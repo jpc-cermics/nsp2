@@ -104,6 +104,12 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
       
   type->init = (init_func *) init_atkhyperlink;
 
+  /* 
+   * AtkHyperlink interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkhyperlink_id == 0 ) 
     {
       /* 
@@ -131,7 +137,7 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
 
 static int init_atkhyperlink(NspAtkHyperlink *Obj,NspTypeAtkHyperlink *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -183,10 +189,10 @@ static char *atkhyperlink_type_short_string(NspObject *v)
 
 NspAtkHyperlink   *atkhyperlink_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkhyperlink_id) ) return ((NspAtkHyperlink *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkhyperlink_id)  == TRUE  ) return ((NspAtkHyperlink *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkhyperlink));
   return NULL;
@@ -230,18 +236,6 @@ NspAtkHyperlink *atkhyperlink_copy(NspAtkHyperlink *self)
  * wrappers for the AtkHyperlink
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkHyperlink *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkhyperlink is initialized * /
-  nsp_type_atkhyperlink = new_type_atkhyperlink(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkhyperlink)) == NULLATKHYPERLINK) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_atk_hyperlink_get_uri(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -375,6 +369,12 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
       
   type->init = (init_func *) init_atkobject;
 
+  /* 
+   * AtkObject interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkobject_id == 0 ) 
     {
       /* 
@@ -402,7 +402,7 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
 
 static int init_atkobject(NspAtkObject *Obj,NspTypeAtkObject *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -454,10 +454,10 @@ static char *atkobject_type_short_string(NspObject *v)
 
 NspAtkObject   *atkobject_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkobject_id) ) return ((NspAtkObject *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkobject_id)  == TRUE  ) return ((NspAtkObject *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkobject));
   return NULL;
@@ -501,18 +501,6 @@ NspAtkObject *atkobject_copy(NspAtkObject *self)
  * wrappers for the AtkObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkObject *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkobject is initialized * /
-  nsp_type_atkobject = new_type_atkobject(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkobject)) == NULLATKOBJECT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -749,6 +737,12 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
       
   type->init = (init_func *) init_atknoopobject;
 
+  /* 
+   * AtkNoOpObject interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atknoopobject_id == 0 ) 
     {
       /* 
@@ -776,7 +770,7 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
 
 static int init_atknoopobject(NspAtkNoOpObject *Obj,NspTypeAtkNoOpObject *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -828,10 +822,10 @@ static char *atknoopobject_type_short_string(NspObject *v)
 
 NspAtkNoOpObject   *atknoopobject_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atknoopobject_id) ) return ((NspAtkNoOpObject *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atknoopobject_id)  == TRUE  ) return ((NspAtkNoOpObject *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atknoopobject));
   return NULL;
@@ -875,18 +869,6 @@ NspAtkNoOpObject *atknoopobject_copy(NspAtkNoOpObject *self)
  * wrappers for the AtkNoOpObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkNoOpObject *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atknoopobject is initialized * /
-  nsp_type_atknoopobject = new_type_atknoopobject(T_BASE);
-  if(( H = atkobject_create(NVOID,(NspTypeBase *) nsp_type_atknoopobject)) == NULLATKNOOPOBJECT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_atknoopobject_new(Stack stack, int rhs, int opt, int lhs)
@@ -968,6 +950,12 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
       
   type->init = (init_func *) init_atkobjectfactory;
 
+  /* 
+   * AtkObjectFactory interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkobjectfactory_id == 0 ) 
     {
       /* 
@@ -995,7 +983,7 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
 
 static int init_atkobjectfactory(NspAtkObjectFactory *Obj,NspTypeAtkObjectFactory *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1047,10 +1035,10 @@ static char *atkobjectfactory_type_short_string(NspObject *v)
 
 NspAtkObjectFactory   *atkobjectfactory_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkobjectfactory_id) ) return ((NspAtkObjectFactory *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkobjectfactory_id)  == TRUE  ) return ((NspAtkObjectFactory *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkobjectfactory));
   return NULL;
@@ -1094,18 +1082,6 @@ NspAtkObjectFactory *atkobjectfactory_copy(NspAtkObjectFactory *self)
  * wrappers for the AtkObjectFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkObjectFactory *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkobjectfactory is initialized * /
-  nsp_type_atkobjectfactory = new_type_atkobjectfactory(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkobjectfactory)) == NULLATKOBJECTFACTORY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1197,6 +1173,12 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
       
   type->init = (init_func *) init_atknoopobjectfactory;
 
+  /* 
+   * AtkNoOpObjectFactory interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atknoopobjectfactory_id == 0 ) 
     {
       /* 
@@ -1224,7 +1206,7 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
 
 static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *Obj,NspTypeAtkNoOpObjectFactory *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1276,10 +1258,10 @@ static char *atknoopobjectfactory_type_short_string(NspObject *v)
 
 NspAtkNoOpObjectFactory   *atknoopobjectfactory_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atknoopobjectfactory_id) ) return ((NspAtkNoOpObjectFactory *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atknoopobjectfactory_id)  == TRUE  ) return ((NspAtkNoOpObjectFactory *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atknoopobjectfactory));
   return NULL;
@@ -1323,18 +1305,6 @@ NspAtkNoOpObjectFactory *atknoopobjectfactory_copy(NspAtkNoOpObjectFactory *self
  * wrappers for the AtkNoOpObjectFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkNoOpObjectFactory *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atknoopobjectfactory is initialized * /
-  nsp_type_atknoopobjectfactory = new_type_atknoopobjectfactory(T_BASE);
-  if(( H = atkobjectfactory_create(NVOID,(NspTypeBase *) nsp_type_atknoopobjectfactory)) == NULLATKNOOPOBJECTFACTORY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_atknoopobjectfactory_new(Stack stack, int rhs, int opt, int lhs)
@@ -1414,6 +1384,12 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
       
   type->init = (init_func *) init_atkregistry;
 
+  /* 
+   * AtkRegistry interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkregistry_id == 0 ) 
     {
       /* 
@@ -1441,7 +1417,7 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
 
 static int init_atkregistry(NspAtkRegistry *Obj,NspTypeAtkRegistry *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1493,10 +1469,10 @@ static char *atkregistry_type_short_string(NspObject *v)
 
 NspAtkRegistry   *atkregistry_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkregistry_id) ) return ((NspAtkRegistry *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkregistry_id)  == TRUE  ) return ((NspAtkRegistry *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkregistry));
   return NULL;
@@ -1540,18 +1516,6 @@ NspAtkRegistry *atkregistry_copy(NspAtkRegistry *self)
  * wrappers for the AtkRegistry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkRegistry *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkregistry is initialized * /
-  nsp_type_atkregistry = new_type_atkregistry(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkregistry)) == NULLATKREGISTRY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_atk_registry_set_factory_type(NspAtkRegistry *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1666,6 +1630,12 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
       
   type->init = (init_func *) init_atkrelation;
 
+  /* 
+   * AtkRelation interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkrelation_id == 0 ) 
     {
       /* 
@@ -1693,7 +1663,7 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
 
 static int init_atkrelation(NspAtkRelation *Obj,NspTypeAtkRelation *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1745,10 +1715,10 @@ static char *atkrelation_type_short_string(NspObject *v)
 
 NspAtkRelation   *atkrelation_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkrelation_id) ) return ((NspAtkRelation *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkrelation_id)  == TRUE  ) return ((NspAtkRelation *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkrelation));
   return NULL;
@@ -1793,18 +1763,6 @@ NspAtkRelation *atkrelation_copy(NspAtkRelation *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkRelation *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkrelation is initialized * /
-  nsp_type_atkrelation = new_type_atkrelation(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkrelation)) == NULLATKRELATION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 18 "atk.override"
 static int
 _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
@@ -1846,7 +1804,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1850 "atk.c"
+#line 1808 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1926,6 +1884,12 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
       
   type->init = (init_func *) init_atkrelationset;
 
+  /* 
+   * AtkRelationSet interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkrelationset_id == 0 ) 
     {
       /* 
@@ -1953,7 +1917,7 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
 
 static int init_atkrelationset(NspAtkRelationSet *Obj,NspTypeAtkRelationSet *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2005,10 +1969,10 @@ static char *atkrelationset_type_short_string(NspObject *v)
 
 NspAtkRelationSet   *atkrelationset_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkrelationset_id) ) return ((NspAtkRelationSet *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkrelationset_id)  == TRUE  ) return ((NspAtkRelationSet *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkrelationset));
   return NULL;
@@ -2052,18 +2016,6 @@ NspAtkRelationSet *atkrelationset_copy(NspAtkRelationSet *self)
  * wrappers for the AtkRelationSet
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkRelationSet *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkrelationset is initialized * /
-  nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkrelationset)) == NULLATKRELATIONSET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_atkrelationset_new(Stack stack, int rhs, int opt, int lhs)
@@ -2223,6 +2175,12 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
       
   type->init = (init_func *) init_atkstateset;
 
+  /* 
+   * AtkStateSet interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkstateset_id == 0 ) 
     {
       /* 
@@ -2250,7 +2208,7 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
 
 static int init_atkstateset(NspAtkStateSet *Obj,NspTypeAtkStateSet *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2302,10 +2260,10 @@ static char *atkstateset_type_short_string(NspObject *v)
 
 NspAtkStateSet   *atkstateset_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkstateset_id) ) return ((NspAtkStateSet *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkstateset_id)  == TRUE  ) return ((NspAtkStateSet *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkstateset));
   return NULL;
@@ -2349,18 +2307,6 @@ NspAtkStateSet *atkstateset_copy(NspAtkStateSet *self)
  * wrappers for the AtkStateSet
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkStateSet *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkstateset is initialized * /
-  nsp_type_atkstateset = new_type_atkstateset(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkstateset)) == NULLATKSTATESET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_atk_state_set_is_empty(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2536,6 +2482,12 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
       
   type->init = (init_func *) init_atkutil;
 
+  /* 
+   * AtkUtil interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_atkutil_id == 0 ) 
     {
       /* 
@@ -2563,7 +2515,7 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
 
 static int init_atkutil(NspAtkUtil *Obj,NspTypeAtkUtil *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2615,10 +2567,10 @@ static char *atkutil_type_short_string(NspObject *v)
 
 NspAtkUtil   *atkutil_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_atkutil_id) ) return ((NspAtkUtil *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkutil_id)  == TRUE  ) return ((NspAtkUtil *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkutil));
   return NULL;
@@ -2662,18 +2614,6 @@ NspAtkUtil *atkutil_copy(NspAtkUtil *self)
  * wrappers for the AtkUtil
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspAtkUtil *H;
-  CheckRhs(0,0);
-  / * want to be sure that type atkutil is initialized * /
-  nsp_type_atkutil = new_type_atkutil(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_atkutil)) == NULLATKUTIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *atkutil_get_methods(void) { return NULL;};
 /*-------------------------------------------

@@ -137,7 +137,7 @@ class Wrapper:
               '\n'  \
               'static int init_%(typename_dc)s(Nsp%(typename)s *Obj,NspType%(typename)s *type)\n'  \
               '{\n'  \
-              '  /* jump the first surtype */ \n'  \
+              '  /* initialize the surtype */ \n'  \
               '  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;\n'  \
               '  Obj->type = type; \n'  \
               '  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;\n'  \
@@ -190,10 +190,10 @@ class Wrapper:
               '\n'  \
               'Nsp%(typename)s   *%(typename_dc)s_object(NspObject *O)\n'  \
               '{\n'  \
-              '  /** Follow pointer **/\n'  \
+              '  /* Follow pointer */\n'  \
               '  HOBJ_GET_OBJECT(O,NULL);\n'  \
-              '  /** Check type **/\n'  \
-              '  if ( %(interface_1)s (O,nsp_type_%(typename_dc)s_id) ) return ((Nsp%(typename)s *) O);\n'  \
+              '  /* Check type */\n'  \
+              '  if ( %(interface_1)s (O,nsp_type_%(typename_dc)s_id) %(interface_3)s ) return ((Nsp%(typename)s *) O);\n'  \
               '  else \n'  \
               '    Scierror("Error:\tArgument should be a %%s\\n",type_get_name(nsp_type_%(typename_dc)s));\n'  \
               '  return NULL;\n'  \
@@ -297,6 +297,16 @@ class Wrapper:
                 '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
                 'static NspMethods *%(typename_dc)s_get_methods(void); \n' \
                 '#endif /* %(typename)s_Private */\n'
+
+
+    type_tmpl_1_0_2 = \
+              '  /* \n' \
+              '   * %(typename)s interfaces can be added here \n' \
+              '   * type->interface = (NspTypeBase *) new_type_b();\n' \
+              '   * type->interface->interface = (NspTypeBase *) new_type_C()\n' \
+              '   * ....\n' \
+              '   */\n' 
+
     
     slots_list = ['tp_getattr', 'tp_setattr' ]
 
@@ -363,7 +373,8 @@ class Wrapper:
 
     
     def get_initial_class_substdict(self): return { 'interface_1' : 'check_cast',
-                                                    'interface_2' : 'nsp_object_type'}
+                                                    'interface_2' : 'nsp_object_type',
+                                                    'interface_3' : ' == TRUE '}
 
     def get_initial_constructor_substdict(self):
         return { 'name': '%s.__init__' % self.objinfo.c_name,
@@ -421,6 +432,8 @@ class Wrapper:
 
         # insert the type defintion 
         self.fp.write(self.type_tmpl_1 % substdict)
+
+        self.fp.write(self.type_tmpl_1_0_2 % substdict)
         # insert the implemented interfaces
         if len(self.objinfo.implements) != 0 :
             ti = 'type->interface'
@@ -866,7 +879,9 @@ class GObjectWrapper(Wrapper):
               ' * wrappers for the %(typename)s\n'  \
               ' * i.e functions at Nsp level \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  \
+              '\n'  
+
+    unused_tmpl = \
               '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
               '{\n'  \
               '  Nsp%(typename)s *H;\n'  \
@@ -888,6 +903,7 @@ class GObjectWrapper(Wrapper):
     def get_initial_class_substdict(self):
         return {'interface_1' : 'check_cast',
                 'interface_2' : 'nsp_object_type',
+                'interface_3' : ' == TRUE ',
                 'tp_basicsize'      : 'NspGObject',
                 'tp_weaklistoffset' : 'offsetof(PyGObject, weakreflist)',
                 'tp_dictoffset'     : 'offsetof(PyGObject, inst_dict)' }
@@ -919,6 +935,7 @@ class GInterfaceWrapper(GObjectWrapper):
     def get_initial_class_substdict(self):
         return { 'interface_1' : 'check_implements',
                  'interface_2' : 'nsp_object_implements',
+                 'interface_3' : '',
                  'tp_basicsize'      : 'PyGObject',
                  'tp_weaklistoffset' : '0',
                  'tp_dictoffset'     : '0'}
@@ -993,6 +1010,7 @@ class GBoxedWrapper(Wrapper):
     def get_initial_class_substdict(self):
         return {'interface_1' : 'check_cast',
                 'interface_2' : 'nsp_object_type',
+                'interface_3' : ' == TRUE ',
                 'tp_basicsize'      : 'PyGBoxed',
                 'tp_weaklistoffset' : '0',
                 'tp_dictoffset'     : '0' }
@@ -1071,6 +1089,7 @@ class GPointerWrapper(GBoxedWrapper):
     def get_initial_class_substdict(self):
         return {'interface_1' : 'check_cast',
                 'interface_2' : 'nsp_object_type',
+                'interface_3' : ' == TRUE ',
                 'tp_basicsize'      : 'PyGPointer',
                 'tp_weaklistoffset' : '0',
                 'tp_dictoffset'     : '0' }

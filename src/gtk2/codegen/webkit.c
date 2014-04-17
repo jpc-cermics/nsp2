@@ -129,6 +129,12 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
       
   type->init = (init_func *) init_webkitwebview;
 
+  /* 
+   * WebKitWebView interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitwebview_id == 0 ) 
     {
       /* 
@@ -156,7 +162,7 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
 
 static int init_webkitwebview(NspWebKitWebView *Obj,NspTypeWebKitWebView *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -208,10 +214,10 @@ static char *webkitwebview_type_short_string(NspObject *v)
 
 NspWebKitWebView   *webkitwebview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitwebview_id) ) return ((NspWebKitWebView *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitwebview_id)  == TRUE  ) return ((NspWebKitWebView *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitwebview));
   return NULL;
@@ -255,18 +261,6 @@ NspWebKitWebView *webkitwebview_copy(NspWebKitWebView *self)
  * wrappers for the WebKitWebView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitWebView *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitwebview is initialized * /
-  nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_webkitwebview)) == NULLWEBKITWEBVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitwebview_new(Stack stack, int rhs, int opt, int lhs)
@@ -701,6 +695,12 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
       
   type->init = (init_func *) init_webkitwebframe;
 
+  /* 
+   * WebKitWebFrame interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitwebframe_id == 0 ) 
     {
       /* 
@@ -728,7 +728,7 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
 
 static int init_webkitwebframe(NspWebKitWebFrame *Obj,NspTypeWebKitWebFrame *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -780,10 +780,10 @@ static char *webkitwebframe_type_short_string(NspObject *v)
 
 NspWebKitWebFrame   *webkitwebframe_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitwebframe_id) ) return ((NspWebKitWebFrame *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitwebframe_id)  == TRUE  ) return ((NspWebKitWebFrame *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitwebframe));
   return NULL;
@@ -827,18 +827,6 @@ NspWebKitWebFrame *webkitwebframe_copy(NspWebKitWebFrame *self)
  * wrappers for the WebKitWebFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitWebFrame *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitwebframe is initialized * /
-  nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_webkitwebframe)) == NULLWEBKITWEBFRAME) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitwebframe_new(Stack stack, int rhs, int opt, int lhs)
@@ -1014,6 +1002,12 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
       
   type->init = (init_func *) init_webkitwebhistoryitem;
 
+  /* 
+   * WebKitWebHistoryItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitwebhistoryitem_id == 0 ) 
     {
       /* 
@@ -1041,7 +1035,7 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
 
 static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *Obj,NspTypeWebKitWebHistoryItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1093,10 +1087,10 @@ static char *webkitwebhistoryitem_type_short_string(NspObject *v)
 
 NspWebKitWebHistoryItem   *webkitwebhistoryitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitwebhistoryitem_id) ) return ((NspWebKitWebHistoryItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitwebhistoryitem_id)  == TRUE  ) return ((NspWebKitWebHistoryItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitwebhistoryitem));
   return NULL;
@@ -1140,18 +1134,6 @@ NspWebKitWebHistoryItem *webkitwebhistoryitem_copy(NspWebKitWebHistoryItem *self
  * wrappers for the WebKitWebHistoryItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitWebHistoryItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitwebhistoryitem is initialized * /
-  nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_webkitwebhistoryitem)) == NULLWEBKITWEBHISTORYITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitwebhistoryitem_new(Stack stack, int rhs, int opt, int lhs)
@@ -1290,6 +1272,12 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
       
   type->init = (init_func *) init_webkitwebbackforwardlist;
 
+  /* 
+   * WebKitWebBackForwardList interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitwebbackforwardlist_id == 0 ) 
     {
       /* 
@@ -1317,7 +1305,7 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
 
 static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *Obj,NspTypeWebKitWebBackForwardList *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1369,10 +1357,10 @@ static char *webkitwebbackforwardlist_type_short_string(NspObject *v)
 
 NspWebKitWebBackForwardList   *webkitwebbackforwardlist_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitwebbackforwardlist_id) ) return ((NspWebKitWebBackForwardList *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitwebbackforwardlist_id)  == TRUE  ) return ((NspWebKitWebBackForwardList *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitwebbackforwardlist));
   return NULL;
@@ -1416,18 +1404,6 @@ NspWebKitWebBackForwardList *webkitwebbackforwardlist_copy(NspWebKitWebBackForwa
  * wrappers for the WebKitWebBackForwardList
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitWebBackForwardList *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitwebbackforwardlist is initialized * /
-  nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_webkitwebbackforwardlist)) == NULLWEBKITWEBBACKFORWARDLIST) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
@@ -1663,6 +1639,12 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
       
   type->init = (init_func *) init_webkitwebsettings;
 
+  /* 
+   * WebKitWebSettings interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitwebsettings_id == 0 ) 
     {
       /* 
@@ -1690,7 +1672,7 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
 
 static int init_webkitwebsettings(NspWebKitWebSettings *Obj,NspTypeWebKitWebSettings *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1742,10 +1724,10 @@ static char *webkitwebsettings_type_short_string(NspObject *v)
 
 NspWebKitWebSettings   *webkitwebsettings_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitwebsettings_id) ) return ((NspWebKitWebSettings *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitwebsettings_id)  == TRUE  ) return ((NspWebKitWebSettings *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitwebsettings));
   return NULL;
@@ -1789,18 +1771,6 @@ NspWebKitWebSettings *webkitwebsettings_copy(NspWebKitWebSettings *self)
  * wrappers for the WebKitWebSettings
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitWebSettings *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitwebsettings is initialized * /
-  nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_webkitwebsettings)) == NULLWEBKITWEBSETTINGS) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitwebsettings_new(Stack stack, int rhs, int opt, int lhs)
@@ -1896,6 +1866,12 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
       
   type->init = (init_func *) init_webkitnetworkrequest;
 
+  /* 
+   * WebKitNetworkRequest interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_webkitnetworkrequest_id == 0 ) 
     {
       /* 
@@ -1923,7 +1899,7 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
 
 static int init_webkitnetworkrequest(NspWebKitNetworkRequest *Obj,NspTypeWebKitNetworkRequest *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1975,10 +1951,10 @@ static char *webkitnetworkrequest_type_short_string(NspObject *v)
 
 NspWebKitNetworkRequest   *webkitnetworkrequest_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_webkitnetworkrequest_id) ) return ((NspWebKitNetworkRequest *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_webkitnetworkrequest_id)  == TRUE  ) return ((NspWebKitNetworkRequest *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_webkitnetworkrequest));
   return NULL;
@@ -2022,18 +1998,6 @@ NspWebKitNetworkRequest *webkitnetworkrequest_copy(NspWebKitNetworkRequest *self
  * wrappers for the WebKitNetworkRequest
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspWebKitNetworkRequest *H;
-  CheckRhs(0,0);
-  / * want to be sure that type webkitnetworkrequest is initialized * /
-  nsp_type_webkitnetworkrequest = new_type_webkitnetworkrequest(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_webkitnetworkrequest)) == NULLWEBKITNETWORKREQUEST) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
@@ -2263,7 +2227,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2267 "webkit.c"
+#line 2231 "webkit.c"
 
 
 /*----------------------------------------------------

@@ -336,6 +336,12 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
       
   type->init = (init_func *) init_gtkborder;
 
+  /* 
+   * GtkBorder interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkborder_id == 0 ) 
     {
       /* 
@@ -363,7 +369,7 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
 
 static int init_gtkborder(NspGtkBorder *Obj,NspTypeGtkBorder *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -415,10 +421,10 @@ static char *gtkborder_type_short_string(NspObject *v)
 
 NspGtkBorder   *gtkborder_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkborder_id) ) return ((NspGtkBorder *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkborder_id)  == TRUE  ) return ((NspGtkBorder *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkborder));
   return NULL;
@@ -563,6 +569,12 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
       
   type->init = (init_func *) init_gtkiconinfo;
 
+  /* 
+   * GtkIconInfo interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkiconinfo_id == 0 ) 
     {
       /* 
@@ -590,7 +602,7 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
 
 static int init_gtkiconinfo(NspGtkIconInfo *Obj,NspTypeGtkIconInfo *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -642,10 +654,10 @@ static char *gtkiconinfo_type_short_string(NspObject *v)
 
 NspGtkIconInfo   *gtkiconinfo_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkiconinfo_id) ) return ((NspGtkIconInfo *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkiconinfo_id)  == TRUE  ) return ((NspGtkIconInfo *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkiconinfo));
   return NULL;
@@ -871,6 +883,12 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
       
   type->init = (init_func *) init_gtkiconset;
 
+  /* 
+   * GtkIconSet interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkiconset_id == 0 ) 
     {
       /* 
@@ -898,7 +916,7 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
 
 static int init_gtkiconset(NspGtkIconSet *Obj,NspTypeGtkIconSet *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -950,10 +968,10 @@ static char *gtkiconset_type_short_string(NspObject *v)
 
 NspGtkIconSet   *gtkiconset_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkiconset_id) ) return ((NspGtkIconSet *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkiconset_id)  == TRUE  ) return ((NspGtkIconSet *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkiconset));
   return NULL;
@@ -1050,7 +1068,7 @@ _wrap_gtkiconset_new(Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_gtk_icon_set_new_from_pixbuf(stack,rhs,opt,lhs);
 }
-#line 1054 "gtk.c"
+#line 1072 "gtk.c"
 
 
 static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
@@ -1119,7 +1137,7 @@ _wrap_gtk_icon_set_get_sizes(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,(NspObject *) ret) ; 
   return 1;
 }
-#line 1123 "gtk.c"
+#line 1141 "gtk.c"
 
 
 static NspMethods gtkiconset_methods[] = {
@@ -1194,6 +1212,12 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
       
   type->init = (init_func *) init_gtkiconsource;
 
+  /* 
+   * GtkIconSource interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkiconsource_id == 0 ) 
     {
       /* 
@@ -1221,7 +1245,7 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
 
 static int init_gtkiconsource(NspGtkIconSource *Obj,NspTypeGtkIconSource *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1273,10 +1297,10 @@ static char *gtkiconsource_type_short_string(NspObject *v)
 
 NspGtkIconSource   *gtkiconsource_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkiconsource_id) ) return ((NspGtkIconSource *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkiconsource_id)  == TRUE  ) return ((NspGtkIconSource *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkiconsource));
   return NULL;
@@ -1621,6 +1645,12 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
       
   type->init = (init_func *) init_gtkrequisition;
 
+  /* 
+   * GtkRequisition interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkrequisition_id == 0 ) 
     {
       /* 
@@ -1648,7 +1678,7 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
 
 static int init_gtkrequisition(NspGtkRequisition *Obj,NspTypeGtkRequisition *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1700,10 +1730,10 @@ static char *gtkrequisition_type_short_string(NspObject *v)
 
 NspGtkRequisition   *gtkrequisition_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkrequisition_id) ) return ((NspGtkRequisition *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkrequisition_id)  == TRUE  ) return ((NspGtkRequisition *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkrequisition));
   return NULL;
@@ -1798,7 +1828,7 @@ _wrap_gtk_requisition__set_width(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->width = val;
   return OK;
 }
-#line 1802 "gtk.c"
+#line 1832 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_width(NspObject *self,char *attr)
 {
   int ret;
@@ -1815,7 +1845,7 @@ _wrap_gtk_requisition__set_height(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->height = val;
   return 0;
 }
-#line 1819 "gtk.c"
+#line 1849 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 {
   int ret;
@@ -1887,6 +1917,12 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
       
   type->init = (init_func *) init_gtkselectiondata;
 
+  /* 
+   * GtkSelectionData interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkselectiondata_id == 0 ) 
     {
       /* 
@@ -1914,7 +1950,7 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
 
 static int init_gtkselectiondata(NspGtkSelectionData *Obj,NspTypeGtkSelectionData *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1966,10 +2002,10 @@ static char *gtkselectiondata_type_short_string(NspObject *v)
 
 NspGtkSelectionData   *gtkselectiondata_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkselectiondata_id) ) return ((NspGtkSelectionData *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkselectiondata_id)  == TRUE  ) return ((NspGtkSelectionData *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkselectiondata));
   return NULL;
@@ -2044,7 +2080,7 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 			 type, format,(const guchar *) data, length);
   return 0;
 }
-#line 2048 "gtk.c"
+#line 2084 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_set_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2074,7 +2110,7 @@ _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,in
   Scierror("To be done XXXXX gtk_selection_data_get_text");
   return 0;
 }
-#line 2078 "gtk.c"
+#line 2114 "gtk.c"
 
 
 #line 516 "gtk.override"
@@ -2095,7 +2131,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1; 
   NSP_LIST_CLEAN; 
 }
-#line 2099 "gtk.c"
+#line 2135 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_targets_include_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2179,7 +2215,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
-#line 2183 "gtk.c"
+#line 2219 "gtk.c"
 
 
 static NspMethods gtkselectiondata_methods[] = {
@@ -2241,7 +2277,7 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
     return nsp_new_string_obj(NVOID,NULL,0);
   }
 }
-#line 2245 "gtk.c"
+#line 2281 "gtk.c"
 static AttrTab gtkselectiondata_attrs[] = {
   { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2309,6 +2345,12 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
       
   type->init = (init_func *) init_gtktextattributes;
 
+  /* 
+   * GtkTextAttributes interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextattributes_id == 0 ) 
     {
       /* 
@@ -2336,7 +2378,7 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
 
 static int init_gtktextattributes(NspGtkTextAttributes *Obj,NspTypeGtkTextAttributes *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2388,10 +2430,10 @@ static char *gtktextattributes_type_short_string(NspObject *v)
 
 NspGtkTextAttributes   *gtktextattributes_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextattributes_id) ) return ((NspGtkTextAttributes *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextattributes_id)  == TRUE  ) return ((NspGtkTextAttributes *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextattributes));
   return NULL;
@@ -2509,7 +2551,7 @@ _wrap_gtk_text_attributes__get_bg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2513 "gtk.c"
+#line 2555 "gtk.c"
 #line 6715 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
@@ -2518,7 +2560,7 @@ _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2522 "gtk.c"
+#line 2564 "gtk.c"
 #line 6724 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
@@ -2528,7 +2570,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2532 "gtk.c"
+#line 2574 "gtk.c"
 #line 6734 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
@@ -2539,7 +2581,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2543 "gtk.c"
+#line 2585 "gtk.c"
 #line 6745 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
@@ -2548,7 +2590,7 @@ _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.rise;
   return nsp_new_double_obj((double) ret);
 }
-#line 2552 "gtk.c"
+#line 2594 "gtk.c"
 #line 6754 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
@@ -2557,7 +2599,7 @@ _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.underline;
   return nsp_new_double_obj((double) ret);
 }
-#line 2561 "gtk.c"
+#line 2603 "gtk.c"
 #line 6763 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
@@ -2565,7 +2607,7 @@ _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.strikethrough;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2569 "gtk.c"
+#line 2611 "gtk.c"
 #line 6771 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
@@ -2574,7 +2616,7 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
 
-#line 2578 "gtk.c"
+#line 2620 "gtk.c"
 static NspObject *_wrap_gtk_text_attributes__get_justification(NspObject *self,char *attr)
 {
   gint ret;
@@ -2818,6 +2860,12 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
       
   type->init = (init_func *) init_gtktextiter;
 
+  /* 
+   * GtkTextIter interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextiter_id == 0 ) 
     {
       /* 
@@ -2845,7 +2893,7 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
 
 static int init_gtktextiter(NspGtkTextIter *Obj,NspTypeGtkTextIter *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2897,10 +2945,10 @@ static char *gtktextiter_type_short_string(NspObject *v)
 
 NspGtkTextIter   *gtktextiter_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextiter_id) ) return ((NspGtkTextIter *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextiter_id)  == TRUE  ) return ((NspGtkTextIter *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextiter));
   return NULL;
@@ -2974,7 +3022,7 @@ _wrap_gtk_text_iter_copy(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   return (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, nspg_boxed_get(self, GtkTextIter), TRUE, TRUE,NULL);
 }
-#line 2978 "gtk.c"
+#line 3026 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_offset(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3059,7 +3107,7 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   Scierror("XXXX To be done gtk_text_iter_get_slice");
   return 0;
 }
-#line 3063 "gtk.c"
+#line 3111 "gtk.c"
 
 
 #line 5399 "gtk.override"
@@ -3088,7 +3136,7 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   Scierror("To be done gtk_text_iter_get_text");
   return 0;
 }
-#line 3092 "gtk.c"
+#line 3140 "gtk.c"
 
 
 #line 5426 "gtk.override"
@@ -3118,7 +3166,7 @@ _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int op
   Scierror("To be done gtk_text_iter_get_visible_slice");
   return 0;
 }
-#line 3122 "gtk.c"
+#line 3170 "gtk.c"
 
 
 #line 5454 "gtk.override"
@@ -3148,7 +3196,7 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
   Scierror("To be done gtk_text_iter_get_visible_text");
   return 0;
 }
-#line 3152 "gtk.c"
+#line 3200 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3171,7 +3219,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3175 "gtk.c"
+#line 3223 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3200,7 +3248,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
     
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3204 "gtk.c"
+#line 3252 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3292,7 +3340,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3296 "gtk.c"
+#line 3344 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_editable(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3886,7 +3934,7 @@ _wrap_gtk_text_iter_forward_search(NspGBoxed *self,Stack stack,int rhs,int opt,i
     }
   return 0;
 }
-#line 3890 "gtk.c"
+#line 3938 "gtk.c"
 
 
 #line 5554 "gtk.override"
@@ -3924,7 +3972,7 @@ _wrap_gtk_text_iter_backward_search(NspGBoxed *self,Stack stack,int rhs,int opt,
     }
   return 0;
 }
-#line 3928 "gtk.c"
+#line 3976 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4158,6 +4206,12 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
       
   type->init = (init_func *) init_gtktreeiter;
 
+  /* 
+   * GtkTreeIter interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreeiter_id == 0 ) 
     {
       /* 
@@ -4185,7 +4239,7 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
 
 static int init_gtktreeiter(NspGtkTreeIter *Obj,NspTypeGtkTreeIter *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4237,10 +4291,10 @@ static char *gtktreeiter_type_short_string(NspObject *v)
 
 NspGtkTreeIter   *gtktreeiter_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreeiter_id) ) return ((NspGtkTreeIter *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreeiter_id)  == TRUE  ) return ((NspGtkTreeIter *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreeiter));
   return NULL;
@@ -4385,6 +4439,12 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
       
   type->init = (init_func *) init_gtktreerowreference;
 
+  /* 
+   * GtkTreeRowReference interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreerowreference_id == 0 ) 
     {
       /* 
@@ -4412,7 +4472,7 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
 
 static int init_gtktreerowreference(NspGtkTreeRowReference *Obj,NspTypeGtkTreeRowReference *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4464,10 +4524,10 @@ static char *gtktreerowreference_type_short_string(NspObject *v)
 
 NspGtkTreeRowReference   *gtktreerowreference_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreerowreference_id) ) return ((NspGtkTreeRowReference *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreerowreference_id)  == TRUE  ) return ((NspGtkTreeRowReference *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreerowreference));
   return NULL;
@@ -4657,6 +4717,12 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
       
   type->init = (init_func *) init_gtktreepath;
 
+  /* 
+   * GtkTreePath interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreepath_id == 0 ) 
     {
       /* 
@@ -4684,7 +4750,7 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
 
 static int init_gtktreepath(NspGtkTreePath *Obj,NspTypeGtkTreePath *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4736,10 +4802,10 @@ static char *gtktreepath_type_short_string(NspObject *v)
 
 NspGtkTreePath   *gtktreepath_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreepath_id) ) return ((NspGtkTreePath *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreepath_id)  == TRUE  ) return ((NspGtkTreePath *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreepath));
   return NULL;
@@ -4853,7 +4919,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     }
   return NULL;
 }
-#line 4857 "gtk.c"
+#line 4923 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_to_string(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -4901,7 +4967,7 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4905 "gtk.c"
+#line 4971 "gtk.c"
 
 
 #line 180 "gtk.override"
@@ -4930,7 +4996,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
-#line 4934 "gtk.c"
+#line 5000 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -5096,6 +5162,12 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
       
   type->init = (init_func *) init_gtkcelleditable;
 
+  /* 
+   * GtkCellEditable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcelleditable_id == 0 ) 
     {
       /* 
@@ -5123,7 +5195,7 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
 
 static int init_gtkcelleditable(NspGtkCellEditable *Obj,NspTypeGtkCellEditable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -5175,10 +5247,10 @@ static char *gtkcelleditable_type_short_string(NspObject *v)
 
 NspGtkCellEditable   *gtkcelleditable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtkcelleditable_id) ) return ((NspGtkCellEditable *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtkcelleditable_id)  ) return ((NspGtkCellEditable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcelleditable));
   return NULL;
@@ -5222,18 +5294,6 @@ NspGtkCellEditable *gtkcelleditable_copy(NspGtkCellEditable *self)
  * wrappers for the GtkCellEditable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellEditable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcelleditable is initialized * /
-  nsp_type_gtkcelleditable = new_type_gtkcelleditable(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkcelleditable)) == NULLGTKCELLEDITABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_cell_editable_start_editing(NspGtkCellEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5330,6 +5390,12 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
       
   type->init = (init_func *) init_gtkcelllayout;
 
+  /* 
+   * GtkCellLayout interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcelllayout_id == 0 ) 
     {
       /* 
@@ -5357,7 +5423,7 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
 
 static int init_gtkcelllayout(NspGtkCellLayout *Obj,NspTypeGtkCellLayout *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -5409,10 +5475,10 @@ static char *gtkcelllayout_type_short_string(NspObject *v)
 
 NspGtkCellLayout   *gtkcelllayout_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtkcelllayout_id) ) return ((NspGtkCellLayout *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtkcelllayout_id)  ) return ((NspGtkCellLayout *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcelllayout));
   return NULL;
@@ -5456,18 +5522,6 @@ NspGtkCellLayout *gtkcelllayout_copy(NspGtkCellLayout *self)
  * wrappers for the GtkCellLayout
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellLayout *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcelllayout is initialized * /
-  nsp_type_gtkcelllayout = new_type_gtkcelllayout(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkcelllayout)) == NULLGTKCELLLAYOUT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_cell_layout_pack_start(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5536,7 +5590,7 @@ _wrap_gtk_cell_layout_set_attributes(NspGObject *self,Stack stack,int rhs,int op
   return 0;
 }
 
-#line 5540 "gtk.c"
+#line 5594 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_add_attribute(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5621,7 +5675,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 5625 "gtk.c"
+#line 5679 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_clear_attributes(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5715,6 +5769,12 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
       
   type->init = (init_func *) init_gtkeditable;
 
+  /* 
+   * GtkEditable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkeditable_id == 0 ) 
     {
       /* 
@@ -5742,7 +5802,7 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
 
 static int init_gtkeditable(NspGtkEditable *Obj,NspTypeGtkEditable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -5794,10 +5854,10 @@ static char *gtkeditable_type_short_string(NspObject *v)
 
 NspGtkEditable   *gtkeditable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtkeditable_id) ) return ((NspGtkEditable *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtkeditable_id)  ) return ((NspGtkEditable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkeditable));
   return NULL;
@@ -5842,18 +5902,6 @@ NspGtkEditable *gtkeditable_copy(NspGtkEditable *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkEditable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkeditable is initialized * /
-  nsp_type_gtkeditable = new_type_gtkeditable(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkeditable)) == NULLGTKEDITABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int _wrap_gtk_editable_select_region(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, s_int,t_end};
@@ -5872,7 +5920,7 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5876 "gtk.c"
+#line 5924 "gtk.c"
 
 
 #line 3798 "gtk.override"
@@ -5893,7 +5941,7 @@ static int _wrap_gtk_editable_insert_text(NspGtkEditable *self,Stack stack,int r
   if ( nsp_move_double(stack,1,(double)position) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5897 "gtk.c"
+#line 5945 "gtk.c"
 
 
 static int _wrap_gtk_editable_delete_text(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
@@ -6052,6 +6100,12 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
       
   type->init = (init_func *) init_gtkfilechooser;
 
+  /* 
+   * GtkFileChooser interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfilechooser_id == 0 ) 
     {
       /* 
@@ -6079,7 +6133,7 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
 
 static int init_gtkfilechooser(NspGtkFileChooser *Obj,NspTypeGtkFileChooser *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -6131,10 +6185,10 @@ static char *gtkfilechooser_type_short_string(NspObject *v)
 
 NspGtkFileChooser   *gtkfilechooser_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtkfilechooser_id) ) return ((NspGtkFileChooser *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtkfilechooser_id)  ) return ((NspGtkFileChooser *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooser));
   return NULL;
@@ -6178,18 +6232,6 @@ NspGtkFileChooser *gtkfilechooser_copy(NspGtkFileChooser *self)
  * wrappers for the GtkFileChooser
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileChooser *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfilechooser is initialized * /
-  nsp_type_gtkfilechooser = new_type_gtkfilechooser(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooser)) == NULLGTKFILECHOOSER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_file_chooser_set_action(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -6771,6 +6813,12 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
       
   type->init = (init_func *) init_gtktreedragdest;
 
+  /* 
+   * GtkTreeDragDest interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreedragdest_id == 0 ) 
     {
       /* 
@@ -6798,7 +6846,7 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
 
 static int init_gtktreedragdest(NspGtkTreeDragDest *Obj,NspTypeGtkTreeDragDest *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -6850,10 +6898,10 @@ static char *gtktreedragdest_type_short_string(NspObject *v)
 
 NspGtkTreeDragDest   *gtktreedragdest_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtktreedragdest_id) ) return ((NspGtkTreeDragDest *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtktreedragdest_id)  ) return ((NspGtkTreeDragDest *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreedragdest));
   return NULL;
@@ -6897,18 +6945,6 @@ NspGtkTreeDragDest *gtktreedragdest_copy(NspGtkTreeDragDest *self)
  * wrappers for the GtkTreeDragDest
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeDragDest *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreedragdest is initialized * /
-  nsp_type_gtktreedragdest = new_type_gtktreedragdest(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreedragdest)) == NULLGTKTREEDRAGDEST) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_tree_drag_dest_drag_data_received(NspGtkTreeDragDest *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -7026,6 +7062,12 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
       
   type->init = (init_func *) init_gtktreedragsource;
 
+  /* 
+   * GtkTreeDragSource interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreedragsource_id == 0 ) 
     {
       /* 
@@ -7053,7 +7095,7 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
 
 static int init_gtktreedragsource(NspGtkTreeDragSource *Obj,NspTypeGtkTreeDragSource *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -7105,10 +7147,10 @@ static char *gtktreedragsource_type_short_string(NspObject *v)
 
 NspGtkTreeDragSource   *gtktreedragsource_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtktreedragsource_id) ) return ((NspGtkTreeDragSource *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtktreedragsource_id)  ) return ((NspGtkTreeDragSource *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreedragsource));
   return NULL;
@@ -7152,18 +7194,6 @@ NspGtkTreeDragSource *gtktreedragsource_copy(NspGtkTreeDragSource *self)
  * wrappers for the GtkTreeDragSource
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeDragSource *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreedragsource is initialized * /
-  nsp_type_gtktreedragsource = new_type_gtktreedragsource(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreedragsource)) == NULLGTKTREEDRAGSOURCE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_tree_drag_source_row_draggable(NspGtkTreeDragSource *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -7293,6 +7323,12 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
       
   type->init = (init_func *) init_gtktreemodel;
 
+  /* 
+   * GtkTreeModel interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreemodel_id == 0 ) 
     {
       /* 
@@ -7320,7 +7356,7 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
 
 static int init_gtktreemodel(NspGtkTreeModel *Obj,NspTypeGtkTreeModel *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -7372,10 +7408,10 @@ static char *gtktreemodel_type_short_string(NspObject *v)
 
 NspGtkTreeModel   *gtktreemodel_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtktreemodel_id) ) return ((NspGtkTreeModel *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtktreemodel_id)  ) return ((NspGtkTreeModel *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreemodel));
   return NULL;
@@ -7420,18 +7456,6 @@ NspGtkTreeModel *gtktreemodel_copy(NspGtkTreeModel *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeModel *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreemodel is initialized * /
-  nsp_type_gtktreemodel = new_type_gtktreemodel(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreemodel)) == NULLGTKTREEMODEL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int _wrap_gtk_tree_model_get_flags(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   guint ret;
@@ -7466,7 +7490,7 @@ static int _wrap_gtk_tree_model_get_column_type(NspGtkTreeModel *self,Stack stac
   return 1; 
 }
 
-#line 7470 "gtk.c"
+#line 7494 "gtk.c"
 
 
 #line 1509 "gtk.override"
@@ -7499,7 +7523,7 @@ _wrap_gtk_tree_model_get_iter(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
 }
-#line 7503 "gtk.c"
+#line 7527 "gtk.c"
 
 
 #line 1540 "gtk.override"
@@ -7524,7 +7548,7 @@ _wrap_gtk_tree_model_get_iter_from_string(NspGObject *self,Stack stack,int rhs,i
     return RET_BUG;
   }
 }
-#line 7528 "gtk.c"
+#line 7552 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7566,7 +7590,7 @@ _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 1;
 }
-#line 7570 "gtk.c"
+#line 7594 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7619,7 +7643,7 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7623 "gtk.c"
+#line 7647 "gtk.c"
 
 
 #line 2367 "gtk.override"
@@ -7641,7 +7665,7 @@ _wrap_gtk_tree_model_iter_next(NspGObject *self,Stack stack,int rhs,int opt,int 
   if ( nsp_move_boolean(stack,1,rep)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 7645 "gtk.c"
+#line 7669 "gtk.c"
 
 
 #line 2387 "gtk.override"
@@ -7673,7 +7697,7 @@ _wrap_gtk_tree_model_iter_children(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
 }
-#line 7677 "gtk.c"
+#line 7701 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7747,7 +7771,7 @@ _wrap_gtk_tree_model_iter_nth_child(NspGObject *self,Stack stack,int rhs,int opt
   else 
     return RET_BUG;
 }
-#line 7751 "gtk.c"
+#line 7775 "gtk.c"
 
 
 #line 2448 "gtk.override"
@@ -7780,7 +7804,7 @@ _wrap_gtk_tree_model_iter_parent(NspGObject *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
 }
-#line 7784 "gtk.c"
+#line 7808 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7875,7 +7899,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   /* XXXX detecter les erreurs ? */
   return 0;
 }
-#line 7879 "gtk.c"
+#line 7903 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -8015,7 +8039,7 @@ static int _wrap_gtk_tree_model_filter_new(NspGtkTreeModel *self,Stack stack,int
   return 1;
 }
 
-#line 8019 "gtk.c"
+#line 8043 "gtk.c"
 
 
 static NspMethods gtktreemodel_methods[] = {
@@ -8107,6 +8131,12 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
       
   type->init = (init_func *) init_gtktreesortable;
 
+  /* 
+   * GtkTreeSortable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreesortable_id == 0 ) 
     {
       /* 
@@ -8134,7 +8164,7 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
 
 static int init_gtktreesortable(NspGtkTreeSortable *Obj,NspTypeGtkTreeSortable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -8186,10 +8216,10 @@ static char *gtktreesortable_type_short_string(NspObject *v)
 
 NspGtkTreeSortable   *gtktreesortable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_implements (O,nsp_type_gtktreesortable_id) ) return ((NspGtkTreeSortable *) O);
+  /* Check type */
+  if ( check_implements (O,nsp_type_gtktreesortable_id)  ) return ((NspGtkTreeSortable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreesortable));
   return NULL;
@@ -8234,18 +8264,6 @@ NspGtkTreeSortable *gtktreesortable_copy(NspGtkTreeSortable *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeSortable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreesortable is initialized * /
-  nsp_type_gtktreesortable = new_type_gtktreesortable(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreesortable)) == NULLGTKTREESORTABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int _wrap_gtk_tree_sortable_sort_column_changed(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
 {
   gtk_tree_sortable_sort_column_changed(GTK_TREE_SORTABLE(self->obj));
@@ -8266,7 +8284,7 @@ _wrap_gtk_tree_sortable_get_sort_column_id(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,n,(double) sort_column_id,(double) order) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 8270 "gtk.c"
+#line 8288 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_set_sort_column_id(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8342,7 +8360,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#line 8346 "gtk.c"
+#line 8364 "gtk.c"
 
 
 #line 1755 "gtk.override"
@@ -8369,7 +8387,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
 					  nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 8373 "gtk.c"
+#line 8391 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_has_default_sort_func(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8450,6 +8468,12 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
       
   type->init = (init_func *) init_gtkaboutdialog;
 
+  /* 
+   * GtkAboutDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaboutdialog_id == 0 ) 
     {
       /* 
@@ -8477,7 +8501,7 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
 
 static int init_gtkaboutdialog(NspGtkAboutDialog *Obj,NspTypeGtkAboutDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -8529,10 +8553,10 @@ static char *gtkaboutdialog_type_short_string(NspObject *v)
 
 NspGtkAboutDialog   *gtkaboutdialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaboutdialog_id) ) return ((NspGtkAboutDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaboutdialog_id)  == TRUE  ) return ((NspGtkAboutDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaboutdialog));
   return NULL;
@@ -8576,18 +8600,6 @@ NspGtkAboutDialog *gtkaboutdialog_copy(NspGtkAboutDialog *self)
  * wrappers for the GtkAboutDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAboutDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaboutdialog is initialized * /
-  nsp_type_gtkaboutdialog = new_type_gtkaboutdialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkaboutdialog)) == NULLGTKABOUTDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkaboutdialog_new(Stack stack, int rhs, int opt, int lhs)
@@ -8923,6 +8935,12 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
       
   type->init = (init_func *) init_gtkaccelgroup;
 
+  /* 
+   * GtkAccelGroup interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaccelgroup_id == 0 ) 
     {
       /* 
@@ -8950,7 +8968,7 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
 
 static int init_gtkaccelgroup(NspGtkAccelGroup *Obj,NspTypeGtkAccelGroup *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9002,10 +9020,10 @@ static char *gtkaccelgroup_type_short_string(NspObject *v)
 
 NspGtkAccelGroup   *gtkaccelgroup_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaccelgroup_id) ) return ((NspGtkAccelGroup *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaccelgroup_id)  == TRUE  ) return ((NspGtkAccelGroup *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaccelgroup));
   return NULL;
@@ -9049,18 +9067,6 @@ NspGtkAccelGroup *gtkaccelgroup_copy(NspGtkAccelGroup *self)
  * wrappers for the GtkAccelGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAccelGroup *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaccelgroup is initialized * /
-  nsp_type_gtkaccelgroup = new_type_gtkaccelgroup(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkaccelgroup)) == NULLGTKACCELGROUP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkaccelgroup_new(Stack stack, int rhs, int opt, int lhs)
@@ -9173,6 +9179,12 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
       
   type->init = (init_func *) init_gtkaccellabel;
 
+  /* 
+   * GtkAccelLabel interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaccellabel_id == 0 ) 
     {
       /* 
@@ -9200,7 +9212,7 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
 
 static int init_gtkaccellabel(NspGtkAccelLabel *Obj,NspTypeGtkAccelLabel *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9252,10 +9264,10 @@ static char *gtkaccellabel_type_short_string(NspObject *v)
 
 NspGtkAccelLabel   *gtkaccellabel_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaccellabel_id) ) return ((NspGtkAccelLabel *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaccellabel_id)  == TRUE  ) return ((NspGtkAccelLabel *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaccellabel));
   return NULL;
@@ -9299,18 +9311,6 @@ NspGtkAccelLabel *gtkaccellabel_copy(NspGtkAccelLabel *self)
  * wrappers for the GtkAccelLabel
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAccelLabel *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaccellabel is initialized * /
-  nsp_type_gtkaccellabel = new_type_gtkaccellabel(T_BASE);
-  if(( H = gtklabel_create(NVOID,(NspTypeBase *) nsp_type_gtkaccellabel)) == NULLGTKACCELLABEL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkaccellabel_new(Stack stack, int rhs, int opt, int lhs)
@@ -9446,6 +9446,12 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
       
   type->init = (init_func *) init_gtkaccelmap;
 
+  /* 
+   * GtkAccelMap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaccelmap_id == 0 ) 
     {
       /* 
@@ -9473,7 +9479,7 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
 
 static int init_gtkaccelmap(NspGtkAccelMap *Obj,NspTypeGtkAccelMap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9525,10 +9531,10 @@ static char *gtkaccelmap_type_short_string(NspObject *v)
 
 NspGtkAccelMap   *gtkaccelmap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaccelmap_id) ) return ((NspGtkAccelMap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaccelmap_id)  == TRUE  ) return ((NspGtkAccelMap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaccelmap));
   return NULL;
@@ -9572,18 +9578,6 @@ NspGtkAccelMap *gtkaccelmap_copy(NspGtkAccelMap *self)
  * wrappers for the GtkAccelMap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAccelMap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaccelmap is initialized * /
-  nsp_type_gtkaccelmap = new_type_gtkaccelmap(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkaccelmap)) == NULLGTKACCELMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gtkaccelmap_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -9649,6 +9643,12 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
       
   type->init = (init_func *) init_gtkaccessible;
 
+  /* 
+   * GtkAccessible interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaccessible_id == 0 ) 
     {
       /* 
@@ -9676,7 +9676,7 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
 
 static int init_gtkaccessible(NspGtkAccessible *Obj,NspTypeGtkAccessible *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9728,10 +9728,10 @@ static char *gtkaccessible_type_short_string(NspObject *v)
 
 NspGtkAccessible   *gtkaccessible_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaccessible_id) ) return ((NspGtkAccessible *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaccessible_id)  == TRUE  ) return ((NspGtkAccessible *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaccessible));
   return NULL;
@@ -9775,18 +9775,6 @@ NspGtkAccessible *gtkaccessible_copy(NspGtkAccessible *self)
  * wrappers for the GtkAccessible
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAccessible *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaccessible is initialized * /
-  nsp_type_gtkaccessible = new_type_gtkaccessible(T_BASE);
-  if(( H = atkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkaccessible)) == NULLGTKACCESSIBLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_accessible_connect_widget_destroyed(NspGtkAccessible *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -9863,6 +9851,12 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
       
   type->init = (init_func *) init_gtkaction;
 
+  /* 
+   * GtkAction interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaction_id == 0 ) 
     {
       /* 
@@ -9890,7 +9884,7 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
 
 static int init_gtkaction(NspGtkAction *Obj,NspTypeGtkAction *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9942,10 +9936,10 @@ static char *gtkaction_type_short_string(NspObject *v)
 
 NspGtkAction   *gtkaction_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaction_id) ) return ((NspGtkAction *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaction_id)  == TRUE  ) return ((NspGtkAction *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaction));
   return NULL;
@@ -9990,18 +9984,6 @@ NspGtkAction *gtkaction_copy(NspGtkAction *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAction *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaction is initialized * /
-  nsp_type_gtkaction = new_type_gtkaction(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkaction)) == NULLGTKACTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 7120 "gtk.override"
 
 static int
@@ -10020,7 +10002,7 @@ _wrap_gtkaction_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10024 "gtk.c"
+#line 10006 "gtk.c"
 
 
 static int _wrap_gtk_action_get_name(NspGtkAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -10297,6 +10279,12 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
       
   type->init = (init_func *) init_gtkactiongroup;
 
+  /* 
+   * GtkActionGroup interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkactiongroup_id == 0 ) 
     {
       /* 
@@ -10324,7 +10312,7 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
 
 static int init_gtkactiongroup(NspGtkActionGroup *Obj,NspTypeGtkActionGroup *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -10376,10 +10364,10 @@ static char *gtkactiongroup_type_short_string(NspObject *v)
 
 NspGtkActionGroup   *gtkactiongroup_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkactiongroup_id) ) return ((NspGtkActionGroup *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkactiongroup_id)  == TRUE  ) return ((NspGtkActionGroup *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkactiongroup));
   return NULL;
@@ -10423,18 +10411,6 @@ NspGtkActionGroup *gtkactiongroup_copy(NspGtkActionGroup *self)
  * wrappers for the GtkActionGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkActionGroup *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkactiongroup is initialized * /
-  nsp_type_gtkactiongroup = new_type_gtkactiongroup(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkactiongroup)) == NULLGTKACTIONGROUP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkactiongroup_new(Stack stack, int rhs, int opt, int lhs)
@@ -10520,7 +10496,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 10524 "gtk.c"
+#line 10500 "gtk.c"
 
 
 #line 7166 "gtk.override"
@@ -10539,7 +10515,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 10543 "gtk.c"
+#line 10519 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -10673,6 +10649,12 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
       
   type->init = (init_func *) init_gtkadjustment;
 
+  /* 
+   * GtkAdjustment interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkadjustment_id == 0 ) 
     {
       /* 
@@ -10700,7 +10682,7 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
 
 static int init_gtkadjustment(NspGtkAdjustment *Obj,NspTypeGtkAdjustment *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -10752,10 +10734,10 @@ static char *gtkadjustment_type_short_string(NspObject *v)
 
 NspGtkAdjustment   *gtkadjustment_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkadjustment_id) ) return ((NspGtkAdjustment *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkadjustment_id)  == TRUE  ) return ((NspGtkAdjustment *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkadjustment));
   return NULL;
@@ -10800,18 +10782,6 @@ NspGtkAdjustment *gtkadjustment_copy(NspGtkAdjustment *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAdjustment *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkadjustment is initialized * /
-  nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkadjustment)) == NULLGTKADJUSTMENT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int
 _wrap_gtkadjustment_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10843,7 +10813,7 @@ _wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("deprecated: use individual setters");
   return RET_BUG;
 }
-#line 10847 "gtk.c"
+#line 10817 "gtk.c"
 
 
 static int _wrap_gtk_adjustment_changed(NspGtkAdjustment *self,Stack stack,int rhs,int opt,int lhs)
@@ -10910,7 +10880,7 @@ _wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_value_changed(adjustment);
   return 0;
 }
-#line 10914 "gtk.c"
+#line 10884 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_value(NspObject *self,char *attr)
 {
   double ret;
@@ -10931,7 +10901,7 @@ _wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10935 "gtk.c"
+#line 10905 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_lower(NspObject *self,char *attr)
 {
   double ret;
@@ -10952,7 +10922,7 @@ _wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10956 "gtk.c"
+#line 10926 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_upper(NspObject *self,char *attr)
 {
   double ret;
@@ -10973,7 +10943,7 @@ _wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10977 "gtk.c"
+#line 10947 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_step_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -10994,7 +10964,7 @@ _wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10998 "gtk.c"
+#line 10968 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -11015,7 +10985,7 @@ _wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *val
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11019 "gtk.c"
+#line 10989 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr)
 {
   double ret;
@@ -11093,6 +11063,12 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
       
   type->init = (init_func *) init_gtkalignment;
 
+  /* 
+   * GtkAlignment interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkalignment_id == 0 ) 
     {
       /* 
@@ -11120,7 +11096,7 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
 
 static int init_gtkalignment(NspGtkAlignment *Obj,NspTypeGtkAlignment *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -11172,10 +11148,10 @@ static char *gtkalignment_type_short_string(NspObject *v)
 
 NspGtkAlignment   *gtkalignment_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkalignment_id) ) return ((NspGtkAlignment *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkalignment_id)  == TRUE  ) return ((NspGtkAlignment *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkalignment));
   return NULL;
@@ -11219,18 +11195,6 @@ NspGtkAlignment *gtkalignment_copy(NspGtkAlignment *self)
  * wrappers for the GtkAlignment
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAlignment *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkalignment is initialized * /
-  nsp_type_gtkalignment = new_type_gtkalignment(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkalignment)) == NULLGTKALIGNMENT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkalignment_new(Stack stack, int rhs, int opt, int lhs)
@@ -11342,6 +11306,12 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
       
   type->init = (init_func *) init_gtkarrow;
 
+  /* 
+   * GtkArrow interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkarrow_id == 0 ) 
     {
       /* 
@@ -11369,7 +11339,7 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
 
 static int init_gtkarrow(NspGtkArrow *Obj,NspTypeGtkArrow *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -11421,10 +11391,10 @@ static char *gtkarrow_type_short_string(NspObject *v)
 
 NspGtkArrow   *gtkarrow_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkarrow_id) ) return ((NspGtkArrow *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkarrow_id)  == TRUE  ) return ((NspGtkArrow *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkarrow));
   return NULL;
@@ -11468,18 +11438,6 @@ NspGtkArrow *gtkarrow_copy(NspGtkArrow *self)
  * wrappers for the GtkArrow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkArrow *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkarrow is initialized * /
-  nsp_type_gtkarrow = new_type_gtkarrow(T_BASE);
-  if(( H = gtkmisc_create(NVOID,(NspTypeBase *) nsp_type_gtkarrow)) == NULLGTKARROW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkarrow_new(Stack stack, int rhs, int opt, int lhs)
@@ -11587,6 +11545,12 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
       
   type->init = (init_func *) init_gtkaspectframe;
 
+  /* 
+   * GtkAspectFrame interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkaspectframe_id == 0 ) 
     {
       /* 
@@ -11614,7 +11578,7 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
 
 static int init_gtkaspectframe(NspGtkAspectFrame *Obj,NspTypeGtkAspectFrame *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -11666,10 +11630,10 @@ static char *gtkaspectframe_type_short_string(NspObject *v)
 
 NspGtkAspectFrame   *gtkaspectframe_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkaspectframe_id) ) return ((NspGtkAspectFrame *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkaspectframe_id)  == TRUE  ) return ((NspGtkAspectFrame *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkaspectframe));
   return NULL;
@@ -11713,18 +11677,6 @@ NspGtkAspectFrame *gtkaspectframe_copy(NspGtkAspectFrame *self)
  * wrappers for the GtkAspectFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkAspectFrame *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkaspectframe is initialized * /
-  nsp_type_gtkaspectframe = new_type_gtkaspectframe(T_BASE);
-  if(( H = gtkframe_create(NVOID,(NspTypeBase *) nsp_type_gtkaspectframe)) == NULLGTKASPECTFRAME) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkaspectframe_new(Stack stack, int rhs, int opt, int lhs)
@@ -11836,6 +11788,12 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
       
   type->init = (init_func *) init_gtkbin;
 
+  /* 
+   * GtkBin interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkbin_id == 0 ) 
     {
       /* 
@@ -11863,7 +11821,7 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
 
 static int init_gtkbin(NspGtkBin *Obj,NspTypeGtkBin *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -11915,10 +11873,10 @@ static char *gtkbin_type_short_string(NspObject *v)
 
 NspGtkBin   *gtkbin_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkbin_id) ) return ((NspGtkBin *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkbin_id)  == TRUE  ) return ((NspGtkBin *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkbin));
   return NULL;
@@ -11962,18 +11920,6 @@ NspGtkBin *gtkbin_copy(NspGtkBin *self)
  * wrappers for the GtkBin
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkBin *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkbin is initialized * /
-  nsp_type_gtkbin = new_type_gtkbin(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkbin)) == NULLGTKBIN) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_bin_get_child(NspGtkBin *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -12067,6 +12013,12 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
       
   type->init = (init_func *) init_gtkbox;
 
+  /* 
+   * GtkBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkbox_id == 0 ) 
     {
       /* 
@@ -12094,7 +12046,7 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
 
 static int init_gtkbox(NspGtkBox *Obj,NspTypeGtkBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -12146,10 +12098,10 @@ static char *gtkbox_type_short_string(NspObject *v)
 
 NspGtkBox   *gtkbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkbox_id) ) return ((NspGtkBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkbox_id)  == TRUE  ) return ((NspGtkBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkbox));
   return NULL;
@@ -12193,18 +12145,6 @@ NspGtkBox *gtkbox_copy(NspGtkBox *self)
  * wrappers for the GtkBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkbox is initialized * /
-  nsp_type_gtkbox = new_type_gtkbox(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkbox)) == NULLGTKBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_box_pack_start(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -12327,7 +12267,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 12331 "gtk.c"
+#line 12271 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -12423,6 +12363,12 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkbutton;
 
+  /* 
+   * GtkButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkbutton_id == 0 ) 
     {
       /* 
@@ -12450,7 +12396,7 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
 
 static int init_gtkbutton(NspGtkButton *Obj,NspTypeGtkButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -12502,10 +12448,10 @@ static char *gtkbutton_type_short_string(NspObject *v)
 
 NspGtkButton   *gtkbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkbutton_id) ) return ((NspGtkButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkbutton_id)  == TRUE  ) return ((NspGtkButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkbutton));
   return NULL;
@@ -12550,18 +12496,6 @@ NspGtkButton *gtkbutton_copy(NspGtkButton *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkbutton is initialized * /
-  nsp_type_gtkbutton = new_type_gtkbutton(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkbutton)) == NULLGTKBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4313 "gtk.override"
 /* OK */
 static int
@@ -12596,7 +12530,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 12600 "gtk.c"
+#line 12534 "gtk.c"
 
 
 static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -12832,6 +12766,12 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
       
   type->init = (init_func *) init_gtkbuttonbox;
 
+  /* 
+   * GtkButtonBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkbuttonbox_id == 0 ) 
     {
       /* 
@@ -12859,7 +12799,7 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
 
 static int init_gtkbuttonbox(NspGtkButtonBox *Obj,NspTypeGtkButtonBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -12911,10 +12851,10 @@ static char *gtkbuttonbox_type_short_string(NspObject *v)
 
 NspGtkButtonBox   *gtkbuttonbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkbuttonbox_id) ) return ((NspGtkButtonBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkbuttonbox_id)  == TRUE  ) return ((NspGtkButtonBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkbuttonbox));
   return NULL;
@@ -12958,18 +12898,6 @@ NspGtkButtonBox *gtkbuttonbox_copy(NspGtkButtonBox *self)
  * wrappers for the GtkButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkButtonBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkbuttonbox is initialized * /
-  nsp_type_gtkbuttonbox = new_type_gtkbuttonbox(T_BASE);
-  if(( H = gtkbox_create(NVOID,(NspTypeBase *) nsp_type_gtkbuttonbox)) == NULLGTKBUTTONBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_button_box_get_layout(NspGtkButtonBox *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -13042,7 +12970,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13046 "gtk.c"
+#line 12974 "gtk.c"
 
 
 #line 4359 "gtk.override"
@@ -13056,7 +12984,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 13060 "gtk.c"
+#line 12988 "gtk.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -13135,6 +13063,12 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
       
   type->init = (init_func *) init_gtkcalendar;
 
+  /* 
+   * GtkCalendar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcalendar_id == 0 ) 
     {
       /* 
@@ -13162,7 +13096,7 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
 
 static int init_gtkcalendar(NspGtkCalendar *Obj,NspTypeGtkCalendar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -13214,10 +13148,10 @@ static char *gtkcalendar_type_short_string(NspObject *v)
 
 NspGtkCalendar   *gtkcalendar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcalendar_id) ) return ((NspGtkCalendar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcalendar_id)  == TRUE  ) return ((NspGtkCalendar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcalendar));
   return NULL;
@@ -13261,18 +13195,6 @@ NspGtkCalendar *gtkcalendar_copy(NspGtkCalendar *self)
  * wrappers for the GtkCalendar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCalendar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcalendar is initialized * /
-  nsp_type_gtkcalendar = new_type_gtkcalendar(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkcalendar)) == NULLGTKCALENDAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcalendar_new(Stack stack, int rhs, int opt, int lhs)
@@ -13344,7 +13266,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 13348 "gtk.c"
+#line 13270 "gtk.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13383,7 +13305,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13387 "gtk.c"
+#line 13309 "gtk.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13477,6 +13399,12 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrenderer;
 
+  /* 
+   * GtkCellRenderer interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrenderer_id == 0 ) 
     {
       /* 
@@ -13504,7 +13432,7 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
 
 static int init_gtkcellrenderer(NspGtkCellRenderer *Obj,NspTypeGtkCellRenderer *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -13556,10 +13484,10 @@ static char *gtkcellrenderer_type_short_string(NspObject *v)
 
 NspGtkCellRenderer   *gtkcellrenderer_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrenderer_id) ) return ((NspGtkCellRenderer *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrenderer_id)  == TRUE  ) return ((NspGtkCellRenderer *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrenderer));
   return NULL;
@@ -13604,18 +13532,6 @@ NspGtkCellRenderer *gtkcellrenderer_copy(NspGtkCellRenderer *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRenderer *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrenderer is initialized * /
-  nsp_type_gtkcellrenderer = new_type_gtkcellrenderer(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrenderer)) == NULLGTKCELLRENDERER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 6229 "gtk.override"
 static int
 _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
@@ -13649,7 +13565,7 @@ _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,in
   if (  nsp_move_doubles(stack,1,1,4,(double)  x_offset,(double) y_offset, (double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 13653 "gtk.c"
+#line 13569 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13752,7 +13668,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG; 
   return 1; 
 }
-#line 13756 "gtk.c"
+#line 13672 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_get_visible(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13808,7 +13724,7 @@ _wrap_gtk_cell_renderer_get_alignment(NspGObject *self,Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13812 "gtk.c"
+#line 13728 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_padding(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13831,7 +13747,7 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
   return 1;
 }
 
-#line 13835 "gtk.c"
+#line 13751 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_editing_canceled(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13933,6 +13849,12 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrenderercombo;
 
+  /* 
+   * GtkCellRendererCombo interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrenderercombo_id == 0 ) 
     {
       /* 
@@ -13960,7 +13882,7 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
 
 static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *Obj,NspTypeGtkCellRendererCombo *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -14012,10 +13934,10 @@ static char *gtkcellrenderercombo_type_short_string(NspObject *v)
 
 NspGtkCellRendererCombo   *gtkcellrenderercombo_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrenderercombo_id) ) return ((NspGtkCellRendererCombo *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrenderercombo_id)  == TRUE  ) return ((NspGtkCellRendererCombo *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrenderercombo));
   return NULL;
@@ -14059,18 +13981,6 @@ NspGtkCellRendererCombo *gtkcellrenderercombo_copy(NspGtkCellRendererCombo *self
  * wrappers for the GtkCellRendererCombo
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRendererCombo *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrenderercombo is initialized * /
-  nsp_type_gtkcellrenderercombo = new_type_gtkcellrenderercombo(T_BASE);
-  if(( H = gtkcellrenderertext_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrenderercombo)) == NULLGTKCELLRENDERERCOMBO) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcellrenderercombo_new(Stack stack, int rhs, int opt, int lhs)
@@ -14150,6 +14060,12 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrendererpixbuf;
 
+  /* 
+   * GtkCellRendererPixbuf interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrendererpixbuf_id == 0 ) 
     {
       /* 
@@ -14177,7 +14093,7 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
 
 static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *Obj,NspTypeGtkCellRendererPixbuf *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -14229,10 +14145,10 @@ static char *gtkcellrendererpixbuf_type_short_string(NspObject *v)
 
 NspGtkCellRendererPixbuf   *gtkcellrendererpixbuf_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrendererpixbuf_id) ) return ((NspGtkCellRendererPixbuf *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrendererpixbuf_id)  == TRUE  ) return ((NspGtkCellRendererPixbuf *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrendererpixbuf));
   return NULL;
@@ -14276,18 +14192,6 @@ NspGtkCellRendererPixbuf *gtkcellrendererpixbuf_copy(NspGtkCellRendererPixbuf *s
  * wrappers for the GtkCellRendererPixbuf
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRendererPixbuf *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrendererpixbuf is initialized * /
-  nsp_type_gtkcellrendererpixbuf = new_type_gtkcellrendererpixbuf(T_BASE);
-  if(( H = gtkcellrenderer_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrendererpixbuf)) == NULLGTKCELLRENDERERPIXBUF) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcellrendererpixbuf_new(Stack stack, int rhs, int opt, int lhs)
@@ -14367,6 +14271,12 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrendererprogress;
 
+  /* 
+   * GtkCellRendererProgress interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrendererprogress_id == 0 ) 
     {
       /* 
@@ -14394,7 +14304,7 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
 
 static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *Obj,NspTypeGtkCellRendererProgress *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -14446,10 +14356,10 @@ static char *gtkcellrendererprogress_type_short_string(NspObject *v)
 
 NspGtkCellRendererProgress   *gtkcellrendererprogress_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrendererprogress_id) ) return ((NspGtkCellRendererProgress *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrendererprogress_id)  == TRUE  ) return ((NspGtkCellRendererProgress *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrendererprogress));
   return NULL;
@@ -14493,18 +14403,6 @@ NspGtkCellRendererProgress *gtkcellrendererprogress_copy(NspGtkCellRendererProgr
  * wrappers for the GtkCellRendererProgress
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRendererProgress *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrendererprogress is initialized * /
-  nsp_type_gtkcellrendererprogress = new_type_gtkcellrendererprogress(T_BASE);
-  if(( H = gtkcellrenderer_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrendererprogress)) == NULLGTKCELLRENDERERPROGRESS) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcellrendererprogress_new(Stack stack, int rhs, int opt, int lhs)
@@ -14584,6 +14482,12 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrenderertext;
 
+  /* 
+   * GtkCellRendererText interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrenderertext_id == 0 ) 
     {
       /* 
@@ -14611,7 +14515,7 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
 
 static int init_gtkcellrenderertext(NspGtkCellRendererText *Obj,NspTypeGtkCellRendererText *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -14663,10 +14567,10 @@ static char *gtkcellrenderertext_type_short_string(NspObject *v)
 
 NspGtkCellRendererText   *gtkcellrenderertext_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrenderertext_id) ) return ((NspGtkCellRendererText *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrenderertext_id)  == TRUE  ) return ((NspGtkCellRendererText *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrenderertext));
   return NULL;
@@ -14710,18 +14614,6 @@ NspGtkCellRendererText *gtkcellrenderertext_copy(NspGtkCellRendererText *self)
  * wrappers for the GtkCellRendererText
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRendererText *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrenderertext is initialized * /
-  nsp_type_gtkcellrenderertext = new_type_gtkcellrenderertext(T_BASE);
-  if(( H = gtkcellrenderer_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrenderertext)) == NULLGTKCELLRENDERERTEXT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcellrenderertext_new(Stack stack, int rhs, int opt, int lhs)
@@ -14815,6 +14707,12 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
       
   type->init = (init_func *) init_gtkcellrenderertoggle;
 
+  /* 
+   * GtkCellRendererToggle interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcellrenderertoggle_id == 0 ) 
     {
       /* 
@@ -14842,7 +14740,7 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
 
 static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *Obj,NspTypeGtkCellRendererToggle *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -14894,10 +14792,10 @@ static char *gtkcellrenderertoggle_type_short_string(NspObject *v)
 
 NspGtkCellRendererToggle   *gtkcellrenderertoggle_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellrenderertoggle_id) ) return ((NspGtkCellRendererToggle *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellrenderertoggle_id)  == TRUE  ) return ((NspGtkCellRendererToggle *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellrenderertoggle));
   return NULL;
@@ -14941,18 +14839,6 @@ NspGtkCellRendererToggle *gtkcellrenderertoggle_copy(NspGtkCellRendererToggle *s
  * wrappers for the GtkCellRendererToggle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellRendererToggle *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellrenderertoggle is initialized * /
-  nsp_type_gtkcellrenderertoggle = new_type_gtkcellrenderertoggle(T_BASE);
-  if(( H = gtkcellrenderer_create(NVOID,(NspTypeBase *) nsp_type_gtkcellrenderertoggle)) == NULLGTKCELLRENDERERTOGGLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcellrenderertoggle_new(Stack stack, int rhs, int opt, int lhs)
@@ -15075,6 +14961,12 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
       
   type->init = (init_func *) init_gtkcellview;
 
+  /* 
+   * GtkCellView interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkcelllayout(T_DERIVED);
   if ( nsp_type_gtkcellview_id == 0 ) 
     {
@@ -15103,7 +14995,7 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
 
 static int init_gtkcellview(NspGtkCellView *Obj,NspTypeGtkCellView *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -15155,10 +15047,10 @@ static char *gtkcellview_type_short_string(NspObject *v)
 
 NspGtkCellView   *gtkcellview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcellview_id) ) return ((NspGtkCellView *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcellview_id)  == TRUE  ) return ((NspGtkCellView *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcellview));
   return NULL;
@@ -15202,18 +15094,6 @@ NspGtkCellView *gtkcellview_copy(NspGtkCellView *self)
  * wrappers for the GtkCellView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCellView *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcellview is initialized * /
-  nsp_type_gtkcellview = new_type_gtkcellview(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkcellview)) == NULLGTKCELLVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 7035 "gtk.override"
 
@@ -15260,7 +15140,7 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 15264 "gtk.c"
+#line 15144 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -15441,6 +15321,12 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkcheckbutton;
 
+  /* 
+   * GtkCheckButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcheckbutton_id == 0 ) 
     {
       /* 
@@ -15468,7 +15354,7 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
 
 static int init_gtkcheckbutton(NspGtkCheckButton *Obj,NspTypeGtkCheckButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -15520,10 +15406,10 @@ static char *gtkcheckbutton_type_short_string(NspObject *v)
 
 NspGtkCheckButton   *gtkcheckbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcheckbutton_id) ) return ((NspGtkCheckButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcheckbutton_id)  == TRUE  ) return ((NspGtkCheckButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcheckbutton));
   return NULL;
@@ -15568,18 +15454,6 @@ NspGtkCheckButton *gtkcheckbutton_copy(NspGtkCheckButton *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCheckButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcheckbutton is initialized * /
-  nsp_type_gtkcheckbutton = new_type_gtkcheckbutton(T_BASE);
-  if(( H = gtktogglebutton_create(NVOID,(NspTypeBase *) nsp_type_gtkcheckbutton)) == NULLGTKCHECKBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4407 "gtk.override"
 static int
 _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
@@ -15610,7 +15484,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15614 "gtk.c"
+#line 15488 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -15677,6 +15551,12 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtkcheckmenuitem;
 
+  /* 
+   * GtkCheckMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcheckmenuitem_id == 0 ) 
     {
       /* 
@@ -15704,7 +15584,7 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
 
 static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *Obj,NspTypeGtkCheckMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -15756,10 +15636,10 @@ static char *gtkcheckmenuitem_type_short_string(NspObject *v)
 
 NspGtkCheckMenuItem   *gtkcheckmenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcheckmenuitem_id) ) return ((NspGtkCheckMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcheckmenuitem_id)  == TRUE  ) return ((NspGtkCheckMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcheckmenuitem));
   return NULL;
@@ -15804,18 +15684,6 @@ NspGtkCheckMenuItem *gtkcheckmenuitem_copy(NspGtkCheckMenuItem *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCheckMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcheckmenuitem is initialized * /
-  nsp_type_gtkcheckmenuitem = new_type_gtkcheckmenuitem(T_BASE);
-  if(( H = gtkmenuitem_create(NVOID,(NspTypeBase *) nsp_type_gtkcheckmenuitem)) == NULLGTKCHECKMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4594 "gtk.override"
 static int
 _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -15841,7 +15709,7 @@ _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15845 "gtk.c"
+#line 15713 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -16011,6 +15879,12 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkcolorbutton;
 
+  /* 
+   * GtkColorButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcolorbutton_id == 0 ) 
     {
       /* 
@@ -16038,7 +15912,7 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
 
 static int init_gtkcolorbutton(NspGtkColorButton *Obj,NspTypeGtkColorButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -16090,10 +15964,10 @@ static char *gtkcolorbutton_type_short_string(NspObject *v)
 
 NspGtkColorButton   *gtkcolorbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcolorbutton_id) ) return ((NspGtkColorButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcolorbutton_id)  == TRUE  ) return ((NspGtkColorButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcolorbutton));
   return NULL;
@@ -16137,18 +16011,6 @@ NspGtkColorButton *gtkcolorbutton_copy(NspGtkColorButton *self)
  * wrappers for the GtkColorButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkColorButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcolorbutton is initialized * /
-  nsp_type_gtkcolorbutton = new_type_gtkcolorbutton(T_BASE);
-  if(( H = gtkbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkcolorbutton)) == NULLGTKCOLORBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gtkcolorbutton_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -16214,6 +16076,12 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
       
   type->init = (init_func *) init_gtkcolorselection;
 
+  /* 
+   * GtkColorSelection interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcolorselection_id == 0 ) 
     {
       /* 
@@ -16241,7 +16109,7 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
 
 static int init_gtkcolorselection(NspGtkColorSelection *Obj,NspTypeGtkColorSelection *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -16293,10 +16161,10 @@ static char *gtkcolorselection_type_short_string(NspObject *v)
 
 NspGtkColorSelection   *gtkcolorselection_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcolorselection_id) ) return ((NspGtkColorSelection *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcolorselection_id)  == TRUE  ) return ((NspGtkColorSelection *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcolorselection));
   return NULL;
@@ -16340,18 +16208,6 @@ NspGtkColorSelection *gtkcolorselection_copy(NspGtkColorSelection *self)
  * wrappers for the GtkColorSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkColorSelection *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcolorselection is initialized * /
-  nsp_type_gtkcolorselection = new_type_gtkcolorselection(T_BASE);
-  if(( H = gtkvbox_create(NVOID,(NspTypeBase *) nsp_type_gtkcolorselection)) == NULLGTKCOLORSELECTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcolorselection_new(Stack stack, int rhs, int opt, int lhs)
@@ -16422,7 +16278,7 @@ _wrap_gtk_color_selection_set_current_color(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 16426 "gtk.c"
+#line 16282 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16452,7 +16308,7 @@ _wrap_gtk_color_selection_get_current_color(NspGObject *self,Stack stack,int rhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16456 "gtk.c"
+#line 16312 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16489,7 +16345,7 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 16493 "gtk.c"
+#line 16349 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16516,7 +16372,7 @@ _wrap_gtk_color_selection_get_previous_color(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16520 "gtk.c"
+#line 16376 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16652,6 +16508,12 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
       
   type->init = (init_func *) init_gtkcolorselectiondialog;
 
+  /* 
+   * GtkColorSelectionDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcolorselectiondialog_id == 0 ) 
     {
       /* 
@@ -16679,7 +16541,7 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
 
 static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *Obj,NspTypeGtkColorSelectionDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -16731,10 +16593,10 @@ static char *gtkcolorselectiondialog_type_short_string(NspObject *v)
 
 NspGtkColorSelectionDialog   *gtkcolorselectiondialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcolorselectiondialog_id) ) return ((NspGtkColorSelectionDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcolorselectiondialog_id)  == TRUE  ) return ((NspGtkColorSelectionDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcolorselectiondialog));
   return NULL;
@@ -16778,18 +16640,6 @@ NspGtkColorSelectionDialog *gtkcolorselectiondialog_copy(NspGtkColorSelectionDia
  * wrappers for the GtkColorSelectionDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkColorSelectionDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcolorselectiondialog is initialized * /
-  nsp_type_gtkcolorselectiondialog = new_type_gtkcolorselectiondialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkcolorselectiondialog)) == NULLGTKCOLORSELECTIONDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcolorselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
@@ -16911,6 +16761,12 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
       
   type->init = (init_func *) init_gtkcombo;
 
+  /* 
+   * GtkCombo interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcombo_id == 0 ) 
     {
       /* 
@@ -16938,7 +16794,7 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
 
 static int init_gtkcombo(NspGtkCombo *Obj,NspTypeGtkCombo *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -16990,10 +16846,10 @@ static char *gtkcombo_type_short_string(NspObject *v)
 
 NspGtkCombo   *gtkcombo_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcombo_id) ) return ((NspGtkCombo *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcombo_id)  == TRUE  ) return ((NspGtkCombo *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcombo));
   return NULL;
@@ -17037,18 +16893,6 @@ NspGtkCombo *gtkcombo_copy(NspGtkCombo *self)
  * wrappers for the GtkCombo
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCombo *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcombo is initialized * /
-  nsp_type_gtkcombo = new_type_gtkcombo(T_BASE);
-  if(( H = gtkhbox_create(NVOID,(NspTypeBase *) nsp_type_gtkcombo)) == NULLGTKCOMBO) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcombo_new(Stack stack, int rhs, int opt, int lhs)
@@ -17128,7 +16972,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 17132 "gtk.c"
+#line 16976 "gtk.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -17225,6 +17069,12 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
       
   type->init = (init_func *) init_gtkcombobox;
 
+  /* 
+   * GtkComboBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkcelllayout(T_DERIVED);
   if ( nsp_type_gtkcombobox_id == 0 ) 
     {
@@ -17253,7 +17103,7 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
 
 static int init_gtkcombobox(NspGtkComboBox *Obj,NspTypeGtkComboBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -17305,10 +17155,10 @@ static char *gtkcombobox_type_short_string(NspObject *v)
 
 NspGtkComboBox   *gtkcombobox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcombobox_id) ) return ((NspGtkComboBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcombobox_id)  == TRUE  ) return ((NspGtkComboBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcombobox));
   return NULL;
@@ -17353,18 +17203,6 @@ NspGtkComboBox *gtkcombobox_copy(NspGtkComboBox *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkComboBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcombobox is initialized * /
-  nsp_type_gtkcombobox = new_type_gtkcombobox(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkcombobox)) == NULLGTKCOMBOBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 6915 "gtk.override"
 
 /* merging gtkcombobox _new, new_with_model, new_text
@@ -17405,7 +17243,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 17409 "gtk.c"
+#line 17247 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17473,7 +17311,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 17477 "gtk.c"
+#line 17315 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17744,6 +17582,12 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
       
   type->init = (init_func *) init_gtkcomboboxentry;
 
+  /* 
+   * GtkComboBoxEntry interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkcelllayout(T_DERIVED);
   if ( nsp_type_gtkcomboboxentry_id == 0 ) 
     {
@@ -17772,7 +17616,7 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
 
 static int init_gtkcomboboxentry(NspGtkComboBoxEntry *Obj,NspTypeGtkComboBoxEntry *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -17824,10 +17668,10 @@ static char *gtkcomboboxentry_type_short_string(NspObject *v)
 
 NspGtkComboBoxEntry   *gtkcomboboxentry_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcomboboxentry_id) ) return ((NspGtkComboBoxEntry *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcomboboxentry_id)  == TRUE  ) return ((NspGtkComboBoxEntry *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcomboboxentry));
   return NULL;
@@ -17871,18 +17715,6 @@ NspGtkComboBoxEntry *gtkcomboboxentry_copy(NspGtkComboBoxEntry *self)
  * wrappers for the GtkComboBoxEntry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkComboBoxEntry *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcomboboxentry is initialized * /
-  nsp_type_gtkcomboboxentry = new_type_gtkcomboboxentry(T_BASE);
-  if(( H = gtkcombobox_create(NVOID,(NspTypeBase *) nsp_type_gtkcomboboxentry)) == NULLGTKCOMBOBOXENTRY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 6960 "gtk.override"
 
@@ -17930,7 +17762,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 17934 "gtk.c"
+#line 17766 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -18020,6 +17852,12 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
       
   type->init = (init_func *) init_gtkcontainer;
 
+  /* 
+   * GtkContainer interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcontainer_id == 0 ) 
     {
       /* 
@@ -18047,7 +17885,7 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
 
 static int init_gtkcontainer(NspGtkContainer *Obj,NspTypeGtkContainer *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -18099,10 +17937,10 @@ static char *gtkcontainer_type_short_string(NspObject *v)
 
 NspGtkContainer   *gtkcontainer_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcontainer_id) ) return ((NspGtkContainer *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcontainer_id)  == TRUE  ) return ((NspGtkContainer *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcontainer));
   return NULL;
@@ -18146,18 +17984,6 @@ NspGtkContainer *gtkcontainer_copy(NspGtkContainer *self)
  * wrappers for the GtkContainer
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkContainer *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcontainer is initialized * /
-  nsp_type_gtkcontainer = new_type_gtkcontainer(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkcontainer)) == NULLGTKCONTAINER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_container_set_border_width(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -18272,7 +18098,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 18276 "gtk.c"
+#line 18102 "gtk.c"
 
 
 #line 811 "gtk.override"
@@ -18285,7 +18111,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 18289 "gtk.c"
+#line 18115 "gtk.c"
 
 
 #line 803 "gtk.override"
@@ -18295,7 +18121,7 @@ _wrap_gtk_container_children(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("Deprecated: use GtkContainer.get_children");
   return RET_BUG;
 }
-#line 18299 "gtk.c"
+#line 18125 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_expose(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18347,7 +18173,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 18351 "gtk.c"
+#line 18177 "gtk.c"
 
 
 #line 855 "gtk.override"
@@ -18359,7 +18185,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free); 
 }
-#line 18363 "gtk.c"
+#line 18189 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18447,7 +18273,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1; 
 }
 
-#line 18451 "gtk.c"
+#line 18277 "gtk.c"
 
 
 #line 1077 "gtk.override"
@@ -18500,7 +18326,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
-#line 18504 "gtk.c"
+#line 18330 "gtk.c"
 
 
 #line 958 "gtk.override"
@@ -18557,7 +18383,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 18561 "gtk.c"
+#line 18387 "gtk.c"
 
 
 #line 1013 "gtk.override"
@@ -18623,7 +18449,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 18627 "gtk.c"
+#line 18453 "gtk.c"
 
 
 #line 912 "gtk.override"
@@ -18671,7 +18497,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 18675 "gtk.c"
+#line 18501 "gtk.c"
 
 
 #line 865 "gtk.override"
@@ -18720,7 +18546,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 18724 "gtk.c"
+#line 18550 "gtk.c"
 
 
 static NspMethods gtkcontainer_methods[] = {
@@ -18870,6 +18696,12 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
       
   type->init = (init_func *) init_gtkcurve;
 
+  /* 
+   * GtkCurve interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkcurve_id == 0 ) 
     {
       /* 
@@ -18897,7 +18729,7 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
 
 static int init_gtkcurve(NspGtkCurve *Obj,NspTypeGtkCurve *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -18949,10 +18781,10 @@ static char *gtkcurve_type_short_string(NspObject *v)
 
 NspGtkCurve   *gtkcurve_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkcurve_id) ) return ((NspGtkCurve *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcurve_id)  == TRUE  ) return ((NspGtkCurve *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcurve));
   return NULL;
@@ -18996,18 +18828,6 @@ NspGtkCurve *gtkcurve_copy(NspGtkCurve *self)
  * wrappers for the GtkCurve
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkCurve *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkcurve is initialized * /
-  nsp_type_gtkcurve = new_type_gtkcurve(T_BASE);
-  if(( H = gtkdrawingarea_create(NVOID,(NspTypeBase *) nsp_type_gtkcurve)) == NULLGTKCURVE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkcurve_new(Stack stack, int rhs, int opt, int lhs)
@@ -19067,7 +18887,7 @@ _wrap_gtk_curve_get_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) ret);
   return 1;
 }
-#line 19071 "gtk.c"
+#line 18891 "gtk.c"
 
 
 #line 1473 "gtk.override"
@@ -19086,7 +18906,7 @@ _wrap_gtk_curve_set_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   v = Mat2double(v);
   return 0;
 }
-#line 19090 "gtk.c"
+#line 18910 "gtk.c"
 
 
 static int _wrap_gtk_curve_set_curve_type(NspGtkCurve *self,Stack stack,int rhs,int opt,int lhs)
@@ -19175,6 +18995,12 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
       
   type->init = (init_func *) init_gtkdialog;
 
+  /* 
+   * GtkDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkdialog_id == 0 ) 
     {
       /* 
@@ -19202,7 +19028,7 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
 
 static int init_gtkdialog(NspGtkDialog *Obj,NspTypeGtkDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -19254,10 +19080,10 @@ static char *gtkdialog_type_short_string(NspObject *v)
 
 NspGtkDialog   *gtkdialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkdialog_id) ) return ((NspGtkDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkdialog_id)  == TRUE  ) return ((NspGtkDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkdialog));
   return NULL;
@@ -19301,18 +19127,6 @@ NspGtkDialog *gtkdialog_copy(NspGtkDialog *self)
  * wrappers for the GtkDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkdialog is initialized * /
-  nsp_type_gtkdialog = new_type_gtkdialog(T_BASE);
-  if(( H = gtkwindow_create(NVOID,(NspTypeBase *) nsp_type_gtkdialog)) == NULLGTKDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 5990 "gtk.override"
 
@@ -19363,7 +19177,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 19367 "gtk.c"
+#line 19181 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19458,7 +19272,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19462 "gtk.c"
+#line 19276 "gtk.c"
 
 
 static int _wrap_gtk_dialog_set_alternative_button_order_from_array(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19569,6 +19383,12 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
       
   type->init = (init_func *) init_gtkdrawingarea;
 
+  /* 
+   * GtkDrawingArea interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkdrawingarea_id == 0 ) 
     {
       /* 
@@ -19596,7 +19416,7 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
 
 static int init_gtkdrawingarea(NspGtkDrawingArea *Obj,NspTypeGtkDrawingArea *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -19648,10 +19468,10 @@ static char *gtkdrawingarea_type_short_string(NspObject *v)
 
 NspGtkDrawingArea   *gtkdrawingarea_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkdrawingarea_id) ) return ((NspGtkDrawingArea *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkdrawingarea_id)  == TRUE  ) return ((NspGtkDrawingArea *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkdrawingarea));
   return NULL;
@@ -19695,18 +19515,6 @@ NspGtkDrawingArea *gtkdrawingarea_copy(NspGtkDrawingArea *self)
  * wrappers for the GtkDrawingArea
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkDrawingArea *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkdrawingarea is initialized * /
-  nsp_type_gtkdrawingarea = new_type_gtkdrawingarea(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkdrawingarea)) == NULLGTKDRAWINGAREA) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkdrawingarea_new(Stack stack, int rhs, int opt, int lhs)
@@ -19802,6 +19610,12 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
       
   type->init = (init_func *) init_gtkentry;
 
+  /* 
+   * GtkEntry interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkeditable(T_DERIVED);
   type->interface->interface =  (NspTypeBase *) new_type_gtkcelleditable(T_DERIVED);
   if ( nsp_type_gtkentry_id == 0 ) 
@@ -19831,7 +19645,7 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
 
 static int init_gtkentry(NspGtkEntry *Obj,NspTypeGtkEntry *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -19883,10 +19697,10 @@ static char *gtkentry_type_short_string(NspObject *v)
 
 NspGtkEntry   *gtkentry_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkentry_id) ) return ((NspGtkEntry *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkentry_id)  == TRUE  ) return ((NspGtkEntry *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkentry));
   return NULL;
@@ -19930,18 +19744,6 @@ NspGtkEntry *gtkentry_copy(NspGtkEntry *self)
  * wrappers for the GtkEntry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkEntry *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkentry is initialized * /
-  nsp_type_gtkentry = new_type_gtkentry(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkentry)) == NULLGTKENTRY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkentry_new(Stack stack, int rhs, int opt, int lhs)
@@ -20105,7 +19907,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 20109 "gtk.c"
+#line 19911 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_alignment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -20350,6 +20152,12 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
       
   type->init = (init_func *) init_gtkentrycompletion;
 
+  /* 
+   * GtkEntryCompletion interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkcelllayout(T_DERIVED);
   if ( nsp_type_gtkentrycompletion_id == 0 ) 
     {
@@ -20378,7 +20186,7 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
 
 static int init_gtkentrycompletion(NspGtkEntryCompletion *Obj,NspTypeGtkEntryCompletion *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -20430,10 +20238,10 @@ static char *gtkentrycompletion_type_short_string(NspObject *v)
 
 NspGtkEntryCompletion   *gtkentrycompletion_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkentrycompletion_id) ) return ((NspGtkEntryCompletion *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkentrycompletion_id)  == TRUE  ) return ((NspGtkEntryCompletion *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkentrycompletion));
   return NULL;
@@ -20477,18 +20285,6 @@ NspGtkEntryCompletion *gtkentrycompletion_copy(NspGtkEntryCompletion *self)
  * wrappers for the GtkEntryCompletion
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkEntryCompletion *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkentrycompletion is initialized * /
-  nsp_type_gtkentrycompletion = new_type_gtkentrycompletion(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkentrycompletion)) == NULLGTKENTRYCOMPLETION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkentrycompletion_new(Stack stack, int rhs, int opt, int lhs)
@@ -20778,6 +20574,12 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
       
   type->init = (init_func *) init_gtkeventbox;
 
+  /* 
+   * GtkEventBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkeventbox_id == 0 ) 
     {
       /* 
@@ -20805,7 +20607,7 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
 
 static int init_gtkeventbox(NspGtkEventBox *Obj,NspTypeGtkEventBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -20857,10 +20659,10 @@ static char *gtkeventbox_type_short_string(NspObject *v)
 
 NspGtkEventBox   *gtkeventbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkeventbox_id) ) return ((NspGtkEventBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkeventbox_id)  == TRUE  ) return ((NspGtkEventBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkeventbox));
   return NULL;
@@ -20904,18 +20706,6 @@ NspGtkEventBox *gtkeventbox_copy(NspGtkEventBox *self)
  * wrappers for the GtkEventBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkEventBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkeventbox is initialized * /
-  nsp_type_gtkeventbox = new_type_gtkeventbox(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkeventbox)) == NULLGTKEVENTBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkeventbox_new(Stack stack, int rhs, int opt, int lhs)
@@ -21037,6 +20827,12 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
       
   type->init = (init_func *) init_gtkexpander;
 
+  /* 
+   * GtkExpander interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkexpander_id == 0 ) 
     {
       /* 
@@ -21064,7 +20860,7 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
 
 static int init_gtkexpander(NspGtkExpander *Obj,NspTypeGtkExpander *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -21116,10 +20912,10 @@ static char *gtkexpander_type_short_string(NspObject *v)
 
 NspGtkExpander   *gtkexpander_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkexpander_id) ) return ((NspGtkExpander *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkexpander_id)  == TRUE  ) return ((NspGtkExpander *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkexpander));
   return NULL;
@@ -21163,18 +20959,6 @@ NspGtkExpander *gtkexpander_copy(NspGtkExpander *self)
  * wrappers for the GtkExpander
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkExpander *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkexpander is initialized * /
-  nsp_type_gtkexpander = new_type_gtkexpander(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkexpander)) == NULLGTKEXPANDER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkexpander_new(Stack stack, int rhs, int opt, int lhs)
@@ -21393,6 +21177,12 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkfilechooserbutton;
 
+  /* 
+   * GtkFileChooserButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
   if ( nsp_type_gtkfilechooserbutton_id == 0 ) 
     {
@@ -21421,7 +21211,7 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
 
 static int init_gtkfilechooserbutton(NspGtkFileChooserButton *Obj,NspTypeGtkFileChooserButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -21473,10 +21263,10 @@ static char *gtkfilechooserbutton_type_short_string(NspObject *v)
 
 NspGtkFileChooserButton   *gtkfilechooserbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfilechooserbutton_id) ) return ((NspGtkFileChooserButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfilechooserbutton_id)  == TRUE  ) return ((NspGtkFileChooserButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserbutton));
   return NULL;
@@ -21520,18 +21310,6 @@ NspGtkFileChooserButton *gtkfilechooserbutton_copy(NspGtkFileChooserButton *self
  * wrappers for the GtkFileChooserButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileChooserButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfilechooserbutton is initialized * /
-  nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
-  if(( H = gtkhbox_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserbutton)) == NULLGTKFILECHOOSERBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfilechooserbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -21660,6 +21438,12 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
       
   type->init = (init_func *) init_gtkfilechooserdialog;
 
+  /* 
+   * GtkFileChooserDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
   if ( nsp_type_gtkfilechooserdialog_id == 0 ) 
     {
@@ -21688,7 +21472,7 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
 
 static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *Obj,NspTypeGtkFileChooserDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -21740,10 +21524,10 @@ static char *gtkfilechooserdialog_type_short_string(NspObject *v)
 
 NspGtkFileChooserDialog   *gtkfilechooserdialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfilechooserdialog_id) ) return ((NspGtkFileChooserDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfilechooserdialog_id)  == TRUE  ) return ((NspGtkFileChooserDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserdialog));
   return NULL;
@@ -21787,18 +21571,6 @@ NspGtkFileChooserDialog *gtkfilechooserdialog_copy(NspGtkFileChooserDialog *self
  * wrappers for the GtkFileChooserDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileChooserDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfilechooserdialog is initialized * /
-  nsp_type_gtkfilechooserdialog = new_type_gtkfilechooserdialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserdialog)) == NULLGTKFILECHOOSERDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 6100 "gtk.override"
 
@@ -21847,7 +21619,7 @@ _wrap_gtkfilechooserdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 21851 "gtk.c"
+#line 21623 "gtk.c"
 
 
 static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
@@ -21915,6 +21687,12 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
       
   type->init = (init_func *) init_gtkfilechooserwidget;
 
+  /* 
+   * GtkFileChooserWidget interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkfilechooser(T_DERIVED);
   if ( nsp_type_gtkfilechooserwidget_id == 0 ) 
     {
@@ -21943,7 +21721,7 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
 
 static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *Obj,NspTypeGtkFileChooserWidget *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -21995,10 +21773,10 @@ static char *gtkfilechooserwidget_type_short_string(NspObject *v)
 
 NspGtkFileChooserWidget   *gtkfilechooserwidget_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfilechooserwidget_id) ) return ((NspGtkFileChooserWidget *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfilechooserwidget_id)  == TRUE  ) return ((NspGtkFileChooserWidget *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilechooserwidget));
   return NULL;
@@ -22042,18 +21820,6 @@ NspGtkFileChooserWidget *gtkfilechooserwidget_copy(NspGtkFileChooserWidget *self
  * wrappers for the GtkFileChooserWidget
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileChooserWidget *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfilechooserwidget is initialized * /
-  nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
-  if(( H = gtkvbox_create(NVOID,(NspTypeBase *) nsp_type_gtkfilechooserwidget)) == NULLGTKFILECHOOSERWIDGET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfilechooserwidget_new(Stack stack, int rhs, int opt, int lhs)
@@ -22138,6 +21904,12 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
       
   type->init = (init_func *) init_gtkfilefilter;
 
+  /* 
+   * GtkFileFilter interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfilefilter_id == 0 ) 
     {
       /* 
@@ -22165,7 +21937,7 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
 
 static int init_gtkfilefilter(NspGtkFileFilter *Obj,NspTypeGtkFileFilter *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -22217,10 +21989,10 @@ static char *gtkfilefilter_type_short_string(NspObject *v)
 
 NspGtkFileFilter   *gtkfilefilter_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfilefilter_id) ) return ((NspGtkFileFilter *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfilefilter_id)  == TRUE  ) return ((NspGtkFileFilter *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfilefilter));
   return NULL;
@@ -22264,18 +22036,6 @@ NspGtkFileFilter *gtkfilefilter_copy(NspGtkFileFilter *self)
  * wrappers for the GtkFileFilter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileFilter *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfilefilter is initialized * /
-  nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkfilefilter)) == NULLGTKFILEFILTER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfilefilter_new(Stack stack, int rhs, int opt, int lhs)
@@ -22414,6 +22174,12 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
       
   type->init = (init_func *) init_gtkfileselection;
 
+  /* 
+   * GtkFileSelection interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfileselection_id == 0 ) 
     {
       /* 
@@ -22441,7 +22207,7 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
 
 static int init_gtkfileselection(NspGtkFileSelection *Obj,NspTypeGtkFileSelection *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -22493,10 +22259,10 @@ static char *gtkfileselection_type_short_string(NspObject *v)
 
 NspGtkFileSelection   *gtkfileselection_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfileselection_id) ) return ((NspGtkFileSelection *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfileselection_id)  == TRUE  ) return ((NspGtkFileSelection *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfileselection));
   return NULL;
@@ -22540,18 +22306,6 @@ NspGtkFileSelection *gtkfileselection_copy(NspGtkFileSelection *self)
  * wrappers for the GtkFileSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFileSelection *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfileselection is initialized * /
-  nsp_type_gtkfileselection = new_type_gtkfileselection(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkfileselection)) == NULLGTKFILESELECTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfileselection_new(Stack stack, int rhs, int opt, int lhs)
@@ -22624,7 +22378,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 22628 "gtk.c"
+#line 22382 "gtk.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -22886,6 +22640,12 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
       
   type->init = (init_func *) init_gtkfixed;
 
+  /* 
+   * GtkFixed interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfixed_id == 0 ) 
     {
       /* 
@@ -22913,7 +22673,7 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
 
 static int init_gtkfixed(NspGtkFixed *Obj,NspTypeGtkFixed *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -22965,10 +22725,10 @@ static char *gtkfixed_type_short_string(NspObject *v)
 
 NspGtkFixed   *gtkfixed_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfixed_id) ) return ((NspGtkFixed *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfixed_id)  == TRUE  ) return ((NspGtkFixed *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfixed));
   return NULL;
@@ -23012,18 +22772,6 @@ NspGtkFixed *gtkfixed_copy(NspGtkFixed *self)
  * wrappers for the GtkFixed
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFixed *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfixed is initialized * /
-  nsp_type_gtkfixed = new_type_gtkfixed(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkfixed)) == NULLGTKFIXED) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfixed_new(Stack stack, int rhs, int opt, int lhs)
@@ -23148,6 +22896,12 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkfontbutton;
 
+  /* 
+   * GtkFontButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfontbutton_id == 0 ) 
     {
       /* 
@@ -23175,7 +22929,7 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
 
 static int init_gtkfontbutton(NspGtkFontButton *Obj,NspTypeGtkFontButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -23227,10 +22981,10 @@ static char *gtkfontbutton_type_short_string(NspObject *v)
 
 NspGtkFontButton   *gtkfontbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfontbutton_id) ) return ((NspGtkFontButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfontbutton_id)  == TRUE  ) return ((NspGtkFontButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfontbutton));
   return NULL;
@@ -23274,18 +23028,6 @@ NspGtkFontButton *gtkfontbutton_copy(NspGtkFontButton *self)
  * wrappers for the GtkFontButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFontButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfontbutton is initialized * /
-  nsp_type_gtkfontbutton = new_type_gtkfontbutton(T_BASE);
-  if(( H = gtkbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkfontbutton)) == NULLGTKFONTBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfontbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -23485,6 +23227,12 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
       
   type->init = (init_func *) init_gtkfontselection;
 
+  /* 
+   * GtkFontSelection interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfontselection_id == 0 ) 
     {
       /* 
@@ -23512,7 +23260,7 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
 
 static int init_gtkfontselection(NspGtkFontSelection *Obj,NspTypeGtkFontSelection *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -23564,10 +23312,10 @@ static char *gtkfontselection_type_short_string(NspObject *v)
 
 NspGtkFontSelection   *gtkfontselection_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfontselection_id) ) return ((NspGtkFontSelection *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfontselection_id)  == TRUE  ) return ((NspGtkFontSelection *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfontselection));
   return NULL;
@@ -23611,18 +23359,6 @@ NspGtkFontSelection *gtkfontselection_copy(NspGtkFontSelection *self)
  * wrappers for the GtkFontSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFontSelection *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfontselection is initialized * /
-  nsp_type_gtkfontselection = new_type_gtkfontselection(T_BASE);
-  if(( H = gtkvbox_create(NVOID,(NspTypeBase *) nsp_type_gtkfontselection)) == NULLGTKFONTSELECTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfontselection_new(Stack stack, int rhs, int opt, int lhs)
@@ -23761,6 +23497,12 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
       
   type->init = (init_func *) init_gtkfontselectiondialog;
 
+  /* 
+   * GtkFontSelectionDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkfontselectiondialog_id == 0 ) 
     {
       /* 
@@ -23788,7 +23530,7 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
 
 static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *Obj,NspTypeGtkFontSelectionDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -23840,10 +23582,10 @@ static char *gtkfontselectiondialog_type_short_string(NspObject *v)
 
 NspGtkFontSelectionDialog   *gtkfontselectiondialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkfontselectiondialog_id) ) return ((NspGtkFontSelectionDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkfontselectiondialog_id)  == TRUE  ) return ((NspGtkFontSelectionDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkfontselectiondialog));
   return NULL;
@@ -23887,18 +23629,6 @@ NspGtkFontSelectionDialog *gtkfontselectiondialog_copy(NspGtkFontSelectionDialog
  * wrappers for the GtkFontSelectionDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFontSelectionDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkfontselectiondialog is initialized * /
-  nsp_type_gtkfontselectiondialog = new_type_gtkfontselectiondialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkfontselectiondialog)) == NULLGTKFONTSELECTIONDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkfontselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
@@ -24097,6 +23827,12 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
       
   type->init = (init_func *) init_gtkframe;
 
+  /* 
+   * GtkFrame interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkframe_id == 0 ) 
     {
       /* 
@@ -24124,7 +23860,7 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
 
 static int init_gtkframe(NspGtkFrame *Obj,NspTypeGtkFrame *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -24176,10 +23912,10 @@ static char *gtkframe_type_short_string(NspObject *v)
 
 NspGtkFrame   *gtkframe_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkframe_id) ) return ((NspGtkFrame *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkframe_id)  == TRUE  ) return ((NspGtkFrame *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkframe));
   return NULL;
@@ -24223,18 +23959,6 @@ NspGtkFrame *gtkframe_copy(NspGtkFrame *self)
  * wrappers for the GtkFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkFrame *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkframe is initialized * /
-  nsp_type_gtkframe = new_type_gtkframe(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkframe)) == NULLGTKFRAME) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkframe_new(Stack stack, int rhs, int opt, int lhs)
@@ -24315,7 +24039,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 24319 "gtk.c"
+#line 24043 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -24414,6 +24138,12 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
       
   type->init = (init_func *) init_gtkgammacurve;
 
+  /* 
+   * GtkGammaCurve interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkgammacurve_id == 0 ) 
     {
       /* 
@@ -24441,7 +24171,7 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
 
 static int init_gtkgammacurve(NspGtkGammaCurve *Obj,NspTypeGtkGammaCurve *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -24493,10 +24223,10 @@ static char *gtkgammacurve_type_short_string(NspObject *v)
 
 NspGtkGammaCurve   *gtkgammacurve_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkgammacurve_id) ) return ((NspGtkGammaCurve *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkgammacurve_id)  == TRUE  ) return ((NspGtkGammaCurve *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkgammacurve));
   return NULL;
@@ -24540,18 +24270,6 @@ NspGtkGammaCurve *gtkgammacurve_copy(NspGtkGammaCurve *self)
  * wrappers for the GtkGammaCurve
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkGammaCurve *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkgammacurve is initialized * /
-  nsp_type_gtkgammacurve = new_type_gtkgammacurve(T_BASE);
-  if(( H = gtkvbox_create(NVOID,(NspTypeBase *) nsp_type_gtkgammacurve)) == NULLGTKGAMMACURVE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkgammacurve_new(Stack stack, int rhs, int opt, int lhs)
@@ -24680,6 +24398,12 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
       
   type->init = (init_func *) init_gtkhandlebox;
 
+  /* 
+   * GtkHandleBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhandlebox_id == 0 ) 
     {
       /* 
@@ -24707,7 +24431,7 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
 
 static int init_gtkhandlebox(NspGtkHandleBox *Obj,NspTypeGtkHandleBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -24759,10 +24483,10 @@ static char *gtkhandlebox_type_short_string(NspObject *v)
 
 NspGtkHandleBox   *gtkhandlebox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhandlebox_id) ) return ((NspGtkHandleBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhandlebox_id)  == TRUE  ) return ((NspGtkHandleBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhandlebox));
   return NULL;
@@ -24806,18 +24530,6 @@ NspGtkHandleBox *gtkhandlebox_copy(NspGtkHandleBox *self)
  * wrappers for the GtkHandleBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHandleBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhandlebox is initialized * /
-  nsp_type_gtkhandlebox = new_type_gtkhandlebox(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkhandlebox)) == NULLGTKHANDLEBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhandlebox_new(Stack stack, int rhs, int opt, int lhs)
@@ -24967,6 +24679,12 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
       
   type->init = (init_func *) init_gtkhbox;
 
+  /* 
+   * GtkHBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhbox_id == 0 ) 
     {
       /* 
@@ -24994,7 +24712,7 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
 
 static int init_gtkhbox(NspGtkHBox *Obj,NspTypeGtkHBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -25046,10 +24764,10 @@ static char *gtkhbox_type_short_string(NspObject *v)
 
 NspGtkHBox   *gtkhbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhbox_id) ) return ((NspGtkHBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhbox_id)  == TRUE  ) return ((NspGtkHBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhbox));
   return NULL;
@@ -25093,18 +24811,6 @@ NspGtkHBox *gtkhbox_copy(NspGtkHBox *self)
  * wrappers for the GtkHBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhbox is initialized * /
-  nsp_type_gtkhbox = new_type_gtkhbox(T_BASE);
-  if(( H = gtkbox_create(NVOID,(NspTypeBase *) nsp_type_gtkhbox)) == NULLGTKHBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhbox_new(Stack stack, int rhs, int opt, int lhs)
@@ -25190,6 +24896,12 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
       
   type->init = (init_func *) init_gtkhbuttonbox;
 
+  /* 
+   * GtkHButtonBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhbuttonbox_id == 0 ) 
     {
       /* 
@@ -25217,7 +24929,7 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
 
 static int init_gtkhbuttonbox(NspGtkHButtonBox *Obj,NspTypeGtkHButtonBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -25269,10 +24981,10 @@ static char *gtkhbuttonbox_type_short_string(NspObject *v)
 
 NspGtkHButtonBox   *gtkhbuttonbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhbuttonbox_id) ) return ((NspGtkHButtonBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhbuttonbox_id)  == TRUE  ) return ((NspGtkHButtonBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhbuttonbox));
   return NULL;
@@ -25316,18 +25028,6 @@ NspGtkHButtonBox *gtkhbuttonbox_copy(NspGtkHButtonBox *self)
  * wrappers for the GtkHButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHButtonBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhbuttonbox is initialized * /
-  nsp_type_gtkhbuttonbox = new_type_gtkhbuttonbox(T_BASE);
-  if(( H = gtkbuttonbox_create(NVOID,(NspTypeBase *) nsp_type_gtkhbuttonbox)) == NULLGTKHBUTTONBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhbuttonbox_new(Stack stack, int rhs, int opt, int lhs)
@@ -25407,6 +25107,12 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
       
   type->init = (init_func *) init_gtkhpaned;
 
+  /* 
+   * GtkHPaned interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhpaned_id == 0 ) 
     {
       /* 
@@ -25434,7 +25140,7 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
 
 static int init_gtkhpaned(NspGtkHPaned *Obj,NspTypeGtkHPaned *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -25486,10 +25192,10 @@ static char *gtkhpaned_type_short_string(NspObject *v)
 
 NspGtkHPaned   *gtkhpaned_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhpaned_id) ) return ((NspGtkHPaned *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhpaned_id)  == TRUE  ) return ((NspGtkHPaned *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhpaned));
   return NULL;
@@ -25533,18 +25239,6 @@ NspGtkHPaned *gtkhpaned_copy(NspGtkHPaned *self)
  * wrappers for the GtkHPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHPaned *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhpaned is initialized * /
-  nsp_type_gtkhpaned = new_type_gtkhpaned(T_BASE);
-  if(( H = gtkpaned_create(NVOID,(NspTypeBase *) nsp_type_gtkhpaned)) == NULLGTKHPANED) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhpaned_new(Stack stack, int rhs, int opt, int lhs)
@@ -25624,6 +25318,12 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
       
   type->init = (init_func *) init_gtkhruler;
 
+  /* 
+   * GtkHRuler interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhruler_id == 0 ) 
     {
       /* 
@@ -25651,7 +25351,7 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
 
 static int init_gtkhruler(NspGtkHRuler *Obj,NspTypeGtkHRuler *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -25703,10 +25403,10 @@ static char *gtkhruler_type_short_string(NspObject *v)
 
 NspGtkHRuler   *gtkhruler_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhruler_id) ) return ((NspGtkHRuler *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhruler_id)  == TRUE  ) return ((NspGtkHRuler *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhruler));
   return NULL;
@@ -25750,18 +25450,6 @@ NspGtkHRuler *gtkhruler_copy(NspGtkHRuler *self)
  * wrappers for the GtkHRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHRuler *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhruler is initialized * /
-  nsp_type_gtkhruler = new_type_gtkhruler(T_BASE);
-  if(( H = gtkruler_create(NVOID,(NspTypeBase *) nsp_type_gtkhruler)) == NULLGTKHRULER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhruler_new(Stack stack, int rhs, int opt, int lhs)
@@ -25841,6 +25529,12 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
       
   type->init = (init_func *) init_gtkhscale;
 
+  /* 
+   * GtkHScale interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhscale_id == 0 ) 
     {
       /* 
@@ -25868,7 +25562,7 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
 
 static int init_gtkhscale(NspGtkHScale *Obj,NspTypeGtkHScale *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -25920,10 +25614,10 @@ static char *gtkhscale_type_short_string(NspObject *v)
 
 NspGtkHScale   *gtkhscale_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhscale_id) ) return ((NspGtkHScale *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhscale_id)  == TRUE  ) return ((NspGtkHScale *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhscale));
   return NULL;
@@ -25967,18 +25661,6 @@ NspGtkHScale *gtkhscale_copy(NspGtkHScale *self)
  * wrappers for the GtkHScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHScale *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhscale is initialized * /
-  nsp_type_gtkhscale = new_type_gtkhscale(T_BASE);
-  if(( H = gtkscale_create(NVOID,(NspTypeBase *) nsp_type_gtkhscale)) == NULLGTKHSCALE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhscale_new(Stack stack, int rhs, int opt, int lhs)
@@ -26072,6 +25754,12 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
       
   type->init = (init_func *) init_gtkhscrollbar;
 
+  /* 
+   * GtkHScrollbar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhscrollbar_id == 0 ) 
     {
       /* 
@@ -26099,7 +25787,7 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
 
 static int init_gtkhscrollbar(NspGtkHScrollbar *Obj,NspTypeGtkHScrollbar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -26151,10 +25839,10 @@ static char *gtkhscrollbar_type_short_string(NspObject *v)
 
 NspGtkHScrollbar   *gtkhscrollbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhscrollbar_id) ) return ((NspGtkHScrollbar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhscrollbar_id)  == TRUE  ) return ((NspGtkHScrollbar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhscrollbar));
   return NULL;
@@ -26198,18 +25886,6 @@ NspGtkHScrollbar *gtkhscrollbar_copy(NspGtkHScrollbar *self)
  * wrappers for the GtkHScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHScrollbar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhscrollbar is initialized * /
-  nsp_type_gtkhscrollbar = new_type_gtkhscrollbar(T_BASE);
-  if(( H = gtkscrollbar_create(NVOID,(NspTypeBase *) nsp_type_gtkhscrollbar)) == NULLGTKHSCROLLBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhscrollbar_new(Stack stack, int rhs, int opt, int lhs)
@@ -26303,6 +25979,12 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
       
   type->init = (init_func *) init_gtkhseparator;
 
+  /* 
+   * GtkHSeparator interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkhseparator_id == 0 ) 
     {
       /* 
@@ -26330,7 +26012,7 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
 
 static int init_gtkhseparator(NspGtkHSeparator *Obj,NspTypeGtkHSeparator *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -26382,10 +26064,10 @@ static char *gtkhseparator_type_short_string(NspObject *v)
 
 NspGtkHSeparator   *gtkhseparator_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkhseparator_id) ) return ((NspGtkHSeparator *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkhseparator_id)  == TRUE  ) return ((NspGtkHSeparator *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkhseparator));
   return NULL;
@@ -26429,18 +26111,6 @@ NspGtkHSeparator *gtkhseparator_copy(NspGtkHSeparator *self)
  * wrappers for the GtkHSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkHSeparator *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkhseparator is initialized * /
-  nsp_type_gtkhseparator = new_type_gtkhseparator(T_BASE);
-  if(( H = gtkseparator_create(NVOID,(NspTypeBase *) nsp_type_gtkhseparator)) == NULLGTKHSEPARATOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkhseparator_new(Stack stack, int rhs, int opt, int lhs)
@@ -26520,6 +26190,12 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
       
   type->init = (init_func *) init_gtkiconfactory;
 
+  /* 
+   * GtkIconFactory interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkiconfactory_id == 0 ) 
     {
       /* 
@@ -26547,7 +26223,7 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
 
 static int init_gtkiconfactory(NspGtkIconFactory *Obj,NspTypeGtkIconFactory *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -26599,10 +26275,10 @@ static char *gtkiconfactory_type_short_string(NspObject *v)
 
 NspGtkIconFactory   *gtkiconfactory_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkiconfactory_id) ) return ((NspGtkIconFactory *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkiconfactory_id)  == TRUE  ) return ((NspGtkIconFactory *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkiconfactory));
   return NULL;
@@ -26646,18 +26322,6 @@ NspGtkIconFactory *gtkiconfactory_copy(NspGtkIconFactory *self)
  * wrappers for the GtkIconFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconFactory *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkiconfactory is initialized * /
-  nsp_type_gtkiconfactory = new_type_gtkiconfactory(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkiconfactory)) == NULLGTKICONFACTORY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkiconfactory_new(Stack stack, int rhs, int opt, int lhs)
@@ -26789,6 +26453,12 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
       
   type->init = (init_func *) init_gtkicontheme;
 
+  /* 
+   * GtkIconTheme interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkicontheme_id == 0 ) 
     {
       /* 
@@ -26816,7 +26486,7 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
 
 static int init_gtkicontheme(NspGtkIconTheme *Obj,NspTypeGtkIconTheme *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -26868,10 +26538,10 @@ static char *gtkicontheme_type_short_string(NspObject *v)
 
 NspGtkIconTheme   *gtkicontheme_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkicontheme_id) ) return ((NspGtkIconTheme *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkicontheme_id)  == TRUE  ) return ((NspGtkIconTheme *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkicontheme));
   return NULL;
@@ -26915,18 +26585,6 @@ NspGtkIconTheme *gtkicontheme_copy(NspGtkIconTheme *self)
  * wrappers for the GtkIconTheme
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconTheme *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkicontheme is initialized * /
-  nsp_type_gtkicontheme = new_type_gtkicontheme(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkicontheme)) == NULLGTKICONTHEME) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkicontheme_new(Stack stack, int rhs, int opt, int lhs)
@@ -27152,6 +26810,12 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
       
   type->init = (init_func *) init_gtkiconview;
 
+  /* 
+   * GtkIconView interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkcelllayout(T_DERIVED);
   if ( nsp_type_gtkiconview_id == 0 ) 
     {
@@ -27180,7 +26844,7 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
 
 static int init_gtkiconview(NspGtkIconView *Obj,NspTypeGtkIconView *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -27232,10 +26896,10 @@ static char *gtkiconview_type_short_string(NspObject *v)
 
 NspGtkIconView   *gtkiconview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkiconview_id) ) return ((NspGtkIconView *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkiconview_id)  == TRUE  ) return ((NspGtkIconView *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkiconview));
   return NULL;
@@ -27279,18 +26943,6 @@ NspGtkIconView *gtkiconview_copy(NspGtkIconView *self)
  * wrappers for the GtkIconView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconView *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkiconview is initialized * /
-  nsp_type_gtkiconview = new_type_gtkiconview(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkiconview)) == NULLGTKICONVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkiconview_new(Stack stack, int rhs, int opt, int lhs)
@@ -27348,7 +27000,7 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27352 "gtk.c"
+#line 27004 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_set_text_column(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27619,7 +27271,7 @@ static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack sta
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 27623 "gtk.c"
+#line 27275 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_select_all(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27728,7 +27380,7 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 27732 "gtk.c"
+#line 27384 "gtk.c"
 
 
 #line 2688 "gtk.override"
@@ -27753,7 +27405,7 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 27757 "gtk.c"
+#line 27409 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_unset_model_drag_source(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27959,6 +27611,12 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
       
   type->init = (init_func *) init_gtkimage;
 
+  /* 
+   * GtkImage interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkimage_id == 0 ) 
     {
       /* 
@@ -27986,7 +27644,7 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
 
 static int init_gtkimage(NspGtkImage *Obj,NspTypeGtkImage *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -28038,10 +27696,10 @@ static char *gtkimage_type_short_string(NspObject *v)
 
 NspGtkImage   *gtkimage_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkimage_id) ) return ((NspGtkImage *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkimage_id)  == TRUE  ) return ((NspGtkImage *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkimage));
   return NULL;
@@ -28085,18 +27743,6 @@ NspGtkImage *gtkimage_copy(NspGtkImage *self)
  * wrappers for the GtkImage
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkImage *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkimage is initialized * /
-  nsp_type_gtkimage = new_type_gtkimage(T_BASE);
-  if(( H = gtkmisc_create(NVOID,(NspTypeBase *) nsp_type_gtkimage)) == NULLGTKIMAGE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 4144 "gtk.override"
 
@@ -28264,7 +27910,7 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;;
 }
 
-#line 28268 "gtk.c"
+#line 27914 "gtk.c"
 
 
 static int _wrap_gtk_image_clear(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -28552,6 +28198,12 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtkimagemenuitem;
 
+  /* 
+   * GtkImageMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkimagemenuitem_id == 0 ) 
     {
       /* 
@@ -28579,7 +28231,7 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
 
 static int init_gtkimagemenuitem(NspGtkImageMenuItem *Obj,NspTypeGtkImageMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -28631,10 +28283,10 @@ static char *gtkimagemenuitem_type_short_string(NspObject *v)
 
 NspGtkImageMenuItem   *gtkimagemenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkimagemenuitem_id) ) return ((NspGtkImageMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkimagemenuitem_id)  == TRUE  ) return ((NspGtkImageMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkimagemenuitem));
   return NULL;
@@ -28679,18 +28331,6 @@ NspGtkImageMenuItem *gtkimagemenuitem_copy(NspGtkImageMenuItem *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkImageMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkimagemenuitem is initialized * /
-  nsp_type_gtkimagemenuitem = new_type_gtkimagemenuitem(T_BASE);
-  if(( H = gtkmenuitem_create(NVOID,(NspTypeBase *) nsp_type_gtkimagemenuitem)) == NULLGTKIMAGEMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4674 "gtk.override"
 static int
 _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -28732,7 +28372,7 @@ _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28736 "gtk.c"
+#line 28376 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -28825,6 +28465,12 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
       
   type->init = (init_func *) init_gtkimcontext;
 
+  /* 
+   * GtkIMContext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkimcontext_id == 0 ) 
     {
       /* 
@@ -28852,7 +28498,7 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
 
 static int init_gtkimcontext(NspGtkIMContext *Obj,NspTypeGtkIMContext *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -28904,10 +28550,10 @@ static char *gtkimcontext_type_short_string(NspObject *v)
 
 NspGtkIMContext   *gtkimcontext_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkimcontext_id) ) return ((NspGtkIMContext *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkimcontext_id)  == TRUE  ) return ((NspGtkIMContext *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkimcontext));
   return NULL;
@@ -28952,18 +28598,6 @@ NspGtkIMContext *gtkimcontext_copy(NspGtkIMContext *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIMContext *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkimcontext is initialized * /
-  nsp_type_gtkimcontext = new_type_gtkimcontext(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkimcontext)) == NULLGTKIMCONTEXT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int _wrap_gtk_im_context_set_client_window(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
@@ -28995,7 +28629,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 28999 "gtk.c"
+#line 28633 "gtk.c"
 
 
 #line 6438 "gtk.override"
@@ -29019,7 +28653,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 29023 "gtk.c"
+#line 28657 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29088,7 +28722,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 29092 "gtk.c"
+#line 28726 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29180,6 +28814,12 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
       
   type->init = (init_func *) init_gtkimcontextsimple;
 
+  /* 
+   * GtkIMContextSimple interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkimcontextsimple_id == 0 ) 
     {
       /* 
@@ -29207,7 +28847,7 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
 
 static int init_gtkimcontextsimple(NspGtkIMContextSimple *Obj,NspTypeGtkIMContextSimple *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -29259,10 +28899,10 @@ static char *gtkimcontextsimple_type_short_string(NspObject *v)
 
 NspGtkIMContextSimple   *gtkimcontextsimple_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkimcontextsimple_id) ) return ((NspGtkIMContextSimple *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkimcontextsimple_id)  == TRUE  ) return ((NspGtkIMContextSimple *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkimcontextsimple));
   return NULL;
@@ -29306,18 +28946,6 @@ NspGtkIMContextSimple *gtkimcontextsimple_copy(NspGtkIMContextSimple *self)
  * wrappers for the GtkIMContextSimple
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIMContextSimple *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkimcontextsimple is initialized * /
-  nsp_type_gtkimcontextsimple = new_type_gtkimcontextsimple(T_BASE);
-  if(( H = gtkimcontext_create(NVOID,(NspTypeBase *) nsp_type_gtkimcontextsimple)) == NULLGTKIMCONTEXTSIMPLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkimcontextsimple_new(Stack stack, int rhs, int opt, int lhs)
@@ -29397,6 +29025,12 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
       
   type->init = (init_func *) init_gtkimmulticontext;
 
+  /* 
+   * GtkIMMulticontext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkimmulticontext_id == 0 ) 
     {
       /* 
@@ -29424,7 +29058,7 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
 
 static int init_gtkimmulticontext(NspGtkIMMulticontext *Obj,NspTypeGtkIMMulticontext *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -29476,10 +29110,10 @@ static char *gtkimmulticontext_type_short_string(NspObject *v)
 
 NspGtkIMMulticontext   *gtkimmulticontext_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkimmulticontext_id) ) return ((NspGtkIMMulticontext *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkimmulticontext_id)  == TRUE  ) return ((NspGtkIMMulticontext *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkimmulticontext));
   return NULL;
@@ -29523,18 +29157,6 @@ NspGtkIMMulticontext *gtkimmulticontext_copy(NspGtkIMMulticontext *self)
  * wrappers for the GtkIMMulticontext
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIMMulticontext *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkimmulticontext is initialized * /
-  nsp_type_gtkimmulticontext = new_type_gtkimmulticontext(T_BASE);
-  if(( H = gtkimcontext_create(NVOID,(NspTypeBase *) nsp_type_gtkimmulticontext)) == NULLGTKIMMULTICONTEXT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkimmulticontext_new(Stack stack, int rhs, int opt, int lhs)
@@ -29628,6 +29250,12 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
       
   type->init = (init_func *) init_gtkinputdialog;
 
+  /* 
+   * GtkInputDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkinputdialog_id == 0 ) 
     {
       /* 
@@ -29655,7 +29283,7 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
 
 static int init_gtkinputdialog(NspGtkInputDialog *Obj,NspTypeGtkInputDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -29707,10 +29335,10 @@ static char *gtkinputdialog_type_short_string(NspObject *v)
 
 NspGtkInputDialog   *gtkinputdialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkinputdialog_id) ) return ((NspGtkInputDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkinputdialog_id)  == TRUE  ) return ((NspGtkInputDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkinputdialog));
   return NULL;
@@ -29754,18 +29382,6 @@ NspGtkInputDialog *gtkinputdialog_copy(NspGtkInputDialog *self)
  * wrappers for the GtkInputDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkInputDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkinputdialog is initialized * /
-  nsp_type_gtkinputdialog = new_type_gtkinputdialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkinputdialog)) == NULLGTKINPUTDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkinputdialog_new(Stack stack, int rhs, int opt, int lhs)
@@ -29846,6 +29462,12 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
       
   type->init = (init_func *) init_gtkinvisible;
 
+  /* 
+   * GtkInvisible interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkinvisible_id == 0 ) 
     {
       /* 
@@ -29873,7 +29495,7 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
 
 static int init_gtkinvisible(NspGtkInvisible *Obj,NspTypeGtkInvisible *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -29925,10 +29547,10 @@ static char *gtkinvisible_type_short_string(NspObject *v)
 
 NspGtkInvisible   *gtkinvisible_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkinvisible_id) ) return ((NspGtkInvisible *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkinvisible_id)  == TRUE  ) return ((NspGtkInvisible *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkinvisible));
   return NULL;
@@ -29972,18 +29594,6 @@ NspGtkInvisible *gtkinvisible_copy(NspGtkInvisible *self)
  * wrappers for the GtkInvisible
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkInvisible *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkinvisible is initialized * /
-  nsp_type_gtkinvisible = new_type_gtkinvisible(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkinvisible)) == NULLGTKINVISIBLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkinvisible_new(Stack stack, int rhs, int opt, int lhs)
@@ -30090,6 +29700,12 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
       
   type->init = (init_func *) init_gtkitem;
 
+  /* 
+   * GtkItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkitem_id == 0 ) 
     {
       /* 
@@ -30117,7 +29733,7 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
 
 static int init_gtkitem(NspGtkItem *Obj,NspTypeGtkItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -30169,10 +29785,10 @@ static char *gtkitem_type_short_string(NspObject *v)
 
 NspGtkItem   *gtkitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkitem_id) ) return ((NspGtkItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkitem_id)  == TRUE  ) return ((NspGtkItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkitem));
   return NULL;
@@ -30216,18 +29832,6 @@ NspGtkItem *gtkitem_copy(NspGtkItem *self)
  * wrappers for the GtkItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkitem is initialized * /
-  nsp_type_gtkitem = new_type_gtkitem(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkitem)) == NULLGTKITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_item_select(NspGtkItem *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -30318,6 +29922,12 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
       
   type->init = (init_func *) init_gtkitemfactory;
 
+  /* 
+   * GtkItemFactory interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkitemfactory_id == 0 ) 
     {
       /* 
@@ -30345,7 +29955,7 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
 
 static int init_gtkitemfactory(NspGtkItemFactory *Obj,NspTypeGtkItemFactory *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -30397,10 +30007,10 @@ static char *gtkitemfactory_type_short_string(NspObject *v)
 
 NspGtkItemFactory   *gtkitemfactory_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkitemfactory_id) ) return ((NspGtkItemFactory *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkitemfactory_id)  == TRUE  ) return ((NspGtkItemFactory *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkitemfactory));
   return NULL;
@@ -30445,18 +30055,6 @@ NspGtkItemFactory *gtkitemfactory_copy(NspGtkItemFactory *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkItemFactory *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkitemfactory is initialized * /
-  nsp_type_gtkitemfactory = new_type_gtkitemfactory(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkitemfactory)) == NULLGTKITEMFACTORY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 3839 "gtk.override"
 static int
 _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
@@ -30492,7 +30090,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30496 "gtk.c"
+#line 30094 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_construct(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30525,7 +30123,7 @@ static int _wrap_gtk_item_factory_get_item(NspGtkItemFactory *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30529 "gtk.c"
+#line 30127 "gtk.c"
 
 
 #line 3892 "gtk.override"
@@ -30542,7 +30140,7 @@ static int _wrap_gtk_item_factory_get_widget(NspGtkItemFactory *self,Stack stack
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30546 "gtk.c"
+#line 30144 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_get_widget_by_action(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30702,7 +30300,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 0;
 }
-#line 30706 "gtk.c"
+#line 30304 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_delete_item(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30803,6 +30401,12 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
       
   type->init = (init_func *) init_gtklabel;
 
+  /* 
+   * GtkLabel interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtklabel_id == 0 ) 
     {
       /* 
@@ -30830,7 +30434,7 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
 
 static int init_gtklabel(NspGtkLabel *Obj,NspTypeGtkLabel *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -30882,10 +30486,10 @@ static char *gtklabel_type_short_string(NspObject *v)
 
 NspGtkLabel   *gtklabel_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtklabel_id) ) return ((NspGtkLabel *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtklabel_id)  == TRUE  ) return ((NspGtkLabel *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtklabel));
   return NULL;
@@ -30930,18 +30534,6 @@ NspGtkLabel *gtklabel_copy(NspGtkLabel *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkLabel *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtklabel is initialized * /
-  nsp_type_gtklabel = new_type_gtklabel(T_BASE);
-  if(( H = gtkmisc_create(NVOID,(NspTypeBase *) nsp_type_gtklabel)) == NULLGTKLABEL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 1183 "gtk.override"
 static int
 _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
@@ -30971,7 +30563,7 @@ _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 30975 "gtk.c"
+#line 30567 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31215,7 +30807,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1; 
 }
-#line 31219 "gtk.c"
+#line 30811 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31239,7 +30831,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 31243 "gtk.c"
+#line 30835 "gtk.c"
 
 
 static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31267,7 +30859,7 @@ _wrap_gtk_label_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31271 "gtk.c"
+#line 30863 "gtk.c"
 
 
 static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31456,6 +31048,12 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
       
   type->init = (init_func *) init_gtklayout;
 
+  /* 
+   * GtkLayout interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtklayout_id == 0 ) 
     {
       /* 
@@ -31483,7 +31081,7 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
 
 static int init_gtklayout(NspGtkLayout *Obj,NspTypeGtkLayout *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -31535,10 +31133,10 @@ static char *gtklayout_type_short_string(NspObject *v)
 
 NspGtkLayout   *gtklayout_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtklayout_id) ) return ((NspGtkLayout *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtklayout_id)  == TRUE  ) return ((NspGtkLayout *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtklayout));
   return NULL;
@@ -31582,18 +31180,6 @@ NspGtkLayout *gtklayout_copy(NspGtkLayout *self)
  * wrappers for the GtkLayout
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkLayout *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtklayout is initialized * /
-  nsp_type_gtklayout = new_type_gtklayout(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtklayout)) == NULLGTKLAYOUT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtklayout_new(Stack stack, int rhs, int opt, int lhs)
@@ -31673,7 +31259,7 @@ _wrap_gtk_layout_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 1; 
 
 }
-#line 31677 "gtk.c"
+#line 31263 "gtk.c"
 
 
 static int _wrap_gtk_layout_get_hadjustment(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -31845,6 +31431,12 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
       
   type->init = (init_func *) init_gtkliststore;
 
+  /* 
+   * GtkListStore interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtktreemodel(T_DERIVED);
   type->interface->interface =  (NspTypeBase *) new_type_gtktreedragsource(T_DERIVED);
   type->interface->interface->interface =  (NspTypeBase *) new_type_gtktreedragdest(T_DERIVED);
@@ -31876,7 +31468,7 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
 
 static int init_gtkliststore(NspGtkListStore *Obj,NspTypeGtkListStore *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -31928,10 +31520,10 @@ static char *gtkliststore_type_short_string(NspObject *v)
 
 NspGtkListStore   *gtkliststore_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkliststore_id) ) return ((NspGtkListStore *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkliststore_id)  == TRUE  ) return ((NspGtkListStore *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkliststore));
   return NULL;
@@ -31975,18 +31567,6 @@ NspGtkListStore *gtkliststore_copy(NspGtkListStore *self)
  * wrappers for the GtkListStore
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkListStore *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkliststore is initialized * /
-  nsp_type_gtkliststore = new_type_gtkliststore(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkliststore)) == NULLGTKLISTSTORE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 1782 "gtk.override"
 
@@ -32052,7 +31632,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 32056 "gtk.c"
+#line 31636 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_list_store(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32125,7 +31705,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 32129 "gtk.c"
+#line 31709 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32168,7 +31748,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32172 "gtk.c"
+#line 31752 "gtk.c"
 
 
 #line 1929 "gtk.override"
@@ -32195,7 +31775,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32199 "gtk.c"
+#line 31779 "gtk.c"
 
 
 #line 1954 "gtk.override"
@@ -32222,7 +31802,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32226 "gtk.c"
+#line 31806 "gtk.c"
 
 
 #line 1979 "gtk.override"
@@ -32247,7 +31827,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32251 "gtk.c"
+#line 31831 "gtk.c"
 
 
 #line 2002 "gtk.override"
@@ -32273,7 +31853,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32277 "gtk.c"
+#line 31857 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32468,6 +32048,12 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
       
   type->init = (init_func *) init_gtkmenu;
 
+  /* 
+   * GtkMenu interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmenu_id == 0 ) 
     {
       /* 
@@ -32495,7 +32081,7 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
 
 static int init_gtkmenu(NspGtkMenu *Obj,NspTypeGtkMenu *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -32547,10 +32133,10 @@ static char *gtkmenu_type_short_string(NspObject *v)
 
 NspGtkMenu   *gtkmenu_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmenu_id) ) return ((NspGtkMenu *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmenu_id)  == TRUE  ) return ((NspGtkMenu *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmenu));
   return NULL;
@@ -32594,18 +32180,6 @@ NspGtkMenu *gtkmenu_copy(NspGtkMenu *self)
  * wrappers for the GtkMenu
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMenu *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmenu is initialized * /
-  nsp_type_gtkmenu = new_type_gtkmenu(T_BASE);
-  if(( H = gtkmenushell_create(NVOID,(NspTypeBase *) nsp_type_gtkmenu)) == NULLGTKMENU) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkmenu_new(Stack stack, int rhs, int opt, int lhs)
@@ -32686,7 +32260,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 32690 "gtk.c"
+#line 32264 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -32815,7 +32389,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 32819 "gtk.c"
+#line 32393 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -33006,6 +32580,12 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
       
   type->init = (init_func *) init_gtkmenubar;
 
+  /* 
+   * GtkMenuBar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmenubar_id == 0 ) 
     {
       /* 
@@ -33033,7 +32613,7 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
 
 static int init_gtkmenubar(NspGtkMenuBar *Obj,NspTypeGtkMenuBar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -33085,10 +32665,10 @@ static char *gtkmenubar_type_short_string(NspObject *v)
 
 NspGtkMenuBar   *gtkmenubar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmenubar_id) ) return ((NspGtkMenuBar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmenubar_id)  == TRUE  ) return ((NspGtkMenuBar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmenubar));
   return NULL;
@@ -33132,18 +32712,6 @@ NspGtkMenuBar *gtkmenubar_copy(NspGtkMenuBar *self)
  * wrappers for the GtkMenuBar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMenuBar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmenubar is initialized * /
-  nsp_type_gtkmenubar = new_type_gtkmenubar(T_BASE);
-  if(( H = gtkmenushell_create(NVOID,(NspTypeBase *) nsp_type_gtkmenubar)) == NULLGTKMENUBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkmenubar_new(Stack stack, int rhs, int opt, int lhs)
@@ -33271,6 +32839,12 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtkmenuitem;
 
+  /* 
+   * GtkMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmenuitem_id == 0 ) 
     {
       /* 
@@ -33298,7 +32872,7 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
 
 static int init_gtkmenuitem(NspGtkMenuItem *Obj,NspTypeGtkMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -33350,10 +32924,10 @@ static char *gtkmenuitem_type_short_string(NspObject *v)
 
 NspGtkMenuItem   *gtkmenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmenuitem_id) ) return ((NspGtkMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmenuitem_id)  == TRUE  ) return ((NspGtkMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmenuitem));
   return NULL;
@@ -33398,18 +32972,6 @@ NspGtkMenuItem *gtkmenuitem_copy(NspGtkMenuItem *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmenuitem is initialized * /
-  nsp_type_gtkmenuitem = new_type_gtkmenuitem(T_BASE);
-  if(( H = gtkitem_create(NVOID,(NspTypeBase *) nsp_type_gtkmenuitem)) == NULLGTKMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4499 "gtk.override"
 static int
 _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -33436,7 +32998,7 @@ _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 33440 "gtk.c"
+#line 33002 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -33614,6 +33176,12 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
       
   type->init = (init_func *) init_gtkmenushell;
 
+  /* 
+   * GtkMenuShell interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmenushell_id == 0 ) 
     {
       /* 
@@ -33641,7 +33209,7 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
 
 static int init_gtkmenushell(NspGtkMenuShell *Obj,NspTypeGtkMenuShell *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -33693,10 +33261,10 @@ static char *gtkmenushell_type_short_string(NspObject *v)
 
 NspGtkMenuShell   *gtkmenushell_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmenushell_id) ) return ((NspGtkMenuShell *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmenushell_id)  == TRUE  ) return ((NspGtkMenuShell *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmenushell));
   return NULL;
@@ -33740,18 +33308,6 @@ NspGtkMenuShell *gtkmenushell_copy(NspGtkMenuShell *self)
  * wrappers for the GtkMenuShell
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMenuShell *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmenushell is initialized * /
-  nsp_type_gtkmenushell = new_type_gtkmenushell(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkmenushell)) == NULLGTKMENUSHELL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_menu_shell_append(NspGtkMenuShell *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -33923,6 +33479,12 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkmenutoolbutton;
 
+  /* 
+   * GtkMenuToolButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmenutoolbutton_id == 0 ) 
     {
       /* 
@@ -33950,7 +33512,7 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
 
 static int init_gtkmenutoolbutton(NspGtkMenuToolButton *Obj,NspTypeGtkMenuToolButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -34002,10 +33564,10 @@ static char *gtkmenutoolbutton_type_short_string(NspObject *v)
 
 NspGtkMenuToolButton   *gtkmenutoolbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmenutoolbutton_id) ) return ((NspGtkMenuToolButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmenutoolbutton_id)  == TRUE  ) return ((NspGtkMenuToolButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmenutoolbutton));
   return NULL;
@@ -34049,18 +33611,6 @@ NspGtkMenuToolButton *gtkmenutoolbutton_copy(NspGtkMenuToolButton *self)
  * wrappers for the GtkMenuToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMenuToolButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmenutoolbutton is initialized * /
-  nsp_type_gtkmenutoolbutton = new_type_gtkmenutoolbutton(T_BASE);
-  if(( H = gtktoolbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkmenutoolbutton)) == NULLGTKMENUTOOLBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkmenutoolbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -34184,6 +33734,12 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
       
   type->init = (init_func *) init_gtkmessagedialog;
 
+  /* 
+   * GtkMessageDialog interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmessagedialog_id == 0 ) 
     {
       /* 
@@ -34211,7 +33767,7 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
 
 static int init_gtkmessagedialog(NspGtkMessageDialog *Obj,NspTypeGtkMessageDialog *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -34263,10 +33819,10 @@ static char *gtkmessagedialog_type_short_string(NspObject *v)
 
 NspGtkMessageDialog   *gtkmessagedialog_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmessagedialog_id) ) return ((NspGtkMessageDialog *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmessagedialog_id)  == TRUE  ) return ((NspGtkMessageDialog *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmessagedialog));
   return NULL;
@@ -34310,18 +33866,6 @@ NspGtkMessageDialog *gtkmessagedialog_copy(NspGtkMessageDialog *self)
  * wrappers for the GtkMessageDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMessageDialog *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmessagedialog is initialized * /
-  nsp_type_gtkmessagedialog = new_type_gtkmessagedialog(T_BASE);
-  if(( H = gtkdialog_create(NVOID,(NspTypeBase *) nsp_type_gtkmessagedialog)) == NULLGTKMESSAGEDIALOG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 6053 "gtk.override"
 /* XXXXX accepter une matrice pour message a concatener */ 
@@ -34369,7 +33913,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 34373 "gtk.c"
+#line 33917 "gtk.c"
 
 
 static int _wrap_gtk_message_dialog_set_markup(NspGtkMessageDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -34471,6 +34015,12 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
       
   type->init = (init_func *) init_gtkmisc;
 
+  /* 
+   * GtkMisc interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkmisc_id == 0 ) 
     {
       /* 
@@ -34498,7 +34048,7 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
 
 static int init_gtkmisc(NspGtkMisc *Obj,NspTypeGtkMisc *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -34550,10 +34100,10 @@ static char *gtkmisc_type_short_string(NspObject *v)
 
 NspGtkMisc   *gtkmisc_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkmisc_id) ) return ((NspGtkMisc *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkmisc_id)  == TRUE  ) return ((NspGtkMisc *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkmisc));
   return NULL;
@@ -34598,18 +34148,6 @@ NspGtkMisc *gtkmisc_copy(NspGtkMisc *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkMisc *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkmisc is initialized * /
-  nsp_type_gtkmisc = new_type_gtkmisc(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkmisc)) == NULLGTKMISC) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int _wrap_gtk_misc_set_alignment(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_double, s_double,t_end};
@@ -34629,7 +34167,7 @@ _wrap_gtk_misc_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34633 "gtk.c"
+#line 34171 "gtk.c"
 
 
 static int _wrap_gtk_misc_set_padding(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
@@ -34651,7 +34189,7 @@ _wrap_gtk_misc_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34655 "gtk.c"
+#line 34193 "gtk.c"
 
 
 static NspMethods gtkmisc_methods[] = {
@@ -34726,6 +34264,12 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
       
   type->init = (init_func *) init_gtknotebook;
 
+  /* 
+   * GtkNotebook interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtknotebook_id == 0 ) 
     {
       /* 
@@ -34753,7 +34297,7 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
 
 static int init_gtknotebook(NspGtkNotebook *Obj,NspTypeGtkNotebook *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -34805,10 +34349,10 @@ static char *gtknotebook_type_short_string(NspObject *v)
 
 NspGtkNotebook   *gtknotebook_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtknotebook_id) ) return ((NspGtkNotebook *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtknotebook_id)  == TRUE  ) return ((NspGtkNotebook *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtknotebook));
   return NULL;
@@ -34852,18 +34396,6 @@ NspGtkNotebook *gtknotebook_copy(NspGtkNotebook *self)
  * wrappers for the GtkNotebook
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkNotebook *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtknotebook is initialized * /
-  nsp_type_gtknotebook = new_type_gtknotebook(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtknotebook)) == NULLGTKNOTEBOOK) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtknotebook_new(Stack stack, int rhs, int opt, int lhs)
@@ -35234,7 +34766,7 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 35238 "gtk.c"
+#line 34770 "gtk.c"
 
 
 static int _wrap_gtk_notebook_set_tab_label_packing(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -35400,6 +34932,12 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
       
   type->init = (init_func *) init_gtkobject;
 
+  /* 
+   * GtkObject interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkobject_id == 0 ) 
     {
       /* 
@@ -35427,7 +34965,7 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
 
 static int init_gtkobject(NspGtkObject *Obj,NspTypeGtkObject *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -35479,10 +35017,10 @@ static char *gtkobject_type_short_string(NspObject *v)
 
 NspGtkObject   *gtkobject_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkobject_id) ) return ((NspGtkObject *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkobject_id)  == TRUE  ) return ((NspGtkObject *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkobject));
   return NULL;
@@ -35526,18 +35064,6 @@ NspGtkObject *gtkobject_copy(NspGtkObject *self)
  * wrappers for the GtkObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkObject *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkobject is initialized * /
-  nsp_type_gtkobject = new_type_gtkobject(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkobject)) == NULLGTKOBJECT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_GTK_OBJECT_FLAGS(NspGtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -35644,6 +35170,12 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
       
   type->init = (init_func *) init_gtkoldeditable;
 
+  /* 
+   * GtkOldEditable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtkeditable(T_DERIVED);
   if ( nsp_type_gtkoldeditable_id == 0 ) 
     {
@@ -35672,7 +35204,7 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
 
 static int init_gtkoldeditable(NspGtkOldEditable *Obj,NspTypeGtkOldEditable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -35724,10 +35256,10 @@ static char *gtkoldeditable_type_short_string(NspObject *v)
 
 NspGtkOldEditable   *gtkoldeditable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkoldeditable_id) ) return ((NspGtkOldEditable *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkoldeditable_id)  == TRUE  ) return ((NspGtkOldEditable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkoldeditable));
   return NULL;
@@ -35771,18 +35303,6 @@ NspGtkOldEditable *gtkoldeditable_copy(NspGtkOldEditable *self)
  * wrappers for the GtkOldEditable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkOldEditable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkoldeditable is initialized * /
-  nsp_type_gtkoldeditable = new_type_gtkoldeditable(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkoldeditable)) == NULLGTKOLDEDITABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_old_editable_claim_selection(NspGtkOldEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -35873,6 +35393,12 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
       
   type->init = (init_func *) init_gtkoptionmenu;
 
+  /* 
+   * GtkOptionMenu interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkoptionmenu_id == 0 ) 
     {
       /* 
@@ -35900,7 +35426,7 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
 
 static int init_gtkoptionmenu(NspGtkOptionMenu *Obj,NspTypeGtkOptionMenu *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -35952,10 +35478,10 @@ static char *gtkoptionmenu_type_short_string(NspObject *v)
 
 NspGtkOptionMenu   *gtkoptionmenu_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkoptionmenu_id) ) return ((NspGtkOptionMenu *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkoptionmenu_id)  == TRUE  ) return ((NspGtkOptionMenu *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkoptionmenu));
   return NULL;
@@ -35999,18 +35525,6 @@ NspGtkOptionMenu *gtkoptionmenu_copy(NspGtkOptionMenu *self)
  * wrappers for the GtkOptionMenu
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkOptionMenu *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkoptionmenu is initialized * /
-  nsp_type_gtkoptionmenu = new_type_gtkoptionmenu(T_BASE);
-  if(( H = gtkbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkoptionmenu)) == NULLGTKOPTIONMENU) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkoptionmenu_new(Stack stack, int rhs, int opt, int lhs)
@@ -36142,6 +35656,12 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
       
   type->init = (init_func *) init_gtkpaned;
 
+  /* 
+   * GtkPaned interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkpaned_id == 0 ) 
     {
       /* 
@@ -36169,7 +35689,7 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
 
 static int init_gtkpaned(NspGtkPaned *Obj,NspTypeGtkPaned *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -36221,10 +35741,10 @@ static char *gtkpaned_type_short_string(NspObject *v)
 
 NspGtkPaned   *gtkpaned_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkpaned_id) ) return ((NspGtkPaned *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkpaned_id)  == TRUE  ) return ((NspGtkPaned *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkpaned));
   return NULL;
@@ -36268,18 +35788,6 @@ NspGtkPaned *gtkpaned_copy(NspGtkPaned *self)
  * wrappers for the GtkPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkPaned *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkpaned is initialized * /
-  nsp_type_gtkpaned = new_type_gtkpaned(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtkpaned)) == NULLGTKPANED) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_paned_add1(NspGtkPaned *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -36495,6 +36003,12 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
       
   type->init = (init_func *) init_gtkplug;
 
+  /* 
+   * GtkPlug interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkplug_id == 0 ) 
     {
       /* 
@@ -36522,7 +36036,7 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
 
 static int init_gtkplug(NspGtkPlug *Obj,NspTypeGtkPlug *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -36574,10 +36088,10 @@ static char *gtkplug_type_short_string(NspObject *v)
 
 NspGtkPlug   *gtkplug_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkplug_id) ) return ((NspGtkPlug *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkplug_id)  == TRUE  ) return ((NspGtkPlug *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkplug));
   return NULL;
@@ -36621,18 +36135,6 @@ NspGtkPlug *gtkplug_copy(NspGtkPlug *self)
  * wrappers for the GtkPlug
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkPlug *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkplug is initialized * /
-  nsp_type_gtkplug = new_type_gtkplug(T_BASE);
-  if(( H = gtkwindow_create(NVOID,(NspTypeBase *) nsp_type_gtkplug)) == NULLGTKPLUG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkplug_new(Stack stack, int rhs, int opt, int lhs)
@@ -36749,6 +36251,12 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
       
   type->init = (init_func *) init_gtkpreview;
 
+  /* 
+   * GtkPreview interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkpreview_id == 0 ) 
     {
       /* 
@@ -36776,7 +36284,7 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
 
 static int init_gtkpreview(NspGtkPreview *Obj,NspTypeGtkPreview *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -36828,10 +36336,10 @@ static char *gtkpreview_type_short_string(NspObject *v)
 
 NspGtkPreview   *gtkpreview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkpreview_id) ) return ((NspGtkPreview *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkpreview_id)  == TRUE  ) return ((NspGtkPreview *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkpreview));
   return NULL;
@@ -36875,18 +36383,6 @@ NspGtkPreview *gtkpreview_copy(NspGtkPreview *self)
  * wrappers for the GtkPreview
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkPreview *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkpreview is initialized * /
-  nsp_type_gtkpreview = new_type_gtkpreview(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkpreview)) == NULLGTKPREVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkpreview_new(Stack stack, int rhs, int opt, int lhs)
@@ -37032,6 +36528,12 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
       
   type->init = (init_func *) init_gtkprogress;
 
+  /* 
+   * GtkProgress interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkprogress_id == 0 ) 
     {
       /* 
@@ -37059,7 +36561,7 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
 
 static int init_gtkprogress(NspGtkProgress *Obj,NspTypeGtkProgress *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -37111,10 +36613,10 @@ static char *gtkprogress_type_short_string(NspObject *v)
 
 NspGtkProgress   *gtkprogress_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkprogress_id) ) return ((NspGtkProgress *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkprogress_id)  == TRUE  ) return ((NspGtkProgress *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkprogress));
   return NULL;
@@ -37158,18 +36660,6 @@ NspGtkProgress *gtkprogress_copy(NspGtkProgress *self)
  * wrappers for the GtkProgress
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkProgress *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkprogress is initialized * /
-  nsp_type_gtkprogress = new_type_gtkprogress(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkprogress)) == NULLGTKPROGRESS) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gtkprogress_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -37235,6 +36725,12 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
       
   type->init = (init_func *) init_gtkprogressbar;
 
+  /* 
+   * GtkProgressBar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkprogressbar_id == 0 ) 
     {
       /* 
@@ -37262,7 +36758,7 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
 
 static int init_gtkprogressbar(NspGtkProgressBar *Obj,NspTypeGtkProgressBar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -37314,10 +36810,10 @@ static char *gtkprogressbar_type_short_string(NspObject *v)
 
 NspGtkProgressBar   *gtkprogressbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkprogressbar_id) ) return ((NspGtkProgressBar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkprogressbar_id)  == TRUE  ) return ((NspGtkProgressBar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkprogressbar));
   return NULL;
@@ -37361,18 +36857,6 @@ NspGtkProgressBar *gtkprogressbar_copy(NspGtkProgressBar *self)
  * wrappers for the GtkProgressBar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkProgressBar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkprogressbar is initialized * /
-  nsp_type_gtkprogressbar = new_type_gtkprogressbar(T_BASE);
-  if(( H = gtkprogress_create(NVOID,(NspTypeBase *) nsp_type_gtkprogressbar)) == NULLGTKPROGRESSBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkprogressbar_new(Stack stack, int rhs, int opt, int lhs)
@@ -37600,6 +37084,12 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
       
   type->init = (init_func *) init_gtkradioaction;
 
+  /* 
+   * GtkRadioAction interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkradioaction_id == 0 ) 
     {
       /* 
@@ -37627,7 +37117,7 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
 
 static int init_gtkradioaction(NspGtkRadioAction *Obj,NspTypeGtkRadioAction *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -37679,10 +37169,10 @@ static char *gtkradioaction_type_short_string(NspObject *v)
 
 NspGtkRadioAction   *gtkradioaction_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkradioaction_id) ) return ((NspGtkRadioAction *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkradioaction_id)  == TRUE  ) return ((NspGtkRadioAction *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkradioaction));
   return NULL;
@@ -37726,18 +37216,6 @@ NspGtkRadioAction *gtkradioaction_copy(NspGtkRadioAction *self)
  * wrappers for the GtkRadioAction
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRadioAction *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkradioaction is initialized * /
-  nsp_type_gtkradioaction = new_type_gtkradioaction(T_BASE);
-  if(( H = gtktoggleaction_create(NVOID,(NspTypeBase *) nsp_type_gtkradioaction)) == NULLGTKRADIOACTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkradioaction_new(Stack stack, int rhs, int opt, int lhs)
@@ -37783,7 +37261,7 @@ static int _wrap_gtk_radio_action_set_group(NspGtkRadioAction *self,Stack stack,
   return 0;
 }
 
-#line 37787 "gtk.c"
+#line 37265 "gtk.c"
 
 
 #line 7109 "gtk.override"
@@ -37796,7 +37274,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
-#line 37800 "gtk.c"
+#line 37278 "gtk.c"
 
 
 static int _wrap_gtk_radio_action_get_current_value(NspGtkRadioAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -37825,7 +37303,7 @@ static int _wrap_gtk_radio_action_set_current_value(NspGtkRadioAction *self,Stac
 
 }
 
-#line 37829 "gtk.c"
+#line 37307 "gtk.c"
 
 
 static NspMethods gtkradioaction_methods[] = {
@@ -37900,6 +37378,12 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
       
   type->init = (init_func *) init_gtkradiobutton;
 
+  /* 
+   * GtkRadioButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkradiobutton_id == 0 ) 
     {
       /* 
@@ -37927,7 +37411,7 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
 
 static int init_gtkradiobutton(NspGtkRadioButton *Obj,NspTypeGtkRadioButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -37979,10 +37463,10 @@ static char *gtkradiobutton_type_short_string(NspObject *v)
 
 NspGtkRadioButton   *gtkradiobutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkradiobutton_id) ) return ((NspGtkRadioButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkradiobutton_id)  == TRUE  ) return ((NspGtkRadioButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkradiobutton));
   return NULL;
@@ -38026,18 +37510,6 @@ NspGtkRadioButton *gtkradiobutton_copy(NspGtkRadioButton *self)
  * wrappers for the GtkRadioButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRadioButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkradiobutton is initialized * /
-  nsp_type_gtkradiobutton = new_type_gtkradiobutton(T_BASE);
-  if(( H = gtkcheckbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkradiobutton)) == NULLGTKRADIOBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 4440 "gtk.override"
 static int
@@ -38085,7 +37557,7 @@ _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 38089 "gtk.c"
+#line 37561 "gtk.c"
 
 
 #line 4487 "gtk.override"
@@ -38097,7 +37569,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 38101 "gtk.c"
+#line 37573 "gtk.c"
 
 
 static NspMethods gtkradiobutton_methods[] = {
@@ -38169,6 +37641,12 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtkradiomenuitem;
 
+  /* 
+   * GtkRadioMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkradiomenuitem_id == 0 ) 
     {
       /* 
@@ -38196,7 +37674,7 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
 
 static int init_gtkradiomenuitem(NspGtkRadioMenuItem *Obj,NspTypeGtkRadioMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -38248,10 +37726,10 @@ static char *gtkradiomenuitem_type_short_string(NspObject *v)
 
 NspGtkRadioMenuItem   *gtkradiomenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkradiomenuitem_id) ) return ((NspGtkRadioMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkradiomenuitem_id)  == TRUE  ) return ((NspGtkRadioMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkradiomenuitem));
   return NULL;
@@ -38295,18 +37773,6 @@ NspGtkRadioMenuItem *gtkradiomenuitem_copy(NspGtkRadioMenuItem *self)
  * wrappers for the GtkRadioMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRadioMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkradiomenuitem is initialized * /
-  nsp_type_gtkradiomenuitem = new_type_gtkradiomenuitem(T_BASE);
-  if(( H = gtkcheckmenuitem_create(NVOID,(NspTypeBase *) nsp_type_gtkradiomenuitem)) == NULLGTKRADIOMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 4622 "gtk.override"
 static int
@@ -38354,7 +37820,7 @@ _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 38358 "gtk.c"
+#line 37824 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_new_from_widget(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -38480,6 +37946,12 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkradiotoolbutton;
 
+  /* 
+   * GtkRadioToolButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkradiotoolbutton_id == 0 ) 
     {
       /* 
@@ -38507,7 +37979,7 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
 
 static int init_gtkradiotoolbutton(NspGtkRadioToolButton *Obj,NspTypeGtkRadioToolButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -38559,10 +38031,10 @@ static char *gtkradiotoolbutton_type_short_string(NspObject *v)
 
 NspGtkRadioToolButton   *gtkradiotoolbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkradiotoolbutton_id) ) return ((NspGtkRadioToolButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkradiotoolbutton_id)  == TRUE  ) return ((NspGtkRadioToolButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkradiotoolbutton));
   return NULL;
@@ -38606,18 +38078,6 @@ NspGtkRadioToolButton *gtkradiotoolbutton_copy(NspGtkRadioToolButton *self)
  * wrappers for the GtkRadioToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRadioToolButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkradiotoolbutton is initialized * /
-  nsp_type_gtkradiotoolbutton = new_type_gtkradiotoolbutton(T_BASE);
-  if(( H = gtktoggletoolbutton_create(NVOID,(NspTypeBase *) nsp_type_gtkradiotoolbutton)) == NULLGTKRADIOTOOLBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 7220 "gtk.override"
 /* mixes all the constructors */
@@ -38673,7 +38133,7 @@ _wrap_gtkradiotoolbutton_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 38677 "gtk.c"
+#line 38137 "gtk.c"
 
 
 static int _wrap_gtk_radio_tool_button_set_group(NspGtkRadioToolButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -38767,6 +38227,12 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
       
   type->init = (init_func *) init_gtkrange;
 
+  /* 
+   * GtkRange interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkrange_id == 0 ) 
     {
       /* 
@@ -38794,7 +38260,7 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
 
 static int init_gtkrange(NspGtkRange *Obj,NspTypeGtkRange *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -38846,10 +38312,10 @@ static char *gtkrange_type_short_string(NspObject *v)
 
 NspGtkRange   *gtkrange_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkrange_id) ) return ((NspGtkRange *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkrange_id)  == TRUE  ) return ((NspGtkRange *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkrange));
   return NULL;
@@ -38893,18 +38359,6 @@ NspGtkRange *gtkrange_copy(NspGtkRange *self)
  * wrappers for the GtkRange
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRange *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkrange is initialized * /
-  nsp_type_gtkrange = new_type_gtkrange(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkrange)) == NULLGTKRANGE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_range_set_update_policy(NspGtkRange *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -39076,6 +38530,12 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
       
   type->init = (init_func *) init_gtkrcstyle;
 
+  /* 
+   * GtkRcStyle interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkrcstyle_id == 0 ) 
     {
       /* 
@@ -39103,7 +38563,7 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
 
 static int init_gtkrcstyle(NspGtkRcStyle *Obj,NspTypeGtkRcStyle *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -39155,10 +38615,10 @@ static char *gtkrcstyle_type_short_string(NspObject *v)
 
 NspGtkRcStyle   *gtkrcstyle_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkrcstyle_id) ) return ((NspGtkRcStyle *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkrcstyle_id)  == TRUE  ) return ((NspGtkRcStyle *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkrcstyle));
   return NULL;
@@ -39202,18 +38662,6 @@ NspGtkRcStyle *gtkrcstyle_copy(NspGtkRcStyle *self)
  * wrappers for the GtkRcStyle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRcStyle *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkrcstyle is initialized * /
-  nsp_type_gtkrcstyle = new_type_gtkrcstyle(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkrcstyle)) == NULLGTKRCSTYLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_rc_add_widget_name_style(NspGtkRcStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -39329,6 +38777,12 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
       
   type->init = (init_func *) init_gtkruler;
 
+  /* 
+   * GtkRuler interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkruler_id == 0 ) 
     {
       /* 
@@ -39356,7 +38810,7 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
 
 static int init_gtkruler(NspGtkRuler *Obj,NspTypeGtkRuler *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -39408,10 +38862,10 @@ static char *gtkruler_type_short_string(NspObject *v)
 
 NspGtkRuler   *gtkruler_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkruler_id) ) return ((NspGtkRuler *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkruler_id)  == TRUE  ) return ((NspGtkRuler *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkruler));
   return NULL;
@@ -39455,18 +38909,6 @@ NspGtkRuler *gtkruler_copy(NspGtkRuler *self)
  * wrappers for the GtkRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRuler *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkruler is initialized * /
-  nsp_type_gtkruler = new_type_gtkruler(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkruler)) == NULLGTKRULER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_ruler_set_metric(NspGtkRuler *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -39520,7 +38962,7 @@ _wrap_gtk_ruler_get_range(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,4,(double) lower,(double) upper,(double) position,(double) max_size ) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 39524 "gtk.c"
+#line 38966 "gtk.c"
 
 
 static NspMethods gtkruler_methods[] = {
@@ -39597,6 +39039,12 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
       
   type->init = (init_func *) init_gtkscale;
 
+  /* 
+   * GtkScale interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkscale_id == 0 ) 
     {
       /* 
@@ -39624,7 +39072,7 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
 
 static int init_gtkscale(NspGtkScale *Obj,NspTypeGtkScale *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -39676,10 +39124,10 @@ static char *gtkscale_type_short_string(NspObject *v)
 
 NspGtkScale   *gtkscale_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkscale_id) ) return ((NspGtkScale *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkscale_id)  == TRUE  ) return ((NspGtkScale *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkscale));
   return NULL;
@@ -39723,18 +39171,6 @@ NspGtkScale *gtkscale_copy(NspGtkScale *self)
  * wrappers for the GtkScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkScale *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkscale is initialized * /
-  nsp_type_gtkscale = new_type_gtkscale(T_BASE);
-  if(( H = gtkrange_create(NVOID,(NspTypeBase *) nsp_type_gtkscale)) == NULLGTKSCALE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_scale_set_digits(NspGtkScale *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -39886,6 +39322,12 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
       
   type->init = (init_func *) init_gtkscrollbar;
 
+  /* 
+   * GtkScrollbar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkscrollbar_id == 0 ) 
     {
       /* 
@@ -39913,7 +39355,7 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
 
 static int init_gtkscrollbar(NspGtkScrollbar *Obj,NspTypeGtkScrollbar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -39965,10 +39407,10 @@ static char *gtkscrollbar_type_short_string(NspObject *v)
 
 NspGtkScrollbar   *gtkscrollbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkscrollbar_id) ) return ((NspGtkScrollbar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkscrollbar_id)  == TRUE  ) return ((NspGtkScrollbar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkscrollbar));
   return NULL;
@@ -40012,18 +39454,6 @@ NspGtkScrollbar *gtkscrollbar_copy(NspGtkScrollbar *self)
  * wrappers for the GtkScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkScrollbar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkscrollbar is initialized * /
-  nsp_type_gtkscrollbar = new_type_gtkscrollbar(T_BASE);
-  if(( H = gtkrange_create(NVOID,(NspTypeBase *) nsp_type_gtkscrollbar)) == NULLGTKSCROLLBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gtkscrollbar_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -40089,6 +39519,12 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
       
   type->init = (init_func *) init_gtkscrolledwindow;
 
+  /* 
+   * GtkScrolledWindow interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkscrolledwindow_id == 0 ) 
     {
       /* 
@@ -40116,7 +39552,7 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
 
 static int init_gtkscrolledwindow(NspGtkScrolledWindow *Obj,NspTypeGtkScrolledWindow *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -40168,10 +39604,10 @@ static char *gtkscrolledwindow_type_short_string(NspObject *v)
 
 NspGtkScrolledWindow   *gtkscrolledwindow_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkscrolledwindow_id) ) return ((NspGtkScrolledWindow *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkscrolledwindow_id)  == TRUE  ) return ((NspGtkScrolledWindow *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkscrolledwindow));
   return NULL;
@@ -40215,18 +39651,6 @@ NspGtkScrolledWindow *gtkscrolledwindow_copy(NspGtkScrolledWindow *self)
  * wrappers for the GtkScrolledWindow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkScrolledWindow *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkscrolledwindow is initialized * /
-  nsp_type_gtkscrolledwindow = new_type_gtkscrolledwindow(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkscrolledwindow)) == NULLGTKSCROLLEDWINDOW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkscrolledwindow_new(Stack stack, int rhs, int opt, int lhs)
@@ -40470,6 +39894,12 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
       
   type->init = (init_func *) init_gtkseparator;
 
+  /* 
+   * GtkSeparator interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkseparator_id == 0 ) 
     {
       /* 
@@ -40497,7 +39927,7 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
 
 static int init_gtkseparator(NspGtkSeparator *Obj,NspTypeGtkSeparator *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -40549,10 +39979,10 @@ static char *gtkseparator_type_short_string(NspObject *v)
 
 NspGtkSeparator   *gtkseparator_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkseparator_id) ) return ((NspGtkSeparator *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkseparator_id)  == TRUE  ) return ((NspGtkSeparator *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkseparator));
   return NULL;
@@ -40596,18 +40026,6 @@ NspGtkSeparator *gtkseparator_copy(NspGtkSeparator *self)
  * wrappers for the GtkSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSeparator *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkseparator is initialized * /
-  nsp_type_gtkseparator = new_type_gtkseparator(T_BASE);
-  if(( H = gtkwidget_create(NVOID,(NspTypeBase *) nsp_type_gtkseparator)) == NULLGTKSEPARATOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gtkseparator_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -40673,6 +40091,12 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtkseparatormenuitem;
 
+  /* 
+   * GtkSeparatorMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkseparatormenuitem_id == 0 ) 
     {
       /* 
@@ -40700,7 +40124,7 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
 
 static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *Obj,NspTypeGtkSeparatorMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -40752,10 +40176,10 @@ static char *gtkseparatormenuitem_type_short_string(NspObject *v)
 
 NspGtkSeparatorMenuItem   *gtkseparatormenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkseparatormenuitem_id) ) return ((NspGtkSeparatorMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkseparatormenuitem_id)  == TRUE  ) return ((NspGtkSeparatorMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkseparatormenuitem));
   return NULL;
@@ -40799,18 +40223,6 @@ NspGtkSeparatorMenuItem *gtkseparatormenuitem_copy(NspGtkSeparatorMenuItem *self
  * wrappers for the GtkSeparatorMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSeparatorMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkseparatormenuitem is initialized * /
-  nsp_type_gtkseparatormenuitem = new_type_gtkseparatormenuitem(T_BASE);
-  if(( H = gtkmenuitem_create(NVOID,(NspTypeBase *) nsp_type_gtkseparatormenuitem)) == NULLGTKSEPARATORMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkseparatormenuitem_new(Stack stack, int rhs, int opt, int lhs)
@@ -40890,6 +40302,12 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
       
   type->init = (init_func *) init_gtkseparatortoolitem;
 
+  /* 
+   * GtkSeparatorToolItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkseparatortoolitem_id == 0 ) 
     {
       /* 
@@ -40917,7 +40335,7 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
 
 static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *Obj,NspTypeGtkSeparatorToolItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -40969,10 +40387,10 @@ static char *gtkseparatortoolitem_type_short_string(NspObject *v)
 
 NspGtkSeparatorToolItem   *gtkseparatortoolitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkseparatortoolitem_id) ) return ((NspGtkSeparatorToolItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkseparatortoolitem_id)  == TRUE  ) return ((NspGtkSeparatorToolItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkseparatortoolitem));
   return NULL;
@@ -41016,18 +40434,6 @@ NspGtkSeparatorToolItem *gtkseparatortoolitem_copy(NspGtkSeparatorToolItem *self
  * wrappers for the GtkSeparatorToolItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSeparatorToolItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkseparatortoolitem is initialized * /
-  nsp_type_gtkseparatortoolitem = new_type_gtkseparatortoolitem(T_BASE);
-  if(( H = gtktoolitem_create(NVOID,(NspTypeBase *) nsp_type_gtkseparatortoolitem)) == NULLGTKSEPARATORTOOLITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkseparatortoolitem_new(Stack stack, int rhs, int opt, int lhs)
@@ -41130,6 +40536,12 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
       
   type->init = (init_func *) init_gtksettings;
 
+  /* 
+   * GtkSettings interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtksettings_id == 0 ) 
     {
       /* 
@@ -41157,7 +40569,7 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
 
 static int init_gtksettings(NspGtkSettings *Obj,NspTypeGtkSettings *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -41209,10 +40621,10 @@ static char *gtksettings_type_short_string(NspObject *v)
 
 NspGtkSettings   *gtksettings_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtksettings_id) ) return ((NspGtkSettings *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtksettings_id)  == TRUE  ) return ((NspGtkSettings *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtksettings));
   return NULL;
@@ -41256,18 +40668,6 @@ NspGtkSettings *gtksettings_copy(NspGtkSettings *self)
  * wrappers for the GtkSettings
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSettings *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtksettings is initialized * /
-  nsp_type_gtksettings = new_type_gtksettings(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtksettings)) == NULLGTKSETTINGS) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_settings_set_string_property(NspGtkSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -41369,6 +40769,12 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
       
   type->init = (init_func *) init_gtksizegroup;
 
+  /* 
+   * GtkSizeGroup interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtksizegroup_id == 0 ) 
     {
       /* 
@@ -41396,7 +40802,7 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
 
 static int init_gtksizegroup(NspGtkSizeGroup *Obj,NspTypeGtkSizeGroup *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -41448,10 +40854,10 @@ static char *gtksizegroup_type_short_string(NspObject *v)
 
 NspGtkSizeGroup   *gtksizegroup_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtksizegroup_id) ) return ((NspGtkSizeGroup *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtksizegroup_id)  == TRUE  ) return ((NspGtkSizeGroup *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtksizegroup));
   return NULL;
@@ -41495,18 +40901,6 @@ NspGtkSizeGroup *gtksizegroup_copy(NspGtkSizeGroup *self)
  * wrappers for the GtkSizeGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSizeGroup *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtksizegroup is initialized * /
-  nsp_type_gtksizegroup = new_type_gtksizegroup(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtksizegroup)) == NULLGTKSIZEGROUP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtksizegroup_new(Stack stack, int rhs, int opt, int lhs)
@@ -41656,6 +41050,12 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
       
   type->init = (init_func *) init_gtksocket;
 
+  /* 
+   * GtkSocket interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtksocket_id == 0 ) 
     {
       /* 
@@ -41683,7 +41083,7 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
 
 static int init_gtksocket(NspGtkSocket *Obj,NspTypeGtkSocket *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -41735,10 +41135,10 @@ static char *gtksocket_type_short_string(NspObject *v)
 
 NspGtkSocket   *gtksocket_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtksocket_id) ) return ((NspGtkSocket *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtksocket_id)  == TRUE  ) return ((NspGtkSocket *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtksocket));
   return NULL;
@@ -41782,18 +41182,6 @@ NspGtkSocket *gtksocket_copy(NspGtkSocket *self)
  * wrappers for the GtkSocket
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSocket *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtksocket is initialized * /
-  nsp_type_gtksocket = new_type_gtksocket(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtksocket)) == NULLGTKSOCKET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtksocket_new(Stack stack, int rhs, int opt, int lhs)
@@ -41907,6 +41295,12 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
       
   type->init = (init_func *) init_gtkspinbutton;
 
+  /* 
+   * GtkSpinButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkspinbutton_id == 0 ) 
     {
       /* 
@@ -41934,7 +41328,7 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
 
 static int init_gtkspinbutton(NspGtkSpinButton *Obj,NspTypeGtkSpinButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -41986,10 +41380,10 @@ static char *gtkspinbutton_type_short_string(NspObject *v)
 
 NspGtkSpinButton   *gtkspinbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkspinbutton_id) ) return ((NspGtkSpinButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkspinbutton_id)  == TRUE  ) return ((NspGtkSpinButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkspinbutton));
   return NULL;
@@ -42033,18 +41427,6 @@ NspGtkSpinButton *gtkspinbutton_copy(NspGtkSpinButton *self)
  * wrappers for the GtkSpinButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSpinButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkspinbutton is initialized * /
-  nsp_type_gtkspinbutton = new_type_gtkspinbutton(T_BASE);
-  if(( H = gtkentry_create(NVOID,(NspTypeBase *) nsp_type_gtkspinbutton)) == NULLGTKSPINBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkspinbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -42162,7 +41544,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1; 
 
 }
-#line 42166 "gtk.c"
+#line 41548 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -42186,7 +41568,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG; 
   return 1; 
 }
-#line 42190 "gtk.c"
+#line 41572 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -42394,6 +41776,12 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
       
   type->init = (init_func *) init_gtkstatusbar;
 
+  /* 
+   * GtkStatusbar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkstatusbar_id == 0 ) 
     {
       /* 
@@ -42421,7 +41809,7 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
 
 static int init_gtkstatusbar(NspGtkStatusbar *Obj,NspTypeGtkStatusbar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -42473,10 +41861,10 @@ static char *gtkstatusbar_type_short_string(NspObject *v)
 
 NspGtkStatusbar   *gtkstatusbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkstatusbar_id) ) return ((NspGtkStatusbar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkstatusbar_id)  == TRUE  ) return ((NspGtkStatusbar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkstatusbar));
   return NULL;
@@ -42520,18 +41908,6 @@ NspGtkStatusbar *gtkstatusbar_copy(NspGtkStatusbar *self)
  * wrappers for the GtkStatusbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkStatusbar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkstatusbar is initialized * /
-  nsp_type_gtkstatusbar = new_type_gtkstatusbar(T_BASE);
-  if(( H = gtkhbox_create(NVOID,(NspTypeBase *) nsp_type_gtkstatusbar)) == NULLGTKSTATUSBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkstatusbar_new(Stack stack, int rhs, int opt, int lhs)
@@ -42678,6 +42054,12 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
       
   type->init = (init_func *) init_gtkstyle;
 
+  /* 
+   * GtkStyle interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkstyle_id == 0 ) 
     {
       /* 
@@ -42705,7 +42087,7 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
 
 static int init_gtkstyle(NspGtkStyle *Obj,NspTypeGtkStyle *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -42757,10 +42139,10 @@ static char *gtkstyle_type_short_string(NspObject *v)
 
 NspGtkStyle   *gtkstyle_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkstyle_id) ) return ((NspGtkStyle *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkstyle_id)  == TRUE  ) return ((NspGtkStyle *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkstyle));
   return NULL;
@@ -42804,18 +42186,6 @@ NspGtkStyle *gtkstyle_copy(NspGtkStyle *self)
  * wrappers for the GtkStyle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkStyle *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkstyle is initialized * /
-  nsp_type_gtkstyle = new_type_gtkstyle(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkstyle)) == NULLGTKSTYLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkstyle_new(Stack stack, int rhs, int opt, int lhs)
@@ -43392,7 +42762,7 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 43396 "gtk.c"
+#line 42766 "gtk.c"
 
 
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
@@ -44224,7 +43594,7 @@ _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
   Scierror("Use method .get_fg[pos]\n");
   return NULL;
 }
-#line 44228 "gtk.c"
+#line 43598 "gtk.c"
 #line 215 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
@@ -44232,7 +43602,7 @@ _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
   Scierror("Use method .get_bg[pos]\n");
   return NULL;
 }
-#line 44236 "gtk.c"
+#line 43606 "gtk.c"
 #line 223 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light(NspGObject *self, char *attr)
@@ -44240,7 +43610,7 @@ _wrap_gtk_style__get_light(NspGObject *self, char *attr)
   Scierror("Use method .get_light[pos]\n");
   return NULL;
 }
-#line 44244 "gtk.c"
+#line 43614 "gtk.c"
 #line 231 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
@@ -44248,7 +43618,7 @@ _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
   Scierror("Use method .get_dark[pos]\n");
   return NULL;
 }
-#line 44252 "gtk.c"
+#line 43622 "gtk.c"
 #line 239 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
@@ -44256,7 +43626,7 @@ _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
   Scierror("Use method .get_mid[pos]\n");
   return NULL;
 }
-#line 44260 "gtk.c"
+#line 43630 "gtk.c"
 #line 247 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text(NspGObject *self, char *attr)
@@ -44264,7 +43634,7 @@ _wrap_gtk_style__get_text(NspGObject *self, char *attr)
   Scierror("Use method .get_text[pos]\n");
   return NULL;
 }
-#line 44268 "gtk.c"
+#line 43638 "gtk.c"
 #line 255 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base(NspGObject *self, char *attr)
@@ -44272,7 +43642,7 @@ _wrap_gtk_style__get_base(NspGObject *self, char *attr)
   Scierror("Use method .get_base[pos]\n");
   return NULL;
 }
-#line 44276 "gtk.c"
+#line 43646 "gtk.c"
 #line 263 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
@@ -44280,7 +43650,7 @@ _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa[pos]\n");
   return NULL;
 }
-#line 44284 "gtk.c"
+#line 43654 "gtk.c"
 #line 271 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white(NspGObject *self, char *attr)
@@ -44299,7 +43669,7 @@ _wrap_gtk_style__set_white(NspGObject *self, char *attr, NspObject *value)
   style->white = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44303 "gtk.c"
+#line 43673 "gtk.c"
 #line 290 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black(NspGObject *self, char *attr)
@@ -44318,7 +43688,7 @@ _wrap_gtk_style__set_black(NspGObject *self, char *attr, NspObject *value)
   style->black = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44322 "gtk.c"
+#line 43692 "gtk.c"
 static NspObject *_wrap_gtk_style__get_font_desc(NspObject *self,char *attr)
 {
   PangoFontDescription *ret;
@@ -44348,7 +43718,7 @@ _wrap_gtk_style__get_fg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_fg_gc[pos]\n");
   return NULL;
 }
-#line 44352 "gtk.c"
+#line 43722 "gtk.c"
 #line 317 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
@@ -44356,7 +43726,7 @@ _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_gc[pos]\n");
   return NULL;
 }
-#line 44360 "gtk.c"
+#line 43730 "gtk.c"
 #line 325 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
@@ -44364,7 +43734,7 @@ _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_light_gc[pos]\n");
   return NULL;
 }
-#line 44368 "gtk.c"
+#line 43738 "gtk.c"
 #line 333 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
@@ -44372,7 +43742,7 @@ _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_dark_gc[pos]\n");
   return NULL;
 }
-#line 44376 "gtk.c"
+#line 43746 "gtk.c"
 #line 341 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
@@ -44380,7 +43750,7 @@ _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_mid_gc[pos]\n");
   return NULL;
 }
-#line 44384 "gtk.c"
+#line 43754 "gtk.c"
 #line 349 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
@@ -44388,7 +43758,7 @@ _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_gc[pos]\n");
   return NULL;
 }
-#line 44392 "gtk.c"
+#line 43762 "gtk.c"
 #line 357 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
@@ -44396,7 +43766,7 @@ _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_base_gc[pos]\n");
   return NULL;
 }
-#line 44400 "gtk.c"
+#line 43770 "gtk.c"
 #line 365 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
@@ -44404,7 +43774,7 @@ _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa_gc[pos]\n");
   return NULL;
 }
-#line 44408 "gtk.c"
+#line 43778 "gtk.c"
 #line 373 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white_gc(NspGObject *self, char *attr)
@@ -44423,7 +43793,7 @@ _wrap_gtk_style__set_white_gc(NspGObject *self, char *attr, NspObject *value)
   style->white_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 44427 "gtk.c"
+#line 43797 "gtk.c"
 #line 392 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black_gc(NspGObject *self, char *attr)
@@ -44442,7 +43812,7 @@ _wrap_gtk_style__set_black_gc(NspGObject *self, char *attr, NspObject *value)
   style->black_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 44446 "gtk.c"
+#line 43816 "gtk.c"
 #line 411 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
@@ -44450,7 +43820,7 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-#line 44454 "gtk.c"
+#line 43824 "gtk.c"
 static AttrTab gtkstyle_attrs[] = {
   { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -44537,6 +43907,12 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
       
   type->init = (init_func *) init_gtktable;
 
+  /* 
+   * GtkTable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktable_id == 0 ) 
     {
       /* 
@@ -44564,7 +43940,7 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
 
 static int init_gtktable(NspGtkTable *Obj,NspTypeGtkTable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -44616,10 +43992,10 @@ static char *gtktable_type_short_string(NspObject *v)
 
 NspGtkTable   *gtktable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktable_id) ) return ((NspGtkTable *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktable_id)  == TRUE  ) return ((NspGtkTable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktable));
   return NULL;
@@ -44663,18 +44039,6 @@ NspGtkTable *gtktable_copy(NspGtkTable *self)
  * wrappers for the GtkTable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktable is initialized * /
-  nsp_type_gtktable = new_type_gtktable(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtktable)) == NULLGTKTABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktable_new(Stack stack, int rhs, int opt, int lhs)
@@ -44908,6 +44272,12 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
       
   type->init = (init_func *) init_gtktearoffmenuitem;
 
+  /* 
+   * GtkTearoffMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktearoffmenuitem_id == 0 ) 
     {
       /* 
@@ -44935,7 +44305,7 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
 
 static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *Obj,NspTypeGtkTearoffMenuItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -44987,10 +44357,10 @@ static char *gtktearoffmenuitem_type_short_string(NspObject *v)
 
 NspGtkTearoffMenuItem   *gtktearoffmenuitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktearoffmenuitem_id) ) return ((NspGtkTearoffMenuItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktearoffmenuitem_id)  == TRUE  ) return ((NspGtkTearoffMenuItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktearoffmenuitem));
   return NULL;
@@ -45034,18 +44404,6 @@ NspGtkTearoffMenuItem *gtktearoffmenuitem_copy(NspGtkTearoffMenuItem *self)
  * wrappers for the GtkTearoffMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTearoffMenuItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktearoffmenuitem is initialized * /
-  nsp_type_gtktearoffmenuitem = new_type_gtktearoffmenuitem(T_BASE);
-  if(( H = gtkmenuitem_create(NVOID,(NspTypeBase *) nsp_type_gtktearoffmenuitem)) == NULLGTKTEAROFFMENUITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktearoffmenuitem_new(Stack stack, int rhs, int opt, int lhs)
@@ -45125,6 +44483,12 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
       
   type->init = (init_func *) init_gtktextbuffer;
 
+  /* 
+   * GtkTextBuffer interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextbuffer_id == 0 ) 
     {
       /* 
@@ -45152,7 +44516,7 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
 
 static int init_gtktextbuffer(NspGtkTextBuffer *Obj,NspTypeGtkTextBuffer *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -45204,10 +44568,10 @@ static char *gtktextbuffer_type_short_string(NspObject *v)
 
 NspGtkTextBuffer   *gtktextbuffer_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextbuffer_id) ) return ((NspGtkTextBuffer *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextbuffer_id)  == TRUE  ) return ((NspGtkTextBuffer *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextbuffer));
   return NULL;
@@ -45251,18 +44615,6 @@ NspGtkTextBuffer *gtktextbuffer_copy(NspGtkTextBuffer *self)
  * wrappers for the GtkTextBuffer
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextBuffer *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextbuffer is initialized * /
-  nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktextbuffer)) == NULLGTKTEXTBUFFER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktextbuffer_new(Stack stack, int rhs, int opt, int lhs)
@@ -45329,7 +44681,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 45333 "gtk.c"
+#line 44685 "gtk.c"
 
 
 #line 5867 "gtk.override"
@@ -45346,7 +44698,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 45350 "gtk.c"
+#line 44702 "gtk.c"
 
 
 #line 5882 "gtk.override"
@@ -45360,7 +44712,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 45364 "gtk.c"
+#line 44716 "gtk.c"
 
 
 #line 5894 "gtk.override"
@@ -45380,7 +44732,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 45384 "gtk.c"
+#line 44736 "gtk.c"
 
 
 #line 5912 "gtk.override"
@@ -45395,7 +44747,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 45399 "gtk.c"
+#line 44751 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45488,7 +44840,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 45492 "gtk.c"
+#line 44844 "gtk.c"
 
 
 #line 5623 "gtk.override"
@@ -45523,7 +44875,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 45527 "gtk.c"
+#line 44879 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46004,7 +45356,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46008 "gtk.c"
+#line 45360 "gtk.c"
 
 
 #line 5710 "gtk.override"
@@ -46024,7 +45376,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46028 "gtk.c"
+#line 45380 "gtk.c"
 
 
 #line 5728 "gtk.override"
@@ -46044,7 +45396,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46048 "gtk.c"
+#line 45400 "gtk.c"
 
 
 #line 5746 "gtk.override"
@@ -46063,7 +45415,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46067 "gtk.c"
+#line 45419 "gtk.c"
 
 
 #line 5763 "gtk.override"
@@ -46081,7 +45433,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46085 "gtk.c"
+#line 45437 "gtk.c"
 
 
 #line 5779 "gtk.override"
@@ -46095,7 +45447,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46099 "gtk.c"
+#line 45451 "gtk.c"
 
 
 #line 5791 "gtk.override"
@@ -46109,7 +45461,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46113 "gtk.c"
+#line 45465 "gtk.c"
 
 
 #line 5803 "gtk.override"
@@ -46129,7 +45481,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 46133 "gtk.c"
+#line 45485 "gtk.c"
 
 
 #line 5821 "gtk.override"
@@ -46147,7 +45499,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46151 "gtk.c"
+#line 45503 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46202,7 +45554,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 46206 "gtk.c"
+#line 45558 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46376,6 +45728,12 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
       
   type->init = (init_func *) init_gtktextchildanchor;
 
+  /* 
+   * GtkTextChildAnchor interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextchildanchor_id == 0 ) 
     {
       /* 
@@ -46403,7 +45761,7 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
 
 static int init_gtktextchildanchor(NspGtkTextChildAnchor *Obj,NspTypeGtkTextChildAnchor *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -46455,10 +45813,10 @@ static char *gtktextchildanchor_type_short_string(NspObject *v)
 
 NspGtkTextChildAnchor   *gtktextchildanchor_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextchildanchor_id) ) return ((NspGtkTextChildAnchor *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextchildanchor_id)  == TRUE  ) return ((NspGtkTextChildAnchor *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextchildanchor));
   return NULL;
@@ -46503,18 +45861,6 @@ NspGtkTextChildAnchor *gtktextchildanchor_copy(NspGtkTextChildAnchor *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextChildAnchor *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextchildanchor is initialized * /
-  nsp_type_gtktextchildanchor = new_type_gtktextchildanchor(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktextchildanchor)) == NULLGTKTEXTCHILDANCHOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 static int
 _wrap_gtktextchildanchor_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -46538,7 +45884,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 46542 "gtk.c"
+#line 45888 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -46619,6 +45965,12 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
       
   type->init = (init_func *) init_gtktextmark;
 
+  /* 
+   * GtkTextMark interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextmark_id == 0 ) 
     {
       /* 
@@ -46646,7 +45998,7 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
 
 static int init_gtktextmark(NspGtkTextMark *Obj,NspTypeGtkTextMark *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -46698,10 +46050,10 @@ static char *gtktextmark_type_short_string(NspObject *v)
 
 NspGtkTextMark   *gtktextmark_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextmark_id) ) return ((NspGtkTextMark *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextmark_id)  == TRUE  ) return ((NspGtkTextMark *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextmark));
   return NULL;
@@ -46745,18 +46097,6 @@ NspGtkTextMark *gtktextmark_copy(NspGtkTextMark *self)
  * wrappers for the GtkTextMark
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextMark *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextmark is initialized * /
-  nsp_type_gtktextmark = new_type_gtktextmark(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktextmark)) == NULLGTKTEXTMARK) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_text_mark_set_visible(NspGtkTextMark *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -46884,6 +46224,12 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
       
   type->init = (init_func *) init_gtktexttag;
 
+  /* 
+   * GtkTextTag interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktexttag_id == 0 ) 
     {
       /* 
@@ -46911,7 +46257,7 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
 
 static int init_gtktexttag(NspGtkTextTag *Obj,NspTypeGtkTextTag *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -46963,10 +46309,10 @@ static char *gtktexttag_type_short_string(NspObject *v)
 
 NspGtkTextTag   *gtktexttag_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktexttag_id) ) return ((NspGtkTextTag *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktexttag_id)  == TRUE  ) return ((NspGtkTextTag *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktexttag));
   return NULL;
@@ -47010,18 +46356,6 @@ NspGtkTextTag *gtktexttag_copy(NspGtkTextTag *self)
  * wrappers for the GtkTextTag
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextTag *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktexttag is initialized * /
-  nsp_type_gtktexttag = new_type_gtktexttag(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktexttag)) == NULLGTKTEXTTAG) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktexttag_new(Stack stack, int rhs, int opt, int lhs)
@@ -47156,6 +46490,12 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
       
   type->init = (init_func *) init_gtktexttagtable;
 
+  /* 
+   * GtkTextTagTable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktexttagtable_id == 0 ) 
     {
       /* 
@@ -47183,7 +46523,7 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
 
 static int init_gtktexttagtable(NspGtkTextTagTable *Obj,NspTypeGtkTextTagTable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -47235,10 +46575,10 @@ static char *gtktexttagtable_type_short_string(NspObject *v)
 
 NspGtkTextTagTable   *gtktexttagtable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktexttagtable_id) ) return ((NspGtkTextTagTable *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktexttagtable_id)  == TRUE  ) return ((NspGtkTextTagTable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktexttagtable));
   return NULL;
@@ -47282,18 +46622,6 @@ NspGtkTextTagTable *gtktexttagtable_copy(NspGtkTextTagTable *self)
  * wrappers for the GtkTextTagTable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextTagTable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktexttagtable is initialized * /
-  nsp_type_gtktexttagtable = new_type_gtktexttagtable(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktexttagtable)) == NULLGTKTEXTTAGTABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktexttagtable_new(Stack stack, int rhs, int opt, int lhs)
@@ -47421,6 +46749,12 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
       
   type->init = (init_func *) init_gtktextview;
 
+  /* 
+   * GtkTextView interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktextview_id == 0 ) 
     {
       /* 
@@ -47448,7 +46782,7 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
 
 static int init_gtktextview(NspGtkTextView *Obj,NspTypeGtkTextView *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -47500,10 +46834,10 @@ static char *gtktextview_type_short_string(NspObject *v)
 
 NspGtkTextView   *gtktextview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktextview_id) ) return ((NspGtkTextView *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktextview_id)  == TRUE  ) return ((NspGtkTextView *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktextview));
   return NULL;
@@ -47547,18 +46881,6 @@ NspGtkTextView *gtktextview_copy(NspGtkTextView *self)
  * wrappers for the GtkTextView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextView *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextview is initialized * /
-  nsp_type_gtktextview = new_type_gtktextview(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtktextview)) == NULLGTKTEXTVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktextview_new(Stack stack, int rhs, int opt, int lhs)
@@ -47688,7 +47010,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47692 "gtk.c"
+#line 47014 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47727,7 +47049,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47731 "gtk.c"
+#line 47053 "gtk.c"
 
 
 #line 6657 "gtk.override"
@@ -47746,7 +47068,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47750 "gtk.c"
+#line 47072 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_iter_at_position(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47784,7 +47106,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG; 
   return 1; 
 }
-#line 47788 "gtk.c"
+#line 47110 "gtk.c"
 
 
 #line 6621 "gtk.override"
@@ -47803,7 +47125,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 47807 "gtk.c"
+#line 47129 "gtk.c"
 
 
 #line 5948 "gtk.override"
@@ -47825,7 +47147,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47829 "gtk.c"
+#line 47151 "gtk.c"
 
 
 #line 5968 "gtk.override"
@@ -47847,7 +47169,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47851 "gtk.c"
+#line 47173 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -48401,6 +47723,12 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
       
   type->init = (init_func *) init_gtktoggleaction;
 
+  /* 
+   * GtkToggleAction interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktoggleaction_id == 0 ) 
     {
       /* 
@@ -48428,7 +47756,7 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
 
 static int init_gtktoggleaction(NspGtkToggleAction *Obj,NspTypeGtkToggleAction *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -48480,10 +47808,10 @@ static char *gtktoggleaction_type_short_string(NspObject *v)
 
 NspGtkToggleAction   *gtktoggleaction_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktoggleaction_id) ) return ((NspGtkToggleAction *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktoggleaction_id)  == TRUE  ) return ((NspGtkToggleAction *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktoggleaction));
   return NULL;
@@ -48527,18 +47855,6 @@ NspGtkToggleAction *gtktoggleaction_copy(NspGtkToggleAction *self)
  * wrappers for the GtkToggleAction
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToggleAction *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktoggleaction is initialized * /
-  nsp_type_gtktoggleaction = new_type_gtktoggleaction(T_BASE);
-  if(( H = gtkaction_create(NVOID,(NspTypeBase *) nsp_type_gtktoggleaction)) == NULLGTKTOGGLEACTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktoggleaction_new(Stack stack, int rhs, int opt, int lhs)
@@ -48669,6 +47985,12 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
       
   type->init = (init_func *) init_gtktogglebutton;
 
+  /* 
+   * GtkToggleButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktogglebutton_id == 0 ) 
     {
       /* 
@@ -48696,7 +48018,7 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
 
 static int init_gtktogglebutton(NspGtkToggleButton *Obj,NspTypeGtkToggleButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -48748,10 +48070,10 @@ static char *gtktogglebutton_type_short_string(NspObject *v)
 
 NspGtkToggleButton   *gtktogglebutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktogglebutton_id) ) return ((NspGtkToggleButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktogglebutton_id)  == TRUE  ) return ((NspGtkToggleButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktogglebutton));
   return NULL;
@@ -48796,18 +48118,6 @@ NspGtkToggleButton *gtktogglebutton_copy(NspGtkToggleButton *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToggleButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktogglebutton is initialized * /
-  nsp_type_gtktogglebutton = new_type_gtktogglebutton(T_BASE);
-  if(( H = gtkbutton_create(NVOID,(NspTypeBase *) nsp_type_gtktogglebutton)) == NULLGTKTOGGLEBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 4373 "gtk.override"
 /* OK */
 static int
@@ -48839,7 +48149,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 48843 "gtk.c"
+#line 48153 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -48998,6 +48308,12 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
       
   type->init = (init_func *) init_gtktoggletoolbutton;
 
+  /* 
+   * GtkToggleToolButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktoggletoolbutton_id == 0 ) 
     {
       /* 
@@ -49025,7 +48341,7 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
 
 static int init_gtktoggletoolbutton(NspGtkToggleToolButton *Obj,NspTypeGtkToggleToolButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -49077,10 +48393,10 @@ static char *gtktoggletoolbutton_type_short_string(NspObject *v)
 
 NspGtkToggleToolButton   *gtktoggletoolbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktoggletoolbutton_id) ) return ((NspGtkToggleToolButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktoggletoolbutton_id)  == TRUE  ) return ((NspGtkToggleToolButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktoggletoolbutton));
   return NULL;
@@ -49124,18 +48440,6 @@ NspGtkToggleToolButton *gtktoggletoolbutton_copy(NspGtkToggleToolButton *self)
  * wrappers for the GtkToggleToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToggleToolButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktoggletoolbutton is initialized * /
-  nsp_type_gtktoggletoolbutton = new_type_gtktoggletoolbutton(T_BASE);
-  if(( H = gtktoolbutton_create(NVOID,(NspTypeBase *) nsp_type_gtktoggletoolbutton)) == NULLGTKTOGGLETOOLBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktoggletoolbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -49238,6 +48542,12 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
       
   type->init = (init_func *) init_gtktoolbar;
 
+  /* 
+   * GtkToolbar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktoolbar_id == 0 ) 
     {
       /* 
@@ -49265,7 +48575,7 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
 
 static int init_gtktoolbar(NspGtkToolbar *Obj,NspTypeGtkToolbar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -49317,10 +48627,10 @@ static char *gtktoolbar_type_short_string(NspObject *v)
 
 NspGtkToolbar   *gtktoolbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktoolbar_id) ) return ((NspGtkToolbar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktoolbar_id)  == TRUE  ) return ((NspGtkToolbar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktoolbar));
   return NULL;
@@ -49364,18 +48674,6 @@ NspGtkToolbar *gtktoolbar_copy(NspGtkToolbar *self)
  * wrappers for the GtkToolbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToolbar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktoolbar is initialized * /
-  nsp_type_gtktoolbar = new_type_gtktoolbar(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtktoolbar)) == NULLGTKTOOLBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktoolbar_new(Stack stack, int rhs, int opt, int lhs)
@@ -49571,7 +48869,7 @@ _wrap_gtk_toolbar_append_item(NspGObject *self,Stack stack,int rhs,int opt,int l
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_append_item);
 }
 
-#line 49575 "gtk.c"
+#line 48873 "gtk.c"
 
 
 #line 4821 "gtk.override"
@@ -49581,7 +48879,7 @@ _wrap_gtk_toolbar_prepend_item(NspGObject *self,Stack stack,int rhs,int opt,int 
 {
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_prepend_item);
 }
-#line 49585 "gtk.c"
+#line 48883 "gtk.c"
 
 
 #line 4829 "gtk.override"
@@ -49616,7 +48914,7 @@ _wrap_gtk_toolbar_insert_stock(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,TRUE,ret,callback,params);
 }
-#line 49620 "gtk.c"
+#line 48918 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_space(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -49694,7 +48992,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49698 "gtk.c"
+#line 48996 "gtk.c"
 
 
 #line 4908 "gtk.override"
@@ -49742,7 +49040,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49746 "gtk.c"
+#line 49044 "gtk.c"
 
 
 #line 4954 "gtk.override"
@@ -49794,7 +49092,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49798 "gtk.c"
+#line 49096 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_widget(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -50030,6 +49328,12 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
       
   type->init = (init_func *) init_gtktoolbutton;
 
+  /* 
+   * GtkToolButton interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktoolbutton_id == 0 ) 
     {
       /* 
@@ -50057,7 +49361,7 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
 
 static int init_gtktoolbutton(NspGtkToolButton *Obj,NspTypeGtkToolButton *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -50109,10 +49413,10 @@ static char *gtktoolbutton_type_short_string(NspObject *v)
 
 NspGtkToolButton   *gtktoolbutton_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktoolbutton_id) ) return ((NspGtkToolButton *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktoolbutton_id)  == TRUE  ) return ((NspGtkToolButton *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktoolbutton));
   return NULL;
@@ -50156,18 +49460,6 @@ NspGtkToolButton *gtktoolbutton_copy(NspGtkToolButton *self)
  * wrappers for the GtkToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToolButton *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktoolbutton is initialized * /
-  nsp_type_gtktoolbutton = new_type_gtktoolbutton(T_BASE);
-  if(( H = gtktoolitem_create(NVOID,(NspTypeBase *) nsp_type_gtktoolbutton)) == NULLGTKTOOLBUTTON) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktoolbutton_new(Stack stack, int rhs, int opt, int lhs)
@@ -50420,6 +49712,12 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
       
   type->init = (init_func *) init_gtktoolitem;
 
+  /* 
+   * GtkToolItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktoolitem_id == 0 ) 
     {
       /* 
@@ -50447,7 +49745,7 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
 
 static int init_gtktoolitem(NspGtkToolItem *Obj,NspTypeGtkToolItem *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -50499,10 +49797,10 @@ static char *gtktoolitem_type_short_string(NspObject *v)
 
 NspGtkToolItem   *gtktoolitem_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktoolitem_id) ) return ((NspGtkToolItem *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktoolitem_id)  == TRUE  ) return ((NspGtkToolItem *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktoolitem));
   return NULL;
@@ -50546,18 +49844,6 @@ NspGtkToolItem *gtktoolitem_copy(NspGtkToolItem *self)
  * wrappers for the GtkToolItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkToolItem *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktoolitem is initialized * /
-  nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtktoolitem)) == NULLGTKTOOLITEM) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktoolitem_new(Stack stack, int rhs, int opt, int lhs)
@@ -50863,6 +50149,12 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
       
   type->init = (init_func *) init_gtktooltips;
 
+  /* 
+   * GtkTooltips interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktooltips_id == 0 ) 
     {
       /* 
@@ -50890,7 +50182,7 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
 
 static int init_gtktooltips(NspGtkTooltips *Obj,NspTypeGtkTooltips *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -50942,10 +50234,10 @@ static char *gtktooltips_type_short_string(NspObject *v)
 
 NspGtkTooltips   *gtktooltips_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktooltips_id) ) return ((NspGtkTooltips *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktooltips_id)  == TRUE  ) return ((NspGtkTooltips *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktooltips));
   return NULL;
@@ -50989,18 +50281,6 @@ NspGtkTooltips *gtktooltips_copy(NspGtkTooltips *self)
  * wrappers for the GtkTooltips
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTooltips *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktooltips is initialized * /
-  nsp_type_gtktooltips = new_type_gtktooltips(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtktooltips)) == NULLGTKTOOLTIPS) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktooltips_new(Stack stack, int rhs, int opt, int lhs)
@@ -51099,7 +50379,7 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
 					nspgobject_new(NVOID,(GObject *)data->widget),
 					data->tip_text, data->tip_private);
 }
-#line 51103 "gtk.c"
+#line 50383 "gtk.c"
 #line 6491 "gtk.override"
 static NspObject *
 _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
@@ -51129,7 +50409,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-#line 51133 "gtk.c"
+#line 50413 "gtk.c"
 static NspObject *_wrap_gtk_tooltips__get_delay(NspObject *self,char *attr)
 {
   int ret;
@@ -51229,6 +50509,12 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
       
   type->init = (init_func *) init_gtktreemodelfilter;
 
+  /* 
+   * GtkTreeModelFilter interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtktreemodel(T_DERIVED);
   type->interface->interface =  (NspTypeBase *) new_type_gtktreedragsource(T_DERIVED);
   if ( nsp_type_gtktreemodelfilter_id == 0 ) 
@@ -51258,7 +50544,7 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
 
 static int init_gtktreemodelfilter(NspGtkTreeModelFilter *Obj,NspTypeGtkTreeModelFilter *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -51310,10 +50596,10 @@ static char *gtktreemodelfilter_type_short_string(NspObject *v)
 
 NspGtkTreeModelFilter   *gtktreemodelfilter_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreemodelfilter_id) ) return ((NspGtkTreeModelFilter *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreemodelfilter_id)  == TRUE  ) return ((NspGtkTreeModelFilter *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreemodelfilter));
   return NULL;
@@ -51357,18 +50643,6 @@ NspGtkTreeModelFilter *gtktreemodelfilter_copy(NspGtkTreeModelFilter *self)
  * wrappers for the GtkTreeModelFilter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeModelFilter *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreemodelfilter is initialized * /
-  nsp_type_gtktreemodelfilter = new_type_gtktreemodelfilter(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreemodelfilter)) == NULLGTKTREEMODELFILTER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_tree_model_filter_set_visible_column(NspGtkTreeModelFilter *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -51563,6 +50837,12 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
       
   type->init = (init_func *) init_gtktreemodelsort;
 
+  /* 
+   * GtkTreeModelSort interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtktreemodel(T_DERIVED);
   type->interface->interface =  (NspTypeBase *) new_type_gtktreesortable(T_DERIVED);
   if ( nsp_type_gtktreemodelsort_id == 0 ) 
@@ -51592,7 +50872,7 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
 
 static int init_gtktreemodelsort(NspGtkTreeModelSort *Obj,NspTypeGtkTreeModelSort *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -51644,10 +50924,10 @@ static char *gtktreemodelsort_type_short_string(NspObject *v)
 
 NspGtkTreeModelSort   *gtktreemodelsort_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreemodelsort_id) ) return ((NspGtkTreeModelSort *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreemodelsort_id)  == TRUE  ) return ((NspGtkTreeModelSort *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreemodelsort));
   return NULL;
@@ -51691,18 +50971,6 @@ NspGtkTreeModelSort *gtktreemodelsort_copy(NspGtkTreeModelSort *self)
  * wrappers for the GtkTreeModelSort
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeModelSort *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreemodelsort is initialized * /
-  nsp_type_gtktreemodelsort = new_type_gtktreemodelsort(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreemodelsort)) == NULLGTKTREEMODELSORT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtktreemodelsort_new(Stack stack, int rhs, int opt, int lhs)
@@ -51921,6 +51189,12 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
       
   type->init = (init_func *) init_gtktreeselection;
 
+  /* 
+   * GtkTreeSelection interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreeselection_id == 0 ) 
     {
       /* 
@@ -51948,7 +51222,7 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
 
 static int init_gtktreeselection(NspGtkTreeSelection *Obj,NspTypeGtkTreeSelection *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -52000,10 +51274,10 @@ static char *gtktreeselection_type_short_string(NspObject *v)
 
 NspGtkTreeSelection   *gtktreeselection_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreeselection_id) ) return ((NspGtkTreeSelection *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreeselection_id)  == TRUE  ) return ((NspGtkTreeSelection *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreeselection));
   return NULL;
@@ -52047,18 +51321,6 @@ NspGtkTreeSelection *gtktreeselection_copy(NspGtkTreeSelection *self)
  * wrappers for the GtkTreeSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeSelection *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreeselection is initialized * /
-  nsp_type_gtktreeselection = new_type_gtktreeselection(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreeselection)) == NULLGTKTREESELECTION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gtk_tree_selection_set_mode(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -52144,7 +51406,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 52148 "gtk.c"
+#line 51410 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52199,7 +51461,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 52203 "gtk.c"
+#line 51465 "gtk.c"
 
 
 #line 3416 "gtk.override"
@@ -52212,7 +51474,7 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 52216 "gtk.c"
+#line 51478 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_count_selected_rows(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52285,7 +51547,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 52289 "gtk.c"
+#line 51551 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52531,6 +51793,12 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
       
   type->init = (init_func *) init_gtktreestore;
 
+  /* 
+   * GtkTreeStore interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   type->interface =  (NspTypeBase *) new_type_gtktreemodel(T_DERIVED);
   type->interface->interface =  (NspTypeBase *) new_type_gtktreedragsource(T_DERIVED);
   type->interface->interface->interface =  (NspTypeBase *) new_type_gtktreedragdest(T_DERIVED);
@@ -52562,7 +51830,7 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
 
 static int init_gtktreestore(NspGtkTreeStore *Obj,NspTypeGtkTreeStore *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -52614,10 +51882,10 @@ static char *gtktreestore_type_short_string(NspObject *v)
 
 NspGtkTreeStore   *gtktreestore_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreestore_id) ) return ((NspGtkTreeStore *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreestore_id)  == TRUE  ) return ((NspGtkTreeStore *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreestore));
   return NULL;
@@ -52661,18 +51929,6 @@ NspGtkTreeStore *gtktreestore_copy(NspGtkTreeStore *self)
  * wrappers for the GtkTreeStore
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeStore *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreestore is initialized * /
-  nsp_type_gtktreestore = new_type_gtktreestore(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreestore)) == NULLGTKTREESTORE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 2028 "gtk.override"
 /* very similar to liststore : 
@@ -52739,7 +51995,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 52743 "gtk.c"
+#line 51999 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_tree_store(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52813,7 +52069,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 52817 "gtk.c"
+#line 52073 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52862,7 +52118,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52866 "gtk.c"
+#line 52122 "gtk.c"
 
 
 #line 2181 "gtk.override"
@@ -52897,7 +52153,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52901 "gtk.c"
+#line 52157 "gtk.c"
 
 
 #line 2214 "gtk.override"
@@ -52932,7 +52188,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52936 "gtk.c"
+#line 52192 "gtk.c"
 
 
 #line 2247 "gtk.override"
@@ -52982,7 +52238,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52986 "gtk.c"
+#line 52242 "gtk.c"
 
 
 #line 2295 "gtk.override"
@@ -53035,7 +52291,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 53039 "gtk.c"
+#line 52295 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -53282,6 +52538,12 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
       
   type->init = (init_func *) init_gtktreeview;
 
+  /* 
+   * GtkTreeView interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreeview_id == 0 ) 
     {
       /* 
@@ -53309,7 +52571,7 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
 
 static int init_gtktreeview(NspGtkTreeView *Obj,NspTypeGtkTreeView *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -53361,10 +52623,10 @@ static char *gtktreeview_type_short_string(NspObject *v)
 
 NspGtkTreeView   *gtktreeview_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreeview_id) ) return ((NspGtkTreeView *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreeview_id)  == TRUE  ) return ((NspGtkTreeView *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreeview));
   return NULL;
@@ -53409,18 +52671,6 @@ NspGtkTreeView *gtktreeview_copy(NspGtkTreeView *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeView *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreeview is initialized * /
-  nsp_type_gtktreeview = new_type_gtktreeview(T_BASE);
-  if(( H = gtkcontainer_create(NVOID,(NspTypeBase *) nsp_type_gtktreeview)) == NULLGTKTREEVIEW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 2571 "gtk.override"
 static int
 _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
@@ -53452,7 +52702,7 @@ _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53456 "gtk.c"
+#line 52706 "gtk.c"
 
 
 #line 2603 "gtk.override"
@@ -53476,7 +52726,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53480 "gtk.c"
+#line 52730 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53693,7 +52943,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53697 "gtk.c"
+#line 52947 "gtk.c"
 
 
 #line 2880 "gtk.override"
@@ -53745,7 +52995,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53749 "gtk.c"
+#line 52999 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53773,7 +53023,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 53777 "gtk.c"
+#line 53027 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54059,7 +53309,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 54063 "gtk.c"
+#line 53313 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54101,7 +53351,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 54105 "gtk.c"
+#line 53355 "gtk.c"
 
 
 #line 3070 "gtk.override"
@@ -54131,7 +53381,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 54135 "gtk.c"
+#line 53385 "gtk.c"
 
 
 #line 3098 "gtk.override"
@@ -54160,7 +53410,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 54164 "gtk.c"
+#line 53414 "gtk.c"
 
 
 #line 3055 "gtk.override"
@@ -54177,7 +53427,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 54181 "gtk.c"
+#line 53431 "gtk.c"
 
 
 #line 3125 "gtk.override"
@@ -54193,7 +53443,7 @@ _wrap_gtk_tree_view_widget_to_tree_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) tx,(double) ty) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 54197 "gtk.c"
+#line 53447 "gtk.c"
 
 
 #line 3139 "gtk.override"
@@ -54209,7 +53459,7 @@ _wrap_gtk_tree_view_tree_to_widget_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) wx,(double) wy) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 54213 "gtk.c"
+#line 53463 "gtk.c"
 
 
 #line 3192 "gtk.override"
@@ -54241,7 +53491,7 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 54245 "gtk.c"
+#line 53495 "gtk.c"
 
 
 #line 3222 "gtk.override"
@@ -54267,7 +53517,7 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
 }
 
 
-#line 54271 "gtk.c"
+#line 53521 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54553,6 +53803,12 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
       
   type->init = (init_func *) init_gtktreeviewcolumn;
 
+  /* 
+   * GtkTreeViewColumn interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtktreeviewcolumn_id == 0 ) 
     {
       /* 
@@ -54580,7 +53836,7 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
 
 static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *Obj,NspTypeGtkTreeViewColumn *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -54632,10 +53888,10 @@ static char *gtktreeviewcolumn_type_short_string(NspObject *v)
 
 NspGtkTreeViewColumn   *gtktreeviewcolumn_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtktreeviewcolumn_id) ) return ((NspGtkTreeViewColumn *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtktreeviewcolumn_id)  == TRUE  ) return ((NspGtkTreeViewColumn *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtktreeviewcolumn));
   return NULL;
@@ -54679,18 +53935,6 @@ NspGtkTreeViewColumn *gtktreeviewcolumn_copy(NspGtkTreeViewColumn *self)
  * wrappers for the GtkTreeViewColumn
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeViewColumn *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreeviewcolumn is initialized * /
-  nsp_type_gtktreeviewcolumn = new_type_gtktreeviewcolumn(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtktreeviewcolumn)) == NULLGTKTREEVIEWCOLUMN) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 2724 "gtk.override"
 /* gtktreeviewcolumn_new(title="...",renderer=nsp_type_gtkcellrenderer,options= hash)
@@ -54747,7 +53991,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 54751 "gtk.c"
+#line 53995 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_queue_resize(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54792,7 +54036,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
-#line 54796 "gtk.c"
+#line 54040 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_add_attribute(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54840,7 +54084,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 54844 "gtk.c"
+#line 54088 "gtk.c"
 
 
 #line 2809 "gtk.override"
@@ -54913,7 +54157,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 54917 "gtk.c"
+#line 54161 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55255,7 +54499,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 55259 "gtk.c"
+#line 54503 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55401,6 +54645,12 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
       
   type->init = (init_func *) init_gtkuimanager;
 
+  /* 
+   * GtkUIManager interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkuimanager_id == 0 ) 
     {
       /* 
@@ -55428,7 +54678,7 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
 
 static int init_gtkuimanager(NspGtkUIManager *Obj,NspTypeGtkUIManager *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -55480,10 +54730,10 @@ static char *gtkuimanager_type_short_string(NspObject *v)
 
 NspGtkUIManager   *gtkuimanager_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkuimanager_id) ) return ((NspGtkUIManager *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkuimanager_id)  == TRUE  ) return ((NspGtkUIManager *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkuimanager));
   return NULL;
@@ -55527,18 +54777,6 @@ NspGtkUIManager *gtkuimanager_copy(NspGtkUIManager *self)
  * wrappers for the GtkUIManager
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkUIManager *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkuimanager is initialized * /
-  nsp_type_gtkuimanager = new_type_gtkuimanager(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkuimanager)) == NULLGTKUIMANAGER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkuimanager_new(Stack stack, int rhs, int opt, int lhs)
@@ -55820,6 +55058,12 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
       
   type->init = (init_func *) init_gtkvbox;
 
+  /* 
+   * GtkVBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvbox_id == 0 ) 
     {
       /* 
@@ -55847,7 +55091,7 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
 
 static int init_gtkvbox(NspGtkVBox *Obj,NspTypeGtkVBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -55899,10 +55143,10 @@ static char *gtkvbox_type_short_string(NspObject *v)
 
 NspGtkVBox   *gtkvbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvbox_id) ) return ((NspGtkVBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvbox_id)  == TRUE  ) return ((NspGtkVBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvbox));
   return NULL;
@@ -55946,18 +55190,6 @@ NspGtkVBox *gtkvbox_copy(NspGtkVBox *self)
  * wrappers for the GtkVBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvbox is initialized * /
-  nsp_type_gtkvbox = new_type_gtkvbox(T_BASE);
-  if(( H = gtkbox_create(NVOID,(NspTypeBase *) nsp_type_gtkvbox)) == NULLGTKVBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvbox_new(Stack stack, int rhs, int opt, int lhs)
@@ -56043,6 +55275,12 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
       
   type->init = (init_func *) init_gtkvbuttonbox;
 
+  /* 
+   * GtkVButtonBox interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvbuttonbox_id == 0 ) 
     {
       /* 
@@ -56070,7 +55308,7 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
 
 static int init_gtkvbuttonbox(NspGtkVButtonBox *Obj,NspTypeGtkVButtonBox *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -56122,10 +55360,10 @@ static char *gtkvbuttonbox_type_short_string(NspObject *v)
 
 NspGtkVButtonBox   *gtkvbuttonbox_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvbuttonbox_id) ) return ((NspGtkVButtonBox *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvbuttonbox_id)  == TRUE  ) return ((NspGtkVButtonBox *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvbuttonbox));
   return NULL;
@@ -56169,18 +55407,6 @@ NspGtkVButtonBox *gtkvbuttonbox_copy(NspGtkVButtonBox *self)
  * wrappers for the GtkVButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVButtonBox *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvbuttonbox is initialized * /
-  nsp_type_gtkvbuttonbox = new_type_gtkvbuttonbox(T_BASE);
-  if(( H = gtkbuttonbox_create(NVOID,(NspTypeBase *) nsp_type_gtkvbuttonbox)) == NULLGTKVBUTTONBOX) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvbuttonbox_new(Stack stack, int rhs, int opt, int lhs)
@@ -56260,6 +55486,12 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
       
   type->init = (init_func *) init_gtkviewport;
 
+  /* 
+   * GtkViewport interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkviewport_id == 0 ) 
     {
       /* 
@@ -56287,7 +55519,7 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
 
 static int init_gtkviewport(NspGtkViewport *Obj,NspTypeGtkViewport *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -56339,10 +55571,10 @@ static char *gtkviewport_type_short_string(NspObject *v)
 
 NspGtkViewport   *gtkviewport_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkviewport_id) ) return ((NspGtkViewport *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkviewport_id)  == TRUE  ) return ((NspGtkViewport *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkviewport));
   return NULL;
@@ -56386,18 +55618,6 @@ NspGtkViewport *gtkviewport_copy(NspGtkViewport *self)
  * wrappers for the GtkViewport
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkViewport *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkviewport is initialized * /
-  nsp_type_gtkviewport = new_type_gtkviewport(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkviewport)) == NULLGTKVIEWPORT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkviewport_new(Stack stack, int rhs, int opt, int lhs)
@@ -56594,6 +55814,12 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
       
   type->init = (init_func *) init_gtkvpaned;
 
+  /* 
+   * GtkVPaned interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvpaned_id == 0 ) 
     {
       /* 
@@ -56621,7 +55847,7 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
 
 static int init_gtkvpaned(NspGtkVPaned *Obj,NspTypeGtkVPaned *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -56673,10 +55899,10 @@ static char *gtkvpaned_type_short_string(NspObject *v)
 
 NspGtkVPaned   *gtkvpaned_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvpaned_id) ) return ((NspGtkVPaned *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvpaned_id)  == TRUE  ) return ((NspGtkVPaned *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvpaned));
   return NULL;
@@ -56720,18 +55946,6 @@ NspGtkVPaned *gtkvpaned_copy(NspGtkVPaned *self)
  * wrappers for the GtkVPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVPaned *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvpaned is initialized * /
-  nsp_type_gtkvpaned = new_type_gtkvpaned(T_BASE);
-  if(( H = gtkpaned_create(NVOID,(NspTypeBase *) nsp_type_gtkvpaned)) == NULLGTKVPANED) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvpaned_new(Stack stack, int rhs, int opt, int lhs)
@@ -56811,6 +56025,12 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
       
   type->init = (init_func *) init_gtkvruler;
 
+  /* 
+   * GtkVRuler interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvruler_id == 0 ) 
     {
       /* 
@@ -56838,7 +56058,7 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
 
 static int init_gtkvruler(NspGtkVRuler *Obj,NspTypeGtkVRuler *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -56890,10 +56110,10 @@ static char *gtkvruler_type_short_string(NspObject *v)
 
 NspGtkVRuler   *gtkvruler_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvruler_id) ) return ((NspGtkVRuler *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvruler_id)  == TRUE  ) return ((NspGtkVRuler *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvruler));
   return NULL;
@@ -56937,18 +56157,6 @@ NspGtkVRuler *gtkvruler_copy(NspGtkVRuler *self)
  * wrappers for the GtkVRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVRuler *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvruler is initialized * /
-  nsp_type_gtkvruler = new_type_gtkvruler(T_BASE);
-  if(( H = gtkruler_create(NVOID,(NspTypeBase *) nsp_type_gtkvruler)) == NULLGTKVRULER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvruler_new(Stack stack, int rhs, int opt, int lhs)
@@ -57028,6 +56236,12 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
       
   type->init = (init_func *) init_gtkvscale;
 
+  /* 
+   * GtkVScale interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvscale_id == 0 ) 
     {
       /* 
@@ -57055,7 +56269,7 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
 
 static int init_gtkvscale(NspGtkVScale *Obj,NspTypeGtkVScale *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -57107,10 +56321,10 @@ static char *gtkvscale_type_short_string(NspObject *v)
 
 NspGtkVScale   *gtkvscale_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvscale_id) ) return ((NspGtkVScale *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvscale_id)  == TRUE  ) return ((NspGtkVScale *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvscale));
   return NULL;
@@ -57154,18 +56368,6 @@ NspGtkVScale *gtkvscale_copy(NspGtkVScale *self)
  * wrappers for the GtkVScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVScale *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvscale is initialized * /
-  nsp_type_gtkvscale = new_type_gtkvscale(T_BASE);
-  if(( H = gtkscale_create(NVOID,(NspTypeBase *) nsp_type_gtkvscale)) == NULLGTKVSCALE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvscale_new(Stack stack, int rhs, int opt, int lhs)
@@ -57259,6 +56461,12 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
       
   type->init = (init_func *) init_gtkvscrollbar;
 
+  /* 
+   * GtkVScrollbar interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvscrollbar_id == 0 ) 
     {
       /* 
@@ -57286,7 +56494,7 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
 
 static int init_gtkvscrollbar(NspGtkVScrollbar *Obj,NspTypeGtkVScrollbar *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -57338,10 +56546,10 @@ static char *gtkvscrollbar_type_short_string(NspObject *v)
 
 NspGtkVScrollbar   *gtkvscrollbar_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvscrollbar_id) ) return ((NspGtkVScrollbar *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvscrollbar_id)  == TRUE  ) return ((NspGtkVScrollbar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvscrollbar));
   return NULL;
@@ -57385,18 +56593,6 @@ NspGtkVScrollbar *gtkvscrollbar_copy(NspGtkVScrollbar *self)
  * wrappers for the GtkVScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVScrollbar *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvscrollbar is initialized * /
-  nsp_type_gtkvscrollbar = new_type_gtkvscrollbar(T_BASE);
-  if(( H = gtkscrollbar_create(NVOID,(NspTypeBase *) nsp_type_gtkvscrollbar)) == NULLGTKVSCROLLBAR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvscrollbar_new(Stack stack, int rhs, int opt, int lhs)
@@ -57490,6 +56686,12 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
       
   type->init = (init_func *) init_gtkvseparator;
 
+  /* 
+   * GtkVSeparator interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkvseparator_id == 0 ) 
     {
       /* 
@@ -57517,7 +56719,7 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
 
 static int init_gtkvseparator(NspGtkVSeparator *Obj,NspTypeGtkVSeparator *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -57569,10 +56771,10 @@ static char *gtkvseparator_type_short_string(NspObject *v)
 
 NspGtkVSeparator   *gtkvseparator_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkvseparator_id) ) return ((NspGtkVSeparator *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkvseparator_id)  == TRUE  ) return ((NspGtkVSeparator *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkvseparator));
   return NULL;
@@ -57616,18 +56818,6 @@ NspGtkVSeparator *gtkvseparator_copy(NspGtkVSeparator *self)
  * wrappers for the GtkVSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkVSeparator *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkvseparator is initialized * /
-  nsp_type_gtkvseparator = new_type_gtkvseparator(T_BASE);
-  if(( H = gtkseparator_create(NVOID,(NspTypeBase *) nsp_type_gtkvseparator)) == NULLGTKVSEPARATOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkvseparator_new(Stack stack, int rhs, int opt, int lhs)
@@ -57707,6 +56897,12 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
       
   type->init = (init_func *) init_gtkwidget;
 
+  /* 
+   * GtkWidget interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkwidget_id == 0 ) 
     {
       /* 
@@ -57734,7 +56930,7 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
 
 static int init_gtkwidget(NspGtkWidget *Obj,NspTypeGtkWidget *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -57786,10 +56982,10 @@ static char *gtkwidget_type_short_string(NspObject *v)
 
 NspGtkWidget   *gtkwidget_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkwidget_id) ) return ((NspGtkWidget *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkwidget_id)  == TRUE  ) return ((NspGtkWidget *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkwidget));
   return NULL;
@@ -57834,18 +57030,6 @@ NspGtkWidget *gtkwidget_copy(NspGtkWidget *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkWidget *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkwidget is initialized * /
-  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if(( H = gtkobject_create(NVOID,(NspTypeBase *) nsp_type_gtkwidget)) == NULLGTKWIDGET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 560 "gtk.override"
 extern int int_gobj_create(Stack stack,int rhs,int opt,int lhs);
 static int
@@ -57854,7 +57038,7 @@ _wrap_gtkwidget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 57858 "gtk.c"
+#line 57042 "gtk.c"
 
 
 #line 675 "gtk.override"
@@ -57869,7 +57053,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 57873 "gtk.c"
+#line 57057 "gtk.c"
 
 
 static int _wrap_gtk_drag_check_threshold(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57978,7 +57162,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 57982 "gtk.c"
+#line 57166 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_set_proxy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58028,7 +57212,7 @@ _wrap_gtk_drag_dest_find_target(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 58032 "gtk.c"
+#line 57216 "gtk.c"
 
 
 #line 5232 "gtk.override"
@@ -58061,7 +57245,7 @@ _wrap_gtk_drag_dest_get_target_list(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 58065 "gtk.c"
+#line 57249 "gtk.c"
 
 
 #line 5263 "gtk.override"
@@ -58084,7 +57268,7 @@ _wrap_gtk_drag_dest_set_target_list(NspGObject *self,Stack stack,int rhs,int opt
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 58088 "gtk.c"
+#line 57272 "gtk.c"
 
 
 #line 5284 "gtk.override"
@@ -58111,7 +57295,7 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 58115 "gtk.c"
+#line 57299 "gtk.c"
 
 
 static int _wrap_gtk_drag_source_unset(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58186,7 +57370,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 58190 "gtk.c"
+#line 57374 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_add_text_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58306,7 +57490,7 @@ _wrap_gtk_selection_add_targets(NspGObject *self,Stack stack,int rhs,int opt,int
   g_free(targets);
   return 0;
 }
-#line 58310 "gtk.c"
+#line 57494 "gtk.c"
 
 
 static int _wrap_gtk_selection_clear_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58494,7 +57678,7 @@ _wrap_gtk_widget_size_request(NspGObject *self,Stack stack,int rhs,int opt,int l
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58498 "gtk.c"
+#line 57682 "gtk.c"
 
 
 static int _wrap_gtk_widget_size_allocate(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58519,7 +57703,7 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58523 "gtk.c"
+#line 57707 "gtk.c"
 
 
 #line 622 "gtk.override"
@@ -58574,7 +57758,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 58578 "gtk.c"
+#line 57762 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58737,7 +57921,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else 
     return RET_BUG;
 }
-#line 58741 "gtk.c"
+#line 57925 "gtk.c"
 
 
 static int _wrap_gtk_widget_freeze_child_notify(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58899,7 +58083,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 58903 "gtk.c"
+#line 58087 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59016,7 +58200,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 59020 "gtk.c"
+#line 58204 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59146,7 +58330,7 @@ _wrap_gtk_widget_get_pointer(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if (  nsp_move_doubles(stack,1,1,2,(double) x, (double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 59150 "gtk.c"
+#line 58334 "gtk.c"
 
 
 static int _wrap_gtk_widget_is_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59190,7 +58374,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 59194 "gtk.c"
+#line 58378 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59494,7 +58678,7 @@ _wrap_gtk_widget_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, result);
   return 1;
 }
-#line 59498 "gtk.c"
+#line 58682 "gtk.c"
 
 
 #line 770 "gtk.override"
@@ -59513,7 +58697,7 @@ _wrap_gtk_widget_class_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,result);
   return 1;
 }
-#line 59517 "gtk.c"
+#line 58701 "gtk.c"
 
 
 static int _wrap_gtk_widget_list_mnemonic_labels(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59823,6 +59007,12 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
       
   type->init = (init_func *) init_gtkwindow;
 
+  /* 
+   * GtkWindow interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkwindow_id == 0 ) 
     {
       /* 
@@ -59850,7 +59040,7 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
 
 static int init_gtkwindow(NspGtkWindow *Obj,NspTypeGtkWindow *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -59902,10 +59092,10 @@ static char *gtkwindow_type_short_string(NspObject *v)
 
 NspGtkWindow   *gtkwindow_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkwindow_id) ) return ((NspGtkWindow *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkwindow_id)  == TRUE  ) return ((NspGtkWindow *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkwindow));
   return NULL;
@@ -59949,18 +59139,6 @@ NspGtkWindow *gtkwindow_copy(NspGtkWindow *self)
  * wrappers for the GtkWindow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkWindow *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkwindow is initialized * /
-  nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
-  if(( H = gtkbin_create(NVOID,(NspTypeBase *) nsp_type_gtkwindow)) == NULLGTKWINDOW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkwindow_new(Stack stack, int rhs, int opt, int lhs)
@@ -60333,7 +59511,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 60337 "gtk.c"
+#line 59515 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60443,7 +59621,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
-#line 60447 "gtk.c"
+#line 59625 "gtk.c"
 
 
 #line 7183 "gtk.override"
@@ -60456,7 +59634,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 60460 "gtk.c"
+#line 59638 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60719,7 +59897,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 60723 "gtk.c"
+#line 59901 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60743,7 +59921,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 60747 "gtk.c"
+#line 59925 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60766,7 +59944,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 60770 "gtk.c"
+#line 59948 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -61260,6 +60438,12 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
       
   type->init = (init_func *) init_gtkwindowgroup;
 
+  /* 
+   * GtkWindowGroup interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gtkwindowgroup_id == 0 ) 
     {
       /* 
@@ -61287,7 +60471,7 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
 
 static int init_gtkwindowgroup(NspGtkWindowGroup *Obj,NspTypeGtkWindowGroup *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -61339,10 +60523,10 @@ static char *gtkwindowgroup_type_short_string(NspObject *v)
 
 NspGtkWindowGroup   *gtkwindowgroup_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gtkwindowgroup_id) ) return ((NspGtkWindowGroup *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkwindowgroup_id)  == TRUE  ) return ((NspGtkWindowGroup *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkwindowgroup));
   return NULL;
@@ -61386,18 +60570,6 @@ NspGtkWindowGroup *gtkwindowgroup_copy(NspGtkWindowGroup *self)
  * wrappers for the GtkWindowGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkWindowGroup *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkwindowgroup is initialized * /
-  nsp_type_gtkwindowgroup = new_type_gtkwindowgroup(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gtkwindowgroup)) == NULLGTKWINDOWGROUP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gtkwindowgroup_new(Stack stack, int rhs, int opt, int lhs)
@@ -61489,7 +60661,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 61493 "gtk.c"
+#line 60665 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
@@ -61817,7 +60989,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 61821 "gtk.c"
+#line 60993 "gtk.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
@@ -62127,7 +61299,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 62131 "gtk.c"
+#line 61303 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs)
@@ -62403,7 +61575,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 62407 "gtk.c"
+#line 61579 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
@@ -62433,7 +61605,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 62437 "gtk.c"
+#line 61609 "gtk.c"
 
 
 #line 3781 "gtk.override"
@@ -62449,7 +61621,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 62453 "gtk.c"
+#line 61625 "gtk.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
@@ -62622,7 +61794,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 62626 "gtk.c"
+#line 61798 "gtk.c"
 
 
 #line 6162 "gtk.override"
@@ -62635,7 +61807,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 62639 "gtk.c"
+#line 61811 "gtk.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
@@ -62832,7 +62004,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 62836 "gtk.c"
+#line 62008 "gtk.c"
 
 
 #line 6338 "gtk.override"
@@ -62852,7 +62024,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 62856 "gtk.c"
+#line 62028 "gtk.c"
 
 
 #line 6324 "gtk.override"
@@ -62868,7 +62040,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 62872 "gtk.c"
+#line 62044 "gtk.c"
 
 
 int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
@@ -63155,7 +62327,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 63159 "gtk.c"
+#line 62331 "gtk.c"
 
 
 int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs)

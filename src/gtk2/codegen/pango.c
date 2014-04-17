@@ -112,6 +112,12 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
       
   type->init = (init_func *) init_pangoattrlist;
 
+  /* 
+   * PangoAttrList interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangoattrlist_id == 0 ) 
     {
       /* 
@@ -139,7 +145,7 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
 
 static int init_pangoattrlist(NspPangoAttrList *Obj,NspTypePangoAttrList *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -191,10 +197,10 @@ static char *pangoattrlist_type_short_string(NspObject *v)
 
 NspPangoAttrList   *pangoattrlist_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangoattrlist_id) ) return ((NspPangoAttrList *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangoattrlist_id)  == TRUE  ) return ((NspPangoAttrList *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangoattrlist));
   return NULL;
@@ -290,7 +296,7 @@ _wrap_pango_attr_list_insert(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_insert(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 294 "pango.c"
+#line 300 "pango.c"
 
 
 #line 336 "pango.override"
@@ -307,7 +313,7 @@ _wrap_pango_attr_list_insert_before(NspObject *self, Stack stack,int rhs,int opt
   pango_attr_list_insert_before(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 311 "pango.c"
+#line 317 "pango.c"
 
 
 #line 351 "pango.override"
@@ -324,7 +330,7 @@ _wrap_pango_attr_list_change(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_change(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 328 "pango.c"
+#line 334 "pango.c"
 
 
 static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int rhs,int opt,int lhs)
@@ -417,6 +423,12 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
       
   type->init = (init_func *) init_pangocolor;
 
+  /* 
+   * PangoColor interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangocolor_id == 0 ) 
     {
       /* 
@@ -444,7 +456,7 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
 
 static int init_pangocolor(NspPangoColor *Obj,NspTypePangoColor *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -496,10 +508,10 @@ static char *pangocolor_type_short_string(NspObject *v)
 
 NspPangoColor   *pangocolor_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangocolor_id) ) return ((NspPangoColor *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangocolor_id)  == TRUE  ) return ((NspPangoColor *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangocolor));
   return NULL;
@@ -572,7 +584,7 @@ _wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 576 "pango.c"
+#line 588 "pango.c"
 
 
 static int _wrap_pango_color_parse(NspPangoColor *self,Stack stack,int rhs,int opt,int lhs)
@@ -682,6 +694,12 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
       
   type->init = (init_func *) init_pangofontdescription;
 
+  /* 
+   * PangoFontDescription interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontdescription_id == 0 ) 
     {
       /* 
@@ -709,7 +727,7 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
 
 static int init_pangofontdescription(NspPangoFontDescription *Obj,NspTypePangoFontDescription *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -761,10 +779,10 @@ static char *pangofontdescription_type_short_string(NspObject *v)
 
 NspPangoFontDescription   *pangofontdescription_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontdescription_id) ) return ((NspPangoFontDescription *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontdescription_id)  == TRUE  ) return ((NspPangoFontDescription *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontdescription));
   return NULL;
@@ -847,7 +865,7 @@ _wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 851 "pango.c"
+#line 869 "pango.c"
 
 
 #line 416 "pango.override"
@@ -858,7 +876,7 @@ _wrap_pango_font_description_copy(NspObject *self)
 				    nspg_boxed_get(self, PangoFontDescription),
 				    TRUE, TRUE, NULL);
 }
-#line 862 "pango.c"
+#line 880 "pango.c"
 
 
 static int _wrap_pango_font_description_copy_static(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
@@ -1191,6 +1209,12 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
       
   type->init = (init_func *) init_pangofontmetrics;
 
+  /* 
+   * PangoFontMetrics interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontmetrics_id == 0 ) 
     {
       /* 
@@ -1218,7 +1242,7 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
 
 static int init_pangofontmetrics(NspPangoFontMetrics *Obj,NspTypePangoFontMetrics *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1270,10 +1294,10 @@ static char *pangofontmetrics_type_short_string(NspObject *v)
 
 NspPangoFontMetrics   *pangofontmetrics_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontmetrics_id) ) return ((NspPangoFontMetrics *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontmetrics_id)  == TRUE  ) return ((NspPangoFontMetrics *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontmetrics));
   return NULL;
@@ -1434,6 +1458,12 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
       
   type->init = (init_func *) init_pangoglyphstring;
 
+  /* 
+   * PangoGlyphString interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangoglyphstring_id == 0 ) 
     {
       /* 
@@ -1461,7 +1491,7 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
 
 static int init_pangoglyphstring(NspPangoGlyphString *Obj,NspTypePangoGlyphString *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1513,10 +1543,10 @@ static char *pangoglyphstring_type_short_string(NspObject *v)
 
 NspPangoGlyphString   *pangoglyphstring_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangoglyphstring_id) ) return ((NspPangoGlyphString *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangoglyphstring_id)  == TRUE  ) return ((NspPangoGlyphString *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangoglyphstring));
   return NULL;
@@ -1633,7 +1663,7 @@ _wrap_pango_glyph_string_extents(NspObject *self, Stack stack,int rhs,int opt,in
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1637 "pango.c"
+#line 1667 "pango.c"
 
 
 #line 530 "pango.override"
@@ -1663,7 +1693,7 @@ _wrap_pango_glyph_string_extents_range(NspObject *self, Stack stack,int rhs,int 
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1667 "pango.c"
+#line 1697 "pango.c"
 
 
 #line 558 "pango.override"
@@ -1689,7 +1719,7 @@ _wrap_pango_glyph_string_get_logical_widths(NspObject *self, Stack stack,int rhs
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 1693 "pango.c"
+#line 1723 "pango.c"
 
 
 static NspMethods pangoglyphstring_methods[] = {
@@ -1776,6 +1806,12 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
       
   type->init = (init_func *) init_pangolanguage;
 
+  /* 
+   * PangoLanguage interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangolanguage_id == 0 ) 
     {
       /* 
@@ -1803,7 +1839,7 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
 
 static int init_pangolanguage(NspPangoLanguage *Obj,NspTypePangoLanguage *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1855,10 +1891,10 @@ static char *pangolanguage_type_short_string(NspObject *v)
 
 NspPangoLanguage   *pangolanguage_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangolanguage_id) ) return ((NspPangoLanguage *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangolanguage_id)  == TRUE  ) return ((NspPangoLanguage *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangolanguage));
   return NULL;
@@ -1995,6 +2031,12 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
       
   type->init = (init_func *) init_pangotabarray;
 
+  /* 
+   * PangoTabArray interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangotabarray_id == 0 ) 
     {
       /* 
@@ -2022,7 +2064,7 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
 
 static int init_pangotabarray(NspPangoTabArray *Obj,NspTypePangoTabArray *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2074,10 +2116,10 @@ static char *pangotabarray_type_short_string(NspObject *v)
 
 NspPangoTabArray   *pangotabarray_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangotabarray_id) ) return ((NspPangoTabArray *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangotabarray_id)  == TRUE  ) return ((NspPangoTabArray *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangotabarray));
   return NULL;
@@ -2207,7 +2249,7 @@ _wrap_pango_tab_array_get_tab(NspObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,2,(double)alignment,(double) location)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 2211 "pango.c"
+#line 2253 "pango.c"
 
 
 #line 819 "pango.override"
@@ -2230,7 +2272,7 @@ _wrap_pango_tab_array_get_tabs(NspObject *self, Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 2234 "pango.c"
+#line 2276 "pango.c"
 
 
 static int _wrap_pango_tab_array_get_positions_in_pixels(NspPangoTabArray *self,Stack stack,int rhs,int opt,int lhs)
@@ -2316,6 +2358,12 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
       
   type->init = (init_func *) init_pangocontext;
 
+  /* 
+   * PangoContext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangocontext_id == 0 ) 
     {
       /* 
@@ -2343,7 +2391,7 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
 
 static int init_pangocontext(NspPangoContext *Obj,NspTypePangoContext *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2395,10 +2443,10 @@ static char *pangocontext_type_short_string(NspObject *v)
 
 NspPangoContext   *pangocontext_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangocontext_id) ) return ((NspPangoContext *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangocontext_id)  == TRUE  ) return ((NspPangoContext *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangocontext));
   return NULL;
@@ -2443,18 +2491,6 @@ NspPangoContext *pangocontext_copy(NspPangoContext *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoContext *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangocontext is initialized * /
-  nsp_type_pangocontext = new_type_pangocontext(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangocontext)) == NULLPANGOCONTEXT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 425 "pango.override"
 static  NspObject *
 _wrap_pango_context_list_families(NspGObject *self)
@@ -2474,7 +2510,7 @@ _wrap_pango_context_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 2478 "pango.c"
+#line 2514 "pango.c"
 
 
 static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -2706,6 +2742,12 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
       
   type->init = (init_func *) init_pangofont;
 
+  /* 
+   * PangoFont interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofont_id == 0 ) 
     {
       /* 
@@ -2733,7 +2775,7 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
 
 static int init_pangofont(NspPangoFont *Obj,NspTypePangoFont *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2785,10 +2827,10 @@ static char *pangofont_type_short_string(NspObject *v)
 
 NspPangoFont   *pangofont_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofont_id) ) return ((NspPangoFont *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofont_id)  == TRUE  ) return ((NspPangoFont *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofont));
   return NULL;
@@ -2832,18 +2874,6 @@ NspPangoFont *pangofont_copy(NspPangoFont *self)
  * wrappers for the PangoFont
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoFont *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangofont is initialized * /
-  nsp_type_pangofont = new_type_pangofont(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangofont)) == NULLPANGOFONT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_pango_font_describe(NspPangoFont *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2897,7 +2927,7 @@ _wrap_pango_font_get_glyph_extents(NspGObject *self, Stack stack,int rhs,int opt
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 2901 "pango.c"
+#line 2931 "pango.c"
 
 
 static NspMethods pangofont_methods[] = {
@@ -2971,6 +3001,12 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
       
   type->init = (init_func *) init_pangofontface;
 
+  /* 
+   * PangoFontFace interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontface_id == 0 ) 
     {
       /* 
@@ -2998,7 +3034,7 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
 
 static int init_pangofontface(NspPangoFontFace *Obj,NspTypePangoFontFace *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3050,10 +3086,10 @@ static char *pangofontface_type_short_string(NspObject *v)
 
 NspPangoFontFace   *pangofontface_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontface_id) ) return ((NspPangoFontFace *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontface_id)  == TRUE  ) return ((NspPangoFontFace *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontface));
   return NULL;
@@ -3097,18 +3133,6 @@ NspPangoFontFace *pangofontface_copy(NspPangoFontFace *self)
  * wrappers for the PangoFontFace
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoFontFace *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangofontface is initialized * /
-  nsp_type_pangofontface = new_type_pangofontface(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangofontface)) == NULLPANGOFONTFACE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_pango_font_face_describe(NspPangoFontFace *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -3200,6 +3224,12 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
       
   type->init = (init_func *) init_pangofontfamily;
 
+  /* 
+   * PangoFontFamily interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontfamily_id == 0 ) 
     {
       /* 
@@ -3227,7 +3257,7 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
 
 static int init_pangofontfamily(NspPangoFontFamily *Obj,NspTypePangoFontFamily *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3279,10 +3309,10 @@ static char *pangofontfamily_type_short_string(NspObject *v)
 
 NspPangoFontFamily   *pangofontfamily_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontfamily_id) ) return ((NspPangoFontFamily *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontfamily_id)  == TRUE  ) return ((NspPangoFontFamily *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontfamily));
   return NULL;
@@ -3327,18 +3357,6 @@ NspPangoFontFamily *pangofontfamily_copy(NspPangoFontFamily *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoFontFamily *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangofontfamily is initialized * /
-  nsp_type_pangofontfamily = new_type_pangofontfamily(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangofontfamily)) == NULLPANGOFONTFAMILY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 465 "pango.override"
 static  NspObject *
 _wrap_pango_font_family_list_faces(NspGObject *self)
@@ -3358,7 +3376,7 @@ _wrap_pango_font_family_list_faces(NspGObject *self)
   g_free(faces);
   return ret;
 }
-#line 3362 "pango.c"
+#line 3380 "pango.c"
 
 
 static int _wrap_pango_font_family_get_name(NspPangoFontFamily *self,Stack stack,int rhs,int opt,int lhs)
@@ -3439,6 +3457,12 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
       
   type->init = (init_func *) init_pangofontmap;
 
+  /* 
+   * PangoFontMap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontmap_id == 0 ) 
     {
       /* 
@@ -3466,7 +3490,7 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
 
 static int init_pangofontmap(NspPangoFontMap *Obj,NspTypePangoFontMap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3518,10 +3542,10 @@ static char *pangofontmap_type_short_string(NspObject *v)
 
 NspPangoFontMap   *pangofontmap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontmap_id) ) return ((NspPangoFontMap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontmap_id)  == TRUE  ) return ((NspPangoFontMap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontmap));
   return NULL;
@@ -3565,18 +3589,6 @@ NspPangoFontMap *pangofontmap_copy(NspPangoFontMap *self)
  * wrappers for the PangoFontMap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoFontMap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangofontmap is initialized * /
-  nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangofontmap)) == NULLPANGOFONTMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -3645,7 +3657,7 @@ _wrap_pango_font_map_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 3649 "pango.c"
+#line 3661 "pango.c"
 
 
 static NspMethods pangofontmap_methods[] = {
@@ -3719,6 +3731,12 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
       
   type->init = (init_func *) init_pangofontset;
 
+  /* 
+   * PangoFontset interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangofontset_id == 0 ) 
     {
       /* 
@@ -3746,7 +3764,7 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
 
 static int init_pangofontset(NspPangoFontset *Obj,NspTypePangoFontset *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3798,10 +3816,10 @@ static char *pangofontset_type_short_string(NspObject *v)
 
 NspPangoFontset   *pangofontset_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangofontset_id) ) return ((NspPangoFontset *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangofontset_id)  == TRUE  ) return ((NspPangoFontset *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangofontset));
   return NULL;
@@ -3845,18 +3863,6 @@ NspPangoFontset *pangofontset_copy(NspPangoFontset *self)
  * wrappers for the PangoFontset
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoFontset *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangofontset is initialized * /
-  nsp_type_pangofontset = new_type_pangofontset(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangofontset)) == NULLPANGOFONTSET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_pango_fontset_get_font(NspPangoFontset *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -3954,6 +3960,12 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
       
   type->init = (init_func *) init_pangolayout;
 
+  /* 
+   * PangoLayout interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_pangolayout_id == 0 ) 
     {
       /* 
@@ -3981,7 +3993,7 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
 
 static int init_pangolayout(NspPangoLayout *Obj,NspTypePangoLayout *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4033,10 +4045,10 @@ static char *pangolayout_type_short_string(NspObject *v)
 
 NspPangoLayout   *pangolayout_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_pangolayout_id) ) return ((NspPangoLayout *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_pangolayout_id)  == TRUE  ) return ((NspPangoLayout *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_pangolayout));
   return NULL;
@@ -4080,18 +4092,6 @@ NspPangoLayout *pangolayout_copy(NspPangoLayout *self)
  * wrappers for the PangoLayout
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPangoLayout *H;
-  CheckRhs(0,0);
-  / * want to be sure that type pangolayout is initialized * /
-  nsp_type_pangolayout = new_type_pangolayout(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_pangolayout)) == NULLPANGOLAYOUT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_pangolayout_new(Stack stack, int rhs, int opt, int lhs)

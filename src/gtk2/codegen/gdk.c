@@ -128,6 +128,12 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
       
   type->init = (init_func *) init_gdkevent;
 
+  /* 
+   * GdkEvent interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkevent_id == 0 ) 
     {
       /* 
@@ -155,7 +161,7 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
 
 static int init_gdkevent(NspGdkEvent *Obj,NspTypeGdkEvent *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -207,10 +213,10 @@ static char *gdkevent_type_short_string(NspObject *v)
 
 NspGdkEvent   *gdkevent_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkevent_id) ) return ((NspGdkEvent *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkevent_id)  == TRUE  ) return ((NspGdkEvent *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkevent));
   return NULL;
@@ -327,7 +333,7 @@ _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;      
 }
-#line 331 "gdk.c"
+#line 337 "gdk.c"
 
 
 #line 1082 "gdk.override"
@@ -341,7 +347,7 @@ _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,in
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 345 "gdk.c"
+#line 351 "gdk.c"
 
 
 #line 1054 "gdk.override"
@@ -359,7 +365,7 @@ _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,n,(double) value) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 363 "gdk.c"
+#line 369 "gdk.c"
 
 
 static NspMethods gdkevent_methods[] = {
@@ -718,7 +724,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   Scierror("Error: Event attributes not found \n");
   return NULL;
 }
-#line 722 "gdk.c"
+#line 728 "gdk.c"
 
 
 
@@ -779,6 +785,12 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
       
   type->init = (init_func *) init_gdkfont;
 
+  /* 
+   * GdkFont interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkfont_id == 0 ) 
     {
       /* 
@@ -806,7 +818,7 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
 
 static int init_gdkfont(NspGdkFont *Obj,NspTypeGdkFont *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -858,10 +870,10 @@ static char *gdkfont_type_short_string(NspObject *v)
 
 NspGdkFont   *gdkfont_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkfont_id) ) return ((NspGdkFont *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkfont_id)  == TRUE  ) return ((NspGdkFont *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkfont));
   return NULL;
@@ -981,7 +993,7 @@ static int _wrap_gdk_char_width(NspGdkFont *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 985 "gdk.c"
+#line 997 "gdk.c"
 
 
 static int _wrap_gdk_string_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1023,7 +1035,7 @@ static int _wrap_gdk_char_measure(NspGdkFont *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 1027 "gdk.c"
+#line 1039 "gdk.c"
 
 
 static int _wrap_gdk_string_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1066,7 +1078,7 @@ static int _wrap_gdk_char_height(NspGdkFont *self,Stack stack,int rhs,int opt,in
   return 1; 
 }
 
-#line 1070 "gdk.c"
+#line 1082 "gdk.c"
 
 
 #line 529 "gdk.override"
@@ -1089,7 +1101,7 @@ _wrap_gdk_text_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
 			(double) ascent, (double) descent) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 1093 "gdk.c"
+#line 1105 "gdk.c"
 
 
 static int _wrap_gdk_string_extents(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1210,6 +1222,12 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
       
   type->init = (init_func *) init_gdkcolor;
 
+  /* 
+   * GdkColor interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkcolor_id == 0 ) 
     {
       /* 
@@ -1237,7 +1255,7 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
 
 static int init_gdkcolor(NspGdkColor *Obj,NspTypeGdkColor *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1289,10 +1307,10 @@ static char *gdkcolor_type_short_string(NspObject *v)
 
 NspGdkColor   *gdkcolor_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkcolor_id) ) return ((NspGdkColor *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkcolor_id)  == TRUE  ) return ((NspGdkColor *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkcolor));
   return NULL;
@@ -1366,7 +1384,7 @@ _wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1370 "gdk.c"
+#line 1388 "gdk.c"
 
 
 static NspMethods *gdkcolor_get_methods(void) { return NULL;};
@@ -1443,7 +1461,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   return OK;
 }
 
-#line 1447 "gdk.c"
+#line 1465 "gdk.c"
 
 
 
@@ -1504,6 +1522,12 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
       
   type->init = (init_func *) init_gdkcursor;
 
+  /* 
+   * GdkCursor interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkcursor_id == 0 ) 
     {
       /* 
@@ -1531,7 +1555,7 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
 
 static int init_gdkcursor(NspGdkCursor *Obj,NspTypeGdkCursor *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1583,10 +1607,10 @@ static char *gdkcursor_type_short_string(NspObject *v)
 
 NspGdkCursor   *gdkcursor_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkcursor_id) ) return ((NspGdkCursor *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkcursor_id)  == TRUE  ) return ((NspGdkCursor *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkcursor));
   return NULL;
@@ -1704,7 +1728,7 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) nsp_ret);
   return 1;
 }
-#line 1708 "gdk.c"
+#line 1732 "gdk.c"
 
 
 static NspMethods *gdkcursor_get_methods(void) { return NULL;};
@@ -1782,6 +1806,12 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
       
   type->init = (init_func *) init_gdkrectangle;
 
+  /* 
+   * GdkRectangle interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkrectangle_id == 0 ) 
     {
       /* 
@@ -1809,7 +1839,7 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
 
 static int init_gdkrectangle(NspGdkRectangle *Obj,NspTypeGdkRectangle *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -1861,10 +1891,10 @@ static char *gdkrectangle_type_short_string(NspObject *v)
 
 NspGdkRectangle   *gdkrectangle_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkrectangle_id) ) return ((NspGdkRectangle *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkrectangle_id)  == TRUE  ) return ((NspGdkRectangle *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkrectangle));
   return NULL;
@@ -1960,7 +1990,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
-#line 1964 "gdk.c"
+#line 1994 "gdk.c"
 
 
 #line 2199 "gdk.override"
@@ -1977,7 +2007,7 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1981 "gdk.c"
+#line 2011 "gdk.c"
 
 
 #line 2214 "gdk.override"
@@ -1994,7 +2024,7 @@ _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1998 "gdk.c"
+#line 2028 "gdk.c"
 
 
 static NspMethods gdkrectangle_methods[] = {
@@ -2102,6 +2132,12 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
       
   type->init = (init_func *) init_gdkcolormap;
 
+  /* 
+   * GdkColormap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkcolormap_id == 0 ) 
     {
       /* 
@@ -2129,7 +2165,7 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
 
 static int init_gdkcolormap(NspGdkColormap *Obj,NspTypeGdkColormap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2181,10 +2217,10 @@ static char *gdkcolormap_type_short_string(NspObject *v)
 
 NspGdkColormap   *gdkcolormap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkcolormap_id) ) return ((NspGdkColormap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkcolormap_id)  == TRUE  ) return ((NspGdkColormap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkcolormap));
   return NULL;
@@ -2228,18 +2264,6 @@ NspGdkColormap *gdkcolormap_copy(NspGdkColormap *self)
  * wrappers for the GdkColormap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkColormap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkcolormap is initialized * /
-  nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkcolormap)) == NULLGDKCOLORMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
@@ -2322,7 +2346,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
   }
   return 0;
 }
-#line 2326 "gdk.c"
+#line 2350 "gdk.c"
 
 
 static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2379,7 +2403,7 @@ _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: use GdkColormap.alloc_color\n"); 
   return RET_BUG;
 }
-#line 2383 "gdk.c"
+#line 2407 "gdk.c"
 
 
 static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2474,6 +2498,12 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
       
   type->init = (init_func *) init_gdkdevice;
 
+  /* 
+   * GdkDevice interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkdevice_id == 0 ) 
     {
       /* 
@@ -2501,7 +2531,7 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
 
 static int init_gdkdevice(NspGdkDevice *Obj,NspTypeGdkDevice *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -2553,10 +2583,10 @@ static char *gdkdevice_type_short_string(NspObject *v)
 
 NspGdkDevice   *gdkdevice_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkdevice_id) ) return ((NspGdkDevice *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkdevice_id)  == TRUE  ) return ((NspGdkDevice *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkdevice));
   return NULL;
@@ -2600,18 +2630,6 @@ NspGdkDevice *gdkdevice_copy(NspGdkDevice *self)
  * wrappers for the GdkDevice
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkDevice *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkdevice is initialized * /
-  nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkdevice)) == NULLGDKDEVICE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_device_set_source(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2687,7 +2705,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
     if (( nsp_move_double(stack,2,(double) mask))==FAIL) return RET_BUG;
   return 2;
 }
-#line 2691 "gdk.c"
+#line 2709 "gdk.c"
 
 
 #line 1154 "gdk.override"
@@ -2730,7 +2748,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   Scierror("Error: function _wrap_gdk_device_get_history not finished\n");  
   return RET_BUG;
 }
-#line 2734 "gdk.c"
+#line 2752 "gdk.c"
 
 
 #line 1195 "gdk.override"
@@ -2760,7 +2778,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     }
   return 1;
 }
-#line 2764 "gdk.c"
+#line 2782 "gdk.c"
 
 
 static NspMethods gdkdevice_methods[] = {
@@ -2835,7 +2853,7 @@ _wrap_gdk_device__get_axes(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2839 "gdk.c"
+#line 2857 "gdk.c"
 static NspObject *_wrap_gdk_device__get_num_keys(NspObject *self,char *attr)
 {
   int ret;
@@ -2859,7 +2877,7 @@ _wrap_gdk_device__get_keys(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2863 "gdk.c"
+#line 2881 "gdk.c"
 static AttrTab gdkdevice_attrs[] = {
   { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2930,6 +2948,12 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
       
   type->init = (init_func *) init_gdkdisplay;
 
+  /* 
+   * GdkDisplay interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkdisplay_id == 0 ) 
     {
       /* 
@@ -2957,7 +2981,7 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
 
 static int init_gdkdisplay(NspGdkDisplay *Obj,NspTypeGdkDisplay *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3009,10 +3033,10 @@ static char *gdkdisplay_type_short_string(NspObject *v)
 
 NspGdkDisplay   *gdkdisplay_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkdisplay_id) ) return ((NspGdkDisplay *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkdisplay_id)  == TRUE  ) return ((NspGdkDisplay *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkdisplay));
   return NULL;
@@ -3056,18 +3080,6 @@ NspGdkDisplay *gdkdisplay_copy(NspGdkDisplay *self)
  * wrappers for the GdkDisplay
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkDisplay *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkdisplay is initialized * /
-  nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkdisplay)) == NULLGDKDISPLAY) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_display_get_name(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -3322,6 +3334,12 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
       
   type->init = (init_func *) init_gdkdisplaymanager;
 
+  /* 
+   * GdkDisplayManager interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkdisplaymanager_id == 0 ) 
     {
       /* 
@@ -3349,7 +3367,7 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
 
 static int init_gdkdisplaymanager(NspGdkDisplayManager *Obj,NspTypeGdkDisplayManager *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3401,10 +3419,10 @@ static char *gdkdisplaymanager_type_short_string(NspObject *v)
 
 NspGdkDisplayManager   *gdkdisplaymanager_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkdisplaymanager_id) ) return ((NspGdkDisplayManager *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkdisplaymanager_id)  == TRUE  ) return ((NspGdkDisplayManager *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkdisplaymanager));
   return NULL;
@@ -3448,18 +3466,6 @@ NspGdkDisplayManager *gdkdisplaymanager_copy(NspGdkDisplayManager *self)
  * wrappers for the GdkDisplayManager
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkDisplayManager *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkdisplaymanager is initialized * /
-  nsp_type_gdkdisplaymanager = new_type_gdkdisplaymanager(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkdisplaymanager)) == NULLGDKDISPLAYMANAGER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gdkdisplaymanager_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -3525,6 +3531,12 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
       
   type->init = (init_func *) init_gdkdragcontext;
 
+  /* 
+   * GdkDragContext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkdragcontext_id == 0 ) 
     {
       /* 
@@ -3552,7 +3564,7 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
 
 static int init_gdkdragcontext(NspGdkDragContext *Obj,NspTypeGdkDragContext *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -3604,10 +3616,10 @@ static char *gdkdragcontext_type_short_string(NspObject *v)
 
 NspGdkDragContext   *gdkdragcontext_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkdragcontext_id) ) return ((NspGdkDragContext *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkdragcontext_id)  == TRUE  ) return ((NspGdkDragContext *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkdragcontext));
   return NULL;
@@ -3651,18 +3663,6 @@ NspGdkDragContext *gdkdragcontext_copy(NspGdkDragContext *self)
  * wrappers for the GdkDragContext
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkDragContext *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkdragcontext is initialized * /
-  nsp_type_gdkdragcontext = new_type_gdkdragcontext(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkdragcontext)) == NULLGDKDRAGCONTEXT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkdragcontext_new(Stack stack, int rhs, int opt, int lhs)
@@ -4037,6 +4037,12 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
       
   type->init = (init_func *) init_gdkdrawable;
 
+  /* 
+   * GdkDrawable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkdrawable_id == 0 ) 
     {
       /* 
@@ -4064,7 +4070,7 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
 
 static int init_gdkdrawable(NspGdkDrawable *Obj,NspTypeGdkDrawable *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4116,10 +4122,10 @@ static char *gdkdrawable_type_short_string(NspObject *v)
 
 NspGdkDrawable   *gdkdrawable_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkdrawable_id) ) return ((NspGdkDrawable *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkdrawable_id)  == TRUE  ) return ((NspGdkDrawable *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkdrawable));
   return NULL;
@@ -4164,18 +4170,6 @@ NspGdkDrawable *gdkdrawable_copy(NspGdkDrawable *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkDrawable *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkdrawable is initialized * /
-  nsp_type_gdkdrawable = new_type_gdkdrawable(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkdrawable)) == NULLGDKDRAWABLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 1598 "gdk.override"
 static int
 _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -4187,7 +4181,7 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width, (double) height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4191 "gdk.c"
+#line 4185 "gdk.c"
 
 
 static int _wrap_gdk_drawable_set_colormap(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4295,7 +4289,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4299 "gdk.c"
+#line 4293 "gdk.c"
 
 
 static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4338,7 +4332,7 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 		GDK_GC(gc->obj), x, y, text, strlen(text));
   return 0;
 }
-#line 4342 "gdk.c"
+#line 4336 "gdk.c"
 
 
 static int _wrap_gdk_draw_drawable(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4388,7 +4382,7 @@ _wrap_gdk_draw_points(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4392 "gdk.c"
+#line 4386 "gdk.c"
 
 
 #line 214 "gdk.override"
@@ -4420,7 +4414,7 @@ _wrap_gdk_draw_segments(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(segs);
   return 0;
 }
-#line 4424 "gdk.c"
+#line 4418 "gdk.c"
 
 
 #line 244 "gdk.override"
@@ -4446,7 +4440,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4450 "gdk.c"
+#line 4444 "gdk.c"
 
 
 static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4546,7 +4540,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");
   return RET_BUG;
 }
-#line 4550 "gdk.c"
+#line 4544 "gdk.c"
 
 
 #line 311 "gdk.override"
@@ -4589,7 +4583,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4593 "gdk.c"
+#line 4587 "gdk.c"
 
 
 #line 354 "gdk.override"
@@ -4631,7 +4625,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4635 "gdk.c"
+#line 4629 "gdk.c"
 
 
 static NspMethods gdkdrawable_methods[] = {
@@ -4726,6 +4720,12 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
       
   type->init = (init_func *) init_gdkwindow;
 
+  /* 
+   * GdkWindow interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkwindow_id == 0 ) 
     {
       /* 
@@ -4753,7 +4753,7 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
 
 static int init_gdkwindow(NspGdkWindow *Obj,NspTypeGdkWindow *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -4805,10 +4805,10 @@ static char *gdkwindow_type_short_string(NspObject *v)
 
 NspGdkWindow   *gdkwindow_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkwindow_id) ) return ((NspGdkWindow *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkwindow_id)  == TRUE  ) return ((NspGdkWindow *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkwindow));
   return NULL;
@@ -4853,18 +4853,6 @@ NspGdkWindow *gdkwindow_copy(NspGdkWindow *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkWindow *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkwindow is initialized * /
-  nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  if(( H = gdkdrawable_create(NVOID,(NspTypeBase *) nsp_type_gdkwindow)) == NULLGDKWINDOW) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
 #line 1610 "gdk.override"
 static int
 _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -4888,7 +4876,7 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, nsp_context);
   return 1;
 }
-#line 4892 "gdk.c"
+#line 4880 "gdk.c"
 
 
 static int _wrap_gdk_input_set_extension_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -4965,7 +4953,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 4969 "gdk.c"
+#line 4957 "gdk.c"
 
 
 #line 1696 "gdk.override"
@@ -5071,7 +5059,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 5075 "gdk.c"
+#line 5063 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5435,7 +5423,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height,(double) depth) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5439 "gdk.c"
+#line 5427 "gdk.c"
 
 
 #line 1812 "gdk.override"
@@ -5448,7 +5436,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5452 "gdk.c"
+#line 5440 "gdk.c"
 
 
 #line 1823 "gdk.override"
@@ -5461,7 +5449,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5465 "gdk.c"
+#line 5453 "gdk.c"
 
 
 #line 1834 "gdk.override"
@@ -5474,7 +5462,7 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5478 "gdk.c"
+#line 5466 "gdk.c"
 
 
 #line 1845 "gdk.override"
@@ -5487,7 +5475,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5491 "gdk.c"
+#line 5479 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5513,7 +5501,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5517 "gdk.c"
+#line 5505 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5563,7 +5551,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5567 "gdk.c"
+#line 5555 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5907,6 +5895,12 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
       
   type->init = (init_func *) init_gdkpixmap;
 
+  /* 
+   * GdkPixmap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkpixmap_id == 0 ) 
     {
       /* 
@@ -5934,7 +5928,7 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
 
 static int init_gdkpixmap(NspGdkPixmap *Obj,NspTypeGdkPixmap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -5986,10 +5980,10 @@ static char *gdkpixmap_type_short_string(NspObject *v)
 
 NspGdkPixmap   *gdkpixmap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkpixmap_id) ) return ((NspGdkPixmap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkpixmap_id)  == TRUE  ) return ((NspGdkPixmap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkpixmap));
   return NULL;
@@ -6033,18 +6027,6 @@ NspGdkPixmap *gdkpixmap_copy(NspGdkPixmap *self)
  * wrappers for the GdkPixmap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkPixmap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkpixmap is initialized * /
-  nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
-  if(( H = gdkdrawable_create(NVOID,(NspTypeBase *) nsp_type_gdkpixmap)) == NULLGDKPIXMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
@@ -6142,6 +6124,12 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
       
   type->init = (init_func *) init_gdkbitmap;
 
+  /* 
+   * GdkBitmap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkbitmap_id == 0 ) 
     {
       /* 
@@ -6169,7 +6157,7 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
 
 static int init_gdkbitmap(NspGdkBitmap *Obj,NspTypeGdkBitmap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -6221,10 +6209,10 @@ static char *gdkbitmap_type_short_string(NspObject *v)
 
 NspGdkBitmap   *gdkbitmap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkbitmap_id) ) return ((NspGdkBitmap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkbitmap_id)  == TRUE  ) return ((NspGdkBitmap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkbitmap));
   return NULL;
@@ -6268,18 +6256,6 @@ NspGdkBitmap *gdkbitmap_copy(NspGdkBitmap *self)
  * wrappers for the GdkBitmap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkBitmap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkbitmap is initialized * /
-  nsp_type_gdkbitmap = new_type_gdkbitmap(T_BASE);
-  if(( H = gdkdrawable_create(NVOID,(NspTypeBase *) nsp_type_gdkbitmap)) == NULLGDKBITMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static NspMethods *gdkbitmap_get_methods(void) { return NULL;};
 /*-------------------------------------------
@@ -6347,6 +6323,12 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
       
   type->init = (init_func *) init_gdkgc;
 
+  /* 
+   * GdkGC interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkgc_id == 0 ) 
     {
       /* 
@@ -6374,7 +6356,7 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
 
 static int init_gdkgc(NspGdkGC *Obj,NspTypeGdkGC *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -6426,10 +6408,10 @@ static char *gdkgc_type_short_string(NspObject *v)
 
 NspGdkGC   *gdkgc_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkgc_id) ) return ((NspGdkGC *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkgc_id)  == TRUE  ) return ((NspGdkGC *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkgc));
   return NULL;
@@ -6473,18 +6455,6 @@ NspGdkGC *gdkgc_copy(NspGdkGC *self)
  * wrappers for the GdkGC
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkGC *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkgc is initialized * /
-  nsp_type_gdkgc = new_type_gdkgc(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkgc)) == NULLGDKGC) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 1274 "gdk.override"
 static int
@@ -6626,7 +6596,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 6630 "gdk.c"
+#line 6600 "gdk.c"
 
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6822,7 +6792,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(dash_list);
   return 0;
 }
-#line 6826 "gdk.c"
+#line 6796 "gdk.c"
 
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6985,7 +6955,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   }
   return NULL;
 }
-#line 6989 "gdk.c"
+#line 6959 "gdk.c"
 
 
 #line 1475 "gdk.override"
@@ -7085,7 +7055,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
     }
   return 0;
 }
-#line 7089 "gdk.c"
+#line 7059 "gdk.c"
 
 
 
@@ -7146,6 +7116,12 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
       
   type->init = (init_func *) init_gdkimage;
 
+  /* 
+   * GdkImage interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkimage_id == 0 ) 
     {
       /* 
@@ -7173,7 +7149,7 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
 
 static int init_gdkimage(NspGdkImage *Obj,NspTypeGdkImage *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -7225,10 +7201,10 @@ static char *gdkimage_type_short_string(NspObject *v)
 
 NspGdkImage   *gdkimage_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkimage_id) ) return ((NspGdkImage *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkimage_id)  == TRUE  ) return ((NspGdkImage *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkimage));
   return NULL;
@@ -7272,18 +7248,6 @@ NspGdkImage *gdkimage_copy(NspGdkImage *self)
  * wrappers for the GdkImage
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkImage *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkimage is initialized * /
-  nsp_type_gdkimage = new_type_gdkimage(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkimage)) == NULLGDKIMAGE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
@@ -7419,6 +7383,12 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
       
   type->init = (init_func *) init_gdkkeymap;
 
+  /* 
+   * GdkKeymap interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkkeymap_id == 0 ) 
     {
       /* 
@@ -7446,7 +7416,7 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
 
 static int init_gdkkeymap(NspGdkKeymap *Obj,NspTypeGdkKeymap *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -7498,10 +7468,10 @@ static char *gdkkeymap_type_short_string(NspObject *v)
 
 NspGdkKeymap   *gdkkeymap_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkkeymap_id) ) return ((NspGdkKeymap *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkkeymap_id)  == TRUE  ) return ((NspGdkKeymap *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkkeymap));
   return NULL;
@@ -7545,18 +7515,6 @@ NspGdkKeymap *gdkkeymap_copy(NspGdkKeymap *self)
  * wrappers for the GdkKeymap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkKeymap *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkkeymap is initialized * /
-  nsp_type_gdkkeymap = new_type_gdkkeymap(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkkeymap)) == NULLGDKKEYMAP) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_keymap_get_direction(NspGdkKeymap *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -7635,6 +7593,12 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
       
   type->init = (init_func *) init_gdkpixbuf;
 
+  /* 
+   * GdkPixbuf interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkpixbuf_id == 0 ) 
     {
       /* 
@@ -7662,7 +7626,7 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
 
 static int init_gdkpixbuf(NspGdkPixbuf *Obj,NspTypeGdkPixbuf *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -7714,10 +7678,10 @@ static char *gdkpixbuf_type_short_string(NspObject *v)
 
 NspGdkPixbuf   *gdkpixbuf_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkpixbuf_id) ) return ((NspGdkPixbuf *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkpixbuf_id)  == TRUE  ) return ((NspGdkPixbuf *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkpixbuf));
   return NULL;
@@ -7761,18 +7725,6 @@ NspGdkPixbuf *gdkpixbuf_copy(NspGdkPixbuf *self)
  * wrappers for the GdkPixbuf
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkPixbuf *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkpixbuf is initialized * /
-  nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkpixbuf)) == NULLGDKPIXBUF) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_pixbuf_render_to_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -7855,7 +7807,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       return 1;
     }
 }
-#line 7859 "gdk.c"
+#line 7811 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -7934,7 +7886,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7938 "gdk.c"
+#line 7890 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8088,7 +8040,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8092 "gdk.c"
+#line 8044 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8262,7 +8214,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8266 "gdk.c"
+#line 8218 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
@@ -8326,6 +8278,12 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
       
   type->init = (init_func *) init_gdkpixbufanimation;
 
+  /* 
+   * GdkPixbufAnimation interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkpixbufanimation_id == 0 ) 
     {
       /* 
@@ -8353,7 +8311,7 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
 
 static int init_gdkpixbufanimation(NspGdkPixbufAnimation *Obj,NspTypeGdkPixbufAnimation *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -8405,10 +8363,10 @@ static char *gdkpixbufanimation_type_short_string(NspObject *v)
 
 NspGdkPixbufAnimation   *gdkpixbufanimation_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkpixbufanimation_id) ) return ((NspGdkPixbufAnimation *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkpixbufanimation_id)  == TRUE  ) return ((NspGdkPixbufAnimation *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkpixbufanimation));
   return NULL;
@@ -8452,18 +8410,6 @@ NspGdkPixbufAnimation *gdkpixbufanimation_copy(NspGdkPixbufAnimation *self)
  * wrappers for the GdkPixbufAnimation
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkPixbufAnimation *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkpixbufanimation is initialized * /
-  nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkpixbufanimation)) == NULLGDKPIXBUFANIMATION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkpixbufanimation_new(Stack stack, int rhs, int opt, int lhs)
@@ -8593,6 +8539,12 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
       
   type->init = (init_func *) init_gdkpixbufanimationiter;
 
+  /* 
+   * GdkPixbufAnimationIter interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkpixbufanimationiter_id == 0 ) 
     {
       /* 
@@ -8620,7 +8572,7 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
 
 static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *Obj,NspTypeGdkPixbufAnimationIter *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -8672,10 +8624,10 @@ static char *gdkpixbufanimationiter_type_short_string(NspObject *v)
 
 NspGdkPixbufAnimationIter   *gdkpixbufanimationiter_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkpixbufanimationiter_id) ) return ((NspGdkPixbufAnimationIter *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkpixbufanimationiter_id)  == TRUE  ) return ((NspGdkPixbufAnimationIter *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkpixbufanimationiter));
   return NULL;
@@ -8719,18 +8671,6 @@ NspGdkPixbufAnimationIter *gdkpixbufanimationiter_copy(NspGdkPixbufAnimationIter
  * wrappers for the GdkPixbufAnimationIter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkPixbufAnimationIter *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkpixbufanimationiter is initialized * /
-  nsp_type_gdkpixbufanimationiter = new_type_gdkpixbufanimationiter(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkpixbufanimationiter)) == NULLGDKPIXBUFANIMATIONITER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_pixbuf_animation_iter_get_delay_time(NspGdkPixbufAnimationIter *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -8830,6 +8770,12 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
       
   type->init = (init_func *) init_gdkpixbufloader;
 
+  /* 
+   * GdkPixbufLoader interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkpixbufloader_id == 0 ) 
     {
       /* 
@@ -8857,7 +8803,7 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
 
 static int init_gdkpixbufloader(NspGdkPixbufLoader *Obj,NspTypeGdkPixbufLoader *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -8909,10 +8855,10 @@ static char *gdkpixbufloader_type_short_string(NspObject *v)
 
 NspGdkPixbufLoader   *gdkpixbufloader_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkpixbufloader_id) ) return ((NspGdkPixbufLoader *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkpixbufloader_id)  == TRUE  ) return ((NspGdkPixbufLoader *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkpixbufloader));
   return NULL;
@@ -8956,18 +8902,6 @@ NspGdkPixbufLoader *gdkpixbufloader_copy(NspGdkPixbufLoader *self)
  * wrappers for the GdkPixbufLoader
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkPixbufLoader *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkpixbufloader is initialized * /
-  nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkpixbufloader)) == NULLGDKPIXBUFLOADER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int
 _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
@@ -9113,6 +9047,12 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
       
   type->init = (init_func *) init_gdkscreen;
 
+  /* 
+   * GdkScreen interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkscreen_id == 0 ) 
     {
       /* 
@@ -9140,7 +9080,7 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
 
 static int init_gdkscreen(NspGdkScreen *Obj,NspTypeGdkScreen *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9192,10 +9132,10 @@ static char *gdkscreen_type_short_string(NspObject *v)
 
 NspGdkScreen   *gdkscreen_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkscreen_id) ) return ((NspGdkScreen *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkscreen_id)  == TRUE  ) return ((NspGdkScreen *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkscreen));
   return NULL;
@@ -9239,18 +9179,6 @@ NspGdkScreen *gdkscreen_copy(NspGdkScreen *self)
  * wrappers for the GdkScreen
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkScreen *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkscreen is initialized * /
-  nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkscreen)) == NULLGDKSCREEN) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 static int _wrap_gdk_screen_get_default_colormap(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -9552,6 +9480,12 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
       
   type->init = (init_func *) init_gdkvisual;
 
+  /* 
+   * GdkVisual interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
   if ( nsp_type_gdkvisual_id == 0 ) 
     {
       /* 
@@ -9579,7 +9513,7 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
 
 static int init_gdkvisual(NspGdkVisual *Obj,NspTypeGdkVisual *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type; 
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -9631,10 +9565,10 @@ static char *gdkvisual_type_short_string(NspObject *v)
 
 NspGdkVisual   *gdkvisual_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
-  if ( check_cast (O,nsp_type_gdkvisual_id) ) return ((NspGdkVisual *) O);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gdkvisual_id)  == TRUE  ) return ((NspGdkVisual *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gdkvisual));
   return NULL;
@@ -9678,18 +9612,6 @@ NspGdkVisual *gdkvisual_copy(NspGdkVisual *self)
  * wrappers for the GdkVisual
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkVisual *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkvisual is initialized * /
-  nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
-  if(( H = gobject_create(NVOID,(NspTypeBase *) nsp_type_gdkvisual)) == NULLGDKVISUAL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
 
 #line 2233 "gdk.override"
 static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
@@ -9770,7 +9692,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 9774 "gdk.c"
+#line 9696 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -10089,7 +10011,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function _wrap_gdk_threads_enter unimplemented \n ");
   return RET_BUG;
 }
-#line 10093 "gdk.c"
+#line 10015 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
@@ -10178,7 +10100,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10182 "gdk.c"
+#line 10104 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs)
@@ -10301,7 +10223,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10305 "gdk.c"
+#line 10227 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
@@ -10408,7 +10330,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10412 "gdk.c"
+#line 10334 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
@@ -10675,7 +10597,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10679 "gdk.c"
+#line 10601 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
@@ -11008,7 +10930,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 11012 "gdk.c"
+#line 10934 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
@@ -11077,7 +10999,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 11081 "gdk.c"
+#line 11003 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)
