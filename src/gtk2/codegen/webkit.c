@@ -154,12 +154,12 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitwebview(NspWebKitWebView *o,NspTypeWebKitWebView *type)
+static int init_webkitwebview(NspWebKitWebView *Obj,NspTypeWebKitWebView *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -726,12 +726,12 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitwebframe(NspWebKitWebFrame *o,NspTypeWebKitWebFrame *type)
+static int init_webkitwebframe(NspWebKitWebFrame *Obj,NspTypeWebKitWebFrame *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1039,12 +1039,12 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *o,NspTypeWebKitWebHistoryItem *type)
+static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *Obj,NspTypeWebKitWebHistoryItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1315,12 +1315,12 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *o,NspTypeWebKitWebBackForwardList *type)
+static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *Obj,NspTypeWebKitWebBackForwardList *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1688,12 +1688,12 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitwebsettings(NspWebKitWebSettings *o,NspTypeWebKitWebSettings *type)
+static int init_webkitwebsettings(NspWebKitWebSettings *Obj,NspTypeWebKitWebSettings *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1921,12 +1921,12 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_webkitnetworkrequest(NspWebKitNetworkRequest *o,NspTypeWebKitNetworkRequest *type)
+static int init_webkitnetworkrequest(NspWebKitNetworkRequest *Obj,NspTypeWebKitNetworkRequest *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }

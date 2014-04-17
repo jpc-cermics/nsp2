@@ -137,12 +137,12 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangoattrlist(NspPangoAttrList *o,NspTypePangoAttrList *type)
+static int init_pangoattrlist(NspPangoAttrList *Obj,NspTypePangoAttrList *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -442,12 +442,12 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangocolor(NspPangoColor *o,NspTypePangoColor *type)
+static int init_pangocolor(NspPangoColor *Obj,NspTypePangoColor *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -707,12 +707,12 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontdescription(NspPangoFontDescription *o,NspTypePangoFontDescription *type)
+static int init_pangofontdescription(NspPangoFontDescription *Obj,NspTypePangoFontDescription *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1216,12 +1216,12 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontmetrics(NspPangoFontMetrics *o,NspTypePangoFontMetrics *type)
+static int init_pangofontmetrics(NspPangoFontMetrics *Obj,NspTypePangoFontMetrics *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1459,12 +1459,12 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangoglyphstring(NspPangoGlyphString *o,NspTypePangoGlyphString *type)
+static int init_pangoglyphstring(NspPangoGlyphString *Obj,NspTypePangoGlyphString *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1801,12 +1801,12 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangolanguage(NspPangoLanguage *o,NspTypePangoLanguage *type)
+static int init_pangolanguage(NspPangoLanguage *Obj,NspTypePangoLanguage *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2020,12 +2020,12 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangotabarray(NspPangoTabArray *o,NspTypePangoTabArray *type)
+static int init_pangotabarray(NspPangoTabArray *Obj,NspTypePangoTabArray *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2341,12 +2341,12 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangocontext(NspPangoContext *o,NspTypePangoContext *type)
+static int init_pangocontext(NspPangoContext *Obj,NspTypePangoContext *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2731,12 +2731,12 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofont(NspPangoFont *o,NspTypePangoFont *type)
+static int init_pangofont(NspPangoFont *Obj,NspTypePangoFont *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2996,12 +2996,12 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontface(NspPangoFontFace *o,NspTypePangoFontFace *type)
+static int init_pangofontface(NspPangoFontFace *Obj,NspTypePangoFontFace *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3225,12 +3225,12 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontfamily(NspPangoFontFamily *o,NspTypePangoFontFamily *type)
+static int init_pangofontfamily(NspPangoFontFamily *Obj,NspTypePangoFontFamily *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3464,12 +3464,12 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontmap(NspPangoFontMap *o,NspTypePangoFontMap *type)
+static int init_pangofontmap(NspPangoFontMap *Obj,NspTypePangoFontMap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3744,12 +3744,12 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangofontset(NspPangoFontset *o,NspTypePangoFontset *type)
+static int init_pangofontset(NspPangoFontset *Obj,NspTypePangoFontset *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3979,12 +3979,12 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_pangolayout(NspPangoLayout *o,NspTypePangoLayout *type)
+static int init_pangolayout(NspPangoLayout *Obj,NspTypePangoLayout *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }

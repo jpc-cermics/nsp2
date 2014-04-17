@@ -135,12 +135,12 @@ class Wrapper:
               ' * locally and by calling initializer on parent class \n'  \
               ' */\n'  \
               '\n'  \
-              'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type)\n'  \
+              'static int init_%(typename_dc)s(Nsp%(typename)s *Obj,NspType%(typename)s *type)\n'  \
               '{\n'  \
               '  /* jump the first surtype */ \n'  \
-              '  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;\n'  \
-              '  o->type = type; \n'  \
-              '  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;\n'  \
+              '  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;\n'  \
+              '  Obj->type = type; \n'  \
+              '  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;\n'  \
               '  /* specific */\n'  \
               '  return OK;\n'  \
               '}\n'  \

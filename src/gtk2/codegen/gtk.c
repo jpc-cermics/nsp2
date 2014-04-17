@@ -361,12 +361,12 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkborder(NspGtkBorder *o,NspTypeGtkBorder *type)
+static int init_gtkborder(NspGtkBorder *Obj,NspTypeGtkBorder *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -588,12 +588,12 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkiconinfo(NspGtkIconInfo *o,NspTypeGtkIconInfo *type)
+static int init_gtkiconinfo(NspGtkIconInfo *Obj,NspTypeGtkIconInfo *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -896,12 +896,12 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkiconset(NspGtkIconSet *o,NspTypeGtkIconSet *type)
+static int init_gtkiconset(NspGtkIconSet *Obj,NspTypeGtkIconSet *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1219,12 +1219,12 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkiconsource(NspGtkIconSource *o,NspTypeGtkIconSource *type)
+static int init_gtkiconsource(NspGtkIconSource *Obj,NspTypeGtkIconSource *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1646,12 +1646,12 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkrequisition(NspGtkRequisition *o,NspTypeGtkRequisition *type)
+static int init_gtkrequisition(NspGtkRequisition *Obj,NspTypeGtkRequisition *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1912,12 +1912,12 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkselectiondata(NspGtkSelectionData *o,NspTypeGtkSelectionData *type)
+static int init_gtkselectiondata(NspGtkSelectionData *Obj,NspTypeGtkSelectionData *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2334,12 +2334,12 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextattributes(NspGtkTextAttributes *o,NspTypeGtkTextAttributes *type)
+static int init_gtktextattributes(NspGtkTextAttributes *Obj,NspTypeGtkTextAttributes *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2843,12 +2843,12 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextiter(NspGtkTextIter *o,NspTypeGtkTextIter *type)
+static int init_gtktextiter(NspGtkTextIter *Obj,NspTypeGtkTextIter *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -4183,12 +4183,12 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreeiter(NspGtkTreeIter *o,NspTypeGtkTreeIter *type)
+static int init_gtktreeiter(NspGtkTreeIter *Obj,NspTypeGtkTreeIter *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -4410,12 +4410,12 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreerowreference(NspGtkTreeRowReference *o,NspTypeGtkTreeRowReference *type)
+static int init_gtktreerowreference(NspGtkTreeRowReference *Obj,NspTypeGtkTreeRowReference *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -4682,12 +4682,12 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreepath(NspGtkTreePath *o,NspTypeGtkTreePath *type)
+static int init_gtktreepath(NspGtkTreePath *Obj,NspTypeGtkTreePath *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -5121,12 +5121,12 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcelleditable(NspGtkCellEditable *o,NspTypeGtkCellEditable *type)
+static int init_gtkcelleditable(NspGtkCellEditable *Obj,NspTypeGtkCellEditable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -5355,12 +5355,12 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcelllayout(NspGtkCellLayout *o,NspTypeGtkCellLayout *type)
+static int init_gtkcelllayout(NspGtkCellLayout *Obj,NspTypeGtkCellLayout *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -5740,12 +5740,12 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkeditable(NspGtkEditable *o,NspTypeGtkEditable *type)
+static int init_gtkeditable(NspGtkEditable *Obj,NspTypeGtkEditable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -6077,12 +6077,12 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfilechooser(NspGtkFileChooser *o,NspTypeGtkFileChooser *type)
+static int init_gtkfilechooser(NspGtkFileChooser *Obj,NspTypeGtkFileChooser *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -6796,12 +6796,12 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreedragdest(NspGtkTreeDragDest *o,NspTypeGtkTreeDragDest *type)
+static int init_gtktreedragdest(NspGtkTreeDragDest *Obj,NspTypeGtkTreeDragDest *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -7051,12 +7051,12 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreedragsource(NspGtkTreeDragSource *o,NspTypeGtkTreeDragSource *type)
+static int init_gtktreedragsource(NspGtkTreeDragSource *Obj,NspTypeGtkTreeDragSource *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -7318,12 +7318,12 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreemodel(NspGtkTreeModel *o,NspTypeGtkTreeModel *type)
+static int init_gtktreemodel(NspGtkTreeModel *Obj,NspTypeGtkTreeModel *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8132,12 +8132,12 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreesortable(NspGtkTreeSortable *o,NspTypeGtkTreeSortable *type)
+static int init_gtktreesortable(NspGtkTreeSortable *Obj,NspTypeGtkTreeSortable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8475,12 +8475,12 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaboutdialog(NspGtkAboutDialog *o,NspTypeGtkAboutDialog *type)
+static int init_gtkaboutdialog(NspGtkAboutDialog *Obj,NspTypeGtkAboutDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8948,12 +8948,12 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaccelgroup(NspGtkAccelGroup *o,NspTypeGtkAccelGroup *type)
+static int init_gtkaccelgroup(NspGtkAccelGroup *Obj,NspTypeGtkAccelGroup *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9198,12 +9198,12 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaccellabel(NspGtkAccelLabel *o,NspTypeGtkAccelLabel *type)
+static int init_gtkaccellabel(NspGtkAccelLabel *Obj,NspTypeGtkAccelLabel *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9471,12 +9471,12 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaccelmap(NspGtkAccelMap *o,NspTypeGtkAccelMap *type)
+static int init_gtkaccelmap(NspGtkAccelMap *Obj,NspTypeGtkAccelMap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9674,12 +9674,12 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaccessible(NspGtkAccessible *o,NspTypeGtkAccessible *type)
+static int init_gtkaccessible(NspGtkAccessible *Obj,NspTypeGtkAccessible *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9888,12 +9888,12 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaction(NspGtkAction *o,NspTypeGtkAction *type)
+static int init_gtkaction(NspGtkAction *Obj,NspTypeGtkAction *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -10322,12 +10322,12 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkactiongroup(NspGtkActionGroup *o,NspTypeGtkActionGroup *type)
+static int init_gtkactiongroup(NspGtkActionGroup *Obj,NspTypeGtkActionGroup *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -10698,12 +10698,12 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkadjustment(NspGtkAdjustment *o,NspTypeGtkAdjustment *type)
+static int init_gtkadjustment(NspGtkAdjustment *Obj,NspTypeGtkAdjustment *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -11118,12 +11118,12 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkalignment(NspGtkAlignment *o,NspTypeGtkAlignment *type)
+static int init_gtkalignment(NspGtkAlignment *Obj,NspTypeGtkAlignment *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -11367,12 +11367,12 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkarrow(NspGtkArrow *o,NspTypeGtkArrow *type)
+static int init_gtkarrow(NspGtkArrow *Obj,NspTypeGtkArrow *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -11612,12 +11612,12 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkaspectframe(NspGtkAspectFrame *o,NspTypeGtkAspectFrame *type)
+static int init_gtkaspectframe(NspGtkAspectFrame *Obj,NspTypeGtkAspectFrame *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -11861,12 +11861,12 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkbin(NspGtkBin *o,NspTypeGtkBin *type)
+static int init_gtkbin(NspGtkBin *Obj,NspTypeGtkBin *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -12092,12 +12092,12 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkbox(NspGtkBox *o,NspTypeGtkBox *type)
+static int init_gtkbox(NspGtkBox *Obj,NspTypeGtkBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -12448,12 +12448,12 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkbutton(NspGtkButton *o,NspTypeGtkButton *type)
+static int init_gtkbutton(NspGtkButton *Obj,NspTypeGtkButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -12857,12 +12857,12 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkbuttonbox(NspGtkButtonBox *o,NspTypeGtkButtonBox *type)
+static int init_gtkbuttonbox(NspGtkButtonBox *Obj,NspTypeGtkButtonBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -13160,12 +13160,12 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcalendar(NspGtkCalendar *o,NspTypeGtkCalendar *type)
+static int init_gtkcalendar(NspGtkCalendar *Obj,NspTypeGtkCalendar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -13502,12 +13502,12 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrenderer(NspGtkCellRenderer *o,NspTypeGtkCellRenderer *type)
+static int init_gtkcellrenderer(NspGtkCellRenderer *Obj,NspTypeGtkCellRenderer *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -13958,12 +13958,12 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *o,NspTypeGtkCellRendererCombo *type)
+static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *Obj,NspTypeGtkCellRendererCombo *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -14175,12 +14175,12 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *o,NspTypeGtkCellRendererPixbuf *type)
+static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *Obj,NspTypeGtkCellRendererPixbuf *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -14392,12 +14392,12 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *o,NspTypeGtkCellRendererProgress *type)
+static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *Obj,NspTypeGtkCellRendererProgress *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -14609,12 +14609,12 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrenderertext(NspGtkCellRendererText *o,NspTypeGtkCellRendererText *type)
+static int init_gtkcellrenderertext(NspGtkCellRendererText *Obj,NspTypeGtkCellRendererText *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -14840,12 +14840,12 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type)
+static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *Obj,NspTypeGtkCellRendererToggle *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -15101,12 +15101,12 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcellview(NspGtkCellView *o,NspTypeGtkCellView *type)
+static int init_gtkcellview(NspGtkCellView *Obj,NspTypeGtkCellView *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -15466,12 +15466,12 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcheckbutton(NspGtkCheckButton *o,NspTypeGtkCheckButton *type)
+static int init_gtkcheckbutton(NspGtkCheckButton *Obj,NspTypeGtkCheckButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -15702,12 +15702,12 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *o,NspTypeGtkCheckMenuItem *type)
+static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *Obj,NspTypeGtkCheckMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -16036,12 +16036,12 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcolorbutton(NspGtkColorButton *o,NspTypeGtkColorButton *type)
+static int init_gtkcolorbutton(NspGtkColorButton *Obj,NspTypeGtkColorButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -16239,12 +16239,12 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcolorselection(NspGtkColorSelection *o,NspTypeGtkColorSelection *type)
+static int init_gtkcolorselection(NspGtkColorSelection *Obj,NspTypeGtkColorSelection *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -16677,12 +16677,12 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *o,NspTypeGtkColorSelectionDialog *type)
+static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *Obj,NspTypeGtkColorSelectionDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -16936,12 +16936,12 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcombo(NspGtkCombo *o,NspTypeGtkCombo *type)
+static int init_gtkcombo(NspGtkCombo *Obj,NspTypeGtkCombo *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -17251,12 +17251,12 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcombobox(NspGtkComboBox *o,NspTypeGtkComboBox *type)
+static int init_gtkcombobox(NspGtkComboBox *Obj,NspTypeGtkComboBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -17770,12 +17770,12 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcomboboxentry(NspGtkComboBoxEntry *o,NspTypeGtkComboBoxEntry *type)
+static int init_gtkcomboboxentry(NspGtkComboBoxEntry *Obj,NspTypeGtkComboBoxEntry *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -18045,12 +18045,12 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcontainer(NspGtkContainer *o,NspTypeGtkContainer *type)
+static int init_gtkcontainer(NspGtkContainer *Obj,NspTypeGtkContainer *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -18895,12 +18895,12 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkcurve(NspGtkCurve *o,NspTypeGtkCurve *type)
+static int init_gtkcurve(NspGtkCurve *Obj,NspTypeGtkCurve *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -19200,12 +19200,12 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkdialog(NspGtkDialog *o,NspTypeGtkDialog *type)
+static int init_gtkdialog(NspGtkDialog *Obj,NspTypeGtkDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -19594,12 +19594,12 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkdrawingarea(NspGtkDrawingArea *o,NspTypeGtkDrawingArea *type)
+static int init_gtkdrawingarea(NspGtkDrawingArea *Obj,NspTypeGtkDrawingArea *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -19829,12 +19829,12 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkentry(NspGtkEntry *o,NspTypeGtkEntry *type)
+static int init_gtkentry(NspGtkEntry *Obj,NspTypeGtkEntry *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -20376,12 +20376,12 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkentrycompletion(NspGtkEntryCompletion *o,NspTypeGtkEntryCompletion *type)
+static int init_gtkentrycompletion(NspGtkEntryCompletion *Obj,NspTypeGtkEntryCompletion *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -20803,12 +20803,12 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkeventbox(NspGtkEventBox *o,NspTypeGtkEventBox *type)
+static int init_gtkeventbox(NspGtkEventBox *Obj,NspTypeGtkEventBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -21062,12 +21062,12 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkexpander(NspGtkExpander *o,NspTypeGtkExpander *type)
+static int init_gtkexpander(NspGtkExpander *Obj,NspTypeGtkExpander *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -21419,12 +21419,12 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfilechooserbutton(NspGtkFileChooserButton *o,NspTypeGtkFileChooserButton *type)
+static int init_gtkfilechooserbutton(NspGtkFileChooserButton *Obj,NspTypeGtkFileChooserButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -21686,12 +21686,12 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *o,NspTypeGtkFileChooserDialog *type)
+static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *Obj,NspTypeGtkFileChooserDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -21941,12 +21941,12 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *o,NspTypeGtkFileChooserWidget *type)
+static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *Obj,NspTypeGtkFileChooserWidget *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -22163,12 +22163,12 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfilefilter(NspGtkFileFilter *o,NspTypeGtkFileFilter *type)
+static int init_gtkfilefilter(NspGtkFileFilter *Obj,NspTypeGtkFileFilter *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -22439,12 +22439,12 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfileselection(NspGtkFileSelection *o,NspTypeGtkFileSelection *type)
+static int init_gtkfileselection(NspGtkFileSelection *Obj,NspTypeGtkFileSelection *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -22911,12 +22911,12 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type)
+static int init_gtkfixed(NspGtkFixed *Obj,NspTypeGtkFixed *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -23173,12 +23173,12 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfontbutton(NspGtkFontButton *o,NspTypeGtkFontButton *type)
+static int init_gtkfontbutton(NspGtkFontButton *Obj,NspTypeGtkFontButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -23510,12 +23510,12 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfontselection(NspGtkFontSelection *o,NspTypeGtkFontSelection *type)
+static int init_gtkfontselection(NspGtkFontSelection *Obj,NspTypeGtkFontSelection *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -23786,12 +23786,12 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *o,NspTypeGtkFontSelectionDialog *type)
+static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *Obj,NspTypeGtkFontSelectionDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -24122,12 +24122,12 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkframe(NspGtkFrame *o,NspTypeGtkFrame *type)
+static int init_gtkframe(NspGtkFrame *Obj,NspTypeGtkFrame *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -24439,12 +24439,12 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type)
+static int init_gtkgammacurve(NspGtkGammaCurve *Obj,NspTypeGtkGammaCurve *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -24705,12 +24705,12 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type)
+static int init_gtkhandlebox(NspGtkHandleBox *Obj,NspTypeGtkHandleBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -24992,12 +24992,12 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhbox(NspGtkHBox *o,NspTypeGtkHBox *type)
+static int init_gtkhbox(NspGtkHBox *Obj,NspTypeGtkHBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -25215,12 +25215,12 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhbuttonbox(NspGtkHButtonBox *o,NspTypeGtkHButtonBox *type)
+static int init_gtkhbuttonbox(NspGtkHButtonBox *Obj,NspTypeGtkHButtonBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -25432,12 +25432,12 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhpaned(NspGtkHPaned *o,NspTypeGtkHPaned *type)
+static int init_gtkhpaned(NspGtkHPaned *Obj,NspTypeGtkHPaned *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -25649,12 +25649,12 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhruler(NspGtkHRuler *o,NspTypeGtkHRuler *type)
+static int init_gtkhruler(NspGtkHRuler *Obj,NspTypeGtkHRuler *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -25866,12 +25866,12 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhscale(NspGtkHScale *o,NspTypeGtkHScale *type)
+static int init_gtkhscale(NspGtkHScale *Obj,NspTypeGtkHScale *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -26097,12 +26097,12 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhscrollbar(NspGtkHScrollbar *o,NspTypeGtkHScrollbar *type)
+static int init_gtkhscrollbar(NspGtkHScrollbar *Obj,NspTypeGtkHScrollbar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -26328,12 +26328,12 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkhseparator(NspGtkHSeparator *o,NspTypeGtkHSeparator *type)
+static int init_gtkhseparator(NspGtkHSeparator *Obj,NspTypeGtkHSeparator *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -26545,12 +26545,12 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkiconfactory(NspGtkIconFactory *o,NspTypeGtkIconFactory *type)
+static int init_gtkiconfactory(NspGtkIconFactory *Obj,NspTypeGtkIconFactory *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -26814,12 +26814,12 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkicontheme(NspGtkIconTheme *o,NspTypeGtkIconTheme *type)
+static int init_gtkicontheme(NspGtkIconTheme *Obj,NspTypeGtkIconTheme *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -27178,12 +27178,12 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkiconview(NspGtkIconView *o,NspTypeGtkIconView *type)
+static int init_gtkiconview(NspGtkIconView *Obj,NspTypeGtkIconView *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -27984,12 +27984,12 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type)
+static int init_gtkimage(NspGtkImage *Obj,NspTypeGtkImage *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -28577,12 +28577,12 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkimagemenuitem(NspGtkImageMenuItem *o,NspTypeGtkImageMenuItem *type)
+static int init_gtkimagemenuitem(NspGtkImageMenuItem *Obj,NspTypeGtkImageMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -28850,12 +28850,12 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkimcontext(NspGtkIMContext *o,NspTypeGtkIMContext *type)
+static int init_gtkimcontext(NspGtkIMContext *Obj,NspTypeGtkIMContext *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -29205,12 +29205,12 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkimcontextsimple(NspGtkIMContextSimple *o,NspTypeGtkIMContextSimple *type)
+static int init_gtkimcontextsimple(NspGtkIMContextSimple *Obj,NspTypeGtkIMContextSimple *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -29422,12 +29422,12 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkimmulticontext(NspGtkIMMulticontext *o,NspTypeGtkIMMulticontext *type)
+static int init_gtkimmulticontext(NspGtkIMMulticontext *Obj,NspTypeGtkIMMulticontext *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -29653,12 +29653,12 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkinputdialog(NspGtkInputDialog *o,NspTypeGtkInputDialog *type)
+static int init_gtkinputdialog(NspGtkInputDialog *Obj,NspTypeGtkInputDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -29871,12 +29871,12 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkinvisible(NspGtkInvisible *o,NspTypeGtkInvisible *type)
+static int init_gtkinvisible(NspGtkInvisible *Obj,NspTypeGtkInvisible *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -30115,12 +30115,12 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkitem(NspGtkItem *o,NspTypeGtkItem *type)
+static int init_gtkitem(NspGtkItem *Obj,NspTypeGtkItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -30343,12 +30343,12 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkitemfactory(NspGtkItemFactory *o,NspTypeGtkItemFactory *type)
+static int init_gtkitemfactory(NspGtkItemFactory *Obj,NspTypeGtkItemFactory *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -30828,12 +30828,12 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtklabel(NspGtkLabel *o,NspTypeGtkLabel *type)
+static int init_gtklabel(NspGtkLabel *Obj,NspTypeGtkLabel *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -31481,12 +31481,12 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtklayout(NspGtkLayout *o,NspTypeGtkLayout *type)
+static int init_gtklayout(NspGtkLayout *Obj,NspTypeGtkLayout *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -31874,12 +31874,12 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkliststore(NspGtkListStore *o,NspTypeGtkListStore *type)
+static int init_gtkliststore(NspGtkListStore *Obj,NspTypeGtkListStore *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -32493,12 +32493,12 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmenu(NspGtkMenu *o,NspTypeGtkMenu *type)
+static int init_gtkmenu(NspGtkMenu *Obj,NspTypeGtkMenu *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -33031,12 +33031,12 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmenubar(NspGtkMenuBar *o,NspTypeGtkMenuBar *type)
+static int init_gtkmenubar(NspGtkMenuBar *Obj,NspTypeGtkMenuBar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -33296,12 +33296,12 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmenuitem(NspGtkMenuItem *o,NspTypeGtkMenuItem *type)
+static int init_gtkmenuitem(NspGtkMenuItem *Obj,NspTypeGtkMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -33639,12 +33639,12 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmenushell(NspGtkMenuShell *o,NspTypeGtkMenuShell *type)
+static int init_gtkmenushell(NspGtkMenuShell *Obj,NspTypeGtkMenuShell *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -33948,12 +33948,12 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmenutoolbutton(NspGtkMenuToolButton *o,NspTypeGtkMenuToolButton *type)
+static int init_gtkmenutoolbutton(NspGtkMenuToolButton *Obj,NspTypeGtkMenuToolButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -34209,12 +34209,12 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type)
+static int init_gtkmessagedialog(NspGtkMessageDialog *Obj,NspTypeGtkMessageDialog *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -34496,12 +34496,12 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type)
+static int init_gtkmisc(NspGtkMisc *Obj,NspTypeGtkMisc *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -34751,12 +34751,12 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtknotebook(NspGtkNotebook *o,NspTypeGtkNotebook *type)
+static int init_gtknotebook(NspGtkNotebook *Obj,NspTypeGtkNotebook *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -35425,12 +35425,12 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type)
+static int init_gtkobject(NspGtkObject *Obj,NspTypeGtkObject *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -35670,12 +35670,12 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkoldeditable(NspGtkOldEditable *o,NspTypeGtkOldEditable *type)
+static int init_gtkoldeditable(NspGtkOldEditable *Obj,NspTypeGtkOldEditable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -35898,12 +35898,12 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkoptionmenu(NspGtkOptionMenu *o,NspTypeGtkOptionMenu *type)
+static int init_gtkoptionmenu(NspGtkOptionMenu *Obj,NspTypeGtkOptionMenu *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -36167,12 +36167,12 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkpaned(NspGtkPaned *o,NspTypeGtkPaned *type)
+static int init_gtkpaned(NspGtkPaned *Obj,NspTypeGtkPaned *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -36520,12 +36520,12 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkplug(NspGtkPlug *o,NspTypeGtkPlug *type)
+static int init_gtkplug(NspGtkPlug *Obj,NspTypeGtkPlug *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -36774,12 +36774,12 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkpreview(NspGtkPreview *o,NspTypeGtkPreview *type)
+static int init_gtkpreview(NspGtkPreview *Obj,NspTypeGtkPreview *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -37057,12 +37057,12 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type)
+static int init_gtkprogress(NspGtkProgress *Obj,NspTypeGtkProgress *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -37260,12 +37260,12 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkprogressbar(NspGtkProgressBar *o,NspTypeGtkProgressBar *type)
+static int init_gtkprogressbar(NspGtkProgressBar *Obj,NspTypeGtkProgressBar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -37625,12 +37625,12 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkradioaction(NspGtkRadioAction *o,NspTypeGtkRadioAction *type)
+static int init_gtkradioaction(NspGtkRadioAction *Obj,NspTypeGtkRadioAction *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -37925,12 +37925,12 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkradiobutton(NspGtkRadioButton *o,NspTypeGtkRadioButton *type)
+static int init_gtkradiobutton(NspGtkRadioButton *Obj,NspTypeGtkRadioButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -38194,12 +38194,12 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkradiomenuitem(NspGtkRadioMenuItem *o,NspTypeGtkRadioMenuItem *type)
+static int init_gtkradiomenuitem(NspGtkRadioMenuItem *Obj,NspTypeGtkRadioMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -38505,12 +38505,12 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkradiotoolbutton(NspGtkRadioToolButton *o,NspTypeGtkRadioToolButton *type)
+static int init_gtkradiotoolbutton(NspGtkRadioToolButton *Obj,NspTypeGtkRadioToolButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -38792,12 +38792,12 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkrange(NspGtkRange *o,NspTypeGtkRange *type)
+static int init_gtkrange(NspGtkRange *Obj,NspTypeGtkRange *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -39101,12 +39101,12 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkrcstyle(NspGtkRcStyle *o,NspTypeGtkRcStyle *type)
+static int init_gtkrcstyle(NspGtkRcStyle *Obj,NspTypeGtkRcStyle *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -39354,12 +39354,12 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkruler(NspGtkRuler *o,NspTypeGtkRuler *type)
+static int init_gtkruler(NspGtkRuler *Obj,NspTypeGtkRuler *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -39622,12 +39622,12 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkscale(NspGtkScale *o,NspTypeGtkScale *type)
+static int init_gtkscale(NspGtkScale *Obj,NspTypeGtkScale *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -39911,12 +39911,12 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkscrollbar(NspGtkScrollbar *o,NspTypeGtkScrollbar *type)
+static int init_gtkscrollbar(NspGtkScrollbar *Obj,NspTypeGtkScrollbar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -40114,12 +40114,12 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkscrolledwindow(NspGtkScrolledWindow *o,NspTypeGtkScrolledWindow *type)
+static int init_gtkscrolledwindow(NspGtkScrolledWindow *Obj,NspTypeGtkScrolledWindow *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -40495,12 +40495,12 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkseparator(NspGtkSeparator *o,NspTypeGtkSeparator *type)
+static int init_gtkseparator(NspGtkSeparator *Obj,NspTypeGtkSeparator *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -40698,12 +40698,12 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *o,NspTypeGtkSeparatorMenuItem *type)
+static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *Obj,NspTypeGtkSeparatorMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -40915,12 +40915,12 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *o,NspTypeGtkSeparatorToolItem *type)
+static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *Obj,NspTypeGtkSeparatorToolItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -41155,12 +41155,12 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtksettings(NspGtkSettings *o,NspTypeGtkSettings *type)
+static int init_gtksettings(NspGtkSettings *Obj,NspTypeGtkSettings *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -41394,12 +41394,12 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtksizegroup(NspGtkSizeGroup *o,NspTypeGtkSizeGroup *type)
+static int init_gtksizegroup(NspGtkSizeGroup *Obj,NspTypeGtkSizeGroup *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -41681,12 +41681,12 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtksocket(NspGtkSocket *o,NspTypeGtkSocket *type)
+static int init_gtksocket(NspGtkSocket *Obj,NspTypeGtkSocket *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -41932,12 +41932,12 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkspinbutton(NspGtkSpinButton *o,NspTypeGtkSpinButton *type)
+static int init_gtkspinbutton(NspGtkSpinButton *Obj,NspTypeGtkSpinButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -42419,12 +42419,12 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type)
+static int init_gtkstatusbar(NspGtkStatusbar *Obj,NspTypeGtkStatusbar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -42703,12 +42703,12 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkstyle(NspGtkStyle *o,NspTypeGtkStyle *type)
+static int init_gtkstyle(NspGtkStyle *Obj,NspTypeGtkStyle *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -44562,12 +44562,12 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktable(NspGtkTable *o,NspTypeGtkTable *type)
+static int init_gtktable(NspGtkTable *Obj,NspTypeGtkTable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -44933,12 +44933,12 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *o,NspTypeGtkTearoffMenuItem *type)
+static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *Obj,NspTypeGtkTearoffMenuItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -45150,12 +45150,12 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type)
+static int init_gtktextbuffer(NspGtkTextBuffer *Obj,NspTypeGtkTextBuffer *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -46401,12 +46401,12 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type)
+static int init_gtktextchildanchor(NspGtkTextChildAnchor *Obj,NspTypeGtkTextChildAnchor *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -46644,12 +46644,12 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextmark(NspGtkTextMark *o,NspTypeGtkTextMark *type)
+static int init_gtktextmark(NspGtkTextMark *Obj,NspTypeGtkTextMark *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -46909,12 +46909,12 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktexttag(NspGtkTextTag *o,NspTypeGtkTextTag *type)
+static int init_gtktexttag(NspGtkTextTag *Obj,NspTypeGtkTextTag *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -47181,12 +47181,12 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktexttagtable(NspGtkTextTagTable *o,NspTypeGtkTextTagTable *type)
+static int init_gtktexttagtable(NspGtkTextTagTable *Obj,NspTypeGtkTextTagTable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -47446,12 +47446,12 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktextview(NspGtkTextView *o,NspTypeGtkTextView *type)
+static int init_gtktextview(NspGtkTextView *Obj,NspTypeGtkTextView *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -48426,12 +48426,12 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktoggleaction(NspGtkToggleAction *o,NspTypeGtkToggleAction *type)
+static int init_gtktoggleaction(NspGtkToggleAction *Obj,NspTypeGtkToggleAction *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -48694,12 +48694,12 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktogglebutton(NspGtkToggleButton *o,NspTypeGtkToggleButton *type)
+static int init_gtktogglebutton(NspGtkToggleButton *Obj,NspTypeGtkToggleButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -49023,12 +49023,12 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktoggletoolbutton(NspGtkToggleToolButton *o,NspTypeGtkToggleToolButton *type)
+static int init_gtktoggletoolbutton(NspGtkToggleToolButton *Obj,NspTypeGtkToggleToolButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -49263,12 +49263,12 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktoolbar(NspGtkToolbar *o,NspTypeGtkToolbar *type)
+static int init_gtktoolbar(NspGtkToolbar *Obj,NspTypeGtkToolbar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -50055,12 +50055,12 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktoolbutton(NspGtkToolButton *o,NspTypeGtkToolButton *type)
+static int init_gtktoolbutton(NspGtkToolButton *Obj,NspTypeGtkToolButton *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -50445,12 +50445,12 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktoolitem(NspGtkToolItem *o,NspTypeGtkToolItem *type)
+static int init_gtktoolitem(NspGtkToolItem *Obj,NspTypeGtkToolItem *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -50888,12 +50888,12 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktooltips(NspGtkTooltips *o,NspTypeGtkTooltips *type)
+static int init_gtktooltips(NspGtkTooltips *Obj,NspTypeGtkTooltips *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -51256,12 +51256,12 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreemodelfilter(NspGtkTreeModelFilter *o,NspTypeGtkTreeModelFilter *type)
+static int init_gtktreemodelfilter(NspGtkTreeModelFilter *Obj,NspTypeGtkTreeModelFilter *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -51590,12 +51590,12 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type)
+static int init_gtktreemodelsort(NspGtkTreeModelSort *Obj,NspTypeGtkTreeModelSort *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -51946,12 +51946,12 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreeselection(NspGtkTreeSelection *o,NspTypeGtkTreeSelection *type)
+static int init_gtktreeselection(NspGtkTreeSelection *Obj,NspTypeGtkTreeSelection *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -52560,12 +52560,12 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreestore(NspGtkTreeStore *o,NspTypeGtkTreeStore *type)
+static int init_gtktreestore(NspGtkTreeStore *Obj,NspTypeGtkTreeStore *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -53307,12 +53307,12 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreeview(NspGtkTreeView *o,NspTypeGtkTreeView *type)
+static int init_gtktreeview(NspGtkTreeView *Obj,NspTypeGtkTreeView *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -54578,12 +54578,12 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *o,NspTypeGtkTreeViewColumn *type)
+static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *Obj,NspTypeGtkTreeViewColumn *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -55426,12 +55426,12 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkuimanager(NspGtkUIManager *o,NspTypeGtkUIManager *type)
+static int init_gtkuimanager(NspGtkUIManager *Obj,NspTypeGtkUIManager *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -55845,12 +55845,12 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvbox(NspGtkVBox *o,NspTypeGtkVBox *type)
+static int init_gtkvbox(NspGtkVBox *Obj,NspTypeGtkVBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -56068,12 +56068,12 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvbuttonbox(NspGtkVButtonBox *o,NspTypeGtkVButtonBox *type)
+static int init_gtkvbuttonbox(NspGtkVButtonBox *Obj,NspTypeGtkVButtonBox *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -56285,12 +56285,12 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkviewport(NspGtkViewport *o,NspTypeGtkViewport *type)
+static int init_gtkviewport(NspGtkViewport *Obj,NspTypeGtkViewport *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -56619,12 +56619,12 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvpaned(NspGtkVPaned *o,NspTypeGtkVPaned *type)
+static int init_gtkvpaned(NspGtkVPaned *Obj,NspTypeGtkVPaned *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -56836,12 +56836,12 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvruler(NspGtkVRuler *o,NspTypeGtkVRuler *type)
+static int init_gtkvruler(NspGtkVRuler *Obj,NspTypeGtkVRuler *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -57053,12 +57053,12 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvscale(NspGtkVScale *o,NspTypeGtkVScale *type)
+static int init_gtkvscale(NspGtkVScale *Obj,NspTypeGtkVScale *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -57284,12 +57284,12 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvscrollbar(NspGtkVScrollbar *o,NspTypeGtkVScrollbar *type)
+static int init_gtkvscrollbar(NspGtkVScrollbar *Obj,NspTypeGtkVScrollbar *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -57515,12 +57515,12 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkvseparator(NspGtkVSeparator *o,NspTypeGtkVSeparator *type)
+static int init_gtkvseparator(NspGtkVSeparator *Obj,NspTypeGtkVSeparator *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -57732,12 +57732,12 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkwidget(NspGtkWidget *o,NspTypeGtkWidget *type)
+static int init_gtkwidget(NspGtkWidget *Obj,NspTypeGtkWidget *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -59848,12 +59848,12 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkwindow(NspGtkWindow *o,NspTypeGtkWindow *type)
+static int init_gtkwindow(NspGtkWindow *Obj,NspTypeGtkWindow *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -61285,12 +61285,12 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gtkwindowgroup(NspGtkWindowGroup *o,NspTypeGtkWindowGroup *type)
+static int init_gtkwindowgroup(NspGtkWindowGroup *Obj,NspTypeGtkWindowGroup *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }

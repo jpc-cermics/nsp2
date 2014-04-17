@@ -153,12 +153,12 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkevent(NspGdkEvent *o,NspTypeGdkEvent *type)
+static int init_gdkevent(NspGdkEvent *Obj,NspTypeGdkEvent *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -804,12 +804,12 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkfont(NspGdkFont *o,NspTypeGdkFont *type)
+static int init_gdkfont(NspGdkFont *Obj,NspTypeGdkFont *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1235,12 +1235,12 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkcolor(NspGdkColor *o,NspTypeGdkColor *type)
+static int init_gdkcolor(NspGdkColor *Obj,NspTypeGdkColor *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1529,12 +1529,12 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkcursor(NspGdkCursor *o,NspTypeGdkCursor *type)
+static int init_gdkcursor(NspGdkCursor *Obj,NspTypeGdkCursor *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1807,12 +1807,12 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkrectangle(NspGdkRectangle *o,NspTypeGdkRectangle *type)
+static int init_gdkrectangle(NspGdkRectangle *Obj,NspTypeGdkRectangle *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2127,12 +2127,12 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkcolormap(NspGdkColormap *o,NspTypeGdkColormap *type)
+static int init_gdkcolormap(NspGdkColormap *Obj,NspTypeGdkColormap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2499,12 +2499,12 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkdevice(NspGdkDevice *o,NspTypeGdkDevice *type)
+static int init_gdkdevice(NspGdkDevice *Obj,NspTypeGdkDevice *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2955,12 +2955,12 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkdisplay(NspGdkDisplay *o,NspTypeGdkDisplay *type)
+static int init_gdkdisplay(NspGdkDisplay *Obj,NspTypeGdkDisplay *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3347,12 +3347,12 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkdisplaymanager(NspGdkDisplayManager *o,NspTypeGdkDisplayManager *type)
+static int init_gdkdisplaymanager(NspGdkDisplayManager *Obj,NspTypeGdkDisplayManager *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -3550,12 +3550,12 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkdragcontext(NspGdkDragContext *o,NspTypeGdkDragContext *type)
+static int init_gdkdragcontext(NspGdkDragContext *Obj,NspTypeGdkDragContext *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -4062,12 +4062,12 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkdrawable(NspGdkDrawable *o,NspTypeGdkDrawable *type)
+static int init_gdkdrawable(NspGdkDrawable *Obj,NspTypeGdkDrawable *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -4751,12 +4751,12 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkwindow(NspGdkWindow *o,NspTypeGdkWindow *type)
+static int init_gdkwindow(NspGdkWindow *Obj,NspTypeGdkWindow *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -5932,12 +5932,12 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type)
+static int init_gdkpixmap(NspGdkPixmap *Obj,NspTypeGdkPixmap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -6167,12 +6167,12 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkbitmap(NspGdkBitmap *o,NspTypeGdkBitmap *type)
+static int init_gdkbitmap(NspGdkBitmap *Obj,NspTypeGdkBitmap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -6372,12 +6372,12 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkgc(NspGdkGC *o,NspTypeGdkGC *type)
+static int init_gdkgc(NspGdkGC *Obj,NspTypeGdkGC *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -7171,12 +7171,12 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkimage(NspGdkImage *o,NspTypeGdkImage *type)
+static int init_gdkimage(NspGdkImage *Obj,NspTypeGdkImage *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -7444,12 +7444,12 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkkeymap(NspGdkKeymap *o,NspTypeGdkKeymap *type)
+static int init_gdkkeymap(NspGdkKeymap *Obj,NspTypeGdkKeymap *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -7660,12 +7660,12 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkpixbuf(NspGdkPixbuf *o,NspTypeGdkPixbuf *type)
+static int init_gdkpixbuf(NspGdkPixbuf *Obj,NspTypeGdkPixbuf *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8351,12 +8351,12 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkpixbufanimation(NspGdkPixbufAnimation *o,NspTypeGdkPixbufAnimation *type)
+static int init_gdkpixbufanimation(NspGdkPixbufAnimation *Obj,NspTypeGdkPixbufAnimation *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8618,12 +8618,12 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *o,NspTypeGdkPixbufAnimationIter *type)
+static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *Obj,NspTypeGdkPixbufAnimationIter *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -8855,12 +8855,12 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkpixbufloader(NspGdkPixbufLoader *o,NspTypeGdkPixbufLoader *type)
+static int init_gdkpixbufloader(NspGdkPixbufLoader *Obj,NspTypeGdkPixbufLoader *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9138,12 +9138,12 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkscreen(NspGdkScreen *o,NspTypeGdkScreen *type)
+static int init_gdkscreen(NspGdkScreen *Obj,NspTypeGdkScreen *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -9577,12 +9577,12 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_gdkvisual(NspGdkVisual *o,NspTypeGdkVisual *type)
+static int init_gdkvisual(NspGdkVisual *Obj,NspTypeGdkVisual *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }

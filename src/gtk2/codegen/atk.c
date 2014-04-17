@@ -129,12 +129,12 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkhyperlink(NspAtkHyperlink *o,NspTypeAtkHyperlink *type)
+static int init_atkhyperlink(NspAtkHyperlink *Obj,NspTypeAtkHyperlink *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -400,12 +400,12 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkobject(NspAtkObject *o,NspTypeAtkObject *type)
+static int init_atkobject(NspAtkObject *Obj,NspTypeAtkObject *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -774,12 +774,12 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atknoopobject(NspAtkNoOpObject *o,NspTypeAtkNoOpObject *type)
+static int init_atknoopobject(NspAtkNoOpObject *Obj,NspTypeAtkNoOpObject *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -993,12 +993,12 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type)
+static int init_atkobjectfactory(NspAtkObjectFactory *Obj,NspTypeAtkObjectFactory *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1222,12 +1222,12 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *o,NspTypeAtkNoOpObjectFactory *type)
+static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *Obj,NspTypeAtkNoOpObjectFactory *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1439,12 +1439,12 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkregistry(NspAtkRegistry *o,NspTypeAtkRegistry *type)
+static int init_atkregistry(NspAtkRegistry *Obj,NspTypeAtkRegistry *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1691,12 +1691,12 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type)
+static int init_atkrelation(NspAtkRelation *Obj,NspTypeAtkRelation *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -1951,12 +1951,12 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkrelationset(NspAtkRelationSet *o,NspTypeAtkRelationSet *type)
+static int init_atkrelationset(NspAtkRelationSet *Obj,NspTypeAtkRelationSet *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2248,12 +2248,12 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkstateset(NspAtkStateSet *o,NspTypeAtkStateSet *type)
+static int init_atkstateset(NspAtkStateSet *Obj,NspTypeAtkStateSet *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
@@ -2561,12 +2561,12 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_atkutil(NspAtkUtil *o,NspTypeAtkUtil *type)
+static int init_atkutil(NspAtkUtil *Obj,NspTypeAtkUtil *type)
 {
   /* jump the first surtype */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
