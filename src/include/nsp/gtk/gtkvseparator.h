@@ -48,8 +48,8 @@ extern NspGtkVSeparator *GetGtkVSeparator (Stack stack, int i);
 
 #ifdef GtkVSeparator_Private 
 static int init_gtkvseparator(NspGtkVSeparator *o,NspTypeGtkVSeparator *type);
-static char *gtkvseparator_type_as_string(void);
-static char *gtkvseparator_type_short_string(NspObject *v);
+static char *nsp_gtkvseparator_type_as_string(void);
+static char *nsp_gtkvseparator_type_short_string(NspObject *v);
 static AttrTab gtkvseparator_attrs[];
 /* static int int_gtkvseparator_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkvseparator_get_methods(void); 

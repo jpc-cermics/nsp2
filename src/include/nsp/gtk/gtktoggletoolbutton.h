@@ -48,8 +48,8 @@ extern NspGtkToggleToolButton *GetGtkToggleToolButton (Stack stack, int i);
 
 #ifdef GtkToggleToolButton_Private 
 static int init_gtktoggletoolbutton(NspGtkToggleToolButton *o,NspTypeGtkToggleToolButton *type);
-static char *gtktoggletoolbutton_type_as_string(void);
-static char *gtktoggletoolbutton_type_short_string(NspObject *v);
+static char *nsp_gtktoggletoolbutton_type_as_string(void);
+static char *nsp_gtktoggletoolbutton_type_short_string(NspObject *v);
 static AttrTab gtktoggletoolbutton_attrs[];
 /* static int int_gtktoggletoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktoggletoolbutton_get_methods(void); 

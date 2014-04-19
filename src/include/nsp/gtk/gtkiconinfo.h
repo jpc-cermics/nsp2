@@ -48,8 +48,8 @@ extern NspGtkIconInfo *GetGtkIconInfo (Stack stack, int i);
 
 #ifdef GtkIconInfo_Private 
 static int init_gtkiconinfo(NspGtkIconInfo *o,NspTypeGtkIconInfo *type);
-static char *gtkiconinfo_type_as_string(void);
-static char *gtkiconinfo_type_short_string(NspObject *v);
+static char *nsp_gtkiconinfo_type_as_string(void);
+static char *nsp_gtkiconinfo_type_short_string(NspObject *v);
 static AttrTab gtkiconinfo_attrs[];
 /* static int int_gtkiconinfo_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkiconinfo_get_methods(void); 

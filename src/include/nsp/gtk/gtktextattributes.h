@@ -48,8 +48,8 @@ extern NspGtkTextAttributes *GetGtkTextAttributes (Stack stack, int i);
 
 #ifdef GtkTextAttributes_Private 
 static int init_gtktextattributes(NspGtkTextAttributes *o,NspTypeGtkTextAttributes *type);
-static char *gtktextattributes_type_as_string(void);
-static char *gtktextattributes_type_short_string(NspObject *v);
+static char *nsp_gtktextattributes_type_as_string(void);
+static char *nsp_gtktextattributes_type_short_string(NspObject *v);
 static AttrTab gtktextattributes_attrs[];
 /* static int int_gtktextattributes_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextattributes_get_methods(void); 

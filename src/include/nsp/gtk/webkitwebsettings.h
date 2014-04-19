@@ -48,8 +48,8 @@ extern NspWebKitWebSettings *GetWebKitWebSettings (Stack stack, int i);
 
 #ifdef WebKitWebSettings_Private 
 static int init_webkitwebsettings(NspWebKitWebSettings *o,NspTypeWebKitWebSettings *type);
-static char *webkitwebsettings_type_as_string(void);
-static char *webkitwebsettings_type_short_string(NspObject *v);
+static char *nsp_webkitwebsettings_type_as_string(void);
+static char *nsp_webkitwebsettings_type_short_string(NspObject *v);
 static AttrTab webkitwebsettings_attrs[];
 /* static int int_webkitwebsettings_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitwebsettings_get_methods(void); 

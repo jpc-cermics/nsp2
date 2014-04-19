@@ -48,8 +48,8 @@ extern NspGtkToolItem *GetGtkToolItem (Stack stack, int i);
 
 #ifdef GtkToolItem_Private 
 static int init_gtktoolitem(NspGtkToolItem *o,NspTypeGtkToolItem *type);
-static char *gtktoolitem_type_as_string(void);
-static char *gtktoolitem_type_short_string(NspObject *v);
+static char *nsp_gtktoolitem_type_as_string(void);
+static char *nsp_gtktoolitem_type_short_string(NspObject *v);
 static AttrTab gtktoolitem_attrs[];
 /* static int int_gtktoolitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktoolitem_get_methods(void); 

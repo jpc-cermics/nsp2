@@ -48,8 +48,8 @@ extern NspGtkCellRendererProgress *GetGtkCellRendererProgress (Stack stack, int 
 
 #ifdef GtkCellRendererProgress_Private 
 static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *o,NspTypeGtkCellRendererProgress *type);
-static char *gtkcellrendererprogress_type_as_string(void);
-static char *gtkcellrendererprogress_type_short_string(NspObject *v);
+static char *nsp_gtkcellrendererprogress_type_as_string(void);
+static char *nsp_gtkcellrendererprogress_type_short_string(NspObject *v);
 static AttrTab gtkcellrendererprogress_attrs[];
 /* static int int_gtkcellrendererprogress_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrendererprogress_get_methods(void); 

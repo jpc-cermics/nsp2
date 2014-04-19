@@ -48,8 +48,8 @@ extern NspGdkDisplayManager *GetGdkDisplayManager (Stack stack, int i);
 
 #ifdef GdkDisplayManager_Private 
 static int init_gdkdisplaymanager(NspGdkDisplayManager *o,NspTypeGdkDisplayManager *type);
-static char *gdkdisplaymanager_type_as_string(void);
-static char *gdkdisplaymanager_type_short_string(NspObject *v);
+static char *nsp_gdkdisplaymanager_type_as_string(void);
+static char *nsp_gdkdisplaymanager_type_short_string(NspObject *v);
 static AttrTab gdkdisplaymanager_attrs[];
 /* static int int_gdkdisplaymanager_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkdisplaymanager_get_methods(void); 

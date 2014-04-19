@@ -48,8 +48,8 @@ extern NspPangoFont *GetPangoFont (Stack stack, int i);
 
 #ifdef PangoFont_Private 
 static int init_pangofont(NspPangoFont *o,NspTypePangoFont *type);
-static char *pangofont_type_as_string(void);
-static char *pangofont_type_short_string(NspObject *v);
+static char *nsp_pangofont_type_as_string(void);
+static char *nsp_pangofont_type_short_string(NspObject *v);
 static AttrTab pangofont_attrs[];
 /* static int int_pangofont_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangofont_get_methods(void); 

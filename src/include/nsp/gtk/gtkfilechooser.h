@@ -48,8 +48,8 @@ extern NspGtkFileChooser *GetGtkFileChooser (Stack stack, int i);
 
 #ifdef GtkFileChooser_Private 
 static int init_gtkfilechooser(NspGtkFileChooser *o,NspTypeGtkFileChooser *type);
-static char *gtkfilechooser_type_as_string(void);
-static char *gtkfilechooser_type_short_string(NspObject *v);
+static char *nsp_gtkfilechooser_type_as_string(void);
+static char *nsp_gtkfilechooser_type_short_string(NspObject *v);
 static AttrTab gtkfilechooser_attrs[];
 /* static int int_gtkfilechooser_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfilechooser_get_methods(void); 

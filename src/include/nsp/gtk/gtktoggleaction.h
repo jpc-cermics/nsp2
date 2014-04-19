@@ -48,8 +48,8 @@ extern NspGtkToggleAction *GetGtkToggleAction (Stack stack, int i);
 
 #ifdef GtkToggleAction_Private 
 static int init_gtktoggleaction(NspGtkToggleAction *o,NspTypeGtkToggleAction *type);
-static char *gtktoggleaction_type_as_string(void);
-static char *gtktoggleaction_type_short_string(NspObject *v);
+static char *nsp_gtktoggleaction_type_as_string(void);
+static char *nsp_gtktoggleaction_type_short_string(NspObject *v);
 static AttrTab gtktoggleaction_attrs[];
 /* static int int_gtktoggleaction_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktoggleaction_get_methods(void); 

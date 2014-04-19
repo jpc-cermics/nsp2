@@ -48,8 +48,8 @@ extern NspWebKitWebView *GetWebKitWebView (Stack stack, int i);
 
 #ifdef WebKitWebView_Private 
 static int init_webkitwebview(NspWebKitWebView *o,NspTypeWebKitWebView *type);
-static char *webkitwebview_type_as_string(void);
-static char *webkitwebview_type_short_string(NspObject *v);
+static char *nsp_webkitwebview_type_as_string(void);
+static char *nsp_webkitwebview_type_short_string(NspObject *v);
 static AttrTab webkitwebview_attrs[];
 /* static int int_webkitwebview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitwebview_get_methods(void); 

@@ -48,7 +48,7 @@
 #include "nsp/gtk/atkutil.h"
 
 
-/* ----------- AtkHyperlink ----------- */
+/* ----------- NspAtkHyperlink ----------- */
 
 
 #include "nsp/object.h"
@@ -57,17 +57,17 @@
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkHyperlink inherits from GObject 
+ * NspAtkHyperlink inherits from GObject 
  */
 
 int nsp_type_atkhyperlink_id=0;
 NspTypeAtkHyperlink *nsp_type_atkhyperlink=NULL;
 
 /*
- * Type object for AtkHyperlink 
+ * Type object for NspAtkHyperlink 
  * all the instance of NspTypeAtkHyperlink share the same id. 
  * nsp_type_atkhyperlink: is an instance of NspTypeAtkHyperlink 
- *    used for objects of AtkHyperlink type (i.e built with new_atkhyperlink) 
+ *    used for objects of NspAtkHyperlink type (i.e built with new_atkhyperlink) 
  * other instances are used for derived classes 
  */
 NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
@@ -96,8 +96,8 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
   
   /* object methods redefined for atkhyperlink */ 
 
-  top->s_type =  (s_type_func *) atkhyperlink_type_as_string;    
-  top->sh_type = (sh_type_func *) atkhyperlink_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkhyperlink_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkhyperlink_type_short_string;
   /* top->create = (create_func*) int_atkhyperlink_create;*/ 
   
   /* specific methods for atkhyperlink */
@@ -105,7 +105,7 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
   type->init = (init_func *) init_atkhyperlink;
 
   /* 
-   * AtkHyperlink interfaces can be added here 
+   * NspAtkHyperlink interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -131,7 +131,7 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
 }
 
 /*
- * initialize AtkHyperlink instances 
+ * initialize NspAtkHyperlink instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -146,7 +146,7 @@ static int init_atkhyperlink(NspAtkHyperlink *Obj,NspTypeAtkHyperlink *type)
 }
 
 /*
- * new instance of AtkHyperlink 
+ * new instance of NspAtkHyperlink 
  */
 
 NspAtkHyperlink *new_atkhyperlink() 
@@ -161,7 +161,7 @@ NspAtkHyperlink *new_atkhyperlink()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkHyperlink 
+ * Object method redefined for NspAtkHyperlink 
  *-----------------------------------------------*/
 
 /*
@@ -171,23 +171,23 @@ NspAtkHyperlink *new_atkhyperlink()
 static char atkhyperlink_type_name[]="AtkHyperlink";
 static char atkhyperlink_short_type_name[]="AtkHyperlink";
 
-static char *atkhyperlink_type_as_string(void)
+static char *nsp_atkhyperlink_type_as_string(void)
 {
   return(atkhyperlink_type_name);
 }
 
-static char *atkhyperlink_type_short_string(NspObject *v)
+static char *nsp_atkhyperlink_type_short_string(NspObject *v)
 {
   return(atkhyperlink_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkHyperlink objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkHyperlink objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkHyperlink   *atkhyperlink_object(NspObject *O)
+NspAtkHyperlink *nsp_atkhyperlink_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -217,7 +217,7 @@ NspAtkHyperlink  *GetAtkHyperlinkCopy(Stack stack, int i)
 NspAtkHyperlink  *GetAtkHyperlink(Stack stack, int i)
 {
   NspAtkHyperlink *M;
-  if (( M = atkhyperlink_object(NthObj(i))) == NULLATKHYPERLINK)
+  if (( M = nsp_atkhyperlink_object(NthObj(i))) == NULLATKHYPERLINK)
      ArgMessage(stack,i);
   return M;
 }
@@ -313,7 +313,7 @@ static NspMethods *atkhyperlink_get_methods(void) { return atkhyperlink_methods;
 static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkObject ----------- */
+/* ----------- NspAtkObject ----------- */
 
 
 #include "nsp/object.h"
@@ -322,17 +322,17 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkObject inherits from GObject 
+ * NspAtkObject inherits from GObject 
  */
 
 int nsp_type_atkobject_id=0;
 NspTypeAtkObject *nsp_type_atkobject=NULL;
 
 /*
- * Type object for AtkObject 
+ * Type object for NspAtkObject 
  * all the instance of NspTypeAtkObject share the same id. 
  * nsp_type_atkobject: is an instance of NspTypeAtkObject 
- *    used for objects of AtkObject type (i.e built with new_atkobject) 
+ *    used for objects of NspAtkObject type (i.e built with new_atkobject) 
  * other instances are used for derived classes 
  */
 NspTypeAtkObject *new_type_atkobject(type_mode mode)
@@ -361,8 +361,8 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
   
   /* object methods redefined for atkobject */ 
 
-  top->s_type =  (s_type_func *) atkobject_type_as_string;    
-  top->sh_type = (sh_type_func *) atkobject_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkobject_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkobject_type_short_string;
   /* top->create = (create_func*) int_atkobject_create;*/ 
   
   /* specific methods for atkobject */
@@ -370,7 +370,7 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
   type->init = (init_func *) init_atkobject;
 
   /* 
-   * AtkObject interfaces can be added here 
+   * NspAtkObject interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -396,7 +396,7 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
 }
 
 /*
- * initialize AtkObject instances 
+ * initialize NspAtkObject instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -411,7 +411,7 @@ static int init_atkobject(NspAtkObject *Obj,NspTypeAtkObject *type)
 }
 
 /*
- * new instance of AtkObject 
+ * new instance of NspAtkObject 
  */
 
 NspAtkObject *new_atkobject() 
@@ -426,7 +426,7 @@ NspAtkObject *new_atkobject()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkObject 
+ * Object method redefined for NspAtkObject 
  *-----------------------------------------------*/
 
 /*
@@ -436,23 +436,23 @@ NspAtkObject *new_atkobject()
 static char atkobject_type_name[]="AtkObject";
 static char atkobject_short_type_name[]="AtkObject";
 
-static char *atkobject_type_as_string(void)
+static char *nsp_atkobject_type_as_string(void)
 {
   return(atkobject_type_name);
 }
 
-static char *atkobject_type_short_string(NspObject *v)
+static char *nsp_atkobject_type_short_string(NspObject *v)
 {
   return(atkobject_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkObject objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkObject objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkObject   *atkobject_object(NspObject *O)
+NspAtkObject *nsp_atkobject_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -482,7 +482,7 @@ NspAtkObject  *GetAtkObjectCopy(Stack stack, int i)
 NspAtkObject  *GetAtkObject(Stack stack, int i)
 {
   NspAtkObject *M;
-  if (( M = atkobject_object(NthObj(i))) == NULLATKOBJECT)
+  if (( M = nsp_atkobject_object(NthObj(i))) == NULLATKOBJECT)
      ArgMessage(stack,i);
   return M;
 }
@@ -681,7 +681,7 @@ static NspMethods *atkobject_get_methods(void) { return atkobject_methods;};
 static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkNoOpObject ----------- */
+/* ----------- NspAtkNoOpObject ----------- */
 
 
 #include "nsp/object.h"
@@ -690,17 +690,17 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkNoOpObject inherits from AtkObject 
+ * NspAtkNoOpObject inherits from AtkObject 
  */
 
 int nsp_type_atknoopobject_id=0;
 NspTypeAtkNoOpObject *nsp_type_atknoopobject=NULL;
 
 /*
- * Type object for AtkNoOpObject 
+ * Type object for NspAtkNoOpObject 
  * all the instance of NspTypeAtkNoOpObject share the same id. 
  * nsp_type_atknoopobject: is an instance of NspTypeAtkNoOpObject 
- *    used for objects of AtkNoOpObject type (i.e built with new_atknoopobject) 
+ *    used for objects of NspAtkNoOpObject type (i.e built with new_atknoopobject) 
  * other instances are used for derived classes 
  */
 NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
@@ -729,8 +729,8 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
   
   /* object methods redefined for atknoopobject */ 
 
-  top->s_type =  (s_type_func *) atknoopobject_type_as_string;    
-  top->sh_type = (sh_type_func *) atknoopobject_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atknoopobject_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atknoopobject_type_short_string;
   /* top->create = (create_func*) int_atknoopobject_create;*/ 
   
   /* specific methods for atknoopobject */
@@ -738,7 +738,7 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
   type->init = (init_func *) init_atknoopobject;
 
   /* 
-   * AtkNoOpObject interfaces can be added here 
+   * NspAtkNoOpObject interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -764,7 +764,7 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
 }
 
 /*
- * initialize AtkNoOpObject instances 
+ * initialize NspAtkNoOpObject instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -779,7 +779,7 @@ static int init_atknoopobject(NspAtkNoOpObject *Obj,NspTypeAtkNoOpObject *type)
 }
 
 /*
- * new instance of AtkNoOpObject 
+ * new instance of NspAtkNoOpObject 
  */
 
 NspAtkNoOpObject *new_atknoopobject() 
@@ -794,7 +794,7 @@ NspAtkNoOpObject *new_atknoopobject()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkNoOpObject 
+ * Object method redefined for NspAtkNoOpObject 
  *-----------------------------------------------*/
 
 /*
@@ -804,23 +804,23 @@ NspAtkNoOpObject *new_atknoopobject()
 static char atknoopobject_type_name[]="AtkNoOpObject";
 static char atknoopobject_short_type_name[]="AtkNoOpObject";
 
-static char *atknoopobject_type_as_string(void)
+static char *nsp_atknoopobject_type_as_string(void)
 {
   return(atknoopobject_type_name);
 }
 
-static char *atknoopobject_type_short_string(NspObject *v)
+static char *nsp_atknoopobject_type_short_string(NspObject *v)
 {
   return(atknoopobject_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkNoOpObject objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkNoOpObject objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkNoOpObject   *atknoopobject_object(NspObject *O)
+NspAtkNoOpObject *nsp_atknoopobject_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -850,7 +850,7 @@ NspAtkNoOpObject  *GetAtkNoOpObjectCopy(Stack stack, int i)
 NspAtkNoOpObject  *GetAtkNoOpObject(Stack stack, int i)
 {
   NspAtkNoOpObject *M;
-  if (( M = atknoopobject_object(NthObj(i))) == NULLATKNOOPOBJECT)
+  if (( M = nsp_atknoopobject_object(NthObj(i))) == NULLATKNOOPOBJECT)
      ArgMessage(stack,i);
   return M;
 }
@@ -894,7 +894,7 @@ static NspMethods *atknoopobject_get_methods(void) { return NULL;};
 static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkObjectFactory ----------- */
+/* ----------- NspAtkObjectFactory ----------- */
 
 
 #include "nsp/object.h"
@@ -903,17 +903,17 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkObjectFactory inherits from GObject 
+ * NspAtkObjectFactory inherits from GObject 
  */
 
 int nsp_type_atkobjectfactory_id=0;
 NspTypeAtkObjectFactory *nsp_type_atkobjectfactory=NULL;
 
 /*
- * Type object for AtkObjectFactory 
+ * Type object for NspAtkObjectFactory 
  * all the instance of NspTypeAtkObjectFactory share the same id. 
  * nsp_type_atkobjectfactory: is an instance of NspTypeAtkObjectFactory 
- *    used for objects of AtkObjectFactory type (i.e built with new_atkobjectfactory) 
+ *    used for objects of NspAtkObjectFactory type (i.e built with new_atkobjectfactory) 
  * other instances are used for derived classes 
  */
 NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
@@ -942,8 +942,8 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
   
   /* object methods redefined for atkobjectfactory */ 
 
-  top->s_type =  (s_type_func *) atkobjectfactory_type_as_string;    
-  top->sh_type = (sh_type_func *) atkobjectfactory_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkobjectfactory_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkobjectfactory_type_short_string;
   /* top->create = (create_func*) int_atkobjectfactory_create;*/ 
   
   /* specific methods for atkobjectfactory */
@@ -951,7 +951,7 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
   type->init = (init_func *) init_atkobjectfactory;
 
   /* 
-   * AtkObjectFactory interfaces can be added here 
+   * NspAtkObjectFactory interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -977,7 +977,7 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
 }
 
 /*
- * initialize AtkObjectFactory instances 
+ * initialize NspAtkObjectFactory instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -992,7 +992,7 @@ static int init_atkobjectfactory(NspAtkObjectFactory *Obj,NspTypeAtkObjectFactor
 }
 
 /*
- * new instance of AtkObjectFactory 
+ * new instance of NspAtkObjectFactory 
  */
 
 NspAtkObjectFactory *new_atkobjectfactory() 
@@ -1007,7 +1007,7 @@ NspAtkObjectFactory *new_atkobjectfactory()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkObjectFactory 
+ * Object method redefined for NspAtkObjectFactory 
  *-----------------------------------------------*/
 
 /*
@@ -1017,23 +1017,23 @@ NspAtkObjectFactory *new_atkobjectfactory()
 static char atkobjectfactory_type_name[]="AtkObjectFactory";
 static char atkobjectfactory_short_type_name[]="AtkObjectFactory";
 
-static char *atkobjectfactory_type_as_string(void)
+static char *nsp_atkobjectfactory_type_as_string(void)
 {
   return(atkobjectfactory_type_name);
 }
 
-static char *atkobjectfactory_type_short_string(NspObject *v)
+static char *nsp_atkobjectfactory_type_short_string(NspObject *v)
 {
   return(atkobjectfactory_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkObjectFactory objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkObjectFactory objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkObjectFactory   *atkobjectfactory_object(NspObject *O)
+NspAtkObjectFactory *nsp_atkobjectfactory_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1063,7 +1063,7 @@ NspAtkObjectFactory  *GetAtkObjectFactoryCopy(Stack stack, int i)
 NspAtkObjectFactory  *GetAtkObjectFactory(Stack stack, int i)
 {
   NspAtkObjectFactory *M;
-  if (( M = atkobjectfactory_object(NthObj(i))) == NULLATKOBJECTFACTORY)
+  if (( M = nsp_atkobjectfactory_object(NthObj(i))) == NULLATKOBJECTFACTORY)
      ArgMessage(stack,i);
   return M;
 }
@@ -1117,7 +1117,7 @@ static NspMethods *atkobjectfactory_get_methods(void) { return atkobjectfactory_
 static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkNoOpObjectFactory ----------- */
+/* ----------- NspAtkNoOpObjectFactory ----------- */
 
 
 #include "nsp/object.h"
@@ -1126,17 +1126,17 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkNoOpObjectFactory inherits from AtkObjectFactory 
+ * NspAtkNoOpObjectFactory inherits from AtkObjectFactory 
  */
 
 int nsp_type_atknoopobjectfactory_id=0;
 NspTypeAtkNoOpObjectFactory *nsp_type_atknoopobjectfactory=NULL;
 
 /*
- * Type object for AtkNoOpObjectFactory 
+ * Type object for NspAtkNoOpObjectFactory 
  * all the instance of NspTypeAtkNoOpObjectFactory share the same id. 
  * nsp_type_atknoopobjectfactory: is an instance of NspTypeAtkNoOpObjectFactory 
- *    used for objects of AtkNoOpObjectFactory type (i.e built with new_atknoopobjectfactory) 
+ *    used for objects of NspAtkNoOpObjectFactory type (i.e built with new_atknoopobjectfactory) 
  * other instances are used for derived classes 
  */
 NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
@@ -1165,8 +1165,8 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
   
   /* object methods redefined for atknoopobjectfactory */ 
 
-  top->s_type =  (s_type_func *) atknoopobjectfactory_type_as_string;    
-  top->sh_type = (sh_type_func *) atknoopobjectfactory_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atknoopobjectfactory_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atknoopobjectfactory_type_short_string;
   /* top->create = (create_func*) int_atknoopobjectfactory_create;*/ 
   
   /* specific methods for atknoopobjectfactory */
@@ -1174,7 +1174,7 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
   type->init = (init_func *) init_atknoopobjectfactory;
 
   /* 
-   * AtkNoOpObjectFactory interfaces can be added here 
+   * NspAtkNoOpObjectFactory interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1200,7 +1200,7 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
 }
 
 /*
- * initialize AtkNoOpObjectFactory instances 
+ * initialize NspAtkNoOpObjectFactory instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1215,7 +1215,7 @@ static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *Obj,NspTypeAtkNoOp
 }
 
 /*
- * new instance of AtkNoOpObjectFactory 
+ * new instance of NspAtkNoOpObjectFactory 
  */
 
 NspAtkNoOpObjectFactory *new_atknoopobjectfactory() 
@@ -1230,7 +1230,7 @@ NspAtkNoOpObjectFactory *new_atknoopobjectfactory()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkNoOpObjectFactory 
+ * Object method redefined for NspAtkNoOpObjectFactory 
  *-----------------------------------------------*/
 
 /*
@@ -1240,23 +1240,23 @@ NspAtkNoOpObjectFactory *new_atknoopobjectfactory()
 static char atknoopobjectfactory_type_name[]="AtkNoOpObjectFactory";
 static char atknoopobjectfactory_short_type_name[]="AtkNoOpObjectFactory";
 
-static char *atknoopobjectfactory_type_as_string(void)
+static char *nsp_atknoopobjectfactory_type_as_string(void)
 {
   return(atknoopobjectfactory_type_name);
 }
 
-static char *atknoopobjectfactory_type_short_string(NspObject *v)
+static char *nsp_atknoopobjectfactory_type_short_string(NspObject *v)
 {
   return(atknoopobjectfactory_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkNoOpObjectFactory objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkNoOpObjectFactory objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkNoOpObjectFactory   *atknoopobjectfactory_object(NspObject *O)
+NspAtkNoOpObjectFactory *nsp_atknoopobjectfactory_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1286,7 +1286,7 @@ NspAtkNoOpObjectFactory  *GetAtkNoOpObjectFactoryCopy(Stack stack, int i)
 NspAtkNoOpObjectFactory  *GetAtkNoOpObjectFactory(Stack stack, int i)
 {
   NspAtkNoOpObjectFactory *M;
-  if (( M = atknoopobjectfactory_object(NthObj(i))) == NULLATKNOOPOBJECTFACTORY)
+  if (( M = nsp_atknoopobjectfactory_object(NthObj(i))) == NULLATKNOOPOBJECTFACTORY)
      ArgMessage(stack,i);
   return M;
 }
@@ -1328,7 +1328,7 @@ static NspMethods *atknoopobjectfactory_get_methods(void) { return NULL;};
 static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkRegistry ----------- */
+/* ----------- NspAtkRegistry ----------- */
 
 
 #include "nsp/object.h"
@@ -1337,17 +1337,17 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkRegistry inherits from GObject 
+ * NspAtkRegistry inherits from GObject 
  */
 
 int nsp_type_atkregistry_id=0;
 NspTypeAtkRegistry *nsp_type_atkregistry=NULL;
 
 /*
- * Type object for AtkRegistry 
+ * Type object for NspAtkRegistry 
  * all the instance of NspTypeAtkRegistry share the same id. 
  * nsp_type_atkregistry: is an instance of NspTypeAtkRegistry 
- *    used for objects of AtkRegistry type (i.e built with new_atkregistry) 
+ *    used for objects of NspAtkRegistry type (i.e built with new_atkregistry) 
  * other instances are used for derived classes 
  */
 NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
@@ -1376,8 +1376,8 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
   
   /* object methods redefined for atkregistry */ 
 
-  top->s_type =  (s_type_func *) atkregistry_type_as_string;    
-  top->sh_type = (sh_type_func *) atkregistry_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkregistry_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkregistry_type_short_string;
   /* top->create = (create_func*) int_atkregistry_create;*/ 
   
   /* specific methods for atkregistry */
@@ -1385,7 +1385,7 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
   type->init = (init_func *) init_atkregistry;
 
   /* 
-   * AtkRegistry interfaces can be added here 
+   * NspAtkRegistry interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1411,7 +1411,7 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
 }
 
 /*
- * initialize AtkRegistry instances 
+ * initialize NspAtkRegistry instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1426,7 +1426,7 @@ static int init_atkregistry(NspAtkRegistry *Obj,NspTypeAtkRegistry *type)
 }
 
 /*
- * new instance of AtkRegistry 
+ * new instance of NspAtkRegistry 
  */
 
 NspAtkRegistry *new_atkregistry() 
@@ -1441,7 +1441,7 @@ NspAtkRegistry *new_atkregistry()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkRegistry 
+ * Object method redefined for NspAtkRegistry 
  *-----------------------------------------------*/
 
 /*
@@ -1451,23 +1451,23 @@ NspAtkRegistry *new_atkregistry()
 static char atkregistry_type_name[]="AtkRegistry";
 static char atkregistry_short_type_name[]="AtkRegistry";
 
-static char *atkregistry_type_as_string(void)
+static char *nsp_atkregistry_type_as_string(void)
 {
   return(atkregistry_type_name);
 }
 
-static char *atkregistry_type_short_string(NspObject *v)
+static char *nsp_atkregistry_type_short_string(NspObject *v)
 {
   return(atkregistry_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkRegistry objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkRegistry objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkRegistry   *atkregistry_object(NspObject *O)
+NspAtkRegistry *nsp_atkregistry_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1497,7 +1497,7 @@ NspAtkRegistry  *GetAtkRegistryCopy(Stack stack, int i)
 NspAtkRegistry  *GetAtkRegistry(Stack stack, int i)
 {
   NspAtkRegistry *M;
-  if (( M = atkregistry_object(NthObj(i))) == NULLATKREGISTRY)
+  if (( M = nsp_atkregistry_object(NthObj(i))) == NULLATKREGISTRY)
      ArgMessage(stack,i);
   return M;
 }
@@ -1574,7 +1574,7 @@ static NspMethods *atkregistry_get_methods(void) { return atkregistry_methods;};
 static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkRelation ----------- */
+/* ----------- NspAtkRelation ----------- */
 
 
 #include "nsp/object.h"
@@ -1583,17 +1583,17 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkRelation inherits from GObject 
+ * NspAtkRelation inherits from GObject 
  */
 
 int nsp_type_atkrelation_id=0;
 NspTypeAtkRelation *nsp_type_atkrelation=NULL;
 
 /*
- * Type object for AtkRelation 
+ * Type object for NspAtkRelation 
  * all the instance of NspTypeAtkRelation share the same id. 
  * nsp_type_atkrelation: is an instance of NspTypeAtkRelation 
- *    used for objects of AtkRelation type (i.e built with new_atkrelation) 
+ *    used for objects of NspAtkRelation type (i.e built with new_atkrelation) 
  * other instances are used for derived classes 
  */
 NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
@@ -1622,8 +1622,8 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
   
   /* object methods redefined for atkrelation */ 
 
-  top->s_type =  (s_type_func *) atkrelation_type_as_string;    
-  top->sh_type = (sh_type_func *) atkrelation_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkrelation_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkrelation_type_short_string;
   /* top->create = (create_func*) int_atkrelation_create;*/ 
   
   /* specific methods for atkrelation */
@@ -1631,7 +1631,7 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
   type->init = (init_func *) init_atkrelation;
 
   /* 
-   * AtkRelation interfaces can be added here 
+   * NspAtkRelation interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1657,7 +1657,7 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
 }
 
 /*
- * initialize AtkRelation instances 
+ * initialize NspAtkRelation instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1672,7 +1672,7 @@ static int init_atkrelation(NspAtkRelation *Obj,NspTypeAtkRelation *type)
 }
 
 /*
- * new instance of AtkRelation 
+ * new instance of NspAtkRelation 
  */
 
 NspAtkRelation *new_atkrelation() 
@@ -1687,7 +1687,7 @@ NspAtkRelation *new_atkrelation()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkRelation 
+ * Object method redefined for NspAtkRelation 
  *-----------------------------------------------*/
 
 /*
@@ -1697,23 +1697,23 @@ NspAtkRelation *new_atkrelation()
 static char atkrelation_type_name[]="AtkRelation";
 static char atkrelation_short_type_name[]="AtkRelation";
 
-static char *atkrelation_type_as_string(void)
+static char *nsp_atkrelation_type_as_string(void)
 {
   return(atkrelation_type_name);
 }
 
-static char *atkrelation_type_short_string(NspObject *v)
+static char *nsp_atkrelation_type_short_string(NspObject *v)
 {
   return(atkrelation_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkRelation objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkRelation objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkRelation   *atkrelation_object(NspObject *O)
+NspAtkRelation *nsp_atkrelation_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1743,7 +1743,7 @@ NspAtkRelation  *GetAtkRelationCopy(Stack stack, int i)
 NspAtkRelation  *GetAtkRelation(Stack stack, int i)
 {
   NspAtkRelation *M;
-  if (( M = atkrelation_object(NthObj(i))) == NULLATKRELATION)
+  if (( M = nsp_atkrelation_object(NthObj(i))) == NULLATKRELATION)
      ArgMessage(stack,i);
   return M;
 }
@@ -1828,7 +1828,7 @@ static NspMethods *atkrelation_get_methods(void) { return atkrelation_methods;};
 static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkRelationSet ----------- */
+/* ----------- NspAtkRelationSet ----------- */
 
 
 #include "nsp/object.h"
@@ -1837,17 +1837,17 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkRelationSet inherits from GObject 
+ * NspAtkRelationSet inherits from GObject 
  */
 
 int nsp_type_atkrelationset_id=0;
 NspTypeAtkRelationSet *nsp_type_atkrelationset=NULL;
 
 /*
- * Type object for AtkRelationSet 
+ * Type object for NspAtkRelationSet 
  * all the instance of NspTypeAtkRelationSet share the same id. 
  * nsp_type_atkrelationset: is an instance of NspTypeAtkRelationSet 
- *    used for objects of AtkRelationSet type (i.e built with new_atkrelationset) 
+ *    used for objects of NspAtkRelationSet type (i.e built with new_atkrelationset) 
  * other instances are used for derived classes 
  */
 NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
@@ -1876,8 +1876,8 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
   
   /* object methods redefined for atkrelationset */ 
 
-  top->s_type =  (s_type_func *) atkrelationset_type_as_string;    
-  top->sh_type = (sh_type_func *) atkrelationset_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkrelationset_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkrelationset_type_short_string;
   /* top->create = (create_func*) int_atkrelationset_create;*/ 
   
   /* specific methods for atkrelationset */
@@ -1885,7 +1885,7 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
   type->init = (init_func *) init_atkrelationset;
 
   /* 
-   * AtkRelationSet interfaces can be added here 
+   * NspAtkRelationSet interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1911,7 +1911,7 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
 }
 
 /*
- * initialize AtkRelationSet instances 
+ * initialize NspAtkRelationSet instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1926,7 +1926,7 @@ static int init_atkrelationset(NspAtkRelationSet *Obj,NspTypeAtkRelationSet *typ
 }
 
 /*
- * new instance of AtkRelationSet 
+ * new instance of NspAtkRelationSet 
  */
 
 NspAtkRelationSet *new_atkrelationset() 
@@ -1941,7 +1941,7 @@ NspAtkRelationSet *new_atkrelationset()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkRelationSet 
+ * Object method redefined for NspAtkRelationSet 
  *-----------------------------------------------*/
 
 /*
@@ -1951,23 +1951,23 @@ NspAtkRelationSet *new_atkrelationset()
 static char atkrelationset_type_name[]="AtkRelationSet";
 static char atkrelationset_short_type_name[]="AtkRelationSet";
 
-static char *atkrelationset_type_as_string(void)
+static char *nsp_atkrelationset_type_as_string(void)
 {
   return(atkrelationset_type_name);
 }
 
-static char *atkrelationset_type_short_string(NspObject *v)
+static char *nsp_atkrelationset_type_short_string(NspObject *v)
 {
   return(atkrelationset_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkRelationSet objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkRelationSet objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkRelationSet   *atkrelationset_object(NspObject *O)
+NspAtkRelationSet *nsp_atkrelationset_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1997,7 +1997,7 @@ NspAtkRelationSet  *GetAtkRelationSetCopy(Stack stack, int i)
 NspAtkRelationSet  *GetAtkRelationSet(Stack stack, int i)
 {
   NspAtkRelationSet *M;
-  if (( M = atkrelationset_object(NthObj(i))) == NULLATKRELATIONSET)
+  if (( M = nsp_atkrelationset_object(NthObj(i))) == NULLATKRELATIONSET)
      ArgMessage(stack,i);
   return M;
 }
@@ -2119,7 +2119,7 @@ static NspMethods *atkrelationset_get_methods(void) { return atkrelationset_meth
 static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkStateSet ----------- */
+/* ----------- NspAtkStateSet ----------- */
 
 
 #include "nsp/object.h"
@@ -2128,17 +2128,17 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkStateSet inherits from GObject 
+ * NspAtkStateSet inherits from GObject 
  */
 
 int nsp_type_atkstateset_id=0;
 NspTypeAtkStateSet *nsp_type_atkstateset=NULL;
 
 /*
- * Type object for AtkStateSet 
+ * Type object for NspAtkStateSet 
  * all the instance of NspTypeAtkStateSet share the same id. 
  * nsp_type_atkstateset: is an instance of NspTypeAtkStateSet 
- *    used for objects of AtkStateSet type (i.e built with new_atkstateset) 
+ *    used for objects of NspAtkStateSet type (i.e built with new_atkstateset) 
  * other instances are used for derived classes 
  */
 NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
@@ -2167,8 +2167,8 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
   
   /* object methods redefined for atkstateset */ 
 
-  top->s_type =  (s_type_func *) atkstateset_type_as_string;    
-  top->sh_type = (sh_type_func *) atkstateset_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkstateset_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkstateset_type_short_string;
   /* top->create = (create_func*) int_atkstateset_create;*/ 
   
   /* specific methods for atkstateset */
@@ -2176,7 +2176,7 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
   type->init = (init_func *) init_atkstateset;
 
   /* 
-   * AtkStateSet interfaces can be added here 
+   * NspAtkStateSet interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2202,7 +2202,7 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
 }
 
 /*
- * initialize AtkStateSet instances 
+ * initialize NspAtkStateSet instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2217,7 +2217,7 @@ static int init_atkstateset(NspAtkStateSet *Obj,NspTypeAtkStateSet *type)
 }
 
 /*
- * new instance of AtkStateSet 
+ * new instance of NspAtkStateSet 
  */
 
 NspAtkStateSet *new_atkstateset() 
@@ -2232,7 +2232,7 @@ NspAtkStateSet *new_atkstateset()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkStateSet 
+ * Object method redefined for NspAtkStateSet 
  *-----------------------------------------------*/
 
 /*
@@ -2242,23 +2242,23 @@ NspAtkStateSet *new_atkstateset()
 static char atkstateset_type_name[]="AtkStateSet";
 static char atkstateset_short_type_name[]="AtkStateSet";
 
-static char *atkstateset_type_as_string(void)
+static char *nsp_atkstateset_type_as_string(void)
 {
   return(atkstateset_type_name);
 }
 
-static char *atkstateset_type_short_string(NspObject *v)
+static char *nsp_atkstateset_type_short_string(NspObject *v)
 {
   return(atkstateset_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkStateSet objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkStateSet objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkStateSet   *atkstateset_object(NspObject *O)
+NspAtkStateSet *nsp_atkstateset_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2288,7 +2288,7 @@ NspAtkStateSet  *GetAtkStateSetCopy(Stack stack, int i)
 NspAtkStateSet  *GetAtkStateSet(Stack stack, int i)
 {
   NspAtkStateSet *M;
-  if (( M = atkstateset_object(NthObj(i))) == NULLATKSTATESET)
+  if (( M = nsp_atkstateset_object(NthObj(i))) == NULLATKSTATESET)
      ArgMessage(stack,i);
   return M;
 }
@@ -2426,7 +2426,7 @@ static NspMethods *atkstateset_get_methods(void) { return atkstateset_methods;};
 static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- AtkUtil ----------- */
+/* ----------- NspAtkUtil ----------- */
 
 
 #include "nsp/object.h"
@@ -2435,17 +2435,17 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * AtkUtil inherits from GObject 
+ * NspAtkUtil inherits from GObject 
  */
 
 int nsp_type_atkutil_id=0;
 NspTypeAtkUtil *nsp_type_atkutil=NULL;
 
 /*
- * Type object for AtkUtil 
+ * Type object for NspAtkUtil 
  * all the instance of NspTypeAtkUtil share the same id. 
  * nsp_type_atkutil: is an instance of NspTypeAtkUtil 
- *    used for objects of AtkUtil type (i.e built with new_atkutil) 
+ *    used for objects of NspAtkUtil type (i.e built with new_atkutil) 
  * other instances are used for derived classes 
  */
 NspTypeAtkUtil *new_type_atkutil(type_mode mode)
@@ -2474,8 +2474,8 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
   
   /* object methods redefined for atkutil */ 
 
-  top->s_type =  (s_type_func *) atkutil_type_as_string;    
-  top->sh_type = (sh_type_func *) atkutil_type_short_string;
+  top->s_type =  (s_type_func *) nsp_atkutil_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkutil_type_short_string;
   /* top->create = (create_func*) int_atkutil_create;*/ 
   
   /* specific methods for atkutil */
@@ -2483,7 +2483,7 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
   type->init = (init_func *) init_atkutil;
 
   /* 
-   * AtkUtil interfaces can be added here 
+   * NspAtkUtil interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2509,7 +2509,7 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
 }
 
 /*
- * initialize AtkUtil instances 
+ * initialize NspAtkUtil instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2524,7 +2524,7 @@ static int init_atkutil(NspAtkUtil *Obj,NspTypeAtkUtil *type)
 }
 
 /*
- * new instance of AtkUtil 
+ * new instance of NspAtkUtil 
  */
 
 NspAtkUtil *new_atkutil() 
@@ -2539,7 +2539,7 @@ NspAtkUtil *new_atkutil()
 }
 
 /*----------------------------------------------
- * Object method redefined for AtkUtil 
+ * Object method redefined for NspAtkUtil 
  *-----------------------------------------------*/
 
 /*
@@ -2549,23 +2549,23 @@ NspAtkUtil *new_atkutil()
 static char atkutil_type_name[]="AtkUtil";
 static char atkutil_short_type_name[]="AtkUtil";
 
-static char *atkutil_type_as_string(void)
+static char *nsp_atkutil_type_as_string(void)
 {
   return(atkutil_type_name);
 }
 
-static char *atkutil_type_short_string(NspObject *v)
+static char *nsp_atkutil_type_short_string(NspObject *v)
 {
   return(atkutil_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for AtkUtil objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspAtkUtil objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspAtkUtil   *atkutil_object(NspObject *O)
+NspAtkUtil *nsp_atkutil_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2595,7 +2595,7 @@ NspAtkUtil  *GetAtkUtilCopy(Stack stack, int i)
 NspAtkUtil  *GetAtkUtil(Stack stack, int i)
 {
   NspAtkUtil *M;
-  if (( M = atkutil_object(NthObj(i))) == NULLATKUTIL)
+  if (( M = nsp_atkutil_object(NthObj(i))) == NULLATKUTIL)
      ArgMessage(stack,i);
   return M;
 }
@@ -2625,7 +2625,7 @@ static AttrTab atkutil_attrs[]={{NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs) /* get_default_registry */
 {
   AtkRegistry *ret;
   NspObject *nsp_ret;
@@ -2636,7 +2636,7 @@ ret = atk_get_default_registry();
   return 1;
 }
 
-int _wrap_atk_relation_type_register(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_relation_type_register(Stack stack, int rhs, int opt, int lhs) /* relation_type_register */
 {
   int_types T[] = {string,t_end};
   char *name;
@@ -2647,7 +2647,7 @@ ret = atk_relation_type_register(name);
   return 1;
 }
 
-int _wrap_atk_relation_type_for_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_relation_type_for_name(Stack stack, int rhs, int opt, int lhs) /* relation_type_for_name */
 {
   int_types T[] = {string,t_end};
   char *name;
@@ -2658,7 +2658,7 @@ ret = atk_relation_type_for_name(name);
   return 1;
 }
 
-int _wrap_atk_state_type_for_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_state_type_for_name(Stack stack, int rhs, int opt, int lhs) /* state_type_for_name */
 {
   int_types T[] = {string,t_end};
   char *name;
@@ -2669,7 +2669,7 @@ ret = atk_state_type_for_name(name);
   return 1;
 }
 
-int _wrap_atk_text_attribute_get_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_text_attribute_get_name(Stack stack, int rhs, int opt, int lhs) /* text_attribute_get_name */
 {
   int_types T[] = {obj,t_end};
   AtkTextAttribute attr;
@@ -2683,7 +2683,7 @@ ret = atk_text_attribute_get_name(attr);
   return 1;
 }
 
-int _wrap_atk_text_attribute_get_value(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_text_attribute_get_value(Stack stack, int rhs, int opt, int lhs) /* text_attribute_get_value */
 {
   int_types T[] = {obj, s_int,t_end};
   AtkTextAttribute attr;
@@ -2698,7 +2698,7 @@ ret = atk_text_attribute_get_value(attr, index);
   return 1;
 }
 
-int _wrap_atk_remove_focus_tracker(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_remove_focus_tracker(Stack stack, int rhs, int opt, int lhs) /* remove_focus_tracker */
 {
   int_types T[] = {s_int,t_end};
   int tracker_id;
@@ -2707,7 +2707,7 @@ atk_remove_focus_tracker(tracker_id);
   return 0;
 }
 
-int _wrap_atk_focus_tracker_notify(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_focus_tracker_notify(Stack stack, int rhs, int opt, int lhs) /* focus_tracker_notify */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *object;
@@ -2716,7 +2716,7 @@ atk_focus_tracker_notify(ATK_OBJECT(object->obj));
   return 0;
 }
 
-int _wrap_atk_remove_global_event_listener(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_remove_global_event_listener(Stack stack, int rhs, int opt, int lhs) /* remove_global_event_listener */
 {
   int_types T[] = {s_int,t_end};
   int listener_id;
@@ -2725,7 +2725,7 @@ atk_remove_global_event_listener(listener_id);
   return 0;
 }
 
-int _wrap_atk_remove_key_event_listener(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_remove_key_event_listener(Stack stack, int rhs, int opt, int lhs) /* remove_key_event_listener */
 {
   int_types T[] = {s_int,t_end};
   int listener_id;
@@ -2734,7 +2734,7 @@ atk_remove_key_event_listener(listener_id);
   return 0;
 }
 
-int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs) /* get_root */
 {
   AtkObject *ret;
   NspObject *nsp_ret;
@@ -2745,7 +2745,7 @@ ret = atk_get_root();
   return 1;
 }
 
-int _wrap_atk_get_toolkit_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_get_toolkit_name(Stack stack, int rhs, int opt, int lhs) /* get_toolkit_name */
 {
   const gchar *ret;
 ret = atk_get_toolkit_name();
@@ -2753,7 +2753,7 @@ ret = atk_get_toolkit_name();
   return 1;
 }
 
-int _wrap_atk_get_toolkit_version(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_get_toolkit_version(Stack stack, int rhs, int opt, int lhs) /* get_toolkit_version */
 {
   const gchar *ret;
 ret = atk_get_toolkit_version();
@@ -2761,7 +2761,7 @@ ret = atk_get_toolkit_version();
   return 1;
 }
 
-int _wrap_atk_role_for_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_atk_role_for_name(Stack stack, int rhs, int opt, int lhs) /* role_for_name */
 {
   int_types T[] = {string,t_end};
   char *name;

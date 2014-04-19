@@ -48,8 +48,8 @@ extern NspGtkSeparatorToolItem *GetGtkSeparatorToolItem (Stack stack, int i);
 
 #ifdef GtkSeparatorToolItem_Private 
 static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *o,NspTypeGtkSeparatorToolItem *type);
-static char *gtkseparatortoolitem_type_as_string(void);
-static char *gtkseparatortoolitem_type_short_string(NspObject *v);
+static char *nsp_gtkseparatortoolitem_type_as_string(void);
+static char *nsp_gtkseparatortoolitem_type_short_string(NspObject *v);
 static AttrTab gtkseparatortoolitem_attrs[];
 /* static int int_gtkseparatortoolitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkseparatortoolitem_get_methods(void); 

@@ -71,7 +71,7 @@
 #include "nsp/gtk/gdkvisual.h"
 
 
-/* ----------- GdkEvent ----------- */
+/* ----------- NspGdkEvent ----------- */
 
 static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 
@@ -81,17 +81,17 @@ static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkEvent inherits from GBoxed 
+ * NspGdkEvent inherits from GBoxed 
  */
 
 int nsp_type_gdkevent_id=0;
 NspTypeGdkEvent *nsp_type_gdkevent=NULL;
 
 /*
- * Type object for GdkEvent 
+ * Type object for NspGdkEvent 
  * all the instance of NspTypeGdkEvent share the same id. 
  * nsp_type_gdkevent: is an instance of NspTypeGdkEvent 
- *    used for objects of GdkEvent type (i.e built with new_gdkevent) 
+ *    used for objects of NspGdkEvent type (i.e built with new_gdkevent) 
  * other instances are used for derived classes 
  */
 NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
@@ -120,8 +120,8 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
   
   /* object methods redefined for gdkevent */ 
 
-  top->s_type =  (s_type_func *) gdkevent_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkevent_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkevent_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkevent_type_short_string;
   /* top->create = (create_func*) int_gdkevent_create;*/ 
   
   /* specific methods for gdkevent */
@@ -129,7 +129,7 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
   type->init = (init_func *) init_gdkevent;
 
   /* 
-   * GdkEvent interfaces can be added here 
+   * NspGdkEvent interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -155,7 +155,7 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
 }
 
 /*
- * initialize GdkEvent instances 
+ * initialize NspGdkEvent instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -170,7 +170,7 @@ static int init_gdkevent(NspGdkEvent *Obj,NspTypeGdkEvent *type)
 }
 
 /*
- * new instance of GdkEvent 
+ * new instance of NspGdkEvent 
  */
 
 NspGdkEvent *new_gdkevent() 
@@ -185,7 +185,7 @@ NspGdkEvent *new_gdkevent()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkEvent 
+ * Object method redefined for NspGdkEvent 
  *-----------------------------------------------*/
 
 /*
@@ -195,23 +195,23 @@ NspGdkEvent *new_gdkevent()
 static char gdkevent_type_name[]="GdkEvent";
 static char gdkevent_short_type_name[]="GdkEvent";
 
-static char *gdkevent_type_as_string(void)
+static char *nsp_gdkevent_type_as_string(void)
 {
   return(gdkevent_type_name);
 }
 
-static char *gdkevent_type_short_string(NspObject *v)
+static char *nsp_gdkevent_type_short_string(NspObject *v)
 {
   return(gdkevent_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkEvent objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkEvent objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkEvent   *gdkevent_object(NspObject *O)
+NspGdkEvent *nsp_gdkevent_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -241,7 +241,7 @@ NspGdkEvent  *GetGdkEventCopy(Stack stack, int i)
 NspGdkEvent  *GetGdkEvent(Stack stack, int i)
 {
   NspGdkEvent *M;
-  if (( M = gdkevent_object(NthObj(i))) == NULLGDKEVENT)
+  if (( M = nsp_gdkevent_object(NthObj(i))) == NULLGDKEVENT)
      ArgMessage(stack,i);
   return M;
 }
@@ -729,7 +729,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 
 
 
-/* ----------- GdkFont ----------- */
+/* ----------- NspGdkFont ----------- */
 
 
 #include "nsp/object.h"
@@ -738,17 +738,17 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkFont inherits from GBoxed 
+ * NspGdkFont inherits from GBoxed 
  */
 
 int nsp_type_gdkfont_id=0;
 NspTypeGdkFont *nsp_type_gdkfont=NULL;
 
 /*
- * Type object for GdkFont 
+ * Type object for NspGdkFont 
  * all the instance of NspTypeGdkFont share the same id. 
  * nsp_type_gdkfont: is an instance of NspTypeGdkFont 
- *    used for objects of GdkFont type (i.e built with new_gdkfont) 
+ *    used for objects of NspGdkFont type (i.e built with new_gdkfont) 
  * other instances are used for derived classes 
  */
 NspTypeGdkFont *new_type_gdkfont(type_mode mode)
@@ -777,8 +777,8 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
   
   /* object methods redefined for gdkfont */ 
 
-  top->s_type =  (s_type_func *) gdkfont_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkfont_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkfont_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkfont_type_short_string;
   /* top->create = (create_func*) int_gdkfont_create;*/ 
   
   /* specific methods for gdkfont */
@@ -786,7 +786,7 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
   type->init = (init_func *) init_gdkfont;
 
   /* 
-   * GdkFont interfaces can be added here 
+   * NspGdkFont interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -812,7 +812,7 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
 }
 
 /*
- * initialize GdkFont instances 
+ * initialize NspGdkFont instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -827,7 +827,7 @@ static int init_gdkfont(NspGdkFont *Obj,NspTypeGdkFont *type)
 }
 
 /*
- * new instance of GdkFont 
+ * new instance of NspGdkFont 
  */
 
 NspGdkFont *new_gdkfont() 
@@ -842,7 +842,7 @@ NspGdkFont *new_gdkfont()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkFont 
+ * Object method redefined for NspGdkFont 
  *-----------------------------------------------*/
 
 /*
@@ -852,23 +852,23 @@ NspGdkFont *new_gdkfont()
 static char gdkfont_type_name[]="GdkFont";
 static char gdkfont_short_type_name[]="GdkFont";
 
-static char *gdkfont_type_as_string(void)
+static char *nsp_gdkfont_type_as_string(void)
 {
   return(gdkfont_type_name);
 }
 
-static char *gdkfont_type_short_string(NspObject *v)
+static char *nsp_gdkfont_type_short_string(NspObject *v)
 {
   return(gdkfont_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkFont objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkFont objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkFont   *gdkfont_object(NspObject *O)
+NspGdkFont *nsp_gdkfont_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -898,7 +898,7 @@ NspGdkFont  *GetGdkFontCopy(Stack stack, int i)
 NspGdkFont  *GetGdkFont(Stack stack, int i)
 {
   NspGdkFont *M;
-  if (( M = gdkfont_object(NthObj(i))) == NULLGDKFONT)
+  if (( M = nsp_gdkfont_object(NthObj(i))) == NULLGDKFONT)
      ArgMessage(stack,i);
   return M;
 }
@@ -1165,7 +1165,7 @@ static AttrTab gdkfont_attrs[] = {
 
 
 
-/* ----------- GdkColor ----------- */
+/* ----------- NspGdkColor ----------- */
 
 static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 
@@ -1175,17 +1175,17 @@ static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkColor inherits from GBoxed 
+ * NspGdkColor inherits from GBoxed 
  */
 
 int nsp_type_gdkcolor_id=0;
 NspTypeGdkColor *nsp_type_gdkcolor=NULL;
 
 /*
- * Type object for GdkColor 
+ * Type object for NspGdkColor 
  * all the instance of NspTypeGdkColor share the same id. 
  * nsp_type_gdkcolor: is an instance of NspTypeGdkColor 
- *    used for objects of GdkColor type (i.e built with new_gdkcolor) 
+ *    used for objects of NspGdkColor type (i.e built with new_gdkcolor) 
  * other instances are used for derived classes 
  */
 NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
@@ -1214,8 +1214,8 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
   
   /* object methods redefined for gdkcolor */ 
 
-  top->s_type =  (s_type_func *) gdkcolor_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkcolor_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkcolor_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkcolor_type_short_string;
   /* top->create = (create_func*) int_gdkcolor_create;*/ 
   
   /* specific methods for gdkcolor */
@@ -1223,7 +1223,7 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
   type->init = (init_func *) init_gdkcolor;
 
   /* 
-   * GdkColor interfaces can be added here 
+   * NspGdkColor interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1249,7 +1249,7 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
 }
 
 /*
- * initialize GdkColor instances 
+ * initialize NspGdkColor instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1264,7 +1264,7 @@ static int init_gdkcolor(NspGdkColor *Obj,NspTypeGdkColor *type)
 }
 
 /*
- * new instance of GdkColor 
+ * new instance of NspGdkColor 
  */
 
 NspGdkColor *new_gdkcolor() 
@@ -1279,7 +1279,7 @@ NspGdkColor *new_gdkcolor()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkColor 
+ * Object method redefined for NspGdkColor 
  *-----------------------------------------------*/
 
 /*
@@ -1289,23 +1289,23 @@ NspGdkColor *new_gdkcolor()
 static char gdkcolor_type_name[]="GdkColor";
 static char gdkcolor_short_type_name[]="GdkColor";
 
-static char *gdkcolor_type_as_string(void)
+static char *nsp_gdkcolor_type_as_string(void)
 {
   return(gdkcolor_type_name);
 }
 
-static char *gdkcolor_type_short_string(NspObject *v)
+static char *nsp_gdkcolor_type_short_string(NspObject *v)
 {
   return(gdkcolor_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkColor objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkColor objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkColor   *gdkcolor_object(NspObject *O)
+NspGdkColor *nsp_gdkcolor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1335,7 +1335,7 @@ NspGdkColor  *GetGdkColorCopy(Stack stack, int i)
 NspGdkColor  *GetGdkColor(Stack stack, int i)
 {
   NspGdkColor *M;
-  if (( M = gdkcolor_object(NthObj(i))) == NULLGDKCOLOR)
+  if (( M = nsp_gdkcolor_object(NthObj(i))) == NULLGDKCOLOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -1466,7 +1466,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 
 
-/* ----------- GdkCursor ----------- */
+/* ----------- NspGdkCursor ----------- */
 
 
 #include "nsp/object.h"
@@ -1475,17 +1475,17 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkCursor inherits from GBoxed 
+ * NspGdkCursor inherits from GBoxed 
  */
 
 int nsp_type_gdkcursor_id=0;
 NspTypeGdkCursor *nsp_type_gdkcursor=NULL;
 
 /*
- * Type object for GdkCursor 
+ * Type object for NspGdkCursor 
  * all the instance of NspTypeGdkCursor share the same id. 
  * nsp_type_gdkcursor: is an instance of NspTypeGdkCursor 
- *    used for objects of GdkCursor type (i.e built with new_gdkcursor) 
+ *    used for objects of NspGdkCursor type (i.e built with new_gdkcursor) 
  * other instances are used for derived classes 
  */
 NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
@@ -1514,8 +1514,8 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
   
   /* object methods redefined for gdkcursor */ 
 
-  top->s_type =  (s_type_func *) gdkcursor_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkcursor_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkcursor_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkcursor_type_short_string;
   /* top->create = (create_func*) int_gdkcursor_create;*/ 
   
   /* specific methods for gdkcursor */
@@ -1523,7 +1523,7 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
   type->init = (init_func *) init_gdkcursor;
 
   /* 
-   * GdkCursor interfaces can be added here 
+   * NspGdkCursor interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1549,7 +1549,7 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
 }
 
 /*
- * initialize GdkCursor instances 
+ * initialize NspGdkCursor instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1564,7 +1564,7 @@ static int init_gdkcursor(NspGdkCursor *Obj,NspTypeGdkCursor *type)
 }
 
 /*
- * new instance of GdkCursor 
+ * new instance of NspGdkCursor 
  */
 
 NspGdkCursor *new_gdkcursor() 
@@ -1579,7 +1579,7 @@ NspGdkCursor *new_gdkcursor()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkCursor 
+ * Object method redefined for NspGdkCursor 
  *-----------------------------------------------*/
 
 /*
@@ -1589,23 +1589,23 @@ NspGdkCursor *new_gdkcursor()
 static char gdkcursor_type_name[]="GdkCursor";
 static char gdkcursor_short_type_name[]="GdkCursor";
 
-static char *gdkcursor_type_as_string(void)
+static char *nsp_gdkcursor_type_as_string(void)
 {
   return(gdkcursor_type_name);
 }
 
-static char *gdkcursor_type_short_string(NspObject *v)
+static char *nsp_gdkcursor_type_short_string(NspObject *v)
 {
   return(gdkcursor_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkCursor objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkCursor objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkCursor   *gdkcursor_object(NspObject *O)
+NspGdkCursor *nsp_gdkcursor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1635,7 +1635,7 @@ NspGdkCursor  *GetGdkCursorCopy(Stack stack, int i)
 NspGdkCursor  *GetGdkCursor(Stack stack, int i)
 {
   NspGdkCursor *M;
-  if (( M = gdkcursor_object(NthObj(i))) == NULLGDKCURSOR)
+  if (( M = nsp_gdkcursor_object(NthObj(i))) == NULLGDKCURSOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -1750,7 +1750,7 @@ static AttrTab gdkcursor_attrs[] = {
 
 
 
-/* ----------- GdkRectangle ----------- */
+/* ----------- NspGdkRectangle ----------- */
 
 
 #include "nsp/object.h"
@@ -1759,17 +1759,17 @@ static AttrTab gdkcursor_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkRectangle inherits from GBoxed 
+ * NspGdkRectangle inherits from GBoxed 
  */
 
 int nsp_type_gdkrectangle_id=0;
 NspTypeGdkRectangle *nsp_type_gdkrectangle=NULL;
 
 /*
- * Type object for GdkRectangle 
+ * Type object for NspGdkRectangle 
  * all the instance of NspTypeGdkRectangle share the same id. 
  * nsp_type_gdkrectangle: is an instance of NspTypeGdkRectangle 
- *    used for objects of GdkRectangle type (i.e built with new_gdkrectangle) 
+ *    used for objects of NspGdkRectangle type (i.e built with new_gdkrectangle) 
  * other instances are used for derived classes 
  */
 NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
@@ -1798,8 +1798,8 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
   
   /* object methods redefined for gdkrectangle */ 
 
-  top->s_type =  (s_type_func *) gdkrectangle_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkrectangle_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkrectangle_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkrectangle_type_short_string;
   /* top->create = (create_func*) int_gdkrectangle_create;*/ 
   
   /* specific methods for gdkrectangle */
@@ -1807,7 +1807,7 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
   type->init = (init_func *) init_gdkrectangle;
 
   /* 
-   * GdkRectangle interfaces can be added here 
+   * NspGdkRectangle interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1833,7 +1833,7 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
 }
 
 /*
- * initialize GdkRectangle instances 
+ * initialize NspGdkRectangle instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1848,7 +1848,7 @@ static int init_gdkrectangle(NspGdkRectangle *Obj,NspTypeGdkRectangle *type)
 }
 
 /*
- * new instance of GdkRectangle 
+ * new instance of NspGdkRectangle 
  */
 
 NspGdkRectangle *new_gdkrectangle() 
@@ -1863,7 +1863,7 @@ NspGdkRectangle *new_gdkrectangle()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkRectangle 
+ * Object method redefined for NspGdkRectangle 
  *-----------------------------------------------*/
 
 /*
@@ -1873,23 +1873,23 @@ NspGdkRectangle *new_gdkrectangle()
 static char gdkrectangle_type_name[]="GdkRectangle";
 static char gdkrectangle_short_type_name[]="GdkRectangle";
 
-static char *gdkrectangle_type_as_string(void)
+static char *nsp_gdkrectangle_type_as_string(void)
 {
   return(gdkrectangle_type_name);
 }
 
-static char *gdkrectangle_type_short_string(NspObject *v)
+static char *nsp_gdkrectangle_type_short_string(NspObject *v)
 {
   return(gdkrectangle_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkRectangle objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkRectangle objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkRectangle   *gdkrectangle_object(NspObject *O)
+NspGdkRectangle *nsp_gdkrectangle_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1919,7 +1919,7 @@ NspGdkRectangle  *GetGdkRectangleCopy(Stack stack, int i)
 NspGdkRectangle  *GetGdkRectangle(Stack stack, int i)
 {
   NspGdkRectangle *M;
-  if (( M = gdkrectangle_object(NthObj(i))) == NULLGDKRECTANGLE)
+  if (( M = nsp_gdkrectangle_object(NthObj(i))) == NULLGDKRECTANGLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -2076,7 +2076,7 @@ static AttrTab gdkrectangle_attrs[] = {
 
 
 
-/* ----------- GdkColormap ----------- */
+/* ----------- NspGdkColormap ----------- */
 
 
 #include "nsp/object.h"
@@ -2085,17 +2085,17 @@ static AttrTab gdkrectangle_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkColormap inherits from GObject 
+ * NspGdkColormap inherits from GObject 
  */
 
 int nsp_type_gdkcolormap_id=0;
 NspTypeGdkColormap *nsp_type_gdkcolormap=NULL;
 
 /*
- * Type object for GdkColormap 
+ * Type object for NspGdkColormap 
  * all the instance of NspTypeGdkColormap share the same id. 
  * nsp_type_gdkcolormap: is an instance of NspTypeGdkColormap 
- *    used for objects of GdkColormap type (i.e built with new_gdkcolormap) 
+ *    used for objects of NspGdkColormap type (i.e built with new_gdkcolormap) 
  * other instances are used for derived classes 
  */
 NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
@@ -2124,8 +2124,8 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
   
   /* object methods redefined for gdkcolormap */ 
 
-  top->s_type =  (s_type_func *) gdkcolormap_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkcolormap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkcolormap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkcolormap_type_short_string;
   /* top->create = (create_func*) int_gdkcolormap_create;*/ 
   
   /* specific methods for gdkcolormap */
@@ -2133,7 +2133,7 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
   type->init = (init_func *) init_gdkcolormap;
 
   /* 
-   * GdkColormap interfaces can be added here 
+   * NspGdkColormap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2159,7 +2159,7 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
 }
 
 /*
- * initialize GdkColormap instances 
+ * initialize NspGdkColormap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2174,7 +2174,7 @@ static int init_gdkcolormap(NspGdkColormap *Obj,NspTypeGdkColormap *type)
 }
 
 /*
- * new instance of GdkColormap 
+ * new instance of NspGdkColormap 
  */
 
 NspGdkColormap *new_gdkcolormap() 
@@ -2189,7 +2189,7 @@ NspGdkColormap *new_gdkcolormap()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkColormap 
+ * Object method redefined for NspGdkColormap 
  *-----------------------------------------------*/
 
 /*
@@ -2199,23 +2199,23 @@ NspGdkColormap *new_gdkcolormap()
 static char gdkcolormap_type_name[]="GdkColormap";
 static char gdkcolormap_short_type_name[]="GdkColormap";
 
-static char *gdkcolormap_type_as_string(void)
+static char *nsp_gdkcolormap_type_as_string(void)
 {
   return(gdkcolormap_type_name);
 }
 
-static char *gdkcolormap_type_short_string(NspObject *v)
+static char *nsp_gdkcolormap_type_short_string(NspObject *v)
 {
   return(gdkcolormap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkColormap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkColormap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkColormap   *gdkcolormap_object(NspObject *O)
+NspGdkColormap *nsp_gdkcolormap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2245,7 +2245,7 @@ NspGdkColormap  *GetGdkColormapCopy(Stack stack, int i)
 NspGdkColormap  *GetGdkColormap(Stack stack, int i)
 {
   NspGdkColormap *M;
-  if (( M = gdkcolormap_object(NthObj(i))) == NULLGDKCOLORMAP)
+  if (( M = nsp_gdkcolormap_object(NthObj(i))) == NULLGDKCOLORMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -2442,7 +2442,7 @@ static NspMethods *gdkcolormap_get_methods(void) { return gdkcolormap_methods;};
 static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkDevice ----------- */
+/* ----------- NspGdkDevice ----------- */
 
 
 #include "nsp/object.h"
@@ -2451,17 +2451,17 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkDevice inherits from GObject 
+ * NspGdkDevice inherits from GObject 
  */
 
 int nsp_type_gdkdevice_id=0;
 NspTypeGdkDevice *nsp_type_gdkdevice=NULL;
 
 /*
- * Type object for GdkDevice 
+ * Type object for NspGdkDevice 
  * all the instance of NspTypeGdkDevice share the same id. 
  * nsp_type_gdkdevice: is an instance of NspTypeGdkDevice 
- *    used for objects of GdkDevice type (i.e built with new_gdkdevice) 
+ *    used for objects of NspGdkDevice type (i.e built with new_gdkdevice) 
  * other instances are used for derived classes 
  */
 NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
@@ -2490,8 +2490,8 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
   
   /* object methods redefined for gdkdevice */ 
 
-  top->s_type =  (s_type_func *) gdkdevice_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkdevice_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkdevice_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkdevice_type_short_string;
   /* top->create = (create_func*) int_gdkdevice_create;*/ 
   
   /* specific methods for gdkdevice */
@@ -2499,7 +2499,7 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
   type->init = (init_func *) init_gdkdevice;
 
   /* 
-   * GdkDevice interfaces can be added here 
+   * NspGdkDevice interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2525,7 +2525,7 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
 }
 
 /*
- * initialize GdkDevice instances 
+ * initialize NspGdkDevice instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2540,7 +2540,7 @@ static int init_gdkdevice(NspGdkDevice *Obj,NspTypeGdkDevice *type)
 }
 
 /*
- * new instance of GdkDevice 
+ * new instance of NspGdkDevice 
  */
 
 NspGdkDevice *new_gdkdevice() 
@@ -2555,7 +2555,7 @@ NspGdkDevice *new_gdkdevice()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkDevice 
+ * Object method redefined for NspGdkDevice 
  *-----------------------------------------------*/
 
 /*
@@ -2565,23 +2565,23 @@ NspGdkDevice *new_gdkdevice()
 static char gdkdevice_type_name[]="GdkDevice";
 static char gdkdevice_short_type_name[]="GdkDevice";
 
-static char *gdkdevice_type_as_string(void)
+static char *nsp_gdkdevice_type_as_string(void)
 {
   return(gdkdevice_type_name);
 }
 
-static char *gdkdevice_type_short_string(NspObject *v)
+static char *nsp_gdkdevice_type_short_string(NspObject *v)
 {
   return(gdkdevice_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkDevice objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkDevice objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkDevice   *gdkdevice_object(NspObject *O)
+NspGdkDevice *nsp_gdkdevice_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2611,7 +2611,7 @@ NspGdkDevice  *GetGdkDeviceCopy(Stack stack, int i)
 NspGdkDevice  *GetGdkDevice(Stack stack, int i)
 {
   NspGdkDevice *M;
-  if (( M = gdkdevice_object(NthObj(i))) == NULLGDKDEVICE)
+  if (( M = nsp_gdkdevice_object(NthObj(i))) == NULLGDKDEVICE)
      ArgMessage(stack,i);
   return M;
 }
@@ -2892,7 +2892,7 @@ static AttrTab gdkdevice_attrs[] = {
 
 
 
-/* ----------- GdkDisplay ----------- */
+/* ----------- NspGdkDisplay ----------- */
 
 
 #include "nsp/object.h"
@@ -2901,17 +2901,17 @@ static AttrTab gdkdevice_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkDisplay inherits from GObject 
+ * NspGdkDisplay inherits from GObject 
  */
 
 int nsp_type_gdkdisplay_id=0;
 NspTypeGdkDisplay *nsp_type_gdkdisplay=NULL;
 
 /*
- * Type object for GdkDisplay 
+ * Type object for NspGdkDisplay 
  * all the instance of NspTypeGdkDisplay share the same id. 
  * nsp_type_gdkdisplay: is an instance of NspTypeGdkDisplay 
- *    used for objects of GdkDisplay type (i.e built with new_gdkdisplay) 
+ *    used for objects of NspGdkDisplay type (i.e built with new_gdkdisplay) 
  * other instances are used for derived classes 
  */
 NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
@@ -2940,8 +2940,8 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
   
   /* object methods redefined for gdkdisplay */ 
 
-  top->s_type =  (s_type_func *) gdkdisplay_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkdisplay_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkdisplay_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkdisplay_type_short_string;
   /* top->create = (create_func*) int_gdkdisplay_create;*/ 
   
   /* specific methods for gdkdisplay */
@@ -2949,7 +2949,7 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
   type->init = (init_func *) init_gdkdisplay;
 
   /* 
-   * GdkDisplay interfaces can be added here 
+   * NspGdkDisplay interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2975,7 +2975,7 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
 }
 
 /*
- * initialize GdkDisplay instances 
+ * initialize NspGdkDisplay instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2990,7 +2990,7 @@ static int init_gdkdisplay(NspGdkDisplay *Obj,NspTypeGdkDisplay *type)
 }
 
 /*
- * new instance of GdkDisplay 
+ * new instance of NspGdkDisplay 
  */
 
 NspGdkDisplay *new_gdkdisplay() 
@@ -3005,7 +3005,7 @@ NspGdkDisplay *new_gdkdisplay()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkDisplay 
+ * Object method redefined for NspGdkDisplay 
  *-----------------------------------------------*/
 
 /*
@@ -3015,23 +3015,23 @@ NspGdkDisplay *new_gdkdisplay()
 static char gdkdisplay_type_name[]="GdkDisplay";
 static char gdkdisplay_short_type_name[]="GdkDisplay";
 
-static char *gdkdisplay_type_as_string(void)
+static char *nsp_gdkdisplay_type_as_string(void)
 {
   return(gdkdisplay_type_name);
 }
 
-static char *gdkdisplay_type_short_string(NspObject *v)
+static char *nsp_gdkdisplay_type_short_string(NspObject *v)
 {
   return(gdkdisplay_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkDisplay objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkDisplay objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkDisplay   *gdkdisplay_object(NspObject *O)
+NspGdkDisplay *nsp_gdkdisplay_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3061,7 +3061,7 @@ NspGdkDisplay  *GetGdkDisplayCopy(Stack stack, int i)
 NspGdkDisplay  *GetGdkDisplay(Stack stack, int i)
 {
   NspGdkDisplay *M;
-  if (( M = gdkdisplay_object(NthObj(i))) == NULLGDKDISPLAY)
+  if (( M = nsp_gdkdisplay_object(NthObj(i))) == NULLGDKDISPLAY)
      ArgMessage(stack,i);
   return M;
 }
@@ -3278,7 +3278,7 @@ static NspMethods *gdkdisplay_get_methods(void) { return gdkdisplay_methods;};
 static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkDisplayManager ----------- */
+/* ----------- NspGdkDisplayManager ----------- */
 
 
 #include "nsp/object.h"
@@ -3287,17 +3287,17 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkDisplayManager inherits from GObject 
+ * NspGdkDisplayManager inherits from GObject 
  */
 
 int nsp_type_gdkdisplaymanager_id=0;
 NspTypeGdkDisplayManager *nsp_type_gdkdisplaymanager=NULL;
 
 /*
- * Type object for GdkDisplayManager 
+ * Type object for NspGdkDisplayManager 
  * all the instance of NspTypeGdkDisplayManager share the same id. 
  * nsp_type_gdkdisplaymanager: is an instance of NspTypeGdkDisplayManager 
- *    used for objects of GdkDisplayManager type (i.e built with new_gdkdisplaymanager) 
+ *    used for objects of NspGdkDisplayManager type (i.e built with new_gdkdisplaymanager) 
  * other instances are used for derived classes 
  */
 NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
@@ -3326,8 +3326,8 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
   
   /* object methods redefined for gdkdisplaymanager */ 
 
-  top->s_type =  (s_type_func *) gdkdisplaymanager_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkdisplaymanager_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkdisplaymanager_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkdisplaymanager_type_short_string;
   /* top->create = (create_func*) int_gdkdisplaymanager_create;*/ 
   
   /* specific methods for gdkdisplaymanager */
@@ -3335,7 +3335,7 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
   type->init = (init_func *) init_gdkdisplaymanager;
 
   /* 
-   * GdkDisplayManager interfaces can be added here 
+   * NspGdkDisplayManager interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3361,7 +3361,7 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
 }
 
 /*
- * initialize GdkDisplayManager instances 
+ * initialize NspGdkDisplayManager instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3376,7 +3376,7 @@ static int init_gdkdisplaymanager(NspGdkDisplayManager *Obj,NspTypeGdkDisplayMan
 }
 
 /*
- * new instance of GdkDisplayManager 
+ * new instance of NspGdkDisplayManager 
  */
 
 NspGdkDisplayManager *new_gdkdisplaymanager() 
@@ -3391,7 +3391,7 @@ NspGdkDisplayManager *new_gdkdisplaymanager()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkDisplayManager 
+ * Object method redefined for NspGdkDisplayManager 
  *-----------------------------------------------*/
 
 /*
@@ -3401,23 +3401,23 @@ NspGdkDisplayManager *new_gdkdisplaymanager()
 static char gdkdisplaymanager_type_name[]="GdkDisplayManager";
 static char gdkdisplaymanager_short_type_name[]="GdkDisplayManager";
 
-static char *gdkdisplaymanager_type_as_string(void)
+static char *nsp_gdkdisplaymanager_type_as_string(void)
 {
   return(gdkdisplaymanager_type_name);
 }
 
-static char *gdkdisplaymanager_type_short_string(NspObject *v)
+static char *nsp_gdkdisplaymanager_type_short_string(NspObject *v)
 {
   return(gdkdisplaymanager_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkDisplayManager objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkDisplayManager objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkDisplayManager   *gdkdisplaymanager_object(NspObject *O)
+NspGdkDisplayManager *nsp_gdkdisplaymanager_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3447,7 +3447,7 @@ NspGdkDisplayManager  *GetGdkDisplayManagerCopy(Stack stack, int i)
 NspGdkDisplayManager  *GetGdkDisplayManager(Stack stack, int i)
 {
   NspGdkDisplayManager *M;
-  if (( M = gdkdisplaymanager_object(NthObj(i))) == NULLGDKDISPLAYMANAGER)
+  if (( M = nsp_gdkdisplaymanager_object(NthObj(i))) == NULLGDKDISPLAYMANAGER)
      ArgMessage(stack,i);
   return M;
 }
@@ -3475,7 +3475,7 @@ static NspMethods *gdkdisplaymanager_get_methods(void) { return NULL;};
 static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkDragContext ----------- */
+/* ----------- NspGdkDragContext ----------- */
 
 
 #include "nsp/object.h"
@@ -3484,17 +3484,17 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkDragContext inherits from GObject 
+ * NspGdkDragContext inherits from GObject 
  */
 
 int nsp_type_gdkdragcontext_id=0;
 NspTypeGdkDragContext *nsp_type_gdkdragcontext=NULL;
 
 /*
- * Type object for GdkDragContext 
+ * Type object for NspGdkDragContext 
  * all the instance of NspTypeGdkDragContext share the same id. 
  * nsp_type_gdkdragcontext: is an instance of NspTypeGdkDragContext 
- *    used for objects of GdkDragContext type (i.e built with new_gdkdragcontext) 
+ *    used for objects of NspGdkDragContext type (i.e built with new_gdkdragcontext) 
  * other instances are used for derived classes 
  */
 NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
@@ -3523,8 +3523,8 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
   
   /* object methods redefined for gdkdragcontext */ 
 
-  top->s_type =  (s_type_func *) gdkdragcontext_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkdragcontext_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkdragcontext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkdragcontext_type_short_string;
   /* top->create = (create_func*) int_gdkdragcontext_create;*/ 
   
   /* specific methods for gdkdragcontext */
@@ -3532,7 +3532,7 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
   type->init = (init_func *) init_gdkdragcontext;
 
   /* 
-   * GdkDragContext interfaces can be added here 
+   * NspGdkDragContext interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3558,7 +3558,7 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
 }
 
 /*
- * initialize GdkDragContext instances 
+ * initialize NspGdkDragContext instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3573,7 +3573,7 @@ static int init_gdkdragcontext(NspGdkDragContext *Obj,NspTypeGdkDragContext *typ
 }
 
 /*
- * new instance of GdkDragContext 
+ * new instance of NspGdkDragContext 
  */
 
 NspGdkDragContext *new_gdkdragcontext() 
@@ -3588,7 +3588,7 @@ NspGdkDragContext *new_gdkdragcontext()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkDragContext 
+ * Object method redefined for NspGdkDragContext 
  *-----------------------------------------------*/
 
 /*
@@ -3598,23 +3598,23 @@ NspGdkDragContext *new_gdkdragcontext()
 static char gdkdragcontext_type_name[]="GdkDragContext";
 static char gdkdragcontext_short_type_name[]="GdkDragContext";
 
-static char *gdkdragcontext_type_as_string(void)
+static char *nsp_gdkdragcontext_type_as_string(void)
 {
   return(gdkdragcontext_type_name);
 }
 
-static char *gdkdragcontext_type_short_string(NspObject *v)
+static char *nsp_gdkdragcontext_type_short_string(NspObject *v)
 {
   return(gdkdragcontext_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkDragContext objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkDragContext objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkDragContext   *gdkdragcontext_object(NspObject *O)
+NspGdkDragContext *nsp_gdkdragcontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3644,7 +3644,7 @@ NspGdkDragContext  *GetGdkDragContextCopy(Stack stack, int i)
 NspGdkDragContext  *GetGdkDragContext(Stack stack, int i)
 {
   NspGdkDragContext *M;
-  if (( M = gdkdragcontext_object(NthObj(i))) == NULLGDKDRAGCONTEXT)
+  if (( M = nsp_gdkdragcontext_object(NthObj(i))) == NULLGDKDRAGCONTEXT)
      ArgMessage(stack,i);
   return M;
 }
@@ -3981,7 +3981,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 
 
 
-/* ----------- GdkDrawable ----------- */
+/* ----------- NspGdkDrawable ----------- */
 
 
 #include "nsp/object.h"
@@ -3990,17 +3990,17 @@ static AttrTab gdkdragcontext_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkDrawable inherits from GObject 
+ * NspGdkDrawable inherits from GObject 
  */
 
 int nsp_type_gdkdrawable_id=0;
 NspTypeGdkDrawable *nsp_type_gdkdrawable=NULL;
 
 /*
- * Type object for GdkDrawable 
+ * Type object for NspGdkDrawable 
  * all the instance of NspTypeGdkDrawable share the same id. 
  * nsp_type_gdkdrawable: is an instance of NspTypeGdkDrawable 
- *    used for objects of GdkDrawable type (i.e built with new_gdkdrawable) 
+ *    used for objects of NspGdkDrawable type (i.e built with new_gdkdrawable) 
  * other instances are used for derived classes 
  */
 NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
@@ -4029,8 +4029,8 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
   
   /* object methods redefined for gdkdrawable */ 
 
-  top->s_type =  (s_type_func *) gdkdrawable_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkdrawable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkdrawable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkdrawable_type_short_string;
   /* top->create = (create_func*) int_gdkdrawable_create;*/ 
   
   /* specific methods for gdkdrawable */
@@ -4038,7 +4038,7 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
   type->init = (init_func *) init_gdkdrawable;
 
   /* 
-   * GdkDrawable interfaces can be added here 
+   * NspGdkDrawable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -4064,7 +4064,7 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
 }
 
 /*
- * initialize GdkDrawable instances 
+ * initialize NspGdkDrawable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4079,7 +4079,7 @@ static int init_gdkdrawable(NspGdkDrawable *Obj,NspTypeGdkDrawable *type)
 }
 
 /*
- * new instance of GdkDrawable 
+ * new instance of NspGdkDrawable 
  */
 
 NspGdkDrawable *new_gdkdrawable() 
@@ -4094,7 +4094,7 @@ NspGdkDrawable *new_gdkdrawable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkDrawable 
+ * Object method redefined for NspGdkDrawable 
  *-----------------------------------------------*/
 
 /*
@@ -4104,23 +4104,23 @@ NspGdkDrawable *new_gdkdrawable()
 static char gdkdrawable_type_name[]="GdkDrawable";
 static char gdkdrawable_short_type_name[]="GdkDrawable";
 
-static char *gdkdrawable_type_as_string(void)
+static char *nsp_gdkdrawable_type_as_string(void)
 {
   return(gdkdrawable_type_name);
 }
 
-static char *gdkdrawable_type_short_string(NspObject *v)
+static char *nsp_gdkdrawable_type_short_string(NspObject *v)
 {
   return(gdkdrawable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkDrawable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkDrawable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkDrawable   *gdkdrawable_object(NspObject *O)
+NspGdkDrawable *nsp_gdkdrawable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4150,7 +4150,7 @@ NspGdkDrawable  *GetGdkDrawableCopy(Stack stack, int i)
 NspGdkDrawable  *GetGdkDrawable(Stack stack, int i)
 {
   NspGdkDrawable *M;
-  if (( M = gdkdrawable_object(NthObj(i))) == NULLGDKDRAWABLE)
+  if (( M = nsp_gdkdrawable_object(NthObj(i))) == NULLGDKDRAWABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -4664,7 +4664,7 @@ static NspMethods *gdkdrawable_get_methods(void) { return gdkdrawable_methods;};
 static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkWindow ----------- */
+/* ----------- NspGdkWindow ----------- */
 
 
 #include "nsp/object.h"
@@ -4673,17 +4673,17 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkWindow inherits from GdkDrawable 
+ * NspGdkWindow inherits from GdkDrawable 
  */
 
 int nsp_type_gdkwindow_id=0;
 NspTypeGdkWindow *nsp_type_gdkwindow=NULL;
 
 /*
- * Type object for GdkWindow 
+ * Type object for NspGdkWindow 
  * all the instance of NspTypeGdkWindow share the same id. 
  * nsp_type_gdkwindow: is an instance of NspTypeGdkWindow 
- *    used for objects of GdkWindow type (i.e built with new_gdkwindow) 
+ *    used for objects of NspGdkWindow type (i.e built with new_gdkwindow) 
  * other instances are used for derived classes 
  */
 NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
@@ -4712,8 +4712,8 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
   
   /* object methods redefined for gdkwindow */ 
 
-  top->s_type =  (s_type_func *) gdkwindow_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkwindow_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkwindow_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkwindow_type_short_string;
   /* top->create = (create_func*) int_gdkwindow_create;*/ 
   
   /* specific methods for gdkwindow */
@@ -4721,7 +4721,7 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
   type->init = (init_func *) init_gdkwindow;
 
   /* 
-   * GdkWindow interfaces can be added here 
+   * NspGdkWindow interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -4747,7 +4747,7 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
 }
 
 /*
- * initialize GdkWindow instances 
+ * initialize NspGdkWindow instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4762,7 +4762,7 @@ static int init_gdkwindow(NspGdkWindow *Obj,NspTypeGdkWindow *type)
 }
 
 /*
- * new instance of GdkWindow 
+ * new instance of NspGdkWindow 
  */
 
 NspGdkWindow *new_gdkwindow() 
@@ -4777,7 +4777,7 @@ NspGdkWindow *new_gdkwindow()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkWindow 
+ * Object method redefined for NspGdkWindow 
  *-----------------------------------------------*/
 
 /*
@@ -4787,23 +4787,23 @@ NspGdkWindow *new_gdkwindow()
 static char gdkwindow_type_name[]="GdkWindow";
 static char gdkwindow_short_type_name[]="GdkWindow";
 
-static char *gdkwindow_type_as_string(void)
+static char *nsp_gdkwindow_type_as_string(void)
 {
   return(gdkwindow_type_name);
 }
 
-static char *gdkwindow_type_short_string(NspObject *v)
+static char *nsp_gdkwindow_type_short_string(NspObject *v)
 {
   return(gdkwindow_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkWindow objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkWindow objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkWindow   *gdkwindow_object(NspObject *O)
+NspGdkWindow *nsp_gdkwindow_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4833,7 +4833,7 @@ NspGdkWindow  *GetGdkWindowCopy(Stack stack, int i)
 NspGdkWindow  *GetGdkWindow(Stack stack, int i)
 {
   NspGdkWindow *M;
-  if (( M = gdkwindow_object(NthObj(i))) == NULLGDKWINDOW)
+  if (( M = nsp_gdkwindow_object(NthObj(i))) == NULLGDKWINDOW)
      ArgMessage(stack,i);
   return M;
 }
@@ -5839,7 +5839,7 @@ static NspMethods *gdkwindow_get_methods(void) { return gdkwindow_methods;};
 static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkPixmap ----------- */
+/* ----------- NspGdkPixmap ----------- */
 
 
 #include "nsp/object.h"
@@ -5848,17 +5848,17 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkPixmap inherits from GdkDrawable 
+ * NspGdkPixmap inherits from GdkDrawable 
  */
 
 int nsp_type_gdkpixmap_id=0;
 NspTypeGdkPixmap *nsp_type_gdkpixmap=NULL;
 
 /*
- * Type object for GdkPixmap 
+ * Type object for NspGdkPixmap 
  * all the instance of NspTypeGdkPixmap share the same id. 
  * nsp_type_gdkpixmap: is an instance of NspTypeGdkPixmap 
- *    used for objects of GdkPixmap type (i.e built with new_gdkpixmap) 
+ *    used for objects of NspGdkPixmap type (i.e built with new_gdkpixmap) 
  * other instances are used for derived classes 
  */
 NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
@@ -5887,8 +5887,8 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
   
   /* object methods redefined for gdkpixmap */ 
 
-  top->s_type =  (s_type_func *) gdkpixmap_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkpixmap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkpixmap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkpixmap_type_short_string;
   /* top->create = (create_func*) int_gdkpixmap_create;*/ 
   
   /* specific methods for gdkpixmap */
@@ -5896,7 +5896,7 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
   type->init = (init_func *) init_gdkpixmap;
 
   /* 
-   * GdkPixmap interfaces can be added here 
+   * NspGdkPixmap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -5922,7 +5922,7 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
 }
 
 /*
- * initialize GdkPixmap instances 
+ * initialize NspGdkPixmap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -5937,7 +5937,7 @@ static int init_gdkpixmap(NspGdkPixmap *Obj,NspTypeGdkPixmap *type)
 }
 
 /*
- * new instance of GdkPixmap 
+ * new instance of NspGdkPixmap 
  */
 
 NspGdkPixmap *new_gdkpixmap() 
@@ -5952,7 +5952,7 @@ NspGdkPixmap *new_gdkpixmap()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkPixmap 
+ * Object method redefined for NspGdkPixmap 
  *-----------------------------------------------*/
 
 /*
@@ -5962,23 +5962,23 @@ NspGdkPixmap *new_gdkpixmap()
 static char gdkpixmap_type_name[]="GdkPixmap";
 static char gdkpixmap_short_type_name[]="GdkPixmap";
 
-static char *gdkpixmap_type_as_string(void)
+static char *nsp_gdkpixmap_type_as_string(void)
 {
   return(gdkpixmap_type_name);
 }
 
-static char *gdkpixmap_type_short_string(NspObject *v)
+static char *nsp_gdkpixmap_type_short_string(NspObject *v)
 {
   return(gdkpixmap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkPixmap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkPixmap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkPixmap   *gdkpixmap_object(NspObject *O)
+NspGdkPixmap *nsp_gdkpixmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6008,7 +6008,7 @@ NspGdkPixmap  *GetGdkPixmapCopy(Stack stack, int i)
 NspGdkPixmap  *GetGdkPixmap(Stack stack, int i)
 {
   NspGdkPixmap *M;
-  if (( M = gdkpixmap_object(NthObj(i))) == NULLGDKPIXMAP)
+  if (( M = nsp_gdkpixmap_object(NthObj(i))) == NULLGDKPIXMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -6068,7 +6068,7 @@ static NspMethods *gdkpixmap_get_methods(void) { return NULL;};
 static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkBitmap ----------- */
+/* ----------- NspGdkBitmap ----------- */
 
 
 #include "nsp/object.h"
@@ -6077,17 +6077,17 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkBitmap inherits from GdkDrawable 
+ * NspGdkBitmap inherits from GdkDrawable 
  */
 
 int nsp_type_gdkbitmap_id=0;
 NspTypeGdkBitmap *nsp_type_gdkbitmap=NULL;
 
 /*
- * Type object for GdkBitmap 
+ * Type object for NspGdkBitmap 
  * all the instance of NspTypeGdkBitmap share the same id. 
  * nsp_type_gdkbitmap: is an instance of NspTypeGdkBitmap 
- *    used for objects of GdkBitmap type (i.e built with new_gdkbitmap) 
+ *    used for objects of NspGdkBitmap type (i.e built with new_gdkbitmap) 
  * other instances are used for derived classes 
  */
 NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
@@ -6116,8 +6116,8 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
   
   /* object methods redefined for gdkbitmap */ 
 
-  top->s_type =  (s_type_func *) gdkbitmap_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkbitmap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkbitmap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkbitmap_type_short_string;
   /* top->create = (create_func*) int_gdkbitmap_create;*/ 
   
   /* specific methods for gdkbitmap */
@@ -6125,7 +6125,7 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
   type->init = (init_func *) init_gdkbitmap;
 
   /* 
-   * GdkBitmap interfaces can be added here 
+   * NspGdkBitmap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -6151,7 +6151,7 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
 }
 
 /*
- * initialize GdkBitmap instances 
+ * initialize NspGdkBitmap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -6166,7 +6166,7 @@ static int init_gdkbitmap(NspGdkBitmap *Obj,NspTypeGdkBitmap *type)
 }
 
 /*
- * new instance of GdkBitmap 
+ * new instance of NspGdkBitmap 
  */
 
 NspGdkBitmap *new_gdkbitmap() 
@@ -6181,7 +6181,7 @@ NspGdkBitmap *new_gdkbitmap()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkBitmap 
+ * Object method redefined for NspGdkBitmap 
  *-----------------------------------------------*/
 
 /*
@@ -6191,23 +6191,23 @@ NspGdkBitmap *new_gdkbitmap()
 static char gdkbitmap_type_name[]="GdkBitmap";
 static char gdkbitmap_short_type_name[]="GdkBitmap";
 
-static char *gdkbitmap_type_as_string(void)
+static char *nsp_gdkbitmap_type_as_string(void)
 {
   return(gdkbitmap_type_name);
 }
 
-static char *gdkbitmap_type_short_string(NspObject *v)
+static char *nsp_gdkbitmap_type_short_string(NspObject *v)
 {
   return(gdkbitmap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkBitmap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkBitmap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkBitmap   *gdkbitmap_object(NspObject *O)
+NspGdkBitmap *nsp_gdkbitmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6237,7 +6237,7 @@ NspGdkBitmap  *GetGdkBitmapCopy(Stack stack, int i)
 NspGdkBitmap  *GetGdkBitmap(Stack stack, int i)
 {
   NspGdkBitmap *M;
-  if (( M = gdkbitmap_object(NthObj(i))) == NULLGDKBITMAP)
+  if (( M = nsp_gdkbitmap_object(NthObj(i))) == NULLGDKBITMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -6265,7 +6265,7 @@ static NspMethods *gdkbitmap_get_methods(void) { return NULL;};
 static AttrTab gdkbitmap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkGC ----------- */
+/* ----------- NspGdkGC ----------- */
 
 static int _wrap_gdk_gc_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
@@ -6276,17 +6276,17 @@ static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkGC inherits from GObject 
+ * NspGdkGC inherits from GObject 
  */
 
 int nsp_type_gdkgc_id=0;
 NspTypeGdkGC *nsp_type_gdkgc=NULL;
 
 /*
- * Type object for GdkGC 
+ * Type object for NspGdkGC 
  * all the instance of NspTypeGdkGC share the same id. 
  * nsp_type_gdkgc: is an instance of NspTypeGdkGC 
- *    used for objects of GdkGC type (i.e built with new_gdkgc) 
+ *    used for objects of NspGdkGC type (i.e built with new_gdkgc) 
  * other instances are used for derived classes 
  */
 NspTypeGdkGC *new_type_gdkgc(type_mode mode)
@@ -6315,8 +6315,8 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
   
   /* object methods redefined for gdkgc */ 
 
-  top->s_type =  (s_type_func *) gdkgc_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkgc_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkgc_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkgc_type_short_string;
   /* top->create = (create_func*) int_gdkgc_create;*/ 
   
   /* specific methods for gdkgc */
@@ -6324,7 +6324,7 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
   type->init = (init_func *) init_gdkgc;
 
   /* 
-   * GdkGC interfaces can be added here 
+   * NspGdkGC interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -6350,7 +6350,7 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
 }
 
 /*
- * initialize GdkGC instances 
+ * initialize NspGdkGC instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -6365,7 +6365,7 @@ static int init_gdkgc(NspGdkGC *Obj,NspTypeGdkGC *type)
 }
 
 /*
- * new instance of GdkGC 
+ * new instance of NspGdkGC 
  */
 
 NspGdkGC *new_gdkgc() 
@@ -6380,7 +6380,7 @@ NspGdkGC *new_gdkgc()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkGC 
+ * Object method redefined for NspGdkGC 
  *-----------------------------------------------*/
 
 /*
@@ -6390,23 +6390,23 @@ NspGdkGC *new_gdkgc()
 static char gdkgc_type_name[]="GdkGC";
 static char gdkgc_short_type_name[]="GdkGC";
 
-static char *gdkgc_type_as_string(void)
+static char *nsp_gdkgc_type_as_string(void)
 {
   return(gdkgc_type_name);
 }
 
-static char *gdkgc_type_short_string(NspObject *v)
+static char *nsp_gdkgc_type_short_string(NspObject *v)
 {
   return(gdkgc_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkGC objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkGC objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkGC   *gdkgc_object(NspObject *O)
+NspGdkGC *nsp_gdkgc_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6436,7 +6436,7 @@ NspGdkGC  *GetGdkGCCopy(Stack stack, int i)
 NspGdkGC  *GetGdkGC(Stack stack, int i)
 {
   NspGdkGC *M;
-  if (( M = gdkgc_object(NthObj(i))) == NULLGDKGC)
+  if (( M = nsp_gdkgc_object(NthObj(i))) == NULLGDKGC)
      ArgMessage(stack,i);
   return M;
 }
@@ -7060,7 +7060,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 
 
-/* ----------- GdkImage ----------- */
+/* ----------- NspGdkImage ----------- */
 
 
 #include "nsp/object.h"
@@ -7069,17 +7069,17 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkImage inherits from GObject 
+ * NspGdkImage inherits from GObject 
  */
 
 int nsp_type_gdkimage_id=0;
 NspTypeGdkImage *nsp_type_gdkimage=NULL;
 
 /*
- * Type object for GdkImage 
+ * Type object for NspGdkImage 
  * all the instance of NspTypeGdkImage share the same id. 
  * nsp_type_gdkimage: is an instance of NspTypeGdkImage 
- *    used for objects of GdkImage type (i.e built with new_gdkimage) 
+ *    used for objects of NspGdkImage type (i.e built with new_gdkimage) 
  * other instances are used for derived classes 
  */
 NspTypeGdkImage *new_type_gdkimage(type_mode mode)
@@ -7108,8 +7108,8 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
   
   /* object methods redefined for gdkimage */ 
 
-  top->s_type =  (s_type_func *) gdkimage_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkimage_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkimage_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkimage_type_short_string;
   /* top->create = (create_func*) int_gdkimage_create;*/ 
   
   /* specific methods for gdkimage */
@@ -7117,7 +7117,7 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
   type->init = (init_func *) init_gdkimage;
 
   /* 
-   * GdkImage interfaces can be added here 
+   * NspGdkImage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -7143,7 +7143,7 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
 }
 
 /*
- * initialize GdkImage instances 
+ * initialize NspGdkImage instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -7158,7 +7158,7 @@ static int init_gdkimage(NspGdkImage *Obj,NspTypeGdkImage *type)
 }
 
 /*
- * new instance of GdkImage 
+ * new instance of NspGdkImage 
  */
 
 NspGdkImage *new_gdkimage() 
@@ -7173,7 +7173,7 @@ NspGdkImage *new_gdkimage()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkImage 
+ * Object method redefined for NspGdkImage 
  *-----------------------------------------------*/
 
 /*
@@ -7183,23 +7183,23 @@ NspGdkImage *new_gdkimage()
 static char gdkimage_type_name[]="GdkImage";
 static char gdkimage_short_type_name[]="GdkImage";
 
-static char *gdkimage_type_as_string(void)
+static char *nsp_gdkimage_type_as_string(void)
 {
   return(gdkimage_type_name);
 }
 
-static char *gdkimage_type_short_string(NspObject *v)
+static char *nsp_gdkimage_type_short_string(NspObject *v)
 {
   return(gdkimage_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkImage objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkImage objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkImage   *gdkimage_object(NspObject *O)
+NspGdkImage *nsp_gdkimage_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7229,7 +7229,7 @@ NspGdkImage  *GetGdkImageCopy(Stack stack, int i)
 NspGdkImage  *GetGdkImage(Stack stack, int i)
 {
   NspGdkImage *M;
-  if (( M = gdkimage_object(NthObj(i))) == NULLGDKIMAGE)
+  if (( M = nsp_gdkimage_object(NthObj(i))) == NULLGDKIMAGE)
      ArgMessage(stack,i);
   return M;
 }
@@ -7327,7 +7327,7 @@ static NspMethods *gdkimage_get_methods(void) { return gdkimage_methods;};
 static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkKeymap ----------- */
+/* ----------- NspGdkKeymap ----------- */
 
 
 #include "nsp/object.h"
@@ -7336,17 +7336,17 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkKeymap inherits from GObject 
+ * NspGdkKeymap inherits from GObject 
  */
 
 int nsp_type_gdkkeymap_id=0;
 NspTypeGdkKeymap *nsp_type_gdkkeymap=NULL;
 
 /*
- * Type object for GdkKeymap 
+ * Type object for NspGdkKeymap 
  * all the instance of NspTypeGdkKeymap share the same id. 
  * nsp_type_gdkkeymap: is an instance of NspTypeGdkKeymap 
- *    used for objects of GdkKeymap type (i.e built with new_gdkkeymap) 
+ *    used for objects of NspGdkKeymap type (i.e built with new_gdkkeymap) 
  * other instances are used for derived classes 
  */
 NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
@@ -7375,8 +7375,8 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
   
   /* object methods redefined for gdkkeymap */ 
 
-  top->s_type =  (s_type_func *) gdkkeymap_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkkeymap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkkeymap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkkeymap_type_short_string;
   /* top->create = (create_func*) int_gdkkeymap_create;*/ 
   
   /* specific methods for gdkkeymap */
@@ -7384,7 +7384,7 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
   type->init = (init_func *) init_gdkkeymap;
 
   /* 
-   * GdkKeymap interfaces can be added here 
+   * NspGdkKeymap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -7410,7 +7410,7 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
 }
 
 /*
- * initialize GdkKeymap instances 
+ * initialize NspGdkKeymap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -7425,7 +7425,7 @@ static int init_gdkkeymap(NspGdkKeymap *Obj,NspTypeGdkKeymap *type)
 }
 
 /*
- * new instance of GdkKeymap 
+ * new instance of NspGdkKeymap 
  */
 
 NspGdkKeymap *new_gdkkeymap() 
@@ -7440,7 +7440,7 @@ NspGdkKeymap *new_gdkkeymap()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkKeymap 
+ * Object method redefined for NspGdkKeymap 
  *-----------------------------------------------*/
 
 /*
@@ -7450,23 +7450,23 @@ NspGdkKeymap *new_gdkkeymap()
 static char gdkkeymap_type_name[]="GdkKeymap";
 static char gdkkeymap_short_type_name[]="GdkKeymap";
 
-static char *gdkkeymap_type_as_string(void)
+static char *nsp_gdkkeymap_type_as_string(void)
 {
   return(gdkkeymap_type_name);
 }
 
-static char *gdkkeymap_type_short_string(NspObject *v)
+static char *nsp_gdkkeymap_type_short_string(NspObject *v)
 {
   return(gdkkeymap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkKeymap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkKeymap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkKeymap   *gdkkeymap_object(NspObject *O)
+NspGdkKeymap *nsp_gdkkeymap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7496,7 +7496,7 @@ NspGdkKeymap  *GetGdkKeymapCopy(Stack stack, int i)
 NspGdkKeymap  *GetGdkKeymap(Stack stack, int i)
 {
   NspGdkKeymap *M;
-  if (( M = gdkkeymap_object(NthObj(i))) == NULLGDKKEYMAP)
+  if (( M = nsp_gdkkeymap_object(NthObj(i))) == NULLGDKKEYMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -7537,7 +7537,7 @@ static NspMethods *gdkkeymap_get_methods(void) { return gdkkeymap_methods;};
 static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkPixbuf ----------- */
+/* ----------- NspGdkPixbuf ----------- */
 
 
 #include "nsp/object.h"
@@ -7546,17 +7546,17 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkPixbuf inherits from GObject 
+ * NspGdkPixbuf inherits from GObject 
  */
 
 int nsp_type_gdkpixbuf_id=0;
 NspTypeGdkPixbuf *nsp_type_gdkpixbuf=NULL;
 
 /*
- * Type object for GdkPixbuf 
+ * Type object for NspGdkPixbuf 
  * all the instance of NspTypeGdkPixbuf share the same id. 
  * nsp_type_gdkpixbuf: is an instance of NspTypeGdkPixbuf 
- *    used for objects of GdkPixbuf type (i.e built with new_gdkpixbuf) 
+ *    used for objects of NspGdkPixbuf type (i.e built with new_gdkpixbuf) 
  * other instances are used for derived classes 
  */
 NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
@@ -7585,8 +7585,8 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
   
   /* object methods redefined for gdkpixbuf */ 
 
-  top->s_type =  (s_type_func *) gdkpixbuf_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkpixbuf_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkpixbuf_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkpixbuf_type_short_string;
   /* top->create = (create_func*) int_gdkpixbuf_create;*/ 
   
   /* specific methods for gdkpixbuf */
@@ -7594,7 +7594,7 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
   type->init = (init_func *) init_gdkpixbuf;
 
   /* 
-   * GdkPixbuf interfaces can be added here 
+   * NspGdkPixbuf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -7620,7 +7620,7 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
 }
 
 /*
- * initialize GdkPixbuf instances 
+ * initialize NspGdkPixbuf instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -7635,7 +7635,7 @@ static int init_gdkpixbuf(NspGdkPixbuf *Obj,NspTypeGdkPixbuf *type)
 }
 
 /*
- * new instance of GdkPixbuf 
+ * new instance of NspGdkPixbuf 
  */
 
 NspGdkPixbuf *new_gdkpixbuf() 
@@ -7650,7 +7650,7 @@ NspGdkPixbuf *new_gdkpixbuf()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkPixbuf 
+ * Object method redefined for NspGdkPixbuf 
  *-----------------------------------------------*/
 
 /*
@@ -7660,23 +7660,23 @@ NspGdkPixbuf *new_gdkpixbuf()
 static char gdkpixbuf_type_name[]="GdkPixbuf";
 static char gdkpixbuf_short_type_name[]="GdkPixbuf";
 
-static char *gdkpixbuf_type_as_string(void)
+static char *nsp_gdkpixbuf_type_as_string(void)
 {
   return(gdkpixbuf_type_name);
 }
 
-static char *gdkpixbuf_type_short_string(NspObject *v)
+static char *nsp_gdkpixbuf_type_short_string(NspObject *v)
 {
   return(gdkpixbuf_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkPixbuf objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkPixbuf objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkPixbuf   *gdkpixbuf_object(NspObject *O)
+NspGdkPixbuf *nsp_gdkpixbuf_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7706,7 +7706,7 @@ NspGdkPixbuf  *GetGdkPixbufCopy(Stack stack, int i)
 NspGdkPixbuf  *GetGdkPixbuf(Stack stack, int i)
 {
   NspGdkPixbuf *M;
-  if (( M = gdkpixbuf_object(NthObj(i))) == NULLGDKPIXBUF)
+  if (( M = nsp_gdkpixbuf_object(NthObj(i))) == NULLGDKPIXBUF)
      ArgMessage(stack,i);
   return M;
 }
@@ -8222,7 +8222,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 
 
 
-/* ----------- GdkPixbufAnimation ----------- */
+/* ----------- NspGdkPixbufAnimation ----------- */
 
 
 #include "nsp/object.h"
@@ -8231,17 +8231,17 @@ static AttrTab gdkpixbuf_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkPixbufAnimation inherits from GObject 
+ * NspGdkPixbufAnimation inherits from GObject 
  */
 
 int nsp_type_gdkpixbufanimation_id=0;
 NspTypeGdkPixbufAnimation *nsp_type_gdkpixbufanimation=NULL;
 
 /*
- * Type object for GdkPixbufAnimation 
+ * Type object for NspGdkPixbufAnimation 
  * all the instance of NspTypeGdkPixbufAnimation share the same id. 
  * nsp_type_gdkpixbufanimation: is an instance of NspTypeGdkPixbufAnimation 
- *    used for objects of GdkPixbufAnimation type (i.e built with new_gdkpixbufanimation) 
+ *    used for objects of NspGdkPixbufAnimation type (i.e built with new_gdkpixbufanimation) 
  * other instances are used for derived classes 
  */
 NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
@@ -8270,8 +8270,8 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
   
   /* object methods redefined for gdkpixbufanimation */ 
 
-  top->s_type =  (s_type_func *) gdkpixbufanimation_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkpixbufanimation_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkpixbufanimation_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkpixbufanimation_type_short_string;
   /* top->create = (create_func*) int_gdkpixbufanimation_create;*/ 
   
   /* specific methods for gdkpixbufanimation */
@@ -8279,7 +8279,7 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
   type->init = (init_func *) init_gdkpixbufanimation;
 
   /* 
-   * GdkPixbufAnimation interfaces can be added here 
+   * NspGdkPixbufAnimation interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8305,7 +8305,7 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
 }
 
 /*
- * initialize GdkPixbufAnimation instances 
+ * initialize NspGdkPixbufAnimation instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8320,7 +8320,7 @@ static int init_gdkpixbufanimation(NspGdkPixbufAnimation *Obj,NspTypeGdkPixbufAn
 }
 
 /*
- * new instance of GdkPixbufAnimation 
+ * new instance of NspGdkPixbufAnimation 
  */
 
 NspGdkPixbufAnimation *new_gdkpixbufanimation() 
@@ -8335,7 +8335,7 @@ NspGdkPixbufAnimation *new_gdkpixbufanimation()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkPixbufAnimation 
+ * Object method redefined for NspGdkPixbufAnimation 
  *-----------------------------------------------*/
 
 /*
@@ -8345,23 +8345,23 @@ NspGdkPixbufAnimation *new_gdkpixbufanimation()
 static char gdkpixbufanimation_type_name[]="GdkPixbufAnimation";
 static char gdkpixbufanimation_short_type_name[]="GdkPixbufAnimation";
 
-static char *gdkpixbufanimation_type_as_string(void)
+static char *nsp_gdkpixbufanimation_type_as_string(void)
 {
   return(gdkpixbufanimation_type_name);
 }
 
-static char *gdkpixbufanimation_type_short_string(NspObject *v)
+static char *nsp_gdkpixbufanimation_type_short_string(NspObject *v)
 {
   return(gdkpixbufanimation_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkPixbufAnimation objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkPixbufAnimation objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkPixbufAnimation   *gdkpixbufanimation_object(NspObject *O)
+NspGdkPixbufAnimation *nsp_gdkpixbufanimation_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8391,7 +8391,7 @@ NspGdkPixbufAnimation  *GetGdkPixbufAnimationCopy(Stack stack, int i)
 NspGdkPixbufAnimation  *GetGdkPixbufAnimation(Stack stack, int i)
 {
   NspGdkPixbufAnimation *M;
-  if (( M = gdkpixbufanimation_object(NthObj(i))) == NULLGDKPIXBUFANIMATION)
+  if (( M = nsp_gdkpixbufanimation_object(NthObj(i))) == NULLGDKPIXBUFANIMATION)
      ArgMessage(stack,i);
   return M;
 }
@@ -8483,7 +8483,7 @@ static NspMethods *gdkpixbufanimation_get_methods(void) { return gdkpixbufanimat
 static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkPixbufAnimationIter ----------- */
+/* ----------- NspGdkPixbufAnimationIter ----------- */
 
 
 #include "nsp/object.h"
@@ -8492,17 +8492,17 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkPixbufAnimationIter inherits from GObject 
+ * NspGdkPixbufAnimationIter inherits from GObject 
  */
 
 int nsp_type_gdkpixbufanimationiter_id=0;
 NspTypeGdkPixbufAnimationIter *nsp_type_gdkpixbufanimationiter=NULL;
 
 /*
- * Type object for GdkPixbufAnimationIter 
+ * Type object for NspGdkPixbufAnimationIter 
  * all the instance of NspTypeGdkPixbufAnimationIter share the same id. 
  * nsp_type_gdkpixbufanimationiter: is an instance of NspTypeGdkPixbufAnimationIter 
- *    used for objects of GdkPixbufAnimationIter type (i.e built with new_gdkpixbufanimationiter) 
+ *    used for objects of NspGdkPixbufAnimationIter type (i.e built with new_gdkpixbufanimationiter) 
  * other instances are used for derived classes 
  */
 NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
@@ -8531,8 +8531,8 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
   
   /* object methods redefined for gdkpixbufanimationiter */ 
 
-  top->s_type =  (s_type_func *) gdkpixbufanimationiter_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkpixbufanimationiter_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkpixbufanimationiter_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkpixbufanimationiter_type_short_string;
   /* top->create = (create_func*) int_gdkpixbufanimationiter_create;*/ 
   
   /* specific methods for gdkpixbufanimationiter */
@@ -8540,7 +8540,7 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
   type->init = (init_func *) init_gdkpixbufanimationiter;
 
   /* 
-   * GdkPixbufAnimationIter interfaces can be added here 
+   * NspGdkPixbufAnimationIter interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8566,7 +8566,7 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
 }
 
 /*
- * initialize GdkPixbufAnimationIter instances 
+ * initialize NspGdkPixbufAnimationIter instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8581,7 +8581,7 @@ static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *Obj,NspTypeGdk
 }
 
 /*
- * new instance of GdkPixbufAnimationIter 
+ * new instance of NspGdkPixbufAnimationIter 
  */
 
 NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter() 
@@ -8596,7 +8596,7 @@ NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkPixbufAnimationIter 
+ * Object method redefined for NspGdkPixbufAnimationIter 
  *-----------------------------------------------*/
 
 /*
@@ -8606,23 +8606,23 @@ NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter()
 static char gdkpixbufanimationiter_type_name[]="GdkPixbufAnimationIter";
 static char gdkpixbufanimationiter_short_type_name[]="GdkPixbufAnimationIter";
 
-static char *gdkpixbufanimationiter_type_as_string(void)
+static char *nsp_gdkpixbufanimationiter_type_as_string(void)
 {
   return(gdkpixbufanimationiter_type_name);
 }
 
-static char *gdkpixbufanimationiter_type_short_string(NspObject *v)
+static char *nsp_gdkpixbufanimationiter_type_short_string(NspObject *v)
 {
   return(gdkpixbufanimationiter_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkPixbufAnimationIter objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkPixbufAnimationIter objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkPixbufAnimationIter   *gdkpixbufanimationiter_object(NspObject *O)
+NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8652,7 +8652,7 @@ NspGdkPixbufAnimationIter  *GetGdkPixbufAnimationIterCopy(Stack stack, int i)
 NspGdkPixbufAnimationIter  *GetGdkPixbufAnimationIter(Stack stack, int i)
 {
   NspGdkPixbufAnimationIter *M;
-  if (( M = gdkpixbufanimationiter_object(NthObj(i))) == NULLGDKPIXBUFANIMATIONITER)
+  if (( M = nsp_gdkpixbufanimationiter_object(NthObj(i))) == NULLGDKPIXBUFANIMATIONITER)
      ArgMessage(stack,i);
   return M;
 }
@@ -8714,7 +8714,7 @@ static NspMethods *gdkpixbufanimationiter_get_methods(void) { return gdkpixbufan
 static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkPixbufLoader ----------- */
+/* ----------- NspGdkPixbufLoader ----------- */
 
 
 #include "nsp/object.h"
@@ -8723,17 +8723,17 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkPixbufLoader inherits from GObject 
+ * NspGdkPixbufLoader inherits from GObject 
  */
 
 int nsp_type_gdkpixbufloader_id=0;
 NspTypeGdkPixbufLoader *nsp_type_gdkpixbufloader=NULL;
 
 /*
- * Type object for GdkPixbufLoader 
+ * Type object for NspGdkPixbufLoader 
  * all the instance of NspTypeGdkPixbufLoader share the same id. 
  * nsp_type_gdkpixbufloader: is an instance of NspTypeGdkPixbufLoader 
- *    used for objects of GdkPixbufLoader type (i.e built with new_gdkpixbufloader) 
+ *    used for objects of NspGdkPixbufLoader type (i.e built with new_gdkpixbufloader) 
  * other instances are used for derived classes 
  */
 NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
@@ -8762,8 +8762,8 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
   
   /* object methods redefined for gdkpixbufloader */ 
 
-  top->s_type =  (s_type_func *) gdkpixbufloader_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkpixbufloader_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkpixbufloader_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkpixbufloader_type_short_string;
   /* top->create = (create_func*) int_gdkpixbufloader_create;*/ 
   
   /* specific methods for gdkpixbufloader */
@@ -8771,7 +8771,7 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
   type->init = (init_func *) init_gdkpixbufloader;
 
   /* 
-   * GdkPixbufLoader interfaces can be added here 
+   * NspGdkPixbufLoader interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8797,7 +8797,7 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
 }
 
 /*
- * initialize GdkPixbufLoader instances 
+ * initialize NspGdkPixbufLoader instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8812,7 +8812,7 @@ static int init_gdkpixbufloader(NspGdkPixbufLoader *Obj,NspTypeGdkPixbufLoader *
 }
 
 /*
- * new instance of GdkPixbufLoader 
+ * new instance of NspGdkPixbufLoader 
  */
 
 NspGdkPixbufLoader *new_gdkpixbufloader() 
@@ -8827,7 +8827,7 @@ NspGdkPixbufLoader *new_gdkpixbufloader()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkPixbufLoader 
+ * Object method redefined for NspGdkPixbufLoader 
  *-----------------------------------------------*/
 
 /*
@@ -8837,23 +8837,23 @@ NspGdkPixbufLoader *new_gdkpixbufloader()
 static char gdkpixbufloader_type_name[]="GdkPixbufLoader";
 static char gdkpixbufloader_short_type_name[]="GdkPixbufLoader";
 
-static char *gdkpixbufloader_type_as_string(void)
+static char *nsp_gdkpixbufloader_type_as_string(void)
 {
   return(gdkpixbufloader_type_name);
 }
 
-static char *gdkpixbufloader_type_short_string(NspObject *v)
+static char *nsp_gdkpixbufloader_type_short_string(NspObject *v)
 {
   return(gdkpixbufloader_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkPixbufLoader objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkPixbufLoader objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkPixbufLoader   *gdkpixbufloader_object(NspObject *O)
+NspGdkPixbufLoader *nsp_gdkpixbufloader_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8883,7 +8883,7 @@ NspGdkPixbufLoader  *GetGdkPixbufLoaderCopy(Stack stack, int i)
 NspGdkPixbufLoader  *GetGdkPixbufLoader(Stack stack, int i)
 {
   NspGdkPixbufLoader *M;
-  if (( M = gdkpixbufloader_object(NthObj(i))) == NULLGDKPIXBUFLOADER)
+  if (( M = nsp_gdkpixbufloader_object(NthObj(i))) == NULLGDKPIXBUFLOADER)
      ArgMessage(stack,i);
   return M;
 }
@@ -8991,7 +8991,7 @@ static NspMethods *gdkpixbufloader_get_methods(void) { return gdkpixbufloader_me
 static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkScreen ----------- */
+/* ----------- NspGdkScreen ----------- */
 
 
 #include "nsp/object.h"
@@ -9000,17 +9000,17 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkScreen inherits from GObject 
+ * NspGdkScreen inherits from GObject 
  */
 
 int nsp_type_gdkscreen_id=0;
 NspTypeGdkScreen *nsp_type_gdkscreen=NULL;
 
 /*
- * Type object for GdkScreen 
+ * Type object for NspGdkScreen 
  * all the instance of NspTypeGdkScreen share the same id. 
  * nsp_type_gdkscreen: is an instance of NspTypeGdkScreen 
- *    used for objects of GdkScreen type (i.e built with new_gdkscreen) 
+ *    used for objects of NspGdkScreen type (i.e built with new_gdkscreen) 
  * other instances are used for derived classes 
  */
 NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
@@ -9039,8 +9039,8 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
   
   /* object methods redefined for gdkscreen */ 
 
-  top->s_type =  (s_type_func *) gdkscreen_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkscreen_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkscreen_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkscreen_type_short_string;
   /* top->create = (create_func*) int_gdkscreen_create;*/ 
   
   /* specific methods for gdkscreen */
@@ -9048,7 +9048,7 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
   type->init = (init_func *) init_gdkscreen;
 
   /* 
-   * GdkScreen interfaces can be added here 
+   * NspGdkScreen interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9074,7 +9074,7 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
 }
 
 /*
- * initialize GdkScreen instances 
+ * initialize NspGdkScreen instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9089,7 +9089,7 @@ static int init_gdkscreen(NspGdkScreen *Obj,NspTypeGdkScreen *type)
 }
 
 /*
- * new instance of GdkScreen 
+ * new instance of NspGdkScreen 
  */
 
 NspGdkScreen *new_gdkscreen() 
@@ -9104,7 +9104,7 @@ NspGdkScreen *new_gdkscreen()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkScreen 
+ * Object method redefined for NspGdkScreen 
  *-----------------------------------------------*/
 
 /*
@@ -9114,23 +9114,23 @@ NspGdkScreen *new_gdkscreen()
 static char gdkscreen_type_name[]="GdkScreen";
 static char gdkscreen_short_type_name[]="GdkScreen";
 
-static char *gdkscreen_type_as_string(void)
+static char *nsp_gdkscreen_type_as_string(void)
 {
   return(gdkscreen_type_name);
 }
 
-static char *gdkscreen_type_short_string(NspObject *v)
+static char *nsp_gdkscreen_type_short_string(NspObject *v)
 {
   return(gdkscreen_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkScreen objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkScreen objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkScreen   *gdkscreen_object(NspObject *O)
+NspGdkScreen *nsp_gdkscreen_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9160,7 +9160,7 @@ NspGdkScreen  *GetGdkScreenCopy(Stack stack, int i)
 NspGdkScreen  *GetGdkScreen(Stack stack, int i)
 {
   NspGdkScreen *M;
-  if (( M = gdkscreen_object(NthObj(i))) == NULLGDKSCREEN)
+  if (( M = nsp_gdkscreen_object(NthObj(i))) == NULLGDKSCREEN)
      ArgMessage(stack,i);
   return M;
 }
@@ -9424,7 +9424,7 @@ static NspMethods *gdkscreen_get_methods(void) { return gdkscreen_methods;};
 static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GdkVisual ----------- */
+/* ----------- NspGdkVisual ----------- */
 
 
 #include "nsp/object.h"
@@ -9433,17 +9433,17 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GdkVisual inherits from GObject 
+ * NspGdkVisual inherits from GObject 
  */
 
 int nsp_type_gdkvisual_id=0;
 NspTypeGdkVisual *nsp_type_gdkvisual=NULL;
 
 /*
- * Type object for GdkVisual 
+ * Type object for NspGdkVisual 
  * all the instance of NspTypeGdkVisual share the same id. 
  * nsp_type_gdkvisual: is an instance of NspTypeGdkVisual 
- *    used for objects of GdkVisual type (i.e built with new_gdkvisual) 
+ *    used for objects of NspGdkVisual type (i.e built with new_gdkvisual) 
  * other instances are used for derived classes 
  */
 NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
@@ -9472,8 +9472,8 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
   
   /* object methods redefined for gdkvisual */ 
 
-  top->s_type =  (s_type_func *) gdkvisual_type_as_string;    
-  top->sh_type = (sh_type_func *) gdkvisual_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gdkvisual_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gdkvisual_type_short_string;
   /* top->create = (create_func*) int_gdkvisual_create;*/ 
   
   /* specific methods for gdkvisual */
@@ -9481,7 +9481,7 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
   type->init = (init_func *) init_gdkvisual;
 
   /* 
-   * GdkVisual interfaces can be added here 
+   * NspGdkVisual interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9507,7 +9507,7 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
 }
 
 /*
- * initialize GdkVisual instances 
+ * initialize NspGdkVisual instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9522,7 +9522,7 @@ static int init_gdkvisual(NspGdkVisual *Obj,NspTypeGdkVisual *type)
 }
 
 /*
- * new instance of GdkVisual 
+ * new instance of NspGdkVisual 
  */
 
 NspGdkVisual *new_gdkvisual() 
@@ -9537,7 +9537,7 @@ NspGdkVisual *new_gdkvisual()
 }
 
 /*----------------------------------------------
- * Object method redefined for GdkVisual 
+ * Object method redefined for NspGdkVisual 
  *-----------------------------------------------*/
 
 /*
@@ -9547,23 +9547,23 @@ NspGdkVisual *new_gdkvisual()
 static char gdkvisual_type_name[]="GdkVisual";
 static char gdkvisual_short_type_name[]="GdkVisual";
 
-static char *gdkvisual_type_as_string(void)
+static char *nsp_gdkvisual_type_as_string(void)
 {
   return(gdkvisual_type_name);
 }
 
-static char *gdkvisual_type_short_string(NspObject *v)
+static char *nsp_gdkvisual_type_short_string(NspObject *v)
 {
   return(gdkvisual_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GdkVisual objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGdkVisual objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGdkVisual   *gdkvisual_object(NspObject *O)
+NspGdkVisual *nsp_gdkvisual_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9593,7 +9593,7 @@ NspGdkVisual  *GetGdkVisualCopy(Stack stack, int i)
 NspGdkVisual  *GetGdkVisual(Stack stack, int i)
 {
   NspGdkVisual *M;
-  if (( M = gdkvisual_object(NthObj(i))) == NULLGDKVISUAL)
+  if (( M = nsp_gdkvisual_object(NthObj(i))) == NULLGDKVISUAL)
      ArgMessage(stack,i);
   return M;
 }
@@ -9826,13 +9826,13 @@ static AttrTab gdkvisual_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-int _wrap_gdk_notify_startup_complete(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_notify_startup_complete(Stack stack, int rhs, int opt, int lhs) /* notify_startup_complete */
 {
 gdk_notify_startup_complete();
   return 0;
 }
 
-int _wrap_gdk_get_display_arg_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_display_arg_name(Stack stack, int rhs, int opt, int lhs) /* get_display_arg_name */
 {
   const gchar *ret;
 ret = gdk_get_display_arg_name();
@@ -9840,7 +9840,7 @@ ret = gdk_get_display_arg_name();
   return 1;
 }
 
-int _wrap_gdk_get_program_class(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_program_class(Stack stack, int rhs, int opt, int lhs) /* get_program_class */
 {
   const gchar *ret;
 ret = gdk_get_program_class();
@@ -9848,7 +9848,7 @@ ret = gdk_get_program_class();
   return 1;
 }
 
-int _wrap_gdk_set_program_class(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_program_class(Stack stack, int rhs, int opt, int lhs) /* set_program_class */
 {
   int_types T[] = {string,t_end};
   char *program_class;
@@ -9857,7 +9857,7 @@ gdk_set_program_class(program_class);
   return 0;
 }
 
-int _wrap_gdk_get_display(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_display(Stack stack, int rhs, int opt, int lhs) /* get_display */
 {
   const gchar *ret;
 ret = gdk_get_display();
@@ -9865,7 +9865,7 @@ ret = gdk_get_display();
   return 1;
 }
 
-int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs) /* pointer_grab */
 {
   int_types T[] = {obj_check,new_opts,t_end};
   nsp_option opts[] = {
@@ -9907,7 +9907,7 @@ ret = gdk_pointer_grab(GDK_WINDOW(window->obj), owner_events, event_mask, confin
   return 1;
 }
 
-int _wrap_gdk_pointer_ungrab(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pointer_ungrab(Stack stack, int rhs, int opt, int lhs) /* pointer_ungrab */
 {
   int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
@@ -9919,7 +9919,7 @@ gdk_pointer_ungrab(time);
   return 0;
 }
 
-int _wrap_gdk_keyboard_grab(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyboard_grab(Stack stack, int rhs, int opt, int lhs) /* keyboard_grab */
 {
   int_types T[] = {obj_check,new_opts,t_end};
   nsp_option opts[] = {
@@ -9936,7 +9936,7 @@ ret = gdk_keyboard_grab(GDK_WINDOW(window->obj), owner_events, time);
   return 1;
 }
 
-int _wrap_gdk_pointer_is_grabbed(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pointer_is_grabbed(Stack stack, int rhs, int opt, int lhs) /* pointer_is_grabbed */
 {
   int ret;
 ret = gdk_pointer_is_grabbed();
@@ -9944,7 +9944,7 @@ ret = gdk_pointer_is_grabbed();
   return 1;
 }
 
-int _wrap_gdk_screen_width(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_screen_width(Stack stack, int rhs, int opt, int lhs) /* screen_width */
 {
   int ret;
 ret = gdk_screen_width();
@@ -9952,7 +9952,7 @@ ret = gdk_screen_width();
   return 1;
 }
 
-int _wrap_gdk_screen_height(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_screen_height(Stack stack, int rhs, int opt, int lhs) /* screen_height */
 {
   int ret;
 ret = gdk_screen_height();
@@ -9960,7 +9960,7 @@ ret = gdk_screen_height();
   return 1;
 }
 
-int _wrap_gdk_screen_width_mm(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_screen_width_mm(Stack stack, int rhs, int opt, int lhs) /* screen_width_mm */
 {
   int ret;
 ret = gdk_screen_width_mm();
@@ -9968,7 +9968,7 @@ ret = gdk_screen_width_mm();
   return 1;
 }
 
-int _wrap_gdk_screen_height_mm(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_screen_height_mm(Stack stack, int rhs, int opt, int lhs) /* screen_height_mm */
 {
   int ret;
 ret = gdk_screen_height_mm();
@@ -9976,19 +9976,19 @@ ret = gdk_screen_height_mm();
   return 1;
 }
 
-int _wrap_gdk_flush(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_flush(Stack stack, int rhs, int opt, int lhs) /* flush */
 {
 gdk_flush();
   return 0;
 }
 
-int _wrap_gdk_beep(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_beep(Stack stack, int rhs, int opt, int lhs) /* beep */
 {
 gdk_beep();
   return 0;
 }
 
-int _wrap_gdk_set_double_click_time(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_double_click_time(Stack stack, int rhs, int opt, int lhs) /* set_double_click_time */
 {
   int_types T[] = {s_int,t_end};
   int msec;
@@ -10014,7 +10014,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
 #line 10015 "gdk.c"
 
 
-int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs) /* threads_leave */
 {
 gdk_threads_leave();
   return 0;
@@ -10103,13 +10103,13 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
 #line 10104 "gdk.c"
 
 
-int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
 {
 gdk_pre_parse_libgtk_only();
   return 0;
 }
 
-int _wrap_gdk_exit(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_exit(Stack stack, int rhs, int opt, int lhs) /* exit */
 {
   int_types T[] = {s_int,t_end};
   int error_code;
@@ -10118,7 +10118,7 @@ gdk_exit(error_code);
   return 0;
 }
 
-int _wrap_gdk_set_locale(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_locale(Stack stack, int rhs, int opt, int lhs) /* set_locale */
 {
   gchar *ret;
 ret = gdk_set_locale();
@@ -10127,13 +10127,13 @@ ret = gdk_set_locale();
   return 1;
 }
 
-int _wrap_gdk_error_trap_push(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_error_trap_push(Stack stack, int rhs, int opt, int lhs) /* error_trap_push */
 {
 gdk_error_trap_push();
   return 0;
 }
 
-int _wrap_gdk_error_trap_pop(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_error_trap_pop(Stack stack, int rhs, int opt, int lhs) /* error_trap_pop */
 {
   int ret;
 ret = gdk_error_trap_pop();
@@ -10141,7 +10141,7 @@ ret = gdk_error_trap_pop();
   return 1;
 }
 
-int _wrap_gdk_set_use_xshm(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_use_xshm(Stack stack, int rhs, int opt, int lhs) /* set_use_xshm */
 {
   int_types T[] = {s_bool,t_end};
   int use_xshm;
@@ -10150,7 +10150,7 @@ gdk_set_use_xshm(use_xshm);
   return 0;
 }
 
-int _wrap_gdk_get_use_xshm(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_use_xshm(Stack stack, int rhs, int opt, int lhs) /* get_use_xshm */
 {
   int ret;
 ret = gdk_get_use_xshm();
@@ -10158,7 +10158,7 @@ ret = gdk_get_use_xshm();
   return 1;
 }
 
-int _wrap_gdk_input_remove(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_input_remove(Stack stack, int rhs, int opt, int lhs) /* input_remove */
 {
   int_types T[] = {s_int,t_end};
   int tag;
@@ -10167,7 +10167,7 @@ gdk_input_remove(tag);
   return 0;
 }
 
-int _wrap_gdk_event_send_client_message_for_display(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_event_send_client_message_for_display(Stack stack, int rhs, int opt, int lhs) /* event_send_client_message_for_display */
 {
   int_types T[] = {obj_check, obj, s_int,t_end};
   NspGObject *display;
@@ -10187,7 +10187,7 @@ ret = gdk_event_send_client_message_for_display(GDK_DISPLAY(display->obj), event
   return 1;
 }
 
-int _wrap_gdk_colormap_get_system(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_colormap_get_system(Stack stack, int rhs, int opt, int lhs) /* colormap_get_system */
 {
   GdkColormap *ret;
   NspObject *nsp_ret;
@@ -10198,7 +10198,7 @@ ret = gdk_colormap_get_system();
   return 1;
 }
 
-int _wrap_gdk_colormap_get_system_size(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_colormap_get_system_size(Stack stack, int rhs, int opt, int lhs) /* colormap_get_system_size */
 {
   int ret;
 ret = gdk_colormap_get_system_size();
@@ -10226,7 +10226,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
 #line 10227 "gdk.c"
 
 
-int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs) /* gdk_draw_layout_with_colors */
 {
   int_types T[] = {obj_check, obj_check, s_int, s_int, obj_check, obj, obj,t_end};
   NspGObject *drawable, *gc, *layout;
@@ -10250,7 +10250,7 @@ gdk_draw_layout_with_colors(GDK_DRAWABLE(drawable->obj), GDK_GC(gc->obj), x, y, 
   return 0;
 }
 
-int _wrap_gdk_events_pending(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_events_pending(Stack stack, int rhs, int opt, int lhs) /* events_pending */
 {
   int ret;
 ret = gdk_events_pending();
@@ -10258,7 +10258,7 @@ ret = gdk_events_pending();
   return 1;
 }
 
-int _wrap_gdk_event_get(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_event_get(Stack stack, int rhs, int opt, int lhs) /* event_get */
 {
   GdkEvent *ret;
   NspObject *nsp_ret;
@@ -10270,7 +10270,7 @@ ret = gdk_event_get();
   return 1;
 }
 
-int _wrap_gdk_event_peek(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_event_peek(Stack stack, int rhs, int opt, int lhs) /* event_peek */
 {
   GdkEvent *ret;
   NspObject *nsp_ret;
@@ -10282,7 +10282,7 @@ ret = gdk_event_peek();
   return 1;
 }
 
-int _wrap_gdk_event_get_graphics_expose(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_event_get_graphics_expose(Stack stack, int rhs, int opt, int lhs) /* event_get_graphics_expose */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *window;
@@ -10297,7 +10297,7 @@ ret = gdk_event_get_graphics_expose(GDK_WINDOW(window->obj));
   return 1;
 }
 
-int _wrap_gdk_set_show_events(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_show_events(Stack stack, int rhs, int opt, int lhs) /* set_show_events */
 {
   int_types T[] = {s_bool,t_end};
   int show_events;
@@ -10306,7 +10306,7 @@ gdk_set_show_events(show_events);
   return 0;
 }
 
-int _wrap_gdk_get_show_events(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_show_events(Stack stack, int rhs, int opt, int lhs) /* get_show_events */
 {
   int ret;
 ret = gdk_get_show_events();
@@ -10333,7 +10333,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
 #line 10334 "gdk.c"
 
 
-int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs) /* font_from_description */
 {
   int_types T[] = {obj,t_end};
   PangoFontDescription *font_desc = NULL;
@@ -10354,7 +10354,7 @@ ret = gdk_font_from_description(font_desc);
   return 1;
 }
 
-int _wrap_gdk_devices_list(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_devices_list(Stack stack, int rhs, int opt, int lhs) /* devices_list */
 {
   GList *ret, *tmp;
   NspList *nsp_list;
@@ -10363,7 +10363,7 @@ ret = gdk_devices_list();
 
 }
 
-int _wrap_gdk_device_get_core_pointer(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_device_get_core_pointer(Stack stack, int rhs, int opt, int lhs) /* device_get_core_pointer */
 {
   GdkDevice *ret;
   NspObject *nsp_ret;
@@ -10374,7 +10374,7 @@ ret = gdk_device_get_core_pointer();
   return 1;
 }
 
-int _wrap_gdk_keymap_get_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keymap_get_default(Stack stack, int rhs, int opt, int lhs) /* keymap_get_default */
 {
   GdkKeymap *ret;
   NspObject *nsp_ret;
@@ -10385,7 +10385,7 @@ ret = gdk_keymap_get_default();
   return 1;
 }
 
-int _wrap_gdk_keyval_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_name(Stack stack, int rhs, int opt, int lhs) /* keyval_name */
 {
   int_types T[] = {s_int,t_end};
   int keyval;
@@ -10396,7 +10396,7 @@ ret = gdk_keyval_name(keyval);
   return 1;
 }
 
-int _wrap_gdk_keyval_from_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_from_name(Stack stack, int rhs, int opt, int lhs) /* keyval_from_name */
 {
   int_types T[] = {string,t_end};
   char *keyval_name;
@@ -10407,7 +10407,7 @@ ret = gdk_keyval_from_name(keyval_name);
   return 1;
 }
 
-int _wrap_gdk_keyval_to_upper(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_to_upper(Stack stack, int rhs, int opt, int lhs) /* keyval_to_upper */
 {
   int_types T[] = {s_int,t_end};
   int keyval, ret;
@@ -10417,7 +10417,7 @@ ret = gdk_keyval_to_upper(keyval);
   return 1;
 }
 
-int _wrap_gdk_keyval_to_lower(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_to_lower(Stack stack, int rhs, int opt, int lhs) /* keyval_to_lower */
 {
   int_types T[] = {s_int,t_end};
   int keyval, ret;
@@ -10427,7 +10427,7 @@ ret = gdk_keyval_to_lower(keyval);
   return 1;
 }
 
-int _wrap_gdk_keyval_is_upper(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_is_upper(Stack stack, int rhs, int opt, int lhs) /* keyval_is_upper */
 {
   int_types T[] = {s_int,t_end};
   int keyval, ret;
@@ -10437,7 +10437,7 @@ ret = gdk_keyval_is_upper(keyval);
   return 1;
 }
 
-int _wrap_gdk_keyval_is_lower(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_is_lower(Stack stack, int rhs, int opt, int lhs) /* keyval_is_lower */
 {
   int_types T[] = {s_int,t_end};
   int keyval, ret;
@@ -10447,7 +10447,7 @@ ret = gdk_keyval_is_lower(keyval);
   return 1;
 }
 
-int _wrap_gdk_keyval_to_unicode(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_keyval_to_unicode(Stack stack, int rhs, int opt, int lhs) /* keyval_to_unicode */
 {
   int_types T[] = {s_int,t_end};
   int keyval;
@@ -10458,7 +10458,7 @@ ret = gdk_keyval_to_unicode(keyval);
   return 1;
 }
 
-int _wrap_gdk_unicode_to_keyval(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_unicode_to_keyval(Stack stack, int rhs, int opt, int lhs) /* unicode_to_keyval */
 {
   int_types T[] = {s_int,t_end};
   gulong wc;
@@ -10469,7 +10469,7 @@ ret = gdk_unicode_to_keyval(wc);
   return 1;
 }
 
-int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /* pixmap_create_from_data */
 {
   int_types T[] = {obj_check, string, s_int, s_int, s_int, obj, obj,t_end};
   NspGObject *drawable;
@@ -10600,7 +10600,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
 #line 10601 "gdk.c"
 
 
-int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /* bitmap_create_from_data */
 {
   int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
@@ -10631,7 +10631,7 @@ ret = gdk_bitmap_create_from_data(drawable, data, width, height);
   return 1;
 }
 
-int _wrap_gdk_pixmap_foreign_new(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixmap_foreign_new(Stack stack, int rhs, int opt, int lhs) /* gdk_pixmap_foreign_new */
 {
   int_types T[] = {s_int,t_end};
   gulong anid;
@@ -10645,7 +10645,7 @@ ret = gdk_pixmap_foreign_new(anid);
   return 1;
 }
 
-int _wrap_gdk_pixmap_lookup(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixmap_lookup(Stack stack, int rhs, int opt, int lhs) /* gdk_pixmap_lookup */
 {
   int_types T[] = {s_int,t_end};
   gulong anid;
@@ -10659,7 +10659,7 @@ ret = gdk_pixmap_lookup(anid);
   return 1;
 }
 
-int _wrap_gdk_atom_intern(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_atom_intern(Stack stack, int rhs, int opt, int lhs) /* atom_intern */
 {
   int_types T[] = {string,new_opts,t_end};
   nsp_option opts[] = {
@@ -10677,7 +10677,7 @@ ret = gdk_atom_intern(atom_name, only_if_exists);
   return 1;
 }
 
-int _wrap_gdk_rgb_xpixel_from_rgb(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_xpixel_from_rgb(Stack stack, int rhs, int opt, int lhs) /* rgb_xpixel_from_rgb */
 {
   int_types T[] = {s_int,t_end};
   gulong rgb, ret;
@@ -10687,7 +10687,7 @@ ret = gdk_rgb_xpixel_from_rgb(rgb);
   return 1;
 }
 
-int _wrap_gdk_rgb_gc_set_foreground(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_gc_set_foreground(Stack stack, int rhs, int opt, int lhs) /* rgb_gc_set_foreground */
 {
   int_types T[] = {obj_check, s_int,t_end};
   NspGObject *gc;
@@ -10697,7 +10697,7 @@ gdk_rgb_gc_set_foreground(GDK_GC(gc->obj), rgb);
   return 0;
 }
 
-int _wrap_gdk_rgb_gc_set_background(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_gc_set_background(Stack stack, int rhs, int opt, int lhs) /* rgb_gc_set_background */
 {
   int_types T[] = {obj_check, s_int,t_end};
   NspGObject *gc;
@@ -10707,7 +10707,7 @@ gdk_rgb_gc_set_background(GDK_GC(gc->obj), rgb);
   return 0;
 }
 
-int _wrap_gdk_rgb_ditherable(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_ditherable(Stack stack, int rhs, int opt, int lhs) /* rgb_ditherable */
 {
   int ret;
 ret = gdk_rgb_ditherable();
@@ -10715,7 +10715,7 @@ ret = gdk_rgb_ditherable();
   return 1;
 }
 
-int _wrap_gdk_rgb_set_verbose(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_set_verbose(Stack stack, int rhs, int opt, int lhs) /* rgb_set_verbose */
 {
   int_types T[] = {s_bool,t_end};
   int verbose;
@@ -10724,7 +10724,7 @@ gdk_rgb_set_verbose(verbose);
   return 0;
 }
 
-int _wrap_gdk_rgb_set_install(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_set_install(Stack stack, int rhs, int opt, int lhs) /* rgb_set_install */
 {
   int_types T[] = {s_bool,t_end};
   int install;
@@ -10733,7 +10733,7 @@ gdk_rgb_set_install(install);
   return 0;
 }
 
-int _wrap_gdk_rgb_set_min_colors(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_set_min_colors(Stack stack, int rhs, int opt, int lhs) /* rgb_set_min_colors */
 {
   int_types T[] = {s_int,t_end};
   int min_colors;
@@ -10742,7 +10742,7 @@ gdk_rgb_set_min_colors(min_colors);
   return 0;
 }
 
-int _wrap_gdk_rgb_get_cmap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_get_cmap(Stack stack, int rhs, int opt, int lhs) /* rgb_get_cmap */
 {
   GdkColormap *ret;
   NspObject *nsp_ret;
@@ -10753,7 +10753,7 @@ ret = gdk_rgb_get_cmap();
   return 1;
 }
 
-int _wrap_gdk_rgb_get_visual(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_rgb_get_visual(Stack stack, int rhs, int opt, int lhs) /* rgb_get_visual */
 {
   GdkVisual *ret;
   NspObject *nsp_ret;
@@ -10764,7 +10764,7 @@ ret = gdk_rgb_get_visual();
   return 1;
 }
 
-int _wrap_gdk_selection_owner_get(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_selection_owner_get(Stack stack, int rhs, int opt, int lhs) /* selection_owner_get */
 {
   int_types T[] = {obj,t_end};
   GdkAtom selection;
@@ -10779,7 +10779,7 @@ ret = gdk_selection_owner_get(selection);
   return 1;
 }
 
-int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* selection_send_notify */
 {
   int_types T[] = {s_int, obj, obj, obj, s_int,t_end};
   gulong requestor, time;
@@ -10793,7 +10793,7 @@ gdk_selection_send_notify(requestor, selection, target, property, time);
   return 0;
 }
 
-int _wrap_gdk_list_visuals(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_list_visuals(Stack stack, int rhs, int opt, int lhs) /* list_visuals */
 {
   GList *ret, *tmp;
   NspList *nsp_list;
@@ -10802,7 +10802,7 @@ ret = gdk_list_visuals();
 
 }
 
-int _wrap_gdk_window_at_pointer(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_at_pointer(Stack stack, int rhs, int opt, int lhs) /* window_at_pointer */
 {
   int_types T[] = {s_int, s_int,t_end};
   int win_x, win_y;
@@ -10816,7 +10816,7 @@ ret = gdk_window_at_pointer(&win_x, &win_y);
   return 1;
 }
 
-int _wrap_gdk_window_foreign_new(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_foreign_new(Stack stack, int rhs, int opt, int lhs) /* window_foreign_new */
 {
   int_types T[] = {s_int,t_end};
   gulong anid;
@@ -10830,7 +10830,7 @@ ret = gdk_window_foreign_new(anid);
   return 1;
 }
 
-int _wrap_gdk_window_lookup(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_lookup(Stack stack, int rhs, int opt, int lhs) /* window_lookup */
 {
   int_types T[] = {s_int,t_end};
   gulong anid;
@@ -10844,7 +10844,7 @@ ret = gdk_window_lookup(anid);
   return 1;
 }
 
-int _wrap_gdk_set_sm_client_id(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_set_sm_client_id(Stack stack, int rhs, int opt, int lhs) /* set_sm_client_id */
 {
   int_types T[] = {string,t_end};
   char *sm_client_id;
@@ -10853,7 +10853,7 @@ gdk_set_sm_client_id(sm_client_id);
   return 0;
 }
 
-int _wrap_gdk_window_get_toplevels(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_get_toplevels(Stack stack, int rhs, int opt, int lhs) /* window_get_toplevels */
 {
   GList *ret, *tmp;
   NspList *nsp_list;
@@ -10862,13 +10862,13 @@ ret = gdk_window_get_toplevels();
 
 }
 
-int _wrap_gdk_window_process_all_updates(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_process_all_updates(Stack stack, int rhs, int opt, int lhs) /* window_process_all_updates */
 {
 gdk_window_process_all_updates();
   return 0;
 }
 
-int _wrap_gdk_window_set_debug_updates(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_window_set_debug_updates(Stack stack, int rhs, int opt, int lhs) /* gdk_window_set_debug_updates */
 {
   int_types T[] = {s_bool,t_end};
   int setting;
@@ -10877,7 +10877,7 @@ gdk_window_set_debug_updates(setting);
   return 0;
 }
 
-int _wrap_gdk_get_default_root_window(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_get_default_root_window(Stack stack, int rhs, int opt, int lhs) /* get_default_root_window */
 {
   GdkWindow *ret;
   NspObject *nsp_ret;
@@ -10888,7 +10888,7 @@ ret = gdk_get_default_root_window();
   return 1;
 }
 
-int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs) /* pixbuf_new_from_file */
 {
   int_types T[] = {string,t_end};
   char *filename;
@@ -10933,7 +10933,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
 #line 10934 "gdk.c"
 
 
-int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs) /* pixbuf_new_from_inline */
 {
   int_types T[] = {s_int, string, s_bool,t_end};
   int data_length, copy_pixels;
@@ -10954,7 +10954,7 @@ ret = gdk_pixbuf_new_from_inline(data_length, data, copy_pixels, &error);
   return 1;
 }
 
-int _wrap_gdk_pixbuf_loader_new(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_pixbuf_loader_new(Stack stack, int rhs, int opt, int lhs) /* gdk_pixbuf_loader_new */
 {
   GdkPixbufLoader *ret;
   NspObject *nsp_ret;
@@ -10965,7 +10965,7 @@ ret = gdk_pixbuf_loader_new();
   return 1;
 }
 
-int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_screen_get_default */
 {
   GdkScreen *ret;
   NspObject *nsp_ret;
@@ -11002,7 +11002,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
 #line 11003 "gdk.c"
 
 
-int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_display_get_default */
 {
   GdkDisplay *ret;
   NspObject *nsp_ret;
@@ -11013,7 +11013,7 @@ ret = gdk_display_get_default();
   return 1;
 }
 
-int _wrap_gdk_display_open_default_libgtk_only(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gdk_display_open_default_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* gdk_display_open_default_libgtk_only */
 {
   GdkDisplay *ret;
   NspObject *nsp_ret;

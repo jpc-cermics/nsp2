@@ -48,8 +48,8 @@ extern NspWebKitWebHistoryItem *GetWebKitWebHistoryItem (Stack stack, int i);
 
 #ifdef WebKitWebHistoryItem_Private 
 static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *o,NspTypeWebKitWebHistoryItem *type);
-static char *webkitwebhistoryitem_type_as_string(void);
-static char *webkitwebhistoryitem_type_short_string(NspObject *v);
+static char *nsp_webkitwebhistoryitem_type_as_string(void);
+static char *nsp_webkitwebhistoryitem_type_short_string(NspObject *v);
 static AttrTab webkitwebhistoryitem_attrs[];
 /* static int int_webkitwebhistoryitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitwebhistoryitem_get_methods(void); 

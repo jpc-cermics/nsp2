@@ -48,8 +48,8 @@ extern NspGtkMenuToolButton *GetGtkMenuToolButton (Stack stack, int i);
 
 #ifdef GtkMenuToolButton_Private 
 static int init_gtkmenutoolbutton(NspGtkMenuToolButton *o,NspTypeGtkMenuToolButton *type);
-static char *gtkmenutoolbutton_type_as_string(void);
-static char *gtkmenutoolbutton_type_short_string(NspObject *v);
+static char *nsp_gtkmenutoolbutton_type_as_string(void);
+static char *nsp_gtkmenutoolbutton_type_short_string(NspObject *v);
 static AttrTab gtkmenutoolbutton_attrs[];
 /* static int int_gtkmenutoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmenutoolbutton_get_methods(void); 

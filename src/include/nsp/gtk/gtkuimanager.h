@@ -48,8 +48,8 @@ extern NspGtkUIManager *GetGtkUIManager (Stack stack, int i);
 
 #ifdef GtkUIManager_Private 
 static int init_gtkuimanager(NspGtkUIManager *o,NspTypeGtkUIManager *type);
-static char *gtkuimanager_type_as_string(void);
-static char *gtkuimanager_type_short_string(NspObject *v);
+static char *nsp_gtkuimanager_type_as_string(void);
+static char *nsp_gtkuimanager_type_short_string(NspObject *v);
 static AttrTab gtkuimanager_attrs[];
 /* static int int_gtkuimanager_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkuimanager_get_methods(void); 

@@ -48,8 +48,8 @@ extern NspGtkAccelMap *GetGtkAccelMap (Stack stack, int i);
 
 #ifdef GtkAccelMap_Private 
 static int init_gtkaccelmap(NspGtkAccelMap *o,NspTypeGtkAccelMap *type);
-static char *gtkaccelmap_type_as_string(void);
-static char *gtkaccelmap_type_short_string(NspObject *v);
+static char *nsp_gtkaccelmap_type_as_string(void);
+static char *nsp_gtkaccelmap_type_short_string(NspObject *v);
 static AttrTab gtkaccelmap_attrs[];
 /* static int int_gtkaccelmap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaccelmap_get_methods(void); 

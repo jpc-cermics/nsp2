@@ -48,8 +48,8 @@ extern NspGtkRadioToolButton *GetGtkRadioToolButton (Stack stack, int i);
 
 #ifdef GtkRadioToolButton_Private 
 static int init_gtkradiotoolbutton(NspGtkRadioToolButton *o,NspTypeGtkRadioToolButton *type);
-static char *gtkradiotoolbutton_type_as_string(void);
-static char *gtkradiotoolbutton_type_short_string(NspObject *v);
+static char *nsp_gtkradiotoolbutton_type_as_string(void);
+static char *nsp_gtkradiotoolbutton_type_short_string(NspObject *v);
 static AttrTab gtkradiotoolbutton_attrs[];
 /* static int int_gtkradiotoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkradiotoolbutton_get_methods(void); 

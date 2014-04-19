@@ -48,8 +48,8 @@ extern NspGtkAccessible *GetGtkAccessible (Stack stack, int i);
 
 #ifdef GtkAccessible_Private 
 static int init_gtkaccessible(NspGtkAccessible *o,NspTypeGtkAccessible *type);
-static char *gtkaccessible_type_as_string(void);
-static char *gtkaccessible_type_short_string(NspObject *v);
+static char *nsp_gtkaccessible_type_as_string(void);
+static char *nsp_gtkaccessible_type_short_string(NspObject *v);
 static AttrTab gtkaccessible_attrs[];
 /* static int int_gtkaccessible_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaccessible_get_methods(void); 

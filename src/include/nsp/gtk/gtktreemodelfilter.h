@@ -48,8 +48,8 @@ extern NspGtkTreeModelFilter *GetGtkTreeModelFilter (Stack stack, int i);
 
 #ifdef GtkTreeModelFilter_Private 
 static int init_gtktreemodelfilter(NspGtkTreeModelFilter *o,NspTypeGtkTreeModelFilter *type);
-static char *gtktreemodelfilter_type_as_string(void);
-static char *gtktreemodelfilter_type_short_string(NspObject *v);
+static char *nsp_gtktreemodelfilter_type_as_string(void);
+static char *nsp_gtktreemodelfilter_type_short_string(NspObject *v);
 static AttrTab gtktreemodelfilter_attrs[];
 /* static int int_gtktreemodelfilter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreemodelfilter_get_methods(void); 

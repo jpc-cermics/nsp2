@@ -61,17 +61,17 @@ class Wrapper:
               '#include "nsp/interf.h"\n'  \
               '#include "nsp/nspthreads.h"\n'  \
               '/* \n' \
-              ' * %(typename)s inherits from %(parent)s \n%(implements)s' \
+              ' * Nsp%(typename)s inherits from %(parent)s \n%(implements)s' \
               ' */\n' \
               '\n' \
               'int nsp_type_%(typename_dc)s_id=0;\n'  \
               'NspType%(typename)s *nsp_type_%(typename_dc)s=NULL;\n'  \
               '\n'  \
               '/*\n' \
-              ' * Type object for %(typename)s \n' \
+              ' * Type object for Nsp%(typename)s \n' \
               ' * all the instance of NspType%(typename)s share the same id. \n' \
               ' * nsp_type_%(typename_dc)s: is an instance of NspType%(typename)s \n' \
-              ' *    used for objects of %(typename)s type (i.e built with new_%(typename_dc)s) \n' \
+              ' *    used for objects of Nsp%(typename)s type (i.e built with new_%(typename_dc)s) \n' \
               ' * other instances are used for derived classes \n' \
               ' */\n' \
               'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
@@ -100,8 +100,8 @@ class Wrapper:
               '  \n'  \
               '  /* object methods redefined for %(typename_dc)s */ \n'  \
               '\n'  \
-              '  top->s_type =  (s_type_func *) %(typename_dc)s_type_as_string;    \n'  \
-              '  top->sh_type = (sh_type_func *) %(typename_dc)s_type_short_string;\n'  \
+              '  top->s_type =  (s_type_func *) nsp_%(typename_dc)s_type_as_string;    \n'  \
+              '  top->sh_type = (sh_type_func *) nsp_%(typename_dc)s_type_short_string;\n'  \
               '  /* top->create = (create_func*) int_%(typename_dc)s_create;*/ \n' \
               '  \n'  \
               '  /* specific methods for %(typename_dc)s */\n'  \
@@ -131,7 +131,7 @@ class Wrapper:
               '}\n'  \
               '\n'  \
               '/*\n'  \
-              ' * initialize %(typename)s instances \n'  \
+              ' * initialize Nsp%(typename)s instances \n'  \
               ' * locally and by calling initializer on parent class \n'  \
               ' */\n'  \
               '\n'  \
@@ -146,7 +146,7 @@ class Wrapper:
               '}\n'  \
               '\n'  \
               '/*\n'  \
-              ' * new instance of %(typename)s \n'  \
+              ' * new instance of Nsp%(typename)s \n'  \
               ' */\n'  \
               '\n'  \
               'Nsp%(typename)s *new_%(typename_dc)s() \n'  \
@@ -161,7 +161,7 @@ class Wrapper:
               '}\n'  \
               '\n'  \
               '/*----------------------------------------------\n'  \
-              ' * Object method redefined for %(typename)s \n'  \
+              ' * Object method redefined for Nsp%(typename)s \n'  \
               ' *-----------------------------------------------*/\n'  \
               '\n'  \
               '/*\n'  \
@@ -171,12 +171,12 @@ class Wrapper:
               'static char %(typename_dc)s_type_name[]="%(typename)s";\n'  \
               'static char %(typename_dc)s_short_type_name[]="%(typename)s";\n'  \
               '\n'  \
-              'static char *%(typename_dc)s_type_as_string(void)\n'  \
+              'static char *nsp_%(typename_dc)s_type_as_string(void)\n'  \
               '{\n'  \
               '  return(%(typename_dc)s_type_name);\n'  \
               '}\n'  \
               '\n'  \
-              'static char *%(typename_dc)s_type_short_string(NspObject *v)\n'  \
+              'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v)\n'  \
               '{\n'  \
               '  return(%(typename_dc)s_short_type_name);\n'  \
               '}\n'  \
@@ -184,11 +184,11 @@ class Wrapper:
     type_tmpl_1_2 = \
               '/*-----------------------------------------------------\n'  \
               ' * a set of functions used when writing interfaces \n'  \
-              ' * for %(typename)s objects \n'  \
-              ' * Note that some of these functions could become MACROS XXXXX \n'  \
+              ' * for Nsp%(typename)s objects \n'  \
+              ' * Note that some of these functions could become MACROS \n'  \
               ' *-----------------------------------------------------*/\n'  \
               '\n'  \
-              'Nsp%(typename)s   *%(typename_dc)s_object(NspObject *O)\n'  \
+              'Nsp%(typename)s *nsp_%(typename_dc)s_object(NspObject *O)\n'  \
               '{\n'  \
               '  /* Follow pointer */\n'  \
               '  HOBJ_GET_OBJECT(O,NULL);\n'  \
@@ -218,7 +218,7 @@ class Wrapper:
               'Nsp%(typename)s  *Get%(typename)s(Stack stack, int i)\n'  \
               '{\n'  \
               '  Nsp%(typename)s *M;\n'  \
-              '  if (( M = %(typename_dc)s_object(NthObj(i))) == NULL%(typename_uc)s)\n'  \
+              '  if (( M = nsp_%(typename_dc)s_object(NthObj(i))) == NULL%(typename_uc)s)\n'  \
               '     ArgMessage(stack,i);\n'  \
               '  return M;\n'  \
               '}\n'  \
@@ -291,8 +291,8 @@ class Wrapper:
                 '\n' \
                 '#ifdef %(typename)s_Private \n' \
                 'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
-                'static char *%(typename_dc)s_type_as_string(void);\n' \
-                'static char *%(typename_dc)s_type_short_string(NspObject *v);\n' \
+                'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
+                'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
                 'static AttrTab %(typename_dc)s_attrs[];\n' \
                 '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
                 'static NspMethods *%(typename_dc)s_get_methods(void); \n' \
@@ -301,7 +301,7 @@ class Wrapper:
 
     type_tmpl_1_0_2 = \
               '  /* \n' \
-              '   * %(typename)s interfaces can be added here \n' \
+              '   * Nsp%(typename)s interfaces can be added here \n' \
               '   * type->interface = (NspTypeBase *) new_type_b();\n' \
               '   * type->interface->interface = (NspTypeBase *) new_type_C()\n' \
               '   * ....\n' \
@@ -345,7 +345,7 @@ class Wrapper:
     # this is used when a default constructor giving a Warning must be used 
 
     function_tmpl = \
-        'int _wrap_%(cname)s(Stack stack, int rhs, int opt, int lhs)\n' \
+        'int _wrap_%(cname)s(Stack stack, int rhs, int opt, int lhs) /* %(name)s */\n' \
         '{\n' \
         '%(varlist)s' \
         '%(parseargs)s' \
@@ -383,7 +383,7 @@ class Wrapper:
         return { 'name': '%s.%s' % (self.objinfo.c_name, method.name) }
 
     def write_class(self):
-        self.fp.write('\n/* ----------- ' + self.objinfo.c_name + ' ----------- */\n\n')
+        self.fp.write('\n/* ----------- ' + 'Nsp'+self.objinfo.c_name + ' ----------- */\n\n')
         substdict = self.get_initial_class_substdict()
 
         if self.overrides.modulename:

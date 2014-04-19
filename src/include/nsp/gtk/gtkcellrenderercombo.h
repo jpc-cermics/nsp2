@@ -48,8 +48,8 @@ extern NspGtkCellRendererCombo *GetGtkCellRendererCombo (Stack stack, int i);
 
 #ifdef GtkCellRendererCombo_Private 
 static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *o,NspTypeGtkCellRendererCombo *type);
-static char *gtkcellrenderercombo_type_as_string(void);
-static char *gtkcellrenderercombo_type_short_string(NspObject *v);
+static char *nsp_gtkcellrenderercombo_type_as_string(void);
+static char *nsp_gtkcellrenderercombo_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderercombo_attrs[];
 /* static int int_gtkcellrenderercombo_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrenderercombo_get_methods(void); 

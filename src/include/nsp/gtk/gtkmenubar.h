@@ -48,8 +48,8 @@ extern NspGtkMenuBar *GetGtkMenuBar (Stack stack, int i);
 
 #ifdef GtkMenuBar_Private 
 static int init_gtkmenubar(NspGtkMenuBar *o,NspTypeGtkMenuBar *type);
-static char *gtkmenubar_type_as_string(void);
-static char *gtkmenubar_type_short_string(NspObject *v);
+static char *nsp_gtkmenubar_type_as_string(void);
+static char *nsp_gtkmenubar_type_short_string(NspObject *v);
 static AttrTab gtkmenubar_attrs[];
 /* static int int_gtkmenubar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmenubar_get_methods(void); 

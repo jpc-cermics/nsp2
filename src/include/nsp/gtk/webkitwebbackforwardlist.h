@@ -48,8 +48,8 @@ extern NspWebKitWebBackForwardList *GetWebKitWebBackForwardList (Stack stack, in
 
 #ifdef WebKitWebBackForwardList_Private 
 static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *o,NspTypeWebKitWebBackForwardList *type);
-static char *webkitwebbackforwardlist_type_as_string(void);
-static char *webkitwebbackforwardlist_type_short_string(NspObject *v);
+static char *nsp_webkitwebbackforwardlist_type_as_string(void);
+static char *nsp_webkitwebbackforwardlist_type_short_string(NspObject *v);
 static AttrTab webkitwebbackforwardlist_attrs[];
 /* static int int_webkitwebbackforwardlist_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitwebbackforwardlist_get_methods(void); 

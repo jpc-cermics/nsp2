@@ -48,8 +48,8 @@ extern NspGtkExpander *GetGtkExpander (Stack stack, int i);
 
 #ifdef GtkExpander_Private 
 static int init_gtkexpander(NspGtkExpander *o,NspTypeGtkExpander *type);
-static char *gtkexpander_type_as_string(void);
-static char *gtkexpander_type_short_string(NspObject *v);
+static char *nsp_gtkexpander_type_as_string(void);
+static char *nsp_gtkexpander_type_short_string(NspObject *v);
 static AttrTab gtkexpander_attrs[];
 /* static int int_gtkexpander_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkexpander_get_methods(void); 

@@ -48,8 +48,8 @@ extern NspGtkBorder *GetGtkBorder (Stack stack, int i);
 
 #ifdef GtkBorder_Private 
 static int init_gtkborder(NspGtkBorder *o,NspTypeGtkBorder *type);
-static char *gtkborder_type_as_string(void);
-static char *gtkborder_type_short_string(NspObject *v);
+static char *nsp_gtkborder_type_as_string(void);
+static char *nsp_gtkborder_type_short_string(NspObject *v);
 static AttrTab gtkborder_attrs[];
 /* static int int_gtkborder_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkborder_get_methods(void); 

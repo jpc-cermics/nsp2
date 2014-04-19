@@ -280,7 +280,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #include "nsp/gtk/gtkwindowgroup.h"
 
 
-/* ----------- GtkBorder ----------- */
+/* ----------- NspGtkBorder ----------- */
 
 
 #include "nsp/object.h"
@@ -289,17 +289,17 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkBorder inherits from GBoxed 
+ * NspGtkBorder inherits from GBoxed 
  */
 
 int nsp_type_gtkborder_id=0;
 NspTypeGtkBorder *nsp_type_gtkborder=NULL;
 
 /*
- * Type object for GtkBorder 
+ * Type object for NspGtkBorder 
  * all the instance of NspTypeGtkBorder share the same id. 
  * nsp_type_gtkborder: is an instance of NspTypeGtkBorder 
- *    used for objects of GtkBorder type (i.e built with new_gtkborder) 
+ *    used for objects of NspGtkBorder type (i.e built with new_gtkborder) 
  * other instances are used for derived classes 
  */
 NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
@@ -328,8 +328,8 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
   
   /* object methods redefined for gtkborder */ 
 
-  top->s_type =  (s_type_func *) gtkborder_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkborder_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkborder_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkborder_type_short_string;
   /* top->create = (create_func*) int_gtkborder_create;*/ 
   
   /* specific methods for gtkborder */
@@ -337,7 +337,7 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
   type->init = (init_func *) init_gtkborder;
 
   /* 
-   * GtkBorder interfaces can be added here 
+   * NspGtkBorder interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -363,7 +363,7 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
 }
 
 /*
- * initialize GtkBorder instances 
+ * initialize NspGtkBorder instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -378,7 +378,7 @@ static int init_gtkborder(NspGtkBorder *Obj,NspTypeGtkBorder *type)
 }
 
 /*
- * new instance of GtkBorder 
+ * new instance of NspGtkBorder 
  */
 
 NspGtkBorder *new_gtkborder() 
@@ -393,7 +393,7 @@ NspGtkBorder *new_gtkborder()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkBorder 
+ * Object method redefined for NspGtkBorder 
  *-----------------------------------------------*/
 
 /*
@@ -403,23 +403,23 @@ NspGtkBorder *new_gtkborder()
 static char gtkborder_type_name[]="GtkBorder";
 static char gtkborder_short_type_name[]="GtkBorder";
 
-static char *gtkborder_type_as_string(void)
+static char *nsp_gtkborder_type_as_string(void)
 {
   return(gtkborder_type_name);
 }
 
-static char *gtkborder_type_short_string(NspObject *v)
+static char *nsp_gtkborder_type_short_string(NspObject *v)
 {
   return(gtkborder_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkBorder objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkBorder objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkBorder   *gtkborder_object(NspObject *O)
+NspGtkBorder *nsp_gtkborder_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -449,7 +449,7 @@ NspGtkBorder  *GetGtkBorderCopy(Stack stack, int i)
 NspGtkBorder  *GetGtkBorder(Stack stack, int i)
 {
   NspGtkBorder *M;
-  if (( M = gtkborder_object(NthObj(i))) == NULLGTKBORDER)
+  if (( M = nsp_gtkborder_object(NthObj(i))) == NULLGTKBORDER)
      ArgMessage(stack,i);
   return M;
 }
@@ -513,7 +513,7 @@ static NspMethods *gtkborder_get_methods(void) { return gtkborder_methods;};
 static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconInfo ----------- */
+/* ----------- NspGtkIconInfo ----------- */
 
 
 #include "nsp/object.h"
@@ -522,17 +522,17 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconInfo inherits from GBoxed 
+ * NspGtkIconInfo inherits from GBoxed 
  */
 
 int nsp_type_gtkiconinfo_id=0;
 NspTypeGtkIconInfo *nsp_type_gtkiconinfo=NULL;
 
 /*
- * Type object for GtkIconInfo 
+ * Type object for NspGtkIconInfo 
  * all the instance of NspTypeGtkIconInfo share the same id. 
  * nsp_type_gtkiconinfo: is an instance of NspTypeGtkIconInfo 
- *    used for objects of GtkIconInfo type (i.e built with new_gtkiconinfo) 
+ *    used for objects of NspGtkIconInfo type (i.e built with new_gtkiconinfo) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
@@ -561,8 +561,8 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
   
   /* object methods redefined for gtkiconinfo */ 
 
-  top->s_type =  (s_type_func *) gtkiconinfo_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkiconinfo_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkiconinfo_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkiconinfo_type_short_string;
   /* top->create = (create_func*) int_gtkiconinfo_create;*/ 
   
   /* specific methods for gtkiconinfo */
@@ -570,7 +570,7 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
   type->init = (init_func *) init_gtkiconinfo;
 
   /* 
-   * GtkIconInfo interfaces can be added here 
+   * NspGtkIconInfo interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -596,7 +596,7 @@ NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
 }
 
 /*
- * initialize GtkIconInfo instances 
+ * initialize NspGtkIconInfo instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -611,7 +611,7 @@ static int init_gtkiconinfo(NspGtkIconInfo *Obj,NspTypeGtkIconInfo *type)
 }
 
 /*
- * new instance of GtkIconInfo 
+ * new instance of NspGtkIconInfo 
  */
 
 NspGtkIconInfo *new_gtkiconinfo() 
@@ -626,7 +626,7 @@ NspGtkIconInfo *new_gtkiconinfo()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconInfo 
+ * Object method redefined for NspGtkIconInfo 
  *-----------------------------------------------*/
 
 /*
@@ -636,23 +636,23 @@ NspGtkIconInfo *new_gtkiconinfo()
 static char gtkiconinfo_type_name[]="GtkIconInfo";
 static char gtkiconinfo_short_type_name[]="GtkIconInfo";
 
-static char *gtkiconinfo_type_as_string(void)
+static char *nsp_gtkiconinfo_type_as_string(void)
 {
   return(gtkiconinfo_type_name);
 }
 
-static char *gtkiconinfo_type_short_string(NspObject *v)
+static char *nsp_gtkiconinfo_type_short_string(NspObject *v)
 {
   return(gtkiconinfo_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconInfo objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconInfo objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconInfo   *gtkiconinfo_object(NspObject *O)
+NspGtkIconInfo *nsp_gtkiconinfo_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -682,7 +682,7 @@ NspGtkIconInfo  *GetGtkIconInfoCopy(Stack stack, int i)
 NspGtkIconInfo  *GetGtkIconInfo(Stack stack, int i)
 {
   NspGtkIconInfo *M;
-  if (( M = gtkiconinfo_object(NthObj(i))) == NULLGTKICONINFO)
+  if (( M = nsp_gtkiconinfo_object(NthObj(i))) == NULLGTKICONINFO)
      ArgMessage(stack,i);
   return M;
 }
@@ -827,7 +827,7 @@ static NspMethods *gtkiconinfo_get_methods(void) { return gtkiconinfo_methods;};
 static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconSet ----------- */
+/* ----------- NspGtkIconSet ----------- */
 
 
 #include "nsp/object.h"
@@ -836,17 +836,17 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconSet inherits from GBoxed 
+ * NspGtkIconSet inherits from GBoxed 
  */
 
 int nsp_type_gtkiconset_id=0;
 NspTypeGtkIconSet *nsp_type_gtkiconset=NULL;
 
 /*
- * Type object for GtkIconSet 
+ * Type object for NspGtkIconSet 
  * all the instance of NspTypeGtkIconSet share the same id. 
  * nsp_type_gtkiconset: is an instance of NspTypeGtkIconSet 
- *    used for objects of GtkIconSet type (i.e built with new_gtkiconset) 
+ *    used for objects of NspGtkIconSet type (i.e built with new_gtkiconset) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
@@ -875,8 +875,8 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
   
   /* object methods redefined for gtkiconset */ 
 
-  top->s_type =  (s_type_func *) gtkiconset_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkiconset_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkiconset_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkiconset_type_short_string;
   /* top->create = (create_func*) int_gtkiconset_create;*/ 
   
   /* specific methods for gtkiconset */
@@ -884,7 +884,7 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
   type->init = (init_func *) init_gtkiconset;
 
   /* 
-   * GtkIconSet interfaces can be added here 
+   * NspGtkIconSet interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -910,7 +910,7 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
 }
 
 /*
- * initialize GtkIconSet instances 
+ * initialize NspGtkIconSet instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -925,7 +925,7 @@ static int init_gtkiconset(NspGtkIconSet *Obj,NspTypeGtkIconSet *type)
 }
 
 /*
- * new instance of GtkIconSet 
+ * new instance of NspGtkIconSet 
  */
 
 NspGtkIconSet *new_gtkiconset() 
@@ -940,7 +940,7 @@ NspGtkIconSet *new_gtkiconset()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconSet 
+ * Object method redefined for NspGtkIconSet 
  *-----------------------------------------------*/
 
 /*
@@ -950,23 +950,23 @@ NspGtkIconSet *new_gtkiconset()
 static char gtkiconset_type_name[]="GtkIconSet";
 static char gtkiconset_short_type_name[]="GtkIconSet";
 
-static char *gtkiconset_type_as_string(void)
+static char *nsp_gtkiconset_type_as_string(void)
 {
   return(gtkiconset_type_name);
 }
 
-static char *gtkiconset_type_short_string(NspObject *v)
+static char *nsp_gtkiconset_type_short_string(NspObject *v)
 {
   return(gtkiconset_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconSet objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconSet objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconSet   *gtkiconset_object(NspObject *O)
+NspGtkIconSet *nsp_gtkiconset_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -996,7 +996,7 @@ NspGtkIconSet  *GetGtkIconSetCopy(Stack stack, int i)
 NspGtkIconSet  *GetGtkIconSet(Stack stack, int i)
 {
   NspGtkIconSet *M;
-  if (( M = gtkiconset_object(NthObj(i))) == NULLGTKICONSET)
+  if (( M = nsp_gtkiconset_object(NthObj(i))) == NULLGTKICONSET)
      ArgMessage(stack,i);
   return M;
 }
@@ -1156,7 +1156,7 @@ static NspMethods *gtkiconset_get_methods(void) { return gtkiconset_methods;};
 static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconSource ----------- */
+/* ----------- NspGtkIconSource ----------- */
 
 
 #include "nsp/object.h"
@@ -1165,17 +1165,17 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconSource inherits from GBoxed 
+ * NspGtkIconSource inherits from GBoxed 
  */
 
 int nsp_type_gtkiconsource_id=0;
 NspTypeGtkIconSource *nsp_type_gtkiconsource=NULL;
 
 /*
- * Type object for GtkIconSource 
+ * Type object for NspGtkIconSource 
  * all the instance of NspTypeGtkIconSource share the same id. 
  * nsp_type_gtkiconsource: is an instance of NspTypeGtkIconSource 
- *    used for objects of GtkIconSource type (i.e built with new_gtkiconsource) 
+ *    used for objects of NspGtkIconSource type (i.e built with new_gtkiconsource) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
@@ -1204,8 +1204,8 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
   
   /* object methods redefined for gtkiconsource */ 
 
-  top->s_type =  (s_type_func *) gtkiconsource_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkiconsource_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkiconsource_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkiconsource_type_short_string;
   /* top->create = (create_func*) int_gtkiconsource_create;*/ 
   
   /* specific methods for gtkiconsource */
@@ -1213,7 +1213,7 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
   type->init = (init_func *) init_gtkiconsource;
 
   /* 
-   * GtkIconSource interfaces can be added here 
+   * NspGtkIconSource interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1239,7 +1239,7 @@ NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
 }
 
 /*
- * initialize GtkIconSource instances 
+ * initialize NspGtkIconSource instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1254,7 +1254,7 @@ static int init_gtkiconsource(NspGtkIconSource *Obj,NspTypeGtkIconSource *type)
 }
 
 /*
- * new instance of GtkIconSource 
+ * new instance of NspGtkIconSource 
  */
 
 NspGtkIconSource *new_gtkiconsource() 
@@ -1269,7 +1269,7 @@ NspGtkIconSource *new_gtkiconsource()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconSource 
+ * Object method redefined for NspGtkIconSource 
  *-----------------------------------------------*/
 
 /*
@@ -1279,23 +1279,23 @@ NspGtkIconSource *new_gtkiconsource()
 static char gtkiconsource_type_name[]="GtkIconSource";
 static char gtkiconsource_short_type_name[]="GtkIconSource";
 
-static char *gtkiconsource_type_as_string(void)
+static char *nsp_gtkiconsource_type_as_string(void)
 {
   return(gtkiconsource_type_name);
 }
 
-static char *gtkiconsource_type_short_string(NspObject *v)
+static char *nsp_gtkiconsource_type_short_string(NspObject *v)
 {
   return(gtkiconsource_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconSource objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconSource objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconSource   *gtkiconsource_object(NspObject *O)
+NspGtkIconSource *nsp_gtkiconsource_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1325,7 +1325,7 @@ NspGtkIconSource  *GetGtkIconSourceCopy(Stack stack, int i)
 NspGtkIconSource  *GetGtkIconSource(Stack stack, int i)
 {
   NspGtkIconSource *M;
-  if (( M = gtkiconsource_object(NthObj(i))) == NULLGTKICONSOURCE)
+  if (( M = nsp_gtkiconsource_object(NthObj(i))) == NULLGTKICONSOURCE)
      ArgMessage(stack,i);
   return M;
 }
@@ -1589,7 +1589,7 @@ static NspMethods *gtkiconsource_get_methods(void) { return gtkiconsource_method
 static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRequisition ----------- */
+/* ----------- NspGtkRequisition ----------- */
 
 
 #include "nsp/object.h"
@@ -1598,17 +1598,17 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRequisition inherits from GBoxed 
+ * NspGtkRequisition inherits from GBoxed 
  */
 
 int nsp_type_gtkrequisition_id=0;
 NspTypeGtkRequisition *nsp_type_gtkrequisition=NULL;
 
 /*
- * Type object for GtkRequisition 
+ * Type object for NspGtkRequisition 
  * all the instance of NspTypeGtkRequisition share the same id. 
  * nsp_type_gtkrequisition: is an instance of NspTypeGtkRequisition 
- *    used for objects of GtkRequisition type (i.e built with new_gtkrequisition) 
+ *    used for objects of NspGtkRequisition type (i.e built with new_gtkrequisition) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
@@ -1637,8 +1637,8 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
   
   /* object methods redefined for gtkrequisition */ 
 
-  top->s_type =  (s_type_func *) gtkrequisition_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkrequisition_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkrequisition_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkrequisition_type_short_string;
   /* top->create = (create_func*) int_gtkrequisition_create;*/ 
   
   /* specific methods for gtkrequisition */
@@ -1646,7 +1646,7 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
   type->init = (init_func *) init_gtkrequisition;
 
   /* 
-   * GtkRequisition interfaces can be added here 
+   * NspGtkRequisition interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1672,7 +1672,7 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
 }
 
 /*
- * initialize GtkRequisition instances 
+ * initialize NspGtkRequisition instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1687,7 +1687,7 @@ static int init_gtkrequisition(NspGtkRequisition *Obj,NspTypeGtkRequisition *typ
 }
 
 /*
- * new instance of GtkRequisition 
+ * new instance of NspGtkRequisition 
  */
 
 NspGtkRequisition *new_gtkrequisition() 
@@ -1702,7 +1702,7 @@ NspGtkRequisition *new_gtkrequisition()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRequisition 
+ * Object method redefined for NspGtkRequisition 
  *-----------------------------------------------*/
 
 /*
@@ -1712,23 +1712,23 @@ NspGtkRequisition *new_gtkrequisition()
 static char gtkrequisition_type_name[]="GtkRequisition";
 static char gtkrequisition_short_type_name[]="GtkRequisition";
 
-static char *gtkrequisition_type_as_string(void)
+static char *nsp_gtkrequisition_type_as_string(void)
 {
   return(gtkrequisition_type_name);
 }
 
-static char *gtkrequisition_type_short_string(NspObject *v)
+static char *nsp_gtkrequisition_type_short_string(NspObject *v)
 {
   return(gtkrequisition_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRequisition objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRequisition objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRequisition   *gtkrequisition_object(NspObject *O)
+NspGtkRequisition *nsp_gtkrequisition_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1758,7 +1758,7 @@ NspGtkRequisition  *GetGtkRequisitionCopy(Stack stack, int i)
 NspGtkRequisition  *GetGtkRequisition(Stack stack, int i)
 {
   NspGtkRequisition *M;
-  if (( M = gtkrequisition_object(NthObj(i))) == NULLGTKREQUISITION)
+  if (( M = nsp_gtkrequisition_object(NthObj(i))) == NULLGTKREQUISITION)
      ArgMessage(stack,i);
   return M;
 }
@@ -1861,7 +1861,7 @@ static AttrTab gtkrequisition_attrs[] = {
 
 
 
-/* ----------- GtkSelectionData ----------- */
+/* ----------- NspGtkSelectionData ----------- */
 
 
 #include "nsp/object.h"
@@ -1870,17 +1870,17 @@ static AttrTab gtkrequisition_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSelectionData inherits from GBoxed 
+ * NspGtkSelectionData inherits from GBoxed 
  */
 
 int nsp_type_gtkselectiondata_id=0;
 NspTypeGtkSelectionData *nsp_type_gtkselectiondata=NULL;
 
 /*
- * Type object for GtkSelectionData 
+ * Type object for NspGtkSelectionData 
  * all the instance of NspTypeGtkSelectionData share the same id. 
  * nsp_type_gtkselectiondata: is an instance of NspTypeGtkSelectionData 
- *    used for objects of GtkSelectionData type (i.e built with new_gtkselectiondata) 
+ *    used for objects of NspGtkSelectionData type (i.e built with new_gtkselectiondata) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
@@ -1909,8 +1909,8 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
   
   /* object methods redefined for gtkselectiondata */ 
 
-  top->s_type =  (s_type_func *) gtkselectiondata_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkselectiondata_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkselectiondata_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkselectiondata_type_short_string;
   /* top->create = (create_func*) int_gtkselectiondata_create;*/ 
   
   /* specific methods for gtkselectiondata */
@@ -1918,7 +1918,7 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
   type->init = (init_func *) init_gtkselectiondata;
 
   /* 
-   * GtkSelectionData interfaces can be added here 
+   * NspGtkSelectionData interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1944,7 +1944,7 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
 }
 
 /*
- * initialize GtkSelectionData instances 
+ * initialize NspGtkSelectionData instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1959,7 +1959,7 @@ static int init_gtkselectiondata(NspGtkSelectionData *Obj,NspTypeGtkSelectionDat
 }
 
 /*
- * new instance of GtkSelectionData 
+ * new instance of NspGtkSelectionData 
  */
 
 NspGtkSelectionData *new_gtkselectiondata() 
@@ -1974,7 +1974,7 @@ NspGtkSelectionData *new_gtkselectiondata()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSelectionData 
+ * Object method redefined for NspGtkSelectionData 
  *-----------------------------------------------*/
 
 /*
@@ -1984,23 +1984,23 @@ NspGtkSelectionData *new_gtkselectiondata()
 static char gtkselectiondata_type_name[]="GtkSelectionData";
 static char gtkselectiondata_short_type_name[]="GtkSelectionData";
 
-static char *gtkselectiondata_type_as_string(void)
+static char *nsp_gtkselectiondata_type_as_string(void)
 {
   return(gtkselectiondata_type_name);
 }
 
-static char *gtkselectiondata_type_short_string(NspObject *v)
+static char *nsp_gtkselectiondata_type_short_string(NspObject *v)
 {
   return(gtkselectiondata_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSelectionData objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSelectionData objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSelectionData   *gtkselectiondata_object(NspObject *O)
+NspGtkSelectionData *nsp_gtkselectiondata_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2030,7 +2030,7 @@ NspGtkSelectionData  *GetGtkSelectionDataCopy(Stack stack, int i)
 NspGtkSelectionData  *GetGtkSelectionData(Stack stack, int i)
 {
   NspGtkSelectionData *M;
-  if (( M = gtkselectiondata_object(NthObj(i))) == NULLGTKSELECTIONDATA)
+  if (( M = nsp_gtkselectiondata_object(NthObj(i))) == NULLGTKSELECTIONDATA)
      ArgMessage(stack,i);
   return M;
 }
@@ -2289,7 +2289,7 @@ static AttrTab gtkselectiondata_attrs[] = {
 
 
 
-/* ----------- GtkTextAttributes ----------- */
+/* ----------- NspGtkTextAttributes ----------- */
 
 
 #include "nsp/object.h"
@@ -2298,17 +2298,17 @@ static AttrTab gtkselectiondata_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextAttributes inherits from GBoxed 
+ * NspGtkTextAttributes inherits from GBoxed 
  */
 
 int nsp_type_gtktextattributes_id=0;
 NspTypeGtkTextAttributes *nsp_type_gtktextattributes=NULL;
 
 /*
- * Type object for GtkTextAttributes 
+ * Type object for NspGtkTextAttributes 
  * all the instance of NspTypeGtkTextAttributes share the same id. 
  * nsp_type_gtktextattributes: is an instance of NspTypeGtkTextAttributes 
- *    used for objects of GtkTextAttributes type (i.e built with new_gtktextattributes) 
+ *    used for objects of NspGtkTextAttributes type (i.e built with new_gtktextattributes) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
@@ -2337,8 +2337,8 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
   
   /* object methods redefined for gtktextattributes */ 
 
-  top->s_type =  (s_type_func *) gtktextattributes_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextattributes_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextattributes_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextattributes_type_short_string;
   /* top->create = (create_func*) int_gtktextattributes_create;*/ 
   
   /* specific methods for gtktextattributes */
@@ -2346,7 +2346,7 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
   type->init = (init_func *) init_gtktextattributes;
 
   /* 
-   * GtkTextAttributes interfaces can be added here 
+   * NspGtkTextAttributes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2372,7 +2372,7 @@ NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
 }
 
 /*
- * initialize GtkTextAttributes instances 
+ * initialize NspGtkTextAttributes instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2387,7 +2387,7 @@ static int init_gtktextattributes(NspGtkTextAttributes *Obj,NspTypeGtkTextAttrib
 }
 
 /*
- * new instance of GtkTextAttributes 
+ * new instance of NspGtkTextAttributes 
  */
 
 NspGtkTextAttributes *new_gtktextattributes() 
@@ -2402,7 +2402,7 @@ NspGtkTextAttributes *new_gtktextattributes()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextAttributes 
+ * Object method redefined for NspGtkTextAttributes 
  *-----------------------------------------------*/
 
 /*
@@ -2412,23 +2412,23 @@ NspGtkTextAttributes *new_gtktextattributes()
 static char gtktextattributes_type_name[]="GtkTextAttributes";
 static char gtktextattributes_short_type_name[]="GtkTextAttributes";
 
-static char *gtktextattributes_type_as_string(void)
+static char *nsp_gtktextattributes_type_as_string(void)
 {
   return(gtktextattributes_type_name);
 }
 
-static char *gtktextattributes_type_short_string(NspObject *v)
+static char *nsp_gtktextattributes_type_short_string(NspObject *v)
 {
   return(gtktextattributes_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextAttributes objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextAttributes objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextAttributes   *gtktextattributes_object(NspObject *O)
+NspGtkTextAttributes *nsp_gtktextattributes_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2458,7 +2458,7 @@ NspGtkTextAttributes  *GetGtkTextAttributesCopy(Stack stack, int i)
 NspGtkTextAttributes  *GetGtkTextAttributes(Stack stack, int i)
 {
   NspGtkTextAttributes *M;
-  if (( M = gtktextattributes_object(NthObj(i))) == NULLGTKTEXTATTRIBUTES)
+  if (( M = nsp_gtktextattributes_object(NthObj(i))) == NULLGTKTEXTATTRIBUTES)
      ArgMessage(stack,i);
   return M;
 }
@@ -2804,7 +2804,7 @@ static AttrTab gtktextattributes_attrs[] = {
 
 
 
-/* ----------- GtkTextIter ----------- */
+/* ----------- NspGtkTextIter ----------- */
 
 
 #include "nsp/object.h"
@@ -2813,17 +2813,17 @@ static AttrTab gtktextattributes_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextIter inherits from GBoxed 
+ * NspGtkTextIter inherits from GBoxed 
  */
 
 int nsp_type_gtktextiter_id=0;
 NspTypeGtkTextIter *nsp_type_gtktextiter=NULL;
 
 /*
- * Type object for GtkTextIter 
+ * Type object for NspGtkTextIter 
  * all the instance of NspTypeGtkTextIter share the same id. 
  * nsp_type_gtktextiter: is an instance of NspTypeGtkTextIter 
- *    used for objects of GtkTextIter type (i.e built with new_gtktextiter) 
+ *    used for objects of NspGtkTextIter type (i.e built with new_gtktextiter) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
@@ -2852,8 +2852,8 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
   
   /* object methods redefined for gtktextiter */ 
 
-  top->s_type =  (s_type_func *) gtktextiter_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextiter_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextiter_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextiter_type_short_string;
   /* top->create = (create_func*) int_gtktextiter_create;*/ 
   
   /* specific methods for gtktextiter */
@@ -2861,7 +2861,7 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
   type->init = (init_func *) init_gtktextiter;
 
   /* 
-   * GtkTextIter interfaces can be added here 
+   * NspGtkTextIter interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2887,7 +2887,7 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
 }
 
 /*
- * initialize GtkTextIter instances 
+ * initialize NspGtkTextIter instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2902,7 +2902,7 @@ static int init_gtktextiter(NspGtkTextIter *Obj,NspTypeGtkTextIter *type)
 }
 
 /*
- * new instance of GtkTextIter 
+ * new instance of NspGtkTextIter 
  */
 
 NspGtkTextIter *new_gtktextiter() 
@@ -2917,7 +2917,7 @@ NspGtkTextIter *new_gtktextiter()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextIter 
+ * Object method redefined for NspGtkTextIter 
  *-----------------------------------------------*/
 
 /*
@@ -2927,23 +2927,23 @@ NspGtkTextIter *new_gtktextiter()
 static char gtktextiter_type_name[]="GtkTextIter";
 static char gtktextiter_short_type_name[]="GtkTextIter";
 
-static char *gtktextiter_type_as_string(void)
+static char *nsp_gtktextiter_type_as_string(void)
 {
   return(gtktextiter_type_name);
 }
 
-static char *gtktextiter_type_short_string(NspObject *v)
+static char *nsp_gtktextiter_type_short_string(NspObject *v)
 {
   return(gtktextiter_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextIter objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextIter objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextIter   *gtktextiter_object(NspObject *O)
+NspGtkTextIter *nsp_gtktextiter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2973,7 +2973,7 @@ NspGtkTextIter  *GetGtkTextIterCopy(Stack stack, int i)
 NspGtkTextIter  *GetGtkTextIter(Stack stack, int i)
 {
   NspGtkTextIter *M;
-  if (( M = gtktextiter_object(NthObj(i))) == NULLGTKTEXTITER)
+  if (( M = nsp_gtktextiter_object(NthObj(i))) == NULLGTKTEXTITER)
      ArgMessage(stack,i);
   return M;
 }
@@ -4150,7 +4150,7 @@ static NspMethods *gtktextiter_get_methods(void) { return gtktextiter_methods;};
 static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeIter ----------- */
+/* ----------- NspGtkTreeIter ----------- */
 
 
 #include "nsp/object.h"
@@ -4159,17 +4159,17 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeIter inherits from GBoxed 
+ * NspGtkTreeIter inherits from GBoxed 
  */
 
 int nsp_type_gtktreeiter_id=0;
 NspTypeGtkTreeIter *nsp_type_gtktreeiter=NULL;
 
 /*
- * Type object for GtkTreeIter 
+ * Type object for NspGtkTreeIter 
  * all the instance of NspTypeGtkTreeIter share the same id. 
  * nsp_type_gtktreeiter: is an instance of NspTypeGtkTreeIter 
- *    used for objects of GtkTreeIter type (i.e built with new_gtktreeiter) 
+ *    used for objects of NspGtkTreeIter type (i.e built with new_gtktreeiter) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
@@ -4198,8 +4198,8 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
   
   /* object methods redefined for gtktreeiter */ 
 
-  top->s_type =  (s_type_func *) gtktreeiter_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreeiter_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreeiter_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreeiter_type_short_string;
   /* top->create = (create_func*) int_gtktreeiter_create;*/ 
   
   /* specific methods for gtktreeiter */
@@ -4207,7 +4207,7 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
   type->init = (init_func *) init_gtktreeiter;
 
   /* 
-   * GtkTreeIter interfaces can be added here 
+   * NspGtkTreeIter interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -4233,7 +4233,7 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
 }
 
 /*
- * initialize GtkTreeIter instances 
+ * initialize NspGtkTreeIter instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4248,7 +4248,7 @@ static int init_gtktreeiter(NspGtkTreeIter *Obj,NspTypeGtkTreeIter *type)
 }
 
 /*
- * new instance of GtkTreeIter 
+ * new instance of NspGtkTreeIter 
  */
 
 NspGtkTreeIter *new_gtktreeiter() 
@@ -4263,7 +4263,7 @@ NspGtkTreeIter *new_gtktreeiter()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeIter 
+ * Object method redefined for NspGtkTreeIter 
  *-----------------------------------------------*/
 
 /*
@@ -4273,23 +4273,23 @@ NspGtkTreeIter *new_gtktreeiter()
 static char gtktreeiter_type_name[]="GtkTreeIter";
 static char gtktreeiter_short_type_name[]="GtkTreeIter";
 
-static char *gtktreeiter_type_as_string(void)
+static char *nsp_gtktreeiter_type_as_string(void)
 {
   return(gtktreeiter_type_name);
 }
 
-static char *gtktreeiter_type_short_string(NspObject *v)
+static char *nsp_gtktreeiter_type_short_string(NspObject *v)
 {
   return(gtktreeiter_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeIter objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeIter objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeIter   *gtktreeiter_object(NspObject *O)
+NspGtkTreeIter *nsp_gtktreeiter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4319,7 +4319,7 @@ NspGtkTreeIter  *GetGtkTreeIterCopy(Stack stack, int i)
 NspGtkTreeIter  *GetGtkTreeIter(Stack stack, int i)
 {
   NspGtkTreeIter *M;
-  if (( M = gtktreeiter_object(NthObj(i))) == NULLGTKTREEITER)
+  if (( M = nsp_gtktreeiter_object(NthObj(i))) == NULLGTKTREEITER)
      ArgMessage(stack,i);
   return M;
 }
@@ -4383,7 +4383,7 @@ static NspMethods *gtktreeiter_get_methods(void) { return gtktreeiter_methods;};
 static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeRowReference ----------- */
+/* ----------- NspGtkTreeRowReference ----------- */
 
 
 #include "nsp/object.h"
@@ -4392,17 +4392,17 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeRowReference inherits from GBoxed 
+ * NspGtkTreeRowReference inherits from GBoxed 
  */
 
 int nsp_type_gtktreerowreference_id=0;
 NspTypeGtkTreeRowReference *nsp_type_gtktreerowreference=NULL;
 
 /*
- * Type object for GtkTreeRowReference 
+ * Type object for NspGtkTreeRowReference 
  * all the instance of NspTypeGtkTreeRowReference share the same id. 
  * nsp_type_gtktreerowreference: is an instance of NspTypeGtkTreeRowReference 
- *    used for objects of GtkTreeRowReference type (i.e built with new_gtktreerowreference) 
+ *    used for objects of NspGtkTreeRowReference type (i.e built with new_gtktreerowreference) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
@@ -4431,8 +4431,8 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
   
   /* object methods redefined for gtktreerowreference */ 
 
-  top->s_type =  (s_type_func *) gtktreerowreference_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreerowreference_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreerowreference_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreerowreference_type_short_string;
   /* top->create = (create_func*) int_gtktreerowreference_create;*/ 
   
   /* specific methods for gtktreerowreference */
@@ -4440,7 +4440,7 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
   type->init = (init_func *) init_gtktreerowreference;
 
   /* 
-   * GtkTreeRowReference interfaces can be added here 
+   * NspGtkTreeRowReference interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -4466,7 +4466,7 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
 }
 
 /*
- * initialize GtkTreeRowReference instances 
+ * initialize NspGtkTreeRowReference instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4481,7 +4481,7 @@ static int init_gtktreerowreference(NspGtkTreeRowReference *Obj,NspTypeGtkTreeRo
 }
 
 /*
- * new instance of GtkTreeRowReference 
+ * new instance of NspGtkTreeRowReference 
  */
 
 NspGtkTreeRowReference *new_gtktreerowreference() 
@@ -4496,7 +4496,7 @@ NspGtkTreeRowReference *new_gtktreerowreference()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeRowReference 
+ * Object method redefined for NspGtkTreeRowReference 
  *-----------------------------------------------*/
 
 /*
@@ -4506,23 +4506,23 @@ NspGtkTreeRowReference *new_gtktreerowreference()
 static char gtktreerowreference_type_name[]="GtkTreeRowReference";
 static char gtktreerowreference_short_type_name[]="GtkTreeRowReference";
 
-static char *gtktreerowreference_type_as_string(void)
+static char *nsp_gtktreerowreference_type_as_string(void)
 {
   return(gtktreerowreference_type_name);
 }
 
-static char *gtktreerowreference_type_short_string(NspObject *v)
+static char *nsp_gtktreerowreference_type_short_string(NspObject *v)
 {
   return(gtktreerowreference_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeRowReference objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeRowReference objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeRowReference   *gtktreerowreference_object(NspObject *O)
+NspGtkTreeRowReference *nsp_gtktreerowreference_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4552,7 +4552,7 @@ NspGtkTreeRowReference  *GetGtkTreeRowReferenceCopy(Stack stack, int i)
 NspGtkTreeRowReference  *GetGtkTreeRowReference(Stack stack, int i)
 {
   NspGtkTreeRowReference *M;
-  if (( M = gtktreerowreference_object(NthObj(i))) == NULLGTKTREEROWREFERENCE)
+  if (( M = nsp_gtktreerowreference_object(NthObj(i))) == NULLGTKTREEROWREFERENCE)
      ArgMessage(stack,i);
   return M;
 }
@@ -4661,7 +4661,7 @@ static NspMethods *gtktreerowreference_get_methods(void) { return gtktreerowrefe
 static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreePath ----------- */
+/* ----------- NspGtkTreePath ----------- */
 
 
 #include "nsp/object.h"
@@ -4670,17 +4670,17 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreePath inherits from GBoxed 
+ * NspGtkTreePath inherits from GBoxed 
  */
 
 int nsp_type_gtktreepath_id=0;
 NspTypeGtkTreePath *nsp_type_gtktreepath=NULL;
 
 /*
- * Type object for GtkTreePath 
+ * Type object for NspGtkTreePath 
  * all the instance of NspTypeGtkTreePath share the same id. 
  * nsp_type_gtktreepath: is an instance of NspTypeGtkTreePath 
- *    used for objects of GtkTreePath type (i.e built with new_gtktreepath) 
+ *    used for objects of NspGtkTreePath type (i.e built with new_gtktreepath) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
@@ -4709,8 +4709,8 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
   
   /* object methods redefined for gtktreepath */ 
 
-  top->s_type =  (s_type_func *) gtktreepath_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreepath_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreepath_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreepath_type_short_string;
   /* top->create = (create_func*) int_gtktreepath_create;*/ 
   
   /* specific methods for gtktreepath */
@@ -4718,7 +4718,7 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
   type->init = (init_func *) init_gtktreepath;
 
   /* 
-   * GtkTreePath interfaces can be added here 
+   * NspGtkTreePath interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -4744,7 +4744,7 @@ NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
 }
 
 /*
- * initialize GtkTreePath instances 
+ * initialize NspGtkTreePath instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4759,7 +4759,7 @@ static int init_gtktreepath(NspGtkTreePath *Obj,NspTypeGtkTreePath *type)
 }
 
 /*
- * new instance of GtkTreePath 
+ * new instance of NspGtkTreePath 
  */
 
 NspGtkTreePath *new_gtktreepath() 
@@ -4774,7 +4774,7 @@ NspGtkTreePath *new_gtktreepath()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreePath 
+ * Object method redefined for NspGtkTreePath 
  *-----------------------------------------------*/
 
 /*
@@ -4784,23 +4784,23 @@ NspGtkTreePath *new_gtktreepath()
 static char gtktreepath_type_name[]="GtkTreePath";
 static char gtktreepath_short_type_name[]="GtkTreePath";
 
-static char *gtktreepath_type_as_string(void)
+static char *nsp_gtktreepath_type_as_string(void)
 {
   return(gtktreepath_type_name);
 }
 
-static char *gtktreepath_type_short_string(NspObject *v)
+static char *nsp_gtktreepath_type_short_string(NspObject *v)
 {
   return(gtktreepath_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreePath objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreePath objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreePath   *gtktreepath_object(NspObject *O)
+NspGtkTreePath *nsp_gtktreepath_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4830,7 +4830,7 @@ NspGtkTreePath  *GetGtkTreePathCopy(Stack stack, int i)
 NspGtkTreePath  *GetGtkTreePath(Stack stack, int i)
 {
   NspGtkTreePath *M;
-  if (( M = gtktreepath_object(NthObj(i))) == NULLGTKTREEPATH)
+  if (( M = nsp_gtktreepath_object(NthObj(i))) == NULLGTKTREEPATH)
      ArgMessage(stack,i);
   return M;
 }
@@ -5106,7 +5106,7 @@ static NspMethods *gtktreepath_get_methods(void) { return gtktreepath_methods;};
 static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellEditable ----------- */
+/* ----------- NspGtkCellEditable ----------- */
 
 
 #include "nsp/object.h"
@@ -5115,17 +5115,17 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellEditable inherits from GObject 
+ * NspGtkCellEditable inherits from GObject 
  */
 
 int nsp_type_gtkcelleditable_id=0;
 NspTypeGtkCellEditable *nsp_type_gtkcelleditable=NULL;
 
 /*
- * Type object for GtkCellEditable 
+ * Type object for NspGtkCellEditable 
  * all the instance of NspTypeGtkCellEditable share the same id. 
  * nsp_type_gtkcelleditable: is an instance of NspTypeGtkCellEditable 
- *    used for objects of GtkCellEditable type (i.e built with new_gtkcelleditable) 
+ *    used for objects of NspGtkCellEditable type (i.e built with new_gtkcelleditable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
@@ -5154,8 +5154,8 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
   
   /* object methods redefined for gtkcelleditable */ 
 
-  top->s_type =  (s_type_func *) gtkcelleditable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcelleditable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcelleditable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcelleditable_type_short_string;
   /* top->create = (create_func*) int_gtkcelleditable_create;*/ 
   
   /* specific methods for gtkcelleditable */
@@ -5163,7 +5163,7 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
   type->init = (init_func *) init_gtkcelleditable;
 
   /* 
-   * GtkCellEditable interfaces can be added here 
+   * NspGtkCellEditable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -5189,7 +5189,7 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
 }
 
 /*
- * initialize GtkCellEditable instances 
+ * initialize NspGtkCellEditable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -5204,7 +5204,7 @@ static int init_gtkcelleditable(NspGtkCellEditable *Obj,NspTypeGtkCellEditable *
 }
 
 /*
- * new instance of GtkCellEditable 
+ * new instance of NspGtkCellEditable 
  */
 
 NspGtkCellEditable *new_gtkcelleditable() 
@@ -5219,7 +5219,7 @@ NspGtkCellEditable *new_gtkcelleditable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellEditable 
+ * Object method redefined for NspGtkCellEditable 
  *-----------------------------------------------*/
 
 /*
@@ -5229,23 +5229,23 @@ NspGtkCellEditable *new_gtkcelleditable()
 static char gtkcelleditable_type_name[]="GtkCellEditable";
 static char gtkcelleditable_short_type_name[]="GtkCellEditable";
 
-static char *gtkcelleditable_type_as_string(void)
+static char *nsp_gtkcelleditable_type_as_string(void)
 {
   return(gtkcelleditable_type_name);
 }
 
-static char *gtkcelleditable_type_short_string(NspObject *v)
+static char *nsp_gtkcelleditable_type_short_string(NspObject *v)
 {
   return(gtkcelleditable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellEditable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellEditable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellEditable   *gtkcelleditable_object(NspObject *O)
+NspGtkCellEditable *nsp_gtkcelleditable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -5275,7 +5275,7 @@ NspGtkCellEditable  *GetGtkCellEditableCopy(Stack stack, int i)
 NspGtkCellEditable  *GetGtkCellEditable(Stack stack, int i)
 {
   NspGtkCellEditable *M;
-  if (( M = gtkcelleditable_object(NthObj(i))) == NULLGTKCELLEDITABLE)
+  if (( M = nsp_gtkcelleditable_object(NthObj(i))) == NULLGTKCELLEDITABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -5334,7 +5334,7 @@ static NspMethods *gtkcelleditable_get_methods(void) { return gtkcelleditable_me
 static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellLayout ----------- */
+/* ----------- NspGtkCellLayout ----------- */
 
 
 #include "nsp/object.h"
@@ -5343,17 +5343,17 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellLayout inherits from GObject 
+ * NspGtkCellLayout inherits from GObject 
  */
 
 int nsp_type_gtkcelllayout_id=0;
 NspTypeGtkCellLayout *nsp_type_gtkcelllayout=NULL;
 
 /*
- * Type object for GtkCellLayout 
+ * Type object for NspGtkCellLayout 
  * all the instance of NspTypeGtkCellLayout share the same id. 
  * nsp_type_gtkcelllayout: is an instance of NspTypeGtkCellLayout 
- *    used for objects of GtkCellLayout type (i.e built with new_gtkcelllayout) 
+ *    used for objects of NspGtkCellLayout type (i.e built with new_gtkcelllayout) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
@@ -5382,8 +5382,8 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
   
   /* object methods redefined for gtkcelllayout */ 
 
-  top->s_type =  (s_type_func *) gtkcelllayout_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcelllayout_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcelllayout_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcelllayout_type_short_string;
   /* top->create = (create_func*) int_gtkcelllayout_create;*/ 
   
   /* specific methods for gtkcelllayout */
@@ -5391,7 +5391,7 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
   type->init = (init_func *) init_gtkcelllayout;
 
   /* 
-   * GtkCellLayout interfaces can be added here 
+   * NspGtkCellLayout interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -5417,7 +5417,7 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
 }
 
 /*
- * initialize GtkCellLayout instances 
+ * initialize NspGtkCellLayout instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -5432,7 +5432,7 @@ static int init_gtkcelllayout(NspGtkCellLayout *Obj,NspTypeGtkCellLayout *type)
 }
 
 /*
- * new instance of GtkCellLayout 
+ * new instance of NspGtkCellLayout 
  */
 
 NspGtkCellLayout *new_gtkcelllayout() 
@@ -5447,7 +5447,7 @@ NspGtkCellLayout *new_gtkcelllayout()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellLayout 
+ * Object method redefined for NspGtkCellLayout 
  *-----------------------------------------------*/
 
 /*
@@ -5457,23 +5457,23 @@ NspGtkCellLayout *new_gtkcelllayout()
 static char gtkcelllayout_type_name[]="GtkCellLayout";
 static char gtkcelllayout_short_type_name[]="GtkCellLayout";
 
-static char *gtkcelllayout_type_as_string(void)
+static char *nsp_gtkcelllayout_type_as_string(void)
 {
   return(gtkcelllayout_type_name);
 }
 
-static char *gtkcelllayout_type_short_string(NspObject *v)
+static char *nsp_gtkcelllayout_type_short_string(NspObject *v)
 {
   return(gtkcelllayout_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellLayout objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellLayout objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellLayout   *gtkcelllayout_object(NspObject *O)
+NspGtkCellLayout *nsp_gtkcelllayout_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -5503,7 +5503,7 @@ NspGtkCellLayout  *GetGtkCellLayoutCopy(Stack stack, int i)
 NspGtkCellLayout  *GetGtkCellLayout(Stack stack, int i)
 {
   NspGtkCellLayout *M;
-  if (( M = gtkcelllayout_object(NthObj(i))) == NULLGTKCELLLAYOUT)
+  if (( M = nsp_gtkcelllayout_object(NthObj(i))) == NULLGTKCELLLAYOUT)
      ArgMessage(stack,i);
   return M;
 }
@@ -5713,7 +5713,7 @@ static NspMethods *gtkcelllayout_get_methods(void) { return gtkcelllayout_method
 static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkEditable ----------- */
+/* ----------- NspGtkEditable ----------- */
 
 
 #include "nsp/object.h"
@@ -5722,17 +5722,17 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkEditable inherits from GObject 
+ * NspGtkEditable inherits from GObject 
  */
 
 int nsp_type_gtkeditable_id=0;
 NspTypeGtkEditable *nsp_type_gtkeditable=NULL;
 
 /*
- * Type object for GtkEditable 
+ * Type object for NspGtkEditable 
  * all the instance of NspTypeGtkEditable share the same id. 
  * nsp_type_gtkeditable: is an instance of NspTypeGtkEditable 
- *    used for objects of GtkEditable type (i.e built with new_gtkeditable) 
+ *    used for objects of NspGtkEditable type (i.e built with new_gtkeditable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
@@ -5761,8 +5761,8 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
   
   /* object methods redefined for gtkeditable */ 
 
-  top->s_type =  (s_type_func *) gtkeditable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkeditable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkeditable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkeditable_type_short_string;
   /* top->create = (create_func*) int_gtkeditable_create;*/ 
   
   /* specific methods for gtkeditable */
@@ -5770,7 +5770,7 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
   type->init = (init_func *) init_gtkeditable;
 
   /* 
-   * GtkEditable interfaces can be added here 
+   * NspGtkEditable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -5796,7 +5796,7 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
 }
 
 /*
- * initialize GtkEditable instances 
+ * initialize NspGtkEditable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -5811,7 +5811,7 @@ static int init_gtkeditable(NspGtkEditable *Obj,NspTypeGtkEditable *type)
 }
 
 /*
- * new instance of GtkEditable 
+ * new instance of NspGtkEditable 
  */
 
 NspGtkEditable *new_gtkeditable() 
@@ -5826,7 +5826,7 @@ NspGtkEditable *new_gtkeditable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkEditable 
+ * Object method redefined for NspGtkEditable 
  *-----------------------------------------------*/
 
 /*
@@ -5836,23 +5836,23 @@ NspGtkEditable *new_gtkeditable()
 static char gtkeditable_type_name[]="GtkEditable";
 static char gtkeditable_short_type_name[]="GtkEditable";
 
-static char *gtkeditable_type_as_string(void)
+static char *nsp_gtkeditable_type_as_string(void)
 {
   return(gtkeditable_type_name);
 }
 
-static char *gtkeditable_type_short_string(NspObject *v)
+static char *nsp_gtkeditable_type_short_string(NspObject *v)
 {
   return(gtkeditable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkEditable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkEditable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkEditable   *gtkeditable_object(NspObject *O)
+NspGtkEditable *nsp_gtkeditable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -5882,7 +5882,7 @@ NspGtkEditable  *GetGtkEditableCopy(Stack stack, int i)
 NspGtkEditable  *GetGtkEditable(Stack stack, int i)
 {
   NspGtkEditable *M;
-  if (( M = gtkeditable_object(NthObj(i))) == NULLGTKEDITABLE)
+  if (( M = nsp_gtkeditable_object(NthObj(i))) == NULLGTKEDITABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -6044,7 +6044,7 @@ static NspMethods *gtkeditable_get_methods(void) { return gtkeditable_methods;};
 static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileChooser ----------- */
+/* ----------- NspGtkFileChooser ----------- */
 
 
 #include "nsp/object.h"
@@ -6053,17 +6053,17 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileChooser inherits from GObject 
+ * NspGtkFileChooser inherits from GObject 
  */
 
 int nsp_type_gtkfilechooser_id=0;
 NspTypeGtkFileChooser *nsp_type_gtkfilechooser=NULL;
 
 /*
- * Type object for GtkFileChooser 
+ * Type object for NspGtkFileChooser 
  * all the instance of NspTypeGtkFileChooser share the same id. 
  * nsp_type_gtkfilechooser: is an instance of NspTypeGtkFileChooser 
- *    used for objects of GtkFileChooser type (i.e built with new_gtkfilechooser) 
+ *    used for objects of NspGtkFileChooser type (i.e built with new_gtkfilechooser) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
@@ -6092,8 +6092,8 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
   
   /* object methods redefined for gtkfilechooser */ 
 
-  top->s_type =  (s_type_func *) gtkfilechooser_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfilechooser_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfilechooser_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfilechooser_type_short_string;
   /* top->create = (create_func*) int_gtkfilechooser_create;*/ 
   
   /* specific methods for gtkfilechooser */
@@ -6101,7 +6101,7 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
   type->init = (init_func *) init_gtkfilechooser;
 
   /* 
-   * GtkFileChooser interfaces can be added here 
+   * NspGtkFileChooser interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -6127,7 +6127,7 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
 }
 
 /*
- * initialize GtkFileChooser instances 
+ * initialize NspGtkFileChooser instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -6142,7 +6142,7 @@ static int init_gtkfilechooser(NspGtkFileChooser *Obj,NspTypeGtkFileChooser *typ
 }
 
 /*
- * new instance of GtkFileChooser 
+ * new instance of NspGtkFileChooser 
  */
 
 NspGtkFileChooser *new_gtkfilechooser() 
@@ -6157,7 +6157,7 @@ NspGtkFileChooser *new_gtkfilechooser()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileChooser 
+ * Object method redefined for NspGtkFileChooser 
  *-----------------------------------------------*/
 
 /*
@@ -6167,23 +6167,23 @@ NspGtkFileChooser *new_gtkfilechooser()
 static char gtkfilechooser_type_name[]="GtkFileChooser";
 static char gtkfilechooser_short_type_name[]="GtkFileChooser";
 
-static char *gtkfilechooser_type_as_string(void)
+static char *nsp_gtkfilechooser_type_as_string(void)
 {
   return(gtkfilechooser_type_name);
 }
 
-static char *gtkfilechooser_type_short_string(NspObject *v)
+static char *nsp_gtkfilechooser_type_short_string(NspObject *v)
 {
   return(gtkfilechooser_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileChooser objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileChooser objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileChooser   *gtkfilechooser_object(NspObject *O)
+NspGtkFileChooser *nsp_gtkfilechooser_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6213,7 +6213,7 @@ NspGtkFileChooser  *GetGtkFileChooserCopy(Stack stack, int i)
 NspGtkFileChooser  *GetGtkFileChooser(Stack stack, int i)
 {
   NspGtkFileChooser *M;
-  if (( M = gtkfilechooser_object(NthObj(i))) == NULLGTKFILECHOOSER)
+  if (( M = nsp_gtkfilechooser_object(NthObj(i))) == NULLGTKFILECHOOSER)
      ArgMessage(stack,i);
   return M;
 }
@@ -6757,7 +6757,7 @@ static NspMethods *gtkfilechooser_get_methods(void) { return gtkfilechooser_meth
 static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeDragDest ----------- */
+/* ----------- NspGtkTreeDragDest ----------- */
 
 
 #include "nsp/object.h"
@@ -6766,17 +6766,17 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeDragDest inherits from GObject 
+ * NspGtkTreeDragDest inherits from GObject 
  */
 
 int nsp_type_gtktreedragdest_id=0;
 NspTypeGtkTreeDragDest *nsp_type_gtktreedragdest=NULL;
 
 /*
- * Type object for GtkTreeDragDest 
+ * Type object for NspGtkTreeDragDest 
  * all the instance of NspTypeGtkTreeDragDest share the same id. 
  * nsp_type_gtktreedragdest: is an instance of NspTypeGtkTreeDragDest 
- *    used for objects of GtkTreeDragDest type (i.e built with new_gtktreedragdest) 
+ *    used for objects of NspGtkTreeDragDest type (i.e built with new_gtktreedragdest) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
@@ -6805,8 +6805,8 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
   
   /* object methods redefined for gtktreedragdest */ 
 
-  top->s_type =  (s_type_func *) gtktreedragdest_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreedragdest_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreedragdest_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreedragdest_type_short_string;
   /* top->create = (create_func*) int_gtktreedragdest_create;*/ 
   
   /* specific methods for gtktreedragdest */
@@ -6814,7 +6814,7 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
   type->init = (init_func *) init_gtktreedragdest;
 
   /* 
-   * GtkTreeDragDest interfaces can be added here 
+   * NspGtkTreeDragDest interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -6840,7 +6840,7 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
 }
 
 /*
- * initialize GtkTreeDragDest instances 
+ * initialize NspGtkTreeDragDest instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -6855,7 +6855,7 @@ static int init_gtktreedragdest(NspGtkTreeDragDest *Obj,NspTypeGtkTreeDragDest *
 }
 
 /*
- * new instance of GtkTreeDragDest 
+ * new instance of NspGtkTreeDragDest 
  */
 
 NspGtkTreeDragDest *new_gtktreedragdest() 
@@ -6870,7 +6870,7 @@ NspGtkTreeDragDest *new_gtktreedragdest()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeDragDest 
+ * Object method redefined for NspGtkTreeDragDest 
  *-----------------------------------------------*/
 
 /*
@@ -6880,23 +6880,23 @@ NspGtkTreeDragDest *new_gtktreedragdest()
 static char gtktreedragdest_type_name[]="GtkTreeDragDest";
 static char gtktreedragdest_short_type_name[]="GtkTreeDragDest";
 
-static char *gtktreedragdest_type_as_string(void)
+static char *nsp_gtktreedragdest_type_as_string(void)
 {
   return(gtktreedragdest_type_name);
 }
 
-static char *gtktreedragdest_type_short_string(NspObject *v)
+static char *nsp_gtktreedragdest_type_short_string(NspObject *v)
 {
   return(gtktreedragdest_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeDragDest objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeDragDest objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeDragDest   *gtktreedragdest_object(NspObject *O)
+NspGtkTreeDragDest *nsp_gtktreedragdest_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6926,7 +6926,7 @@ NspGtkTreeDragDest  *GetGtkTreeDragDestCopy(Stack stack, int i)
 NspGtkTreeDragDest  *GetGtkTreeDragDest(Stack stack, int i)
 {
   NspGtkTreeDragDest *M;
-  if (( M = gtktreedragdest_object(NthObj(i))) == NULLGTKTREEDRAGDEST)
+  if (( M = nsp_gtktreedragdest_object(NthObj(i))) == NULLGTKTREEDRAGDEST)
      ArgMessage(stack,i);
   return M;
 }
@@ -7006,7 +7006,7 @@ static NspMethods *gtktreedragdest_get_methods(void) { return gtktreedragdest_me
 static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeDragSource ----------- */
+/* ----------- NspGtkTreeDragSource ----------- */
 
 
 #include "nsp/object.h"
@@ -7015,17 +7015,17 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeDragSource inherits from GObject 
+ * NspGtkTreeDragSource inherits from GObject 
  */
 
 int nsp_type_gtktreedragsource_id=0;
 NspTypeGtkTreeDragSource *nsp_type_gtktreedragsource=NULL;
 
 /*
- * Type object for GtkTreeDragSource 
+ * Type object for NspGtkTreeDragSource 
  * all the instance of NspTypeGtkTreeDragSource share the same id. 
  * nsp_type_gtktreedragsource: is an instance of NspTypeGtkTreeDragSource 
- *    used for objects of GtkTreeDragSource type (i.e built with new_gtktreedragsource) 
+ *    used for objects of NspGtkTreeDragSource type (i.e built with new_gtktreedragsource) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
@@ -7054,8 +7054,8 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
   
   /* object methods redefined for gtktreedragsource */ 
 
-  top->s_type =  (s_type_func *) gtktreedragsource_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreedragsource_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreedragsource_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreedragsource_type_short_string;
   /* top->create = (create_func*) int_gtktreedragsource_create;*/ 
   
   /* specific methods for gtktreedragsource */
@@ -7063,7 +7063,7 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
   type->init = (init_func *) init_gtktreedragsource;
 
   /* 
-   * GtkTreeDragSource interfaces can be added here 
+   * NspGtkTreeDragSource interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -7089,7 +7089,7 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
 }
 
 /*
- * initialize GtkTreeDragSource instances 
+ * initialize NspGtkTreeDragSource instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -7104,7 +7104,7 @@ static int init_gtktreedragsource(NspGtkTreeDragSource *Obj,NspTypeGtkTreeDragSo
 }
 
 /*
- * new instance of GtkTreeDragSource 
+ * new instance of NspGtkTreeDragSource 
  */
 
 NspGtkTreeDragSource *new_gtktreedragsource() 
@@ -7119,7 +7119,7 @@ NspGtkTreeDragSource *new_gtktreedragsource()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeDragSource 
+ * Object method redefined for NspGtkTreeDragSource 
  *-----------------------------------------------*/
 
 /*
@@ -7129,23 +7129,23 @@ NspGtkTreeDragSource *new_gtktreedragsource()
 static char gtktreedragsource_type_name[]="GtkTreeDragSource";
 static char gtktreedragsource_short_type_name[]="GtkTreeDragSource";
 
-static char *gtktreedragsource_type_as_string(void)
+static char *nsp_gtktreedragsource_type_as_string(void)
 {
   return(gtktreedragsource_type_name);
 }
 
-static char *gtktreedragsource_type_short_string(NspObject *v)
+static char *nsp_gtktreedragsource_type_short_string(NspObject *v)
 {
   return(gtktreedragsource_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeDragSource objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeDragSource objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeDragSource   *gtktreedragsource_object(NspObject *O)
+NspGtkTreeDragSource *nsp_gtktreedragsource_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7175,7 +7175,7 @@ NspGtkTreeDragSource  *GetGtkTreeDragSourceCopy(Stack stack, int i)
 NspGtkTreeDragSource  *GetGtkTreeDragSource(Stack stack, int i)
 {
   NspGtkTreeDragSource *M;
-  if (( M = gtktreedragsource_object(NthObj(i))) == NULLGTKTREEDRAGSOURCE)
+  if (( M = nsp_gtktreedragsource_object(NthObj(i))) == NULLGTKTREEDRAGSOURCE)
      ArgMessage(stack,i);
   return M;
 }
@@ -7267,7 +7267,7 @@ static NspMethods *gtktreedragsource_get_methods(void) { return gtktreedragsourc
 static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeModel ----------- */
+/* ----------- NspGtkTreeModel ----------- */
 
 
 #include "nsp/object.h"
@@ -7276,17 +7276,17 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeModel inherits from GObject 
+ * NspGtkTreeModel inherits from GObject 
  */
 
 int nsp_type_gtktreemodel_id=0;
 NspTypeGtkTreeModel *nsp_type_gtktreemodel=NULL;
 
 /*
- * Type object for GtkTreeModel 
+ * Type object for NspGtkTreeModel 
  * all the instance of NspTypeGtkTreeModel share the same id. 
  * nsp_type_gtktreemodel: is an instance of NspTypeGtkTreeModel 
- *    used for objects of GtkTreeModel type (i.e built with new_gtktreemodel) 
+ *    used for objects of NspGtkTreeModel type (i.e built with new_gtktreemodel) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
@@ -7315,8 +7315,8 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
   
   /* object methods redefined for gtktreemodel */ 
 
-  top->s_type =  (s_type_func *) gtktreemodel_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreemodel_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreemodel_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreemodel_type_short_string;
   /* top->create = (create_func*) int_gtktreemodel_create;*/ 
   
   /* specific methods for gtktreemodel */
@@ -7324,7 +7324,7 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
   type->init = (init_func *) init_gtktreemodel;
 
   /* 
-   * GtkTreeModel interfaces can be added here 
+   * NspGtkTreeModel interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -7350,7 +7350,7 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
 }
 
 /*
- * initialize GtkTreeModel instances 
+ * initialize NspGtkTreeModel instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -7365,7 +7365,7 @@ static int init_gtktreemodel(NspGtkTreeModel *Obj,NspTypeGtkTreeModel *type)
 }
 
 /*
- * new instance of GtkTreeModel 
+ * new instance of NspGtkTreeModel 
  */
 
 NspGtkTreeModel *new_gtktreemodel() 
@@ -7380,7 +7380,7 @@ NspGtkTreeModel *new_gtktreemodel()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeModel 
+ * Object method redefined for NspGtkTreeModel 
  *-----------------------------------------------*/
 
 /*
@@ -7390,23 +7390,23 @@ NspGtkTreeModel *new_gtktreemodel()
 static char gtktreemodel_type_name[]="GtkTreeModel";
 static char gtktreemodel_short_type_name[]="GtkTreeModel";
 
-static char *gtktreemodel_type_as_string(void)
+static char *nsp_gtktreemodel_type_as_string(void)
 {
   return(gtktreemodel_type_name);
 }
 
-static char *gtktreemodel_type_short_string(NspObject *v)
+static char *nsp_gtktreemodel_type_short_string(NspObject *v)
 {
   return(gtktreemodel_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeModel objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeModel objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeModel   *gtktreemodel_object(NspObject *O)
+NspGtkTreeModel *nsp_gtktreemodel_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7436,7 +7436,7 @@ NspGtkTreeModel  *GetGtkTreeModelCopy(Stack stack, int i)
 NspGtkTreeModel  *GetGtkTreeModel(Stack stack, int i)
 {
   NspGtkTreeModel *M;
-  if (( M = gtktreemodel_object(NthObj(i))) == NULLGTKTREEMODEL)
+  if (( M = nsp_gtktreemodel_object(NthObj(i))) == NULLGTKTREEMODEL)
      ArgMessage(stack,i);
   return M;
 }
@@ -8075,7 +8075,7 @@ static NspMethods *gtktreemodel_get_methods(void) { return gtktreemodel_methods;
 static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeSortable ----------- */
+/* ----------- NspGtkTreeSortable ----------- */
 
 
 #include "nsp/object.h"
@@ -8084,17 +8084,17 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeSortable inherits from GObject 
+ * NspGtkTreeSortable inherits from GObject 
  */
 
 int nsp_type_gtktreesortable_id=0;
 NspTypeGtkTreeSortable *nsp_type_gtktreesortable=NULL;
 
 /*
- * Type object for GtkTreeSortable 
+ * Type object for NspGtkTreeSortable 
  * all the instance of NspTypeGtkTreeSortable share the same id. 
  * nsp_type_gtktreesortable: is an instance of NspTypeGtkTreeSortable 
- *    used for objects of GtkTreeSortable type (i.e built with new_gtktreesortable) 
+ *    used for objects of NspGtkTreeSortable type (i.e built with new_gtktreesortable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
@@ -8123,8 +8123,8 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
   
   /* object methods redefined for gtktreesortable */ 
 
-  top->s_type =  (s_type_func *) gtktreesortable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreesortable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreesortable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreesortable_type_short_string;
   /* top->create = (create_func*) int_gtktreesortable_create;*/ 
   
   /* specific methods for gtktreesortable */
@@ -8132,7 +8132,7 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
   type->init = (init_func *) init_gtktreesortable;
 
   /* 
-   * GtkTreeSortable interfaces can be added here 
+   * NspGtkTreeSortable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8158,7 +8158,7 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
 }
 
 /*
- * initialize GtkTreeSortable instances 
+ * initialize NspGtkTreeSortable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8173,7 +8173,7 @@ static int init_gtktreesortable(NspGtkTreeSortable *Obj,NspTypeGtkTreeSortable *
 }
 
 /*
- * new instance of GtkTreeSortable 
+ * new instance of NspGtkTreeSortable 
  */
 
 NspGtkTreeSortable *new_gtktreesortable() 
@@ -8188,7 +8188,7 @@ NspGtkTreeSortable *new_gtktreesortable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeSortable 
+ * Object method redefined for NspGtkTreeSortable 
  *-----------------------------------------------*/
 
 /*
@@ -8198,23 +8198,23 @@ NspGtkTreeSortable *new_gtktreesortable()
 static char gtktreesortable_type_name[]="GtkTreeSortable";
 static char gtktreesortable_short_type_name[]="GtkTreeSortable";
 
-static char *gtktreesortable_type_as_string(void)
+static char *nsp_gtktreesortable_type_as_string(void)
 {
   return(gtktreesortable_type_name);
 }
 
-static char *gtktreesortable_type_short_string(NspObject *v)
+static char *nsp_gtktreesortable_type_short_string(NspObject *v)
 {
   return(gtktreesortable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeSortable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeSortable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeSortable   *gtktreesortable_object(NspObject *O)
+NspGtkTreeSortable *nsp_gtktreesortable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8244,7 +8244,7 @@ NspGtkTreeSortable  *GetGtkTreeSortableCopy(Stack stack, int i)
 NspGtkTreeSortable  *GetGtkTreeSortable(Stack stack, int i)
 {
   NspGtkTreeSortable *M;
-  if (( M = gtktreesortable_object(NthObj(i))) == NULLGTKTREESORTABLE)
+  if (( M = nsp_gtktreesortable_object(NthObj(i))) == NULLGTKTREESORTABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -8412,7 +8412,7 @@ static NspMethods *gtktreesortable_get_methods(void) { return gtktreesortable_me
 static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAboutDialog ----------- */
+/* ----------- NspGtkAboutDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -8421,17 +8421,17 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAboutDialog inherits from GtkDialog 
+ * NspGtkAboutDialog inherits from GtkDialog 
  */
 
 int nsp_type_gtkaboutdialog_id=0;
 NspTypeGtkAboutDialog *nsp_type_gtkaboutdialog=NULL;
 
 /*
- * Type object for GtkAboutDialog 
+ * Type object for NspGtkAboutDialog 
  * all the instance of NspTypeGtkAboutDialog share the same id. 
  * nsp_type_gtkaboutdialog: is an instance of NspTypeGtkAboutDialog 
- *    used for objects of GtkAboutDialog type (i.e built with new_gtkaboutdialog) 
+ *    used for objects of NspGtkAboutDialog type (i.e built with new_gtkaboutdialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
@@ -8460,8 +8460,8 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
   
   /* object methods redefined for gtkaboutdialog */ 
 
-  top->s_type =  (s_type_func *) gtkaboutdialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaboutdialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaboutdialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaboutdialog_type_short_string;
   /* top->create = (create_func*) int_gtkaboutdialog_create;*/ 
   
   /* specific methods for gtkaboutdialog */
@@ -8469,7 +8469,7 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
   type->init = (init_func *) init_gtkaboutdialog;
 
   /* 
-   * GtkAboutDialog interfaces can be added here 
+   * NspGtkAboutDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8495,7 +8495,7 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
 }
 
 /*
- * initialize GtkAboutDialog instances 
+ * initialize NspGtkAboutDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8510,7 +8510,7 @@ static int init_gtkaboutdialog(NspGtkAboutDialog *Obj,NspTypeGtkAboutDialog *typ
 }
 
 /*
- * new instance of GtkAboutDialog 
+ * new instance of NspGtkAboutDialog 
  */
 
 NspGtkAboutDialog *new_gtkaboutdialog() 
@@ -8525,7 +8525,7 @@ NspGtkAboutDialog *new_gtkaboutdialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAboutDialog 
+ * Object method redefined for NspGtkAboutDialog 
  *-----------------------------------------------*/
 
 /*
@@ -8535,23 +8535,23 @@ NspGtkAboutDialog *new_gtkaboutdialog()
 static char gtkaboutdialog_type_name[]="GtkAboutDialog";
 static char gtkaboutdialog_short_type_name[]="GtkAboutDialog";
 
-static char *gtkaboutdialog_type_as_string(void)
+static char *nsp_gtkaboutdialog_type_as_string(void)
 {
   return(gtkaboutdialog_type_name);
 }
 
-static char *gtkaboutdialog_type_short_string(NspObject *v)
+static char *nsp_gtkaboutdialog_type_short_string(NspObject *v)
 {
   return(gtkaboutdialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAboutDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAboutDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAboutDialog   *gtkaboutdialog_object(NspObject *O)
+NspGtkAboutDialog *nsp_gtkaboutdialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8581,7 +8581,7 @@ NspGtkAboutDialog  *GetGtkAboutDialogCopy(Stack stack, int i)
 NspGtkAboutDialog  *GetGtkAboutDialog(Stack stack, int i)
 {
   NspGtkAboutDialog *M;
-  if (( M = gtkaboutdialog_object(NthObj(i))) == NULLGTKABOUTDIALOG)
+  if (( M = nsp_gtkaboutdialog_object(NthObj(i))) == NULLGTKABOUTDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -8879,7 +8879,7 @@ static NspMethods *gtkaboutdialog_get_methods(void) { return gtkaboutdialog_meth
 static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAccelGroup ----------- */
+/* ----------- NspGtkAccelGroup ----------- */
 
 
 #include "nsp/object.h"
@@ -8888,17 +8888,17 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAccelGroup inherits from GObject 
+ * NspGtkAccelGroup inherits from GObject 
  */
 
 int nsp_type_gtkaccelgroup_id=0;
 NspTypeGtkAccelGroup *nsp_type_gtkaccelgroup=NULL;
 
 /*
- * Type object for GtkAccelGroup 
+ * Type object for NspGtkAccelGroup 
  * all the instance of NspTypeGtkAccelGroup share the same id. 
  * nsp_type_gtkaccelgroup: is an instance of NspTypeGtkAccelGroup 
- *    used for objects of GtkAccelGroup type (i.e built with new_gtkaccelgroup) 
+ *    used for objects of NspGtkAccelGroup type (i.e built with new_gtkaccelgroup) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
@@ -8927,8 +8927,8 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
   
   /* object methods redefined for gtkaccelgroup */ 
 
-  top->s_type =  (s_type_func *) gtkaccelgroup_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaccelgroup_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaccelgroup_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaccelgroup_type_short_string;
   /* top->create = (create_func*) int_gtkaccelgroup_create;*/ 
   
   /* specific methods for gtkaccelgroup */
@@ -8936,7 +8936,7 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
   type->init = (init_func *) init_gtkaccelgroup;
 
   /* 
-   * GtkAccelGroup interfaces can be added here 
+   * NspGtkAccelGroup interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -8962,7 +8962,7 @@ NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
 }
 
 /*
- * initialize GtkAccelGroup instances 
+ * initialize NspGtkAccelGroup instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -8977,7 +8977,7 @@ static int init_gtkaccelgroup(NspGtkAccelGroup *Obj,NspTypeGtkAccelGroup *type)
 }
 
 /*
- * new instance of GtkAccelGroup 
+ * new instance of NspGtkAccelGroup 
  */
 
 NspGtkAccelGroup *new_gtkaccelgroup() 
@@ -8992,7 +8992,7 @@ NspGtkAccelGroup *new_gtkaccelgroup()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAccelGroup 
+ * Object method redefined for NspGtkAccelGroup 
  *-----------------------------------------------*/
 
 /*
@@ -9002,23 +9002,23 @@ NspGtkAccelGroup *new_gtkaccelgroup()
 static char gtkaccelgroup_type_name[]="GtkAccelGroup";
 static char gtkaccelgroup_short_type_name[]="GtkAccelGroup";
 
-static char *gtkaccelgroup_type_as_string(void)
+static char *nsp_gtkaccelgroup_type_as_string(void)
 {
   return(gtkaccelgroup_type_name);
 }
 
-static char *gtkaccelgroup_type_short_string(NspObject *v)
+static char *nsp_gtkaccelgroup_type_short_string(NspObject *v)
 {
   return(gtkaccelgroup_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAccelGroup objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAccelGroup objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAccelGroup   *gtkaccelgroup_object(NspObject *O)
+NspGtkAccelGroup *nsp_gtkaccelgroup_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9048,7 +9048,7 @@ NspGtkAccelGroup  *GetGtkAccelGroupCopy(Stack stack, int i)
 NspGtkAccelGroup  *GetGtkAccelGroup(Stack stack, int i)
 {
   NspGtkAccelGroup *M;
-  if (( M = gtkaccelgroup_object(NthObj(i))) == NULLGTKACCELGROUP)
+  if (( M = nsp_gtkaccelgroup_object(NthObj(i))) == NULLGTKACCELGROUP)
      ArgMessage(stack,i);
   return M;
 }
@@ -9123,7 +9123,7 @@ static NspMethods *gtkaccelgroup_get_methods(void) { return gtkaccelgroup_method
 static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAccelLabel ----------- */
+/* ----------- NspGtkAccelLabel ----------- */
 
 
 #include "nsp/object.h"
@@ -9132,17 +9132,17 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAccelLabel inherits from GtkLabel 
+ * NspGtkAccelLabel inherits from GtkLabel 
  */
 
 int nsp_type_gtkaccellabel_id=0;
 NspTypeGtkAccelLabel *nsp_type_gtkaccellabel=NULL;
 
 /*
- * Type object for GtkAccelLabel 
+ * Type object for NspGtkAccelLabel 
  * all the instance of NspTypeGtkAccelLabel share the same id. 
  * nsp_type_gtkaccellabel: is an instance of NspTypeGtkAccelLabel 
- *    used for objects of GtkAccelLabel type (i.e built with new_gtkaccellabel) 
+ *    used for objects of NspGtkAccelLabel type (i.e built with new_gtkaccellabel) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
@@ -9171,8 +9171,8 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
   
   /* object methods redefined for gtkaccellabel */ 
 
-  top->s_type =  (s_type_func *) gtkaccellabel_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaccellabel_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaccellabel_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaccellabel_type_short_string;
   /* top->create = (create_func*) int_gtkaccellabel_create;*/ 
   
   /* specific methods for gtkaccellabel */
@@ -9180,7 +9180,7 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
   type->init = (init_func *) init_gtkaccellabel;
 
   /* 
-   * GtkAccelLabel interfaces can be added here 
+   * NspGtkAccelLabel interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9206,7 +9206,7 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
 }
 
 /*
- * initialize GtkAccelLabel instances 
+ * initialize NspGtkAccelLabel instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9221,7 +9221,7 @@ static int init_gtkaccellabel(NspGtkAccelLabel *Obj,NspTypeGtkAccelLabel *type)
 }
 
 /*
- * new instance of GtkAccelLabel 
+ * new instance of NspGtkAccelLabel 
  */
 
 NspGtkAccelLabel *new_gtkaccellabel() 
@@ -9236,7 +9236,7 @@ NspGtkAccelLabel *new_gtkaccellabel()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAccelLabel 
+ * Object method redefined for NspGtkAccelLabel 
  *-----------------------------------------------*/
 
 /*
@@ -9246,23 +9246,23 @@ NspGtkAccelLabel *new_gtkaccellabel()
 static char gtkaccellabel_type_name[]="GtkAccelLabel";
 static char gtkaccellabel_short_type_name[]="GtkAccelLabel";
 
-static char *gtkaccellabel_type_as_string(void)
+static char *nsp_gtkaccellabel_type_as_string(void)
 {
   return(gtkaccellabel_type_name);
 }
 
-static char *gtkaccellabel_type_short_string(NspObject *v)
+static char *nsp_gtkaccellabel_type_short_string(NspObject *v)
 {
   return(gtkaccellabel_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAccelLabel objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAccelLabel objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAccelLabel   *gtkaccellabel_object(NspObject *O)
+NspGtkAccelLabel *nsp_gtkaccellabel_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9292,7 +9292,7 @@ NspGtkAccelLabel  *GetGtkAccelLabelCopy(Stack stack, int i)
 NspGtkAccelLabel  *GetGtkAccelLabel(Stack stack, int i)
 {
   NspGtkAccelLabel *M;
-  if (( M = gtkaccellabel_object(NthObj(i))) == NULLGTKACCELLABEL)
+  if (( M = nsp_gtkaccellabel_object(NthObj(i))) == NULLGTKACCELLABEL)
      ArgMessage(stack,i);
   return M;
 }
@@ -9390,7 +9390,7 @@ static NspMethods *gtkaccellabel_get_methods(void) { return gtkaccellabel_method
 static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAccelMap ----------- */
+/* ----------- NspGtkAccelMap ----------- */
 
 
 #include "nsp/object.h"
@@ -9399,17 +9399,17 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAccelMap inherits from GObject 
+ * NspGtkAccelMap inherits from GObject 
  */
 
 int nsp_type_gtkaccelmap_id=0;
 NspTypeGtkAccelMap *nsp_type_gtkaccelmap=NULL;
 
 /*
- * Type object for GtkAccelMap 
+ * Type object for NspGtkAccelMap 
  * all the instance of NspTypeGtkAccelMap share the same id. 
  * nsp_type_gtkaccelmap: is an instance of NspTypeGtkAccelMap 
- *    used for objects of GtkAccelMap type (i.e built with new_gtkaccelmap) 
+ *    used for objects of NspGtkAccelMap type (i.e built with new_gtkaccelmap) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
@@ -9438,8 +9438,8 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
   
   /* object methods redefined for gtkaccelmap */ 
 
-  top->s_type =  (s_type_func *) gtkaccelmap_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaccelmap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaccelmap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaccelmap_type_short_string;
   /* top->create = (create_func*) int_gtkaccelmap_create;*/ 
   
   /* specific methods for gtkaccelmap */
@@ -9447,7 +9447,7 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
   type->init = (init_func *) init_gtkaccelmap;
 
   /* 
-   * GtkAccelMap interfaces can be added here 
+   * NspGtkAccelMap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9473,7 +9473,7 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
 }
 
 /*
- * initialize GtkAccelMap instances 
+ * initialize NspGtkAccelMap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9488,7 +9488,7 @@ static int init_gtkaccelmap(NspGtkAccelMap *Obj,NspTypeGtkAccelMap *type)
 }
 
 /*
- * new instance of GtkAccelMap 
+ * new instance of NspGtkAccelMap 
  */
 
 NspGtkAccelMap *new_gtkaccelmap() 
@@ -9503,7 +9503,7 @@ NspGtkAccelMap *new_gtkaccelmap()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAccelMap 
+ * Object method redefined for NspGtkAccelMap 
  *-----------------------------------------------*/
 
 /*
@@ -9513,23 +9513,23 @@ NspGtkAccelMap *new_gtkaccelmap()
 static char gtkaccelmap_type_name[]="GtkAccelMap";
 static char gtkaccelmap_short_type_name[]="GtkAccelMap";
 
-static char *gtkaccelmap_type_as_string(void)
+static char *nsp_gtkaccelmap_type_as_string(void)
 {
   return(gtkaccelmap_type_name);
 }
 
-static char *gtkaccelmap_type_short_string(NspObject *v)
+static char *nsp_gtkaccelmap_type_short_string(NspObject *v)
 {
   return(gtkaccelmap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAccelMap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAccelMap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAccelMap   *gtkaccelmap_object(NspObject *O)
+NspGtkAccelMap *nsp_gtkaccelmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9559,7 +9559,7 @@ NspGtkAccelMap  *GetGtkAccelMapCopy(Stack stack, int i)
 NspGtkAccelMap  *GetGtkAccelMap(Stack stack, int i)
 {
   NspGtkAccelMap *M;
-  if (( M = gtkaccelmap_object(NthObj(i))) == NULLGTKACCELMAP)
+  if (( M = nsp_gtkaccelmap_object(NthObj(i))) == NULLGTKACCELMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -9587,7 +9587,7 @@ static NspMethods *gtkaccelmap_get_methods(void) { return NULL;};
 static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAccessible ----------- */
+/* ----------- NspGtkAccessible ----------- */
 
 
 #include "nsp/object.h"
@@ -9596,17 +9596,17 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAccessible inherits from AtkObject 
+ * NspGtkAccessible inherits from AtkObject 
  */
 
 int nsp_type_gtkaccessible_id=0;
 NspTypeGtkAccessible *nsp_type_gtkaccessible=NULL;
 
 /*
- * Type object for GtkAccessible 
+ * Type object for NspGtkAccessible 
  * all the instance of NspTypeGtkAccessible share the same id. 
  * nsp_type_gtkaccessible: is an instance of NspTypeGtkAccessible 
- *    used for objects of GtkAccessible type (i.e built with new_gtkaccessible) 
+ *    used for objects of NspGtkAccessible type (i.e built with new_gtkaccessible) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
@@ -9635,8 +9635,8 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
   
   /* object methods redefined for gtkaccessible */ 
 
-  top->s_type =  (s_type_func *) gtkaccessible_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaccessible_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaccessible_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaccessible_type_short_string;
   /* top->create = (create_func*) int_gtkaccessible_create;*/ 
   
   /* specific methods for gtkaccessible */
@@ -9644,7 +9644,7 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
   type->init = (init_func *) init_gtkaccessible;
 
   /* 
-   * GtkAccessible interfaces can be added here 
+   * NspGtkAccessible interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9670,7 +9670,7 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
 }
 
 /*
- * initialize GtkAccessible instances 
+ * initialize NspGtkAccessible instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9685,7 +9685,7 @@ static int init_gtkaccessible(NspGtkAccessible *Obj,NspTypeGtkAccessible *type)
 }
 
 /*
- * new instance of GtkAccessible 
+ * new instance of NspGtkAccessible 
  */
 
 NspGtkAccessible *new_gtkaccessible() 
@@ -9700,7 +9700,7 @@ NspGtkAccessible *new_gtkaccessible()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAccessible 
+ * Object method redefined for NspGtkAccessible 
  *-----------------------------------------------*/
 
 /*
@@ -9710,23 +9710,23 @@ NspGtkAccessible *new_gtkaccessible()
 static char gtkaccessible_type_name[]="GtkAccessible";
 static char gtkaccessible_short_type_name[]="GtkAccessible";
 
-static char *gtkaccessible_type_as_string(void)
+static char *nsp_gtkaccessible_type_as_string(void)
 {
   return(gtkaccessible_type_name);
 }
 
-static char *gtkaccessible_type_short_string(NspObject *v)
+static char *nsp_gtkaccessible_type_short_string(NspObject *v)
 {
   return(gtkaccessible_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAccessible objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAccessible objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAccessible   *gtkaccessible_object(NspObject *O)
+NspGtkAccessible *nsp_gtkaccessible_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9756,7 +9756,7 @@ NspGtkAccessible  *GetGtkAccessibleCopy(Stack stack, int i)
 NspGtkAccessible  *GetGtkAccessible(Stack stack, int i)
 {
   NspGtkAccessible *M;
-  if (( M = gtkaccessible_object(NthObj(i))) == NULLGTKACCESSIBLE)
+  if (( M = nsp_gtkaccessible_object(NthObj(i))) == NULLGTKACCESSIBLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -9795,7 +9795,7 @@ static NspMethods *gtkaccessible_get_methods(void) { return gtkaccessible_method
 static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAction ----------- */
+/* ----------- NspGtkAction ----------- */
 
 
 #include "nsp/object.h"
@@ -9804,17 +9804,17 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAction inherits from GObject 
+ * NspGtkAction inherits from GObject 
  */
 
 int nsp_type_gtkaction_id=0;
 NspTypeGtkAction *nsp_type_gtkaction=NULL;
 
 /*
- * Type object for GtkAction 
+ * Type object for NspGtkAction 
  * all the instance of NspTypeGtkAction share the same id. 
  * nsp_type_gtkaction: is an instance of NspTypeGtkAction 
- *    used for objects of GtkAction type (i.e built with new_gtkaction) 
+ *    used for objects of NspGtkAction type (i.e built with new_gtkaction) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAction *new_type_gtkaction(type_mode mode)
@@ -9843,8 +9843,8 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
   
   /* object methods redefined for gtkaction */ 
 
-  top->s_type =  (s_type_func *) gtkaction_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaction_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaction_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaction_type_short_string;
   /* top->create = (create_func*) int_gtkaction_create;*/ 
   
   /* specific methods for gtkaction */
@@ -9852,7 +9852,7 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
   type->init = (init_func *) init_gtkaction;
 
   /* 
-   * GtkAction interfaces can be added here 
+   * NspGtkAction interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -9878,7 +9878,7 @@ NspTypeGtkAction *new_type_gtkaction(type_mode mode)
 }
 
 /*
- * initialize GtkAction instances 
+ * initialize NspGtkAction instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -9893,7 +9893,7 @@ static int init_gtkaction(NspGtkAction *Obj,NspTypeGtkAction *type)
 }
 
 /*
- * new instance of GtkAction 
+ * new instance of NspGtkAction 
  */
 
 NspGtkAction *new_gtkaction() 
@@ -9908,7 +9908,7 @@ NspGtkAction *new_gtkaction()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAction 
+ * Object method redefined for NspGtkAction 
  *-----------------------------------------------*/
 
 /*
@@ -9918,23 +9918,23 @@ NspGtkAction *new_gtkaction()
 static char gtkaction_type_name[]="GtkAction";
 static char gtkaction_short_type_name[]="GtkAction";
 
-static char *gtkaction_type_as_string(void)
+static char *nsp_gtkaction_type_as_string(void)
 {
   return(gtkaction_type_name);
 }
 
-static char *gtkaction_type_short_string(NspObject *v)
+static char *nsp_gtkaction_type_short_string(NspObject *v)
 {
   return(gtkaction_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAction objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAction objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAction   *gtkaction_object(NspObject *O)
+NspGtkAction *nsp_gtkaction_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9964,7 +9964,7 @@ NspGtkAction  *GetGtkActionCopy(Stack stack, int i)
 NspGtkAction  *GetGtkAction(Stack stack, int i)
 {
   NspGtkAction *M;
-  if (( M = gtkaction_object(NthObj(i))) == NULLGTKACTION)
+  if (( M = nsp_gtkaction_object(NthObj(i))) == NULLGTKACTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -10223,7 +10223,7 @@ static NspMethods *gtkaction_get_methods(void) { return gtkaction_methods;};
 static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkActionGroup ----------- */
+/* ----------- NspGtkActionGroup ----------- */
 
 
 #include "nsp/object.h"
@@ -10232,17 +10232,17 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkActionGroup inherits from GObject 
+ * NspGtkActionGroup inherits from GObject 
  */
 
 int nsp_type_gtkactiongroup_id=0;
 NspTypeGtkActionGroup *nsp_type_gtkactiongroup=NULL;
 
 /*
- * Type object for GtkActionGroup 
+ * Type object for NspGtkActionGroup 
  * all the instance of NspTypeGtkActionGroup share the same id. 
  * nsp_type_gtkactiongroup: is an instance of NspTypeGtkActionGroup 
- *    used for objects of GtkActionGroup type (i.e built with new_gtkactiongroup) 
+ *    used for objects of NspGtkActionGroup type (i.e built with new_gtkactiongroup) 
  * other instances are used for derived classes 
  */
 NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
@@ -10271,8 +10271,8 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
   
   /* object methods redefined for gtkactiongroup */ 
 
-  top->s_type =  (s_type_func *) gtkactiongroup_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkactiongroup_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkactiongroup_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkactiongroup_type_short_string;
   /* top->create = (create_func*) int_gtkactiongroup_create;*/ 
   
   /* specific methods for gtkactiongroup */
@@ -10280,7 +10280,7 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
   type->init = (init_func *) init_gtkactiongroup;
 
   /* 
-   * GtkActionGroup interfaces can be added here 
+   * NspGtkActionGroup interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -10306,7 +10306,7 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
 }
 
 /*
- * initialize GtkActionGroup instances 
+ * initialize NspGtkActionGroup instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -10321,7 +10321,7 @@ static int init_gtkactiongroup(NspGtkActionGroup *Obj,NspTypeGtkActionGroup *typ
 }
 
 /*
- * new instance of GtkActionGroup 
+ * new instance of NspGtkActionGroup 
  */
 
 NspGtkActionGroup *new_gtkactiongroup() 
@@ -10336,7 +10336,7 @@ NspGtkActionGroup *new_gtkactiongroup()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkActionGroup 
+ * Object method redefined for NspGtkActionGroup 
  *-----------------------------------------------*/
 
 /*
@@ -10346,23 +10346,23 @@ NspGtkActionGroup *new_gtkactiongroup()
 static char gtkactiongroup_type_name[]="GtkActionGroup";
 static char gtkactiongroup_short_type_name[]="GtkActionGroup";
 
-static char *gtkactiongroup_type_as_string(void)
+static char *nsp_gtkactiongroup_type_as_string(void)
 {
   return(gtkactiongroup_type_name);
 }
 
-static char *gtkactiongroup_type_short_string(NspObject *v)
+static char *nsp_gtkactiongroup_type_short_string(NspObject *v)
 {
   return(gtkactiongroup_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkActionGroup objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkActionGroup objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkActionGroup   *gtkactiongroup_object(NspObject *O)
+NspGtkActionGroup *nsp_gtkactiongroup_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -10392,7 +10392,7 @@ NspGtkActionGroup  *GetGtkActionGroupCopy(Stack stack, int i)
 NspGtkActionGroup  *GetGtkActionGroup(Stack stack, int i)
 {
   NspGtkActionGroup *M;
-  if (( M = gtkactiongroup_object(NthObj(i))) == NULLGTKACTIONGROUP)
+  if (( M = nsp_gtkactiongroup_object(NthObj(i))) == NULLGTKACTIONGROUP)
      ArgMessage(stack,i);
   return M;
 }
@@ -10593,7 +10593,7 @@ static NspMethods *gtkactiongroup_get_methods(void) { return gtkactiongroup_meth
 static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAdjustment ----------- */
+/* ----------- NspGtkAdjustment ----------- */
 
 
 #include "nsp/object.h"
@@ -10602,17 +10602,17 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAdjustment inherits from GtkObject 
+ * NspGtkAdjustment inherits from GtkObject 
  */
 
 int nsp_type_gtkadjustment_id=0;
 NspTypeGtkAdjustment *nsp_type_gtkadjustment=NULL;
 
 /*
- * Type object for GtkAdjustment 
+ * Type object for NspGtkAdjustment 
  * all the instance of NspTypeGtkAdjustment share the same id. 
  * nsp_type_gtkadjustment: is an instance of NspTypeGtkAdjustment 
- *    used for objects of GtkAdjustment type (i.e built with new_gtkadjustment) 
+ *    used for objects of NspGtkAdjustment type (i.e built with new_gtkadjustment) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
@@ -10641,8 +10641,8 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
   
   /* object methods redefined for gtkadjustment */ 
 
-  top->s_type =  (s_type_func *) gtkadjustment_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkadjustment_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkadjustment_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkadjustment_type_short_string;
   /* top->create = (create_func*) int_gtkadjustment_create;*/ 
   
   /* specific methods for gtkadjustment */
@@ -10650,7 +10650,7 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
   type->init = (init_func *) init_gtkadjustment;
 
   /* 
-   * GtkAdjustment interfaces can be added here 
+   * NspGtkAdjustment interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -10676,7 +10676,7 @@ NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
 }
 
 /*
- * initialize GtkAdjustment instances 
+ * initialize NspGtkAdjustment instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -10691,7 +10691,7 @@ static int init_gtkadjustment(NspGtkAdjustment *Obj,NspTypeGtkAdjustment *type)
 }
 
 /*
- * new instance of GtkAdjustment 
+ * new instance of NspGtkAdjustment 
  */
 
 NspGtkAdjustment *new_gtkadjustment() 
@@ -10706,7 +10706,7 @@ NspGtkAdjustment *new_gtkadjustment()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAdjustment 
+ * Object method redefined for NspGtkAdjustment 
  *-----------------------------------------------*/
 
 /*
@@ -10716,23 +10716,23 @@ NspGtkAdjustment *new_gtkadjustment()
 static char gtkadjustment_type_name[]="GtkAdjustment";
 static char gtkadjustment_short_type_name[]="GtkAdjustment";
 
-static char *gtkadjustment_type_as_string(void)
+static char *nsp_gtkadjustment_type_as_string(void)
 {
   return(gtkadjustment_type_name);
 }
 
-static char *gtkadjustment_type_short_string(NspObject *v)
+static char *nsp_gtkadjustment_type_short_string(NspObject *v)
 {
   return(gtkadjustment_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAdjustment objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAdjustment objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAdjustment   *gtkadjustment_object(NspObject *O)
+NspGtkAdjustment *nsp_gtkadjustment_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -10762,7 +10762,7 @@ NspGtkAdjustment  *GetGtkAdjustmentCopy(Stack stack, int i)
 NspGtkAdjustment  *GetGtkAdjustment(Stack stack, int i)
 {
   NspGtkAdjustment *M;
-  if (( M = gtkadjustment_object(NthObj(i))) == NULLGTKADJUSTMENT)
+  if (( M = nsp_gtkadjustment_object(NthObj(i))) == NULLGTKADJUSTMENT)
      ArgMessage(stack,i);
   return M;
 }
@@ -11007,7 +11007,7 @@ static AttrTab gtkadjustment_attrs[] = {
 
 
 
-/* ----------- GtkAlignment ----------- */
+/* ----------- NspGtkAlignment ----------- */
 
 
 #include "nsp/object.h"
@@ -11016,17 +11016,17 @@ static AttrTab gtkadjustment_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAlignment inherits from GtkBin 
+ * NspGtkAlignment inherits from GtkBin 
  */
 
 int nsp_type_gtkalignment_id=0;
 NspTypeGtkAlignment *nsp_type_gtkalignment=NULL;
 
 /*
- * Type object for GtkAlignment 
+ * Type object for NspGtkAlignment 
  * all the instance of NspTypeGtkAlignment share the same id. 
  * nsp_type_gtkalignment: is an instance of NspTypeGtkAlignment 
- *    used for objects of GtkAlignment type (i.e built with new_gtkalignment) 
+ *    used for objects of NspGtkAlignment type (i.e built with new_gtkalignment) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
@@ -11055,8 +11055,8 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
   
   /* object methods redefined for gtkalignment */ 
 
-  top->s_type =  (s_type_func *) gtkalignment_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkalignment_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkalignment_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkalignment_type_short_string;
   /* top->create = (create_func*) int_gtkalignment_create;*/ 
   
   /* specific methods for gtkalignment */
@@ -11064,7 +11064,7 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
   type->init = (init_func *) init_gtkalignment;
 
   /* 
-   * GtkAlignment interfaces can be added here 
+   * NspGtkAlignment interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -11090,7 +11090,7 @@ NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
 }
 
 /*
- * initialize GtkAlignment instances 
+ * initialize NspGtkAlignment instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -11105,7 +11105,7 @@ static int init_gtkalignment(NspGtkAlignment *Obj,NspTypeGtkAlignment *type)
 }
 
 /*
- * new instance of GtkAlignment 
+ * new instance of NspGtkAlignment 
  */
 
 NspGtkAlignment *new_gtkalignment() 
@@ -11120,7 +11120,7 @@ NspGtkAlignment *new_gtkalignment()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAlignment 
+ * Object method redefined for NspGtkAlignment 
  *-----------------------------------------------*/
 
 /*
@@ -11130,23 +11130,23 @@ NspGtkAlignment *new_gtkalignment()
 static char gtkalignment_type_name[]="GtkAlignment";
 static char gtkalignment_short_type_name[]="GtkAlignment";
 
-static char *gtkalignment_type_as_string(void)
+static char *nsp_gtkalignment_type_as_string(void)
 {
   return(gtkalignment_type_name);
 }
 
-static char *gtkalignment_type_short_string(NspObject *v)
+static char *nsp_gtkalignment_type_short_string(NspObject *v)
 {
   return(gtkalignment_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAlignment objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAlignment objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAlignment   *gtkalignment_object(NspObject *O)
+NspGtkAlignment *nsp_gtkalignment_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -11176,7 +11176,7 @@ NspGtkAlignment  *GetGtkAlignmentCopy(Stack stack, int i)
 NspGtkAlignment  *GetGtkAlignment(Stack stack, int i)
 {
   NspGtkAlignment *M;
-  if (( M = gtkalignment_object(NthObj(i))) == NULLGTKALIGNMENT)
+  if (( M = nsp_gtkalignment_object(NthObj(i))) == NULLGTKALIGNMENT)
      ArgMessage(stack,i);
   return M;
 }
@@ -11250,7 +11250,7 @@ static NspMethods *gtkalignment_get_methods(void) { return gtkalignment_methods;
 static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkArrow ----------- */
+/* ----------- NspGtkArrow ----------- */
 
 
 #include "nsp/object.h"
@@ -11259,17 +11259,17 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkArrow inherits from GtkMisc 
+ * NspGtkArrow inherits from GtkMisc 
  */
 
 int nsp_type_gtkarrow_id=0;
 NspTypeGtkArrow *nsp_type_gtkarrow=NULL;
 
 /*
- * Type object for GtkArrow 
+ * Type object for NspGtkArrow 
  * all the instance of NspTypeGtkArrow share the same id. 
  * nsp_type_gtkarrow: is an instance of NspTypeGtkArrow 
- *    used for objects of GtkArrow type (i.e built with new_gtkarrow) 
+ *    used for objects of NspGtkArrow type (i.e built with new_gtkarrow) 
  * other instances are used for derived classes 
  */
 NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
@@ -11298,8 +11298,8 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
   
   /* object methods redefined for gtkarrow */ 
 
-  top->s_type =  (s_type_func *) gtkarrow_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkarrow_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkarrow_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkarrow_type_short_string;
   /* top->create = (create_func*) int_gtkarrow_create;*/ 
   
   /* specific methods for gtkarrow */
@@ -11307,7 +11307,7 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
   type->init = (init_func *) init_gtkarrow;
 
   /* 
-   * GtkArrow interfaces can be added here 
+   * NspGtkArrow interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -11333,7 +11333,7 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
 }
 
 /*
- * initialize GtkArrow instances 
+ * initialize NspGtkArrow instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -11348,7 +11348,7 @@ static int init_gtkarrow(NspGtkArrow *Obj,NspTypeGtkArrow *type)
 }
 
 /*
- * new instance of GtkArrow 
+ * new instance of NspGtkArrow 
  */
 
 NspGtkArrow *new_gtkarrow() 
@@ -11363,7 +11363,7 @@ NspGtkArrow *new_gtkarrow()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkArrow 
+ * Object method redefined for NspGtkArrow 
  *-----------------------------------------------*/
 
 /*
@@ -11373,23 +11373,23 @@ NspGtkArrow *new_gtkarrow()
 static char gtkarrow_type_name[]="GtkArrow";
 static char gtkarrow_short_type_name[]="GtkArrow";
 
-static char *gtkarrow_type_as_string(void)
+static char *nsp_gtkarrow_type_as_string(void)
 {
   return(gtkarrow_type_name);
 }
 
-static char *gtkarrow_type_short_string(NspObject *v)
+static char *nsp_gtkarrow_type_short_string(NspObject *v)
 {
   return(gtkarrow_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkArrow objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkArrow objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkArrow   *gtkarrow_object(NspObject *O)
+NspGtkArrow *nsp_gtkarrow_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -11419,7 +11419,7 @@ NspGtkArrow  *GetGtkArrowCopy(Stack stack, int i)
 NspGtkArrow  *GetGtkArrow(Stack stack, int i)
 {
   NspGtkArrow *M;
-  if (( M = gtkarrow_object(NthObj(i))) == NULLGTKARROW)
+  if (( M = nsp_gtkarrow_object(NthObj(i))) == NULLGTKARROW)
      ArgMessage(stack,i);
   return M;
 }
@@ -11489,7 +11489,7 @@ static NspMethods *gtkarrow_get_methods(void) { return gtkarrow_methods;};
 static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkAspectFrame ----------- */
+/* ----------- NspGtkAspectFrame ----------- */
 
 
 #include "nsp/object.h"
@@ -11498,17 +11498,17 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkAspectFrame inherits from GtkFrame 
+ * NspGtkAspectFrame inherits from GtkFrame 
  */
 
 int nsp_type_gtkaspectframe_id=0;
 NspTypeGtkAspectFrame *nsp_type_gtkaspectframe=NULL;
 
 /*
- * Type object for GtkAspectFrame 
+ * Type object for NspGtkAspectFrame 
  * all the instance of NspTypeGtkAspectFrame share the same id. 
  * nsp_type_gtkaspectframe: is an instance of NspTypeGtkAspectFrame 
- *    used for objects of GtkAspectFrame type (i.e built with new_gtkaspectframe) 
+ *    used for objects of NspGtkAspectFrame type (i.e built with new_gtkaspectframe) 
  * other instances are used for derived classes 
  */
 NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
@@ -11537,8 +11537,8 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
   
   /* object methods redefined for gtkaspectframe */ 
 
-  top->s_type =  (s_type_func *) gtkaspectframe_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkaspectframe_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkaspectframe_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkaspectframe_type_short_string;
   /* top->create = (create_func*) int_gtkaspectframe_create;*/ 
   
   /* specific methods for gtkaspectframe */
@@ -11546,7 +11546,7 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
   type->init = (init_func *) init_gtkaspectframe;
 
   /* 
-   * GtkAspectFrame interfaces can be added here 
+   * NspGtkAspectFrame interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -11572,7 +11572,7 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
 }
 
 /*
- * initialize GtkAspectFrame instances 
+ * initialize NspGtkAspectFrame instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -11587,7 +11587,7 @@ static int init_gtkaspectframe(NspGtkAspectFrame *Obj,NspTypeGtkAspectFrame *typ
 }
 
 /*
- * new instance of GtkAspectFrame 
+ * new instance of NspGtkAspectFrame 
  */
 
 NspGtkAspectFrame *new_gtkaspectframe() 
@@ -11602,7 +11602,7 @@ NspGtkAspectFrame *new_gtkaspectframe()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkAspectFrame 
+ * Object method redefined for NspGtkAspectFrame 
  *-----------------------------------------------*/
 
 /*
@@ -11612,23 +11612,23 @@ NspGtkAspectFrame *new_gtkaspectframe()
 static char gtkaspectframe_type_name[]="GtkAspectFrame";
 static char gtkaspectframe_short_type_name[]="GtkAspectFrame";
 
-static char *gtkaspectframe_type_as_string(void)
+static char *nsp_gtkaspectframe_type_as_string(void)
 {
   return(gtkaspectframe_type_name);
 }
 
-static char *gtkaspectframe_type_short_string(NspObject *v)
+static char *nsp_gtkaspectframe_type_short_string(NspObject *v)
 {
   return(gtkaspectframe_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkAspectFrame objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkAspectFrame objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkAspectFrame   *gtkaspectframe_object(NspObject *O)
+NspGtkAspectFrame *nsp_gtkaspectframe_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -11658,7 +11658,7 @@ NspGtkAspectFrame  *GetGtkAspectFrameCopy(Stack stack, int i)
 NspGtkAspectFrame  *GetGtkAspectFrame(Stack stack, int i)
 {
   NspGtkAspectFrame *M;
-  if (( M = gtkaspectframe_object(NthObj(i))) == NULLGTKASPECTFRAME)
+  if (( M = nsp_gtkaspectframe_object(NthObj(i))) == NULLGTKASPECTFRAME)
      ArgMessage(stack,i);
   return M;
 }
@@ -11732,7 +11732,7 @@ static NspMethods *gtkaspectframe_get_methods(void) { return gtkaspectframe_meth
 static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkBin ----------- */
+/* ----------- NspGtkBin ----------- */
 
 
 #include "nsp/object.h"
@@ -11741,17 +11741,17 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkBin inherits from GtkContainer 
+ * NspGtkBin inherits from GtkContainer 
  */
 
 int nsp_type_gtkbin_id=0;
 NspTypeGtkBin *nsp_type_gtkbin=NULL;
 
 /*
- * Type object for GtkBin 
+ * Type object for NspGtkBin 
  * all the instance of NspTypeGtkBin share the same id. 
  * nsp_type_gtkbin: is an instance of NspTypeGtkBin 
- *    used for objects of GtkBin type (i.e built with new_gtkbin) 
+ *    used for objects of NspGtkBin type (i.e built with new_gtkbin) 
  * other instances are used for derived classes 
  */
 NspTypeGtkBin *new_type_gtkbin(type_mode mode)
@@ -11780,8 +11780,8 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
   
   /* object methods redefined for gtkbin */ 
 
-  top->s_type =  (s_type_func *) gtkbin_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkbin_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkbin_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkbin_type_short_string;
   /* top->create = (create_func*) int_gtkbin_create;*/ 
   
   /* specific methods for gtkbin */
@@ -11789,7 +11789,7 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
   type->init = (init_func *) init_gtkbin;
 
   /* 
-   * GtkBin interfaces can be added here 
+   * NspGtkBin interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -11815,7 +11815,7 @@ NspTypeGtkBin *new_type_gtkbin(type_mode mode)
 }
 
 /*
- * initialize GtkBin instances 
+ * initialize NspGtkBin instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -11830,7 +11830,7 @@ static int init_gtkbin(NspGtkBin *Obj,NspTypeGtkBin *type)
 }
 
 /*
- * new instance of GtkBin 
+ * new instance of NspGtkBin 
  */
 
 NspGtkBin *new_gtkbin() 
@@ -11845,7 +11845,7 @@ NspGtkBin *new_gtkbin()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkBin 
+ * Object method redefined for NspGtkBin 
  *-----------------------------------------------*/
 
 /*
@@ -11855,23 +11855,23 @@ NspGtkBin *new_gtkbin()
 static char gtkbin_type_name[]="GtkBin";
 static char gtkbin_short_type_name[]="GtkBin";
 
-static char *gtkbin_type_as_string(void)
+static char *nsp_gtkbin_type_as_string(void)
 {
   return(gtkbin_type_name);
 }
 
-static char *gtkbin_type_short_string(NspObject *v)
+static char *nsp_gtkbin_type_short_string(NspObject *v)
 {
   return(gtkbin_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkBin objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkBin objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkBin   *gtkbin_object(NspObject *O)
+NspGtkBin *nsp_gtkbin_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -11901,7 +11901,7 @@ NspGtkBin  *GetGtkBinCopy(Stack stack, int i)
 NspGtkBin  *GetGtkBin(Stack stack, int i)
 {
   NspGtkBin *M;
-  if (( M = gtkbin_object(NthObj(i))) == NULLGTKBIN)
+  if (( M = nsp_gtkbin_object(NthObj(i))) == NULLGTKBIN)
      ArgMessage(stack,i);
   return M;
 }
@@ -11957,7 +11957,7 @@ static AttrTab gtkbin_attrs[] = {
 
 
 
-/* ----------- GtkBox ----------- */
+/* ----------- NspGtkBox ----------- */
 
 
 #include "nsp/object.h"
@@ -11966,17 +11966,17 @@ static AttrTab gtkbin_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkBox inherits from GtkContainer 
+ * NspGtkBox inherits from GtkContainer 
  */
 
 int nsp_type_gtkbox_id=0;
 NspTypeGtkBox *nsp_type_gtkbox=NULL;
 
 /*
- * Type object for GtkBox 
+ * Type object for NspGtkBox 
  * all the instance of NspTypeGtkBox share the same id. 
  * nsp_type_gtkbox: is an instance of NspTypeGtkBox 
- *    used for objects of GtkBox type (i.e built with new_gtkbox) 
+ *    used for objects of NspGtkBox type (i.e built with new_gtkbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkBox *new_type_gtkbox(type_mode mode)
@@ -12005,8 +12005,8 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
   
   /* object methods redefined for gtkbox */ 
 
-  top->s_type =  (s_type_func *) gtkbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkbox_type_short_string;
   /* top->create = (create_func*) int_gtkbox_create;*/ 
   
   /* specific methods for gtkbox */
@@ -12014,7 +12014,7 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
   type->init = (init_func *) init_gtkbox;
 
   /* 
-   * GtkBox interfaces can be added here 
+   * NspGtkBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -12040,7 +12040,7 @@ NspTypeGtkBox *new_type_gtkbox(type_mode mode)
 }
 
 /*
- * initialize GtkBox instances 
+ * initialize NspGtkBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -12055,7 +12055,7 @@ static int init_gtkbox(NspGtkBox *Obj,NspTypeGtkBox *type)
 }
 
 /*
- * new instance of GtkBox 
+ * new instance of NspGtkBox 
  */
 
 NspGtkBox *new_gtkbox() 
@@ -12070,7 +12070,7 @@ NspGtkBox *new_gtkbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkBox 
+ * Object method redefined for NspGtkBox 
  *-----------------------------------------------*/
 
 /*
@@ -12080,23 +12080,23 @@ NspGtkBox *new_gtkbox()
 static char gtkbox_type_name[]="GtkBox";
 static char gtkbox_short_type_name[]="GtkBox";
 
-static char *gtkbox_type_as_string(void)
+static char *nsp_gtkbox_type_as_string(void)
 {
   return(gtkbox_type_name);
 }
 
-static char *gtkbox_type_short_string(NspObject *v)
+static char *nsp_gtkbox_type_short_string(NspObject *v)
 {
   return(gtkbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkBox   *gtkbox_object(NspObject *O)
+NspGtkBox *nsp_gtkbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -12126,7 +12126,7 @@ NspGtkBox  *GetGtkBoxCopy(Stack stack, int i)
 NspGtkBox  *GetGtkBox(Stack stack, int i)
 {
   NspGtkBox *M;
-  if (( M = gtkbox_object(NthObj(i))) == NULLGTKBOX)
+  if (( M = nsp_gtkbox_object(NthObj(i))) == NULLGTKBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -12307,7 +12307,7 @@ static NspMethods *gtkbox_get_methods(void) { return gtkbox_methods;};
 static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkButton ----------- */
+/* ----------- NspGtkButton ----------- */
 
 
 #include "nsp/object.h"
@@ -12316,17 +12316,17 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkButton inherits from GtkBin 
+ * NspGtkButton inherits from GtkBin 
  */
 
 int nsp_type_gtkbutton_id=0;
 NspTypeGtkButton *nsp_type_gtkbutton=NULL;
 
 /*
- * Type object for GtkButton 
+ * Type object for NspGtkButton 
  * all the instance of NspTypeGtkButton share the same id. 
  * nsp_type_gtkbutton: is an instance of NspTypeGtkButton 
- *    used for objects of GtkButton type (i.e built with new_gtkbutton) 
+ *    used for objects of NspGtkButton type (i.e built with new_gtkbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
@@ -12355,8 +12355,8 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
   
   /* object methods redefined for gtkbutton */ 
 
-  top->s_type =  (s_type_func *) gtkbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkbutton_type_short_string;
   /* top->create = (create_func*) int_gtkbutton_create;*/ 
   
   /* specific methods for gtkbutton */
@@ -12364,7 +12364,7 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
   type->init = (init_func *) init_gtkbutton;
 
   /* 
-   * GtkButton interfaces can be added here 
+   * NspGtkButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -12390,7 +12390,7 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
 }
 
 /*
- * initialize GtkButton instances 
+ * initialize NspGtkButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -12405,7 +12405,7 @@ static int init_gtkbutton(NspGtkButton *Obj,NspTypeGtkButton *type)
 }
 
 /*
- * new instance of GtkButton 
+ * new instance of NspGtkButton 
  */
 
 NspGtkButton *new_gtkbutton() 
@@ -12420,7 +12420,7 @@ NspGtkButton *new_gtkbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkButton 
+ * Object method redefined for NspGtkButton 
  *-----------------------------------------------*/
 
 /*
@@ -12430,23 +12430,23 @@ NspGtkButton *new_gtkbutton()
 static char gtkbutton_type_name[]="GtkButton";
 static char gtkbutton_short_type_name[]="GtkButton";
 
-static char *gtkbutton_type_as_string(void)
+static char *nsp_gtkbutton_type_as_string(void)
 {
   return(gtkbutton_type_name);
 }
 
-static char *gtkbutton_type_short_string(NspObject *v)
+static char *nsp_gtkbutton_type_short_string(NspObject *v)
 {
   return(gtkbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkButton   *gtkbutton_object(NspObject *O)
+NspGtkButton *nsp_gtkbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -12476,7 +12476,7 @@ NspGtkButton  *GetGtkButtonCopy(Stack stack, int i)
 NspGtkButton  *GetGtkButton(Stack stack, int i)
 {
   NspGtkButton *M;
-  if (( M = gtkbutton_object(NthObj(i))) == NULLGTKBUTTON)
+  if (( M = nsp_gtkbutton_object(NthObj(i))) == NULLGTKBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -12710,7 +12710,7 @@ static NspMethods *gtkbutton_get_methods(void) { return gtkbutton_methods;};
 static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkButtonBox ----------- */
+/* ----------- NspGtkButtonBox ----------- */
 
 
 #include "nsp/object.h"
@@ -12719,17 +12719,17 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkButtonBox inherits from GtkBox 
+ * NspGtkButtonBox inherits from GtkBox 
  */
 
 int nsp_type_gtkbuttonbox_id=0;
 NspTypeGtkButtonBox *nsp_type_gtkbuttonbox=NULL;
 
 /*
- * Type object for GtkButtonBox 
+ * Type object for NspGtkButtonBox 
  * all the instance of NspTypeGtkButtonBox share the same id. 
  * nsp_type_gtkbuttonbox: is an instance of NspTypeGtkButtonBox 
- *    used for objects of GtkButtonBox type (i.e built with new_gtkbuttonbox) 
+ *    used for objects of NspGtkButtonBox type (i.e built with new_gtkbuttonbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
@@ -12758,8 +12758,8 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
   
   /* object methods redefined for gtkbuttonbox */ 
 
-  top->s_type =  (s_type_func *) gtkbuttonbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkbuttonbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkbuttonbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkbuttonbox_type_short_string;
   /* top->create = (create_func*) int_gtkbuttonbox_create;*/ 
   
   /* specific methods for gtkbuttonbox */
@@ -12767,7 +12767,7 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
   type->init = (init_func *) init_gtkbuttonbox;
 
   /* 
-   * GtkButtonBox interfaces can be added here 
+   * NspGtkButtonBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -12793,7 +12793,7 @@ NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
 }
 
 /*
- * initialize GtkButtonBox instances 
+ * initialize NspGtkButtonBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -12808,7 +12808,7 @@ static int init_gtkbuttonbox(NspGtkButtonBox *Obj,NspTypeGtkButtonBox *type)
 }
 
 /*
- * new instance of GtkButtonBox 
+ * new instance of NspGtkButtonBox 
  */
 
 NspGtkButtonBox *new_gtkbuttonbox() 
@@ -12823,7 +12823,7 @@ NspGtkButtonBox *new_gtkbuttonbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkButtonBox 
+ * Object method redefined for NspGtkButtonBox 
  *-----------------------------------------------*/
 
 /*
@@ -12833,23 +12833,23 @@ NspGtkButtonBox *new_gtkbuttonbox()
 static char gtkbuttonbox_type_name[]="GtkButtonBox";
 static char gtkbuttonbox_short_type_name[]="GtkButtonBox";
 
-static char *gtkbuttonbox_type_as_string(void)
+static char *nsp_gtkbuttonbox_type_as_string(void)
 {
   return(gtkbuttonbox_type_name);
 }
 
-static char *gtkbuttonbox_type_short_string(NspObject *v)
+static char *nsp_gtkbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkbuttonbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkButtonBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkButtonBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkButtonBox   *gtkbuttonbox_object(NspObject *O)
+NspGtkButtonBox *nsp_gtkbuttonbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -12879,7 +12879,7 @@ NspGtkButtonBox  *GetGtkButtonBoxCopy(Stack stack, int i)
 NspGtkButtonBox  *GetGtkButtonBox(Stack stack, int i)
 {
   NspGtkButtonBox *M;
-  if (( M = gtkbuttonbox_object(NthObj(i))) == NULLGTKBUTTONBOX)
+  if (( M = nsp_gtkbuttonbox_object(NthObj(i))) == NULLGTKBUTTONBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -13007,7 +13007,7 @@ static NspMethods *gtkbuttonbox_get_methods(void) { return gtkbuttonbox_methods;
 static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCalendar ----------- */
+/* ----------- NspGtkCalendar ----------- */
 
 
 #include "nsp/object.h"
@@ -13016,17 +13016,17 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCalendar inherits from GtkWidget 
+ * NspGtkCalendar inherits from GtkWidget 
  */
 
 int nsp_type_gtkcalendar_id=0;
 NspTypeGtkCalendar *nsp_type_gtkcalendar=NULL;
 
 /*
- * Type object for GtkCalendar 
+ * Type object for NspGtkCalendar 
  * all the instance of NspTypeGtkCalendar share the same id. 
  * nsp_type_gtkcalendar: is an instance of NspTypeGtkCalendar 
- *    used for objects of GtkCalendar type (i.e built with new_gtkcalendar) 
+ *    used for objects of NspGtkCalendar type (i.e built with new_gtkcalendar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
@@ -13055,8 +13055,8 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
   
   /* object methods redefined for gtkcalendar */ 
 
-  top->s_type =  (s_type_func *) gtkcalendar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcalendar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcalendar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcalendar_type_short_string;
   /* top->create = (create_func*) int_gtkcalendar_create;*/ 
   
   /* specific methods for gtkcalendar */
@@ -13064,7 +13064,7 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
   type->init = (init_func *) init_gtkcalendar;
 
   /* 
-   * GtkCalendar interfaces can be added here 
+   * NspGtkCalendar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -13090,7 +13090,7 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
 }
 
 /*
- * initialize GtkCalendar instances 
+ * initialize NspGtkCalendar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -13105,7 +13105,7 @@ static int init_gtkcalendar(NspGtkCalendar *Obj,NspTypeGtkCalendar *type)
 }
 
 /*
- * new instance of GtkCalendar 
+ * new instance of NspGtkCalendar 
  */
 
 NspGtkCalendar *new_gtkcalendar() 
@@ -13120,7 +13120,7 @@ NspGtkCalendar *new_gtkcalendar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCalendar 
+ * Object method redefined for NspGtkCalendar 
  *-----------------------------------------------*/
 
 /*
@@ -13130,23 +13130,23 @@ NspGtkCalendar *new_gtkcalendar()
 static char gtkcalendar_type_name[]="GtkCalendar";
 static char gtkcalendar_short_type_name[]="GtkCalendar";
 
-static char *gtkcalendar_type_as_string(void)
+static char *nsp_gtkcalendar_type_as_string(void)
 {
   return(gtkcalendar_type_name);
 }
 
-static char *gtkcalendar_type_short_string(NspObject *v)
+static char *nsp_gtkcalendar_type_short_string(NspObject *v)
 {
   return(gtkcalendar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCalendar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCalendar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCalendar   *gtkcalendar_object(NspObject *O)
+NspGtkCalendar *nsp_gtkcalendar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -13176,7 +13176,7 @@ NspGtkCalendar  *GetGtkCalendarCopy(Stack stack, int i)
 NspGtkCalendar  *GetGtkCalendar(Stack stack, int i)
 {
   NspGtkCalendar *M;
-  if (( M = gtkcalendar_object(NthObj(i))) == NULLGTKCALENDAR)
+  if (( M = nsp_gtkcalendar_object(NthObj(i))) == NULLGTKCALENDAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -13343,7 +13343,7 @@ static NspMethods *gtkcalendar_get_methods(void) { return gtkcalendar_methods;};
 static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRenderer ----------- */
+/* ----------- NspGtkCellRenderer ----------- */
 
 
 #include "nsp/object.h"
@@ -13352,17 +13352,17 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRenderer inherits from GtkObject 
+ * NspGtkCellRenderer inherits from GtkObject 
  */
 
 int nsp_type_gtkcellrenderer_id=0;
 NspTypeGtkCellRenderer *nsp_type_gtkcellrenderer=NULL;
 
 /*
- * Type object for GtkCellRenderer 
+ * Type object for NspGtkCellRenderer 
  * all the instance of NspTypeGtkCellRenderer share the same id. 
  * nsp_type_gtkcellrenderer: is an instance of NspTypeGtkCellRenderer 
- *    used for objects of GtkCellRenderer type (i.e built with new_gtkcellrenderer) 
+ *    used for objects of NspGtkCellRenderer type (i.e built with new_gtkcellrenderer) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
@@ -13391,8 +13391,8 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
   
   /* object methods redefined for gtkcellrenderer */ 
 
-  top->s_type =  (s_type_func *) gtkcellrenderer_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrenderer_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrenderer_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrenderer_type_short_string;
   /* top->create = (create_func*) int_gtkcellrenderer_create;*/ 
   
   /* specific methods for gtkcellrenderer */
@@ -13400,7 +13400,7 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
   type->init = (init_func *) init_gtkcellrenderer;
 
   /* 
-   * GtkCellRenderer interfaces can be added here 
+   * NspGtkCellRenderer interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -13426,7 +13426,7 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
 }
 
 /*
- * initialize GtkCellRenderer instances 
+ * initialize NspGtkCellRenderer instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -13441,7 +13441,7 @@ static int init_gtkcellrenderer(NspGtkCellRenderer *Obj,NspTypeGtkCellRenderer *
 }
 
 /*
- * new instance of GtkCellRenderer 
+ * new instance of NspGtkCellRenderer 
  */
 
 NspGtkCellRenderer *new_gtkcellrenderer() 
@@ -13456,7 +13456,7 @@ NspGtkCellRenderer *new_gtkcellrenderer()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRenderer 
+ * Object method redefined for NspGtkCellRenderer 
  *-----------------------------------------------*/
 
 /*
@@ -13466,23 +13466,23 @@ NspGtkCellRenderer *new_gtkcellrenderer()
 static char gtkcellrenderer_type_name[]="GtkCellRenderer";
 static char gtkcellrenderer_short_type_name[]="GtkCellRenderer";
 
-static char *gtkcellrenderer_type_as_string(void)
+static char *nsp_gtkcellrenderer_type_as_string(void)
 {
   return(gtkcellrenderer_type_name);
 }
 
-static char *gtkcellrenderer_type_short_string(NspObject *v)
+static char *nsp_gtkcellrenderer_type_short_string(NspObject *v)
 {
   return(gtkcellrenderer_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRenderer objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRenderer objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRenderer   *gtkcellrenderer_object(NspObject *O)
+NspGtkCellRenderer *nsp_gtkcellrenderer_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -13512,7 +13512,7 @@ NspGtkCellRenderer  *GetGtkCellRendererCopy(Stack stack, int i)
 NspGtkCellRenderer  *GetGtkCellRenderer(Stack stack, int i)
 {
   NspGtkCellRenderer *M;
-  if (( M = gtkcellrenderer_object(NthObj(i))) == NULLGTKCELLRENDERER)
+  if (( M = nsp_gtkcellrenderer_object(NthObj(i))) == NULLGTKCELLRENDERER)
      ArgMessage(stack,i);
   return M;
 }
@@ -13793,7 +13793,7 @@ static NspMethods *gtkcellrenderer_get_methods(void) { return gtkcellrenderer_me
 static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRendererCombo ----------- */
+/* ----------- NspGtkCellRendererCombo ----------- */
 
 
 #include "nsp/object.h"
@@ -13802,17 +13802,17 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRendererCombo inherits from GtkCellRendererText 
+ * NspGtkCellRendererCombo inherits from GtkCellRendererText 
  */
 
 int nsp_type_gtkcellrenderercombo_id=0;
 NspTypeGtkCellRendererCombo *nsp_type_gtkcellrenderercombo=NULL;
 
 /*
- * Type object for GtkCellRendererCombo 
+ * Type object for NspGtkCellRendererCombo 
  * all the instance of NspTypeGtkCellRendererCombo share the same id. 
  * nsp_type_gtkcellrenderercombo: is an instance of NspTypeGtkCellRendererCombo 
- *    used for objects of GtkCellRendererCombo type (i.e built with new_gtkcellrenderercombo) 
+ *    used for objects of NspGtkCellRendererCombo type (i.e built with new_gtkcellrenderercombo) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
@@ -13841,8 +13841,8 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
   
   /* object methods redefined for gtkcellrenderercombo */ 
 
-  top->s_type =  (s_type_func *) gtkcellrenderercombo_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrenderercombo_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrenderercombo_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrenderercombo_type_short_string;
   /* top->create = (create_func*) int_gtkcellrenderercombo_create;*/ 
   
   /* specific methods for gtkcellrenderercombo */
@@ -13850,7 +13850,7 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
   type->init = (init_func *) init_gtkcellrenderercombo;
 
   /* 
-   * GtkCellRendererCombo interfaces can be added here 
+   * NspGtkCellRendererCombo interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -13876,7 +13876,7 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
 }
 
 /*
- * initialize GtkCellRendererCombo instances 
+ * initialize NspGtkCellRendererCombo instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -13891,7 +13891,7 @@ static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *Obj,NspTypeGtkCell
 }
 
 /*
- * new instance of GtkCellRendererCombo 
+ * new instance of NspGtkCellRendererCombo 
  */
 
 NspGtkCellRendererCombo *new_gtkcellrenderercombo() 
@@ -13906,7 +13906,7 @@ NspGtkCellRendererCombo *new_gtkcellrenderercombo()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRendererCombo 
+ * Object method redefined for NspGtkCellRendererCombo 
  *-----------------------------------------------*/
 
 /*
@@ -13916,23 +13916,23 @@ NspGtkCellRendererCombo *new_gtkcellrenderercombo()
 static char gtkcellrenderercombo_type_name[]="GtkCellRendererCombo";
 static char gtkcellrenderercombo_short_type_name[]="GtkCellRendererCombo";
 
-static char *gtkcellrenderercombo_type_as_string(void)
+static char *nsp_gtkcellrenderercombo_type_as_string(void)
 {
   return(gtkcellrenderercombo_type_name);
 }
 
-static char *gtkcellrenderercombo_type_short_string(NspObject *v)
+static char *nsp_gtkcellrenderercombo_type_short_string(NspObject *v)
 {
   return(gtkcellrenderercombo_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRendererCombo objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRendererCombo objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRendererCombo   *gtkcellrenderercombo_object(NspObject *O)
+NspGtkCellRendererCombo *nsp_gtkcellrenderercombo_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -13962,7 +13962,7 @@ NspGtkCellRendererCombo  *GetGtkCellRendererComboCopy(Stack stack, int i)
 NspGtkCellRendererCombo  *GetGtkCellRendererCombo(Stack stack, int i)
 {
   NspGtkCellRendererCombo *M;
-  if (( M = gtkcellrenderercombo_object(NthObj(i))) == NULLGTKCELLRENDERERCOMBO)
+  if (( M = nsp_gtkcellrenderercombo_object(NthObj(i))) == NULLGTKCELLRENDERERCOMBO)
      ArgMessage(stack,i);
   return M;
 }
@@ -14004,7 +14004,7 @@ static NspMethods *gtkcellrenderercombo_get_methods(void) { return NULL;};
 static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRendererPixbuf ----------- */
+/* ----------- NspGtkCellRendererPixbuf ----------- */
 
 
 #include "nsp/object.h"
@@ -14013,17 +14013,17 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRendererPixbuf inherits from GtkCellRenderer 
+ * NspGtkCellRendererPixbuf inherits from GtkCellRenderer 
  */
 
 int nsp_type_gtkcellrendererpixbuf_id=0;
 NspTypeGtkCellRendererPixbuf *nsp_type_gtkcellrendererpixbuf=NULL;
 
 /*
- * Type object for GtkCellRendererPixbuf 
+ * Type object for NspGtkCellRendererPixbuf 
  * all the instance of NspTypeGtkCellRendererPixbuf share the same id. 
  * nsp_type_gtkcellrendererpixbuf: is an instance of NspTypeGtkCellRendererPixbuf 
- *    used for objects of GtkCellRendererPixbuf type (i.e built with new_gtkcellrendererpixbuf) 
+ *    used for objects of NspGtkCellRendererPixbuf type (i.e built with new_gtkcellrendererpixbuf) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
@@ -14052,8 +14052,8 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
   
   /* object methods redefined for gtkcellrendererpixbuf */ 
 
-  top->s_type =  (s_type_func *) gtkcellrendererpixbuf_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrendererpixbuf_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrendererpixbuf_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrendererpixbuf_type_short_string;
   /* top->create = (create_func*) int_gtkcellrendererpixbuf_create;*/ 
   
   /* specific methods for gtkcellrendererpixbuf */
@@ -14061,7 +14061,7 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
   type->init = (init_func *) init_gtkcellrendererpixbuf;
 
   /* 
-   * GtkCellRendererPixbuf interfaces can be added here 
+   * NspGtkCellRendererPixbuf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -14087,7 +14087,7 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
 }
 
 /*
- * initialize GtkCellRendererPixbuf instances 
+ * initialize NspGtkCellRendererPixbuf instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -14102,7 +14102,7 @@ static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *Obj,NspTypeGtkCe
 }
 
 /*
- * new instance of GtkCellRendererPixbuf 
+ * new instance of NspGtkCellRendererPixbuf 
  */
 
 NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf() 
@@ -14117,7 +14117,7 @@ NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRendererPixbuf 
+ * Object method redefined for NspGtkCellRendererPixbuf 
  *-----------------------------------------------*/
 
 /*
@@ -14127,23 +14127,23 @@ NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf()
 static char gtkcellrendererpixbuf_type_name[]="GtkCellRendererPixbuf";
 static char gtkcellrendererpixbuf_short_type_name[]="GtkCellRendererPixbuf";
 
-static char *gtkcellrendererpixbuf_type_as_string(void)
+static char *nsp_gtkcellrendererpixbuf_type_as_string(void)
 {
   return(gtkcellrendererpixbuf_type_name);
 }
 
-static char *gtkcellrendererpixbuf_type_short_string(NspObject *v)
+static char *nsp_gtkcellrendererpixbuf_type_short_string(NspObject *v)
 {
   return(gtkcellrendererpixbuf_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRendererPixbuf objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRendererPixbuf objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRendererPixbuf   *gtkcellrendererpixbuf_object(NspObject *O)
+NspGtkCellRendererPixbuf *nsp_gtkcellrendererpixbuf_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -14173,7 +14173,7 @@ NspGtkCellRendererPixbuf  *GetGtkCellRendererPixbufCopy(Stack stack, int i)
 NspGtkCellRendererPixbuf  *GetGtkCellRendererPixbuf(Stack stack, int i)
 {
   NspGtkCellRendererPixbuf *M;
-  if (( M = gtkcellrendererpixbuf_object(NthObj(i))) == NULLGTKCELLRENDERERPIXBUF)
+  if (( M = nsp_gtkcellrendererpixbuf_object(NthObj(i))) == NULLGTKCELLRENDERERPIXBUF)
      ArgMessage(stack,i);
   return M;
 }
@@ -14215,7 +14215,7 @@ static NspMethods *gtkcellrendererpixbuf_get_methods(void) { return NULL;};
 static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRendererProgress ----------- */
+/* ----------- NspGtkCellRendererProgress ----------- */
 
 
 #include "nsp/object.h"
@@ -14224,17 +14224,17 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRendererProgress inherits from GtkCellRenderer 
+ * NspGtkCellRendererProgress inherits from GtkCellRenderer 
  */
 
 int nsp_type_gtkcellrendererprogress_id=0;
 NspTypeGtkCellRendererProgress *nsp_type_gtkcellrendererprogress=NULL;
 
 /*
- * Type object for GtkCellRendererProgress 
+ * Type object for NspGtkCellRendererProgress 
  * all the instance of NspTypeGtkCellRendererProgress share the same id. 
  * nsp_type_gtkcellrendererprogress: is an instance of NspTypeGtkCellRendererProgress 
- *    used for objects of GtkCellRendererProgress type (i.e built with new_gtkcellrendererprogress) 
+ *    used for objects of NspGtkCellRendererProgress type (i.e built with new_gtkcellrendererprogress) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
@@ -14263,8 +14263,8 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
   
   /* object methods redefined for gtkcellrendererprogress */ 
 
-  top->s_type =  (s_type_func *) gtkcellrendererprogress_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrendererprogress_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrendererprogress_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrendererprogress_type_short_string;
   /* top->create = (create_func*) int_gtkcellrendererprogress_create;*/ 
   
   /* specific methods for gtkcellrendererprogress */
@@ -14272,7 +14272,7 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
   type->init = (init_func *) init_gtkcellrendererprogress;
 
   /* 
-   * GtkCellRendererProgress interfaces can be added here 
+   * NspGtkCellRendererProgress interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -14298,7 +14298,7 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
 }
 
 /*
- * initialize GtkCellRendererProgress instances 
+ * initialize NspGtkCellRendererProgress instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -14313,7 +14313,7 @@ static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *Obj,NspTypeG
 }
 
 /*
- * new instance of GtkCellRendererProgress 
+ * new instance of NspGtkCellRendererProgress 
  */
 
 NspGtkCellRendererProgress *new_gtkcellrendererprogress() 
@@ -14328,7 +14328,7 @@ NspGtkCellRendererProgress *new_gtkcellrendererprogress()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRendererProgress 
+ * Object method redefined for NspGtkCellRendererProgress 
  *-----------------------------------------------*/
 
 /*
@@ -14338,23 +14338,23 @@ NspGtkCellRendererProgress *new_gtkcellrendererprogress()
 static char gtkcellrendererprogress_type_name[]="GtkCellRendererProgress";
 static char gtkcellrendererprogress_short_type_name[]="GtkCellRendererProgress";
 
-static char *gtkcellrendererprogress_type_as_string(void)
+static char *nsp_gtkcellrendererprogress_type_as_string(void)
 {
   return(gtkcellrendererprogress_type_name);
 }
 
-static char *gtkcellrendererprogress_type_short_string(NspObject *v)
+static char *nsp_gtkcellrendererprogress_type_short_string(NspObject *v)
 {
   return(gtkcellrendererprogress_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRendererProgress objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRendererProgress objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRendererProgress   *gtkcellrendererprogress_object(NspObject *O)
+NspGtkCellRendererProgress *nsp_gtkcellrendererprogress_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -14384,7 +14384,7 @@ NspGtkCellRendererProgress  *GetGtkCellRendererProgressCopy(Stack stack, int i)
 NspGtkCellRendererProgress  *GetGtkCellRendererProgress(Stack stack, int i)
 {
   NspGtkCellRendererProgress *M;
-  if (( M = gtkcellrendererprogress_object(NthObj(i))) == NULLGTKCELLRENDERERPROGRESS)
+  if (( M = nsp_gtkcellrendererprogress_object(NthObj(i))) == NULLGTKCELLRENDERERPROGRESS)
      ArgMessage(stack,i);
   return M;
 }
@@ -14426,7 +14426,7 @@ static NspMethods *gtkcellrendererprogress_get_methods(void) { return NULL;};
 static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRendererText ----------- */
+/* ----------- NspGtkCellRendererText ----------- */
 
 
 #include "nsp/object.h"
@@ -14435,17 +14435,17 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRendererText inherits from GtkCellRenderer 
+ * NspGtkCellRendererText inherits from GtkCellRenderer 
  */
 
 int nsp_type_gtkcellrenderertext_id=0;
 NspTypeGtkCellRendererText *nsp_type_gtkcellrenderertext=NULL;
 
 /*
- * Type object for GtkCellRendererText 
+ * Type object for NspGtkCellRendererText 
  * all the instance of NspTypeGtkCellRendererText share the same id. 
  * nsp_type_gtkcellrenderertext: is an instance of NspTypeGtkCellRendererText 
- *    used for objects of GtkCellRendererText type (i.e built with new_gtkcellrenderertext) 
+ *    used for objects of NspGtkCellRendererText type (i.e built with new_gtkcellrenderertext) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
@@ -14474,8 +14474,8 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
   
   /* object methods redefined for gtkcellrenderertext */ 
 
-  top->s_type =  (s_type_func *) gtkcellrenderertext_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrenderertext_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrenderertext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrenderertext_type_short_string;
   /* top->create = (create_func*) int_gtkcellrenderertext_create;*/ 
   
   /* specific methods for gtkcellrenderertext */
@@ -14483,7 +14483,7 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
   type->init = (init_func *) init_gtkcellrenderertext;
 
   /* 
-   * GtkCellRendererText interfaces can be added here 
+   * NspGtkCellRendererText interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -14509,7 +14509,7 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
 }
 
 /*
- * initialize GtkCellRendererText instances 
+ * initialize NspGtkCellRendererText instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -14524,7 +14524,7 @@ static int init_gtkcellrenderertext(NspGtkCellRendererText *Obj,NspTypeGtkCellRe
 }
 
 /*
- * new instance of GtkCellRendererText 
+ * new instance of NspGtkCellRendererText 
  */
 
 NspGtkCellRendererText *new_gtkcellrenderertext() 
@@ -14539,7 +14539,7 @@ NspGtkCellRendererText *new_gtkcellrenderertext()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRendererText 
+ * Object method redefined for NspGtkCellRendererText 
  *-----------------------------------------------*/
 
 /*
@@ -14549,23 +14549,23 @@ NspGtkCellRendererText *new_gtkcellrenderertext()
 static char gtkcellrenderertext_type_name[]="GtkCellRendererText";
 static char gtkcellrenderertext_short_type_name[]="GtkCellRendererText";
 
-static char *gtkcellrenderertext_type_as_string(void)
+static char *nsp_gtkcellrenderertext_type_as_string(void)
 {
   return(gtkcellrenderertext_type_name);
 }
 
-static char *gtkcellrenderertext_type_short_string(NspObject *v)
+static char *nsp_gtkcellrenderertext_type_short_string(NspObject *v)
 {
   return(gtkcellrenderertext_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRendererText objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRendererText objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRendererText   *gtkcellrenderertext_object(NspObject *O)
+NspGtkCellRendererText *nsp_gtkcellrenderertext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -14595,7 +14595,7 @@ NspGtkCellRendererText  *GetGtkCellRendererTextCopy(Stack stack, int i)
 NspGtkCellRendererText  *GetGtkCellRendererText(Stack stack, int i)
 {
   NspGtkCellRendererText *M;
-  if (( M = gtkcellrenderertext_object(NthObj(i))) == NULLGTKCELLRENDERERTEXT)
+  if (( M = nsp_gtkcellrenderertext_object(NthObj(i))) == NULLGTKCELLRENDERERTEXT)
      ArgMessage(stack,i);
   return M;
 }
@@ -14651,7 +14651,7 @@ static NspMethods *gtkcellrenderertext_get_methods(void) { return gtkcellrendere
 static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellRendererToggle ----------- */
+/* ----------- NspGtkCellRendererToggle ----------- */
 
 
 #include "nsp/object.h"
@@ -14660,17 +14660,17 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellRendererToggle inherits from GtkCellRenderer 
+ * NspGtkCellRendererToggle inherits from GtkCellRenderer 
  */
 
 int nsp_type_gtkcellrenderertoggle_id=0;
 NspTypeGtkCellRendererToggle *nsp_type_gtkcellrenderertoggle=NULL;
 
 /*
- * Type object for GtkCellRendererToggle 
+ * Type object for NspGtkCellRendererToggle 
  * all the instance of NspTypeGtkCellRendererToggle share the same id. 
  * nsp_type_gtkcellrenderertoggle: is an instance of NspTypeGtkCellRendererToggle 
- *    used for objects of GtkCellRendererToggle type (i.e built with new_gtkcellrenderertoggle) 
+ *    used for objects of NspGtkCellRendererToggle type (i.e built with new_gtkcellrenderertoggle) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
@@ -14699,8 +14699,8 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
   
   /* object methods redefined for gtkcellrenderertoggle */ 
 
-  top->s_type =  (s_type_func *) gtkcellrenderertoggle_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellrenderertoggle_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellrenderertoggle_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellrenderertoggle_type_short_string;
   /* top->create = (create_func*) int_gtkcellrenderertoggle_create;*/ 
   
   /* specific methods for gtkcellrenderertoggle */
@@ -14708,7 +14708,7 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
   type->init = (init_func *) init_gtkcellrenderertoggle;
 
   /* 
-   * GtkCellRendererToggle interfaces can be added here 
+   * NspGtkCellRendererToggle interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -14734,7 +14734,7 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
 }
 
 /*
- * initialize GtkCellRendererToggle instances 
+ * initialize NspGtkCellRendererToggle instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -14749,7 +14749,7 @@ static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *Obj,NspTypeGtkCe
 }
 
 /*
- * new instance of GtkCellRendererToggle 
+ * new instance of NspGtkCellRendererToggle 
  */
 
 NspGtkCellRendererToggle *new_gtkcellrenderertoggle() 
@@ -14764,7 +14764,7 @@ NspGtkCellRendererToggle *new_gtkcellrenderertoggle()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellRendererToggle 
+ * Object method redefined for NspGtkCellRendererToggle 
  *-----------------------------------------------*/
 
 /*
@@ -14774,23 +14774,23 @@ NspGtkCellRendererToggle *new_gtkcellrenderertoggle()
 static char gtkcellrenderertoggle_type_name[]="GtkCellRendererToggle";
 static char gtkcellrenderertoggle_short_type_name[]="GtkCellRendererToggle";
 
-static char *gtkcellrenderertoggle_type_as_string(void)
+static char *nsp_gtkcellrenderertoggle_type_as_string(void)
 {
   return(gtkcellrenderertoggle_type_name);
 }
 
-static char *gtkcellrenderertoggle_type_short_string(NspObject *v)
+static char *nsp_gtkcellrenderertoggle_type_short_string(NspObject *v)
 {
   return(gtkcellrenderertoggle_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellRendererToggle objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellRendererToggle objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellRendererToggle   *gtkcellrenderertoggle_object(NspObject *O)
+NspGtkCellRendererToggle *nsp_gtkcellrenderertoggle_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -14820,7 +14820,7 @@ NspGtkCellRendererToggle  *GetGtkCellRendererToggleCopy(Stack stack, int i)
 NspGtkCellRendererToggle  *GetGtkCellRendererToggle(Stack stack, int i)
 {
   NspGtkCellRendererToggle *M;
-  if (( M = gtkcellrenderertoggle_object(NthObj(i))) == NULLGTKCELLRENDERERTOGGLE)
+  if (( M = nsp_gtkcellrenderertoggle_object(NthObj(i))) == NULLGTKCELLRENDERERTOGGLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -14904,7 +14904,7 @@ static NspMethods *gtkcellrenderertoggle_get_methods(void) { return gtkcellrende
 static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCellView ----------- */
+/* ----------- NspGtkCellView ----------- */
 
 
 #include "nsp/object.h"
@@ -14913,7 +14913,7 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCellView inherits from GtkWidget 
+ * NspGtkCellView inherits from GtkWidget 
  * and implements  GtkCellLayout
  */
 
@@ -14921,10 +14921,10 @@ int nsp_type_gtkcellview_id=0;
 NspTypeGtkCellView *nsp_type_gtkcellview=NULL;
 
 /*
- * Type object for GtkCellView 
+ * Type object for NspGtkCellView 
  * all the instance of NspTypeGtkCellView share the same id. 
  * nsp_type_gtkcellview: is an instance of NspTypeGtkCellView 
- *    used for objects of GtkCellView type (i.e built with new_gtkcellview) 
+ *    used for objects of NspGtkCellView type (i.e built with new_gtkcellview) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
@@ -14953,8 +14953,8 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
   
   /* object methods redefined for gtkcellview */ 
 
-  top->s_type =  (s_type_func *) gtkcellview_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcellview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcellview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcellview_type_short_string;
   /* top->create = (create_func*) int_gtkcellview_create;*/ 
   
   /* specific methods for gtkcellview */
@@ -14962,7 +14962,7 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
   type->init = (init_func *) init_gtkcellview;
 
   /* 
-   * GtkCellView interfaces can be added here 
+   * NspGtkCellView interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -14989,7 +14989,7 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
 }
 
 /*
- * initialize GtkCellView instances 
+ * initialize NspGtkCellView instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -15004,7 +15004,7 @@ static int init_gtkcellview(NspGtkCellView *Obj,NspTypeGtkCellView *type)
 }
 
 /*
- * new instance of GtkCellView 
+ * new instance of NspGtkCellView 
  */
 
 NspGtkCellView *new_gtkcellview() 
@@ -15019,7 +15019,7 @@ NspGtkCellView *new_gtkcellview()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCellView 
+ * Object method redefined for NspGtkCellView 
  *-----------------------------------------------*/
 
 /*
@@ -15029,23 +15029,23 @@ NspGtkCellView *new_gtkcellview()
 static char gtkcellview_type_name[]="GtkCellView";
 static char gtkcellview_short_type_name[]="GtkCellView";
 
-static char *gtkcellview_type_as_string(void)
+static char *nsp_gtkcellview_type_as_string(void)
 {
   return(gtkcellview_type_name);
 }
 
-static char *gtkcellview_type_short_string(NspObject *v)
+static char *nsp_gtkcellview_type_short_string(NspObject *v)
 {
   return(gtkcellview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCellView objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCellView objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCellView   *gtkcellview_object(NspObject *O)
+NspGtkCellView *nsp_gtkcellview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -15075,7 +15075,7 @@ NspGtkCellView  *GetGtkCellViewCopy(Stack stack, int i)
 NspGtkCellView  *GetGtkCellView(Stack stack, int i)
 {
   NspGtkCellView *M;
-  if (( M = gtkcellview_object(NthObj(i))) == NULLGTKCELLVIEW)
+  if (( M = nsp_gtkcellview_object(NthObj(i))) == NULLGTKCELLVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -15265,7 +15265,7 @@ static NspMethods *gtkcellview_get_methods(void) { return gtkcellview_methods;};
 static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCheckButton ----------- */
+/* ----------- NspGtkCheckButton ----------- */
 
 
 #include "nsp/object.h"
@@ -15274,17 +15274,17 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCheckButton inherits from GtkToggleButton 
+ * NspGtkCheckButton inherits from GtkToggleButton 
  */
 
 int nsp_type_gtkcheckbutton_id=0;
 NspTypeGtkCheckButton *nsp_type_gtkcheckbutton=NULL;
 
 /*
- * Type object for GtkCheckButton 
+ * Type object for NspGtkCheckButton 
  * all the instance of NspTypeGtkCheckButton share the same id. 
  * nsp_type_gtkcheckbutton: is an instance of NspTypeGtkCheckButton 
- *    used for objects of GtkCheckButton type (i.e built with new_gtkcheckbutton) 
+ *    used for objects of NspGtkCheckButton type (i.e built with new_gtkcheckbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
@@ -15313,8 +15313,8 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
   
   /* object methods redefined for gtkcheckbutton */ 
 
-  top->s_type =  (s_type_func *) gtkcheckbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcheckbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcheckbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcheckbutton_type_short_string;
   /* top->create = (create_func*) int_gtkcheckbutton_create;*/ 
   
   /* specific methods for gtkcheckbutton */
@@ -15322,7 +15322,7 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
   type->init = (init_func *) init_gtkcheckbutton;
 
   /* 
-   * GtkCheckButton interfaces can be added here 
+   * NspGtkCheckButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -15348,7 +15348,7 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
 }
 
 /*
- * initialize GtkCheckButton instances 
+ * initialize NspGtkCheckButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -15363,7 +15363,7 @@ static int init_gtkcheckbutton(NspGtkCheckButton *Obj,NspTypeGtkCheckButton *typ
 }
 
 /*
- * new instance of GtkCheckButton 
+ * new instance of NspGtkCheckButton 
  */
 
 NspGtkCheckButton *new_gtkcheckbutton() 
@@ -15378,7 +15378,7 @@ NspGtkCheckButton *new_gtkcheckbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCheckButton 
+ * Object method redefined for NspGtkCheckButton 
  *-----------------------------------------------*/
 
 /*
@@ -15388,23 +15388,23 @@ NspGtkCheckButton *new_gtkcheckbutton()
 static char gtkcheckbutton_type_name[]="GtkCheckButton";
 static char gtkcheckbutton_short_type_name[]="GtkCheckButton";
 
-static char *gtkcheckbutton_type_as_string(void)
+static char *nsp_gtkcheckbutton_type_as_string(void)
 {
   return(gtkcheckbutton_type_name);
 }
 
-static char *gtkcheckbutton_type_short_string(NspObject *v)
+static char *nsp_gtkcheckbutton_type_short_string(NspObject *v)
 {
   return(gtkcheckbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCheckButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCheckButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCheckButton   *gtkcheckbutton_object(NspObject *O)
+NspGtkCheckButton *nsp_gtkcheckbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -15434,7 +15434,7 @@ NspGtkCheckButton  *GetGtkCheckButtonCopy(Stack stack, int i)
 NspGtkCheckButton  *GetGtkCheckButton(Stack stack, int i)
 {
   NspGtkCheckButton *M;
-  if (( M = gtkcheckbutton_object(NthObj(i))) == NULLGTKCHECKBUTTON)
+  if (( M = nsp_gtkcheckbutton_object(NthObj(i))) == NULLGTKCHECKBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -15495,7 +15495,7 @@ static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
 static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkCheckMenuItem ----------- */
+/* ----------- NspGtkCheckMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -15504,17 +15504,17 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCheckMenuItem inherits from GtkMenuItem 
+ * NspGtkCheckMenuItem inherits from GtkMenuItem 
  */
 
 int nsp_type_gtkcheckmenuitem_id=0;
 NspTypeGtkCheckMenuItem *nsp_type_gtkcheckmenuitem=NULL;
 
 /*
- * Type object for GtkCheckMenuItem 
+ * Type object for NspGtkCheckMenuItem 
  * all the instance of NspTypeGtkCheckMenuItem share the same id. 
  * nsp_type_gtkcheckmenuitem: is an instance of NspTypeGtkCheckMenuItem 
- *    used for objects of GtkCheckMenuItem type (i.e built with new_gtkcheckmenuitem) 
+ *    used for objects of NspGtkCheckMenuItem type (i.e built with new_gtkcheckmenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
@@ -15543,8 +15543,8 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
   
   /* object methods redefined for gtkcheckmenuitem */ 
 
-  top->s_type =  (s_type_func *) gtkcheckmenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcheckmenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcheckmenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcheckmenuitem_type_short_string;
   /* top->create = (create_func*) int_gtkcheckmenuitem_create;*/ 
   
   /* specific methods for gtkcheckmenuitem */
@@ -15552,7 +15552,7 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
   type->init = (init_func *) init_gtkcheckmenuitem;
 
   /* 
-   * GtkCheckMenuItem interfaces can be added here 
+   * NspGtkCheckMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -15578,7 +15578,7 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkCheckMenuItem instances 
+ * initialize NspGtkCheckMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -15593,7 +15593,7 @@ static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *Obj,NspTypeGtkCheckMenuIte
 }
 
 /*
- * new instance of GtkCheckMenuItem 
+ * new instance of NspGtkCheckMenuItem 
  */
 
 NspGtkCheckMenuItem *new_gtkcheckmenuitem() 
@@ -15608,7 +15608,7 @@ NspGtkCheckMenuItem *new_gtkcheckmenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCheckMenuItem 
+ * Object method redefined for NspGtkCheckMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -15618,23 +15618,23 @@ NspGtkCheckMenuItem *new_gtkcheckmenuitem()
 static char gtkcheckmenuitem_type_name[]="GtkCheckMenuItem";
 static char gtkcheckmenuitem_short_type_name[]="GtkCheckMenuItem";
 
-static char *gtkcheckmenuitem_type_as_string(void)
+static char *nsp_gtkcheckmenuitem_type_as_string(void)
 {
   return(gtkcheckmenuitem_type_name);
 }
 
-static char *gtkcheckmenuitem_type_short_string(NspObject *v)
+static char *nsp_gtkcheckmenuitem_type_short_string(NspObject *v)
 {
   return(gtkcheckmenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCheckMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCheckMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCheckMenuItem   *gtkcheckmenuitem_object(NspObject *O)
+NspGtkCheckMenuItem *nsp_gtkcheckmenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -15664,7 +15664,7 @@ NspGtkCheckMenuItem  *GetGtkCheckMenuItemCopy(Stack stack, int i)
 NspGtkCheckMenuItem  *GetGtkCheckMenuItem(Stack stack, int i)
 {
   NspGtkCheckMenuItem *M;
-  if (( M = gtkcheckmenuitem_object(NthObj(i))) == NULLGTKCHECKMENUITEM)
+  if (( M = nsp_gtkcheckmenuitem_object(NthObj(i))) == NULLGTKCHECKMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -15823,7 +15823,7 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 
 
 
-/* ----------- GtkColorButton ----------- */
+/* ----------- NspGtkColorButton ----------- */
 
 
 #include "nsp/object.h"
@@ -15832,17 +15832,17 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkColorButton inherits from GtkButton 
+ * NspGtkColorButton inherits from GtkButton 
  */
 
 int nsp_type_gtkcolorbutton_id=0;
 NspTypeGtkColorButton *nsp_type_gtkcolorbutton=NULL;
 
 /*
- * Type object for GtkColorButton 
+ * Type object for NspGtkColorButton 
  * all the instance of NspTypeGtkColorButton share the same id. 
  * nsp_type_gtkcolorbutton: is an instance of NspTypeGtkColorButton 
- *    used for objects of GtkColorButton type (i.e built with new_gtkcolorbutton) 
+ *    used for objects of NspGtkColorButton type (i.e built with new_gtkcolorbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
@@ -15871,8 +15871,8 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
   
   /* object methods redefined for gtkcolorbutton */ 
 
-  top->s_type =  (s_type_func *) gtkcolorbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcolorbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcolorbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcolorbutton_type_short_string;
   /* top->create = (create_func*) int_gtkcolorbutton_create;*/ 
   
   /* specific methods for gtkcolorbutton */
@@ -15880,7 +15880,7 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
   type->init = (init_func *) init_gtkcolorbutton;
 
   /* 
-   * GtkColorButton interfaces can be added here 
+   * NspGtkColorButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -15906,7 +15906,7 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
 }
 
 /*
- * initialize GtkColorButton instances 
+ * initialize NspGtkColorButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -15921,7 +15921,7 @@ static int init_gtkcolorbutton(NspGtkColorButton *Obj,NspTypeGtkColorButton *typ
 }
 
 /*
- * new instance of GtkColorButton 
+ * new instance of NspGtkColorButton 
  */
 
 NspGtkColorButton *new_gtkcolorbutton() 
@@ -15936,7 +15936,7 @@ NspGtkColorButton *new_gtkcolorbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkColorButton 
+ * Object method redefined for NspGtkColorButton 
  *-----------------------------------------------*/
 
 /*
@@ -15946,23 +15946,23 @@ NspGtkColorButton *new_gtkcolorbutton()
 static char gtkcolorbutton_type_name[]="GtkColorButton";
 static char gtkcolorbutton_short_type_name[]="GtkColorButton";
 
-static char *gtkcolorbutton_type_as_string(void)
+static char *nsp_gtkcolorbutton_type_as_string(void)
 {
   return(gtkcolorbutton_type_name);
 }
 
-static char *gtkcolorbutton_type_short_string(NspObject *v)
+static char *nsp_gtkcolorbutton_type_short_string(NspObject *v)
 {
   return(gtkcolorbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkColorButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkColorButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkColorButton   *gtkcolorbutton_object(NspObject *O)
+NspGtkColorButton *nsp_gtkcolorbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -15992,7 +15992,7 @@ NspGtkColorButton  *GetGtkColorButtonCopy(Stack stack, int i)
 NspGtkColorButton  *GetGtkColorButton(Stack stack, int i)
 {
   NspGtkColorButton *M;
-  if (( M = gtkcolorbutton_object(NthObj(i))) == NULLGTKCOLORBUTTON)
+  if (( M = nsp_gtkcolorbutton_object(NthObj(i))) == NULLGTKCOLORBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -16020,7 +16020,7 @@ static NspMethods *gtkcolorbutton_get_methods(void) { return NULL;};
 static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkColorSelection ----------- */
+/* ----------- NspGtkColorSelection ----------- */
 
 
 #include "nsp/object.h"
@@ -16029,17 +16029,17 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkColorSelection inherits from GtkVBox 
+ * NspGtkColorSelection inherits from GtkVBox 
  */
 
 int nsp_type_gtkcolorselection_id=0;
 NspTypeGtkColorSelection *nsp_type_gtkcolorselection=NULL;
 
 /*
- * Type object for GtkColorSelection 
+ * Type object for NspGtkColorSelection 
  * all the instance of NspTypeGtkColorSelection share the same id. 
  * nsp_type_gtkcolorselection: is an instance of NspTypeGtkColorSelection 
- *    used for objects of GtkColorSelection type (i.e built with new_gtkcolorselection) 
+ *    used for objects of NspGtkColorSelection type (i.e built with new_gtkcolorselection) 
  * other instances are used for derived classes 
  */
 NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
@@ -16068,8 +16068,8 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
   
   /* object methods redefined for gtkcolorselection */ 
 
-  top->s_type =  (s_type_func *) gtkcolorselection_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcolorselection_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcolorselection_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcolorselection_type_short_string;
   /* top->create = (create_func*) int_gtkcolorselection_create;*/ 
   
   /* specific methods for gtkcolorselection */
@@ -16077,7 +16077,7 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
   type->init = (init_func *) init_gtkcolorselection;
 
   /* 
-   * GtkColorSelection interfaces can be added here 
+   * NspGtkColorSelection interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -16103,7 +16103,7 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
 }
 
 /*
- * initialize GtkColorSelection instances 
+ * initialize NspGtkColorSelection instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -16118,7 +16118,7 @@ static int init_gtkcolorselection(NspGtkColorSelection *Obj,NspTypeGtkColorSelec
 }
 
 /*
- * new instance of GtkColorSelection 
+ * new instance of NspGtkColorSelection 
  */
 
 NspGtkColorSelection *new_gtkcolorselection() 
@@ -16133,7 +16133,7 @@ NspGtkColorSelection *new_gtkcolorselection()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkColorSelection 
+ * Object method redefined for NspGtkColorSelection 
  *-----------------------------------------------*/
 
 /*
@@ -16143,23 +16143,23 @@ NspGtkColorSelection *new_gtkcolorselection()
 static char gtkcolorselection_type_name[]="GtkColorSelection";
 static char gtkcolorselection_short_type_name[]="GtkColorSelection";
 
-static char *gtkcolorselection_type_as_string(void)
+static char *nsp_gtkcolorselection_type_as_string(void)
 {
   return(gtkcolorselection_type_name);
 }
 
-static char *gtkcolorselection_type_short_string(NspObject *v)
+static char *nsp_gtkcolorselection_type_short_string(NspObject *v)
 {
   return(gtkcolorselection_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkColorSelection objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkColorSelection objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkColorSelection   *gtkcolorselection_object(NspObject *O)
+NspGtkColorSelection *nsp_gtkcolorselection_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -16189,7 +16189,7 @@ NspGtkColorSelection  *GetGtkColorSelectionCopy(Stack stack, int i)
 NspGtkColorSelection  *GetGtkColorSelection(Stack stack, int i)
 {
   NspGtkColorSelection *M;
-  if (( M = gtkcolorselection_object(NthObj(i))) == NULLGTKCOLORSELECTION)
+  if (( M = nsp_gtkcolorselection_object(NthObj(i))) == NULLGTKCOLORSELECTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -16452,7 +16452,7 @@ static NspMethods *gtkcolorselection_get_methods(void) { return gtkcolorselectio
 static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkColorSelectionDialog ----------- */
+/* ----------- NspGtkColorSelectionDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -16461,17 +16461,17 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkColorSelectionDialog inherits from GtkDialog 
+ * NspGtkColorSelectionDialog inherits from GtkDialog 
  */
 
 int nsp_type_gtkcolorselectiondialog_id=0;
 NspTypeGtkColorSelectionDialog *nsp_type_gtkcolorselectiondialog=NULL;
 
 /*
- * Type object for GtkColorSelectionDialog 
+ * Type object for NspGtkColorSelectionDialog 
  * all the instance of NspTypeGtkColorSelectionDialog share the same id. 
  * nsp_type_gtkcolorselectiondialog: is an instance of NspTypeGtkColorSelectionDialog 
- *    used for objects of GtkColorSelectionDialog type (i.e built with new_gtkcolorselectiondialog) 
+ *    used for objects of NspGtkColorSelectionDialog type (i.e built with new_gtkcolorselectiondialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
@@ -16500,8 +16500,8 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
   
   /* object methods redefined for gtkcolorselectiondialog */ 
 
-  top->s_type =  (s_type_func *) gtkcolorselectiondialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcolorselectiondialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcolorselectiondialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcolorselectiondialog_type_short_string;
   /* top->create = (create_func*) int_gtkcolorselectiondialog_create;*/ 
   
   /* specific methods for gtkcolorselectiondialog */
@@ -16509,7 +16509,7 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
   type->init = (init_func *) init_gtkcolorselectiondialog;
 
   /* 
-   * GtkColorSelectionDialog interfaces can be added here 
+   * NspGtkColorSelectionDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -16535,7 +16535,7 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
 }
 
 /*
- * initialize GtkColorSelectionDialog instances 
+ * initialize NspGtkColorSelectionDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -16550,7 +16550,7 @@ static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *Obj,NspTypeG
 }
 
 /*
- * new instance of GtkColorSelectionDialog 
+ * new instance of NspGtkColorSelectionDialog 
  */
 
 NspGtkColorSelectionDialog *new_gtkcolorselectiondialog() 
@@ -16565,7 +16565,7 @@ NspGtkColorSelectionDialog *new_gtkcolorselectiondialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkColorSelectionDialog 
+ * Object method redefined for NspGtkColorSelectionDialog 
  *-----------------------------------------------*/
 
 /*
@@ -16575,23 +16575,23 @@ NspGtkColorSelectionDialog *new_gtkcolorselectiondialog()
 static char gtkcolorselectiondialog_type_name[]="GtkColorSelectionDialog";
 static char gtkcolorselectiondialog_short_type_name[]="GtkColorSelectionDialog";
 
-static char *gtkcolorselectiondialog_type_as_string(void)
+static char *nsp_gtkcolorselectiondialog_type_as_string(void)
 {
   return(gtkcolorselectiondialog_type_name);
 }
 
-static char *gtkcolorselectiondialog_type_short_string(NspObject *v)
+static char *nsp_gtkcolorselectiondialog_type_short_string(NspObject *v)
 {
   return(gtkcolorselectiondialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkColorSelectionDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkColorSelectionDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkColorSelectionDialog   *gtkcolorselectiondialog_object(NspObject *O)
+NspGtkColorSelectionDialog *nsp_gtkcolorselectiondialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -16621,7 +16621,7 @@ NspGtkColorSelectionDialog  *GetGtkColorSelectionDialogCopy(Stack stack, int i)
 NspGtkColorSelectionDialog  *GetGtkColorSelectionDialog(Stack stack, int i)
 {
   NspGtkColorSelectionDialog *M;
-  if (( M = gtkcolorselectiondialog_object(NthObj(i))) == NULLGTKCOLORSELECTIONDIALOG)
+  if (( M = nsp_gtkcolorselectiondialog_object(NthObj(i))) == NULLGTKCOLORSELECTIONDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -16705,7 +16705,7 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 
 
 
-/* ----------- GtkCombo ----------- */
+/* ----------- NspGtkCombo ----------- */
 
 
 #include "nsp/object.h"
@@ -16714,17 +16714,17 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCombo inherits from GtkHBox 
+ * NspGtkCombo inherits from GtkHBox 
  */
 
 int nsp_type_gtkcombo_id=0;
 NspTypeGtkCombo *nsp_type_gtkcombo=NULL;
 
 /*
- * Type object for GtkCombo 
+ * Type object for NspGtkCombo 
  * all the instance of NspTypeGtkCombo share the same id. 
  * nsp_type_gtkcombo: is an instance of NspTypeGtkCombo 
- *    used for objects of GtkCombo type (i.e built with new_gtkcombo) 
+ *    used for objects of NspGtkCombo type (i.e built with new_gtkcombo) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
@@ -16753,8 +16753,8 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
   
   /* object methods redefined for gtkcombo */ 
 
-  top->s_type =  (s_type_func *) gtkcombo_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcombo_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcombo_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcombo_type_short_string;
   /* top->create = (create_func*) int_gtkcombo_create;*/ 
   
   /* specific methods for gtkcombo */
@@ -16762,7 +16762,7 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
   type->init = (init_func *) init_gtkcombo;
 
   /* 
-   * GtkCombo interfaces can be added here 
+   * NspGtkCombo interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -16788,7 +16788,7 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
 }
 
 /*
- * initialize GtkCombo instances 
+ * initialize NspGtkCombo instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -16803,7 +16803,7 @@ static int init_gtkcombo(NspGtkCombo *Obj,NspTypeGtkCombo *type)
 }
 
 /*
- * new instance of GtkCombo 
+ * new instance of NspGtkCombo 
  */
 
 NspGtkCombo *new_gtkcombo() 
@@ -16818,7 +16818,7 @@ NspGtkCombo *new_gtkcombo()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCombo 
+ * Object method redefined for NspGtkCombo 
  *-----------------------------------------------*/
 
 /*
@@ -16828,23 +16828,23 @@ NspGtkCombo *new_gtkcombo()
 static char gtkcombo_type_name[]="GtkCombo";
 static char gtkcombo_short_type_name[]="GtkCombo";
 
-static char *gtkcombo_type_as_string(void)
+static char *nsp_gtkcombo_type_as_string(void)
 {
   return(gtkcombo_type_name);
 }
 
-static char *gtkcombo_type_short_string(NspObject *v)
+static char *nsp_gtkcombo_type_short_string(NspObject *v)
 {
   return(gtkcombo_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCombo objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCombo objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCombo   *gtkcombo_object(NspObject *O)
+NspGtkCombo *nsp_gtkcombo_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -16874,7 +16874,7 @@ NspGtkCombo  *GetGtkComboCopy(Stack stack, int i)
 NspGtkCombo  *GetGtkCombo(Stack stack, int i)
 {
   NspGtkCombo *M;
-  if (( M = gtkcombo_object(NthObj(i))) == NULLGTKCOMBO)
+  if (( M = nsp_gtkcombo_object(NthObj(i))) == NULLGTKCOMBO)
      ArgMessage(stack,i);
   return M;
 }
@@ -17012,7 +17012,7 @@ static AttrTab gtkcombo_attrs[] = {
 
 
 
-/* ----------- GtkComboBox ----------- */
+/* ----------- NspGtkComboBox ----------- */
 
 
 #include "nsp/object.h"
@@ -17021,7 +17021,7 @@ static AttrTab gtkcombo_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkComboBox inherits from GtkBin 
+ * NspGtkComboBox inherits from GtkBin 
  * and implements  GtkCellLayout
  */
 
@@ -17029,10 +17029,10 @@ int nsp_type_gtkcombobox_id=0;
 NspTypeGtkComboBox *nsp_type_gtkcombobox=NULL;
 
 /*
- * Type object for GtkComboBox 
+ * Type object for NspGtkComboBox 
  * all the instance of NspTypeGtkComboBox share the same id. 
  * nsp_type_gtkcombobox: is an instance of NspTypeGtkComboBox 
- *    used for objects of GtkComboBox type (i.e built with new_gtkcombobox) 
+ *    used for objects of NspGtkComboBox type (i.e built with new_gtkcombobox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
@@ -17061,8 +17061,8 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
   
   /* object methods redefined for gtkcombobox */ 
 
-  top->s_type =  (s_type_func *) gtkcombobox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcombobox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcombobox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcombobox_type_short_string;
   /* top->create = (create_func*) int_gtkcombobox_create;*/ 
   
   /* specific methods for gtkcombobox */
@@ -17070,7 +17070,7 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
   type->init = (init_func *) init_gtkcombobox;
 
   /* 
-   * GtkComboBox interfaces can be added here 
+   * NspGtkComboBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -17097,7 +17097,7 @@ NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
 }
 
 /*
- * initialize GtkComboBox instances 
+ * initialize NspGtkComboBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -17112,7 +17112,7 @@ static int init_gtkcombobox(NspGtkComboBox *Obj,NspTypeGtkComboBox *type)
 }
 
 /*
- * new instance of GtkComboBox 
+ * new instance of NspGtkComboBox 
  */
 
 NspGtkComboBox *new_gtkcombobox() 
@@ -17127,7 +17127,7 @@ NspGtkComboBox *new_gtkcombobox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkComboBox 
+ * Object method redefined for NspGtkComboBox 
  *-----------------------------------------------*/
 
 /*
@@ -17137,23 +17137,23 @@ NspGtkComboBox *new_gtkcombobox()
 static char gtkcombobox_type_name[]="GtkComboBox";
 static char gtkcombobox_short_type_name[]="GtkComboBox";
 
-static char *gtkcombobox_type_as_string(void)
+static char *nsp_gtkcombobox_type_as_string(void)
 {
   return(gtkcombobox_type_name);
 }
 
-static char *gtkcombobox_type_short_string(NspObject *v)
+static char *nsp_gtkcombobox_type_short_string(NspObject *v)
 {
   return(gtkcombobox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkComboBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkComboBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkComboBox   *gtkcombobox_object(NspObject *O)
+NspGtkComboBox *nsp_gtkcombobox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -17183,7 +17183,7 @@ NspGtkComboBox  *GetGtkComboBoxCopy(Stack stack, int i)
 NspGtkComboBox  *GetGtkComboBox(Stack stack, int i)
 {
   NspGtkComboBox *M;
-  if (( M = gtkcombobox_object(NthObj(i))) == NULLGTKCOMBOBOX)
+  if (( M = nsp_gtkcombobox_object(NthObj(i))) == NULLGTKCOMBOBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -17525,7 +17525,7 @@ static NspMethods *gtkcombobox_get_methods(void) { return gtkcombobox_methods;};
 static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkComboBoxEntry ----------- */
+/* ----------- NspGtkComboBoxEntry ----------- */
 
 
 #include "nsp/object.h"
@@ -17534,7 +17534,7 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkComboBoxEntry inherits from GtkComboBox 
+ * NspGtkComboBoxEntry inherits from GtkComboBox 
  * and implements  GtkCellLayout
  */
 
@@ -17542,10 +17542,10 @@ int nsp_type_gtkcomboboxentry_id=0;
 NspTypeGtkComboBoxEntry *nsp_type_gtkcomboboxentry=NULL;
 
 /*
- * Type object for GtkComboBoxEntry 
+ * Type object for NspGtkComboBoxEntry 
  * all the instance of NspTypeGtkComboBoxEntry share the same id. 
  * nsp_type_gtkcomboboxentry: is an instance of NspTypeGtkComboBoxEntry 
- *    used for objects of GtkComboBoxEntry type (i.e built with new_gtkcomboboxentry) 
+ *    used for objects of NspGtkComboBoxEntry type (i.e built with new_gtkcomboboxentry) 
  * other instances are used for derived classes 
  */
 NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
@@ -17574,8 +17574,8 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
   
   /* object methods redefined for gtkcomboboxentry */ 
 
-  top->s_type =  (s_type_func *) gtkcomboboxentry_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcomboboxentry_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcomboboxentry_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcomboboxentry_type_short_string;
   /* top->create = (create_func*) int_gtkcomboboxentry_create;*/ 
   
   /* specific methods for gtkcomboboxentry */
@@ -17583,7 +17583,7 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
   type->init = (init_func *) init_gtkcomboboxentry;
 
   /* 
-   * GtkComboBoxEntry interfaces can be added here 
+   * NspGtkComboBoxEntry interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -17610,7 +17610,7 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
 }
 
 /*
- * initialize GtkComboBoxEntry instances 
+ * initialize NspGtkComboBoxEntry instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -17625,7 +17625,7 @@ static int init_gtkcomboboxentry(NspGtkComboBoxEntry *Obj,NspTypeGtkComboBoxEntr
 }
 
 /*
- * new instance of GtkComboBoxEntry 
+ * new instance of NspGtkComboBoxEntry 
  */
 
 NspGtkComboBoxEntry *new_gtkcomboboxentry() 
@@ -17640,7 +17640,7 @@ NspGtkComboBoxEntry *new_gtkcomboboxentry()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkComboBoxEntry 
+ * Object method redefined for NspGtkComboBoxEntry 
  *-----------------------------------------------*/
 
 /*
@@ -17650,23 +17650,23 @@ NspGtkComboBoxEntry *new_gtkcomboboxentry()
 static char gtkcomboboxentry_type_name[]="GtkComboBoxEntry";
 static char gtkcomboboxentry_short_type_name[]="GtkComboBoxEntry";
 
-static char *gtkcomboboxentry_type_as_string(void)
+static char *nsp_gtkcomboboxentry_type_as_string(void)
 {
   return(gtkcomboboxentry_type_name);
 }
 
-static char *gtkcomboboxentry_type_short_string(NspObject *v)
+static char *nsp_gtkcomboboxentry_type_short_string(NspObject *v)
 {
   return(gtkcomboboxentry_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkComboBoxEntry objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkComboBoxEntry objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkComboBoxEntry   *gtkcomboboxentry_object(NspObject *O)
+NspGtkComboBoxEntry *nsp_gtkcomboboxentry_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -17696,7 +17696,7 @@ NspGtkComboBoxEntry  *GetGtkComboBoxEntryCopy(Stack stack, int i)
 NspGtkComboBoxEntry  *GetGtkComboBoxEntry(Stack stack, int i)
 {
   NspGtkComboBoxEntry *M;
-  if (( M = gtkcomboboxentry_object(NthObj(i))) == NULLGTKCOMBOBOXENTRY)
+  if (( M = nsp_gtkcomboboxentry_object(NthObj(i))) == NULLGTKCOMBOBOXENTRY)
      ArgMessage(stack,i);
   return M;
 }
@@ -17796,7 +17796,7 @@ static NspMethods *gtkcomboboxentry_get_methods(void) { return gtkcomboboxentry_
 static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkContainer ----------- */
+/* ----------- NspGtkContainer ----------- */
 
 
 #include "nsp/object.h"
@@ -17805,17 +17805,17 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkContainer inherits from GtkWidget 
+ * NspGtkContainer inherits from GtkWidget 
  */
 
 int nsp_type_gtkcontainer_id=0;
 NspTypeGtkContainer *nsp_type_gtkcontainer=NULL;
 
 /*
- * Type object for GtkContainer 
+ * Type object for NspGtkContainer 
  * all the instance of NspTypeGtkContainer share the same id. 
  * nsp_type_gtkcontainer: is an instance of NspTypeGtkContainer 
- *    used for objects of GtkContainer type (i.e built with new_gtkcontainer) 
+ *    used for objects of NspGtkContainer type (i.e built with new_gtkcontainer) 
  * other instances are used for derived classes 
  */
 NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
@@ -17844,8 +17844,8 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
   
   /* object methods redefined for gtkcontainer */ 
 
-  top->s_type =  (s_type_func *) gtkcontainer_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcontainer_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcontainer_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcontainer_type_short_string;
   /* top->create = (create_func*) int_gtkcontainer_create;*/ 
   
   /* specific methods for gtkcontainer */
@@ -17853,7 +17853,7 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
   type->init = (init_func *) init_gtkcontainer;
 
   /* 
-   * GtkContainer interfaces can be added here 
+   * NspGtkContainer interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -17879,7 +17879,7 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
 }
 
 /*
- * initialize GtkContainer instances 
+ * initialize NspGtkContainer instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -17894,7 +17894,7 @@ static int init_gtkcontainer(NspGtkContainer *Obj,NspTypeGtkContainer *type)
 }
 
 /*
- * new instance of GtkContainer 
+ * new instance of NspGtkContainer 
  */
 
 NspGtkContainer *new_gtkcontainer() 
@@ -17909,7 +17909,7 @@ NspGtkContainer *new_gtkcontainer()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkContainer 
+ * Object method redefined for NspGtkContainer 
  *-----------------------------------------------*/
 
 /*
@@ -17919,23 +17919,23 @@ NspGtkContainer *new_gtkcontainer()
 static char gtkcontainer_type_name[]="GtkContainer";
 static char gtkcontainer_short_type_name[]="GtkContainer";
 
-static char *gtkcontainer_type_as_string(void)
+static char *nsp_gtkcontainer_type_as_string(void)
 {
   return(gtkcontainer_type_name);
 }
 
-static char *gtkcontainer_type_short_string(NspObject *v)
+static char *nsp_gtkcontainer_type_short_string(NspObject *v)
 {
   return(gtkcontainer_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkContainer objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkContainer objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkContainer   *gtkcontainer_object(NspObject *O)
+NspGtkContainer *nsp_gtkcontainer_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -17965,7 +17965,7 @@ NspGtkContainer  *GetGtkContainerCopy(Stack stack, int i)
 NspGtkContainer  *GetGtkContainer(Stack stack, int i)
 {
   NspGtkContainer *M;
-  if (( M = gtkcontainer_object(NthObj(i))) == NULLGTKCONTAINER)
+  if (( M = nsp_gtkcontainer_object(NthObj(i))) == NULLGTKCONTAINER)
      ArgMessage(stack,i);
   return M;
 }
@@ -18640,7 +18640,7 @@ static AttrTab gtkcontainer_attrs[] = {
 
 
 
-/* ----------- GtkCurve ----------- */
+/* ----------- NspGtkCurve ----------- */
 
 
 #include "nsp/object.h"
@@ -18649,17 +18649,17 @@ static AttrTab gtkcontainer_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkCurve inherits from GtkDrawingArea 
+ * NspGtkCurve inherits from GtkDrawingArea 
  */
 
 int nsp_type_gtkcurve_id=0;
 NspTypeGtkCurve *nsp_type_gtkcurve=NULL;
 
 /*
- * Type object for GtkCurve 
+ * Type object for NspGtkCurve 
  * all the instance of NspTypeGtkCurve share the same id. 
  * nsp_type_gtkcurve: is an instance of NspTypeGtkCurve 
- *    used for objects of GtkCurve type (i.e built with new_gtkcurve) 
+ *    used for objects of NspGtkCurve type (i.e built with new_gtkcurve) 
  * other instances are used for derived classes 
  */
 NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
@@ -18688,8 +18688,8 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
   
   /* object methods redefined for gtkcurve */ 
 
-  top->s_type =  (s_type_func *) gtkcurve_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkcurve_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkcurve_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkcurve_type_short_string;
   /* top->create = (create_func*) int_gtkcurve_create;*/ 
   
   /* specific methods for gtkcurve */
@@ -18697,7 +18697,7 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
   type->init = (init_func *) init_gtkcurve;
 
   /* 
-   * GtkCurve interfaces can be added here 
+   * NspGtkCurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -18723,7 +18723,7 @@ NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
 }
 
 /*
- * initialize GtkCurve instances 
+ * initialize NspGtkCurve instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -18738,7 +18738,7 @@ static int init_gtkcurve(NspGtkCurve *Obj,NspTypeGtkCurve *type)
 }
 
 /*
- * new instance of GtkCurve 
+ * new instance of NspGtkCurve 
  */
 
 NspGtkCurve *new_gtkcurve() 
@@ -18753,7 +18753,7 @@ NspGtkCurve *new_gtkcurve()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkCurve 
+ * Object method redefined for NspGtkCurve 
  *-----------------------------------------------*/
 
 /*
@@ -18763,23 +18763,23 @@ NspGtkCurve *new_gtkcurve()
 static char gtkcurve_type_name[]="GtkCurve";
 static char gtkcurve_short_type_name[]="GtkCurve";
 
-static char *gtkcurve_type_as_string(void)
+static char *nsp_gtkcurve_type_as_string(void)
 {
   return(gtkcurve_type_name);
 }
 
-static char *gtkcurve_type_short_string(NspObject *v)
+static char *nsp_gtkcurve_type_short_string(NspObject *v)
 {
   return(gtkcurve_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkCurve objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkCurve objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkCurve   *gtkcurve_object(NspObject *O)
+NspGtkCurve *nsp_gtkcurve_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -18809,7 +18809,7 @@ NspGtkCurve  *GetGtkCurveCopy(Stack stack, int i)
 NspGtkCurve  *GetGtkCurve(Stack stack, int i)
 {
   NspGtkCurve *M;
-  if (( M = gtkcurve_object(NthObj(i))) == NULLGTKCURVE)
+  if (( M = nsp_gtkcurve_object(NthObj(i))) == NULLGTKCURVE)
      ArgMessage(stack,i);
   return M;
 }
@@ -18939,7 +18939,7 @@ static NspMethods *gtkcurve_get_methods(void) { return gtkcurve_methods;};
 static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkDialog ----------- */
+/* ----------- NspGtkDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -18948,17 +18948,17 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkDialog inherits from GtkWindow 
+ * NspGtkDialog inherits from GtkWindow 
  */
 
 int nsp_type_gtkdialog_id=0;
 NspTypeGtkDialog *nsp_type_gtkdialog=NULL;
 
 /*
- * Type object for GtkDialog 
+ * Type object for NspGtkDialog 
  * all the instance of NspTypeGtkDialog share the same id. 
  * nsp_type_gtkdialog: is an instance of NspTypeGtkDialog 
- *    used for objects of GtkDialog type (i.e built with new_gtkdialog) 
+ *    used for objects of NspGtkDialog type (i.e built with new_gtkdialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
@@ -18987,8 +18987,8 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
   
   /* object methods redefined for gtkdialog */ 
 
-  top->s_type =  (s_type_func *) gtkdialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkdialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkdialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkdialog_type_short_string;
   /* top->create = (create_func*) int_gtkdialog_create;*/ 
   
   /* specific methods for gtkdialog */
@@ -18996,7 +18996,7 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
   type->init = (init_func *) init_gtkdialog;
 
   /* 
-   * GtkDialog interfaces can be added here 
+   * NspGtkDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -19022,7 +19022,7 @@ NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
 }
 
 /*
- * initialize GtkDialog instances 
+ * initialize NspGtkDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -19037,7 +19037,7 @@ static int init_gtkdialog(NspGtkDialog *Obj,NspTypeGtkDialog *type)
 }
 
 /*
- * new instance of GtkDialog 
+ * new instance of NspGtkDialog 
  */
 
 NspGtkDialog *new_gtkdialog() 
@@ -19052,7 +19052,7 @@ NspGtkDialog *new_gtkdialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkDialog 
+ * Object method redefined for NspGtkDialog 
  *-----------------------------------------------*/
 
 /*
@@ -19062,23 +19062,23 @@ NspGtkDialog *new_gtkdialog()
 static char gtkdialog_type_name[]="GtkDialog";
 static char gtkdialog_short_type_name[]="GtkDialog";
 
-static char *gtkdialog_type_as_string(void)
+static char *nsp_gtkdialog_type_as_string(void)
 {
   return(gtkdialog_type_name);
 }
 
-static char *gtkdialog_type_short_string(NspObject *v)
+static char *nsp_gtkdialog_type_short_string(NspObject *v)
 {
   return(gtkdialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkDialog   *gtkdialog_object(NspObject *O)
+NspGtkDialog *nsp_gtkdialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -19108,7 +19108,7 @@ NspGtkDialog  *GetGtkDialogCopy(Stack stack, int i)
 NspGtkDialog  *GetGtkDialog(Stack stack, int i)
 {
   NspGtkDialog *M;
-  if (( M = gtkdialog_object(NthObj(i))) == NULLGTKDIALOG)
+  if (( M = nsp_gtkdialog_object(NthObj(i))) == NULLGTKDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -19327,7 +19327,7 @@ static AttrTab gtkdialog_attrs[] = {
 
 
 
-/* ----------- GtkDrawingArea ----------- */
+/* ----------- NspGtkDrawingArea ----------- */
 
 
 #include "nsp/object.h"
@@ -19336,17 +19336,17 @@ static AttrTab gtkdialog_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkDrawingArea inherits from GtkWidget 
+ * NspGtkDrawingArea inherits from GtkWidget 
  */
 
 int nsp_type_gtkdrawingarea_id=0;
 NspTypeGtkDrawingArea *nsp_type_gtkdrawingarea=NULL;
 
 /*
- * Type object for GtkDrawingArea 
+ * Type object for NspGtkDrawingArea 
  * all the instance of NspTypeGtkDrawingArea share the same id. 
  * nsp_type_gtkdrawingarea: is an instance of NspTypeGtkDrawingArea 
- *    used for objects of GtkDrawingArea type (i.e built with new_gtkdrawingarea) 
+ *    used for objects of NspGtkDrawingArea type (i.e built with new_gtkdrawingarea) 
  * other instances are used for derived classes 
  */
 NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
@@ -19375,8 +19375,8 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
   
   /* object methods redefined for gtkdrawingarea */ 
 
-  top->s_type =  (s_type_func *) gtkdrawingarea_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkdrawingarea_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkdrawingarea_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkdrawingarea_type_short_string;
   /* top->create = (create_func*) int_gtkdrawingarea_create;*/ 
   
   /* specific methods for gtkdrawingarea */
@@ -19384,7 +19384,7 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
   type->init = (init_func *) init_gtkdrawingarea;
 
   /* 
-   * GtkDrawingArea interfaces can be added here 
+   * NspGtkDrawingArea interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -19410,7 +19410,7 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
 }
 
 /*
- * initialize GtkDrawingArea instances 
+ * initialize NspGtkDrawingArea instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -19425,7 +19425,7 @@ static int init_gtkdrawingarea(NspGtkDrawingArea *Obj,NspTypeGtkDrawingArea *typ
 }
 
 /*
- * new instance of GtkDrawingArea 
+ * new instance of NspGtkDrawingArea 
  */
 
 NspGtkDrawingArea *new_gtkdrawingarea() 
@@ -19440,7 +19440,7 @@ NspGtkDrawingArea *new_gtkdrawingarea()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkDrawingArea 
+ * Object method redefined for NspGtkDrawingArea 
  *-----------------------------------------------*/
 
 /*
@@ -19450,23 +19450,23 @@ NspGtkDrawingArea *new_gtkdrawingarea()
 static char gtkdrawingarea_type_name[]="GtkDrawingArea";
 static char gtkdrawingarea_short_type_name[]="GtkDrawingArea";
 
-static char *gtkdrawingarea_type_as_string(void)
+static char *nsp_gtkdrawingarea_type_as_string(void)
 {
   return(gtkdrawingarea_type_name);
 }
 
-static char *gtkdrawingarea_type_short_string(NspObject *v)
+static char *nsp_gtkdrawingarea_type_short_string(NspObject *v)
 {
   return(gtkdrawingarea_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkDrawingArea objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkDrawingArea objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkDrawingArea   *gtkdrawingarea_object(NspObject *O)
+NspGtkDrawingArea *nsp_gtkdrawingarea_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -19496,7 +19496,7 @@ NspGtkDrawingArea  *GetGtkDrawingAreaCopy(Stack stack, int i)
 NspGtkDrawingArea  *GetGtkDrawingArea(Stack stack, int i)
 {
   NspGtkDrawingArea *M;
-  if (( M = gtkdrawingarea_object(NthObj(i))) == NULLGTKDRAWINGAREA)
+  if (( M = nsp_gtkdrawingarea_object(NthObj(i))) == NULLGTKDRAWINGAREA)
      ArgMessage(stack,i);
   return M;
 }
@@ -19553,7 +19553,7 @@ static NspMethods *gtkdrawingarea_get_methods(void) { return gtkdrawingarea_meth
 static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkEntry ----------- */
+/* ----------- NspGtkEntry ----------- */
 
 
 #include "nsp/object.h"
@@ -19562,7 +19562,7 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkEntry inherits from GtkWidget 
+ * NspGtkEntry inherits from GtkWidget 
  * and implements  GtkEditable GtkCellEditable
  */
 
@@ -19570,10 +19570,10 @@ int nsp_type_gtkentry_id=0;
 NspTypeGtkEntry *nsp_type_gtkentry=NULL;
 
 /*
- * Type object for GtkEntry 
+ * Type object for NspGtkEntry 
  * all the instance of NspTypeGtkEntry share the same id. 
  * nsp_type_gtkentry: is an instance of NspTypeGtkEntry 
- *    used for objects of GtkEntry type (i.e built with new_gtkentry) 
+ *    used for objects of NspGtkEntry type (i.e built with new_gtkentry) 
  * other instances are used for derived classes 
  */
 NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
@@ -19602,8 +19602,8 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
   
   /* object methods redefined for gtkentry */ 
 
-  top->s_type =  (s_type_func *) gtkentry_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkentry_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkentry_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkentry_type_short_string;
   /* top->create = (create_func*) int_gtkentry_create;*/ 
   
   /* specific methods for gtkentry */
@@ -19611,7 +19611,7 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
   type->init = (init_func *) init_gtkentry;
 
   /* 
-   * GtkEntry interfaces can be added here 
+   * NspGtkEntry interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -19639,7 +19639,7 @@ NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
 }
 
 /*
- * initialize GtkEntry instances 
+ * initialize NspGtkEntry instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -19654,7 +19654,7 @@ static int init_gtkentry(NspGtkEntry *Obj,NspTypeGtkEntry *type)
 }
 
 /*
- * new instance of GtkEntry 
+ * new instance of NspGtkEntry 
  */
 
 NspGtkEntry *new_gtkentry() 
@@ -19669,7 +19669,7 @@ NspGtkEntry *new_gtkentry()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkEntry 
+ * Object method redefined for NspGtkEntry 
  *-----------------------------------------------*/
 
 /*
@@ -19679,23 +19679,23 @@ NspGtkEntry *new_gtkentry()
 static char gtkentry_type_name[]="GtkEntry";
 static char gtkentry_short_type_name[]="GtkEntry";
 
-static char *gtkentry_type_as_string(void)
+static char *nsp_gtkentry_type_as_string(void)
 {
   return(gtkentry_type_name);
 }
 
-static char *gtkentry_type_short_string(NspObject *v)
+static char *nsp_gtkentry_type_short_string(NspObject *v)
 {
   return(gtkentry_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkEntry objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkEntry objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkEntry   *gtkentry_object(NspObject *O)
+NspGtkEntry *nsp_gtkentry_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -19725,7 +19725,7 @@ NspGtkEntry  *GetGtkEntryCopy(Stack stack, int i)
 NspGtkEntry  *GetGtkEntry(Stack stack, int i)
 {
   NspGtkEntry *M;
-  if (( M = gtkentry_object(NthObj(i))) == NULLGTKENTRY)
+  if (( M = nsp_gtkentry_object(NthObj(i))) == NULLGTKENTRY)
      ArgMessage(stack,i);
   return M;
 }
@@ -20095,7 +20095,7 @@ static NspMethods *gtkentry_get_methods(void) { return gtkentry_methods;};
 static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkEntryCompletion ----------- */
+/* ----------- NspGtkEntryCompletion ----------- */
 
 
 #include "nsp/object.h"
@@ -20104,7 +20104,7 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkEntryCompletion inherits from GObject 
+ * NspGtkEntryCompletion inherits from GObject 
  * and implements  GtkCellLayout
  */
 
@@ -20112,10 +20112,10 @@ int nsp_type_gtkentrycompletion_id=0;
 NspTypeGtkEntryCompletion *nsp_type_gtkentrycompletion=NULL;
 
 /*
- * Type object for GtkEntryCompletion 
+ * Type object for NspGtkEntryCompletion 
  * all the instance of NspTypeGtkEntryCompletion share the same id. 
  * nsp_type_gtkentrycompletion: is an instance of NspTypeGtkEntryCompletion 
- *    used for objects of GtkEntryCompletion type (i.e built with new_gtkentrycompletion) 
+ *    used for objects of NspGtkEntryCompletion type (i.e built with new_gtkentrycompletion) 
  * other instances are used for derived classes 
  */
 NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
@@ -20144,8 +20144,8 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
   
   /* object methods redefined for gtkentrycompletion */ 
 
-  top->s_type =  (s_type_func *) gtkentrycompletion_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkentrycompletion_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkentrycompletion_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkentrycompletion_type_short_string;
   /* top->create = (create_func*) int_gtkentrycompletion_create;*/ 
   
   /* specific methods for gtkentrycompletion */
@@ -20153,7 +20153,7 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
   type->init = (init_func *) init_gtkentrycompletion;
 
   /* 
-   * GtkEntryCompletion interfaces can be added here 
+   * NspGtkEntryCompletion interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -20180,7 +20180,7 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
 }
 
 /*
- * initialize GtkEntryCompletion instances 
+ * initialize NspGtkEntryCompletion instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -20195,7 +20195,7 @@ static int init_gtkentrycompletion(NspGtkEntryCompletion *Obj,NspTypeGtkEntryCom
 }
 
 /*
- * new instance of GtkEntryCompletion 
+ * new instance of NspGtkEntryCompletion 
  */
 
 NspGtkEntryCompletion *new_gtkentrycompletion() 
@@ -20210,7 +20210,7 @@ NspGtkEntryCompletion *new_gtkentrycompletion()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkEntryCompletion 
+ * Object method redefined for NspGtkEntryCompletion 
  *-----------------------------------------------*/
 
 /*
@@ -20220,23 +20220,23 @@ NspGtkEntryCompletion *new_gtkentrycompletion()
 static char gtkentrycompletion_type_name[]="GtkEntryCompletion";
 static char gtkentrycompletion_short_type_name[]="GtkEntryCompletion";
 
-static char *gtkentrycompletion_type_as_string(void)
+static char *nsp_gtkentrycompletion_type_as_string(void)
 {
   return(gtkentrycompletion_type_name);
 }
 
-static char *gtkentrycompletion_type_short_string(NspObject *v)
+static char *nsp_gtkentrycompletion_type_short_string(NspObject *v)
 {
   return(gtkentrycompletion_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkEntryCompletion objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkEntryCompletion objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkEntryCompletion   *gtkentrycompletion_object(NspObject *O)
+NspGtkEntryCompletion *nsp_gtkentrycompletion_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -20266,7 +20266,7 @@ NspGtkEntryCompletion  *GetGtkEntryCompletionCopy(Stack stack, int i)
 NspGtkEntryCompletion  *GetGtkEntryCompletion(Stack stack, int i)
 {
   NspGtkEntryCompletion *M;
-  if (( M = gtkentrycompletion_object(NthObj(i))) == NULLGTKENTRYCOMPLETION)
+  if (( M = nsp_gtkentrycompletion_object(NthObj(i))) == NULLGTKENTRYCOMPLETION)
      ArgMessage(stack,i);
   return M;
 }
@@ -20518,7 +20518,7 @@ static NspMethods *gtkentrycompletion_get_methods(void) { return gtkentrycomplet
 static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkEventBox ----------- */
+/* ----------- NspGtkEventBox ----------- */
 
 
 #include "nsp/object.h"
@@ -20527,17 +20527,17 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkEventBox inherits from GtkBin 
+ * NspGtkEventBox inherits from GtkBin 
  */
 
 int nsp_type_gtkeventbox_id=0;
 NspTypeGtkEventBox *nsp_type_gtkeventbox=NULL;
 
 /*
- * Type object for GtkEventBox 
+ * Type object for NspGtkEventBox 
  * all the instance of NspTypeGtkEventBox share the same id. 
  * nsp_type_gtkeventbox: is an instance of NspTypeGtkEventBox 
- *    used for objects of GtkEventBox type (i.e built with new_gtkeventbox) 
+ *    used for objects of NspGtkEventBox type (i.e built with new_gtkeventbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
@@ -20566,8 +20566,8 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
   
   /* object methods redefined for gtkeventbox */ 
 
-  top->s_type =  (s_type_func *) gtkeventbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkeventbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkeventbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkeventbox_type_short_string;
   /* top->create = (create_func*) int_gtkeventbox_create;*/ 
   
   /* specific methods for gtkeventbox */
@@ -20575,7 +20575,7 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
   type->init = (init_func *) init_gtkeventbox;
 
   /* 
-   * GtkEventBox interfaces can be added here 
+   * NspGtkEventBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -20601,7 +20601,7 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
 }
 
 /*
- * initialize GtkEventBox instances 
+ * initialize NspGtkEventBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -20616,7 +20616,7 @@ static int init_gtkeventbox(NspGtkEventBox *Obj,NspTypeGtkEventBox *type)
 }
 
 /*
- * new instance of GtkEventBox 
+ * new instance of NspGtkEventBox 
  */
 
 NspGtkEventBox *new_gtkeventbox() 
@@ -20631,7 +20631,7 @@ NspGtkEventBox *new_gtkeventbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkEventBox 
+ * Object method redefined for NspGtkEventBox 
  *-----------------------------------------------*/
 
 /*
@@ -20641,23 +20641,23 @@ NspGtkEventBox *new_gtkeventbox()
 static char gtkeventbox_type_name[]="GtkEventBox";
 static char gtkeventbox_short_type_name[]="GtkEventBox";
 
-static char *gtkeventbox_type_as_string(void)
+static char *nsp_gtkeventbox_type_as_string(void)
 {
   return(gtkeventbox_type_name);
 }
 
-static char *gtkeventbox_type_short_string(NspObject *v)
+static char *nsp_gtkeventbox_type_short_string(NspObject *v)
 {
   return(gtkeventbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkEventBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkEventBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkEventBox   *gtkeventbox_object(NspObject *O)
+NspGtkEventBox *nsp_gtkeventbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -20687,7 +20687,7 @@ NspGtkEventBox  *GetGtkEventBoxCopy(Stack stack, int i)
 NspGtkEventBox  *GetGtkEventBox(Stack stack, int i)
 {
   NspGtkEventBox *M;
-  if (( M = gtkeventbox_object(NthObj(i))) == NULLGTKEVENTBOX)
+  if (( M = nsp_gtkeventbox_object(NthObj(i))) == NULLGTKEVENTBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -20771,7 +20771,7 @@ static NspMethods *gtkeventbox_get_methods(void) { return gtkeventbox_methods;};
 static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkExpander ----------- */
+/* ----------- NspGtkExpander ----------- */
 
 
 #include "nsp/object.h"
@@ -20780,17 +20780,17 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkExpander inherits from GtkBin 
+ * NspGtkExpander inherits from GtkBin 
  */
 
 int nsp_type_gtkexpander_id=0;
 NspTypeGtkExpander *nsp_type_gtkexpander=NULL;
 
 /*
- * Type object for GtkExpander 
+ * Type object for NspGtkExpander 
  * all the instance of NspTypeGtkExpander share the same id. 
  * nsp_type_gtkexpander: is an instance of NspTypeGtkExpander 
- *    used for objects of GtkExpander type (i.e built with new_gtkexpander) 
+ *    used for objects of NspGtkExpander type (i.e built with new_gtkexpander) 
  * other instances are used for derived classes 
  */
 NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
@@ -20819,8 +20819,8 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
   
   /* object methods redefined for gtkexpander */ 
 
-  top->s_type =  (s_type_func *) gtkexpander_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkexpander_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkexpander_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkexpander_type_short_string;
   /* top->create = (create_func*) int_gtkexpander_create;*/ 
   
   /* specific methods for gtkexpander */
@@ -20828,7 +20828,7 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
   type->init = (init_func *) init_gtkexpander;
 
   /* 
-   * GtkExpander interfaces can be added here 
+   * NspGtkExpander interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -20854,7 +20854,7 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
 }
 
 /*
- * initialize GtkExpander instances 
+ * initialize NspGtkExpander instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -20869,7 +20869,7 @@ static int init_gtkexpander(NspGtkExpander *Obj,NspTypeGtkExpander *type)
 }
 
 /*
- * new instance of GtkExpander 
+ * new instance of NspGtkExpander 
  */
 
 NspGtkExpander *new_gtkexpander() 
@@ -20884,7 +20884,7 @@ NspGtkExpander *new_gtkexpander()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkExpander 
+ * Object method redefined for NspGtkExpander 
  *-----------------------------------------------*/
 
 /*
@@ -20894,23 +20894,23 @@ NspGtkExpander *new_gtkexpander()
 static char gtkexpander_type_name[]="GtkExpander";
 static char gtkexpander_short_type_name[]="GtkExpander";
 
-static char *gtkexpander_type_as_string(void)
+static char *nsp_gtkexpander_type_as_string(void)
 {
   return(gtkexpander_type_name);
 }
 
-static char *gtkexpander_type_short_string(NspObject *v)
+static char *nsp_gtkexpander_type_short_string(NspObject *v)
 {
   return(gtkexpander_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkExpander objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkExpander objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkExpander   *gtkexpander_object(NspObject *O)
+NspGtkExpander *nsp_gtkexpander_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -20940,7 +20940,7 @@ NspGtkExpander  *GetGtkExpanderCopy(Stack stack, int i)
 NspGtkExpander  *GetGtkExpander(Stack stack, int i)
 {
   NspGtkExpander *M;
-  if (( M = gtkexpander_object(NthObj(i))) == NULLGTKEXPANDER)
+  if (( M = nsp_gtkexpander_object(NthObj(i))) == NULLGTKEXPANDER)
      ArgMessage(stack,i);
   return M;
 }
@@ -21120,7 +21120,7 @@ static NspMethods *gtkexpander_get_methods(void) { return gtkexpander_methods;};
 static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileChooserButton ----------- */
+/* ----------- NspGtkFileChooserButton ----------- */
 
 
 #include "nsp/object.h"
@@ -21129,7 +21129,7 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileChooserButton inherits from GtkHBox 
+ * NspGtkFileChooserButton inherits from GtkHBox 
  * and implements  GtkFileChooser
  */
 
@@ -21137,10 +21137,10 @@ int nsp_type_gtkfilechooserbutton_id=0;
 NspTypeGtkFileChooserButton *nsp_type_gtkfilechooserbutton=NULL;
 
 /*
- * Type object for GtkFileChooserButton 
+ * Type object for NspGtkFileChooserButton 
  * all the instance of NspTypeGtkFileChooserButton share the same id. 
  * nsp_type_gtkfilechooserbutton: is an instance of NspTypeGtkFileChooserButton 
- *    used for objects of GtkFileChooserButton type (i.e built with new_gtkfilechooserbutton) 
+ *    used for objects of NspGtkFileChooserButton type (i.e built with new_gtkfilechooserbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
@@ -21169,8 +21169,8 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
   
   /* object methods redefined for gtkfilechooserbutton */ 
 
-  top->s_type =  (s_type_func *) gtkfilechooserbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfilechooserbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfilechooserbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfilechooserbutton_type_short_string;
   /* top->create = (create_func*) int_gtkfilechooserbutton_create;*/ 
   
   /* specific methods for gtkfilechooserbutton */
@@ -21178,7 +21178,7 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
   type->init = (init_func *) init_gtkfilechooserbutton;
 
   /* 
-   * GtkFileChooserButton interfaces can be added here 
+   * NspGtkFileChooserButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -21205,7 +21205,7 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
 }
 
 /*
- * initialize GtkFileChooserButton instances 
+ * initialize NspGtkFileChooserButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -21220,7 +21220,7 @@ static int init_gtkfilechooserbutton(NspGtkFileChooserButton *Obj,NspTypeGtkFile
 }
 
 /*
- * new instance of GtkFileChooserButton 
+ * new instance of NspGtkFileChooserButton 
  */
 
 NspGtkFileChooserButton *new_gtkfilechooserbutton() 
@@ -21235,7 +21235,7 @@ NspGtkFileChooserButton *new_gtkfilechooserbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileChooserButton 
+ * Object method redefined for NspGtkFileChooserButton 
  *-----------------------------------------------*/
 
 /*
@@ -21245,23 +21245,23 @@ NspGtkFileChooserButton *new_gtkfilechooserbutton()
 static char gtkfilechooserbutton_type_name[]="GtkFileChooserButton";
 static char gtkfilechooserbutton_short_type_name[]="GtkFileChooserButton";
 
-static char *gtkfilechooserbutton_type_as_string(void)
+static char *nsp_gtkfilechooserbutton_type_as_string(void)
 {
   return(gtkfilechooserbutton_type_name);
 }
 
-static char *gtkfilechooserbutton_type_short_string(NspObject *v)
+static char *nsp_gtkfilechooserbutton_type_short_string(NspObject *v)
 {
   return(gtkfilechooserbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileChooserButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileChooserButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileChooserButton   *gtkfilechooserbutton_object(NspObject *O)
+NspGtkFileChooserButton *nsp_gtkfilechooserbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -21291,7 +21291,7 @@ NspGtkFileChooserButton  *GetGtkFileChooserButtonCopy(Stack stack, int i)
 NspGtkFileChooserButton  *GetGtkFileChooserButton(Stack stack, int i)
 {
   NspGtkFileChooserButton *M;
-  if (( M = gtkfilechooserbutton_object(NthObj(i))) == NULLGTKFILECHOOSERBUTTON)
+  if (( M = nsp_gtkfilechooserbutton_object(NthObj(i))) == NULLGTKFILECHOOSERBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -21381,7 +21381,7 @@ static NspMethods *gtkfilechooserbutton_get_methods(void) { return gtkfilechoose
 static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileChooserDialog ----------- */
+/* ----------- NspGtkFileChooserDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -21390,7 +21390,7 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileChooserDialog inherits from GtkDialog 
+ * NspGtkFileChooserDialog inherits from GtkDialog 
  * and implements  GtkFileChooser
  */
 
@@ -21398,10 +21398,10 @@ int nsp_type_gtkfilechooserdialog_id=0;
 NspTypeGtkFileChooserDialog *nsp_type_gtkfilechooserdialog=NULL;
 
 /*
- * Type object for GtkFileChooserDialog 
+ * Type object for NspGtkFileChooserDialog 
  * all the instance of NspTypeGtkFileChooserDialog share the same id. 
  * nsp_type_gtkfilechooserdialog: is an instance of NspTypeGtkFileChooserDialog 
- *    used for objects of GtkFileChooserDialog type (i.e built with new_gtkfilechooserdialog) 
+ *    used for objects of NspGtkFileChooserDialog type (i.e built with new_gtkfilechooserdialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
@@ -21430,8 +21430,8 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
   
   /* object methods redefined for gtkfilechooserdialog */ 
 
-  top->s_type =  (s_type_func *) gtkfilechooserdialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfilechooserdialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfilechooserdialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfilechooserdialog_type_short_string;
   /* top->create = (create_func*) int_gtkfilechooserdialog_create;*/ 
   
   /* specific methods for gtkfilechooserdialog */
@@ -21439,7 +21439,7 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
   type->init = (init_func *) init_gtkfilechooserdialog;
 
   /* 
-   * GtkFileChooserDialog interfaces can be added here 
+   * NspGtkFileChooserDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -21466,7 +21466,7 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
 }
 
 /*
- * initialize GtkFileChooserDialog instances 
+ * initialize NspGtkFileChooserDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -21481,7 +21481,7 @@ static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *Obj,NspTypeGtkFile
 }
 
 /*
- * new instance of GtkFileChooserDialog 
+ * new instance of NspGtkFileChooserDialog 
  */
 
 NspGtkFileChooserDialog *new_gtkfilechooserdialog() 
@@ -21496,7 +21496,7 @@ NspGtkFileChooserDialog *new_gtkfilechooserdialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileChooserDialog 
+ * Object method redefined for NspGtkFileChooserDialog 
  *-----------------------------------------------*/
 
 /*
@@ -21506,23 +21506,23 @@ NspGtkFileChooserDialog *new_gtkfilechooserdialog()
 static char gtkfilechooserdialog_type_name[]="GtkFileChooserDialog";
 static char gtkfilechooserdialog_short_type_name[]="GtkFileChooserDialog";
 
-static char *gtkfilechooserdialog_type_as_string(void)
+static char *nsp_gtkfilechooserdialog_type_as_string(void)
 {
   return(gtkfilechooserdialog_type_name);
 }
 
-static char *gtkfilechooserdialog_type_short_string(NspObject *v)
+static char *nsp_gtkfilechooserdialog_type_short_string(NspObject *v)
 {
   return(gtkfilechooserdialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileChooserDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileChooserDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileChooserDialog   *gtkfilechooserdialog_object(NspObject *O)
+NspGtkFileChooserDialog *nsp_gtkfilechooserdialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -21552,7 +21552,7 @@ NspGtkFileChooserDialog  *GetGtkFileChooserDialogCopy(Stack stack, int i)
 NspGtkFileChooserDialog  *GetGtkFileChooserDialog(Stack stack, int i)
 {
   NspGtkFileChooserDialog *M;
-  if (( M = gtkfilechooserdialog_object(NthObj(i))) == NULLGTKFILECHOOSERDIALOG)
+  if (( M = nsp_gtkfilechooserdialog_object(NthObj(i))) == NULLGTKFILECHOOSERDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -21630,7 +21630,7 @@ static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
 static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileChooserWidget ----------- */
+/* ----------- NspGtkFileChooserWidget ----------- */
 
 
 #include "nsp/object.h"
@@ -21639,7 +21639,7 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileChooserWidget inherits from GtkVBox 
+ * NspGtkFileChooserWidget inherits from GtkVBox 
  * and implements  GtkFileChooser
  */
 
@@ -21647,10 +21647,10 @@ int nsp_type_gtkfilechooserwidget_id=0;
 NspTypeGtkFileChooserWidget *nsp_type_gtkfilechooserwidget=NULL;
 
 /*
- * Type object for GtkFileChooserWidget 
+ * Type object for NspGtkFileChooserWidget 
  * all the instance of NspTypeGtkFileChooserWidget share the same id. 
  * nsp_type_gtkfilechooserwidget: is an instance of NspTypeGtkFileChooserWidget 
- *    used for objects of GtkFileChooserWidget type (i.e built with new_gtkfilechooserwidget) 
+ *    used for objects of NspGtkFileChooserWidget type (i.e built with new_gtkfilechooserwidget) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
@@ -21679,8 +21679,8 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
   
   /* object methods redefined for gtkfilechooserwidget */ 
 
-  top->s_type =  (s_type_func *) gtkfilechooserwidget_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfilechooserwidget_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfilechooserwidget_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfilechooserwidget_type_short_string;
   /* top->create = (create_func*) int_gtkfilechooserwidget_create;*/ 
   
   /* specific methods for gtkfilechooserwidget */
@@ -21688,7 +21688,7 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
   type->init = (init_func *) init_gtkfilechooserwidget;
 
   /* 
-   * GtkFileChooserWidget interfaces can be added here 
+   * NspGtkFileChooserWidget interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -21715,7 +21715,7 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
 }
 
 /*
- * initialize GtkFileChooserWidget instances 
+ * initialize NspGtkFileChooserWidget instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -21730,7 +21730,7 @@ static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *Obj,NspTypeGtkFile
 }
 
 /*
- * new instance of GtkFileChooserWidget 
+ * new instance of NspGtkFileChooserWidget 
  */
 
 NspGtkFileChooserWidget *new_gtkfilechooserwidget() 
@@ -21745,7 +21745,7 @@ NspGtkFileChooserWidget *new_gtkfilechooserwidget()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileChooserWidget 
+ * Object method redefined for NspGtkFileChooserWidget 
  *-----------------------------------------------*/
 
 /*
@@ -21755,23 +21755,23 @@ NspGtkFileChooserWidget *new_gtkfilechooserwidget()
 static char gtkfilechooserwidget_type_name[]="GtkFileChooserWidget";
 static char gtkfilechooserwidget_short_type_name[]="GtkFileChooserWidget";
 
-static char *gtkfilechooserwidget_type_as_string(void)
+static char *nsp_gtkfilechooserwidget_type_as_string(void)
 {
   return(gtkfilechooserwidget_type_name);
 }
 
-static char *gtkfilechooserwidget_type_short_string(NspObject *v)
+static char *nsp_gtkfilechooserwidget_type_short_string(NspObject *v)
 {
   return(gtkfilechooserwidget_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileChooserWidget objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileChooserWidget objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileChooserWidget   *gtkfilechooserwidget_object(NspObject *O)
+NspGtkFileChooserWidget *nsp_gtkfilechooserwidget_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -21801,7 +21801,7 @@ NspGtkFileChooserWidget  *GetGtkFileChooserWidgetCopy(Stack stack, int i)
 NspGtkFileChooserWidget  *GetGtkFileChooserWidget(Stack stack, int i)
 {
   NspGtkFileChooserWidget *M;
-  if (( M = gtkfilechooserwidget_object(NthObj(i))) == NULLGTKFILECHOOSERWIDGET)
+  if (( M = nsp_gtkfilechooserwidget_object(NthObj(i))) == NULLGTKFILECHOOSERWIDGET)
      ArgMessage(stack,i);
   return M;
 }
@@ -21848,7 +21848,7 @@ static NspMethods *gtkfilechooserwidget_get_methods(void) { return NULL;};
 static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileFilter ----------- */
+/* ----------- NspGtkFileFilter ----------- */
 
 
 #include "nsp/object.h"
@@ -21857,17 +21857,17 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileFilter inherits from GtkObject 
+ * NspGtkFileFilter inherits from GtkObject 
  */
 
 int nsp_type_gtkfilefilter_id=0;
 NspTypeGtkFileFilter *nsp_type_gtkfilefilter=NULL;
 
 /*
- * Type object for GtkFileFilter 
+ * Type object for NspGtkFileFilter 
  * all the instance of NspTypeGtkFileFilter share the same id. 
  * nsp_type_gtkfilefilter: is an instance of NspTypeGtkFileFilter 
- *    used for objects of GtkFileFilter type (i.e built with new_gtkfilefilter) 
+ *    used for objects of NspGtkFileFilter type (i.e built with new_gtkfilefilter) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
@@ -21896,8 +21896,8 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
   
   /* object methods redefined for gtkfilefilter */ 
 
-  top->s_type =  (s_type_func *) gtkfilefilter_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfilefilter_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfilefilter_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfilefilter_type_short_string;
   /* top->create = (create_func*) int_gtkfilefilter_create;*/ 
   
   /* specific methods for gtkfilefilter */
@@ -21905,7 +21905,7 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
   type->init = (init_func *) init_gtkfilefilter;
 
   /* 
-   * GtkFileFilter interfaces can be added here 
+   * NspGtkFileFilter interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -21931,7 +21931,7 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
 }
 
 /*
- * initialize GtkFileFilter instances 
+ * initialize NspGtkFileFilter instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -21946,7 +21946,7 @@ static int init_gtkfilefilter(NspGtkFileFilter *Obj,NspTypeGtkFileFilter *type)
 }
 
 /*
- * new instance of GtkFileFilter 
+ * new instance of NspGtkFileFilter 
  */
 
 NspGtkFileFilter *new_gtkfilefilter() 
@@ -21961,7 +21961,7 @@ NspGtkFileFilter *new_gtkfilefilter()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileFilter 
+ * Object method redefined for NspGtkFileFilter 
  *-----------------------------------------------*/
 
 /*
@@ -21971,23 +21971,23 @@ NspGtkFileFilter *new_gtkfilefilter()
 static char gtkfilefilter_type_name[]="GtkFileFilter";
 static char gtkfilefilter_short_type_name[]="GtkFileFilter";
 
-static char *gtkfilefilter_type_as_string(void)
+static char *nsp_gtkfilefilter_type_as_string(void)
 {
   return(gtkfilefilter_type_name);
 }
 
-static char *gtkfilefilter_type_short_string(NspObject *v)
+static char *nsp_gtkfilefilter_type_short_string(NspObject *v)
 {
   return(gtkfilefilter_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileFilter objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileFilter objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileFilter   *gtkfilefilter_object(NspObject *O)
+NspGtkFileFilter *nsp_gtkfilefilter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -22017,7 +22017,7 @@ NspGtkFileFilter  *GetGtkFileFilterCopy(Stack stack, int i)
 NspGtkFileFilter  *GetGtkFileFilter(Stack stack, int i)
 {
   NspGtkFileFilter *M;
-  if (( M = gtkfilefilter_object(NthObj(i))) == NULLGTKFILEFILTER)
+  if (( M = nsp_gtkfilefilter_object(NthObj(i))) == NULLGTKFILEFILTER)
      ArgMessage(stack,i);
   return M;
 }
@@ -22118,7 +22118,7 @@ static NspMethods *gtkfilefilter_get_methods(void) { return gtkfilefilter_method
 static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFileSelection ----------- */
+/* ----------- NspGtkFileSelection ----------- */
 
 
 #include "nsp/object.h"
@@ -22127,17 +22127,17 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFileSelection inherits from GtkDialog 
+ * NspGtkFileSelection inherits from GtkDialog 
  */
 
 int nsp_type_gtkfileselection_id=0;
 NspTypeGtkFileSelection *nsp_type_gtkfileselection=NULL;
 
 /*
- * Type object for GtkFileSelection 
+ * Type object for NspGtkFileSelection 
  * all the instance of NspTypeGtkFileSelection share the same id. 
  * nsp_type_gtkfileselection: is an instance of NspTypeGtkFileSelection 
- *    used for objects of GtkFileSelection type (i.e built with new_gtkfileselection) 
+ *    used for objects of NspGtkFileSelection type (i.e built with new_gtkfileselection) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
@@ -22166,8 +22166,8 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
   
   /* object methods redefined for gtkfileselection */ 
 
-  top->s_type =  (s_type_func *) gtkfileselection_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfileselection_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfileselection_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfileselection_type_short_string;
   /* top->create = (create_func*) int_gtkfileselection_create;*/ 
   
   /* specific methods for gtkfileselection */
@@ -22175,7 +22175,7 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
   type->init = (init_func *) init_gtkfileselection;
 
   /* 
-   * GtkFileSelection interfaces can be added here 
+   * NspGtkFileSelection interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -22201,7 +22201,7 @@ NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
 }
 
 /*
- * initialize GtkFileSelection instances 
+ * initialize NspGtkFileSelection instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -22216,7 +22216,7 @@ static int init_gtkfileselection(NspGtkFileSelection *Obj,NspTypeGtkFileSelectio
 }
 
 /*
- * new instance of GtkFileSelection 
+ * new instance of NspGtkFileSelection 
  */
 
 NspGtkFileSelection *new_gtkfileselection() 
@@ -22231,7 +22231,7 @@ NspGtkFileSelection *new_gtkfileselection()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFileSelection 
+ * Object method redefined for NspGtkFileSelection 
  *-----------------------------------------------*/
 
 /*
@@ -22241,23 +22241,23 @@ NspGtkFileSelection *new_gtkfileselection()
 static char gtkfileselection_type_name[]="GtkFileSelection";
 static char gtkfileselection_short_type_name[]="GtkFileSelection";
 
-static char *gtkfileselection_type_as_string(void)
+static char *nsp_gtkfileselection_type_as_string(void)
 {
   return(gtkfileselection_type_name);
 }
 
-static char *gtkfileselection_type_short_string(NspObject *v)
+static char *nsp_gtkfileselection_type_short_string(NspObject *v)
 {
   return(gtkfileselection_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFileSelection objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFileSelection objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFileSelection   *gtkfileselection_object(NspObject *O)
+NspGtkFileSelection *nsp_gtkfileselection_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -22287,7 +22287,7 @@ NspGtkFileSelection  *GetGtkFileSelectionCopy(Stack stack, int i)
 NspGtkFileSelection  *GetGtkFileSelection(Stack stack, int i)
 {
   NspGtkFileSelection *M;
-  if (( M = gtkfileselection_object(NthObj(i))) == NULLGTKFILESELECTION)
+  if (( M = nsp_gtkfileselection_object(NthObj(i))) == NULLGTKFILESELECTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -22584,7 +22584,7 @@ static AttrTab gtkfileselection_attrs[] = {
 
 
 
-/* ----------- GtkFixed ----------- */
+/* ----------- NspGtkFixed ----------- */
 
 
 #include "nsp/object.h"
@@ -22593,17 +22593,17 @@ static AttrTab gtkfileselection_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFixed inherits from GtkContainer 
+ * NspGtkFixed inherits from GtkContainer 
  */
 
 int nsp_type_gtkfixed_id=0;
 NspTypeGtkFixed *nsp_type_gtkfixed=NULL;
 
 /*
- * Type object for GtkFixed 
+ * Type object for NspGtkFixed 
  * all the instance of NspTypeGtkFixed share the same id. 
  * nsp_type_gtkfixed: is an instance of NspTypeGtkFixed 
- *    used for objects of GtkFixed type (i.e built with new_gtkfixed) 
+ *    used for objects of NspGtkFixed type (i.e built with new_gtkfixed) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
@@ -22632,8 +22632,8 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
   
   /* object methods redefined for gtkfixed */ 
 
-  top->s_type =  (s_type_func *) gtkfixed_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfixed_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfixed_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfixed_type_short_string;
   /* top->create = (create_func*) int_gtkfixed_create;*/ 
   
   /* specific methods for gtkfixed */
@@ -22641,7 +22641,7 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
   type->init = (init_func *) init_gtkfixed;
 
   /* 
-   * GtkFixed interfaces can be added here 
+   * NspGtkFixed interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -22667,7 +22667,7 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
 }
 
 /*
- * initialize GtkFixed instances 
+ * initialize NspGtkFixed instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -22682,7 +22682,7 @@ static int init_gtkfixed(NspGtkFixed *Obj,NspTypeGtkFixed *type)
 }
 
 /*
- * new instance of GtkFixed 
+ * new instance of NspGtkFixed 
  */
 
 NspGtkFixed *new_gtkfixed() 
@@ -22697,7 +22697,7 @@ NspGtkFixed *new_gtkfixed()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFixed 
+ * Object method redefined for NspGtkFixed 
  *-----------------------------------------------*/
 
 /*
@@ -22707,23 +22707,23 @@ NspGtkFixed *new_gtkfixed()
 static char gtkfixed_type_name[]="GtkFixed";
 static char gtkfixed_short_type_name[]="GtkFixed";
 
-static char *gtkfixed_type_as_string(void)
+static char *nsp_gtkfixed_type_as_string(void)
 {
   return(gtkfixed_type_name);
 }
 
-static char *gtkfixed_type_short_string(NspObject *v)
+static char *nsp_gtkfixed_type_short_string(NspObject *v)
 {
   return(gtkfixed_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFixed objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFixed objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFixed   *gtkfixed_object(NspObject *O)
+NspGtkFixed *nsp_gtkfixed_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -22753,7 +22753,7 @@ NspGtkFixed  *GetGtkFixedCopy(Stack stack, int i)
 NspGtkFixed  *GetGtkFixed(Stack stack, int i)
 {
   NspGtkFixed *M;
-  if (( M = gtkfixed_object(NthObj(i))) == NULLGTKFIXED)
+  if (( M = nsp_gtkfixed_object(NthObj(i))) == NULLGTKFIXED)
      ArgMessage(stack,i);
   return M;
 }
@@ -22840,7 +22840,7 @@ static NspMethods *gtkfixed_get_methods(void) { return gtkfixed_methods;};
 static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFontButton ----------- */
+/* ----------- NspGtkFontButton ----------- */
 
 
 #include "nsp/object.h"
@@ -22849,17 +22849,17 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFontButton inherits from GtkButton 
+ * NspGtkFontButton inherits from GtkButton 
  */
 
 int nsp_type_gtkfontbutton_id=0;
 NspTypeGtkFontButton *nsp_type_gtkfontbutton=NULL;
 
 /*
- * Type object for GtkFontButton 
+ * Type object for NspGtkFontButton 
  * all the instance of NspTypeGtkFontButton share the same id. 
  * nsp_type_gtkfontbutton: is an instance of NspTypeGtkFontButton 
- *    used for objects of GtkFontButton type (i.e built with new_gtkfontbutton) 
+ *    used for objects of NspGtkFontButton type (i.e built with new_gtkfontbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
@@ -22888,8 +22888,8 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
   
   /* object methods redefined for gtkfontbutton */ 
 
-  top->s_type =  (s_type_func *) gtkfontbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfontbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfontbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfontbutton_type_short_string;
   /* top->create = (create_func*) int_gtkfontbutton_create;*/ 
   
   /* specific methods for gtkfontbutton */
@@ -22897,7 +22897,7 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
   type->init = (init_func *) init_gtkfontbutton;
 
   /* 
-   * GtkFontButton interfaces can be added here 
+   * NspGtkFontButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -22923,7 +22923,7 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
 }
 
 /*
- * initialize GtkFontButton instances 
+ * initialize NspGtkFontButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -22938,7 +22938,7 @@ static int init_gtkfontbutton(NspGtkFontButton *Obj,NspTypeGtkFontButton *type)
 }
 
 /*
- * new instance of GtkFontButton 
+ * new instance of NspGtkFontButton 
  */
 
 NspGtkFontButton *new_gtkfontbutton() 
@@ -22953,7 +22953,7 @@ NspGtkFontButton *new_gtkfontbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFontButton 
+ * Object method redefined for NspGtkFontButton 
  *-----------------------------------------------*/
 
 /*
@@ -22963,23 +22963,23 @@ NspGtkFontButton *new_gtkfontbutton()
 static char gtkfontbutton_type_name[]="GtkFontButton";
 static char gtkfontbutton_short_type_name[]="GtkFontButton";
 
-static char *gtkfontbutton_type_as_string(void)
+static char *nsp_gtkfontbutton_type_as_string(void)
 {
   return(gtkfontbutton_type_name);
 }
 
-static char *gtkfontbutton_type_short_string(NspObject *v)
+static char *nsp_gtkfontbutton_type_short_string(NspObject *v)
 {
   return(gtkfontbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFontButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFontButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFontButton   *gtkfontbutton_object(NspObject *O)
+NspGtkFontButton *nsp_gtkfontbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -23009,7 +23009,7 @@ NspGtkFontButton  *GetGtkFontButtonCopy(Stack stack, int i)
 NspGtkFontButton  *GetGtkFontButton(Stack stack, int i)
 {
   NspGtkFontButton *M;
-  if (( M = gtkfontbutton_object(NthObj(i))) == NULLGTKFONTBUTTON)
+  if (( M = nsp_gtkfontbutton_object(NthObj(i))) == NULLGTKFONTBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -23171,7 +23171,7 @@ static NspMethods *gtkfontbutton_get_methods(void) { return gtkfontbutton_method
 static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFontSelection ----------- */
+/* ----------- NspGtkFontSelection ----------- */
 
 
 #include "nsp/object.h"
@@ -23180,17 +23180,17 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFontSelection inherits from GtkVBox 
+ * NspGtkFontSelection inherits from GtkVBox 
  */
 
 int nsp_type_gtkfontselection_id=0;
 NspTypeGtkFontSelection *nsp_type_gtkfontselection=NULL;
 
 /*
- * Type object for GtkFontSelection 
+ * Type object for NspGtkFontSelection 
  * all the instance of NspTypeGtkFontSelection share the same id. 
  * nsp_type_gtkfontselection: is an instance of NspTypeGtkFontSelection 
- *    used for objects of GtkFontSelection type (i.e built with new_gtkfontselection) 
+ *    used for objects of NspGtkFontSelection type (i.e built with new_gtkfontselection) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
@@ -23219,8 +23219,8 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
   
   /* object methods redefined for gtkfontselection */ 
 
-  top->s_type =  (s_type_func *) gtkfontselection_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfontselection_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfontselection_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfontselection_type_short_string;
   /* top->create = (create_func*) int_gtkfontselection_create;*/ 
   
   /* specific methods for gtkfontselection */
@@ -23228,7 +23228,7 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
   type->init = (init_func *) init_gtkfontselection;
 
   /* 
-   * GtkFontSelection interfaces can be added here 
+   * NspGtkFontSelection interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -23254,7 +23254,7 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
 }
 
 /*
- * initialize GtkFontSelection instances 
+ * initialize NspGtkFontSelection instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -23269,7 +23269,7 @@ static int init_gtkfontselection(NspGtkFontSelection *Obj,NspTypeGtkFontSelectio
 }
 
 /*
- * new instance of GtkFontSelection 
+ * new instance of NspGtkFontSelection 
  */
 
 NspGtkFontSelection *new_gtkfontselection() 
@@ -23284,7 +23284,7 @@ NspGtkFontSelection *new_gtkfontselection()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFontSelection 
+ * Object method redefined for NspGtkFontSelection 
  *-----------------------------------------------*/
 
 /*
@@ -23294,23 +23294,23 @@ NspGtkFontSelection *new_gtkfontselection()
 static char gtkfontselection_type_name[]="GtkFontSelection";
 static char gtkfontselection_short_type_name[]="GtkFontSelection";
 
-static char *gtkfontselection_type_as_string(void)
+static char *nsp_gtkfontselection_type_as_string(void)
 {
   return(gtkfontselection_type_name);
 }
 
-static char *gtkfontselection_type_short_string(NspObject *v)
+static char *nsp_gtkfontselection_type_short_string(NspObject *v)
 {
   return(gtkfontselection_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFontSelection objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFontSelection objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFontSelection   *gtkfontselection_object(NspObject *O)
+NspGtkFontSelection *nsp_gtkfontselection_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -23340,7 +23340,7 @@ NspGtkFontSelection  *GetGtkFontSelectionCopy(Stack stack, int i)
 NspGtkFontSelection  *GetGtkFontSelection(Stack stack, int i)
 {
   NspGtkFontSelection *M;
-  if (( M = gtkfontselection_object(NthObj(i))) == NULLGTKFONTSELECTION)
+  if (( M = nsp_gtkfontselection_object(NthObj(i))) == NULLGTKFONTSELECTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -23441,7 +23441,7 @@ static NspMethods *gtkfontselection_get_methods(void) { return gtkfontselection_
 static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkFontSelectionDialog ----------- */
+/* ----------- NspGtkFontSelectionDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -23450,17 +23450,17 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFontSelectionDialog inherits from GtkDialog 
+ * NspGtkFontSelectionDialog inherits from GtkDialog 
  */
 
 int nsp_type_gtkfontselectiondialog_id=0;
 NspTypeGtkFontSelectionDialog *nsp_type_gtkfontselectiondialog=NULL;
 
 /*
- * Type object for GtkFontSelectionDialog 
+ * Type object for NspGtkFontSelectionDialog 
  * all the instance of NspTypeGtkFontSelectionDialog share the same id. 
  * nsp_type_gtkfontselectiondialog: is an instance of NspTypeGtkFontSelectionDialog 
- *    used for objects of GtkFontSelectionDialog type (i.e built with new_gtkfontselectiondialog) 
+ *    used for objects of NspGtkFontSelectionDialog type (i.e built with new_gtkfontselectiondialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
@@ -23489,8 +23489,8 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
   
   /* object methods redefined for gtkfontselectiondialog */ 
 
-  top->s_type =  (s_type_func *) gtkfontselectiondialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkfontselectiondialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkfontselectiondialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkfontselectiondialog_type_short_string;
   /* top->create = (create_func*) int_gtkfontselectiondialog_create;*/ 
   
   /* specific methods for gtkfontselectiondialog */
@@ -23498,7 +23498,7 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
   type->init = (init_func *) init_gtkfontselectiondialog;
 
   /* 
-   * GtkFontSelectionDialog interfaces can be added here 
+   * NspGtkFontSelectionDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -23524,7 +23524,7 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
 }
 
 /*
- * initialize GtkFontSelectionDialog instances 
+ * initialize NspGtkFontSelectionDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -23539,7 +23539,7 @@ static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *Obj,NspTypeGtk
 }
 
 /*
- * new instance of GtkFontSelectionDialog 
+ * new instance of NspGtkFontSelectionDialog 
  */
 
 NspGtkFontSelectionDialog *new_gtkfontselectiondialog() 
@@ -23554,7 +23554,7 @@ NspGtkFontSelectionDialog *new_gtkfontselectiondialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFontSelectionDialog 
+ * Object method redefined for NspGtkFontSelectionDialog 
  *-----------------------------------------------*/
 
 /*
@@ -23564,23 +23564,23 @@ NspGtkFontSelectionDialog *new_gtkfontselectiondialog()
 static char gtkfontselectiondialog_type_name[]="GtkFontSelectionDialog";
 static char gtkfontselectiondialog_short_type_name[]="GtkFontSelectionDialog";
 
-static char *gtkfontselectiondialog_type_as_string(void)
+static char *nsp_gtkfontselectiondialog_type_as_string(void)
 {
   return(gtkfontselectiondialog_type_name);
 }
 
-static char *gtkfontselectiondialog_type_short_string(NspObject *v)
+static char *nsp_gtkfontselectiondialog_type_short_string(NspObject *v)
 {
   return(gtkfontselectiondialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFontSelectionDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFontSelectionDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFontSelectionDialog   *gtkfontselectiondialog_object(NspObject *O)
+NspGtkFontSelectionDialog *nsp_gtkfontselectiondialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -23610,7 +23610,7 @@ NspGtkFontSelectionDialog  *GetGtkFontSelectionDialogCopy(Stack stack, int i)
 NspGtkFontSelectionDialog  *GetGtkFontSelectionDialog(Stack stack, int i)
 {
   NspGtkFontSelectionDialog *M;
-  if (( M = gtkfontselectiondialog_object(NthObj(i))) == NULLGTKFONTSELECTIONDIALOG)
+  if (( M = nsp_gtkfontselectiondialog_object(NthObj(i))) == NULLGTKFONTSELECTIONDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -23771,7 +23771,7 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 
 
 
-/* ----------- GtkFrame ----------- */
+/* ----------- NspGtkFrame ----------- */
 
 
 #include "nsp/object.h"
@@ -23780,17 +23780,17 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkFrame inherits from GtkBin 
+ * NspGtkFrame inherits from GtkBin 
  */
 
 int nsp_type_gtkframe_id=0;
 NspTypeGtkFrame *nsp_type_gtkframe=NULL;
 
 /*
- * Type object for GtkFrame 
+ * Type object for NspGtkFrame 
  * all the instance of NspTypeGtkFrame share the same id. 
  * nsp_type_gtkframe: is an instance of NspTypeGtkFrame 
- *    used for objects of GtkFrame type (i.e built with new_gtkframe) 
+ *    used for objects of NspGtkFrame type (i.e built with new_gtkframe) 
  * other instances are used for derived classes 
  */
 NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
@@ -23819,8 +23819,8 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
   
   /* object methods redefined for gtkframe */ 
 
-  top->s_type =  (s_type_func *) gtkframe_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkframe_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkframe_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkframe_type_short_string;
   /* top->create = (create_func*) int_gtkframe_create;*/ 
   
   /* specific methods for gtkframe */
@@ -23828,7 +23828,7 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
   type->init = (init_func *) init_gtkframe;
 
   /* 
-   * GtkFrame interfaces can be added here 
+   * NspGtkFrame interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -23854,7 +23854,7 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
 }
 
 /*
- * initialize GtkFrame instances 
+ * initialize NspGtkFrame instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -23869,7 +23869,7 @@ static int init_gtkframe(NspGtkFrame *Obj,NspTypeGtkFrame *type)
 }
 
 /*
- * new instance of GtkFrame 
+ * new instance of NspGtkFrame 
  */
 
 NspGtkFrame *new_gtkframe() 
@@ -23884,7 +23884,7 @@ NspGtkFrame *new_gtkframe()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkFrame 
+ * Object method redefined for NspGtkFrame 
  *-----------------------------------------------*/
 
 /*
@@ -23894,23 +23894,23 @@ NspGtkFrame *new_gtkframe()
 static char gtkframe_type_name[]="GtkFrame";
 static char gtkframe_short_type_name[]="GtkFrame";
 
-static char *gtkframe_type_as_string(void)
+static char *nsp_gtkframe_type_as_string(void)
 {
   return(gtkframe_type_name);
 }
 
-static char *gtkframe_type_short_string(NspObject *v)
+static char *nsp_gtkframe_type_short_string(NspObject *v)
 {
   return(gtkframe_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkFrame objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkFrame objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkFrame   *gtkframe_object(NspObject *O)
+NspGtkFrame *nsp_gtkframe_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -23940,7 +23940,7 @@ NspGtkFrame  *GetGtkFrameCopy(Stack stack, int i)
 NspGtkFrame  *GetGtkFrame(Stack stack, int i)
 {
   NspGtkFrame *M;
-  if (( M = gtkframe_object(NthObj(i))) == NULLGTKFRAME)
+  if (( M = nsp_gtkframe_object(NthObj(i))) == NULLGTKFRAME)
      ArgMessage(stack,i);
   return M;
 }
@@ -24082,7 +24082,7 @@ static NspMethods *gtkframe_get_methods(void) { return gtkframe_methods;};
 static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkGammaCurve ----------- */
+/* ----------- NspGtkGammaCurve ----------- */
 
 
 #include "nsp/object.h"
@@ -24091,17 +24091,17 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkGammaCurve inherits from GtkVBox 
+ * NspGtkGammaCurve inherits from GtkVBox 
  */
 
 int nsp_type_gtkgammacurve_id=0;
 NspTypeGtkGammaCurve *nsp_type_gtkgammacurve=NULL;
 
 /*
- * Type object for GtkGammaCurve 
+ * Type object for NspGtkGammaCurve 
  * all the instance of NspTypeGtkGammaCurve share the same id. 
  * nsp_type_gtkgammacurve: is an instance of NspTypeGtkGammaCurve 
- *    used for objects of GtkGammaCurve type (i.e built with new_gtkgammacurve) 
+ *    used for objects of NspGtkGammaCurve type (i.e built with new_gtkgammacurve) 
  * other instances are used for derived classes 
  */
 NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
@@ -24130,8 +24130,8 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
   
   /* object methods redefined for gtkgammacurve */ 
 
-  top->s_type =  (s_type_func *) gtkgammacurve_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkgammacurve_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkgammacurve_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkgammacurve_type_short_string;
   /* top->create = (create_func*) int_gtkgammacurve_create;*/ 
   
   /* specific methods for gtkgammacurve */
@@ -24139,7 +24139,7 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
   type->init = (init_func *) init_gtkgammacurve;
 
   /* 
-   * GtkGammaCurve interfaces can be added here 
+   * NspGtkGammaCurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -24165,7 +24165,7 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
 }
 
 /*
- * initialize GtkGammaCurve instances 
+ * initialize NspGtkGammaCurve instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -24180,7 +24180,7 @@ static int init_gtkgammacurve(NspGtkGammaCurve *Obj,NspTypeGtkGammaCurve *type)
 }
 
 /*
- * new instance of GtkGammaCurve 
+ * new instance of NspGtkGammaCurve 
  */
 
 NspGtkGammaCurve *new_gtkgammacurve() 
@@ -24195,7 +24195,7 @@ NspGtkGammaCurve *new_gtkgammacurve()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkGammaCurve 
+ * Object method redefined for NspGtkGammaCurve 
  *-----------------------------------------------*/
 
 /*
@@ -24205,23 +24205,23 @@ NspGtkGammaCurve *new_gtkgammacurve()
 static char gtkgammacurve_type_name[]="GtkGammaCurve";
 static char gtkgammacurve_short_type_name[]="GtkGammaCurve";
 
-static char *gtkgammacurve_type_as_string(void)
+static char *nsp_gtkgammacurve_type_as_string(void)
 {
   return(gtkgammacurve_type_name);
 }
 
-static char *gtkgammacurve_type_short_string(NspObject *v)
+static char *nsp_gtkgammacurve_type_short_string(NspObject *v)
 {
   return(gtkgammacurve_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkGammaCurve objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkGammaCurve objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkGammaCurve   *gtkgammacurve_object(NspObject *O)
+NspGtkGammaCurve *nsp_gtkgammacurve_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -24251,7 +24251,7 @@ NspGtkGammaCurve  *GetGtkGammaCurveCopy(Stack stack, int i)
 NspGtkGammaCurve  *GetGtkGammaCurve(Stack stack, int i)
 {
   NspGtkGammaCurve *M;
-  if (( M = gtkgammacurve_object(NthObj(i))) == NULLGTKGAMMACURVE)
+  if (( M = nsp_gtkgammacurve_object(NthObj(i))) == NULLGTKGAMMACURVE)
      ArgMessage(stack,i);
   return M;
 }
@@ -24342,7 +24342,7 @@ static AttrTab gtkgammacurve_attrs[] = {
 
 
 
-/* ----------- GtkHandleBox ----------- */
+/* ----------- NspGtkHandleBox ----------- */
 
 
 #include "nsp/object.h"
@@ -24351,17 +24351,17 @@ static AttrTab gtkgammacurve_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHandleBox inherits from GtkBin 
+ * NspGtkHandleBox inherits from GtkBin 
  */
 
 int nsp_type_gtkhandlebox_id=0;
 NspTypeGtkHandleBox *nsp_type_gtkhandlebox=NULL;
 
 /*
- * Type object for GtkHandleBox 
+ * Type object for NspGtkHandleBox 
  * all the instance of NspTypeGtkHandleBox share the same id. 
  * nsp_type_gtkhandlebox: is an instance of NspTypeGtkHandleBox 
- *    used for objects of GtkHandleBox type (i.e built with new_gtkhandlebox) 
+ *    used for objects of NspGtkHandleBox type (i.e built with new_gtkhandlebox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
@@ -24390,8 +24390,8 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
   
   /* object methods redefined for gtkhandlebox */ 
 
-  top->s_type =  (s_type_func *) gtkhandlebox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhandlebox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhandlebox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhandlebox_type_short_string;
   /* top->create = (create_func*) int_gtkhandlebox_create;*/ 
   
   /* specific methods for gtkhandlebox */
@@ -24399,7 +24399,7 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
   type->init = (init_func *) init_gtkhandlebox;
 
   /* 
-   * GtkHandleBox interfaces can be added here 
+   * NspGtkHandleBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -24425,7 +24425,7 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
 }
 
 /*
- * initialize GtkHandleBox instances 
+ * initialize NspGtkHandleBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -24440,7 +24440,7 @@ static int init_gtkhandlebox(NspGtkHandleBox *Obj,NspTypeGtkHandleBox *type)
 }
 
 /*
- * new instance of GtkHandleBox 
+ * new instance of NspGtkHandleBox 
  */
 
 NspGtkHandleBox *new_gtkhandlebox() 
@@ -24455,7 +24455,7 @@ NspGtkHandleBox *new_gtkhandlebox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHandleBox 
+ * Object method redefined for NspGtkHandleBox 
  *-----------------------------------------------*/
 
 /*
@@ -24465,23 +24465,23 @@ NspGtkHandleBox *new_gtkhandlebox()
 static char gtkhandlebox_type_name[]="GtkHandleBox";
 static char gtkhandlebox_short_type_name[]="GtkHandleBox";
 
-static char *gtkhandlebox_type_as_string(void)
+static char *nsp_gtkhandlebox_type_as_string(void)
 {
   return(gtkhandlebox_type_name);
 }
 
-static char *gtkhandlebox_type_short_string(NspObject *v)
+static char *nsp_gtkhandlebox_type_short_string(NspObject *v)
 {
   return(gtkhandlebox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHandleBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHandleBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHandleBox   *gtkhandlebox_object(NspObject *O)
+NspGtkHandleBox *nsp_gtkhandlebox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -24511,7 +24511,7 @@ NspGtkHandleBox  *GetGtkHandleBoxCopy(Stack stack, int i)
 NspGtkHandleBox  *GetGtkHandleBox(Stack stack, int i)
 {
   NspGtkHandleBox *M;
-  if (( M = gtkhandlebox_object(NthObj(i))) == NULLGTKHANDLEBOX)
+  if (( M = nsp_gtkhandlebox_object(NthObj(i))) == NULLGTKHANDLEBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -24623,7 +24623,7 @@ static NspMethods *gtkhandlebox_get_methods(void) { return gtkhandlebox_methods;
 static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHBox ----------- */
+/* ----------- NspGtkHBox ----------- */
 
 
 #include "nsp/object.h"
@@ -24632,17 +24632,17 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHBox inherits from GtkBox 
+ * NspGtkHBox inherits from GtkBox 
  */
 
 int nsp_type_gtkhbox_id=0;
 NspTypeGtkHBox *nsp_type_gtkhbox=NULL;
 
 /*
- * Type object for GtkHBox 
+ * Type object for NspGtkHBox 
  * all the instance of NspTypeGtkHBox share the same id. 
  * nsp_type_gtkhbox: is an instance of NspTypeGtkHBox 
- *    used for objects of GtkHBox type (i.e built with new_gtkhbox) 
+ *    used for objects of NspGtkHBox type (i.e built with new_gtkhbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
@@ -24671,8 +24671,8 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
   
   /* object methods redefined for gtkhbox */ 
 
-  top->s_type =  (s_type_func *) gtkhbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhbox_type_short_string;
   /* top->create = (create_func*) int_gtkhbox_create;*/ 
   
   /* specific methods for gtkhbox */
@@ -24680,7 +24680,7 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
   type->init = (init_func *) init_gtkhbox;
 
   /* 
-   * GtkHBox interfaces can be added here 
+   * NspGtkHBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -24706,7 +24706,7 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
 }
 
 /*
- * initialize GtkHBox instances 
+ * initialize NspGtkHBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -24721,7 +24721,7 @@ static int init_gtkhbox(NspGtkHBox *Obj,NspTypeGtkHBox *type)
 }
 
 /*
- * new instance of GtkHBox 
+ * new instance of NspGtkHBox 
  */
 
 NspGtkHBox *new_gtkhbox() 
@@ -24736,7 +24736,7 @@ NspGtkHBox *new_gtkhbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHBox 
+ * Object method redefined for NspGtkHBox 
  *-----------------------------------------------*/
 
 /*
@@ -24746,23 +24746,23 @@ NspGtkHBox *new_gtkhbox()
 static char gtkhbox_type_name[]="GtkHBox";
 static char gtkhbox_short_type_name[]="GtkHBox";
 
-static char *gtkhbox_type_as_string(void)
+static char *nsp_gtkhbox_type_as_string(void)
 {
   return(gtkhbox_type_name);
 }
 
-static char *gtkhbox_type_short_string(NspObject *v)
+static char *nsp_gtkhbox_type_short_string(NspObject *v)
 {
   return(gtkhbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHBox   *gtkhbox_object(NspObject *O)
+NspGtkHBox *nsp_gtkhbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -24792,7 +24792,7 @@ NspGtkHBox  *GetGtkHBoxCopy(Stack stack, int i)
 NspGtkHBox  *GetGtkHBox(Stack stack, int i)
 {
   NspGtkHBox *M;
-  if (( M = gtkhbox_object(NthObj(i))) == NULLGTKHBOX)
+  if (( M = nsp_gtkhbox_object(NthObj(i))) == NULLGTKHBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -24840,7 +24840,7 @@ static NspMethods *gtkhbox_get_methods(void) { return NULL;};
 static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHButtonBox ----------- */
+/* ----------- NspGtkHButtonBox ----------- */
 
 
 #include "nsp/object.h"
@@ -24849,17 +24849,17 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHButtonBox inherits from GtkButtonBox 
+ * NspGtkHButtonBox inherits from GtkButtonBox 
  */
 
 int nsp_type_gtkhbuttonbox_id=0;
 NspTypeGtkHButtonBox *nsp_type_gtkhbuttonbox=NULL;
 
 /*
- * Type object for GtkHButtonBox 
+ * Type object for NspGtkHButtonBox 
  * all the instance of NspTypeGtkHButtonBox share the same id. 
  * nsp_type_gtkhbuttonbox: is an instance of NspTypeGtkHButtonBox 
- *    used for objects of GtkHButtonBox type (i.e built with new_gtkhbuttonbox) 
+ *    used for objects of NspGtkHButtonBox type (i.e built with new_gtkhbuttonbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
@@ -24888,8 +24888,8 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
   
   /* object methods redefined for gtkhbuttonbox */ 
 
-  top->s_type =  (s_type_func *) gtkhbuttonbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhbuttonbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhbuttonbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhbuttonbox_type_short_string;
   /* top->create = (create_func*) int_gtkhbuttonbox_create;*/ 
   
   /* specific methods for gtkhbuttonbox */
@@ -24897,7 +24897,7 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
   type->init = (init_func *) init_gtkhbuttonbox;
 
   /* 
-   * GtkHButtonBox interfaces can be added here 
+   * NspGtkHButtonBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -24923,7 +24923,7 @@ NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
 }
 
 /*
- * initialize GtkHButtonBox instances 
+ * initialize NspGtkHButtonBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -24938,7 +24938,7 @@ static int init_gtkhbuttonbox(NspGtkHButtonBox *Obj,NspTypeGtkHButtonBox *type)
 }
 
 /*
- * new instance of GtkHButtonBox 
+ * new instance of NspGtkHButtonBox 
  */
 
 NspGtkHButtonBox *new_gtkhbuttonbox() 
@@ -24953,7 +24953,7 @@ NspGtkHButtonBox *new_gtkhbuttonbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHButtonBox 
+ * Object method redefined for NspGtkHButtonBox 
  *-----------------------------------------------*/
 
 /*
@@ -24963,23 +24963,23 @@ NspGtkHButtonBox *new_gtkhbuttonbox()
 static char gtkhbuttonbox_type_name[]="GtkHButtonBox";
 static char gtkhbuttonbox_short_type_name[]="GtkHButtonBox";
 
-static char *gtkhbuttonbox_type_as_string(void)
+static char *nsp_gtkhbuttonbox_type_as_string(void)
 {
   return(gtkhbuttonbox_type_name);
 }
 
-static char *gtkhbuttonbox_type_short_string(NspObject *v)
+static char *nsp_gtkhbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkhbuttonbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHButtonBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHButtonBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHButtonBox   *gtkhbuttonbox_object(NspObject *O)
+NspGtkHButtonBox *nsp_gtkhbuttonbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -25009,7 +25009,7 @@ NspGtkHButtonBox  *GetGtkHButtonBoxCopy(Stack stack, int i)
 NspGtkHButtonBox  *GetGtkHButtonBox(Stack stack, int i)
 {
   NspGtkHButtonBox *M;
-  if (( M = gtkhbuttonbox_object(NthObj(i))) == NULLGTKHBUTTONBOX)
+  if (( M = nsp_gtkhbuttonbox_object(NthObj(i))) == NULLGTKHBUTTONBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -25051,7 +25051,7 @@ static NspMethods *gtkhbuttonbox_get_methods(void) { return NULL;};
 static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHPaned ----------- */
+/* ----------- NspGtkHPaned ----------- */
 
 
 #include "nsp/object.h"
@@ -25060,17 +25060,17 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHPaned inherits from GtkPaned 
+ * NspGtkHPaned inherits from GtkPaned 
  */
 
 int nsp_type_gtkhpaned_id=0;
 NspTypeGtkHPaned *nsp_type_gtkhpaned=NULL;
 
 /*
- * Type object for GtkHPaned 
+ * Type object for NspGtkHPaned 
  * all the instance of NspTypeGtkHPaned share the same id. 
  * nsp_type_gtkhpaned: is an instance of NspTypeGtkHPaned 
- *    used for objects of GtkHPaned type (i.e built with new_gtkhpaned) 
+ *    used for objects of NspGtkHPaned type (i.e built with new_gtkhpaned) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
@@ -25099,8 +25099,8 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
   
   /* object methods redefined for gtkhpaned */ 
 
-  top->s_type =  (s_type_func *) gtkhpaned_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhpaned_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhpaned_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhpaned_type_short_string;
   /* top->create = (create_func*) int_gtkhpaned_create;*/ 
   
   /* specific methods for gtkhpaned */
@@ -25108,7 +25108,7 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
   type->init = (init_func *) init_gtkhpaned;
 
   /* 
-   * GtkHPaned interfaces can be added here 
+   * NspGtkHPaned interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -25134,7 +25134,7 @@ NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
 }
 
 /*
- * initialize GtkHPaned instances 
+ * initialize NspGtkHPaned instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -25149,7 +25149,7 @@ static int init_gtkhpaned(NspGtkHPaned *Obj,NspTypeGtkHPaned *type)
 }
 
 /*
- * new instance of GtkHPaned 
+ * new instance of NspGtkHPaned 
  */
 
 NspGtkHPaned *new_gtkhpaned() 
@@ -25164,7 +25164,7 @@ NspGtkHPaned *new_gtkhpaned()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHPaned 
+ * Object method redefined for NspGtkHPaned 
  *-----------------------------------------------*/
 
 /*
@@ -25174,23 +25174,23 @@ NspGtkHPaned *new_gtkhpaned()
 static char gtkhpaned_type_name[]="GtkHPaned";
 static char gtkhpaned_short_type_name[]="GtkHPaned";
 
-static char *gtkhpaned_type_as_string(void)
+static char *nsp_gtkhpaned_type_as_string(void)
 {
   return(gtkhpaned_type_name);
 }
 
-static char *gtkhpaned_type_short_string(NspObject *v)
+static char *nsp_gtkhpaned_type_short_string(NspObject *v)
 {
   return(gtkhpaned_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHPaned objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHPaned objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHPaned   *gtkhpaned_object(NspObject *O)
+NspGtkHPaned *nsp_gtkhpaned_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -25220,7 +25220,7 @@ NspGtkHPaned  *GetGtkHPanedCopy(Stack stack, int i)
 NspGtkHPaned  *GetGtkHPaned(Stack stack, int i)
 {
   NspGtkHPaned *M;
-  if (( M = gtkhpaned_object(NthObj(i))) == NULLGTKHPANED)
+  if (( M = nsp_gtkhpaned_object(NthObj(i))) == NULLGTKHPANED)
      ArgMessage(stack,i);
   return M;
 }
@@ -25262,7 +25262,7 @@ static NspMethods *gtkhpaned_get_methods(void) { return NULL;};
 static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHRuler ----------- */
+/* ----------- NspGtkHRuler ----------- */
 
 
 #include "nsp/object.h"
@@ -25271,17 +25271,17 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHRuler inherits from GtkRuler 
+ * NspGtkHRuler inherits from GtkRuler 
  */
 
 int nsp_type_gtkhruler_id=0;
 NspTypeGtkHRuler *nsp_type_gtkhruler=NULL;
 
 /*
- * Type object for GtkHRuler 
+ * Type object for NspGtkHRuler 
  * all the instance of NspTypeGtkHRuler share the same id. 
  * nsp_type_gtkhruler: is an instance of NspTypeGtkHRuler 
- *    used for objects of GtkHRuler type (i.e built with new_gtkhruler) 
+ *    used for objects of NspGtkHRuler type (i.e built with new_gtkhruler) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
@@ -25310,8 +25310,8 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
   
   /* object methods redefined for gtkhruler */ 
 
-  top->s_type =  (s_type_func *) gtkhruler_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhruler_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhruler_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhruler_type_short_string;
   /* top->create = (create_func*) int_gtkhruler_create;*/ 
   
   /* specific methods for gtkhruler */
@@ -25319,7 +25319,7 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
   type->init = (init_func *) init_gtkhruler;
 
   /* 
-   * GtkHRuler interfaces can be added here 
+   * NspGtkHRuler interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -25345,7 +25345,7 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
 }
 
 /*
- * initialize GtkHRuler instances 
+ * initialize NspGtkHRuler instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -25360,7 +25360,7 @@ static int init_gtkhruler(NspGtkHRuler *Obj,NspTypeGtkHRuler *type)
 }
 
 /*
- * new instance of GtkHRuler 
+ * new instance of NspGtkHRuler 
  */
 
 NspGtkHRuler *new_gtkhruler() 
@@ -25375,7 +25375,7 @@ NspGtkHRuler *new_gtkhruler()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHRuler 
+ * Object method redefined for NspGtkHRuler 
  *-----------------------------------------------*/
 
 /*
@@ -25385,23 +25385,23 @@ NspGtkHRuler *new_gtkhruler()
 static char gtkhruler_type_name[]="GtkHRuler";
 static char gtkhruler_short_type_name[]="GtkHRuler";
 
-static char *gtkhruler_type_as_string(void)
+static char *nsp_gtkhruler_type_as_string(void)
 {
   return(gtkhruler_type_name);
 }
 
-static char *gtkhruler_type_short_string(NspObject *v)
+static char *nsp_gtkhruler_type_short_string(NspObject *v)
 {
   return(gtkhruler_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHRuler objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHRuler objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHRuler   *gtkhruler_object(NspObject *O)
+NspGtkHRuler *nsp_gtkhruler_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -25431,7 +25431,7 @@ NspGtkHRuler  *GetGtkHRulerCopy(Stack stack, int i)
 NspGtkHRuler  *GetGtkHRuler(Stack stack, int i)
 {
   NspGtkHRuler *M;
-  if (( M = gtkhruler_object(NthObj(i))) == NULLGTKHRULER)
+  if (( M = nsp_gtkhruler_object(NthObj(i))) == NULLGTKHRULER)
      ArgMessage(stack,i);
   return M;
 }
@@ -25473,7 +25473,7 @@ static NspMethods *gtkhruler_get_methods(void) { return NULL;};
 static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHScale ----------- */
+/* ----------- NspGtkHScale ----------- */
 
 
 #include "nsp/object.h"
@@ -25482,17 +25482,17 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHScale inherits from GtkScale 
+ * NspGtkHScale inherits from GtkScale 
  */
 
 int nsp_type_gtkhscale_id=0;
 NspTypeGtkHScale *nsp_type_gtkhscale=NULL;
 
 /*
- * Type object for GtkHScale 
+ * Type object for NspGtkHScale 
  * all the instance of NspTypeGtkHScale share the same id. 
  * nsp_type_gtkhscale: is an instance of NspTypeGtkHScale 
- *    used for objects of GtkHScale type (i.e built with new_gtkhscale) 
+ *    used for objects of NspGtkHScale type (i.e built with new_gtkhscale) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
@@ -25521,8 +25521,8 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
   
   /* object methods redefined for gtkhscale */ 
 
-  top->s_type =  (s_type_func *) gtkhscale_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhscale_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhscale_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhscale_type_short_string;
   /* top->create = (create_func*) int_gtkhscale_create;*/ 
   
   /* specific methods for gtkhscale */
@@ -25530,7 +25530,7 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
   type->init = (init_func *) init_gtkhscale;
 
   /* 
-   * GtkHScale interfaces can be added here 
+   * NspGtkHScale interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -25556,7 +25556,7 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
 }
 
 /*
- * initialize GtkHScale instances 
+ * initialize NspGtkHScale instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -25571,7 +25571,7 @@ static int init_gtkhscale(NspGtkHScale *Obj,NspTypeGtkHScale *type)
 }
 
 /*
- * new instance of GtkHScale 
+ * new instance of NspGtkHScale 
  */
 
 NspGtkHScale *new_gtkhscale() 
@@ -25586,7 +25586,7 @@ NspGtkHScale *new_gtkhscale()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHScale 
+ * Object method redefined for NspGtkHScale 
  *-----------------------------------------------*/
 
 /*
@@ -25596,23 +25596,23 @@ NspGtkHScale *new_gtkhscale()
 static char gtkhscale_type_name[]="GtkHScale";
 static char gtkhscale_short_type_name[]="GtkHScale";
 
-static char *gtkhscale_type_as_string(void)
+static char *nsp_gtkhscale_type_as_string(void)
 {
   return(gtkhscale_type_name);
 }
 
-static char *gtkhscale_type_short_string(NspObject *v)
+static char *nsp_gtkhscale_type_short_string(NspObject *v)
 {
   return(gtkhscale_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHScale objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHScale objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHScale   *gtkhscale_object(NspObject *O)
+NspGtkHScale *nsp_gtkhscale_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -25642,7 +25642,7 @@ NspGtkHScale  *GetGtkHScaleCopy(Stack stack, int i)
 NspGtkHScale  *GetGtkHScale(Stack stack, int i)
 {
   NspGtkHScale *M;
-  if (( M = gtkhscale_object(NthObj(i))) == NULLGTKHSCALE)
+  if (( M = nsp_gtkhscale_object(NthObj(i))) == NULLGTKHSCALE)
      ArgMessage(stack,i);
   return M;
 }
@@ -25698,7 +25698,7 @@ static NspMethods *gtkhscale_get_methods(void) { return NULL;};
 static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHScrollbar ----------- */
+/* ----------- NspGtkHScrollbar ----------- */
 
 
 #include "nsp/object.h"
@@ -25707,17 +25707,17 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHScrollbar inherits from GtkScrollbar 
+ * NspGtkHScrollbar inherits from GtkScrollbar 
  */
 
 int nsp_type_gtkhscrollbar_id=0;
 NspTypeGtkHScrollbar *nsp_type_gtkhscrollbar=NULL;
 
 /*
- * Type object for GtkHScrollbar 
+ * Type object for NspGtkHScrollbar 
  * all the instance of NspTypeGtkHScrollbar share the same id. 
  * nsp_type_gtkhscrollbar: is an instance of NspTypeGtkHScrollbar 
- *    used for objects of GtkHScrollbar type (i.e built with new_gtkhscrollbar) 
+ *    used for objects of NspGtkHScrollbar type (i.e built with new_gtkhscrollbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
@@ -25746,8 +25746,8 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
   
   /* object methods redefined for gtkhscrollbar */ 
 
-  top->s_type =  (s_type_func *) gtkhscrollbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhscrollbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhscrollbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhscrollbar_type_short_string;
   /* top->create = (create_func*) int_gtkhscrollbar_create;*/ 
   
   /* specific methods for gtkhscrollbar */
@@ -25755,7 +25755,7 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
   type->init = (init_func *) init_gtkhscrollbar;
 
   /* 
-   * GtkHScrollbar interfaces can be added here 
+   * NspGtkHScrollbar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -25781,7 +25781,7 @@ NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
 }
 
 /*
- * initialize GtkHScrollbar instances 
+ * initialize NspGtkHScrollbar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -25796,7 +25796,7 @@ static int init_gtkhscrollbar(NspGtkHScrollbar *Obj,NspTypeGtkHScrollbar *type)
 }
 
 /*
- * new instance of GtkHScrollbar 
+ * new instance of NspGtkHScrollbar 
  */
 
 NspGtkHScrollbar *new_gtkhscrollbar() 
@@ -25811,7 +25811,7 @@ NspGtkHScrollbar *new_gtkhscrollbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHScrollbar 
+ * Object method redefined for NspGtkHScrollbar 
  *-----------------------------------------------*/
 
 /*
@@ -25821,23 +25821,23 @@ NspGtkHScrollbar *new_gtkhscrollbar()
 static char gtkhscrollbar_type_name[]="GtkHScrollbar";
 static char gtkhscrollbar_short_type_name[]="GtkHScrollbar";
 
-static char *gtkhscrollbar_type_as_string(void)
+static char *nsp_gtkhscrollbar_type_as_string(void)
 {
   return(gtkhscrollbar_type_name);
 }
 
-static char *gtkhscrollbar_type_short_string(NspObject *v)
+static char *nsp_gtkhscrollbar_type_short_string(NspObject *v)
 {
   return(gtkhscrollbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHScrollbar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHScrollbar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHScrollbar   *gtkhscrollbar_object(NspObject *O)
+NspGtkHScrollbar *nsp_gtkhscrollbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -25867,7 +25867,7 @@ NspGtkHScrollbar  *GetGtkHScrollbarCopy(Stack stack, int i)
 NspGtkHScrollbar  *GetGtkHScrollbar(Stack stack, int i)
 {
   NspGtkHScrollbar *M;
-  if (( M = gtkhscrollbar_object(NthObj(i))) == NULLGTKHSCROLLBAR)
+  if (( M = nsp_gtkhscrollbar_object(NthObj(i))) == NULLGTKHSCROLLBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -25923,7 +25923,7 @@ static NspMethods *gtkhscrollbar_get_methods(void) { return NULL;};
 static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkHSeparator ----------- */
+/* ----------- NspGtkHSeparator ----------- */
 
 
 #include "nsp/object.h"
@@ -25932,17 +25932,17 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkHSeparator inherits from GtkSeparator 
+ * NspGtkHSeparator inherits from GtkSeparator 
  */
 
 int nsp_type_gtkhseparator_id=0;
 NspTypeGtkHSeparator *nsp_type_gtkhseparator=NULL;
 
 /*
- * Type object for GtkHSeparator 
+ * Type object for NspGtkHSeparator 
  * all the instance of NspTypeGtkHSeparator share the same id. 
  * nsp_type_gtkhseparator: is an instance of NspTypeGtkHSeparator 
- *    used for objects of GtkHSeparator type (i.e built with new_gtkhseparator) 
+ *    used for objects of NspGtkHSeparator type (i.e built with new_gtkhseparator) 
  * other instances are used for derived classes 
  */
 NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
@@ -25971,8 +25971,8 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
   
   /* object methods redefined for gtkhseparator */ 
 
-  top->s_type =  (s_type_func *) gtkhseparator_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkhseparator_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkhseparator_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkhseparator_type_short_string;
   /* top->create = (create_func*) int_gtkhseparator_create;*/ 
   
   /* specific methods for gtkhseparator */
@@ -25980,7 +25980,7 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
   type->init = (init_func *) init_gtkhseparator;
 
   /* 
-   * GtkHSeparator interfaces can be added here 
+   * NspGtkHSeparator interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -26006,7 +26006,7 @@ NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
 }
 
 /*
- * initialize GtkHSeparator instances 
+ * initialize NspGtkHSeparator instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -26021,7 +26021,7 @@ static int init_gtkhseparator(NspGtkHSeparator *Obj,NspTypeGtkHSeparator *type)
 }
 
 /*
- * new instance of GtkHSeparator 
+ * new instance of NspGtkHSeparator 
  */
 
 NspGtkHSeparator *new_gtkhseparator() 
@@ -26036,7 +26036,7 @@ NspGtkHSeparator *new_gtkhseparator()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkHSeparator 
+ * Object method redefined for NspGtkHSeparator 
  *-----------------------------------------------*/
 
 /*
@@ -26046,23 +26046,23 @@ NspGtkHSeparator *new_gtkhseparator()
 static char gtkhseparator_type_name[]="GtkHSeparator";
 static char gtkhseparator_short_type_name[]="GtkHSeparator";
 
-static char *gtkhseparator_type_as_string(void)
+static char *nsp_gtkhseparator_type_as_string(void)
 {
   return(gtkhseparator_type_name);
 }
 
-static char *gtkhseparator_type_short_string(NspObject *v)
+static char *nsp_gtkhseparator_type_short_string(NspObject *v)
 {
   return(gtkhseparator_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkHSeparator objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkHSeparator objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkHSeparator   *gtkhseparator_object(NspObject *O)
+NspGtkHSeparator *nsp_gtkhseparator_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -26092,7 +26092,7 @@ NspGtkHSeparator  *GetGtkHSeparatorCopy(Stack stack, int i)
 NspGtkHSeparator  *GetGtkHSeparator(Stack stack, int i)
 {
   NspGtkHSeparator *M;
-  if (( M = gtkhseparator_object(NthObj(i))) == NULLGTKHSEPARATOR)
+  if (( M = nsp_gtkhseparator_object(NthObj(i))) == NULLGTKHSEPARATOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -26134,7 +26134,7 @@ static NspMethods *gtkhseparator_get_methods(void) { return NULL;};
 static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconFactory ----------- */
+/* ----------- NspGtkIconFactory ----------- */
 
 
 #include "nsp/object.h"
@@ -26143,17 +26143,17 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconFactory inherits from GObject 
+ * NspGtkIconFactory inherits from GObject 
  */
 
 int nsp_type_gtkiconfactory_id=0;
 NspTypeGtkIconFactory *nsp_type_gtkiconfactory=NULL;
 
 /*
- * Type object for GtkIconFactory 
+ * Type object for NspGtkIconFactory 
  * all the instance of NspTypeGtkIconFactory share the same id. 
  * nsp_type_gtkiconfactory: is an instance of NspTypeGtkIconFactory 
- *    used for objects of GtkIconFactory type (i.e built with new_gtkiconfactory) 
+ *    used for objects of NspGtkIconFactory type (i.e built with new_gtkiconfactory) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
@@ -26182,8 +26182,8 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
   
   /* object methods redefined for gtkiconfactory */ 
 
-  top->s_type =  (s_type_func *) gtkiconfactory_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkiconfactory_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkiconfactory_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkiconfactory_type_short_string;
   /* top->create = (create_func*) int_gtkiconfactory_create;*/ 
   
   /* specific methods for gtkiconfactory */
@@ -26191,7 +26191,7 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
   type->init = (init_func *) init_gtkiconfactory;
 
   /* 
-   * GtkIconFactory interfaces can be added here 
+   * NspGtkIconFactory interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -26217,7 +26217,7 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
 }
 
 /*
- * initialize GtkIconFactory instances 
+ * initialize NspGtkIconFactory instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -26232,7 +26232,7 @@ static int init_gtkiconfactory(NspGtkIconFactory *Obj,NspTypeGtkIconFactory *typ
 }
 
 /*
- * new instance of GtkIconFactory 
+ * new instance of NspGtkIconFactory 
  */
 
 NspGtkIconFactory *new_gtkiconfactory() 
@@ -26247,7 +26247,7 @@ NspGtkIconFactory *new_gtkiconfactory()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconFactory 
+ * Object method redefined for NspGtkIconFactory 
  *-----------------------------------------------*/
 
 /*
@@ -26257,23 +26257,23 @@ NspGtkIconFactory *new_gtkiconfactory()
 static char gtkiconfactory_type_name[]="GtkIconFactory";
 static char gtkiconfactory_short_type_name[]="GtkIconFactory";
 
-static char *gtkiconfactory_type_as_string(void)
+static char *nsp_gtkiconfactory_type_as_string(void)
 {
   return(gtkiconfactory_type_name);
 }
 
-static char *gtkiconfactory_type_short_string(NspObject *v)
+static char *nsp_gtkiconfactory_type_short_string(NspObject *v)
 {
   return(gtkiconfactory_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconFactory objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconFactory objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconFactory   *gtkiconfactory_object(NspObject *O)
+NspGtkIconFactory *nsp_gtkiconfactory_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -26303,7 +26303,7 @@ NspGtkIconFactory  *GetGtkIconFactoryCopy(Stack stack, int i)
 NspGtkIconFactory  *GetGtkIconFactory(Stack stack, int i)
 {
   NspGtkIconFactory *M;
-  if (( M = gtkiconfactory_object(NthObj(i))) == NULLGTKICONFACTORY)
+  if (( M = nsp_gtkiconfactory_object(NthObj(i))) == NULLGTKICONFACTORY)
      ArgMessage(stack,i);
   return M;
 }
@@ -26397,7 +26397,7 @@ static NspMethods *gtkiconfactory_get_methods(void) { return gtkiconfactory_meth
 static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconTheme ----------- */
+/* ----------- NspGtkIconTheme ----------- */
 
 
 #include "nsp/object.h"
@@ -26406,17 +26406,17 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconTheme inherits from GObject 
+ * NspGtkIconTheme inherits from GObject 
  */
 
 int nsp_type_gtkicontheme_id=0;
 NspTypeGtkIconTheme *nsp_type_gtkicontheme=NULL;
 
 /*
- * Type object for GtkIconTheme 
+ * Type object for NspGtkIconTheme 
  * all the instance of NspTypeGtkIconTheme share the same id. 
  * nsp_type_gtkicontheme: is an instance of NspTypeGtkIconTheme 
- *    used for objects of GtkIconTheme type (i.e built with new_gtkicontheme) 
+ *    used for objects of NspGtkIconTheme type (i.e built with new_gtkicontheme) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
@@ -26445,8 +26445,8 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
   
   /* object methods redefined for gtkicontheme */ 
 
-  top->s_type =  (s_type_func *) gtkicontheme_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkicontheme_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkicontheme_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkicontheme_type_short_string;
   /* top->create = (create_func*) int_gtkicontheme_create;*/ 
   
   /* specific methods for gtkicontheme */
@@ -26454,7 +26454,7 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
   type->init = (init_func *) init_gtkicontheme;
 
   /* 
-   * GtkIconTheme interfaces can be added here 
+   * NspGtkIconTheme interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -26480,7 +26480,7 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
 }
 
 /*
- * initialize GtkIconTheme instances 
+ * initialize NspGtkIconTheme instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -26495,7 +26495,7 @@ static int init_gtkicontheme(NspGtkIconTheme *Obj,NspTypeGtkIconTheme *type)
 }
 
 /*
- * new instance of GtkIconTheme 
+ * new instance of NspGtkIconTheme 
  */
 
 NspGtkIconTheme *new_gtkicontheme() 
@@ -26510,7 +26510,7 @@ NspGtkIconTheme *new_gtkicontheme()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconTheme 
+ * Object method redefined for NspGtkIconTheme 
  *-----------------------------------------------*/
 
 /*
@@ -26520,23 +26520,23 @@ NspGtkIconTheme *new_gtkicontheme()
 static char gtkicontheme_type_name[]="GtkIconTheme";
 static char gtkicontheme_short_type_name[]="GtkIconTheme";
 
-static char *gtkicontheme_type_as_string(void)
+static char *nsp_gtkicontheme_type_as_string(void)
 {
   return(gtkicontheme_type_name);
 }
 
-static char *gtkicontheme_type_short_string(NspObject *v)
+static char *nsp_gtkicontheme_type_short_string(NspObject *v)
 {
   return(gtkicontheme_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconTheme objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconTheme objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconTheme   *gtkicontheme_object(NspObject *O)
+NspGtkIconTheme *nsp_gtkicontheme_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -26566,7 +26566,7 @@ NspGtkIconTheme  *GetGtkIconThemeCopy(Stack stack, int i)
 NspGtkIconTheme  *GetGtkIconTheme(Stack stack, int i)
 {
   NspGtkIconTheme *M;
-  if (( M = gtkicontheme_object(NthObj(i))) == NULLGTKICONTHEME)
+  if (( M = nsp_gtkicontheme_object(NthObj(i))) == NULLGTKICONTHEME)
      ArgMessage(stack,i);
   return M;
 }
@@ -26753,7 +26753,7 @@ static NspMethods *gtkicontheme_get_methods(void) { return gtkicontheme_methods;
 static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIconView ----------- */
+/* ----------- NspGtkIconView ----------- */
 
 
 #include "nsp/object.h"
@@ -26762,7 +26762,7 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIconView inherits from GtkContainer 
+ * NspGtkIconView inherits from GtkContainer 
  * and implements  GtkCellLayout
  */
 
@@ -26770,10 +26770,10 @@ int nsp_type_gtkiconview_id=0;
 NspTypeGtkIconView *nsp_type_gtkiconview=NULL;
 
 /*
- * Type object for GtkIconView 
+ * Type object for NspGtkIconView 
  * all the instance of NspTypeGtkIconView share the same id. 
  * nsp_type_gtkiconview: is an instance of NspTypeGtkIconView 
- *    used for objects of GtkIconView type (i.e built with new_gtkiconview) 
+ *    used for objects of NspGtkIconView type (i.e built with new_gtkiconview) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
@@ -26802,8 +26802,8 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
   
   /* object methods redefined for gtkiconview */ 
 
-  top->s_type =  (s_type_func *) gtkiconview_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkiconview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkiconview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkiconview_type_short_string;
   /* top->create = (create_func*) int_gtkiconview_create;*/ 
   
   /* specific methods for gtkiconview */
@@ -26811,7 +26811,7 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
   type->init = (init_func *) init_gtkiconview;
 
   /* 
-   * GtkIconView interfaces can be added here 
+   * NspGtkIconView interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -26838,7 +26838,7 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
 }
 
 /*
- * initialize GtkIconView instances 
+ * initialize NspGtkIconView instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -26853,7 +26853,7 @@ static int init_gtkiconview(NspGtkIconView *Obj,NspTypeGtkIconView *type)
 }
 
 /*
- * new instance of GtkIconView 
+ * new instance of NspGtkIconView 
  */
 
 NspGtkIconView *new_gtkiconview() 
@@ -26868,7 +26868,7 @@ NspGtkIconView *new_gtkiconview()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIconView 
+ * Object method redefined for NspGtkIconView 
  *-----------------------------------------------*/
 
 /*
@@ -26878,23 +26878,23 @@ NspGtkIconView *new_gtkiconview()
 static char gtkiconview_type_name[]="GtkIconView";
 static char gtkiconview_short_type_name[]="GtkIconView";
 
-static char *gtkiconview_type_as_string(void)
+static char *nsp_gtkiconview_type_as_string(void)
 {
   return(gtkiconview_type_name);
 }
 
-static char *gtkiconview_type_short_string(NspObject *v)
+static char *nsp_gtkiconview_type_short_string(NspObject *v)
 {
   return(gtkiconview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIconView objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIconView objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIconView   *gtkiconview_object(NspObject *O)
+NspGtkIconView *nsp_gtkiconview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -26924,7 +26924,7 @@ NspGtkIconView  *GetGtkIconViewCopy(Stack stack, int i)
 NspGtkIconView  *GetGtkIconView(Stack stack, int i)
 {
   NspGtkIconView *M;
-  if (( M = gtkiconview_object(NthObj(i))) == NULLGTKICONVIEW)
+  if (( M = nsp_gtkiconview_object(NthObj(i))) == NULLGTKICONVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -27555,7 +27555,7 @@ static NspMethods *gtkiconview_get_methods(void) { return gtkiconview_methods;};
 static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkImage ----------- */
+/* ----------- NspGtkImage ----------- */
 
 
 #include "nsp/object.h"
@@ -27564,17 +27564,17 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkImage inherits from GtkMisc 
+ * NspGtkImage inherits from GtkMisc 
  */
 
 int nsp_type_gtkimage_id=0;
 NspTypeGtkImage *nsp_type_gtkimage=NULL;
 
 /*
- * Type object for GtkImage 
+ * Type object for NspGtkImage 
  * all the instance of NspTypeGtkImage share the same id. 
  * nsp_type_gtkimage: is an instance of NspTypeGtkImage 
- *    used for objects of GtkImage type (i.e built with new_gtkimage) 
+ *    used for objects of NspGtkImage type (i.e built with new_gtkimage) 
  * other instances are used for derived classes 
  */
 NspTypeGtkImage *new_type_gtkimage(type_mode mode)
@@ -27603,8 +27603,8 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
   
   /* object methods redefined for gtkimage */ 
 
-  top->s_type =  (s_type_func *) gtkimage_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkimage_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkimage_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkimage_type_short_string;
   /* top->create = (create_func*) int_gtkimage_create;*/ 
   
   /* specific methods for gtkimage */
@@ -27612,7 +27612,7 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
   type->init = (init_func *) init_gtkimage;
 
   /* 
-   * GtkImage interfaces can be added here 
+   * NspGtkImage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -27638,7 +27638,7 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode)
 }
 
 /*
- * initialize GtkImage instances 
+ * initialize NspGtkImage instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -27653,7 +27653,7 @@ static int init_gtkimage(NspGtkImage *Obj,NspTypeGtkImage *type)
 }
 
 /*
- * new instance of GtkImage 
+ * new instance of NspGtkImage 
  */
 
 NspGtkImage *new_gtkimage() 
@@ -27668,7 +27668,7 @@ NspGtkImage *new_gtkimage()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkImage 
+ * Object method redefined for NspGtkImage 
  *-----------------------------------------------*/
 
 /*
@@ -27678,23 +27678,23 @@ NspGtkImage *new_gtkimage()
 static char gtkimage_type_name[]="GtkImage";
 static char gtkimage_short_type_name[]="GtkImage";
 
-static char *gtkimage_type_as_string(void)
+static char *nsp_gtkimage_type_as_string(void)
 {
   return(gtkimage_type_name);
 }
 
-static char *gtkimage_type_short_string(NspObject *v)
+static char *nsp_gtkimage_type_short_string(NspObject *v)
 {
   return(gtkimage_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkImage objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkImage objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkImage   *gtkimage_object(NspObject *O)
+NspGtkImage *nsp_gtkimage_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -27724,7 +27724,7 @@ NspGtkImage  *GetGtkImageCopy(Stack stack, int i)
 NspGtkImage  *GetGtkImage(Stack stack, int i)
 {
   NspGtkImage *M;
-  if (( M = gtkimage_object(NthObj(i))) == NULLGTKIMAGE)
+  if (( M = nsp_gtkimage_object(NthObj(i))) == NULLGTKIMAGE)
      ArgMessage(stack,i);
   return M;
 }
@@ -28142,7 +28142,7 @@ static NspMethods *gtkimage_get_methods(void) { return gtkimage_methods;};
 static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkImageMenuItem ----------- */
+/* ----------- NspGtkImageMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -28151,17 +28151,17 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkImageMenuItem inherits from GtkMenuItem 
+ * NspGtkImageMenuItem inherits from GtkMenuItem 
  */
 
 int nsp_type_gtkimagemenuitem_id=0;
 NspTypeGtkImageMenuItem *nsp_type_gtkimagemenuitem=NULL;
 
 /*
- * Type object for GtkImageMenuItem 
+ * Type object for NspGtkImageMenuItem 
  * all the instance of NspTypeGtkImageMenuItem share the same id. 
  * nsp_type_gtkimagemenuitem: is an instance of NspTypeGtkImageMenuItem 
- *    used for objects of GtkImageMenuItem type (i.e built with new_gtkimagemenuitem) 
+ *    used for objects of NspGtkImageMenuItem type (i.e built with new_gtkimagemenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
@@ -28190,8 +28190,8 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
   
   /* object methods redefined for gtkimagemenuitem */ 
 
-  top->s_type =  (s_type_func *) gtkimagemenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkimagemenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkimagemenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkimagemenuitem_type_short_string;
   /* top->create = (create_func*) int_gtkimagemenuitem_create;*/ 
   
   /* specific methods for gtkimagemenuitem */
@@ -28199,7 +28199,7 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
   type->init = (init_func *) init_gtkimagemenuitem;
 
   /* 
-   * GtkImageMenuItem interfaces can be added here 
+   * NspGtkImageMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -28225,7 +28225,7 @@ NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkImageMenuItem instances 
+ * initialize NspGtkImageMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -28240,7 +28240,7 @@ static int init_gtkimagemenuitem(NspGtkImageMenuItem *Obj,NspTypeGtkImageMenuIte
 }
 
 /*
- * new instance of GtkImageMenuItem 
+ * new instance of NspGtkImageMenuItem 
  */
 
 NspGtkImageMenuItem *new_gtkimagemenuitem() 
@@ -28255,7 +28255,7 @@ NspGtkImageMenuItem *new_gtkimagemenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkImageMenuItem 
+ * Object method redefined for NspGtkImageMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -28265,23 +28265,23 @@ NspGtkImageMenuItem *new_gtkimagemenuitem()
 static char gtkimagemenuitem_type_name[]="GtkImageMenuItem";
 static char gtkimagemenuitem_short_type_name[]="GtkImageMenuItem";
 
-static char *gtkimagemenuitem_type_as_string(void)
+static char *nsp_gtkimagemenuitem_type_as_string(void)
 {
   return(gtkimagemenuitem_type_name);
 }
 
-static char *gtkimagemenuitem_type_short_string(NspObject *v)
+static char *nsp_gtkimagemenuitem_type_short_string(NspObject *v)
 {
   return(gtkimagemenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkImageMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkImageMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkImageMenuItem   *gtkimagemenuitem_object(NspObject *O)
+NspGtkImageMenuItem *nsp_gtkimagemenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -28311,7 +28311,7 @@ NspGtkImageMenuItem  *GetGtkImageMenuItemCopy(Stack stack, int i)
 NspGtkImageMenuItem  *GetGtkImageMenuItem(Stack stack, int i)
 {
   NspGtkImageMenuItem *M;
-  if (( M = gtkimagemenuitem_object(NthObj(i))) == NULLGTKIMAGEMENUITEM)
+  if (( M = nsp_gtkimagemenuitem_object(NthObj(i))) == NULLGTKIMAGEMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -28409,7 +28409,7 @@ static NspMethods *gtkimagemenuitem_get_methods(void) { return gtkimagemenuitem_
 static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIMContext ----------- */
+/* ----------- NspGtkIMContext ----------- */
 
 
 #include "nsp/object.h"
@@ -28418,17 +28418,17 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIMContext inherits from GtkObject 
+ * NspGtkIMContext inherits from GtkObject 
  */
 
 int nsp_type_gtkimcontext_id=0;
 NspTypeGtkIMContext *nsp_type_gtkimcontext=NULL;
 
 /*
- * Type object for GtkIMContext 
+ * Type object for NspGtkIMContext 
  * all the instance of NspTypeGtkIMContext share the same id. 
  * nsp_type_gtkimcontext: is an instance of NspTypeGtkIMContext 
- *    used for objects of GtkIMContext type (i.e built with new_gtkimcontext) 
+ *    used for objects of NspGtkIMContext type (i.e built with new_gtkimcontext) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
@@ -28457,8 +28457,8 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
   
   /* object methods redefined for gtkimcontext */ 
 
-  top->s_type =  (s_type_func *) gtkimcontext_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkimcontext_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkimcontext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkimcontext_type_short_string;
   /* top->create = (create_func*) int_gtkimcontext_create;*/ 
   
   /* specific methods for gtkimcontext */
@@ -28466,7 +28466,7 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
   type->init = (init_func *) init_gtkimcontext;
 
   /* 
-   * GtkIMContext interfaces can be added here 
+   * NspGtkIMContext interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -28492,7 +28492,7 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
 }
 
 /*
- * initialize GtkIMContext instances 
+ * initialize NspGtkIMContext instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -28507,7 +28507,7 @@ static int init_gtkimcontext(NspGtkIMContext *Obj,NspTypeGtkIMContext *type)
 }
 
 /*
- * new instance of GtkIMContext 
+ * new instance of NspGtkIMContext 
  */
 
 NspGtkIMContext *new_gtkimcontext() 
@@ -28522,7 +28522,7 @@ NspGtkIMContext *new_gtkimcontext()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIMContext 
+ * Object method redefined for NspGtkIMContext 
  *-----------------------------------------------*/
 
 /*
@@ -28532,23 +28532,23 @@ NspGtkIMContext *new_gtkimcontext()
 static char gtkimcontext_type_name[]="GtkIMContext";
 static char gtkimcontext_short_type_name[]="GtkIMContext";
 
-static char *gtkimcontext_type_as_string(void)
+static char *nsp_gtkimcontext_type_as_string(void)
 {
   return(gtkimcontext_type_name);
 }
 
-static char *gtkimcontext_type_short_string(NspObject *v)
+static char *nsp_gtkimcontext_type_short_string(NspObject *v)
 {
   return(gtkimcontext_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIMContext objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIMContext objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIMContext   *gtkimcontext_object(NspObject *O)
+NspGtkIMContext *nsp_gtkimcontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -28578,7 +28578,7 @@ NspGtkIMContext  *GetGtkIMContextCopy(Stack stack, int i)
 NspGtkIMContext  *GetGtkIMContext(Stack stack, int i)
 {
   NspGtkIMContext *M;
-  if (( M = gtkimcontext_object(NthObj(i))) == NULLGTKIMCONTEXT)
+  if (( M = nsp_gtkimcontext_object(NthObj(i))) == NULLGTKIMCONTEXT)
      ArgMessage(stack,i);
   return M;
 }
@@ -28758,7 +28758,7 @@ static NspMethods *gtkimcontext_get_methods(void) { return gtkimcontext_methods;
 static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIMContextSimple ----------- */
+/* ----------- NspGtkIMContextSimple ----------- */
 
 
 #include "nsp/object.h"
@@ -28767,17 +28767,17 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIMContextSimple inherits from GtkIMContext 
+ * NspGtkIMContextSimple inherits from GtkIMContext 
  */
 
 int nsp_type_gtkimcontextsimple_id=0;
 NspTypeGtkIMContextSimple *nsp_type_gtkimcontextsimple=NULL;
 
 /*
- * Type object for GtkIMContextSimple 
+ * Type object for NspGtkIMContextSimple 
  * all the instance of NspTypeGtkIMContextSimple share the same id. 
  * nsp_type_gtkimcontextsimple: is an instance of NspTypeGtkIMContextSimple 
- *    used for objects of GtkIMContextSimple type (i.e built with new_gtkimcontextsimple) 
+ *    used for objects of NspGtkIMContextSimple type (i.e built with new_gtkimcontextsimple) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
@@ -28806,8 +28806,8 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
   
   /* object methods redefined for gtkimcontextsimple */ 
 
-  top->s_type =  (s_type_func *) gtkimcontextsimple_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkimcontextsimple_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkimcontextsimple_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkimcontextsimple_type_short_string;
   /* top->create = (create_func*) int_gtkimcontextsimple_create;*/ 
   
   /* specific methods for gtkimcontextsimple */
@@ -28815,7 +28815,7 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
   type->init = (init_func *) init_gtkimcontextsimple;
 
   /* 
-   * GtkIMContextSimple interfaces can be added here 
+   * NspGtkIMContextSimple interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -28841,7 +28841,7 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
 }
 
 /*
- * initialize GtkIMContextSimple instances 
+ * initialize NspGtkIMContextSimple instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -28856,7 +28856,7 @@ static int init_gtkimcontextsimple(NspGtkIMContextSimple *Obj,NspTypeGtkIMContex
 }
 
 /*
- * new instance of GtkIMContextSimple 
+ * new instance of NspGtkIMContextSimple 
  */
 
 NspGtkIMContextSimple *new_gtkimcontextsimple() 
@@ -28871,7 +28871,7 @@ NspGtkIMContextSimple *new_gtkimcontextsimple()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIMContextSimple 
+ * Object method redefined for NspGtkIMContextSimple 
  *-----------------------------------------------*/
 
 /*
@@ -28881,23 +28881,23 @@ NspGtkIMContextSimple *new_gtkimcontextsimple()
 static char gtkimcontextsimple_type_name[]="GtkIMContextSimple";
 static char gtkimcontextsimple_short_type_name[]="GtkIMContextSimple";
 
-static char *gtkimcontextsimple_type_as_string(void)
+static char *nsp_gtkimcontextsimple_type_as_string(void)
 {
   return(gtkimcontextsimple_type_name);
 }
 
-static char *gtkimcontextsimple_type_short_string(NspObject *v)
+static char *nsp_gtkimcontextsimple_type_short_string(NspObject *v)
 {
   return(gtkimcontextsimple_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIMContextSimple objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIMContextSimple objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIMContextSimple   *gtkimcontextsimple_object(NspObject *O)
+NspGtkIMContextSimple *nsp_gtkimcontextsimple_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -28927,7 +28927,7 @@ NspGtkIMContextSimple  *GetGtkIMContextSimpleCopy(Stack stack, int i)
 NspGtkIMContextSimple  *GetGtkIMContextSimple(Stack stack, int i)
 {
   NspGtkIMContextSimple *M;
-  if (( M = gtkimcontextsimple_object(NthObj(i))) == NULLGTKIMCONTEXTSIMPLE)
+  if (( M = nsp_gtkimcontextsimple_object(NthObj(i))) == NULLGTKIMCONTEXTSIMPLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -28969,7 +28969,7 @@ static NspMethods *gtkimcontextsimple_get_methods(void) { return NULL;};
 static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkIMMulticontext ----------- */
+/* ----------- NspGtkIMMulticontext ----------- */
 
 
 #include "nsp/object.h"
@@ -28978,17 +28978,17 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkIMMulticontext inherits from GtkIMContext 
+ * NspGtkIMMulticontext inherits from GtkIMContext 
  */
 
 int nsp_type_gtkimmulticontext_id=0;
 NspTypeGtkIMMulticontext *nsp_type_gtkimmulticontext=NULL;
 
 /*
- * Type object for GtkIMMulticontext 
+ * Type object for NspGtkIMMulticontext 
  * all the instance of NspTypeGtkIMMulticontext share the same id. 
  * nsp_type_gtkimmulticontext: is an instance of NspTypeGtkIMMulticontext 
- *    used for objects of GtkIMMulticontext type (i.e built with new_gtkimmulticontext) 
+ *    used for objects of NspGtkIMMulticontext type (i.e built with new_gtkimmulticontext) 
  * other instances are used for derived classes 
  */
 NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
@@ -29017,8 +29017,8 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
   
   /* object methods redefined for gtkimmulticontext */ 
 
-  top->s_type =  (s_type_func *) gtkimmulticontext_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkimmulticontext_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkimmulticontext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkimmulticontext_type_short_string;
   /* top->create = (create_func*) int_gtkimmulticontext_create;*/ 
   
   /* specific methods for gtkimmulticontext */
@@ -29026,7 +29026,7 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
   type->init = (init_func *) init_gtkimmulticontext;
 
   /* 
-   * GtkIMMulticontext interfaces can be added here 
+   * NspGtkIMMulticontext interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -29052,7 +29052,7 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
 }
 
 /*
- * initialize GtkIMMulticontext instances 
+ * initialize NspGtkIMMulticontext instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -29067,7 +29067,7 @@ static int init_gtkimmulticontext(NspGtkIMMulticontext *Obj,NspTypeGtkIMMulticon
 }
 
 /*
- * new instance of GtkIMMulticontext 
+ * new instance of NspGtkIMMulticontext 
  */
 
 NspGtkIMMulticontext *new_gtkimmulticontext() 
@@ -29082,7 +29082,7 @@ NspGtkIMMulticontext *new_gtkimmulticontext()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkIMMulticontext 
+ * Object method redefined for NspGtkIMMulticontext 
  *-----------------------------------------------*/
 
 /*
@@ -29092,23 +29092,23 @@ NspGtkIMMulticontext *new_gtkimmulticontext()
 static char gtkimmulticontext_type_name[]="GtkIMMulticontext";
 static char gtkimmulticontext_short_type_name[]="GtkIMMulticontext";
 
-static char *gtkimmulticontext_type_as_string(void)
+static char *nsp_gtkimmulticontext_type_as_string(void)
 {
   return(gtkimmulticontext_type_name);
 }
 
-static char *gtkimmulticontext_type_short_string(NspObject *v)
+static char *nsp_gtkimmulticontext_type_short_string(NspObject *v)
 {
   return(gtkimmulticontext_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkIMMulticontext objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkIMMulticontext objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkIMMulticontext   *gtkimmulticontext_object(NspObject *O)
+NspGtkIMMulticontext *nsp_gtkimmulticontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -29138,7 +29138,7 @@ NspGtkIMMulticontext  *GetGtkIMMulticontextCopy(Stack stack, int i)
 NspGtkIMMulticontext  *GetGtkIMMulticontext(Stack stack, int i)
 {
   NspGtkIMMulticontext *M;
-  if (( M = gtkimmulticontext_object(NthObj(i))) == NULLGTKIMMULTICONTEXT)
+  if (( M = nsp_gtkimmulticontext_object(NthObj(i))) == NULLGTKIMMULTICONTEXT)
      ArgMessage(stack,i);
   return M;
 }
@@ -29194,7 +29194,7 @@ static NspMethods *gtkimmulticontext_get_methods(void) { return gtkimmulticontex
 static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkInputDialog ----------- */
+/* ----------- NspGtkInputDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -29203,17 +29203,17 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkInputDialog inherits from GtkDialog 
+ * NspGtkInputDialog inherits from GtkDialog 
  */
 
 int nsp_type_gtkinputdialog_id=0;
 NspTypeGtkInputDialog *nsp_type_gtkinputdialog=NULL;
 
 /*
- * Type object for GtkInputDialog 
+ * Type object for NspGtkInputDialog 
  * all the instance of NspTypeGtkInputDialog share the same id. 
  * nsp_type_gtkinputdialog: is an instance of NspTypeGtkInputDialog 
- *    used for objects of GtkInputDialog type (i.e built with new_gtkinputdialog) 
+ *    used for objects of NspGtkInputDialog type (i.e built with new_gtkinputdialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
@@ -29242,8 +29242,8 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
   
   /* object methods redefined for gtkinputdialog */ 
 
-  top->s_type =  (s_type_func *) gtkinputdialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkinputdialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkinputdialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkinputdialog_type_short_string;
   /* top->create = (create_func*) int_gtkinputdialog_create;*/ 
   
   /* specific methods for gtkinputdialog */
@@ -29251,7 +29251,7 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
   type->init = (init_func *) init_gtkinputdialog;
 
   /* 
-   * GtkInputDialog interfaces can be added here 
+   * NspGtkInputDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -29277,7 +29277,7 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
 }
 
 /*
- * initialize GtkInputDialog instances 
+ * initialize NspGtkInputDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -29292,7 +29292,7 @@ static int init_gtkinputdialog(NspGtkInputDialog *Obj,NspTypeGtkInputDialog *typ
 }
 
 /*
- * new instance of GtkInputDialog 
+ * new instance of NspGtkInputDialog 
  */
 
 NspGtkInputDialog *new_gtkinputdialog() 
@@ -29307,7 +29307,7 @@ NspGtkInputDialog *new_gtkinputdialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkInputDialog 
+ * Object method redefined for NspGtkInputDialog 
  *-----------------------------------------------*/
 
 /*
@@ -29317,23 +29317,23 @@ NspGtkInputDialog *new_gtkinputdialog()
 static char gtkinputdialog_type_name[]="GtkInputDialog";
 static char gtkinputdialog_short_type_name[]="GtkInputDialog";
 
-static char *gtkinputdialog_type_as_string(void)
+static char *nsp_gtkinputdialog_type_as_string(void)
 {
   return(gtkinputdialog_type_name);
 }
 
-static char *gtkinputdialog_type_short_string(NspObject *v)
+static char *nsp_gtkinputdialog_type_short_string(NspObject *v)
 {
   return(gtkinputdialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkInputDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkInputDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkInputDialog   *gtkinputdialog_object(NspObject *O)
+NspGtkInputDialog *nsp_gtkinputdialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -29363,7 +29363,7 @@ NspGtkInputDialog  *GetGtkInputDialogCopy(Stack stack, int i)
 NspGtkInputDialog  *GetGtkInputDialog(Stack stack, int i)
 {
   NspGtkInputDialog *M;
-  if (( M = gtkinputdialog_object(NthObj(i))) == NULLGTKINPUTDIALOG)
+  if (( M = nsp_gtkinputdialog_object(NthObj(i))) == NULLGTKINPUTDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -29406,7 +29406,7 @@ static NspMethods *gtkinputdialog_get_methods(void) { return NULL;};
 static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkInvisible ----------- */
+/* ----------- NspGtkInvisible ----------- */
 
 
 #include "nsp/object.h"
@@ -29415,17 +29415,17 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkInvisible inherits from GtkWidget 
+ * NspGtkInvisible inherits from GtkWidget 
  */
 
 int nsp_type_gtkinvisible_id=0;
 NspTypeGtkInvisible *nsp_type_gtkinvisible=NULL;
 
 /*
- * Type object for GtkInvisible 
+ * Type object for NspGtkInvisible 
  * all the instance of NspTypeGtkInvisible share the same id. 
  * nsp_type_gtkinvisible: is an instance of NspTypeGtkInvisible 
- *    used for objects of GtkInvisible type (i.e built with new_gtkinvisible) 
+ *    used for objects of NspGtkInvisible type (i.e built with new_gtkinvisible) 
  * other instances are used for derived classes 
  */
 NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
@@ -29454,8 +29454,8 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
   
   /* object methods redefined for gtkinvisible */ 
 
-  top->s_type =  (s_type_func *) gtkinvisible_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkinvisible_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkinvisible_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkinvisible_type_short_string;
   /* top->create = (create_func*) int_gtkinvisible_create;*/ 
   
   /* specific methods for gtkinvisible */
@@ -29463,7 +29463,7 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
   type->init = (init_func *) init_gtkinvisible;
 
   /* 
-   * GtkInvisible interfaces can be added here 
+   * NspGtkInvisible interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -29489,7 +29489,7 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
 }
 
 /*
- * initialize GtkInvisible instances 
+ * initialize NspGtkInvisible instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -29504,7 +29504,7 @@ static int init_gtkinvisible(NspGtkInvisible *Obj,NspTypeGtkInvisible *type)
 }
 
 /*
- * new instance of GtkInvisible 
+ * new instance of NspGtkInvisible 
  */
 
 NspGtkInvisible *new_gtkinvisible() 
@@ -29519,7 +29519,7 @@ NspGtkInvisible *new_gtkinvisible()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkInvisible 
+ * Object method redefined for NspGtkInvisible 
  *-----------------------------------------------*/
 
 /*
@@ -29529,23 +29529,23 @@ NspGtkInvisible *new_gtkinvisible()
 static char gtkinvisible_type_name[]="GtkInvisible";
 static char gtkinvisible_short_type_name[]="GtkInvisible";
 
-static char *gtkinvisible_type_as_string(void)
+static char *nsp_gtkinvisible_type_as_string(void)
 {
   return(gtkinvisible_type_name);
 }
 
-static char *gtkinvisible_type_short_string(NspObject *v)
+static char *nsp_gtkinvisible_type_short_string(NspObject *v)
 {
   return(gtkinvisible_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkInvisible objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkInvisible objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkInvisible   *gtkinvisible_object(NspObject *O)
+NspGtkInvisible *nsp_gtkinvisible_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -29575,7 +29575,7 @@ NspGtkInvisible  *GetGtkInvisibleCopy(Stack stack, int i)
 NspGtkInvisible  *GetGtkInvisible(Stack stack, int i)
 {
   NspGtkInvisible *M;
-  if (( M = gtkinvisible_object(NthObj(i))) == NULLGTKINVISIBLE)
+  if (( M = nsp_gtkinvisible_object(NthObj(i))) == NULLGTKINVISIBLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -29644,7 +29644,7 @@ static NspMethods *gtkinvisible_get_methods(void) { return gtkinvisible_methods;
 static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkItem ----------- */
+/* ----------- NspGtkItem ----------- */
 
 
 #include "nsp/object.h"
@@ -29653,17 +29653,17 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkItem inherits from GtkBin 
+ * NspGtkItem inherits from GtkBin 
  */
 
 int nsp_type_gtkitem_id=0;
 NspTypeGtkItem *nsp_type_gtkitem=NULL;
 
 /*
- * Type object for GtkItem 
+ * Type object for NspGtkItem 
  * all the instance of NspTypeGtkItem share the same id. 
  * nsp_type_gtkitem: is an instance of NspTypeGtkItem 
- *    used for objects of GtkItem type (i.e built with new_gtkitem) 
+ *    used for objects of NspGtkItem type (i.e built with new_gtkitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkItem *new_type_gtkitem(type_mode mode)
@@ -29692,8 +29692,8 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
   
   /* object methods redefined for gtkitem */ 
 
-  top->s_type =  (s_type_func *) gtkitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkitem_type_short_string;
   /* top->create = (create_func*) int_gtkitem_create;*/ 
   
   /* specific methods for gtkitem */
@@ -29701,7 +29701,7 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
   type->init = (init_func *) init_gtkitem;
 
   /* 
-   * GtkItem interfaces can be added here 
+   * NspGtkItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -29727,7 +29727,7 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode)
 }
 
 /*
- * initialize GtkItem instances 
+ * initialize NspGtkItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -29742,7 +29742,7 @@ static int init_gtkitem(NspGtkItem *Obj,NspTypeGtkItem *type)
 }
 
 /*
- * new instance of GtkItem 
+ * new instance of NspGtkItem 
  */
 
 NspGtkItem *new_gtkitem() 
@@ -29757,7 +29757,7 @@ NspGtkItem *new_gtkitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkItem 
+ * Object method redefined for NspGtkItem 
  *-----------------------------------------------*/
 
 /*
@@ -29767,23 +29767,23 @@ NspGtkItem *new_gtkitem()
 static char gtkitem_type_name[]="GtkItem";
 static char gtkitem_short_type_name[]="GtkItem";
 
-static char *gtkitem_type_as_string(void)
+static char *nsp_gtkitem_type_as_string(void)
 {
   return(gtkitem_type_name);
 }
 
-static char *gtkitem_type_short_string(NspObject *v)
+static char *nsp_gtkitem_type_short_string(NspObject *v)
 {
   return(gtkitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkItem   *gtkitem_object(NspObject *O)
+NspGtkItem *nsp_gtkitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -29813,7 +29813,7 @@ NspGtkItem  *GetGtkItemCopy(Stack stack, int i)
 NspGtkItem  *GetGtkItem(Stack stack, int i)
 {
   NspGtkItem *M;
-  if (( M = gtkitem_object(NthObj(i))) == NULLGTKITEM)
+  if (( M = nsp_gtkitem_object(NthObj(i))) == NULLGTKITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -29866,7 +29866,7 @@ static NspMethods *gtkitem_get_methods(void) { return gtkitem_methods;};
 static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkItemFactory ----------- */
+/* ----------- NspGtkItemFactory ----------- */
 
 
 #include "nsp/object.h"
@@ -29875,17 +29875,17 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkItemFactory inherits from GtkObject 
+ * NspGtkItemFactory inherits from GtkObject 
  */
 
 int nsp_type_gtkitemfactory_id=0;
 NspTypeGtkItemFactory *nsp_type_gtkitemfactory=NULL;
 
 /*
- * Type object for GtkItemFactory 
+ * Type object for NspGtkItemFactory 
  * all the instance of NspTypeGtkItemFactory share the same id. 
  * nsp_type_gtkitemfactory: is an instance of NspTypeGtkItemFactory 
- *    used for objects of GtkItemFactory type (i.e built with new_gtkitemfactory) 
+ *    used for objects of NspGtkItemFactory type (i.e built with new_gtkitemfactory) 
  * other instances are used for derived classes 
  */
 NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
@@ -29914,8 +29914,8 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
   
   /* object methods redefined for gtkitemfactory */ 
 
-  top->s_type =  (s_type_func *) gtkitemfactory_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkitemfactory_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkitemfactory_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkitemfactory_type_short_string;
   /* top->create = (create_func*) int_gtkitemfactory_create;*/ 
   
   /* specific methods for gtkitemfactory */
@@ -29923,7 +29923,7 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
   type->init = (init_func *) init_gtkitemfactory;
 
   /* 
-   * GtkItemFactory interfaces can be added here 
+   * NspGtkItemFactory interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -29949,7 +29949,7 @@ NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
 }
 
 /*
- * initialize GtkItemFactory instances 
+ * initialize NspGtkItemFactory instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -29964,7 +29964,7 @@ static int init_gtkitemfactory(NspGtkItemFactory *Obj,NspTypeGtkItemFactory *typ
 }
 
 /*
- * new instance of GtkItemFactory 
+ * new instance of NspGtkItemFactory 
  */
 
 NspGtkItemFactory *new_gtkitemfactory() 
@@ -29979,7 +29979,7 @@ NspGtkItemFactory *new_gtkitemfactory()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkItemFactory 
+ * Object method redefined for NspGtkItemFactory 
  *-----------------------------------------------*/
 
 /*
@@ -29989,23 +29989,23 @@ NspGtkItemFactory *new_gtkitemfactory()
 static char gtkitemfactory_type_name[]="GtkItemFactory";
 static char gtkitemfactory_short_type_name[]="GtkItemFactory";
 
-static char *gtkitemfactory_type_as_string(void)
+static char *nsp_gtkitemfactory_type_as_string(void)
 {
   return(gtkitemfactory_type_name);
 }
 
-static char *gtkitemfactory_type_short_string(NspObject *v)
+static char *nsp_gtkitemfactory_type_short_string(NspObject *v)
 {
   return(gtkitemfactory_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkItemFactory objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkItemFactory objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkItemFactory   *gtkitemfactory_object(NspObject *O)
+NspGtkItemFactory *nsp_gtkitemfactory_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -30035,7 +30035,7 @@ NspGtkItemFactory  *GetGtkItemFactoryCopy(Stack stack, int i)
 NspGtkItemFactory  *GetGtkItemFactory(Stack stack, int i)
 {
   NspGtkItemFactory *M;
-  if (( M = gtkitemfactory_object(NthObj(i))) == NULLGTKITEMFACTORY)
+  if (( M = nsp_gtkitemfactory_object(NthObj(i))) == NULLGTKITEMFACTORY)
      ArgMessage(stack,i);
   return M;
 }
@@ -30345,7 +30345,7 @@ static NspMethods *gtkitemfactory_get_methods(void) { return gtkitemfactory_meth
 static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkLabel ----------- */
+/* ----------- NspGtkLabel ----------- */
 
 
 #include "nsp/object.h"
@@ -30354,17 +30354,17 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkLabel inherits from GtkMisc 
+ * NspGtkLabel inherits from GtkMisc 
  */
 
 int nsp_type_gtklabel_id=0;
 NspTypeGtkLabel *nsp_type_gtklabel=NULL;
 
 /*
- * Type object for GtkLabel 
+ * Type object for NspGtkLabel 
  * all the instance of NspTypeGtkLabel share the same id. 
  * nsp_type_gtklabel: is an instance of NspTypeGtkLabel 
- *    used for objects of GtkLabel type (i.e built with new_gtklabel) 
+ *    used for objects of NspGtkLabel type (i.e built with new_gtklabel) 
  * other instances are used for derived classes 
  */
 NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
@@ -30393,8 +30393,8 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
   
   /* object methods redefined for gtklabel */ 
 
-  top->s_type =  (s_type_func *) gtklabel_type_as_string;    
-  top->sh_type = (sh_type_func *) gtklabel_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtklabel_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtklabel_type_short_string;
   /* top->create = (create_func*) int_gtklabel_create;*/ 
   
   /* specific methods for gtklabel */
@@ -30402,7 +30402,7 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
   type->init = (init_func *) init_gtklabel;
 
   /* 
-   * GtkLabel interfaces can be added here 
+   * NspGtkLabel interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -30428,7 +30428,7 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
 }
 
 /*
- * initialize GtkLabel instances 
+ * initialize NspGtkLabel instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -30443,7 +30443,7 @@ static int init_gtklabel(NspGtkLabel *Obj,NspTypeGtkLabel *type)
 }
 
 /*
- * new instance of GtkLabel 
+ * new instance of NspGtkLabel 
  */
 
 NspGtkLabel *new_gtklabel() 
@@ -30458,7 +30458,7 @@ NspGtkLabel *new_gtklabel()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkLabel 
+ * Object method redefined for NspGtkLabel 
  *-----------------------------------------------*/
 
 /*
@@ -30468,23 +30468,23 @@ NspGtkLabel *new_gtklabel()
 static char gtklabel_type_name[]="GtkLabel";
 static char gtklabel_short_type_name[]="GtkLabel";
 
-static char *gtklabel_type_as_string(void)
+static char *nsp_gtklabel_type_as_string(void)
 {
   return(gtklabel_type_name);
 }
 
-static char *gtklabel_type_short_string(NspObject *v)
+static char *nsp_gtklabel_type_short_string(NspObject *v)
 {
   return(gtklabel_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkLabel objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkLabel objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkLabel   *gtklabel_object(NspObject *O)
+NspGtkLabel *nsp_gtklabel_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -30514,7 +30514,7 @@ NspGtkLabel  *GetGtkLabelCopy(Stack stack, int i)
 NspGtkLabel  *GetGtkLabel(Stack stack, int i)
 {
   NspGtkLabel *M;
-  if (( M = gtklabel_object(NthObj(i))) == NULLGTKLABEL)
+  if (( M = nsp_gtklabel_object(NthObj(i))) == NULLGTKLABEL)
      ArgMessage(stack,i);
   return M;
 }
@@ -30992,7 +30992,7 @@ static NspMethods *gtklabel_get_methods(void) { return gtklabel_methods;};
 static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkLayout ----------- */
+/* ----------- NspGtkLayout ----------- */
 
 
 #include "nsp/object.h"
@@ -31001,17 +31001,17 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkLayout inherits from GtkContainer 
+ * NspGtkLayout inherits from GtkContainer 
  */
 
 int nsp_type_gtklayout_id=0;
 NspTypeGtkLayout *nsp_type_gtklayout=NULL;
 
 /*
- * Type object for GtkLayout 
+ * Type object for NspGtkLayout 
  * all the instance of NspTypeGtkLayout share the same id. 
  * nsp_type_gtklayout: is an instance of NspTypeGtkLayout 
- *    used for objects of GtkLayout type (i.e built with new_gtklayout) 
+ *    used for objects of NspGtkLayout type (i.e built with new_gtklayout) 
  * other instances are used for derived classes 
  */
 NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
@@ -31040,8 +31040,8 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
   
   /* object methods redefined for gtklayout */ 
 
-  top->s_type =  (s_type_func *) gtklayout_type_as_string;    
-  top->sh_type = (sh_type_func *) gtklayout_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtklayout_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtklayout_type_short_string;
   /* top->create = (create_func*) int_gtklayout_create;*/ 
   
   /* specific methods for gtklayout */
@@ -31049,7 +31049,7 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
   type->init = (init_func *) init_gtklayout;
 
   /* 
-   * GtkLayout interfaces can be added here 
+   * NspGtkLayout interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -31075,7 +31075,7 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
 }
 
 /*
- * initialize GtkLayout instances 
+ * initialize NspGtkLayout instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -31090,7 +31090,7 @@ static int init_gtklayout(NspGtkLayout *Obj,NspTypeGtkLayout *type)
 }
 
 /*
- * new instance of GtkLayout 
+ * new instance of NspGtkLayout 
  */
 
 NspGtkLayout *new_gtklayout() 
@@ -31105,7 +31105,7 @@ NspGtkLayout *new_gtklayout()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkLayout 
+ * Object method redefined for NspGtkLayout 
  *-----------------------------------------------*/
 
 /*
@@ -31115,23 +31115,23 @@ NspGtkLayout *new_gtklayout()
 static char gtklayout_type_name[]="GtkLayout";
 static char gtklayout_short_type_name[]="GtkLayout";
 
-static char *gtklayout_type_as_string(void)
+static char *nsp_gtklayout_type_as_string(void)
 {
   return(gtklayout_type_name);
 }
 
-static char *gtklayout_type_short_string(NspObject *v)
+static char *nsp_gtklayout_type_short_string(NspObject *v)
 {
   return(gtklayout_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkLayout objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkLayout objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkLayout   *gtklayout_object(NspObject *O)
+NspGtkLayout *nsp_gtklayout_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -31161,7 +31161,7 @@ NspGtkLayout  *GetGtkLayoutCopy(Stack stack, int i)
 NspGtkLayout  *GetGtkLayout(Stack stack, int i)
 {
   NspGtkLayout *M;
-  if (( M = gtklayout_object(NthObj(i))) == NULLGTKLAYOUT)
+  if (( M = nsp_gtklayout_object(NthObj(i))) == NULLGTKLAYOUT)
      ArgMessage(stack,i);
   return M;
 }
@@ -31374,7 +31374,7 @@ static AttrTab gtklayout_attrs[] = {
 
 
 
-/* ----------- GtkListStore ----------- */
+/* ----------- NspGtkListStore ----------- */
 
 
 #include "nsp/object.h"
@@ -31383,7 +31383,7 @@ static AttrTab gtklayout_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkListStore inherits from GObject 
+ * NspGtkListStore inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
  */
 
@@ -31391,10 +31391,10 @@ int nsp_type_gtkliststore_id=0;
 NspTypeGtkListStore *nsp_type_gtkliststore=NULL;
 
 /*
- * Type object for GtkListStore 
+ * Type object for NspGtkListStore 
  * all the instance of NspTypeGtkListStore share the same id. 
  * nsp_type_gtkliststore: is an instance of NspTypeGtkListStore 
- *    used for objects of GtkListStore type (i.e built with new_gtkliststore) 
+ *    used for objects of NspGtkListStore type (i.e built with new_gtkliststore) 
  * other instances are used for derived classes 
  */
 NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
@@ -31423,8 +31423,8 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
   
   /* object methods redefined for gtkliststore */ 
 
-  top->s_type =  (s_type_func *) gtkliststore_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkliststore_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkliststore_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkliststore_type_short_string;
   /* top->create = (create_func*) int_gtkliststore_create;*/ 
   
   /* specific methods for gtkliststore */
@@ -31432,7 +31432,7 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
   type->init = (init_func *) init_gtkliststore;
 
   /* 
-   * GtkListStore interfaces can be added here 
+   * NspGtkListStore interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -31462,7 +31462,7 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
 }
 
 /*
- * initialize GtkListStore instances 
+ * initialize NspGtkListStore instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -31477,7 +31477,7 @@ static int init_gtkliststore(NspGtkListStore *Obj,NspTypeGtkListStore *type)
 }
 
 /*
- * new instance of GtkListStore 
+ * new instance of NspGtkListStore 
  */
 
 NspGtkListStore *new_gtkliststore() 
@@ -31492,7 +31492,7 @@ NspGtkListStore *new_gtkliststore()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkListStore 
+ * Object method redefined for NspGtkListStore 
  *-----------------------------------------------*/
 
 /*
@@ -31502,23 +31502,23 @@ NspGtkListStore *new_gtkliststore()
 static char gtkliststore_type_name[]="GtkListStore";
 static char gtkliststore_short_type_name[]="GtkListStore";
 
-static char *gtkliststore_type_as_string(void)
+static char *nsp_gtkliststore_type_as_string(void)
 {
   return(gtkliststore_type_name);
 }
 
-static char *gtkliststore_type_short_string(NspObject *v)
+static char *nsp_gtkliststore_type_short_string(NspObject *v)
 {
   return(gtkliststore_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkListStore objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkListStore objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkListStore   *gtkliststore_object(NspObject *O)
+NspGtkListStore *nsp_gtkliststore_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -31548,7 +31548,7 @@ NspGtkListStore  *GetGtkListStoreCopy(Stack stack, int i)
 NspGtkListStore  *GetGtkListStore(Stack stack, int i)
 {
   NspGtkListStore *M;
-  if (( M = gtkliststore_object(NthObj(i))) == NULLGTKLISTSTORE)
+  if (( M = nsp_gtkliststore_object(NthObj(i))) == NULLGTKLISTSTORE)
      ArgMessage(stack,i);
   return M;
 }
@@ -31992,7 +31992,7 @@ static NspMethods *gtkliststore_get_methods(void) { return gtkliststore_methods;
 static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMenu ----------- */
+/* ----------- NspGtkMenu ----------- */
 
 
 #include "nsp/object.h"
@@ -32001,17 +32001,17 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMenu inherits from GtkMenuShell 
+ * NspGtkMenu inherits from GtkMenuShell 
  */
 
 int nsp_type_gtkmenu_id=0;
 NspTypeGtkMenu *nsp_type_gtkmenu=NULL;
 
 /*
- * Type object for GtkMenu 
+ * Type object for NspGtkMenu 
  * all the instance of NspTypeGtkMenu share the same id. 
  * nsp_type_gtkmenu: is an instance of NspTypeGtkMenu 
- *    used for objects of GtkMenu type (i.e built with new_gtkmenu) 
+ *    used for objects of NspGtkMenu type (i.e built with new_gtkmenu) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
@@ -32040,8 +32040,8 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
   
   /* object methods redefined for gtkmenu */ 
 
-  top->s_type =  (s_type_func *) gtkmenu_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmenu_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmenu_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmenu_type_short_string;
   /* top->create = (create_func*) int_gtkmenu_create;*/ 
   
   /* specific methods for gtkmenu */
@@ -32049,7 +32049,7 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
   type->init = (init_func *) init_gtkmenu;
 
   /* 
-   * GtkMenu interfaces can be added here 
+   * NspGtkMenu interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -32075,7 +32075,7 @@ NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
 }
 
 /*
- * initialize GtkMenu instances 
+ * initialize NspGtkMenu instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -32090,7 +32090,7 @@ static int init_gtkmenu(NspGtkMenu *Obj,NspTypeGtkMenu *type)
 }
 
 /*
- * new instance of GtkMenu 
+ * new instance of NspGtkMenu 
  */
 
 NspGtkMenu *new_gtkmenu() 
@@ -32105,7 +32105,7 @@ NspGtkMenu *new_gtkmenu()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMenu 
+ * Object method redefined for NspGtkMenu 
  *-----------------------------------------------*/
 
 /*
@@ -32115,23 +32115,23 @@ NspGtkMenu *new_gtkmenu()
 static char gtkmenu_type_name[]="GtkMenu";
 static char gtkmenu_short_type_name[]="GtkMenu";
 
-static char *gtkmenu_type_as_string(void)
+static char *nsp_gtkmenu_type_as_string(void)
 {
   return(gtkmenu_type_name);
 }
 
-static char *gtkmenu_type_short_string(NspObject *v)
+static char *nsp_gtkmenu_type_short_string(NspObject *v)
 {
   return(gtkmenu_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMenu objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMenu objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMenu   *gtkmenu_object(NspObject *O)
+NspGtkMenu *nsp_gtkmenu_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -32161,7 +32161,7 @@ NspGtkMenu  *GetGtkMenuCopy(Stack stack, int i)
 NspGtkMenu  *GetGtkMenu(Stack stack, int i)
 {
   NspGtkMenu *M;
-  if (( M = gtkmenu_object(NthObj(i))) == NULLGTKMENU)
+  if (( M = nsp_gtkmenu_object(NthObj(i))) == NULLGTKMENU)
      ArgMessage(stack,i);
   return M;
 }
@@ -32524,7 +32524,7 @@ static NspMethods *gtkmenu_get_methods(void) { return gtkmenu_methods;};
 static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMenuBar ----------- */
+/* ----------- NspGtkMenuBar ----------- */
 
 
 #include "nsp/object.h"
@@ -32533,17 +32533,17 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMenuBar inherits from GtkMenuShell 
+ * NspGtkMenuBar inherits from GtkMenuShell 
  */
 
 int nsp_type_gtkmenubar_id=0;
 NspTypeGtkMenuBar *nsp_type_gtkmenubar=NULL;
 
 /*
- * Type object for GtkMenuBar 
+ * Type object for NspGtkMenuBar 
  * all the instance of NspTypeGtkMenuBar share the same id. 
  * nsp_type_gtkmenubar: is an instance of NspTypeGtkMenuBar 
- *    used for objects of GtkMenuBar type (i.e built with new_gtkmenubar) 
+ *    used for objects of NspGtkMenuBar type (i.e built with new_gtkmenubar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
@@ -32572,8 +32572,8 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
   
   /* object methods redefined for gtkmenubar */ 
 
-  top->s_type =  (s_type_func *) gtkmenubar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmenubar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmenubar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmenubar_type_short_string;
   /* top->create = (create_func*) int_gtkmenubar_create;*/ 
   
   /* specific methods for gtkmenubar */
@@ -32581,7 +32581,7 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
   type->init = (init_func *) init_gtkmenubar;
 
   /* 
-   * GtkMenuBar interfaces can be added here 
+   * NspGtkMenuBar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -32607,7 +32607,7 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
 }
 
 /*
- * initialize GtkMenuBar instances 
+ * initialize NspGtkMenuBar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -32622,7 +32622,7 @@ static int init_gtkmenubar(NspGtkMenuBar *Obj,NspTypeGtkMenuBar *type)
 }
 
 /*
- * new instance of GtkMenuBar 
+ * new instance of NspGtkMenuBar 
  */
 
 NspGtkMenuBar *new_gtkmenubar() 
@@ -32637,7 +32637,7 @@ NspGtkMenuBar *new_gtkmenubar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMenuBar 
+ * Object method redefined for NspGtkMenuBar 
  *-----------------------------------------------*/
 
 /*
@@ -32647,23 +32647,23 @@ NspGtkMenuBar *new_gtkmenubar()
 static char gtkmenubar_type_name[]="GtkMenuBar";
 static char gtkmenubar_short_type_name[]="GtkMenuBar";
 
-static char *gtkmenubar_type_as_string(void)
+static char *nsp_gtkmenubar_type_as_string(void)
 {
   return(gtkmenubar_type_name);
 }
 
-static char *gtkmenubar_type_short_string(NspObject *v)
+static char *nsp_gtkmenubar_type_short_string(NspObject *v)
 {
   return(gtkmenubar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMenuBar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMenuBar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMenuBar   *gtkmenubar_object(NspObject *O)
+NspGtkMenuBar *nsp_gtkmenubar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -32693,7 +32693,7 @@ NspGtkMenuBar  *GetGtkMenuBarCopy(Stack stack, int i)
 NspGtkMenuBar  *GetGtkMenuBar(Stack stack, int i)
 {
   NspGtkMenuBar *M;
-  if (( M = gtkmenubar_object(NthObj(i))) == NULLGTKMENUBAR)
+  if (( M = nsp_gtkmenubar_object(NthObj(i))) == NULLGTKMENUBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -32783,7 +32783,7 @@ static NspMethods *gtkmenubar_get_methods(void) { return gtkmenubar_methods;};
 static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMenuItem ----------- */
+/* ----------- NspGtkMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -32792,17 +32792,17 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMenuItem inherits from GtkItem 
+ * NspGtkMenuItem inherits from GtkItem 
  */
 
 int nsp_type_gtkmenuitem_id=0;
 NspTypeGtkMenuItem *nsp_type_gtkmenuitem=NULL;
 
 /*
- * Type object for GtkMenuItem 
+ * Type object for NspGtkMenuItem 
  * all the instance of NspTypeGtkMenuItem share the same id. 
  * nsp_type_gtkmenuitem: is an instance of NspTypeGtkMenuItem 
- *    used for objects of GtkMenuItem type (i.e built with new_gtkmenuitem) 
+ *    used for objects of NspGtkMenuItem type (i.e built with new_gtkmenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
@@ -32831,8 +32831,8 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
   
   /* object methods redefined for gtkmenuitem */ 
 
-  top->s_type =  (s_type_func *) gtkmenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmenuitem_type_short_string;
   /* top->create = (create_func*) int_gtkmenuitem_create;*/ 
   
   /* specific methods for gtkmenuitem */
@@ -32840,7 +32840,7 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
   type->init = (init_func *) init_gtkmenuitem;
 
   /* 
-   * GtkMenuItem interfaces can be added here 
+   * NspGtkMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -32866,7 +32866,7 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkMenuItem instances 
+ * initialize NspGtkMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -32881,7 +32881,7 @@ static int init_gtkmenuitem(NspGtkMenuItem *Obj,NspTypeGtkMenuItem *type)
 }
 
 /*
- * new instance of GtkMenuItem 
+ * new instance of NspGtkMenuItem 
  */
 
 NspGtkMenuItem *new_gtkmenuitem() 
@@ -32896,7 +32896,7 @@ NspGtkMenuItem *new_gtkmenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMenuItem 
+ * Object method redefined for NspGtkMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -32906,23 +32906,23 @@ NspGtkMenuItem *new_gtkmenuitem()
 static char gtkmenuitem_type_name[]="GtkMenuItem";
 static char gtkmenuitem_short_type_name[]="GtkMenuItem";
 
-static char *gtkmenuitem_type_as_string(void)
+static char *nsp_gtkmenuitem_type_as_string(void)
 {
   return(gtkmenuitem_type_name);
 }
 
-static char *gtkmenuitem_type_short_string(NspObject *v)
+static char *nsp_gtkmenuitem_type_short_string(NspObject *v)
 {
   return(gtkmenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMenuItem   *gtkmenuitem_object(NspObject *O)
+NspGtkMenuItem *nsp_gtkmenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -32952,7 +32952,7 @@ NspGtkMenuItem  *GetGtkMenuItemCopy(Stack stack, int i)
 NspGtkMenuItem  *GetGtkMenuItem(Stack stack, int i)
 {
   NspGtkMenuItem *M;
-  if (( M = gtkmenuitem_object(NthObj(i))) == NULLGTKMENUITEM)
+  if (( M = nsp_gtkmenuitem_object(NthObj(i))) == NULLGTKMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -33120,7 +33120,7 @@ static NspMethods *gtkmenuitem_get_methods(void) { return gtkmenuitem_methods;};
 static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMenuShell ----------- */
+/* ----------- NspGtkMenuShell ----------- */
 
 
 #include "nsp/object.h"
@@ -33129,17 +33129,17 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMenuShell inherits from GtkContainer 
+ * NspGtkMenuShell inherits from GtkContainer 
  */
 
 int nsp_type_gtkmenushell_id=0;
 NspTypeGtkMenuShell *nsp_type_gtkmenushell=NULL;
 
 /*
- * Type object for GtkMenuShell 
+ * Type object for NspGtkMenuShell 
  * all the instance of NspTypeGtkMenuShell share the same id. 
  * nsp_type_gtkmenushell: is an instance of NspTypeGtkMenuShell 
- *    used for objects of GtkMenuShell type (i.e built with new_gtkmenushell) 
+ *    used for objects of NspGtkMenuShell type (i.e built with new_gtkmenushell) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
@@ -33168,8 +33168,8 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
   
   /* object methods redefined for gtkmenushell */ 
 
-  top->s_type =  (s_type_func *) gtkmenushell_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmenushell_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmenushell_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmenushell_type_short_string;
   /* top->create = (create_func*) int_gtkmenushell_create;*/ 
   
   /* specific methods for gtkmenushell */
@@ -33177,7 +33177,7 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
   type->init = (init_func *) init_gtkmenushell;
 
   /* 
-   * GtkMenuShell interfaces can be added here 
+   * NspGtkMenuShell interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -33203,7 +33203,7 @@ NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
 }
 
 /*
- * initialize GtkMenuShell instances 
+ * initialize NspGtkMenuShell instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -33218,7 +33218,7 @@ static int init_gtkmenushell(NspGtkMenuShell *Obj,NspTypeGtkMenuShell *type)
 }
 
 /*
- * new instance of GtkMenuShell 
+ * new instance of NspGtkMenuShell 
  */
 
 NspGtkMenuShell *new_gtkmenushell() 
@@ -33233,7 +33233,7 @@ NspGtkMenuShell *new_gtkmenushell()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMenuShell 
+ * Object method redefined for NspGtkMenuShell 
  *-----------------------------------------------*/
 
 /*
@@ -33243,23 +33243,23 @@ NspGtkMenuShell *new_gtkmenushell()
 static char gtkmenushell_type_name[]="GtkMenuShell";
 static char gtkmenushell_short_type_name[]="GtkMenuShell";
 
-static char *gtkmenushell_type_as_string(void)
+static char *nsp_gtkmenushell_type_as_string(void)
 {
   return(gtkmenushell_type_name);
 }
 
-static char *gtkmenushell_type_short_string(NspObject *v)
+static char *nsp_gtkmenushell_type_short_string(NspObject *v)
 {
   return(gtkmenushell_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMenuShell objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMenuShell objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMenuShell   *gtkmenushell_object(NspObject *O)
+NspGtkMenuShell *nsp_gtkmenushell_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -33289,7 +33289,7 @@ NspGtkMenuShell  *GetGtkMenuShellCopy(Stack stack, int i)
 NspGtkMenuShell  *GetGtkMenuShell(Stack stack, int i)
 {
   NspGtkMenuShell *M;
-  if (( M = gtkmenushell_object(NthObj(i))) == NULLGTKMENUSHELL)
+  if (( M = nsp_gtkmenushell_object(NthObj(i))) == NULLGTKMENUSHELL)
      ArgMessage(stack,i);
   return M;
 }
@@ -33423,7 +33423,7 @@ static NspMethods *gtkmenushell_get_methods(void) { return gtkmenushell_methods;
 static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMenuToolButton ----------- */
+/* ----------- NspGtkMenuToolButton ----------- */
 
 
 #include "nsp/object.h"
@@ -33432,17 +33432,17 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMenuToolButton inherits from GtkToolButton 
+ * NspGtkMenuToolButton inherits from GtkToolButton 
  */
 
 int nsp_type_gtkmenutoolbutton_id=0;
 NspTypeGtkMenuToolButton *nsp_type_gtkmenutoolbutton=NULL;
 
 /*
- * Type object for GtkMenuToolButton 
+ * Type object for NspGtkMenuToolButton 
  * all the instance of NspTypeGtkMenuToolButton share the same id. 
  * nsp_type_gtkmenutoolbutton: is an instance of NspTypeGtkMenuToolButton 
- *    used for objects of GtkMenuToolButton type (i.e built with new_gtkmenutoolbutton) 
+ *    used for objects of NspGtkMenuToolButton type (i.e built with new_gtkmenutoolbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
@@ -33471,8 +33471,8 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
   
   /* object methods redefined for gtkmenutoolbutton */ 
 
-  top->s_type =  (s_type_func *) gtkmenutoolbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmenutoolbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmenutoolbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmenutoolbutton_type_short_string;
   /* top->create = (create_func*) int_gtkmenutoolbutton_create;*/ 
   
   /* specific methods for gtkmenutoolbutton */
@@ -33480,7 +33480,7 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
   type->init = (init_func *) init_gtkmenutoolbutton;
 
   /* 
-   * GtkMenuToolButton interfaces can be added here 
+   * NspGtkMenuToolButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -33506,7 +33506,7 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
 }
 
 /*
- * initialize GtkMenuToolButton instances 
+ * initialize NspGtkMenuToolButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -33521,7 +33521,7 @@ static int init_gtkmenutoolbutton(NspGtkMenuToolButton *Obj,NspTypeGtkMenuToolBu
 }
 
 /*
- * new instance of GtkMenuToolButton 
+ * new instance of NspGtkMenuToolButton 
  */
 
 NspGtkMenuToolButton *new_gtkmenutoolbutton() 
@@ -33536,7 +33536,7 @@ NspGtkMenuToolButton *new_gtkmenutoolbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMenuToolButton 
+ * Object method redefined for NspGtkMenuToolButton 
  *-----------------------------------------------*/
 
 /*
@@ -33546,23 +33546,23 @@ NspGtkMenuToolButton *new_gtkmenutoolbutton()
 static char gtkmenutoolbutton_type_name[]="GtkMenuToolButton";
 static char gtkmenutoolbutton_short_type_name[]="GtkMenuToolButton";
 
-static char *gtkmenutoolbutton_type_as_string(void)
+static char *nsp_gtkmenutoolbutton_type_as_string(void)
 {
   return(gtkmenutoolbutton_type_name);
 }
 
-static char *gtkmenutoolbutton_type_short_string(NspObject *v)
+static char *nsp_gtkmenutoolbutton_type_short_string(NspObject *v)
 {
   return(gtkmenutoolbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMenuToolButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMenuToolButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMenuToolButton   *gtkmenutoolbutton_object(NspObject *O)
+NspGtkMenuToolButton *nsp_gtkmenutoolbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -33592,7 +33592,7 @@ NspGtkMenuToolButton  *GetGtkMenuToolButtonCopy(Stack stack, int i)
 NspGtkMenuToolButton  *GetGtkMenuToolButton(Stack stack, int i)
 {
   NspGtkMenuToolButton *M;
-  if (( M = gtkmenutoolbutton_object(NthObj(i))) == NULLGTKMENUTOOLBUTTON)
+  if (( M = nsp_gtkmenutoolbutton_object(NthObj(i))) == NULLGTKMENUTOOLBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -33678,7 +33678,7 @@ static NspMethods *gtkmenutoolbutton_get_methods(void) { return gtkmenutoolbutto
 static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkMessageDialog ----------- */
+/* ----------- NspGtkMessageDialog ----------- */
 
 
 #include "nsp/object.h"
@@ -33687,17 +33687,17 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMessageDialog inherits from GtkDialog 
+ * NspGtkMessageDialog inherits from GtkDialog 
  */
 
 int nsp_type_gtkmessagedialog_id=0;
 NspTypeGtkMessageDialog *nsp_type_gtkmessagedialog=NULL;
 
 /*
- * Type object for GtkMessageDialog 
+ * Type object for NspGtkMessageDialog 
  * all the instance of NspTypeGtkMessageDialog share the same id. 
  * nsp_type_gtkmessagedialog: is an instance of NspTypeGtkMessageDialog 
- *    used for objects of GtkMessageDialog type (i.e built with new_gtkmessagedialog) 
+ *    used for objects of NspGtkMessageDialog type (i.e built with new_gtkmessagedialog) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
@@ -33726,8 +33726,8 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
   
   /* object methods redefined for gtkmessagedialog */ 
 
-  top->s_type =  (s_type_func *) gtkmessagedialog_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmessagedialog_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmessagedialog_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmessagedialog_type_short_string;
   /* top->create = (create_func*) int_gtkmessagedialog_create;*/ 
   
   /* specific methods for gtkmessagedialog */
@@ -33735,7 +33735,7 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
   type->init = (init_func *) init_gtkmessagedialog;
 
   /* 
-   * GtkMessageDialog interfaces can be added here 
+   * NspGtkMessageDialog interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -33761,7 +33761,7 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
 }
 
 /*
- * initialize GtkMessageDialog instances 
+ * initialize NspGtkMessageDialog instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -33776,7 +33776,7 @@ static int init_gtkmessagedialog(NspGtkMessageDialog *Obj,NspTypeGtkMessageDialo
 }
 
 /*
- * new instance of GtkMessageDialog 
+ * new instance of NspGtkMessageDialog 
  */
 
 NspGtkMessageDialog *new_gtkmessagedialog() 
@@ -33791,7 +33791,7 @@ NspGtkMessageDialog *new_gtkmessagedialog()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMessageDialog 
+ * Object method redefined for NspGtkMessageDialog 
  *-----------------------------------------------*/
 
 /*
@@ -33801,23 +33801,23 @@ NspGtkMessageDialog *new_gtkmessagedialog()
 static char gtkmessagedialog_type_name[]="GtkMessageDialog";
 static char gtkmessagedialog_short_type_name[]="GtkMessageDialog";
 
-static char *gtkmessagedialog_type_as_string(void)
+static char *nsp_gtkmessagedialog_type_as_string(void)
 {
   return(gtkmessagedialog_type_name);
 }
 
-static char *gtkmessagedialog_type_short_string(NspObject *v)
+static char *nsp_gtkmessagedialog_type_short_string(NspObject *v)
 {
   return(gtkmessagedialog_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMessageDialog objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMessageDialog objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMessageDialog   *gtkmessagedialog_object(NspObject *O)
+NspGtkMessageDialog *nsp_gtkmessagedialog_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -33847,7 +33847,7 @@ NspGtkMessageDialog  *GetGtkMessageDialogCopy(Stack stack, int i)
 NspGtkMessageDialog  *GetGtkMessageDialog(Stack stack, int i)
 {
   NspGtkMessageDialog *M;
-  if (( M = gtkmessagedialog_object(NthObj(i))) == NULLGTKMESSAGEDIALOG)
+  if (( M = nsp_gtkmessagedialog_object(NthObj(i))) == NULLGTKMESSAGEDIALOG)
      ArgMessage(stack,i);
   return M;
 }
@@ -33959,7 +33959,7 @@ static AttrTab gtkmessagedialog_attrs[] = {
 
 
 
-/* ----------- GtkMisc ----------- */
+/* ----------- NspGtkMisc ----------- */
 
 
 #include "nsp/object.h"
@@ -33968,17 +33968,17 @@ static AttrTab gtkmessagedialog_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkMisc inherits from GtkWidget 
+ * NspGtkMisc inherits from GtkWidget 
  */
 
 int nsp_type_gtkmisc_id=0;
 NspTypeGtkMisc *nsp_type_gtkmisc=NULL;
 
 /*
- * Type object for GtkMisc 
+ * Type object for NspGtkMisc 
  * all the instance of NspTypeGtkMisc share the same id. 
  * nsp_type_gtkmisc: is an instance of NspTypeGtkMisc 
- *    used for objects of GtkMisc type (i.e built with new_gtkmisc) 
+ *    used for objects of NspGtkMisc type (i.e built with new_gtkmisc) 
  * other instances are used for derived classes 
  */
 NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
@@ -34007,8 +34007,8 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
   
   /* object methods redefined for gtkmisc */ 
 
-  top->s_type =  (s_type_func *) gtkmisc_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkmisc_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkmisc_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkmisc_type_short_string;
   /* top->create = (create_func*) int_gtkmisc_create;*/ 
   
   /* specific methods for gtkmisc */
@@ -34016,7 +34016,7 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
   type->init = (init_func *) init_gtkmisc;
 
   /* 
-   * GtkMisc interfaces can be added here 
+   * NspGtkMisc interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -34042,7 +34042,7 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
 }
 
 /*
- * initialize GtkMisc instances 
+ * initialize NspGtkMisc instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -34057,7 +34057,7 @@ static int init_gtkmisc(NspGtkMisc *Obj,NspTypeGtkMisc *type)
 }
 
 /*
- * new instance of GtkMisc 
+ * new instance of NspGtkMisc 
  */
 
 NspGtkMisc *new_gtkmisc() 
@@ -34072,7 +34072,7 @@ NspGtkMisc *new_gtkmisc()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkMisc 
+ * Object method redefined for NspGtkMisc 
  *-----------------------------------------------*/
 
 /*
@@ -34082,23 +34082,23 @@ NspGtkMisc *new_gtkmisc()
 static char gtkmisc_type_name[]="GtkMisc";
 static char gtkmisc_short_type_name[]="GtkMisc";
 
-static char *gtkmisc_type_as_string(void)
+static char *nsp_gtkmisc_type_as_string(void)
 {
   return(gtkmisc_type_name);
 }
 
-static char *gtkmisc_type_short_string(NspObject *v)
+static char *nsp_gtkmisc_type_short_string(NspObject *v)
 {
   return(gtkmisc_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkMisc objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkMisc objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkMisc   *gtkmisc_object(NspObject *O)
+NspGtkMisc *nsp_gtkmisc_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -34128,7 +34128,7 @@ NspGtkMisc  *GetGtkMiscCopy(Stack stack, int i)
 NspGtkMisc  *GetGtkMisc(Stack stack, int i)
 {
   NspGtkMisc *M;
-  if (( M = gtkmisc_object(NthObj(i))) == NULLGTKMISC)
+  if (( M = nsp_gtkmisc_object(NthObj(i))) == NULLGTKMISC)
      ArgMessage(stack,i);
   return M;
 }
@@ -34208,7 +34208,7 @@ static NspMethods *gtkmisc_get_methods(void) { return gtkmisc_methods;};
 static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkNotebook ----------- */
+/* ----------- NspGtkNotebook ----------- */
 
 
 #include "nsp/object.h"
@@ -34217,17 +34217,17 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkNotebook inherits from GtkContainer 
+ * NspGtkNotebook inherits from GtkContainer 
  */
 
 int nsp_type_gtknotebook_id=0;
 NspTypeGtkNotebook *nsp_type_gtknotebook=NULL;
 
 /*
- * Type object for GtkNotebook 
+ * Type object for NspGtkNotebook 
  * all the instance of NspTypeGtkNotebook share the same id. 
  * nsp_type_gtknotebook: is an instance of NspTypeGtkNotebook 
- *    used for objects of GtkNotebook type (i.e built with new_gtknotebook) 
+ *    used for objects of NspGtkNotebook type (i.e built with new_gtknotebook) 
  * other instances are used for derived classes 
  */
 NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
@@ -34256,8 +34256,8 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
   
   /* object methods redefined for gtknotebook */ 
 
-  top->s_type =  (s_type_func *) gtknotebook_type_as_string;    
-  top->sh_type = (sh_type_func *) gtknotebook_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtknotebook_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtknotebook_type_short_string;
   /* top->create = (create_func*) int_gtknotebook_create;*/ 
   
   /* specific methods for gtknotebook */
@@ -34265,7 +34265,7 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
   type->init = (init_func *) init_gtknotebook;
 
   /* 
-   * GtkNotebook interfaces can be added here 
+   * NspGtkNotebook interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -34291,7 +34291,7 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
 }
 
 /*
- * initialize GtkNotebook instances 
+ * initialize NspGtkNotebook instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -34306,7 +34306,7 @@ static int init_gtknotebook(NspGtkNotebook *Obj,NspTypeGtkNotebook *type)
 }
 
 /*
- * new instance of GtkNotebook 
+ * new instance of NspGtkNotebook 
  */
 
 NspGtkNotebook *new_gtknotebook() 
@@ -34321,7 +34321,7 @@ NspGtkNotebook *new_gtknotebook()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkNotebook 
+ * Object method redefined for NspGtkNotebook 
  *-----------------------------------------------*/
 
 /*
@@ -34331,23 +34331,23 @@ NspGtkNotebook *new_gtknotebook()
 static char gtknotebook_type_name[]="GtkNotebook";
 static char gtknotebook_short_type_name[]="GtkNotebook";
 
-static char *gtknotebook_type_as_string(void)
+static char *nsp_gtknotebook_type_as_string(void)
 {
   return(gtknotebook_type_name);
 }
 
-static char *gtknotebook_type_short_string(NspObject *v)
+static char *nsp_gtknotebook_type_short_string(NspObject *v)
 {
   return(gtknotebook_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkNotebook objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkNotebook objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkNotebook   *gtknotebook_object(NspObject *O)
+NspGtkNotebook *nsp_gtknotebook_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -34377,7 +34377,7 @@ NspGtkNotebook  *GetGtkNotebookCopy(Stack stack, int i)
 NspGtkNotebook  *GetGtkNotebook(Stack stack, int i)
 {
   NspGtkNotebook *M;
-  if (( M = gtknotebook_object(NthObj(i))) == NULLGTKNOTEBOOK)
+  if (( M = nsp_gtknotebook_object(NthObj(i))) == NULLGTKNOTEBOOK)
      ArgMessage(stack,i);
   return M;
 }
@@ -34876,7 +34876,7 @@ static AttrTab gtknotebook_attrs[] = {
 
 
 
-/* ----------- GtkObject ----------- */
+/* ----------- NspGtkObject ----------- */
 
 
 #include "nsp/object.h"
@@ -34885,17 +34885,17 @@ static AttrTab gtknotebook_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkObject inherits from GObject 
+ * NspGtkObject inherits from GObject 
  */
 
 int nsp_type_gtkobject_id=0;
 NspTypeGtkObject *nsp_type_gtkobject=NULL;
 
 /*
- * Type object for GtkObject 
+ * Type object for NspGtkObject 
  * all the instance of NspTypeGtkObject share the same id. 
  * nsp_type_gtkobject: is an instance of NspTypeGtkObject 
- *    used for objects of GtkObject type (i.e built with new_gtkobject) 
+ *    used for objects of NspGtkObject type (i.e built with new_gtkobject) 
  * other instances are used for derived classes 
  */
 NspTypeGtkObject *new_type_gtkobject(type_mode mode)
@@ -34924,8 +34924,8 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
   
   /* object methods redefined for gtkobject */ 
 
-  top->s_type =  (s_type_func *) gtkobject_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkobject_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkobject_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkobject_type_short_string;
   /* top->create = (create_func*) int_gtkobject_create;*/ 
   
   /* specific methods for gtkobject */
@@ -34933,7 +34933,7 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
   type->init = (init_func *) init_gtkobject;
 
   /* 
-   * GtkObject interfaces can be added here 
+   * NspGtkObject interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -34959,7 +34959,7 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode)
 }
 
 /*
- * initialize GtkObject instances 
+ * initialize NspGtkObject instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -34974,7 +34974,7 @@ static int init_gtkobject(NspGtkObject *Obj,NspTypeGtkObject *type)
 }
 
 /*
- * new instance of GtkObject 
+ * new instance of NspGtkObject 
  */
 
 NspGtkObject *new_gtkobject() 
@@ -34989,7 +34989,7 @@ NspGtkObject *new_gtkobject()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkObject 
+ * Object method redefined for NspGtkObject 
  *-----------------------------------------------*/
 
 /*
@@ -34999,23 +34999,23 @@ NspGtkObject *new_gtkobject()
 static char gtkobject_type_name[]="GtkObject";
 static char gtkobject_short_type_name[]="GtkObject";
 
-static char *gtkobject_type_as_string(void)
+static char *nsp_gtkobject_type_as_string(void)
 {
   return(gtkobject_type_name);
 }
 
-static char *gtkobject_type_short_string(NspObject *v)
+static char *nsp_gtkobject_type_short_string(NspObject *v)
 {
   return(gtkobject_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkObject objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkObject objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkObject   *gtkobject_object(NspObject *O)
+NspGtkObject *nsp_gtkobject_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -35045,7 +35045,7 @@ NspGtkObject  *GetGtkObjectCopy(Stack stack, int i)
 NspGtkObject  *GetGtkObject(Stack stack, int i)
 {
   NspGtkObject *M;
-  if (( M = gtkobject_object(NthObj(i))) == NULLGTKOBJECT)
+  if (( M = nsp_gtkobject_object(NthObj(i))) == NULLGTKOBJECT)
      ArgMessage(stack,i);
   return M;
 }
@@ -35113,7 +35113,7 @@ static NspMethods *gtkobject_get_methods(void) { return gtkobject_methods;};
 static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkOldEditable ----------- */
+/* ----------- NspGtkOldEditable ----------- */
 
 
 #include "nsp/object.h"
@@ -35122,7 +35122,7 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkOldEditable inherits from GtkWidget 
+ * NspGtkOldEditable inherits from GtkWidget 
  * and implements  GtkEditable
  */
 
@@ -35130,10 +35130,10 @@ int nsp_type_gtkoldeditable_id=0;
 NspTypeGtkOldEditable *nsp_type_gtkoldeditable=NULL;
 
 /*
- * Type object for GtkOldEditable 
+ * Type object for NspGtkOldEditable 
  * all the instance of NspTypeGtkOldEditable share the same id. 
  * nsp_type_gtkoldeditable: is an instance of NspTypeGtkOldEditable 
- *    used for objects of GtkOldEditable type (i.e built with new_gtkoldeditable) 
+ *    used for objects of NspGtkOldEditable type (i.e built with new_gtkoldeditable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
@@ -35162,8 +35162,8 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
   
   /* object methods redefined for gtkoldeditable */ 
 
-  top->s_type =  (s_type_func *) gtkoldeditable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkoldeditable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkoldeditable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkoldeditable_type_short_string;
   /* top->create = (create_func*) int_gtkoldeditable_create;*/ 
   
   /* specific methods for gtkoldeditable */
@@ -35171,7 +35171,7 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
   type->init = (init_func *) init_gtkoldeditable;
 
   /* 
-   * GtkOldEditable interfaces can be added here 
+   * NspGtkOldEditable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -35198,7 +35198,7 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
 }
 
 /*
- * initialize GtkOldEditable instances 
+ * initialize NspGtkOldEditable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -35213,7 +35213,7 @@ static int init_gtkoldeditable(NspGtkOldEditable *Obj,NspTypeGtkOldEditable *typ
 }
 
 /*
- * new instance of GtkOldEditable 
+ * new instance of NspGtkOldEditable 
  */
 
 NspGtkOldEditable *new_gtkoldeditable() 
@@ -35228,7 +35228,7 @@ NspGtkOldEditable *new_gtkoldeditable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkOldEditable 
+ * Object method redefined for NspGtkOldEditable 
  *-----------------------------------------------*/
 
 /*
@@ -35238,23 +35238,23 @@ NspGtkOldEditable *new_gtkoldeditable()
 static char gtkoldeditable_type_name[]="GtkOldEditable";
 static char gtkoldeditable_short_type_name[]="GtkOldEditable";
 
-static char *gtkoldeditable_type_as_string(void)
+static char *nsp_gtkoldeditable_type_as_string(void)
 {
   return(gtkoldeditable_type_name);
 }
 
-static char *gtkoldeditable_type_short_string(NspObject *v)
+static char *nsp_gtkoldeditable_type_short_string(NspObject *v)
 {
   return(gtkoldeditable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkOldEditable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkOldEditable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkOldEditable   *gtkoldeditable_object(NspObject *O)
+NspGtkOldEditable *nsp_gtkoldeditable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -35284,7 +35284,7 @@ NspGtkOldEditable  *GetGtkOldEditableCopy(Stack stack, int i)
 NspGtkOldEditable  *GetGtkOldEditable(Stack stack, int i)
 {
   NspGtkOldEditable *M;
-  if (( M = gtkoldeditable_object(NthObj(i))) == NULLGTKOLDEDITABLE)
+  if (( M = nsp_gtkoldeditable_object(NthObj(i))) == NULLGTKOLDEDITABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -35337,7 +35337,7 @@ static NspMethods *gtkoldeditable_get_methods(void) { return gtkoldeditable_meth
 static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkOptionMenu ----------- */
+/* ----------- NspGtkOptionMenu ----------- */
 
 
 #include "nsp/object.h"
@@ -35346,17 +35346,17 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkOptionMenu inherits from GtkButton 
+ * NspGtkOptionMenu inherits from GtkButton 
  */
 
 int nsp_type_gtkoptionmenu_id=0;
 NspTypeGtkOptionMenu *nsp_type_gtkoptionmenu=NULL;
 
 /*
- * Type object for GtkOptionMenu 
+ * Type object for NspGtkOptionMenu 
  * all the instance of NspTypeGtkOptionMenu share the same id. 
  * nsp_type_gtkoptionmenu: is an instance of NspTypeGtkOptionMenu 
- *    used for objects of GtkOptionMenu type (i.e built with new_gtkoptionmenu) 
+ *    used for objects of NspGtkOptionMenu type (i.e built with new_gtkoptionmenu) 
  * other instances are used for derived classes 
  */
 NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
@@ -35385,8 +35385,8 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
   
   /* object methods redefined for gtkoptionmenu */ 
 
-  top->s_type =  (s_type_func *) gtkoptionmenu_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkoptionmenu_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkoptionmenu_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkoptionmenu_type_short_string;
   /* top->create = (create_func*) int_gtkoptionmenu_create;*/ 
   
   /* specific methods for gtkoptionmenu */
@@ -35394,7 +35394,7 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
   type->init = (init_func *) init_gtkoptionmenu;
 
   /* 
-   * GtkOptionMenu interfaces can be added here 
+   * NspGtkOptionMenu interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -35420,7 +35420,7 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
 }
 
 /*
- * initialize GtkOptionMenu instances 
+ * initialize NspGtkOptionMenu instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -35435,7 +35435,7 @@ static int init_gtkoptionmenu(NspGtkOptionMenu *Obj,NspTypeGtkOptionMenu *type)
 }
 
 /*
- * new instance of GtkOptionMenu 
+ * new instance of NspGtkOptionMenu 
  */
 
 NspGtkOptionMenu *new_gtkoptionmenu() 
@@ -35450,7 +35450,7 @@ NspGtkOptionMenu *new_gtkoptionmenu()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkOptionMenu 
+ * Object method redefined for NspGtkOptionMenu 
  *-----------------------------------------------*/
 
 /*
@@ -35460,23 +35460,23 @@ NspGtkOptionMenu *new_gtkoptionmenu()
 static char gtkoptionmenu_type_name[]="GtkOptionMenu";
 static char gtkoptionmenu_short_type_name[]="GtkOptionMenu";
 
-static char *gtkoptionmenu_type_as_string(void)
+static char *nsp_gtkoptionmenu_type_as_string(void)
 {
   return(gtkoptionmenu_type_name);
 }
 
-static char *gtkoptionmenu_type_short_string(NspObject *v)
+static char *nsp_gtkoptionmenu_type_short_string(NspObject *v)
 {
   return(gtkoptionmenu_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkOptionMenu objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkOptionMenu objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkOptionMenu   *gtkoptionmenu_object(NspObject *O)
+NspGtkOptionMenu *nsp_gtkoptionmenu_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -35506,7 +35506,7 @@ NspGtkOptionMenu  *GetGtkOptionMenuCopy(Stack stack, int i)
 NspGtkOptionMenu  *GetGtkOptionMenu(Stack stack, int i)
 {
   NspGtkOptionMenu *M;
-  if (( M = gtkoptionmenu_object(NthObj(i))) == NULLGTKOPTIONMENU)
+  if (( M = nsp_gtkoptionmenu_object(NthObj(i))) == NULLGTKOPTIONMENU)
      ArgMessage(stack,i);
   return M;
 }
@@ -35600,7 +35600,7 @@ static NspMethods *gtkoptionmenu_get_methods(void) { return gtkoptionmenu_method
 static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkPaned ----------- */
+/* ----------- NspGtkPaned ----------- */
 
 
 #include "nsp/object.h"
@@ -35609,17 +35609,17 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkPaned inherits from GtkContainer 
+ * NspGtkPaned inherits from GtkContainer 
  */
 
 int nsp_type_gtkpaned_id=0;
 NspTypeGtkPaned *nsp_type_gtkpaned=NULL;
 
 /*
- * Type object for GtkPaned 
+ * Type object for NspGtkPaned 
  * all the instance of NspTypeGtkPaned share the same id. 
  * nsp_type_gtkpaned: is an instance of NspTypeGtkPaned 
- *    used for objects of GtkPaned type (i.e built with new_gtkpaned) 
+ *    used for objects of NspGtkPaned type (i.e built with new_gtkpaned) 
  * other instances are used for derived classes 
  */
 NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
@@ -35648,8 +35648,8 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
   
   /* object methods redefined for gtkpaned */ 
 
-  top->s_type =  (s_type_func *) gtkpaned_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkpaned_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkpaned_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkpaned_type_short_string;
   /* top->create = (create_func*) int_gtkpaned_create;*/ 
   
   /* specific methods for gtkpaned */
@@ -35657,7 +35657,7 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
   type->init = (init_func *) init_gtkpaned;
 
   /* 
-   * GtkPaned interfaces can be added here 
+   * NspGtkPaned interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -35683,7 +35683,7 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
 }
 
 /*
- * initialize GtkPaned instances 
+ * initialize NspGtkPaned instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -35698,7 +35698,7 @@ static int init_gtkpaned(NspGtkPaned *Obj,NspTypeGtkPaned *type)
 }
 
 /*
- * new instance of GtkPaned 
+ * new instance of NspGtkPaned 
  */
 
 NspGtkPaned *new_gtkpaned() 
@@ -35713,7 +35713,7 @@ NspGtkPaned *new_gtkpaned()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkPaned 
+ * Object method redefined for NspGtkPaned 
  *-----------------------------------------------*/
 
 /*
@@ -35723,23 +35723,23 @@ NspGtkPaned *new_gtkpaned()
 static char gtkpaned_type_name[]="GtkPaned";
 static char gtkpaned_short_type_name[]="GtkPaned";
 
-static char *gtkpaned_type_as_string(void)
+static char *nsp_gtkpaned_type_as_string(void)
 {
   return(gtkpaned_type_name);
 }
 
-static char *gtkpaned_type_short_string(NspObject *v)
+static char *nsp_gtkpaned_type_short_string(NspObject *v)
 {
   return(gtkpaned_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkPaned objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkPaned objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkPaned   *gtkpaned_object(NspObject *O)
+NspGtkPaned *nsp_gtkpaned_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -35769,7 +35769,7 @@ NspGtkPaned  *GetGtkPanedCopy(Stack stack, int i)
 NspGtkPaned  *GetGtkPaned(Stack stack, int i)
 {
   NspGtkPaned *M;
-  if (( M = gtkpaned_object(NthObj(i))) == NULLGTKPANED)
+  if (( M = nsp_gtkpaned_object(NthObj(i))) == NULLGTKPANED)
      ArgMessage(stack,i);
   return M;
 }
@@ -35947,7 +35947,7 @@ static AttrTab gtkpaned_attrs[] = {
 
 
 
-/* ----------- GtkPlug ----------- */
+/* ----------- NspGtkPlug ----------- */
 
 
 #include "nsp/object.h"
@@ -35956,17 +35956,17 @@ static AttrTab gtkpaned_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkPlug inherits from GtkWindow 
+ * NspGtkPlug inherits from GtkWindow 
  */
 
 int nsp_type_gtkplug_id=0;
 NspTypeGtkPlug *nsp_type_gtkplug=NULL;
 
 /*
- * Type object for GtkPlug 
+ * Type object for NspGtkPlug 
  * all the instance of NspTypeGtkPlug share the same id. 
  * nsp_type_gtkplug: is an instance of NspTypeGtkPlug 
- *    used for objects of GtkPlug type (i.e built with new_gtkplug) 
+ *    used for objects of NspGtkPlug type (i.e built with new_gtkplug) 
  * other instances are used for derived classes 
  */
 NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
@@ -35995,8 +35995,8 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
   
   /* object methods redefined for gtkplug */ 
 
-  top->s_type =  (s_type_func *) gtkplug_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkplug_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkplug_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkplug_type_short_string;
   /* top->create = (create_func*) int_gtkplug_create;*/ 
   
   /* specific methods for gtkplug */
@@ -36004,7 +36004,7 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
   type->init = (init_func *) init_gtkplug;
 
   /* 
-   * GtkPlug interfaces can be added here 
+   * NspGtkPlug interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -36030,7 +36030,7 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
 }
 
 /*
- * initialize GtkPlug instances 
+ * initialize NspGtkPlug instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -36045,7 +36045,7 @@ static int init_gtkplug(NspGtkPlug *Obj,NspTypeGtkPlug *type)
 }
 
 /*
- * new instance of GtkPlug 
+ * new instance of NspGtkPlug 
  */
 
 NspGtkPlug *new_gtkplug() 
@@ -36060,7 +36060,7 @@ NspGtkPlug *new_gtkplug()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkPlug 
+ * Object method redefined for NspGtkPlug 
  *-----------------------------------------------*/
 
 /*
@@ -36070,23 +36070,23 @@ NspGtkPlug *new_gtkplug()
 static char gtkplug_type_name[]="GtkPlug";
 static char gtkplug_short_type_name[]="GtkPlug";
 
-static char *gtkplug_type_as_string(void)
+static char *nsp_gtkplug_type_as_string(void)
 {
   return(gtkplug_type_name);
 }
 
-static char *gtkplug_type_short_string(NspObject *v)
+static char *nsp_gtkplug_type_short_string(NspObject *v)
 {
   return(gtkplug_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkPlug objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkPlug objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkPlug   *gtkplug_object(NspObject *O)
+NspGtkPlug *nsp_gtkplug_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -36116,7 +36116,7 @@ NspGtkPlug  *GetGtkPlugCopy(Stack stack, int i)
 NspGtkPlug  *GetGtkPlug(Stack stack, int i)
 {
   NspGtkPlug *M;
-  if (( M = gtkplug_object(NthObj(i))) == NULLGTKPLUG)
+  if (( M = nsp_gtkplug_object(NthObj(i))) == NULLGTKPLUG)
      ArgMessage(stack,i);
   return M;
 }
@@ -36195,7 +36195,7 @@ static NspMethods *gtkplug_get_methods(void) { return gtkplug_methods;};
 static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkPreview ----------- */
+/* ----------- NspGtkPreview ----------- */
 
 
 #include "nsp/object.h"
@@ -36204,17 +36204,17 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkPreview inherits from GtkWidget 
+ * NspGtkPreview inherits from GtkWidget 
  */
 
 int nsp_type_gtkpreview_id=0;
 NspTypeGtkPreview *nsp_type_gtkpreview=NULL;
 
 /*
- * Type object for GtkPreview 
+ * Type object for NspGtkPreview 
  * all the instance of NspTypeGtkPreview share the same id. 
  * nsp_type_gtkpreview: is an instance of NspTypeGtkPreview 
- *    used for objects of GtkPreview type (i.e built with new_gtkpreview) 
+ *    used for objects of NspGtkPreview type (i.e built with new_gtkpreview) 
  * other instances are used for derived classes 
  */
 NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
@@ -36243,8 +36243,8 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
   
   /* object methods redefined for gtkpreview */ 
 
-  top->s_type =  (s_type_func *) gtkpreview_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkpreview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkpreview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkpreview_type_short_string;
   /* top->create = (create_func*) int_gtkpreview_create;*/ 
   
   /* specific methods for gtkpreview */
@@ -36252,7 +36252,7 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
   type->init = (init_func *) init_gtkpreview;
 
   /* 
-   * GtkPreview interfaces can be added here 
+   * NspGtkPreview interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -36278,7 +36278,7 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
 }
 
 /*
- * initialize GtkPreview instances 
+ * initialize NspGtkPreview instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -36293,7 +36293,7 @@ static int init_gtkpreview(NspGtkPreview *Obj,NspTypeGtkPreview *type)
 }
 
 /*
- * new instance of GtkPreview 
+ * new instance of NspGtkPreview 
  */
 
 NspGtkPreview *new_gtkpreview() 
@@ -36308,7 +36308,7 @@ NspGtkPreview *new_gtkpreview()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkPreview 
+ * Object method redefined for NspGtkPreview 
  *-----------------------------------------------*/
 
 /*
@@ -36318,23 +36318,23 @@ NspGtkPreview *new_gtkpreview()
 static char gtkpreview_type_name[]="GtkPreview";
 static char gtkpreview_short_type_name[]="GtkPreview";
 
-static char *gtkpreview_type_as_string(void)
+static char *nsp_gtkpreview_type_as_string(void)
 {
   return(gtkpreview_type_name);
 }
 
-static char *gtkpreview_type_short_string(NspObject *v)
+static char *nsp_gtkpreview_type_short_string(NspObject *v)
 {
   return(gtkpreview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkPreview objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkPreview objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkPreview   *gtkpreview_object(NspObject *O)
+NspGtkPreview *nsp_gtkpreview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -36364,7 +36364,7 @@ NspGtkPreview  *GetGtkPreviewCopy(Stack stack, int i)
 NspGtkPreview  *GetGtkPreview(Stack stack, int i)
 {
   NspGtkPreview *M;
-  if (( M = gtkpreview_object(NthObj(i))) == NULLGTKPREVIEW)
+  if (( M = nsp_gtkpreview_object(NthObj(i))) == NULLGTKPREVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -36472,7 +36472,7 @@ static NspMethods *gtkpreview_get_methods(void) { return gtkpreview_methods;};
 static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkProgress ----------- */
+/* ----------- NspGtkProgress ----------- */
 
 
 #include "nsp/object.h"
@@ -36481,17 +36481,17 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkProgress inherits from GtkWidget 
+ * NspGtkProgress inherits from GtkWidget 
  */
 
 int nsp_type_gtkprogress_id=0;
 NspTypeGtkProgress *nsp_type_gtkprogress=NULL;
 
 /*
- * Type object for GtkProgress 
+ * Type object for NspGtkProgress 
  * all the instance of NspTypeGtkProgress share the same id. 
  * nsp_type_gtkprogress: is an instance of NspTypeGtkProgress 
- *    used for objects of GtkProgress type (i.e built with new_gtkprogress) 
+ *    used for objects of NspGtkProgress type (i.e built with new_gtkprogress) 
  * other instances are used for derived classes 
  */
 NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
@@ -36520,8 +36520,8 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
   
   /* object methods redefined for gtkprogress */ 
 
-  top->s_type =  (s_type_func *) gtkprogress_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkprogress_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkprogress_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkprogress_type_short_string;
   /* top->create = (create_func*) int_gtkprogress_create;*/ 
   
   /* specific methods for gtkprogress */
@@ -36529,7 +36529,7 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
   type->init = (init_func *) init_gtkprogress;
 
   /* 
-   * GtkProgress interfaces can be added here 
+   * NspGtkProgress interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -36555,7 +36555,7 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
 }
 
 /*
- * initialize GtkProgress instances 
+ * initialize NspGtkProgress instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -36570,7 +36570,7 @@ static int init_gtkprogress(NspGtkProgress *Obj,NspTypeGtkProgress *type)
 }
 
 /*
- * new instance of GtkProgress 
+ * new instance of NspGtkProgress 
  */
 
 NspGtkProgress *new_gtkprogress() 
@@ -36585,7 +36585,7 @@ NspGtkProgress *new_gtkprogress()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkProgress 
+ * Object method redefined for NspGtkProgress 
  *-----------------------------------------------*/
 
 /*
@@ -36595,23 +36595,23 @@ NspGtkProgress *new_gtkprogress()
 static char gtkprogress_type_name[]="GtkProgress";
 static char gtkprogress_short_type_name[]="GtkProgress";
 
-static char *gtkprogress_type_as_string(void)
+static char *nsp_gtkprogress_type_as_string(void)
 {
   return(gtkprogress_type_name);
 }
 
-static char *gtkprogress_type_short_string(NspObject *v)
+static char *nsp_gtkprogress_type_short_string(NspObject *v)
 {
   return(gtkprogress_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkProgress objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkProgress objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkProgress   *gtkprogress_object(NspObject *O)
+NspGtkProgress *nsp_gtkprogress_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -36641,7 +36641,7 @@ NspGtkProgress  *GetGtkProgressCopy(Stack stack, int i)
 NspGtkProgress  *GetGtkProgress(Stack stack, int i)
 {
   NspGtkProgress *M;
-  if (( M = gtkprogress_object(NthObj(i))) == NULLGTKPROGRESS)
+  if (( M = nsp_gtkprogress_object(NthObj(i))) == NULLGTKPROGRESS)
      ArgMessage(stack,i);
   return M;
 }
@@ -36669,7 +36669,7 @@ static NspMethods *gtkprogress_get_methods(void) { return NULL;};
 static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkProgressBar ----------- */
+/* ----------- NspGtkProgressBar ----------- */
 
 
 #include "nsp/object.h"
@@ -36678,17 +36678,17 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkProgressBar inherits from GtkProgress 
+ * NspGtkProgressBar inherits from GtkProgress 
  */
 
 int nsp_type_gtkprogressbar_id=0;
 NspTypeGtkProgressBar *nsp_type_gtkprogressbar=NULL;
 
 /*
- * Type object for GtkProgressBar 
+ * Type object for NspGtkProgressBar 
  * all the instance of NspTypeGtkProgressBar share the same id. 
  * nsp_type_gtkprogressbar: is an instance of NspTypeGtkProgressBar 
- *    used for objects of GtkProgressBar type (i.e built with new_gtkprogressbar) 
+ *    used for objects of NspGtkProgressBar type (i.e built with new_gtkprogressbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
@@ -36717,8 +36717,8 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
   
   /* object methods redefined for gtkprogressbar */ 
 
-  top->s_type =  (s_type_func *) gtkprogressbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkprogressbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkprogressbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkprogressbar_type_short_string;
   /* top->create = (create_func*) int_gtkprogressbar_create;*/ 
   
   /* specific methods for gtkprogressbar */
@@ -36726,7 +36726,7 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
   type->init = (init_func *) init_gtkprogressbar;
 
   /* 
-   * GtkProgressBar interfaces can be added here 
+   * NspGtkProgressBar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -36752,7 +36752,7 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
 }
 
 /*
- * initialize GtkProgressBar instances 
+ * initialize NspGtkProgressBar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -36767,7 +36767,7 @@ static int init_gtkprogressbar(NspGtkProgressBar *Obj,NspTypeGtkProgressBar *typ
 }
 
 /*
- * new instance of GtkProgressBar 
+ * new instance of NspGtkProgressBar 
  */
 
 NspGtkProgressBar *new_gtkprogressbar() 
@@ -36782,7 +36782,7 @@ NspGtkProgressBar *new_gtkprogressbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkProgressBar 
+ * Object method redefined for NspGtkProgressBar 
  *-----------------------------------------------*/
 
 /*
@@ -36792,23 +36792,23 @@ NspGtkProgressBar *new_gtkprogressbar()
 static char gtkprogressbar_type_name[]="GtkProgressBar";
 static char gtkprogressbar_short_type_name[]="GtkProgressBar";
 
-static char *gtkprogressbar_type_as_string(void)
+static char *nsp_gtkprogressbar_type_as_string(void)
 {
   return(gtkprogressbar_type_name);
 }
 
-static char *gtkprogressbar_type_short_string(NspObject *v)
+static char *nsp_gtkprogressbar_type_short_string(NspObject *v)
 {
   return(gtkprogressbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkProgressBar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkProgressBar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkProgressBar   *gtkprogressbar_object(NspObject *O)
+NspGtkProgressBar *nsp_gtkprogressbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -36838,7 +36838,7 @@ NspGtkProgressBar  *GetGtkProgressBarCopy(Stack stack, int i)
 NspGtkProgressBar  *GetGtkProgressBar(Stack stack, int i)
 {
   NspGtkProgressBar *M;
-  if (( M = gtkprogressbar_object(NthObj(i))) == NULLGTKPROGRESSBAR)
+  if (( M = nsp_gtkprogressbar_object(NthObj(i))) == NULLGTKPROGRESSBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -37028,7 +37028,7 @@ static NspMethods *gtkprogressbar_get_methods(void) { return gtkprogressbar_meth
 static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRadioAction ----------- */
+/* ----------- NspGtkRadioAction ----------- */
 
 
 #include "nsp/object.h"
@@ -37037,17 +37037,17 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRadioAction inherits from GtkToggleAction 
+ * NspGtkRadioAction inherits from GtkToggleAction 
  */
 
 int nsp_type_gtkradioaction_id=0;
 NspTypeGtkRadioAction *nsp_type_gtkradioaction=NULL;
 
 /*
- * Type object for GtkRadioAction 
+ * Type object for NspGtkRadioAction 
  * all the instance of NspTypeGtkRadioAction share the same id. 
  * nsp_type_gtkradioaction: is an instance of NspTypeGtkRadioAction 
- *    used for objects of GtkRadioAction type (i.e built with new_gtkradioaction) 
+ *    used for objects of NspGtkRadioAction type (i.e built with new_gtkradioaction) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
@@ -37076,8 +37076,8 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
   
   /* object methods redefined for gtkradioaction */ 
 
-  top->s_type =  (s_type_func *) gtkradioaction_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkradioaction_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkradioaction_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkradioaction_type_short_string;
   /* top->create = (create_func*) int_gtkradioaction_create;*/ 
   
   /* specific methods for gtkradioaction */
@@ -37085,7 +37085,7 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
   type->init = (init_func *) init_gtkradioaction;
 
   /* 
-   * GtkRadioAction interfaces can be added here 
+   * NspGtkRadioAction interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -37111,7 +37111,7 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
 }
 
 /*
- * initialize GtkRadioAction instances 
+ * initialize NspGtkRadioAction instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -37126,7 +37126,7 @@ static int init_gtkradioaction(NspGtkRadioAction *Obj,NspTypeGtkRadioAction *typ
 }
 
 /*
- * new instance of GtkRadioAction 
+ * new instance of NspGtkRadioAction 
  */
 
 NspGtkRadioAction *new_gtkradioaction() 
@@ -37141,7 +37141,7 @@ NspGtkRadioAction *new_gtkradioaction()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRadioAction 
+ * Object method redefined for NspGtkRadioAction 
  *-----------------------------------------------*/
 
 /*
@@ -37151,23 +37151,23 @@ NspGtkRadioAction *new_gtkradioaction()
 static char gtkradioaction_type_name[]="GtkRadioAction";
 static char gtkradioaction_short_type_name[]="GtkRadioAction";
 
-static char *gtkradioaction_type_as_string(void)
+static char *nsp_gtkradioaction_type_as_string(void)
 {
   return(gtkradioaction_type_name);
 }
 
-static char *gtkradioaction_type_short_string(NspObject *v)
+static char *nsp_gtkradioaction_type_short_string(NspObject *v)
 {
   return(gtkradioaction_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRadioAction objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRadioAction objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRadioAction   *gtkradioaction_object(NspObject *O)
+NspGtkRadioAction *nsp_gtkradioaction_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -37197,7 +37197,7 @@ NspGtkRadioAction  *GetGtkRadioActionCopy(Stack stack, int i)
 NspGtkRadioAction  *GetGtkRadioAction(Stack stack, int i)
 {
   NspGtkRadioAction *M;
-  if (( M = gtkradioaction_object(NthObj(i))) == NULLGTKRADIOACTION)
+  if (( M = nsp_gtkradioaction_object(NthObj(i))) == NULLGTKRADIOACTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -37322,7 +37322,7 @@ static NspMethods *gtkradioaction_get_methods(void) { return gtkradioaction_meth
 static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRadioButton ----------- */
+/* ----------- NspGtkRadioButton ----------- */
 
 
 #include "nsp/object.h"
@@ -37331,17 +37331,17 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRadioButton inherits from GtkCheckButton 
+ * NspGtkRadioButton inherits from GtkCheckButton 
  */
 
 int nsp_type_gtkradiobutton_id=0;
 NspTypeGtkRadioButton *nsp_type_gtkradiobutton=NULL;
 
 /*
- * Type object for GtkRadioButton 
+ * Type object for NspGtkRadioButton 
  * all the instance of NspTypeGtkRadioButton share the same id. 
  * nsp_type_gtkradiobutton: is an instance of NspTypeGtkRadioButton 
- *    used for objects of GtkRadioButton type (i.e built with new_gtkradiobutton) 
+ *    used for objects of NspGtkRadioButton type (i.e built with new_gtkradiobutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
@@ -37370,8 +37370,8 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
   
   /* object methods redefined for gtkradiobutton */ 
 
-  top->s_type =  (s_type_func *) gtkradiobutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkradiobutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkradiobutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkradiobutton_type_short_string;
   /* top->create = (create_func*) int_gtkradiobutton_create;*/ 
   
   /* specific methods for gtkradiobutton */
@@ -37379,7 +37379,7 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
   type->init = (init_func *) init_gtkradiobutton;
 
   /* 
-   * GtkRadioButton interfaces can be added here 
+   * NspGtkRadioButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -37405,7 +37405,7 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
 }
 
 /*
- * initialize GtkRadioButton instances 
+ * initialize NspGtkRadioButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -37420,7 +37420,7 @@ static int init_gtkradiobutton(NspGtkRadioButton *Obj,NspTypeGtkRadioButton *typ
 }
 
 /*
- * new instance of GtkRadioButton 
+ * new instance of NspGtkRadioButton 
  */
 
 NspGtkRadioButton *new_gtkradiobutton() 
@@ -37435,7 +37435,7 @@ NspGtkRadioButton *new_gtkradiobutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRadioButton 
+ * Object method redefined for NspGtkRadioButton 
  *-----------------------------------------------*/
 
 /*
@@ -37445,23 +37445,23 @@ NspGtkRadioButton *new_gtkradiobutton()
 static char gtkradiobutton_type_name[]="GtkRadioButton";
 static char gtkradiobutton_short_type_name[]="GtkRadioButton";
 
-static char *gtkradiobutton_type_as_string(void)
+static char *nsp_gtkradiobutton_type_as_string(void)
 {
   return(gtkradiobutton_type_name);
 }
 
-static char *gtkradiobutton_type_short_string(NspObject *v)
+static char *nsp_gtkradiobutton_type_short_string(NspObject *v)
 {
   return(gtkradiobutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRadioButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRadioButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRadioButton   *gtkradiobutton_object(NspObject *O)
+NspGtkRadioButton *nsp_gtkradiobutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -37491,7 +37491,7 @@ NspGtkRadioButton  *GetGtkRadioButtonCopy(Stack stack, int i)
 NspGtkRadioButton  *GetGtkRadioButton(Stack stack, int i)
 {
   NspGtkRadioButton *M;
-  if (( M = gtkradiobutton_object(NthObj(i))) == NULLGTKRADIOBUTTON)
+  if (( M = nsp_gtkradiobutton_object(NthObj(i))) == NULLGTKRADIOBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -37585,7 +37585,7 @@ static NspMethods *gtkradiobutton_get_methods(void) { return gtkradiobutton_meth
 static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRadioMenuItem ----------- */
+/* ----------- NspGtkRadioMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -37594,17 +37594,17 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRadioMenuItem inherits from GtkCheckMenuItem 
+ * NspGtkRadioMenuItem inherits from GtkCheckMenuItem 
  */
 
 int nsp_type_gtkradiomenuitem_id=0;
 NspTypeGtkRadioMenuItem *nsp_type_gtkradiomenuitem=NULL;
 
 /*
- * Type object for GtkRadioMenuItem 
+ * Type object for NspGtkRadioMenuItem 
  * all the instance of NspTypeGtkRadioMenuItem share the same id. 
  * nsp_type_gtkradiomenuitem: is an instance of NspTypeGtkRadioMenuItem 
- *    used for objects of GtkRadioMenuItem type (i.e built with new_gtkradiomenuitem) 
+ *    used for objects of NspGtkRadioMenuItem type (i.e built with new_gtkradiomenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
@@ -37633,8 +37633,8 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
   
   /* object methods redefined for gtkradiomenuitem */ 
 
-  top->s_type =  (s_type_func *) gtkradiomenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkradiomenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkradiomenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkradiomenuitem_type_short_string;
   /* top->create = (create_func*) int_gtkradiomenuitem_create;*/ 
   
   /* specific methods for gtkradiomenuitem */
@@ -37642,7 +37642,7 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
   type->init = (init_func *) init_gtkradiomenuitem;
 
   /* 
-   * GtkRadioMenuItem interfaces can be added here 
+   * NspGtkRadioMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -37668,7 +37668,7 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkRadioMenuItem instances 
+ * initialize NspGtkRadioMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -37683,7 +37683,7 @@ static int init_gtkradiomenuitem(NspGtkRadioMenuItem *Obj,NspTypeGtkRadioMenuIte
 }
 
 /*
- * new instance of GtkRadioMenuItem 
+ * new instance of NspGtkRadioMenuItem 
  */
 
 NspGtkRadioMenuItem *new_gtkradiomenuitem() 
@@ -37698,7 +37698,7 @@ NspGtkRadioMenuItem *new_gtkradiomenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRadioMenuItem 
+ * Object method redefined for NspGtkRadioMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -37708,23 +37708,23 @@ NspGtkRadioMenuItem *new_gtkradiomenuitem()
 static char gtkradiomenuitem_type_name[]="GtkRadioMenuItem";
 static char gtkradiomenuitem_short_type_name[]="GtkRadioMenuItem";
 
-static char *gtkradiomenuitem_type_as_string(void)
+static char *nsp_gtkradiomenuitem_type_as_string(void)
 {
   return(gtkradiomenuitem_type_name);
 }
 
-static char *gtkradiomenuitem_type_short_string(NspObject *v)
+static char *nsp_gtkradiomenuitem_type_short_string(NspObject *v)
 {
   return(gtkradiomenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRadioMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRadioMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRadioMenuItem   *gtkradiomenuitem_object(NspObject *O)
+NspGtkRadioMenuItem *nsp_gtkradiomenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -37754,7 +37754,7 @@ NspGtkRadioMenuItem  *GetGtkRadioMenuItemCopy(Stack stack, int i)
 NspGtkRadioMenuItem  *GetGtkRadioMenuItem(Stack stack, int i)
 {
   NspGtkRadioMenuItem *M;
-  if (( M = gtkradiomenuitem_object(NthObj(i))) == NULLGTKRADIOMENUITEM)
+  if (( M = nsp_gtkradiomenuitem_object(NthObj(i))) == NULLGTKRADIOMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -37890,7 +37890,7 @@ static NspMethods *gtkradiomenuitem_get_methods(void) { return gtkradiomenuitem_
 static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRadioToolButton ----------- */
+/* ----------- NspGtkRadioToolButton ----------- */
 
 
 #include "nsp/object.h"
@@ -37899,17 +37899,17 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRadioToolButton inherits from GtkToggleToolButton 
+ * NspGtkRadioToolButton inherits from GtkToggleToolButton 
  */
 
 int nsp_type_gtkradiotoolbutton_id=0;
 NspTypeGtkRadioToolButton *nsp_type_gtkradiotoolbutton=NULL;
 
 /*
- * Type object for GtkRadioToolButton 
+ * Type object for NspGtkRadioToolButton 
  * all the instance of NspTypeGtkRadioToolButton share the same id. 
  * nsp_type_gtkradiotoolbutton: is an instance of NspTypeGtkRadioToolButton 
- *    used for objects of GtkRadioToolButton type (i.e built with new_gtkradiotoolbutton) 
+ *    used for objects of NspGtkRadioToolButton type (i.e built with new_gtkradiotoolbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
@@ -37938,8 +37938,8 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
   
   /* object methods redefined for gtkradiotoolbutton */ 
 
-  top->s_type =  (s_type_func *) gtkradiotoolbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkradiotoolbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkradiotoolbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkradiotoolbutton_type_short_string;
   /* top->create = (create_func*) int_gtkradiotoolbutton_create;*/ 
   
   /* specific methods for gtkradiotoolbutton */
@@ -37947,7 +37947,7 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
   type->init = (init_func *) init_gtkradiotoolbutton;
 
   /* 
-   * GtkRadioToolButton interfaces can be added here 
+   * NspGtkRadioToolButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -37973,7 +37973,7 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
 }
 
 /*
- * initialize GtkRadioToolButton instances 
+ * initialize NspGtkRadioToolButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -37988,7 +37988,7 @@ static int init_gtkradiotoolbutton(NspGtkRadioToolButton *Obj,NspTypeGtkRadioToo
 }
 
 /*
- * new instance of GtkRadioToolButton 
+ * new instance of NspGtkRadioToolButton 
  */
 
 NspGtkRadioToolButton *new_gtkradiotoolbutton() 
@@ -38003,7 +38003,7 @@ NspGtkRadioToolButton *new_gtkradiotoolbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRadioToolButton 
+ * Object method redefined for NspGtkRadioToolButton 
  *-----------------------------------------------*/
 
 /*
@@ -38013,23 +38013,23 @@ NspGtkRadioToolButton *new_gtkradiotoolbutton()
 static char gtkradiotoolbutton_type_name[]="GtkRadioToolButton";
 static char gtkradiotoolbutton_short_type_name[]="GtkRadioToolButton";
 
-static char *gtkradiotoolbutton_type_as_string(void)
+static char *nsp_gtkradiotoolbutton_type_as_string(void)
 {
   return(gtkradiotoolbutton_type_name);
 }
 
-static char *gtkradiotoolbutton_type_short_string(NspObject *v)
+static char *nsp_gtkradiotoolbutton_type_short_string(NspObject *v)
 {
   return(gtkradiotoolbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRadioToolButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRadioToolButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRadioToolButton   *gtkradiotoolbutton_object(NspObject *O)
+NspGtkRadioToolButton *nsp_gtkradiotoolbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -38059,7 +38059,7 @@ NspGtkRadioToolButton  *GetGtkRadioToolButtonCopy(Stack stack, int i)
 NspGtkRadioToolButton  *GetGtkRadioToolButton(Stack stack, int i)
 {
   NspGtkRadioToolButton *M;
-  if (( M = gtkradiotoolbutton_object(NthObj(i))) == NULLGTKRADIOTOOLBUTTON)
+  if (( M = nsp_gtkradiotoolbutton_object(NthObj(i))) == NULLGTKRADIOTOOLBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -38171,7 +38171,7 @@ static NspMethods *gtkradiotoolbutton_get_methods(void) { return gtkradiotoolbut
 static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRange ----------- */
+/* ----------- NspGtkRange ----------- */
 
 
 #include "nsp/object.h"
@@ -38180,17 +38180,17 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRange inherits from GtkWidget 
+ * NspGtkRange inherits from GtkWidget 
  */
 
 int nsp_type_gtkrange_id=0;
 NspTypeGtkRange *nsp_type_gtkrange=NULL;
 
 /*
- * Type object for GtkRange 
+ * Type object for NspGtkRange 
  * all the instance of NspTypeGtkRange share the same id. 
  * nsp_type_gtkrange: is an instance of NspTypeGtkRange 
- *    used for objects of GtkRange type (i.e built with new_gtkrange) 
+ *    used for objects of NspGtkRange type (i.e built with new_gtkrange) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRange *new_type_gtkrange(type_mode mode)
@@ -38219,8 +38219,8 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
   
   /* object methods redefined for gtkrange */ 
 
-  top->s_type =  (s_type_func *) gtkrange_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkrange_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkrange_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkrange_type_short_string;
   /* top->create = (create_func*) int_gtkrange_create;*/ 
   
   /* specific methods for gtkrange */
@@ -38228,7 +38228,7 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
   type->init = (init_func *) init_gtkrange;
 
   /* 
-   * GtkRange interfaces can be added here 
+   * NspGtkRange interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -38254,7 +38254,7 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode)
 }
 
 /*
- * initialize GtkRange instances 
+ * initialize NspGtkRange instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -38269,7 +38269,7 @@ static int init_gtkrange(NspGtkRange *Obj,NspTypeGtkRange *type)
 }
 
 /*
- * new instance of GtkRange 
+ * new instance of NspGtkRange 
  */
 
 NspGtkRange *new_gtkrange() 
@@ -38284,7 +38284,7 @@ NspGtkRange *new_gtkrange()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRange 
+ * Object method redefined for NspGtkRange 
  *-----------------------------------------------*/
 
 /*
@@ -38294,23 +38294,23 @@ NspGtkRange *new_gtkrange()
 static char gtkrange_type_name[]="GtkRange";
 static char gtkrange_short_type_name[]="GtkRange";
 
-static char *gtkrange_type_as_string(void)
+static char *nsp_gtkrange_type_as_string(void)
 {
   return(gtkrange_type_name);
 }
 
-static char *gtkrange_type_short_string(NspObject *v)
+static char *nsp_gtkrange_type_short_string(NspObject *v)
 {
   return(gtkrange_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRange objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRange objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRange   *gtkrange_object(NspObject *O)
+NspGtkRange *nsp_gtkrange_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -38340,7 +38340,7 @@ NspGtkRange  *GetGtkRangeCopy(Stack stack, int i)
 NspGtkRange  *GetGtkRange(Stack stack, int i)
 {
   NspGtkRange *M;
-  if (( M = gtkrange_object(NthObj(i))) == NULLGTKRANGE)
+  if (( M = nsp_gtkrange_object(NthObj(i))) == NULLGTKRANGE)
      ArgMessage(stack,i);
   return M;
 }
@@ -38474,7 +38474,7 @@ static NspMethods *gtkrange_get_methods(void) { return gtkrange_methods;};
 static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRcStyle ----------- */
+/* ----------- NspGtkRcStyle ----------- */
 
 
 #include "nsp/object.h"
@@ -38483,17 +38483,17 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRcStyle inherits from GObject 
+ * NspGtkRcStyle inherits from GObject 
  */
 
 int nsp_type_gtkrcstyle_id=0;
 NspTypeGtkRcStyle *nsp_type_gtkrcstyle=NULL;
 
 /*
- * Type object for GtkRcStyle 
+ * Type object for NspGtkRcStyle 
  * all the instance of NspTypeGtkRcStyle share the same id. 
  * nsp_type_gtkrcstyle: is an instance of NspTypeGtkRcStyle 
- *    used for objects of GtkRcStyle type (i.e built with new_gtkrcstyle) 
+ *    used for objects of NspGtkRcStyle type (i.e built with new_gtkrcstyle) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
@@ -38522,8 +38522,8 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
   
   /* object methods redefined for gtkrcstyle */ 
 
-  top->s_type =  (s_type_func *) gtkrcstyle_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkrcstyle_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkrcstyle_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkrcstyle_type_short_string;
   /* top->create = (create_func*) int_gtkrcstyle_create;*/ 
   
   /* specific methods for gtkrcstyle */
@@ -38531,7 +38531,7 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
   type->init = (init_func *) init_gtkrcstyle;
 
   /* 
-   * GtkRcStyle interfaces can be added here 
+   * NspGtkRcStyle interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -38557,7 +38557,7 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
 }
 
 /*
- * initialize GtkRcStyle instances 
+ * initialize NspGtkRcStyle instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -38572,7 +38572,7 @@ static int init_gtkrcstyle(NspGtkRcStyle *Obj,NspTypeGtkRcStyle *type)
 }
 
 /*
- * new instance of GtkRcStyle 
+ * new instance of NspGtkRcStyle 
  */
 
 NspGtkRcStyle *new_gtkrcstyle() 
@@ -38587,7 +38587,7 @@ NspGtkRcStyle *new_gtkrcstyle()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRcStyle 
+ * Object method redefined for NspGtkRcStyle 
  *-----------------------------------------------*/
 
 /*
@@ -38597,23 +38597,23 @@ NspGtkRcStyle *new_gtkrcstyle()
 static char gtkrcstyle_type_name[]="GtkRcStyle";
 static char gtkrcstyle_short_type_name[]="GtkRcStyle";
 
-static char *gtkrcstyle_type_as_string(void)
+static char *nsp_gtkrcstyle_type_as_string(void)
 {
   return(gtkrcstyle_type_name);
 }
 
-static char *gtkrcstyle_type_short_string(NspObject *v)
+static char *nsp_gtkrcstyle_type_short_string(NspObject *v)
 {
   return(gtkrcstyle_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRcStyle objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRcStyle objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRcStyle   *gtkrcstyle_object(NspObject *O)
+NspGtkRcStyle *nsp_gtkrcstyle_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -38643,7 +38643,7 @@ NspGtkRcStyle  *GetGtkRcStyleCopy(Stack stack, int i)
 NspGtkRcStyle  *GetGtkRcStyle(Stack stack, int i)
 {
   NspGtkRcStyle *M;
-  if (( M = gtkrcstyle_object(NthObj(i))) == NULLGTKRCSTYLE)
+  if (( M = nsp_gtkrcstyle_object(NthObj(i))) == NULLGTKRCSTYLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -38721,7 +38721,7 @@ static NspMethods *gtkrcstyle_get_methods(void) { return gtkrcstyle_methods;};
 static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkRuler ----------- */
+/* ----------- NspGtkRuler ----------- */
 
 
 #include "nsp/object.h"
@@ -38730,17 +38730,17 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkRuler inherits from GtkWidget 
+ * NspGtkRuler inherits from GtkWidget 
  */
 
 int nsp_type_gtkruler_id=0;
 NspTypeGtkRuler *nsp_type_gtkruler=NULL;
 
 /*
- * Type object for GtkRuler 
+ * Type object for NspGtkRuler 
  * all the instance of NspTypeGtkRuler share the same id. 
  * nsp_type_gtkruler: is an instance of NspTypeGtkRuler 
- *    used for objects of GtkRuler type (i.e built with new_gtkruler) 
+ *    used for objects of NspGtkRuler type (i.e built with new_gtkruler) 
  * other instances are used for derived classes 
  */
 NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
@@ -38769,8 +38769,8 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
   
   /* object methods redefined for gtkruler */ 
 
-  top->s_type =  (s_type_func *) gtkruler_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkruler_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkruler_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkruler_type_short_string;
   /* top->create = (create_func*) int_gtkruler_create;*/ 
   
   /* specific methods for gtkruler */
@@ -38778,7 +38778,7 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
   type->init = (init_func *) init_gtkruler;
 
   /* 
-   * GtkRuler interfaces can be added here 
+   * NspGtkRuler interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -38804,7 +38804,7 @@ NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
 }
 
 /*
- * initialize GtkRuler instances 
+ * initialize NspGtkRuler instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -38819,7 +38819,7 @@ static int init_gtkruler(NspGtkRuler *Obj,NspTypeGtkRuler *type)
 }
 
 /*
- * new instance of GtkRuler 
+ * new instance of NspGtkRuler 
  */
 
 NspGtkRuler *new_gtkruler() 
@@ -38834,7 +38834,7 @@ NspGtkRuler *new_gtkruler()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkRuler 
+ * Object method redefined for NspGtkRuler 
  *-----------------------------------------------*/
 
 /*
@@ -38844,23 +38844,23 @@ NspGtkRuler *new_gtkruler()
 static char gtkruler_type_name[]="GtkRuler";
 static char gtkruler_short_type_name[]="GtkRuler";
 
-static char *gtkruler_type_as_string(void)
+static char *nsp_gtkruler_type_as_string(void)
 {
   return(gtkruler_type_name);
 }
 
-static char *gtkruler_type_short_string(NspObject *v)
+static char *nsp_gtkruler_type_short_string(NspObject *v)
 {
   return(gtkruler_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkRuler objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkRuler objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkRuler   *gtkruler_object(NspObject *O)
+NspGtkRuler *nsp_gtkruler_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -38890,7 +38890,7 @@ NspGtkRuler  *GetGtkRulerCopy(Stack stack, int i)
 NspGtkRuler  *GetGtkRuler(Stack stack, int i)
 {
   NspGtkRuler *M;
-  if (( M = gtkruler_object(NthObj(i))) == NULLGTKRULER)
+  if (( M = nsp_gtkruler_object(NthObj(i))) == NULLGTKRULER)
      ArgMessage(stack,i);
   return M;
 }
@@ -38983,7 +38983,7 @@ static NspMethods *gtkruler_get_methods(void) { return gtkruler_methods;};
 static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkScale ----------- */
+/* ----------- NspGtkScale ----------- */
 
 
 #include "nsp/object.h"
@@ -38992,17 +38992,17 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkScale inherits from GtkRange 
+ * NspGtkScale inherits from GtkRange 
  */
 
 int nsp_type_gtkscale_id=0;
 NspTypeGtkScale *nsp_type_gtkscale=NULL;
 
 /*
- * Type object for GtkScale 
+ * Type object for NspGtkScale 
  * all the instance of NspTypeGtkScale share the same id. 
  * nsp_type_gtkscale: is an instance of NspTypeGtkScale 
- *    used for objects of GtkScale type (i.e built with new_gtkscale) 
+ *    used for objects of NspGtkScale type (i.e built with new_gtkscale) 
  * other instances are used for derived classes 
  */
 NspTypeGtkScale *new_type_gtkscale(type_mode mode)
@@ -39031,8 +39031,8 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
   
   /* object methods redefined for gtkscale */ 
 
-  top->s_type =  (s_type_func *) gtkscale_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkscale_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkscale_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkscale_type_short_string;
   /* top->create = (create_func*) int_gtkscale_create;*/ 
   
   /* specific methods for gtkscale */
@@ -39040,7 +39040,7 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
   type->init = (init_func *) init_gtkscale;
 
   /* 
-   * GtkScale interfaces can be added here 
+   * NspGtkScale interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -39066,7 +39066,7 @@ NspTypeGtkScale *new_type_gtkscale(type_mode mode)
 }
 
 /*
- * initialize GtkScale instances 
+ * initialize NspGtkScale instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -39081,7 +39081,7 @@ static int init_gtkscale(NspGtkScale *Obj,NspTypeGtkScale *type)
 }
 
 /*
- * new instance of GtkScale 
+ * new instance of NspGtkScale 
  */
 
 NspGtkScale *new_gtkscale() 
@@ -39096,7 +39096,7 @@ NspGtkScale *new_gtkscale()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkScale 
+ * Object method redefined for NspGtkScale 
  *-----------------------------------------------*/
 
 /*
@@ -39106,23 +39106,23 @@ NspGtkScale *new_gtkscale()
 static char gtkscale_type_name[]="GtkScale";
 static char gtkscale_short_type_name[]="GtkScale";
 
-static char *gtkscale_type_as_string(void)
+static char *nsp_gtkscale_type_as_string(void)
 {
   return(gtkscale_type_name);
 }
 
-static char *gtkscale_type_short_string(NspObject *v)
+static char *nsp_gtkscale_type_short_string(NspObject *v)
 {
   return(gtkscale_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkScale objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkScale objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkScale   *gtkscale_object(NspObject *O)
+NspGtkScale *nsp_gtkscale_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -39152,7 +39152,7 @@ NspGtkScale  *GetGtkScaleCopy(Stack stack, int i)
 NspGtkScale  *GetGtkScale(Stack stack, int i)
 {
   NspGtkScale *M;
-  if (( M = gtkscale_object(NthObj(i))) == NULLGTKSCALE)
+  if (( M = nsp_gtkscale_object(NthObj(i))) == NULLGTKSCALE)
      ArgMessage(stack,i);
   return M;
 }
@@ -39266,7 +39266,7 @@ static NspMethods *gtkscale_get_methods(void) { return gtkscale_methods;};
 static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkScrollbar ----------- */
+/* ----------- NspGtkScrollbar ----------- */
 
 
 #include "nsp/object.h"
@@ -39275,17 +39275,17 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkScrollbar inherits from GtkRange 
+ * NspGtkScrollbar inherits from GtkRange 
  */
 
 int nsp_type_gtkscrollbar_id=0;
 NspTypeGtkScrollbar *nsp_type_gtkscrollbar=NULL;
 
 /*
- * Type object for GtkScrollbar 
+ * Type object for NspGtkScrollbar 
  * all the instance of NspTypeGtkScrollbar share the same id. 
  * nsp_type_gtkscrollbar: is an instance of NspTypeGtkScrollbar 
- *    used for objects of GtkScrollbar type (i.e built with new_gtkscrollbar) 
+ *    used for objects of NspGtkScrollbar type (i.e built with new_gtkscrollbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
@@ -39314,8 +39314,8 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
   
   /* object methods redefined for gtkscrollbar */ 
 
-  top->s_type =  (s_type_func *) gtkscrollbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkscrollbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkscrollbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkscrollbar_type_short_string;
   /* top->create = (create_func*) int_gtkscrollbar_create;*/ 
   
   /* specific methods for gtkscrollbar */
@@ -39323,7 +39323,7 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
   type->init = (init_func *) init_gtkscrollbar;
 
   /* 
-   * GtkScrollbar interfaces can be added here 
+   * NspGtkScrollbar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -39349,7 +39349,7 @@ NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
 }
 
 /*
- * initialize GtkScrollbar instances 
+ * initialize NspGtkScrollbar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -39364,7 +39364,7 @@ static int init_gtkscrollbar(NspGtkScrollbar *Obj,NspTypeGtkScrollbar *type)
 }
 
 /*
- * new instance of GtkScrollbar 
+ * new instance of NspGtkScrollbar 
  */
 
 NspGtkScrollbar *new_gtkscrollbar() 
@@ -39379,7 +39379,7 @@ NspGtkScrollbar *new_gtkscrollbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkScrollbar 
+ * Object method redefined for NspGtkScrollbar 
  *-----------------------------------------------*/
 
 /*
@@ -39389,23 +39389,23 @@ NspGtkScrollbar *new_gtkscrollbar()
 static char gtkscrollbar_type_name[]="GtkScrollbar";
 static char gtkscrollbar_short_type_name[]="GtkScrollbar";
 
-static char *gtkscrollbar_type_as_string(void)
+static char *nsp_gtkscrollbar_type_as_string(void)
 {
   return(gtkscrollbar_type_name);
 }
 
-static char *gtkscrollbar_type_short_string(NspObject *v)
+static char *nsp_gtkscrollbar_type_short_string(NspObject *v)
 {
   return(gtkscrollbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkScrollbar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkScrollbar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkScrollbar   *gtkscrollbar_object(NspObject *O)
+NspGtkScrollbar *nsp_gtkscrollbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -39435,7 +39435,7 @@ NspGtkScrollbar  *GetGtkScrollbarCopy(Stack stack, int i)
 NspGtkScrollbar  *GetGtkScrollbar(Stack stack, int i)
 {
   NspGtkScrollbar *M;
-  if (( M = gtkscrollbar_object(NthObj(i))) == NULLGTKSCROLLBAR)
+  if (( M = nsp_gtkscrollbar_object(NthObj(i))) == NULLGTKSCROLLBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -39463,7 +39463,7 @@ static NspMethods *gtkscrollbar_get_methods(void) { return NULL;};
 static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkScrolledWindow ----------- */
+/* ----------- NspGtkScrolledWindow ----------- */
 
 
 #include "nsp/object.h"
@@ -39472,17 +39472,17 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkScrolledWindow inherits from GtkBin 
+ * NspGtkScrolledWindow inherits from GtkBin 
  */
 
 int nsp_type_gtkscrolledwindow_id=0;
 NspTypeGtkScrolledWindow *nsp_type_gtkscrolledwindow=NULL;
 
 /*
- * Type object for GtkScrolledWindow 
+ * Type object for NspGtkScrolledWindow 
  * all the instance of NspTypeGtkScrolledWindow share the same id. 
  * nsp_type_gtkscrolledwindow: is an instance of NspTypeGtkScrolledWindow 
- *    used for objects of GtkScrolledWindow type (i.e built with new_gtkscrolledwindow) 
+ *    used for objects of NspGtkScrolledWindow type (i.e built with new_gtkscrolledwindow) 
  * other instances are used for derived classes 
  */
 NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
@@ -39511,8 +39511,8 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
   
   /* object methods redefined for gtkscrolledwindow */ 
 
-  top->s_type =  (s_type_func *) gtkscrolledwindow_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkscrolledwindow_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkscrolledwindow_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkscrolledwindow_type_short_string;
   /* top->create = (create_func*) int_gtkscrolledwindow_create;*/ 
   
   /* specific methods for gtkscrolledwindow */
@@ -39520,7 +39520,7 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
   type->init = (init_func *) init_gtkscrolledwindow;
 
   /* 
-   * GtkScrolledWindow interfaces can be added here 
+   * NspGtkScrolledWindow interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -39546,7 +39546,7 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
 }
 
 /*
- * initialize GtkScrolledWindow instances 
+ * initialize NspGtkScrolledWindow instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -39561,7 +39561,7 @@ static int init_gtkscrolledwindow(NspGtkScrolledWindow *Obj,NspTypeGtkScrolledWi
 }
 
 /*
- * new instance of GtkScrolledWindow 
+ * new instance of NspGtkScrolledWindow 
  */
 
 NspGtkScrolledWindow *new_gtkscrolledwindow() 
@@ -39576,7 +39576,7 @@ NspGtkScrolledWindow *new_gtkscrolledwindow()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkScrolledWindow 
+ * Object method redefined for NspGtkScrolledWindow 
  *-----------------------------------------------*/
 
 /*
@@ -39586,23 +39586,23 @@ NspGtkScrolledWindow *new_gtkscrolledwindow()
 static char gtkscrolledwindow_type_name[]="GtkScrolledWindow";
 static char gtkscrolledwindow_short_type_name[]="GtkScrolledWindow";
 
-static char *gtkscrolledwindow_type_as_string(void)
+static char *nsp_gtkscrolledwindow_type_as_string(void)
 {
   return(gtkscrolledwindow_type_name);
 }
 
-static char *gtkscrolledwindow_type_short_string(NspObject *v)
+static char *nsp_gtkscrolledwindow_type_short_string(NspObject *v)
 {
   return(gtkscrolledwindow_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkScrolledWindow objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkScrolledWindow objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkScrolledWindow   *gtkscrolledwindow_object(NspObject *O)
+NspGtkScrolledWindow *nsp_gtkscrolledwindow_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -39632,7 +39632,7 @@ NspGtkScrolledWindow  *GetGtkScrolledWindowCopy(Stack stack, int i)
 NspGtkScrolledWindow  *GetGtkScrolledWindow(Stack stack, int i)
 {
   NspGtkScrolledWindow *M;
-  if (( M = gtkscrolledwindow_object(NthObj(i))) == NULLGTKSCROLLEDWINDOW)
+  if (( M = nsp_gtkscrolledwindow_object(NthObj(i))) == NULLGTKSCROLLEDWINDOW)
      ArgMessage(stack,i);
   return M;
 }
@@ -39838,7 +39838,7 @@ static NspMethods *gtkscrolledwindow_get_methods(void) { return gtkscrolledwindo
 static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSeparator ----------- */
+/* ----------- NspGtkSeparator ----------- */
 
 
 #include "nsp/object.h"
@@ -39847,17 +39847,17 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSeparator inherits from GtkWidget 
+ * NspGtkSeparator inherits from GtkWidget 
  */
 
 int nsp_type_gtkseparator_id=0;
 NspTypeGtkSeparator *nsp_type_gtkseparator=NULL;
 
 /*
- * Type object for GtkSeparator 
+ * Type object for NspGtkSeparator 
  * all the instance of NspTypeGtkSeparator share the same id. 
  * nsp_type_gtkseparator: is an instance of NspTypeGtkSeparator 
- *    used for objects of GtkSeparator type (i.e built with new_gtkseparator) 
+ *    used for objects of NspGtkSeparator type (i.e built with new_gtkseparator) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
@@ -39886,8 +39886,8 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
   
   /* object methods redefined for gtkseparator */ 
 
-  top->s_type =  (s_type_func *) gtkseparator_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkseparator_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkseparator_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkseparator_type_short_string;
   /* top->create = (create_func*) int_gtkseparator_create;*/ 
   
   /* specific methods for gtkseparator */
@@ -39895,7 +39895,7 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
   type->init = (init_func *) init_gtkseparator;
 
   /* 
-   * GtkSeparator interfaces can be added here 
+   * NspGtkSeparator interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -39921,7 +39921,7 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
 }
 
 /*
- * initialize GtkSeparator instances 
+ * initialize NspGtkSeparator instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -39936,7 +39936,7 @@ static int init_gtkseparator(NspGtkSeparator *Obj,NspTypeGtkSeparator *type)
 }
 
 /*
- * new instance of GtkSeparator 
+ * new instance of NspGtkSeparator 
  */
 
 NspGtkSeparator *new_gtkseparator() 
@@ -39951,7 +39951,7 @@ NspGtkSeparator *new_gtkseparator()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSeparator 
+ * Object method redefined for NspGtkSeparator 
  *-----------------------------------------------*/
 
 /*
@@ -39961,23 +39961,23 @@ NspGtkSeparator *new_gtkseparator()
 static char gtkseparator_type_name[]="GtkSeparator";
 static char gtkseparator_short_type_name[]="GtkSeparator";
 
-static char *gtkseparator_type_as_string(void)
+static char *nsp_gtkseparator_type_as_string(void)
 {
   return(gtkseparator_type_name);
 }
 
-static char *gtkseparator_type_short_string(NspObject *v)
+static char *nsp_gtkseparator_type_short_string(NspObject *v)
 {
   return(gtkseparator_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSeparator objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSeparator objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSeparator   *gtkseparator_object(NspObject *O)
+NspGtkSeparator *nsp_gtkseparator_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -40007,7 +40007,7 @@ NspGtkSeparator  *GetGtkSeparatorCopy(Stack stack, int i)
 NspGtkSeparator  *GetGtkSeparator(Stack stack, int i)
 {
   NspGtkSeparator *M;
-  if (( M = gtkseparator_object(NthObj(i))) == NULLGTKSEPARATOR)
+  if (( M = nsp_gtkseparator_object(NthObj(i))) == NULLGTKSEPARATOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -40035,7 +40035,7 @@ static NspMethods *gtkseparator_get_methods(void) { return NULL;};
 static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSeparatorMenuItem ----------- */
+/* ----------- NspGtkSeparatorMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -40044,17 +40044,17 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSeparatorMenuItem inherits from GtkMenuItem 
+ * NspGtkSeparatorMenuItem inherits from GtkMenuItem 
  */
 
 int nsp_type_gtkseparatormenuitem_id=0;
 NspTypeGtkSeparatorMenuItem *nsp_type_gtkseparatormenuitem=NULL;
 
 /*
- * Type object for GtkSeparatorMenuItem 
+ * Type object for NspGtkSeparatorMenuItem 
  * all the instance of NspTypeGtkSeparatorMenuItem share the same id. 
  * nsp_type_gtkseparatormenuitem: is an instance of NspTypeGtkSeparatorMenuItem 
- *    used for objects of GtkSeparatorMenuItem type (i.e built with new_gtkseparatormenuitem) 
+ *    used for objects of NspGtkSeparatorMenuItem type (i.e built with new_gtkseparatormenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
@@ -40083,8 +40083,8 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
   
   /* object methods redefined for gtkseparatormenuitem */ 
 
-  top->s_type =  (s_type_func *) gtkseparatormenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkseparatormenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkseparatormenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkseparatormenuitem_type_short_string;
   /* top->create = (create_func*) int_gtkseparatormenuitem_create;*/ 
   
   /* specific methods for gtkseparatormenuitem */
@@ -40092,7 +40092,7 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
   type->init = (init_func *) init_gtkseparatormenuitem;
 
   /* 
-   * GtkSeparatorMenuItem interfaces can be added here 
+   * NspGtkSeparatorMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -40118,7 +40118,7 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkSeparatorMenuItem instances 
+ * initialize NspGtkSeparatorMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -40133,7 +40133,7 @@ static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *Obj,NspTypeGtkSepa
 }
 
 /*
- * new instance of GtkSeparatorMenuItem 
+ * new instance of NspGtkSeparatorMenuItem 
  */
 
 NspGtkSeparatorMenuItem *new_gtkseparatormenuitem() 
@@ -40148,7 +40148,7 @@ NspGtkSeparatorMenuItem *new_gtkseparatormenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSeparatorMenuItem 
+ * Object method redefined for NspGtkSeparatorMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -40158,23 +40158,23 @@ NspGtkSeparatorMenuItem *new_gtkseparatormenuitem()
 static char gtkseparatormenuitem_type_name[]="GtkSeparatorMenuItem";
 static char gtkseparatormenuitem_short_type_name[]="GtkSeparatorMenuItem";
 
-static char *gtkseparatormenuitem_type_as_string(void)
+static char *nsp_gtkseparatormenuitem_type_as_string(void)
 {
   return(gtkseparatormenuitem_type_name);
 }
 
-static char *gtkseparatormenuitem_type_short_string(NspObject *v)
+static char *nsp_gtkseparatormenuitem_type_short_string(NspObject *v)
 {
   return(gtkseparatormenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSeparatorMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSeparatorMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSeparatorMenuItem   *gtkseparatormenuitem_object(NspObject *O)
+NspGtkSeparatorMenuItem *nsp_gtkseparatormenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -40204,7 +40204,7 @@ NspGtkSeparatorMenuItem  *GetGtkSeparatorMenuItemCopy(Stack stack, int i)
 NspGtkSeparatorMenuItem  *GetGtkSeparatorMenuItem(Stack stack, int i)
 {
   NspGtkSeparatorMenuItem *M;
-  if (( M = gtkseparatormenuitem_object(NthObj(i))) == NULLGTKSEPARATORMENUITEM)
+  if (( M = nsp_gtkseparatormenuitem_object(NthObj(i))) == NULLGTKSEPARATORMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -40246,7 +40246,7 @@ static NspMethods *gtkseparatormenuitem_get_methods(void) { return NULL;};
 static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSeparatorToolItem ----------- */
+/* ----------- NspGtkSeparatorToolItem ----------- */
 
 
 #include "nsp/object.h"
@@ -40255,17 +40255,17 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSeparatorToolItem inherits from GtkToolItem 
+ * NspGtkSeparatorToolItem inherits from GtkToolItem 
  */
 
 int nsp_type_gtkseparatortoolitem_id=0;
 NspTypeGtkSeparatorToolItem *nsp_type_gtkseparatortoolitem=NULL;
 
 /*
- * Type object for GtkSeparatorToolItem 
+ * Type object for NspGtkSeparatorToolItem 
  * all the instance of NspTypeGtkSeparatorToolItem share the same id. 
  * nsp_type_gtkseparatortoolitem: is an instance of NspTypeGtkSeparatorToolItem 
- *    used for objects of GtkSeparatorToolItem type (i.e built with new_gtkseparatortoolitem) 
+ *    used for objects of NspGtkSeparatorToolItem type (i.e built with new_gtkseparatortoolitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
@@ -40294,8 +40294,8 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
   
   /* object methods redefined for gtkseparatortoolitem */ 
 
-  top->s_type =  (s_type_func *) gtkseparatortoolitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkseparatortoolitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkseparatortoolitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkseparatortoolitem_type_short_string;
   /* top->create = (create_func*) int_gtkseparatortoolitem_create;*/ 
   
   /* specific methods for gtkseparatortoolitem */
@@ -40303,7 +40303,7 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
   type->init = (init_func *) init_gtkseparatortoolitem;
 
   /* 
-   * GtkSeparatorToolItem interfaces can be added here 
+   * NspGtkSeparatorToolItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -40329,7 +40329,7 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
 }
 
 /*
- * initialize GtkSeparatorToolItem instances 
+ * initialize NspGtkSeparatorToolItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -40344,7 +40344,7 @@ static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *Obj,NspTypeGtkSepa
 }
 
 /*
- * new instance of GtkSeparatorToolItem 
+ * new instance of NspGtkSeparatorToolItem 
  */
 
 NspGtkSeparatorToolItem *new_gtkseparatortoolitem() 
@@ -40359,7 +40359,7 @@ NspGtkSeparatorToolItem *new_gtkseparatortoolitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSeparatorToolItem 
+ * Object method redefined for NspGtkSeparatorToolItem 
  *-----------------------------------------------*/
 
 /*
@@ -40369,23 +40369,23 @@ NspGtkSeparatorToolItem *new_gtkseparatortoolitem()
 static char gtkseparatortoolitem_type_name[]="GtkSeparatorToolItem";
 static char gtkseparatortoolitem_short_type_name[]="GtkSeparatorToolItem";
 
-static char *gtkseparatortoolitem_type_as_string(void)
+static char *nsp_gtkseparatortoolitem_type_as_string(void)
 {
   return(gtkseparatortoolitem_type_name);
 }
 
-static char *gtkseparatortoolitem_type_short_string(NspObject *v)
+static char *nsp_gtkseparatortoolitem_type_short_string(NspObject *v)
 {
   return(gtkseparatortoolitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSeparatorToolItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSeparatorToolItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSeparatorToolItem   *gtkseparatortoolitem_object(NspObject *O)
+NspGtkSeparatorToolItem *nsp_gtkseparatortoolitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -40415,7 +40415,7 @@ NspGtkSeparatorToolItem  *GetGtkSeparatorToolItemCopy(Stack stack, int i)
 NspGtkSeparatorToolItem  *GetGtkSeparatorToolItem(Stack stack, int i)
 {
   NspGtkSeparatorToolItem *M;
-  if (( M = gtkseparatortoolitem_object(NthObj(i))) == NULLGTKSEPARATORTOOLITEM)
+  if (( M = nsp_gtkseparatortoolitem_object(NthObj(i))) == NULLGTKSEPARATORTOOLITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -40480,7 +40480,7 @@ static NspMethods *gtkseparatortoolitem_get_methods(void) { return gtkseparatort
 static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSettings ----------- */
+/* ----------- NspGtkSettings ----------- */
 
 
 #include "nsp/object.h"
@@ -40489,17 +40489,17 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSettings inherits from GObject 
+ * NspGtkSettings inherits from GObject 
  */
 
 int nsp_type_gtksettings_id=0;
 NspTypeGtkSettings *nsp_type_gtksettings=NULL;
 
 /*
- * Type object for GtkSettings 
+ * Type object for NspGtkSettings 
  * all the instance of NspTypeGtkSettings share the same id. 
  * nsp_type_gtksettings: is an instance of NspTypeGtkSettings 
- *    used for objects of GtkSettings type (i.e built with new_gtksettings) 
+ *    used for objects of NspGtkSettings type (i.e built with new_gtksettings) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
@@ -40528,8 +40528,8 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
   
   /* object methods redefined for gtksettings */ 
 
-  top->s_type =  (s_type_func *) gtksettings_type_as_string;    
-  top->sh_type = (sh_type_func *) gtksettings_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtksettings_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtksettings_type_short_string;
   /* top->create = (create_func*) int_gtksettings_create;*/ 
   
   /* specific methods for gtksettings */
@@ -40537,7 +40537,7 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
   type->init = (init_func *) init_gtksettings;
 
   /* 
-   * GtkSettings interfaces can be added here 
+   * NspGtkSettings interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -40563,7 +40563,7 @@ NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
 }
 
 /*
- * initialize GtkSettings instances 
+ * initialize NspGtkSettings instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -40578,7 +40578,7 @@ static int init_gtksettings(NspGtkSettings *Obj,NspTypeGtkSettings *type)
 }
 
 /*
- * new instance of GtkSettings 
+ * new instance of NspGtkSettings 
  */
 
 NspGtkSettings *new_gtksettings() 
@@ -40593,7 +40593,7 @@ NspGtkSettings *new_gtksettings()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSettings 
+ * Object method redefined for NspGtkSettings 
  *-----------------------------------------------*/
 
 /*
@@ -40603,23 +40603,23 @@ NspGtkSettings *new_gtksettings()
 static char gtksettings_type_name[]="GtkSettings";
 static char gtksettings_short_type_name[]="GtkSettings";
 
-static char *gtksettings_type_as_string(void)
+static char *nsp_gtksettings_type_as_string(void)
 {
   return(gtksettings_type_name);
 }
 
-static char *gtksettings_type_short_string(NspObject *v)
+static char *nsp_gtksettings_type_short_string(NspObject *v)
 {
   return(gtksettings_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSettings objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSettings objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSettings   *gtksettings_object(NspObject *O)
+NspGtkSettings *nsp_gtksettings_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -40649,7 +40649,7 @@ NspGtkSettings  *GetGtkSettingsCopy(Stack stack, int i)
 NspGtkSettings  *GetGtkSettings(Stack stack, int i)
 {
   NspGtkSettings *M;
-  if (( M = gtksettings_object(NthObj(i))) == NULLGTKSETTINGS)
+  if (( M = nsp_gtksettings_object(NthObj(i))) == NULLGTKSETTINGS)
      ArgMessage(stack,i);
   return M;
 }
@@ -40713,7 +40713,7 @@ static NspMethods *gtksettings_get_methods(void) { return gtksettings_methods;};
 static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSizeGroup ----------- */
+/* ----------- NspGtkSizeGroup ----------- */
 
 
 #include "nsp/object.h"
@@ -40722,17 +40722,17 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSizeGroup inherits from GObject 
+ * NspGtkSizeGroup inherits from GObject 
  */
 
 int nsp_type_gtksizegroup_id=0;
 NspTypeGtkSizeGroup *nsp_type_gtksizegroup=NULL;
 
 /*
- * Type object for GtkSizeGroup 
+ * Type object for NspGtkSizeGroup 
  * all the instance of NspTypeGtkSizeGroup share the same id. 
  * nsp_type_gtksizegroup: is an instance of NspTypeGtkSizeGroup 
- *    used for objects of GtkSizeGroup type (i.e built with new_gtksizegroup) 
+ *    used for objects of NspGtkSizeGroup type (i.e built with new_gtksizegroup) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
@@ -40761,8 +40761,8 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
   
   /* object methods redefined for gtksizegroup */ 
 
-  top->s_type =  (s_type_func *) gtksizegroup_type_as_string;    
-  top->sh_type = (sh_type_func *) gtksizegroup_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtksizegroup_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtksizegroup_type_short_string;
   /* top->create = (create_func*) int_gtksizegroup_create;*/ 
   
   /* specific methods for gtksizegroup */
@@ -40770,7 +40770,7 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
   type->init = (init_func *) init_gtksizegroup;
 
   /* 
-   * GtkSizeGroup interfaces can be added here 
+   * NspGtkSizeGroup interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -40796,7 +40796,7 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
 }
 
 /*
- * initialize GtkSizeGroup instances 
+ * initialize NspGtkSizeGroup instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -40811,7 +40811,7 @@ static int init_gtksizegroup(NspGtkSizeGroup *Obj,NspTypeGtkSizeGroup *type)
 }
 
 /*
- * new instance of GtkSizeGroup 
+ * new instance of NspGtkSizeGroup 
  */
 
 NspGtkSizeGroup *new_gtksizegroup() 
@@ -40826,7 +40826,7 @@ NspGtkSizeGroup *new_gtksizegroup()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSizeGroup 
+ * Object method redefined for NspGtkSizeGroup 
  *-----------------------------------------------*/
 
 /*
@@ -40836,23 +40836,23 @@ NspGtkSizeGroup *new_gtksizegroup()
 static char gtksizegroup_type_name[]="GtkSizeGroup";
 static char gtksizegroup_short_type_name[]="GtkSizeGroup";
 
-static char *gtksizegroup_type_as_string(void)
+static char *nsp_gtksizegroup_type_as_string(void)
 {
   return(gtksizegroup_type_name);
 }
 
-static char *gtksizegroup_type_short_string(NspObject *v)
+static char *nsp_gtksizegroup_type_short_string(NspObject *v)
 {
   return(gtksizegroup_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSizeGroup objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSizeGroup objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSizeGroup   *gtksizegroup_object(NspObject *O)
+NspGtkSizeGroup *nsp_gtksizegroup_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -40882,7 +40882,7 @@ NspGtkSizeGroup  *GetGtkSizeGroupCopy(Stack stack, int i)
 NspGtkSizeGroup  *GetGtkSizeGroup(Stack stack, int i)
 {
   NspGtkSizeGroup *M;
-  if (( M = gtksizegroup_object(NthObj(i))) == NULLGTKSIZEGROUP)
+  if (( M = nsp_gtksizegroup_object(NthObj(i))) == NULLGTKSIZEGROUP)
      ArgMessage(stack,i);
   return M;
 }
@@ -40994,7 +40994,7 @@ static NspMethods *gtksizegroup_get_methods(void) { return gtksizegroup_methods;
 static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSocket ----------- */
+/* ----------- NspGtkSocket ----------- */
 
 
 #include "nsp/object.h"
@@ -41003,17 +41003,17 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSocket inherits from GtkContainer 
+ * NspGtkSocket inherits from GtkContainer 
  */
 
 int nsp_type_gtksocket_id=0;
 NspTypeGtkSocket *nsp_type_gtksocket=NULL;
 
 /*
- * Type object for GtkSocket 
+ * Type object for NspGtkSocket 
  * all the instance of NspTypeGtkSocket share the same id. 
  * nsp_type_gtksocket: is an instance of NspTypeGtkSocket 
- *    used for objects of GtkSocket type (i.e built with new_gtksocket) 
+ *    used for objects of NspGtkSocket type (i.e built with new_gtksocket) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
@@ -41042,8 +41042,8 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
   
   /* object methods redefined for gtksocket */ 
 
-  top->s_type =  (s_type_func *) gtksocket_type_as_string;    
-  top->sh_type = (sh_type_func *) gtksocket_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtksocket_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtksocket_type_short_string;
   /* top->create = (create_func*) int_gtksocket_create;*/ 
   
   /* specific methods for gtksocket */
@@ -41051,7 +41051,7 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
   type->init = (init_func *) init_gtksocket;
 
   /* 
-   * GtkSocket interfaces can be added here 
+   * NspGtkSocket interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -41077,7 +41077,7 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
 }
 
 /*
- * initialize GtkSocket instances 
+ * initialize NspGtkSocket instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -41092,7 +41092,7 @@ static int init_gtksocket(NspGtkSocket *Obj,NspTypeGtkSocket *type)
 }
 
 /*
- * new instance of GtkSocket 
+ * new instance of NspGtkSocket 
  */
 
 NspGtkSocket *new_gtksocket() 
@@ -41107,7 +41107,7 @@ NspGtkSocket *new_gtksocket()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSocket 
+ * Object method redefined for NspGtkSocket 
  *-----------------------------------------------*/
 
 /*
@@ -41117,23 +41117,23 @@ NspGtkSocket *new_gtksocket()
 static char gtksocket_type_name[]="GtkSocket";
 static char gtksocket_short_type_name[]="GtkSocket";
 
-static char *gtksocket_type_as_string(void)
+static char *nsp_gtksocket_type_as_string(void)
 {
   return(gtksocket_type_name);
 }
 
-static char *gtksocket_type_short_string(NspObject *v)
+static char *nsp_gtksocket_type_short_string(NspObject *v)
 {
   return(gtksocket_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSocket objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSocket objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSocket   *gtksocket_object(NspObject *O)
+NspGtkSocket *nsp_gtksocket_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -41163,7 +41163,7 @@ NspGtkSocket  *GetGtkSocketCopy(Stack stack, int i)
 NspGtkSocket  *GetGtkSocket(Stack stack, int i)
 {
   NspGtkSocket *M;
-  if (( M = gtksocket_object(NthObj(i))) == NULLGTKSOCKET)
+  if (( M = nsp_gtksocket_object(NthObj(i))) == NULLGTKSOCKET)
      ArgMessage(stack,i);
   return M;
 }
@@ -41239,7 +41239,7 @@ static NspMethods *gtksocket_get_methods(void) { return gtksocket_methods;};
 static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkSpinButton ----------- */
+/* ----------- NspGtkSpinButton ----------- */
 
 
 #include "nsp/object.h"
@@ -41248,17 +41248,17 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkSpinButton inherits from GtkEntry 
+ * NspGtkSpinButton inherits from GtkEntry 
  */
 
 int nsp_type_gtkspinbutton_id=0;
 NspTypeGtkSpinButton *nsp_type_gtkspinbutton=NULL;
 
 /*
- * Type object for GtkSpinButton 
+ * Type object for NspGtkSpinButton 
  * all the instance of NspTypeGtkSpinButton share the same id. 
  * nsp_type_gtkspinbutton: is an instance of NspTypeGtkSpinButton 
- *    used for objects of GtkSpinButton type (i.e built with new_gtkspinbutton) 
+ *    used for objects of NspGtkSpinButton type (i.e built with new_gtkspinbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
@@ -41287,8 +41287,8 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
   
   /* object methods redefined for gtkspinbutton */ 
 
-  top->s_type =  (s_type_func *) gtkspinbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkspinbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkspinbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkspinbutton_type_short_string;
   /* top->create = (create_func*) int_gtkspinbutton_create;*/ 
   
   /* specific methods for gtkspinbutton */
@@ -41296,7 +41296,7 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
   type->init = (init_func *) init_gtkspinbutton;
 
   /* 
-   * GtkSpinButton interfaces can be added here 
+   * NspGtkSpinButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -41322,7 +41322,7 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
 }
 
 /*
- * initialize GtkSpinButton instances 
+ * initialize NspGtkSpinButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -41337,7 +41337,7 @@ static int init_gtkspinbutton(NspGtkSpinButton *Obj,NspTypeGtkSpinButton *type)
 }
 
 /*
- * new instance of GtkSpinButton 
+ * new instance of NspGtkSpinButton 
  */
 
 NspGtkSpinButton *new_gtkspinbutton() 
@@ -41352,7 +41352,7 @@ NspGtkSpinButton *new_gtkspinbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkSpinButton 
+ * Object method redefined for NspGtkSpinButton 
  *-----------------------------------------------*/
 
 /*
@@ -41362,23 +41362,23 @@ NspGtkSpinButton *new_gtkspinbutton()
 static char gtkspinbutton_type_name[]="GtkSpinButton";
 static char gtkspinbutton_short_type_name[]="GtkSpinButton";
 
-static char *gtkspinbutton_type_as_string(void)
+static char *nsp_gtkspinbutton_type_as_string(void)
 {
   return(gtkspinbutton_type_name);
 }
 
-static char *gtkspinbutton_type_short_string(NspObject *v)
+static char *nsp_gtkspinbutton_type_short_string(NspObject *v)
 {
   return(gtkspinbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkSpinButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkSpinButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkSpinButton   *gtkspinbutton_object(NspObject *O)
+NspGtkSpinButton *nsp_gtkspinbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -41408,7 +41408,7 @@ NspGtkSpinButton  *GetGtkSpinButtonCopy(Stack stack, int i)
 NspGtkSpinButton  *GetGtkSpinButton(Stack stack, int i)
 {
   NspGtkSpinButton *M;
-  if (( M = gtkspinbutton_object(NthObj(i))) == NULLGTKSPINBUTTON)
+  if (( M = nsp_gtkspinbutton_object(NthObj(i))) == NULLGTKSPINBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -41720,7 +41720,7 @@ static NspMethods *gtkspinbutton_get_methods(void) { return gtkspinbutton_method
 static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkStatusbar ----------- */
+/* ----------- NspGtkStatusbar ----------- */
 
 
 #include "nsp/object.h"
@@ -41729,17 +41729,17 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkStatusbar inherits from GtkHBox 
+ * NspGtkStatusbar inherits from GtkHBox 
  */
 
 int nsp_type_gtkstatusbar_id=0;
 NspTypeGtkStatusbar *nsp_type_gtkstatusbar=NULL;
 
 /*
- * Type object for GtkStatusbar 
+ * Type object for NspGtkStatusbar 
  * all the instance of NspTypeGtkStatusbar share the same id. 
  * nsp_type_gtkstatusbar: is an instance of NspTypeGtkStatusbar 
- *    used for objects of GtkStatusbar type (i.e built with new_gtkstatusbar) 
+ *    used for objects of NspGtkStatusbar type (i.e built with new_gtkstatusbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
@@ -41768,8 +41768,8 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
   
   /* object methods redefined for gtkstatusbar */ 
 
-  top->s_type =  (s_type_func *) gtkstatusbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkstatusbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkstatusbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkstatusbar_type_short_string;
   /* top->create = (create_func*) int_gtkstatusbar_create;*/ 
   
   /* specific methods for gtkstatusbar */
@@ -41777,7 +41777,7 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
   type->init = (init_func *) init_gtkstatusbar;
 
   /* 
-   * GtkStatusbar interfaces can be added here 
+   * NspGtkStatusbar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -41803,7 +41803,7 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
 }
 
 /*
- * initialize GtkStatusbar instances 
+ * initialize NspGtkStatusbar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -41818,7 +41818,7 @@ static int init_gtkstatusbar(NspGtkStatusbar *Obj,NspTypeGtkStatusbar *type)
 }
 
 /*
- * new instance of GtkStatusbar 
+ * new instance of NspGtkStatusbar 
  */
 
 NspGtkStatusbar *new_gtkstatusbar() 
@@ -41833,7 +41833,7 @@ NspGtkStatusbar *new_gtkstatusbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkStatusbar 
+ * Object method redefined for NspGtkStatusbar 
  *-----------------------------------------------*/
 
 /*
@@ -41843,23 +41843,23 @@ NspGtkStatusbar *new_gtkstatusbar()
 static char gtkstatusbar_type_name[]="GtkStatusbar";
 static char gtkstatusbar_short_type_name[]="GtkStatusbar";
 
-static char *gtkstatusbar_type_as_string(void)
+static char *nsp_gtkstatusbar_type_as_string(void)
 {
   return(gtkstatusbar_type_name);
 }
 
-static char *gtkstatusbar_type_short_string(NspObject *v)
+static char *nsp_gtkstatusbar_type_short_string(NspObject *v)
 {
   return(gtkstatusbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkStatusbar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkStatusbar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkStatusbar   *gtkstatusbar_object(NspObject *O)
+NspGtkStatusbar *nsp_gtkstatusbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -41889,7 +41889,7 @@ NspGtkStatusbar  *GetGtkStatusbarCopy(Stack stack, int i)
 NspGtkStatusbar  *GetGtkStatusbar(Stack stack, int i)
 {
   NspGtkStatusbar *M;
-  if (( M = gtkstatusbar_object(NthObj(i))) == NULLGTKSTATUSBAR)
+  if (( M = nsp_gtkstatusbar_object(NthObj(i))) == NULLGTKSTATUSBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -41998,7 +41998,7 @@ static NspMethods *gtkstatusbar_get_methods(void) { return gtkstatusbar_methods;
 static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkStyle ----------- */
+/* ----------- NspGtkStyle ----------- */
 
 
 #include "nsp/object.h"
@@ -42007,17 +42007,17 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkStyle inherits from GObject 
+ * NspGtkStyle inherits from GObject 
  */
 
 int nsp_type_gtkstyle_id=0;
 NspTypeGtkStyle *nsp_type_gtkstyle=NULL;
 
 /*
- * Type object for GtkStyle 
+ * Type object for NspGtkStyle 
  * all the instance of NspTypeGtkStyle share the same id. 
  * nsp_type_gtkstyle: is an instance of NspTypeGtkStyle 
- *    used for objects of GtkStyle type (i.e built with new_gtkstyle) 
+ *    used for objects of NspGtkStyle type (i.e built with new_gtkstyle) 
  * other instances are used for derived classes 
  */
 NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
@@ -42046,8 +42046,8 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
   
   /* object methods redefined for gtkstyle */ 
 
-  top->s_type =  (s_type_func *) gtkstyle_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkstyle_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkstyle_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkstyle_type_short_string;
   /* top->create = (create_func*) int_gtkstyle_create;*/ 
   
   /* specific methods for gtkstyle */
@@ -42055,7 +42055,7 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
   type->init = (init_func *) init_gtkstyle;
 
   /* 
-   * GtkStyle interfaces can be added here 
+   * NspGtkStyle interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -42081,7 +42081,7 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
 }
 
 /*
- * initialize GtkStyle instances 
+ * initialize NspGtkStyle instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -42096,7 +42096,7 @@ static int init_gtkstyle(NspGtkStyle *Obj,NspTypeGtkStyle *type)
 }
 
 /*
- * new instance of GtkStyle 
+ * new instance of NspGtkStyle 
  */
 
 NspGtkStyle *new_gtkstyle() 
@@ -42111,7 +42111,7 @@ NspGtkStyle *new_gtkstyle()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkStyle 
+ * Object method redefined for NspGtkStyle 
  *-----------------------------------------------*/
 
 /*
@@ -42121,23 +42121,23 @@ NspGtkStyle *new_gtkstyle()
 static char gtkstyle_type_name[]="GtkStyle";
 static char gtkstyle_short_type_name[]="GtkStyle";
 
-static char *gtkstyle_type_as_string(void)
+static char *nsp_gtkstyle_type_as_string(void)
 {
   return(gtkstyle_type_name);
 }
 
-static char *gtkstyle_type_short_string(NspObject *v)
+static char *nsp_gtkstyle_type_short_string(NspObject *v)
 {
   return(gtkstyle_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkStyle objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkStyle objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkStyle   *gtkstyle_object(NspObject *O)
+NspGtkStyle *nsp_gtkstyle_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -42167,7 +42167,7 @@ NspGtkStyle  *GetGtkStyleCopy(Stack stack, int i)
 NspGtkStyle  *GetGtkStyle(Stack stack, int i)
 {
   NspGtkStyle *M;
-  if (( M = gtkstyle_object(NthObj(i))) == NULLGTKSTYLE)
+  if (( M = nsp_gtkstyle_object(NthObj(i))) == NULLGTKSTYLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -43851,7 +43851,7 @@ static AttrTab gtkstyle_attrs[] = {
 
 
 
-/* ----------- GtkTable ----------- */
+/* ----------- NspGtkTable ----------- */
 
 
 #include "nsp/object.h"
@@ -43860,17 +43860,17 @@ static AttrTab gtkstyle_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTable inherits from GtkContainer 
+ * NspGtkTable inherits from GtkContainer 
  */
 
 int nsp_type_gtktable_id=0;
 NspTypeGtkTable *nsp_type_gtktable=NULL;
 
 /*
- * Type object for GtkTable 
+ * Type object for NspGtkTable 
  * all the instance of NspTypeGtkTable share the same id. 
  * nsp_type_gtktable: is an instance of NspTypeGtkTable 
- *    used for objects of GtkTable type (i.e built with new_gtktable) 
+ *    used for objects of NspGtkTable type (i.e built with new_gtktable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTable *new_type_gtktable(type_mode mode)
@@ -43899,8 +43899,8 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
   
   /* object methods redefined for gtktable */ 
 
-  top->s_type =  (s_type_func *) gtktable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktable_type_short_string;
   /* top->create = (create_func*) int_gtktable_create;*/ 
   
   /* specific methods for gtktable */
@@ -43908,7 +43908,7 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
   type->init = (init_func *) init_gtktable;
 
   /* 
-   * GtkTable interfaces can be added here 
+   * NspGtkTable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -43934,7 +43934,7 @@ NspTypeGtkTable *new_type_gtktable(type_mode mode)
 }
 
 /*
- * initialize GtkTable instances 
+ * initialize NspGtkTable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -43949,7 +43949,7 @@ static int init_gtktable(NspGtkTable *Obj,NspTypeGtkTable *type)
 }
 
 /*
- * new instance of GtkTable 
+ * new instance of NspGtkTable 
  */
 
 NspGtkTable *new_gtktable() 
@@ -43964,7 +43964,7 @@ NspGtkTable *new_gtktable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTable 
+ * Object method redefined for NspGtkTable 
  *-----------------------------------------------*/
 
 /*
@@ -43974,23 +43974,23 @@ NspGtkTable *new_gtktable()
 static char gtktable_type_name[]="GtkTable";
 static char gtktable_short_type_name[]="GtkTable";
 
-static char *gtktable_type_as_string(void)
+static char *nsp_gtktable_type_as_string(void)
 {
   return(gtktable_type_name);
 }
 
-static char *gtktable_type_short_string(NspObject *v)
+static char *nsp_gtktable_type_short_string(NspObject *v)
 {
   return(gtktable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTable   *gtktable_object(NspObject *O)
+NspGtkTable *nsp_gtktable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -44020,7 +44020,7 @@ NspGtkTable  *GetGtkTableCopy(Stack stack, int i)
 NspGtkTable  *GetGtkTable(Stack stack, int i)
 {
   NspGtkTable *M;
-  if (( M = gtktable_object(NthObj(i))) == NULLGTKTABLE)
+  if (( M = nsp_gtktable_object(NthObj(i))) == NULLGTKTABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -44216,7 +44216,7 @@ static NspMethods *gtktable_get_methods(void) { return gtktable_methods;};
 static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTearoffMenuItem ----------- */
+/* ----------- NspGtkTearoffMenuItem ----------- */
 
 
 #include "nsp/object.h"
@@ -44225,17 +44225,17 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTearoffMenuItem inherits from GtkMenuItem 
+ * NspGtkTearoffMenuItem inherits from GtkMenuItem 
  */
 
 int nsp_type_gtktearoffmenuitem_id=0;
 NspTypeGtkTearoffMenuItem *nsp_type_gtktearoffmenuitem=NULL;
 
 /*
- * Type object for GtkTearoffMenuItem 
+ * Type object for NspGtkTearoffMenuItem 
  * all the instance of NspTypeGtkTearoffMenuItem share the same id. 
  * nsp_type_gtktearoffmenuitem: is an instance of NspTypeGtkTearoffMenuItem 
- *    used for objects of GtkTearoffMenuItem type (i.e built with new_gtktearoffmenuitem) 
+ *    used for objects of NspGtkTearoffMenuItem type (i.e built with new_gtktearoffmenuitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
@@ -44264,8 +44264,8 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
   
   /* object methods redefined for gtktearoffmenuitem */ 
 
-  top->s_type =  (s_type_func *) gtktearoffmenuitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktearoffmenuitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktearoffmenuitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktearoffmenuitem_type_short_string;
   /* top->create = (create_func*) int_gtktearoffmenuitem_create;*/ 
   
   /* specific methods for gtktearoffmenuitem */
@@ -44273,7 +44273,7 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
   type->init = (init_func *) init_gtktearoffmenuitem;
 
   /* 
-   * GtkTearoffMenuItem interfaces can be added here 
+   * NspGtkTearoffMenuItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -44299,7 +44299,7 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
 }
 
 /*
- * initialize GtkTearoffMenuItem instances 
+ * initialize NspGtkTearoffMenuItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -44314,7 +44314,7 @@ static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *Obj,NspTypeGtkTearoffM
 }
 
 /*
- * new instance of GtkTearoffMenuItem 
+ * new instance of NspGtkTearoffMenuItem 
  */
 
 NspGtkTearoffMenuItem *new_gtktearoffmenuitem() 
@@ -44329,7 +44329,7 @@ NspGtkTearoffMenuItem *new_gtktearoffmenuitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTearoffMenuItem 
+ * Object method redefined for NspGtkTearoffMenuItem 
  *-----------------------------------------------*/
 
 /*
@@ -44339,23 +44339,23 @@ NspGtkTearoffMenuItem *new_gtktearoffmenuitem()
 static char gtktearoffmenuitem_type_name[]="GtkTearoffMenuItem";
 static char gtktearoffmenuitem_short_type_name[]="GtkTearoffMenuItem";
 
-static char *gtktearoffmenuitem_type_as_string(void)
+static char *nsp_gtktearoffmenuitem_type_as_string(void)
 {
   return(gtktearoffmenuitem_type_name);
 }
 
-static char *gtktearoffmenuitem_type_short_string(NspObject *v)
+static char *nsp_gtktearoffmenuitem_type_short_string(NspObject *v)
 {
   return(gtktearoffmenuitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTearoffMenuItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTearoffMenuItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTearoffMenuItem   *gtktearoffmenuitem_object(NspObject *O)
+NspGtkTearoffMenuItem *nsp_gtktearoffmenuitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -44385,7 +44385,7 @@ NspGtkTearoffMenuItem  *GetGtkTearoffMenuItemCopy(Stack stack, int i)
 NspGtkTearoffMenuItem  *GetGtkTearoffMenuItem(Stack stack, int i)
 {
   NspGtkTearoffMenuItem *M;
-  if (( M = gtktearoffmenuitem_object(NthObj(i))) == NULLGTKTEAROFFMENUITEM)
+  if (( M = nsp_gtktearoffmenuitem_object(NthObj(i))) == NULLGTKTEAROFFMENUITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -44427,7 +44427,7 @@ static NspMethods *gtktearoffmenuitem_get_methods(void) { return NULL;};
 static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTextBuffer ----------- */
+/* ----------- NspGtkTextBuffer ----------- */
 
 
 #include "nsp/object.h"
@@ -44436,17 +44436,17 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextBuffer inherits from GObject 
+ * NspGtkTextBuffer inherits from GObject 
  */
 
 int nsp_type_gtktextbuffer_id=0;
 NspTypeGtkTextBuffer *nsp_type_gtktextbuffer=NULL;
 
 /*
- * Type object for GtkTextBuffer 
+ * Type object for NspGtkTextBuffer 
  * all the instance of NspTypeGtkTextBuffer share the same id. 
  * nsp_type_gtktextbuffer: is an instance of NspTypeGtkTextBuffer 
- *    used for objects of GtkTextBuffer type (i.e built with new_gtktextbuffer) 
+ *    used for objects of NspGtkTextBuffer type (i.e built with new_gtktextbuffer) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
@@ -44475,8 +44475,8 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
   
   /* object methods redefined for gtktextbuffer */ 
 
-  top->s_type =  (s_type_func *) gtktextbuffer_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextbuffer_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextbuffer_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextbuffer_type_short_string;
   /* top->create = (create_func*) int_gtktextbuffer_create;*/ 
   
   /* specific methods for gtktextbuffer */
@@ -44484,7 +44484,7 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
   type->init = (init_func *) init_gtktextbuffer;
 
   /* 
-   * GtkTextBuffer interfaces can be added here 
+   * NspGtkTextBuffer interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -44510,7 +44510,7 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
 }
 
 /*
- * initialize GtkTextBuffer instances 
+ * initialize NspGtkTextBuffer instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -44525,7 +44525,7 @@ static int init_gtktextbuffer(NspGtkTextBuffer *Obj,NspTypeGtkTextBuffer *type)
 }
 
 /*
- * new instance of GtkTextBuffer 
+ * new instance of NspGtkTextBuffer 
  */
 
 NspGtkTextBuffer *new_gtktextbuffer() 
@@ -44540,7 +44540,7 @@ NspGtkTextBuffer *new_gtktextbuffer()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextBuffer 
+ * Object method redefined for NspGtkTextBuffer 
  *-----------------------------------------------*/
 
 /*
@@ -44550,23 +44550,23 @@ NspGtkTextBuffer *new_gtktextbuffer()
 static char gtktextbuffer_type_name[]="GtkTextBuffer";
 static char gtktextbuffer_short_type_name[]="GtkTextBuffer";
 
-static char *gtktextbuffer_type_as_string(void)
+static char *nsp_gtktextbuffer_type_as_string(void)
 {
   return(gtktextbuffer_type_name);
 }
 
-static char *gtktextbuffer_type_short_string(NspObject *v)
+static char *nsp_gtktextbuffer_type_short_string(NspObject *v)
 {
   return(gtktextbuffer_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextBuffer objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextBuffer objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextBuffer   *gtktextbuffer_object(NspObject *O)
+NspGtkTextBuffer *nsp_gtktextbuffer_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -44596,7 +44596,7 @@ NspGtkTextBuffer  *GetGtkTextBufferCopy(Stack stack, int i)
 NspGtkTextBuffer  *GetGtkTextBuffer(Stack stack, int i)
 {
   NspGtkTextBuffer *M;
-  if (( M = gtktextbuffer_object(NthObj(i))) == NULLGTKTEXTBUFFER)
+  if (( M = nsp_gtktextbuffer_object(NthObj(i))) == NULLGTKTEXTBUFFER)
      ArgMessage(stack,i);
   return M;
 }
@@ -45672,7 +45672,7 @@ static AttrTab gtktextbuffer_attrs[] = {
 
 
 
-/* ----------- GtkTextChildAnchor ----------- */
+/* ----------- NspGtkTextChildAnchor ----------- */
 
 
 #include "nsp/object.h"
@@ -45681,17 +45681,17 @@ static AttrTab gtktextbuffer_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextChildAnchor inherits from GObject 
+ * NspGtkTextChildAnchor inherits from GObject 
  */
 
 int nsp_type_gtktextchildanchor_id=0;
 NspTypeGtkTextChildAnchor *nsp_type_gtktextchildanchor=NULL;
 
 /*
- * Type object for GtkTextChildAnchor 
+ * Type object for NspGtkTextChildAnchor 
  * all the instance of NspTypeGtkTextChildAnchor share the same id. 
  * nsp_type_gtktextchildanchor: is an instance of NspTypeGtkTextChildAnchor 
- *    used for objects of GtkTextChildAnchor type (i.e built with new_gtktextchildanchor) 
+ *    used for objects of NspGtkTextChildAnchor type (i.e built with new_gtktextchildanchor) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
@@ -45720,8 +45720,8 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
   
   /* object methods redefined for gtktextchildanchor */ 
 
-  top->s_type =  (s_type_func *) gtktextchildanchor_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextchildanchor_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextchildanchor_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextchildanchor_type_short_string;
   /* top->create = (create_func*) int_gtktextchildanchor_create;*/ 
   
   /* specific methods for gtktextchildanchor */
@@ -45729,7 +45729,7 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
   type->init = (init_func *) init_gtktextchildanchor;
 
   /* 
-   * GtkTextChildAnchor interfaces can be added here 
+   * NspGtkTextChildAnchor interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -45755,7 +45755,7 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
 }
 
 /*
- * initialize GtkTextChildAnchor instances 
+ * initialize NspGtkTextChildAnchor instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -45770,7 +45770,7 @@ static int init_gtktextchildanchor(NspGtkTextChildAnchor *Obj,NspTypeGtkTextChil
 }
 
 /*
- * new instance of GtkTextChildAnchor 
+ * new instance of NspGtkTextChildAnchor 
  */
 
 NspGtkTextChildAnchor *new_gtktextchildanchor() 
@@ -45785,7 +45785,7 @@ NspGtkTextChildAnchor *new_gtktextchildanchor()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextChildAnchor 
+ * Object method redefined for NspGtkTextChildAnchor 
  *-----------------------------------------------*/
 
 /*
@@ -45795,23 +45795,23 @@ NspGtkTextChildAnchor *new_gtktextchildanchor()
 static char gtktextchildanchor_type_name[]="GtkTextChildAnchor";
 static char gtktextchildanchor_short_type_name[]="GtkTextChildAnchor";
 
-static char *gtktextchildanchor_type_as_string(void)
+static char *nsp_gtktextchildanchor_type_as_string(void)
 {
   return(gtktextchildanchor_type_name);
 }
 
-static char *gtktextchildanchor_type_short_string(NspObject *v)
+static char *nsp_gtktextchildanchor_type_short_string(NspObject *v)
 {
   return(gtktextchildanchor_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextChildAnchor objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextChildAnchor objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextChildAnchor   *gtktextchildanchor_object(NspObject *O)
+NspGtkTextChildAnchor *nsp_gtktextchildanchor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -45841,7 +45841,7 @@ NspGtkTextChildAnchor  *GetGtkTextChildAnchorCopy(Stack stack, int i)
 NspGtkTextChildAnchor  *GetGtkTextChildAnchor(Stack stack, int i)
 {
   NspGtkTextChildAnchor *M;
-  if (( M = gtktextchildanchor_object(NthObj(i))) == NULLGTKTEXTCHILDANCHOR)
+  if (( M = nsp_gtktextchildanchor_object(NthObj(i))) == NULLGTKTEXTCHILDANCHOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -45909,7 +45909,7 @@ static NspMethods *gtktextchildanchor_get_methods(void) { return gtktextchildanc
 static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTextMark ----------- */
+/* ----------- NspGtkTextMark ----------- */
 
 
 #include "nsp/object.h"
@@ -45918,17 +45918,17 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextMark inherits from GObject 
+ * NspGtkTextMark inherits from GObject 
  */
 
 int nsp_type_gtktextmark_id=0;
 NspTypeGtkTextMark *nsp_type_gtktextmark=NULL;
 
 /*
- * Type object for GtkTextMark 
+ * Type object for NspGtkTextMark 
  * all the instance of NspTypeGtkTextMark share the same id. 
  * nsp_type_gtktextmark: is an instance of NspTypeGtkTextMark 
- *    used for objects of GtkTextMark type (i.e built with new_gtktextmark) 
+ *    used for objects of NspGtkTextMark type (i.e built with new_gtktextmark) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
@@ -45957,8 +45957,8 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
   
   /* object methods redefined for gtktextmark */ 
 
-  top->s_type =  (s_type_func *) gtktextmark_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextmark_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextmark_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextmark_type_short_string;
   /* top->create = (create_func*) int_gtktextmark_create;*/ 
   
   /* specific methods for gtktextmark */
@@ -45966,7 +45966,7 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
   type->init = (init_func *) init_gtktextmark;
 
   /* 
-   * GtkTextMark interfaces can be added here 
+   * NspGtkTextMark interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -45992,7 +45992,7 @@ NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
 }
 
 /*
- * initialize GtkTextMark instances 
+ * initialize NspGtkTextMark instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -46007,7 +46007,7 @@ static int init_gtktextmark(NspGtkTextMark *Obj,NspTypeGtkTextMark *type)
 }
 
 /*
- * new instance of GtkTextMark 
+ * new instance of NspGtkTextMark 
  */
 
 NspGtkTextMark *new_gtktextmark() 
@@ -46022,7 +46022,7 @@ NspGtkTextMark *new_gtktextmark()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextMark 
+ * Object method redefined for NspGtkTextMark 
  *-----------------------------------------------*/
 
 /*
@@ -46032,23 +46032,23 @@ NspGtkTextMark *new_gtktextmark()
 static char gtktextmark_type_name[]="GtkTextMark";
 static char gtktextmark_short_type_name[]="GtkTextMark";
 
-static char *gtktextmark_type_as_string(void)
+static char *nsp_gtktextmark_type_as_string(void)
 {
   return(gtktextmark_type_name);
 }
 
-static char *gtktextmark_type_short_string(NspObject *v)
+static char *nsp_gtktextmark_type_short_string(NspObject *v)
 {
   return(gtktextmark_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextMark objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextMark objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextMark   *gtktextmark_object(NspObject *O)
+NspGtkTextMark *nsp_gtktextmark_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -46078,7 +46078,7 @@ NspGtkTextMark  *GetGtkTextMarkCopy(Stack stack, int i)
 NspGtkTextMark  *GetGtkTextMark(Stack stack, int i)
 {
   NspGtkTextMark *M;
-  if (( M = gtktextmark_object(NthObj(i))) == NULLGTKTEXTMARK)
+  if (( M = nsp_gtktextmark_object(NthObj(i))) == NULLGTKTEXTMARK)
      ArgMessage(stack,i);
   return M;
 }
@@ -46168,7 +46168,7 @@ static NspMethods *gtktextmark_get_methods(void) { return gtktextmark_methods;};
 static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTextTag ----------- */
+/* ----------- NspGtkTextTag ----------- */
 
 
 #include "nsp/object.h"
@@ -46177,17 +46177,17 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextTag inherits from GObject 
+ * NspGtkTextTag inherits from GObject 
  */
 
 int nsp_type_gtktexttag_id=0;
 NspTypeGtkTextTag *nsp_type_gtktexttag=NULL;
 
 /*
- * Type object for GtkTextTag 
+ * Type object for NspGtkTextTag 
  * all the instance of NspTypeGtkTextTag share the same id. 
  * nsp_type_gtktexttag: is an instance of NspTypeGtkTextTag 
- *    used for objects of GtkTextTag type (i.e built with new_gtktexttag) 
+ *    used for objects of NspGtkTextTag type (i.e built with new_gtktexttag) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
@@ -46216,8 +46216,8 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
   
   /* object methods redefined for gtktexttag */ 
 
-  top->s_type =  (s_type_func *) gtktexttag_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktexttag_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktexttag_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktexttag_type_short_string;
   /* top->create = (create_func*) int_gtktexttag_create;*/ 
   
   /* specific methods for gtktexttag */
@@ -46225,7 +46225,7 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
   type->init = (init_func *) init_gtktexttag;
 
   /* 
-   * GtkTextTag interfaces can be added here 
+   * NspGtkTextTag interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -46251,7 +46251,7 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
 }
 
 /*
- * initialize GtkTextTag instances 
+ * initialize NspGtkTextTag instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -46266,7 +46266,7 @@ static int init_gtktexttag(NspGtkTextTag *Obj,NspTypeGtkTextTag *type)
 }
 
 /*
- * new instance of GtkTextTag 
+ * new instance of NspGtkTextTag 
  */
 
 NspGtkTextTag *new_gtktexttag() 
@@ -46281,7 +46281,7 @@ NspGtkTextTag *new_gtktexttag()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextTag 
+ * Object method redefined for NspGtkTextTag 
  *-----------------------------------------------*/
 
 /*
@@ -46291,23 +46291,23 @@ NspGtkTextTag *new_gtktexttag()
 static char gtktexttag_type_name[]="GtkTextTag";
 static char gtktexttag_short_type_name[]="GtkTextTag";
 
-static char *gtktexttag_type_as_string(void)
+static char *nsp_gtktexttag_type_as_string(void)
 {
   return(gtktexttag_type_name);
 }
 
-static char *gtktexttag_type_short_string(NspObject *v)
+static char *nsp_gtktexttag_type_short_string(NspObject *v)
 {
   return(gtktexttag_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextTag objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextTag objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextTag   *gtktexttag_object(NspObject *O)
+NspGtkTextTag *nsp_gtktexttag_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -46337,7 +46337,7 @@ NspGtkTextTag  *GetGtkTextTagCopy(Stack stack, int i)
 NspGtkTextTag  *GetGtkTextTag(Stack stack, int i)
 {
   NspGtkTextTag *M;
-  if (( M = gtktexttag_object(NthObj(i))) == NULLGTKTEXTTAG)
+  if (( M = nsp_gtktexttag_object(NthObj(i))) == NULLGTKTEXTTAG)
      ArgMessage(stack,i);
   return M;
 }
@@ -46434,7 +46434,7 @@ static NspMethods *gtktexttag_get_methods(void) { return gtktexttag_methods;};
 static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTextTagTable ----------- */
+/* ----------- NspGtkTextTagTable ----------- */
 
 
 #include "nsp/object.h"
@@ -46443,17 +46443,17 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextTagTable inherits from GObject 
+ * NspGtkTextTagTable inherits from GObject 
  */
 
 int nsp_type_gtktexttagtable_id=0;
 NspTypeGtkTextTagTable *nsp_type_gtktexttagtable=NULL;
 
 /*
- * Type object for GtkTextTagTable 
+ * Type object for NspGtkTextTagTable 
  * all the instance of NspTypeGtkTextTagTable share the same id. 
  * nsp_type_gtktexttagtable: is an instance of NspTypeGtkTextTagTable 
- *    used for objects of GtkTextTagTable type (i.e built with new_gtktexttagtable) 
+ *    used for objects of NspGtkTextTagTable type (i.e built with new_gtktexttagtable) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
@@ -46482,8 +46482,8 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
   
   /* object methods redefined for gtktexttagtable */ 
 
-  top->s_type =  (s_type_func *) gtktexttagtable_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktexttagtable_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktexttagtable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktexttagtable_type_short_string;
   /* top->create = (create_func*) int_gtktexttagtable_create;*/ 
   
   /* specific methods for gtktexttagtable */
@@ -46491,7 +46491,7 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
   type->init = (init_func *) init_gtktexttagtable;
 
   /* 
-   * GtkTextTagTable interfaces can be added here 
+   * NspGtkTextTagTable interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -46517,7 +46517,7 @@ NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
 }
 
 /*
- * initialize GtkTextTagTable instances 
+ * initialize NspGtkTextTagTable instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -46532,7 +46532,7 @@ static int init_gtktexttagtable(NspGtkTextTagTable *Obj,NspTypeGtkTextTagTable *
 }
 
 /*
- * new instance of GtkTextTagTable 
+ * new instance of NspGtkTextTagTable 
  */
 
 NspGtkTextTagTable *new_gtktexttagtable() 
@@ -46547,7 +46547,7 @@ NspGtkTextTagTable *new_gtktexttagtable()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextTagTable 
+ * Object method redefined for NspGtkTextTagTable 
  *-----------------------------------------------*/
 
 /*
@@ -46557,23 +46557,23 @@ NspGtkTextTagTable *new_gtktexttagtable()
 static char gtktexttagtable_type_name[]="GtkTextTagTable";
 static char gtktexttagtable_short_type_name[]="GtkTextTagTable";
 
-static char *gtktexttagtable_type_as_string(void)
+static char *nsp_gtktexttagtable_type_as_string(void)
 {
   return(gtktexttagtable_type_name);
 }
 
-static char *gtktexttagtable_type_short_string(NspObject *v)
+static char *nsp_gtktexttagtable_type_short_string(NspObject *v)
 {
   return(gtktexttagtable_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextTagTable objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextTagTable objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextTagTable   *gtktexttagtable_object(NspObject *O)
+NspGtkTextTagTable *nsp_gtktexttagtable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -46603,7 +46603,7 @@ NspGtkTextTagTable  *GetGtkTextTagTableCopy(Stack stack, int i)
 NspGtkTextTagTable  *GetGtkTextTagTable(Stack stack, int i)
 {
   NspGtkTextTagTable *M;
-  if (( M = gtktexttagtable_object(NthObj(i))) == NULLGTKTEXTTAGTABLE)
+  if (( M = nsp_gtktexttagtable_object(NthObj(i))) == NULLGTKTEXTTAGTABLE)
      ArgMessage(stack,i);
   return M;
 }
@@ -46693,7 +46693,7 @@ static NspMethods *gtktexttagtable_get_methods(void) { return gtktexttagtable_me
 static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTextView ----------- */
+/* ----------- NspGtkTextView ----------- */
 
 
 #include "nsp/object.h"
@@ -46702,17 +46702,17 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTextView inherits from GtkContainer 
+ * NspGtkTextView inherits from GtkContainer 
  */
 
 int nsp_type_gtktextview_id=0;
 NspTypeGtkTextView *nsp_type_gtktextview=NULL;
 
 /*
- * Type object for GtkTextView 
+ * Type object for NspGtkTextView 
  * all the instance of NspTypeGtkTextView share the same id. 
  * nsp_type_gtktextview: is an instance of NspTypeGtkTextView 
- *    used for objects of GtkTextView type (i.e built with new_gtktextview) 
+ *    used for objects of NspGtkTextView type (i.e built with new_gtktextview) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
@@ -46741,8 +46741,8 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
   
   /* object methods redefined for gtktextview */ 
 
-  top->s_type =  (s_type_func *) gtktextview_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktextview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktextview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktextview_type_short_string;
   /* top->create = (create_func*) int_gtktextview_create;*/ 
   
   /* specific methods for gtktextview */
@@ -46750,7 +46750,7 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
   type->init = (init_func *) init_gtktextview;
 
   /* 
-   * GtkTextView interfaces can be added here 
+   * NspGtkTextView interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -46776,7 +46776,7 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
 }
 
 /*
- * initialize GtkTextView instances 
+ * initialize NspGtkTextView instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -46791,7 +46791,7 @@ static int init_gtktextview(NspGtkTextView *Obj,NspTypeGtkTextView *type)
 }
 
 /*
- * new instance of GtkTextView 
+ * new instance of NspGtkTextView 
  */
 
 NspGtkTextView *new_gtktextview() 
@@ -46806,7 +46806,7 @@ NspGtkTextView *new_gtktextview()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTextView 
+ * Object method redefined for NspGtkTextView 
  *-----------------------------------------------*/
 
 /*
@@ -46816,23 +46816,23 @@ NspGtkTextView *new_gtktextview()
 static char gtktextview_type_name[]="GtkTextView";
 static char gtktextview_short_type_name[]="GtkTextView";
 
-static char *gtktextview_type_as_string(void)
+static char *nsp_gtktextview_type_as_string(void)
 {
   return(gtktextview_type_name);
 }
 
-static char *gtktextview_type_short_string(NspObject *v)
+static char *nsp_gtktextview_type_short_string(NspObject *v)
 {
   return(gtktextview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTextView objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTextView objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTextView   *gtktextview_object(NspObject *O)
+NspGtkTextView *nsp_gtktextview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -46862,7 +46862,7 @@ NspGtkTextView  *GetGtkTextViewCopy(Stack stack, int i)
 NspGtkTextView  *GetGtkTextView(Stack stack, int i)
 {
   NspGtkTextView *M;
-  if (( M = gtktextview_object(NthObj(i))) == NULLGTKTEXTVIEW)
+  if (( M = nsp_gtktextview_object(NthObj(i))) == NULLGTKTEXTVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -47667,7 +47667,7 @@ static NspMethods *gtktextview_get_methods(void) { return gtktextview_methods;};
 static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkToggleAction ----------- */
+/* ----------- NspGtkToggleAction ----------- */
 
 
 #include "nsp/object.h"
@@ -47676,17 +47676,17 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToggleAction inherits from GtkAction 
+ * NspGtkToggleAction inherits from GtkAction 
  */
 
 int nsp_type_gtktoggleaction_id=0;
 NspTypeGtkToggleAction *nsp_type_gtktoggleaction=NULL;
 
 /*
- * Type object for GtkToggleAction 
+ * Type object for NspGtkToggleAction 
  * all the instance of NspTypeGtkToggleAction share the same id. 
  * nsp_type_gtktoggleaction: is an instance of NspTypeGtkToggleAction 
- *    used for objects of GtkToggleAction type (i.e built with new_gtktoggleaction) 
+ *    used for objects of NspGtkToggleAction type (i.e built with new_gtktoggleaction) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
@@ -47715,8 +47715,8 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
   
   /* object methods redefined for gtktoggleaction */ 
 
-  top->s_type =  (s_type_func *) gtktoggleaction_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktoggleaction_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktoggleaction_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktoggleaction_type_short_string;
   /* top->create = (create_func*) int_gtktoggleaction_create;*/ 
   
   /* specific methods for gtktoggleaction */
@@ -47724,7 +47724,7 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
   type->init = (init_func *) init_gtktoggleaction;
 
   /* 
-   * GtkToggleAction interfaces can be added here 
+   * NspGtkToggleAction interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -47750,7 +47750,7 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
 }
 
 /*
- * initialize GtkToggleAction instances 
+ * initialize NspGtkToggleAction instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -47765,7 +47765,7 @@ static int init_gtktoggleaction(NspGtkToggleAction *Obj,NspTypeGtkToggleAction *
 }
 
 /*
- * new instance of GtkToggleAction 
+ * new instance of NspGtkToggleAction 
  */
 
 NspGtkToggleAction *new_gtktoggleaction() 
@@ -47780,7 +47780,7 @@ NspGtkToggleAction *new_gtktoggleaction()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToggleAction 
+ * Object method redefined for NspGtkToggleAction 
  *-----------------------------------------------*/
 
 /*
@@ -47790,23 +47790,23 @@ NspGtkToggleAction *new_gtktoggleaction()
 static char gtktoggleaction_type_name[]="GtkToggleAction";
 static char gtktoggleaction_short_type_name[]="GtkToggleAction";
 
-static char *gtktoggleaction_type_as_string(void)
+static char *nsp_gtktoggleaction_type_as_string(void)
 {
   return(gtktoggleaction_type_name);
 }
 
-static char *gtktoggleaction_type_short_string(NspObject *v)
+static char *nsp_gtktoggleaction_type_short_string(NspObject *v)
 {
   return(gtktoggleaction_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToggleAction objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToggleAction objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToggleAction   *gtktoggleaction_object(NspObject *O)
+NspGtkToggleAction *nsp_gtktoggleaction_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -47836,7 +47836,7 @@ NspGtkToggleAction  *GetGtkToggleActionCopy(Stack stack, int i)
 NspGtkToggleAction  *GetGtkToggleAction(Stack stack, int i)
 {
   NspGtkToggleAction *M;
-  if (( M = gtktoggleaction_object(NthObj(i))) == NULLGTKTOGGLEACTION)
+  if (( M = nsp_gtktoggleaction_object(NthObj(i))) == NULLGTKTOGGLEACTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -47929,7 +47929,7 @@ static NspMethods *gtktoggleaction_get_methods(void) { return gtktoggleaction_me
 static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkToggleButton ----------- */
+/* ----------- NspGtkToggleButton ----------- */
 
 
 #include "nsp/object.h"
@@ -47938,17 +47938,17 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToggleButton inherits from GtkButton 
+ * NspGtkToggleButton inherits from GtkButton 
  */
 
 int nsp_type_gtktogglebutton_id=0;
 NspTypeGtkToggleButton *nsp_type_gtktogglebutton=NULL;
 
 /*
- * Type object for GtkToggleButton 
+ * Type object for NspGtkToggleButton 
  * all the instance of NspTypeGtkToggleButton share the same id. 
  * nsp_type_gtktogglebutton: is an instance of NspTypeGtkToggleButton 
- *    used for objects of GtkToggleButton type (i.e built with new_gtktogglebutton) 
+ *    used for objects of NspGtkToggleButton type (i.e built with new_gtktogglebutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
@@ -47977,8 +47977,8 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
   
   /* object methods redefined for gtktogglebutton */ 
 
-  top->s_type =  (s_type_func *) gtktogglebutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktogglebutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktogglebutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktogglebutton_type_short_string;
   /* top->create = (create_func*) int_gtktogglebutton_create;*/ 
   
   /* specific methods for gtktogglebutton */
@@ -47986,7 +47986,7 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
   type->init = (init_func *) init_gtktogglebutton;
 
   /* 
-   * GtkToggleButton interfaces can be added here 
+   * NspGtkToggleButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -48012,7 +48012,7 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
 }
 
 /*
- * initialize GtkToggleButton instances 
+ * initialize NspGtkToggleButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -48027,7 +48027,7 @@ static int init_gtktogglebutton(NspGtkToggleButton *Obj,NspTypeGtkToggleButton *
 }
 
 /*
- * new instance of GtkToggleButton 
+ * new instance of NspGtkToggleButton 
  */
 
 NspGtkToggleButton *new_gtktogglebutton() 
@@ -48042,7 +48042,7 @@ NspGtkToggleButton *new_gtktogglebutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToggleButton 
+ * Object method redefined for NspGtkToggleButton 
  *-----------------------------------------------*/
 
 /*
@@ -48052,23 +48052,23 @@ NspGtkToggleButton *new_gtktogglebutton()
 static char gtktogglebutton_type_name[]="GtkToggleButton";
 static char gtktogglebutton_short_type_name[]="GtkToggleButton";
 
-static char *gtktogglebutton_type_as_string(void)
+static char *nsp_gtktogglebutton_type_as_string(void)
 {
   return(gtktogglebutton_type_name);
 }
 
-static char *gtktogglebutton_type_short_string(NspObject *v)
+static char *nsp_gtktogglebutton_type_short_string(NspObject *v)
 {
   return(gtktogglebutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToggleButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToggleButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToggleButton   *gtktogglebutton_object(NspObject *O)
+NspGtkToggleButton *nsp_gtktogglebutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -48098,7 +48098,7 @@ NspGtkToggleButton  *GetGtkToggleButtonCopy(Stack stack, int i)
 NspGtkToggleButton  *GetGtkToggleButton(Stack stack, int i)
 {
   NspGtkToggleButton *M;
-  if (( M = gtktogglebutton_object(NthObj(i))) == NULLGTKTOGGLEBUTTON)
+  if (( M = nsp_gtktogglebutton_object(NthObj(i))) == NULLGTKTOGGLEBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -48252,7 +48252,7 @@ static AttrTab gtktogglebutton_attrs[] = {
 
 
 
-/* ----------- GtkToggleToolButton ----------- */
+/* ----------- NspGtkToggleToolButton ----------- */
 
 
 #include "nsp/object.h"
@@ -48261,17 +48261,17 @@ static AttrTab gtktogglebutton_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToggleToolButton inherits from GtkToolButton 
+ * NspGtkToggleToolButton inherits from GtkToolButton 
  */
 
 int nsp_type_gtktoggletoolbutton_id=0;
 NspTypeGtkToggleToolButton *nsp_type_gtktoggletoolbutton=NULL;
 
 /*
- * Type object for GtkToggleToolButton 
+ * Type object for NspGtkToggleToolButton 
  * all the instance of NspTypeGtkToggleToolButton share the same id. 
  * nsp_type_gtktoggletoolbutton: is an instance of NspTypeGtkToggleToolButton 
- *    used for objects of GtkToggleToolButton type (i.e built with new_gtktoggletoolbutton) 
+ *    used for objects of NspGtkToggleToolButton type (i.e built with new_gtktoggletoolbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
@@ -48300,8 +48300,8 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
   
   /* object methods redefined for gtktoggletoolbutton */ 
 
-  top->s_type =  (s_type_func *) gtktoggletoolbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktoggletoolbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktoggletoolbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktoggletoolbutton_type_short_string;
   /* top->create = (create_func*) int_gtktoggletoolbutton_create;*/ 
   
   /* specific methods for gtktoggletoolbutton */
@@ -48309,7 +48309,7 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
   type->init = (init_func *) init_gtktoggletoolbutton;
 
   /* 
-   * GtkToggleToolButton interfaces can be added here 
+   * NspGtkToggleToolButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -48335,7 +48335,7 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
 }
 
 /*
- * initialize GtkToggleToolButton instances 
+ * initialize NspGtkToggleToolButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -48350,7 +48350,7 @@ static int init_gtktoggletoolbutton(NspGtkToggleToolButton *Obj,NspTypeGtkToggle
 }
 
 /*
- * new instance of GtkToggleToolButton 
+ * new instance of NspGtkToggleToolButton 
  */
 
 NspGtkToggleToolButton *new_gtktoggletoolbutton() 
@@ -48365,7 +48365,7 @@ NspGtkToggleToolButton *new_gtktoggletoolbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToggleToolButton 
+ * Object method redefined for NspGtkToggleToolButton 
  *-----------------------------------------------*/
 
 /*
@@ -48375,23 +48375,23 @@ NspGtkToggleToolButton *new_gtktoggletoolbutton()
 static char gtktoggletoolbutton_type_name[]="GtkToggleToolButton";
 static char gtktoggletoolbutton_short_type_name[]="GtkToggleToolButton";
 
-static char *gtktoggletoolbutton_type_as_string(void)
+static char *nsp_gtktoggletoolbutton_type_as_string(void)
 {
   return(gtktoggletoolbutton_type_name);
 }
 
-static char *gtktoggletoolbutton_type_short_string(NspObject *v)
+static char *nsp_gtktoggletoolbutton_type_short_string(NspObject *v)
 {
   return(gtktoggletoolbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToggleToolButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToggleToolButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToggleToolButton   *gtktoggletoolbutton_object(NspObject *O)
+NspGtkToggleToolButton *nsp_gtktoggletoolbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -48421,7 +48421,7 @@ NspGtkToggleToolButton  *GetGtkToggleToolButtonCopy(Stack stack, int i)
 NspGtkToggleToolButton  *GetGtkToggleToolButton(Stack stack, int i)
 {
   NspGtkToggleToolButton *M;
-  if (( M = gtktoggletoolbutton_object(NthObj(i))) == NULLGTKTOGGLETOOLBUTTON)
+  if (( M = nsp_gtktoggletoolbutton_object(NthObj(i))) == NULLGTKTOGGLETOOLBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -48486,7 +48486,7 @@ static NspMethods *gtktoggletoolbutton_get_methods(void) { return gtktoggletoolb
 static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkToolbar ----------- */
+/* ----------- NspGtkToolbar ----------- */
 
 
 #include "nsp/object.h"
@@ -48495,17 +48495,17 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToolbar inherits from GtkContainer 
+ * NspGtkToolbar inherits from GtkContainer 
  */
 
 int nsp_type_gtktoolbar_id=0;
 NspTypeGtkToolbar *nsp_type_gtktoolbar=NULL;
 
 /*
- * Type object for GtkToolbar 
+ * Type object for NspGtkToolbar 
  * all the instance of NspTypeGtkToolbar share the same id. 
  * nsp_type_gtktoolbar: is an instance of NspTypeGtkToolbar 
- *    used for objects of GtkToolbar type (i.e built with new_gtktoolbar) 
+ *    used for objects of NspGtkToolbar type (i.e built with new_gtktoolbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
@@ -48534,8 +48534,8 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
   
   /* object methods redefined for gtktoolbar */ 
 
-  top->s_type =  (s_type_func *) gtktoolbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktoolbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktoolbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktoolbar_type_short_string;
   /* top->create = (create_func*) int_gtktoolbar_create;*/ 
   
   /* specific methods for gtktoolbar */
@@ -48543,7 +48543,7 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
   type->init = (init_func *) init_gtktoolbar;
 
   /* 
-   * GtkToolbar interfaces can be added here 
+   * NspGtkToolbar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -48569,7 +48569,7 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
 }
 
 /*
- * initialize GtkToolbar instances 
+ * initialize NspGtkToolbar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -48584,7 +48584,7 @@ static int init_gtktoolbar(NspGtkToolbar *Obj,NspTypeGtkToolbar *type)
 }
 
 /*
- * new instance of GtkToolbar 
+ * new instance of NspGtkToolbar 
  */
 
 NspGtkToolbar *new_gtktoolbar() 
@@ -48599,7 +48599,7 @@ NspGtkToolbar *new_gtktoolbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToolbar 
+ * Object method redefined for NspGtkToolbar 
  *-----------------------------------------------*/
 
 /*
@@ -48609,23 +48609,23 @@ NspGtkToolbar *new_gtktoolbar()
 static char gtktoolbar_type_name[]="GtkToolbar";
 static char gtktoolbar_short_type_name[]="GtkToolbar";
 
-static char *gtktoolbar_type_as_string(void)
+static char *nsp_gtktoolbar_type_as_string(void)
 {
   return(gtktoolbar_type_name);
 }
 
-static char *gtktoolbar_type_short_string(NspObject *v)
+static char *nsp_gtktoolbar_type_short_string(NspObject *v)
 {
   return(gtktoolbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToolbar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToolbar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToolbar   *gtktoolbar_object(NspObject *O)
+NspGtkToolbar *nsp_gtktoolbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -48655,7 +48655,7 @@ NspGtkToolbar  *GetGtkToolbarCopy(Stack stack, int i)
 NspGtkToolbar  *GetGtkToolbar(Stack stack, int i)
 {
   NspGtkToolbar *M;
-  if (( M = gtktoolbar_object(NthObj(i))) == NULLGTKTOOLBAR)
+  if (( M = nsp_gtktoolbar_object(NthObj(i))) == NULLGTKTOOLBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -49272,7 +49272,7 @@ static NspMethods *gtktoolbar_get_methods(void) { return gtktoolbar_methods;};
 static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkToolButton ----------- */
+/* ----------- NspGtkToolButton ----------- */
 
 
 #include "nsp/object.h"
@@ -49281,17 +49281,17 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToolButton inherits from GtkToolItem 
+ * NspGtkToolButton inherits from GtkToolItem 
  */
 
 int nsp_type_gtktoolbutton_id=0;
 NspTypeGtkToolButton *nsp_type_gtktoolbutton=NULL;
 
 /*
- * Type object for GtkToolButton 
+ * Type object for NspGtkToolButton 
  * all the instance of NspTypeGtkToolButton share the same id. 
  * nsp_type_gtktoolbutton: is an instance of NspTypeGtkToolButton 
- *    used for objects of GtkToolButton type (i.e built with new_gtktoolbutton) 
+ *    used for objects of NspGtkToolButton type (i.e built with new_gtktoolbutton) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
@@ -49320,8 +49320,8 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
   
   /* object methods redefined for gtktoolbutton */ 
 
-  top->s_type =  (s_type_func *) gtktoolbutton_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktoolbutton_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktoolbutton_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktoolbutton_type_short_string;
   /* top->create = (create_func*) int_gtktoolbutton_create;*/ 
   
   /* specific methods for gtktoolbutton */
@@ -49329,7 +49329,7 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
   type->init = (init_func *) init_gtktoolbutton;
 
   /* 
-   * GtkToolButton interfaces can be added here 
+   * NspGtkToolButton interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -49355,7 +49355,7 @@ NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
 }
 
 /*
- * initialize GtkToolButton instances 
+ * initialize NspGtkToolButton instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -49370,7 +49370,7 @@ static int init_gtktoolbutton(NspGtkToolButton *Obj,NspTypeGtkToolButton *type)
 }
 
 /*
- * new instance of GtkToolButton 
+ * new instance of NspGtkToolButton 
  */
 
 NspGtkToolButton *new_gtktoolbutton() 
@@ -49385,7 +49385,7 @@ NspGtkToolButton *new_gtktoolbutton()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToolButton 
+ * Object method redefined for NspGtkToolButton 
  *-----------------------------------------------*/
 
 /*
@@ -49395,23 +49395,23 @@ NspGtkToolButton *new_gtktoolbutton()
 static char gtktoolbutton_type_name[]="GtkToolButton";
 static char gtktoolbutton_short_type_name[]="GtkToolButton";
 
-static char *gtktoolbutton_type_as_string(void)
+static char *nsp_gtktoolbutton_type_as_string(void)
 {
   return(gtktoolbutton_type_name);
 }
 
-static char *gtktoolbutton_type_short_string(NspObject *v)
+static char *nsp_gtktoolbutton_type_short_string(NspObject *v)
 {
   return(gtktoolbutton_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToolButton objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToolButton objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToolButton   *gtktoolbutton_object(NspObject *O)
+NspGtkToolButton *nsp_gtktoolbutton_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -49441,7 +49441,7 @@ NspGtkToolButton  *GetGtkToolButtonCopy(Stack stack, int i)
 NspGtkToolButton  *GetGtkToolButton(Stack stack, int i)
 {
   NspGtkToolButton *M;
-  if (( M = gtktoolbutton_object(NthObj(i))) == NULLGTKTOOLBUTTON)
+  if (( M = nsp_gtktoolbutton_object(NthObj(i))) == NULLGTKTOOLBUTTON)
      ArgMessage(stack,i);
   return M;
 }
@@ -49656,7 +49656,7 @@ static NspMethods *gtktoolbutton_get_methods(void) { return gtktoolbutton_method
 static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkToolItem ----------- */
+/* ----------- NspGtkToolItem ----------- */
 
 
 #include "nsp/object.h"
@@ -49665,17 +49665,17 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkToolItem inherits from GtkBin 
+ * NspGtkToolItem inherits from GtkBin 
  */
 
 int nsp_type_gtktoolitem_id=0;
 NspTypeGtkToolItem *nsp_type_gtktoolitem=NULL;
 
 /*
- * Type object for GtkToolItem 
+ * Type object for NspGtkToolItem 
  * all the instance of NspTypeGtkToolItem share the same id. 
  * nsp_type_gtktoolitem: is an instance of NspTypeGtkToolItem 
- *    used for objects of GtkToolItem type (i.e built with new_gtktoolitem) 
+ *    used for objects of NspGtkToolItem type (i.e built with new_gtktoolitem) 
  * other instances are used for derived classes 
  */
 NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
@@ -49704,8 +49704,8 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
   
   /* object methods redefined for gtktoolitem */ 
 
-  top->s_type =  (s_type_func *) gtktoolitem_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktoolitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktoolitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktoolitem_type_short_string;
   /* top->create = (create_func*) int_gtktoolitem_create;*/ 
   
   /* specific methods for gtktoolitem */
@@ -49713,7 +49713,7 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
   type->init = (init_func *) init_gtktoolitem;
 
   /* 
-   * GtkToolItem interfaces can be added here 
+   * NspGtkToolItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -49739,7 +49739,7 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
 }
 
 /*
- * initialize GtkToolItem instances 
+ * initialize NspGtkToolItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -49754,7 +49754,7 @@ static int init_gtktoolitem(NspGtkToolItem *Obj,NspTypeGtkToolItem *type)
 }
 
 /*
- * new instance of GtkToolItem 
+ * new instance of NspGtkToolItem 
  */
 
 NspGtkToolItem *new_gtktoolitem() 
@@ -49769,7 +49769,7 @@ NspGtkToolItem *new_gtktoolitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkToolItem 
+ * Object method redefined for NspGtkToolItem 
  *-----------------------------------------------*/
 
 /*
@@ -49779,23 +49779,23 @@ NspGtkToolItem *new_gtktoolitem()
 static char gtktoolitem_type_name[]="GtkToolItem";
 static char gtktoolitem_short_type_name[]="GtkToolItem";
 
-static char *gtktoolitem_type_as_string(void)
+static char *nsp_gtktoolitem_type_as_string(void)
 {
   return(gtktoolitem_type_name);
 }
 
-static char *gtktoolitem_type_short_string(NspObject *v)
+static char *nsp_gtktoolitem_type_short_string(NspObject *v)
 {
   return(gtktoolitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkToolItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkToolItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkToolItem   *gtktoolitem_object(NspObject *O)
+NspGtkToolItem *nsp_gtktoolitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -49825,7 +49825,7 @@ NspGtkToolItem  *GetGtkToolItemCopy(Stack stack, int i)
 NspGtkToolItem  *GetGtkToolItem(Stack stack, int i)
 {
   NspGtkToolItem *M;
-  if (( M = gtktoolitem_object(NthObj(i))) == NULLGTKTOOLITEM)
+  if (( M = nsp_gtktoolitem_object(NthObj(i))) == NULLGTKTOOLITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -50093,7 +50093,7 @@ static NspMethods *gtktoolitem_get_methods(void) { return gtktoolitem_methods;};
 static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTooltips ----------- */
+/* ----------- NspGtkTooltips ----------- */
 
 
 #include "nsp/object.h"
@@ -50102,17 +50102,17 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTooltips inherits from GtkObject 
+ * NspGtkTooltips inherits from GtkObject 
  */
 
 int nsp_type_gtktooltips_id=0;
 NspTypeGtkTooltips *nsp_type_gtktooltips=NULL;
 
 /*
- * Type object for GtkTooltips 
+ * Type object for NspGtkTooltips 
  * all the instance of NspTypeGtkTooltips share the same id. 
  * nsp_type_gtktooltips: is an instance of NspTypeGtkTooltips 
- *    used for objects of GtkTooltips type (i.e built with new_gtktooltips) 
+ *    used for objects of NspGtkTooltips type (i.e built with new_gtktooltips) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
@@ -50141,8 +50141,8 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
   
   /* object methods redefined for gtktooltips */ 
 
-  top->s_type =  (s_type_func *) gtktooltips_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktooltips_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktooltips_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktooltips_type_short_string;
   /* top->create = (create_func*) int_gtktooltips_create;*/ 
   
   /* specific methods for gtktooltips */
@@ -50150,7 +50150,7 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
   type->init = (init_func *) init_gtktooltips;
 
   /* 
-   * GtkTooltips interfaces can be added here 
+   * NspGtkTooltips interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -50176,7 +50176,7 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
 }
 
 /*
- * initialize GtkTooltips instances 
+ * initialize NspGtkTooltips instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -50191,7 +50191,7 @@ static int init_gtktooltips(NspGtkTooltips *Obj,NspTypeGtkTooltips *type)
 }
 
 /*
- * new instance of GtkTooltips 
+ * new instance of NspGtkTooltips 
  */
 
 NspGtkTooltips *new_gtktooltips() 
@@ -50206,7 +50206,7 @@ NspGtkTooltips *new_gtktooltips()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTooltips 
+ * Object method redefined for NspGtkTooltips 
  *-----------------------------------------------*/
 
 /*
@@ -50216,23 +50216,23 @@ NspGtkTooltips *new_gtktooltips()
 static char gtktooltips_type_name[]="GtkTooltips";
 static char gtktooltips_short_type_name[]="GtkTooltips";
 
-static char *gtktooltips_type_as_string(void)
+static char *nsp_gtktooltips_type_as_string(void)
 {
   return(gtktooltips_type_name);
 }
 
-static char *gtktooltips_type_short_string(NspObject *v)
+static char *nsp_gtktooltips_type_short_string(NspObject *v)
 {
   return(gtktooltips_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTooltips objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTooltips objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTooltips   *gtktooltips_object(NspObject *O)
+NspGtkTooltips *nsp_gtktooltips_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -50262,7 +50262,7 @@ NspGtkTooltips  *GetGtkTooltipsCopy(Stack stack, int i)
 NspGtkTooltips  *GetGtkTooltips(Stack stack, int i)
 {
   NspGtkTooltips *M;
-  if (( M = gtktooltips_object(NthObj(i))) == NULLGTKTOOLTIPS)
+  if (( M = nsp_gtktooltips_object(NthObj(i))) == NULLGTKTOOLTIPS)
      ArgMessage(stack,i);
   return M;
 }
@@ -50452,7 +50452,7 @@ static AttrTab gtktooltips_attrs[] = {
 
 
 
-/* ----------- GtkTreeModelFilter ----------- */
+/* ----------- NspGtkTreeModelFilter ----------- */
 
 
 #include "nsp/object.h"
@@ -50461,7 +50461,7 @@ static AttrTab gtktooltips_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeModelFilter inherits from GObject 
+ * NspGtkTreeModelFilter inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource
  */
 
@@ -50469,10 +50469,10 @@ int nsp_type_gtktreemodelfilter_id=0;
 NspTypeGtkTreeModelFilter *nsp_type_gtktreemodelfilter=NULL;
 
 /*
- * Type object for GtkTreeModelFilter 
+ * Type object for NspGtkTreeModelFilter 
  * all the instance of NspTypeGtkTreeModelFilter share the same id. 
  * nsp_type_gtktreemodelfilter: is an instance of NspTypeGtkTreeModelFilter 
- *    used for objects of GtkTreeModelFilter type (i.e built with new_gtktreemodelfilter) 
+ *    used for objects of NspGtkTreeModelFilter type (i.e built with new_gtktreemodelfilter) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
@@ -50501,8 +50501,8 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
   
   /* object methods redefined for gtktreemodelfilter */ 
 
-  top->s_type =  (s_type_func *) gtktreemodelfilter_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreemodelfilter_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreemodelfilter_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreemodelfilter_type_short_string;
   /* top->create = (create_func*) int_gtktreemodelfilter_create;*/ 
   
   /* specific methods for gtktreemodelfilter */
@@ -50510,7 +50510,7 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
   type->init = (init_func *) init_gtktreemodelfilter;
 
   /* 
-   * GtkTreeModelFilter interfaces can be added here 
+   * NspGtkTreeModelFilter interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -50538,7 +50538,7 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
 }
 
 /*
- * initialize GtkTreeModelFilter instances 
+ * initialize NspGtkTreeModelFilter instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -50553,7 +50553,7 @@ static int init_gtktreemodelfilter(NspGtkTreeModelFilter *Obj,NspTypeGtkTreeMode
 }
 
 /*
- * new instance of GtkTreeModelFilter 
+ * new instance of NspGtkTreeModelFilter 
  */
 
 NspGtkTreeModelFilter *new_gtktreemodelfilter() 
@@ -50568,7 +50568,7 @@ NspGtkTreeModelFilter *new_gtktreemodelfilter()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeModelFilter 
+ * Object method redefined for NspGtkTreeModelFilter 
  *-----------------------------------------------*/
 
 /*
@@ -50578,23 +50578,23 @@ NspGtkTreeModelFilter *new_gtktreemodelfilter()
 static char gtktreemodelfilter_type_name[]="GtkTreeModelFilter";
 static char gtktreemodelfilter_short_type_name[]="GtkTreeModelFilter";
 
-static char *gtktreemodelfilter_type_as_string(void)
+static char *nsp_gtktreemodelfilter_type_as_string(void)
 {
   return(gtktreemodelfilter_type_name);
 }
 
-static char *gtktreemodelfilter_type_short_string(NspObject *v)
+static char *nsp_gtktreemodelfilter_type_short_string(NspObject *v)
 {
   return(gtktreemodelfilter_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeModelFilter objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeModelFilter objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeModelFilter   *gtktreemodelfilter_object(NspObject *O)
+NspGtkTreeModelFilter *nsp_gtktreemodelfilter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -50624,7 +50624,7 @@ NspGtkTreeModelFilter  *GetGtkTreeModelFilterCopy(Stack stack, int i)
 NspGtkTreeModelFilter  *GetGtkTreeModelFilter(Stack stack, int i)
 {
   NspGtkTreeModelFilter *M;
-  if (( M = gtktreemodelfilter_object(NthObj(i))) == NULLGTKTREEMODELFILTER)
+  if (( M = nsp_gtktreemodelfilter_object(NthObj(i))) == NULLGTKTREEMODELFILTER)
      ArgMessage(stack,i);
   return M;
 }
@@ -50780,7 +50780,7 @@ static NspMethods *gtktreemodelfilter_get_methods(void) { return gtktreemodelfil
 static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeModelSort ----------- */
+/* ----------- NspGtkTreeModelSort ----------- */
 
 
 #include "nsp/object.h"
@@ -50789,7 +50789,7 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeModelSort inherits from GObject 
+ * NspGtkTreeModelSort inherits from GObject 
  * and implements  GtkTreeModel GtkTreeSortable
  */
 
@@ -50797,10 +50797,10 @@ int nsp_type_gtktreemodelsort_id=0;
 NspTypeGtkTreeModelSort *nsp_type_gtktreemodelsort=NULL;
 
 /*
- * Type object for GtkTreeModelSort 
+ * Type object for NspGtkTreeModelSort 
  * all the instance of NspTypeGtkTreeModelSort share the same id. 
  * nsp_type_gtktreemodelsort: is an instance of NspTypeGtkTreeModelSort 
- *    used for objects of GtkTreeModelSort type (i.e built with new_gtktreemodelsort) 
+ *    used for objects of NspGtkTreeModelSort type (i.e built with new_gtktreemodelsort) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
@@ -50829,8 +50829,8 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
   
   /* object methods redefined for gtktreemodelsort */ 
 
-  top->s_type =  (s_type_func *) gtktreemodelsort_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreemodelsort_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreemodelsort_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreemodelsort_type_short_string;
   /* top->create = (create_func*) int_gtktreemodelsort_create;*/ 
   
   /* specific methods for gtktreemodelsort */
@@ -50838,7 +50838,7 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
   type->init = (init_func *) init_gtktreemodelsort;
 
   /* 
-   * GtkTreeModelSort interfaces can be added here 
+   * NspGtkTreeModelSort interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -50866,7 +50866,7 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
 }
 
 /*
- * initialize GtkTreeModelSort instances 
+ * initialize NspGtkTreeModelSort instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -50881,7 +50881,7 @@ static int init_gtktreemodelsort(NspGtkTreeModelSort *Obj,NspTypeGtkTreeModelSor
 }
 
 /*
- * new instance of GtkTreeModelSort 
+ * new instance of NspGtkTreeModelSort 
  */
 
 NspGtkTreeModelSort *new_gtktreemodelsort() 
@@ -50896,7 +50896,7 @@ NspGtkTreeModelSort *new_gtktreemodelsort()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeModelSort 
+ * Object method redefined for NspGtkTreeModelSort 
  *-----------------------------------------------*/
 
 /*
@@ -50906,23 +50906,23 @@ NspGtkTreeModelSort *new_gtktreemodelsort()
 static char gtktreemodelsort_type_name[]="GtkTreeModelSort";
 static char gtktreemodelsort_short_type_name[]="GtkTreeModelSort";
 
-static char *gtktreemodelsort_type_as_string(void)
+static char *nsp_gtktreemodelsort_type_as_string(void)
 {
   return(gtktreemodelsort_type_name);
 }
 
-static char *gtktreemodelsort_type_short_string(NspObject *v)
+static char *nsp_gtktreemodelsort_type_short_string(NspObject *v)
 {
   return(gtktreemodelsort_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeModelSort objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeModelSort objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeModelSort   *gtktreemodelsort_object(NspObject *O)
+NspGtkTreeModelSort *nsp_gtktreemodelsort_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -50952,7 +50952,7 @@ NspGtkTreeModelSort  *GetGtkTreeModelSortCopy(Stack stack, int i)
 NspGtkTreeModelSort  *GetGtkTreeModelSort(Stack stack, int i)
 {
   NspGtkTreeModelSort *M;
-  if (( M = gtktreemodelsort_object(NthObj(i))) == NULLGTKTREEMODELSORT)
+  if (( M = nsp_gtktreemodelsort_object(NthObj(i))) == NULLGTKTREEMODELSORT)
      ArgMessage(stack,i);
   return M;
 }
@@ -51133,7 +51133,7 @@ static NspMethods *gtktreemodelsort_get_methods(void) { return gtktreemodelsort_
 static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeSelection ----------- */
+/* ----------- NspGtkTreeSelection ----------- */
 
 
 #include "nsp/object.h"
@@ -51142,17 +51142,17 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeSelection inherits from GtkObject 
+ * NspGtkTreeSelection inherits from GtkObject 
  */
 
 int nsp_type_gtktreeselection_id=0;
 NspTypeGtkTreeSelection *nsp_type_gtktreeselection=NULL;
 
 /*
- * Type object for GtkTreeSelection 
+ * Type object for NspGtkTreeSelection 
  * all the instance of NspTypeGtkTreeSelection share the same id. 
  * nsp_type_gtktreeselection: is an instance of NspTypeGtkTreeSelection 
- *    used for objects of GtkTreeSelection type (i.e built with new_gtktreeselection) 
+ *    used for objects of NspGtkTreeSelection type (i.e built with new_gtktreeselection) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
@@ -51181,8 +51181,8 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
   
   /* object methods redefined for gtktreeselection */ 
 
-  top->s_type =  (s_type_func *) gtktreeselection_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreeselection_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreeselection_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreeselection_type_short_string;
   /* top->create = (create_func*) int_gtktreeselection_create;*/ 
   
   /* specific methods for gtktreeselection */
@@ -51190,7 +51190,7 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
   type->init = (init_func *) init_gtktreeselection;
 
   /* 
-   * GtkTreeSelection interfaces can be added here 
+   * NspGtkTreeSelection interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -51216,7 +51216,7 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
 }
 
 /*
- * initialize GtkTreeSelection instances 
+ * initialize NspGtkTreeSelection instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -51231,7 +51231,7 @@ static int init_gtktreeselection(NspGtkTreeSelection *Obj,NspTypeGtkTreeSelectio
 }
 
 /*
- * new instance of GtkTreeSelection 
+ * new instance of NspGtkTreeSelection 
  */
 
 NspGtkTreeSelection *new_gtktreeselection() 
@@ -51246,7 +51246,7 @@ NspGtkTreeSelection *new_gtktreeselection()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeSelection 
+ * Object method redefined for NspGtkTreeSelection 
  *-----------------------------------------------*/
 
 /*
@@ -51256,23 +51256,23 @@ NspGtkTreeSelection *new_gtktreeselection()
 static char gtktreeselection_type_name[]="GtkTreeSelection";
 static char gtktreeselection_short_type_name[]="GtkTreeSelection";
 
-static char *gtktreeselection_type_as_string(void)
+static char *nsp_gtktreeselection_type_as_string(void)
 {
   return(gtktreeselection_type_name);
 }
 
-static char *gtktreeselection_type_short_string(NspObject *v)
+static char *nsp_gtktreeselection_type_short_string(NspObject *v)
 {
   return(gtktreeselection_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeSelection objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeSelection objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeSelection   *gtktreeselection_object(NspObject *O)
+NspGtkTreeSelection *nsp_gtktreeselection_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -51302,7 +51302,7 @@ NspGtkTreeSelection  *GetGtkTreeSelectionCopy(Stack stack, int i)
 NspGtkTreeSelection  *GetGtkTreeSelection(Stack stack, int i)
 {
   NspGtkTreeSelection *M;
-  if (( M = gtktreeselection_object(NthObj(i))) == NULLGTKTREESELECTION)
+  if (( M = nsp_gtktreeselection_object(NthObj(i))) == NULLGTKTREESELECTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -51736,7 +51736,7 @@ static NspMethods *gtktreeselection_get_methods(void) { return gtktreeselection_
 static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeStore ----------- */
+/* ----------- NspGtkTreeStore ----------- */
 
 
 #include "nsp/object.h"
@@ -51745,7 +51745,7 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeStore inherits from GObject 
+ * NspGtkTreeStore inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
  */
 
@@ -51753,10 +51753,10 @@ int nsp_type_gtktreestore_id=0;
 NspTypeGtkTreeStore *nsp_type_gtktreestore=NULL;
 
 /*
- * Type object for GtkTreeStore 
+ * Type object for NspGtkTreeStore 
  * all the instance of NspTypeGtkTreeStore share the same id. 
  * nsp_type_gtktreestore: is an instance of NspTypeGtkTreeStore 
- *    used for objects of GtkTreeStore type (i.e built with new_gtktreestore) 
+ *    used for objects of NspGtkTreeStore type (i.e built with new_gtktreestore) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
@@ -51785,8 +51785,8 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
   
   /* object methods redefined for gtktreestore */ 
 
-  top->s_type =  (s_type_func *) gtktreestore_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreestore_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreestore_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreestore_type_short_string;
   /* top->create = (create_func*) int_gtktreestore_create;*/ 
   
   /* specific methods for gtktreestore */
@@ -51794,7 +51794,7 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
   type->init = (init_func *) init_gtktreestore;
 
   /* 
-   * GtkTreeStore interfaces can be added here 
+   * NspGtkTreeStore interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -51824,7 +51824,7 @@ NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
 }
 
 /*
- * initialize GtkTreeStore instances 
+ * initialize NspGtkTreeStore instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -51839,7 +51839,7 @@ static int init_gtktreestore(NspGtkTreeStore *Obj,NspTypeGtkTreeStore *type)
 }
 
 /*
- * new instance of GtkTreeStore 
+ * new instance of NspGtkTreeStore 
  */
 
 NspGtkTreeStore *new_gtktreestore() 
@@ -51854,7 +51854,7 @@ NspGtkTreeStore *new_gtktreestore()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeStore 
+ * Object method redefined for NspGtkTreeStore 
  *-----------------------------------------------*/
 
 /*
@@ -51864,23 +51864,23 @@ NspGtkTreeStore *new_gtktreestore()
 static char gtktreestore_type_name[]="GtkTreeStore";
 static char gtktreestore_short_type_name[]="GtkTreeStore";
 
-static char *gtktreestore_type_as_string(void)
+static char *nsp_gtktreestore_type_as_string(void)
 {
   return(gtktreestore_type_name);
 }
 
-static char *gtktreestore_type_short_string(NspObject *v)
+static char *nsp_gtktreestore_type_short_string(NspObject *v)
 {
   return(gtktreestore_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeStore objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeStore objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeStore   *gtktreestore_object(NspObject *O)
+NspGtkTreeStore *nsp_gtktreestore_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -51910,7 +51910,7 @@ NspGtkTreeStore  *GetGtkTreeStoreCopy(Stack stack, int i)
 NspGtkTreeStore  *GetGtkTreeStore(Stack stack, int i)
 {
   NspGtkTreeStore *M;
-  if (( M = gtktreestore_object(NthObj(i))) == NULLGTKTREESTORE)
+  if (( M = nsp_gtktreestore_object(NthObj(i))) == NULLGTKTREESTORE)
      ArgMessage(stack,i);
   return M;
 }
@@ -52482,7 +52482,7 @@ static NspMethods *gtktreestore_get_methods(void) { return gtktreestore_methods;
 static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeView ----------- */
+/* ----------- NspGtkTreeView ----------- */
 
 
 #include "nsp/object.h"
@@ -52491,17 +52491,17 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeView inherits from GtkContainer 
+ * NspGtkTreeView inherits from GtkContainer 
  */
 
 int nsp_type_gtktreeview_id=0;
 NspTypeGtkTreeView *nsp_type_gtktreeview=NULL;
 
 /*
- * Type object for GtkTreeView 
+ * Type object for NspGtkTreeView 
  * all the instance of NspTypeGtkTreeView share the same id. 
  * nsp_type_gtktreeview: is an instance of NspTypeGtkTreeView 
- *    used for objects of GtkTreeView type (i.e built with new_gtktreeview) 
+ *    used for objects of NspGtkTreeView type (i.e built with new_gtktreeview) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
@@ -52530,8 +52530,8 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
   
   /* object methods redefined for gtktreeview */ 
 
-  top->s_type =  (s_type_func *) gtktreeview_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreeview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreeview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreeview_type_short_string;
   /* top->create = (create_func*) int_gtktreeview_create;*/ 
   
   /* specific methods for gtktreeview */
@@ -52539,7 +52539,7 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
   type->init = (init_func *) init_gtktreeview;
 
   /* 
-   * GtkTreeView interfaces can be added here 
+   * NspGtkTreeView interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -52565,7 +52565,7 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
 }
 
 /*
- * initialize GtkTreeView instances 
+ * initialize NspGtkTreeView instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -52580,7 +52580,7 @@ static int init_gtktreeview(NspGtkTreeView *Obj,NspTypeGtkTreeView *type)
 }
 
 /*
- * new instance of GtkTreeView 
+ * new instance of NspGtkTreeView 
  */
 
 NspGtkTreeView *new_gtktreeview() 
@@ -52595,7 +52595,7 @@ NspGtkTreeView *new_gtktreeview()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeView 
+ * Object method redefined for NspGtkTreeView 
  *-----------------------------------------------*/
 
 /*
@@ -52605,23 +52605,23 @@ NspGtkTreeView *new_gtktreeview()
 static char gtktreeview_type_name[]="GtkTreeView";
 static char gtktreeview_short_type_name[]="GtkTreeView";
 
-static char *gtktreeview_type_as_string(void)
+static char *nsp_gtktreeview_type_as_string(void)
 {
   return(gtktreeview_type_name);
 }
 
-static char *gtktreeview_type_short_string(NspObject *v)
+static char *nsp_gtktreeview_type_short_string(NspObject *v)
 {
   return(gtktreeview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeView objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeView objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeView   *gtktreeview_object(NspObject *O)
+NspGtkTreeView *nsp_gtktreeview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -52651,7 +52651,7 @@ NspGtkTreeView  *GetGtkTreeViewCopy(Stack stack, int i)
 NspGtkTreeView  *GetGtkTreeView(Stack stack, int i)
 {
   NspGtkTreeView *M;
-  if (( M = gtktreeview_object(NthObj(i))) == NULLGTKTREEVIEW)
+  if (( M = nsp_gtktreeview_object(NthObj(i))) == NULLGTKTREEVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -53747,7 +53747,7 @@ static NspMethods *gtktreeview_get_methods(void) { return gtktreeview_methods;};
 static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkTreeViewColumn ----------- */
+/* ----------- NspGtkTreeViewColumn ----------- */
 
 
 #include "nsp/object.h"
@@ -53756,17 +53756,17 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkTreeViewColumn inherits from GtkObject 
+ * NspGtkTreeViewColumn inherits from GtkObject 
  */
 
 int nsp_type_gtktreeviewcolumn_id=0;
 NspTypeGtkTreeViewColumn *nsp_type_gtktreeviewcolumn=NULL;
 
 /*
- * Type object for GtkTreeViewColumn 
+ * Type object for NspGtkTreeViewColumn 
  * all the instance of NspTypeGtkTreeViewColumn share the same id. 
  * nsp_type_gtktreeviewcolumn: is an instance of NspTypeGtkTreeViewColumn 
- *    used for objects of GtkTreeViewColumn type (i.e built with new_gtktreeviewcolumn) 
+ *    used for objects of NspGtkTreeViewColumn type (i.e built with new_gtktreeviewcolumn) 
  * other instances are used for derived classes 
  */
 NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
@@ -53795,8 +53795,8 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
   
   /* object methods redefined for gtktreeviewcolumn */ 
 
-  top->s_type =  (s_type_func *) gtktreeviewcolumn_type_as_string;    
-  top->sh_type = (sh_type_func *) gtktreeviewcolumn_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtktreeviewcolumn_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtktreeviewcolumn_type_short_string;
   /* top->create = (create_func*) int_gtktreeviewcolumn_create;*/ 
   
   /* specific methods for gtktreeviewcolumn */
@@ -53804,7 +53804,7 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
   type->init = (init_func *) init_gtktreeviewcolumn;
 
   /* 
-   * GtkTreeViewColumn interfaces can be added here 
+   * NspGtkTreeViewColumn interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -53830,7 +53830,7 @@ NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
 }
 
 /*
- * initialize GtkTreeViewColumn instances 
+ * initialize NspGtkTreeViewColumn instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -53845,7 +53845,7 @@ static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *Obj,NspTypeGtkTreeViewCo
 }
 
 /*
- * new instance of GtkTreeViewColumn 
+ * new instance of NspGtkTreeViewColumn 
  */
 
 NspGtkTreeViewColumn *new_gtktreeviewcolumn() 
@@ -53860,7 +53860,7 @@ NspGtkTreeViewColumn *new_gtktreeviewcolumn()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkTreeViewColumn 
+ * Object method redefined for NspGtkTreeViewColumn 
  *-----------------------------------------------*/
 
 /*
@@ -53870,23 +53870,23 @@ NspGtkTreeViewColumn *new_gtktreeviewcolumn()
 static char gtktreeviewcolumn_type_name[]="GtkTreeViewColumn";
 static char gtktreeviewcolumn_short_type_name[]="GtkTreeViewColumn";
 
-static char *gtktreeviewcolumn_type_as_string(void)
+static char *nsp_gtktreeviewcolumn_type_as_string(void)
 {
   return(gtktreeviewcolumn_type_name);
 }
 
-static char *gtktreeviewcolumn_type_short_string(NspObject *v)
+static char *nsp_gtktreeviewcolumn_type_short_string(NspObject *v)
 {
   return(gtktreeviewcolumn_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkTreeViewColumn objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkTreeViewColumn objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkTreeViewColumn   *gtktreeviewcolumn_object(NspObject *O)
+NspGtkTreeViewColumn *nsp_gtktreeviewcolumn_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -53916,7 +53916,7 @@ NspGtkTreeViewColumn  *GetGtkTreeViewColumnCopy(Stack stack, int i)
 NspGtkTreeViewColumn  *GetGtkTreeViewColumn(Stack stack, int i)
 {
   NspGtkTreeViewColumn *M;
-  if (( M = gtktreeviewcolumn_object(NthObj(i))) == NULLGTKTREEVIEWCOLUMN)
+  if (( M = nsp_gtktreeviewcolumn_object(NthObj(i))) == NULLGTKTREEVIEWCOLUMN)
      ArgMessage(stack,i);
   return M;
 }
@@ -54589,7 +54589,7 @@ static NspMethods *gtktreeviewcolumn_get_methods(void) { return gtktreeviewcolum
 static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkUIManager ----------- */
+/* ----------- NspGtkUIManager ----------- */
 
 
 #include "nsp/object.h"
@@ -54598,17 +54598,17 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkUIManager inherits from GObject 
+ * NspGtkUIManager inherits from GObject 
  */
 
 int nsp_type_gtkuimanager_id=0;
 NspTypeGtkUIManager *nsp_type_gtkuimanager=NULL;
 
 /*
- * Type object for GtkUIManager 
+ * Type object for NspGtkUIManager 
  * all the instance of NspTypeGtkUIManager share the same id. 
  * nsp_type_gtkuimanager: is an instance of NspTypeGtkUIManager 
- *    used for objects of GtkUIManager type (i.e built with new_gtkuimanager) 
+ *    used for objects of NspGtkUIManager type (i.e built with new_gtkuimanager) 
  * other instances are used for derived classes 
  */
 NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
@@ -54637,8 +54637,8 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
   
   /* object methods redefined for gtkuimanager */ 
 
-  top->s_type =  (s_type_func *) gtkuimanager_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkuimanager_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkuimanager_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkuimanager_type_short_string;
   /* top->create = (create_func*) int_gtkuimanager_create;*/ 
   
   /* specific methods for gtkuimanager */
@@ -54646,7 +54646,7 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
   type->init = (init_func *) init_gtkuimanager;
 
   /* 
-   * GtkUIManager interfaces can be added here 
+   * NspGtkUIManager interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -54672,7 +54672,7 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
 }
 
 /*
- * initialize GtkUIManager instances 
+ * initialize NspGtkUIManager instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -54687,7 +54687,7 @@ static int init_gtkuimanager(NspGtkUIManager *Obj,NspTypeGtkUIManager *type)
 }
 
 /*
- * new instance of GtkUIManager 
+ * new instance of NspGtkUIManager 
  */
 
 NspGtkUIManager *new_gtkuimanager() 
@@ -54702,7 +54702,7 @@ NspGtkUIManager *new_gtkuimanager()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkUIManager 
+ * Object method redefined for NspGtkUIManager 
  *-----------------------------------------------*/
 
 /*
@@ -54712,23 +54712,23 @@ NspGtkUIManager *new_gtkuimanager()
 static char gtkuimanager_type_name[]="GtkUIManager";
 static char gtkuimanager_short_type_name[]="GtkUIManager";
 
-static char *gtkuimanager_type_as_string(void)
+static char *nsp_gtkuimanager_type_as_string(void)
 {
   return(gtkuimanager_type_name);
 }
 
-static char *gtkuimanager_type_short_string(NspObject *v)
+static char *nsp_gtkuimanager_type_short_string(NspObject *v)
 {
   return(gtkuimanager_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkUIManager objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkUIManager objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkUIManager   *gtkuimanager_object(NspObject *O)
+NspGtkUIManager *nsp_gtkuimanager_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -54758,7 +54758,7 @@ NspGtkUIManager  *GetGtkUIManagerCopy(Stack stack, int i)
 NspGtkUIManager  *GetGtkUIManager(Stack stack, int i)
 {
   NspGtkUIManager *M;
-  if (( M = gtkuimanager_object(NthObj(i))) == NULLGTKUIMANAGER)
+  if (( M = nsp_gtkuimanager_object(NthObj(i))) == NULLGTKUIMANAGER)
      ArgMessage(stack,i);
   return M;
 }
@@ -55002,7 +55002,7 @@ static NspMethods *gtkuimanager_get_methods(void) { return gtkuimanager_methods;
 static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVBox ----------- */
+/* ----------- NspGtkVBox ----------- */
 
 
 #include "nsp/object.h"
@@ -55011,17 +55011,17 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVBox inherits from GtkBox 
+ * NspGtkVBox inherits from GtkBox 
  */
 
 int nsp_type_gtkvbox_id=0;
 NspTypeGtkVBox *nsp_type_gtkvbox=NULL;
 
 /*
- * Type object for GtkVBox 
+ * Type object for NspGtkVBox 
  * all the instance of NspTypeGtkVBox share the same id. 
  * nsp_type_gtkvbox: is an instance of NspTypeGtkVBox 
- *    used for objects of GtkVBox type (i.e built with new_gtkvbox) 
+ *    used for objects of NspGtkVBox type (i.e built with new_gtkvbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
@@ -55050,8 +55050,8 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
   
   /* object methods redefined for gtkvbox */ 
 
-  top->s_type =  (s_type_func *) gtkvbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvbox_type_short_string;
   /* top->create = (create_func*) int_gtkvbox_create;*/ 
   
   /* specific methods for gtkvbox */
@@ -55059,7 +55059,7 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
   type->init = (init_func *) init_gtkvbox;
 
   /* 
-   * GtkVBox interfaces can be added here 
+   * NspGtkVBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -55085,7 +55085,7 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
 }
 
 /*
- * initialize GtkVBox instances 
+ * initialize NspGtkVBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -55100,7 +55100,7 @@ static int init_gtkvbox(NspGtkVBox *Obj,NspTypeGtkVBox *type)
 }
 
 /*
- * new instance of GtkVBox 
+ * new instance of NspGtkVBox 
  */
 
 NspGtkVBox *new_gtkvbox() 
@@ -55115,7 +55115,7 @@ NspGtkVBox *new_gtkvbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVBox 
+ * Object method redefined for NspGtkVBox 
  *-----------------------------------------------*/
 
 /*
@@ -55125,23 +55125,23 @@ NspGtkVBox *new_gtkvbox()
 static char gtkvbox_type_name[]="GtkVBox";
 static char gtkvbox_short_type_name[]="GtkVBox";
 
-static char *gtkvbox_type_as_string(void)
+static char *nsp_gtkvbox_type_as_string(void)
 {
   return(gtkvbox_type_name);
 }
 
-static char *gtkvbox_type_short_string(NspObject *v)
+static char *nsp_gtkvbox_type_short_string(NspObject *v)
 {
   return(gtkvbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVBox   *gtkvbox_object(NspObject *O)
+NspGtkVBox *nsp_gtkvbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -55171,7 +55171,7 @@ NspGtkVBox  *GetGtkVBoxCopy(Stack stack, int i)
 NspGtkVBox  *GetGtkVBox(Stack stack, int i)
 {
   NspGtkVBox *M;
-  if (( M = gtkvbox_object(NthObj(i))) == NULLGTKVBOX)
+  if (( M = nsp_gtkvbox_object(NthObj(i))) == NULLGTKVBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -55219,7 +55219,7 @@ static NspMethods *gtkvbox_get_methods(void) { return NULL;};
 static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVButtonBox ----------- */
+/* ----------- NspGtkVButtonBox ----------- */
 
 
 #include "nsp/object.h"
@@ -55228,17 +55228,17 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVButtonBox inherits from GtkButtonBox 
+ * NspGtkVButtonBox inherits from GtkButtonBox 
  */
 
 int nsp_type_gtkvbuttonbox_id=0;
 NspTypeGtkVButtonBox *nsp_type_gtkvbuttonbox=NULL;
 
 /*
- * Type object for GtkVButtonBox 
+ * Type object for NspGtkVButtonBox 
  * all the instance of NspTypeGtkVButtonBox share the same id. 
  * nsp_type_gtkvbuttonbox: is an instance of NspTypeGtkVButtonBox 
- *    used for objects of GtkVButtonBox type (i.e built with new_gtkvbuttonbox) 
+ *    used for objects of NspGtkVButtonBox type (i.e built with new_gtkvbuttonbox) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
@@ -55267,8 +55267,8 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
   
   /* object methods redefined for gtkvbuttonbox */ 
 
-  top->s_type =  (s_type_func *) gtkvbuttonbox_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvbuttonbox_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvbuttonbox_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvbuttonbox_type_short_string;
   /* top->create = (create_func*) int_gtkvbuttonbox_create;*/ 
   
   /* specific methods for gtkvbuttonbox */
@@ -55276,7 +55276,7 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
   type->init = (init_func *) init_gtkvbuttonbox;
 
   /* 
-   * GtkVButtonBox interfaces can be added here 
+   * NspGtkVButtonBox interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -55302,7 +55302,7 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
 }
 
 /*
- * initialize GtkVButtonBox instances 
+ * initialize NspGtkVButtonBox instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -55317,7 +55317,7 @@ static int init_gtkvbuttonbox(NspGtkVButtonBox *Obj,NspTypeGtkVButtonBox *type)
 }
 
 /*
- * new instance of GtkVButtonBox 
+ * new instance of NspGtkVButtonBox 
  */
 
 NspGtkVButtonBox *new_gtkvbuttonbox() 
@@ -55332,7 +55332,7 @@ NspGtkVButtonBox *new_gtkvbuttonbox()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVButtonBox 
+ * Object method redefined for NspGtkVButtonBox 
  *-----------------------------------------------*/
 
 /*
@@ -55342,23 +55342,23 @@ NspGtkVButtonBox *new_gtkvbuttonbox()
 static char gtkvbuttonbox_type_name[]="GtkVButtonBox";
 static char gtkvbuttonbox_short_type_name[]="GtkVButtonBox";
 
-static char *gtkvbuttonbox_type_as_string(void)
+static char *nsp_gtkvbuttonbox_type_as_string(void)
 {
   return(gtkvbuttonbox_type_name);
 }
 
-static char *gtkvbuttonbox_type_short_string(NspObject *v)
+static char *nsp_gtkvbuttonbox_type_short_string(NspObject *v)
 {
   return(gtkvbuttonbox_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVButtonBox objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVButtonBox objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVButtonBox   *gtkvbuttonbox_object(NspObject *O)
+NspGtkVButtonBox *nsp_gtkvbuttonbox_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -55388,7 +55388,7 @@ NspGtkVButtonBox  *GetGtkVButtonBoxCopy(Stack stack, int i)
 NspGtkVButtonBox  *GetGtkVButtonBox(Stack stack, int i)
 {
   NspGtkVButtonBox *M;
-  if (( M = gtkvbuttonbox_object(NthObj(i))) == NULLGTKVBUTTONBOX)
+  if (( M = nsp_gtkvbuttonbox_object(NthObj(i))) == NULLGTKVBUTTONBOX)
      ArgMessage(stack,i);
   return M;
 }
@@ -55430,7 +55430,7 @@ static NspMethods *gtkvbuttonbox_get_methods(void) { return NULL;};
 static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkViewport ----------- */
+/* ----------- NspGtkViewport ----------- */
 
 
 #include "nsp/object.h"
@@ -55439,17 +55439,17 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkViewport inherits from GtkBin 
+ * NspGtkViewport inherits from GtkBin 
  */
 
 int nsp_type_gtkviewport_id=0;
 NspTypeGtkViewport *nsp_type_gtkviewport=NULL;
 
 /*
- * Type object for GtkViewport 
+ * Type object for NspGtkViewport 
  * all the instance of NspTypeGtkViewport share the same id. 
  * nsp_type_gtkviewport: is an instance of NspTypeGtkViewport 
- *    used for objects of GtkViewport type (i.e built with new_gtkviewport) 
+ *    used for objects of NspGtkViewport type (i.e built with new_gtkviewport) 
  * other instances are used for derived classes 
  */
 NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
@@ -55478,8 +55478,8 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
   
   /* object methods redefined for gtkviewport */ 
 
-  top->s_type =  (s_type_func *) gtkviewport_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkviewport_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkviewport_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkviewport_type_short_string;
   /* top->create = (create_func*) int_gtkviewport_create;*/ 
   
   /* specific methods for gtkviewport */
@@ -55487,7 +55487,7 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
   type->init = (init_func *) init_gtkviewport;
 
   /* 
-   * GtkViewport interfaces can be added here 
+   * NspGtkViewport interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -55513,7 +55513,7 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
 }
 
 /*
- * initialize GtkViewport instances 
+ * initialize NspGtkViewport instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -55528,7 +55528,7 @@ static int init_gtkviewport(NspGtkViewport *Obj,NspTypeGtkViewport *type)
 }
 
 /*
- * new instance of GtkViewport 
+ * new instance of NspGtkViewport 
  */
 
 NspGtkViewport *new_gtkviewport() 
@@ -55543,7 +55543,7 @@ NspGtkViewport *new_gtkviewport()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkViewport 
+ * Object method redefined for NspGtkViewport 
  *-----------------------------------------------*/
 
 /*
@@ -55553,23 +55553,23 @@ NspGtkViewport *new_gtkviewport()
 static char gtkviewport_type_name[]="GtkViewport";
 static char gtkviewport_short_type_name[]="GtkViewport";
 
-static char *gtkviewport_type_as_string(void)
+static char *nsp_gtkviewport_type_as_string(void)
 {
   return(gtkviewport_type_name);
 }
 
-static char *gtkviewport_type_short_string(NspObject *v)
+static char *nsp_gtkviewport_type_short_string(NspObject *v)
 {
   return(gtkviewport_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkViewport objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkViewport objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkViewport   *gtkviewport_object(NspObject *O)
+NspGtkViewport *nsp_gtkviewport_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -55599,7 +55599,7 @@ NspGtkViewport  *GetGtkViewportCopy(Stack stack, int i)
 NspGtkViewport  *GetGtkViewport(Stack stack, int i)
 {
   NspGtkViewport *M;
-  if (( M = gtkviewport_object(NthObj(i))) == NULLGTKVIEWPORT)
+  if (( M = nsp_gtkviewport_object(NthObj(i))) == NULLGTKVIEWPORT)
      ArgMessage(stack,i);
   return M;
 }
@@ -55758,7 +55758,7 @@ static NspMethods *gtkviewport_get_methods(void) { return gtkviewport_methods;};
 static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVPaned ----------- */
+/* ----------- NspGtkVPaned ----------- */
 
 
 #include "nsp/object.h"
@@ -55767,17 +55767,17 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVPaned inherits from GtkPaned 
+ * NspGtkVPaned inherits from GtkPaned 
  */
 
 int nsp_type_gtkvpaned_id=0;
 NspTypeGtkVPaned *nsp_type_gtkvpaned=NULL;
 
 /*
- * Type object for GtkVPaned 
+ * Type object for NspGtkVPaned 
  * all the instance of NspTypeGtkVPaned share the same id. 
  * nsp_type_gtkvpaned: is an instance of NspTypeGtkVPaned 
- *    used for objects of GtkVPaned type (i.e built with new_gtkvpaned) 
+ *    used for objects of NspGtkVPaned type (i.e built with new_gtkvpaned) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
@@ -55806,8 +55806,8 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
   
   /* object methods redefined for gtkvpaned */ 
 
-  top->s_type =  (s_type_func *) gtkvpaned_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvpaned_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvpaned_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvpaned_type_short_string;
   /* top->create = (create_func*) int_gtkvpaned_create;*/ 
   
   /* specific methods for gtkvpaned */
@@ -55815,7 +55815,7 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
   type->init = (init_func *) init_gtkvpaned;
 
   /* 
-   * GtkVPaned interfaces can be added here 
+   * NspGtkVPaned interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -55841,7 +55841,7 @@ NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
 }
 
 /*
- * initialize GtkVPaned instances 
+ * initialize NspGtkVPaned instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -55856,7 +55856,7 @@ static int init_gtkvpaned(NspGtkVPaned *Obj,NspTypeGtkVPaned *type)
 }
 
 /*
- * new instance of GtkVPaned 
+ * new instance of NspGtkVPaned 
  */
 
 NspGtkVPaned *new_gtkvpaned() 
@@ -55871,7 +55871,7 @@ NspGtkVPaned *new_gtkvpaned()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVPaned 
+ * Object method redefined for NspGtkVPaned 
  *-----------------------------------------------*/
 
 /*
@@ -55881,23 +55881,23 @@ NspGtkVPaned *new_gtkvpaned()
 static char gtkvpaned_type_name[]="GtkVPaned";
 static char gtkvpaned_short_type_name[]="GtkVPaned";
 
-static char *gtkvpaned_type_as_string(void)
+static char *nsp_gtkvpaned_type_as_string(void)
 {
   return(gtkvpaned_type_name);
 }
 
-static char *gtkvpaned_type_short_string(NspObject *v)
+static char *nsp_gtkvpaned_type_short_string(NspObject *v)
 {
   return(gtkvpaned_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVPaned objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVPaned objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVPaned   *gtkvpaned_object(NspObject *O)
+NspGtkVPaned *nsp_gtkvpaned_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -55927,7 +55927,7 @@ NspGtkVPaned  *GetGtkVPanedCopy(Stack stack, int i)
 NspGtkVPaned  *GetGtkVPaned(Stack stack, int i)
 {
   NspGtkVPaned *M;
-  if (( M = gtkvpaned_object(NthObj(i))) == NULLGTKVPANED)
+  if (( M = nsp_gtkvpaned_object(NthObj(i))) == NULLGTKVPANED)
      ArgMessage(stack,i);
   return M;
 }
@@ -55969,7 +55969,7 @@ static NspMethods *gtkvpaned_get_methods(void) { return NULL;};
 static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVRuler ----------- */
+/* ----------- NspGtkVRuler ----------- */
 
 
 #include "nsp/object.h"
@@ -55978,17 +55978,17 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVRuler inherits from GtkRuler 
+ * NspGtkVRuler inherits from GtkRuler 
  */
 
 int nsp_type_gtkvruler_id=0;
 NspTypeGtkVRuler *nsp_type_gtkvruler=NULL;
 
 /*
- * Type object for GtkVRuler 
+ * Type object for NspGtkVRuler 
  * all the instance of NspTypeGtkVRuler share the same id. 
  * nsp_type_gtkvruler: is an instance of NspTypeGtkVRuler 
- *    used for objects of GtkVRuler type (i.e built with new_gtkvruler) 
+ *    used for objects of NspGtkVRuler type (i.e built with new_gtkvruler) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
@@ -56017,8 +56017,8 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
   
   /* object methods redefined for gtkvruler */ 
 
-  top->s_type =  (s_type_func *) gtkvruler_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvruler_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvruler_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvruler_type_short_string;
   /* top->create = (create_func*) int_gtkvruler_create;*/ 
   
   /* specific methods for gtkvruler */
@@ -56026,7 +56026,7 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
   type->init = (init_func *) init_gtkvruler;
 
   /* 
-   * GtkVRuler interfaces can be added here 
+   * NspGtkVRuler interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -56052,7 +56052,7 @@ NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
 }
 
 /*
- * initialize GtkVRuler instances 
+ * initialize NspGtkVRuler instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -56067,7 +56067,7 @@ static int init_gtkvruler(NspGtkVRuler *Obj,NspTypeGtkVRuler *type)
 }
 
 /*
- * new instance of GtkVRuler 
+ * new instance of NspGtkVRuler 
  */
 
 NspGtkVRuler *new_gtkvruler() 
@@ -56082,7 +56082,7 @@ NspGtkVRuler *new_gtkvruler()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVRuler 
+ * Object method redefined for NspGtkVRuler 
  *-----------------------------------------------*/
 
 /*
@@ -56092,23 +56092,23 @@ NspGtkVRuler *new_gtkvruler()
 static char gtkvruler_type_name[]="GtkVRuler";
 static char gtkvruler_short_type_name[]="GtkVRuler";
 
-static char *gtkvruler_type_as_string(void)
+static char *nsp_gtkvruler_type_as_string(void)
 {
   return(gtkvruler_type_name);
 }
 
-static char *gtkvruler_type_short_string(NspObject *v)
+static char *nsp_gtkvruler_type_short_string(NspObject *v)
 {
   return(gtkvruler_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVRuler objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVRuler objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVRuler   *gtkvruler_object(NspObject *O)
+NspGtkVRuler *nsp_gtkvruler_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -56138,7 +56138,7 @@ NspGtkVRuler  *GetGtkVRulerCopy(Stack stack, int i)
 NspGtkVRuler  *GetGtkVRuler(Stack stack, int i)
 {
   NspGtkVRuler *M;
-  if (( M = gtkvruler_object(NthObj(i))) == NULLGTKVRULER)
+  if (( M = nsp_gtkvruler_object(NthObj(i))) == NULLGTKVRULER)
      ArgMessage(stack,i);
   return M;
 }
@@ -56180,7 +56180,7 @@ static NspMethods *gtkvruler_get_methods(void) { return NULL;};
 static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVScale ----------- */
+/* ----------- NspGtkVScale ----------- */
 
 
 #include "nsp/object.h"
@@ -56189,17 +56189,17 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVScale inherits from GtkScale 
+ * NspGtkVScale inherits from GtkScale 
  */
 
 int nsp_type_gtkvscale_id=0;
 NspTypeGtkVScale *nsp_type_gtkvscale=NULL;
 
 /*
- * Type object for GtkVScale 
+ * Type object for NspGtkVScale 
  * all the instance of NspTypeGtkVScale share the same id. 
  * nsp_type_gtkvscale: is an instance of NspTypeGtkVScale 
- *    used for objects of GtkVScale type (i.e built with new_gtkvscale) 
+ *    used for objects of NspGtkVScale type (i.e built with new_gtkvscale) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
@@ -56228,8 +56228,8 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
   
   /* object methods redefined for gtkvscale */ 
 
-  top->s_type =  (s_type_func *) gtkvscale_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvscale_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvscale_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvscale_type_short_string;
   /* top->create = (create_func*) int_gtkvscale_create;*/ 
   
   /* specific methods for gtkvscale */
@@ -56237,7 +56237,7 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
   type->init = (init_func *) init_gtkvscale;
 
   /* 
-   * GtkVScale interfaces can be added here 
+   * NspGtkVScale interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -56263,7 +56263,7 @@ NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
 }
 
 /*
- * initialize GtkVScale instances 
+ * initialize NspGtkVScale instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -56278,7 +56278,7 @@ static int init_gtkvscale(NspGtkVScale *Obj,NspTypeGtkVScale *type)
 }
 
 /*
- * new instance of GtkVScale 
+ * new instance of NspGtkVScale 
  */
 
 NspGtkVScale *new_gtkvscale() 
@@ -56293,7 +56293,7 @@ NspGtkVScale *new_gtkvscale()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVScale 
+ * Object method redefined for NspGtkVScale 
  *-----------------------------------------------*/
 
 /*
@@ -56303,23 +56303,23 @@ NspGtkVScale *new_gtkvscale()
 static char gtkvscale_type_name[]="GtkVScale";
 static char gtkvscale_short_type_name[]="GtkVScale";
 
-static char *gtkvscale_type_as_string(void)
+static char *nsp_gtkvscale_type_as_string(void)
 {
   return(gtkvscale_type_name);
 }
 
-static char *gtkvscale_type_short_string(NspObject *v)
+static char *nsp_gtkvscale_type_short_string(NspObject *v)
 {
   return(gtkvscale_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVScale objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVScale objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVScale   *gtkvscale_object(NspObject *O)
+NspGtkVScale *nsp_gtkvscale_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -56349,7 +56349,7 @@ NspGtkVScale  *GetGtkVScaleCopy(Stack stack, int i)
 NspGtkVScale  *GetGtkVScale(Stack stack, int i)
 {
   NspGtkVScale *M;
-  if (( M = gtkvscale_object(NthObj(i))) == NULLGTKVSCALE)
+  if (( M = nsp_gtkvscale_object(NthObj(i))) == NULLGTKVSCALE)
      ArgMessage(stack,i);
   return M;
 }
@@ -56405,7 +56405,7 @@ static NspMethods *gtkvscale_get_methods(void) { return NULL;};
 static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVScrollbar ----------- */
+/* ----------- NspGtkVScrollbar ----------- */
 
 
 #include "nsp/object.h"
@@ -56414,17 +56414,17 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVScrollbar inherits from GtkScrollbar 
+ * NspGtkVScrollbar inherits from GtkScrollbar 
  */
 
 int nsp_type_gtkvscrollbar_id=0;
 NspTypeGtkVScrollbar *nsp_type_gtkvscrollbar=NULL;
 
 /*
- * Type object for GtkVScrollbar 
+ * Type object for NspGtkVScrollbar 
  * all the instance of NspTypeGtkVScrollbar share the same id. 
  * nsp_type_gtkvscrollbar: is an instance of NspTypeGtkVScrollbar 
- *    used for objects of GtkVScrollbar type (i.e built with new_gtkvscrollbar) 
+ *    used for objects of NspGtkVScrollbar type (i.e built with new_gtkvscrollbar) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
@@ -56453,8 +56453,8 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
   
   /* object methods redefined for gtkvscrollbar */ 
 
-  top->s_type =  (s_type_func *) gtkvscrollbar_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvscrollbar_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvscrollbar_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvscrollbar_type_short_string;
   /* top->create = (create_func*) int_gtkvscrollbar_create;*/ 
   
   /* specific methods for gtkvscrollbar */
@@ -56462,7 +56462,7 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
   type->init = (init_func *) init_gtkvscrollbar;
 
   /* 
-   * GtkVScrollbar interfaces can be added here 
+   * NspGtkVScrollbar interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -56488,7 +56488,7 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
 }
 
 /*
- * initialize GtkVScrollbar instances 
+ * initialize NspGtkVScrollbar instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -56503,7 +56503,7 @@ static int init_gtkvscrollbar(NspGtkVScrollbar *Obj,NspTypeGtkVScrollbar *type)
 }
 
 /*
- * new instance of GtkVScrollbar 
+ * new instance of NspGtkVScrollbar 
  */
 
 NspGtkVScrollbar *new_gtkvscrollbar() 
@@ -56518,7 +56518,7 @@ NspGtkVScrollbar *new_gtkvscrollbar()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVScrollbar 
+ * Object method redefined for NspGtkVScrollbar 
  *-----------------------------------------------*/
 
 /*
@@ -56528,23 +56528,23 @@ NspGtkVScrollbar *new_gtkvscrollbar()
 static char gtkvscrollbar_type_name[]="GtkVScrollbar";
 static char gtkvscrollbar_short_type_name[]="GtkVScrollbar";
 
-static char *gtkvscrollbar_type_as_string(void)
+static char *nsp_gtkvscrollbar_type_as_string(void)
 {
   return(gtkvscrollbar_type_name);
 }
 
-static char *gtkvscrollbar_type_short_string(NspObject *v)
+static char *nsp_gtkvscrollbar_type_short_string(NspObject *v)
 {
   return(gtkvscrollbar_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVScrollbar objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVScrollbar objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVScrollbar   *gtkvscrollbar_object(NspObject *O)
+NspGtkVScrollbar *nsp_gtkvscrollbar_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -56574,7 +56574,7 @@ NspGtkVScrollbar  *GetGtkVScrollbarCopy(Stack stack, int i)
 NspGtkVScrollbar  *GetGtkVScrollbar(Stack stack, int i)
 {
   NspGtkVScrollbar *M;
-  if (( M = gtkvscrollbar_object(NthObj(i))) == NULLGTKVSCROLLBAR)
+  if (( M = nsp_gtkvscrollbar_object(NthObj(i))) == NULLGTKVSCROLLBAR)
      ArgMessage(stack,i);
   return M;
 }
@@ -56630,7 +56630,7 @@ static NspMethods *gtkvscrollbar_get_methods(void) { return NULL;};
 static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkVSeparator ----------- */
+/* ----------- NspGtkVSeparator ----------- */
 
 
 #include "nsp/object.h"
@@ -56639,17 +56639,17 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkVSeparator inherits from GtkSeparator 
+ * NspGtkVSeparator inherits from GtkSeparator 
  */
 
 int nsp_type_gtkvseparator_id=0;
 NspTypeGtkVSeparator *nsp_type_gtkvseparator=NULL;
 
 /*
- * Type object for GtkVSeparator 
+ * Type object for NspGtkVSeparator 
  * all the instance of NspTypeGtkVSeparator share the same id. 
  * nsp_type_gtkvseparator: is an instance of NspTypeGtkVSeparator 
- *    used for objects of GtkVSeparator type (i.e built with new_gtkvseparator) 
+ *    used for objects of NspGtkVSeparator type (i.e built with new_gtkvseparator) 
  * other instances are used for derived classes 
  */
 NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
@@ -56678,8 +56678,8 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
   
   /* object methods redefined for gtkvseparator */ 
 
-  top->s_type =  (s_type_func *) gtkvseparator_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkvseparator_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkvseparator_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkvseparator_type_short_string;
   /* top->create = (create_func*) int_gtkvseparator_create;*/ 
   
   /* specific methods for gtkvseparator */
@@ -56687,7 +56687,7 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
   type->init = (init_func *) init_gtkvseparator;
 
   /* 
-   * GtkVSeparator interfaces can be added here 
+   * NspGtkVSeparator interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -56713,7 +56713,7 @@ NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
 }
 
 /*
- * initialize GtkVSeparator instances 
+ * initialize NspGtkVSeparator instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -56728,7 +56728,7 @@ static int init_gtkvseparator(NspGtkVSeparator *Obj,NspTypeGtkVSeparator *type)
 }
 
 /*
- * new instance of GtkVSeparator 
+ * new instance of NspGtkVSeparator 
  */
 
 NspGtkVSeparator *new_gtkvseparator() 
@@ -56743,7 +56743,7 @@ NspGtkVSeparator *new_gtkvseparator()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkVSeparator 
+ * Object method redefined for NspGtkVSeparator 
  *-----------------------------------------------*/
 
 /*
@@ -56753,23 +56753,23 @@ NspGtkVSeparator *new_gtkvseparator()
 static char gtkvseparator_type_name[]="GtkVSeparator";
 static char gtkvseparator_short_type_name[]="GtkVSeparator";
 
-static char *gtkvseparator_type_as_string(void)
+static char *nsp_gtkvseparator_type_as_string(void)
 {
   return(gtkvseparator_type_name);
 }
 
-static char *gtkvseparator_type_short_string(NspObject *v)
+static char *nsp_gtkvseparator_type_short_string(NspObject *v)
 {
   return(gtkvseparator_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkVSeparator objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkVSeparator objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkVSeparator   *gtkvseparator_object(NspObject *O)
+NspGtkVSeparator *nsp_gtkvseparator_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -56799,7 +56799,7 @@ NspGtkVSeparator  *GetGtkVSeparatorCopy(Stack stack, int i)
 NspGtkVSeparator  *GetGtkVSeparator(Stack stack, int i)
 {
   NspGtkVSeparator *M;
-  if (( M = gtkvseparator_object(NthObj(i))) == NULLGTKVSEPARATOR)
+  if (( M = nsp_gtkvseparator_object(NthObj(i))) == NULLGTKVSEPARATOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -56841,7 +56841,7 @@ static NspMethods *gtkvseparator_get_methods(void) { return NULL;};
 static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- GtkWidget ----------- */
+/* ----------- NspGtkWidget ----------- */
 
 
 #include "nsp/object.h"
@@ -56850,17 +56850,17 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkWidget inherits from GtkObject 
+ * NspGtkWidget inherits from GtkObject 
  */
 
 int nsp_type_gtkwidget_id=0;
 NspTypeGtkWidget *nsp_type_gtkwidget=NULL;
 
 /*
- * Type object for GtkWidget 
+ * Type object for NspGtkWidget 
  * all the instance of NspTypeGtkWidget share the same id. 
  * nsp_type_gtkwidget: is an instance of NspTypeGtkWidget 
- *    used for objects of GtkWidget type (i.e built with new_gtkwidget) 
+ *    used for objects of NspGtkWidget type (i.e built with new_gtkwidget) 
  * other instances are used for derived classes 
  */
 NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
@@ -56889,8 +56889,8 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
   
   /* object methods redefined for gtkwidget */ 
 
-  top->s_type =  (s_type_func *) gtkwidget_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkwidget_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkwidget_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkwidget_type_short_string;
   /* top->create = (create_func*) int_gtkwidget_create;*/ 
   
   /* specific methods for gtkwidget */
@@ -56898,7 +56898,7 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
   type->init = (init_func *) init_gtkwidget;
 
   /* 
-   * GtkWidget interfaces can be added here 
+   * NspGtkWidget interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -56924,7 +56924,7 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
 }
 
 /*
- * initialize GtkWidget instances 
+ * initialize NspGtkWidget instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -56939,7 +56939,7 @@ static int init_gtkwidget(NspGtkWidget *Obj,NspTypeGtkWidget *type)
 }
 
 /*
- * new instance of GtkWidget 
+ * new instance of NspGtkWidget 
  */
 
 NspGtkWidget *new_gtkwidget() 
@@ -56954,7 +56954,7 @@ NspGtkWidget *new_gtkwidget()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkWidget 
+ * Object method redefined for NspGtkWidget 
  *-----------------------------------------------*/
 
 /*
@@ -56964,23 +56964,23 @@ NspGtkWidget *new_gtkwidget()
 static char gtkwidget_type_name[]="GtkWidget";
 static char gtkwidget_short_type_name[]="GtkWidget";
 
-static char *gtkwidget_type_as_string(void)
+static char *nsp_gtkwidget_type_as_string(void)
 {
   return(gtkwidget_type_name);
 }
 
-static char *gtkwidget_type_short_string(NspObject *v)
+static char *nsp_gtkwidget_type_short_string(NspObject *v)
 {
   return(gtkwidget_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkWidget objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkWidget objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkWidget   *gtkwidget_object(NspObject *O)
+NspGtkWidget *nsp_gtkwidget_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -57010,7 +57010,7 @@ NspGtkWidget  *GetGtkWidgetCopy(Stack stack, int i)
 NspGtkWidget  *GetGtkWidget(Stack stack, int i)
 {
   NspGtkWidget *M;
-  if (( M = gtkwidget_object(NthObj(i))) == NULLGTKWIDGET)
+  if (( M = nsp_gtkwidget_object(NthObj(i))) == NULLGTKWIDGET)
      ArgMessage(stack,i);
   return M;
 }
@@ -58951,7 +58951,7 @@ static AttrTab gtkwidget_attrs[] = {
 
 
 
-/* ----------- GtkWindow ----------- */
+/* ----------- NspGtkWindow ----------- */
 
 
 #include "nsp/object.h"
@@ -58960,17 +58960,17 @@ static AttrTab gtkwidget_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkWindow inherits from GtkBin 
+ * NspGtkWindow inherits from GtkBin 
  */
 
 int nsp_type_gtkwindow_id=0;
 NspTypeGtkWindow *nsp_type_gtkwindow=NULL;
 
 /*
- * Type object for GtkWindow 
+ * Type object for NspGtkWindow 
  * all the instance of NspTypeGtkWindow share the same id. 
  * nsp_type_gtkwindow: is an instance of NspTypeGtkWindow 
- *    used for objects of GtkWindow type (i.e built with new_gtkwindow) 
+ *    used for objects of NspGtkWindow type (i.e built with new_gtkwindow) 
  * other instances are used for derived classes 
  */
 NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
@@ -58999,8 +58999,8 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
   
   /* object methods redefined for gtkwindow */ 
 
-  top->s_type =  (s_type_func *) gtkwindow_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkwindow_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkwindow_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkwindow_type_short_string;
   /* top->create = (create_func*) int_gtkwindow_create;*/ 
   
   /* specific methods for gtkwindow */
@@ -59008,7 +59008,7 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
   type->init = (init_func *) init_gtkwindow;
 
   /* 
-   * GtkWindow interfaces can be added here 
+   * NspGtkWindow interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -59034,7 +59034,7 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
 }
 
 /*
- * initialize GtkWindow instances 
+ * initialize NspGtkWindow instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -59049,7 +59049,7 @@ static int init_gtkwindow(NspGtkWindow *Obj,NspTypeGtkWindow *type)
 }
 
 /*
- * new instance of GtkWindow 
+ * new instance of NspGtkWindow 
  */
 
 NspGtkWindow *new_gtkwindow() 
@@ -59064,7 +59064,7 @@ NspGtkWindow *new_gtkwindow()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkWindow 
+ * Object method redefined for NspGtkWindow 
  *-----------------------------------------------*/
 
 /*
@@ -59074,23 +59074,23 @@ NspGtkWindow *new_gtkwindow()
 static char gtkwindow_type_name[]="GtkWindow";
 static char gtkwindow_short_type_name[]="GtkWindow";
 
-static char *gtkwindow_type_as_string(void)
+static char *nsp_gtkwindow_type_as_string(void)
 {
   return(gtkwindow_type_name);
 }
 
-static char *gtkwindow_type_short_string(NspObject *v)
+static char *nsp_gtkwindow_type_short_string(NspObject *v)
 {
   return(gtkwindow_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkWindow objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkWindow objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkWindow   *gtkwindow_object(NspObject *O)
+NspGtkWindow *nsp_gtkwindow_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -59120,7 +59120,7 @@ NspGtkWindow  *GetGtkWindowCopy(Stack stack, int i)
 NspGtkWindow  *GetGtkWindow(Stack stack, int i)
 {
   NspGtkWindow *M;
-  if (( M = gtkwindow_object(NthObj(i))) == NULLGTKWINDOW)
+  if (( M = nsp_gtkwindow_object(NthObj(i))) == NULLGTKWINDOW)
      ArgMessage(stack,i);
   return M;
 }
@@ -60382,7 +60382,7 @@ static AttrTab gtkwindow_attrs[] = {
 
 
 
-/* ----------- GtkWindowGroup ----------- */
+/* ----------- NspGtkWindowGroup ----------- */
 
 
 #include "nsp/object.h"
@@ -60391,17 +60391,17 @@ static AttrTab gtkwindow_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * GtkWindowGroup inherits from GObject 
+ * NspGtkWindowGroup inherits from GObject 
  */
 
 int nsp_type_gtkwindowgroup_id=0;
 NspTypeGtkWindowGroup *nsp_type_gtkwindowgroup=NULL;
 
 /*
- * Type object for GtkWindowGroup 
+ * Type object for NspGtkWindowGroup 
  * all the instance of NspTypeGtkWindowGroup share the same id. 
  * nsp_type_gtkwindowgroup: is an instance of NspTypeGtkWindowGroup 
- *    used for objects of GtkWindowGroup type (i.e built with new_gtkwindowgroup) 
+ *    used for objects of NspGtkWindowGroup type (i.e built with new_gtkwindowgroup) 
  * other instances are used for derived classes 
  */
 NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
@@ -60430,8 +60430,8 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
   
   /* object methods redefined for gtkwindowgroup */ 
 
-  top->s_type =  (s_type_func *) gtkwindowgroup_type_as_string;    
-  top->sh_type = (sh_type_func *) gtkwindowgroup_type_short_string;
+  top->s_type =  (s_type_func *) nsp_gtkwindowgroup_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_gtkwindowgroup_type_short_string;
   /* top->create = (create_func*) int_gtkwindowgroup_create;*/ 
   
   /* specific methods for gtkwindowgroup */
@@ -60439,7 +60439,7 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
   type->init = (init_func *) init_gtkwindowgroup;
 
   /* 
-   * GtkWindowGroup interfaces can be added here 
+   * NspGtkWindowGroup interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -60465,7 +60465,7 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
 }
 
 /*
- * initialize GtkWindowGroup instances 
+ * initialize NspGtkWindowGroup instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -60480,7 +60480,7 @@ static int init_gtkwindowgroup(NspGtkWindowGroup *Obj,NspTypeGtkWindowGroup *typ
 }
 
 /*
- * new instance of GtkWindowGroup 
+ * new instance of NspGtkWindowGroup 
  */
 
 NspGtkWindowGroup *new_gtkwindowgroup() 
@@ -60495,7 +60495,7 @@ NspGtkWindowGroup *new_gtkwindowgroup()
 }
 
 /*----------------------------------------------
- * Object method redefined for GtkWindowGroup 
+ * Object method redefined for NspGtkWindowGroup 
  *-----------------------------------------------*/
 
 /*
@@ -60505,23 +60505,23 @@ NspGtkWindowGroup *new_gtkwindowgroup()
 static char gtkwindowgroup_type_name[]="GtkWindowGroup";
 static char gtkwindowgroup_short_type_name[]="GtkWindowGroup";
 
-static char *gtkwindowgroup_type_as_string(void)
+static char *nsp_gtkwindowgroup_type_as_string(void)
 {
   return(gtkwindowgroup_type_name);
 }
 
-static char *gtkwindowgroup_type_short_string(NspObject *v)
+static char *nsp_gtkwindowgroup_type_short_string(NspObject *v)
 {
   return(gtkwindowgroup_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for GtkWindowGroup objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspGtkWindowGroup objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspGtkWindowGroup   *gtkwindowgroup_object(NspObject *O)
+NspGtkWindowGroup *nsp_gtkwindowgroup_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -60551,7 +60551,7 @@ NspGtkWindowGroup  *GetGtkWindowGroupCopy(Stack stack, int i)
 NspGtkWindowGroup  *GetGtkWindowGroup(Stack stack, int i)
 {
   NspGtkWindowGroup *M;
-  if (( M = gtkwindowgroup_object(NthObj(i))) == NULLGTKWINDOWGROUP)
+  if (( M = nsp_gtkwindowgroup_object(NthObj(i))) == NULLGTKWINDOWGROUP)
      ArgMessage(stack,i);
   return M;
 }
@@ -60664,7 +60664,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
 #line 60665 "gtk.c"
 
 
-int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs) /* accelerator_valid */
 {
   int_types T[] = {s_int, obj,t_end};
   int keyval, ret;
@@ -60678,7 +60678,7 @@ ret = gtk_accelerator_valid(keyval, modifiers);
   return 1;
 }
 
-int _wrap_gtk_accelerator_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accelerator_name(Stack stack, int rhs, int opt, int lhs) /* accelerator_name */
 {
   int_types T[] = {s_int, obj,t_end};
   int accelerator_key;
@@ -60694,7 +60694,7 @@ ret = gtk_accelerator_name(accelerator_key, accelerator_mods);
   return 1;
 }
 
-int _wrap_gtk_accelerator_set_default_mod_mask(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accelerator_set_default_mod_mask(Stack stack, int rhs, int opt, int lhs) /* accelerator_set_default_mod_mask */
 {
   int_types T[] = {obj,t_end};
   GdkModifierType default_mod_mask;
@@ -60706,7 +60706,7 @@ gtk_accelerator_set_default_mod_mask(default_mod_mask);
   return 0;
 }
 
-int _wrap_gtk_accelerator_get_default_mod_mask(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accelerator_get_default_mod_mask(Stack stack, int rhs, int opt, int lhs) /* accelerator_get_default_mod_mask */
 {
   int ret;
 ret = gtk_accelerator_get_default_mod_mask();
@@ -60714,7 +60714,7 @@ ret = gtk_accelerator_get_default_mod_mask();
   return 1;
 }
 
-int _wrap_gtk_accelerator_get_label(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accelerator_get_label(Stack stack, int rhs, int opt, int lhs) /* accelerator_get_label */
 {
   int_types T[] = {s_int, obj,t_end};
   int accelerator_key;
@@ -60730,7 +60730,7 @@ ret = gtk_accelerator_get_label(accelerator_key, accelerator_mods);
   return 1;
 }
 
-int _wrap_gtk_accel_map_add_entry(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_add_entry(Stack stack, int rhs, int opt, int lhs) /* accel_map_add_entry */
 {
   int_types T[] = {string, s_int, obj,t_end};
   char *accel_path;
@@ -60744,7 +60744,7 @@ gtk_accel_map_add_entry(accel_path, accel_key, accel_mods);
   return 0;
 }
 
-int _wrap_gtk_accel_map_change_entry(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_change_entry(Stack stack, int rhs, int opt, int lhs) /* accel_map_change_entry */
 {
   int_types T[] = {string, s_int, obj, s_bool,t_end};
   char *accel_path;
@@ -60759,7 +60759,7 @@ ret = gtk_accel_map_change_entry(accel_path, accel_key, accel_mods, replace);
   return 1;
 }
 
-int _wrap_gtk_accel_map_load(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_load(Stack stack, int rhs, int opt, int lhs) /* accel_map_load */
 {
   int_types T[] = {string,t_end};
   char *file_name;
@@ -60768,7 +60768,7 @@ gtk_accel_map_load(file_name);
   return 0;
 }
 
-int _wrap_gtk_accel_map_save(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_save(Stack stack, int rhs, int opt, int lhs) /* accel_map_save */
 {
   int_types T[] = {string,t_end};
   char *file_name;
@@ -60777,7 +60777,7 @@ gtk_accel_map_save(file_name);
   return 0;
 }
 
-int _wrap_gtk_accel_map_load_fd(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_load_fd(Stack stack, int rhs, int opt, int lhs) /* accel_map_load_fd */
 {
   int_types T[] = {s_int,t_end};
   int fd;
@@ -60786,7 +60786,7 @@ gtk_accel_map_load_fd(fd);
   return 0;
 }
 
-int _wrap_gtk_accel_map_save_fd(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_save_fd(Stack stack, int rhs, int opt, int lhs) /* accel_map_save_fd */
 {
   int_types T[] = {s_int,t_end};
   int fd;
@@ -60795,7 +60795,7 @@ gtk_accel_map_save_fd(fd);
   return 0;
 }
 
-int _wrap_gtk_accel_map_lock_path(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_lock_path(Stack stack, int rhs, int opt, int lhs) /* accel_map_lock_path */
 {
   int_types T[] = {string,t_end};
   char *accel_path;
@@ -60804,7 +60804,7 @@ gtk_accel_map_lock_path(accel_path);
   return 0;
 }
 
-int _wrap_gtk_accel_map_unlock_path(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_unlock_path(Stack stack, int rhs, int opt, int lhs) /* accel_map_unlock_path */
 {
   int_types T[] = {string,t_end};
   char *accel_path;
@@ -60813,7 +60813,7 @@ gtk_accel_map_unlock_path(accel_path);
   return 0;
 }
 
-int _wrap_gtk_accel_map_add_filter(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_add_filter(Stack stack, int rhs, int opt, int lhs) /* accel_map_add_filter */
 {
   int_types T[] = {string,t_end};
   char *filter_pattern;
@@ -60822,7 +60822,7 @@ gtk_accel_map_add_filter(filter_pattern);
   return 0;
 }
 
-int _wrap_gtk_accel_map_get(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_accel_map_get(Stack stack, int rhs, int opt, int lhs) /* accel_map_get */
 {
   GtkAccelMap *ret;
   NspObject *nsp_ret;
@@ -60833,7 +60833,7 @@ ret = gtk_accel_map_get();
   return 1;
 }
 
-int _wrap_gtk_bindings_activate(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_bindings_activate(Stack stack, int rhs, int opt, int lhs) /* bindings_activate */
 {
   int_types T[] = {obj_check, s_int, obj,t_end};
   NspGObject *object;
@@ -60992,7 +60992,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 #line 60993 "gtk.c"
 
 
-int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs) /* color_selection_palette_to_string */
 {
   int_types T[] = {obj, s_int,t_end};
   GdkColor *colors = NULL;
@@ -61012,7 +61012,7 @@ ret = gtk_color_selection_palette_to_string(colors, n_colors);
   return 1;
 }
 
-int _wrap_gtk_alternative_dialog_button_order(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_alternative_dialog_button_order(Stack stack, int rhs, int opt, int lhs) /* alternative_dialog_button_order */
 {
   int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
@@ -61035,7 +61035,7 @@ ret = gtk_alternative_dialog_button_order(screen);
   return 1;
 }
 
-int _wrap_gtk_drag_finish(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_finish(Stack stack, int rhs, int opt, int lhs) /* drag_finish */
 {
   int_types T[] = {obj_check, s_bool, s_bool, s_int,t_end};
   NspGObject *context;
@@ -61046,7 +61046,7 @@ gtk_drag_finish(GDK_DRAG_CONTEXT(context->obj), success, del, time_);
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_widget(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_widget(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_widget */
 {
   int_types T[] = {obj_check, obj_check, s_int, s_int,t_end};
   NspGObject *context, *widget;
@@ -61056,7 +61056,7 @@ gtk_drag_set_icon_widget(GDK_DRAG_CONTEXT(context->obj), GTK_WIDGET(widget->obj)
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_pixmap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_pixmap(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_pixmap */
 {
   int_types T[] = {obj_check, obj_check, obj_check, obj_check, s_int, s_int,t_end};
   NspGObject *context, *colormap, *pixmap, *mask;
@@ -61066,7 +61066,7 @@ gtk_drag_set_icon_pixmap(GDK_DRAG_CONTEXT(context->obj), GDK_COLORMAP(colormap->
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_pixbuf(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_pixbuf(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_pixbuf */
 {
   int_types T[] = {obj_check, obj_check, s_int, s_int,t_end};
   NspGObject *context, *pixbuf;
@@ -61076,7 +61076,7 @@ gtk_drag_set_icon_pixbuf(GDK_DRAG_CONTEXT(context->obj), GDK_PIXBUF(pixbuf->obj)
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_stock(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_stock(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_stock */
 {
   int_types T[] = {obj_check, string, s_int, s_int,t_end};
   NspGObject *context;
@@ -61087,7 +61087,7 @@ gtk_drag_set_icon_stock(GDK_DRAG_CONTEXT(context->obj), stock_id, hot_x, hot_y);
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_name(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_name */
 {
   int_types T[] = {obj_check, string, s_int, s_int,t_end};
   NspGObject *context;
@@ -61098,7 +61098,7 @@ gtk_drag_set_icon_name(GDK_DRAG_CONTEXT(context->obj), icon_name, hot_x, hot_y);
   return 0;
 }
 
-int _wrap_gtk_drag_set_icon_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_icon_default(Stack stack, int rhs, int opt, int lhs) /* drag_set_icon_default */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *context;
@@ -61107,7 +61107,7 @@ gtk_drag_set_icon_default(GDK_DRAG_CONTEXT(context->obj));
   return 0;
 }
 
-int _wrap_gtk_drag_set_default_icon(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_set_default_icon(Stack stack, int rhs, int opt, int lhs) /* drag_set_default_icon */
 {
   int_types T[] = {obj_check, obj_check, obj_check, s_int, s_int,t_end};
   NspGObject *colormap, *pixmap, *mask;
@@ -61118,7 +61118,7 @@ gtk_drag_set_default_icon(GDK_COLORMAP(colormap->obj), GDK_PIXMAP(pixmap->obj), 
   return 0;
 }
 
-int _wrap_gtk_drag_get_source_widget(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_get_source_widget(Stack stack, int rhs, int opt, int lhs) /* drag_get_source_widget */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *context;
@@ -61132,7 +61132,7 @@ ret = gtk_drag_get_source_widget(GDK_DRAG_CONTEXT(context->obj));
   return 1;
 }
 
-int _wrap_gtk_drag_source_set_icon_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_drag_source_set_icon_name(Stack stack, int rhs, int opt, int lhs) /* drag_source_set_icon_name */
 {
   int_types T[] = {obj_check, string,t_end};
   NspGObject *widget;
@@ -61142,7 +61142,7 @@ gtk_drag_source_set_icon_name(GTK_WIDGET(widget->obj), icon_name);
   return 0;
 }
 
-int _wrap_gtk_expander_new_with_mnemonic(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_expander_new_with_mnemonic(Stack stack, int rhs, int opt, int lhs) /* expander_new_with_mnemonic */
 {
   int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
@@ -61160,7 +61160,7 @@ ret = gtk_expander_new_with_mnemonic(label);
   return 1;
 }
 
-int _wrap_gtk_file_chooser_button_new_with_backend(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_file_chooser_button_new_with_backend(Stack stack, int rhs, int opt, int lhs) /* file_chooser_button_new_with_backend */
 {
   int_types T[] = {string, obj, string,t_end};
   char *title, *backend;
@@ -61178,7 +61178,7 @@ ret = gtk_file_chooser_button_new_with_backend(title, action, backend);
   return 1;
 }
 
-int _wrap_gtk_file_chooser_button_new_with_dialog(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_file_chooser_button_new_with_dialog(Stack stack, int rhs, int opt, int lhs) /* file_chooser_button_new_with_dialog */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *dialog;
@@ -61193,7 +61193,7 @@ ret = gtk_file_chooser_button_new_with_dialog(GTK_WIDGET(dialog->obj));
   return 1;
 }
 
-int _wrap_gtk_file_chooser_widget_new_with_backend(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_file_chooser_widget_new_with_backend(Stack stack, int rhs, int opt, int lhs) /* file_chooser_widget_new_with_backend */
 {
   int_types T[] = {obj, string,t_end};
   GtkFileChooserAction action;
@@ -61211,7 +61211,7 @@ ret = gtk_file_chooser_widget_new_with_backend(action, backend);
   return 1;
 }
 
-int _wrap_gtk_font_button_new_with_font(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_font_button_new_with_font(Stack stack, int rhs, int opt, int lhs) /* gtk_font_button_new_with_font */
 {
   int_types T[] = {string,t_end};
   char *fontname;
@@ -61226,7 +61226,7 @@ ret = gtk_font_button_new_with_font(fontname);
   return 1;
 }
 
-int _wrap_gtk_hbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_hbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int lhs) /* hbutton_box_get_spacing_default */
 {
   int ret;
   Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
@@ -61235,7 +61235,7 @@ ret = gtk_hbutton_box_get_spacing_default();
   return 1;
 }
 
-int _wrap_gtk_hbutton_box_get_layout_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_hbutton_box_get_layout_default(Stack stack, int rhs, int opt, int lhs) /* hbutton_box_get_layout_default */
 {
   gint ret;
   Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
@@ -61244,7 +61244,7 @@ ret = gtk_hbutton_box_get_layout_default();
   return 1;
 }
 
-int _wrap_gtk_hbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_hbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int lhs) /* hbutton_box_set_spacing_default */
 {
   int_types T[] = {s_int,t_end};
   int spacing;
@@ -61254,7 +61254,7 @@ gtk_hbutton_box_set_spacing_default(spacing);
   return 0;
 }
 
-int _wrap_gtk_hbutton_box_set_layout_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_hbutton_box_set_layout_default(Stack stack, int rhs, int opt, int lhs) /* hbutton_box_set_layout_default */
 {
   int_types T[] = {obj,t_end};
   GtkButtonBoxStyle layout;
@@ -61267,7 +61267,7 @@ gtk_hbutton_box_set_layout_default(layout);
   return 0;
 }
 
-int _wrap_gtk_icon_factory_lookup_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_factory_lookup_default(Stack stack, int rhs, int opt, int lhs) /* icon_factory_lookup_default */
 {
   int_types T[] = {string,t_end};
   char *stock_id;
@@ -61302,7 +61302,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
 #line 61303 "gtk.c"
 
 
-int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs) /* icon_size_lookup_for_settings */
 {
   int_types T[] = {obj_check, obj, s_int, s_int,t_end};
   NspGObject *settings;
@@ -61317,7 +61317,7 @@ ret = gtk_icon_size_lookup_for_settings(GTK_SETTINGS(settings->obj), size, &widt
   return 1;
 }
 
-int _wrap_gtk_icon_size_register(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_size_register(Stack stack, int rhs, int opt, int lhs) /* icon_size_register */
 {
   int_types T[] = {string, s_int, s_int,t_end};
   char *name;
@@ -61329,7 +61329,7 @@ ret = gtk_icon_size_register(name, width, height);
   return 1;
 }
 
-int _wrap_gtk_icon_size_register_alias(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_size_register_alias(Stack stack, int rhs, int opt, int lhs) /* icon_size_register_alias */
 {
   int_types T[] = {string, obj,t_end};
   char *alias;
@@ -61342,7 +61342,7 @@ gtk_icon_size_register_alias(alias, target);
   return 0;
 }
 
-int _wrap_gtk_icon_size_from_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_size_from_name(Stack stack, int rhs, int opt, int lhs) /* icon_size_from_name */
 {
   int_types T[] = {string,t_end};
   char *name;
@@ -61353,7 +61353,7 @@ ret = gtk_icon_size_from_name(name);
   return 1;
 }
 
-int _wrap_gtk_icon_size_get_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_size_get_name(Stack stack, int rhs, int opt, int lhs) /* icon_size_get_name */
 {
   int_types T[] = {obj,t_end};
   GtkIconSize size;
@@ -61367,7 +61367,7 @@ ret = gtk_icon_size_get_name(size);
   return 1;
 }
 
-int _wrap_gtk_icon_set_new(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_set_new(Stack stack, int rhs, int opt, int lhs) /* icon_set_new */
 {
   GtkIconSet *ret;
   NspObject *nsp_ret;
@@ -61379,7 +61379,7 @@ ret = gtk_icon_set_new();
   return 1;
 }
 
-int _wrap_gtk_icon_theme_get_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_theme_get_default(Stack stack, int rhs, int opt, int lhs) /* icon_theme_get_default */
 {
   GtkIconTheme *ret;
   NspObject *nsp_ret;
@@ -61390,7 +61390,7 @@ ret = gtk_icon_theme_get_default();
   return 1;
 }
 
-int _wrap_gtk_icon_theme_get_for_screen(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_theme_get_for_screen(Stack stack, int rhs, int opt, int lhs) /* icon_theme_get_for_screen */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *screen;
@@ -61404,7 +61404,7 @@ ret = gtk_icon_theme_get_for_screen(GDK_SCREEN(screen->obj));
   return 1;
 }
 
-int _wrap_gtk_icon_theme_add_builtin_icon(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_theme_add_builtin_icon(Stack stack, int rhs, int opt, int lhs) /* icon_theme_add_builtin_icon */
 {
   int_types T[] = {string, s_int, obj_check,t_end};
   char *icon_name;
@@ -61415,7 +61415,7 @@ gtk_icon_theme_add_builtin_icon(icon_name, size, GDK_PIXBUF(pixbuf->obj));
   return 0;
 }
 
-int _wrap_gtk_icon_view_new_with_model(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_icon_view_new_with_model(Stack stack, int rhs, int opt, int lhs) /* gtk_icon_view_new_with_model */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *model;
@@ -61430,7 +61430,7 @@ ret = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model->obj));
   return 1;
 }
 
-int _wrap_gtk_image_new_from_icon_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_image_new_from_icon_name(Stack stack, int rhs, int opt, int lhs) /* image_new_from_icon_name */
 {
   int_types T[] = {string, obj,t_end};
   char *icon_name;
@@ -61448,7 +61448,7 @@ ret = gtk_image_new_from_icon_name(icon_name, size);
   return 1;
 }
 
-int _wrap_gtk_item_factory_add_foreign(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_item_factory_add_foreign(Stack stack, int rhs, int opt, int lhs) /* item_factory_add_foreign */
 {
   int_types T[] = {obj_check, string, obj_check, s_int, obj,t_end};
   NspGObject *accel_widget, *accel_group;
@@ -61463,7 +61463,7 @@ gtk_item_factory_add_foreign(GTK_WIDGET(accel_widget->obj), full_path, GTK_ACCEL
   return 0;
 }
 
-int _wrap_gtk_item_factory_from_widget(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_item_factory_from_widget(Stack stack, int rhs, int opt, int lhs) /* item_factory_from_widget */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *widget;
@@ -61477,7 +61477,7 @@ ret = gtk_item_factory_from_widget(GTK_WIDGET(widget->obj));
   return 1;
 }
 
-int _wrap_gtk_item_factory_path_from_widget(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_item_factory_path_from_widget(Stack stack, int rhs, int opt, int lhs) /* item_factory_path_from_widget */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *widget;
@@ -61488,7 +61488,7 @@ ret = gtk_item_factory_path_from_widget(GTK_WIDGET(widget->obj));
   return 1;
 }
 
-int _wrap_gtk_item_factory_from_path(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_item_factory_from_path(Stack stack, int rhs, int opt, int lhs) /* item_factory_from_path */
 {
   int_types T[] = {string,t_end};
   char *path;
@@ -61503,7 +61503,7 @@ ret = gtk_item_factory_from_path(path);
   return 1;
 }
 
-int _wrap_gtk_item_factories_path_delete(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_item_factories_path_delete(Stack stack, int rhs, int opt, int lhs) /* item_factories_path_delete */
 {
   int_types T[] = {string, string,t_end};
   char *ifactory_path, *path;
@@ -61513,7 +61513,7 @@ gtk_item_factories_path_delete(ifactory_path, path);
   return 0;
 }
 
-int _wrap_gtk_check_version(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_check_version(Stack stack, int rhs, int opt, int lhs) /* check_version */
 {
   int_types T[] = {s_int, s_int, s_int,t_end};
   int required_major, required_minor, required_micro;
@@ -61524,13 +61524,13 @@ ret = gtk_check_version(required_major, required_minor, required_micro);
   return 1;
 }
 
-int _wrap_gtk_disable_setlocale(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_disable_setlocale(Stack stack, int rhs, int opt, int lhs) /* disable_setlocale */
 {
 gtk_disable_setlocale();
   return 0;
 }
 
-int _wrap_gtk_get_default_language(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_get_default_language(Stack stack, int rhs, int opt, int lhs) /* get_default_language */
 {
   PangoLanguage *ret;
   NspObject *nsp_ret;
@@ -61542,7 +61542,7 @@ ret = gtk_get_default_language();
   return 1;
 }
 
-int _wrap_gtk_events_pending(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_events_pending(Stack stack, int rhs, int opt, int lhs) /* events_pending */
 {
   int ret;
 ret = gtk_events_pending();
@@ -61550,7 +61550,7 @@ ret = gtk_events_pending();
   return 1;
 }
 
-int _wrap_gtk_main_do_event(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_main_do_event(Stack stack, int rhs, int opt, int lhs) /* main_do_event */
 {
   int_types T[] = {obj,t_end};
   GdkEvent *event = NULL;
@@ -61578,7 +61578,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
 #line 61579 "gtk.c"
 
 
-int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs) /* main_level */
 {
   int ret;
 ret = gtk_main_level();
@@ -61586,7 +61586,7 @@ ret = gtk_main_level();
   return 1;
 }
 
-int _wrap_gtk_main_quit(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_main_quit(Stack stack, int rhs, int opt, int lhs) /* main_quit */
 {
 gtk_main_quit();
   return 0;
@@ -61624,7 +61624,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
 #line 61625 "gtk.c"
 
 
-int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs) /* grab_get_current */
 {
   GtkWidget *ret;
   NspObject *nsp_ret;
@@ -61635,7 +61635,7 @@ ret = gtk_grab_get_current();
   return 1;
 }
 
-int _wrap_gtk_quit_remove(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_quit_remove(Stack stack, int rhs, int opt, int lhs) /* quit_remove */
 {
   int_types T[] = {s_int,t_end};
   int quit_handler_id;
@@ -61644,7 +61644,7 @@ gtk_quit_remove(quit_handler_id);
   return 0;
 }
 
-int _wrap_gtk_timeout_remove(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_timeout_remove(Stack stack, int rhs, int opt, int lhs) /* timeout_remove */
 {
   int_types T[] = {s_int,t_end};
   int timeout_handler_id;
@@ -61653,7 +61653,7 @@ gtk_timeout_remove(timeout_handler_id);
   return 0;
 }
 
-int _wrap_gtk_idle_remove(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_idle_remove(Stack stack, int rhs, int opt, int lhs) /* idle_remove */
 {
   int_types T[] = {s_int,t_end};
   int idle_handler_id;
@@ -61662,7 +61662,7 @@ gtk_idle_remove(idle_handler_id);
   return 0;
 }
 
-int _wrap_gtk_get_current_event_time(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_get_current_event_time(Stack stack, int rhs, int opt, int lhs) /* get_current_event_time */
 {
   gulong ret;
 ret = gtk_get_current_event_time();
@@ -61670,7 +61670,7 @@ ret = gtk_get_current_event_time();
   return 1;
 }
 
-int _wrap_gtk_menu_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_menu_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs) /* gtk_menu_tool_button_new_from_stock */
 {
   int_types T[] = {string,t_end};
   char *stock_id;
@@ -61685,7 +61685,7 @@ ret = gtk_menu_tool_button_new_from_stock(stock_id);
   return 1;
 }
 
-int _wrap_gtk_plug_new_for_display(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_plug_new_for_display(Stack stack, int rhs, int opt, int lhs) /* plug_new_for_display */
 {
   int_types T[] = {obj_check, s_int,t_end};
   NspGObject *display;
@@ -61701,7 +61701,7 @@ ret = gtk_plug_new_for_display(GDK_DISPLAY(display->obj), socket_id);
   return 1;
 }
 
-int _wrap_gtk_preview_set_gamma(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_set_gamma(Stack stack, int rhs, int opt, int lhs) /* preview_set_gamma */
 {
   int_types T[] = {s_double,t_end};
   double gamma;
@@ -61711,7 +61711,7 @@ gtk_preview_set_gamma(gamma);
   return 0;
 }
 
-int _wrap_gtk_preview_set_color_cube(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_set_color_cube(Stack stack, int rhs, int opt, int lhs) /* preview_set_color_cube */
 {
   int_types T[] = {s_int, s_int, s_int, s_int,t_end};
   int nred_shades, ngreen_shades, nblue_shades, ngray_shades;
@@ -61721,7 +61721,7 @@ gtk_preview_set_color_cube(nred_shades, ngreen_shades, nblue_shades, ngray_shade
   return 0;
 }
 
-int _wrap_gtk_preview_set_install_cmap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_set_install_cmap(Stack stack, int rhs, int opt, int lhs) /* preview_set_install_cmap */
 {
   int_types T[] = {s_int,t_end};
   int install_cmap;
@@ -61731,7 +61731,7 @@ gtk_preview_set_install_cmap(install_cmap);
   return 0;
 }
 
-int _wrap_gtk_preview_set_reserved(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_set_reserved(Stack stack, int rhs, int opt, int lhs) /* preview_set_reserved */
 {
   int_types T[] = {s_int,t_end};
   int nreserved;
@@ -61741,7 +61741,7 @@ gtk_preview_set_reserved(nreserved);
   return 0;
 }
 
-int _wrap_gtk_preview_get_visual(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_get_visual(Stack stack, int rhs, int opt, int lhs) /* preview_get_visual */
 {
   GdkVisual *ret;
   NspObject *nsp_ret;
@@ -61753,7 +61753,7 @@ ret = gtk_preview_get_visual();
   return 1;
 }
 
-int _wrap_gtk_preview_get_cmap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_get_cmap(Stack stack, int rhs, int opt, int lhs) /* preview_get_cmap */
 {
   GdkColormap *ret;
   NspObject *nsp_ret;
@@ -61765,14 +61765,14 @@ ret = gtk_preview_get_cmap();
   return 1;
 }
 
-int _wrap_gtk_preview_reset(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_preview_reset(Stack stack, int rhs, int opt, int lhs) /* preview_reset */
 {
   Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
 gtk_preview_reset();
   return 0;
 }
 
-int _wrap_gtk_rc_add_default_file(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_add_default_file(Stack stack, int rhs, int opt, int lhs) /* rc_add_default_file */
 {
   int_types T[] = {string,t_end};
   char *filename;
@@ -61810,7 +61810,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
 #line 61811 "gtk.c"
 
 
-int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs) /* rc_get_style_by_paths */
 {
   int_types T[] = {obj_check, string, string, obj,t_end};
   NspGObject *settings;
@@ -61828,7 +61828,7 @@ ret = gtk_rc_get_style_by_paths(GTK_SETTINGS(settings->obj), widget_path, class_
   return 1;
 }
 
-int _wrap_gtk_rc_reparse_all_for_settings(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_reparse_all_for_settings(Stack stack, int rhs, int opt, int lhs) /* rc_reparse_all_for_settings */
 {
   int_types T[] = {obj_check, s_bool,t_end};
   NspGObject *settings;
@@ -61839,7 +61839,7 @@ ret = gtk_rc_reparse_all_for_settings(GTK_SETTINGS(settings->obj), force_load);
   return 1;
 }
 
-int _wrap_gtk_rc_reset_styles(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_reset_styles(Stack stack, int rhs, int opt, int lhs) /* rc_reset_styles */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *settings;
@@ -61848,7 +61848,7 @@ gtk_rc_reset_styles(GTK_SETTINGS(settings->obj));
   return 0;
 }
 
-int _wrap_gtk_rc_parse(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_parse(Stack stack, int rhs, int opt, int lhs) /* rc_parse */
 {
   int_types T[] = {string,t_end};
   char *filename;
@@ -61857,7 +61857,7 @@ gtk_rc_parse(filename);
   return 0;
 }
 
-int _wrap_gtk_rc_parse_string(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_parse_string(Stack stack, int rhs, int opt, int lhs) /* rc_parse_string */
 {
   int_types T[] = {string,t_end};
   char *rc_string;
@@ -61866,7 +61866,7 @@ gtk_rc_parse_string(rc_string);
   return 0;
 }
 
-int _wrap_gtk_rc_reparse_all(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_reparse_all(Stack stack, int rhs, int opt, int lhs) /* rc_reparse_all */
 {
   int ret;
 ret = gtk_rc_reparse_all();
@@ -61874,7 +61874,7 @@ ret = gtk_rc_reparse_all();
   return 1;
 }
 
-int _wrap_gtk_rc_find_module_in_path(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_find_module_in_path(Stack stack, int rhs, int opt, int lhs) /* rc_find_module_in_path */
 {
   int_types T[] = {string,t_end};
   char *module_file;
@@ -61886,7 +61886,7 @@ ret = gtk_rc_find_module_in_path(module_file);
   return 1;
 }
 
-int _wrap_gtk_rc_get_theme_dir(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_get_theme_dir(Stack stack, int rhs, int opt, int lhs) /* rc_get_theme_dir */
 {
   gchar *ret;
 ret = gtk_rc_get_theme_dir();
@@ -61895,7 +61895,7 @@ ret = gtk_rc_get_theme_dir();
   return 1;
 }
 
-int _wrap_gtk_rc_get_module_dir(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_get_module_dir(Stack stack, int rhs, int opt, int lhs) /* rc_get_module_dir */
 {
   gchar *ret;
 ret = gtk_rc_get_module_dir();
@@ -61904,7 +61904,7 @@ ret = gtk_rc_get_module_dir();
   return 1;
 }
 
-int _wrap_gtk_rc_get_im_module_path(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_get_im_module_path(Stack stack, int rhs, int opt, int lhs) /* rc_get_im_module_path */
 {
   gchar *ret;
 ret = gtk_rc_get_im_module_path();
@@ -61913,7 +61913,7 @@ ret = gtk_rc_get_im_module_path();
   return 1;
 }
 
-int _wrap_gtk_rc_get_im_module_file(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_rc_get_im_module_file(Stack stack, int rhs, int opt, int lhs) /* rc_get_im_module_file */
 {
   gchar *ret;
 ret = gtk_rc_get_im_module_file();
@@ -61922,7 +61922,7 @@ ret = gtk_rc_get_im_module_file();
   return 1;
 }
 
-int _wrap_gtk_selection_owner_set_for_display(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_selection_owner_set_for_display(Stack stack, int rhs, int opt, int lhs) /* selection_owner_set_for_display */
 {
   int_types T[] = {obj_check, obj, obj,new_opts,t_end};
   nsp_option opts[] = {
@@ -61947,7 +61947,7 @@ ret = gtk_selection_owner_set_for_display(GDK_DISPLAY(display->obj), widget, sel
   return 1;
 }
 
-int _wrap_gtk_settings_get_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_settings_get_default(Stack stack, int rhs, int opt, int lhs) /* settings_get_default */
 {
   GtkSettings *ret;
   NspObject *nsp_ret;
@@ -62043,7 +62043,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
 #line 62044 "gtk.c"
 
 
-int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs) /* toggle_tool_button_new_from_stock */
 {
   int_types T[] = {string,t_end};
   char *stock_id;
@@ -62058,7 +62058,7 @@ ret = gtk_toggle_tool_button_new_from_stock(stock_id);
   return 1;
 }
 
-int _wrap_gtk_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs) /* tool_button_new_from_stock */
 {
   int_types T[] = {string,t_end};
   char *stock_id;
@@ -62073,7 +62073,7 @@ ret = gtk_tool_button_new_from_stock(stock_id);
   return 1;
 }
 
-int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs) /* tree_row_reference_inserted */
 {
   int_types T[] = {obj_check, obj,t_end};
   NspGObject *proxy;
@@ -62090,7 +62090,7 @@ gtk_tree_row_reference_inserted(G_OBJECT(proxy->obj), path);
   return 0;
 }
 
-int _wrap_gtk_tree_row_reference_deleted(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_tree_row_reference_deleted(Stack stack, int rhs, int opt, int lhs) /* tree_row_reference_deleted */
 {
   int_types T[] = {obj_check, obj,t_end};
   NspGObject *proxy;
@@ -62107,7 +62107,7 @@ gtk_tree_row_reference_deleted(G_OBJECT(proxy->obj), path);
   return 0;
 }
 
-int _wrap_gtk_tree_row_reference_reordered(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_tree_row_reference_reordered(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_reordered */
 {
   int_types T[] = {obj_check, obj, obj, s_int,t_end};
   NspGObject *proxy;
@@ -62132,7 +62132,7 @@ gtk_tree_row_reference_reordered(G_OBJECT(proxy->obj), path, iter, &new_order);
   return 0;
 }
 
-int _wrap_gtk_vbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_vbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int lhs) /* vbutton_box_get_spacing_default */
 {
   int ret;
   Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
@@ -62141,7 +62141,7 @@ ret = gtk_vbutton_box_get_spacing_default();
   return 1;
 }
 
-int _wrap_gtk_vbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_vbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int lhs) /* vbutton_box_set_spacing_default */
 {
   int_types T[] = {s_int,t_end};
   int spacing;
@@ -62151,7 +62151,7 @@ gtk_vbutton_box_set_spacing_default(spacing);
   return 0;
 }
 
-int _wrap_gtk_vbutton_box_get_layout_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_vbutton_box_get_layout_default(Stack stack, int rhs, int opt, int lhs) /* vbutton_box_get_layout_default */
 {
   gint ret;
   Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
@@ -62160,7 +62160,7 @@ ret = gtk_vbutton_box_get_layout_default();
   return 1;
 }
 
-int _wrap_gtk_vbutton_box_set_layout_default(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_vbutton_box_set_layout_default(Stack stack, int rhs, int opt, int lhs) /* vbutton_box_set_layout_default */
 {
   int_types T[] = {obj,t_end};
   GtkButtonBoxStyle layout;
@@ -62173,7 +62173,7 @@ gtk_vbutton_box_set_layout_default(layout);
   return 0;
 }
 
-int _wrap_gtk_widget_push_colormap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_push_colormap(Stack stack, int rhs, int opt, int lhs) /* widget_push_colormap */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *cmap;
@@ -62182,25 +62182,25 @@ gtk_widget_push_colormap(GDK_COLORMAP(cmap->obj));
   return 0;
 }
 
-int _wrap_gtk_widget_push_composite_child(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_push_composite_child(Stack stack, int rhs, int opt, int lhs) /* widget_push_composite_child */
 {
 gtk_widget_push_composite_child();
   return 0;
 }
 
-int _wrap_gtk_widget_pop_composite_child(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_pop_composite_child(Stack stack, int rhs, int opt, int lhs) /* widget_pop_composite_child */
 {
 gtk_widget_pop_composite_child();
   return 0;
 }
 
-int _wrap_gtk_widget_pop_colormap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_pop_colormap(Stack stack, int rhs, int opt, int lhs) /* widget_pop_colormap */
 {
 gtk_widget_pop_colormap();
   return 0;
 }
 
-int _wrap_gtk_widget_get_default_style(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_get_default_style(Stack stack, int rhs, int opt, int lhs) /* widget_get_default_style */
 {
   GtkStyle *ret;
   NspObject *nsp_ret;
@@ -62211,7 +62211,7 @@ ret = gtk_widget_get_default_style();
   return 1;
 }
 
-int _wrap_gtk_widget_set_default_colormap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_set_default_colormap(Stack stack, int rhs, int opt, int lhs) /* widget_set_default_colormap */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *colormap;
@@ -62220,7 +62220,7 @@ gtk_widget_set_default_colormap(GDK_COLORMAP(colormap->obj));
   return 0;
 }
 
-int _wrap_gtk_widget_get_default_colormap(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_get_default_colormap(Stack stack, int rhs, int opt, int lhs) /* widget_get_default_colormap */
 {
   GdkColormap *ret;
   NspObject *nsp_ret;
@@ -62231,7 +62231,7 @@ ret = gtk_widget_get_default_colormap();
   return 1;
 }
 
-int _wrap_gtk_widget_get_default_visual(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_get_default_visual(Stack stack, int rhs, int opt, int lhs) /* widget_get_default_visual */
 {
   GdkVisual *ret;
   NspObject *nsp_ret;
@@ -62242,7 +62242,7 @@ ret = gtk_widget_get_default_visual();
   return 1;
 }
 
-int _wrap_gtk_widget_set_default_direction(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_set_default_direction(Stack stack, int rhs, int opt, int lhs) /* widget_set_default_direction */
 {
   int_types T[] = {obj,t_end};
   GtkTextDirection dir;
@@ -62254,7 +62254,7 @@ gtk_widget_set_default_direction(dir);
   return 0;
 }
 
-int _wrap_gtk_widget_get_default_direction(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_widget_get_default_direction(Stack stack, int rhs, int opt, int lhs) /* widget_get_default_direction */
 {
   gint ret;
 ret = gtk_widget_get_default_direction();
@@ -62262,7 +62262,7 @@ ret = gtk_widget_get_default_direction();
   return 1;
 }
 
-int _wrap_gtk_window_set_default_icon_list(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_set_default_icon_list(Stack stack, int rhs, int opt, int lhs) /* window_set_default_icon_list */
 {
   int_types T[] = {list,t_end};
   NspList *nsp_list;
@@ -62274,7 +62274,7 @@ gtk_window_set_default_icon_list(list);
   return 0;
 }
 
-int _wrap_gtk_window_get_default_icon_list(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_get_default_icon_list(Stack stack, int rhs, int opt, int lhs) /* window_get_default_icon_list */
 {
   GList *ret, *tmp;
   NspList *nsp_list;
@@ -62283,7 +62283,7 @@ ret = gtk_window_get_default_icon_list();
 
 }
 
-int _wrap_gtk_window_set_default_icon(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_set_default_icon(Stack stack, int rhs, int opt, int lhs) /* window_set_default_icon */
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *icon;
@@ -62292,7 +62292,7 @@ gtk_window_set_default_icon(GDK_PIXBUF(icon->obj));
   return 0;
 }
 
-int _wrap_gtk_window_set_default_icon_from_file(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_set_default_icon_from_file(Stack stack, int rhs, int opt, int lhs) /* gtk_window_set_default_icon_from_file */
 {
   int_types T[] = {string,t_end};
   char *filename;
@@ -62308,7 +62308,7 @@ ret = gtk_window_set_default_icon_from_file(filename, &err);
   return 1;
 }
 
-int _wrap_gtk_window_set_auto_startup_notification(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_set_auto_startup_notification(Stack stack, int rhs, int opt, int lhs) /* gtk_window_set_auto_startup_notification */
 {
   int_types T[] = {s_bool,t_end};
   int setting;
@@ -62330,7 +62330,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
 #line 62331 "gtk.c"
 
 
-int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs)
+int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs) /* window_set_default_icon_name */
 {
   int_types T[] = {string,t_end};
   char *name;

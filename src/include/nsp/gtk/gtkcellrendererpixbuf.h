@@ -48,8 +48,8 @@ extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbuf (Stack stack, int i);
 
 #ifdef GtkCellRendererPixbuf_Private 
 static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *o,NspTypeGtkCellRendererPixbuf *type);
-static char *gtkcellrendererpixbuf_type_as_string(void);
-static char *gtkcellrendererpixbuf_type_short_string(NspObject *v);
+static char *nsp_gtkcellrendererpixbuf_type_as_string(void);
+static char *nsp_gtkcellrendererpixbuf_type_short_string(NspObject *v);
 static AttrTab gtkcellrendererpixbuf_attrs[];
 /* static int int_gtkcellrendererpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrendererpixbuf_get_methods(void); 

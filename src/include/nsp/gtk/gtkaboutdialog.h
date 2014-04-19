@@ -48,8 +48,8 @@ extern NspGtkAboutDialog *GetGtkAboutDialog (Stack stack, int i);
 
 #ifdef GtkAboutDialog_Private 
 static int init_gtkaboutdialog(NspGtkAboutDialog *o,NspTypeGtkAboutDialog *type);
-static char *gtkaboutdialog_type_as_string(void);
-static char *gtkaboutdialog_type_short_string(NspObject *v);
+static char *nsp_gtkaboutdialog_type_as_string(void);
+static char *nsp_gtkaboutdialog_type_short_string(NspObject *v);
 static AttrTab gtkaboutdialog_attrs[];
 /* static int int_gtkaboutdialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaboutdialog_get_methods(void); 

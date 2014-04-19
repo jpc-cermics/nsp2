@@ -48,8 +48,8 @@ extern NspGtkTreeRowReference *GetGtkTreeRowReference (Stack stack, int i);
 
 #ifdef GtkTreeRowReference_Private 
 static int init_gtktreerowreference(NspGtkTreeRowReference *o,NspTypeGtkTreeRowReference *type);
-static char *gtktreerowreference_type_as_string(void);
-static char *gtktreerowreference_type_short_string(NspObject *v);
+static char *nsp_gtktreerowreference_type_as_string(void);
+static char *nsp_gtktreerowreference_type_short_string(NspObject *v);
 static AttrTab gtktreerowreference_attrs[];
 /* static int int_gtktreerowreference_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreerowreference_get_methods(void); 

@@ -48,8 +48,8 @@ extern NspWebKitWebFrame *GetWebKitWebFrame (Stack stack, int i);
 
 #ifdef WebKitWebFrame_Private 
 static int init_webkitwebframe(NspWebKitWebFrame *o,NspTypeWebKitWebFrame *type);
-static char *webkitwebframe_type_as_string(void);
-static char *webkitwebframe_type_short_string(NspObject *v);
+static char *nsp_webkitwebframe_type_as_string(void);
+static char *nsp_webkitwebframe_type_short_string(NspObject *v);
 static AttrTab webkitwebframe_attrs[];
 /* static int int_webkitwebframe_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitwebframe_get_methods(void); 

@@ -48,8 +48,8 @@ extern NspPangoAttrList *GetPangoAttrList (Stack stack, int i);
 
 #ifdef PangoAttrList_Private 
 static int init_pangoattrlist(NspPangoAttrList *o,NspTypePangoAttrList *type);
-static char *pangoattrlist_type_as_string(void);
-static char *pangoattrlist_type_short_string(NspObject *v);
+static char *nsp_pangoattrlist_type_as_string(void);
+static char *nsp_pangoattrlist_type_short_string(NspObject *v);
 static AttrTab pangoattrlist_attrs[];
 /* static int int_pangoattrlist_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangoattrlist_get_methods(void); 

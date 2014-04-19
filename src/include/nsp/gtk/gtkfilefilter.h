@@ -48,8 +48,8 @@ extern NspGtkFileFilter *GetGtkFileFilter (Stack stack, int i);
 
 #ifdef GtkFileFilter_Private 
 static int init_gtkfilefilter(NspGtkFileFilter *o,NspTypeGtkFileFilter *type);
-static char *gtkfilefilter_type_as_string(void);
-static char *gtkfilefilter_type_short_string(NspObject *v);
+static char *nsp_gtkfilefilter_type_as_string(void);
+static char *nsp_gtkfilefilter_type_short_string(NspObject *v);
 static AttrTab gtkfilefilter_attrs[];
 /* static int int_gtkfilefilter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfilefilter_get_methods(void); 

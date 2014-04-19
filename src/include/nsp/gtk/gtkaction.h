@@ -48,8 +48,8 @@ extern NspGtkAction *GetGtkAction (Stack stack, int i);
 
 #ifdef GtkAction_Private 
 static int init_gtkaction(NspGtkAction *o,NspTypeGtkAction *type);
-static char *gtkaction_type_as_string(void);
-static char *gtkaction_type_short_string(NspObject *v);
+static char *nsp_gtkaction_type_as_string(void);
+static char *nsp_gtkaction_type_short_string(NspObject *v);
 static AttrTab gtkaction_attrs[];
 /* static int int_gtkaction_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkaction_get_methods(void); 

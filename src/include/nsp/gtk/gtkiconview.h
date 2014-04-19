@@ -48,8 +48,8 @@ extern NspGtkIconView *GetGtkIconView (Stack stack, int i);
 
 #ifdef GtkIconView_Private 
 static int init_gtkiconview(NspGtkIconView *o,NspTypeGtkIconView *type);
-static char *gtkiconview_type_as_string(void);
-static char *gtkiconview_type_short_string(NspObject *v);
+static char *nsp_gtkiconview_type_as_string(void);
+static char *nsp_gtkiconview_type_short_string(NspObject *v);
 static AttrTab gtkiconview_attrs[];
 /* static int int_gtkiconview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkiconview_get_methods(void); 

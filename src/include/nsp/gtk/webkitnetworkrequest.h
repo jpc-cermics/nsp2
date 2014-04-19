@@ -48,8 +48,8 @@ extern NspWebKitNetworkRequest *GetWebKitNetworkRequest (Stack stack, int i);
 
 #ifdef WebKitNetworkRequest_Private 
 static int init_webkitnetworkrequest(NspWebKitNetworkRequest *o,NspTypeWebKitNetworkRequest *type);
-static char *webkitnetworkrequest_type_as_string(void);
-static char *webkitnetworkrequest_type_short_string(NspObject *v);
+static char *nsp_webkitnetworkrequest_type_as_string(void);
+static char *nsp_webkitnetworkrequest_type_short_string(NspObject *v);
 static AttrTab webkitnetworkrequest_attrs[];
 /* static int int_webkitnetworkrequest_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *webkitnetworkrequest_get_methods(void); 

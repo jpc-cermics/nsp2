@@ -48,8 +48,8 @@ extern NspGtkEntryCompletion *GetGtkEntryCompletion (Stack stack, int i);
 
 #ifdef GtkEntryCompletion_Private 
 static int init_gtkentrycompletion(NspGtkEntryCompletion *o,NspTypeGtkEntryCompletion *type);
-static char *gtkentrycompletion_type_as_string(void);
-static char *gtkentrycompletion_type_short_string(NspObject *v);
+static char *nsp_gtkentrycompletion_type_as_string(void);
+static char *nsp_gtkentrycompletion_type_short_string(NspObject *v);
 static AttrTab gtkentrycompletion_attrs[];
 /* static int int_gtkentrycompletion_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkentrycompletion_get_methods(void); 

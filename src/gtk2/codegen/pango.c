@@ -56,7 +56,7 @@
 #include "nsp/gtk/pangolayout.h"
 
 
-/* ----------- PangoAttrList ----------- */
+/* ----------- NspPangoAttrList ----------- */
 
 
 #include "nsp/object.h"
@@ -65,17 +65,17 @@
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoAttrList inherits from GBoxed 
+ * NspPangoAttrList inherits from GBoxed 
  */
 
 int nsp_type_pangoattrlist_id=0;
 NspTypePangoAttrList *nsp_type_pangoattrlist=NULL;
 
 /*
- * Type object for PangoAttrList 
+ * Type object for NspPangoAttrList 
  * all the instance of NspTypePangoAttrList share the same id. 
  * nsp_type_pangoattrlist: is an instance of NspTypePangoAttrList 
- *    used for objects of PangoAttrList type (i.e built with new_pangoattrlist) 
+ *    used for objects of NspPangoAttrList type (i.e built with new_pangoattrlist) 
  * other instances are used for derived classes 
  */
 NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
@@ -104,8 +104,8 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
   
   /* object methods redefined for pangoattrlist */ 
 
-  top->s_type =  (s_type_func *) pangoattrlist_type_as_string;    
-  top->sh_type = (sh_type_func *) pangoattrlist_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangoattrlist_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangoattrlist_type_short_string;
   /* top->create = (create_func*) int_pangoattrlist_create;*/ 
   
   /* specific methods for pangoattrlist */
@@ -113,7 +113,7 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
   type->init = (init_func *) init_pangoattrlist;
 
   /* 
-   * PangoAttrList interfaces can be added here 
+   * NspPangoAttrList interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -139,7 +139,7 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
 }
 
 /*
- * initialize PangoAttrList instances 
+ * initialize NspPangoAttrList instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -154,7 +154,7 @@ static int init_pangoattrlist(NspPangoAttrList *Obj,NspTypePangoAttrList *type)
 }
 
 /*
- * new instance of PangoAttrList 
+ * new instance of NspPangoAttrList 
  */
 
 NspPangoAttrList *new_pangoattrlist() 
@@ -169,7 +169,7 @@ NspPangoAttrList *new_pangoattrlist()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoAttrList 
+ * Object method redefined for NspPangoAttrList 
  *-----------------------------------------------*/
 
 /*
@@ -179,23 +179,23 @@ NspPangoAttrList *new_pangoattrlist()
 static char pangoattrlist_type_name[]="PangoAttrList";
 static char pangoattrlist_short_type_name[]="PangoAttrList";
 
-static char *pangoattrlist_type_as_string(void)
+static char *nsp_pangoattrlist_type_as_string(void)
 {
   return(pangoattrlist_type_name);
 }
 
-static char *pangoattrlist_type_short_string(NspObject *v)
+static char *nsp_pangoattrlist_type_short_string(NspObject *v)
 {
   return(pangoattrlist_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoAttrList objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoAttrList objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoAttrList   *pangoattrlist_object(NspObject *O)
+NspPangoAttrList *nsp_pangoattrlist_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -225,7 +225,7 @@ NspPangoAttrList  *GetPangoAttrListCopy(Stack stack, int i)
 NspPangoAttrList  *GetPangoAttrList(Stack stack, int i)
 {
   NspPangoAttrList *M;
-  if (( M = pangoattrlist_object(NthObj(i))) == NULLPANGOATTRLIST)
+  if (( M = nsp_pangoattrlist_object(NthObj(i))) == NULLPANGOATTRLIST)
      ArgMessage(stack,i);
   return M;
 }
@@ -367,7 +367,7 @@ static NspMethods *pangoattrlist_get_methods(void) { return pangoattrlist_method
 static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoColor ----------- */
+/* ----------- NspPangoColor ----------- */
 
 
 #include "nsp/object.h"
@@ -376,17 +376,17 @@ static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoColor inherits from GBoxed 
+ * NspPangoColor inherits from GBoxed 
  */
 
 int nsp_type_pangocolor_id=0;
 NspTypePangoColor *nsp_type_pangocolor=NULL;
 
 /*
- * Type object for PangoColor 
+ * Type object for NspPangoColor 
  * all the instance of NspTypePangoColor share the same id. 
  * nsp_type_pangocolor: is an instance of NspTypePangoColor 
- *    used for objects of PangoColor type (i.e built with new_pangocolor) 
+ *    used for objects of NspPangoColor type (i.e built with new_pangocolor) 
  * other instances are used for derived classes 
  */
 NspTypePangoColor *new_type_pangocolor(type_mode mode)
@@ -415,8 +415,8 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
   
   /* object methods redefined for pangocolor */ 
 
-  top->s_type =  (s_type_func *) pangocolor_type_as_string;    
-  top->sh_type = (sh_type_func *) pangocolor_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangocolor_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangocolor_type_short_string;
   /* top->create = (create_func*) int_pangocolor_create;*/ 
   
   /* specific methods for pangocolor */
@@ -424,7 +424,7 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
   type->init = (init_func *) init_pangocolor;
 
   /* 
-   * PangoColor interfaces can be added here 
+   * NspPangoColor interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -450,7 +450,7 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
 }
 
 /*
- * initialize PangoColor instances 
+ * initialize NspPangoColor instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -465,7 +465,7 @@ static int init_pangocolor(NspPangoColor *Obj,NspTypePangoColor *type)
 }
 
 /*
- * new instance of PangoColor 
+ * new instance of NspPangoColor 
  */
 
 NspPangoColor *new_pangocolor() 
@@ -480,7 +480,7 @@ NspPangoColor *new_pangocolor()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoColor 
+ * Object method redefined for NspPangoColor 
  *-----------------------------------------------*/
 
 /*
@@ -490,23 +490,23 @@ NspPangoColor *new_pangocolor()
 static char pangocolor_type_name[]="PangoColor";
 static char pangocolor_short_type_name[]="PangoColor";
 
-static char *pangocolor_type_as_string(void)
+static char *nsp_pangocolor_type_as_string(void)
 {
   return(pangocolor_type_name);
 }
 
-static char *pangocolor_type_short_string(NspObject *v)
+static char *nsp_pangocolor_type_short_string(NspObject *v)
 {
   return(pangocolor_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoColor objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoColor objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoColor   *pangocolor_object(NspObject *O)
+NspPangoColor *nsp_pangocolor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -536,7 +536,7 @@ NspPangoColor  *GetPangoColorCopy(Stack stack, int i)
 NspPangoColor  *GetPangoColor(Stack stack, int i)
 {
   NspPangoColor *M;
-  if (( M = pangocolor_object(NthObj(i))) == NULLPANGOCOLOR)
+  if (( M = nsp_pangocolor_object(NthObj(i))) == NULLPANGOCOLOR)
      ArgMessage(stack,i);
   return M;
 }
@@ -638,7 +638,7 @@ static AttrTab pangocolor_attrs[] = {
 
 
 
-/* ----------- PangoFontDescription ----------- */
+/* ----------- NspPangoFontDescription ----------- */
 
 
 #include "nsp/object.h"
@@ -647,17 +647,17 @@ static AttrTab pangocolor_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontDescription inherits from GBoxed 
+ * NspPangoFontDescription inherits from GBoxed 
  */
 
 int nsp_type_pangofontdescription_id=0;
 NspTypePangoFontDescription *nsp_type_pangofontdescription=NULL;
 
 /*
- * Type object for PangoFontDescription 
+ * Type object for NspPangoFontDescription 
  * all the instance of NspTypePangoFontDescription share the same id. 
  * nsp_type_pangofontdescription: is an instance of NspTypePangoFontDescription 
- *    used for objects of PangoFontDescription type (i.e built with new_pangofontdescription) 
+ *    used for objects of NspPangoFontDescription type (i.e built with new_pangofontdescription) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
@@ -686,8 +686,8 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
   
   /* object methods redefined for pangofontdescription */ 
 
-  top->s_type =  (s_type_func *) pangofontdescription_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontdescription_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontdescription_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontdescription_type_short_string;
   /* top->create = (create_func*) int_pangofontdescription_create;*/ 
   
   /* specific methods for pangofontdescription */
@@ -695,7 +695,7 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
   type->init = (init_func *) init_pangofontdescription;
 
   /* 
-   * PangoFontDescription interfaces can be added here 
+   * NspPangoFontDescription interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -721,7 +721,7 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
 }
 
 /*
- * initialize PangoFontDescription instances 
+ * initialize NspPangoFontDescription instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -736,7 +736,7 @@ static int init_pangofontdescription(NspPangoFontDescription *Obj,NspTypePangoFo
 }
 
 /*
- * new instance of PangoFontDescription 
+ * new instance of NspPangoFontDescription 
  */
 
 NspPangoFontDescription *new_pangofontdescription() 
@@ -751,7 +751,7 @@ NspPangoFontDescription *new_pangofontdescription()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontDescription 
+ * Object method redefined for NspPangoFontDescription 
  *-----------------------------------------------*/
 
 /*
@@ -761,23 +761,23 @@ NspPangoFontDescription *new_pangofontdescription()
 static char pangofontdescription_type_name[]="PangoFontDescription";
 static char pangofontdescription_short_type_name[]="PangoFontDescription";
 
-static char *pangofontdescription_type_as_string(void)
+static char *nsp_pangofontdescription_type_as_string(void)
 {
   return(pangofontdescription_type_name);
 }
 
-static char *pangofontdescription_type_short_string(NspObject *v)
+static char *nsp_pangofontdescription_type_short_string(NspObject *v)
 {
   return(pangofontdescription_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontDescription objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontDescription objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontDescription   *pangofontdescription_object(NspObject *O)
+NspPangoFontDescription *nsp_pangofontdescription_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -807,7 +807,7 @@ NspPangoFontDescription  *GetPangoFontDescriptionCopy(Stack stack, int i)
 NspPangoFontDescription  *GetPangoFontDescription(Stack stack, int i)
 {
   NspPangoFontDescription *M;
-  if (( M = pangofontdescription_object(NthObj(i))) == NULLPANGOFONTDESCRIPTION)
+  if (( M = nsp_pangofontdescription_object(NthObj(i))) == NULLPANGOFONTDESCRIPTION)
      ArgMessage(stack,i);
   return M;
 }
@@ -1153,7 +1153,7 @@ static NspMethods *pangofontdescription_get_methods(void) { return pangofontdesc
 static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFontMetrics ----------- */
+/* ----------- NspPangoFontMetrics ----------- */
 
 
 #include "nsp/object.h"
@@ -1162,17 +1162,17 @@ static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontMetrics inherits from GBoxed 
+ * NspPangoFontMetrics inherits from GBoxed 
  */
 
 int nsp_type_pangofontmetrics_id=0;
 NspTypePangoFontMetrics *nsp_type_pangofontmetrics=NULL;
 
 /*
- * Type object for PangoFontMetrics 
+ * Type object for NspPangoFontMetrics 
  * all the instance of NspTypePangoFontMetrics share the same id. 
  * nsp_type_pangofontmetrics: is an instance of NspTypePangoFontMetrics 
- *    used for objects of PangoFontMetrics type (i.e built with new_pangofontmetrics) 
+ *    used for objects of NspPangoFontMetrics type (i.e built with new_pangofontmetrics) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
@@ -1201,8 +1201,8 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
   
   /* object methods redefined for pangofontmetrics */ 
 
-  top->s_type =  (s_type_func *) pangofontmetrics_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontmetrics_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontmetrics_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontmetrics_type_short_string;
   /* top->create = (create_func*) int_pangofontmetrics_create;*/ 
   
   /* specific methods for pangofontmetrics */
@@ -1210,7 +1210,7 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
   type->init = (init_func *) init_pangofontmetrics;
 
   /* 
-   * PangoFontMetrics interfaces can be added here 
+   * NspPangoFontMetrics interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1236,7 +1236,7 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
 }
 
 /*
- * initialize PangoFontMetrics instances 
+ * initialize NspPangoFontMetrics instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1251,7 +1251,7 @@ static int init_pangofontmetrics(NspPangoFontMetrics *Obj,NspTypePangoFontMetric
 }
 
 /*
- * new instance of PangoFontMetrics 
+ * new instance of NspPangoFontMetrics 
  */
 
 NspPangoFontMetrics *new_pangofontmetrics() 
@@ -1266,7 +1266,7 @@ NspPangoFontMetrics *new_pangofontmetrics()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontMetrics 
+ * Object method redefined for NspPangoFontMetrics 
  *-----------------------------------------------*/
 
 /*
@@ -1276,23 +1276,23 @@ NspPangoFontMetrics *new_pangofontmetrics()
 static char pangofontmetrics_type_name[]="PangoFontMetrics";
 static char pangofontmetrics_short_type_name[]="PangoFontMetrics";
 
-static char *pangofontmetrics_type_as_string(void)
+static char *nsp_pangofontmetrics_type_as_string(void)
 {
   return(pangofontmetrics_type_name);
 }
 
-static char *pangofontmetrics_type_short_string(NspObject *v)
+static char *nsp_pangofontmetrics_type_short_string(NspObject *v)
 {
   return(pangofontmetrics_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontMetrics objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontMetrics objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontMetrics   *pangofontmetrics_object(NspObject *O)
+NspPangoFontMetrics *nsp_pangofontmetrics_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1322,7 +1322,7 @@ NspPangoFontMetrics  *GetPangoFontMetricsCopy(Stack stack, int i)
 NspPangoFontMetrics  *GetPangoFontMetrics(Stack stack, int i)
 {
   NspPangoFontMetrics *M;
-  if (( M = pangofontmetrics_object(NthObj(i))) == NULLPANGOFONTMETRICS)
+  if (( M = nsp_pangofontmetrics_object(NthObj(i))) == NULLPANGOFONTMETRICS)
      ArgMessage(stack,i);
   return M;
 }
@@ -1402,7 +1402,7 @@ static NspMethods *pangofontmetrics_get_methods(void) { return pangofontmetrics_
 static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoGlyphString ----------- */
+/* ----------- NspPangoGlyphString ----------- */
 
 
 #include "nsp/object.h"
@@ -1411,17 +1411,17 @@ static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoGlyphString inherits from GBoxed 
+ * NspPangoGlyphString inherits from GBoxed 
  */
 
 int nsp_type_pangoglyphstring_id=0;
 NspTypePangoGlyphString *nsp_type_pangoglyphstring=NULL;
 
 /*
- * Type object for PangoGlyphString 
+ * Type object for NspPangoGlyphString 
  * all the instance of NspTypePangoGlyphString share the same id. 
  * nsp_type_pangoglyphstring: is an instance of NspTypePangoGlyphString 
- *    used for objects of PangoGlyphString type (i.e built with new_pangoglyphstring) 
+ *    used for objects of NspPangoGlyphString type (i.e built with new_pangoglyphstring) 
  * other instances are used for derived classes 
  */
 NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
@@ -1450,8 +1450,8 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
   
   /* object methods redefined for pangoglyphstring */ 
 
-  top->s_type =  (s_type_func *) pangoglyphstring_type_as_string;    
-  top->sh_type = (sh_type_func *) pangoglyphstring_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangoglyphstring_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangoglyphstring_type_short_string;
   /* top->create = (create_func*) int_pangoglyphstring_create;*/ 
   
   /* specific methods for pangoglyphstring */
@@ -1459,7 +1459,7 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
   type->init = (init_func *) init_pangoglyphstring;
 
   /* 
-   * PangoGlyphString interfaces can be added here 
+   * NspPangoGlyphString interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1485,7 +1485,7 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
 }
 
 /*
- * initialize PangoGlyphString instances 
+ * initialize NspPangoGlyphString instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1500,7 +1500,7 @@ static int init_pangoglyphstring(NspPangoGlyphString *Obj,NspTypePangoGlyphStrin
 }
 
 /*
- * new instance of PangoGlyphString 
+ * new instance of NspPangoGlyphString 
  */
 
 NspPangoGlyphString *new_pangoglyphstring() 
@@ -1515,7 +1515,7 @@ NspPangoGlyphString *new_pangoglyphstring()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoGlyphString 
+ * Object method redefined for NspPangoGlyphString 
  *-----------------------------------------------*/
 
 /*
@@ -1525,23 +1525,23 @@ NspPangoGlyphString *new_pangoglyphstring()
 static char pangoglyphstring_type_name[]="PangoGlyphString";
 static char pangoglyphstring_short_type_name[]="PangoGlyphString";
 
-static char *pangoglyphstring_type_as_string(void)
+static char *nsp_pangoglyphstring_type_as_string(void)
 {
   return(pangoglyphstring_type_name);
 }
 
-static char *pangoglyphstring_type_short_string(NspObject *v)
+static char *nsp_pangoglyphstring_type_short_string(NspObject *v)
 {
   return(pangoglyphstring_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoGlyphString objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoGlyphString objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoGlyphString   *pangoglyphstring_object(NspObject *O)
+NspPangoGlyphString *nsp_pangoglyphstring_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1571,7 +1571,7 @@ NspPangoGlyphString  *GetPangoGlyphStringCopy(Stack stack, int i)
 NspPangoGlyphString  *GetPangoGlyphString(Stack stack, int i)
 {
   NspPangoGlyphString *M;
-  if (( M = pangoglyphstring_object(NthObj(i))) == NULLPANGOGLYPHSTRING)
+  if (( M = nsp_pangoglyphstring_object(NthObj(i))) == NULLPANGOGLYPHSTRING)
      ArgMessage(stack,i);
   return M;
 }
@@ -1750,7 +1750,7 @@ static AttrTab pangoglyphstring_attrs[] = {
 
 
 
-/* ----------- PangoLanguage ----------- */
+/* ----------- NspPangoLanguage ----------- */
 
 
 #include "nsp/object.h"
@@ -1759,17 +1759,17 @@ static AttrTab pangoglyphstring_attrs[] = {
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoLanguage inherits from GBoxed 
+ * NspPangoLanguage inherits from GBoxed 
  */
 
 int nsp_type_pangolanguage_id=0;
 NspTypePangoLanguage *nsp_type_pangolanguage=NULL;
 
 /*
- * Type object for PangoLanguage 
+ * Type object for NspPangoLanguage 
  * all the instance of NspTypePangoLanguage share the same id. 
  * nsp_type_pangolanguage: is an instance of NspTypePangoLanguage 
- *    used for objects of PangoLanguage type (i.e built with new_pangolanguage) 
+ *    used for objects of NspPangoLanguage type (i.e built with new_pangolanguage) 
  * other instances are used for derived classes 
  */
 NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
@@ -1798,8 +1798,8 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
   
   /* object methods redefined for pangolanguage */ 
 
-  top->s_type =  (s_type_func *) pangolanguage_type_as_string;    
-  top->sh_type = (sh_type_func *) pangolanguage_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangolanguage_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangolanguage_type_short_string;
   /* top->create = (create_func*) int_pangolanguage_create;*/ 
   
   /* specific methods for pangolanguage */
@@ -1807,7 +1807,7 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
   type->init = (init_func *) init_pangolanguage;
 
   /* 
-   * PangoLanguage interfaces can be added here 
+   * NspPangoLanguage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1833,7 +1833,7 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
 }
 
 /*
- * initialize PangoLanguage instances 
+ * initialize NspPangoLanguage instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1848,7 +1848,7 @@ static int init_pangolanguage(NspPangoLanguage *Obj,NspTypePangoLanguage *type)
 }
 
 /*
- * new instance of PangoLanguage 
+ * new instance of NspPangoLanguage 
  */
 
 NspPangoLanguage *new_pangolanguage() 
@@ -1863,7 +1863,7 @@ NspPangoLanguage *new_pangolanguage()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoLanguage 
+ * Object method redefined for NspPangoLanguage 
  *-----------------------------------------------*/
 
 /*
@@ -1873,23 +1873,23 @@ NspPangoLanguage *new_pangolanguage()
 static char pangolanguage_type_name[]="PangoLanguage";
 static char pangolanguage_short_type_name[]="PangoLanguage";
 
-static char *pangolanguage_type_as_string(void)
+static char *nsp_pangolanguage_type_as_string(void)
 {
   return(pangolanguage_type_name);
 }
 
-static char *pangolanguage_type_short_string(NspObject *v)
+static char *nsp_pangolanguage_type_short_string(NspObject *v)
 {
   return(pangolanguage_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoLanguage objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoLanguage objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoLanguage   *pangolanguage_object(NspObject *O)
+NspPangoLanguage *nsp_pangolanguage_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1919,7 +1919,7 @@ NspPangoLanguage  *GetPangoLanguageCopy(Stack stack, int i)
 NspPangoLanguage  *GetPangoLanguage(Stack stack, int i)
 {
   NspPangoLanguage *M;
-  if (( M = pangolanguage_object(NthObj(i))) == NULLPANGOLANGUAGE)
+  if (( M = nsp_pangolanguage_object(NthObj(i))) == NULLPANGOLANGUAGE)
      ArgMessage(stack,i);
   return M;
 }
@@ -1975,7 +1975,7 @@ static NspMethods *pangolanguage_get_methods(void) { return pangolanguage_method
 static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoTabArray ----------- */
+/* ----------- NspPangoTabArray ----------- */
 
 
 #include "nsp/object.h"
@@ -1984,17 +1984,17 @@ static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoTabArray inherits from GBoxed 
+ * NspPangoTabArray inherits from GBoxed 
  */
 
 int nsp_type_pangotabarray_id=0;
 NspTypePangoTabArray *nsp_type_pangotabarray=NULL;
 
 /*
- * Type object for PangoTabArray 
+ * Type object for NspPangoTabArray 
  * all the instance of NspTypePangoTabArray share the same id. 
  * nsp_type_pangotabarray: is an instance of NspTypePangoTabArray 
- *    used for objects of PangoTabArray type (i.e built with new_pangotabarray) 
+ *    used for objects of NspPangoTabArray type (i.e built with new_pangotabarray) 
  * other instances are used for derived classes 
  */
 NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
@@ -2023,8 +2023,8 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
   
   /* object methods redefined for pangotabarray */ 
 
-  top->s_type =  (s_type_func *) pangotabarray_type_as_string;    
-  top->sh_type = (sh_type_func *) pangotabarray_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangotabarray_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangotabarray_type_short_string;
   /* top->create = (create_func*) int_pangotabarray_create;*/ 
   
   /* specific methods for pangotabarray */
@@ -2032,7 +2032,7 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
   type->init = (init_func *) init_pangotabarray;
 
   /* 
-   * PangoTabArray interfaces can be added here 
+   * NspPangoTabArray interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2058,7 +2058,7 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
 }
 
 /*
- * initialize PangoTabArray instances 
+ * initialize NspPangoTabArray instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2073,7 +2073,7 @@ static int init_pangotabarray(NspPangoTabArray *Obj,NspTypePangoTabArray *type)
 }
 
 /*
- * new instance of PangoTabArray 
+ * new instance of NspPangoTabArray 
  */
 
 NspPangoTabArray *new_pangotabarray() 
@@ -2088,7 +2088,7 @@ NspPangoTabArray *new_pangotabarray()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoTabArray 
+ * Object method redefined for NspPangoTabArray 
  *-----------------------------------------------*/
 
 /*
@@ -2098,23 +2098,23 @@ NspPangoTabArray *new_pangotabarray()
 static char pangotabarray_type_name[]="PangoTabArray";
 static char pangotabarray_short_type_name[]="PangoTabArray";
 
-static char *pangotabarray_type_as_string(void)
+static char *nsp_pangotabarray_type_as_string(void)
 {
   return(pangotabarray_type_name);
 }
 
-static char *pangotabarray_type_short_string(NspObject *v)
+static char *nsp_pangotabarray_type_short_string(NspObject *v)
 {
   return(pangotabarray_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoTabArray objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoTabArray objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoTabArray   *pangotabarray_object(NspObject *O)
+NspPangoTabArray *nsp_pangotabarray_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2144,7 +2144,7 @@ NspPangoTabArray  *GetPangoTabArrayCopy(Stack stack, int i)
 NspPangoTabArray  *GetPangoTabArray(Stack stack, int i)
 {
   NspPangoTabArray *M;
-  if (( M = pangotabarray_object(NthObj(i))) == NULLPANGOTABARRAY)
+  if (( M = nsp_pangotabarray_object(NthObj(i))) == NULLPANGOTABARRAY)
      ArgMessage(stack,i);
   return M;
 }
@@ -2302,7 +2302,7 @@ static NspMethods *pangotabarray_get_methods(void) { return pangotabarray_method
 static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoContext ----------- */
+/* ----------- NspPangoContext ----------- */
 
 
 #include "nsp/object.h"
@@ -2311,17 +2311,17 @@ static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoContext inherits from GObject 
+ * NspPangoContext inherits from GObject 
  */
 
 int nsp_type_pangocontext_id=0;
 NspTypePangoContext *nsp_type_pangocontext=NULL;
 
 /*
- * Type object for PangoContext 
+ * Type object for NspPangoContext 
  * all the instance of NspTypePangoContext share the same id. 
  * nsp_type_pangocontext: is an instance of NspTypePangoContext 
- *    used for objects of PangoContext type (i.e built with new_pangocontext) 
+ *    used for objects of NspPangoContext type (i.e built with new_pangocontext) 
  * other instances are used for derived classes 
  */
 NspTypePangoContext *new_type_pangocontext(type_mode mode)
@@ -2350,8 +2350,8 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
   
   /* object methods redefined for pangocontext */ 
 
-  top->s_type =  (s_type_func *) pangocontext_type_as_string;    
-  top->sh_type = (sh_type_func *) pangocontext_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangocontext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangocontext_type_short_string;
   /* top->create = (create_func*) int_pangocontext_create;*/ 
   
   /* specific methods for pangocontext */
@@ -2359,7 +2359,7 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
   type->init = (init_func *) init_pangocontext;
 
   /* 
-   * PangoContext interfaces can be added here 
+   * NspPangoContext interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2385,7 +2385,7 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
 }
 
 /*
- * initialize PangoContext instances 
+ * initialize NspPangoContext instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2400,7 +2400,7 @@ static int init_pangocontext(NspPangoContext *Obj,NspTypePangoContext *type)
 }
 
 /*
- * new instance of PangoContext 
+ * new instance of NspPangoContext 
  */
 
 NspPangoContext *new_pangocontext() 
@@ -2415,7 +2415,7 @@ NspPangoContext *new_pangocontext()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoContext 
+ * Object method redefined for NspPangoContext 
  *-----------------------------------------------*/
 
 /*
@@ -2425,23 +2425,23 @@ NspPangoContext *new_pangocontext()
 static char pangocontext_type_name[]="PangoContext";
 static char pangocontext_short_type_name[]="PangoContext";
 
-static char *pangocontext_type_as_string(void)
+static char *nsp_pangocontext_type_as_string(void)
 {
   return(pangocontext_type_name);
 }
 
-static char *pangocontext_type_short_string(NspObject *v)
+static char *nsp_pangocontext_type_short_string(NspObject *v)
 {
   return(pangocontext_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoContext objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoContext objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoContext   *pangocontext_object(NspObject *O)
+NspPangoContext *nsp_pangocontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2471,7 +2471,7 @@ NspPangoContext  *GetPangoContextCopy(Stack stack, int i)
 NspPangoContext  *GetPangoContext(Stack stack, int i)
 {
   NspPangoContext *M;
-  if (( M = pangocontext_object(NthObj(i))) == NULLPANGOCONTEXT)
+  if (( M = nsp_pangocontext_object(NthObj(i))) == NULLPANGOCONTEXT)
      ArgMessage(stack,i);
   return M;
 }
@@ -2686,7 +2686,7 @@ static NspMethods *pangocontext_get_methods(void) { return pangocontext_methods;
 static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFont ----------- */
+/* ----------- NspPangoFont ----------- */
 
 
 #include "nsp/object.h"
@@ -2695,17 +2695,17 @@ static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFont inherits from GObject 
+ * NspPangoFont inherits from GObject 
  */
 
 int nsp_type_pangofont_id=0;
 NspTypePangoFont *nsp_type_pangofont=NULL;
 
 /*
- * Type object for PangoFont 
+ * Type object for NspPangoFont 
  * all the instance of NspTypePangoFont share the same id. 
  * nsp_type_pangofont: is an instance of NspTypePangoFont 
- *    used for objects of PangoFont type (i.e built with new_pangofont) 
+ *    used for objects of NspPangoFont type (i.e built with new_pangofont) 
  * other instances are used for derived classes 
  */
 NspTypePangoFont *new_type_pangofont(type_mode mode)
@@ -2734,8 +2734,8 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
   
   /* object methods redefined for pangofont */ 
 
-  top->s_type =  (s_type_func *) pangofont_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofont_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofont_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofont_type_short_string;
   /* top->create = (create_func*) int_pangofont_create;*/ 
   
   /* specific methods for pangofont */
@@ -2743,7 +2743,7 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
   type->init = (init_func *) init_pangofont;
 
   /* 
-   * PangoFont interfaces can be added here 
+   * NspPangoFont interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -2769,7 +2769,7 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
 }
 
 /*
- * initialize PangoFont instances 
+ * initialize NspPangoFont instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -2784,7 +2784,7 @@ static int init_pangofont(NspPangoFont *Obj,NspTypePangoFont *type)
 }
 
 /*
- * new instance of PangoFont 
+ * new instance of NspPangoFont 
  */
 
 NspPangoFont *new_pangofont() 
@@ -2799,7 +2799,7 @@ NspPangoFont *new_pangofont()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFont 
+ * Object method redefined for NspPangoFont 
  *-----------------------------------------------*/
 
 /*
@@ -2809,23 +2809,23 @@ NspPangoFont *new_pangofont()
 static char pangofont_type_name[]="PangoFont";
 static char pangofont_short_type_name[]="PangoFont";
 
-static char *pangofont_type_as_string(void)
+static char *nsp_pangofont_type_as_string(void)
 {
   return(pangofont_type_name);
 }
 
-static char *pangofont_type_short_string(NspObject *v)
+static char *nsp_pangofont_type_short_string(NspObject *v)
 {
   return(pangofont_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFont objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFont objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFont   *pangofont_object(NspObject *O)
+NspPangoFont *nsp_pangofont_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2855,7 +2855,7 @@ NspPangoFont  *GetPangoFontCopy(Stack stack, int i)
 NspPangoFont  *GetPangoFont(Stack stack, int i)
 {
   NspPangoFont *M;
-  if (( M = pangofont_object(NthObj(i))) == NULLPANGOFONT)
+  if (( M = nsp_pangofont_object(NthObj(i))) == NULLPANGOFONT)
      ArgMessage(stack,i);
   return M;
 }
@@ -2945,7 +2945,7 @@ static NspMethods *pangofont_get_methods(void) { return pangofont_methods;};
 static AttrTab pangofont_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFontFace ----------- */
+/* ----------- NspPangoFontFace ----------- */
 
 
 #include "nsp/object.h"
@@ -2954,17 +2954,17 @@ static AttrTab pangofont_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontFace inherits from GObject 
+ * NspPangoFontFace inherits from GObject 
  */
 
 int nsp_type_pangofontface_id=0;
 NspTypePangoFontFace *nsp_type_pangofontface=NULL;
 
 /*
- * Type object for PangoFontFace 
+ * Type object for NspPangoFontFace 
  * all the instance of NspTypePangoFontFace share the same id. 
  * nsp_type_pangofontface: is an instance of NspTypePangoFontFace 
- *    used for objects of PangoFontFace type (i.e built with new_pangofontface) 
+ *    used for objects of NspPangoFontFace type (i.e built with new_pangofontface) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
@@ -2993,8 +2993,8 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
   
   /* object methods redefined for pangofontface */ 
 
-  top->s_type =  (s_type_func *) pangofontface_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontface_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontface_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontface_type_short_string;
   /* top->create = (create_func*) int_pangofontface_create;*/ 
   
   /* specific methods for pangofontface */
@@ -3002,7 +3002,7 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
   type->init = (init_func *) init_pangofontface;
 
   /* 
-   * PangoFontFace interfaces can be added here 
+   * NspPangoFontFace interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3028,7 +3028,7 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
 }
 
 /*
- * initialize PangoFontFace instances 
+ * initialize NspPangoFontFace instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3043,7 +3043,7 @@ static int init_pangofontface(NspPangoFontFace *Obj,NspTypePangoFontFace *type)
 }
 
 /*
- * new instance of PangoFontFace 
+ * new instance of NspPangoFontFace 
  */
 
 NspPangoFontFace *new_pangofontface() 
@@ -3058,7 +3058,7 @@ NspPangoFontFace *new_pangofontface()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontFace 
+ * Object method redefined for NspPangoFontFace 
  *-----------------------------------------------*/
 
 /*
@@ -3068,23 +3068,23 @@ NspPangoFontFace *new_pangofontface()
 static char pangofontface_type_name[]="PangoFontFace";
 static char pangofontface_short_type_name[]="PangoFontFace";
 
-static char *pangofontface_type_as_string(void)
+static char *nsp_pangofontface_type_as_string(void)
 {
   return(pangofontface_type_name);
 }
 
-static char *pangofontface_type_short_string(NspObject *v)
+static char *nsp_pangofontface_type_short_string(NspObject *v)
 {
   return(pangofontface_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontFace objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontFace objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontFace   *pangofontface_object(NspObject *O)
+NspPangoFontFace *nsp_pangofontface_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3114,7 +3114,7 @@ NspPangoFontFace  *GetPangoFontFaceCopy(Stack stack, int i)
 NspPangoFontFace  *GetPangoFontFace(Stack stack, int i)
 {
   NspPangoFontFace *M;
-  if (( M = pangofontface_object(NthObj(i))) == NULLPANGOFONTFACE)
+  if (( M = nsp_pangofontface_object(NthObj(i))) == NULLPANGOFONTFACE)
      ArgMessage(stack,i);
   return M;
 }
@@ -3168,7 +3168,7 @@ static NspMethods *pangofontface_get_methods(void) { return pangofontface_method
 static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFontFamily ----------- */
+/* ----------- NspPangoFontFamily ----------- */
 
 
 #include "nsp/object.h"
@@ -3177,17 +3177,17 @@ static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontFamily inherits from GObject 
+ * NspPangoFontFamily inherits from GObject 
  */
 
 int nsp_type_pangofontfamily_id=0;
 NspTypePangoFontFamily *nsp_type_pangofontfamily=NULL;
 
 /*
- * Type object for PangoFontFamily 
+ * Type object for NspPangoFontFamily 
  * all the instance of NspTypePangoFontFamily share the same id. 
  * nsp_type_pangofontfamily: is an instance of NspTypePangoFontFamily 
- *    used for objects of PangoFontFamily type (i.e built with new_pangofontfamily) 
+ *    used for objects of NspPangoFontFamily type (i.e built with new_pangofontfamily) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
@@ -3216,8 +3216,8 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
   
   /* object methods redefined for pangofontfamily */ 
 
-  top->s_type =  (s_type_func *) pangofontfamily_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontfamily_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontfamily_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontfamily_type_short_string;
   /* top->create = (create_func*) int_pangofontfamily_create;*/ 
   
   /* specific methods for pangofontfamily */
@@ -3225,7 +3225,7 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
   type->init = (init_func *) init_pangofontfamily;
 
   /* 
-   * PangoFontFamily interfaces can be added here 
+   * NspPangoFontFamily interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3251,7 +3251,7 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
 }
 
 /*
- * initialize PangoFontFamily instances 
+ * initialize NspPangoFontFamily instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3266,7 +3266,7 @@ static int init_pangofontfamily(NspPangoFontFamily *Obj,NspTypePangoFontFamily *
 }
 
 /*
- * new instance of PangoFontFamily 
+ * new instance of NspPangoFontFamily 
  */
 
 NspPangoFontFamily *new_pangofontfamily() 
@@ -3281,7 +3281,7 @@ NspPangoFontFamily *new_pangofontfamily()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontFamily 
+ * Object method redefined for NspPangoFontFamily 
  *-----------------------------------------------*/
 
 /*
@@ -3291,23 +3291,23 @@ NspPangoFontFamily *new_pangofontfamily()
 static char pangofontfamily_type_name[]="PangoFontFamily";
 static char pangofontfamily_short_type_name[]="PangoFontFamily";
 
-static char *pangofontfamily_type_as_string(void)
+static char *nsp_pangofontfamily_type_as_string(void)
 {
   return(pangofontfamily_type_name);
 }
 
-static char *pangofontfamily_type_short_string(NspObject *v)
+static char *nsp_pangofontfamily_type_short_string(NspObject *v)
 {
   return(pangofontfamily_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontFamily objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontFamily objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontFamily   *pangofontfamily_object(NspObject *O)
+NspPangoFontFamily *nsp_pangofontfamily_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3337,7 +3337,7 @@ NspPangoFontFamily  *GetPangoFontFamilyCopy(Stack stack, int i)
 NspPangoFontFamily  *GetPangoFontFamily(Stack stack, int i)
 {
   NspPangoFontFamily *M;
-  if (( M = pangofontfamily_object(NthObj(i))) == NULLPANGOFONTFAMILY)
+  if (( M = nsp_pangofontfamily_object(NthObj(i))) == NULLPANGOFONTFAMILY)
      ArgMessage(stack,i);
   return M;
 }
@@ -3401,7 +3401,7 @@ static NspMethods *pangofontfamily_get_methods(void) { return pangofontfamily_me
 static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFontMap ----------- */
+/* ----------- NspPangoFontMap ----------- */
 
 
 #include "nsp/object.h"
@@ -3410,17 +3410,17 @@ static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontMap inherits from GObject 
+ * NspPangoFontMap inherits from GObject 
  */
 
 int nsp_type_pangofontmap_id=0;
 NspTypePangoFontMap *nsp_type_pangofontmap=NULL;
 
 /*
- * Type object for PangoFontMap 
+ * Type object for NspPangoFontMap 
  * all the instance of NspTypePangoFontMap share the same id. 
  * nsp_type_pangofontmap: is an instance of NspTypePangoFontMap 
- *    used for objects of PangoFontMap type (i.e built with new_pangofontmap) 
+ *    used for objects of NspPangoFontMap type (i.e built with new_pangofontmap) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
@@ -3449,8 +3449,8 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
   
   /* object methods redefined for pangofontmap */ 
 
-  top->s_type =  (s_type_func *) pangofontmap_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontmap_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontmap_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontmap_type_short_string;
   /* top->create = (create_func*) int_pangofontmap_create;*/ 
   
   /* specific methods for pangofontmap */
@@ -3458,7 +3458,7 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
   type->init = (init_func *) init_pangofontmap;
 
   /* 
-   * PangoFontMap interfaces can be added here 
+   * NspPangoFontMap interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3484,7 +3484,7 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
 }
 
 /*
- * initialize PangoFontMap instances 
+ * initialize NspPangoFontMap instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3499,7 +3499,7 @@ static int init_pangofontmap(NspPangoFontMap *Obj,NspTypePangoFontMap *type)
 }
 
 /*
- * new instance of PangoFontMap 
+ * new instance of NspPangoFontMap 
  */
 
 NspPangoFontMap *new_pangofontmap() 
@@ -3514,7 +3514,7 @@ NspPangoFontMap *new_pangofontmap()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontMap 
+ * Object method redefined for NspPangoFontMap 
  *-----------------------------------------------*/
 
 /*
@@ -3524,23 +3524,23 @@ NspPangoFontMap *new_pangofontmap()
 static char pangofontmap_type_name[]="PangoFontMap";
 static char pangofontmap_short_type_name[]="PangoFontMap";
 
-static char *pangofontmap_type_as_string(void)
+static char *nsp_pangofontmap_type_as_string(void)
 {
   return(pangofontmap_type_name);
 }
 
-static char *pangofontmap_type_short_string(NspObject *v)
+static char *nsp_pangofontmap_type_short_string(NspObject *v)
 {
   return(pangofontmap_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontMap objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontMap objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontMap   *pangofontmap_object(NspObject *O)
+NspPangoFontMap *nsp_pangofontmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3570,7 +3570,7 @@ NspPangoFontMap  *GetPangoFontMapCopy(Stack stack, int i)
 NspPangoFontMap  *GetPangoFontMap(Stack stack, int i)
 {
   NspPangoFontMap *M;
-  if (( M = pangofontmap_object(NthObj(i))) == NULLPANGOFONTMAP)
+  if (( M = nsp_pangofontmap_object(NthObj(i))) == NULLPANGOFONTMAP)
      ArgMessage(stack,i);
   return M;
 }
@@ -3675,7 +3675,7 @@ static NspMethods *pangofontmap_get_methods(void) { return pangofontmap_methods;
 static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoFontset ----------- */
+/* ----------- NspPangoFontset ----------- */
 
 
 #include "nsp/object.h"
@@ -3684,17 +3684,17 @@ static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoFontset inherits from GObject 
+ * NspPangoFontset inherits from GObject 
  */
 
 int nsp_type_pangofontset_id=0;
 NspTypePangoFontset *nsp_type_pangofontset=NULL;
 
 /*
- * Type object for PangoFontset 
+ * Type object for NspPangoFontset 
  * all the instance of NspTypePangoFontset share the same id. 
  * nsp_type_pangofontset: is an instance of NspTypePangoFontset 
- *    used for objects of PangoFontset type (i.e built with new_pangofontset) 
+ *    used for objects of NspPangoFontset type (i.e built with new_pangofontset) 
  * other instances are used for derived classes 
  */
 NspTypePangoFontset *new_type_pangofontset(type_mode mode)
@@ -3723,8 +3723,8 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
   
   /* object methods redefined for pangofontset */ 
 
-  top->s_type =  (s_type_func *) pangofontset_type_as_string;    
-  top->sh_type = (sh_type_func *) pangofontset_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangofontset_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangofontset_type_short_string;
   /* top->create = (create_func*) int_pangofontset_create;*/ 
   
   /* specific methods for pangofontset */
@@ -3732,7 +3732,7 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
   type->init = (init_func *) init_pangofontset;
 
   /* 
-   * PangoFontset interfaces can be added here 
+   * NspPangoFontset interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3758,7 +3758,7 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
 }
 
 /*
- * initialize PangoFontset instances 
+ * initialize NspPangoFontset instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -3773,7 +3773,7 @@ static int init_pangofontset(NspPangoFontset *Obj,NspTypePangoFontset *type)
 }
 
 /*
- * new instance of PangoFontset 
+ * new instance of NspPangoFontset 
  */
 
 NspPangoFontset *new_pangofontset() 
@@ -3788,7 +3788,7 @@ NspPangoFontset *new_pangofontset()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoFontset 
+ * Object method redefined for NspPangoFontset 
  *-----------------------------------------------*/
 
 /*
@@ -3798,23 +3798,23 @@ NspPangoFontset *new_pangofontset()
 static char pangofontset_type_name[]="PangoFontset";
 static char pangofontset_short_type_name[]="PangoFontset";
 
-static char *pangofontset_type_as_string(void)
+static char *nsp_pangofontset_type_as_string(void)
 {
   return(pangofontset_type_name);
 }
 
-static char *pangofontset_type_short_string(NspObject *v)
+static char *nsp_pangofontset_type_short_string(NspObject *v)
 {
   return(pangofontset_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoFontset objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoFontset objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoFontset   *pangofontset_object(NspObject *O)
+NspPangoFontset *nsp_pangofontset_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3844,7 +3844,7 @@ NspPangoFontset  *GetPangoFontsetCopy(Stack stack, int i)
 NspPangoFontset  *GetPangoFontset(Stack stack, int i)
 {
   NspPangoFontset *M;
-  if (( M = pangofontset_object(NthObj(i))) == NULLPANGOFONTSET)
+  if (( M = nsp_pangofontset_object(NthObj(i))) == NULLPANGOFONTSET)
      ArgMessage(stack,i);
   return M;
 }
@@ -3904,7 +3904,7 @@ static NspMethods *pangofontset_get_methods(void) { return pangofontset_methods;
 static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- PangoLayout ----------- */
+/* ----------- NspPangoLayout ----------- */
 
 
 #include "nsp/object.h"
@@ -3913,17 +3913,17 @@ static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * PangoLayout inherits from GObject 
+ * NspPangoLayout inherits from GObject 
  */
 
 int nsp_type_pangolayout_id=0;
 NspTypePangoLayout *nsp_type_pangolayout=NULL;
 
 /*
- * Type object for PangoLayout 
+ * Type object for NspPangoLayout 
  * all the instance of NspTypePangoLayout share the same id. 
  * nsp_type_pangolayout: is an instance of NspTypePangoLayout 
- *    used for objects of PangoLayout type (i.e built with new_pangolayout) 
+ *    used for objects of NspPangoLayout type (i.e built with new_pangolayout) 
  * other instances are used for derived classes 
  */
 NspTypePangoLayout *new_type_pangolayout(type_mode mode)
@@ -3952,8 +3952,8 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
   
   /* object methods redefined for pangolayout */ 
 
-  top->s_type =  (s_type_func *) pangolayout_type_as_string;    
-  top->sh_type = (sh_type_func *) pangolayout_type_short_string;
+  top->s_type =  (s_type_func *) nsp_pangolayout_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_pangolayout_type_short_string;
   /* top->create = (create_func*) int_pangolayout_create;*/ 
   
   /* specific methods for pangolayout */
@@ -3961,7 +3961,7 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
   type->init = (init_func *) init_pangolayout;
 
   /* 
-   * PangoLayout interfaces can be added here 
+   * NspPangoLayout interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -3987,7 +3987,7 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
 }
 
 /*
- * initialize PangoLayout instances 
+ * initialize NspPangoLayout instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -4002,7 +4002,7 @@ static int init_pangolayout(NspPangoLayout *Obj,NspTypePangoLayout *type)
 }
 
 /*
- * new instance of PangoLayout 
+ * new instance of NspPangoLayout 
  */
 
 NspPangoLayout *new_pangolayout() 
@@ -4017,7 +4017,7 @@ NspPangoLayout *new_pangolayout()
 }
 
 /*----------------------------------------------
- * Object method redefined for PangoLayout 
+ * Object method redefined for NspPangoLayout 
  *-----------------------------------------------*/
 
 /*
@@ -4027,23 +4027,23 @@ NspPangoLayout *new_pangolayout()
 static char pangolayout_type_name[]="PangoLayout";
 static char pangolayout_short_type_name[]="PangoLayout";
 
-static char *pangolayout_type_as_string(void)
+static char *nsp_pangolayout_type_as_string(void)
 {
   return(pangolayout_type_name);
 }
 
-static char *pangolayout_type_short_string(NspObject *v)
+static char *nsp_pangolayout_type_short_string(NspObject *v)
 {
   return(pangolayout_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for PangoLayout objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspPangoLayout objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspPangoLayout   *pangolayout_object(NspObject *O)
+NspPangoLayout *nsp_pangolayout_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4073,7 +4073,7 @@ NspPangoLayout  *GetPangoLayoutCopy(Stack stack, int i)
 NspPangoLayout  *GetPangoLayout(Stack stack, int i)
 {
   NspPangoLayout *M;
-  if (( M = pangolayout_object(NthObj(i))) == NULLPANGOLAYOUT)
+  if (( M = nsp_pangolayout_object(NthObj(i))) == NULLPANGOLAYOUT)
      ArgMessage(stack,i);
   return M;
 }
@@ -4621,7 +4621,7 @@ static AttrTab pangolayout_attrs[]={{NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-int _wrap_pango_attr_type_register(Stack stack, int rhs, int opt, int lhs)
+int _wrap_pango_attr_type_register(Stack stack, int rhs, int opt, int lhs) /* pango_attr_type_register */
 {
   int_types T[] = {string,t_end};
   char *name;
@@ -4962,7 +4962,7 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
 #line 4963 "pango.c"
 
 
-int _wrap_pango_find_paragraph_boundary(Stack stack, int rhs, int opt, int lhs)
+int _wrap_pango_find_paragraph_boundary(Stack stack, int rhs, int opt, int lhs) /* find_paragraph_boundary */
 {
   int_types T[] = {string, s_int, s_int, s_int,t_end};
   char *text;
@@ -4972,7 +4972,7 @@ pango_find_paragraph_boundary(text, length, &paragraph_delimiter_index, &next_pa
   return 0;
 }
 
-int _wrap_pango_reorder_items(Stack stack, int rhs, int opt, int lhs)
+int _wrap_pango_reorder_items(Stack stack, int rhs, int opt, int lhs) /* reorder_items */
 {
   int_types T[] = {list,t_end};
   NspList *nsp_logical_items, *nsp_list;
@@ -4985,7 +4985,7 @@ ret = pango_reorder_items(logical_items);
 
 }
 
-int _wrap_pango_language_from_string(Stack stack, int rhs, int opt, int lhs)
+int _wrap_pango_language_from_string(Stack stack, int rhs, int opt, int lhs) /* pango_language_from_string */
 {
   int_types T[] = {string,t_end};
   char *language;

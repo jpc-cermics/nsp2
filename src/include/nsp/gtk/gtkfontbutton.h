@@ -48,8 +48,8 @@ extern NspGtkFontButton *GetGtkFontButton (Stack stack, int i);
 
 #ifdef GtkFontButton_Private 
 static int init_gtkfontbutton(NspGtkFontButton *o,NspTypeGtkFontButton *type);
-static char *gtkfontbutton_type_as_string(void);
-static char *gtkfontbutton_type_short_string(NspObject *v);
+static char *nsp_gtkfontbutton_type_as_string(void);
+static char *nsp_gtkfontbutton_type_short_string(NspObject *v);
 static AttrTab gtkfontbutton_attrs[];
 /* static int int_gtkfontbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfontbutton_get_methods(void); 

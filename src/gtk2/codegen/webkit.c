@@ -73,7 +73,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #include "nsp/gtk/webkitnetworkrequest.h"
 
 
-/* ----------- WebKitWebView ----------- */
+/* ----------- NspWebKitWebView ----------- */
 
 
 #include "nsp/object.h"
@@ -82,17 +82,17 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitWebView inherits from GtkContainer 
+ * NspWebKitWebView inherits from GtkContainer 
  */
 
 int nsp_type_webkitwebview_id=0;
 NspTypeWebKitWebView *nsp_type_webkitwebview=NULL;
 
 /*
- * Type object for WebKitWebView 
+ * Type object for NspWebKitWebView 
  * all the instance of NspTypeWebKitWebView share the same id. 
  * nsp_type_webkitwebview: is an instance of NspTypeWebKitWebView 
- *    used for objects of WebKitWebView type (i.e built with new_webkitwebview) 
+ *    used for objects of NspWebKitWebView type (i.e built with new_webkitwebview) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
@@ -121,8 +121,8 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
   
   /* object methods redefined for webkitwebview */ 
 
-  top->s_type =  (s_type_func *) webkitwebview_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitwebview_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitwebview_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitwebview_type_short_string;
   /* top->create = (create_func*) int_webkitwebview_create;*/ 
   
   /* specific methods for webkitwebview */
@@ -130,7 +130,7 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
   type->init = (init_func *) init_webkitwebview;
 
   /* 
-   * WebKitWebView interfaces can be added here 
+   * NspWebKitWebView interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -156,7 +156,7 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
 }
 
 /*
- * initialize WebKitWebView instances 
+ * initialize NspWebKitWebView instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -171,7 +171,7 @@ static int init_webkitwebview(NspWebKitWebView *Obj,NspTypeWebKitWebView *type)
 }
 
 /*
- * new instance of WebKitWebView 
+ * new instance of NspWebKitWebView 
  */
 
 NspWebKitWebView *new_webkitwebview() 
@@ -186,7 +186,7 @@ NspWebKitWebView *new_webkitwebview()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitWebView 
+ * Object method redefined for NspWebKitWebView 
  *-----------------------------------------------*/
 
 /*
@@ -196,23 +196,23 @@ NspWebKitWebView *new_webkitwebview()
 static char webkitwebview_type_name[]="WebKitWebView";
 static char webkitwebview_short_type_name[]="WebKitWebView";
 
-static char *webkitwebview_type_as_string(void)
+static char *nsp_webkitwebview_type_as_string(void)
 {
   return(webkitwebview_type_name);
 }
 
-static char *webkitwebview_type_short_string(NspObject *v)
+static char *nsp_webkitwebview_type_short_string(NspObject *v)
 {
   return(webkitwebview_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitWebView objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitWebView objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitWebView   *webkitwebview_object(NspObject *O)
+NspWebKitWebView *nsp_webkitwebview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -242,7 +242,7 @@ NspWebKitWebView  *GetWebKitWebViewCopy(Stack stack, int i)
 NspWebKitWebView  *GetWebKitWebView(Stack stack, int i)
 {
   NspWebKitWebView *M;
-  if (( M = webkitwebview_object(NthObj(i))) == NULLWEBKITWEBVIEW)
+  if (( M = nsp_webkitwebview_object(NthObj(i))) == NULLWEBKITWEBVIEW)
      ArgMessage(stack,i);
   return M;
 }
@@ -639,7 +639,7 @@ static NspMethods *webkitwebview_get_methods(void) { return webkitwebview_method
 static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- WebKitWebFrame ----------- */
+/* ----------- NspWebKitWebFrame ----------- */
 
 
 #include "nsp/object.h"
@@ -648,17 +648,17 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitWebFrame inherits from GObject 
+ * NspWebKitWebFrame inherits from GObject 
  */
 
 int nsp_type_webkitwebframe_id=0;
 NspTypeWebKitWebFrame *nsp_type_webkitwebframe=NULL;
 
 /*
- * Type object for WebKitWebFrame 
+ * Type object for NspWebKitWebFrame 
  * all the instance of NspTypeWebKitWebFrame share the same id. 
  * nsp_type_webkitwebframe: is an instance of NspTypeWebKitWebFrame 
- *    used for objects of WebKitWebFrame type (i.e built with new_webkitwebframe) 
+ *    used for objects of NspWebKitWebFrame type (i.e built with new_webkitwebframe) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
@@ -687,8 +687,8 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
   
   /* object methods redefined for webkitwebframe */ 
 
-  top->s_type =  (s_type_func *) webkitwebframe_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitwebframe_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitwebframe_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitwebframe_type_short_string;
   /* top->create = (create_func*) int_webkitwebframe_create;*/ 
   
   /* specific methods for webkitwebframe */
@@ -696,7 +696,7 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
   type->init = (init_func *) init_webkitwebframe;
 
   /* 
-   * WebKitWebFrame interfaces can be added here 
+   * NspWebKitWebFrame interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -722,7 +722,7 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
 }
 
 /*
- * initialize WebKitWebFrame instances 
+ * initialize NspWebKitWebFrame instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -737,7 +737,7 @@ static int init_webkitwebframe(NspWebKitWebFrame *Obj,NspTypeWebKitWebFrame *typ
 }
 
 /*
- * new instance of WebKitWebFrame 
+ * new instance of NspWebKitWebFrame 
  */
 
 NspWebKitWebFrame *new_webkitwebframe() 
@@ -752,7 +752,7 @@ NspWebKitWebFrame *new_webkitwebframe()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitWebFrame 
+ * Object method redefined for NspWebKitWebFrame 
  *-----------------------------------------------*/
 
 /*
@@ -762,23 +762,23 @@ NspWebKitWebFrame *new_webkitwebframe()
 static char webkitwebframe_type_name[]="WebKitWebFrame";
 static char webkitwebframe_short_type_name[]="WebKitWebFrame";
 
-static char *webkitwebframe_type_as_string(void)
+static char *nsp_webkitwebframe_type_as_string(void)
 {
   return(webkitwebframe_type_name);
 }
 
-static char *webkitwebframe_type_short_string(NspObject *v)
+static char *nsp_webkitwebframe_type_short_string(NspObject *v)
 {
   return(webkitwebframe_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitWebFrame objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitWebFrame objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitWebFrame   *webkitwebframe_object(NspObject *O)
+NspWebKitWebFrame *nsp_webkitwebframe_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -808,7 +808,7 @@ NspWebKitWebFrame  *GetWebKitWebFrameCopy(Stack stack, int i)
 NspWebKitWebFrame  *GetWebKitWebFrame(Stack stack, int i)
 {
   NspWebKitWebFrame *M;
-  if (( M = webkitwebframe_object(NthObj(i))) == NULLWEBKITWEBFRAME)
+  if (( M = nsp_webkitwebframe_object(NthObj(i))) == NULLWEBKITWEBFRAME)
      ArgMessage(stack,i);
   return M;
 }
@@ -946,7 +946,7 @@ static NspMethods *webkitwebframe_get_methods(void) { return webkitwebframe_meth
 static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- WebKitWebHistoryItem ----------- */
+/* ----------- NspWebKitWebHistoryItem ----------- */
 
 
 #include "nsp/object.h"
@@ -955,17 +955,17 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitWebHistoryItem inherits from GObject 
+ * NspWebKitWebHistoryItem inherits from GObject 
  */
 
 int nsp_type_webkitwebhistoryitem_id=0;
 NspTypeWebKitWebHistoryItem *nsp_type_webkitwebhistoryitem=NULL;
 
 /*
- * Type object for WebKitWebHistoryItem 
+ * Type object for NspWebKitWebHistoryItem 
  * all the instance of NspTypeWebKitWebHistoryItem share the same id. 
  * nsp_type_webkitwebhistoryitem: is an instance of NspTypeWebKitWebHistoryItem 
- *    used for objects of WebKitWebHistoryItem type (i.e built with new_webkitwebhistoryitem) 
+ *    used for objects of NspWebKitWebHistoryItem type (i.e built with new_webkitwebhistoryitem) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
@@ -994,8 +994,8 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
   
   /* object methods redefined for webkitwebhistoryitem */ 
 
-  top->s_type =  (s_type_func *) webkitwebhistoryitem_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitwebhistoryitem_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitwebhistoryitem_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitwebhistoryitem_type_short_string;
   /* top->create = (create_func*) int_webkitwebhistoryitem_create;*/ 
   
   /* specific methods for webkitwebhistoryitem */
@@ -1003,7 +1003,7 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
   type->init = (init_func *) init_webkitwebhistoryitem;
 
   /* 
-   * WebKitWebHistoryItem interfaces can be added here 
+   * NspWebKitWebHistoryItem interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1029,7 +1029,7 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
 }
 
 /*
- * initialize WebKitWebHistoryItem instances 
+ * initialize NspWebKitWebHistoryItem instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1044,7 +1044,7 @@ static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *Obj,NspTypeWebKitW
 }
 
 /*
- * new instance of WebKitWebHistoryItem 
+ * new instance of NspWebKitWebHistoryItem 
  */
 
 NspWebKitWebHistoryItem *new_webkitwebhistoryitem() 
@@ -1059,7 +1059,7 @@ NspWebKitWebHistoryItem *new_webkitwebhistoryitem()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitWebHistoryItem 
+ * Object method redefined for NspWebKitWebHistoryItem 
  *-----------------------------------------------*/
 
 /*
@@ -1069,23 +1069,23 @@ NspWebKitWebHistoryItem *new_webkitwebhistoryitem()
 static char webkitwebhistoryitem_type_name[]="WebKitWebHistoryItem";
 static char webkitwebhistoryitem_short_type_name[]="WebKitWebHistoryItem";
 
-static char *webkitwebhistoryitem_type_as_string(void)
+static char *nsp_webkitwebhistoryitem_type_as_string(void)
 {
   return(webkitwebhistoryitem_type_name);
 }
 
-static char *webkitwebhistoryitem_type_short_string(NspObject *v)
+static char *nsp_webkitwebhistoryitem_type_short_string(NspObject *v)
 {
   return(webkitwebhistoryitem_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitWebHistoryItem objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitWebHistoryItem objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitWebHistoryItem   *webkitwebhistoryitem_object(NspObject *O)
+NspWebKitWebHistoryItem *nsp_webkitwebhistoryitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1115,7 +1115,7 @@ NspWebKitWebHistoryItem  *GetWebKitWebHistoryItemCopy(Stack stack, int i)
 NspWebKitWebHistoryItem  *GetWebKitWebHistoryItem(Stack stack, int i)
 {
   NspWebKitWebHistoryItem *M;
-  if (( M = webkitwebhistoryitem_object(NthObj(i))) == NULLWEBKITWEBHISTORYITEM)
+  if (( M = nsp_webkitwebhistoryitem_object(NthObj(i))) == NULLWEBKITWEBHISTORYITEM)
      ArgMessage(stack,i);
   return M;
 }
@@ -1216,7 +1216,7 @@ static NspMethods *webkitwebhistoryitem_get_methods(void) { return webkitwebhist
 static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- WebKitWebBackForwardList ----------- */
+/* ----------- NspWebKitWebBackForwardList ----------- */
 
 
 #include "nsp/object.h"
@@ -1225,17 +1225,17 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitWebBackForwardList inherits from GObject 
+ * NspWebKitWebBackForwardList inherits from GObject 
  */
 
 int nsp_type_webkitwebbackforwardlist_id=0;
 NspTypeWebKitWebBackForwardList *nsp_type_webkitwebbackforwardlist=NULL;
 
 /*
- * Type object for WebKitWebBackForwardList 
+ * Type object for NspWebKitWebBackForwardList 
  * all the instance of NspTypeWebKitWebBackForwardList share the same id. 
  * nsp_type_webkitwebbackforwardlist: is an instance of NspTypeWebKitWebBackForwardList 
- *    used for objects of WebKitWebBackForwardList type (i.e built with new_webkitwebbackforwardlist) 
+ *    used for objects of NspWebKitWebBackForwardList type (i.e built with new_webkitwebbackforwardlist) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mode)
@@ -1264,8 +1264,8 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
   
   /* object methods redefined for webkitwebbackforwardlist */ 
 
-  top->s_type =  (s_type_func *) webkitwebbackforwardlist_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitwebbackforwardlist_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitwebbackforwardlist_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitwebbackforwardlist_type_short_string;
   /* top->create = (create_func*) int_webkitwebbackforwardlist_create;*/ 
   
   /* specific methods for webkitwebbackforwardlist */
@@ -1273,7 +1273,7 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
   type->init = (init_func *) init_webkitwebbackforwardlist;
 
   /* 
-   * WebKitWebBackForwardList interfaces can be added here 
+   * NspWebKitWebBackForwardList interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1299,7 +1299,7 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
 }
 
 /*
- * initialize WebKitWebBackForwardList instances 
+ * initialize NspWebKitWebBackForwardList instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1314,7 +1314,7 @@ static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *Obj,NspTyp
 }
 
 /*
- * new instance of WebKitWebBackForwardList 
+ * new instance of NspWebKitWebBackForwardList 
  */
 
 NspWebKitWebBackForwardList *new_webkitwebbackforwardlist() 
@@ -1329,7 +1329,7 @@ NspWebKitWebBackForwardList *new_webkitwebbackforwardlist()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitWebBackForwardList 
+ * Object method redefined for NspWebKitWebBackForwardList 
  *-----------------------------------------------*/
 
 /*
@@ -1339,23 +1339,23 @@ NspWebKitWebBackForwardList *new_webkitwebbackforwardlist()
 static char webkitwebbackforwardlist_type_name[]="WebKitWebBackForwardList";
 static char webkitwebbackforwardlist_short_type_name[]="WebKitWebBackForwardList";
 
-static char *webkitwebbackforwardlist_type_as_string(void)
+static char *nsp_webkitwebbackforwardlist_type_as_string(void)
 {
   return(webkitwebbackforwardlist_type_name);
 }
 
-static char *webkitwebbackforwardlist_type_short_string(NspObject *v)
+static char *nsp_webkitwebbackforwardlist_type_short_string(NspObject *v)
 {
   return(webkitwebbackforwardlist_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitWebBackForwardList objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitWebBackForwardList objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitWebBackForwardList   *webkitwebbackforwardlist_object(NspObject *O)
+NspWebKitWebBackForwardList *nsp_webkitwebbackforwardlist_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1385,7 +1385,7 @@ NspWebKitWebBackForwardList  *GetWebKitWebBackForwardListCopy(Stack stack, int i
 NspWebKitWebBackForwardList  *GetWebKitWebBackForwardList(Stack stack, int i)
 {
   NspWebKitWebBackForwardList *M;
-  if (( M = webkitwebbackforwardlist_object(NthObj(i))) == NULLWEBKITWEBBACKFORWARDLIST)
+  if (( M = nsp_webkitwebbackforwardlist_object(NthObj(i))) == NULLWEBKITWEBBACKFORWARDLIST)
      ArgMessage(stack,i);
   return M;
 }
@@ -1583,7 +1583,7 @@ static NspMethods *webkitwebbackforwardlist_get_methods(void) { return webkitweb
 static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- WebKitWebSettings ----------- */
+/* ----------- NspWebKitWebSettings ----------- */
 
 
 #include "nsp/object.h"
@@ -1592,17 +1592,17 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitWebSettings inherits from GObject 
+ * NspWebKitWebSettings inherits from GObject 
  */
 
 int nsp_type_webkitwebsettings_id=0;
 NspTypeWebKitWebSettings *nsp_type_webkitwebsettings=NULL;
 
 /*
- * Type object for WebKitWebSettings 
+ * Type object for NspWebKitWebSettings 
  * all the instance of NspTypeWebKitWebSettings share the same id. 
  * nsp_type_webkitwebsettings: is an instance of NspTypeWebKitWebSettings 
- *    used for objects of WebKitWebSettings type (i.e built with new_webkitwebsettings) 
+ *    used for objects of NspWebKitWebSettings type (i.e built with new_webkitwebsettings) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
@@ -1631,8 +1631,8 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
   
   /* object methods redefined for webkitwebsettings */ 
 
-  top->s_type =  (s_type_func *) webkitwebsettings_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitwebsettings_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitwebsettings_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitwebsettings_type_short_string;
   /* top->create = (create_func*) int_webkitwebsettings_create;*/ 
   
   /* specific methods for webkitwebsettings */
@@ -1640,7 +1640,7 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
   type->init = (init_func *) init_webkitwebsettings;
 
   /* 
-   * WebKitWebSettings interfaces can be added here 
+   * NspWebKitWebSettings interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1666,7 +1666,7 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
 }
 
 /*
- * initialize WebKitWebSettings instances 
+ * initialize NspWebKitWebSettings instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1681,7 +1681,7 @@ static int init_webkitwebsettings(NspWebKitWebSettings *Obj,NspTypeWebKitWebSett
 }
 
 /*
- * new instance of WebKitWebSettings 
+ * new instance of NspWebKitWebSettings 
  */
 
 NspWebKitWebSettings *new_webkitwebsettings() 
@@ -1696,7 +1696,7 @@ NspWebKitWebSettings *new_webkitwebsettings()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitWebSettings 
+ * Object method redefined for NspWebKitWebSettings 
  *-----------------------------------------------*/
 
 /*
@@ -1706,23 +1706,23 @@ NspWebKitWebSettings *new_webkitwebsettings()
 static char webkitwebsettings_type_name[]="WebKitWebSettings";
 static char webkitwebsettings_short_type_name[]="WebKitWebSettings";
 
-static char *webkitwebsettings_type_as_string(void)
+static char *nsp_webkitwebsettings_type_as_string(void)
 {
   return(webkitwebsettings_type_name);
 }
 
-static char *webkitwebsettings_type_short_string(NspObject *v)
+static char *nsp_webkitwebsettings_type_short_string(NspObject *v)
 {
   return(webkitwebsettings_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitWebSettings objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitWebSettings objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitWebSettings   *webkitwebsettings_object(NspObject *O)
+NspWebKitWebSettings *nsp_webkitwebsettings_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1752,7 +1752,7 @@ NspWebKitWebSettings  *GetWebKitWebSettingsCopy(Stack stack, int i)
 NspWebKitWebSettings  *GetWebKitWebSettings(Stack stack, int i)
 {
   NspWebKitWebSettings *M;
-  if (( M = webkitwebsettings_object(NthObj(i))) == NULLWEBKITWEBSETTINGS)
+  if (( M = nsp_webkitwebsettings_object(NthObj(i))) == NULLWEBKITWEBSETTINGS)
      ArgMessage(stack,i);
   return M;
 }
@@ -1810,7 +1810,7 @@ static NspMethods *webkitwebsettings_get_methods(void) { return webkitwebsetting
 static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 
 
-/* ----------- WebKitNetworkRequest ----------- */
+/* ----------- NspWebKitNetworkRequest ----------- */
 
 
 #include "nsp/object.h"
@@ -1819,17 +1819,17 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
 /* 
- * WebKitNetworkRequest inherits from GObject 
+ * NspWebKitNetworkRequest inherits from GObject 
  */
 
 int nsp_type_webkitnetworkrequest_id=0;
 NspTypeWebKitNetworkRequest *nsp_type_webkitnetworkrequest=NULL;
 
 /*
- * Type object for WebKitNetworkRequest 
+ * Type object for NspWebKitNetworkRequest 
  * all the instance of NspTypeWebKitNetworkRequest share the same id. 
  * nsp_type_webkitnetworkrequest: is an instance of NspTypeWebKitNetworkRequest 
- *    used for objects of WebKitNetworkRequest type (i.e built with new_webkitnetworkrequest) 
+ *    used for objects of NspWebKitNetworkRequest type (i.e built with new_webkitnetworkrequest) 
  * other instances are used for derived classes 
  */
 NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
@@ -1858,8 +1858,8 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
   
   /* object methods redefined for webkitnetworkrequest */ 
 
-  top->s_type =  (s_type_func *) webkitnetworkrequest_type_as_string;    
-  top->sh_type = (sh_type_func *) webkitnetworkrequest_type_short_string;
+  top->s_type =  (s_type_func *) nsp_webkitnetworkrequest_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_webkitnetworkrequest_type_short_string;
   /* top->create = (create_func*) int_webkitnetworkrequest_create;*/ 
   
   /* specific methods for webkitnetworkrequest */
@@ -1867,7 +1867,7 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
   type->init = (init_func *) init_webkitnetworkrequest;
 
   /* 
-   * WebKitNetworkRequest interfaces can be added here 
+   * NspWebKitNetworkRequest interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1893,7 +1893,7 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
 }
 
 /*
- * initialize WebKitNetworkRequest instances 
+ * initialize NspWebKitNetworkRequest instances 
  * locally and by calling initializer on parent class 
  */
 
@@ -1908,7 +1908,7 @@ static int init_webkitnetworkrequest(NspWebKitNetworkRequest *Obj,NspTypeWebKitN
 }
 
 /*
- * new instance of WebKitNetworkRequest 
+ * new instance of NspWebKitNetworkRequest 
  */
 
 NspWebKitNetworkRequest *new_webkitnetworkrequest() 
@@ -1923,7 +1923,7 @@ NspWebKitNetworkRequest *new_webkitnetworkrequest()
 }
 
 /*----------------------------------------------
- * Object method redefined for WebKitNetworkRequest 
+ * Object method redefined for NspWebKitNetworkRequest 
  *-----------------------------------------------*/
 
 /*
@@ -1933,23 +1933,23 @@ NspWebKitNetworkRequest *new_webkitnetworkrequest()
 static char webkitnetworkrequest_type_name[]="WebKitNetworkRequest";
 static char webkitnetworkrequest_short_type_name[]="WebKitNetworkRequest";
 
-static char *webkitnetworkrequest_type_as_string(void)
+static char *nsp_webkitnetworkrequest_type_as_string(void)
 {
   return(webkitnetworkrequest_type_name);
 }
 
-static char *webkitnetworkrequest_type_short_string(NspObject *v)
+static char *nsp_webkitnetworkrequest_type_short_string(NspObject *v)
 {
   return(webkitnetworkrequest_short_type_name);
 }
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for WebKitNetworkRequest objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspWebKitNetworkRequest objects 
+ * Note that some of these functions could become MACROS 
  *-----------------------------------------------------*/
 
-NspWebKitNetworkRequest   *webkitnetworkrequest_object(NspObject *O)
+NspWebKitNetworkRequest *nsp_webkitnetworkrequest_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1979,7 +1979,7 @@ NspWebKitNetworkRequest  *GetWebKitNetworkRequestCopy(Stack stack, int i)
 NspWebKitNetworkRequest  *GetWebKitNetworkRequest(Stack stack, int i)
 {
   NspWebKitNetworkRequest *M;
-  if (( M = webkitnetworkrequest_object(NthObj(i))) == NULLWEBKITNETWORKREQUEST)
+  if (( M = nsp_webkitnetworkrequest_object(NthObj(i))) == NULLWEBKITNETWORKREQUEST)
      ArgMessage(stack,i);
   return M;
 }

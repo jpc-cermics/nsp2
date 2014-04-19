@@ -48,8 +48,8 @@ extern NspPangoColor *GetPangoColor (Stack stack, int i);
 
 #ifdef PangoColor_Private 
 static int init_pangocolor(NspPangoColor *o,NspTypePangoColor *type);
-static char *pangocolor_type_as_string(void);
-static char *pangocolor_type_short_string(NspObject *v);
+static char *nsp_pangocolor_type_as_string(void);
+static char *nsp_pangocolor_type_short_string(NspObject *v);
 static AttrTab pangocolor_attrs[];
 /* static int int_pangocolor_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangocolor_get_methods(void); 
