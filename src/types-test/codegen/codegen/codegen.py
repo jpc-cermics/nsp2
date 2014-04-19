@@ -2236,8 +2236,7 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
         ' */\n' 
     fp.write( type_tmpl_copyright) 
     fp.write('\n\n')
-    #fp.write('#include <nsp/object.h>\n')
-    #fp.write('#include <gtk/gtk.h>\n')
+
     for module, pyname, cname in overrides.get_imports():
         fp.write('#include "%s.h"\n' % string.lower(cname))
     fp.write('\n\n')
