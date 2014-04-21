@@ -1,4 +1,8 @@
-
+/* -*- Mode: C -*- */
 %%
-ignore poo
+include-start ClassA
+/* zoo */
+%%
+import a.b as classa
+import b.d as classb
 
