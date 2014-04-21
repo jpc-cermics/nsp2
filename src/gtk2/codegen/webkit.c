@@ -76,11 +76,11 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 /* ----------- NspWebKitWebView ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitWebView_Private 
-#include "nsp/gtk/webkitwebview.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitwebview.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitWebView inherits from GtkContainer 
  */
@@ -289,6 +289,7 @@ static int _wrap_webkit_web_view_get_back_forward_list(NspWebKitWebView *self,St
 {
   WebKitWebBackForwardList *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_back_forward_list(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebbackforwardlist))== NULL) return RET_BUG;
@@ -310,6 +311,7 @@ static int _wrap_webkit_web_view_go_to_back_forward_item(NspWebKitWebView *self,
 static int _wrap_webkit_web_view_can_go_back(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_can_go_back(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -318,6 +320,7 @@ static int _wrap_webkit_web_view_can_go_back(NspWebKitWebView *self,Stack stack,
 static int _wrap_webkit_web_view_can_go_forward(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_can_go_forward(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -325,12 +328,14 @@ static int _wrap_webkit_web_view_can_go_forward(NspWebKitWebView *self,Stack sta
 
 static int _wrap_webkit_web_view_go_back(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_go_back(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_go_forward(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_go_forward(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -346,6 +351,7 @@ static int _wrap_webkit_web_view_go_back_or_forward(NspWebKitWebView *self,Stack
 
 static int _wrap_webkit_web_view_stop_loading(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -361,6 +367,7 @@ static int _wrap_webkit_web_view_open(NspWebKitWebView *self,Stack stack,int rhs
 
 static int _wrap_webkit_web_view_reload(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_reload(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -387,6 +394,7 @@ static int _wrap_webkit_web_view_get_main_frame(NspWebKitWebView *self,Stack sta
 {
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -398,6 +406,7 @@ static int _wrap_webkit_web_view_get_focused_frame(NspWebKitWebView *self,Stack 
 {
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_focused_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -417,6 +426,7 @@ static int _wrap_webkit_web_view_execute_script(NspWebKitWebView *self,Stack sta
 static int _wrap_webkit_web_view_get_editable(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_editable(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -464,30 +474,35 @@ static int _wrap_webkit_web_view_set_highlight_text_matches(NspWebKitWebView *se
 
 static int _wrap_webkit_web_view_can_cut_clipboard(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_can_cut_clipboard(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_can_copy_clipboard(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_can_copy_clipboard(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_can_paste_clipboard(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_can_paste_clipboard(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_paste_clipboard(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_paste_clipboard(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_delete_selection(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_delete_selection(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -495,6 +510,7 @@ static int _wrap_webkit_web_view_delete_selection(NspWebKitWebView *self,Stack s
 static int _wrap_webkit_web_view_has_selection(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_has_selection(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -502,6 +518,7 @@ static int _wrap_webkit_web_view_has_selection(NspWebKitWebView *self,Stack stac
 
 static int _wrap_webkit_web_view_select_all(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_select_all(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -519,6 +536,7 @@ static int _wrap_webkit_web_view_get_settings(NspWebKitWebView *self,Stack stack
 {
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
@@ -529,6 +547,7 @@ static int _wrap_webkit_web_view_get_settings(NspWebKitWebView *self,Stack stack
 static int _wrap_webkit_web_view_get_transparent(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_transparent(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -546,6 +565,7 @@ static int _wrap_webkit_web_view_set_transparent(NspWebKitWebView *self,Stack st
 static int _wrap_webkit_web_view_get_zoom_level(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   double ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -562,12 +582,14 @@ static int _wrap_webkit_web_view_set_zoom_level(NspWebKitWebView *self,Stack sta
 
 static int _wrap_webkit_web_view_zoom_in(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_zoom_in(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_view_zoom_out(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_view_zoom_out(WEBKIT_WEB_VIEW(self->obj));
   return 0;
 }
@@ -575,6 +597,7 @@ static int _wrap_webkit_web_view_zoom_out(NspWebKitWebView *self,Stack stack,int
 static int _wrap_webkit_web_view_get_full_content_zoom(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_view_get_full_content_zoom(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -642,11 +665,11 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebFrame ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitWebFrame_Private 
-#include "nsp/gtk/webkitwebframe.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitwebframe.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitWebFrame inherits from GObject 
  */
@@ -848,6 +871,7 @@ static int _wrap_webkit_web_frame_get_web_view(NspWebKitWebFrame *self,Stack sta
 {
   WebKitWebView *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_frame_get_web_view(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebview))== NULL) return RET_BUG;
@@ -858,6 +882,7 @@ static int _wrap_webkit_web_frame_get_web_view(NspWebKitWebFrame *self,Stack sta
 static int _wrap_webkit_web_frame_get_name(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_frame_get_name(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -866,6 +891,7 @@ static int _wrap_webkit_web_frame_get_name(NspWebKitWebFrame *self,Stack stack,i
 static int _wrap_webkit_web_frame_get_title(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_frame_get_title(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -874,6 +900,7 @@ static int _wrap_webkit_web_frame_get_title(NspWebKitWebFrame *self,Stack stack,
 static int _wrap_webkit_web_frame_get_uri(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_frame_get_uri(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -883,6 +910,7 @@ static int _wrap_webkit_web_frame_get_parent(NspWebKitWebFrame *self,Stack stack
 {
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_frame_get_parent(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -901,12 +929,14 @@ static int _wrap_webkit_web_frame_load_request(NspWebKitWebFrame *self,Stack sta
 
 static int _wrap_webkit_web_frame_stop_loading(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_frame_stop_loading(WEBKIT_WEB_FRAME(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_frame_reload(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_frame_reload(WEBKIT_WEB_FRAME(self->obj));
   return 0;
 }
@@ -949,11 +979,11 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebHistoryItem ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitWebHistoryItem_Private 
-#include "nsp/gtk/webkitwebhistoryitem.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitwebhistoryitem.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitWebHistoryItem inherits from GObject 
  */
@@ -1152,6 +1182,7 @@ _wrap_webkitwebhistoryitem_new(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_webkit_web_history_item_get_title(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_history_item_get_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1160,6 +1191,7 @@ static int _wrap_webkit_web_history_item_get_title(NspWebKitWebHistoryItem *self
 static int _wrap_webkit_web_history_item_get_alternate_title(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_history_item_get_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1177,6 +1209,7 @@ static int _wrap_webkit_web_history_item_set_alternate_title(NspWebKitWebHistory
 static int _wrap_webkit_web_history_item_get_uri(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_history_item_get_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1185,6 +1218,7 @@ static int _wrap_webkit_web_history_item_get_uri(NspWebKitWebHistoryItem *self,S
 static int _wrap_webkit_web_history_item_get_original_uri(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_web_history_item_get_original_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1193,6 +1227,7 @@ static int _wrap_webkit_web_history_item_get_original_uri(NspWebKitWebHistoryIte
 static int _wrap_webkit_web_history_item_get_last_visited_time(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   double ret;
+  CheckRhs(0,0);
   ret = webkit_web_history_item_get_last_visited_time(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -1219,11 +1254,11 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebBackForwardList ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitWebBackForwardList_Private 
-#include "nsp/gtk/webkitwebbackforwardlist.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitwebbackforwardlist.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitWebBackForwardList inherits from GObject 
  */
@@ -1423,12 +1458,14 @@ _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_webkit_web_back_forward_list_go_forward(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_back_forward_list_go_forward(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_back_forward_list_go_back(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   webkit_web_back_forward_list_go_back(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   return 0;
 }
@@ -1481,6 +1518,7 @@ static int _wrap_webkit_web_back_forward_list_get_back_item(NspWebKitWebBackForw
 {
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_back_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1492,6 +1530,7 @@ static int _wrap_webkit_web_back_forward_list_get_current_item(NspWebKitWebBackF
 {
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_current_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1503,6 +1542,7 @@ static int _wrap_webkit_web_back_forward_list_get_forward_item(NspWebKitWebBackF
 {
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_forward_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1527,6 +1567,7 @@ static int _wrap_webkit_web_back_forward_list_get_nth_item(NspWebKitWebBackForwa
 static int _wrap_webkit_web_back_forward_list_get_back_length(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_back_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1535,6 +1576,7 @@ static int _wrap_webkit_web_back_forward_list_get_back_length(NspWebKitWebBackFo
 static int _wrap_webkit_web_back_forward_list_get_forward_length(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_forward_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1543,6 +1585,7 @@ static int _wrap_webkit_web_back_forward_list_get_forward_length(NspWebKitWebBac
 static int _wrap_webkit_web_back_forward_list_get_limit(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = webkit_web_back_forward_list_get_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1586,11 +1629,11 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebSettings ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitWebSettings_Private 
-#include "nsp/gtk/webkitwebsettings.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitwebsettings.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitWebSettings inherits from GObject 
  */
@@ -1790,6 +1833,7 @@ static int _wrap_webkit_web_settings_copy(NspWebKitWebSettings *self,Stack stack
 {
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = webkit_web_settings_copy(WEBKIT_WEB_SETTINGS(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
@@ -1813,11 +1857,11 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspWebKitNetworkRequest ----------- */
 
 
-#include "nsp/object.h"
 #define  WebKitNetworkRequest_Private 
-#include "nsp/gtk/webkitnetworkrequest.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/webkitnetworkrequest.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspWebKitNetworkRequest inherits from GObject 
  */
@@ -2027,6 +2071,7 @@ static int _wrap_webkit_network_request_set_uri(NspWebKitNetworkRequest *self,St
 static int _wrap_webkit_network_request_get_uri(NspWebKitNetworkRequest *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = webkit_network_request_get_uri(WEBKIT_NETWORK_REQUEST(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -2227,7 +2272,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2231 "webkit.c"
+#line 2276 "webkit.c"
 
 
 /*----------------------------------------------------

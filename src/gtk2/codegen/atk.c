@@ -51,11 +51,11 @@
 /* ----------- NspAtkHyperlink ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkHyperlink_Private 
-#include "nsp/gtk/atkhyperlink.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkhyperlink.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkHyperlink inherits from GObject 
  */
@@ -266,6 +266,7 @@ static int _wrap_atk_hyperlink_get_object(NspAtkHyperlink *self,Stack stack,int 
 static int _wrap_atk_hyperlink_get_end_index(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_hyperlink_get_end_index(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -274,6 +275,7 @@ static int _wrap_atk_hyperlink_get_end_index(NspAtkHyperlink *self,Stack stack,i
 static int _wrap_atk_hyperlink_get_start_index(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_hyperlink_get_start_index(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -282,6 +284,7 @@ static int _wrap_atk_hyperlink_get_start_index(NspAtkHyperlink *self,Stack stack
 static int _wrap_atk_hyperlink_is_valid(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_hyperlink_is_valid(ATK_HYPERLINK(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -290,6 +293,7 @@ static int _wrap_atk_hyperlink_is_valid(NspAtkHyperlink *self,Stack stack,int rh
 static int _wrap_atk_hyperlink_get_n_anchors(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_hyperlink_get_n_anchors(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -316,11 +320,11 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkObject ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkObject_Private 
-#include "nsp/gtk/atkobject.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkobject.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkObject inherits from GObject 
  */
@@ -505,6 +509,7 @@ NspAtkObject *atkobject_copy(NspAtkObject *self)
 static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = atk_object_get_name(ATK_OBJECT(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -513,6 +518,7 @@ static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int 
 static int _wrap_atk_object_get_description(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
+  CheckRhs(0,0);
   ret = atk_object_get_description(ATK_OBJECT(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -522,6 +528,7 @@ static int _wrap_atk_object_get_parent(NspAtkObject *self,Stack stack,int rhs,in
 {
   AtkObject *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = atk_object_get_parent(ATK_OBJECT(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
@@ -532,6 +539,7 @@ static int _wrap_atk_object_get_parent(NspAtkObject *self,Stack stack,int rhs,in
 static int _wrap_atk_object_get_n_accessible_children(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_object_get_n_accessible_children(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -555,6 +563,7 @@ static int _wrap_atk_object_ref_relation_set(NspAtkObject *self,Stack stack,int 
 {
   AtkRelationSet *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = atk_object_ref_relation_set(ATK_OBJECT(self->obj));
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelationset))== NULL) return RET_BUG;
@@ -565,6 +574,7 @@ static int _wrap_atk_object_ref_relation_set(NspAtkObject *self,Stack stack,int 
 static int _wrap_atk_object_get_role(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
+  CheckRhs(0,0);
   ret = atk_object_get_role(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -573,6 +583,7 @@ static int _wrap_atk_object_get_role(NspAtkObject *self,Stack stack,int rhs,int 
 static int _wrap_atk_object_get_layer(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
+  CheckRhs(0,0);
   ret = atk_object_get_layer(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -581,6 +592,7 @@ static int _wrap_atk_object_get_layer(NspAtkObject *self,Stack stack,int rhs,int
 static int _wrap_atk_object_get_mdi_zorder(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_object_get_mdi_zorder(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -590,6 +602,7 @@ static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs
 {
   AtkStateSet *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
   ret = atk_object_ref_state_set(ATK_OBJECT(self->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
@@ -600,6 +613,7 @@ static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs
 static int _wrap_atk_object_get_index_in_parent(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_object_get_index_in_parent(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -684,11 +698,11 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkNoOpObject ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkNoOpObject_Private 
-#include "nsp/gtk/atknoopobject.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atknoopobject.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkNoOpObject inherits from AtkObject 
  */
@@ -897,11 +911,11 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkObjectFactory ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkObjectFactory_Private 
-#include "nsp/gtk/atkobjectfactory.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkobjectfactory.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkObjectFactory inherits from GObject 
  */
@@ -1099,6 +1113,7 @@ static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,
 
 static int _wrap_atk_object_factory_invalidate(NspAtkObjectFactory *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   atk_object_factory_invalidate(ATK_OBJECT_FACTORY(self->obj));
   return 0;
 }
@@ -1120,11 +1135,11 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkNoOpObjectFactory ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkNoOpObjectFactory_Private 
-#include "nsp/gtk/atknoopobjectfactory.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atknoopobjectfactory.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkNoOpObjectFactory inherits from AtkObjectFactory 
  */
@@ -1331,11 +1346,11 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkRegistry ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkRegistry_Private 
-#include "nsp/gtk/atkregistry.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkregistry.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkRegistry inherits from GObject 
  */
@@ -1577,11 +1592,11 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkRelation ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkRelation_Private 
-#include "nsp/gtk/atkrelation.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkrelation.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkRelation inherits from GObject 
  */
@@ -1804,12 +1819,13 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1808 "atk.c"
+#line 1823 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
+  CheckRhs(0,0);
   ret = atk_relation_get_relation_type(ATK_RELATION(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1831,11 +1847,11 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkRelationSet ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkRelationSet_Private 
-#include "nsp/gtk/atkrelationset.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkrelationset.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkRelationSet inherits from GObject 
  */
@@ -2066,6 +2082,7 @@ static int _wrap_atk_relation_set_add(NspAtkRelationSet *self,Stack stack,int rh
 static int _wrap_atk_relation_set_get_n_relations(NspAtkRelationSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_relation_set_get_n_relations(ATK_RELATION_SET(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -2122,11 +2139,11 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkStateSet ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkStateSet_Private 
-#include "nsp/gtk/atkstateset.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkstateset.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkStateSet inherits from GObject 
  */
@@ -2311,6 +2328,7 @@ NspAtkStateSet *atkstateset_copy(NspAtkStateSet *self)
 static int _wrap_atk_state_set_is_empty(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
+  CheckRhs(0,0);
   ret = atk_state_set_is_empty(ATK_STATE_SET(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -2332,6 +2350,7 @@ static int _wrap_atk_state_set_add_state(NspAtkStateSet *self,Stack stack,int rh
 
 static int _wrap_atk_state_set_clear_states(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   atk_state_set_clear_states(ATK_STATE_SET(self->obj));
   return 0;
 }
@@ -2429,11 +2448,11 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 /* ----------- NspAtkUtil ----------- */
 
 
-#include "nsp/object.h"
 #define  AtkUtil_Private 
-#include "nsp/gtk/atkutil.h"
-#include "nsp/interf.h"
-#include "nsp/nspthreads.h"
+#include <nsp/objects.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
 /* 
  * NspAtkUtil inherits from GObject 
  */
@@ -2629,6 +2648,7 @@ int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs) /* ge
 {
   AtkRegistry *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
 ret = atk_get_default_registry();
   nsp_type_atkregistry = new_type_atkregistry(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkregistry))== NULL) return RET_BUG;
@@ -2738,6 +2758,7 @@ int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs) /* get_root */
 {
   AtkObject *ret;
   NspObject *nsp_ret;
+  CheckRhs(0,0);
 ret = atk_get_root();
   nsp_type_atkobject = new_type_atkobject(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
@@ -2748,6 +2769,7 @@ ret = atk_get_root();
 int _wrap_atk_get_toolkit_name(Stack stack, int rhs, int opt, int lhs) /* get_toolkit_name */
 {
   const gchar *ret;
+  CheckRhs(0,0);
 ret = atk_get_toolkit_name();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -2756,6 +2778,7 @@ ret = atk_get_toolkit_name();
 int _wrap_atk_get_toolkit_version(Stack stack, int rhs, int opt, int lhs) /* get_toolkit_version */
 {
   const gchar *ret;
+  CheckRhs(0,0);
 ret = atk_get_toolkit_version();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;

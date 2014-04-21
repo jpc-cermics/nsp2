@@ -55,11 +55,11 @@ class Wrapper:
 
     type_tmpl_1 = \
               '\n'  \
-              '#include "nsp/object.h"\n'  \
               '#define  %(typename)s_Private \n'  \
-              '#include "nsp/gtk/%(typename_dc)s.h"\n'  \
-              '#include "nsp/interf.h"\n'  \
-              '#include "nsp/nspthreads.h"\n'  \
+              '#include <nsp/objects.h>\n'  \
+              '#include <nsp/gtk/%(typename_dc)s.h>\n'  \
+              '#include <nsp/interf.h>\n'  \
+              '#include <nsp/nspthreads.h>\n'  \
               '/* \n' \
               ' * Nsp%(typename)s inherits from %(parent)s \n%(implements)s' \
               ' */\n' \
@@ -547,7 +547,7 @@ class Wrapper:
             substdict['varlist'] = info.get_tylist() + info.get_kwlist() + substdict['varlist']
         else:
             substdict['varlist'] = info.get_tylist() + substdict['varlist']
-            substdict['parseargs'] = ''
+            substdict['parseargs'] = '  CheckRhs(0,0);\n'
             substdict['extraparams'] = ''
             flags = 'METH_NOARGS'
 
