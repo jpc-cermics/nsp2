@@ -22,6 +22,9 @@
 
 
 
+
+
+
 #line 4 "gtk.override"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -87,197 +90,193 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #endif 
 
 
-#line 91 "gtk.c"
-
-
+#line 94 "gtk.c"
 /* ---------- types from other modules ---------- */
-#include "nsp/gtk/gdkatom.h"
-#include "nsp/gtk/gdkpixmap.h"
-#include "nsp/gtk/gdkwindow.h"
-#include "nsp/gtk/gdkgc.h"
-#include "nsp/gtk/gdkfont.h"
-#include "nsp/gtk/gdkpixbuf.h"
-#include "nsp/gtk/gdkbitmap.h"
-#include "nsp/gtk/gdkpixbufanimation.h"
-#include "nsp/gtk/gdkdragcontext.h"
-#include "nsp/gtk/gdkcolormap.h"
-#include "nsp/gtk/gdkcolor.h"
-#include "nsp/gtk/gdkimage.h"
-#include "nsp/gtk/gdkvisual.h"
-#include "nsp/gtk/gdkrectangle.h"
-#include "nsp/gtk/gdkevent.h"
-#include "nsp/gtk/gdkscreen.h"
-#include "nsp/gtk/gdkdisplay.h"
-#include "nsp/gtk/gtktreemodel.h"
-#include "nsp/gtk/pangolayout.h"
-#include "nsp/gtk/pangolanguage.h"
-#include "nsp/gtk/pangofontdescription.h"
-#include "nsp/gtk/pangoattrlist.h"
-#include "nsp/gtk/pangotabarray.h"
-#include "nsp/gtk/pangocontext.h"
-
-
+#include <nsp/gtk/gdkatom.h>
+#include <nsp/gtk/gdkpixmap.h>
+#include <nsp/gtk/gdkwindow.h>
+#include <nsp/gtk/gdkgc.h>
+#include <nsp/gtk/gdkfont.h>
+#include <nsp/gtk/gdkpixbuf.h>
+#include <nsp/gtk/gdkbitmap.h>
+#include <nsp/gtk/gdkpixbufanimation.h>
+#include <nsp/gtk/gdkdragcontext.h>
+#include <nsp/gtk/gdkcolormap.h>
+#include <nsp/gtk/gdkcolor.h>
+#include <nsp/gtk/gdkimage.h>
+#include <nsp/gtk/gdkvisual.h>
+#include <nsp/gtk/gdkrectangle.h>
+#include <nsp/gtk/gdkevent.h>
+#include <nsp/gtk/gdkscreen.h>
+#include <nsp/gtk/gdkdisplay.h>
+#include <nsp/gtk/gtktreemodel.h>
+#include <nsp/gtk/pangolayout.h>
+#include <nsp/gtk/pangolanguage.h>
+#include <nsp/gtk/pangofontdescription.h>
+#include <nsp/gtk/pangoattrlist.h>
+#include <nsp/gtk/pangotabarray.h>
+#include <nsp/gtk/pangocontext.h>
 /* ---------- forward type declarations ---------- */
-#include "nsp/gtk/gtkborder.h"
-#include "nsp/gtk/gtkiconinfo.h"
-#include "nsp/gtk/gtkiconset.h"
-#include "nsp/gtk/gtkiconsource.h"
-#include "nsp/gtk/gtkrequisition.h"
-#include "nsp/gtk/gtkselectiondata.h"
-#include "nsp/gtk/gtktextattributes.h"
-#include "nsp/gtk/gtktextiter.h"
-#include "nsp/gtk/gtktreeiter.h"
-#include "nsp/gtk/gtktreerowreference.h"
-#include "nsp/gtk/gtktreepath.h"
-#include "nsp/gtk/gtkaboutdialog.h"
-#include "nsp/gtk/gtkaccelgroup.h"
-#include "nsp/gtk/gtkaccellabel.h"
-#include "nsp/gtk/gtkaccelmap.h"
-#include "nsp/gtk/gtkaccessible.h"
-#include "nsp/gtk/gtkaction.h"
-#include "nsp/gtk/gtkactiongroup.h"
-#include "nsp/gtk/gtkadjustment.h"
-#include "nsp/gtk/gtkalignment.h"
-#include "nsp/gtk/gtkarrow.h"
-#include "nsp/gtk/gtkaspectframe.h"
-#include "nsp/gtk/gtkbin.h"
-#include "nsp/gtk/gtkbox.h"
-#include "nsp/gtk/gtkbutton.h"
-#include "nsp/gtk/gtkbuttonbox.h"
-#include "nsp/gtk/gtkcalendar.h"
-#include "nsp/gtk/gtkcellrenderer.h"
-#include "nsp/gtk/gtkcellrenderercombo.h"
-#include "nsp/gtk/gtkcellrendererpixbuf.h"
-#include "nsp/gtk/gtkcellrendererprogress.h"
-#include "nsp/gtk/gtkcellrenderertext.h"
-#include "nsp/gtk/gtkcellrenderertoggle.h"
-#include "nsp/gtk/gtkcellview.h"
-#include "nsp/gtk/gtkcheckbutton.h"
-#include "nsp/gtk/gtkcheckmenuitem.h"
-#include "nsp/gtk/gtkcolorbutton.h"
-#include "nsp/gtk/gtkcolorselection.h"
-#include "nsp/gtk/gtkcolorselectiondialog.h"
-#include "nsp/gtk/gtkcombo.h"
-#include "nsp/gtk/gtkcombobox.h"
-#include "nsp/gtk/gtkcomboboxentry.h"
-#include "nsp/gtk/gtkcontainer.h"
-#include "nsp/gtk/gtkcurve.h"
-#include "nsp/gtk/gtkdialog.h"
-#include "nsp/gtk/gtkdrawingarea.h"
-#include "nsp/gtk/gtkentry.h"
-#include "nsp/gtk/gtkentrycompletion.h"
-#include "nsp/gtk/gtkeventbox.h"
-#include "nsp/gtk/gtkexpander.h"
-#include "nsp/gtk/gtkfilechooserbutton.h"
-#include "nsp/gtk/gtkfilechooserdialog.h"
-#include "nsp/gtk/gtkfilechooserwidget.h"
-#include "nsp/gtk/gtkfilefilter.h"
-#include "nsp/gtk/gtkfileselection.h"
-#include "nsp/gtk/gtkfixed.h"
-#include "nsp/gtk/gtkfontbutton.h"
-#include "nsp/gtk/gtkfontselection.h"
-#include "nsp/gtk/gtkfontselectiondialog.h"
-#include "nsp/gtk/gtkframe.h"
-#include "nsp/gtk/gtkgammacurve.h"
-#include "nsp/gtk/gtkhandlebox.h"
-#include "nsp/gtk/gtkhbox.h"
-#include "nsp/gtk/gtkhbuttonbox.h"
-#include "nsp/gtk/gtkhpaned.h"
-#include "nsp/gtk/gtkhruler.h"
-#include "nsp/gtk/gtkhscale.h"
-#include "nsp/gtk/gtkhscrollbar.h"
-#include "nsp/gtk/gtkhseparator.h"
-#include "nsp/gtk/gtkiconfactory.h"
-#include "nsp/gtk/gtkicontheme.h"
-#include "nsp/gtk/gtkiconview.h"
-#include "nsp/gtk/gtkimage.h"
-#include "nsp/gtk/gtkimagemenuitem.h"
-#include "nsp/gtk/gtkimcontext.h"
-#include "nsp/gtk/gtkimcontextsimple.h"
-#include "nsp/gtk/gtkimmulticontext.h"
-#include "nsp/gtk/gtkinputdialog.h"
-#include "nsp/gtk/gtkinvisible.h"
-#include "nsp/gtk/gtkitem.h"
-#include "nsp/gtk/gtkitemfactory.h"
-#include "nsp/gtk/gtklabel.h"
-#include "nsp/gtk/gtklayout.h"
-#include "nsp/gtk/gtkliststore.h"
-#include "nsp/gtk/gtkmenu.h"
-#include "nsp/gtk/gtkmenubar.h"
-#include "nsp/gtk/gtkmenuitem.h"
-#include "nsp/gtk/gtkmenushell.h"
-#include "nsp/gtk/gtkmenutoolbutton.h"
-#include "nsp/gtk/gtkmessagedialog.h"
-#include "nsp/gtk/gtkmisc.h"
-#include "nsp/gtk/gtknotebook.h"
-#include "nsp/gtk/gtkobject.h"
-#include "nsp/gtk/gtkoldeditable.h"
-#include "nsp/gtk/gtkoptionmenu.h"
-#include "nsp/gtk/gtkpaned.h"
-#include "nsp/gtk/gtkplug.h"
-#include "nsp/gtk/gtkpreview.h"
-#include "nsp/gtk/gtkprogress.h"
-#include "nsp/gtk/gtkprogressbar.h"
-#include "nsp/gtk/gtkradioaction.h"
-#include "nsp/gtk/gtkradiobutton.h"
-#include "nsp/gtk/gtkradiomenuitem.h"
-#include "nsp/gtk/gtkradiotoolbutton.h"
-#include "nsp/gtk/gtkrange.h"
-#include "nsp/gtk/gtkrcstyle.h"
-#include "nsp/gtk/gtkruler.h"
-#include "nsp/gtk/gtkscale.h"
-#include "nsp/gtk/gtkscrollbar.h"
-#include "nsp/gtk/gtkscrolledwindow.h"
-#include "nsp/gtk/gtkseparator.h"
-#include "nsp/gtk/gtkseparatormenuitem.h"
-#include "nsp/gtk/gtkseparatortoolitem.h"
-#include "nsp/gtk/gtksettings.h"
-#include "nsp/gtk/gtksizegroup.h"
-#include "nsp/gtk/gtksocket.h"
-#include "nsp/gtk/gtkspinbutton.h"
-#include "nsp/gtk/gtkstatusbar.h"
-#include "nsp/gtk/gtkstyle.h"
-#include "nsp/gtk/gtktable.h"
-#include "nsp/gtk/gtktearoffmenuitem.h"
-#include "nsp/gtk/gtktextbuffer.h"
-#include "nsp/gtk/gtktextchildanchor.h"
-#include "nsp/gtk/gtktextmark.h"
-#include "nsp/gtk/gtktexttag.h"
-#include "nsp/gtk/gtktexttagtable.h"
-#include "nsp/gtk/gtktextview.h"
-#include "nsp/gtk/gtktoggleaction.h"
-#include "nsp/gtk/gtktogglebutton.h"
-#include "nsp/gtk/gtktoggletoolbutton.h"
-#include "nsp/gtk/gtktoolbar.h"
-#include "nsp/gtk/gtktoolbutton.h"
-#include "nsp/gtk/gtktoolitem.h"
-#include "nsp/gtk/gtktooltips.h"
-#include "nsp/gtk/gtktreemodelfilter.h"
-#include "nsp/gtk/gtktreemodelsort.h"
-#include "nsp/gtk/gtktreeselection.h"
-#include "nsp/gtk/gtktreestore.h"
-#include "nsp/gtk/gtktreeview.h"
-#include "nsp/gtk/gtktreeviewcolumn.h"
-#include "nsp/gtk/gtkuimanager.h"
-#include "nsp/gtk/gtkvbox.h"
-#include "nsp/gtk/gtkvbuttonbox.h"
-#include "nsp/gtk/gtkviewport.h"
-#include "nsp/gtk/gtkvpaned.h"
-#include "nsp/gtk/gtkvruler.h"
-#include "nsp/gtk/gtkvscale.h"
-#include "nsp/gtk/gtkvscrollbar.h"
-#include "nsp/gtk/gtkvseparator.h"
-#include "nsp/gtk/gtkwidget.h"
-#include "nsp/gtk/gtkwindow.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
-#include "nsp/gtk/gtkwindowgroup.h"
+#include <nsp/gtk/gtkborder.h>
+#include <nsp/gtk/gtkiconinfo.h>
+#include <nsp/gtk/gtkiconset.h>
+#include <nsp/gtk/gtkiconsource.h>
+#include <nsp/gtk/gtkrequisition.h>
+#include <nsp/gtk/gtkselectiondata.h>
+#include <nsp/gtk/gtktextattributes.h>
+#include <nsp/gtk/gtktextiter.h>
+#include <nsp/gtk/gtktreeiter.h>
+#include <nsp/gtk/gtktreerowreference.h>
+#include <nsp/gtk/gtktreepath.h>
+#include <nsp/gtk/gtkaboutdialog.h>
+#include <nsp/gtk/gtkaccelgroup.h>
+#include <nsp/gtk/gtkaccellabel.h>
+#include <nsp/gtk/gtkaccelmap.h>
+#include <nsp/gtk/gtkaccessible.h>
+#include <nsp/gtk/gtkaction.h>
+#include <nsp/gtk/gtkactiongroup.h>
+#include <nsp/gtk/gtkadjustment.h>
+#include <nsp/gtk/gtkalignment.h>
+#include <nsp/gtk/gtkarrow.h>
+#include <nsp/gtk/gtkaspectframe.h>
+#include <nsp/gtk/gtkbin.h>
+#include <nsp/gtk/gtkbox.h>
+#include <nsp/gtk/gtkbutton.h>
+#include <nsp/gtk/gtkbuttonbox.h>
+#include <nsp/gtk/gtkcalendar.h>
+#include <nsp/gtk/gtkcellrenderer.h>
+#include <nsp/gtk/gtkcellrenderercombo.h>
+#include <nsp/gtk/gtkcellrendererpixbuf.h>
+#include <nsp/gtk/gtkcellrendererprogress.h>
+#include <nsp/gtk/gtkcellrenderertext.h>
+#include <nsp/gtk/gtkcellrenderertoggle.h>
+#include <nsp/gtk/gtkcellview.h>
+#include <nsp/gtk/gtkcheckbutton.h>
+#include <nsp/gtk/gtkcheckmenuitem.h>
+#include <nsp/gtk/gtkcolorbutton.h>
+#include <nsp/gtk/gtkcolorselection.h>
+#include <nsp/gtk/gtkcolorselectiondialog.h>
+#include <nsp/gtk/gtkcombo.h>
+#include <nsp/gtk/gtkcombobox.h>
+#include <nsp/gtk/gtkcomboboxentry.h>
+#include <nsp/gtk/gtkcontainer.h>
+#include <nsp/gtk/gtkcurve.h>
+#include <nsp/gtk/gtkdialog.h>
+#include <nsp/gtk/gtkdrawingarea.h>
+#include <nsp/gtk/gtkentry.h>
+#include <nsp/gtk/gtkentrycompletion.h>
+#include <nsp/gtk/gtkeventbox.h>
+#include <nsp/gtk/gtkexpander.h>
+#include <nsp/gtk/gtkfilechooserbutton.h>
+#include <nsp/gtk/gtkfilechooserdialog.h>
+#include <nsp/gtk/gtkfilechooserwidget.h>
+#include <nsp/gtk/gtkfilefilter.h>
+#include <nsp/gtk/gtkfileselection.h>
+#include <nsp/gtk/gtkfixed.h>
+#include <nsp/gtk/gtkfontbutton.h>
+#include <nsp/gtk/gtkfontselection.h>
+#include <nsp/gtk/gtkfontselectiondialog.h>
+#include <nsp/gtk/gtkframe.h>
+#include <nsp/gtk/gtkgammacurve.h>
+#include <nsp/gtk/gtkhandlebox.h>
+#include <nsp/gtk/gtkhbox.h>
+#include <nsp/gtk/gtkhbuttonbox.h>
+#include <nsp/gtk/gtkhpaned.h>
+#include <nsp/gtk/gtkhruler.h>
+#include <nsp/gtk/gtkhscale.h>
+#include <nsp/gtk/gtkhscrollbar.h>
+#include <nsp/gtk/gtkhseparator.h>
+#include <nsp/gtk/gtkiconfactory.h>
+#include <nsp/gtk/gtkicontheme.h>
+#include <nsp/gtk/gtkiconview.h>
+#include <nsp/gtk/gtkimage.h>
+#include <nsp/gtk/gtkimagemenuitem.h>
+#include <nsp/gtk/gtkimcontext.h>
+#include <nsp/gtk/gtkimcontextsimple.h>
+#include <nsp/gtk/gtkimmulticontext.h>
+#include <nsp/gtk/gtkinputdialog.h>
+#include <nsp/gtk/gtkinvisible.h>
+#include <nsp/gtk/gtkitem.h>
+#include <nsp/gtk/gtkitemfactory.h>
+#include <nsp/gtk/gtklabel.h>
+#include <nsp/gtk/gtklayout.h>
+#include <nsp/gtk/gtkliststore.h>
+#include <nsp/gtk/gtkmenu.h>
+#include <nsp/gtk/gtkmenubar.h>
+#include <nsp/gtk/gtkmenuitem.h>
+#include <nsp/gtk/gtkmenushell.h>
+#include <nsp/gtk/gtkmenutoolbutton.h>
+#include <nsp/gtk/gtkmessagedialog.h>
+#include <nsp/gtk/gtkmisc.h>
+#include <nsp/gtk/gtknotebook.h>
+#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gtkoldeditable.h>
+#include <nsp/gtk/gtkoptionmenu.h>
+#include <nsp/gtk/gtkpaned.h>
+#include <nsp/gtk/gtkplug.h>
+#include <nsp/gtk/gtkpreview.h>
+#include <nsp/gtk/gtkprogress.h>
+#include <nsp/gtk/gtkprogressbar.h>
+#include <nsp/gtk/gtkradioaction.h>
+#include <nsp/gtk/gtkradiobutton.h>
+#include <nsp/gtk/gtkradiomenuitem.h>
+#include <nsp/gtk/gtkradiotoolbutton.h>
+#include <nsp/gtk/gtkrange.h>
+#include <nsp/gtk/gtkrcstyle.h>
+#include <nsp/gtk/gtkruler.h>
+#include <nsp/gtk/gtkscale.h>
+#include <nsp/gtk/gtkscrollbar.h>
+#include <nsp/gtk/gtkscrolledwindow.h>
+#include <nsp/gtk/gtkseparator.h>
+#include <nsp/gtk/gtkseparatormenuitem.h>
+#include <nsp/gtk/gtkseparatortoolitem.h>
+#include <nsp/gtk/gtksettings.h>
+#include <nsp/gtk/gtksizegroup.h>
+#include <nsp/gtk/gtksocket.h>
+#include <nsp/gtk/gtkspinbutton.h>
+#include <nsp/gtk/gtkstatusbar.h>
+#include <nsp/gtk/gtkstyle.h>
+#include <nsp/gtk/gtktable.h>
+#include <nsp/gtk/gtktearoffmenuitem.h>
+#include <nsp/gtk/gtktextbuffer.h>
+#include <nsp/gtk/gtktextchildanchor.h>
+#include <nsp/gtk/gtktextmark.h>
+#include <nsp/gtk/gtktexttag.h>
+#include <nsp/gtk/gtktexttagtable.h>
+#include <nsp/gtk/gtktextview.h>
+#include <nsp/gtk/gtktoggleaction.h>
+#include <nsp/gtk/gtktogglebutton.h>
+#include <nsp/gtk/gtktoggletoolbutton.h>
+#include <nsp/gtk/gtktoolbar.h>
+#include <nsp/gtk/gtktoolbutton.h>
+#include <nsp/gtk/gtktoolitem.h>
+#include <nsp/gtk/gtktooltips.h>
+#include <nsp/gtk/gtktreemodelfilter.h>
+#include <nsp/gtk/gtktreemodelsort.h>
+#include <nsp/gtk/gtktreeselection.h>
+#include <nsp/gtk/gtktreestore.h>
+#include <nsp/gtk/gtktreeview.h>
+#include <nsp/gtk/gtktreeviewcolumn.h>
+#include <nsp/gtk/gtkuimanager.h>
+#include <nsp/gtk/gtkvbox.h>
+#include <nsp/gtk/gtkvbuttonbox.h>
+#include <nsp/gtk/gtkviewport.h>
+#include <nsp/gtk/gtkvpaned.h>
+#include <nsp/gtk/gtkvruler.h>
+#include <nsp/gtk/gtkvscale.h>
+#include <nsp/gtk/gtkvscrollbar.h>
+#include <nsp/gtk/gtkvseparator.h>
+#include <nsp/gtk/gtkwidget.h>
+#include <nsp/gtk/gtkwindow.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
+#include <nsp/gtk/gtkwindowgroup.h>
 
 
 /* ----------- NspGtkBorder ----------- */
@@ -288,6 +287,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #include <nsp/gtk/gtkborder.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkBorder inherits from GBoxed 
  */
@@ -395,7 +395,6 @@ NspGtkBorder *new_gtkborder()
 /*----------------------------------------------
  * Object method redefined for NspGtkBorder 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -468,19 +467,9 @@ NspGtkBorder *gtkborder_copy(NspGtkBorder *self)
  * wrappers for the GtkBorder
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkBorder *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkborder is initialized * /
-  nsp_type_gtkborder = new_type_gtkborder(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkborder)) == NULLGTKBORDER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_border_copy(NspGtkBorder *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkBorder *ret;
@@ -512,7 +501,7 @@ static NspMethods *gtkborder_get_methods(void) { return gtkborder_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconInfo ----------- */
@@ -523,6 +512,7 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkiconinfo.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconInfo inherits from GBoxed 
  */
@@ -630,7 +620,6 @@ NspGtkIconInfo *new_gtkiconinfo()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconInfo 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -703,19 +692,9 @@ NspGtkIconInfo *gtkiconinfo_copy(NspGtkIconInfo *self)
  * wrappers for the GtkIconInfo
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconInfo *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkiconinfo is initialized * /
-  nsp_type_gtkiconinfo = new_type_gtkiconinfo(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkiconinfo)) == NULLGTKICONINFO) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_icon_info_copy(NspGtkIconInfo *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkIconInfo *ret;
@@ -833,7 +812,7 @@ static NspMethods *gtkiconinfo_get_methods(void) { return gtkiconinfo_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconSet ----------- */
@@ -844,6 +823,7 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkiconset.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconSet inherits from GBoxed 
  */
@@ -951,7 +931,6 @@ NspGtkIconSet *new_gtkiconset()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconSet 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1024,19 +1003,9 @@ NspGtkIconSet *gtkiconset_copy(NspGtkIconSet *self)
  * wrappers for the GtkIconSet
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconSet *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkiconset is initialized * /
-  nsp_type_gtkiconset = new_type_gtkiconset(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkiconset)) == NULLGTKICONSET) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6173 "gtk.override"
 /* XXXXX ce qui suit devrait etre dans icon_set_new */ 
 static int
@@ -1077,7 +1046,7 @@ _wrap_gtkiconset_new(Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_gtk_icon_set_new_from_pixbuf(stack,rhs,opt,lhs);
 }
-#line 1081 "gtk.c"
+#line 1050 "gtk.c"
 
 
 static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
@@ -1147,7 +1116,7 @@ _wrap_gtk_icon_set_get_sizes(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,(NspObject *) ret) ; 
   return 1;
 }
-#line 1151 "gtk.c"
+#line 1120 "gtk.c"
 
 
 static NspMethods gtkiconset_methods[] = {
@@ -1163,7 +1132,7 @@ static NspMethods *gtkiconset_get_methods(void) { return gtkiconset_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconSource ----------- */
@@ -1174,6 +1143,7 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkiconsource.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconSource inherits from GBoxed 
  */
@@ -1281,7 +1251,6 @@ NspGtkIconSource *new_gtkiconsource()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconSource 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1354,19 +1323,9 @@ NspGtkIconSource *gtkiconsource_copy(NspGtkIconSource *self)
  * wrappers for the GtkIconSource
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkIconSource *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkiconsource is initialized * /
-  nsp_type_gtkiconsource = new_type_gtkiconsource(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkiconsource)) == NULLGTKICONSOURCE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkiconsource_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1607,7 +1566,7 @@ static NspMethods *gtkiconsource_get_methods(void) { return gtkiconsource_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRequisition ----------- */
@@ -1618,6 +1577,7 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkrequisition.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRequisition inherits from GBoxed 
  */
@@ -1725,7 +1685,6 @@ NspGtkRequisition *new_gtkrequisition()
 /*----------------------------------------------
  * Object method redefined for NspGtkRequisition 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1798,19 +1757,9 @@ NspGtkRequisition *gtkrequisition_copy(NspGtkRequisition *self)
  * wrappers for the GtkRequisition
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkRequisition *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkrequisition is initialized * /
-  nsp_type_gtkrequisition = new_type_gtkrequisition(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkrequisition)) == NULLGTKREQUISITION) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_requisition_copy(NspGtkRequisition *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkRequisition *ret;
@@ -1851,7 +1800,7 @@ _wrap_gtk_requisition__set_width(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->width = val;
   return OK;
 }
-#line 1855 "gtk.c"
+#line 1804 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_width(NspObject *self,char *attr)
 {
   int ret;
@@ -1868,7 +1817,7 @@ _wrap_gtk_requisition__set_height(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->height = val;
   return 0;
 }
-#line 1872 "gtk.c"
+#line 1821 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 {
   int ret;
@@ -1877,9 +1826,9 @@ static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 }
 
 static AttrTab gtkrequisition_attrs[] = {
-  { "width", (attr_get_function *)_wrap_gtk_requisition__get_width, (attr_set_function *)_wrap_gtk_requisition__set_width,(attr_get_object_function *)int_get_object_failed },
-  { "height", (attr_get_function *)_wrap_gtk_requisition__get_height, (attr_set_function *)_wrap_gtk_requisition__set_height,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "width", (attr_get_function *)_wrap_gtk_requisition__get_width, (attr_set_function *)_wrap_gtk_requisition__set_width,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "height", (attr_get_function *)_wrap_gtk_requisition__get_height, (attr_set_function *)_wrap_gtk_requisition__set_height,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -1892,6 +1841,7 @@ static AttrTab gtkrequisition_attrs[] = {
 #include <nsp/gtk/gtkselectiondata.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSelectionData inherits from GBoxed 
  */
@@ -1999,7 +1949,6 @@ NspGtkSelectionData *new_gtkselectiondata()
 /*----------------------------------------------
  * Object method redefined for NspGtkSelectionData 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2072,19 +2021,9 @@ NspGtkSelectionData *gtkselectiondata_copy(NspGtkSelectionData *self)
  * wrappers for the GtkSelectionData
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkSelectionData *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtkselectiondata is initialized * /
-  nsp_type_gtkselectiondata = new_type_gtkselectiondata(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtkselectiondata)) == NULLGTKSELECTIONDATA) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 480 "gtk.override"
 static int
 _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
@@ -2103,7 +2042,7 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 			 type, format,(const guchar *) data, length);
   return 0;
 }
-#line 2107 "gtk.c"
+#line 2046 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_set_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2133,7 +2072,7 @@ _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,in
   Scierror("To be done XXXXX gtk_selection_data_get_text");
   return 0;
 }
-#line 2137 "gtk.c"
+#line 2076 "gtk.c"
 
 
 #line 516 "gtk.override"
@@ -2154,7 +2093,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1; 
   NSP_LIST_CLEAN; 
 }
-#line 2158 "gtk.c"
+#line 2097 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_targets_include_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2240,7 +2179,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
-#line 2244 "gtk.c"
+#line 2183 "gtk.c"
 
 
 static NspMethods gtkselectiondata_methods[] = {
@@ -2302,14 +2241,14 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
     return nsp_new_string_obj(NVOID,NULL,0);
   }
 }
-#line 2306 "gtk.c"
+#line 2245 "gtk.c"
 static AttrTab gtkselectiondata_attrs[] = {
-  { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "type", (attr_get_function *)_wrap_gtk_selection_data__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "format", (attr_get_function *)_wrap_gtk_selection_data__get_format, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "data", (attr_get_function *)_wrap_gtk_selection_data__get_data, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "type", (attr_get_function *)_wrap_gtk_selection_data__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "format", (attr_get_function *)_wrap_gtk_selection_data__get_format, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "data", (attr_get_function *)_wrap_gtk_selection_data__get_data, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -2322,6 +2261,7 @@ static AttrTab gtkselectiondata_attrs[] = {
 #include <nsp/gtk/gtktextattributes.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextAttributes inherits from GBoxed 
  */
@@ -2429,7 +2369,6 @@ NspGtkTextAttributes *new_gtktextattributes()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextAttributes 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2502,19 +2441,9 @@ NspGtkTextAttributes *gtktextattributes_copy(NspGtkTextAttributes *self)
  * wrappers for the GtkTextAttributes
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextAttributes *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextattributes is initialized * /
-  nsp_type_gtktextattributes = new_type_gtktextattributes(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtktextattributes)) == NULLGTKTEXTATTRIBUTES) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktextattributes_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2577,7 +2506,7 @@ _wrap_gtk_text_attributes__get_bg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2581 "gtk.c"
+#line 2510 "gtk.c"
 #line 6715 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
@@ -2586,7 +2515,7 @@ _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2590 "gtk.c"
+#line 2519 "gtk.c"
 #line 6724 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
@@ -2596,7 +2525,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2600 "gtk.c"
+#line 2529 "gtk.c"
 #line 6734 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
@@ -2607,7 +2536,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2611 "gtk.c"
+#line 2540 "gtk.c"
 #line 6745 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
@@ -2616,7 +2545,7 @@ _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.rise;
   return nsp_new_double_obj((double) ret);
 }
-#line 2620 "gtk.c"
+#line 2549 "gtk.c"
 #line 6754 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
@@ -2625,7 +2554,7 @@ _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.underline;
   return nsp_new_double_obj((double) ret);
 }
-#line 2629 "gtk.c"
+#line 2558 "gtk.c"
 #line 6763 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
@@ -2633,7 +2562,7 @@ _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.strikethrough;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2637 "gtk.c"
+#line 2566 "gtk.c"
 #line 6771 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
@@ -2642,7 +2571,7 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
 
-#line 2646 "gtk.c"
+#line 2575 "gtk.c"
 static NspObject *_wrap_gtk_text_attributes__get_justification(NspObject *self,char *attr)
 {
   gint ret;
@@ -2796,36 +2725,36 @@ static NspObject *_wrap_gtk_text_attributes__get_pad4(NspObject *self,char *attr
 }
 
 static AttrTab gtktextattributes_attrs[] = {
-  { "bg_color", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_color, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fg_color", (attr_get_function *)_wrap_gtk_text_attributes__get_fg_color, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "bg_stipple", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_stipple, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fg_stipple", (attr_get_function *)_wrap_gtk_text_attributes__get_fg_stipple, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "rise", (attr_get_function *)_wrap_gtk_text_attributes__get_rise, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "underline", (attr_get_function *)_wrap_gtk_text_attributes__get_underline, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "strikethrough", (attr_get_function *)_wrap_gtk_text_attributes__get_strikethrough, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "draw_bg", (attr_get_function *)_wrap_gtk_text_attributes__get_draw_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "justification", (attr_get_function *)_wrap_gtk_text_attributes__get_justification, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "direction", (attr_get_function *)_wrap_gtk_text_attributes__get_direction, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "font", (attr_get_function *)_wrap_gtk_text_attributes__get_font, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "font_scale", (attr_get_function *)_wrap_gtk_text_attributes__get_font_scale, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "left_margin", (attr_get_function *)_wrap_gtk_text_attributes__get_left_margin, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "indent", (attr_get_function *)_wrap_gtk_text_attributes__get_indent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "right_margin", (attr_get_function *)_wrap_gtk_text_attributes__get_right_margin, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pixels_above_lines", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_above_lines, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pixels_below_lines", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_below_lines, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pixels_inside_wrap", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_inside_wrap, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "tabs", (attr_get_function *)_wrap_gtk_text_attributes__get_tabs, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "wrap_mode", (attr_get_function *)_wrap_gtk_text_attributes__get_wrap_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "language", (attr_get_function *)_wrap_gtk_text_attributes__get_language, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "invisible", (attr_get_function *)_wrap_gtk_text_attributes__get_invisible, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "bg_full_height", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_full_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "editable", (attr_get_function *)_wrap_gtk_text_attributes__get_editable, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "realized", (attr_get_function *)_wrap_gtk_text_attributes__get_realized, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pad1", (attr_get_function *)_wrap_gtk_text_attributes__get_pad1, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pad2", (attr_get_function *)_wrap_gtk_text_attributes__get_pad2, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pad3", (attr_get_function *)_wrap_gtk_text_attributes__get_pad3, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "pad4", (attr_get_function *)_wrap_gtk_text_attributes__get_pad4, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "bg_color", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_color, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fg_color", (attr_get_function *)_wrap_gtk_text_attributes__get_fg_color, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bg_stipple", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_stipple, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fg_stipple", (attr_get_function *)_wrap_gtk_text_attributes__get_fg_stipple, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "rise", (attr_get_function *)_wrap_gtk_text_attributes__get_rise, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "underline", (attr_get_function *)_wrap_gtk_text_attributes__get_underline, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "strikethrough", (attr_get_function *)_wrap_gtk_text_attributes__get_strikethrough, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "draw_bg", (attr_get_function *)_wrap_gtk_text_attributes__get_draw_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "justification", (attr_get_function *)_wrap_gtk_text_attributes__get_justification, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "direction", (attr_get_function *)_wrap_gtk_text_attributes__get_direction, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "font", (attr_get_function *)_wrap_gtk_text_attributes__get_font, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "font_scale", (attr_get_function *)_wrap_gtk_text_attributes__get_font_scale, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "left_margin", (attr_get_function *)_wrap_gtk_text_attributes__get_left_margin, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "indent", (attr_get_function *)_wrap_gtk_text_attributes__get_indent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "right_margin", (attr_get_function *)_wrap_gtk_text_attributes__get_right_margin, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pixels_above_lines", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_above_lines, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pixels_below_lines", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_below_lines, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pixels_inside_wrap", (attr_get_function *)_wrap_gtk_text_attributes__get_pixels_inside_wrap, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "tabs", (attr_get_function *)_wrap_gtk_text_attributes__get_tabs, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "wrap_mode", (attr_get_function *)_wrap_gtk_text_attributes__get_wrap_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "language", (attr_get_function *)_wrap_gtk_text_attributes__get_language, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "invisible", (attr_get_function *)_wrap_gtk_text_attributes__get_invisible, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bg_full_height", (attr_get_function *)_wrap_gtk_text_attributes__get_bg_full_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "editable", (attr_get_function *)_wrap_gtk_text_attributes__get_editable, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "realized", (attr_get_function *)_wrap_gtk_text_attributes__get_realized, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pad1", (attr_get_function *)_wrap_gtk_text_attributes__get_pad1, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pad2", (attr_get_function *)_wrap_gtk_text_attributes__get_pad2, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pad3", (attr_get_function *)_wrap_gtk_text_attributes__get_pad3, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "pad4", (attr_get_function *)_wrap_gtk_text_attributes__get_pad4, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -2838,6 +2767,7 @@ static AttrTab gtktextattributes_attrs[] = {
 #include <nsp/gtk/gtktextiter.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextIter inherits from GBoxed 
  */
@@ -2945,7 +2875,6 @@ NspGtkTextIter *new_gtktextiter()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextIter 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -3018,19 +2947,9 @@ NspGtkTextIter *gtktextiter_copy(NspGtkTextIter *self)
  * wrappers for the GtkTextIter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTextIter *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktextiter is initialized * /
-  nsp_type_gtktextiter = new_type_gtktextiter(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtktextiter)) == NULLGTKTEXTITER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_text_iter_get_buffer(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkTextBuffer *ret;
@@ -3049,7 +2968,7 @@ _wrap_gtk_text_iter_copy(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   return (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, nspg_boxed_get(self, GtkTextIter), TRUE, TRUE,NULL);
 }
-#line 3053 "gtk.c"
+#line 2972 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_offset(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3141,7 +3060,7 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   Scierror("XXXX To be done gtk_text_iter_get_slice");
   return 0;
 }
-#line 3145 "gtk.c"
+#line 3064 "gtk.c"
 
 
 #line 5399 "gtk.override"
@@ -3170,7 +3089,7 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   Scierror("To be done gtk_text_iter_get_text");
   return 0;
 }
-#line 3174 "gtk.c"
+#line 3093 "gtk.c"
 
 
 #line 5426 "gtk.override"
@@ -3200,7 +3119,7 @@ _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int op
   Scierror("To be done gtk_text_iter_get_visible_slice");
   return 0;
 }
-#line 3204 "gtk.c"
+#line 3123 "gtk.c"
 
 
 #line 5454 "gtk.override"
@@ -3230,7 +3149,7 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
   Scierror("To be done gtk_text_iter_get_visible_text");
   return 0;
 }
-#line 3234 "gtk.c"
+#line 3153 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3254,7 +3173,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3258 "gtk.c"
+#line 3177 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3284,7 +3203,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
     
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3288 "gtk.c"
+#line 3207 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3376,7 +3295,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3380 "gtk.c"
+#line 3299 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_editable(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4002,7 +3921,7 @@ _wrap_gtk_text_iter_forward_search(NspGBoxed *self,Stack stack,int rhs,int opt,i
     }
   return 0;
 }
-#line 4006 "gtk.c"
+#line 3925 "gtk.c"
 
 
 #line 5554 "gtk.override"
@@ -4040,7 +3959,7 @@ _wrap_gtk_text_iter_backward_search(NspGBoxed *self,Stack stack,int rhs,int opt,
     }
   return 0;
 }
-#line 4044 "gtk.c"
+#line 3963 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4215,7 +4134,7 @@ static NspMethods *gtktextiter_get_methods(void) { return gtktextiter_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeIter ----------- */
@@ -4226,6 +4145,7 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreeiter.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeIter inherits from GBoxed 
  */
@@ -4333,7 +4253,6 @@ NspGtkTreeIter *new_gtktreeiter()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeIter 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -4406,19 +4325,9 @@ NspGtkTreeIter *gtktreeiter_copy(NspGtkTreeIter *self)
  * wrappers for the GtkTreeIter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeIter *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreeiter is initialized * /
-  nsp_type_gtktreeiter = new_type_gtktreeiter(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtktreeiter)) == NULLGTKTREEITER) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_iter_copy(NspGtkTreeIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkTreeIter *ret;
@@ -4450,7 +4359,7 @@ static NspMethods *gtktreeiter_get_methods(void) { return gtktreeiter_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeRowReference ----------- */
@@ -4461,6 +4370,7 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreerowreference.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeRowReference inherits from GBoxed 
  */
@@ -4568,7 +4478,6 @@ NspGtkTreeRowReference *new_gtktreerowreference()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeRowReference 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -4641,19 +4550,9 @@ NspGtkTreeRowReference *gtktreerowreference_copy(NspGtkTreeRowReference *self)
  * wrappers for the GtkTreeRowReference
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreeRowReference *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreerowreference is initialized * /
-  nsp_type_gtktreerowreference = new_type_gtktreerowreference(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtktreerowreference)) == NULLGTKTREEROWREFERENCE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktreerowreference_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4732,7 +4631,7 @@ static NspMethods *gtktreerowreference_get_methods(void) { return gtktreerowrefe
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreePath ----------- */
@@ -4743,6 +4642,7 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreepath.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreePath inherits from GBoxed 
  */
@@ -4850,7 +4750,6 @@ NspGtkTreePath *new_gtktreepath()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreePath 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -4923,19 +4822,9 @@ NspGtkTreePath *gtktreepath_copy(NspGtkTreePath *self)
  * wrappers for the GtkTreePath
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGtkTreePath *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gtktreepath is initialized * /
-  nsp_type_gtktreepath = new_type_gtktreepath(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gtktreepath)) == NULLGTKTREEPATH) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 111 "gtk.override"
 static int
 _wrap_gtktreepath_new(Stack stack, int rhs, int opt, int lhs)
@@ -4993,7 +4882,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     }
   return NULL;
 }
-#line 4997 "gtk.c"
+#line 4886 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_to_string(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -5043,7 +4932,7 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 5047 "gtk.c"
+#line 4936 "gtk.c"
 
 
 #line 180 "gtk.override"
@@ -5072,7 +4961,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
-#line 5076 "gtk.c"
+#line 4965 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -5183,7 +5072,7 @@ static NspMethods *gtktreepath_get_methods(void) { return gtktreepath_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellEditable ----------- */
@@ -5194,6 +5083,7 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcelleditable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellEditable inherits from GObject 
  */
@@ -5301,7 +5191,6 @@ NspGtkCellEditable *new_gtkcelleditable()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellEditable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -5374,7 +5263,9 @@ NspGtkCellEditable *gtkcelleditable_copy(NspGtkCellEditable *self)
  * wrappers for the GtkCellEditable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_cell_editable_start_editing(NspGtkCellEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -5413,7 +5304,7 @@ static NspMethods gtkcelleditable_methods[] = {
 };
 
 static NspMethods *gtkcelleditable_get_methods(void) { return gtkcelleditable_methods;};
-static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellLayout ----------- */
@@ -5424,6 +5315,7 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcelllayout.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellLayout inherits from GObject 
  */
@@ -5531,7 +5423,6 @@ NspGtkCellLayout *new_gtkcelllayout()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellLayout 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -5604,7 +5495,9 @@ NspGtkCellLayout *gtkcelllayout_copy(NspGtkCellLayout *self)
  * wrappers for the GtkCellLayout
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_cell_layout_pack_start(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,new_opts,t_end};
@@ -5673,7 +5566,7 @@ _wrap_gtk_cell_layout_set_attributes(NspGObject *self,Stack stack,int rhs,int op
   return 0;
 }
 
-#line 5677 "gtk.c"
+#line 5570 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_add_attribute(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5758,7 +5651,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 5762 "gtk.c"
+#line 5655 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_clear_attributes(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5793,7 +5686,7 @@ static NspMethods gtkcelllayout_methods[] = {
 };
 
 static NspMethods *gtkcelllayout_get_methods(void) { return gtkcelllayout_methods;};
-static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkEditable ----------- */
@@ -5804,6 +5697,7 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkeditable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkEditable inherits from GObject 
  */
@@ -5911,7 +5805,6 @@ NspGtkEditable *new_gtkeditable()
 /*----------------------------------------------
  * Object method redefined for NspGtkEditable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -5984,7 +5877,9 @@ NspGtkEditable *gtkeditable_copy(NspGtkEditable *self)
  * wrappers for the GtkEditable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_editable_select_region(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, s_int,t_end};
@@ -6003,7 +5898,7 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 6007 "gtk.c"
+#line 5902 "gtk.c"
 
 
 #line 3798 "gtk.override"
@@ -6024,7 +5919,7 @@ static int _wrap_gtk_editable_insert_text(NspGtkEditable *self,Stack stack,int r
   if ( nsp_move_double(stack,1,(double)position) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 6028 "gtk.c"
+#line 5923 "gtk.c"
 
 
 static int _wrap_gtk_editable_delete_text(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
@@ -6130,7 +6025,7 @@ static NspMethods gtkeditable_methods[] = {
 };
 
 static NspMethods *gtkeditable_get_methods(void) { return gtkeditable_methods;};
-static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileChooser ----------- */
@@ -6141,6 +6036,7 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfilechooser.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileChooser inherits from GObject 
  */
@@ -6248,7 +6144,6 @@ NspGtkFileChooser *new_gtkfilechooser()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileChooser 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -6321,7 +6216,9 @@ NspGtkFileChooser *gtkfilechooser_copy(NspGtkFileChooser *self)
  * wrappers for the GtkFileChooser
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_file_chooser_set_action(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -6866,7 +6763,7 @@ static NspMethods gtkfilechooser_methods[] = {
 };
 
 static NspMethods *gtkfilechooser_get_methods(void) { return gtkfilechooser_methods;};
-static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeDragDest ----------- */
@@ -6877,6 +6774,7 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreedragdest.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeDragDest inherits from GObject 
  */
@@ -6984,7 +6882,6 @@ NspGtkTreeDragDest *new_gtktreedragdest()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeDragDest 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7057,7 +6954,9 @@ NspGtkTreeDragDest *gtktreedragdest_copy(NspGtkTreeDragDest *self)
  * wrappers for the GtkTreeDragDest
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_drag_dest_drag_data_received(NspGtkTreeDragDest *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, obj,t_end};
@@ -7115,7 +7014,7 @@ static NspMethods gtktreedragdest_methods[] = {
 };
 
 static NspMethods *gtktreedragdest_get_methods(void) { return gtktreedragdest_methods;};
-static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeDragSource ----------- */
@@ -7126,6 +7025,7 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreedragsource.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeDragSource inherits from GObject 
  */
@@ -7233,7 +7133,6 @@ NspGtkTreeDragSource *new_gtktreedragsource()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeDragSource 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7306,7 +7205,9 @@ NspGtkTreeDragSource *gtktreedragsource_copy(NspGtkTreeDragSource *self)
  * wrappers for the GtkTreeDragSource
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_drag_source_row_draggable(NspGtkTreeDragSource *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -7376,7 +7277,7 @@ static NspMethods gtktreedragsource_methods[] = {
 };
 
 static NspMethods *gtktreedragsource_get_methods(void) { return gtktreedragsource_methods;};
-static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeModel ----------- */
@@ -7387,6 +7288,7 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreemodel.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeModel inherits from GObject 
  */
@@ -7494,7 +7396,6 @@ NspGtkTreeModel *new_gtktreemodel()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeModel 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7567,7 +7468,9 @@ NspGtkTreeModel *gtktreemodel_copy(NspGtkTreeModel *self)
  * wrappers for the GtkTreeModel
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_model_get_flags(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
 {
   guint ret;
@@ -7604,7 +7507,7 @@ static int _wrap_gtk_tree_model_get_column_type(NspGtkTreeModel *self,Stack stac
   return 1; 
 }
 
-#line 7608 "gtk.c"
+#line 7511 "gtk.c"
 
 
 #line 1509 "gtk.override"
@@ -7637,7 +7540,7 @@ _wrap_gtk_tree_model_get_iter(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
 }
-#line 7641 "gtk.c"
+#line 7544 "gtk.c"
 
 
 #line 1540 "gtk.override"
@@ -7662,7 +7565,7 @@ _wrap_gtk_tree_model_get_iter_from_string(NspGObject *self,Stack stack,int rhs,i
     return RET_BUG;
   }
 }
-#line 7666 "gtk.c"
+#line 7569 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7704,7 +7607,7 @@ _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 1;
 }
-#line 7708 "gtk.c"
+#line 7611 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7757,7 +7660,7 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7761 "gtk.c"
+#line 7664 "gtk.c"
 
 
 #line 2367 "gtk.override"
@@ -7779,7 +7682,7 @@ _wrap_gtk_tree_model_iter_next(NspGObject *self,Stack stack,int rhs,int opt,int 
   if ( nsp_move_boolean(stack,1,rep)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 7783 "gtk.c"
+#line 7686 "gtk.c"
 
 
 #line 2387 "gtk.override"
@@ -7811,7 +7714,7 @@ _wrap_gtk_tree_model_iter_children(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
 }
-#line 7815 "gtk.c"
+#line 7718 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7885,7 +7788,7 @@ _wrap_gtk_tree_model_iter_nth_child(NspGObject *self,Stack stack,int rhs,int opt
   else 
     return RET_BUG;
 }
-#line 7889 "gtk.c"
+#line 7792 "gtk.c"
 
 
 #line 2448 "gtk.override"
@@ -7918,7 +7821,7 @@ _wrap_gtk_tree_model_iter_parent(NspGObject *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
 }
-#line 7922 "gtk.c"
+#line 7825 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -8013,7 +7916,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   /* XXXX detecter les erreurs ? */
   return 0;
 }
-#line 8017 "gtk.c"
+#line 7920 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -8153,7 +8056,7 @@ static int _wrap_gtk_tree_model_filter_new(NspGtkTreeModel *self,Stack stack,int
   return 1;
 }
 
-#line 8157 "gtk.c"
+#line 8060 "gtk.c"
 
 
 static NspMethods gtktreemodel_methods[] = {
@@ -8186,7 +8089,7 @@ static NspMethods gtktreemodel_methods[] = {
 };
 
 static NspMethods *gtktreemodel_get_methods(void) { return gtktreemodel_methods;};
-static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeSortable ----------- */
@@ -8197,6 +8100,7 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreesortable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeSortable inherits from GObject 
  */
@@ -8304,7 +8208,6 @@ NspGtkTreeSortable *new_gtktreesortable()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeSortable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -8377,7 +8280,9 @@ NspGtkTreeSortable *gtktreesortable_copy(NspGtkTreeSortable *self)
  * wrappers for the GtkTreeSortable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_sortable_sort_column_changed(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -8399,7 +8304,7 @@ _wrap_gtk_tree_sortable_get_sort_column_id(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,n,(double) sort_column_id,(double) order) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 8403 "gtk.c"
+#line 8308 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_set_sort_column_id(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8475,7 +8380,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#line 8479 "gtk.c"
+#line 8384 "gtk.c"
 
 
 #line 1755 "gtk.override"
@@ -8502,7 +8407,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
 					  nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 8506 "gtk.c"
+#line 8411 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_has_default_sort_func(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8525,7 +8430,7 @@ static NspMethods gtktreesortable_methods[] = {
 };
 
 static NspMethods *gtktreesortable_get_methods(void) { return gtktreesortable_methods;};
-static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAboutDialog ----------- */
@@ -8536,6 +8441,7 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaboutdialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAboutDialog inherits from GtkDialog 
  */
@@ -8643,7 +8549,6 @@ NspGtkAboutDialog *new_gtkaboutdialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkAboutDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -8716,14 +8621,15 @@ NspGtkAboutDialog *gtkaboutdialog_copy(NspGtkAboutDialog *self)
  * wrappers for the GtkAboutDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkaboutdialog_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_about_dialog_new())== NULL) return RET_BUG;
-
   nsp_type_gtkaboutdialog = new_type_gtkaboutdialog(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaboutdialog );
@@ -9003,7 +8909,7 @@ static NspMethods *gtkaboutdialog_get_methods(void) { return gtkaboutdialog_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAccelGroup ----------- */
@@ -9014,6 +8920,7 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaccelgroup.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAccelGroup inherits from GObject 
  */
@@ -9121,7 +9028,6 @@ NspGtkAccelGroup *new_gtkaccelgroup()
 /*----------------------------------------------
  * Object method redefined for NspGtkAccelGroup 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9194,14 +9100,15 @@ NspGtkAccelGroup *gtkaccelgroup_copy(NspGtkAccelGroup *self)
  * wrappers for the GtkAccelGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkaccelgroup_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_accel_group_new())== NULL) return RET_BUG;
-
   nsp_type_gtkaccelgroup = new_type_gtkaccelgroup(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccelgroup );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -9249,7 +9156,7 @@ static NspMethods *gtkaccelgroup_get_methods(void) { return gtkaccelgroup_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAccelLabel ----------- */
@@ -9260,6 +9167,7 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaccellabel.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAccelLabel inherits from GtkLabel 
  */
@@ -9367,7 +9275,6 @@ NspGtkAccelLabel *new_gtkaccellabel()
 /*----------------------------------------------
  * Object method redefined for NspGtkAccelLabel 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9440,7 +9347,9 @@ NspGtkAccelLabel *gtkaccellabel_copy(NspGtkAccelLabel *self)
  * wrappers for the GtkAccelLabel
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkaccellabel_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -9449,7 +9358,6 @@ _wrap_gtkaccellabel_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_accel_label_new(string))== NULL) return RET_BUG;
-
   nsp_type_gtkaccellabel = new_type_gtkaccellabel(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaccellabel );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -9520,7 +9428,7 @@ static NspMethods *gtkaccellabel_get_methods(void) { return gtkaccellabel_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAccelMap ----------- */
@@ -9531,6 +9439,7 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaccelmap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAccelMap inherits from GObject 
  */
@@ -9638,7 +9547,6 @@ NspGtkAccelMap *new_gtkaccelmap()
 /*----------------------------------------------
  * Object method redefined for NspGtkAccelMap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9711,13 +9619,15 @@ NspGtkAccelMap *gtkaccelmap_copy(NspGtkAccelMap *self)
  * wrappers for the GtkAccelMap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gtkaccelmap_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAccessible ----------- */
@@ -9728,6 +9638,7 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaccessible.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAccessible inherits from AtkObject 
  */
@@ -9835,7 +9746,6 @@ NspGtkAccessible *new_gtkaccessible()
 /*----------------------------------------------
  * Object method redefined for NspGtkAccessible 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9908,7 +9818,9 @@ NspGtkAccessible *gtkaccessible_copy(NspGtkAccessible *self)
  * wrappers for the GtkAccessible
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_accessible_connect_widget_destroyed(NspGtkAccessible *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -9926,7 +9838,7 @@ static NspMethods *gtkaccessible_get_methods(void) { return gtkaccessible_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAction ----------- */
@@ -9937,6 +9849,7 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaction.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAction inherits from GObject 
  */
@@ -10044,7 +9957,6 @@ NspGtkAction *new_gtkaction()
 /*----------------------------------------------
  * Object method redefined for NspGtkAction 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -10117,7 +10029,9 @@ NspGtkAction *gtkaction_copy(NspGtkAction *self)
  * wrappers for the GtkAction
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 7120 "gtk.override"
 
 static int
@@ -10136,7 +10050,7 @@ _wrap_gtkaction_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10140 "gtk.c"
+#line 10054 "gtk.c"
 
 
 static int _wrap_gtk_action_get_name(NspGtkAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -10366,7 +10280,7 @@ static NspMethods *gtkaction_get_methods(void) { return gtkaction_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkActionGroup ----------- */
@@ -10377,6 +10291,7 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkactiongroup.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkActionGroup inherits from GObject 
  */
@@ -10484,7 +10399,6 @@ NspGtkActionGroup *new_gtkactiongroup()
 /*----------------------------------------------
  * Object method redefined for NspGtkActionGroup 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -10557,7 +10471,9 @@ NspGtkActionGroup *gtkactiongroup_copy(NspGtkActionGroup *self)
  * wrappers for the GtkActionGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkactiongroup_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10566,7 +10482,6 @@ _wrap_gtkactiongroup_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_action_group_new(name))== NULL) return RET_BUG;
-
   nsp_type_gtkactiongroup = new_type_gtkactiongroup(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkactiongroup );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -10645,7 +10560,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 10649 "gtk.c"
+#line 10564 "gtk.c"
 
 
 #line 7166 "gtk.override"
@@ -10664,7 +10579,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 10668 "gtk.c"
+#line 10583 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -10739,7 +10654,7 @@ static NspMethods *gtkactiongroup_get_methods(void) { return gtkactiongroup_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAdjustment ----------- */
@@ -10750,6 +10665,7 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkadjustment.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAdjustment inherits from GtkObject 
  */
@@ -10857,7 +10773,6 @@ NspGtkAdjustment *new_gtkadjustment()
 /*----------------------------------------------
  * Object method redefined for NspGtkAdjustment 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -10930,7 +10845,9 @@ NspGtkAdjustment *gtkadjustment_copy(NspGtkAdjustment *self)
  * wrappers for the GtkAdjustment
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkadjustment_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10947,7 +10864,6 @@ _wrap_gtkadjustment_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &value, &lower, &upper, &step_incr, &page_incr, &page_size) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_adjustment_new(value, lower, upper, step_incr, page_incr, page_size))== NULL) return RET_BUG;
-
   nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkadjustment );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -10962,7 +10878,7 @@ _wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("deprecated: use individual setters");
   return RET_BUG;
 }
-#line 10966 "gtk.c"
+#line 10882 "gtk.c"
 
 
 static int _wrap_gtk_adjustment_changed(NspGtkAdjustment *self,Stack stack,int rhs,int opt,int lhs)
@@ -11032,7 +10948,7 @@ _wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_value_changed(adjustment);
   return 0;
 }
-#line 11036 "gtk.c"
+#line 10952 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_value(NspObject *self,char *attr)
 {
   double ret;
@@ -11053,7 +10969,7 @@ _wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11057 "gtk.c"
+#line 10973 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_lower(NspObject *self,char *attr)
 {
   double ret;
@@ -11074,7 +10990,7 @@ _wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11078 "gtk.c"
+#line 10994 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_upper(NspObject *self,char *attr)
 {
   double ret;
@@ -11095,7 +11011,7 @@ _wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11099 "gtk.c"
+#line 11015 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_step_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -11116,7 +11032,7 @@ _wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11120 "gtk.c"
+#line 11036 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -11137,7 +11053,7 @@ _wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *val
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11141 "gtk.c"
+#line 11057 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr)
 {
   double ret;
@@ -11148,13 +11064,13 @@ static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr
 }
 
 static AttrTab gtkadjustment_attrs[] = {
-  { "value", (attr_get_function *)_wrap_gtk_adjustment__get_value, (attr_set_function *)_wrap_gtk_adjustment__set_value,(attr_get_object_function *)int_get_object_failed },
-  { "lower", (attr_get_function *)_wrap_gtk_adjustment__get_lower, (attr_set_function *)_wrap_gtk_adjustment__set_lower,(attr_get_object_function *)int_get_object_failed },
-  { "upper", (attr_get_function *)_wrap_gtk_adjustment__get_upper, (attr_set_function *)_wrap_gtk_adjustment__set_upper,(attr_get_object_function *)int_get_object_failed },
-  { "step_increment", (attr_get_function *)_wrap_gtk_adjustment__get_step_increment, (attr_set_function *)_wrap_gtk_adjustment__set_step_increment,(attr_get_object_function *)int_get_object_failed },
-  { "page_increment", (attr_get_function *)_wrap_gtk_adjustment__get_page_increment, (attr_set_function *)_wrap_gtk_adjustment__set_page_increment,(attr_get_object_function *)int_get_object_failed },
-  { "page_size", (attr_get_function *)_wrap_gtk_adjustment__get_page_size, (attr_set_function *)_wrap_gtk_adjustment__set_page_size,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "value", (attr_get_function *)_wrap_gtk_adjustment__get_value, (attr_set_function *)_wrap_gtk_adjustment__set_value,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "lower", (attr_get_function *)_wrap_gtk_adjustment__get_lower, (attr_set_function *)_wrap_gtk_adjustment__set_lower,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "upper", (attr_get_function *)_wrap_gtk_adjustment__get_upper, (attr_set_function *)_wrap_gtk_adjustment__set_upper,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "step_increment", (attr_get_function *)_wrap_gtk_adjustment__get_step_increment, (attr_set_function *)_wrap_gtk_adjustment__set_step_increment,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "page_increment", (attr_get_function *)_wrap_gtk_adjustment__get_page_increment, (attr_set_function *)_wrap_gtk_adjustment__set_page_increment,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "page_size", (attr_get_function *)_wrap_gtk_adjustment__get_page_size, (attr_set_function *)_wrap_gtk_adjustment__set_page_size,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -11167,6 +11083,7 @@ static AttrTab gtkadjustment_attrs[] = {
 #include <nsp/gtk/gtkalignment.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAlignment inherits from GtkBin 
  */
@@ -11274,7 +11191,6 @@ NspGtkAlignment *new_gtkalignment()
 /*----------------------------------------------
  * Object method redefined for NspGtkAlignment 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -11347,7 +11263,9 @@ NspGtkAlignment *gtkalignment_copy(NspGtkAlignment *self)
  * wrappers for the GtkAlignment
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkalignment_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -11362,7 +11280,6 @@ _wrap_gtkalignment_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &xalign, &yalign, &xscale, &yscale) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_alignment_new(xalign, yalign, xscale, yscale))== NULL) return RET_BUG;
-
   nsp_type_gtkalignment = new_type_gtkalignment(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkalignment );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -11399,7 +11316,7 @@ static NspMethods *gtkalignment_get_methods(void) { return gtkalignment_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkArrow ----------- */
@@ -11410,6 +11327,7 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkarrow.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkArrow inherits from GtkMisc 
  */
@@ -11517,7 +11435,6 @@ NspGtkArrow *new_gtkarrow()
 /*----------------------------------------------
  * Object method redefined for NspGtkArrow 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -11590,7 +11507,9 @@ NspGtkArrow *gtkarrow_copy(NspGtkArrow *self)
  * wrappers for the GtkArrow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkarrow_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -11605,7 +11524,6 @@ _wrap_gtkarrow_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_SHADOW_TYPE, nsp_shadow_type, &shadow_type)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_arrow_new(arrow_type, shadow_type))== NULL) return RET_BUG;
-
   nsp_type_gtkarrow = new_type_gtkarrow(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkarrow );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -11638,7 +11556,7 @@ static NspMethods *gtkarrow_get_methods(void) { return gtkarrow_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkAspectFrame ----------- */
@@ -11649,6 +11567,7 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkaspectframe.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkAspectFrame inherits from GtkFrame 
  */
@@ -11756,7 +11675,6 @@ NspGtkAspectFrame *new_gtkaspectframe()
 /*----------------------------------------------
  * Object method redefined for NspGtkAspectFrame 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -11829,7 +11747,9 @@ NspGtkAspectFrame *gtkaspectframe_copy(NspGtkAspectFrame *self)
  * wrappers for the GtkAspectFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkaspectframe_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -11847,7 +11767,6 @@ _wrap_gtkaspectframe_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &label, &xalign, &yalign, &ratio, &obey_child) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_aspect_frame_new(label, xalign, yalign, ratio, obey_child))== NULL) return RET_BUG;
-
   nsp_type_gtkaspectframe = new_type_gtkaspectframe(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaspectframe );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -11881,7 +11800,7 @@ static NspMethods *gtkaspectframe_get_methods(void) { return gtkaspectframe_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkBin ----------- */
@@ -11892,6 +11811,7 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkbin.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkBin inherits from GtkContainer 
  */
@@ -11999,7 +11919,6 @@ NspGtkBin *new_gtkbin()
 /*----------------------------------------------
  * Object method redefined for NspGtkBin 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -12072,7 +11991,9 @@ NspGtkBin *gtkbin_copy(NspGtkBin *self)
  * wrappers for the GtkBin
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_bin_get_child(NspGtkBin *self,Stack stack,int rhs,int opt,int lhs)
 {
   GtkWidget *ret;
@@ -12104,8 +12025,8 @@ static NspObject *_wrap_gtk_bin__get_child(NspObject *self,char *attr)
 }
 
 static AttrTab gtkbin_attrs[] = {
-  { "child", (attr_get_function *)_wrap_gtk_bin__get_child, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "child", (attr_get_function *)_wrap_gtk_bin__get_child, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -12118,6 +12039,7 @@ static AttrTab gtkbin_attrs[] = {
 #include <nsp/gtk/gtkbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkBox inherits from GtkContainer 
  */
@@ -12225,7 +12147,6 @@ NspGtkBox *new_gtkbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -12298,7 +12219,9 @@ NspGtkBox *gtkbox_copy(NspGtkBox *self)
  * wrappers for the GtkBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_box_pack_start(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,new_opts,t_end};
@@ -12422,7 +12345,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 12426 "gtk.c"
+#line 12349 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -12459,7 +12382,7 @@ static NspMethods *gtkbox_get_methods(void) { return gtkbox_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkButton ----------- */
@@ -12470,6 +12393,7 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkButton inherits from GtkBin 
  */
@@ -12577,7 +12501,6 @@ NspGtkButton *new_gtkbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -12650,7 +12573,9 @@ NspGtkButton *gtkbutton_copy(NspGtkButton *self)
  * wrappers for the GtkButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4313 "gtk.override"
 /* OK */
 static int
@@ -12685,7 +12610,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 12689 "gtk.c"
+#line 12614 "gtk.c"
 
 
 static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -12873,7 +12798,7 @@ static NspMethods *gtkbutton_get_methods(void) { return gtkbutton_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkButtonBox ----------- */
@@ -12884,6 +12809,7 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkbuttonbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkButtonBox inherits from GtkBox 
  */
@@ -12991,7 +12917,6 @@ NspGtkButtonBox *new_gtkbuttonbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkButtonBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -13064,7 +12989,9 @@ NspGtkButtonBox *gtkbuttonbox_copy(NspGtkButtonBox *self)
  * wrappers for the GtkButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_button_box_get_layout(NspGtkButtonBox *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
@@ -13137,7 +13064,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13141 "gtk.c"
+#line 13068 "gtk.c"
 
 
 #line 4359 "gtk.override"
@@ -13151,7 +13078,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 13155 "gtk.c"
+#line 13082 "gtk.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -13171,7 +13098,7 @@ static NspMethods *gtkbuttonbox_get_methods(void) { return gtkbuttonbox_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCalendar ----------- */
@@ -13182,6 +13109,7 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcalendar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCalendar inherits from GtkWidget 
  */
@@ -13289,7 +13217,6 @@ NspGtkCalendar *new_gtkcalendar()
 /*----------------------------------------------
  * Object method redefined for NspGtkCalendar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -13362,14 +13289,15 @@ NspGtkCalendar *gtkcalendar_copy(NspGtkCalendar *self)
  * wrappers for the GtkCalendar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcalendar_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_calendar_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcalendar = new_type_gtkcalendar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcalendar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -13433,7 +13361,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 13437 "gtk.c"
+#line 13365 "gtk.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13474,7 +13402,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13478 "gtk.c"
+#line 13406 "gtk.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13511,7 +13439,7 @@ static NspMethods *gtkcalendar_get_methods(void) { return gtkcalendar_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRenderer ----------- */
@@ -13522,6 +13450,7 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrenderer.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRenderer inherits from GtkObject 
  */
@@ -13629,7 +13558,6 @@ NspGtkCellRenderer *new_gtkcellrenderer()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRenderer 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -13702,7 +13630,9 @@ NspGtkCellRenderer *gtkcellrenderer_copy(NspGtkCellRenderer *self)
  * wrappers for the GtkCellRenderer
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6229 "gtk.override"
 static int
 _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
@@ -13736,7 +13666,7 @@ _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,in
   if (  nsp_move_doubles(stack,1,1,4,(double)  x_offset,(double) y_offset, (double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 13740 "gtk.c"
+#line 13670 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13839,7 +13769,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG; 
   return 1; 
 }
-#line 13843 "gtk.c"
+#line 13773 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_get_visible(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13897,7 +13827,7 @@ _wrap_gtk_cell_renderer_get_alignment(NspGObject *self,Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13901 "gtk.c"
+#line 13831 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_padding(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13920,7 +13850,7 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
   return 1;
 }
 
-#line 13924 "gtk.c"
+#line 13854 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_editing_canceled(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13964,7 +13894,7 @@ static NspMethods *gtkcellrenderer_get_methods(void) { return gtkcellrenderer_me
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRendererCombo ----------- */
@@ -13975,6 +13905,7 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrenderercombo.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRendererCombo inherits from GtkCellRendererText 
  */
@@ -14082,7 +14013,6 @@ NspGtkCellRendererCombo *new_gtkcellrenderercombo()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRendererCombo 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -14155,14 +14085,15 @@ NspGtkCellRendererCombo *gtkcellrenderercombo_copy(NspGtkCellRendererCombo *self
  * wrappers for the GtkCellRendererCombo
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcellrenderercombo_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_cell_renderer_combo_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcellrenderercombo = new_type_gtkcellrenderercombo(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderercombo );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -14175,7 +14106,7 @@ static NspMethods *gtkcellrenderercombo_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRendererPixbuf ----------- */
@@ -14186,6 +14117,7 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrendererpixbuf.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRendererPixbuf inherits from GtkCellRenderer 
  */
@@ -14293,7 +14225,6 @@ NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRendererPixbuf 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -14366,14 +14297,15 @@ NspGtkCellRendererPixbuf *gtkcellrendererpixbuf_copy(NspGtkCellRendererPixbuf *s
  * wrappers for the GtkCellRendererPixbuf
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcellrendererpixbuf_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_cell_renderer_pixbuf_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcellrendererpixbuf = new_type_gtkcellrendererpixbuf(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererpixbuf );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -14386,7 +14318,7 @@ static NspMethods *gtkcellrendererpixbuf_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRendererProgress ----------- */
@@ -14397,6 +14329,7 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrendererprogress.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRendererProgress inherits from GtkCellRenderer 
  */
@@ -14504,7 +14437,6 @@ NspGtkCellRendererProgress *new_gtkcellrendererprogress()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRendererProgress 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -14577,14 +14509,15 @@ NspGtkCellRendererProgress *gtkcellrendererprogress_copy(NspGtkCellRendererProgr
  * wrappers for the GtkCellRendererProgress
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcellrendererprogress_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_cell_renderer_progress_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcellrendererprogress = new_type_gtkcellrendererprogress(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrendererprogress );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -14597,7 +14530,7 @@ static NspMethods *gtkcellrendererprogress_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRendererText ----------- */
@@ -14608,6 +14541,7 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrenderertext.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRendererText inherits from GtkCellRenderer 
  */
@@ -14715,7 +14649,6 @@ NspGtkCellRendererText *new_gtkcellrenderertext()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRendererText 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -14788,14 +14721,15 @@ NspGtkCellRendererText *gtkcellrenderertext_copy(NspGtkCellRendererText *self)
  * wrappers for the GtkCellRendererText
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcellrenderertext_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_cell_renderer_text_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcellrenderertext = new_type_gtkcellrenderertext(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertext );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -14822,7 +14756,7 @@ static NspMethods *gtkcellrenderertext_get_methods(void) { return gtkcellrendere
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellRendererToggle ----------- */
@@ -14833,6 +14767,7 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellrenderertoggle.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellRendererToggle inherits from GtkCellRenderer 
  */
@@ -14940,7 +14875,6 @@ NspGtkCellRendererToggle *new_gtkcellrenderertoggle()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellRendererToggle 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -15013,14 +14947,15 @@ NspGtkCellRendererToggle *gtkcellrenderertoggle_copy(NspGtkCellRendererToggle *s
  * wrappers for the GtkCellRendererToggle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcellrenderertoggle_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_cell_renderer_toggle_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcellrenderertoggle = new_type_gtkcellrenderertoggle(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcellrenderertoggle );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -15077,7 +15012,7 @@ static NspMethods *gtkcellrenderertoggle_get_methods(void) { return gtkcellrende
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCellView ----------- */
@@ -15088,6 +15023,7 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcellview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCellView inherits from GtkWidget 
  * and implements  GtkCellLayout
@@ -15197,7 +15133,6 @@ NspGtkCellView *new_gtkcellview()
 /*----------------------------------------------
  * Object method redefined for NspGtkCellView 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -15270,7 +15205,9 @@ NspGtkCellView *gtkcellview_copy(NspGtkCellView *self)
  * wrappers for the GtkCellView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 7035 "gtk.override"
 
 /* merging gtk_cell_view_new 
@@ -15316,7 +15253,7 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 15320 "gtk.c"
+#line 15257 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -15440,7 +15377,7 @@ static NspMethods *gtkcellview_get_methods(void) { return gtkcellview_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCheckButton ----------- */
@@ -15451,6 +15388,7 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcheckbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCheckButton inherits from GtkToggleButton 
  */
@@ -15558,7 +15496,6 @@ NspGtkCheckButton *new_gtkcheckbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkCheckButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -15631,7 +15568,9 @@ NspGtkCheckButton *gtkcheckbutton_copy(NspGtkCheckButton *self)
  * wrappers for the GtkCheckButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4407 "gtk.override"
 static int
 _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
@@ -15662,7 +15601,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15666 "gtk.c"
+#line 15605 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -15670,7 +15609,7 @@ static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkCheckMenuItem ----------- */
@@ -15681,6 +15620,7 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcheckmenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCheckMenuItem inherits from GtkMenuItem 
  */
@@ -15788,7 +15728,6 @@ NspGtkCheckMenuItem *new_gtkcheckmenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkCheckMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -15861,7 +15800,9 @@ NspGtkCheckMenuItem *gtkcheckmenuitem_copy(NspGtkCheckMenuItem *self)
  * wrappers for the GtkCheckMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4594 "gtk.override"
 static int
 _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -15887,7 +15828,7 @@ _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15891 "gtk.c"
+#line 15832 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -15999,8 +15940,8 @@ static NspObject *_wrap_gtk_check_menu_item__get_active(NspObject *self,char *at
 }
 
 static AttrTab gtkcheckmenuitem_attrs[] = {
-  { "active", (attr_get_function *)_wrap_gtk_check_menu_item__get_active, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "active", (attr_get_function *)_wrap_gtk_check_menu_item__get_active, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -16013,6 +15954,7 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 #include <nsp/gtk/gtkcolorbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkColorButton inherits from GtkButton 
  */
@@ -16120,7 +16062,6 @@ NspGtkColorButton *new_gtkcolorbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkColorButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -16193,13 +16134,15 @@ NspGtkColorButton *gtkcolorbutton_copy(NspGtkColorButton *self)
  * wrappers for the GtkColorButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gtkcolorbutton_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkColorSelection ----------- */
@@ -16210,6 +16153,7 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcolorselection.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkColorSelection inherits from GtkVBox 
  */
@@ -16317,7 +16261,6 @@ NspGtkColorSelection *new_gtkcolorselection()
 /*----------------------------------------------
  * Object method redefined for NspGtkColorSelection 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -16390,14 +16333,15 @@ NspGtkColorSelection *gtkcolorselection_copy(NspGtkColorSelection *self)
  * wrappers for the GtkColorSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcolorselection_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_color_selection_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcolorselection = new_type_gtkcolorselection(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorselection );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -16462,7 +16406,7 @@ _wrap_gtk_color_selection_set_current_color(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 16466 "gtk.c"
+#line 16410 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16492,7 +16436,7 @@ _wrap_gtk_color_selection_get_current_color(NspGObject *self,Stack stack,int rhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16496 "gtk.c"
+#line 16440 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16530,7 +16474,7 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 16534 "gtk.c"
+#line 16478 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16557,7 +16501,7 @@ _wrap_gtk_color_selection_get_previous_color(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16561 "gtk.c"
+#line 16505 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16636,7 +16580,7 @@ static NspMethods *gtkcolorselection_get_methods(void) { return gtkcolorselectio
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkColorSelectionDialog ----------- */
@@ -16647,6 +16591,7 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcolorselectiondialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkColorSelectionDialog inherits from GtkDialog 
  */
@@ -16754,7 +16699,6 @@ NspGtkColorSelectionDialog *new_gtkcolorselectiondialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkColorSelectionDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -16827,7 +16771,9 @@ NspGtkColorSelectionDialog *gtkcolorselectiondialog_copy(NspGtkColorSelectionDia
  * wrappers for the GtkColorSelectionDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcolorselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -16836,7 +16782,6 @@ _wrap_gtkcolorselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_color_selection_dialog_new(title))== NULL) return RET_BUG;
-
   nsp_type_gtkcolorselectiondialog = new_type_gtkcolorselectiondialog(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcolorselectiondialog );
@@ -16883,11 +16828,11 @@ static NspObject *_wrap_gtk_color_selection_dialog__get_help_button(NspObject *s
 }
 
 static AttrTab gtkcolorselectiondialog_attrs[] = {
-  { "colorsel", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_colorsel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "ok_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "cancel_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "help_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_help_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "colorsel", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_colorsel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "ok_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "cancel_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "help_button", (attr_get_function *)_wrap_gtk_color_selection_dialog__get_help_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -16900,6 +16845,7 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 #include <nsp/gtk/gtkcombo.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCombo inherits from GtkHBox 
  */
@@ -17007,7 +16953,6 @@ NspGtkCombo *new_gtkcombo()
 /*----------------------------------------------
  * Object method redefined for NspGtkCombo 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -17080,14 +17025,15 @@ NspGtkCombo *gtkcombo_copy(NspGtkCombo *self)
  * wrappers for the GtkCombo
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcombo_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_combo_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcombo = new_type_gtkcombo(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombo );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -17159,7 +17105,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 17163 "gtk.c"
+#line 17109 "gtk.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -17194,8 +17140,8 @@ static NspObject *_wrap_gtk_combo__get_entry(NspObject *self,char *attr)
 }
 
 static AttrTab gtkcombo_attrs[] = {
-  { "entry", (attr_get_function *)_wrap_gtk_combo__get_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "entry", (attr_get_function *)_wrap_gtk_combo__get_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -17208,6 +17154,7 @@ static AttrTab gtkcombo_attrs[] = {
 #include <nsp/gtk/gtkcombobox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkComboBox inherits from GtkBin 
  * and implements  GtkCellLayout
@@ -17317,7 +17264,6 @@ NspGtkComboBox *new_gtkcombobox()
 /*----------------------------------------------
  * Object method redefined for NspGtkComboBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -17390,7 +17336,9 @@ NspGtkComboBox *gtkcombobox_copy(NspGtkComboBox *self)
  * wrappers for the GtkComboBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6915 "gtk.override"
 
 /* merging gtkcombobox _new, new_with_model, new_text
@@ -17431,7 +17379,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 17435 "gtk.c"
+#line 17383 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17500,7 +17448,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 17504 "gtk.c"
+#line 17452 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17721,7 +17669,7 @@ static NspMethods *gtkcombobox_get_methods(void) { return gtkcombobox_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkComboBoxEntry ----------- */
@@ -17732,6 +17680,7 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcomboboxentry.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkComboBoxEntry inherits from GtkComboBox 
  * and implements  GtkCellLayout
@@ -17841,7 +17790,6 @@ NspGtkComboBoxEntry *new_gtkcomboboxentry()
 /*----------------------------------------------
  * Object method redefined for NspGtkComboBoxEntry 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -17914,7 +17862,9 @@ NspGtkComboBoxEntry *gtkcomboboxentry_copy(NspGtkComboBoxEntry *self)
  * wrappers for the GtkComboBoxEntry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6960 "gtk.override"
 
 /* merging gtkcomboboxentry _new, new_with_model, new_text
@@ -17961,7 +17911,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 17965 "gtk.c"
+#line 17915 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -17993,7 +17943,7 @@ static NspMethods *gtkcomboboxentry_get_methods(void) { return gtkcomboboxentry_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkContainer ----------- */
@@ -18004,6 +17954,7 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkcontainer.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkContainer inherits from GtkWidget 
  */
@@ -18111,7 +18062,6 @@ NspGtkContainer *new_gtkcontainer()
 /*----------------------------------------------
  * Object method redefined for NspGtkContainer 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -18184,7 +18134,9 @@ NspGtkContainer *gtkcontainer_copy(NspGtkContainer *self)
  * wrappers for the GtkContainer
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_container_set_border_width(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -18301,7 +18253,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 18305 "gtk.c"
+#line 18257 "gtk.c"
 
 
 #line 811 "gtk.override"
@@ -18314,7 +18266,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 18318 "gtk.c"
+#line 18270 "gtk.c"
 
 
 #line 803 "gtk.override"
@@ -18324,7 +18276,7 @@ _wrap_gtk_container_children(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("Deprecated: use GtkContainer.get_children");
   return RET_BUG;
 }
-#line 18328 "gtk.c"
+#line 18280 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_expose(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18376,7 +18328,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 18380 "gtk.c"
+#line 18332 "gtk.c"
 
 
 #line 855 "gtk.override"
@@ -18388,7 +18340,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free); 
 }
-#line 18392 "gtk.c"
+#line 18344 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18480,7 +18432,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1; 
 }
 
-#line 18484 "gtk.c"
+#line 18436 "gtk.c"
 
 
 #line 1077 "gtk.override"
@@ -18533,7 +18485,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
-#line 18537 "gtk.c"
+#line 18489 "gtk.c"
 
 
 #line 958 "gtk.override"
@@ -18590,7 +18542,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 18594 "gtk.c"
+#line 18546 "gtk.c"
 
 
 #line 1013 "gtk.override"
@@ -18656,7 +18608,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 18660 "gtk.c"
+#line 18612 "gtk.c"
 
 
 #line 912 "gtk.override"
@@ -18704,7 +18656,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 18708 "gtk.c"
+#line 18660 "gtk.c"
 
 
 #line 865 "gtk.override"
@@ -18753,7 +18705,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 18757 "gtk.c"
+#line 18709 "gtk.c"
 
 
 static NspMethods gtkcontainer_methods[] = {
@@ -18836,13 +18788,13 @@ static NspObject *_wrap_gtk_container__get_has_focus_chain(NspObject *self,char 
 }
 
 static AttrTab gtkcontainer_attrs[] = {
-  { "focus_child", (attr_get_function *)_wrap_gtk_container__get_focus_child, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "border_width", (attr_get_function *)_wrap_gtk_container__get_border_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "need_resize", (attr_get_function *)_wrap_gtk_container__get_need_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "resize_mode", (attr_get_function *)_wrap_gtk_container__get_resize_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "reallocate_redraws", (attr_get_function *)_wrap_gtk_container__get_reallocate_redraws, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "has_focus_chain", (attr_get_function *)_wrap_gtk_container__get_has_focus_chain, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "focus_child", (attr_get_function *)_wrap_gtk_container__get_focus_child, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "border_width", (attr_get_function *)_wrap_gtk_container__get_border_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "need_resize", (attr_get_function *)_wrap_gtk_container__get_need_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "resize_mode", (attr_get_function *)_wrap_gtk_container__get_resize_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "reallocate_redraws", (attr_get_function *)_wrap_gtk_container__get_reallocate_redraws, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "has_focus_chain", (attr_get_function *)_wrap_gtk_container__get_has_focus_chain, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -18855,6 +18807,7 @@ static AttrTab gtkcontainer_attrs[] = {
 #include <nsp/gtk/gtkcurve.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkCurve inherits from GtkDrawingArea 
  */
@@ -18962,7 +18915,6 @@ NspGtkCurve *new_gtkcurve()
 /*----------------------------------------------
  * Object method redefined for NspGtkCurve 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -19035,14 +18987,15 @@ NspGtkCurve *gtkcurve_copy(NspGtkCurve *self)
  * wrappers for the GtkCurve
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkcurve_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_curve_new())== NULL) return RET_BUG;
-
   nsp_type_gtkcurve = new_type_gtkcurve(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcurve );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -19095,7 +19048,7 @@ _wrap_gtk_curve_get_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) ret);
   return 1;
 }
-#line 19099 "gtk.c"
+#line 19052 "gtk.c"
 
 
 #line 1473 "gtk.override"
@@ -19114,7 +19067,7 @@ _wrap_gtk_curve_set_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   v = Mat2double(v);
   return 0;
 }
-#line 19118 "gtk.c"
+#line 19071 "gtk.c"
 
 
 static int _wrap_gtk_curve_set_curve_type(NspGtkCurve *self,Stack stack,int rhs,int opt,int lhs)
@@ -19144,7 +19097,7 @@ static NspMethods *gtkcurve_get_methods(void) { return gtkcurve_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkDialog ----------- */
@@ -19155,6 +19108,7 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkdialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkDialog inherits from GtkWindow 
  */
@@ -19262,7 +19216,6 @@ NspGtkDialog *new_gtkdialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -19335,7 +19288,9 @@ NspGtkDialog *gtkdialog_copy(NspGtkDialog *self)
  * wrappers for the GtkDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 5990 "gtk.override"
 
 /* gtk_dialog_new gtk_dialog_new_with_buttons are mixed here */ 
@@ -19385,7 +19340,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 19389 "gtk.c"
+#line 19344 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19481,7 +19436,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19485 "gtk.c"
+#line 19440 "gtk.c"
 
 
 static int _wrap_gtk_dialog_set_alternative_button_order_from_array(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19529,9 +19484,9 @@ static NspObject *_wrap_gtk_dialog__get_action_area(NspObject *self,char *attr)
 }
 
 static AttrTab gtkdialog_attrs[] = {
-  { "vbox", (attr_get_function *)_wrap_gtk_dialog__get_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "action_area", (attr_get_function *)_wrap_gtk_dialog__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "vbox", (attr_get_function *)_wrap_gtk_dialog__get_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "action_area", (attr_get_function *)_wrap_gtk_dialog__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -19544,6 +19499,7 @@ static AttrTab gtkdialog_attrs[] = {
 #include <nsp/gtk/gtkdrawingarea.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkDrawingArea inherits from GtkWidget 
  */
@@ -19651,7 +19607,6 @@ NspGtkDrawingArea *new_gtkdrawingarea()
 /*----------------------------------------------
  * Object method redefined for NspGtkDrawingArea 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -19724,14 +19679,15 @@ NspGtkDrawingArea *gtkdrawingarea_copy(NspGtkDrawingArea *self)
  * wrappers for the GtkDrawingArea
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkdrawingarea_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_drawing_area_new())== NULL) return RET_BUG;
-
   nsp_type_gtkdrawingarea = new_type_gtkdrawingarea(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkdrawingarea );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -19759,7 +19715,7 @@ static NspMethods *gtkdrawingarea_get_methods(void) { return gtkdrawingarea_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkEntry ----------- */
@@ -19770,6 +19726,7 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkentry.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkEntry inherits from GtkWidget 
  * and implements  GtkEditable GtkCellEditable
@@ -19880,7 +19837,6 @@ NspGtkEntry *new_gtkentry()
 /*----------------------------------------------
  * Object method redefined for NspGtkEntry 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -19953,7 +19909,9 @@ NspGtkEntry *gtkentry_copy(NspGtkEntry *self)
  * wrappers for the GtkEntry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkentry_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -19965,7 +19923,6 @@ _wrap_gtkentry_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &max) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_entry_new_with_max_length(max))== NULL) return RET_BUG;
-
   nsp_type_gtkentry = new_type_gtkentry(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentry );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -20124,7 +20081,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 20128 "gtk.c"
+#line 20085 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_alignment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -20314,7 +20271,7 @@ static NspMethods *gtkentry_get_methods(void) { return gtkentry_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkEntryCompletion ----------- */
@@ -20325,6 +20282,7 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkentrycompletion.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkEntryCompletion inherits from GObject 
  * and implements  GtkCellLayout
@@ -20434,7 +20392,6 @@ NspGtkEntryCompletion *new_gtkentrycompletion()
 /*----------------------------------------------
  * Object method redefined for NspGtkEntryCompletion 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -20507,14 +20464,15 @@ NspGtkEntryCompletion *gtkentrycompletion_copy(NspGtkEntryCompletion *self)
  * wrappers for the GtkEntryCompletion
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkentrycompletion_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_entry_completion_new())== NULL) return RET_BUG;
-
   nsp_type_gtkentrycompletion = new_type_gtkentrycompletion(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentrycompletion );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -20747,7 +20705,7 @@ static NspMethods *gtkentrycompletion_get_methods(void) { return gtkentrycomplet
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkEventBox ----------- */
@@ -20758,6 +20716,7 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkeventbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkEventBox inherits from GtkBin 
  */
@@ -20865,7 +20824,6 @@ NspGtkEventBox *new_gtkeventbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkEventBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -20938,14 +20896,15 @@ NspGtkEventBox *gtkeventbox_copy(NspGtkEventBox *self)
  * wrappers for the GtkEventBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkeventbox_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_event_box_new())== NULL) return RET_BUG;
-
   nsp_type_gtkeventbox = new_type_gtkeventbox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkeventbox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -21002,7 +20961,7 @@ static NspMethods *gtkeventbox_get_methods(void) { return gtkeventbox_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkExpander ----------- */
@@ -21013,6 +20972,7 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkexpander.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkExpander inherits from GtkBin 
  */
@@ -21120,7 +21080,6 @@ NspGtkExpander *new_gtkexpander()
 /*----------------------------------------------
  * Object method redefined for NspGtkExpander 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -21193,7 +21152,9 @@ NspGtkExpander *gtkexpander_copy(NspGtkExpander *self)
  * wrappers for the GtkExpander
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkexpander_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -21202,7 +21163,6 @@ _wrap_gtkexpander_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&label) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_expander_new(label))== NULL) return RET_BUG;
-
   nsp_type_gtkexpander = new_type_gtkexpander(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkexpander );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -21357,7 +21317,7 @@ static NspMethods *gtkexpander_get_methods(void) { return gtkexpander_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileChooserButton ----------- */
@@ -21368,6 +21328,7 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfilechooserbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileChooserButton inherits from GtkHBox 
  * and implements  GtkFileChooser
@@ -21477,7 +21438,6 @@ NspGtkFileChooserButton *new_gtkfilechooserbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileChooserButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -21550,7 +21510,9 @@ NspGtkFileChooserButton *gtkfilechooserbutton_copy(NspGtkFileChooserButton *self
  * wrappers for the GtkFileChooserButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfilechooserbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -21563,7 +21525,6 @@ _wrap_gtkfilechooserbutton_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_file_chooser_button_new(title, action))== NULL) return RET_BUG;
-
   nsp_type_gtkfilechooserbutton = new_type_gtkfilechooserbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -21620,7 +21581,7 @@ static NspMethods *gtkfilechooserbutton_get_methods(void) { return gtkfilechoose
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileChooserDialog ----------- */
@@ -21631,6 +21592,7 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfilechooserdialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileChooserDialog inherits from GtkDialog 
  * and implements  GtkFileChooser
@@ -21740,7 +21702,6 @@ NspGtkFileChooserDialog *new_gtkfilechooserdialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileChooserDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -21813,7 +21774,9 @@ NspGtkFileChooserDialog *gtkfilechooserdialog_copy(NspGtkFileChooserDialog *self
  * wrappers for the GtkFileChooserDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6100 "gtk.override"
 
 static int
@@ -21861,7 +21824,7 @@ _wrap_gtkfilechooserdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 21865 "gtk.c"
+#line 21828 "gtk.c"
 
 
 static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
@@ -21869,7 +21832,7 @@ static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileChooserWidget ----------- */
@@ -21880,6 +21843,7 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfilechooserwidget.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileChooserWidget inherits from GtkVBox 
  * and implements  GtkFileChooser
@@ -21989,7 +21953,6 @@ NspGtkFileChooserWidget *new_gtkfilechooserwidget()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileChooserWidget 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -22062,7 +22025,9 @@ NspGtkFileChooserWidget *gtkfilechooserwidget_copy(NspGtkFileChooserWidget *self
  * wrappers for the GtkFileChooserWidget
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfilechooserwidget_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -22074,7 +22039,6 @@ _wrap_gtkfilechooserwidget_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_FILE_CHOOSER_ACTION, nsp_action, &action)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_file_chooser_widget_new(action))== NULL) return RET_BUG;
-
   nsp_type_gtkfilechooserwidget = new_type_gtkfilechooserwidget(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilechooserwidget );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -22087,7 +22051,7 @@ static NspMethods *gtkfilechooserwidget_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileFilter ----------- */
@@ -22098,6 +22062,7 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfilefilter.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileFilter inherits from GtkObject 
  */
@@ -22205,7 +22170,6 @@ NspGtkFileFilter *new_gtkfilefilter()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileFilter 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -22278,14 +22242,15 @@ NspGtkFileFilter *gtkfilefilter_copy(NspGtkFileFilter *self)
  * wrappers for the GtkFileFilter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfilefilter_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_file_filter_new())== NULL) return RET_BUG;
-
   nsp_type_gtkfilefilter = new_type_gtkfilefilter(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfilefilter );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -22360,7 +22325,7 @@ static NspMethods *gtkfilefilter_get_methods(void) { return gtkfilefilter_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFileSelection ----------- */
@@ -22371,6 +22336,7 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfileselection.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFileSelection inherits from GtkDialog 
  */
@@ -22478,7 +22444,6 @@ NspGtkFileSelection *new_gtkfileselection()
 /*----------------------------------------------
  * Object method redefined for NspGtkFileSelection 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -22551,7 +22516,9 @@ NspGtkFileSelection *gtkfileselection_copy(NspGtkFileSelection *self)
  * wrappers for the GtkFileSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfileselection_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -22563,7 +22530,6 @@ _wrap_gtkfileselection_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &title) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_file_selection_new(title))== NULL) return RET_BUG;
-
   nsp_type_gtkfileselection = new_type_gtkfileselection(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfileselection );
@@ -22626,7 +22592,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 22630 "gtk.c"
+#line 22596 "gtk.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -22810,25 +22776,25 @@ static NspObject *_wrap_gtk_file_selection__get_action_area(NspObject *self,char
 }
 
 static AttrTab gtkfileselection_attrs[] = {
-  { "dir_list", (attr_get_function *)_wrap_gtk_file_selection__get_dir_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "file_list", (attr_get_function *)_wrap_gtk_file_selection__get_file_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "selection_entry", (attr_get_function *)_wrap_gtk_file_selection__get_selection_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "selection_text", (attr_get_function *)_wrap_gtk_file_selection__get_selection_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "main_vbox", (attr_get_function *)_wrap_gtk_file_selection__get_main_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "ok_button", (attr_get_function *)_wrap_gtk_file_selection__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "cancel_button", (attr_get_function *)_wrap_gtk_file_selection__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "help_button", (attr_get_function *)_wrap_gtk_file_selection__get_help_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "history_pulldown", (attr_get_function *)_wrap_gtk_file_selection__get_history_pulldown, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "history_menu", (attr_get_function *)_wrap_gtk_file_selection__get_history_menu, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_dialog", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_dialog, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_entry", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_c_dir", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_c_dir, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_del_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_del_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fileop_ren_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_ren_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "button_area", (attr_get_function *)_wrap_gtk_file_selection__get_button_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "action_area", (attr_get_function *)_wrap_gtk_file_selection__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "dir_list", (attr_get_function *)_wrap_gtk_file_selection__get_dir_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "file_list", (attr_get_function *)_wrap_gtk_file_selection__get_file_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "selection_entry", (attr_get_function *)_wrap_gtk_file_selection__get_selection_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "selection_text", (attr_get_function *)_wrap_gtk_file_selection__get_selection_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "main_vbox", (attr_get_function *)_wrap_gtk_file_selection__get_main_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "ok_button", (attr_get_function *)_wrap_gtk_file_selection__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "cancel_button", (attr_get_function *)_wrap_gtk_file_selection__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "help_button", (attr_get_function *)_wrap_gtk_file_selection__get_help_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "history_pulldown", (attr_get_function *)_wrap_gtk_file_selection__get_history_pulldown, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "history_menu", (attr_get_function *)_wrap_gtk_file_selection__get_history_menu, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_dialog", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_dialog, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_entry", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_entry, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_c_dir", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_c_dir, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_del_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_del_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fileop_ren_file", (attr_get_function *)_wrap_gtk_file_selection__get_fileop_ren_file, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "button_area", (attr_get_function *)_wrap_gtk_file_selection__get_button_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "action_area", (attr_get_function *)_wrap_gtk_file_selection__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -22841,6 +22807,7 @@ static AttrTab gtkfileselection_attrs[] = {
 #include <nsp/gtk/gtkfixed.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFixed inherits from GtkContainer 
  */
@@ -22948,7 +22915,6 @@ NspGtkFixed *new_gtkfixed()
 /*----------------------------------------------
  * Object method redefined for NspGtkFixed 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -23021,14 +22987,15 @@ NspGtkFixed *gtkfixed_copy(NspGtkFixed *self)
  * wrappers for the GtkFixed
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfixed_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_fixed_new())== NULL) return RET_BUG;
-
   nsp_type_gtkfixed = new_type_gtkfixed(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfixed );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -23087,7 +23054,7 @@ static NspMethods *gtkfixed_get_methods(void) { return gtkfixed_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFontButton ----------- */
@@ -23098,6 +23065,7 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfontbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFontButton inherits from GtkButton 
  */
@@ -23205,7 +23173,6 @@ NspGtkFontButton *new_gtkfontbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkFontButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -23278,14 +23245,15 @@ NspGtkFontButton *gtkfontbutton_copy(NspGtkFontButton *self)
  * wrappers for the GtkFontButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfontbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_font_button_new())== NULL) return RET_BUG;
-
   nsp_type_gtkfontbutton = new_type_gtkfontbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -23424,7 +23392,7 @@ static NspMethods *gtkfontbutton_get_methods(void) { return gtkfontbutton_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFontSelection ----------- */
@@ -23435,6 +23403,7 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfontselection.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFontSelection inherits from GtkVBox 
  */
@@ -23542,7 +23511,6 @@ NspGtkFontSelection *new_gtkfontselection()
 /*----------------------------------------------
  * Object method redefined for NspGtkFontSelection 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -23615,14 +23583,15 @@ NspGtkFontSelection *gtkfontselection_copy(NspGtkFontSelection *self)
  * wrappers for the GtkFontSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfontselection_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_font_selection_new())== NULL) return RET_BUG;
-
   nsp_type_gtkfontselection = new_type_gtkfontselection(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontselection );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -23697,7 +23666,7 @@ static NspMethods *gtkfontselection_get_methods(void) { return gtkfontselection_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkFontSelectionDialog ----------- */
@@ -23708,6 +23677,7 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkfontselectiondialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFontSelectionDialog inherits from GtkDialog 
  */
@@ -23815,7 +23785,6 @@ NspGtkFontSelectionDialog *new_gtkfontselectiondialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkFontSelectionDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -23888,7 +23857,9 @@ NspGtkFontSelectionDialog *gtkfontselectiondialog_copy(NspGtkFontSelectionDialog
  * wrappers for the GtkFontSelectionDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkfontselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -23897,7 +23868,6 @@ _wrap_gtkfontselectiondialog_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_font_selection_dialog_new(title))== NULL) return RET_BUG;
-
   nsp_type_gtkfontselectiondialog = new_type_gtkfontselectiondialog(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkfontselectiondialog );
@@ -24022,13 +23992,13 @@ static NspObject *_wrap_gtk_font_selection_dialog__get_cancel_button(NspObject *
 }
 
 static AttrTab gtkfontselectiondialog_attrs[] = {
-  { "fontsel", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_fontsel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "main_vbox", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_main_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "action_area", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "ok_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "apply_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_apply_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "cancel_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "fontsel", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_fontsel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "main_vbox", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_main_vbox, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "action_area", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_action_area, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "ok_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_ok_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "apply_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_apply_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "cancel_button", (attr_get_function *)_wrap_gtk_font_selection_dialog__get_cancel_button, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -24041,6 +24011,7 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 #include <nsp/gtk/gtkframe.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkFrame inherits from GtkBin 
  */
@@ -24148,7 +24119,6 @@ NspGtkFrame *new_gtkframe()
 /*----------------------------------------------
  * Object method redefined for NspGtkFrame 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -24221,7 +24191,9 @@ NspGtkFrame *gtkframe_copy(NspGtkFrame *self)
  * wrappers for the GtkFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkframe_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -24233,7 +24205,6 @@ _wrap_gtkframe_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &label) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_frame_new(label))== NULL) return RET_BUG;
-
   nsp_type_gtkframe = new_type_gtkframe(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkframe );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -24303,7 +24274,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 24307 "gtk.c"
+#line 24278 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -24344,7 +24315,7 @@ static NspMethods *gtkframe_get_methods(void) { return gtkframe_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkGammaCurve ----------- */
@@ -24355,6 +24326,7 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkgammacurve.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkGammaCurve inherits from GtkVBox 
  */
@@ -24462,7 +24434,6 @@ NspGtkGammaCurve *new_gtkgammacurve()
 /*----------------------------------------------
  * Object method redefined for NspGtkGammaCurve 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -24535,14 +24506,15 @@ NspGtkGammaCurve *gtkgammacurve_copy(NspGtkGammaCurve *self)
  * wrappers for the GtkGammaCurve
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkgammacurve_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_gamma_curve_new())== NULL) return RET_BUG;
-
   nsp_type_gtkgammacurve = new_type_gtkgammacurve(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkgammacurve );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -24597,12 +24569,12 @@ static NspObject *_wrap_gtk_gamma_curve__get_gamma_text(NspObject *self,char *at
 }
 
 static AttrTab gtkgammacurve_attrs[] = {
-  { "table", (attr_get_function *)_wrap_gtk_gamma_curve__get_table, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "curve", (attr_get_function *)_wrap_gtk_gamma_curve__get_curve, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "gamma", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "gamma_dialog", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma_dialog, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "gamma_text", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "table", (attr_get_function *)_wrap_gtk_gamma_curve__get_table, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "curve", (attr_get_function *)_wrap_gtk_gamma_curve__get_curve, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "gamma", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "gamma_dialog", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma_dialog, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "gamma_text", (attr_get_function *)_wrap_gtk_gamma_curve__get_gamma_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -24615,6 +24587,7 @@ static AttrTab gtkgammacurve_attrs[] = {
 #include <nsp/gtk/gtkhandlebox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHandleBox inherits from GtkBin 
  */
@@ -24722,7 +24695,6 @@ NspGtkHandleBox *new_gtkhandlebox()
 /*----------------------------------------------
  * Object method redefined for NspGtkHandleBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -24795,14 +24767,15 @@ NspGtkHandleBox *gtkhandlebox_copy(NspGtkHandleBox *self)
  * wrappers for the GtkHandleBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhandlebox_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_handle_box_new())== NULL) return RET_BUG;
-
   nsp_type_gtkhandlebox = new_type_gtkhandlebox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhandlebox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -24888,7 +24861,7 @@ static NspMethods *gtkhandlebox_get_methods(void) { return gtkhandlebox_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHBox ----------- */
@@ -24899,6 +24872,7 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHBox inherits from GtkBox 
  */
@@ -25006,7 +24980,6 @@ NspGtkHBox *new_gtkhbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkHBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -25079,7 +25052,9 @@ NspGtkHBox *gtkhbox_copy(NspGtkHBox *self)
  * wrappers for the GtkHBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhbox_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -25092,7 +25067,6 @@ _wrap_gtkhbox_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &homogeneous, &spacing) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_hbox_new(homogeneous, spacing))== NULL) return RET_BUG;
-
   nsp_type_gtkhbox = new_type_gtkhbox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhbox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -25105,7 +25079,7 @@ static NspMethods *gtkhbox_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHButtonBox ----------- */
@@ -25116,6 +25090,7 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhbuttonbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHButtonBox inherits from GtkButtonBox 
  */
@@ -25223,7 +25198,6 @@ NspGtkHButtonBox *new_gtkhbuttonbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkHButtonBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -25296,14 +25270,15 @@ NspGtkHButtonBox *gtkhbuttonbox_copy(NspGtkHButtonBox *self)
  * wrappers for the GtkHButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhbuttonbox_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_hbutton_box_new())== NULL) return RET_BUG;
-
   nsp_type_gtkhbuttonbox = new_type_gtkhbuttonbox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhbuttonbox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -25316,7 +25291,7 @@ static NspMethods *gtkhbuttonbox_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHPaned ----------- */
@@ -25327,6 +25302,7 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhpaned.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHPaned inherits from GtkPaned 
  */
@@ -25434,7 +25410,6 @@ NspGtkHPaned *new_gtkhpaned()
 /*----------------------------------------------
  * Object method redefined for NspGtkHPaned 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -25507,14 +25482,15 @@ NspGtkHPaned *gtkhpaned_copy(NspGtkHPaned *self)
  * wrappers for the GtkHPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhpaned_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_hpaned_new())== NULL) return RET_BUG;
-
   nsp_type_gtkhpaned = new_type_gtkhpaned(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhpaned );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -25527,7 +25503,7 @@ static NspMethods *gtkhpaned_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHRuler ----------- */
@@ -25538,6 +25514,7 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhruler.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHRuler inherits from GtkRuler 
  */
@@ -25645,7 +25622,6 @@ NspGtkHRuler *new_gtkhruler()
 /*----------------------------------------------
  * Object method redefined for NspGtkHRuler 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -25718,14 +25694,15 @@ NspGtkHRuler *gtkhruler_copy(NspGtkHRuler *self)
  * wrappers for the GtkHRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhruler_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_hruler_new())== NULL) return RET_BUG;
-
   nsp_type_gtkhruler = new_type_gtkhruler(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhruler );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -25738,7 +25715,7 @@ static NspMethods *gtkhruler_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHScale ----------- */
@@ -25749,6 +25726,7 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhscale.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHScale inherits from GtkScale 
  */
@@ -25856,7 +25834,6 @@ NspGtkHScale *new_gtkhscale()
 /*----------------------------------------------
  * Object method redefined for NspGtkHScale 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -25929,7 +25906,9 @@ NspGtkHScale *gtkhscale_copy(NspGtkHScale *self)
  * wrappers for the GtkHScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhscale_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -25950,7 +25929,6 @@ _wrap_gtkhscale_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_hscale_new(adjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkhscale = new_type_gtkhscale(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhscale );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -25963,7 +25941,7 @@ static NspMethods *gtkhscale_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHScrollbar ----------- */
@@ -25974,6 +25952,7 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhscrollbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHScrollbar inherits from GtkScrollbar 
  */
@@ -26081,7 +26060,6 @@ NspGtkHScrollbar *new_gtkhscrollbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkHScrollbar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -26154,7 +26132,9 @@ NspGtkHScrollbar *gtkhscrollbar_copy(NspGtkHScrollbar *self)
  * wrappers for the GtkHScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhscrollbar_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -26175,7 +26155,6 @@ _wrap_gtkhscrollbar_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_hscrollbar_new(adjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkhscrollbar = new_type_gtkhscrollbar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhscrollbar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -26188,7 +26167,7 @@ static NspMethods *gtkhscrollbar_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkHSeparator ----------- */
@@ -26199,6 +26178,7 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkhseparator.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkHSeparator inherits from GtkSeparator 
  */
@@ -26306,7 +26286,6 @@ NspGtkHSeparator *new_gtkhseparator()
 /*----------------------------------------------
  * Object method redefined for NspGtkHSeparator 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -26379,14 +26358,15 @@ NspGtkHSeparator *gtkhseparator_copy(NspGtkHSeparator *self)
  * wrappers for the GtkHSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkhseparator_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_hseparator_new())== NULL) return RET_BUG;
-
   nsp_type_gtkhseparator = new_type_gtkhseparator(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkhseparator );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -26399,7 +26379,7 @@ static NspMethods *gtkhseparator_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconFactory ----------- */
@@ -26410,6 +26390,7 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkiconfactory.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconFactory inherits from GObject 
  */
@@ -26517,7 +26498,6 @@ NspGtkIconFactory *new_gtkiconfactory()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconFactory 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -26590,14 +26570,15 @@ NspGtkIconFactory *gtkiconfactory_copy(NspGtkIconFactory *self)
  * wrappers for the GtkIconFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkiconfactory_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_icon_factory_new())== NULL) return RET_BUG;
-
   nsp_type_gtkiconfactory = new_type_gtkiconfactory(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconfactory );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -26664,7 +26645,7 @@ static NspMethods *gtkiconfactory_get_methods(void) { return gtkiconfactory_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconTheme ----------- */
@@ -26675,6 +26656,7 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkicontheme.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconTheme inherits from GObject 
  */
@@ -26782,7 +26764,6 @@ NspGtkIconTheme *new_gtkicontheme()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconTheme 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -26855,14 +26836,15 @@ NspGtkIconTheme *gtkicontheme_copy(NspGtkIconTheme *self)
  * wrappers for the GtkIconTheme
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkicontheme_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_icon_theme_new())== NULL) return RET_BUG;
-
   nsp_type_gtkicontheme = new_type_gtkicontheme(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkicontheme );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -27022,7 +27004,7 @@ static NspMethods *gtkicontheme_get_methods(void) { return gtkicontheme_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIconView ----------- */
@@ -27033,6 +27015,7 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkiconview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIconView inherits from GtkContainer 
  * and implements  GtkCellLayout
@@ -27142,7 +27125,6 @@ NspGtkIconView *new_gtkiconview()
 /*----------------------------------------------
  * Object method redefined for NspGtkIconView 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -27215,14 +27197,15 @@ NspGtkIconView *gtkiconview_copy(NspGtkIconView *self)
  * wrappers for the GtkIconView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkiconview_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_icon_view_new())== NULL) return RET_BUG;
-
   nsp_type_gtkiconview = new_type_gtkiconview(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkiconview );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -27272,7 +27255,7 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27276 "gtk.c"
+#line 27259 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_set_text_column(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27554,7 +27537,7 @@ static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack sta
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 27558 "gtk.c"
+#line 27541 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_select_all(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27665,7 +27648,7 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 27669 "gtk.c"
+#line 27652 "gtk.c"
 
 
 #line 2688 "gtk.override"
@@ -27690,7 +27673,7 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 27694 "gtk.c"
+#line 27677 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_unset_model_drag_source(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27841,7 +27824,7 @@ static NspMethods *gtkiconview_get_methods(void) { return gtkiconview_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkImage ----------- */
@@ -27852,6 +27835,7 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkimage.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkImage inherits from GtkMisc 
  */
@@ -27959,7 +27943,6 @@ NspGtkImage *new_gtkimage()
 /*----------------------------------------------
  * Object method redefined for NspGtkImage 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -28032,7 +28015,9 @@ NspGtkImage *gtkimage_copy(NspGtkImage *self)
  * wrappers for the GtkImage
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4144 "gtk.override"
 
 static const char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
@@ -28199,7 +28184,7 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;;
 }
 
-#line 28203 "gtk.c"
+#line 28188 "gtk.c"
 
 
 static int _wrap_gtk_image_clear(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -28433,7 +28418,7 @@ static NspMethods *gtkimage_get_methods(void) { return gtkimage_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkImageMenuItem ----------- */
@@ -28444,6 +28429,7 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkimagemenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkImageMenuItem inherits from GtkMenuItem 
  */
@@ -28551,7 +28537,6 @@ NspGtkImageMenuItem *new_gtkimagemenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkImageMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -28624,7 +28609,9 @@ NspGtkImageMenuItem *gtkimagemenuitem_copy(NspGtkImageMenuItem *self)
  * wrappers for the GtkImageMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4674 "gtk.override"
 static int
 _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -28666,7 +28653,7 @@ _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28670 "gtk.c"
+#line 28657 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -28701,7 +28688,7 @@ static NspMethods *gtkimagemenuitem_get_methods(void) { return gtkimagemenuitem_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIMContext ----------- */
@@ -28712,6 +28699,7 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkimcontext.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIMContext inherits from GtkObject 
  */
@@ -28819,7 +28807,6 @@ NspGtkIMContext *new_gtkimcontext()
 /*----------------------------------------------
  * Object method redefined for NspGtkIMContext 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -28892,7 +28879,9 @@ NspGtkIMContext *gtkimcontext_copy(NspGtkIMContext *self)
  * wrappers for the GtkIMContext
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_im_context_set_client_window(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
@@ -28924,7 +28913,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 28928 "gtk.c"
+#line 28917 "gtk.c"
 
 
 #line 6438 "gtk.override"
@@ -28948,7 +28937,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 28952 "gtk.c"
+#line 28941 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29020,7 +29009,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 29024 "gtk.c"
+#line 29013 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29053,7 +29042,7 @@ static NspMethods *gtkimcontext_get_methods(void) { return gtkimcontext_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIMContextSimple ----------- */
@@ -29064,6 +29053,7 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkimcontextsimple.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIMContextSimple inherits from GtkIMContext 
  */
@@ -29171,7 +29161,6 @@ NspGtkIMContextSimple *new_gtkimcontextsimple()
 /*----------------------------------------------
  * Object method redefined for NspGtkIMContextSimple 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -29244,14 +29233,15 @@ NspGtkIMContextSimple *gtkimcontextsimple_copy(NspGtkIMContextSimple *self)
  * wrappers for the GtkIMContextSimple
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkimcontextsimple_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_im_context_simple_new())== NULL) return RET_BUG;
-
   nsp_type_gtkimcontextsimple = new_type_gtkimcontextsimple(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimcontextsimple );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -29264,7 +29254,7 @@ static NspMethods *gtkimcontextsimple_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkIMMulticontext ----------- */
@@ -29275,6 +29265,7 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkimmulticontext.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkIMMulticontext inherits from GtkIMContext 
  */
@@ -29382,7 +29373,6 @@ NspGtkIMMulticontext *new_gtkimmulticontext()
 /*----------------------------------------------
  * Object method redefined for NspGtkIMMulticontext 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -29455,14 +29445,15 @@ NspGtkIMMulticontext *gtkimmulticontext_copy(NspGtkIMMulticontext *self)
  * wrappers for the GtkIMMulticontext
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkimmulticontext_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_im_multicontext_new())== NULL) return RET_BUG;
-
   nsp_type_gtkimmulticontext = new_type_gtkimmulticontext(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkimmulticontext );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -29489,7 +29480,7 @@ static NspMethods *gtkimmulticontext_get_methods(void) { return gtkimmulticontex
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkInputDialog ----------- */
@@ -29500,6 +29491,7 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkinputdialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkInputDialog inherits from GtkDialog 
  */
@@ -29607,7 +29599,6 @@ NspGtkInputDialog *new_gtkinputdialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkInputDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -29680,14 +29671,15 @@ NspGtkInputDialog *gtkinputdialog_copy(NspGtkInputDialog *self)
  * wrappers for the GtkInputDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkinputdialog_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_input_dialog_new())== NULL) return RET_BUG;
-
   nsp_type_gtkinputdialog = new_type_gtkinputdialog(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinputdialog );
@@ -29701,7 +29693,7 @@ static NspMethods *gtkinputdialog_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkInvisible ----------- */
@@ -29712,6 +29704,7 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkinvisible.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkInvisible inherits from GtkWidget 
  */
@@ -29819,7 +29812,6 @@ NspGtkInvisible *new_gtkinvisible()
 /*----------------------------------------------
  * Object method redefined for NspGtkInvisible 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -29892,14 +29884,15 @@ NspGtkInvisible *gtkinvisible_copy(NspGtkInvisible *self)
  * wrappers for the GtkInvisible
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkinvisible_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_invisible_new())== NULL) return RET_BUG;
-
   nsp_type_gtkinvisible = new_type_gtkinvisible(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of invisibles */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkinvisible );
@@ -29940,7 +29933,7 @@ static NspMethods *gtkinvisible_get_methods(void) { return gtkinvisible_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkItem ----------- */
@@ -29951,6 +29944,7 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkItem inherits from GtkBin 
  */
@@ -30058,7 +30052,6 @@ NspGtkItem *new_gtkitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -30131,7 +30124,9 @@ NspGtkItem *gtkitem_copy(NspGtkItem *self)
  * wrappers for the GtkItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_item_select(NspGtkItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -30165,7 +30160,7 @@ static NspMethods *gtkitem_get_methods(void) { return gtkitem_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkItemFactory ----------- */
@@ -30176,6 +30171,7 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkitemfactory.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkItemFactory inherits from GtkObject 
  */
@@ -30283,7 +30279,6 @@ NspGtkItemFactory *new_gtkitemfactory()
 /*----------------------------------------------
  * Object method redefined for NspGtkItemFactory 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -30356,7 +30351,9 @@ NspGtkItemFactory *gtkitemfactory_copy(NspGtkItemFactory *self)
  * wrappers for the GtkItemFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 3839 "gtk.override"
 static int
 _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
@@ -30392,7 +30389,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30396 "gtk.c"
+#line 30393 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_construct(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30425,7 +30422,7 @@ static int _wrap_gtk_item_factory_get_item(NspGtkItemFactory *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30429 "gtk.c"
+#line 30426 "gtk.c"
 
 
 #line 3892 "gtk.override"
@@ -30442,7 +30439,7 @@ static int _wrap_gtk_item_factory_get_widget(NspGtkItemFactory *self,Stack stack
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30446 "gtk.c"
+#line 30443 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_get_widget_by_action(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30602,7 +30599,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 0;
 }
-#line 30606 "gtk.c"
+#line 30603 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_delete_item(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30644,7 +30641,7 @@ static NspMethods *gtkitemfactory_get_methods(void) { return gtkitemfactory_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkLabel ----------- */
@@ -30655,6 +30652,7 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtklabel.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkLabel inherits from GtkMisc 
  */
@@ -30762,7 +30760,6 @@ NspGtkLabel *new_gtklabel()
 /*----------------------------------------------
  * Object method redefined for NspGtkLabel 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -30835,7 +30832,9 @@ NspGtkLabel *gtklabel_copy(NspGtkLabel *self)
  * wrappers for the GtkLabel
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 1183 "gtk.override"
 static int
 _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
@@ -30865,7 +30864,7 @@ _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 30869 "gtk.c"
+#line 30868 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31119,7 +31118,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1; 
 }
-#line 31123 "gtk.c"
+#line 31122 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31144,7 +31143,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 31148 "gtk.c"
+#line 31147 "gtk.c"
 
 
 static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31172,7 +31171,7 @@ _wrap_gtk_label_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31176 "gtk.c"
+#line 31175 "gtk.c"
 
 
 static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31306,7 +31305,7 @@ static NspMethods *gtklabel_get_methods(void) { return gtklabel_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkLayout ----------- */
@@ -31317,6 +31316,7 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtklayout.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkLayout inherits from GtkContainer 
  */
@@ -31424,7 +31424,6 @@ NspGtkLayout *new_gtklayout()
 /*----------------------------------------------
  * Object method redefined for NspGtkLayout 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -31497,7 +31496,9 @@ NspGtkLayout *gtklayout_copy(NspGtkLayout *self)
  * wrappers for the GtkLayout
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtklayout_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -31527,7 +31528,6 @@ _wrap_gtklayout_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_layout_new(hadjustment, vadjustment))== NULL) return RET_BUG;
-
   nsp_type_gtklayout = new_type_gtklayout(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtklayout );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -31689,8 +31689,8 @@ static NspObject *_wrap_gtk_layout__get_bin_window(NspObject *self,char *attr)
 }
 
 static AttrTab gtklayout_attrs[] = {
-  { "bin_window", (attr_get_function *)_wrap_gtk_layout__get_bin_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "bin_window", (attr_get_function *)_wrap_gtk_layout__get_bin_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -31703,6 +31703,7 @@ static AttrTab gtklayout_attrs[] = {
 #include <nsp/gtk/gtkliststore.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkListStore inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
@@ -31815,7 +31816,6 @@ NspGtkListStore *new_gtkliststore()
 /*----------------------------------------------
  * Object method redefined for NspGtkListStore 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -31888,7 +31888,9 @@ NspGtkListStore *gtkliststore_copy(NspGtkListStore *self)
  * wrappers for the GtkListStore
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 1782 "gtk.override"
 
 static int
@@ -31953,7 +31955,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 31957 "gtk.c"
+#line 31959 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_list_store(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32028,7 +32030,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 32032 "gtk.c"
+#line 32034 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32071,7 +32073,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32075 "gtk.c"
+#line 32077 "gtk.c"
 
 
 #line 1929 "gtk.override"
@@ -32098,7 +32100,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32102 "gtk.c"
+#line 32104 "gtk.c"
 
 
 #line 1954 "gtk.override"
@@ -32125,7 +32127,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32129 "gtk.c"
+#line 32131 "gtk.c"
 
 
 #line 1979 "gtk.override"
@@ -32150,7 +32152,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32154 "gtk.c"
+#line 32156 "gtk.c"
 
 
 #line 2002 "gtk.override"
@@ -32176,7 +32178,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32180 "gtk.c"
+#line 32182 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32313,7 +32315,7 @@ static NspMethods *gtkliststore_get_methods(void) { return gtkliststore_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMenu ----------- */
@@ -32324,6 +32326,7 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmenu.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMenu inherits from GtkMenuShell 
  */
@@ -32431,7 +32434,6 @@ NspGtkMenu *new_gtkmenu()
 /*----------------------------------------------
  * Object method redefined for NspGtkMenu 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -32504,14 +32506,15 @@ NspGtkMenu *gtkmenu_copy(NspGtkMenu *self)
  * wrappers for the GtkMenu
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkmenu_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_menu_new())== NULL) return RET_BUG;
-
   nsp_type_gtkmenu = new_type_gtkmenu(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenu );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -32584,7 +32587,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 32588 "gtk.c"
+#line 32591 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -32717,7 +32720,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 32721 "gtk.c"
+#line 32724 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -32853,7 +32856,7 @@ static NspMethods *gtkmenu_get_methods(void) { return gtkmenu_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMenuBar ----------- */
@@ -32864,6 +32867,7 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmenubar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMenuBar inherits from GtkMenuShell 
  */
@@ -32971,7 +32975,6 @@ NspGtkMenuBar *new_gtkmenubar()
 /*----------------------------------------------
  * Object method redefined for NspGtkMenuBar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -33044,14 +33047,15 @@ NspGtkMenuBar *gtkmenubar_copy(NspGtkMenuBar *self)
  * wrappers for the GtkMenuBar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkmenubar_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_menu_bar_new())== NULL) return RET_BUG;
-
   nsp_type_gtkmenubar = new_type_gtkmenubar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenubar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -33114,7 +33118,7 @@ static NspMethods *gtkmenubar_get_methods(void) { return gtkmenubar_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMenuItem ----------- */
@@ -33125,6 +33129,7 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMenuItem inherits from GtkItem 
  */
@@ -33232,7 +33237,6 @@ NspGtkMenuItem *new_gtkmenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -33305,7 +33309,9 @@ NspGtkMenuItem *gtkmenuitem_copy(NspGtkMenuItem *self)
  * wrappers for the GtkMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4499 "gtk.override"
 static int
 _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -33332,7 +33338,7 @@ _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 33336 "gtk.c"
+#line 33342 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -33458,7 +33464,7 @@ static NspMethods *gtkmenuitem_get_methods(void) { return gtkmenuitem_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMenuShell ----------- */
@@ -33469,6 +33475,7 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmenushell.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMenuShell inherits from GtkContainer 
  */
@@ -33576,7 +33583,6 @@ NspGtkMenuShell *new_gtkmenushell()
 /*----------------------------------------------
  * Object method redefined for NspGtkMenuShell 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -33649,7 +33655,9 @@ NspGtkMenuShell *gtkmenushell_copy(NspGtkMenuShell *self)
  * wrappers for the GtkMenuShell
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_menu_shell_append(NspGtkMenuShell *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
@@ -33765,7 +33773,7 @@ static NspMethods *gtkmenushell_get_methods(void) { return gtkmenushell_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMenuToolButton ----------- */
@@ -33776,6 +33784,7 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmenutoolbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMenuToolButton inherits from GtkToolButton 
  */
@@ -33883,7 +33892,6 @@ NspGtkMenuToolButton *new_gtkmenutoolbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkMenuToolButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -33956,7 +33964,9 @@ NspGtkMenuToolButton *gtkmenutoolbutton_copy(NspGtkMenuToolButton *self)
  * wrappers for the GtkMenuToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkmenutoolbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -33966,7 +33976,6 @@ _wrap_gtkmenutoolbutton_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &icon_widget, &label) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_menu_tool_button_new(GTK_WIDGET(icon_widget->obj), label))== NULL) return RET_BUG;
-
   nsp_type_gtkmenutoolbutton = new_type_gtkmenutoolbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkmenutoolbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -34021,7 +34030,7 @@ static NspMethods *gtkmenutoolbutton_get_methods(void) { return gtkmenutoolbutto
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkMessageDialog ----------- */
@@ -34032,6 +34041,7 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkmessagedialog.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMessageDialog inherits from GtkDialog 
  */
@@ -34139,7 +34149,6 @@ NspGtkMessageDialog *new_gtkmessagedialog()
 /*----------------------------------------------
  * Object method redefined for NspGtkMessageDialog 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -34212,7 +34221,9 @@ NspGtkMessageDialog *gtkmessagedialog_copy(NspGtkMessageDialog *self)
  * wrappers for the GtkMessageDialog
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 6053 "gtk.override"
 /* XXXXX accepter une matrice pour message a concatener */ 
 static int
@@ -34259,7 +34270,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 34263 "gtk.c"
+#line 34274 "gtk.c"
 
 
 static int _wrap_gtk_message_dialog_set_markup(NspGtkMessageDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -34298,9 +34309,9 @@ static NspObject *_wrap_gtk_message_dialog__get_label(NspObject *self,char *attr
 }
 
 static AttrTab gtkmessagedialog_attrs[] = {
-  { "image", (attr_get_function *)_wrap_gtk_message_dialog__get_image, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "label", (attr_get_function *)_wrap_gtk_message_dialog__get_label, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "image", (attr_get_function *)_wrap_gtk_message_dialog__get_image, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "label", (attr_get_function *)_wrap_gtk_message_dialog__get_label, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -34313,6 +34324,7 @@ static AttrTab gtkmessagedialog_attrs[] = {
 #include <nsp/gtk/gtkmisc.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkMisc inherits from GtkWidget 
  */
@@ -34420,7 +34432,6 @@ NspGtkMisc *new_gtkmisc()
 /*----------------------------------------------
  * Object method redefined for NspGtkMisc 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -34493,7 +34504,9 @@ NspGtkMisc *gtkmisc_copy(NspGtkMisc *self)
  * wrappers for the GtkMisc
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_misc_set_alignment(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_double, s_double,t_end};
@@ -34513,7 +34526,7 @@ _wrap_gtk_misc_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34517 "gtk.c"
+#line 34530 "gtk.c"
 
 
 static int _wrap_gtk_misc_set_padding(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
@@ -34535,7 +34548,7 @@ _wrap_gtk_misc_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34539 "gtk.c"
+#line 34552 "gtk.c"
 
 
 static NspMethods gtkmisc_methods[] = {
@@ -34551,7 +34564,7 @@ static NspMethods *gtkmisc_get_methods(void) { return gtkmisc_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkNotebook ----------- */
@@ -34562,6 +34575,7 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtknotebook.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkNotebook inherits from GtkContainer 
  */
@@ -34669,7 +34683,6 @@ NspGtkNotebook *new_gtknotebook()
 /*----------------------------------------------
  * Object method redefined for NspGtkNotebook 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -34742,14 +34755,15 @@ NspGtkNotebook *gtknotebook_copy(NspGtkNotebook *self)
  * wrappers for the GtkNotebook
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtknotebook_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_notebook_new())== NULL) return RET_BUG;
-
   nsp_type_gtknotebook = new_type_gtknotebook(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtknotebook );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -35122,7 +35136,7 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 35126 "gtk.c"
+#line 35140 "gtk.c"
 
 
 static int _wrap_gtk_notebook_set_tab_label_packing(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -35227,8 +35241,8 @@ static NspObject *_wrap_gtk_notebook__get_tab_pos(NspObject *self,char *attr)
 }
 
 static AttrTab gtknotebook_attrs[] = {
-  { "tab_pos", (attr_get_function *)_wrap_gtk_notebook__get_tab_pos, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "tab_pos", (attr_get_function *)_wrap_gtk_notebook__get_tab_pos, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -35241,6 +35255,7 @@ static AttrTab gtknotebook_attrs[] = {
 #include <nsp/gtk/gtkobject.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkObject inherits from GObject 
  */
@@ -35348,7 +35363,6 @@ NspGtkObject *new_gtkobject()
 /*----------------------------------------------
  * Object method redefined for NspGtkObject 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -35421,7 +35435,9 @@ NspGtkObject *gtkobject_copy(NspGtkObject *self)
  * wrappers for the GtkObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_GTK_OBJECT_FLAGS(NspGtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -35469,7 +35485,7 @@ static NspMethods *gtkobject_get_methods(void) { return gtkobject_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkOldEditable ----------- */
@@ -35480,6 +35496,7 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkoldeditable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkOldEditable inherits from GtkWidget 
  * and implements  GtkEditable
@@ -35589,7 +35606,6 @@ NspGtkOldEditable *new_gtkoldeditable()
 /*----------------------------------------------
  * Object method redefined for NspGtkOldEditable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -35662,7 +35678,9 @@ NspGtkOldEditable *gtkoldeditable_copy(NspGtkOldEditable *self)
  * wrappers for the GtkOldEditable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_old_editable_claim_selection(NspGtkOldEditable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_bool,new_opts,t_end};
@@ -35694,7 +35712,7 @@ static NspMethods *gtkoldeditable_get_methods(void) { return gtkoldeditable_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkOptionMenu ----------- */
@@ -35705,6 +35723,7 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkoptionmenu.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkOptionMenu inherits from GtkButton 
  */
@@ -35812,7 +35831,6 @@ NspGtkOptionMenu *new_gtkoptionmenu()
 /*----------------------------------------------
  * Object method redefined for NspGtkOptionMenu 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -35885,14 +35903,15 @@ NspGtkOptionMenu *gtkoptionmenu_copy(NspGtkOptionMenu *self)
  * wrappers for the GtkOptionMenu
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkoptionmenu_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_option_menu_new())== NULL) return RET_BUG;
-
   nsp_type_gtkoptionmenu = new_type_gtkoptionmenu(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkoptionmenu );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -35960,7 +35979,7 @@ static NspMethods *gtkoptionmenu_get_methods(void) { return gtkoptionmenu_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkPaned ----------- */
@@ -35971,6 +35990,7 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkpaned.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkPaned inherits from GtkContainer 
  */
@@ -36078,7 +36098,6 @@ NspGtkPaned *new_gtkpaned()
 /*----------------------------------------------
  * Object method redefined for NspGtkPaned 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -36151,7 +36170,9 @@ NspGtkPaned *gtkpaned_copy(NspGtkPaned *self)
  * wrappers for the GtkPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_paned_add1(NspGtkPaned *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
@@ -36304,11 +36325,11 @@ static NspObject *_wrap_gtk_paned__get_child2_shrink(NspObject *self,char *attr)
 }
 
 static AttrTab gtkpaned_attrs[] = {
-  { "child1_resize", (attr_get_function *)_wrap_gtk_paned__get_child1_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "child2_resize", (attr_get_function *)_wrap_gtk_paned__get_child2_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "child1_shrink", (attr_get_function *)_wrap_gtk_paned__get_child1_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "child2_shrink", (attr_get_function *)_wrap_gtk_paned__get_child2_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "child1_resize", (attr_get_function *)_wrap_gtk_paned__get_child1_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "child2_resize", (attr_get_function *)_wrap_gtk_paned__get_child2_resize, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "child1_shrink", (attr_get_function *)_wrap_gtk_paned__get_child1_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "child2_shrink", (attr_get_function *)_wrap_gtk_paned__get_child2_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -36321,6 +36342,7 @@ static AttrTab gtkpaned_attrs[] = {
 #include <nsp/gtk/gtkplug.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkPlug inherits from GtkWindow 
  */
@@ -36428,7 +36450,6 @@ NspGtkPlug *new_gtkplug()
 /*----------------------------------------------
  * Object method redefined for NspGtkPlug 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -36501,7 +36522,9 @@ NspGtkPlug *gtkplug_copy(NspGtkPlug *self)
  * wrappers for the GtkPlug
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkplug_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -36510,7 +36533,6 @@ _wrap_gtkplug_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&socket_id) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_plug_new(socket_id))== NULL) return RET_BUG;
-
   nsp_type_gtkplug = new_type_gtkplug(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkplug );
@@ -36559,7 +36581,7 @@ static NspMethods *gtkplug_get_methods(void) { return gtkplug_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkPreview ----------- */
@@ -36570,6 +36592,7 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkpreview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkPreview inherits from GtkWidget 
  */
@@ -36677,7 +36700,6 @@ NspGtkPreview *new_gtkpreview()
 /*----------------------------------------------
  * Object method redefined for NspGtkPreview 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -36750,7 +36772,9 @@ NspGtkPreview *gtkpreview_copy(NspGtkPreview *self)
  * wrappers for the GtkPreview
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkpreview_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -36763,7 +36787,6 @@ _wrap_gtkpreview_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_PREVIEW_TYPE, nsp_type, &type)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_preview_new(type))== NULL) return RET_BUG;
-
   nsp_type_gtkpreview = new_type_gtkpreview(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkpreview );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -36836,7 +36859,7 @@ static NspMethods *gtkpreview_get_methods(void) { return gtkpreview_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkProgress ----------- */
@@ -36847,6 +36870,7 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkprogress.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkProgress inherits from GtkWidget 
  */
@@ -36954,7 +36978,6 @@ NspGtkProgress *new_gtkprogress()
 /*----------------------------------------------
  * Object method redefined for NspGtkProgress 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -37027,13 +37050,15 @@ NspGtkProgress *gtkprogress_copy(NspGtkProgress *self)
  * wrappers for the GtkProgress
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gtkprogress_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkProgressBar ----------- */
@@ -37044,6 +37069,7 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkprogressbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkProgressBar inherits from GtkProgress 
  */
@@ -37151,7 +37177,6 @@ NspGtkProgressBar *new_gtkprogressbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkProgressBar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -37224,14 +37249,15 @@ NspGtkProgressBar *gtkprogressbar_copy(NspGtkProgressBar *self)
  * wrappers for the GtkProgressBar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkprogressbar_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_progress_bar_new())== NULL) return RET_BUG;
-
   nsp_type_gtkprogressbar = new_type_gtkprogressbar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkprogressbar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -37397,7 +37423,7 @@ static NspMethods *gtkprogressbar_get_methods(void) { return gtkprogressbar_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRadioAction ----------- */
@@ -37408,6 +37434,7 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkradioaction.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRadioAction inherits from GtkToggleAction 
  */
@@ -37515,7 +37542,6 @@ NspGtkRadioAction *new_gtkradioaction()
 /*----------------------------------------------
  * Object method redefined for NspGtkRadioAction 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -37588,7 +37614,9 @@ NspGtkRadioAction *gtkradioaction_copy(NspGtkRadioAction *self)
  * wrappers for the GtkRadioAction
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkradioaction_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -37598,7 +37626,6 @@ _wrap_gtkradioaction_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name, &label, &tooltip, &stock_id, &value) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_radio_action_new(name, label, tooltip, stock_id, value))== NULL) return RET_BUG;
-
   nsp_type_gtkradioaction = new_type_gtkradioaction(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkradioaction );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -37633,7 +37660,7 @@ static int _wrap_gtk_radio_action_set_group(NspGtkRadioAction *self,Stack stack,
   return 0;
 }
 
-#line 37637 "gtk.c"
+#line 37664 "gtk.c"
 
 
 #line 7109 "gtk.override"
@@ -37646,7 +37673,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
-#line 37650 "gtk.c"
+#line 37677 "gtk.c"
 
 
 static int _wrap_gtk_radio_action_get_current_value(NspGtkRadioAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -37676,7 +37703,7 @@ static int _wrap_gtk_radio_action_set_current_value(NspGtkRadioAction *self,Stac
 
 }
 
-#line 37680 "gtk.c"
+#line 37707 "gtk.c"
 
 
 static NspMethods gtkradioaction_methods[] = {
@@ -37692,7 +37719,7 @@ static NspMethods *gtkradioaction_get_methods(void) { return gtkradioaction_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRadioButton ----------- */
@@ -37703,6 +37730,7 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkradiobutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRadioButton inherits from GtkCheckButton 
  */
@@ -37810,7 +37838,6 @@ NspGtkRadioButton *new_gtkradiobutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkRadioButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -37883,7 +37910,9 @@ NspGtkRadioButton *gtkradiobutton_copy(NspGtkRadioButton *self)
  * wrappers for the GtkRadioButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4440 "gtk.override"
 static int
 _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
@@ -37930,7 +37959,7 @@ _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 37934 "gtk.c"
+#line 37963 "gtk.c"
 
 
 #line 4487 "gtk.override"
@@ -37942,7 +37971,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 37946 "gtk.c"
+#line 37975 "gtk.c"
 
 
 static NspMethods gtkradiobutton_methods[] = {
@@ -37955,7 +37984,7 @@ static NspMethods *gtkradiobutton_get_methods(void) { return gtkradiobutton_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRadioMenuItem ----------- */
@@ -37966,6 +37995,7 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkradiomenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRadioMenuItem inherits from GtkCheckMenuItem 
  */
@@ -38073,7 +38103,6 @@ NspGtkRadioMenuItem *new_gtkradiomenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkRadioMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -38146,7 +38175,9 @@ NspGtkRadioMenuItem *gtkradiomenuitem_copy(NspGtkRadioMenuItem *self)
  * wrappers for the GtkRadioMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4622 "gtk.override"
 static int
 _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
@@ -38193,7 +38224,7 @@ _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 38197 "gtk.c"
+#line 38228 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_new_from_widget(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -38262,7 +38293,7 @@ static NspMethods *gtkradiomenuitem_get_methods(void) { return gtkradiomenuitem_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRadioToolButton ----------- */
@@ -38273,6 +38304,7 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkradiotoolbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRadioToolButton inherits from GtkToggleToolButton 
  */
@@ -38380,7 +38412,6 @@ NspGtkRadioToolButton *new_gtkradiotoolbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkRadioToolButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -38453,7 +38484,9 @@ NspGtkRadioToolButton *gtkradiotoolbutton_copy(NspGtkRadioToolButton *self)
  * wrappers for the GtkRadioToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 7220 "gtk.override"
 /* mixes all the constructors */
 static int
@@ -38508,7 +38541,7 @@ _wrap_gtkradiotoolbutton_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 38512 "gtk.c"
+#line 38545 "gtk.c"
 
 
 static int _wrap_gtk_radio_tool_button_set_group(NspGtkRadioToolButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -38544,7 +38577,7 @@ static NspMethods *gtkradiotoolbutton_get_methods(void) { return gtkradiotoolbut
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRange ----------- */
@@ -38555,6 +38588,7 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkrange.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRange inherits from GtkWidget 
  */
@@ -38662,7 +38696,6 @@ NspGtkRange *new_gtkrange()
 /*----------------------------------------------
  * Object method redefined for NspGtkRange 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -38735,7 +38768,9 @@ NspGtkRange *gtkrange_copy(NspGtkRange *self)
  * wrappers for the GtkRange
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_range_set_update_policy(NspGtkRange *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -38851,7 +38886,7 @@ static NspMethods *gtkrange_get_methods(void) { return gtkrange_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRcStyle ----------- */
@@ -38862,6 +38897,7 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkrcstyle.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRcStyle inherits from GObject 
  */
@@ -38969,7 +39005,6 @@ NspGtkRcStyle *new_gtkrcstyle()
 /*----------------------------------------------
  * Object method redefined for NspGtkRcStyle 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -39042,7 +39077,9 @@ NspGtkRcStyle *gtkrcstyle_copy(NspGtkRcStyle *self)
  * wrappers for the GtkRcStyle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_rc_add_widget_name_style(NspGtkRcStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,t_end};
@@ -39099,7 +39136,7 @@ static NspMethods *gtkrcstyle_get_methods(void) { return gtkrcstyle_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkRuler ----------- */
@@ -39110,6 +39147,7 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkruler.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkRuler inherits from GtkWidget 
  */
@@ -39217,7 +39255,6 @@ NspGtkRuler *new_gtkruler()
 /*----------------------------------------------
  * Object method redefined for NspGtkRuler 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -39290,7 +39327,9 @@ NspGtkRuler *gtkruler_copy(NspGtkRuler *self)
  * wrappers for the GtkRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_ruler_set_metric(NspGtkRuler *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -39346,7 +39385,7 @@ _wrap_gtk_ruler_get_range(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,4,(double) lower,(double) upper,(double) position,(double) max_size ) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 39350 "gtk.c"
+#line 39389 "gtk.c"
 
 
 static NspMethods gtkruler_methods[] = {
@@ -39364,7 +39403,7 @@ static NspMethods *gtkruler_get_methods(void) { return gtkruler_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkScale ----------- */
@@ -39375,6 +39414,7 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkscale.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkScale inherits from GtkRange 
  */
@@ -39482,7 +39522,6 @@ NspGtkScale *new_gtkscale()
 /*----------------------------------------------
  * Object method redefined for NspGtkScale 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -39555,7 +39594,9 @@ NspGtkScale *gtkscale_copy(NspGtkScale *self)
  * wrappers for the GtkScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_scale_set_digits(NspGtkScale *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -39651,7 +39692,7 @@ static NspMethods *gtkscale_get_methods(void) { return gtkscale_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkScrollbar ----------- */
@@ -39662,6 +39703,7 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkscrollbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkScrollbar inherits from GtkRange 
  */
@@ -39769,7 +39811,6 @@ NspGtkScrollbar *new_gtkscrollbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkScrollbar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -39842,13 +39883,15 @@ NspGtkScrollbar *gtkscrollbar_copy(NspGtkScrollbar *self)
  * wrappers for the GtkScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gtkscrollbar_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkScrolledWindow ----------- */
@@ -39859,6 +39902,7 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkscrolledwindow.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkScrolledWindow inherits from GtkBin 
  */
@@ -39966,7 +40010,6 @@ NspGtkScrolledWindow *new_gtkscrolledwindow()
 /*----------------------------------------------
  * Object method redefined for NspGtkScrolledWindow 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -40039,7 +40082,9 @@ NspGtkScrolledWindow *gtkscrolledwindow_copy(NspGtkScrolledWindow *self)
  * wrappers for the GtkScrolledWindow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkscrolledwindow_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -40069,7 +40114,6 @@ _wrap_gtkscrolledwindow_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_scrolled_window_new(hadjustment, vadjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkscrolledwindow = new_type_gtkscrolledwindow(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkscrolledwindow );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -40229,7 +40273,7 @@ static NspMethods *gtkscrolledwindow_get_methods(void) { return gtkscrolledwindo
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSeparator ----------- */
@@ -40240,6 +40284,7 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkseparator.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSeparator inherits from GtkWidget 
  */
@@ -40347,7 +40392,6 @@ NspGtkSeparator *new_gtkseparator()
 /*----------------------------------------------
  * Object method redefined for NspGtkSeparator 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -40420,13 +40464,15 @@ NspGtkSeparator *gtkseparator_copy(NspGtkSeparator *self)
  * wrappers for the GtkSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gtkseparator_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSeparatorMenuItem ----------- */
@@ -40437,6 +40483,7 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkseparatormenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSeparatorMenuItem inherits from GtkMenuItem 
  */
@@ -40544,7 +40591,6 @@ NspGtkSeparatorMenuItem *new_gtkseparatormenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkSeparatorMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -40617,14 +40663,15 @@ NspGtkSeparatorMenuItem *gtkseparatormenuitem_copy(NspGtkSeparatorMenuItem *self
  * wrappers for the GtkSeparatorMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkseparatormenuitem_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_separator_menu_item_new())== NULL) return RET_BUG;
-
   nsp_type_gtkseparatormenuitem = new_type_gtkseparatormenuitem(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatormenuitem );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -40637,7 +40684,7 @@ static NspMethods *gtkseparatormenuitem_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSeparatorToolItem ----------- */
@@ -40648,6 +40695,7 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkseparatortoolitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSeparatorToolItem inherits from GtkToolItem 
  */
@@ -40755,7 +40803,6 @@ NspGtkSeparatorToolItem *new_gtkseparatortoolitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkSeparatorToolItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -40828,14 +40875,15 @@ NspGtkSeparatorToolItem *gtkseparatortoolitem_copy(NspGtkSeparatorToolItem *self
  * wrappers for the GtkSeparatorToolItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkseparatortoolitem_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_separator_tool_item_new())== NULL) return RET_BUG;
-
   nsp_type_gtkseparatortoolitem = new_type_gtkseparatortoolitem(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkseparatortoolitem );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -40872,7 +40920,7 @@ static NspMethods *gtkseparatortoolitem_get_methods(void) { return gtkseparatort
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSettings ----------- */
@@ -40883,6 +40931,7 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtksettings.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSettings inherits from GObject 
  */
@@ -40990,7 +41039,6 @@ NspGtkSettings *new_gtksettings()
 /*----------------------------------------------
  * Object method redefined for NspGtkSettings 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -41063,7 +41111,9 @@ NspGtkSettings *gtksettings_copy(NspGtkSettings *self)
  * wrappers for the GtkSettings
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_settings_set_string_property(NspGtkSettings *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, string, string,t_end};
@@ -41105,7 +41155,7 @@ static NspMethods *gtksettings_get_methods(void) { return gtksettings_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSizeGroup ----------- */
@@ -41116,6 +41166,7 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtksizegroup.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSizeGroup inherits from GObject 
  */
@@ -41223,7 +41274,6 @@ NspGtkSizeGroup *new_gtksizegroup()
 /*----------------------------------------------
  * Object method redefined for NspGtkSizeGroup 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -41296,7 +41346,9 @@ NspGtkSizeGroup *gtksizegroup_copy(NspGtkSizeGroup *self)
  * wrappers for the GtkSizeGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtksizegroup_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -41308,7 +41360,6 @@ _wrap_gtksizegroup_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_SIZE_GROUP_MODE, nsp_mode, &mode)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_size_group_new(mode))== NULL) return RET_BUG;
-
   nsp_type_gtksizegroup = new_type_gtksizegroup(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksizegroup );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -41388,7 +41439,7 @@ static NspMethods *gtksizegroup_get_methods(void) { return gtksizegroup_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSocket ----------- */
@@ -41399,6 +41450,7 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtksocket.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSocket inherits from GtkContainer 
  */
@@ -41506,7 +41558,6 @@ NspGtkSocket *new_gtksocket()
 /*----------------------------------------------
  * Object method redefined for NspGtkSocket 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -41579,14 +41630,15 @@ NspGtkSocket *gtksocket_copy(NspGtkSocket *self)
  * wrappers for the GtkSocket
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtksocket_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_socket_new())== NULL) return RET_BUG;
-
   nsp_type_gtksocket = new_type_gtksocket(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtksocket );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -41634,7 +41686,7 @@ static NspMethods *gtksocket_get_methods(void) { return gtksocket_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkSpinButton ----------- */
@@ -41645,6 +41697,7 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkspinbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkSpinButton inherits from GtkEntry 
  */
@@ -41752,7 +41805,6 @@ NspGtkSpinButton *new_gtkspinbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkSpinButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -41825,7 +41877,9 @@ NspGtkSpinButton *gtkspinbutton_copy(NspGtkSpinButton *self)
  * wrappers for the GtkSpinButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkspinbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -41850,7 +41904,6 @@ _wrap_gtkspinbutton_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_spin_button_new(adjustment, climb_rate, digits))== NULL) return RET_BUG;
-
   nsp_type_gtkspinbutton = new_type_gtkspinbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkspinbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -41944,7 +41997,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1; 
 
 }
-#line 41948 "gtk.c"
+#line 42001 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -41968,7 +42021,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG; 
   return 1; 
 }
-#line 41972 "gtk.c"
+#line 42025 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -42124,7 +42177,7 @@ static NspMethods *gtkspinbutton_get_methods(void) { return gtkspinbutton_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkStatusbar ----------- */
@@ -42135,6 +42188,7 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkstatusbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkStatusbar inherits from GtkHBox 
  */
@@ -42242,7 +42296,6 @@ NspGtkStatusbar *new_gtkstatusbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkStatusbar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -42315,14 +42368,15 @@ NspGtkStatusbar *gtkstatusbar_copy(NspGtkStatusbar *self)
  * wrappers for the GtkStatusbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkstatusbar_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_statusbar_new())== NULL) return RET_BUG;
-
   nsp_type_gtkstatusbar = new_type_gtkstatusbar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstatusbar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -42403,7 +42457,7 @@ static NspMethods *gtkstatusbar_get_methods(void) { return gtkstatusbar_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkStyle ----------- */
@@ -42414,6 +42468,7 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkstyle.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkStyle inherits from GObject 
  */
@@ -42521,7 +42576,6 @@ NspGtkStyle *new_gtkstyle()
 /*----------------------------------------------
  * Object method redefined for NspGtkStyle 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -42594,14 +42648,15 @@ NspGtkStyle *gtkstyle_copy(NspGtkStyle *self)
  * wrappers for the GtkStyle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkstyle_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_style_new())== NULL) return RET_BUG;
-
   nsp_type_gtkstyle = new_type_gtkstyle(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkstyle );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -43173,7 +43228,7 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 43177 "gtk.c"
+#line 43232 "gtk.c"
 
 
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
@@ -44005,7 +44060,7 @@ _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
   Scierror("Use method .get_fg[pos]\n");
   return NULL;
 }
-#line 44009 "gtk.c"
+#line 44064 "gtk.c"
 #line 215 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
@@ -44013,7 +44068,7 @@ _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
   Scierror("Use method .get_bg[pos]\n");
   return NULL;
 }
-#line 44017 "gtk.c"
+#line 44072 "gtk.c"
 #line 223 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light(NspGObject *self, char *attr)
@@ -44021,7 +44076,7 @@ _wrap_gtk_style__get_light(NspGObject *self, char *attr)
   Scierror("Use method .get_light[pos]\n");
   return NULL;
 }
-#line 44025 "gtk.c"
+#line 44080 "gtk.c"
 #line 231 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
@@ -44029,7 +44084,7 @@ _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
   Scierror("Use method .get_dark[pos]\n");
   return NULL;
 }
-#line 44033 "gtk.c"
+#line 44088 "gtk.c"
 #line 239 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
@@ -44037,7 +44092,7 @@ _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
   Scierror("Use method .get_mid[pos]\n");
   return NULL;
 }
-#line 44041 "gtk.c"
+#line 44096 "gtk.c"
 #line 247 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text(NspGObject *self, char *attr)
@@ -44045,7 +44100,7 @@ _wrap_gtk_style__get_text(NspGObject *self, char *attr)
   Scierror("Use method .get_text[pos]\n");
   return NULL;
 }
-#line 44049 "gtk.c"
+#line 44104 "gtk.c"
 #line 255 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base(NspGObject *self, char *attr)
@@ -44053,7 +44108,7 @@ _wrap_gtk_style__get_base(NspGObject *self, char *attr)
   Scierror("Use method .get_base[pos]\n");
   return NULL;
 }
-#line 44057 "gtk.c"
+#line 44112 "gtk.c"
 #line 263 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
@@ -44061,7 +44116,7 @@ _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa[pos]\n");
   return NULL;
 }
-#line 44065 "gtk.c"
+#line 44120 "gtk.c"
 #line 271 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white(NspGObject *self, char *attr)
@@ -44080,7 +44135,7 @@ _wrap_gtk_style__set_white(NspGObject *self, char *attr, NspObject *value)
   style->white = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44084 "gtk.c"
+#line 44139 "gtk.c"
 #line 290 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black(NspGObject *self, char *attr)
@@ -44099,7 +44154,7 @@ _wrap_gtk_style__set_black(NspGObject *self, char *attr, NspObject *value)
   style->black = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44103 "gtk.c"
+#line 44158 "gtk.c"
 static NspObject *_wrap_gtk_style__get_font_desc(NspObject *self,char *attr)
 {
   PangoFontDescription *ret;
@@ -44129,7 +44184,7 @@ _wrap_gtk_style__get_fg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_fg_gc[pos]\n");
   return NULL;
 }
-#line 44133 "gtk.c"
+#line 44188 "gtk.c"
 #line 317 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
@@ -44137,7 +44192,7 @@ _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_gc[pos]\n");
   return NULL;
 }
-#line 44141 "gtk.c"
+#line 44196 "gtk.c"
 #line 325 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
@@ -44145,7 +44200,7 @@ _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_light_gc[pos]\n");
   return NULL;
 }
-#line 44149 "gtk.c"
+#line 44204 "gtk.c"
 #line 333 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
@@ -44153,7 +44208,7 @@ _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_dark_gc[pos]\n");
   return NULL;
 }
-#line 44157 "gtk.c"
+#line 44212 "gtk.c"
 #line 341 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
@@ -44161,7 +44216,7 @@ _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_mid_gc[pos]\n");
   return NULL;
 }
-#line 44165 "gtk.c"
+#line 44220 "gtk.c"
 #line 349 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
@@ -44169,7 +44224,7 @@ _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_gc[pos]\n");
   return NULL;
 }
-#line 44173 "gtk.c"
+#line 44228 "gtk.c"
 #line 357 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
@@ -44177,7 +44232,7 @@ _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_base_gc[pos]\n");
   return NULL;
 }
-#line 44181 "gtk.c"
+#line 44236 "gtk.c"
 #line 365 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
@@ -44185,7 +44240,7 @@ _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa_gc[pos]\n");
   return NULL;
 }
-#line 44189 "gtk.c"
+#line 44244 "gtk.c"
 #line 373 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white_gc(NspGObject *self, char *attr)
@@ -44204,7 +44259,7 @@ _wrap_gtk_style__set_white_gc(NspGObject *self, char *attr, NspObject *value)
   style->white_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 44208 "gtk.c"
+#line 44263 "gtk.c"
 #line 392 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black_gc(NspGObject *self, char *attr)
@@ -44223,7 +44278,7 @@ _wrap_gtk_style__set_black_gc(NspGObject *self, char *attr, NspObject *value)
   style->black_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 44227 "gtk.c"
+#line 44282 "gtk.c"
 #line 411 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
@@ -44231,33 +44286,33 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-#line 44235 "gtk.c"
+#line 44290 "gtk.c"
 static AttrTab gtkstyle_attrs[] = {
-  { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "light", (attr_get_function *)_wrap_gtk_style__get_light, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "dark", (attr_get_function *)_wrap_gtk_style__get_dark, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "mid", (attr_get_function *)_wrap_gtk_style__get_mid, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "text", (attr_get_function *)_wrap_gtk_style__get_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "base", (attr_get_function *)_wrap_gtk_style__get_base, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "text_aa", (attr_get_function *)_wrap_gtk_style__get_text_aa, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "white", (attr_get_function *)_wrap_gtk_style__get_white, (attr_set_function *)_wrap_gtk_style__set_white,(attr_get_object_function *)int_get_object_failed },
-  { "black", (attr_get_function *)_wrap_gtk_style__get_black, (attr_set_function *)_wrap_gtk_style__set_black,(attr_get_object_function *)int_get_object_failed },
-  { "font_desc", (attr_get_function *)_wrap_gtk_style__get_font_desc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "xthickness", (attr_get_function *)_wrap_gtk_style__get_xthickness, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "ythickness", (attr_get_function *)_wrap_gtk_style__get_ythickness, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "fg_gc", (attr_get_function *)_wrap_gtk_style__get_fg_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "bg_gc", (attr_get_function *)_wrap_gtk_style__get_bg_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "light_gc", (attr_get_function *)_wrap_gtk_style__get_light_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "dark_gc", (attr_get_function *)_wrap_gtk_style__get_dark_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "mid_gc", (attr_get_function *)_wrap_gtk_style__get_mid_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "text_gc", (attr_get_function *)_wrap_gtk_style__get_text_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "base_gc", (attr_get_function *)_wrap_gtk_style__get_base_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "text_aa_gc", (attr_get_function *)_wrap_gtk_style__get_text_aa_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "white_gc", (attr_get_function *)_wrap_gtk_style__get_white_gc, (attr_set_function *)_wrap_gtk_style__set_white_gc,(attr_get_object_function *)int_get_object_failed },
-  { "black_gc", (attr_get_function *)_wrap_gtk_style__get_black_gc, (attr_set_function *)_wrap_gtk_style__set_black_gc,(attr_get_object_function *)int_get_object_failed },
-  { "bg_pixmap", (attr_get_function *)_wrap_gtk_style__get_bg_pixmap, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "light", (attr_get_function *)_wrap_gtk_style__get_light, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "dark", (attr_get_function *)_wrap_gtk_style__get_dark, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "mid", (attr_get_function *)_wrap_gtk_style__get_mid, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "text", (attr_get_function *)_wrap_gtk_style__get_text, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "base", (attr_get_function *)_wrap_gtk_style__get_base, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "text_aa", (attr_get_function *)_wrap_gtk_style__get_text_aa, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "white", (attr_get_function *)_wrap_gtk_style__get_white, (attr_set_function *)_wrap_gtk_style__set_white,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "black", (attr_get_function *)_wrap_gtk_style__get_black, (attr_set_function *)_wrap_gtk_style__set_black,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "font_desc", (attr_get_function *)_wrap_gtk_style__get_font_desc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "xthickness", (attr_get_function *)_wrap_gtk_style__get_xthickness, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "ythickness", (attr_get_function *)_wrap_gtk_style__get_ythickness, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "fg_gc", (attr_get_function *)_wrap_gtk_style__get_fg_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bg_gc", (attr_get_function *)_wrap_gtk_style__get_bg_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "light_gc", (attr_get_function *)_wrap_gtk_style__get_light_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "dark_gc", (attr_get_function *)_wrap_gtk_style__get_dark_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "mid_gc", (attr_get_function *)_wrap_gtk_style__get_mid_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "text_gc", (attr_get_function *)_wrap_gtk_style__get_text_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "base_gc", (attr_get_function *)_wrap_gtk_style__get_base_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "text_aa_gc", (attr_get_function *)_wrap_gtk_style__get_text_aa_gc, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "white_gc", (attr_get_function *)_wrap_gtk_style__get_white_gc, (attr_set_function *)_wrap_gtk_style__set_white_gc,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "black_gc", (attr_get_function *)_wrap_gtk_style__get_black_gc, (attr_set_function *)_wrap_gtk_style__set_black_gc,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bg_pixmap", (attr_get_function *)_wrap_gtk_style__get_bg_pixmap, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -44270,6 +44325,7 @@ static AttrTab gtkstyle_attrs[] = {
 #include <nsp/gtk/gtktable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTable inherits from GtkContainer 
  */
@@ -44377,7 +44433,6 @@ NspGtkTable *new_gtktable()
 /*----------------------------------------------
  * Object method redefined for NspGtkTable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -44450,7 +44505,9 @@ NspGtkTable *gtktable_copy(NspGtkTable *self)
  * wrappers for the GtkTable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktable_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -44464,7 +44521,6 @@ _wrap_gtktable_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &rows, &columns, &homogeneous) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_table_new(rows, columns, homogeneous))== NULL) return RET_BUG;
-
   nsp_type_gtktable = new_type_gtktable(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktable );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -44627,7 +44683,7 @@ static NspMethods *gtktable_get_methods(void) { return gtktable_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTearoffMenuItem ----------- */
@@ -44638,6 +44694,7 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktearoffmenuitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTearoffMenuItem inherits from GtkMenuItem 
  */
@@ -44745,7 +44802,6 @@ NspGtkTearoffMenuItem *new_gtktearoffmenuitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkTearoffMenuItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -44818,14 +44874,15 @@ NspGtkTearoffMenuItem *gtktearoffmenuitem_copy(NspGtkTearoffMenuItem *self)
  * wrappers for the GtkTearoffMenuItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktearoffmenuitem_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_tearoff_menu_item_new())== NULL) return RET_BUG;
-
   nsp_type_gtktearoffmenuitem = new_type_gtktearoffmenuitem(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktearoffmenuitem );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -44838,7 +44895,7 @@ static NspMethods *gtktearoffmenuitem_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTextBuffer ----------- */
@@ -44849,6 +44906,7 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktextbuffer.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextBuffer inherits from GObject 
  */
@@ -44956,7 +45014,6 @@ NspGtkTextBuffer *new_gtktextbuffer()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextBuffer 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -45029,7 +45086,9 @@ NspGtkTextBuffer *gtktextbuffer_copy(NspGtkTextBuffer *self)
  * wrappers for the GtkTextBuffer
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktextbuffer_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -45050,7 +45109,6 @@ _wrap_gtktextbuffer_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_text_buffer_new(table))== NULL) return RET_BUG;
-
   nsp_type_gtktextbuffer = new_type_gtktextbuffer(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextbuffer );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -45098,7 +45156,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 45102 "gtk.c"
+#line 45160 "gtk.c"
 
 
 #line 5867 "gtk.override"
@@ -45115,7 +45173,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 45119 "gtk.c"
+#line 45177 "gtk.c"
 
 
 #line 5882 "gtk.override"
@@ -45129,7 +45187,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 45133 "gtk.c"
+#line 45191 "gtk.c"
 
 
 #line 5894 "gtk.override"
@@ -45149,7 +45207,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 45153 "gtk.c"
+#line 45211 "gtk.c"
 
 
 #line 5912 "gtk.override"
@@ -45164,7 +45222,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 45168 "gtk.c"
+#line 45226 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45257,7 +45315,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 45261 "gtk.c"
+#line 45319 "gtk.c"
 
 
 #line 5623 "gtk.override"
@@ -45292,7 +45350,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 45296 "gtk.c"
+#line 45354 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45775,7 +45833,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45779 "gtk.c"
+#line 45837 "gtk.c"
 
 
 #line 5710 "gtk.override"
@@ -45795,7 +45853,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45799 "gtk.c"
+#line 45857 "gtk.c"
 
 
 #line 5728 "gtk.override"
@@ -45815,7 +45873,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45819 "gtk.c"
+#line 45877 "gtk.c"
 
 
 #line 5746 "gtk.override"
@@ -45834,7 +45892,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45838 "gtk.c"
+#line 45896 "gtk.c"
 
 
 #line 5763 "gtk.override"
@@ -45852,7 +45910,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45856 "gtk.c"
+#line 45914 "gtk.c"
 
 
 #line 5779 "gtk.override"
@@ -45866,7 +45924,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45870 "gtk.c"
+#line 45928 "gtk.c"
 
 
 #line 5791 "gtk.override"
@@ -45880,7 +45938,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45884 "gtk.c"
+#line 45942 "gtk.c"
 
 
 #line 5803 "gtk.override"
@@ -45900,7 +45958,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 45904 "gtk.c"
+#line 45962 "gtk.c"
 
 
 #line 5821 "gtk.override"
@@ -45918,7 +45976,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45922 "gtk.c"
+#line 45980 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45974,7 +46032,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 45978 "gtk.c"
+#line 46036 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46088,8 +46146,8 @@ static NspObject *_wrap_gtk_text_buffer__get_tag_table(NspObject *self,char *att
 }
 
 static AttrTab gtktextbuffer_attrs[] = {
-  { "tag_table", (attr_get_function *)_wrap_gtk_text_buffer__get_tag_table, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "tag_table", (attr_get_function *)_wrap_gtk_text_buffer__get_tag_table, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -46102,6 +46160,7 @@ static AttrTab gtktextbuffer_attrs[] = {
 #include <nsp/gtk/gtktextchildanchor.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextChildAnchor inherits from GObject 
  */
@@ -46209,7 +46268,6 @@ NspGtkTextChildAnchor *new_gtktextchildanchor()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextChildAnchor 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -46282,14 +46340,15 @@ NspGtkTextChildAnchor *gtktextchildanchor_copy(NspGtkTextChildAnchor *self)
  * wrappers for the GtkTextChildAnchor
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktextchildanchor_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_text_child_anchor_new())== NULL) return RET_BUG;
-
   nsp_type_gtktextchildanchor = new_type_gtktextchildanchor(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextchildanchor );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -46306,7 +46365,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 46310 "gtk.c"
+#line 46369 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -46329,7 +46388,7 @@ static NspMethods *gtktextchildanchor_get_methods(void) { return gtktextchildanc
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTextMark ----------- */
@@ -46340,6 +46399,7 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktextmark.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextMark inherits from GObject 
  */
@@ -46447,7 +46507,6 @@ NspGtkTextMark *new_gtktextmark()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextMark 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -46520,7 +46579,9 @@ NspGtkTextMark *gtktextmark_copy(NspGtkTextMark *self)
  * wrappers for the GtkTextMark
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_text_mark_set_visible(NspGtkTextMark *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_bool,t_end};
@@ -46593,7 +46654,7 @@ static NspMethods *gtktextmark_get_methods(void) { return gtktextmark_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTextTag ----------- */
@@ -46604,6 +46665,7 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktexttag.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextTag inherits from GObject 
  */
@@ -46711,7 +46773,6 @@ NspGtkTextTag *new_gtktexttag()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextTag 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -46784,7 +46845,9 @@ NspGtkTextTag *gtktexttag_copy(NspGtkTextTag *self)
  * wrappers for the GtkTextTag
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktexttag_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -46796,7 +46859,6 @@ _wrap_gtktexttag_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &name) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_text_tag_new(name))== NULL) return RET_BUG;
-
   nsp_type_gtktexttag = new_type_gtktexttag(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttag );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -46860,7 +46922,7 @@ static NspMethods *gtktexttag_get_methods(void) { return gtktexttag_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTextTagTable ----------- */
@@ -46871,6 +46933,7 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktexttagtable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextTagTable inherits from GObject 
  */
@@ -46978,7 +47041,6 @@ NspGtkTextTagTable *new_gtktexttagtable()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextTagTable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -47051,14 +47113,15 @@ NspGtkTextTagTable *gtktexttagtable_copy(NspGtkTextTagTable *self)
  * wrappers for the GtkTextTagTable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktexttagtable_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_text_tag_table_new())== NULL) return RET_BUG;
-
   nsp_type_gtktexttagtable = new_type_gtktexttagtable(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktexttagtable );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -47120,7 +47183,7 @@ static NspMethods *gtktexttagtable_get_methods(void) { return gtktexttagtable_me
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTextView ----------- */
@@ -47131,6 +47194,7 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktextview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTextView inherits from GtkContainer 
  */
@@ -47238,7 +47302,6 @@ NspGtkTextView *new_gtktextview()
 /*----------------------------------------------
  * Object method redefined for NspGtkTextView 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -47311,7 +47374,9 @@ NspGtkTextView *gtktextview_copy(NspGtkTextView *self)
  * wrappers for the GtkTextView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktextview_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -47332,7 +47397,6 @@ _wrap_gtktextview_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_text_view_new_with_buffer(buffer))== NULL) return RET_BUG;
-
   nsp_type_gtktextview = new_type_gtktextview(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktextview );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -47442,7 +47506,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47446 "gtk.c"
+#line 47510 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47482,7 +47546,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47486 "gtk.c"
+#line 47550 "gtk.c"
 
 
 #line 6657 "gtk.override"
@@ -47501,7 +47565,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47505 "gtk.c"
+#line 47569 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_iter_at_position(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47539,7 +47603,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG; 
   return 1; 
 }
-#line 47543 "gtk.c"
+#line 47607 "gtk.c"
 
 
 #line 6621 "gtk.override"
@@ -47558,7 +47622,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 47562 "gtk.c"
+#line 47626 "gtk.c"
 
 
 #line 5948 "gtk.override"
@@ -47580,7 +47644,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47584 "gtk.c"
+#line 47648 "gtk.c"
 
 
 #line 5968 "gtk.override"
@@ -47602,7 +47666,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47606 "gtk.c"
+#line 47670 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -48110,7 +48174,7 @@ static NspMethods *gtktextview_get_methods(void) { return gtktextview_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkToggleAction ----------- */
@@ -48121,6 +48185,7 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktoggleaction.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToggleAction inherits from GtkAction 
  */
@@ -48228,7 +48293,6 @@ NspGtkToggleAction *new_gtktoggleaction()
 /*----------------------------------------------
  * Object method redefined for NspGtkToggleAction 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -48301,7 +48365,9 @@ NspGtkToggleAction *gtktoggleaction_copy(NspGtkToggleAction *self)
  * wrappers for the GtkToggleAction
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktoggleaction_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -48310,7 +48376,6 @@ _wrap_gtktoggleaction_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name, &label, &tooltip, &stock_id) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_toggle_action_new(name, label, tooltip, stock_id))== NULL) return RET_BUG;
-
   nsp_type_gtktoggleaction = new_type_gtktoggleaction(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoggleaction );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -48375,7 +48440,7 @@ static NspMethods *gtktoggleaction_get_methods(void) { return gtktoggleaction_me
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkToggleButton ----------- */
@@ -48386,6 +48451,7 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktogglebutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToggleButton inherits from GtkButton 
  */
@@ -48493,7 +48559,6 @@ NspGtkToggleButton *new_gtktogglebutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkToggleButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -48566,7 +48631,9 @@ NspGtkToggleButton *gtktogglebutton_copy(NspGtkToggleButton *self)
  * wrappers for the GtkToggleButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 4373 "gtk.override"
 /* OK */
 static int
@@ -48598,7 +48665,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 48602 "gtk.c"
+#line 48669 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -48699,8 +48766,8 @@ static NspObject *_wrap_gtk_toggle_button__get_draw_indicator(NspObject *self,ch
 }
 
 static AttrTab gtktogglebutton_attrs[] = {
-  { "draw_indicator", (attr_get_function *)_wrap_gtk_toggle_button__get_draw_indicator, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "draw_indicator", (attr_get_function *)_wrap_gtk_toggle_button__get_draw_indicator, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -48713,6 +48780,7 @@ static AttrTab gtktogglebutton_attrs[] = {
 #include <nsp/gtk/gtktoggletoolbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToggleToolButton inherits from GtkToolButton 
  */
@@ -48820,7 +48888,6 @@ NspGtkToggleToolButton *new_gtktoggletoolbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkToggleToolButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -48893,14 +48960,15 @@ NspGtkToggleToolButton *gtktoggletoolbutton_copy(NspGtkToggleToolButton *self)
  * wrappers for the GtkToggleToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktoggletoolbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_toggle_tool_button_new())== NULL) return RET_BUG;
-
   nsp_type_gtktoggletoolbutton = new_type_gtktoggletoolbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoggletoolbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -48937,7 +49005,7 @@ static NspMethods *gtktoggletoolbutton_get_methods(void) { return gtktoggletoolb
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkToolbar ----------- */
@@ -48948,6 +49016,7 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktoolbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToolbar inherits from GtkContainer 
  */
@@ -49055,7 +49124,6 @@ NspGtkToolbar *new_gtktoolbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkToolbar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -49128,14 +49196,15 @@ NspGtkToolbar *gtktoolbar_copy(NspGtkToolbar *self)
  * wrappers for the GtkToolbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktoolbar_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_toolbar_new())== NULL) return RET_BUG;
-
   nsp_type_gtktoolbar = new_type_gtktoolbar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -49326,7 +49395,7 @@ _wrap_gtk_toolbar_append_item(NspGObject *self,Stack stack,int rhs,int opt,int l
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_append_item);
 }
 
-#line 49330 "gtk.c"
+#line 49399 "gtk.c"
 
 
 #line 4821 "gtk.override"
@@ -49336,7 +49405,7 @@ _wrap_gtk_toolbar_prepend_item(NspGObject *self,Stack stack,int rhs,int opt,int 
 {
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_prepend_item);
 }
-#line 49340 "gtk.c"
+#line 49409 "gtk.c"
 
 
 #line 4829 "gtk.override"
@@ -49371,7 +49440,7 @@ _wrap_gtk_toolbar_insert_stock(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,TRUE,ret,callback,params);
 }
-#line 49375 "gtk.c"
+#line 49444 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_space(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -49451,7 +49520,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49455 "gtk.c"
+#line 49524 "gtk.c"
 
 
 #line 4908 "gtk.override"
@@ -49499,7 +49568,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49503 "gtk.c"
+#line 49572 "gtk.c"
 
 
 #line 4954 "gtk.override"
@@ -49551,7 +49620,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49555 "gtk.c"
+#line 49624 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_widget(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -49734,7 +49803,7 @@ static NspMethods *gtktoolbar_get_methods(void) { return gtktoolbar_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkToolButton ----------- */
@@ -49745,6 +49814,7 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktoolbutton.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToolButton inherits from GtkToolItem 
  */
@@ -49852,7 +49922,6 @@ NspGtkToolButton *new_gtktoolbutton()
 /*----------------------------------------------
  * Object method redefined for NspGtkToolButton 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -49925,7 +49994,9 @@ NspGtkToolButton *gtktoolbutton_copy(NspGtkToolButton *self)
  * wrappers for the GtkToolButton
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktoolbutton_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -49948,7 +50019,6 @@ _wrap_gtktoolbutton_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_tool_button_new(icon_widget, label))== NULL) return RET_BUG;
-
   nsp_type_gtktoolbutton = new_type_gtktoolbutton(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolbutton );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -50124,7 +50194,7 @@ static NspMethods *gtktoolbutton_get_methods(void) { return gtktoolbutton_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkToolItem ----------- */
@@ -50135,6 +50205,7 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktoolitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkToolItem inherits from GtkBin 
  */
@@ -50242,7 +50313,6 @@ NspGtkToolItem *new_gtktoolitem()
 /*----------------------------------------------
  * Object method redefined for NspGtkToolItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -50315,14 +50385,15 @@ NspGtkToolItem *gtktoolitem_copy(NspGtkToolItem *self)
  * wrappers for the GtkToolItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktoolitem_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_tool_item_new())== NULL) return RET_BUG;
-
   nsp_type_gtktoolitem = new_type_gtktoolitem(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktoolitem );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -50573,7 +50644,7 @@ static NspMethods *gtktoolitem_get_methods(void) { return gtktoolitem_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTooltips ----------- */
@@ -50584,6 +50655,7 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktooltips.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTooltips inherits from GtkObject 
  */
@@ -50691,7 +50763,6 @@ NspGtkTooltips *new_gtktooltips()
 /*----------------------------------------------
  * Object method redefined for NspGtkTooltips 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -50764,14 +50835,15 @@ NspGtkTooltips *gtktooltips_copy(NspGtkTooltips *self)
  * wrappers for the GtkTooltips
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktooltips_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_tooltips_new())== NULL) return RET_BUG;
-
   nsp_type_gtktooltips = new_type_gtktooltips(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktooltips );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -50865,7 +50937,7 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
 					nspgobject_new(NVOID,(GObject *)data->widget),
 					data->tip_text, data->tip_private);
 }
-#line 50869 "gtk.c"
+#line 50941 "gtk.c"
 #line 6491 "gtk.override"
 static NspObject *
 _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
@@ -50895,7 +50967,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-#line 50899 "gtk.c"
+#line 50971 "gtk.c"
 static NspObject *_wrap_gtk_tooltips__get_delay(NspObject *self,char *attr)
 {
   int ret;
@@ -50925,15 +50997,15 @@ static NspObject *_wrap_gtk_tooltips__get_timer_tag(NspObject *self,char *attr)
 }
 
 static AttrTab gtktooltips_attrs[] = {
-  { "tip_window", (attr_get_function *)_wrap_gtk_tooltips__get_tip_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "tip_label", (attr_get_function *)_wrap_gtk_tooltips__get_tip_label, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "active_tips_data", (attr_get_function *)_wrap_gtk_tooltips__get_active_tips_data, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "tips_data_list", (attr_get_function *)_wrap_gtk_tooltips__get_tips_data_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "delay", (attr_get_function *)_wrap_gtk_tooltips__get_delay, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "enabled", (attr_get_function *)_wrap_gtk_tooltips__get_enabled, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "use_sticky_delay", (attr_get_function *)_wrap_gtk_tooltips__get_use_sticky_delay, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "timer_tag", (attr_get_function *)_wrap_gtk_tooltips__get_timer_tag, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "tip_window", (attr_get_function *)_wrap_gtk_tooltips__get_tip_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "tip_label", (attr_get_function *)_wrap_gtk_tooltips__get_tip_label, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "active_tips_data", (attr_get_function *)_wrap_gtk_tooltips__get_active_tips_data, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "tips_data_list", (attr_get_function *)_wrap_gtk_tooltips__get_tips_data_list, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "delay", (attr_get_function *)_wrap_gtk_tooltips__get_delay, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "enabled", (attr_get_function *)_wrap_gtk_tooltips__get_enabled, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "use_sticky_delay", (attr_get_function *)_wrap_gtk_tooltips__get_use_sticky_delay, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "timer_tag", (attr_get_function *)_wrap_gtk_tooltips__get_timer_tag, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -50946,6 +51018,7 @@ static AttrTab gtktooltips_attrs[] = {
 #include <nsp/gtk/gtktreemodelfilter.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeModelFilter inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource
@@ -51056,7 +51129,6 @@ NspGtkTreeModelFilter *new_gtktreemodelfilter()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeModelFilter 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -51129,7 +51201,9 @@ NspGtkTreeModelFilter *gtktreemodelfilter_copy(NspGtkTreeModelFilter *self)
  * wrappers for the GtkTreeModelFilter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_model_filter_set_visible_column(NspGtkTreeModelFilter *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -51266,7 +51340,7 @@ static NspMethods *gtktreemodelfilter_get_methods(void) { return gtktreemodelfil
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeModelSort ----------- */
@@ -51277,6 +51351,7 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreemodelsort.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeModelSort inherits from GObject 
  * and implements  GtkTreeModel GtkTreeSortable
@@ -51387,7 +51462,6 @@ NspGtkTreeModelSort *new_gtktreemodelsort()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeModelSort 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -51460,7 +51534,9 @@ NspGtkTreeModelSort *gtktreemodelsort_copy(NspGtkTreeModelSort *self)
  * wrappers for the GtkTreeModelSort
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtktreemodelsort_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -51469,7 +51545,6 @@ _wrap_gtktreemodelsort_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktreemodel, &child_model) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_tree_model_sort_new_with_model(GTK_TREE_MODEL(child_model->obj)))== NULL) return RET_BUG;
-
   nsp_type_gtktreemodelsort = new_type_gtktreemodelsort(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtktreemodelsort );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -51622,7 +51697,7 @@ static NspMethods *gtktreemodelsort_get_methods(void) { return gtktreemodelsort_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeSelection ----------- */
@@ -51633,6 +51708,7 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreeselection.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeSelection inherits from GtkObject 
  */
@@ -51740,7 +51816,6 @@ NspGtkTreeSelection *new_gtktreeselection()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeSelection 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -51813,7 +51888,9 @@ NspGtkTreeSelection *gtktreeselection_copy(NspGtkTreeSelection *self)
  * wrappers for the GtkTreeSelection
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gtk_tree_selection_set_mode(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -51899,7 +51976,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 51903 "gtk.c"
+#line 51980 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -51955,7 +52032,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 51959 "gtk.c"
+#line 52036 "gtk.c"
 
 
 #line 3416 "gtk.override"
@@ -51968,7 +52045,7 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 51972 "gtk.c"
+#line 52049 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_count_selected_rows(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52042,7 +52119,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 52046 "gtk.c"
+#line 52123 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52230,7 +52307,7 @@ static NspMethods *gtktreeselection_get_methods(void) { return gtktreeselection_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeStore ----------- */
@@ -52241,6 +52318,7 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreestore.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeStore inherits from GObject 
  * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
@@ -52353,7 +52431,6 @@ NspGtkTreeStore *new_gtktreestore()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeStore 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -52426,7 +52503,9 @@ NspGtkTreeStore *gtktreestore_copy(NspGtkTreeStore *self)
  * wrappers for the GtkTreeStore
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 2028 "gtk.override"
 /* very similar to liststore : 
  * we build the first level here 
@@ -52492,7 +52571,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 52496 "gtk.c"
+#line 52575 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_tree_store(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52568,7 +52647,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 52572 "gtk.c"
+#line 52651 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52617,7 +52696,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52621 "gtk.c"
+#line 52700 "gtk.c"
 
 
 #line 2181 "gtk.override"
@@ -52652,7 +52731,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52656 "gtk.c"
+#line 52735 "gtk.c"
 
 
 #line 2214 "gtk.override"
@@ -52687,7 +52766,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52691 "gtk.c"
+#line 52770 "gtk.c"
 
 
 #line 2247 "gtk.override"
@@ -52737,7 +52816,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52741 "gtk.c"
+#line 52820 "gtk.c"
 
 
 #line 2295 "gtk.override"
@@ -52790,7 +52869,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 52794 "gtk.c"
+#line 52873 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52979,7 +53058,7 @@ static NspMethods *gtktreestore_get_methods(void) { return gtktreestore_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeView ----------- */
@@ -52990,6 +53069,7 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreeview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeView inherits from GtkContainer 
  */
@@ -53097,7 +53177,6 @@ NspGtkTreeView *new_gtktreeview()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeView 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -53170,7 +53249,9 @@ NspGtkTreeView *gtktreeview_copy(NspGtkTreeView *self)
  * wrappers for the GtkTreeView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 2571 "gtk.override"
 static int
 _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
@@ -53202,7 +53283,7 @@ _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53206 "gtk.c"
+#line 53287 "gtk.c"
 
 
 #line 2603 "gtk.override"
@@ -53226,7 +53307,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53230 "gtk.c"
+#line 53311 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53449,7 +53530,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53453 "gtk.c"
+#line 53534 "gtk.c"
 
 
 #line 2880 "gtk.override"
@@ -53501,7 +53582,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53505 "gtk.c"
+#line 53586 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53529,7 +53610,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 53533 "gtk.c"
+#line 53614 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53819,7 +53900,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 53823 "gtk.c"
+#line 53904 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53862,7 +53943,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 53866 "gtk.c"
+#line 53947 "gtk.c"
 
 
 #line 3070 "gtk.override"
@@ -53892,7 +53973,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53896 "gtk.c"
+#line 53977 "gtk.c"
 
 
 #line 3098 "gtk.override"
@@ -53921,7 +54002,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53925 "gtk.c"
+#line 54006 "gtk.c"
 
 
 #line 3055 "gtk.override"
@@ -53938,7 +54019,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53942 "gtk.c"
+#line 54023 "gtk.c"
 
 
 #line 3125 "gtk.override"
@@ -53954,7 +54035,7 @@ _wrap_gtk_tree_view_widget_to_tree_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) tx,(double) ty) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53958 "gtk.c"
+#line 54039 "gtk.c"
 
 
 #line 3139 "gtk.override"
@@ -53970,7 +54051,7 @@ _wrap_gtk_tree_view_tree_to_widget_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) wx,(double) wy) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53974 "gtk.c"
+#line 54055 "gtk.c"
 
 
 #line 3192 "gtk.override"
@@ -54002,7 +54083,7 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 54006 "gtk.c"
+#line 54087 "gtk.c"
 
 
 #line 3222 "gtk.override"
@@ -54028,7 +54109,7 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
 }
 
 
-#line 54032 "gtk.c"
+#line 54113 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54263,7 +54344,7 @@ static NspMethods *gtktreeview_get_methods(void) { return gtktreeview_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkTreeViewColumn ----------- */
@@ -54274,6 +54355,7 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtktreeviewcolumn.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkTreeViewColumn inherits from GtkObject 
  */
@@ -54381,7 +54463,6 @@ NspGtkTreeViewColumn *new_gtktreeviewcolumn()
 /*----------------------------------------------
  * Object method redefined for NspGtkTreeViewColumn 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -54454,7 +54535,9 @@ NspGtkTreeViewColumn *gtktreeviewcolumn_copy(NspGtkTreeViewColumn *self)
  * wrappers for the GtkTreeViewColumn
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 2724 "gtk.override"
 /* gtktreeviewcolumn_new(title="...",renderer=nsp_type_gtkcellrenderer,options= hash)
  * options a hash table of int values 
@@ -54510,7 +54593,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 54514 "gtk.c"
+#line 54597 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_queue_resize(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54557,7 +54640,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
-#line 54561 "gtk.c"
+#line 54644 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_add_attribute(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54605,7 +54688,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 54609 "gtk.c"
+#line 54692 "gtk.c"
 
 
 #line 2809 "gtk.override"
@@ -54678,7 +54761,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 54682 "gtk.c"
+#line 54765 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55038,7 +55121,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 55042 "gtk.c"
+#line 55125 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55126,7 +55209,7 @@ static NspMethods *gtktreeviewcolumn_get_methods(void) { return gtktreeviewcolum
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkUIManager ----------- */
@@ -55137,6 +55220,7 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkuimanager.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkUIManager inherits from GObject 
  */
@@ -55244,7 +55328,6 @@ NspGtkUIManager *new_gtkuimanager()
 /*----------------------------------------------
  * Object method redefined for NspGtkUIManager 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -55317,14 +55400,15 @@ NspGtkUIManager *gtkuimanager_copy(NspGtkUIManager *self)
  * wrappers for the GtkUIManager
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkuimanager_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_ui_manager_new())== NULL) return RET_BUG;
-
   nsp_type_gtkuimanager = new_type_gtkuimanager(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkuimanager );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -55545,7 +55629,7 @@ static NspMethods *gtkuimanager_get_methods(void) { return gtkuimanager_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVBox ----------- */
@@ -55556,6 +55640,7 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVBox inherits from GtkBox 
  */
@@ -55663,7 +55748,6 @@ NspGtkVBox *new_gtkvbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkVBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -55736,7 +55820,9 @@ NspGtkVBox *gtkvbox_copy(NspGtkVBox *self)
  * wrappers for the GtkVBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvbox_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -55749,7 +55835,6 @@ _wrap_gtkvbox_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &homogeneous, &spacing) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gtk_vbox_new(homogeneous, spacing))== NULL) return RET_BUG;
-
   nsp_type_gtkvbox = new_type_gtkvbox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvbox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -55762,7 +55847,7 @@ static NspMethods *gtkvbox_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVButtonBox ----------- */
@@ -55773,6 +55858,7 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvbuttonbox.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVButtonBox inherits from GtkButtonBox 
  */
@@ -55880,7 +55966,6 @@ NspGtkVButtonBox *new_gtkvbuttonbox()
 /*----------------------------------------------
  * Object method redefined for NspGtkVButtonBox 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -55953,14 +56038,15 @@ NspGtkVButtonBox *gtkvbuttonbox_copy(NspGtkVButtonBox *self)
  * wrappers for the GtkVButtonBox
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvbuttonbox_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_vbutton_box_new())== NULL) return RET_BUG;
-
   nsp_type_gtkvbuttonbox = new_type_gtkvbuttonbox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvbuttonbox );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -55973,7 +56059,7 @@ static NspMethods *gtkvbuttonbox_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkViewport ----------- */
@@ -55984,6 +56070,7 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkviewport.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkViewport inherits from GtkBin 
  */
@@ -56091,7 +56178,6 @@ NspGtkViewport *new_gtkviewport()
 /*----------------------------------------------
  * Object method redefined for NspGtkViewport 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -56164,7 +56250,9 @@ NspGtkViewport *gtkviewport_copy(NspGtkViewport *self)
  * wrappers for the GtkViewport
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkviewport_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -56194,7 +56282,6 @@ _wrap_gtkviewport_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_viewport_new(hadjustment, vadjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkviewport = new_type_gtkviewport(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkviewport );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -56304,7 +56391,7 @@ static NspMethods *gtkviewport_get_methods(void) { return gtkviewport_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVPaned ----------- */
@@ -56315,6 +56402,7 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvpaned.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVPaned inherits from GtkPaned 
  */
@@ -56422,7 +56510,6 @@ NspGtkVPaned *new_gtkvpaned()
 /*----------------------------------------------
  * Object method redefined for NspGtkVPaned 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -56495,14 +56582,15 @@ NspGtkVPaned *gtkvpaned_copy(NspGtkVPaned *self)
  * wrappers for the GtkVPaned
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvpaned_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_vpaned_new())== NULL) return RET_BUG;
-
   nsp_type_gtkvpaned = new_type_gtkvpaned(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvpaned );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -56515,7 +56603,7 @@ static NspMethods *gtkvpaned_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVRuler ----------- */
@@ -56526,6 +56614,7 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvruler.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVRuler inherits from GtkRuler 
  */
@@ -56633,7 +56722,6 @@ NspGtkVRuler *new_gtkvruler()
 /*----------------------------------------------
  * Object method redefined for NspGtkVRuler 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -56706,14 +56794,15 @@ NspGtkVRuler *gtkvruler_copy(NspGtkVRuler *self)
  * wrappers for the GtkVRuler
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvruler_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_vruler_new())== NULL) return RET_BUG;
-
   nsp_type_gtkvruler = new_type_gtkvruler(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvruler );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -56726,7 +56815,7 @@ static NspMethods *gtkvruler_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVScale ----------- */
@@ -56737,6 +56826,7 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvscale.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVScale inherits from GtkScale 
  */
@@ -56844,7 +56934,6 @@ NspGtkVScale *new_gtkvscale()
 /*----------------------------------------------
  * Object method redefined for NspGtkVScale 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -56917,7 +57006,9 @@ NspGtkVScale *gtkvscale_copy(NspGtkVScale *self)
  * wrappers for the GtkVScale
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvscale_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -56938,7 +57029,6 @@ _wrap_gtkvscale_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_vscale_new(adjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkvscale = new_type_gtkvscale(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvscale );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -56951,7 +57041,7 @@ static NspMethods *gtkvscale_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVScrollbar ----------- */
@@ -56962,6 +57052,7 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvscrollbar.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVScrollbar inherits from GtkScrollbar 
  */
@@ -57069,7 +57160,6 @@ NspGtkVScrollbar *new_gtkvscrollbar()
 /*----------------------------------------------
  * Object method redefined for NspGtkVScrollbar 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -57142,7 +57232,9 @@ NspGtkVScrollbar *gtkvscrollbar_copy(NspGtkVScrollbar *self)
  * wrappers for the GtkVScrollbar
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvscrollbar_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -57163,7 +57255,6 @@ _wrap_gtkvscrollbar_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gtk_vscrollbar_new(adjustment))== NULL) return RET_BUG;
-
   nsp_type_gtkvscrollbar = new_type_gtkvscrollbar(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvscrollbar );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -57176,7 +57267,7 @@ static NspMethods *gtkvscrollbar_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkVSeparator ----------- */
@@ -57187,6 +57278,7 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkvseparator.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkVSeparator inherits from GtkSeparator 
  */
@@ -57294,7 +57386,6 @@ NspGtkVSeparator *new_gtkvseparator()
 /*----------------------------------------------
  * Object method redefined for NspGtkVSeparator 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -57367,14 +57458,15 @@ NspGtkVSeparator *gtkvseparator_copy(NspGtkVSeparator *self)
  * wrappers for the GtkVSeparator
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkvseparator_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_vseparator_new())== NULL) return RET_BUG;
-
   nsp_type_gtkvseparator = new_type_gtkvseparator(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkvseparator );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -57387,7 +57479,7 @@ static NspMethods *gtkvseparator_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGtkWidget ----------- */
@@ -57398,6 +57490,7 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gtkwidget.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkWidget inherits from GtkObject 
  */
@@ -57505,7 +57598,6 @@ NspGtkWidget *new_gtkwidget()
 /*----------------------------------------------
  * Object method redefined for NspGtkWidget 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -57578,7 +57670,9 @@ NspGtkWidget *gtkwidget_copy(NspGtkWidget *self)
  * wrappers for the GtkWidget
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 560 "gtk.override"
 extern int int_gobj_create(Stack stack,int rhs,int opt,int lhs);
 static int
@@ -57587,7 +57681,7 @@ _wrap_gtkwidget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 57591 "gtk.c"
+#line 57685 "gtk.c"
 
 
 #line 675 "gtk.override"
@@ -57602,7 +57696,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 57606 "gtk.c"
+#line 57700 "gtk.c"
 
 
 static int _wrap_gtk_drag_check_threshold(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57713,7 +57807,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 57717 "gtk.c"
+#line 57811 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_set_proxy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57764,7 +57858,7 @@ _wrap_gtk_drag_dest_find_target(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 57768 "gtk.c"
+#line 57862 "gtk.c"
 
 
 #line 5232 "gtk.override"
@@ -57797,7 +57891,7 @@ _wrap_gtk_drag_dest_get_target_list(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 57801 "gtk.c"
+#line 57895 "gtk.c"
 
 
 #line 5263 "gtk.override"
@@ -57820,7 +57914,7 @@ _wrap_gtk_drag_dest_set_target_list(NspGObject *self,Stack stack,int rhs,int opt
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 57824 "gtk.c"
+#line 57918 "gtk.c"
 
 
 #line 5284 "gtk.override"
@@ -57847,7 +57941,7 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 57851 "gtk.c"
+#line 57945 "gtk.c"
 
 
 static int _wrap_gtk_drag_source_unset(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57923,7 +58017,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 57927 "gtk.c"
+#line 58021 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_add_text_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58053,7 +58147,7 @@ _wrap_gtk_selection_add_targets(NspGObject *self,Stack stack,int rhs,int opt,int
   g_free(targets);
   return 0;
 }
-#line 58057 "gtk.c"
+#line 58151 "gtk.c"
 
 
 static int _wrap_gtk_selection_clear_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58258,7 +58352,7 @@ _wrap_gtk_widget_size_request(NspGObject *self,Stack stack,int rhs,int opt,int l
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58262 "gtk.c"
+#line 58356 "gtk.c"
 
 
 static int _wrap_gtk_widget_size_allocate(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58283,7 +58377,7 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58287 "gtk.c"
+#line 58381 "gtk.c"
 
 
 #line 622 "gtk.override"
@@ -58338,7 +58432,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 58342 "gtk.c"
+#line 58436 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58503,7 +58597,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else 
     return RET_BUG;
 }
-#line 58507 "gtk.c"
+#line 58601 "gtk.c"
 
 
 static int _wrap_gtk_widget_freeze_child_notify(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58672,7 +58766,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 58676 "gtk.c"
+#line 58770 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58791,7 +58885,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 58795 "gtk.c"
+#line 58889 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58930,7 +59024,7 @@ _wrap_gtk_widget_get_pointer(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if (  nsp_move_doubles(stack,1,1,2,(double) x, (double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58934 "gtk.c"
+#line 59028 "gtk.c"
 
 
 static int _wrap_gtk_widget_is_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58974,7 +59068,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 58978 "gtk.c"
+#line 59072 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59288,7 +59382,7 @@ _wrap_gtk_widget_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, result);
   return 1;
 }
-#line 59292 "gtk.c"
+#line 59386 "gtk.c"
 
 
 #line 770 "gtk.override"
@@ -59307,7 +59401,7 @@ _wrap_gtk_widget_class_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,result);
   return 1;
 }
-#line 59311 "gtk.c"
+#line 59405 "gtk.c"
 
 
 static int _wrap_gtk_widget_list_mnemonic_labels(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59551,14 +59645,14 @@ static NspObject *_wrap_gtk_widget__get_parent(NspObject *self,char *attr)
 }
 
 static AttrTab gtkwidget_attrs[] = {
-  { "state", (attr_get_function *)_wrap_gtk_widget__get_state, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "saved_state", (attr_get_function *)_wrap_gtk_widget__get_saved_state, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "name", (attr_get_function *)_wrap_gtk_widget__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "style", (attr_get_function *)_wrap_gtk_widget__get_style, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "allocation", (attr_get_function *)_wrap_gtk_widget__get_allocation, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "window", (attr_get_function *)_wrap_gtk_widget__get_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "parent", (attr_get_function *)_wrap_gtk_widget__get_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "state", (attr_get_function *)_wrap_gtk_widget__get_state, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "saved_state", (attr_get_function *)_wrap_gtk_widget__get_saved_state, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "name", (attr_get_function *)_wrap_gtk_widget__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "style", (attr_get_function *)_wrap_gtk_widget__get_style, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "allocation", (attr_get_function *)_wrap_gtk_widget__get_allocation, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "window", (attr_get_function *)_wrap_gtk_widget__get_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "parent", (attr_get_function *)_wrap_gtk_widget__get_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -59571,6 +59665,7 @@ static AttrTab gtkwidget_attrs[] = {
 #include <nsp/gtk/gtkwindow.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkWindow inherits from GtkBin 
  */
@@ -59678,7 +59773,6 @@ NspGtkWindow *new_gtkwindow()
 /*----------------------------------------------
  * Object method redefined for NspGtkWindow 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -59751,7 +59845,9 @@ NspGtkWindow *gtkwindow_copy(NspGtkWindow *self)
  * wrappers for the GtkWindow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkwindow_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -59766,7 +59862,6 @@ _wrap_gtkwindow_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GTK_TYPE_WINDOW_TYPE, nsp_type, &type)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_window_new(type))== NULL) return RET_BUG;
-
   nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
     /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindow );
@@ -60137,7 +60232,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 60141 "gtk.c"
+#line 60236 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60252,7 +60347,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
-#line 60256 "gtk.c"
+#line 60351 "gtk.c"
 
 
 #line 7183 "gtk.override"
@@ -60265,7 +60360,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 60269 "gtk.c"
+#line 60364 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60540,7 +60635,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 60544 "gtk.c"
+#line 60639 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60564,7 +60659,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 60568 "gtk.c"
+#line 60663 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60587,7 +60682,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 60591 "gtk.c"
+#line 60686 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60989,41 +61084,41 @@ static NspObject *_wrap_gtk_window__get_mnemonic_modifier(NspObject *self,char *
 }
 
 static AttrTab gtkwindow_attrs[] = {
-  { "title", (attr_get_function *)_wrap_gtk_window__get_title, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "wmclass_name", (attr_get_function *)_wrap_gtk_window__get_wmclass_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "wmclass_class", (attr_get_function *)_wrap_gtk_window__get_wmclass_class, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "wm_role", (attr_get_function *)_wrap_gtk_window__get_wm_role, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "focus_widget", (attr_get_function *)_wrap_gtk_window__get_focus_widget, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "default_widget", (attr_get_function *)_wrap_gtk_window__get_default_widget, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "transient_parent", (attr_get_function *)_wrap_gtk_window__get_transient_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "frame", (attr_get_function *)_wrap_gtk_window__get_frame, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "group", (attr_get_function *)_wrap_gtk_window__get_group, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "configure_request_count", (attr_get_function *)_wrap_gtk_window__get_configure_request_count, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "allow_shrink", (attr_get_function *)_wrap_gtk_window__get_allow_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "allow_grow", (attr_get_function *)_wrap_gtk_window__get_allow_grow, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "configure_notify_received", (attr_get_function *)_wrap_gtk_window__get_configure_notify_received, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "need_default_position", (attr_get_function *)_wrap_gtk_window__get_need_default_position, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "need_default_size", (attr_get_function *)_wrap_gtk_window__get_need_default_size, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "position", (attr_get_function *)_wrap_gtk_window__get_position, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "type", (attr_get_function *)_wrap_gtk_window__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "has_user_ref_count", (attr_get_function *)_wrap_gtk_window__get_has_user_ref_count, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "has_focus", (attr_get_function *)_wrap_gtk_window__get_has_focus, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "modal", (attr_get_function *)_wrap_gtk_window__get_modal, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "destroy_with_parent", (attr_get_function *)_wrap_gtk_window__get_destroy_with_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "has_frame", (attr_get_function *)_wrap_gtk_window__get_has_frame, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "iconify_initially", (attr_get_function *)_wrap_gtk_window__get_iconify_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "stick_initially", (attr_get_function *)_wrap_gtk_window__get_stick_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "maximize_initially", (attr_get_function *)_wrap_gtk_window__get_maximize_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "decorated", (attr_get_function *)_wrap_gtk_window__get_decorated, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "type_hint", (attr_get_function *)_wrap_gtk_window__get_type_hint, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "gravity", (attr_get_function *)_wrap_gtk_window__get_gravity, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "frame_left", (attr_get_function *)_wrap_gtk_window__get_frame_left, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "frame_top", (attr_get_function *)_wrap_gtk_window__get_frame_top, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "frame_right", (attr_get_function *)_wrap_gtk_window__get_frame_right, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "frame_bottom", (attr_get_function *)_wrap_gtk_window__get_frame_bottom, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "keys_changed_handler", (attr_get_function *)_wrap_gtk_window__get_keys_changed_handler, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "mnemonic_modifier", (attr_get_function *)_wrap_gtk_window__get_mnemonic_modifier, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "title", (attr_get_function *)_wrap_gtk_window__get_title, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "wmclass_name", (attr_get_function *)_wrap_gtk_window__get_wmclass_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "wmclass_class", (attr_get_function *)_wrap_gtk_window__get_wmclass_class, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "wm_role", (attr_get_function *)_wrap_gtk_window__get_wm_role, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "focus_widget", (attr_get_function *)_wrap_gtk_window__get_focus_widget, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "default_widget", (attr_get_function *)_wrap_gtk_window__get_default_widget, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "transient_parent", (attr_get_function *)_wrap_gtk_window__get_transient_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "frame", (attr_get_function *)_wrap_gtk_window__get_frame, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "group", (attr_get_function *)_wrap_gtk_window__get_group, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "configure_request_count", (attr_get_function *)_wrap_gtk_window__get_configure_request_count, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "allow_shrink", (attr_get_function *)_wrap_gtk_window__get_allow_shrink, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "allow_grow", (attr_get_function *)_wrap_gtk_window__get_allow_grow, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "configure_notify_received", (attr_get_function *)_wrap_gtk_window__get_configure_notify_received, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "need_default_position", (attr_get_function *)_wrap_gtk_window__get_need_default_position, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "need_default_size", (attr_get_function *)_wrap_gtk_window__get_need_default_size, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "position", (attr_get_function *)_wrap_gtk_window__get_position, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "type", (attr_get_function *)_wrap_gtk_window__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "has_user_ref_count", (attr_get_function *)_wrap_gtk_window__get_has_user_ref_count, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "has_focus", (attr_get_function *)_wrap_gtk_window__get_has_focus, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "modal", (attr_get_function *)_wrap_gtk_window__get_modal, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "destroy_with_parent", (attr_get_function *)_wrap_gtk_window__get_destroy_with_parent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "has_frame", (attr_get_function *)_wrap_gtk_window__get_has_frame, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "iconify_initially", (attr_get_function *)_wrap_gtk_window__get_iconify_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "stick_initially", (attr_get_function *)_wrap_gtk_window__get_stick_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "maximize_initially", (attr_get_function *)_wrap_gtk_window__get_maximize_initially, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "decorated", (attr_get_function *)_wrap_gtk_window__get_decorated, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "type_hint", (attr_get_function *)_wrap_gtk_window__get_type_hint, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "gravity", (attr_get_function *)_wrap_gtk_window__get_gravity, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "frame_left", (attr_get_function *)_wrap_gtk_window__get_frame_left, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "frame_top", (attr_get_function *)_wrap_gtk_window__get_frame_top, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "frame_right", (attr_get_function *)_wrap_gtk_window__get_frame_right, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "frame_bottom", (attr_get_function *)_wrap_gtk_window__get_frame_bottom, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "keys_changed_handler", (attr_get_function *)_wrap_gtk_window__get_keys_changed_handler, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "mnemonic_modifier", (attr_get_function *)_wrap_gtk_window__get_mnemonic_modifier, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -61036,6 +61131,7 @@ static AttrTab gtkwindow_attrs[] = {
 #include <nsp/gtk/gtkwindowgroup.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGtkWindowGroup inherits from GObject 
  */
@@ -61143,7 +61239,6 @@ NspGtkWindowGroup *new_gtkwindowgroup()
 /*----------------------------------------------
  * Object method redefined for NspGtkWindowGroup 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -61216,14 +61311,15 @@ NspGtkWindowGroup *gtkwindowgroup_copy(NspGtkWindowGroup *self)
  * wrappers for the GtkWindowGroup
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gtkwindowgroup_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gtk_window_group_new())== NULL) return RET_BUG;
-
   nsp_type_gtkwindowgroup = new_type_gtkwindowgroup(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkwindowgroup );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -61260,7 +61356,7 @@ static NspMethods *gtkwindowgroup_get_methods(void) { return gtkwindowgroup_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gtkwindowgroup_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gtkwindowgroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -61307,7 +61403,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 61311 "gtk.c"
+#line 61407 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs) /* accelerator_valid */
@@ -61637,7 +61733,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 61641 "gtk.c"
+#line 61737 "gtk.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs) /* color_selection_palette_to_string */
@@ -61949,7 +62045,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 61953 "gtk.c"
+#line 62049 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs) /* icon_size_lookup_for_settings */
@@ -62230,7 +62326,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 62234 "gtk.c"
+#line 62330 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs) /* main_level */
@@ -62262,7 +62358,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 62266 "gtk.c"
+#line 62362 "gtk.c"
 
 
 #line 3781 "gtk.override"
@@ -62278,7 +62374,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 62282 "gtk.c"
+#line 62378 "gtk.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs) /* grab_get_current */
@@ -62456,7 +62552,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 62460 "gtk.c"
+#line 62556 "gtk.c"
 
 
 #line 6162 "gtk.override"
@@ -62469,7 +62565,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 62473 "gtk.c"
+#line 62569 "gtk.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs) /* rc_get_style_by_paths */
@@ -62672,7 +62768,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 62676 "gtk.c"
+#line 62772 "gtk.c"
 
 
 #line 6338 "gtk.override"
@@ -62692,7 +62788,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 62696 "gtk.c"
+#line 62792 "gtk.c"
 
 
 #line 6324 "gtk.override"
@@ -62708,7 +62804,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 62712 "gtk.c"
+#line 62808 "gtk.c"
 
 
 int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs) /* toggle_tool_button_new_from_stock */
@@ -63005,7 +63101,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 63009 "gtk.c"
+#line 63105 "gtk.c"
 
 
 int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs) /* window_set_default_icon_name */
@@ -63387,3 +63483,5 @@ gtk_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_flags_add_constants((NspHash *)module, GTK_TYPE_WIDGET_FLAGS, strip_prefix);
 }
 
+
+#line 63488 "gtk.c"

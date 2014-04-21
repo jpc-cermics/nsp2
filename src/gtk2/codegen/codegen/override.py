@@ -23,6 +23,7 @@ class Overrides:
         self.override_slots = {}
         self.headers = ''
         self.init = ''
+        self.last = ''
         self.imports = []
 	if filename: self.handle_file(filename)
 
@@ -88,6 +89,9 @@ class Overrides:
         elif words[0] == 'init':
             self.init = '%s\n#line %d "%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)
+        elif words[0] == 'last':
+            self.last = '%s\n#line %d "%s"\n%s' % \
+                        (self.last, startline + 1, filename, rest)
         elif words[0] == 'modulename':
             self.modulename = words[1]
         elif words[0] == 'import':
@@ -128,5 +132,7 @@ class Overrides:
         return self.headers
     def get_init(self):
         return self.init
+    def get_last(self):
+        return self.last
     def get_imports(self):
         return self.imports

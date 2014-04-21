@@ -22,30 +22,29 @@
 
 
 
+
+
+
 #line 4 "atk.override"
 
 #include "nsp/gtk/gobject.h"
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>
-#line 32 "atk.c"
-
-
+#line 35 "atk.c"
 /* ---------- types from other modules ---------- */
-#include "nsp/gtk/gobject.h"
-
-
+#include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
-#include "nsp/gtk/atkhyperlink.h"
-#include "nsp/gtk/atkobject.h"
-#include "nsp/gtk/atknoopobject.h"
-#include "nsp/gtk/atkobjectfactory.h"
-#include "nsp/gtk/atknoopobjectfactory.h"
-#include "nsp/gtk/atkregistry.h"
-#include "nsp/gtk/atkrelation.h"
-#include "nsp/gtk/atkrelationset.h"
-#include "nsp/gtk/atkstateset.h"
-#include "nsp/gtk/atkutil.h"
+#include <nsp/gtk/atkhyperlink.h>
+#include <nsp/gtk/atkobject.h>
+#include <nsp/gtk/atknoopobject.h>
+#include <nsp/gtk/atkobjectfactory.h>
+#include <nsp/gtk/atknoopobjectfactory.h>
+#include <nsp/gtk/atkregistry.h>
+#include <nsp/gtk/atkrelation.h>
+#include <nsp/gtk/atkrelationset.h>
+#include <nsp/gtk/atkstateset.h>
+#include <nsp/gtk/atkutil.h>
 
 
 /* ----------- NspAtkHyperlink ----------- */
@@ -56,6 +55,7 @@
 #include <nsp/gtk/atkhyperlink.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkHyperlink inherits from GObject 
  */
@@ -163,7 +163,6 @@ NspAtkHyperlink *new_atkhyperlink()
 /*----------------------------------------------
  * Object method redefined for NspAtkHyperlink 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -236,7 +235,9 @@ NspAtkHyperlink *atkhyperlink_copy(NspAtkHyperlink *self)
  * wrappers for the AtkHyperlink
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_atk_hyperlink_get_uri(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -314,7 +315,7 @@ static NspMethods *atkhyperlink_get_methods(void) { return atkhyperlink_methods;
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkObject ----------- */
@@ -325,6 +326,7 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkobject.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkObject inherits from GObject 
  */
@@ -432,7 +434,6 @@ NspAtkObject *new_atkobject()
 /*----------------------------------------------
  * Object method redefined for NspAtkObject 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -505,7 +506,9 @@ NspAtkObject *atkobject_copy(NspAtkObject *self)
  * wrappers for the AtkObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -692,7 +695,7 @@ static NspMethods *atkobject_get_methods(void) { return atkobject_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkNoOpObject ----------- */
@@ -703,6 +706,7 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atknoopobject.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkNoOpObject inherits from AtkObject 
  */
@@ -810,7 +814,6 @@ NspAtkNoOpObject *new_atknoopobject()
 /*----------------------------------------------
  * Object method redefined for NspAtkNoOpObject 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -883,7 +886,9 @@ NspAtkNoOpObject *atknoopobject_copy(NspAtkNoOpObject *self)
  * wrappers for the AtkNoOpObject
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_atknoopobject_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -892,7 +897,6 @@ _wrap_atknoopobject_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
   if ((ret = (GObject *)atk_no_op_object_new(G_OBJECT(obj->obj)))== NULL) return RET_BUG;
-
   nsp_type_atknoopobject = new_type_atknoopobject(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobject );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -905,7 +909,7 @@ static NspMethods *atknoopobject_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkObjectFactory ----------- */
@@ -916,6 +920,7 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkobjectfactory.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkObjectFactory inherits from GObject 
  */
@@ -1023,7 +1028,6 @@ NspAtkObjectFactory *new_atkobjectfactory()
 /*----------------------------------------------
  * Object method redefined for NspAtkObjectFactory 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1096,7 +1100,9 @@ NspAtkObjectFactory *atkobjectfactory_copy(NspAtkObjectFactory *self)
  * wrappers for the AtkObjectFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
@@ -1129,7 +1135,7 @@ static NspMethods *atkobjectfactory_get_methods(void) { return atkobjectfactory_
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkNoOpObjectFactory ----------- */
@@ -1140,6 +1146,7 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atknoopobjectfactory.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkNoOpObjectFactory inherits from AtkObjectFactory 
  */
@@ -1247,7 +1254,6 @@ NspAtkNoOpObjectFactory *new_atknoopobjectfactory()
 /*----------------------------------------------
  * Object method redefined for NspAtkNoOpObjectFactory 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1320,14 +1326,15 @@ NspAtkNoOpObjectFactory *atknoopobjectfactory_copy(NspAtkNoOpObjectFactory *self
  * wrappers for the AtkNoOpObjectFactory
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_atknoopobjectfactory_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)atk_no_op_object_factory_new())== NULL) return RET_BUG;
-
   nsp_type_atknoopobjectfactory = new_type_atknoopobjectfactory(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobjectfactory );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1340,7 +1347,7 @@ static NspMethods *atknoopobjectfactory_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkRegistry ----------- */
@@ -1351,6 +1358,7 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkregistry.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkRegistry inherits from GObject 
  */
@@ -1458,7 +1466,6 @@ NspAtkRegistry *new_atkregistry()
 /*----------------------------------------------
  * Object method redefined for NspAtkRegistry 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1531,7 +1538,9 @@ NspAtkRegistry *atkregistry_copy(NspAtkRegistry *self)
  * wrappers for the AtkRegistry
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_atk_registry_set_factory_type(NspAtkRegistry *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, obj,t_end};
@@ -1586,7 +1595,7 @@ static NspMethods *atkregistry_get_methods(void) { return atkregistry_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkRelation ----------- */
@@ -1597,6 +1606,7 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkrelation.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkRelation inherits from GObject 
  */
@@ -1704,7 +1714,6 @@ NspAtkRelation *new_atkrelation()
 /*----------------------------------------------
  * Object method redefined for NspAtkRelation 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1777,7 +1786,9 @@ NspAtkRelation *atkrelation_copy(NspAtkRelation *self)
  * wrappers for the AtkRelation
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 18 "atk.override"
 static int
 _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
@@ -1819,7 +1830,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1823 "atk.c"
+#line 1834 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1841,7 +1852,7 @@ static NspMethods *atkrelation_get_methods(void) { return atkrelation_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkRelationSet ----------- */
@@ -1852,6 +1863,7 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkrelationset.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkRelationSet inherits from GObject 
  */
@@ -1959,7 +1971,6 @@ NspAtkRelationSet *new_atkrelationset()
 /*----------------------------------------------
  * Object method redefined for NspAtkRelationSet 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2032,14 +2043,15 @@ NspAtkRelationSet *atkrelationset_copy(NspAtkRelationSet *self)
  * wrappers for the AtkRelationSet
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_atkrelationset_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)atk_relation_set_new())== NULL) return RET_BUG;
-
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atkrelationset );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -2133,7 +2145,7 @@ static NspMethods *atkrelationset_get_methods(void) { return atkrelationset_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkStateSet ----------- */
@@ -2144,6 +2156,7 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkstateset.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkStateSet inherits from GObject 
  */
@@ -2251,7 +2264,6 @@ NspAtkStateSet *new_atkstateset()
 /*----------------------------------------------
  * Object method redefined for NspAtkStateSet 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2324,7 +2336,9 @@ NspAtkStateSet *atkstateset_copy(NspAtkStateSet *self)
  * wrappers for the AtkStateSet
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_atk_state_set_is_empty(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -2442,7 +2456,7 @@ static NspMethods *atkstateset_get_methods(void) { return atkstateset_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkUtil ----------- */
@@ -2453,6 +2467,7 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/atkutil.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspAtkUtil inherits from GObject 
  */
@@ -2560,7 +2575,6 @@ NspAtkUtil *new_atkutil()
 /*----------------------------------------------
  * Object method redefined for NspAtkUtil 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2633,13 +2647,15 @@ NspAtkUtil *atkutil_copy(NspAtkUtil *self)
  * wrappers for the AtkUtil
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *atkutil_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab atkutil_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab atkutil_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -3004,3 +3020,5 @@ atk_add_constants(NspObject *module, const gchar *strip_prefix)
 /*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_XY_WINDOW", strip_prefix), ATK_XY_WINDOW);*/
 }
 
+
+#line 3025 "atk.c"

@@ -59,7 +59,7 @@ class Wrapper:
               '#include <nsp/objects.h>\n'  \
               '#include <nsp/gtk/%(typename_dc)s.h>\n'  \
               '#include <nsp/interf.h>\n'  \
-              '#include <nsp/nspthreads.h>\n'  \
+              '#include <nsp/nspthreads.h>\n\n'  \
               '/* \n' \
               ' * Nsp%(typename)s inherits from %(parent)s \n%(implements)s' \
               ' */\n' \
@@ -163,7 +163,6 @@ class Wrapper:
               '/*----------------------------------------------\n'  \
               ' * Object method redefined for Nsp%(typename)s \n'  \
               ' *-----------------------------------------------*/\n'  \
-              '\n'  \
               '/*\n'  \
               ' * type as string \n'  \
               ' */\n'  \
@@ -238,7 +237,6 @@ class Wrapper:
               ' * wrappers for the %(typename)s\n'  \
               ' * i.e functions at Nsp level \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  \
 
     type_header = \
                 '/* -*- Mode: C -*- */\n' \
@@ -454,6 +452,11 @@ class Wrapper:
         fhp.write(self.type_header %substdict)
         fhp.close() 
         
+        self.fp.write( '/*-------------------------------------------\n');
+        self.fp.write( ' * Methods\n');
+        self.fp.write( ' *-------------------------------------------*/\n');
+
+
         substdict['tp_init'] = self.write_constructor()
         substdict['tp_methods'] = self.write_methods()
         substdict['tp_getset'] = self.write_getsets()
@@ -658,7 +661,7 @@ class Wrapper:
         # no overrides for the whole function.  If no fields, don't write a func
         if not self.objinfo.fields:
             lower_name1 = string.lower(self.objinfo.c_name)
-            self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL}} ;\n' % lower_name1)
+            self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
             return '0'
         getsets = []
@@ -714,19 +717,19 @@ class Wrapper:
                                      % (self.objinfo.c_name, fname, exc_info()))
             if gettername != 'int_get_failed' or settername != 'int_set_failed':
                 getobjectname = 'int_get_object_failed'
-                getsets.append('  { "%s", (attr_get_function *)%s, (attr_set_function *)%s,(attr_get_object_function *)%s },\n' %
+                getsets.append('  { "%s", (attr_get_function *)%s, (attr_set_function *)%s,(attr_get_object_function *)%s, NULL },\n' %
                                (fixname(fname), gettername, settername,getobjectname))
 
         lower_name1 = string.lower(self.objinfo.c_name)
         if not getsets:
             # self.fp.write('static AttrTab *%s_get_attrs_table(void) { return NULL;};\n' % lower_name1)
-            self.fp.write('static AttrTab %s_attrs[] = {{NULL,NULL,NULL}} ;\n' % lower_name1)
+            self.fp.write('static AttrTab %s_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
             return '0'
         else: 
             self.fp.write('static AttrTab %s_attrs[] = {\n' % lower_name1)
             for getset in getsets:
                 self.fp.write(getset)
-            self.fp.write('  { NULL,NULL,NULL,NULL },\n')
+            self.fp.write('  { NULL,NULL,NULL,NULL,NULL},\n')
             self.fp.write('};\n\n')
             lower_name1 = string.lower(self.objinfo.c_name)
             #self.fp.write('static AttrTab *%s_get_attrs_table(void) { return %s;};\n' % (lower_name1, getsets_name))
@@ -844,7 +847,7 @@ class GObjectWrapper(Wrapper):
         '%(parseargs)s' \
         '%(codebefore)s' \
         '  if ((ret = (GObject *)%(cname)s(%(arglist)s))== NULL) return RET_BUG;\n' \
-        '%(codeafter)s\n' \
+        '%(codeafter)s' \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n' \
         '%(aftercreate)s' \
         '  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
@@ -879,7 +882,6 @@ class GObjectWrapper(Wrapper):
               ' * wrappers for the %(typename)s\n'  \
               ' * i.e functions at Nsp level \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  
 
     unused_tmpl = \
               '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
@@ -947,7 +949,7 @@ class GInterfaceWrapper(GObjectWrapper):
     def write_getsets(self):
         # interfaces have no fields ...
         lower_name1 = string.lower(self.objinfo.c_name)
-        self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL}} ;\n' % lower_name1)
+        self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
         return '0'
 
 class GBoxedWrapper(Wrapper):
@@ -993,7 +995,8 @@ class GBoxedWrapper(Wrapper):
               ' * wrappers for the %(typename)s\n'  \
               ' * i.e functions at Nsp level \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  \
+
+    unused_tmpl = \
               '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
               '{\n'  \
               '  Nsp%(typename)s *H;\n'  \
@@ -1061,7 +1064,9 @@ class GPointerWrapper(GBoxedWrapper):
                    ' * wrappers for the %(typename)s\n'  \
                    ' * i.e functions at Nsp level \n'  \
                    ' *-------------------------------------------------------------------*/\n'  \
-                   '\n'  \
+                   '\n'  
+
+    unused_tmpl = \
                    '/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)\n'  \
                    '{\n'  \
                    '  Nsp%(typename)s *H;\n'  \
@@ -1155,28 +1160,25 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write( type_tmpl_copyright) 
     fp.write('\n\n')
 
+    fp.write('\n\n\n')
     hd = overrides.get_headers()
     if hd <> "":
         fp.write(hd)
         fp.resetline()
-    else:
-        fp.write('\n')
-
-    fp.write('\n\n')
-    fp.write('/* ---------- types from other modules ---------- */\n')
-    for module, pyname, cname in overrides.get_imports():
-        fp.write('#include "nsp/gtk/%s.h"\n' % string.lower(cname))
-    fp.write('\n\n')
+        
+    imports = overrides.get_imports()
+    if len(imports) >= 1:
+        fp.write('/* ---------- types from other modules ---------- */\n')
+        for module, pyname, cname in imports:
+            fp.write('#include <nsp/gtk/%s.h>\n' % string.lower(cname))
+    #fp.write('\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
     for obj in parser.boxes:
-        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
+        fp.write('#include <nsp/gtk/%s.h>\n' % (string.lower(obj.c_name)))
     for obj in parser.objects:
-        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
+        fp.write('#include <nsp/gtk/%s.h>\n' % (string.lower(obj.c_name)))
     for interface in parser.interfaces:
-        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
+        fp.write('#include <nsp/gtk/%s.h>\n' % (string.lower(obj.c_name)))
     fp.write('\n')
 
     # used to collect constructors 
@@ -1219,6 +1221,10 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     wrapper.write_functions(prefix,functions)
 
     write_enums(parser, prefix, fp)
+
+    # code added verbatim at the end 
+    fp.write(overrides.get_last() + '\n')
+    fp.resetline()
 
 def write_source_unused(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('/* initialize stuff extension classes */\n')

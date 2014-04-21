@@ -1158,11 +1158,12 @@ matcher.register('time_t', arg)
 
 # If the system maxint is smaller than unsigned int, we need to use
 # Long objects with PyLong_AsUnsignedLong
-if sys.maxint >= (1L << 32):
-    matcher.register('guint32', arg)
-else:
-    arg = ULongArg()
-    matcher.register('guint32', arg)
+#if sys.maxint >= (1L << 32):
+#   matcher.register('guint32', arg)
+#else:
+
+arg = ULongArg()
+matcher.register('guint32', arg)
 
 arg = ULongArg()
 matcher.register('gulong', arg)

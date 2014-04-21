@@ -25,10 +25,10 @@
 
 
 /* ---------- types from other modules ---------- */
-
-
+#include <nsp/gtk/classa.h>
+#include <nsp/gtk/classb.h>
 /* ---------- forward type declarations ---------- */
-#include "nsp/gtk/gdkcolormap.h"
+#include <nsp/gtk/gdkcolormap.h>
 
 
 /* ----------- NspGdkColormap ----------- */
@@ -39,6 +39,7 @@
 #include <nsp/gtk/gdkcolormap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkColormap inherits from GObject 
  */
@@ -146,7 +147,6 @@ NspGdkColormap *new_gdkcolormap()
 /*----------------------------------------------
  * Object method redefined for NspGdkColormap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -219,7 +219,9 @@ NspGdkColormap *gdkcolormap_copy(NspGdkColormap *self)
  * wrappers for the GdkColormap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -228,7 +230,6 @@ _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&allocate) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_colormap_new(allocate))== NULL) return RET_BUG;
-
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcolormap );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -266,7 +267,7 @@ static NspMethods *gdkcolormap_get_methods(void) { return gdkcolormap_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -338,3 +339,5 @@ void test_Interf_Info(int i, char **fname, function (**f))
   *fname = test_func[i].name;
   *f = test_func[i].fonc;
 }
+
+#line 344 "test.c"

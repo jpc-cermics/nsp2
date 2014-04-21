@@ -22,6 +22,9 @@
 
 
 
+
+
+
 #line 4 "gdk.override"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -33,42 +36,38 @@
 
 /* #include "pygtk-private.h" */
 
-#line 37 "gdk.c"
-
-
+#line 40 "gdk.c"
 /* ---------- types from other modules ---------- */
-#include "nsp/gtk/gobject.h"
-#include "nsp/gtk/pangocontext.h"
-#include "nsp/gtk/pangofont.h"
-#include "nsp/gtk/pangolayout.h"
-#include "nsp/gtk/gtkwidget.h"
-#include "nsp/gtk/gdkatom.h"
-
-
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/pangocontext.h>
+#include <nsp/gtk/pangofont.h>
+#include <nsp/gtk/pangolayout.h>
+#include <nsp/gtk/gtkwidget.h>
+#include <nsp/gtk/gdkatom.h>
 /* ---------- forward type declarations ---------- */
-#include "nsp/gtk/gdkevent.h"
-#include "nsp/gtk/gdkfont.h"
-#include "nsp/gtk/gdkcolor.h"
-#include "nsp/gtk/gdkcursor.h"
-#include "nsp/gtk/gdkrectangle.h"
-#include "nsp/gtk/gdkcolormap.h"
-#include "nsp/gtk/gdkdevice.h"
-#include "nsp/gtk/gdkdisplay.h"
-#include "nsp/gtk/gdkdisplaymanager.h"
-#include "nsp/gtk/gdkdragcontext.h"
-#include "nsp/gtk/gdkdrawable.h"
-#include "nsp/gtk/gdkwindow.h"
-#include "nsp/gtk/gdkpixmap.h"
-#include "nsp/gtk/gdkbitmap.h"
-#include "nsp/gtk/gdkgc.h"
-#include "nsp/gtk/gdkimage.h"
-#include "nsp/gtk/gdkkeymap.h"
-#include "nsp/gtk/gdkpixbuf.h"
-#include "nsp/gtk/gdkpixbufanimation.h"
-#include "nsp/gtk/gdkpixbufanimationiter.h"
-#include "nsp/gtk/gdkpixbufloader.h"
-#include "nsp/gtk/gdkscreen.h"
-#include "nsp/gtk/gdkvisual.h"
+#include <nsp/gtk/gdkevent.h>
+#include <nsp/gtk/gdkfont.h>
+#include <nsp/gtk/gdkcolor.h>
+#include <nsp/gtk/gdkcursor.h>
+#include <nsp/gtk/gdkrectangle.h>
+#include <nsp/gtk/gdkcolormap.h>
+#include <nsp/gtk/gdkdevice.h>
+#include <nsp/gtk/gdkdisplay.h>
+#include <nsp/gtk/gdkdisplaymanager.h>
+#include <nsp/gtk/gdkdragcontext.h>
+#include <nsp/gtk/gdkdrawable.h>
+#include <nsp/gtk/gdkwindow.h>
+#include <nsp/gtk/gdkpixmap.h>
+#include <nsp/gtk/gdkbitmap.h>
+#include <nsp/gtk/gdkgc.h>
+#include <nsp/gtk/gdkimage.h>
+#include <nsp/gtk/gdkkeymap.h>
+#include <nsp/gtk/gdkpixbuf.h>
+#include <nsp/gtk/gdkpixbufanimation.h>
+#include <nsp/gtk/gdkpixbufanimationiter.h>
+#include <nsp/gtk/gdkpixbufloader.h>
+#include <nsp/gtk/gdkscreen.h>
+#include <nsp/gtk/gdkvisual.h>
 
 
 /* ----------- NspGdkEvent ----------- */
@@ -80,6 +79,7 @@ static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 #include <nsp/gtk/gdkevent.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkEvent inherits from GBoxed 
  */
@@ -187,7 +187,6 @@ NspGdkEvent *new_gdkevent()
 /*----------------------------------------------
  * Object method redefined for NspGdkEvent 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -260,19 +259,9 @@ NspGdkEvent *gdkevent_copy(NspGdkEvent *self)
  * wrappers for the GdkEvent
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkEvent *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkevent is initialized * /
-  nsp_type_gdkevent = new_type_gdkevent(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gdkevent)) == NULLGDKEVENT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_event_send_client_message(NspGdkEvent *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -338,7 +327,7 @@ _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;      
 }
-#line 342 "gdk.c"
+#line 331 "gdk.c"
 
 
 #line 1082 "gdk.override"
@@ -352,7 +341,7 @@ _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,in
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 356 "gdk.c"
+#line 345 "gdk.c"
 
 
 #line 1054 "gdk.override"
@@ -370,7 +359,7 @@ _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,n,(double) value) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 374 "gdk.c"
+#line 363 "gdk.c"
 
 
 static NspMethods gdkevent_methods[] = {
@@ -391,7 +380,7 @@ static NspMethods *gdkevent_get_methods(void) { return gdkevent_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkevent_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkevent_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #line 716 "gdk.override"
 
 static NspObject *
@@ -729,7 +718,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   Scierror("Error: Event attributes not found \n");
   return NULL;
 }
-#line 733 "gdk.c"
+#line 722 "gdk.c"
 
 
 
@@ -742,6 +731,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 #include <nsp/gtk/gdkfont.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkFont inherits from GBoxed 
  */
@@ -849,7 +839,6 @@ NspGdkFont *new_gdkfont()
 /*----------------------------------------------
  * Object method redefined for NspGdkFont 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -922,19 +911,9 @@ NspGdkFont *gdkfont_copy(NspGdkFont *self)
  * wrappers for the GdkFont
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkFont *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkfont is initialized * /
-  nsp_type_gdkfont = new_type_gdkfont(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gdkfont)) == NULLGDKFONT) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkfont_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -999,7 +978,7 @@ static int _wrap_gdk_char_width(NspGdkFont *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 1003 "gdk.c"
+#line 982 "gdk.c"
 
 
 static int _wrap_gdk_string_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1041,7 +1020,7 @@ static int _wrap_gdk_char_measure(NspGdkFont *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 1045 "gdk.c"
+#line 1024 "gdk.c"
 
 
 static int _wrap_gdk_string_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1084,7 +1063,7 @@ static int _wrap_gdk_char_height(NspGdkFont *self,Stack stack,int rhs,int opt,in
   return 1; 
 }
 
-#line 1088 "gdk.c"
+#line 1067 "gdk.c"
 
 
 #line 529 "gdk.override"
@@ -1107,7 +1086,7 @@ _wrap_gdk_text_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
 			(double) ascent, (double) descent) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 1111 "gdk.c"
+#line 1090 "gdk.c"
 
 
 static int _wrap_gdk_string_extents(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1163,10 +1142,10 @@ static NspObject *_wrap_gdk_font__get_descent(NspObject *self,char *attr)
 }
 
 static AttrTab gdkfont_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_font__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "ascent", (attr_get_function *)_wrap_gdk_font__get_ascent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "descent", (attr_get_function *)_wrap_gdk_font__get_descent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "type", (attr_get_function *)_wrap_gdk_font__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "ascent", (attr_get_function *)_wrap_gdk_font__get_ascent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "descent", (attr_get_function *)_wrap_gdk_font__get_descent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -1180,6 +1159,7 @@ static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include <nsp/gtk/gdkcolor.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkColor inherits from GBoxed 
  */
@@ -1287,7 +1267,6 @@ NspGdkColor *new_gdkcolor()
 /*----------------------------------------------
  * Object method redefined for NspGdkColor 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1360,19 +1339,9 @@ NspGdkColor *gdkcolor_copy(NspGdkColor *self)
  * wrappers for the GdkColor
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkColor *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkcolor is initialized * /
-  nsp_type_gdkcolor = new_type_gdkcolor(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gdkcolor)) == NULLGDKCOLOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 398 "gdk.override"
 static int
 _wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
@@ -1390,7 +1359,7 @@ _wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1394 "gdk.c"
+#line 1363 "gdk.c"
 
 
 static NspMethods *gdkcolor_get_methods(void) { return NULL;};
@@ -1429,11 +1398,11 @@ static NspObject *_wrap_gdk_color__get_blue(NspObject *self,char *attr)
 }
 
 static AttrTab gdkcolor_attrs[] = {
-  { "pixel", (attr_get_function *)_wrap_gdk_color__get_pixel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "red", (attr_get_function *)_wrap_gdk_color__get_red, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "green", (attr_get_function *)_wrap_gdk_color__get_green, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "blue", (attr_get_function *)_wrap_gdk_color__get_blue, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "pixel", (attr_get_function *)_wrap_gdk_color__get_pixel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "red", (attr_get_function *)_wrap_gdk_color__get_red, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "green", (attr_get_function *)_wrap_gdk_color__get_green, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "blue", (attr_get_function *)_wrap_gdk_color__get_blue, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 #line 416 "gdk.override"
@@ -1467,7 +1436,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   return OK;
 }
 
-#line 1471 "gdk.c"
+#line 1440 "gdk.c"
 
 
 
@@ -1480,6 +1449,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include <nsp/gtk/gdkcursor.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkCursor inherits from GBoxed 
  */
@@ -1587,7 +1557,6 @@ NspGdkCursor *new_gdkcursor()
 /*----------------------------------------------
  * Object method redefined for NspGdkCursor 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1660,19 +1629,9 @@ NspGdkCursor *gdkcursor_copy(NspGdkCursor *self)
  * wrappers for the GdkCursor
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkCursor *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkcursor is initialized * /
-  nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gdkcursor)) == NULLGDKCURSOR) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 654 "gdk.override"
 static int
 _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
@@ -1734,7 +1693,7 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) nsp_ret);
   return 1;
 }
-#line 1738 "gdk.c"
+#line 1697 "gdk.c"
 
 
 static NspMethods *gdkcursor_get_methods(void) { return NULL;};
@@ -1750,8 +1709,8 @@ static NspObject *_wrap_gdk_cursor__get_type(NspObject *self,char *attr)
 }
 
 static AttrTab gdkcursor_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_cursor__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "type", (attr_get_function *)_wrap_gdk_cursor__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -1764,6 +1723,7 @@ static AttrTab gdkcursor_attrs[] = {
 #include <nsp/gtk/gdkrectangle.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkRectangle inherits from GBoxed 
  */
@@ -1871,7 +1831,6 @@ NspGdkRectangle *new_gdkrectangle()
 /*----------------------------------------------
  * Object method redefined for NspGdkRectangle 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1944,19 +1903,9 @@ NspGdkRectangle *gdkrectangle_copy(NspGdkRectangle *self)
  * wrappers for the GdkRectangle
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
-/* int int_clc_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspGdkRectangle *H;
-  CheckRhs(0,0);
-  / * want to be sure that type gdkrectangle is initialized * /
-  nsp_type_gdkrectangle = new_type_gdkrectangle(T_BASE);
-  if(( H = gboxed_create(NVOID,(NspTypeBase *) nsp_type_gdkrectangle)) == NULLGDKRECTANGLE) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-*/ 
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 2159 "gdk.override"
 static int
 _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
@@ -1996,7 +1945,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
-#line 2000 "gdk.c"
+#line 1949 "gdk.c"
 
 
 #line 2199 "gdk.override"
@@ -2013,7 +1962,7 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 2017 "gdk.c"
+#line 1966 "gdk.c"
 
 
 #line 2214 "gdk.override"
@@ -2030,7 +1979,7 @@ _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 2034 "gdk.c"
+#line 1983 "gdk.c"
 
 
 static NspMethods gdkrectangle_methods[] = {
@@ -2073,11 +2022,11 @@ static NspObject *_wrap_gdk_rectangle__get_height(NspObject *self,char *attr)
 }
 
 static AttrTab gdkrectangle_attrs[] = {
-  { "x", (attr_get_function *)_wrap_gdk_rectangle__get_x, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "y", (attr_get_function *)_wrap_gdk_rectangle__get_y, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "width", (attr_get_function *)_wrap_gdk_rectangle__get_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "height", (attr_get_function *)_wrap_gdk_rectangle__get_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "x", (attr_get_function *)_wrap_gdk_rectangle__get_x, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "y", (attr_get_function *)_wrap_gdk_rectangle__get_y, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "width", (attr_get_function *)_wrap_gdk_rectangle__get_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "height", (attr_get_function *)_wrap_gdk_rectangle__get_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -2090,6 +2039,7 @@ static AttrTab gdkrectangle_attrs[] = {
 #include <nsp/gtk/gdkcolormap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkColormap inherits from GObject 
  */
@@ -2197,7 +2147,6 @@ NspGdkColormap *new_gdkcolormap()
 /*----------------------------------------------
  * Object method redefined for NspGdkColormap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2270,7 +2219,9 @@ NspGdkColormap *gdkcolormap_copy(NspGdkColormap *self)
  * wrappers for the GdkColormap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2280,7 +2231,6 @@ _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkvisual, &visual, &allocate) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_colormap_new(GDK_VISUAL(visual->obj), allocate))== NULL) return RET_BUG;
-
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcolormap );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -2352,7 +2302,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
   }
   return 0;
 }
-#line 2356 "gdk.c"
+#line 2306 "gdk.c"
 
 
 static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2410,7 +2360,7 @@ _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: use GdkColormap.alloc_color\n"); 
   return RET_BUG;
 }
-#line 2414 "gdk.c"
+#line 2364 "gdk.c"
 
 
 static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2446,7 +2396,7 @@ static NspMethods *gdkcolormap_get_methods(void) { return gdkcolormap_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkDevice ----------- */
@@ -2457,6 +2407,7 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkdevice.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkDevice inherits from GObject 
  */
@@ -2564,7 +2515,6 @@ NspGdkDevice *new_gdkdevice()
 /*----------------------------------------------
  * Object method redefined for NspGdkDevice 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2637,7 +2587,9 @@ NspGdkDevice *gdkdevice_copy(NspGdkDevice *self)
  * wrappers for the GdkDevice
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_device_set_source(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
@@ -2712,7 +2664,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
     if (( nsp_move_double(stack,2,(double) mask))==FAIL) return RET_BUG;
   return 2;
 }
-#line 2716 "gdk.c"
+#line 2668 "gdk.c"
 
 
 #line 1154 "gdk.override"
@@ -2755,7 +2707,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   Scierror("Error: function _wrap_gdk_device_get_history not finished\n");  
   return RET_BUG;
 }
-#line 2759 "gdk.c"
+#line 2711 "gdk.c"
 
 
 #line 1195 "gdk.override"
@@ -2785,7 +2737,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     }
   return 1;
 }
-#line 2789 "gdk.c"
+#line 2741 "gdk.c"
 
 
 static NspMethods gdkdevice_methods[] = {
@@ -2860,7 +2812,7 @@ _wrap_gdk_device__get_axes(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2864 "gdk.c"
+#line 2816 "gdk.c"
 static NspObject *_wrap_gdk_device__get_num_keys(NspObject *self,char *attr)
 {
   int ret;
@@ -2884,17 +2836,17 @@ _wrap_gdk_device__get_keys(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2888 "gdk.c"
+#line 2840 "gdk.c"
 static AttrTab gdkdevice_attrs[] = {
-  { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "mode", (attr_get_function *)_wrap_gdk_device__get_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "has_cursor", (attr_get_function *)_wrap_gdk_device__get_has_cursor, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "num_axes", (attr_get_function *)_wrap_gdk_device__get_num_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "axes", (attr_get_function *)_wrap_gdk_device__get_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "num_keys", (attr_get_function *)_wrap_gdk_device__get_num_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "keys", (attr_get_function *)_wrap_gdk_device__get_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "mode", (attr_get_function *)_wrap_gdk_device__get_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "has_cursor", (attr_get_function *)_wrap_gdk_device__get_has_cursor, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "num_axes", (attr_get_function *)_wrap_gdk_device__get_num_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "axes", (attr_get_function *)_wrap_gdk_device__get_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "num_keys", (attr_get_function *)_wrap_gdk_device__get_num_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "keys", (attr_get_function *)_wrap_gdk_device__get_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -2907,6 +2859,7 @@ static AttrTab gdkdevice_attrs[] = {
 #include <nsp/gtk/gdkdisplay.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkDisplay inherits from GObject 
  */
@@ -3014,7 +2967,6 @@ NspGdkDisplay *new_gdkdisplay()
 /*----------------------------------------------
  * Object method redefined for NspGdkDisplay 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -3087,7 +3039,9 @@ NspGdkDisplay *gdkdisplay_copy(NspGdkDisplay *self)
  * wrappers for the GdkDisplay
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_display_get_name(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
@@ -3293,7 +3247,7 @@ static NspMethods *gdkdisplay_get_methods(void) { return gdkdisplay_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkDisplayManager ----------- */
@@ -3304,6 +3258,7 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkdisplaymanager.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkDisplayManager inherits from GObject 
  */
@@ -3411,7 +3366,6 @@ NspGdkDisplayManager *new_gdkdisplaymanager()
 /*----------------------------------------------
  * Object method redefined for NspGdkDisplayManager 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -3484,13 +3438,15 @@ NspGdkDisplayManager *gdkdisplaymanager_copy(NspGdkDisplayManager *self)
  * wrappers for the GdkDisplayManager
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gdkdisplaymanager_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkDragContext ----------- */
@@ -3501,6 +3457,7 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkdragcontext.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkDragContext inherits from GObject 
  */
@@ -3608,7 +3565,6 @@ NspGdkDragContext *new_gdkdragcontext()
 /*----------------------------------------------
  * Object method redefined for NspGdkDragContext 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -3681,14 +3637,15 @@ NspGdkDragContext *gdkdragcontext_copy(NspGdkDragContext *self)
  * wrappers for the GdkDragContext
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkdragcontext_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)gdk_drag_context_new())== NULL) return RET_BUG;
-
   nsp_type_gdkdragcontext = new_type_gdkdragcontext(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkdragcontext );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -3777,7 +3734,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_double(stack,2,(double) protocol)== FAIL) return RET_BUG;
   return 2;
 }
-#line 3781 "gdk.c"
+#line 3738 "gdk.c"
 
 
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -3956,7 +3913,7 @@ _wrap_gdk_drag_context__get_targets(NspGObject *self, char *attr)
       return NULL;
     }
 }
-#line 3960 "gdk.c"
+#line 3917 "gdk.c"
 static NspObject *_wrap_gdk_drag_context__get_actions(NspObject *self,char *attr)
 {
   guint ret;
@@ -3988,16 +3945,16 @@ static NspObject *_wrap_gdk_drag_context__get_start_time(NspObject *self,char *a
 }
 
 static AttrTab gdkdragcontext_attrs[] = {
-  { "protocol", (attr_get_function *)_wrap_gdk_drag_context__get_protocol, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "is_source", (attr_get_function *)_wrap_gdk_drag_context__get_is_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "source_window", (attr_get_function *)_wrap_gdk_drag_context__get_source_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "dest_window", (attr_get_function *)_wrap_gdk_drag_context__get_dest_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "targets", (attr_get_function *)_wrap_gdk_drag_context__get_targets, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "actions", (attr_get_function *)_wrap_gdk_drag_context__get_actions, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "suggested_action", (attr_get_function *)_wrap_gdk_drag_context__get_suggested_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "action", (attr_get_function *)_wrap_gdk_drag_context__get_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "start_time", (attr_get_function *)_wrap_gdk_drag_context__get_start_time, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "protocol", (attr_get_function *)_wrap_gdk_drag_context__get_protocol, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "is_source", (attr_get_function *)_wrap_gdk_drag_context__get_is_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "source_window", (attr_get_function *)_wrap_gdk_drag_context__get_source_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "dest_window", (attr_get_function *)_wrap_gdk_drag_context__get_dest_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "targets", (attr_get_function *)_wrap_gdk_drag_context__get_targets, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "actions", (attr_get_function *)_wrap_gdk_drag_context__get_actions, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "suggested_action", (attr_get_function *)_wrap_gdk_drag_context__get_suggested_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "action", (attr_get_function *)_wrap_gdk_drag_context__get_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "start_time", (attr_get_function *)_wrap_gdk_drag_context__get_start_time, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -4010,6 +3967,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 #include <nsp/gtk/gdkdrawable.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkDrawable inherits from GObject 
  */
@@ -4117,7 +4075,6 @@ NspGdkDrawable *new_gdkdrawable()
 /*----------------------------------------------
  * Object method redefined for NspGdkDrawable 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -4190,7 +4147,9 @@ NspGdkDrawable *gdkdrawable_copy(NspGdkDrawable *self)
  * wrappers for the GdkDrawable
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 1598 "gdk.override"
 static int
 _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -4202,7 +4161,7 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width, (double) height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4206 "gdk.c"
+#line 4165 "gdk.c"
 
 
 static int _wrap_gdk_drawable_set_colormap(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4313,7 +4272,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4317 "gdk.c"
+#line 4276 "gdk.c"
 
 
 static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4356,7 +4315,7 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 		GDK_GC(gc->obj), x, y, text, strlen(text));
   return 0;
 }
-#line 4360 "gdk.c"
+#line 4319 "gdk.c"
 
 
 static int _wrap_gdk_draw_drawable(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4406,7 +4365,7 @@ _wrap_gdk_draw_points(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4410 "gdk.c"
+#line 4369 "gdk.c"
 
 
 #line 214 "gdk.override"
@@ -4438,7 +4397,7 @@ _wrap_gdk_draw_segments(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(segs);
   return 0;
 }
-#line 4442 "gdk.c"
+#line 4401 "gdk.c"
 
 
 #line 244 "gdk.override"
@@ -4464,7 +4423,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4468 "gdk.c"
+#line 4427 "gdk.c"
 
 
 static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4564,7 +4523,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");
   return RET_BUG;
 }
-#line 4568 "gdk.c"
+#line 4527 "gdk.c"
 
 
 #line 311 "gdk.override"
@@ -4607,7 +4566,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4611 "gdk.c"
+#line 4570 "gdk.c"
 
 
 #line 354 "gdk.override"
@@ -4649,7 +4608,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4653 "gdk.c"
+#line 4612 "gdk.c"
 
 
 static NspMethods gdkdrawable_methods[] = {
@@ -4685,7 +4644,7 @@ static NspMethods *gdkdrawable_get_methods(void) { return gdkdrawable_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkWindow ----------- */
@@ -4696,6 +4655,7 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkwindow.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkWindow inherits from GdkDrawable 
  */
@@ -4803,7 +4763,6 @@ NspGdkWindow *new_gdkwindow()
 /*----------------------------------------------
  * Object method redefined for NspGdkWindow 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -4876,7 +4835,9 @@ NspGdkWindow *gdkwindow_copy(NspGdkWindow *self)
  * wrappers for the GdkWindow
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 1610 "gdk.override"
 static int
 _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -4900,7 +4861,7 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, nsp_context);
   return 1;
 }
-#line 4904 "gdk.c"
+#line 4865 "gdk.c"
 
 
 static int _wrap_gdk_input_set_extension_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -4977,7 +4938,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 4981 "gdk.c"
+#line 4942 "gdk.c"
 
 
 #line 1696 "gdk.override"
@@ -5083,7 +5044,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 5087 "gdk.c"
+#line 5048 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5461,7 +5422,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height,(double) depth) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5465 "gdk.c"
+#line 5426 "gdk.c"
 
 
 #line 1812 "gdk.override"
@@ -5474,7 +5435,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5478 "gdk.c"
+#line 5439 "gdk.c"
 
 
 #line 1823 "gdk.override"
@@ -5487,7 +5448,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5491 "gdk.c"
+#line 5452 "gdk.c"
 
 
 #line 1834 "gdk.override"
@@ -5500,7 +5461,7 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5504 "gdk.c"
+#line 5465 "gdk.c"
 
 
 #line 1845 "gdk.override"
@@ -5513,7 +5474,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5517 "gdk.c"
+#line 5478 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5539,7 +5500,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5543 "gdk.c"
+#line 5504 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5591,7 +5552,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5595 "gdk.c"
+#line 5556 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5887,7 +5848,7 @@ static NspMethods *gdkwindow_get_methods(void) { return gdkwindow_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkPixmap ----------- */
@@ -5898,6 +5859,7 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkpixmap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkPixmap inherits from GdkDrawable 
  */
@@ -6005,7 +5967,6 @@ NspGdkPixmap *new_gdkpixmap()
 /*----------------------------------------------
  * Object method redefined for NspGdkPixmap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -6078,7 +6039,9 @@ NspGdkPixmap *gdkpixmap_copy(NspGdkPixmap *self)
  * wrappers for the GdkPixmap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -6103,7 +6066,6 @@ _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
     }
   }
   if ((ret = (GObject *)gdk_pixmap_new(drawable, width, height, depth))== NULL) return RET_BUG;
-
   nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixmap );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -6116,7 +6078,7 @@ static NspMethods *gdkpixmap_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkBitmap ----------- */
@@ -6127,6 +6089,7 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkbitmap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkBitmap inherits from GdkDrawable 
  */
@@ -6234,7 +6197,6 @@ NspGdkBitmap *new_gdkbitmap()
 /*----------------------------------------------
  * Object method redefined for NspGdkBitmap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -6307,13 +6269,15 @@ NspGdkBitmap *gdkbitmap_copy(NspGdkBitmap *self)
  * wrappers for the GdkBitmap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gdkbitmap_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkbitmap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkbitmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkGC ----------- */
@@ -6326,6 +6290,7 @@ static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include <nsp/gtk/gdkgc.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkGC inherits from GObject 
  */
@@ -6433,7 +6398,6 @@ NspGdkGC *new_gdkgc()
 /*----------------------------------------------
  * Object method redefined for NspGdkGC 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -6506,7 +6470,9 @@ NspGdkGC *gdkgc_copy(NspGdkGC *self)
  * wrappers for the GdkGC
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 1274 "gdk.override"
 static int
 _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
@@ -6647,7 +6613,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 6651 "gdk.c"
+#line 6617 "gdk.c"
 
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6843,7 +6809,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(dash_list);
   return 0;
 }
-#line 6847 "gdk.c"
+#line 6813 "gdk.c"
 
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6947,7 +6913,7 @@ static NspMethods *gdkgc_get_methods(void) { return gdkgc_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkgc_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkgc_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #line 1415 "gdk.override"
 
 static char *_gdkgc_attrs[]={ "__attrs", "background", "cap_style",
@@ -7007,7 +6973,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   }
   return NULL;
 }
-#line 7011 "gdk.c"
+#line 6977 "gdk.c"
 
 
 #line 1475 "gdk.override"
@@ -7107,7 +7073,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
     }
   return 0;
 }
-#line 7111 "gdk.c"
+#line 7077 "gdk.c"
 
 
 
@@ -7120,6 +7086,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include <nsp/gtk/gdkimage.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkImage inherits from GObject 
  */
@@ -7227,7 +7194,6 @@ NspGdkImage *new_gdkimage()
 /*----------------------------------------------
  * Object method redefined for NspGdkImage 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7300,7 +7266,9 @@ NspGdkImage *gdkimage_copy(NspGdkImage *self)
  * wrappers for the GdkImage
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -7314,7 +7282,6 @@ _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
   if (nspg_enum_get_value(GDK_TYPE_IMAGE_TYPE, nsp_type, &type)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gdk_image_new(type, GDK_VISUAL(visual->obj), width, height))== NULL) return RET_BUG;
-
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkimage );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -7377,7 +7344,7 @@ static NspMethods *gdkimage_get_methods(void) { return gdkimage_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkKeymap ----------- */
@@ -7388,6 +7355,7 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkkeymap.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkKeymap inherits from GObject 
  */
@@ -7495,7 +7463,6 @@ NspGdkKeymap *new_gdkkeymap()
 /*----------------------------------------------
  * Object method redefined for NspGdkKeymap 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7568,7 +7535,9 @@ NspGdkKeymap *gdkkeymap_copy(NspGdkKeymap *self)
  * wrappers for the GdkKeymap
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_keymap_get_direction(NspGdkKeymap *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
@@ -7588,7 +7557,7 @@ static NspMethods *gdkkeymap_get_methods(void) { return gdkkeymap_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkPixbuf ----------- */
@@ -7599,6 +7568,7 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkpixbuf.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkPixbuf inherits from GObject 
  */
@@ -7706,7 +7676,6 @@ NspGdkPixbuf *new_gdkpixbuf()
 /*----------------------------------------------
  * Object method redefined for NspGdkPixbuf 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -7779,7 +7748,9 @@ NspGdkPixbuf *gdkpixbuf_copy(NspGdkPixbuf *self)
  * wrappers for the GdkPixbuf
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_pixbuf_render_to_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int, obj, s_int, s_int,t_end};
@@ -7861,7 +7832,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       return 1;
     }
 }
-#line 7865 "gdk.c"
+#line 7836 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -7943,7 +7914,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7947 "gdk.c"
+#line 7918 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8101,7 +8072,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8105 "gdk.c"
+#line 8076 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8275,10 +8246,10 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8279 "gdk.c"
+#line 8250 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
-  { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -8291,6 +8262,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 #include <nsp/gtk/gdkpixbufanimation.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkPixbufAnimation inherits from GObject 
  */
@@ -8398,7 +8370,6 @@ NspGdkPixbufAnimation *new_gdkpixbufanimation()
 /*----------------------------------------------
  * Object method redefined for NspGdkPixbufAnimation 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -8471,7 +8442,9 @@ NspGdkPixbufAnimation *gdkpixbufanimation_copy(NspGdkPixbufAnimation *self)
  * wrappers for the GdkPixbufAnimation
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkpixbufanimation_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -8485,7 +8458,6 @@ _wrap_gdkpixbufanimation_new(Stack stack, int rhs, int opt, int lhs)
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
-
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufanimation );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -8545,7 +8517,7 @@ static NspMethods *gdkpixbufanimation_get_methods(void) { return gdkpixbufanimat
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkPixbufAnimationIter ----------- */
@@ -8556,6 +8528,7 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkpixbufanimationiter.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkPixbufAnimationIter inherits from GObject 
  */
@@ -8663,7 +8636,6 @@ NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter()
 /*----------------------------------------------
  * Object method redefined for NspGdkPixbufAnimationIter 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -8736,7 +8708,9 @@ NspGdkPixbufAnimationIter *gdkpixbufanimationiter_copy(NspGdkPixbufAnimationIter
  * wrappers for the GdkPixbufAnimationIter
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_pixbuf_animation_iter_get_delay_time(NspGdkPixbufAnimationIter *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -8779,7 +8753,7 @@ static NspMethods *gdkpixbufanimationiter_get_methods(void) { return gdkpixbufan
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkPixbufLoader ----------- */
@@ -8790,6 +8764,7 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkpixbufloader.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkPixbufLoader inherits from GObject 
  */
@@ -8897,7 +8872,6 @@ NspGdkPixbufLoader *new_gdkpixbufloader()
 /*----------------------------------------------
  * Object method redefined for NspGdkPixbufLoader 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -8970,7 +8944,9 @@ NspGdkPixbufLoader *gdkpixbufloader_copy(NspGdkPixbufLoader *self)
  * wrappers for the GdkPixbufLoader
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -8984,7 +8960,6 @@ _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
-
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixbufloader );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -9059,7 +9034,7 @@ static NspMethods *gdkpixbufloader_get_methods(void) { return gdkpixbufloader_me
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkScreen ----------- */
@@ -9070,6 +9045,7 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkscreen.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkScreen inherits from GObject 
  */
@@ -9177,7 +9153,6 @@ NspGdkScreen *new_gdkscreen()
 /*----------------------------------------------
  * Object method redefined for NspGdkScreen 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9250,7 +9225,9 @@ NspGdkScreen *gdkscreen_copy(NspGdkScreen *self)
  * wrappers for the GdkScreen
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_gdk_screen_get_default_colormap(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
   GdkColormap *ret;
@@ -9508,7 +9485,7 @@ static NspMethods *gdkscreen_get_methods(void) { return gdkscreen_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspGdkVisual ----------- */
@@ -9519,6 +9496,7 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/gdkvisual.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspGdkVisual inherits from GObject 
  */
@@ -9626,7 +9604,6 @@ NspGdkVisual *new_gdkvisual()
 /*----------------------------------------------
  * Object method redefined for NspGdkVisual 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -9699,7 +9676,9 @@ NspGdkVisual *gdkvisual_copy(NspGdkVisual *self)
  * wrappers for the GdkVisual
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 2233 "gdk.override"
 static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
@@ -9779,7 +9758,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 9783 "gdk.c"
+#line 9762 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -9892,21 +9871,21 @@ static NspObject *_wrap_gdk_visual__get_blue_prec(NspObject *self,char *attr)
 }
 
 static AttrTab gdkvisual_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_visual__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "depth", (attr_get_function *)_wrap_gdk_visual__get_depth, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "byte_order", (attr_get_function *)_wrap_gdk_visual__get_byte_order, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "colormap_size", (attr_get_function *)_wrap_gdk_visual__get_colormap_size, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "bits_per_rgb", (attr_get_function *)_wrap_gdk_visual__get_bits_per_rgb, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "red_mask", (attr_get_function *)_wrap_gdk_visual__get_red_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "red_shift", (attr_get_function *)_wrap_gdk_visual__get_red_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "red_prec", (attr_get_function *)_wrap_gdk_visual__get_red_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "green_mask", (attr_get_function *)_wrap_gdk_visual__get_green_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "green_shift", (attr_get_function *)_wrap_gdk_visual__get_green_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "green_prec", (attr_get_function *)_wrap_gdk_visual__get_green_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "blue_mask", (attr_get_function *)_wrap_gdk_visual__get_blue_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "blue_shift", (attr_get_function *)_wrap_gdk_visual__get_blue_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { "blue_prec", (attr_get_function *)_wrap_gdk_visual__get_blue_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
-  { NULL,NULL,NULL,NULL },
+  { "type", (attr_get_function *)_wrap_gdk_visual__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "depth", (attr_get_function *)_wrap_gdk_visual__get_depth, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "byte_order", (attr_get_function *)_wrap_gdk_visual__get_byte_order, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "colormap_size", (attr_get_function *)_wrap_gdk_visual__get_colormap_size, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "bits_per_rgb", (attr_get_function *)_wrap_gdk_visual__get_bits_per_rgb, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "red_mask", (attr_get_function *)_wrap_gdk_visual__get_red_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "red_shift", (attr_get_function *)_wrap_gdk_visual__get_red_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "red_prec", (attr_get_function *)_wrap_gdk_visual__get_red_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "green_mask", (attr_get_function *)_wrap_gdk_visual__get_green_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "green_shift", (attr_get_function *)_wrap_gdk_visual__get_green_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "green_prec", (attr_get_function *)_wrap_gdk_visual__get_green_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "blue_mask", (attr_get_function *)_wrap_gdk_visual__get_blue_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "blue_shift", (attr_get_function *)_wrap_gdk_visual__get_blue_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "blue_prec", (attr_get_function *)_wrap_gdk_visual__get_blue_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
 };
 
 
@@ -10109,7 +10088,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function _wrap_gdk_threads_enter unimplemented \n ");
   return RET_BUG;
 }
-#line 10113 "gdk.c"
+#line 10092 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs) /* threads_leave */
@@ -10199,7 +10178,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10203 "gdk.c"
+#line 10182 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
@@ -10329,7 +10308,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10333 "gdk.c"
+#line 10312 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs) /* gdk_draw_layout_with_colors */
@@ -10440,7 +10419,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10444 "gdk.c"
+#line 10423 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs) /* font_from_description */
@@ -10710,7 +10689,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10714 "gdk.c"
+#line 10693 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /* bitmap_create_from_data */
@@ -11050,7 +11029,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 11054 "gdk.c"
+#line 11033 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs) /* pixbuf_new_from_inline */
@@ -11121,7 +11100,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 11125 "gdk.c"
+#line 11104 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_display_get_default */
@@ -11333,3 +11312,5 @@ gdk_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_enum_add_constants((NspHash *) module, GDK_TYPE_OWNER_CHANGE, strip_prefix);
 }
 
+
+#line 11317 "gdk.c"

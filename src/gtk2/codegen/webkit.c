@@ -22,6 +22,9 @@
 
 
 
+
+
+
 #line 4 "webkit.override"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -58,19 +61,14 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 62 "webkit.c"
-
-
-/* ---------- types from other modules ---------- */
-
-
+#line 65 "webkit.c"
 /* ---------- forward type declarations ---------- */
-#include "nsp/gtk/webkitwebview.h"
-#include "nsp/gtk/webkitwebframe.h"
-#include "nsp/gtk/webkitwebhistoryitem.h"
-#include "nsp/gtk/webkitwebbackforwardlist.h"
-#include "nsp/gtk/webkitwebsettings.h"
-#include "nsp/gtk/webkitnetworkrequest.h"
+#include <nsp/gtk/webkitwebview.h>
+#include <nsp/gtk/webkitwebframe.h>
+#include <nsp/gtk/webkitwebhistoryitem.h>
+#include <nsp/gtk/webkitwebbackforwardlist.h>
+#include <nsp/gtk/webkitwebsettings.h>
+#include <nsp/gtk/webkitnetworkrequest.h>
 
 
 /* ----------- NspWebKitWebView ----------- */
@@ -81,6 +79,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #include <nsp/gtk/webkitwebview.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitWebView inherits from GtkContainer 
  */
@@ -188,7 +187,6 @@ NspWebKitWebView *new_webkitwebview()
 /*----------------------------------------------
  * Object method redefined for NspWebKitWebView 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -261,14 +259,15 @@ NspWebKitWebView *webkitwebview_copy(NspWebKitWebView *self)
  * wrappers for the WebKitWebView
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitwebview_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)webkit_web_view_new())== NULL) return RET_BUG;
-
   nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitwebview );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -659,7 +658,7 @@ static NspMethods *webkitwebview_get_methods(void) { return webkitwebview_method
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspWebKitWebFrame ----------- */
@@ -670,6 +669,7 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/webkitwebframe.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitWebFrame inherits from GObject 
  */
@@ -777,7 +777,6 @@ NspWebKitWebFrame *new_webkitwebframe()
 /*----------------------------------------------
  * Object method redefined for NspWebKitWebFrame 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -850,7 +849,9 @@ NspWebKitWebFrame *webkitwebframe_copy(NspWebKitWebFrame *self)
  * wrappers for the WebKitWebFrame
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitwebframe_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -859,7 +860,6 @@ _wrap_webkitwebframe_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_web_frame_new(WEBKIT_WEB_VIEW(view->obj)))== NULL) return RET_BUG;
-
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitwebframe );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -973,7 +973,7 @@ static NspMethods *webkitwebframe_get_methods(void) { return webkitwebframe_meth
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspWebKitWebHistoryItem ----------- */
@@ -984,6 +984,7 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/webkitwebhistoryitem.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitWebHistoryItem inherits from GObject 
  */
@@ -1091,7 +1092,6 @@ NspWebKitWebHistoryItem *new_webkitwebhistoryitem()
 /*----------------------------------------------
  * Object method redefined for NspWebKitWebHistoryItem 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1164,14 +1164,15 @@ NspWebKitWebHistoryItem *webkitwebhistoryitem_copy(NspWebKitWebHistoryItem *self
  * wrappers for the WebKitWebHistoryItem
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitwebhistoryitem_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)webkit_web_history_item_new())== NULL) return RET_BUG;
-
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1248,7 +1249,7 @@ static NspMethods *webkitwebhistoryitem_get_methods(void) { return webkitwebhist
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspWebKitWebBackForwardList ----------- */
@@ -1259,6 +1260,7 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/webkitwebbackforwardlist.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitWebBackForwardList inherits from GObject 
  */
@@ -1366,7 +1368,6 @@ NspWebKitWebBackForwardList *new_webkitwebbackforwardlist()
 /*----------------------------------------------
  * Object method redefined for NspWebKitWebBackForwardList 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1439,7 +1440,9 @@ NspWebKitWebBackForwardList *webkitwebbackforwardlist_copy(NspWebKitWebBackForwa
  * wrappers for the WebKitWebBackForwardList
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1448,7 +1451,6 @@ _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_web_back_forward_list_new_with_web_view(WEBKIT_WEB_VIEW(view->obj)))== NULL) return RET_BUG;
-
   nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitwebbackforwardlist );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1623,7 +1625,7 @@ static NspMethods *webkitwebbackforwardlist_get_methods(void) { return webkitweb
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspWebKitWebSettings ----------- */
@@ -1634,6 +1636,7 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/webkitwebsettings.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitWebSettings inherits from GObject 
  */
@@ -1741,7 +1744,6 @@ NspWebKitWebSettings *new_webkitwebsettings()
 /*----------------------------------------------
  * Object method redefined for NspWebKitWebSettings 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -1814,14 +1816,15 @@ NspWebKitWebSettings *webkitwebsettings_copy(NspWebKitWebSettings *self)
  * wrappers for the WebKitWebSettings
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitwebsettings_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)webkit_web_settings_new())== NULL) return RET_BUG;
-
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitwebsettings );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1851,7 +1854,7 @@ static NspMethods *webkitwebsettings_get_methods(void) { return webkitwebsetting
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspWebKitNetworkRequest ----------- */
@@ -1862,6 +1865,7 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 #include <nsp/gtk/webkitnetworkrequest.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
+
 /* 
  * NspWebKitNetworkRequest inherits from GObject 
  */
@@ -1969,7 +1973,6 @@ NspWebKitNetworkRequest *new_webkitnetworkrequest()
 /*----------------------------------------------
  * Object method redefined for NspWebKitNetworkRequest 
  *-----------------------------------------------*/
-
 /*
  * type as string 
  */
@@ -2042,7 +2045,9 @@ NspWebKitNetworkRequest *webkitnetworkrequest_copy(NspWebKitNetworkRequest *self
  * wrappers for the WebKitNetworkRequest
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
-
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int
 _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2051,7 +2056,6 @@ _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_network_request_new(uri))== NULL) return RET_BUG;
-
   nsp_type_webkitnetworkrequest = new_type_webkitnetworkrequest(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_webkitnetworkrequest );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -2088,7 +2092,7 @@ static NspMethods *webkitnetworkrequest_get_methods(void) { return webkitnetwork
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab webkitnetworkrequest_attrs[]={{NULL,NULL,NULL}} ;
+static AttrTab webkitnetworkrequest_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -2272,7 +2276,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2276 "webkit.c"
+#line 2280 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2311,3 +2315,5 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
   *fname = webkit_func[i].name;
   *f = webkit_func[i].fonc;
 }
+
+#line 2320 "webkit.c"
