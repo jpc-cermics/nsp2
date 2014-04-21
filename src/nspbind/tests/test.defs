@@ -1,0 +1,63 @@
+;; -*- scheme -*-
+
+(define-object Colormap
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkColormap")
+  (gtype-id "GDK_TYPE_COLORMAP")
+)
+
+(define-function gdk_colormap_new
+  (c-name "gdk_colormap_new")
+  (is-constructor-of GdkColormap)
+  (return-type "GdkColormap*")
+  (parameters
+   '("gboolean" "allocate")
+  )
+)
+
+(define-function colormap_get_system
+  (c-name "gdk_colormap_get_system")
+  (return-type "GdkColormap*")
+)
+
+(define-method alloc_color
+  (of-object "GdkColormap")
+  (c-name "gdk_colormap_alloc_color")
+  (return-type "gboolean")
+  (parameters
+    '("gboolean" "writeable")
+    '("gboolean" "best_match")
+  )
+)
+
+(define-method set_colormap
+  (of-object "GdkColormap")
+  (c-name "gdk_drawable_set_colormap")
+  (return-type "none")
+  (parameters
+    '("GdkColormap*" "colormap")
+  )
+)
+
+(define-function testzzz
+  (c-name "Ctestzzz")
+  (return-type "int")
+  (parameters
+    '("double" "zz")
+    '("int" "xx1")
+    '("int" "xx2")
+    '("int" "xx3")
+  )
+)
+
+(define-function testxxx
+  (c-name "Ctestxxx")
+  (return-type "int")
+  (parameters
+   '("double" "zz1")
+   '("double" "zz2")
+   '("double" "zz3")
+  )
+)
+
