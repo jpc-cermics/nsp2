@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkCurve
-#define INC_NSP_GtkCurve
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkdrawingarea.h"
+#ifndef NSP_INC_NspGtkCurve
+#define NSP_INC_NspGtkCurve
 
 /*
-* NspGtkCurve inherits from NspGtkDrawingArea
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkCurve */
+
+#include <nsp/gtk/gtkdrawingarea.h>
+
+/*
+* NspGtkCurve inherits from GtkDrawingArea
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkCurve *nsp_type_gtkcurve;
 
 NspTypeGtkCurve *new_type_gtkcurve(type_mode mode);
 
-/* instance for GtkCurve */
+/* instance for NspGtkCurve */
 
 NspGtkCurve *new_gtkcurve();
 
@@ -34,23 +50,22 @@ NspGtkCurve *new_gtkcurve();
 
 #define NULLGTKCURVE (NspGtkCurve*) 0
 
-NspGtkCurve *gtkcurve_create(char *name,NspTypeBase *type);
 
-/* from GtkCurveObj.c */
+/* from NspGtkCurveObj.c */
 
-extern NspGtkCurve *gtkcurve_object (NspObject *O); 
+extern NspGtkCurve *nsp_gtkcurve_object (NspObject *O); 
 extern int IsGtkCurveObj (Stack stack, int i); 
 extern int IsGtkCurve(NspObject *O);
 extern NspGtkCurve *GetGtkCurveCopy (Stack stack, int i); 
 extern NspGtkCurve *GetGtkCurve (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkCurve */
 
-#ifdef GtkCurve_Private 
+#ifdef NspGtkCurve_Private 
 static int init_gtkcurve(NspGtkCurve *o,NspTypeGtkCurve *type);
 static char *nsp_gtkcurve_type_as_string(void);
 static char *nsp_gtkcurve_type_short_string(NspObject *v);
 static AttrTab gtkcurve_attrs[];
-/* static int int_gtkcurve_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcurve_get_methods(void); 
-#endif /* GtkCurve_Private */
+/* static int int_gtkcurve_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkCurve_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkRadioToolButton
-#define INC_NSP_GtkRadioToolButton
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtktoggletoolbutton.h"
+#ifndef NSP_INC_NspGtkRadioToolButton
+#define NSP_INC_NspGtkRadioToolButton
 
 /*
-* NspGtkRadioToolButton inherits from NspGtkToggleToolButton
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkRadioToolButton */
+
+#include <nsp/gtk/gtktoggletoolbutton.h>
+
+/*
+* NspGtkRadioToolButton inherits from GtkToggleToolButton
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkRadioToolButton *nsp_type_gtkradiotoolbutton;
 
 NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode);
 
-/* instance for GtkRadioToolButton */
+/* instance for NspGtkRadioToolButton */
 
 NspGtkRadioToolButton *new_gtkradiotoolbutton();
 
@@ -34,23 +50,22 @@ NspGtkRadioToolButton *new_gtkradiotoolbutton();
 
 #define NULLGTKRADIOTOOLBUTTON (NspGtkRadioToolButton*) 0
 
-NspGtkRadioToolButton *gtkradiotoolbutton_create(char *name,NspTypeBase *type);
 
-/* from GtkRadioToolButtonObj.c */
+/* from NspGtkRadioToolButtonObj.c */
 
-extern NspGtkRadioToolButton *gtkradiotoolbutton_object (NspObject *O); 
+extern NspGtkRadioToolButton *nsp_gtkradiotoolbutton_object (NspObject *O); 
 extern int IsGtkRadioToolButtonObj (Stack stack, int i); 
 extern int IsGtkRadioToolButton(NspObject *O);
 extern NspGtkRadioToolButton *GetGtkRadioToolButtonCopy (Stack stack, int i); 
 extern NspGtkRadioToolButton *GetGtkRadioToolButton (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkRadioToolButton */
 
-#ifdef GtkRadioToolButton_Private 
+#ifdef NspGtkRadioToolButton_Private 
 static int init_gtkradiotoolbutton(NspGtkRadioToolButton *o,NspTypeGtkRadioToolButton *type);
 static char *nsp_gtkradiotoolbutton_type_as_string(void);
 static char *nsp_gtkradiotoolbutton_type_short_string(NspObject *v);
 static AttrTab gtkradiotoolbutton_attrs[];
-/* static int int_gtkradiotoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkradiotoolbutton_get_methods(void); 
-#endif /* GtkRadioToolButton_Private */
+/* static int int_gtkradiotoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkRadioToolButton_Private */

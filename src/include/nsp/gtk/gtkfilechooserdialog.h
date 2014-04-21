@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkFileChooserDialog
-#define INC_NSP_GtkFileChooserDialog
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkdialog.h"
+#ifndef NSP_INC_NspGtkFileChooserDialog
+#define NSP_INC_NspGtkFileChooserDialog
 
 /*
-* NspGtkFileChooserDialog inherits from NspGtkDialog
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkFileChooserDialog */
+
+#include <nsp/gtk/gtkdialog.h>
+
+/*
+* NspGtkFileChooserDialog inherits from GtkDialog
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkFileChooserDialog *nsp_type_gtkfilechooserdialog;
 
 NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode);
 
-/* instance for GtkFileChooserDialog */
+/* instance for NspGtkFileChooserDialog */
 
 NspGtkFileChooserDialog *new_gtkfilechooserdialog();
 
@@ -34,23 +50,22 @@ NspGtkFileChooserDialog *new_gtkfilechooserdialog();
 
 #define NULLGTKFILECHOOSERDIALOG (NspGtkFileChooserDialog*) 0
 
-NspGtkFileChooserDialog *gtkfilechooserdialog_create(char *name,NspTypeBase *type);
 
-/* from GtkFileChooserDialogObj.c */
+/* from NspGtkFileChooserDialogObj.c */
 
-extern NspGtkFileChooserDialog *gtkfilechooserdialog_object (NspObject *O); 
+extern NspGtkFileChooserDialog *nsp_gtkfilechooserdialog_object (NspObject *O); 
 extern int IsGtkFileChooserDialogObj (Stack stack, int i); 
 extern int IsGtkFileChooserDialog(NspObject *O);
 extern NspGtkFileChooserDialog *GetGtkFileChooserDialogCopy (Stack stack, int i); 
 extern NspGtkFileChooserDialog *GetGtkFileChooserDialog (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkFileChooserDialog */
 
-#ifdef GtkFileChooserDialog_Private 
+#ifdef NspGtkFileChooserDialog_Private 
 static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *o,NspTypeGtkFileChooserDialog *type);
 static char *nsp_gtkfilechooserdialog_type_as_string(void);
 static char *nsp_gtkfilechooserdialog_type_short_string(NspObject *v);
 static AttrTab gtkfilechooserdialog_attrs[];
-/* static int int_gtkfilechooserdialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfilechooserdialog_get_methods(void); 
-#endif /* GtkFileChooserDialog_Private */
+/* static int int_gtkfilechooserdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkFileChooserDialog_Private */

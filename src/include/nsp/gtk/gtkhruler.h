@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkHRuler
-#define INC_NSP_GtkHRuler
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkruler.h"
+#ifndef NSP_INC_NspGtkHRuler
+#define NSP_INC_NspGtkHRuler
 
 /*
-* NspGtkHRuler inherits from NspGtkRuler
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkHRuler */
+
+#include <nsp/gtk/gtkruler.h>
+
+/*
+* NspGtkHRuler inherits from GtkRuler
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkHRuler *nsp_type_gtkhruler;
 
 NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode);
 
-/* instance for GtkHRuler */
+/* instance for NspGtkHRuler */
 
 NspGtkHRuler *new_gtkhruler();
 
@@ -34,23 +50,22 @@ NspGtkHRuler *new_gtkhruler();
 
 #define NULLGTKHRULER (NspGtkHRuler*) 0
 
-NspGtkHRuler *gtkhruler_create(char *name,NspTypeBase *type);
 
-/* from GtkHRulerObj.c */
+/* from NspGtkHRulerObj.c */
 
-extern NspGtkHRuler *gtkhruler_object (NspObject *O); 
+extern NspGtkHRuler *nsp_gtkhruler_object (NspObject *O); 
 extern int IsGtkHRulerObj (Stack stack, int i); 
 extern int IsGtkHRuler(NspObject *O);
 extern NspGtkHRuler *GetGtkHRulerCopy (Stack stack, int i); 
 extern NspGtkHRuler *GetGtkHRuler (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkHRuler */
 
-#ifdef GtkHRuler_Private 
+#ifdef NspGtkHRuler_Private 
 static int init_gtkhruler(NspGtkHRuler *o,NspTypeGtkHRuler *type);
 static char *nsp_gtkhruler_type_as_string(void);
 static char *nsp_gtkhruler_type_short_string(NspObject *v);
 static AttrTab gtkhruler_attrs[];
-/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhruler_get_methods(void); 
-#endif /* GtkHRuler_Private */
+/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkHRuler_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkOldEditable
-#define INC_NSP_GtkOldEditable
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkOldEditable
+#define NSP_INC_NspGtkOldEditable
 
 /*
-* NspGtkOldEditable inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkOldEditable */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkOldEditable inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkOldEditable *nsp_type_gtkoldeditable;
 
 NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode);
 
-/* instance for GtkOldEditable */
+/* instance for NspGtkOldEditable */
 
 NspGtkOldEditable *new_gtkoldeditable();
 
@@ -34,23 +50,22 @@ NspGtkOldEditable *new_gtkoldeditable();
 
 #define NULLGTKOLDEDITABLE (NspGtkOldEditable*) 0
 
-NspGtkOldEditable *gtkoldeditable_create(char *name,NspTypeBase *type);
 
-/* from GtkOldEditableObj.c */
+/* from NspGtkOldEditableObj.c */
 
-extern NspGtkOldEditable *gtkoldeditable_object (NspObject *O); 
+extern NspGtkOldEditable *nsp_gtkoldeditable_object (NspObject *O); 
 extern int IsGtkOldEditableObj (Stack stack, int i); 
 extern int IsGtkOldEditable(NspObject *O);
 extern NspGtkOldEditable *GetGtkOldEditableCopy (Stack stack, int i); 
 extern NspGtkOldEditable *GetGtkOldEditable (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkOldEditable */
 
-#ifdef GtkOldEditable_Private 
+#ifdef NspGtkOldEditable_Private 
 static int init_gtkoldeditable(NspGtkOldEditable *o,NspTypeGtkOldEditable *type);
 static char *nsp_gtkoldeditable_type_as_string(void);
 static char *nsp_gtkoldeditable_type_short_string(NspObject *v);
 static AttrTab gtkoldeditable_attrs[];
-/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkoldeditable_get_methods(void); 
-#endif /* GtkOldEditable_Private */
+/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkOldEditable_Private */

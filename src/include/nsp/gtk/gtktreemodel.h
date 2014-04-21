@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTreeModel
-#define INC_NSP_GtkTreeModel
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTreeModel
+#define NSP_INC_NspGtkTreeModel
 
 /*
-* NspGtkTreeModel inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTreeModel */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTreeModel inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTreeModel *nsp_type_gtktreemodel;
 
 NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode);
 
-/* instance for GtkTreeModel */
+/* instance for NspGtkTreeModel */
 
 NspGtkTreeModel *new_gtktreemodel();
 
@@ -34,23 +50,22 @@ NspGtkTreeModel *new_gtktreemodel();
 
 #define NULLGTKTREEMODEL (NspGtkTreeModel*) 0
 
-NspGtkTreeModel *gtktreemodel_create(char *name,NspTypeBase *type);
 
-/* from GtkTreeModelObj.c */
+/* from NspGtkTreeModelObj.c */
 
-extern NspGtkTreeModel *gtktreemodel_object (NspObject *O); 
+extern NspGtkTreeModel *nsp_gtktreemodel_object (NspObject *O); 
 extern int IsGtkTreeModelObj (Stack stack, int i); 
 extern int IsGtkTreeModel(NspObject *O);
 extern NspGtkTreeModel *GetGtkTreeModelCopy (Stack stack, int i); 
 extern NspGtkTreeModel *GetGtkTreeModel (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTreeModel */
 
-#ifdef GtkTreeModel_Private 
+#ifdef NspGtkTreeModel_Private 
 static int init_gtktreemodel(NspGtkTreeModel *o,NspTypeGtkTreeModel *type);
 static char *nsp_gtktreemodel_type_as_string(void);
 static char *nsp_gtktreemodel_type_short_string(NspObject *v);
 static AttrTab gtktreemodel_attrs[];
-/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreemodel_get_methods(void); 
-#endif /* GtkTreeModel_Private */
+/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTreeModel_Private */

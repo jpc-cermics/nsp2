@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTreeModelFilter
-#define INC_NSP_GtkTreeModelFilter
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTreeModelFilter
+#define NSP_INC_NspGtkTreeModelFilter
 
 /*
-* NspGtkTreeModelFilter inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTreeModelFilter */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTreeModelFilter inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTreeModelFilter *nsp_type_gtktreemodelfilter;
 
 NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode);
 
-/* instance for GtkTreeModelFilter */
+/* instance for NspGtkTreeModelFilter */
 
 NspGtkTreeModelFilter *new_gtktreemodelfilter();
 
@@ -34,23 +50,22 @@ NspGtkTreeModelFilter *new_gtktreemodelfilter();
 
 #define NULLGTKTREEMODELFILTER (NspGtkTreeModelFilter*) 0
 
-NspGtkTreeModelFilter *gtktreemodelfilter_create(char *name,NspTypeBase *type);
 
-/* from GtkTreeModelFilterObj.c */
+/* from NspGtkTreeModelFilterObj.c */
 
-extern NspGtkTreeModelFilter *gtktreemodelfilter_object (NspObject *O); 
+extern NspGtkTreeModelFilter *nsp_gtktreemodelfilter_object (NspObject *O); 
 extern int IsGtkTreeModelFilterObj (Stack stack, int i); 
 extern int IsGtkTreeModelFilter(NspObject *O);
 extern NspGtkTreeModelFilter *GetGtkTreeModelFilterCopy (Stack stack, int i); 
 extern NspGtkTreeModelFilter *GetGtkTreeModelFilter (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTreeModelFilter */
 
-#ifdef GtkTreeModelFilter_Private 
+#ifdef NspGtkTreeModelFilter_Private 
 static int init_gtktreemodelfilter(NspGtkTreeModelFilter *o,NspTypeGtkTreeModelFilter *type);
 static char *nsp_gtktreemodelfilter_type_as_string(void);
 static char *nsp_gtktreemodelfilter_type_short_string(NspObject *v);
 static AttrTab gtktreemodelfilter_attrs[];
-/* static int int_gtktreemodelfilter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreemodelfilter_get_methods(void); 
-#endif /* GtkTreeModelFilter_Private */
+/* static int int_gtktreemodelfilter_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTreeModelFilter_Private */

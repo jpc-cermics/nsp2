@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTextBuffer
-#define INC_NSP_GtkTextBuffer
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTextBuffer
+#define NSP_INC_NspGtkTextBuffer
 
 /*
-* NspGtkTextBuffer inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTextBuffer */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTextBuffer inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTextBuffer *nsp_type_gtktextbuffer;
 
 NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode);
 
-/* instance for GtkTextBuffer */
+/* instance for NspGtkTextBuffer */
 
 NspGtkTextBuffer *new_gtktextbuffer();
 
@@ -34,23 +50,22 @@ NspGtkTextBuffer *new_gtktextbuffer();
 
 #define NULLGTKTEXTBUFFER (NspGtkTextBuffer*) 0
 
-NspGtkTextBuffer *gtktextbuffer_create(char *name,NspTypeBase *type);
 
-/* from GtkTextBufferObj.c */
+/* from NspGtkTextBufferObj.c */
 
-extern NspGtkTextBuffer *gtktextbuffer_object (NspObject *O); 
+extern NspGtkTextBuffer *nsp_gtktextbuffer_object (NspObject *O); 
 extern int IsGtkTextBufferObj (Stack stack, int i); 
 extern int IsGtkTextBuffer(NspObject *O);
 extern NspGtkTextBuffer *GetGtkTextBufferCopy (Stack stack, int i); 
 extern NspGtkTextBuffer *GetGtkTextBuffer (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTextBuffer */
 
-#ifdef GtkTextBuffer_Private 
+#ifdef NspGtkTextBuffer_Private 
 static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type);
 static char *nsp_gtktextbuffer_type_as_string(void);
 static char *nsp_gtktextbuffer_type_short_string(NspObject *v);
 static AttrTab gtktextbuffer_attrs[];
-/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextbuffer_get_methods(void); 
-#endif /* GtkTextBuffer_Private */
+/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTextBuffer_Private */

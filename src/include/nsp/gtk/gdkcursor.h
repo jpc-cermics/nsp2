@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GdkCursor
-#define INC_NSP_GdkCursor
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gboxed.h"
+#ifndef NSP_INC_NspGdkCursor
+#define NSP_INC_NspGdkCursor
 
 /*
-* NspGdkCursor inherits from NspGBoxed
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGdkCursor */
+
+#include <nsp/gtk/gboxed.h>
+
+/*
+* NspGdkCursor inherits from GBoxed
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGdkCursor *nsp_type_gdkcursor;
 
 NspTypeGdkCursor *new_type_gdkcursor(type_mode mode);
 
-/* instance for GdkCursor */
+/* instance for NspGdkCursor */
 
 NspGdkCursor *new_gdkcursor();
 
@@ -34,23 +50,22 @@ NspGdkCursor *new_gdkcursor();
 
 #define NULLGDKCURSOR (NspGdkCursor*) 0
 
-NspGdkCursor *gdkcursor_create(char *name,NspTypeBase *type);
 
-/* from GdkCursorObj.c */
+/* from NspGdkCursorObj.c */
 
-extern NspGdkCursor *gdkcursor_object (NspObject *O); 
+extern NspGdkCursor *nsp_gdkcursor_object (NspObject *O); 
 extern int IsGdkCursorObj (Stack stack, int i); 
 extern int IsGdkCursor(NspObject *O);
 extern NspGdkCursor *GetGdkCursorCopy (Stack stack, int i); 
 extern NspGdkCursor *GetGdkCursor (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGdkCursor */
 
-#ifdef GdkCursor_Private 
+#ifdef NspGdkCursor_Private 
 static int init_gdkcursor(NspGdkCursor *o,NspTypeGdkCursor *type);
 static char *nsp_gdkcursor_type_as_string(void);
 static char *nsp_gdkcursor_type_short_string(NspObject *v);
 static AttrTab gdkcursor_attrs[];
-/* static int int_gdkcursor_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkcursor_get_methods(void); 
-#endif /* GdkCursor_Private */
+/* static int int_gdkcursor_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGdkCursor_Private */

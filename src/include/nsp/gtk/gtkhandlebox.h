@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkHandleBox
-#define INC_NSP_GtkHandleBox
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkbin.h"
+#ifndef NSP_INC_NspGtkHandleBox
+#define NSP_INC_NspGtkHandleBox
 
 /*
-* NspGtkHandleBox inherits from NspGtkBin
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkHandleBox */
+
+#include <nsp/gtk/gtkbin.h>
+
+/*
+* NspGtkHandleBox inherits from GtkBin
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkHandleBox *nsp_type_gtkhandlebox;
 
 NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode);
 
-/* instance for GtkHandleBox */
+/* instance for NspGtkHandleBox */
 
 NspGtkHandleBox *new_gtkhandlebox();
 
@@ -34,23 +50,22 @@ NspGtkHandleBox *new_gtkhandlebox();
 
 #define NULLGTKHANDLEBOX (NspGtkHandleBox*) 0
 
-NspGtkHandleBox *gtkhandlebox_create(char *name,NspTypeBase *type);
 
-/* from GtkHandleBoxObj.c */
+/* from NspGtkHandleBoxObj.c */
 
-extern NspGtkHandleBox *gtkhandlebox_object (NspObject *O); 
+extern NspGtkHandleBox *nsp_gtkhandlebox_object (NspObject *O); 
 extern int IsGtkHandleBoxObj (Stack stack, int i); 
 extern int IsGtkHandleBox(NspObject *O);
 extern NspGtkHandleBox *GetGtkHandleBoxCopy (Stack stack, int i); 
 extern NspGtkHandleBox *GetGtkHandleBox (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkHandleBox */
 
-#ifdef GtkHandleBox_Private 
+#ifdef NspGtkHandleBox_Private 
 static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type);
 static char *nsp_gtkhandlebox_type_as_string(void);
 static char *nsp_gtkhandlebox_type_short_string(NspObject *v);
 static AttrTab gtkhandlebox_attrs[];
-/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkhandlebox_get_methods(void); 
-#endif /* GtkHandleBox_Private */
+/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkHandleBox_Private */

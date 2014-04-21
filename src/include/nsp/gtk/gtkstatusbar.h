@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkStatusbar
-#define INC_NSP_GtkStatusbar
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkhbox.h"
+#ifndef NSP_INC_NspGtkStatusbar
+#define NSP_INC_NspGtkStatusbar
 
 /*
-* NspGtkStatusbar inherits from NspGtkHBox
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkStatusbar */
+
+#include <nsp/gtk/gtkhbox.h>
+
+/*
+* NspGtkStatusbar inherits from GtkHBox
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkStatusbar *nsp_type_gtkstatusbar;
 
 NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode);
 
-/* instance for GtkStatusbar */
+/* instance for NspGtkStatusbar */
 
 NspGtkStatusbar *new_gtkstatusbar();
 
@@ -34,23 +50,22 @@ NspGtkStatusbar *new_gtkstatusbar();
 
 #define NULLGTKSTATUSBAR (NspGtkStatusbar*) 0
 
-NspGtkStatusbar *gtkstatusbar_create(char *name,NspTypeBase *type);
 
-/* from GtkStatusbarObj.c */
+/* from NspGtkStatusbarObj.c */
 
-extern NspGtkStatusbar *gtkstatusbar_object (NspObject *O); 
+extern NspGtkStatusbar *nsp_gtkstatusbar_object (NspObject *O); 
 extern int IsGtkStatusbarObj (Stack stack, int i); 
 extern int IsGtkStatusbar(NspObject *O);
 extern NspGtkStatusbar *GetGtkStatusbarCopy (Stack stack, int i); 
 extern NspGtkStatusbar *GetGtkStatusbar (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkStatusbar */
 
-#ifdef GtkStatusbar_Private 
+#ifdef NspGtkStatusbar_Private 
 static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type);
 static char *nsp_gtkstatusbar_type_as_string(void);
 static char *nsp_gtkstatusbar_type_short_string(NspObject *v);
 static AttrTab gtkstatusbar_attrs[];
-/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkstatusbar_get_methods(void); 
-#endif /* GtkStatusbar_Private */
+/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkStatusbar_Private */

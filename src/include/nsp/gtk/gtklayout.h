@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkLayout
-#define INC_NSP_GtkLayout
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcontainer.h"
+#ifndef NSP_INC_NspGtkLayout
+#define NSP_INC_NspGtkLayout
 
 /*
-* NspGtkLayout inherits from NspGtkContainer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkLayout */
+
+#include <nsp/gtk/gtkcontainer.h>
+
+/*
+* NspGtkLayout inherits from GtkContainer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkLayout *nsp_type_gtklayout;
 
 NspTypeGtkLayout *new_type_gtklayout(type_mode mode);
 
-/* instance for GtkLayout */
+/* instance for NspGtkLayout */
 
 NspGtkLayout *new_gtklayout();
 
@@ -34,23 +50,22 @@ NspGtkLayout *new_gtklayout();
 
 #define NULLGTKLAYOUT (NspGtkLayout*) 0
 
-NspGtkLayout *gtklayout_create(char *name,NspTypeBase *type);
 
-/* from GtkLayoutObj.c */
+/* from NspGtkLayoutObj.c */
 
-extern NspGtkLayout *gtklayout_object (NspObject *O); 
+extern NspGtkLayout *nsp_gtklayout_object (NspObject *O); 
 extern int IsGtkLayoutObj (Stack stack, int i); 
 extern int IsGtkLayout(NspObject *O);
 extern NspGtkLayout *GetGtkLayoutCopy (Stack stack, int i); 
 extern NspGtkLayout *GetGtkLayout (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkLayout */
 
-#ifdef GtkLayout_Private 
+#ifdef NspGtkLayout_Private 
 static int init_gtklayout(NspGtkLayout *o,NspTypeGtkLayout *type);
 static char *nsp_gtklayout_type_as_string(void);
 static char *nsp_gtklayout_type_short_string(NspObject *v);
 static AttrTab gtklayout_attrs[];
-/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtklayout_get_methods(void); 
-#endif /* GtkLayout_Private */
+/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkLayout_Private */

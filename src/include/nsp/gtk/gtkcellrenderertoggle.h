@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkCellRendererToggle
-#define INC_NSP_GtkCellRendererToggle
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcellrenderer.h"
+#ifndef NSP_INC_NspGtkCellRendererToggle
+#define NSP_INC_NspGtkCellRendererToggle
 
 /*
-* NspGtkCellRendererToggle inherits from NspGtkCellRenderer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkCellRendererToggle */
+
+#include <nsp/gtk/gtkcellrenderer.h>
+
+/*
+* NspGtkCellRendererToggle inherits from GtkCellRenderer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkCellRendererToggle *nsp_type_gtkcellrenderertoggle;
 
 NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode);
 
-/* instance for GtkCellRendererToggle */
+/* instance for NspGtkCellRendererToggle */
 
 NspGtkCellRendererToggle *new_gtkcellrenderertoggle();
 
@@ -34,23 +50,22 @@ NspGtkCellRendererToggle *new_gtkcellrenderertoggle();
 
 #define NULLGTKCELLRENDERERTOGGLE (NspGtkCellRendererToggle*) 0
 
-NspGtkCellRendererToggle *gtkcellrenderertoggle_create(char *name,NspTypeBase *type);
 
-/* from GtkCellRendererToggleObj.c */
+/* from NspGtkCellRendererToggleObj.c */
 
-extern NspGtkCellRendererToggle *gtkcellrenderertoggle_object (NspObject *O); 
+extern NspGtkCellRendererToggle *nsp_gtkcellrenderertoggle_object (NspObject *O); 
 extern int IsGtkCellRendererToggleObj (Stack stack, int i); 
 extern int IsGtkCellRendererToggle(NspObject *O);
 extern NspGtkCellRendererToggle *GetGtkCellRendererToggleCopy (Stack stack, int i); 
 extern NspGtkCellRendererToggle *GetGtkCellRendererToggle (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkCellRendererToggle */
 
-#ifdef GtkCellRendererToggle_Private 
+#ifdef NspGtkCellRendererToggle_Private 
 static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type);
 static char *nsp_gtkcellrenderertoggle_type_as_string(void);
 static char *nsp_gtkcellrenderertoggle_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderertoggle_attrs[];
-/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrenderertoggle_get_methods(void); 
-#endif /* GtkCellRendererToggle_Private */
+/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkCellRendererToggle_Private */

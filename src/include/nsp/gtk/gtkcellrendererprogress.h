@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkCellRendererProgress
-#define INC_NSP_GtkCellRendererProgress
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcellrenderer.h"
+#ifndef NSP_INC_NspGtkCellRendererProgress
+#define NSP_INC_NspGtkCellRendererProgress
 
 /*
-* NspGtkCellRendererProgress inherits from NspGtkCellRenderer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkCellRendererProgress */
+
+#include <nsp/gtk/gtkcellrenderer.h>
+
+/*
+* NspGtkCellRendererProgress inherits from GtkCellRenderer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkCellRendererProgress *nsp_type_gtkcellrendererprogress;
 
 NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode);
 
-/* instance for GtkCellRendererProgress */
+/* instance for NspGtkCellRendererProgress */
 
 NspGtkCellRendererProgress *new_gtkcellrendererprogress();
 
@@ -34,23 +50,22 @@ NspGtkCellRendererProgress *new_gtkcellrendererprogress();
 
 #define NULLGTKCELLRENDERERPROGRESS (NspGtkCellRendererProgress*) 0
 
-NspGtkCellRendererProgress *gtkcellrendererprogress_create(char *name,NspTypeBase *type);
 
-/* from GtkCellRendererProgressObj.c */
+/* from NspGtkCellRendererProgressObj.c */
 
-extern NspGtkCellRendererProgress *gtkcellrendererprogress_object (NspObject *O); 
+extern NspGtkCellRendererProgress *nsp_gtkcellrendererprogress_object (NspObject *O); 
 extern int IsGtkCellRendererProgressObj (Stack stack, int i); 
 extern int IsGtkCellRendererProgress(NspObject *O);
 extern NspGtkCellRendererProgress *GetGtkCellRendererProgressCopy (Stack stack, int i); 
 extern NspGtkCellRendererProgress *GetGtkCellRendererProgress (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkCellRendererProgress */
 
-#ifdef GtkCellRendererProgress_Private 
+#ifdef NspGtkCellRendererProgress_Private 
 static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *o,NspTypeGtkCellRendererProgress *type);
 static char *nsp_gtkcellrendererprogress_type_as_string(void);
 static char *nsp_gtkcellrendererprogress_type_short_string(NspObject *v);
 static AttrTab gtkcellrendererprogress_attrs[];
-/* static int int_gtkcellrendererprogress_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrendererprogress_get_methods(void); 
-#endif /* GtkCellRendererProgress_Private */
+/* static int int_gtkcellrendererprogress_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkCellRendererProgress_Private */

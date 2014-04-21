@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkExpander
-#define INC_NSP_GtkExpander
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkbin.h"
+#ifndef NSP_INC_NspGtkExpander
+#define NSP_INC_NspGtkExpander
 
 /*
-* NspGtkExpander inherits from NspGtkBin
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkExpander */
+
+#include <nsp/gtk/gtkbin.h>
+
+/*
+* NspGtkExpander inherits from GtkBin
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkExpander *nsp_type_gtkexpander;
 
 NspTypeGtkExpander *new_type_gtkexpander(type_mode mode);
 
-/* instance for GtkExpander */
+/* instance for NspGtkExpander */
 
 NspGtkExpander *new_gtkexpander();
 
@@ -34,23 +50,22 @@ NspGtkExpander *new_gtkexpander();
 
 #define NULLGTKEXPANDER (NspGtkExpander*) 0
 
-NspGtkExpander *gtkexpander_create(char *name,NspTypeBase *type);
 
-/* from GtkExpanderObj.c */
+/* from NspGtkExpanderObj.c */
 
-extern NspGtkExpander *gtkexpander_object (NspObject *O); 
+extern NspGtkExpander *nsp_gtkexpander_object (NspObject *O); 
 extern int IsGtkExpanderObj (Stack stack, int i); 
 extern int IsGtkExpander(NspObject *O);
 extern NspGtkExpander *GetGtkExpanderCopy (Stack stack, int i); 
 extern NspGtkExpander *GetGtkExpander (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkExpander */
 
-#ifdef GtkExpander_Private 
+#ifdef NspGtkExpander_Private 
 static int init_gtkexpander(NspGtkExpander *o,NspTypeGtkExpander *type);
 static char *nsp_gtkexpander_type_as_string(void);
 static char *nsp_gtkexpander_type_short_string(NspObject *v);
 static AttrTab gtkexpander_attrs[];
-/* static int int_gtkexpander_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkexpander_get_methods(void); 
-#endif /* GtkExpander_Private */
+/* static int int_gtkexpander_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkExpander_Private */

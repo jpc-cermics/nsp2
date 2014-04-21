@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GdkDragContext
-#define INC_NSP_GdkDragContext
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGdkDragContext
+#define NSP_INC_NspGdkDragContext
 
 /*
-* NspGdkDragContext inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGdkDragContext */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGdkDragContext inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGdkDragContext *nsp_type_gdkdragcontext;
 
 NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode);
 
-/* instance for GdkDragContext */
+/* instance for NspGdkDragContext */
 
 NspGdkDragContext *new_gdkdragcontext();
 
@@ -34,23 +50,22 @@ NspGdkDragContext *new_gdkdragcontext();
 
 #define NULLGDKDRAGCONTEXT (NspGdkDragContext*) 0
 
-NspGdkDragContext *gdkdragcontext_create(char *name,NspTypeBase *type);
 
-/* from GdkDragContextObj.c */
+/* from NspGdkDragContextObj.c */
 
-extern NspGdkDragContext *gdkdragcontext_object (NspObject *O); 
+extern NspGdkDragContext *nsp_gdkdragcontext_object (NspObject *O); 
 extern int IsGdkDragContextObj (Stack stack, int i); 
 extern int IsGdkDragContext(NspObject *O);
 extern NspGdkDragContext *GetGdkDragContextCopy (Stack stack, int i); 
 extern NspGdkDragContext *GetGdkDragContext (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGdkDragContext */
 
-#ifdef GdkDragContext_Private 
+#ifdef NspGdkDragContext_Private 
 static int init_gdkdragcontext(NspGdkDragContext *o,NspTypeGdkDragContext *type);
 static char *nsp_gdkdragcontext_type_as_string(void);
 static char *nsp_gdkdragcontext_type_short_string(NspObject *v);
 static AttrTab gdkdragcontext_attrs[];
-/* static int int_gdkdragcontext_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkdragcontext_get_methods(void); 
-#endif /* GdkDragContext_Private */
+/* static int int_gdkdragcontext_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGdkDragContext_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkIMContext
-#define INC_NSP_GtkIMContext
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkobject.h"
+#ifndef NSP_INC_NspGtkIMContext
+#define NSP_INC_NspGtkIMContext
 
 /*
-* NspGtkIMContext inherits from NspGtkObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkIMContext */
+
+#include <nsp/gtk/gtkobject.h>
+
+/*
+* NspGtkIMContext inherits from GtkObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkIMContext *nsp_type_gtkimcontext;
 
 NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode);
 
-/* instance for GtkIMContext */
+/* instance for NspGtkIMContext */
 
 NspGtkIMContext *new_gtkimcontext();
 
@@ -34,23 +50,22 @@ NspGtkIMContext *new_gtkimcontext();
 
 #define NULLGTKIMCONTEXT (NspGtkIMContext*) 0
 
-NspGtkIMContext *gtkimcontext_create(char *name,NspTypeBase *type);
 
-/* from GtkIMContextObj.c */
+/* from NspGtkIMContextObj.c */
 
-extern NspGtkIMContext *gtkimcontext_object (NspObject *O); 
+extern NspGtkIMContext *nsp_gtkimcontext_object (NspObject *O); 
 extern int IsGtkIMContextObj (Stack stack, int i); 
 extern int IsGtkIMContext(NspObject *O);
 extern NspGtkIMContext *GetGtkIMContextCopy (Stack stack, int i); 
 extern NspGtkIMContext *GetGtkIMContext (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkIMContext */
 
-#ifdef GtkIMContext_Private 
+#ifdef NspGtkIMContext_Private 
 static int init_gtkimcontext(NspGtkIMContext *o,NspTypeGtkIMContext *type);
 static char *nsp_gtkimcontext_type_as_string(void);
 static char *nsp_gtkimcontext_type_short_string(NspObject *v);
 static AttrTab gtkimcontext_attrs[];
-/* static int int_gtkimcontext_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimcontext_get_methods(void); 
-#endif /* GtkIMContext_Private */
+/* static int int_gtkimcontext_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkIMContext_Private */

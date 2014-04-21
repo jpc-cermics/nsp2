@@ -58,7 +58,7 @@
 /* ----------- NspPangoAttrList ----------- */
 
 
-#define  PangoAttrList_Private 
+#define  NspPangoAttrList_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangoattrlist.h>
 #include <nsp/interf.h>
@@ -360,7 +360,7 @@ static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoColor ----------- */
 
 
-#define  PangoColor_Private 
+#define  NspPangoColor_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangocolor.h>
 #include <nsp/interf.h>
@@ -621,7 +621,7 @@ static AttrTab pangocolor_attrs[] = {
 /* ----------- NspPangoFontDescription ----------- */
 
 
-#define  PangoFontDescription_Private 
+#define  NspPangoFontDescription_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontdescription.h>
 #include <nsp/interf.h>
@@ -1137,7 +1137,7 @@ static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFontMetrics ----------- */
 
 
-#define  PangoFontMetrics_Private 
+#define  NspPangoFontMetrics_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontmetrics.h>
 #include <nsp/interf.h>
@@ -1380,7 +1380,7 @@ static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoGlyphString ----------- */
 
 
-#define  PangoGlyphString_Private 
+#define  NspPangoGlyphString_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangoglyphstring.h>
 #include <nsp/interf.h>
@@ -1719,7 +1719,7 @@ static AttrTab pangoglyphstring_attrs[] = {
 /* ----------- NspPangoLanguage ----------- */
 
 
-#define  PangoLanguage_Private 
+#define  NspPangoLanguage_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangolanguage.h>
 #include <nsp/interf.h>
@@ -1934,7 +1934,7 @@ static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoTabArray ----------- */
 
 
-#define  PangoTabArray_Private 
+#define  NspPangoTabArray_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangotabarray.h>
 #include <nsp/interf.h>
@@ -2254,7 +2254,7 @@ static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoContext ----------- */
 
 
-#define  PangoContext_Private 
+#define  NspPangoContext_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangocontext.h>
 #include <nsp/interf.h>
@@ -2643,7 +2643,7 @@ static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFont ----------- */
 
 
-#define  PangoFont_Private 
+#define  NspPangoFont_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofont.h>
 #include <nsp/interf.h>
@@ -2905,7 +2905,7 @@ static AttrTab pangofont_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFontFace ----------- */
 
 
-#define  PangoFontFace_Private 
+#define  NspPangoFontFace_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontface.h>
 #include <nsp/interf.h>
@@ -3132,7 +3132,7 @@ static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFontFamily ----------- */
 
 
-#define  PangoFontFamily_Private 
+#define  NspPangoFontFamily_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontfamily.h>
 #include <nsp/interf.h>
@@ -3368,7 +3368,7 @@ static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFontMap ----------- */
 
 
-#define  PangoFontMap_Private 
+#define  NspPangoFontMap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontmap.h>
 #include <nsp/interf.h>
@@ -3644,7 +3644,7 @@ static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoFontset ----------- */
 
 
-#define  PangoFontset_Private 
+#define  NspPangoFontset_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangofontset.h>
 #include <nsp/interf.h>
@@ -3876,7 +3876,7 @@ static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspPangoLayout ----------- */
 
 
-#define  PangoLayout_Private 
+#define  NspPangoLayout_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/pangolayout.h>
 #include <nsp/interf.h>

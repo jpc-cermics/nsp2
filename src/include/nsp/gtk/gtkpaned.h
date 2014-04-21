@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkPaned
-#define INC_NSP_GtkPaned
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcontainer.h"
+#ifndef NSP_INC_NspGtkPaned
+#define NSP_INC_NspGtkPaned
 
 /*
-* NspGtkPaned inherits from NspGtkContainer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkPaned */
+
+#include <nsp/gtk/gtkcontainer.h>
+
+/*
+* NspGtkPaned inherits from GtkContainer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkPaned *nsp_type_gtkpaned;
 
 NspTypeGtkPaned *new_type_gtkpaned(type_mode mode);
 
-/* instance for GtkPaned */
+/* instance for NspGtkPaned */
 
 NspGtkPaned *new_gtkpaned();
 
@@ -34,23 +50,22 @@ NspGtkPaned *new_gtkpaned();
 
 #define NULLGTKPANED (NspGtkPaned*) 0
 
-NspGtkPaned *gtkpaned_create(char *name,NspTypeBase *type);
 
-/* from GtkPanedObj.c */
+/* from NspGtkPanedObj.c */
 
-extern NspGtkPaned *gtkpaned_object (NspObject *O); 
+extern NspGtkPaned *nsp_gtkpaned_object (NspObject *O); 
 extern int IsGtkPanedObj (Stack stack, int i); 
 extern int IsGtkPaned(NspObject *O);
 extern NspGtkPaned *GetGtkPanedCopy (Stack stack, int i); 
 extern NspGtkPaned *GetGtkPaned (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkPaned */
 
-#ifdef GtkPaned_Private 
+#ifdef NspGtkPaned_Private 
 static int init_gtkpaned(NspGtkPaned *o,NspTypeGtkPaned *type);
 static char *nsp_gtkpaned_type_as_string(void);
 static char *nsp_gtkpaned_type_short_string(NspObject *v);
 static AttrTab gtkpaned_attrs[];
-/* static int int_gtkpaned_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkpaned_get_methods(void); 
-#endif /* GtkPaned_Private */
+/* static int int_gtkpaned_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkPaned_Private */

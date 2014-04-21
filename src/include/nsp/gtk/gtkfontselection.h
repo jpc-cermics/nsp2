@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkFontSelection
-#define INC_NSP_GtkFontSelection
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkvbox.h"
+#ifndef NSP_INC_NspGtkFontSelection
+#define NSP_INC_NspGtkFontSelection
 
 /*
-* NspGtkFontSelection inherits from NspGtkVBox
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkFontSelection */
+
+#include <nsp/gtk/gtkvbox.h>
+
+/*
+* NspGtkFontSelection inherits from GtkVBox
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkFontSelection *nsp_type_gtkfontselection;
 
 NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode);
 
-/* instance for GtkFontSelection */
+/* instance for NspGtkFontSelection */
 
 NspGtkFontSelection *new_gtkfontselection();
 
@@ -34,23 +50,22 @@ NspGtkFontSelection *new_gtkfontselection();
 
 #define NULLGTKFONTSELECTION (NspGtkFontSelection*) 0
 
-NspGtkFontSelection *gtkfontselection_create(char *name,NspTypeBase *type);
 
-/* from GtkFontSelectionObj.c */
+/* from NspGtkFontSelectionObj.c */
 
-extern NspGtkFontSelection *gtkfontselection_object (NspObject *O); 
+extern NspGtkFontSelection *nsp_gtkfontselection_object (NspObject *O); 
 extern int IsGtkFontSelectionObj (Stack stack, int i); 
 extern int IsGtkFontSelection(NspObject *O);
 extern NspGtkFontSelection *GetGtkFontSelectionCopy (Stack stack, int i); 
 extern NspGtkFontSelection *GetGtkFontSelection (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkFontSelection */
 
-#ifdef GtkFontSelection_Private 
+#ifdef NspGtkFontSelection_Private 
 static int init_gtkfontselection(NspGtkFontSelection *o,NspTypeGtkFontSelection *type);
 static char *nsp_gtkfontselection_type_as_string(void);
 static char *nsp_gtkfontselection_type_short_string(NspObject *v);
 static AttrTab gtkfontselection_attrs[];
-/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfontselection_get_methods(void); 
-#endif /* GtkFontSelection_Private */
+/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkFontSelection_Private */

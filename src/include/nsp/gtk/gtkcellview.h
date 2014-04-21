@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkCellView
-#define INC_NSP_GtkCellView
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkCellView
+#define NSP_INC_NspGtkCellView
 
 /*
-* NspGtkCellView inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkCellView */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkCellView inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkCellView *nsp_type_gtkcellview;
 
 NspTypeGtkCellView *new_type_gtkcellview(type_mode mode);
 
-/* instance for GtkCellView */
+/* instance for NspGtkCellView */
 
 NspGtkCellView *new_gtkcellview();
 
@@ -34,23 +50,22 @@ NspGtkCellView *new_gtkcellview();
 
 #define NULLGTKCELLVIEW (NspGtkCellView*) 0
 
-NspGtkCellView *gtkcellview_create(char *name,NspTypeBase *type);
 
-/* from GtkCellViewObj.c */
+/* from NspGtkCellViewObj.c */
 
-extern NspGtkCellView *gtkcellview_object (NspObject *O); 
+extern NspGtkCellView *nsp_gtkcellview_object (NspObject *O); 
 extern int IsGtkCellViewObj (Stack stack, int i); 
 extern int IsGtkCellView(NspObject *O);
 extern NspGtkCellView *GetGtkCellViewCopy (Stack stack, int i); 
 extern NspGtkCellView *GetGtkCellView (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkCellView */
 
-#ifdef GtkCellView_Private 
+#ifdef NspGtkCellView_Private 
 static int init_gtkcellview(NspGtkCellView *o,NspTypeGtkCellView *type);
 static char *nsp_gtkcellview_type_as_string(void);
 static char *nsp_gtkcellview_type_short_string(NspObject *v);
 static AttrTab gtkcellview_attrs[];
-/* static int int_gtkcellview_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellview_get_methods(void); 
-#endif /* GtkCellView_Private */
+/* static int int_gtkcellview_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkCellView_Private */

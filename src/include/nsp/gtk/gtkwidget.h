@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkWidget
-#define INC_NSP_GtkWidget
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkobject.h"
+#ifndef NSP_INC_NspGtkWidget
+#define NSP_INC_NspGtkWidget
 
 /*
-* NspGtkWidget inherits from NspGtkObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkWidget */
+
+#include <nsp/gtk/gtkobject.h>
+
+/*
+* NspGtkWidget inherits from GtkObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkWidget *nsp_type_gtkwidget;
 
 NspTypeGtkWidget *new_type_gtkwidget(type_mode mode);
 
-/* instance for GtkWidget */
+/* instance for NspGtkWidget */
 
 NspGtkWidget *new_gtkwidget();
 
@@ -34,23 +50,22 @@ NspGtkWidget *new_gtkwidget();
 
 #define NULLGTKWIDGET (NspGtkWidget*) 0
 
-NspGtkWidget *gtkwidget_create(char *name,NspTypeBase *type);
 
-/* from GtkWidgetObj.c */
+/* from NspGtkWidgetObj.c */
 
-extern NspGtkWidget *gtkwidget_object (NspObject *O); 
+extern NspGtkWidget *nsp_gtkwidget_object (NspObject *O); 
 extern int IsGtkWidgetObj (Stack stack, int i); 
 extern int IsGtkWidget(NspObject *O);
 extern NspGtkWidget *GetGtkWidgetCopy (Stack stack, int i); 
 extern NspGtkWidget *GetGtkWidget (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkWidget */
 
-#ifdef GtkWidget_Private 
+#ifdef NspGtkWidget_Private 
 static int init_gtkwidget(NspGtkWidget *o,NspTypeGtkWidget *type);
 static char *nsp_gtkwidget_type_as_string(void);
 static char *nsp_gtkwidget_type_short_string(NspObject *v);
 static AttrTab gtkwidget_attrs[];
-/* static int int_gtkwidget_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkwidget_get_methods(void); 
-#endif /* GtkWidget_Private */
+/* static int int_gtkwidget_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkWidget_Private */

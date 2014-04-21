@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkGammaCurve
-#define INC_NSP_GtkGammaCurve
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkvbox.h"
+#ifndef NSP_INC_NspGtkGammaCurve
+#define NSP_INC_NspGtkGammaCurve
 
 /*
-* NspGtkGammaCurve inherits from NspGtkVBox
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkGammaCurve */
+
+#include <nsp/gtk/gtkvbox.h>
+
+/*
+* NspGtkGammaCurve inherits from GtkVBox
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkGammaCurve *nsp_type_gtkgammacurve;
 
 NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode);
 
-/* instance for GtkGammaCurve */
+/* instance for NspGtkGammaCurve */
 
 NspGtkGammaCurve *new_gtkgammacurve();
 
@@ -34,23 +50,22 @@ NspGtkGammaCurve *new_gtkgammacurve();
 
 #define NULLGTKGAMMACURVE (NspGtkGammaCurve*) 0
 
-NspGtkGammaCurve *gtkgammacurve_create(char *name,NspTypeBase *type);
 
-/* from GtkGammaCurveObj.c */
+/* from NspGtkGammaCurveObj.c */
 
-extern NspGtkGammaCurve *gtkgammacurve_object (NspObject *O); 
+extern NspGtkGammaCurve *nsp_gtkgammacurve_object (NspObject *O); 
 extern int IsGtkGammaCurveObj (Stack stack, int i); 
 extern int IsGtkGammaCurve(NspObject *O);
 extern NspGtkGammaCurve *GetGtkGammaCurveCopy (Stack stack, int i); 
 extern NspGtkGammaCurve *GetGtkGammaCurve (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkGammaCurve */
 
-#ifdef GtkGammaCurve_Private 
+#ifdef NspGtkGammaCurve_Private 
 static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type);
 static char *nsp_gtkgammacurve_type_as_string(void);
 static char *nsp_gtkgammacurve_type_short_string(NspObject *v);
 static AttrTab gtkgammacurve_attrs[];
-/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkgammacurve_get_methods(void); 
-#endif /* GtkGammaCurve_Private */
+/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkGammaCurve_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_PangoFontMetrics
-#define INC_NSP_PangoFontMetrics
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gboxed.h"
+#ifndef NSP_INC_NspPangoFontMetrics
+#define NSP_INC_NspPangoFontMetrics
 
 /*
-* NspPangoFontMetrics inherits from NspGBoxed
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspPangoFontMetrics */
+
+#include <nsp/gtk/gboxed.h>
+
+/*
+* NspPangoFontMetrics inherits from GBoxed
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypePangoFontMetrics *nsp_type_pangofontmetrics;
 
 NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode);
 
-/* instance for PangoFontMetrics */
+/* instance for NspPangoFontMetrics */
 
 NspPangoFontMetrics *new_pangofontmetrics();
 
@@ -34,23 +50,22 @@ NspPangoFontMetrics *new_pangofontmetrics();
 
 #define NULLPANGOFONTMETRICS (NspPangoFontMetrics*) 0
 
-NspPangoFontMetrics *pangofontmetrics_create(char *name,NspTypeBase *type);
 
-/* from PangoFontMetricsObj.c */
+/* from NspPangoFontMetricsObj.c */
 
-extern NspPangoFontMetrics *pangofontmetrics_object (NspObject *O); 
+extern NspPangoFontMetrics *nsp_pangofontmetrics_object (NspObject *O); 
 extern int IsPangoFontMetricsObj (Stack stack, int i); 
 extern int IsPangoFontMetrics(NspObject *O);
 extern NspPangoFontMetrics *GetPangoFontMetricsCopy (Stack stack, int i); 
 extern NspPangoFontMetrics *GetPangoFontMetrics (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspPangoFontMetrics */
 
-#ifdef PangoFontMetrics_Private 
+#ifdef NspPangoFontMetrics_Private 
 static int init_pangofontmetrics(NspPangoFontMetrics *o,NspTypePangoFontMetrics *type);
 static char *nsp_pangofontmetrics_type_as_string(void);
 static char *nsp_pangofontmetrics_type_short_string(NspObject *v);
 static AttrTab pangofontmetrics_attrs[];
-/* static int int_pangofontmetrics_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *pangofontmetrics_get_methods(void); 
-#endif /* PangoFontMetrics_Private */
+/* static int int_pangofontmetrics_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspPangoFontMetrics_Private */

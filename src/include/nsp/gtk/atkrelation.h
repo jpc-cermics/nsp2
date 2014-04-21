@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_AtkRelation
-#define INC_NSP_AtkRelation
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspAtkRelation
+#define NSP_INC_NspAtkRelation
 
 /*
-* NspAtkRelation inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspAtkRelation */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspAtkRelation inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeAtkRelation *nsp_type_atkrelation;
 
 NspTypeAtkRelation *new_type_atkrelation(type_mode mode);
 
-/* instance for AtkRelation */
+/* instance for NspAtkRelation */
 
 NspAtkRelation *new_atkrelation();
 
@@ -34,23 +50,22 @@ NspAtkRelation *new_atkrelation();
 
 #define NULLATKRELATION (NspAtkRelation*) 0
 
-NspAtkRelation *atkrelation_create(char *name,NspTypeBase *type);
 
-/* from AtkRelationObj.c */
+/* from NspAtkRelationObj.c */
 
-extern NspAtkRelation *atkrelation_object (NspObject *O); 
+extern NspAtkRelation *nsp_atkrelation_object (NspObject *O); 
 extern int IsAtkRelationObj (Stack stack, int i); 
 extern int IsAtkRelation(NspObject *O);
 extern NspAtkRelation *GetAtkRelationCopy (Stack stack, int i); 
 extern NspAtkRelation *GetAtkRelation (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspAtkRelation */
 
-#ifdef AtkRelation_Private 
+#ifdef NspAtkRelation_Private 
 static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type);
 static char *nsp_atkrelation_type_as_string(void);
 static char *nsp_atkrelation_type_short_string(NspObject *v);
 static AttrTab atkrelation_attrs[];
-/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkrelation_get_methods(void); 
-#endif /* AtkRelation_Private */
+/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspAtkRelation_Private */

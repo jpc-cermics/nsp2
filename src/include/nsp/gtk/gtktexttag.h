@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTextTag
-#define INC_NSP_GtkTextTag
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTextTag
+#define NSP_INC_NspGtkTextTag
 
 /*
-* NspGtkTextTag inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTextTag */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTextTag inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTextTag *nsp_type_gtktexttag;
 
 NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode);
 
-/* instance for GtkTextTag */
+/* instance for NspGtkTextTag */
 
 NspGtkTextTag *new_gtktexttag();
 
@@ -34,23 +50,22 @@ NspGtkTextTag *new_gtktexttag();
 
 #define NULLGTKTEXTTAG (NspGtkTextTag*) 0
 
-NspGtkTextTag *gtktexttag_create(char *name,NspTypeBase *type);
 
-/* from GtkTextTagObj.c */
+/* from NspGtkTextTagObj.c */
 
-extern NspGtkTextTag *gtktexttag_object (NspObject *O); 
+extern NspGtkTextTag *nsp_gtktexttag_object (NspObject *O); 
 extern int IsGtkTextTagObj (Stack stack, int i); 
 extern int IsGtkTextTag(NspObject *O);
 extern NspGtkTextTag *GetGtkTextTagCopy (Stack stack, int i); 
 extern NspGtkTextTag *GetGtkTextTag (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTextTag */
 
-#ifdef GtkTextTag_Private 
+#ifdef NspGtkTextTag_Private 
 static int init_gtktexttag(NspGtkTextTag *o,NspTypeGtkTextTag *type);
 static char *nsp_gtktexttag_type_as_string(void);
 static char *nsp_gtktexttag_type_short_string(NspObject *v);
 static AttrTab gtktexttag_attrs[];
-/* static int int_gtktexttag_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktexttag_get_methods(void); 
-#endif /* GtkTextTag_Private */
+/* static int int_gtktexttag_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTextTag_Private */

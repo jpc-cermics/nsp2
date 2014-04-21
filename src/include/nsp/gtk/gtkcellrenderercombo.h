@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkCellRendererCombo
-#define INC_NSP_GtkCellRendererCombo
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcellrenderertext.h"
+#ifndef NSP_INC_NspGtkCellRendererCombo
+#define NSP_INC_NspGtkCellRendererCombo
 
 /*
-* NspGtkCellRendererCombo inherits from NspGtkCellRendererText
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkCellRendererCombo */
+
+#include <nsp/gtk/gtkcellrenderertext.h>
+
+/*
+* NspGtkCellRendererCombo inherits from GtkCellRendererText
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkCellRendererCombo *nsp_type_gtkcellrenderercombo;
 
 NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode);
 
-/* instance for GtkCellRendererCombo */
+/* instance for NspGtkCellRendererCombo */
 
 NspGtkCellRendererCombo *new_gtkcellrenderercombo();
 
@@ -34,23 +50,22 @@ NspGtkCellRendererCombo *new_gtkcellrenderercombo();
 
 #define NULLGTKCELLRENDERERCOMBO (NspGtkCellRendererCombo*) 0
 
-NspGtkCellRendererCombo *gtkcellrenderercombo_create(char *name,NspTypeBase *type);
 
-/* from GtkCellRendererComboObj.c */
+/* from NspGtkCellRendererComboObj.c */
 
-extern NspGtkCellRendererCombo *gtkcellrenderercombo_object (NspObject *O); 
+extern NspGtkCellRendererCombo *nsp_gtkcellrenderercombo_object (NspObject *O); 
 extern int IsGtkCellRendererComboObj (Stack stack, int i); 
 extern int IsGtkCellRendererCombo(NspObject *O);
 extern NspGtkCellRendererCombo *GetGtkCellRendererComboCopy (Stack stack, int i); 
 extern NspGtkCellRendererCombo *GetGtkCellRendererCombo (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkCellRendererCombo */
 
-#ifdef GtkCellRendererCombo_Private 
+#ifdef NspGtkCellRendererCombo_Private 
 static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *o,NspTypeGtkCellRendererCombo *type);
 static char *nsp_gtkcellrenderercombo_type_as_string(void);
 static char *nsp_gtkcellrenderercombo_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderercombo_attrs[];
-/* static int int_gtkcellrenderercombo_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkcellrenderercombo_get_methods(void); 
-#endif /* GtkCellRendererCombo_Private */
+/* static int int_gtkcellrenderercombo_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkCellRendererCombo_Private */

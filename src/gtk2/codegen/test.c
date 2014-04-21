@@ -34,7 +34,7 @@
 /* ----------- NspGdkColormap ----------- */
 
 
-#define  GdkColormap_Private 
+#define  NspGdkColormap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkcolormap.h>
 #include <nsp/interf.h>

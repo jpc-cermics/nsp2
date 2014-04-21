@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkImageMenuItem
-#define INC_NSP_GtkImageMenuItem
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkmenuitem.h"
+#ifndef NSP_INC_NspGtkImageMenuItem
+#define NSP_INC_NspGtkImageMenuItem
 
 /*
-* NspGtkImageMenuItem inherits from NspGtkMenuItem
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkImageMenuItem */
+
+#include <nsp/gtk/gtkmenuitem.h>
+
+/*
+* NspGtkImageMenuItem inherits from GtkMenuItem
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkImageMenuItem *nsp_type_gtkimagemenuitem;
 
 NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode);
 
-/* instance for GtkImageMenuItem */
+/* instance for NspGtkImageMenuItem */
 
 NspGtkImageMenuItem *new_gtkimagemenuitem();
 
@@ -34,23 +50,22 @@ NspGtkImageMenuItem *new_gtkimagemenuitem();
 
 #define NULLGTKIMAGEMENUITEM (NspGtkImageMenuItem*) 0
 
-NspGtkImageMenuItem *gtkimagemenuitem_create(char *name,NspTypeBase *type);
 
-/* from GtkImageMenuItemObj.c */
+/* from NspGtkImageMenuItemObj.c */
 
-extern NspGtkImageMenuItem *gtkimagemenuitem_object (NspObject *O); 
+extern NspGtkImageMenuItem *nsp_gtkimagemenuitem_object (NspObject *O); 
 extern int IsGtkImageMenuItemObj (Stack stack, int i); 
 extern int IsGtkImageMenuItem(NspObject *O);
 extern NspGtkImageMenuItem *GetGtkImageMenuItemCopy (Stack stack, int i); 
 extern NspGtkImageMenuItem *GetGtkImageMenuItem (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkImageMenuItem */
 
-#ifdef GtkImageMenuItem_Private 
+#ifdef NspGtkImageMenuItem_Private 
 static int init_gtkimagemenuitem(NspGtkImageMenuItem *o,NspTypeGtkImageMenuItem *type);
 static char *nsp_gtkimagemenuitem_type_as_string(void);
 static char *nsp_gtkimagemenuitem_type_short_string(NspObject *v);
 static AttrTab gtkimagemenuitem_attrs[];
-/* static int int_gtkimagemenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimagemenuitem_get_methods(void); 
-#endif /* GtkImageMenuItem_Private */
+/* static int int_gtkimagemenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkImageMenuItem_Private */

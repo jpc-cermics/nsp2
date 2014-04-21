@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkFileChooserButton
-#define INC_NSP_GtkFileChooserButton
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkhbox.h"
+#ifndef NSP_INC_NspGtkFileChooserButton
+#define NSP_INC_NspGtkFileChooserButton
 
 /*
-* NspGtkFileChooserButton inherits from NspGtkHBox
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkFileChooserButton */
+
+#include <nsp/gtk/gtkhbox.h>
+
+/*
+* NspGtkFileChooserButton inherits from GtkHBox
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkFileChooserButton *nsp_type_gtkfilechooserbutton;
 
 NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode);
 
-/* instance for GtkFileChooserButton */
+/* instance for NspGtkFileChooserButton */
 
 NspGtkFileChooserButton *new_gtkfilechooserbutton();
 
@@ -34,23 +50,22 @@ NspGtkFileChooserButton *new_gtkfilechooserbutton();
 
 #define NULLGTKFILECHOOSERBUTTON (NspGtkFileChooserButton*) 0
 
-NspGtkFileChooserButton *gtkfilechooserbutton_create(char *name,NspTypeBase *type);
 
-/* from GtkFileChooserButtonObj.c */
+/* from NspGtkFileChooserButtonObj.c */
 
-extern NspGtkFileChooserButton *gtkfilechooserbutton_object (NspObject *O); 
+extern NspGtkFileChooserButton *nsp_gtkfilechooserbutton_object (NspObject *O); 
 extern int IsGtkFileChooserButtonObj (Stack stack, int i); 
 extern int IsGtkFileChooserButton(NspObject *O);
 extern NspGtkFileChooserButton *GetGtkFileChooserButtonCopy (Stack stack, int i); 
 extern NspGtkFileChooserButton *GetGtkFileChooserButton (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkFileChooserButton */
 
-#ifdef GtkFileChooserButton_Private 
+#ifdef NspGtkFileChooserButton_Private 
 static int init_gtkfilechooserbutton(NspGtkFileChooserButton *o,NspTypeGtkFileChooserButton *type);
 static char *nsp_gtkfilechooserbutton_type_as_string(void);
 static char *nsp_gtkfilechooserbutton_type_short_string(NspObject *v);
 static AttrTab gtkfilechooserbutton_attrs[];
-/* static int int_gtkfilechooserbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfilechooserbutton_get_methods(void); 
-#endif /* GtkFileChooserButton_Private */
+/* static int int_gtkfilechooserbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkFileChooserButton_Private */

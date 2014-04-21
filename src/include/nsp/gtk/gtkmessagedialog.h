@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkMessageDialog
-#define INC_NSP_GtkMessageDialog
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkdialog.h"
+#ifndef NSP_INC_NspGtkMessageDialog
+#define NSP_INC_NspGtkMessageDialog
 
 /*
-* NspGtkMessageDialog inherits from NspGtkDialog
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkMessageDialog */
+
+#include <nsp/gtk/gtkdialog.h>
+
+/*
+* NspGtkMessageDialog inherits from GtkDialog
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkMessageDialog *nsp_type_gtkmessagedialog;
 
 NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode);
 
-/* instance for GtkMessageDialog */
+/* instance for NspGtkMessageDialog */
 
 NspGtkMessageDialog *new_gtkmessagedialog();
 
@@ -34,23 +50,22 @@ NspGtkMessageDialog *new_gtkmessagedialog();
 
 #define NULLGTKMESSAGEDIALOG (NspGtkMessageDialog*) 0
 
-NspGtkMessageDialog *gtkmessagedialog_create(char *name,NspTypeBase *type);
 
-/* from GtkMessageDialogObj.c */
+/* from NspGtkMessageDialogObj.c */
 
-extern NspGtkMessageDialog *gtkmessagedialog_object (NspObject *O); 
+extern NspGtkMessageDialog *nsp_gtkmessagedialog_object (NspObject *O); 
 extern int IsGtkMessageDialogObj (Stack stack, int i); 
 extern int IsGtkMessageDialog(NspObject *O);
 extern NspGtkMessageDialog *GetGtkMessageDialogCopy (Stack stack, int i); 
 extern NspGtkMessageDialog *GetGtkMessageDialog (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkMessageDialog */
 
-#ifdef GtkMessageDialog_Private 
+#ifdef NspGtkMessageDialog_Private 
 static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type);
 static char *nsp_gtkmessagedialog_type_as_string(void);
 static char *nsp_gtkmessagedialog_type_short_string(NspObject *v);
 static AttrTab gtkmessagedialog_attrs[];
-/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmessagedialog_get_methods(void); 
-#endif /* GtkMessageDialog_Private */
+/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkMessageDialog_Private */

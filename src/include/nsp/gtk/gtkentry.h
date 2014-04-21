@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkEntry
-#define INC_NSP_GtkEntry
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkEntry
+#define NSP_INC_NspGtkEntry
 
 /*
-* NspGtkEntry inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkEntry */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkEntry inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkEntry *nsp_type_gtkentry;
 
 NspTypeGtkEntry *new_type_gtkentry(type_mode mode);
 
-/* instance for GtkEntry */
+/* instance for NspGtkEntry */
 
 NspGtkEntry *new_gtkentry();
 
@@ -34,23 +50,22 @@ NspGtkEntry *new_gtkentry();
 
 #define NULLGTKENTRY (NspGtkEntry*) 0
 
-NspGtkEntry *gtkentry_create(char *name,NspTypeBase *type);
 
-/* from GtkEntryObj.c */
+/* from NspGtkEntryObj.c */
 
-extern NspGtkEntry *gtkentry_object (NspObject *O); 
+extern NspGtkEntry *nsp_gtkentry_object (NspObject *O); 
 extern int IsGtkEntryObj (Stack stack, int i); 
 extern int IsGtkEntry(NspObject *O);
 extern NspGtkEntry *GetGtkEntryCopy (Stack stack, int i); 
 extern NspGtkEntry *GetGtkEntry (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkEntry */
 
-#ifdef GtkEntry_Private 
+#ifdef NspGtkEntry_Private 
 static int init_gtkentry(NspGtkEntry *o,NspTypeGtkEntry *type);
 static char *nsp_gtkentry_type_as_string(void);
 static char *nsp_gtkentry_type_short_string(NspObject *v);
 static AttrTab gtkentry_attrs[];
-/* static int int_gtkentry_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkentry_get_methods(void); 
-#endif /* GtkEntry_Private */
+/* static int int_gtkentry_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkEntry_Private */

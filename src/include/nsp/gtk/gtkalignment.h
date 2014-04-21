@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkAlignment
-#define INC_NSP_GtkAlignment
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkbin.h"
+#ifndef NSP_INC_NspGtkAlignment
+#define NSP_INC_NspGtkAlignment
 
 /*
-* NspGtkAlignment inherits from NspGtkBin
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkAlignment */
+
+#include <nsp/gtk/gtkbin.h>
+
+/*
+* NspGtkAlignment inherits from GtkBin
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkAlignment *nsp_type_gtkalignment;
 
 NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode);
 
-/* instance for GtkAlignment */
+/* instance for NspGtkAlignment */
 
 NspGtkAlignment *new_gtkalignment();
 
@@ -34,23 +50,22 @@ NspGtkAlignment *new_gtkalignment();
 
 #define NULLGTKALIGNMENT (NspGtkAlignment*) 0
 
-NspGtkAlignment *gtkalignment_create(char *name,NspTypeBase *type);
 
-/* from GtkAlignmentObj.c */
+/* from NspGtkAlignmentObj.c */
 
-extern NspGtkAlignment *gtkalignment_object (NspObject *O); 
+extern NspGtkAlignment *nsp_gtkalignment_object (NspObject *O); 
 extern int IsGtkAlignmentObj (Stack stack, int i); 
 extern int IsGtkAlignment(NspObject *O);
 extern NspGtkAlignment *GetGtkAlignmentCopy (Stack stack, int i); 
 extern NspGtkAlignment *GetGtkAlignment (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkAlignment */
 
-#ifdef GtkAlignment_Private 
+#ifdef NspGtkAlignment_Private 
 static int init_gtkalignment(NspGtkAlignment *o,NspTypeGtkAlignment *type);
 static char *nsp_gtkalignment_type_as_string(void);
 static char *nsp_gtkalignment_type_short_string(NspObject *v);
 static AttrTab gtkalignment_attrs[];
-/* static int int_gtkalignment_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkalignment_get_methods(void); 
-#endif /* GtkAlignment_Private */
+/* static int int_gtkalignment_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkAlignment_Private */

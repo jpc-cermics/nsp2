@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_AtkUtil
-#define INC_NSP_AtkUtil
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspAtkUtil
+#define NSP_INC_NspAtkUtil
 
 /*
-* NspAtkUtil inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspAtkUtil */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspAtkUtil inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeAtkUtil *nsp_type_atkutil;
 
 NspTypeAtkUtil *new_type_atkutil(type_mode mode);
 
-/* instance for AtkUtil */
+/* instance for NspAtkUtil */
 
 NspAtkUtil *new_atkutil();
 
@@ -34,23 +50,22 @@ NspAtkUtil *new_atkutil();
 
 #define NULLATKUTIL (NspAtkUtil*) 0
 
-NspAtkUtil *atkutil_create(char *name,NspTypeBase *type);
 
-/* from AtkUtilObj.c */
+/* from NspAtkUtilObj.c */
 
-extern NspAtkUtil *atkutil_object (NspObject *O); 
+extern NspAtkUtil *nsp_atkutil_object (NspObject *O); 
 extern int IsAtkUtilObj (Stack stack, int i); 
 extern int IsAtkUtil(NspObject *O);
 extern NspAtkUtil *GetAtkUtilCopy (Stack stack, int i); 
 extern NspAtkUtil *GetAtkUtil (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspAtkUtil */
 
-#ifdef AtkUtil_Private 
+#ifdef NspAtkUtil_Private 
 static int init_atkutil(NspAtkUtil *o,NspTypeAtkUtil *type);
 static char *nsp_atkutil_type_as_string(void);
 static char *nsp_atkutil_type_short_string(NspObject *v);
 static AttrTab atkutil_attrs[];
-/* static int int_atkutil_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkutil_get_methods(void); 
-#endif /* AtkUtil_Private */
+/* static int int_atkutil_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspAtkUtil_Private */

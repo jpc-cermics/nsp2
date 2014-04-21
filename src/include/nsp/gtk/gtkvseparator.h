@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkVSeparator
-#define INC_NSP_GtkVSeparator
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkseparator.h"
+#ifndef NSP_INC_NspGtkVSeparator
+#define NSP_INC_NspGtkVSeparator
 
 /*
-* NspGtkVSeparator inherits from NspGtkSeparator
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkVSeparator */
+
+#include <nsp/gtk/gtkseparator.h>
+
+/*
+* NspGtkVSeparator inherits from GtkSeparator
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkVSeparator *nsp_type_gtkvseparator;
 
 NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode);
 
-/* instance for GtkVSeparator */
+/* instance for NspGtkVSeparator */
 
 NspGtkVSeparator *new_gtkvseparator();
 
@@ -34,23 +50,22 @@ NspGtkVSeparator *new_gtkvseparator();
 
 #define NULLGTKVSEPARATOR (NspGtkVSeparator*) 0
 
-NspGtkVSeparator *gtkvseparator_create(char *name,NspTypeBase *type);
 
-/* from GtkVSeparatorObj.c */
+/* from NspGtkVSeparatorObj.c */
 
-extern NspGtkVSeparator *gtkvseparator_object (NspObject *O); 
+extern NspGtkVSeparator *nsp_gtkvseparator_object (NspObject *O); 
 extern int IsGtkVSeparatorObj (Stack stack, int i); 
 extern int IsGtkVSeparator(NspObject *O);
 extern NspGtkVSeparator *GetGtkVSeparatorCopy (Stack stack, int i); 
 extern NspGtkVSeparator *GetGtkVSeparator (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkVSeparator */
 
-#ifdef GtkVSeparator_Private 
+#ifdef NspGtkVSeparator_Private 
 static int init_gtkvseparator(NspGtkVSeparator *o,NspTypeGtkVSeparator *type);
 static char *nsp_gtkvseparator_type_as_string(void);
 static char *nsp_gtkvseparator_type_short_string(NspObject *v);
 static AttrTab gtkvseparator_attrs[];
-/* static int int_gtkvseparator_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkvseparator_get_methods(void); 
-#endif /* GtkVSeparator_Private */
+/* static int int_gtkvseparator_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkVSeparator_Private */

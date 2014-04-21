@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkImage
-#define INC_NSP_GtkImage
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkmisc.h"
+#ifndef NSP_INC_NspGtkImage
+#define NSP_INC_NspGtkImage
 
 /*
-* NspGtkImage inherits from NspGtkMisc
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkImage */
+
+#include <nsp/gtk/gtkmisc.h>
+
+/*
+* NspGtkImage inherits from GtkMisc
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkImage *nsp_type_gtkimage;
 
 NspTypeGtkImage *new_type_gtkimage(type_mode mode);
 
-/* instance for GtkImage */
+/* instance for NspGtkImage */
 
 NspGtkImage *new_gtkimage();
 
@@ -34,23 +50,22 @@ NspGtkImage *new_gtkimage();
 
 #define NULLGTKIMAGE (NspGtkImage*) 0
 
-NspGtkImage *gtkimage_create(char *name,NspTypeBase *type);
 
-/* from GtkImageObj.c */
+/* from NspGtkImageObj.c */
 
-extern NspGtkImage *gtkimage_object (NspObject *O); 
+extern NspGtkImage *nsp_gtkimage_object (NspObject *O); 
 extern int IsGtkImageObj (Stack stack, int i); 
 extern int IsGtkImage(NspObject *O);
 extern NspGtkImage *GetGtkImageCopy (Stack stack, int i); 
 extern NspGtkImage *GetGtkImage (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkImage */
 
-#ifdef GtkImage_Private 
+#ifdef NspGtkImage_Private 
 static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type);
 static char *nsp_gtkimage_type_as_string(void);
 static char *nsp_gtkimage_type_short_string(NspObject *v);
 static AttrTab gtkimage_attrs[];
-/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkimage_get_methods(void); 
-#endif /* GtkImage_Private */
+/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkImage_Private */

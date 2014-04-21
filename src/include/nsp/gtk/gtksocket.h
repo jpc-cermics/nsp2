@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkSocket
-#define INC_NSP_GtkSocket
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcontainer.h"
+#ifndef NSP_INC_NspGtkSocket
+#define NSP_INC_NspGtkSocket
 
 /*
-* NspGtkSocket inherits from NspGtkContainer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkSocket */
+
+#include <nsp/gtk/gtkcontainer.h>
+
+/*
+* NspGtkSocket inherits from GtkContainer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkSocket *nsp_type_gtksocket;
 
 NspTypeGtkSocket *new_type_gtksocket(type_mode mode);
 
-/* instance for GtkSocket */
+/* instance for NspGtkSocket */
 
 NspGtkSocket *new_gtksocket();
 
@@ -34,23 +50,22 @@ NspGtkSocket *new_gtksocket();
 
 #define NULLGTKSOCKET (NspGtkSocket*) 0
 
-NspGtkSocket *gtksocket_create(char *name,NspTypeBase *type);
 
-/* from GtkSocketObj.c */
+/* from NspGtkSocketObj.c */
 
-extern NspGtkSocket *gtksocket_object (NspObject *O); 
+extern NspGtkSocket *nsp_gtksocket_object (NspObject *O); 
 extern int IsGtkSocketObj (Stack stack, int i); 
 extern int IsGtkSocket(NspObject *O);
 extern NspGtkSocket *GetGtkSocketCopy (Stack stack, int i); 
 extern NspGtkSocket *GetGtkSocket (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkSocket */
 
-#ifdef GtkSocket_Private 
+#ifdef NspGtkSocket_Private 
 static int init_gtksocket(NspGtkSocket *o,NspTypeGtkSocket *type);
 static char *nsp_gtksocket_type_as_string(void);
 static char *nsp_gtksocket_type_short_string(NspObject *v);
 static AttrTab gtksocket_attrs[];
-/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtksocket_get_methods(void); 
-#endif /* GtkSocket_Private */
+/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkSocket_Private */

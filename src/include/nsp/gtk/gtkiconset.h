@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkIconSet
-#define INC_NSP_GtkIconSet
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gboxed.h"
+#ifndef NSP_INC_NspGtkIconSet
+#define NSP_INC_NspGtkIconSet
 
 /*
-* NspGtkIconSet inherits from NspGBoxed
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkIconSet */
+
+#include <nsp/gtk/gboxed.h>
+
+/*
+* NspGtkIconSet inherits from GBoxed
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkIconSet *nsp_type_gtkiconset;
 
 NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode);
 
-/* instance for GtkIconSet */
+/* instance for NspGtkIconSet */
 
 NspGtkIconSet *new_gtkiconset();
 
@@ -34,23 +50,22 @@ NspGtkIconSet *new_gtkiconset();
 
 #define NULLGTKICONSET (NspGtkIconSet*) 0
 
-NspGtkIconSet *gtkiconset_create(char *name,NspTypeBase *type);
 
-/* from GtkIconSetObj.c */
+/* from NspGtkIconSetObj.c */
 
-extern NspGtkIconSet *gtkiconset_object (NspObject *O); 
+extern NspGtkIconSet *nsp_gtkiconset_object (NspObject *O); 
 extern int IsGtkIconSetObj (Stack stack, int i); 
 extern int IsGtkIconSet(NspObject *O);
 extern NspGtkIconSet *GetGtkIconSetCopy (Stack stack, int i); 
 extern NspGtkIconSet *GetGtkIconSet (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkIconSet */
 
-#ifdef GtkIconSet_Private 
+#ifdef NspGtkIconSet_Private 
 static int init_gtkiconset(NspGtkIconSet *o,NspTypeGtkIconSet *type);
 static char *nsp_gtkiconset_type_as_string(void);
 static char *nsp_gtkiconset_type_short_string(NspObject *v);
 static AttrTab gtkiconset_attrs[];
-/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkiconset_get_methods(void); 
-#endif /* GtkIconSet_Private */
+/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkIconSet_Private */

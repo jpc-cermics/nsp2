@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkEventBox
-#define INC_NSP_GtkEventBox
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkbin.h"
+#ifndef NSP_INC_NspGtkEventBox
+#define NSP_INC_NspGtkEventBox
 
 /*
-* NspGtkEventBox inherits from NspGtkBin
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkEventBox */
+
+#include <nsp/gtk/gtkbin.h>
+
+/*
+* NspGtkEventBox inherits from GtkBin
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkEventBox *nsp_type_gtkeventbox;
 
 NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode);
 
-/* instance for GtkEventBox */
+/* instance for NspGtkEventBox */
 
 NspGtkEventBox *new_gtkeventbox();
 
@@ -34,23 +50,22 @@ NspGtkEventBox *new_gtkeventbox();
 
 #define NULLGTKEVENTBOX (NspGtkEventBox*) 0
 
-NspGtkEventBox *gtkeventbox_create(char *name,NspTypeBase *type);
 
-/* from GtkEventBoxObj.c */
+/* from NspGtkEventBoxObj.c */
 
-extern NspGtkEventBox *gtkeventbox_object (NspObject *O); 
+extern NspGtkEventBox *nsp_gtkeventbox_object (NspObject *O); 
 extern int IsGtkEventBoxObj (Stack stack, int i); 
 extern int IsGtkEventBox(NspObject *O);
 extern NspGtkEventBox *GetGtkEventBoxCopy (Stack stack, int i); 
 extern NspGtkEventBox *GetGtkEventBox (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkEventBox */
 
-#ifdef GtkEventBox_Private 
+#ifdef NspGtkEventBox_Private 
 static int init_gtkeventbox(NspGtkEventBox *o,NspTypeGtkEventBox *type);
 static char *nsp_gtkeventbox_type_as_string(void);
 static char *nsp_gtkeventbox_type_short_string(NspObject *v);
 static AttrTab gtkeventbox_attrs[];
-/* static int int_gtkeventbox_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkeventbox_get_methods(void); 
-#endif /* GtkEventBox_Private */
+/* static int int_gtkeventbox_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkEventBox_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkFontButton
-#define INC_NSP_GtkFontButton
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkbutton.h"
+#ifndef NSP_INC_NspGtkFontButton
+#define NSP_INC_NspGtkFontButton
 
 /*
-* NspGtkFontButton inherits from NspGtkButton
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkFontButton */
+
+#include <nsp/gtk/gtkbutton.h>
+
+/*
+* NspGtkFontButton inherits from GtkButton
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkFontButton *nsp_type_gtkfontbutton;
 
 NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode);
 
-/* instance for GtkFontButton */
+/* instance for NspGtkFontButton */
 
 NspGtkFontButton *new_gtkfontbutton();
 
@@ -34,23 +50,22 @@ NspGtkFontButton *new_gtkfontbutton();
 
 #define NULLGTKFONTBUTTON (NspGtkFontButton*) 0
 
-NspGtkFontButton *gtkfontbutton_create(char *name,NspTypeBase *type);
 
-/* from GtkFontButtonObj.c */
+/* from NspGtkFontButtonObj.c */
 
-extern NspGtkFontButton *gtkfontbutton_object (NspObject *O); 
+extern NspGtkFontButton *nsp_gtkfontbutton_object (NspObject *O); 
 extern int IsGtkFontButtonObj (Stack stack, int i); 
 extern int IsGtkFontButton(NspObject *O);
 extern NspGtkFontButton *GetGtkFontButtonCopy (Stack stack, int i); 
 extern NspGtkFontButton *GetGtkFontButton (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkFontButton */
 
-#ifdef GtkFontButton_Private 
+#ifdef NspGtkFontButton_Private 
 static int init_gtkfontbutton(NspGtkFontButton *o,NspTypeGtkFontButton *type);
 static char *nsp_gtkfontbutton_type_as_string(void);
 static char *nsp_gtkfontbutton_type_short_string(NspObject *v);
 static AttrTab gtkfontbutton_attrs[];
-/* static int int_gtkfontbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfontbutton_get_methods(void); 
-#endif /* GtkFontButton_Private */
+/* static int int_gtkfontbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkFontButton_Private */

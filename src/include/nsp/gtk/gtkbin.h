@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkBin
-#define INC_NSP_GtkBin
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcontainer.h"
+#ifndef NSP_INC_NspGtkBin
+#define NSP_INC_NspGtkBin
 
 /*
-* NspGtkBin inherits from NspGtkContainer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkBin */
+
+#include <nsp/gtk/gtkcontainer.h>
+
+/*
+* NspGtkBin inherits from GtkContainer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkBin *nsp_type_gtkbin;
 
 NspTypeGtkBin *new_type_gtkbin(type_mode mode);
 
-/* instance for GtkBin */
+/* instance for NspGtkBin */
 
 NspGtkBin *new_gtkbin();
 
@@ -34,23 +50,22 @@ NspGtkBin *new_gtkbin();
 
 #define NULLGTKBIN (NspGtkBin*) 0
 
-NspGtkBin *gtkbin_create(char *name,NspTypeBase *type);
 
-/* from GtkBinObj.c */
+/* from NspGtkBinObj.c */
 
-extern NspGtkBin *gtkbin_object (NspObject *O); 
+extern NspGtkBin *nsp_gtkbin_object (NspObject *O); 
 extern int IsGtkBinObj (Stack stack, int i); 
 extern int IsGtkBin(NspObject *O);
 extern NspGtkBin *GetGtkBinCopy (Stack stack, int i); 
 extern NspGtkBin *GetGtkBin (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkBin */
 
-#ifdef GtkBin_Private 
+#ifdef NspGtkBin_Private 
 static int init_gtkbin(NspGtkBin *o,NspTypeGtkBin *type);
 static char *nsp_gtkbin_type_as_string(void);
 static char *nsp_gtkbin_type_short_string(NspObject *v);
 static AttrTab gtkbin_attrs[];
-/* static int int_gtkbin_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkbin_get_methods(void); 
-#endif /* GtkBin_Private */
+/* static int int_gtkbin_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkBin_Private */

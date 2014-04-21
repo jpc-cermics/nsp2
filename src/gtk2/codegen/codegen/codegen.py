@@ -55,7 +55,7 @@ class Wrapper:
 
     type_tmpl_1 = \
               '\n'  \
-              '#define  %(typename)s_Private \n'  \
+              '#define  Nsp%(typename)s_Private \n'  \
               '#include <nsp/objects.h>\n'  \
               '#include <nsp/gtk/%(typename_dc)s.h>\n'  \
               '#include <nsp/interf.h>\n'  \
@@ -238,20 +238,36 @@ class Wrapper:
               ' * i.e functions at Nsp level \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
 
-    type_header = \
+    type_header_01 = \
                 '/* -*- Mode: C -*- */\n' \
-                '#ifndef INC_NSP_%(typename)s\n' \
-                '#define INC_NSP_%(typename)s\n' \
-                '\n' \
-                '/*-----------------------------------------------------------------\n' \
-                '* This Software is ( Copyright ENPC 1998-2012 )\n' \
-                '* Jean-Philippe Chancelier Enpc/Cermics\n' \
-                '*-----------------------------------------------------------------*/\n' \
-                '\n' \
-                '#include "nsp/gtk/%(parent_dc)s.h"\n' \
+                '#ifndef NSP_INC_Nsp%(typename)s\n' \
+                '#define NSP_INC_Nsp%(typename)s\n' \
                 '\n' \
                 '/*\n' \
-                '* Nsp%(typename)s inherits from Nsp%(parent)s\n' \
+                ' * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics\n' \
+                ' * \n' \
+                ' * This library is free software; you can redistribute it and/or\n' \
+                ' * modify it under the terms of the GNU General Public\n' \
+                ' * License as published by the Free Software Foundation; either\n' \
+                ' * version 2 of the License, or (at your option) any later version.\n' \
+                ' *\n' \
+                ' * This library is distributed in the hope that it will be useful,\n' \
+                ' * but WITHOUT ANY WARRANTY; without even the implied warranty of\n' \
+                ' * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n' \
+                ' * General Public License for more details.\n' \
+                ' *\n' \
+                ' * You should have received a copy of the GNU General Public\n' \
+                ' * License along with this library; if not, write to the\n' \
+                ' * Free Software Foundation, Inc., 59 Temple Place - Suite 330,\n' \
+                ' * Boston, MA 02111-1307, USA.\n' \
+                ' */\n\n' 
+    type_header_1 = \
+                '/* Nsp%(typename)s */\n' \
+                '\n' \
+                '#include <nsp/gtk/%(parent_dc)s.h>\n' \
+                '\n' \
+                '/*\n' \
+                '* Nsp%(typename)s inherits from %(parent)s\n' \
                 '* just change some type attributes \n' \
                 '*/\n' \
                 '\n' \
@@ -265,7 +281,7 @@ class Wrapper:
                 '\n' \
                 'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode);\n' \
                 '\n' \
-                '/* instance for %(typename)s */\n' \
+                '/* instance for Nsp%(typename)s */\n' \
                 '\n' \
                 'Nsp%(typename)s *new_%(typename_dc)s();\n' \
                 '\n' \
@@ -275,26 +291,25 @@ class Wrapper:
                 '\n' \
                 '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
                 '\n' \
-                'Nsp%(typename)s *%(typename_dc)s_create(char *name,NspTypeBase *type);\n' \
                 '\n' \
-                '/* from %(typename)sObj.c */\n' \
+                '/* from Nsp%(typename)sObj.c */\n' \
                 '\n' \
-                'extern Nsp%(typename)s *%(typename_dc)s_object (NspObject *O); \n' \
+                'extern Nsp%(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
                 'extern int Is%(typename)sObj (Stack stack, int i); \n' \
                 'extern int Is%(typename)s(NspObject *O);\n' \
                 'extern Nsp%(typename)s *Get%(typename)sCopy (Stack stack, int i); \n' \
                 'extern Nsp%(typename)s *Get%(typename)s (Stack stack, int i); \n' \
                 '\n' \
-                '#endif \n' \
+                '#endif /* NSP_INC_Nsp%(typename)s */\n' \
                 '\n' \
-                '#ifdef %(typename)s_Private \n' \
+                '#ifdef Nsp%(typename)s_Private \n' \
                 'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
                 'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
                 'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
                 'static AttrTab %(typename_dc)s_attrs[];\n' \
-                '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
                 'static NspMethods *%(typename_dc)s_get_methods(void); \n' \
-                '#endif /* %(typename)s_Private */\n'
+                '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
+                '#endif /* Nsp%(typename)s_Private */\n'
 
 
     type_tmpl_1_0_2 = \
@@ -449,7 +464,9 @@ class Wrapper:
         # write a header file for class object
         outheadername = '../../include/nsp/gtk/' + string.lower(self.objinfo.c_name) + '.h'
         fhp = FileOutput(open(outheadername, "w"),outheadername)
-        fhp.write(self.type_header %substdict)
+        fhp.write(self.type_header_01 %substdict)
+        fhp.write(self.type_header_1 %substdict)
+
         fhp.close() 
         
         self.fp.write( '/*-------------------------------------------\n');

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkObject
-#define INC_NSP_GtkObject
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkObject
+#define NSP_INC_NspGtkObject
 
 /*
-* NspGtkObject inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkObject */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkObject inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkObject *nsp_type_gtkobject;
 
 NspTypeGtkObject *new_type_gtkobject(type_mode mode);
 
-/* instance for GtkObject */
+/* instance for NspGtkObject */
 
 NspGtkObject *new_gtkobject();
 
@@ -34,23 +50,22 @@ NspGtkObject *new_gtkobject();
 
 #define NULLGTKOBJECT (NspGtkObject*) 0
 
-NspGtkObject *gtkobject_create(char *name,NspTypeBase *type);
 
-/* from GtkObjectObj.c */
+/* from NspGtkObjectObj.c */
 
-extern NspGtkObject *gtkobject_object (NspObject *O); 
+extern NspGtkObject *nsp_gtkobject_object (NspObject *O); 
 extern int IsGtkObjectObj (Stack stack, int i); 
 extern int IsGtkObject(NspObject *O);
 extern NspGtkObject *GetGtkObjectCopy (Stack stack, int i); 
 extern NspGtkObject *GetGtkObject (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkObject */
 
-#ifdef GtkObject_Private 
+#ifdef NspGtkObject_Private 
 static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type);
 static char *nsp_gtkobject_type_as_string(void);
 static char *nsp_gtkobject_type_short_string(NspObject *v);
 static AttrTab gtkobject_attrs[];
-/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkobject_get_methods(void); 
-#endif /* GtkObject_Private */
+/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkObject_Private */

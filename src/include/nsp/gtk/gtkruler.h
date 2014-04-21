@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkRuler
-#define INC_NSP_GtkRuler
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkRuler
+#define NSP_INC_NspGtkRuler
 
 /*
-* NspGtkRuler inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkRuler */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkRuler inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkRuler *nsp_type_gtkruler;
 
 NspTypeGtkRuler *new_type_gtkruler(type_mode mode);
 
-/* instance for GtkRuler */
+/* instance for NspGtkRuler */
 
 NspGtkRuler *new_gtkruler();
 
@@ -34,23 +50,22 @@ NspGtkRuler *new_gtkruler();
 
 #define NULLGTKRULER (NspGtkRuler*) 0
 
-NspGtkRuler *gtkruler_create(char *name,NspTypeBase *type);
 
-/* from GtkRulerObj.c */
+/* from NspGtkRulerObj.c */
 
-extern NspGtkRuler *gtkruler_object (NspObject *O); 
+extern NspGtkRuler *nsp_gtkruler_object (NspObject *O); 
 extern int IsGtkRulerObj (Stack stack, int i); 
 extern int IsGtkRuler(NspObject *O);
 extern NspGtkRuler *GetGtkRulerCopy (Stack stack, int i); 
 extern NspGtkRuler *GetGtkRuler (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkRuler */
 
-#ifdef GtkRuler_Private 
+#ifdef NspGtkRuler_Private 
 static int init_gtkruler(NspGtkRuler *o,NspTypeGtkRuler *type);
 static char *nsp_gtkruler_type_as_string(void);
 static char *nsp_gtkruler_type_short_string(NspObject *v);
 static AttrTab gtkruler_attrs[];
-/* static int int_gtkruler_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkruler_get_methods(void); 
-#endif /* GtkRuler_Private */
+/* static int int_gtkruler_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkRuler_Private */

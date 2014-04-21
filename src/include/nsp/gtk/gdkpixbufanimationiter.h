@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GdkPixbufAnimationIter
-#define INC_NSP_GdkPixbufAnimationIter
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGdkPixbufAnimationIter
+#define NSP_INC_NspGdkPixbufAnimationIter
 
 /*
-* NspGdkPixbufAnimationIter inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGdkPixbufAnimationIter */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGdkPixbufAnimationIter inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGdkPixbufAnimationIter *nsp_type_gdkpixbufanimationiter;
 
 NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode);
 
-/* instance for GdkPixbufAnimationIter */
+/* instance for NspGdkPixbufAnimationIter */
 
 NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter();
 
@@ -34,23 +50,22 @@ NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter();
 
 #define NULLGDKPIXBUFANIMATIONITER (NspGdkPixbufAnimationIter*) 0
 
-NspGdkPixbufAnimationIter *gdkpixbufanimationiter_create(char *name,NspTypeBase *type);
 
-/* from GdkPixbufAnimationIterObj.c */
+/* from NspGdkPixbufAnimationIterObj.c */
 
-extern NspGdkPixbufAnimationIter *gdkpixbufanimationiter_object (NspObject *O); 
+extern NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object (NspObject *O); 
 extern int IsGdkPixbufAnimationIterObj (Stack stack, int i); 
 extern int IsGdkPixbufAnimationIter(NspObject *O);
 extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIterCopy (Stack stack, int i); 
 extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIter (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGdkPixbufAnimationIter */
 
-#ifdef GdkPixbufAnimationIter_Private 
+#ifdef NspGdkPixbufAnimationIter_Private 
 static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *o,NspTypeGdkPixbufAnimationIter *type);
 static char *nsp_gdkpixbufanimationiter_type_as_string(void);
 static char *nsp_gdkpixbufanimationiter_type_short_string(NspObject *v);
 static AttrTab gdkpixbufanimationiter_attrs[];
-/* static int int_gdkpixbufanimationiter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixbufanimationiter_get_methods(void); 
-#endif /* GdkPixbufAnimationIter_Private */
+/* static int int_gdkpixbufanimationiter_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGdkPixbufAnimationIter_Private */

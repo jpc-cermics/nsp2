@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GdkWindow
-#define INC_NSP_GdkWindow
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gdkdrawable.h"
+#ifndef NSP_INC_NspGdkWindow
+#define NSP_INC_NspGdkWindow
 
 /*
-* NspGdkWindow inherits from NspGdkDrawable
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGdkWindow */
+
+#include <nsp/gtk/gdkdrawable.h>
+
+/*
+* NspGdkWindow inherits from GdkDrawable
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGdkWindow *nsp_type_gdkwindow;
 
 NspTypeGdkWindow *new_type_gdkwindow(type_mode mode);
 
-/* instance for GdkWindow */
+/* instance for NspGdkWindow */
 
 NspGdkWindow *new_gdkwindow();
 
@@ -34,23 +50,22 @@ NspGdkWindow *new_gdkwindow();
 
 #define NULLGDKWINDOW (NspGdkWindow*) 0
 
-NspGdkWindow *gdkwindow_create(char *name,NspTypeBase *type);
 
-/* from GdkWindowObj.c */
+/* from NspGdkWindowObj.c */
 
-extern NspGdkWindow *gdkwindow_object (NspObject *O); 
+extern NspGdkWindow *nsp_gdkwindow_object (NspObject *O); 
 extern int IsGdkWindowObj (Stack stack, int i); 
 extern int IsGdkWindow(NspObject *O);
 extern NspGdkWindow *GetGdkWindowCopy (Stack stack, int i); 
 extern NspGdkWindow *GetGdkWindow (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGdkWindow */
 
-#ifdef GdkWindow_Private 
+#ifdef NspGdkWindow_Private 
 static int init_gdkwindow(NspGdkWindow *o,NspTypeGdkWindow *type);
 static char *nsp_gdkwindow_type_as_string(void);
 static char *nsp_gdkwindow_type_short_string(NspObject *v);
 static AttrTab gdkwindow_attrs[];
-/* static int int_gdkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkwindow_get_methods(void); 
-#endif /* GdkWindow_Private */
+/* static int int_gdkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGdkWindow_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTextIter
-#define INC_NSP_GtkTextIter
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gboxed.h"
+#ifndef NSP_INC_NspGtkTextIter
+#define NSP_INC_NspGtkTextIter
 
 /*
-* NspGtkTextIter inherits from NspGBoxed
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTextIter */
+
+#include <nsp/gtk/gboxed.h>
+
+/*
+* NspGtkTextIter inherits from GBoxed
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTextIter *nsp_type_gtktextiter;
 
 NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode);
 
-/* instance for GtkTextIter */
+/* instance for NspGtkTextIter */
 
 NspGtkTextIter *new_gtktextiter();
 
@@ -34,23 +50,22 @@ NspGtkTextIter *new_gtktextiter();
 
 #define NULLGTKTEXTITER (NspGtkTextIter*) 0
 
-NspGtkTextIter *gtktextiter_create(char *name,NspTypeBase *type);
 
-/* from GtkTextIterObj.c */
+/* from NspGtkTextIterObj.c */
 
-extern NspGtkTextIter *gtktextiter_object (NspObject *O); 
+extern NspGtkTextIter *nsp_gtktextiter_object (NspObject *O); 
 extern int IsGtkTextIterObj (Stack stack, int i); 
 extern int IsGtkTextIter(NspObject *O);
 extern NspGtkTextIter *GetGtkTextIterCopy (Stack stack, int i); 
 extern NspGtkTextIter *GetGtkTextIter (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTextIter */
 
-#ifdef GtkTextIter_Private 
+#ifdef NspGtkTextIter_Private 
 static int init_gtktextiter(NspGtkTextIter *o,NspTypeGtkTextIter *type);
 static char *nsp_gtktextiter_type_as_string(void);
 static char *nsp_gtktextiter_type_short_string(NspObject *v);
 static AttrTab gtktextiter_attrs[];
-/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextiter_get_methods(void); 
-#endif /* GtkTextIter_Private */
+/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTextIter_Private */

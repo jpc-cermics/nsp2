@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTextChildAnchor
-#define INC_NSP_GtkTextChildAnchor
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTextChildAnchor
+#define NSP_INC_NspGtkTextChildAnchor
 
 /*
-* NspGtkTextChildAnchor inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTextChildAnchor */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTextChildAnchor inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTextChildAnchor *nsp_type_gtktextchildanchor;
 
 NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode);
 
-/* instance for GtkTextChildAnchor */
+/* instance for NspGtkTextChildAnchor */
 
 NspGtkTextChildAnchor *new_gtktextchildanchor();
 
@@ -34,23 +50,22 @@ NspGtkTextChildAnchor *new_gtktextchildanchor();
 
 #define NULLGTKTEXTCHILDANCHOR (NspGtkTextChildAnchor*) 0
 
-NspGtkTextChildAnchor *gtktextchildanchor_create(char *name,NspTypeBase *type);
 
-/* from GtkTextChildAnchorObj.c */
+/* from NspGtkTextChildAnchorObj.c */
 
-extern NspGtkTextChildAnchor *gtktextchildanchor_object (NspObject *O); 
+extern NspGtkTextChildAnchor *nsp_gtktextchildanchor_object (NspObject *O); 
 extern int IsGtkTextChildAnchorObj (Stack stack, int i); 
 extern int IsGtkTextChildAnchor(NspObject *O);
 extern NspGtkTextChildAnchor *GetGtkTextChildAnchorCopy (Stack stack, int i); 
 extern NspGtkTextChildAnchor *GetGtkTextChildAnchor (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTextChildAnchor */
 
-#ifdef GtkTextChildAnchor_Private 
+#ifdef NspGtkTextChildAnchor_Private 
 static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type);
 static char *nsp_gtktextchildanchor_type_as_string(void);
 static char *nsp_gtktextchildanchor_type_short_string(NspObject *v);
 static AttrTab gtktextchildanchor_attrs[];
-/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextchildanchor_get_methods(void); 
-#endif /* GtkTextChildAnchor_Private */
+/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTextChildAnchor_Private */

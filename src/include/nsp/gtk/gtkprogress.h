@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkProgress
-#define INC_NSP_GtkProgress
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkProgress
+#define NSP_INC_NspGtkProgress
 
 /*
-* NspGtkProgress inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkProgress */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkProgress inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkProgress *nsp_type_gtkprogress;
 
 NspTypeGtkProgress *new_type_gtkprogress(type_mode mode);
 
-/* instance for GtkProgress */
+/* instance for NspGtkProgress */
 
 NspGtkProgress *new_gtkprogress();
 
@@ -34,23 +50,22 @@ NspGtkProgress *new_gtkprogress();
 
 #define NULLGTKPROGRESS (NspGtkProgress*) 0
 
-NspGtkProgress *gtkprogress_create(char *name,NspTypeBase *type);
 
-/* from GtkProgressObj.c */
+/* from NspGtkProgressObj.c */
 
-extern NspGtkProgress *gtkprogress_object (NspObject *O); 
+extern NspGtkProgress *nsp_gtkprogress_object (NspObject *O); 
 extern int IsGtkProgressObj (Stack stack, int i); 
 extern int IsGtkProgress(NspObject *O);
 extern NspGtkProgress *GetGtkProgressCopy (Stack stack, int i); 
 extern NspGtkProgress *GetGtkProgress (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkProgress */
 
-#ifdef GtkProgress_Private 
+#ifdef NspGtkProgress_Private 
 static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type);
 static char *nsp_gtkprogress_type_as_string(void);
 static char *nsp_gtkprogress_type_short_string(NspObject *v);
 static AttrTab gtkprogress_attrs[];
-/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkprogress_get_methods(void); 
-#endif /* GtkProgress_Private */
+/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkProgress_Private */

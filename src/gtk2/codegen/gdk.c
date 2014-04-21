@@ -74,7 +74,7 @@
 
 static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 
-#define  GdkEvent_Private 
+#define  NspGdkEvent_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkevent.h>
 #include <nsp/interf.h>
@@ -726,7 +726,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 /* ----------- NspGdkFont ----------- */
 
 
-#define  GdkFont_Private 
+#define  NspGdkFont_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkfont.h>
 #include <nsp/interf.h>
@@ -1154,7 +1154,7 @@ static AttrTab gdkfont_attrs[] = {
 
 static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 
-#define  GdkColor_Private 
+#define  NspGdkColor_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkcolor.h>
 #include <nsp/interf.h>
@@ -1444,7 +1444,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 /* ----------- NspGdkCursor ----------- */
 
 
-#define  GdkCursor_Private 
+#define  NspGdkCursor_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkcursor.h>
 #include <nsp/interf.h>
@@ -1718,7 +1718,7 @@ static AttrTab gdkcursor_attrs[] = {
 /* ----------- NspGdkRectangle ----------- */
 
 
-#define  GdkRectangle_Private 
+#define  NspGdkRectangle_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkrectangle.h>
 #include <nsp/interf.h>
@@ -2034,7 +2034,7 @@ static AttrTab gdkrectangle_attrs[] = {
 /* ----------- NspGdkColormap ----------- */
 
 
-#define  GdkColormap_Private 
+#define  NspGdkColormap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkcolormap.h>
 #include <nsp/interf.h>
@@ -2402,7 +2402,7 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkDevice ----------- */
 
 
-#define  GdkDevice_Private 
+#define  NspGdkDevice_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkdevice.h>
 #include <nsp/interf.h>
@@ -2854,7 +2854,7 @@ static AttrTab gdkdevice_attrs[] = {
 /* ----------- NspGdkDisplay ----------- */
 
 
-#define  GdkDisplay_Private 
+#define  NspGdkDisplay_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkdisplay.h>
 #include <nsp/interf.h>
@@ -3253,7 +3253,7 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkDisplayManager ----------- */
 
 
-#define  GdkDisplayManager_Private 
+#define  NspGdkDisplayManager_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkdisplaymanager.h>
 #include <nsp/interf.h>
@@ -3452,7 +3452,7 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkDragContext ----------- */
 
 
-#define  GdkDragContext_Private 
+#define  NspGdkDragContext_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkdragcontext.h>
 #include <nsp/interf.h>
@@ -3962,7 +3962,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 /* ----------- NspGdkDrawable ----------- */
 
 
-#define  GdkDrawable_Private 
+#define  NspGdkDrawable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkdrawable.h>
 #include <nsp/interf.h>
@@ -4650,7 +4650,7 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkWindow ----------- */
 
 
-#define  GdkWindow_Private 
+#define  NspGdkWindow_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkwindow.h>
 #include <nsp/interf.h>
@@ -5854,7 +5854,7 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkPixmap ----------- */
 
 
-#define  GdkPixmap_Private 
+#define  NspGdkPixmap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkpixmap.h>
 #include <nsp/interf.h>
@@ -6084,7 +6084,7 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkBitmap ----------- */
 
 
-#define  GdkBitmap_Private 
+#define  NspGdkBitmap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkbitmap.h>
 #include <nsp/interf.h>
@@ -6285,7 +6285,7 @@ static AttrTab gdkbitmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 static int _wrap_gdk_gc_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 
-#define  GdkGC_Private 
+#define  NspGdkGC_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkgc.h>
 #include <nsp/interf.h>
@@ -7081,7 +7081,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 /* ----------- NspGdkImage ----------- */
 
 
-#define  GdkImage_Private 
+#define  NspGdkImage_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkimage.h>
 #include <nsp/interf.h>
@@ -7350,7 +7350,7 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkKeymap ----------- */
 
 
-#define  GdkKeymap_Private 
+#define  NspGdkKeymap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkkeymap.h>
 #include <nsp/interf.h>
@@ -7563,7 +7563,7 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkPixbuf ----------- */
 
 
-#define  GdkPixbuf_Private 
+#define  NspGdkPixbuf_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkpixbuf.h>
 #include <nsp/interf.h>
@@ -8257,7 +8257,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 /* ----------- NspGdkPixbufAnimation ----------- */
 
 
-#define  GdkPixbufAnimation_Private 
+#define  NspGdkPixbufAnimation_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkpixbufanimation.h>
 #include <nsp/interf.h>
@@ -8523,7 +8523,7 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkPixbufAnimationIter ----------- */
 
 
-#define  GdkPixbufAnimationIter_Private 
+#define  NspGdkPixbufAnimationIter_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkpixbufanimationiter.h>
 #include <nsp/interf.h>
@@ -8759,7 +8759,7 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkPixbufLoader ----------- */
 
 
-#define  GdkPixbufLoader_Private 
+#define  NspGdkPixbufLoader_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkpixbufloader.h>
 #include <nsp/interf.h>
@@ -9040,7 +9040,7 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkScreen ----------- */
 
 
-#define  GdkScreen_Private 
+#define  NspGdkScreen_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkscreen.h>
 #include <nsp/interf.h>
@@ -9491,7 +9491,7 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGdkVisual ----------- */
 
 
-#define  GdkVisual_Private 
+#define  NspGdkVisual_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gdkvisual.h>
 #include <nsp/interf.h>

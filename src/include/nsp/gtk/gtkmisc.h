@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkMisc
-#define INC_NSP_GtkMisc
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkwidget.h"
+#ifndef NSP_INC_NspGtkMisc
+#define NSP_INC_NspGtkMisc
 
 /*
-* NspGtkMisc inherits from NspGtkWidget
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkMisc */
+
+#include <nsp/gtk/gtkwidget.h>
+
+/*
+* NspGtkMisc inherits from GtkWidget
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkMisc *nsp_type_gtkmisc;
 
 NspTypeGtkMisc *new_type_gtkmisc(type_mode mode);
 
-/* instance for GtkMisc */
+/* instance for NspGtkMisc */
 
 NspGtkMisc *new_gtkmisc();
 
@@ -34,23 +50,22 @@ NspGtkMisc *new_gtkmisc();
 
 #define NULLGTKMISC (NspGtkMisc*) 0
 
-NspGtkMisc *gtkmisc_create(char *name,NspTypeBase *type);
 
-/* from GtkMiscObj.c */
+/* from NspGtkMiscObj.c */
 
-extern NspGtkMisc *gtkmisc_object (NspObject *O); 
+extern NspGtkMisc *nsp_gtkmisc_object (NspObject *O); 
 extern int IsGtkMiscObj (Stack stack, int i); 
 extern int IsGtkMisc(NspObject *O);
 extern NspGtkMisc *GetGtkMiscCopy (Stack stack, int i); 
 extern NspGtkMisc *GetGtkMisc (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkMisc */
 
-#ifdef GtkMisc_Private 
+#ifdef NspGtkMisc_Private 
 static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type);
 static char *nsp_gtkmisc_type_as_string(void);
 static char *nsp_gtkmisc_type_short_string(NspObject *v);
 static AttrTab gtkmisc_attrs[];
-/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmisc_get_methods(void); 
-#endif /* GtkMisc_Private */
+/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkMisc_Private */

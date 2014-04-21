@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkIconTheme
-#define INC_NSP_GtkIconTheme
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkIconTheme
+#define NSP_INC_NspGtkIconTheme
 
 /*
-* NspGtkIconTheme inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkIconTheme */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkIconTheme inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkIconTheme *nsp_type_gtkicontheme;
 
 NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode);
 
-/* instance for GtkIconTheme */
+/* instance for NspGtkIconTheme */
 
 NspGtkIconTheme *new_gtkicontheme();
 
@@ -34,23 +50,22 @@ NspGtkIconTheme *new_gtkicontheme();
 
 #define NULLGTKICONTHEME (NspGtkIconTheme*) 0
 
-NspGtkIconTheme *gtkicontheme_create(char *name,NspTypeBase *type);
 
-/* from GtkIconThemeObj.c */
+/* from NspGtkIconThemeObj.c */
 
-extern NspGtkIconTheme *gtkicontheme_object (NspObject *O); 
+extern NspGtkIconTheme *nsp_gtkicontheme_object (NspObject *O); 
 extern int IsGtkIconThemeObj (Stack stack, int i); 
 extern int IsGtkIconTheme(NspObject *O);
 extern NspGtkIconTheme *GetGtkIconThemeCopy (Stack stack, int i); 
 extern NspGtkIconTheme *GetGtkIconTheme (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkIconTheme */
 
-#ifdef GtkIconTheme_Private 
+#ifdef NspGtkIconTheme_Private 
 static int init_gtkicontheme(NspGtkIconTheme *o,NspTypeGtkIconTheme *type);
 static char *nsp_gtkicontheme_type_as_string(void);
 static char *nsp_gtkicontheme_type_short_string(NspObject *v);
 static AttrTab gtkicontheme_attrs[];
-/* static int int_gtkicontheme_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkicontheme_get_methods(void); 
-#endif /* GtkIconTheme_Private */
+/* static int int_gtkicontheme_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkIconTheme_Private */

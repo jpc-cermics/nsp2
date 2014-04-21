@@ -74,7 +74,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 /* ----------- NspWebKitWebView ----------- */
 
 
-#define  WebKitWebView_Private 
+#define  NspWebKitWebView_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitwebview.h>
 #include <nsp/interf.h>
@@ -664,7 +664,7 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebFrame ----------- */
 
 
-#define  WebKitWebFrame_Private 
+#define  NspWebKitWebFrame_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitwebframe.h>
 #include <nsp/interf.h>
@@ -979,7 +979,7 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebHistoryItem ----------- */
 
 
-#define  WebKitWebHistoryItem_Private 
+#define  NspWebKitWebHistoryItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitwebhistoryitem.h>
 #include <nsp/interf.h>
@@ -1255,7 +1255,7 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebBackForwardList ----------- */
 
 
-#define  WebKitWebBackForwardList_Private 
+#define  NspWebKitWebBackForwardList_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitwebbackforwardlist.h>
 #include <nsp/interf.h>
@@ -1631,7 +1631,7 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspWebKitWebSettings ----------- */
 
 
-#define  WebKitWebSettings_Private 
+#define  NspWebKitWebSettings_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitwebsettings.h>
 #include <nsp/interf.h>
@@ -1860,7 +1860,7 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspWebKitNetworkRequest ----------- */
 
 
-#define  WebKitNetworkRequest_Private 
+#define  NspWebKitNetworkRequest_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/webkitnetworkrequest.h>
 #include <nsp/interf.h>

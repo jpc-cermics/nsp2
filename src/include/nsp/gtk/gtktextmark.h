@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTextMark
-#define INC_NSP_GtkTextMark
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTextMark
+#define NSP_INC_NspGtkTextMark
 
 /*
-* NspGtkTextMark inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTextMark */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTextMark inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTextMark *nsp_type_gtktextmark;
 
 NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode);
 
-/* instance for GtkTextMark */
+/* instance for NspGtkTextMark */
 
 NspGtkTextMark *new_gtktextmark();
 
@@ -34,23 +50,22 @@ NspGtkTextMark *new_gtktextmark();
 
 #define NULLGTKTEXTMARK (NspGtkTextMark*) 0
 
-NspGtkTextMark *gtktextmark_create(char *name,NspTypeBase *type);
 
-/* from GtkTextMarkObj.c */
+/* from NspGtkTextMarkObj.c */
 
-extern NspGtkTextMark *gtktextmark_object (NspObject *O); 
+extern NspGtkTextMark *nsp_gtktextmark_object (NspObject *O); 
 extern int IsGtkTextMarkObj (Stack stack, int i); 
 extern int IsGtkTextMark(NspObject *O);
 extern NspGtkTextMark *GetGtkTextMarkCopy (Stack stack, int i); 
 extern NspGtkTextMark *GetGtkTextMark (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTextMark */
 
-#ifdef GtkTextMark_Private 
+#ifdef NspGtkTextMark_Private 
 static int init_gtktextmark(NspGtkTextMark *o,NspTypeGtkTextMark *type);
 static char *nsp_gtktextmark_type_as_string(void);
 static char *nsp_gtktextmark_type_short_string(NspObject *v);
 static AttrTab gtktextmark_attrs[];
-/* static int int_gtktextmark_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktextmark_get_methods(void); 
-#endif /* GtkTextMark_Private */
+/* static int int_gtktextmark_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTextMark_Private */

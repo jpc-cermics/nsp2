@@ -282,7 +282,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 /* ----------- NspGtkBorder ----------- */
 
 
-#define  GtkBorder_Private 
+#define  NspGtkBorder_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkborder.h>
 #include <nsp/interf.h>
@@ -507,7 +507,7 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconInfo ----------- */
 
 
-#define  GtkIconInfo_Private 
+#define  NspGtkIconInfo_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkiconinfo.h>
 #include <nsp/interf.h>
@@ -818,7 +818,7 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconSet ----------- */
 
 
-#define  GtkIconSet_Private 
+#define  NspGtkIconSet_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkiconset.h>
 #include <nsp/interf.h>
@@ -1138,7 +1138,7 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconSource ----------- */
 
 
-#define  GtkIconSource_Private 
+#define  NspGtkIconSource_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkiconsource.h>
 #include <nsp/interf.h>
@@ -1572,7 +1572,7 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRequisition ----------- */
 
 
-#define  GtkRequisition_Private 
+#define  NspGtkRequisition_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkrequisition.h>
 #include <nsp/interf.h>
@@ -1836,7 +1836,7 @@ static AttrTab gtkrequisition_attrs[] = {
 /* ----------- NspGtkSelectionData ----------- */
 
 
-#define  GtkSelectionData_Private 
+#define  NspGtkSelectionData_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkselectiondata.h>
 #include <nsp/interf.h>
@@ -2256,7 +2256,7 @@ static AttrTab gtkselectiondata_attrs[] = {
 /* ----------- NspGtkTextAttributes ----------- */
 
 
-#define  GtkTextAttributes_Private 
+#define  NspGtkTextAttributes_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextattributes.h>
 #include <nsp/interf.h>
@@ -2762,7 +2762,7 @@ static AttrTab gtktextattributes_attrs[] = {
 /* ----------- NspGtkTextIter ----------- */
 
 
-#define  GtkTextIter_Private 
+#define  NspGtkTextIter_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextiter.h>
 #include <nsp/interf.h>
@@ -4140,7 +4140,7 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeIter ----------- */
 
 
-#define  GtkTreeIter_Private 
+#define  NspGtkTreeIter_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreeiter.h>
 #include <nsp/interf.h>
@@ -4365,7 +4365,7 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeRowReference ----------- */
 
 
-#define  GtkTreeRowReference_Private 
+#define  NspGtkTreeRowReference_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreerowreference.h>
 #include <nsp/interf.h>
@@ -4637,7 +4637,7 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreePath ----------- */
 
 
-#define  GtkTreePath_Private 
+#define  NspGtkTreePath_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreepath.h>
 #include <nsp/interf.h>
@@ -5078,7 +5078,7 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellEditable ----------- */
 
 
-#define  GtkCellEditable_Private 
+#define  NspGtkCellEditable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcelleditable.h>
 #include <nsp/interf.h>
@@ -5310,7 +5310,7 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellLayout ----------- */
 
 
-#define  GtkCellLayout_Private 
+#define  NspGtkCellLayout_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcelllayout.h>
 #include <nsp/interf.h>
@@ -5692,7 +5692,7 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkEditable ----------- */
 
 
-#define  GtkEditable_Private 
+#define  NspGtkEditable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkeditable.h>
 #include <nsp/interf.h>
@@ -6031,7 +6031,7 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileChooser ----------- */
 
 
-#define  GtkFileChooser_Private 
+#define  NspGtkFileChooser_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfilechooser.h>
 #include <nsp/interf.h>
@@ -6769,7 +6769,7 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeDragDest ----------- */
 
 
-#define  GtkTreeDragDest_Private 
+#define  NspGtkTreeDragDest_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreedragdest.h>
 #include <nsp/interf.h>
@@ -7020,7 +7020,7 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeDragSource ----------- */
 
 
-#define  GtkTreeDragSource_Private 
+#define  NspGtkTreeDragSource_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreedragsource.h>
 #include <nsp/interf.h>
@@ -7283,7 +7283,7 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeModel ----------- */
 
 
-#define  GtkTreeModel_Private 
+#define  NspGtkTreeModel_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreemodel.h>
 #include <nsp/interf.h>
@@ -8095,7 +8095,7 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeSortable ----------- */
 
 
-#define  GtkTreeSortable_Private 
+#define  NspGtkTreeSortable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreesortable.h>
 #include <nsp/interf.h>
@@ -8436,7 +8436,7 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAboutDialog ----------- */
 
 
-#define  GtkAboutDialog_Private 
+#define  NspGtkAboutDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaboutdialog.h>
 #include <nsp/interf.h>
@@ -8915,7 +8915,7 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAccelGroup ----------- */
 
 
-#define  GtkAccelGroup_Private 
+#define  NspGtkAccelGroup_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaccelgroup.h>
 #include <nsp/interf.h>
@@ -9162,7 +9162,7 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAccelLabel ----------- */
 
 
-#define  GtkAccelLabel_Private 
+#define  NspGtkAccelLabel_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaccellabel.h>
 #include <nsp/interf.h>
@@ -9434,7 +9434,7 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAccelMap ----------- */
 
 
-#define  GtkAccelMap_Private 
+#define  NspGtkAccelMap_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaccelmap.h>
 #include <nsp/interf.h>
@@ -9633,7 +9633,7 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAccessible ----------- */
 
 
-#define  GtkAccessible_Private 
+#define  NspGtkAccessible_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaccessible.h>
 #include <nsp/interf.h>
@@ -9844,7 +9844,7 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAction ----------- */
 
 
-#define  GtkAction_Private 
+#define  NspGtkAction_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaction.h>
 #include <nsp/interf.h>
@@ -10286,7 +10286,7 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkActionGroup ----------- */
 
 
-#define  GtkActionGroup_Private 
+#define  NspGtkActionGroup_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkactiongroup.h>
 #include <nsp/interf.h>
@@ -10660,7 +10660,7 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAdjustment ----------- */
 
 
-#define  GtkAdjustment_Private 
+#define  NspGtkAdjustment_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkadjustment.h>
 #include <nsp/interf.h>
@@ -11078,7 +11078,7 @@ static AttrTab gtkadjustment_attrs[] = {
 /* ----------- NspGtkAlignment ----------- */
 
 
-#define  GtkAlignment_Private 
+#define  NspGtkAlignment_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkalignment.h>
 #include <nsp/interf.h>
@@ -11322,7 +11322,7 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkArrow ----------- */
 
 
-#define  GtkArrow_Private 
+#define  NspGtkArrow_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkarrow.h>
 #include <nsp/interf.h>
@@ -11562,7 +11562,7 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkAspectFrame ----------- */
 
 
-#define  GtkAspectFrame_Private 
+#define  NspGtkAspectFrame_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkaspectframe.h>
 #include <nsp/interf.h>
@@ -11806,7 +11806,7 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkBin ----------- */
 
 
-#define  GtkBin_Private 
+#define  NspGtkBin_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkbin.h>
 #include <nsp/interf.h>
@@ -12034,7 +12034,7 @@ static AttrTab gtkbin_attrs[] = {
 /* ----------- NspGtkBox ----------- */
 
 
-#define  GtkBox_Private 
+#define  NspGtkBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkbox.h>
 #include <nsp/interf.h>
@@ -12388,7 +12388,7 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkButton ----------- */
 
 
-#define  GtkButton_Private 
+#define  NspGtkButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkbutton.h>
 #include <nsp/interf.h>
@@ -12804,7 +12804,7 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkButtonBox ----------- */
 
 
-#define  GtkButtonBox_Private 
+#define  NspGtkButtonBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkbuttonbox.h>
 #include <nsp/interf.h>
@@ -13104,7 +13104,7 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCalendar ----------- */
 
 
-#define  GtkCalendar_Private 
+#define  NspGtkCalendar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcalendar.h>
 #include <nsp/interf.h>
@@ -13445,7 +13445,7 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRenderer ----------- */
 
 
-#define  GtkCellRenderer_Private 
+#define  NspGtkCellRenderer_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrenderer.h>
 #include <nsp/interf.h>
@@ -13900,7 +13900,7 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRendererCombo ----------- */
 
 
-#define  GtkCellRendererCombo_Private 
+#define  NspGtkCellRendererCombo_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrenderercombo.h>
 #include <nsp/interf.h>
@@ -14112,7 +14112,7 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRendererPixbuf ----------- */
 
 
-#define  GtkCellRendererPixbuf_Private 
+#define  NspGtkCellRendererPixbuf_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrendererpixbuf.h>
 #include <nsp/interf.h>
@@ -14324,7 +14324,7 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRendererProgress ----------- */
 
 
-#define  GtkCellRendererProgress_Private 
+#define  NspGtkCellRendererProgress_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrendererprogress.h>
 #include <nsp/interf.h>
@@ -14536,7 +14536,7 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRendererText ----------- */
 
 
-#define  GtkCellRendererText_Private 
+#define  NspGtkCellRendererText_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrenderertext.h>
 #include <nsp/interf.h>
@@ -14762,7 +14762,7 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellRendererToggle ----------- */
 
 
-#define  GtkCellRendererToggle_Private 
+#define  NspGtkCellRendererToggle_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellrenderertoggle.h>
 #include <nsp/interf.h>
@@ -15018,7 +15018,7 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCellView ----------- */
 
 
-#define  GtkCellView_Private 
+#define  NspGtkCellView_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcellview.h>
 #include <nsp/interf.h>
@@ -15383,7 +15383,7 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCheckButton ----------- */
 
 
-#define  GtkCheckButton_Private 
+#define  NspGtkCheckButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcheckbutton.h>
 #include <nsp/interf.h>
@@ -15615,7 +15615,7 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkCheckMenuItem ----------- */
 
 
-#define  GtkCheckMenuItem_Private 
+#define  NspGtkCheckMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcheckmenuitem.h>
 #include <nsp/interf.h>
@@ -15949,7 +15949,7 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 /* ----------- NspGtkColorButton ----------- */
 
 
-#define  GtkColorButton_Private 
+#define  NspGtkColorButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcolorbutton.h>
 #include <nsp/interf.h>
@@ -16148,7 +16148,7 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkColorSelection ----------- */
 
 
-#define  GtkColorSelection_Private 
+#define  NspGtkColorSelection_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcolorselection.h>
 #include <nsp/interf.h>
@@ -16586,7 +16586,7 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkColorSelectionDialog ----------- */
 
 
-#define  GtkColorSelectionDialog_Private 
+#define  NspGtkColorSelectionDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcolorselectiondialog.h>
 #include <nsp/interf.h>
@@ -16840,7 +16840,7 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 /* ----------- NspGtkCombo ----------- */
 
 
-#define  GtkCombo_Private 
+#define  NspGtkCombo_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcombo.h>
 #include <nsp/interf.h>
@@ -17149,7 +17149,7 @@ static AttrTab gtkcombo_attrs[] = {
 /* ----------- NspGtkComboBox ----------- */
 
 
-#define  GtkComboBox_Private 
+#define  NspGtkComboBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcombobox.h>
 #include <nsp/interf.h>
@@ -17675,7 +17675,7 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkComboBoxEntry ----------- */
 
 
-#define  GtkComboBoxEntry_Private 
+#define  NspGtkComboBoxEntry_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcomboboxentry.h>
 #include <nsp/interf.h>
@@ -17949,7 +17949,7 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkContainer ----------- */
 
 
-#define  GtkContainer_Private 
+#define  NspGtkContainer_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcontainer.h>
 #include <nsp/interf.h>
@@ -18802,7 +18802,7 @@ static AttrTab gtkcontainer_attrs[] = {
 /* ----------- NspGtkCurve ----------- */
 
 
-#define  GtkCurve_Private 
+#define  NspGtkCurve_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkcurve.h>
 #include <nsp/interf.h>
@@ -19103,7 +19103,7 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkDialog ----------- */
 
 
-#define  GtkDialog_Private 
+#define  NspGtkDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkdialog.h>
 #include <nsp/interf.h>
@@ -19494,7 +19494,7 @@ static AttrTab gtkdialog_attrs[] = {
 /* ----------- NspGtkDrawingArea ----------- */
 
 
-#define  GtkDrawingArea_Private 
+#define  NspGtkDrawingArea_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkdrawingarea.h>
 #include <nsp/interf.h>
@@ -19721,7 +19721,7 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkEntry ----------- */
 
 
-#define  GtkEntry_Private 
+#define  NspGtkEntry_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkentry.h>
 #include <nsp/interf.h>
@@ -20277,7 +20277,7 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkEntryCompletion ----------- */
 
 
-#define  GtkEntryCompletion_Private 
+#define  NspGtkEntryCompletion_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkentrycompletion.h>
 #include <nsp/interf.h>
@@ -20711,7 +20711,7 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkEventBox ----------- */
 
 
-#define  GtkEventBox_Private 
+#define  NspGtkEventBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkeventbox.h>
 #include <nsp/interf.h>
@@ -20967,7 +20967,7 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkExpander ----------- */
 
 
-#define  GtkExpander_Private 
+#define  NspGtkExpander_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkexpander.h>
 #include <nsp/interf.h>
@@ -21323,7 +21323,7 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileChooserButton ----------- */
 
 
-#define  GtkFileChooserButton_Private 
+#define  NspGtkFileChooserButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfilechooserbutton.h>
 #include <nsp/interf.h>
@@ -21587,7 +21587,7 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileChooserDialog ----------- */
 
 
-#define  GtkFileChooserDialog_Private 
+#define  NspGtkFileChooserDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfilechooserdialog.h>
 #include <nsp/interf.h>
@@ -21838,7 +21838,7 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileChooserWidget ----------- */
 
 
-#define  GtkFileChooserWidget_Private 
+#define  NspGtkFileChooserWidget_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfilechooserwidget.h>
 #include <nsp/interf.h>
@@ -22057,7 +22057,7 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileFilter ----------- */
 
 
-#define  GtkFileFilter_Private 
+#define  NspGtkFileFilter_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfilefilter.h>
 #include <nsp/interf.h>
@@ -22331,7 +22331,7 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFileSelection ----------- */
 
 
-#define  GtkFileSelection_Private 
+#define  NspGtkFileSelection_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfileselection.h>
 #include <nsp/interf.h>
@@ -22802,7 +22802,7 @@ static AttrTab gtkfileselection_attrs[] = {
 /* ----------- NspGtkFixed ----------- */
 
 
-#define  GtkFixed_Private 
+#define  NspGtkFixed_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfixed.h>
 #include <nsp/interf.h>
@@ -23060,7 +23060,7 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFontButton ----------- */
 
 
-#define  GtkFontButton_Private 
+#define  NspGtkFontButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfontbutton.h>
 #include <nsp/interf.h>
@@ -23398,7 +23398,7 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFontSelection ----------- */
 
 
-#define  GtkFontSelection_Private 
+#define  NspGtkFontSelection_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfontselection.h>
 #include <nsp/interf.h>
@@ -23672,7 +23672,7 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkFontSelectionDialog ----------- */
 
 
-#define  GtkFontSelectionDialog_Private 
+#define  NspGtkFontSelectionDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkfontselectiondialog.h>
 #include <nsp/interf.h>
@@ -24006,7 +24006,7 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 /* ----------- NspGtkFrame ----------- */
 
 
-#define  GtkFrame_Private 
+#define  NspGtkFrame_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkframe.h>
 #include <nsp/interf.h>
@@ -24321,7 +24321,7 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkGammaCurve ----------- */
 
 
-#define  GtkGammaCurve_Private 
+#define  NspGtkGammaCurve_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkgammacurve.h>
 #include <nsp/interf.h>
@@ -24582,7 +24582,7 @@ static AttrTab gtkgammacurve_attrs[] = {
 /* ----------- NspGtkHandleBox ----------- */
 
 
-#define  GtkHandleBox_Private 
+#define  NspGtkHandleBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhandlebox.h>
 #include <nsp/interf.h>
@@ -24867,7 +24867,7 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHBox ----------- */
 
 
-#define  GtkHBox_Private 
+#define  NspGtkHBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhbox.h>
 #include <nsp/interf.h>
@@ -25085,7 +25085,7 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHButtonBox ----------- */
 
 
-#define  GtkHButtonBox_Private 
+#define  NspGtkHButtonBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhbuttonbox.h>
 #include <nsp/interf.h>
@@ -25297,7 +25297,7 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHPaned ----------- */
 
 
-#define  GtkHPaned_Private 
+#define  NspGtkHPaned_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhpaned.h>
 #include <nsp/interf.h>
@@ -25509,7 +25509,7 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHRuler ----------- */
 
 
-#define  GtkHRuler_Private 
+#define  NspGtkHRuler_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhruler.h>
 #include <nsp/interf.h>
@@ -25721,7 +25721,7 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHScale ----------- */
 
 
-#define  GtkHScale_Private 
+#define  NspGtkHScale_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhscale.h>
 #include <nsp/interf.h>
@@ -25947,7 +25947,7 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHScrollbar ----------- */
 
 
-#define  GtkHScrollbar_Private 
+#define  NspGtkHScrollbar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhscrollbar.h>
 #include <nsp/interf.h>
@@ -26173,7 +26173,7 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkHSeparator ----------- */
 
 
-#define  GtkHSeparator_Private 
+#define  NspGtkHSeparator_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkhseparator.h>
 #include <nsp/interf.h>
@@ -26385,7 +26385,7 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconFactory ----------- */
 
 
-#define  GtkIconFactory_Private 
+#define  NspGtkIconFactory_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkiconfactory.h>
 #include <nsp/interf.h>
@@ -26651,7 +26651,7 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconTheme ----------- */
 
 
-#define  GtkIconTheme_Private 
+#define  NspGtkIconTheme_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkicontheme.h>
 #include <nsp/interf.h>
@@ -27010,7 +27010,7 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIconView ----------- */
 
 
-#define  GtkIconView_Private 
+#define  NspGtkIconView_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkiconview.h>
 #include <nsp/interf.h>
@@ -27830,7 +27830,7 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkImage ----------- */
 
 
-#define  GtkImage_Private 
+#define  NspGtkImage_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkimage.h>
 #include <nsp/interf.h>
@@ -28424,7 +28424,7 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkImageMenuItem ----------- */
 
 
-#define  GtkImageMenuItem_Private 
+#define  NspGtkImageMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkimagemenuitem.h>
 #include <nsp/interf.h>
@@ -28694,7 +28694,7 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIMContext ----------- */
 
 
-#define  GtkIMContext_Private 
+#define  NspGtkIMContext_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkimcontext.h>
 #include <nsp/interf.h>
@@ -29048,7 +29048,7 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIMContextSimple ----------- */
 
 
-#define  GtkIMContextSimple_Private 
+#define  NspGtkIMContextSimple_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkimcontextsimple.h>
 #include <nsp/interf.h>
@@ -29260,7 +29260,7 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkIMMulticontext ----------- */
 
 
-#define  GtkIMMulticontext_Private 
+#define  NspGtkIMMulticontext_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkimmulticontext.h>
 #include <nsp/interf.h>
@@ -29486,7 +29486,7 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkInputDialog ----------- */
 
 
-#define  GtkInputDialog_Private 
+#define  NspGtkInputDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkinputdialog.h>
 #include <nsp/interf.h>
@@ -29699,7 +29699,7 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkInvisible ----------- */
 
 
-#define  GtkInvisible_Private 
+#define  NspGtkInvisible_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkinvisible.h>
 #include <nsp/interf.h>
@@ -29939,7 +29939,7 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkItem ----------- */
 
 
-#define  GtkItem_Private 
+#define  NspGtkItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkitem.h>
 #include <nsp/interf.h>
@@ -30166,7 +30166,7 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkItemFactory ----------- */
 
 
-#define  GtkItemFactory_Private 
+#define  NspGtkItemFactory_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkitemfactory.h>
 #include <nsp/interf.h>
@@ -30647,7 +30647,7 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkLabel ----------- */
 
 
-#define  GtkLabel_Private 
+#define  NspGtkLabel_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtklabel.h>
 #include <nsp/interf.h>
@@ -31311,7 +31311,7 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkLayout ----------- */
 
 
-#define  GtkLayout_Private 
+#define  NspGtkLayout_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtklayout.h>
 #include <nsp/interf.h>
@@ -31698,7 +31698,7 @@ static AttrTab gtklayout_attrs[] = {
 /* ----------- NspGtkListStore ----------- */
 
 
-#define  GtkListStore_Private 
+#define  NspGtkListStore_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkliststore.h>
 #include <nsp/interf.h>
@@ -32321,7 +32321,7 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMenu ----------- */
 
 
-#define  GtkMenu_Private 
+#define  NspGtkMenu_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmenu.h>
 #include <nsp/interf.h>
@@ -32862,7 +32862,7 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMenuBar ----------- */
 
 
-#define  GtkMenuBar_Private 
+#define  NspGtkMenuBar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmenubar.h>
 #include <nsp/interf.h>
@@ -33124,7 +33124,7 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMenuItem ----------- */
 
 
-#define  GtkMenuItem_Private 
+#define  NspGtkMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmenuitem.h>
 #include <nsp/interf.h>
@@ -33470,7 +33470,7 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMenuShell ----------- */
 
 
-#define  GtkMenuShell_Private 
+#define  NspGtkMenuShell_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmenushell.h>
 #include <nsp/interf.h>
@@ -33779,7 +33779,7 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMenuToolButton ----------- */
 
 
-#define  GtkMenuToolButton_Private 
+#define  NspGtkMenuToolButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmenutoolbutton.h>
 #include <nsp/interf.h>
@@ -34036,7 +34036,7 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkMessageDialog ----------- */
 
 
-#define  GtkMessageDialog_Private 
+#define  NspGtkMessageDialog_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmessagedialog.h>
 #include <nsp/interf.h>
@@ -34319,7 +34319,7 @@ static AttrTab gtkmessagedialog_attrs[] = {
 /* ----------- NspGtkMisc ----------- */
 
 
-#define  GtkMisc_Private 
+#define  NspGtkMisc_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkmisc.h>
 #include <nsp/interf.h>
@@ -34570,7 +34570,7 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkNotebook ----------- */
 
 
-#define  GtkNotebook_Private 
+#define  NspGtkNotebook_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtknotebook.h>
 #include <nsp/interf.h>
@@ -35250,7 +35250,7 @@ static AttrTab gtknotebook_attrs[] = {
 /* ----------- NspGtkObject ----------- */
 
 
-#define  GtkObject_Private 
+#define  NspGtkObject_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkobject.h>
 #include <nsp/interf.h>
@@ -35491,7 +35491,7 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkOldEditable ----------- */
 
 
-#define  GtkOldEditable_Private 
+#define  NspGtkOldEditable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkoldeditable.h>
 #include <nsp/interf.h>
@@ -35718,7 +35718,7 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkOptionMenu ----------- */
 
 
-#define  GtkOptionMenu_Private 
+#define  NspGtkOptionMenu_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkoptionmenu.h>
 #include <nsp/interf.h>
@@ -35985,7 +35985,7 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkPaned ----------- */
 
 
-#define  GtkPaned_Private 
+#define  NspGtkPaned_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkpaned.h>
 #include <nsp/interf.h>
@@ -36337,7 +36337,7 @@ static AttrTab gtkpaned_attrs[] = {
 /* ----------- NspGtkPlug ----------- */
 
 
-#define  GtkPlug_Private 
+#define  NspGtkPlug_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkplug.h>
 #include <nsp/interf.h>
@@ -36587,7 +36587,7 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkPreview ----------- */
 
 
-#define  GtkPreview_Private 
+#define  NspGtkPreview_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkpreview.h>
 #include <nsp/interf.h>
@@ -36865,7 +36865,7 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkProgress ----------- */
 
 
-#define  GtkProgress_Private 
+#define  NspGtkProgress_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkprogress.h>
 #include <nsp/interf.h>
@@ -37064,7 +37064,7 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkProgressBar ----------- */
 
 
-#define  GtkProgressBar_Private 
+#define  NspGtkProgressBar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkprogressbar.h>
 #include <nsp/interf.h>
@@ -37429,7 +37429,7 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRadioAction ----------- */
 
 
-#define  GtkRadioAction_Private 
+#define  NspGtkRadioAction_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkradioaction.h>
 #include <nsp/interf.h>
@@ -37725,7 +37725,7 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRadioButton ----------- */
 
 
-#define  GtkRadioButton_Private 
+#define  NspGtkRadioButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkradiobutton.h>
 #include <nsp/interf.h>
@@ -37990,7 +37990,7 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRadioMenuItem ----------- */
 
 
-#define  GtkRadioMenuItem_Private 
+#define  NspGtkRadioMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkradiomenuitem.h>
 #include <nsp/interf.h>
@@ -38299,7 +38299,7 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRadioToolButton ----------- */
 
 
-#define  GtkRadioToolButton_Private 
+#define  NspGtkRadioToolButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkradiotoolbutton.h>
 #include <nsp/interf.h>
@@ -38583,7 +38583,7 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRange ----------- */
 
 
-#define  GtkRange_Private 
+#define  NspGtkRange_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkrange.h>
 #include <nsp/interf.h>
@@ -38892,7 +38892,7 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRcStyle ----------- */
 
 
-#define  GtkRcStyle_Private 
+#define  NspGtkRcStyle_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkrcstyle.h>
 #include <nsp/interf.h>
@@ -39142,7 +39142,7 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkRuler ----------- */
 
 
-#define  GtkRuler_Private 
+#define  NspGtkRuler_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkruler.h>
 #include <nsp/interf.h>
@@ -39409,7 +39409,7 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkScale ----------- */
 
 
-#define  GtkScale_Private 
+#define  NspGtkScale_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkscale.h>
 #include <nsp/interf.h>
@@ -39698,7 +39698,7 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkScrollbar ----------- */
 
 
-#define  GtkScrollbar_Private 
+#define  NspGtkScrollbar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkscrollbar.h>
 #include <nsp/interf.h>
@@ -39897,7 +39897,7 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkScrolledWindow ----------- */
 
 
-#define  GtkScrolledWindow_Private 
+#define  NspGtkScrolledWindow_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkscrolledwindow.h>
 #include <nsp/interf.h>
@@ -40279,7 +40279,7 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSeparator ----------- */
 
 
-#define  GtkSeparator_Private 
+#define  NspGtkSeparator_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkseparator.h>
 #include <nsp/interf.h>
@@ -40478,7 +40478,7 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSeparatorMenuItem ----------- */
 
 
-#define  GtkSeparatorMenuItem_Private 
+#define  NspGtkSeparatorMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkseparatormenuitem.h>
 #include <nsp/interf.h>
@@ -40690,7 +40690,7 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSeparatorToolItem ----------- */
 
 
-#define  GtkSeparatorToolItem_Private 
+#define  NspGtkSeparatorToolItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkseparatortoolitem.h>
 #include <nsp/interf.h>
@@ -40926,7 +40926,7 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSettings ----------- */
 
 
-#define  GtkSettings_Private 
+#define  NspGtkSettings_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtksettings.h>
 #include <nsp/interf.h>
@@ -41161,7 +41161,7 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSizeGroup ----------- */
 
 
-#define  GtkSizeGroup_Private 
+#define  NspGtkSizeGroup_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtksizegroup.h>
 #include <nsp/interf.h>
@@ -41445,7 +41445,7 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSocket ----------- */
 
 
-#define  GtkSocket_Private 
+#define  NspGtkSocket_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtksocket.h>
 #include <nsp/interf.h>
@@ -41692,7 +41692,7 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkSpinButton ----------- */
 
 
-#define  GtkSpinButton_Private 
+#define  NspGtkSpinButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkspinbutton.h>
 #include <nsp/interf.h>
@@ -42183,7 +42183,7 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkStatusbar ----------- */
 
 
-#define  GtkStatusbar_Private 
+#define  NspGtkStatusbar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkstatusbar.h>
 #include <nsp/interf.h>
@@ -42463,7 +42463,7 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkStyle ----------- */
 
 
-#define  GtkStyle_Private 
+#define  NspGtkStyle_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkstyle.h>
 #include <nsp/interf.h>
@@ -44320,7 +44320,7 @@ static AttrTab gtkstyle_attrs[] = {
 /* ----------- NspGtkTable ----------- */
 
 
-#define  GtkTable_Private 
+#define  NspGtkTable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktable.h>
 #include <nsp/interf.h>
@@ -44689,7 +44689,7 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTearoffMenuItem ----------- */
 
 
-#define  GtkTearoffMenuItem_Private 
+#define  NspGtkTearoffMenuItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktearoffmenuitem.h>
 #include <nsp/interf.h>
@@ -44901,7 +44901,7 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTextBuffer ----------- */
 
 
-#define  GtkTextBuffer_Private 
+#define  NspGtkTextBuffer_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextbuffer.h>
 #include <nsp/interf.h>
@@ -46155,7 +46155,7 @@ static AttrTab gtktextbuffer_attrs[] = {
 /* ----------- NspGtkTextChildAnchor ----------- */
 
 
-#define  GtkTextChildAnchor_Private 
+#define  NspGtkTextChildAnchor_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextchildanchor.h>
 #include <nsp/interf.h>
@@ -46394,7 +46394,7 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTextMark ----------- */
 
 
-#define  GtkTextMark_Private 
+#define  NspGtkTextMark_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextmark.h>
 #include <nsp/interf.h>
@@ -46660,7 +46660,7 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTextTag ----------- */
 
 
-#define  GtkTextTag_Private 
+#define  NspGtkTextTag_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktexttag.h>
 #include <nsp/interf.h>
@@ -46928,7 +46928,7 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTextTagTable ----------- */
 
 
-#define  GtkTextTagTable_Private 
+#define  NspGtkTextTagTable_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktexttagtable.h>
 #include <nsp/interf.h>
@@ -47189,7 +47189,7 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTextView ----------- */
 
 
-#define  GtkTextView_Private 
+#define  NspGtkTextView_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktextview.h>
 #include <nsp/interf.h>
@@ -48180,7 +48180,7 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkToggleAction ----------- */
 
 
-#define  GtkToggleAction_Private 
+#define  NspGtkToggleAction_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktoggleaction.h>
 #include <nsp/interf.h>
@@ -48446,7 +48446,7 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkToggleButton ----------- */
 
 
-#define  GtkToggleButton_Private 
+#define  NspGtkToggleButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktogglebutton.h>
 #include <nsp/interf.h>
@@ -48775,7 +48775,7 @@ static AttrTab gtktogglebutton_attrs[] = {
 /* ----------- NspGtkToggleToolButton ----------- */
 
 
-#define  GtkToggleToolButton_Private 
+#define  NspGtkToggleToolButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktoggletoolbutton.h>
 #include <nsp/interf.h>
@@ -49011,7 +49011,7 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkToolbar ----------- */
 
 
-#define  GtkToolbar_Private 
+#define  NspGtkToolbar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktoolbar.h>
 #include <nsp/interf.h>
@@ -49809,7 +49809,7 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkToolButton ----------- */
 
 
-#define  GtkToolButton_Private 
+#define  NspGtkToolButton_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktoolbutton.h>
 #include <nsp/interf.h>
@@ -50200,7 +50200,7 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkToolItem ----------- */
 
 
-#define  GtkToolItem_Private 
+#define  NspGtkToolItem_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktoolitem.h>
 #include <nsp/interf.h>
@@ -50650,7 +50650,7 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTooltips ----------- */
 
 
-#define  GtkTooltips_Private 
+#define  NspGtkTooltips_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktooltips.h>
 #include <nsp/interf.h>
@@ -51013,7 +51013,7 @@ static AttrTab gtktooltips_attrs[] = {
 /* ----------- NspGtkTreeModelFilter ----------- */
 
 
-#define  GtkTreeModelFilter_Private 
+#define  NspGtkTreeModelFilter_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreemodelfilter.h>
 #include <nsp/interf.h>
@@ -51346,7 +51346,7 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeModelSort ----------- */
 
 
-#define  GtkTreeModelSort_Private 
+#define  NspGtkTreeModelSort_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreemodelsort.h>
 #include <nsp/interf.h>
@@ -51703,7 +51703,7 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeSelection ----------- */
 
 
-#define  GtkTreeSelection_Private 
+#define  NspGtkTreeSelection_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreeselection.h>
 #include <nsp/interf.h>
@@ -52313,7 +52313,7 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeStore ----------- */
 
 
-#define  GtkTreeStore_Private 
+#define  NspGtkTreeStore_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreestore.h>
 #include <nsp/interf.h>
@@ -53064,7 +53064,7 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeView ----------- */
 
 
-#define  GtkTreeView_Private 
+#define  NspGtkTreeView_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreeview.h>
 #include <nsp/interf.h>
@@ -54350,7 +54350,7 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkTreeViewColumn ----------- */
 
 
-#define  GtkTreeViewColumn_Private 
+#define  NspGtkTreeViewColumn_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtktreeviewcolumn.h>
 #include <nsp/interf.h>
@@ -55215,7 +55215,7 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkUIManager ----------- */
 
 
-#define  GtkUIManager_Private 
+#define  NspGtkUIManager_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkuimanager.h>
 #include <nsp/interf.h>
@@ -55635,7 +55635,7 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVBox ----------- */
 
 
-#define  GtkVBox_Private 
+#define  NspGtkVBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvbox.h>
 #include <nsp/interf.h>
@@ -55853,7 +55853,7 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVButtonBox ----------- */
 
 
-#define  GtkVButtonBox_Private 
+#define  NspGtkVButtonBox_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvbuttonbox.h>
 #include <nsp/interf.h>
@@ -56065,7 +56065,7 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkViewport ----------- */
 
 
-#define  GtkViewport_Private 
+#define  NspGtkViewport_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkviewport.h>
 #include <nsp/interf.h>
@@ -56397,7 +56397,7 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVPaned ----------- */
 
 
-#define  GtkVPaned_Private 
+#define  NspGtkVPaned_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvpaned.h>
 #include <nsp/interf.h>
@@ -56609,7 +56609,7 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVRuler ----------- */
 
 
-#define  GtkVRuler_Private 
+#define  NspGtkVRuler_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvruler.h>
 #include <nsp/interf.h>
@@ -56821,7 +56821,7 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVScale ----------- */
 
 
-#define  GtkVScale_Private 
+#define  NspGtkVScale_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvscale.h>
 #include <nsp/interf.h>
@@ -57047,7 +57047,7 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVScrollbar ----------- */
 
 
-#define  GtkVScrollbar_Private 
+#define  NspGtkVScrollbar_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvscrollbar.h>
 #include <nsp/interf.h>
@@ -57273,7 +57273,7 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkVSeparator ----------- */
 
 
-#define  GtkVSeparator_Private 
+#define  NspGtkVSeparator_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkvseparator.h>
 #include <nsp/interf.h>
@@ -57485,7 +57485,7 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspGtkWidget ----------- */
 
 
-#define  GtkWidget_Private 
+#define  NspGtkWidget_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkwidget.h>
 #include <nsp/interf.h>
@@ -59660,7 +59660,7 @@ static AttrTab gtkwidget_attrs[] = {
 /* ----------- NspGtkWindow ----------- */
 
 
-#define  GtkWindow_Private 
+#define  NspGtkWindow_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkwindow.h>
 #include <nsp/interf.h>
@@ -61126,7 +61126,7 @@ static AttrTab gtkwindow_attrs[] = {
 /* ----------- NspGtkWindowGroup ----------- */
 
 
-#define  GtkWindowGroup_Private 
+#define  NspGtkWindowGroup_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/gtkwindowgroup.h>
 #include <nsp/interf.h>

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTreeModelSort
-#define INC_NSP_GtkTreeModelSort
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTreeModelSort
+#define NSP_INC_NspGtkTreeModelSort
 
 /*
-* NspGtkTreeModelSort inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTreeModelSort */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTreeModelSort inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTreeModelSort *nsp_type_gtktreemodelsort;
 
 NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode);
 
-/* instance for GtkTreeModelSort */
+/* instance for NspGtkTreeModelSort */
 
 NspGtkTreeModelSort *new_gtktreemodelsort();
 
@@ -34,23 +50,22 @@ NspGtkTreeModelSort *new_gtktreemodelsort();
 
 #define NULLGTKTREEMODELSORT (NspGtkTreeModelSort*) 0
 
-NspGtkTreeModelSort *gtktreemodelsort_create(char *name,NspTypeBase *type);
 
-/* from GtkTreeModelSortObj.c */
+/* from NspGtkTreeModelSortObj.c */
 
-extern NspGtkTreeModelSort *gtktreemodelsort_object (NspObject *O); 
+extern NspGtkTreeModelSort *nsp_gtktreemodelsort_object (NspObject *O); 
 extern int IsGtkTreeModelSortObj (Stack stack, int i); 
 extern int IsGtkTreeModelSort(NspObject *O);
 extern NspGtkTreeModelSort *GetGtkTreeModelSortCopy (Stack stack, int i); 
 extern NspGtkTreeModelSort *GetGtkTreeModelSort (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTreeModelSort */
 
-#ifdef GtkTreeModelSort_Private 
+#ifdef NspGtkTreeModelSort_Private 
 static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type);
 static char *nsp_gtktreemodelsort_type_as_string(void);
 static char *nsp_gtktreemodelsort_type_short_string(NspObject *v);
 static AttrTab gtktreemodelsort_attrs[];
-/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreemodelsort_get_methods(void); 
-#endif /* GtkTreeModelSort_Private */
+/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTreeModelSort_Private */

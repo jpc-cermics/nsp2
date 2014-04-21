@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkToggleToolButton
-#define INC_NSP_GtkToggleToolButton
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtktoolbutton.h"
+#ifndef NSP_INC_NspGtkToggleToolButton
+#define NSP_INC_NspGtkToggleToolButton
 
 /*
-* NspGtkToggleToolButton inherits from NspGtkToolButton
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkToggleToolButton */
+
+#include <nsp/gtk/gtktoolbutton.h>
+
+/*
+* NspGtkToggleToolButton inherits from GtkToolButton
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkToggleToolButton *nsp_type_gtktoggletoolbutton;
 
 NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode);
 
-/* instance for GtkToggleToolButton */
+/* instance for NspGtkToggleToolButton */
 
 NspGtkToggleToolButton *new_gtktoggletoolbutton();
 
@@ -34,23 +50,22 @@ NspGtkToggleToolButton *new_gtktoggletoolbutton();
 
 #define NULLGTKTOGGLETOOLBUTTON (NspGtkToggleToolButton*) 0
 
-NspGtkToggleToolButton *gtktoggletoolbutton_create(char *name,NspTypeBase *type);
 
-/* from GtkToggleToolButtonObj.c */
+/* from NspGtkToggleToolButtonObj.c */
 
-extern NspGtkToggleToolButton *gtktoggletoolbutton_object (NspObject *O); 
+extern NspGtkToggleToolButton *nsp_gtktoggletoolbutton_object (NspObject *O); 
 extern int IsGtkToggleToolButtonObj (Stack stack, int i); 
 extern int IsGtkToggleToolButton(NspObject *O);
 extern NspGtkToggleToolButton *GetGtkToggleToolButtonCopy (Stack stack, int i); 
 extern NspGtkToggleToolButton *GetGtkToggleToolButton (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkToggleToolButton */
 
-#ifdef GtkToggleToolButton_Private 
+#ifdef NspGtkToggleToolButton_Private 
 static int init_gtktoggletoolbutton(NspGtkToggleToolButton *o,NspTypeGtkToggleToolButton *type);
 static char *nsp_gtktoggletoolbutton_type_as_string(void);
 static char *nsp_gtktoggletoolbutton_type_short_string(NspObject *v);
 static AttrTab gtktoggletoolbutton_attrs[];
-/* static int int_gtktoggletoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktoggletoolbutton_get_methods(void); 
-#endif /* GtkToggleToolButton_Private */
+/* static int int_gtktoggletoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkToggleToolButton_Private */

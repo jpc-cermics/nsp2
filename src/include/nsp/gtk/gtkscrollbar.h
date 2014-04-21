@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkScrollbar
-#define INC_NSP_GtkScrollbar
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkrange.h"
+#ifndef NSP_INC_NspGtkScrollbar
+#define NSP_INC_NspGtkScrollbar
 
 /*
-* NspGtkScrollbar inherits from NspGtkRange
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkScrollbar */
+
+#include <nsp/gtk/gtkrange.h>
+
+/*
+* NspGtkScrollbar inherits from GtkRange
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkScrollbar *nsp_type_gtkscrollbar;
 
 NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode);
 
-/* instance for GtkScrollbar */
+/* instance for NspGtkScrollbar */
 
 NspGtkScrollbar *new_gtkscrollbar();
 
@@ -34,23 +50,22 @@ NspGtkScrollbar *new_gtkscrollbar();
 
 #define NULLGTKSCROLLBAR (NspGtkScrollbar*) 0
 
-NspGtkScrollbar *gtkscrollbar_create(char *name,NspTypeBase *type);
 
-/* from GtkScrollbarObj.c */
+/* from NspGtkScrollbarObj.c */
 
-extern NspGtkScrollbar *gtkscrollbar_object (NspObject *O); 
+extern NspGtkScrollbar *nsp_gtkscrollbar_object (NspObject *O); 
 extern int IsGtkScrollbarObj (Stack stack, int i); 
 extern int IsGtkScrollbar(NspObject *O);
 extern NspGtkScrollbar *GetGtkScrollbarCopy (Stack stack, int i); 
 extern NspGtkScrollbar *GetGtkScrollbar (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkScrollbar */
 
-#ifdef GtkScrollbar_Private 
+#ifdef NspGtkScrollbar_Private 
 static int init_gtkscrollbar(NspGtkScrollbar *o,NspTypeGtkScrollbar *type);
 static char *nsp_gtkscrollbar_type_as_string(void);
 static char *nsp_gtkscrollbar_type_short_string(NspObject *v);
 static AttrTab gtkscrollbar_attrs[];
-/* static int int_gtkscrollbar_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkscrollbar_get_methods(void); 
-#endif /* GtkScrollbar_Private */
+/* static int int_gtkscrollbar_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkScrollbar_Private */

@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkFixed
-#define INC_NSP_GtkFixed
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkcontainer.h"
+#ifndef NSP_INC_NspGtkFixed
+#define NSP_INC_NspGtkFixed
 
 /*
-* NspGtkFixed inherits from NspGtkContainer
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkFixed */
+
+#include <nsp/gtk/gtkcontainer.h>
+
+/*
+* NspGtkFixed inherits from GtkContainer
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkFixed *nsp_type_gtkfixed;
 
 NspTypeGtkFixed *new_type_gtkfixed(type_mode mode);
 
-/* instance for GtkFixed */
+/* instance for NspGtkFixed */
 
 NspGtkFixed *new_gtkfixed();
 
@@ -34,23 +50,22 @@ NspGtkFixed *new_gtkfixed();
 
 #define NULLGTKFIXED (NspGtkFixed*) 0
 
-NspGtkFixed *gtkfixed_create(char *name,NspTypeBase *type);
 
-/* from GtkFixedObj.c */
+/* from NspGtkFixedObj.c */
 
-extern NspGtkFixed *gtkfixed_object (NspObject *O); 
+extern NspGtkFixed *nsp_gtkfixed_object (NspObject *O); 
 extern int IsGtkFixedObj (Stack stack, int i); 
 extern int IsGtkFixed(NspObject *O);
 extern NspGtkFixed *GetGtkFixedCopy (Stack stack, int i); 
 extern NspGtkFixed *GetGtkFixed (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkFixed */
 
-#ifdef GtkFixed_Private 
+#ifdef NspGtkFixed_Private 
 static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type);
 static char *nsp_gtkfixed_type_as_string(void);
 static char *nsp_gtkfixed_type_short_string(NspObject *v);
 static AttrTab gtkfixed_attrs[];
-/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkfixed_get_methods(void); 
-#endif /* GtkFixed_Private */
+/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkFixed_Private */

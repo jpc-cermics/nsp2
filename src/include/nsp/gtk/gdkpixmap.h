@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GdkPixmap
-#define INC_NSP_GdkPixmap
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gdkdrawable.h"
+#ifndef NSP_INC_NspGdkPixmap
+#define NSP_INC_NspGdkPixmap
 
 /*
-* NspGdkPixmap inherits from NspGdkDrawable
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGdkPixmap */
+
+#include <nsp/gtk/gdkdrawable.h>
+
+/*
+* NspGdkPixmap inherits from GdkDrawable
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGdkPixmap *nsp_type_gdkpixmap;
 
 NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode);
 
-/* instance for GdkPixmap */
+/* instance for NspGdkPixmap */
 
 NspGdkPixmap *new_gdkpixmap();
 
@@ -34,23 +50,22 @@ NspGdkPixmap *new_gdkpixmap();
 
 #define NULLGDKPIXMAP (NspGdkPixmap*) 0
 
-NspGdkPixmap *gdkpixmap_create(char *name,NspTypeBase *type);
 
-/* from GdkPixmapObj.c */
+/* from NspGdkPixmapObj.c */
 
-extern NspGdkPixmap *gdkpixmap_object (NspObject *O); 
+extern NspGdkPixmap *nsp_gdkpixmap_object (NspObject *O); 
 extern int IsGdkPixmapObj (Stack stack, int i); 
 extern int IsGdkPixmap(NspObject *O);
 extern NspGdkPixmap *GetGdkPixmapCopy (Stack stack, int i); 
 extern NspGdkPixmap *GetGdkPixmap (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGdkPixmap */
 
-#ifdef GdkPixmap_Private 
+#ifdef NspGdkPixmap_Private 
 static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type);
 static char *nsp_gdkpixmap_type_as_string(void);
 static char *nsp_gdkpixmap_type_short_string(NspObject *v);
 static AttrTab gdkpixmap_attrs[];
-/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gdkpixmap_get_methods(void); 
-#endif /* GdkPixmap_Private */
+/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGdkPixmap_Private */

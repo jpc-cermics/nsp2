@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkScale
-#define INC_NSP_GtkScale
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkrange.h"
+#ifndef NSP_INC_NspGtkScale
+#define NSP_INC_NspGtkScale
 
 /*
-* NspGtkScale inherits from NspGtkRange
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkScale */
+
+#include <nsp/gtk/gtkrange.h>
+
+/*
+* NspGtkScale inherits from GtkRange
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkScale *nsp_type_gtkscale;
 
 NspTypeGtkScale *new_type_gtkscale(type_mode mode);
 
-/* instance for GtkScale */
+/* instance for NspGtkScale */
 
 NspGtkScale *new_gtkscale();
 
@@ -34,23 +50,22 @@ NspGtkScale *new_gtkscale();
 
 #define NULLGTKSCALE (NspGtkScale*) 0
 
-NspGtkScale *gtkscale_create(char *name,NspTypeBase *type);
 
-/* from GtkScaleObj.c */
+/* from NspGtkScaleObj.c */
 
-extern NspGtkScale *gtkscale_object (NspObject *O); 
+extern NspGtkScale *nsp_gtkscale_object (NspObject *O); 
 extern int IsGtkScaleObj (Stack stack, int i); 
 extern int IsGtkScale(NspObject *O);
 extern NspGtkScale *GetGtkScaleCopy (Stack stack, int i); 
 extern NspGtkScale *GetGtkScale (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkScale */
 
-#ifdef GtkScale_Private 
+#ifdef NspGtkScale_Private 
 static int init_gtkscale(NspGtkScale *o,NspTypeGtkScale *type);
 static char *nsp_gtkscale_type_as_string(void);
 static char *nsp_gtkscale_type_short_string(NspObject *v);
 static AttrTab gtkscale_attrs[];
-/* static int int_gtkscale_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkscale_get_methods(void); 
-#endif /* GtkScale_Private */
+/* static int int_gtkscale_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkScale_Private */

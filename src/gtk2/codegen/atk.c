@@ -50,7 +50,7 @@
 /* ----------- NspAtkHyperlink ----------- */
 
 
-#define  AtkHyperlink_Private 
+#define  NspAtkHyperlink_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkhyperlink.h>
 #include <nsp/interf.h>
@@ -321,7 +321,7 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkObject ----------- */
 
 
-#define  AtkObject_Private 
+#define  NspAtkObject_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkobject.h>
 #include <nsp/interf.h>
@@ -701,7 +701,7 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkNoOpObject ----------- */
 
 
-#define  AtkNoOpObject_Private 
+#define  NspAtkNoOpObject_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atknoopobject.h>
 #include <nsp/interf.h>
@@ -915,7 +915,7 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkObjectFactory ----------- */
 
 
-#define  AtkObjectFactory_Private 
+#define  NspAtkObjectFactory_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkobjectfactory.h>
 #include <nsp/interf.h>
@@ -1141,7 +1141,7 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkNoOpObjectFactory ----------- */
 
 
-#define  AtkNoOpObjectFactory_Private 
+#define  NspAtkNoOpObjectFactory_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atknoopobjectfactory.h>
 #include <nsp/interf.h>
@@ -1353,7 +1353,7 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkRegistry ----------- */
 
 
-#define  AtkRegistry_Private 
+#define  NspAtkRegistry_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkregistry.h>
 #include <nsp/interf.h>
@@ -1601,7 +1601,7 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkRelation ----------- */
 
 
-#define  AtkRelation_Private 
+#define  NspAtkRelation_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkrelation.h>
 #include <nsp/interf.h>
@@ -1858,7 +1858,7 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkRelationSet ----------- */
 
 
-#define  AtkRelationSet_Private 
+#define  NspAtkRelationSet_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkrelationset.h>
 #include <nsp/interf.h>
@@ -2151,7 +2151,7 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkStateSet ----------- */
 
 
-#define  AtkStateSet_Private 
+#define  NspAtkStateSet_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkstateset.h>
 #include <nsp/interf.h>
@@ -2462,7 +2462,7 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /* ----------- NspAtkUtil ----------- */
 
 
-#define  AtkUtil_Private 
+#define  NspAtkUtil_Private 
 #include <nsp/objects.h>
 #include <nsp/gtk/atkutil.h>
 #include <nsp/interf.h>

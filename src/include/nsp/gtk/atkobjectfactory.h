@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_AtkObjectFactory
-#define INC_NSP_AtkObjectFactory
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspAtkObjectFactory
+#define NSP_INC_NspAtkObjectFactory
 
 /*
-* NspAtkObjectFactory inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspAtkObjectFactory */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspAtkObjectFactory inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeAtkObjectFactory *nsp_type_atkobjectfactory;
 
 NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode);
 
-/* instance for AtkObjectFactory */
+/* instance for NspAtkObjectFactory */
 
 NspAtkObjectFactory *new_atkobjectfactory();
 
@@ -34,23 +50,22 @@ NspAtkObjectFactory *new_atkobjectfactory();
 
 #define NULLATKOBJECTFACTORY (NspAtkObjectFactory*) 0
 
-NspAtkObjectFactory *atkobjectfactory_create(char *name,NspTypeBase *type);
 
-/* from AtkObjectFactoryObj.c */
+/* from NspAtkObjectFactoryObj.c */
 
-extern NspAtkObjectFactory *atkobjectfactory_object (NspObject *O); 
+extern NspAtkObjectFactory *nsp_atkobjectfactory_object (NspObject *O); 
 extern int IsAtkObjectFactoryObj (Stack stack, int i); 
 extern int IsAtkObjectFactory(NspObject *O);
 extern NspAtkObjectFactory *GetAtkObjectFactoryCopy (Stack stack, int i); 
 extern NspAtkObjectFactory *GetAtkObjectFactory (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspAtkObjectFactory */
 
-#ifdef AtkObjectFactory_Private 
+#ifdef NspAtkObjectFactory_Private 
 static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type);
 static char *nsp_atkobjectfactory_type_as_string(void);
 static char *nsp_atkobjectfactory_type_short_string(NspObject *v);
 static AttrTab atkobjectfactory_attrs[];
-/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *atkobjectfactory_get_methods(void); 
-#endif /* AtkObjectFactory_Private */
+/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspAtkObjectFactory_Private */

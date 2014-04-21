@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkTreeStore
-#define INC_NSP_GtkTreeStore
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gobject.h"
+#ifndef NSP_INC_NspGtkTreeStore
+#define NSP_INC_NspGtkTreeStore
 
 /*
-* NspGtkTreeStore inherits from NspGObject
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkTreeStore */
+
+#include <nsp/gtk/gobject.h>
+
+/*
+* NspGtkTreeStore inherits from GObject
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkTreeStore *nsp_type_gtktreestore;
 
 NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode);
 
-/* instance for GtkTreeStore */
+/* instance for NspGtkTreeStore */
 
 NspGtkTreeStore *new_gtktreestore();
 
@@ -34,23 +50,22 @@ NspGtkTreeStore *new_gtktreestore();
 
 #define NULLGTKTREESTORE (NspGtkTreeStore*) 0
 
-NspGtkTreeStore *gtktreestore_create(char *name,NspTypeBase *type);
 
-/* from GtkTreeStoreObj.c */
+/* from NspGtkTreeStoreObj.c */
 
-extern NspGtkTreeStore *gtktreestore_object (NspObject *O); 
+extern NspGtkTreeStore *nsp_gtktreestore_object (NspObject *O); 
 extern int IsGtkTreeStoreObj (Stack stack, int i); 
 extern int IsGtkTreeStore(NspObject *O);
 extern NspGtkTreeStore *GetGtkTreeStoreCopy (Stack stack, int i); 
 extern NspGtkTreeStore *GetGtkTreeStore (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkTreeStore */
 
-#ifdef GtkTreeStore_Private 
+#ifdef NspGtkTreeStore_Private 
 static int init_gtktreestore(NspGtkTreeStore *o,NspTypeGtkTreeStore *type);
 static char *nsp_gtktreestore_type_as_string(void);
 static char *nsp_gtktreestore_type_short_string(NspObject *v);
 static AttrTab gtktreestore_attrs[];
-/* static int int_gtktreestore_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtktreestore_get_methods(void); 
-#endif /* GtkTreeStore_Private */
+/* static int int_gtktreestore_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkTreeStore_Private */

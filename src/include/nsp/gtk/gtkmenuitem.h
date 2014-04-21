@@ -1,16 +1,32 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GtkMenuItem
-#define INC_NSP_GtkMenuItem
-
-/*-----------------------------------------------------------------
-* This Software is ( Copyright ENPC 1998-2012 )
-* Jean-Philippe Chancelier Enpc/Cermics
-*-----------------------------------------------------------------*/
-
-#include "nsp/gtk/gtkitem.h"
+#ifndef NSP_INC_NspGtkMenuItem
+#define NSP_INC_NspGtkMenuItem
 
 /*
-* NspGtkMenuItem inherits from NspGtkItem
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* NspGtkMenuItem */
+
+#include <nsp/gtk/gtkitem.h>
+
+/*
+* NspGtkMenuItem inherits from GtkItem
 * just change some type attributes 
 */
 
@@ -24,7 +40,7 @@ extern NspTypeGtkMenuItem *nsp_type_gtkmenuitem;
 
 NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode);
 
-/* instance for GtkMenuItem */
+/* instance for NspGtkMenuItem */
 
 NspGtkMenuItem *new_gtkmenuitem();
 
@@ -34,23 +50,22 @@ NspGtkMenuItem *new_gtkmenuitem();
 
 #define NULLGTKMENUITEM (NspGtkMenuItem*) 0
 
-NspGtkMenuItem *gtkmenuitem_create(char *name,NspTypeBase *type);
 
-/* from GtkMenuItemObj.c */
+/* from NspGtkMenuItemObj.c */
 
-extern NspGtkMenuItem *gtkmenuitem_object (NspObject *O); 
+extern NspGtkMenuItem *nsp_gtkmenuitem_object (NspObject *O); 
 extern int IsGtkMenuItemObj (Stack stack, int i); 
 extern int IsGtkMenuItem(NspObject *O);
 extern NspGtkMenuItem *GetGtkMenuItemCopy (Stack stack, int i); 
 extern NspGtkMenuItem *GetGtkMenuItem (Stack stack, int i); 
 
-#endif 
+#endif /* NSP_INC_NspGtkMenuItem */
 
-#ifdef GtkMenuItem_Private 
+#ifdef NspGtkMenuItem_Private 
 static int init_gtkmenuitem(NspGtkMenuItem *o,NspTypeGtkMenuItem *type);
 static char *nsp_gtkmenuitem_type_as_string(void);
 static char *nsp_gtkmenuitem_type_short_string(NspObject *v);
 static AttrTab gtkmenuitem_attrs[];
-/* static int int_gtkmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
 static NspMethods *gtkmenuitem_get_methods(void); 
-#endif /* GtkMenuItem_Private */
+/* static int int_gtkmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+#endif /* NspGtkMenuItem_Private */
