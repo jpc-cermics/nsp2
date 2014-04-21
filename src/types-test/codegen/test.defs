@@ -1,0 +1,29 @@
+;; -*- scheme -*-
+
+(define-object Colormap
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "NspColormap")
+  (gtype-id "GDK_TYPE_COLORMAP")
+)
+
+(define-function testzzz
+  (c-name "Ctestzzz")
+  (return-type "int")
+  (parameters
+    '("double" "zz")
+    '("int" "xx1")
+    '("int" "xx2")
+    '("int" "xx3")
+  )
+)
+
+(define-function testxxx
+  (c-name "Ctestxxx")
+  (return-type "int")
+  (parameters
+   '("double" "zz1")
+   '("double" "zz2")
+   '("double" "zz3")
+  )
+)
