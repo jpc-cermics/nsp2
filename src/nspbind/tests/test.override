@@ -5,4 +5,3 @@ include-start ClassA
 %%
 import a.b as classa
 import b.d as classb
-
