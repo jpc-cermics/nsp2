@@ -33,11 +33,13 @@ let definitions_source_file_extension = Path.to_file_extension ".defs"
 and overrides_source_file_extension = Path.to_file_extension ".override"
 ;;
 
+(*
 let source_language_of_string = function
   | "defs" -> Definition
   | "override" -> Overrides 
   | _ -> raise Not_found
 ;;
+*)
 
 let conf = {
   Simport_configuration.

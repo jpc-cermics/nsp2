@@ -14,7 +14,6 @@
 
 (* $Id$ *)
 
-open Simport_configuration;;
 
 type error =
    | Fatal_error of string
