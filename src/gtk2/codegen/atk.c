@@ -24,14 +24,13 @@
 
 
 
-
 #line 4 "atk.override"
 
 #include "nsp/gtk/gobject.h"
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>
-#line 35 "atk.c"
+#line 34 "atk.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
@@ -1830,7 +1829,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1834 "atk.c"
+#line 1833 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -2864,161 +2863,15 @@ void atk_Interf_Info(int i, char **fname, function (**f))
 void
 atk_add_constants(NspObject *module, const gchar *strip_prefix)
 {
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_INVALID", strip_prefix), ATK_ROLE_INVALID);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ACCEL_LABEL", strip_prefix), ATK_ROLE_ACCEL_LABEL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ALERT", strip_prefix), ATK_ROLE_ALERT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ANIMATION", strip_prefix), ATK_ROLE_ANIMATION);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ARROW", strip_prefix), ATK_ROLE_ARROW);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_CALENDAR", strip_prefix), ATK_ROLE_CALENDAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_CANVAS", strip_prefix), ATK_ROLE_CANVAS);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_CHECK_BOX", strip_prefix), ATK_ROLE_CHECK_BOX);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_CHECK_MENU_ITEM", strip_prefix), ATK_ROLE_CHECK_MENU_ITEM);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_COLOR_CHOOSER", strip_prefix), ATK_ROLE_COLOR_CHOOSER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_COLUMN_HEADER", strip_prefix), ATK_ROLE_COLUMN_HEADER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_COMBO_BOX", strip_prefix), ATK_ROLE_COMBO_BOX);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DATE_EDITOR", strip_prefix), ATK_ROLE_DATE_EDITOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DESKTOP_ICON", strip_prefix), ATK_ROLE_DESKTOP_ICON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DESKTOP_FRAME", strip_prefix), ATK_ROLE_DESKTOP_FRAME);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DIAL", strip_prefix), ATK_ROLE_DIAL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DIALOG", strip_prefix), ATK_ROLE_DIALOG);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DIRECTORY_PANE", strip_prefix), ATK_ROLE_DIRECTORY_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_DRAWING_AREA", strip_prefix), ATK_ROLE_DRAWING_AREA);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_FILE_CHOOSER", strip_prefix), ATK_ROLE_FILE_CHOOSER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_FILLER", strip_prefix), ATK_ROLE_FILLER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_FONT_CHOOSER", strip_prefix), ATK_ROLE_FONT_CHOOSER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_FRAME", strip_prefix), ATK_ROLE_FRAME);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_GLASS_PANE", strip_prefix), ATK_ROLE_GLASS_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_HTML_CONTAINER", strip_prefix), ATK_ROLE_HTML_CONTAINER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ICON", strip_prefix), ATK_ROLE_ICON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_IMAGE", strip_prefix), ATK_ROLE_IMAGE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_INTERNAL_FRAME", strip_prefix), ATK_ROLE_INTERNAL_FRAME);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_LABEL", strip_prefix), ATK_ROLE_LABEL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_LAYERED_PANE", strip_prefix), ATK_ROLE_LAYERED_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_LIST", strip_prefix), ATK_ROLE_LIST);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_LIST_ITEM", strip_prefix), ATK_ROLE_LIST_ITEM);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_MENU", strip_prefix), ATK_ROLE_MENU);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_MENU_BAR", strip_prefix), ATK_ROLE_MENU_BAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_MENU_ITEM", strip_prefix), ATK_ROLE_MENU_ITEM);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_OPTION_PANE", strip_prefix), ATK_ROLE_OPTION_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PAGE_TAB", strip_prefix), ATK_ROLE_PAGE_TAB);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PAGE_TAB_LIST", strip_prefix), ATK_ROLE_PAGE_TAB_LIST);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PANEL", strip_prefix), ATK_ROLE_PANEL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PASSWORD_TEXT", strip_prefix), ATK_ROLE_PASSWORD_TEXT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_POPUP_MENU", strip_prefix), ATK_ROLE_POPUP_MENU);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PROGRESS_BAR", strip_prefix), ATK_ROLE_PROGRESS_BAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_PUSH_BUTTON", strip_prefix), ATK_ROLE_PUSH_BUTTON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_RADIO_BUTTON", strip_prefix), ATK_ROLE_RADIO_BUTTON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_RADIO_MENU_ITEM", strip_prefix), ATK_ROLE_RADIO_MENU_ITEM);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ROOT_PANE", strip_prefix), ATK_ROLE_ROOT_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_ROW_HEADER", strip_prefix), ATK_ROLE_ROW_HEADER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SCROLL_BAR", strip_prefix), ATK_ROLE_SCROLL_BAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SCROLL_PANE", strip_prefix), ATK_ROLE_SCROLL_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SEPARATOR", strip_prefix), ATK_ROLE_SEPARATOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SLIDER", strip_prefix), ATK_ROLE_SLIDER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SPLIT_PANE", strip_prefix), ATK_ROLE_SPLIT_PANE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_SPIN_BUTTON", strip_prefix), ATK_ROLE_SPIN_BUTTON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_STATUSBAR", strip_prefix), ATK_ROLE_STATUSBAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TABLE", strip_prefix), ATK_ROLE_TABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TABLE_CELL", strip_prefix), ATK_ROLE_TABLE_CELL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TABLE_COLUMN_HEADER", strip_prefix), ATK_ROLE_TABLE_COLUMN_HEADER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TABLE_ROW_HEADER", strip_prefix), ATK_ROLE_TABLE_ROW_HEADER);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TEAR_OFF_MENU_ITEM", strip_prefix), ATK_ROLE_TEAR_OFF_MENU_ITEM);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TERMINAL", strip_prefix), ATK_ROLE_TERMINAL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TEXT", strip_prefix), ATK_ROLE_TEXT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TOGGLE_BUTTON", strip_prefix), ATK_ROLE_TOGGLE_BUTTON);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TOOL_BAR", strip_prefix), ATK_ROLE_TOOL_BAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TOOL_TIP", strip_prefix), ATK_ROLE_TOOL_TIP);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TREE", strip_prefix), ATK_ROLE_TREE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_TREE_TABLE", strip_prefix), ATK_ROLE_TREE_TABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_UNKNOWN", strip_prefix), ATK_ROLE_UNKNOWN);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_VIEWPORT", strip_prefix), ATK_ROLE_VIEWPORT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_WINDOW", strip_prefix), ATK_ROLE_WINDOW);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_ROLE_LAST_DEFINED", strip_prefix), ATK_ROLE_LAST_DEFINED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_INVALID", strip_prefix), ATK_LAYER_INVALID);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_BACKGROUND", strip_prefix), ATK_LAYER_BACKGROUND);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_CANVAS", strip_prefix), ATK_LAYER_CANVAS);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_WIDGET", strip_prefix), ATK_LAYER_WIDGET);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_MDI", strip_prefix), ATK_LAYER_MDI);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_POPUP", strip_prefix), ATK_LAYER_POPUP);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_LAYER_OVERLAY", strip_prefix), ATK_LAYER_OVERLAY);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_NULL", strip_prefix), ATK_RELATION_NULL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_CONTROLLED_BY", strip_prefix), ATK_RELATION_CONTROLLED_BY);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_CONTROLLER_FOR", strip_prefix), ATK_RELATION_CONTROLLER_FOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_LABEL_FOR", strip_prefix), ATK_RELATION_LABEL_FOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_LABELLED_BY", strip_prefix), ATK_RELATION_LABELLED_BY);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_MEMBER_OF", strip_prefix), ATK_RELATION_MEMBER_OF);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_NODE_CHILD_OF", strip_prefix), ATK_RELATION_NODE_CHILD_OF);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_RELATION_LAST_DEFINED", strip_prefix), ATK_RELATION_LAST_DEFINED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_INVALID", strip_prefix), ATK_STATE_INVALID);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_ACTIVE", strip_prefix), ATK_STATE_ACTIVE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_ARMED", strip_prefix), ATK_STATE_ARMED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_BUSY", strip_prefix), ATK_STATE_BUSY);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_CHECKED", strip_prefix), ATK_STATE_CHECKED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_DEFUNCT", strip_prefix), ATK_STATE_DEFUNCT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_EDITABLE", strip_prefix), ATK_STATE_EDITABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_ENABLED", strip_prefix), ATK_STATE_ENABLED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_EXPANDABLE", strip_prefix), ATK_STATE_EXPANDABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_EXPANDED", strip_prefix), ATK_STATE_EXPANDED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_FOCUSABLE", strip_prefix), ATK_STATE_FOCUSABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_FOCUSED", strip_prefix), ATK_STATE_FOCUSED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_HORIZONTAL", strip_prefix), ATK_STATE_HORIZONTAL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_ICONIFIED", strip_prefix), ATK_STATE_ICONIFIED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_MODAL", strip_prefix), ATK_STATE_MODAL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_MULTI_LINE", strip_prefix), ATK_STATE_MULTI_LINE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_MULTISELECTABLE", strip_prefix), ATK_STATE_MULTISELECTABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_OPAQUE", strip_prefix), ATK_STATE_OPAQUE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_PRESSED", strip_prefix), ATK_STATE_PRESSED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_RESIZABLE", strip_prefix), ATK_STATE_RESIZABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_SELECTABLE", strip_prefix), ATK_STATE_SELECTABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_SELECTED", strip_prefix), ATK_STATE_SELECTED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_SENSITIVE", strip_prefix), ATK_STATE_SENSITIVE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_SHOWING", strip_prefix), ATK_STATE_SHOWING);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_SINGLE_LINE", strip_prefix), ATK_STATE_SINGLE_LINE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_STALE", strip_prefix), ATK_STATE_STALE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_TRANSIENT", strip_prefix), ATK_STATE_TRANSIENT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_VERTICAL", strip_prefix), ATK_STATE_VERTICAL);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_VISIBLE", strip_prefix), ATK_STATE_VISIBLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_STATE_LAST_DEFINED", strip_prefix), ATK_STATE_LAST_DEFINED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_LEFT_MARGIN", strip_prefix), ATK_TEXT_ATTR_LEFT_MARGIN);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_RIGHT_MARGIN", strip_prefix), ATK_TEXT_ATTR_RIGHT_MARGIN);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_INDENT", strip_prefix), ATK_TEXT_ATTR_INDENT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_INVISIBLE", strip_prefix), ATK_TEXT_ATTR_INVISIBLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_EDITABLE", strip_prefix), ATK_TEXT_ATTR_EDITABLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_PIXELS_ABOVE_LINES", strip_prefix), ATK_TEXT_ATTR_PIXELS_ABOVE_LINES);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_PIXELS_BELOW_LINES", strip_prefix), ATK_TEXT_ATTR_PIXELS_BELOW_LINES);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_PIXELS_INSIDE_WRAP", strip_prefix), ATK_TEXT_ATTR_PIXELS_INSIDE_WRAP);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_BG_FULL_HEIGHT", strip_prefix), ATK_TEXT_ATTR_BG_FULL_HEIGHT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_RISE", strip_prefix), ATK_TEXT_ATTR_RISE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_UNDERLINE", strip_prefix), ATK_TEXT_ATTR_UNDERLINE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_STRIKETHROUGH", strip_prefix), ATK_TEXT_ATTR_STRIKETHROUGH);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_SIZE", strip_prefix), ATK_TEXT_ATTR_SIZE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_SCALE", strip_prefix), ATK_TEXT_ATTR_SCALE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_WEIGHT", strip_prefix), ATK_TEXT_ATTR_WEIGHT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_LANGUAGE", strip_prefix), ATK_TEXT_ATTR_LANGUAGE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_FAMILY_NAME", strip_prefix), ATK_TEXT_ATTR_FAMILY_NAME);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_BG_COLOR", strip_prefix), ATK_TEXT_ATTR_BG_COLOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_FG_COLOR", strip_prefix), ATK_TEXT_ATTR_FG_COLOR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_BG_STIPPLE", strip_prefix), ATK_TEXT_ATTR_BG_STIPPLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_FG_STIPPLE", strip_prefix), ATK_TEXT_ATTR_FG_STIPPLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_WRAP_MODE", strip_prefix), ATK_TEXT_ATTR_WRAP_MODE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_DIRECTION", strip_prefix), ATK_TEXT_ATTR_DIRECTION);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_JUSTIFICATION", strip_prefix), ATK_TEXT_ATTR_JUSTIFICATION);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_STRETCH", strip_prefix), ATK_TEXT_ATTR_STRETCH);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_VARIANT", strip_prefix), ATK_TEXT_ATTR_VARIANT);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_ATTR_STYLE", strip_prefix), ATK_TEXT_ATTR_STYLE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_CHAR", strip_prefix), ATK_TEXT_BOUNDARY_CHAR);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_WORD_START", strip_prefix), ATK_TEXT_BOUNDARY_WORD_START);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_WORD_END", strip_prefix), ATK_TEXT_BOUNDARY_WORD_END);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_SENTENCE_START", strip_prefix), ATK_TEXT_BOUNDARY_SENTENCE_START);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_SENTENCE_END", strip_prefix), ATK_TEXT_BOUNDARY_SENTENCE_END);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_LINE_START", strip_prefix), ATK_TEXT_BOUNDARY_LINE_START);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_TEXT_BOUNDARY_LINE_END", strip_prefix), ATK_TEXT_BOUNDARY_LINE_END);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_KEY_EVENT_PRESS", strip_prefix), ATK_KEY_EVENT_PRESS);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_KEY_EVENT_RELEASE", strip_prefix), ATK_KEY_EVENT_RELEASE);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_KEY_EVENT_LAST_DEFINED", strip_prefix), ATK_KEY_EVENT_LAST_DEFINED);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_XY_SCREEN", strip_prefix), ATK_XY_SCREEN);*/
-/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_XY_WINDOW", strip_prefix), ATK_XY_WINDOW);*/
+/* enum or flags without typecode: AtkRole */
+/* enum or flags without typecode: AtkLayer */
+/* enum or flags without typecode: AtkRelationType */
+/* enum or flags without typecode: AtkStateType */
+/* enum or flags without typecode: AtkTextAttribute */
+/* enum or flags without typecode: AtkTextBoundary */
+/* enum or flags without typecode: AtkKeyEventType */
+/* enum or flags without typecode: AtkCoordType */
 }
 
 
-#line 3025 "atk.c"
+#line 2878 "atk.c"

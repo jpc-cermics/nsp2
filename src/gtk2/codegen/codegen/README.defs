@@ -143,15 +143,13 @@
    (function function-name
      (in-module module-name-list) ;; "static methods" go in their
                                   ;; object's module
-     (is-constructor-of object-type-alias) ;; optional, marks a
-   constructor
+     (is-constructor-of object-type-alias) ;; optional, marks a constructor
      (c-name function-name)
      (return-type return-value-type) ;; defaults to void
      (caller-owns-return boolean-value) ;; defaults to #f
      (parameter in-or-out-or-inout
          (type-and-name parameter-type-alias parameter-name)
-         (c-declaration "c-type-and-name")) ;; c-declaration only
-   required
+         (c-declaration "c-type-and-name")) ;; c-declaration only required
                                             ;; if the type alias is
    "native"
      (varargs #t) ;; has varargs at the end
@@ -168,8 +166,7 @@
        (is-constructor-of GdkRgbCmap)
        (c-name gdk_rgb_cmap_new)
        (return-type GdkRgbCmap)
-       (caller-owns-return #t) ;; perhaps this could be implied by
-   is-constructor-of
+       (caller-owns-return #t) ;; perhaps this could be implied by is-constructor-of
        (parameter in (type-and-name array-of-guint32 colors))
        (parameter in (type-and-name gint n_colors)))
 

@@ -142,6 +142,7 @@ class Wrapper:
               '  Obj->type = type; \n'  \
               '  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;\n'  \
               '  /* specific */\n'  \
+              '%(fields_init)s' \
               '  return OK;\n'  \
               '}\n'  \
               '\n'  \
@@ -381,6 +382,13 @@ class Wrapper:
         return string.lower(string.replace(self.objinfo.typecode,
                                            '_TYPE_', '_', 1))
 
+    # used to build the attribute interface names
+    # 
+
+    def get_lower_c_name(self):
+        # return string.lower(string.replace(self.objinfo.typecode,'_TYPE_', '_', 1))
+        return string.lower(self.objinfo.c_name)
+
     def get_field_accessor(self, fieldname, fieldtype):
         raise NotImplementedError
 
@@ -394,6 +402,19 @@ class Wrapper:
                  'errorreturn': '-1' }
     def get_initial_method_substdict(self, method):
         return { 'name': '%s.%s' % (self.objinfo.c_name, method.name) }
+
+    def build_init_fields(self,varname):
+        # initialize the fields to default value but only for 
+        # object that are not byref 
+        lower_name = self.get_lower_c_name()
+        str = ''
+        if not self.objinfo.fields:
+            lower_name1 = string.lower(self.objinfo.c_name)
+            return str 
+        for ftype, fname in self.objinfo.fields:
+            handler = argtypes.matcher.get_init(ftype)
+            str = str + handler.attr_write_init(ftype, fname,varname, 'f' , 'no' , '0' , 'no')
+        return str 
 
     def write_class(self):
         self.fp.write('\n/* ----------- ' + 'Nsp'+self.objinfo.c_name + ' ----------- */\n\n')
@@ -414,6 +435,7 @@ class Wrapper:
         substdict['parent_dc'] = string.lower(self.objinfo.parent)
         substdict['tp_getattr_def'] = 'int_get_attribute';
         substdict['tp_setattr_def'] = 'int_set_attribute';
+        substdict['fields_init'] = '' ; # self.build_init_fields('Obj')
 
         # check if some slots are overriden and add them in substdict
         # tp_setattr and tp_getattr 
@@ -1131,9 +1153,10 @@ def write_enums(parser, prefix, fp=sys.stdout):
     fp.write('void\n' + prefix + '_add_constants(NspObject *module, const gchar *strip_prefix)\n{\n')
     for enum in parser.enums:
         if enum.typecode is None:
-            for nick, value in enum.values:
-                fp.write('/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("%s", strip_prefix), %s);*/\n'
-                         % (value, value))
+            fp.write('/* enum or flags without typecode: %s */\n' % enum.c_name )
+            #for nick, value in enum.values:
+            #    fp.write('/*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("%s", strip_prefix), %s);*/\n'
+            #             % (value, value))
         else:
             if enum.deftype == 'enum':
                 fp.write('  nsp_enum_add_constants((NspHash *) module, %s, strip_prefix);\n'
@@ -1177,11 +1200,14 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write( type_tmpl_copyright) 
     fp.write('\n\n')
 
-    fp.write('\n\n\n')
+    fp.write('\n\n')
+
     hd = overrides.get_headers()
     if hd <> "":
         fp.write(hd)
         fp.resetline()
+    else:
+        fp.write('\n')
         
     imports = overrides.get_imports()
     if len(imports) >= 1:

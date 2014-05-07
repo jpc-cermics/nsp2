@@ -124,6 +124,10 @@ class ArgType:
 	raise RuntimeError, "write_return not implemented for %s" % \
               self.__class__.__name__
 
+    def attr_write_init(self,ptype, pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return ''
+
 class NoneArg(ArgType):
     def write_return(self, ptype, ownsreturn, info):
         info.codeafter.append('  return 0;')
@@ -162,6 +166,12 @@ class StringArg(ArgType):
 	    info.varlist.add('const gchar', '*ret')
             info.attrcodeafter.append('  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);\n  return nsp_ret;')
 
+    def attr_write_init(self,ptype, pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field of type string is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = NULL;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = nsp_new_string("%s",-1);\n' % (varname,pname,pdef)
           
 
 class UCharArg(ArgType):
@@ -242,6 +252,12 @@ class IntArg(ArgType):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = 0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
 class IntPointerArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
@@ -260,6 +276,10 @@ class IntPointerArg(ArgType):
         info.varlist.add('int', '*ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        return  '  %s->%s = NULL;\n' % (varname,pname)
+
 class DoublePointerArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
@@ -276,6 +296,13 @@ class DoublePointerArg(ArgType):
     def attr_write_return(self, ptype, ownsreturn, info):
         info.varlist.add('double', '*ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field of type string is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = NULL; %s->%s_length = 0; \n' % (varname,pname,varname,pname)
+        else: 
+            return '  %s->%s = AFAIRE %s;\n' % (varname,pname,pdef)
 
 
         
@@ -297,6 +324,13 @@ class BoolArg(IntArg):
         info.varlist.add('int', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);\n  return nsp_ret;')
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = TRUE;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
 class TimeTArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
@@ -353,6 +387,13 @@ class Int64Arg(ArgType):
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = 0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
+
 class UInt64Arg(ArgType):
     dflt = '  if (nsp_%(name)s)\n' \
            '      %(name)s = PyLong_AsUnsignedLongLong(nsp_%(name)s);\n'
@@ -391,6 +432,14 @@ class DoubleArg(ArgType):
         info.varlist.add('double', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
+
+    def attr_write_init(self,ptype, pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = 0.0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
+
 
 
 class GSList(ArgType):
@@ -627,6 +676,10 @@ class ObjectArg(ArgType):
                                       '  return (NspObject *) gobject_create(NVOID,(GObject *)ret,' 
                                   '(NspTypeBase *) nsp_type_%(name)s);' %  {'name': string.lower(self.objname)} )
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef, psize, pcheck ):
+	"""used when a field is to be initialized """
+        return '  %s->%s = NULL;\n' % (varname,pname);
+
 
 class BoxedArg(ArgType):
     # haven't done support for default args.  Is it needed?
@@ -793,6 +846,11 @@ class PointerArg(ArgType):
             info.varlist.add(self.typename, 'ret')
             info.attrcodeafter.append('  /* nspg_pointer_new handles NULL checking */\n' +
                                   '  return nspg_pointer_new(' + self.typecode + ', &ret);')
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        return  '  %s->%s = NULL;\n' % (varname,pname)
+
 
 class AtomArg(IntArg):
     atom = ('  if ( nsp_gdk_atom_from_object(nsp_%(name)s,&%(name)s)==FAIL) return RET_BUG;\n')
@@ -965,6 +1023,12 @@ class NspObjectArg(ArgType):
         else:
             info.attrcodeafter.append(' return ret;')
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef, psize, pcheck ):
+	"""used when a field is to be initialized """
+        return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
+
+
+
 class NspGListArg(ArgType):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         info.varlist.add('GList-NspObject', '*' + pname)
@@ -1028,6 +1092,17 @@ class NspDoubleArrayArg(NspMatArg):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat')
 
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            vdef = '{0}'
+        else: 
+            vdef = pdef
+        return '  {\n' \
+            '    double x_def[%s]=%s;\n' \
+            '    memcpy(%s->%s,x_def,%s*sizeof(double));\n' \
+            '  }\n' % (psize,pdef, varname,pname, psize)
+
 class NspDoubleArrayCopyArg(NspDoubleArrayArg):
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy')
@@ -1077,6 +1152,15 @@ class ArgMatcher:
             if ptype[:8] == 'GdkEvent' and ptype[-1] == '*':
                 return self.argtypes['GdkEvent*']
             raise
+
+    def get_init(self,ptype):
+        try:
+            return self.argtypes[ptype]
+        except KeyError:
+            if ptype[:8] == 'GdkEvent' and ptype[-1] == '*':
+                return self.argtypes['GdkEvent*']
+            return ArgType()
+
     def object_is_a(self, otype, parent):
         if otype == None: return 0
         if otype == parent: return 1

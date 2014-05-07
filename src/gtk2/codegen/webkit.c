@@ -24,7 +24,6 @@
 
 
 
-
 #line 4 "webkit.override"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -61,7 +60,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 65 "webkit.c"
+#line 64 "webkit.c"
 /* ---------- forward type declarations ---------- */
 #include <nsp/gtk/webkitwebview.h>
 #include <nsp/gtk/webkitwebframe.h>
@@ -2276,7 +2275,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2280 "webkit.c"
+#line 2279 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2316,4 +2315,4 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
   *f = webkit_func[i].fonc;
 }
 
-#line 2320 "webkit.c"
+#line 2319 "webkit.c"
