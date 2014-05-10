@@ -61,11 +61,3 @@
   )
 )
 
-(define-function testdef
-  (c-name "gdk_pointer_grab")
-  (return-type "int")
-  (parameters
-    '("gboolean" "owner_events" (null-ok) (default "FALSE"))
-    '("guint32" "time" (null-ok) (default "GDK_CURRENT_TIME"))
-  )
-)
