@@ -17,8 +17,8 @@ def exc_info():
     return ret
 
 def fixname(name):
-    if keyword.iskeyword(name):
-	return name + '_'
+    # if keyword.iskeyword(name):
+    #       return name + '_' *)
     return name
 
 class FileOutput:
@@ -987,6 +987,12 @@ class GInterfaceWrapper(GObjectWrapper):
         return '0'
     def write_getsets(self):
         # interfaces have no fields ...
+        type_tmpl_2 = \
+                    '/*-------------------------------------------\n'  \
+                    ' * Attributes\n'  \
+                    ' *-------------------------------------------*/\n\n'  \
+
+        self.fp.write(type_tmpl_2)
         lower_name1 = string.lower(self.objinfo.c_name)
         self.fp.write('static AttrTab %s_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;\n' % lower_name1)
         return '0'

@@ -5784,7 +5784,7 @@ static NspMethods gdkwindow_methods[] = {
   {"clear",(nsp_method *) _wrap_gdk_window_clear},
   {"clear_area",(nsp_method *) _wrap_gdk_window_clear_area},
   {"clear_area_e",(nsp_method *) _wrap_gdk_window_clear_area_e},
-  {"raise_",(nsp_method *) _wrap_gdk_window_raise},
+  {"raise",(nsp_method *) _wrap_gdk_window_raise},
   {"lower",(nsp_method *) _wrap_gdk_window_lower},
   {"focus",(nsp_method *) _wrap_gdk_window_focus},
   {"set_override_redirect",(nsp_method *) _wrap_gdk_window_set_override_redirect},
