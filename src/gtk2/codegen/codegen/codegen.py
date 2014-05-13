@@ -53,7 +53,7 @@ class FileOutput:
 
 class Wrapper:
 
-    type_tmpl_1 = \
+    type_tmpl_1_0 = \
               '\n'  \
               '#define  Nsp%(typename)s_Private \n'  \
               '#include <nsp/objects.h>\n'  \
@@ -75,7 +75,9 @@ class Wrapper:
               ' * other instances are used for derived classes \n' \
               ' */\n' \
               'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
-              '{\n'  \
+              '{\n'  
+
+    type_tmpl_1_0_1 = \
               '  NspType%(typename)s *type= NULL;\n'  \
               '  NspTypeObject *top;\n'  \
               '  if (  nsp_type_%(typename_dc)s != 0 && mode == T_BASE ) \n'  \
@@ -466,15 +468,24 @@ class Wrapper:
             substdict['implements'] = str 
 
         # insert the type defintion 
-        self.fp.write(self.type_tmpl_1 % substdict)
+        self.fp.write(self.type_tmpl_1_0 % substdict)
+        # insert declaration for implemented interfaces 
+        if len(self.objinfo.implements) != 0 :
+            for interf in self.objinfo.implements:
+                self.fp.write('  NspType%s *t_%s;\n' % (interf,string.lower(interf)));
+        self.fp.write(self.type_tmpl_1_0_1 % substdict)
 
         self.fp.write(self.type_tmpl_1_0_2 % substdict)
         # insert the implemented interfaces
+
         if len(self.objinfo.implements) != 0 :
             ti = 'type->interface'
             for interf in self.objinfo.implements:
-                self.fp.write('  %s =  (NspTypeBase *) new_type_%s(T_DERIVED);\n' % (ti,string.lower(interf)));
+                l_interf = string.lower(interf);
+                self.fp.write('  t_%s = new_type_%s(T_DERIVED);\n' % (l_interf,l_interf))
+                self.fp.write('  %s = (NspTypeBase *) t_%s;\n' % (ti,l_interf))
                 ti = ti + '->interface'
+
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
         # insert the end of type defintion 
@@ -553,7 +564,9 @@ class Wrapper:
             handler = argtypes.matcher.get(function_obj.ret)
             handler.write_return(function_obj.ret,
                                  function_obj.caller_owns_return, info)
-            
+            if function_obj.caller_owns_return:
+                sys.stderr.write('Write return %s with %d \n' % (function_obj.name, function_obj.caller_owns_return))
+
         if function_obj.deprecated != None:
             deprecated = self.deprecated_tmpl % {
                 'deprecationmsg': function_obj.deprecated,
