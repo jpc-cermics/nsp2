@@ -1,12 +1,12 @@
 .SUFFIXES: .defs .diff .idiff .c $(SUFFIXES)
 SHELL = /bin/sh
 
-ALL=  pango.c atk.c gdk.c gtk.c
+ALL=  pango.c atk.c gdk.c gtk.c webkit.c 
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 IDIFF=$(patsubst %.c,%.idiff,$(ALL))
 
-PROG=../bin/simport 
+PROG=../bin/simport -nw 
 SRC=/usr/local/src/nsp2-ref/src/types-test/
 GTK=/usr/local/src/nsp2-ref/src/gtk2/codegen/
 ISRC=/usr/local/src/nsp2-ref/src/include/nsp/
@@ -35,6 +35,12 @@ gtk.c: gtk.defs gtk.override ../bin/simport.bin
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/gtk.c+gtk.c+g" /tmp/$*.c > $*.c
+	@rm -f /tmp/$*.c
+
+webkit.c: webkit.defs webkit.override ../bin/simport.bin
+	$(PROG) -p $* -o /tmp/$*.c $* 
+	@sed -e "s+codegen/++g" \
+	    -e "s+/tmp/webkit.c+webkit.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
 
