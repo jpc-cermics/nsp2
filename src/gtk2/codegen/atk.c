@@ -896,6 +896,7 @@ _wrap_atknoopobject_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
   if ((ret = (GObject *)atk_no_op_object_new(G_OBJECT(obj->obj)))== NULL) return RET_BUG;
+
   nsp_type_atknoopobject = new_type_atknoopobject(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobject );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1334,6 +1335,7 @@ _wrap_atknoopobjectfactory_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)atk_no_op_object_factory_new())== NULL) return RET_BUG;
+
   nsp_type_atknoopobjectfactory = new_type_atknoopobjectfactory(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atknoopobjectfactory );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -1829,7 +1831,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1833 "atk.c"
+#line 1835 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -2051,6 +2053,7 @@ _wrap_atkrelationset_new(Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   if ((ret = (GObject *)atk_relation_set_new())== NULL) return RET_BUG;
+
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atkrelationset );
    if ( nsp_ret == NULL) return RET_BUG;
@@ -2874,4 +2877,4 @@ atk_add_constants(NspObject *module, const gchar *strip_prefix)
 }
 
 
-#line 2878 "atk.c"
+#line 2881 "atk.c"

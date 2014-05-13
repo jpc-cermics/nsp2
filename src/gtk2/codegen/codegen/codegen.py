@@ -899,7 +899,7 @@ class GObjectWrapper(Wrapper):
         '%(parseargs)s' \
         '%(codebefore)s' \
         '  if ((ret = (GObject *)%(cname)s(%(arglist)s))== NULL) return RET_BUG;\n' \
-        '%(codeafter)s' \
+        '%(codeafter)s\n' \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n' \
         '%(aftercreate)s' \
         '  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
