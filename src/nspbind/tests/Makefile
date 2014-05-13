@@ -11,7 +11,7 @@ ALL=  classa.c classb.c classaref.c classbref.c \
 	fec.c  contour3d.c block.c link.c connector.c \
 	diagram.c grimage.c epoints.c sharedlib.c \
 	hm.c agraph.c ast.c astv.c bvar.c \
-	stochdec.c bson.c test.c
+	stochdec.c bson.c
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 IDIFF=$(patsubst %.c,%.idiff,$(ALL))
@@ -28,17 +28,6 @@ agraph.c: agraph.defs
 	@sed -e "s+codegen/+../types-test/codegen/+g" \
 	    -e "s+/tmp/agraph.c+agraph.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
-
-test.c: test.defs test.override ../bin/simport.bin
-	$(PROG) -p $* -o $*.c $* 
-
-test.diff: test.c 
-	@echo "-------- diff $*.c $(GTK)$*.c -------------------"
-	@diff -rw $*.c $(GTK)$*.c; $$status 
-
-test.idiff: test.c 
-	@echo "-------- diff gdkcolormap.h $(ISRC)gtk/gdkcolormap.h -------------------"
-	@diff -rw gdkcolormap.h $(ISRC)gtk/gdkcolormap.h; $$status 
 
 agraph.diff : agraph.c 
 	@echo "-------- diff $*.c -------------------"
