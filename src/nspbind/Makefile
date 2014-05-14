@@ -404,3 +404,12 @@ bannerize-slx: $(SLX_DIR)/banner $(SLX_FILES_TO_BANNERIZE)
 include $(CONFIG_DIR)/Caml.mk
 include $(CONFIG_DIR)/Simport.mk
 include $(CONFIG_DIR)/Doc.mk
+
+MLI=src/matlab/printing/stringarg.ml
+
+mli	:
+	ocamlc -I src/basics -I src/configuration -I src/matlab/printing -I src/matlab/parsing \
+		-i $(MLI) > $(MLI)i
+
+etags:
+	etags  `find . -name '*.ml*' `
