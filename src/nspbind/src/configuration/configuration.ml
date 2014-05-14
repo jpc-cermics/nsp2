@@ -26,25 +26,17 @@ let fatal_error s = raise (Error (Fatal_error s));;
 
 let print_version v = Format.fprintf Format.std_formatter "%s" v;;
 
-let simulink_translator_name = "simport";;
-let simulink_translator_version = "0.9.0";;
+let nsp_codegen_name = "nspcodegen";;
+let nsp_codegen_version = "0.9.0";;
 
 let definitions_source_file_extension = Path.to_file_extension ".defs"
 and overrides_source_file_extension = Path.to_file_extension ".override"
 ;;
 
-(*
-let source_language_of_string = function
-  | "defs" -> Definition
-  | "override" -> Overrides 
-  | _ -> raise Not_found
-;;
-*)
-
 let conf = {
   Simport_configuration.
-  software_name = simulink_translator_name;
-  software_version = simulink_translator_version;
+  software_name = nsp_codegen_name;
+  software_version = nsp_codegen_version;
   
   verbose = false;
   debug = false;
@@ -56,6 +48,9 @@ let conf = {
 
   target_file = None;
   prefix = None;
+
+  path_to_override_for_c = None;
+  path_to_override_for_h = None;
 }
 ;;
 
@@ -209,6 +204,40 @@ let report_error ppf = function
       let soft = get_software_name () in
       Format.fprintf ppf
 	"@[<v 5>%s: fatal error %s@]@." soft s
+;;
+
+let set_path_to_override_for_c fname =
+  match conf.path_to_override_for_c with
+  | Some src_name ->
+      fatal_error
+	(Printf.sprintf
+           "path to override file is already set to \"%s\";        \n  could not set it again to \"%s\""
+            src_name fname)
+  | None ->
+      conf.path_to_override_for_c <- Some fname
+;;
+
+let set_path_to_override_for_h fname =
+  match conf.path_to_override_for_h with
+  | Some src_name ->
+      fatal_error
+	(Printf.sprintf
+           "path to override file is already set to \"%s\";        \n  could not set it again to \"%s\""
+            src_name fname)
+  | None ->
+      conf.path_to_override_for_h <- Some fname
+;;
+
+let get_path_to_override_for_c () = 
+  match conf.path_to_override_for_c with
+  | None -> "codegen/"
+  | Some fname -> fname
+;;
+
+let get_path_to_override_for_h () = 
+  match conf.path_to_override_for_h with
+  | None -> "codegen/"
+  | Some fname -> fname
 ;;
 
 (* Consistency tests. *)

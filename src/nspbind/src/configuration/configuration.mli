@@ -67,6 +67,12 @@ val set_prefix_from_object: string -> unit;;
 
 val get_source_file_basename: unit -> Path.file_name;;
 
+val set_path_to_override_for_c: Path.file_name -> unit;;
+val set_path_to_override_for_h: Path.file_name -> unit;;
+
+val get_path_to_override_for_c: unit -> Path.file_name;;
+val get_path_to_override_for_h: unit -> Path.file_name;;
+
 (*
  Local Variables:
   compile-command: "cd ../..; make"

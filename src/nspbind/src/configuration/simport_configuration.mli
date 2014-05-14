@@ -16,9 +16,6 @@
 
 type version = string;;
 
-type definitions_source_file_name = Path.explicit_file_name;;
-type overrides_source_file_name = Path.explicit_file_name;;
-
 type source_file_types = 
   | Definition
   | Overrides 
@@ -37,8 +34,10 @@ type configuration = {
   mutable definitions_source_file : Path.file_name option;
   mutable overrides_source_file : Path.file_name option; 
   mutable target_file : Path.file_name option; 
-
   mutable prefix : string option;
+    
+  mutable path_to_override_for_c : Path.file_name option;
+  mutable path_to_override_for_h : Path.file_name option;
 }
 ;;
 

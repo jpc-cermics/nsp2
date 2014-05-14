@@ -3,14 +3,6 @@
 let print_version ppf = function | s -> Lib_print.print_quoted_string ppf s
 ;;
 
-let print_definitions_source_file_name ppf = function
-  | p_e -> Path_print.print_explicit_file_name ppf p_e
-;;
-
-let print_overrides_source_file_name ppf = function
-  | p_e -> Path_print.print_explicit_file_name ppf p_e
-;;
-
 let print_source_file_types ppf = function
   | Simport_configuration.Definition -> Format.fprintf ppf "%s" "Definition"
   | Simport_configuration.Overrides -> Format.fprintf ppf "%s" "Overrides"
@@ -28,6 +20,8 @@ let print_configuration ppf = function
       Simport_configuration.overrides_source_file = p_f_o1;
       Simport_configuration.target_file = p_f_o2;
       Simport_configuration.prefix = s_o;
+      Simport_configuration.path_to_override_for_c = p_f_o3;
+      Simport_configuration.path_to_override_for_h = p_f_o4;
     } ->
     Format.fprintf ppf "%,@[<1>{@,";
     Format.fprintf ppf "%,@[<1>software_name =@ ";
@@ -51,6 +45,12 @@ let print_configuration ppf = function
     Lib_print.print_Option Path_print.print_file_name ppf p_f_o2;
     Format.fprintf ppf "%,;@]@ "; Format.fprintf ppf "%,@[<1>prefix =@ ";
     Lib_print.print_Option Lib_print.print_quoted_string ppf s_o;
+    Format.fprintf ppf "%,;@]@ ";
+    Format.fprintf ppf "%,@[<1>path_to_override_for_c =@ ";
+    Lib_print.print_Option Path_print.print_file_name ppf p_f_o3;
+    Format.fprintf ppf "%,;@]@ ";
+    Format.fprintf ppf "%,@[<1>path_to_override_for_h =@ ";
+    Lib_print.print_Option Path_print.print_file_name ppf p_f_o4;
     Format.fprintf ppf "%,;@]@ "; Format.fprintf ppf "%,@,}@]"
 ;;
 

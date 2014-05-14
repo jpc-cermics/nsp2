@@ -52,9 +52,6 @@ let print_where () =
 
 let parse_args () =
   Arg.parse [
-    ("-I", Arg.String Path.push,
-     "<directory-name>:\
-    \n   add the directory name argument to the search path for files");
     ("-d", Arg.Unit Configuration.set_debug,
      ": trigger all debugging flags");
     ("-debug", Arg.Unit set_general_debug,
@@ -65,6 +62,10 @@ let parse_args () =
      ": set the source file argument");
     ("-o", Arg.String Configuration.set_target_file,
      ": set the target file result");
+    ("-cp", Arg.String Configuration.set_path_to_override_for_c,
+     ": set the path of override file to be generated in c files");
+    ("-cip", Arg.String Configuration.set_path_to_override_for_h,
+     ": set the path of override file to be generated in h files");
     ("-verbose", Arg.Unit Configuration.set_verbose,
      ": set the verbose mode");
     ("-v", Arg.Unit Configuration.set_verbose,
