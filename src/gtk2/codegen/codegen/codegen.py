@@ -524,7 +524,7 @@ class Wrapper:
                 self.fp.setline(lineno, filename)
                 self.fp.write(self.overrides.slot_override(slotname))
                 self.fp.resetline()
-                self.fp.write('\n\n')
+                #self.fp.write('\n\n')
                 substdict[slot] = slotfunc
             else:
                 substdict[slot] = '0'
