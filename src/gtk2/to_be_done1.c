@@ -234,7 +234,11 @@ static int add_constants(void);
 
 void nsp_init_gtk_types(void) 
 {
+#if GLIB_CHECK_VERSION(2,36,0)
+  /* deprecated g_type_init */
+#else
   g_type_init();
+#endif
   new_type_atkhyperlink(T_BASE);
   new_type_atkobject(T_BASE);
   new_type_atknoopobject(T_BASE);
