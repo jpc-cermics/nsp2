@@ -748,7 +748,7 @@ int nsp_smio_scanf_matrix(NspSMio *F,char *format,NspMatrix **M,int flag,NspSMat
 {
   int mem=OK,c, i,j,rows,cols,n, vl = -1;
   char *start,*end;
-  long int offset;
+  long int offset=0;
   double x;
   if ( !IS_OPENED(F->obj->flag)) 
     {
@@ -963,7 +963,7 @@ int nsp_smio_read_lines(NspSMio *F,NspSMatrix **S,int nlines)
 
 int nsp_smio_scanf_smatrix(NspSMio *F,NspSMatrix **S)
 {
-  long int offset;
+  long int offset=0;
   int mem=OK;
   int rows=0,n;
   if ( !IS_OPENED(F->obj->flag)) 

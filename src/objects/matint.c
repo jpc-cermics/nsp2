@@ -325,6 +325,7 @@ static int int_matint_meth_enlarge(NspObject *self, Stack stack, int rhs, int op
  *      this is to be checked.
  */
 
+#if 0 
 static int int_matint_meth_set_values(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   CheckStdRhs (2,3);
@@ -349,7 +350,7 @@ static int int_matint_meth_set_values(NspObject *self, Stack stack, int rhs, int
   MoveObj(stack,1,self);
   return 1;
 }
-
+#endif 
 
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
@@ -359,7 +360,9 @@ static NspMethods matint_methods[] = {
   {"to_cells",(nsp_method *) int_matint_to_cells},
   {"set_diag",(nsp_method *) int_matint_meth_set_diag},
   {"enlarge",(nsp_method *) int_matint_meth_enlarge},
-  /* {"set_values",(nsp_method *) int_matint_meth_set_values}, XXXX to be finished */
+#if 0 
+  {"set_values",(nsp_method *) int_matint_meth_set_values}, 
+#endif
   { NULL, NULL}
 };
 
