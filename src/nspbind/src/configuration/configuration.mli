@@ -24,7 +24,7 @@ exception Error of error;;
 val report_error: Format.formatter -> error -> unit
 ;;
 
-val print_version: Simport_configuration.version -> unit;;
+val print_version: Codegen_configuration.version -> unit;;
 
 val set_verbose: unit -> unit;;
 val get_verbose: unit -> bool;;
@@ -48,7 +48,7 @@ val is_definitions_source_file_name: Path.file_name -> bool;;
 val is_overrides_source_file_name: Path.file_name -> bool;;
 
 val get_software_name: unit -> string;;
-val get_software_version: unit -> Simport_configuration.version;;
+val get_software_version: unit -> Codegen_configuration.version;;
 
 (** Internal usage. *)
 

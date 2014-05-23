@@ -62,23 +62,23 @@
     ./src/basics/ident_print.cmx ./src/basics/hash_table_print.cmx \
     ./src/basics/binding.cmi
 ./src/configuration/format_printer.cmi :
-./src/configuration/configuration.cmi : \
-    ./src/configuration/simport_configuration.cmi ./src/basics/path.cmi
-./src/configuration/simport_configuration.cmi : ./src/basics/path.cmi
+./src/configuration/configuration.cmi : ./src/basics/path.cmi \
+    ./src/configuration/codegen_configuration.cmi
+./src/configuration/codegen_configuration.cmi : ./src/basics/path.cmi
 ./src/configuration/say.cmi :
 ./src/configuration/arguments.cmi : ./src/basics/path.cmi
-./src/configuration/configuration.cmo : \
-    ./src/configuration/simport_configuration.cmi ./src/basics/path.cmi \
+./src/configuration/configuration.cmo : ./src/basics/unatural_types.cmi \
+    ./src/basics/unatural.cmi ./src/basics/path.cmi \
+    ./src/configuration/codegen_configuration.cmi \
     ./src/configuration/configuration.cmi
-./src/configuration/configuration.cmx : \
-    ./src/configuration/simport_configuration.cmi ./src/basics/path.cmx \
+./src/configuration/configuration.cmx : ./src/basics/unatural_types.cmx \
+    ./src/basics/unatural.cmx ./src/basics/path.cmx \
+    ./src/configuration/codegen_configuration.cmi \
     ./src/configuration/configuration.cmi
-./src/configuration/simport_configuration_print.cmo : \
-    ./src/configuration/simport_configuration.cmi ./src/basics/path_print.cmo \
-    ./src/basics/lib_print.cmi
-./src/configuration/simport_configuration_print.cmx : \
-    ./src/configuration/simport_configuration.cmi ./src/basics/path_print.cmx \
-    ./src/basics/lib_print.cmx
+./src/configuration/codegen_configuration_print.cmo : \
+    ./src/basics/path_print.cmo ./src/basics/lib_print.cmi
+./src/configuration/codegen_configuration_print.cmx : \
+    ./src/basics/path_print.cmx ./src/basics/lib_print.cmx
 ./src/configuration/say.cmo : ./src/configuration/configuration.cmi \
     ./src/configuration/say.cmi
 ./src/configuration/say.cmx : ./src/configuration/configuration.cmx \
@@ -183,6 +183,7 @@
 ./src/matlab/printing/definitions.cmi : ./src/matlab/printing/stringarg.cmi \
     ./src/matlab/parsing/lisp_ast.cmo
 ./src/matlab/printing/genfunctions.cmi : ./src/matlab/printing/stringarg.cmi
+./src/matlab/printing/genmethods.cmi : ./src/matlab/printing/stringarg.cmi
 ./src/matlab/printing/mtlb_ppf.cmo : ./src/matlab/printing/mtlb_ppf.cmi
 ./src/matlab/printing/mtlb_ppf.cmx : ./src/matlab/printing/mtlb_ppf.cmi
 ./src/matlab/printing/overrides.cmo : ./src/configuration/say.cmi \
@@ -268,7 +269,7 @@
     ./src/configuration/configuration.cmx ./src/matlab/printing/codegen.cmx \
     ./src/matlab/parsing/ast_node.cmi
 ./src/compiler/main_gen.cmi :
-./src/compiler/mdl_compile.cmi : ./src/basics/path.cmi
+./src/compiler/defs_compile.cmi : ./src/basics/path.cmi
 ./src/compiler/main_gen.cmo : ./src/matlab/parsing/mtlb_syntaxerr.cmi \
     ./src/matlab/parsing/mtlb_location.cmi \
     ./src/matlab/parsing/mtlb_lexer.cmo ./src/configuration/configuration.cmi \
@@ -277,15 +278,15 @@
     ./src/matlab/parsing/mtlb_location.cmx \
     ./src/matlab/parsing/mtlb_lexer.cmx ./src/configuration/configuration.cmx \
     ./src/compiler/main_gen.cmi
-./src/compiler/mdl_compile.cmo : ./src/configuration/say.cmi \
+./src/compiler/defs_compile.cmo : ./src/configuration/say.cmi \
     ./src/basics/path.cmi ./src/matlab/printing/override_print.cmo \
-    ./src/configuration/configuration.cmi ./src/compiler/mdl_compile.cmi
-./src/compiler/mdl_compile.cmx : ./src/configuration/say.cmx \
+    ./src/configuration/configuration.cmi ./src/compiler/defs_compile.cmi
+./src/compiler/defs_compile.cmx : ./src/configuration/say.cmx \
     ./src/basics/path.cmx ./src/matlab/printing/override_print.cmx \
-    ./src/configuration/configuration.cmx ./src/compiler/mdl_compile.cmi
+    ./src/configuration/configuration.cmx ./src/compiler/defs_compile.cmi
 ./src/driver/driver.cmo : ./src/configuration/say.cmi \
-    ./src/compiler/mdl_compile.cmi ./src/compiler/main_gen.cmi \
+    ./src/compiler/main_gen.cmi ./src/compiler/defs_compile.cmi \
     ./src/configuration/arguments.cmi
 ./src/driver/driver.cmx : ./src/configuration/say.cmx \
-    ./src/compiler/mdl_compile.cmx ./src/compiler/main_gen.cmx \
+    ./src/compiler/main_gen.cmx ./src/compiler/defs_compile.cmx \
     ./src/configuration/arguments.cmx

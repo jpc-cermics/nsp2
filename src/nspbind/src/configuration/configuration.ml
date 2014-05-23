@@ -14,7 +14,7 @@
 
 (* $Id$ *)
 
-open Simport_configuration;;
+open Codegen_configuration;;
 
 type error =
   | Fatal_error of string
@@ -34,7 +34,7 @@ and overrides_source_file_extension = Path.to_file_extension ".override"
 ;;
 
 let conf = {
-  Simport_configuration.
+  Codegen_configuration.
   software_name = nsp_codegen_name;
   software_version = nsp_codegen_version;
   

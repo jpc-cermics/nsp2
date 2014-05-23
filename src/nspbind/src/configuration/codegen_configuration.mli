@@ -1,6 +1,6 @@
 (***********************************************************************)
 (*                                                                     *)
-(*                               Simport                               *)
+(*                           Interface generator                       *)
 (*                                                                     *)
 (*                   Pierre Weis, INRIA Rocquencourt                   *)
 (*                                                                     *)

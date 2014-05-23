@@ -4,24 +4,24 @@ let print_version ppf = function | s -> Lib_print.print_quoted_string ppf s
 ;;
 
 let print_source_file_types ppf = function
-  | Simport_configuration.Definition -> Format.fprintf ppf "%s" "Definition"
-  | Simport_configuration.Overrides -> Format.fprintf ppf "%s" "Overrides"
+  | Codegen_configuration.Definition -> Format.fprintf ppf "%s" "Definition"
+  | Codegen_configuration.Overrides -> Format.fprintf ppf "%s" "Overrides"
 ;;
 
 let print_configuration ppf = function
   | {
-      Simport_configuration.software_name = s;
-      Simport_configuration.software_version = v;
-      Simport_configuration.verbose = b;
-      Simport_configuration.debug = b0;
-      Simport_configuration.warnings = b1;
-      Simport_configuration.source_file_basename = p_f_o;
-      Simport_configuration.definitions_source_file = p_f_o0;
-      Simport_configuration.overrides_source_file = p_f_o1;
-      Simport_configuration.target_file = p_f_o2;
-      Simport_configuration.prefix = s_o;
-      Simport_configuration.path_to_override_for_c = p_f_o3;
-      Simport_configuration.path_to_override_for_h = p_f_o4;
+      Codegen_configuration.software_name = s;
+      Codegen_configuration.software_version = v;
+      Codegen_configuration.verbose = b;
+      Codegen_configuration.debug = b0;
+      Codegen_configuration.warnings = b1;
+      Codegen_configuration.source_file_basename = p_f_o;
+      Codegen_configuration.definitions_source_file = p_f_o0;
+      Codegen_configuration.overrides_source_file = p_f_o1;
+      Codegen_configuration.target_file = p_f_o2;
+      Codegen_configuration.prefix = s_o;
+      Codegen_configuration.path_to_override_for_c = p_f_o3;
+      Codegen_configuration.path_to_override_for_h = p_f_o4;
     } ->
     Format.fprintf ppf "%,@[<1>{@,";
     Format.fprintf ppf "%,@[<1>software_name =@ ";

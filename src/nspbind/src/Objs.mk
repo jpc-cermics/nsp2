@@ -155,29 +155,29 @@ $(BASICS_DIR)/binding_print.ml: $(BASICS_DIR)/binding.mli
 
 CONFIGURATION_BYT_OBJS=\
  $(CONFIGURATION_DIR)/configuration.cmo\
- $(CONFIGURATION_DIR)/simport_configuration_print.cmo\
+ $(CONFIGURATION_DIR)/codegen_configuration_print.cmo\
  $(CONFIGURATION_DIR)/say.cmo\
  $(CONFIGURATION_DIR)/arguments.cmo\
 
 CONFIGURATION_CAML_FILES=\
  $(CONFIGURATION_DIR)/format_printer.mli\
  $(CONFIGURATION_DIR)/configuration.mli\
- $(CONFIGURATION_DIR)/simport_configuration.mli\
+ $(CONFIGURATION_DIR)/codegen_configuration.mli\
  $(CONFIGURATION_DIR)/say.mli\
  $(CONFIGURATION_DIR)/arguments.mli\
  $(CONFIGURATION_BYT_OBJS:.cmo=.ml)\
 
 CONFIGURATION_CAML_GENERATED_FILES=\
  $(CONFIGURATION_DIR)/configuration.ml\
- $(CONFIGURATION_DIR)/simport_configuration_print.ml\
+ $(CONFIGURATION_DIR)/codegen_configuration_print.ml\
 
 $(CONFIGURATION_DIR)/configuration.ml:\
  $(CONFIG_DIR)/simport.env\
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(CONFIGURATION_DIR)/simport_configuration_print.ml:\
- $(CONFIGURATION_DIR)/simport_configuration.mli
-	$(CAML_GEN) $(CONFIGURATION_DIR)/simport_configuration.mli
+$(CONFIGURATION_DIR)/codegen_configuration_print.ml:\
+ $(CONFIGURATION_DIR)/codegen_configuration.mli
+	$(CAML_GEN) $(CONFIGURATION_DIR)/codegen_configuration.mli
 
 # Directory src/matlab
 
@@ -297,11 +297,11 @@ MATLAB_CAML_GENERATED_FILES=\
 
 COMPILER_BYT_OBJS=\
  $(COMPILER_DIR)/main_gen.cmo\
- $(COMPILER_DIR)/mdl_compile.cmo\
+ $(COMPILER_DIR)/defs_compile.cmo\
 
 COMPILER_CAML_FILES=\
  $(COMPILER_DIR)/main_gen.mli\
- $(COMPILER_DIR)/mdl_compile.mli\
+ $(COMPILER_DIR)/defs_compile.mli\
  $(COMPILER_BYT_OBJS:.cmo=.ml)\
 
 COMPILER_CAML_GENERATED_FILES=\
@@ -381,8 +381,6 @@ CONFIG_SCRIPTS_TO_BANNERIZE=\
 
 # List of .mlin .mliin, etc. to enter in the list of files to bannerize
 CAML_GENERATING_FILES=\
-
-#$(CONFIGURATION_DIR)/configuration.mlin\
 
 LOCAL_FILES_TO_BANNERIZE=\
  $(CONFIG_FILES_TO_BANNERIZE)\

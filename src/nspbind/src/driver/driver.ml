@@ -15,7 +15,7 @@
 (* $Id$ *)
 
 let treat_file _ppf src_fname =
-  Mdl_compile.compile src_fname
+  Defs_compile.compile src_fname
 ;;
 
 let do_compile = 
