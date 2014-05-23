@@ -26,6 +26,6 @@ val report_error: Format.formatter -> error -> unit;;
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

@@ -14,24 +14,26 @@
 
 (* $Id$ *)
 
-let print_position ppf = function
-  | {
-      Lexing.pos_fname = s;
-      Lexing.pos_lnum = i;
-      Lexing.pos_bol = i0;
-      Lexing.pos_cnum = i1;
-    } ->
-    Format.fprintf ppf "%,@[<1>{@,";
-    Format.fprintf ppf "%,@[<1>pos_fname =@ ";
-    Lib_print.print_quoted_string ppf s; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_lnum =@ ";
-    Lib_print.print_quoted_int ppf i; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_bol =@ ";
-    Lib_print.print_quoted_int ppf i0; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_cnum =@ ";
-    Lib_print.print_quoted_int ppf i1; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@,}@]"
-;;
+(* 
+val method_tmpl_std : string
+val method_tmpl_boxed : string
+val method_tmpl : Stringarg.object_rec -> string
+val constructor_tmpl_std : string
+val constructor_tmpl_boxed : string
+val constructor_tmpl : Stringarg.object_rec -> string
+val written_overrides_table : (string, string) Hashtbl.t
+val write_method :
+  Stringarg.object_rec ->
+  bool -> Stringarg.function_obj -> string -> bool -> bool -> string * bool
+val find_methods : Stringarg.object_rec -> Stringarg.function_obj list
+val write_methods : Stringarg.object_rec -> bool -> unit
+val find_constructors : Stringarg.object_rec -> Stringarg.function_obj list
+
+*)
+
+val write_methods: Stringarg.object_rec -> bool -> unit;;
+val write_constructors:  Stringarg.object_rec -> bool -> 
+  (string, string) Hashtbl.t -> Stringarg.function_obj list;;
 
 (*
  Local Variables:

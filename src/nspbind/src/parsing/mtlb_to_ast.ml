@@ -59,6 +59,6 @@ let read_mtlb_string = parse_string;;
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

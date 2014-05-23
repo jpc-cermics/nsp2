@@ -38,6 +38,6 @@ val get_line : t -> int;;
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

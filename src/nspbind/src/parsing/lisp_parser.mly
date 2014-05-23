@@ -52,7 +52,7 @@ atom: NAME { Lisp_ast.Atom $1 }
 
 /*
  Local Variables:
-  compile-command: "cd ../../../; make"
+  compile-command: "cd ../../; make"
   End:
 */
 

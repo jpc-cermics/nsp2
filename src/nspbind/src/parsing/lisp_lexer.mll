@@ -83,7 +83,7 @@ rule token = parse
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)
 

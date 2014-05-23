@@ -163,6 +163,6 @@ let read_lisp_file efname =
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

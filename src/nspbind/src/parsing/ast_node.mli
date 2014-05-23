@@ -39,6 +39,6 @@ type ('desc, 'info) t = ('desc, 'info) ast_node;;
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

@@ -26,6 +26,6 @@ val read_mtlb_string :
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

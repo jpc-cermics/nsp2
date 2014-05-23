@@ -129,6 +129,6 @@ val lift_fun_desc2 :
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

@@ -36,6 +36,6 @@ and 'info override_desc =
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

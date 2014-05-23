@@ -37,6 +37,6 @@ let change_ast_desc node desc =
 
 (*
  Local Variables:
-  compile-command: "cd ../../; make"
+  compile-command: "cd ../..make"
   End:
 *)

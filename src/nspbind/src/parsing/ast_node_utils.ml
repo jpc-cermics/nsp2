@@ -128,6 +128,6 @@ let lift_fun_desc2 info f_desc =
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

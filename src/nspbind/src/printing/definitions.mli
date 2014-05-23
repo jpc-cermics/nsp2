@@ -14,24 +14,15 @@
 
 (* $Id$ *)
 
-let print_position ppf = function
-  | {
-      Lexing.pos_fname = s;
-      Lexing.pos_lnum = i;
-      Lexing.pos_bol = i0;
-      Lexing.pos_cnum = i1;
-    } ->
-    Format.fprintf ppf "%,@[<1>{@,";
-    Format.fprintf ppf "%,@[<1>pos_fname =@ ";
-    Lib_print.print_quoted_string ppf s; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_lnum =@ ";
-    Lib_print.print_quoted_int ppf i; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_bol =@ ";
-    Lib_print.print_quoted_int ppf i0; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@[<1>pos_cnum =@ ";
-    Lib_print.print_quoted_int ppf i1; Format.fprintf ppf "%,;@]@ ";
-    Format.fprintf ppf "%,@,}@]"
-;;
+val select_objects: Lisp_ast.t list -> Stringarg.object_rec list;;
+val select_interfaces: Lisp_ast.t list -> Stringarg.object_rec list;;
+val select_structures: Lisp_ast.t list -> Stringarg.object_rec list;;
+val select_pointers: Lisp_ast.t list -> Stringarg.object_rec list;;
+val select_boxes: Lisp_ast.t list -> Stringarg.object_rec list;;
+val select_functions:  Lisp_ast.t list ->  Stringarg.function_obj list -> Stringarg.function_obj list;;
+val select_enums:  Lisp_ast.t list -> Stringarg.enum list -> Stringarg.enum list;;
+
+val print_lisp_ast : Lisp_ast.t list -> unit;;
 
 (*
  Local Variables:

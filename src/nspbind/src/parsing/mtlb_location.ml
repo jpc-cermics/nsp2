@@ -66,6 +66,6 @@ let get_line { loc_beg = loc_beg; loc_end = _loc_end; } =
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)

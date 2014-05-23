@@ -25,6 +25,6 @@ let report_error ppf = function
 
 (*
  Local Variables:
-  compile-command: "cd ../../..; make"
+  compile-command: "cd ../..; make"
   End:
 *)
