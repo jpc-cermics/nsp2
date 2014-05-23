@@ -31,9 +31,8 @@ CAMLZIP_LIB_DIR=$(SIMPORT_INTERNAL_LIBS_DIR)/camlzip
 BASICS_DIR=$(SRC_DIR)/basics
 CONFIGURATION_DIR=$(SRC_DIR)/configuration
 
-MATLAB_DIR=$(SRC_DIR)/matlab
-MATLAB_PARSING_DIR=$(MATLAB_DIR)/parsing
-MATLAB_PRINTING_DIR=$(MATLAB_DIR)/printing
+CODEGEN_PARSING_DIR=$(SRC_DIR)/parsing
+PRINTING_DIR=$(SRC_DIR)/printing
 
 COMPILER_DIR=$(SRC_DIR)/compiler
 DRIVER_DIR=$(SRC_DIR)/driver
@@ -42,16 +41,16 @@ SIMPORT_SUB_DIRS=\
  $(BASICS_DIR)\
  $(CONFIGURATION_DIR)\
  $(EMBEDDED_DIR)\
- $(MATLAB_PARSING_DIR)\
- $(MATLAB_PRINTING_DIR)\
+ $(CODEGEN_PARSING_DIR)\
+ $(PRINTING_DIR)\
  $(COMPILER_DIR)\
  $(DRIVER_DIR)\
 
 SIMPORT_COMMON_CAML_INCLUDES=\
  -I $(BASICS_DIR)\
  -I $(CONFIGURATION_DIR)\
- -I $(MATLAB_PARSING_DIR)\
- -I $(MATLAB_PRINTING_DIR)\
+ -I $(CODEGEN_PARSING_DIR)\
+ -I $(PRINTING_DIR)\
 
 SIMPORT_TRAILING_CAML_INCLUDES=\
  -I $(COMPILER_DIR)\
@@ -184,114 +183,114 @@ $(CONFIGURATION_DIR)/codegen_configuration_print.ml:\
 # Directory src/parsing
 
 MATLAB_LEX_BYT_OBJS=\
- $(MATLAB_PARSING_DIR)/mtlb_location.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_lexer.cmo\
- $(MATLAB_PARSING_DIR)/lisp_lexer.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_location.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_lexer.cmo\
+ $(CODEGEN_PARSING_DIR)/lisp_lexer.cmo\
 
 MATLAB_LEX_CAML_FILES=\
- $(MATLAB_PARSING_DIR)/mtlb_location.mli\
- $(MATLAB_PARSING_DIR)/mtlb_lexer.mll\
- $(MATLAB_PARSING_DIR)/lisp_lexer.mll\
+ $(CODEGEN_PARSING_DIR)/mtlb_location.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_lexer.mll\
+ $(CODEGEN_PARSING_DIR)/lisp_lexer.mll\
  $(MATLAB_LEX_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_LEX_CAML_GENERATED_FILES=\
- $(MATLAB_PARSING_DIR)/mtlb_lexer.ml\
- $(MATLAB_PARSING_DIR)/lisp_lexer.ml\
+ $(CODEGEN_PARSING_DIR)/mtlb_lexer.ml\
+ $(CODEGEN_PARSING_DIR)/lisp_lexer.ml\
 
 MATLAB_PARSE_BYT_OBJS=\
- $(MATLAB_PARSING_DIR)/lisp_ast.cmo\
- $(MATLAB_PARSING_DIR)/ast_node_utils.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_syntaxerr.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_ast_funs.cmo\
- $(MATLAB_PARSING_DIR)/lexing_print.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_location_print.cmo\
- $(MATLAB_PARSING_DIR)/ast_node_print.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_ast_print.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_parser.cmo\
- $(MATLAB_PARSING_DIR)/lisp_parser.cmo\
- $(MATLAB_PARSING_DIR)/mtlb_to_ast.cmo\
- $(MATLAB_PARSING_DIR)/lisp_to_ast.cmo\
+ $(CODEGEN_PARSING_DIR)/lisp_ast.cmo\
+ $(CODEGEN_PARSING_DIR)/ast_node_utils.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_syntaxerr.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_ast_funs.cmo\
+ $(CODEGEN_PARSING_DIR)/lexing_print.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_location_print.cmo\
+ $(CODEGEN_PARSING_DIR)/ast_node_print.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_ast_print.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_parser.cmo\
+ $(CODEGEN_PARSING_DIR)/lisp_parser.cmo\
+ $(CODEGEN_PARSING_DIR)/mtlb_to_ast.cmo\
+ $(CODEGEN_PARSING_DIR)/lisp_to_ast.cmo\
 
 MATLAB_PARSE_CAML_FILES=\
- $(MATLAB_PARSING_DIR)/ast_node.mli\
- $(MATLAB_PARSING_DIR)/ast_node_utils.mli\
- $(MATLAB_PARSING_DIR)/mtlb_ast.mli\
- $(MATLAB_PARSING_DIR)/mtlb_syntaxerr.mli\
- $(MATLAB_PARSING_DIR)/mtlb_parser.mly\
- $(MATLAB_PARSING_DIR)/mtlb_parser.mli\
- $(MATLAB_PARSING_DIR)/lisp_parser.mly\
- $(MATLAB_PARSING_DIR)/lisp_parser.mli\
- $(MATLAB_PARSING_DIR)/mtlb_to_ast.mli\
- $(MATLAB_PARSING_DIR)/lisp_to_ast.mli\
+ $(CODEGEN_PARSING_DIR)/ast_node.mli\
+ $(CODEGEN_PARSING_DIR)/ast_node_utils.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_ast.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_syntaxerr.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_parser.mly\
+ $(CODEGEN_PARSING_DIR)/mtlb_parser.mli\
+ $(CODEGEN_PARSING_DIR)/lisp_parser.mly\
+ $(CODEGEN_PARSING_DIR)/lisp_parser.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_to_ast.mli\
+ $(CODEGEN_PARSING_DIR)/lisp_to_ast.mli\
  $(MATLAB_PARSE_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_PARSE_CAML_GENERATED_FILES=\
- $(MATLAB_PARSING_DIR)/mtlb_location_print.ml\
- $(MATLAB_PARSING_DIR)/ast_node_print.ml\
- $(MATLAB_PARSING_DIR)/mtlb_ast_print.ml\
- $(MATLAB_PARSING_DIR)/mtlb_parser.mli\
- $(MATLAB_PARSING_DIR)/mtlb_parser.ml\
- $(MATLAB_PARSING_DIR)/lisp_parser.mli\
- $(MATLAB_PARSING_DIR)/lisp_parser.ml\
+ $(CODEGEN_PARSING_DIR)/mtlb_location_print.ml\
+ $(CODEGEN_PARSING_DIR)/ast_node_print.ml\
+ $(CODEGEN_PARSING_DIR)/mtlb_ast_print.ml\
+ $(CODEGEN_PARSING_DIR)/mtlb_parser.mli\
+ $(CODEGEN_PARSING_DIR)/mtlb_parser.ml\
+ $(CODEGEN_PARSING_DIR)/lisp_parser.mli\
+ $(CODEGEN_PARSING_DIR)/lisp_parser.ml\
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(MATLAB_PARSING_DIR)/mtlb_location_print.ml:\
-  $(MATLAB_PARSING_DIR)/mtlb_location.mli
-	$(CAML_GEN) $(MATLAB_PARSING_DIR)/mtlb_location.mli
+$(CODEGEN_PARSING_DIR)/mtlb_location_print.ml:\
+  $(CODEGEN_PARSING_DIR)/mtlb_location.mli
+	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/mtlb_location.mli
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(MATLAB_PARSING_DIR)/ast_node_print.ml: $(MATLAB_PARSING_DIR)/ast_node.mli
-	$(CAML_GEN) $(MATLAB_PARSING_DIR)/ast_node.mli
+$(CODEGEN_PARSING_DIR)/ast_node_print.ml: $(CODEGEN_PARSING_DIR)/ast_node.mli
+	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/ast_node.mli
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(MATLAB_PARSING_DIR)/mtlb_ast_print.ml: $(MATLAB_PARSING_DIR)/mtlb_ast.mli
-	$(CAML_GEN) $(MATLAB_PARSING_DIR)/mtlb_ast.mli
+$(CODEGEN_PARSING_DIR)/mtlb_ast_print.ml: $(CODEGEN_PARSING_DIR)/mtlb_ast.mli
+	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/mtlb_ast.mli
 
 # Directory src/matlab/printing
 
-MATLAB_PRINTING_BYT_OBJS=\
- $(MATLAB_PRINTING_DIR)/mtlb_ppf.cmo\
- $(MATLAB_PRINTING_DIR)/overrides.cmo\
- $(MATLAB_PRINTING_DIR)/file.cmo\
- $(MATLAB_PRINTING_DIR)/stringarg.cmo\
- $(MATLAB_PRINTING_DIR)/definitions.cmo\
- $(MATLAB_PRINTING_DIR)/build.cmo\
- $(MATLAB_PRINTING_DIR)/genheaders.cmo\
- $(MATLAB_PRINTING_DIR)/genfunctions.cmo\
- $(MATLAB_PRINTING_DIR)/genmethods.cmo\
- $(MATLAB_PRINTING_DIR)/gengetset.cmo\
- $(MATLAB_PRINTING_DIR)/codegen.cmo\
- $(MATLAB_PRINTING_DIR)/override_print.cmo\
+PRINTING_BYT_OBJS=\
+ $(PRINTING_DIR)/mtlb_ppf.cmo\
+ $(PRINTING_DIR)/overrides.cmo\
+ $(PRINTING_DIR)/file.cmo\
+ $(PRINTING_DIR)/stringarg.cmo\
+ $(PRINTING_DIR)/definitions.cmo\
+ $(PRINTING_DIR)/build.cmo\
+ $(PRINTING_DIR)/genheaders.cmo\
+ $(PRINTING_DIR)/genfunctions.cmo\
+ $(PRINTING_DIR)/genmethods.cmo\
+ $(PRINTING_DIR)/gengetset.cmo\
+ $(PRINTING_DIR)/codegen.cmo\
+ $(PRINTING_DIR)/override_print.cmo\
 
-# $(MATLAB_PRINTING_DIR)/codegen.cmo\
+# $(PRINTING_DIR)/codegen.cmo\
 #
 
-MATLAB_PRINTING_CAML_FILES=\
- $(MATLAB_PRINTING_DIR)/genheaders.mli\
- $(MATLAB_PRINTING_DIR)/mtlb_ppf.mli\
- $(MATLAB_PRINTING_DIR)/file.mli\
- $(MATLAB_PRINTING_DIR)/stringarg.mli\
- $(MATLAB_PRINTING_DIR)/definitions.mli\
- $(MATLAB_PRINTING_DIR)/genfunctions.mli\
- $(MATLAB_PRINTING_DIR)/genmethods.mli\
- $(MATLAB_PRINTING_BYT_OBJS:.cmo=.ml)\
+PRINTING_CAML_FILES=\
+ $(PRINTING_DIR)/genheaders.mli\
+ $(PRINTING_DIR)/mtlb_ppf.mli\
+ $(PRINTING_DIR)/file.mli\
+ $(PRINTING_DIR)/stringarg.mli\
+ $(PRINTING_DIR)/definitions.mli\
+ $(PRINTING_DIR)/genfunctions.mli\
+ $(PRINTING_DIR)/genmethods.mli\
+ $(PRINTING_BYT_OBJS:.cmo=.ml)\
 
-MATLAB_PRINTING_CAML_GENERATED_FILES=\
+PRINTING_CAML_GENERATED_FILES=\
 
 MATLAB_BYT_OBJS=\
  $(MATLAB_LEX_BYT_OBJS)\
  $(MATLAB_PARSE_BYT_OBJS)\
- $(MATLAB_PRINTING_BYT_OBJS)\
+ $(PRINTING_BYT_OBJS)\
 
 MATLAB_CAML_FILES=\
  $(MATLAB_LEX_CAML_FILES)\
  $(MATLAB_PARSE_CAML_FILES)\
- $(MATLAB_PRINTING_CAML_FILES)\
+ $(PRINTING_CAML_FILES)\
 
 MATLAB_CAML_GENERATED_FILES=\
  $(MATLAB_LEX_CAML_GENERATED_FILES)\
  $(MATLAB_PARSE_CAML_GENERATED_FILES)\
- $(MATLAB_PRINTING_CAML_GENERATED_FILES)\
+ $(PRINTING_CAML_GENERATED_FILES)\
 
 # Directory src/compiler
 

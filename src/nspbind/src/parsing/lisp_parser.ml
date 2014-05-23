@@ -6,7 +6,7 @@ type token =
 
 open Parsing;;
 let _ = parse_error;;
-# 3 "src/matlab/parsing/lisp_parser.mly"
+# 3 "src/parsing/lisp_parser.mly"
 
 (***********************************************************************)
 (*                                                                     *)
@@ -24,7 +24,7 @@ let _ = parse_error;;
 
 (* *)
 
-# 28 "src/matlab/parsing/lisp_parser.ml"
+# 28 "src/parsing/lisp_parser.ml"
 let yytransl_const = [|
   258 (* LPAREN *);
   259 (* RPAREN *);
@@ -85,73 +85,73 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'sexps) in
     Obj.repr(
-# 30 "src/matlab/parsing/lisp_parser.mly"
+# 30 "src/parsing/lisp_parser.mly"
           ( _1 )
-# 91 "src/matlab/parsing/lisp_parser.ml"
+# 91 "src/parsing/lisp_parser.ml"
                : Lisp_ast.t list))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'sexp) in
     Obj.repr(
-# 33 "src/matlab/parsing/lisp_parser.mly"
+# 33 "src/parsing/lisp_parser.mly"
          ( [_1] )
-# 98 "src/matlab/parsing/lisp_parser.ml"
+# 98 "src/parsing/lisp_parser.ml"
                : 'sexps))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : 'sexp) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'sexps) in
     Obj.repr(
-# 34 "src/matlab/parsing/lisp_parser.mly"
+# 34 "src/parsing/lisp_parser.mly"
                ( _1 :: _2 )
-# 106 "src/matlab/parsing/lisp_parser.ml"
+# 106 "src/parsing/lisp_parser.ml"
                : 'sexps))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'list) in
     Obj.repr(
-# 37 "src/matlab/parsing/lisp_parser.mly"
+# 37 "src/parsing/lisp_parser.mly"
          ( _1 )
-# 113 "src/matlab/parsing/lisp_parser.ml"
+# 113 "src/parsing/lisp_parser.ml"
                : 'sexp))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'atom) in
     Obj.repr(
-# 38 "src/matlab/parsing/lisp_parser.mly"
+# 38 "src/parsing/lisp_parser.mly"
          ( _1 )
-# 120 "src/matlab/parsing/lisp_parser.ml"
+# 120 "src/parsing/lisp_parser.ml"
                : 'sexp))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 42 "src/matlab/parsing/lisp_parser.mly"
+# 42 "src/parsing/lisp_parser.mly"
                   ( Lisp_ast.Null )
-# 126 "src/matlab/parsing/lisp_parser.ml"
+# 126 "src/parsing/lisp_parser.ml"
                : 'list))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'inside_list) in
     Obj.repr(
-# 43 "src/matlab/parsing/lisp_parser.mly"
+# 43 "src/parsing/lisp_parser.mly"
                               ( _2 )
-# 133 "src/matlab/parsing/lisp_parser.ml"
+# 133 "src/parsing/lisp_parser.ml"
                : 'list))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'sexp) in
     Obj.repr(
-# 46 "src/matlab/parsing/lisp_parser.mly"
+# 46 "src/parsing/lisp_parser.mly"
          ( Lisp_ast.cons _1 Lisp_ast.Null )
-# 140 "src/matlab/parsing/lisp_parser.ml"
+# 140 "src/parsing/lisp_parser.ml"
                : 'inside_list))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : 'sexp) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'inside_list) in
     Obj.repr(
-# 47 "src/matlab/parsing/lisp_parser.mly"
+# 47 "src/parsing/lisp_parser.mly"
                      ( Lisp_ast.cons _1 _2 )
-# 148 "src/matlab/parsing/lisp_parser.ml"
+# 148 "src/parsing/lisp_parser.ml"
                : 'inside_list))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 50 "src/matlab/parsing/lisp_parser.mly"
+# 50 "src/parsing/lisp_parser.mly"
            ( Lisp_ast.Atom _1 )
-# 155 "src/matlab/parsing/lisp_parser.ml"
+# 155 "src/parsing/lisp_parser.ml"
                : 'atom))
 (* Entry implementation_file *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))

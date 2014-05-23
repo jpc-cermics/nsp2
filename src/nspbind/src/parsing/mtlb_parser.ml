@@ -8,7 +8,7 @@ type token =
 
 open Parsing;;
 let _ = parse_error;;
-# 3 "src/matlab/parsing/mtlb_parser.mly"
+# 3 "src/parsing/mtlb_parser.mly"
 
 (***********************************************************************)
 (*                                                                     *)
@@ -30,7 +30,7 @@ open Mtlb_ast_funs;;
 (* *)
 
 
-# 34 "src/matlab/parsing/mtlb_parser.ml"
+# 34 "src/parsing/mtlb_parser.ml"
 let yytransl_const = [|
     0 (* EOF *);
     0|]
@@ -157,67 +157,67 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'overrides) in
     Obj.repr(
-# 41 "src/matlab/parsing/mtlb_parser.mly"
+# 41 "src/parsing/mtlb_parser.mly"
                ( mk (Ast(List.rev _1)) )
-# 163 "src/matlab/parsing/mtlb_parser.ml"
+# 163 "src/parsing/mtlb_parser.ml"
                : Mtlb_ast.parsing Mtlb_ast.implementation_file))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'rule) in
     Obj.repr(
-# 44 "src/matlab/parsing/mtlb_parser.mly"
+# 44 "src/parsing/mtlb_parser.mly"
                        ( (_1)::[]; )
-# 170 "src/matlab/parsing/mtlb_parser.ml"
+# 170 "src/parsing/mtlb_parser.ml"
                : 'overrides))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : 'overrides) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'rule) in
     Obj.repr(
-# 45 "src/matlab/parsing/mtlb_parser.mly"
+# 45 "src/parsing/mtlb_parser.mly"
                        ( (_2)::_1; )
-# 178 "src/matlab/parsing/mtlb_parser.ml"
+# 178 "src/parsing/mtlb_parser.ml"
                : 'overrides))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : string) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'names) in
     Obj.repr(
-# 48 "src/matlab/parsing/mtlb_parser.mly"
+# 48 "src/parsing/mtlb_parser.mly"
                  ( mk ( Ignore(_2)))
-# 186 "src/matlab/parsing/mtlb_parser.ml"
+# 186 "src/parsing/mtlb_parser.ml"
                : 'rule))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string * string ) in
     Obj.repr(
-# 49 "src/matlab/parsing/mtlb_parser.mly"
+# 49 "src/parsing/mtlb_parser.mly"
           ( let (a,b) = _1 in mk (Override2(a,b)))
-# 193 "src/matlab/parsing/mtlb_parser.ml"
+# 193 "src/parsing/mtlb_parser.ml"
                : 'rule))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string * string * string ) in
     Obj.repr(
-# 50 "src/matlab/parsing/mtlb_parser.mly"
+# 50 "src/parsing/mtlb_parser.mly"
           ( let (a,b,c) = _1 in mk (Override3(a,b,c)))
-# 200 "src/matlab/parsing/mtlb_parser.ml"
+# 200 "src/parsing/mtlb_parser.ml"
                : 'rule))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string * string * string * string ) in
     Obj.repr(
-# 51 "src/matlab/parsing/mtlb_parser.mly"
+# 51 "src/parsing/mtlb_parser.mly"
           ( let (a,b,c,d) = _1 in mk (Override4(a,b,c,d)))
-# 207 "src/matlab/parsing/mtlb_parser.ml"
+# 207 "src/parsing/mtlb_parser.ml"
                : 'rule))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 54 "src/matlab/parsing/mtlb_parser.mly"
+# 54 "src/parsing/mtlb_parser.mly"
      ( [])
-# 213 "src/matlab/parsing/mtlb_parser.ml"
+# 213 "src/parsing/mtlb_parser.ml"
                : 'names))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : string) in
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'names) in
     Obj.repr(
-# 55 "src/matlab/parsing/mtlb_parser.mly"
+# 55 "src/parsing/mtlb_parser.mly"
                ( _1 :: _2 )
-# 221 "src/matlab/parsing/mtlb_parser.ml"
+# 221 "src/parsing/mtlb_parser.ml"
                : 'names))
 (* Entry implementation_file *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))
