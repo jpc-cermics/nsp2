@@ -47,6 +47,7 @@
 #include <nsp/type.h>
 #include <nsp/file.h>
 #include <nsp/serial.h>
+#include <nsp/hash.h>
 #include <nsp/nspthreads.h>
 #include <nsp/stack.h>
 #include <nsp/interf.h>
@@ -2182,36 +2183,122 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
  * read saved object from a file 
  */
 
+static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S);
+static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname);
+
 static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs) 
 {
+  NspSMatrix *S=NULLSMAT;
+  NspHash *H=NULL;
+  int rep = OK;
   char buf[FSIZE+1];
   char *fname;
-  NspObject *O; 
   NspFile *F;
-  CheckRhs(1,2);
-  CheckLhs(1,1);
+  CheckStdRhs(1,2);
+  CheckLhs(0,1);
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ( rhs -opt == 2)
+    {
+      if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;        
+    }
   /* expand keys in path name result in buf */
   nsp_expand_file_with_exec_dir(&stack,fname,buf);
   /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
-  while (1) 
+  if ( lhs <= 0) 
     {
-      if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
-      if ( nsp_store_object(O) == FAIL) 
-	{
-	  Scierror("Error: failed to load object from %s\n",  fname);
-	  break;
-	}
+      rep = nsp_xdr_load_to_frame(F,S,fname);
+    }
+  else
+    {
+      H=nsp_xdr_load_to_hash(F,S);
     }
   if (nsp_file_close_xdr_r(F) == FAIL)
     {
       nsp_file_destroy(F);
+      if ( H != NULL) nsp_hash_destroy(H);
       return RET_BUG;
     }
   nsp_file_destroy(F);
+  if ( lhs <= 0 )
+    {
+      if (rep == FAIL) 
+	return RET_BUG;
+      else 
+	return 0;
+    }
+  else
+    {
+      if (H==NULL)
+	return RET_BUG;
+      else
+	{
+	  MoveObj(stack,1,NSP_OBJECT(H));
+	  return 1;
+	}
+    }
   return 0;
 }
+
+static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S)
+{
+  NspObject *Obj;
+  NspHash *H;
+  if(( H = nsp_hash_create(NVOID,10)) == NULLHASH) 
+    return NULL;
+  while (1) 
+    {
+      int ok = TRUE;
+      if ((Obj=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
+      if ( S != NULLSMAT )
+	{
+	  int i;
+	  ok=FALSE;
+	  for ( i = 0; i < S->mn; i++) 
+	    if ( strcmp(S->S[i],nsp_object_get_name(Obj))== 0 )
+	      {
+		ok = TRUE; break;
+	      }
+	}
+      if ( ok == TRUE )
+	{
+	  if (nsp_hash_enter(H,Obj) == FAIL) goto fail;
+	}
+    }
+  return H;
+ fail:
+  nsp_hash_destroy(H);
+  return NULL;
+} 
+
+static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname)
+{
+  NspObject *Obj;
+  while (1) 
+    {
+      int ok = TRUE;
+      if ((Obj=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
+      if ( S != NULLSMAT )
+	{
+	  int i;
+	  ok=FALSE;
+	  for ( i = 0; i < S->mn; i++) 
+	    if ( strcmp(S->S[i],nsp_object_get_name(Obj))== 0 )
+	      {
+		ok = TRUE; break;
+	      }
+	}
+      if ( ok == TRUE )
+	{
+	  if ( nsp_store_object(Obj) == FAIL) 
+	    {
+	      Scierror("Error: failed to load object from %s\n", fname);
+	      return FAIL;
+	    }
+	}
+    }
+  return OK;
+} 
 
 /*
  * the function xdr_opaque, always writes block of size BYTES_PER_XDR_UNIT. So
