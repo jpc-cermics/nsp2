@@ -8,8 +8,9 @@
   %-- Calling sequence section
 \begin{calling_sequence}
   \begin{verbatim}
-    load(filename [,name1,...,namen])  
-    sci_load(filename [,name1,...,namen])  
+    load(filename [, names]);
+    H= load(filename [, names] );
+    sci_load(filename [, name1,...,namen])  
     H=sci_load(filename [,name1,...,namen]);
   \end{verbatim}
 \end{calling_sequence}
@@ -18,16 +19,19 @@
   \begin{varlist}
     \vname{filename}: a string giving a file pathname.
     \vname{namei}: strings specifying object names. 
+    \vname{names}: a string matrix specifying object names. 
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
   The \verb!load! command is used to reload in the running nsp context 
   objects previously saved in a file by the \verb!save! command. 
   If the function is called with only one argument then the 
-  whole file content is reloaded. If explicit names are given then 
+  whole file content is reloaded. If a string matrix \verb!names! is given then 
   objects with corresponding names are searched and if found reloaded in 
   the running nsp session. 
-
+  If a left hand side argument is provided then an hash table 
+  filled with the loaded values is returned.
+  
   The \verb!sci_load! command is used to reload in the running nsp context
   objects previously saved by scicoslab (or saved with the  \verb!sci_save! 
   commande). If a left hand side argument is provided then an hash table 
@@ -38,7 +42,9 @@
   \begin{program}\HCode{a=rand(2,2);\Hnewline
     save('foo.dat',a,b=ones(4,2));\Hnewline
     clear a,b;\Hnewline
-    load('foo.dat');}
+    load('foo.dat');\Hnewline
+    H=load('foo.dat');\Hnewline
+    H=load('foo.dat','a');}
   \end{program}
 \end{examples}
 %-- see also
