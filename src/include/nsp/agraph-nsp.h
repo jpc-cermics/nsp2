@@ -1,3 +1,6 @@
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_NspAgraph_NSP
+#define NSP_INC_NspAgraph_NSP
 
 #include "agnode.h"
 #include "agedge.h"
@@ -11,12 +14,9 @@ int nsp_agisflattened(NspAgraph * g);
 int nsp_agisdirected(NspAgraph * g);
 int nsp_agisundirected(NspAgraph * g);
 int nsp_agisstrict(NspAgraph * g);
-/* nodes */
-NspAgnode  *nsp_agidnode(NspAgraph * g, unsigned long id,int createflag);
-NspAgnode  *nsp_agsubnode(NspAgraph * g, NspAgnode  * n, int createflag); 
-NspAgnode  *nsp_agfstnode(NspAgraph * g);
-NspAgnode  *nsp_agnxtnode(NspAgnode  * n);
+
 /* edges */
+
 NspAgedge *nsp_agidedge(NspAgnode * t, NspAgnode * h, unsigned long id,
 			  int createflag);
 NspAgedge *nsp_agsubedge(NspAgraph * g, NspAgedge * e, int createflag);
@@ -28,12 +28,10 @@ NspAgedge *nsp_agfstedge(NspAgnode * n);
 NspAgedge *nsp_agnxtedge(NspAgedge * e, NspAgnode * n);
 
 /* generic */
-NspAgraph *nsp_agraphof(void *);
-char *nsp_agnameof(void *);
+
 int nsp_agrelabel(void *obj, char *name);	/* scary */
 int nsp_agrelabel_node(NspAgnode * n, char *newname);
 int nsp_agdelete(NspAgraph * g, void *obj);
-long nsp_agdelsubg(NspAgraph * g, NspAgraph * sub);	/* could be agclose */
 int nsp_agdelnode(NspAgnode * arg_n);
 int nsp_agdeledge(NspAgedge * arg_e);
 int nsp_agisarootobj(void *);
@@ -59,12 +57,8 @@ char *nsp_agget(void *obj, char *name);
 char *nsp_agxget(void *obj, NspAgsym * sym);
 int nsp_agset(void *obj, char *name, char *value);
 int nsp_agxset(void *obj, NspAgsym * sym, char *value);
-/* defintions for subgraphs */
-NspAgraph *nsp_agsubg(NspAgraph * g, char *name, int cflag);	/* constructor */
-NspAgraph *nsp_agidsubg(NspAgraph * g, unsigned long id, int cflag);	/* constructor */
-NspAgraph *nsp_agfstsubg(NspAgraph * g);;
-NspAgraph *nsp_agnxtsubg(NspAgraph * subg);
-NspAgraph *nsp_agparent(NspAgraph * g);;
-NspAgraph *nsp_agroot(NspAgraph * g);
+
 /* set cardinality */
 int nsp_agdegree(NspAgnode * n, int in, int out);
+
+#endif 

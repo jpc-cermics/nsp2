@@ -100,12 +100,11 @@ extern int nsp_agraph_xdr_save(XDR  *xdrs, NspAgraph *M);
 
 #line 7 "codegen/agraph.override"
 /* inserted at the end of public part of include file
- * of ldfaure.h
  */
 #include <gvc.h> 
 #include <nsp/agraph-nsp.h>
 
-#line 109 "./agraph.h"
+#line 108 "./agraph.h"
 #endif /* NSP_INC_NspAgraph */ 
 
 #ifdef NspAgraph_Private 
@@ -120,22 +119,20 @@ static AttrTab agraph_attrs[];
 static NspMethods *agraph_get_methods(void);
 /* static int int_agraph_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAgraph *nsp_agraph_create_void(const char *name,NspTypeBase *type);
-#line 15 "codegen/agraph.override"
-/* inserted in the private part of include file
- * of ldfaure.h
- */
-static int nsp_gv_add_nodes(NspAgraph *G, NspSMatrix *S);
-static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
-#define nsp_gv_nnodes(G) agnnodes((G)->obj->graph)
-#define nsp_gv_nedges(G) agnedges((G)->obj->graph)
+#line 14 "codegen/agraph.override"
+
+/* graph methods */
+
+#define nsp_agnnodes(G) agnnodes((G)->obj->graph)
+#define nsp_agnedges(G) agnedges((G)->obj->graph)
+
+static NspAgraph *nsp_agparent(NspAgraph * G);
+static NspAgraph *nsp_agroot(NspAgraph * G);
+
 static int nsp_gv_write(NspAgraph * g,void *chan);
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
 static int nsp_gv_layout(NspAgraph *G, char *mode);
-static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name);
-static NspAgnode *nsp_gv_agfstnode(NspAgraph * g);
-static NspAgnode *nsp_gv_aglstnode(NspAgraph * g);
-static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n);
-static NspAgnode *nsp_gv_agprvnode(NspAgraph * g, NspAgnode *n);
+
 static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g);
 static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g);
 static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g);
@@ -147,8 +144,39 @@ static NspAgedge *nsp_gv_agnxtin(NspAgraph * g, NspAgedge *e);
 static NspAgedge *nsp_gv_agfstedge(NspAgraph * g, NspAgnode *n);
 static NspAgedge *nsp_gv_agnxtedge(NspAgraph * g, NspAgedge *e, NspAgnode *n);
 static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs);
-static NspAgraph *nsp_gv_agsubg(NspAgraph * g, char *name);
 
-#line 153 "./agraph.h"
+/* graph methods related to subgraphs */
+
+static NspAgraph *nsp_agsubg(NspAgraph * g, char *name);
+static NspAgraph *nsp_agfstsubg(NspAgraph * G);
+static NspAgraph *nsp_agnxtsubg(NspAgraph * G);
+static int nsp_agdelsubg(NspAgraph * G,NspAgraph * Gsub);
+
+/* graph methods related to nodes */
+
+static NspAgnode *nsp_agfstnode(NspAgraph * g);
+static NspAgnode *nsp_aglstnode(NspAgraph * g);
+static NspAgnode *nsp_agnxtnode(NspAgraph * g, NspAgnode *n);
+static NspAgnode *nsp_agprvnode(NspAgraph * g, NspAgnode *n);
+static int nsp_agaddnodes(NspAgraph *G, NspSMatrix *S);
+static int nsp_agaddedges(NspAgraph *G, NspSMatrix *S);
+static NspAgnode *nsp_agfindnode_by_name(NspAgraph * g, char *name);
+
+/* common */
+
+static char *nsp_agnameof_g(NspAgraph * G);
+static char *nsp_agnameof_n(NspAgnode * N);
+static char *nsp_agnameof_e(NspAgedge * E);
+
+/* node methods */
+
+static NspAgraph *nsp_agraphof(NspAgnode * N);
+
+/* edge methods */
+
+static NspAgnode *nsp_agtail(NspAgedge* E);
+static NspAgnode *nsp_aghead(NspAgedge* E);
+
+#line 181 "./agraph.h"
 #endif /* NspAgraph_Private */
 
