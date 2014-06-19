@@ -14,6 +14,8 @@ include-private Agraph
 
 /* graph methods */
 
+static int nsp_agraph_fill_from_b(Agraph_t *g, NspBMatrix *B);
+
 #define nsp_agnnodes(G) agnnodes((G)->obj->graph)
 #define nsp_agnedges(G) agnedges((G)->obj->graph)
 
@@ -111,7 +113,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
   Agdesc_t itype = Agundirected;
   const char *t_choices[]={ "graph", "graphstrict","digraph","digraphstrict",  NULL };
   Agdesc_t t_itype[]={ Agundirected,Agstrictundirected, Agdirected , Agstrictdirected};
-  CheckStdRhs(0,0);
+  CheckStdRhs(0,1);
   /* aginit(); can be called multiple times */
   if ( get_optional_args(stack,rhs,opt,opts,&type,&name) == FAIL) 
     return RET_BUG;
@@ -127,6 +129,23 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: agopen failed to create a graph\n");
       return RET_BUG;
     }
+  if ( rhs -opt == 1)
+    {
+      NspBMatrix *B;
+      if (( B = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
+      if ( B->m != B->n ) 
+	{
+	  Scierror("Error: first argument should be a square matrix\n");
+	  return RET_BUG;
+	}
+      itype= Agdirected;
+      if ( nsp_agraph_fill_from_b(g, B) == FAIL) 
+	{
+	  Scierror("Error: failed to fill graph with data\n");
+	  return RET_BUG;
+	}
+    }
+
   if ((H = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
@@ -898,4 +917,48 @@ static NspAgnode *nsp_agtail(NspAgedge* E)
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
+/*-------------------------------------------------
+ *  utilities for graph creation 
+ *-------------------------------------------------*/
 
+int nsp_agraph_fill_from_b(Agraph_t *g, NspBMatrix *B)
+{
+  int i,j;
+  char buf[512];
+  for ( i = 0 ; i < B->m ; i++) 
+    {
+      snprintf(buf,511,"N%d",i);
+      if ( agnode(g, buf ,1) == NULL) 
+	{
+	  return FAIL;
+	}
+    }    
+  for ( i = 0 ; i < B->m ; i++)
+    {
+      Agnode_t *t, *h;
+      snprintf(buf,511,"N%d",i);
+      if ((t = agfindnode(g, buf ))== NULL) 
+	{
+	  Scierror("Error: failed to create an arc, node %s not found\n",buf);
+	  return FAIL;
+	}
+      for ( j = 0 ; j < B->n ; j++)
+	{
+	  if ( B->B[i+j*B->m] == 1) 
+	    {
+	      snprintf(buf,511,"N%d",j);
+	      if ((h = agfindnode(g, buf)) == NULL)
+		{
+		  Scierror("Error: failed to create an arc, node %s not found\n",buf);
+		  return FAIL;
+		}
+	      if ( agedge(g, t,h,0,1)  == NULL) 
+		{
+		  Scierror("add_deges: failed to add arc %s->%s\n",t,h);
+		  return FAIL;
+		}
+	    }
+	}
+    }
+  return OK;
+}

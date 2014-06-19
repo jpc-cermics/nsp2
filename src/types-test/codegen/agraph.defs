@@ -451,47 +451,41 @@
 ;; usefull ? 
 ;;------------------------
 
-;;	 { (char *)"agdegree", _wrap_agdegree, METH_VARARGS, NULL},
+;; (define-function agdegree
+;;   (c-name "nsp_agdegree")
+;;   (return-type "int")
+;;   (parameters
+;;     '("NspAgnode*" "n")
+;;     '("int" "in")
+;;     '("int" "out")
+;;   )
+;; )
 
-(define-function agdegree
-  (c-name "nsp_agdegree")
-  (return-type "int")
-  (parameters
-    '("NspAgnode*" "n")
-    '("int" "in")
-    '("int" "out")
-  )
-)
+;; (define-function agdelnode
+;;   (c-name "nsp_agdelnode")
+;;   (return-type "int")
+;;   (parameters
+;;     '("NspAgnode*" "arg_n")
+;;   )
+;; )
 
-;;	 { (char *)"agdelnode", _wrap_agdelnode, METH_VARARGS, NULL},
+;; (define-function agdeledge
+;;   (c-name "nsp_agdeledge")
+;;   (return-type "int")
+;;   (parameters
+;;     '("NspAgedge*" "arg_e")
+;;   )
+;; )
 
-(define-function agdelnode
-  (c-name "nsp_agdelnode")
-  (return-type "int")
-  (parameters
-    '("NspAgnode*" "arg_n")
-  )
-)
-
-;;	 { (char *)"agdeledge", _wrap_agdeledge, METH_VARARGS, NULL},
-
-(define-function agdeledge
-  (c-name "nsp_agdeledge")
-  (return-type "int")
-  (parameters
-    '("NspAgedge*" "arg_e")
-  )
-)
-
-(define-function agsubedge
-  (c-name "nsp_agsubedge")
-  (return-type "NspAgedge*")
-  (parameters
-    '("NspAgraph*" "g")
-    '("NspAgedge*" "e")
-    '("int" "createflag")
-  )
-)
+;; (define-function agsubedge
+;;   (c-name "nsp_agsubedge")
+;;   (return-type "NspAgedge*")
+;;   (parameters
+;;     '("NspAgraph*" "g")
+;;     '("NspAgedge*" "e")
+;;     '("int" "createflag")
+;;   )
+;; )
 
 ;; (define-function agattrsym
 ;;   (c-name "nsp_agattrsym")
@@ -502,58 +496,13 @@
 ;;   )
 ;; )
 
-
-(define-function agnxtattr
-  (c-name "nsp_agnxtattr")
-  (return-type "NspAgsym*")
-  (parameters
-    '("NspAgraph*" "g")
-    '("int" "kind")
-    '("NspAgsym*" "attr")
-  )
-)
-
-;; { (char *)"agget", _wrap_agget, METH_VARARGS, NULL},
-
-;; (define-function agget
-;;   (c-name "nsp_agget")
-;;   (return-type "char*")
+;; (define-function agnxtattr
+;;   (c-name "nsp_agnxtattr")
+;;   (return-type "NspAgsym*")
 ;;   (parameters
-;;     '("void*" "obj")
-;;     '("char*" "name")
-;;   )
-;; )
-;;	 { (char *)"agxget", _wrap_agxget, METH_VARARGS, NULL},
-
-;; (define-function agxget
-;;   (c-name "nsp_agxget")
-;;   (return-type "char*")
-;;   (parameters
-;;     '("void*" "obj")
-;;     '("NspAgsym*" "sym")
-;;   )
-;; )
-
-;; { (char *)"agset", _wrap_agset, METH_VARARGS, NULL},
-
-;; (define-function agset
-;;   (c-name "nsp_agset")
-;;   (return-type "int")
-;;   (parameters
-;;     '("void*" "obj")
-;;     '("char*" "name")
-;;     '("char*" "value")
-;;   )
-;; )
-;;	 { (char *)"agxset", _wrap_agxset, METH_VARARGS, NULL},
-
-;; (define-function agxset
-;;   (c-name "nsp_agxset")
-;;   (return-type "int")
-;;   (parameters
-;;     '("void*" "obj")
-;;     '("NspAgsym*" "sym")
-;;     '("char*" "value")
+;;     '("NspAgraph*" "g")
+;;     '("int" "kind")
+;;     '("NspAgsym*" "attr")
 ;;   )
 ;; )
 

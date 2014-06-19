@@ -123,6 +123,8 @@ static NspAgraph *nsp_agraph_create_void(const char *name,NspTypeBase *type);
 
 /* graph methods */
 
+static int nsp_agraph_fill_from_b(Agraph_t *g, NspBMatrix *B);
+
 #define nsp_agnnodes(G) agnnodes((G)->obj->graph)
 #define nsp_agnedges(G) agnedges((G)->obj->graph)
 
@@ -177,6 +179,6 @@ static NspAgraph *nsp_agraphof(NspAgnode * N);
 static NspAgnode *nsp_agtail(NspAgedge* E);
 static NspAgnode *nsp_aghead(NspAgedge* E);
 
-#line 181 "./agraph.h"
+#line 183 "./agraph.h"
 #endif /* NspAgraph_Private */
 
