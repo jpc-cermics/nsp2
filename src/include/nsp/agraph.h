@@ -135,17 +135,20 @@ static int nsp_gv_write(NspAgraph * g,void *chan);
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
 static int nsp_gv_layout(NspAgraph *G, char *mode);
 
-static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g);
-static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g);
-static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g);
+static NspSMatrix *nsp_agnodeattrs(NspAgraph * g);
+static NspSMatrix *nsp_agedgeattrs(NspAgraph * g);
+static NspSMatrix *nsp_agraphattrs(NspAgraph * g);
 
-static NspAgedge *nsp_gv_agfstout(NspAgraph * g, NspAgnode *n);
-static NspAgedge *nsp_gv_agnxtout(NspAgraph * g, NspAgedge *e);
-static NspAgedge *nsp_gv_agfstin(NspAgraph * g, NspAgnode *n);
-static NspAgedge *nsp_gv_agnxtin(NspAgraph * g, NspAgedge *e);
-static NspAgedge *nsp_gv_agfstedge(NspAgraph * g, NspAgnode *n);
-static NspAgedge *nsp_gv_agnxtedge(NspAgraph * g, NspAgedge *e, NspAgnode *n);
-static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs);
+static NspAgedge *nsp_agfstout(NspAgraph * g, NspAgnode *n);
+static NspAgedge *nsp_agnxtout(NspAgraph * g, NspAgedge *e);
+static NspAgedge *nsp_agfstin(NspAgraph * g, NspAgnode *n);
+static NspAgedge *nsp_agnxtin(NspAgraph * g, NspAgedge *e);
+static NspAgedge *nsp_agfstedge(NspAgraph * g, NspAgnode *n);
+static NspAgedge *nsp_agnxtedge(NspAgraph * g, NspAgedge *e, NspAgnode *n);
+
+static int _wrap_nsp_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs);
+static int nsp_agdelnode(NspAgraph *g, NspAgnode *n);
+static int nsp_agdeledge(NspAgraph *g,NspAgedge *e);
 
 /* graph methods related to subgraphs */
 
@@ -164,6 +167,8 @@ static int nsp_agaddnodes(NspAgraph *G, NspSMatrix *S);
 static int nsp_agaddedges(NspAgraph *G, NspSMatrix *S);
 static NspAgnode *nsp_agfindnode_by_name(NspAgraph * g, char *name);
 
+static NspAgraph *nsp_agread(void *chan);
+
 /* common */
 
 static char *nsp_agnameof_g(NspAgraph * G);
@@ -179,6 +184,6 @@ static NspAgraph *nsp_agraphof(NspAgnode * N);
 static NspAgnode *nsp_agtail(NspAgedge* E);
 static NspAgnode *nsp_aghead(NspAgedge* E);
 
-#line 183 "./agraph.h"
+#line 188 "./agraph.h"
 #endif /* NspAgraph_Private */
 
