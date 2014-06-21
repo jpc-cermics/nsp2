@@ -1745,7 +1745,7 @@ if test "$with_graphviz" != "no"; then
       ## try first to use pkg-config	
       ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
       ## this is not supposed to work since sndfile.pc does not exists
-      PKG_CHECK_MODULES(GRAPHVIZ, libgvc <= 2.35.0 , HAVE_GRAPHVIZ="yes", HAVE_GRAPHVIZ="no")
+      PKG_CHECK_MODULES(GRAPHVIZ, libgvc >= 2.36.0 , HAVE_GRAPHVIZ="yes", HAVE_GRAPHVIZ="no")
       ## In case of success I just want portaudio be added in GTK_PKGS_CFLAGS 
       if test "$HAVE_GRAPHVIZ" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgvc"
