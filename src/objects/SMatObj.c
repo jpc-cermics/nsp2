@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1417,12 +1417,35 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 
 static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep=0;
+  char *mode = "bytes";
+  const char *modes[]={"bytes", "utf8",NULL};
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *Res;
   NspSMatrix *A;
-  CheckRhs(1,1);
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if (( A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if (( Res=nsp_smatrix_elts_length(A)) == NULLMAT) return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
+    return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
+	{
+	  string_not_in_array(stack, mode, modes, "optional argument mode");
+	  return RET_BUG; 
+	}
+    }
+  if ( rep == 0 ) 
+    {
+      if (( Res=nsp_smatrix_elts_length(A)) == NULLMAT) return RET_BUG;
+    }
+  else
+    {
+      if (( Res=nsp_smatrix_elts_length_utf8(A)) == NULLMAT) return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -1576,20 +1599,45 @@ static int int_smxisxdigit(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res = strstr(A,str)
+ * Res = strstr(A,str,mode=)
  * strstr(A,str)
  */
 
 static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep=0;
+  char *mode = "bytes";
+  const char *modes[]={"bytes", "utf8",NULL};
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int i;
   char *Str;
   NspSMatrix *A;
   NspMatrix *B;
-  CheckRhs(2,2);
+  CheckStdRhs(2,2);
   CheckLhs(1,1);
   if (( A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;  
   if (( Str = GetString(stack,2)) == (char*)0) return RET_BUG;
+  if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
+    return RET_BUG;
+  if ( rhs == 3 )
+    {
+      if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
+	{
+	  string_not_in_array(stack, mode, modes, "optional argument mode");
+	  return RET_BUG; 
+	}
+    }
+  
   if (( B =nsp_smatrix_strstr(A,Str)) == NULLMAT ) return RET_BUG;
+  if ( rep == 1) 
+    {
+      for (i=0; i < B->mn ; i++)
+	{
+	  if (B->R[i] != 0) 
+	    B->R[i] = nsp_string_utf8_pos(A->S[i], B->R[i]-1) +1;
+	}
+    }
   MoveObj(stack,1,(NspObject *) B);
   return 1;
 }
@@ -1685,7 +1733,7 @@ static int int_smxenlarge(Stack stack, int rhs, int opt, int lhs)
  * Ascii   txt <-> ascii
  */
 
-static int int_smxascii2smat(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_ascii_to_smatrix(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   NspSMatrix *B;
@@ -1704,7 +1752,7 @@ static int int_smxascii2smat(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-static int int_smxsmat2ascii(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_smatrix_to_ascii(Stack stack, int rhs, int opt, int lhs)
 {
   char *Str;
   NspMatrix *B;
@@ -1716,14 +1764,14 @@ static int int_smxsmat2ascii(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-static int int_smxascii(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_ascii(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ( IsMatObj(stack,1 ))
-    return int_smxascii2smat(stack,rhs,opt,lhs);
+    return int_smatrix_ascii_to_smatrix(stack,rhs,opt,lhs);
   else
-    return int_smxsmat2ascii(stack,rhs,opt,lhs);
+    return int_smatrix_smatrix_to_ascii(stack,rhs,opt,lhs);
 }
 
 /* FIXME
@@ -2533,7 +2581,7 @@ static OpTab SMatrix_func[]={
   {"capitalize",int_smxcapitalize},
   {"strstr",int_smxstrstr},
   {"strindex",int_smxstrindex},
-  {"ascii",int_smxascii},
+  {"ascii",int_smatrix_ascii},
   {"split",int_smxsplit},
   {"eq_s_s" ,  int_smxeq },
   {"feq_s_s" ,  int_smxfeq },
