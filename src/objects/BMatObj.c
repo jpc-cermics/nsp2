@@ -1161,6 +1161,7 @@ static OpTab BMatrix_func[]={
   {"seq_and_b",int_bmatrix_and},
   {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
+  {"double_b",int_bmatrix_b2m}, /* alias of b2m */
   {"concatd_b_b", int_matint_concatd}, /* int_bmatrix_concatd}, */
   {"concatr_b_b", int_matint_concatr}, /* int_bmatrix_concatr},*/
   {"concatdiag_b_b" , int_matint_concat_diag},/* int_bmatrix_concatdiag },*/
