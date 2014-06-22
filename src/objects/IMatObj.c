@@ -3513,6 +3513,7 @@ static OpTab IMatrix_func[]={
   {"addcols_i_m",int_imatrix_addcols},
   {"addrows_i_m",int_imatrix_addrows},
   {"i2m",int_imatrix_i2m},
+  {"double_i",int_imatrix_i2m}, /* alias */
   {"concatd_i_i", int_matint_concatd}, /* int_imatrix_concatd}, */
   {"concatr_i_i", int_matint_concatr}, /* int_imatrix_concatr},*/
   {"concatdiag_i_i" , int_matint_concat_diag},/* int_imatrix_concatdiag },*/
