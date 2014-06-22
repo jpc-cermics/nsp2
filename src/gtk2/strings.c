@@ -116,11 +116,10 @@ int nsp_smatrix_to_utf8(NspSMatrix *A)
  * nsp_string_to_utf8:
  * @str: string to be converted to Utf8
  * 
- * converts a string to Utf8 with the following assumptions.
- * if string is utf8 do nothing and return @str. If locale 
- * is UTF8 and the string is not utf8 then assume that the string is 
- * ISO-8859-15. If locale is not UTF8 then assume that the string is 
- * given with locale coding.
+ * converts a string to utf8 with the following assumptions.
+ * If the string is an utf8 string then do nothing and return @str. 
+ * If locale is UTF8 and the string is not utf8 then assume that the string is ISO-8859-15. 
+ * If locale is not UTF8 then assume that the string is given with locale coding.
  *
  * Return value: a pointer to the new allocated string or %NULL in case of allocation failure 
  * or a pointer to @str if the string was not converted.
@@ -175,7 +174,61 @@ int nsp_smatrix_utf8_validate(NspSMatrix *A)
   return TRUE;
 }
 
+/**
+ * nsp_string_length:
+ * @str: string 
+ * 
+ * Compute the length of a string checking if string is utf8 or not.
+ * 
+ * Return value: an integer 
+ **/
 
+int nsp_string_length(nsp_const_string str ) 
+{
+  if ( g_utf8_validate(str,-1,NULL))
+    {
+      return g_utf8_strlen (str,-1);
+    }
+  else
+    {
+      return strlen(str);
+    }
+}
+
+/**
+ * nsp_string_utf8_pos:
+ * @str: string 
+ * @i: integer
+ * 
+ * If @str is an utf8 string, returns the index of the @i-th byte of @str
+ * in terms of utf8 characters. @i must be a byte which starts an utf8 character.
+ * In case of errors, -1 is returned.
+ *
+ * Return value: an integer 
+ **/
+
+int nsp_string_utf8_pos(nsp_const_string str, int i) 
+{
+  /* retourne un offset en terme de nbre de characteres utf8 
+     int io=g_utf8_pointer_to_offset (str,&str[8]);
+     gchar *res= g_utf8_offset_to_pointer (str,3);
+     inversement donne le charactere utf8 situé a un offset donné 
+     Sciprintf("character obtenue apres offset de 3 %c qui est a pos %d \n",*res,(int) (res-str));
+     Sciprintf("le character %c est a un offset de %d \n",str[8],io);
+     char *p = g_utf8_find_prev_char (str,&str[i]);
+     Sciprintf("Previous utf8 char is %c at position %d\n",*p,(int) (p-str));
+     if (g_utf8_find_prev_char (str,&str[i]) != &str[i]) 
+     return g_utf8_strlen (str, Min(i,strlen(str) ));
+  */
+  if (  0 <= i && i < strlen(str) && g_utf8_validate(str,-1,NULL) )
+    {
+      return g_utf8_pointer_to_offset (str,&str[i]);
+    }
+  else
+    {
+      return -1;
+    }
+}
 
 
 
