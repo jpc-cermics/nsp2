@@ -1735,7 +1735,30 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
   if ( Loc == NULLMAT) { return(Loc);}
   for ( i = 0 ; i < A->mn ; i++) 
     {
-      Loc->R[i] = strlen(A->S[i]) ;
+      Loc->R[i] = strlen(A->S[i]);
+    }
+  return(Loc);
+}
+
+/**
+ * nsp_smatrix_elts_length_utf8:
+ * @A: a #NspSMatrix 
+ * 
+ * return a numeric matrix #NspMatrix which contains the length of the strings 
+ * (in utf8 chars) contained in string matrix @A.
+ * 
+ * Return value:  a new #NspMatrix or %NULLMAT 
+ **/
+
+NspMatrix *nsp_smatrix_elts_length_utf8(NspSMatrix *A)
+{
+  int i;
+  NspMatrix *Loc;
+  Loc = nsp_matrix_create(NVOID,'r',A->m,A->n);
+  if ( Loc == NULLMAT) { return(Loc);}
+  for ( i = 0 ; i < A->mn ; i++) 
+    {
+      Loc->R[i] = nsp_string_length(A->S[i]);
     }
   return(Loc);
 }

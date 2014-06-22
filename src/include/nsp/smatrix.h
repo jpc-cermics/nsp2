@@ -108,6 +108,7 @@ extern NspSMatrix *nsp_smatrix_row_concat(NspSMatrix *A, nsp_const_string str, i
 extern nsp_string nsp_smatrix_elts_concat(const NspSMatrix *A, nsp_const_string rstr, int rflag, nsp_const_string cstr, int cflag); 
 extern NspSMatrix *nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind); 
 extern NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A); 
+extern NspMatrix *nsp_smatrix_elts_length_utf8(NspSMatrix *A); 
 extern NspSMatrix *nsp_matrix_to_smatrix(NspMatrix *A, nsp_const_string str, int flag); 
 extern void nsp_smatrix_tolower(NspSMatrix *A); 
 extern void nsp_smatrix_toupper(NspSMatrix *A); 
