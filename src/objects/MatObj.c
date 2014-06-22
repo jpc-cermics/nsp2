@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2013 Bruno Pinçon Esial/Iecn
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2014 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -5664,12 +5664,25 @@ static int int_hex2num(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* identity function for doubles */
+
+static int int_double_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Res;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if ((Res = GetMatCopy(stack, 1)) == NULLMAT)
+    return RET_BUG;
+  NSP_OBJECT(Res)->ret_pos = 1; 
+  return 1;
+}
  
 /*
  * The Interface for basic matrices operation 
  */
 
 static OpTab Matrix_func[] = {
+  {"double_m", int_double_m},
   {"num2hex",int_num2hex},
   {"hex2num",int_hex2num},
   {"alignement_m",int_alignement},
