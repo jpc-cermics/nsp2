@@ -1377,11 +1377,17 @@ static int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
 
 static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep=0;
+  char *mode = "bytes";
+  const char *modes[]={"bytes", "utf8",NULL};
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
   int alloc = FALSE;
   NspMatrix *Ind;
   NspBMatrix *BElts=NULLBMAT;
   NspSMatrix *A;
-  CheckRhs(2,2);
+  CheckStdRhs(2,2);
   CheckLhs(1,1);
   if ((A= GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ( IsBMatObj(stack,2)  ) 
@@ -1398,10 +1404,32 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
       if ((Ind = GetRealMat(stack,2)) == NULLMAT) 
 	return RET_BUG;
     }
-  if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)  
+
+  if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
+    return RET_BUG;
+  if ( rhs == 3 )
     {
-      if ( alloc ) nsp_matrix_destroy(Ind) ;
-      return RET_BUG;
+      if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
+	{
+	  string_not_in_array(stack, mode, modes, "optional argument mode");
+	  return RET_BUG; 
+	}
+    }
+  if ( rep == 0 ) 
+    {
+      if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)  
+	{
+	  if ( alloc ) nsp_matrix_destroy(Ind) ;
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      if (( A =nsp_smatrix_part_utf8(A,Ind)) == NULLSMAT)  
+	{
+	  if ( alloc ) nsp_matrix_destroy(Ind) ;
+	  return RET_BUG;
+	}
     }
   MoveObj(stack,1,(NspObject *) A);
   if ( alloc ) nsp_matrix_destroy(Ind) ;

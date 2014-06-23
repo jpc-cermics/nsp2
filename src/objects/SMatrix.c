@@ -1717,6 +1717,96 @@ NspSMatrix*nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind)
   return(Loc);
 }
 
+
+/**
+ * nsp_string_part_length: 
+ * @str: a #nsp_string
+ * @str1: a #nsp_string or NULL
+ * @Ind: a #NspMatrix 
+ * 
+ * computes the length of the result of part selection of @str using @Ind as indices.
+ * @Ind gives characters to be extracted by their position in @str counted in utf8 characters.
+ * if @str1 is non NULL it is filled with the result of part extraction.
+ * if an indice is out of bounds then a blank character is inserted.
+ */
+
+int nsp_string_part_length(nsp_const_string str, nsp_string str1, NspMatrix *Ind)
+{
+  int ns = g_utf8_strlen (str,-1);
+  int k,ind,l=0;
+  for ( k =0; k < Ind->mn ; k++ ) 
+    {
+      ind = ((int) Ind->R[k])-1;
+      if ( 0 <= ind && ind < ns) 
+	{
+	  int l1,i;
+	  gchar *res= g_utf8_offset_to_pointer (str,ind);
+	  gchar *next = g_utf8_find_next_char (res,NULL);
+	  /* Sciprintf("character at position %d is of size %d and string=%s,next=%s\n",
+	     ind,(int)(next-res),res,next);
+	  */
+	  l1 = (int)(next-res);
+	  if ( str1 != NULL) 
+	    for ( i=0 ; i < l1 ; i++) str1[l+i]= res[i];
+	  l += (int)(next-res);
+	}
+      else
+	{
+	  if ( str1 != NULL) str1[l]= ' ';
+	  l += 1;
+	}
+    }
+  /* Sciprintf("The extracted string will be of byte size %d \n",l); */
+  return l;
+}
+
+/**
+ * nsp_smatrix_part_utf8:
+ * @A: a #NspSMatrix 
+ * @Ind: a #NspMatrix 
+ * 
+ * returns a new #NspSMatrix obtained by extracting from @A entries 
+ * the characters given by indices given in @Ind. When an indice is out 
+ * of range a blank character is inserted. Here Ind gives positions in utf8 characters 
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
+
+NspSMatrix*nsp_smatrix_part_utf8(NspSMatrix *A, NspMatrix *Ind)
+{
+  int i;
+  NspSMatrix *Loc;
+  if ((Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) == NULLSMAT)
+    return(Loc);
+  for ( i = 0 ; i < A->mn ; i ++) 
+    {
+      if ( g_utf8_validate(A->S[i],-1,NULL) == TRUE )
+	{
+	  int len = nsp_string_part_length(A->S[i],NULL,Ind);
+	  nsp_string res = new_nsp_string_n(len);
+	  if ( res == NULL) 
+	    {
+	      Scierror("Error: failed to allocate a string\n");
+	      goto fail;
+	    }
+	  nsp_string_part_length(A->S[i],res,Ind);
+	  res[len]='\0';
+	  Loc->S[i]= res;
+	}
+      else
+	{
+	  Scierror("Error: string at position %d is not a valid utf8 string\n",i);
+	  goto fail;  
+	}
+    }
+  return(Loc);
+ fail:
+  nsp_smatrix_destroy(Loc);
+  return NULL;
+}
+
+
+
 /**
  * nsp_smatrix_elts_length:
  * @A: a #NspSMatrix 
