@@ -9,7 +9,7 @@ LIBRARY = nsp.a
 CFLAGS = $(CC_OPTIONS) $(GLPK_CFLAGS)
 CXXFLAGS = $(CC_OPTIONS) 
 
-OBJSC  = linprog-IN.o clp-IN.o clp_cpp.o coinmp_cpp.o
+OBJSC  = linprog-IN.o 
 
 include ../Make.lib
 
