@@ -7,7 +7,9 @@ SCIDIR1=..\..
 LIBRARY = nsp.a
 
 CFLAGS = $(CC_OPTIONS) $(GLPK_CFLAGS)
-OBJSC  = linprog-IN.o
+CXXFLAGS = $(CC_OPTIONS) 
+
+OBJSC  = linprog-IN.o clp-IN.o clp_cpp.o coinmp_cpp.o
 
 include ../Make.lib
 
