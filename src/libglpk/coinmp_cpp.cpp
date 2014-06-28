@@ -99,13 +99,14 @@ int nsp_coinmp_solve(const char* problemName, nsp_clp_params *options,int sense,
 		     NspMatrix *RetCost,NspMatrix *Retcode)
 {
   /* matrix A part */
-  int *matrixBegin = (const int*) Cmatbeg->Iv;
-  int *matrixIndex = (const int*) Cmatind->Iv;
+  int *matrixBegin = (int *) Cmatbeg->Iv;
+  int *matrixIndex = (int *) Cmatind->Iv;
   double *matrixValues = Cmatval->R; 
   int colCount = ncols, rowCount = nrows; 
   int nonZeroCount = matrixBegin[ncols]; /* number of non null elements in the matrix */
-  int rangeCount = 0; double rangeValues = NULL;
+  int rangeCount = 0; double *rangeValues = NULL;
   /* we need to provide matrixCount which counts number of elements in each column */
+  int *matrixCount = NULL;
   /* for (i = 0; i < ncols ; i++) 
      {
      matrixCount = matrixBegin[i+1] - matrixBegin[i];
@@ -121,14 +122,15 @@ int nsp_coinmp_solve(const char* problemName, nsp_clp_params *options,int sense,
 
   /* rowType should be of size rowcount and should contain
    * 'L', 'E', 'G', 'R', 'N' */
-  
+  char *rowType = NULL;
+
   /* we can provide colType of size colcount and should contain 
    * 'C', 'B', 'I' 
    */
-  
+  char *columnType = NULL;
+
   HPROB hProb;
   int result;
-  char filename[260];
   /* pass extra arguments to message callbacks */
   const char *userParam = "TEST";
   hProb = CoinCreateProblem(problemName);  
@@ -136,10 +138,13 @@ int nsp_coinmp_solve(const char* problemName, nsp_clp_params *options,int sense,
 			  objectSense, objectConst, objectCoeffs, lowerBounds, upperBounds, 
 			  rowType, rhsValues, rangeValues, matrixBegin, matrixCount, 
 			  matrixIndex, matrixValues);
+  /* 
   result = CoinLoadNames(hProb, colNames, rowNames, objectName);
   if (columnType) {
     result = CoinLoadInteger(hProb, columnType);
   }
+  */
+
   result = CoinCheckProblem(hProb);
   if (result != SOLV_CALL_SUCCESS) {
     fprintf(stdout, "Check Problem failed (result = %d)\n", result);
@@ -152,18 +157,17 @@ int nsp_coinmp_solve(const char* problemName, nsp_clp_params *options,int sense,
   }
   result = CoinOptimizeProblem(hProb, 0);
   /* 
+  char filename[260];
   strcpy(filename, problemName);
   strcat(filename, ".mps");
   result = CoinWriteFile(hProb, SOLV_FILE_MPS, filename);
   */
-  int solutionStatus= CoinGetSolutionStatus(hProb);
-  const char* solutionText = CoinGetSolutionText(hProb);
-  double objectValue = CoinGetObjectValue(hProb);
-
-  colCount = CoinGetColCount(hProb);
-  xValues = (double* )malloc(colCount * sizeof(double));
-  CoinGetSolutionValues(hProb, xValues, NULL, NULL, NULL);
+  Retcode->R[0]= CoinGetSolutionStatus(hProb);
+  /* const char* solutionText = CoinGetSolutionText(hProb); */
+  RetCost->R[0]= CoinGetObjectValue(hProb);
+  CoinGetSolutionValues(hProb, X->R, NULL, NULL, NULL);
   CoinUnloadProblem(hProb);
+  return OK;
 }
 
 
