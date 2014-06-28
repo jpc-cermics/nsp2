@@ -11,8 +11,7 @@ LIBRARY = nsp.lib
 
 CFLAGS = $(CC_OPTIONS) $(GLPK_CFLAGS)
 CXXFLAGS = $(CC_OPTIONS) 
-
-OBJSC  = linprog-IN.obj clp-IN.obj clp_cpp.obj coinmp_cpp.obj
+OBJSC  = linprog-IN.obj coinmp_cpp.obj clp_cpp.obj clp-IN.obj
 
 include ../Make.lib.mak
 

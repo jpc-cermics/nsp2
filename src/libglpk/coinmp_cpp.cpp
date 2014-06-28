@@ -6,32 +6,8 @@
 
 #include "CoinMP.h"
 #include "coinmp_cpp.h"
-#include "Coin_C_defines.h"
-#include "CoinMessageHandler.hpp"
-#include "ClpSimplex.hpp"
-#include "ClpInterior.hpp"
-#include "ClpCholeskyBase.hpp"
 
 /* inteface for the coinmp interface to linear programming */
-
-class DerivedHandler :
-  public CoinMessageHandler {
-public:
-  virtual int print() ;
-};
-
-int DerivedHandler::print()
-{
-  Sciprintf(messageBuffer());
-  Sciprintf("\n");
-  return 0;
-}
-
-
-double nsp_coin_dbl_max(void)
-{
-  return COIN_DBL_MAX; 
-}
 
 int SOLVCALL MsgLogCallback(const char* MessageStr, void *UserParam)
 {
@@ -157,10 +133,10 @@ int nsp_coinmp_solve(const char* problemName, nsp_clp_params *options,int sense,
   }
   result = CoinOptimizeProblem(hProb, 0);
   /* 
-  char filename[260];
-  strcpy(filename, problemName);
-  strcat(filename, ".mps");
-  result = CoinWriteFile(hProb, SOLV_FILE_MPS, filename);
+     char filename[260];
+     strcpy(filename, problemName);
+     strcat(filename, ".mps");
+     result = CoinWriteFile(hProb, SOLV_FILE_MPS, filename);
   */
   Retcode->R[0]= CoinGetSolutionStatus(hProb);
   /* const char* solutionText = CoinGetSolutionText(hProb); */
