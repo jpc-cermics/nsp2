@@ -1,5 +1,5 @@
-#ifndef CPL_CPP_H 
-#define CPL_CPP_H 
+#ifndef NSP_COINMP_CPP_H 
+#define NSP_COINMP_CPP_H 
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -8,9 +8,9 @@ extern "C" {
 #include <nsp/objects.h>
 #include <nsp/imatrix.h>
 
-  typedef struct _nsp_clp_params nsp_clp_params ;
+  typedef struct _nsp_clp_params1 nsp_clp_params1 ;
   
-  struct _nsp_clp_params
+  struct _nsp_clp_params1
   {
     int solverchoice ;
     int maxnumiterations ;
@@ -26,17 +26,18 @@ extern "C" {
   
   extern double nsp_coin_dbl_max(void);
 
-  extern int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int neq, 
-			   NspIMatrix*Cmatbeg, NspIMatrix *Cmatind, NspMatrix *Cmatval, 
-			   NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
-			   NspIMatrix*Qmatbeg, NspIMatrix *Qmatind, NspMatrix *Qmatval, 
-			   NspMatrix *Rhs,  NspMatrix *Lhs, char *var_type[], NspMatrix *X,NspMatrix *Lambda,
-			   NspMatrix *RetCost,NspMatrix *Retcode);
+  extern int nsp_coinmp_solve(const char* problemName, int sense, int ncols, int nrows,
+			      NspIMatrix*Cmatbeg, NspIMatrix *Cmatcount, NspIMatrix *Cmatind, NspMatrix *Cmatval, 
+			      NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
+			      NspMatrix *Rhs,const char *columnType,  NspMatrix *X,NspMatrix *Lambda,
+			      NspMatrix *RetCost,NspMatrix *Retcode,const char *rowType,
+			      int semiCount, int *semiIndex);
 
 #ifdef __cplusplus
 }
 #endif 
 
-#endif /* CPL_CPP_H  */
+
+#endif /*NSP_COINMP_CPP_H */
 
 

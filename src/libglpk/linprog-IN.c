@@ -1225,15 +1225,18 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
 extern function  int_clp_sparse;
 extern function  int_clp_sparse2;
 extern function  int_clp_solve;
+extern function  int_coinmp_solve;
 #endif 
 
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
+  {"linprog_glpk", int_linprog},
   {"readmpsfile", int_readmpsfile},
 #ifdef WITH_CLP
   {"clp_sparse", int_clp_sparse},
   {"clp_sparse2", int_clp_sparse2},
-  {"clp_linprog", int_clp_solve},
+  {"linprog_clp", int_clp_solve},
+  {"linprog_coinmp", int_coinmp_solve},
 #endif 
   {(char *) 0, NULL},
 };
