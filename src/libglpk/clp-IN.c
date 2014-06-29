@@ -398,10 +398,10 @@ int int_coinmp_solve(Stack stack, int rhs, int opt, int lhs)
     }
   for (i = 0 ; i < nrows ; i++)
     {
-      if ( i < Rhs->mn) 
-	rowType[i]= 'L';
-      else
+      if ( i < Rhse->mn) 
 	rowType[i]= 'E';
+      else
+	rowType[i]= 'L';
     }
   rowType[nrows]='\0';
 

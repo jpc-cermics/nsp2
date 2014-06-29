@@ -39,8 +39,9 @@ optimalValue = 1428729.2857143;
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-// problemName = "Bakery";
-// -------------------------
+// "Bakery"
+// --------
+
 n=2;
 m=3;
 cte=  - 4000.0 / 30.0;
@@ -63,8 +64,8 @@ optimalValue = 506.66666667;
 if abs(fopt+cte - optimalValue) > 1.e-7 then pause;end
 if abs(fopt1+cte - optimalValue) > 1.e-7 then pause;end
 
-// probname = "Afiro";
-//---------------------
+// Afiro
+//-------
 n = 32;
 m = 27;
 sense = "min";
@@ -108,8 +109,8 @@ Al=A(Lq,:);bl=b(Lq);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-// char* probname = "P0033";
-//---------------------------
+// P0033
+//--------
 
 n = 33;
 m = 15;
@@ -149,10 +150,11 @@ optimalValue = 3089.0;
 // [xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense)
 ctyp = smat_create(1,n,"B"); 
 [xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
+
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-//	probname = "Exmip1";
+// Exmip1
 //--------------------------
 
 n = 8;
@@ -162,10 +164,10 @@ sense = "min";
 objconst = 0.0;
 c=[1, 0, 0, 0, 2, 0, 0, -1];
 lb=[2.5, 0, 0, 0, 0.5, 0, 0, 0];
-ub=[1e+037, 4.1, 1e+037, 1e+037, 4, 1e+037, 1e+037, 4.3];
+ub=[%inf, 4.1, %inf, %inf, 4, %inf, %inf, 4.3];
 
 // char rtyp[5]= ['G', 'L', 'E', 'G', 'L'];
-//drhs[5]=[2.5, 2.1, 4, 1.8, 15];
+b=[2.5, 2.1, 4, 1.8, 15];
 //drng[5]=[0, 0, 0, -3.2, 12];
 
 beg=[0, 2, 4, 6, 8, 10, 11, 12, 14];
@@ -174,7 +176,8 @@ val=[3, 5.6, 1, 2, 1.1, 1, -2, 2.8, -1, 1, 1, -1.2, -1, 1.9];
 ctyp = [ 'C', 'C', 'B', 'B', 'C', 'C', 'C', 'C'];
 optimalValue = 3.23684210526;
 
-//	char* probname = "GamsSos1a";
+// GamsSos1a
+// Sos variables XXXX
 //----------------------------------
 
 n = 3;
@@ -200,7 +203,8 @@ val=[1, 1, 1];
 	
 optimalValue = 0.72;
 
-//	char* probname = "GamsSos2a";
+// GamsSos2a
+// Sos variables XXXX
 // ----------------------------------
 
 n = 7;
@@ -235,6 +239,7 @@ m = 3;
 // objectname = "z";
 sense = "min";
 objconst = 0.0;
+
 c=[0.0, 1.0, 1.0, 0.0];
 lb=[2.8, 0.0, 0.0, 0.0];
 ub=[10.0, 1e+37, 1e+37, 1e+37];
@@ -258,5 +263,10 @@ Al=[A(1,:);-A(2,:)];bl=[b(1);-b(2)];
 //[xopt,fopt,flag,extra] = linprog(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
 [xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense,semi_cont=1);
 
+// On force la premiere variable a 0 
+lb(1)=0;ub(1)=0;
+[xopt,fopt,flag,extra] = linprog(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense)//,semi_cont=1);
 
+if abs(fopt - optimalValue) > 1.e-7 then pause;end
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
