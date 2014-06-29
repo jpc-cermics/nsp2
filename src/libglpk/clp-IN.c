@@ -389,6 +389,11 @@ int int_coinmp_solve(Stack stack, int rhs, int opt, int lhs)
 
   /* rowType should be of size rowcount and should contain
    * 'L', 'E', 'G', 'R', 'N' 
+   * L: (Ax)_i <= b_i 
+   * G: (Ax)_i >= b_i
+   * E: (Ax)_i == b_i  
+   * R: b_i -Abs(range_i) <= (Ax)_i <= b_i 
+   * N: no constraint 
    */
 
   if (( rowType =new_nsp_string_n(nrows+1)) == (nsp_string) 0)

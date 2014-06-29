@@ -165,7 +165,6 @@ objconst = 0.0;
 c=[1, 0, 0, 0, 2, 0, 0, -1];
 lb=[2.5, 0, 0, 0, 0.5, 0, 0, 0];
 ub=[%inf, 4.1, %inf, %inf, 4, %inf, %inf, 4.3];
-
 // char rtyp[5]= ['G', 'L', 'E', 'G', 'L'];
 b=[2.5, 2.1, 4, 1.8, 15];
 //drng[5]=[0, 0, 0, -3.2, 12];
@@ -173,8 +172,19 @@ b=[2.5, 2.1, 4, 1.8, 15];
 beg=[0, 2, 4, 6, 8, 10, 11, 12, 14];
 ind=[0, 4, 0, 1, 1, 2, 0, 3, 0, 4, 2, 3, 0, 4];
 val=[3, 5.6, 1, 2, 1.1, 1, -2, 2.8, -1, 1, 1, -1.2, -1, 1.9];
+
 ctyp = [ 'C', 'C', 'B', 'B', 'C', 'C', 'C', 'C'];
+A=sparse_from_triplet(m,n,beg,ind,val);
+Ae=A(3,:);be=b(3);
+A=[-A(1,:);A(2,:);-A(4,:);A(5,:)];
+b=[-b(1);b(2);-b(4);b(5)];
+
+// XXXX A faire pour linprog 
+[xopt,fopt,flag] = linprog(c,A,b,Ae,be,binprog=%t,sense=sense);
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
+
 optimalValue = 3.23684210526;
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // GamsSos1a
 // Sos variables XXXX
