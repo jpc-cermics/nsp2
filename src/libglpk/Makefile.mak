@@ -14,6 +14,7 @@ CXXFLAGS = $(CC_OPTIONS)
 WIP= coinmp_cpp.obj clp_cpp.obj clp-IN.obj
 OBJSC  = linprog-IN.obj $(WIP)
 
+
 include ../Make.lib.mak
 
 

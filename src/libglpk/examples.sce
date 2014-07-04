@@ -1,4 +1,3 @@
-
 // example 1 
 
 c= [50; 40; 70; 80]; 
@@ -6,6 +5,10 @@ A = [ 2 4 8  6;
       10 8 6 10; 
       1 1 2  2]; 
 b = [100; 160;  20]; 
+
+
+// Take care that default value for lb is 0 and ub = %inf 
+// -----------------------------------------------------
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max");
 [xopt1,fopt1,flag1,extra1] = clp_linprog(c,A,b,[],[],sense="max");
