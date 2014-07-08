@@ -26,7 +26,7 @@
    \vname{x0}: In that case an initial point is given and \verb!mode'! is ignored and set to \verb!mode=3!. The given point must be admissible.
    \vname{imp}: verbose option (optional parameter)   (Try \verb!imp=7,8,...!). warning the message are output in the window where scilab has been started.
    \vname{x}: optimal solution found.
-   \vname{f}: optimal value of the cost function (i.e. \verb!f=0.5*x'*Q*x+p'!).
+   \vname{f}: optimal value of the cost function (i.e. \verb!f=0.5*x'*Q*x+p'*x!).
    \vname{lagr}: vector of Lagrange multipliers.  If lower and upper-bounds \verb!ci,cs! are provided, \verb!lagr! has 
    \verb!n + me + md! components and \verb!lagr(1:n)! is the Lagrange  vector associated with the bound 
    constraints and  \verb!lagr (n+1 : n + me + md)! is the Lagrange vector associated  
