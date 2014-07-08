@@ -7,6 +7,8 @@
 #include "CoinMP.h"
 #include "coinmp_cpp.h"
 
+static int nsp_coinmp_set_options(HPROB hProb, NspHash *H);
+
 /* interface for the coinmp interface to linear programming */
 
 int SOLVCALL MsgLogCallback(const char* MessageStr, void *UserParam)
@@ -43,7 +45,7 @@ int nsp_coinmp_solve(const char* problemName, int sense, int ncols, int nrows,
 		     NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
 		     NspMatrix *Rhs,const char *columnType,  NspMatrix *X,NspMatrix *Lambda,
 		     NspMatrix *RetCost,NspMatrix *Retcode,const char *rowType,
-		     int semiCount, int *semiIndex)
+		     int semiCount, int *semiIndex,NspHash *Options)
 {
   /* matrix A part */
   int *matrixBegin = (int *) Cmatbeg->Iv;
@@ -101,6 +103,9 @@ int nsp_coinmp_solve(const char* problemName, int sense, int ncols, int nrows,
   else {
     result = CoinRegisterMipNodeCallback(hProb, &MipNodeCallback, (void*)userParam);
   }
+
+  nsp_coinmp_set_options(hProb,Options);
+
   result = CoinOptimizeProblem(hProb, 0);
 
   /* 
@@ -119,4 +124,77 @@ int nsp_coinmp_solve(const char* problemName, int sense, int ncols, int nrows,
 }
 
 
+NspHash *nsp_coinmp_get_options(void)
+{
+  NspHash *H;
+  int i;
+  HPROB hProb = CoinCreateProblem("dummy");
+  if(( H = nsp_hash_create(NVOID,300)) == NULLHASH) return NULLHASH;
+  /* allocate elements and store copies of T elements in Loc **/
+  for ( i = 1; i < 200; i++ )
+    {
+      NspObject *Obj = NULL;
+      const char *s = CoinGetOptionName(hProb,i);
+      if ( s != NULL && strlen(s) != 0 ) 
+	{
+	  int id = CoinLocateOptionName(hProb,s);
+	  int t = CoinGetOptionType(hProb,id);
+	  if ( t == 2 || t == 1) 
+	    {
+	      int ival = CoinGetIntOption(hProb, id);
+	      Obj = nsp_create_object_from_double(s,ival);
 
+	    }
+	  else if ( t == 4 ) 
+	    {
+	      double val = CoinGetRealOption(hProb, id);
+	      Obj = nsp_create_object_from_double(s,val);
+	    }
+	  if ( Obj != NULL) 
+	    {
+	      if (nsp_hash_enter(H,Obj) == FAIL) return NULLHASH;
+	    }
+	}
+    }
+  CoinUnloadProblem(hProb);
+  return H;
+}
+
+static int nsp_coinmp_set_options(HPROB hProb, NspHash *H)
+{
+  NspObject *Obj;
+  int i=0;
+  if ( H == NULL) return OK;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(H,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  int id = CoinLocateOptionName(hProb,NSP_OBJECT(Obj)->name);
+	  int t = CoinGetOptionType(hProb,id);
+	  /* check that its a Matrix */
+	  if ( IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1) 
+	    {
+	      double val = ((NspMatrix *) Obj)->R[0];
+	      if ( t == 2 || t == 1) 
+		{
+		  Sciprintf("ZOptions %s=%d\n",NSP_OBJECT(Obj)->name,(int) val);
+		  CoinSetIntOption(hProb, id, (int) val);
+		}
+	      else if ( t == 4 ) 
+		{
+		  CoinSetRealOption(hProb, id, val);
+		  Sciprintf("ZOptions %s=%d\n",NSP_OBJECT(Obj)->name,val);
+		}
+	      else
+		Sciprintf("Warning: Unkown option type %d, this is a bug\n",id);
+	    }
+	  else
+	    {
+	      Sciprintf("Warning: options %s should be a 1x1 real matrix\n",NSP_OBJECT(Obj)->name);
+	    }
+	}
+      if (rep == FAIL) break;
+    }
+  return OK;
+}

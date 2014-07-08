@@ -36,6 +36,8 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
   ClpSimplex *modelByColumn = NULL;
   ClpInterior *modelPrimalDual = NULL;
   DerivedHandler * mexprinter = NULL;
+
+  if ( Qmatbeg != NULL ) options->solverchoice=3;
   
   switch (options->solverchoice)
     {
@@ -54,6 +56,10 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
 	      }
 	  }
 	modelByColumn->setOptimizationDirection((sense==0) ? 1: -1);
+	if ( Qmatbeg != NULL ) 
+	  {	
+	    modelByColumn->loadQuadraticObjective(ncols,(const int*) Qmatbeg->Iv,(const int*) Qmatind->Iv,Qmatval->R);
+	  }	
 	break;
       }
     case 3:
@@ -70,33 +76,14 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
 		  modelByColumn->setInteger(i);
 	      }
 	  }
-	modelByColumn->setOptimizationDirection((sense==0) ? 1: -1);
+	modelPrimalDual->setOptimizationDirection((sense==0) ? 1: -1);
+	if ( Qmatbeg != NULL ) 
+	  {	
+	    modelPrimalDual->loadQuadraticObjective(ncols,(const int*) Qmatbeg->Iv,(const int*) Qmatind->Iv,Qmatval->R);
+	  }	
 	break;
       }
     }
-		
-  if ( Qmatbeg != NULL ) 
-    {	
-      /* do we have a quadratic part  */
-      if (options->solverchoice==2)
-	{
-	  options->solverchoice = 1;
-	}
-      switch (options->solverchoice)
-	{
-	default:
-	  {							
-	    modelByColumn->loadQuadraticObjective(ncols,(const int*) Qmatbeg->Iv,(const int*) Qmatind->Iv,Qmatval->R);
-	    modelByColumn->setOptimizationDirection((sense==0) ? 1: -1);
-	    break;
-	  }	
-	case 3:
-	  {				
-	    modelPrimalDual->loadQuadraticObjective(ncols,(const int*) Qmatbeg->Iv,(const int*) Qmatind->Iv,Qmatval->R);
-	    modelByColumn->setOptimizationDirection((sense==0) ? 1: -1);
-	  }
-	}					
-    }	
 
   /* change handler for printing */
   mexprinter = new DerivedHandler(); 
@@ -124,16 +111,19 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
     default:
     case 1:			
       {	
+	/* Sciprintf("using primal\n");*/
 	modelByColumn->primal();		
 	break;
       }
     case 2:			
-      {					
+      {				
+	/* Sciprintf("using dual\n"); */
 	modelByColumn->dual();
 	break;
       }
     case 3:
       {			
+	/* Sciprintf("using primal-dual\n"); */
 	ClpCholeskyBase * cholesky = new ClpCholeskyBase();			
 	cholesky->setKKT(true);		
 	modelPrimalDual->setCholesky(cholesky);	
@@ -161,7 +151,6 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
       Retcode->R[0] = modelByColumn->status();		
       modelByColumn->writeMps("poo.mps");
     }
-  
   
   /* variables */
 

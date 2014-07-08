@@ -31,7 +31,17 @@ extern "C" {
 			      NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
 			      NspMatrix *Rhs,const char *columnType,  NspMatrix *X,NspMatrix *Lambda,
 			      NspMatrix *RetCost,NspMatrix *Retcode,const char *rowType,
-			      int semiCount, int *semiIndex);
+			      int semiCount, int *semiIndex,NspHash *Options);
+
+  extern NspHash *nsp_coinmp_get_options(void);
+
+  extern int nsp_cplex_solve(const char* problemName, int sense, int ncols, int nrows,
+			     NspIMatrix*Cmatbeg, NspIMatrix *Cmatcount, NspIMatrix *Cmatind, NspMatrix *Cmatval, 
+			     NspMatrix *lower, NspMatrix *upper, NspMatrix *Objective,
+			     NspIMatrix*Qmatbeg,NspIMatrix *Qmatcnt, NspIMatrix *Qmatind, NspMatrix *Qmatval, 
+			     NspMatrix *Rhs,const char *columnType,  NspMatrix *X,NspMatrix *Lambda,
+			     NspMatrix *RetCost,NspMatrix *Retcode,const char *rowType,
+			     int semiCount, int *semiIndex,NspHash *Options,int loglevel);
 
 #ifdef __cplusplus
 }

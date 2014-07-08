@@ -154,6 +154,10 @@ ctyp = smat_create(1,n,"B");
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
+
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
+
+
 // Exmip1
 //--------------------------
 
@@ -181,7 +185,12 @@ b=[-b(1);b(2);-b(4);b(5)];
 
 // XXXX A faire pour linprog 
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,binprog=%t,sense=sense);
-[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
+H=hash(LogLevel=0);
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb, ...
+					    var_type=ctyp, sense=sense, ...
+					    options =H);
+
+pause xxxx;
 
 optimalValue = 3.23684210526;
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end

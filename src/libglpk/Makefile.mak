@@ -9,9 +9,9 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib
 
-CFLAGS = $(CC_OPTIONS) $(GLPK_CFLAGS)
+CFLAGS = $(CC_OPTIONS) $(GLPK_CFLAGS) -I/opt/ibm/ILOG/CPLEX_Studio126/cplex/include 
 CXXFLAGS = $(CC_OPTIONS) 
-WIP= coinmp_cpp.obj clp_cpp.obj clp-IN.obj
+WIP= coinmp_cpp.obj clp_cpp.obj clp-IN.obj nspcplex.obj
 OBJSC  = linprog-IN.obj $(WIP)
 
 

@@ -1226,7 +1226,15 @@ extern function  int_clp_sparse;
 extern function  int_clp_sparse2;
 extern function  int_clp_solve;
 extern function  int_coinmp_solve;
+extern function  int_coinmp_options;
 #endif 
+
+#define WITH_CPLEX
+
+#ifdef WITH_CPLEX 
+extern function int_cplex_solve;
+#endif 
+
 
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
@@ -1237,6 +1245,10 @@ static OpTab liblinprog_func[] = {
   {"clp_sparse2", int_clp_sparse2},
   {"linprog_clp", int_clp_solve},
   {"linprog_coinmp", int_coinmp_solve},
+  {"coinmp_options", int_coinmp_options},
+#endif 
+#ifdef WITH_CPLEX 
+  {"linprog_cplex", int_cplex_solve},
 #endif 
   {(char *) 0, NULL},
 };
