@@ -563,6 +563,7 @@ extern double nsp_cplex_dbl_max();
 
 int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep;
   int loglevel = 0;
   const double coin_dbl_max= nsp_cplex_dbl_max();
   char *sense_str = "min";
@@ -641,7 +642,8 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("Error: first and second argument of function %s should be a real full or sparse matrix\n",NspFname(stack));
+      Scierror("Error: first and second argument of function %s should be a real full or sparse matrix\n",
+	       NspFname(stack));
       return RET_BUG;
     }
 
@@ -795,7 +797,8 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( ((NspMatrix *) ObjQ)->m != ncols && ((NspMatrix *) ObjQ)->n != ncols )
 	    {
-	      Scierror("Error: optional argument Q of function %s should be of size %dx%d\n",NspFname(stack),ncols,ncols);
+	      Scierror("Error: optional argument Q of function %s should be of size %dx%d\n",
+		       NspFname(stack),ncols,ncols);
 	      return RET_BUG;
 	    }
 	  if ( nsp_matrix_to_sparse_triplet((NspMatrix *)ObjQ,NULL, &Qmatbeg,&Qmatind,&Qmatval) == FAIL)
@@ -805,7 +808,8 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( ((NspSpColMatrix *) ObjQ)->m != ncols && ((NspSpColMatrix *) ObjQ)->n != ncols )
 	    {
-	      Scierror("Error: optional argument Q of function %s should be of size %dx%d\n",NspFname(stack),ncols,ncols);
+	      Scierror("Error: optional argument Q of function %s should be of size %dx%d\n",
+		       NspFname(stack),ncols,ncols);
 	      return RET_BUG;
 	    }
 	  if ( nsp_spcolmatrix_to_sparse_triplet((NspSpColMatrix *)ObjQ,NULL, &Qmatbeg,&Qmatind,&Qmatval) == FAIL)
@@ -813,7 +817,8 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
 	}
       else
 	{
-	  Scierror("Error: optional argument Q of function %s should be a real full or sparse matrix\n",NspFname(stack));
+	  Scierror("Error: optional argument Q of function %s should be a real full or sparse matrix\n",
+		   NspFname(stack));
 	  return RET_BUG;
 	}
 
@@ -838,11 +843,11 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
   if (( RetCost= nsp_matrix_create(NVOID,'r', 1,1)) == NULL ) 
     return RET_BUG;
 
-  nsp_cplex_solve("Pb", sense, ncols, nrows,Cmatbeg,Cmatcount,Cmatind, Cmatval,
-		  lb,ub,Objective, Qmatbeg, Qmatcnt, Qmatind, Qmatval,
-		  B, columnType,  X, Lambda,RetCost, Retcode,rowType, 
-		  (SemiCont != NULL) ? SemiCont->mn : 0, 
-		  (SemiCont != NULL) ? (int *) SemiCont->R: NULL, Options,loglevel);
+  rep = nsp_cplex_solve("Pb", sense, ncols, nrows,Cmatbeg,Cmatcount,Cmatind, Cmatval,
+			lb,ub,Objective, Qmatbeg, Qmatcnt, Qmatind, Qmatval,
+			B, columnType,  X, Lambda,RetCost, Retcode,rowType, 
+			(SemiCont != NULL) ? SemiCont->mn : 0, 
+			(SemiCont != NULL) ? (int *) SemiCont->R: NULL, Options,loglevel);
 
   /* destroy allocated */
 
@@ -859,12 +864,31 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
   if ( columnType != NULL) nsp_string_destroy(&columnType);
   if ( rowType != NULL) nsp_string_destroy(&columnType);
 
-  MoveObj(stack,1,NSP_OBJECT(X));
-  MoveObj(stack,2,NSP_OBJECT(RetCost));
-  MoveObj(stack,3,NSP_OBJECT(Retcode));
-  MoveObj(stack,4,NSP_OBJECT(Lambda)); 
-
-  return 4;
+  if ( rep == FAIL ) 
+    {
+      nsp_matrix_destroy(X);
+      nsp_matrix_destroy(RetCost);
+      nsp_matrix_destroy(Retcode);
+      nsp_matrix_destroy(Lambda);
+      return RET_BUG;
+    }
+  else
+    {
+      MoveObj(stack,1,NSP_OBJECT(X));
+      if ( lhs >= 2) 
+	MoveObj(stack,2,NSP_OBJECT(RetCost));
+      else
+	nsp_matrix_destroy(RetCost);
+      if ( lhs >= 3)
+	MoveObj(stack,3,NSP_OBJECT(Retcode));
+      else
+	nsp_matrix_destroy(Retcode);
+      if ( lhs >= 4)
+	MoveObj(stack,4,NSP_OBJECT(Lambda)); 
+      else
+	nsp_matrix_destroy(Lambda);
+    }
+  return Max(lhs,1);
 }
 
 

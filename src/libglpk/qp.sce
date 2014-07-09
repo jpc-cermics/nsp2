@@ -18,13 +18,6 @@ b=[20;30];
 lb=[0,-%inf,-%inf];
 ub=[40,%inf,%inf];
 
-// Attention quapro n'aime pas %inf 
-// il faudrait corriger 
-
-//Big=number_properties('huge');
-//lb=[0,-Big,-Big];
-//ub=[40,Big,Big];
-
 Q= -[ 33,-06,00;
       -06,22,-23/2;
       00,-23/2,11];
