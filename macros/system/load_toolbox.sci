@@ -1,4 +1,3 @@
-
 function load_toolbox(name)
   
   function tb=get_toolbox(names,tbxes)
@@ -32,7 +31,10 @@ function load_toolbox(name)
     if ~ok then 
       error(catenate(lasterror()));
     else
-      resume(H(:));
+      if size(H,1) > 0 then 
+	// resume could be changed to do nothing when called with 0-args
+	resume(H(:));
+      end
     end
   else
     if size(tb,'*')== 0 then 
