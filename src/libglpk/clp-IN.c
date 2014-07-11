@@ -34,6 +34,7 @@ static int get_clp_options(Stack stack, NspHash *solver_options, nsp_clp_params 
   
 int int_clp_solve(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep = OK;
   const double coin_dbl_max= nsp_coin_dbl_max();
   char *sense_str = "min";
   NspMatrix *X,*Lambda, *Retcode, *RetCost;
@@ -104,7 +105,8 @@ int int_clp_solve(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("Error: first and second argument of function %s should be a real full or sparse matrix\n",NspFname(stack));
+      Scierror("Error: second and fourth arguments of function %s should be both full or both sparse matrices\n", 
+	       NspFname(stack));
       return RET_BUG;
     }
 
@@ -239,21 +241,45 @@ int int_clp_solve(Stack stack, int rhs, int opt, int lhs)
   if ( Qmatval !=NULL) nsp_matrix_destroy(Qmatval);
 
   nsp_matrix_destroy(B);
-
+  nsp_matrix_destroy(Lhs);
+  nsp_matrix_destroy(lb);
+  nsp_matrix_destroy(ub);
+  
   /* XXXX */
-
-  MoveObj(stack,1,NSP_OBJECT(X));
-  MoveObj(stack,2,NSP_OBJECT(RetCost));
-  MoveObj(stack,3,NSP_OBJECT(Retcode));
-  MoveObj(stack,4,NSP_OBJECT(Lambda)); 
-
-  return 4;
+  rep = OK;
+  
+  if ( rep == FAIL ) 
+    {
+      nsp_matrix_destroy(X);
+      nsp_matrix_destroy(RetCost);
+      nsp_matrix_destroy(Retcode);
+      nsp_matrix_destroy(Lambda);
+      return RET_BUG;
+    }
+  else
+    {
+      MoveObj(stack,1,NSP_OBJECT(X));
+      if ( lhs >= 2) 
+	MoveObj(stack,2,NSP_OBJECT(RetCost));
+      else
+	nsp_matrix_destroy(RetCost);
+      if ( lhs >= 3)
+	MoveObj(stack,3,NSP_OBJECT(Retcode));
+      else
+	nsp_matrix_destroy(Retcode);
+      if ( lhs >= 4)
+	MoveObj(stack,4,NSP_OBJECT(Lambda)); 
+      else
+	nsp_matrix_destroy(Lambda);
+    }
+  return Max(lhs,1);
 }
 
 /* Using CoinMP interface to call clp or cbc */
 
 int int_coinmp_solve(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep = OK;
   const double coin_dbl_max= nsp_coin_dbl_max();
   char *sense_str = "min";
   NspMatrix *X,*Lambda, *Retcode, *RetCost;
@@ -325,7 +351,8 @@ int int_coinmp_solve(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("Error: first and second argument of function %s should be a real full or sparse matrix\n",NspFname(stack));
+      Scierror("Error: second and fourth arguments of function %s should be both full or both sparse matrices\n", 
+	       NspFname(stack));
       return RET_BUG;
     }
 
@@ -488,18 +515,43 @@ int int_coinmp_solve(Stack stack, int rhs, int opt, int lhs)
   /* destroy allocated */
 
   if ( Cmatbeg !=NULL) nsp_imatrix_destroy(Cmatbeg);
+  if ( Cmatcount !=NULL) nsp_imatrix_destroy(Cmatcount);
   if ( Cmatind !=NULL) nsp_imatrix_destroy(Cmatind);
   if ( Cmatval !=NULL) nsp_matrix_destroy(Cmatval);
   nsp_matrix_destroy(B);
+  nsp_matrix_destroy(Lhs);
+  nsp_matrix_destroy(lb);
+  nsp_matrix_destroy(ub);
   if ( columnType != NULL) nsp_string_destroy(&columnType);
   if ( rowType != NULL) nsp_string_destroy(&columnType);
 
-  MoveObj(stack,1,NSP_OBJECT(X));
-  MoveObj(stack,2,NSP_OBJECT(RetCost));
-  MoveObj(stack,3,NSP_OBJECT(Retcode));
-  MoveObj(stack,4,NSP_OBJECT(Lambda)); 
+  rep = OK;
 
-  return 4;
+  if ( rep == FAIL ) 
+    {
+      nsp_matrix_destroy(X);
+      nsp_matrix_destroy(RetCost);
+      nsp_matrix_destroy(Retcode);
+      nsp_matrix_destroy(Lambda);
+      return RET_BUG;
+    }
+  else
+    {
+      MoveObj(stack,1,NSP_OBJECT(X));
+      if ( lhs >= 2) 
+	MoveObj(stack,2,NSP_OBJECT(RetCost));
+      else
+	nsp_matrix_destroy(RetCost);
+      if ( lhs >= 3)
+	MoveObj(stack,3,NSP_OBJECT(Retcode));
+      else
+	nsp_matrix_destroy(Retcode);
+      if ( lhs >= 4)
+	MoveObj(stack,4,NSP_OBJECT(Lambda)); 
+      else
+	nsp_matrix_destroy(Lambda);
+    }
+  return Max(lhs,1);
 }
 
 int int_coinmp_options(Stack stack, int rhs, int opt, int lhs)
@@ -642,7 +694,7 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("Error: first and second argument of function %s should be a real full or sparse matrix\n",
+      Scierror("Error: second and fourth arguments of function %s should be both full or both sparse matrices\n",
 	       NspFname(stack));
       return RET_BUG;
     }
@@ -852,6 +904,7 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
   /* destroy allocated */
 
   if ( Cmatbeg !=NULL) nsp_imatrix_destroy(Cmatbeg);
+  if ( Cmatcount !=NULL) nsp_imatrix_destroy(Cmatcount);
   if ( Cmatind !=NULL) nsp_imatrix_destroy(Cmatind);
   if ( Cmatval !=NULL) nsp_matrix_destroy(Cmatval);
 
@@ -861,6 +914,11 @@ int int_cplex_solve(Stack stack, int rhs, int opt, int lhs)
   if ( Qmatval !=NULL) nsp_matrix_destroy(Qmatval);
 
   nsp_matrix_destroy(B);
+  nsp_matrix_destroy(Lhs);
+  nsp_matrix_destroy(lb);
+  nsp_matrix_destroy(ub);
+  if ( SemiCont != NULL) nsp_matrix_destroy(SemiCont);
+
   if ( columnType != NULL) nsp_string_destroy(&columnType);
   if ( rowType != NULL) nsp_string_destroy(&columnType);
 
@@ -1124,3 +1182,5 @@ static int nsp_spcolmatrix_to_sparse_triplet(NspSpColMatrix *A1,NspSpColMatrix *
   if ( MatVal !=NULL) nsp_matrix_destroy(MatVal);
   return FAIL;
 }
+
+

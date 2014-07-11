@@ -141,7 +141,7 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
       dual = modelPrimalDual->dualRowSolution();
       RetCost->R[0] = modelPrimalDual->getObjValue(); 
       Retcode->R[0] = modelPrimalDual->status();			
-      modelPrimalDual->writeMps("poo.mps");
+      /* modelPrimalDual->writeMps("poo.mps"); */
     }
   else
     {	
@@ -149,7 +149,7 @@ int nsp_clp_solve(nsp_clp_params *options,int sense, int ncols, int nrows, int n
       dual = modelByColumn->dualRowSolution();
       RetCost->R[0] =  modelByColumn->getObjValue(); 
       Retcode->R[0] = modelByColumn->status();		
-      modelByColumn->writeMps("poo.mps");
+      /* modelByColumn->writeMps("poo.mps"); */
     }
   
   /* variables */

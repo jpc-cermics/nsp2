@@ -1,20 +1,3 @@
-
-function A=sparse_from_triplet(m,n,beg,ind,val)
-// utility to recreate math from beg,ind,val
-  ind=ind(:);val=val(:);
-  IJ=[];
-  V=[];
-  for j=1:n
-    cstart=beg(j);
-    cend=beg(j+1);
-    ij=ind(cstart+1:cend)+1;
-    ij=[ij,j*ones(size(ij,'*'),1)];
-    IJ=[IJ;ij];
-    V=[V;val(cstart+1:cend)];
-  end
-  A=sparse(IJ,V,[m,n]);
-endfunction
-
 // We code here in nsp the problems used for coinmp test
 //-----------------------------------------------------
 
@@ -30,13 +13,20 @@ beg=[0,2,4,6,8,10,11,12,14];
 count=[2,2,2,2,2,1,1,2];
 ind=[0,4,0,1,1,2,0,3,0,4,2,3,0,4];
 val=[3., 5.6, 1., 2., 1.1, 1., -2., 2.8, -1., 1., 1., -1.2, -1., 1.9];
-A=sparse_from_triplet(m,n,beg,ind,val);
+A=spfrommtlb(beg,ind,val,[m,n]);
+
 optimalValue = 1428729.2857143;
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense="max");
-[xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
-
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // "Bakery"
@@ -53,16 +43,21 @@ b =[1400 , 8000 , 5000 ];
 beg =  [ 0 , 2, 4 ];
 ind =  [ 0, 1, 0, 2];
 val =  [ 0.1, 1, 0.2, 1];
-A=sparse_from_triplet(m,n,beg,ind,val);
-optimalValue = 506.66666667;
+A=spfrommtlb(beg,ind,val,[m,n]);
+
+optimalValue = 506.66666667 -cte ;
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense="max");
+if abs(fopt - optimalValue) > 1.e-7 then pause;end
+
 [xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-// compare fopt + cte to optimalValue
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-if abs(fopt+cte - optimalValue) > 1.e-7 then pause;end
-if abs(fopt1+cte - optimalValue) > 1.e-7 then pause;end
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // Afiro
 //-------
@@ -97,16 +92,22 @@ val =[-1, -1.06, 1, 0.301, 1, -1, 1, -1, 1, 1, -1, -1.06, 1, 0.301, ...
 
 optimalValue = -464.753142857;
 
-A=sparse_from_triplet(m,n,beg,ind,val);
+A=spfrommtlb(beg,ind,val,[m,n]);
 Eq=find(ct == 'E');
 Ae=A(Eq,:);be=b(Eq);
 Lq=find(ct == 'L');
 Al=A(Lq,:);bl=b(Lq);
 
-[xopt,fopt,flag,extra] = linprog(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
-[xopt1,fopt1,flag1,extra1] = linprog_clp(c,Al,bl,Ae,be,ub=ub,lb=lb,sense=sense);
-
+[xopt,fopt,flag,extra] = linprog(c,A,b,[],[],ub=ub,lb=lb,sense=sense);
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
+
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense=sense);
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // P0033
@@ -140,23 +141,25 @@ val=[1, -300, -300, 1, -300, -300, 1, 300, -300, -300, 1, 300, ...
      -400, -200, -400];
 
 ctyp = smat_create(1,n,"B");
-A=sparse_from_triplet(m,n,beg,ind,val);
+A=spfrommtlb(beg,ind,val,[m,n]);
+
 Ae=sparse([]);
 be =[];
 optimalValue = 3089.0;
+ctyp = smat_create(1,n,"B"); 
 
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,binprog=%t,sense=sense);
-// use coinmp with binary variables 
-// [xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense)
-ctyp = smat_create(1,n,"B"); 
-[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
-
 if abs(fopt - optimalValue) > 1.e-7 then pause;end
+
+// binary variables we use coinmp 
+// [xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense)
+
+// XXX we should not have to give ul and bl 
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb,var_type=ctyp, sense=sense);
-
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,var_type=ctyp, sense=sense);
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // Exmip1
 //--------------------------
@@ -178,21 +181,26 @@ ind=[0, 4, 0, 1, 1, 2, 0, 3, 0, 4, 2, 3, 0, 4];
 val=[3, 5.6, 1, 2, 1.1, 1, -2, 2.8, -1, 1, 1, -1.2, -1, 1.9];
 
 ctyp = [ 'C', 'C', 'B', 'B', 'C', 'C', 'C', 'C'];
-A=sparse_from_triplet(m,n,beg,ind,val);
+A=spfrommtlb(beg,ind,val,[m,n]);
 Ae=A(3,:);be=b(3);
 A=[-A(1,:);A(2,:);-A(4,:);A(5,:)];
 b=[-b(1);b(2);-b(4);b(5)];
+optimalValue = 3.23684210526;
 
-// XXXX A faire pour linprog 
-[xopt,fopt,flag] = linprog(c,A,b,Ae,be,binprog=%t,sense=sense);
-H=hash(LogLevel=0);
+// no 'B' in linprog 
+ctyp1 = [ 'C', 'C', 'I', 'I', 'C', 'C', 'C', 'C'];
+lb(3:4)=0; ub(3:4)=4;
+[xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub,lb=lb,sense=sense);
+if abs(fopt - optimalValue) > 1.e-7 then pause;end
+  
 [xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb, ...
 					    var_type=ctyp, sense=sense, ...
 					    options =H);
+if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-pause xxxx;
-
-optimalValue = 3.23684210526;
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb, ...
+					   var_type=ctyp, sense=sense, ...
+					   options =H);
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
 // GamsSos1a
@@ -250,7 +258,7 @@ val = [1, 1, 1, 1, 2, 2, 1, 3, 3, -1, -1, -1, 1, 1, 1];
 
 optimalValue = 0.0;
 
-//	char* probname = "SemiCont";
+// char* probname = "SemiCont";
 // --------------------------------
 
 n = 4;
@@ -275,7 +283,7 @@ semiIndex = [1];
 
 optimalValue = 1.1;
 
-A=sparse_from_triplet(m,n,beg,ind,val);
+A=spfrommtlb(beg,ind,val,[m,n]);
 Ae=A(3,:);be=b(3);
 Al=[A(1,:);-A(2,:)];bl=[b(1);-b(2)];
 

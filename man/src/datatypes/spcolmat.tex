@@ -90,7 +90,11 @@ value \verb+V[i]+ has \verb+(I[i],J[i])+ coordinates.
     \item \verb+[ij,v,mn]=spget(S)+ does the inverse of the call \verb+sparse(ij,v,[mn]);+ 
     \item \verb+umfpack_create(A)+ computes LU factorizations (see \manlink{umfpack_create}{umfpack_create})
     \item \verb+cholmod_create(A)+ computes Cholesky or LDLt factorizations (see
-      \manlink{cholmod_create}{cholmod_create})
+      \manlink{cholmod_create}{cholmod_create}) 
+    \item \verb+spfrommtlb(beg,ind,val,[m,n])+ used to create a sparse matrix from a matlab triplet description. 
+      \verb+val+ gives the non null entries in matrix \verb+A+. \verb+ind+ gives the row indices coresponding to non 
+      null entries. \verb+beg(j)+ gives the indices in \verb+val+ and \verb+ind+ of the first non null element of column \verb+j+.
+    \item \verb+[beg,ind,val]=spget_mtlb(A)+ returns a matlab triplet description for sparse matrix \verb+A+.
 \end{itemize}
 
 \itemdesc{Some useful tests}
@@ -98,6 +102,8 @@ value \verb+V[i]+ has \verb+(I[i],J[i])+ coordinates.
     \item \verb+is(A,%types.SpColMat)+ tests if the argument $A$ is a sparse matrix.
     \item \verb+isreal(A)+ tests if the sparse matrix $A$ is real or complex (see \manlink{isreal}{isreal})
     \item \verb+isvector(A)+ tests if the sparse matrix $A$ is a (sparse) vector (see \manlink{isvector}{isvector})
+    \item \verb+issymetric(A)+ tests if the sparse matrix $A$ is symmetric.
+    \item \verb+istriangular(A)+ tests if the sparse matrix $A$ is triangular.
 \end{itemize}
 
 

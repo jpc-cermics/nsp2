@@ -1227,6 +1227,7 @@ extern function  int_clp_sparse2;
 extern function  int_clp_solve;
 extern function  int_coinmp_solve;
 extern function  int_coinmp_options;
+extern function  coinmex;
 #endif 
 
 #define WITH_CPLEX
@@ -1246,6 +1247,7 @@ static OpTab liblinprog_func[] = {
   {"linprog_clp", int_clp_solve},
   {"linprog_coinmp", int_coinmp_solve},
   {"coinmp_options", int_coinmp_options},
+  {"coinmex", coinmex},
 #endif 
 #ifdef WITH_CPLEX 
   {"linprog_cplex", int_cplex_solve},
@@ -1255,6 +1257,12 @@ static OpTab liblinprog_func[] = {
 
 int liblinprog_Interf (int i, Stack stack, int rhs, int opt, int lhs)
 {
+  if ( i == 8 )
+    {
+      Sciprintf("a mex\n");
+      return nsp_mex_wrapper(stack,rhs,opt,lhs,liblinprog_func[i].fonc);
+    }
+  else
   return (*(liblinprog_func[i].fonc)) (stack, rhs, opt, lhs);
 }
 
@@ -1263,3 +1271,4 @@ void liblinprog_Interf_Info (int i, char **fname, function (**f))
  *fname = liblinprog_func[i].name;
  *f = liblinprog_func[i].fonc;
 }
+

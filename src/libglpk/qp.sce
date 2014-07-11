@@ -22,7 +22,7 @@ Q= -[ 33,-06,00;
       -06,22,-23/2;
       00,-23/2,11];
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max",Q=Q,loglevel=2);
+[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max",Q=Q,loglevel=0);
 
 if (fopt1- 2.015617) > 1.e-5 then pause;end
 if xopt1(1) - 0.139115 > 1.e-5 then pause;end
@@ -34,4 +34,8 @@ if extra1(2) - 30.757886 > 1.e-5 then pause;end
 if exists('quapro') then 
   [xopt2,lambda2,f2,info2] = quapro(-Q,-c,full(A),b,lb,ub,0);
 end
+
+
+[xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max",Q=Q);
+[xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
 
