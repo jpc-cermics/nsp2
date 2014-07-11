@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2004-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2014 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -2063,6 +2063,38 @@ mxArray *mxCreateNumericArray(int ndim, const int *dims,
       if ( class == mxDOUBLE_CLASS )
 	{
 	  return mxCreateDoubleMatrix(dims[0],dims[1],ComplexFlag);
+	}
+      if ( class == mxINT8_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_gint8);
+	}
+      if ( class == mxUINT8_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_guint8);
+	}
+      if ( class == mxINT16_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_gint16);
+	}
+      if ( class == mxUINT16_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_guint16);
+	}
+      if ( class == mxINT32_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_gint32);
+	}
+      if ( class == mxUINT32_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_guint32);
+	}
+      if ( class == mxINT64_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_gint64);
+	}
+      if ( class == mxUINT64_CLASS )
+	{
+	  return (mxArray *) nsp_imatrix_create(NVOID,dims[0],dims[1], nsp_guint64);
 	}
       else if ( class == mxCHAR_CLASS ) 
 	{
