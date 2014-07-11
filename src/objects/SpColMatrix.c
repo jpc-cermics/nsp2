@@ -8978,3 +8978,122 @@ int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x, char op)
     }
   return OK;
 }
+
+
+/**
+ * nsp_spcolmatrix_to_symmetric:
+ * @A: a #NspSpColMatrix of size n x n
+ * @eps: a double 
+ * 
+ * This is mainly a utility function for quadratic programming 
+ * where symmetric matrices can be given as triangular matrices.
+ * 
+ * if triu(A,1)==0 then A= A + tril(A,-1)';
+ * if tril(A,1)==0 then A= A + triu(A,1)';
+ * if triu and tril were both non null we equalize 
+ * transposed values if they only differ to eps. 
+ * 
+ * Return value: a new  #NspSpColMatrix or %NULLSPCOL
+ **/
+
+static void nsp_spcolmatrix_force_symmetry(NspSpColMatrix *A,double eps);
+
+NspSpColMatrix *nsp_spcolmatrix_to_symmetric(NspSpColMatrix *A,double eps)
+{
+  NspSpColMatrix *Tu= nsp_spcolmatrix_copy(A);
+  NspSpColMatrix *Tl= nsp_spcolmatrix_copy(A);
+  NspSpColMatrix *D = nsp_spcolmatrix_diag_extract(A,0);
+  NspSpColMatrix *Tup=NULL,*Tlp=NULL, *A1=NULL;
+ 
+  if ( Tu == NULL || nsp_spcolmatrix_triu(Tu,1) == FAIL)  goto end;
+  if ( Tl == NULL || nsp_spcolmatrix_tril(Tl,-1) == FAIL) goto end;
+  if ( D == NULL )  goto end;
+
+  if ( nsp_spcolmatrix_nnz(Tu) == 0 ) 
+    {
+      if ( nsp_spcolmatrix_nnz(Tl) != 0 ) 
+	{
+	  if ((Tlp = nsp_spcolmatrix_transpose(Tl)) == NULL) goto end;
+	  if ((A1 = nsp_spcolmatrix_add(Tl,Tlp)) == NULL) goto end;
+	  if ( nsp_spcolmatrix_set_diag(A1,(NspObject *) D,0)== FAIL) goto end;
+	}
+      else
+	{
+	  if (( A1= nsp_spcolmatrix_copy(A)) == NULL) goto end;
+	}
+    }
+  else
+    {
+      if ( nsp_spcolmatrix_nnz(Tl) == 0 ) 
+	{
+	  if ((Tup = nsp_spcolmatrix_transpose(Tu)) == NULL) goto end;
+	  if ((A1 = nsp_spcolmatrix_add(Tu,Tup))== NULL) goto end;
+	  if ( nsp_spcolmatrix_set_diag(A1,(NspObject *) D,0)== FAIL) goto end;
+	}
+      else
+	{
+	  if (( A1= nsp_spcolmatrix_copy(A)) == NULL) goto end;
+	  /* we have to change epsilon symmetry to symmetry */
+	  nsp_spcolmatrix_force_symmetry(A1,1.e-15);
+	}
+    }
+
+ end:
+  if ( Tl != NULL)  nsp_spcolmatrix_destroy(Tl);
+  if ( Tu != NULL)  nsp_spcolmatrix_destroy(Tu);
+  if ( D != NULL)  nsp_spcolmatrix_destroy(D);
+  if ( Tup != NULL)  nsp_spcolmatrix_destroy(Tup);
+  if ( Tlp != NULL)  nsp_spcolmatrix_destroy(Tlp);
+  return A1;
+}
+
+
+
+static void nsp_spcolmatrix_force_symmetry(NspSpColMatrix *A,double eps)
+{
+  int j,k,i,kp;
+  if ( A->rc_type == 'r' ) 
+    {
+      double val_ij, val_ji;
+      for ( j = 0 ; j < A->n-1 ; j++ ) 
+	{
+	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	    {
+	      val_ij = A->D[j]->R[k];
+	      i = A->D[j]->J[k];
+	      if ( i != j  &&  val_ij != 0.0 )
+		{
+		  kp = nsp_spcolmatrix_locate(A->D[i],j);
+		  if ( kp >= 0 )
+		    {
+		      val_ji = A->D[i]->R[kp];
+		      if ( Abs(val_ij - val_ji ) < eps) 
+			A->D[i]->R[kp] = val_ij;
+		    }
+		}
+	    }
+	}
+    }
+  else
+    {
+      doubleC val_ij, val_ji;
+      for ( j = 0 ; j < A->n-1 ; j++ ) 
+	{
+	  for ( k = A->D[j]->size-1 ; k >= 0 ; k-- ) 
+	    {
+	      val_ij = A->D[j]->C[k];
+	      i = A->D[j]->J[k];
+	      if ( i != j  &&  (val_ij.r != 0.0 || val_ij.i != 0.0) )
+		{
+		  kp = nsp_spcolmatrix_locate(A->D[i],j);
+		  if ( kp >= 0 )
+		    {
+		      val_ji = A->D[i]->C[kp];
+		      if ( Abs( val_ij.r - val_ji.r ) < eps && Abs( val_ij.i - -val_ji.i ) < eps) 
+			A->D[i]->C[kp] = val_ij;
+		    }
+		}
+	    }
+	}
+    }
+}

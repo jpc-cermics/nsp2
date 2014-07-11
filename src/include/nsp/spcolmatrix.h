@@ -244,6 +244,8 @@ extern void nsp_spcolmatrix_in_place_assign(NspSpColMatrix *A, int jA, index_vec
 extern int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *index_r, int *p, NspMatrix *B, int jB);
 extern int nsp_spcolmatrix_set_rowcol_from_full(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols, NspMatrix *B);
 
+extern NspSpColMatrix *nsp_spcolmatrix_to_symmetric(NspSpColMatrix *A,double eps);
+
 #endif 
 
 #ifdef SpColMatrix_Private 

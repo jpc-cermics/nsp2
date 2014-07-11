@@ -3302,6 +3302,30 @@ static int int_spcolmatrix_kron(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_spcolmatrix_to_symmetric(Stack stack, int rhs, int opt, int lhs)
+{
+  double eps = 1.e-15;
+
+  NspSpColMatrix *A,*Res;
+  CheckStdRhs (1,1);
+  CheckLhs (0, 1);
+  if ((A = GetSpCol(stack, 1)) == NULLSPCOL)
+    return RET_BUG;
+  if (rhs >= 2)
+    {
+      if (GetScalarDouble (stack, 2, &eps) == FAIL)
+	return RET_BUG;
+    }
+  if ((Res = nsp_spcolmatrix_to_symmetric(A,eps))== NULL)
+    {
+      Scierror("Error: failed to symmetrize matrix\n");
+      return RET_BUG;
+    }
+  MoveObj (stack, 1, NSP_OBJECT(Res));
+  return 1;
+}
+
+
 /*
  * The Interface for basic numerical sparse matrices operation 
  * we use sp for spcol 
@@ -3360,8 +3384,8 @@ static OpTab SpColMatrix_func[]={
   {"sparse", int_spcolmatrix_sparse},
   {"sparse_sp", int_spcolmatrix_sparse_sp},
   {"spget", int_spcolmatrix_get},
-  {"spfrommtlb",int_spcolmatrix_from_mtlb},
-  {"spget_mtlb", int_spcolmatrix_get_mtlb},
+  {"spfrommtlb",int_spcolmatrix_from_mtlb}, /* XXX Doc */
+  {"spget_mtlb", int_spcolmatrix_get_mtlb}, /* XXX Doc */
   {"full_sp",int_spcolmatrix_sp2m},
   {"sum_sp_s" ,  int_spcolmatrix_sum },
   {"sum_sp" ,  int_spcolmatrix_sum },
@@ -3426,6 +3450,7 @@ static OpTab SpColMatrix_func[]={
   {"numel_sp",int_spcolmatrix_numel},
   {"scale_rows_sp_m",int_spcolmatrix_scale_rows},
   {"scale_cols_sp_m",int_spcolmatrix_scale_cols},
+  {"symmetrize", int_spcolmatrix_to_symmetric}, /* XXX doc */
   {(char *) 0, NULL}
 };
 
