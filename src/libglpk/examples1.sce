@@ -188,11 +188,16 @@ b=[-b(1);b(2);-b(4);b(5)];
 optimalValue = 3.23684210526;
 
 // no 'B' in linprog 
-ctyp1 = [ 'C', 'C', 'I', 'I', 'C', 'C', 'C', 'C'];
-lb(3:4)=0; ub(3:4)=4;
-[xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub,lb=lb,sense=sense);
-if abs(fopt - optimalValue) > 1.e-7 then pause;end
-  
+
+if %f 
+  ctyp1 = [ 'C', 'C', 'I', 'I', 'C', 'C', 'C', 'C'];
+  lb(3:4)=0; ub(3:4)=4;
+  [xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub,lb=lb,sense=sense);
+  if abs(fopt - optimalValue) > 1.e-7 then pause;end
+end 
+
+H=hash(LogLevel=0); 
+
 [xopt1,fopt1,flag1,extra1] = linprog_coinmp(c,A,b,Ae,be,ub=ub,lb=lb, ...
 					    var_type=ctyp, sense=sense, ...
 					    options =H);
