@@ -523,7 +523,6 @@ int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, d
 	  status_flag = get_status_flag(ret_code, sol_status, GLP_UNDEF);
 	  if ( status_flag != 0 )
 	    {
-	      Sciprintf(" echec resolution du LP relaxe\n");
 	      if ( status_flag == 1 ) /* relaxed LP is unbounded, mip is unbounded too if at least a feasible */
 		*fopt = Nan;          /* integer solution exists but we could not decide here so put fopt=Nan */
 	      goto end;
