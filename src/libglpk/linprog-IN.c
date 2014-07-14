@@ -456,7 +456,7 @@ int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, d
 	{
 	  binf = lb != NULLMAT ? lb->R[k] : 0.0;
 	  bsup = ub != NULLMAT ? ub->R[k] : PlusInf;
-	  if ( intprog || (mipprog && strcmp(var_type->S[k],"I")) )
+	  if ( intprog || (mipprog && strcmp(var_type->S[k],"I") == 0) )
 	    {
 	      binf = ceil(binf); bsup = floor(bsup);
 	    }
@@ -523,6 +523,7 @@ int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, d
 	  status_flag = get_status_flag(ret_code, sol_status, GLP_UNDEF);
 	  if ( status_flag != 0 )
 	    {
+	      Sciprintf(" echec resolution du LP relaxe\n");
 	      if ( status_flag == 1 ) /* relaxed LP is unbounded, mip is unbounded too if at least a feasible */
 		*fopt = Nan;          /* integer solution exists but we could not decide here so put fopt=Nan */
 	      goto end;
@@ -986,7 +987,7 @@ int int_linprog(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *    [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile(filename,fmt="fixed"|"free",verb=0|1)
+ *    [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile(filename,type="mps"|"lp", fmt="fixed"|"free",verb=0|1)
  *
  */
 int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
@@ -994,13 +995,14 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *c=NULLMAT, *b=NULLMAT, *be=NULLMAT, *lb=NULLMAT, *ub=NULLMAT;
   NspSpColMatrix *A=NULLSPCOLMAT, *Ae=NULLSPCOLMAT;
   NspSMatrix *var_type = NULLSMAT;
-  char *filename=NULL, *fmt_str=NULL, *sense=NULL;
+  char *filename=NULL, *fmt_str=NULL, *type_str=NULL, *sense=NULL;
   int i, j, nb_ineq, nb_eq, nb_free, nb_var_int, nb_var_bin, ib, ibe, 
     fmt = GLP_MPS_DECK, nb_var, nb_cstr, *rownum=NULL, *ind=NULL, verb=-1, verb_default=1;
   Boolean binprog, intprog, mipprog;
   glp_prob *LP=NULL;
   int_types T[] = {string, new_opts, t_end} ;
   nsp_option opts[] ={{"fmt",string,NULLOBJ,-1},
+		      {"type",string,NULLOBJ,-1},
 		      {"verb",s_int,NULLOBJ,-1},
  		      { NULL,t_end,NULLOBJ,-1}};
   void *info=NULL;
@@ -1008,7 +1010,7 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
   
   CheckLhs(11,11);
 
-  if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &fmt_str, &verb) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &fmt_str, &type_str, &verb) == FAIL) 
     return RET_BUG;
 
   if ( fmt_str != NULL )
@@ -1036,9 +1038,25 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
 
   LP = glp_create_prob();
 
-  if ( glp_read_mps(LP, fmt, NULL, filename) != 0 )
+  if ( type_str == NULL ||  strcmp(type_str , "mps") == 0 ) 
     {
-      Scierror("Error: glp_read_mps FAILS \n");
+      if ( glp_read_mps(LP, fmt, NULL, filename) != 0 )
+	{
+	  Scierror("Error: glp_read_mps FAILS \n");
+	  return RET_BUG;
+	}
+    }
+  else if ( strcmp(type_str , "lp") == 0 ) 
+    {
+      if ( glp_read_lp(LP, NULL, filename) != 0 )
+	{
+	  Scierror("Error: glp_read_lp FAILS \n");
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      Scierror("Error: optional arg type=  in function %s should be 'mps' or 'lp'\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1229,8 +1247,6 @@ extern function  int_coinmp_solve;
 extern function  int_coinmp_options;
 extern function  coinmex;
 #endif 
-
-#define WITH_CPLEX
 
 #ifdef WITH_CPLEX 
 extern function int_cplex_solve;
