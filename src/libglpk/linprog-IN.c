@@ -627,6 +627,7 @@ int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, d
 
  err:
   glp_delete_prob(LP);
+  glp_term_hook(NULL, NULL);   /* uninstall term_hook  */
   return FAIL;
 }
 
@@ -986,22 +987,21 @@ int int_linprog(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *    [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile(filename,type="mps"|"lp", fmt="fixed"|"free",verb=0|1)
+ *    [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp(filename,type="mps"|"free_mps"|"lp", verb=0|1|2)
  *
  */
-int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
+int int_readlp(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *c=NULLMAT, *b=NULLMAT, *be=NULLMAT, *lb=NULLMAT, *ub=NULLMAT;
   NspSpColMatrix *A=NULLSPCOLMAT, *Ae=NULLSPCOLMAT;
   NspSMatrix *var_type = NULLSMAT;
-  char *filename=NULL, *fmt_str=NULL, *type_str=NULL, *sense=NULL;
+  char *filename=NULL, *type_str=NULL, *sense=NULL;
   int i, j, nb_ineq, nb_eq, nb_free, nb_var_int, nb_var_bin, ib, ibe, 
-    fmt = GLP_MPS_DECK, nb_var, nb_cstr, *rownum=NULL, *ind=NULL, verb=-1, verb_default=1;
+    nb_var, nb_cstr, *rownum=NULL, *ind=NULL, verb=-1, verb_default=1;
   Boolean binprog, intprog, mipprog;
   glp_prob *LP=NULL;
   int_types T[] = {string, new_opts, t_end} ;
-  nsp_option opts[] ={{"fmt",string,NULLOBJ,-1},
-		      {"type",string,NULLOBJ,-1},
+  nsp_option opts[] ={{"type",string,NULLOBJ,-1},
 		      {"verb",s_int,NULLOBJ,-1},
  		      { NULL,t_end,NULLOBJ,-1}};
   void *info=NULL;
@@ -1009,42 +1009,39 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
   
   CheckLhs(11,11);
 
-  if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &fmt_str, &type_str, &verb) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &type_str, &verb) == FAIL) 
     return RET_BUG;
-
-  if ( fmt_str != NULL )
-    {
-      if ( strcmp(fmt_str , "free") == 0 )
-	fmt = GLP_MPS_FILE;
-      else if ( strcmp(fmt_str , "fixed") == 0 )
-	fmt = GLP_MPS_DECK;
-      else
-	{
-	  Scierror("Error: optional arg fmt=  in function %s should be 'free' or 'fixed'\n",NspFname(stack));
-	  return RET_BUG;
-	}
-    }
 
   verb = verb < 0 ? verb_default : verb;
 
   /* install function to redirect output terminal messages to nsp */
   glp_term_hook(output_to_nsp_term, info);
 
-  if ( verb <= 1 ) 
+  if ( verb < 1 ) 
     glp_term_out(GLP_OFF);
   else
     glp_term_out(GLP_ON);
 
   LP = glp_create_prob();
 
-  if ( type_str == NULL ||  strcmp(type_str , "mps") == 0 ) 
+  if ( type_str == NULL  ||  strcmp(type_str , "mps") == 0 ) 
     {
-      if ( glp_read_mps(LP, fmt, NULL, filename) != 0 )
+      if ( glp_read_mps(LP, GLP_MPS_DECK, NULL, filename) != 0 )
 	{
 	  Scierror("Error: glp_read_mps FAILS \n");
 	  return RET_BUG;
 	}
     }
+
+  else if ( strcmp(type_str , "free_mps") == 0 ) 
+    {
+      if ( glp_read_mps(LP, GLP_MPS_FILE, NULL, filename) != 0 )
+	{
+	  Scierror("Error: glp_read_mps FAILS \n");
+	  return RET_BUG;
+	}
+    }
+
   else if ( strcmp(type_str , "lp") == 0 ) 
     {
       if ( glp_read_lp(LP, NULL, filename) != 0 )
@@ -1055,7 +1052,7 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("Error: optional arg type=  in function %s should be 'mps' or 'lp'\n",NspFname(stack));
+      Scierror("Error: optional arg type=  in function %s should be 'mps' 'free_mps' or 'lp'\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1210,6 +1207,7 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
 
   FREE(rownum); FREE(ind); FREE(val);
   glp_delete_prob(LP);
+  glp_term_hook(NULL, NULL);   /* uninstall term_hook  */
 
   MoveObj (stack, 1, (NspObject *) c);
   MoveObj (stack, 2, (NspObject *) A);
@@ -1235,6 +1233,7 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
   nsp_smatrix_destroy(var_type);
   FREE(rownum); FREE(ind); FREE(val);
   glp_delete_prob(LP);
+  glp_term_hook(NULL, NULL);   /* uninstall term_hook  */
   return RET_BUG;
 }
 
@@ -1255,7 +1254,7 @@ extern function int_cplex_solve;
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
   {"linprog_glpk", int_linprog},
-  {"readmpsfile", int_readmpsfile},
+  {"readlp", int_readlp},
 #ifdef WITH_CLP
   {"clp_sparse", int_clp_sparse},
   {"clp_sparse2", int_clp_sparse2},
