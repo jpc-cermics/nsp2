@@ -51,7 +51,7 @@ lb = [0;0;0];
 ub = [40;%inf;%inf];
 
 [xopt,fopt,flag,extra] = linprog(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
-[xopt1,fopt1,flag1,extra1] = clp_linprog(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
+[xopt1,fopt1,flag1,extra1] = linprog_clp(c,A,b,Ae,be,ub=ub,lb=lb,sense="min");
 
 if norm(xopt-xopt1) >= 1.e-8 then pause;end 
 if norm(extra1- extra.lambda) >= 1.e-8 then pause;end 

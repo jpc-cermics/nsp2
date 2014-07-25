@@ -39,7 +39,7 @@ the column \verb+i+.
 %For compatibility with matlab, there is also a internal storage format
 %corresponding to the Compressed column Storage Format (triplet Ax,Ai,Ap, also used by UMFPACK)
  
-The functions \verb+sparse+ and \verb+sp_create+ (or  \verb+spcol_create+) lets to create
+The functions \verb+sparse+ and \verb+sp_create+ (or  \verb+spcol_create+) can be used to create
 sparse matrices:
 \begin{itemize}
 \item \verb+sparse(M)+ builds a sparse matrix from a full one ;
@@ -49,6 +49,8 @@ sparse matrices:
    added (this can be useful to build finite element matrix).
 \item \verb+sp_create(m,n)+ simply creates a sparse matrix of size $m \times n$ (without
    non zero elements).   
+\item \verb+spfrommtlb(beg,ind,val,[m,n])+  creates a sparse matrix of size $m \times n$ 
+whose entries are described by a triplet described below (See \verb+spfrommtlb+).
 \end{itemize}
 
 \end{mandescription}

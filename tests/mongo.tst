@@ -43,7 +43,7 @@ col.delete[]; // delete evrything in testData
 
 // fill testData 
 for i=1:100 
-  A=bson_create(hash(5,x=sprintf("%s%d","s",i)));
+  A=bson_create(hash(5,x=sprintf("%s%d","s",i),num=i));
   col.insert[A];
 end
 // check 
@@ -56,5 +56,45 @@ while %t then
   R{$+1}= E.to_hash[];
 end
 
+// just select the num field in the output query 
 
+cursor= col.find[fields=bson_create(hash(num=1))];
+R={};
+while %t then 
+  E= cursor.next[];
+  if type(E,'short')== 'b' then break;end
+  R{$+1}= E.to_hash[];
+end
+
+
+// just select the num field in the output query 
+// and limit answers to 1 
+
+cursor= col.find[fields=bson_create(hash(num=1)), limit=1];
+R={};
+while %t then 
+  E= cursor.next[];
+  if type(E,'short')== 'b' then break;end
+  R{$+1}= E.to_hash[];
+end
+
+// search for a specific x 
+
+cursor= col.find[query=bson_create(hash(x="s80"))];
+R={};
+while %t then 
+  E= cursor.next[];
+  if type(E,'short')== 'b' then break;end
+  R{$+1}= E.to_hash[];
+end
+
+// search with $gt 
+
+cursor= col.find[query=bson_create(hash(num=hash($gt=80)))];
+R={};
+while %t then 
+  E= cursor.next[];
+  if type(E,'short')== 'b' then break;end
+  R{$+1}= E.to_hash[];
+end
 

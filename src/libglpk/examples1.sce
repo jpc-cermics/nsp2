@@ -29,6 +29,8 @@ if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 [xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,sparse([]),[],ub=ub,lb=lb,sense="max");
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
+pause zzz;
+
 // "Bakery"
 // --------
 
@@ -188,13 +190,12 @@ b=[-b(1);b(2);-b(4);b(5)];
 optimalValue = 3.23684210526;
 
 // no 'B' in linprog 
+// we use I with extra bounds 
 
-if %f 
-  ctyp1 = [ 'C', 'C', 'I', 'I', 'C', 'C', 'C', 'C'];
-  lb(3:4)=0; ub(3:4)=4;
-  [xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub,lb=lb,sense=sense);
-  if abs(fopt - optimalValue) > 1.e-7 then pause;end
-end 
+ctyp1 = [ 'C', 'C', 'I', 'I', 'C', 'C', 'C', 'C'];
+ub1=ub;ub1(3:4)=1;
+[xopt,fopt,flag] = linprog(c,A,b,Ae,be,var_type=ctyp1,ub=ub1,lb=lb,sense=sense);
+if abs(fopt - optimalValue) > 1.e-7 then pause;end
 
 H=hash(LogLevel=0); 
 
@@ -203,10 +204,12 @@ H=hash(LogLevel=0);
 					    options =H);
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
 
-[xopt1,fopt1,flag1,extra1] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb, ...
+[xopt2,fopt2,flag2,extra2] = linprog_cplex(c,A,b,Ae,be,ub=ub,lb=lb, ...
 					   var_type=ctyp, sense=sense, ...
 					   options =H);
 if abs(fopt1 - optimalValue) > 1.e-7 then pause;end
+
+pause xxxx;
 
 // GamsSos1a
 // Sos variables XXXX
