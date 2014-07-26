@@ -16,7 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-// tests for linprog and readmpsfile (to be completed) 
+// tests for linprog and readlp (to be completed) 
 
 if ~%glpk then 
    printf("This version of nsp was not compiled with glpk support\n");
@@ -121,19 +121,19 @@ if ~ (gopt.equal[-%inf] && flag.equal[2] && isempty(yopt)) then, pause, end
 // tests on easy mips (from netlib)
 
 // bal8x12.mps is a mip with x >= 0 (no need to provide lb=0)
-[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile("bal8x12.mps");
+[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("bal8x12.mps",verb=0);
 Fe = 471.55; 
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,ub=ub,var_type=var_type,verb=0);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 
 // gr4x6.mps is a mip with x >= 0 (no need to provide lb=0)
-[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile("gr4x6.mps");
+[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("gr4x6.mps",verb=0);
 Fe = 202.35; 
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,ub=ub,var_type=var_type,verb=0);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
 
 // bk4x3.mps is a mip with x >= 0 (no need to provide lb=0)
-[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readmpsfile("bk4x3.mps");
+[c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] = readlp("bk4x3.mps",verb=0);
 Fe = 350.0; 
 [xopt,fopt,flag] = linprog(c,A,b,Ae,be,ub=ub,var_type=var_type,verb=0);
 if abs((fopt-Fe)/Fe) >= 4*%eps then, pause, end
