@@ -38,8 +38,8 @@ storage.
 \paragraph{Operations on Cells}
 \itemdesc{Cells methods}
 \begin{itemize}
-\item \verb+[bool,i,j]=C.has[Obj]+ returns true if \verb+Obj+ is present in the cell array \verb+C+ and if requested also returns indices. Presence is checked via the equal operator i.e 
-true is returned if \verb+C{i,j}.equal[Obj]+.
+\item \verb+[bool,i,j]=C.has[Obj]+ returns true if \verb+Obj+ is present in the cell array \verb+C+ and if requested also returns indices. 
+  Presence is checked via the equal operator i.e true is returned if \verb+C{i,j}.equal[Obj]+.
 \end{itemize}
 \itemdesc{Methods from the matint interface}
 \begin{itemize}
@@ -139,7 +139,7 @@ A{1:2,1:2}=(1,2,3,4);
 D{3}=8;
 \end{Verbatim}
 
-\item Using \verb+{.}+ to provide a sequence of aguments to a function
+\item Using \verb+{.}+ to provide a sequence of arguments to a function
 \begin{Verbatim} 
 function y=f(varargin);y=length(varargin);endfunction;
 A={8,9,M,"nsp"}; // creation 
