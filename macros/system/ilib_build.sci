@@ -1,5 +1,6 @@
 function ilib_build(ilib_name,table,files,libs,...
 		    makename='Makelib',ldflags="",cflags="",fflags="",verbose=%t)
+  // generate files and make a shared library 
   // Copyright Enpc 
   // generate the gateway file
   if verbose then printf('   generate a gateway file\n');end
@@ -11,8 +12,15 @@ function ilib_build(ilib_name,table,files,libs,...
   if verbose then printf('   generate a Makefile: %s\n',makename);end
   if isempty(table) then with_gateway=%f ; else with_gateway=%t ;end 
   ilib_gen_Make(ilib_name,table,files,libs,makename,with_gateway,ldflags,cflags,fflags);
-  // we call make
   if verbose then printf('   running the makefile\n');end
+  // a little trick here: all the previous functions generate files
+  // using the current_exec_dir which is not the case for ilib_compile
+  // thus we change the path of makefile to compile in the proper
+  // directory.
+  if file('pathtype',makename)=='relative' then 
+    makename = file('join',[file('split',get_current_exec_dir(absolute=%t));makename]);
+    if verbose then printf('   running the makefile: %s\n',makename);end
+  end
   ilib_compile(ilib_name,makename,files);
 endfunction
 
@@ -22,8 +30,54 @@ function ilib_gen_gateway(name,tables)
 // generate an interface gateway named name
 // from table table taking into account 
 // attributes of function i.e mex fmex or std interface 
+//
+// The gateway is generated in the directory given by the 
+// dirname of name 
 //------------------------------------
-// extract the 
+  
+  function [gate,names,cast,declar,have_mex]=new_names(table) 
+  // change names according to types 
+    [mt,nt]=size(table);
+    have_mex=%f;
+    gate = smat_create(mt,1,"NULL");
+    names= smat_create(mt,1," "); 
+    cast = smat_create(mt,1,"");
+    declar=smat_create(mt,1, "function");
+    for i=1:mt 
+      select table(i,3) 
+       case 'cmex' then 
+	have_mex=%t;
+	declar(i)="mexfun";
+	cast(i) = "(function *)";
+	gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
+	names(i) = "mex_" + table(i,2)
+       case 'fmex' then 
+	have_mex=%t;
+	declar(i)="mexfun";
+	cast(i) = "(function *)";
+	gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
+	names(i) = "C2F(mex" + table(i,2) + ")"
+       case 'Fmex' then 
+	have_mex=%t;
+	declar(i)="mexfun";
+	cast(i) = "(function *)";
+	gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
+	names(i) = "C2F(mex" + table(i,2) + ")"
+       case 'csci'  then 
+	names(i) = table(i,2)
+       case 'cnsp'  then 
+	names(i) = table(i,2)
+       case 'fsci'  then 
+	names(i) = "C2F(" + table(i,2) + ")"
+       case 'fnsp'  then 
+	names(i) = "C2F(" + table(i,2) + ")"
+       case 'direct'  then 
+	names(i) = "C2F(" + table(i,2) + ")"
+      else error("wrong interface type "+table(i,3)); 
+      end 
+    end 
+  endfunction
+  
   arg_name=name;
   name=file('tail',name);
   sufix=file('extension',name);
@@ -97,52 +151,6 @@ function ilib_gen_gateway(name,tables)
   end
 endfunction
 
-function [gate,names,cast,declar,have_mex]=new_names(table) 
-// change names according to types 
-  [mt,nt]=size(table);
-  have_mex=%f;
-  gate= "NULL";
-  gate = gate(ones_new(mt,1));
-  names= " "; 
-  names= names(ones_new(mt,1)); 
-  cast = "";
-  cast = cast(ones_new(mt,1)); 
-  declar= "function";
-  declar = declar(ones_new(mt,1)); 
-  for i=1:mt 
-    select table(i,3) 
-     case 'cmex' then 
-      have_mex=%t;
-      declar(i)="mexfun";
-      cast(i) = "(function *)";
-      gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
-      names(i) = "mex_" + table(i,2)
-     case 'fmex' then 
-      have_mex=%t;
-      declar(i)="mexfun";
-      cast(i) = "(function *)";
-      gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
-      names(i) = "C2F(mex" + table(i,2) + ")"
-     case 'Fmex' then 
-      have_mex=%t;
-      declar(i)="mexfun";
-      cast(i) = "(function *)";
-      gate(i)="(function_wrapper *) nsp_mex_wrapper"; 
-      names(i) = "C2F(mex" + table(i,2) + ")"
-     case 'csci'  then 
-      names(i) = table(i,2)
-     case 'cnsp'  then 
-      names(i) = table(i,2)
-     case 'fsci'  then 
-      names(i) = "C2F(" + table(i,2) + ")"
-     case 'fnsp'  then 
-      names(i) = "C2F(" + table(i,2) + ")"
-     case 'direct'  then 
-      names(i) = "C2F(" + table(i,2) + ")"
-    else error("wrong interface type "+table(i,3)); 
-    end 
-  end 
-endfunction
 
 function ilib_gen_loader(name,tables,libs)
 // Copyright Enpc 
@@ -456,11 +464,11 @@ endfunction
 
 function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
 // Copyright ENPC
-// call make for target files or objects depending
-// on OS and compilers
-// very similar to G_make
+// call make for target files or objects depending on OS and compilers
 // if files is given the make is performed on each 
 // target contained in files then a whole make is performed 
+// makename can be a path leading to a Makefile in that case 
+// a chdir is performed before running Makefile 
 //-------------------------------------------------
   ok=%t,
   if nargin < 3 || isempty(files) then files=m2s([]); end 
@@ -475,49 +483,53 @@ function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
       ilib_compile_get_names(lib_name,makename,files)  
   if path=="." then path = "./";end 
   if path<>"" && path<>"./" then chdir(path);  end 
-  // the name of the shared lib 
-  libn= file('join',[path,lib_name_make]);
-  
-  // perform the make with system function 
-  // step by step 
-  // first try to build each file step by step 
-  nf = size(files,'*');
-  ok=%t;
-  for i=1:nf 
-    str = [make_command,makename,files(i)];
-    strc = catenate(str,sep=" ");
-    if verbose then printf('   '+strc + '\n');end
-    //ok = ilib_spawn_sync(str);
-    [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
-    stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
-    stdout = catenate(stdout,sep="   ");
-    if ~ok then
-      printf('   '+stdout + '\n');
-      stderr = catenate(stderr,sep="\n   ");
-      printf('   '+stderr + '\n');
-      break;
+  // the name of the shared lib
+  try 
+    libn= file('join',[path,lib_name_make]);
+    // perform the make with system function 
+    // step by step 
+    // first try to build each file step by step 
+    nf = size(files,'*');
+    ok=%t;
+    for i=1:nf 
+      str = [make_command,makename,files(i)];
+      strc = catenate(str,sep=" ");
+      if verbose then printf('   '+strc + '\n');end
+      //ok = ilib_spawn_sync(str);
+      [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+      stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
+      stdout = catenate(stdout,sep="   ");
+      if ~ok then
+	printf('   '+stdout + '\n');
+	stderr = catenate(stderr,sep="\n   ");
+	printf('   '+stderr + '\n');
+	break;
+      end
+      if verbose then printf('   '+stdout + '\n');end
     end
-    if verbose then printf('   '+stdout + '\n');end
-  end
-  if ok then
-    // then the shared library 
-    if verbose then printf('   building shared library\n');end
-    str = [make_command, makename, lib_name];
-    strc=  catenate(str,sep=" ");
-    if verbose then printf('   '+strc + '\n');end
-    //ok = ilib_spawn_sync(str);
-    [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
-    stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
-    stdout = catenate(stdout,sep="   ");
-    if ~ok then
-      printf('   '+stdout + '\n');
-      stderr = catenate(stderr,sep="\n   ");
-      printf('   '+stderr + '\n');
-    elseif verbose then
-      printf('   '+stdout + '\n');
+    if ok then
+      // then the shared library 
+      if verbose then printf('   building shared library\n');end
+      str = [make_command, makename, lib_name];
+      strc=  catenate(str,sep=" ");
+      if verbose then printf('   '+strc + '\n');end
+      //ok = ilib_spawn_sync(str);
+      [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+      stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
+      stdout = catenate(stdout,sep="   ");
+      if ~ok then
+	printf('   '+stdout + '\n');
+	stderr = catenate(stderr,sep="\n   ");
+	printf('   '+stderr + '\n');
+      elseif verbose then
+	printf('   '+stdout + '\n');
+      end
     end
+  catch 
+    printf('%s',catenate(lasterror()));
+  finally
+    chdir(oldpath); 
   end
-  chdir(oldpath); 
 endfunction
 
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
