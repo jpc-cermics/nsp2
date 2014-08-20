@@ -5,6 +5,11 @@ A=testmatrix('magic',6);
 A1=unserialize(serialize(A));
 if ~A1.equal[A] then pause;end 
 
+A=testmatrix('magic',6);
+As=serialize(A);
+A1=As.unserialize[]; // use a method 
+if ~A1.equal[A] then pause;end 
+
 A=rand(5,6) >=0.5 ;
 A1=unserialize(serialize(A));
 if ~A1.equal[A] then pause;end 
@@ -113,6 +118,13 @@ if ~A1.equal[A] then pause;end
 y=A1.unserialize[];
 if ~x.equal[y] then pause;end 
 
+// serialize and compress 
+
+A=testmatrix('magic',6);
+As=serialize(A);
+As1=As.compress[];
+A1=As1.unserialize[];
+if ~A1.equal[A] then pause;end 
 
 
 
