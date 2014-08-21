@@ -34,19 +34,16 @@
   
   The \verb!isglobal! function does not exists in nsp. Similar result 
   can be obtained with \verb!exists(identname,'global');!.
-  
 \end{mandescription}
 %--example 
 \begin{examples}
   \begin{Verbatim}
-    global('a', def=1); 
-    function y=f(x); global a; y=x+a; endfunction
-    function g(x); global(a=2);a=x; endfunction
-    f(3)
-    g(3)
-    f(5)
-    exists('a','global');
+    function y=f(x); global(a=5); y=x+a; endfunction;
+    f(0);
     clearglobal a;
+    global(a=10);
+    f(0);
+    exists('a','global');
   \end{Verbatim}
 \end{examples}
 %-- see also
