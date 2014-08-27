@@ -96,6 +96,13 @@ if strsubst('abc,abd,aa,bxe',',','')<>'abcabdaabxe'  then pause,end
 if strsubst(',abc,abd,aa,bxe',',','')<>'abcabdaabxe'  then pause,end
 if strsubst('abc',',',';')<>'abc'  then pause,end
 
+S=strsubst('la terre est noire','noire','bleue');
+if ~S.equal['la terre est bleue'] then pause,end;
+S=strsubst(['one','two'],['one','two'],['two','three']); 
+if ~S.equal[['three','three']] then pause,end;
+S=strsubst(['xne'],['x','one'],['o','two']);
+if ~S.equal['two'] then pause,end;
+
 // {"ascii",int_smxascii},
 
 
