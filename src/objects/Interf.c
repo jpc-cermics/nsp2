@@ -1201,7 +1201,7 @@ void MoveObj(Stack stack, int j, NspObject *O)
 	  nsp_object_destroy(&obj);
 	}
     }
-  else 
+  else if ( O != obj)
     {
       nsp_void_object_destroy(&NthObj(j)); 
     }
