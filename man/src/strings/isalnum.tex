@@ -17,7 +17,7 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-A=isxxx(str)
+B=isxxx(str)
 \end{verbatim}
 \end{calling_sequence}
 
@@ -30,10 +30,14 @@ A=isxxx(str)
 \end{parameters}
 
 \begin{mandescription}
-returns in a boolean row vector \verb+A+ the result of the coresponding test 
-for each character of string \verb+str+.
+Returns in a boolean row vector \verb+B+ the result of the coresponding test 
+for each character of the string argument \verb+str+.
 Each test function checks whether each character of \verb+str+,
-falls into a  certain character class according to the current locale.
+falls into a certain character class according to the current locale.
 \end{mandescription}
 % -- see also
+
+\begin{manseealso}
+  \manlink{Smat}{Smat}  
+\end{manseealso}
 

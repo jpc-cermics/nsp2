@@ -23,12 +23,17 @@ reads file contents and store the result line by line in a string matrix.
 \end{mandescription}
 
 \begin{examples}
-  \begin{program} \HCode{A = string([1,2;3,4]);\Hnewline
-    putfile('A.txt',A);\Hnewline
-    A1= getfile('A.txt');\Hnewline
-    A1== A(:) }
-  \end{program}
+  \begin{Verbatim}
+    A = string([1,2;3,4]);
+    putfile('A.txt',A);
+    A1= getfile('A.txt');
+    A1== A(:)
+  \end{Verbatim}
 \end{examples}
 
 % -- see also
 
+\begin{manseealso}
+  \manlink{putfile}{putfile}
+  \manlink{File}{File}  
+\end{manseealso}

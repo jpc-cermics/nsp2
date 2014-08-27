@@ -14,19 +14,25 @@ putfile(fname,S)
 \begin{parameters}
   \begin{varlist}
     \vname{fname}: the file name to create given as a string.
-    \vname{A}: a string matrix.
+    \vname{S}: a string matrix giving the line contents of the file to be created. The 
+    string matrix is accessed in column order mode.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-writes in file \verb+fname+ the contents of \verb+A+ in column order (i.e like \verb+A(:)+)
+  Writes in file \verb+fname+ the contents of \verb+S+ in column order (i.e like \verb+S(:)+)
 \end{mandescription}
 
 \begin{examples}
-  \begin{program} \HCode{A = string([1,2;3,4]);\Hnewline
-    putfile('A.txt',A);}
-  \end{program}
+  \begin{Verbatim} 
+    A = string([1,2;3,4]);
+    putfile('A.txt',A);
+  \end{Verbatim}
 \end{examples}
 
 % -- see also
+\begin{manseealso}
+  \manlink{getfile}{getfile}
+  \manlink{File}{File}  
+\end{manseealso}
 
