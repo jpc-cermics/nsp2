@@ -21,7 +21,7 @@ function ilib_build(ilib_name,table,files,libs,...
     makename = file('join',[file('split',get_current_exec_dir(absolute=%t));makename]);
     if verbose then printf('   running the makefile: %s\n',makename);end
   end
-  ilib_compile(ilib_name,makename,files);
+  ilib_compile(ilib_name,makename,files,verbose=verbose);
 endfunction
 
 function ilib_gen_gateway(name,tables)
