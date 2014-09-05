@@ -69,10 +69,12 @@ override Bvar.bvar_set_value kwargs
 /* override a method */
 static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *Obj;
+  NspObject *Obj,*Arg;
   CheckRhs(1,1);
   CheckLhs(0,1); 
-  if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
+  /* take care that argument can be an Hobj */
+  if ((Arg =nsp_get_object(stack,1)) == NULLOBJ) return RET_BUG;
+  if ((Obj = nsp_object_copy_and_name("ud",Arg)) == NULLOBJ) 
     return RET_BUG;
   if ( IsMat(Obj)) 
     {
