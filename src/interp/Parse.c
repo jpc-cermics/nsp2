@@ -108,7 +108,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   if ((input = fopen(Str,"r")) == NULL) 
     {
       /* Only when strerror exists XXXXXXX */
-      Scierror("Error:\tCan't open file %s for reading\n %s\n"
+      Scierror("Error: Cannot open file %s for reading\n %s\n"
 	       ,Str,strerror(errno));
       return RET_BUG;
     }
@@ -123,7 +123,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
   if ( rep == RET_CTRLC ) 
     {
-      Scierror("execstr:\tExecution interupted by Ctrl-C\n");
+      Scierror("execstr: Execution interupted by Ctrl-C\n");
     }
   else if ( rep < 0 ) 
     {
@@ -180,11 +180,11 @@ int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatc
     }
   else if ( rep == RET_CTRLC ) 
     {
-      Scierror("execstr:\tExecution interupted by Ctrl-C\n");
+      Scierror("execstr: Execution interupted by Ctrl-C\n");
     }
   else if ( rep < 0 && rep != RET_QUIT ) 
     {
-      Scierror("Error:\tBug detected during execstr\n");
+      Scierror("Error: Bug detected during execstr\n");
     }
   if ( errcatch == FALSE ) 
     nsp_error_message_show();
@@ -234,7 +234,7 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
   if ( rep == RET_CTRLC ) 
     {
-      Scierror("execstr:\tExecution interupted by Ctrl-C\n");
+      Scierror("execstr: Execution interupted by Ctrl-C\n");
     }
   else if ( rep < 0 ) 
     {
@@ -246,7 +246,7 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
 	}
       else 
 	{
-	  Scierror("Error:\tBug detected during execstr\n");
+	  Scierror("Error: Bug detected during execstr\n");
 	}
     }
 
@@ -354,7 +354,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
   sprintf(F,"%s/%s",dirname,Fname);
   if (( f= fopen(F,"r") ) == (FILE *)0 )
     {
-      Scierror("Error:\t:Can't open file %s\n",F);
+      Scierror("Error: Cannot open file %s\n",F);
       return RET_BUG;
     }
   while (1) 
@@ -375,7 +375,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       if ((SciInput = fopen(F1,"r")) == NULL) 
 	{
 	  /* Only when strerror exists XXXXXXX **/
-	  Scierror("Error:\tCan't open file %s for reading\n %s\n"
+	  Scierror("Error: Cannot open file %s for reading\n %s\n"
 		   ,F1,strerror(errno));
 	  rep = RET_BUG;
 	  goto end;
@@ -440,7 +440,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
   GDir *dir =  g_dir_open(dirname,0,NULL);
   if ( dir == NULL) 
     {
-      Scierror("Error:\t:Cannot open directory %s\n",Dir);
+      Scierror("Error: Cannot open directory %s\n",Dir);
       return RET_BUG;
     }
   strcpy(F1,dirname);
@@ -462,7 +462,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      if ((SciInput = fopen(F1,"r")) == NULL) 
 		{
 		  /* Only when strerror exists XXXXXXX */
-		  Scierror("Error:\tCan't open file %s for reading\n %s\n"
+		  Scierror("Error: Cannot open file %s for reading\n %s\n"
 			   ,F1,strerror(errno));
 		  rep = RET_BUG;
 		  goto end;
