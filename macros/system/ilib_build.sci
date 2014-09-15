@@ -504,9 +504,14 @@ function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
 	stderr = catenate(stderr,sep="\n   ");
 	printf('   '+stderr + '\n');
 	break;
+      else
+	// XXXX here it should be possible to see the warnings 
+	// when compilation was ok 
+	// warnings are not in ok,stdout,stderr,msgerr,exitst
       end
       if verbose then printf('   '+stdout + '\n');end
     end
+
     if ok then
       // then the shared library 
       if verbose then printf('   building shared library\n');end
