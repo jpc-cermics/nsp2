@@ -53,9 +53,9 @@ function y=diffobjs(A,B)
 endfunction
 
 function scicos_mputl(str,fname)
-    F=fopen(fname,mode="w");
-    F.put_smatrix[str];
-    F.close[];
+  F=fopen(fname,mode="w");
+  F.put_smatrix[str];
+  F.close[];
 endfunction
 
 function str=scicos_mgetl(fname)
