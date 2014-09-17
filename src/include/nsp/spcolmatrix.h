@@ -101,7 +101,7 @@ extern NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A);
 extern NspSpColMatrix   *nsp_spcolmatrix_object(NspObject *O);
 
 
- extern NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n); 
+ extern NspSpColMatrix *nsp_spcolmatrix_create(const char *name, char type, int m, int n); 
  extern NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n); 
  extern int nsp_spcolmatrix_get(NspSpColMatrix *A, NspMatrix **RC, NspMatrix **Values); 
  extern int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n); 
@@ -245,6 +245,11 @@ extern int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vect
 extern int nsp_spcolmatrix_set_rowcol_from_full(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols, NspMatrix *B);
 
 extern NspSpColMatrix *nsp_spcolmatrix_to_symmetric(NspSpColMatrix *A,double eps);
+
+/* utility functions for matrix conversions */
+
+extern int nsp_matrix_to_sparse_triplet(NspMatrix *A1, NspMatrix *A2, NspIMatrix **Matbeg,NspIMatrix **Matind, NspMatrix **Matval);
+extern int nsp_spcolmatrix_to_sparse_triplet(NspSpColMatrix *A1,NspSpColMatrix *A2, NspIMatrix **Matbeg,NspIMatrix **Matind, NspMatrix **Matval);
 
 #endif 
 

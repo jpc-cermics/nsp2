@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2011 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2014 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -89,7 +89,7 @@ static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int
  * Return value: a new  #NspSpColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
+NspSpColMatrix *nsp_spcolmatrix_create(const char *name, char type, int m, int n)
 {
   int i;
   NspSpColMatrix *Sp = new_spcolmatrix();
@@ -9097,3 +9097,171 @@ static void nsp_spcolmatrix_force_symmetry(NspSpColMatrix *A,double eps)
 	}
     }
 }
+
+/* utility function used in linear programing interfaces 
+ * returns a sparse description of matrix [A2;A1] 
+ * the sparse coding scheme is similar to the one returned by spget_mtlb(A)
+ * the matrix A2 can be equal to NULL;
+ */
+
+int nsp_matrix_to_sparse_triplet(NspMatrix *A1, NspMatrix *A2, NspIMatrix **Matbeg,NspIMatrix **Matind, NspMatrix **Matval)
+{
+  NspIMatrix *MatBeg=NULL,*MatInd=NULL;
+  NspMatrix *MatVal=NULL;
+  int i,j,nz,count;
+  /* Convert to clp sparse code */
+  if (A2 != NULL && A1->n != A2->n )
+    {
+      Scierror("Error: A1 and A2 should have same number of columns\n");
+      return FAIL;
+    }
+  
+  if ( ( MatBeg = nsp_imatrix_create(NVOID,1,A1->n+1,nsp_gint32)) == NULLIMAT )
+    goto end;
+  /* count non-null elements in [A1;A2] */
+  MatBeg->Gint32[0]=0;
+  for ( j=0; j < A1->n ; j++)
+    {
+      MatBeg->Gint32[j+1]=0;
+      if ( A2 != NULL ) 
+	{
+	  for ( i=0; i < A2->m ; i++)
+	    {
+	      if ( A2->R[i+A2->m*j] != 0.0) MatBeg->Gint32[j+1]++;
+	    }
+	}
+      for ( i=0; i < A1->m ; i++)
+	{
+	  if ( A1->R[i+A1->m*j] != 0.0) MatBeg->Gint32[j+1]++;
+	}
+    }
+  /* second step to make the cumsum */
+  for ( i=2 ; i < MatBeg->n ; i++)
+    {
+      MatBeg->Gint32[i] += MatBeg->Gint32[i-1];
+    }
+  /* row indices of non nul ements */
+  nz = MatBeg->Gint32[MatBeg->n-1];
+  if ( ( MatInd = nsp_imatrix_create(NVOID,1,nz,nsp_gint32)) == NULLIMAT )
+    goto end;
+  if ( ( MatVal = nsp_matrix_create(NVOID,'r',1,nz)) == NULLMAT )
+    goto end;
+  count=0;
+  for ( j=0; j < A1->n ; j++)
+    {
+      int offset =0;
+      if (A2 != NULL) 
+	{
+	  offset = A2->m;
+	  for ( i=0; i < A2->m ; i++)
+	    {
+	      if ( A2->R[i+A2->m*j] != 0.0) 
+		{
+		  MatInd->Gint32[count]=i; 
+		  MatVal->R[count]= A2->R[i+A2->m*j];
+		  count++;
+		}
+	    }
+	}
+      for ( i=0; i < A1->m ; i++)
+	{
+	  if ( A1->R[i+A1->m*j] != 0.0) 
+	    {
+	      MatInd->Gint32[count]=i+offset;
+	      MatVal->R[count]= A1->R[i+A1->m*j];
+	      count++;
+	    }
+	}
+    }
+
+  *Matbeg = MatBeg;
+  *Matind = MatInd;
+  *Matval = MatVal;
+  return OK;
+ end:
+  if ( MatBeg !=NULL) nsp_imatrix_destroy(MatBeg);
+  if ( MatInd !=NULL) nsp_imatrix_destroy(MatInd);
+  if ( MatVal !=NULL) nsp_matrix_destroy(MatVal);
+  return FAIL;
+}
+
+/* utility function used in linear programing interfaces 
+ * returns a sparse description of matrix [A2;A1] 
+ * the sparse coding scheme is similar to the one returned by spget_mtlb(A)
+ * the matrix A2 can be equal to NULL;
+ */
+
+int nsp_spcolmatrix_to_sparse_triplet(NspSpColMatrix *A1,NspSpColMatrix *A2, NspIMatrix **Matbeg,NspIMatrix **Matind, NspMatrix **Matval)
+{
+  NspIMatrix *MatBeg=NULL,*MatInd=NULL;
+  NspMatrix *MatVal=NULL;
+  int i,j,nz,count;
+  /* Convert to clp sparse code 
+   * MatBeg: indices of the start of each column in the array of non-null values 
+   * columnwize.
+   */
+
+  /* Convert to clp sparse code */
+  if (A2 != NULL && A1->n != A2->n )
+    {
+      Scierror("Error: A1 and A2 should have same number of columns\n");
+      return FAIL;
+    }
+  
+  if ( ( MatBeg = nsp_imatrix_create(NVOID,1,A1->n+1,nsp_gint32)) == NULLIMAT )
+    goto end;
+  MatBeg->Gint32[0]=0;
+  for ( j=0; j < A1->n ; j++)
+    {
+      MatBeg->Gint32[j+1] = A1->D[j]->size;
+      if (A2 != NULL) 
+	MatBeg->Gint32[j+1] += A2->D[j]->size;
+    }
+
+  /* second step to make the cumsum */
+  for ( i=2 ; i < MatBeg->n ; i++)
+    {
+      MatBeg->Gint32[i] += MatBeg->Gint32[i-1];
+    }
+  /* row indices of non nul ements */
+  nz = MatBeg->Gint32[MatBeg->n-1];
+  if ( ( MatInd = nsp_imatrix_create(NVOID,1,nz,nsp_gint32)) == NULLIMAT )
+    goto end;
+  if ( ( MatVal = nsp_matrix_create(NVOID,'r',1,nz)) == NULLMAT )
+    goto end;
+  count=0;
+  for ( j=0; j < A1->n ; j++)
+    {
+      int k, offset = 0;
+      SpCol *Col;
+      if (A2 != NULL) 
+	{
+	  offset = A2->m;
+	  Col = A2->D[j];
+	  for ( k = 0 ; k < Col->size ; k++)
+	    {
+	      MatInd->Gint32[count]= Col->J[k];
+	      MatVal->R[count]= Col->R[k];
+	      count++;
+	    }
+	}
+      Col = A1->D[j];
+      for ( k = 0 ; k < Col->size ; k++)
+	{
+	  MatInd->Gint32[count]= Col->J[k]+offset;
+	  MatVal->R[count]= Col->R[k];
+	  count++;
+	}
+    }
+  *Matbeg = MatBeg;
+  *Matind = MatInd;
+  *Matval = MatVal;
+  return OK;
+ end:
+  if ( MatBeg !=NULL) nsp_imatrix_destroy(MatBeg);
+  if ( MatInd !=NULL) nsp_imatrix_destroy(MatInd);
+  if ( MatVal !=NULL) nsp_matrix_destroy(MatVal);
+  return FAIL;
+}
+
+
