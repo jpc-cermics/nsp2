@@ -40,3 +40,10 @@ install::
 		--exclude '*.f' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
 
+up:
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in coselica-0.4.8-nsp  scicos-4.4 ;\
+	do \
+		(cd $$i ; echo "making clean in macros/$$i..."; \
+		$(MAKE) $(MFLAGS) up); \
+	done
