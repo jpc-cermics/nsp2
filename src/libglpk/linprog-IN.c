@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2012- Bruno Pinçon Esial/Iecn
+ * Copyright (C) 2012-2014 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,13 +20,13 @@
 
 #include <glpk.h>
 #include <setjmp.h>
-#include "nsp/interf.h"
-#include "nsp/matrix.h"
-#include "nsp/smatrix.h"
-#include "nsp/hash.h"
-#include "nsp/spcolmatrix.h"
-#include "nsp/sciio.h"
-
+#include <nsp/interf.h>
+#include <nsp/matrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/hash.h>
+#include <nsp/spcolmatrix.h>
+#include <nsp/sciio.h>
+#include <nsp/system.h>
 /* 
  * nsp interface to glpk
  *
@@ -992,6 +992,7 @@ int int_linprog(Stack stack, int rhs, int opt, int lhs)
  */
 int int_readlp(Stack stack, int rhs, int opt, int lhs)
 {
+  char filename_expanded[FSIZE+1];
   NspMatrix *c=NULLMAT, *b=NULLMAT, *be=NULLMAT, *lb=NULLMAT, *ub=NULLMAT;
   NspSpColMatrix *A=NULLSPCOLMAT, *Ae=NULLSPCOLMAT;
   NspSMatrix *var_type = NULLSMAT;
@@ -1011,7 +1012,8 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &type_str, &verb) == FAIL) 
     return RET_BUG;
-
+  nsp_expand_file_with_exec_dir(&stack,filename,filename_expanded);
+  
   verb = verb < 0 ? verb_default : verb;
 
   /* install function to redirect output terminal messages to nsp */
@@ -1026,7 +1028,7 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
 
   if ( type_str == NULL  ||  strcmp(type_str , "mps") == 0 ) 
     {
-      if ( glp_read_mps(LP, GLP_MPS_DECK, NULL, filename) != 0 )
+      if ( glp_read_mps(LP, GLP_MPS_DECK, NULL, filename_expanded) != 0 )
 	{
 	  Scierror("Error: glp_read_mps FAILS \n");
 	  return RET_BUG;
@@ -1035,7 +1037,7 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(type_str , "free_mps") == 0 ) 
     {
-      if ( glp_read_mps(LP, GLP_MPS_FILE, NULL, filename) != 0 )
+      if ( glp_read_mps(LP, GLP_MPS_FILE, NULL, filename_expanded) != 0 )
 	{
 	  Scierror("Error: glp_read_mps FAILS \n");
 	  return RET_BUG;
@@ -1044,7 +1046,7 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(type_str , "lp") == 0 ) 
     {
-      if ( glp_read_lp(LP, NULL, filename) != 0 )
+      if ( glp_read_lp(LP, NULL, filename_expanded) != 0 )
 	{
 	  Scierror("Error: glp_read_lp FAILS \n");
 	  return RET_BUG;
@@ -1237,46 +1239,15 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-#ifdef WITH_CLP
-extern function  int_clp_sparse;
-extern function  int_clp_sparse2;
-extern function  int_clp_solve;
-extern function  int_coinmp_solve;
-extern function  int_coinmp_options;
-extern function  coinmex;
-#endif 
-
-#ifdef WITH_CPLEX 
-extern function int_cplex_solve;
-#endif 
-
-
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
   {"linprog_glpk", int_linprog},
   {"readlp", int_readlp},
-#ifdef WITH_CLP
-  {"clp_sparse", int_clp_sparse},
-  {"clp_sparse2", int_clp_sparse2},
-  {"linprog_clp", int_clp_solve},
-  {"linprog_coinmp", int_coinmp_solve},
-  {"coinmp_options", int_coinmp_options},
-  {"coinmex", coinmex},
-#endif 
-#ifdef WITH_CPLEX 
-  {"linprog_cplex", int_cplex_solve},
-#endif 
   {(char *) 0, NULL},
 };
 
 int liblinprog_Interf (int i, Stack stack, int rhs, int opt, int lhs)
 {
-  if ( i == 8 )
-    {
-      Sciprintf("a mex\n");
-      return nsp_mex_wrapper(stack,rhs,opt,lhs,liblinprog_func[i].fonc);
-    }
-  else
   return (*(liblinprog_func[i].fonc)) (stack, rhs, opt, lhs);
 }
 
@@ -1285,4 +1256,5 @@ void liblinprog_Interf_Info (int i, char **fname, function (**f))
  *fname = liblinprog_func[i].name;
  *f = liblinprog_func[i].fonc;
 }
+
 
