@@ -170,7 +170,11 @@ typedef enum _int_types{
   s_int,        /* scalar int */
   s_double,     /* scalar double */
   s_bool,       /* scalar bool   */
+#ifdef __cplusplus
+  string_c,     /* string */
+#else 
   string,       /* string */
+#endif
   stringcopy,   /* string copy */
   mat,          /* matrix */
   matcopy,      /* copy of matrix */
@@ -214,7 +218,7 @@ typedef enum _int_types{
 typedef struct _nsp_option nsp_option;
 
 struct _nsp_option { 
-  char *name;  /* options names */
+  const char *name;  /* options names */
   int_types type; /* types associated to each optional name */
   NspObject *obj;    /* array to store pointers to selected optional arguments 
 		  * (set to NULL) if optional argument is not found */
