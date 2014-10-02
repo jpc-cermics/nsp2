@@ -52,7 +52,7 @@
 #endif 
 
 #ifdef STANDALONE 
-Token_Obj Token ;
+token Token ;
 int debug = 0;
 int debugI =0 ;
 #endif
