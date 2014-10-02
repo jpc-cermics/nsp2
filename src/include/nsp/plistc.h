@@ -6,10 +6,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#include "nsp/math.h"
-#include "nsp/sciio.h" 
-#include "nsp/plisttoken.h"
+#include <nsp/math.h>
+#include <nsp/sciio.h> 
+#include <nsp/plisttoken.h>
 #include <nsp/objectf.h>
+#include <nsp/tokenizer.h>
 
 extern int debug; 
 extern int debugI;
@@ -17,6 +18,8 @@ extern int debugI;
 /*
  * structure for Token Parsing 
  */
+
+/*
 
 #define TBUF 1024
 
@@ -31,8 +34,9 @@ typedef struct token
   int Line;
 } Token_Obj ;
 
-extern Token_Obj Token ;
+*/
 
+extern token Token ;
 extern const char *nsp_astcode_to_nickname(int code);
 extern const char *nsp_astcode_to_name(int code);
 extern int nsp_is_nsp_keyword(const char *id);

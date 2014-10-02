@@ -1,7 +1,7 @@
 #ifndef NSP_INC_TOKENIZER 
 #define NSP_INC_TOKENIZER 
 
-#include "nsp/plisttoken.h"
+#include <nsp/plisttoken.h>
 
 #define LINEMAXSIZE 4096 
 
@@ -19,7 +19,7 @@ struct _curline {
  * structure for current parsed token 
  */ 
 
-#define TBUF 1024
+#define TBUF 32768 
 
 typedef struct _token token; 
 
