@@ -356,6 +356,7 @@ extern void scicos_transmit_or_zero_block(scicos_block *block,int flag);
 extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
 extern void scicos_gtkrange_block(scicos_block * block, int flag);
+extern void scicos_gtkswitch_block(scicos_block * block, int flag);
 
 extern void mswitch (scicos_block *block,int flag);
 extern void logicalop (scicos_block *block,int flag);
@@ -865,6 +866,7 @@ scicos_block_table  tabsim[] ={
   {"gensqr",(ScicosF) scicos_gensqr_block},
   /*  {"hltblk",(ScicosF) F2C(hltblk)}, */
   {"gtkrange", (ScicosF) scicos_gtkrange_block},
+  {"gtkswitch", (ScicosF) scicos_gtkswitch_block},
   {"hltblk",(ScicosF) scicos_hltblk_block},
   /* {"hystheresis",(ScicosF) hystheresis}, */
   {"hystheresis",(ScicosF) scicos_hystheresis_block},
