@@ -160,7 +160,7 @@
 (define-method edgeattr 
   (of-object "Agraph")
   (c-name "nsp_agattr_e")
-  :: (return-type "boolean")
+  ;; (return-type "boolean")
   (parameters
    '("string" "attr")
    '("string" "value")
