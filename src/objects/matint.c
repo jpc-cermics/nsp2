@@ -1681,7 +1681,6 @@ int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, Ns
  * returns:  %OK or %FAIL.
  */
 
-
 int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
@@ -1818,11 +1817,13 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
   
   to = (char *) A->S; from = (char *) B->S;
 
-  if ( MAT_INT(typeA)->free_elt == (matint_free_elt *) 0 )  /* Matrix of numbers or booleans */
+  if ( MAT_INT(typeA)->free_elt == (matint_free_elt *) 0 )  
     {
+      /* Matrix of numbers or booleans or int matrices */
+
       if ( elt_size_B < elt_size_A )    /* just because A is complex and B real... */
 	return nsp_matint_special_set_elts(ObjA, index->val, index->nval, ObjB, typeA);
-
+      
       if ( index->flag  &&  B->mn == index->nval )  /* values go from min to max by step of 1 */
 	{
 	  memcpy(to+ elt_size_A*index->val[0],from, elt_size_A*index->nval);
@@ -3138,6 +3139,8 @@ int int_matint_extract(Stack stack, int rhs, int opt, int lhs)
  * generic interface which can be used by objects which implement 
  * matint in order to perform <literal>A(I,J)=B</literal> 
  * 
+ * Note: this routine will work for Imatrices but only is the itypes 
+ * are the same. This is checked in the Imatrix interface.
  * 
  * Returns:  1 or %RET_BUG
  **/

@@ -3486,6 +3486,24 @@ static int int_imatrix_nnz(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+
+static int int_imatrix_setrowscols(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *ObjA,*ObjB;
+  CheckRhs (3, 4);
+  CheckLhs (1, 1);
+
+  ObjA = NthObj(1); HOBJ_GET_OBJECT(ObjA, RET_BUG);
+  ObjB = NthObj(rhs); HOBJ_GET_OBJECT(ObjB, RET_BUG);
+  
+  if ( ((NspIMatrix *) ObjA)->itype != ((NspIMatrix *) ObjB)->itype) 
+    {
+      Scierror("Error: the two matrices should share the same integer type \n");
+      return RET_BUG;
+    }
+  return int_matint_setrowscols(stack,rhs,opt,lhs);
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -3502,7 +3520,7 @@ static OpTab IMatrix_func[]={
   {"extractcols_i", int_matint_extractcols}, 
   {"extractrows_i", int_matint_extractrows_gen}, 
   {"resize2vect_i", int_matint_resize2vect},
-  {"setrowscols_i", int_matint_setrowscols},
+  {"setrowscols_i", int_imatrix_setrowscols},
   {"deleteelts_i", int_matint_deleteelts},
   {"deleterows_i", int_matint_deleterows},
   {"deletecols_i", int_matint_deletecols},
