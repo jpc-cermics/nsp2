@@ -4148,14 +4148,14 @@ int int_mxbdiv(Stack stack, int rhs, int opt, int lhs)
 
 int int_mxdiv (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *HMat1, *HMat2;
+  NspMatrix *A, *B;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
-  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
+  if ((A = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+  if ((B = GetMat (stack, 2)) == NULLMAT)
     return RET_BUG;
-  if (HMat2->mn <= 1)
+  if (B->mn <= 1)
     {
       return int_mx_mopscal (stack, rhs, opt, lhs,
 			     nsp_mat_div_scalar, nsp_mat_div_el,
@@ -4163,8 +4163,24 @@ int int_mxdiv (Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror ("%s: / not implemented for non 1x1 matrices\n", NspFname(stack));
-      return RET_BUG;
+      /* Here we use the property:  A / B = ( B' \ A') '; 
+       * it could be improved to avoid transpositions by 
+       */
+      int ret= RET_BUG;
+      double tol_rcond;
+      NspMatrix *Ap= NULL,*Bp=NULL,*C=NULL,*Cp=NULL;
+      if ((Ap = nsp_matrix_transpose (A)) == NULLMAT) goto bug;
+      if ((Bp = nsp_matrix_transpose (B)) == NULLMAT) goto bug;
+      tol_rcond = Max(B->m,B->n)*nsp_dlamch("eps");
+      if ((C = nsp_matrix_bdiv(Bp,Ap, tol_rcond)) == NULLMAT) goto bug;
+      if ((Cp = nsp_matrix_transpose (C)) == NULLMAT) goto bug;
+      MoveObj(stack,1,NSP_OBJECT(Cp));
+      ret= 1 ;
+    bug:
+      if ( Ap != NULL) nsp_matrix_destroy(Ap);
+      if ( Bp != NULL) nsp_matrix_destroy(Bp);
+      if ( C != NULL) nsp_matrix_destroy(C);
+      return ret;
     }
   return 1;
 }
