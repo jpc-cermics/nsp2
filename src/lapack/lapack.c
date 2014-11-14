@@ -3807,7 +3807,14 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
   NspMatrix *C,*Ac;
   if ( A->m != B->m ) 
     {
-      /* FIXME: must we treat the scalar case ? 
+      if ( A->mn == 1 ) 
+	{
+	  /* B divided by scalar A */
+	  if ( (C=nsp_matrix_copy(B)) == NULLMAT ) return NULLMAT;
+	  nsp_mat_div_scalar(C, A);
+	  return C;
+	}
+      /* FIXME: must we treat the B scalar case ? 
        *        A\scalar => x = inv(A)*scalar or pinv(A)*scalar 
        */
       Scierror("Error:\tIncompatible dimensions (in bdiv)\n");
