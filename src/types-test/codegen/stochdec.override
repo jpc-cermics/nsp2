@@ -10,17 +10,23 @@ include-public Stochdec
 #include <nsp/gridvaluefn.h>
 #include <nsp/cutsvaluefn.h>
 
-int nsp_gvf_check_nx(NspMatrix *nx);
-NspMatrix *nsp_gvf_create_steps(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax);
-NspMatrix *nsp_gvf_create_values(NspMatrix *nx);
-int nsp_gvf_ind_to_point(NspGridValueFn *Gvf,double pt[], int i);
-int nsp_gvf_point_to_ind(NspGridValueFn *Gvf,const double pt[]) ;
-double nsp_gvf_get_i_value(NspGridValueFn *Gvf, int i);
-void nsp_gvf_set_i_value(NspGridValueFn *Gvf, int i,const double val);
-double nsp_gvf_get_pt_value(NspGridValueFn *Gvf,const double pt[]) ;
-void nsp_gvf_set_pt_value(NspGridValueFn *Gvf,const double pt[],const double val) ;
-int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes);
-double nsp_cvf_get_value(NspCutsValueFn *Cvf,const double pt[]) ;
+extern int nsp_gvf_check_nx(NspMatrix *nx);
+extern NspMatrix *nsp_gvf_create_steps(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax);
+extern NspMatrix *nsp_gvf_create_values(NspMatrix *nx);
+extern int nsp_gvf_ind_to_point(NspGridValueFn *Gvf,double pt[], int i);
+extern int nsp_gvf_point_to_ind(NspGridValueFn *Gvf,const double pt[]) ;
+extern double nsp_gvf_get_i_value(NspGridValueFn *Gvf, int i);
+extern void nsp_gvf_set_i_value(NspGridValueFn *Gvf, int i,const double val);
+extern double nsp_gvf_get_pt_value(NspGridValueFn *Gvf,const double pt[]) ;
+extern void nsp_gvf_set_pt_value(NspGridValueFn *Gvf,const double pt[],const double val) ;
+extern NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf);
+extern NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax);
+
+
+extern int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes);
+extern double nsp_cvf_get_value(NspCutsValueFn *Cvf,const double pt[]) ;
+extern int nsp_cvf_add_slope(NspCutsValueFn *Cvf,double height,double slope[]);
+extern int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t);
 
 %%
 include-private Stochdec
@@ -58,44 +64,14 @@ override nsp_gridfn
 
 int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs) 
 {
-  NspMatrix *pasx=NULL, *values = NULL, *nx=NULL, *nx_c;
+  NspMatrix *xmin, *xmax,*nx;
   NspGridValueFn *H;
-  NspValueFn *F;
   int_types T[] = {realmat,realmat,realmat,t_end};
-  NspMatrix *xmin, *xmax, *xmin_c, *xmax_c;
   if ( GetArgs(stack,rhs,opt,T,&nx, &xmin, &xmax) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,3, nx->mn != xmin->mn);
   CheckDimProp(NspFname(stack),2,3, xmin->mn != xmax->mn);
-  if (nsp_gvf_check_nx(nx) == FAIL) 
-    {
-      Scierror("Error: first argument should contain values greater than 1\n");
-      return RET_BUG;
-    }
-  if ( (pasx=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
-    {
-      Scierror("Error: unable to create steps\n");
-      return RET_BUG;
-    }
-  if ((values=nsp_gvf_create_values(nx)) == NULL )
-    {
-      Scierror("Error: unable to allocate space for values \n");
-      return RET_BUG;
-    }
-  if ((nx_c = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(nx))) == NULLMAT) 
+  if ((H=nsp_gvf_create(nx,xmin,xmax)) == NULL)
     return RET_BUG;
-  if ((xmin_c = (NspMatrix *) nsp_object_copy_and_name("xmin",NSP_OBJECT(xmin))) == NULLMAT) 
-    return RET_BUG;
-  if ((xmax_c = (NspMatrix *) nsp_object_copy_and_name("xmax",NSP_OBJECT(xmax))) == NULLMAT) 
-    return RET_BUG;
-
-  /* want to be sure that type gridvaluefn is initialized */
-  nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
-  H = nsp_gridvaluefn_create(NVOID, nx_c, pasx, values,(NspTypeBase *) nsp_type_gridvaluefn);
-  if ( H == NULL) return RET_BUG;
-  F= (NspValueFn *)H;
-  nsp_matrix_destroy(F->xmin);  F->xmin = xmin_c;
-  nsp_matrix_destroy(F->xmax);  F->xmax = xmax_c;
-  F->xdim = nx->mn;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
@@ -358,10 +334,25 @@ int nsp_gvf_ind_to_point(NspGridValueFn *Gvf,double pt[], int i)
   if(i < 0) return FAIL;
   for ( k=0 ; k < Vf->xdim; k++)
     {
-      int nx = (int) Gvf->nx->R[k];
-      ind = i % nx ; /*  i - (i/nx)*nx; remainder */
+      int inx = (int) Gvf->nx->R[k];
+      ind = i % inx ; /*  i - (i/nx)*nx; remainder */
       pt[k] = Vf->xmin->R[k] + Gvf->pasx->R[k]*ind;
-      i = (i-ind)/nx;
+      i = (i-ind)/inx;
+    }
+  return OK;
+}
+
+int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t)
+{
+  int k, ind;
+  /* Case where x is out of bounds */
+  if(i < 0) return FAIL;
+  for ( k=0 ; k < pt->mn; k++)
+    {
+      int inx = (int) nx->R[k];
+      ind = i % inx ; /*  i - (i/nx)*nx; remainder */
+      pt->R[k] = min->R[k] + pasx->R[k]*ind;
+      i = (i-ind)/inx;
     }
   return OK;
 }
@@ -479,5 +470,49 @@ int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes)
       memcpy(Cvf->slopes->R + offset1, slopes->R +offset2, Cvf->slopes->m*sizeof(double));
     }
   return OK;
+}
+
+
+NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf)
+{
+  return (NspMatrix *) nsp_object_copy(NSP_OBJECT(Gvf->nx));
+}
+
+
+NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
+{
+  NspGridValueFn *H;
+  NspValueFn *F;
+  NspMatrix *pasx=NULL, *values = NULL, *nx_c=NULL, *xmin_c=NULL,*xmax_c=NULL;
+  if (nsp_gvf_check_nx(nx) == FAIL) 
+    {
+      Scierror("Error: first argument should contain values greater than 1\n");
+      return NULL;
+    }
+  if ( (pasx=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
+    {
+      Scierror("Error: unable to create steps\n");
+      return NULL;
+    }
+  if ((values=nsp_gvf_create_values(nx)) == NULL )
+    {
+      Scierror("Error: unable to allocate space for values \n");
+      return NULL;
+    }
+  if ((nx_c = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(nx))) == NULLMAT) 
+    return NULL;
+  if ((xmin_c = (NspMatrix *) nsp_object_copy_and_name("xmin",NSP_OBJECT(xmin))) == NULLMAT) 
+    return NULL;
+  if ((xmax_c = (NspMatrix *) nsp_object_copy_and_name("xmax",NSP_OBJECT(xmax))) == NULLMAT) 
+    return NULL;
+  /* want to be sure that type gridvaluefn is initialized */
+  nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
+  H = nsp_gridvaluefn_create(NVOID, nx_c, pasx, values,(NspTypeBase *) nsp_type_gridvaluefn);
+  if ( H == NULL) return NULL;
+  F= (NspValueFn *)H;
+  nsp_matrix_destroy(F->xmin);  F->xmin = xmin_c;
+  nsp_matrix_destroy(F->xmax);  F->xmax = xmax_c;
+  F->xdim = nx->mn;
+  return H;
 }
 

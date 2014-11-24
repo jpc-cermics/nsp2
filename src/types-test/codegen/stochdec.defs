@@ -71,6 +71,12 @@
     )
   )
 
+(define-method get_nx
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_get_nx")
+  (return-type "NspMatrix*")
+  )
+
 ;;-----------------------------------
 ;; CutsValueFn: functions and methods 
 ;;-----------------------------------
