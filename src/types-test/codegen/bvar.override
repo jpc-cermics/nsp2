@@ -17,6 +17,7 @@ static int bvar_code_getvarname(NspObject *Obj, NspHash *H);
 static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
 static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
 static int bvar_code_vars(NspList *L, NspHash *H);
+static int bvar_code_vars_used(NspList *L, NspHash *H);
 static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed);
 static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,NspObject *expr, int *callf) ;
 static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_modified, const char *vname);
@@ -58,9 +59,11 @@ override Bvar.bvar_get_value kwargs
 /* override a method */
 static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *Obj;
   CheckRhs(0,0);
   CheckLhs(0,1); 
-  MoveObj(stack,1, self->value);
+  if ((Obj = nsp_object_copy(self->value)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1, Obj);
   return Max(lhs,1);
 }
 
@@ -109,6 +112,8 @@ override Bvar.bvar_set_varname kwargs
 static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
   char *str;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((str = nsp_string_copy(str)) ==NULL) return RET_BUG;
   free(self->varname);
@@ -326,6 +331,26 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&code) == FAIL) return RET_BUG;
   if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
   if ( bvar_code_vars(code,H) == FAIL) 
+    {
+      nsp_hash_destroy(H);
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+}
+
+%%
+override bvar_code_vars_used kwargs
+
+int _wrap_bvar_code_vars_used(Stack stack, int rhs, int opt, int lhs)
+{
+  NspHash *H;
+  int_types T[] = { list ,  t_end};
+  NspList *code;
+  CheckLhs(0,1); 
+  if ( GetArgs(stack,rhs,opt,T,&code) == FAIL) return RET_BUG;
+  if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
+  if ( bvar_code_vars_used(code,H) == FAIL) 
     {
       nsp_hash_destroy(H);
       return RET_BUG;
@@ -766,6 +791,91 @@ static int bvar_code_vars(NspList *L, NspHash *H)
 		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
 		}
 	    }
+	}
+      C = C->next;
+    }
+  return OK;
+ fail: 
+  return FAIL;
+}
+
+/* similar to bvar_code_vars but just checks use of variables */
+
+static int bvar_code_vars_used(NspList *L, NspHash *H)
+{
+  /* walk through the list */
+  Cell *C = L->first;
+  while ( C != NULLCELL) 
+    {
+      NspObject *Elt = C->O;
+      if ( Elt != NULLOBJ )
+	{
+	  int i;
+	  const char *name;
+	  NspObject *elt1,*eltn;
+	  if (! IsList(Elt) ) goto fail;
+	  /* get first element */
+	  if ( (elt1= nsp_list_get_element((NspList *) Elt,1)) == NULL) goto fail;
+	  if ( ! ( IsSMat(elt1) && ((NspSMatrix *) elt1)->mn ==1 )) goto fail;
+	  name = ((NspSMatrix *) elt1)->S[0];
+	  if (strcmp(name,"nop" )==0) 
+	    {}
+	  else if (strcmp(name,"annotation")==0) 
+	    {}
+	  else if (strcmp(name,"set")==0) 
+	    {
+	      for ( i = 3 ; i <= 3 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"bi_insert")==0)
+	    {
+	      for ( i = 3 ; i <= 5 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"uni_insert")==0)
+	    {
+	      for ( i = 3 ; i <= 4 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"assign")==0)
+	    {
+	      for ( i = 3 ; i <= 3 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"mcopy")==0)
+	    {
+	      for ( i = 3 ; i <= 3 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"if_expr")==0)
+	    {
+	      for ( i = 3 ; i <= 4 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if (bvar_code_getvarname(eltn,H) == FAIL ) goto fail;
+		}
+	    }
+	  else if (strcmp(name,"endfunction")==0)  
+	    {}
+	  else if (strcmp(name,"switch_expr")==0)  
+	    {}
+	  else if (strcmp(name,"callf")==0) 
+	    {}
 	}
       C = C->next;
     }
