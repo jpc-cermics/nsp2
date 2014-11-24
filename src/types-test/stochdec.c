@@ -24,7 +24,7 @@
 
 
 
-#line 33 "codegen/stochdec.override"
+#line 39 "codegen/stochdec.override"
 /* headers */
 
 #line 31 "stochdec.c"
@@ -248,7 +248,7 @@ static NspStochdec  *nsp_stochdec_xdr_load(XDR *xdrs)
 
 void nsp_stochdec_destroy_partial(NspStochdec *H)
 {
-#line 54 "codegen/stochdec.override"
+#line 60 "codegen/stochdec.override"
    /* verbatim in destroy */
 
 #line 255 "stochdec.c"
@@ -1556,7 +1556,7 @@ int int_gridvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 105 "codegen/stochdec.override"
+#line 81 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1581,7 +1581,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1582 "stochdec.c"
 
 
-#line 128 "codegen/stochdec.override"
+#line 104 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1608,7 +1608,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1609 "stochdec.c"
 
 
-#line 182 "codegen/stochdec.override"
+#line 158 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1624,7 +1624,7 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
 #line 1625 "stochdec.c"
 
 
-#line 153 "codegen/stochdec.override"
+#line 129 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1655,7 +1655,7 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1656 "stochdec.c"
 
 
-#line 220 "codegen/stochdec.override"
+#line 196 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1674,7 +1674,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
 #line 1675 "stochdec.c"
 
 
-#line 196 "codegen/stochdec.override"
+#line 172 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1700,6 +1700,16 @@ static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1701 "stochdec.c"
 
 
+static int _wrap_nsp_gvf_get_nx(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+  CheckRhs(0,0);
+  ret = nsp_gvf_get_nx(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
 static NspMethods gridvaluefn_methods[] = {
   {"i2p",(nsp_method *) _wrap_nsp_gvf_ind_to_point},
   {"p2i",(nsp_method *) _wrap_nsp_gvf_point_to_ind},
@@ -1707,6 +1717,7 @@ static NspMethods gridvaluefn_methods[] = {
   {"pt_set_value",(nsp_method *) _wrap_nsp_gvf_set_pt_value},
   {"i_get_value",(nsp_method *) _wrap_nsp_gvf_get_i_value},
   {"pt_get_value",(nsp_method *) _wrap_nsp_gvf_get_pt_value},
+  {"get_nx",(nsp_method *) _wrap_nsp_gvf_get_nx},
   { NULL, NULL}
 };
 
@@ -2222,7 +2233,7 @@ int int_cutsvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 265 "codegen/stochdec.override"
+#line 241 "codegen/stochdec.override"
 
 /* method overriden */
 
@@ -2244,10 +2255,10 @@ static int _wrap_nsp_cvf_add_slopes(NspCutsValueFn *self,Stack stack,int rhs,int
   return 0;
 }
 
-#line 2248 "stochdec.c"
+#line 2259 "stochdec.c"
 
 
-#line 288 "codegen/stochdec.override"
+#line 264 "codegen/stochdec.override"
 
 static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2270,7 +2281,7 @@ static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int 
   return 1;
 }
 
-#line 2274 "stochdec.c"
+#line 2285 "stochdec.c"
 
 
 static NspMethods cutsvaluefn_methods[] = {
@@ -2289,56 +2300,26 @@ static AttrTab cutsvaluefn_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 58 "codegen/stochdec.override"
+#line 64 "codegen/stochdec.override"
 
 int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs) 
 {
-  NspMatrix *pasx=NULL, *values = NULL, *nx=NULL, *nx_c;
+  NspMatrix *xmin, *xmax,*nx;
   NspGridValueFn *H;
-  NspValueFn *F;
   int_types T[] = {realmat,realmat,realmat,t_end};
-  NspMatrix *xmin, *xmax, *xmin_c, *xmax_c;
   if ( GetArgs(stack,rhs,opt,T,&nx, &xmin, &xmax) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,3, nx->mn != xmin->mn);
   CheckDimProp(NspFname(stack),2,3, xmin->mn != xmax->mn);
-  if (nsp_gvf_check_nx(nx) == FAIL) 
-    {
-      Scierror("Error: first argument should contain values greater than 1\n");
-      return RET_BUG;
-    }
-  if ( (pasx=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
-    {
-      Scierror("Error: unable to create steps\n");
-      return RET_BUG;
-    }
-  if ((values=nsp_gvf_create_values(nx)) == NULL )
-    {
-      Scierror("Error: unable to allocate space for values \n");
-      return RET_BUG;
-    }
-  if ((nx_c = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(nx))) == NULLMAT) 
+  if ((H=nsp_gvf_create(nx,xmin,xmax)) == NULL)
     return RET_BUG;
-  if ((xmin_c = (NspMatrix *) nsp_object_copy_and_name("xmin",NSP_OBJECT(xmin))) == NULLMAT) 
-    return RET_BUG;
-  if ((xmax_c = (NspMatrix *) nsp_object_copy_and_name("xmax",NSP_OBJECT(xmax))) == NULLMAT) 
-    return RET_BUG;
-
-  /* want to be sure that type gridvaluefn is initialized */
-  nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
-  H = nsp_gridvaluefn_create(NVOID, nx_c, pasx, values,(NspTypeBase *) nsp_type_gridvaluefn);
-  if ( H == NULL) return RET_BUG;
-  F= (NspValueFn *)H;
-  nsp_matrix_destroy(F->xmin);  F->xmin = xmin_c;
-  nsp_matrix_destroy(F->xmax);  F->xmax = xmax_c;
-  F->xdim = nx->mn;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
 
-#line 2339 "stochdec.c"
+#line 2320 "stochdec.c"
 
 
-#line 237 "codegen/stochdec.override"
+#line 213 "codegen/stochdec.override"
 
 int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -2365,7 +2346,7 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2369 "stochdec.c"
+#line 2350 "stochdec.c"
 
 
 /*----------------------------------------------------
@@ -2396,7 +2377,7 @@ void Stochdec_Interf_Info(int i, char **fname, function (**f))
   *f = Stochdec_func[i].fonc;
 }
 
-#line 312 "codegen/stochdec.override"
+#line 288 "codegen/stochdec.override"
 
 /***************************************
  * a set of functions for GridValueFn 
@@ -2446,10 +2427,25 @@ int nsp_gvf_ind_to_point(NspGridValueFn *Gvf,double pt[], int i)
   if(i < 0) return FAIL;
   for ( k=0 ; k < Vf->xdim; k++)
     {
-      int nx = (int) Gvf->nx->R[k];
-      ind = i % nx ; /*  i - (i/nx)*nx; remainder */
+      int inx = (int) Gvf->nx->R[k];
+      ind = i % inx ; /*  i - (i/nx)*nx; remainder */
       pt[k] = Vf->xmin->R[k] + Gvf->pasx->R[k]*ind;
-      i = (i-ind)/nx;
+      i = (i-ind)/inx;
+    }
+  return OK;
+}
+
+int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t)
+{
+  int k, ind;
+  /* Case where x is out of bounds */
+  if(i < 0) return FAIL;
+  for ( k=0 ; k < pt->mn; k++)
+    {
+      int inx = (int) nx->R[k];
+      ind = i % inx ; /*  i - (i/nx)*nx; remainder */
+      pt->R[k] = min->R[k] + pasx->R[k]*ind;
+      i = (i-ind)/inx;
     }
   return OK;
 }
@@ -2570,4 +2566,48 @@ int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes)
 }
 
 
-#line 2574 "stochdec.c"
+NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf)
+{
+  return (NspMatrix *) nsp_object_copy(NSP_OBJECT(Gvf->nx));
+}
+
+
+NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
+{
+  NspGridValueFn *H;
+  NspValueFn *F;
+  NspMatrix *pasx=NULL, *values = NULL, *nx_c=NULL, *xmin_c=NULL,*xmax_c=NULL;
+  if (nsp_gvf_check_nx(nx) == FAIL) 
+    {
+      Scierror("Error: first argument should contain values greater than 1\n");
+      return NULL;
+    }
+  if ( (pasx=nsp_gvf_create_steps(nx,xmin,xmax))== NULL) 
+    {
+      Scierror("Error: unable to create steps\n");
+      return NULL;
+    }
+  if ((values=nsp_gvf_create_values(nx)) == NULL )
+    {
+      Scierror("Error: unable to allocate space for values \n");
+      return NULL;
+    }
+  if ((nx_c = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(nx))) == NULLMAT) 
+    return NULL;
+  if ((xmin_c = (NspMatrix *) nsp_object_copy_and_name("xmin",NSP_OBJECT(xmin))) == NULLMAT) 
+    return NULL;
+  if ((xmax_c = (NspMatrix *) nsp_object_copy_and_name("xmax",NSP_OBJECT(xmax))) == NULLMAT) 
+    return NULL;
+  /* want to be sure that type gridvaluefn is initialized */
+  nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
+  H = nsp_gridvaluefn_create(NVOID, nx_c, pasx, values,(NspTypeBase *) nsp_type_gridvaluefn);
+  if ( H == NULL) return NULL;
+  F= (NspValueFn *)H;
+  nsp_matrix_destroy(F->xmin);  F->xmin = xmin_c;
+  nsp_matrix_destroy(F->xmax);  F->xmax = xmax_c;
+  F->xdim = nx->mn;
+  return H;
+}
+
+
+#line 2614 "stochdec.c"
