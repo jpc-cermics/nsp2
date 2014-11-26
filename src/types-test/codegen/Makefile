@@ -29,7 +29,13 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 
 
 all:: $(ALL)
+
+
+plus:
 	cd ../; make all
+
+testgen: $(ALL)
+
 
 clean :: 
 	$(RM) $(ALL)

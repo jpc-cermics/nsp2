@@ -75,6 +75,10 @@ static NspAgraph *nsp_agraphof(NspAgnode * N);
 static NspAgnode *nsp_agtail(NspAgedge* E);
 static NspAgnode *nsp_aghead(NspAgedge* E);
 
+/* ref counts */
+static int nsp_agattr_refcount_set(void *obj,int itype, int offset);
+/* static int nsp_agattr_refcount_get(Agraph_t *obj,int itype); */
+
 %%
 headers
 /* headers */
@@ -156,6 +160,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to create a graph\n");
       return RET_BUG;
     }
+  nsp_agattr_refcount_set(g,AGRAPH,0);
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -164,8 +169,33 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 %%
 override-destroy-prelim  Agraph
    /* verbatim in destroy */
-/* agclose(H->obj->graph); */
+   int l = nsp_agattr_refcount_set(H->obj->graph,AGRAPH,-1);
+   /* Sciprintf("Warning: graph refcount is %d\n",l); */
+   if ( l <= 0) 
+     {
+       /* Sciprintf("Warning: agclose called\n"); */
+       agclose(H->obj->graph);
+     }
    
+%%
+override-destroy-prelim  Agnode
+   /* verbatim in destroy */
+   int l = nsp_agattr_refcount_set(H->obj->node,AGNODE,-1);
+   /* Sciprintf("Warning: node refcount is %d\n",l); */
+   if ( l <= 0) 
+     {
+     }
+%%
+override-destroy-prelim  Agedge
+   /* verbatim in destroy */
+   int l = nsp_agattr_refcount_set(H->obj->edge,AGEDGE,-1);
+   /* Sciprintf("Warning: edge refcount is %d\n",l); */
+   if ( l <= 0) 
+     {
+              
+     }
+
+
 %%
 override nsp_agattr kwargs
 
@@ -455,6 +485,11 @@ static NspSMatrix *nsp_agobjattrs(NspAgraph * g,int tag )
   return NULL;
 }
 
+/* the next methods are methods for graph objects 
+ * setting attributes of the graph and common to all 
+ * nodes and edges.
+ */
+
 static NspSMatrix *nsp_agraphattrs(NspAgraph * g)
 {
   return nsp_agobjattrs(g,AGRAPH);
@@ -478,6 +513,7 @@ static NspAgedge *nsp_agfstout(NspAgraph * g, NspAgnode *n)
       Scierror("Error: first out edge was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -489,6 +525,7 @@ static NspAgedge *nsp_agnxtout(NspAgraph * g, NspAgedge *e)
       Scierror("Error: next out edge node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -500,6 +537,7 @@ static NspAgedge *nsp_agfstin(NspAgraph * g, NspAgnode *n)
       Scierror("Error: first in edge was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -511,6 +549,7 @@ static NspAgedge *nsp_agnxtin(NspAgraph * g, NspAgedge *e)
       Scierror("Error: next in edge was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -522,6 +561,7 @@ static NspAgedge *nsp_agfstedge(NspAgraph * g, NspAgnode *n)
       Scierror("Error: first edge node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -533,6 +573,7 @@ static NspAgedge *nsp_agnxtedge(NspAgraph * g, NspAgedge *e, NspAgnode *n)
       Scierror("Error: next edge was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(e1,AGEDGE,+1);
   return nsp_agedge_create(NVOID,e1,NULL);
 }
 
@@ -598,6 +639,7 @@ static NspAgraph *nsp_agparent(NspAgraph * G)
       Scierror("Error: failed to create a graph\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(p,AGRAPH,+1);
   return P;
 }
 
@@ -616,6 +658,8 @@ static NspAgraph *nsp_agroot(NspAgraph * G)
       Scierror("Error: failed to create a graph\n");
       return NULL;
     }
+  /* take care that the two graphs share the same (Agraph_t *) */
+  nsp_agattr_refcount_set(g,AGRAPH,+1);
   return R;
 }
 
@@ -628,6 +672,7 @@ static NspAgnode *nsp_agfstnode(NspAgraph * g)
       Scierror("Error: first node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(n,AGNODE,+1);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -639,6 +684,7 @@ static NspAgnode *nsp_aglstnode(NspAgraph * g)
       Scierror("Error: last node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(n,AGNODE,+1);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -650,6 +696,7 @@ static NspAgnode *nsp_agnxtnode(NspAgraph * g, NspAgnode *n)
       Scierror("Error: next node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(n1,AGNODE,+1);
   return nsp_agnode_create(NVOID,n1,NULL);
 }
 
@@ -661,6 +708,7 @@ static NspAgnode *nsp_agprvnode(NspAgraph * g, NspAgnode *n)
       Scierror("Error: previous node was not found\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(n1,AGNODE,+1);
   return nsp_agnode_create(NVOID,n1,NULL);
 }
 
@@ -672,6 +720,7 @@ static NspAgnode *nsp_agfindnode_by_name(NspAgraph * g, char *name)
       Scierror("Error: node with name=%s was not found\n",name);
       return NULL;
     }
+  nsp_agattr_refcount_set(n,AGNODE,+1);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -763,6 +812,7 @@ static NspAgraph *nsp_agsubg(NspAgraph * G, char *name)
       Scierror("Error: failed to create a subgraph\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(s,AGRAPH,+1);
   return S;
 }
 
@@ -781,6 +831,7 @@ static NspAgraph *nsp_agfstsubg(NspAgraph * G)
       Scierror("Error: failed to create a graph\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(s,AGRAPH,+1);
   return S;
 }
 
@@ -799,6 +850,7 @@ static NspAgraph *nsp_agnxtsubg(NspAgraph * G)
       Scierror("Error: failed to create a graph\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(s,AGRAPH,+1);
   return S;
 }
 
@@ -824,6 +876,7 @@ static NspAgraph *nsp_agraphof(NspAgnode * N)
       Scierror("Error: failed to create a graph\n");
       return NULL;
     }
+  nsp_agattr_refcount_set(g,AGRAPH,+1);
   return G;
 }
 
@@ -844,6 +897,7 @@ static NspAgnode *nsp_aghead(NspAgedge* E)
 	Scierror("Error: failed to get the head of an edge \n");
       return NULL;
     }
+  nsp_agattr_refcount_set(n,AGNODE,+1);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -859,6 +913,7 @@ static NspAgnode *nsp_agtail(NspAgedge* E)
       else
 	Scierror("Error: failed to get the tail of an edge \n");
     }
+  nsp_agattr_refcount_set(n,AGNODE,+1);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -950,6 +1005,64 @@ int nsp_agdelrec(void *obj, char *name);
 void nsp_aginit(NspAgraph * g, int kind, char *rec_name,
 		   int rec_size, int move_to_front);
 void nsp_agclean(NspAgraph * g, int kind, char *rec_name);
+
+
+static int nsp_agattr_refcount_set(void *vo,int itype, int offset)
+{
+  Agraph_t *obj = vo;
+  /* Agsym_t *a = NULL; */
+  gulong l;
+  gchar *end, buf[32];
+  gchar *ret = agget(obj,"refcount");
+  if ( ret == NULL) 
+    {
+      l=1;
+    }
+  else
+    {
+      l = strtoul (ret, &end,10);
+    }
+  l += offset;
+  sprintf(buf,"%ld",l);
+  agsafeset(obj,"refcount",buf,"");
+  /* a = agattr( obj->root,itype,"refcount",buf); 
+  if ( a == NULL) 
+    {
+      Sciprintf("Error: failed to add refcount attribute to object.\n");
+    }
+  */
+  return l;
+} 
+
+#if 0
+static int nsp_agattr_refcount_get(Agraph_t *obj,int itype)
+{
+  gchar *end;
+  gchar *ret = agget(obj,"refcount");
+  return ( ret == NULL) ? 1 : strtol (ret, &end,10);
+}
+#endif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
