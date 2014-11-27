@@ -184,6 +184,10 @@ static NspAgraph *nsp_agraphof(NspAgnode * N);
 static NspAgnode *nsp_agtail(NspAgedge* E);
 static NspAgnode *nsp_aghead(NspAgedge* E);
 
-#line 188 "./agraph.h"
+/* ref counts */
+static int nsp_agattr_refcount_set(void *obj,int itype, int offset);
+/* static int nsp_agattr_refcount_get(Agraph_t *obj,int itype); */
+
+#line 192 "./agraph.h"
 #endif /* NspAgraph_Private */
 
