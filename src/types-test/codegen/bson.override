@@ -19,6 +19,10 @@ static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
 static bson_t *nsp_bson_b_copy(const bson_t *b);
 
+#define bson_uint8_t uint8_t 
+#define bson_bool_t bool_t 
+#define bson_uint32_t uint32_t
+
 %%
 headers
 #include <nsp/objects.h>
@@ -85,7 +89,7 @@ static NspBson  *nsp_bson_xdr_load(XDR *xdrs)
   bson_reader_t *reader;
   const bson_t *b;
   bson_t *br;
-  bson_bool_t eof = FALSE;
+  bool eof = FALSE;
   bson_uint8_t *buffer;
   int n_bytes;
   NspBson *H = NULL;
@@ -434,7 +438,7 @@ static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int r
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   bson_init (&b);
-  r = mongoc_collection_delete (self->obj->co,
+  r = mongoc_collection_remove(self->obj->co,
 				MONGOC_DELETE_NONE,
 				&b,
 				NULL,
@@ -911,8 +915,7 @@ static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter)
     case BSON_TYPE_INT64:     Obj = NULL;break;
     case BSON_TYPE_MAXKEY:    Obj = NULL;break;
     case BSON_TYPE_MINKEY:    Obj = NULL;break;
-    default:
-       break;
+    default: Obj=NULL; break;
     }
   return Obj;
 }

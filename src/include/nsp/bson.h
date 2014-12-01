@@ -128,6 +128,10 @@ static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
 static bson_t *nsp_bson_b_copy(const bson_t *b);
 
-#line 132 "./bson.h"
+#define bson_uint8_t uint8_t 
+#define bson_bool_t bool_t 
+#define bson_uint32_t uint32_t
+
+#line 136 "./bson.h"
 #endif /* NspBson_Private */
 
