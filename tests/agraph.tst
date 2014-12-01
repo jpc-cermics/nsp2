@@ -1,6 +1,8 @@
-// Attention agclose fait que deux exec 
-// successifs plantent. 
+// Attention agclose fait que deux exec successifs plantent. 
 // à revoir donc 
+// Le pb vient de G1=G.root[];
+// G1 et G partagent alors le meme graphe mais le compteur n'a pas été 
+// augmenté !
 
 // un graphe 
 G=agraph_create();
@@ -34,7 +36,15 @@ if n.nameof[] <> " 1" then pause;end
 
 // get graph from node 
 
-G1=n.agraphof[];
+G1=n.graphof[];
 if ~G1.equal[G] then pause;end 
+
+// attributes 
+
+G.agset[c='4']
+G.agset[c='4',d='56']
+G.agget['c']
+S=G.graphattrs[];
+
 
 
