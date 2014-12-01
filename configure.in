@@ -615,6 +615,34 @@ case "$host" in
     #
     MAKEFILE_TARGET=Makefile.netbsd
    ;;
+# Openbsd  systems 
+  *-*-openbsd*)
+    # check for --export-dynamic
+    ac_save_LDFLAGS="$LDFLAGS"
+    LDFLAGS='-Wl,--export-dynamic'
+    AC_MSG_CHECKING([if the linker accepts --export-dynamic])
+    AC_TRY_LINK(,,
+      AC_MSG_RESULT(yes)
+       LD_LDFLAGS=["$LD_LDFLAGS  --export-dynamic"],
+       AC_MSG_RESULT(no))
+    LDFLAGS="$ac_save_LDFLAGS" 
+    CC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+    FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+    # C compiler 
+    if test X"$CC" = Xcc; then
+        CC_OPTIONS="${CC_OPTIONS}  -Dopenbsd"
+	CC_LDFLAGS="${CC_LDFLAGS} -Wl,-R${X11BASE}/lib"
+    fi
+    CC_PICFLAGS='-fPIC'
+    FC_LDFLAGS="${FC_LDFLAGS}  -Wl,-R${X11BASE}/lib"
+    FC_PICFLAGS='-fPIC'
+    LD=ld
+    LDFLAGS="${LDFLAGS} -R${X11BASE}/lib"
+    #
+    # Compiler Debug Flags
+    #
+    MAKEFILE_TARGET=Makefile.linux
+   ;;
 # Darwin/MacOSX 
   *-*-darwin*)
      STRIP=echo
