@@ -44,6 +44,7 @@ struct _NspTypeAgraph {
 typedef struct _nsp_agraph nsp_agraph;
 struct _nsp_agraph {
   void* graph;
+  void* gvc;
   int ref_count;
 };
 
@@ -73,7 +74,7 @@ NspAgraph *new_agraph();
 
 #define NULLAGRAPH (NspAgraph*) 0
 
-extern NspAgraph *nsp_agraph_create(const char *name,void* graph,NspTypeBase *type);
+extern NspAgraph *nsp_agraph_create(const char *name,void* graph,void* gvc,NspTypeBase *type);
 extern NspAgraph *nsp_agraph_create_default(const char *name);
 
 /* from NspAgraphObj.c */
@@ -104,7 +105,7 @@ extern int nsp_agraph_xdr_save(XDR  *xdrs, NspAgraph *M);
 #include <gvc.h> 
 #include <nsp/agraph-nsp.h>
 
-#line 108 "./agraph.h"
+#line 109 "./agraph.h"
 #endif /* NSP_INC_NspAgraph */ 
 
 #ifdef NspAgraph_Private 
@@ -188,6 +189,6 @@ static NspAgnode *nsp_aghead(NspAgedge* E);
 static int nsp_agattr_refcount_set(void *obj,int itype, int offset);
 /* static int nsp_agattr_refcount_get(Agraph_t *obj,int itype); */
 
-#line 192 "./agraph.h"
+#line 193 "./agraph.h"
 #endif /* NspAgraph_Private */
 

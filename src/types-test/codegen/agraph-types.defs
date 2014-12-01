@@ -6,6 +6,7 @@
   (c-name "NspAgraph")
   (fields
     '("void*" "graph" "hidden" "NULL")
+    '("void*" "gvc" "hidden" "NULL")
     )
   (gtype-id "Agraph")
 )

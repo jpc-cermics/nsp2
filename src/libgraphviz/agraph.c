@@ -184,8 +184,10 @@ static char *nsp_agraph_type_short_string(NspObject *v)
   return(agraph_short_type_name);
 }
 
+#line 429 "../types-test/codegen/agraph.override"
+
 /*
- * A == B 
+ *  A == B (we just compare the graph attribute not the gvc).
  */
 
 static int nsp_agraph_eq(NspAgraph *A, NspObject *B)
@@ -206,10 +208,7 @@ static int nsp_agraph_neq(NspAgraph *A, NspObject *B)
   return ( nsp_agraph_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
-/*
- * save 
- */
-
+#line 212 "agraph.c"
 int nsp_agraph_xdr_save(XDR *xdrs, NspAgraph *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -258,10 +257,18 @@ void nsp_agraph_destroy_partial(NspAgraph *H)
    if ( l <= 0) 
      {
        /* Sciprintf("Warning: agclose called\n"); */
+       if ( H->obj->gvc != NULL) 
+	 {
+	   gvFreeLayout(H->obj->gvc,H->obj->graph);
+	 }
        agclose(H->obj->graph);
+       if ( H->obj->gvc != NULL) 
+	 {
+	   gvFreeContext(H->obj->gvc);
+	 }
      }
    
-#line 265 "agraph.c"
+#line 272 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -317,6 +324,7 @@ int nsp_agraph_print(NspAgraph *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"graph=0x%x\n",M->obj->graph);
+  Sciprintf1(indent+2,"gvc=0x%x\n",M->obj->gvc);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -333,6 +341,7 @@ int nsp_agraph_latex(NspAgraph *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"graph=0x%x\n",M->obj->graph);
+  Sciprintf1(indent+2,"gvc=0x%x\n",M->obj->gvc);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -402,6 +411,7 @@ int nsp_agraph_create_partial(NspAgraph *H)
   if((H->obj = calloc(1,sizeof(nsp_agraph)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->graph = NULL;
+  H->obj->gvc = NULL;
   return OK;
 }
 
@@ -410,12 +420,13 @@ int nsp_agraph_check_values(NspAgraph *H)
   return OK;
 }
 
-NspAgraph *nsp_agraph_create(const char *name,void* graph,NspTypeBase *type)
+NspAgraph *nsp_agraph_create(const char *name,void* graph,void* gvc,NspTypeBase *type)
 {
   NspAgraph *H  = nsp_agraph_create_void(name,type);
   if ( H ==  NULLAGRAPH) return NULLAGRAPH;
   if ( nsp_agraph_create_partial(H) == FAIL) return NULLAGRAPH;
   H->obj->graph = graph;
+  H->obj->gvc = gvc;
   if ( nsp_agraph_check_values(H) == FAIL) return NULLAGRAPH;
   return H;
 }
@@ -457,6 +468,7 @@ NspAgraph *nsp_agraph_full_copy_partial(NspAgraph *H,NspAgraph *self)
   if ((H->obj = calloc(1,sizeof(nsp_agraph))) == NULL) return NULLAGRAPH;
   H->obj->ref_count=1;
   H->obj->graph = self->obj->graph;
+  H->obj->gvc = self->obj->gvc;
   return H;
 }
 
@@ -532,7 +544,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ((H = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+  if ((H = nsp_agraph_create(NVOID,g,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return RET_BUG;
@@ -543,7 +555,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 547 "agraph.c"
+#line 559 "agraph.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -595,7 +607,7 @@ static int _wrap_nsp_agnameof_g(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 349 "../types-test/codegen/agraph.override"
+#line 357 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agaddnodes(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -618,10 +630,10 @@ static int _wrap_nsp_agaddnodes(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 622 "agraph.c"
+#line 634 "agraph.c"
 
 
-#line 373 "../types-test/codegen/agraph.override"
+#line 381 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agaddedges(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -638,10 +650,10 @@ static int _wrap_nsp_agaddedges(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 642 "agraph.c"
+#line 654 "agraph.c"
 
 
-#line 322 "../types-test/codegen/agraph.override"
+#line 330 "../types-test/codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -649,10 +661,10 @@ static int _wrap_nsp_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->graph,stack,rhs,opt,lhs);
 } 
 
-#line 653 "agraph.c"
+#line 665 "agraph.c"
 
 
-#line 307 "../types-test/codegen/agraph.override"
+#line 315 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -666,7 +678,7 @@ static int _wrap_nsp_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 
-#line 670 "agraph.c"
+#line 682 "agraph.c"
 
 
 static int _wrap_nsp_gv_layout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -687,7 +699,7 @@ static int _wrap_nsp_gv_render(NspAgraph *self,Stack stack,int rhs,int opt,int l
   return 0;
 }
 
-#line 201 "../types-test/codegen/agraph.override"
+#line 209 "../types-test/codegen/agraph.override"
 
 /* generic function used to set a graph attribute */
 
@@ -740,7 +752,7 @@ static int _wrap_nsp_agattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 
-#line 744 "agraph.c"
+#line 756 "agraph.c"
 
 
 static int _wrap_nsp_agraphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -753,14 +765,14 @@ static int _wrap_nsp_agraphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
   return 1;
 }
 
-#line 255 "../types-test/codegen/agraph.override"
+#line 263 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agattr_n(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_nsp_agattr_gen(self,stack,rhs,opt,lhs,AGNODE,"node");
 }
 
-#line 764 "agraph.c"
+#line 776 "agraph.c"
 
 
 static int _wrap_nsp_agnodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -773,14 +785,14 @@ static int _wrap_nsp_agnodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
   return 1;
 }
 
-#line 263 "../types-test/codegen/agraph.override"
+#line 271 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agattr_e(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_nsp_agattr_gen(self,stack,rhs,opt,lhs,AGEDGE,"edge");
 }
 
-#line 784 "agraph.c"
+#line 796 "agraph.c"
 
 
 static int _wrap_nsp_agedgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -804,7 +816,7 @@ static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 271 "../types-test/codegen/agraph.override"
+#line 279 "../types-test/codegen/agraph.override"
 static int _wrap_nsp_agisundirected(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -815,10 +827,10 @@ static int _wrap_nsp_agisundirected(NspAgraph *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 819 "agraph.c"
+#line 831 "agraph.c"
 
 
-#line 283 "../types-test/codegen/agraph.override"
+#line 291 "../types-test/codegen/agraph.override"
 static int _wrap_nsp_agisdirected(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -829,10 +841,10 @@ static int _wrap_nsp_agisdirected(NspAgraph *self,Stack stack,int rhs,int opt,in
   return 1;
 }
 
-#line 833 "agraph.c"
+#line 845 "agraph.c"
 
 
-#line 295 "../types-test/codegen/agraph.override"
+#line 303 "../types-test/codegen/agraph.override"
 static int _wrap_nsp_agisstrict(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -843,7 +855,7 @@ static int _wrap_nsp_agisstrict(NspAgraph *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 847 "agraph.c"
+#line 859 "agraph.c"
 
 
 static int _wrap_nsp_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -1033,7 +1045,7 @@ static int _wrap_nsp_agdeledge(NspAgraph *self,Stack stack,int rhs,int opt,int l
   return 0;
 }
 
-#line 391 "../types-test/codegen/agraph.override"
+#line 399 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_agdegree(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1062,7 +1074,7 @@ static int _wrap_nsp_agdegree(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1066 "agraph.c"
+#line 1078 "agraph.c"
 
 
 static NspMethods agraph_methods[] = {
@@ -1338,14 +1350,14 @@ void nsp_agnode_destroy_partial(NspAgnode *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 182 "../types-test/codegen/agraph.override"
+#line 190 "../types-test/codegen/agraph.override"
    /* verbatim in destroy */
    int l = nsp_agattr_refcount_set(H->obj->node,AGNODE,-1);
    /* Sciprintf("Warning: node refcount is %d\n",l); */
    if ( l <= 0) 
      {
      }
-#line 1349 "agraph.c"
+#line 1361 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -1595,7 +1607,7 @@ static int _wrap_nsp_agraphof(NspAgnode *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 331 "../types-test/codegen/agraph.override"
+#line 339 "../types-test/codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
@@ -1603,7 +1615,7 @@ static int _wrap_nsp_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->node,stack,rhs,opt,lhs);
 } 
 
-#line 1607 "agraph.c"
+#line 1619 "agraph.c"
 
 
 static NspMethods agnode_methods[] = {
@@ -1844,7 +1856,7 @@ void nsp_agedge_destroy_partial(NspAgedge *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 190 "../types-test/codegen/agraph.override"
+#line 198 "../types-test/codegen/agraph.override"
    /* verbatim in destroy */
    int l = nsp_agattr_refcount_set(H->obj->edge,AGEDGE,-1);
    /* Sciprintf("Warning: edge refcount is %d\n",l); */
@@ -1854,7 +1866,7 @@ void nsp_agedge_destroy_partial(NspAgedge *H)
      }
 
 
-#line 1858 "agraph.c"
+#line 1870 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -2114,7 +2126,7 @@ static int _wrap_nsp_agtail(NspAgedge *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 340 "../types-test/codegen/agraph.override"
+#line 348 "../types-test/codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_e(NspAgedge *self,Stack stack,int rhs,int opt,int lhs)
@@ -2122,7 +2134,7 @@ static int _wrap_nsp_agset_e(NspAgedge *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->edge,stack,rhs,opt,lhs);
 } 
 
-#line 2126 "agraph.c"
+#line 2138 "agraph.c"
 
 
 static NspMethods agedge_methods[] = {
@@ -3199,7 +3211,7 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 421 "../types-test/codegen/agraph.override"
+#line 454 "../types-test/codegen/agraph.override"
 
 /* set of nsp function to facilitate methods or functions for graphviz functions */
 
@@ -3211,7 +3223,7 @@ static NspAgraph *nsp_agread(void *chan)
   /* aginit(); */ /* can be called multiple times */
   if ((dotGraph = agread(file,NULL))== NULL) 
     return NULL;
-  return nsp_agraph_create(NVOID,dotGraph, NULL);
+  return nsp_agraph_create(NVOID,dotGraph,NULL, NULL);
 }
 
 static int nsp_gv_write(NspAgraph * g,void *chan)
@@ -3223,29 +3235,27 @@ static int nsp_gv_write(NspAgraph * g,void *chan)
   return TRUE;
 }
 
-static GVC_t *gvc=NULL;
-
 static int nsp_gv_layout(NspAgraph *G, char *mode)
 {
-  if ( gvc == NULL ) 
+  if ( G->obj->gvc == NULL ) 
     {
-      gvc = gvContext();
+      G->obj->gvc = gvContext();
     }
-  gvLayout(gvc, G->obj->graph, mode);
+  gvLayout(G->obj->gvc, G->obj->graph, mode);
   return TRUE;
 }
 
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
 {
   FILE* file;
-  if ( gvc == NULL ) 
+  if ( G->obj->gvc == NULL ) 
     {
       Scierror("render: you should call layout first\n");
       return FALSE;
     }
   if (( file = fopen(filename, "w"))== NULL) 
     return FALSE;
-  gvRender(gvc, G->obj->graph, mode, file);
+  gvRender(G->obj->gvc, G->obj->graph, mode, file);
   fclose(file);
   return TRUE;
 }
@@ -3416,7 +3426,7 @@ static NspAgraph *nsp_agparent(NspAgraph * G)
       Scierror("Error: failed to obtain parent graph\n");
       return NULL;
     }
-  if ((P = nsp_agraph_create(NVOID,p, NULL)) == NULL) 
+  if ((P = nsp_agraph_create(NVOID,p,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -3435,7 +3445,7 @@ static NspAgraph *nsp_agroot(NspAgraph * G)
       Scierror("Error: failed to obtain parent graph\n");
       return NULL;
     }
-  if (( R = nsp_agraph_create(NVOID,r, NULL)) == NULL) 
+  if (( R = nsp_agraph_create(NVOID,r,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -3589,7 +3599,7 @@ static NspAgraph *nsp_agsubg(NspAgraph * G, char *name)
       Scierror("Error: failed to create a subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a subgraph\n");
       return NULL;
@@ -3608,7 +3618,7 @@ static NspAgraph *nsp_agfstsubg(NspAgraph * G)
       Scierror("Error: failed to find a subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -3627,7 +3637,7 @@ static NspAgraph *nsp_agnxtsubg(NspAgraph * G)
       Scierror("Error: failed to find next subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -3653,7 +3663,7 @@ static NspAgraph *nsp_agraphof(NspAgnode * N)
   NspAgraph *G;
   Agraph_t *g = agraphof(N->obj->node);
   if ( g == NULL) return NULL;
-  if ((G = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+  if ((G = nsp_agraph_create(NVOID,g,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -3850,4 +3860,4 @@ static int nsp_agattr_refcount_get(Agraph_t *obj,int itype)
 
 
 
-#line 3854 "agraph.c"
+#line 3864 "agraph.c"

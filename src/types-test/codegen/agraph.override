@@ -155,7 +155,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ((H = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+  if ((H = nsp_agraph_create(NVOID,g,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return RET_BUG;
@@ -174,7 +174,15 @@ override-destroy-prelim  Agraph
    if ( l <= 0) 
      {
        /* Sciprintf("Warning: agclose called\n"); */
+       if ( H->obj->gvc != NULL) 
+	 {
+	   gvFreeLayout(H->obj->gvc,H->obj->graph);
+	 }
        agclose(H->obj->graph);
+       if ( H->obj->gvc != NULL) 
+	 {
+	   gvFreeContext(H->obj->gvc);
+	 }
      }
    
 %%
@@ -417,6 +425,31 @@ static int _wrap_nsp_agdegree(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 }
 
 %%
+override-equal Agraph
+
+/*
+ *  A == B (we just compare the graph attribute not the gvc).
+ */
+
+static int nsp_agraph_eq(NspAgraph *A, NspObject *B)
+{
+  NspAgraph *loc = (NspAgraph *) B;
+  if ( check_cast(B,nsp_type_agraph_id) == FALSE) return FALSE ;
+  if ( A->obj == loc->obj ) return TRUE;
+  if ( A->obj->graph != loc->obj->graph) return FALSE;
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_agraph_neq(NspAgraph *A, NspObject *B)
+{
+  return ( nsp_agraph_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+%%
 last
 
 /* set of nsp function to facilitate methods or functions for graphviz functions */
@@ -429,7 +462,7 @@ static NspAgraph *nsp_agread(void *chan)
   /* aginit(); */ /* can be called multiple times */
   if ((dotGraph = agread(file,NULL))== NULL) 
     return NULL;
-  return nsp_agraph_create(NVOID,dotGraph, NULL);
+  return nsp_agraph_create(NVOID,dotGraph,NULL, NULL);
 }
 
 static int nsp_gv_write(NspAgraph * g,void *chan)
@@ -441,29 +474,27 @@ static int nsp_gv_write(NspAgraph * g,void *chan)
   return TRUE;
 }
 
-static GVC_t *gvc=NULL;
-
 static int nsp_gv_layout(NspAgraph *G, char *mode)
 {
-  if ( gvc == NULL ) 
+  if ( G->obj->gvc == NULL ) 
     {
-      gvc = gvContext();
+      G->obj->gvc = gvContext();
     }
-  gvLayout(gvc, G->obj->graph, mode);
+  gvLayout(G->obj->gvc, G->obj->graph, mode);
   return TRUE;
 }
 
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
 {
   FILE* file;
-  if ( gvc == NULL ) 
+  if ( G->obj->gvc == NULL ) 
     {
       Scierror("render: you should call layout first\n");
       return FALSE;
     }
   if (( file = fopen(filename, "w"))== NULL) 
     return FALSE;
-  gvRender(gvc, G->obj->graph, mode, file);
+  gvRender(G->obj->gvc, G->obj->graph, mode, file);
   fclose(file);
   return TRUE;
 }
@@ -634,7 +665,7 @@ static NspAgraph *nsp_agparent(NspAgraph * G)
       Scierror("Error: failed to obtain parent graph\n");
       return NULL;
     }
-  if ((P = nsp_agraph_create(NVOID,p, NULL)) == NULL) 
+  if ((P = nsp_agraph_create(NVOID,p,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -653,7 +684,7 @@ static NspAgraph *nsp_agroot(NspAgraph * G)
       Scierror("Error: failed to obtain parent graph\n");
       return NULL;
     }
-  if (( R = nsp_agraph_create(NVOID,r, NULL)) == NULL) 
+  if (( R = nsp_agraph_create(NVOID,r,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -807,7 +838,7 @@ static NspAgraph *nsp_agsubg(NspAgraph * G, char *name)
       Scierror("Error: failed to create a subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a subgraph\n");
       return NULL;
@@ -826,7 +857,7 @@ static NspAgraph *nsp_agfstsubg(NspAgraph * G)
       Scierror("Error: failed to find a subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -845,7 +876,7 @@ static NspAgraph *nsp_agnxtsubg(NspAgraph * G)
       Scierror("Error: failed to find next subgraph\n");
       return NULL;
     }
-  if (( S = nsp_agraph_create(NVOID,s, NULL)) == NULL) 
+  if (( S = nsp_agraph_create(NVOID,s,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
@@ -871,7 +902,7 @@ static NspAgraph *nsp_agraphof(NspAgnode * N)
   NspAgraph *G;
   Agraph_t *g = agraphof(N->obj->node);
   if ( g == NULL) return NULL;
-  if ((G = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+  if ((G = nsp_agraph_create(NVOID,g,NULL, NULL)) == NULL) 
     {
       Scierror("Error: failed to create a graph\n");
       return NULL;
