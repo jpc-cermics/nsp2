@@ -170,8 +170,13 @@ extern  double nsp_dlamch (char *cmach);
 #ifdef __APPLE__
 #include <machine/endian.h>
 #else
+#if defined(__OpenBSD__)
+#include <sys/endian.h>
+#else
 #include <endian.h>
+#endif
 #endif /* __APPLE__ */
+
 #include <sys/types.h>
 
 /* compile time check */
