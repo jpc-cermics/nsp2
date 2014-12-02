@@ -115,8 +115,8 @@ void nsp_gr_delete(int winid)
  * @fname: file name;
  * @winid: graphic window number.
  * @color: b&w (0) or colour export (1),
+ * @option: a character among 'd', 'l', 'n', 'p', 'k'.
  * @driver: driver to use for output. 
- * @option: 
  *
  * export recorded graphics to file @fname 
  * 
