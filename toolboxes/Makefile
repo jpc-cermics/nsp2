@@ -39,10 +39,11 @@ install::
 	@tar   cf - --exclude CVS --exclude '*.c' --exclude '*.o' --exclude '*.lo' \
 		--exclude '*.f' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
+SUBDIRS_UP= coselica-0.4.8-nsp  scicos-4.4 codegen-peval
 
 up:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in coselica-0.4.8-nsp  scicos-4.4 ;\
+	for i in $(SUBDIRS_UP) ;\
 	do \
 		(cd $$i ; echo "making clean in macros/$$i..."; \
 		$(MAKE) $(MFLAGS) up); \
