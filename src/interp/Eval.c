@@ -47,6 +47,12 @@
 #include <nsp/nspthreads.h> 
 #include <nsp/nspdatas.h> 
 
+/* #define USE_GETRUSAGE  */
+#ifdef  USE_GETRUSAGE 
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif 
+
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
 static int EvalFor (PList L1,Stack stack,int first);
@@ -116,7 +122,18 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   char *fname ; 
   int j,rep;
   stack.first = first;
-  
+
+
+#ifdef  USE_GETRUSAGE 
+  { struct rusage usage;
+  struct rlimit limit;
+  getrusage(RUSAGE_SELF, &usage);
+  getrlimit (RLIMIT_STACK, &limit);
+  printf("Entering nsp_eval with first=%d, maximum resident set size used=%ld, stack limit= %ld and %ld max\n",
+    first,usage.ru_maxrss, limit.rlim_cur, limit.rlim_max);
+}
+#endif 
+
   /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
   L = L1; /* operator */
   L1= L->next ; /* first arg */
