@@ -600,6 +600,8 @@ static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix
  *   value in case of error.
  **/
 
+/* #define NSP_PROFILING */
+
 int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs)
 {
   const char *name_def="datas",*name= NSP_OBJECT(OF)->name;
