@@ -223,7 +223,7 @@ static int get_glpk_scale_option(int scale)
     }
 } 
 
-int output_to_nsp_term(void *info, const char *s)
+static int output_to_nsp_term(void *info, const char *s)
 {
   Sciprintf("%s", s);
   return 1; 
@@ -232,7 +232,7 @@ int output_to_nsp_term(void *info, const char *s)
 jmp_buf intglpk_env;
 
 #ifdef HAVE_GLPK_ERROR_HOOK
-void exit_from_glpk_redirected_to_nsp(void *info)
+static void exit_from_glpk_redirected_to_nsp(void *info)
 {
   longjmp(intglpk_env,-1);
 }
@@ -395,12 +395,12 @@ static void provide_heuristic_sol(glp_tree *tree, void *info)
   return;
 }
 
-int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, double *valA, 
-	     NspMatrix *b, NspMatrix *be, NspSMatrix *var_type, NspMatrix *lb, NspMatrix *ub,
-	     int solver, Solvers_params *SolPar, Boolean binprog, Boolean intprog, 
-	     Boolean mipprog, int verb, int tm_lim, int out_frq, double *fopt, NspMatrix *xopt, int *Status_flag,
-	     NspMatrix *redcosts, NspMatrix *lambda, NspMatrix *basis_info_str, NspMatrix *basis_info_aux,
-	     NspMatrix *heuristic_sol)
+static int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, double *valA, 
+		    NspMatrix *b, NspMatrix *be, NspSMatrix *var_type, NspMatrix *lb, NspMatrix *ub,
+		    int solver, Solvers_params *SolPar, Boolean binprog, Boolean intprog, 
+		    Boolean mipprog, int verb, int tm_lim, int out_frq, double *fopt, NspMatrix *xopt, int *Status_flag,
+		    NspMatrix *redcosts, NspMatrix *lambda, NspMatrix *basis_info_str, NspMatrix *basis_info_aux,
+		    NspMatrix *heuristic_sol)
 {
   glp_prob *LP=NULL;
   int k, nb_var = c->mn, nb_ineq = b->mn, nb_eq = be->mn, ret_code, sol_status, dual_sol_status, status_flag;
@@ -1008,7 +1008,7 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
   void *info=NULL;
   double *val=NULL;
   
-  CheckLhs(11,11);
+  CheckLhs(1,11);
 
   if ( GetArgs(stack,rhs,opt,T,&filename, &opts, &type_str, &verb) == FAIL) 
     return RET_BUG;
@@ -1210,20 +1210,79 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
   FREE(rownum); FREE(ind); FREE(val);
   glp_delete_prob(LP);
   glp_term_hook(NULL, NULL);   /* uninstall term_hook  */
-
+  
+  if ( lhs <= 1 ) 
+    {
+      /* return a hash table [c,A,b,Ae,be,sense,lb,ub,binprog,intprog,var_type] */
+      NspObject *O;
+      NspHash *D;
+      if ( ( D = nsp_hash_create(NVOID, 20) ) == NULLHASH) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(c),"c") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(c))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(A),"A") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(A))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(b),"b") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(b))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(Ae),"Ae") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(Ae))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(be),"be") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(be))== FAIL) goto err;
+      if (( O = nsp_new_string_obj("sense",sense, 3)) == NULLOBJ ) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(sense))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(lb),"lb") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(lb))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(ub),"ub") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(ub))== FAIL) goto err;
+      if ((O = (binprog != FALSE) ? nsp_create_true_object("binprog") : nsp_create_false_object("binprog") )==NULLOBJ) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(binprog))== FAIL) goto err;
+      if ((O = (intprog != FALSE) ? nsp_create_true_object("intprog") : nsp_create_false_object("intprog") )==NULLOBJ) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(intprog))== FAIL) goto err;
+      if (nsp_object_set_name(NSP_OBJECT(var_type),"var_type") == FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(var_type))== FAIL) goto err;
+      MoveObj (stack, 1, NSP_OBJECT(D));
+      return Max(lhs,1);
+    }
+  
   MoveObj (stack, 1, (NspObject *) c);
-  MoveObj (stack, 2, (NspObject *) A);
-  MoveObj (stack, 3, (NspObject *) b);
-  MoveObj (stack, 4, (NspObject *) Ae);
-  MoveObj (stack, 5, (NspObject *) be);
-  if ( nsp_move_string(stack, 6, sense, 3) == FAIL ) goto err;
-  MoveObj (stack, 7, (NspObject *) lb);
-  MoveObj (stack, 8, (NspObject *) ub);
-  if ( nsp_move_boolean(stack, 9, binprog) == FAIL ) goto err;
-  if ( nsp_move_boolean(stack, 10, intprog) == FAIL ) goto err;
-  MoveObj (stack, 11, (NspObject *) var_type);
+  if ( lhs >= 2 ) 
+    MoveObj (stack, 2, (NspObject *) A);
+  else
+    nsp_spcolmatrix_destroy(A);
+  if ( lhs >= 3 ) 
+    MoveObj (stack, 3, (NspObject *) b);
+  else
+    nsp_matrix_destroy(b);
+  if ( lhs >= 4 ) 
+    MoveObj (stack, 4, (NspObject *) Ae);
+  else
+    nsp_spcolmatrix_destroy(Ae);
+  if ( lhs >= 5 ) 
+    MoveObj (stack, 5, (NspObject *) be);
+  else
+    nsp_matrix_destroy(be);
+  if ( lhs >= 6 ) 
+    {
+      if ( nsp_move_string(stack, 6, sense, 3) == FAIL ) goto err;
+    }
+  if ( lhs >= 7 ) 
+    MoveObj (stack, 7, (NspObject *) lb);
+  else
+    nsp_matrix_destroy(lb);
+  if ( lhs >= 8 ) 
+    MoveObj (stack, 8, (NspObject *) ub);
+  else
+    nsp_matrix_destroy(ub);
+  if ( lhs >= 9 ) 
+    if ( nsp_move_boolean(stack, 9, binprog) == FAIL ) goto err;
+  if ( lhs >= 10 ) 
+    if ( nsp_move_boolean(stack, 10, intprog) == FAIL ) goto err;
+  if ( lhs >= 11 ) 
+    MoveObj (stack, 11, (NspObject *) var_type);
+  else
+    nsp_smatrix_destroy(var_type);
+  
   return lhs;
-
+  
  err:
   nsp_spcolmatrix_destroy(A);
   nsp_spcolmatrix_destroy(Ae);
@@ -1238,6 +1297,11 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
   glp_term_hook(NULL, NULL);   /* uninstall term_hook  */
   return RET_BUG;
 }
+
+
+
+
+
 
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
