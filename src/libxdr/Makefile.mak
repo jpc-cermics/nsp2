@@ -25,11 +25,10 @@ include ../Make.lib.mak
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
-
-xdr.obj: rpc/types.h rpc/xdr.h
-xdr_array.obj: rpc/types.h rpc/xdr.h
-xdr_float.obj: rpc/types.h rpc/xdr.h
-xdr_mem.obj: rpc/types.h rpc/xdr.h
-xdr_rec.obj: rpc/types.h rpc/xdr.h
-xdr_reference.obj: rpc/types.h rpc/xdr.h
-xdr_stdio.obj: rpc/types.h rpc/xdr.h
+xdr.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_array.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_float.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_mem.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_rec.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_reference.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_stdio.obj: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h

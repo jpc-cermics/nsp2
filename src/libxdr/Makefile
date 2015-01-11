@@ -22,11 +22,10 @@ all:: Makefile.mak
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
-
-xdr.o: rpc/types.h rpc/xdr.h
-xdr_array.o: rpc/types.h rpc/xdr.h
-xdr_float.o: rpc/types.h rpc/xdr.h
-xdr_mem.o: rpc/types.h rpc/xdr.h
-xdr_rec.o: rpc/types.h rpc/xdr.h
-xdr_reference.o: rpc/types.h rpc/xdr.h
-xdr_stdio.o: rpc/types.h rpc/xdr.h
+xdr.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_array.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_float.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_mem.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_rec.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_reference.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
+xdr_stdio.o: ../include/nsp/rpc/types.h ../include/nsp/rpc/xdr.h
