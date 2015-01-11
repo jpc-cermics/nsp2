@@ -43,7 +43,11 @@
 #if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <sys/cdefs.h>
 #endif 
+
 #if !defined(__MSC__) 
+#include <stdint.h>
+#else 
+#if defined(__MINGW32__)
 #include <stdint.h>
 #else 
 #undef bool_t
@@ -61,6 +65,7 @@ typedef long long int int64_t;
 typedef unsigned long long int uint64_t;
 #endif 
 #define __const const
+#endif 
 #endif 
 
 /*
