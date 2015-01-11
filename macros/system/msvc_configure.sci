@@ -2,14 +2,16 @@ function ok = msvc_configure()
 
   function [path,v8] = msvc_get_sdk()
     path = "";
-    entries = ["Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8" ; // Windows 8 SDK (2012 express)
-               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8" ; // Windows 8 SDK (2012 express)
+    entries = ["Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.1", "InstallationFolder","v8.1" ; // Windows 8 SDK (2012 express)
+	       "Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8.0" ; // Windows 8 SDK (2012 express)
+               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.1", "InstallationFolder","v8.1" ; // Windows 8 SDK (2012 express)	       
+               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8.0" ; // Windows 8 SDK (2012 express)
     	       "Software\\Microsoft\\Microsoft SDKs\\Windows", "CurrentInstallFolder", "" ; // Vista & Seven SDK    
 	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1", "Install Dir","" ; // Windows 2003 R2 SDK
 	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3", "Install Dir",""]; // Windows 2003 SDK
     for i = 1:size(entries,'r')
       ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'', entries(i,1), entries(i,2))",errcatch=%t);
-      v8 = entries(i,3)=="v8";
+      v8 = entries(i,3);
       if ok && file('exists',path') then break;end 
     end
     // remove trailing slash
@@ -75,33 +77,32 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64, v8)
   function  ok=setNewLIB( path, sdk_path, bIsExpress, is64, v8)
     ok=%f;
     LIB = getenv('LIB', '');
+    str = m2s([]);
     if is64 then 
-      str = m2s([]);
+      lib_suffix="\\amd64";
       if sdk_path <> "" then 
-         // avant 
-	 if v8 then 
-	   if is64 then 
-	     str = [ sdk_path + '\\lib\\win8\\um\\x64']
-	   else 
-	     str = [ sdk_path + '\\lib\\win8\\um\\x86']
-	   end 
-	 else
-	   str = sdk_path + '\\lib\\x64';
-	 end
-	 // si windows 8    	 
+	select v8 
+	 case "v8.1" then str = [ sdk_path + '\\lib\\winv6.3\\um\\x64']
+	 case "v8.0" then str = [ sdk_path + '\\lib\\win8\\um\\x64']
+	else
+	  str = sdk_path + '\\lib\\x64';
+	end
       end
-      newLIB = [path + '\\VC\\ATLMFC\\LIB\\amd64';
-		path + '\\VC\\LIB\\amd64'
-		str 
-		LIB];
     else
-      str = m2s([]);
-      if sdk_path <> "" then str = sdk_path + '\\lib';end
-      newLIB = [  path + '\\VC\\ATLMFC\\LIB'
-		  path +  '\\VC\\LIB'
-		  str 
-		  LIB];
+      lib_suffix="";
+      if sdk_path <> "" then 
+	select v8 
+	 case "v8.1" then str = [ sdk_path + '\\lib\\winv6.3\\um\\x86']
+	 case "v8.0" then str = [ sdk_path + '\\lib\\win8\\um\\x86']
+	else
+	  str = sdk_path + '\\lib';
+	end
+      end
     end
+    newLIB = [path + '\\VC\\ATLMFC\\LIB'+ lib_suffix;
+	      path + '\\VC\\LIB' + lib_suffix;
+	      str;
+	      LIB];
     if bIsExpress then newLIB(1)=[];end 
     newLIB =catenate(newLIB,sep=';');
     setenv('LIB',newLIB );
@@ -131,7 +132,14 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64, v8)
 		  PATH];
     else
       str = m2s([]);
-      if sdk_path <> "" then str = sdk_path + '\\bin'; end
+      if sdk_path <> "" then 
+	select v8 
+	 case "v8.1" then str = sdk_path + '\\bin\\x86';
+	 case "v8.0" then str = sdk_path + '\\bin\\x86';
+	else
+	  str = sdk_path + '\\bin';
+	end
+      end
       newPATH = [path + '\\Common7\\IDE\\'
 		 path + '\\VC\\bin'
 		 path + '\\Common7\\Tools'
@@ -169,7 +177,7 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64, v8)
     INCLUDE = getenv('INCLUDE', '');
     str = m2s([]);
     if sdk_path <> "" then 
-      if v8 then 
+      if v8 == "v8.0" || v8 == "v8.1"  then 
 	str = [ sdk_path + '\\include';
 		sdk_path + '\\include\\um';
 		sdk_path + '\\include\\shared';
