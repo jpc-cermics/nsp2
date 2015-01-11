@@ -6,6 +6,7 @@ FFTW3 support..........:@HAVE_FFTW3@
 OpenGl support.........:@WITH_GL@
 Sndfile support........:@HAVE_SNDFILE@
 Portaudio support......:@HAVE_PORTAUDIO@
+Mongodb support........:@HAVE_MONGODB_C@
 Graphviz support.......:@HAVE_GRAPHVIZ@
 Asound support.........:@HAVE_ASOUND@
 Glpk support...........:@HAVE_GLPK@
