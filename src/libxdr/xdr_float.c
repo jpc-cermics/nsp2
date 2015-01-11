@@ -70,7 +70,7 @@ struct	vax_single {
 #define VAX_SNG_BIAS	0x81
 #define IEEE_SNG_BIAS	0x7f
 
-#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
 static struct sgl_limits {
   struct vax_single s;
   struct ieee_single ieee;
@@ -86,7 +86,7 @@ bool_t
 xdr_float(register XDR *xdrs, register float *fp)
 {
 
-#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
+#if !defined(WIN32) && !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_) && !defined(i386)
   struct ieee_single is;
   struct vax_single vs, *vsp;
   struct sgl_limits *lim;
