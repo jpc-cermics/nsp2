@@ -27,11 +27,11 @@
 #endif 
 
 /* define min max for win32 */
-#ifndef max 
+#ifndef max
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #endif 
 
-#ifndef min 
+#ifndef min
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #endif
 
