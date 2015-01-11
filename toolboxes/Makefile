@@ -45,6 +45,6 @@ up:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS_UP) ;\
 	do \
-		(cd $$i ; echo "making clean in macros/$$i..."; \
+		(cd $$i ; echo "making up in macros/$$i..."; \
 		$(MAKE) $(MFLAGS) up); \
 	done
