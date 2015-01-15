@@ -374,7 +374,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
   // do not use a win32 path when cross compiling
   fprintf(fd,"SCIDIR =%s\n",NSP);
   fprintf(fd,"SCIDIR1 =%s\n",file('native',NSP));
-  fprintf(fd,"DUMPEXTS=""$(SCIDIR1)\\bin\\dumpexts""\n");
+  fprintf(fd,"DUMPEXTS=""$(SCIDIR1)\\bin\\dumpexts-nsp""\n");
   fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\libnsp.lib\n\n");
   fprintf(fd,sprintf("CC=%s\\lcc\n",path));
   fprintf(fd,sprintf("LINKER=%s\\lcclnk\n",path));

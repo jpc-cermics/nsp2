@@ -1,6 +1,6 @@
 #--- see examples/addinter-tutorial-so ----------
 
-DUMPEXTS="$(SCIDIR1)\bin\dumpexts"
+DUMPEXTS="$(SCIDIR1)\bin\dumpexts-nsp"
 SCIIMPLIB="$(SCIDIR)/bin/libnsp.lib"
 
 all :: $(LIBRARY).dll

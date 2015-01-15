@@ -569,7 +569,7 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.mingw32
     # resource file 
     RC_FILE=nsp_ico.o    
-    DUMPEXTS='all :: ../../bin/dumpexts.exe'
+    DUMPEXTS='all :: ../../bin/dumpexts-nsp.exe'
     FLIBS_SH='-module -no-undefined  -L$(SCIDIR)/bin -lnsp'
     ;;
 # FreeBSD  systems 
