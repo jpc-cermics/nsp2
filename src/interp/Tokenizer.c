@@ -683,14 +683,14 @@ static int parse_comment(Tokenizer *T)
   int count =0; 
   while ( (c=T->GetChar(T)) != '\n') 
     {
-      if ( count < TBUF-1 ) 
+      if ( count < TOK_BUF-1 ) 
 	{
 	  T->tokenv.buf[count++]= c;
 	}
       else
 	{
-	  T->tokenv.buf[Min(10,TBUF-1)] = '\0';
-	  T->ParseError(T,"Parse Error: comment begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
+	  T->tokenv.buf[Min(10,TOK_BUF-1)] = '\0';
+	  T->ParseError(T,"Parse Error: comment begining with %s... is too long (>%d)\n",T->tokenv.buf,TOK_BUF);
 	  return(FAIL);
 	}
     }
@@ -716,7 +716,7 @@ static int parse_command_arg(Tokenizer *T)
   char c = T->tokenv.NextC;
   int count=0;
   /* back to the begining of string*/
-  while ( count < TBUF ) 
+  while ( count < TOK_BUF ) 
     {
       if ( c == '\0' ) 
 	{
@@ -785,10 +785,10 @@ static int parse_command_arg(Tokenizer *T)
       /* get next char */
       c=T->GetChar(T);
     }
-  if ( count >= TBUF )
+  if ( count >= TOK_BUF )
     {
-      T->tokenv.buf[Min(10,TBUF-1)] = '\0';
-      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
+      T->tokenv.buf[Min(10,TOK_BUF-1)] = '\0';
+      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TOK_BUF);
       return(FAIL);
     }
   while (count != 0 &&  T->tokenv.buf[count-1] == ' ') count--;
@@ -812,7 +812,7 @@ static int parse_string(Tokenizer *T)
   int count=0;
   /* back to the begining of string*/
   T->curline.lpt3 = T->curline.lpt2;
-  while ( count < TBUF ) 
+  while ( count < TOK_BUF ) 
     {
       c=T->GetChar(T);
       if ( c == '\0' ) 
@@ -892,10 +892,10 @@ static int parse_string(Tokenizer *T)
       else 
 	T->tokenv.buf[count++]=c;
     }
-  if ( count >= TBUF )
+  if ( count >= TOK_BUF )
     {
-      T->tokenv.buf[Min(10,TBUF-1)] = '\0';
-      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TBUF);
+      T->tokenv.buf[Min(10,TOK_BUF-1)] = '\0';
+      T->ParseError(T,"Parse Error: string begining with %s... is too long (>%d)\n",T->tokenv.buf,TOK_BUF);
       return(FAIL);
     }
   T->tokenv.buf[count]='\0';

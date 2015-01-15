@@ -18,14 +18,15 @@ struct _curline {
 /*
  * structure for current parsed token 
  */ 
+/* windows stack overflow on tests if 32768 */
 
-#define TBUF 32768 
+#define TOK_BUF 32768
 
 typedef struct _token token; 
 
 struct _token 
 {
-  char buf[TBUF];
+  char buf[TOK_BUF];
   char syn[NAME_MAXL];
   double syv;
   char NextC;
