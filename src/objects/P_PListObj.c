@@ -219,16 +219,19 @@ int NspPListXdrSave(XDR *xdrs, NspPList *M)
  * Load a NspPList
  */
 
-static int PListXdrLoad(XDR *xdrs, PList *plist);
+#define TBUF TOK_BUF
+
+static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf);
 
 NspPList *NspPListXdrLoad(XDR *xdrs)
 {
+  char buf[TBUF];
   PList L=NULLPLIST,L1;
   char file_name[FSIZE]; 
   char name[NAME_MAXL]; 
   if (nsp_xdr_load_string(xdrs, name,NAME_MAXL) == FAIL) return NULLP_PLIST;
   if (nsp_xdr_load_string(xdrs, file_name,FSIZE) == FAIL) return NULLP_PLIST;
-  if ( PListXdrLoad(xdrs,&L) == FAIL) return NULLP_PLIST;
+  if ( PListXdrLoad(xdrs,&L,buf) == FAIL) return NULLP_PLIST;
   if ( L->type != PLIST ) return NULLP_PLIST;
   L1= L->O;
   L->O = NULLPLIST;
@@ -320,14 +323,16 @@ static int PListXdrSave(XDR *xdrs, PList L)
  * Read a PList from a file 
  */
 
-static int PListXdrLoad(XDR *xdrs, PList *plist)
+static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 {
   NspObject *Obj;
   int opar,op,oline,arity;
   PList loc=NULLPLIST;
   PList loc1=NULLPLIST;
-  char buf[TBUF];
   char c ;
+  /* static int count = 0; count++;
+   * Sciprintf("Enter PListXdrLoad %d\n",count); 
+   */
   while ( 1) 
     {
       c= EOF;
@@ -336,31 +341,31 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	{
 	case 'S' : 
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_string(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_string(plist,buf) == FAIL) goto fail;
 	  break;
 	case 'C' : 
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_comment(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_comment(plist,buf) == FAIL) goto fail;
 	  break;
 	case 'D':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_doublei(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_doublei(plist,buf) == FAIL) goto fail;
 	  break;
 	case 'I':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_inti(plist,buf, INUMBER32) == FAIL) return (FAIL);
+	  if (nsp_parse_add_inti(plist,buf, INUMBER32) == FAIL) goto fail;
 	  break;
 	case 'J':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_inti(plist,buf, INUMBER64) == FAIL) return (FAIL);
+	  if (nsp_parse_add_inti(plist,buf, INUMBER64) == FAIL) goto fail;
 	  break;
 	case 'U':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_inti(plist,buf, UNUMBER32) == FAIL) return (FAIL);
+	  if (nsp_parse_add_inti(plist,buf, UNUMBER32) == FAIL) goto fail;
 	  break;
 	case 'V':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_inti(plist,buf, UNUMBER64) == FAIL) return (FAIL);
+	  if (nsp_parse_add_inti(plist,buf, UNUMBER64) == FAIL) goto fail;
 	  break;
 	case 'N':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
@@ -369,44 +374,44 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 #else 
 	  arity=-1;
 #endif 
-	  if (nsp_parse_add_name1(plist,buf,arity) == FAIL) return (FAIL);
+	  if (nsp_parse_add_name1(plist,buf,arity) == FAIL) goto fail;
 	  break;
 	case 'P':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if (nsp_parse_add_opname(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_opname(plist,buf) == FAIL) goto fail;
 	  break;
 	case 'B':
-	  if ((Obj=nsp_object_xdr_load(xdrs))== NULLOBJ )  return FAIL;
-	  if ( nsp_parse_add_object(plist,Obj ) == FAIL) return (FAIL);
+	  if ((Obj=nsp_object_xdr_load(xdrs))== NULLOBJ ) goto fail;
+	  if ( nsp_parse_add_object(plist,Obj ) == FAIL) goto fail;
 	  break;
 	case 'L':
 	  loc1 = loc = NULLPLIST;
-	  if (PListXdrLoad(xdrs,&loc) == FAIL) return (FAIL);
-	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) return (FAIL);
-	  if (nsp_parse_add_list(plist,&loc1)== FAIL)  return (FAIL);
+	  if (PListXdrLoad(xdrs,&loc,buf) == FAIL) goto fail;
+	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) goto fail;
+	  if (nsp_parse_add_list(plist,&loc1)== FAIL)  goto fail;
 	  break;
 	case 'M': 
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if (nsp_parse_add_last(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
+	  if (nsp_parse_add_last(plist,EMPTYMAT,0,oline) == FAIL) goto fail;
 	  break;
 	case 'O':
 	  nsp_xdr_load_i(xdrs,&opar);
 	  nsp_xdr_load_i(xdrs,&op);
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if (nsp_parse_add_last(plist,op,opar,oline) == FAIL) return(FAIL);
+	  if (nsp_parse_add_last(plist,op,opar,oline) == FAIL) goto fail;
 	  break;
-	case 'E':
-	  return(OK);
-	  break;
-	case 'Z' :
-	  return OK;
+	case 'E': goto ok; break;
+	case 'Z' :goto ok; break;
 	  break;
 	default: 
 	  Scierror("Error:\tSomething wrong in saved plist\n");
-	  return FAIL;
+	  goto fail;
 	}
     }
+ ok:   /*count--; Sciprintf("Quit PListXdrLoad\n"); */
   return OK ;
+ fail : /* count--;  Sciprintf("Quit PListXdrLoad\n");*/
+  return FAIL;
 }
 
 
