@@ -456,7 +456,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if (( n =nsp_eval_func(O1,fname,2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
-#ifdef ZZZ
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
 	  /* XXXX en test si le parsing des matrices est remis comme celui des cells */
 	case DIAGCONCAT:
 	case ROWCONCAT:

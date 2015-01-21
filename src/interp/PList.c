@@ -40,6 +40,7 @@
 #include <nsp/interf.h>
 #include <nsp/pr-output.h>
 #include <nsp/frame.h>
+#include <nsp/parse.h>
 
 /**
  * nsp_parse_add:
@@ -1196,6 +1197,24 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      if ( j > 0 && newpos > CMAX  ) 
+		{
+		  Sciprintf("\n");
+		  newpos =_nsp_plist_pretty_print_arg(List,posret,0,posret);
+		}
+	      else
+		{
+		  newpos =_nsp_plist_pretty_print_arg(List,0,newpos,posret);
+		}
+	      if ( j < L->arity-1)
+		newpos =_nsp_plist_pretty_print_opname(L->type,0,newpos);
+	      List = List->next;
+	    }
+	  return newpos;
+#else
 	  newpos =_nsp_plist_pretty_print_arg_ret(List,indent,pos,posret,&ret);
 	  if ( newpos == 0) 
 	    {
@@ -1216,6 +1235,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	      newpos =_nsp_plist_pretty_print_arg_ret(List->next,0,newpos,posret,&ret);
 	    }
 	  return newpos;
+#endif 
 	  break;
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:
@@ -1832,11 +1852,23 @@ static void _nsp_plist_print(PList List, int indent)
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
+	  if ( L->arity > 1) Sciprintf("[");
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _nsp_plist_print_arg(List,indent);
+	      if ( j < L->arity-1)
+		nsp_print_opname(L->type);
+	      List = List->next;
+	    }
+	  if ( L->arity > 1) Sciprintf("]");
+#else 
 	  Sciprintf("[");
 	  _nsp_plist_print_arg(List,indent);
 	  nsp_print_opname(L->type);
 	  _nsp_plist_print_arg(List->next,indent);
 	  Sciprintf("]");
+#endif
 	  break;
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:
@@ -2365,8 +2397,16 @@ void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      Arg_name_to_local_name(rec,List,H);
+	      List = List->next;
+	    }
+#else 
 	  Arg_name_to_local_name(rec,List,H);
 	  Arg_name_to_local_name(rec,List->next,H);
+#endif 
 	  break;
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:

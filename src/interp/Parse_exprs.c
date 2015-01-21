@@ -2042,7 +2042,7 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       /*  *************    get a matrix */
       if (debug) scidebug(debugI++,"[mat>");
       if 
-#ifdef ZZZ
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
 	(parse_cells(T,symb_table,plist,']') == OK ) 
 #else 
 	(parse_matrix(T,symb_table,plist,']') == OK ) 
