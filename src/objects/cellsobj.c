@@ -742,18 +742,43 @@ int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
 
 int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(0,1000);
+  int koffset=0,loffset=0;
+  NspCells *C;
+  int i,cols=0,rows=0;
+  CheckRhs(0,INT_MAX);
   CheckLhs(1,1);
   if ( rhs == 1 ) 
     {
       NthObj(1)->ret_pos = 1;
       return 1;
     }
-  else 
+  /* first pass to check size and types */
+  for ( i = 1 ; i <= rhs ; i++) 
     {
-      Scierror("%s: is to be done !\n",NspFname(stack));
-      return RET_BUG;
+      NspCells *Ci= GetCells(stack,i);
+      if ( Ci == NULLCELLS ) return RET_BUG;
+      cols += Ci->n;
+      rows += Ci->m;
     }
+  if ( (C =nsp_cells_create(NVOID,rows,cols)) == NULLCELLS ) return RET_BUG;
+  for ( i = 1 ; i <= rhs ; i++) 
+    {
+      int k,l;
+      NspCells *Ci= GetCells(stack,i);
+      NspObject *Ob = NSP_OBJECT(Ci);
+      if ( MaybeObjCopy(&Ob) == NULL)  return RET_BUG;
+      for ( k = 0 ; k < Ci->m ; k++) 
+	for ( l = 0 ; l < Ci->n ; l++) 
+	  {
+	    C->objs[koffset+ k+(l+loffset)*C->m]= Ci->objs[k +l*Ci->m];
+	    Ci->objs[k+l*Ci->m]=NULLOBJ;
+	  }
+      koffset += Ci->m;
+      loffset += Ci->n;
+      /* now Ci can be safely destroyed when returning */
+    }
+  MoveObj(stack,1,(NspObject *) C);
+  return 1;
 }
 
 
@@ -1395,7 +1420,7 @@ static OpTab Cells_func[]={
   {"cell",int_cells_create},   /* matlab name (note that cells is also the matlab name but considered obsolete)*/
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},
-  {"diag_cells_create", int_row_cells_create},
+  {"diag_cells_create", int_diag_cells_create},
   {"redim_ce",int_matint_redim},
   {"matrix_ce", int_matint_redim},
   {"reshape_ce", int_matint_redim},
