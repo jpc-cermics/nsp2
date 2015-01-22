@@ -86,7 +86,7 @@ static int parse_listeval(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
 static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 			       int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
-			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt);
+			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt,int flag);
 
 #ifdef  WITH_SYMB_TABLE 
 static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
@@ -2648,14 +2648,14 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       /* parse a set of expressions separated by , the white space case is 
        * parsed below in the while 
        */ 
-      if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
+      if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop,TRUE)== FAIL) 
 	return(FAIL);
     }
   while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop 
 	 && T->tokenv.id != '#' &&  T->tokenv.id != COMMENT )
     {
       PList plist2=NULLPLIST;
-      if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
+      if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop,TRUE)== FAIL) 
 	return(FAIL);
       /* We have to take care here of the merge of CELLCOLCONCAT when plist1 and plist2 are 
        * both  CELLCOLCONCAT. This happens when colconcat is performed with white spaces. 
@@ -2706,7 +2706,7 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
 
 static int parse_colcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
-  return parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop);
+  return parse_nary_flat_opt(T,symb_table,plist,parse_rowcells,IsColMatOp,"matrix",stop,FALSE);
 }
 
 /**
@@ -2741,7 +2741,7 @@ static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
   if ( T->NextToken(T) == FAIL) return(FAIL);
 
   /*  parse_nblines(T); */
-  if (parse_nary_flat_opt(T,symb_table,plist,parse_colcells,IsDiagMatOp,"matrix",stop)== FAIL) 
+  if (parse_nary_flat_opt(T,symb_table,plist,parse_colcells,IsDiagMatOp,"matrix",stop,FALSE)== FAIL) 
     return(FAIL);
   /*  parse_nblines(T); */
   if ( T->tokenv.id != stop )  
@@ -3154,7 +3154,7 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
  * 
  * like the previous one but the 
  * returned parsed list is of the form 
- * ( arg1 ...  argn op)
+ * (op arg1 ...  argn)
  * can be used when op is unique 
  * Note:  in this case int (*opfn)(Tokenizer *T,int *op,char c) 
  *        must always return the correct expected op
@@ -3164,7 +3164,7 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
 
 static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 			       int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
-			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt)
+			       int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt,int flag)
 {
   int count = 1;
   int op;
@@ -3183,7 +3183,14 @@ static int parse_nary_flat_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
       count++;
     }
   if (debug) Sciprintf("{t_op:%d}",op);
-  if ( count >= 1 ) 
+  if ( count == 1 ) 
+    {
+      if (flag)
+	{
+	  if (nsp_parse_add(&plist1,op,count,T->tokenv.Line) == FAIL) return(FAIL);
+	}
+    }
+  else if ( count > 1)
     {
       if (nsp_parse_add(&plist1,op,count,T->tokenv.Line) == FAIL) return(FAIL);
     }

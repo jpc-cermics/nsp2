@@ -95,6 +95,21 @@ int nsp_check_is_mlhs(PList plist, PList *plist1, int *kount)
  *  Returns: %OK or %FAIL
  */
 
+#ifdef NSP_PARSE_MATRIX_AS_CELLS 
+static int IsColConc(PList plist, PList *plist1, int *kount)
+{
+  int j, n = plist->arity;
+  if ( plist->type != COLCONCAT ) return FAIL;
+  for ( j = 0 ; j < n ; j++)
+    {
+      plist = plist->next;
+      if ( Isname(plist,plist1,kount) != OK 
+	   && IsFeval(plist,plist1,kount) != OK )
+	return FAIL;
+    }
+  return OK;
+}
+#else
 static int IsColConc(PList plist, PList *plist1, int *kount)
 {
   if ( plist->type != COLCONCAT ) return FAIL;
@@ -113,6 +128,7 @@ static int IsColConc(PList plist, PList *plist1, int *kount)
     }
   return(FAIL);
 }
+#endif 
 
 /**
  * Isname:
