@@ -775,7 +775,8 @@ esac
 #########################
 
 builtin(include,config/ac_check_pointer.m4)
-AC_CHECK_POINTER_SIZE() 
+AC_CHECK_POINTER_SIZE_INT() 
+AC_CHECK_POINTER_SIZE_LONG() 
 
 #########################
 ## sizeof(long double)== sizeof(double)

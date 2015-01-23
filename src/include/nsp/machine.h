@@ -213,16 +213,27 @@
  * Defined if sizeof(int*)==sizeof(int) 
  */
 
-/* storing and retrieving an int in a pointer */
+/**
+ *  POINTER_LONG :
+ *
+ * Defined if sizeof(int*)==sizeof(long) 
+ */
+
+/* used to store and retrieve an int in a pointer 
+ */
 
 #if defined(POINTER_INT) 
 #define NSP_INT_TO_POINTER(i) ((int *) (i)) 
 #define NSP_POINTER_TO_INT(i) ((int) (i))
 #else 
+#if defined(POINTER_LONG) 
 #define NSP_INT_TO_POINTER(i) ((int *) (long) (i))
 #define NSP_POINTER_TO_INT(i) ((int) (long) (i))
+#else
+#define NSP_INT_TO_POINTER(i) ((int *) (long long) (i))
+#define NSP_POINTER_TO_INT(i) ((int) (long long) (i))
 #endif 
-
+#endif
 /* CNAME(x,y) ==> xy **/
 
 #if defined(USE_SHARP_SIGN)

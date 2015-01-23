@@ -5028,16 +5028,31 @@ int int_alignement(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M, *A;
   CheckRhs(1,1);
   CheckLhs(1,1);  
-  unsigned long int a, p; 
+#if defined(POINTER_INT)
+  unsigned int a, p;
+#else
+#if defined(POINTER_LONG)
+  unsigned long a, p; 
+#else
+  unsigned long long a, p; 
+#endif
+#endif
   if ( (M = GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
   if ( (A = nsp_matrix_create(NVOID, 'r', 1, 1)) == NULLMAT ) return RET_BUG;
-  p = (long int) M->I;
+#if defined(POINTER_INT)
+  p = (unsigned int) M->I;
+#else 
+#if defined(POINTER_LONG)
+  p = (unsigned long) M->I;
+#else
+  p = (unsigned long long) M->I;
+#endif
+#endif
   a = p & 0xF;
   A->R[0] = (double) a;
   MoveObj (stack, 1, (NspObject *) A);
   return 1;
 }
-
 
 extern void  C2F(dperm)(double *A,int *nv, int *ind);
 
