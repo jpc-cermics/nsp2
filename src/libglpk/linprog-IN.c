@@ -1228,15 +1228,15 @@ int int_readlp(Stack stack, int rhs, int opt, int lhs)
       if (nsp_object_set_name(NSP_OBJECT(be),"be") == FAIL) goto err;
       if (nsp_hash_enter(D,NSP_OBJECT(be))== FAIL) goto err;
       if (( O = nsp_new_string_obj("sense",sense, 3)) == NULLOBJ ) goto err;
-      if (nsp_hash_enter(D,NSP_OBJECT(sense))== FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(O))== FAIL) goto err;
       if (nsp_object_set_name(NSP_OBJECT(lb),"lb") == FAIL) goto err;
       if (nsp_hash_enter(D,NSP_OBJECT(lb))== FAIL) goto err;
       if (nsp_object_set_name(NSP_OBJECT(ub),"ub") == FAIL) goto err;
       if (nsp_hash_enter(D,NSP_OBJECT(ub))== FAIL) goto err;
       if ((O = (binprog != FALSE) ? nsp_create_true_object("binprog") : nsp_create_false_object("binprog") )==NULLOBJ) goto err;
-      if (nsp_hash_enter(D,NSP_OBJECT(binprog))== FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(O))== FAIL) goto err;
       if ((O = (intprog != FALSE) ? nsp_create_true_object("intprog") : nsp_create_false_object("intprog") )==NULLOBJ) goto err;
-      if (nsp_hash_enter(D,NSP_OBJECT(intprog))== FAIL) goto err;
+      if (nsp_hash_enter(D,NSP_OBJECT(O))== FAIL) goto err;
       if (nsp_object_set_name(NSP_OBJECT(var_type),"var_type") == FAIL) goto err;
       if (nsp_hash_enter(D,NSP_OBJECT(var_type))== FAIL) goto err;
       MoveObj (stack, 1, NSP_OBJECT(D));
