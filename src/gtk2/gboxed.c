@@ -251,7 +251,7 @@ int gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
     {
       Sciprintf1(indent,"%s\t= %s GBoxed at 0x%lx\n",pname,
 		 g_type_name(self->gtype),
-		 (long)self->boxed);
+		 NSP_POINTER_CAST_TO_INT self->boxed);
     }
   return TRUE;
 }

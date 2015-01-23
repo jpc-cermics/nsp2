@@ -225,13 +225,16 @@
 #if defined(POINTER_INT) 
 #define NSP_INT_TO_POINTER(i) ((int *) (i)) 
 #define NSP_POINTER_TO_INT(i) ((int) (i))
+#define NSP_POINTER_CAST_TO_INT (unsigned int)
 #else 
 #if defined(POINTER_LONG) 
 #define NSP_INT_TO_POINTER(i) ((int *) (long) (i))
 #define NSP_POINTER_TO_INT(i) ((int) (long) (i))
+#define NSP_POINTER_CAST_TO_INT (unsigned long)
 #else
 #define NSP_INT_TO_POINTER(i) ((int *) (long long) (i))
 #define NSP_POINTER_TO_INT(i) ((int) (long long) (i))
+#define NSP_POINTER_CAST_TO_INT (unsigned long long)
 #endif 
 #endif
 /* CNAME(x,y) ==> xy **/

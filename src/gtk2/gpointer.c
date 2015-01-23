@@ -223,8 +223,8 @@ int gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
   else 
     {
       Sciprintf1(indent,"%s\t= %s GPointer at 0x%lx ]\n",pname,
-		g_type_name(self->gtype),
-		(long)self->pointer);
+		 g_type_name(self->gtype),
+		 NSP_POINTER_CAST_TO_INT self->pointer);
     }
   return TRUE;
 

@@ -30,11 +30,13 @@
 
 static void nsp_check_underscores(int isfor,nsp_const_string ename, char *ename1);
 static int nsp_find_shared(nsp_const_string shared_path);
-static int nsp_link_status (void) ;
 static void nsp_delete_symbols (int );
 static void *nsp_dlopen(nsp_const_string shared_path,int global);
 static int nsp_dlsym(NspSharedlib *sh, nsp_const_string name, nsp_const_string ename, char strf);
 static void nsp_dlclose(void *shd) ;
+#if !defined(WIN32) 
+static int nsp_link_status (void) ;
+#endif 
 
 #if defined(WIN32) 
 #include "link_W95.c"

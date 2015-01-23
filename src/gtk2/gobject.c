@@ -296,7 +296,7 @@ int gobject_info(NspGObject *self, int indent,char *name,int rec_level)
       /* A changer XXXX pour que GObject soit remplacé par le type GTk */
       Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d\n", pname,
 		self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
-		(long) self->obj, 
+		 NSP_POINTER_CAST_TO_INT self->obj, 
 		((GObject *) self->obj)->ref_count);
     }
   return TRUE;

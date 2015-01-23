@@ -34,12 +34,12 @@
  * 
  * Returns: 
  **/
-
+#if 0
 int nsp_link_status(void)
 {
   return(1);
 }
-
+#endif
 /**
  * nsp_dlopen:
  * @shared_path: a null-terminated string giving a pathname 

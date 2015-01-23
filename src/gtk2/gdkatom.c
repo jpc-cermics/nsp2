@@ -283,7 +283,7 @@ int gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
       a_name = gdk_atom_name(self->atom);
       Sciprintf1(indent,"%s\t= GdkAtom name=%s 0x%lx \n", pname, 
 		 a_name ? a_name : "",
-		 (unsigned long)self->atom);
+		 NSP_POINTER_CAST_TO_INT self->atom);
       g_free(a_name);
     }
   return TRUE;
