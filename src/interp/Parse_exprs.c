@@ -67,9 +67,13 @@ static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *i
 static int IsColMatOp(Tokenizer *T,int *op,char opt);
 static int IsRowMatOp(Tokenizer *T,int *op,char opt);
 static int IsDiagMatOp(Tokenizer *T,int *op,char opt);
+
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
 static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
 static int parse_colmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
 static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
+#endif
+
 static int parse_cells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop);
 static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int *excnt, int fblank, char end_char);
 static int Check_Func_Def(Tokenizer *T,NspBHash *symb_table,PList plist);
@@ -2467,6 +2471,7 @@ static int parse_expr_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,char op
   return parse_expr(T,symb_table,plist,'t');
 }
 
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
 /**
  * parse_rowmatrix:
  * @T: a #Tokenizer 
@@ -2534,7 +2539,9 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
   nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
+#endif 
 
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
 /**
  * parse_colmatrix:
  * @T: a #Tokenizer 
@@ -2551,6 +2558,9 @@ static int parse_colmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
 {
   return (parse_nary_opt(T,symb_table,plist,parse_rowmatrix,IsColMatOp,"matrix",stop));
 }
+#endif 
+
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
 
 /**
  * parse_matrix:
@@ -2596,6 +2606,7 @@ static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop
   if ( T->NextToken(T) == FAIL) return(FAIL);
   return(OK);
 }
+#endif 
 
 /**
  * parse_rowcells:

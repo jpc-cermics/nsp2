@@ -974,8 +974,11 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret);
 static int _nsp_plist_pretty_print_opname(int type, int indent, int pos);
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep);
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret);
-static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret);
 static int _nsp_plist_equalop_mlhs_length(PList L);
+
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
+static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret);
+#endif
 
 /**
  * nsp_plist_pretty_print:
@@ -1019,7 +1022,10 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 {
   PList L=List;
   const char *s;
-  int j,newpos=0,ret=FALSE;
+  int j,newpos=0;
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
+  int ret=FALSE;
+#endif
   /* just in case L is not the first */
   while ( L->prev != NULL) L= L->prev;
   List = L->next;
@@ -1641,7 +1647,7 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
 /* similar to _nsp_plist_pretty_print_arg_ 
  * but add a newline if ar is a comment 
  */
-
+#ifndef NSP_PARSE_MATRIX_AS_CELLS 
 static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret)
 {
   int newpos= _nsp_plist_pretty_print_arg(L,i,pos,posret);
@@ -1657,6 +1663,7 @@ static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, 
     }
   return newpos; 
 }
+#endif 
 
 /**
  * nsp_plist_print:
