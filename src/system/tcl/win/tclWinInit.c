@@ -11,8 +11,9 @@
  * SCCS: @(#) tclUnixInit.c 1.26 97/08/05 20:09:25
  */
 
-#include "tclInt.h"
 #include "tclPort.h"
+#include "tclInt.h"
+
 #if defined(__FreeBSD__)
 #   include <floatingpoint.h>
 #endif

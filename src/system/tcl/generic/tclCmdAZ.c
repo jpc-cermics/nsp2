@@ -22,8 +22,8 @@
  *--------------------------------------------------------------------------
  */
 
-#include "tclInt.h"
 #include "tclPort.h"
+#include "tclInt.h"
 #include "nsp/stack.h" 
 
 /*

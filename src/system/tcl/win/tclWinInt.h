@@ -14,11 +14,12 @@
 #ifndef _TCLWININT
 #define _TCLWININT
 
-#ifndef _TCLINT
-#include "tclInt.h"
-#endif
 #ifndef _TCLPORT
 #include "tclPort.h"
+#endif
+
+#ifndef _TCLINT
+#include "tclInt.h"
 #endif
 
 /*

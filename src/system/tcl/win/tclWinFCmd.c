@@ -1144,7 +1144,8 @@ ConvertFileNameFormat(
   HANDLE findHandle;
   WIN32_FIND_DATA findData;
   int pathArgc, i;
-  char **pathArgv, **newPathArgv;
+  char **pathArgv;
+  char **newPathArgv;
   char *currentElement, *resultStr;
   nsp_tcldstring resultDString;
   int result = TCL_OK;
@@ -1171,7 +1172,7 @@ ConvertFileNameFormat(
       int useLong;
 
       nsp_tcldstring_init(&resultDString);
-      resultStr = nsp_join_path(i + 1, pathArgv, &resultDString);
+      resultStr = nsp_join_path(i + 1,(const char **) pathArgv, &resultDString);
       findHandle = FindFirstFile(resultStr, &findData);
       if (findHandle == INVALID_HANDLE_VALUE) {
 	pathArgc = i - 1;
@@ -1208,7 +1209,7 @@ ConvertFileNameFormat(
   }
 
   nsp_tcldstring_init(&resultDString);
-  resultStr = nsp_join_path(pathArgc, newPathArgv, &resultDString);
+  resultStr = nsp_join_path(pathArgc,(const char **) newPathArgv, &resultDString);
   *attributePtrPtr = nsp_new_string_obj(NVOID,resultStr, nsp_tcldstring_length(&resultDString));
     
   nsp_tcldstring_free(&resultDString);

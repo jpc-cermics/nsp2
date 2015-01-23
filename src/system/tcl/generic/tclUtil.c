@@ -9,8 +9,9 @@
  *
  */
 
-#include "tclInt.h"
 #include "tclPort.h"
+#include "tclInt.h"
+
 
 /**
  * nsp_string_match:

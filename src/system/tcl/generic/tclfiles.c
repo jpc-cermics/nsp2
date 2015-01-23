@@ -8,8 +8,8 @@
  *
  */
 
-#include "tclInt.h"
 #include "tclPort.h"
+#include "tclInt.h"
 
 /*
  * Declarations for local procedures defined in this file:

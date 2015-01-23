@@ -14,8 +14,8 @@
  *
  */
 
-#include "tclInt.h"
 #include "tclPort.h"
+#include "tclInt.h"
 
 static int cacheSize = 0;	/* Number of env strings in environCache. */
 static char **environCache = NULL;
