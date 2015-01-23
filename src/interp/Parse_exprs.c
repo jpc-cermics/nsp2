@@ -2621,6 +2621,7 @@ static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop
 static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
   Stack *stack = nsp_get_stack();
+  int tag = TRUE;
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
   PList plist1 = NULLPLIST ;
@@ -2648,14 +2649,14 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       /* parse a set of expressions separated by , the white space case is 
        * parsed below in the while 
        */ 
-      if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop,TRUE)== FAIL) 
+      if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop,tag)== FAIL) 
 	return(FAIL);
     }
   while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop 
 	 && T->tokenv.id != '#' &&  T->tokenv.id != COMMENT )
     {
       PList plist2=NULLPLIST;
-      if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop,TRUE)== FAIL) 
+      if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop,tag)== FAIL) 
 	return(FAIL);
       /* We have to take care here of the merge of CELLCOLCONCAT when plist1 and plist2 are 
        * both  CELLCOLCONCAT. This happens when colconcat is performed with white spaces. 

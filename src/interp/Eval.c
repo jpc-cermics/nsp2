@@ -442,7 +442,9 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nargs = 0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      /* evaluate arguments */
+	      /* evaluate arguments 
+	       * we accept n to be != 1 
+	       */
 	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) <0 ) 
 		{
 		  /* clean and return */
@@ -477,8 +479,16 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) <0 ) 
 		{
 		  /* clean and return */
-		  nsp_void_seq_object_destroy(stack,first,first+nargs);
+		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
 		  SHOWBUG(stack,n,L1);
+		}
+	      if ( n != 1)
+		{
+		  Scierror("Error: evaluation of argument %d in a matrix concatenation ``%s'' returned %d arguments while expecting one\n",
+			   j+1,nsp_astcode_to_name(L->type),n);
+		  /* clean and return */
+		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
+		  SHOWBUG(stack,RET_BUG,L1);
 		}
 	      nargs += n;
 	      if ( nargs == 2 ) 
