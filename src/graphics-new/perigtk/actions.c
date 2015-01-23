@@ -3,6 +3,9 @@
 
 extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
+#if 0
+/* WIP */
+
 static void
 activate_action (GtkAction *action, void *user_data)
 {
@@ -25,8 +28,6 @@ toggle_action (GtkAction *action)
   g_message ("Action %s (type=%s) activated (active=%d)", name, typename,
 	     gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
-
-
 
 /* convenience functions for declaring actions */
 static GtkActionEntry entries[] = {
@@ -113,5 +114,6 @@ static void nsp_gwin_add_ui_manager(BCG *dd,GtkWidget *box )
   gtk_box_pack_start (GTK_BOX (box), tb, FALSE, TRUE, 0);  
   gtk_widget_show(tb);
 }
+#endif 
 
 

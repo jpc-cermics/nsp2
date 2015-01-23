@@ -373,7 +373,8 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 		      width,height,
 		      GDK_RGB_DITHER_NONE,
 		      0,0);
-      gdk_pixbuf_unref(scaled);
+      /* gdk_pixbuf_unref(scaled); */
+      g_object_unref(scaled);
     }
 
 }

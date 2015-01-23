@@ -785,7 +785,9 @@ int intzgetrf(NspMatrix *A,NspMatrix **pL,NspMatrix **pE, NspMatrix **pRcond)
 
 
 static int intdgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
+#if 0
 static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
+#endif
 static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 
 /**
@@ -840,7 +842,7 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
   if ( A->rc_type == 'r' ) 
     {
       if ( intdgesdd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
-/*       if ( intdgesvd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL; */
+      /*  if ( intdgesvd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL; */
     } 
   else
     {
@@ -935,6 +937,7 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   return FAIL;
 } 
 
+#if 0
 static int intdgesvd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
 		     NspMatrix **Rank, double *tol)
 {
@@ -1012,6 +1015,7 @@ static int intdgesvd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   nsp_matrix_destroy(s);
   return FAIL;
 } 
+#endif
 
 static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
 		     NspMatrix **Rank, double *tol)

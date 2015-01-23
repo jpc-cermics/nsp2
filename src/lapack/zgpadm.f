@@ -105,7 +105,8 @@
          return
       endif
       ns = MAX( 0,INT(LOG(hnorm)/LOG(2.0d0))+2 )
-      scale =  CMPLX( t/DBLE(2**ns),0.0d0 )
+*     KIND added jpc 2015
+      scale =  CMPLX( t/DBLE(2**ns),0.0d0 , KIND(t) )
       scale2 = scale*scale
 *
 *---  compute Pade coefficients ...

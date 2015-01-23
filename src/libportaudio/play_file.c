@@ -93,8 +93,9 @@ int nsp_play_file(const char *file,int sync,int device)
   threadData.file =  g_strdup(file);
   threadData.o_device = device;
   threadData.pa_print = Scierror;
-  if (!g_thread_supported ()) g_thread_init (NULL);
-  g_thread_create(play_thread,&threadData,FALSE,NULL);
+  /* deprecated: if (!g_thread_supported ()) g_thread_init (NULL); */
+  /* deprecated: g_thread_create(play_thread,&threadData,FALSE,NULL);*/
+  g_thread_new("play_file",play_thread,&threadData);
   /* if sync is TRUE */
   if ( sync == TRUE )
     {

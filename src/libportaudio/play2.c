@@ -77,8 +77,9 @@ int nsp_play_data_no_cb(NspMatrix *M,int sample_rate, int sync,int device)
   threadData.o_device = device;
   threadData.sample_rate = sample_rate;
   threadData.pa_print = Scierror;
-  if (!g_thread_supported ()) g_thread_init (NULL);
-  g_thread_create(play_data_nocb_thread,&threadData,FALSE,NULL);
+  /* if (!g_thread_supported ()) g_thread_init (NULL); */
+  /* g_thread_create(play_data_nocb_thread,&threadData,FALSE,NULL); */
+  g_thread_new("play_data",play_data_nocb_thread,&threadData);
   /* if sync is TRUE */
   if ( sync == TRUE )
     {

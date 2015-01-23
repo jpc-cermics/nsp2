@@ -34,6 +34,7 @@
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
+#include <nsp/gtk/atkrectangle.h>
 #include <nsp/gtk/atkhyperlink.h>
 #include <nsp/gtk/atkobject.h>
 #include <nsp/gtk/atknoopobject.h>
@@ -44,6 +45,3806 @@
 #include <nsp/gtk/atkrelationset.h>
 #include <nsp/gtk/atkstateset.h>
 #include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+#include <nsp/gtk/atkutil.h>
+
+
+/* ----------- NspAtkRectangle ----------- */
+
+
+#define  NspAtkRectangle_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkrectangle.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkRectangle inherits from GBoxed 
+ */
+
+int nsp_type_atkrectangle_id=0;
+NspTypeAtkRectangle *nsp_type_atkrectangle=NULL;
+
+/*
+ * Type object for NspAtkRectangle 
+ * all the instance of NspTypeAtkRectangle share the same id. 
+ * nsp_type_atkrectangle: is an instance of NspTypeAtkRectangle 
+ *    used for objects of NspAtkRectangle type (i.e built with new_atkrectangle) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkRectangle *new_type_atkrectangle(type_mode mode)
+{
+  NspTypeAtkRectangle *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkrectangle != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkrectangle;
+    }
+  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkrectangle_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkrectangle_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkrectangle;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkrectangle */ 
+
+  top->s_type =  (s_type_func *) nsp_atkrectangle_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkrectangle_type_short_string;
+  /* top->create = (create_func*) int_atkrectangle_create;*/ 
+  
+  /* specific methods for atkrectangle */
+      
+  type->init = (init_func *) init_atkrectangle;
+
+  /* 
+   * NspAtkRectangle interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkrectangle_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkRectangle called nsp_type_atkrectangle
+       */
+      type->id =  nsp_type_atkrectangle_id = nsp_new_type_id();
+      nsp_type_atkrectangle = type;
+      if ( nsp_register_type(nsp_type_atkrectangle) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkrectangle, ATK_TYPE_RECTANGLE);
+      return ( mode == T_BASE ) ? type : new_type_atkrectangle(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkrectangle_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkRectangle instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkrectangle(NspAtkRectangle *Obj,NspTypeAtkRectangle *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkRectangle 
+ */
+
+NspAtkRectangle *new_atkrectangle() 
+{
+  NspAtkRectangle *loc; 
+  /* type must exists */
+  nsp_type_atkrectangle = new_type_atkrectangle(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkRectangle)))== NULLATKRECTANGLE) return loc;
+  /* initialize object */
+  if ( init_atkrectangle(loc,nsp_type_atkrectangle) == FAIL) return NULLATKRECTANGLE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkRectangle 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkrectangle_type_name[]="AtkRectangle";
+static char atkrectangle_short_type_name[]="AtkRectangle";
+
+static char *nsp_atkrectangle_type_as_string(void)
+{
+  return(atkrectangle_type_name);
+}
+
+static char *nsp_atkrectangle_type_short_string(NspObject *v)
+{
+  return(atkrectangle_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkRectangle objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkRectangle *nsp_atkrectangle_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_atkrectangle_id)  == TRUE  ) return ((NspAtkRectangle *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkrectangle));
+  return NULL;
+}
+
+int IsAtkRectangleObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_atkrectangle_id);
+}
+
+int IsAtkRectangle(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_atkrectangle_id);
+}
+
+NspAtkRectangle  *GetAtkRectangleCopy(Stack stack, int i)
+{
+  if (  GetAtkRectangle(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkRectangle  *GetAtkRectangle(Stack stack, int i)
+{
+  NspAtkRectangle *M;
+  if (( M = nsp_atkrectangle_object(NthObj(i))) == NULLATKRECTANGLE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspAtkRectangle *atkrectangle_copy(NspAtkRectangle *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_atkrectangle);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkRectangle
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static NspMethods *atkrectangle_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static NspObject *_wrap_atk_rectangle__get_x(NspObject *self,char *attr)
+{
+  int ret;
+  ret = NSP_GBOXED_GET(self, AtkRectangle)->x;
+  return nsp_new_double_obj((double) ret);
+}
+
+static NspObject *_wrap_atk_rectangle__get_y(NspObject *self,char *attr)
+{
+  int ret;
+  ret = NSP_GBOXED_GET(self, AtkRectangle)->y;
+  return nsp_new_double_obj((double) ret);
+}
+
+static NspObject *_wrap_atk_rectangle__get_width(NspObject *self,char *attr)
+{
+  int ret;
+  ret = NSP_GBOXED_GET(self, AtkRectangle)->width;
+  return nsp_new_double_obj((double) ret);
+}
+
+static NspObject *_wrap_atk_rectangle__get_height(NspObject *self,char *attr)
+{
+  int ret;
+  ret = NSP_GBOXED_GET(self, AtkRectangle)->height;
+  return nsp_new_double_obj((double) ret);
+}
+
+static AttrTab atkrectangle_attrs[] = {
+  { "x", (attr_get_function *)_wrap_atk_rectangle__get_x, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "y", (attr_get_function *)_wrap_atk_rectangle__get_y, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "width", (attr_get_function *)_wrap_atk_rectangle__get_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { "height", (attr_get_function *)_wrap_atk_rectangle__get_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL},
+};
+
+
+
+/* ----------- NspAtkAction ----------- */
+
+
+#define  NspAtkAction_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkaction.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkAction inherits from GObject 
+ */
+
+int nsp_type_atkaction_id=0;
+NspTypeAtkAction *nsp_type_atkaction=NULL;
+
+/*
+ * Type object for NspAtkAction 
+ * all the instance of NspTypeAtkAction share the same id. 
+ * nsp_type_atkaction: is an instance of NspTypeAtkAction 
+ *    used for objects of NspAtkAction type (i.e built with new_atkaction) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkAction *new_type_atkaction(type_mode mode)
+{
+  NspTypeAtkAction *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkaction != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkaction;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkaction_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkaction_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkaction;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkaction */ 
+
+  top->s_type =  (s_type_func *) nsp_atkaction_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkaction_type_short_string;
+  /* top->create = (create_func*) int_atkaction_create;*/ 
+  
+  /* specific methods for atkaction */
+      
+  type->init = (init_func *) init_atkaction;
+
+  /* 
+   * NspAtkAction interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkaction_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkAction called nsp_type_atkaction
+       */
+      type->id =  nsp_type_atkaction_id = nsp_new_type_id();
+      nsp_type_atkaction = type;
+      if ( nsp_register_type(nsp_type_atkaction) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkaction, ATK_TYPE_ACTION);
+      return ( mode == T_BASE ) ? type : new_type_atkaction(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkaction_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkAction instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkaction(NspAtkAction *Obj,NspTypeAtkAction *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkAction 
+ */
+
+NspAtkAction *new_atkaction() 
+{
+  NspAtkAction *loc; 
+  /* type must exists */
+  nsp_type_atkaction = new_type_atkaction(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkAction)))== NULLATKACTION) return loc;
+  /* initialize object */
+  if ( init_atkaction(loc,nsp_type_atkaction) == FAIL) return NULLATKACTION;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkAction 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkaction_type_name[]="AtkAction";
+static char atkaction_short_type_name[]="AtkAction";
+
+static char *nsp_atkaction_type_as_string(void)
+{
+  return(atkaction_type_name);
+}
+
+static char *nsp_atkaction_type_short_string(NspObject *v)
+{
+  return(atkaction_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkAction objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkAction *nsp_atkaction_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkaction_id)  ) return ((NspAtkAction *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkaction));
+  return NULL;
+}
+
+int IsAtkActionObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkaction_id);
+}
+
+int IsAtkAction(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkaction_id);
+}
+
+NspAtkAction  *GetAtkActionCopy(Stack stack, int i)
+{
+  if (  GetAtkAction(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkAction  *GetAtkAction(Stack stack, int i)
+{
+  NspAtkAction *M;
+  if (( M = nsp_atkaction_object(NthObj(i))) == NULLATKACTION)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkAction *atkaction_copy(NspAtkAction *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkaction);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkaction);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkAction
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_action_do_action(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_action_do_action(ATK_ACTION(self->obj), i);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_action_get_n_actions(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_action_get_n_actions(ATK_ACTION(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_action_get_description(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_action_get_description(ATK_ACTION(self->obj), i);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_action_get_name(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_action_get_name(ATK_ACTION(self->obj), i);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_action_get_keybinding(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_action_get_keybinding(ATK_ACTION(self->obj), i);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_action_set_description(NspAtkAction *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, string,t_end};
+  int i, ret;
+  char *desc;
+  if ( GetArgs(stack,rhs,opt,T,&i, &desc) == FAIL) return RET_BUG;
+  ret = atk_action_set_description(ATK_ACTION(self->obj), i, desc);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkaction_methods[] = {
+  {"do_action",(nsp_method *) _wrap_atk_action_do_action},
+  {"get_n_actions",(nsp_method *) _wrap_atk_action_get_n_actions},
+  {"get_description",(nsp_method *) _wrap_atk_action_get_description},
+  {"get_name",(nsp_method *) _wrap_atk_action_get_name},
+  {"get_keybinding",(nsp_method *) _wrap_atk_action_get_keybinding},
+  {"set_description",(nsp_method *) _wrap_atk_action_set_description},
+  { NULL, NULL}
+};
+
+static NspMethods *atkaction_get_methods(void) { return atkaction_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkaction_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkComponent ----------- */
+
+
+#define  NspAtkComponent_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkcomponent.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkComponent inherits from GObject 
+ */
+
+int nsp_type_atkcomponent_id=0;
+NspTypeAtkComponent *nsp_type_atkcomponent=NULL;
+
+/*
+ * Type object for NspAtkComponent 
+ * all the instance of NspTypeAtkComponent share the same id. 
+ * nsp_type_atkcomponent: is an instance of NspTypeAtkComponent 
+ *    used for objects of NspAtkComponent type (i.e built with new_atkcomponent) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkComponent *new_type_atkcomponent(type_mode mode)
+{
+  NspTypeAtkComponent *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkcomponent != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkcomponent;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkcomponent_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkcomponent_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkcomponent;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkcomponent */ 
+
+  top->s_type =  (s_type_func *) nsp_atkcomponent_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkcomponent_type_short_string;
+  /* top->create = (create_func*) int_atkcomponent_create;*/ 
+  
+  /* specific methods for atkcomponent */
+      
+  type->init = (init_func *) init_atkcomponent;
+
+  /* 
+   * NspAtkComponent interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkcomponent_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkComponent called nsp_type_atkcomponent
+       */
+      type->id =  nsp_type_atkcomponent_id = nsp_new_type_id();
+      nsp_type_atkcomponent = type;
+      if ( nsp_register_type(nsp_type_atkcomponent) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkcomponent, ATK_TYPE_COMPONENT);
+      return ( mode == T_BASE ) ? type : new_type_atkcomponent(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkcomponent_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkComponent instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkcomponent(NspAtkComponent *Obj,NspTypeAtkComponent *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkComponent 
+ */
+
+NspAtkComponent *new_atkcomponent() 
+{
+  NspAtkComponent *loc; 
+  /* type must exists */
+  nsp_type_atkcomponent = new_type_atkcomponent(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkComponent)))== NULLATKCOMPONENT) return loc;
+  /* initialize object */
+  if ( init_atkcomponent(loc,nsp_type_atkcomponent) == FAIL) return NULLATKCOMPONENT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkComponent 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkcomponent_type_name[]="AtkComponent";
+static char atkcomponent_short_type_name[]="AtkComponent";
+
+static char *nsp_atkcomponent_type_as_string(void)
+{
+  return(atkcomponent_type_name);
+}
+
+static char *nsp_atkcomponent_type_short_string(NspObject *v)
+{
+  return(atkcomponent_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkComponent objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkComponent *nsp_atkcomponent_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkcomponent_id)  ) return ((NspAtkComponent *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkcomponent));
+  return NULL;
+}
+
+int IsAtkComponentObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkcomponent_id);
+}
+
+int IsAtkComponent(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkcomponent_id);
+}
+
+NspAtkComponent  *GetAtkComponentCopy(Stack stack, int i)
+{
+  if (  GetAtkComponent(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkComponent  *GetAtkComponent(Stack stack, int i)
+{
+  NspAtkComponent *M;
+  if (( M = nsp_atkcomponent_object(NthObj(i))) == NULLATKCOMPONENT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkComponent *atkcomponent_copy(NspAtkComponent *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkcomponent);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkcomponent);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkComponent
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_component_contains(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y, ret;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  ret = atk_component_contains(ATK_COMPONENT(self->obj), x, y, coord_type);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_ref_accessible_at_point(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL, *nsp_ret;
+  AtkObject *ret;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  ret = atk_component_ref_accessible_at_point(ATK_COMPONENT(self->obj), x, y, coord_type);
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_component_get_extents(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, s_int, s_int, obj,t_end};
+  int x, y, width, height;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  atk_component_get_extents(ATK_COMPONENT(self->obj), &x, &y, &width, &height, coord_type);
+  return 0;
+}
+
+static int _wrap_atk_component_get_position(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  atk_component_get_position(ATK_COMPONENT(self->obj), &x, &y, coord_type);
+  return 0;
+}
+
+static int _wrap_atk_component_get_size(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int width, height;
+  if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
+  atk_component_get_size(ATK_COMPONENT(self->obj), &width, &height);
+  return 0;
+}
+
+static int _wrap_atk_component_grab_focus(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_component_grab_focus(ATK_COMPONENT(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_set_extents(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, s_int, s_int, obj,t_end};
+  int x, y, width, height, ret;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  ret = atk_component_set_extents(ATK_COMPONENT(self->obj), x, y, width, height, coord_type);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_set_position(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y, ret;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  ret = atk_component_set_position(ATK_COMPONENT(self->obj), x, y, coord_type);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_set_size(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int width, height, ret;
+  if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
+  ret = atk_component_set_size(ATK_COMPONENT(self->obj), width, height);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_get_layer(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint ret;
+  CheckRhs(0,0);
+  ret = atk_component_get_layer(ATK_COMPONENT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_get_mdi_zorder(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_component_get_mdi_zorder(ATK_COMPONENT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_component_get_alpha(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  double ret;
+  CheckRhs(0,0);
+  ret = atk_component_get_alpha(ATK_COMPONENT(self->obj));
+  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkcomponent_methods[] = {
+  {"contains",(nsp_method *) _wrap_atk_component_contains},
+  {"ref_accessible_at_point",(nsp_method *) _wrap_atk_component_ref_accessible_at_point},
+  {"get_extents",(nsp_method *) _wrap_atk_component_get_extents},
+  {"get_position",(nsp_method *) _wrap_atk_component_get_position},
+  {"get_size",(nsp_method *) _wrap_atk_component_get_size},
+  {"grab_focus",(nsp_method *) _wrap_atk_component_grab_focus},
+  {"set_extents",(nsp_method *) _wrap_atk_component_set_extents},
+  {"set_position",(nsp_method *) _wrap_atk_component_set_position},
+  {"set_size",(nsp_method *) _wrap_atk_component_set_size},
+  {"get_layer",(nsp_method *) _wrap_atk_component_get_layer},
+  {"get_mdi_zorder",(nsp_method *) _wrap_atk_component_get_mdi_zorder},
+  {"get_alpha",(nsp_method *) _wrap_atk_component_get_alpha},
+  { NULL, NULL}
+};
+
+static NspMethods *atkcomponent_get_methods(void) { return atkcomponent_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkcomponent_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkDocument ----------- */
+
+
+#define  NspAtkDocument_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkdocument.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkDocument inherits from GObject 
+ */
+
+int nsp_type_atkdocument_id=0;
+NspTypeAtkDocument *nsp_type_atkdocument=NULL;
+
+/*
+ * Type object for NspAtkDocument 
+ * all the instance of NspTypeAtkDocument share the same id. 
+ * nsp_type_atkdocument: is an instance of NspTypeAtkDocument 
+ *    used for objects of NspAtkDocument type (i.e built with new_atkdocument) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkDocument *new_type_atkdocument(type_mode mode)
+{
+  NspTypeAtkDocument *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkdocument != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkdocument;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkdocument_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkdocument_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkdocument;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkdocument */ 
+
+  top->s_type =  (s_type_func *) nsp_atkdocument_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkdocument_type_short_string;
+  /* top->create = (create_func*) int_atkdocument_create;*/ 
+  
+  /* specific methods for atkdocument */
+      
+  type->init = (init_func *) init_atkdocument;
+
+  /* 
+   * NspAtkDocument interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkdocument_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkDocument called nsp_type_atkdocument
+       */
+      type->id =  nsp_type_atkdocument_id = nsp_new_type_id();
+      nsp_type_atkdocument = type;
+      if ( nsp_register_type(nsp_type_atkdocument) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkdocument, ATK_TYPE_DOCUMENT);
+      return ( mode == T_BASE ) ? type : new_type_atkdocument(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkdocument_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkDocument instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkdocument(NspAtkDocument *Obj,NspTypeAtkDocument *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkDocument 
+ */
+
+NspAtkDocument *new_atkdocument() 
+{
+  NspAtkDocument *loc; 
+  /* type must exists */
+  nsp_type_atkdocument = new_type_atkdocument(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkDocument)))== NULLATKDOCUMENT) return loc;
+  /* initialize object */
+  if ( init_atkdocument(loc,nsp_type_atkdocument) == FAIL) return NULLATKDOCUMENT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkDocument 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkdocument_type_name[]="AtkDocument";
+static char atkdocument_short_type_name[]="AtkDocument";
+
+static char *nsp_atkdocument_type_as_string(void)
+{
+  return(atkdocument_type_name);
+}
+
+static char *nsp_atkdocument_type_short_string(NspObject *v)
+{
+  return(atkdocument_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkDocument objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkDocument *nsp_atkdocument_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkdocument_id)  ) return ((NspAtkDocument *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkdocument));
+  return NULL;
+}
+
+int IsAtkDocumentObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkdocument_id);
+}
+
+int IsAtkDocument(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkdocument_id);
+}
+
+NspAtkDocument  *GetAtkDocumentCopy(Stack stack, int i)
+{
+  if (  GetAtkDocument(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkDocument  *GetAtkDocument(Stack stack, int i)
+{
+  NspAtkDocument *M;
+  if (( M = nsp_atkdocument_object(NthObj(i))) == NULLATKDOCUMENT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkDocument *atkdocument_copy(NspAtkDocument *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkdocument);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkdocument);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkDocument
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_document_get_document_type(NspAtkDocument *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+  CheckRhs(0,0);
+  ret = atk_document_get_document_type(ATK_DOCUMENT(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkdocument_methods[] = {
+  {"get_document_type",(nsp_method *) _wrap_atk_document_get_document_type},
+  { NULL, NULL}
+};
+
+static NspMethods *atkdocument_get_methods(void) { return atkdocument_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkdocument_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkEditableText ----------- */
+
+
+#define  NspAtkEditableText_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkeditabletext.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkEditableText inherits from GObject 
+ */
+
+int nsp_type_atkeditabletext_id=0;
+NspTypeAtkEditableText *nsp_type_atkeditabletext=NULL;
+
+/*
+ * Type object for NspAtkEditableText 
+ * all the instance of NspTypeAtkEditableText share the same id. 
+ * nsp_type_atkeditabletext: is an instance of NspTypeAtkEditableText 
+ *    used for objects of NspAtkEditableText type (i.e built with new_atkeditabletext) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkEditableText *new_type_atkeditabletext(type_mode mode)
+{
+  NspTypeAtkEditableText *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkeditabletext != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkeditabletext;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkeditabletext_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkeditabletext_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkeditabletext;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkeditabletext */ 
+
+  top->s_type =  (s_type_func *) nsp_atkeditabletext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkeditabletext_type_short_string;
+  /* top->create = (create_func*) int_atkeditabletext_create;*/ 
+  
+  /* specific methods for atkeditabletext */
+      
+  type->init = (init_func *) init_atkeditabletext;
+
+  /* 
+   * NspAtkEditableText interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkeditabletext_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkEditableText called nsp_type_atkeditabletext
+       */
+      type->id =  nsp_type_atkeditabletext_id = nsp_new_type_id();
+      nsp_type_atkeditabletext = type;
+      if ( nsp_register_type(nsp_type_atkeditabletext) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkeditabletext, ATK_TYPE_EDITABLE_TEXT);
+      return ( mode == T_BASE ) ? type : new_type_atkeditabletext(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkeditabletext_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkEditableText instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkeditabletext(NspAtkEditableText *Obj,NspTypeAtkEditableText *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkEditableText 
+ */
+
+NspAtkEditableText *new_atkeditabletext() 
+{
+  NspAtkEditableText *loc; 
+  /* type must exists */
+  nsp_type_atkeditabletext = new_type_atkeditabletext(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkEditableText)))== NULLATKEDITABLETEXT) return loc;
+  /* initialize object */
+  if ( init_atkeditabletext(loc,nsp_type_atkeditabletext) == FAIL) return NULLATKEDITABLETEXT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkEditableText 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkeditabletext_type_name[]="AtkEditableText";
+static char atkeditabletext_short_type_name[]="AtkEditableText";
+
+static char *nsp_atkeditabletext_type_as_string(void)
+{
+  return(atkeditabletext_type_name);
+}
+
+static char *nsp_atkeditabletext_type_short_string(NspObject *v)
+{
+  return(atkeditabletext_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkEditableText objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkEditableText *nsp_atkeditabletext_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkeditabletext_id)  ) return ((NspAtkEditableText *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkeditabletext));
+  return NULL;
+}
+
+int IsAtkEditableTextObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkeditabletext_id);
+}
+
+int IsAtkEditableText(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkeditabletext_id);
+}
+
+NspAtkEditableText  *GetAtkEditableTextCopy(Stack stack, int i)
+{
+  if (  GetAtkEditableText(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkEditableText  *GetAtkEditableText(Stack stack, int i)
+{
+  NspAtkEditableText *M;
+  if (( M = nsp_atkeditabletext_object(NthObj(i))) == NULLATKEDITABLETEXT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkEditableText *atkeditabletext_copy(NspAtkEditableText *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkeditabletext);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkeditabletext);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkEditableText
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_editable_text_set_text_contents(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *string;
+  if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
+  atk_editable_text_set_text_contents(ATK_EDITABLE_TEXT(self->obj), string);
+  return 0;
+}
+
+static int _wrap_atk_editable_text_insert_text(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, s_int, s_int,t_end};
+  char *string;
+  int length, position;
+  if ( GetArgs(stack,rhs,opt,T,&string, &length, &position) == FAIL) return RET_BUG;
+  atk_editable_text_insert_text(ATK_EDITABLE_TEXT(self->obj), string, length, &position);
+  return 0;
+}
+
+static int _wrap_atk_editable_text_copy_text(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int start_pos, end_pos;
+  if ( GetArgs(stack,rhs,opt,T,&start_pos, &end_pos) == FAIL) return RET_BUG;
+  atk_editable_text_copy_text(ATK_EDITABLE_TEXT(self->obj), start_pos, end_pos);
+  return 0;
+}
+
+static int _wrap_atk_editable_text_cut_text(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int start_pos, end_pos;
+  if ( GetArgs(stack,rhs,opt,T,&start_pos, &end_pos) == FAIL) return RET_BUG;
+  atk_editable_text_cut_text(ATK_EDITABLE_TEXT(self->obj), start_pos, end_pos);
+  return 0;
+}
+
+static int _wrap_atk_editable_text_delete_text(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int start_pos, end_pos;
+  if ( GetArgs(stack,rhs,opt,T,&start_pos, &end_pos) == FAIL) return RET_BUG;
+  atk_editable_text_delete_text(ATK_EDITABLE_TEXT(self->obj), start_pos, end_pos);
+  return 0;
+}
+
+static int _wrap_atk_editable_text_paste_text(NspAtkEditableText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int position;
+  if ( GetArgs(stack,rhs,opt,T,&position) == FAIL) return RET_BUG;
+  atk_editable_text_paste_text(ATK_EDITABLE_TEXT(self->obj), position);
+  return 0;
+}
+
+static NspMethods atkeditabletext_methods[] = {
+  {"set_text_contents",(nsp_method *) _wrap_atk_editable_text_set_text_contents},
+  {"insert_text",(nsp_method *) _wrap_atk_editable_text_insert_text},
+  {"copy_text",(nsp_method *) _wrap_atk_editable_text_copy_text},
+  {"cut_text",(nsp_method *) _wrap_atk_editable_text_cut_text},
+  {"delete_text",(nsp_method *) _wrap_atk_editable_text_delete_text},
+  {"paste_text",(nsp_method *) _wrap_atk_editable_text_paste_text},
+  { NULL, NULL}
+};
+
+static NspMethods *atkeditabletext_get_methods(void) { return atkeditabletext_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkeditabletext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkHyperlinkImpl ----------- */
+
+
+#define  NspAtkHyperlinkImpl_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkhyperlinkimpl.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkHyperlinkImpl inherits from GObject 
+ */
+
+int nsp_type_atkhyperlinkimpl_id=0;
+NspTypeAtkHyperlinkImpl *nsp_type_atkhyperlinkimpl=NULL;
+
+/*
+ * Type object for NspAtkHyperlinkImpl 
+ * all the instance of NspTypeAtkHyperlinkImpl share the same id. 
+ * nsp_type_atkhyperlinkimpl: is an instance of NspTypeAtkHyperlinkImpl 
+ *    used for objects of NspAtkHyperlinkImpl type (i.e built with new_atkhyperlinkimpl) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkHyperlinkImpl *new_type_atkhyperlinkimpl(type_mode mode)
+{
+  NspTypeAtkHyperlinkImpl *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkhyperlinkimpl != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkhyperlinkimpl;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkhyperlinkimpl_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkhyperlinkimpl_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkhyperlinkimpl;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkhyperlinkimpl */ 
+
+  top->s_type =  (s_type_func *) nsp_atkhyperlinkimpl_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkhyperlinkimpl_type_short_string;
+  /* top->create = (create_func*) int_atkhyperlinkimpl_create;*/ 
+  
+  /* specific methods for atkhyperlinkimpl */
+      
+  type->init = (init_func *) init_atkhyperlinkimpl;
+
+  /* 
+   * NspAtkHyperlinkImpl interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkhyperlinkimpl_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkHyperlinkImpl called nsp_type_atkhyperlinkimpl
+       */
+      type->id =  nsp_type_atkhyperlinkimpl_id = nsp_new_type_id();
+      nsp_type_atkhyperlinkimpl = type;
+      if ( nsp_register_type(nsp_type_atkhyperlinkimpl) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkhyperlinkimpl, ATK_TYPE_HYPERLINK_IMPL);
+      return ( mode == T_BASE ) ? type : new_type_atkhyperlinkimpl(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkhyperlinkimpl_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkHyperlinkImpl instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkhyperlinkimpl(NspAtkHyperlinkImpl *Obj,NspTypeAtkHyperlinkImpl *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkHyperlinkImpl 
+ */
+
+NspAtkHyperlinkImpl *new_atkhyperlinkimpl() 
+{
+  NspAtkHyperlinkImpl *loc; 
+  /* type must exists */
+  nsp_type_atkhyperlinkimpl = new_type_atkhyperlinkimpl(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkHyperlinkImpl)))== NULLATKHYPERLINKIMPL) return loc;
+  /* initialize object */
+  if ( init_atkhyperlinkimpl(loc,nsp_type_atkhyperlinkimpl) == FAIL) return NULLATKHYPERLINKIMPL;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkHyperlinkImpl 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkhyperlinkimpl_type_name[]="AtkHyperlinkImpl";
+static char atkhyperlinkimpl_short_type_name[]="AtkHyperlinkImpl";
+
+static char *nsp_atkhyperlinkimpl_type_as_string(void)
+{
+  return(atkhyperlinkimpl_type_name);
+}
+
+static char *nsp_atkhyperlinkimpl_type_short_string(NspObject *v)
+{
+  return(atkhyperlinkimpl_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkHyperlinkImpl objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkHyperlinkImpl *nsp_atkhyperlinkimpl_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkhyperlinkimpl_id)  ) return ((NspAtkHyperlinkImpl *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkhyperlinkimpl));
+  return NULL;
+}
+
+int IsAtkHyperlinkImplObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkhyperlinkimpl_id);
+}
+
+int IsAtkHyperlinkImpl(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkhyperlinkimpl_id);
+}
+
+NspAtkHyperlinkImpl  *GetAtkHyperlinkImplCopy(Stack stack, int i)
+{
+  if (  GetAtkHyperlinkImpl(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkHyperlinkImpl  *GetAtkHyperlinkImpl(Stack stack, int i)
+{
+  NspAtkHyperlinkImpl *M;
+  if (( M = nsp_atkhyperlinkimpl_object(NthObj(i))) == NULLATKHYPERLINKIMPL)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkHyperlinkImpl *atkhyperlinkimpl_copy(NspAtkHyperlinkImpl *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkhyperlinkimpl);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkhyperlinkimpl);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkHyperlinkImpl
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static NspMethods *atkhyperlinkimpl_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkhyperlinkimpl_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkHypertext ----------- */
+
+
+#define  NspAtkHypertext_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkhypertext.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkHypertext inherits from GObject 
+ */
+
+int nsp_type_atkhypertext_id=0;
+NspTypeAtkHypertext *nsp_type_atkhypertext=NULL;
+
+/*
+ * Type object for NspAtkHypertext 
+ * all the instance of NspTypeAtkHypertext share the same id. 
+ * nsp_type_atkhypertext: is an instance of NspTypeAtkHypertext 
+ *    used for objects of NspAtkHypertext type (i.e built with new_atkhypertext) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkHypertext *new_type_atkhypertext(type_mode mode)
+{
+  NspTypeAtkHypertext *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkhypertext != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkhypertext;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkhypertext_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkhypertext_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkhypertext;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkhypertext */ 
+
+  top->s_type =  (s_type_func *) nsp_atkhypertext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkhypertext_type_short_string;
+  /* top->create = (create_func*) int_atkhypertext_create;*/ 
+  
+  /* specific methods for atkhypertext */
+      
+  type->init = (init_func *) init_atkhypertext;
+
+  /* 
+   * NspAtkHypertext interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkhypertext_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkHypertext called nsp_type_atkhypertext
+       */
+      type->id =  nsp_type_atkhypertext_id = nsp_new_type_id();
+      nsp_type_atkhypertext = type;
+      if ( nsp_register_type(nsp_type_atkhypertext) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkhypertext, ATK_TYPE_HYPERTEXT);
+      return ( mode == T_BASE ) ? type : new_type_atkhypertext(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkhypertext_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkHypertext instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkhypertext(NspAtkHypertext *Obj,NspTypeAtkHypertext *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkHypertext 
+ */
+
+NspAtkHypertext *new_atkhypertext() 
+{
+  NspAtkHypertext *loc; 
+  /* type must exists */
+  nsp_type_atkhypertext = new_type_atkhypertext(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkHypertext)))== NULLATKHYPERTEXT) return loc;
+  /* initialize object */
+  if ( init_atkhypertext(loc,nsp_type_atkhypertext) == FAIL) return NULLATKHYPERTEXT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkHypertext 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkhypertext_type_name[]="AtkHypertext";
+static char atkhypertext_short_type_name[]="AtkHypertext";
+
+static char *nsp_atkhypertext_type_as_string(void)
+{
+  return(atkhypertext_type_name);
+}
+
+static char *nsp_atkhypertext_type_short_string(NspObject *v)
+{
+  return(atkhypertext_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkHypertext objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkHypertext *nsp_atkhypertext_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkhypertext_id)  ) return ((NspAtkHypertext *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkhypertext));
+  return NULL;
+}
+
+int IsAtkHypertextObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkhypertext_id);
+}
+
+int IsAtkHypertext(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkhypertext_id);
+}
+
+NspAtkHypertext  *GetAtkHypertextCopy(Stack stack, int i)
+{
+  if (  GetAtkHypertext(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkHypertext  *GetAtkHypertext(Stack stack, int i)
+{
+  NspAtkHypertext *M;
+  if (( M = nsp_atkhypertext_object(NthObj(i))) == NULLATKHYPERTEXT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkHypertext *atkhypertext_copy(NspAtkHypertext *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkhypertext);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkhypertext);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkHypertext
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_hypertext_get_link(NspAtkHypertext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int link_index;
+  AtkHyperlink *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&link_index) == FAIL) return RET_BUG;
+  ret = atk_hypertext_get_link(ATK_HYPERTEXT(self->obj), link_index);
+  nsp_type_atkhyperlink = new_type_atkhyperlink(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkhyperlink))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_hypertext_get_n_links(NspAtkHypertext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_hypertext_get_n_links(ATK_HYPERTEXT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_hypertext_get_link_index(NspAtkHypertext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int char_index, ret;
+  if ( GetArgs(stack,rhs,opt,T,&char_index) == FAIL) return RET_BUG;
+  ret = atk_hypertext_get_link_index(ATK_HYPERTEXT(self->obj), char_index);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkhypertext_methods[] = {
+  {"get_link",(nsp_method *) _wrap_atk_hypertext_get_link},
+  {"get_n_links",(nsp_method *) _wrap_atk_hypertext_get_n_links},
+  {"get_link_index",(nsp_method *) _wrap_atk_hypertext_get_link_index},
+  { NULL, NULL}
+};
+
+static NspMethods *atkhypertext_get_methods(void) { return atkhypertext_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkhypertext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkImage ----------- */
+
+
+#define  NspAtkImage_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkimage.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkImage inherits from GObject 
+ */
+
+int nsp_type_atkimage_id=0;
+NspTypeAtkImage *nsp_type_atkimage=NULL;
+
+/*
+ * Type object for NspAtkImage 
+ * all the instance of NspTypeAtkImage share the same id. 
+ * nsp_type_atkimage: is an instance of NspTypeAtkImage 
+ *    used for objects of NspAtkImage type (i.e built with new_atkimage) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkImage *new_type_atkimage(type_mode mode)
+{
+  NspTypeAtkImage *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkimage != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkimage;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkimage_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkimage_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkimage;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkimage */ 
+
+  top->s_type =  (s_type_func *) nsp_atkimage_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkimage_type_short_string;
+  /* top->create = (create_func*) int_atkimage_create;*/ 
+  
+  /* specific methods for atkimage */
+      
+  type->init = (init_func *) init_atkimage;
+
+  /* 
+   * NspAtkImage interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkimage_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkImage called nsp_type_atkimage
+       */
+      type->id =  nsp_type_atkimage_id = nsp_new_type_id();
+      nsp_type_atkimage = type;
+      if ( nsp_register_type(nsp_type_atkimage) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkimage, ATK_TYPE_IMAGE);
+      return ( mode == T_BASE ) ? type : new_type_atkimage(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkimage_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkImage instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkimage(NspAtkImage *Obj,NspTypeAtkImage *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkImage 
+ */
+
+NspAtkImage *new_atkimage() 
+{
+  NspAtkImage *loc; 
+  /* type must exists */
+  nsp_type_atkimage = new_type_atkimage(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkImage)))== NULLATKIMAGE) return loc;
+  /* initialize object */
+  if ( init_atkimage(loc,nsp_type_atkimage) == FAIL) return NULLATKIMAGE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkImage 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkimage_type_name[]="AtkImage";
+static char atkimage_short_type_name[]="AtkImage";
+
+static char *nsp_atkimage_type_as_string(void)
+{
+  return(atkimage_type_name);
+}
+
+static char *nsp_atkimage_type_short_string(NspObject *v)
+{
+  return(atkimage_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkImage objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkImage *nsp_atkimage_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkimage_id)  ) return ((NspAtkImage *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkimage));
+  return NULL;
+}
+
+int IsAtkImageObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkimage_id);
+}
+
+int IsAtkImage(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkimage_id);
+}
+
+NspAtkImage  *GetAtkImageCopy(Stack stack, int i)
+{
+  if (  GetAtkImage(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkImage  *GetAtkImage(Stack stack, int i)
+{
+  NspAtkImage *M;
+  if (( M = nsp_atkimage_object(NthObj(i))) == NULLATKIMAGE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkImage *atkimage_copy(NspAtkImage *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkimage);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkimage);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkImage
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_image_get_image_description(NspAtkImage *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const gchar *ret;
+  CheckRhs(0,0);
+  ret = atk_image_get_image_description(ATK_IMAGE(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_image_get_image_size(NspAtkImage *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int width, height;
+  if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
+  atk_image_get_image_size(ATK_IMAGE(self->obj), &width, &height);
+  return 0;
+}
+
+static int _wrap_atk_image_set_image_description(NspAtkImage *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *description;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&description) == FAIL) return RET_BUG;
+  ret = atk_image_set_image_description(ATK_IMAGE(self->obj), description);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_image_get_image_position(NspAtkImage *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y;
+  AtkCoordType coord_type;
+  NspObject *nsp_coord_type = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
+      return RET_BUG;
+  atk_image_get_image_position(ATK_IMAGE(self->obj), &x, &y, coord_type);
+  return 0;
+}
+
+static NspMethods atkimage_methods[] = {
+  {"get_image_description",(nsp_method *) _wrap_atk_image_get_image_description},
+  {"get_image_size",(nsp_method *) _wrap_atk_image_get_image_size},
+  {"set_image_description",(nsp_method *) _wrap_atk_image_set_image_description},
+  {"get_image_position",(nsp_method *) _wrap_atk_image_get_image_position},
+  { NULL, NULL}
+};
+
+static NspMethods *atkimage_get_methods(void) { return atkimage_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkImplementorIface ----------- */
+
+
+#define  NspAtkImplementorIface_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkimplementoriface.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkImplementorIface inherits from GObject 
+ */
+
+int nsp_type_atkimplementoriface_id=0;
+NspTypeAtkImplementorIface *nsp_type_atkimplementoriface=NULL;
+
+/*
+ * Type object for NspAtkImplementorIface 
+ * all the instance of NspTypeAtkImplementorIface share the same id. 
+ * nsp_type_atkimplementoriface: is an instance of NspTypeAtkImplementorIface 
+ *    used for objects of NspAtkImplementorIface type (i.e built with new_atkimplementoriface) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkImplementorIface *new_type_atkimplementoriface(type_mode mode)
+{
+  NspTypeAtkImplementorIface *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkimplementoriface != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkimplementoriface;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkimplementoriface_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkimplementoriface_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkimplementoriface;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkimplementoriface */ 
+
+  top->s_type =  (s_type_func *) nsp_atkimplementoriface_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkimplementoriface_type_short_string;
+  /* top->create = (create_func*) int_atkimplementoriface_create;*/ 
+  
+  /* specific methods for atkimplementoriface */
+      
+  type->init = (init_func *) init_atkimplementoriface;
+
+  /* 
+   * NspAtkImplementorIface interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkimplementoriface_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkImplementorIface called nsp_type_atkimplementoriface
+       */
+      type->id =  nsp_type_atkimplementoriface_id = nsp_new_type_id();
+      nsp_type_atkimplementoriface = type;
+      if ( nsp_register_type(nsp_type_atkimplementoriface) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkimplementoriface, ATK_TYPE_IMPLEMENTOR);
+      return ( mode == T_BASE ) ? type : new_type_atkimplementoriface(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkimplementoriface_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkImplementorIface instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkimplementoriface(NspAtkImplementorIface *Obj,NspTypeAtkImplementorIface *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkImplementorIface 
+ */
+
+NspAtkImplementorIface *new_atkimplementoriface() 
+{
+  NspAtkImplementorIface *loc; 
+  /* type must exists */
+  nsp_type_atkimplementoriface = new_type_atkimplementoriface(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkImplementorIface)))== NULLATKIMPLEMENTORIFACE) return loc;
+  /* initialize object */
+  if ( init_atkimplementoriface(loc,nsp_type_atkimplementoriface) == FAIL) return NULLATKIMPLEMENTORIFACE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkImplementorIface 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkimplementoriface_type_name[]="AtkImplementorIface";
+static char atkimplementoriface_short_type_name[]="AtkImplementorIface";
+
+static char *nsp_atkimplementoriface_type_as_string(void)
+{
+  return(atkimplementoriface_type_name);
+}
+
+static char *nsp_atkimplementoriface_type_short_string(NspObject *v)
+{
+  return(atkimplementoriface_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkImplementorIface objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkImplementorIface *nsp_atkimplementoriface_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkimplementoriface_id)  ) return ((NspAtkImplementorIface *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkimplementoriface));
+  return NULL;
+}
+
+int IsAtkImplementorIfaceObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkimplementoriface_id);
+}
+
+int IsAtkImplementorIface(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkimplementoriface_id);
+}
+
+NspAtkImplementorIface  *GetAtkImplementorIfaceCopy(Stack stack, int i)
+{
+  if (  GetAtkImplementorIface(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkImplementorIface  *GetAtkImplementorIface(Stack stack, int i)
+{
+  NspAtkImplementorIface *M;
+  if (( M = nsp_atkimplementoriface_object(NthObj(i))) == NULLATKIMPLEMENTORIFACE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkImplementorIface *atkimplementoriface_copy(NspAtkImplementorIface *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkimplementoriface);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkimplementoriface);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkImplementorIface
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static NspMethods *atkimplementoriface_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkimplementoriface_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkSelection ----------- */
+
+
+#define  NspAtkSelection_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkselection.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkSelection inherits from GObject 
+ */
+
+int nsp_type_atkselection_id=0;
+NspTypeAtkSelection *nsp_type_atkselection=NULL;
+
+/*
+ * Type object for NspAtkSelection 
+ * all the instance of NspTypeAtkSelection share the same id. 
+ * nsp_type_atkselection: is an instance of NspTypeAtkSelection 
+ *    used for objects of NspAtkSelection type (i.e built with new_atkselection) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkSelection *new_type_atkselection(type_mode mode)
+{
+  NspTypeAtkSelection *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkselection != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkselection;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkselection_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkselection_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkselection;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkselection */ 
+
+  top->s_type =  (s_type_func *) nsp_atkselection_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkselection_type_short_string;
+  /* top->create = (create_func*) int_atkselection_create;*/ 
+  
+  /* specific methods for atkselection */
+      
+  type->init = (init_func *) init_atkselection;
+
+  /* 
+   * NspAtkSelection interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkselection_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkSelection called nsp_type_atkselection
+       */
+      type->id =  nsp_type_atkselection_id = nsp_new_type_id();
+      nsp_type_atkselection = type;
+      if ( nsp_register_type(nsp_type_atkselection) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkselection, ATK_TYPE_SELECTION);
+      return ( mode == T_BASE ) ? type : new_type_atkselection(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkselection_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkSelection instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkselection(NspAtkSelection *Obj,NspTypeAtkSelection *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkSelection 
+ */
+
+NspAtkSelection *new_atkselection() 
+{
+  NspAtkSelection *loc; 
+  /* type must exists */
+  nsp_type_atkselection = new_type_atkselection(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkSelection)))== NULLATKSELECTION) return loc;
+  /* initialize object */
+  if ( init_atkselection(loc,nsp_type_atkselection) == FAIL) return NULLATKSELECTION;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkSelection 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkselection_type_name[]="AtkSelection";
+static char atkselection_short_type_name[]="AtkSelection";
+
+static char *nsp_atkselection_type_as_string(void)
+{
+  return(atkselection_type_name);
+}
+
+static char *nsp_atkselection_type_short_string(NspObject *v)
+{
+  return(atkselection_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkSelection objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkSelection *nsp_atkselection_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkselection_id)  ) return ((NspAtkSelection *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkselection));
+  return NULL;
+}
+
+int IsAtkSelectionObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkselection_id);
+}
+
+int IsAtkSelection(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkselection_id);
+}
+
+NspAtkSelection  *GetAtkSelectionCopy(Stack stack, int i)
+{
+  if (  GetAtkSelection(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkSelection  *GetAtkSelection(Stack stack, int i)
+{
+  NspAtkSelection *M;
+  if (( M = nsp_atkselection_object(NthObj(i))) == NULLATKSELECTION)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkSelection *atkselection_copy(NspAtkSelection *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkselection);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkselection);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkSelection
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_selection_add_selection(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_selection_add_selection(ATK_SELECTION(self->obj), i);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_selection_clear_selection(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_selection_clear_selection(ATK_SELECTION(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_selection_ref_selection(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i;
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_selection_ref_selection(ATK_SELECTION(self->obj), i);
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_selection_get_selection_count(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_selection_get_selection_count(ATK_SELECTION(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_selection_is_child_selected(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_selection_is_child_selected(ATK_SELECTION(self->obj), i);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_selection_remove_selection(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i, ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_selection_remove_selection(ATK_SELECTION(self->obj), i);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_selection_select_all_selection(NspAtkSelection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_selection_select_all_selection(ATK_SELECTION(self->obj));
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkselection_methods[] = {
+  {"add_selection",(nsp_method *) _wrap_atk_selection_add_selection},
+  {"clear_selection",(nsp_method *) _wrap_atk_selection_clear_selection},
+  {"ref_selection",(nsp_method *) _wrap_atk_selection_ref_selection},
+  {"get_selection_count",(nsp_method *) _wrap_atk_selection_get_selection_count},
+  {"is_child_selected",(nsp_method *) _wrap_atk_selection_is_child_selected},
+  {"remove_selection",(nsp_method *) _wrap_atk_selection_remove_selection},
+  {"select_all_selection",(nsp_method *) _wrap_atk_selection_select_all_selection},
+  { NULL, NULL}
+};
+
+static NspMethods *atkselection_get_methods(void) { return atkselection_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkselection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkStreamableContent ----------- */
+
+
+#define  NspAtkStreamableContent_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkstreamablecontent.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkStreamableContent inherits from GObject 
+ */
+
+int nsp_type_atkstreamablecontent_id=0;
+NspTypeAtkStreamableContent *nsp_type_atkstreamablecontent=NULL;
+
+/*
+ * Type object for NspAtkStreamableContent 
+ * all the instance of NspTypeAtkStreamableContent share the same id. 
+ * nsp_type_atkstreamablecontent: is an instance of NspTypeAtkStreamableContent 
+ *    used for objects of NspAtkStreamableContent type (i.e built with new_atkstreamablecontent) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkStreamableContent *new_type_atkstreamablecontent(type_mode mode)
+{
+  NspTypeAtkStreamableContent *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkstreamablecontent != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkstreamablecontent;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkstreamablecontent_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkstreamablecontent_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkstreamablecontent;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkstreamablecontent */ 
+
+  top->s_type =  (s_type_func *) nsp_atkstreamablecontent_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkstreamablecontent_type_short_string;
+  /* top->create = (create_func*) int_atkstreamablecontent_create;*/ 
+  
+  /* specific methods for atkstreamablecontent */
+      
+  type->init = (init_func *) init_atkstreamablecontent;
+
+  /* 
+   * NspAtkStreamableContent interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkstreamablecontent_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkStreamableContent called nsp_type_atkstreamablecontent
+       */
+      type->id =  nsp_type_atkstreamablecontent_id = nsp_new_type_id();
+      nsp_type_atkstreamablecontent = type;
+      if ( nsp_register_type(nsp_type_atkstreamablecontent) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkstreamablecontent, ATK_TYPE_STREAMABLE_CONTENT);
+      return ( mode == T_BASE ) ? type : new_type_atkstreamablecontent(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkstreamablecontent_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkStreamableContent instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkstreamablecontent(NspAtkStreamableContent *Obj,NspTypeAtkStreamableContent *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkStreamableContent 
+ */
+
+NspAtkStreamableContent *new_atkstreamablecontent() 
+{
+  NspAtkStreamableContent *loc; 
+  /* type must exists */
+  nsp_type_atkstreamablecontent = new_type_atkstreamablecontent(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkStreamableContent)))== NULLATKSTREAMABLECONTENT) return loc;
+  /* initialize object */
+  if ( init_atkstreamablecontent(loc,nsp_type_atkstreamablecontent) == FAIL) return NULLATKSTREAMABLECONTENT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkStreamableContent 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkstreamablecontent_type_name[]="AtkStreamableContent";
+static char atkstreamablecontent_short_type_name[]="AtkStreamableContent";
+
+static char *nsp_atkstreamablecontent_type_as_string(void)
+{
+  return(atkstreamablecontent_type_name);
+}
+
+static char *nsp_atkstreamablecontent_type_short_string(NspObject *v)
+{
+  return(atkstreamablecontent_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkStreamableContent objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkStreamableContent *nsp_atkstreamablecontent_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkstreamablecontent_id)  ) return ((NspAtkStreamableContent *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkstreamablecontent));
+  return NULL;
+}
+
+int IsAtkStreamableContentObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkstreamablecontent_id);
+}
+
+int IsAtkStreamableContent(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkstreamablecontent_id);
+}
+
+NspAtkStreamableContent  *GetAtkStreamableContentCopy(Stack stack, int i)
+{
+  if (  GetAtkStreamableContent(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkStreamableContent  *GetAtkStreamableContent(Stack stack, int i)
+{
+  NspAtkStreamableContent *M;
+  if (( M = nsp_atkstreamablecontent_object(NthObj(i))) == NULLATKSTREAMABLECONTENT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkStreamableContent *atkstreamablecontent_copy(NspAtkStreamableContent *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkstreamablecontent);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkstreamablecontent);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkStreamableContent
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_streamable_content_get_n_mime_types(NspAtkStreamableContent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_streamable_content_get_n_mime_types(ATK_STREAMABLE_CONTENT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_streamable_content_get_mime_type(NspAtkStreamableContent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int i;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
+  ret = atk_streamable_content_get_mime_type(ATK_STREAMABLE_CONTENT(self->obj), i);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atkstreamablecontent_methods[] = {
+  {"get_n_mime_types",(nsp_method *) _wrap_atk_streamable_content_get_n_mime_types},
+  {"get_mime_type",(nsp_method *) _wrap_atk_streamable_content_get_mime_type},
+  { NULL, NULL}
+};
+
+static NspMethods *atkstreamablecontent_get_methods(void) { return atkstreamablecontent_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkstreamablecontent_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkTable ----------- */
+
+
+#define  NspAtkTable_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atktable.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkTable inherits from GObject 
+ */
+
+int nsp_type_atktable_id=0;
+NspTypeAtkTable *nsp_type_atktable=NULL;
+
+/*
+ * Type object for NspAtkTable 
+ * all the instance of NspTypeAtkTable share the same id. 
+ * nsp_type_atktable: is an instance of NspTypeAtkTable 
+ *    used for objects of NspAtkTable type (i.e built with new_atktable) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkTable *new_type_atktable(type_mode mode)
+{
+  NspTypeAtkTable *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atktable != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atktable;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atktable_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atktable_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atktable;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atktable */ 
+
+  top->s_type =  (s_type_func *) nsp_atktable_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atktable_type_short_string;
+  /* top->create = (create_func*) int_atktable_create;*/ 
+  
+  /* specific methods for atktable */
+      
+  type->init = (init_func *) init_atktable;
+
+  /* 
+   * NspAtkTable interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atktable_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkTable called nsp_type_atktable
+       */
+      type->id =  nsp_type_atktable_id = nsp_new_type_id();
+      nsp_type_atktable = type;
+      if ( nsp_register_type(nsp_type_atktable) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atktable, ATK_TYPE_TABLE);
+      return ( mode == T_BASE ) ? type : new_type_atktable(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atktable_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkTable instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atktable(NspAtkTable *Obj,NspTypeAtkTable *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkTable 
+ */
+
+NspAtkTable *new_atktable() 
+{
+  NspAtkTable *loc; 
+  /* type must exists */
+  nsp_type_atktable = new_type_atktable(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkTable)))== NULLATKTABLE) return loc;
+  /* initialize object */
+  if ( init_atktable(loc,nsp_type_atktable) == FAIL) return NULLATKTABLE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkTable 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atktable_type_name[]="AtkTable";
+static char atktable_short_type_name[]="AtkTable";
+
+static char *nsp_atktable_type_as_string(void)
+{
+  return(atktable_type_name);
+}
+
+static char *nsp_atktable_type_short_string(NspObject *v)
+{
+  return(atktable_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkTable objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkTable *nsp_atktable_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atktable_id)  ) return ((NspAtkTable *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atktable));
+  return NULL;
+}
+
+int IsAtkTableObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atktable_id);
+}
+
+int IsAtkTable(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atktable_id);
+}
+
+NspAtkTable  *GetAtkTableCopy(Stack stack, int i)
+{
+  if (  GetAtkTable(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkTable  *GetAtkTable(Stack stack, int i)
+{
+  NspAtkTable *M;
+  if (( M = nsp_atktable_object(NthObj(i))) == NULLATKTABLE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkTable *atktable_copy(NspAtkTable *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atktable);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atktable);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkTable
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_table_ref_at(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int row, column;
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
+  ret = atk_table_ref_at(ATK_TABLE(self->obj), row, column);
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_table_get_index_at(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int row, column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
+  ret = atk_table_get_index_at(ATK_TABLE(self->obj), row, column);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_column_at_index(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int index, ret;
+  if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
+  ret = atk_table_get_column_at_index(ATK_TABLE(self->obj), index);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_row_at_index(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int index, ret;
+  if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
+  ret = atk_table_get_row_at_index(ATK_TABLE(self->obj), index);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_n_columns(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_table_get_n_columns(ATK_TABLE(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_n_rows(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_table_get_n_rows(ATK_TABLE(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_column_extent_at(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int row, column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
+  ret = atk_table_get_column_extent_at(ATK_TABLE(self->obj), row, column);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_row_extent_at(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int row, column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
+  ret = atk_table_get_row_extent_at(ATK_TABLE(self->obj), row, column);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_caption(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = atk_table_get_caption(ATK_TABLE(self->obj));
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_table_get_column_description(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int column;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
+  ret = atk_table_get_column_description(ATK_TABLE(self->obj), column);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_column_header(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int column;
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
+  ret = atk_table_get_column_header(ATK_TABLE(self->obj), column);
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_table_get_row_description(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int row;
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
+  ret = atk_table_get_row_description(ATK_TABLE(self->obj), row);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_get_row_header(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int row;
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
+  ret = atk_table_get_row_header(ATK_TABLE(self->obj), row);
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_table_get_summary(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  AtkObject *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = atk_table_get_summary(ATK_TABLE(self->obj));
+  nsp_type_atkobject = new_type_atkobject(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_atk_table_set_caption(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *caption;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &caption) == FAIL) return RET_BUG;
+  atk_table_set_caption(ATK_TABLE(self->obj), ATK_OBJECT(caption->obj));
+  return 0;
+}
+
+static int _wrap_atk_table_set_column_description(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, string,t_end};
+  int column;
+  char *description;
+  if ( GetArgs(stack,rhs,opt,T,&column, &description) == FAIL) return RET_BUG;
+  atk_table_set_column_description(ATK_TABLE(self->obj), column, description);
+  return 0;
+}
+
+static int _wrap_atk_table_set_column_header(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, obj_check,t_end};
+  int column;
+  NspGObject *header;
+  if ( GetArgs(stack,rhs,opt,T,&column, &nsp_type_atkobject, &header) == FAIL) return RET_BUG;
+  atk_table_set_column_header(ATK_TABLE(self->obj), column, ATK_OBJECT(header->obj));
+  return 0;
+}
+
+static int _wrap_atk_table_set_row_description(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, string,t_end};
+  int row;
+  char *description;
+  if ( GetArgs(stack,rhs,opt,T,&row, &description) == FAIL) return RET_BUG;
+  atk_table_set_row_description(ATK_TABLE(self->obj), row, description);
+  return 0;
+}
+
+static int _wrap_atk_table_set_row_header(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, obj_check,t_end};
+  int row;
+  NspGObject *header;
+  if ( GetArgs(stack,rhs,opt,T,&row, &nsp_type_atkobject, &header) == FAIL) return RET_BUG;
+  atk_table_set_row_header(ATK_TABLE(self->obj), row, ATK_OBJECT(header->obj));
+  return 0;
+}
+
+static int _wrap_atk_table_set_summary(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspGObject *accessible;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &accessible) == FAIL) return RET_BUG;
+  atk_table_set_summary(ATK_TABLE(self->obj), ATK_OBJECT(accessible->obj));
+  return 0;
+}
+
+static int _wrap_atk_table_is_column_selected(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
+  ret = atk_table_is_column_selected(ATK_TABLE(self->obj), column);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_is_row_selected(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int row, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
+  ret = atk_table_is_row_selected(ATK_TABLE(self->obj), row);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_is_selected(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int row, column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
+  ret = atk_table_is_selected(ATK_TABLE(self->obj), row, column);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_add_row_selection(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int row, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
+  ret = atk_table_add_row_selection(ATK_TABLE(self->obj), row);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_remove_row_selection(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int row, ret;
+  if ( GetArgs(stack,rhs,opt,T,&row) == FAIL) return RET_BUG;
+  ret = atk_table_remove_row_selection(ATK_TABLE(self->obj), row);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_add_column_selection(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
+  ret = atk_table_add_column_selection(ATK_TABLE(self->obj), column);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_table_remove_column_selection(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int column, ret;
+  if ( GetArgs(stack,rhs,opt,T,&column) == FAIL) return RET_BUG;
+  ret = atk_table_remove_column_selection(ATK_TABLE(self->obj), column);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atktable_methods[] = {
+  {"ref_at",(nsp_method *) _wrap_atk_table_ref_at},
+  {"get_index_at",(nsp_method *) _wrap_atk_table_get_index_at},
+  {"get_column_at_index",(nsp_method *) _wrap_atk_table_get_column_at_index},
+  {"get_row_at_index",(nsp_method *) _wrap_atk_table_get_row_at_index},
+  {"get_n_columns",(nsp_method *) _wrap_atk_table_get_n_columns},
+  {"get_n_rows",(nsp_method *) _wrap_atk_table_get_n_rows},
+  {"get_column_extent_at",(nsp_method *) _wrap_atk_table_get_column_extent_at},
+  {"get_row_extent_at",(nsp_method *) _wrap_atk_table_get_row_extent_at},
+  {"get_caption",(nsp_method *) _wrap_atk_table_get_caption},
+  {"get_column_description",(nsp_method *) _wrap_atk_table_get_column_description},
+  {"get_column_header",(nsp_method *) _wrap_atk_table_get_column_header},
+  {"get_row_description",(nsp_method *) _wrap_atk_table_get_row_description},
+  {"get_row_header",(nsp_method *) _wrap_atk_table_get_row_header},
+  {"get_summary",(nsp_method *) _wrap_atk_table_get_summary},
+  {"set_caption",(nsp_method *) _wrap_atk_table_set_caption},
+  {"set_column_description",(nsp_method *) _wrap_atk_table_set_column_description},
+  {"set_column_header",(nsp_method *) _wrap_atk_table_set_column_header},
+  {"set_row_description",(nsp_method *) _wrap_atk_table_set_row_description},
+  {"set_row_header",(nsp_method *) _wrap_atk_table_set_row_header},
+  {"set_summary",(nsp_method *) _wrap_atk_table_set_summary},
+  {"is_column_selected",(nsp_method *) _wrap_atk_table_is_column_selected},
+  {"is_row_selected",(nsp_method *) _wrap_atk_table_is_row_selected},
+  {"is_selected",(nsp_method *) _wrap_atk_table_is_selected},
+  {"add_row_selection",(nsp_method *) _wrap_atk_table_add_row_selection},
+  {"remove_row_selection",(nsp_method *) _wrap_atk_table_remove_row_selection},
+  {"add_column_selection",(nsp_method *) _wrap_atk_table_add_column_selection},
+  {"remove_column_selection",(nsp_method *) _wrap_atk_table_remove_column_selection},
+  { NULL, NULL}
+};
+
+static NspMethods *atktable_get_methods(void) { return atktable_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atktable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkText ----------- */
+
+
+#define  NspAtkText_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atktext.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkText inherits from GObject 
+ */
+
+int nsp_type_atktext_id=0;
+NspTypeAtkText *nsp_type_atktext=NULL;
+
+/*
+ * Type object for NspAtkText 
+ * all the instance of NspTypeAtkText share the same id. 
+ * nsp_type_atktext: is an instance of NspTypeAtkText 
+ *    used for objects of NspAtkText type (i.e built with new_atktext) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkText *new_type_atktext(type_mode mode)
+{
+  NspTypeAtkText *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atktext != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atktext;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atktext_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atktext_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atktext;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atktext */ 
+
+  top->s_type =  (s_type_func *) nsp_atktext_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atktext_type_short_string;
+  /* top->create = (create_func*) int_atktext_create;*/ 
+  
+  /* specific methods for atktext */
+      
+  type->init = (init_func *) init_atktext;
+
+  /* 
+   * NspAtkText interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atktext_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkText called nsp_type_atktext
+       */
+      type->id =  nsp_type_atktext_id = nsp_new_type_id();
+      nsp_type_atktext = type;
+      if ( nsp_register_type(nsp_type_atktext) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atktext, ATK_TYPE_TEXT);
+      return ( mode == T_BASE ) ? type : new_type_atktext(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atktext_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkText instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atktext(NspAtkText *Obj,NspTypeAtkText *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkText 
+ */
+
+NspAtkText *new_atktext() 
+{
+  NspAtkText *loc; 
+  /* type must exists */
+  nsp_type_atktext = new_type_atktext(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkText)))== NULLATKTEXT) return loc;
+  /* initialize object */
+  if ( init_atktext(loc,nsp_type_atktext) == FAIL) return NULLATKTEXT;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkText 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atktext_type_name[]="AtkText";
+static char atktext_short_type_name[]="AtkText";
+
+static char *nsp_atktext_type_as_string(void)
+{
+  return(atktext_type_name);
+}
+
+static char *nsp_atktext_type_short_string(NspObject *v)
+{
+  return(atktext_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkText objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkText *nsp_atktext_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atktext_id)  ) return ((NspAtkText *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atktext));
+  return NULL;
+}
+
+int IsAtkTextObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atktext_id);
+}
+
+int IsAtkText(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atktext_id);
+}
+
+NspAtkText  *GetAtkTextCopy(Stack stack, int i)
+{
+  if (  GetAtkText(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkText  *GetAtkText(Stack stack, int i)
+{
+  NspAtkText *M;
+  if (( M = nsp_atktext_object(NthObj(i))) == NULLATKTEXT)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkText *atktext_copy(NspAtkText *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atktext);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atktext);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkText
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_atk_text_get_text(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int start_offset, end_offset;
+  gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&start_offset, &end_offset) == FAIL) return RET_BUG;
+  ret = atk_text_get_text(ATK_TEXT(self->obj), start_offset, end_offset);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_atk_text_get_character_at_offset(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int offset;
+  gunichar ret;
+  if ( GetArgs(stack,rhs,opt,T,&offset) == FAIL) return RET_BUG;
+  ret = atk_text_get_character_at_offset(ATK_TEXT(self->obj), offset);
+  if ( nsp_move_double(stack,1,(double) ret)== FAIL)return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_get_caret_offset(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_text_get_caret_offset(ATK_TEXT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_get_character_extents(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, s_int, s_int, s_int, obj,t_end};
+  int offset, x, y, width, height;
+  AtkCoordType coords;
+  NspObject *nsp_coords = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&offset, &x, &y, &width, &height, &nsp_coords) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coords, &coords)== FAIL)
+      return RET_BUG;
+  atk_text_get_character_extents(ATK_TEXT(self->obj), offset, &x, &y, &width, &height, coords);
+  return 0;
+}
+
+static int _wrap_atk_text_get_character_count(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_text_get_character_count(ATK_TEXT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_get_offset_at_point(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, obj,t_end};
+  int x, y, ret;
+  AtkCoordType coords;
+  NspObject *nsp_coords = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coords) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coords, &coords)== FAIL)
+      return RET_BUG;
+  ret = atk_text_get_offset_at_point(ATK_TEXT(self->obj), x, y, coords);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_get_n_selections(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  CheckRhs(0,0);
+  ret = atk_text_get_n_selections(ATK_TEXT(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_get_selection(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, s_int,t_end};
+  int selection_num, start_offset, end_offset;
+  gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&selection_num, &start_offset, &end_offset) == FAIL) return RET_BUG;
+  ret = atk_text_get_selection(ATK_TEXT(self->obj), selection_num, &start_offset, &end_offset);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+static int _wrap_atk_text_add_selection(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int,t_end};
+  int start_offset, end_offset, ret;
+  if ( GetArgs(stack,rhs,opt,T,&start_offset, &end_offset) == FAIL) return RET_BUG;
+  ret = atk_text_add_selection(ATK_TEXT(self->obj), start_offset, end_offset);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_remove_selection(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int selection_num, ret;
+  if ( GetArgs(stack,rhs,opt,T,&selection_num) == FAIL) return RET_BUG;
+  ret = atk_text_remove_selection(ATK_TEXT(self->obj), selection_num);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_set_selection(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, s_int, s_int,t_end};
+  int selection_num, start_offset, end_offset, ret;
+  if ( GetArgs(stack,rhs,opt,T,&selection_num, &start_offset, &end_offset) == FAIL) return RET_BUG;
+  ret = atk_text_set_selection(ATK_TEXT(self->obj), selection_num, start_offset, end_offset);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_atk_text_set_caret_offset(NspAtkText *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int offset, ret;
+  if ( GetArgs(stack,rhs,opt,T,&offset) == FAIL) return RET_BUG;
+  ret = atk_text_set_caret_offset(ATK_TEXT(self->obj), offset);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods atktext_methods[] = {
+  {"get_text",(nsp_method *) _wrap_atk_text_get_text},
+  {"get_character_at_offset",(nsp_method *) _wrap_atk_text_get_character_at_offset},
+  {"get_caret_offset",(nsp_method *) _wrap_atk_text_get_caret_offset},
+  {"get_character_extents",(nsp_method *) _wrap_atk_text_get_character_extents},
+  {"get_character_count",(nsp_method *) _wrap_atk_text_get_character_count},
+  {"get_offset_at_point",(nsp_method *) _wrap_atk_text_get_offset_at_point},
+  {"get_n_selections",(nsp_method *) _wrap_atk_text_get_n_selections},
+  {"get_selection",(nsp_method *) _wrap_atk_text_get_selection},
+  {"add_selection",(nsp_method *) _wrap_atk_text_add_selection},
+  {"remove_selection",(nsp_method *) _wrap_atk_text_remove_selection},
+  {"set_selection",(nsp_method *) _wrap_atk_text_set_selection},
+  {"set_caret_offset",(nsp_method *) _wrap_atk_text_set_caret_offset},
+  { NULL, NULL}
+};
+
+static NspMethods *atktext_get_methods(void) { return atktext_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atktext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* ----------- NspAtkValue ----------- */
+
+
+#define  NspAtkValue_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/atkvalue.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspAtkValue inherits from GObject 
+ */
+
+int nsp_type_atkvalue_id=0;
+NspTypeAtkValue *nsp_type_atkvalue=NULL;
+
+/*
+ * Type object for NspAtkValue 
+ * all the instance of NspTypeAtkValue share the same id. 
+ * nsp_type_atkvalue: is an instance of NspTypeAtkValue 
+ *    used for objects of NspAtkValue type (i.e built with new_atkvalue) 
+ * other instances are used for derived classes 
+ */
+NspTypeAtkValue *new_type_atkvalue(type_mode mode)
+{
+  NspTypeAtkValue *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_atkvalue != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_atkvalue;
+    }
+  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = atkvalue_attrs ; 
+  type->get_attrs = (attrs_func *)  int_get_attribute;
+  type->set_attrs = (attrs_func *)  int_set_attribute;
+  type->methods = atkvalue_get_methods; 
+  type->gtk_methods = TRUE; 
+  type->new = (new_func *) new_atkvalue;
+  
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for atkvalue */ 
+
+  top->s_type =  (s_type_func *) nsp_atkvalue_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_atkvalue_type_short_string;
+  /* top->create = (create_func*) int_atkvalue_create;*/ 
+  
+  /* specific methods for atkvalue */
+      
+  type->init = (init_func *) init_atkvalue;
+
+  /* 
+   * NspAtkValue interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_atkvalue_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAtkValue called nsp_type_atkvalue
+       */
+      type->id =  nsp_type_atkvalue_id = nsp_new_type_id();
+      nsp_type_atkvalue = type;
+      if ( nsp_register_type(nsp_type_atkvalue) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_atkvalue, ATK_TYPE_VALUE);
+      return ( mode == T_BASE ) ? type : new_type_atkvalue(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_atkvalue_id;
+       return type;
+    }
+}
+
+/*
+ * initialize NspAtkValue instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_atkvalue(NspAtkValue *Obj,NspTypeAtkValue *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type; 
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of NspAtkValue 
+ */
+
+NspAtkValue *new_atkvalue() 
+{
+  NspAtkValue *loc; 
+  /* type must exists */
+  nsp_type_atkvalue = new_type_atkvalue(T_BASE);
+  if ( (loc = malloc(sizeof(NspAtkValue)))== NULLATKVALUE) return loc;
+  /* initialize object */
+  if ( init_atkvalue(loc,nsp_type_atkvalue) == FAIL) return NULLATKVALUE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAtkValue 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char atkvalue_type_name[]="AtkValue";
+static char atkvalue_short_type_name[]="AtkValue";
+
+static char *nsp_atkvalue_type_as_string(void)
+{
+  return(atkvalue_type_name);
+}
+
+static char *nsp_atkvalue_type_short_string(NspObject *v)
+{
+  return(atkvalue_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAtkValue objects 
+ * Note that some of these functions could become MACROS 
+ *-----------------------------------------------------*/
+
+NspAtkValue *nsp_atkvalue_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_implements (O,nsp_type_atkvalue_id)  ) return ((NspAtkValue *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_atkvalue));
+  return NULL;
+}
+
+int IsAtkValueObj(Stack stack, int i)
+{
+  return nsp_object_implements(NthObj(i) , nsp_type_atkvalue_id);
+}
+
+int IsAtkValue(NspObject *O)
+{
+  return nsp_object_implements(O,nsp_type_atkvalue_id);
+}
+
+NspAtkValue  *GetAtkValueCopy(Stack stack, int i)
+{
+  if (  GetAtkValue(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAtkValue  *GetAtkValue(Stack stack, int i)
+{
+  NspAtkValue *M;
+  if (( M = nsp_atkvalue_object(NthObj(i))) == NULLATKVALUE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAtkValue *atkvalue_copy(NspAtkValue *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkvalue);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_atkvalue);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the AtkValue
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static NspMethods *atkvalue_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab atkvalue_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAtkHyperlink ----------- */
@@ -582,24 +4383,6 @@ static int _wrap_atk_object_get_role(NspAtkObject *self,Stack stack,int rhs,int 
   return 1;
 }
 
-static int _wrap_atk_object_get_layer(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
-{
-  gint ret;
-  CheckRhs(0,0);
-  ret = atk_object_get_layer(ATK_OBJECT(self->obj));
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-static int _wrap_atk_object_get_mdi_zorder(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int ret;
-  CheckRhs(0,0);
-  ret = atk_object_get_mdi_zorder(ATK_OBJECT(self->obj));
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
 static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   AtkStateSet *ret;
@@ -677,8 +4460,6 @@ static NspMethods atkobject_methods[] = {
   {"ref_accessible_child",(nsp_method *) _wrap_atk_object_ref_accessible_child},
   {"ref_relation_set",(nsp_method *) _wrap_atk_object_ref_relation_set},
   {"get_role",(nsp_method *) _wrap_atk_object_get_role},
-  {"get_layer",(nsp_method *) _wrap_atk_object_get_layer},
-  {"get_mdi_zorder",(nsp_method *) _wrap_atk_object_get_mdi_zorder},
   {"ref_state_set",(nsp_method *) _wrap_atk_object_ref_state_set},
   {"get_index_in_parent",(nsp_method *) _wrap_atk_object_get_index_in_parent},
   {"set_name",(nsp_method *) _wrap_atk_object_set_name},
@@ -1831,7 +5612,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1835 "atk.c"
+#line 5616 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -2736,24 +6517,6 @@ ret = atk_text_attribute_get_value(attr, index);
   return 1;
 }
 
-int _wrap_atk_remove_focus_tracker(Stack stack, int rhs, int opt, int lhs) /* remove_focus_tracker */
-{
-  int_types T[] = {s_int,t_end};
-  int tracker_id;
-  if ( GetArgs(stack,rhs,opt,T,&tracker_id) == FAIL) return RET_BUG;
-atk_remove_focus_tracker(tracker_id);
-  return 0;
-}
-
-int _wrap_atk_focus_tracker_notify(Stack stack, int rhs, int opt, int lhs) /* focus_tracker_notify */
-{
-  int_types T[] = {obj_check,t_end};
-  NspGObject *object;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &object) == FAIL) return RET_BUG;
-atk_focus_tracker_notify(ATK_OBJECT(object->obj));
-  return 0;
-}
-
 int _wrap_atk_remove_global_event_listener(Stack stack, int rhs, int opt, int lhs) /* remove_global_event_listener */
 {
   int_types T[] = {s_int,t_end};
@@ -2829,8 +6592,6 @@ static OpTab atk_func[]={
   {"atk_state_type_for_name", _wrap_atk_state_type_for_name},
   {"atk_text_attribute_get_name", _wrap_atk_text_attribute_get_name},
   {"atk_text_attribute_get_value", _wrap_atk_text_attribute_get_value},
-  {"atk_remove_focus_tracker", _wrap_atk_remove_focus_tracker},
-  {"atk_focus_tracker_notify", _wrap_atk_focus_tracker_notify},
   {"atk_remove_global_event_listener", _wrap_atk_remove_global_event_listener},
   {"atk_remove_key_event_listener", _wrap_atk_remove_key_event_listener},
   {"atk_get_root", _wrap_atk_get_root},
@@ -2877,4 +6638,4 @@ atk_add_constants(NspObject *module, const gchar *strip_prefix)
 }
 
 
-#line 2881 "atk.c"
+#line 6642 "atk.c"

@@ -145,14 +145,15 @@
   (return-type "gboolean")
 )
 
-(define-method remove_focus_handler
-  (of-object "AtkComponent")
-  (c-name "atk_component_remove_focus_handler")
-  (return-type "none")
-  (parameters
-    '("guint" "handler_id")
-  )
-)
+;; deprecated 
+;; (define-method remove_focus_handler
+;;   (of-object "AtkComponent")
+;;   (c-name "atk_component_remove_focus_handler")
+;;   (return-type "none")
+;;   (parameters
+;;     '("guint" "handler_id")
+;;   )
+;; )
 
 (define-method set_extents
   (of-object "AtkComponent")
@@ -188,6 +189,154 @@
   )
 )
 
+(define-function rectangle_get_type
+  (c-name "atk_rectangle_get_type")
+  (return-type "GType")
+)
+
+(define-method get_layer
+  (of-object "AtkComponent")
+  (c-name "atk_component_get_layer")
+  (return-type "AtkLayer")
+)
+
+(define-method get_mdi_zorder
+  (of-object "AtkComponent")
+  (c-name "atk_component_get_mdi_zorder")
+  (return-type "gint")
+)
+
+(define-method get_alpha
+  (of-object "AtkComponent")
+  (c-name "atk_component_get_alpha")
+  (return-type "gdouble")
+)
+
+(define-virtual add_focus_handler
+  (of-object "AtkComponent")
+  (return-type "guint")
+  (parameters
+    '("AtkFocusHandler" "handler")
+  )
+)
+
+(define-virtual contains
+  (of-object "AtkComponent")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual ref_accessible_at_point
+  (of-object "AtkComponent")
+  (return-type "AtkObject*")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual get_extents
+  (of-object "AtkComponent")
+  (return-type "none")
+  (parameters
+    '("gint*" "x")
+    '("gint*" "y")
+    '("gint*" "width")
+    '("gint*" "height")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual get_position
+  (of-object "AtkComponent")
+  (return-type "none")
+  (parameters
+    '("gint*" "x")
+    '("gint*" "y")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual get_size
+  (of-object "AtkComponent")
+  (return-type "none")
+  (parameters
+    '("gint*" "width")
+    '("gint*" "height")
+  )
+)
+
+(define-virtual grab_focus
+  (of-object "AtkComponent")
+  (return-type "gboolean")
+)
+
+(define-virtual remove_focus_handler
+  (of-object "AtkComponent")
+  (return-type "none")
+  (parameters
+    '("guint" "handler_id")
+  )
+)
+
+(define-virtual set_extents
+  (of-object "AtkComponent")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "width")
+    '("gint" "height")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual set_position
+  (of-object "AtkComponent")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("AtkCoordType" "coord_type")
+  )
+)
+
+(define-virtual set_size
+  (of-object "AtkComponent")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+  )
+)
+
+(define-virtual get_layer
+  (of-object "AtkComponent")
+  (return-type "AtkLayer")
+)
+
+(define-virtual get_mdi_zorder
+  (of-object "AtkComponent")
+  (return-type "gint")
+)
+
+(define-virtual bounds_changed
+  (of-object "AtkComponent")
+  (return-type "none")
+  (parameters
+    '("AtkRectangle*" "bounds")
+  )
+)
+
+(define-virtual get_alpha
+  (of-object "AtkComponent")
+  (return-type "gdouble")
+)
 
 
 ;; From /usr/include/atk-1.0/atk/atkdocument.h
@@ -549,17 +698,19 @@
   (return-type "AtkRole")
 )
 
-(define-method get_layer
-  (of-object "AtkObject")
-  (c-name "atk_object_get_layer")
-  (return-type "AtkLayer")
-)
+;; deprecated Use 'atk_component_get_layer'
+;; (define-method get_layer
+;;   (of-object "AtkObject")
+;;   (c-name "atk_object_get_layer")
+;;   (return-type "AtkLayer")
+;; )
 
-(define-method get_mdi_zorder
-  (of-object "AtkObject")
-  (c-name "atk_object_get_mdi_zorder")
-  (return-type "gint")
-)
+;; deprecated Use 'atk_component_get_mdi_zorder' 
+;; (define-method get_mdi_zorder
+;;   (of-object "AtkObject")
+;;   (c-name "atk_object_get_mdi_zorder")
+;;   (return-type "gint")
+;; )
 
 (define-method ref_state_set
   (of-object "AtkObject")
@@ -1315,41 +1466,41 @@
   )
 )
 
-(define-method get_text_after_offset
-  (of-object "AtkText")
-  (c-name "atk_text_get_text_after_offset")
-  (return-type "gchar*")
-  (parameters
-    '("gint" "offset")
-    '("AtkTextBoundary" "boundary_type")
-    '("gint*" "start_offset")
-    '("gint*" "end_offset")
-  )
-)
+;; (define-method get_text_after_offset
+;;   (of-object "AtkText")
+;;   (c-name "atk_text_get_text_after_offset")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gint" "offset")
+;;     '("AtkTextBoundary" "boundary_type")
+;;     '("gint*" "start_offset")
+;;     '("gint*" "end_offset")
+;;   )
+;; )
 
-(define-method get_text_at_offset
-  (of-object "AtkText")
-  (c-name "atk_text_get_text_at_offset")
-  (return-type "gchar*")
-  (parameters
-    '("gint" "offset")
-    '("AtkTextBoundary" "boundary_type")
-    '("gint*" "start_offset")
-    '("gint*" "end_offset")
-  )
-)
+;; (define-method get_text_at_offset
+;;   (of-object "AtkText")
+;;   (c-name "atk_text_get_text_at_offset")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gint" "offset")
+;;     '("AtkTextBoundary" "boundary_type")
+;;     '("gint*" "start_offset")
+;;     '("gint*" "end_offset")
+;;   )
+;; )
 
-(define-method get_text_before_offset
-  (of-object "AtkText")
-  (c-name "atk_text_get_text_before_offset")
-  (return-type "gchar*")
-  (parameters
-    '("gint" "offset")
-    '("AtkTextBoundary" "boundary_type")
-    '("gint*" "start_offset")
-    '("gint*" "end_offset")
-  )
-)
+;; (define-method get_text_before_offset
+;;   (of-object "AtkText")
+;;   (c-name "atk_text_get_text_before_offset")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gint" "offset")
+;;     '("AtkTextBoundary" "boundary_type")
+;;     '("gint*" "start_offset")
+;;     '("gint*" "end_offset")
+;;   )
+;; )
 
 (define-method get_caret_offset
   (of-object "AtkText")
@@ -1501,13 +1652,14 @@
   )
 )
 
-(define-function remove_focus_tracker
-  (c-name "atk_remove_focus_tracker")
-  (return-type "none")
-  (parameters
-    '("guint" "tracker_id")
-  )
-)
+;; deprecated
+;; (define-function remove_focus_tracker
+;;   (c-name "atk_remove_focus_tracker")
+;;   (return-type "none")
+;;   (parameters
+;;     '("guint" "tracker_id")
+;;   )
+;; )
 
 (define-function focus_tracker_init
   (c-name "atk_focus_tracker_init")
@@ -1517,13 +1669,14 @@
   )
 )
 
-(define-function focus_tracker_notify
-  (c-name "atk_focus_tracker_notify")
-  (return-type "none")
-  (parameters
-    '("AtkObject*" "object")
-  )
-)
+;; deprecated
+;; (define-function focus_tracker_notify
+;;   (c-name "atk_focus_tracker_notify")
+;;   (return-type "none")
+;;   (parameters
+;;     '("AtkObject*" "object")
+;;   )
+;; )
 
 (define-function add_global_event_listener
   (c-name "atk_add_global_event_listener")

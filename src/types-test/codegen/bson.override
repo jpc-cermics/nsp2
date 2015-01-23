@@ -875,7 +875,7 @@ static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t le
 
 static NspObject *nsp_bson_iter_to_hash(const char *name, bson_iter_t *iter)
 {
-  NspObject *Obj;
+  NspObject *Obj=NULL;
   const bson_uint8_t *child = NULL;
   bson_uint32_t child_len = -1;
   bson_iter_document(iter, &child_len, &child);
@@ -890,34 +890,33 @@ static NspObject *nsp_bson_iter_to_hash(const char *name, bson_iter_t *iter)
 
 static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter)
 {
-  NspObject *Obj = NULL;
   const char *key =bson_iter_key(iter);
   switch (bson_iter_type_unsafe (iter)) 
     {
-    case BSON_TYPE_EOD:       Obj = NULL;break;
-    case BSON_TYPE_DOUBLE:    Obj = nsp_bson_iter_to_nspmatrix(key,iter);break;
-    case BSON_TYPE_UTF8:      Obj = nsp_bson_iter_to_nspsmatrix(key,iter);break;
-    case BSON_TYPE_DOCUMENT:  Obj = nsp_bson_iter_to_hash(key,iter);break;
-    case BSON_TYPE_ARRAY:     Obj = nsp_bson_iter_to_cells(key,iter);break;
-    case BSON_TYPE_BINARY:    Obj = nsp_bson_iter_to_nspserial(key,iter);break;
-    case BSON_TYPE_UNDEFINED: Obj = NULL;break;
-    case BSON_TYPE_OID:	      Obj = NULL;break;
-    case BSON_TYPE_BOOL:      Obj = nsp_bson_iter_to_nspbmatrix(key,iter);break;
-    case BSON_TYPE_DATE_TIME: Obj = nsp_bson_iter_to_nspdatetime(key,iter);break;
-    case BSON_TYPE_NULL:      Obj = NULL;break;
-    case BSON_TYPE_REGEX:     Obj = NULL;break;
-    case BSON_TYPE_DBPOINTER: Obj = NULL;break;
-    case BSON_TYPE_CODE:      Obj = NULL;break;
-    case BSON_TYPE_SYMBOL:    Obj = NULL;break;
-    case BSON_TYPE_CODEWSCOPE:Obj = NULL;break;
-    case BSON_TYPE_INT32:     Obj = NULL;break;
-    case BSON_TYPE_TIMESTAMP: Obj = NULL;break;
-    case BSON_TYPE_INT64:     Obj = NULL;break;
-    case BSON_TYPE_MAXKEY:    Obj = NULL;break;
-    case BSON_TYPE_MINKEY:    Obj = NULL;break;
-    default: Obj=NULL; break;
+    case BSON_TYPE_EOD:       return NULL;break;
+    case BSON_TYPE_DOUBLE:    return nsp_bson_iter_to_nspmatrix(key,iter);break;
+    case BSON_TYPE_UTF8:      return nsp_bson_iter_to_nspsmatrix(key,iter);break;
+    case BSON_TYPE_DOCUMENT:  return nsp_bson_iter_to_hash(key,iter);break;
+    case BSON_TYPE_ARRAY:     return nsp_bson_iter_to_cells(key,iter);break;
+    case BSON_TYPE_BINARY:    return nsp_bson_iter_to_nspserial(key,iter);break;
+    case BSON_TYPE_UNDEFINED: return NULL;break;
+    case BSON_TYPE_OID:	      return NULL;break;
+    case BSON_TYPE_BOOL:      return nsp_bson_iter_to_nspbmatrix(key,iter);break;
+    case BSON_TYPE_DATE_TIME: return nsp_bson_iter_to_nspdatetime(key,iter);break;
+    case BSON_TYPE_NULL:      return NULL;break;
+    case BSON_TYPE_REGEX:     return NULL;break;
+    case BSON_TYPE_DBPOINTER: return NULL;break;
+    case BSON_TYPE_CODE:      return NULL;break;
+    case BSON_TYPE_SYMBOL:    return NULL;break;
+    case BSON_TYPE_CODEWSCOPE:return NULL;break;
+    case BSON_TYPE_INT32:     return NULL;break;
+    case BSON_TYPE_TIMESTAMP: return NULL;break;
+    case BSON_TYPE_INT64:     return NULL;break;
+    case BSON_TYPE_MAXKEY:    return NULL;break;
+    case BSON_TYPE_MINKEY:    return NULL;break;
+    default: return NULL;break;
     }
-  return Obj;
+  return NULL;
 }
 
 static NspHash *nsp_bson_to_hash(const char *name,bson_t * b)

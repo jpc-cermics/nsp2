@@ -85,8 +85,9 @@ int nsp_record_data(NspMatrix **M,int seconds,int sample_rate,int channels, int 
   threadData.channels = channels;
   threadData.pa_print = Scierror;
   threadData.o_device = o_device;
-  if (!g_thread_supported ()) g_thread_init (NULL);
-  g_thread_create(record_data_thread,&threadData,FALSE,NULL);
+  /* if (!g_thread_supported ()) g_thread_init (NULL); */
+  /* g_thread_create(record_data_thread,&threadData,FALSE,NULL); */
+  g_thread_new("record_data",record_data_thread,&threadData);
   /* we need to wait for the end */
   guint timer_pa = g_timeout_add(100,  (GSourceFunc) timeout_portaudio , NULL);
   signal(SIGINT,controlC_handler_portaudio);

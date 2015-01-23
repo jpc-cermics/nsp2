@@ -652,7 +652,7 @@ int int_linprog(Stack stack, int rhs, int opt, int lhs)
     *redcosts=NULLMAT, *lambda=NULLMAT, *basis_info_str=NULLMAT, *basis_info_aux=NULLMAT, *heur_sol=NULLMAT;
   NspObject *A, *Ae;
   NspHash *solver_options = NULLHASH, *extra = NULLHASH, *basis_info = NULLHASH;
-  Solvers_params SolPar;
+  Solvers_params SolPar={0};
   char *sense_str = NULL, *solver_str = NULL;
   NspSMatrix *var_type = NULLSMAT;
   Boolean binprog=FALSE, intprog=FALSE, mipprog=FALSE;
