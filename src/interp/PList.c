@@ -1984,6 +1984,7 @@ static void _nsp_plist_print(PList List, int indent)
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
 	      _nsp_plist_print_arg(List,indent);
+	      Sciprintf((j == L->arity -1 ) ? "" : ",");
 	      List = List->next;
 	    }
 	  Sciprintf(")");
