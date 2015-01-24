@@ -193,7 +193,7 @@ NspObject *module_path_search_name(NspList *L,NspSMatrix *Sm,char **oname)
 {
   struct stat stat_buf;
   int i;
-  char buf[MAX_PATH];
+  char buf[FSIZE];
   NspObject *Ob;
   if ( L == NULLLIST) return NULLOBJ;
   /* search oname in L */
@@ -250,7 +250,7 @@ NspObject *module_path_search_name(NspList *L,NspSMatrix *Sm,char **oname)
 NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname)
 {
   NspFile *F;
-  char buf[MAX_PATH], *loc;
+  char buf[FSIZE], *loc;
   /* is object in the module search path */ 
   NspObject *Ob=module_path_search_name(L,Sm,oname);
   if ( Ob == NULLOBJ) return NULLOBJ; 
