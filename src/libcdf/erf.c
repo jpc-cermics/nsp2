@@ -17,9 +17,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "nsp/object.h" /* for file.h */
-#include "cdf.h"
+#include <nsp/nsp.h>
+#include <nsp/object.h> /* for file.h */
 #include <nsp/math.h>
+
+#include "cdf.h"
+
+extern int is_little_endian(void);
 
 static double erf_approx(double x);
 static double erf_approx1(double x);
