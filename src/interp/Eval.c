@@ -475,15 +475,15 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nargs = 0;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      /* evaluate arguments */
 	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) <0 ) 
 		{
 		  /* clean and return */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
 		  SHOWBUG(stack,n,L1);
 		}
-	      if ( n != 1)
+	      if ( n > 1)
 		{
+		  /* we accept n== 0 since some elements may be just comments */
 		  Scierror("Error: evaluation of argument %d in a matrix concatenation ``%s'' returned %d arguments while expecting one\n",
 			   j+1,nsp_astcode_to_name(L->type),n);
 		  /* clean and return */
@@ -518,7 +518,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      loc= loc->next;
 	    }
-	  return n;
+	  return nargs;
 	  break;
 #else 
 	case ROWCONCAT:
