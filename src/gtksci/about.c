@@ -31,18 +31,15 @@ void create_nsp_about(void)
   GdkPixbuf *pixbuf, *transparent;
   
   const gchar *authors[] = {
-    "J.Ph Chancelier",
-    "Bruno Pinçon",
+    "J.-Ph. Chancelier, B. Pinçon",
     "and many more for",
-    "all library and interfaced tools",
+    "all libraries and interfaced tools",
     NULL
   };
 
   const gchar *documentors[] = {
-    "J.Ph Chancelier",
-    "F. Delebecque",
-    "Bruno Pinçon",
-    "and many more...",
+    "J.Ph Chancelier, F. Delebecque, Bruno Pinçon",
+    "and many more.",
     NULL
   };
 
