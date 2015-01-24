@@ -2355,3 +2355,128 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+%%
+override gdk_window_lookup kwargs
+
+/* cast of GdkNative */
+
+int _wrap_gdk_window_lookup(Stack stack, int rhs, int opt, int lhs) /* window_lookup */
+{
+  int_types T[] = {s_int,t_end};
+  gulong anid;
+  GdkWindow *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&anid) == FAIL) return RET_BUG;
+  ret = gdk_window_lookup((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT anid);
+  nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_pixmap_foreign_new
+
+int _wrap_gdk_pixmap_foreign_new(Stack stack, int rhs, int opt, int lhs) /* gdk_pixmap_foreign_new */
+{
+  int_types T[] = {s_int,t_end};
+  gulong anid;
+  GdkPixmap *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&anid) == FAIL) return RET_BUG;
+  ret = gdk_pixmap_foreign_new((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT anid);
+  nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixmap))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_window_foreign_new
+
+int _wrap_gdk_window_foreign_new(Stack stack, int rhs, int opt, int lhs) /* window_foreign_new */
+{
+  int_types T[] = {s_int,t_end};
+  gulong anid;
+  GdkWindow *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&anid) == FAIL) return RET_BUG;
+  ret = gdk_window_foreign_new((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT anid);
+  nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_pixmap_lookup
+
+int _wrap_gdk_pixmap_lookup(Stack stack, int rhs, int opt, int lhs) /* gdk_pixmap_lookup */
+{
+  int_types T[] = {s_int,t_end};
+  gulong anid;
+  GdkPixmap *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&anid) == FAIL) return RET_BUG;
+  ret = gdk_pixmap_lookup((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT anid);
+  nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixmap))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_selection_send_notify
+
+int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* selection_send_notify */
+{
+  int_types T[] = {s_int, obj, obj, obj, s_int,t_end};
+  gulong requestor, time;
+  GdkAtom selection, target, property;
+  NspObject *nsp_selection = NULL, *nsp_target = NULL, *nsp_property = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&requestor, &nsp_selection, &nsp_target, &nsp_property, &time) == FAIL) return RET_BUG;
+  if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
+  if ( nsp_gdk_atom_from_object(nsp_target,&target)==FAIL) return RET_BUG;
+  if ( nsp_gdk_atom_from_object(nsp_property,&property)==FAIL) return RET_BUG;
+  gdk_selection_send_notify((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT requestor, selection, target, property, time);
+  return 0;
+}
+
+%%
+override gdk_event_send_client_message
+
+static int _wrap_gdk_event_send_client_message(NspGdkEvent *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong winid;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&winid) == FAIL) return RET_BUG;
+  ret = gdk_event_send_client_message(NSP_GBOXED_GET(self, GdkEvent),
+				      (GdkNativeWindow)  NSP_POINTER_CAST_TO_INT winid);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override gdk_event_send_client_message_for_display
+
+int _wrap_gdk_event_send_client_message_for_display(Stack stack, int rhs, int opt, int lhs) 
+{
+  int_types T[] = {obj_check, obj, s_int,t_end};
+  NspGObject *display;
+  GdkEvent *event = NULL;
+  NspObject *nsp_event;
+  gulong winid;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_event, &winid) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
+      event = nspg_boxed_get(nsp_event, GdkEvent);
+  else {
+      Scierror( "event should be a GdkEvent");
+      return RET_BUG;
+  }
+ret = gdk_event_send_client_message_for_display(GDK_DISPLAY(display->obj), event, 
+						(GdkNativeWindow)  NSP_POINTER_CAST_TO_INT winid);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}

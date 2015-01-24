@@ -72,7 +72,8 @@ void create_plugged_main_menu(void)
 
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
-    Plug = gtk_plug_new(atoi(nsp_getenv("SCIWIN")));
+    Plug = gtk_plug_new((GdkNativeWindow) NSP_POINTER_CAST_TO_INT 
+			atoi(nsp_getenv("SCIWIN")));
     main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;

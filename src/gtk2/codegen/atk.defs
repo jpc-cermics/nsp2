@@ -118,26 +118,28 @@
   )
 )
 
-(define-method get_position
-  (of-object "AtkComponent")
-  (c-name "atk_component_get_position")
-  (return-type "none")
-  (parameters
-    '("gint*" "x")
-    '("gint*" "y")
-    '("AtkCoordType" "coord_type")
-  )
-)
+;; deprecated: use get_extents
+;; (define-method get_position
+;;   (of-object "AtkComponent")
+;;   (c-name "atk_component_get_position")
+;;   (return-type "none")
+;;   (parameters
+;;     '("gint*" "x")
+;;     '("gint*" "y")
+;;     '("AtkCoordType" "coord_type")
+;;   )
+;; )
 
-(define-method get_size
-  (of-object "AtkComponent")
-  (c-name "atk_component_get_size")
-  (return-type "none")
-  (parameters
-    '("gint*" "width")
-    '("gint*" "height")
-  )
-)
+;; deprecated: use get_extents
+;; (define-method get_size
+;;   (of-object "AtkComponent")
+;;   (c-name "atk_component_get_size")
+;;   (return-type "none")
+;;   (parameters
+;;     '("gint*" "width")
+;;     '("gint*" "height")
+;;   )
+;; )
 
 (define-method grab_focus
   (of-object "AtkComponent")
@@ -346,11 +348,12 @@
   (return-type "GType")
 )
 
-(define-method get_document_type
-  (of-object "AtkDocument")
-  (c-name "atk_document_get_document_type")
-  (return-type "const-gchar*")
-)
+;; deprecated: 
+;; (define-method get_document_type
+;;   (of-object "AtkDocument")
+;;   (c-name "atk_document_get_document_type")
+;;   (return-type "const-gchar*")
+;; )
 
 (define-method get_document
   (of-object "AtkDocument")
@@ -769,14 +772,14 @@
   )
 )
 
-(define-method remove_property_change_handler
-  (of-object "AtkObject")
-  (c-name "atk_object_remove_property_change_handler")
-  (return-type "none")
-  (parameters
-    '("guint" "handler_id")
-  )
-)
+;; (define-method remove_property_change_handler
+;;   (of-object "AtkObject")
+;;   (c-name "atk_object_remove_property_change_handler")
+;;   (return-type "none")
+;;   (parameters
+;;     '("guint" "handler_id")
+;;   )
+;; )
 
 (define-method notify_state_change
   (of-object "AtkObject")
@@ -1190,33 +1193,33 @@
   )
 )
 
-(define-method get_index_at
-  (of-object "AtkTable")
-  (c-name "atk_table_get_index_at")
-  (return-type "gint")
-  (parameters
-    '("gint" "row")
-    '("gint" "column")
-  )
-)
+;; (define-method get_index_at
+;;   (of-object "AtkTable")
+;;   (c-name "atk_table_get_index_at")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gint" "row")
+;;     '("gint" "column")
+;;   )
+;; )
 
-(define-method get_column_at_index
-  (of-object "AtkTable")
-  (c-name "atk_table_get_column_at_index")
-  (return-type "gint")
-  (parameters
-    '("gint" "index")
-  )
-)
+;; (define-method get_column_at_index
+;;   (of-object "AtkTable")
+;;   (c-name "atk_table_get_column_at_index")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gint" "index")
+;;   )
+;; )
 
-(define-method get_row_at_index
-  (of-object "AtkTable")
-  (c-name "atk_table_get_row_at_index")
-  (return-type "gint")
-  (parameters
-    '("gint" "index")
-  )
-)
+;; (define-method get_row_at_index
+;;   (of-object "AtkTable")
+;;   (c-name "atk_table_get_row_at_index")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gint" "index")
+;;   )
+;; )
 
 (define-method get_n_columns
   (of-object "AtkTable")

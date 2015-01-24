@@ -7286,7 +7286,134 @@ static int _wrap_gtk_radio_action_set_current_value(NspGtkRadioAction *self,Stac
   Scierror("Error: gtk_radio_action_set_current_value only exists for gtk >= 2.10\n");
   return RET_BUG;
 #endif 
+}
 
+%%
+override gtk_plug_new
+
+static int
+_wrap_gtkplug_new(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong socket_id;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&socket_id) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)gtk_plug_new((GdkNativeWindow) NSP_POINTER_CAST_TO_INT socket_id)) 
+      == NULL) return RET_BUG;
+
+  nsp_type_gtkplug = new_type_gtkplug(T_BASE);
+    /* g_xxxx_object_ref(ret); XXXwe don't own the first reference of windows */
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkplug );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gtk_plug_construct
+
+static int _wrap_gtk_plug_construct(NspGtkPlug *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong socket_id;
+  if ( GetArgs(stack,rhs,opt,T,&socket_id) == FAIL) return RET_BUG;
+  gtk_plug_construct(GTK_PLUG(self->obj),(GdkNativeWindow) NSP_POINTER_CAST_TO_INT socket_id);
+  return 0;
+}
+
+%%
+override gtk_plug_construct_for_display
+
+static int _wrap_gtk_plug_construct_for_display(NspGtkPlug *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, s_int,t_end};
+  NspGObject *display;
+  gulong socket_id;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &socket_id) == FAIL) return RET_BUG;
+  gtk_plug_construct_for_display(GTK_PLUG(self->obj), GDK_DISPLAY(display->obj),
+				 (GdkNativeWindow) NSP_POINTER_CAST_TO_INT socket_id);
+  return 0;
+}
+
+%%
+override gtk_socket_steal
+
+static int _wrap_gtk_socket_steal(NspGtkSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong wid;
+  if ( GetArgs(stack,rhs,opt,T,&wid) == FAIL) return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
+  gtk_socket_steal(GTK_SOCKET(self->obj),(GdkNativeWindow) NSP_POINTER_CAST_TO_INT wid);
+  return 0;
+}
+
+%%
+override gtk_socket_add_id
+
+static int _wrap_gtk_socket_add_id(NspGtkSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong window_id;
+  if ( GetArgs(stack,rhs,opt,T,&window_id) == FAIL) return RET_BUG;
+  gtk_socket_add_id(GTK_SOCKET(self->obj), (GdkNativeWindow) NSP_POINTER_CAST_TO_INT window_id);
+  return 0;
+}
+
+%%
+override gtk_socket_get_id
+
+static int _wrap_gtk_socket_get_id(NspGtkSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gulong ret;
+  CheckRhs(0,0);
+  ret = NSP_POINTER_CAST_TO_INT gtk_socket_get_id(GTK_SOCKET(self->obj));
+ if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override gtk_socket_steal 
+
+static int _wrap_gtk_socket_steal(NspGtkSocket *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  gulong wid;
+  if ( GetArgs(stack,rhs,opt,T,&wid) == FAIL) return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
+  gtk_socket_steal(GTK_SOCKET(self->obj),(GdkNativeWindow) NSP_POINTER_CAST_TO_INT wid);
+  return 0;
+}
+
+%%
+override gtk_plug_get_id
+
+static int _wrap_gtk_plug_get_id(NspGtkPlug *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gulong ret;
+  CheckRhs(0,0);
+  ret = NSP_POINTER_CAST_TO_INT gtk_plug_get_id(GTK_PLUG(self->obj));
+ if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override gtk_plug_new_for_display
+
+int _wrap_gtk_plug_new_for_display(Stack stack, int rhs, int opt, int lhs) /* plug_new_for_display */
+{
+  int_types T[] = {obj_check, s_int,t_end};
+  NspGObject *display;
+  gulong socket_id;
+  GtkWidget *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &socket_id) == FAIL) return RET_BUG;
+  Scierror("%s: deprecated use gtk.Plug(socket_id, display)",NspFname(stack)); return RET_BUG;
+ret = gtk_plug_new_for_display(GDK_DISPLAY(display->obj), (GdkNativeWindow) NSP_POINTER_CAST_TO_INT socket_id);
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
 }
 
 %%

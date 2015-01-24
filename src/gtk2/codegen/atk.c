@@ -801,28 +801,6 @@ static int _wrap_atk_component_get_extents(NspAtkComponent *self,Stack stack,int
   return 0;
 }
 
-static int _wrap_atk_component_get_position(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int, s_int, obj,t_end};
-  int x, y;
-  AtkCoordType coord_type;
-  NspObject *nsp_coord_type = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&x, &y, &nsp_coord_type) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_coord_type, &coord_type)== FAIL)
-      return RET_BUG;
-  atk_component_get_position(ATK_COMPONENT(self->obj), &x, &y, coord_type);
-  return 0;
-}
-
-static int _wrap_atk_component_get_size(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int, s_int,t_end};
-  int width, height;
-  if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
-  atk_component_get_size(ATK_COMPONENT(self->obj), &width, &height);
-  return 0;
-}
-
 static int _wrap_atk_component_grab_focus(NspAtkComponent *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -901,8 +879,6 @@ static NspMethods atkcomponent_methods[] = {
   {"contains",(nsp_method *) _wrap_atk_component_contains},
   {"ref_accessible_at_point",(nsp_method *) _wrap_atk_component_ref_accessible_at_point},
   {"get_extents",(nsp_method *) _wrap_atk_component_get_extents},
-  {"get_position",(nsp_method *) _wrap_atk_component_get_position},
-  {"get_size",(nsp_method *) _wrap_atk_component_get_size},
   {"grab_focus",(nsp_method *) _wrap_atk_component_grab_focus},
   {"set_extents",(nsp_method *) _wrap_atk_component_set_extents},
   {"set_position",(nsp_method *) _wrap_atk_component_set_position},
@@ -1112,21 +1088,7 @@ NspAtkDocument *atkdocument_copy(NspAtkDocument *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_atk_document_get_document_type(NspAtkDocument *self,Stack stack,int rhs,int opt,int lhs)
-{
-  const gchar *ret;
-  CheckRhs(0,0);
-  ret = atk_document_get_document_type(ATK_DOCUMENT(self->obj));
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  return 1;
-}
-
-static NspMethods atkdocument_methods[] = {
-  {"get_document_type",(nsp_method *) _wrap_atk_document_get_document_type},
-  { NULL, NULL}
-};
-
-static NspMethods *atkdocument_get_methods(void) { return atkdocument_methods;};
+static NspMethods *atkdocument_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -2995,36 +2957,6 @@ static int _wrap_atk_table_ref_at(NspAtkTable *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-static int _wrap_atk_table_get_index_at(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int, s_int,t_end};
-  int row, column, ret;
-  if ( GetArgs(stack,rhs,opt,T,&row, &column) == FAIL) return RET_BUG;
-  ret = atk_table_get_index_at(ATK_TABLE(self->obj), row, column);
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-static int _wrap_atk_table_get_column_at_index(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int index, ret;
-  if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
-  ret = atk_table_get_column_at_index(ATK_TABLE(self->obj), index);
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-static int _wrap_atk_table_get_row_at_index(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int index, ret;
-  if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
-  ret = atk_table_get_row_at_index(ATK_TABLE(self->obj), index);
-  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
 static int _wrap_atk_table_get_n_columns(NspAtkTable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -3267,9 +3199,6 @@ static int _wrap_atk_table_remove_column_selection(NspAtkTable *self,Stack stack
 
 static NspMethods atktable_methods[] = {
   {"ref_at",(nsp_method *) _wrap_atk_table_ref_at},
-  {"get_index_at",(nsp_method *) _wrap_atk_table_get_index_at},
-  {"get_column_at_index",(nsp_method *) _wrap_atk_table_get_column_at_index},
-  {"get_row_at_index",(nsp_method *) _wrap_atk_table_get_row_at_index},
   {"get_n_columns",(nsp_method *) _wrap_atk_table_get_n_columns},
   {"get_n_rows",(nsp_method *) _wrap_atk_table_get_n_rows},
   {"get_column_extent_at",(nsp_method *) _wrap_atk_table_get_column_extent_at},
@@ -4443,15 +4372,6 @@ static int _wrap_atk_object_set_role(NspAtkObject *self,Stack stack,int rhs,int 
   return 0;
 }
 
-static int _wrap_atk_object_remove_property_change_handler(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int handler_id;
-  if ( GetArgs(stack,rhs,opt,T,&handler_id) == FAIL) return RET_BUG;
-  atk_object_remove_property_change_handler(ATK_OBJECT(self->obj), handler_id);
-  return 0;
-}
-
 static NspMethods atkobject_methods[] = {
   {"get_name",(nsp_method *) _wrap_atk_object_get_name},
   {"get_description",(nsp_method *) _wrap_atk_object_get_description},
@@ -4466,7 +4386,6 @@ static NspMethods atkobject_methods[] = {
   {"set_description",(nsp_method *) _wrap_atk_object_set_description},
   {"set_parent",(nsp_method *) _wrap_atk_object_set_parent},
   {"set_role",(nsp_method *) _wrap_atk_object_set_role},
-  {"remove_property_change_handler",(nsp_method *) _wrap_atk_object_remove_property_change_handler},
   { NULL, NULL}
 };
 
@@ -5612,7 +5531,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 5616 "atk.c"
+#line 5535 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -6638,4 +6557,4 @@ atk_add_constants(NspObject *module, const gchar *strip_prefix)
 }
 
 
-#line 6642 "atk.c"
+#line 6561 "atk.c"
