@@ -18,14 +18,15 @@
 #include <nsp/type.h> 
 #include <nsp/hash.h> 
 #include <nsp/file.h> 
+#include <nsp/system.h> 
 
-#include "nsp/datas.h"
-#include "nsp/interf.h" 
+#include <nsp/datas.h>
+#include <nsp/interf.h> 
 
-#include "nsp/mod.h" 
-#include "nsp/module.h" 
-#include "nsp/modulelt.h" 
-#include "nsp/me.h" 
+#include <nsp/mod.h> 
+#include <nsp/module.h> 
+#include <nsp/modulelt.h> 
+#include <nsp/me.h> 
 
 /*********************************************
  * Search module mname in module list L 
@@ -51,12 +52,9 @@ NspModule *nsp_search_module(NspList *L, nsp_const_string mname)
 
 static int nsp_insert_module_last_i(NspList *L,char *dir,char **Mname);
 
-/* XXXXX a factoriser quelque part */ 
-#define MAX_PATH 1024 
-
 int nsp_insert_module_last(NspList *L,char *dir,char **Mname)
 {
-  char buf[MAX_PATH];
+  char buf[FSIZE];
   strcpy(buf,dir);
   if ( Mname != NULL && Mname[0][0] != '\0')
     { 
