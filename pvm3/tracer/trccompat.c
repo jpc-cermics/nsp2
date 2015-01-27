@@ -27,6 +27,12 @@
 #include <stdlib.h>
 #endif
 
+#ifdef	HASSTDINT
+#include <stdint.h> 
+#define INTPTR_T (intptr_t)
+#else 
+#define INTPTR_T 
+#endif 
 
 /* Tracer Headers */
 
@@ -59,7 +65,7 @@ trc_init_old_events()
 	{
 	  trc_add_to_trie( TRC_OLD_EVENT_TRIE,
 			   TRC_OLD_TEV_TRACE_NAMES[i],
-			   (void *) ( ( i - TRC_OLD_TEV_FIRST ) + 1 ) );
+			   (void *) INTPTR_T ( ( i - TRC_OLD_TEV_FIRST ) + 1 ) );
 	}
 
       TRC_OLD_TEV_TRACE[i] = 0;
