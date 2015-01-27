@@ -422,6 +422,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <pvm3.h>
 #include <pvmproto.h>
@@ -1505,10 +1506,12 @@ exectasks(mp, rmp, schtid)
 	wxp->w_sched = schtid;
 
 	/* change to desired working directory (if specified) */
-	if (wd) {
-		savewd = (char *) getcwd( (char *) NULL, 255 );
-		chdir( wd );
-	}
+	if (wd) 
+	  {
+	    int ierr;
+	    savewd = (char *) getcwd( (char *) NULL, 255 );
+	    ierr= chdir( wd );
+	  }
 
 #if defined(IMA_PGON) || defined(IMA_SP2MPI) || defined(IMA_AIX4SP2) \
 		|| defined(IMA_BEOLIN)
@@ -1524,9 +1527,11 @@ exectasks(mp, rmp, schtid)
 
 	/* go back to original directory (if getcwd() was successful) */
 	if (savewd)
-		chdir( savewd );
-
-for (i = 0; i < wxp->w_veclen; i++) {
+	  {
+	    int ierr;
+	    ierr = chdir( savewd );
+	  }
+	for (i = 0; i < wxp->w_veclen; i++) {
 		if (wxp->w_vec[i] > 0) {
 			if (wxp->w_trctid > 0) {
 				tev_send_newtask(

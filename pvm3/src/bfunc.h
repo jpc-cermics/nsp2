@@ -89,6 +89,7 @@
 #define BCOPY(s,d,n)    memcpy(d,s,n)
 
 #else
+#include <strings.h>
 #define BZERO(d,n)      bzero(d,n)
 #define BCMP(s,d,n)     bcmp(s,d,n)
 #define BCOPY(s,d,n)    bcopy(s,d,n)
