@@ -28,12 +28,6 @@ Makefile.mak	: Makefile
 
 all :: lsci.obj 
 
-Parse_exprs.c: ../include/nsp/parse.h
-
-Eval.c: ../include/nsp/parse.h
-
-PList.c:  ../include/nsp/parse.h
-
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
