@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2004-2014 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2015 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
