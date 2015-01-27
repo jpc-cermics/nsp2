@@ -19,7 +19,7 @@
  *
  *
  * Adapted from the testtext.c file in gtk+/tests 
- * to be used as a terminal for Nsp jpc (2006-2012).
+ * to be used as a terminal for Nsp jpc (2006-2015).
  * Note: you can use 
  *   gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
  * to set up emacs editing mode in gtk widgets but note that some editing 

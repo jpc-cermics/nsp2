@@ -2,7 +2,7 @@
 #define NSP_INC_INDEX 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2008) 
+ * This Software is GPL (Copyright ENPC 1998-2015) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

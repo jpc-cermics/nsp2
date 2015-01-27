@@ -2,7 +2,7 @@
 #define NSP_ACTIONS_OLD_H
 
 /*
- * This Software is GPL (Copyright ENPC 2009-2009) 
+ * This Software is GPL (Copyright ENPC 2009-2015) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  *
  * The following functions perform scale changes and then redirect 

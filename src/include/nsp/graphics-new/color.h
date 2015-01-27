@@ -2,7 +2,7 @@
 #define NSP_DEF_COL_H
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
+ * This Software is GPL (Copyright ENPC 1998-2015) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  *
  * 

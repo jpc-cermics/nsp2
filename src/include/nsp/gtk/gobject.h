@@ -3,8 +3,8 @@
 #define INC_NSP_NspGObject
 
 /*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
+ * This Software is ( Copyright ENPC 1998-2015)
+ * Jean-Philippe Chancelier Enpc/Cermics       
  *********************************************************************/
   
 /* class NspGObject : wrapper for Gtk GObjects  */

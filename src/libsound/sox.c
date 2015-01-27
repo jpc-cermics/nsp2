@@ -1,6 +1,5 @@
 /*****************************************************
- * Modified code from sox for Scilab to read/write 
- * wav files 
+ * Modified code from sox to read/write  wav files 
  *
  * July 5, 1991
  * Copyright 1991 Lance Norskog And Sundry Contributors
@@ -8,7 +7,7 @@
  * any purpose.  This copyright notice must be maintained. 
  * Lance Norskog And Sundry Contributors are not responsible for 
  * the consequences of using this software.
- * 1999 Copyright ENPC 
+ * 
  *****************************************************/
 
 #include "st.h"
@@ -21,7 +20,6 @@
 #include "nsp/interf.h"
 #include "sox.h" 
 
-
 struct soundstream informat;
 ft_t ft;
 
@@ -29,8 +27,6 @@ static void checkformat (ft_t ft);
 static void cleanup  (void);
 static void init  (void);
 static int filetype (int fd);
-
-
 
 /************************************************************
  * loadwave 

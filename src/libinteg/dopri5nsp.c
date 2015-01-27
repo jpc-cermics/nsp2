@@ -52,7 +52,7 @@
  *
  * The new resulting file are subject to the same license.
  * Copyright (c) 2004, Ernst Hairer
- * Copyright (c) 2010-2011, Bruno Pincon
+ * Copyright (c) 2010-2015, Bruno Pincon
  *     
  */
 

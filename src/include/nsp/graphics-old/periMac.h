@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------
     Graphic library for 2D and 3D plotting 
-    Copyright (C) 1998 Chancelier Jean-Philippe
+    Copyright (C) 1998-2015 Chancelier Jean-Philippe
     jpc@cergrene.enpc.fr 
  --------------------------------------------------------------------------*/
 

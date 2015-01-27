@@ -1,6 +1,6 @@
 /* -*-   Encoding: utf-8  -*-  */
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -69,7 +69,7 @@ void create_nsp_about(void)
   gtk_show_about_dialog (NULL,/*GTK_WINDOW (window),*/
 			 "program-name", "Nsp",
 			 "version", PACKAGE_VERSION,
-			 "copyright", "(C) 2004-2011 The Nsp Team",
+			 "copyright", "(C) 2004-2015 The Nsp Team",
 			 "license", license,
 			 "website", "http://cermics.enpc.fr/~jpc/nsp-tiddly/",
 			 "authors", authors,

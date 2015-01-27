@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1078,7 +1078,6 @@ int link_contains_pt(const NspLink *B,const double pt[2])
  * pt = [ xp(kmin)+ pmin*(xp(kmin+1)-xp(kmin)) ;
  *        yp(kmin)+ pmin*(yp(kmin+1)-yp(kmin)) 
  * the distance is dmin 
- * Copyright ENPC
  **************************************************/
 
 static void dist_2_polyline(const NspMatrix *poly,const double pt[2],

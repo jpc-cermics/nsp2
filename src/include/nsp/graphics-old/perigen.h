@@ -3,7 +3,7 @@
 
 /*------------------------------------------------------------------------
  *    Graphic library
- *    Copyright (C) 2001-2004 Enpc/Jean-Philippe Chancelier
+ *    Copyright (C) 2001-2015 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 

@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
- *               2007-2011 Bruno Pincon Esial/Iecn (changes in GetDimArg func) 
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ *               2007-2015 Bruno Pincon Esial/Iecn (changes in GetDimArg func) 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

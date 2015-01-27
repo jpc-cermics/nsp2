@@ -3,7 +3,7 @@
 #define NSP_INC_GMarkupNode
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2015) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

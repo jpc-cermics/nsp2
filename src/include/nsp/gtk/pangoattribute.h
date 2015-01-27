@@ -3,7 +3,7 @@
 #define INC_NSP_PangoAttribute
 
 /*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
+ * This Software is ( Copyright ENPC 1998-2015 )
  * Jean-Philippe Chancelier Enpc/Cermics
  *-----------------------------------------------------------------*/
   

@@ -2,7 +2,7 @@
 #define NSP_INC_CELLS
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2007) 
+ * This Software is GPL (Copyright ENPC 1998-2015) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

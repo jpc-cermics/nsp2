@@ -3,7 +3,7 @@
 #define INC_NSP_NspGObject_util
 
 /*----------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2008 ) 
+ * This Software is ( Copyright ENPC 1998-2015 ) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  *
  * A set of macros to deal with GList and GSList 

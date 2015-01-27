@@ -2,7 +2,7 @@
 #define PARSER_H
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2006) 
+ * This Software is GPL (Copyright ENPC 1998-2015 ) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
