@@ -1,6 +1,6 @@
 function x = bdiv_sp_m(A,b)
 //
-// Copyright (C) 2008 Bruno Pinçon, Jean-Philippe Chancelier
+// Copyright (C) 2008-2015 Bruno Pinçon, Jean-Philippe Chancelier
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

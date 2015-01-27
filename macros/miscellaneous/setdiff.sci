@@ -1,6 +1,6 @@
 function [c,ka] = setdiff(a,b,ind_type="double",which="elements")
 
-// Copyright (C) 2006 Bruno Pinçon
+// Copyright (C) 2006-2015 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

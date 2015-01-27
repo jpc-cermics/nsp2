@@ -1,5 +1,5 @@
 function A=toeplitz(c,r)
-// Copyright (C) 2010-2011 Jean-Philippe Chancelier 
+// Copyright (C) 2010-2015 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ function A=toeplitz(c,r)
 endfunction
 
 function A=hankel(c,r)
-// Copyright (C) 2010-2011 Jean-Philippe Chancelier 
+// Copyright (C) 2010-2015 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

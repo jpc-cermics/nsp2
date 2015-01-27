@@ -1,6 +1,6 @@
 
 function res=compose_fft_p(p,q)
-// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ function res=compose_fft_p(p,q)
 endfunction
 
 function res=compose_p(p,q)
-// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

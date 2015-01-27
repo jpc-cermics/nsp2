@@ -1,5 +1,5 @@
 function y=poly(x,varargin,varargopt)
-// Copyright  2010-2013 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

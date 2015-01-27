@@ -1,5 +1,5 @@
 function [g,p,q]=cofactors(u,v, td, iter = %t , ftol = 1.e-14 ) 
-// Copyright  2010-2013 Jean-Philippe Chancelier 
+// Copyright  2010-2015 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

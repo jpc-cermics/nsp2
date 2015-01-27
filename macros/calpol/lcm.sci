@@ -1,5 +1,5 @@
 function [q,fact]=lcm(p)
-// Copyright  2013-2013 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2013-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ function [q,fact]=lcm_i(p)
 //    such that p.*fact == q
 // jpc: Aug 2013 using hard coded internal lcm_m_m 
 
-// Copyright  2013-2013 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2013-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ function [q,fact]=lcm_m(p)
 //    such that p.*fact == q
 // jpc: Aug 2013 using the hard coded internal lcm_m_m 
 
-// Copyright  2013-2013 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2013-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

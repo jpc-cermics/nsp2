@@ -1,5 +1,5 @@
 function res=det_p(P,k=[])
-// Copyright  2010-2013 Francois Delebecque Inria.
+// Copyright  2010-2015 Francois Delebecque Inria.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ function res=det_p(P,k=[])
 // and apply inverse fft to the coefficients of the determinant to get 
 // back the polynomial.
 // 
-// adapted to nsp (jpc 2010-2011).
+// adapted to nsp (jpc 2010-2015).
 // 
   if isempty(P) then
     res=[]; 

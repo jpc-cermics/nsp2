@@ -1,5 +1,5 @@
 function [q,fact]=gcd(p)
-// Copyright  2013-2013 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2013-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
