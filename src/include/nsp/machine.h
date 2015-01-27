@@ -222,6 +222,13 @@
 /* used to store and retrieve an int in a pointer 
  */
 
+/* NSP_POINTER_CAST_TO_INT is used when an integer is 
+ * to be casted to a pointer: (void*) x 
+ * we first cast the integer to a proper size integer 
+ * using (void*) NSP_POINTER_CAST_TO_INT x
+ * Note: intptr_t which is in <stdint.h> should do the same 
+ */
+
 #if defined(POINTER_INT) 
 #define NSP_INT_TO_POINTER(i) ((int *) (i)) 
 #define NSP_POINTER_TO_INT(i) ((int) (i))
