@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*-
-// Copyright (C) 2012- Bruno Pinçon ESIAL/IECN
+// Copyright (C) 2012-2015 Bruno Pinçon ESIAL/IECN
 
 //
 // This program is free software; you can redistribute it and/or modify

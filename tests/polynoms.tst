@@ -1,6 +1,7 @@
 // -*- Mode: scilab -*- 
 
 function p3=pprod(p1,p2)
+// used for testing 
   [m1,n1]=size(p1);
   [m2,n2]=size(p2);
   if size(p1,'*')==1 then 
@@ -20,6 +21,7 @@ function p3=pprod(p1,p2)
 endfunction
 
 function p3=pdotstar(p1,p2)
+// used for testing
   [m1,n1]=size(p1);
   [m2,n2]=size(p2);
   if size(p1,'*')==1 then 

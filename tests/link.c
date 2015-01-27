@@ -1,6 +1,6 @@
 /*********************************************************************
- * This Software is ( Copyright ENPC 1998 )                          *
- * Jean-Philippe Chancelier Enpc/Cergrene                            *
+ * This Software is ( Copyright ENPC 1998-2015 )
+ * Jean-Philippe Chancelier Enpc/Cergrene       
  * test for link 
  *********************************************************************/
 

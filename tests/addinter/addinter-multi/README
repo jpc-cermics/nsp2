@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*- 
-// Copyright (C) 2005 Jean-Philippe Chancelier 
+// Copyright (C) 2005-2015 Jean-Philippe Chancelier 
 //                    Francois Delebecque 
 // 
 // This program is free software; you can redistribute it and/or modify

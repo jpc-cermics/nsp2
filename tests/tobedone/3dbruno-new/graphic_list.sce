@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// Copyright (C) 2004-2010 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright (C) 2004-2015 Jean-Philippe Chancelier Cermics/Enpc 
 // jpc@cermics.enpc.fr 
 // NSP  graphic demo 
 //--------------------------------------------------- 

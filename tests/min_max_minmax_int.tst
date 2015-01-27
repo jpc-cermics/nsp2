@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*- 
-// Copyright (C) 2009 B. Pincon Iecn/Esial
+// Copyright (C) 2009-2015 B. Pincon Iecn/Esial
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
