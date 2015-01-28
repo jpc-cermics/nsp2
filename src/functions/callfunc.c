@@ -200,7 +200,7 @@ extern  sci_interface  Bson_Interf  ;extern  interface_info  Bson_Interf_Info  ;
 extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf_Info;
 
 /* for value functions  */
-#ifdef WITH_CLP
+#ifdef XXWITH_CLP
 extern  sci_interface  Stochdec_Interf; extern  interface_info Stochdec_Interf_Info;
 #endif 
 
@@ -341,7 +341,7 @@ InterfTab Interfaces[]={
   {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info}, 
   {Bvar_Interf, Bvar_Interf_Info},
   {M2iMatrix_Interf, M2iMatrix_Interf_Info},
-#ifdef WITH_CLP
+#ifdef XXWITH_CLP
   {Stochdec_Interf, Stochdec_Interf_Info},
 #endif 
 #ifdef WITH_MONGODB_C
