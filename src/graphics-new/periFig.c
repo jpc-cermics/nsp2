@@ -1372,6 +1372,10 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,doubl
       fnum=5;      loadfamily("Times-BoldItalic",&fnum);
     }
   FileInit(Xgc);
+
+  Xgc->graphic_engine->scale->initialize_gc(Xgc);
+  Xgc->scales = NULL;
+  xgc_add_default_scale(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
   return NULL;
