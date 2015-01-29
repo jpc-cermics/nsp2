@@ -127,6 +127,8 @@ basic : $(TESTS)
 
 tests: all
 
+# on windows USE ../bin/nsp-nowin.exe 
+
 .tst.dia :
 	@echo -n "testing $*: "
 	@../bin/nsp -nw -e "nsptest('$*.tst');quit" 
