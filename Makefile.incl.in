@@ -92,12 +92,15 @@ TCLTK_INC_PATH = @TCLTK_INC_PATH@
 NSPLIBS=$(SCIDIR)/libs/nsp.a $(SCIDIR)/libs/graphics.a $(SCIDIR)/libs/graphics-new.a $(SCIDIR)/libs/rand.a $(SCIDIR)/libs/dcd.a $(SCIDIR)/libs/integ.a $(SCIDIR)/libs/approx.a $(SCIDIR)/libs/spmf.a @MPLUSLIB@ @LIBXDRA@
 EXTERNLIBS = $(PVMLIB) $(PVMGLIB) @GTKLIBS@ @FFTW3_LIBS@ @CHOLMOD_LIBS@ @UMFPACK_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@ @TERMCAPLIB@ @LIBXDR@ @GMP_LIBS@ @TCLTK_LIBS@ @ZLIB_LIBS@ @GLPK_LIBS@ @STDCPP_LIBS@ @GLU_LIBS@
 #
-# for WIN32 version 
-# win32 libraries for gcwin32 
-#
+# for WIN32 version, libraries to be used 
+# and linker options 
 WIN32LIBS=-mwindows -lwsock32 -lshell32 -lcomctl32  -lwinspool -lm 
 WINLIBS = $(TCLTK_LIBS) $(WIN32LIBS)
 LINKEROPT= $(LD_LDFLAGS)
+# detect if this is a w32 or w64 version 
+NSP_ISS=@NSP_ISS@
+SCICOS_GEN_LIB=@SCICOS_GEN_LIB@
+TARGET_MACHINE=@TARGET_MACHINE@
 #
 # Ressource compiler 
 #

@@ -343,8 +343,10 @@ fi
 
 # extra resource file used for win32 
 RC_FILE= 
-# dumpexts executable used for win32
+# used to add a target for building dumpexts executable used for win32
 DUMPEXTS=
+# used to add a target for building SCICOS lib file used for win32
+SCICOS_GEN_LIB=
 
 #echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
 #echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
@@ -570,6 +572,7 @@ case "$host" in
     # resource file 
     RC_FILE=nsp_ico.o    
     DUMPEXTS='all :: ../../bin/dumpexts-nsp.exe'
+    SCICOS_GEN_LIB='libscicos.lib'
     FLIBS_SH='-module -no-undefined  -L$(SCIDIR)/bin -lnsp'
     ;;
 # FreeBSD  systems 
@@ -674,8 +677,8 @@ esac
 # NSPISS is inserted in the package name built for windows 
 # TARGET_MACHINE is the machine option transmited to msvc linker
 
-NSP_ISS=w32
-TARGET_MACHINE=ix86
+NSP_ISS=
+TARGET_MACHINE=
 CROSS=no
 
 case "$host" in
@@ -686,6 +689,8 @@ case "$host" in
     CROSS=yes
     ;;
   i686-pc-mingw32 )
+    NSP_ISS=w32
+    TARGET_MACHINE=ix86
     CROSS=yes
     ;;
 esac
@@ -2015,6 +2020,7 @@ AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 AC_SUBST(NSP_ISS)
 AC_SUBST(TARGET_MACHINE)
+AC_SUBST(SCICOS_GEN_LIB)
 
 AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak)
 
