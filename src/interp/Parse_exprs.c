@@ -2672,11 +2672,13 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       /* We have to take care here of the merge of CELLCOLCONCAT when plist1 and plist2 are 
        * both  CELLCOLCONCAT. This happens when colconcat is performed with white spaces. 
        */
-      if ( plist1->type == PLIST && ((PList) plist1->O)->type == CELLCOLCONCAT ) 
+      if ( plist1->type == PLIST && 
+	   (((PList) plist1->O)->type == CELLCOLCONCAT || ((PList) plist1->O)->type == COLCONCAT ))
 	{
 	  PList loc1 = (PList) plist1->O;
 	  PList loc2 = (PList) plist2->O;
-	  if (  plist2->type == PLIST && loc2->type == CELLCOLCONCAT )
+	  if (  plist2->type == PLIST &&
+		( loc2->type == CELLCOLCONCAT || loc2->type == COLCONCAT )) 
 	    {
 	      /* merge the two cellcolconcat */
 	      if (nsp_parse_append(&loc1,&loc2->next) == FAIL) return(FAIL);
