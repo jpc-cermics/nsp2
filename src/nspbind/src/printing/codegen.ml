@@ -1131,6 +1131,7 @@ let write_source fp parser prefix =
   register_types parser;
   register_types register_parser;
   Say.debug "Enter write source";
+  (* TIME Say.warning "--> write_source ";  let t = Sys.time() in *)
   File.set_ppf fp;
   File.write_string "/* -*- Mode: C -*- */\n\n";
   File.write_string "/* This file is generated, please do not edit */\n";
@@ -1148,7 +1149,6 @@ let write_source fp parser prefix =
 
   File.write_string "\n\n\n";  (* XXX: a corriger plus tard \n\n is enough *)
   insert_headers ();
-
 
   let imports = Overrides.get_imports () in 
   if List.length imports <> 0 then 
@@ -1254,6 +1254,7 @@ let write_source fp parser prefix =
     File.resetline();
   else
     File.resetline(); (* XXX should be (); *)
+   (* TIME Say.warning (Printf.sprintf "<-- %f sec" ( Sys.time() -. t));*)
 ;;
 
 (*

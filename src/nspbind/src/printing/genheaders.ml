@@ -76,7 +76,7 @@ let type_header i_start gtk_inc imp im i_public i_private =
  \n#define NSP_INC_$(typename_nn)\
  \n\
  \n/*\
- \n * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics\
+ \n * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics\
  \n * \
  \n * This library is free software; you can redistribute it and/or\
  \n * modify it under the terms of the GNU General Public\
@@ -185,7 +185,7 @@ let type_header_gtk i_start gtk_inc _imp _im i_public i_private =
  \n#define NSP_INC_$(typename_nn)\
  \n\
  \n/*\
- \n * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics\
+ \n * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics\
  \n * \
  \n * This library is free software; you can redistribute it and/or\
  \n * modify it under the terms of the GNU General Public\

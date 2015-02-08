@@ -143,15 +143,13 @@ let incr_line_num lexbuf =
 (** Add number of newlines contained in string to the current line
     counter of the file being lexed. *)
 
-let rec count_newlines s =
-  let n = (String.length s) in
-  if n = 0 then 0
-  else
-    let rest = count_newlines (String.sub s 1 (n -1)) in
-    if s.[0] == '\n' then
-      rest + 1
-    else
-      rest
+let count_newlines s = 
+  let c = ref 0 in
+  for i = 0 to (String.length s) - 1 do
+    if s.[i] == '\n' then
+      c := !c +1
+  done;
+  !c
 ;;
 
 let incr_lines lexbuf str =
@@ -168,7 +166,7 @@ let show_location str lexbuf =
 
 (* To buffer string literals *)
 
-let initial_string_buffer = String.create 256;;
+let initial_string_buffer = String.create 128000;;
 let string_buff = ref initial_string_buffer;;
 let string_index = ref 0;;
 
@@ -179,6 +177,8 @@ let reset_string_buffer () =
 
 let store_string_char c =
   if !string_index >= String.length (!string_buff) then begin
+    if true then  prerr_endline 
+      (Printf.sprintf "Buffer size increased");
     let new_buff = String.create (String.length (!string_buff) * 2) in
       String.blit (!string_buff) 0 new_buff 0 (String.length (!string_buff));
       string_buff := new_buff
@@ -187,7 +187,10 @@ let store_string_char c =
   incr string_index
 ;;
 
-let store_string s = String.iter store_string_char s
+let store_string s = 
+  if debug then  prerr_endline 
+      (Printf.sprintf "store a string [%s]\n" s);
+  String.iter store_string_char s
 ;;
 
 let get_stored_string () =
@@ -322,6 +325,14 @@ rule token = parse
      RULE2(s,str);
    }
 
+|  [ ^ '%']* '%' '%' ( blank | eol_char )* eof 
+    {
+     (* this can happen if file is ended by an empty %% 
+      * we add this rule to avoid infinite loop on next one 
+      *)
+     EOF
+   }
+
 | ( [ ^ '%']* as s) '%' '%' 
     {
      push_back lexbuf '%';
@@ -359,15 +370,28 @@ and items = parse
      token lexbuf
    }
 
-(* code part *)
+(* code part: 
+ * Note that the last rule _ will slow the code 
+ * if used on a large number of characters 
+ * That's why we have added two rules 
+ *)
 
 and code = parse
+  | ([ ^ '%']* as s) eof 
+      {
+        if debug then 
+	 prerr_endline 
+	    (Printf.sprintf "get code up to end of file");
+       store_string s;
+     }
+
   | ([ ^ '%']* as s) '%' '%' 
       {
        if debug then 
 	 prerr_endline 
 	   (Printf.sprintf "stop code at start of a potential new section");
-       store_string s;
+       store_string s; 
+
        if String.length s = 0 || s.[(String.length s) - 1] = '\n' then 
 	 (
 	  if debug then  prerr_endline 
@@ -378,12 +402,21 @@ and code = parse
        else
 	 ( 
 	   if debug then prerr_endline 
-	       (Printf.sprintf "percent was inside the code");
+	       (Printf.sprintf "the two percent were inside the code");
 	   store_string_char '%';
 	   store_string_char '%';
 	   code lexbuf;
 	  );
      }
+ | ([ ^ '%']* '%' as s)
+      {
+       if debug then 
+	 prerr_endline 
+	   (Printf.sprintf "stop at %% store string and go on");
+       store_string s;
+       code lexbuf;
+     }
+
   | eof 
       {
        if debug then 
@@ -392,6 +425,8 @@ and code = parse
        }
   | _
       { 
+	if debug then prerr_endline 
+	    (Printf.sprintf "store one character");
 	store_string_char(Lexing.lexeme_char lexbuf 0);
         code lexbuf 
       }

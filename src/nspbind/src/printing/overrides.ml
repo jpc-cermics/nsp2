@@ -214,7 +214,7 @@ let get_copyright () =
     let (code, _line ) = get "copyright" "_"  in 
     code
   else
-    " * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics\n"
+    " * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics\n"
 ;;
 
 (* ignore keyword *) 

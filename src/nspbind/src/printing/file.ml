@@ -53,16 +53,26 @@ let resetline () =
   setline (file_output.lineno+2) file_output.filename;
 ;;
 
-let rec count_newlines s =
+let count_newlines s = 
+  let c = ref 0 in
+  for i = 0 to (String.length s) - 1 do
+    if s.[i] == '\n' then
+      c := !c +1
+  done;
+  !c
+;;
+(*
+let rec count_newlines_ugly s =
   let n = (String.length s) in
   if n = 0 then 0
   else
-    let rest = count_newlines (String.sub s 1 (n -1)) in
+    let rest = count_newlines_ugly (String.sub s 1 (n -1)) in
     if s.[0] == '\n' then
       rest + 1
     else
       rest
 ;;
+*)
 
 let write str = 
   Format.fprintf file_output.ppf "%s" str;

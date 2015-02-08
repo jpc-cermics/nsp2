@@ -71,7 +71,7 @@ let overrides_init efname =
   Say.debug "read_mtlb_file";
   let m_ast = Mtlb_to_ast.read_mtlb_file efname in
   Say.debug "insert_ast";
-  insert_ast m_ast.Ast_node.ast_desc
+  insert_ast m_ast.Ast_node.ast_desc;
 ;;
 
 let fill_parser parser lisp_ast = 
