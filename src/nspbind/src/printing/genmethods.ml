@@ -86,17 +86,19 @@ let write_method objinfo is_gtk_class  meth template handle_return is_method =
   let fixname x = x in 
   let method_name1 = meth.f_c_name in 
   let method_name2 = objinfo.or_name  ^ "."  ^ meth.f_c_name in 
+
   if Overrides.is_ignored method_name1 then 
     ("", false)
   else
     (
      if Overrides.is "override" method_name1 then
        (
-	(* Printf.printf "Found %s (%s) in override (step 1) \n" method_name1 ("_wrap_"  ^ meth.f_c_name) ; *)
-	if not (Hashtbl.mem written_overrides_table meth.f_c_name) then 
+	Say.debug
+	  (Printf.sprintf "Found %s (%s) in override (step 1)" method_name1 ("_wrap_"  ^ meth.f_c_name)) ; 
+	if not (Hashtbl.mem written_overrides_table method_name1) then 
 	  (
 	   File.write_override "override" method_name1;
-	   Hashtbl.add written_overrides_table meth.f_c_name "_";
+	   Hashtbl.add written_overrides_table method_name1 "_";
 	  );
 	File.write_string "\n\n";
 	(
@@ -107,7 +109,8 @@ let write_method objinfo is_gtk_class  meth template handle_return is_method =
        (
 	if Overrides.is "override" method_name2 then
 	  ( 
-	    (* Printf.printf "Found %s in override (step 2)\n" method_name2; *)
+	    Say.debug
+	      (Printf.sprintf "Found %s in override (step 2)" method_name2);
 	    File.write_override "override"  method_name2;
 	    File.write_string "\n\n";	
 	    (Printf.sprintf "  {\"%s\",(nsp_method *) %s},\n" (fixname meth.f_name) ("_wrap_"  ^ meth.f_c_name) ,
@@ -115,6 +118,8 @@ let write_method objinfo is_gtk_class  meth template handle_return is_method =
 	   )
 	else
 	  (
+	   Say.debug
+	     (Printf.sprintf "Found %s in not override \n" method_name1);
 	   let substdict=  Hashtbl.create 256 in 
 	   Hashtbl.add substdict "typename"  objinfo.or_c_name;
 	   Hashtbl.add substdict "typename_nn"  objinfo.or_name;
@@ -212,7 +217,7 @@ let write_constructors objinfo is_gtk_class failed_tbl =
       if flag then 
 	(
 	 Hashtbl.add failed_tbl ((String.lowercase x.is_constructor_of) ^ "_new" ) "_"
-	)
+	);
     )
     constructors;
   constructors;
