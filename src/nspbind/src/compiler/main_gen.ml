@@ -24,17 +24,17 @@ let do_phase phase treat_file ppf fname =
   with
   | Configuration.Error err ->
     Configuration.report_error Format.err_formatter err
-  | Mtlb_lexer.Error (e, pos_begin, pos_end) ->
-    let loc = Mtlb_location.mk_loc pos_begin pos_end in
+  | Override_lexer.Error (e, pos_begin, pos_end) ->
+    let loc = Override_location.mk_loc pos_begin pos_end in
     Format.fprintf Format.err_formatter
       "Lexical error: %a@.%a@."
-      Mtlb_location.print loc
-      Mtlb_lexer.report_error e
-  | Mtlb_syntaxerr.Error (Mtlb_syntaxerr.Other loc) ->
+      Override_location.print loc
+      Override_lexer.report_error e
+  | Override_syntaxerr.Error (Override_syntaxerr.Other loc) ->
     Format.fprintf Format.err_formatter
       "Syntax error: %a@."
-      Mtlb_location.print loc
-      (* Mtlb_syntaxerr.report_error (Mtlb_syntaxerr.Other loc) *)
+      Override_location.print loc
+      (* Override_syntaxerr.report_error (Override_syntaxerr.Other loc) *)
 ;;
 
 (*

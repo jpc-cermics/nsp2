@@ -32,24 +32,17 @@ include $(CONFIG_DIR)/Config.mk
 #DOC_SRC_DIR=$(MAIN_DIR)/doc_src
 
 # Inherited from $(SRC_DIR)/Objs.mk
-#SIMPORT_INTERNAL_LIBS_DIR=$(SRC_DIR)/internal_libs/lib/ocaml
-#OCAML_XML_LIB_DIR=$(SIMPORT_INTERNAL_LIBS_DIR)/ocaml-xml
-#OCAML_XML_DIR=$(SLX_FILE_FORMAT_PARSING_DIR)/ocaml-xml
-#CAMLZIP_LIB_DIR=$(SIMPORT_INTERNAL_LIBS_DIR)/camlzip
-#CAMLZIP_DIR=$(SLX_FILE_FORMAT_PARSING_DIR)/camlzip
-#EXTERNAL_LIBRARIES_BYT_OBJS=unix.cma
-#EXTERNAL_LIBRARIES_BIN_OBJS=$(SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
-#SIMPORT_INTERNAL_LIBRARIES=$(SIMPORT_INTERNAL_LIBRARIES_BYT_OBJS) $(SIMPORT_INTERNAL_LIBRARIES_BIN_OBJS)
-#SIMPORT_BYT_OBJS=...
+#NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS=unix.cma
+#NSPBIND_EXTERNAL_LIBRARIES_BIN_OBJS=$(NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
+#NSPBIND_INTERNAL_LIBS_DIR=libdir 
+#NSPBIND_INTERNAL_LIBRARIES_BYT_OBJS (in fact empty)
+#NSPBIND_INTERNAL_LIBRARIES_BIN_OBJS (in fact empty)
+#NSPBIND_BYT_OBJS=...
 
 SCRIPTS_DIR=$(SRC_DIR)/scripts
 
-SRC_MDL_DIR=$(SRC_DIR)/mdl
-SRC_MDL_FILE_FORMAT_DIR=$(SRC_DIR)/mdl_file_format
-SRC_SLX_FILE_FORMAT_DIR=$(SRC_DIR)/slx_file_format
-
 # The default target.
-default: simport
+default: nspbind
 
 # The list of object files to build.
 include $(SRC_DIR)/Objs.mk
@@ -62,81 +55,50 @@ IDENTITY_DIRS=\
  $(MAIN_DIR)/share\
  $(MAIN_DIR)/config\
  $(SRC_DIR)/configuration\
- $(SRC_DIR)/simulink_embedded\
- $(SRC_DIR)/matlab\
- $(SRC_MDL_DIR)/ast\
- $(SRC_MDL_FILE_FORMAT_DIR)/parsing\
- $(SRC_MDL_DIR)/dast\
- $(SRC_MDL_DIR)/inheritance\
- $(SRC_MDL_DIR)/split\
- $(SRC_MDL_DIR)/translation\
- $(SRC_MDL_DIR)/genr_block/common\
- $(SRC_MDL_DIR/genr_block/genr_scicos_block\
- $(SRC_MDL_DIR)/genr_block/genr_scicos_pro_block\
- $(SRC_SLX_FILE_FORMAT_DIR)/parsing\
- $(SRC_SLX_FILE_FORMAT_DIR)/dast\
- $(SRC_SLX_FILE_FORMAT_DIR)/translating\
  $(SRC_DIR)/compiler\
  $(SRC_DIR)/driver\
 
-CAML_FILES=$(SIMPORT_CAML_FILES)
+CAML_FILES=$(NSPBIND_CAML_FILES)
 
-CAML_INCLUDES=$(SIMPORT_CAML_INCLUDES)
+CAML_INCLUDES=$(NSPBIND_CAML_INCLUDES)
 
-CAML_GENERATED_FILES=$(SIMPORT_CAML_GENERATED_FILES)
+CAML_GENERATED_FILES=$(NSPBIND_CAML_GENERATED_FILES)
 
 # Simport pervasives file
 
-SIMPORT_COMMAND=$(BIN_DIR)/simport
-SIMPORT_PRO_COMMAND=$(BIN_DIR)/simport_pro
+NSPBIND_COMMAND=$(BIN_DIR)/nspbind
 
 # Simport linking object files
-SIMPORT_LINK_BYT_OBJS=\
- $(SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS)\
- $(SIMPORT_INTERNAL_LIBRARIES_BYT_OBJS)\
- $(SIMPORT_BYT_OBJS)\
+NSPBIND_LINK_BYT_OBJS=\
+ $(NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS)\
+ $(NSPBIND_INTERNAL_LIBRARIES_BYT_OBJS)\
+ $(NSPBIND_BYT_OBJS)\
 
-SIMPORT_BIN_OBJS=$(SIMPORT_BYT_OBJS:.cmo=.cmx)\
+NSPBIND_BIN_OBJS=$(NSPBIND_BYT_OBJS:.cmo=.cmx)\
 
-SIMPORT_LINK_BIN_OBJS=\
- $(SIMPORT_EXTERNAL_LIBRARIES_BIN_OBJS)\
- $(SIMPORT_INTERNAL_LIBRARIES_BIN_OBJS)\
- $(SIMPORT_BIN_OBJS)\
-
-# Simport Pro linking object files
-SIMPORT_PRO_LINK_BYT_OBJS=\
- $(SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS)\
- $(SIMPORT_INTERNAL_LIBRARIES_BYT_OBJS)\
- $(SIMPORT_PRO_BYT_OBJS)\
-
-SIMPORT_PRO_BIN_OBJS=$(SIMPORT_PRO_BYT_OBJS:.cmo=.cmx)
-
-SIMPORT_PRO_LINK_BIN_OBJS=\
- $(SIMPORT_EXTERNAL_LIBRARIES_BIN_OBJS)\
- $(SIMPORT_INTERNAL_LIBRARIES_BIN_OBJS)\
- $(SIMPORT_PRO_BIN_OBJS)\
+NSPBIND_LINK_BIN_OBJS=\
+ $(NSPBIND_EXTERNAL_LIBRARIES_BIN_OBJS)\
+ $(NSPBIND_INTERNAL_LIBRARIES_BIN_OBJS)\
+ $(NSPBIND_BIN_OBJS)\
 
 # Executables to build
-EXE=$(BIN_DIR)/simport
-EXE_PRO=$(BIN_DIR)/simport_pro
+EXE=$(BIN_DIR)/nspbind
 
-.PHONY: simport exe_byt exe_bin info identity ignore
+.PHONY: nspbind exe_byt exe_bin info identity ignore
 .PHONY: bannerize bannerize-local bannerize-matlab bannerize-slx
 .PHONY: test test-no-warnings test-nw
-.PHONY: test_pro test_pro-no-warnings test_pro-nw
 .PHONY: autodoc showdoc showman update
-.PHONY: simport_pro exe_pro_byt exe_pro_bin
 
 # The regular version
-simport: $(SIMPORT_INTERNAL_LIBRARIES)
+nspbind: $(NSPBIND_INTERNAL_LIBRARIES)
 	$(MAKE)\
-	  CAML_INCLUDES="$(SIMPORT_CAML_INCLUDES)"\
-	  SIMPORT=$(SIMPORT_COMMAND)\
+	  CAML_INCLUDES="$(NSPBIND_CAML_INCLUDES)"\
+	  NSPBIND=$(NSPBIND_COMMAND)\
 	  byt bin
 
-byt: $(SIMPORT_CAML_FILES) exe_byt 
+byt: $(NSPBIND_CAML_FILES) exe_byt 
 
-bin: $(SIMPORT_CAML_FILES) exe_bin 
+bin: $(NSPBIND_CAML_FILES) exe_bin 
 
 exe_byt: $(EXE).byt
 	$(CPC) $(EXE).byt $(EXE)
@@ -144,54 +106,21 @@ exe_byt: $(EXE).byt
 exe_bin: $(EXE).bin
 	$(CPC) $(EXE).bin $(EXE)
 
-$(EXE).byt: $(SIMPORT_BYT_OBJS)
+$(EXE).byt: $(NSPBIND_BYT_OBJS)
 	@echo "Byte linking program $(EXE).byt" && \
-	$(CAML_BYT) -o $(EXE).byt $(SIMPORT_LINK_BYT_OBJS)
+	$(CAML_BYT) -o $(EXE).byt $(NSPBIND_LINK_BYT_OBJS)
 
-$(EXE).bin: $(SIMPORT_BIN_OBJS)
+$(EXE).bin: $(NSPBIND_BIN_OBJS)
 	@echo "Binary linking program $(EXE).bin" && \
-	$(CAML_BIN) -o $(EXE).bin $(SIMPORT_LINK_BIN_OBJS)
-
-# The pro version
-simport_pro: $(SIMPORT_INTERNAL_LIBRARIES)
-	$(MAKE)\
-	  CAML_INCLUDES="$(SIMPORT_PRO_CAML_INCLUDES)"\
-	  SIMPORT=$(SIMPORT_PRO_COMMAND)\
-	  byt_pro bin_pro
-
-byt_pro: $(SIMPORT_PRO_CAML_FILES) exe_pro_byt $(SIMPORT_PRO_OWN_LIBRARY_OBJS)
-
-bin_pro: $(SIMPORT_PRO_CAML_FILES) exe_pro_bin $(SIMPORT_PRO_OWN_LIBRARY_OBJS)
-
-exe_pro_byt: $(EXE_PRO).byt
-	$(CPC) $(EXE_PRO).byt $(EXE_PRO)
-
-exe_pro_bin: $(EXE_PRO).bin
-	$(CPC) $(EXE_PRO).bin $(EXE_PRO)
-
-$(EXE_PRO).byt: $(SIMPORT_PRO_BYT_OBJS)
-	@echo "Byte linking program $(EXE_PRO).byt" && \
-	$(CAML_BYT) -o $(EXE_PRO).byt $(SIMPORT_PRO_LINK_BYT_OBJS)
-
-$(EXE_PRO).bin: $(SIMPORT_PRO_BIN_OBJS)
-	@echo "Binary linking program $(EXE_PRO).bin" && \
-	$(CAML_BIN) -o $(EXE_PRO).bin $(SIMPORT_PRO_LINK_BIN_OBJS)
+	$(CAML_BIN) -o $(EXE).bin $(NSPBIND_LINK_BIN_OBJS)
 
 test:
 	(cd test_data && $(MAKE) all)
 
-test_pro:
-	(cd test_data && $(MAKE) all_pro)
-
 test-no-warnings:
-	(cd test_data && $(MAKE) all SIMPORT_FLAGS=-no-warnings)
-
-test_pro-no-warnings:
-	(cd test_data && $(MAKE) all_pro SIMPORT_PRO_FLAGS=-no-warnings)
+	(cd test_data && $(MAKE) all NSPBIND_FLAGS=-no-warnings)
 
 test-nw: test-no-warnings
-
-test_pro-nw: test_pro-no-warnings
 
 test-nsp:
 	(cd test_data && $(MAKE) compile-nsp)
@@ -200,7 +129,7 @@ clean-test:
 	@(cd test_data && $(MAKE) clean-all)
 
 clean-all::
-	@$(RM) $(SIMPORT_INTERNAL_LIBS_DIR)/*/* &&\
+	@$(RM) $(NSPBIND_INTERNAL_LIBS_DIR)/*/* &&\
 	(cd $(CAMLZIP_DIR) && $(MAKE) clean-all) &&\
 	(cd $(OCAML_XML_DIR) && $(MAKE) clean-all) &&\
 	$(MAKE) clean-test
@@ -210,15 +139,14 @@ distclean: clean-all
 
 clean::
 	@$(RM) $(EXE) $(EXE).b* &&\
-	$(RM) $(SIMPORT_OWN_LIBRARY_OBJS) $(SIMPORT_PRO_OWN_LIBRARY_OBJS)
+	$(RM) $(NSPBIND_OWN_LIBRARY_OBJS)
 
 # We need internal libraries to be compiled to compute dependencies
-before-depend: $(SIMPORT_INTERNAL_LIBRARIES)
+before-depend: $(NSPBIND_INTERNAL_LIBRARIES)
 
 local-depend:
 	@echo "Computing additional dependencies" &&\
-	$(CAML_DEP) $(SIMPORT_PRO_CAML_INCLUDES)\
-	  $(MDL_GENR_SCICOS_PRO_BLOCK_CAML_FILES) >> .depend
+	$(CAML_DEP) $(MDL_GENR_SCICOS_PRO_BLOCK_CAML_FILES) >> .depend
 
 depend:: local-depend
 	@echo "Computing internal libraries dependencies" 
@@ -228,15 +156,15 @@ info:
 	echo "CAML_FILES are" &&\
 	echo $(CAML_FILES) &&\
 	echo &&\
-	echo "SIMPORT_BYT_OBJS are" &&\
-	echo $(SIMPORT_BYT_OBJS) &&\
-	echo "SIMPORT_LINK_BYT_OBJS are" &&\
-	echo $(SIMPORT_LINK_BYT_OBJS) &&\
+	echo "NSPBIND_BYT_OBJS are" &&\
+	echo $(NSPBIND_BYT_OBJS) &&\
+	echo "NSPBIND_LINK_BYT_OBJS are" &&\
+	echo $(NSPBIND_LINK_BYT_OBJS) &&\
 	echo &&\
-	echo "SIMPORT_BIN_OBJS are" &&\
-	echo $(SIMPORT_BIN_OBJS) &&\
-	echo "SIMPORT_LINK_BIN_OBJS are" &&\
-	echo $(SIMPORT_LINK_BIN_OBJS) &&\
+	echo "NSPBIND_BIN_OBJS are" &&\
+	echo $(NSPBIND_BIN_OBJS) &&\
+	echo "NSPBIND_LINK_BIN_OBJS are" &&\
+	echo $(NSPBIND_LINK_BIN_OBJS) &&\
 	echo &&\
 	echo "CAML_INCLUDES are" &&\
 	echo $(CAML_INCLUDES) &&\
@@ -260,24 +188,24 @@ info:
 	echo "CAML_GENERATED_FILES are" &&\
 	echo $(CAML_GENERATED_FILES) &&\
 	echo &&\
-	echo "SIMPORT command is" &&\
-	echo $(SIMPORT) &&\
-	echo "SIMPORT_OWN_LIBRARY_OBJS are" &&\
-	echo $(SIMPORT_OWN_LIBRARY_OBJS) &&\
-	echo "SIMPORT_PRO_OWN_LIBRARY_OBJS are" &&\
-	echo $(SIMPORT_PRO_OWN_LIBRARY_OBJS) &&\
+	echo "NSPBIND command is" &&\
+	echo $(NSPBIND) &&\
+	echo "NSPBIND_OWN_LIBRARY_OBJS are" &&\
+	echo $(NSPBIND_OWN_LIBRARY_OBJS) &&\
+	echo "NSPBIND_PRO_OWN_LIBRARY_OBJS are" &&\
+	echo $(NSPBIND_PRO_OWN_LIBRARY_OBJS) &&\
 	echo
 
 autodoc: $(AUTO_DOC_OBJS)
 
-$(AUTO_DOC_OBJS): $(CAML_FILES) $(SIMPORT_OWN_LIBRARY_OBJS)
+$(AUTO_DOC_OBJS): $(CAML_FILES) $(NSPBIND_OWN_LIBRARY_OBJS)
 	HTMLDIR=$(AUTO_DOC_DIR) $(SCRIPTS_DIR)/generate_htmldoc.sh
 
 showdoc: $(AUTO_DOC_OBJS)
 	$(BROWSER) $(AUTO_DOC_OBJS) &
 
-showman: $(DOC_SRC_DIR)/simport.1
-	$(MAN) $(DOC_SRC_DIR)/simport.1 | $(MORE)
+showman: $(DOC_SRC_DIR)/nspbind.1
+	$(MAN) $(DOC_SRC_DIR)/nspbind.1 | $(MORE)
 
 identity: clean-generated
 	FILES=`find $(IDENTITY_DIRS) -type f -a -exec grep -l '$$Id:' "{}" \; | grep -v .svn` &&\
@@ -311,7 +239,7 @@ ignore:
 # From Objs.mk
 # LOCAL_FILES_TO_BANNERIZE=\
 #  $(MAIN_DIR)/Makefile $(SRC_DIR)/Objs.mk\
-#  $(SIMPORT_FILES_TO_BANNERIZE)\
+#  $(NSPBIND_FILES_TO_BANNERIZE)\
 #  $(CONFIG_FILES_TO_BANNERIZE)\
 # LOCAL_SCRIPTS_TO_BANNERIZE=\
 #  $(MAIN_DIR)/configure\

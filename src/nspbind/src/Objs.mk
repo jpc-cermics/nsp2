@@ -25,9 +25,6 @@
 # Inherited from Main_DIR/Makefile
 #CONFIG_DIR=$(MAIN_DIR)/config
 
-SIMPORT_INTERNAL_LIBS_DIR=$(SRC_DIR)/internal_libs/lib/ocaml
-OCAML_XML_LIB_DIR=$(SIMPORT_INTERNAL_LIBS_DIR)/ocaml-xml
-CAMLZIP_LIB_DIR=$(SIMPORT_INTERNAL_LIBS_DIR)/camlzip
 BASICS_DIR=$(SRC_DIR)/basics
 CONFIGURATION_DIR=$(SRC_DIR)/configuration
 
@@ -37,7 +34,7 @@ PRINTING_DIR=$(SRC_DIR)/printing
 COMPILER_DIR=$(SRC_DIR)/compiler
 DRIVER_DIR=$(SRC_DIR)/driver
 
-SIMPORT_SUB_DIRS=\
+NSPBIND_SUB_DIRS=\
  $(BASICS_DIR)\
  $(CONFIGURATION_DIR)\
  $(EMBEDDED_DIR)\
@@ -46,29 +43,32 @@ SIMPORT_SUB_DIRS=\
  $(COMPILER_DIR)\
  $(DRIVER_DIR)\
 
-SIMPORT_COMMON_CAML_INCLUDES=\
+NSPBIND_COMMON_CAML_INCLUDES=\
  -I $(BASICS_DIR)\
  -I $(CONFIGURATION_DIR)\
  -I $(CODEGEN_PARSING_DIR)\
  -I $(PRINTING_DIR)\
 
-SIMPORT_TRAILING_CAML_INCLUDES=\
+NSPBIND_TRAILING_CAML_INCLUDES=\
  -I $(COMPILER_DIR)\
  -I $(DRIVER_DIR)\
 
-SIMPORT_CAML_INCLUDES=\
- $(SIMPORT_COMMON_CAML_INCLUDES)\
- $(SIMPORT_TRAILING_CAML_INCLUDES)\
+NSPBIND_CAML_INCLUDES=\
+ $(NSPBIND_COMMON_CAML_INCLUDES)\
+ $(NSPBIND_TRAILING_CAML_INCLUDES)\
 
-SIMPORT_PRO_CAML_INCLUDES=\
- $(SIMPORT_COMMON_CAML_INCLUDES)\
- $(SIMPORT_TRAILING_CAML_INCLUDES)\
+NSPBIND_PRO_CAML_INCLUDES=\
+ $(NSPBIND_COMMON_CAML_INCLUDES)\
+ $(NSPBIND_TRAILING_CAML_INCLUDES)\
+
+# Internal libraries 
+NSPBIND_INTERNAL_LIBRARIES_BYT_OBJS=
+NSPBIND_INTERNAL_LIBRARIES_BIN_OBJS=
+NSPBIND_INTERNAL_LIBS_DIR=libdir 
 
 # External libraries
-
-# EXTERNAL_LIBRARIES=unix
-SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS=str.cma unix.cma
-SIMPORT_EXTERNAL_LIBRARIES_BIN_OBJS=$(SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
+NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS=str.cma unix.cma
+NSPBIND_EXTERNAL_LIBRARIES_BIN_OBJS=$(NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
 
 # Internal libraries
 
@@ -150,73 +150,73 @@ $(CONFIGURATION_DIR)/codegen_configuration_print.ml:\
 # Directory src/parsing
 
 MATLAB_LEX_BYT_OBJS=\
- $(CODEGEN_PARSING_DIR)/mtlb_location.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_lexer.cmo\
+ $(CODEGEN_PARSING_DIR)/override_location.cmo\
+ $(CODEGEN_PARSING_DIR)/override_lexer.cmo\
  $(CODEGEN_PARSING_DIR)/lisp_lexer.cmo\
 
 MATLAB_LEX_CAML_FILES=\
- $(CODEGEN_PARSING_DIR)/mtlb_location.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_lexer.mll\
+ $(CODEGEN_PARSING_DIR)/override_location.mli\
+ $(CODEGEN_PARSING_DIR)/override_lexer.mll\
  $(CODEGEN_PARSING_DIR)/lisp_lexer.mll\
  $(MATLAB_LEX_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_LEX_CAML_GENERATED_FILES=\
- $(CODEGEN_PARSING_DIR)/mtlb_lexer.ml\
+ $(CODEGEN_PARSING_DIR)/override_lexer.ml\
  $(CODEGEN_PARSING_DIR)/lisp_lexer.ml\
 
 MATLAB_PARSE_BYT_OBJS=\
  $(CODEGEN_PARSING_DIR)/lisp_ast.cmo\
  $(CODEGEN_PARSING_DIR)/ast_node_utils.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_syntaxerr.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_ast_funs.cmo\
+ $(CODEGEN_PARSING_DIR)/override_syntaxerr.cmo\
+ $(CODEGEN_PARSING_DIR)/override_ast_funs.cmo\
  $(CODEGEN_PARSING_DIR)/lexing_print.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_location_print.cmo\
+ $(CODEGEN_PARSING_DIR)/override_location_print.cmo\
  $(CODEGEN_PARSING_DIR)/ast_node_print.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_ast_print.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_parser.cmo\
+ $(CODEGEN_PARSING_DIR)/override_ast_print.cmo\
+ $(CODEGEN_PARSING_DIR)/override_parser.cmo\
  $(CODEGEN_PARSING_DIR)/lisp_parser.cmo\
- $(CODEGEN_PARSING_DIR)/mtlb_to_ast.cmo\
+ $(CODEGEN_PARSING_DIR)/override_to_ast.cmo\
  $(CODEGEN_PARSING_DIR)/lisp_to_ast.cmo\
 
 MATLAB_PARSE_CAML_FILES=\
  $(CODEGEN_PARSING_DIR)/ast_node.mli\
  $(CODEGEN_PARSING_DIR)/ast_node_utils.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_ast.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_syntaxerr.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_parser.mly\
- $(CODEGEN_PARSING_DIR)/mtlb_parser.mli\
+ $(CODEGEN_PARSING_DIR)/override_ast.mli\
+ $(CODEGEN_PARSING_DIR)/override_syntaxerr.mli\
+ $(CODEGEN_PARSING_DIR)/override_parser.mly\
+ $(CODEGEN_PARSING_DIR)/override_parser.mli\
  $(CODEGEN_PARSING_DIR)/lisp_parser.mly\
  $(CODEGEN_PARSING_DIR)/lisp_parser.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_to_ast.mli\
+ $(CODEGEN_PARSING_DIR)/override_to_ast.mli\
  $(CODEGEN_PARSING_DIR)/lisp_to_ast.mli\
  $(MATLAB_PARSE_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_PARSE_CAML_GENERATED_FILES=\
- $(CODEGEN_PARSING_DIR)/mtlb_location_print.ml\
+ $(CODEGEN_PARSING_DIR)/override_location_print.ml\
  $(CODEGEN_PARSING_DIR)/ast_node_print.ml\
- $(CODEGEN_PARSING_DIR)/mtlb_ast_print.ml\
- $(CODEGEN_PARSING_DIR)/mtlb_parser.mli\
- $(CODEGEN_PARSING_DIR)/mtlb_parser.ml\
+ $(CODEGEN_PARSING_DIR)/override_ast_print.ml\
+ $(CODEGEN_PARSING_DIR)/override_parser.mli\
+ $(CODEGEN_PARSING_DIR)/override_parser.ml\
  $(CODEGEN_PARSING_DIR)/lisp_parser.mli\
  $(CODEGEN_PARSING_DIR)/lisp_parser.ml\
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(CODEGEN_PARSING_DIR)/mtlb_location_print.ml:\
-  $(CODEGEN_PARSING_DIR)/mtlb_location.mli
-	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/mtlb_location.mli
+$(CODEGEN_PARSING_DIR)/override_location_print.ml:\
+  $(CODEGEN_PARSING_DIR)/override_location.mli
+	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/override_location.mli
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
 $(CODEGEN_PARSING_DIR)/ast_node_print.ml: $(CODEGEN_PARSING_DIR)/ast_node.mli
 	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/ast_node.mli
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
-$(CODEGEN_PARSING_DIR)/mtlb_ast_print.ml: $(CODEGEN_PARSING_DIR)/mtlb_ast.mli
-	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/mtlb_ast.mli
+$(CODEGEN_PARSING_DIR)/override_ast_print.ml: $(CODEGEN_PARSING_DIR)/override_ast.mli
+	$(CAML_GEN) $(CODEGEN_PARSING_DIR)/override_ast.mli
 
 # Directory src/matlab/printing
 
 PRINTING_BYT_OBJS=\
- $(PRINTING_DIR)/mtlb_ppf.cmo\
+ $(PRINTING_DIR)/override_ppf.cmo\
  $(PRINTING_DIR)/overrides.cmo\
  $(PRINTING_DIR)/file.cmo\
  $(PRINTING_DIR)/stringarg.cmo\
@@ -234,7 +234,7 @@ PRINTING_BYT_OBJS=\
 
 PRINTING_CAML_FILES=\
  $(PRINTING_DIR)/genheaders.mli\
- $(PRINTING_DIR)/mtlb_ppf.mli\
+ $(PRINTING_DIR)/override_ppf.mli\
  $(PRINTING_DIR)/file.mli\
  $(PRINTING_DIR)/stringarg.mli\
  $(PRINTING_DIR)/definitions.mli\
@@ -284,50 +284,50 @@ DRIVER_CAML_GENERATED_FILES=\
 
 # Directory src/
 
-SIMPORT_COMMON_BYT_OBJS=\
+NSPBIND_COMMON_BYT_OBJS=\
  $(BASICS_BYT_OBJS)\
  $(CONFIGURATION_BYT_OBJS)\
  $(MATLAB_BYT_OBJS)\
 
-SIMPORT_TRAILING_BYT_OBJS=\
+NSPBIND_TRAILING_BYT_OBJS=\
  $(COMPILER_BYT_OBJS)\
  $(DRIVER_BYT_OBJS)\
 
-SIMPORT_BYT_OBJS=\
- $(SIMPORT_COMMON_BYT_OBJS)\
- $(SIMPORT_TRAILING_BYT_OBJS)\
+NSPBIND_BYT_OBJS=\
+ $(NSPBIND_COMMON_BYT_OBJS)\
+ $(NSPBIND_TRAILING_BYT_OBJS)\
 
-SIMPORT_PRO_BYT_OBJS=\
- $(SIMPORT_COMMON_BYT_OBJS)\
- $(SIMPORT_TRAILING_BYT_OBJS)\
+NSPBIND_PRO_BYT_OBJS=\
+ $(NSPBIND_COMMON_BYT_OBJS)\
+ $(NSPBIND_TRAILING_BYT_OBJS)\
 
-SIMPORT_COMMON_CAML_FILES=\
+NSPBIND_COMMON_CAML_FILES=\
  $(BASICS_CAML_FILES)\
  $(CONFIGURATION_CAML_FILES)\
  $(MATLAB_CAML_FILES)\
 
-SIMPORT_TRAILING_CAML_FILES=\
+NSPBIND_TRAILING_CAML_FILES=\
  $(COMPILER_CAML_FILES)\
  $(DRIVER_CAML_FILES)\
 
-SIMPORT_CAML_FILES=\
- $(SIMPORT_COMMON_CAML_FILES)\
- $(SIMPORT_TRAILING_CAML_FILES)\
+NSPBIND_CAML_FILES=\
+ $(NSPBIND_COMMON_CAML_FILES)\
+ $(NSPBIND_TRAILING_CAML_FILES)\
 
-SIMPORT_CAML_GENERATED_FILES=\
+NSPBIND_CAML_GENERATED_FILES=\
  $(BASICS_CAML_GENERATED_FILES)\
  $(CONFIGURATION_CAML_GENERATED_FILES)\
  $(MATLAB_CAML_GENERATED_FILES)\
  $(COMPILER_CAML_GENERATED_FILES)\
  $(DRIVER_CAML_GENERATED_FILES)\
 
-SIMPORT_PRO_CAML_FILES=\
- $(SIMPORT_COMMON_CAML_FILES)\
- $(SIMPORT_TRAILING_CAML_FILES)\
+NSPBIND_PRO_CAML_FILES=\
+ $(NSPBIND_COMMON_CAML_FILES)\
+ $(NSPBIND_TRAILING_CAML_FILES)\
 
 # List of files to bannerize
 
-SIMPORT_FILES_TO_BANNERIZE=\
+NSPBIND_FILES_TO_BANNERIZE=\
  $(BASICS_CAML_FILES)\
  $(CONFIGURATION_CAML_FILES)\
  $(COMPILER_CAML_FILES)\
@@ -353,7 +353,7 @@ LOCAL_FILES_TO_BANNERIZE=\
  $(MAIN_DIR)/Makefile\
  $(SRC_DIR)/Objs.mk\
  $(CAML_GENERATING_FILES)\
- $(SIMPORT_FILES_TO_BANNERIZE)\
+ $(NSPBIND_FILES_TO_BANNERIZE)\
 
 LOCAL_SCRIPTS_TO_BANNERIZE=\
  $(MAIN_DIR)/configure\
