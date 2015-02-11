@@ -1,50 +1,24 @@
 ./src/basics/lib_print.cmi : ./src/configuration/format_printer.cmi
-./src/basics/unatural_types.cmi :
-./src/basics/unatural.cmi : ./src/basics/unatural_types.cmi
 ./src/basics/location.cmi :
 ./src/basics/location_print.cmi : ./src/basics/location.cmi
 ./src/basics/ident.cmi :
-./src/basics/hash_table.cmi : ./src/basics/unatural_types.cmi
-./src/basics/hash_table_print.cmi : ./src/basics/hash_table.cmi
 ./src/basics/path.cmi :
 ./src/basics/ulist1.cmi :
-./src/basics/binding.cmi : ./src/basics/ident.cmi \
-    ./src/basics/hash_table.cmi
 ./src/basics/umarshal.cmi : ./src/basics/path.cmi
 ./src/basics/lib_print.cmo : ./src/basics/lib_print.cmi
 ./src/basics/lib_print.cmx : ./src/basics/lib_print.cmi
-./src/basics/unatural_types.cmo : ./src/basics/unatural_types.cmi
-./src/basics/unatural_types.cmx : ./src/basics/unatural_types.cmi
-./src/basics/unatural.cmo : ./src/basics/unatural_types.cmi \
-    ./src/basics/unatural.cmi
-./src/basics/unatural.cmx : ./src/basics/unatural_types.cmx \
-    ./src/basics/unatural.cmi
 ./src/basics/location.cmo : ./src/basics/location.cmi
 ./src/basics/location.cmx : ./src/basics/location.cmi
 ./src/basics/location_print.cmo : ./src/basics/location.cmi \
     ./src/basics/location_print.cmi
 ./src/basics/location_print.cmx : ./src/basics/location.cmx \
     ./src/basics/location_print.cmi
-./src/basics/hash_table.cmo : ./src/basics/unatural_types.cmi \
-    ./src/basics/hash_table.cmi
-./src/basics/hash_table.cmx : ./src/basics/unatural_types.cmx \
-    ./src/basics/hash_table.cmi
-./src/basics/hash_table_print.cmo : ./src/basics/hash_table.cmi \
-    ./src/basics/hash_table_print.cmi
-./src/basics/hash_table_print.cmx : ./src/basics/hash_table.cmx \
-    ./src/basics/hash_table_print.cmi
 ./src/basics/path.cmo : ./src/basics/path.cmi
 ./src/basics/path.cmx : ./src/basics/path.cmi
 ./src/basics/ulist1.cmo : ./src/basics/ulist1.cmi
 ./src/basics/ulist1.cmx : ./src/basics/ulist1.cmi
 ./src/basics/umarshal.cmo : ./src/basics/path.cmi ./src/basics/umarshal.cmi
 ./src/basics/umarshal.cmx : ./src/basics/path.cmx ./src/basics/umarshal.cmi
-./src/basics/unatural_types_print.cmo : ./src/basics/unatural_types.cmi \
-    ./src/basics/lib_print.cmi
-./src/basics/unatural_types_print.cmx : ./src/basics/unatural_types.cmx \
-    ./src/basics/lib_print.cmx
-./src/basics/unatural_print.cmo : ./src/basics/unatural_types_print.cmo
-./src/basics/unatural_print.cmx : ./src/basics/unatural_types_print.cmx
 ./src/basics/ident_print.cmo : ./src/basics/lib_print.cmi \
     ./src/basics/ident.cmi
 ./src/basics/ident_print.cmx : ./src/basics/lib_print.cmx \
@@ -55,12 +29,6 @@
     ./src/basics/lib_print.cmx
 ./src/basics/ulist1_print.cmo : ./src/basics/lib_print.cmi
 ./src/basics/ulist1_print.cmx : ./src/basics/lib_print.cmx
-./src/basics/binding_print.cmo : ./src/basics/lib_print.cmi \
-    ./src/basics/ident_print.cmo ./src/basics/hash_table_print.cmi \
-    ./src/basics/binding.cmi
-./src/basics/binding_print.cmx : ./src/basics/lib_print.cmx \
-    ./src/basics/ident_print.cmx ./src/basics/hash_table_print.cmx \
-    ./src/basics/binding.cmi
 ./src/configuration/format_printer.cmi :
 ./src/configuration/configuration.cmi : ./src/basics/path.cmi \
     ./src/configuration/codegen_configuration.cmi
@@ -166,27 +134,23 @@
 ./src/printing/genheaders.cmi : ./src/printing/stringarg.cmi
 ./src/printing/mtlb_ppf.cmi : ./src/configuration/format_printer.cmi
 ./src/printing/file.cmi :
-./src/printing/stringarg.cmi : ./src/basics/hash_table.cmi
+./src/printing/stringarg.cmi :
 ./src/printing/definitions.cmi : ./src/printing/stringarg.cmi \
     ./src/parsing/lisp_ast.cmo
 ./src/printing/genfunctions.cmi : ./src/printing/stringarg.cmi
 ./src/printing/genmethods.cmi : ./src/printing/stringarg.cmi
 ./src/printing/mtlb_ppf.cmo : ./src/printing/mtlb_ppf.cmi
 ./src/printing/mtlb_ppf.cmx : ./src/printing/mtlb_ppf.cmi
-./src/printing/overrides.cmo : ./src/configuration/say.cmi \
-    ./src/basics/hash_table.cmi
-./src/printing/overrides.cmx : ./src/configuration/say.cmx \
-    ./src/basics/hash_table.cmx
+./src/printing/overrides.cmo : ./src/configuration/say.cmi
+./src/printing/overrides.cmx : ./src/configuration/say.cmx
 ./src/printing/file.cmo : ./src/configuration/say.cmi \
     ./src/printing/overrides.cmo ./src/printing/file.cmi
 ./src/printing/file.cmx : ./src/configuration/say.cmx \
     ./src/printing/overrides.cmx ./src/printing/file.cmi
 ./src/printing/stringarg.cmo : ./src/configuration/say.cmi \
-    ./src/printing/overrides.cmo ./src/basics/hash_table.cmi \
-    ./src/printing/stringarg.cmi
+    ./src/printing/overrides.cmo ./src/printing/stringarg.cmi
 ./src/printing/stringarg.cmx : ./src/configuration/say.cmx \
-    ./src/printing/overrides.cmx ./src/basics/hash_table.cmx \
-    ./src/printing/stringarg.cmi
+    ./src/printing/overrides.cmx ./src/printing/stringarg.cmi
 ./src/printing/definitions.cmo : ./src/printing/stringarg.cmi \
     ./src/configuration/say.cmi ./src/parsing/lisp_ast.cmo \
     ./src/printing/definitions.cmi

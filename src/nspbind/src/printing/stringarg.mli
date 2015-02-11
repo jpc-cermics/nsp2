@@ -843,7 +843,7 @@ type parser = {
 }
 val parser : parser
 val register_parser : parser
-val matcher_hash : (string, string_arg) Hash_table.t
+val matcher_hash : (string, string_arg) Hashtbl.t
 val matcher_get : string -> string_arg
 val register_object : object_rec -> unit
 val register_enum : enum -> unit

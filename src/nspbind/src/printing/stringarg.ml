@@ -4612,7 +4612,14 @@ let register_parser =
   }
 ;;
 
-let matcher_hash = Hash_table.of_bindings [
+let of_bindings bindings =
+  let l = List.length bindings in
+  let t = Hashtbl.create l in
+  List.iter (fun (k, v) -> Hashtbl.add t k v) bindings;
+  t
+;;
+
+let matcher_hash = of_bindings [
   (* none *) 
   "none", nonearg;
   (* string *) 

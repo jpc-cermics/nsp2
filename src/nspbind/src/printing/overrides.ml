@@ -33,8 +33,15 @@ type override_keywords =
   | IGNORE_GLOB
 ;;
 
+let of_bindings bindings =
+  let l = List.length bindings in
+  let t = Hashtbl.create l in
+  List.iter (fun (k, v) -> Hashtbl.add t k v) bindings;
+  t
+;;
+
 let keyword_table =
-  Hash_table.of_bindings [
+  of_bindings [
   "override-attr" , OVERRIDE_ATTR   ;
   "override-field-void-pointer-copy" , OVERRIDE_FIELD_VOID_POINTER_COPY  ;
   "override-slot" , OVERRIDE_SLOT ;
