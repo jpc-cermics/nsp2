@@ -4,12 +4,11 @@ SHELL = /bin/sh
 ALL=  pango.c atk.c gdk.c gtk.c webkit.c 
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
-IDIFF=$(patsubst %.c,%.idiff,$(ALL))
 
 PROG=../bin/nspbind -nw 
 SRC=/usr/local/src/nsp2-ref/src/types-test/
 GTK=/usr/local/src/nsp2-ref/src/gtk2/codegen/
-ISRC=/usr/local/src/nsp2-ref/src/include/nsp/
+ISRC=/usr/local/src/nsp2-ref/src/include/nsp/gtk/
 
 all:	$(ALL)
 
@@ -48,7 +47,7 @@ webkit.c: webkit.defs webkit.override ../bin/nspbind
 	@echo "-------- diff $*.c -------------------"
 	@diff -rw $*.c $(GTK); $$status 
 
-%.idiff: %.c	
+%.idiff: %.h	
 	@echo "-------- diff $*.h -------------------"
 	@diff -rw $*.h $(ISRC); $$status 
 
@@ -57,10 +56,14 @@ webkit.c: webkit.defs webkit.override ../bin/nspbind
 
 diff: $(DIFF)
 
+HSRC=$(wildcard *.h)
+IDIFF=$(patsubst %.h,%.idiff,$(HSRC))
+
 idiff: $(IDIFF)
 
 clean:
 	rm -f *.c *.h
+
 
 
 

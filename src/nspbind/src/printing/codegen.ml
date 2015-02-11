@@ -937,16 +937,16 @@ let get_initial_class_substdict objinfo =
 (* write a class *) 
 
 let write_class objinfo failed_tbl = 
-  Say.debug (Printf.sprintf "Enter write_class for %s" objinfo.or_name);
 
+  Say.debug (Printf.sprintf "Enter write_class for %s" objinfo.or_name);
   let is_gtk_class = check_gtk_class  objinfo in
   let objinfo = 
     if is_gtk_class then 
       (
-       { objinfo with 
-	 or_name = objinfo.or_c_name;
-	 or_c_name = "Nsp" ^ objinfo.or_c_name;
-       } )
+      let rep = { objinfo with 
+         or_c_name = "Nsp" ^ objinfo.or_c_name;
+       } in 
+      rep)
     else
       objinfo in 
 

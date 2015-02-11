@@ -270,6 +270,7 @@ let count_elts hash =
 let write_header_file objinfo is_gtk_class override_filename substdict = 
   let name = objinfo.or_name in 
   let filename = "./"  ^ (String.lowercase name)  ^".h" in 
+
   Say.debug (Printf.sprintf "write header file %s" filename);
   Hashtbl.replace substdict "fields" (Build.build_fields objinfo);
   Hashtbl.replace substdict "fields_list" (Build.build_list_fields objinfo "");
