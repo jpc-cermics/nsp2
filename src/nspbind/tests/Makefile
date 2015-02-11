@@ -16,7 +16,7 @@ ALL=  classa.c classb.c classaref.c classbref.c \
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 IDIFF=$(patsubst %.c,%.idiff,$(ALL))
 
-PROG=../bin/simport 
+PROG=../bin/nspbind
 SRC=/usr/local/src/nsp2-ref/src/types-test/
 GTK=/usr/local/src/nsp2-ref/src/gtk2/codegen/
 ISRC=/usr/local/src/nsp2-ref/src/include/nsp/

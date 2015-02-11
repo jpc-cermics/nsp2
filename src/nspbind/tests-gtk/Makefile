@@ -6,38 +6,38 @@ ALL=  pango.c atk.c gdk.c gtk.c webkit.c
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 IDIFF=$(patsubst %.c,%.idiff,$(ALL))
 
-PROG=../bin/simport -nw 
+PROG=../bin/nspbind -nw 
 SRC=/usr/local/src/nsp2-ref/src/types-test/
 GTK=/usr/local/src/nsp2-ref/src/gtk2/codegen/
 ISRC=/usr/local/src/nsp2-ref/src/include/nsp/
 
 all:	$(ALL)
 
-pango.c: pango.defs pango.override ../bin/simport.bin
+pango.c: pango.defs pango.override ../bin/nspbind
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/pango.c+pango.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
-atk.c: atk.defs atk.override ../bin/simport.bin
+atk.c: atk.defs atk.override ../bin/nspbind
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/atk.c+atk.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
-gdk.c: gdk.defs gdk.override ../bin/simport.bin
+gdk.c: gdk.defs gdk.override ../bin/nspbind
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/gdk.c+gdk.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
-gtk.c: gtk.defs gtk.override ../bin/simport.bin
+gtk.c: gtk.defs gtk.override ../bin/nspbind
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/gtk.c+gtk.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
-webkit.c: webkit.defs webkit.override ../bin/simport.bin
+webkit.c: webkit.defs webkit.override ../bin/nspbind
 	$(PROG) -p $* -o /tmp/$*.c $* 
 	@sed -e "s+codegen/++g" \
 	    -e "s+/tmp/webkit.c+webkit.c+g" /tmp/$*.c > $*.c
