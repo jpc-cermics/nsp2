@@ -1,7 +1,6 @@
 ./src/basics/lib_print.cmi : ./src/configuration/format_printer.cmi
 ./src/basics/location.cmi :
 ./src/basics/location_print.cmi : ./src/basics/location.cmi
-./src/basics/ident.cmi :
 ./src/basics/path.cmi :
 ./src/basics/lib_print.cmo : ./src/basics/lib_print.cmi
 ./src/basics/lib_print.cmx : ./src/basics/lib_print.cmi
@@ -13,10 +12,6 @@
     ./src/basics/location_print.cmi
 ./src/basics/path.cmo : ./src/basics/path.cmi
 ./src/basics/path.cmx : ./src/basics/path.cmi
-./src/basics/ident_print.cmo : ./src/basics/lib_print.cmi \
-    ./src/basics/ident.cmi
-./src/basics/ident_print.cmx : ./src/basics/lib_print.cmx \
-    ./src/basics/ident.cmi
 ./src/basics/path_print.cmo : ./src/basics/path.cmi \
     ./src/basics/lib_print.cmi
 ./src/basics/path_print.cmx : ./src/basics/path.cmx \
