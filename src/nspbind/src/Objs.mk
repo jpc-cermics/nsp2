@@ -75,7 +75,6 @@ NSPBIND_EXTERNAL_LIBRARIES_BIN_OBJS=$(NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.
 # Directory src/basics
 
 BASICS_ML_ONLY_FILES=\
- $(BASICS_DIR)/ident_print.ml\
  $(BASICS_DIR)/path_print.ml\
 
 BASICS_ML_FILES=\
@@ -92,7 +91,6 @@ BASICS_MLI_FILES=\
  $(BASICS_DIR)/lib_print.mli\
  $(BASICS_DIR)/location.mli\
  $(BASICS_DIR)/location_print.mli\
- $(BASICS_DIR)/ident.mli\
  $(BASICS_DIR)/path.mli\
 
 BASICS_CAML_FILES=\
@@ -100,7 +98,6 @@ BASICS_CAML_FILES=\
  $(BASICS_ML_FILES)\
 
 BASICS_CAML_GENERATED_FILES=\
- $(BASICS_DIR)/ident_print.ml\
  $(BASICS_DIR)/path_print.ml\
 
 BASICS_BYT_FILES_TO_INSTALL=\
@@ -110,9 +107,6 @@ BASICS_BYT_FILES_TO_INSTALL=\
 
 BASICS_BIN_FILES_TO_INSTALL=\
  $(BASICS_ML_FILES:.ml=.cmx)\
-
-$(BASICS_DIR)/ident_print.ml: $(BASICS_DIR)/ident.mli
-	$(CAML_GEN) $(BASICS_DIR)/ident.mli
 
 $(BASICS_DIR)/path_print.ml: $(BASICS_DIR)/path.mli
 	$(CAML_GEN) $(BASICS_DIR)/path.mli
