@@ -53,10 +53,10 @@ let report_error ppf = function
 
 let report_lexical_error ppf = function
   | Error (r, sp, ep) ->
-    let loc = Mtlb_location.mk_loc sp ep in
+    let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."
-      Mtlb_location.print loc
+      Override_location.print loc
       report_error r
   | exn -> raise exn
 ;;

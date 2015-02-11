@@ -25,8 +25,8 @@ exception Execution_error of execution_error
 ;;
 
 let execution_error exc ast =
-  let begin_pos = ast.Ast_node.ast_loc.Mtlb_location.loc_beg
-  and end_pos = ast.Ast_node.ast_loc.Mtlb_location.loc_end in
+  let begin_pos = ast.Ast_node.ast_loc.Override_location.loc_beg
+  and end_pos = ast.Ast_node.ast_loc.Override_location.loc_end in
   raise
     (Execution_error {
        error = exc; begin_pos = begin_pos; end_pos = end_pos;
@@ -36,13 +36,13 @@ let execution_error exc ast =
 (** {6 Finding locations} *)
 
 let get_symbol_loc () =
-  Mtlb_location.mk_loc
+  Override_location.mk_loc
     (Parsing.symbol_start_pos ())
     (Parsing.symbol_end_pos ())
 ;;
 
 let get_rhs_loc n =
-  Mtlb_location.mk_loc
+  Override_location.mk_loc
     (Parsing.rhs_start_pos n)
     (Parsing.rhs_end_pos n)
 ;;
@@ -63,7 +63,7 @@ let make_ast_node loc desc info = {
 }
 ;;
 
-let make_dummy_ast_node desc = make_ast_node Mtlb_location.none desc;;
+let make_dummy_ast_node desc = make_ast_node Override_location.none desc;;
 
 let change_ast_node_desc ast_node desc = {
   ast_node with

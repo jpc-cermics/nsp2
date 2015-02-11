@@ -14,7 +14,7 @@
 
 (* $Id$ *)
 
-open Mtlb_ast;;
+open Override_ast;;
 open Format;;
 open Stringarg;;
 
@@ -46,7 +46,7 @@ and print_ast_desc ppf = function
 (* insert an override ast into overrides data  *)
 
 let insert_override override =
-  let line = Mtlb_location.get_line override.Ast_node.ast_loc in 
+  let line = Override_location.get_line override.Ast_node.ast_loc in 
   match override.Ast_node.ast_desc with
   | Ignore(names) -> Overrides.store_ignore names;
   | Override2(s,code) ->  Overrides.store s "_" ( code, line );
@@ -69,7 +69,7 @@ and insert_ast = function
 
 let overrides_init efname = 
   Say.debug "read_mtlb_file";
-  let m_ast = Mtlb_to_ast.read_mtlb_file efname in
+  let m_ast = Override_to_ast.read_mtlb_file efname in
   Say.debug "insert_ast";
   insert_ast m_ast.Ast_node.ast_desc;
 ;;

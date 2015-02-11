@@ -15,8 +15,8 @@
 (*                                                                     *)
 (***********************************************************************)
 
-open Mtlb_ast;;
-open Mtlb_ast_funs;;
+open Override_ast;;
+open Override_ast_funs;;
 
 (* *)
 
@@ -33,7 +33,7 @@ open Mtlb_ast_funs;;
 // Where to start.
 
 %start implementation_file
-%type <Mtlb_ast.parsing Mtlb_ast.implementation_file> implementation_file
+%type <Override_ast.parsing Override_ast.implementation_file> implementation_file
 
 %%
 

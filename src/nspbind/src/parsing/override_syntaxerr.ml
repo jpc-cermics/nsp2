@@ -12,17 +12,16 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+type error =
+  | Other of Override_location.t
+;;
 
-(** Entry points to the parser *)
+exception Error of error;;
 
-val read_mtlb_file :
-  Path.explicit_file_name -> Mtlb_ast.parsing Mtlb_ast.implementation_file;;
-val read_mtlb_string :
-  string -> Mtlb_ast.parsing Mtlb_ast.implementation_file;;
-
-
-
+let report_error ppf = function
+  | Other _loc ->
+      Format.fprintf ppf "Syntax error"
+;;
 
 (*
  Local Variables:

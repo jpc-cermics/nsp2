@@ -18,26 +18,26 @@
 
 let parse lexbuf =
   try
-    let ast = Mtlb_parser.implementation_file Mtlb_lexer.token lexbuf in
+    let ast = Override_parser.implementation_file Override_lexer.token lexbuf in
     Parsing.clear_parser();
     ast
   with
-  | Mtlb_lexer.Error(Mtlb_lexer.Unterminated_comment, _, _) as err -> raise err
-  | Mtlb_lexer.Error(Mtlb_lexer.Unterminated_string, _, _) as err -> raise err
-  | Mtlb_lexer.Error(_, _, _) as err -> raise err
-  | Mtlb_syntaxerr.Error _ as err -> raise err
+  | Override_lexer.Error(Override_lexer.Unterminated_comment, _, _) as err -> raise err
+  | Override_lexer.Error(Override_lexer.Unterminated_string, _, _) as err -> raise err
+  | Override_lexer.Error(_, _, _) as err -> raise err
+  | Override_syntaxerr.Error _ as err -> raise err
   | Parsing.Parse_error ->
       let loc1 =
-        { Mtlb_location.loc_beg = lexbuf.Lexing.lex_start_p;
-          Mtlb_location.loc_end = lexbuf.Lexing.lex_curr_p} in
-      raise (Mtlb_syntaxerr.Error (Mtlb_syntaxerr.Other loc1))
+        { Override_location.loc_beg = lexbuf.Lexing.lex_start_p;
+          Override_location.loc_end = lexbuf.Lexing.lex_curr_p} in
+      raise (Override_syntaxerr.Error (Override_syntaxerr.Other loc1))
 ;;
 
 (* Parse a file *)
 
 let parse_ic fname ic =
   let lexbuf = Lexing.from_channel ic in
-  Mtlb_location.init lexbuf fname;
+  Override_location.init lexbuf fname;
   parse lexbuf
 ;;
 
@@ -50,7 +50,7 @@ let parse_file efname =
 
 let parse_string s =
   let lexbuf = Lexing.from_string s in
-  Mtlb_location.init lexbuf (Printf.sprintf "<string: %s>" s);
+  Override_location.init lexbuf (Printf.sprintf "<string: %s>" s);
   parse lexbuf
 ;;
 

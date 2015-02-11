@@ -14,15 +14,15 @@
 
 (* $Id$ *)
 
-(* Auxiliary type for reporting syntax errors *)
+(** Entry points to the parser *)
 
-type error =
-  | Other of Mtlb_location.t
-;;
+val read_mtlb_file :
+  Path.explicit_file_name -> Override_ast.parsing Override_ast.implementation_file;;
+val read_mtlb_string :
+  string -> Override_ast.parsing Override_ast.implementation_file;;
 
-exception Error of error;;
 
-val report_error: Format.formatter -> error -> unit;;
+
 
 (*
  Local Variables:

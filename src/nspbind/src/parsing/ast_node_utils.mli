@@ -29,16 +29,16 @@ val execution_error : exn -> ('a, 'b) Ast_node.ast_node -> 'c;;
 
 (** {6 Finding AST locations } *)
 
-val get_symbol_loc : unit -> Mtlb_location.t;;
+val get_symbol_loc : unit -> Override_location.t;;
 (** Get the location of the string that matches a grammar rule. *)
 
-val get_rhs_loc : int -> Mtlb_location.t;;
+val get_rhs_loc : int -> Override_location.t;;
 (** Get the location of the string that matches the nth item of
     a grammar rule. *)
 
-val get_unary_op_loc : unit -> Mtlb_location.t;;
-val get_binary_op_loc : unit -> Mtlb_location.t;;
-val get_op_loc : int -> Mtlb_location.t;;
+val get_unary_op_loc : unit -> Override_location.t;;
+val get_binary_op_loc : unit -> Override_location.t;;
+val get_op_loc : int -> Override_location.t;;
 (** [get_unary_op_loc ()] get the location of the string that matches a unary
  prefix operator of a grammar rule.
  [get_binary_op_loc ()] get the location of the string that matches a binary
@@ -51,7 +51,7 @@ val get_op_loc : int -> Mtlb_location.t;;
 (** {6 Building AST nodes } *)
 
 val make_ast_node :
-  Mtlb_location.t -> 'desc -> 'info -> ('desc, 'info) Ast_node.ast_node
+  Override_location.t -> 'desc -> 'info -> ('desc, 'info) Ast_node.ast_node
 ;;
 (** [make_ast_node loc desc info] build an [ast_node] with the corresponding
   fields. *)
@@ -60,7 +60,7 @@ val make_dummy_ast_node :
   'desc -> 'info -> ('desc, 'info) Ast_node.ast_node
 ;;
 (** [make_dummy_ast_node desc info] build an [ast_node] with the corresponding
-  fields and a dummy [Mtlb_location.t]. *)
+  fields and a dummy [Override_location.t]. *)
 
 val change_ast_node_contents :
   ('a, 'b) Ast_node.ast_node ->

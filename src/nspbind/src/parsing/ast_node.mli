@@ -26,7 +26,7 @@
     we also accept any visibility for the node description type,
     being it either public, private, or abstract. *)
 type ('desc, 'info) ast_node = {
-   ast_loc : Mtlb_location.t;
+   ast_loc : Override_location.t;
    (** The location in the source of the AST node. *)
    ast_desc : 'desc;
    (** The description of the node. *)

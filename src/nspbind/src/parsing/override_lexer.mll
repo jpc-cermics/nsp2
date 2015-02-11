@@ -18,9 +18,9 @@
 
 (* Prelude part: this is pure Caml. *)
 
-(* open Mtlb_ast;; *)
+(* open Override_ast;; *)
 
-open Mtlb_parser;;
+open Override_parser;;
 open Lexing;;
 
 (** {6 Lexing errors} *)
@@ -54,10 +54,10 @@ let report_error ppf = function
 
 let report_lexical_error ppf = function
   | Error (r, sp, ep) ->
-    let loc = Mtlb_location.mk_loc sp ep in
+    let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."
-      Mtlb_location.print loc
+      Override_location.print loc
       report_error r
   | exn -> raise exn
 ;;
@@ -160,9 +160,9 @@ let incr_lines lexbuf str =
 (* debug *)
 
 let show_location str lexbuf =
-  let loc = Mtlb_location.mk_loc  lexbuf.lex_start_p lexbuf.lex_curr_p in
+  let loc = Override_location.mk_loc  lexbuf.lex_start_p lexbuf.lex_curr_p in
   Format.fprintf Format.std_formatter "%a@.Test Lexical error: %s %a@."
-    Mtlb_location.print loc str report_error Test_error
+    Override_location.print loc str report_error Test_error
 
 (* To buffer string literals *)
 

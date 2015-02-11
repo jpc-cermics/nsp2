@@ -1,11 +1,11 @@
-# 17 "src/parsing/mtlb_lexer.mll"
+# 17 "src/parsing/override_lexer.mll"
  
 
 (* Prelude part: this is pure Caml. *)
 
-(* open Mtlb_ast;; *)
+(* open Override_ast;; *)
 
-open Mtlb_parser;;
+open Override_parser;;
 open Lexing;;
 
 (** {6 Lexing errors} *)
@@ -39,10 +39,10 @@ let report_error ppf = function
 
 let report_lexical_error ppf = function
   | Error (r, sp, ep) ->
-    let loc = Mtlb_location.mk_loc sp ep in
+    let loc = Override_location.mk_loc sp ep in
     Format.fprintf ppf
       "%a@.Lexical error: %a@."
-      Mtlb_location.print loc
+      Override_location.print loc
       report_error r
   | exn -> raise exn
 ;;
@@ -145,9 +145,9 @@ let incr_lines lexbuf str =
 (* debug *)
 
 let show_location str lexbuf =
-  let loc = Mtlb_location.mk_loc  lexbuf.lex_start_p lexbuf.lex_curr_p in
+  let loc = Override_location.mk_loc  lexbuf.lex_start_p lexbuf.lex_curr_p in
   Format.fprintf Format.std_formatter "%a@.Test Lexical error: %s %a@."
-    Mtlb_location.print loc str report_error Test_error
+    Override_location.print loc str report_error Test_error
 
 (* To buffer string literals *)
 
@@ -220,7 +220,7 @@ let split_string str =
 ;;
 
 
-# 224 "src/parsing/mtlb_lexer.ml"
+# 224 "src/parsing/override_lexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base = 
    "\000\000\250\255\001\000\002\000\002\000\252\255\000\000\004\000\
@@ -696,26 +696,26 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 266 "src/parsing/mtlb_lexer.mll"
+# 266 "src/parsing/override_lexer.mll"
                                        s1
-# 702 "src/parsing/mtlb_lexer.ml"
+# 702 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(0) lexbuf.Lexing.lex_mem.(1)
 and
-# 266 "src/parsing/mtlb_lexer.mll"
+# 266 "src/parsing/override_lexer.mll"
                                                               s2
-# 707 "src/parsing/mtlb_lexer.ml"
+# 707 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(2) lexbuf.Lexing.lex_mem.(3)
 and
-# 266 "src/parsing/mtlb_lexer.mll"
+# 266 "src/parsing/override_lexer.mll"
                                                                                 s3
-# 712 "src/parsing/mtlb_lexer.ml"
+# 712 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(3) + 1) lexbuf.Lexing.lex_mem.(4)
 and
-# 266 "src/parsing/mtlb_lexer.mll"
+# 266 "src/parsing/override_lexer.mll"
                                                                                                        s4
-# 717 "src/parsing/mtlb_lexer.ml"
+# 717 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(4) lexbuf.Lexing.lex_mem.(5) in
-# 267 "src/parsing/mtlb_lexer.mll"
+# 267 "src/parsing/override_lexer.mll"
     (
      incr_line_num lexbuf;
      incr_line_num lexbuf;
@@ -732,25 +732,25 @@ and
      else
        (RULE4(s1,s2,s3,str));
    )
-# 736 "src/parsing/mtlb_lexer.ml"
+# 736 "src/parsing/override_lexer.ml"
 
   | 1 ->
 let
-# 284 "src/parsing/mtlb_lexer.mll"
+# 284 "src/parsing/override_lexer.mll"
                                        s1
-# 742 "src/parsing/mtlb_lexer.ml"
+# 742 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(0) lexbuf.Lexing.lex_mem.(1)
 and
-# 284 "src/parsing/mtlb_lexer.mll"
+# 284 "src/parsing/override_lexer.mll"
                                                              s2
-# 747 "src/parsing/mtlb_lexer.ml"
+# 747 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(2) lexbuf.Lexing.lex_mem.(3)
 and
-# 284 "src/parsing/mtlb_lexer.mll"
+# 284 "src/parsing/override_lexer.mll"
                                                                                    rest
-# 752 "src/parsing/mtlb_lexer.ml"
+# 752 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(3) lexbuf.Lexing.lex_mem.(4) in
-# 285 "src/parsing/mtlb_lexer.mll"
+# 285 "src/parsing/override_lexer.mll"
     (
      incr_line_num lexbuf;
      incr_line_num lexbuf;
@@ -771,20 +771,20 @@ and
 	RULE3(s1,s2,str)
        );
       )
-# 775 "src/parsing/mtlb_lexer.ml"
+# 775 "src/parsing/override_lexer.ml"
 
   | 2 ->
 let
-# 306 "src/parsing/mtlb_lexer.mll"
+# 306 "src/parsing/override_lexer.mll"
                                        s
-# 781 "src/parsing/mtlb_lexer.ml"
+# 781 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(0) lexbuf.Lexing.lex_mem.(1)
 and
-# 306 "src/parsing/mtlb_lexer.mll"
+# 306 "src/parsing/override_lexer.mll"
                                                              s2
-# 786 "src/parsing/mtlb_lexer.ml"
+# 786 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(1) lexbuf.Lexing.lex_mem.(2) in
-# 307 "src/parsing/mtlb_lexer.mll"
+# 307 "src/parsing/override_lexer.mll"
     (
      incr_line_num lexbuf;
      incr_line_num lexbuf;
@@ -805,25 +805,25 @@ and
      if debug then prerr_endline (Printf.sprintf "<-- code4=[%s]" str);
      RULE2(s,str);
    )
-# 809 "src/parsing/mtlb_lexer.ml"
+# 809 "src/parsing/override_lexer.ml"
 
   | 3 ->
-# 329 "src/parsing/mtlb_lexer.mll"
+# 329 "src/parsing/override_lexer.mll"
     (
      (* this can happen if file is ended by an empty %% 
       * we add this rule to avoid infinite loop on next one 
       *)
      EOF
    )
-# 819 "src/parsing/mtlb_lexer.ml"
+# 819 "src/parsing/override_lexer.ml"
 
   | 4 ->
 let
-# 336 "src/parsing/mtlb_lexer.mll"
+# 336 "src/parsing/override_lexer.mll"
                  s
-# 825 "src/parsing/mtlb_lexer.ml"
+# 825 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_curr_pos + -2) in
-# 337 "src/parsing/mtlb_lexer.mll"
+# 337 "src/parsing/override_lexer.mll"
     (
      push_back lexbuf '%';
      push_back lexbuf '%';
@@ -831,24 +831,24 @@ let
      if debug then prerr_endline (Printf.sprintf "<-- start=[%s]" s);
      RULE2("start",s);
    )
-# 835 "src/parsing/mtlb_lexer.ml"
+# 835 "src/parsing/override_lexer.ml"
 
   | 5 ->
-# 346 "src/parsing/mtlb_lexer.mll"
+# 346 "src/parsing/override_lexer.mll"
     (
      EOF
    )
-# 842 "src/parsing/mtlb_lexer.ml"
+# 842 "src/parsing/override_lexer.ml"
 
   | 6 ->
-# 350 "src/parsing/mtlb_lexer.mll"
+# 350 "src/parsing/override_lexer.mll"
     ( 
       prerr_endline (Printf.sprintf "autre");
       error
         (Illegal_character (Lexing.lexeme_char lexbuf 0),
          lexbuf.lex_start_p,
          lexbuf.lex_curr_p) )
-# 852 "src/parsing/mtlb_lexer.ml"
+# 852 "src/parsing/override_lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_token_rec lexbuf __ocaml_lex_state
 
@@ -858,28 +858,28 @@ and __ocaml_lex_items_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 358 "src/parsing/mtlb_lexer.mll"
+# 358 "src/parsing/override_lexer.mll"
              s
-# 864 "src/parsing/mtlb_lexer.ml"
+# 864 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 359 "src/parsing/mtlb_lexer.mll"
+# 359 "src/parsing/override_lexer.mll"
     (
      if debug then 
        prerr_endline 
 	 (Printf.sprintf "--> NAME ->[%s]" s );
      NAME(s)
    )
-# 873 "src/parsing/mtlb_lexer.ml"
+# 873 "src/parsing/override_lexer.ml"
 
   | 1 ->
-# 366 "src/parsing/mtlb_lexer.mll"
+# 366 "src/parsing/override_lexer.mll"
     (
      if debug then 
        prerr_endline 
 	 (Printf.sprintf "--> blank" );
      token lexbuf
    )
-# 883 "src/parsing/mtlb_lexer.ml"
+# 883 "src/parsing/override_lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_items_rec lexbuf __ocaml_lex_state
 
@@ -889,26 +889,26 @@ and __ocaml_lex_code_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 380 "src/parsing/mtlb_lexer.mll"
+# 380 "src/parsing/override_lexer.mll"
                   s
-# 895 "src/parsing/mtlb_lexer.ml"
+# 895 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 381 "src/parsing/mtlb_lexer.mll"
+# 381 "src/parsing/override_lexer.mll"
       (
         if debug then 
 	 prerr_endline 
 	    (Printf.sprintf "get code up to end of file");
        store_string s;
      )
-# 904 "src/parsing/mtlb_lexer.ml"
+# 904 "src/parsing/override_lexer.ml"
 
   | 1 ->
 let
-# 388 "src/parsing/mtlb_lexer.mll"
+# 388 "src/parsing/override_lexer.mll"
                   s
-# 910 "src/parsing/mtlb_lexer.ml"
+# 910 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_curr_pos + -2) in
-# 389 "src/parsing/mtlb_lexer.mll"
+# 389 "src/parsing/override_lexer.mll"
       (
        if debug then 
 	 prerr_endline 
@@ -931,15 +931,15 @@ let
 	   code lexbuf;
 	  );
      )
-# 935 "src/parsing/mtlb_lexer.ml"
+# 935 "src/parsing/override_lexer.ml"
 
   | 2 ->
 let
-# 411 "src/parsing/mtlb_lexer.mll"
+# 411 "src/parsing/override_lexer.mll"
                      s
-# 941 "src/parsing/mtlb_lexer.ml"
+# 941 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 412 "src/parsing/mtlb_lexer.mll"
+# 412 "src/parsing/override_lexer.mll"
       (
        if debug then 
 	 prerr_endline 
@@ -947,32 +947,32 @@ let
        store_string s;
        code lexbuf;
      )
-# 951 "src/parsing/mtlb_lexer.ml"
+# 951 "src/parsing/override_lexer.ml"
 
   | 3 ->
-# 421 "src/parsing/mtlb_lexer.mll"
+# 421 "src/parsing/override_lexer.mll"
       (
        if debug then 
 	 prerr_endline 
 	   (Printf.sprintf "end of file " );
        )
-# 960 "src/parsing/mtlb_lexer.ml"
+# 960 "src/parsing/override_lexer.ml"
 
   | 4 ->
-# 427 "src/parsing/mtlb_lexer.mll"
+# 427 "src/parsing/override_lexer.mll"
       ( 
 	if debug then prerr_endline 
 	    (Printf.sprintf "store one character");
 	store_string_char(Lexing.lexeme_char lexbuf 0);
         code lexbuf 
       )
-# 970 "src/parsing/mtlb_lexer.ml"
+# 970 "src/parsing/override_lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_code_rec lexbuf __ocaml_lex_state
 
 ;;
 
-# 434 "src/parsing/mtlb_lexer.mll"
+# 434 "src/parsing/override_lexer.mll"
  
 
 (* zone for extra functions *)
@@ -984,4 +984,4 @@ let
 *)
 
 
-# 988 "src/parsing/mtlb_lexer.ml"
+# 988 "src/parsing/override_lexer.ml"

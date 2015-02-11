@@ -5,7 +5,7 @@ let print_position ppf = function
 ;;
 
 let print_t ppf = function
-  | { Mtlb_location.loc_beg = p; Mtlb_location.loc_end = p0; } ->
+  | { Override_location.loc_beg = p; Override_location.loc_end = p0; } ->
     Format.fprintf ppf "%,@[<1>{@,"; Format.fprintf ppf "%,@[<1>loc_beg =@ ";
     print_position ppf p; Format.fprintf ppf "%,;@]@ ";
     Format.fprintf ppf "%,@[<1>loc_end =@ "; print_position ppf p0;

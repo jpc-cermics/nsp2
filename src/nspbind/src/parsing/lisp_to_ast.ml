@@ -30,7 +30,7 @@ let parse lexbuf =
 
 let parse_ic fname ic =
   let lexbuf = Lexing.from_channel ic in
-  Mtlb_location.init lexbuf fname;
+  Override_location.init lexbuf fname;
   parse lexbuf
 ;;
 

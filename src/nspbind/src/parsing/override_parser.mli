@@ -7,4 +7,4 @@ type token =
   | RULE4 of (string * string * string * string )
 
 val implementation_file :
-  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Mtlb_ast.parsing Mtlb_ast.implementation_file
+  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Override_ast.parsing Override_ast.implementation_file

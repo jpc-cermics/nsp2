@@ -12,16 +12,17 @@
 (*                                                                     *)
 (***********************************************************************)
 
+(* $Id$ *)
+
+(* Auxiliary type for reporting syntax errors *)
+
 type error =
-  | Other of Mtlb_location.t
+  | Other of Override_location.t
 ;;
 
 exception Error of error;;
 
-let report_error ppf = function
-  | Other _loc ->
-      Format.fprintf ppf "Syntax error"
-;;
+val report_error: Format.formatter -> error -> unit;;
 
 (*
  Local Variables:
