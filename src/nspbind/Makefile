@@ -336,8 +336,10 @@ include $(CONFIG_DIR)/Doc.mk
 MLI=src/matlab/printing/stringarg.ml
 
 mli	:
-	ocamlc -I src/basics -I src/configuration -I src/matlab/printing -I src/matlab/parsing \
-		-i $(MLI) > $(MLI)i
+	ocamlc -I src/basics -I src/configuration \
+	-I src/matlab/printing -I src/matlab/parsing \
+	-I src/printing \
+	-i $(MLI) > $(MLI)i
 
 etags:
 	etags  `find . -name '*.ml*' `
