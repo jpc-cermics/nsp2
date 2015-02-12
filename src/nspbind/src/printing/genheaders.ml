@@ -1,9 +1,20 @@
-(* # write a header file for a class *)
+(***********************************************************************)
+(*                                                                     *)
+(*                           Interface generator                       *)
+(*                                                                     *)
+(*          J.Ph Chancelier, Enpc/Cermics                              *)
+(*                                                                     *)
+(*  Copyright 2012-2015,                                               *)
+(*  Ecole Nationale des ponts et chaussees                             *)
+(*  All rights reserved.                                               *)
+(*                                                                     *)
+(*  This file is distributed under the terms of the BSD License.       *)
+(*                                                                     *)
+(***********************************************************************)
 
-(* XXXXX Regarder: Buffer.add_substitute 
- * qui fait un truc analogue à ce qui est fait 
- * avec les tables de hash 
- *)
+(* $Id$ *)
+
+(* write a header file for a class *)
 
 open Stringarg;;
 

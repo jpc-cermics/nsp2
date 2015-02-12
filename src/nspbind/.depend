@@ -128,14 +128,16 @@
 ./src/printing/genmethods.cmi : ./src/printing/stringarg.cmi
 ./src/printing/override_ppf.cmo : ./src/printing/override_ppf.cmi
 ./src/printing/override_ppf.cmx : ./src/printing/override_ppf.cmi
-./src/printing/overrides.cmo : ./src/configuration/say.cmi
-./src/printing/overrides.cmx : ./src/configuration/say.cmx
+./src/printing/overrides.cmo : ./src/configuration/say.cmi \
+    ./src/printing/overrides.cmi
+./src/printing/overrides.cmx : ./src/configuration/say.cmx \
+    ./src/printing/overrides.cmi
 ./src/printing/file.cmo : ./src/configuration/say.cmi \
-    ./src/printing/overrides.cmo ./src/printing/file.cmi
+    ./src/printing/overrides.cmi ./src/printing/file.cmi
 ./src/printing/file.cmx : ./src/configuration/say.cmx \
     ./src/printing/overrides.cmx ./src/printing/file.cmi
 ./src/printing/stringarg.cmo : ./src/configuration/say.cmi \
-    ./src/printing/overrides.cmo ./src/printing/stringarg.cmi
+    ./src/printing/overrides.cmi ./src/printing/stringarg.cmi
 ./src/printing/stringarg.cmx : ./src/configuration/say.cmx \
     ./src/printing/overrides.cmx ./src/printing/stringarg.cmi
 ./src/printing/definitions.cmo : ./src/printing/stringarg.cmi \
@@ -145,19 +147,19 @@
     ./src/configuration/say.cmx ./src/parsing/lisp_ast.cmx \
     ./src/printing/definitions.cmi
 ./src/printing/build.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi
+    ./src/configuration/say.cmi ./src/printing/build.cmi
 ./src/printing/build.cmx : ./src/printing/stringarg.cmx \
-    ./src/configuration/say.cmx
+    ./src/configuration/say.cmx ./src/printing/build.cmi
 ./src/printing/genheaders.cmo : ./src/printing/stringarg.cmi \
     ./src/configuration/say.cmi ./src/basics/path.cmi \
-    ./src/printing/overrides.cmo ./src/printing/file.cmi \
-    ./src/printing/build.cmo ./src/printing/genheaders.cmi
+    ./src/printing/overrides.cmi ./src/printing/file.cmi \
+    ./src/printing/build.cmi ./src/printing/genheaders.cmi
 ./src/printing/genheaders.cmx : ./src/printing/stringarg.cmx \
     ./src/configuration/say.cmx ./src/basics/path.cmx \
     ./src/printing/overrides.cmx ./src/printing/file.cmx \
     ./src/printing/build.cmx ./src/printing/genheaders.cmi
 ./src/printing/genfunctions.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi ./src/printing/overrides.cmo \
+    ./src/configuration/say.cmi ./src/printing/overrides.cmi \
     ./src/printing/file.cmi ./src/configuration/configuration.cmi \
     ./src/printing/genfunctions.cmi
 ./src/printing/genfunctions.cmx : ./src/printing/stringarg.cmx \
@@ -165,7 +167,7 @@
     ./src/printing/file.cmx ./src/configuration/configuration.cmx \
     ./src/printing/genfunctions.cmi
 ./src/printing/genmethods.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi ./src/printing/overrides.cmo \
+    ./src/configuration/say.cmi ./src/printing/overrides.cmi \
     ./src/printing/genfunctions.cmi ./src/printing/file.cmi \
     ./src/printing/genmethods.cmi
 ./src/printing/genmethods.cmx : ./src/printing/stringarg.cmx \
@@ -173,27 +175,29 @@
     ./src/printing/genfunctions.cmx ./src/printing/file.cmx \
     ./src/printing/genmethods.cmi
 ./src/printing/gengetset.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi ./src/printing/overrides.cmo \
-    ./src/printing/file.cmi
+    ./src/configuration/say.cmi ./src/printing/overrides.cmi \
+    ./src/printing/file.cmi ./src/printing/gengetset.cmi
 ./src/printing/gengetset.cmx : ./src/printing/stringarg.cmx \
     ./src/configuration/say.cmx ./src/printing/overrides.cmx \
-    ./src/printing/file.cmx
+    ./src/printing/file.cmx ./src/printing/gengetset.cmi
 ./src/printing/codegen.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi ./src/printing/overrides.cmo \
+    ./src/configuration/say.cmi ./src/printing/overrides.cmi \
     ./src/printing/genmethods.cmi ./src/printing/genheaders.cmi \
-    ./src/printing/gengetset.cmo ./src/printing/genfunctions.cmi \
-    ./src/printing/file.cmi ./src/printing/build.cmo
+    ./src/printing/gengetset.cmi ./src/printing/genfunctions.cmi \
+    ./src/printing/file.cmi ./src/printing/build.cmi \
+    ./src/printing/codegen.cmi
 ./src/printing/codegen.cmx : ./src/printing/stringarg.cmx \
     ./src/configuration/say.cmx ./src/printing/overrides.cmx \
     ./src/printing/genmethods.cmx ./src/printing/genheaders.cmx \
     ./src/printing/gengetset.cmx ./src/printing/genfunctions.cmx \
-    ./src/printing/file.cmx ./src/printing/build.cmx
+    ./src/printing/file.cmx ./src/printing/build.cmx \
+    ./src/printing/codegen.cmi
 ./src/printing/override_print.cmo : ./src/printing/stringarg.cmi \
-    ./src/configuration/say.cmi ./src/printing/overrides.cmo \
+    ./src/configuration/say.cmi ./src/printing/overrides.cmi \
     ./src/parsing/override_to_ast.cmi ./src/parsing/override_location.cmi \
     ./src/parsing/override_ast.cmi ./src/parsing/lisp_to_ast.cmi \
     ./src/printing/file.cmi ./src/printing/definitions.cmi \
-    ./src/configuration/configuration.cmi ./src/printing/codegen.cmo \
+    ./src/configuration/configuration.cmi ./src/printing/codegen.cmi \
     ./src/parsing/ast_node.cmi
 ./src/printing/override_print.cmx : ./src/printing/stringarg.cmx \
     ./src/configuration/say.cmx ./src/printing/overrides.cmx \

@@ -1,3 +1,19 @@
+(***********************************************************************)
+(*                                                                     *)
+(*                           Interface generator                       *)
+(*                                                                     *)
+(*          J.Ph Chancelier, Enpc/Cermics                              *)
+(*                                                                     *)
+(*  Copyright 2012-2015,                                               *)
+(*  Ecole Nationale des ponts et chaussees                             *)
+(*  All rights reserved.                                               *)
+(*                                                                     *)
+(*  This file is distributed under the terms of the BSD License.       *)
+(*                                                                     *)
+(***********************************************************************)
+
+(* $Id$ *)
+
 val strip_type : string -> bool * string
 type e_field = { e_tag : string; e_value : string; }
 type enum = {
@@ -852,3 +868,10 @@ val register_get_name : object_rec -> string
 val register_boxed : object_rec -> unit
 val register_pointer : object_rec -> unit
 val register_types : parser -> unit
+
+
+(*
+ Local Variables:
+  compile-command: "cd ../..; make"
+  End:
+*)

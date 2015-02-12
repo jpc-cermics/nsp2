@@ -1,3 +1,18 @@
+(***********************************************************************)
+(*                                                                     *)
+(*                           Interface generator                       *)
+(*                                                                     *)
+(*          J.Ph Chancelier, Enpc/Cermics                              *)
+(*                                                                     *)
+(*  Copyright 2012-2015,                                               *)
+(*  Ecole Nationale des ponts et chaussees                             *)
+(*  All rights reserved.                                               *)
+(*                                                                     *)
+(*  This file is distributed under the terms of the BSD License.       *)
+(*                                                                     *)
+(***********************************************************************)
+
+(* $Id$ *)
 
 open Stringarg;;
 
