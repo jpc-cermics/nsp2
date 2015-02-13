@@ -1183,9 +1183,14 @@ let write_source fp parser prefix =
   let insert_forward_declaration l = 
     List.iter 
       (fun obj -> 
-	File.write_string 
-	  (Printf.sprintf "#include <nsp/gtk/%s.h>\n" 
-	     (String.lowercase obj.or_c_name))
+	if (check_gtk_class obj ) then
+	  File.write_string 
+	    (Printf.sprintf "#include <nsp/gtk/%s.h>\n" 
+	       (String.lowercase obj.or_c_name))
+	else
+	  File.write_string 
+	    (Printf.sprintf "#include <nsp/%s.h>\n" 
+	       (String.lowercase obj.or_name))
       ) l in 
   
   if is_gtk_class then 
