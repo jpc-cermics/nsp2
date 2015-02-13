@@ -16,7 +16,7 @@ let _ = parse_error;;
 (*                                                                     *)
 (*          J.Ph Chancelier, Enpc/Cermics                              *)
 (*                                                                     *)
-(*  Copyright 2012-2013,                                               *)
+(*  Copyright 2012-2015,                                               *)
 (*  Ecole Nationale des ponts et chaussées                             *)
 (*  All rights reserved.                                               *)
 (*                                                                     *)

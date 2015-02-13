@@ -4,7 +4,7 @@
 (*                                                                     *)
 (*                   Pierre Weis, INRIA Rocquencourt                   *)
 (*                                                                     *)
-(*  Copyright 2010-2014,                                               *)
+(*  Copyright 2010-2015,                                               *)
 (*  Institut National de Recherche en Informatique et en Automatique.  *)
 (*  All rights reserved.                                               *)
 (*                                                                     *)

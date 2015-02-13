@@ -1,6 +1,6 @@
 (***********************************************************************)
 (*                                                                     *)
-(*                           Interface generator                       *)
+(*          Interface generator                                        *)
 (*                                                                     *)
 (*          J.Ph Chancelier, Enpc/Cermics                              *)
 (*                                                                     *)
