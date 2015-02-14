@@ -19,8 +19,6 @@
 #                                                                     #
 #######################################################################
 
-# $Id$
-
 PREFIX_INSTALL_DIR=/usr/local
 
 OCAML_LIB_DIR=$(SRC_ROOT_DIR)/src/internal_libs/lib/ocaml

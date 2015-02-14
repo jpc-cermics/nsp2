@@ -12,8 +12,6 @@
 #                                                                     #
 #######################################################################
 
-# $Id$
-
 PREFIX_INSTALL_DIR=
 
 OCAML_LIB_DIR=$(SRC_ROOT_DIR)/src/internal_libs/lib/ocaml
