@@ -281,6 +281,8 @@ let count_elts hash =
 let write_header_file objinfo is_gtk_class override_filename substdict = 
   let name = objinfo.or_name in 
   let filename = "./"  ^ (String.lowercase name)  ^".h" in 
+  let parent_is_object = Hashtbl.find substdict "parent_dc" = "object" in
+  let is_gtk_class = if parent_is_object then false else is_gtk_class in
 
   Say.debug (Printf.sprintf "write header file %s" filename);
   Hashtbl.replace substdict "fields" (Build.build_fields objinfo);
