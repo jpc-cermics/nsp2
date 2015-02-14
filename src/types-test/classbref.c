@@ -28,7 +28,7 @@
 
 #line 30 "classbref.c"
 
-/* ----------- NspClassBRef ----------- */
+/* -----------NspClassBRef ----------- */
 
 
 #define  NspClassBRef_Private 
@@ -136,7 +136,7 @@ static int init_classbref(NspClassBRef *Obj,NspTypeClassBRef *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -195,7 +195,7 @@ static int nsp_classbref_eq(NspClassBRef *A, NspObject *B)
   if ( A->obj->clb_color != loc->obj->clb_color) return FALSE;
   if ( A->obj->clb_thickness != loc->obj->clb_thickness) return FALSE;
   if ( NSP_OBJECT(A->obj->clb_val)->type->eq(A->obj->clb_val,loc->obj->clb_val) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -221,7 +221,7 @@ int nsp_classbref_xdr_save(XDR *xdrs, NspClassBRef *M)
   if (nsp_xdr_save_i(xdrs, M->obj->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_thickness) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->clb_val)) == FAIL) return FAIL;
-  if ( nsp_classaref_xdr_save(xdrs, (NspClassARef *) M)== FAIL) return FAIL;
+  if ( nsp_classaref_xdr_save(xdrs, (NspClassARef * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -243,7 +243,7 @@ NspClassBRef  *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_classaref_xdr_load_partial(xdrs,(NspClassARef *)M) == NULL) return NULL;
+  if ( nsp_classaref_xdr_load_partial(xdrs,(NspClassARef * )M) == NULL) return NULL;
  return M;
 }
 
@@ -265,8 +265,8 @@ static NspClassBRef  *nsp_classbref_xdr_load(XDR *xdrs)
 
 void nsp_classbref_destroy_partial(NspClassBRef *H)
 {
-  nsp_classaref_destroy_partial((NspClassARef *) H);
-  H->obj->ref_count--;
+  nsp_classaref_destroy_partial((NspClassARef * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->clb_val != NULL ) 
@@ -323,15 +323,15 @@ int nsp_classbref_print(NspClassBRef *M, int indent,const char *name, int rec_le
           nsp_classbref_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"clb_color=%d\n",M->obj->clb_color);
-  Sciprintf1(indent+2,"clb_thickness=%d\n",M->obj->clb_thickness);
+  Sciprintf1(indent+2,"clb_color=%d\n", M->obj->clb_color);
+  Sciprintf1(indent+2,"clb_thickness=%d\n", M->obj->clb_thickness);
   if ( M->obj->clb_val != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classaref_print((NspClassARef *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_classaref_print((NspClassARef * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -346,12 +346,12 @@ int nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classbref_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"clb_color=%d\n",M->obj->clb_color);
-  Sciprintf1(indent+2,"clb_thickness=%d\n",M->obj->clb_thickness);
+  Sciprintf1(indent+2,"clb_color=%d\n", M->obj->clb_color);
+  Sciprintf1(indent+2,"clb_thickness=%d\n", M->obj->clb_thickness);
   if ( M->obj->clb_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classaref_latex((NspClassARef *) M,indent+2,NULL,rec_level);
+  nsp_classaref_latex((NspClassARef * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -367,7 +367,7 @@ NspClassBRef   *nsp_classbref_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_classbref_id) == TRUE ) return ((NspClassBRef *) O);
+  if ( check_cast (O,nsp_type_classbref_id)  == TRUE  ) return ((NspClassBRef *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_classbref));
   return NULL;
@@ -418,7 +418,7 @@ static NspClassBRef *nsp_classbref_create_void(const char *name,NspTypeBase *typ
 
 int nsp_classbref_create_partial(NspClassBRef *H)
 {
-  if ( nsp_classaref_create_partial((NspClassARef *) H)== FAIL) return FAIL;
+  if ( nsp_classaref_create_partial((NspClassARef * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_classbref)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->clb_color = 0;
@@ -435,7 +435,7 @@ int nsp_classbref_check_values(NspClassBRef *H)
        return FAIL;
 
     }
-  nsp_classaref_check_values((NspClassARef *) H);
+  nsp_classaref_check_values((NspClassARef * ) H);
   return OK;
 }
 
@@ -457,7 +457,7 @@ NspClassBRef *nsp_classbref_create_default(const char *name)
  NspClassBRef *H  = nsp_classbref_create_void(name,NULL);
  if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classbref_create_partial(H) == FAIL) return NULLCLASSBREF;
- if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
+  if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
  return H;
 }
 
@@ -475,7 +475,7 @@ NspClassBRef *nsp_classbref_copy(NspClassBRef *self)
 {
   NspClassBRef *H  =nsp_classbref_create_void(NVOID,(NspTypeBase *) nsp_type_classbref);
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
-  if ( nsp_classaref_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
+  if ( nsp_classaref_copy_partial((NspClassARef *) H,(NspClassARef * ) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_copy_partial(H,self)== NULL) return NULLCLASSBREF;
 
   return H;
@@ -494,7 +494,7 @@ NspClassBRef *nsp_classbref_full_copy_partial(NspClassBRef *H,NspClassBRef *self
     { H->obj->clb_val = NULL;}
   else
     {
-      if ((H->obj->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val",NSP_OBJECT(self->obj->clb_val))) == NULLMAT) return NULL;
+      if ((H->obj->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val", NSP_OBJECT(self->obj->clb_val))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -521,10 +521,10 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_classbref = new_type_classbref(T_BASE);
   if(( H = nsp_classbref_create_void(NVOID,(NspTypeBase *) nsp_type_classbref)) == NULLCLASSBREF) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -622,9 +622,9 @@ static int _wrap_classbref_set_clb_val(void *self,const char *attr, NspObject *O
 }
 
 static AttrTab classbref_attrs[] = {
-  { "clb_color", (attr_get_function *)_wrap_classbref_get_clb_color, (attr_set_function *)_wrap_classbref_set_clb_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "clb_thickness", (attr_get_function *)_wrap_classbref_get_clb_thickness, (attr_set_function *)_wrap_classbref_set_clb_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "clb_val", (attr_get_function *)_wrap_classbref_get_clb_val, (attr_set_function *)_wrap_classbref_set_clb_val,(attr_get_object_function *)_wrap_classbref_get_obj_clb_val, (attr_set_object_function *)int_set_object_failed },
+  { "clb_color", (attr_get_function * )_wrap_classbref_get_clb_color, (attr_set_function * )_wrap_classbref_set_clb_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "clb_thickness", (attr_get_function * )_wrap_classbref_get_clb_thickness, (attr_set_function * )_wrap_classbref_set_clb_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "clb_val", (attr_get_function * )_wrap_classbref_get_clb_val, (attr_set_function * )_wrap_classbref_set_clb_val, (attr_get_object_function * )_wrap_classbref_get_obj_clb_val, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -646,13 +646,13 @@ static OpTab ClassBRef_func[]={
 
 int ClassBRef_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(ClassBRef_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(ClassBRef_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void ClassBRef_Interf_Info(int i, char **fname, function (**f))
+void ClassBRef_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = ClassBRef_func[i].name;
   *f = ClassBRef_func[i].fonc;

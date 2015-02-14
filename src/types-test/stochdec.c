@@ -29,7 +29,7 @@
 
 #line 31 "stochdec.c"
 
-/* ----------- NspStochdec ----------- */
+/* -----------NspStochdec ----------- */
 
 
 #define  NspStochdec_Private 
@@ -137,7 +137,7 @@ static int init_stochdec(NspStochdec *Obj,NspTypeStochdec *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->xdim = 0;
-  return OK;
+ return OK;
 }
 
 /*
@@ -193,7 +193,7 @@ static int nsp_stochdec_eq(NspStochdec *A, NspObject *B)
   NspStochdec *loc = (NspStochdec *) B;
   if ( check_cast(B,nsp_type_stochdec_id) == FALSE) return FALSE ;
   if ( A->xdim != loc->xdim) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -302,10 +302,10 @@ int nsp_stochdec_print(NspStochdec *M, int indent,const char *name, int rec_leve
           nsp_stochdec_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"xdim=%d\n",M->xdim);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -320,7 +320,7 @@ int nsp_stochdec_latex(NspStochdec *M, int indent,const char *name, int rec_leve
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_stochdec_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"xdim=%d\n",M->xdim);
+  Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -336,7 +336,7 @@ NspStochdec   *nsp_stochdec_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_stochdec_id) == TRUE ) return ((NspStochdec *) O);
+  if ( check_cast (O,nsp_type_stochdec_id)  == TRUE  ) return ((NspStochdec *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_stochdec));
   return NULL;
@@ -409,7 +409,7 @@ NspStochdec *nsp_stochdec_create_default(const char *name)
 {
  NspStochdec *H  = nsp_stochdec_create_void(name,NULL);
  if ( H ==  NULLSTOCHDEC) return NULLSTOCHDEC;
- if ( nsp_stochdec_check_values(H) == FAIL) return NULLSTOCHDEC;
+  if ( nsp_stochdec_check_values(H) == FAIL) return NULLSTOCHDEC;
  return H;
 }
 
@@ -463,9 +463,9 @@ int int_stochdec_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_stochdec = new_type_stochdec(T_BASE);
   if(( H = nsp_stochdec_create_void(NVOID,(NspTypeBase *) nsp_type_stochdec)) == NULLSTOCHDEC) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_stochdec_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -493,13 +493,13 @@ static int _wrap_stochdec_set_xdim(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab stochdec_attrs[] = {
-  { "xdim", (attr_get_function *)_wrap_stochdec_get_xdim, (attr_set_function *)_wrap_stochdec_set_xdim,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "xdim", (attr_get_function * )_wrap_stochdec_get_xdim, (attr_set_function * )_wrap_stochdec_set_xdim, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspValueFn ----------- */
+/* -----------NspValueFn ----------- */
 
 
 #define  NspValueFn_Private 
@@ -609,7 +609,7 @@ static int init_valuefn(NspValueFn *Obj,NspTypeValueFn *type)
   Obj->xdim = 0;
   Obj->xmin = NULLMAT;
   Obj->xmax = NULLMAT;
-  return OK;
+ return OK;
 }
 
 /*
@@ -667,7 +667,7 @@ static int nsp_valuefn_eq(NspValueFn *A, NspObject *B)
   if ( A->xdim != loc->xdim) return FALSE;
   if ( NSP_OBJECT(A->xmin)->type->eq(A->xmin,loc->xmin) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->xmax)->type->eq(A->xmax,loc->xmax) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -776,16 +776,16 @@ int nsp_valuefn_print(NspValueFn *M, int indent,const char *name, int rec_level)
           nsp_valuefn_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"xdim=%d\n",M->xdim);
+  Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
   if ( M->xmin != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->xmin),indent+2,"xmin",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->xmin),indent+2,"xmin", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->xmax != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->xmax),indent+2,"xmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->xmax),indent+2,"xmax", rec_level+1)== FALSE ) return FALSE ;
     }
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -800,12 +800,12 @@ int nsp_valuefn_latex(NspValueFn *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_valuefn_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"xdim=%d\n",M->xdim);
+  Sciprintf1(indent+2,"xdim=%d\n", M->xdim);
   if ( M->xmin != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->xmin),indent+2,"xmin",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->xmin),indent+2,"xmin", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->xmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->xmax),indent+2,"xmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->xmax),indent+2,"xmax", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -822,7 +822,7 @@ NspValueFn   *nsp_valuefn_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_valuefn_id) == TRUE ) return ((NspValueFn *) O);
+  if ( check_cast (O,nsp_type_valuefn_id)  == TRUE  ) return ((NspValueFn *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_valuefn));
   return NULL;
@@ -909,7 +909,7 @@ NspValueFn *nsp_valuefn_create_default(const char *name)
 {
  NspValueFn *H  = nsp_valuefn_create_void(name,NULL);
  if ( H ==  NULLVALUEFN) return NULLVALUEFN;
- if ( nsp_valuefn_check_values(H) == FAIL) return NULLVALUEFN;
+  if ( nsp_valuefn_check_values(H) == FAIL) return NULLVALUEFN;
  return H;
 }
 
@@ -924,13 +924,13 @@ NspValueFn *nsp_valuefn_copy_partial(NspValueFn *H,NspValueFn *self)
     { H->xmin = NULL;}
   else
     {
-      if ((H->xmin = (NspMatrix *) nsp_object_copy_and_name("xmin",NSP_OBJECT(self->xmin))) == NULLMAT) return NULL;
+      if ((H->xmin = (NspMatrix *) nsp_object_copy_and_name("xmin", NSP_OBJECT(self->xmin))) == NULLMAT) return NULL;
     }
   if ( self->xmax == NULL )
     { H->xmax = NULL;}
   else
     {
-      if ((H->xmax = (NspMatrix *) nsp_object_copy_and_name("xmax",NSP_OBJECT(self->xmax))) == NULLMAT) return NULL;
+      if ((H->xmax = (NspMatrix *) nsp_object_copy_and_name("xmax", NSP_OBJECT(self->xmax))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -954,13 +954,13 @@ NspValueFn *nsp_valuefn_full_copy_partial(NspValueFn *H,NspValueFn *self)
     { H->xmin = NULL;}
   else
     {
-      if ((H->xmin = (NspMatrix *) nsp_object_full_copy_and_name("xmin",NSP_OBJECT(self->xmin))) == NULLMAT) return NULL;
+      if ((H->xmin = (NspMatrix *) nsp_object_full_copy_and_name("xmin", NSP_OBJECT(self->xmin))) == NULLMAT) return NULL;
     }
   if ( self->xmax == NULL )
     { H->xmax = NULL;}
   else
     {
-      if ((H->xmax = (NspMatrix *) nsp_object_full_copy_and_name("xmax",NSP_OBJECT(self->xmax))) == NULLMAT) return NULL;
+      if ((H->xmax = (NspMatrix *) nsp_object_full_copy_and_name("xmax", NSP_OBJECT(self->xmax))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -987,9 +987,9 @@ int int_valuefn_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_valuefn = new_type_valuefn(T_BASE);
   if(( H = nsp_valuefn_create_void(NVOID,(NspTypeBase *) nsp_type_valuefn)) == NULLVALUEFN) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_valuefn_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -1017,13 +1017,13 @@ static int _wrap_valuefn_set_xdim(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab valuefn_attrs[] = {
-  { "xdim", (attr_get_function *)_wrap_valuefn_get_xdim, (attr_set_function *)_wrap_valuefn_set_xdim,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "xdim", (attr_get_function * )_wrap_valuefn_get_xdim, (attr_set_function * )_wrap_valuefn_set_xdim, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGridValueFn ----------- */
+/* -----------NspGridValueFn ----------- */
 
 
 #define  NspGridValueFn_Private 
@@ -1133,7 +1133,7 @@ static int init_gridvaluefn(NspGridValueFn *Obj,NspTypeGridValueFn *type)
   Obj->nx = NULLMAT;
   Obj->pasx = NULLMAT;
   Obj->values = NULLMAT;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1191,7 +1191,7 @@ static int nsp_gridvaluefn_eq(NspGridValueFn *A, NspObject *B)
   if ( NSP_OBJECT(A->nx)->type->eq(A->nx,loc->nx) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->pasx)->type->eq(A->pasx,loc->pasx) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->values)->type->eq(A->values,loc->values) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1214,7 +1214,7 @@ int nsp_gridvaluefn_xdr_save(XDR *xdrs, NspGridValueFn *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_gridvaluefn)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if ( nsp_valuefn_xdr_save(xdrs, (NspValueFn *) M)== FAIL) return FAIL;
+  if ( nsp_valuefn_xdr_save(xdrs, (NspValueFn * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -1232,7 +1232,7 @@ NspGridValueFn  *nsp_gridvaluefn_xdr_load_partial(XDR *xdrs, NspGridValueFn *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_valuefn_xdr_load_partial(xdrs,(NspValueFn *)M) == NULL) return NULL;
+  if ( nsp_valuefn_xdr_load_partial(xdrs,(NspValueFn * )M) == NULL) return NULL;
  return M;
 }
 
@@ -1254,7 +1254,7 @@ static NspGridValueFn  *nsp_gridvaluefn_xdr_load(XDR *xdrs)
 
 void nsp_gridvaluefn_destroy_partial(NspGridValueFn *H)
 {
-  nsp_valuefn_destroy_partial((NspValueFn *) H);
+  nsp_valuefn_destroy_partial((NspValueFn * ) H);
   if ( H->nx != NULL ) 
     nsp_matrix_destroy(H->nx);
   if ( H->pasx != NULL ) 
@@ -1311,19 +1311,19 @@ int nsp_gridvaluefn_print(NspGridValueFn *M, int indent,const char *name, int re
           nsp_gridvaluefn_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
   if ( M->nx != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->nx),indent+2,"nx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->nx),indent+2,"nx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->pasx != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->pasx),indent+2,"pasx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->pasx),indent+2,"pasx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->values != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->values),indent+2,"values",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_print((NspValueFn *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_valuefn_print((NspValueFn * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -1339,15 +1339,15 @@ int nsp_gridvaluefn_latex(NspGridValueFn *M, int indent,const char *name, int re
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_gridvaluefn_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->nx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->nx),indent+2,"nx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->nx),indent+2,"nx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->pasx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->pasx),indent+2,"pasx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->pasx),indent+2,"pasx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->values != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->values),indent+2,"values",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->values),indent+2,"values", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_latex((NspValueFn *) M,indent+2,NULL,rec_level);
+  nsp_valuefn_latex((NspValueFn * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1363,7 +1363,7 @@ NspGridValueFn   *nsp_gridvaluefn_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_gridvaluefn_id) == TRUE ) return ((NspGridValueFn *) O);
+  if ( check_cast (O,nsp_type_gridvaluefn_id)  == TRUE  ) return ((NspGridValueFn *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gridvaluefn));
   return NULL;
@@ -1437,7 +1437,7 @@ int nsp_gridvaluefn_check_values(NspGridValueFn *H)
        return FAIL;
 
     }
-  nsp_valuefn_check_values((NspValueFn *) H);
+  nsp_valuefn_check_values((NspValueFn * ) H);
   return OK;
 }
 
@@ -1457,7 +1457,7 @@ NspGridValueFn *nsp_gridvaluefn_create_default(const char *name)
 {
  NspGridValueFn *H  = nsp_gridvaluefn_create_void(name,NULL);
  if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
- if ( nsp_gridvaluefn_check_values(H) == FAIL) return NULLGRIDVALUEFN;
+  if ( nsp_gridvaluefn_check_values(H) == FAIL) return NULLGRIDVALUEFN;
  return H;
 }
 
@@ -1471,19 +1471,19 @@ NspGridValueFn *nsp_gridvaluefn_copy_partial(NspGridValueFn *H,NspGridValueFn *s
     { H->nx = NULL;}
   else
     {
-      if ((H->nx = (NspMatrix *) nsp_object_copy_and_name("nx",NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
+      if ((H->nx = (NspMatrix *) nsp_object_copy_and_name("nx", NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
     }
   if ( self->pasx == NULL )
     { H->pasx = NULL;}
   else
     {
-      if ((H->pasx = (NspMatrix *) nsp_object_copy_and_name("pasx",NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
+      if ((H->pasx = (NspMatrix *) nsp_object_copy_and_name("pasx", NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
     }
   if ( self->values == NULL )
     { H->values = NULL;}
   else
     {
-      if ((H->values = (NspMatrix *) nsp_object_copy_and_name("values",NSP_OBJECT(self->values))) == NULLMAT) return NULL;
+      if ((H->values = (NspMatrix *) nsp_object_copy_and_name("values", NSP_OBJECT(self->values))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -1492,7 +1492,7 @@ NspGridValueFn *nsp_gridvaluefn_copy(NspGridValueFn *self)
 {
   NspGridValueFn *H  =nsp_gridvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_gridvaluefn);
   if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
-  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn *) self ) == NULL) return NULLGRIDVALUEFN;
+  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( nsp_gridvaluefn_copy_partial(H,self)== NULL) return NULLGRIDVALUEFN;
 
   return H;
@@ -1507,19 +1507,19 @@ NspGridValueFn *nsp_gridvaluefn_full_copy_partial(NspGridValueFn *H,NspGridValue
     { H->nx = NULL;}
   else
     {
-      if ((H->nx = (NspMatrix *) nsp_object_full_copy_and_name("nx",NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
+      if ((H->nx = (NspMatrix *) nsp_object_full_copy_and_name("nx", NSP_OBJECT(self->nx))) == NULLMAT) return NULL;
     }
   if ( self->pasx == NULL )
     { H->pasx = NULL;}
   else
     {
-      if ((H->pasx = (NspMatrix *) nsp_object_full_copy_and_name("pasx",NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
+      if ((H->pasx = (NspMatrix *) nsp_object_full_copy_and_name("pasx", NSP_OBJECT(self->pasx))) == NULLMAT) return NULL;
     }
   if ( self->values == NULL )
     { H->values = NULL;}
   else
     {
-      if ((H->values = (NspMatrix *) nsp_object_full_copy_and_name("values",NSP_OBJECT(self->values))) == NULLMAT) return NULL;
+      if ((H->values = (NspMatrix *) nsp_object_full_copy_and_name("values", NSP_OBJECT(self->values))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -1528,7 +1528,7 @@ NspGridValueFn *nsp_gridvaluefn_full_copy(NspGridValueFn *self)
 {
   NspGridValueFn *H  =nsp_gridvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_gridvaluefn);
   if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
-  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn *) self ) == NULL) return NULLGRIDVALUEFN;
+  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( nsp_gridvaluefn_full_copy_partial(H,self)== NULL) return NULLGRIDVALUEFN;
 
   return H;
@@ -1547,9 +1547,9 @@ int int_gridvaluefn_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_gridvaluefn = new_type_gridvaluefn(T_BASE);
   if(( H = nsp_gridvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_gridvaluefn)) == NULLGRIDVALUEFN) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gridvaluefn_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -1704,7 +1704,7 @@ static int _wrap_nsp_gvf_get_nx(NspGridValueFn *self,Stack stack,int rhs,int opt
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret = nsp_gvf_get_nx(self);
+  ret =nsp_gvf_get_nx(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1726,10 +1726,10 @@ static NspMethods *gridvaluefn_get_methods(void) { return gridvaluefn_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab gridvaluefn_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab gridvaluefn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspCutsValueFn ----------- */
+/* -----------NspCutsValueFn ----------- */
 
 
 #define  NspCutsValueFn_Private 
@@ -1838,7 +1838,7 @@ static int init_cutsvaluefn(NspCutsValueFn *Obj,NspTypeCutsValueFn *type)
   /* specific */
   Obj->heights = NULLMAT;
   Obj->slopes = NULLMAT;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1895,7 +1895,7 @@ static int nsp_cutsvaluefn_eq(NspCutsValueFn *A, NspObject *B)
   if ( check_cast(B,nsp_type_cutsvaluefn_id) == FALSE) return FALSE ;
   if ( NSP_OBJECT(A->heights)->type->eq(A->heights,loc->heights) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->slopes)->type->eq(A->slopes,loc->slopes) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1918,7 +1918,7 @@ int nsp_cutsvaluefn_xdr_save(XDR *xdrs, NspCutsValueFn *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_cutsvaluefn)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if ( nsp_valuefn_xdr_save(xdrs, (NspValueFn *) M)== FAIL) return FAIL;
+  if ( nsp_valuefn_xdr_save(xdrs, (NspValueFn * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -1936,7 +1936,7 @@ NspCutsValueFn  *nsp_cutsvaluefn_xdr_load_partial(XDR *xdrs, NspCutsValueFn *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_valuefn_xdr_load_partial(xdrs,(NspValueFn *)M) == NULL) return NULL;
+  if ( nsp_valuefn_xdr_load_partial(xdrs,(NspValueFn * )M) == NULL) return NULL;
  return M;
 }
 
@@ -1958,7 +1958,7 @@ static NspCutsValueFn  *nsp_cutsvaluefn_xdr_load(XDR *xdrs)
 
 void nsp_cutsvaluefn_destroy_partial(NspCutsValueFn *H)
 {
-  nsp_valuefn_destroy_partial((NspValueFn *) H);
+  nsp_valuefn_destroy_partial((NspValueFn * ) H);
   if ( H->heights != NULL ) 
     nsp_matrix_destroy(H->heights);
   if ( H->slopes != NULL ) 
@@ -2013,16 +2013,16 @@ int nsp_cutsvaluefn_print(NspCutsValueFn *M, int indent,const char *name, int re
           nsp_cutsvaluefn_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_cutsvaluefn_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_cutsvaluefn_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
   if ( M->heights != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->heights),indent+2,"heights",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->heights),indent+2,"heights", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->slopes != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->slopes),indent+2,"slopes",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->slopes),indent+2,"slopes", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_print((NspValueFn *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_valuefn_print((NspValueFn * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -2038,12 +2038,12 @@ int nsp_cutsvaluefn_latex(NspCutsValueFn *M, int indent,const char *name, int re
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_cutsvaluefn_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->heights != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->heights),indent+2,"heights",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->heights),indent+2,"heights", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->slopes != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->slopes),indent+2,"slopes",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->slopes),indent+2,"slopes", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_valuefn_latex((NspValueFn *) M,indent+2,NULL,rec_level);
+  nsp_valuefn_latex((NspValueFn * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -2059,7 +2059,7 @@ NspCutsValueFn   *nsp_cutsvaluefn_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_cutsvaluefn_id) == TRUE ) return ((NspCutsValueFn *) O);
+  if ( check_cast (O,nsp_type_cutsvaluefn_id)  == TRUE  ) return ((NspCutsValueFn *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cutsvaluefn));
   return NULL;
@@ -2127,7 +2127,7 @@ int nsp_cutsvaluefn_check_values(NspCutsValueFn *H)
        return FAIL;
 
     }
-  nsp_valuefn_check_values((NspValueFn *) H);
+  nsp_valuefn_check_values((NspValueFn * ) H);
   return OK;
 }
 
@@ -2146,7 +2146,7 @@ NspCutsValueFn *nsp_cutsvaluefn_create_default(const char *name)
 {
  NspCutsValueFn *H  = nsp_cutsvaluefn_create_void(name,NULL);
  if ( H ==  NULLCUTSVALUEFN) return NULLCUTSVALUEFN;
- if ( nsp_cutsvaluefn_check_values(H) == FAIL) return NULLCUTSVALUEFN;
+  if ( nsp_cutsvaluefn_check_values(H) == FAIL) return NULLCUTSVALUEFN;
  return H;
 }
 
@@ -2160,13 +2160,13 @@ NspCutsValueFn *nsp_cutsvaluefn_copy_partial(NspCutsValueFn *H,NspCutsValueFn *s
     { H->heights = NULL;}
   else
     {
-      if ((H->heights = (NspMatrix *) nsp_object_copy_and_name("heights",NSP_OBJECT(self->heights))) == NULLMAT) return NULL;
+      if ((H->heights = (NspMatrix *) nsp_object_copy_and_name("heights", NSP_OBJECT(self->heights))) == NULLMAT) return NULL;
     }
   if ( self->slopes == NULL )
     { H->slopes = NULL;}
   else
     {
-      if ((H->slopes = (NspMatrix *) nsp_object_copy_and_name("slopes",NSP_OBJECT(self->slopes))) == NULLMAT) return NULL;
+      if ((H->slopes = (NspMatrix *) nsp_object_copy_and_name("slopes", NSP_OBJECT(self->slopes))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -2175,7 +2175,7 @@ NspCutsValueFn *nsp_cutsvaluefn_copy(NspCutsValueFn *self)
 {
   NspCutsValueFn *H  =nsp_cutsvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_cutsvaluefn);
   if ( H ==  NULLCUTSVALUEFN) return NULLCUTSVALUEFN;
-  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn *) self ) == NULL) return NULLCUTSVALUEFN;
+  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( nsp_cutsvaluefn_copy_partial(H,self)== NULL) return NULLCUTSVALUEFN;
 
   return H;
@@ -2190,13 +2190,13 @@ NspCutsValueFn *nsp_cutsvaluefn_full_copy_partial(NspCutsValueFn *H,NspCutsValue
     { H->heights = NULL;}
   else
     {
-      if ((H->heights = (NspMatrix *) nsp_object_full_copy_and_name("heights",NSP_OBJECT(self->heights))) == NULLMAT) return NULL;
+      if ((H->heights = (NspMatrix *) nsp_object_full_copy_and_name("heights", NSP_OBJECT(self->heights))) == NULLMAT) return NULL;
     }
   if ( self->slopes == NULL )
     { H->slopes = NULL;}
   else
     {
-      if ((H->slopes = (NspMatrix *) nsp_object_full_copy_and_name("slopes",NSP_OBJECT(self->slopes))) == NULLMAT) return NULL;
+      if ((H->slopes = (NspMatrix *) nsp_object_full_copy_and_name("slopes", NSP_OBJECT(self->slopes))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -2205,7 +2205,7 @@ NspCutsValueFn *nsp_cutsvaluefn_full_copy(NspCutsValueFn *self)
 {
   NspCutsValueFn *H  =nsp_cutsvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_cutsvaluefn);
   if ( H ==  NULLCUTSVALUEFN) return NULLCUTSVALUEFN;
-  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn *) self ) == NULL) return NULLCUTSVALUEFN;
+  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( nsp_cutsvaluefn_full_copy_partial(H,self)== NULL) return NULLCUTSVALUEFN;
 
   return H;
@@ -2224,9 +2224,9 @@ int int_cutsvaluefn_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_cutsvaluefn = new_type_cutsvaluefn(T_BASE);
   if(( H = nsp_cutsvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_cutsvaluefn)) == NULLCUTSVALUEFN) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_cutsvaluefn_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -2295,7 +2295,7 @@ static NspMethods *cutsvaluefn_get_methods(void) { return cutsvaluefn_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab cutsvaluefn_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab cutsvaluefn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -2355,8 +2355,8 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Stochdec_func[]={
-  {"gridfn", _wrap_nsp_gridfn},
-  {"cutsfn", _wrap_nsp_cutsfn},
+  { "gridfn", _wrap_nsp_gridfn},
+  { "cutsfn", _wrap_nsp_cutsfn},
   { "stochdec_create", int_stochdec_create},
   { NULL, NULL}
 };
@@ -2365,13 +2365,13 @@ static OpTab Stochdec_func[]={
 
 int Stochdec_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Stochdec_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Stochdec_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Stochdec_Interf_Info(int i, char **fname, function (**f))
+void Stochdec_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Stochdec_func[i].name;
   *f = Stochdec_func[i].fonc;

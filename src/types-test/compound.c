@@ -28,7 +28,7 @@
 
 #line 30 "compound.c"
 
-/* ----------- NspCompound ----------- */
+/* -----------NspCompound ----------- */
 
 
 #define  NspCompound_Private 
@@ -149,7 +149,7 @@ static int init_compound(NspCompound *Obj,NspTypeCompound *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -210,7 +210,7 @@ static int nsp_compound_eq(NspCompound *A, NspObject *B)
   if ( A->obj->hilite_type != loc->obj->hilite_type) return FALSE;
   if ( A->obj->hilite_size != loc->obj->hilite_size) return FALSE;
   if ( A->obj->hilite_color != loc->obj->hilite_color) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -237,7 +237,7 @@ int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
   if (nsp_xdr_save_i(xdrs, M->obj->hilite_type) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->hilite_size) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->hilite_color) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -260,7 +260,7 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -282,8 +282,8 @@ static NspCompound  *nsp_compound_xdr_load(XDR *xdrs)
 
 void nsp_compound_destroy_partial(NspCompound *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->bounds != NULL ) 
@@ -342,19 +342,19 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
           nsp_compound_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"hilite_type=%d\n",M->obj->hilite_type);
-  Sciprintf1(indent+2,"hilite_size=%d\n",M->obj->hilite_size);
-  Sciprintf1(indent+2,"hilite_color=%d\n",M->obj->hilite_color);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"hilite_type=%d\n", M->obj->hilite_type);
+  Sciprintf1(indent+2,"hilite_size=%d\n", M->obj->hilite_size);
+  Sciprintf1(indent+2,"hilite_color=%d\n", M->obj->hilite_color);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -370,15 +370,15 @@ int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_compound_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"hilite_type=%d\n",M->obj->hilite_type);
-  Sciprintf1(indent+2,"hilite_size=%d\n",M->obj->hilite_size);
-  Sciprintf1(indent+2,"hilite_color=%d\n",M->obj->hilite_color);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"hilite_type=%d\n", M->obj->hilite_type);
+  Sciprintf1(indent+2,"hilite_size=%d\n", M->obj->hilite_size);
+  Sciprintf1(indent+2,"hilite_color=%d\n", M->obj->hilite_color);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -394,7 +394,7 @@ NspCompound   *nsp_compound_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_compound_id) == TRUE ) return ((NspCompound *) O);
+  if ( check_cast (O,nsp_type_compound_id)  == TRUE  ) return ((NspCompound *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_compound));
   return NULL;
@@ -445,7 +445,7 @@ static NspCompound *nsp_compound_create_void(const char *name,NspTypeBase *type)
 
 int nsp_compound_create_partial(NspCompound *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_compound)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->bounds = NULLMAT;
@@ -470,7 +470,7 @@ int nsp_compound_check_values(NspCompound *H)
      if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -494,7 +494,7 @@ NspCompound *nsp_compound_create_default(const char *name)
  NspCompound *H  = nsp_compound_create_void(name,NULL);
  if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_compound_create_partial(H) == FAIL) return NULLCOMPOUND;
- if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
+  if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
  return H;
 }
 
@@ -512,7 +512,7 @@ NspCompound *nsp_compound_copy(NspCompound *self)
 {
   NspCompound *H  =nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_copy_partial(H,self)== NULL) return NULLCOMPOUND;
 
   return H;
@@ -529,13 +529,13 @@ NspCompound *nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds", NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children", NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   H->obj->hilite_type=self->obj->hilite_type;
   H->obj->hilite_size=self->obj->hilite_size;
@@ -565,10 +565,10 @@ int int_compound_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_compound = new_type_compound(T_BASE);
   if(( H = nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound)) == NULLCOMPOUND) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_compound_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -689,10 +689,10 @@ static int _wrap_compound_set_hilite_color(void *self,const char *attr, NspObjec
 }
 
 static AttrTab compound_attrs[] = {
-  { "children", (attr_get_function *)_wrap_compound_get_children, (attr_set_function *)_wrap_compound_set_children,(attr_get_object_function *)_wrap_compound_get_obj_children, (attr_set_object_function *)_wrap_compound_set_obj_children },
-  { "hilite_type", (attr_get_function *)_wrap_compound_get_hilite_type, (attr_set_function *)_wrap_compound_set_hilite_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "hilite_size", (attr_get_function *)_wrap_compound_get_hilite_size, (attr_set_function *)_wrap_compound_set_hilite_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "hilite_color", (attr_get_function *)_wrap_compound_get_hilite_color, (attr_set_function *)_wrap_compound_set_hilite_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "children", (attr_get_function * )_wrap_compound_get_children, (attr_set_function * )_wrap_compound_set_children, (attr_get_object_function * )_wrap_compound_get_obj_children, (attr_set_object_function * )_wrap_compound_set_obj_children },
+  { "hilite_type", (attr_get_function * )_wrap_compound_get_hilite_type, (attr_set_function * )_wrap_compound_set_hilite_type, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "hilite_size", (attr_get_function * )_wrap_compound_get_hilite_size, (attr_set_function * )_wrap_compound_set_hilite_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "hilite_color", (attr_get_function * )_wrap_compound_get_hilite_color, (attr_set_function * )_wrap_compound_set_hilite_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -731,8 +731,8 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Compound_func[]={
-  {"extractelts_compound", _wrap_nsp_extractelts_compound},
-  {"setrowscols_compound", _wrap_nsp_setrowscols_compound},
+  { "extractelts_compound", _wrap_nsp_extractelts_compound},
+  { "setrowscols_compound", _wrap_nsp_setrowscols_compound},
   { "compound_create", int_compound_create},
   { NULL, NULL}
 };
@@ -741,13 +741,13 @@ static OpTab Compound_func[]={
 
 int Compound_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Compound_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Compound_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Compound_Interf_Info(int i, char **fname, function (**f))
+void Compound_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Compound_func[i].name;
   *f = Compound_func[i].fonc;

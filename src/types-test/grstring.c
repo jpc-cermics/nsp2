@@ -33,7 +33,7 @@
 
 #line 35 "grstring.c"
 
-/* ----------- NspGrstring ----------- */
+/* -----------NspGrstring ----------- */
 
 
 #define  NspGrstring_Private 
@@ -155,7 +155,7 @@ static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -222,7 +222,7 @@ static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
   if ( A->obj->posx != loc->obj->posx) return FALSE;
   if ( A->obj->posy != loc->obj->posy) return FALSE;
   if ( A->obj->size != loc->obj->size) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -256,7 +256,7 @@ int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
   if (nsp_xdr_save_i(xdrs, M->obj->posx) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->posy) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->size) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -286,7 +286,7 @@ NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -308,8 +308,8 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
 
 void nsp_grstring_destroy_partial(NspGrstring *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_string_destroy(&(H->obj->font));
@@ -367,23 +367,23 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
           nsp_grstring_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_grstring_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_grstring_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"x=%f\n",M->obj->x);
-  Sciprintf1(indent+2,"y=%f\n",M->obj->y);
+  Sciprintf1(indent+2,"x=%f\n", M->obj->x);
+  Sciprintf1(indent+2,"y=%f\n", M->obj->y);
   Sciprintf1(indent+2,"font=%s\n",M->obj->font);
   if ( M->obj->text != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->text),indent+2,"text",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->text),indent+2,"text", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
-  Sciprintf1(indent+2,"w=%f\n",M->obj->w);
-  Sciprintf1(indent+2,"h=%f\n",M->obj->h);
-  Sciprintf1(indent+2,"fill=%d\n",M->obj->fill);
-  Sciprintf1(indent+2,"posx=%d\n",M->obj->posx);
-  Sciprintf1(indent+2,"posy=%d\n",M->obj->posy);
-  Sciprintf1(indent+2,"size=%d\n",M->obj->size);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"angle=%f\n", M->obj->angle);
+  Sciprintf1(indent+2,"w=%f\n", M->obj->w);
+  Sciprintf1(indent+2,"h=%f\n", M->obj->h);
+  Sciprintf1(indent+2,"fill=%d\n", M->obj->fill);
+  Sciprintf1(indent+2,"posx=%d\n", M->obj->posx);
+  Sciprintf1(indent+2,"posy=%d\n", M->obj->posy);
+  Sciprintf1(indent+2,"size=%d\n", M->obj->size);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -398,20 +398,20 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_grstring_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"x=%f\n",M->obj->x);
-  Sciprintf1(indent+2,"y=%f\n",M->obj->y);
+  Sciprintf1(indent+2,"x=%f\n", M->obj->x);
+  Sciprintf1(indent+2,"y=%f\n", M->obj->y);
   Sciprintf1(indent+2,"font=%s\n",M->obj->font);
   if ( M->obj->text != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->text),indent+2,"text",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->text),indent+2,"text", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
-  Sciprintf1(indent+2,"w=%f\n",M->obj->w);
-  Sciprintf1(indent+2,"h=%f\n",M->obj->h);
-  Sciprintf1(indent+2,"fill=%d\n",M->obj->fill);
-  Sciprintf1(indent+2,"posx=%d\n",M->obj->posx);
-  Sciprintf1(indent+2,"posy=%d\n",M->obj->posy);
-  Sciprintf1(indent+2,"size=%d\n",M->obj->size);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"angle=%f\n", M->obj->angle);
+  Sciprintf1(indent+2,"w=%f\n", M->obj->w);
+  Sciprintf1(indent+2,"h=%f\n", M->obj->h);
+  Sciprintf1(indent+2,"fill=%d\n", M->obj->fill);
+  Sciprintf1(indent+2,"posx=%d\n", M->obj->posx);
+  Sciprintf1(indent+2,"posy=%d\n", M->obj->posy);
+  Sciprintf1(indent+2,"size=%d\n", M->obj->size);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -427,7 +427,7 @@ NspGrstring   *nsp_grstring_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_grstring_id) == TRUE ) return ((NspGrstring *) O);
+  if ( check_cast (O,nsp_type_grstring_id)  == TRUE  ) return ((NspGrstring *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_grstring));
   return NULL;
@@ -478,7 +478,7 @@ static NspGrstring *nsp_grstring_create_void(const char *name,NspTypeBase *type)
 
 int nsp_grstring_create_partial(NspGrstring *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_grstring)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->x = 0.0;
@@ -499,7 +499,7 @@ int nsp_grstring_check_values(NspGrstring *H)
 {
   if ( H->obj->font == NULL) 
     {
-     if (( H->obj->font = nsp_string_copy("")) == NULL)
+  if (( H->obj->font = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->text == NULLSMAT) 
@@ -507,7 +507,7 @@ int nsp_grstring_check_values(NspGrstring *H)
      if (( H->obj->text = nsp_smatrix_create("text",0,0,"v",0)) == NULLSMAT)
        return FAIL;
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -537,7 +537,7 @@ NspGrstring *nsp_grstring_create_default(const char *name)
  NspGrstring *H  = nsp_grstring_create_void(name,NULL);
  if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_grstring_create_partial(H) == FAIL) return NULLGRSTRING;
- if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
+  if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
  return H;
 }
 
@@ -555,7 +555,7 @@ NspGrstring *nsp_grstring_copy(NspGrstring *self)
 {
   NspGrstring *H  =nsp_grstring_create_void(NVOID,(NspTypeBase *) nsp_type_grstring);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_copy_partial(H,self)== NULL) return NULLGRSTRING;
 
   return H;
@@ -575,7 +575,7 @@ NspGrstring *nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self)
     { H->obj->text = NULL;}
   else
     {
-      if ((H->obj->text = (NspSMatrix *) nsp_object_full_copy_and_name("text",NSP_OBJECT(self->obj->text))) == NULLSMAT) return NULL;
+      if ((H->obj->text = (NspSMatrix *) nsp_object_full_copy_and_name("text", NSP_OBJECT(self->obj->text))) == NULLSMAT) return NULL;
     }
   H->obj->angle=self->obj->angle;
   H->obj->w=self->obj->w;
@@ -609,10 +609,10 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_grstring = new_type_grstring(T_BASE);
   if(( H = nsp_grstring_create_void(NVOID,(NspTypeBase *) nsp_type_grstring)) == NULLGRSTRING) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -815,17 +815,17 @@ static int _wrap_grstring_set_size(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab grstring_attrs[] = {
-  { "x", (attr_get_function *)_wrap_grstring_get_x, (attr_set_function *)_wrap_grstring_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_grstring_get_y, (attr_set_function *)_wrap_grstring_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "font", (attr_get_function *)_wrap_grstring_get_font, (attr_set_function *)_wrap_grstring_set_font,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "text", (attr_get_function *)_wrap_grstring_get_text, (attr_set_function *)_wrap_grstring_set_text,(attr_get_object_function *)_wrap_grstring_get_obj_text, (attr_set_object_function *)int_set_object_failed },
-  { "angle", (attr_get_function *)_wrap_grstring_get_angle, (attr_set_function *)_wrap_grstring_set_angle,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "w", (attr_get_function *)_wrap_grstring_get_w, (attr_set_function *)_wrap_grstring_set_w,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "h", (attr_get_function *)_wrap_grstring_get_h, (attr_set_function *)_wrap_grstring_set_h,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "fill", (attr_get_function *)_wrap_grstring_get_fill, (attr_set_function *)_wrap_grstring_set_fill,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "posx", (attr_get_function *)_wrap_grstring_get_posx, (attr_set_function *)_wrap_grstring_set_posx,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "posy", (attr_get_function *)_wrap_grstring_get_posy, (attr_set_function *)_wrap_grstring_set_posy,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "size", (attr_get_function *)_wrap_grstring_get_size, (attr_set_function *)_wrap_grstring_set_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_grstring_get_x, (attr_set_function * )_wrap_grstring_set_x, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_grstring_get_y, (attr_set_function * )_wrap_grstring_set_y, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "font", (attr_get_function * )_wrap_grstring_get_font, (attr_set_function * )_wrap_grstring_set_font, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "text", (attr_get_function * )_wrap_grstring_get_text, (attr_set_function * )_wrap_grstring_set_text, (attr_get_object_function * )_wrap_grstring_get_obj_text, (attr_set_object_function * )int_set_object_failed },
+  { "angle", (attr_get_function * )_wrap_grstring_get_angle, (attr_set_function * )_wrap_grstring_set_angle, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "w", (attr_get_function * )_wrap_grstring_get_w, (attr_set_function * )_wrap_grstring_set_w, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "h", (attr_get_function * )_wrap_grstring_get_h, (attr_set_function * )_wrap_grstring_set_h, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "fill", (attr_get_function * )_wrap_grstring_get_fill, (attr_set_function * )_wrap_grstring_set_fill, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "posx", (attr_get_function * )_wrap_grstring_get_posx, (attr_set_function * )_wrap_grstring_set_posx, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "posy", (attr_get_function * )_wrap_grstring_get_posy, (attr_set_function * )_wrap_grstring_set_posy, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "size", (attr_get_function * )_wrap_grstring_get_size, (attr_set_function * )_wrap_grstring_set_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -864,8 +864,8 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Grstring_func[]={
-  {"extractelts_grstring", _wrap_nsp_extractelts_grstring},
-  {"setrowscols_grstring", _wrap_nsp_setrowscols_grstring},
+  { "extractelts_grstring", _wrap_nsp_extractelts_grstring},
+  { "setrowscols_grstring", _wrap_nsp_setrowscols_grstring},
   { "grstring_create", int_grstring_create},
   { NULL, NULL}
 };
@@ -874,13 +874,13 @@ static OpTab Grstring_func[]={
 
 int Grstring_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Grstring_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Grstring_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Grstring_Interf_Info(int i, char **fname, function (**f))
+void Grstring_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Grstring_func[i].name;
   *f = Grstring_func[i].fonc;

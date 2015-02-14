@@ -35,7 +35,7 @@ extern int nsp_message_(char *message,char **buttons,int n_buttons);
 
 #line 37 "link.c"
 
-/* ----------- NspLink ----------- */
+/* -----------NspLink ----------- */
 
 
 #define  NspLink_Private 
@@ -45,7 +45,7 @@ extern int nsp_message_(char *message,char **buttons,int n_buttons);
 
 /* 
  * NspLink inherits from Graphic 
- * and implements  GRint
+ * and implements GRint
  */
 
 int nsp_type_link_id=0;
@@ -129,7 +129,7 @@ NspTypeLink *new_type_link(type_mode mode)
    * ....
    */
   t_grint = new_type_grint(T_DERIVED);
-  type->interface = (NspTypeBase *) t_grint;
+  type->interface = (NspTypeBase * ) t_grint;
 #line 143 "codegen/link.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) link_get_hilited;
@@ -190,7 +190,7 @@ static int init_link(NspLink *Obj,NspTypeLink *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -253,7 +253,7 @@ static int nsp_link_eq(NspLink *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->poly)->type->eq(A->obj->poly,loc->obj->poly) == FALSE ) return FALSE;
   if ( nsp_eq_grl_lock(&A->obj->lock1,&loc->obj->lock1)== FALSE) return FALSE;
   if ( nsp_eq_grl_lock(&A->obj->lock2,&loc->obj->lock2)== FALSE) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -340,8 +340,8 @@ static NspLink  *nsp_link_xdr_load(XDR *xdrs)
 
 void nsp_link_destroy_partial(NspLink *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->poly != NULL ) 
@@ -400,19 +400,19 @@ int nsp_link_print(NspLink *M, int indent,const char *name, int rec_level)
           nsp_link_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
   if ( M->obj->poly != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->poly),indent+2,"poly",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->poly),indent+2,"poly", rec_level+1)== FALSE ) return FALSE ;
     }
   nsp_print_grl_lock(indent+2,&M->obj->lock1,M);
   nsp_print_grl_lock(indent+2,&M->obj->lock2,M);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -427,16 +427,16 @@ int nsp_link_latex(NspLink *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
   if ( M->obj->poly != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->poly),indent+2,"poly",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->poly),indent+2,"poly", rec_level+1)== FALSE ) return FALSE ;
     }
   nsp_print_grl_lock(indent+2,&M->obj->lock1,M);
   nsp_print_grl_lock(indent+2,&M->obj->lock2,M);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -452,7 +452,7 @@ NspLink   *nsp_link_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_link_id) == TRUE ) return ((NspLink *) O);
+  if ( check_cast (O,nsp_type_link_id)  == TRUE  ) return ((NspLink *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_link));
   return NULL;
@@ -577,7 +577,7 @@ NspLink *nsp_link_copy(NspLink *self)
 {
   NspLink *H  =nsp_link_create_void(NVOID,(NspTypeBase *) nsp_type_link);
   if ( H ==  NULLLINK) return NULLLINK;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLLINK;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLLINK;
   if ( nsp_link_copy_partial(H,self)== NULL) return NULLLINK;
 
   return H;
@@ -598,7 +598,7 @@ NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
     { H->obj->poly = NULL;}
   else
     {
-      if ((H->obj->poly = (NspMatrix *) nsp_object_full_copy_and_name("poly",NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
+      if ((H->obj->poly = (NspMatrix *) nsp_object_full_copy_and_name("poly", NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
     }
   if( nsp_grl_lock_full_copy(H,&H->obj->lock1,self)== FAIL) return NULL;
   if( nsp_grl_lock_full_copy(H,&H->obj->lock2,self)== FAIL) return NULL;
@@ -812,10 +812,10 @@ static int _wrap_link_set_poly(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab link_attrs[] = {
-  { "color", (attr_get_function *)_wrap_link_get_color, (attr_set_function *)_wrap_link_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "thickness", (attr_get_function *)_wrap_link_get_thickness, (attr_set_function *)_wrap_link_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "background", (attr_get_function *)_wrap_link_get_background, (attr_set_function *)_wrap_link_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "poly", (attr_get_function *)_wrap_link_get_poly, (attr_set_function *)_wrap_link_set_poly,(attr_get_object_function *)_wrap_link_get_obj_poly, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_link_get_color, (attr_set_function * )_wrap_link_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "thickness", (attr_get_function * )_wrap_link_get_thickness, (attr_set_function * )_wrap_link_set_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "background", (attr_get_function * )_wrap_link_get_background, (attr_set_function * )_wrap_link_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "poly", (attr_get_function * )_wrap_link_get_poly, (attr_set_function * )_wrap_link_set_poly, (attr_get_object_function * )_wrap_link_get_obj_poly, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -837,13 +837,13 @@ static OpTab Link_func[]={
 
 int Link_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Link_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Link_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Link_Interf_Info(int i, char **fname, function (**f))
+void Link_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Link_func[i].name;
   *f = Link_func[i].fonc;

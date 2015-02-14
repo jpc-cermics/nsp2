@@ -32,7 +32,7 @@
 
 #line 34 "bvar.c"
 
-/* ----------- NspBvar ----------- */
+/* -----------NspBvar ----------- */
 
 
 #define  NspBvar_Private 
@@ -153,7 +153,7 @@ static int init_bvar(NspBvar *Obj,NspTypeBvar *type)
   Obj->sym = FALSE;
   Obj->value = NULLOBJ;
   Obj->varname = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -283,7 +283,7 @@ void nsp_bvar_destroy_partial(NspBvar *H)
 /* verbatim in destroy */
 
 #line 286 "bvar.c"
-  if ( H->value != NULL ) 
+  if (H->value != NULL)
     nsp_object_destroy(&H->value);
   nsp_string_destroy(&(H->varname));
 }
@@ -367,7 +367,7 @@ NspBvar   *nsp_bvar_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_bvar_id) == TRUE ) return ((NspBvar *) O);
+  if ( check_cast (O,nsp_type_bvar_id)  == TRUE  ) return ((NspBvar *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_bvar));
   return NULL;
@@ -430,7 +430,7 @@ int nsp_bvar_check_values(NspBvar *H)
     }
   if ( H->varname == NULL) 
     {
-     if (( H->varname = nsp_string_copy("")) == NULL)
+  if (( H->varname = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   return OK;
@@ -455,7 +455,7 @@ NspBvar *nsp_bvar_create_default(const char *name)
 {
  NspBvar *H  = nsp_bvar_create_void(name,NULL);
  if ( H ==  NULLBVAR) return NULLBVAR;
- if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
+  if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
  return H;
 }
 
@@ -526,9 +526,9 @@ int int_bvar_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_bvar = new_type_bvar(T_BASE);
   if(( H = nsp_bvar_create_void(NVOID,(NspTypeBase *) nsp_type_bvar)) == NULLBVAR) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_bvar_check_values(H) == FAIL) return RET_BUG;
-#line 52 "codegen/bvar.override"
+  #line 52 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 534 "bvar.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -654,7 +654,7 @@ static NspMethods *bvar_get_methods(void) { return bvar_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab bvar_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab bvar_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -846,14 +846,14 @@ int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Bvar_func[]={
-  {"bvar_code_getvarname", _wrap_bvar_code_getvarname},
-  {"bvar_code_countvarname", _wrap_bvar_code_countvarname},
-  {"bvar_code_isvarname", _wrap_bvar_code_isvarname},
-  {"bvar_code_replacevarname", _wrap_bvar_code_replacevarname},
-  {"bvar_code_vars", _wrap_bvar_code_vars},
-  {"bvar_code_vars_used", _wrap_bvar_code_vars_used},
-  {"bvar_code_replacevar", _wrap_bvar_code_replacevar},
-  {"bvar_code_varstatus", _wrap_bvar_code_varstatus},
+  { "bvar_code_getvarname", _wrap_bvar_code_getvarname},
+  { "bvar_code_countvarname", _wrap_bvar_code_countvarname},
+  { "bvar_code_isvarname", _wrap_bvar_code_isvarname},
+  { "bvar_code_replacevarname", _wrap_bvar_code_replacevarname},
+  { "bvar_code_vars", _wrap_bvar_code_vars},
+  { "bvar_code_vars_used", _wrap_bvar_code_vars_used},
+  { "bvar_code_replacevar", _wrap_bvar_code_replacevar},
+  { "bvar_code_varstatus", _wrap_bvar_code_varstatus},
   { "bvar_create", int_bvar_create},
   { NULL, NULL}
 };
@@ -862,13 +862,13 @@ static OpTab Bvar_func[]={
 
 int Bvar_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Bvar_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Bvar_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Bvar_Interf_Info(int i, char **fname, function (**f))
+void Bvar_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Bvar_func[i].name;
   *f = Bvar_func[i].fonc;

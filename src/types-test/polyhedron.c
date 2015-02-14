@@ -36,7 +36,7 @@
 
 #line 38 "polyhedron.c"
 
-/* ----------- NspPolyhedron ----------- */
+/* -----------NspPolyhedron ----------- */
 
 
 #define  NspPolyhedron_Private 
@@ -160,7 +160,7 @@ static int init_polyhedron(NspPolyhedron *Obj,NspTypePolyhedron *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -226,7 +226,7 @@ static int nsp_polyhedron_eq(NspPolyhedron *A, NspObject *B)
     for ( i = 0 ; i < A->obj->pos_length ; i++)
       if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
   }
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -254,7 +254,7 @@ int nsp_polyhedron_xdr_save(XDR *xdrs, NspPolyhedron *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcolor)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mback_color)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -278,7 +278,7 @@ NspPolyhedron  *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -305,8 +305,8 @@ static NspPolyhedron  *nsp_polyhedron_xdr_load(XDR *xdrs)
 
 void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 80 "codegen/polyhedron.override"
@@ -375,24 +375,24 @@ int nsp_polyhedron_print(NspPolyhedron *M, int indent,const char *name, int rec_
           nsp_polyhedron_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_polyhedron_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_polyhedron_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   if ( M->obj->Mface != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mface),indent+2,"Mface",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mface),indent+2,"Mface", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->Mcolor != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->Mback_color != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mback_color),indent+2,"Mback_color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mback_color),indent+2,"Mback_color", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -408,20 +408,20 @@ int nsp_polyhedron_latex(NspPolyhedron *M, int indent,const char *name, int rec_
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyhedron_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   if ( M->obj->Mface != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),indent+2,"Mface",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),indent+2,"Mface", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->Mcolor != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->Mback_color != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mback_color),indent+2,"Mback_color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mback_color),indent+2,"Mback_color", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -437,7 +437,7 @@ NspPolyhedron   *nsp_polyhedron_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_polyhedron_id) == TRUE ) return ((NspPolyhedron *) O);
+  if ( check_cast (O,nsp_type_polyhedron_id)  == TRUE  ) return ((NspPolyhedron *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_polyhedron));
   return NULL;
@@ -488,7 +488,7 @@ static NspPolyhedron *nsp_polyhedron_create_void(const char *name,NspTypeBase *t
 
 int nsp_polyhedron_create_partial(NspPolyhedron *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_polyhedron)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->Mcoord = NULLMAT;
@@ -529,7 +529,7 @@ int nsp_polyhedron_check_values(NspPolyhedron *H)
        return FAIL;
       memcpy(H->obj->Mback_color->R,x_def,1*sizeof(double));
   }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -561,7 +561,7 @@ NspPolyhedron *nsp_polyhedron_create_default(const char *name)
  NspPolyhedron *H  = nsp_polyhedron_create_void(name,NULL);
  if ( H ==  NULLPOLYHEDRON) return NULLPOLYHEDRON;
   if ( nsp_polyhedron_create_partial(H) == FAIL) return NULLPOLYHEDRON;
- if ( nsp_polyhedron_check_values(H) == FAIL) return NULLPOLYHEDRON;
+  if ( nsp_polyhedron_check_values(H) == FAIL) return NULLPOLYHEDRON;
  return H;
 }
 
@@ -579,7 +579,7 @@ NspPolyhedron *nsp_polyhedron_copy(NspPolyhedron *self)
 {
   NspPolyhedron *H  =nsp_polyhedron_create_void(NVOID,(NspTypeBase *) nsp_type_polyhedron);
   if ( H ==  NULLPOLYHEDRON) return NULLPOLYHEDRON;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYHEDRON;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYHEDRON;
   if ( nsp_polyhedron_copy_partial(H,self)== NULL) return NULLPOLYHEDRON;
 
   return H;
@@ -596,26 +596,26 @@ NspPolyhedron *nsp_polyhedron_full_copy_partial(NspPolyhedron *H,NspPolyhedron *
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord", NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   H->obj->Mcoord_l = self->obj->Mcoord_l;
   if ( self->obj->Mface == NULL )
     { H->obj->Mface = NULL;}
   else
     {
-      if ((H->obj->Mface = (NspMatrix *) nsp_object_full_copy_and_name("Mface",NSP_OBJECT(self->obj->Mface))) == NULLMAT) return NULL;
+      if ((H->obj->Mface = (NspMatrix *) nsp_object_full_copy_and_name("Mface", NSP_OBJECT(self->obj->Mface))) == NULLMAT) return NULL;
     }
   if ( self->obj->Mcolor == NULL )
     { H->obj->Mcolor = NULL;}
   else
     {
-      if ((H->obj->Mcolor = (NspMatrix *) nsp_object_full_copy_and_name("Mcolor",NSP_OBJECT(self->obj->Mcolor))) == NULLMAT) return NULL;
+      if ((H->obj->Mcolor = (NspMatrix *) nsp_object_full_copy_and_name("Mcolor", NSP_OBJECT(self->obj->Mcolor))) == NULLMAT) return NULL;
     }
   if ( self->obj->Mback_color == NULL )
     { H->obj->Mback_color = NULL;}
   else
     {
-      if ((H->obj->Mback_color = (NspMatrix *) nsp_object_full_copy_and_name("Mback_color",NSP_OBJECT(self->obj->Mback_color))) == NULLMAT) return NULL;
+      if ((H->obj->Mback_color = (NspMatrix *) nsp_object_full_copy_and_name("Mback_color", NSP_OBJECT(self->obj->Mback_color))) == NULLMAT) return NULL;
     }
   H->obj->mesh=self->obj->mesh;
   if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
@@ -651,10 +651,10 @@ int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_polyhedron = new_type_polyhedron(T_BASE);
   if(( H = nsp_polyhedron_create_void(NVOID,(NspTypeBase *) nsp_type_polyhedron)) == NULLPOLYHEDRON) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_polyhedron_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_polyhedron_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyhedron_check_values(H) == FAIL) return RET_BUG;
-#line 75 "codegen/polyhedron.override"
+  #line 75 "codegen/polyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return RET_BUG; 
 
@@ -781,7 +781,7 @@ static NspObject *_wrap_polyhedron_get_mesh(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspPolyhedron *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_polyhedron_set_mesh(void *self,const char *attr, NspObject *O)
@@ -793,11 +793,11 @@ static int _wrap_polyhedron_set_mesh(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab polyhedron_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_polyhedron_get_Mcoord, (attr_set_function *)_wrap_polyhedron_set_Mcoord,(attr_get_object_function *)_wrap_polyhedron_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
-  { "Mface", (attr_get_function *)_wrap_polyhedron_get_Mface, (attr_set_function *)_wrap_polyhedron_set_Mface,(attr_get_object_function *)_wrap_polyhedron_get_obj_Mface, (attr_set_object_function *)int_set_object_failed },
-  { "Mcolor", (attr_get_function *)_wrap_polyhedron_get_Mcolor, (attr_set_function *)_wrap_polyhedron_set_Mcolor,(attr_get_object_function *)_wrap_polyhedron_get_obj_Mcolor, (attr_set_object_function *)int_set_object_failed },
-  { "Mback_color", (attr_get_function *)_wrap_polyhedron_get_Mback_color, (attr_set_function *)_wrap_polyhedron_set_Mback_color,(attr_get_object_function *)_wrap_polyhedron_get_obj_Mback_color, (attr_set_object_function *)int_set_object_failed },
-  { "mesh", (attr_get_function *)_wrap_polyhedron_get_mesh, (attr_set_function *)_wrap_polyhedron_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function * )_wrap_polyhedron_get_Mcoord, (attr_set_function * )_wrap_polyhedron_set_Mcoord, (attr_get_object_function * )_wrap_polyhedron_get_obj_Mcoord, (attr_set_object_function * )int_set_object_failed },
+  { "Mface", (attr_get_function * )_wrap_polyhedron_get_Mface, (attr_set_function * )_wrap_polyhedron_set_Mface, (attr_get_object_function * )_wrap_polyhedron_get_obj_Mface, (attr_set_object_function * )int_set_object_failed },
+  { "Mcolor", (attr_get_function * )_wrap_polyhedron_get_Mcolor, (attr_set_function * )_wrap_polyhedron_set_Mcolor, (attr_get_object_function * )_wrap_polyhedron_get_obj_Mcolor, (attr_set_object_function * )int_set_object_failed },
+  { "Mback_color", (attr_get_function * )_wrap_polyhedron_get_Mback_color, (attr_set_function * )_wrap_polyhedron_set_Mback_color, (attr_get_object_function * )_wrap_polyhedron_get_obj_Mback_color, (attr_set_object_function * )int_set_object_failed },
+  { "mesh", (attr_get_function * )_wrap_polyhedron_get_mesh, (attr_set_function * )_wrap_polyhedron_set_mesh, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -910,11 +910,11 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Polyhedron_func[]={
-  {"extractelts_polyhedron", _wrap_nsp_extractelts_polyhedron},
-  {"setrowscols_polyhedron", _wrap_nsp_setrowscols_polyhedron},
-  {"surf_to_coords", _wrap_nsp_surf_to_coords},
-  {"surf_to_faces", _wrap_nsp_surf_to_faces},
-  {"facets_to_faces", _wrap_nsp_facets_to_faces},
+  { "extractelts_polyhedron", _wrap_nsp_extractelts_polyhedron},
+  { "setrowscols_polyhedron", _wrap_nsp_setrowscols_polyhedron},
+  { "surf_to_coords", _wrap_nsp_surf_to_coords},
+  { "surf_to_faces", _wrap_nsp_surf_to_faces},
+  { "facets_to_faces", _wrap_nsp_facets_to_faces},
   { "polyhedron_create", int_polyhedron_create},
   { NULL, NULL}
 };
@@ -923,13 +923,13 @@ static OpTab Polyhedron_func[]={
 
 int Polyhedron_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Polyhedron_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Polyhedron_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Polyhedron_Interf_Info(int i, char **fname, function (**f))
+void Polyhedron_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Polyhedron_func[i].name;
   *f = Polyhedron_func[i].fonc;

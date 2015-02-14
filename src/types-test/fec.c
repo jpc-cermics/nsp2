@@ -38,7 +38,7 @@ extern Gengine GL_gengine;
 
 #line 40 "fec.c"
 
-/* ----------- NspFec ----------- */
+/* -----------NspFec ----------- */
 
 
 #define  NspFec_Private 
@@ -160,7 +160,7 @@ static int init_fec(NspFec *Obj,NspTypeFec *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -226,7 +226,7 @@ static int nsp_fec_eq(NspFec *A, NspObject *B)
   if ( A->obj->paint != loc->obj->paint) return FALSE;
   if ( NSP_OBJECT(A->obj->colout)->type->eq(A->obj->colout,loc->obj->colout) == FALSE ) return FALSE;
   if ( A->obj->colorbar != loc->obj->colorbar) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -259,7 +259,7 @@ int nsp_fec_xdr_save(XDR *xdrs, NspFec *M)
   if (nsp_xdr_save_i(xdrs, M->obj->paint) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colout)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->colorbar) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -288,7 +288,7 @@ NspFec  *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -310,8 +310,8 @@ static NspFec  *nsp_fec_xdr_load(XDR *xdrs)
 
 void nsp_fec_destroy_partial(NspFec *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->x != NULL ) 
@@ -380,34 +380,34 @@ int nsp_fec_print(NspFec *M, int indent,const char *name, int rec_level)
           nsp_fec_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_fec_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_fec_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->triangles != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->triangles),indent+2,"triangles",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->triangles),indent+2,"triangles", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->func != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->func),indent+2,"func",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->func),indent+2,"func", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->colminmax != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->colminmax),indent+2,"colminmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colminmax),indent+2,"colminmax", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->zminmax != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"paint	= %s\n", ( M->obj->paint == TRUE) ? "T" : "F" );
   if ( M->obj->colout != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colout),indent+2,"colout", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"colorbar	= %s\n", ( M->obj->colorbar == TRUE) ? "T" : "F" );
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -423,30 +423,30 @@ int nsp_fec_latex(NspFec *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_fec_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->triangles != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->triangles),indent+2,"triangles",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->triangles),indent+2,"triangles", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->func != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->func),indent+2,"func",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->func),indent+2,"func", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->colminmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),indent+2,"colminmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colminmax),indent+2,"colminmax", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->zminmax != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"paint	= %s\n", ( M->obj->paint == TRUE) ? "T" : "F" );
   if ( M->obj->colout != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),indent+2,"colout", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"colorbar	= %s\n", ( M->obj->colorbar == TRUE) ? "T" : "F" );
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -462,7 +462,7 @@ NspFec   *nsp_fec_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_fec_id) == TRUE ) return ((NspFec *) O);
+  if ( check_cast (O,nsp_type_fec_id)  == TRUE  ) return ((NspFec *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_fec));
   return NULL;
@@ -513,7 +513,7 @@ static NspFec *nsp_fec_create_void(const char *name,NspTypeBase *type)
 
 int nsp_fec_create_partial(NspFec *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_fec)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->x = NULLMAT;
@@ -573,7 +573,7 @@ int nsp_fec_check_values(NspFec *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -602,7 +602,7 @@ NspFec *nsp_fec_create_default(const char *name)
  NspFec *H  = nsp_fec_create_void(name,NULL);
  if ( H ==  NULLFEC) return NULLFEC;
   if ( nsp_fec_create_partial(H) == FAIL) return NULLFEC;
- if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
+  if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
  return H;
 }
 
@@ -620,7 +620,7 @@ NspFec *nsp_fec_copy(NspFec *self)
 {
   NspFec *H  =nsp_fec_create_void(NVOID,(NspTypeBase *) nsp_type_fec);
   if ( H ==  NULLFEC) return NULLFEC;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFEC;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFEC;
   if ( nsp_fec_copy_partial(H,self)== NULL) return NULLFEC;
 
   return H;
@@ -637,37 +637,37 @@ NspFec *nsp_fec_full_copy_partial(NspFec *H,NspFec *self)
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x", NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y", NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->triangles == NULL )
     { H->obj->triangles = NULL;}
   else
     {
-      if ((H->obj->triangles = (NspMatrix *) nsp_object_full_copy_and_name("triangles",NSP_OBJECT(self->obj->triangles))) == NULLMAT) return NULL;
+      if ((H->obj->triangles = (NspMatrix *) nsp_object_full_copy_and_name("triangles", NSP_OBJECT(self->obj->triangles))) == NULLMAT) return NULL;
     }
   if ( self->obj->func == NULL )
     { H->obj->func = NULL;}
   else
     {
-      if ((H->obj->func = (NspMatrix *) nsp_object_full_copy_and_name("func",NSP_OBJECT(self->obj->func))) == NULLMAT) return NULL;
+      if ((H->obj->func = (NspMatrix *) nsp_object_full_copy_and_name("func", NSP_OBJECT(self->obj->func))) == NULLMAT) return NULL;
     }
   if ( self->obj->colminmax == NULL )
     { H->obj->colminmax = NULL;}
   else
     {
-      if ((H->obj->colminmax = (NspMatrix *) nsp_object_full_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
+      if ((H->obj->colminmax = (NspMatrix *) nsp_object_full_copy_and_name("colminmax", NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
     }
   if ( self->obj->zminmax == NULL )
     { H->obj->zminmax = NULL;}
   else
     {
-      if ((H->obj->zminmax = (NspMatrix *) nsp_object_full_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
+      if ((H->obj->zminmax = (NspMatrix *) nsp_object_full_copy_and_name("zminmax", NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
     }
   H->obj->mesh=self->obj->mesh;
   H->obj->paint=self->obj->paint;
@@ -675,7 +675,7 @@ NspFec *nsp_fec_full_copy_partial(NspFec *H,NspFec *self)
     { H->obj->colout = NULL;}
   else
     {
-      if ((H->obj->colout = (NspMatrix *) nsp_object_full_copy_and_name("colout",NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
+      if ((H->obj->colout = (NspMatrix *) nsp_object_full_copy_and_name("colout", NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
     }
   H->obj->colorbar=self->obj->colorbar;
   return H;
@@ -703,10 +703,10 @@ int int_fec_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_fec = new_type_fec(T_BASE);
   if(( H = nsp_fec_create_void(NVOID,(NspTypeBase *) nsp_type_fec)) == NULLFEC) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_fec_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_fec_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_fec_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -880,7 +880,7 @@ static NspObject *_wrap_fec_get_mesh(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspFec *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_fec_set_mesh(void *self,const char *attr, NspObject *O)
@@ -897,7 +897,7 @@ static NspObject *_wrap_fec_get_paint(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspFec *) self)->obj->paint;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_fec_set_paint(void *self,const char *attr, NspObject *O)
@@ -940,7 +940,7 @@ static NspObject *_wrap_fec_get_colorbar(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspFec *) self)->obj->colorbar;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_fec_set_colorbar(void *self,const char *attr, NspObject *O)
@@ -952,16 +952,16 @@ static int _wrap_fec_set_colorbar(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab fec_attrs[] = {
-  { "x", (attr_get_function *)_wrap_fec_get_x, (attr_set_function *)_wrap_fec_set_x,(attr_get_object_function *)_wrap_fec_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_fec_get_y, (attr_set_function *)_wrap_fec_set_y,(attr_get_object_function *)_wrap_fec_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "triangles", (attr_get_function *)_wrap_fec_get_triangles, (attr_set_function *)_wrap_fec_set_triangles,(attr_get_object_function *)_wrap_fec_get_obj_triangles, (attr_set_object_function *)int_set_object_failed },
-  { "func", (attr_get_function *)_wrap_fec_get_func, (attr_set_function *)_wrap_fec_set_func,(attr_get_object_function *)_wrap_fec_get_obj_func, (attr_set_object_function *)int_set_object_failed },
-  { "colminmax", (attr_get_function *)_wrap_fec_get_colminmax, (attr_set_function *)_wrap_fec_set_colminmax,(attr_get_object_function *)_wrap_fec_get_obj_colminmax, (attr_set_object_function *)int_set_object_failed },
-  { "zminmax", (attr_get_function *)_wrap_fec_get_zminmax, (attr_set_function *)_wrap_fec_set_zminmax,(attr_get_object_function *)_wrap_fec_get_obj_zminmax, (attr_set_object_function *)int_set_object_failed },
-  { "mesh", (attr_get_function *)_wrap_fec_get_mesh, (attr_set_function *)_wrap_fec_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "paint", (attr_get_function *)_wrap_fec_get_paint, (attr_set_function *)_wrap_fec_set_paint,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "colout", (attr_get_function *)_wrap_fec_get_colout, (attr_set_function *)_wrap_fec_set_colout,(attr_get_object_function *)_wrap_fec_get_obj_colout, (attr_set_object_function *)int_set_object_failed },
-  { "colorbar", (attr_get_function *)_wrap_fec_get_colorbar, (attr_set_function *)_wrap_fec_set_colorbar,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_fec_get_x, (attr_set_function * )_wrap_fec_set_x, (attr_get_object_function * )_wrap_fec_get_obj_x, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_fec_get_y, (attr_set_function * )_wrap_fec_set_y, (attr_get_object_function * )_wrap_fec_get_obj_y, (attr_set_object_function * )int_set_object_failed },
+  { "triangles", (attr_get_function * )_wrap_fec_get_triangles, (attr_set_function * )_wrap_fec_set_triangles, (attr_get_object_function * )_wrap_fec_get_obj_triangles, (attr_set_object_function * )int_set_object_failed },
+  { "func", (attr_get_function * )_wrap_fec_get_func, (attr_set_function * )_wrap_fec_set_func, (attr_get_object_function * )_wrap_fec_get_obj_func, (attr_set_object_function * )int_set_object_failed },
+  { "colminmax", (attr_get_function * )_wrap_fec_get_colminmax, (attr_set_function * )_wrap_fec_set_colminmax, (attr_get_object_function * )_wrap_fec_get_obj_colminmax, (attr_set_object_function * )int_set_object_failed },
+  { "zminmax", (attr_get_function * )_wrap_fec_get_zminmax, (attr_set_function * )_wrap_fec_set_zminmax, (attr_get_object_function * )_wrap_fec_get_obj_zminmax, (attr_set_object_function * )int_set_object_failed },
+  { "mesh", (attr_get_function * )_wrap_fec_get_mesh, (attr_set_function * )_wrap_fec_set_mesh, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "paint", (attr_get_function * )_wrap_fec_get_paint, (attr_set_function * )_wrap_fec_set_paint, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "colout", (attr_get_function * )_wrap_fec_get_colout, (attr_set_function * )_wrap_fec_set_colout, (attr_get_object_function * )_wrap_fec_get_obj_colout, (attr_set_object_function * )int_set_object_failed },
+  { "colorbar", (attr_get_function * )_wrap_fec_get_colorbar, (attr_set_function * )_wrap_fec_set_colorbar, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -999,8 +999,8 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Fec_func[]={
-  {"extractelts_fec", _wrap_nsp_extractelts_fec},
-  {"setrowscols_fec", _wrap_nsp_setrowscols_fec},
+  { "extractelts_fec", _wrap_nsp_extractelts_fec},
+  { "setrowscols_fec", _wrap_nsp_setrowscols_fec},
   { "fec_create", int_fec_create},
   { NULL, NULL}
 };
@@ -1009,13 +1009,13 @@ static OpTab Fec_func[]={
 
 int Fec_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Fec_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Fec_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Fec_Interf_Info(int i, char **fname, function (**f))
+void Fec_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Fec_func[i].name;
   *f = Fec_func[i].fonc;

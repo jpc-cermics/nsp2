@@ -28,7 +28,7 @@
 
 #line 30 "connector.c"
 
-/* ----------- NspConnector ----------- */
+/* -----------NspConnector ----------- */
 
 
 #define  NspConnector_Private 
@@ -38,7 +38,7 @@
 
 /* 
  * NspConnector inherits from Graphic 
- * and implements  GRint
+ * and implements GRint
  */
 
 int nsp_type_connector_id=0;
@@ -122,7 +122,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
    * ....
    */
   t_grint = new_type_grint(T_DERIVED);
-  type->interface = (NspTypeBase *) t_grint;
+  type->interface = (NspTypeBase * ) t_grint;
 #line 112 "codegen/connector.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) connector_get_hilited;
@@ -183,7 +183,7 @@ static int init_connector(NspConnector *Obj,NspTypeConnector *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -249,7 +249,7 @@ static int nsp_connector_eq(NspConnector *A, NspObject *B)
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
   if ( A->obj->background != loc->obj->background) return FALSE;
   if ( nsp_eq_gr_lock(&A->obj->lock,&loc->obj->lock)== FALSE) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -331,8 +331,8 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
 
 void nsp_connector_destroy_partial(NspConnector *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_destroy_gr_lock(&H->obj->lock,H); 
@@ -388,16 +388,16 @@ int nsp_connector_print(NspConnector *M, int indent,const char *name, int rec_le
           nsp_connector_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_connector_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_connector_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
+  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
   if ( nsp_print_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
   nsp_print_gr_lock(indent+2,&M->obj->lock,M);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -412,13 +412,13 @@ int nsp_connector_latex(NspConnector *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_connector_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
+  Sciprintf1(indent+2,"object_sid=0x%x\n", M->obj->object_sid);
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n", M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
   nsp_print_gr_lock(indent+2,&M->obj->lock,M);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -434,7 +434,7 @@ NspConnector   *nsp_connector_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_connector_id) == TRUE ) return ((NspConnector *) O);
+  if ( check_cast (O,nsp_type_connector_id)  == TRUE  ) return ((NspConnector *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_connector));
   return NULL;
@@ -551,7 +551,7 @@ NspConnector *nsp_connector_copy(NspConnector *self)
 {
   NspConnector *H  =nsp_connector_create_void(NVOID,(NspTypeBase *) nsp_type_connector);
   if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONNECTOR;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONNECTOR;
   if ( nsp_connector_copy_partial(H,self)== NULL) return NULLCONNECTOR;
 
   return H;
@@ -760,9 +760,9 @@ static int _wrap_connector_set_background(void *self,const char *attr, NspObject
 }
 
 static AttrTab connector_attrs[] = {
-  { "color", (attr_get_function *)_wrap_connector_get_color, (attr_set_function *)_wrap_connector_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "thickness", (attr_get_function *)_wrap_connector_get_thickness, (attr_set_function *)_wrap_connector_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "background", (attr_get_function *)_wrap_connector_get_background, (attr_set_function *)_wrap_connector_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_connector_get_color, (attr_set_function * )_wrap_connector_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "thickness", (attr_get_function * )_wrap_connector_get_thickness, (attr_set_function * )_wrap_connector_set_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "background", (attr_get_function * )_wrap_connector_get_background, (attr_set_function * )_wrap_connector_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -784,13 +784,13 @@ static OpTab Connector_func[]={
 
 int Connector_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Connector_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Connector_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Connector_Interf_Info(int i, char **fname, function (**f))
+void Connector_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Connector_func[i].name;
   *f = Connector_func[i].fonc;

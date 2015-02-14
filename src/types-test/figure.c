@@ -34,7 +34,7 @@
 
 #line 36 "figure.c"
 
-/* ----------- NspFigure ----------- */
+/* -----------NspFigure ----------- */
 
 
 #define  NspFigure_Private 
@@ -151,7 +151,7 @@ static int init_figure(NspFigure *Obj,NspTypeFigure *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -218,7 +218,7 @@ static int nsp_figure_eq(NspFigure *A, NspObject *B)
   if ( A->obj->draw_now != loc->obj->draw_now) return FALSE;
 if ( NSP_OBJECT(A->obj->gc)->type->eq(A->obj->gc,loc->obj->gc) == FALSE ) return FALSE;
   if ( A->obj->Xgc != loc->obj->Xgc) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -250,7 +250,7 @@ int nsp_figure_xdr_save(XDR *xdrs, NspFigure *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->position)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->gc)) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -278,7 +278,7 @@ NspFigure  *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -305,8 +305,8 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
 
 void nsp_figure_destroy_partial(NspFigure *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 96 "codegen/figure.override"
@@ -378,31 +378,31 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
           nsp_figure_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_figure_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"driver=%s\n",M->obj->driver);
-  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
   if ( M->obj->dims != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->dims),indent+2,"dims",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->dims),indent+2,"dims", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->viewport_dims != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
   if ( M->obj->position != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->position),indent+2,"position",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->position),indent+2,"position", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
   if ( M->obj->gc != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->gc),indent+2,"gc",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->gc),indent+2,"gc", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Xgc=0x%x\n",M->obj->Xgc);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"Xgc=0x%x\n", M->obj->Xgc);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -419,26 +419,26 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
   Sciprintf1(indent+2,"driver=%s\n",M->obj->driver);
-  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
   if ( M->obj->dims != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->dims),indent+2,"dims",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->dims),indent+2,"dims", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->viewport_dims != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->viewport_dims),indent+2,"viewport_dims", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"wresize	= %s\n", ( M->obj->wresize == TRUE) ? "T" : "F" );
   if ( M->obj->position != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),indent+2,"position",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->position),indent+2,"position", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"draw_now	= %s\n", ( M->obj->draw_now == TRUE) ? "T" : "F" );
   if ( M->obj->gc != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),indent+2,"gc",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),indent+2,"gc", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Xgc=0x%x\n",M->obj->Xgc);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"Xgc=0x%x\n", M->obj->Xgc);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -454,7 +454,7 @@ NspFigure   *nsp_figure_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_figure_id) == TRUE ) return ((NspFigure *) O);
+  if ( check_cast (O,nsp_type_figure_id)  == TRUE  ) return ((NspFigure *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_figure));
   return NULL;
@@ -505,7 +505,7 @@ static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type)
 
 int nsp_figure_create_partial(NspFigure *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_figure)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->fname = NULL;
@@ -526,12 +526,12 @@ int nsp_figure_check_values(NspFigure *H)
 {
   if ( H->obj->fname == NULL) 
     {
-     if (( H->obj->fname = nsp_string_copy("")) == NULL)
+  if (( H->obj->fname = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->driver == NULL) 
     {
-     if (( H->obj->driver = nsp_string_copy("")) == NULL)
+  if (( H->obj->driver = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->dims == NULLMAT) 
@@ -562,7 +562,7 @@ int nsp_figure_check_values(NspFigure *H)
      if (( H->obj->gc = nsp_figuredata_create_default("gc")) == NULL)
        return FAIL;
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -597,7 +597,7 @@ NspFigure *nsp_figure_create_default(const char *name)
  NspFigure *H  = nsp_figure_create_void(name,NULL);
  if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_figure_create_partial(H) == FAIL) return NULLFIGURE;
- if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
+  if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
  return H;
 }
 
@@ -615,7 +615,7 @@ NspFigure *nsp_figure_copy(NspFigure *self)
 {
   NspFigure *H  =nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure);
   if ( H ==  NULLFIGURE) return NULLFIGURE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_copy_partial(H,self)== NULL) return NULLFIGURE;
 
   return H;
@@ -635,33 +635,33 @@ NspFigure *nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self)
     { H->obj->dims = NULL;}
   else
     {
-      if ((H->obj->dims = (NspMatrix *) nsp_object_full_copy_and_name("dims",NSP_OBJECT(self->obj->dims))) == NULLMAT) return NULL;
+      if ((H->obj->dims = (NspMatrix *) nsp_object_full_copy_and_name("dims", NSP_OBJECT(self->obj->dims))) == NULLMAT) return NULL;
     }
   if ( self->obj->viewport_dims == NULL )
     { H->obj->viewport_dims = NULL;}
   else
     {
-      if ((H->obj->viewport_dims = (NspMatrix *) nsp_object_full_copy_and_name("viewport_dims",NSP_OBJECT(self->obj->viewport_dims))) == NULLMAT) return NULL;
+      if ((H->obj->viewport_dims = (NspMatrix *) nsp_object_full_copy_and_name("viewport_dims", NSP_OBJECT(self->obj->viewport_dims))) == NULLMAT) return NULL;
     }
   H->obj->wresize=self->obj->wresize;
   if ( self->obj->position == NULL )
     { H->obj->position = NULL;}
   else
     {
-      if ((H->obj->position = (NspMatrix *) nsp_object_full_copy_and_name("position",NSP_OBJECT(self->obj->position))) == NULLMAT) return NULL;
+      if ((H->obj->position = (NspMatrix *) nsp_object_full_copy_and_name("position", NSP_OBJECT(self->obj->position))) == NULLMAT) return NULL;
     }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children", NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   H->obj->draw_now=self->obj->draw_now;
   if ( self->obj->gc == NULL )
     { H->obj->gc = NULL;}
   else
     {
-      if ((H->obj->gc = (NspFigureData *) nsp_object_full_copy_and_name("gc",NSP_OBJECT(self->obj->gc))) == NULL) return NULL;
+      if ((H->obj->gc = (NspFigureData *) nsp_object_full_copy_and_name("gc", NSP_OBJECT(self->obj->gc))) == NULL) return NULL;
     }
   H->obj->Xgc = self->obj->Xgc;
   return H;
@@ -694,10 +694,10 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_figure = new_type_figure(T_BASE);
   if(( H = nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure)) == NULLFIGURE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
-#line 101 "codegen/figure.override"
+  #line 101 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
   nsp_figure_children_link_figure(H);
   nsp_figure_initialize_gc(H);
@@ -741,7 +741,7 @@ static int _wrap_nsp_figure_draw_status(NspFigure *self,Stack stack,int rhs,int 
 {
   int ret;
   CheckRhs(0,0);
-  ret = nsp_figure_draw_status(self);
+  ret =nsp_figure_draw_status(self);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -801,10 +801,10 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *g;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_graphic, &g) == FAIL) return RET_BUG;
-  nsp_figure_remove_element(self, ((NspGraphic *) g));
+  nsp_figure_remove_element(self,((NspGraphic *) g));
   return 0;
 }
 
@@ -939,7 +939,7 @@ static NspObject *_wrap_figure_get_wresize(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspFigure *) self)->obj->wresize;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_figure_set_wresize(void *self,const char *attr, NspObject *O)
@@ -1046,21 +1046,21 @@ static int _wrap_figure_set_gc(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab figure_attrs[] = {
-  { "fname", (attr_get_function *)_wrap_figure_get_fname, (attr_set_function *)_wrap_figure_set_fname,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "driver", (attr_get_function *)_wrap_figure_get_driver, (attr_set_function *)_wrap_figure_set_driver,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "id", (attr_get_function *)_wrap_figure_get_id, (attr_set_function *)_wrap_figure_set_id,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "dims", (attr_get_function *)_wrap_figure_get_dims, (attr_set_function *)_wrap_figure_set_dims,(attr_get_object_function *)_wrap_figure_get_obj_dims, (attr_set_object_function *)int_set_object_failed },
-  { "viewport_dims", (attr_get_function *)_wrap_figure_get_viewport_dims, (attr_set_function *)_wrap_figure_set_viewport_dims,(attr_get_object_function *)_wrap_figure_get_obj_viewport_dims, (attr_set_object_function *)int_set_object_failed },
-  { "wresize", (attr_get_function *)_wrap_figure_get_wresize, (attr_set_function *)_wrap_figure_set_wresize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "position", (attr_get_function *)_wrap_figure_get_position, (attr_set_function *)_wrap_figure_set_position,(attr_get_object_function *)_wrap_figure_get_obj_position, (attr_set_object_function *)int_set_object_failed },
-  { "children", (attr_get_function *)_wrap_figure_get_children, (attr_set_function *)_wrap_figure_set_children,(attr_get_object_function *)_wrap_figure_get_obj_children, (attr_set_object_function *)_wrap_figure_set_obj_children },
-  { "gc", (attr_get_function *)_wrap_figure_get_gc, (attr_set_function *)_wrap_figure_set_gc,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "fname", (attr_get_function * )_wrap_figure_get_fname, (attr_set_function * )_wrap_figure_set_fname, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "driver", (attr_get_function * )_wrap_figure_get_driver, (attr_set_function * )_wrap_figure_set_driver, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "id", (attr_get_function * )_wrap_figure_get_id, (attr_set_function * )_wrap_figure_set_id, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "dims", (attr_get_function * )_wrap_figure_get_dims, (attr_set_function * )_wrap_figure_set_dims, (attr_get_object_function * )_wrap_figure_get_obj_dims, (attr_set_object_function * )int_set_object_failed },
+  { "viewport_dims", (attr_get_function * )_wrap_figure_get_viewport_dims, (attr_set_function * )_wrap_figure_set_viewport_dims, (attr_get_object_function * )_wrap_figure_get_obj_viewport_dims, (attr_set_object_function * )int_set_object_failed },
+  { "wresize", (attr_get_function * )_wrap_figure_get_wresize, (attr_set_function * )_wrap_figure_set_wresize, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "position", (attr_get_function * )_wrap_figure_get_position, (attr_set_function * )_wrap_figure_set_position, (attr_get_object_function * )_wrap_figure_get_obj_position, (attr_set_object_function * )int_set_object_failed },
+  { "children", (attr_get_function * )_wrap_figure_get_children, (attr_set_function * )_wrap_figure_set_children, (attr_get_object_function * )_wrap_figure_get_obj_children, (attr_set_object_function * )_wrap_figure_set_obj_children },
+  { "gc", (attr_get_function * )_wrap_figure_get_gc, (attr_set_function * )_wrap_figure_set_gc, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspFigureData ----------- */
+/* -----------NspFigureData ----------- */
 
 
 #define  NspFigureData_Private 
@@ -1184,7 +1184,7 @@ static int init_figuredata(NspFigureData *Obj,NspTypeFigureData *type)
   Obj->thickness = 1;
   Obj->use_color = 1;
   Obj->auto_clear = FALSE;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1256,7 +1256,7 @@ static int nsp_figuredata_eq(NspFigureData *A, NspObject *B)
   if ( A->thickness != loc->thickness) return FALSE;
   if ( A->use_color != loc->use_color) return FALSE;
   if ( A->auto_clear != loc->auto_clear) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1395,28 +1395,28 @@ int nsp_figuredata_print(NspFigureData *M, int indent,const char *name, int rec_
           nsp_figuredata_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"color=%d\n",M->color);
-  Sciprintf1(indent+2,"background=%d\n",M->background);
+  Sciprintf1(indent+2,"color=%d\n", M->color);
+  Sciprintf1(indent+2,"background=%d\n", M->background);
   if ( M->colormap != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"dashes=%d\n",M->dashes);
-  Sciprintf1(indent+2,"font=%d\n",M->font);
-  Sciprintf1(indent+2,"font_size=%d\n",M->font_size);
-  Sciprintf1(indent+2,"foreground=%d\n",M->foreground);
-  Sciprintf1(indent+2,"hidden3d=%d\n",M->hidden3d);
-  Sciprintf1(indent+2,"line_mode=%d\n",M->line_mode);
-  Sciprintf1(indent+2,"line_style=%d\n",M->line_style);
-  Sciprintf1(indent+2,"mark=%d\n",M->mark);
-  Sciprintf1(indent+2,"mark_size=%d\n",M->mark_size);
-  Sciprintf1(indent+2,"pattern=%d\n",M->pattern);
-  Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
-  Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
-  Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
+  Sciprintf1(indent+2,"dashes=%d\n", M->dashes);
+  Sciprintf1(indent+2,"font=%d\n", M->font);
+  Sciprintf1(indent+2,"font_size=%d\n", M->font_size);
+  Sciprintf1(indent+2,"foreground=%d\n", M->foreground);
+  Sciprintf1(indent+2,"hidden3d=%d\n", M->hidden3d);
+  Sciprintf1(indent+2,"line_mode=%d\n", M->line_mode);
+  Sciprintf1(indent+2,"line_style=%d\n", M->line_style);
+  Sciprintf1(indent+2,"mark=%d\n", M->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->mark_size);
+  Sciprintf1(indent+2,"pattern=%d\n", M->pattern);
+  Sciprintf1(indent+2,"pixmap=%d\n", M->pixmap);
+  Sciprintf1(indent+2,"thickness=%d\n", M->thickness);
+  Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
   Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -1431,24 +1431,24 @@ int nsp_figuredata_latex(NspFigureData *M, int indent,const char *name, int rec_
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_figuredata_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"color=%d\n",M->color);
-  Sciprintf1(indent+2,"background=%d\n",M->background);
+  Sciprintf1(indent+2,"color=%d\n", M->color);
+  Sciprintf1(indent+2,"background=%d\n", M->background);
   if ( M->colormap != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"dashes=%d\n",M->dashes);
-  Sciprintf1(indent+2,"font=%d\n",M->font);
-  Sciprintf1(indent+2,"font_size=%d\n",M->font_size);
-  Sciprintf1(indent+2,"foreground=%d\n",M->foreground);
-  Sciprintf1(indent+2,"hidden3d=%d\n",M->hidden3d);
-  Sciprintf1(indent+2,"line_mode=%d\n",M->line_mode);
-  Sciprintf1(indent+2,"line_style=%d\n",M->line_style);
-  Sciprintf1(indent+2,"mark=%d\n",M->mark);
-  Sciprintf1(indent+2,"mark_size=%d\n",M->mark_size);
-  Sciprintf1(indent+2,"pattern=%d\n",M->pattern);
-  Sciprintf1(indent+2,"pixmap=%d\n",M->pixmap);
-  Sciprintf1(indent+2,"thickness=%d\n",M->thickness);
-  Sciprintf1(indent+2,"use_color=%d\n",M->use_color);
+  Sciprintf1(indent+2,"dashes=%d\n", M->dashes);
+  Sciprintf1(indent+2,"font=%d\n", M->font);
+  Sciprintf1(indent+2,"font_size=%d\n", M->font_size);
+  Sciprintf1(indent+2,"foreground=%d\n", M->foreground);
+  Sciprintf1(indent+2,"hidden3d=%d\n", M->hidden3d);
+  Sciprintf1(indent+2,"line_mode=%d\n", M->line_mode);
+  Sciprintf1(indent+2,"line_style=%d\n", M->line_style);
+  Sciprintf1(indent+2,"mark=%d\n", M->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->mark_size);
+  Sciprintf1(indent+2,"pattern=%d\n", M->pattern);
+  Sciprintf1(indent+2,"pixmap=%d\n", M->pixmap);
+  Sciprintf1(indent+2,"thickness=%d\n", M->thickness);
+  Sciprintf1(indent+2,"use_color=%d\n", M->use_color);
   Sciprintf1(indent+2,"auto_clear	= %s\n", ( M->auto_clear == TRUE) ? "T" : "F" );
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -1465,7 +1465,7 @@ NspFigureData   *nsp_figuredata_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_figuredata_id) == TRUE ) return ((NspFigureData *) O);
+  if ( check_cast (O,nsp_type_figuredata_id)  == TRUE  ) return ((NspFigureData *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_figuredata));
   return NULL;
@@ -1560,7 +1560,7 @@ NspFigureData *nsp_figuredata_create_default(const char *name)
 {
  NspFigureData *H  = nsp_figuredata_create_void(name,NULL);
  if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
- if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
+  if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
  return H;
 }
 
@@ -1576,7 +1576,7 @@ NspFigureData *nsp_figuredata_copy_partial(NspFigureData *H,NspFigureData *self)
     { H->colormap = NULL;}
   else
     {
-      if ((H->colormap = (NspMatrix *) nsp_object_copy_and_name("colormap",NSP_OBJECT(self->colormap))) == NULLMAT) return NULL;
+      if ((H->colormap = (NspMatrix *) nsp_object_copy_and_name("colormap", NSP_OBJECT(self->colormap))) == NULLMAT) return NULL;
     }
   H->dashes=self->dashes;
   H->font=self->font;
@@ -1615,7 +1615,7 @@ NspFigureData *nsp_figuredata_full_copy_partial(NspFigureData *H,NspFigureData *
     { H->colormap = NULL;}
   else
     {
-      if ((H->colormap = (NspMatrix *) nsp_object_full_copy_and_name("colormap",NSP_OBJECT(self->colormap))) == NULLMAT) return NULL;
+      if ((H->colormap = (NspMatrix *) nsp_object_full_copy_and_name("colormap", NSP_OBJECT(self->colormap))) == NULLMAT) return NULL;
     }
   H->dashes=self->dashes;
   H->font=self->font;
@@ -1656,9 +1656,9 @@ int int_figuredata_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_figuredata = new_type_figuredata(T_BASE);
   if(( H = nsp_figuredata_create_void(NVOID,(NspTypeBase *) nsp_type_figuredata)) == NULLFIGUREDATA) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figuredata_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -1953,7 +1953,7 @@ static NspObject *_wrap_figuredata_get_auto_clear(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspFigureData *) self)->auto_clear;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_figuredata_set_auto_clear(void *self,const char *attr, NspObject *O)
@@ -1965,23 +1965,23 @@ static int _wrap_figuredata_set_auto_clear(void *self,const char *attr, NspObjec
 }
 
 static AttrTab figuredata_attrs[] = {
-  { "color", (attr_get_function *)_wrap_figuredata_get_color, (attr_set_function *)_wrap_figuredata_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "background", (attr_get_function *)_wrap_figuredata_get_background, (attr_set_function *)_wrap_figuredata_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "colormap", (attr_get_function *)_wrap_figuredata_get_colormap, (attr_set_function *)_wrap_figuredata_set_colormap,(attr_get_object_function *)_wrap_figuredata_get_obj_colormap, (attr_set_object_function *)_wrap_figuredata_set_obj_colormap },
-  { "dashes", (attr_get_function *)_wrap_figuredata_get_dashes, (attr_set_function *)_wrap_figuredata_set_dashes,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "font", (attr_get_function *)_wrap_figuredata_get_font, (attr_set_function *)_wrap_figuredata_set_font,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "font_size", (attr_get_function *)_wrap_figuredata_get_font_size, (attr_set_function *)_wrap_figuredata_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "foreground", (attr_get_function *)_wrap_figuredata_get_foreground, (attr_set_function *)_wrap_figuredata_set_foreground,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "hidden3d", (attr_get_function *)_wrap_figuredata_get_hidden3d, (attr_set_function *)_wrap_figuredata_set_hidden3d,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "line_mode", (attr_get_function *)_wrap_figuredata_get_line_mode, (attr_set_function *)_wrap_figuredata_set_line_mode,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "line_style", (attr_get_function *)_wrap_figuredata_get_line_style, (attr_set_function *)_wrap_figuredata_set_line_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mark", (attr_get_function *)_wrap_figuredata_get_mark, (attr_set_function *)_wrap_figuredata_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mark_size", (attr_get_function *)_wrap_figuredata_get_mark_size, (attr_set_function *)_wrap_figuredata_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "pattern", (attr_get_function *)_wrap_figuredata_get_pattern, (attr_set_function *)_wrap_figuredata_set_pattern,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "pixmap", (attr_get_function *)_wrap_figuredata_get_pixmap, (attr_set_function *)_wrap_figuredata_set_pixmap,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "thickness", (attr_get_function *)_wrap_figuredata_get_thickness, (attr_set_function *)_wrap_figuredata_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "use_color", (attr_get_function *)_wrap_figuredata_get_use_color, (attr_set_function *)_wrap_figuredata_set_use_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "auto_clear", (attr_get_function *)_wrap_figuredata_get_auto_clear, (attr_set_function *)_wrap_figuredata_set_auto_clear,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_figuredata_get_color, (attr_set_function * )_wrap_figuredata_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "background", (attr_get_function * )_wrap_figuredata_get_background, (attr_set_function * )_wrap_figuredata_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "colormap", (attr_get_function * )_wrap_figuredata_get_colormap, (attr_set_function * )_wrap_figuredata_set_colormap, (attr_get_object_function * )_wrap_figuredata_get_obj_colormap, (attr_set_object_function * )_wrap_figuredata_set_obj_colormap },
+  { "dashes", (attr_get_function * )_wrap_figuredata_get_dashes, (attr_set_function * )_wrap_figuredata_set_dashes, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "font", (attr_get_function * )_wrap_figuredata_get_font, (attr_set_function * )_wrap_figuredata_set_font, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "font_size", (attr_get_function * )_wrap_figuredata_get_font_size, (attr_set_function * )_wrap_figuredata_set_font_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "foreground", (attr_get_function * )_wrap_figuredata_get_foreground, (attr_set_function * )_wrap_figuredata_set_foreground, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "hidden3d", (attr_get_function * )_wrap_figuredata_get_hidden3d, (attr_set_function * )_wrap_figuredata_set_hidden3d, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "line_mode", (attr_get_function * )_wrap_figuredata_get_line_mode, (attr_set_function * )_wrap_figuredata_set_line_mode, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "line_style", (attr_get_function * )_wrap_figuredata_get_line_style, (attr_set_function * )_wrap_figuredata_set_line_style, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark", (attr_get_function * )_wrap_figuredata_get_mark, (attr_set_function * )_wrap_figuredata_set_mark, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark_size", (attr_get_function * )_wrap_figuredata_get_mark_size, (attr_set_function * )_wrap_figuredata_set_mark_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "pattern", (attr_get_function * )_wrap_figuredata_get_pattern, (attr_set_function * )_wrap_figuredata_set_pattern, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "pixmap", (attr_get_function * )_wrap_figuredata_get_pixmap, (attr_set_function * )_wrap_figuredata_set_pixmap, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "thickness", (attr_get_function * )_wrap_figuredata_get_thickness, (attr_set_function * )_wrap_figuredata_set_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "use_color", (attr_get_function * )_wrap_figuredata_get_use_color, (attr_set_function * )_wrap_figuredata_set_use_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "auto_clear", (attr_get_function * )_wrap_figuredata_get_auto_clear, (attr_set_function * )_wrap_figuredata_set_auto_clear, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1993,7 +1993,7 @@ int _wrap_nsp_check_for_current_figure(Stack stack, int rhs, int opt, int lhs) /
 {
   NspFigure *ret;
   CheckRhs(0,0);
-    ret = nsp_check_for_current_figure();
+    ret =nsp_check_for_current_figure();
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -2001,13 +2001,13 @@ int _wrap_nsp_check_for_current_figure(Stack stack, int rhs, int opt, int lhs) /
 
 int _wrap_nsp_get_wid_figure(Stack stack, int rhs, int opt, int lhs) /* get_figure */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int wid;
   NspObject *ret;
   if ( GetArgs(stack,rhs,opt,T,&wid) == FAIL) return RET_BUG;
-    ret = nsp_get_wid_figure(wid);
+    ret =nsp_get_wid_figure(wid);
   if (ret == NULLOBJ ) return RET_BUG;
-  MoveObj(stack,1,ret);
+MoveObj(stack,1,ret);
   return 1;
 }
 
@@ -2015,7 +2015,7 @@ int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_cu
 {
   NspAxes *ret;
   CheckRhs(0,0);
-    ret = nsp_get_current_axes();
+    ret =nsp_get_current_axes();
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -2051,11 +2051,11 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Figure_func[]={
-  {"get_current_figure", _wrap_nsp_check_for_current_figure},
-  {"get_figure", _wrap_nsp_get_wid_figure},
-  {"get_current_axes", _wrap_nsp_get_current_axes},
-  {"extractelts_figure", _wrap_nsp_extractelts_figure},
-  {"setrowscols_figure", _wrap_nsp_setrowscols_figure},
+  { "get_current_figure", _wrap_nsp_check_for_current_figure},
+  { "get_figure", _wrap_nsp_get_wid_figure},
+  { "get_current_axes", _wrap_nsp_get_current_axes},
+  { "extractelts_figure", _wrap_nsp_extractelts_figure},
+  { "setrowscols_figure", _wrap_nsp_setrowscols_figure},
   { "figure_create", int_figure_create},
   { NULL, NULL}
 };
@@ -2064,13 +2064,13 @@ static OpTab Figure_func[]={
 
 int Figure_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Figure_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Figure_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Figure_Interf_Info(int i, char **fname, function (**f))
+void Figure_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Figure_func[i].name;
   *f = Figure_func[i].fonc;

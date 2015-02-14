@@ -37,7 +37,7 @@
 
 #line 39 "polyline3d.c"
 
-/* ----------- NspPolyline3d ----------- */
+/* -----------NspPolyline3d ----------- */
 
 
 #define  NspPolyline3d_Private 
@@ -161,7 +161,7 @@ static int init_polyline3d(NspPolyline3d *Obj,NspTypePolyline3d *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -225,7 +225,7 @@ static int nsp_polyline3d_eq(NspPolyline3d *A, NspObject *B)
       if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
   }
   if ( A->obj->max != loc->obj->max) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -250,7 +250,7 @@ int nsp_polyline3d_xdr_save(XDR *xdrs, NspPolyline3d *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcolor)) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -271,7 +271,7 @@ NspPolyline3d  *nsp_polyline3d_xdr_load_partial(XDR *xdrs, NspPolyline3d *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -298,8 +298,8 @@ static NspPolyline3d  *nsp_polyline3d_xdr_load(XDR *xdrs)
 
 void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 80 "codegen/polyline3d.override"
@@ -364,18 +364,18 @@ int nsp_polyline3d_print(NspPolyline3d *M, int indent,const char *name, int rec_
           nsp_polyline3d_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_polyline3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_polyline3d_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   if ( M->obj->Mcolor != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"max=%d\n", M->obj->max);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -391,14 +391,14 @@ int nsp_polyline3d_latex(NspPolyline3d *M, int indent,const char *name, int rec_
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_polyline3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
   if ( M->obj->Mcolor != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"max=%d\n", M->obj->max);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -414,7 +414,7 @@ NspPolyline3d   *nsp_polyline3d_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_polyline3d_id) == TRUE ) return ((NspPolyline3d *) O);
+  if ( check_cast (O,nsp_type_polyline3d_id)  == TRUE  ) return ((NspPolyline3d *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_polyline3d));
   return NULL;
@@ -465,7 +465,7 @@ static NspPolyline3d *nsp_polyline3d_create_void(const char *name,NspTypeBase *t
 
 int nsp_polyline3d_create_partial(NspPolyline3d *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_polyline3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->Mcoord = NULLMAT;
@@ -490,7 +490,7 @@ int nsp_polyline3d_check_values(NspPolyline3d *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -520,7 +520,7 @@ NspPolyline3d *nsp_polyline3d_create_default(const char *name)
  NspPolyline3d *H  = nsp_polyline3d_create_void(name,NULL);
  if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_create_partial(H) == FAIL) return NULLPOLYLINE3D;
- if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
+  if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
  return H;
 }
 
@@ -538,7 +538,7 @@ NspPolyline3d *nsp_polyline3d_copy(NspPolyline3d *self)
 {
   NspPolyline3d *H  =nsp_polyline3d_create_void(NVOID,(NspTypeBase *) nsp_type_polyline3d);
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE3D;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
 
   return H;
@@ -555,14 +555,14 @@ NspPolyline3d *nsp_polyline3d_full_copy_partial(NspPolyline3d *H,NspPolyline3d *
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord", NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   H->obj->Mcoord_l = self->obj->Mcoord_l;
   if ( self->obj->Mcolor == NULL )
     { H->obj->Mcolor = NULL;}
   else
     {
-      if ((H->obj->Mcolor = (NspMatrix *) nsp_object_full_copy_and_name("Mcolor",NSP_OBJECT(self->obj->Mcolor))) == NULLMAT) return NULL;
+      if ((H->obj->Mcolor = (NspMatrix *) nsp_object_full_copy_and_name("Mcolor", NSP_OBJECT(self->obj->Mcolor))) == NULLMAT) return NULL;
     }
   if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
   H->obj->pos_length = self->obj->pos_length;
@@ -598,10 +598,10 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_polyline3d = new_type_polyline3d(T_BASE);
   if(( H = nsp_polyline3d_create_void(NVOID,(NspTypeBase *) nsp_type_polyline3d)) == NULLPOLYLINE3D) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_polyline3d_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_polyline3d_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline3d_check_values(H) == FAIL) return RET_BUG;
-#line 75 "codegen/polyline3d.override"
+  #line 75 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
@@ -671,8 +671,8 @@ static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O
 }
 
 static AttrTab polyline3d_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_polyline3d_get_Mcoord, (attr_set_function *)_wrap_polyline3d_set_Mcoord,(attr_get_object_function *)_wrap_polyline3d_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
-  { "Mcolor", (attr_get_function *)_wrap_polyline3d_get_Mcolor, (attr_set_function *)_wrap_polyline3d_set_Mcolor,(attr_get_object_function *)_wrap_polyline3d_get_obj_Mcolor, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function * )_wrap_polyline3d_get_Mcoord, (attr_set_function * )_wrap_polyline3d_set_Mcoord, (attr_get_object_function * )_wrap_polyline3d_get_obj_Mcoord, (attr_set_object_function * )int_set_object_failed },
+  { "Mcolor", (attr_get_function * )_wrap_polyline3d_get_Mcolor, (attr_set_function * )_wrap_polyline3d_set_Mcolor, (attr_get_object_function * )_wrap_polyline3d_get_obj_Mcolor, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -711,8 +711,8 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Polyline3d_func[]={
-  {"extractelts_polyline3d", _wrap_nsp_extractelts_polyline3d},
-  {"setrowscols_polyline3d", _wrap_nsp_setrowscols_polyline3d},
+  { "extractelts_polyline3d", _wrap_nsp_extractelts_polyline3d},
+  { "setrowscols_polyline3d", _wrap_nsp_setrowscols_polyline3d},
   { "polyline3d_create", int_polyline3d_create},
   { NULL, NULL}
 };
@@ -721,13 +721,13 @@ static OpTab Polyline3d_func[]={
 
 int Polyline3d_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Polyline3d_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Polyline3d_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Polyline3d_Interf_Info(int i, char **fname, function (**f))
+void Polyline3d_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Polyline3d_func[i].name;
   *f = Polyline3d_func[i].fonc;

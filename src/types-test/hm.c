@@ -29,7 +29,7 @@
 
 #line 31 "hm.c"
 
-/* ----------- NspHm ----------- */
+/* -----------NspHm ----------- */
 
 
 #define  NspHm_Private 
@@ -141,7 +141,7 @@ static int init_hm(NspHm *Obj,NspTypeHm *type)
   Obj->filled = 0;
   Obj->base = 4;
   Obj->keysize = 16;
-  return OK;
+ return OK;
 }
 
 /*
@@ -201,7 +201,7 @@ static int nsp_hm_eq(NspHm *A, NspObject *B)
   if ( A->filled != loc->filled) return FALSE;
   if ( A->base != loc->base) return FALSE;
   if ( A->keysize != loc->keysize) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -316,14 +316,14 @@ int nsp_hm_print(NspHm *M, int indent,const char *name, int rec_level)
           nsp_hm_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_hm_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_hm_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"htable=0x%x\n",M->htable);
-  Sciprintf1(indent+2,"hsize=%d\n",M->hsize);
-  Sciprintf1(indent+2,"filled=%d\n",M->filled);
-  Sciprintf1(indent+2,"base=%d\n",M->base);
-  Sciprintf1(indent+2,"keysize=%d\n",M->keysize);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"htable=0x%x\n", M->htable);
+  Sciprintf1(indent+2,"hsize=%d\n", M->hsize);
+  Sciprintf1(indent+2,"filled=%d\n", M->filled);
+  Sciprintf1(indent+2,"base=%d\n", M->base);
+  Sciprintf1(indent+2,"keysize=%d\n", M->keysize);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -338,11 +338,11 @@ int nsp_hm_latex(NspHm *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_hm_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"htable=0x%x\n",M->htable);
-  Sciprintf1(indent+2,"hsize=%d\n",M->hsize);
-  Sciprintf1(indent+2,"filled=%d\n",M->filled);
-  Sciprintf1(indent+2,"base=%d\n",M->base);
-  Sciprintf1(indent+2,"keysize=%d\n",M->keysize);
+  Sciprintf1(indent+2,"htable=0x%x\n", M->htable);
+  Sciprintf1(indent+2,"hsize=%d\n", M->hsize);
+  Sciprintf1(indent+2,"filled=%d\n", M->filled);
+  Sciprintf1(indent+2,"base=%d\n", M->base);
+  Sciprintf1(indent+2,"keysize=%d\n", M->keysize);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -358,7 +358,7 @@ NspHm   *nsp_hm_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_hm_id) == TRUE ) return ((NspHm *) O);
+  if ( check_cast (O,nsp_type_hm_id)  == TRUE  ) return ((NspHm *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_hm));
   return NULL;
@@ -439,7 +439,7 @@ NspHm *nsp_hm_create_default(const char *name)
 {
  NspHm *H  = nsp_hm_create_void(name,NULL);
  if ( H ==  NULLHM) return NULLHM;
- if ( nsp_hm_check_values(H) == FAIL) return NULLHM;
+  if ( nsp_hm_check_values(H) == FAIL) return NULLHM;
  return H;
 }
 
@@ -657,11 +657,11 @@ static int _wrap_nsp_hm_m2key(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {mat,t_end};
+  int_types T[] = {mat, t_end};
   NspMatrix *M;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&M) == FAIL) return RET_BUG;
-  ret = nsp_hm_check_slope(self, M);
+  ret =nsp_hm_check_slope(self,M);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -728,8 +728,8 @@ static int _wrap_hm_set_keysize(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab hm_attrs[] = {
-  { "base", (attr_get_function *)_wrap_hm_get_base, (attr_set_function *)_wrap_hm_set_base,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "keysize", (attr_get_function *)_wrap_hm_get_keysize, (attr_set_function *)_wrap_hm_set_keysize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "base", (attr_get_function * )_wrap_hm_get_base, (attr_set_function * )_wrap_hm_set_base, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "keysize", (attr_get_function * )_wrap_hm_get_keysize, (attr_set_function * )_wrap_hm_set_keysize, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -751,13 +751,13 @@ static OpTab Hm_func[]={
 
 int Hm_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Hm_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Hm_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Hm_Interf_Info(int i, char **fname, function (**f))
+void Hm_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Hm_func[i].name;
   *f = Hm_func[i].fonc;

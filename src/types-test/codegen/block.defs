@@ -1,5 +1,7 @@
 ;; -*- scheme -*-
 
+(register "graphic-types.defs")
+
 (define-objectref Block
   (in-module "Block")
   (parent "Graphic")

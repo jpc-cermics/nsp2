@@ -32,7 +32,7 @@
 
 #line 34 "ast.c"
 
-/* ----------- NspAst ----------- */
+/* -----------NspAst ----------- */
 
 
 #define  NspAst_Private 
@@ -148,7 +148,7 @@ static int init_ast(NspAst *Obj,NspTypeAst *type)
   Obj->xobj = NULLOBJ;
   Obj->args = NULLLIST;
   Obj->user_data = NULLOBJ;
-  return OK;
+ return OK;
 }
 
 /*
@@ -268,11 +268,11 @@ void nsp_ast_destroy_partial(NspAst *H)
 
 #line 270 "ast.c"
   nsp_string_destroy(&(H->str));
-  if ( H->xobj != NULL ) 
+  if (H->xobj != NULL)
     nsp_object_destroy(&H->xobj);
   if ( H->args != NULL ) 
     nsp_list_destroy(H->args);
-  if ( H->user_data != NULL ) 
+  if (H->user_data != NULL)
     nsp_object_destroy(&H->user_data);
 }
 
@@ -389,12 +389,12 @@ int nsp_ast_latex(NspAst *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_ast_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"op=%d\n",M->op);
-  Sciprintf1(indent+2,"arity=%d\n",M->arity);
+  Sciprintf1(indent+2,"op=%d\n", M->op);
+  Sciprintf1(indent+2,"arity=%d\n", M->arity);
   Sciprintf1(indent+2,"str=%s\n",M->str);
         if ( M->xobj->type->pr(M->xobj,indent+2,"xobj",rec_level+1)==FALSE) return FALSE;
   if ( M->args != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->args),indent+2,"args",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->args),indent+2,"args", rec_level+1)== FALSE ) return FALSE ;
     }
         if ( M->user_data->type->pr(M->user_data,indent+2,"user_data",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(indent+1,"}\n");
@@ -412,7 +412,7 @@ NspAst   *nsp_ast_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_ast_id) == TRUE ) return ((NspAst *) O);
+  if ( check_cast (O,nsp_type_ast_id)  == TRUE  ) return ((NspAst *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_ast));
   return NULL;
@@ -470,7 +470,7 @@ int nsp_ast_check_values(NspAst *H)
 {
   if ( H->str == NULL) 
     {
-     if (( H->str = nsp_string_copy("")) == NULL)
+  if (( H->str = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->xobj == NULLOBJ) 
@@ -513,7 +513,7 @@ NspAst *nsp_ast_create_default(const char *name)
 {
  NspAst *H  = nsp_ast_create_void(name,NULL);
  if ( H ==  NULLAST) return NULLAST;
- if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
+  if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
  return H;
 }
 
@@ -536,7 +536,7 @@ NspAst *nsp_ast_copy_partial(NspAst *H,NspAst *self)
     { H->args = NULL;}
   else
     {
-      if ((H->args = (NspList *) nsp_object_copy_and_name("args",NSP_OBJECT(self->args))) == NULLLIST) return NULL;
+      if ((H->args = (NspList *) nsp_object_copy_and_name("args", NSP_OBJECT(self->args))) == NULLLIST) return NULL;
     }
   if ( self->user_data == NULL )
     { H->user_data = NULL;}
@@ -574,7 +574,7 @@ NspAst *nsp_ast_full_copy_partial(NspAst *H,NspAst *self)
     { H->args = NULL;}
   else
     {
-      if ((H->args = (NspList *) nsp_object_full_copy_and_name("args",NSP_OBJECT(self->args))) == NULLLIST) return NULL;
+      if ((H->args = (NspList *) nsp_object_full_copy_and_name("args", NSP_OBJECT(self->args))) == NULLLIST) return NULL;
     }
   if ( self->user_data == NULL )
     { H->user_data = NULL;}
@@ -610,9 +610,9 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_ast = new_type_ast(T_BASE);
   if(( H = nsp_ast_create_void(NVOID,(NspTypeBase *) nsp_type_ast)) == NULLAST) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
-#line 51 "codegen/ast.override"
+  #line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 618 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -937,7 +937,7 @@ static NspMethods *ast_get_methods(void) { return ast_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab ast_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab ast_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -956,13 +956,13 @@ static OpTab Ast_func[]={
 
 int Ast_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Ast_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Ast_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Ast_Interf_Info(int i, char **fname, function (**f))
+void Ast_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Ast_func[i].name;
   *f = Ast_func[i].fonc;

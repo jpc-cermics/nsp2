@@ -28,7 +28,7 @@
 
 #line 30 "classaref.c"
 
-/* ----------- NspClassARef ----------- */
+/* -----------NspClassARef ----------- */
 
 
 #define  NspClassARef_Private 
@@ -136,7 +136,7 @@ static int init_classaref(NspClassARef *Obj,NspTypeClassARef *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -197,7 +197,7 @@ static int nsp_classaref_eq(NspClassARef *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->cla_val)->type->eq(A->obj->cla_val,loc->obj->cla_val) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->cla_bval)->type->eq(A->obj->cla_bval,loc->obj->cla_bval) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->cla_lval)->type->eq(A->obj->cla_lval,loc->obj->cla_lval) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -264,7 +264,7 @@ static NspClassARef  *nsp_classaref_xdr_load(XDR *xdrs)
 
 void nsp_classaref_destroy_partial(NspClassARef *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 23 "codegen/classaref.override"
@@ -328,20 +328,20 @@ int nsp_classaref_print(NspClassARef *M, int indent,const char *name, int rec_le
           nsp_classaref_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
-  Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
+  Sciprintf1(indent+2,"cla_color=%d\n", M->obj->cla_color);
+  Sciprintf1(indent+2,"cla_thickness=%d\n", M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->cla_bval != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_bval),indent+2,"cla_bval",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_bval),indent+2,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->cla_lval != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_lval),indent+2,"cla_lval",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->cla_lval),indent+2,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
     }
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -356,16 +356,16 @@ int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classaref_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cla_color=%d\n",M->obj->cla_color);
-  Sciprintf1(indent+2,"cla_thickness=%d\n",M->obj->cla_thickness);
+  Sciprintf1(indent+2,"cla_color=%d\n", M->obj->cla_color);
+  Sciprintf1(indent+2,"cla_thickness=%d\n", M->obj->cla_thickness);
   if ( M->obj->cla_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_val),indent+2,"cla_val", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->cla_bval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_bval),indent+2,"cla_bval",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_bval),indent+2,"cla_bval", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->cla_lval != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_lval),indent+2,"cla_lval",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->cla_lval),indent+2,"cla_lval", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -382,7 +382,7 @@ NspClassARef   *nsp_classaref_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_classaref_id) == TRUE ) return ((NspClassARef *) O);
+  if ( check_cast (O,nsp_type_classaref_id)  == TRUE  ) return ((NspClassARef *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_classaref));
   return NULL;
@@ -487,7 +487,7 @@ NspClassARef *nsp_classaref_create_default(const char *name)
  NspClassARef *H  = nsp_classaref_create_void(name,NULL);
  if ( H ==  NULLCLASSAREF) return NULLCLASSAREF;
   if ( nsp_classaref_create_partial(H) == FAIL) return NULLCLASSAREF;
- if ( nsp_classaref_check_values(H) == FAIL) return NULLCLASSAREF;
+  if ( nsp_classaref_check_values(H) == FAIL) return NULLCLASSAREF;
  return H;
 }
 
@@ -523,19 +523,19 @@ NspClassARef *nsp_classaref_full_copy_partial(NspClassARef *H,NspClassARef *self
     { H->obj->cla_val = NULL;}
   else
     {
-      if ((H->obj->cla_val = (NspMatrix *) nsp_object_full_copy_and_name("cla_val",NSP_OBJECT(self->obj->cla_val))) == NULLMAT) return NULL;
+      if ((H->obj->cla_val = (NspMatrix *) nsp_object_full_copy_and_name("cla_val", NSP_OBJECT(self->obj->cla_val))) == NULLMAT) return NULL;
     }
   if ( self->obj->cla_bval == NULL )
     { H->obj->cla_bval = NULL;}
   else
     {
-      if ((H->obj->cla_bval = (NspBMatrix *) nsp_object_full_copy_and_name("cla_bval",NSP_OBJECT(self->obj->cla_bval))) == NULLBMAT) return NULL;
+      if ((H->obj->cla_bval = (NspBMatrix *) nsp_object_full_copy_and_name("cla_bval", NSP_OBJECT(self->obj->cla_bval))) == NULLBMAT) return NULL;
     }
   if ( self->obj->cla_lval == NULL )
     { H->obj->cla_lval = NULL;}
   else
     {
-      if ((H->obj->cla_lval = (NspList *) nsp_object_full_copy_and_name("cla_lval",NSP_OBJECT(self->obj->cla_lval))) == NULLLIST) return NULL;
+      if ((H->obj->cla_lval = (NspList *) nsp_object_full_copy_and_name("cla_lval", NSP_OBJECT(self->obj->cla_lval))) == NULLLIST) return NULL;
     }
   return H;
 }
@@ -564,10 +564,10 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_classaref = new_type_classaref(T_BASE);
   if(( H = nsp_classaref_create_void(NVOID,(NspTypeBase *) nsp_type_classaref)) == NULLCLASSAREF) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_classaref_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_classaref_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classaref_check_values(H) == FAIL) return RET_BUG;
-#line 20 "codegen/classaref.override"
+  #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
 #line 573 "classaref.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -718,11 +718,11 @@ static int _wrap_classaref_set_cla_lval(void *self,const char *attr, NspObject *
 }
 
 static AttrTab classaref_attrs[] = {
-  { "cla_color", (attr_get_function *)_wrap_classaref_get_cla_color, (attr_set_function *)_wrap_classaref_set_cla_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "cla_thickness", (attr_get_function *)_wrap_classaref_get_cla_thickness, (attr_set_function *)_wrap_classaref_set_cla_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "cla_val", (attr_get_function *)_wrap_classaref_get_cla_val, (attr_set_function *)_wrap_classaref_set_cla_val,(attr_get_object_function *)_wrap_classaref_get_obj_cla_val, (attr_set_object_function *)int_set_object_failed },
-  { "cla_bval", (attr_get_function *)_wrap_classaref_get_cla_bval, (attr_set_function *)_wrap_classaref_set_cla_bval,(attr_get_object_function *)_wrap_classaref_get_obj_cla_bval, (attr_set_object_function *)int_set_object_failed },
-  { "cla_lval", (attr_get_function *)_wrap_classaref_get_cla_lval, (attr_set_function *)_wrap_classaref_set_cla_lval,(attr_get_object_function *)_wrap_classaref_get_obj_cla_lval, (attr_set_object_function *)int_set_object_failed },
+  { "cla_color", (attr_get_function * )_wrap_classaref_get_cla_color, (attr_set_function * )_wrap_classaref_set_cla_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "cla_thickness", (attr_get_function * )_wrap_classaref_get_cla_thickness, (attr_set_function * )_wrap_classaref_set_cla_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "cla_val", (attr_get_function * )_wrap_classaref_get_cla_val, (attr_set_function * )_wrap_classaref_set_cla_val, (attr_get_object_function * )_wrap_classaref_get_obj_cla_val, (attr_set_object_function * )int_set_object_failed },
+  { "cla_bval", (attr_get_function * )_wrap_classaref_get_cla_bval, (attr_set_function * )_wrap_classaref_set_cla_bval, (attr_get_object_function * )_wrap_classaref_get_obj_cla_bval, (attr_set_object_function * )int_set_object_failed },
+  { "cla_lval", (attr_get_function * )_wrap_classaref_get_cla_lval, (attr_set_function * )_wrap_classaref_set_cla_lval, (attr_get_object_function * )_wrap_classaref_get_obj_cla_lval, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -765,8 +765,8 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassARef_func[]={
-  {"clareftest", _wrap_clareftest},
-  {"setrowscols_classaref", _wrap_setrowscols_classaref},
+  { "clareftest", _wrap_clareftest},
+  { "setrowscols_classaref", _wrap_setrowscols_classaref},
   { "classaref_create", int_classaref_create},
   { NULL, NULL}
 };
@@ -775,13 +775,13 @@ static OpTab ClassARef_func[]={
 
 int ClassARef_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(ClassARef_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(ClassARef_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void ClassARef_Interf_Info(int i, char **fname, function (**f))
+void ClassARef_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = ClassARef_func[i].name;
   *f = ClassARef_func[i].fonc;

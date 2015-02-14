@@ -1,10 +1,5 @@
 ;; -*- scheme -*-
 
-extern int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, 
-			      int n1, int n2, int nz, double *zz, 
-			      int flag, double zlev);
-
-
 (define-objectref Contour3d
   (in-module "Contour3d")
   (parent "Graphic")

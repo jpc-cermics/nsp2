@@ -33,7 +33,7 @@ extern Gengine GL_gengine;
 
 #line 35 "objs3d.c"
 
-/* ----------- NspObjs3d ----------- */
+/* -----------NspObjs3d ----------- */
 
 
 #define  NspObjs3d_Private 
@@ -156,7 +156,7 @@ static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -229,7 +229,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
   if ( A->obj->fixed != loc->obj->fixed) return FALSE;
   if ( NSP_OBJECT(A->obj->ebox)->type->eq(A->obj->ebox,loc->obj->ebox) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -267,7 +267,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_save_i(xdrs, M->obj->box_style) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fixed) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->ebox)) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -301,7 +301,7 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -323,8 +323,8 @@ static NspObjs3d  *nsp_objs3d_xdr_load(XDR *xdrs)
 
 void nsp_objs3d_destroy_partial(NspObjs3d *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
@@ -395,41 +395,41 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
           nsp_objs3d_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
+  Sciprintf1(indent+2,"rho=%f\n", M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->arect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->arect),indent+2,"arect", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->frect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
   if ( M->obj->children != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->colormap != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
-  Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
+  Sciprintf1(indent+2,"alpha=%f\n", M->obj->alpha);
+  Sciprintf1(indent+2,"theta=%f\n", M->obj->theta);
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
-  Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
+  Sciprintf1(indent+2,"box_color=%d\n", M->obj->box_color);
+  Sciprintf1(indent+2,"box_style=%d\n", M->obj->box_style);
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   if ( M->obj->ebox != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->ebox),indent+2,"ebox",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -446,36 +446,36 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
+  Sciprintf1(indent+2,"rho=%f\n", M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->arect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->frect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->colormap != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),indent+2,"colormap",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->colormap),indent+2,"colormap", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
-  Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
+  Sciprintf1(indent+2,"alpha=%f\n", M->obj->alpha);
+  Sciprintf1(indent+2,"theta=%f\n", M->obj->theta);
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
-  Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
+  Sciprintf1(indent+2,"box_color=%d\n", M->obj->box_color);
+  Sciprintf1(indent+2,"box_style=%d\n", M->obj->box_style);
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   if ( M->obj->ebox != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),indent+2,"ebox",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -491,7 +491,7 @@ NspObjs3d   *nsp_objs3d_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_objs3d_id) == TRUE ) return ((NspObjs3d *) O);
+  if ( check_cast (O,nsp_type_objs3d_id)  == TRUE  ) return ((NspObjs3d *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_objs3d));
   return NULL;
@@ -542,7 +542,7 @@ static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type)
 
 int nsp_objs3d_create_partial(NspObjs3d *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_objs3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   nsp_init_nsp_gcscale(&H->obj->scale);
@@ -598,7 +598,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   }
   if ( H->obj->title == NULL) 
     {
-     if (( H->obj->title = nsp_string_copy("")) == NULL)
+  if (( H->obj->title = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->children == NULLLIST) 
@@ -619,7 +619,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
        return FAIL;
       memcpy(H->obj->ebox->R,x_def,6*sizeof(double));
   }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -655,7 +655,7 @@ NspObjs3d *nsp_objs3d_create_default(const char *name)
  NspObjs3d *H  = nsp_objs3d_create_void(name,NULL);
  if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
- if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
+  if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
  return H;
 }
 
@@ -673,7 +673,7 @@ NspObjs3d *nsp_objs3d_copy(NspObjs3d *self)
 {
   NspObjs3d *H  =nsp_objs3d_create_void(NVOID,(NspTypeBase *) nsp_type_objs3d);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLOBJS3D;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_copy_partial(H,self)== NULL) return NULLOBJS3D;
 
   return H;
@@ -691,7 +691,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     { H->obj->wrect = NULL;}
   else
     {
-      if ((H->obj->wrect = (NspMatrix *) nsp_object_full_copy_and_name("wrect",NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
+      if ((H->obj->wrect = (NspMatrix *) nsp_object_full_copy_and_name("wrect", NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
     }
   H->obj->rho=self->obj->rho;
   H->obj->top=self->obj->top;
@@ -699,32 +699,32 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds", NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->arect == NULL )
     { H->obj->arect = NULL;}
   else
     {
-      if ((H->obj->arect = (NspMatrix *) nsp_object_full_copy_and_name("arect",NSP_OBJECT(self->obj->arect))) == NULLMAT) return NULL;
+      if ((H->obj->arect = (NspMatrix *) nsp_object_full_copy_and_name("arect", NSP_OBJECT(self->obj->arect))) == NULLMAT) return NULL;
     }
   if ( self->obj->frect == NULL )
     { H->obj->frect = NULL;}
   else
     {
-      if ((H->obj->frect = (NspMatrix *) nsp_object_full_copy_and_name("frect",NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
+      if ((H->obj->frect = (NspMatrix *) nsp_object_full_copy_and_name("frect", NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
     }
   if ((H->obj->title = nsp_string_copy(self->obj->title)) == NULL) return NULL;
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children", NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   if ( self->obj->colormap == NULL )
     { H->obj->colormap = NULL;}
   else
     {
-      if ((H->obj->colormap = (NspMatrix *) nsp_object_full_copy_and_name("colormap",NSP_OBJECT(self->obj->colormap))) == NULLMAT) return NULL;
+      if ((H->obj->colormap = (NspMatrix *) nsp_object_full_copy_and_name("colormap", NSP_OBJECT(self->obj->colormap))) == NULLMAT) return NULL;
     }
   H->obj->alpha=self->obj->alpha;
   H->obj->theta=self->obj->theta;
@@ -736,7 +736,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     { H->obj->ebox = NULL;}
   else
     {
-      if ((H->obj->ebox = (NspMatrix *) nsp_object_full_copy_and_name("ebox",NSP_OBJECT(self->obj->ebox))) == NULLMAT) return NULL;
+      if ((H->obj->ebox = (NspMatrix *) nsp_object_full_copy_and_name("ebox", NSP_OBJECT(self->obj->ebox))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -763,10 +763,10 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_objs3d = new_type_objs3d(T_BASE);
   if(( H = nsp_objs3d_create_void(NVOID,(NspTypeBase *) nsp_type_objs3d)) == NULLOBJS3D) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -835,7 +835,7 @@ static NspObject *_wrap_objs3d_get_top(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspObjs3d *) self)->obj->top;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_objs3d_set_top(void *self,const char *attr, NspObject *O)
@@ -1048,7 +1048,7 @@ static NspObject *_wrap_objs3d_get_with_box(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspObjs3d *) self)->obj->with_box;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_objs3d_set_with_box(void *self,const char *attr, NspObject *O)
@@ -1095,7 +1095,7 @@ static NspObject *_wrap_objs3d_get_fixed(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspObjs3d *) self)->obj->fixed;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_objs3d_set_fixed(void *self,const char *attr, NspObject *O)
@@ -1133,21 +1133,21 @@ static int _wrap_objs3d_set_ebox(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab objs3d_attrs[] = {
-  { "wrect", (attr_get_function *)_wrap_objs3d_get_wrect, (attr_set_function *)_wrap_objs3d_set_wrect,(attr_get_object_function *)_wrap_objs3d_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
-  { "rho", (attr_get_function *)_wrap_objs3d_get_rho, (attr_set_function *)_wrap_objs3d_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "top", (attr_get_function *)_wrap_objs3d_get_top, (attr_set_function *)_wrap_objs3d_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "arect", (attr_get_function *)_wrap_objs3d_get_arect, (attr_set_function *)_wrap_objs3d_set_arect,(attr_get_object_function *)_wrap_objs3d_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
-  { "frect", (attr_get_function *)_wrap_objs3d_get_frect, (attr_set_function *)_wrap_objs3d_set_frect,(attr_get_object_function *)_wrap_objs3d_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
-  { "title", (attr_get_function *)_wrap_objs3d_get_title, (attr_set_function *)_wrap_objs3d_set_title,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "children", (attr_get_function *)_wrap_objs3d_get_children, (attr_set_function *)_wrap_objs3d_set_children,(attr_get_object_function *)_wrap_objs3d_get_obj_children, (attr_set_object_function *)_wrap_objs3d_set_obj_children },
-  { "colormap", (attr_get_function *)_wrap_objs3d_get_colormap, (attr_set_function *)_wrap_objs3d_set_colormap,(attr_get_object_function *)_wrap_objs3d_get_obj_colormap, (attr_set_object_function *)int_set_object_failed },
-  { "alpha", (attr_get_function *)_wrap_objs3d_get_alpha, (attr_set_function *)_wrap_objs3d_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "theta", (attr_get_function *)_wrap_objs3d_get_theta, (attr_set_function *)_wrap_objs3d_set_theta,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "with_box", (attr_get_function *)_wrap_objs3d_get_with_box, (attr_set_function *)_wrap_objs3d_set_with_box,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "box_color", (attr_get_function *)_wrap_objs3d_get_box_color, (attr_set_function *)_wrap_objs3d_set_box_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "box_style", (attr_get_function *)_wrap_objs3d_get_box_style, (attr_set_function *)_wrap_objs3d_set_box_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "fixed", (attr_get_function *)_wrap_objs3d_get_fixed, (attr_set_function *)_wrap_objs3d_set_fixed,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "ebox", (attr_get_function *)_wrap_objs3d_get_ebox, (attr_set_function *)_wrap_objs3d_set_ebox,(attr_get_object_function *)_wrap_objs3d_get_obj_ebox, (attr_set_object_function *)int_set_object_failed },
+  { "wrect", (attr_get_function * )_wrap_objs3d_get_wrect, (attr_set_function * )_wrap_objs3d_set_wrect, (attr_get_object_function * )_wrap_objs3d_get_obj_wrect, (attr_set_object_function * )int_set_object_failed },
+  { "rho", (attr_get_function * )_wrap_objs3d_get_rho, (attr_set_function * )_wrap_objs3d_set_rho, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "top", (attr_get_function * )_wrap_objs3d_get_top, (attr_set_function * )_wrap_objs3d_set_top, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "arect", (attr_get_function * )_wrap_objs3d_get_arect, (attr_set_function * )_wrap_objs3d_set_arect, (attr_get_object_function * )_wrap_objs3d_get_obj_arect, (attr_set_object_function * )int_set_object_failed },
+  { "frect", (attr_get_function * )_wrap_objs3d_get_frect, (attr_set_function * )_wrap_objs3d_set_frect, (attr_get_object_function * )_wrap_objs3d_get_obj_frect, (attr_set_object_function * )int_set_object_failed },
+  { "title", (attr_get_function * )_wrap_objs3d_get_title, (attr_set_function * )_wrap_objs3d_set_title, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "children", (attr_get_function * )_wrap_objs3d_get_children, (attr_set_function * )_wrap_objs3d_set_children, (attr_get_object_function * )_wrap_objs3d_get_obj_children, (attr_set_object_function * )_wrap_objs3d_set_obj_children },
+  { "colormap", (attr_get_function * )_wrap_objs3d_get_colormap, (attr_set_function * )_wrap_objs3d_set_colormap, (attr_get_object_function * )_wrap_objs3d_get_obj_colormap, (attr_set_object_function * )int_set_object_failed },
+  { "alpha", (attr_get_function * )_wrap_objs3d_get_alpha, (attr_set_function * )_wrap_objs3d_set_alpha, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "theta", (attr_get_function * )_wrap_objs3d_get_theta, (attr_set_function * )_wrap_objs3d_set_theta, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "with_box", (attr_get_function * )_wrap_objs3d_get_with_box, (attr_set_function * )_wrap_objs3d_set_with_box, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "box_color", (attr_get_function * )_wrap_objs3d_get_box_color, (attr_set_function * )_wrap_objs3d_set_box_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "box_style", (attr_get_function * )_wrap_objs3d_get_box_style, (attr_set_function * )_wrap_objs3d_set_box_style, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "fixed", (attr_get_function * )_wrap_objs3d_get_fixed, (attr_set_function * )_wrap_objs3d_set_fixed, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "ebox", (attr_get_function * )_wrap_objs3d_get_ebox, (attr_set_function * )_wrap_objs3d_set_ebox, (attr_get_object_function * )_wrap_objs3d_get_obj_ebox, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1185,8 +1185,8 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Objs3d_func[]={
-  {"extractelts_objs3d", _wrap_nsp_extractelts_objs3d},
-  {"setrowscols_objs3d", _wrap_nsp_setrowscols_objs3d},
+  { "extractelts_objs3d", _wrap_nsp_extractelts_objs3d},
+  { "setrowscols_objs3d", _wrap_nsp_setrowscols_objs3d},
   { "objs3d_create", int_objs3d_create},
   { NULL, NULL}
 };
@@ -1195,13 +1195,13 @@ static OpTab Objs3d_func[]={
 
 int Objs3d_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Objs3d_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Objs3d_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Objs3d_Interf_Info(int i, char **fname, function (**f))
+void Objs3d_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Objs3d_func[i].name;
   *f = Objs3d_func[i].fonc;

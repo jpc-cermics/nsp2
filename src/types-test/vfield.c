@@ -28,7 +28,7 @@
 
 #line 30 "vfield.c"
 
-/* ----------- NspVField ----------- */
+/* -----------NspVField ----------- */
 
 
 #define  NspVField_Private 
@@ -150,7 +150,7 @@ static int init_vfield(NspVField *Obj,NspTypeVField *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -211,7 +211,7 @@ static int nsp_vfield_eq(NspVField *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( A->obj->colored != loc->obj->colored) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -239,7 +239,7 @@ int nsp_vfield_xdr_save(XDR *xdrs, NspVField *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->colored) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -263,7 +263,7 @@ NspVField  *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -285,8 +285,8 @@ static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
 
 void nsp_vfield_destroy_partial(NspVField *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->fx != NULL ) 
@@ -349,23 +349,23 @@ int nsp_vfield_print(NspVField *M, int indent,const char *name, int rec_level)
           nsp_vfield_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_vfield_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_vfield_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->fx != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->fx),indent+2,"fx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->fx),indent+2,"fx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->fy != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->fy),indent+2,"fy",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->fy),indent+2,"fy", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"colored	= %s\n", ( M->obj->colored == TRUE) ? "T" : "F" );
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -381,19 +381,19 @@ int nsp_vfield_latex(NspVField *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_vfield_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->fx != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fx),indent+2,"fx",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fx),indent+2,"fx", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->fy != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fy),indent+2,"fy",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->fy),indent+2,"fy", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"colored	= %s\n", ( M->obj->colored == TRUE) ? "T" : "F" );
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -409,7 +409,7 @@ NspVField   *nsp_vfield_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_vfield_id) == TRUE ) return ((NspVField *) O);
+  if ( check_cast (O,nsp_type_vfield_id)  == TRUE  ) return ((NspVField *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_vfield));
   return NULL;
@@ -460,7 +460,7 @@ static NspVField *nsp_vfield_create_void(const char *name,NspTypeBase *type)
 
 int nsp_vfield_create_partial(NspVField *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_vfield)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->fx = NULLMAT;
@@ -497,7 +497,7 @@ int nsp_vfield_check_values(NspVField *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -521,7 +521,7 @@ NspVField *nsp_vfield_create_default(const char *name)
  NspVField *H  = nsp_vfield_create_void(name,NULL);
  if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_vfield_create_partial(H) == FAIL) return NULLVFIELD;
- if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
+  if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
  return H;
 }
 
@@ -539,7 +539,7 @@ NspVField *nsp_vfield_copy(NspVField *self)
 {
   NspVField *H  =nsp_vfield_create_void(NVOID,(NspTypeBase *) nsp_type_vfield);
   if ( H ==  NULLVFIELD) return NULLVFIELD;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_copy_partial(H,self)== NULL) return NULLVFIELD;
 
   return H;
@@ -556,25 +556,25 @@ NspVField *nsp_vfield_full_copy_partial(NspVField *H,NspVField *self)
     { H->obj->fx = NULL;}
   else
     {
-      if ((H->obj->fx = (NspMatrix *) nsp_object_full_copy_and_name("fx",NSP_OBJECT(self->obj->fx))) == NULLMAT) return NULL;
+      if ((H->obj->fx = (NspMatrix *) nsp_object_full_copy_and_name("fx", NSP_OBJECT(self->obj->fx))) == NULLMAT) return NULL;
     }
   if ( self->obj->fy == NULL )
     { H->obj->fy = NULL;}
   else
     {
-      if ((H->obj->fy = (NspMatrix *) nsp_object_full_copy_and_name("fy",NSP_OBJECT(self->obj->fy))) == NULLMAT) return NULL;
+      if ((H->obj->fy = (NspMatrix *) nsp_object_full_copy_and_name("fy", NSP_OBJECT(self->obj->fy))) == NULLMAT) return NULL;
     }
   if ( self->obj->x == NULL )
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x", NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y", NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   H->obj->colored=self->obj->colored;
   return H;
@@ -602,10 +602,10 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_vfield = new_type_vfield(T_BASE);
   if(( H = nsp_vfield_create_void(NVOID,(NspTypeBase *) nsp_type_vfield)) == NULLVFIELD) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -727,7 +727,7 @@ static NspObject *_wrap_vfield_get_colored(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspVField *) self)->obj->colored;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_vfield_set_colored(void *self,const char *attr, NspObject *O)
@@ -739,11 +739,11 @@ static int _wrap_vfield_set_colored(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab vfield_attrs[] = {
-  { "fx", (attr_get_function *)_wrap_vfield_get_fx, (attr_set_function *)_wrap_vfield_set_fx,(attr_get_object_function *)_wrap_vfield_get_obj_fx, (attr_set_object_function *)int_set_object_failed },
-  { "fy", (attr_get_function *)_wrap_vfield_get_fy, (attr_set_function *)_wrap_vfield_set_fy,(attr_get_object_function *)_wrap_vfield_get_obj_fy, (attr_set_object_function *)int_set_object_failed },
-  { "x", (attr_get_function *)_wrap_vfield_get_x, (attr_set_function *)_wrap_vfield_set_x,(attr_get_object_function *)_wrap_vfield_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_vfield_get_y, (attr_set_function *)_wrap_vfield_set_y,(attr_get_object_function *)_wrap_vfield_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "colored", (attr_get_function *)_wrap_vfield_get_colored, (attr_set_function *)_wrap_vfield_set_colored,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "fx", (attr_get_function * )_wrap_vfield_get_fx, (attr_set_function * )_wrap_vfield_set_fx, (attr_get_object_function * )_wrap_vfield_get_obj_fx, (attr_set_object_function * )int_set_object_failed },
+  { "fy", (attr_get_function * )_wrap_vfield_get_fy, (attr_set_function * )_wrap_vfield_set_fy, (attr_get_object_function * )_wrap_vfield_get_obj_fy, (attr_set_object_function * )int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_vfield_get_x, (attr_set_function * )_wrap_vfield_set_x, (attr_get_object_function * )_wrap_vfield_get_obj_x, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_vfield_get_y, (attr_set_function * )_wrap_vfield_set_y, (attr_get_object_function * )_wrap_vfield_get_obj_y, (attr_set_object_function * )int_set_object_failed },
+  { "colored", (attr_get_function * )_wrap_vfield_get_colored, (attr_set_function * )_wrap_vfield_set_colored, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -781,8 +781,8 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab VField_func[]={
-  {"extractelts_vfield", _wrap_nsp_extractelts_vfield},
-  {"setrowscols_vfield", _wrap_nsp_setrowscols_vfield},
+  { "extractelts_vfield", _wrap_nsp_extractelts_vfield},
+  { "setrowscols_vfield", _wrap_nsp_setrowscols_vfield},
   { "vfield_create", int_vfield_create},
   { NULL, NULL}
 };
@@ -791,13 +791,13 @@ static OpTab VField_func[]={
 
 int VField_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(VField_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(VField_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void VField_Interf_Info(int i, char **fname, function (**f))
+void VField_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = VField_func[i].name;
   *f = VField_func[i].fonc;

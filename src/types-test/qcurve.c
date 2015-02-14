@@ -28,7 +28,7 @@
 
 #line 30 "qcurve.c"
 
-/* ----------- NspQcurve ----------- */
+/* -----------NspQcurve ----------- */
 
 
 #define  NspQcurve_Private 
@@ -150,7 +150,7 @@ static int init_qcurve(NspQcurve *Obj,NspTypeQcurve *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -215,7 +215,7 @@ static int nsp_qcurve_eq(NspQcurve *A, NspObject *B)
   if ( strcmp(A->obj->legend,loc->obj->legend) != 0) return FALSE;
   if ( A->obj->start != loc->obj->start) return FALSE;
   if ( A->obj->last != loc->obj->last) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -245,7 +245,7 @@ int nsp_qcurve_xdr_save(XDR *xdrs, NspQcurve *M)
   if (nsp_xdr_save_i(xdrs, M->obj->mode) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Pts)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->legend) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -271,7 +271,7 @@ NspQcurve  *nsp_qcurve_xdr_load_partial(XDR *xdrs, NspQcurve *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -293,8 +293,8 @@ static NspQcurve  *nsp_qcurve_xdr_load(XDR *xdrs)
 
 void nsp_qcurve_destroy_partial(NspQcurve *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->Pts != NULL ) 
@@ -352,21 +352,21 @@ int nsp_qcurve_print(NspQcurve *M, int indent,const char *name, int rec_level)
           nsp_qcurve_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_qcurve_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_qcurve_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
-  Sciprintf1(indent+2,"width=%d\n",M->obj->width);
-  Sciprintf1(indent+2,"style=%d\n",M->obj->style);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"mode=%d\n",M->obj->mode);
+  Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(indent+2,"width=%d\n", M->obj->width);
+  Sciprintf1(indent+2,"style=%d\n", M->obj->style);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"mode=%d\n", M->obj->mode);
   if ( M->obj->Pts != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Pts),indent+2,"Pts", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
-  Sciprintf1(indent+2,"start=%d\n",M->obj->start);
-  Sciprintf1(indent+2,"last=%d\n",M->obj->last);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"start=%d\n", M->obj->start);
+  Sciprintf1(indent+2,"last=%d\n", M->obj->last);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -381,18 +381,18 @@ int nsp_qcurve_latex(NspQcurve *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_qcurve_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
-  Sciprintf1(indent+2,"width=%d\n",M->obj->width);
-  Sciprintf1(indent+2,"style=%d\n",M->obj->style);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"mode=%d\n",M->obj->mode);
+  Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(indent+2,"width=%d\n", M->obj->width);
+  Sciprintf1(indent+2,"style=%d\n", M->obj->style);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"mode=%d\n", M->obj->mode);
   if ( M->obj->Pts != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Pts),indent+2,"Pts", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"legend=%s\n",M->obj->legend);
-  Sciprintf1(indent+2,"start=%d\n",M->obj->start);
-  Sciprintf1(indent+2,"last=%d\n",M->obj->last);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"start=%d\n", M->obj->start);
+  Sciprintf1(indent+2,"last=%d\n", M->obj->last);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -408,7 +408,7 @@ NspQcurve   *nsp_qcurve_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_qcurve_id) == TRUE ) return ((NspQcurve *) O);
+  if ( check_cast (O,nsp_type_qcurve_id)  == TRUE  ) return ((NspQcurve *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_qcurve));
   return NULL;
@@ -459,7 +459,7 @@ static NspQcurve *nsp_qcurve_create_void(const char *name,NspTypeBase *type)
 
 int nsp_qcurve_create_partial(NspQcurve *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_qcurve)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->mark = -1;
@@ -484,10 +484,10 @@ int nsp_qcurve_check_values(NspQcurve *H)
     }
   if ( H->obj->legend == NULL) 
     {
-     if (( H->obj->legend = nsp_string_copy("")) == NULL)
+  if (( H->obj->legend = nsp_string_copy("")) == NULL)
        return FAIL;
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -515,7 +515,7 @@ NspQcurve *nsp_qcurve_create_default(const char *name)
  NspQcurve *H  = nsp_qcurve_create_void(name,NULL);
  if ( H ==  NULLQCURVE) return NULLQCURVE;
   if ( nsp_qcurve_create_partial(H) == FAIL) return NULLQCURVE;
- if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
+  if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
  return H;
 }
 
@@ -533,7 +533,7 @@ NspQcurve *nsp_qcurve_copy(NspQcurve *self)
 {
   NspQcurve *H  =nsp_qcurve_create_void(NVOID,(NspTypeBase *) nsp_type_qcurve);
   if ( H ==  NULLQCURVE) return NULLQCURVE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLQCURVE;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLQCURVE;
   if ( nsp_qcurve_copy_partial(H,self)== NULL) return NULLQCURVE;
 
   return H;
@@ -555,7 +555,7 @@ NspQcurve *nsp_qcurve_full_copy_partial(NspQcurve *H,NspQcurve *self)
     { H->obj->Pts = NULL;}
   else
     {
-      if ((H->obj->Pts = (NspMatrix *) nsp_object_full_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
+      if ((H->obj->Pts = (NspMatrix *) nsp_object_full_copy_and_name("Pts", NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
     }
   if ((H->obj->legend = nsp_string_copy(self->obj->legend)) == NULL) return NULL;
   H->obj->start=self->obj->start;
@@ -585,10 +585,10 @@ int int_qcurve_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_qcurve = new_type_qcurve(T_BASE);
   if(( H = nsp_qcurve_create_void(NVOID,(NspTypeBase *) nsp_type_qcurve)) == NULLQCURVE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_qcurve_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_qcurve_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_qcurve_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -597,19 +597,19 @@ int int_qcurve_create(Stack stack, int rhs, int opt, int lhs)
  *-------------------------------------------*/
 static int _wrap_nsp_qcurve_addPts(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {mat,t_end};
+  int_types T[] = {mat, t_end};
   NspMatrix *pts;
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
-  nsp_qcurve_addPts(self, pts);
+  nsp_qcurve_addPts(self,pts);
   return 0;
 }
 
 static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int pts, ret;
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
-  ret = nsp_qcurve_enlarge(self, pts);
+  ret =nsp_qcurve_enlarge(self,pts);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -625,7 +625,7 @@ static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret = nsp_qcurve_get_pts(self);
+  ret =nsp_qcurve_get_pts(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -635,7 +635,7 @@ static int _wrap_nsp_qcurve_get_len(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   int ret;
   CheckRhs(0,0);
-  ret = nsp_qcurve_get_len(self);
+  ret =nsp_qcurve_get_len(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -804,13 +804,13 @@ static int _wrap_qcurve_set_legend(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab qcurve_attrs[] = {
-  { "mark", (attr_get_function *)_wrap_qcurve_get_mark, (attr_set_function *)_wrap_qcurve_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "width", (attr_get_function *)_wrap_qcurve_get_width, (attr_set_function *)_wrap_qcurve_set_width,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "style", (attr_get_function *)_wrap_qcurve_get_style, (attr_set_function *)_wrap_qcurve_set_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "color", (attr_get_function *)_wrap_qcurve_get_color, (attr_set_function *)_wrap_qcurve_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mode", (attr_get_function *)_wrap_qcurve_get_mode, (attr_set_function *)_wrap_qcurve_set_mode,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "Pts", (attr_get_function *)_wrap_qcurve_get_Pts, (attr_set_function *)_wrap_qcurve_set_Pts,(attr_get_object_function *)_wrap_qcurve_get_obj_Pts, (attr_set_object_function *)_wrap_qcurve_set_obj_Pts },
-  { "legend", (attr_get_function *)_wrap_qcurve_get_legend, (attr_set_function *)_wrap_qcurve_set_legend,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark", (attr_get_function * )_wrap_qcurve_get_mark, (attr_set_function * )_wrap_qcurve_set_mark, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "width", (attr_get_function * )_wrap_qcurve_get_width, (attr_set_function * )_wrap_qcurve_set_width, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "style", (attr_get_function * )_wrap_qcurve_get_style, (attr_set_function * )_wrap_qcurve_set_style, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_qcurve_get_color, (attr_set_function * )_wrap_qcurve_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mode", (attr_get_function * )_wrap_qcurve_get_mode, (attr_set_function * )_wrap_qcurve_set_mode, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "Pts", (attr_get_function * )_wrap_qcurve_get_Pts, (attr_set_function * )_wrap_qcurve_set_Pts, (attr_get_object_function * )_wrap_qcurve_get_obj_Pts, (attr_set_object_function * )_wrap_qcurve_set_obj_Pts },
+  { "legend", (attr_get_function * )_wrap_qcurve_get_legend, (attr_set_function * )_wrap_qcurve_set_legend, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -849,8 +849,8 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Qcurve_func[]={
-  {"extractelts_qcurve", _wrap_nsp_extractelts_qcurve},
-  {"setrowscols_qcurve", _wrap_nsp_setrowscols_qcurve},
+  { "extractelts_qcurve", _wrap_nsp_extractelts_qcurve},
+  { "setrowscols_qcurve", _wrap_nsp_setrowscols_qcurve},
   { "qcurve_create", int_qcurve_create},
   { NULL, NULL}
 };
@@ -859,13 +859,13 @@ static OpTab Qcurve_func[]={
 
 int Qcurve_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Qcurve_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Qcurve_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Qcurve_Interf_Info(int i, char **fname, function (**f))
+void Qcurve_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Qcurve_func[i].name;
   *f = Qcurve_func[i].fonc;

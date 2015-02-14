@@ -29,7 +29,7 @@
 
 #line 31 "epoints.c"
 
-/* ----------- NspEpoints ----------- */
+/* -----------NspEpoints ----------- */
 
 
 #define  NspEpoints_Private 
@@ -141,7 +141,7 @@ static int init_epoints(NspEpoints *Obj,NspTypeEpoints *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -200,7 +200,7 @@ static int nsp_epoints_eq(NspEpoints *A, NspObject *B)
   if ( strcmp(A->obj->ename,loc->obj->ename) != 0) return FALSE;
   if ( A->obj->func != loc->obj->func) return FALSE;
   if ( A->obj->shid != loc->obj->shid) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -254,7 +254,7 @@ static NspEpoints  *nsp_epoints_xdr_load(XDR *xdrs)
 
 void nsp_epoints_destroy_partial(NspEpoints *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_string_destroy(&(H->obj->ename));
@@ -310,12 +310,12 @@ int nsp_epoints_print(NspEpoints *M, int indent,const char *name, int rec_level)
           nsp_epoints_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"ename=%s\n",M->obj->ename);
-  Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
-  Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"func=0x%x\n", M->obj->func);
+  Sciprintf1(indent+2,"shid=%d\n", M->obj->shid);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -331,8 +331,8 @@ int nsp_epoints_latex(NspEpoints *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"ename=%s\n",M->obj->ename);
-  Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
-  Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
+  Sciprintf1(indent+2,"func=0x%x\n", M->obj->func);
+  Sciprintf1(indent+2,"shid=%d\n", M->obj->shid);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -348,7 +348,7 @@ NspEpoints   *nsp_epoints_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_epoints_id) == TRUE ) return ((NspEpoints *) O);
+  if ( check_cast (O,nsp_type_epoints_id)  == TRUE  ) return ((NspEpoints *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_epoints));
   return NULL;
@@ -411,7 +411,7 @@ int nsp_epoints_check_values(NspEpoints *H)
 {
   if ( H->obj->ename == NULL) 
     {
-     if (( H->obj->ename = nsp_string_copy("")) == NULL)
+  if (( H->obj->ename = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   return OK;
@@ -435,7 +435,7 @@ NspEpoints *nsp_epoints_create_default(const char *name)
  NspEpoints *H  = nsp_epoints_create_void(name,NULL);
  if ( H ==  NULLEPOINTS) return NULLEPOINTS;
   if ( nsp_epoints_create_partial(H) == FAIL) return NULLEPOINTS;
- if ( nsp_epoints_check_values(H) == FAIL) return NULLEPOINTS;
+  if ( nsp_epoints_check_values(H) == FAIL) return NULLEPOINTS;
  return H;
 }
 
@@ -492,10 +492,10 @@ int int_epoints_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_epoints = new_type_epoints(T_BASE);
   if(( H = nsp_epoints_create_void(NVOID,(NspTypeBase *) nsp_type_epoints)) == NULLEPOINTS) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_epoints_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_epoints_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_epoints_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -507,7 +507,7 @@ static NspMethods *epoints_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab epoints_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab epoints_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -526,13 +526,13 @@ static OpTab Epoints_func[]={
 
 int Epoints_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Epoints_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Epoints_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Epoints_Interf_Info(int i, char **fname, function (**f))
+void Epoints_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Epoints_func[i].name;
   *f = Epoints_func[i].fonc;

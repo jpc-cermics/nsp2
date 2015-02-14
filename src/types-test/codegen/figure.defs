@@ -1,5 +1,7 @@
 ;; -*- scheme -*-
 
+(register "graphic-types.defs")
+(register "axes-types.defs")
 
 (define-objectref Figure
   (in-module "Figure")

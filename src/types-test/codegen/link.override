@@ -309,7 +309,7 @@ NspLink *nsp_link_create_default(const char *name)
 }
 
 %%
-zz_override-destroy-prelim Link
+ignore zz_override-destroy-prelim Link
     /* verbatim in destroy */
     nsp_destroy_grl_lock(H->obj->locks,H);FREE(H->obj->locks);
 %%

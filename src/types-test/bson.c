@@ -37,7 +37,7 @@
 #include <nsp/cells.h>
 #line 39 "bson.c"
 
-/* ----------- NspBson ----------- */
+/* -----------NspBson ----------- */
 
 
 #define  NspBson_Private 
@@ -156,7 +156,7 @@ static int init_bson(NspBson *Obj,NspTypeBson *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -217,7 +217,7 @@ static int nsp_bson_eq(NspBson *A, NspObject *B)
   if ( check_cast(B,nsp_type_bson_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->b != loc->obj->b) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -297,7 +297,7 @@ static NspBson  *nsp_bson_xdr_load(XDR *xdrs)
 
 void nsp_bson_destroy_partial(NspBson *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 179 "codegen/bson.override"
@@ -350,10 +350,10 @@ int nsp_bson_print(NspBson *M, int indent,const char *name, int rec_level)
           nsp_bson_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"b=0x%x\n",M->obj->b);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"b=0x%x\n", M->obj->b);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -368,7 +368,7 @@ int nsp_bson_latex(NspBson *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_bson_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"b=0x%x\n",M->obj->b);
+  Sciprintf1(indent+2,"b=0x%x\n", M->obj->b);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -384,7 +384,7 @@ NspBson   *nsp_bson_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_bson_id) == TRUE ) return ((NspBson *) O);
+  if ( check_cast (O,nsp_type_bson_id)  == TRUE  ) return ((NspBson *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_bson));
   return NULL;
@@ -471,7 +471,7 @@ NspBson *nsp_bson_create_default(const char *name)
  NspBson *H  = nsp_bson_create_void(name,NULL);
  if ( H ==  NULLBSON) return NULLBSON;
   if ( nsp_bson_create_partial(H) == FAIL) return NULLBSON;
- if ( nsp_bson_check_values(H) == FAIL) return NULLBSON;
+  if ( nsp_bson_check_values(H) == FAIL) return NULLBSON;
  return H;
 }
 
@@ -644,10 +644,10 @@ static NspMethods *bson_get_methods(void) { return bson_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab bson_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab bson_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspMclient ----------- */
+/* -----------NspMclient ----------- */
 
 
 #define  NspMclient_Private 
@@ -755,7 +755,7 @@ static int init_mclient(NspMclient *Obj,NspTypeMclient *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -812,7 +812,7 @@ static int nsp_mclient_eq(NspMclient *A, NspObject *B)
   if ( check_cast(B,nsp_type_mclient_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->cl != loc->obj->cl) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -866,7 +866,7 @@ static NspMclient  *nsp_mclient_xdr_load(XDR *xdrs)
 
 void nsp_mclient_destroy_partial(NspMclient *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 331 "codegen/bson.override"
@@ -926,10 +926,10 @@ int nsp_mclient_print(NspMclient *M, int indent,const char *name, int rec_level)
           nsp_mclient_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cl=0x%x\n",M->obj->cl);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"cl=0x%x\n", M->obj->cl);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -944,7 +944,7 @@ int nsp_mclient_latex(NspMclient *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mclient_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cl=0x%x\n",M->obj->cl);
+  Sciprintf1(indent+2,"cl=0x%x\n", M->obj->cl);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -960,7 +960,7 @@ NspMclient   *nsp_mclient_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_mclient_id) == TRUE ) return ((NspMclient *) O);
+  if ( check_cast (O,nsp_type_mclient_id)  == TRUE  ) return ((NspMclient *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_mclient));
   return NULL;
@@ -1038,7 +1038,7 @@ NspMclient *nsp_mclient_create_default(const char *name)
  NspMclient *H  = nsp_mclient_create_void(name,NULL);
  if ( H ==  NULLMCLIENT) return NULLMCLIENT;
   if ( nsp_mclient_create_partial(H) == FAIL) return NULLMCLIENT;
- if ( nsp_mclient_check_values(H) == FAIL) return NULLMCLIENT;
+  if ( nsp_mclient_check_values(H) == FAIL) return NULLMCLIENT;
  return H;
 }
 
@@ -1154,10 +1154,10 @@ static NspMethods *mclient_get_methods(void) { return mclient_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab mclient_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab mclient_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspMcollection ----------- */
+/* -----------NspMcollection ----------- */
 
 
 #define  NspMcollection_Private 
@@ -1265,7 +1265,7 @@ static int init_mcollection(NspMcollection *Obj,NspTypeMcollection *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1322,7 +1322,7 @@ static int nsp_mcollection_eq(NspMcollection *A, NspObject *B)
   if ( check_cast(B,nsp_type_mcollection_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->co != loc->obj->co) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1376,7 +1376,7 @@ static NspMcollection  *nsp_mcollection_xdr_load(XDR *xdrs)
 
 void nsp_mcollection_destroy_partial(NspMcollection *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 373 "codegen/bson.override"
@@ -1436,10 +1436,10 @@ int nsp_mcollection_print(NspMcollection *M, int indent,const char *name, int re
           nsp_mcollection_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"co=0x%x\n",M->obj->co);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"co=0x%x\n", M->obj->co);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -1454,7 +1454,7 @@ int nsp_mcollection_latex(NspMcollection *M, int indent,const char *name, int re
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcollection_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"co=0x%x\n",M->obj->co);
+  Sciprintf1(indent+2,"co=0x%x\n", M->obj->co);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1470,7 +1470,7 @@ NspMcollection   *nsp_mcollection_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_mcollection_id) == TRUE ) return ((NspMcollection *) O);
+  if ( check_cast (O,nsp_type_mcollection_id)  == TRUE  ) return ((NspMcollection *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_mcollection));
   return NULL;
@@ -1548,7 +1548,7 @@ NspMcollection *nsp_mcollection_create_default(const char *name)
  NspMcollection *H  = nsp_mcollection_create_void(name,NULL);
  if ( H ==  NULLMCOLLECTION) return NULLMCOLLECTION;
   if ( nsp_mcollection_create_partial(H) == FAIL) return NULLMCOLLECTION;
- if ( nsp_mcollection_check_values(H) == FAIL) return NULLMCOLLECTION;
+  if ( nsp_mcollection_check_values(H) == FAIL) return NULLMCOLLECTION;
  return H;
 }
 
@@ -1603,10 +1603,10 @@ int int_mcollection_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_mcollection = new_type_mcollection(T_BASE);
   if(( H = nsp_mcollection_create_void(NVOID,(NspTypeBase *) nsp_type_mcollection)) == NULLMCOLLECTION) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_mcollection_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_mcollection_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_mcollection_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -1745,10 +1745,10 @@ static NspMethods *mcollection_get_methods(void) { return mcollection_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab mcollection_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab mcollection_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspMcursor ----------- */
+/* -----------NspMcursor ----------- */
 
 
 #define  NspMcursor_Private 
@@ -1856,7 +1856,7 @@ static int init_mcursor(NspMcursor *Obj,NspTypeMcursor *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1914,7 +1914,7 @@ static int nsp_mcursor_eq(NspMcursor *A, NspObject *B)
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->cu != loc->obj->cu) return FALSE;
   if ( A->obj->doc != loc->obj->doc) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1968,7 +1968,7 @@ static NspMcursor  *nsp_mcursor_xdr_load(XDR *xdrs)
 
 void nsp_mcursor_destroy_partial(NspMcursor *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 501 "codegen/bson.override"
@@ -2029,11 +2029,11 @@ int nsp_mcursor_print(NspMcursor *M, int indent,const char *name, int rec_level)
           nsp_mcursor_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cu=0x%x\n",M->obj->cu);
-  Sciprintf1(indent+2,"doc=0x%x\n",M->obj->doc);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"cu=0x%x\n", M->obj->cu);
+  Sciprintf1(indent+2,"doc=0x%x\n", M->obj->doc);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -2048,8 +2048,8 @@ int nsp_mcursor_latex(NspMcursor *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"cu=0x%x\n",M->obj->cu);
-  Sciprintf1(indent+2,"doc=0x%x\n",M->obj->doc);
+  Sciprintf1(indent+2,"cu=0x%x\n", M->obj->cu);
+  Sciprintf1(indent+2,"doc=0x%x\n", M->obj->doc);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -2065,7 +2065,7 @@ NspMcursor   *nsp_mcursor_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_mcursor_id) == TRUE ) return ((NspMcursor *) O);
+  if ( check_cast (O,nsp_type_mcursor_id)  == TRUE  ) return ((NspMcursor *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_mcursor));
   return NULL;
@@ -2145,7 +2145,7 @@ NspMcursor *nsp_mcursor_create_default(const char *name)
  NspMcursor *H  = nsp_mcursor_create_void(name,NULL);
  if ( H ==  NULLMCURSOR) return NULLMCURSOR;
   if ( nsp_mcursor_create_partial(H) == FAIL) return NULLMCURSOR;
- if ( nsp_mcursor_check_values(H) == FAIL) return NULLMCURSOR;
+  if ( nsp_mcursor_check_values(H) == FAIL) return NULLMCURSOR;
  return H;
 }
 
@@ -2201,10 +2201,10 @@ int int_mcursor_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_mcursor = new_type_mcursor(T_BASE);
   if(( H = nsp_mcursor_create_void(NVOID,(NspTypeBase *) nsp_type_mcursor)) == NULLMCURSOR) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_mcursor_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_mcursor_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_mcursor_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -2300,7 +2300,7 @@ static NspMethods *mcursor_get_methods(void) { return mcursor_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab mcursor_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab mcursor_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -2321,7 +2321,7 @@ static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------*/
 
 static OpTab Bson_func[]={
-  {"mclient_create", _wrap_mclient_create},
+  { "mclient_create", _wrap_mclient_create},
   { "bson_create", int_bson_create},
   { NULL, NULL}
 };
@@ -2330,13 +2330,13 @@ static OpTab Bson_func[]={
 
 int Bson_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Bson_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Bson_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Bson_Interf_Info(int i, char **fname, function (**f))
+void Bson_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Bson_func[i].name;
   *f = Bson_func[i].fonc;

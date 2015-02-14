@@ -37,7 +37,7 @@
 
 #line 39 "diagram.c"
 
-/* ----------- NspDiagram ----------- */
+/* -----------NspDiagram ----------- */
 
 
 #define  NspDiagram_Private 
@@ -159,7 +159,7 @@ static int init_diagram(NspDiagram *Obj,NspTypeDiagram *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -217,7 +217,7 @@ static int nsp_diagram_eq(NspDiagram *A, NspObject *B)
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->bounds)->type->eq(A->obj->bounds,loc->obj->bounds) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -241,7 +241,7 @@ int nsp_diagram_xdr_save(XDR *xdrs, NspDiagram *M)
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_diagram)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -261,7 +261,7 @@ NspDiagram  *nsp_diagram_xdr_load_partial(XDR *xdrs, NspDiagram *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -288,8 +288,8 @@ static NspDiagram  *nsp_diagram_xdr_load(XDR *xdrs)
 
 void nsp_diagram_destroy_partial(NspDiagram *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->bounds != NULL ) 
@@ -348,16 +348,16 @@ int nsp_diagram_print(NspDiagram *M, int indent,const char *name, int rec_level)
           nsp_diagram_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_diagram_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_diagram_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -373,12 +373,12 @@ int nsp_diagram_latex(NspDiagram *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_diagram_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -394,7 +394,7 @@ NspDiagram   *nsp_diagram_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_diagram_id) == TRUE ) return ((NspDiagram *) O);
+  if ( check_cast (O,nsp_type_diagram_id)  == TRUE  ) return ((NspDiagram *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_diagram));
   return NULL;
@@ -445,7 +445,7 @@ static NspDiagram *nsp_diagram_create_void(const char *name,NspTypeBase *type)
 
 int nsp_diagram_create_partial(NspDiagram *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_diagram)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->bounds = NULLMAT;
@@ -467,7 +467,7 @@ int nsp_diagram_check_values(NspDiagram *H)
      if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -493,7 +493,7 @@ NspDiagram *nsp_diagram_create_default(const char *name)
  NspDiagram *H  = nsp_diagram_create_void(name,NULL);
  if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
   if ( nsp_diagram_create_partial(H) == FAIL) return NULLDIAGRAM;
- if ( nsp_diagram_check_values(H) == FAIL) return NULLDIAGRAM;
+  if ( nsp_diagram_check_values(H) == FAIL) return NULLDIAGRAM;
  return H;
 }
 
@@ -511,7 +511,7 @@ NspDiagram *nsp_diagram_copy(NspDiagram *self)
 {
   NspDiagram *H  =nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram);
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLDIAGRAM;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLDIAGRAM;
   if ( nsp_diagram_copy_partial(H,self)== NULL) return NULLDIAGRAM;
 
   return H;
@@ -528,13 +528,13 @@ NspDiagram *nsp_diagram_full_copy_partial(NspDiagram *H,NspDiagram *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds", NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children", NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   return H;
 }
@@ -566,10 +566,10 @@ int int_diagram_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_diagram = new_type_diagram(T_BASE);
   if(( H = nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram)) == NULLDIAGRAM) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_diagram_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_diagram_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_diagram_check_values(H) == FAIL) return RET_BUG;
-#line 118 "codegen/diagram.override"
+  #line 118 "codegen/diagram.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
   nspdiagram_recompute_pointers(H->obj);
 
@@ -1266,7 +1266,7 @@ static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 }
 
 static AttrTab diagram_attrs[] = {
-  { "children", (attr_get_function *)_wrap_diagram_get_children, (attr_set_function *)_wrap_diagram_set_children,(attr_get_object_function *)_wrap_diagram_get_obj_children, (attr_set_object_function *)_wrap_diagram_set_obj_children },
+  { "children", (attr_get_function * )_wrap_diagram_get_children, (attr_set_function * )_wrap_diagram_set_children, (attr_get_object_function * )_wrap_diagram_get_obj_children, (attr_set_object_function * )_wrap_diagram_set_obj_children },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1304,8 +1304,8 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Diagram_func[]={
-  {"extractelts_diagram", _wrap_nsp_extractelts_diagram},
-  {"setrowscols_diagram", _wrap_nsp_setrowscols_diagram},
+  { "extractelts_diagram", _wrap_nsp_extractelts_diagram},
+  { "setrowscols_diagram", _wrap_nsp_setrowscols_diagram},
   { "diagram_create", int_diagram_create},
   { NULL, NULL}
 };
@@ -1314,13 +1314,13 @@ static OpTab Diagram_func[]={
 
 int Diagram_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Diagram_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Diagram_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Diagram_Interf_Info(int i, char **fname, function (**f))
+void Diagram_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Diagram_func[i].name;
   *f = Diagram_func[i].fonc;

@@ -36,7 +36,7 @@
 
 #line 38 "graphic.c"
 
-/* ----------- NspGraphic ----------- */
+/* -----------NspGraphic ----------- */
 
 
 #define  NspGraphic_Private 
@@ -164,7 +164,7 @@ static int init_graphic(NspGraphic *Obj,NspTypeGraphic *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -224,7 +224,7 @@ static int nsp_graphic_eq(NspGraphic *A, NspObject *B)
   if ( A->obj->show != loc->obj->show) return FALSE;
   if ( A->obj->Fig != loc->obj->Fig) return FALSE;
   if ( A->obj->Axe != loc->obj->Axe) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -282,7 +282,7 @@ static NspGraphic  *nsp_graphic_xdr_load(XDR *xdrs)
 
 void nsp_graphic_destroy_partial(NspGraphic *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     FREE(H->obj);
@@ -337,13 +337,13 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
           nsp_graphic_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Fig=0x%x\n",M->obj->Fig);
-  Sciprintf1(indent+2,"Axe=0x%x\n",M->obj->Axe);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"Fig=0x%x\n", M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=0x%x\n", M->obj->Axe);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -360,8 +360,8 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Fig=0x%x\n",M->obj->Fig);
-  Sciprintf1(indent+2,"Axe=0x%x\n",M->obj->Axe);
+  Sciprintf1(indent+2,"Fig=0x%x\n", M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=0x%x\n", M->obj->Axe);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -377,7 +377,7 @@ NspGraphic   *nsp_graphic_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_graphic_id) == TRUE ) return ((NspGraphic *) O);
+  if ( check_cast (O,nsp_type_graphic_id)  == TRUE  ) return ((NspGraphic *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_graphic));
   return NULL;
@@ -461,7 +461,7 @@ NspGraphic *nsp_graphic_create_default(const char *name)
  NspGraphic *H  = nsp_graphic_create_void(name,NULL);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
- if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
+  if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
  return H;
 }
 
@@ -519,10 +519,10 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_graphic = new_type_graphic(T_BASE);
   if(( H = nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic)) == NULLGRAPHIC) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_graphic_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -603,7 +603,7 @@ static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret = graphic_get_bounds(self);
+  ret =graphic_get_bounds(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -630,7 +630,7 @@ static NspObject *_wrap_graphic_get_hilited(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspGraphic *) self)->obj->hilited;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_graphic_set_hilited(void *self,const char *attr, NspObject *O)
@@ -647,7 +647,7 @@ static NspObject *_wrap_graphic_get_show(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspGraphic *) self)->obj->show;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_graphic_set_show(void *self,const char *attr, NspObject *O)
@@ -659,8 +659,8 @@ static int _wrap_graphic_set_show(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab graphic_attrs[] = {
-  { "hilited", (attr_get_function *)_wrap_graphic_get_hilited, (attr_set_function *)_wrap_graphic_set_hilited,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "show", (attr_get_function *)_wrap_graphic_get_show, (attr_set_function *)_wrap_graphic_set_show,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hilited", (attr_get_function * )_wrap_graphic_get_hilited, (attr_set_function * )_wrap_graphic_set_hilited, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "show", (attr_get_function * )_wrap_graphic_get_show, (attr_set_function * )_wrap_graphic_set_show, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -682,13 +682,13 @@ static OpTab Graphic_func[]={
 
 int Graphic_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Graphic_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Graphic_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Graphic_Interf_Info(int i, char **fname, function (**f))
+void Graphic_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Graphic_func[i].name;
   *f = Graphic_func[i].fonc;

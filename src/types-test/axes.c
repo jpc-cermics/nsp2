@@ -36,7 +36,7 @@ extern Gengine GL_gengine;
 
 #line 38 "axes.c"
 
-/* ----------- NspAxes ----------- */
+/* -----------NspAxes ----------- */
 
 
 #define  NspAxes_Private 
@@ -159,7 +159,7 @@ static int init_axes(NspAxes *Obj,NspTypeAxes *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -241,7 +241,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( A->obj->line_width != loc->obj->line_width) return FALSE;
   if ( A->obj->font_size != loc->obj->font_size) return FALSE;
   if ( A->obj->background != loc->obj->background) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -287,7 +287,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs, M->obj->line_width) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->background) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -329,7 +329,7 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -351,8 +351,8 @@ static NspAxes  *nsp_axes_xdr_load(XDR *xdrs)
 
 void nsp_axes_destroy_partial(NspAxes *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
@@ -425,50 +425,50 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
           nsp_axes_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
+  Sciprintf1(indent+2,"rho=%f\n", M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->arect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->arect),indent+2,"arect", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->frect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->frect),indent+2,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
   Sciprintf1(indent+2,"x=%s\n",M->obj->x);
   Sciprintf1(indent+2,"y=%s\n",M->obj->y);
   if ( M->obj->children != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"iso	= %s\n", ( M->obj->iso == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"auto_axis	= %s\n", ( M->obj->auto_axis == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"grid=%d\n",M->obj->grid);
-  Sciprintf1(indent+2,"axes=%d\n",M->obj->axes);
+  Sciprintf1(indent+2,"grid=%d\n", M->obj->grid);
+  Sciprintf1(indent+2,"axes=%d\n", M->obj->axes);
   Sciprintf1(indent+2,"xlog	= %s\n", ( M->obj->xlog == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"ylog	= %s\n", ( M->obj->ylog == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"lpos=%d\n",M->obj->lpos);
+  Sciprintf1(indent+2,"lpos=%d\n", M->obj->lpos);
   if ( M->obj->rect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->rect),indent+2,"rect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->rect),indent+2,"rect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"zoom	= %s\n", ( M->obj->zoom == TRUE) ? "T" : "F" );
   if ( M->obj->zrect != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->zrect),indent+2,"zrect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
-  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
+  Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -485,45 +485,45 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"rho=%f\n",M->obj->rho);
+  Sciprintf1(indent+2,"rho=%f\n", M->obj->rho);
   Sciprintf1(indent+2,"top	= %s\n", ( M->obj->top == TRUE) ? "T" : "F" );
   if ( M->obj->bounds != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->bounds),indent+2,"bounds", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->arect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->arect),indent+2,"arect", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->frect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->frect),indent+2,"frect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"title=%s\n",M->obj->title);
   Sciprintf1(indent+2,"x=%s\n",M->obj->x);
   Sciprintf1(indent+2,"y=%s\n",M->obj->y);
   if ( M->obj->children != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"iso	= %s\n", ( M->obj->iso == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"auto_axis	= %s\n", ( M->obj->auto_axis == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"grid=%d\n",M->obj->grid);
-  Sciprintf1(indent+2,"axes=%d\n",M->obj->axes);
+  Sciprintf1(indent+2,"grid=%d\n", M->obj->grid);
+  Sciprintf1(indent+2,"axes=%d\n", M->obj->axes);
   Sciprintf1(indent+2,"xlog	= %s\n", ( M->obj->xlog == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"ylog	= %s\n", ( M->obj->ylog == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"lpos=%d\n",M->obj->lpos);
+  Sciprintf1(indent+2,"lpos=%d\n", M->obj->lpos);
   if ( M->obj->rect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),indent+2,"rect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->rect),indent+2,"rect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"zoom	= %s\n", ( M->obj->zoom == TRUE) ? "T" : "F" );
   if ( M->obj->zrect != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zrect),indent+2,"zrect", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
-  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
-  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
+  Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
+  Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -539,7 +539,7 @@ NspAxes   *nsp_axes_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_axes_id) == TRUE ) return ((NspAxes *) O);
+  if ( check_cast (O,nsp_type_axes_id)  == TRUE  ) return ((NspAxes *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_axes));
   return NULL;
@@ -590,7 +590,7 @@ static NspAxes *nsp_axes_create_void(const char *name,NspTypeBase *type)
 
 int nsp_axes_create_partial(NspAxes *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_axes)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   nsp_init_nsp_gcscale(&H->obj->scale);
@@ -655,17 +655,17 @@ int nsp_axes_check_values(NspAxes *H)
   }
   if ( H->obj->title == NULL) 
     {
-     if (( H->obj->title = nsp_string_copy("")) == NULL)
+  if (( H->obj->title = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->x == NULL) 
     {
-     if (( H->obj->x = nsp_string_copy("")) == NULL)
+  if (( H->obj->x = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->y == NULL) 
     {
-     if (( H->obj->y = nsp_string_copy("")) == NULL)
+  if (( H->obj->y = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->obj->children == NULLLIST) 
@@ -687,7 +687,7 @@ int nsp_axes_check_values(NspAxes *H)
        return FAIL;
       memcpy(H->obj->zrect->R,x_def,4*sizeof(double));
   }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -732,7 +732,7 @@ NspAxes *nsp_axes_create_default(const char *name)
  NspAxes *H  = nsp_axes_create_void(name,NULL);
  if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
- if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
+  if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
  return H;
 }
 
@@ -750,7 +750,7 @@ NspAxes *nsp_axes_copy(NspAxes *self)
 {
   NspAxes *H  =nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes);
   if ( H ==  NULLAXES) return NULLAXES;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLAXES;
   if ( nsp_axes_copy_partial(H,self)== NULL) return NULLAXES;
 
   return H;
@@ -768,7 +768,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     { H->obj->wrect = NULL;}
   else
     {
-      if ((H->obj->wrect = (NspMatrix *) nsp_object_full_copy_and_name("wrect",NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
+      if ((H->obj->wrect = (NspMatrix *) nsp_object_full_copy_and_name("wrect", NSP_OBJECT(self->obj->wrect))) == NULLMAT) return NULL;
     }
   H->obj->rho=self->obj->rho;
   H->obj->top=self->obj->top;
@@ -776,19 +776,19 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds", NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->arect == NULL )
     { H->obj->arect = NULL;}
   else
     {
-      if ((H->obj->arect = (NspMatrix *) nsp_object_full_copy_and_name("arect",NSP_OBJECT(self->obj->arect))) == NULLMAT) return NULL;
+      if ((H->obj->arect = (NspMatrix *) nsp_object_full_copy_and_name("arect", NSP_OBJECT(self->obj->arect))) == NULLMAT) return NULL;
     }
   if ( self->obj->frect == NULL )
     { H->obj->frect = NULL;}
   else
     {
-      if ((H->obj->frect = (NspMatrix *) nsp_object_full_copy_and_name("frect",NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
+      if ((H->obj->frect = (NspMatrix *) nsp_object_full_copy_and_name("frect", NSP_OBJECT(self->obj->frect))) == NULLMAT) return NULL;
     }
   if ((H->obj->title = nsp_string_copy(self->obj->title)) == NULL) return NULL;
   if ((H->obj->x = nsp_string_copy(self->obj->x)) == NULL) return NULL;
@@ -797,7 +797,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children", NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   H->obj->fixed=self->obj->fixed;
   H->obj->iso=self->obj->iso;
@@ -811,14 +811,14 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     { H->obj->rect = NULL;}
   else
     {
-      if ((H->obj->rect = (NspMatrix *) nsp_object_full_copy_and_name("rect",NSP_OBJECT(self->obj->rect))) == NULLMAT) return NULL;
+      if ((H->obj->rect = (NspMatrix *) nsp_object_full_copy_and_name("rect", NSP_OBJECT(self->obj->rect))) == NULLMAT) return NULL;
     }
   H->obj->zoom=self->obj->zoom;
   if ( self->obj->zrect == NULL )
     { H->obj->zrect = NULL;}
   else
     {
-      if ((H->obj->zrect = (NspMatrix *) nsp_object_full_copy_and_name("zrect",NSP_OBJECT(self->obj->zrect))) == NULLMAT) return NULL;
+      if ((H->obj->zrect = (NspMatrix *) nsp_object_full_copy_and_name("zrect", NSP_OBJECT(self->obj->zrect))) == NULLMAT) return NULL;
     }
   H->obj->clip=self->obj->clip;
   H->obj->line_width=self->obj->line_width;
@@ -849,10 +849,10 @@ int int_axes_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_axes = new_type_axes(T_BASE);
   if(( H = nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes)) == NULLAXES) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_axes_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_axes_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -921,7 +921,7 @@ static NspObject *_wrap_axes_get_top(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->top;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_top(void *self,const char *attr, NspObject *O)
@@ -1111,7 +1111,7 @@ static NspObject *_wrap_axes_get_fixed(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->fixed;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_fixed(void *self,const char *attr, NspObject *O)
@@ -1128,7 +1128,7 @@ static NspObject *_wrap_axes_get_iso(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->iso;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_iso(void *self,const char *attr, NspObject *O)
@@ -1145,7 +1145,7 @@ static NspObject *_wrap_axes_get_auto_axis(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->auto_axis;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_auto_axis(void *self,const char *attr, NspObject *O)
@@ -1192,7 +1192,7 @@ static NspObject *_wrap_axes_get_xlog(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->xlog;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_xlog(void *self,const char *attr, NspObject *O)
@@ -1209,7 +1209,7 @@ static NspObject *_wrap_axes_get_ylog(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->ylog;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_ylog(void *self,const char *attr, NspObject *O)
@@ -1267,7 +1267,7 @@ static NspObject *_wrap_axes_get_zoom(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->zoom;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_zoom(void *self,const char *attr, NspObject *O)
@@ -1284,7 +1284,7 @@ static NspObject *_wrap_axes_get_clip(void *self,const char *attr)
   NspObject *nsp_ret;
   ret = ((NspAxes *) self)->obj->clip;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static int _wrap_axes_set_clip(void *self,const char *attr, NspObject *O)
@@ -1341,29 +1341,29 @@ static int _wrap_axes_set_background(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab axes_attrs[] = {
-  { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
-  { "rho", (attr_get_function *)_wrap_axes_get_rho, (attr_set_function *)_wrap_axes_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "top", (attr_get_function *)_wrap_axes_get_top, (attr_set_function *)_wrap_axes_set_top,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "arect", (attr_get_function *)_wrap_axes_get_arect, (attr_set_function *)_wrap_axes_set_arect,(attr_get_object_function *)_wrap_axes_get_obj_arect, (attr_set_object_function *)int_set_object_failed },
-  { "frect", (attr_get_function *)_wrap_axes_get_frect, (attr_set_function *)_wrap_axes_set_frect,(attr_get_object_function *)_wrap_axes_get_obj_frect, (attr_set_object_function *)int_set_object_failed },
-  { "title", (attr_get_function *)_wrap_axes_get_title, (attr_set_function *)_wrap_axes_set_title,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "x", (attr_get_function *)_wrap_axes_get_x, (attr_set_function *)_wrap_axes_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_axes_get_y, (attr_set_function *)_wrap_axes_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "children", (attr_get_function *)_wrap_axes_get_children, (attr_set_function *)_wrap_axes_set_children,(attr_get_object_function *)_wrap_axes_get_obj_children, (attr_set_object_function *)_wrap_axes_set_obj_children },
-  { "fixed", (attr_get_function *)_wrap_axes_get_fixed, (attr_set_function *)_wrap_axes_set_fixed,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "iso", (attr_get_function *)_wrap_axes_get_iso, (attr_set_function *)_wrap_axes_set_iso,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "auto_axis", (attr_get_function *)_wrap_axes_get_auto_axis, (attr_set_function *)_wrap_axes_set_auto_axis,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "grid", (attr_get_function *)_wrap_axes_get_grid, (attr_set_function *)_wrap_axes_set_grid,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "axes", (attr_get_function *)_wrap_axes_get_axes, (attr_set_function *)_wrap_axes_set_axes,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "xlog", (attr_get_function *)_wrap_axes_get_xlog, (attr_set_function *)_wrap_axes_set_xlog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "ylog", (attr_get_function *)_wrap_axes_get_ylog, (attr_set_function *)_wrap_axes_set_ylog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "lpos", (attr_get_function *)_wrap_axes_get_lpos, (attr_set_function *)_wrap_axes_set_lpos,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "rect", (attr_get_function *)_wrap_axes_get_rect, (attr_set_function *)_wrap_axes_set_rect,(attr_get_object_function *)_wrap_axes_get_obj_rect, (attr_set_object_function *)int_set_object_failed },
-  { "zoom", (attr_get_function *)_wrap_axes_get_zoom, (attr_set_function *)_wrap_axes_set_zoom,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "clip", (attr_get_function *)_wrap_axes_get_clip, (attr_set_function *)_wrap_axes_set_clip,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "line_width", (attr_get_function *)_wrap_axes_get_line_width, (attr_set_function *)_wrap_axes_set_line_width,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "font_size", (attr_get_function *)_wrap_axes_get_font_size, (attr_set_function *)_wrap_axes_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "background", (attr_get_function *)_wrap_axes_get_background, (attr_set_function *)_wrap_axes_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "wrect", (attr_get_function * )_wrap_axes_get_wrect, (attr_set_function * )_wrap_axes_set_wrect, (attr_get_object_function * )_wrap_axes_get_obj_wrect, (attr_set_object_function * )int_set_object_failed },
+  { "rho", (attr_get_function * )_wrap_axes_get_rho, (attr_set_function * )_wrap_axes_set_rho, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "top", (attr_get_function * )_wrap_axes_get_top, (attr_set_function * )_wrap_axes_set_top, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "arect", (attr_get_function * )_wrap_axes_get_arect, (attr_set_function * )_wrap_axes_set_arect, (attr_get_object_function * )_wrap_axes_get_obj_arect, (attr_set_object_function * )int_set_object_failed },
+  { "frect", (attr_get_function * )_wrap_axes_get_frect, (attr_set_function * )_wrap_axes_set_frect, (attr_get_object_function * )_wrap_axes_get_obj_frect, (attr_set_object_function * )int_set_object_failed },
+  { "title", (attr_get_function * )_wrap_axes_get_title, (attr_set_function * )_wrap_axes_set_title, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_axes_get_x, (attr_set_function * )_wrap_axes_set_x, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_axes_get_y, (attr_set_function * )_wrap_axes_set_y, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "children", (attr_get_function * )_wrap_axes_get_children, (attr_set_function * )_wrap_axes_set_children, (attr_get_object_function * )_wrap_axes_get_obj_children, (attr_set_object_function * )_wrap_axes_set_obj_children },
+  { "fixed", (attr_get_function * )_wrap_axes_get_fixed, (attr_set_function * )_wrap_axes_set_fixed, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "iso", (attr_get_function * )_wrap_axes_get_iso, (attr_set_function * )_wrap_axes_set_iso, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "auto_axis", (attr_get_function * )_wrap_axes_get_auto_axis, (attr_set_function * )_wrap_axes_set_auto_axis, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "grid", (attr_get_function * )_wrap_axes_get_grid, (attr_set_function * )_wrap_axes_set_grid, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "axes", (attr_get_function * )_wrap_axes_get_axes, (attr_set_function * )_wrap_axes_set_axes, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "xlog", (attr_get_function * )_wrap_axes_get_xlog, (attr_set_function * )_wrap_axes_set_xlog, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "ylog", (attr_get_function * )_wrap_axes_get_ylog, (attr_set_function * )_wrap_axes_set_ylog, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "lpos", (attr_get_function * )_wrap_axes_get_lpos, (attr_set_function * )_wrap_axes_set_lpos, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "rect", (attr_get_function * )_wrap_axes_get_rect, (attr_set_function * )_wrap_axes_set_rect, (attr_get_object_function * )_wrap_axes_get_obj_rect, (attr_set_object_function * )int_set_object_failed },
+  { "zoom", (attr_get_function * )_wrap_axes_get_zoom, (attr_set_function * )_wrap_axes_set_zoom, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "clip", (attr_get_function * )_wrap_axes_get_clip, (attr_set_function * )_wrap_axes_set_clip, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "line_width", (attr_get_function * )_wrap_axes_get_line_width, (attr_set_function * )_wrap_axes_set_line_width, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "font_size", (attr_get_function * )_wrap_axes_get_font_size, (attr_set_function * )_wrap_axes_set_font_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "background", (attr_get_function * )_wrap_axes_get_background, (attr_set_function * )_wrap_axes_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1402,8 +1402,8 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Axes_func[]={
-  {"extractelts_axes", _wrap_nsp_extractelts_axes},
-  {"setrowscols_axes", _wrap_nsp_setrowscols_axes},
+  { "extractelts_axes", _wrap_nsp_extractelts_axes},
+  { "setrowscols_axes", _wrap_nsp_setrowscols_axes},
   { "axes_create", int_axes_create},
   { NULL, NULL}
 };
@@ -1412,13 +1412,13 @@ static OpTab Axes_func[]={
 
 int Axes_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Axes_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Axes_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Axes_Interf_Info(int i, char **fname, function (**f))
+void Axes_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Axes_func[i].name;
   *f = Axes_func[i].fonc;

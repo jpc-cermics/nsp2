@@ -37,7 +37,7 @@
 
 #line 39 "contour3d.c"
 
-/* ----------- NspContour3d ----------- */
+/* -----------NspContour3d ----------- */
 
 
 #define  NspContour3d_Private 
@@ -161,7 +161,7 @@ static int init_contour3d(NspContour3d *Obj,NspTypeContour3d *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -223,7 +223,7 @@ static int nsp_contour3d_eq(NspContour3d *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->zz)->type->eq(A->obj->zz,loc->obj->zz) == FALSE ) return FALSE;
   if ( A->obj->flag != loc->obj->flag) return FALSE;
   if ( A->obj->zlev != loc->obj->zlev) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -252,7 +252,7 @@ int nsp_contour3d_xdr_save(XDR *xdrs, NspContour3d *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->zz)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->flag) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->zlev) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -277,7 +277,7 @@ NspContour3d  *nsp_contour3d_xdr_load_partial(XDR *xdrs, NspContour3d *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -304,8 +304,8 @@ static NspContour3d  *nsp_contour3d_xdr_load(XDR *xdrs)
 
 void nsp_contour3d_destroy_partial(NspContour3d *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 76 "codegen/contour3d.override"
@@ -372,24 +372,24 @@ int nsp_contour3d_print(NspContour3d *M, int indent,const char *name, int rec_le
           nsp_contour3d_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_contour3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_contour3d_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->z != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->z),indent+2,"z", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->zz != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->zz),indent+2,"zz",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->zz),indent+2,"zz", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"flag=%d\n",M->obj->flag);
-  Sciprintf1(indent+2,"zlev=%f\n",M->obj->zlev);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"flag=%d\n", M->obj->flag);
+  Sciprintf1(indent+2,"zlev=%f\n", M->obj->zlev);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -405,20 +405,20 @@ int nsp_contour3d_latex(NspContour3d *M, int indent,const char *name, int rec_le
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_contour3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->z != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->z),indent+2,"z", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->zz != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zz),indent+2,"zz",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->zz),indent+2,"zz", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"flag=%d\n",M->obj->flag);
-  Sciprintf1(indent+2,"zlev=%f\n",M->obj->zlev);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"flag=%d\n", M->obj->flag);
+  Sciprintf1(indent+2,"zlev=%f\n", M->obj->zlev);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -434,7 +434,7 @@ NspContour3d   *nsp_contour3d_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_contour3d_id) == TRUE ) return ((NspContour3d *) O);
+  if ( check_cast (O,nsp_type_contour3d_id)  == TRUE  ) return ((NspContour3d *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_contour3d));
   return NULL;
@@ -485,7 +485,7 @@ static NspContour3d *nsp_contour3d_create_void(const char *name,NspTypeBase *typ
 
 int nsp_contour3d_create_partial(NspContour3d *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_contour3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->x = NULLMAT;
@@ -523,7 +523,7 @@ int nsp_contour3d_check_values(NspContour3d *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -553,7 +553,7 @@ NspContour3d *nsp_contour3d_create_default(const char *name)
  NspContour3d *H  = nsp_contour3d_create_void(name,NULL);
  if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
   if ( nsp_contour3d_create_partial(H) == FAIL) return NULLCONTOUR3D;
- if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
+  if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
  return H;
 }
 
@@ -571,7 +571,7 @@ NspContour3d *nsp_contour3d_copy(NspContour3d *self)
 {
   NspContour3d *H  =nsp_contour3d_create_void(NVOID,(NspTypeBase *) nsp_type_contour3d);
   if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR3D;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR3D;
   if ( nsp_contour3d_copy_partial(H,self)== NULL) return NULLCONTOUR3D;
 
   return H;
@@ -588,25 +588,25 @@ NspContour3d *nsp_contour3d_full_copy_partial(NspContour3d *H,NspContour3d *self
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x", NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y", NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->z == NULL )
     { H->obj->z = NULL;}
   else
     {
-      if ((H->obj->z = (NspMatrix *) nsp_object_full_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
+      if ((H->obj->z = (NspMatrix *) nsp_object_full_copy_and_name("z", NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
     }
   if ( self->obj->zz == NULL )
     { H->obj->zz = NULL;}
   else
     {
-      if ((H->obj->zz = (NspMatrix *) nsp_object_full_copy_and_name("zz",NSP_OBJECT(self->obj->zz))) == NULLMAT) return NULL;
+      if ((H->obj->zz = (NspMatrix *) nsp_object_full_copy_and_name("zz", NSP_OBJECT(self->obj->zz))) == NULLMAT) return NULL;
     }
   H->obj->flag=self->obj->flag;
   H->obj->zlev=self->obj->zlev;
@@ -640,10 +640,10 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_contour3d = new_type_contour3d(T_BASE);
   if(( H = nsp_contour3d_create_void(NVOID,(NspTypeBase *) nsp_type_contour3d)) == NULLCONTOUR3D) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_contour3d_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_contour3d_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour3d_check_values(H) == FAIL) return RET_BUG;
-#line 71 "codegen/contour3d.override"
+  #line 71 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return RET_BUG; 
 
@@ -797,12 +797,12 @@ static int _wrap_contour3d_set_zlev(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab contour3d_attrs[] = {
-  { "x", (attr_get_function *)_wrap_contour3d_get_x, (attr_set_function *)_wrap_contour3d_set_x,(attr_get_object_function *)_wrap_contour3d_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_contour3d_get_y, (attr_set_function *)_wrap_contour3d_set_y,(attr_get_object_function *)_wrap_contour3d_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "z", (attr_get_function *)_wrap_contour3d_get_z, (attr_set_function *)_wrap_contour3d_set_z,(attr_get_object_function *)_wrap_contour3d_get_obj_z, (attr_set_object_function *)int_set_object_failed },
-  { "zz", (attr_get_function *)_wrap_contour3d_get_zz, (attr_set_function *)_wrap_contour3d_set_zz,(attr_get_object_function *)_wrap_contour3d_get_obj_zz, (attr_set_object_function *)int_set_object_failed },
-  { "flag", (attr_get_function *)_wrap_contour3d_get_flag, (attr_set_function *)_wrap_contour3d_set_flag,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "zlev", (attr_get_function *)_wrap_contour3d_get_zlev, (attr_set_function *)_wrap_contour3d_set_zlev,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_contour3d_get_x, (attr_set_function * )_wrap_contour3d_set_x, (attr_get_object_function * )_wrap_contour3d_get_obj_x, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_contour3d_get_y, (attr_set_function * )_wrap_contour3d_set_y, (attr_get_object_function * )_wrap_contour3d_get_obj_y, (attr_set_object_function * )int_set_object_failed },
+  { "z", (attr_get_function * )_wrap_contour3d_get_z, (attr_set_function * )_wrap_contour3d_set_z, (attr_get_object_function * )_wrap_contour3d_get_obj_z, (attr_set_object_function * )int_set_object_failed },
+  { "zz", (attr_get_function * )_wrap_contour3d_get_zz, (attr_set_function * )_wrap_contour3d_set_zz, (attr_get_object_function * )_wrap_contour3d_get_obj_zz, (attr_set_object_function * )int_set_object_failed },
+  { "flag", (attr_get_function * )_wrap_contour3d_get_flag, (attr_set_function * )_wrap_contour3d_set_flag, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "zlev", (attr_get_function * )_wrap_contour3d_get_zlev, (attr_set_function * )_wrap_contour3d_set_zlev, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -840,8 +840,8 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Contour3d_func[]={
-  {"extractelts_contour3d", _wrap_nsp_extractelts_contour3d},
-  {"setrowscols_contour3d", _wrap_nsp_setrowscols_contour3d},
+  { "extractelts_contour3d", _wrap_nsp_extractelts_contour3d},
+  { "setrowscols_contour3d", _wrap_nsp_setrowscols_contour3d},
   { "contour3d_create", int_contour3d_create},
   { NULL, NULL}
 };
@@ -850,13 +850,13 @@ static OpTab Contour3d_func[]={
 
 int Contour3d_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Contour3d_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Contour3d_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Contour3d_Interf_Info(int i, char **fname, function (**f))
+void Contour3d_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Contour3d_func[i].name;
   *f = Contour3d_func[i].fonc;

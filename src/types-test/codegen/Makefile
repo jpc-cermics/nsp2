@@ -1,349 +1,91 @@
 .SUFFIXES: .defs .c $(SUFFIXES)
 SHELL = /bin/sh
 
-SCIDIR=../../..
-SCIDIR1=..\..\..
-
-LIBRARY = nsp-cla.a 
-
-OBJSC = classa.o classb.o 
-OBJSF=
-
-include $(SCIDIR)/Makefile.incl
-
-CFLAGS = $(CC_OPTIONS) 
-FFLAGS = $(FC_OPTIONS)
-
-PYTHON=python 
-ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
-	../polyline.c ../graphic.c ../axes.c ../figure.c ../curve.c \
-	../qcurve.c \
-	../groot.c ../gmatrix.c ../vfield.c ../contour.c ../grstring.c \
-	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
-	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
-	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
-	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
-	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
-	../hm.c ../../libgraphviz/agraph.c ../ast.c ../astv.c ../bvar.c \
-	../stochdec.c ../bson.c 
-
-
-all:: $(ALL)
-
-
-plus:
-	cd ../; make all
-
-testgen: $(ALL)
-
-
-clean :: 
-	$(RM) $(ALL)
-
-.defs.c:
-	($(PYTHON) codegen/codegen.py \
-	    --override $*.override \
-	    --prefix $* $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
-
-../classa.c : classa-types.defs classa.defs classa.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override classa.override \
-	    --prefix ClassA classa.defs) > $*.c \
-	&& mv classa.h ../../include/nsp 
-
-../classb.c : classb-types.defs classb.defs  classb.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override classb.override \
-	    --prefix ClassB classb.defs) > $*.c \
-	&& mv classb.h ../../include/nsp 
-
-../classaref.c : classaref-types.defs classaref.defs  classaref.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override classaref.override \
-	    --prefix ClassARef classaref.defs) > $*.c \
-	&& mv classaref.h ../../include/nsp 
-
-../classbref.c : classbref-types.defs classbref.defs classbref.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override classbref.override \
-	    --prefix ClassBRef classbref.defs) > $*.c \
-	&& mv classbref.h ../../include/nsp 
-
-../polyline.c : polyline-types.defs polyline.defs  polyline.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override polyline.override \
-	    --prefix Polyline polyline.defs) > $*.c \
-	&& mv polyline.h ../../include/nsp 
-
-../graphic.c : graphic-types.defs graphic.defs graphic.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override graphic.override \
-	    --prefix Graphic graphic.defs) > $*.c \
-	&& mv graphic.h ../../include/nsp 
-
-../axes.c : axes-types.defs axes.defs axes.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override axes.override \
-	    --prefix Axes axes.defs) > $*.c \
-	&& mv axes.h ../../include/nsp 
-
-../curve.c : curve-types.defs curve.defs curve.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override curve.override \
-	    --prefix Curve curve.defs) > $*.c \
-	&& mv curve.h ../../include/nsp 
-
-../qcurve.c : qcurve-types.defs qcurve.defs qcurve.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override qcurve.override \
-	    --prefix Qcurve qcurve.defs) > $*.c \
-	&& mv qcurve.h ../../include/nsp 
-
-../figure.c :  figure.defs  figure.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-		--register ./axes-types.defs \
-		--register ./graphic-types.defs \
-	    --override figure.override \
-	    --prefix Figure figure.defs) > $*.c \
-	&& mv figure.h ../../include/nsp \
-	&& mv figuredata.h ../../include/nsp
-
-../groot.c : groot.defs  groot.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override groot.override \
-	    --prefix GRoot groot.defs) > $*.c \
-	&& mv groot.h ../../include/nsp 
-
-../gmatrix.c :  gmatrix.defs gmatrix.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override gmatrix.override \
-	    --prefix GMatrix gmatrix.defs) > $*.c \
-	&& mv gmatrix.h ../../include/nsp 
-
-../gmatrix1.c :  gmatrix1.defs gmatrix1.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override gmatrix1.override \
-	    --prefix GMatrix1 gmatrix1.defs) > $*.c \
-	&& mv gmatrix1.h ../../include/nsp 
-
-../fec.c :  fec.defs fec.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override fec.override \
-	    --prefix Fec fec.defs) > $*.c \
-	&& mv fec.h ../../include/nsp 
-
-../vfield.c : vfield.defs vfield.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override vfield.override \
-	    --prefix VField vfield.defs) > $*.c \
-	&& mv vfield.h ../../include/nsp 
-
-../contour.c :  contour.defs contour.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override contour.override \
-	    --prefix Contour contour.defs) > $*.c \
-	&& mv contour.h ../../include/nsp 
-
-../grstring.c : grstring-types.defs grstring.defs  grstring.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override grstring.override \
-	    --prefix Grstring grstring.defs) > $*.c \
-	&& mv grstring.h ../../include/nsp 
-
-../grrect.c : grrect-types.defs grrect.defs  grrect.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override grrect.override \
-	    --prefix GrRect grrect.defs) > $*.c \
-	&& mv grrect.h ../../include/nsp 
-
-../grarc.c : grarc-types.defs grarc.defs grarc.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override grarc.override \
-	    --prefix GrArc grarc.defs) > $*.c \
-	&& mv grarc.h ../../include/nsp 
-
-../arrows.c : arrows.defs arrows-types.defs arrows.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override arrows.override \
-	    --prefix Arrows arrows.defs) > $*.c \
-	&& mv arrows.h ../../include/nsp 
-
-../segments.c : segments.defs segments-types.defs segments.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override segments.override \
-	    --prefix Segments segments.defs) > $*.c \
-	&& mv segments.h ../../include/nsp 
-
-../surf.c : surf-types.defs surf.defs  surf.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override surf.override \
-	    --prefix Surf surf.defs) > $*.c \
-	&& mv surf.h ../../include/nsp 
-
-../string3d.c : string3d-types.defs string3d.defs string3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override string3d.override \
-	    --prefix String3d string3d.defs) > $*.c \
-	&& mv string3d.h ../../include/nsp 
-
-../spolyhedron.c : spolyhedron-types.defs spolyhedron.defs  spolyhedron.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override spolyhedron.override \
-	    --prefix SPolyhedron spolyhedron.defs) > $*.c \
-	&& mv spolyhedron.h ../../include/nsp 
-
-../contour3d.c : contour3d-types.defs contour3d.defs  contour3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override contour3d.override \
-	    --prefix Contour3d contour3d.defs) > $*.c \
-	&& mv contour3d.h ../../include/nsp 
-
-../polyhedron.c : polyhedron-types.defs polyhedron.defs polyhedron.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override polyhedron.override \
-	    --prefix Polyhedron polyhedron.defs) > $*.c \
-	&& mv polyhedron.h ../../include/nsp 
-
-../points3d.c : points3d-types.defs points3d.defs  points3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override points3d.override \
-	    --prefix Points3d points3d.defs) > $*.c \
-	&& mv points3d.h ../../include/nsp 
-
-../objs3d.c : objs3d-types.defs objs3d.defs  objs3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override objs3d.override \
-	    --prefix Objs3d objs3d.defs) > $*.c \
-	&& mv objs3d.h ../../include/nsp 
-
-../box3d.c : box3d-types.defs box3d.defs box3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override box3d.override \
-	    --prefix Box3d box3d.defs) > $*.c \
-	&& mv box3d.h ../../include/nsp 
-
-../polyline3d.c : polyline3d-types.defs polyline3d.defs  polyline3d.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override polyline3d.override \
-	    --prefix Polyline3d polyline3d.defs) > $*.c \
-	&& mv polyline3d.h ../../include/nsp 
-
-../compound.c : compound-types.defs compound.defs  compound.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override compound.override \
-	    --prefix Compound compound.defs) > $*.c \
-	&& mv compound.h ../../include/nsp 
-
-../block.c : block.defs  block.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --register ./block-req.defs \
-	    --register ./graphic-types.defs \
-	    --override block.override \
-	    --prefix Block block.defs) > $*.c \
-	&& mv block.h ../../include/nsp 
-
-../link.c : link.defs  link.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --register ./graphic-types.defs \
-	    --override link.override \
-	    --prefix Link link.defs) > $*.c \
-	&& mv link.h ../../include/nsp 
-
-../diagram.c : diagram.defs  diagram.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --register ./graphic-types.defs \
-	    --override diagram.override \
-	    --prefix Diagram diagram.defs) > $*.c \
-	&& mv diagram.h ../../include/nsp 
-
-../connector.c : connector.defs  connector.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --register ./graphic-types.defs \
-	    --override connector.override \
-	    --prefix Connector connector.defs) > $*.c \
-	&& mv connector.h ../../include/nsp 
-
-../grimage.c : grimage.defs grimage-types.defs grimage.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --register ./graphic-types.defs \
-	    --override grimage.override \
-	    --prefix GrImage grimage.defs) > $*.c \
-	&& mv grimage.h ../../include/nsp 
-
-../interface.c : interface.defs codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	   	 \
-	    --prefix Interface interface.defs) > $*.c 
-
-../epoints.c : epoints.defs epoints-types.defs epoints.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override epoints.override \
-	    --prefix Epoints epoints.defs) > $*.c \
-	&& mv epoints.h ../../include/nsp 
-
-../sharedlib.c : sharedlib.defs sharedlib-types.defs sharedlib.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override sharedlib.override \
-	    --prefix Sharedlib sharedlib.defs) > $*.c \
-	&& mv sharedlib.h ../../include/nsp 
-
-xxall:: ../../liblowdisc/ldfaure.c 
-	cd ../../liblowdisc/; make 
-
-../../liblowdisc/ldfaure.c : ldfaure.defs ldfaure-types.defs ldfaure.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override ldfaure.override \
-	    --prefix Ldfaure ldfaure.defs) | sed -e "s+codegen/+../types-test/codegen/+g" > $*.c \
-	&& mv ldfaure.h ldhalton.h ldrevhalton.h ldsobol4.h ldsobol8.h ldniederreiter.h  ../../liblowdisc/nsp/
-
-../hm.c : hm.defs hm-types.defs hm.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override hm.override \
-	    --prefix Hm hm.defs) > $*.c \
-	&& mv hm.h ../../include/nsp 
-
-
-../../libgraphviz/agraph.c : agraph.defs agraph-types.defs agraph.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override agraph.override \
-	    --prefix Agraph agraph.defs) | sed -e "s+codegen/+../types-test/codegen/+g" > $*.c  \
-	&& mv agdisc.h  agedge.h  agnode.h  agsym.h  agraph.h ../../include/nsp 
-
-
-../ast.c : ast.defs ast-types.defs ast.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override ast.override \
-	    --prefix Ast ast.defs) > $*.c \
-	&& mv ast.h ../../include/nsp 
-
-../astv.c : astv.defs astv-types.defs astv.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override astv.override \
-	    --prefix Astv astv.defs) > $*.c \
-	&& mv astv.h ../../include/nsp 
-
-../bvar.c : bvar.defs bvar-types.defs bvar.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override bvar.override \
-	    --prefix Bvar bvar.defs) > $*.c \
-	&& mv bvar.h ../../include/nsp 
-
-../stochdec.c : stochdec.defs stochdec-types.defs stochdec.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override stochdec.override \
-	    --prefix Stochdec stochdec.defs) > $*.c \
-	&& mv stochdec.h *valuefn.h ../../include/nsp 
-
-../bson.c : bson.defs bson-types.defs bson.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override bson.override \
-	    --prefix Bson bson.defs) > $*.c \
-	&& mv bson.h mclient.h  mcollection.h  mcursor.h ../../include/nsp 
-
-test.c : test.defs test.override codegen/*.py
-	($(PYTHON) codegen/codegen.py \
-	    --override test.override \
-	    --prefix test test.defs) > $*.c 
-
+include ../../../Makefile.incl
+
+ALL=  classa.defs classb.defs classaref.defs classbref.defs \
+	polyline.defs graphic.defs axes.defs figure.defs curve.defs \
+	qcurve.defs groot.defs gmatrix.defs vfield.defs contour.defs \
+	grstring.defs grrect.defs grarc.defs arrows.defs segments.defs \
+	surf.defs box3d.defs objs3d.defs points3d.defs polyhedron.defs \
+	polyline3d.defs spolyhedron.defs string3d.defs compound.defs \
+	gmatrix1.defs fec.defs contour3d.defs block.defs link.defs \
+	connector.defs diagram.defs grimage.defs epoints.defs sharedlib.defs \
+	hm.defs agraph.defs ast.defs astv.defs bvar.defs \
+	stochdec.defs bson.defs
+
+PROG=../../../bin/nspbind
+
+SRC=../
+ISRC=../../include/nsp/
+
+TARGET=$(patsubst %.defs,../%.c,$(ALL))
+
+all::	$(TARGET)
+
+agraph.c: agraph.defs
+	$(PROG) -o /tmp/$*.c $*
+	@sed -e "s+codegen/+../types-test/codegen/+g" \
+	    -e "s+/tmp/agraph.c+agraph.c+g" /tmp/$*.c > $*.c
+	@rm -f /tmp/$*.c
+
+agraph.diff : agraph.c
+	@echo "-------- diff $*.c -------------------"
+	@diff -rw $*.c $(SRC)/../libgraphviz/; $$status
+
+../%.c: %.defs
+	@echo "generate $*.c and include files"
+	@$(PROG) -o $*.c $*
+	@$(RM) ../$*.c ; mv $*.c ../
+	@$(RM) $(ISRC)/$*.h
+	@mv $*.h $(ISRC)/$*.h
+
+clean:
+	@$(RM) *.c *.h
+
+# dependencies
+
+classa.c : classa-types.defs classa.defs classa.override
+classb.c : classb-types.defs classb.defs  classb.override
+classaref.c : classaref-types.defs classaref.defs  classaref.override
+classbref.c : classbref-types.defs classbref.defs classbref.override
+polyline.c : polyline-types.defs polyline.defs  polyline.override
+graphic.c : graphic-types.defs graphic.defs graphic.override
+axes.c : axes-types.defs axes.defs axes.override
+curve.c : curve-types.defs curve.defs curve.override
+qcurve.c : qcurve-types.defs qcurve.defs qcurve.override
+figure.c :  figure.defs  figure.override
+groot.c : groot.defs  groot.override
+gmatrix.c :  gmatrix.defs gmatrix.override
+gmatrix1.c :  gmatrix1.defs gmatrix1.override
+fec.c :  fec.defs fec.override
+vfield.c : vfield.defs vfield.override
+contour.c :  contour.defs contour.override
+grstring.c : grstring-types.defs grstring.defs  grstring.override
+grrect.c : grrect-types.defs grrect.defs  grrect.override
+grarc.c : grarc-types.defs grarc.defs grarc.override
+arrows.c : arrows.defs arrows-types.defs arrows.override
+segments.c : segments.defs segments-types.defs segments.override
+surf.c : surf-types.defs surf.defs  surf.override
+string3d.c : string3d-types.defs string3d.defs string3d.override
+spolyhedron.c : spolyhedron-types.defs spolyhedron.defs  spolyhedron.override
+contour3d.c : contour3d-types.defs contour3d.defs  contour3d.override
+polyhedron.c : polyhedron-types.defs polyhedron.defs polyhedron.override
+points3d.c : points3d-types.defs points3d.defs  points3d.override
+objs3d.c : objs3d-types.defs objs3d.defs  objs3d.override
+box3d.c : box3d-types.defs box3d.defs box3d.override
+polyline3d.c : polyline3d-types.defs polyline3d.defs  polyline3d.override
+compound.c : compound-types.defs compound.defs  compound.override
+block.c : block.defs  block.override
+link.c : link.defs  link.override
+diagram.c : diagram.defs  diagram.override
+connector.c : connector.defs  connector.override
+grimage.c : grimage.defs grimage-types.defs grimage.override
+interface.c : interface.defs
+sharedlib.c : sharedlib.defs sharedlib-types.defs sharedlib.override
+hm.c : hm.defs hm-types.defs hm.override
+ast.c : ast.defs ast-types.defs ast.override
+astv.c : astv.defs astv-types.defs astv.override
+bvar.c : bvar.defs bvar-types.defs bvar.override
+stochdec.c : stochdec.defs stochdec-types.defs stochdec.override
+bson.c : bson.defs bson-types.defs bson.override

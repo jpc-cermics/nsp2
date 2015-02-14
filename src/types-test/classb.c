@@ -28,7 +28,7 @@
 
 #line 30 "classb.c"
 
-/* ----------- NspClassB ----------- */
+/* -----------NspClassB ----------- */
 
 
 #define  NspClassB_Private 
@@ -138,7 +138,7 @@ static int init_classb(NspClassB *Obj,NspTypeClassB *type)
   Obj->clb_color = 0;
   Obj->clb_thickness = 0;
   Obj->clb_val = NULLMAT;
-  return OK;
+ return OK;
 }
 
 /*
@@ -196,7 +196,7 @@ static int nsp_classb_eq(NspClassB *A, NspObject *B)
   if ( A->clb_color != loc->clb_color) return FALSE;
   if ( A->clb_thickness != loc->clb_thickness) return FALSE;
   if ( NSP_OBJECT(A->clb_val)->type->eq(A->clb_val,loc->clb_val) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -222,7 +222,7 @@ int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
   if (nsp_xdr_save_i(xdrs, M->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->clb_thickness) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->clb_val)) == FAIL) return FAIL;
-  if ( nsp_classa_xdr_save(xdrs, (NspClassA *) M)== FAIL) return FAIL;
+  if ( nsp_classa_xdr_save(xdrs, (NspClassA * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -243,7 +243,7 @@ NspClassB  *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_classa_xdr_load_partial(xdrs,(NspClassA *)M) == NULL) return NULL;
+  if ( nsp_classa_xdr_load_partial(xdrs,(NspClassA * )M) == NULL) return NULL;
  return M;
 }
 
@@ -265,7 +265,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 
 void nsp_classb_destroy_partial(NspClassB *H)
 {
-  nsp_classa_destroy_partial((NspClassA *) H);
+  nsp_classa_destroy_partial((NspClassA * ) H);
   if ( H->clb_val != NULL ) 
     nsp_matrix_destroy(H->clb_val);
 }
@@ -318,15 +318,15 @@ int nsp_classb_print(NspClassB *M, int indent,const char *name, int rec_level)
           nsp_classb_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)) );
+      Sciprintf1(indent,"%s\t=\t\t%s \n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)));
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
-  Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
+  Sciprintf1(indent+2,"clb_color=%d\n", M->clb_color);
+  Sciprintf1(indent+2,"clb_thickness=%d\n", M->clb_thickness);
   if ( M->clb_val != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classa_print((NspClassA *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_classa_print((NspClassA * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -341,12 +341,12 @@ int nsp_classb_latex(NspClassB *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classb_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"clb_color=%d\n",M->clb_color);
-  Sciprintf1(indent+2,"clb_thickness=%d\n",M->clb_thickness);
+  Sciprintf1(indent+2,"clb_color=%d\n", M->clb_color);
+  Sciprintf1(indent+2,"clb_thickness=%d\n", M->clb_thickness);
   if ( M->clb_val != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->clb_val),indent+2,"clb_val",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->clb_val),indent+2,"clb_val", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_classa_latex((NspClassA *) M,indent+2,NULL,rec_level);
+  nsp_classa_latex((NspClassA * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -362,7 +362,7 @@ NspClassB   *nsp_classb_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_classb_id) == TRUE ) return ((NspClassB *) O);
+  if ( check_cast (O,nsp_type_classb_id)  == TRUE  ) return ((NspClassB *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_classb));
   return NULL;
@@ -424,7 +424,7 @@ int nsp_classb_check_values(NspClassB *H)
        return FAIL;
 
     }
-  nsp_classa_check_values((NspClassA *) H);
+  nsp_classa_check_values((NspClassA * ) H);
   return OK;
 }
 
@@ -444,7 +444,7 @@ NspClassB *nsp_classb_create_default(const char *name)
 {
  NspClassB *H  = nsp_classb_create_void(name,NULL);
  if ( H ==  NULLCLASSB) return NULLCLASSB;
- if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
+  if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
  return H;
 }
 
@@ -460,7 +460,7 @@ NspClassB *nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
     { H->clb_val = NULL;}
   else
     {
-      if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
+      if ((H->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val", NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -469,7 +469,7 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA *) self ) == NULL) return NULLCLASSB;
+  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   if ( nsp_classb_copy_partial(H,self)== NULL) return NULLCLASSB;
 
   return H;
@@ -486,7 +486,7 @@ NspClassB *nsp_classb_full_copy_partial(NspClassB *H,NspClassB *self)
     { H->clb_val = NULL;}
   else
     {
-      if ((H->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
+      if ((H->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val", NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -495,7 +495,7 @@ NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  if ( nsp_classa_full_copy_partial((NspClassA *) H,(NspClassA *) self ) == NULL) return NULLCLASSB;
+  if ( nsp_classa_full_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   if ( nsp_classb_full_copy_partial(H,self)== NULL) return NULLCLASSB;
 
   return H;
@@ -514,9 +514,9 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_classb = new_type_classb(T_BASE);
   if(( H = nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb)) == NULLCLASSB) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -608,15 +608,15 @@ static int _wrap_classb_set_clb_val(void *self,const char *attr, NspObject *O)
   if ( ! IsMat(O) ) return FAIL;
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassB *) self)->clb_val != NULL ) 
-    nsp_matrix_destroy(((NspClassB *) self)->clb_val);
+  nsp_matrix_destroy(((NspClassB *) self)->clb_val);
   ((NspClassB *) self)->clb_val= clb_val;
   return OK;
 }
 
 static AttrTab classb_attrs[] = {
-  { "clb_color", (attr_get_function *)_wrap_classb_get_clb_color, (attr_set_function *)_wrap_classb_set_clb_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "clb_thickness", (attr_get_function *)_wrap_classb_get_clb_thickness, (attr_set_function *)_wrap_classb_set_clb_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "clb_val", (attr_get_function *)_wrap_classb_get_clb_val, (attr_set_function *)_wrap_classb_set_clb_val,(attr_get_object_function *)_wrap_classb_get_obj_clb_val, (attr_set_object_function *)int_set_object_failed },
+  { "clb_color", (attr_get_function * )_wrap_classb_get_clb_color, (attr_set_function * )_wrap_classb_set_clb_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "clb_thickness", (attr_get_function * )_wrap_classb_get_clb_thickness, (attr_set_function * )_wrap_classb_set_clb_thickness, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "clb_val", (attr_get_function * )_wrap_classb_get_clb_val, (attr_set_function * )_wrap_classb_set_clb_val, (attr_get_object_function * )_wrap_classb_get_obj_clb_val, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -638,13 +638,13 @@ static OpTab ClassB_func[]={
 
 int ClassB_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(ClassB_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(ClassB_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void ClassB_Interf_Info(int i, char **fname, function (**f))
+void ClassB_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = ClassB_func[i].name;
   *f = ClassB_func[i].fonc;

@@ -30,7 +30,7 @@
 
 #line 32 "arrows.c"
 
-/* ----------- NspArrows ----------- */
+/* -----------NspArrows ----------- */
 
 
 #define  NspArrows_Private 
@@ -152,7 +152,7 @@ static int init_arrows(NspArrows *Obj,NspTypeArrows *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -212,7 +212,7 @@ static int nsp_arrows_eq(NspArrows *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->color)->type->eq(A->obj->color,loc->obj->color) == FALSE ) return FALSE;
   if ( A->obj->arsize != loc->obj->arsize) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -239,7 +239,7 @@ int nsp_arrows_xdr_save(XDR *xdrs, NspArrows *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->color)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->arsize) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -262,7 +262,7 @@ NspArrows  *nsp_arrows_xdr_load_partial(XDR *xdrs, NspArrows *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -284,8 +284,8 @@ static NspArrows  *nsp_arrows_xdr_load(XDR *xdrs)
 
 void nsp_arrows_destroy_partial(NspArrows *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->x != NULL ) 
@@ -346,20 +346,20 @@ int nsp_arrows_print(NspArrows *M, int indent,const char *name, int rec_level)
           nsp_arrows_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_arrows_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_arrows_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->color != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->color),indent+2,"color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"arsize=%f\n",M->obj->arsize);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"arsize=%f\n", M->obj->arsize);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -375,16 +375,16 @@ int nsp_arrows_latex(NspArrows *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_arrows_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->color != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"arsize=%f\n",M->obj->arsize);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"arsize=%f\n", M->obj->arsize);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -400,7 +400,7 @@ NspArrows   *nsp_arrows_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_arrows_id) == TRUE ) return ((NspArrows *) O);
+  if ( check_cast (O,nsp_type_arrows_id)  == TRUE  ) return ((NspArrows *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_arrows));
   return NULL;
@@ -451,7 +451,7 @@ static NspArrows *nsp_arrows_create_void(const char *name,NspTypeBase *type)
 
 int nsp_arrows_create_partial(NspArrows *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_arrows)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->x = NULLMAT;
@@ -481,7 +481,7 @@ int nsp_arrows_check_values(NspArrows *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -504,7 +504,7 @@ NspArrows *nsp_arrows_create_default(const char *name)
  NspArrows *H  = nsp_arrows_create_void(name,NULL);
  if ( H ==  NULLARROWS) return NULLARROWS;
   if ( nsp_arrows_create_partial(H) == FAIL) return NULLARROWS;
- if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
+  if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
  return H;
 }
 
@@ -522,7 +522,7 @@ NspArrows *nsp_arrows_copy(NspArrows *self)
 {
   NspArrows *H  =nsp_arrows_create_void(NVOID,(NspTypeBase *) nsp_type_arrows);
   if ( H ==  NULLARROWS) return NULLARROWS;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLARROWS;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLARROWS;
   if ( nsp_arrows_copy_partial(H,self)== NULL) return NULLARROWS;
 
   return H;
@@ -539,19 +539,19 @@ NspArrows *nsp_arrows_full_copy_partial(NspArrows *H,NspArrows *self)
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x", NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y", NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->color == NULL )
     { H->obj->color = NULL;}
   else
     {
-      if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color",NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
+      if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color", NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
     }
   H->obj->arsize=self->obj->arsize;
   return H;
@@ -579,10 +579,10 @@ int int_arrows_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_arrows = new_type_arrows(T_BASE);
   if(( H = nsp_arrows_create_void(NVOID,(NspTypeBase *) nsp_type_arrows)) == NULLARROWS) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_arrows_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_arrows_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_arrows_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -690,10 +690,10 @@ static int _wrap_arrows_set_arsize(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab arrows_attrs[] = {
-  { "x", (attr_get_function *)_wrap_arrows_get_x, (attr_set_function *)_wrap_arrows_set_x,(attr_get_object_function *)_wrap_arrows_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_arrows_get_y, (attr_set_function *)_wrap_arrows_set_y,(attr_get_object_function *)_wrap_arrows_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "color", (attr_get_function *)_wrap_arrows_get_color, (attr_set_function *)_wrap_arrows_set_color,(attr_get_object_function *)_wrap_arrows_get_obj_color, (attr_set_object_function *)int_set_object_failed },
-  { "arsize", (attr_get_function *)_wrap_arrows_get_arsize, (attr_set_function *)_wrap_arrows_set_arsize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_arrows_get_x, (attr_set_function * )_wrap_arrows_set_x, (attr_get_object_function * )_wrap_arrows_get_obj_x, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_arrows_get_y, (attr_set_function * )_wrap_arrows_set_y, (attr_get_object_function * )_wrap_arrows_get_obj_y, (attr_set_object_function * )int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_arrows_get_color, (attr_set_function * )_wrap_arrows_set_color, (attr_get_object_function * )_wrap_arrows_get_obj_color, (attr_set_object_function * )int_set_object_failed },
+  { "arsize", (attr_get_function * )_wrap_arrows_get_arsize, (attr_set_function * )_wrap_arrows_set_arsize, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -732,8 +732,8 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Arrows_func[]={
-  {"extractelts_arrows", _wrap_nsp_extractelts_arrows},
-  {"setrowscols_arrows", _wrap_nsp_setrowscols_arrows},
+  { "extractelts_arrows", _wrap_nsp_extractelts_arrows},
+  { "setrowscols_arrows", _wrap_nsp_setrowscols_arrows},
   { "arrows_create", int_arrows_create},
   { NULL, NULL}
 };
@@ -742,13 +742,13 @@ static OpTab Arrows_func[]={
 
 int Arrows_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Arrows_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Arrows_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Arrows_Interf_Info(int i, char **fname, function (**f))
+void Arrows_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Arrows_func[i].name;
   *f = Arrows_func[i].fonc;

@@ -28,7 +28,7 @@
 
 #line 30 "segments.c"
 
-/* ----------- NspSegments ----------- */
+/* -----------NspSegments ----------- */
 
 
 #define  NspSegments_Private 
@@ -150,7 +150,7 @@ static int init_segments(NspSegments *Obj,NspTypeSegments *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -209,7 +209,7 @@ static int nsp_segments_eq(NspSegments *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->color)->type->eq(A->obj->color,loc->obj->color) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -235,7 +235,7 @@ int nsp_segments_xdr_save(XDR *xdrs, NspSegments *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->color)) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -257,7 +257,7 @@ NspSegments  *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -279,8 +279,8 @@ static NspSegments  *nsp_segments_xdr_load(XDR *xdrs)
 
 void nsp_segments_destroy_partial(NspSegments *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->x != NULL ) 
@@ -341,19 +341,19 @@ int nsp_segments_print(NspSegments *M, int indent,const char *name, int rec_leve
           nsp_segments_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_segments_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_segments_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->color != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->color),indent+2,"color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -369,15 +369,15 @@ int nsp_segments_latex(NspSegments *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_segments_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->x != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->x),indent+2,"x", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->y != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->y),indent+2,"y", rec_level+1)== FALSE ) return FALSE ;
     }
   if ( M->obj->color != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -393,7 +393,7 @@ NspSegments   *nsp_segments_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_segments_id) == TRUE ) return ((NspSegments *) O);
+  if ( check_cast (O,nsp_type_segments_id)  == TRUE  ) return ((NspSegments *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_segments));
   return NULL;
@@ -444,7 +444,7 @@ static NspSegments *nsp_segments_create_void(const char *name,NspTypeBase *type)
 
 int nsp_segments_create_partial(NspSegments *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_segments)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->x = NULLMAT;
@@ -473,7 +473,7 @@ int nsp_segments_check_values(NspSegments *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -495,7 +495,7 @@ NspSegments *nsp_segments_create_default(const char *name)
  NspSegments *H  = nsp_segments_create_void(name,NULL);
  if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_segments_create_partial(H) == FAIL) return NULLSEGMENTS;
- if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
+  if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
  return H;
 }
 
@@ -513,7 +513,7 @@ NspSegments *nsp_segments_copy(NspSegments *self)
 {
   NspSegments *H  =nsp_segments_create_void(NVOID,(NspTypeBase *) nsp_type_segments);
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_copy_partial(H,self)== NULL) return NULLSEGMENTS;
 
   return H;
@@ -530,19 +530,19 @@ NspSegments *nsp_segments_full_copy_partial(NspSegments *H,NspSegments *self)
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x", NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y", NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->color == NULL )
     { H->obj->color = NULL;}
   else
     {
-      if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color",NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
+      if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color", NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -569,10 +569,10 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_segments = new_type_segments(T_BASE);
   if(( H = nsp_segments_create_void(NVOID,(NspTypeBase *) nsp_type_segments)) == NULLSEGMENTS) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_segments_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -663,9 +663,9 @@ static int _wrap_segments_set_color(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab segments_attrs[] = {
-  { "x", (attr_get_function *)_wrap_segments_get_x, (attr_set_function *)_wrap_segments_set_x,(attr_get_object_function *)_wrap_segments_get_obj_x, (attr_set_object_function *)int_set_object_failed },
-  { "y", (attr_get_function *)_wrap_segments_get_y, (attr_set_function *)_wrap_segments_set_y,(attr_get_object_function *)_wrap_segments_get_obj_y, (attr_set_object_function *)int_set_object_failed },
-  { "color", (attr_get_function *)_wrap_segments_get_color, (attr_set_function *)_wrap_segments_set_color,(attr_get_object_function *)_wrap_segments_get_obj_color, (attr_set_object_function *)int_set_object_failed },
+  { "x", (attr_get_function * )_wrap_segments_get_x, (attr_set_function * )_wrap_segments_set_x, (attr_get_object_function * )_wrap_segments_get_obj_x, (attr_set_object_function * )int_set_object_failed },
+  { "y", (attr_get_function * )_wrap_segments_get_y, (attr_set_function * )_wrap_segments_set_y, (attr_get_object_function * )_wrap_segments_get_obj_y, (attr_set_object_function * )int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_segments_get_color, (attr_set_function * )_wrap_segments_set_color, (attr_get_object_function * )_wrap_segments_get_obj_color, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -704,8 +704,8 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Segments_func[]={
-  {"extractelts_segments", _wrap_nsp_extractelts_segments},
-  {"setrowscols_segments", _wrap_nsp_setrowscols_segments},
+  { "extractelts_segments", _wrap_nsp_extractelts_segments},
+  { "setrowscols_segments", _wrap_nsp_setrowscols_segments},
   { "segments_create", int_segments_create},
   { NULL, NULL}
 };
@@ -714,13 +714,13 @@ static OpTab Segments_func[]={
 
 int Segments_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Segments_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Segments_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Segments_Interf_Info(int i, char **fname, function (**f))
+void Segments_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Segments_func[i].name;
   *f = Segments_func[i].fonc;

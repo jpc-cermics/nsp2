@@ -40,7 +40,7 @@ extern Gengine GL_gengine;
 
 #line 42 "points3d.c"
 
-/* ----------- NspPoints3d ----------- */
+/* -----------NspPoints3d ----------- */
 
 
 #define  NspPoints3d_Private 
@@ -164,7 +164,7 @@ static int init_points3d(NspPoints3d *Obj,NspTypePoints3d *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -230,7 +230,7 @@ static int nsp_points3d_eq(NspPoints3d *A, NspObject *B)
       if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
   }
   if ( A->obj->max != loc->obj->max) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -257,7 +257,7 @@ int nsp_points3d_xdr_save(XDR *xdrs, NspPoints3d *M)
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark_type) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
-  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -280,7 +280,7 @@ NspPoints3d  *nsp_points3d_xdr_load_partial(XDR *xdrs, NspPoints3d *M)
      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
-  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic * )M) == NULL) return NULL;
  return M;
 }
 
@@ -307,8 +307,8 @@ static NspPoints3d  *nsp_points3d_xdr_load(XDR *xdrs)
 
 void nsp_points3d_destroy_partial(NspPoints3d *H)
 {
-  nsp_graphic_destroy_partial((NspGraphic *) H);
-  H->obj->ref_count--;
+  nsp_graphic_destroy_partial((NspGraphic * ) H);
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
 #line 85 "codegen/points3d.override"
@@ -372,18 +372,18 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
           nsp_points3d_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
-  Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
-  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
-  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"mark_type=%d\n", M->obj->mark_type);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(indent+2,"max=%d\n", M->obj->max);
+  nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -399,14 +399,14 @@ int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_points3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
-  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
-  Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
-  Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
-  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
-  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n", M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
+  Sciprintf1(indent+2,"mark_type=%d\n", M->obj->mark_type);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(indent+2,"max=%d\n", M->obj->max);
+  nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -422,7 +422,7 @@ NspPoints3d   *nsp_points3d_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_points3d_id) == TRUE ) return ((NspPoints3d *) O);
+  if ( check_cast (O,nsp_type_points3d_id)  == TRUE  ) return ((NspPoints3d *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_points3d));
   return NULL;
@@ -473,7 +473,7 @@ static NspPoints3d *nsp_points3d_create_void(const char *name,NspTypeBase *type)
 
 int nsp_points3d_create_partial(NspPoints3d *H)
 {
-  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if ( nsp_graphic_create_partial((NspGraphic * ) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_points3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->Mcoord = NULLMAT;
@@ -494,7 +494,7 @@ int nsp_points3d_check_values(NspPoints3d *H)
        return FAIL;
 
     }
-  nsp_graphic_check_values((NspGraphic *) H);
+  nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
@@ -526,7 +526,7 @@ NspPoints3d *nsp_points3d_create_default(const char *name)
  NspPoints3d *H  = nsp_points3d_create_void(name,NULL);
  if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
   if ( nsp_points3d_create_partial(H) == FAIL) return NULLPOINTS3D;
- if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
+  if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
  return H;
 }
 
@@ -544,7 +544,7 @@ NspPoints3d *nsp_points3d_copy(NspPoints3d *self)
 {
   NspPoints3d *H  =nsp_points3d_create_void(NVOID,(NspTypeBase *) nsp_type_points3d);
   if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOINTS3D;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 
   return H;
@@ -561,7 +561,7 @@ NspPoints3d *nsp_points3d_full_copy_partial(NspPoints3d *H,NspPoints3d *self)
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord", NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   H->obj->Mcoord_l = self->obj->Mcoord_l;
   H->obj->color=self->obj->color;
@@ -601,10 +601,10 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_points3d = new_type_points3d(T_BASE);
   if(( H = nsp_points3d_create_void(NVOID,(NspTypeBase *) nsp_type_points3d)) == NULLPOINTS3D) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_points3d_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_points3d_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_points3d_check_values(H) == FAIL) return RET_BUG;
-#line 80 "codegen/points3d.override"
+  #line 80 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
@@ -693,10 +693,10 @@ static int _wrap_points3d_set_mark_size(void *self,const char *attr, NspObject *
 }
 
 static AttrTab points3d_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_points3d_get_Mcoord, (attr_set_function *)_wrap_points3d_set_Mcoord,(attr_get_object_function *)_wrap_points3d_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
-  { "color", (attr_get_function *)_wrap_points3d_get_color, (attr_set_function *)_wrap_points3d_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mark_type", (attr_get_function *)_wrap_points3d_get_mark_type, (attr_set_function *)_wrap_points3d_set_mark_type,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
-  { "mark_size", (attr_get_function *)_wrap_points3d_get_mark_size, (attr_set_function *)_wrap_points3d_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function * )_wrap_points3d_get_Mcoord, (attr_set_function * )_wrap_points3d_set_Mcoord, (attr_get_object_function * )_wrap_points3d_get_obj_Mcoord, (attr_set_object_function * )int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_points3d_get_color, (attr_set_function * )_wrap_points3d_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark_type", (attr_get_function * )_wrap_points3d_get_mark_type, (attr_set_function * )_wrap_points3d_set_mark_type, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark_size", (attr_get_function * )_wrap_points3d_get_mark_size, (attr_set_function * )_wrap_points3d_set_mark_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -735,8 +735,8 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Points3d_func[]={
-  {"extractelts_points3d", _wrap_nsp_extractelts_points3d},
-  {"setrowscols_points3d", _wrap_nsp_setrowscols_points3d},
+  { "extractelts_points3d", _wrap_nsp_extractelts_points3d},
+  { "setrowscols_points3d", _wrap_nsp_setrowscols_points3d},
   { "points3d_create", int_points3d_create},
   { NULL, NULL}
 };
@@ -745,13 +745,13 @@ static OpTab Points3d_func[]={
 
 int Points3d_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Points3d_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Points3d_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Points3d_Interf_Info(int i, char **fname, function (**f))
+void Points3d_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Points3d_func[i].name;
   *f = Points3d_func[i].fonc;

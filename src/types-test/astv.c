@@ -32,7 +32,7 @@
 
 #line 34 "astv.c"
 
-/* ----------- NspAstv ----------- */
+/* -----------NspAstv ----------- */
 
 
 #define  NspAstv_Private 
@@ -152,7 +152,7 @@ static int init_astv(NspAstv *Obj,NspTypeAstv *type)
   Obj->args = NULLOBJ;
   Obj->stype = nsp_new_string("",-1);
   Obj->ssubtype = nsp_new_string("",-1);
-  return OK;
+ return OK;
 }
 
 /*
@@ -276,15 +276,15 @@ void nsp_astv_destroy_partial(NspAstv *H)
 /* verbatim in destroy */
 
 #line 279 "astv.c"
-  if ( H->value != NULL ) 
+  if (H->value != NULL)
     nsp_object_destroy(&H->value);
-  if ( H->ast_rows != NULL ) 
+  if (H->ast_rows != NULL)
     nsp_object_destroy(&H->ast_rows);
-  if ( H->ast_columns != NULL ) 
+  if (H->ast_columns != NULL)
     nsp_object_destroy(&H->ast_columns);
-  if ( H->ast_value != NULL ) 
+  if (H->ast_value != NULL)
     nsp_object_destroy(&H->ast_value);
-  if ( H->args != NULL ) 
+  if (H->args != NULL)
     nsp_object_destroy(&H->args);
   nsp_string_destroy(&(H->stype));
   nsp_string_destroy(&(H->ssubtype));
@@ -358,8 +358,8 @@ int nsp_astv_latex(NspAstv *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_astv_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hv	= %s\n", ( M->hv == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"rows=%d\n",M->rows);
-  Sciprintf1(indent+2,"columns=%d\n",M->columns);
+  Sciprintf1(indent+2,"rows=%d\n", M->rows);
+  Sciprintf1(indent+2,"columns=%d\n", M->columns);
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
         if ( M->ast_rows->type->pr(M->ast_rows,indent+2,"ast_rows",rec_level+1)==FALSE) return FALSE;
         if ( M->ast_columns->type->pr(M->ast_columns,indent+2,"ast_columns",rec_level+1)==FALSE) return FALSE;
@@ -382,7 +382,7 @@ NspAstv   *nsp_astv_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_astv_id) == TRUE ) return ((NspAstv *) O);
+  if ( check_cast (O,nsp_type_astv_id)  == TRUE  ) return ((NspAstv *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_astv));
   return NULL;
@@ -465,12 +465,12 @@ int nsp_astv_check_values(NspAstv *H)
     }
   if ( H->stype == NULL) 
     {
-     if (( H->stype = nsp_string_copy("")) == NULL)
+  if (( H->stype = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   if ( H->ssubtype == NULL) 
     {
-     if (( H->ssubtype = nsp_string_copy("")) == NULL)
+  if (( H->ssubtype = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   return OK;
@@ -502,7 +502,7 @@ NspAstv *nsp_astv_create_default(const char *name)
 {
  NspAstv *H  = nsp_astv_create_void(name,NULL);
  if ( H ==  NULLASTV) return NULLASTV;
- if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
+  if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
  return H;
 }
 
@@ -627,9 +627,9 @@ int int_astv_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_astv = new_type_astv(T_BASE);
   if(( H = nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv)) == NULLASTV) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_astv_check_values(H) == FAIL) return RET_BUG;
-#line 40 "codegen/astv.override"
+  #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 635 "astv.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -757,7 +757,7 @@ static NspMethods *astv_get_methods(void) { return astv_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab astv_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab astv_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -776,13 +776,13 @@ static OpTab Astv_func[]={
 
 int Astv_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Astv_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Astv_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Astv_Interf_Info(int i, char **fname, function (**f))
+void Astv_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Astv_func[i].name;
   *f = Astv_func[i].fonc;

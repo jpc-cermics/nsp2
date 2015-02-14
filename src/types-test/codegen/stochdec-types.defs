@@ -10,8 +10,6 @@
   (gtype-id "Stochdec")
 )
 
-;; an object used to store a Value function 
-
 (define-object ValueFn
   (in-module "Stochdec")
   (parent "Object")
@@ -24,8 +22,6 @@
   (gtype-id "ValueFn")
 )
 
-;; sub type of Value function: Grid Value Function 
-
 (define-object GridValueFn
   (in-module "Stochdec")
   (parent "ValueFn")
@@ -37,8 +33,6 @@
    )
   (gtype-id "GridValueFn")
 )
-
-;; sub type of Value function: Cuts Value Function 
 
 (define-object CutsValueFn
   (in-module "Stochdec")

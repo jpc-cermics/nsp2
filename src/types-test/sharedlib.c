@@ -29,7 +29,7 @@
 
 #line 31 "sharedlib.c"
 
-/* ----------- NspSharedlib ----------- */
+/* -----------NspSharedlib ----------- */
 
 
 #define  NspSharedlib_Private 
@@ -141,7 +141,7 @@ static int init_sharedlib(NspSharedlib *Obj,NspTypeSharedlib *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -200,7 +200,7 @@ static int nsp_sharedlib_eq(NspSharedlib *A, NspObject *B)
   if ( A->obj->shd != loc->obj->shd) return FALSE;
   if ( A->obj->id != loc->obj->id) return FALSE;
   if ( strcmp(A->obj->path,loc->obj->path) != 0) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -254,7 +254,7 @@ static NspSharedlib  *nsp_sharedlib_xdr_load(XDR *xdrs)
 
 void nsp_sharedlib_destroy_partial(NspSharedlib *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
   nsp_string_destroy(&(H->obj->path));
@@ -310,12 +310,12 @@ int nsp_sharedlib_print(NspSharedlib *M, int indent,const char *name, int rec_le
           nsp_sharedlib_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"shd=0x%x\n",M->obj->shd);
-  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"shd=0x%x\n", M->obj->shd);
+  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
   Sciprintf1(indent+2,"path=%s\n",M->obj->path);
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -330,8 +330,8 @@ int nsp_sharedlib_latex(NspSharedlib *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"shd=0x%x\n",M->obj->shd);
-  Sciprintf1(indent+2,"id=%d\n",M->obj->id);
+  Sciprintf1(indent+2,"shd=0x%x\n", M->obj->shd);
+  Sciprintf1(indent+2,"id=%d\n", M->obj->id);
   Sciprintf1(indent+2,"path=%s\n",M->obj->path);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -348,7 +348,7 @@ NspSharedlib   *nsp_sharedlib_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_sharedlib_id) == TRUE ) return ((NspSharedlib *) O);
+  if ( check_cast (O,nsp_type_sharedlib_id)  == TRUE  ) return ((NspSharedlib *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_sharedlib));
   return NULL;
@@ -403,7 +403,7 @@ int nsp_sharedlib_create_partial(NspSharedlib *H)
   H->obj->ref_count=1;
   H->obj->shd = NULL;
   H->obj->id = -1;
-  H->obj->path = nsp_new_string("NULL",-1);
+  H->obj->path = NULL;
   return OK;
 }
 
@@ -411,7 +411,7 @@ int nsp_sharedlib_check_values(NspSharedlib *H)
 {
   if ( H->obj->path == NULL) 
     {
-     if (( H->obj->path = nsp_string_copy("")) == NULL)
+  if (( H->obj->path = nsp_string_copy("")) == NULL)
        return FAIL;
     }
   return OK;
@@ -435,7 +435,7 @@ NspSharedlib *nsp_sharedlib_create_default(const char *name)
  NspSharedlib *H  = nsp_sharedlib_create_void(name,NULL);
  if ( H ==  NULLSHAREDLIB) return NULLSHAREDLIB;
   if ( nsp_sharedlib_create_partial(H) == FAIL) return NULLSHAREDLIB;
- if ( nsp_sharedlib_check_values(H) == FAIL) return NULLSHAREDLIB;
+  if ( nsp_sharedlib_check_values(H) == FAIL) return NULLSHAREDLIB;
  return H;
 }
 
@@ -492,10 +492,10 @@ int int_sharedlib_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_sharedlib = new_type_sharedlib(T_BASE);
   if(( H = nsp_sharedlib_create_void(NVOID,(NspTypeBase *) nsp_type_sharedlib)) == NULLSHAREDLIB) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_sharedlib_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_sharedlib_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_sharedlib_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -507,7 +507,7 @@ static NspMethods *sharedlib_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab sharedlib_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab sharedlib_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -526,13 +526,13 @@ static OpTab Sharedlib_func[]={
 
 int Sharedlib_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Sharedlib_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Sharedlib_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Sharedlib_Interf_Info(int i, char **fname, function (**f))
+void Sharedlib_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Sharedlib_func[i].name;
   *f = Sharedlib_func[i].fonc;
