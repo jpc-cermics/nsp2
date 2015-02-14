@@ -24,7 +24,7 @@ PREFIX_INSTALL_DIR=/usr/local
 OCAML_LIB_DIR=$(SRC_ROOT_DIR)/src/internal_libs/lib/ocaml
 
 SRC_INSTALL_DIR=$(SRC_ROOT_DIR)/scicoslab
-BIN_DIR=$(MAIN_DIR)/bin
+BIN_DIR=../../$(MAIN_DIR)/bin
 LIB_DIR=$(MAIN_DIR)/lib
 SRC_DIR=$(MAIN_DIR)/src
 AUTO_DOC_DIR=$(MAIN_DIR)/autodoc/html

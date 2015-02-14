@@ -34,7 +34,7 @@ include $(CONFIG_DIR)/Config.mk
 # Inherited from $(SRC_DIR)/Objs.mk
 #NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS=unix.cma
 #NSPBIND_EXTERNAL_LIBRARIES_BIN_OBJS=$(NSPBIND_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
-#NSPBIND_INTERNAL_LIBS_DIR=libdir 
+#NSPBIND_INTERNAL_LIBS_DIR=libdir
 #NSPBIND_INTERNAL_LIBRARIES_BYT_OBJS (in fact empty)
 #NSPBIND_INTERNAL_LIBRARIES_BIN_OBJS (in fact empty)
 #NSPBIND_BYT_OBJS=...
@@ -90,29 +90,16 @@ EXE=$(BIN_DIR)/nspbind
 .PHONY: autodoc showdoc showman update
 
 # The regular version
-nspbind: $(NSPBIND_INTERNAL_LIBRARIES)
-	$(MAKE)\
-	  CAML_INCLUDES="$(NSPBIND_CAML_INCLUDES)"\
-	  NSPBIND=$(NSPBIND_COMMAND)\
-	  byt bin
 
-byt: $(NSPBIND_CAML_FILES) exe_byt 
+nspbind: $(NSPBIND_COMMAND)
 
-bin: $(NSPBIND_CAML_FILES) exe_bin 
+$(NSPBIND_COMMAND): $(NSPBIND_INTERNAL_LIBRARIES) byt bin
+	@echo "Binary linking program $(EXE)" && \
+	$(CAML_BIN) -o $(EXE) $(NSPBIND_LINK_BIN_OBJS)
 
-exe_byt: $(EXE).byt
-	$(CPC) $(EXE).byt $(EXE)
+byt: $(NSPBIND_CAML_FILES) $(NSPBIND_BYT_OBJS)
 
-exe_bin: $(EXE).bin
-	$(CPC) $(EXE).bin $(EXE)
-
-$(EXE).byt: $(NSPBIND_BYT_OBJS)
-	@echo "Byte linking program $(EXE).byt" && \
-	$(CAML_BYT) -o $(EXE).byt $(NSPBIND_LINK_BYT_OBJS)
-
-$(EXE).bin: $(NSPBIND_BIN_OBJS)
-	@echo "Binary linking program $(EXE).bin" && \
-	$(CAML_BIN) -o $(EXE).bin $(NSPBIND_LINK_BIN_OBJS)
+bin: $(NSPBIND_CAML_FILES) $(NSPBIND_BIN_OBJS)
 
 test:
 	(cd test_data && $(MAKE) all)
@@ -149,7 +136,7 @@ local-depend:
 	$(CAML_DEP) $(MDL_GENR_SCICOS_PRO_BLOCK_CAML_FILES) >> .depend
 
 depend:: local-depend
-	@echo "Computing internal libraries dependencies" 
+	@echo "Computing internal libraries dependencies"
 
 info:
 	@echo &&\
