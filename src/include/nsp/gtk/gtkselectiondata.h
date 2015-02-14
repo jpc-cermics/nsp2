@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkSelectionData inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkSelectionData inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkSelectionData ;
 typedef NspTypeGBoxed NspTypeGtkSelectionData ;
@@ -45,27 +45,27 @@ NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode);
 NspGtkSelectionData *new_gtkselectiondata();
 
 /*
-* Object methods redefined for gtkselectiondata 
-*/
+ * Object methods redefined for gtkselectiondata 
+ */
 
 #define NULLGTKSELECTIONDATA (NspGtkSelectionData*) 0
 
 
 /* from NspGtkSelectionDataObj.c */
 
-extern NspGtkSelectionData *nsp_gtkselectiondata_object (NspObject *O); 
-extern int IsGtkSelectionDataObj (Stack stack, int i); 
+extern NspGtkSelectionData *nsp_gtkselectiondata_object (NspObject *O);
+extern int IsGtkSelectionDataObj (Stack stack, int i);
 extern int IsGtkSelectionData(NspObject *O);
-extern NspGtkSelectionData *GetGtkSelectionDataCopy (Stack stack, int i); 
-extern NspGtkSelectionData *GetGtkSelectionData (Stack stack, int i); 
+extern NspGtkSelectionData *GetGtkSelectionDataCopy (Stack stack, int i);
+extern NspGtkSelectionData *GetGtkSelectionData (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSelectionData */
+#endif /* NSP_INC_NspGtkSelectionData */ 
 
 #ifdef NspGtkSelectionData_Private 
 static int init_gtkselectiondata(NspGtkSelectionData *o,NspTypeGtkSelectionData *type);
 static char *nsp_gtkselectiondata_type_as_string(void);
 static char *nsp_gtkselectiondata_type_short_string(NspObject *v);
 static AttrTab gtkselectiondata_attrs[];
-static NspMethods *gtkselectiondata_get_methods(void); 
-/* static int int_gtkselectiondata_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkselectiondata_get_methods(void);
+/* static int int_gtkselectiondata_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSelectionData_Private */

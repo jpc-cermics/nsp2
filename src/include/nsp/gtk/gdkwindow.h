@@ -26,9 +26,9 @@
 #include <nsp/gtk/gdkdrawable.h>
 
 /*
-* NspGdkWindow inherits from GdkDrawable
-* just change some type attributes 
-*/
+ * NspGdkWindow inherits from GdkDrawable
+ * just change some type attributes 
+ */
 
 typedef NspGdkDrawable NspGdkWindow ;
 typedef NspTypeGdkDrawable NspTypeGdkWindow ;
@@ -45,27 +45,27 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode);
 NspGdkWindow *new_gdkwindow();
 
 /*
-* Object methods redefined for gdkwindow 
-*/
+ * Object methods redefined for gdkwindow 
+ */
 
 #define NULLGDKWINDOW (NspGdkWindow*) 0
 
 
 /* from NspGdkWindowObj.c */
 
-extern NspGdkWindow *nsp_gdkwindow_object (NspObject *O); 
-extern int IsGdkWindowObj (Stack stack, int i); 
+extern NspGdkWindow *nsp_gdkwindow_object (NspObject *O);
+extern int IsGdkWindowObj (Stack stack, int i);
 extern int IsGdkWindow(NspObject *O);
-extern NspGdkWindow *GetGdkWindowCopy (Stack stack, int i); 
-extern NspGdkWindow *GetGdkWindow (Stack stack, int i); 
+extern NspGdkWindow *GetGdkWindowCopy (Stack stack, int i);
+extern NspGdkWindow *GetGdkWindow (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkWindow */
+#endif /* NSP_INC_NspGdkWindow */ 
 
 #ifdef NspGdkWindow_Private 
 static int init_gdkwindow(NspGdkWindow *o,NspTypeGdkWindow *type);
 static char *nsp_gdkwindow_type_as_string(void);
 static char *nsp_gdkwindow_type_short_string(NspObject *v);
 static AttrTab gdkwindow_attrs[];
-static NspMethods *gdkwindow_get_methods(void); 
-/* static int int_gdkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkwindow_get_methods(void);
+/* static int int_gdkwindow_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkWindow_Private */

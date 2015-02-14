@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspPangoFontFamily inherits from GObject
-* just change some type attributes 
-*/
+ * NspPangoFontFamily inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspPangoFontFamily ;
 typedef NspTypeGObject NspTypePangoFontFamily ;
@@ -45,27 +45,27 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode);
 NspPangoFontFamily *new_pangofontfamily();
 
 /*
-* Object methods redefined for pangofontfamily 
-*/
+ * Object methods redefined for pangofontfamily 
+ */
 
 #define NULLPANGOFONTFAMILY (NspPangoFontFamily*) 0
 
 
 /* from NspPangoFontFamilyObj.c */
 
-extern NspPangoFontFamily *nsp_pangofontfamily_object (NspObject *O); 
-extern int IsPangoFontFamilyObj (Stack stack, int i); 
+extern NspPangoFontFamily *nsp_pangofontfamily_object (NspObject *O);
+extern int IsPangoFontFamilyObj (Stack stack, int i);
 extern int IsPangoFontFamily(NspObject *O);
-extern NspPangoFontFamily *GetPangoFontFamilyCopy (Stack stack, int i); 
-extern NspPangoFontFamily *GetPangoFontFamily (Stack stack, int i); 
+extern NspPangoFontFamily *GetPangoFontFamilyCopy (Stack stack, int i);
+extern NspPangoFontFamily *GetPangoFontFamily (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoFontFamily */
+#endif /* NSP_INC_NspPangoFontFamily */ 
 
 #ifdef NspPangoFontFamily_Private 
 static int init_pangofontfamily(NspPangoFontFamily *o,NspTypePangoFontFamily *type);
 static char *nsp_pangofontfamily_type_as_string(void);
 static char *nsp_pangofontfamily_type_short_string(NspObject *v);
 static AttrTab pangofontfamily_attrs[];
-static NspMethods *pangofontfamily_get_methods(void); 
-/* static int int_pangofontfamily_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontfamily_get_methods(void);
+/* static int int_pangofontfamily_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoFontFamily_Private */

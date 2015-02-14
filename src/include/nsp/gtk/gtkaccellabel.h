@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtklabel.h>
 
 /*
-* NspGtkAccelLabel inherits from GtkLabel
-* just change some type attributes 
-*/
+ * NspGtkAccelLabel inherits from GtkLabel
+ * just change some type attributes 
+ */
 
 typedef NspGtkLabel NspGtkAccelLabel ;
 typedef NspTypeGtkLabel NspTypeGtkAccelLabel ;
@@ -45,27 +45,27 @@ NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode);
 NspGtkAccelLabel *new_gtkaccellabel();
 
 /*
-* Object methods redefined for gtkaccellabel 
-*/
+ * Object methods redefined for gtkaccellabel 
+ */
 
 #define NULLGTKACCELLABEL (NspGtkAccelLabel*) 0
 
 
 /* from NspGtkAccelLabelObj.c */
 
-extern NspGtkAccelLabel *nsp_gtkaccellabel_object (NspObject *O); 
-extern int IsGtkAccelLabelObj (Stack stack, int i); 
+extern NspGtkAccelLabel *nsp_gtkaccellabel_object (NspObject *O);
+extern int IsGtkAccelLabelObj (Stack stack, int i);
 extern int IsGtkAccelLabel(NspObject *O);
-extern NspGtkAccelLabel *GetGtkAccelLabelCopy (Stack stack, int i); 
-extern NspGtkAccelLabel *GetGtkAccelLabel (Stack stack, int i); 
+extern NspGtkAccelLabel *GetGtkAccelLabelCopy (Stack stack, int i);
+extern NspGtkAccelLabel *GetGtkAccelLabel (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkAccelLabel */
+#endif /* NSP_INC_NspGtkAccelLabel */ 
 
 #ifdef NspGtkAccelLabel_Private 
 static int init_gtkaccellabel(NspGtkAccelLabel *o,NspTypeGtkAccelLabel *type);
 static char *nsp_gtkaccellabel_type_as_string(void);
 static char *nsp_gtkaccellabel_type_short_string(NspObject *v);
 static AttrTab gtkaccellabel_attrs[];
-static NspMethods *gtkaccellabel_get_methods(void); 
-/* static int int_gtkaccellabel_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaccellabel_get_methods(void);
+/* static int int_gtkaccellabel_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkAccelLabel_Private */

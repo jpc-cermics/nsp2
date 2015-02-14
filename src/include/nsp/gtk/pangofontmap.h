@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspPangoFontMap inherits from GObject
-* just change some type attributes 
-*/
+ * NspPangoFontMap inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspPangoFontMap ;
 typedef NspTypeGObject NspTypePangoFontMap ;
@@ -45,27 +45,27 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode);
 NspPangoFontMap *new_pangofontmap();
 
 /*
-* Object methods redefined for pangofontmap 
-*/
+ * Object methods redefined for pangofontmap 
+ */
 
 #define NULLPANGOFONTMAP (NspPangoFontMap*) 0
 
 
 /* from NspPangoFontMapObj.c */
 
-extern NspPangoFontMap *nsp_pangofontmap_object (NspObject *O); 
-extern int IsPangoFontMapObj (Stack stack, int i); 
+extern NspPangoFontMap *nsp_pangofontmap_object (NspObject *O);
+extern int IsPangoFontMapObj (Stack stack, int i);
 extern int IsPangoFontMap(NspObject *O);
-extern NspPangoFontMap *GetPangoFontMapCopy (Stack stack, int i); 
-extern NspPangoFontMap *GetPangoFontMap (Stack stack, int i); 
+extern NspPangoFontMap *GetPangoFontMapCopy (Stack stack, int i);
+extern NspPangoFontMap *GetPangoFontMap (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoFontMap */
+#endif /* NSP_INC_NspPangoFontMap */ 
 
 #ifdef NspPangoFontMap_Private 
 static int init_pangofontmap(NspPangoFontMap *o,NspTypePangoFontMap *type);
 static char *nsp_pangofontmap_type_as_string(void);
 static char *nsp_pangofontmap_type_short_string(NspObject *v);
 static AttrTab pangofontmap_attrs[];
-static NspMethods *pangofontmap_get_methods(void); 
-/* static int int_pangofontmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontmap_get_methods(void);
+/* static int int_pangofontmap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoFontMap_Private */

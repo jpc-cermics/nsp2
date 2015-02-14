@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkItem inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkItem inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkItem ;
 typedef NspTypeGtkBin NspTypeGtkItem ;
@@ -45,27 +45,27 @@ NspTypeGtkItem *new_type_gtkitem(type_mode mode);
 NspGtkItem *new_gtkitem();
 
 /*
-* Object methods redefined for gtkitem 
-*/
+ * Object methods redefined for gtkitem 
+ */
 
 #define NULLGTKITEM (NspGtkItem*) 0
 
 
 /* from NspGtkItemObj.c */
 
-extern NspGtkItem *nsp_gtkitem_object (NspObject *O); 
-extern int IsGtkItemObj (Stack stack, int i); 
+extern NspGtkItem *nsp_gtkitem_object (NspObject *O);
+extern int IsGtkItemObj (Stack stack, int i);
 extern int IsGtkItem(NspObject *O);
-extern NspGtkItem *GetGtkItemCopy (Stack stack, int i); 
-extern NspGtkItem *GetGtkItem (Stack stack, int i); 
+extern NspGtkItem *GetGtkItemCopy (Stack stack, int i);
+extern NspGtkItem *GetGtkItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkItem */
+#endif /* NSP_INC_NspGtkItem */ 
 
 #ifdef NspGtkItem_Private 
 static int init_gtkitem(NspGtkItem *o,NspTypeGtkItem *type);
 static char *nsp_gtkitem_type_as_string(void);
 static char *nsp_gtkitem_type_short_string(NspObject *v);
 static AttrTab gtkitem_attrs[];
-static NspMethods *gtkitem_get_methods(void); 
-/* static int int_gtkitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkitem_get_methods(void);
+/* static int int_gtkitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkItem_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkImage inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkImage inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkImage ;
 typedef NspTypeGObject NspTypeGdkImage ;
@@ -45,27 +45,27 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode);
 NspGdkImage *new_gdkimage();
 
 /*
-* Object methods redefined for gdkimage 
-*/
+ * Object methods redefined for gdkimage 
+ */
 
 #define NULLGDKIMAGE (NspGdkImage*) 0
 
 
 /* from NspGdkImageObj.c */
 
-extern NspGdkImage *nsp_gdkimage_object (NspObject *O); 
-extern int IsGdkImageObj (Stack stack, int i); 
+extern NspGdkImage *nsp_gdkimage_object (NspObject *O);
+extern int IsGdkImageObj (Stack stack, int i);
 extern int IsGdkImage(NspObject *O);
-extern NspGdkImage *GetGdkImageCopy (Stack stack, int i); 
-extern NspGdkImage *GetGdkImage (Stack stack, int i); 
+extern NspGdkImage *GetGdkImageCopy (Stack stack, int i);
+extern NspGdkImage *GetGdkImage (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkImage */
+#endif /* NSP_INC_NspGdkImage */ 
 
 #ifdef NspGdkImage_Private 
 static int init_gdkimage(NspGdkImage *o,NspTypeGdkImage *type);
 static char *nsp_gdkimage_type_as_string(void);
 static char *nsp_gdkimage_type_short_string(NspObject *v);
 static AttrTab gdkimage_attrs[];
-static NspMethods *gdkimage_get_methods(void); 
-/* static int int_gdkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkimage_get_methods(void);
+/* static int int_gdkimage_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkImage_Private */

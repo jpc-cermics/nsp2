@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbutton.h>
 
 /*
-* NspGtkFontButton inherits from GtkButton
-* just change some type attributes 
-*/
+ * NspGtkFontButton inherits from GtkButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkButton NspGtkFontButton ;
 typedef NspTypeGtkButton NspTypeGtkFontButton ;
@@ -45,27 +45,27 @@ NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode);
 NspGtkFontButton *new_gtkfontbutton();
 
 /*
-* Object methods redefined for gtkfontbutton 
-*/
+ * Object methods redefined for gtkfontbutton 
+ */
 
 #define NULLGTKFONTBUTTON (NspGtkFontButton*) 0
 
 
 /* from NspGtkFontButtonObj.c */
 
-extern NspGtkFontButton *nsp_gtkfontbutton_object (NspObject *O); 
-extern int IsGtkFontButtonObj (Stack stack, int i); 
+extern NspGtkFontButton *nsp_gtkfontbutton_object (NspObject *O);
+extern int IsGtkFontButtonObj (Stack stack, int i);
 extern int IsGtkFontButton(NspObject *O);
-extern NspGtkFontButton *GetGtkFontButtonCopy (Stack stack, int i); 
-extern NspGtkFontButton *GetGtkFontButton (Stack stack, int i); 
+extern NspGtkFontButton *GetGtkFontButtonCopy (Stack stack, int i);
+extern NspGtkFontButton *GetGtkFontButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFontButton */
+#endif /* NSP_INC_NspGtkFontButton */ 
 
 #ifdef NspGtkFontButton_Private 
 static int init_gtkfontbutton(NspGtkFontButton *o,NspTypeGtkFontButton *type);
 static char *nsp_gtkfontbutton_type_as_string(void);
 static char *nsp_gtkfontbutton_type_short_string(NspObject *v);
 static AttrTab gtkfontbutton_attrs[];
-static NspMethods *gtkfontbutton_get_methods(void); 
-/* static int int_gtkfontbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfontbutton_get_methods(void);
+/* static int int_gtkfontbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFontButton_Private */

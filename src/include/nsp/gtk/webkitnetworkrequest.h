@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspWebKitNetworkRequest inherits from GObject
-* just change some type attributes 
-*/
+ * NspWebKitNetworkRequest inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspWebKitNetworkRequest ;
 typedef NspTypeGObject NspTypeWebKitNetworkRequest ;
@@ -45,27 +45,27 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode);
 NspWebKitNetworkRequest *new_webkitnetworkrequest();
 
 /*
-* Object methods redefined for webkitnetworkrequest 
-*/
+ * Object methods redefined for webkitnetworkrequest 
+ */
 
 #define NULLWEBKITNETWORKREQUEST (NspWebKitNetworkRequest*) 0
 
 
 /* from NspWebKitNetworkRequestObj.c */
 
-extern NspWebKitNetworkRequest *nsp_webkitnetworkrequest_object (NspObject *O); 
-extern int IsWebKitNetworkRequestObj (Stack stack, int i); 
+extern NspWebKitNetworkRequest *nsp_webkitnetworkrequest_object (NspObject *O);
+extern int IsWebKitNetworkRequestObj (Stack stack, int i);
 extern int IsWebKitNetworkRequest(NspObject *O);
-extern NspWebKitNetworkRequest *GetWebKitNetworkRequestCopy (Stack stack, int i); 
-extern NspWebKitNetworkRequest *GetWebKitNetworkRequest (Stack stack, int i); 
+extern NspWebKitNetworkRequest *GetWebKitNetworkRequestCopy (Stack stack, int i);
+extern NspWebKitNetworkRequest *GetWebKitNetworkRequest (Stack stack, int i);
 
-#endif /* NSP_INC_NspWebKitNetworkRequest */
+#endif /* NSP_INC_NspWebKitNetworkRequest */ 
 
 #ifdef NspWebKitNetworkRequest_Private 
 static int init_webkitnetworkrequest(NspWebKitNetworkRequest *o,NspTypeWebKitNetworkRequest *type);
 static char *nsp_webkitnetworkrequest_type_as_string(void);
 static char *nsp_webkitnetworkrequest_type_short_string(NspObject *v);
 static AttrTab webkitnetworkrequest_attrs[];
-static NspMethods *webkitnetworkrequest_get_methods(void); 
-/* static int int_webkitnetworkrequest_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *webkitnetworkrequest_get_methods(void);
+/* static int int_webkitnetworkrequest_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspWebKitNetworkRequest_Private */

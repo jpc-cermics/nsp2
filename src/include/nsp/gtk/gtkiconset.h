@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkIconSet inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkIconSet inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkIconSet ;
 typedef NspTypeGBoxed NspTypeGtkIconSet ;
@@ -45,27 +45,27 @@ NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode);
 NspGtkIconSet *new_gtkiconset();
 
 /*
-* Object methods redefined for gtkiconset 
-*/
+ * Object methods redefined for gtkiconset 
+ */
 
 #define NULLGTKICONSET (NspGtkIconSet*) 0
 
 
 /* from NspGtkIconSetObj.c */
 
-extern NspGtkIconSet *nsp_gtkiconset_object (NspObject *O); 
-extern int IsGtkIconSetObj (Stack stack, int i); 
+extern NspGtkIconSet *nsp_gtkiconset_object (NspObject *O);
+extern int IsGtkIconSetObj (Stack stack, int i);
 extern int IsGtkIconSet(NspObject *O);
-extern NspGtkIconSet *GetGtkIconSetCopy (Stack stack, int i); 
-extern NspGtkIconSet *GetGtkIconSet (Stack stack, int i); 
+extern NspGtkIconSet *GetGtkIconSetCopy (Stack stack, int i);
+extern NspGtkIconSet *GetGtkIconSet (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIconSet */
+#endif /* NSP_INC_NspGtkIconSet */ 
 
 #ifdef NspGtkIconSet_Private 
 static int init_gtkiconset(NspGtkIconSet *o,NspTypeGtkIconSet *type);
 static char *nsp_gtkiconset_type_as_string(void);
 static char *nsp_gtkiconset_type_short_string(NspObject *v);
 static AttrTab gtkiconset_attrs[];
-static NspMethods *gtkiconset_get_methods(void); 
-/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkiconset_get_methods(void);
+/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIconSet_Private */

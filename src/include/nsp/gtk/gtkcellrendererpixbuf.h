@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcellrenderer.h>
 
 /*
-* NspGtkCellRendererPixbuf inherits from GtkCellRenderer
-* just change some type attributes 
-*/
+ * NspGtkCellRendererPixbuf inherits from GtkCellRenderer
+ * just change some type attributes 
+ */
 
 typedef NspGtkCellRenderer NspGtkCellRendererPixbuf ;
 typedef NspTypeGtkCellRenderer NspTypeGtkCellRendererPixbuf ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode);
 NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf();
 
 /*
-* Object methods redefined for gtkcellrendererpixbuf 
-*/
+ * Object methods redefined for gtkcellrendererpixbuf 
+ */
 
 #define NULLGTKCELLRENDERERPIXBUF (NspGtkCellRendererPixbuf*) 0
 
 
 /* from NspGtkCellRendererPixbufObj.c */
 
-extern NspGtkCellRendererPixbuf *nsp_gtkcellrendererpixbuf_object (NspObject *O); 
-extern int IsGtkCellRendererPixbufObj (Stack stack, int i); 
+extern NspGtkCellRendererPixbuf *nsp_gtkcellrendererpixbuf_object (NspObject *O);
+extern int IsGtkCellRendererPixbufObj (Stack stack, int i);
 extern int IsGtkCellRendererPixbuf(NspObject *O);
-extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbufCopy (Stack stack, int i); 
-extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbuf (Stack stack, int i); 
+extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbufCopy (Stack stack, int i);
+extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbuf (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRendererPixbuf */
+#endif /* NSP_INC_NspGtkCellRendererPixbuf */ 
 
 #ifdef NspGtkCellRendererPixbuf_Private 
 static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *o,NspTypeGtkCellRendererPixbuf *type);
 static char *nsp_gtkcellrendererpixbuf_type_as_string(void);
 static char *nsp_gtkcellrendererpixbuf_type_short_string(NspObject *v);
 static AttrTab gtkcellrendererpixbuf_attrs[];
-static NspMethods *gtkcellrendererpixbuf_get_methods(void); 
-/* static int int_gtkcellrendererpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrendererpixbuf_get_methods(void);
+/* static int int_gtkcellrendererpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRendererPixbuf_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcombobox.h>
 
 /*
-* NspGtkComboBoxEntry inherits from GtkComboBox
-* just change some type attributes 
-*/
+ * NspGtkComboBoxEntry inherits from GtkComboBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkComboBox NspGtkComboBoxEntry ;
 typedef NspTypeGtkComboBox NspTypeGtkComboBoxEntry ;
@@ -45,27 +45,27 @@ NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode);
 NspGtkComboBoxEntry *new_gtkcomboboxentry();
 
 /*
-* Object methods redefined for gtkcomboboxentry 
-*/
+ * Object methods redefined for gtkcomboboxentry 
+ */
 
 #define NULLGTKCOMBOBOXENTRY (NspGtkComboBoxEntry*) 0
 
 
 /* from NspGtkComboBoxEntryObj.c */
 
-extern NspGtkComboBoxEntry *nsp_gtkcomboboxentry_object (NspObject *O); 
-extern int IsGtkComboBoxEntryObj (Stack stack, int i); 
+extern NspGtkComboBoxEntry *nsp_gtkcomboboxentry_object (NspObject *O);
+extern int IsGtkComboBoxEntryObj (Stack stack, int i);
 extern int IsGtkComboBoxEntry(NspObject *O);
-extern NspGtkComboBoxEntry *GetGtkComboBoxEntryCopy (Stack stack, int i); 
-extern NspGtkComboBoxEntry *GetGtkComboBoxEntry (Stack stack, int i); 
+extern NspGtkComboBoxEntry *GetGtkComboBoxEntryCopy (Stack stack, int i);
+extern NspGtkComboBoxEntry *GetGtkComboBoxEntry (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkComboBoxEntry */
+#endif /* NSP_INC_NspGtkComboBoxEntry */ 
 
 #ifdef NspGtkComboBoxEntry_Private 
 static int init_gtkcomboboxentry(NspGtkComboBoxEntry *o,NspTypeGtkComboBoxEntry *type);
 static char *nsp_gtkcomboboxentry_type_as_string(void);
 static char *nsp_gtkcomboboxentry_type_short_string(NspObject *v);
 static AttrTab gtkcomboboxentry_attrs[];
-static NspMethods *gtkcomboboxentry_get_methods(void); 
-/* static int int_gtkcomboboxentry_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcomboboxentry_get_methods(void);
+/* static int int_gtkcomboboxentry_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkComboBoxEntry_Private */

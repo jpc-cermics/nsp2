@@ -26,9 +26,9 @@
 #include <nsp/gtk/atkobject.h>
 
 /*
-* NspGtkAccessible inherits from AtkObject
-* just change some type attributes 
-*/
+ * NspGtkAccessible inherits from AtkObject
+ * just change some type attributes 
+ */
 
 typedef NspAtkObject NspGtkAccessible ;
 typedef NspTypeAtkObject NspTypeGtkAccessible ;
@@ -45,27 +45,27 @@ NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode);
 NspGtkAccessible *new_gtkaccessible();
 
 /*
-* Object methods redefined for gtkaccessible 
-*/
+ * Object methods redefined for gtkaccessible 
+ */
 
 #define NULLGTKACCESSIBLE (NspGtkAccessible*) 0
 
 
 /* from NspGtkAccessibleObj.c */
 
-extern NspGtkAccessible *nsp_gtkaccessible_object (NspObject *O); 
-extern int IsGtkAccessibleObj (Stack stack, int i); 
+extern NspGtkAccessible *nsp_gtkaccessible_object (NspObject *O);
+extern int IsGtkAccessibleObj (Stack stack, int i);
 extern int IsGtkAccessible(NspObject *O);
-extern NspGtkAccessible *GetGtkAccessibleCopy (Stack stack, int i); 
-extern NspGtkAccessible *GetGtkAccessible (Stack stack, int i); 
+extern NspGtkAccessible *GetGtkAccessibleCopy (Stack stack, int i);
+extern NspGtkAccessible *GetGtkAccessible (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkAccessible */
+#endif /* NSP_INC_NspGtkAccessible */ 
 
 #ifdef NspGtkAccessible_Private 
 static int init_gtkaccessible(NspGtkAccessible *o,NspTypeGtkAccessible *type);
 static char *nsp_gtkaccessible_type_as_string(void);
 static char *nsp_gtkaccessible_type_short_string(NspObject *v);
 static AttrTab gtkaccessible_attrs[];
-static NspMethods *gtkaccessible_get_methods(void); 
-/* static int int_gtkaccessible_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaccessible_get_methods(void);
+/* static int int_gtkaccessible_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkAccessible_Private */

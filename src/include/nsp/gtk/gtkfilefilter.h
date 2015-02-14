@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkFileFilter inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkFileFilter inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkFileFilter ;
 typedef NspTypeGtkObject NspTypeGtkFileFilter ;
@@ -45,27 +45,27 @@ NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode);
 NspGtkFileFilter *new_gtkfilefilter();
 
 /*
-* Object methods redefined for gtkfilefilter 
-*/
+ * Object methods redefined for gtkfilefilter 
+ */
 
 #define NULLGTKFILEFILTER (NspGtkFileFilter*) 0
 
 
 /* from NspGtkFileFilterObj.c */
 
-extern NspGtkFileFilter *nsp_gtkfilefilter_object (NspObject *O); 
-extern int IsGtkFileFilterObj (Stack stack, int i); 
+extern NspGtkFileFilter *nsp_gtkfilefilter_object (NspObject *O);
+extern int IsGtkFileFilterObj (Stack stack, int i);
 extern int IsGtkFileFilter(NspObject *O);
-extern NspGtkFileFilter *GetGtkFileFilterCopy (Stack stack, int i); 
-extern NspGtkFileFilter *GetGtkFileFilter (Stack stack, int i); 
+extern NspGtkFileFilter *GetGtkFileFilterCopy (Stack stack, int i);
+extern NspGtkFileFilter *GetGtkFileFilter (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFileFilter */
+#endif /* NSP_INC_NspGtkFileFilter */ 
 
 #ifdef NspGtkFileFilter_Private 
 static int init_gtkfilefilter(NspGtkFileFilter *o,NspTypeGtkFileFilter *type);
 static char *nsp_gtkfilefilter_type_as_string(void);
 static char *nsp_gtkfilefilter_type_short_string(NspObject *v);
 static AttrTab gtkfilefilter_attrs[];
-static NspMethods *gtkfilefilter_get_methods(void); 
-/* static int int_gtkfilefilter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfilefilter_get_methods(void);
+/* static int int_gtkfilefilter_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFileFilter_Private */

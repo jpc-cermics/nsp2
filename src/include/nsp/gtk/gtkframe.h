@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkFrame inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkFrame inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkFrame ;
 typedef NspTypeGtkBin NspTypeGtkFrame ;
@@ -45,27 +45,27 @@ NspTypeGtkFrame *new_type_gtkframe(type_mode mode);
 NspGtkFrame *new_gtkframe();
 
 /*
-* Object methods redefined for gtkframe 
-*/
+ * Object methods redefined for gtkframe 
+ */
 
 #define NULLGTKFRAME (NspGtkFrame*) 0
 
 
 /* from NspGtkFrameObj.c */
 
-extern NspGtkFrame *nsp_gtkframe_object (NspObject *O); 
-extern int IsGtkFrameObj (Stack stack, int i); 
+extern NspGtkFrame *nsp_gtkframe_object (NspObject *O);
+extern int IsGtkFrameObj (Stack stack, int i);
 extern int IsGtkFrame(NspObject *O);
-extern NspGtkFrame *GetGtkFrameCopy (Stack stack, int i); 
-extern NspGtkFrame *GetGtkFrame (Stack stack, int i); 
+extern NspGtkFrame *GetGtkFrameCopy (Stack stack, int i);
+extern NspGtkFrame *GetGtkFrame (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFrame */
+#endif /* NSP_INC_NspGtkFrame */ 
 
 #ifdef NspGtkFrame_Private 
 static int init_gtkframe(NspGtkFrame *o,NspTypeGtkFrame *type);
 static char *nsp_gtkframe_type_as_string(void);
 static char *nsp_gtkframe_type_short_string(NspObject *v);
 static AttrTab gtkframe_attrs[];
-static NspMethods *gtkframe_get_methods(void); 
-/* static int int_gtkframe_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkframe_get_methods(void);
+/* static int int_gtkframe_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFrame_Private */

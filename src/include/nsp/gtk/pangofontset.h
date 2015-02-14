@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspPangoFontset inherits from GObject
-* just change some type attributes 
-*/
+ * NspPangoFontset inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspPangoFontset ;
 typedef NspTypeGObject NspTypePangoFontset ;
@@ -45,27 +45,27 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode);
 NspPangoFontset *new_pangofontset();
 
 /*
-* Object methods redefined for pangofontset 
-*/
+ * Object methods redefined for pangofontset 
+ */
 
 #define NULLPANGOFONTSET (NspPangoFontset*) 0
 
 
 /* from NspPangoFontsetObj.c */
 
-extern NspPangoFontset *nsp_pangofontset_object (NspObject *O); 
-extern int IsPangoFontsetObj (Stack stack, int i); 
+extern NspPangoFontset *nsp_pangofontset_object (NspObject *O);
+extern int IsPangoFontsetObj (Stack stack, int i);
 extern int IsPangoFontset(NspObject *O);
-extern NspPangoFontset *GetPangoFontsetCopy (Stack stack, int i); 
-extern NspPangoFontset *GetPangoFontset (Stack stack, int i); 
+extern NspPangoFontset *GetPangoFontsetCopy (Stack stack, int i);
+extern NspPangoFontset *GetPangoFontset (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoFontset */
+#endif /* NSP_INC_NspPangoFontset */ 
 
 #ifdef NspPangoFontset_Private 
 static int init_pangofontset(NspPangoFontset *o,NspTypePangoFontset *type);
 static char *nsp_pangofontset_type_as_string(void);
 static char *nsp_pangofontset_type_short_string(NspObject *v);
 static AttrTab pangofontset_attrs[];
-static NspMethods *pangofontset_get_methods(void); 
-/* static int int_pangofontset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontset_get_methods(void);
+/* static int int_pangofontset_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoFontset_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkVisual inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkVisual inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkVisual ;
 typedef NspTypeGObject NspTypeGdkVisual ;
@@ -45,27 +45,27 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode);
 NspGdkVisual *new_gdkvisual();
 
 /*
-* Object methods redefined for gdkvisual 
-*/
+ * Object methods redefined for gdkvisual 
+ */
 
 #define NULLGDKVISUAL (NspGdkVisual*) 0
 
 
 /* from NspGdkVisualObj.c */
 
-extern NspGdkVisual *nsp_gdkvisual_object (NspObject *O); 
-extern int IsGdkVisualObj (Stack stack, int i); 
+extern NspGdkVisual *nsp_gdkvisual_object (NspObject *O);
+extern int IsGdkVisualObj (Stack stack, int i);
 extern int IsGdkVisual(NspObject *O);
-extern NspGdkVisual *GetGdkVisualCopy (Stack stack, int i); 
-extern NspGdkVisual *GetGdkVisual (Stack stack, int i); 
+extern NspGdkVisual *GetGdkVisualCopy (Stack stack, int i);
+extern NspGdkVisual *GetGdkVisual (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkVisual */
+#endif /* NSP_INC_NspGdkVisual */ 
 
 #ifdef NspGdkVisual_Private 
 static int init_gdkvisual(NspGdkVisual *o,NspTypeGdkVisual *type);
 static char *nsp_gdkvisual_type_as_string(void);
 static char *nsp_gdkvisual_type_short_string(NspObject *v);
 static AttrTab gdkvisual_attrs[];
-static NspMethods *gdkvisual_get_methods(void); 
-/* static int int_gdkvisual_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkvisual_get_methods(void);
+/* static int int_gdkvisual_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkVisual_Private */

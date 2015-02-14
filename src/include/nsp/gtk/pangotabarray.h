@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspPangoTabArray inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspPangoTabArray inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspPangoTabArray ;
 typedef NspTypeGBoxed NspTypePangoTabArray ;
@@ -45,27 +45,27 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode);
 NspPangoTabArray *new_pangotabarray();
 
 /*
-* Object methods redefined for pangotabarray 
-*/
+ * Object methods redefined for pangotabarray 
+ */
 
 #define NULLPANGOTABARRAY (NspPangoTabArray*) 0
 
 
 /* from NspPangoTabArrayObj.c */
 
-extern NspPangoTabArray *nsp_pangotabarray_object (NspObject *O); 
-extern int IsPangoTabArrayObj (Stack stack, int i); 
+extern NspPangoTabArray *nsp_pangotabarray_object (NspObject *O);
+extern int IsPangoTabArrayObj (Stack stack, int i);
 extern int IsPangoTabArray(NspObject *O);
-extern NspPangoTabArray *GetPangoTabArrayCopy (Stack stack, int i); 
-extern NspPangoTabArray *GetPangoTabArray (Stack stack, int i); 
+extern NspPangoTabArray *GetPangoTabArrayCopy (Stack stack, int i);
+extern NspPangoTabArray *GetPangoTabArray (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoTabArray */
+#endif /* NSP_INC_NspPangoTabArray */ 
 
 #ifdef NspPangoTabArray_Private 
 static int init_pangotabarray(NspPangoTabArray *o,NspTypePangoTabArray *type);
 static char *nsp_pangotabarray_type_as_string(void);
 static char *nsp_pangotabarray_type_short_string(NspObject *v);
 static AttrTab pangotabarray_attrs[];
-static NspMethods *pangotabarray_get_methods(void); 
-/* static int int_pangotabarray_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangotabarray_get_methods(void);
+/* static int int_pangotabarray_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoTabArray_Private */

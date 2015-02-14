@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkEventBox inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkEventBox inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkEventBox ;
 typedef NspTypeGtkBin NspTypeGtkEventBox ;
@@ -45,27 +45,27 @@ NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode);
 NspGtkEventBox *new_gtkeventbox();
 
 /*
-* Object methods redefined for gtkeventbox 
-*/
+ * Object methods redefined for gtkeventbox 
+ */
 
 #define NULLGTKEVENTBOX (NspGtkEventBox*) 0
 
 
 /* from NspGtkEventBoxObj.c */
 
-extern NspGtkEventBox *nsp_gtkeventbox_object (NspObject *O); 
-extern int IsGtkEventBoxObj (Stack stack, int i); 
+extern NspGtkEventBox *nsp_gtkeventbox_object (NspObject *O);
+extern int IsGtkEventBoxObj (Stack stack, int i);
 extern int IsGtkEventBox(NspObject *O);
-extern NspGtkEventBox *GetGtkEventBoxCopy (Stack stack, int i); 
-extern NspGtkEventBox *GetGtkEventBox (Stack stack, int i); 
+extern NspGtkEventBox *GetGtkEventBoxCopy (Stack stack, int i);
+extern NspGtkEventBox *GetGtkEventBox (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkEventBox */
+#endif /* NSP_INC_NspGtkEventBox */ 
 
 #ifdef NspGtkEventBox_Private 
 static int init_gtkeventbox(NspGtkEventBox *o,NspTypeGtkEventBox *type);
 static char *nsp_gtkeventbox_type_as_string(void);
 static char *nsp_gtkeventbox_type_short_string(NspObject *v);
 static AttrTab gtkeventbox_attrs[];
-static NspMethods *gtkeventbox_get_methods(void); 
-/* static int int_gtkeventbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkeventbox_get_methods(void);
+/* static int int_gtkeventbox_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkEventBox_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkPaned inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkPaned inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkPaned ;
 typedef NspTypeGtkContainer NspTypeGtkPaned ;
@@ -45,27 +45,27 @@ NspTypeGtkPaned *new_type_gtkpaned(type_mode mode);
 NspGtkPaned *new_gtkpaned();
 
 /*
-* Object methods redefined for gtkpaned 
-*/
+ * Object methods redefined for gtkpaned 
+ */
 
 #define NULLGTKPANED (NspGtkPaned*) 0
 
 
 /* from NspGtkPanedObj.c */
 
-extern NspGtkPaned *nsp_gtkpaned_object (NspObject *O); 
-extern int IsGtkPanedObj (Stack stack, int i); 
+extern NspGtkPaned *nsp_gtkpaned_object (NspObject *O);
+extern int IsGtkPanedObj (Stack stack, int i);
 extern int IsGtkPaned(NspObject *O);
-extern NspGtkPaned *GetGtkPanedCopy (Stack stack, int i); 
-extern NspGtkPaned *GetGtkPaned (Stack stack, int i); 
+extern NspGtkPaned *GetGtkPanedCopy (Stack stack, int i);
+extern NspGtkPaned *GetGtkPaned (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkPaned */
+#endif /* NSP_INC_NspGtkPaned */ 
 
 #ifdef NspGtkPaned_Private 
 static int init_gtkpaned(NspGtkPaned *o,NspTypeGtkPaned *type);
 static char *nsp_gtkpaned_type_as_string(void);
 static char *nsp_gtkpaned_type_short_string(NspObject *v);
 static AttrTab gtkpaned_attrs[];
-static NspMethods *gtkpaned_get_methods(void); 
-/* static int int_gtkpaned_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkpaned_get_methods(void);
+/* static int int_gtkpaned_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkPaned_Private */

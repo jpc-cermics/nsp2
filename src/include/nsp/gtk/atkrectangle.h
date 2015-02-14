@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspAtkRectangle inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspAtkRectangle inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspAtkRectangle ;
 typedef NspTypeGBoxed NspTypeAtkRectangle ;
@@ -45,27 +45,27 @@ NspTypeAtkRectangle *new_type_atkrectangle(type_mode mode);
 NspAtkRectangle *new_atkrectangle();
 
 /*
-* Object methods redefined for atkrectangle 
-*/
+ * Object methods redefined for atkrectangle 
+ */
 
 #define NULLATKRECTANGLE (NspAtkRectangle*) 0
 
 
 /* from NspAtkRectangleObj.c */
 
-extern NspAtkRectangle *nsp_atkrectangle_object (NspObject *O); 
-extern int IsAtkRectangleObj (Stack stack, int i); 
+extern NspAtkRectangle *nsp_atkrectangle_object (NspObject *O);
+extern int IsAtkRectangleObj (Stack stack, int i);
 extern int IsAtkRectangle(NspObject *O);
-extern NspAtkRectangle *GetAtkRectangleCopy (Stack stack, int i); 
-extern NspAtkRectangle *GetAtkRectangle (Stack stack, int i); 
+extern NspAtkRectangle *GetAtkRectangleCopy (Stack stack, int i);
+extern NspAtkRectangle *GetAtkRectangle (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkRectangle */
+#endif /* NSP_INC_NspAtkRectangle */ 
 
 #ifdef NspAtkRectangle_Private 
 static int init_atkrectangle(NspAtkRectangle *o,NspTypeAtkRectangle *type);
 static char *nsp_atkrectangle_type_as_string(void);
 static char *nsp_atkrectangle_type_short_string(NspObject *v);
 static AttrTab atkrectangle_attrs[];
-static NspMethods *atkrectangle_get_methods(void); 
-/* static int int_atkrectangle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkrectangle_get_methods(void);
+/* static int int_atkrectangle_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkRectangle_Private */

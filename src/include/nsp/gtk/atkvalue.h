@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkValue inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkValue inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkValue ;
 typedef NspTypeGObject NspTypeAtkValue ;
@@ -45,27 +45,27 @@ NspTypeAtkValue *new_type_atkvalue(type_mode mode);
 NspAtkValue *new_atkvalue();
 
 /*
-* Object methods redefined for atkvalue 
-*/
+ * Object methods redefined for atkvalue 
+ */
 
 #define NULLATKVALUE (NspAtkValue*) 0
 
 
 /* from NspAtkValueObj.c */
 
-extern NspAtkValue *nsp_atkvalue_object (NspObject *O); 
-extern int IsAtkValueObj (Stack stack, int i); 
+extern NspAtkValue *nsp_atkvalue_object (NspObject *O);
+extern int IsAtkValueObj (Stack stack, int i);
 extern int IsAtkValue(NspObject *O);
-extern NspAtkValue *GetAtkValueCopy (Stack stack, int i); 
-extern NspAtkValue *GetAtkValue (Stack stack, int i); 
+extern NspAtkValue *GetAtkValueCopy (Stack stack, int i);
+extern NspAtkValue *GetAtkValue (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkValue */
+#endif /* NSP_INC_NspAtkValue */ 
 
 #ifdef NspAtkValue_Private 
 static int init_atkvalue(NspAtkValue *o,NspTypeAtkValue *type);
 static char *nsp_atkvalue_type_as_string(void);
 static char *nsp_atkvalue_type_short_string(NspObject *v);
 static AttrTab atkvalue_attrs[];
-static NspMethods *atkvalue_get_methods(void); 
-/* static int int_atkvalue_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkvalue_get_methods(void);
+/* static int int_atkvalue_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkValue_Private */

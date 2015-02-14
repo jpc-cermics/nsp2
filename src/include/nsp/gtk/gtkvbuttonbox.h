@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbuttonbox.h>
 
 /*
-* NspGtkVButtonBox inherits from GtkButtonBox
-* just change some type attributes 
-*/
+ * NspGtkVButtonBox inherits from GtkButtonBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkButtonBox NspGtkVButtonBox ;
 typedef NspTypeGtkButtonBox NspTypeGtkVButtonBox ;
@@ -45,27 +45,27 @@ NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode);
 NspGtkVButtonBox *new_gtkvbuttonbox();
 
 /*
-* Object methods redefined for gtkvbuttonbox 
-*/
+ * Object methods redefined for gtkvbuttonbox 
+ */
 
 #define NULLGTKVBUTTONBOX (NspGtkVButtonBox*) 0
 
 
 /* from NspGtkVButtonBoxObj.c */
 
-extern NspGtkVButtonBox *nsp_gtkvbuttonbox_object (NspObject *O); 
-extern int IsGtkVButtonBoxObj (Stack stack, int i); 
+extern NspGtkVButtonBox *nsp_gtkvbuttonbox_object (NspObject *O);
+extern int IsGtkVButtonBoxObj (Stack stack, int i);
 extern int IsGtkVButtonBox(NspObject *O);
-extern NspGtkVButtonBox *GetGtkVButtonBoxCopy (Stack stack, int i); 
-extern NspGtkVButtonBox *GetGtkVButtonBox (Stack stack, int i); 
+extern NspGtkVButtonBox *GetGtkVButtonBoxCopy (Stack stack, int i);
+extern NspGtkVButtonBox *GetGtkVButtonBox (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkVButtonBox */
+#endif /* NSP_INC_NspGtkVButtonBox */ 
 
 #ifdef NspGtkVButtonBox_Private 
 static int init_gtkvbuttonbox(NspGtkVButtonBox *o,NspTypeGtkVButtonBox *type);
 static char *nsp_gtkvbuttonbox_type_as_string(void);
 static char *nsp_gtkvbuttonbox_type_short_string(NspObject *v);
 static AttrTab gtkvbuttonbox_attrs[];
-static NspMethods *gtkvbuttonbox_get_methods(void); 
-/* static int int_gtkvbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvbuttonbox_get_methods(void);
+/* static int int_gtkvbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkVButtonBox_Private */

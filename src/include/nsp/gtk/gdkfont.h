@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGdkFont inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGdkFont inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGdkFont ;
 typedef NspTypeGBoxed NspTypeGdkFont ;
@@ -45,27 +45,27 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode);
 NspGdkFont *new_gdkfont();
 
 /*
-* Object methods redefined for gdkfont 
-*/
+ * Object methods redefined for gdkfont 
+ */
 
 #define NULLGDKFONT (NspGdkFont*) 0
 
 
 /* from NspGdkFontObj.c */
 
-extern NspGdkFont *nsp_gdkfont_object (NspObject *O); 
-extern int IsGdkFontObj (Stack stack, int i); 
+extern NspGdkFont *nsp_gdkfont_object (NspObject *O);
+extern int IsGdkFontObj (Stack stack, int i);
 extern int IsGdkFont(NspObject *O);
-extern NspGdkFont *GetGdkFontCopy (Stack stack, int i); 
-extern NspGdkFont *GetGdkFont (Stack stack, int i); 
+extern NspGdkFont *GetGdkFontCopy (Stack stack, int i);
+extern NspGdkFont *GetGdkFont (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkFont */
+#endif /* NSP_INC_NspGdkFont */ 
 
 #ifdef NspGdkFont_Private 
 static int init_gdkfont(NspGdkFont *o,NspTypeGdkFont *type);
 static char *nsp_gdkfont_type_as_string(void);
 static char *nsp_gdkfont_type_short_string(NspObject *v);
 static AttrTab gdkfont_attrs[];
-static NspMethods *gdkfont_get_methods(void); 
-/* static int int_gdkfont_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkfont_get_methods(void);
+/* static int int_gdkfont_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkFont_Private */

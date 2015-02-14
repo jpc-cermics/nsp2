@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwindow.h>
 
 /*
-* NspGtkPlug inherits from GtkWindow
-* just change some type attributes 
-*/
+ * NspGtkPlug inherits from GtkWindow
+ * just change some type attributes 
+ */
 
 typedef NspGtkWindow NspGtkPlug ;
 typedef NspTypeGtkWindow NspTypeGtkPlug ;
@@ -45,27 +45,27 @@ NspTypeGtkPlug *new_type_gtkplug(type_mode mode);
 NspGtkPlug *new_gtkplug();
 
 /*
-* Object methods redefined for gtkplug 
-*/
+ * Object methods redefined for gtkplug 
+ */
 
 #define NULLGTKPLUG (NspGtkPlug*) 0
 
 
 /* from NspGtkPlugObj.c */
 
-extern NspGtkPlug *nsp_gtkplug_object (NspObject *O); 
-extern int IsGtkPlugObj (Stack stack, int i); 
+extern NspGtkPlug *nsp_gtkplug_object (NspObject *O);
+extern int IsGtkPlugObj (Stack stack, int i);
 extern int IsGtkPlug(NspObject *O);
-extern NspGtkPlug *GetGtkPlugCopy (Stack stack, int i); 
-extern NspGtkPlug *GetGtkPlug (Stack stack, int i); 
+extern NspGtkPlug *GetGtkPlugCopy (Stack stack, int i);
+extern NspGtkPlug *GetGtkPlug (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkPlug */
+#endif /* NSP_INC_NspGtkPlug */ 
 
 #ifdef NspGtkPlug_Private 
 static int init_gtkplug(NspGtkPlug *o,NspTypeGtkPlug *type);
 static char *nsp_gtkplug_type_as_string(void);
 static char *nsp_gtkplug_type_short_string(NspObject *v);
 static AttrTab gtkplug_attrs[];
-static NspMethods *gtkplug_get_methods(void); 
-/* static int int_gtkplug_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkplug_get_methods(void);
+/* static int int_gtkplug_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkPlug_Private */

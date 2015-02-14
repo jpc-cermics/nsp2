@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkscrollbar.h>
 
 /*
-* NspGtkVScrollbar inherits from GtkScrollbar
-* just change some type attributes 
-*/
+ * NspGtkVScrollbar inherits from GtkScrollbar
+ * just change some type attributes 
+ */
 
 typedef NspGtkScrollbar NspGtkVScrollbar ;
 typedef NspTypeGtkScrollbar NspTypeGtkVScrollbar ;
@@ -45,27 +45,27 @@ NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode);
 NspGtkVScrollbar *new_gtkvscrollbar();
 
 /*
-* Object methods redefined for gtkvscrollbar 
-*/
+ * Object methods redefined for gtkvscrollbar 
+ */
 
 #define NULLGTKVSCROLLBAR (NspGtkVScrollbar*) 0
 
 
 /* from NspGtkVScrollbarObj.c */
 
-extern NspGtkVScrollbar *nsp_gtkvscrollbar_object (NspObject *O); 
-extern int IsGtkVScrollbarObj (Stack stack, int i); 
+extern NspGtkVScrollbar *nsp_gtkvscrollbar_object (NspObject *O);
+extern int IsGtkVScrollbarObj (Stack stack, int i);
 extern int IsGtkVScrollbar(NspObject *O);
-extern NspGtkVScrollbar *GetGtkVScrollbarCopy (Stack stack, int i); 
-extern NspGtkVScrollbar *GetGtkVScrollbar (Stack stack, int i); 
+extern NspGtkVScrollbar *GetGtkVScrollbarCopy (Stack stack, int i);
+extern NspGtkVScrollbar *GetGtkVScrollbar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkVScrollbar */
+#endif /* NSP_INC_NspGtkVScrollbar */ 
 
 #ifdef NspGtkVScrollbar_Private 
 static int init_gtkvscrollbar(NspGtkVScrollbar *o,NspTypeGtkVScrollbar *type);
 static char *nsp_gtkvscrollbar_type_as_string(void);
 static char *nsp_gtkvscrollbar_type_short_string(NspObject *v);
 static AttrTab gtkvscrollbar_attrs[];
-static NspMethods *gtkvscrollbar_get_methods(void); 
-/* static int int_gtkvscrollbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvscrollbar_get_methods(void);
+/* static int int_gtkvscrollbar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkVScrollbar_Private */

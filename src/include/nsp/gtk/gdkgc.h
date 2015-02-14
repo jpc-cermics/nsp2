@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkGC inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkGC inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkGC ;
 typedef NspTypeGObject NspTypeGdkGC ;
@@ -45,27 +45,27 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode);
 NspGdkGC *new_gdkgc();
 
 /*
-* Object methods redefined for gdkgc 
-*/
+ * Object methods redefined for gdkgc 
+ */
 
 #define NULLGDKGC (NspGdkGC*) 0
 
 
 /* from NspGdkGCObj.c */
 
-extern NspGdkGC *nsp_gdkgc_object (NspObject *O); 
-extern int IsGdkGCObj (Stack stack, int i); 
+extern NspGdkGC *nsp_gdkgc_object (NspObject *O);
+extern int IsGdkGCObj (Stack stack, int i);
 extern int IsGdkGC(NspObject *O);
-extern NspGdkGC *GetGdkGCCopy (Stack stack, int i); 
-extern NspGdkGC *GetGdkGC (Stack stack, int i); 
+extern NspGdkGC *GetGdkGCCopy (Stack stack, int i);
+extern NspGdkGC *GetGdkGC (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkGC */
+#endif /* NSP_INC_NspGdkGC */ 
 
 #ifdef NspGdkGC_Private 
 static int init_gdkgc(NspGdkGC *o,NspTypeGdkGC *type);
 static char *nsp_gdkgc_type_as_string(void);
 static char *nsp_gdkgc_type_short_string(NspObject *v);
 static AttrTab gdkgc_attrs[];
-static NspMethods *gdkgc_get_methods(void); 
-/* static int int_gdkgc_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkgc_get_methods(void);
+/* static int int_gdkgc_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkGC_Private */

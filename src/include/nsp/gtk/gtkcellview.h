@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkCellView inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkCellView inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkCellView ;
 typedef NspTypeGtkWidget NspTypeGtkCellView ;
@@ -45,27 +45,27 @@ NspTypeGtkCellView *new_type_gtkcellview(type_mode mode);
 NspGtkCellView *new_gtkcellview();
 
 /*
-* Object methods redefined for gtkcellview 
-*/
+ * Object methods redefined for gtkcellview 
+ */
 
 #define NULLGTKCELLVIEW (NspGtkCellView*) 0
 
 
 /* from NspGtkCellViewObj.c */
 
-extern NspGtkCellView *nsp_gtkcellview_object (NspObject *O); 
-extern int IsGtkCellViewObj (Stack stack, int i); 
+extern NspGtkCellView *nsp_gtkcellview_object (NspObject *O);
+extern int IsGtkCellViewObj (Stack stack, int i);
 extern int IsGtkCellView(NspObject *O);
-extern NspGtkCellView *GetGtkCellViewCopy (Stack stack, int i); 
-extern NspGtkCellView *GetGtkCellView (Stack stack, int i); 
+extern NspGtkCellView *GetGtkCellViewCopy (Stack stack, int i);
+extern NspGtkCellView *GetGtkCellView (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellView */
+#endif /* NSP_INC_NspGtkCellView */ 
 
 #ifdef NspGtkCellView_Private 
 static int init_gtkcellview(NspGtkCellView *o,NspTypeGtkCellView *type);
 static char *nsp_gtkcellview_type_as_string(void);
 static char *nsp_gtkcellview_type_short_string(NspObject *v);
 static AttrTab gtkcellview_attrs[];
-static NspMethods *gtkcellview_get_methods(void); 
-/* static int int_gtkcellview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellview_get_methods(void);
+/* static int int_gtkcellview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellView_Private */

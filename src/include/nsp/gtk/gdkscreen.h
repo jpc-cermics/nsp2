@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkScreen inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkScreen inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkScreen ;
 typedef NspTypeGObject NspTypeGdkScreen ;
@@ -45,27 +45,27 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode);
 NspGdkScreen *new_gdkscreen();
 
 /*
-* Object methods redefined for gdkscreen 
-*/
+ * Object methods redefined for gdkscreen 
+ */
 
 #define NULLGDKSCREEN (NspGdkScreen*) 0
 
 
 /* from NspGdkScreenObj.c */
 
-extern NspGdkScreen *nsp_gdkscreen_object (NspObject *O); 
-extern int IsGdkScreenObj (Stack stack, int i); 
+extern NspGdkScreen *nsp_gdkscreen_object (NspObject *O);
+extern int IsGdkScreenObj (Stack stack, int i);
 extern int IsGdkScreen(NspObject *O);
-extern NspGdkScreen *GetGdkScreenCopy (Stack stack, int i); 
-extern NspGdkScreen *GetGdkScreen (Stack stack, int i); 
+extern NspGdkScreen *GetGdkScreenCopy (Stack stack, int i);
+extern NspGdkScreen *GetGdkScreen (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkScreen */
+#endif /* NSP_INC_NspGdkScreen */ 
 
 #ifdef NspGdkScreen_Private 
 static int init_gdkscreen(NspGdkScreen *o,NspTypeGdkScreen *type);
 static char *nsp_gdkscreen_type_as_string(void);
 static char *nsp_gdkscreen_type_short_string(NspObject *v);
 static AttrTab gdkscreen_attrs[];
-static NspMethods *gdkscreen_get_methods(void); 
-/* static int int_gdkscreen_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkscreen_get_methods(void);
+/* static int int_gdkscreen_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkScreen_Private */

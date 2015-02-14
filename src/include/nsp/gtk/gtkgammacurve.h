@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkvbox.h>
 
 /*
-* NspGtkGammaCurve inherits from GtkVBox
-* just change some type attributes 
-*/
+ * NspGtkGammaCurve inherits from GtkVBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkVBox NspGtkGammaCurve ;
 typedef NspTypeGtkVBox NspTypeGtkGammaCurve ;
@@ -45,27 +45,27 @@ NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode);
 NspGtkGammaCurve *new_gtkgammacurve();
 
 /*
-* Object methods redefined for gtkgammacurve 
-*/
+ * Object methods redefined for gtkgammacurve 
+ */
 
 #define NULLGTKGAMMACURVE (NspGtkGammaCurve*) 0
 
 
 /* from NspGtkGammaCurveObj.c */
 
-extern NspGtkGammaCurve *nsp_gtkgammacurve_object (NspObject *O); 
-extern int IsGtkGammaCurveObj (Stack stack, int i); 
+extern NspGtkGammaCurve *nsp_gtkgammacurve_object (NspObject *O);
+extern int IsGtkGammaCurveObj (Stack stack, int i);
 extern int IsGtkGammaCurve(NspObject *O);
-extern NspGtkGammaCurve *GetGtkGammaCurveCopy (Stack stack, int i); 
-extern NspGtkGammaCurve *GetGtkGammaCurve (Stack stack, int i); 
+extern NspGtkGammaCurve *GetGtkGammaCurveCopy (Stack stack, int i);
+extern NspGtkGammaCurve *GetGtkGammaCurve (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkGammaCurve */
+#endif /* NSP_INC_NspGtkGammaCurve */ 
 
 #ifdef NspGtkGammaCurve_Private 
 static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type);
 static char *nsp_gtkgammacurve_type_as_string(void);
 static char *nsp_gtkgammacurve_type_short_string(NspObject *v);
 static AttrTab gtkgammacurve_attrs[];
-static NspMethods *gtkgammacurve_get_methods(void); 
-/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkgammacurve_get_methods(void);
+/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkGammaCurve_Private */

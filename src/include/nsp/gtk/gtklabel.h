@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmisc.h>
 
 /*
-* NspGtkLabel inherits from GtkMisc
-* just change some type attributes 
-*/
+ * NspGtkLabel inherits from GtkMisc
+ * just change some type attributes 
+ */
 
 typedef NspGtkMisc NspGtkLabel ;
 typedef NspTypeGtkMisc NspTypeGtkLabel ;
@@ -45,27 +45,27 @@ NspTypeGtkLabel *new_type_gtklabel(type_mode mode);
 NspGtkLabel *new_gtklabel();
 
 /*
-* Object methods redefined for gtklabel 
-*/
+ * Object methods redefined for gtklabel 
+ */
 
 #define NULLGTKLABEL (NspGtkLabel*) 0
 
 
 /* from NspGtkLabelObj.c */
 
-extern NspGtkLabel *nsp_gtklabel_object (NspObject *O); 
-extern int IsGtkLabelObj (Stack stack, int i); 
+extern NspGtkLabel *nsp_gtklabel_object (NspObject *O);
+extern int IsGtkLabelObj (Stack stack, int i);
 extern int IsGtkLabel(NspObject *O);
-extern NspGtkLabel *GetGtkLabelCopy (Stack stack, int i); 
-extern NspGtkLabel *GetGtkLabel (Stack stack, int i); 
+extern NspGtkLabel *GetGtkLabelCopy (Stack stack, int i);
+extern NspGtkLabel *GetGtkLabel (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkLabel */
+#endif /* NSP_INC_NspGtkLabel */ 
 
 #ifdef NspGtkLabel_Private 
 static int init_gtklabel(NspGtkLabel *o,NspTypeGtkLabel *type);
 static char *nsp_gtklabel_type_as_string(void);
 static char *nsp_gtklabel_type_short_string(NspObject *v);
 static AttrTab gtklabel_attrs[];
-static NspMethods *gtklabel_get_methods(void); 
-/* static int int_gtklabel_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtklabel_get_methods(void);
+/* static int int_gtklabel_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkLabel_Private */

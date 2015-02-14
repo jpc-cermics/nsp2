@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkButton inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkButton inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkButton ;
 typedef NspTypeGtkBin NspTypeGtkButton ;
@@ -45,27 +45,27 @@ NspTypeGtkButton *new_type_gtkbutton(type_mode mode);
 NspGtkButton *new_gtkbutton();
 
 /*
-* Object methods redefined for gtkbutton 
-*/
+ * Object methods redefined for gtkbutton 
+ */
 
 #define NULLGTKBUTTON (NspGtkButton*) 0
 
 
 /* from NspGtkButtonObj.c */
 
-extern NspGtkButton *nsp_gtkbutton_object (NspObject *O); 
-extern int IsGtkButtonObj (Stack stack, int i); 
+extern NspGtkButton *nsp_gtkbutton_object (NspObject *O);
+extern int IsGtkButtonObj (Stack stack, int i);
 extern int IsGtkButton(NspObject *O);
-extern NspGtkButton *GetGtkButtonCopy (Stack stack, int i); 
-extern NspGtkButton *GetGtkButton (Stack stack, int i); 
+extern NspGtkButton *GetGtkButtonCopy (Stack stack, int i);
+extern NspGtkButton *GetGtkButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkButton */
+#endif /* NSP_INC_NspGtkButton */ 
 
 #ifdef NspGtkButton_Private 
 static int init_gtkbutton(NspGtkButton *o,NspTypeGtkButton *type);
 static char *nsp_gtkbutton_type_as_string(void);
 static char *nsp_gtkbutton_type_short_string(NspObject *v);
 static AttrTab gtkbutton_attrs[];
-static NspMethods *gtkbutton_get_methods(void); 
-/* static int int_gtkbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkbutton_get_methods(void);
+/* static int int_gtkbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkButton_Private */

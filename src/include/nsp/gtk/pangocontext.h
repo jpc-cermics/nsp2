@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspPangoContext inherits from GObject
-* just change some type attributes 
-*/
+ * NspPangoContext inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspPangoContext ;
 typedef NspTypeGObject NspTypePangoContext ;
@@ -45,27 +45,27 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode);
 NspPangoContext *new_pangocontext();
 
 /*
-* Object methods redefined for pangocontext 
-*/
+ * Object methods redefined for pangocontext 
+ */
 
 #define NULLPANGOCONTEXT (NspPangoContext*) 0
 
 
 /* from NspPangoContextObj.c */
 
-extern NspPangoContext *nsp_pangocontext_object (NspObject *O); 
-extern int IsPangoContextObj (Stack stack, int i); 
+extern NspPangoContext *nsp_pangocontext_object (NspObject *O);
+extern int IsPangoContextObj (Stack stack, int i);
 extern int IsPangoContext(NspObject *O);
-extern NspPangoContext *GetPangoContextCopy (Stack stack, int i); 
-extern NspPangoContext *GetPangoContext (Stack stack, int i); 
+extern NspPangoContext *GetPangoContextCopy (Stack stack, int i);
+extern NspPangoContext *GetPangoContext (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoContext */
+#endif /* NSP_INC_NspPangoContext */ 
 
 #ifdef NspPangoContext_Private 
 static int init_pangocontext(NspPangoContext *o,NspTypePangoContext *type);
 static char *nsp_pangocontext_type_as_string(void);
 static char *nsp_pangocontext_type_short_string(NspObject *v);
 static AttrTab pangocontext_attrs[];
-static NspMethods *pangocontext_get_methods(void); 
-/* static int int_pangocontext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangocontext_get_methods(void);
+/* static int int_pangocontext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoContext_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktoolbutton.h>
 
 /*
-* NspGtkToggleToolButton inherits from GtkToolButton
-* just change some type attributes 
-*/
+ * NspGtkToggleToolButton inherits from GtkToolButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkToolButton NspGtkToggleToolButton ;
 typedef NspTypeGtkToolButton NspTypeGtkToggleToolButton ;
@@ -45,27 +45,27 @@ NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode);
 NspGtkToggleToolButton *new_gtktoggletoolbutton();
 
 /*
-* Object methods redefined for gtktoggletoolbutton 
-*/
+ * Object methods redefined for gtktoggletoolbutton 
+ */
 
 #define NULLGTKTOGGLETOOLBUTTON (NspGtkToggleToolButton*) 0
 
 
 /* from NspGtkToggleToolButtonObj.c */
 
-extern NspGtkToggleToolButton *nsp_gtktoggletoolbutton_object (NspObject *O); 
-extern int IsGtkToggleToolButtonObj (Stack stack, int i); 
+extern NspGtkToggleToolButton *nsp_gtktoggletoolbutton_object (NspObject *O);
+extern int IsGtkToggleToolButtonObj (Stack stack, int i);
 extern int IsGtkToggleToolButton(NspObject *O);
-extern NspGtkToggleToolButton *GetGtkToggleToolButtonCopy (Stack stack, int i); 
-extern NspGtkToggleToolButton *GetGtkToggleToolButton (Stack stack, int i); 
+extern NspGtkToggleToolButton *GetGtkToggleToolButtonCopy (Stack stack, int i);
+extern NspGtkToggleToolButton *GetGtkToggleToolButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkToggleToolButton */
+#endif /* NSP_INC_NspGtkToggleToolButton */ 
 
 #ifdef NspGtkToggleToolButton_Private 
 static int init_gtktoggletoolbutton(NspGtkToggleToolButton *o,NspTypeGtkToggleToolButton *type);
 static char *nsp_gtktoggletoolbutton_type_as_string(void);
 static char *nsp_gtktoggletoolbutton_type_short_string(NspObject *v);
 static AttrTab gtktoggletoolbutton_attrs[];
-static NspMethods *gtktoggletoolbutton_get_methods(void); 
-/* static int int_gtktoggletoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktoggletoolbutton_get_methods(void);
+/* static int int_gtktoggletoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkToggleToolButton_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkOldEditable inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkOldEditable inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkOldEditable ;
 typedef NspTypeGtkWidget NspTypeGtkOldEditable ;
@@ -45,27 +45,27 @@ NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode);
 NspGtkOldEditable *new_gtkoldeditable();
 
 /*
-* Object methods redefined for gtkoldeditable 
-*/
+ * Object methods redefined for gtkoldeditable 
+ */
 
 #define NULLGTKOLDEDITABLE (NspGtkOldEditable*) 0
 
 
 /* from NspGtkOldEditableObj.c */
 
-extern NspGtkOldEditable *nsp_gtkoldeditable_object (NspObject *O); 
-extern int IsGtkOldEditableObj (Stack stack, int i); 
+extern NspGtkOldEditable *nsp_gtkoldeditable_object (NspObject *O);
+extern int IsGtkOldEditableObj (Stack stack, int i);
 extern int IsGtkOldEditable(NspObject *O);
-extern NspGtkOldEditable *GetGtkOldEditableCopy (Stack stack, int i); 
-extern NspGtkOldEditable *GetGtkOldEditable (Stack stack, int i); 
+extern NspGtkOldEditable *GetGtkOldEditableCopy (Stack stack, int i);
+extern NspGtkOldEditable *GetGtkOldEditable (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkOldEditable */
+#endif /* NSP_INC_NspGtkOldEditable */ 
 
 #ifdef NspGtkOldEditable_Private 
 static int init_gtkoldeditable(NspGtkOldEditable *o,NspTypeGtkOldEditable *type);
 static char *nsp_gtkoldeditable_type_as_string(void);
 static char *nsp_gtkoldeditable_type_short_string(NspObject *v);
 static AttrTab gtkoldeditable_attrs[];
-static NspMethods *gtkoldeditable_get_methods(void); 
-/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkoldeditable_get_methods(void);
+/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkOldEditable_Private */

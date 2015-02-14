@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkTooltips inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkTooltips inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkTooltips ;
 typedef NspTypeGtkObject NspTypeGtkTooltips ;
@@ -45,27 +45,27 @@ NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode);
 NspGtkTooltips *new_gtktooltips();
 
 /*
-* Object methods redefined for gtktooltips 
-*/
+ * Object methods redefined for gtktooltips 
+ */
 
 #define NULLGTKTOOLTIPS (NspGtkTooltips*) 0
 
 
 /* from NspGtkTooltipsObj.c */
 
-extern NspGtkTooltips *nsp_gtktooltips_object (NspObject *O); 
-extern int IsGtkTooltipsObj (Stack stack, int i); 
+extern NspGtkTooltips *nsp_gtktooltips_object (NspObject *O);
+extern int IsGtkTooltipsObj (Stack stack, int i);
 extern int IsGtkTooltips(NspObject *O);
-extern NspGtkTooltips *GetGtkTooltipsCopy (Stack stack, int i); 
-extern NspGtkTooltips *GetGtkTooltips (Stack stack, int i); 
+extern NspGtkTooltips *GetGtkTooltipsCopy (Stack stack, int i);
+extern NspGtkTooltips *GetGtkTooltips (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTooltips */
+#endif /* NSP_INC_NspGtkTooltips */ 
 
 #ifdef NspGtkTooltips_Private 
 static int init_gtktooltips(NspGtkTooltips *o,NspTypeGtkTooltips *type);
 static char *nsp_gtktooltips_type_as_string(void);
 static char *nsp_gtktooltips_type_short_string(NspObject *v);
 static AttrTab gtktooltips_attrs[];
-static NspMethods *gtktooltips_get_methods(void); 
-/* static int int_gtktooltips_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktooltips_get_methods(void);
+/* static int int_gtktooltips_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTooltips_Private */

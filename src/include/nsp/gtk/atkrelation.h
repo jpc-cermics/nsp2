@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkRelation inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkRelation inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkRelation ;
 typedef NspTypeGObject NspTypeAtkRelation ;
@@ -45,27 +45,27 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode);
 NspAtkRelation *new_atkrelation();
 
 /*
-* Object methods redefined for atkrelation 
-*/
+ * Object methods redefined for atkrelation 
+ */
 
 #define NULLATKRELATION (NspAtkRelation*) 0
 
 
 /* from NspAtkRelationObj.c */
 
-extern NspAtkRelation *nsp_atkrelation_object (NspObject *O); 
-extern int IsAtkRelationObj (Stack stack, int i); 
+extern NspAtkRelation *nsp_atkrelation_object (NspObject *O);
+extern int IsAtkRelationObj (Stack stack, int i);
 extern int IsAtkRelation(NspObject *O);
-extern NspAtkRelation *GetAtkRelationCopy (Stack stack, int i); 
-extern NspAtkRelation *GetAtkRelation (Stack stack, int i); 
+extern NspAtkRelation *GetAtkRelationCopy (Stack stack, int i);
+extern NspAtkRelation *GetAtkRelation (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkRelation */
+#endif /* NSP_INC_NspAtkRelation */ 
 
 #ifdef NspAtkRelation_Private 
 static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type);
 static char *nsp_atkrelation_type_as_string(void);
 static char *nsp_atkrelation_type_short_string(NspObject *v);
 static AttrTab atkrelation_attrs[];
-static NspMethods *atkrelation_get_methods(void); 
-/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkrelation_get_methods(void);
+/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkRelation_Private */

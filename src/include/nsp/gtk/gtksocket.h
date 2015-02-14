@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkSocket inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkSocket inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkSocket ;
 typedef NspTypeGtkContainer NspTypeGtkSocket ;
@@ -45,27 +45,27 @@ NspTypeGtkSocket *new_type_gtksocket(type_mode mode);
 NspGtkSocket *new_gtksocket();
 
 /*
-* Object methods redefined for gtksocket 
-*/
+ * Object methods redefined for gtksocket 
+ */
 
 #define NULLGTKSOCKET (NspGtkSocket*) 0
 
 
 /* from NspGtkSocketObj.c */
 
-extern NspGtkSocket *nsp_gtksocket_object (NspObject *O); 
-extern int IsGtkSocketObj (Stack stack, int i); 
+extern NspGtkSocket *nsp_gtksocket_object (NspObject *O);
+extern int IsGtkSocketObj (Stack stack, int i);
 extern int IsGtkSocket(NspObject *O);
-extern NspGtkSocket *GetGtkSocketCopy (Stack stack, int i); 
-extern NspGtkSocket *GetGtkSocket (Stack stack, int i); 
+extern NspGtkSocket *GetGtkSocketCopy (Stack stack, int i);
+extern NspGtkSocket *GetGtkSocket (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSocket */
+#endif /* NSP_INC_NspGtkSocket */ 
 
 #ifdef NspGtkSocket_Private 
 static int init_gtksocket(NspGtkSocket *o,NspTypeGtkSocket *type);
 static char *nsp_gtksocket_type_as_string(void);
 static char *nsp_gtksocket_type_short_string(NspObject *v);
 static AttrTab gtksocket_attrs[];
-static NspMethods *gtksocket_get_methods(void); 
-/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtksocket_get_methods(void);
+/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSocket_Private */

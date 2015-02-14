@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspPangoLayout inherits from GObject
-* just change some type attributes 
-*/
+ * NspPangoLayout inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspPangoLayout ;
 typedef NspTypeGObject NspTypePangoLayout ;
@@ -45,27 +45,27 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode);
 NspPangoLayout *new_pangolayout();
 
 /*
-* Object methods redefined for pangolayout 
-*/
+ * Object methods redefined for pangolayout 
+ */
 
 #define NULLPANGOLAYOUT (NspPangoLayout*) 0
 
 
 /* from NspPangoLayoutObj.c */
 
-extern NspPangoLayout *nsp_pangolayout_object (NspObject *O); 
-extern int IsPangoLayoutObj (Stack stack, int i); 
+extern NspPangoLayout *nsp_pangolayout_object (NspObject *O);
+extern int IsPangoLayoutObj (Stack stack, int i);
 extern int IsPangoLayout(NspObject *O);
-extern NspPangoLayout *GetPangoLayoutCopy (Stack stack, int i); 
-extern NspPangoLayout *GetPangoLayout (Stack stack, int i); 
+extern NspPangoLayout *GetPangoLayoutCopy (Stack stack, int i);
+extern NspPangoLayout *GetPangoLayout (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoLayout */
+#endif /* NSP_INC_NspPangoLayout */ 
 
 #ifdef NspPangoLayout_Private 
 static int init_pangolayout(NspPangoLayout *o,NspTypePangoLayout *type);
 static char *nsp_pangolayout_type_as_string(void);
 static char *nsp_pangolayout_type_short_string(NspObject *v);
 static AttrTab pangolayout_attrs[];
-static NspMethods *pangolayout_get_methods(void); 
-/* static int int_pangolayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangolayout_get_methods(void);
+/* static int int_pangolayout_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoLayout_Private */

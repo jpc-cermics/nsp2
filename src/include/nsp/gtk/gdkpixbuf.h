@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkPixbuf inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkPixbuf inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkPixbuf ;
 typedef NspTypeGObject NspTypeGdkPixbuf ;
@@ -45,27 +45,27 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode);
 NspGdkPixbuf *new_gdkpixbuf();
 
 /*
-* Object methods redefined for gdkpixbuf 
-*/
+ * Object methods redefined for gdkpixbuf 
+ */
 
 #define NULLGDKPIXBUF (NspGdkPixbuf*) 0
 
 
 /* from NspGdkPixbufObj.c */
 
-extern NspGdkPixbuf *nsp_gdkpixbuf_object (NspObject *O); 
-extern int IsGdkPixbufObj (Stack stack, int i); 
+extern NspGdkPixbuf *nsp_gdkpixbuf_object (NspObject *O);
+extern int IsGdkPixbufObj (Stack stack, int i);
 extern int IsGdkPixbuf(NspObject *O);
-extern NspGdkPixbuf *GetGdkPixbufCopy (Stack stack, int i); 
-extern NspGdkPixbuf *GetGdkPixbuf (Stack stack, int i); 
+extern NspGdkPixbuf *GetGdkPixbufCopy (Stack stack, int i);
+extern NspGdkPixbuf *GetGdkPixbuf (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkPixbuf */
+#endif /* NSP_INC_NspGdkPixbuf */ 
 
 #ifdef NspGdkPixbuf_Private 
 static int init_gdkpixbuf(NspGdkPixbuf *o,NspTypeGdkPixbuf *type);
 static char *nsp_gdkpixbuf_type_as_string(void);
 static char *nsp_gdkpixbuf_type_short_string(NspObject *v);
 static AttrTab gdkpixbuf_attrs[];
-static NspMethods *gdkpixbuf_get_methods(void); 
-/* static int int_gdkpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbuf_get_methods(void);
+/* static int int_gdkpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkPixbuf_Private */

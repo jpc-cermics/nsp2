@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktoolitem.h>
 
 /*
-* NspGtkSeparatorToolItem inherits from GtkToolItem
-* just change some type attributes 
-*/
+ * NspGtkSeparatorToolItem inherits from GtkToolItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkToolItem NspGtkSeparatorToolItem ;
 typedef NspTypeGtkToolItem NspTypeGtkSeparatorToolItem ;
@@ -45,27 +45,27 @@ NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode);
 NspGtkSeparatorToolItem *new_gtkseparatortoolitem();
 
 /*
-* Object methods redefined for gtkseparatortoolitem 
-*/
+ * Object methods redefined for gtkseparatortoolitem 
+ */
 
 #define NULLGTKSEPARATORTOOLITEM (NspGtkSeparatorToolItem*) 0
 
 
 /* from NspGtkSeparatorToolItemObj.c */
 
-extern NspGtkSeparatorToolItem *nsp_gtkseparatortoolitem_object (NspObject *O); 
-extern int IsGtkSeparatorToolItemObj (Stack stack, int i); 
+extern NspGtkSeparatorToolItem *nsp_gtkseparatortoolitem_object (NspObject *O);
+extern int IsGtkSeparatorToolItemObj (Stack stack, int i);
 extern int IsGtkSeparatorToolItem(NspObject *O);
-extern NspGtkSeparatorToolItem *GetGtkSeparatorToolItemCopy (Stack stack, int i); 
-extern NspGtkSeparatorToolItem *GetGtkSeparatorToolItem (Stack stack, int i); 
+extern NspGtkSeparatorToolItem *GetGtkSeparatorToolItemCopy (Stack stack, int i);
+extern NspGtkSeparatorToolItem *GetGtkSeparatorToolItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSeparatorToolItem */
+#endif /* NSP_INC_NspGtkSeparatorToolItem */ 
 
 #ifdef NspGtkSeparatorToolItem_Private 
 static int init_gtkseparatortoolitem(NspGtkSeparatorToolItem *o,NspTypeGtkSeparatorToolItem *type);
 static char *nsp_gtkseparatortoolitem_type_as_string(void);
 static char *nsp_gtkseparatortoolitem_type_short_string(NspObject *v);
 static AttrTab gtkseparatortoolitem_attrs[];
-static NspMethods *gtkseparatortoolitem_get_methods(void); 
-/* static int int_gtkseparatortoolitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkseparatortoolitem_get_methods(void);
+/* static int int_gtkseparatortoolitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSeparatorToolItem_Private */

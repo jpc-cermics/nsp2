@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkTreeRowReference inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkTreeRowReference inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkTreeRowReference ;
 typedef NspTypeGBoxed NspTypeGtkTreeRowReference ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode);
 NspGtkTreeRowReference *new_gtktreerowreference();
 
 /*
-* Object methods redefined for gtktreerowreference 
-*/
+ * Object methods redefined for gtktreerowreference 
+ */
 
 #define NULLGTKTREEROWREFERENCE (NspGtkTreeRowReference*) 0
 
 
 /* from NspGtkTreeRowReferenceObj.c */
 
-extern NspGtkTreeRowReference *nsp_gtktreerowreference_object (NspObject *O); 
-extern int IsGtkTreeRowReferenceObj (Stack stack, int i); 
+extern NspGtkTreeRowReference *nsp_gtktreerowreference_object (NspObject *O);
+extern int IsGtkTreeRowReferenceObj (Stack stack, int i);
 extern int IsGtkTreeRowReference(NspObject *O);
-extern NspGtkTreeRowReference *GetGtkTreeRowReferenceCopy (Stack stack, int i); 
-extern NspGtkTreeRowReference *GetGtkTreeRowReference (Stack stack, int i); 
+extern NspGtkTreeRowReference *GetGtkTreeRowReferenceCopy (Stack stack, int i);
+extern NspGtkTreeRowReference *GetGtkTreeRowReference (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeRowReference */
+#endif /* NSP_INC_NspGtkTreeRowReference */ 
 
 #ifdef NspGtkTreeRowReference_Private 
 static int init_gtktreerowreference(NspGtkTreeRowReference *o,NspTypeGtkTreeRowReference *type);
 static char *nsp_gtktreerowreference_type_as_string(void);
 static char *nsp_gtktreerowreference_type_short_string(NspObject *v);
 static AttrTab gtktreerowreference_attrs[];
-static NspMethods *gtktreerowreference_get_methods(void); 
-/* static int int_gtktreerowreference_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreerowreference_get_methods(void);
+/* static int int_gtktreerowreference_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeRowReference_Private */

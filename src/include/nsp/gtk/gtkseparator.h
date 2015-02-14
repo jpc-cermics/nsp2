@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkSeparator inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkSeparator inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkSeparator ;
 typedef NspTypeGtkWidget NspTypeGtkSeparator ;
@@ -45,27 +45,27 @@ NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode);
 NspGtkSeparator *new_gtkseparator();
 
 /*
-* Object methods redefined for gtkseparator 
-*/
+ * Object methods redefined for gtkseparator 
+ */
 
 #define NULLGTKSEPARATOR (NspGtkSeparator*) 0
 
 
 /* from NspGtkSeparatorObj.c */
 
-extern NspGtkSeparator *nsp_gtkseparator_object (NspObject *O); 
-extern int IsGtkSeparatorObj (Stack stack, int i); 
+extern NspGtkSeparator *nsp_gtkseparator_object (NspObject *O);
+extern int IsGtkSeparatorObj (Stack stack, int i);
 extern int IsGtkSeparator(NspObject *O);
-extern NspGtkSeparator *GetGtkSeparatorCopy (Stack stack, int i); 
-extern NspGtkSeparator *GetGtkSeparator (Stack stack, int i); 
+extern NspGtkSeparator *GetGtkSeparatorCopy (Stack stack, int i);
+extern NspGtkSeparator *GetGtkSeparator (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSeparator */
+#endif /* NSP_INC_NspGtkSeparator */ 
 
 #ifdef NspGtkSeparator_Private 
 static int init_gtkseparator(NspGtkSeparator *o,NspTypeGtkSeparator *type);
 static char *nsp_gtkseparator_type_as_string(void);
 static char *nsp_gtkseparator_type_short_string(NspObject *v);
 static AttrTab gtkseparator_attrs[];
-static NspMethods *gtkseparator_get_methods(void); 
-/* static int int_gtkseparator_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkseparator_get_methods(void);
+/* static int int_gtkseparator_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSeparator_Private */

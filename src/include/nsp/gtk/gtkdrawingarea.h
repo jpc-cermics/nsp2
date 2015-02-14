@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkDrawingArea inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkDrawingArea inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkDrawingArea ;
 typedef NspTypeGtkWidget NspTypeGtkDrawingArea ;
@@ -45,27 +45,27 @@ NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode);
 NspGtkDrawingArea *new_gtkdrawingarea();
 
 /*
-* Object methods redefined for gtkdrawingarea 
-*/
+ * Object methods redefined for gtkdrawingarea 
+ */
 
 #define NULLGTKDRAWINGAREA (NspGtkDrawingArea*) 0
 
 
 /* from NspGtkDrawingAreaObj.c */
 
-extern NspGtkDrawingArea *nsp_gtkdrawingarea_object (NspObject *O); 
-extern int IsGtkDrawingAreaObj (Stack stack, int i); 
+extern NspGtkDrawingArea *nsp_gtkdrawingarea_object (NspObject *O);
+extern int IsGtkDrawingAreaObj (Stack stack, int i);
 extern int IsGtkDrawingArea(NspObject *O);
-extern NspGtkDrawingArea *GetGtkDrawingAreaCopy (Stack stack, int i); 
-extern NspGtkDrawingArea *GetGtkDrawingArea (Stack stack, int i); 
+extern NspGtkDrawingArea *GetGtkDrawingAreaCopy (Stack stack, int i);
+extern NspGtkDrawingArea *GetGtkDrawingArea (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkDrawingArea */
+#endif /* NSP_INC_NspGtkDrawingArea */ 
 
 #ifdef NspGtkDrawingArea_Private 
 static int init_gtkdrawingarea(NspGtkDrawingArea *o,NspTypeGtkDrawingArea *type);
 static char *nsp_gtkdrawingarea_type_as_string(void);
 static char *nsp_gtkdrawingarea_type_short_string(NspObject *v);
 static AttrTab gtkdrawingarea_attrs[];
-static NspMethods *gtkdrawingarea_get_methods(void); 
-/* static int int_gtkdrawingarea_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkdrawingarea_get_methods(void);
+/* static int int_gtkdrawingarea_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkDrawingArea_Private */

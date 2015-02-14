@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkIMContext inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkIMContext inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkIMContext ;
 typedef NspTypeGtkObject NspTypeGtkIMContext ;
@@ -45,27 +45,27 @@ NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode);
 NspGtkIMContext *new_gtkimcontext();
 
 /*
-* Object methods redefined for gtkimcontext 
-*/
+ * Object methods redefined for gtkimcontext 
+ */
 
 #define NULLGTKIMCONTEXT (NspGtkIMContext*) 0
 
 
 /* from NspGtkIMContextObj.c */
 
-extern NspGtkIMContext *nsp_gtkimcontext_object (NspObject *O); 
-extern int IsGtkIMContextObj (Stack stack, int i); 
+extern NspGtkIMContext *nsp_gtkimcontext_object (NspObject *O);
+extern int IsGtkIMContextObj (Stack stack, int i);
 extern int IsGtkIMContext(NspObject *O);
-extern NspGtkIMContext *GetGtkIMContextCopy (Stack stack, int i); 
-extern NspGtkIMContext *GetGtkIMContext (Stack stack, int i); 
+extern NspGtkIMContext *GetGtkIMContextCopy (Stack stack, int i);
+extern NspGtkIMContext *GetGtkIMContext (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIMContext */
+#endif /* NSP_INC_NspGtkIMContext */ 
 
 #ifdef NspGtkIMContext_Private 
 static int init_gtkimcontext(NspGtkIMContext *o,NspTypeGtkIMContext *type);
 static char *nsp_gtkimcontext_type_as_string(void);
 static char *nsp_gtkimcontext_type_short_string(NspObject *v);
 static AttrTab gtkimcontext_attrs[];
-static NspMethods *gtkimcontext_get_methods(void); 
-/* static int int_gtkimcontext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimcontext_get_methods(void);
+/* static int int_gtkimcontext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIMContext_Private */

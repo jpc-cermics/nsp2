@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTextBuffer inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTextBuffer inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTextBuffer ;
 typedef NspTypeGObject NspTypeGtkTextBuffer ;
@@ -45,27 +45,27 @@ NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode);
 NspGtkTextBuffer *new_gtktextbuffer();
 
 /*
-* Object methods redefined for gtktextbuffer 
-*/
+ * Object methods redefined for gtktextbuffer 
+ */
 
 #define NULLGTKTEXTBUFFER (NspGtkTextBuffer*) 0
 
 
 /* from NspGtkTextBufferObj.c */
 
-extern NspGtkTextBuffer *nsp_gtktextbuffer_object (NspObject *O); 
-extern int IsGtkTextBufferObj (Stack stack, int i); 
+extern NspGtkTextBuffer *nsp_gtktextbuffer_object (NspObject *O);
+extern int IsGtkTextBufferObj (Stack stack, int i);
 extern int IsGtkTextBuffer(NspObject *O);
-extern NspGtkTextBuffer *GetGtkTextBufferCopy (Stack stack, int i); 
-extern NspGtkTextBuffer *GetGtkTextBuffer (Stack stack, int i); 
+extern NspGtkTextBuffer *GetGtkTextBufferCopy (Stack stack, int i);
+extern NspGtkTextBuffer *GetGtkTextBuffer (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTextBuffer */
+#endif /* NSP_INC_NspGtkTextBuffer */ 
 
 #ifdef NspGtkTextBuffer_Private 
 static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type);
 static char *nsp_gtktextbuffer_type_as_string(void);
 static char *nsp_gtktextbuffer_type_short_string(NspObject *v);
 static AttrTab gtktextbuffer_attrs[];
-static NspMethods *gtktextbuffer_get_methods(void); 
-/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextbuffer_get_methods(void);
+/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTextBuffer_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkAccelMap inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkAccelMap inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkAccelMap ;
 typedef NspTypeGObject NspTypeGtkAccelMap ;
@@ -45,27 +45,27 @@ NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode);
 NspGtkAccelMap *new_gtkaccelmap();
 
 /*
-* Object methods redefined for gtkaccelmap 
-*/
+ * Object methods redefined for gtkaccelmap 
+ */
 
 #define NULLGTKACCELMAP (NspGtkAccelMap*) 0
 
 
 /* from NspGtkAccelMapObj.c */
 
-extern NspGtkAccelMap *nsp_gtkaccelmap_object (NspObject *O); 
-extern int IsGtkAccelMapObj (Stack stack, int i); 
+extern NspGtkAccelMap *nsp_gtkaccelmap_object (NspObject *O);
+extern int IsGtkAccelMapObj (Stack stack, int i);
 extern int IsGtkAccelMap(NspObject *O);
-extern NspGtkAccelMap *GetGtkAccelMapCopy (Stack stack, int i); 
-extern NspGtkAccelMap *GetGtkAccelMap (Stack stack, int i); 
+extern NspGtkAccelMap *GetGtkAccelMapCopy (Stack stack, int i);
+extern NspGtkAccelMap *GetGtkAccelMap (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkAccelMap */
+#endif /* NSP_INC_NspGtkAccelMap */ 
 
 #ifdef NspGtkAccelMap_Private 
 static int init_gtkaccelmap(NspGtkAccelMap *o,NspTypeGtkAccelMap *type);
 static char *nsp_gtkaccelmap_type_as_string(void);
 static char *nsp_gtkaccelmap_type_short_string(NspObject *v);
 static AttrTab gtkaccelmap_attrs[];
-static NspMethods *gtkaccelmap_get_methods(void); 
-/* static int int_gtkaccelmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaccelmap_get_methods(void);
+/* static int int_gtkaccelmap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkAccelMap_Private */

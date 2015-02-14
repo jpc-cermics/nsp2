@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkRequisition inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkRequisition inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkRequisition ;
 typedef NspTypeGBoxed NspTypeGtkRequisition ;
@@ -45,27 +45,27 @@ NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode);
 NspGtkRequisition *new_gtkrequisition();
 
 /*
-* Object methods redefined for gtkrequisition 
-*/
+ * Object methods redefined for gtkrequisition 
+ */
 
 #define NULLGTKREQUISITION (NspGtkRequisition*) 0
 
 
 /* from NspGtkRequisitionObj.c */
 
-extern NspGtkRequisition *nsp_gtkrequisition_object (NspObject *O); 
-extern int IsGtkRequisitionObj (Stack stack, int i); 
+extern NspGtkRequisition *nsp_gtkrequisition_object (NspObject *O);
+extern int IsGtkRequisitionObj (Stack stack, int i);
 extern int IsGtkRequisition(NspObject *O);
-extern NspGtkRequisition *GetGtkRequisitionCopy (Stack stack, int i); 
-extern NspGtkRequisition *GetGtkRequisition (Stack stack, int i); 
+extern NspGtkRequisition *GetGtkRequisitionCopy (Stack stack, int i);
+extern NspGtkRequisition *GetGtkRequisition (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRequisition */
+#endif /* NSP_INC_NspGtkRequisition */ 
 
 #ifdef NspGtkRequisition_Private 
 static int init_gtkrequisition(NspGtkRequisition *o,NspTypeGtkRequisition *type);
 static char *nsp_gtkrequisition_type_as_string(void);
 static char *nsp_gtkrequisition_type_short_string(NspObject *v);
 static AttrTab gtkrequisition_attrs[];
-static NspMethods *gtkrequisition_get_methods(void); 
-/* static int int_gtkrequisition_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrequisition_get_methods(void);
+/* static int int_gtkrequisition_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRequisition_Private */

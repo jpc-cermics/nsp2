@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkSelection inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkSelection inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkSelection ;
 typedef NspTypeGObject NspTypeAtkSelection ;
@@ -45,27 +45,27 @@ NspTypeAtkSelection *new_type_atkselection(type_mode mode);
 NspAtkSelection *new_atkselection();
 
 /*
-* Object methods redefined for atkselection 
-*/
+ * Object methods redefined for atkselection 
+ */
 
 #define NULLATKSELECTION (NspAtkSelection*) 0
 
 
 /* from NspAtkSelectionObj.c */
 
-extern NspAtkSelection *nsp_atkselection_object (NspObject *O); 
-extern int IsAtkSelectionObj (Stack stack, int i); 
+extern NspAtkSelection *nsp_atkselection_object (NspObject *O);
+extern int IsAtkSelectionObj (Stack stack, int i);
 extern int IsAtkSelection(NspObject *O);
-extern NspAtkSelection *GetAtkSelectionCopy (Stack stack, int i); 
-extern NspAtkSelection *GetAtkSelection (Stack stack, int i); 
+extern NspAtkSelection *GetAtkSelectionCopy (Stack stack, int i);
+extern NspAtkSelection *GetAtkSelection (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkSelection */
+#endif /* NSP_INC_NspAtkSelection */ 
 
 #ifdef NspAtkSelection_Private 
 static int init_atkselection(NspAtkSelection *o,NspTypeAtkSelection *type);
 static char *nsp_atkselection_type_as_string(void);
 static char *nsp_atkselection_type_short_string(NspObject *v);
 static AttrTab atkselection_attrs[];
-static NspMethods *atkselection_get_methods(void); 
-/* static int int_atkselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkselection_get_methods(void);
+/* static int int_atkselection_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkSelection_Private */

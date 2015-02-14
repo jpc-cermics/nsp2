@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkLayout inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkLayout inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkLayout ;
 typedef NspTypeGtkContainer NspTypeGtkLayout ;
@@ -45,27 +45,27 @@ NspTypeGtkLayout *new_type_gtklayout(type_mode mode);
 NspGtkLayout *new_gtklayout();
 
 /*
-* Object methods redefined for gtklayout 
-*/
+ * Object methods redefined for gtklayout 
+ */
 
 #define NULLGTKLAYOUT (NspGtkLayout*) 0
 
 
 /* from NspGtkLayoutObj.c */
 
-extern NspGtkLayout *nsp_gtklayout_object (NspObject *O); 
-extern int IsGtkLayoutObj (Stack stack, int i); 
+extern NspGtkLayout *nsp_gtklayout_object (NspObject *O);
+extern int IsGtkLayoutObj (Stack stack, int i);
 extern int IsGtkLayout(NspObject *O);
-extern NspGtkLayout *GetGtkLayoutCopy (Stack stack, int i); 
-extern NspGtkLayout *GetGtkLayout (Stack stack, int i); 
+extern NspGtkLayout *GetGtkLayoutCopy (Stack stack, int i);
+extern NspGtkLayout *GetGtkLayout (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkLayout */
+#endif /* NSP_INC_NspGtkLayout */ 
 
 #ifdef NspGtkLayout_Private 
 static int init_gtklayout(NspGtkLayout *o,NspTypeGtkLayout *type);
 static char *nsp_gtklayout_type_as_string(void);
 static char *nsp_gtklayout_type_short_string(NspObject *v);
 static AttrTab gtklayout_attrs[];
-static NspMethods *gtklayout_get_methods(void); 
-/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtklayout_get_methods(void);
+/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkLayout_Private */

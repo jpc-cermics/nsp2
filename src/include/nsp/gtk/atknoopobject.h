@@ -26,9 +26,9 @@
 #include <nsp/gtk/atkobject.h>
 
 /*
-* NspAtkNoOpObject inherits from AtkObject
-* just change some type attributes 
-*/
+ * NspAtkNoOpObject inherits from AtkObject
+ * just change some type attributes 
+ */
 
 typedef NspAtkObject NspAtkNoOpObject ;
 typedef NspTypeAtkObject NspTypeAtkNoOpObject ;
@@ -45,27 +45,27 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode);
 NspAtkNoOpObject *new_atknoopobject();
 
 /*
-* Object methods redefined for atknoopobject 
-*/
+ * Object methods redefined for atknoopobject 
+ */
 
 #define NULLATKNOOPOBJECT (NspAtkNoOpObject*) 0
 
 
 /* from NspAtkNoOpObjectObj.c */
 
-extern NspAtkNoOpObject *nsp_atknoopobject_object (NspObject *O); 
-extern int IsAtkNoOpObjectObj (Stack stack, int i); 
+extern NspAtkNoOpObject *nsp_atknoopobject_object (NspObject *O);
+extern int IsAtkNoOpObjectObj (Stack stack, int i);
 extern int IsAtkNoOpObject(NspObject *O);
-extern NspAtkNoOpObject *GetAtkNoOpObjectCopy (Stack stack, int i); 
-extern NspAtkNoOpObject *GetAtkNoOpObject (Stack stack, int i); 
+extern NspAtkNoOpObject *GetAtkNoOpObjectCopy (Stack stack, int i);
+extern NspAtkNoOpObject *GetAtkNoOpObject (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkNoOpObject */
+#endif /* NSP_INC_NspAtkNoOpObject */ 
 
 #ifdef NspAtkNoOpObject_Private 
 static int init_atknoopobject(NspAtkNoOpObject *o,NspTypeAtkNoOpObject *type);
 static char *nsp_atknoopobject_type_as_string(void);
 static char *nsp_atknoopobject_type_short_string(NspObject *v);
 static AttrTab atknoopobject_attrs[];
-static NspMethods *atknoopobject_get_methods(void); 
-/* static int int_atknoopobject_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atknoopobject_get_methods(void);
+/* static int int_atknoopobject_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkNoOpObject_Private */

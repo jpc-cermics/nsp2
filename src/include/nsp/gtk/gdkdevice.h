@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkDevice inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkDevice inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkDevice ;
 typedef NspTypeGObject NspTypeGdkDevice ;
@@ -45,27 +45,27 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode);
 NspGdkDevice *new_gdkdevice();
 
 /*
-* Object methods redefined for gdkdevice 
-*/
+ * Object methods redefined for gdkdevice 
+ */
 
 #define NULLGDKDEVICE (NspGdkDevice*) 0
 
 
 /* from NspGdkDeviceObj.c */
 
-extern NspGdkDevice *nsp_gdkdevice_object (NspObject *O); 
-extern int IsGdkDeviceObj (Stack stack, int i); 
+extern NspGdkDevice *nsp_gdkdevice_object (NspObject *O);
+extern int IsGdkDeviceObj (Stack stack, int i);
 extern int IsGdkDevice(NspObject *O);
-extern NspGdkDevice *GetGdkDeviceCopy (Stack stack, int i); 
-extern NspGdkDevice *GetGdkDevice (Stack stack, int i); 
+extern NspGdkDevice *GetGdkDeviceCopy (Stack stack, int i);
+extern NspGdkDevice *GetGdkDevice (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkDevice */
+#endif /* NSP_INC_NspGdkDevice */ 
 
 #ifdef NspGdkDevice_Private 
 static int init_gdkdevice(NspGdkDevice *o,NspTypeGdkDevice *type);
 static char *nsp_gdkdevice_type_as_string(void);
 static char *nsp_gdkdevice_type_short_string(NspObject *v);
 static AttrTab gdkdevice_attrs[];
-static NspMethods *gdkdevice_get_methods(void); 
-/* static int int_gdkdevice_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdevice_get_methods(void);
+/* static int int_gdkdevice_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkDevice_Private */

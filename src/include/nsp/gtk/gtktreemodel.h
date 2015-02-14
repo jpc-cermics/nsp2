@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeModel inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeModel inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeModel ;
 typedef NspTypeGObject NspTypeGtkTreeModel ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode);
 NspGtkTreeModel *new_gtktreemodel();
 
 /*
-* Object methods redefined for gtktreemodel 
-*/
+ * Object methods redefined for gtktreemodel 
+ */
 
 #define NULLGTKTREEMODEL (NspGtkTreeModel*) 0
 
 
 /* from NspGtkTreeModelObj.c */
 
-extern NspGtkTreeModel *nsp_gtktreemodel_object (NspObject *O); 
-extern int IsGtkTreeModelObj (Stack stack, int i); 
+extern NspGtkTreeModel *nsp_gtktreemodel_object (NspObject *O);
+extern int IsGtkTreeModelObj (Stack stack, int i);
 extern int IsGtkTreeModel(NspObject *O);
-extern NspGtkTreeModel *GetGtkTreeModelCopy (Stack stack, int i); 
-extern NspGtkTreeModel *GetGtkTreeModel (Stack stack, int i); 
+extern NspGtkTreeModel *GetGtkTreeModelCopy (Stack stack, int i);
+extern NspGtkTreeModel *GetGtkTreeModel (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeModel */
+#endif /* NSP_INC_NspGtkTreeModel */ 
 
 #ifdef NspGtkTreeModel_Private 
 static int init_gtktreemodel(NspGtkTreeModel *o,NspTypeGtkTreeModel *type);
 static char *nsp_gtktreemodel_type_as_string(void);
 static char *nsp_gtktreemodel_type_short_string(NspObject *v);
 static AttrTab gtktreemodel_attrs[];
-static NspMethods *gtktreemodel_get_methods(void); 
-/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreemodel_get_methods(void);
+/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeModel_Private */

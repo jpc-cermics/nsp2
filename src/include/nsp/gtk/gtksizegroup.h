@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkSizeGroup inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkSizeGroup inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkSizeGroup ;
 typedef NspTypeGObject NspTypeGtkSizeGroup ;
@@ -45,27 +45,27 @@ NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode);
 NspGtkSizeGroup *new_gtksizegroup();
 
 /*
-* Object methods redefined for gtksizegroup 
-*/
+ * Object methods redefined for gtksizegroup 
+ */
 
 #define NULLGTKSIZEGROUP (NspGtkSizeGroup*) 0
 
 
 /* from NspGtkSizeGroupObj.c */
 
-extern NspGtkSizeGroup *nsp_gtksizegroup_object (NspObject *O); 
-extern int IsGtkSizeGroupObj (Stack stack, int i); 
+extern NspGtkSizeGroup *nsp_gtksizegroup_object (NspObject *O);
+extern int IsGtkSizeGroupObj (Stack stack, int i);
 extern int IsGtkSizeGroup(NspObject *O);
-extern NspGtkSizeGroup *GetGtkSizeGroupCopy (Stack stack, int i); 
-extern NspGtkSizeGroup *GetGtkSizeGroup (Stack stack, int i); 
+extern NspGtkSizeGroup *GetGtkSizeGroupCopy (Stack stack, int i);
+extern NspGtkSizeGroup *GetGtkSizeGroup (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSizeGroup */
+#endif /* NSP_INC_NspGtkSizeGroup */ 
 
 #ifdef NspGtkSizeGroup_Private 
 static int init_gtksizegroup(NspGtkSizeGroup *o,NspTypeGtkSizeGroup *type);
 static char *nsp_gtksizegroup_type_as_string(void);
 static char *nsp_gtksizegroup_type_short_string(NspObject *v);
 static AttrTab gtksizegroup_attrs[];
-static NspMethods *gtksizegroup_get_methods(void); 
-/* static int int_gtksizegroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtksizegroup_get_methods(void);
+/* static int int_gtksizegroup_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSizeGroup_Private */

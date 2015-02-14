@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcellrenderertext.h>
 
 /*
-* NspGtkCellRendererCombo inherits from GtkCellRendererText
-* just change some type attributes 
-*/
+ * NspGtkCellRendererCombo inherits from GtkCellRendererText
+ * just change some type attributes 
+ */
 
 typedef NspGtkCellRendererText NspGtkCellRendererCombo ;
 typedef NspTypeGtkCellRendererText NspTypeGtkCellRendererCombo ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode);
 NspGtkCellRendererCombo *new_gtkcellrenderercombo();
 
 /*
-* Object methods redefined for gtkcellrenderercombo 
-*/
+ * Object methods redefined for gtkcellrenderercombo 
+ */
 
 #define NULLGTKCELLRENDERERCOMBO (NspGtkCellRendererCombo*) 0
 
 
 /* from NspGtkCellRendererComboObj.c */
 
-extern NspGtkCellRendererCombo *nsp_gtkcellrenderercombo_object (NspObject *O); 
-extern int IsGtkCellRendererComboObj (Stack stack, int i); 
+extern NspGtkCellRendererCombo *nsp_gtkcellrenderercombo_object (NspObject *O);
+extern int IsGtkCellRendererComboObj (Stack stack, int i);
 extern int IsGtkCellRendererCombo(NspObject *O);
-extern NspGtkCellRendererCombo *GetGtkCellRendererComboCopy (Stack stack, int i); 
-extern NspGtkCellRendererCombo *GetGtkCellRendererCombo (Stack stack, int i); 
+extern NspGtkCellRendererCombo *GetGtkCellRendererComboCopy (Stack stack, int i);
+extern NspGtkCellRendererCombo *GetGtkCellRendererCombo (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRendererCombo */
+#endif /* NSP_INC_NspGtkCellRendererCombo */ 
 
 #ifdef NspGtkCellRendererCombo_Private 
 static int init_gtkcellrenderercombo(NspGtkCellRendererCombo *o,NspTypeGtkCellRendererCombo *type);
 static char *nsp_gtkcellrenderercombo_type_as_string(void);
 static char *nsp_gtkcellrenderercombo_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderercombo_attrs[];
-static NspMethods *gtkcellrenderercombo_get_methods(void); 
-/* static int int_gtkcellrenderercombo_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderercombo_get_methods(void);
+/* static int int_gtkcellrenderercombo_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRendererCombo_Private */

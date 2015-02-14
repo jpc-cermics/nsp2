@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspWebKitWebView inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspWebKitWebView inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspWebKitWebView ;
 typedef NspTypeGtkContainer NspTypeWebKitWebView ;
@@ -45,27 +45,27 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode);
 NspWebKitWebView *new_webkitwebview();
 
 /*
-* Object methods redefined for webkitwebview 
-*/
+ * Object methods redefined for webkitwebview 
+ */
 
 #define NULLWEBKITWEBVIEW (NspWebKitWebView*) 0
 
 
 /* from NspWebKitWebViewObj.c */
 
-extern NspWebKitWebView *nsp_webkitwebview_object (NspObject *O); 
-extern int IsWebKitWebViewObj (Stack stack, int i); 
+extern NspWebKitWebView *nsp_webkitwebview_object (NspObject *O);
+extern int IsWebKitWebViewObj (Stack stack, int i);
 extern int IsWebKitWebView(NspObject *O);
-extern NspWebKitWebView *GetWebKitWebViewCopy (Stack stack, int i); 
-extern NspWebKitWebView *GetWebKitWebView (Stack stack, int i); 
+extern NspWebKitWebView *GetWebKitWebViewCopy (Stack stack, int i);
+extern NspWebKitWebView *GetWebKitWebView (Stack stack, int i);
 
-#endif /* NSP_INC_NspWebKitWebView */
+#endif /* NSP_INC_NspWebKitWebView */ 
 
 #ifdef NspWebKitWebView_Private 
 static int init_webkitwebview(NspWebKitWebView *o,NspTypeWebKitWebView *type);
 static char *nsp_webkitwebview_type_as_string(void);
 static char *nsp_webkitwebview_type_short_string(NspObject *v);
 static AttrTab webkitwebview_attrs[];
-static NspMethods *webkitwebview_get_methods(void); 
-/* static int int_webkitwebview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *webkitwebview_get_methods(void);
+/* static int int_webkitwebview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspWebKitWebView_Private */

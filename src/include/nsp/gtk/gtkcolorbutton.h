@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbutton.h>
 
 /*
-* NspGtkColorButton inherits from GtkButton
-* just change some type attributes 
-*/
+ * NspGtkColorButton inherits from GtkButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkButton NspGtkColorButton ;
 typedef NspTypeGtkButton NspTypeGtkColorButton ;
@@ -45,27 +45,27 @@ NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode);
 NspGtkColorButton *new_gtkcolorbutton();
 
 /*
-* Object methods redefined for gtkcolorbutton 
-*/
+ * Object methods redefined for gtkcolorbutton 
+ */
 
 #define NULLGTKCOLORBUTTON (NspGtkColorButton*) 0
 
 
 /* from NspGtkColorButtonObj.c */
 
-extern NspGtkColorButton *nsp_gtkcolorbutton_object (NspObject *O); 
-extern int IsGtkColorButtonObj (Stack stack, int i); 
+extern NspGtkColorButton *nsp_gtkcolorbutton_object (NspObject *O);
+extern int IsGtkColorButtonObj (Stack stack, int i);
 extern int IsGtkColorButton(NspObject *O);
-extern NspGtkColorButton *GetGtkColorButtonCopy (Stack stack, int i); 
-extern NspGtkColorButton *GetGtkColorButton (Stack stack, int i); 
+extern NspGtkColorButton *GetGtkColorButtonCopy (Stack stack, int i);
+extern NspGtkColorButton *GetGtkColorButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkColorButton */
+#endif /* NSP_INC_NspGtkColorButton */ 
 
 #ifdef NspGtkColorButton_Private 
 static int init_gtkcolorbutton(NspGtkColorButton *o,NspTypeGtkColorButton *type);
 static char *nsp_gtkcolorbutton_type_as_string(void);
 static char *nsp_gtkcolorbutton_type_short_string(NspObject *v);
 static AttrTab gtkcolorbutton_attrs[];
-static NspMethods *gtkcolorbutton_get_methods(void); 
-/* static int int_gtkcolorbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcolorbutton_get_methods(void);
+/* static int int_gtkcolorbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkColorButton_Private */

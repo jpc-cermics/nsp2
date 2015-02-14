@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkIconView inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkIconView inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkIconView ;
 typedef NspTypeGtkContainer NspTypeGtkIconView ;
@@ -45,27 +45,27 @@ NspTypeGtkIconView *new_type_gtkiconview(type_mode mode);
 NspGtkIconView *new_gtkiconview();
 
 /*
-* Object methods redefined for gtkiconview 
-*/
+ * Object methods redefined for gtkiconview 
+ */
 
 #define NULLGTKICONVIEW (NspGtkIconView*) 0
 
 
 /* from NspGtkIconViewObj.c */
 
-extern NspGtkIconView *nsp_gtkiconview_object (NspObject *O); 
-extern int IsGtkIconViewObj (Stack stack, int i); 
+extern NspGtkIconView *nsp_gtkiconview_object (NspObject *O);
+extern int IsGtkIconViewObj (Stack stack, int i);
 extern int IsGtkIconView(NspObject *O);
-extern NspGtkIconView *GetGtkIconViewCopy (Stack stack, int i); 
-extern NspGtkIconView *GetGtkIconView (Stack stack, int i); 
+extern NspGtkIconView *GetGtkIconViewCopy (Stack stack, int i);
+extern NspGtkIconView *GetGtkIconView (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIconView */
+#endif /* NSP_INC_NspGtkIconView */ 
 
 #ifdef NspGtkIconView_Private 
 static int init_gtkiconview(NspGtkIconView *o,NspTypeGtkIconView *type);
 static char *nsp_gtkiconview_type_as_string(void);
 static char *nsp_gtkiconview_type_short_string(NspObject *v);
 static AttrTab gtkiconview_attrs[];
-static NspMethods *gtkiconview_get_methods(void); 
-/* static int int_gtkiconview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkiconview_get_methods(void);
+/* static int int_gtkiconview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIconView_Private */

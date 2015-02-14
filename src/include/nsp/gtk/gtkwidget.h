@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkWidget inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkWidget inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkWidget ;
 typedef NspTypeGtkObject NspTypeGtkWidget ;
@@ -45,27 +45,27 @@ NspTypeGtkWidget *new_type_gtkwidget(type_mode mode);
 NspGtkWidget *new_gtkwidget();
 
 /*
-* Object methods redefined for gtkwidget 
-*/
+ * Object methods redefined for gtkwidget 
+ */
 
 #define NULLGTKWIDGET (NspGtkWidget*) 0
 
 
 /* from NspGtkWidgetObj.c */
 
-extern NspGtkWidget *nsp_gtkwidget_object (NspObject *O); 
-extern int IsGtkWidgetObj (Stack stack, int i); 
+extern NspGtkWidget *nsp_gtkwidget_object (NspObject *O);
+extern int IsGtkWidgetObj (Stack stack, int i);
 extern int IsGtkWidget(NspObject *O);
-extern NspGtkWidget *GetGtkWidgetCopy (Stack stack, int i); 
-extern NspGtkWidget *GetGtkWidget (Stack stack, int i); 
+extern NspGtkWidget *GetGtkWidgetCopy (Stack stack, int i);
+extern NspGtkWidget *GetGtkWidget (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkWidget */
+#endif /* NSP_INC_NspGtkWidget */ 
 
 #ifdef NspGtkWidget_Private 
 static int init_gtkwidget(NspGtkWidget *o,NspTypeGtkWidget *type);
 static char *nsp_gtkwidget_type_as_string(void);
 static char *nsp_gtkwidget_type_short_string(NspObject *v);
 static AttrTab gtkwidget_attrs[];
-static NspMethods *gtkwidget_get_methods(void); 
-/* static int int_gtkwidget_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkwidget_get_methods(void);
+/* static int int_gtkwidget_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkWidget_Private */

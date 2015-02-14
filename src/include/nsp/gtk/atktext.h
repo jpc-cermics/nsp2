@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkText inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkText inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkText ;
 typedef NspTypeGObject NspTypeAtkText ;
@@ -45,27 +45,27 @@ NspTypeAtkText *new_type_atktext(type_mode mode);
 NspAtkText *new_atktext();
 
 /*
-* Object methods redefined for atktext 
-*/
+ * Object methods redefined for atktext 
+ */
 
 #define NULLATKTEXT (NspAtkText*) 0
 
 
 /* from NspAtkTextObj.c */
 
-extern NspAtkText *nsp_atktext_object (NspObject *O); 
-extern int IsAtkTextObj (Stack stack, int i); 
+extern NspAtkText *nsp_atktext_object (NspObject *O);
+extern int IsAtkTextObj (Stack stack, int i);
 extern int IsAtkText(NspObject *O);
-extern NspAtkText *GetAtkTextCopy (Stack stack, int i); 
-extern NspAtkText *GetAtkText (Stack stack, int i); 
+extern NspAtkText *GetAtkTextCopy (Stack stack, int i);
+extern NspAtkText *GetAtkText (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkText */
+#endif /* NSP_INC_NspAtkText */ 
 
 #ifdef NspAtkText_Private 
 static int init_atktext(NspAtkText *o,NspTypeAtkText *type);
 static char *nsp_atktext_type_as_string(void);
 static char *nsp_atktext_type_short_string(NspObject *v);
 static AttrTab atktext_attrs[];
-static NspMethods *atktext_get_methods(void); 
-/* static int int_atktext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atktext_get_methods(void);
+/* static int int_atktext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkText_Private */

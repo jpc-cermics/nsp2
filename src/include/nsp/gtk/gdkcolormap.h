@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkColormap inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkColormap inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkColormap ;
 typedef NspTypeGObject NspTypeGdkColormap ;
@@ -45,27 +45,27 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode);
 NspGdkColormap *new_gdkcolormap();
 
 /*
-* Object methods redefined for gdkcolormap 
-*/
+ * Object methods redefined for gdkcolormap 
+ */
 
 #define NULLGDKCOLORMAP (NspGdkColormap*) 0
 
 
 /* from NspGdkColormapObj.c */
 
-extern NspGdkColormap *nsp_gdkcolormap_object (NspObject *O); 
-extern int IsGdkColormapObj (Stack stack, int i); 
+extern NspGdkColormap *nsp_gdkcolormap_object (NspObject *O);
+extern int IsGdkColormapObj (Stack stack, int i);
 extern int IsGdkColormap(NspObject *O);
-extern NspGdkColormap *GetGdkColormapCopy (Stack stack, int i); 
-extern NspGdkColormap *GetGdkColormap (Stack stack, int i); 
+extern NspGdkColormap *GetGdkColormapCopy (Stack stack, int i);
+extern NspGdkColormap *GetGdkColormap (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkColormap */
+#endif /* NSP_INC_NspGdkColormap */ 
 
 #ifdef NspGdkColormap_Private 
 static int init_gdkcolormap(NspGdkColormap *o,NspTypeGdkColormap *type);
 static char *nsp_gdkcolormap_type_as_string(void);
 static char *nsp_gdkcolormap_type_short_string(NspObject *v);
 static AttrTab gdkcolormap_attrs[];
-static NspMethods *gdkcolormap_get_methods(void); 
-/* static int int_gdkcolormap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkcolormap_get_methods(void);
+/* static int int_gdkcolormap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkColormap_Private */

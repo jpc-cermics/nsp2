@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkHandleBox inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkHandleBox inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkHandleBox ;
 typedef NspTypeGtkBin NspTypeGtkHandleBox ;
@@ -45,27 +45,27 @@ NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode);
 NspGtkHandleBox *new_gtkhandlebox();
 
 /*
-* Object methods redefined for gtkhandlebox 
-*/
+ * Object methods redefined for gtkhandlebox 
+ */
 
 #define NULLGTKHANDLEBOX (NspGtkHandleBox*) 0
 
 
 /* from NspGtkHandleBoxObj.c */
 
-extern NspGtkHandleBox *nsp_gtkhandlebox_object (NspObject *O); 
-extern int IsGtkHandleBoxObj (Stack stack, int i); 
+extern NspGtkHandleBox *nsp_gtkhandlebox_object (NspObject *O);
+extern int IsGtkHandleBoxObj (Stack stack, int i);
 extern int IsGtkHandleBox(NspObject *O);
-extern NspGtkHandleBox *GetGtkHandleBoxCopy (Stack stack, int i); 
-extern NspGtkHandleBox *GetGtkHandleBox (Stack stack, int i); 
+extern NspGtkHandleBox *GetGtkHandleBoxCopy (Stack stack, int i);
+extern NspGtkHandleBox *GetGtkHandleBox (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkHandleBox */
+#endif /* NSP_INC_NspGtkHandleBox */ 
 
 #ifdef NspGtkHandleBox_Private 
 static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type);
 static char *nsp_gtkhandlebox_type_as_string(void);
 static char *nsp_gtkhandlebox_type_short_string(NspObject *v);
 static AttrTab gtkhandlebox_attrs[];
-static NspMethods *gtkhandlebox_get_methods(void); 
-/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhandlebox_get_methods(void);
+/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkHandleBox_Private */

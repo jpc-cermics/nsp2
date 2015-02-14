@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkTable inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkTable inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkTable ;
 typedef NspTypeGObject NspTypeAtkTable ;
@@ -45,27 +45,27 @@ NspTypeAtkTable *new_type_atktable(type_mode mode);
 NspAtkTable *new_atktable();
 
 /*
-* Object methods redefined for atktable 
-*/
+ * Object methods redefined for atktable 
+ */
 
 #define NULLATKTABLE (NspAtkTable*) 0
 
 
 /* from NspAtkTableObj.c */
 
-extern NspAtkTable *nsp_atktable_object (NspObject *O); 
-extern int IsAtkTableObj (Stack stack, int i); 
+extern NspAtkTable *nsp_atktable_object (NspObject *O);
+extern int IsAtkTableObj (Stack stack, int i);
 extern int IsAtkTable(NspObject *O);
-extern NspAtkTable *GetAtkTableCopy (Stack stack, int i); 
-extern NspAtkTable *GetAtkTable (Stack stack, int i); 
+extern NspAtkTable *GetAtkTableCopy (Stack stack, int i);
+extern NspAtkTable *GetAtkTable (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkTable */
+#endif /* NSP_INC_NspAtkTable */ 
 
 #ifdef NspAtkTable_Private 
 static int init_atktable(NspAtkTable *o,NspTypeAtkTable *type);
 static char *nsp_atktable_type_as_string(void);
 static char *nsp_atktable_type_short_string(NspObject *v);
 static AttrTab atktable_attrs[];
-static NspMethods *atktable_get_methods(void); 
-/* static int int_atktable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atktable_get_methods(void);
+/* static int int_atktable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkTable_Private */

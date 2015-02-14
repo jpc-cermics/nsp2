@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkTreeSelection inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkTreeSelection inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkTreeSelection ;
 typedef NspTypeGtkObject NspTypeGtkTreeSelection ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode);
 NspGtkTreeSelection *new_gtktreeselection();
 
 /*
-* Object methods redefined for gtktreeselection 
-*/
+ * Object methods redefined for gtktreeselection 
+ */
 
 #define NULLGTKTREESELECTION (NspGtkTreeSelection*) 0
 
 
 /* from NspGtkTreeSelectionObj.c */
 
-extern NspGtkTreeSelection *nsp_gtktreeselection_object (NspObject *O); 
-extern int IsGtkTreeSelectionObj (Stack stack, int i); 
+extern NspGtkTreeSelection *nsp_gtktreeselection_object (NspObject *O);
+extern int IsGtkTreeSelectionObj (Stack stack, int i);
 extern int IsGtkTreeSelection(NspObject *O);
-extern NspGtkTreeSelection *GetGtkTreeSelectionCopy (Stack stack, int i); 
-extern NspGtkTreeSelection *GetGtkTreeSelection (Stack stack, int i); 
+extern NspGtkTreeSelection *GetGtkTreeSelectionCopy (Stack stack, int i);
+extern NspGtkTreeSelection *GetGtkTreeSelection (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeSelection */
+#endif /* NSP_INC_NspGtkTreeSelection */ 
 
 #ifdef NspGtkTreeSelection_Private 
 static int init_gtktreeselection(NspGtkTreeSelection *o,NspTypeGtkTreeSelection *type);
 static char *nsp_gtktreeselection_type_as_string(void);
 static char *nsp_gtktreeselection_type_short_string(NspObject *v);
 static AttrTab gtktreeselection_attrs[];
-static NspMethods *gtktreeselection_get_methods(void); 
-/* static int int_gtktreeselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreeselection_get_methods(void);
+/* static int int_gtktreeselection_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeSelection_Private */

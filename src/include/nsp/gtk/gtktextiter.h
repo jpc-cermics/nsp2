@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkTextIter inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkTextIter inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkTextIter ;
 typedef NspTypeGBoxed NspTypeGtkTextIter ;
@@ -45,27 +45,27 @@ NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode);
 NspGtkTextIter *new_gtktextiter();
 
 /*
-* Object methods redefined for gtktextiter 
-*/
+ * Object methods redefined for gtktextiter 
+ */
 
 #define NULLGTKTEXTITER (NspGtkTextIter*) 0
 
 
 /* from NspGtkTextIterObj.c */
 
-extern NspGtkTextIter *nsp_gtktextiter_object (NspObject *O); 
-extern int IsGtkTextIterObj (Stack stack, int i); 
+extern NspGtkTextIter *nsp_gtktextiter_object (NspObject *O);
+extern int IsGtkTextIterObj (Stack stack, int i);
 extern int IsGtkTextIter(NspObject *O);
-extern NspGtkTextIter *GetGtkTextIterCopy (Stack stack, int i); 
-extern NspGtkTextIter *GetGtkTextIter (Stack stack, int i); 
+extern NspGtkTextIter *GetGtkTextIterCopy (Stack stack, int i);
+extern NspGtkTextIter *GetGtkTextIter (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTextIter */
+#endif /* NSP_INC_NspGtkTextIter */ 
 
 #ifdef NspGtkTextIter_Private 
 static int init_gtktextiter(NspGtkTextIter *o,NspTypeGtkTextIter *type);
 static char *nsp_gtktextiter_type_as_string(void);
 static char *nsp_gtktextiter_type_short_string(NspObject *v);
 static AttrTab gtktextiter_attrs[];
-static NspMethods *gtktextiter_get_methods(void); 
-/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextiter_get_methods(void);
+/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTextIter_Private */

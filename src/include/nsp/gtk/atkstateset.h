@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkStateSet inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkStateSet inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkStateSet ;
 typedef NspTypeGObject NspTypeAtkStateSet ;
@@ -45,27 +45,27 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode);
 NspAtkStateSet *new_atkstateset();
 
 /*
-* Object methods redefined for atkstateset 
-*/
+ * Object methods redefined for atkstateset 
+ */
 
 #define NULLATKSTATESET (NspAtkStateSet*) 0
 
 
 /* from NspAtkStateSetObj.c */
 
-extern NspAtkStateSet *nsp_atkstateset_object (NspObject *O); 
-extern int IsAtkStateSetObj (Stack stack, int i); 
+extern NspAtkStateSet *nsp_atkstateset_object (NspObject *O);
+extern int IsAtkStateSetObj (Stack stack, int i);
 extern int IsAtkStateSet(NspObject *O);
-extern NspAtkStateSet *GetAtkStateSetCopy (Stack stack, int i); 
-extern NspAtkStateSet *GetAtkStateSet (Stack stack, int i); 
+extern NspAtkStateSet *GetAtkStateSetCopy (Stack stack, int i);
+extern NspAtkStateSet *GetAtkStateSet (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkStateSet */
+#endif /* NSP_INC_NspAtkStateSet */ 
 
 #ifdef NspAtkStateSet_Private 
 static int init_atkstateset(NspAtkStateSet *o,NspTypeAtkStateSet *type);
 static char *nsp_atkstateset_type_as_string(void);
 static char *nsp_atkstateset_type_short_string(NspObject *v);
 static AttrTab atkstateset_attrs[];
-static NspMethods *atkstateset_get_methods(void); 
-/* static int int_atkstateset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkstateset_get_methods(void);
+/* static int int_atkstateset_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkStateSet_Private */

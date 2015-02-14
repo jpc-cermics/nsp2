@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkPreview inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkPreview inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkPreview ;
 typedef NspTypeGtkWidget NspTypeGtkPreview ;
@@ -45,27 +45,27 @@ NspTypeGtkPreview *new_type_gtkpreview(type_mode mode);
 NspGtkPreview *new_gtkpreview();
 
 /*
-* Object methods redefined for gtkpreview 
-*/
+ * Object methods redefined for gtkpreview 
+ */
 
 #define NULLGTKPREVIEW (NspGtkPreview*) 0
 
 
 /* from NspGtkPreviewObj.c */
 
-extern NspGtkPreview *nsp_gtkpreview_object (NspObject *O); 
-extern int IsGtkPreviewObj (Stack stack, int i); 
+extern NspGtkPreview *nsp_gtkpreview_object (NspObject *O);
+extern int IsGtkPreviewObj (Stack stack, int i);
 extern int IsGtkPreview(NspObject *O);
-extern NspGtkPreview *GetGtkPreviewCopy (Stack stack, int i); 
-extern NspGtkPreview *GetGtkPreview (Stack stack, int i); 
+extern NspGtkPreview *GetGtkPreviewCopy (Stack stack, int i);
+extern NspGtkPreview *GetGtkPreview (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkPreview */
+#endif /* NSP_INC_NspGtkPreview */ 
 
 #ifdef NspGtkPreview_Private 
 static int init_gtkpreview(NspGtkPreview *o,NspTypeGtkPreview *type);
 static char *nsp_gtkpreview_type_as_string(void);
 static char *nsp_gtkpreview_type_short_string(NspObject *v);
 static AttrTab gtkpreview_attrs[];
-static NspMethods *gtkpreview_get_methods(void); 
-/* static int int_gtkpreview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkpreview_get_methods(void);
+/* static int int_gtkpreview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkPreview_Private */

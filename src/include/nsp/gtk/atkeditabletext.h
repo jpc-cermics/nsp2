@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkEditableText inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkEditableText inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkEditableText ;
 typedef NspTypeGObject NspTypeAtkEditableText ;
@@ -45,27 +45,27 @@ NspTypeAtkEditableText *new_type_atkeditabletext(type_mode mode);
 NspAtkEditableText *new_atkeditabletext();
 
 /*
-* Object methods redefined for atkeditabletext 
-*/
+ * Object methods redefined for atkeditabletext 
+ */
 
 #define NULLATKEDITABLETEXT (NspAtkEditableText*) 0
 
 
 /* from NspAtkEditableTextObj.c */
 
-extern NspAtkEditableText *nsp_atkeditabletext_object (NspObject *O); 
-extern int IsAtkEditableTextObj (Stack stack, int i); 
+extern NspAtkEditableText *nsp_atkeditabletext_object (NspObject *O);
+extern int IsAtkEditableTextObj (Stack stack, int i);
 extern int IsAtkEditableText(NspObject *O);
-extern NspAtkEditableText *GetAtkEditableTextCopy (Stack stack, int i); 
-extern NspAtkEditableText *GetAtkEditableText (Stack stack, int i); 
+extern NspAtkEditableText *GetAtkEditableTextCopy (Stack stack, int i);
+extern NspAtkEditableText *GetAtkEditableText (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkEditableText */
+#endif /* NSP_INC_NspAtkEditableText */ 
 
 #ifdef NspAtkEditableText_Private 
 static int init_atkeditabletext(NspAtkEditableText *o,NspTypeAtkEditableText *type);
 static char *nsp_atkeditabletext_type_as_string(void);
 static char *nsp_atkeditabletext_type_short_string(NspObject *v);
 static AttrTab atkeditabletext_attrs[];
-static NspMethods *atkeditabletext_get_methods(void); 
-/* static int int_atkeditabletext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkeditabletext_get_methods(void);
+/* static int int_atkeditabletext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkEditableText_Private */

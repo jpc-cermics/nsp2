@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktoggleaction.h>
 
 /*
-* NspGtkRadioAction inherits from GtkToggleAction
-* just change some type attributes 
-*/
+ * NspGtkRadioAction inherits from GtkToggleAction
+ * just change some type attributes 
+ */
 
 typedef NspGtkToggleAction NspGtkRadioAction ;
 typedef NspTypeGtkToggleAction NspTypeGtkRadioAction ;
@@ -45,27 +45,27 @@ NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode);
 NspGtkRadioAction *new_gtkradioaction();
 
 /*
-* Object methods redefined for gtkradioaction 
-*/
+ * Object methods redefined for gtkradioaction 
+ */
 
 #define NULLGTKRADIOACTION (NspGtkRadioAction*) 0
 
 
 /* from NspGtkRadioActionObj.c */
 
-extern NspGtkRadioAction *nsp_gtkradioaction_object (NspObject *O); 
-extern int IsGtkRadioActionObj (Stack stack, int i); 
+extern NspGtkRadioAction *nsp_gtkradioaction_object (NspObject *O);
+extern int IsGtkRadioActionObj (Stack stack, int i);
 extern int IsGtkRadioAction(NspObject *O);
-extern NspGtkRadioAction *GetGtkRadioActionCopy (Stack stack, int i); 
-extern NspGtkRadioAction *GetGtkRadioAction (Stack stack, int i); 
+extern NspGtkRadioAction *GetGtkRadioActionCopy (Stack stack, int i);
+extern NspGtkRadioAction *GetGtkRadioAction (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRadioAction */
+#endif /* NSP_INC_NspGtkRadioAction */ 
 
 #ifdef NspGtkRadioAction_Private 
 static int init_gtkradioaction(NspGtkRadioAction *o,NspTypeGtkRadioAction *type);
 static char *nsp_gtkradioaction_type_as_string(void);
 static char *nsp_gtkradioaction_type_short_string(NspObject *v);
 static AttrTab gtkradioaction_attrs[];
-static NspMethods *gtkradioaction_get_methods(void); 
-/* static int int_gtkradioaction_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkradioaction_get_methods(void);
+/* static int int_gtkradioaction_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRadioAction_Private */

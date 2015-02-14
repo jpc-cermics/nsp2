@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbox.h>
 
 /*
-* NspGtkVBox inherits from GtkBox
-* just change some type attributes 
-*/
+ * NspGtkVBox inherits from GtkBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkBox NspGtkVBox ;
 typedef NspTypeGtkBox NspTypeGtkVBox ;
@@ -45,27 +45,27 @@ NspTypeGtkVBox *new_type_gtkvbox(type_mode mode);
 NspGtkVBox *new_gtkvbox();
 
 /*
-* Object methods redefined for gtkvbox 
-*/
+ * Object methods redefined for gtkvbox 
+ */
 
 #define NULLGTKVBOX (NspGtkVBox*) 0
 
 
 /* from NspGtkVBoxObj.c */
 
-extern NspGtkVBox *nsp_gtkvbox_object (NspObject *O); 
-extern int IsGtkVBoxObj (Stack stack, int i); 
+extern NspGtkVBox *nsp_gtkvbox_object (NspObject *O);
+extern int IsGtkVBoxObj (Stack stack, int i);
 extern int IsGtkVBox(NspObject *O);
-extern NspGtkVBox *GetGtkVBoxCopy (Stack stack, int i); 
-extern NspGtkVBox *GetGtkVBox (Stack stack, int i); 
+extern NspGtkVBox *GetGtkVBoxCopy (Stack stack, int i);
+extern NspGtkVBox *GetGtkVBox (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkVBox */
+#endif /* NSP_INC_NspGtkVBox */ 
 
 #ifdef NspGtkVBox_Private 
 static int init_gtkvbox(NspGtkVBox *o,NspTypeGtkVBox *type);
 static char *nsp_gtkvbox_type_as_string(void);
 static char *nsp_gtkvbox_type_short_string(NspObject *v);
 static AttrTab gtkvbox_attrs[];
-static NspMethods *gtkvbox_get_methods(void); 
-/* static int int_gtkvbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvbox_get_methods(void);
+/* static int int_gtkvbox_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkVBox_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkimcontext.h>
 
 /*
-* NspGtkIMMulticontext inherits from GtkIMContext
-* just change some type attributes 
-*/
+ * NspGtkIMMulticontext inherits from GtkIMContext
+ * just change some type attributes 
+ */
 
 typedef NspGtkIMContext NspGtkIMMulticontext ;
 typedef NspTypeGtkIMContext NspTypeGtkIMMulticontext ;
@@ -45,27 +45,27 @@ NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode);
 NspGtkIMMulticontext *new_gtkimmulticontext();
 
 /*
-* Object methods redefined for gtkimmulticontext 
-*/
+ * Object methods redefined for gtkimmulticontext 
+ */
 
 #define NULLGTKIMMULTICONTEXT (NspGtkIMMulticontext*) 0
 
 
 /* from NspGtkIMMulticontextObj.c */
 
-extern NspGtkIMMulticontext *nsp_gtkimmulticontext_object (NspObject *O); 
-extern int IsGtkIMMulticontextObj (Stack stack, int i); 
+extern NspGtkIMMulticontext *nsp_gtkimmulticontext_object (NspObject *O);
+extern int IsGtkIMMulticontextObj (Stack stack, int i);
 extern int IsGtkIMMulticontext(NspObject *O);
-extern NspGtkIMMulticontext *GetGtkIMMulticontextCopy (Stack stack, int i); 
-extern NspGtkIMMulticontext *GetGtkIMMulticontext (Stack stack, int i); 
+extern NspGtkIMMulticontext *GetGtkIMMulticontextCopy (Stack stack, int i);
+extern NspGtkIMMulticontext *GetGtkIMMulticontext (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIMMulticontext */
+#endif /* NSP_INC_NspGtkIMMulticontext */ 
 
 #ifdef NspGtkIMMulticontext_Private 
 static int init_gtkimmulticontext(NspGtkIMMulticontext *o,NspTypeGtkIMMulticontext *type);
 static char *nsp_gtkimmulticontext_type_as_string(void);
 static char *nsp_gtkimmulticontext_type_short_string(NspObject *v);
 static AttrTab gtkimmulticontext_attrs[];
-static NspMethods *gtkimmulticontext_get_methods(void); 
-/* static int int_gtkimmulticontext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimmulticontext_get_methods(void);
+/* static int int_gtkimmulticontext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIMMulticontext_Private */

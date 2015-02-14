@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkAboutDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkAboutDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkAboutDialog ;
 typedef NspTypeGtkDialog NspTypeGtkAboutDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode);
 NspGtkAboutDialog *new_gtkaboutdialog();
 
 /*
-* Object methods redefined for gtkaboutdialog 
-*/
+ * Object methods redefined for gtkaboutdialog 
+ */
 
 #define NULLGTKABOUTDIALOG (NspGtkAboutDialog*) 0
 
 
 /* from NspGtkAboutDialogObj.c */
 
-extern NspGtkAboutDialog *nsp_gtkaboutdialog_object (NspObject *O); 
-extern int IsGtkAboutDialogObj (Stack stack, int i); 
+extern NspGtkAboutDialog *nsp_gtkaboutdialog_object (NspObject *O);
+extern int IsGtkAboutDialogObj (Stack stack, int i);
 extern int IsGtkAboutDialog(NspObject *O);
-extern NspGtkAboutDialog *GetGtkAboutDialogCopy (Stack stack, int i); 
-extern NspGtkAboutDialog *GetGtkAboutDialog (Stack stack, int i); 
+extern NspGtkAboutDialog *GetGtkAboutDialogCopy (Stack stack, int i);
+extern NspGtkAboutDialog *GetGtkAboutDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkAboutDialog */
+#endif /* NSP_INC_NspGtkAboutDialog */ 
 
 #ifdef NspGtkAboutDialog_Private 
 static int init_gtkaboutdialog(NspGtkAboutDialog *o,NspTypeGtkAboutDialog *type);
 static char *nsp_gtkaboutdialog_type_as_string(void);
 static char *nsp_gtkaboutdialog_type_short_string(NspObject *v);
 static AttrTab gtkaboutdialog_attrs[];
-static NspMethods *gtkaboutdialog_get_methods(void); 
-/* static int int_gtkaboutdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaboutdialog_get_methods(void);
+/* static int int_gtkaboutdialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkAboutDialog_Private */

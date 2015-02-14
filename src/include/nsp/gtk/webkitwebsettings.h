@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspWebKitWebSettings inherits from GObject
-* just change some type attributes 
-*/
+ * NspWebKitWebSettings inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspWebKitWebSettings ;
 typedef NspTypeGObject NspTypeWebKitWebSettings ;
@@ -45,27 +45,27 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode);
 NspWebKitWebSettings *new_webkitwebsettings();
 
 /*
-* Object methods redefined for webkitwebsettings 
-*/
+ * Object methods redefined for webkitwebsettings 
+ */
 
 #define NULLWEBKITWEBSETTINGS (NspWebKitWebSettings*) 0
 
 
 /* from NspWebKitWebSettingsObj.c */
 
-extern NspWebKitWebSettings *nsp_webkitwebsettings_object (NspObject *O); 
-extern int IsWebKitWebSettingsObj (Stack stack, int i); 
+extern NspWebKitWebSettings *nsp_webkitwebsettings_object (NspObject *O);
+extern int IsWebKitWebSettingsObj (Stack stack, int i);
 extern int IsWebKitWebSettings(NspObject *O);
-extern NspWebKitWebSettings *GetWebKitWebSettingsCopy (Stack stack, int i); 
-extern NspWebKitWebSettings *GetWebKitWebSettings (Stack stack, int i); 
+extern NspWebKitWebSettings *GetWebKitWebSettingsCopy (Stack stack, int i);
+extern NspWebKitWebSettings *GetWebKitWebSettings (Stack stack, int i);
 
-#endif /* NSP_INC_NspWebKitWebSettings */
+#endif /* NSP_INC_NspWebKitWebSettings */ 
 
 #ifdef NspWebKitWebSettings_Private 
 static int init_webkitwebsettings(NspWebKitWebSettings *o,NspTypeWebKitWebSettings *type);
 static char *nsp_webkitwebsettings_type_as_string(void);
 static char *nsp_webkitwebsettings_type_short_string(NspObject *v);
 static AttrTab webkitwebsettings_attrs[];
-static NspMethods *webkitwebsettings_get_methods(void); 
-/* static int int_webkitwebsettings_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *webkitwebsettings_get_methods(void);
+/* static int int_webkitwebsettings_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspWebKitWebSettings_Private */

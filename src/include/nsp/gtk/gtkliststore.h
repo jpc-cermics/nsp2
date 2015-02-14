@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkListStore inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkListStore inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkListStore ;
 typedef NspTypeGObject NspTypeGtkListStore ;
@@ -45,27 +45,27 @@ NspTypeGtkListStore *new_type_gtkliststore(type_mode mode);
 NspGtkListStore *new_gtkliststore();
 
 /*
-* Object methods redefined for gtkliststore 
-*/
+ * Object methods redefined for gtkliststore 
+ */
 
 #define NULLGTKLISTSTORE (NspGtkListStore*) 0
 
 
 /* from NspGtkListStoreObj.c */
 
-extern NspGtkListStore *nsp_gtkliststore_object (NspObject *O); 
-extern int IsGtkListStoreObj (Stack stack, int i); 
+extern NspGtkListStore *nsp_gtkliststore_object (NspObject *O);
+extern int IsGtkListStoreObj (Stack stack, int i);
 extern int IsGtkListStore(NspObject *O);
-extern NspGtkListStore *GetGtkListStoreCopy (Stack stack, int i); 
-extern NspGtkListStore *GetGtkListStore (Stack stack, int i); 
+extern NspGtkListStore *GetGtkListStoreCopy (Stack stack, int i);
+extern NspGtkListStore *GetGtkListStore (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkListStore */
+#endif /* NSP_INC_NspGtkListStore */ 
 
 #ifdef NspGtkListStore_Private 
 static int init_gtkliststore(NspGtkListStore *o,NspTypeGtkListStore *type);
 static char *nsp_gtkliststore_type_as_string(void);
 static char *nsp_gtkliststore_type_short_string(NspObject *v);
 static AttrTab gtkliststore_attrs[];
-static NspMethods *gtkliststore_get_methods(void); 
-/* static int int_gtkliststore_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkliststore_get_methods(void);
+/* static int int_gtkliststore_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkListStore_Private */

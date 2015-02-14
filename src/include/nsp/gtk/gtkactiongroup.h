@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkActionGroup inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkActionGroup inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkActionGroup ;
 typedef NspTypeGObject NspTypeGtkActionGroup ;
@@ -45,27 +45,27 @@ NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode);
 NspGtkActionGroup *new_gtkactiongroup();
 
 /*
-* Object methods redefined for gtkactiongroup 
-*/
+ * Object methods redefined for gtkactiongroup 
+ */
 
 #define NULLGTKACTIONGROUP (NspGtkActionGroup*) 0
 
 
 /* from NspGtkActionGroupObj.c */
 
-extern NspGtkActionGroup *nsp_gtkactiongroup_object (NspObject *O); 
-extern int IsGtkActionGroupObj (Stack stack, int i); 
+extern NspGtkActionGroup *nsp_gtkactiongroup_object (NspObject *O);
+extern int IsGtkActionGroupObj (Stack stack, int i);
 extern int IsGtkActionGroup(NspObject *O);
-extern NspGtkActionGroup *GetGtkActionGroupCopy (Stack stack, int i); 
-extern NspGtkActionGroup *GetGtkActionGroup (Stack stack, int i); 
+extern NspGtkActionGroup *GetGtkActionGroupCopy (Stack stack, int i);
+extern NspGtkActionGroup *GetGtkActionGroup (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkActionGroup */
+#endif /* NSP_INC_NspGtkActionGroup */ 
 
 #ifdef NspGtkActionGroup_Private 
 static int init_gtkactiongroup(NspGtkActionGroup *o,NspTypeGtkActionGroup *type);
 static char *nsp_gtkactiongroup_type_as_string(void);
 static char *nsp_gtkactiongroup_type_short_string(NspObject *v);
 static AttrTab gtkactiongroup_attrs[];
-static NspMethods *gtkactiongroup_get_methods(void); 
-/* static int int_gtkactiongroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkactiongroup_get_methods(void);
+/* static int int_gtkactiongroup_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkActionGroup_Private */

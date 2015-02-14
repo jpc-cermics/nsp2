@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkvbox.h>
 
 /*
-* NspGtkFontSelection inherits from GtkVBox
-* just change some type attributes 
-*/
+ * NspGtkFontSelection inherits from GtkVBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkVBox NspGtkFontSelection ;
 typedef NspTypeGtkVBox NspTypeGtkFontSelection ;
@@ -45,27 +45,27 @@ NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode);
 NspGtkFontSelection *new_gtkfontselection();
 
 /*
-* Object methods redefined for gtkfontselection 
-*/
+ * Object methods redefined for gtkfontselection 
+ */
 
 #define NULLGTKFONTSELECTION (NspGtkFontSelection*) 0
 
 
 /* from NspGtkFontSelectionObj.c */
 
-extern NspGtkFontSelection *nsp_gtkfontselection_object (NspObject *O); 
-extern int IsGtkFontSelectionObj (Stack stack, int i); 
+extern NspGtkFontSelection *nsp_gtkfontselection_object (NspObject *O);
+extern int IsGtkFontSelectionObj (Stack stack, int i);
 extern int IsGtkFontSelection(NspObject *O);
-extern NspGtkFontSelection *GetGtkFontSelectionCopy (Stack stack, int i); 
-extern NspGtkFontSelection *GetGtkFontSelection (Stack stack, int i); 
+extern NspGtkFontSelection *GetGtkFontSelectionCopy (Stack stack, int i);
+extern NspGtkFontSelection *GetGtkFontSelection (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFontSelection */
+#endif /* NSP_INC_NspGtkFontSelection */ 
 
 #ifdef NspGtkFontSelection_Private 
 static int init_gtkfontselection(NspGtkFontSelection *o,NspTypeGtkFontSelection *type);
 static char *nsp_gtkfontselection_type_as_string(void);
 static char *nsp_gtkfontselection_type_short_string(NspObject *v);
 static AttrTab gtkfontselection_attrs[];
-static NspMethods *gtkfontselection_get_methods(void); 
-/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfontselection_get_methods(void);
+/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFontSelection_Private */

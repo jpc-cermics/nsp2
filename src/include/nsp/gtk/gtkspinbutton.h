@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkentry.h>
 
 /*
-* NspGtkSpinButton inherits from GtkEntry
-* just change some type attributes 
-*/
+ * NspGtkSpinButton inherits from GtkEntry
+ * just change some type attributes 
+ */
 
 typedef NspGtkEntry NspGtkSpinButton ;
 typedef NspTypeGtkEntry NspTypeGtkSpinButton ;
@@ -45,27 +45,27 @@ NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode);
 NspGtkSpinButton *new_gtkspinbutton();
 
 /*
-* Object methods redefined for gtkspinbutton 
-*/
+ * Object methods redefined for gtkspinbutton 
+ */
 
 #define NULLGTKSPINBUTTON (NspGtkSpinButton*) 0
 
 
 /* from NspGtkSpinButtonObj.c */
 
-extern NspGtkSpinButton *nsp_gtkspinbutton_object (NspObject *O); 
-extern int IsGtkSpinButtonObj (Stack stack, int i); 
+extern NspGtkSpinButton *nsp_gtkspinbutton_object (NspObject *O);
+extern int IsGtkSpinButtonObj (Stack stack, int i);
 extern int IsGtkSpinButton(NspObject *O);
-extern NspGtkSpinButton *GetGtkSpinButtonCopy (Stack stack, int i); 
-extern NspGtkSpinButton *GetGtkSpinButton (Stack stack, int i); 
+extern NspGtkSpinButton *GetGtkSpinButtonCopy (Stack stack, int i);
+extern NspGtkSpinButton *GetGtkSpinButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSpinButton */
+#endif /* NSP_INC_NspGtkSpinButton */ 
 
 #ifdef NspGtkSpinButton_Private 
 static int init_gtkspinbutton(NspGtkSpinButton *o,NspTypeGtkSpinButton *type);
 static char *nsp_gtkspinbutton_type_as_string(void);
 static char *nsp_gtkspinbutton_type_short_string(NspObject *v);
 static AttrTab gtkspinbutton_attrs[];
-static NspMethods *gtkspinbutton_get_methods(void); 
-/* static int int_gtkspinbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkspinbutton_get_methods(void);
+/* static int int_gtkspinbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSpinButton_Private */

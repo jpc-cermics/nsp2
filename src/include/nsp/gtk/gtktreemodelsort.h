@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeModelSort inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeModelSort inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeModelSort ;
 typedef NspTypeGObject NspTypeGtkTreeModelSort ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode);
 NspGtkTreeModelSort *new_gtktreemodelsort();
 
 /*
-* Object methods redefined for gtktreemodelsort 
-*/
+ * Object methods redefined for gtktreemodelsort 
+ */
 
 #define NULLGTKTREEMODELSORT (NspGtkTreeModelSort*) 0
 
 
 /* from NspGtkTreeModelSortObj.c */
 
-extern NspGtkTreeModelSort *nsp_gtktreemodelsort_object (NspObject *O); 
-extern int IsGtkTreeModelSortObj (Stack stack, int i); 
+extern NspGtkTreeModelSort *nsp_gtktreemodelsort_object (NspObject *O);
+extern int IsGtkTreeModelSortObj (Stack stack, int i);
 extern int IsGtkTreeModelSort(NspObject *O);
-extern NspGtkTreeModelSort *GetGtkTreeModelSortCopy (Stack stack, int i); 
-extern NspGtkTreeModelSort *GetGtkTreeModelSort (Stack stack, int i); 
+extern NspGtkTreeModelSort *GetGtkTreeModelSortCopy (Stack stack, int i);
+extern NspGtkTreeModelSort *GetGtkTreeModelSort (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeModelSort */
+#endif /* NSP_INC_NspGtkTreeModelSort */ 
 
 #ifdef NspGtkTreeModelSort_Private 
 static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type);
 static char *nsp_gtktreemodelsort_type_as_string(void);
 static char *nsp_gtktreemodelsort_type_short_string(NspObject *v);
 static AttrTab gtktreemodelsort_attrs[];
-static NspMethods *gtktreemodelsort_get_methods(void); 
-/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreemodelsort_get_methods(void);
+/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeModelSort_Private */

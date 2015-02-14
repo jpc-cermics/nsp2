@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeSortable inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeSortable inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeSortable ;
 typedef NspTypeGObject NspTypeGtkTreeSortable ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode);
 NspGtkTreeSortable *new_gtktreesortable();
 
 /*
-* Object methods redefined for gtktreesortable 
-*/
+ * Object methods redefined for gtktreesortable 
+ */
 
 #define NULLGTKTREESORTABLE (NspGtkTreeSortable*) 0
 
 
 /* from NspGtkTreeSortableObj.c */
 
-extern NspGtkTreeSortable *nsp_gtktreesortable_object (NspObject *O); 
-extern int IsGtkTreeSortableObj (Stack stack, int i); 
+extern NspGtkTreeSortable *nsp_gtktreesortable_object (NspObject *O);
+extern int IsGtkTreeSortableObj (Stack stack, int i);
 extern int IsGtkTreeSortable(NspObject *O);
-extern NspGtkTreeSortable *GetGtkTreeSortableCopy (Stack stack, int i); 
-extern NspGtkTreeSortable *GetGtkTreeSortable (Stack stack, int i); 
+extern NspGtkTreeSortable *GetGtkTreeSortableCopy (Stack stack, int i);
+extern NspGtkTreeSortable *GetGtkTreeSortable (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeSortable */
+#endif /* NSP_INC_NspGtkTreeSortable */ 
 
 #ifdef NspGtkTreeSortable_Private 
 static int init_gtktreesortable(NspGtkTreeSortable *o,NspTypeGtkTreeSortable *type);
 static char *nsp_gtktreesortable_type_as_string(void);
 static char *nsp_gtktreesortable_type_short_string(NspObject *v);
 static AttrTab gtktreesortable_attrs[];
-static NspMethods *gtktreesortable_get_methods(void); 
-/* static int int_gtktreesortable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreesortable_get_methods(void);
+/* static int int_gtktreesortable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeSortable_Private */

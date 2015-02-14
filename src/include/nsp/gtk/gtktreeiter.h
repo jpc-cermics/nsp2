@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkTreeIter inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkTreeIter inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkTreeIter ;
 typedef NspTypeGBoxed NspTypeGtkTreeIter ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode);
 NspGtkTreeIter *new_gtktreeiter();
 
 /*
-* Object methods redefined for gtktreeiter 
-*/
+ * Object methods redefined for gtktreeiter 
+ */
 
 #define NULLGTKTREEITER (NspGtkTreeIter*) 0
 
 
 /* from NspGtkTreeIterObj.c */
 
-extern NspGtkTreeIter *nsp_gtktreeiter_object (NspObject *O); 
-extern int IsGtkTreeIterObj (Stack stack, int i); 
+extern NspGtkTreeIter *nsp_gtktreeiter_object (NspObject *O);
+extern int IsGtkTreeIterObj (Stack stack, int i);
 extern int IsGtkTreeIter(NspObject *O);
-extern NspGtkTreeIter *GetGtkTreeIterCopy (Stack stack, int i); 
-extern NspGtkTreeIter *GetGtkTreeIter (Stack stack, int i); 
+extern NspGtkTreeIter *GetGtkTreeIterCopy (Stack stack, int i);
+extern NspGtkTreeIter *GetGtkTreeIter (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeIter */
+#endif /* NSP_INC_NspGtkTreeIter */ 
 
 #ifdef NspGtkTreeIter_Private 
 static int init_gtktreeiter(NspGtkTreeIter *o,NspTypeGtkTreeIter *type);
 static char *nsp_gtktreeiter_type_as_string(void);
 static char *nsp_gtktreeiter_type_short_string(NspObject *v);
 static AttrTab gtktreeiter_attrs[];
-static NspMethods *gtktreeiter_get_methods(void); 
-/* static int int_gtktreeiter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreeiter_get_methods(void);
+/* static int int_gtktreeiter_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeIter_Private */

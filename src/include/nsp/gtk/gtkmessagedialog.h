@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkMessageDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkMessageDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkMessageDialog ;
 typedef NspTypeGtkDialog NspTypeGtkMessageDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode);
 NspGtkMessageDialog *new_gtkmessagedialog();
 
 /*
-* Object methods redefined for gtkmessagedialog 
-*/
+ * Object methods redefined for gtkmessagedialog 
+ */
 
 #define NULLGTKMESSAGEDIALOG (NspGtkMessageDialog*) 0
 
 
 /* from NspGtkMessageDialogObj.c */
 
-extern NspGtkMessageDialog *nsp_gtkmessagedialog_object (NspObject *O); 
-extern int IsGtkMessageDialogObj (Stack stack, int i); 
+extern NspGtkMessageDialog *nsp_gtkmessagedialog_object (NspObject *O);
+extern int IsGtkMessageDialogObj (Stack stack, int i);
 extern int IsGtkMessageDialog(NspObject *O);
-extern NspGtkMessageDialog *GetGtkMessageDialogCopy (Stack stack, int i); 
-extern NspGtkMessageDialog *GetGtkMessageDialog (Stack stack, int i); 
+extern NspGtkMessageDialog *GetGtkMessageDialogCopy (Stack stack, int i);
+extern NspGtkMessageDialog *GetGtkMessageDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkMessageDialog */
+#endif /* NSP_INC_NspGtkMessageDialog */ 
 
 #ifdef NspGtkMessageDialog_Private 
 static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type);
 static char *nsp_gtkmessagedialog_type_as_string(void);
 static char *nsp_gtkmessagedialog_type_short_string(NspObject *v);
 static AttrTab gtkmessagedialog_attrs[];
-static NspMethods *gtkmessagedialog_get_methods(void); 
-/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmessagedialog_get_methods(void);
+/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkMessageDialog_Private */

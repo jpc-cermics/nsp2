@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcheckbutton.h>
 
 /*
-* NspGtkRadioButton inherits from GtkCheckButton
-* just change some type attributes 
-*/
+ * NspGtkRadioButton inherits from GtkCheckButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkCheckButton NspGtkRadioButton ;
 typedef NspTypeGtkCheckButton NspTypeGtkRadioButton ;
@@ -45,27 +45,27 @@ NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode);
 NspGtkRadioButton *new_gtkradiobutton();
 
 /*
-* Object methods redefined for gtkradiobutton 
-*/
+ * Object methods redefined for gtkradiobutton 
+ */
 
 #define NULLGTKRADIOBUTTON (NspGtkRadioButton*) 0
 
 
 /* from NspGtkRadioButtonObj.c */
 
-extern NspGtkRadioButton *nsp_gtkradiobutton_object (NspObject *O); 
-extern int IsGtkRadioButtonObj (Stack stack, int i); 
+extern NspGtkRadioButton *nsp_gtkradiobutton_object (NspObject *O);
+extern int IsGtkRadioButtonObj (Stack stack, int i);
 extern int IsGtkRadioButton(NspObject *O);
-extern NspGtkRadioButton *GetGtkRadioButtonCopy (Stack stack, int i); 
-extern NspGtkRadioButton *GetGtkRadioButton (Stack stack, int i); 
+extern NspGtkRadioButton *GetGtkRadioButtonCopy (Stack stack, int i);
+extern NspGtkRadioButton *GetGtkRadioButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRadioButton */
+#endif /* NSP_INC_NspGtkRadioButton */ 
 
 #ifdef NspGtkRadioButton_Private 
 static int init_gtkradiobutton(NspGtkRadioButton *o,NspTypeGtkRadioButton *type);
 static char *nsp_gtkradiobutton_type_as_string(void);
 static char *nsp_gtkradiobutton_type_short_string(NspObject *v);
 static AttrTab gtkradiobutton_attrs[];
-static NspMethods *gtkradiobutton_get_methods(void); 
-/* static int int_gtkradiobutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkradiobutton_get_methods(void);
+/* static int int_gtkradiobutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRadioButton_Private */

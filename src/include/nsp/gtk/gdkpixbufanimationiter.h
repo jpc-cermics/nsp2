@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkPixbufAnimationIter inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkPixbufAnimationIter inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkPixbufAnimationIter ;
 typedef NspTypeGObject NspTypeGdkPixbufAnimationIter ;
@@ -45,27 +45,27 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode);
 NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter();
 
 /*
-* Object methods redefined for gdkpixbufanimationiter 
-*/
+ * Object methods redefined for gdkpixbufanimationiter 
+ */
 
 #define NULLGDKPIXBUFANIMATIONITER (NspGdkPixbufAnimationIter*) 0
 
 
 /* from NspGdkPixbufAnimationIterObj.c */
 
-extern NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object (NspObject *O); 
-extern int IsGdkPixbufAnimationIterObj (Stack stack, int i); 
+extern NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object (NspObject *O);
+extern int IsGdkPixbufAnimationIterObj (Stack stack, int i);
 extern int IsGdkPixbufAnimationIter(NspObject *O);
-extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIterCopy (Stack stack, int i); 
-extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIter (Stack stack, int i); 
+extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIterCopy (Stack stack, int i);
+extern NspGdkPixbufAnimationIter *GetGdkPixbufAnimationIter (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkPixbufAnimationIter */
+#endif /* NSP_INC_NspGdkPixbufAnimationIter */ 
 
 #ifdef NspGdkPixbufAnimationIter_Private 
 static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *o,NspTypeGdkPixbufAnimationIter *type);
 static char *nsp_gdkpixbufanimationiter_type_as_string(void);
 static char *nsp_gdkpixbufanimationiter_type_short_string(NspObject *v);
 static AttrTab gdkpixbufanimationiter_attrs[];
-static NspMethods *gdkpixbufanimationiter_get_methods(void); 
-/* static int int_gdkpixbufanimationiter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbufanimationiter_get_methods(void);
+/* static int int_gdkpixbufanimationiter_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkPixbufAnimationIter_Private */

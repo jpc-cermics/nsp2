@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkFileChooserDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkFileChooserDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkFileChooserDialog ;
 typedef NspTypeGtkDialog NspTypeGtkFileChooserDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode);
 NspGtkFileChooserDialog *new_gtkfilechooserdialog();
 
 /*
-* Object methods redefined for gtkfilechooserdialog 
-*/
+ * Object methods redefined for gtkfilechooserdialog 
+ */
 
 #define NULLGTKFILECHOOSERDIALOG (NspGtkFileChooserDialog*) 0
 
 
 /* from NspGtkFileChooserDialogObj.c */
 
-extern NspGtkFileChooserDialog *nsp_gtkfilechooserdialog_object (NspObject *O); 
-extern int IsGtkFileChooserDialogObj (Stack stack, int i); 
+extern NspGtkFileChooserDialog *nsp_gtkfilechooserdialog_object (NspObject *O);
+extern int IsGtkFileChooserDialogObj (Stack stack, int i);
 extern int IsGtkFileChooserDialog(NspObject *O);
-extern NspGtkFileChooserDialog *GetGtkFileChooserDialogCopy (Stack stack, int i); 
-extern NspGtkFileChooserDialog *GetGtkFileChooserDialog (Stack stack, int i); 
+extern NspGtkFileChooserDialog *GetGtkFileChooserDialogCopy (Stack stack, int i);
+extern NspGtkFileChooserDialog *GetGtkFileChooserDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFileChooserDialog */
+#endif /* NSP_INC_NspGtkFileChooserDialog */ 
 
 #ifdef NspGtkFileChooserDialog_Private 
 static int init_gtkfilechooserdialog(NspGtkFileChooserDialog *o,NspTypeGtkFileChooserDialog *type);
 static char *nsp_gtkfilechooserdialog_type_as_string(void);
 static char *nsp_gtkfilechooserdialog_type_short_string(NspObject *v);
 static AttrTab gtkfilechooserdialog_attrs[];
-static NspMethods *gtkfilechooserdialog_get_methods(void); 
-/* static int int_gtkfilechooserdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfilechooserdialog_get_methods(void);
+/* static int int_gtkfilechooserdialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFileChooserDialog_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkObjectFactory inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkObjectFactory inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkObjectFactory ;
 typedef NspTypeGObject NspTypeAtkObjectFactory ;
@@ -45,27 +45,27 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode);
 NspAtkObjectFactory *new_atkobjectfactory();
 
 /*
-* Object methods redefined for atkobjectfactory 
-*/
+ * Object methods redefined for atkobjectfactory 
+ */
 
 #define NULLATKOBJECTFACTORY (NspAtkObjectFactory*) 0
 
 
 /* from NspAtkObjectFactoryObj.c */
 
-extern NspAtkObjectFactory *nsp_atkobjectfactory_object (NspObject *O); 
-extern int IsAtkObjectFactoryObj (Stack stack, int i); 
+extern NspAtkObjectFactory *nsp_atkobjectfactory_object (NspObject *O);
+extern int IsAtkObjectFactoryObj (Stack stack, int i);
 extern int IsAtkObjectFactory(NspObject *O);
-extern NspAtkObjectFactory *GetAtkObjectFactoryCopy (Stack stack, int i); 
-extern NspAtkObjectFactory *GetAtkObjectFactory (Stack stack, int i); 
+extern NspAtkObjectFactory *GetAtkObjectFactoryCopy (Stack stack, int i);
+extern NspAtkObjectFactory *GetAtkObjectFactory (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkObjectFactory */
+#endif /* NSP_INC_NspAtkObjectFactory */ 
 
 #ifdef NspAtkObjectFactory_Private 
 static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type);
 static char *nsp_atkobjectfactory_type_as_string(void);
 static char *nsp_atkobjectfactory_type_short_string(NspObject *v);
 static AttrTab atkobjectfactory_attrs[];
-static NspMethods *atkobjectfactory_get_methods(void); 
-/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkobjectfactory_get_methods(void);
+/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkObjectFactory_Private */

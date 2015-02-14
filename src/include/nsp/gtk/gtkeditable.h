@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkEditable inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkEditable inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkEditable ;
 typedef NspTypeGObject NspTypeGtkEditable ;
@@ -45,27 +45,27 @@ NspTypeGtkEditable *new_type_gtkeditable(type_mode mode);
 NspGtkEditable *new_gtkeditable();
 
 /*
-* Object methods redefined for gtkeditable 
-*/
+ * Object methods redefined for gtkeditable 
+ */
 
 #define NULLGTKEDITABLE (NspGtkEditable*) 0
 
 
 /* from NspGtkEditableObj.c */
 
-extern NspGtkEditable *nsp_gtkeditable_object (NspObject *O); 
-extern int IsGtkEditableObj (Stack stack, int i); 
+extern NspGtkEditable *nsp_gtkeditable_object (NspObject *O);
+extern int IsGtkEditableObj (Stack stack, int i);
 extern int IsGtkEditable(NspObject *O);
-extern NspGtkEditable *GetGtkEditableCopy (Stack stack, int i); 
-extern NspGtkEditable *GetGtkEditable (Stack stack, int i); 
+extern NspGtkEditable *GetGtkEditableCopy (Stack stack, int i);
+extern NspGtkEditable *GetGtkEditable (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkEditable */
+#endif /* NSP_INC_NspGtkEditable */ 
 
 #ifdef NspGtkEditable_Private 
 static int init_gtkeditable(NspGtkEditable *o,NspTypeGtkEditable *type);
 static char *nsp_gtkeditable_type_as_string(void);
 static char *nsp_gtkeditable_type_short_string(NspObject *v);
 static AttrTab gtkeditable_attrs[];
-static NspMethods *gtkeditable_get_methods(void); 
-/* static int int_gtkeditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkeditable_get_methods(void);
+/* static int int_gtkeditable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkEditable_Private */

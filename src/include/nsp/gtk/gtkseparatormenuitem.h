@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmenuitem.h>
 
 /*
-* NspGtkSeparatorMenuItem inherits from GtkMenuItem
-* just change some type attributes 
-*/
+ * NspGtkSeparatorMenuItem inherits from GtkMenuItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkMenuItem NspGtkSeparatorMenuItem ;
 typedef NspTypeGtkMenuItem NspTypeGtkSeparatorMenuItem ;
@@ -45,27 +45,27 @@ NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode);
 NspGtkSeparatorMenuItem *new_gtkseparatormenuitem();
 
 /*
-* Object methods redefined for gtkseparatormenuitem 
-*/
+ * Object methods redefined for gtkseparatormenuitem 
+ */
 
 #define NULLGTKSEPARATORMENUITEM (NspGtkSeparatorMenuItem*) 0
 
 
 /* from NspGtkSeparatorMenuItemObj.c */
 
-extern NspGtkSeparatorMenuItem *nsp_gtkseparatormenuitem_object (NspObject *O); 
-extern int IsGtkSeparatorMenuItemObj (Stack stack, int i); 
+extern NspGtkSeparatorMenuItem *nsp_gtkseparatormenuitem_object (NspObject *O);
+extern int IsGtkSeparatorMenuItemObj (Stack stack, int i);
 extern int IsGtkSeparatorMenuItem(NspObject *O);
-extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItemCopy (Stack stack, int i); 
-extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItem (Stack stack, int i); 
+extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItemCopy (Stack stack, int i);
+extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkSeparatorMenuItem */
+#endif /* NSP_INC_NspGtkSeparatorMenuItem */ 
 
 #ifdef NspGtkSeparatorMenuItem_Private 
 static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *o,NspTypeGtkSeparatorMenuItem *type);
 static char *nsp_gtkseparatormenuitem_type_as_string(void);
 static char *nsp_gtkseparatormenuitem_type_short_string(NspObject *v);
 static AttrTab gtkseparatormenuitem_attrs[];
-static NspMethods *gtkseparatormenuitem_get_methods(void); 
-/* static int int_gtkseparatormenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkseparatormenuitem_get_methods(void);
+/* static int int_gtkseparatormenuitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkSeparatorMenuItem_Private */

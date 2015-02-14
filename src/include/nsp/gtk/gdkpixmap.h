@@ -26,9 +26,9 @@
 #include <nsp/gtk/gdkdrawable.h>
 
 /*
-* NspGdkPixmap inherits from GdkDrawable
-* just change some type attributes 
-*/
+ * NspGdkPixmap inherits from GdkDrawable
+ * just change some type attributes 
+ */
 
 typedef NspGdkDrawable NspGdkPixmap ;
 typedef NspTypeGdkDrawable NspTypeGdkPixmap ;
@@ -45,27 +45,27 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode);
 NspGdkPixmap *new_gdkpixmap();
 
 /*
-* Object methods redefined for gdkpixmap 
-*/
+ * Object methods redefined for gdkpixmap 
+ */
 
 #define NULLGDKPIXMAP (NspGdkPixmap*) 0
 
 
 /* from NspGdkPixmapObj.c */
 
-extern NspGdkPixmap *nsp_gdkpixmap_object (NspObject *O); 
-extern int IsGdkPixmapObj (Stack stack, int i); 
+extern NspGdkPixmap *nsp_gdkpixmap_object (NspObject *O);
+extern int IsGdkPixmapObj (Stack stack, int i);
 extern int IsGdkPixmap(NspObject *O);
-extern NspGdkPixmap *GetGdkPixmapCopy (Stack stack, int i); 
-extern NspGdkPixmap *GetGdkPixmap (Stack stack, int i); 
+extern NspGdkPixmap *GetGdkPixmapCopy (Stack stack, int i);
+extern NspGdkPixmap *GetGdkPixmap (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkPixmap */
+#endif /* NSP_INC_NspGdkPixmap */ 
 
 #ifdef NspGdkPixmap_Private 
 static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type);
 static char *nsp_gdkpixmap_type_as_string(void);
 static char *nsp_gdkpixmap_type_short_string(NspObject *v);
 static AttrTab gdkpixmap_attrs[];
-static NspMethods *gdkpixmap_get_methods(void); 
-/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixmap_get_methods(void);
+/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkPixmap_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gdkdrawable.h>
 
 /*
-* NspGdkBitmap inherits from GdkDrawable
-* just change some type attributes 
-*/
+ * NspGdkBitmap inherits from GdkDrawable
+ * just change some type attributes 
+ */
 
 typedef NspGdkDrawable NspGdkBitmap ;
 typedef NspTypeGdkDrawable NspTypeGdkBitmap ;
@@ -45,27 +45,27 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode);
 NspGdkBitmap *new_gdkbitmap();
 
 /*
-* Object methods redefined for gdkbitmap 
-*/
+ * Object methods redefined for gdkbitmap 
+ */
 
 #define NULLGDKBITMAP (NspGdkBitmap*) 0
 
 
 /* from NspGdkBitmapObj.c */
 
-extern NspGdkBitmap *nsp_gdkbitmap_object (NspObject *O); 
-extern int IsGdkBitmapObj (Stack stack, int i); 
+extern NspGdkBitmap *nsp_gdkbitmap_object (NspObject *O);
+extern int IsGdkBitmapObj (Stack stack, int i);
 extern int IsGdkBitmap(NspObject *O);
-extern NspGdkBitmap *GetGdkBitmapCopy (Stack stack, int i); 
-extern NspGdkBitmap *GetGdkBitmap (Stack stack, int i); 
+extern NspGdkBitmap *GetGdkBitmapCopy (Stack stack, int i);
+extern NspGdkBitmap *GetGdkBitmap (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkBitmap */
+#endif /* NSP_INC_NspGdkBitmap */ 
 
 #ifdef NspGdkBitmap_Private 
 static int init_gdkbitmap(NspGdkBitmap *o,NspTypeGdkBitmap *type);
 static char *nsp_gdkbitmap_type_as_string(void);
 static char *nsp_gdkbitmap_type_short_string(NspObject *v);
 static AttrTab gdkbitmap_attrs[];
-static NspMethods *gdkbitmap_get_methods(void); 
-/* static int int_gdkbitmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkbitmap_get_methods(void);
+/* static int int_gdkbitmap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkBitmap_Private */

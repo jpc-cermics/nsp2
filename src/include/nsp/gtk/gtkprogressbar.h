@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkprogress.h>
 
 /*
-* NspGtkProgressBar inherits from GtkProgress
-* just change some type attributes 
-*/
+ * NspGtkProgressBar inherits from GtkProgress
+ * just change some type attributes 
+ */
 
 typedef NspGtkProgress NspGtkProgressBar ;
 typedef NspTypeGtkProgress NspTypeGtkProgressBar ;
@@ -45,27 +45,27 @@ NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode);
 NspGtkProgressBar *new_gtkprogressbar();
 
 /*
-* Object methods redefined for gtkprogressbar 
-*/
+ * Object methods redefined for gtkprogressbar 
+ */
 
 #define NULLGTKPROGRESSBAR (NspGtkProgressBar*) 0
 
 
 /* from NspGtkProgressBarObj.c */
 
-extern NspGtkProgressBar *nsp_gtkprogressbar_object (NspObject *O); 
-extern int IsGtkProgressBarObj (Stack stack, int i); 
+extern NspGtkProgressBar *nsp_gtkprogressbar_object (NspObject *O);
+extern int IsGtkProgressBarObj (Stack stack, int i);
 extern int IsGtkProgressBar(NspObject *O);
-extern NspGtkProgressBar *GetGtkProgressBarCopy (Stack stack, int i); 
-extern NspGtkProgressBar *GetGtkProgressBar (Stack stack, int i); 
+extern NspGtkProgressBar *GetGtkProgressBarCopy (Stack stack, int i);
+extern NspGtkProgressBar *GetGtkProgressBar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkProgressBar */
+#endif /* NSP_INC_NspGtkProgressBar */ 
 
 #ifdef NspGtkProgressBar_Private 
 static int init_gtkprogressbar(NspGtkProgressBar *o,NspTypeGtkProgressBar *type);
 static char *nsp_gtkprogressbar_type_as_string(void);
 static char *nsp_gtkprogressbar_type_short_string(NspObject *v);
 static AttrTab gtkprogressbar_attrs[];
-static NspMethods *gtkprogressbar_get_methods(void); 
-/* static int int_gtkprogressbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkprogressbar_get_methods(void);
+/* static int int_gtkprogressbar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkProgressBar_Private */

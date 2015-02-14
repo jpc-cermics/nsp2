@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeModelFilter inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeModelFilter inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeModelFilter ;
 typedef NspTypeGObject NspTypeGtkTreeModelFilter ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode);
 NspGtkTreeModelFilter *new_gtktreemodelfilter();
 
 /*
-* Object methods redefined for gtktreemodelfilter 
-*/
+ * Object methods redefined for gtktreemodelfilter 
+ */
 
 #define NULLGTKTREEMODELFILTER (NspGtkTreeModelFilter*) 0
 
 
 /* from NspGtkTreeModelFilterObj.c */
 
-extern NspGtkTreeModelFilter *nsp_gtktreemodelfilter_object (NspObject *O); 
-extern int IsGtkTreeModelFilterObj (Stack stack, int i); 
+extern NspGtkTreeModelFilter *nsp_gtktreemodelfilter_object (NspObject *O);
+extern int IsGtkTreeModelFilterObj (Stack stack, int i);
 extern int IsGtkTreeModelFilter(NspObject *O);
-extern NspGtkTreeModelFilter *GetGtkTreeModelFilterCopy (Stack stack, int i); 
-extern NspGtkTreeModelFilter *GetGtkTreeModelFilter (Stack stack, int i); 
+extern NspGtkTreeModelFilter *GetGtkTreeModelFilterCopy (Stack stack, int i);
+extern NspGtkTreeModelFilter *GetGtkTreeModelFilter (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeModelFilter */
+#endif /* NSP_INC_NspGtkTreeModelFilter */ 
 
 #ifdef NspGtkTreeModelFilter_Private 
 static int init_gtktreemodelfilter(NspGtkTreeModelFilter *o,NspTypeGtkTreeModelFilter *type);
 static char *nsp_gtktreemodelfilter_type_as_string(void);
 static char *nsp_gtktreemodelfilter_type_short_string(NspObject *v);
 static AttrTab gtktreemodelfilter_attrs[];
-static NspMethods *gtktreemodelfilter_get_methods(void); 
-/* static int int_gtktreemodelfilter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreemodelfilter_get_methods(void);
+/* static int int_gtktreemodelfilter_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeModelFilter_Private */

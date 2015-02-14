@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspPangoAttrList inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspPangoAttrList inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspPangoAttrList ;
 typedef NspTypeGBoxed NspTypePangoAttrList ;
@@ -45,27 +45,27 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode);
 NspPangoAttrList *new_pangoattrlist();
 
 /*
-* Object methods redefined for pangoattrlist 
-*/
+ * Object methods redefined for pangoattrlist 
+ */
 
 #define NULLPANGOATTRLIST (NspPangoAttrList*) 0
 
 
 /* from NspPangoAttrListObj.c */
 
-extern NspPangoAttrList *nsp_pangoattrlist_object (NspObject *O); 
-extern int IsPangoAttrListObj (Stack stack, int i); 
+extern NspPangoAttrList *nsp_pangoattrlist_object (NspObject *O);
+extern int IsPangoAttrListObj (Stack stack, int i);
 extern int IsPangoAttrList(NspObject *O);
-extern NspPangoAttrList *GetPangoAttrListCopy (Stack stack, int i); 
-extern NspPangoAttrList *GetPangoAttrList (Stack stack, int i); 
+extern NspPangoAttrList *GetPangoAttrListCopy (Stack stack, int i);
+extern NspPangoAttrList *GetPangoAttrList (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoAttrList */
+#endif /* NSP_INC_NspPangoAttrList */ 
 
 #ifdef NspPangoAttrList_Private 
 static int init_pangoattrlist(NspPangoAttrList *o,NspTypePangoAttrList *type);
 static char *nsp_pangoattrlist_type_as_string(void);
 static char *nsp_pangoattrlist_type_short_string(NspObject *v);
 static AttrTab pangoattrlist_attrs[];
-static NspMethods *pangoattrlist_get_methods(void); 
-/* static int int_pangoattrlist_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangoattrlist_get_methods(void);
+/* static int int_pangoattrlist_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoAttrList_Private */

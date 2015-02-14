@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbutton.h>
 
 /*
-* NspGtkOptionMenu inherits from GtkButton
-* just change some type attributes 
-*/
+ * NspGtkOptionMenu inherits from GtkButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkButton NspGtkOptionMenu ;
 typedef NspTypeGtkButton NspTypeGtkOptionMenu ;
@@ -45,27 +45,27 @@ NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode);
 NspGtkOptionMenu *new_gtkoptionmenu();
 
 /*
-* Object methods redefined for gtkoptionmenu 
-*/
+ * Object methods redefined for gtkoptionmenu 
+ */
 
 #define NULLGTKOPTIONMENU (NspGtkOptionMenu*) 0
 
 
 /* from NspGtkOptionMenuObj.c */
 
-extern NspGtkOptionMenu *nsp_gtkoptionmenu_object (NspObject *O); 
-extern int IsGtkOptionMenuObj (Stack stack, int i); 
+extern NspGtkOptionMenu *nsp_gtkoptionmenu_object (NspObject *O);
+extern int IsGtkOptionMenuObj (Stack stack, int i);
 extern int IsGtkOptionMenu(NspObject *O);
-extern NspGtkOptionMenu *GetGtkOptionMenuCopy (Stack stack, int i); 
-extern NspGtkOptionMenu *GetGtkOptionMenu (Stack stack, int i); 
+extern NspGtkOptionMenu *GetGtkOptionMenuCopy (Stack stack, int i);
+extern NspGtkOptionMenu *GetGtkOptionMenu (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkOptionMenu */
+#endif /* NSP_INC_NspGtkOptionMenu */ 
 
 #ifdef NspGtkOptionMenu_Private 
 static int init_gtkoptionmenu(NspGtkOptionMenu *o,NspTypeGtkOptionMenu *type);
 static char *nsp_gtkoptionmenu_type_as_string(void);
 static char *nsp_gtkoptionmenu_type_short_string(NspObject *v);
 static AttrTab gtkoptionmenu_attrs[];
-static NspMethods *gtkoptionmenu_get_methods(void); 
-/* static int int_gtkoptionmenu_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkoptionmenu_get_methods(void);
+/* static int int_gtkoptionmenu_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkOptionMenu_Private */

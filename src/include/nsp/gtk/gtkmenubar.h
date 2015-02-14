@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmenushell.h>
 
 /*
-* NspGtkMenuBar inherits from GtkMenuShell
-* just change some type attributes 
-*/
+ * NspGtkMenuBar inherits from GtkMenuShell
+ * just change some type attributes 
+ */
 
 typedef NspGtkMenuShell NspGtkMenuBar ;
 typedef NspTypeGtkMenuShell NspTypeGtkMenuBar ;
@@ -45,27 +45,27 @@ NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode);
 NspGtkMenuBar *new_gtkmenubar();
 
 /*
-* Object methods redefined for gtkmenubar 
-*/
+ * Object methods redefined for gtkmenubar 
+ */
 
 #define NULLGTKMENUBAR (NspGtkMenuBar*) 0
 
 
 /* from NspGtkMenuBarObj.c */
 
-extern NspGtkMenuBar *nsp_gtkmenubar_object (NspObject *O); 
-extern int IsGtkMenuBarObj (Stack stack, int i); 
+extern NspGtkMenuBar *nsp_gtkmenubar_object (NspObject *O);
+extern int IsGtkMenuBarObj (Stack stack, int i);
 extern int IsGtkMenuBar(NspObject *O);
-extern NspGtkMenuBar *GetGtkMenuBarCopy (Stack stack, int i); 
-extern NspGtkMenuBar *GetGtkMenuBar (Stack stack, int i); 
+extern NspGtkMenuBar *GetGtkMenuBarCopy (Stack stack, int i);
+extern NspGtkMenuBar *GetGtkMenuBar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkMenuBar */
+#endif /* NSP_INC_NspGtkMenuBar */ 
 
 #ifdef NspGtkMenuBar_Private 
 static int init_gtkmenubar(NspGtkMenuBar *o,NspTypeGtkMenuBar *type);
 static char *nsp_gtkmenubar_type_as_string(void);
 static char *nsp_gtkmenubar_type_short_string(NspObject *v);
 static AttrTab gtkmenubar_attrs[];
-static NspMethods *gtkmenubar_get_methods(void); 
-/* static int int_gtkmenubar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmenubar_get_methods(void);
+/* static int int_gtkmenubar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkMenuBar_Private */

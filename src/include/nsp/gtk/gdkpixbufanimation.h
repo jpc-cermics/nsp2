@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkPixbufAnimation inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkPixbufAnimation inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkPixbufAnimation ;
 typedef NspTypeGObject NspTypeGdkPixbufAnimation ;
@@ -45,27 +45,27 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode);
 NspGdkPixbufAnimation *new_gdkpixbufanimation();
 
 /*
-* Object methods redefined for gdkpixbufanimation 
-*/
+ * Object methods redefined for gdkpixbufanimation 
+ */
 
 #define NULLGDKPIXBUFANIMATION (NspGdkPixbufAnimation*) 0
 
 
 /* from NspGdkPixbufAnimationObj.c */
 
-extern NspGdkPixbufAnimation *nsp_gdkpixbufanimation_object (NspObject *O); 
-extern int IsGdkPixbufAnimationObj (Stack stack, int i); 
+extern NspGdkPixbufAnimation *nsp_gdkpixbufanimation_object (NspObject *O);
+extern int IsGdkPixbufAnimationObj (Stack stack, int i);
 extern int IsGdkPixbufAnimation(NspObject *O);
-extern NspGdkPixbufAnimation *GetGdkPixbufAnimationCopy (Stack stack, int i); 
-extern NspGdkPixbufAnimation *GetGdkPixbufAnimation (Stack stack, int i); 
+extern NspGdkPixbufAnimation *GetGdkPixbufAnimationCopy (Stack stack, int i);
+extern NspGdkPixbufAnimation *GetGdkPixbufAnimation (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkPixbufAnimation */
+#endif /* NSP_INC_NspGdkPixbufAnimation */ 
 
 #ifdef NspGdkPixbufAnimation_Private 
 static int init_gdkpixbufanimation(NspGdkPixbufAnimation *o,NspTypeGdkPixbufAnimation *type);
 static char *nsp_gdkpixbufanimation_type_as_string(void);
 static char *nsp_gdkpixbufanimation_type_short_string(NspObject *v);
 static AttrTab gdkpixbufanimation_attrs[];
-static NspMethods *gdkpixbufanimation_get_methods(void); 
-/* static int int_gdkpixbufanimation_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbufanimation_get_methods(void);
+/* static int int_gdkpixbufanimation_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkPixbufAnimation_Private */

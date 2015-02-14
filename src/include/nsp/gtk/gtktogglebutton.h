@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbutton.h>
 
 /*
-* NspGtkToggleButton inherits from GtkButton
-* just change some type attributes 
-*/
+ * NspGtkToggleButton inherits from GtkButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkButton NspGtkToggleButton ;
 typedef NspTypeGtkButton NspTypeGtkToggleButton ;
@@ -45,27 +45,27 @@ NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode);
 NspGtkToggleButton *new_gtktogglebutton();
 
 /*
-* Object methods redefined for gtktogglebutton 
-*/
+ * Object methods redefined for gtktogglebutton 
+ */
 
 #define NULLGTKTOGGLEBUTTON (NspGtkToggleButton*) 0
 
 
 /* from NspGtkToggleButtonObj.c */
 
-extern NspGtkToggleButton *nsp_gtktogglebutton_object (NspObject *O); 
-extern int IsGtkToggleButtonObj (Stack stack, int i); 
+extern NspGtkToggleButton *nsp_gtktogglebutton_object (NspObject *O);
+extern int IsGtkToggleButtonObj (Stack stack, int i);
 extern int IsGtkToggleButton(NspObject *O);
-extern NspGtkToggleButton *GetGtkToggleButtonCopy (Stack stack, int i); 
-extern NspGtkToggleButton *GetGtkToggleButton (Stack stack, int i); 
+extern NspGtkToggleButton *GetGtkToggleButtonCopy (Stack stack, int i);
+extern NspGtkToggleButton *GetGtkToggleButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkToggleButton */
+#endif /* NSP_INC_NspGtkToggleButton */ 
 
 #ifdef NspGtkToggleButton_Private 
 static int init_gtktogglebutton(NspGtkToggleButton *o,NspTypeGtkToggleButton *type);
 static char *nsp_gtktogglebutton_type_as_string(void);
 static char *nsp_gtktogglebutton_type_short_string(NspObject *v);
 static AttrTab gtktogglebutton_attrs[];
-static NspMethods *gtktogglebutton_get_methods(void); 
-/* static int int_gtktogglebutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktogglebutton_get_methods(void);
+/* static int int_gtktogglebutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkToggleButton_Private */

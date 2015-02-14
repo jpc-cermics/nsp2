@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkhbox.h>
 
 /*
-* NspGtkFileChooserButton inherits from GtkHBox
-* just change some type attributes 
-*/
+ * NspGtkFileChooserButton inherits from GtkHBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkHBox NspGtkFileChooserButton ;
 typedef NspTypeGtkHBox NspTypeGtkFileChooserButton ;
@@ -45,27 +45,27 @@ NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode);
 NspGtkFileChooserButton *new_gtkfilechooserbutton();
 
 /*
-* Object methods redefined for gtkfilechooserbutton 
-*/
+ * Object methods redefined for gtkfilechooserbutton 
+ */
 
 #define NULLGTKFILECHOOSERBUTTON (NspGtkFileChooserButton*) 0
 
 
 /* from NspGtkFileChooserButtonObj.c */
 
-extern NspGtkFileChooserButton *nsp_gtkfilechooserbutton_object (NspObject *O); 
-extern int IsGtkFileChooserButtonObj (Stack stack, int i); 
+extern NspGtkFileChooserButton *nsp_gtkfilechooserbutton_object (NspObject *O);
+extern int IsGtkFileChooserButtonObj (Stack stack, int i);
 extern int IsGtkFileChooserButton(NspObject *O);
-extern NspGtkFileChooserButton *GetGtkFileChooserButtonCopy (Stack stack, int i); 
-extern NspGtkFileChooserButton *GetGtkFileChooserButton (Stack stack, int i); 
+extern NspGtkFileChooserButton *GetGtkFileChooserButtonCopy (Stack stack, int i);
+extern NspGtkFileChooserButton *GetGtkFileChooserButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFileChooserButton */
+#endif /* NSP_INC_NspGtkFileChooserButton */ 
 
 #ifdef NspGtkFileChooserButton_Private 
 static int init_gtkfilechooserbutton(NspGtkFileChooserButton *o,NspTypeGtkFileChooserButton *type);
 static char *nsp_gtkfilechooserbutton_type_as_string(void);
 static char *nsp_gtkfilechooserbutton_type_short_string(NspObject *v);
 static AttrTab gtkfilechooserbutton_attrs[];
-static NspMethods *gtkfilechooserbutton_get_methods(void); 
-/* static int int_gtkfilechooserbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfilechooserbutton_get_methods(void);
+/* static int int_gtkfilechooserbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFileChooserButton_Private */

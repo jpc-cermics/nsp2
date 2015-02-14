@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspWebKitWebFrame inherits from GObject
-* just change some type attributes 
-*/
+ * NspWebKitWebFrame inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspWebKitWebFrame ;
 typedef NspTypeGObject NspTypeWebKitWebFrame ;
@@ -45,27 +45,27 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode);
 NspWebKitWebFrame *new_webkitwebframe();
 
 /*
-* Object methods redefined for webkitwebframe 
-*/
+ * Object methods redefined for webkitwebframe 
+ */
 
 #define NULLWEBKITWEBFRAME (NspWebKitWebFrame*) 0
 
 
 /* from NspWebKitWebFrameObj.c */
 
-extern NspWebKitWebFrame *nsp_webkitwebframe_object (NspObject *O); 
-extern int IsWebKitWebFrameObj (Stack stack, int i); 
+extern NspWebKitWebFrame *nsp_webkitwebframe_object (NspObject *O);
+extern int IsWebKitWebFrameObj (Stack stack, int i);
 extern int IsWebKitWebFrame(NspObject *O);
-extern NspWebKitWebFrame *GetWebKitWebFrameCopy (Stack stack, int i); 
-extern NspWebKitWebFrame *GetWebKitWebFrame (Stack stack, int i); 
+extern NspWebKitWebFrame *GetWebKitWebFrameCopy (Stack stack, int i);
+extern NspWebKitWebFrame *GetWebKitWebFrame (Stack stack, int i);
 
-#endif /* NSP_INC_NspWebKitWebFrame */
+#endif /* NSP_INC_NspWebKitWebFrame */ 
 
 #ifdef NspWebKitWebFrame_Private 
 static int init_webkitwebframe(NspWebKitWebFrame *o,NspTypeWebKitWebFrame *type);
 static char *nsp_webkitwebframe_type_as_string(void);
 static char *nsp_webkitwebframe_type_short_string(NspObject *v);
 static AttrTab webkitwebframe_attrs[];
-static NspMethods *webkitwebframe_get_methods(void); 
-/* static int int_webkitwebframe_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *webkitwebframe_get_methods(void);
+/* static int int_webkitwebframe_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspWebKitWebFrame_Private */

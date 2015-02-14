@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkInputDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkInputDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkInputDialog ;
 typedef NspTypeGtkDialog NspTypeGtkInputDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode);
 NspGtkInputDialog *new_gtkinputdialog();
 
 /*
-* Object methods redefined for gtkinputdialog 
-*/
+ * Object methods redefined for gtkinputdialog 
+ */
 
 #define NULLGTKINPUTDIALOG (NspGtkInputDialog*) 0
 
 
 /* from NspGtkInputDialogObj.c */
 
-extern NspGtkInputDialog *nsp_gtkinputdialog_object (NspObject *O); 
-extern int IsGtkInputDialogObj (Stack stack, int i); 
+extern NspGtkInputDialog *nsp_gtkinputdialog_object (NspObject *O);
+extern int IsGtkInputDialogObj (Stack stack, int i);
 extern int IsGtkInputDialog(NspObject *O);
-extern NspGtkInputDialog *GetGtkInputDialogCopy (Stack stack, int i); 
-extern NspGtkInputDialog *GetGtkInputDialog (Stack stack, int i); 
+extern NspGtkInputDialog *GetGtkInputDialogCopy (Stack stack, int i);
+extern NspGtkInputDialog *GetGtkInputDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkInputDialog */
+#endif /* NSP_INC_NspGtkInputDialog */ 
 
 #ifdef NspGtkInputDialog_Private 
 static int init_gtkinputdialog(NspGtkInputDialog *o,NspTypeGtkInputDialog *type);
 static char *nsp_gtkinputdialog_type_as_string(void);
 static char *nsp_gtkinputdialog_type_short_string(NspObject *v);
 static AttrTab gtkinputdialog_attrs[];
-static NspMethods *gtkinputdialog_get_methods(void); 
-/* static int int_gtkinputdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkinputdialog_get_methods(void);
+/* static int int_gtkinputdialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkInputDialog_Private */

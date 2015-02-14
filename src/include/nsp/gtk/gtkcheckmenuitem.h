@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmenuitem.h>
 
 /*
-* NspGtkCheckMenuItem inherits from GtkMenuItem
-* just change some type attributes 
-*/
+ * NspGtkCheckMenuItem inherits from GtkMenuItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkMenuItem NspGtkCheckMenuItem ;
 typedef NspTypeGtkMenuItem NspTypeGtkCheckMenuItem ;
@@ -45,27 +45,27 @@ NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode);
 NspGtkCheckMenuItem *new_gtkcheckmenuitem();
 
 /*
-* Object methods redefined for gtkcheckmenuitem 
-*/
+ * Object methods redefined for gtkcheckmenuitem 
+ */
 
 #define NULLGTKCHECKMENUITEM (NspGtkCheckMenuItem*) 0
 
 
 /* from NspGtkCheckMenuItemObj.c */
 
-extern NspGtkCheckMenuItem *nsp_gtkcheckmenuitem_object (NspObject *O); 
-extern int IsGtkCheckMenuItemObj (Stack stack, int i); 
+extern NspGtkCheckMenuItem *nsp_gtkcheckmenuitem_object (NspObject *O);
+extern int IsGtkCheckMenuItemObj (Stack stack, int i);
 extern int IsGtkCheckMenuItem(NspObject *O);
-extern NspGtkCheckMenuItem *GetGtkCheckMenuItemCopy (Stack stack, int i); 
-extern NspGtkCheckMenuItem *GetGtkCheckMenuItem (Stack stack, int i); 
+extern NspGtkCheckMenuItem *GetGtkCheckMenuItemCopy (Stack stack, int i);
+extern NspGtkCheckMenuItem *GetGtkCheckMenuItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCheckMenuItem */
+#endif /* NSP_INC_NspGtkCheckMenuItem */ 
 
 #ifdef NspGtkCheckMenuItem_Private 
 static int init_gtkcheckmenuitem(NspGtkCheckMenuItem *o,NspTypeGtkCheckMenuItem *type);
 static char *nsp_gtkcheckmenuitem_type_as_string(void);
 static char *nsp_gtkcheckmenuitem_type_short_string(NspObject *v);
 static AttrTab gtkcheckmenuitem_attrs[];
-static NspMethods *gtkcheckmenuitem_get_methods(void); 
-/* static int int_gtkcheckmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcheckmenuitem_get_methods(void);
+/* static int int_gtkcheckmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCheckMenuItem_Private */

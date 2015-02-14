@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcheckmenuitem.h>
 
 /*
-* NspGtkRadioMenuItem inherits from GtkCheckMenuItem
-* just change some type attributes 
-*/
+ * NspGtkRadioMenuItem inherits from GtkCheckMenuItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkCheckMenuItem NspGtkRadioMenuItem ;
 typedef NspTypeGtkCheckMenuItem NspTypeGtkRadioMenuItem ;
@@ -45,27 +45,27 @@ NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode);
 NspGtkRadioMenuItem *new_gtkradiomenuitem();
 
 /*
-* Object methods redefined for gtkradiomenuitem 
-*/
+ * Object methods redefined for gtkradiomenuitem 
+ */
 
 #define NULLGTKRADIOMENUITEM (NspGtkRadioMenuItem*) 0
 
 
 /* from NspGtkRadioMenuItemObj.c */
 
-extern NspGtkRadioMenuItem *nsp_gtkradiomenuitem_object (NspObject *O); 
-extern int IsGtkRadioMenuItemObj (Stack stack, int i); 
+extern NspGtkRadioMenuItem *nsp_gtkradiomenuitem_object (NspObject *O);
+extern int IsGtkRadioMenuItemObj (Stack stack, int i);
 extern int IsGtkRadioMenuItem(NspObject *O);
-extern NspGtkRadioMenuItem *GetGtkRadioMenuItemCopy (Stack stack, int i); 
-extern NspGtkRadioMenuItem *GetGtkRadioMenuItem (Stack stack, int i); 
+extern NspGtkRadioMenuItem *GetGtkRadioMenuItemCopy (Stack stack, int i);
+extern NspGtkRadioMenuItem *GetGtkRadioMenuItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRadioMenuItem */
+#endif /* NSP_INC_NspGtkRadioMenuItem */ 
 
 #ifdef NspGtkRadioMenuItem_Private 
 static int init_gtkradiomenuitem(NspGtkRadioMenuItem *o,NspTypeGtkRadioMenuItem *type);
 static char *nsp_gtkradiomenuitem_type_as_string(void);
 static char *nsp_gtkradiomenuitem_type_short_string(NspObject *v);
 static AttrTab gtkradiomenuitem_attrs[];
-static NspMethods *gtkradiomenuitem_get_methods(void); 
-/* static int int_gtkradiomenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkradiomenuitem_get_methods(void);
+/* static int int_gtkradiomenuitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRadioMenuItem_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkvbox.h>
 
 /*
-* NspGtkFileChooserWidget inherits from GtkVBox
-* just change some type attributes 
-*/
+ * NspGtkFileChooserWidget inherits from GtkVBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkVBox NspGtkFileChooserWidget ;
 typedef NspTypeGtkVBox NspTypeGtkFileChooserWidget ;
@@ -45,27 +45,27 @@ NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode);
 NspGtkFileChooserWidget *new_gtkfilechooserwidget();
 
 /*
-* Object methods redefined for gtkfilechooserwidget 
-*/
+ * Object methods redefined for gtkfilechooserwidget 
+ */
 
 #define NULLGTKFILECHOOSERWIDGET (NspGtkFileChooserWidget*) 0
 
 
 /* from NspGtkFileChooserWidgetObj.c */
 
-extern NspGtkFileChooserWidget *nsp_gtkfilechooserwidget_object (NspObject *O); 
-extern int IsGtkFileChooserWidgetObj (Stack stack, int i); 
+extern NspGtkFileChooserWidget *nsp_gtkfilechooserwidget_object (NspObject *O);
+extern int IsGtkFileChooserWidgetObj (Stack stack, int i);
 extern int IsGtkFileChooserWidget(NspObject *O);
-extern NspGtkFileChooserWidget *GetGtkFileChooserWidgetCopy (Stack stack, int i); 
-extern NspGtkFileChooserWidget *GetGtkFileChooserWidget (Stack stack, int i); 
+extern NspGtkFileChooserWidget *GetGtkFileChooserWidgetCopy (Stack stack, int i);
+extern NspGtkFileChooserWidget *GetGtkFileChooserWidget (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFileChooserWidget */
+#endif /* NSP_INC_NspGtkFileChooserWidget */ 
 
 #ifdef NspGtkFileChooserWidget_Private 
 static int init_gtkfilechooserwidget(NspGtkFileChooserWidget *o,NspTypeGtkFileChooserWidget *type);
 static char *nsp_gtkfilechooserwidget_type_as_string(void);
 static char *nsp_gtkfilechooserwidget_type_short_string(NspObject *v);
 static AttrTab gtkfilechooserwidget_attrs[];
-static NspMethods *gtkfilechooserwidget_get_methods(void); 
-/* static int int_gtkfilechooserwidget_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfilechooserwidget_get_methods(void);
+/* static int int_gtkfilechooserwidget_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFileChooserWidget_Private */

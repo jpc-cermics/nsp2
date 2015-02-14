@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkFixed inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkFixed inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkFixed ;
 typedef NspTypeGtkContainer NspTypeGtkFixed ;
@@ -45,27 +45,27 @@ NspTypeGtkFixed *new_type_gtkfixed(type_mode mode);
 NspGtkFixed *new_gtkfixed();
 
 /*
-* Object methods redefined for gtkfixed 
-*/
+ * Object methods redefined for gtkfixed 
+ */
 
 #define NULLGTKFIXED (NspGtkFixed*) 0
 
 
 /* from NspGtkFixedObj.c */
 
-extern NspGtkFixed *nsp_gtkfixed_object (NspObject *O); 
-extern int IsGtkFixedObj (Stack stack, int i); 
+extern NspGtkFixed *nsp_gtkfixed_object (NspObject *O);
+extern int IsGtkFixedObj (Stack stack, int i);
 extern int IsGtkFixed(NspObject *O);
-extern NspGtkFixed *GetGtkFixedCopy (Stack stack, int i); 
-extern NspGtkFixed *GetGtkFixed (Stack stack, int i); 
+extern NspGtkFixed *GetGtkFixedCopy (Stack stack, int i);
+extern NspGtkFixed *GetGtkFixed (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFixed */
+#endif /* NSP_INC_NspGtkFixed */ 
 
 #ifdef NspGtkFixed_Private 
 static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type);
 static char *nsp_gtkfixed_type_as_string(void);
 static char *nsp_gtkfixed_type_short_string(NspObject *v);
 static AttrTab gtkfixed_attrs[];
-static NspMethods *gtkfixed_get_methods(void); 
-/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfixed_get_methods(void);
+/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFixed_Private */

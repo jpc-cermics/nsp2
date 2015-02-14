@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkObject inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkObject inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkObject ;
 typedef NspTypeGObject NspTypeGtkObject ;
@@ -45,27 +45,27 @@ NspTypeGtkObject *new_type_gtkobject(type_mode mode);
 NspGtkObject *new_gtkobject();
 
 /*
-* Object methods redefined for gtkobject 
-*/
+ * Object methods redefined for gtkobject 
+ */
 
 #define NULLGTKOBJECT (NspGtkObject*) 0
 
 
 /* from NspGtkObjectObj.c */
 
-extern NspGtkObject *nsp_gtkobject_object (NspObject *O); 
-extern int IsGtkObjectObj (Stack stack, int i); 
+extern NspGtkObject *nsp_gtkobject_object (NspObject *O);
+extern int IsGtkObjectObj (Stack stack, int i);
 extern int IsGtkObject(NspObject *O);
-extern NspGtkObject *GetGtkObjectCopy (Stack stack, int i); 
-extern NspGtkObject *GetGtkObject (Stack stack, int i); 
+extern NspGtkObject *GetGtkObjectCopy (Stack stack, int i);
+extern NspGtkObject *GetGtkObject (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkObject */
+#endif /* NSP_INC_NspGtkObject */ 
 
 #ifdef NspGtkObject_Private 
 static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type);
 static char *nsp_gtkobject_type_as_string(void);
 static char *nsp_gtkobject_type_short_string(NspObject *v);
 static AttrTab gtkobject_attrs[];
-static NspMethods *gtkobject_get_methods(void); 
-/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkobject_get_methods(void);
+/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkObject_Private */

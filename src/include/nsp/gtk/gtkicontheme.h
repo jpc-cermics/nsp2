@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkIconTheme inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkIconTheme inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkIconTheme ;
 typedef NspTypeGObject NspTypeGtkIconTheme ;
@@ -45,27 +45,27 @@ NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode);
 NspGtkIconTheme *new_gtkicontheme();
 
 /*
-* Object methods redefined for gtkicontheme 
-*/
+ * Object methods redefined for gtkicontheme 
+ */
 
 #define NULLGTKICONTHEME (NspGtkIconTheme*) 0
 
 
 /* from NspGtkIconThemeObj.c */
 
-extern NspGtkIconTheme *nsp_gtkicontheme_object (NspObject *O); 
-extern int IsGtkIconThemeObj (Stack stack, int i); 
+extern NspGtkIconTheme *nsp_gtkicontheme_object (NspObject *O);
+extern int IsGtkIconThemeObj (Stack stack, int i);
 extern int IsGtkIconTheme(NspObject *O);
-extern NspGtkIconTheme *GetGtkIconThemeCopy (Stack stack, int i); 
-extern NspGtkIconTheme *GetGtkIconTheme (Stack stack, int i); 
+extern NspGtkIconTheme *GetGtkIconThemeCopy (Stack stack, int i);
+extern NspGtkIconTheme *GetGtkIconTheme (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIconTheme */
+#endif /* NSP_INC_NspGtkIconTheme */ 
 
 #ifdef NspGtkIconTheme_Private 
 static int init_gtkicontheme(NspGtkIconTheme *o,NspTypeGtkIconTheme *type);
 static char *nsp_gtkicontheme_type_as_string(void);
 static char *nsp_gtkicontheme_type_short_string(NspObject *v);
 static AttrTab gtkicontheme_attrs[];
-static NspMethods *gtkicontheme_get_methods(void); 
-/* static int int_gtkicontheme_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkicontheme_get_methods(void);
+/* static int int_gtkicontheme_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIconTheme_Private */

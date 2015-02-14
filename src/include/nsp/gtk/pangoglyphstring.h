@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspPangoGlyphString inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspPangoGlyphString inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspPangoGlyphString ;
 typedef NspTypeGBoxed NspTypePangoGlyphString ;
@@ -45,27 +45,27 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode);
 NspPangoGlyphString *new_pangoglyphstring();
 
 /*
-* Object methods redefined for pangoglyphstring 
-*/
+ * Object methods redefined for pangoglyphstring 
+ */
 
 #define NULLPANGOGLYPHSTRING (NspPangoGlyphString*) 0
 
 
 /* from NspPangoGlyphStringObj.c */
 
-extern NspPangoGlyphString *nsp_pangoglyphstring_object (NspObject *O); 
-extern int IsPangoGlyphStringObj (Stack stack, int i); 
+extern NspPangoGlyphString *nsp_pangoglyphstring_object (NspObject *O);
+extern int IsPangoGlyphStringObj (Stack stack, int i);
 extern int IsPangoGlyphString(NspObject *O);
-extern NspPangoGlyphString *GetPangoGlyphStringCopy (Stack stack, int i); 
-extern NspPangoGlyphString *GetPangoGlyphString (Stack stack, int i); 
+extern NspPangoGlyphString *GetPangoGlyphStringCopy (Stack stack, int i);
+extern NspPangoGlyphString *GetPangoGlyphString (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoGlyphString */
+#endif /* NSP_INC_NspPangoGlyphString */ 
 
 #ifdef NspPangoGlyphString_Private 
 static int init_pangoglyphstring(NspPangoGlyphString *o,NspTypePangoGlyphString *type);
 static char *nsp_pangoglyphstring_type_as_string(void);
 static char *nsp_pangoglyphstring_type_short_string(NspObject *v);
 static AttrTab pangoglyphstring_attrs[];
-static NspMethods *pangoglyphstring_get_methods(void); 
-/* static int int_pangoglyphstring_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangoglyphstring_get_methods(void);
+/* static int int_pangoglyphstring_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoGlyphString_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktoolbutton.h>
 
 /*
-* NspGtkMenuToolButton inherits from GtkToolButton
-* just change some type attributes 
-*/
+ * NspGtkMenuToolButton inherits from GtkToolButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkToolButton NspGtkMenuToolButton ;
 typedef NspTypeGtkToolButton NspTypeGtkMenuToolButton ;
@@ -45,27 +45,27 @@ NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode);
 NspGtkMenuToolButton *new_gtkmenutoolbutton();
 
 /*
-* Object methods redefined for gtkmenutoolbutton 
-*/
+ * Object methods redefined for gtkmenutoolbutton 
+ */
 
 #define NULLGTKMENUTOOLBUTTON (NspGtkMenuToolButton*) 0
 
 
 /* from NspGtkMenuToolButtonObj.c */
 
-extern NspGtkMenuToolButton *nsp_gtkmenutoolbutton_object (NspObject *O); 
-extern int IsGtkMenuToolButtonObj (Stack stack, int i); 
+extern NspGtkMenuToolButton *nsp_gtkmenutoolbutton_object (NspObject *O);
+extern int IsGtkMenuToolButtonObj (Stack stack, int i);
 extern int IsGtkMenuToolButton(NspObject *O);
-extern NspGtkMenuToolButton *GetGtkMenuToolButtonCopy (Stack stack, int i); 
-extern NspGtkMenuToolButton *GetGtkMenuToolButton (Stack stack, int i); 
+extern NspGtkMenuToolButton *GetGtkMenuToolButtonCopy (Stack stack, int i);
+extern NspGtkMenuToolButton *GetGtkMenuToolButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkMenuToolButton */
+#endif /* NSP_INC_NspGtkMenuToolButton */ 
 
 #ifdef NspGtkMenuToolButton_Private 
 static int init_gtkmenutoolbutton(NspGtkMenuToolButton *o,NspTypeGtkMenuToolButton *type);
 static char *nsp_gtkmenutoolbutton_type_as_string(void);
 static char *nsp_gtkmenutoolbutton_type_short_string(NspObject *v);
 static AttrTab gtkmenutoolbutton_attrs[];
-static NspMethods *gtkmenutoolbutton_get_methods(void); 
-/* static int int_gtkmenutoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmenutoolbutton_get_methods(void);
+/* static int int_gtkmenutoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkMenuToolButton_Private */

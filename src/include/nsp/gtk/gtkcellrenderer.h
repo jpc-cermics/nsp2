@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkobject.h>
 
 /*
-* NspGtkCellRenderer inherits from GtkObject
-* just change some type attributes 
-*/
+ * NspGtkCellRenderer inherits from GtkObject
+ * just change some type attributes 
+ */
 
 typedef NspGtkObject NspGtkCellRenderer ;
 typedef NspTypeGtkObject NspTypeGtkCellRenderer ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode);
 NspGtkCellRenderer *new_gtkcellrenderer();
 
 /*
-* Object methods redefined for gtkcellrenderer 
-*/
+ * Object methods redefined for gtkcellrenderer 
+ */
 
 #define NULLGTKCELLRENDERER (NspGtkCellRenderer*) 0
 
 
 /* from NspGtkCellRendererObj.c */
 
-extern NspGtkCellRenderer *nsp_gtkcellrenderer_object (NspObject *O); 
-extern int IsGtkCellRendererObj (Stack stack, int i); 
+extern NspGtkCellRenderer *nsp_gtkcellrenderer_object (NspObject *O);
+extern int IsGtkCellRendererObj (Stack stack, int i);
 extern int IsGtkCellRenderer(NspObject *O);
-extern NspGtkCellRenderer *GetGtkCellRendererCopy (Stack stack, int i); 
-extern NspGtkCellRenderer *GetGtkCellRenderer (Stack stack, int i); 
+extern NspGtkCellRenderer *GetGtkCellRendererCopy (Stack stack, int i);
+extern NspGtkCellRenderer *GetGtkCellRenderer (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRenderer */
+#endif /* NSP_INC_NspGtkCellRenderer */ 
 
 #ifdef NspGtkCellRenderer_Private 
 static int init_gtkcellrenderer(NspGtkCellRenderer *o,NspTypeGtkCellRenderer *type);
 static char *nsp_gtkcellrenderer_type_as_string(void);
 static char *nsp_gtkcellrenderer_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderer_attrs[];
-static NspMethods *gtkcellrenderer_get_methods(void); 
-/* static int int_gtkcellrenderer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderer_get_methods(void);
+/* static int int_gtkcellrenderer_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRenderer_Private */

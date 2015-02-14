@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkToolbar inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkToolbar inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkToolbar ;
 typedef NspTypeGtkContainer NspTypeGtkToolbar ;
@@ -45,27 +45,27 @@ NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode);
 NspGtkToolbar *new_gtktoolbar();
 
 /*
-* Object methods redefined for gtktoolbar 
-*/
+ * Object methods redefined for gtktoolbar 
+ */
 
 #define NULLGTKTOOLBAR (NspGtkToolbar*) 0
 
 
 /* from NspGtkToolbarObj.c */
 
-extern NspGtkToolbar *nsp_gtktoolbar_object (NspObject *O); 
-extern int IsGtkToolbarObj (Stack stack, int i); 
+extern NspGtkToolbar *nsp_gtktoolbar_object (NspObject *O);
+extern int IsGtkToolbarObj (Stack stack, int i);
 extern int IsGtkToolbar(NspObject *O);
-extern NspGtkToolbar *GetGtkToolbarCopy (Stack stack, int i); 
-extern NspGtkToolbar *GetGtkToolbar (Stack stack, int i); 
+extern NspGtkToolbar *GetGtkToolbarCopy (Stack stack, int i);
+extern NspGtkToolbar *GetGtkToolbar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkToolbar */
+#endif /* NSP_INC_NspGtkToolbar */ 
 
 #ifdef NspGtkToolbar_Private 
 static int init_gtktoolbar(NspGtkToolbar *o,NspTypeGtkToolbar *type);
 static char *nsp_gtktoolbar_type_as_string(void);
 static char *nsp_gtktoolbar_type_short_string(NspObject *v);
 static AttrTab gtktoolbar_attrs[];
-static NspMethods *gtktoolbar_get_methods(void); 
-/* static int int_gtktoolbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktoolbar_get_methods(void);
+/* static int int_gtktoolbar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkToolbar_Private */

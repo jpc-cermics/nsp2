@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbox.h>
 
 /*
-* NspGtkHBox inherits from GtkBox
-* just change some type attributes 
-*/
+ * NspGtkHBox inherits from GtkBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkBox NspGtkHBox ;
 typedef NspTypeGtkBox NspTypeGtkHBox ;
@@ -45,27 +45,27 @@ NspTypeGtkHBox *new_type_gtkhbox(type_mode mode);
 NspGtkHBox *new_gtkhbox();
 
 /*
-* Object methods redefined for gtkhbox 
-*/
+ * Object methods redefined for gtkhbox 
+ */
 
 #define NULLGTKHBOX (NspGtkHBox*) 0
 
 
 /* from NspGtkHBoxObj.c */
 
-extern NspGtkHBox *nsp_gtkhbox_object (NspObject *O); 
-extern int IsGtkHBoxObj (Stack stack, int i); 
+extern NspGtkHBox *nsp_gtkhbox_object (NspObject *O);
+extern int IsGtkHBoxObj (Stack stack, int i);
 extern int IsGtkHBox(NspObject *O);
-extern NspGtkHBox *GetGtkHBoxCopy (Stack stack, int i); 
-extern NspGtkHBox *GetGtkHBox (Stack stack, int i); 
+extern NspGtkHBox *GetGtkHBoxCopy (Stack stack, int i);
+extern NspGtkHBox *GetGtkHBox (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkHBox */
+#endif /* NSP_INC_NspGtkHBox */ 
 
 #ifdef NspGtkHBox_Private 
 static int init_gtkhbox(NspGtkHBox *o,NspTypeGtkHBox *type);
 static char *nsp_gtkhbox_type_as_string(void);
 static char *nsp_gtkhbox_type_short_string(NspObject *v);
 static AttrTab gtkhbox_attrs[];
-static NspMethods *gtkhbox_get_methods(void); 
-/* static int int_gtkhbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhbox_get_methods(void);
+/* static int int_gtkhbox_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkHBox_Private */

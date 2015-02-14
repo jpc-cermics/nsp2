@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkInvisible inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkInvisible inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkInvisible ;
 typedef NspTypeGtkWidget NspTypeGtkInvisible ;
@@ -45,27 +45,27 @@ NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode);
 NspGtkInvisible *new_gtkinvisible();
 
 /*
-* Object methods redefined for gtkinvisible 
-*/
+ * Object methods redefined for gtkinvisible 
+ */
 
 #define NULLGTKINVISIBLE (NspGtkInvisible*) 0
 
 
 /* from NspGtkInvisibleObj.c */
 
-extern NspGtkInvisible *nsp_gtkinvisible_object (NspObject *O); 
-extern int IsGtkInvisibleObj (Stack stack, int i); 
+extern NspGtkInvisible *nsp_gtkinvisible_object (NspObject *O);
+extern int IsGtkInvisibleObj (Stack stack, int i);
 extern int IsGtkInvisible(NspObject *O);
-extern NspGtkInvisible *GetGtkInvisibleCopy (Stack stack, int i); 
-extern NspGtkInvisible *GetGtkInvisible (Stack stack, int i); 
+extern NspGtkInvisible *GetGtkInvisibleCopy (Stack stack, int i);
+extern NspGtkInvisible *GetGtkInvisible (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkInvisible */
+#endif /* NSP_INC_NspGtkInvisible */ 
 
 #ifdef NspGtkInvisible_Private 
 static int init_gtkinvisible(NspGtkInvisible *o,NspTypeGtkInvisible *type);
 static char *nsp_gtkinvisible_type_as_string(void);
 static char *nsp_gtkinvisible_type_short_string(NspObject *v);
 static AttrTab gtkinvisible_attrs[];
-static NspMethods *gtkinvisible_get_methods(void); 
-/* static int int_gtkinvisible_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkinvisible_get_methods(void);
+/* static int int_gtkinvisible_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkInvisible_Private */

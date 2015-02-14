@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkWindow inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkWindow inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkWindow ;
 typedef NspTypeGtkBin NspTypeGtkWindow ;
@@ -45,27 +45,27 @@ NspTypeGtkWindow *new_type_gtkwindow(type_mode mode);
 NspGtkWindow *new_gtkwindow();
 
 /*
-* Object methods redefined for gtkwindow 
-*/
+ * Object methods redefined for gtkwindow 
+ */
 
 #define NULLGTKWINDOW (NspGtkWindow*) 0
 
 
 /* from NspGtkWindowObj.c */
 
-extern NspGtkWindow *nsp_gtkwindow_object (NspObject *O); 
-extern int IsGtkWindowObj (Stack stack, int i); 
+extern NspGtkWindow *nsp_gtkwindow_object (NspObject *O);
+extern int IsGtkWindowObj (Stack stack, int i);
 extern int IsGtkWindow(NspObject *O);
-extern NspGtkWindow *GetGtkWindowCopy (Stack stack, int i); 
-extern NspGtkWindow *GetGtkWindow (Stack stack, int i); 
+extern NspGtkWindow *GetGtkWindowCopy (Stack stack, int i);
+extern NspGtkWindow *GetGtkWindow (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkWindow */
+#endif /* NSP_INC_NspGtkWindow */ 
 
 #ifdef NspGtkWindow_Private 
 static int init_gtkwindow(NspGtkWindow *o,NspTypeGtkWindow *type);
 static char *nsp_gtkwindow_type_as_string(void);
 static char *nsp_gtkwindow_type_short_string(NspObject *v);
 static AttrTab gtkwindow_attrs[];
-static NspMethods *gtkwindow_get_methods(void); 
-/* static int int_gtkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkwindow_get_methods(void);
+/* static int int_gtkwindow_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkWindow_Private */

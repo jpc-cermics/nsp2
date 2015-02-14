@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkscale.h>
 
 /*
-* NspGtkHScale inherits from GtkScale
-* just change some type attributes 
-*/
+ * NspGtkHScale inherits from GtkScale
+ * just change some type attributes 
+ */
 
 typedef NspGtkScale NspGtkHScale ;
 typedef NspTypeGtkScale NspTypeGtkHScale ;
@@ -45,27 +45,27 @@ NspTypeGtkHScale *new_type_gtkhscale(type_mode mode);
 NspGtkHScale *new_gtkhscale();
 
 /*
-* Object methods redefined for gtkhscale 
-*/
+ * Object methods redefined for gtkhscale 
+ */
 
 #define NULLGTKHSCALE (NspGtkHScale*) 0
 
 
 /* from NspGtkHScaleObj.c */
 
-extern NspGtkHScale *nsp_gtkhscale_object (NspObject *O); 
-extern int IsGtkHScaleObj (Stack stack, int i); 
+extern NspGtkHScale *nsp_gtkhscale_object (NspObject *O);
+extern int IsGtkHScaleObj (Stack stack, int i);
 extern int IsGtkHScale(NspObject *O);
-extern NspGtkHScale *GetGtkHScaleCopy (Stack stack, int i); 
-extern NspGtkHScale *GetGtkHScale (Stack stack, int i); 
+extern NspGtkHScale *GetGtkHScaleCopy (Stack stack, int i);
+extern NspGtkHScale *GetGtkHScale (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkHScale */
+#endif /* NSP_INC_NspGtkHScale */ 
 
 #ifdef NspGtkHScale_Private 
 static int init_gtkhscale(NspGtkHScale *o,NspTypeGtkHScale *type);
 static char *nsp_gtkhscale_type_as_string(void);
 static char *nsp_gtkhscale_type_short_string(NspObject *v);
 static AttrTab gtkhscale_attrs[];
-static NspMethods *gtkhscale_get_methods(void); 
-/* static int int_gtkhscale_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhscale_get_methods(void);
+/* static int int_gtkhscale_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkHScale_Private */

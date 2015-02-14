@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkCalendar inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkCalendar inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkCalendar ;
 typedef NspTypeGtkWidget NspTypeGtkCalendar ;
@@ -45,27 +45,27 @@ NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode);
 NspGtkCalendar *new_gtkcalendar();
 
 /*
-* Object methods redefined for gtkcalendar 
-*/
+ * Object methods redefined for gtkcalendar 
+ */
 
 #define NULLGTKCALENDAR (NspGtkCalendar*) 0
 
 
 /* from NspGtkCalendarObj.c */
 
-extern NspGtkCalendar *nsp_gtkcalendar_object (NspObject *O); 
-extern int IsGtkCalendarObj (Stack stack, int i); 
+extern NspGtkCalendar *nsp_gtkcalendar_object (NspObject *O);
+extern int IsGtkCalendarObj (Stack stack, int i);
 extern int IsGtkCalendar(NspObject *O);
-extern NspGtkCalendar *GetGtkCalendarCopy (Stack stack, int i); 
-extern NspGtkCalendar *GetGtkCalendar (Stack stack, int i); 
+extern NspGtkCalendar *GetGtkCalendarCopy (Stack stack, int i);
+extern NspGtkCalendar *GetGtkCalendar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCalendar */
+#endif /* NSP_INC_NspGtkCalendar */ 
 
 #ifdef NspGtkCalendar_Private 
 static int init_gtkcalendar(NspGtkCalendar *o,NspTypeGtkCalendar *type);
 static char *nsp_gtkcalendar_type_as_string(void);
 static char *nsp_gtkcalendar_type_short_string(NspObject *v);
 static AttrTab gtkcalendar_attrs[];
-static NspMethods *gtkcalendar_get_methods(void); 
-/* static int int_gtkcalendar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcalendar_get_methods(void);
+/* static int int_gtkcalendar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCalendar_Private */

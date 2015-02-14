@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkEntryCompletion inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkEntryCompletion inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkEntryCompletion ;
 typedef NspTypeGObject NspTypeGtkEntryCompletion ;
@@ -45,27 +45,27 @@ NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode);
 NspGtkEntryCompletion *new_gtkentrycompletion();
 
 /*
-* Object methods redefined for gtkentrycompletion 
-*/
+ * Object methods redefined for gtkentrycompletion 
+ */
 
 #define NULLGTKENTRYCOMPLETION (NspGtkEntryCompletion*) 0
 
 
 /* from NspGtkEntryCompletionObj.c */
 
-extern NspGtkEntryCompletion *nsp_gtkentrycompletion_object (NspObject *O); 
-extern int IsGtkEntryCompletionObj (Stack stack, int i); 
+extern NspGtkEntryCompletion *nsp_gtkentrycompletion_object (NspObject *O);
+extern int IsGtkEntryCompletionObj (Stack stack, int i);
 extern int IsGtkEntryCompletion(NspObject *O);
-extern NspGtkEntryCompletion *GetGtkEntryCompletionCopy (Stack stack, int i); 
-extern NspGtkEntryCompletion *GetGtkEntryCompletion (Stack stack, int i); 
+extern NspGtkEntryCompletion *GetGtkEntryCompletionCopy (Stack stack, int i);
+extern NspGtkEntryCompletion *GetGtkEntryCompletion (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkEntryCompletion */
+#endif /* NSP_INC_NspGtkEntryCompletion */ 
 
 #ifdef NspGtkEntryCompletion_Private 
 static int init_gtkentrycompletion(NspGtkEntryCompletion *o,NspTypeGtkEntryCompletion *type);
 static char *nsp_gtkentrycompletion_type_as_string(void);
 static char *nsp_gtkentrycompletion_type_short_string(NspObject *v);
 static AttrTab gtkentrycompletion_attrs[];
-static NspMethods *gtkentrycompletion_get_methods(void); 
-/* static int int_gtkentrycompletion_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkentrycompletion_get_methods(void);
+/* static int int_gtkentrycompletion_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkEntryCompletion_Private */

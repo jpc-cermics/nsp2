@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkNotebook inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkNotebook inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkNotebook ;
 typedef NspTypeGtkContainer NspTypeGtkNotebook ;
@@ -45,27 +45,27 @@ NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode);
 NspGtkNotebook *new_gtknotebook();
 
 /*
-* Object methods redefined for gtknotebook 
-*/
+ * Object methods redefined for gtknotebook 
+ */
 
 #define NULLGTKNOTEBOOK (NspGtkNotebook*) 0
 
 
 /* from NspGtkNotebookObj.c */
 
-extern NspGtkNotebook *nsp_gtknotebook_object (NspObject *O); 
-extern int IsGtkNotebookObj (Stack stack, int i); 
+extern NspGtkNotebook *nsp_gtknotebook_object (NspObject *O);
+extern int IsGtkNotebookObj (Stack stack, int i);
 extern int IsGtkNotebook(NspObject *O);
-extern NspGtkNotebook *GetGtkNotebookCopy (Stack stack, int i); 
-extern NspGtkNotebook *GetGtkNotebook (Stack stack, int i); 
+extern NspGtkNotebook *GetGtkNotebookCopy (Stack stack, int i);
+extern NspGtkNotebook *GetGtkNotebook (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkNotebook */
+#endif /* NSP_INC_NspGtkNotebook */ 
 
 #ifdef NspGtkNotebook_Private 
 static int init_gtknotebook(NspGtkNotebook *o,NspTypeGtkNotebook *type);
 static char *nsp_gtknotebook_type_as_string(void);
 static char *nsp_gtknotebook_type_short_string(NspObject *v);
 static AttrTab gtknotebook_attrs[];
-static NspMethods *gtknotebook_get_methods(void); 
-/* static int int_gtknotebook_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtknotebook_get_methods(void);
+/* static int int_gtknotebook_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkNotebook_Private */

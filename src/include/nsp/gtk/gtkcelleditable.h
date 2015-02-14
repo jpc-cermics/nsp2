@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkCellEditable inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkCellEditable inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkCellEditable ;
 typedef NspTypeGObject NspTypeGtkCellEditable ;
@@ -45,27 +45,27 @@ NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode);
 NspGtkCellEditable *new_gtkcelleditable();
 
 /*
-* Object methods redefined for gtkcelleditable 
-*/
+ * Object methods redefined for gtkcelleditable 
+ */
 
 #define NULLGTKCELLEDITABLE (NspGtkCellEditable*) 0
 
 
 /* from NspGtkCellEditableObj.c */
 
-extern NspGtkCellEditable *nsp_gtkcelleditable_object (NspObject *O); 
-extern int IsGtkCellEditableObj (Stack stack, int i); 
+extern NspGtkCellEditable *nsp_gtkcelleditable_object (NspObject *O);
+extern int IsGtkCellEditableObj (Stack stack, int i);
 extern int IsGtkCellEditable(NspObject *O);
-extern NspGtkCellEditable *GetGtkCellEditableCopy (Stack stack, int i); 
-extern NspGtkCellEditable *GetGtkCellEditable (Stack stack, int i); 
+extern NspGtkCellEditable *GetGtkCellEditableCopy (Stack stack, int i);
+extern NspGtkCellEditable *GetGtkCellEditable (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellEditable */
+#endif /* NSP_INC_NspGtkCellEditable */ 
 
 #ifdef NspGtkCellEditable_Private 
 static int init_gtkcelleditable(NspGtkCellEditable *o,NspTypeGtkCellEditable *type);
 static char *nsp_gtkcelleditable_type_as_string(void);
 static char *nsp_gtkcelleditable_type_short_string(NspObject *v);
 static AttrTab gtkcelleditable_attrs[];
-static NspMethods *gtkcelleditable_get_methods(void); 
-/* static int int_gtkcelleditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcelleditable_get_methods(void);
+/* static int int_gtkcelleditable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellEditable_Private */

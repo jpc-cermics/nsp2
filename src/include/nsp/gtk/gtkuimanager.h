@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkUIManager inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkUIManager inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkUIManager ;
 typedef NspTypeGObject NspTypeGtkUIManager ;
@@ -45,27 +45,27 @@ NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode);
 NspGtkUIManager *new_gtkuimanager();
 
 /*
-* Object methods redefined for gtkuimanager 
-*/
+ * Object methods redefined for gtkuimanager 
+ */
 
 #define NULLGTKUIMANAGER (NspGtkUIManager*) 0
 
 
 /* from NspGtkUIManagerObj.c */
 
-extern NspGtkUIManager *nsp_gtkuimanager_object (NspObject *O); 
-extern int IsGtkUIManagerObj (Stack stack, int i); 
+extern NspGtkUIManager *nsp_gtkuimanager_object (NspObject *O);
+extern int IsGtkUIManagerObj (Stack stack, int i);
 extern int IsGtkUIManager(NspObject *O);
-extern NspGtkUIManager *GetGtkUIManagerCopy (Stack stack, int i); 
-extern NspGtkUIManager *GetGtkUIManager (Stack stack, int i); 
+extern NspGtkUIManager *GetGtkUIManagerCopy (Stack stack, int i);
+extern NspGtkUIManager *GetGtkUIManager (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkUIManager */
+#endif /* NSP_INC_NspGtkUIManager */ 
 
 #ifdef NspGtkUIManager_Private 
 static int init_gtkuimanager(NspGtkUIManager *o,NspTypeGtkUIManager *type);
 static char *nsp_gtkuimanager_type_as_string(void);
 static char *nsp_gtkuimanager_type_short_string(NspObject *v);
 static AttrTab gtkuimanager_attrs[];
-static NspMethods *gtkuimanager_get_methods(void); 
-/* static int int_gtkuimanager_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkuimanager_get_methods(void);
+/* static int int_gtkuimanager_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkUIManager_Private */

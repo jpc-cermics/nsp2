@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspWebKitWebHistoryItem inherits from GObject
-* just change some type attributes 
-*/
+ * NspWebKitWebHistoryItem inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspWebKitWebHistoryItem ;
 typedef NspTypeGObject NspTypeWebKitWebHistoryItem ;
@@ -45,27 +45,27 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode);
 NspWebKitWebHistoryItem *new_webkitwebhistoryitem();
 
 /*
-* Object methods redefined for webkitwebhistoryitem 
-*/
+ * Object methods redefined for webkitwebhistoryitem 
+ */
 
 #define NULLWEBKITWEBHISTORYITEM (NspWebKitWebHistoryItem*) 0
 
 
 /* from NspWebKitWebHistoryItemObj.c */
 
-extern NspWebKitWebHistoryItem *nsp_webkitwebhistoryitem_object (NspObject *O); 
-extern int IsWebKitWebHistoryItemObj (Stack stack, int i); 
+extern NspWebKitWebHistoryItem *nsp_webkitwebhistoryitem_object (NspObject *O);
+extern int IsWebKitWebHistoryItemObj (Stack stack, int i);
 extern int IsWebKitWebHistoryItem(NspObject *O);
-extern NspWebKitWebHistoryItem *GetWebKitWebHistoryItemCopy (Stack stack, int i); 
-extern NspWebKitWebHistoryItem *GetWebKitWebHistoryItem (Stack stack, int i); 
+extern NspWebKitWebHistoryItem *GetWebKitWebHistoryItemCopy (Stack stack, int i);
+extern NspWebKitWebHistoryItem *GetWebKitWebHistoryItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspWebKitWebHistoryItem */
+#endif /* NSP_INC_NspWebKitWebHistoryItem */ 
 
 #ifdef NspWebKitWebHistoryItem_Private 
 static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *o,NspTypeWebKitWebHistoryItem *type);
 static char *nsp_webkitwebhistoryitem_type_as_string(void);
 static char *nsp_webkitwebhistoryitem_type_short_string(NspObject *v);
 static AttrTab webkitwebhistoryitem_attrs[];
-static NspMethods *webkitwebhistoryitem_get_methods(void); 
-/* static int int_webkitwebhistoryitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *webkitwebhistoryitem_get_methods(void);
+/* static int int_webkitwebhistoryitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspWebKitWebHistoryItem_Private */

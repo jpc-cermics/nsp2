@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkWindowGroup inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkWindowGroup inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkWindowGroup ;
 typedef NspTypeGObject NspTypeGtkWindowGroup ;
@@ -45,27 +45,27 @@ NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode);
 NspGtkWindowGroup *new_gtkwindowgroup();
 
 /*
-* Object methods redefined for gtkwindowgroup 
-*/
+ * Object methods redefined for gtkwindowgroup 
+ */
 
 #define NULLGTKWINDOWGROUP (NspGtkWindowGroup*) 0
 
 
 /* from NspGtkWindowGroupObj.c */
 
-extern NspGtkWindowGroup *nsp_gtkwindowgroup_object (NspObject *O); 
-extern int IsGtkWindowGroupObj (Stack stack, int i); 
+extern NspGtkWindowGroup *nsp_gtkwindowgroup_object (NspObject *O);
+extern int IsGtkWindowGroupObj (Stack stack, int i);
 extern int IsGtkWindowGroup(NspObject *O);
-extern NspGtkWindowGroup *GetGtkWindowGroupCopy (Stack stack, int i); 
-extern NspGtkWindowGroup *GetGtkWindowGroup (Stack stack, int i); 
+extern NspGtkWindowGroup *GetGtkWindowGroupCopy (Stack stack, int i);
+extern NspGtkWindowGroup *GetGtkWindowGroup (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkWindowGroup */
+#endif /* NSP_INC_NspGtkWindowGroup */ 
 
 #ifdef NspGtkWindowGroup_Private 
 static int init_gtkwindowgroup(NspGtkWindowGroup *o,NspTypeGtkWindowGroup *type);
 static char *nsp_gtkwindowgroup_type_as_string(void);
 static char *nsp_gtkwindowgroup_type_short_string(NspObject *v);
 static AttrTab gtkwindowgroup_attrs[];
-static NspMethods *gtkwindowgroup_get_methods(void); 
-/* static int int_gtkwindowgroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkwindowgroup_get_methods(void);
+/* static int int_gtkwindowgroup_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkWindowGroup_Private */

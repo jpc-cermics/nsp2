@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkFontSelectionDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkFontSelectionDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkFontSelectionDialog ;
 typedef NspTypeGtkDialog NspTypeGtkFontSelectionDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode);
 NspGtkFontSelectionDialog *new_gtkfontselectiondialog();
 
 /*
-* Object methods redefined for gtkfontselectiondialog 
-*/
+ * Object methods redefined for gtkfontselectiondialog 
+ */
 
 #define NULLGTKFONTSELECTIONDIALOG (NspGtkFontSelectionDialog*) 0
 
 
 /* from NspGtkFontSelectionDialogObj.c */
 
-extern NspGtkFontSelectionDialog *nsp_gtkfontselectiondialog_object (NspObject *O); 
-extern int IsGtkFontSelectionDialogObj (Stack stack, int i); 
+extern NspGtkFontSelectionDialog *nsp_gtkfontselectiondialog_object (NspObject *O);
+extern int IsGtkFontSelectionDialogObj (Stack stack, int i);
 extern int IsGtkFontSelectionDialog(NspObject *O);
-extern NspGtkFontSelectionDialog *GetGtkFontSelectionDialogCopy (Stack stack, int i); 
-extern NspGtkFontSelectionDialog *GetGtkFontSelectionDialog (Stack stack, int i); 
+extern NspGtkFontSelectionDialog *GetGtkFontSelectionDialogCopy (Stack stack, int i);
+extern NspGtkFontSelectionDialog *GetGtkFontSelectionDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFontSelectionDialog */
+#endif /* NSP_INC_NspGtkFontSelectionDialog */ 
 
 #ifdef NspGtkFontSelectionDialog_Private 
 static int init_gtkfontselectiondialog(NspGtkFontSelectionDialog *o,NspTypeGtkFontSelectionDialog *type);
 static char *nsp_gtkfontselectiondialog_type_as_string(void);
 static char *nsp_gtkfontselectiondialog_type_short_string(NspObject *v);
 static AttrTab gtkfontselectiondialog_attrs[];
-static NspMethods *gtkfontselectiondialog_get_methods(void); 
-/* static int int_gtkfontselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfontselectiondialog_get_methods(void);
+/* static int int_gtkfontselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFontSelectionDialog_Private */

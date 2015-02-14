@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmisc.h>
 
 /*
-* NspGtkArrow inherits from GtkMisc
-* just change some type attributes 
-*/
+ * NspGtkArrow inherits from GtkMisc
+ * just change some type attributes 
+ */
 
 typedef NspGtkMisc NspGtkArrow ;
 typedef NspTypeGtkMisc NspTypeGtkArrow ;
@@ -45,27 +45,27 @@ NspTypeGtkArrow *new_type_gtkarrow(type_mode mode);
 NspGtkArrow *new_gtkarrow();
 
 /*
-* Object methods redefined for gtkarrow 
-*/
+ * Object methods redefined for gtkarrow 
+ */
 
 #define NULLGTKARROW (NspGtkArrow*) 0
 
 
 /* from NspGtkArrowObj.c */
 
-extern NspGtkArrow *nsp_gtkarrow_object (NspObject *O); 
-extern int IsGtkArrowObj (Stack stack, int i); 
+extern NspGtkArrow *nsp_gtkarrow_object (NspObject *O);
+extern int IsGtkArrowObj (Stack stack, int i);
 extern int IsGtkArrow(NspObject *O);
-extern NspGtkArrow *GetGtkArrowCopy (Stack stack, int i); 
-extern NspGtkArrow *GetGtkArrow (Stack stack, int i); 
+extern NspGtkArrow *GetGtkArrowCopy (Stack stack, int i);
+extern NspGtkArrow *GetGtkArrow (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkArrow */
+#endif /* NSP_INC_NspGtkArrow */ 
 
 #ifdef NspGtkArrow_Private 
 static int init_gtkarrow(NspGtkArrow *o,NspTypeGtkArrow *type);
 static char *nsp_gtkarrow_type_as_string(void);
 static char *nsp_gtkarrow_type_short_string(NspObject *v);
 static AttrTab gtkarrow_attrs[];
-static NspMethods *gtkarrow_get_methods(void); 
-/* static int int_gtkarrow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkarrow_get_methods(void);
+/* static int int_gtkarrow_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkArrow_Private */

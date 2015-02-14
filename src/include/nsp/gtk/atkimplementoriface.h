@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkImplementorIface inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkImplementorIface inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkImplementorIface ;
 typedef NspTypeGObject NspTypeAtkImplementorIface ;
@@ -45,27 +45,27 @@ NspTypeAtkImplementorIface *new_type_atkimplementoriface(type_mode mode);
 NspAtkImplementorIface *new_atkimplementoriface();
 
 /*
-* Object methods redefined for atkimplementoriface 
-*/
+ * Object methods redefined for atkimplementoriface 
+ */
 
 #define NULLATKIMPLEMENTORIFACE (NspAtkImplementorIface*) 0
 
 
 /* from NspAtkImplementorIfaceObj.c */
 
-extern NspAtkImplementorIface *nsp_atkimplementoriface_object (NspObject *O); 
-extern int IsAtkImplementorIfaceObj (Stack stack, int i); 
+extern NspAtkImplementorIface *nsp_atkimplementoriface_object (NspObject *O);
+extern int IsAtkImplementorIfaceObj (Stack stack, int i);
 extern int IsAtkImplementorIface(NspObject *O);
-extern NspAtkImplementorIface *GetAtkImplementorIfaceCopy (Stack stack, int i); 
-extern NspAtkImplementorIface *GetAtkImplementorIface (Stack stack, int i); 
+extern NspAtkImplementorIface *GetAtkImplementorIfaceCopy (Stack stack, int i);
+extern NspAtkImplementorIface *GetAtkImplementorIface (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkImplementorIface */
+#endif /* NSP_INC_NspAtkImplementorIface */ 
 
 #ifdef NspAtkImplementorIface_Private 
 static int init_atkimplementoriface(NspAtkImplementorIface *o,NspTypeAtkImplementorIface *type);
 static char *nsp_atkimplementoriface_type_as_string(void);
 static char *nsp_atkimplementoriface_type_short_string(NspObject *v);
 static AttrTab atkimplementoriface_attrs[];
-static NspMethods *atkimplementoriface_get_methods(void); 
-/* static int int_atkimplementoriface_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkimplementoriface_get_methods(void);
+/* static int int_atkimplementoriface_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkImplementorIface_Private */

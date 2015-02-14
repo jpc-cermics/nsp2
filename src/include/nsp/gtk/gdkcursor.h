@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGdkCursor inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGdkCursor inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGdkCursor ;
 typedef NspTypeGBoxed NspTypeGdkCursor ;
@@ -45,27 +45,27 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode);
 NspGdkCursor *new_gdkcursor();
 
 /*
-* Object methods redefined for gdkcursor 
-*/
+ * Object methods redefined for gdkcursor 
+ */
 
 #define NULLGDKCURSOR (NspGdkCursor*) 0
 
 
 /* from NspGdkCursorObj.c */
 
-extern NspGdkCursor *nsp_gdkcursor_object (NspObject *O); 
-extern int IsGdkCursorObj (Stack stack, int i); 
+extern NspGdkCursor *nsp_gdkcursor_object (NspObject *O);
+extern int IsGdkCursorObj (Stack stack, int i);
 extern int IsGdkCursor(NspObject *O);
-extern NspGdkCursor *GetGdkCursorCopy (Stack stack, int i); 
-extern NspGdkCursor *GetGdkCursor (Stack stack, int i); 
+extern NspGdkCursor *GetGdkCursorCopy (Stack stack, int i);
+extern NspGdkCursor *GetGdkCursor (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkCursor */
+#endif /* NSP_INC_NspGdkCursor */ 
 
 #ifdef NspGdkCursor_Private 
 static int init_gdkcursor(NspGdkCursor *o,NspTypeGdkCursor *type);
 static char *nsp_gdkcursor_type_as_string(void);
 static char *nsp_gdkcursor_type_short_string(NspObject *v);
 static AttrTab gdkcursor_attrs[];
-static NspMethods *gdkcursor_get_methods(void); 
-/* static int int_gdkcursor_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkcursor_get_methods(void);
+/* static int int_gdkcursor_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkCursor_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkruler.h>
 
 /*
-* NspGtkHRuler inherits from GtkRuler
-* just change some type attributes 
-*/
+ * NspGtkHRuler inherits from GtkRuler
+ * just change some type attributes 
+ */
 
 typedef NspGtkRuler NspGtkHRuler ;
 typedef NspTypeGtkRuler NspTypeGtkHRuler ;
@@ -45,27 +45,27 @@ NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode);
 NspGtkHRuler *new_gtkhruler();
 
 /*
-* Object methods redefined for gtkhruler 
-*/
+ * Object methods redefined for gtkhruler 
+ */
 
 #define NULLGTKHRULER (NspGtkHRuler*) 0
 
 
 /* from NspGtkHRulerObj.c */
 
-extern NspGtkHRuler *nsp_gtkhruler_object (NspObject *O); 
-extern int IsGtkHRulerObj (Stack stack, int i); 
+extern NspGtkHRuler *nsp_gtkhruler_object (NspObject *O);
+extern int IsGtkHRulerObj (Stack stack, int i);
 extern int IsGtkHRuler(NspObject *O);
-extern NspGtkHRuler *GetGtkHRulerCopy (Stack stack, int i); 
-extern NspGtkHRuler *GetGtkHRuler (Stack stack, int i); 
+extern NspGtkHRuler *GetGtkHRulerCopy (Stack stack, int i);
+extern NspGtkHRuler *GetGtkHRuler (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkHRuler */
+#endif /* NSP_INC_NspGtkHRuler */ 
 
 #ifdef NspGtkHRuler_Private 
 static int init_gtkhruler(NspGtkHRuler *o,NspTypeGtkHRuler *type);
 static char *nsp_gtkhruler_type_as_string(void);
 static char *nsp_gtkhruler_type_short_string(NspObject *v);
 static AttrTab gtkhruler_attrs[];
-static NspMethods *gtkhruler_get_methods(void); 
-/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhruler_get_methods(void);
+/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkHRuler_Private */

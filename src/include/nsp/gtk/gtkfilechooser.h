@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkFileChooser inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkFileChooser inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkFileChooser ;
 typedef NspTypeGObject NspTypeGtkFileChooser ;
@@ -45,27 +45,27 @@ NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode);
 NspGtkFileChooser *new_gtkfilechooser();
 
 /*
-* Object methods redefined for gtkfilechooser 
-*/
+ * Object methods redefined for gtkfilechooser 
+ */
 
 #define NULLGTKFILECHOOSER (NspGtkFileChooser*) 0
 
 
 /* from NspGtkFileChooserObj.c */
 
-extern NspGtkFileChooser *nsp_gtkfilechooser_object (NspObject *O); 
-extern int IsGtkFileChooserObj (Stack stack, int i); 
+extern NspGtkFileChooser *nsp_gtkfilechooser_object (NspObject *O);
+extern int IsGtkFileChooserObj (Stack stack, int i);
 extern int IsGtkFileChooser(NspObject *O);
-extern NspGtkFileChooser *GetGtkFileChooserCopy (Stack stack, int i); 
-extern NspGtkFileChooser *GetGtkFileChooser (Stack stack, int i); 
+extern NspGtkFileChooser *GetGtkFileChooserCopy (Stack stack, int i);
+extern NspGtkFileChooser *GetGtkFileChooser (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkFileChooser */
+#endif /* NSP_INC_NspGtkFileChooser */ 
 
 #ifdef NspGtkFileChooser_Private 
 static int init_gtkfilechooser(NspGtkFileChooser *o,NspTypeGtkFileChooser *type);
 static char *nsp_gtkfilechooser_type_as_string(void);
 static char *nsp_gtkfilechooser_type_short_string(NspObject *v);
 static AttrTab gtkfilechooser_attrs[];
-static NspMethods *gtkfilechooser_get_methods(void); 
-/* static int int_gtkfilechooser_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfilechooser_get_methods(void);
+/* static int int_gtkfilechooser_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkFileChooser_Private */

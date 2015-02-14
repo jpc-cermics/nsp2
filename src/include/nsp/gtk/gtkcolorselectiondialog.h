@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkdialog.h>
 
 /*
-* NspGtkColorSelectionDialog inherits from GtkDialog
-* just change some type attributes 
-*/
+ * NspGtkColorSelectionDialog inherits from GtkDialog
+ * just change some type attributes 
+ */
 
 typedef NspGtkDialog NspGtkColorSelectionDialog ;
 typedef NspTypeGtkDialog NspTypeGtkColorSelectionDialog ;
@@ -45,27 +45,27 @@ NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
 NspGtkColorSelectionDialog *new_gtkcolorselectiondialog();
 
 /*
-* Object methods redefined for gtkcolorselectiondialog 
-*/
+ * Object methods redefined for gtkcolorselectiondialog 
+ */
 
 #define NULLGTKCOLORSELECTIONDIALOG (NspGtkColorSelectionDialog*) 0
 
 
 /* from NspGtkColorSelectionDialogObj.c */
 
-extern NspGtkColorSelectionDialog *nsp_gtkcolorselectiondialog_object (NspObject *O); 
-extern int IsGtkColorSelectionDialogObj (Stack stack, int i); 
+extern NspGtkColorSelectionDialog *nsp_gtkcolorselectiondialog_object (NspObject *O);
+extern int IsGtkColorSelectionDialogObj (Stack stack, int i);
 extern int IsGtkColorSelectionDialog(NspObject *O);
-extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialogCopy (Stack stack, int i); 
-extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialog (Stack stack, int i); 
+extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialogCopy (Stack stack, int i);
+extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialog (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkColorSelectionDialog */
+#endif /* NSP_INC_NspGtkColorSelectionDialog */ 
 
 #ifdef NspGtkColorSelectionDialog_Private 
 static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *o,NspTypeGtkColorSelectionDialog *type);
 static char *nsp_gtkcolorselectiondialog_type_as_string(void);
 static char *nsp_gtkcolorselectiondialog_type_short_string(NspObject *v);
 static AttrTab gtkcolorselectiondialog_attrs[];
-static NspMethods *gtkcolorselectiondialog_get_methods(void); 
-/* static int int_gtkcolorselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcolorselectiondialog_get_methods(void);
+/* static int int_gtkcolorselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkColorSelectionDialog_Private */

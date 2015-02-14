@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmenuitem.h>
 
 /*
-* NspGtkTearoffMenuItem inherits from GtkMenuItem
-* just change some type attributes 
-*/
+ * NspGtkTearoffMenuItem inherits from GtkMenuItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkMenuItem NspGtkTearoffMenuItem ;
 typedef NspTypeGtkMenuItem NspTypeGtkTearoffMenuItem ;
@@ -45,27 +45,27 @@ NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode);
 NspGtkTearoffMenuItem *new_gtktearoffmenuitem();
 
 /*
-* Object methods redefined for gtktearoffmenuitem 
-*/
+ * Object methods redefined for gtktearoffmenuitem 
+ */
 
 #define NULLGTKTEAROFFMENUITEM (NspGtkTearoffMenuItem*) 0
 
 
 /* from NspGtkTearoffMenuItemObj.c */
 
-extern NspGtkTearoffMenuItem *nsp_gtktearoffmenuitem_object (NspObject *O); 
-extern int IsGtkTearoffMenuItemObj (Stack stack, int i); 
+extern NspGtkTearoffMenuItem *nsp_gtktearoffmenuitem_object (NspObject *O);
+extern int IsGtkTearoffMenuItemObj (Stack stack, int i);
 extern int IsGtkTearoffMenuItem(NspObject *O);
-extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItemCopy (Stack stack, int i); 
-extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItem (Stack stack, int i); 
+extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItemCopy (Stack stack, int i);
+extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTearoffMenuItem */
+#endif /* NSP_INC_NspGtkTearoffMenuItem */ 
 
 #ifdef NspGtkTearoffMenuItem_Private 
 static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *o,NspTypeGtkTearoffMenuItem *type);
 static char *nsp_gtktearoffmenuitem_type_as_string(void);
 static char *nsp_gtktearoffmenuitem_type_short_string(NspObject *v);
 static AttrTab gtktearoffmenuitem_attrs[];
-static NspMethods *gtktearoffmenuitem_get_methods(void); 
-/* static int int_gtktearoffmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktearoffmenuitem_get_methods(void);
+/* static int int_gtktearoffmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTearoffMenuItem_Private */

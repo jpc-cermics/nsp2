@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkaction.h>
 
 /*
-* NspGtkToggleAction inherits from GtkAction
-* just change some type attributes 
-*/
+ * NspGtkToggleAction inherits from GtkAction
+ * just change some type attributes 
+ */
 
 typedef NspGtkAction NspGtkToggleAction ;
 typedef NspTypeGtkAction NspTypeGtkToggleAction ;
@@ -45,27 +45,27 @@ NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode);
 NspGtkToggleAction *new_gtktoggleaction();
 
 /*
-* Object methods redefined for gtktoggleaction 
-*/
+ * Object methods redefined for gtktoggleaction 
+ */
 
 #define NULLGTKTOGGLEACTION (NspGtkToggleAction*) 0
 
 
 /* from NspGtkToggleActionObj.c */
 
-extern NspGtkToggleAction *nsp_gtktoggleaction_object (NspObject *O); 
-extern int IsGtkToggleActionObj (Stack stack, int i); 
+extern NspGtkToggleAction *nsp_gtktoggleaction_object (NspObject *O);
+extern int IsGtkToggleActionObj (Stack stack, int i);
 extern int IsGtkToggleAction(NspObject *O);
-extern NspGtkToggleAction *GetGtkToggleActionCopy (Stack stack, int i); 
-extern NspGtkToggleAction *GetGtkToggleAction (Stack stack, int i); 
+extern NspGtkToggleAction *GetGtkToggleActionCopy (Stack stack, int i);
+extern NspGtkToggleAction *GetGtkToggleAction (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkToggleAction */
+#endif /* NSP_INC_NspGtkToggleAction */ 
 
 #ifdef NspGtkToggleAction_Private 
 static int init_gtktoggleaction(NspGtkToggleAction *o,NspTypeGtkToggleAction *type);
 static char *nsp_gtktoggleaction_type_as_string(void);
 static char *nsp_gtktoggleaction_type_short_string(NspObject *v);
 static AttrTab gtktoggleaction_attrs[];
-static NspMethods *gtktoggleaction_get_methods(void); 
-/* static int int_gtktoggleaction_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktoggleaction_get_methods(void);
+/* static int int_gtktoggleaction_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkToggleAction_Private */

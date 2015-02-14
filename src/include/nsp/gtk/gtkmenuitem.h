@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkitem.h>
 
 /*
-* NspGtkMenuItem inherits from GtkItem
-* just change some type attributes 
-*/
+ * NspGtkMenuItem inherits from GtkItem
+ * just change some type attributes 
+ */
 
 typedef NspGtkItem NspGtkMenuItem ;
 typedef NspTypeGtkItem NspTypeGtkMenuItem ;
@@ -45,27 +45,27 @@ NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode);
 NspGtkMenuItem *new_gtkmenuitem();
 
 /*
-* Object methods redefined for gtkmenuitem 
-*/
+ * Object methods redefined for gtkmenuitem 
+ */
 
 #define NULLGTKMENUITEM (NspGtkMenuItem*) 0
 
 
 /* from NspGtkMenuItemObj.c */
 
-extern NspGtkMenuItem *nsp_gtkmenuitem_object (NspObject *O); 
-extern int IsGtkMenuItemObj (Stack stack, int i); 
+extern NspGtkMenuItem *nsp_gtkmenuitem_object (NspObject *O);
+extern int IsGtkMenuItemObj (Stack stack, int i);
 extern int IsGtkMenuItem(NspObject *O);
-extern NspGtkMenuItem *GetGtkMenuItemCopy (Stack stack, int i); 
-extern NspGtkMenuItem *GetGtkMenuItem (Stack stack, int i); 
+extern NspGtkMenuItem *GetGtkMenuItemCopy (Stack stack, int i);
+extern NspGtkMenuItem *GetGtkMenuItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkMenuItem */
+#endif /* NSP_INC_NspGtkMenuItem */ 
 
 #ifdef NspGtkMenuItem_Private 
 static int init_gtkmenuitem(NspGtkMenuItem *o,NspTypeGtkMenuItem *type);
 static char *nsp_gtkmenuitem_type_as_string(void);
 static char *nsp_gtkmenuitem_type_short_string(NspObject *v);
 static AttrTab gtkmenuitem_attrs[];
-static NspMethods *gtkmenuitem_get_methods(void); 
-/* static int int_gtkmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmenuitem_get_methods(void);
+/* static int int_gtkmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkMenuItem_Private */

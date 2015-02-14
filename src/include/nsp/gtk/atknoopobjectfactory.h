@@ -26,9 +26,9 @@
 #include <nsp/gtk/atkobjectfactory.h>
 
 /*
-* NspAtkNoOpObjectFactory inherits from AtkObjectFactory
-* just change some type attributes 
-*/
+ * NspAtkNoOpObjectFactory inherits from AtkObjectFactory
+ * just change some type attributes 
+ */
 
 typedef NspAtkObjectFactory NspAtkNoOpObjectFactory ;
 typedef NspTypeAtkObjectFactory NspTypeAtkNoOpObjectFactory ;
@@ -45,27 +45,27 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode);
 NspAtkNoOpObjectFactory *new_atknoopobjectfactory();
 
 /*
-* Object methods redefined for atknoopobjectfactory 
-*/
+ * Object methods redefined for atknoopobjectfactory 
+ */
 
 #define NULLATKNOOPOBJECTFACTORY (NspAtkNoOpObjectFactory*) 0
 
 
 /* from NspAtkNoOpObjectFactoryObj.c */
 
-extern NspAtkNoOpObjectFactory *nsp_atknoopobjectfactory_object (NspObject *O); 
-extern int IsAtkNoOpObjectFactoryObj (Stack stack, int i); 
+extern NspAtkNoOpObjectFactory *nsp_atknoopobjectfactory_object (NspObject *O);
+extern int IsAtkNoOpObjectFactoryObj (Stack stack, int i);
 extern int IsAtkNoOpObjectFactory(NspObject *O);
-extern NspAtkNoOpObjectFactory *GetAtkNoOpObjectFactoryCopy (Stack stack, int i); 
-extern NspAtkNoOpObjectFactory *GetAtkNoOpObjectFactory (Stack stack, int i); 
+extern NspAtkNoOpObjectFactory *GetAtkNoOpObjectFactoryCopy (Stack stack, int i);
+extern NspAtkNoOpObjectFactory *GetAtkNoOpObjectFactory (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkNoOpObjectFactory */
+#endif /* NSP_INC_NspAtkNoOpObjectFactory */ 
 
 #ifdef NspAtkNoOpObjectFactory_Private 
 static int init_atknoopobjectfactory(NspAtkNoOpObjectFactory *o,NspTypeAtkNoOpObjectFactory *type);
 static char *nsp_atknoopobjectfactory_type_as_string(void);
 static char *nsp_atknoopobjectfactory_type_short_string(NspObject *v);
 static AttrTab atknoopobjectfactory_attrs[];
-static NspMethods *atknoopobjectfactory_get_methods(void); 
-/* static int int_atknoopobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atknoopobjectfactory_get_methods(void);
+/* static int int_atknoopobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkNoOpObjectFactory_Private */

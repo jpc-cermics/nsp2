@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkDisplayManager inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkDisplayManager inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkDisplayManager ;
 typedef NspTypeGObject NspTypeGdkDisplayManager ;
@@ -45,27 +45,27 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode);
 NspGdkDisplayManager *new_gdkdisplaymanager();
 
 /*
-* Object methods redefined for gdkdisplaymanager 
-*/
+ * Object methods redefined for gdkdisplaymanager 
+ */
 
 #define NULLGDKDISPLAYMANAGER (NspGdkDisplayManager*) 0
 
 
 /* from NspGdkDisplayManagerObj.c */
 
-extern NspGdkDisplayManager *nsp_gdkdisplaymanager_object (NspObject *O); 
-extern int IsGdkDisplayManagerObj (Stack stack, int i); 
+extern NspGdkDisplayManager *nsp_gdkdisplaymanager_object (NspObject *O);
+extern int IsGdkDisplayManagerObj (Stack stack, int i);
 extern int IsGdkDisplayManager(NspObject *O);
-extern NspGdkDisplayManager *GetGdkDisplayManagerCopy (Stack stack, int i); 
-extern NspGdkDisplayManager *GetGdkDisplayManager (Stack stack, int i); 
+extern NspGdkDisplayManager *GetGdkDisplayManagerCopy (Stack stack, int i);
+extern NspGdkDisplayManager *GetGdkDisplayManager (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkDisplayManager */
+#endif /* NSP_INC_NspGdkDisplayManager */ 
 
 #ifdef NspGdkDisplayManager_Private 
 static int init_gdkdisplaymanager(NspGdkDisplayManager *o,NspTypeGdkDisplayManager *type);
 static char *nsp_gdkdisplaymanager_type_as_string(void);
 static char *nsp_gdkdisplaymanager_type_short_string(NspObject *v);
 static AttrTab gdkdisplaymanager_attrs[];
-static NspMethods *gdkdisplaymanager_get_methods(void); 
-/* static int int_gdkdisplaymanager_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdisplaymanager_get_methods(void);
+/* static int int_gdkdisplaymanager_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkDisplayManager_Private */

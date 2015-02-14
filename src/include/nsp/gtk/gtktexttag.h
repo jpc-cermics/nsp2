@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTextTag inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTextTag inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTextTag ;
 typedef NspTypeGObject NspTypeGtkTextTag ;
@@ -45,27 +45,27 @@ NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode);
 NspGtkTextTag *new_gtktexttag();
 
 /*
-* Object methods redefined for gtktexttag 
-*/
+ * Object methods redefined for gtktexttag 
+ */
 
 #define NULLGTKTEXTTAG (NspGtkTextTag*) 0
 
 
 /* from NspGtkTextTagObj.c */
 
-extern NspGtkTextTag *nsp_gtktexttag_object (NspObject *O); 
-extern int IsGtkTextTagObj (Stack stack, int i); 
+extern NspGtkTextTag *nsp_gtktexttag_object (NspObject *O);
+extern int IsGtkTextTagObj (Stack stack, int i);
 extern int IsGtkTextTag(NspObject *O);
-extern NspGtkTextTag *GetGtkTextTagCopy (Stack stack, int i); 
-extern NspGtkTextTag *GetGtkTextTag (Stack stack, int i); 
+extern NspGtkTextTag *GetGtkTextTagCopy (Stack stack, int i);
+extern NspGtkTextTag *GetGtkTextTag (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTextTag */
+#endif /* NSP_INC_NspGtkTextTag */ 
 
 #ifdef NspGtkTextTag_Private 
 static int init_gtktexttag(NspGtkTextTag *o,NspTypeGtkTextTag *type);
 static char *nsp_gtktexttag_type_as_string(void);
 static char *nsp_gtktexttag_type_short_string(NspObject *v);
 static AttrTab gtktexttag_attrs[];
-static NspMethods *gtktexttag_get_methods(void); 
-/* static int int_gtktexttag_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktexttag_get_methods(void);
+/* static int int_gtktexttag_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTextTag_Private */

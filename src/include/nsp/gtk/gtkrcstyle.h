@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkRcStyle inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkRcStyle inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkRcStyle ;
 typedef NspTypeGObject NspTypeGtkRcStyle ;
@@ -45,27 +45,27 @@ NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode);
 NspGtkRcStyle *new_gtkrcstyle();
 
 /*
-* Object methods redefined for gtkrcstyle 
-*/
+ * Object methods redefined for gtkrcstyle 
+ */
 
 #define NULLGTKRCSTYLE (NspGtkRcStyle*) 0
 
 
 /* from NspGtkRcStyleObj.c */
 
-extern NspGtkRcStyle *nsp_gtkrcstyle_object (NspObject *O); 
-extern int IsGtkRcStyleObj (Stack stack, int i); 
+extern NspGtkRcStyle *nsp_gtkrcstyle_object (NspObject *O);
+extern int IsGtkRcStyleObj (Stack stack, int i);
 extern int IsGtkRcStyle(NspObject *O);
-extern NspGtkRcStyle *GetGtkRcStyleCopy (Stack stack, int i); 
-extern NspGtkRcStyle *GetGtkRcStyle (Stack stack, int i); 
+extern NspGtkRcStyle *GetGtkRcStyleCopy (Stack stack, int i);
+extern NspGtkRcStyle *GetGtkRcStyle (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRcStyle */
+#endif /* NSP_INC_NspGtkRcStyle */ 
 
 #ifdef NspGtkRcStyle_Private 
 static int init_gtkrcstyle(NspGtkRcStyle *o,NspTypeGtkRcStyle *type);
 static char *nsp_gtkrcstyle_type_as_string(void);
 static char *nsp_gtkrcstyle_type_short_string(NspObject *v);
 static AttrTab gtkrcstyle_attrs[];
-static NspMethods *gtkrcstyle_get_methods(void); 
-/* static int int_gtkrcstyle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrcstyle_get_methods(void);
+/* static int int_gtkrcstyle_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRcStyle_Private */

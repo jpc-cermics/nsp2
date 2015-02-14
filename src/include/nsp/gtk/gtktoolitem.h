@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkToolItem inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkToolItem inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkToolItem ;
 typedef NspTypeGtkBin NspTypeGtkToolItem ;
@@ -45,27 +45,27 @@ NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode);
 NspGtkToolItem *new_gtktoolitem();
 
 /*
-* Object methods redefined for gtktoolitem 
-*/
+ * Object methods redefined for gtktoolitem 
+ */
 
 #define NULLGTKTOOLITEM (NspGtkToolItem*) 0
 
 
 /* from NspGtkToolItemObj.c */
 
-extern NspGtkToolItem *nsp_gtktoolitem_object (NspObject *O); 
-extern int IsGtkToolItemObj (Stack stack, int i); 
+extern NspGtkToolItem *nsp_gtktoolitem_object (NspObject *O);
+extern int IsGtkToolItemObj (Stack stack, int i);
 extern int IsGtkToolItem(NspObject *O);
-extern NspGtkToolItem *GetGtkToolItemCopy (Stack stack, int i); 
-extern NspGtkToolItem *GetGtkToolItem (Stack stack, int i); 
+extern NspGtkToolItem *GetGtkToolItemCopy (Stack stack, int i);
+extern NspGtkToolItem *GetGtkToolItem (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkToolItem */
+#endif /* NSP_INC_NspGtkToolItem */ 
 
 #ifdef NspGtkToolItem_Private 
 static int init_gtktoolitem(NspGtkToolItem *o,NspTypeGtkToolItem *type);
 static char *nsp_gtktoolitem_type_as_string(void);
 static char *nsp_gtktoolitem_type_short_string(NspObject *v);
 static AttrTab gtktoolitem_attrs[];
-static NspMethods *gtktoolitem_get_methods(void); 
-/* static int int_gtktoolitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktoolitem_get_methods(void);
+/* static int int_gtktoolitem_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkToolItem_Private */

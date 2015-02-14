@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkKeymap inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkKeymap inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkKeymap ;
 typedef NspTypeGObject NspTypeGdkKeymap ;
@@ -45,27 +45,27 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode);
 NspGdkKeymap *new_gdkkeymap();
 
 /*
-* Object methods redefined for gdkkeymap 
-*/
+ * Object methods redefined for gdkkeymap 
+ */
 
 #define NULLGDKKEYMAP (NspGdkKeymap*) 0
 
 
 /* from NspGdkKeymapObj.c */
 
-extern NspGdkKeymap *nsp_gdkkeymap_object (NspObject *O); 
-extern int IsGdkKeymapObj (Stack stack, int i); 
+extern NspGdkKeymap *nsp_gdkkeymap_object (NspObject *O);
+extern int IsGdkKeymapObj (Stack stack, int i);
 extern int IsGdkKeymap(NspObject *O);
-extern NspGdkKeymap *GetGdkKeymapCopy (Stack stack, int i); 
-extern NspGdkKeymap *GetGdkKeymap (Stack stack, int i); 
+extern NspGdkKeymap *GetGdkKeymapCopy (Stack stack, int i);
+extern NspGdkKeymap *GetGdkKeymap (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkKeymap */
+#endif /* NSP_INC_NspGdkKeymap */ 
 
 #ifdef NspGdkKeymap_Private 
 static int init_gdkkeymap(NspGdkKeymap *o,NspTypeGdkKeymap *type);
 static char *nsp_gdkkeymap_type_as_string(void);
 static char *nsp_gdkkeymap_type_short_string(NspObject *v);
 static AttrTab gdkkeymap_attrs[];
-static NspMethods *gdkkeymap_get_methods(void); 
-/* static int int_gdkkeymap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkkeymap_get_methods(void);
+/* static int int_gdkkeymap_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkKeymap_Private */

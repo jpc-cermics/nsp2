@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkContainer inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkContainer inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkContainer ;
 typedef NspTypeGtkWidget NspTypeGtkContainer ;
@@ -45,27 +45,27 @@ NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode);
 NspGtkContainer *new_gtkcontainer();
 
 /*
-* Object methods redefined for gtkcontainer 
-*/
+ * Object methods redefined for gtkcontainer 
+ */
 
 #define NULLGTKCONTAINER (NspGtkContainer*) 0
 
 
 /* from NspGtkContainerObj.c */
 
-extern NspGtkContainer *nsp_gtkcontainer_object (NspObject *O); 
-extern int IsGtkContainerObj (Stack stack, int i); 
+extern NspGtkContainer *nsp_gtkcontainer_object (NspObject *O);
+extern int IsGtkContainerObj (Stack stack, int i);
 extern int IsGtkContainer(NspObject *O);
-extern NspGtkContainer *GetGtkContainerCopy (Stack stack, int i); 
-extern NspGtkContainer *GetGtkContainer (Stack stack, int i); 
+extern NspGtkContainer *GetGtkContainerCopy (Stack stack, int i);
+extern NspGtkContainer *GetGtkContainer (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkContainer */
+#endif /* NSP_INC_NspGtkContainer */ 
 
 #ifdef NspGtkContainer_Private 
 static int init_gtkcontainer(NspGtkContainer *o,NspTypeGtkContainer *type);
 static char *nsp_gtkcontainer_type_as_string(void);
 static char *nsp_gtkcontainer_type_short_string(NspObject *v);
 static AttrTab gtkcontainer_attrs[];
-static NspMethods *gtkcontainer_get_methods(void); 
-/* static int int_gtkcontainer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcontainer_get_methods(void);
+/* static int int_gtkcontainer_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkContainer_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkExpander inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkExpander inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkExpander ;
 typedef NspTypeGtkBin NspTypeGtkExpander ;
@@ -45,27 +45,27 @@ NspTypeGtkExpander *new_type_gtkexpander(type_mode mode);
 NspGtkExpander *new_gtkexpander();
 
 /*
-* Object methods redefined for gtkexpander 
-*/
+ * Object methods redefined for gtkexpander 
+ */
 
 #define NULLGTKEXPANDER (NspGtkExpander*) 0
 
 
 /* from NspGtkExpanderObj.c */
 
-extern NspGtkExpander *nsp_gtkexpander_object (NspObject *O); 
-extern int IsGtkExpanderObj (Stack stack, int i); 
+extern NspGtkExpander *nsp_gtkexpander_object (NspObject *O);
+extern int IsGtkExpanderObj (Stack stack, int i);
 extern int IsGtkExpander(NspObject *O);
-extern NspGtkExpander *GetGtkExpanderCopy (Stack stack, int i); 
-extern NspGtkExpander *GetGtkExpander (Stack stack, int i); 
+extern NspGtkExpander *GetGtkExpanderCopy (Stack stack, int i);
+extern NspGtkExpander *GetGtkExpander (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkExpander */
+#endif /* NSP_INC_NspGtkExpander */ 
 
 #ifdef NspGtkExpander_Private 
 static int init_gtkexpander(NspGtkExpander *o,NspTypeGtkExpander *type);
 static char *nsp_gtkexpander_type_as_string(void);
 static char *nsp_gtkexpander_type_short_string(NspObject *v);
 static AttrTab gtkexpander_attrs[];
-static NspMethods *gtkexpander_get_methods(void); 
-/* static int int_gtkexpander_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkexpander_get_methods(void);
+/* static int int_gtkexpander_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkExpander_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkRegistry inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkRegistry inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkRegistry ;
 typedef NspTypeGObject NspTypeAtkRegistry ;
@@ -45,27 +45,27 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode);
 NspAtkRegistry *new_atkregistry();
 
 /*
-* Object methods redefined for atkregistry 
-*/
+ * Object methods redefined for atkregistry 
+ */
 
 #define NULLATKREGISTRY (NspAtkRegistry*) 0
 
 
 /* from NspAtkRegistryObj.c */
 
-extern NspAtkRegistry *nsp_atkregistry_object (NspObject *O); 
-extern int IsAtkRegistryObj (Stack stack, int i); 
+extern NspAtkRegistry *nsp_atkregistry_object (NspObject *O);
+extern int IsAtkRegistryObj (Stack stack, int i);
 extern int IsAtkRegistry(NspObject *O);
-extern NspAtkRegistry *GetAtkRegistryCopy (Stack stack, int i); 
-extern NspAtkRegistry *GetAtkRegistry (Stack stack, int i); 
+extern NspAtkRegistry *GetAtkRegistryCopy (Stack stack, int i);
+extern NspAtkRegistry *GetAtkRegistry (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkRegistry */
+#endif /* NSP_INC_NspAtkRegistry */ 
 
 #ifdef NspAtkRegistry_Private 
 static int init_atkregistry(NspAtkRegistry *o,NspTypeAtkRegistry *type);
 static char *nsp_atkregistry_type_as_string(void);
 static char *nsp_atkregistry_type_short_string(NspObject *v);
 static AttrTab atkregistry_attrs[];
-static NspMethods *atkregistry_get_methods(void); 
-/* static int int_atkregistry_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkregistry_get_methods(void);
+/* static int int_atkregistry_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkRegistry_Private */

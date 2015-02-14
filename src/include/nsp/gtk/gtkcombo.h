@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkhbox.h>
 
 /*
-* NspGtkCombo inherits from GtkHBox
-* just change some type attributes 
-*/
+ * NspGtkCombo inherits from GtkHBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkHBox NspGtkCombo ;
 typedef NspTypeGtkHBox NspTypeGtkCombo ;
@@ -45,27 +45,27 @@ NspTypeGtkCombo *new_type_gtkcombo(type_mode mode);
 NspGtkCombo *new_gtkcombo();
 
 /*
-* Object methods redefined for gtkcombo 
-*/
+ * Object methods redefined for gtkcombo 
+ */
 
 #define NULLGTKCOMBO (NspGtkCombo*) 0
 
 
 /* from NspGtkComboObj.c */
 
-extern NspGtkCombo *nsp_gtkcombo_object (NspObject *O); 
-extern int IsGtkComboObj (Stack stack, int i); 
+extern NspGtkCombo *nsp_gtkcombo_object (NspObject *O);
+extern int IsGtkComboObj (Stack stack, int i);
 extern int IsGtkCombo(NspObject *O);
-extern NspGtkCombo *GetGtkComboCopy (Stack stack, int i); 
-extern NspGtkCombo *GetGtkCombo (Stack stack, int i); 
+extern NspGtkCombo *GetGtkComboCopy (Stack stack, int i);
+extern NspGtkCombo *GetGtkCombo (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCombo */
+#endif /* NSP_INC_NspGtkCombo */ 
 
 #ifdef NspGtkCombo_Private 
 static int init_gtkcombo(NspGtkCombo *o,NspTypeGtkCombo *type);
 static char *nsp_gtkcombo_type_as_string(void);
 static char *nsp_gtkcombo_type_short_string(NspObject *v);
 static AttrTab gtkcombo_attrs[];
-static NspMethods *gtkcombo_get_methods(void); 
-/* static int int_gtkcombo_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcombo_get_methods(void);
+/* static int int_gtkcombo_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCombo_Private */

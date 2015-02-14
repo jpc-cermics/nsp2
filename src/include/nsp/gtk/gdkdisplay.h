@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkDisplay inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkDisplay inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkDisplay ;
 typedef NspTypeGObject NspTypeGdkDisplay ;
@@ -45,27 +45,27 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode);
 NspGdkDisplay *new_gdkdisplay();
 
 /*
-* Object methods redefined for gdkdisplay 
-*/
+ * Object methods redefined for gdkdisplay 
+ */
 
 #define NULLGDKDISPLAY (NspGdkDisplay*) 0
 
 
 /* from NspGdkDisplayObj.c */
 
-extern NspGdkDisplay *nsp_gdkdisplay_object (NspObject *O); 
-extern int IsGdkDisplayObj (Stack stack, int i); 
+extern NspGdkDisplay *nsp_gdkdisplay_object (NspObject *O);
+extern int IsGdkDisplayObj (Stack stack, int i);
 extern int IsGdkDisplay(NspObject *O);
-extern NspGdkDisplay *GetGdkDisplayCopy (Stack stack, int i); 
-extern NspGdkDisplay *GetGdkDisplay (Stack stack, int i); 
+extern NspGdkDisplay *GetGdkDisplayCopy (Stack stack, int i);
+extern NspGdkDisplay *GetGdkDisplay (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkDisplay */
+#endif /* NSP_INC_NspGdkDisplay */ 
 
 #ifdef NspGdkDisplay_Private 
 static int init_gdkdisplay(NspGdkDisplay *o,NspTypeGdkDisplay *type);
 static char *nsp_gdkdisplay_type_as_string(void);
 static char *nsp_gdkdisplay_type_short_string(NspObject *v);
 static AttrTab gdkdisplay_attrs[];
-static NspMethods *gdkdisplay_get_methods(void); 
-/* static int int_gdkdisplay_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdisplay_get_methods(void);
+/* static int int_gdkdisplay_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkDisplay_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkTextView inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkTextView inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkTextView ;
 typedef NspTypeGtkContainer NspTypeGtkTextView ;
@@ -45,27 +45,27 @@ NspTypeGtkTextView *new_type_gtktextview(type_mode mode);
 NspGtkTextView *new_gtktextview();
 
 /*
-* Object methods redefined for gtktextview 
-*/
+ * Object methods redefined for gtktextview 
+ */
 
 #define NULLGTKTEXTVIEW (NspGtkTextView*) 0
 
 
 /* from NspGtkTextViewObj.c */
 
-extern NspGtkTextView *nsp_gtktextview_object (NspObject *O); 
-extern int IsGtkTextViewObj (Stack stack, int i); 
+extern NspGtkTextView *nsp_gtktextview_object (NspObject *O);
+extern int IsGtkTextViewObj (Stack stack, int i);
 extern int IsGtkTextView(NspObject *O);
-extern NspGtkTextView *GetGtkTextViewCopy (Stack stack, int i); 
-extern NspGtkTextView *GetGtkTextView (Stack stack, int i); 
+extern NspGtkTextView *GetGtkTextViewCopy (Stack stack, int i);
+extern NspGtkTextView *GetGtkTextView (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTextView */
+#endif /* NSP_INC_NspGtkTextView */ 
 
 #ifdef NspGtkTextView_Private 
 static int init_gtktextview(NspGtkTextView *o,NspTypeGtkTextView *type);
 static char *nsp_gtktextview_type_as_string(void);
 static char *nsp_gtktextview_type_short_string(NspObject *v);
 static AttrTab gtktextview_attrs[];
-static NspMethods *gtktextview_get_methods(void); 
-/* static int int_gtktextview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextview_get_methods(void);
+/* static int int_gtktextview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTextView_Private */

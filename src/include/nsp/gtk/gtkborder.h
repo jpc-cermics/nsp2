@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGtkBorder inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGtkBorder inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGtkBorder ;
 typedef NspTypeGBoxed NspTypeGtkBorder ;
@@ -45,27 +45,27 @@ NspTypeGtkBorder *new_type_gtkborder(type_mode mode);
 NspGtkBorder *new_gtkborder();
 
 /*
-* Object methods redefined for gtkborder 
-*/
+ * Object methods redefined for gtkborder 
+ */
 
 #define NULLGTKBORDER (NspGtkBorder*) 0
 
 
 /* from NspGtkBorderObj.c */
 
-extern NspGtkBorder *nsp_gtkborder_object (NspObject *O); 
-extern int IsGtkBorderObj (Stack stack, int i); 
+extern NspGtkBorder *nsp_gtkborder_object (NspObject *O);
+extern int IsGtkBorderObj (Stack stack, int i);
 extern int IsGtkBorder(NspObject *O);
-extern NspGtkBorder *GetGtkBorderCopy (Stack stack, int i); 
-extern NspGtkBorder *GetGtkBorder (Stack stack, int i); 
+extern NspGtkBorder *GetGtkBorderCopy (Stack stack, int i);
+extern NspGtkBorder *GetGtkBorder (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkBorder */
+#endif /* NSP_INC_NspGtkBorder */ 
 
 #ifdef NspGtkBorder_Private 
 static int init_gtkborder(NspGtkBorder *o,NspTypeGtkBorder *type);
 static char *nsp_gtkborder_type_as_string(void);
 static char *nsp_gtkborder_type_short_string(NspObject *v);
 static AttrTab gtkborder_attrs[];
-static NspMethods *gtkborder_get_methods(void); 
-/* static int int_gtkborder_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkborder_get_methods(void);
+/* static int int_gtkborder_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkBorder_Private */

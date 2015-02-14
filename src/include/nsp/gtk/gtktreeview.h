@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcontainer.h>
 
 /*
-* NspGtkTreeView inherits from GtkContainer
-* just change some type attributes 
-*/
+ * NspGtkTreeView inherits from GtkContainer
+ * just change some type attributes 
+ */
 
 typedef NspGtkContainer NspGtkTreeView ;
 typedef NspTypeGtkContainer NspTypeGtkTreeView ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode);
 NspGtkTreeView *new_gtktreeview();
 
 /*
-* Object methods redefined for gtktreeview 
-*/
+ * Object methods redefined for gtktreeview 
+ */
 
 #define NULLGTKTREEVIEW (NspGtkTreeView*) 0
 
 
 /* from NspGtkTreeViewObj.c */
 
-extern NspGtkTreeView *nsp_gtktreeview_object (NspObject *O); 
-extern int IsGtkTreeViewObj (Stack stack, int i); 
+extern NspGtkTreeView *nsp_gtktreeview_object (NspObject *O);
+extern int IsGtkTreeViewObj (Stack stack, int i);
 extern int IsGtkTreeView(NspObject *O);
-extern NspGtkTreeView *GetGtkTreeViewCopy (Stack stack, int i); 
-extern NspGtkTreeView *GetGtkTreeView (Stack stack, int i); 
+extern NspGtkTreeView *GetGtkTreeViewCopy (Stack stack, int i);
+extern NspGtkTreeView *GetGtkTreeView (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeView */
+#endif /* NSP_INC_NspGtkTreeView */ 
 
 #ifdef NspGtkTreeView_Private 
 static int init_gtktreeview(NspGtkTreeView *o,NspTypeGtkTreeView *type);
 static char *nsp_gtktreeview_type_as_string(void);
 static char *nsp_gtktreeview_type_short_string(NspObject *v);
 static AttrTab gtktreeview_attrs[];
-static NspMethods *gtktreeview_get_methods(void); 
-/* static int int_gtktreeview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreeview_get_methods(void);
+/* static int int_gtktreeview_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeView_Private */

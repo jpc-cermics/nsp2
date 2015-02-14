@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkAction inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkAction inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkAction ;
 typedef NspTypeGObject NspTypeAtkAction ;
@@ -45,27 +45,27 @@ NspTypeAtkAction *new_type_atkaction(type_mode mode);
 NspAtkAction *new_atkaction();
 
 /*
-* Object methods redefined for atkaction 
-*/
+ * Object methods redefined for atkaction 
+ */
 
 #define NULLATKACTION (NspAtkAction*) 0
 
 
 /* from NspAtkActionObj.c */
 
-extern NspAtkAction *nsp_atkaction_object (NspObject *O); 
-extern int IsAtkActionObj (Stack stack, int i); 
+extern NspAtkAction *nsp_atkaction_object (NspObject *O);
+extern int IsAtkActionObj (Stack stack, int i);
 extern int IsAtkAction(NspObject *O);
-extern NspAtkAction *GetAtkActionCopy (Stack stack, int i); 
-extern NspAtkAction *GetAtkAction (Stack stack, int i); 
+extern NspAtkAction *GetAtkActionCopy (Stack stack, int i);
+extern NspAtkAction *GetAtkAction (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkAction */
+#endif /* NSP_INC_NspAtkAction */ 
 
 #ifdef NspAtkAction_Private 
 static int init_atkaction(NspAtkAction *o,NspTypeAtkAction *type);
 static char *nsp_atkaction_type_as_string(void);
 static char *nsp_atkaction_type_short_string(NspObject *v);
 static AttrTab atkaction_attrs[];
-static NspMethods *atkaction_get_methods(void); 
-/* static int int_atkaction_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkaction_get_methods(void);
+/* static int int_atkaction_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkAction_Private */

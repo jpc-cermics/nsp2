@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkmisc.h>
 
 /*
-* NspGtkImage inherits from GtkMisc
-* just change some type attributes 
-*/
+ * NspGtkImage inherits from GtkMisc
+ * just change some type attributes 
+ */
 
 typedef NspGtkMisc NspGtkImage ;
 typedef NspTypeGtkMisc NspTypeGtkImage ;
@@ -45,27 +45,27 @@ NspTypeGtkImage *new_type_gtkimage(type_mode mode);
 NspGtkImage *new_gtkimage();
 
 /*
-* Object methods redefined for gtkimage 
-*/
+ * Object methods redefined for gtkimage 
+ */
 
 #define NULLGTKIMAGE (NspGtkImage*) 0
 
 
 /* from NspGtkImageObj.c */
 
-extern NspGtkImage *nsp_gtkimage_object (NspObject *O); 
-extern int IsGtkImageObj (Stack stack, int i); 
+extern NspGtkImage *nsp_gtkimage_object (NspObject *O);
+extern int IsGtkImageObj (Stack stack, int i);
 extern int IsGtkImage(NspObject *O);
-extern NspGtkImage *GetGtkImageCopy (Stack stack, int i); 
-extern NspGtkImage *GetGtkImage (Stack stack, int i); 
+extern NspGtkImage *GetGtkImageCopy (Stack stack, int i);
+extern NspGtkImage *GetGtkImage (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkImage */
+#endif /* NSP_INC_NspGtkImage */ 
 
 #ifdef NspGtkImage_Private 
 static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type);
 static char *nsp_gtkimage_type_as_string(void);
 static char *nsp_gtkimage_type_short_string(NspObject *v);
 static AttrTab gtkimage_attrs[];
-static NspMethods *gtkimage_get_methods(void); 
-/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimage_get_methods(void);
+/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkImage_Private */

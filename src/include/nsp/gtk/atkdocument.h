@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkDocument inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkDocument inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkDocument ;
 typedef NspTypeGObject NspTypeAtkDocument ;
@@ -45,27 +45,27 @@ NspTypeAtkDocument *new_type_atkdocument(type_mode mode);
 NspAtkDocument *new_atkdocument();
 
 /*
-* Object methods redefined for atkdocument 
-*/
+ * Object methods redefined for atkdocument 
+ */
 
 #define NULLATKDOCUMENT (NspAtkDocument*) 0
 
 
 /* from NspAtkDocumentObj.c */
 
-extern NspAtkDocument *nsp_atkdocument_object (NspObject *O); 
-extern int IsAtkDocumentObj (Stack stack, int i); 
+extern NspAtkDocument *nsp_atkdocument_object (NspObject *O);
+extern int IsAtkDocumentObj (Stack stack, int i);
 extern int IsAtkDocument(NspObject *O);
-extern NspAtkDocument *GetAtkDocumentCopy (Stack stack, int i); 
-extern NspAtkDocument *GetAtkDocument (Stack stack, int i); 
+extern NspAtkDocument *GetAtkDocumentCopy (Stack stack, int i);
+extern NspAtkDocument *GetAtkDocument (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkDocument */
+#endif /* NSP_INC_NspAtkDocument */ 
 
 #ifdef NspAtkDocument_Private 
 static int init_atkdocument(NspAtkDocument *o,NspTypeAtkDocument *type);
 static char *nsp_atkdocument_type_as_string(void);
 static char *nsp_atkdocument_type_short_string(NspObject *v);
 static AttrTab atkdocument_attrs[];
-static NspMethods *atkdocument_get_methods(void); 
-/* static int int_atkdocument_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkdocument_get_methods(void);
+/* static int int_atkdocument_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkDocument_Private */

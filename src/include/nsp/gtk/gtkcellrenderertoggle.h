@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcellrenderer.h>
 
 /*
-* NspGtkCellRendererToggle inherits from GtkCellRenderer
-* just change some type attributes 
-*/
+ * NspGtkCellRendererToggle inherits from GtkCellRenderer
+ * just change some type attributes 
+ */
 
 typedef NspGtkCellRenderer NspGtkCellRendererToggle ;
 typedef NspTypeGtkCellRenderer NspTypeGtkCellRendererToggle ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode);
 NspGtkCellRendererToggle *new_gtkcellrenderertoggle();
 
 /*
-* Object methods redefined for gtkcellrenderertoggle 
-*/
+ * Object methods redefined for gtkcellrenderertoggle 
+ */
 
 #define NULLGTKCELLRENDERERTOGGLE (NspGtkCellRendererToggle*) 0
 
 
 /* from NspGtkCellRendererToggleObj.c */
 
-extern NspGtkCellRendererToggle *nsp_gtkcellrenderertoggle_object (NspObject *O); 
-extern int IsGtkCellRendererToggleObj (Stack stack, int i); 
+extern NspGtkCellRendererToggle *nsp_gtkcellrenderertoggle_object (NspObject *O);
+extern int IsGtkCellRendererToggleObj (Stack stack, int i);
 extern int IsGtkCellRendererToggle(NspObject *O);
-extern NspGtkCellRendererToggle *GetGtkCellRendererToggleCopy (Stack stack, int i); 
-extern NspGtkCellRendererToggle *GetGtkCellRendererToggle (Stack stack, int i); 
+extern NspGtkCellRendererToggle *GetGtkCellRendererToggleCopy (Stack stack, int i);
+extern NspGtkCellRendererToggle *GetGtkCellRendererToggle (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRendererToggle */
+#endif /* NSP_INC_NspGtkCellRendererToggle */ 
 
 #ifdef NspGtkCellRendererToggle_Private 
 static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type);
 static char *nsp_gtkcellrenderertoggle_type_as_string(void);
 static char *nsp_gtkcellrenderertoggle_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderertoggle_attrs[];
-static NspMethods *gtkcellrenderertoggle_get_methods(void); 
-/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderertoggle_get_methods(void);
+/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRendererToggle_Private */

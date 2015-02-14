@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkvbox.h>
 
 /*
-* NspGtkColorSelection inherits from GtkVBox
-* just change some type attributes 
-*/
+ * NspGtkColorSelection inherits from GtkVBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkVBox NspGtkColorSelection ;
 typedef NspTypeGtkVBox NspTypeGtkColorSelection ;
@@ -45,27 +45,27 @@ NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode);
 NspGtkColorSelection *new_gtkcolorselection();
 
 /*
-* Object methods redefined for gtkcolorselection 
-*/
+ * Object methods redefined for gtkcolorselection 
+ */
 
 #define NULLGTKCOLORSELECTION (NspGtkColorSelection*) 0
 
 
 /* from NspGtkColorSelectionObj.c */
 
-extern NspGtkColorSelection *nsp_gtkcolorselection_object (NspObject *O); 
-extern int IsGtkColorSelectionObj (Stack stack, int i); 
+extern NspGtkColorSelection *nsp_gtkcolorselection_object (NspObject *O);
+extern int IsGtkColorSelectionObj (Stack stack, int i);
 extern int IsGtkColorSelection(NspObject *O);
-extern NspGtkColorSelection *GetGtkColorSelectionCopy (Stack stack, int i); 
-extern NspGtkColorSelection *GetGtkColorSelection (Stack stack, int i); 
+extern NspGtkColorSelection *GetGtkColorSelectionCopy (Stack stack, int i);
+extern NspGtkColorSelection *GetGtkColorSelection (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkColorSelection */
+#endif /* NSP_INC_NspGtkColorSelection */ 
 
 #ifdef NspGtkColorSelection_Private 
 static int init_gtkcolorselection(NspGtkColorSelection *o,NspTypeGtkColorSelection *type);
 static char *nsp_gtkcolorselection_type_as_string(void);
 static char *nsp_gtkcolorselection_type_short_string(NspObject *v);
 static AttrTab gtkcolorselection_attrs[];
-static NspMethods *gtkcolorselection_get_methods(void); 
-/* static int int_gtkcolorselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcolorselection_get_methods(void);
+/* static int int_gtkcolorselection_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkColorSelection_Private */

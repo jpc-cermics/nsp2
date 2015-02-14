@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspPangoLanguage inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspPangoLanguage inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspPangoLanguage ;
 typedef NspTypeGBoxed NspTypePangoLanguage ;
@@ -45,27 +45,27 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode);
 NspPangoLanguage *new_pangolanguage();
 
 /*
-* Object methods redefined for pangolanguage 
-*/
+ * Object methods redefined for pangolanguage 
+ */
 
 #define NULLPANGOLANGUAGE (NspPangoLanguage*) 0
 
 
 /* from NspPangoLanguageObj.c */
 
-extern NspPangoLanguage *nsp_pangolanguage_object (NspObject *O); 
-extern int IsPangoLanguageObj (Stack stack, int i); 
+extern NspPangoLanguage *nsp_pangolanguage_object (NspObject *O);
+extern int IsPangoLanguageObj (Stack stack, int i);
 extern int IsPangoLanguage(NspObject *O);
-extern NspPangoLanguage *GetPangoLanguageCopy (Stack stack, int i); 
-extern NspPangoLanguage *GetPangoLanguage (Stack stack, int i); 
+extern NspPangoLanguage *GetPangoLanguageCopy (Stack stack, int i);
+extern NspPangoLanguage *GetPangoLanguage (Stack stack, int i);
 
-#endif /* NSP_INC_NspPangoLanguage */
+#endif /* NSP_INC_NspPangoLanguage */ 
 
 #ifdef NspPangoLanguage_Private 
 static int init_pangolanguage(NspPangoLanguage *o,NspTypePangoLanguage *type);
 static char *nsp_pangolanguage_type_as_string(void);
 static char *nsp_pangolanguage_type_short_string(NspObject *v);
 static AttrTab pangolanguage_attrs[];
-static NspMethods *pangolanguage_get_methods(void); 
-/* static int int_pangolanguage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangolanguage_get_methods(void);
+/* static int int_pangolanguage_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspPangoLanguage_Private */

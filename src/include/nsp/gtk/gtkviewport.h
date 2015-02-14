@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkViewport inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkViewport inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkViewport ;
 typedef NspTypeGtkBin NspTypeGtkViewport ;
@@ -45,27 +45,27 @@ NspTypeGtkViewport *new_type_gtkviewport(type_mode mode);
 NspGtkViewport *new_gtkviewport();
 
 /*
-* Object methods redefined for gtkviewport 
-*/
+ * Object methods redefined for gtkviewport 
+ */
 
 #define NULLGTKVIEWPORT (NspGtkViewport*) 0
 
 
 /* from NspGtkViewportObj.c */
 
-extern NspGtkViewport *nsp_gtkviewport_object (NspObject *O); 
-extern int IsGtkViewportObj (Stack stack, int i); 
+extern NspGtkViewport *nsp_gtkviewport_object (NspObject *O);
+extern int IsGtkViewportObj (Stack stack, int i);
 extern int IsGtkViewport(NspObject *O);
-extern NspGtkViewport *GetGtkViewportCopy (Stack stack, int i); 
-extern NspGtkViewport *GetGtkViewport (Stack stack, int i); 
+extern NspGtkViewport *GetGtkViewportCopy (Stack stack, int i);
+extern NspGtkViewport *GetGtkViewport (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkViewport */
+#endif /* NSP_INC_NspGtkViewport */ 
 
 #ifdef NspGtkViewport_Private 
 static int init_gtkviewport(NspGtkViewport *o,NspTypeGtkViewport *type);
 static char *nsp_gtkviewport_type_as_string(void);
 static char *nsp_gtkviewport_type_short_string(NspObject *v);
 static AttrTab gtkviewport_attrs[];
-static NspMethods *gtkviewport_get_methods(void); 
-/* static int int_gtkviewport_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkviewport_get_methods(void);
+/* static int int_gtkviewport_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkViewport_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeDragSource inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeDragSource inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeDragSource ;
 typedef NspTypeGObject NspTypeGtkTreeDragSource ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode);
 NspGtkTreeDragSource *new_gtktreedragsource();
 
 /*
-* Object methods redefined for gtktreedragsource 
-*/
+ * Object methods redefined for gtktreedragsource 
+ */
 
 #define NULLGTKTREEDRAGSOURCE (NspGtkTreeDragSource*) 0
 
 
 /* from NspGtkTreeDragSourceObj.c */
 
-extern NspGtkTreeDragSource *nsp_gtktreedragsource_object (NspObject *O); 
-extern int IsGtkTreeDragSourceObj (Stack stack, int i); 
+extern NspGtkTreeDragSource *nsp_gtktreedragsource_object (NspObject *O);
+extern int IsGtkTreeDragSourceObj (Stack stack, int i);
 extern int IsGtkTreeDragSource(NspObject *O);
-extern NspGtkTreeDragSource *GetGtkTreeDragSourceCopy (Stack stack, int i); 
-extern NspGtkTreeDragSource *GetGtkTreeDragSource (Stack stack, int i); 
+extern NspGtkTreeDragSource *GetGtkTreeDragSourceCopy (Stack stack, int i);
+extern NspGtkTreeDragSource *GetGtkTreeDragSource (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeDragSource */
+#endif /* NSP_INC_NspGtkTreeDragSource */ 
 
 #ifdef NspGtkTreeDragSource_Private 
 static int init_gtktreedragsource(NspGtkTreeDragSource *o,NspTypeGtkTreeDragSource *type);
 static char *nsp_gtktreedragsource_type_as_string(void);
 static char *nsp_gtktreedragsource_type_short_string(NspObject *v);
 static AttrTab gtktreedragsource_attrs[];
-static NspMethods *gtktreedragsource_get_methods(void); 
-/* static int int_gtktreedragsource_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreedragsource_get_methods(void);
+/* static int int_gtktreedragsource_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeDragSource_Private */

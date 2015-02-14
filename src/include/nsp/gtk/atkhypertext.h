@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkHypertext inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkHypertext inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkHypertext ;
 typedef NspTypeGObject NspTypeAtkHypertext ;
@@ -45,27 +45,27 @@ NspTypeAtkHypertext *new_type_atkhypertext(type_mode mode);
 NspAtkHypertext *new_atkhypertext();
 
 /*
-* Object methods redefined for atkhypertext 
-*/
+ * Object methods redefined for atkhypertext 
+ */
 
 #define NULLATKHYPERTEXT (NspAtkHypertext*) 0
 
 
 /* from NspAtkHypertextObj.c */
 
-extern NspAtkHypertext *nsp_atkhypertext_object (NspObject *O); 
-extern int IsAtkHypertextObj (Stack stack, int i); 
+extern NspAtkHypertext *nsp_atkhypertext_object (NspObject *O);
+extern int IsAtkHypertextObj (Stack stack, int i);
 extern int IsAtkHypertext(NspObject *O);
-extern NspAtkHypertext *GetAtkHypertextCopy (Stack stack, int i); 
-extern NspAtkHypertext *GetAtkHypertext (Stack stack, int i); 
+extern NspAtkHypertext *GetAtkHypertextCopy (Stack stack, int i);
+extern NspAtkHypertext *GetAtkHypertext (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkHypertext */
+#endif /* NSP_INC_NspAtkHypertext */ 
 
 #ifdef NspAtkHypertext_Private 
 static int init_atkhypertext(NspAtkHypertext *o,NspTypeAtkHypertext *type);
 static char *nsp_atkhypertext_type_as_string(void);
 static char *nsp_atkhypertext_type_short_string(NspObject *v);
 static AttrTab atkhypertext_attrs[];
-static NspMethods *atkhypertext_get_methods(void); 
-/* static int int_atkhypertext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkhypertext_get_methods(void);
+/* static int int_atkhypertext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkHypertext_Private */

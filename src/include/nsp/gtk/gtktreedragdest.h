@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTreeDragDest inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTreeDragDest inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTreeDragDest ;
 typedef NspTypeGObject NspTypeGtkTreeDragDest ;
@@ -45,27 +45,27 @@ NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode);
 NspGtkTreeDragDest *new_gtktreedragdest();
 
 /*
-* Object methods redefined for gtktreedragdest 
-*/
+ * Object methods redefined for gtktreedragdest 
+ */
 
 #define NULLGTKTREEDRAGDEST (NspGtkTreeDragDest*) 0
 
 
 /* from NspGtkTreeDragDestObj.c */
 
-extern NspGtkTreeDragDest *nsp_gtktreedragdest_object (NspObject *O); 
-extern int IsGtkTreeDragDestObj (Stack stack, int i); 
+extern NspGtkTreeDragDest *nsp_gtktreedragdest_object (NspObject *O);
+extern int IsGtkTreeDragDestObj (Stack stack, int i);
 extern int IsGtkTreeDragDest(NspObject *O);
-extern NspGtkTreeDragDest *GetGtkTreeDragDestCopy (Stack stack, int i); 
-extern NspGtkTreeDragDest *GetGtkTreeDragDest (Stack stack, int i); 
+extern NspGtkTreeDragDest *GetGtkTreeDragDestCopy (Stack stack, int i);
+extern NspGtkTreeDragDest *GetGtkTreeDragDest (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTreeDragDest */
+#endif /* NSP_INC_NspGtkTreeDragDest */ 
 
 #ifdef NspGtkTreeDragDest_Private 
 static int init_gtktreedragdest(NspGtkTreeDragDest *o,NspTypeGtkTreeDragDest *type);
 static char *nsp_gtktreedragdest_type_as_string(void);
 static char *nsp_gtktreedragdest_type_short_string(NspObject *v);
 static AttrTab gtktreedragdest_attrs[];
-static NspMethods *gtktreedragdest_get_methods(void); 
-/* static int int_gtktreedragdest_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreedragdest_get_methods(void);
+/* static int int_gtktreedragdest_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTreeDragDest_Private */

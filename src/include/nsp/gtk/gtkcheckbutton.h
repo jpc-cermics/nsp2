@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktogglebutton.h>
 
 /*
-* NspGtkCheckButton inherits from GtkToggleButton
-* just change some type attributes 
-*/
+ * NspGtkCheckButton inherits from GtkToggleButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkToggleButton NspGtkCheckButton ;
 typedef NspTypeGtkToggleButton NspTypeGtkCheckButton ;
@@ -45,27 +45,27 @@ NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode);
 NspGtkCheckButton *new_gtkcheckbutton();
 
 /*
-* Object methods redefined for gtkcheckbutton 
-*/
+ * Object methods redefined for gtkcheckbutton 
+ */
 
 #define NULLGTKCHECKBUTTON (NspGtkCheckButton*) 0
 
 
 /* from NspGtkCheckButtonObj.c */
 
-extern NspGtkCheckButton *nsp_gtkcheckbutton_object (NspObject *O); 
-extern int IsGtkCheckButtonObj (Stack stack, int i); 
+extern NspGtkCheckButton *nsp_gtkcheckbutton_object (NspObject *O);
+extern int IsGtkCheckButtonObj (Stack stack, int i);
 extern int IsGtkCheckButton(NspObject *O);
-extern NspGtkCheckButton *GetGtkCheckButtonCopy (Stack stack, int i); 
-extern NspGtkCheckButton *GetGtkCheckButton (Stack stack, int i); 
+extern NspGtkCheckButton *GetGtkCheckButtonCopy (Stack stack, int i);
+extern NspGtkCheckButton *GetGtkCheckButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCheckButton */
+#endif /* NSP_INC_NspGtkCheckButton */ 
 
 #ifdef NspGtkCheckButton_Private 
 static int init_gtkcheckbutton(NspGtkCheckButton *o,NspTypeGtkCheckButton *type);
 static char *nsp_gtkcheckbutton_type_as_string(void);
 static char *nsp_gtkcheckbutton_type_short_string(NspObject *v);
 static AttrTab gtkcheckbutton_attrs[];
-static NspMethods *gtkcheckbutton_get_methods(void); 
-/* static int int_gtkcheckbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcheckbutton_get_methods(void);
+/* static int int_gtkcheckbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCheckButton_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkMisc inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkMisc inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkMisc ;
 typedef NspTypeGtkWidget NspTypeGtkMisc ;
@@ -45,27 +45,27 @@ NspTypeGtkMisc *new_type_gtkmisc(type_mode mode);
 NspGtkMisc *new_gtkmisc();
 
 /*
-* Object methods redefined for gtkmisc 
-*/
+ * Object methods redefined for gtkmisc 
+ */
 
 #define NULLGTKMISC (NspGtkMisc*) 0
 
 
 /* from NspGtkMiscObj.c */
 
-extern NspGtkMisc *nsp_gtkmisc_object (NspObject *O); 
-extern int IsGtkMiscObj (Stack stack, int i); 
+extern NspGtkMisc *nsp_gtkmisc_object (NspObject *O);
+extern int IsGtkMiscObj (Stack stack, int i);
 extern int IsGtkMisc(NspObject *O);
-extern NspGtkMisc *GetGtkMiscCopy (Stack stack, int i); 
-extern NspGtkMisc *GetGtkMisc (Stack stack, int i); 
+extern NspGtkMisc *GetGtkMiscCopy (Stack stack, int i);
+extern NspGtkMisc *GetGtkMisc (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkMisc */
+#endif /* NSP_INC_NspGtkMisc */ 
 
 #ifdef NspGtkMisc_Private 
 static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type);
 static char *nsp_gtkmisc_type_as_string(void);
 static char *nsp_gtkmisc_type_short_string(NspObject *v);
 static AttrTab gtkmisc_attrs[];
-static NspMethods *gtkmisc_get_methods(void); 
-/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmisc_get_methods(void);
+/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkMisc_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkframe.h>
 
 /*
-* NspGtkAspectFrame inherits from GtkFrame
-* just change some type attributes 
-*/
+ * NspGtkAspectFrame inherits from GtkFrame
+ * just change some type attributes 
+ */
 
 typedef NspGtkFrame NspGtkAspectFrame ;
 typedef NspTypeGtkFrame NspTypeGtkAspectFrame ;
@@ -45,27 +45,27 @@ NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode);
 NspGtkAspectFrame *new_gtkaspectframe();
 
 /*
-* Object methods redefined for gtkaspectframe 
-*/
+ * Object methods redefined for gtkaspectframe 
+ */
 
 #define NULLGTKASPECTFRAME (NspGtkAspectFrame*) 0
 
 
 /* from NspGtkAspectFrameObj.c */
 
-extern NspGtkAspectFrame *nsp_gtkaspectframe_object (NspObject *O); 
-extern int IsGtkAspectFrameObj (Stack stack, int i); 
+extern NspGtkAspectFrame *nsp_gtkaspectframe_object (NspObject *O);
+extern int IsGtkAspectFrameObj (Stack stack, int i);
 extern int IsGtkAspectFrame(NspObject *O);
-extern NspGtkAspectFrame *GetGtkAspectFrameCopy (Stack stack, int i); 
-extern NspGtkAspectFrame *GetGtkAspectFrame (Stack stack, int i); 
+extern NspGtkAspectFrame *GetGtkAspectFrameCopy (Stack stack, int i);
+extern NspGtkAspectFrame *GetGtkAspectFrame (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkAspectFrame */
+#endif /* NSP_INC_NspGtkAspectFrame */ 
 
 #ifdef NspGtkAspectFrame_Private 
 static int init_gtkaspectframe(NspGtkAspectFrame *o,NspTypeGtkAspectFrame *type);
 static char *nsp_gtkaspectframe_type_as_string(void);
 static char *nsp_gtkaspectframe_type_short_string(NspObject *v);
 static AttrTab gtkaspectframe_attrs[];
-static NspMethods *gtkaspectframe_get_methods(void); 
-/* static int int_gtkaspectframe_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaspectframe_get_methods(void);
+/* static int int_gtkaspectframe_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkAspectFrame_Private */

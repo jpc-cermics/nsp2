@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkProgress inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkProgress inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkProgress ;
 typedef NspTypeGtkWidget NspTypeGtkProgress ;
@@ -45,27 +45,27 @@ NspTypeGtkProgress *new_type_gtkprogress(type_mode mode);
 NspGtkProgress *new_gtkprogress();
 
 /*
-* Object methods redefined for gtkprogress 
-*/
+ * Object methods redefined for gtkprogress 
+ */
 
 #define NULLGTKPROGRESS (NspGtkProgress*) 0
 
 
 /* from NspGtkProgressObj.c */
 
-extern NspGtkProgress *nsp_gtkprogress_object (NspObject *O); 
-extern int IsGtkProgressObj (Stack stack, int i); 
+extern NspGtkProgress *nsp_gtkprogress_object (NspObject *O);
+extern int IsGtkProgressObj (Stack stack, int i);
 extern int IsGtkProgress(NspObject *O);
-extern NspGtkProgress *GetGtkProgressCopy (Stack stack, int i); 
-extern NspGtkProgress *GetGtkProgress (Stack stack, int i); 
+extern NspGtkProgress *GetGtkProgressCopy (Stack stack, int i);
+extern NspGtkProgress *GetGtkProgress (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkProgress */
+#endif /* NSP_INC_NspGtkProgress */ 
 
 #ifdef NspGtkProgress_Private 
 static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type);
 static char *nsp_gtkprogress_type_as_string(void);
 static char *nsp_gtkprogress_type_short_string(NspObject *v);
 static AttrTab gtkprogress_attrs[];
-static NspMethods *gtkprogress_get_methods(void); 
-/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkprogress_get_methods(void);
+/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkProgress_Private */

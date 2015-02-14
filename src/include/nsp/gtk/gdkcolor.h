@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGdkColor inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGdkColor inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGdkColor ;
 typedef NspTypeGBoxed NspTypeGdkColor ;
@@ -45,27 +45,27 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode);
 NspGdkColor *new_gdkcolor();
 
 /*
-* Object methods redefined for gdkcolor 
-*/
+ * Object methods redefined for gdkcolor 
+ */
 
 #define NULLGDKCOLOR (NspGdkColor*) 0
 
 
 /* from NspGdkColorObj.c */
 
-extern NspGdkColor *nsp_gdkcolor_object (NspObject *O); 
-extern int IsGdkColorObj (Stack stack, int i); 
+extern NspGdkColor *nsp_gdkcolor_object (NspObject *O);
+extern int IsGdkColorObj (Stack stack, int i);
 extern int IsGdkColor(NspObject *O);
-extern NspGdkColor *GetGdkColorCopy (Stack stack, int i); 
-extern NspGdkColor *GetGdkColor (Stack stack, int i); 
+extern NspGdkColor *GetGdkColorCopy (Stack stack, int i);
+extern NspGdkColor *GetGdkColor (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkColor */
+#endif /* NSP_INC_NspGdkColor */ 
 
 #ifdef NspGdkColor_Private 
 static int init_gdkcolor(NspGdkColor *o,NspTypeGdkColor *type);
 static char *nsp_gdkcolor_type_as_string(void);
 static char *nsp_gdkcolor_type_short_string(NspObject *v);
 static AttrTab gdkcolor_attrs[];
-static NspMethods *gdkcolor_get_methods(void); 
-/* static int int_gdkcolor_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkcolor_get_methods(void);
+/* static int int_gdkcolor_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkColor_Private */

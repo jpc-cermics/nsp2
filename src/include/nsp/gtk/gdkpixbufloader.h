@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkPixbufLoader inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkPixbufLoader inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkPixbufLoader ;
 typedef NspTypeGObject NspTypeGdkPixbufLoader ;
@@ -45,27 +45,27 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode);
 NspGdkPixbufLoader *new_gdkpixbufloader();
 
 /*
-* Object methods redefined for gdkpixbufloader 
-*/
+ * Object methods redefined for gdkpixbufloader 
+ */
 
 #define NULLGDKPIXBUFLOADER (NspGdkPixbufLoader*) 0
 
 
 /* from NspGdkPixbufLoaderObj.c */
 
-extern NspGdkPixbufLoader *nsp_gdkpixbufloader_object (NspObject *O); 
-extern int IsGdkPixbufLoaderObj (Stack stack, int i); 
+extern NspGdkPixbufLoader *nsp_gdkpixbufloader_object (NspObject *O);
+extern int IsGdkPixbufLoaderObj (Stack stack, int i);
 extern int IsGdkPixbufLoader(NspObject *O);
-extern NspGdkPixbufLoader *GetGdkPixbufLoaderCopy (Stack stack, int i); 
-extern NspGdkPixbufLoader *GetGdkPixbufLoader (Stack stack, int i); 
+extern NspGdkPixbufLoader *GetGdkPixbufLoaderCopy (Stack stack, int i);
+extern NspGdkPixbufLoader *GetGdkPixbufLoader (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkPixbufLoader */
+#endif /* NSP_INC_NspGdkPixbufLoader */ 
 
 #ifdef NspGdkPixbufLoader_Private 
 static int init_gdkpixbufloader(NspGdkPixbufLoader *o,NspTypeGdkPixbufLoader *type);
 static char *nsp_gdkpixbufloader_type_as_string(void);
 static char *nsp_gdkpixbufloader_type_short_string(NspObject *v);
 static AttrTab gdkpixbufloader_attrs[];
-static NspMethods *gdkpixbufloader_get_methods(void); 
-/* static int int_gdkpixbufloader_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbufloader_get_methods(void);
+/* static int int_gdkpixbufloader_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkPixbufLoader_Private */

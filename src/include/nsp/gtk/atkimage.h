@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkImage inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkImage inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkImage ;
 typedef NspTypeGObject NspTypeAtkImage ;
@@ -45,27 +45,27 @@ NspTypeAtkImage *new_type_atkimage(type_mode mode);
 NspAtkImage *new_atkimage();
 
 /*
-* Object methods redefined for atkimage 
-*/
+ * Object methods redefined for atkimage 
+ */
 
 #define NULLATKIMAGE (NspAtkImage*) 0
 
 
 /* from NspAtkImageObj.c */
 
-extern NspAtkImage *nsp_atkimage_object (NspObject *O); 
-extern int IsAtkImageObj (Stack stack, int i); 
+extern NspAtkImage *nsp_atkimage_object (NspObject *O);
+extern int IsAtkImageObj (Stack stack, int i);
 extern int IsAtkImage(NspObject *O);
-extern NspAtkImage *GetAtkImageCopy (Stack stack, int i); 
-extern NspAtkImage *GetAtkImage (Stack stack, int i); 
+extern NspAtkImage *GetAtkImageCopy (Stack stack, int i);
+extern NspAtkImage *GetAtkImage (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkImage */
+#endif /* NSP_INC_NspAtkImage */ 
 
 #ifdef NspAtkImage_Private 
 static int init_atkimage(NspAtkImage *o,NspTypeAtkImage *type);
 static char *nsp_atkimage_type_as_string(void);
 static char *nsp_atkimage_type_short_string(NspObject *v);
 static AttrTab atkimage_attrs[];
-static NspMethods *atkimage_get_methods(void); 
-/* static int int_atkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkimage_get_methods(void);
+/* static int int_atkimage_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkImage_Private */

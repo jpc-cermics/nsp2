@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkbin.h>
 
 /*
-* NspGtkScrolledWindow inherits from GtkBin
-* just change some type attributes 
-*/
+ * NspGtkScrolledWindow inherits from GtkBin
+ * just change some type attributes 
+ */
 
 typedef NspGtkBin NspGtkScrolledWindow ;
 typedef NspTypeGtkBin NspTypeGtkScrolledWindow ;
@@ -45,27 +45,27 @@ NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode);
 NspGtkScrolledWindow *new_gtkscrolledwindow();
 
 /*
-* Object methods redefined for gtkscrolledwindow 
-*/
+ * Object methods redefined for gtkscrolledwindow 
+ */
 
 #define NULLGTKSCROLLEDWINDOW (NspGtkScrolledWindow*) 0
 
 
 /* from NspGtkScrolledWindowObj.c */
 
-extern NspGtkScrolledWindow *nsp_gtkscrolledwindow_object (NspObject *O); 
-extern int IsGtkScrolledWindowObj (Stack stack, int i); 
+extern NspGtkScrolledWindow *nsp_gtkscrolledwindow_object (NspObject *O);
+extern int IsGtkScrolledWindowObj (Stack stack, int i);
 extern int IsGtkScrolledWindow(NspObject *O);
-extern NspGtkScrolledWindow *GetGtkScrolledWindowCopy (Stack stack, int i); 
-extern NspGtkScrolledWindow *GetGtkScrolledWindow (Stack stack, int i); 
+extern NspGtkScrolledWindow *GetGtkScrolledWindowCopy (Stack stack, int i);
+extern NspGtkScrolledWindow *GetGtkScrolledWindow (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkScrolledWindow */
+#endif /* NSP_INC_NspGtkScrolledWindow */ 
 
 #ifdef NspGtkScrolledWindow_Private 
 static int init_gtkscrolledwindow(NspGtkScrolledWindow *o,NspTypeGtkScrolledWindow *type);
 static char *nsp_gtkscrolledwindow_type_as_string(void);
 static char *nsp_gtkscrolledwindow_type_short_string(NspObject *v);
 static AttrTab gtkscrolledwindow_attrs[];
-static NspMethods *gtkscrolledwindow_get_methods(void); 
-/* static int int_gtkscrolledwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkscrolledwindow_get_methods(void);
+/* static int int_gtkscrolledwindow_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkScrolledWindow_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkIconFactory inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkIconFactory inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkIconFactory ;
 typedef NspTypeGObject NspTypeGtkIconFactory ;
@@ -45,27 +45,27 @@ NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode);
 NspGtkIconFactory *new_gtkiconfactory();
 
 /*
-* Object methods redefined for gtkiconfactory 
-*/
+ * Object methods redefined for gtkiconfactory 
+ */
 
 #define NULLGTKICONFACTORY (NspGtkIconFactory*) 0
 
 
 /* from NspGtkIconFactoryObj.c */
 
-extern NspGtkIconFactory *nsp_gtkiconfactory_object (NspObject *O); 
-extern int IsGtkIconFactoryObj (Stack stack, int i); 
+extern NspGtkIconFactory *nsp_gtkiconfactory_object (NspObject *O);
+extern int IsGtkIconFactoryObj (Stack stack, int i);
 extern int IsGtkIconFactory(NspObject *O);
-extern NspGtkIconFactory *GetGtkIconFactoryCopy (Stack stack, int i); 
-extern NspGtkIconFactory *GetGtkIconFactory (Stack stack, int i); 
+extern NspGtkIconFactory *GetGtkIconFactoryCopy (Stack stack, int i);
+extern NspGtkIconFactory *GetGtkIconFactory (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIconFactory */
+#endif /* NSP_INC_NspGtkIconFactory */ 
 
 #ifdef NspGtkIconFactory_Private 
 static int init_gtkiconfactory(NspGtkIconFactory *o,NspTypeGtkIconFactory *type);
 static char *nsp_gtkiconfactory_type_as_string(void);
 static char *nsp_gtkiconfactory_type_short_string(NspObject *v);
 static AttrTab gtkiconfactory_attrs[];
-static NspMethods *gtkiconfactory_get_methods(void); 
-/* static int int_gtkiconfactory_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkiconfactory_get_methods(void);
+/* static int int_gtkiconfactory_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIconFactory_Private */

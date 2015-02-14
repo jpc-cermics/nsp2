@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkhbox.h>
 
 /*
-* NspGtkStatusbar inherits from GtkHBox
-* just change some type attributes 
-*/
+ * NspGtkStatusbar inherits from GtkHBox
+ * just change some type attributes 
+ */
 
 typedef NspGtkHBox NspGtkStatusbar ;
 typedef NspTypeGtkHBox NspTypeGtkStatusbar ;
@@ -45,27 +45,27 @@ NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode);
 NspGtkStatusbar *new_gtkstatusbar();
 
 /*
-* Object methods redefined for gtkstatusbar 
-*/
+ * Object methods redefined for gtkstatusbar 
+ */
 
 #define NULLGTKSTATUSBAR (NspGtkStatusbar*) 0
 
 
 /* from NspGtkStatusbarObj.c */
 
-extern NspGtkStatusbar *nsp_gtkstatusbar_object (NspObject *O); 
-extern int IsGtkStatusbarObj (Stack stack, int i); 
+extern NspGtkStatusbar *nsp_gtkstatusbar_object (NspObject *O);
+extern int IsGtkStatusbarObj (Stack stack, int i);
 extern int IsGtkStatusbar(NspObject *O);
-extern NspGtkStatusbar *GetGtkStatusbarCopy (Stack stack, int i); 
-extern NspGtkStatusbar *GetGtkStatusbar (Stack stack, int i); 
+extern NspGtkStatusbar *GetGtkStatusbarCopy (Stack stack, int i);
+extern NspGtkStatusbar *GetGtkStatusbar (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkStatusbar */
+#endif /* NSP_INC_NspGtkStatusbar */ 
 
 #ifdef NspGtkStatusbar_Private 
 static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type);
 static char *nsp_gtkstatusbar_type_as_string(void);
 static char *nsp_gtkstatusbar_type_short_string(NspObject *v);
 static AttrTab gtkstatusbar_attrs[];
-static NspMethods *gtkstatusbar_get_methods(void); 
-/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkstatusbar_get_methods(void);
+/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkStatusbar_Private */

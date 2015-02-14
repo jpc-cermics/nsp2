@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspAtkStreamableContent inherits from GObject
-* just change some type attributes 
-*/
+ * NspAtkStreamableContent inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspAtkStreamableContent ;
 typedef NspTypeGObject NspTypeAtkStreamableContent ;
@@ -45,27 +45,27 @@ NspTypeAtkStreamableContent *new_type_atkstreamablecontent(type_mode mode);
 NspAtkStreamableContent *new_atkstreamablecontent();
 
 /*
-* Object methods redefined for atkstreamablecontent 
-*/
+ * Object methods redefined for atkstreamablecontent 
+ */
 
 #define NULLATKSTREAMABLECONTENT (NspAtkStreamableContent*) 0
 
 
 /* from NspAtkStreamableContentObj.c */
 
-extern NspAtkStreamableContent *nsp_atkstreamablecontent_object (NspObject *O); 
-extern int IsAtkStreamableContentObj (Stack stack, int i); 
+extern NspAtkStreamableContent *nsp_atkstreamablecontent_object (NspObject *O);
+extern int IsAtkStreamableContentObj (Stack stack, int i);
 extern int IsAtkStreamableContent(NspObject *O);
-extern NspAtkStreamableContent *GetAtkStreamableContentCopy (Stack stack, int i); 
-extern NspAtkStreamableContent *GetAtkStreamableContent (Stack stack, int i); 
+extern NspAtkStreamableContent *GetAtkStreamableContentCopy (Stack stack, int i);
+extern NspAtkStreamableContent *GetAtkStreamableContent (Stack stack, int i);
 
-#endif /* NSP_INC_NspAtkStreamableContent */
+#endif /* NSP_INC_NspAtkStreamableContent */ 
 
 #ifdef NspAtkStreamableContent_Private 
 static int init_atkstreamablecontent(NspAtkStreamableContent *o,NspTypeAtkStreamableContent *type);
 static char *nsp_atkstreamablecontent_type_as_string(void);
 static char *nsp_atkstreamablecontent_type_short_string(NspObject *v);
 static AttrTab atkstreamablecontent_attrs[];
-static NspMethods *atkstreamablecontent_get_methods(void); 
-/* static int int_atkstreamablecontent_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkstreamablecontent_get_methods(void);
+/* static int int_atkstreamablecontent_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspAtkStreamableContent_Private */

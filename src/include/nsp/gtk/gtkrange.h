@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkwidget.h>
 
 /*
-* NspGtkRange inherits from GtkWidget
-* just change some type attributes 
-*/
+ * NspGtkRange inherits from GtkWidget
+ * just change some type attributes 
+ */
 
 typedef NspGtkWidget NspGtkRange ;
 typedef NspTypeGtkWidget NspTypeGtkRange ;
@@ -45,27 +45,27 @@ NspTypeGtkRange *new_type_gtkrange(type_mode mode);
 NspGtkRange *new_gtkrange();
 
 /*
-* Object methods redefined for gtkrange 
-*/
+ * Object methods redefined for gtkrange 
+ */
 
 #define NULLGTKRANGE (NspGtkRange*) 0
 
 
 /* from NspGtkRangeObj.c */
 
-extern NspGtkRange *nsp_gtkrange_object (NspObject *O); 
-extern int IsGtkRangeObj (Stack stack, int i); 
+extern NspGtkRange *nsp_gtkrange_object (NspObject *O);
+extern int IsGtkRangeObj (Stack stack, int i);
 extern int IsGtkRange(NspObject *O);
-extern NspGtkRange *GetGtkRangeCopy (Stack stack, int i); 
-extern NspGtkRange *GetGtkRange (Stack stack, int i); 
+extern NspGtkRange *GetGtkRangeCopy (Stack stack, int i);
+extern NspGtkRange *GetGtkRange (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRange */
+#endif /* NSP_INC_NspGtkRange */ 
 
 #ifdef NspGtkRange_Private 
 static int init_gtkrange(NspGtkRange *o,NspTypeGtkRange *type);
 static char *nsp_gtkrange_type_as_string(void);
 static char *nsp_gtkrange_type_short_string(NspObject *v);
 static AttrTab gtkrange_attrs[];
-static NspMethods *gtkrange_get_methods(void); 
-/* static int int_gtkrange_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrange_get_methods(void);
+/* static int int_gtkrange_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRange_Private */

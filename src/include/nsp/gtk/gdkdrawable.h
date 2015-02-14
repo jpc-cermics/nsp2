@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGdkDrawable inherits from GObject
-* just change some type attributes 
-*/
+ * NspGdkDrawable inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGdkDrawable ;
 typedef NspTypeGObject NspTypeGdkDrawable ;
@@ -45,27 +45,27 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode);
 NspGdkDrawable *new_gdkdrawable();
 
 /*
-* Object methods redefined for gdkdrawable 
-*/
+ * Object methods redefined for gdkdrawable 
+ */
 
 #define NULLGDKDRAWABLE (NspGdkDrawable*) 0
 
 
 /* from NspGdkDrawableObj.c */
 
-extern NspGdkDrawable *nsp_gdkdrawable_object (NspObject *O); 
-extern int IsGdkDrawableObj (Stack stack, int i); 
+extern NspGdkDrawable *nsp_gdkdrawable_object (NspObject *O);
+extern int IsGdkDrawableObj (Stack stack, int i);
 extern int IsGdkDrawable(NspObject *O);
-extern NspGdkDrawable *GetGdkDrawableCopy (Stack stack, int i); 
-extern NspGdkDrawable *GetGdkDrawable (Stack stack, int i); 
+extern NspGdkDrawable *GetGdkDrawableCopy (Stack stack, int i);
+extern NspGdkDrawable *GetGdkDrawable (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkDrawable */
+#endif /* NSP_INC_NspGdkDrawable */ 
 
 #ifdef NspGdkDrawable_Private 
 static int init_gdkdrawable(NspGdkDrawable *o,NspTypeGdkDrawable *type);
 static char *nsp_gdkdrawable_type_as_string(void);
 static char *nsp_gdkdrawable_type_short_string(NspObject *v);
 static AttrTab gdkdrawable_attrs[];
-static NspMethods *gdkdrawable_get_methods(void); 
-/* static int int_gdkdrawable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdrawable_get_methods(void);
+/* static int int_gdkdrawable_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkDrawable_Private */

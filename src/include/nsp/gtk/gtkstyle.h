@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkStyle inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkStyle inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkStyle ;
 typedef NspTypeGObject NspTypeGtkStyle ;
@@ -45,27 +45,27 @@ NspTypeGtkStyle *new_type_gtkstyle(type_mode mode);
 NspGtkStyle *new_gtkstyle();
 
 /*
-* Object methods redefined for gtkstyle 
-*/
+ * Object methods redefined for gtkstyle 
+ */
 
 #define NULLGTKSTYLE (NspGtkStyle*) 0
 
 
 /* from NspGtkStyleObj.c */
 
-extern NspGtkStyle *nsp_gtkstyle_object (NspObject *O); 
-extern int IsGtkStyleObj (Stack stack, int i); 
+extern NspGtkStyle *nsp_gtkstyle_object (NspObject *O);
+extern int IsGtkStyleObj (Stack stack, int i);
 extern int IsGtkStyle(NspObject *O);
-extern NspGtkStyle *GetGtkStyleCopy (Stack stack, int i); 
-extern NspGtkStyle *GetGtkStyle (Stack stack, int i); 
+extern NspGtkStyle *GetGtkStyleCopy (Stack stack, int i);
+extern NspGtkStyle *GetGtkStyle (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkStyle */
+#endif /* NSP_INC_NspGtkStyle */ 
 
 #ifdef NspGtkStyle_Private 
 static int init_gtkstyle(NspGtkStyle *o,NspTypeGtkStyle *type);
 static char *nsp_gtkstyle_type_as_string(void);
 static char *nsp_gtkstyle_type_short_string(NspObject *v);
 static AttrTab gtkstyle_attrs[];
-static NspMethods *gtkstyle_get_methods(void); 
-/* static int int_gtkstyle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkstyle_get_methods(void);
+/* static int int_gtkstyle_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkStyle_Private */

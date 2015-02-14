@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkTextChildAnchor inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkTextChildAnchor inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkTextChildAnchor ;
 typedef NspTypeGObject NspTypeGtkTextChildAnchor ;
@@ -45,27 +45,27 @@ NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode);
 NspGtkTextChildAnchor *new_gtktextchildanchor();
 
 /*
-* Object methods redefined for gtktextchildanchor 
-*/
+ * Object methods redefined for gtktextchildanchor 
+ */
 
 #define NULLGTKTEXTCHILDANCHOR (NspGtkTextChildAnchor*) 0
 
 
 /* from NspGtkTextChildAnchorObj.c */
 
-extern NspGtkTextChildAnchor *nsp_gtktextchildanchor_object (NspObject *O); 
-extern int IsGtkTextChildAnchorObj (Stack stack, int i); 
+extern NspGtkTextChildAnchor *nsp_gtktextchildanchor_object (NspObject *O);
+extern int IsGtkTextChildAnchorObj (Stack stack, int i);
 extern int IsGtkTextChildAnchor(NspObject *O);
-extern NspGtkTextChildAnchor *GetGtkTextChildAnchorCopy (Stack stack, int i); 
-extern NspGtkTextChildAnchor *GetGtkTextChildAnchor (Stack stack, int i); 
+extern NspGtkTextChildAnchor *GetGtkTextChildAnchorCopy (Stack stack, int i);
+extern NspGtkTextChildAnchor *GetGtkTextChildAnchor (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkTextChildAnchor */
+#endif /* NSP_INC_NspGtkTextChildAnchor */ 
 
 #ifdef NspGtkTextChildAnchor_Private 
 static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type);
 static char *nsp_gtktextchildanchor_type_as_string(void);
 static char *nsp_gtktextchildanchor_type_short_string(NspObject *v);
 static AttrTab gtktextchildanchor_attrs[];
-static NspMethods *gtktextchildanchor_get_methods(void); 
-/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextchildanchor_get_methods(void);
+/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkTextChildAnchor_Private */

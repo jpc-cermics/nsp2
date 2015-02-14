@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkimcontext.h>
 
 /*
-* NspGtkIMContextSimple inherits from GtkIMContext
-* just change some type attributes 
-*/
+ * NspGtkIMContextSimple inherits from GtkIMContext
+ * just change some type attributes 
+ */
 
 typedef NspGtkIMContext NspGtkIMContextSimple ;
 typedef NspTypeGtkIMContext NspTypeGtkIMContextSimple ;
@@ -45,27 +45,27 @@ NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode);
 NspGtkIMContextSimple *new_gtkimcontextsimple();
 
 /*
-* Object methods redefined for gtkimcontextsimple 
-*/
+ * Object methods redefined for gtkimcontextsimple 
+ */
 
 #define NULLGTKIMCONTEXTSIMPLE (NspGtkIMContextSimple*) 0
 
 
 /* from NspGtkIMContextSimpleObj.c */
 
-extern NspGtkIMContextSimple *nsp_gtkimcontextsimple_object (NspObject *O); 
-extern int IsGtkIMContextSimpleObj (Stack stack, int i); 
+extern NspGtkIMContextSimple *nsp_gtkimcontextsimple_object (NspObject *O);
+extern int IsGtkIMContextSimpleObj (Stack stack, int i);
 extern int IsGtkIMContextSimple(NspObject *O);
-extern NspGtkIMContextSimple *GetGtkIMContextSimpleCopy (Stack stack, int i); 
-extern NspGtkIMContextSimple *GetGtkIMContextSimple (Stack stack, int i); 
+extern NspGtkIMContextSimple *GetGtkIMContextSimpleCopy (Stack stack, int i);
+extern NspGtkIMContextSimple *GetGtkIMContextSimple (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkIMContextSimple */
+#endif /* NSP_INC_NspGtkIMContextSimple */ 
 
 #ifdef NspGtkIMContextSimple_Private 
 static int init_gtkimcontextsimple(NspGtkIMContextSimple *o,NspTypeGtkIMContextSimple *type);
 static char *nsp_gtkimcontextsimple_type_as_string(void);
 static char *nsp_gtkimcontextsimple_type_short_string(NspObject *v);
 static AttrTab gtkimcontextsimple_attrs[];
-static NspMethods *gtkimcontextsimple_get_methods(void); 
-/* static int int_gtkimcontextsimple_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimcontextsimple_get_methods(void);
+/* static int int_gtkimcontextsimple_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkIMContextSimple_Private */

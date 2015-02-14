@@ -26,9 +26,9 @@
 #include <nsp/gtk/gobject.h>
 
 /*
-* NspGtkCellLayout inherits from GObject
-* just change some type attributes 
-*/
+ * NspGtkCellLayout inherits from GObject
+ * just change some type attributes 
+ */
 
 typedef NspGObject NspGtkCellLayout ;
 typedef NspTypeGObject NspTypeGtkCellLayout ;
@@ -45,27 +45,27 @@ NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode);
 NspGtkCellLayout *new_gtkcelllayout();
 
 /*
-* Object methods redefined for gtkcelllayout 
-*/
+ * Object methods redefined for gtkcelllayout 
+ */
 
 #define NULLGTKCELLLAYOUT (NspGtkCellLayout*) 0
 
 
 /* from NspGtkCellLayoutObj.c */
 
-extern NspGtkCellLayout *nsp_gtkcelllayout_object (NspObject *O); 
-extern int IsGtkCellLayoutObj (Stack stack, int i); 
+extern NspGtkCellLayout *nsp_gtkcelllayout_object (NspObject *O);
+extern int IsGtkCellLayoutObj (Stack stack, int i);
 extern int IsGtkCellLayout(NspObject *O);
-extern NspGtkCellLayout *GetGtkCellLayoutCopy (Stack stack, int i); 
-extern NspGtkCellLayout *GetGtkCellLayout (Stack stack, int i); 
+extern NspGtkCellLayout *GetGtkCellLayoutCopy (Stack stack, int i);
+extern NspGtkCellLayout *GetGtkCellLayout (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellLayout */
+#endif /* NSP_INC_NspGtkCellLayout */ 
 
 #ifdef NspGtkCellLayout_Private 
 static int init_gtkcelllayout(NspGtkCellLayout *o,NspTypeGtkCellLayout *type);
 static char *nsp_gtkcelllayout_type_as_string(void);
 static char *nsp_gtkcelllayout_type_short_string(NspObject *v);
 static AttrTab gtkcelllayout_attrs[];
-static NspMethods *gtkcelllayout_get_methods(void); 
-/* static int int_gtkcelllayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcelllayout_get_methods(void);
+/* static int int_gtkcelllayout_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellLayout_Private */

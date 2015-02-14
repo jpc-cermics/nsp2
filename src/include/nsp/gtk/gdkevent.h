@@ -26,9 +26,9 @@
 #include <nsp/gtk/gboxed.h>
 
 /*
-* NspGdkEvent inherits from GBoxed
-* just change some type attributes 
-*/
+ * NspGdkEvent inherits from GBoxed
+ * just change some type attributes 
+ */
 
 typedef NspGBoxed NspGdkEvent ;
 typedef NspTypeGBoxed NspTypeGdkEvent ;
@@ -45,27 +45,27 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode);
 NspGdkEvent *new_gdkevent();
 
 /*
-* Object methods redefined for gdkevent 
-*/
+ * Object methods redefined for gdkevent 
+ */
 
 #define NULLGDKEVENT (NspGdkEvent*) 0
 
 
 /* from NspGdkEventObj.c */
 
-extern NspGdkEvent *nsp_gdkevent_object (NspObject *O); 
-extern int IsGdkEventObj (Stack stack, int i); 
+extern NspGdkEvent *nsp_gdkevent_object (NspObject *O);
+extern int IsGdkEventObj (Stack stack, int i);
 extern int IsGdkEvent(NspObject *O);
-extern NspGdkEvent *GetGdkEventCopy (Stack stack, int i); 
-extern NspGdkEvent *GetGdkEvent (Stack stack, int i); 
+extern NspGdkEvent *GetGdkEventCopy (Stack stack, int i);
+extern NspGdkEvent *GetGdkEvent (Stack stack, int i);
 
-#endif /* NSP_INC_NspGdkEvent */
+#endif /* NSP_INC_NspGdkEvent */ 
 
 #ifdef NspGdkEvent_Private 
 static int init_gdkevent(NspGdkEvent *o,NspTypeGdkEvent *type);
 static char *nsp_gdkevent_type_as_string(void);
 static char *nsp_gdkevent_type_short_string(NspObject *v);
 static AttrTab gdkevent_attrs[];
-static NspMethods *gdkevent_get_methods(void); 
-/* static int int_gdkevent_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkevent_get_methods(void);
+/* static int int_gdkevent_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGdkEvent_Private */

@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtktoggletoolbutton.h>
 
 /*
-* NspGtkRadioToolButton inherits from GtkToggleToolButton
-* just change some type attributes 
-*/
+ * NspGtkRadioToolButton inherits from GtkToggleToolButton
+ * just change some type attributes 
+ */
 
 typedef NspGtkToggleToolButton NspGtkRadioToolButton ;
 typedef NspTypeGtkToggleToolButton NspTypeGtkRadioToolButton ;
@@ -45,27 +45,27 @@ NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode);
 NspGtkRadioToolButton *new_gtkradiotoolbutton();
 
 /*
-* Object methods redefined for gtkradiotoolbutton 
-*/
+ * Object methods redefined for gtkradiotoolbutton 
+ */
 
 #define NULLGTKRADIOTOOLBUTTON (NspGtkRadioToolButton*) 0
 
 
 /* from NspGtkRadioToolButtonObj.c */
 
-extern NspGtkRadioToolButton *nsp_gtkradiotoolbutton_object (NspObject *O); 
-extern int IsGtkRadioToolButtonObj (Stack stack, int i); 
+extern NspGtkRadioToolButton *nsp_gtkradiotoolbutton_object (NspObject *O);
+extern int IsGtkRadioToolButtonObj (Stack stack, int i);
 extern int IsGtkRadioToolButton(NspObject *O);
-extern NspGtkRadioToolButton *GetGtkRadioToolButtonCopy (Stack stack, int i); 
-extern NspGtkRadioToolButton *GetGtkRadioToolButton (Stack stack, int i); 
+extern NspGtkRadioToolButton *GetGtkRadioToolButtonCopy (Stack stack, int i);
+extern NspGtkRadioToolButton *GetGtkRadioToolButton (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkRadioToolButton */
+#endif /* NSP_INC_NspGtkRadioToolButton */ 
 
 #ifdef NspGtkRadioToolButton_Private 
 static int init_gtkradiotoolbutton(NspGtkRadioToolButton *o,NspTypeGtkRadioToolButton *type);
 static char *nsp_gtkradiotoolbutton_type_as_string(void);
 static char *nsp_gtkradiotoolbutton_type_short_string(NspObject *v);
 static AttrTab gtkradiotoolbutton_attrs[];
-static NspMethods *gtkradiotoolbutton_get_methods(void); 
-/* static int int_gtkradiotoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkradiotoolbutton_get_methods(void);
+/* static int int_gtkradiotoolbutton_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkRadioToolButton_Private */

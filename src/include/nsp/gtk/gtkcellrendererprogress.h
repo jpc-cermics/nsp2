@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcellrenderer.h>
 
 /*
-* NspGtkCellRendererProgress inherits from GtkCellRenderer
-* just change some type attributes 
-*/
+ * NspGtkCellRendererProgress inherits from GtkCellRenderer
+ * just change some type attributes 
+ */
 
 typedef NspGtkCellRenderer NspGtkCellRendererProgress ;
 typedef NspTypeGtkCellRenderer NspTypeGtkCellRendererProgress ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
 NspGtkCellRendererProgress *new_gtkcellrendererprogress();
 
 /*
-* Object methods redefined for gtkcellrendererprogress 
-*/
+ * Object methods redefined for gtkcellrendererprogress 
+ */
 
 #define NULLGTKCELLRENDERERPROGRESS (NspGtkCellRendererProgress*) 0
 
 
 /* from NspGtkCellRendererProgressObj.c */
 
-extern NspGtkCellRendererProgress *nsp_gtkcellrendererprogress_object (NspObject *O); 
-extern int IsGtkCellRendererProgressObj (Stack stack, int i); 
+extern NspGtkCellRendererProgress *nsp_gtkcellrendererprogress_object (NspObject *O);
+extern int IsGtkCellRendererProgressObj (Stack stack, int i);
 extern int IsGtkCellRendererProgress(NspObject *O);
-extern NspGtkCellRendererProgress *GetGtkCellRendererProgressCopy (Stack stack, int i); 
-extern NspGtkCellRendererProgress *GetGtkCellRendererProgress (Stack stack, int i); 
+extern NspGtkCellRendererProgress *GetGtkCellRendererProgressCopy (Stack stack, int i);
+extern NspGtkCellRendererProgress *GetGtkCellRendererProgress (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRendererProgress */
+#endif /* NSP_INC_NspGtkCellRendererProgress */ 
 
 #ifdef NspGtkCellRendererProgress_Private 
 static int init_gtkcellrendererprogress(NspGtkCellRendererProgress *o,NspTypeGtkCellRendererProgress *type);
 static char *nsp_gtkcellrendererprogress_type_as_string(void);
 static char *nsp_gtkcellrendererprogress_type_short_string(NspObject *v);
 static AttrTab gtkcellrendererprogress_attrs[];
-static NspMethods *gtkcellrendererprogress_get_methods(void); 
-/* static int int_gtkcellrendererprogress_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrendererprogress_get_methods(void);
+/* static int int_gtkcellrendererprogress_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRendererProgress_Private */

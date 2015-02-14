@@ -26,9 +26,9 @@
 #include <nsp/gtk/gtkcellrenderer.h>
 
 /*
-* NspGtkCellRendererText inherits from GtkCellRenderer
-* just change some type attributes 
-*/
+ * NspGtkCellRendererText inherits from GtkCellRenderer
+ * just change some type attributes 
+ */
 
 typedef NspGtkCellRenderer NspGtkCellRendererText ;
 typedef NspTypeGtkCellRenderer NspTypeGtkCellRendererText ;
@@ -45,27 +45,27 @@ NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode);
 NspGtkCellRendererText *new_gtkcellrenderertext();
 
 /*
-* Object methods redefined for gtkcellrenderertext 
-*/
+ * Object methods redefined for gtkcellrenderertext 
+ */
 
 #define NULLGTKCELLRENDERERTEXT (NspGtkCellRendererText*) 0
 
 
 /* from NspGtkCellRendererTextObj.c */
 
-extern NspGtkCellRendererText *nsp_gtkcellrenderertext_object (NspObject *O); 
-extern int IsGtkCellRendererTextObj (Stack stack, int i); 
+extern NspGtkCellRendererText *nsp_gtkcellrenderertext_object (NspObject *O);
+extern int IsGtkCellRendererTextObj (Stack stack, int i);
 extern int IsGtkCellRendererText(NspObject *O);
-extern NspGtkCellRendererText *GetGtkCellRendererTextCopy (Stack stack, int i); 
-extern NspGtkCellRendererText *GetGtkCellRendererText (Stack stack, int i); 
+extern NspGtkCellRendererText *GetGtkCellRendererTextCopy (Stack stack, int i);
+extern NspGtkCellRendererText *GetGtkCellRendererText (Stack stack, int i);
 
-#endif /* NSP_INC_NspGtkCellRendererText */
+#endif /* NSP_INC_NspGtkCellRendererText */ 
 
 #ifdef NspGtkCellRendererText_Private 
 static int init_gtkcellrenderertext(NspGtkCellRendererText *o,NspTypeGtkCellRendererText *type);
 static char *nsp_gtkcellrenderertext_type_as_string(void);
 static char *nsp_gtkcellrenderertext_type_short_string(NspObject *v);
 static AttrTab gtkcellrenderertext_attrs[];
-static NspMethods *gtkcellrenderertext_get_methods(void); 
-/* static int int_gtkcellrenderertext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderertext_get_methods(void);
+/* static int int_gtkcellrenderertext_create(Stack stack, int rhs, int opt, int lhs);*/ 
 #endif /* NspGtkCellRendererText_Private */
