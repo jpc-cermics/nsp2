@@ -3157,6 +3157,7 @@ type object_data =
      od_shortname_uc: string;
    }
 
+(*
 let init_object_data objname name parent typecode =
   {
    od_objname = objname;
@@ -3167,6 +3168,7 @@ let init_object_data objname name parent typecode =
    od_shortname = name;
    od_shortname_uc = (String.uppercase name);
  }
+*)
 
 let nulldflt sname stype scast =
   Printf.sprintf"  if ( nsp_%s != NULL ) {\n" sname ^
@@ -3989,6 +3991,14 @@ type custom_boxed_data = {
   }
 ;;
 
+let init_custom_boxed_data getter checker new_s type_s =
+  {
+   cbd_getter= getter;
+   cbd_checker= checker;
+   cbd_new= new_s;
+   cbd_nsp_type= type_s;
+ }
+;;
 
 let cba_null name get check ptype  =
   Printf.sprintf
@@ -4054,6 +4064,7 @@ let make_custom_boxed_arg custom_boxed_data =
     attr_write_defval = custom_boxed_arg_attr_write_defval  boxed_data; *)
   }
 ;;
+
 
 (* pointer_arg *)
 
@@ -4293,6 +4304,7 @@ let null name =
    \n  }\n" name name name name name
 ;;
 
+(*
 let null1 name =
   Printf.sprintf "  if (PyTuple_Check(nsp_%s))\
    \n      %s = nsp_gtk_tree_path_from_nspobject(nsp_%s);\
@@ -4301,6 +4313,7 @@ let null1 name =
    \n      return RET_BUG;\
    \n  }\n" name name name name name
 ;;
+*)
 
 let freepath name =
   Printf.sprintf "  if (%s)\
@@ -4556,12 +4569,13 @@ let nsp_gslist_arg=
 (* tests
  *-------------------------
  *)
-
+(*
 let print_vars ppf varlist =
   let iter_key  key value =
     Printf.fprintf ppf "%s %s\n" key value in
   Hashtbl.iter iter_key  varlist
 ;;
+*)
 
 type parser= {
     mutable objects: object_rec list;
@@ -4707,6 +4721,9 @@ let matcher_hash = of_bindings [
   "GtkAllocation*", gdk_rectangle_pointer_arg;
   "GdkRectangle", gdk_rectangle_arg;
   "GdkNativeWindow", ulong_arg;
+  "@@TreePath", gtk_tree_path_arg; (* example ? *)
+  "@@CustomBoxed", (make_custom_boxed_arg
+                      (init_custom_boxed_data "getter" "checker" "new_s" "type_s"));
 ]
 ;;
 
