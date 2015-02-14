@@ -25,6 +25,15 @@ gvalue.c: gvalue.defs
 	@mv *.h ../../include/nsp/
 	@rm -f /tmp/gvalue.c
 
+girepository.c: girepository.defs
+	@echo "generating girepository.c"
+	@$(PROG) -p girepository -o /tmp/girepository.c girepository
+	@sed -e "s+codegen/++g" \
+	    -e "s+/tmp/girepository.c+girepository.c+g" /tmp/girepository.c > girepository.c
+	@mv girepository.h ../../include/nsp/gtk/
+	@mv gibaseinfo.h ../../include/nsp/
+	@rm -f /tmp/girepository.c
+
 clean:
 	rm -f *.c *.h
 
