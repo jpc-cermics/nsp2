@@ -7427,4 +7427,5 @@ ignore-win32
         gtk_plug_new
         gtk_plug_construct
         gtk_plug_get_id
+
 %%

@@ -1,5 +1,9 @@
 ;; -*- scheme -*-
 
+(register "pango-types.defs")
+(register "atk-types.defs")
+(register "gtk-types.defs")
+
 (include "gdk-types.defs")
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdk.h
@@ -2298,15 +2302,20 @@
   )
 )
 
-(define-function visual_get_best_with_both
-  (is-constructor-of GdkVisual)
-  (c-name "gdk_visual_get_best_with_both")
-  (return-type "GdkVisual*")
-  (parameters
-    '("gint" "depth")
-    '("GdkVisualType" "visual_type")
-  )
-)
+;; if this constructor is present it conflicts 
+;; with visual_new i.e visual_new is overwritten 
+;; and visual_get_best_with_both is then overwritten
+;; with the same function 
+
+;; (define-function visual_get_best_with_both
+;;   (is-constructor-of GdkVisual)
+;;   (c-name "gdk_visual_get_best_with_both")
+;;   (return-type "GdkVisual*")
+;;   (parameters
+;;     '("gint" "depth")
+;;     '("GdkVisualType" "visual_type")
+;;   )
+;; )
 
 (define-function query_depths
   (c-name "gdk_query_depths")

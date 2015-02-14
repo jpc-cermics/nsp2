@@ -1,0 +1,23 @@
+;; -*- scheme -*-
+; object definitions ...
+
+(define-object GIRepository
+  (in-module "GI")
+  (parent "GObject")
+  (c-name "GIRepository")
+  (gtype-id "G_TYPE_IREPOSITORY")
+)
+
+(define-objectref GIBaseInfo
+  (in-module "GI")
+  (parent "Object")
+  (c-name "NspGIBaseInfo")
+  (fields
+   '("void*" "info" "hidden" "NULL")) ;; GIBaseInfo
+  (gtype-id "unused")
+)
+
+
+
+
+

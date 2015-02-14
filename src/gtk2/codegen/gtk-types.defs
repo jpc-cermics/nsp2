@@ -2,7 +2,7 @@
 
 ;; Boxed types ...
 
-(define-boxed Border
+(define-boxed GtkBorder
   (in-module "Gtk")
   (c-name "GtkBorder")
   (gtype-id "GTK_TYPE_BORDER")
@@ -10,7 +10,7 @@
   (release-func "gtk_border_free")
 )
 
-(define-boxed IconInfo
+(define-boxed GtkIconInfo
   (in-module "Gtk")
   (c-name "GtkIconInfo")
   (gtype-id "GTK_TYPE_ICON_INFO")
@@ -18,13 +18,13 @@
   (release-func "gtk_icon_info_free")
 )
 
-(define-boxed IconSet
+(define-boxed GtkIconSet
   (in-module "Gtk")
   (c-name "GtkIconSet")
   (gtype-id "GTK_TYPE_ICON_SET")
 )
 
-(define-boxed IconSource
+(define-boxed GtkIconSource
   (in-module "Gtk")
   (c-name "GtkIconSource")
   (gtype-id "GTK_TYPE_ICON_SOURCE")
@@ -33,7 +33,7 @@
 )
 
 
-(define-boxed Requisition
+(define-boxed GtkRequisition
   (in-module "Gtk")
   (c-name "GtkRequisition")
   (gtype-id "GTK_TYPE_REQUISITION")
@@ -43,7 +43,7 @@
   )
 )
 
-(define-boxed SelectionData
+(define-boxed GtkSelectionData
   (in-module "Gtk")
   (c-name "GtkSelectionData")
   (gtype-id "GTK_TYPE_SELECTION_DATA")
@@ -58,7 +58,7 @@
   )
 )
 
-(define-boxed TextAttributes
+(define-boxed GtkTextAttributes
   (in-module "Gtk")
   (c-name "GtkTextAttributes")
   (gtype-id "GTK_TYPE_TEXT_ATTRIBUTES")
@@ -95,7 +95,7 @@
    )
 )
 
-(define-boxed TextIter
+(define-boxed GtkTextIter
   (in-module "Gtk")
   (c-name "GtkTextIter")
   (gtype-id "GTK_TYPE_TEXT_ITER")
@@ -103,7 +103,7 @@
   (release-func "gtk_text_iter_free")
 )
 
-(define-boxed TreeIter
+(define-boxed GtkTreeIter
   (in-module "Gtk")
   (c-name "GtkTreeIter")
   (gtype-id "GTK_TYPE_TREE_ITER")
@@ -111,7 +111,7 @@
   (release-func "gtk_tree_iter_free")
 )
 
-(define-boxed TreeRowReference
+(define-boxed GtkTreeRowReference
   (in-module "Gtk")
   (c-name "GtkTreeRowReference")
   (gtype-id "GTK_TYPE_TREE_ROW_REFERENCE")
@@ -119,7 +119,7 @@
   (release-func "gtk_tree_row_reference_free")
 )
 
-(define-boxed TreePath
+(define-boxed GtkTreePath
   (in-module "Gtk")
   (c-name "GtkTreePath")
   (gtype-id "GTK_TYPE_TREE_PATH")
@@ -129,7 +129,7 @@
 
 ;; Enumerations ...
 
-(define-enum AnchorType
+(define-enum GtkAnchorType
   (in-module "Gtk")
   (c-name "GtkAnchorType")
   (gtype-id "GTK_TYPE_ANCHOR_TYPE")
@@ -154,7 +154,7 @@
   )
 )
 
-(define-enum ArrowType
+(define-enum GtkArrowType
   (in-module "Gtk")
   (c-name "GtkArrowType")
   (gtype-id "GTK_TYPE_ARROW_TYPE")
@@ -167,7 +167,7 @@
 )
 
 
-(define-enum ButtonBoxStyle
+(define-enum GtkButtonBoxStyle
   (in-module "Gtk")
   (c-name "GtkButtonBoxStyle")
   (gtype-id "GTK_TYPE_BUTTON_BOX_STYLE")
@@ -180,7 +180,7 @@
   )
 )
 
-(define-enum ButtonsType
+(define-enum GtkButtonsType
   (in-module "Gtk")
   (c-name "GtkButtonsType")
   (gtype-id "GTK_TYPE_BUTTONS_TYPE")
@@ -195,7 +195,7 @@
 )
 
 
-(define-enum CellRendererMode
+(define-enum GtkCellRendererMode
   (in-module "Gtk")
   (c-name "GtkCellRendererMode")
   (gtype-id "GTK_TYPE_CELL_RENDERER_MODE")
@@ -206,7 +206,7 @@
   )
 )
 
-(define-enum CellType
+(define-enum GtkCellType
   (in-module "Gtk")
   (c-name "GtkCellType")
   (gtype-id "GTK_TYPE_CELL_TYPE")
@@ -219,7 +219,7 @@
   )
 )
 
-; (define-enum CListDragPos
+; (define-enum GtkCListDragPos
 ;   (in-module "Gtk")
 ;   (c-name "GtkCListDragPos")
 ;   (gtype-id "GTK_TYPE_CLIST_DRAG_POS")
@@ -233,7 +233,7 @@
 
 
 
-(define-enum CornerType
+(define-enum GtkCornerType
   (in-module "Gtk")
   (c-name "GtkCornerType")
   (gtype-id "GTK_TYPE_CORNER_TYPE")
@@ -246,7 +246,7 @@
 )
 
 
-; (define-enum CTreeExpanderStyle
+; (define-enum GtkCTreeExpanderStyle
 ;   (in-module "Gtk")
 ;   (c-name "GtkCTreeExpanderStyle")
 ;   (gtype-id "GTK_TYPE_CTREE_EXPANDER_STYLE")
@@ -258,7 +258,7 @@
 ;   )
 ; )
 
-; (define-enum CTreeExpansionType
+; (define-enum GtkCTreeExpansionType
 ;   (in-module "Gtk")
 ;   (c-name "GtkCTreeExpansionType")
 ;   (gtype-id "GTK_TYPE_CTREE_EXPANSION_TYPE")
@@ -272,7 +272,7 @@
 ;   )
 ; )
 
-; (define-enum CTreeLineStyle
+; (define-enum GtkCTreeLineStyle
 ;   (in-module "Gtk")
 ;   (c-name "GtkCTreeLineStyle")
 ;   (gtype-id "GTK_TYPE_CTREE_LINE_STYLE")
@@ -284,7 +284,7 @@
 ;   )
 ; )
 
-; (define-enum CTreePos
+; (define-enum GtkCTreePos
 ;   (in-module "Gtk")
 ;   (c-name "GtkCTreePos")
 ;   (gtype-id "GTK_TYPE_CTREE_POS")
@@ -297,7 +297,7 @@
 
 
 
-(define-enum CurveType
+(define-enum GtkCurveType
   (in-module "Gtk")
   (c-name "GtkCurveType")
   (gtype-id "GTK_TYPE_CURVE_TYPE")
@@ -308,7 +308,7 @@
   )
 )
 
-(define-enum DeleteType
+(define-enum GtkDeleteType
   (in-module "Gtk")
   (c-name "GtkDeleteType")
   (gtype-id "GTK_TYPE_DELETE_TYPE")
@@ -324,7 +324,7 @@
   )
 )
 
-(define-enum DirectionType
+(define-enum GtkDirectionType
   (in-module "Gtk")
   (c-name "GtkDirectionType")
   (gtype-id "GTK_TYPE_DIRECTION_TYPE")
@@ -338,7 +338,7 @@
   )
 )
 
-(define-enum ExpanderStyle
+(define-enum GtkExpanderStyle
   (in-module "Gtk")
   (c-name "GtkExpanderStyle")
   (gtype-id "GTK_TYPE_EXPANDER_STYLE")
@@ -350,7 +350,7 @@
   )
 )
 
-(define-enum FileChooserAction
+(define-enum GtkFileChooserAction
   (in-module "Gtk")
   (c-name "GtkFileChooserAction")
   (gtype-id "GTK_TYPE_FILE_CHOOSER_ACTION")
@@ -362,7 +362,7 @@
   )
 )
 
-(define-enum FileChooserConfirmation
+(define-enum GtkFileChooserConfirmation
   (in-module "Gtk")
   (c-name "GtkFileChooserConfirmation")
   (gtype-id "GTK_TYPE_FILE_CHOOSER_CONFIRMATION")
@@ -373,7 +373,7 @@
   )
 )
 
-(define-enum FileChooserError
+(define-enum GtkFileChooserError
   (in-module "Gtk")
   (c-name "GtkFileChooserError")
   (gtype-id "GTK_TYPE_FILE_CHOOSER_ERROR")
@@ -383,7 +383,7 @@
   )
 )
 
-(define-enum IconSize
+(define-enum GtkIconSize
   (in-module "Gtk")
   (c-name "GtkIconSize")
   (gtype-id "GTK_TYPE_ICON_SIZE")
@@ -398,7 +398,7 @@
   )
 )
 
-(define-enum IconThemeError
+(define-enum GtkIconThemeError
   (in-module "Gtk")
   (c-name "GtkIconThemeError")
   (gtype-id "GTK_TYPE_ICON_THEME_ERROR")
@@ -408,7 +408,7 @@
   )
 )
 
-(define-enum IconViewDropPosition
+(define-enum GtkIconViewDropPosition
   (in-module "Gtk")
   (c-name "GtkIconViewDropPosition")
   (gtype-id "GTK_TYPE_ICON_VIEW_DROP_POSITION")
@@ -422,7 +422,7 @@
   )
 )
 
-(define-enum ImageType
+(define-enum GtkImageType
   (in-module "Gtk")
   (c-name "GtkImageType")
   (gtype-id "GTK_TYPE_IMAGE_TYPE")
@@ -437,7 +437,7 @@
   )
 )
 
-(define-enum IMPreeditStyle
+(define-enum GtkIMPreeditStyle
   (in-module "Gtk")
   (c-name "GtkIMPreeditStyle")
   (gtype-id "GTK_TYPE_IM_PREEDIT_STYLE")
@@ -448,7 +448,7 @@
   )
 )
 
-(define-enum IMStatusStyle
+(define-enum GtkIMStatusStyle
   (in-module "Gtk")
   (c-name "GtkIMStatusStyle")
   (gtype-id "GTK_TYPE_IM_STATUS_STYLE")
@@ -459,7 +459,7 @@
 )
 
 
-(define-enum Justification
+(define-enum GtkJustification
   (in-module "Gtk")
   (c-name "GtkJustification")
   (gtype-id "GTK_TYPE_JUSTIFICATION")
@@ -471,7 +471,7 @@
   )
 )
 
-(define-enum MatchType
+(define-enum GtkMatchType
   (in-module "Gtk")
   (c-name "GtkMatchType")
   (gtype-id "GTK_TYPE_MATCH_TYPE")
@@ -486,7 +486,7 @@
 )
 
 
-(define-enum MenuDirectionType
+(define-enum GtkMenuDirectionType
   (in-module "Gtk")
   (c-name "GtkMenuDirectionType")
   (gtype-id "GTK_TYPE_MENU_DIRECTION_TYPE")
@@ -498,7 +498,7 @@
   )
 )
 
-(define-enum MessageType
+(define-enum GtkMessageType
   (in-module "Gtk")
   (c-name "GtkMessageType")
   (gtype-id "GTK_TYPE_MESSAGE_TYPE")
@@ -510,7 +510,7 @@
   )
 )
 
-(define-enum MetricType
+(define-enum GtkMetricType
   (in-module "Gtk")
   (c-name "GtkMetricType")
   (gtype-id "GTK_TYPE_METRIC_TYPE")
@@ -521,7 +521,7 @@
   )
 )
 
-(define-enum MovementStep
+(define-enum GtkMovementStep
   (in-module "Gtk")
   (c-name "GtkMovementStep")
   (gtype-id "GTK_TYPE_MOVEMENT_STEP")
@@ -539,7 +539,7 @@
 )
 
 
-(define-enum NotebookTab
+(define-enum GtkNotebookTab
   (in-module "Gtk")
   (c-name "GtkNotebookTab")
   (gtype-id "GTK_TYPE_NOTEBOOK_TAB")
@@ -550,7 +550,7 @@
 )
 
 
-(define-enum Orientation
+(define-enum GtkOrientation
   (in-module "Gtk")
   (c-name "GtkOrientation")
   (gtype-id "GTK_TYPE_ORIENTATION")
@@ -560,7 +560,7 @@
   )
 )
 
-(define-enum PackDirection
+(define-enum GtkPackDirection
   (in-module "Gtk")
   (c-name "GtkPackDirection")
   (gtype-id "GTK_TYPE_PACK_DIRECTION")
@@ -572,7 +572,7 @@
   )
 )
 
-(define-enum PackType
+(define-enum GtkPackType
   (in-module "Gtk")
   (c-name "GtkPackType")
   (gtype-id "GTK_TYPE_PACK_TYPE")
@@ -582,7 +582,7 @@
   )
 )
 
-(define-enum PathPriorityType
+(define-enum GtkPathPriorityType
   (in-module "Gtk")
   (c-name "GtkPathPriorityType")
   (gtype-id "GTK_TYPE_PATH_PRIORITY_TYPE")
@@ -596,7 +596,7 @@
   )
 )
 
-(define-enum PathType
+(define-enum GtkPathType
   (in-module "Gtk")
   (c-name "GtkPathType")
   (gtype-id "GTK_TYPE_PATH_TYPE")
@@ -607,7 +607,7 @@
   )
 )
 
-(define-enum PolicyType
+(define-enum GtkPolicyType
   (in-module "Gtk")
   (c-name "GtkPolicyType")
   (gtype-id "GTK_TYPE_POLICY_TYPE")
@@ -618,7 +618,7 @@
   )
 )
 
-(define-enum PositionType
+(define-enum GtkPositionType
   (in-module "Gtk")
   (c-name "GtkPositionType")
   (gtype-id "GTK_TYPE_POSITION_TYPE")
@@ -630,7 +630,7 @@
   )
 )
 
-(define-enum PreviewType
+(define-enum GtkPreviewType
   (in-module "Gtk")
   (c-name "GtkPreviewType")
   (gtype-id "GTK_TYPE_PREVIEW_TYPE")
@@ -641,7 +641,7 @@
 )
 
 
-(define-enum ProgressBarOrientation
+(define-enum GtkProgressBarOrientation
   (in-module "Gtk")
   (c-name "GtkProgressBarOrientation")
   (gtype-id "GTK_TYPE_PROGRESS_BAR_ORIENTATION")
@@ -653,7 +653,7 @@
   )
 )
 
-(define-enum ProgressBarStyle
+(define-enum GtkProgressBarStyle
   (in-module "Gtk")
   (c-name "GtkProgressBarStyle")
   (gtype-id "GTK_TYPE_PROGRESS_BAR_STYLE")
@@ -664,7 +664,7 @@
 )
 
 
-(define-enum RcTokenType
+(define-enum GtkRcTokenType
   (in-module "Gtk")
   (c-name "GtkRcTokenType")
   (gtype-id "GTK_TYPE_RC_TOKEN_TYPE")
@@ -711,7 +711,7 @@
 )
 
 
-(define-enum ReliefStyle
+(define-enum GtkReliefStyle
   (in-module "Gtk")
   (c-name "GtkReliefStyle")
   (gtype-id "GTK_TYPE_RELIEF_STYLE")
@@ -722,7 +722,7 @@
   )
 )
 
-(define-enum ResizeMode
+(define-enum GtkResizeMode
   (in-module "Gtk")
   (c-name "GtkResizeMode")
   (gtype-id "GTK_TYPE_RESIZE_MODE")
@@ -735,7 +735,7 @@
 
 
 
-(define-enum ResponseType
+(define-enum GtkResponseType
   (in-module "Gtk")
   (c-name "GtkResponseType")
   (gtype-id "GTK_TYPE_RESPONSE_TYPE")
@@ -754,7 +754,7 @@
   )
 )
 
-(define-enum ScrollStep
+(define-enum GtkScrollStep
   (in-module "Gtk")
   (c-name "GtkScrollStep")
   (gtype-id "GTK_TYPE_SCROLL_STEP")
@@ -768,7 +768,7 @@
    )
  )
 
-(define-enum ScrollType
+(define-enum GtkScrollType
   (in-module "Gtk")
   (c-name "GtkScrollType")
   (gtype-id "GTK_TYPE_SCROLL_TYPE")
@@ -792,7 +792,7 @@
   )
 )
 
-(define-enum SelectionMode
+(define-enum GtkSelectionMode
   (in-module "Gtk")
   (c-name "GtkSelectionMode")
   (gtype-id "GTK_TYPE_SELECTION_MODE")
@@ -804,7 +804,7 @@
   )
 )
 
-(define-enum ShadowType
+(define-enum GtkShadowType
   (in-module "Gtk")
   (c-name "GtkShadowType")
   (gtype-id "GTK_TYPE_SHADOW_TYPE")
@@ -818,7 +818,7 @@
 )
 
 
-(define-enum SideType
+(define-enum GtkSideType
   (in-module "Gtk")
   (c-name "GtkSideType")
   (gtype-id "GTK_TYPE_SIDE_TYPE")
@@ -831,7 +831,7 @@
 )
 
 
-(define-enum SizeGroupMode
+(define-enum GtkSizeGroupMode
   (in-module "Gtk")
   (c-name "GtkSizeGroupMode")
   (gtype-id "GTK_TYPE_SIZE_GROUP_MODE")
@@ -844,7 +844,7 @@
 )
 
 
-(define-enum SortType
+(define-enum GtkSortType
   (in-module "Gtk")
   (c-name "GtkSortType")
   (gtype-id "GTK_TYPE_SORT_TYPE")
@@ -854,7 +854,7 @@
   )
 )
 
-(define-enum SpinButtonUpdatePolicy
+(define-enum GtkSpinButtonUpdatePolicy
   (in-module "Gtk")
   (c-name "GtkSpinButtonUpdatePolicy")
   (gtype-id "GTK_TYPE_SPIN_BUTTON_UPDATE_POLICY")
@@ -864,7 +864,7 @@
   )
 )
 
-(define-enum SpinType
+(define-enum GtkSpinType
   (in-module "Gtk")
   (c-name "GtkSpinType")
   (gtype-id "GTK_TYPE_SPIN_TYPE")
@@ -879,7 +879,7 @@
   )
 )
 
-(define-enum StateType
+(define-enum GtkStateType
   (in-module "Gtk")
   (c-name "GtkStateType")
   (gtype-id "GTK_TYPE_STATE_TYPE")
@@ -892,7 +892,7 @@
   )
 )
 
-(define-enum SubmenuDirection
+(define-enum GtkSubmenuDirection
   (in-module "Gtk")
   (c-name "GtkSubmenuDirection")
   (gtype-id "GTK_TYPE_SUBMENU_DIRECTION")
@@ -902,7 +902,7 @@
   )
 )
 
-(define-enum SubmenuPlacement
+(define-enum GtkSubmenuPlacement
   (in-module "Gtk")
   (c-name "GtkSubmenuPlacement")
   (gtype-id "GTK_TYPE_SUBMENU_PLACEMENT")
@@ -912,7 +912,7 @@
   )
 )
 
-(define-enum TextDirection
+(define-enum GtkTextDirection
   (in-module "Gtk")
   (c-name "GtkTextDirection")
   (gtype-id "GTK_TYPE_TEXT_DIRECTION")
@@ -923,7 +923,7 @@
   )
 )
 
-(define-enum TextWindowType
+(define-enum GtkTextWindowType
   (in-module "Gtk")
   (c-name "GtkTextWindowType")
   (gtype-id "GTK_TYPE_TEXT_WINDOW_TYPE")
@@ -939,7 +939,7 @@
 )
 
 
-(define-enum ToolbarChildType
+(define-enum GtkToolbarChildType
   (in-module "Gtk")
   (c-name "GtkToolbarChildType")
   (gtype-id "GTK_TYPE_TOOLBAR_CHILD_TYPE")
@@ -952,7 +952,7 @@
   )
 )
 
-(define-enum ToolbarSpaceStyle
+(define-enum GtkToolbarSpaceStyle
   (in-module "Gtk")
   (c-name "GtkToolbarSpaceStyle")
   (gtype-id "GTK_TYPE_TOOLBAR_SPACE_STYLE")
@@ -962,7 +962,7 @@
   )
 )
 
-(define-enum ToolbarStyle
+(define-enum GtkToolbarStyle
   (in-module "Gtk")
   (c-name "GtkToolbarStyle")
   (gtype-id "GTK_TYPE_TOOLBAR_STYLE")
@@ -974,7 +974,7 @@
   )
 )
 
-(define-enum TreeViewColumnSizing
+(define-enum GtkTreeViewColumnSizing
   (in-module "Gtk")
   (c-name "GtkTreeViewColumnSizing")
   (gtype-id "GTK_TYPE_TREE_VIEW_COLUMN_SIZING")
@@ -985,7 +985,7 @@
   )
 )
 
-(define-enum TreeViewDropPosition
+(define-enum GtkTreeViewDropPosition
   (in-module "Gtk")
   (c-name "GtkTreeViewDropPosition")
   (gtype-id "GTK_TYPE_TREE_VIEW_DROP_POSITION")
@@ -997,7 +997,7 @@
   )
 )
 
-(define-enum TreeViewMode
+(define-enum GtkTreeViewMode
   (in-module "Gtk")
   (c-name "GtkTreeViewMode")
   (gtype-id "GTK_TYPE_TREE_VIEW_MODE")
@@ -1008,7 +1008,7 @@
 )
 
 
-(define-enum UpdateType
+(define-enum GtkUpdateType
   (in-module "Gtk")
   (c-name "GtkUpdateType")
   (gtype-id "GTK_TYPE_UPDATE_TYPE")
@@ -1019,7 +1019,7 @@
   )
 )
 
-(define-enum Visibility
+(define-enum GtkVisibility
   (in-module "Gtk")
   (c-name "GtkVisibility")
   (gtype-id "GTK_TYPE_VISIBILITY")
@@ -1032,7 +1032,7 @@
 
 
 
-(define-enum WidgetHelpType
+(define-enum GtkWidgetHelpType
   (in-module "Gtk")
   (c-name "GtkWidgetHelpType")
   (gtype-id "GTK_TYPE_WIDGET_HELP_TYPE")
@@ -1042,7 +1042,7 @@
   )
 )
 
-(define-enum WindowPosition
+(define-enum GtkWindowPosition
   (in-module "Gtk")
   (c-name "GtkWindowPosition")
   (gtype-id "GTK_TYPE_WINDOW_POSITION")
@@ -1055,7 +1055,7 @@
   )
 )
 
-(define-enum WindowType
+(define-enum GtkWindowType
   (in-module "Gtk")
   (c-name "GtkWindowType")
   (gtype-id "GTK_TYPE_WINDOW_TYPE")
@@ -1065,7 +1065,7 @@
   )
 )
 
-(define-enum WrapMode
+(define-enum GtkWrapMode
   (in-module "Gtk")
   (c-name "GtkWrapMode")
   (gtype-id "GTK_TYPE_WRAP_MODE")
@@ -1078,7 +1078,7 @@
 
 ;; Flags ...
 
-(define-flags AccelFlags
+(define-flags GtkAccelFlags
   (in-module "Gtk")
   (c-name "GtkAccelFlags")
   (gtype-id "GTK_TYPE_ACCEL_FLAGS")
@@ -1090,7 +1090,7 @@
   )
 )
 
-(define-flags ArgFlags
+(define-flags GtkArgFlags
   (in-module "Gtk")
   (c-name "GtkArgFlags")
   (gtype-id "GTK_TYPE_ARG_FLAGS")
@@ -1103,7 +1103,7 @@
   )
 )
 
-(define-flags AttachOptions
+(define-flags GtkAttachOptions
   (in-module "Gtk")
   (c-name "GtkAttachOptions")
   (gtype-id "GTK_TYPE_ATTACH_OPTIONS")
@@ -1116,7 +1116,7 @@
 
 
 
-(define-flags ButtonAction
+(define-flags GtkButtonAction
   (in-module "Gtk")
   (c-name "GtkButtonAction")
   (gtype-id "GTK_TYPE_BUTTON_ACTION")
@@ -1128,7 +1128,7 @@
   )
 )
 
-(define-flags CalendarDisplayOptions
+(define-flags GtkCalendarDisplayOptions
   (in-module "Gtk")
   (c-name "GtkCalendarDisplayOptions")
   (gtype-id "GTK_TYPE_CALENDAR_DISPLAY_OPTIONS")
@@ -1141,7 +1141,7 @@
   )
 )
 
-(define-flags CellRendererState
+(define-flags GtkCellRendererState
   (in-module "Gtk")
   (c-name "GtkCellRendererState")
   (gtype-id "GTK_TYPE_CELL_RENDERER_STATE")
@@ -1153,7 +1153,7 @@
   )
 )
 
-(define-flags DebugFlag
+(define-flags GtkDebugFlag
   (in-module "Gtk")
   (c-name "GtkDebugFlag")
   (gtype-id "GTK_TYPE_DEBUG_FLAG")
@@ -1166,7 +1166,7 @@
   )
 )
 
-(define-flags DestDefaults
+(define-flags GtkDestDefaults
   (in-module "Gtk")
   (c-name "GtkDestDefaults")
   (gtype-id "GTK_TYPE_DEST_DEFAULTS")
@@ -1178,7 +1178,7 @@
   )
 )
 
-(define-flags DialogFlags
+(define-flags GtkDialogFlags
   (in-module "Gtk")
   (c-name "GtkDialogFlags")
   (gtype-id "GTK_TYPE_DIALOG_FLAGS")
@@ -1190,7 +1190,7 @@
 )
 
 
-(define-flags FileFilterFlags
+(define-flags GtkFileFilterFlags
   (in-module "Gtk")
   (c-name "GtkFileFilterFlags")
   (gtype-id "GTK_TYPE_FILE_FILTER_FLAGS")
@@ -1202,7 +1202,7 @@
   )
 )
 
-(define-flags IconLookupFlags
+(define-flags GtkIconLookupFlags
   (in-module "Gtk")
   (c-name "GtkIconLookupFlags")
   (gtype-id "GTK_TYPE_ICON_LOOKUP_FLAGS")
@@ -1214,7 +1214,7 @@
 )
 
 
-(define-flags ObjectFlags
+(define-flags GtkObjectFlags
   (in-module "Gtk")
   (c-name "GtkObjectFlags")
   (gtype-id "GTK_TYPE_OBJECT_FLAGS")
@@ -1227,7 +1227,7 @@
 )
 
 
-(define-flags PrivateFlags
+(define-flags GtkPrivateFlags
   (in-module "Gtk")
   (c-name "GtkPrivateFlags")
   (gtype-id "GTK_TYPE_PRIVATE_FLAGS")
@@ -1247,7 +1247,7 @@
   )
 )
 
-(define-flags RcFlags
+(define-flags GtkRcFlags
   (in-module "Gtk")
   (c-name "GtkRcFlags")
   (gtype-id "GTK_TYPE_RC_FLAGS")
@@ -1259,7 +1259,7 @@
   )
 )
 
-(define-flags SignalRunType
+(define-flags GtkSignalRunType
   (in-module "Gtk")
   (c-name "GtkSignalRunType")
   (gtype-id "GTK_TYPE_SIGNAL_RUN_TYPE")
@@ -1273,7 +1273,7 @@
   )
 )
 
-(define-flags TargetFlags
+(define-flags GtkTargetFlags
   (in-module "Gtk")
   (c-name "GtkTargetFlags")
   (gtype-id "GTK_TYPE_TARGET_FLAGS")
@@ -1284,7 +1284,7 @@
 )
 
 
-(define-flags TextSearchFlags
+(define-flags GtkTextSearchFlags
   (in-module "Gtk")
   (c-name "GtkTextSearchFlags")
   (gtype-id "GTK_TYPE_TEXT_SEARCH_FLAGS")
@@ -1294,7 +1294,7 @@
   )
 )
 
-(define-flags TreeModelFlags
+(define-flags GtkTreeModelFlags
   (in-module "Gtk")
   (c-name "GtkTreeModelFlags")
   (gtype-id "GTK_TYPE_TREE_MODEL_FLAGS")
@@ -1305,7 +1305,7 @@
 )
 
 
-(define-flags UIManagerItemType
+(define-flags GtkUIManagerItemType
   (in-module "Gtk")
   (c-name "GtkUIManagerItemType")
   (gtype-id "GTK_TYPE_UI_MANAGER_ITEM_TYPE")
@@ -1324,7 +1324,7 @@
 )
 
 
-(define-flags WidgetFlags
+(define-flags GtkWidgetFlags
   (in-module "Gtk")
   (c-name "GtkWidgetFlags")
   (gtype-id "GTK_TYPE_WIDGET_FLAGS")
@@ -1352,21 +1352,21 @@
 ;; Interfaces ...
 
 
-(define-interface CellEditable
+(define-interface GtkCellEditable
   (in-module "Gtk")
   (c-name "GtkCellEditable")
   (gtype-id "GTK_TYPE_CELL_EDITABLE")
   (prerequisite "GtkWidget")
 )
 
-(define-interface CellLayout
+(define-interface GtkCellLayout
   (in-module "Gtk")
   (c-name "GtkCellLayout")
   (gtype-id "GTK_TYPE_CELL_LAYOUT")
   (prerequisite "GObject")
 )
 
-(define-interface Editable
+(define-interface GtkEditable
   (in-module "Gtk")
   (c-name "GtkEditable")
   (gtype-id "GTK_TYPE_EDITABLE")
@@ -1374,33 +1374,33 @@
   (prerequisite "GtkWidget")
 )
 
-(define-interface FileChooser
+(define-interface GtkFileChooser
   (in-module "Gtk")
   (c-name "GtkFileChooser")
   (gtype-id "GTK_TYPE_FILE_CHOOSER")
   (prerequisite "GtkWidget")
 )
 
-(define-interface TreeDragDest
+(define-interface GtkTreeDragDest
   (in-module "Gtk")
   (c-name "GtkTreeDragDest")
   (gtype-id "GTK_TYPE_TREE_DRAG_DEST")
 )
 
-(define-interface TreeDragSource
+(define-interface GtkTreeDragSource
   (in-module "Gtk")
   (c-name "GtkTreeDragSource")
   (gtype-id "GTK_TYPE_TREE_DRAG_SOURCE")
 )
 
-(define-interface TreeModel
+(define-interface GtkTreeModel
   (in-module "Gtk")
   (c-name "GtkTreeModel")
   (gtype-id "GTK_TYPE_TREE_MODEL")
   (prerequisite "GObject")
 )
 
-(define-interface TreeSortable
+(define-interface GtkTreeSortable
   (in-module "Gtk")
   (c-name "GtkTreeSortable")
   (gtype-id "GTK_TYPE_TREE_SORTABLE")
@@ -1410,56 +1410,56 @@
 
 ;; object definitions ...
 
-(define-object AboutDialog
+(define-object GtkAboutDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkAboutDialog")
   (gtype-id "GTK_TYPE_ABOUT_DIALOG")
 )
 
-(define-object AccelGroup
+(define-object GtkAccelGroup
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkAccelGroup")
   (gtype-id "GTK_TYPE_ACCEL_GROUP")
 )
 
-(define-object AccelLabel
+(define-object GtkAccelLabel
   (in-module "Gtk")
   (parent "GtkLabel")
   (c-name "GtkAccelLabel")
   (gtype-id "GTK_TYPE_ACCEL_LABEL")
 )
 
-(define-object AccelMap
+(define-object GtkAccelMap
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkAccelMap")
   (gtype-id "GTK_TYPE_ACCEL_MAP")
 )
 
-(define-object Accessible
+(define-object GtkAccessible
   (in-module "Gtk")
   (parent "AtkObject")
   (c-name "GtkAccessible")
   (gtype-id "GTK_TYPE_ACCESSIBLE")
 )
 
-(define-object Action
+(define-object GtkAction
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkAction")
   (gtype-id "GTK_TYPE_ACTION")
 )
 
-(define-object ActionGroup
+(define-object GtkActionGroup
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkActionGroup")
   (gtype-id "GTK_TYPE_ACTION_GROUP")
 )
 
-(define-object Adjustment
+(define-object GtkAdjustment
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkAdjustment")
@@ -1474,28 +1474,28 @@
   )
 )
 
-(define-object Alignment
+(define-object GtkAlignment
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkAlignment")
   (gtype-id "GTK_TYPE_ALIGNMENT")
 )
 
-(define-object Arrow
+(define-object GtkArrow
   (in-module "Gtk")
   (parent "GtkMisc")
   (c-name "GtkArrow")
   (gtype-id "GTK_TYPE_ARROW")
 )
 
-(define-object AspectFrame
+(define-object GtkAspectFrame
   (in-module "Gtk")
   (parent "GtkFrame")
   (c-name "GtkAspectFrame")
   (gtype-id "GTK_TYPE_ASPECT_FRAME")
 )
 
-(define-object Bin
+(define-object GtkBin
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkBin")
@@ -1505,77 +1505,77 @@
   )
 )
 
-(define-object Box
+(define-object GtkBox
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkBox")
   (gtype-id "GTK_TYPE_BOX")
 )
 
-(define-object Button
+(define-object GtkButton
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkButton")
   (gtype-id "GTK_TYPE_BUTTON")
 )
 
-(define-object ButtonBox
+(define-object GtkButtonBox
   (in-module "Gtk")
   (parent "GtkBox")
   (c-name "GtkButtonBox")
   (gtype-id "GTK_TYPE_BUTTON_BOX")
 )
 
-(define-object Calendar
+(define-object GtkCalendar
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkCalendar")
   (gtype-id "GTK_TYPE_CALENDAR")
 )
 
-(define-object CellRenderer
+(define-object GtkCellRenderer
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkCellRenderer")
   (gtype-id "GTK_TYPE_CELL_RENDERER")
 )
 
-(define-object CellRendererCombo
+(define-object GtkCellRendererCombo
   (in-module "Gtk")
   (parent "GtkCellRendererText")
   (c-name "GtkCellRendererCombo")
   (gtype-id "GTK_TYPE_CELL_RENDERER_COMBO")
 )
 
-(define-object CellRendererPixbuf
+(define-object GtkCellRendererPixbuf
   (in-module "Gtk")
   (parent "GtkCellRenderer")
   (c-name "GtkCellRendererPixbuf")
   (gtype-id "GTK_TYPE_CELL_RENDERER_PIXBUF")
 )
 
-(define-object CellRendererProgress
+(define-object GtkCellRendererProgress
   (in-module "Gtk")
   (parent "GtkCellRenderer")
   (c-name "GtkCellRendererProgress")
   (gtype-id "GTK_TYPE_CELL_RENDERER_PROGRESS")
 )
 
-(define-object CellRendererText
+(define-object GtkCellRendererText
   (in-module "Gtk")
   (parent "GtkCellRenderer")
   (c-name "GtkCellRendererText")
   (gtype-id "GTK_TYPE_CELL_RENDERER_TEXT")
 )
 
-(define-object CellRendererToggle
+(define-object GtkCellRendererToggle
   (in-module "Gtk")
   (parent "GtkCellRenderer")
   (c-name "GtkCellRendererToggle")
   (gtype-id "GTK_TYPE_CELL_RENDERER_TOGGLE")
 )
 
-(define-object CellView
+(define-object GtkCellView
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkCellView")
@@ -1583,14 +1583,14 @@
   (implements "GtkCellLayout")
 )
 
-(define-object CheckButton
+(define-object GtkCheckButton
   (in-module "Gtk")
   (parent "GtkToggleButton")
   (c-name "GtkCheckButton")
   (gtype-id "GTK_TYPE_CHECK_BUTTON")
 )
 
-(define-object CheckMenuItem
+(define-object GtkCheckMenuItem
   (in-module "Gtk")
   (parent "GtkMenuItem")
   (c-name "GtkCheckMenuItem")
@@ -1601,7 +1601,7 @@
 )
 
 ; For Gtk+ 2.2
-;(define-object Clipboard
+;(define-object GtkClipboard
 ;  (in-module "Gtk")
 ;  (parent "GObject")
 ;  (c-name "GtkClipboard")
@@ -1610,7 +1610,7 @@
 
 ;; deprecated (jpc)
 
-;( define-object CList
+;( define-object GtkCList
 ;   (in-module "Gtk")
 ;   (parent "GtkContainer")
 ;   (c-name "GtkCList")
@@ -1623,21 +1623,21 @@
 ;   )
 ; )
 
-(define-object ColorButton
+(define-object GtkColorButton
   (in-module "Gtk")
   (parent "GtkButton")
   (c-name "GtkColorButton")
   (gtype-id "GTK_TYPE_COLOR_BUTTON")
 )
 
-(define-object ColorSelection
+(define-object GtkColorSelection
   (in-module "Gtk")
   (parent "GtkVBox")
   (c-name "GtkColorSelection")
   (gtype-id "GTK_TYPE_COLOR_SELECTION")
 )
 
-(define-object ColorSelectionDialog
+(define-object GtkColorSelectionDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkColorSelectionDialog")
@@ -1650,7 +1650,7 @@
   )
 )
 
-(define-object Combo
+(define-object GtkCombo
   (in-module "Gtk")
   (parent "GtkHBox")
   (c-name "GtkCombo")
@@ -1661,7 +1661,7 @@
   )
 )
 
-(define-object ComboBox
+(define-object GtkComboBox
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkComboBox")
@@ -1669,7 +1669,7 @@
   (implements "GtkCellLayout")
 )
 
-(define-object ComboBoxEntry
+(define-object GtkComboBoxEntry
   (in-module "Gtk")
   (parent "GtkComboBox")
   (c-name "GtkComboBoxEntry")
@@ -1677,7 +1677,7 @@
   (implements "GtkCellLayout")
 )
 
-(define-object Container
+(define-object GtkContainer
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkContainer")
@@ -1693,7 +1693,7 @@
 )
 
 ;; deprecated (jpc) 
-; (define-object CTree
+; (define-object GtkCTree
 ;   (in-module "Gtk")
 ;   (parent "GtkCList")
 ;   (c-name "GtkCTree")
@@ -1703,14 +1703,14 @@
 ;   )
 ; )
 
-(define-object Curve
+(define-object GtkCurve
   (in-module "Gtk")
   (parent "GtkDrawingArea")
   (c-name "GtkCurve")
   (gtype-id "GTK_TYPE_CURVE")
 )
 
-(define-object Dialog
+(define-object GtkDialog
   (in-module "Gtk")
   (parent "GtkWindow")
   (c-name "GtkDialog")
@@ -1721,14 +1721,14 @@
   )
 )
 
-(define-object DrawingArea
+(define-object GtkDrawingArea
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkDrawingArea")
   (gtype-id "GTK_TYPE_DRAWING_AREA")
 )
 
-(define-object Entry
+(define-object GtkEntry
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkEntry")
@@ -1737,7 +1737,7 @@
   (implements "GtkCellEditable")
 )
 
-(define-object EntryCompletion
+(define-object GtkEntryCompletion
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkEntryCompletion")
@@ -1745,14 +1745,14 @@
   (implements "GtkCellLayout")
 )
 
-(define-object EventBox
+(define-object GtkEventBox
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkEventBox")
   (gtype-id "GTK_TYPE_EVENT_BOX")
 )
 
-(define-object Expander
+(define-object GtkExpander
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkExpander")
@@ -1760,7 +1760,7 @@
 )
 
 
-(define-object FileChooserButton
+(define-object GtkFileChooserButton
   (in-module "Gtk")
   (parent "GtkHBox")
   (c-name "GtkFileChooserButton")
@@ -1768,7 +1768,7 @@
   (implements "GtkFileChooser")
 )
 
-(define-object FileChooserDialog
+(define-object GtkFileChooserDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkFileChooserDialog")
@@ -1776,7 +1776,7 @@
   (implements "GtkFileChooser")
 )
 
-(define-object FileChooserWidget
+(define-object GtkFileChooserWidget
   (in-module "Gtk")
   (parent "GtkVBox")
   (c-name "GtkFileChooserWidget")
@@ -1784,14 +1784,14 @@
   (implements "GtkFileChooser")
 )
 
-(define-object FileFilter
+(define-object GtkFileFilter
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkFileFilter")
   (gtype-id "GTK_TYPE_FILE_FILTER")
 )
 
-(define-object FileSelection
+(define-object GtkFileSelection
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkFileSelection")
@@ -1818,14 +1818,14 @@
   )
 )
 
-(define-object Fixed
+(define-object GtkFixed
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkFixed")
   (gtype-id "GTK_TYPE_FIXED")
 )
 
-(define-object FontButton
+(define-object GtkFontButton
   (in-module "Gtk")
   (parent "GtkButton")
   (c-name "GtkFontButton")
@@ -1833,14 +1833,14 @@
 )
 
 
-(define-object FontSelection
+(define-object GtkFontSelection
   (in-module "Gtk")
   (parent "GtkVBox")
   (c-name "GtkFontSelection")
   (gtype-id "GTK_TYPE_FONT_SELECTION")
 )
 
-(define-object FontSelectionDialog
+(define-object GtkFontSelectionDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkFontSelectionDialog")
@@ -1855,7 +1855,7 @@
   )
 )
 
-(define-object Frame
+(define-object GtkFrame
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkFrame")
@@ -1863,7 +1863,7 @@
 )
 
 
-(define-object GammaCurve
+(define-object GtkGammaCurve
   (in-module "Gtk")
   (parent "GtkVBox")
   (c-name "GtkGammaCurve")
@@ -1877,77 +1877,77 @@
   )
 )
 
-(define-object HandleBox
+(define-object GtkHandleBox
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkHandleBox")
   (gtype-id "GTK_TYPE_HANDLE_BOX")
 )
 
-(define-object HBox
+(define-object GtkHBox
   (in-module "Gtk")
   (parent "GtkBox")
   (c-name "GtkHBox")
   (gtype-id "GTK_TYPE_HBOX")
 )
 
-(define-object HButtonBox
+(define-object GtkHButtonBox
   (in-module "Gtk")
   (parent "GtkButtonBox")
   (c-name "GtkHButtonBox")
   (gtype-id "GTK_TYPE_HBUTTON_BOX")
 )
 
-(define-object HPaned
+(define-object GtkHPaned
   (in-module "Gtk")
   (parent "GtkPaned")
   (c-name "GtkHPaned")
   (gtype-id "GTK_TYPE_HPANED")
 )
 
-(define-object HRuler
+(define-object GtkHRuler
   (in-module "Gtk")
   (parent "GtkRuler")
   (c-name "GtkHRuler")
   (gtype-id "GTK_TYPE_HRULER")
 )
 
-(define-object HScale
+(define-object GtkHScale
   (in-module "Gtk")
   (parent "GtkScale")
   (c-name "GtkHScale")
   (gtype-id "GTK_TYPE_HSCALE")
 )
 
-(define-object HScrollbar
+(define-object GtkHScrollbar
   (in-module "Gtk")
   (parent "GtkScrollbar")
   (c-name "GtkHScrollbar")
   (gtype-id "GTK_TYPE_HSCROLLBAR")
 )
 
-(define-object HSeparator
+(define-object GtkHSeparator
   (in-module "Gtk")
   (parent "GtkSeparator")
   (c-name "GtkHSeparator")
   (gtype-id "GTK_TYPE_HSEPARATOR")
 )
 
-(define-object IconFactory
+(define-object GtkIconFactory
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkIconFactory")
   (gtype-id "GTK_TYPE_ICON_FACTORY")
 )
 
-(define-object IconTheme
+(define-object GtkIconTheme
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkIconTheme")
   (gtype-id "GTK_TYPE_ICON_THEME")
 )
 
-(define-object IconView
+(define-object GtkIconView
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkIconView")
@@ -1955,56 +1955,56 @@
   (implements "GtkCellLayout")
 )
 
-(define-object Image
+(define-object GtkImage
   (in-module "Gtk")
   (parent "GtkMisc")
   (c-name "GtkImage")
   (gtype-id "GTK_TYPE_IMAGE")
 )
 
-(define-object ImageMenuItem
+(define-object GtkImageMenuItem
   (in-module "Gtk")
   (parent "GtkMenuItem")
   (c-name "GtkImageMenuItem")
   (gtype-id "GTK_TYPE_IMAGE_MENU_ITEM")
 )
 
-(define-object IMContext
+(define-object GtkIMContext
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkIMContext")
   (gtype-id "GTK_TYPE_IM_CONTEXT")
 )
 
-(define-object IMContextSimple
+(define-object GtkIMContextSimple
   (in-module "Gtk")
   (parent "GtkIMContext")
   (c-name "GtkIMContextSimple")
   (gtype-id "GTK_TYPE_IM_CONTEXT_SIMPLE")
 )
 
-(define-object IMMulticontext
+(define-object GtkIMMulticontext
   (in-module "Gtk")
   (parent "GtkIMContext")
   (c-name "GtkIMMulticontext")
   (gtype-id "GTK_TYPE_IM_MULTICONTEXT")
 )
 
-(define-object InputDialog
+(define-object GtkInputDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkInputDialog")
   (gtype-id "GTK_TYPE_INPUT_DIALOG")
 )
 
-(define-object Invisible
+(define-object GtkInvisible
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkInvisible")
   (gtype-id "GTK_TYPE_INVISIBLE")
 )
 
-(define-object Item
+(define-object GtkItem
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkItem")
@@ -2012,21 +2012,21 @@
 )
 
 
-(define-object ItemFactory
+(define-object GtkItemFactory
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkItemFactory")
   (gtype-id "GTK_TYPE_ITEM_FACTORY")
 )
 
-(define-object Label
+(define-object GtkLabel
   (in-module "Gtk")
   (parent "GtkMisc")
   (c-name "GtkLabel")
   (gtype-id "GTK_TYPE_LABEL")
 )
 
-(define-object Layout
+(define-object GtkLayout
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkLayout")
@@ -2037,7 +2037,7 @@
 )
 
 ; deprecated 
-; (define-object List
+; (define-object GtkList
 ;   (in-module "Gtk")
 ;   (parent "GtkContainer")
 ;   (c-name "GtkList")
@@ -2047,7 +2047,7 @@
 ;   )
 ; )
 
-; (define-object ListItem
+; (define-object GtkListItem
 ;   (in-module "Gtk")
 ;   (parent "GtkItem")
 ;   (c-name "GtkListItem")
@@ -2055,7 +2055,7 @@
 ; )
 
 
-(define-object ListStore
+(define-object GtkListStore
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkListStore")
@@ -2066,42 +2066,42 @@
   (implements "GtkTreeSortable")
 )
 
-(define-object Menu
+(define-object GtkMenu
   (in-module "Gtk")
   (parent "GtkMenuShell")
   (c-name "GtkMenu")
   (gtype-id "GTK_TYPE_MENU")
 )
 
-(define-object MenuBar
+(define-object GtkMenuBar
   (in-module "Gtk")
   (parent "GtkMenuShell")
   (c-name "GtkMenuBar")
   (gtype-id "GTK_TYPE_MENU_BAR")
 )
 
-(define-object MenuItem
+(define-object GtkMenuItem
   (in-module "Gtk")
   (parent "GtkItem")
   (c-name "GtkMenuItem")
   (gtype-id "GTK_TYPE_MENU_ITEM")
 )
 
-(define-object MenuShell
+(define-object GtkMenuShell
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkMenuShell")
   (gtype-id "GTK_TYPE_MENU_SHELL")
 )
 
-(define-object MenuToolButton
+(define-object GtkMenuToolButton
   (in-module "Gtk")
   (parent "GtkToolButton")
   (c-name "GtkMenuToolButton")
   (gtype-id "GTK_TYPE_MENU_TOOL_BUTTON")
 )
 
-(define-object MessageDialog
+(define-object GtkMessageDialog
   (in-module "Gtk")
   (parent "GtkDialog")
   (c-name "GtkMessageDialog")
@@ -2112,14 +2112,14 @@
   )
 )
 
-(define-object Misc
+(define-object GtkMisc
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkMisc")
   (gtype-id "GTK_TYPE_MISC")
 )
 
-(define-object Notebook
+(define-object GtkNotebook
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkNotebook")
@@ -2129,14 +2129,14 @@
   )
 )
 
-(define-object Object
+(define-object GtkObject
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkObject")
   (gtype-id "GTK_TYPE_OBJECT")
 )
 
-(define-object OldEditable
+(define-object GtkOldEditable
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkOldEditable")
@@ -2144,7 +2144,7 @@
   (implements "GtkEditable")
 )
 
-(define-object OptionMenu
+(define-object GtkOptionMenu
   (in-module "Gtk")
   (parent "GtkButton")
   (c-name "GtkOptionMenu")
@@ -2153,7 +2153,7 @@
 
 ;; jpc: adding fields to set them at nsp level
 
-(define-object Paned
+(define-object GtkPaned
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkPaned")
@@ -2167,35 +2167,35 @@
 )
 
 ;; jpc deprecated 
-; (define-object Pixmap
+; (define-object GtkPixmap
 ;   (in-module "Gtk")
 ;   (parent "GtkMisc")
 ;   (c-name "GtkPixmap")
 ;   (gtype-id "GTK_TYPE_PIXMAP")
 ; )
 
-(define-object Plug
+(define-object GtkPlug
   (in-module "Gtk")
   (parent "GtkWindow")
   (c-name "GtkPlug")
   (gtype-id "GTK_TYPE_PLUG")
 )
 
-(define-object Preview
+(define-object GtkPreview
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkPreview")
   (gtype-id "GTK_TYPE_PREVIEW")
 )
 
-(define-object Progress
+(define-object GtkProgress
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkProgress")
   (gtype-id "GTK_TYPE_PROGRESS")
 )
 
-(define-object ProgressBar
+(define-object GtkProgressBar
   (in-module "Gtk")
   (parent "GtkProgress")
   (c-name "GtkProgressBar")
@@ -2203,112 +2203,112 @@
 )
 
 ;; added July 2008 
-(define-object RadioAction
+(define-object GtkRadioAction
   (in-module "Gtk")
   (parent "GtkToggleAction")
   (c-name "GtkRadioAction")
   (gtype-id "GTK_TYPE_RADIO_ACTION")
 )
 
-(define-object RadioButton
+(define-object GtkRadioButton
   (in-module "Gtk")
   (parent "GtkCheckButton")
   (c-name "GtkRadioButton")
   (gtype-id "GTK_TYPE_RADIO_BUTTON")
 )
 
-(define-object RadioMenuItem
+(define-object GtkRadioMenuItem
   (in-module "Gtk")
   (parent "GtkCheckMenuItem")
   (c-name "GtkRadioMenuItem")
   (gtype-id "GTK_TYPE_RADIO_MENU_ITEM")
 )
 
-(define-object RadioToolButton
+(define-object GtkRadioToolButton
   (in-module "Gtk")
   (parent "GtkToggleToolButton")
   (c-name "GtkRadioToolButton")
   (gtype-id "GTK_TYPE_RADIO_TOOL_BUTTON")
 )
 
-(define-object Range
+(define-object GtkRange
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkRange")
   (gtype-id "GTK_TYPE_RANGE")
 )
 
-(define-object RcStyle
+(define-object GtkRcStyle
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkRcStyle")
   (gtype-id "GTK_TYPE_RC_STYLE")
 )
 
-(define-object Ruler
+(define-object GtkRuler
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkRuler")
   (gtype-id "GTK_TYPE_RULER")
 )
 
-(define-object Scale
+(define-object GtkScale
   (in-module "Gtk")
   (parent "GtkRange")
   (c-name "GtkScale")
   (gtype-id "GTK_TYPE_SCALE")
 )
 
-(define-object Scrollbar
+(define-object GtkScrollbar
   (in-module "Gtk")
   (parent "GtkRange")
   (c-name "GtkScrollbar")
   (gtype-id "GTK_TYPE_SCROLLBAR")
 )
 
-(define-object ScrolledWindow
+(define-object GtkScrolledWindow
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkScrolledWindow")
   (gtype-id "GTK_TYPE_SCROLLED_WINDOW")
 )
 
-(define-object Separator
+(define-object GtkSeparator
   (in-module "Gtk")
   (parent "GtkWidget")
   (c-name "GtkSeparator")
   (gtype-id "GTK_TYPE_SEPARATOR")
 )
 
-(define-object SeparatorMenuItem
+(define-object GtkSeparatorMenuItem
   (in-module "Gtk")
   (parent "GtkMenuItem")
   (c-name "GtkSeparatorMenuItem")
   (gtype-id "GTK_TYPE_SEPARATOR_MENU_ITEM")
 )
 
-(define-object SeparatorToolItem
+(define-object GtkSeparatorToolItem
   (in-module "Gtk")
   (parent "GtkToolItem")
   (c-name "GtkSeparatorToolItem")
   (gtype-id "GTK_TYPE_SEPARATOR_TOOL_ITEM")
 )
 
-(define-object Settings
+(define-object GtkSettings
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkSettings")
   (gtype-id "GTK_TYPE_SETTINGS")
 )
 
-(define-object SizeGroup
+(define-object GtkSizeGroup
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkSizeGroup")
   (gtype-id "GTK_TYPE_SIZE_GROUP")
 )
 
-(define-object Socket
+(define-object GtkSocket
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkSocket")
@@ -2316,21 +2316,21 @@
 )
 
 
-(define-object SpinButton
+(define-object GtkSpinButton
   (in-module "Gtk")
   (parent "GtkEntry")
   (c-name "GtkSpinButton")
   (gtype-id "GTK_TYPE_SPIN_BUTTON")
 )
 
-(define-object Statusbar
+(define-object GtkStatusbar
   (in-module "Gtk")
   (parent "GtkHBox")
   (c-name "GtkStatusbar")
   (gtype-id "GTK_TYPE_STATUSBAR")
 )
 
-(define-object Style
+(define-object GtkStyle
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkStyle")
@@ -2363,21 +2363,21 @@
   (gtype-id "GTK_TYPE_STYLE")
 )
 
-(define-object Table
+(define-object GtkTable
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkTable")
   (gtype-id "GTK_TYPE_TABLE")
 )
 
-(define-object TearoffMenuItem
+(define-object GtkTearoffMenuItem
   (in-module "Gtk")
   (parent "GtkMenuItem")
   (c-name "GtkTearoffMenuItem")
   (gtype-id "GTK_TYPE_TEAROFF_MENU_ITEM")
 )
 
-(define-object TextBuffer
+(define-object GtkTextBuffer
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTextBuffer")
@@ -2387,49 +2387,49 @@
   )
 )
 
-(define-object TextChildAnchor
+(define-object GtkTextChildAnchor
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTextChildAnchor")
   (gtype-id "GTK_TYPE_TEXT_CHILD_ANCHOR")
 )
 
-(define-object TextMark
+(define-object GtkTextMark
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTextMark")
   (gtype-id "GTK_TYPE_TEXT_MARK")
 )
 
-(define-object TextTag
+(define-object GtkTextTag
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTextTag")
   (gtype-id "GTK_TYPE_TEXT_TAG")
 )
 
-(define-object TextTagTable
+(define-object GtkTextTagTable
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTextTagTable")
   (gtype-id "GTK_TYPE_TEXT_TAG_TABLE")
 )
 
-(define-object TextView
+(define-object GtkTextView
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkTextView")
   (gtype-id "GTK_TYPE_TEXT_VIEW")
 )
 
-(define-object ToggleAction
+(define-object GtkToggleAction
   (in-module "Gtk")
   (parent "GtkAction")
   (c-name "GtkToggleAction")
   (gtype-id "GTK_TYPE_TOGGLE_ACTION")
 )
 
-(define-object ToggleButton
+(define-object GtkToggleButton
   (in-module "Gtk")
   (parent "GtkButton")
   (c-name "GtkToggleButton")
@@ -2439,7 +2439,7 @@
   )
 )
 
-(define-object ToggleToolButton
+(define-object GtkToggleToolButton
   (in-module "Gtk")
   (parent "GtkToolButton")
   (c-name "GtkToggleToolButton")
@@ -2447,28 +2447,28 @@
 )
 
 
-(define-object Toolbar
+(define-object GtkToolbar
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkToolbar")
   (gtype-id "GTK_TYPE_TOOLBAR")
 )
 
-(define-object ToolButton
+(define-object GtkToolButton
   (in-module "Gtk")
   (parent "GtkToolItem")
   (c-name "GtkToolButton")
   (gtype-id "GTK_TYPE_TOOL_BUTTON")
 )
 
-(define-object ToolItem
+(define-object GtkToolItem
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkToolItem")
   (gtype-id "GTK_TYPE_TOOL_ITEM")
 )
 
-(define-object Tooltips
+(define-object GtkTooltips
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkTooltips")
@@ -2485,7 +2485,7 @@
   (gtype-id "GTK_TYPE_TOOLTIPS")
 )
 
-(define-object TreeModelFilter
+(define-object GtkTreeModelFilter
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTreeModelFilter")
@@ -2494,7 +2494,7 @@
   (implements "GtkTreeDragSource")
 )
 
-(define-object TreeModelSort
+(define-object GtkTreeModelSort
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTreeModelSort")
@@ -2503,14 +2503,14 @@
   (implements "GtkTreeSortable")
 )
 
-(define-object TreeSelection
+(define-object GtkTreeSelection
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkTreeSelection")
   (gtype-id "GTK_TYPE_TREE_SELECTION")
 )
 
-(define-object TreeStore
+(define-object GtkTreeStore
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkTreeStore")
@@ -2521,77 +2521,77 @@
   (implements "GtkTreeSortable")
 )
 
-(define-object TreeView
+(define-object GtkTreeView
   (in-module "Gtk")
   (parent "GtkContainer")
   (c-name "GtkTreeView")
   (gtype-id "GTK_TYPE_TREE_VIEW")
 )
 
-(define-object TreeViewColumn
+(define-object GtkTreeViewColumn
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkTreeViewColumn")
   (gtype-id "GTK_TYPE_TREE_VIEW_COLUMN")
 )
 
-(define-object UIManager
+(define-object GtkUIManager
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkUIManager")
   (gtype-id "GTK_TYPE_UI_MANAGER")
 )
 
-(define-object VBox
+(define-object GtkVBox
   (in-module "Gtk")
   (parent "GtkBox")
   (c-name "GtkVBox")
   (gtype-id "GTK_TYPE_VBOX")
 )
 
-(define-object VButtonBox
+(define-object GtkVButtonBox
   (in-module "Gtk")
   (parent "GtkButtonBox")
   (c-name "GtkVButtonBox")
   (gtype-id "GTK_TYPE_VBUTTON_BOX")
 )
 
-(define-object Viewport
+(define-object GtkViewport
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkViewport")
   (gtype-id "GTK_TYPE_VIEWPORT")
 )
 
-(define-object VPaned
+(define-object GtkVPaned
   (in-module "Gtk")
   (parent "GtkPaned")
   (c-name "GtkVPaned")
   (gtype-id "GTK_TYPE_VPANED")
 )
 
-(define-object VRuler
+(define-object GtkVRuler
   (in-module "Gtk")
   (parent "GtkRuler")
   (c-name "GtkVRuler")
   (gtype-id "GTK_TYPE_VRULER")
 )
 
-(define-object VScale
+(define-object GtkVScale
   (in-module "Gtk")
   (parent "GtkScale")
   (c-name "GtkVScale")
   (gtype-id "GTK_TYPE_VSCALE")
 )
 
-(define-object VScrollbar
+(define-object GtkVScrollbar
   (in-module "Gtk")
   (parent "GtkScrollbar")
   (c-name "GtkVScrollbar")
   (gtype-id "GTK_TYPE_VSCROLLBAR")
 )
 
-(define-object VSeparator
+(define-object GtkVSeparator
   (in-module "Gtk")
   (parent "GtkSeparator")
   (c-name "GtkVSeparator")
@@ -2599,7 +2599,7 @@
 )
 
 
-(define-object Widget
+(define-object GtkWidget
   (in-module "Gtk")
   (parent "GtkObject")
   (c-name "GtkWidget")
@@ -2615,7 +2615,7 @@
   )
 )
 
-(define-object Window
+(define-object GtkWindow
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkWindow")
@@ -2659,7 +2659,7 @@
   )
 )
 
-(define-object WindowGroup
+(define-object GtkWindowGroup
   (in-module "Gtk")
   (parent "GObject")
   (c-name "GtkWindowGroup")

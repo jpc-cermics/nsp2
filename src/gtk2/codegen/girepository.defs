@@ -1,0 +1,57 @@
+;; -*- scheme -*-
+
+(include "girepository-types.defs")
+
+(define-function g_irepository_get_default
+  (c-name "g_irepository_get_default")
+  (return-type "GIRepository*")
+  (parameters
+  )
+)
+
+(define-method enumerate_versions
+  (of-object "GIRepository")
+  (c-name "g_irepository_enumerate_versions")
+  (parameters
+   '("const-gchar*" "namespace")
+   )
+  (return-type "GList*")
+)
+
+(define-method find_by_name 
+  (of-object "GIRepository")
+  (c-name "g_irepository_find_by_name")
+  (parameters
+   '("const-gchar*" "namespace")
+   '("const-gchar*" "name")
+   )
+  (return-type "none")
+)
+
+(define-method get_loaded_namespaces
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_loaded_namespaces")
+  (parameters
+   )
+  (return-type "NspSMatrix*")
+)
+
+(define-method require
+  (of-object "GIRepository")
+  (c-name "g_irepository_require")
+  (parameters
+   '("const-gchar*" "namespace")
+   '("const-gchar*" "version")
+   )
+  (return-type "none")
+)
+
+(define-method get_n_infos
+  (of-object "GIRepository")
+  (c-name "g_irepository_get_n_infos")
+  (parameters
+   '("const-gchar*" "namespace")
+   )
+  (return-type "none")
+)
+

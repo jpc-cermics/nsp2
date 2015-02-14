@@ -69,7 +69,7 @@
 #include <nsp/gtk/gdkvisual.h>
 
 
-/* ----------- NspGdkEvent ----------- */
+/* -----------NspGdkEvent ----------- */
 
 static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 
@@ -97,34 +97,34 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
 {
   NspTypeGdkEvent *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkevent != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkevent != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkevent;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkevent_attrs ; 
-  type->get_attrs = (attrs_func *)  _wrap_gdk_event_tp_getattr;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkevent_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkevent_attrs;
+  type->get_attrs = (attrs_func *) _wrap_gdk_event_tp_getattr;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkevent_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkevent;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkevent */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkevent_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkevent_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkevent_type_short_string;
-  /* top->create = (create_func*) int_gdkevent_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkevent_create;*/
+
   /* specific methods for gdkevent */
-      
+
   type->init = (init_func *) init_gdkevent;
 
   /* 
@@ -148,8 +148,8 @@ NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkevent_id;
-       return type;
+      type->id = nsp_type_gdkevent_id;
+      return type;
     }
 }
 
@@ -162,10 +162,10 @@ static int init_gdkevent(NspGdkEvent *Obj,NspTypeGdkEvent *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -174,7 +174,7 @@ static int init_gdkevent(NspGdkEvent *Obj,NspTypeGdkEvent *type)
 
 NspGdkEvent *new_gdkevent() 
 {
-  NspGdkEvent *loc; 
+  NspGdkEvent *loc;
   /* type must exists */
   nsp_type_gdkevent = new_type_gdkevent(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkEvent)))== NULLGDKEVENT) return loc;
@@ -206,10 +206,10 @@ static char *nsp_gdkevent_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkEvent objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkEvent *nsp_gdkevent_object(NspObject *O)
+NspGdkEvent   *nsp_gdkevent_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -222,7 +222,7 @@ NspGdkEvent *nsp_gdkevent_object(NspObject *O)
 
 int IsGdkEventObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkevent_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkevent_id);
 }
 
 int IsGdkEvent(NspObject *O)
@@ -297,7 +297,7 @@ static int _wrap_gdk_event_copy(NspGdkEvent *self,Stack stack,int rhs,int opt,in
   GdkEvent *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_event_copy(NSP_GBOXED_GET(self, GdkEvent));
+  ret =gdk_event_copy(NSP_GBOXED_GET(self, GdkEvent));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -316,7 +316,7 @@ static int _wrap_gdk_event_get_time(NspGdkEvent *self,Stack stack,int rhs,int op
 {
   gulong ret;
   CheckRhs(0,0);
-  ret = gdk_event_get_time(NSP_GBOXED_GET(self, GdkEvent));
+  ret =gdk_event_get_time(NSP_GBOXED_GET(self, GdkEvent));
  if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
   return 1;
 }
@@ -726,7 +726,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 #line 727 "gdk.c"
 
 
-/* ----------- NspGdkFont ----------- */
+/* -----------NspGdkFont ----------- */
 
 
 #define  NspGdkFont_Private 
@@ -753,34 +753,34 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
 {
   NspTypeGdkFont *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkfont != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkfont != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkfont;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkfont_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkfont_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkfont_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkfont_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkfont;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkfont */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkfont_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkfont_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkfont_type_short_string;
-  /* top->create = (create_func*) int_gdkfont_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkfont_create;*/
+
   /* specific methods for gdkfont */
-      
+
   type->init = (init_func *) init_gdkfont;
 
   /* 
@@ -804,8 +804,8 @@ NspTypeGdkFont *new_type_gdkfont(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkfont_id;
-       return type;
+      type->id = nsp_type_gdkfont_id;
+      return type;
     }
 }
 
@@ -818,10 +818,10 @@ static int init_gdkfont(NspGdkFont *Obj,NspTypeGdkFont *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -830,7 +830,7 @@ static int init_gdkfont(NspGdkFont *Obj,NspTypeGdkFont *type)
 
 NspGdkFont *new_gdkfont() 
 {
-  NspGdkFont *loc; 
+  NspGdkFont *loc;
   /* type must exists */
   nsp_type_gdkfont = new_type_gdkfont(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkFont)))== NULLGDKFONT) return loc;
@@ -862,10 +862,10 @@ static char *nsp_gdkfont_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkFont objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkFont *nsp_gdkfont_object(NspObject *O)
+NspGdkFont   *nsp_gdkfont_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -878,7 +878,7 @@ NspGdkFont *nsp_gdkfont_object(NspObject *O)
 
 int IsGdkFontObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkfont_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkfont_id);
 }
 
 int IsGdkFont(NspObject *O)
@@ -920,15 +920,15 @@ NspGdkFont *gdkfont_copy(NspGdkFont *self)
 static int
 _wrap_gdkfont_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *font_name;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&font_name) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_font_load(font_name))== NULL) return RET_BUG;
 
   nsp_type_gdkfont = new_type_gdkfont(T_BASE);
-  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_gdkfont );
-   if ( nsp_ret == NULL) return RET_BUG;
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_gdkfont);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -937,32 +937,32 @@ static int _wrap_gdk_font_id(NspGdkFont *self,Stack stack,int rhs,int opt,int lh
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_font_id(NSP_GBOXED_GET(self, GdkFont));
+  ret =gdk_font_id(NSP_GBOXED_GET(self, GdkFont));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_string_width(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *string;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
-  ret = gdk_string_width(NSP_GBOXED_GET(self, GdkFont), string);
+  ret =gdk_string_width(NSP_GBOXED_GET(self, GdkFont),string);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_text_width(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,new_opts,t_end};
+  int_types T[] = {string,new_opts, t_end};
   nsp_option opts[] = {
-	{"text_length",s_int,NULLOBJ,-1}, 
+	{"text_length",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *text;
   int text_length = -1, ret;
   if ( GetArgs(stack,rhs,opt,T,&text, opts, &text_length) == FAIL) return RET_BUG;
-  ret = gdk_text_width(NSP_GBOXED_GET(self, GdkFont), text, text_length);
+  ret =gdk_text_width(NSP_GBOXED_GET(self, GdkFont),text,text_length);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -986,25 +986,25 @@ static int _wrap_gdk_char_width(NspGdkFont *self,Stack stack,int rhs,int opt,int
 
 static int _wrap_gdk_string_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *string;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
-  ret = gdk_string_measure(NSP_GBOXED_GET(self, GdkFont), string);
+  ret =gdk_string_measure(NSP_GBOXED_GET(self, GdkFont),string);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_text_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,new_opts,t_end};
+  int_types T[] = {string,new_opts, t_end};
   nsp_option opts[] = {
-	{"text_length",s_int,NULLOBJ,-1}, 
+	{"text_length",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *text;
   int text_length = -1, ret;
   if ( GetArgs(stack,rhs,opt,T,&text, opts, &text_length) == FAIL) return RET_BUG;
-  ret = gdk_text_measure(NSP_GBOXED_GET(self, GdkFont), text, text_length);
+  ret =gdk_text_measure(NSP_GBOXED_GET(self, GdkFont),text,text_length);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1028,25 +1028,25 @@ static int _wrap_gdk_char_measure(NspGdkFont *self,Stack stack,int rhs,int opt,i
 
 static int _wrap_gdk_string_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *string;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
-  ret = gdk_string_height(NSP_GBOXED_GET(self, GdkFont), string);
+  ret =gdk_string_height(NSP_GBOXED_GET(self, GdkFont),string);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_text_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,new_opts,t_end};
+  int_types T[] = {string,new_opts, t_end};
   nsp_option opts[] = {
-	{"text_length",s_int,NULLOBJ,-1}, 
+	{"text_length",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *text;
   int text_length = -1, ret;
   if ( GetArgs(stack,rhs,opt,T,&text, opts, &text_length) == FAIL) return RET_BUG;
-  ret = gdk_text_height(NSP_GBOXED_GET(self, GdkFont), text, text_length);
+  ret =gdk_text_height(NSP_GBOXED_GET(self, GdkFont),text,text_length);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1094,11 +1094,11 @@ _wrap_gdk_text_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_string_extents(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {string,s_int,s_int,s_int,s_int,s_int, t_end};
   char *string;
   int lbearing, rbearing, width, ascent, descent;
   if ( GetArgs(stack,rhs,opt,T,&string, &lbearing, &rbearing, &width, &ascent, &descent) == FAIL) return RET_BUG;
-  gdk_string_extents(NSP_GBOXED_GET(self, GdkFont), string, &lbearing, &rbearing, &width, &ascent, &descent);
+  gdk_string_extents(NSP_GBOXED_GET(self, GdkFont),string,&lbearing,&rbearing,&width,&ascent,&descent);
   return 0;
 }
 
@@ -1145,15 +1145,15 @@ static NspObject *_wrap_gdk_font__get_descent(NspObject *self,char *attr)
 }
 
 static AttrTab gdkfont_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_font__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "ascent", (attr_get_function *)_wrap_gdk_font__get_ascent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "descent", (attr_get_function *)_wrap_gdk_font__get_descent, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "type", (attr_get_function * )_wrap_gdk_font__get_type, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "ascent", (attr_get_function * )_wrap_gdk_font__get_ascent, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "descent", (attr_get_function * )_wrap_gdk_font__get_descent, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkColor ----------- */
+/* -----------NspGdkColor ----------- */
 
 static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 
@@ -1181,34 +1181,34 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
 {
   NspTypeGdkColor *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkcolor != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkcolor != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkcolor;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkcolor_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  _wrap_gdk_color_tp_setattr;
-  type->methods = gdkcolor_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkcolor_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) _wrap_gdk_color_tp_setattr;
+  type->methods = gdkcolor_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkcolor;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkcolor */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkcolor_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkcolor_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkcolor_type_short_string;
-  /* top->create = (create_func*) int_gdkcolor_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkcolor_create;*/
+
   /* specific methods for gdkcolor */
-      
+
   type->init = (init_func *) init_gdkcolor;
 
   /* 
@@ -1232,8 +1232,8 @@ NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkcolor_id;
-       return type;
+      type->id = nsp_type_gdkcolor_id;
+      return type;
     }
 }
 
@@ -1246,10 +1246,10 @@ static int init_gdkcolor(NspGdkColor *Obj,NspTypeGdkColor *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1258,7 +1258,7 @@ static int init_gdkcolor(NspGdkColor *Obj,NspTypeGdkColor *type)
 
 NspGdkColor *new_gdkcolor() 
 {
-  NspGdkColor *loc; 
+  NspGdkColor *loc;
   /* type must exists */
   nsp_type_gdkcolor = new_type_gdkcolor(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkColor)))== NULLGDKCOLOR) return loc;
@@ -1290,10 +1290,10 @@ static char *nsp_gdkcolor_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkColor objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkColor *nsp_gdkcolor_object(NspObject *O)
+NspGdkColor   *nsp_gdkcolor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1306,7 +1306,7 @@ NspGdkColor *nsp_gdkcolor_object(NspObject *O)
 
 int IsGdkColorObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkcolor_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkcolor_id);
 }
 
 int IsGdkColor(NspObject *O)
@@ -1401,11 +1401,11 @@ static NspObject *_wrap_gdk_color__get_blue(NspObject *self,char *attr)
 }
 
 static AttrTab gdkcolor_attrs[] = {
-  { "pixel", (attr_get_function *)_wrap_gdk_color__get_pixel, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "red", (attr_get_function *)_wrap_gdk_color__get_red, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "green", (attr_get_function *)_wrap_gdk_color__get_green, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "blue", (attr_get_function *)_wrap_gdk_color__get_blue, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "pixel", (attr_get_function * )_wrap_gdk_color__get_pixel, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "red", (attr_get_function * )_wrap_gdk_color__get_red, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "green", (attr_get_function * )_wrap_gdk_color__get_green, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "blue", (attr_get_function * )_wrap_gdk_color__get_blue, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 #line 416 "gdk.override"
@@ -1442,7 +1442,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #line 1443 "gdk.c"
 
 
-/* ----------- NspGdkCursor ----------- */
+/* -----------NspGdkCursor ----------- */
 
 
 #define  NspGdkCursor_Private 
@@ -1469,34 +1469,34 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
 {
   NspTypeGdkCursor *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkcursor != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkcursor != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkcursor;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkcursor_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkcursor_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkcursor_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkcursor_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkcursor;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkcursor */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkcursor_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkcursor_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkcursor_type_short_string;
-  /* top->create = (create_func*) int_gdkcursor_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkcursor_create;*/
+
   /* specific methods for gdkcursor */
-      
+
   type->init = (init_func *) init_gdkcursor;
 
   /* 
@@ -1520,8 +1520,8 @@ NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkcursor_id;
-       return type;
+      type->id = nsp_type_gdkcursor_id;
+      return type;
     }
 }
 
@@ -1534,10 +1534,10 @@ static int init_gdkcursor(NspGdkCursor *Obj,NspTypeGdkCursor *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1546,7 +1546,7 @@ static int init_gdkcursor(NspGdkCursor *Obj,NspTypeGdkCursor *type)
 
 NspGdkCursor *new_gdkcursor() 
 {
-  NspGdkCursor *loc; 
+  NspGdkCursor *loc;
   /* type must exists */
   nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkCursor)))== NULLGDKCURSOR) return loc;
@@ -1578,10 +1578,10 @@ static char *nsp_gdkcursor_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkCursor objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkCursor *nsp_gdkcursor_object(NspObject *O)
+NspGdkCursor   *nsp_gdkcursor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1594,7 +1594,7 @@ NspGdkCursor *nsp_gdkcursor_object(NspObject *O)
 
 int IsGdkCursorObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkcursor_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkcursor_id);
 }
 
 int IsGdkCursor(NspObject *O)
@@ -1710,13 +1710,13 @@ static NspObject *_wrap_gdk_cursor__get_type(NspObject *self,char *attr)
 }
 
 static AttrTab gdkcursor_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_cursor__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "type", (attr_get_function * )_wrap_gdk_cursor__get_type, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkRectangle ----------- */
+/* -----------NspGdkRectangle ----------- */
 
 
 #define  NspGdkRectangle_Private 
@@ -1743,34 +1743,34 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
 {
   NspTypeGdkRectangle *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkrectangle != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkrectangle != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkrectangle;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkrectangle_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkrectangle_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkrectangle_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkrectangle_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkrectangle;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkrectangle */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkrectangle_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkrectangle_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkrectangle_type_short_string;
-  /* top->create = (create_func*) int_gdkrectangle_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkrectangle_create;*/
+
   /* specific methods for gdkrectangle */
-      
+
   type->init = (init_func *) init_gdkrectangle;
 
   /* 
@@ -1794,8 +1794,8 @@ NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkrectangle_id;
-       return type;
+      type->id = nsp_type_gdkrectangle_id;
+      return type;
     }
 }
 
@@ -1808,10 +1808,10 @@ static int init_gdkrectangle(NspGdkRectangle *Obj,NspTypeGdkRectangle *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1820,7 +1820,7 @@ static int init_gdkrectangle(NspGdkRectangle *Obj,NspTypeGdkRectangle *type)
 
 NspGdkRectangle *new_gdkrectangle() 
 {
-  NspGdkRectangle *loc; 
+  NspGdkRectangle *loc;
   /* type must exists */
   nsp_type_gdkrectangle = new_type_gdkrectangle(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkRectangle)))== NULLGDKRECTANGLE) return loc;
@@ -1852,10 +1852,10 @@ static char *nsp_gdkrectangle_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkRectangle objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkRectangle *nsp_gdkrectangle_object(NspObject *O)
+NspGdkRectangle   *nsp_gdkrectangle_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1868,7 +1868,7 @@ NspGdkRectangle *nsp_gdkrectangle_object(NspObject *O)
 
 int IsGdkRectangleObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkrectangle_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkrectangle_id);
 }
 
 int IsGdkRectangle(NspObject *O)
@@ -2023,16 +2023,16 @@ static NspObject *_wrap_gdk_rectangle__get_height(NspObject *self,char *attr)
 }
 
 static AttrTab gdkrectangle_attrs[] = {
-  { "x", (attr_get_function *)_wrap_gdk_rectangle__get_x, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "y", (attr_get_function *)_wrap_gdk_rectangle__get_y, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "width", (attr_get_function *)_wrap_gdk_rectangle__get_width, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "height", (attr_get_function *)_wrap_gdk_rectangle__get_height, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "x", (attr_get_function * )_wrap_gdk_rectangle__get_x, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "y", (attr_get_function * )_wrap_gdk_rectangle__get_y, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "width", (attr_get_function * )_wrap_gdk_rectangle__get_width, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "height", (attr_get_function * )_wrap_gdk_rectangle__get_height, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkColormap ----------- */
+/* -----------NspGdkColormap ----------- */
 
 
 #define  NspGdkColormap_Private 
@@ -2059,34 +2059,34 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
 {
   NspTypeGdkColormap *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkcolormap != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkcolormap != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkcolormap;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkcolormap_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkcolormap_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkcolormap_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkcolormap_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkcolormap;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkcolormap */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkcolormap_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkcolormap_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkcolormap_type_short_string;
-  /* top->create = (create_func*) int_gdkcolormap_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkcolormap_create;*/
+
   /* specific methods for gdkcolormap */
-      
+
   type->init = (init_func *) init_gdkcolormap;
 
   /* 
@@ -2110,8 +2110,8 @@ NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkcolormap_id;
-       return type;
+      type->id = nsp_type_gdkcolormap_id;
+      return type;
     }
 }
 
@@ -2124,10 +2124,10 @@ static int init_gdkcolormap(NspGdkColormap *Obj,NspTypeGdkColormap *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2136,7 +2136,7 @@ static int init_gdkcolormap(NspGdkColormap *Obj,NspTypeGdkColormap *type)
 
 NspGdkColormap *new_gdkcolormap() 
 {
-  NspGdkColormap *loc; 
+  NspGdkColormap *loc;
   /* type must exists */
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkColormap)))== NULLGDKCOLORMAP) return loc;
@@ -2168,10 +2168,10 @@ static char *nsp_gdkcolormap_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkColormap objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkColormap *nsp_gdkcolormap_object(NspObject *O)
+NspGdkColormap   *nsp_gdkcolormap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2184,7 +2184,7 @@ NspGdkColormap *nsp_gdkcolormap_object(NspObject *O)
 
 int IsGdkColormapObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkcolormap_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkcolormap_id);
 }
 
 int IsGdkColormap(NspObject *O)
@@ -2226,12 +2226,12 @@ NspGdkColormap *gdkcolormap_copy(NspGdkColormap *self)
 static int
 _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj_check, s_bool,t_end};
+  int_types T[] = {obj_check,s_bool, t_end};
   NspGObject *visual;
   int allocate;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkvisual, &visual, &allocate) == FAIL) return RET_BUG;
-  if ((ret = (GObject *)gdk_colormap_new(GDK_VISUAL(visual->obj), allocate))== NULL) return RET_BUG;
+  if ((ret = (GObject *)gdk_colormap_new(GDK_VISUAL(visual->obj),allocate))== NULL) return RET_BUG;
 
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkcolormap );
@@ -2312,7 +2312,7 @@ static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rh
   GdkVisual *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_colormap_get_visual(GDK_COLORMAP(self->obj));
+  ret =gdk_colormap_get_visual(GDK_COLORMAP(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -2321,7 +2321,7 @@ static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rh
 
 static int _wrap_gdk_color_white(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   int ret;
@@ -2332,14 +2332,14 @@ static int _wrap_gdk_color_white(NspGdkColormap *self,Stack stack,int rhs,int op
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  ret = gdk_color_white(GDK_COLORMAP(self->obj), color);
+  ret =gdk_color_white(GDK_COLORMAP(self->obj),color);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_color_black(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   int ret;
@@ -2350,7 +2350,7 @@ static int _wrap_gdk_color_black(NspGdkColormap *self,Stack stack,int rhs,int op
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  ret = gdk_color_black(GDK_COLORMAP(self->obj), color);
+  ret =gdk_color_black(GDK_COLORMAP(self->obj),color);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2367,7 +2367,7 @@ _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   int ret;
@@ -2378,7 +2378,7 @@ static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int o
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  ret = gdk_color_change(GDK_COLORMAP(self->obj), color);
+  ret =gdk_color_change(GDK_COLORMAP(self->obj),color);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2401,7 +2401,7 @@ static NspMethods *gdkcolormap_get_methods(void) { return gdkcolormap_methods;};
 static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkDevice ----------- */
+/* -----------NspGdkDevice ----------- */
 
 
 #define  NspGdkDevice_Private 
@@ -2428,34 +2428,34 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
 {
   NspTypeGdkDevice *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkdevice != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkdevice != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkdevice;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkdevice_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkdevice_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkdevice_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkdevice_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkdevice;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkdevice */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkdevice_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkdevice_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkdevice_type_short_string;
-  /* top->create = (create_func*) int_gdkdevice_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkdevice_create;*/
+
   /* specific methods for gdkdevice */
-      
+
   type->init = (init_func *) init_gdkdevice;
 
   /* 
@@ -2479,8 +2479,8 @@ NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkdevice_id;
-       return type;
+      type->id = nsp_type_gdkdevice_id;
+      return type;
     }
 }
 
@@ -2493,10 +2493,10 @@ static int init_gdkdevice(NspGdkDevice *Obj,NspTypeGdkDevice *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2505,7 +2505,7 @@ static int init_gdkdevice(NspGdkDevice *Obj,NspTypeGdkDevice *type)
 
 NspGdkDevice *new_gdkdevice() 
 {
-  NspGdkDevice *loc; 
+  NspGdkDevice *loc;
   /* type must exists */
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkDevice)))== NULLGDKDEVICE) return loc;
@@ -2537,10 +2537,10 @@ static char *nsp_gdkdevice_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkDevice objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkDevice *nsp_gdkdevice_object(NspObject *O)
+NspGdkDevice   *nsp_gdkdevice_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2553,7 +2553,7 @@ NspGdkDevice *nsp_gdkdevice_object(NspObject *O)
 
 int IsGdkDeviceObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkdevice_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkdevice_id);
 }
 
 int IsGdkDevice(NspObject *O)
@@ -2594,53 +2594,53 @@ NspGdkDevice *gdkdevice_copy(NspGdkDevice *self)
  *-------------------------------------------*/
 static int _wrap_gdk_device_set_source(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkInputSource source;
   NspObject *nsp_source = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_source) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INPUT_SOURCE, nsp_source, &source)== FAIL)
       return RET_BUG;
-  gdk_device_set_source(GDK_DEVICE(self->obj), source);
+  gdk_device_set_source(GDK_DEVICE(self->obj),source);
   return 0;
 }
 
 static int _wrap_gdk_device_set_mode(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkInputMode mode;
   NspObject *nsp_mode = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_mode) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INPUT_MODE, nsp_mode, &mode)== FAIL)
       return RET_BUG;
-  ret = gdk_device_set_mode(GDK_DEVICE(self->obj), mode);
+  ret =gdk_device_set_mode(GDK_DEVICE(self->obj),mode);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_device_set_key(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, obj,t_end};
+  int_types T[] = {s_int,s_int,obj, t_end};
   int index, keyval;
   GdkModifierType modifiers;
   NspObject *nsp_modifiers = NULL;
   if ( GetArgs(stack,rhs,opt,T,&index, &keyval, &nsp_modifiers) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_MODIFIER_TYPE, nsp_modifiers, &modifiers)==FAIL)
       return RET_BUG;
-  gdk_device_set_key(GDK_DEVICE(self->obj), index, keyval, modifiers);
+  gdk_device_set_key(GDK_DEVICE(self->obj),index,keyval,modifiers);
   return 0;
 }
 
 static int _wrap_gdk_device_set_axis_use(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, obj,t_end};
+  int_types T[] = {s_int,obj, t_end};
   int index;
   GdkAxisUse use;
   NspObject *nsp_use = NULL;
   if ( GetArgs(stack,rhs,opt,T,&index, &nsp_use) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_AXIS_USE, nsp_use, &use)== FAIL)
       return RET_BUG;
-  gdk_device_set_axis_use(GDK_DEVICE(self->obj), index, use);
+  gdk_device_set_axis_use(GDK_DEVICE(self->obj),index,use);
   return 0;
 }
 
@@ -2787,7 +2787,7 @@ static NspObject *_wrap_gdk_device__get_has_cursor(NspObject *self,char *attr)
   NspObject *nsp_ret;
   ret = (gboolean) GDK_DEVICE(NSP_GOBJECT_GET(self))->has_cursor;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static NspObject *_wrap_gdk_device__get_num_axes(NspObject *self,char *attr)
@@ -2840,20 +2840,20 @@ _wrap_gdk_device__get_keys(NspGObject *self, char *attr)
 }
 #line 2842 "gdk.c"
 static AttrTab gdkdevice_attrs[] = {
-  { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "mode", (attr_get_function *)_wrap_gdk_device__get_mode, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "has_cursor", (attr_get_function *)_wrap_gdk_device__get_has_cursor, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "num_axes", (attr_get_function *)_wrap_gdk_device__get_num_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "axes", (attr_get_function *)_wrap_gdk_device__get_axes, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "num_keys", (attr_get_function *)_wrap_gdk_device__get_num_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "keys", (attr_get_function *)_wrap_gdk_device__get_keys, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "name", (attr_get_function * )_wrap_gdk_device__get_name, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "source", (attr_get_function * )_wrap_gdk_device__get_source, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "mode", (attr_get_function * )_wrap_gdk_device__get_mode, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "has_cursor", (attr_get_function * )_wrap_gdk_device__get_has_cursor, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "num_axes", (attr_get_function * )_wrap_gdk_device__get_num_axes, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "axes", (attr_get_function * )_wrap_gdk_device__get_axes, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "num_keys", (attr_get_function * )_wrap_gdk_device__get_num_keys, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "keys", (attr_get_function * )_wrap_gdk_device__get_keys, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkDisplay ----------- */
+/* -----------NspGdkDisplay ----------- */
 
 
 #define  NspGdkDisplay_Private 
@@ -2880,34 +2880,34 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
 {
   NspTypeGdkDisplay *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkdisplay != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkdisplay != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkdisplay;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkdisplay_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkdisplay_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkdisplay_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkdisplay_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkdisplay;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkdisplay */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkdisplay_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkdisplay_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkdisplay_type_short_string;
-  /* top->create = (create_func*) int_gdkdisplay_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkdisplay_create;*/
+
   /* specific methods for gdkdisplay */
-      
+
   type->init = (init_func *) init_gdkdisplay;
 
   /* 
@@ -2931,8 +2931,8 @@ NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkdisplay_id;
-       return type;
+      type->id = nsp_type_gdkdisplay_id;
+      return type;
     }
 }
 
@@ -2945,10 +2945,10 @@ static int init_gdkdisplay(NspGdkDisplay *Obj,NspTypeGdkDisplay *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2957,7 +2957,7 @@ static int init_gdkdisplay(NspGdkDisplay *Obj,NspTypeGdkDisplay *type)
 
 NspGdkDisplay *new_gdkdisplay() 
 {
-  NspGdkDisplay *loc; 
+  NspGdkDisplay *loc;
   /* type must exists */
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkDisplay)))== NULLGDKDISPLAY) return loc;
@@ -2989,10 +2989,10 @@ static char *nsp_gdkdisplay_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkDisplay objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkDisplay *nsp_gdkdisplay_object(NspObject *O)
+NspGdkDisplay   *nsp_gdkdisplay_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3005,7 +3005,7 @@ NspGdkDisplay *nsp_gdkdisplay_object(NspObject *O)
 
 int IsGdkDisplayObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkdisplay_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkdisplay_id);
 }
 
 int IsGdkDisplay(NspObject *O)
@@ -3048,7 +3048,7 @@ static int _wrap_gdk_display_get_name(NspGdkDisplay *self,Stack stack,int rhs,in
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = gdk_display_get_name(GDK_DISPLAY(self->obj));
+  ret =gdk_display_get_name(GDK_DISPLAY(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -3057,19 +3057,19 @@ static int _wrap_gdk_display_get_n_screens(NspGdkDisplay *self,Stack stack,int r
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_display_get_n_screens(GDK_DISPLAY(self->obj));
+  ret =gdk_display_get_n_screens(GDK_DISPLAY(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_display_get_screen(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int screen_num;
   GdkScreen *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&screen_num) == FAIL) return RET_BUG;
-  ret = gdk_display_get_screen(GDK_DISPLAY(self->obj), screen_num);
+  ret =gdk_display_get_screen(GDK_DISPLAY(self->obj),screen_num);
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3081,7 +3081,7 @@ static int _wrap_gdk_display_get_default_screen(NspGdkDisplay *self,Stack stack,
   GdkScreen *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_display_get_default_screen(GDK_DISPLAY(self->obj));
+  ret =gdk_display_get_default_screen(GDK_DISPLAY(self->obj));
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3090,19 +3090,19 @@ static int _wrap_gdk_display_get_default_screen(NspGdkDisplay *self,Stack stack,
 
 static int _wrap_gdk_display_pointer_ungrab(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong time_;
   if ( GetArgs(stack,rhs,opt,T,&time_) == FAIL) return RET_BUG;
-  gdk_display_pointer_ungrab(GDK_DISPLAY(self->obj), time_);
+  gdk_display_pointer_ungrab(GDK_DISPLAY(self->obj),time_);
   return 0;
 }
 
 static int _wrap_gdk_display_keyboard_ungrab(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong time_;
   if ( GetArgs(stack,rhs,opt,T,&time_) == FAIL) return RET_BUG;
-  gdk_display_keyboard_ungrab(GDK_DISPLAY(self->obj), time_);
+  gdk_display_keyboard_ungrab(GDK_DISPLAY(self->obj),time_);
   return 0;
 }
 
@@ -3110,7 +3110,7 @@ static int _wrap_gdk_display_pointer_is_grabbed(NspGdkDisplay *self,Stack stack,
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_display_pointer_is_grabbed(GDK_DISPLAY(self->obj));
+  ret =gdk_display_pointer_is_grabbed(GDK_DISPLAY(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -3141,7 +3141,7 @@ static int _wrap_gdk_display_list_devices(NspGdkDisplay *self,Stack stack,int rh
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-  ret = gdk_display_list_devices(GDK_DISPLAY(self->obj));
+  ret =gdk_display_list_devices(GDK_DISPLAY(self->obj));
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -3151,7 +3151,7 @@ static int _wrap_gdk_display_get_event(NspGdkDisplay *self,Stack stack,int rhs,i
   GdkEvent *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_display_get_event(GDK_DISPLAY(self->obj));
+  ret =gdk_display_get_event(GDK_DISPLAY(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -3164,7 +3164,7 @@ static int _wrap_gdk_display_peek_event(NspGdkDisplay *self,Stack stack,int rhs,
   GdkEvent *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_display_peek_event(GDK_DISPLAY(self->obj));
+  ret =gdk_display_peek_event(GDK_DISPLAY(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -3174,7 +3174,7 @@ static int _wrap_gdk_display_peek_event(NspGdkDisplay *self,Stack stack,int rhs,
 
 static int _wrap_gdk_display_put_event(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
   NspObject *nsp_event;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
@@ -3184,16 +3184,16 @@ static int _wrap_gdk_display_put_event(NspGdkDisplay *self,Stack stack,int rhs,i
       Scierror( "event should be a GdkEvent");
       return RET_BUG;
   }
-  gdk_display_put_event(GDK_DISPLAY(self->obj), event);
+  gdk_display_put_event(GDK_DISPLAY(self->obj),event);
   return 0;
 }
 
 static int _wrap_gdk_display_set_double_click_time(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int msec;
   if ( GetArgs(stack,rhs,opt,T,&msec) == FAIL) return RET_BUG;
-  gdk_display_set_double_click_time(GDK_DISPLAY(self->obj), msec);
+  gdk_display_set_double_click_time(GDK_DISPLAY(self->obj),msec);
   return 0;
 }
 
@@ -3202,7 +3202,7 @@ static int _wrap_gdk_display_get_core_pointer(NspGdkDisplay *self,Stack stack,in
   GdkDevice *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_display_get_core_pointer(GDK_DISPLAY(self->obj));
+  ret =gdk_display_get_core_pointer(GDK_DISPLAY(self->obj));
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3211,12 +3211,12 @@ static int _wrap_gdk_display_get_core_pointer(NspGdkDisplay *self,Stack stack,in
 
 static int _wrap_gdk_display_get_window_at_pointer(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int win_x, win_y;
   GdkWindow *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&win_x, &win_y) == FAIL) return RET_BUG;
-  ret = gdk_display_get_window_at_pointer(GDK_DISPLAY(self->obj), &win_x, &win_y);
+  ret =gdk_display_get_window_at_pointer(GDK_DISPLAY(self->obj),&win_x,&win_y);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3252,7 +3252,7 @@ static NspMethods *gdkdisplay_get_methods(void) { return gdkdisplay_methods;};
 static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkDisplayManager ----------- */
+/* -----------NspGdkDisplayManager ----------- */
 
 
 #define  NspGdkDisplayManager_Private 
@@ -3279,34 +3279,34 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
 {
   NspTypeGdkDisplayManager *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkdisplaymanager != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkdisplaymanager != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkdisplaymanager;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkdisplaymanager_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkdisplaymanager_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkdisplaymanager_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkdisplaymanager_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkdisplaymanager;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkdisplaymanager */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkdisplaymanager_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkdisplaymanager_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkdisplaymanager_type_short_string;
-  /* top->create = (create_func*) int_gdkdisplaymanager_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkdisplaymanager_create;*/
+
   /* specific methods for gdkdisplaymanager */
-      
+
   type->init = (init_func *) init_gdkdisplaymanager;
 
   /* 
@@ -3330,8 +3330,8 @@ NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkdisplaymanager_id;
-       return type;
+      type->id = nsp_type_gdkdisplaymanager_id;
+      return type;
     }
 }
 
@@ -3344,10 +3344,10 @@ static int init_gdkdisplaymanager(NspGdkDisplayManager *Obj,NspTypeGdkDisplayMan
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3356,7 +3356,7 @@ static int init_gdkdisplaymanager(NspGdkDisplayManager *Obj,NspTypeGdkDisplayMan
 
 NspGdkDisplayManager *new_gdkdisplaymanager() 
 {
-  NspGdkDisplayManager *loc; 
+  NspGdkDisplayManager *loc;
   /* type must exists */
   nsp_type_gdkdisplaymanager = new_type_gdkdisplaymanager(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkDisplayManager)))== NULLGDKDISPLAYMANAGER) return loc;
@@ -3388,10 +3388,10 @@ static char *nsp_gdkdisplaymanager_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkDisplayManager objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkDisplayManager *nsp_gdkdisplaymanager_object(NspObject *O)
+NspGdkDisplayManager   *nsp_gdkdisplaymanager_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3404,7 +3404,7 @@ NspGdkDisplayManager *nsp_gdkdisplaymanager_object(NspObject *O)
 
 int IsGdkDisplayManagerObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkdisplaymanager_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkdisplaymanager_id);
 }
 
 int IsGdkDisplayManager(NspObject *O)
@@ -3451,7 +3451,7 @@ static NspMethods *gdkdisplaymanager_get_methods(void) { return NULL;};
 static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkDragContext ----------- */
+/* -----------NspGdkDragContext ----------- */
 
 
 #define  NspGdkDragContext_Private 
@@ -3478,34 +3478,34 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
 {
   NspTypeGdkDragContext *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkdragcontext != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkdragcontext != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkdragcontext;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkdragcontext_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkdragcontext_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkdragcontext_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkdragcontext_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkdragcontext;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkdragcontext */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkdragcontext_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkdragcontext_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkdragcontext_type_short_string;
-  /* top->create = (create_func*) int_gdkdragcontext_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkdragcontext_create;*/
+
   /* specific methods for gdkdragcontext */
-      
+
   type->init = (init_func *) init_gdkdragcontext;
 
   /* 
@@ -3529,8 +3529,8 @@ NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkdragcontext_id;
-       return type;
+      type->id = nsp_type_gdkdragcontext_id;
+      return type;
     }
 }
 
@@ -3543,10 +3543,10 @@ static int init_gdkdragcontext(NspGdkDragContext *Obj,NspTypeGdkDragContext *typ
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3555,7 +3555,7 @@ static int init_gdkdragcontext(NspGdkDragContext *Obj,NspTypeGdkDragContext *typ
 
 NspGdkDragContext *new_gdkdragcontext() 
 {
-  NspGdkDragContext *loc; 
+  NspGdkDragContext *loc;
   /* type must exists */
   nsp_type_gdkdragcontext = new_type_gdkdragcontext(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkDragContext)))== NULLGDKDRAGCONTEXT) return loc;
@@ -3587,10 +3587,10 @@ static char *nsp_gdkdragcontext_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkDragContext objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkDragContext *nsp_gdkdragcontext_object(NspObject *O)
+NspGdkDragContext   *nsp_gdkdragcontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3603,7 +3603,7 @@ NspGdkDragContext *nsp_gdkdragcontext_object(NspObject *O)
 
 int IsGdkDragContextObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkdragcontext_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkdragcontext_id);
 }
 
 int IsGdkDragContext(NspObject *O)
@@ -3658,9 +3658,9 @@ _wrap_gdkdragcontext_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_gdk_drag_status(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,new_opts,t_end};
+  int_types T[] = {obj,new_opts, t_end};
   nsp_option opts[] = {
-	{"time",s_int,NULLOBJ,-1}, 
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkDragAction action;
   NspObject *nsp_action = NULL;
@@ -3668,33 +3668,33 @@ static int _wrap_gdk_drag_status(NspGdkDragContext *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_action, opts, &time) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_action, &action)==FAIL)
       return RET_BUG;
-  gdk_drag_status(GDK_DRAG_CONTEXT(self->obj), action, time);
+  gdk_drag_status(GDK_DRAG_CONTEXT(self->obj),action,time);
   return 0;
 }
 
 static int _wrap_gdk_drop_reply(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,new_opts,t_end};
+  int_types T[] = {s_bool,new_opts, t_end};
   nsp_option opts[] = {
-	{"time",s_int,NULLOBJ,-1}, 
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   int ok;
   gulong time = GDK_CURRENT_TIME;
   if ( GetArgs(stack,rhs,opt,T,&ok, opts, &time) == FAIL) return RET_BUG;
-  gdk_drop_reply(GDK_DRAG_CONTEXT(self->obj), ok, time);
+  gdk_drop_reply(GDK_DRAG_CONTEXT(self->obj),ok,time);
   return 0;
 }
 
 static int _wrap_gdk_drop_finish(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,new_opts,t_end};
+  int_types T[] = {s_bool,new_opts, t_end};
   nsp_option opts[] = {
-	{"time",s_int,NULLOBJ,-1}, 
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   int success;
   gulong time = GDK_CURRENT_TIME;
   if ( GetArgs(stack,rhs,opt,T,&success, opts, &time) == FAIL) return RET_BUG;
-  gdk_drop_finish(GDK_DRAG_CONTEXT(self->obj), success, time);
+  gdk_drop_finish(GDK_DRAG_CONTEXT(self->obj),success,time);
   return 0;
 }
 
@@ -3703,7 +3703,7 @@ static int _wrap_gdk_drag_get_selection(NspGdkDragContext *self,Stack stack,int 
   GdkAtom ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_drag_get_selection(GDK_DRAG_CONTEXT(self->obj));
+  ret =gdk_drag_get_selection(GDK_DRAG_CONTEXT(self->obj));
   if (( nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL))== NULL);
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3742,7 +3742,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
 
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj, s_int, s_int, obj, obj, s_int,t_end};
+  int_types T[] = {obj_check,obj,s_int,s_int,obj,obj,s_int, t_end};
   NspGObject *dest_window;
   GdkDragProtocol protocol;
   NspObject *nsp_protocol = NULL, *nsp_suggested_action = NULL, *nsp_possible_actions = NULL;
@@ -3756,39 +3756,39 @@ static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int
       return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_possible_actions, &possible_actions)==FAIL)
       return RET_BUG;
-  ret = gdk_drag_motion(GDK_DRAG_CONTEXT(self->obj), GDK_WINDOW(dest_window->obj), protocol, x_root, y_root, suggested_action, possible_actions, time);
+  ret =gdk_drag_motion(GDK_DRAG_CONTEXT(self->obj),GDK_WINDOW(dest_window->obj),protocol,x_root,y_root,suggested_action,possible_actions,time);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_drag_drop(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong time;
   if ( GetArgs(stack,rhs,opt,T,&time) == FAIL) return RET_BUG;
-  gdk_drag_drop(GDK_DRAG_CONTEXT(self->obj), time);
+  gdk_drag_drop(GDK_DRAG_CONTEXT(self->obj),time);
   return 0;
 }
 
 static int _wrap_gdk_drag_abort(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong time;
   if ( GetArgs(stack,rhs,opt,T,&time) == FAIL) return RET_BUG;
-  gdk_drag_abort(GDK_DRAG_CONTEXT(self->obj), time);
+  gdk_drag_abort(GDK_DRAG_CONTEXT(self->obj),time);
   return 0;
 }
 
 static int _wrap_gtk_drag_finish(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool, s_bool,new_opts,t_end};
+  int_types T[] = {s_bool,s_bool,new_opts, t_end};
   nsp_option opts[] = {
-	{"time",s_int,NULLOBJ,-1}, 
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   int success, del;
   gulong time = GDK_CURRENT_TIME;
   if ( GetArgs(stack,rhs,opt,T,&success, &del, opts, &time) == FAIL) return RET_BUG;
-  gtk_drag_finish(GDK_DRAG_CONTEXT(self->obj), success, del, time);
+  gtk_drag_finish(GDK_DRAG_CONTEXT(self->obj),success,del,time);
   return 0;
 }
 
@@ -3797,7 +3797,7 @@ static int _wrap_gtk_drag_get_source_widget(NspGdkDragContext *self,Stack stack,
   GtkWidget *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gtk_drag_get_source_widget(GDK_DRAG_CONTEXT(self->obj));
+  ret =gtk_drag_get_source_widget(GDK_DRAG_CONTEXT(self->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3806,31 +3806,31 @@ static int _wrap_gtk_drag_get_source_widget(NspGdkDragContext *self,Stack stack,
 
 static int _wrap_gtk_drag_set_icon_widget(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int, t_end};
   NspGObject *widget;
   int hot_x, hot_y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &widget, &hot_x, &hot_y) == FAIL) return RET_BUG;
-  gtk_drag_set_icon_widget(GDK_DRAG_CONTEXT(self->obj), GTK_WIDGET(widget->obj), hot_x, hot_y);
+  gtk_drag_set_icon_widget(GDK_DRAG_CONTEXT(self->obj),GTK_WIDGET(widget->obj),hot_x,hot_y);
   return 0;
 }
 
 static int _wrap_gtk_drag_set_icon_pixmap(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,obj_check,s_int,s_int, t_end};
   NspGObject *colormap, *pixmap, *mask;
   int hot_x, hot_y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap, &nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkbitmap, &mask, &hot_x, &hot_y) == FAIL) return RET_BUG;
-  gtk_drag_set_icon_pixmap(GDK_DRAG_CONTEXT(self->obj), GDK_COLORMAP(colormap->obj), GDK_PIXMAP(pixmap->obj), GDK_DRAWABLE(mask->obj), hot_x, hot_y);
+  gtk_drag_set_icon_pixmap(GDK_DRAG_CONTEXT(self->obj),GDK_COLORMAP(colormap->obj),GDK_PIXMAP(pixmap->obj),GDK_DRAWABLE(mask->obj),hot_x,hot_y);
   return 0;
 }
 
 static int _wrap_gtk_drag_set_icon_pixbuf(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int, t_end};
   NspGObject *pixbuf;
   int hot_x, hot_y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &pixbuf, &hot_x, &hot_y) == FAIL) return RET_BUG;
-  gtk_drag_set_icon_pixbuf(GDK_DRAG_CONTEXT(self->obj), GDK_PIXBUF(pixbuf->obj), hot_x, hot_y);
+  gtk_drag_set_icon_pixbuf(GDK_DRAG_CONTEXT(self->obj),GDK_PIXBUF(pixbuf->obj),hot_x,hot_y);
   return 0;
 }
 
@@ -3877,7 +3877,7 @@ static NspObject *_wrap_gdk_drag_context__get_is_source(NspObject *self,char *at
   NspObject *nsp_ret;
   ret = (gboolean) GDK_DRAG_CONTEXT(NSP_GOBJECT_GET(self))->is_source;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
-  return nsp_ret;
+return nsp_ret;
 }
 
 static NspObject *_wrap_gdk_drag_context__get_source_window(NspObject *self,char *attr)
@@ -3885,7 +3885,7 @@ static NspObject *_wrap_gdk_drag_context__get_source_window(NspObject *self,char
   GdkWindow *ret;
   ret = (GdkWindow*) GDK_DRAG_CONTEXT(NSP_GOBJECT_GET(self))->source_window;
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  return (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow);
+  return (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkwindow);
 }
 
 static NspObject *_wrap_gdk_drag_context__get_dest_window(NspObject *self,char *attr)
@@ -3893,7 +3893,7 @@ static NspObject *_wrap_gdk_drag_context__get_dest_window(NspObject *self,char *
   GdkWindow *ret;
   ret = (GdkWindow*) GDK_DRAG_CONTEXT(NSP_GOBJECT_GET(self))->dest_window;
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
-  return (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow);
+  return (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkwindow);
 }
 
 #line 1251 "gdk.override"
@@ -3948,21 +3948,21 @@ static NspObject *_wrap_gdk_drag_context__get_start_time(NspObject *self,char *a
 }
 
 static AttrTab gdkdragcontext_attrs[] = {
-  { "protocol", (attr_get_function *)_wrap_gdk_drag_context__get_protocol, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "is_source", (attr_get_function *)_wrap_gdk_drag_context__get_is_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "source_window", (attr_get_function *)_wrap_gdk_drag_context__get_source_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "dest_window", (attr_get_function *)_wrap_gdk_drag_context__get_dest_window, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "targets", (attr_get_function *)_wrap_gdk_drag_context__get_targets, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "actions", (attr_get_function *)_wrap_gdk_drag_context__get_actions, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "suggested_action", (attr_get_function *)_wrap_gdk_drag_context__get_suggested_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "action", (attr_get_function *)_wrap_gdk_drag_context__get_action, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "start_time", (attr_get_function *)_wrap_gdk_drag_context__get_start_time, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "protocol", (attr_get_function * )_wrap_gdk_drag_context__get_protocol, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "is_source", (attr_get_function * )_wrap_gdk_drag_context__get_is_source, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "source_window", (attr_get_function * )_wrap_gdk_drag_context__get_source_window, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "dest_window", (attr_get_function * )_wrap_gdk_drag_context__get_dest_window, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "targets", (attr_get_function * )_wrap_gdk_drag_context__get_targets, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "actions", (attr_get_function * )_wrap_gdk_drag_context__get_actions, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "suggested_action", (attr_get_function * )_wrap_gdk_drag_context__get_suggested_action, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "action", (attr_get_function * )_wrap_gdk_drag_context__get_action, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "start_time", (attr_get_function * )_wrap_gdk_drag_context__get_start_time, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkDrawable ----------- */
+/* -----------NspGdkDrawable ----------- */
 
 
 #define  NspGdkDrawable_Private 
@@ -3989,34 +3989,34 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
 {
   NspTypeGdkDrawable *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkdrawable != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkdrawable != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkdrawable;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkdrawable_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkdrawable_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkdrawable_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkdrawable_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkdrawable;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkdrawable */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkdrawable_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkdrawable_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkdrawable_type_short_string;
-  /* top->create = (create_func*) int_gdkdrawable_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkdrawable_create;*/
+
   /* specific methods for gdkdrawable */
-      
+
   type->init = (init_func *) init_gdkdrawable;
 
   /* 
@@ -4040,8 +4040,8 @@ NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkdrawable_id;
-       return type;
+      type->id = nsp_type_gdkdrawable_id;
+      return type;
     }
 }
 
@@ -4054,10 +4054,10 @@ static int init_gdkdrawable(NspGdkDrawable *Obj,NspTypeGdkDrawable *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -4066,7 +4066,7 @@ static int init_gdkdrawable(NspGdkDrawable *Obj,NspTypeGdkDrawable *type)
 
 NspGdkDrawable *new_gdkdrawable() 
 {
-  NspGdkDrawable *loc; 
+  NspGdkDrawable *loc;
   /* type must exists */
   nsp_type_gdkdrawable = new_type_gdkdrawable(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkDrawable)))== NULLGDKDRAWABLE) return loc;
@@ -4098,10 +4098,10 @@ static char *nsp_gdkdrawable_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkDrawable objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkDrawable *nsp_gdkdrawable_object(NspObject *O)
+NspGdkDrawable   *nsp_gdkdrawable_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4114,7 +4114,7 @@ NspGdkDrawable *nsp_gdkdrawable_object(NspObject *O)
 
 int IsGdkDrawableObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkdrawable_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkdrawable_id);
 }
 
 int IsGdkDrawable(NspObject *O)
@@ -4169,10 +4169,10 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
 
 static int _wrap_gdk_drawable_set_colormap(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *colormap;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap) == FAIL) return RET_BUG;
-  gdk_drawable_set_colormap(GDK_DRAWABLE(self->obj), GDK_COLORMAP(colormap->obj));
+  gdk_drawable_set_colormap(GDK_DRAWABLE(self->obj),GDK_COLORMAP(colormap->obj));
   return 0;
 }
 
@@ -4181,7 +4181,7 @@ static int _wrap_gdk_drawable_get_colormap(NspGdkDrawable *self,Stack stack,int 
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_drawable_get_colormap(GDK_DRAWABLE(self->obj));
+  ret =gdk_drawable_get_colormap(GDK_DRAWABLE(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4193,7 +4193,7 @@ static int _wrap_gdk_drawable_get_visual(NspGdkDrawable *self,Stack stack,int rh
   GdkVisual *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_drawable_get_visual(GDK_DRAWABLE(self->obj));
+  ret =gdk_drawable_get_visual(GDK_DRAWABLE(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4204,48 +4204,48 @@ static int _wrap_gdk_drawable_get_depth(NspGdkDrawable *self,Stack stack,int rhs
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_drawable_get_depth(GDK_DRAWABLE(self->obj));
+  ret =gdk_drawable_get_depth(GDK_DRAWABLE(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_draw_point(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int, t_end};
   NspGObject *gc;
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &x, &y) == FAIL) return RET_BUG;
-  gdk_draw_point(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), x, y);
+  gdk_draw_point(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),x,y);
   return 0;
 }
 
 static int _wrap_gdk_draw_line(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int,s_int,s_int, t_end};
   NspGObject *gc;
   int x1, y1, x2, y2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &x1, &y1, &x2, &y2) == FAIL) return RET_BUG;
-  gdk_draw_line(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), x1, y1, x2, y2);
+  gdk_draw_line(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),x1,y1,x2,y2);
   return 0;
 }
 
 static int _wrap_gdk_draw_rectangle(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_bool, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_bool,s_int,s_int,s_int,s_int, t_end};
   NspGObject *gc;
   int filled, x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &filled, &x, &y, &width, &height) == FAIL) return RET_BUG;
-  gdk_draw_rectangle(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), filled, x, y, width, height);
+  gdk_draw_rectangle(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),filled,x,y,width,height);
   return 0;
 }
 
 static int _wrap_gdk_draw_arc(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_bool, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_bool,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *gc;
   int filled, x, y, width, height, angle1, angle2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &filled, &x, &y, &width, &height, &angle1, &angle2) == FAIL) return RET_BUG;
-  gdk_draw_arc(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), filled, x, y, width, height, angle1, angle2);
+  gdk_draw_arc(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),filled,x,y,width,height,angle1,angle2);
   return 0;
 }
 
@@ -4280,7 +4280,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, obj_check, s_int, s_int, string,t_end};
+  int_types T[] = {obj,obj_check,s_int,s_int,string, t_end};
   GdkFont *font = NULL;
   NspObject *nsp_font;
   NspGObject *gc;
@@ -4293,7 +4293,7 @@ static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int op
       Scierror( "font should be a GdkFont");
       return RET_BUG;
   }
-  gdk_draw_string(GDK_DRAWABLE(self->obj), font, GDK_GC(gc->obj), x, y, string);
+  gdk_draw_string(GDK_DRAWABLE(self->obj),font,GDK_GC(gc->obj),x,y,string);
   return 0;
 }
 
@@ -4323,21 +4323,21 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_draw_drawable(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *gc, *src;
   int xsrc, ysrc, xdest, ydest, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &nsp_type_gdkdrawable, &src, &xsrc, &ysrc, &xdest, &ydest, &width, &height) == FAIL) return RET_BUG;
-  gdk_draw_drawable(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), GDK_DRAWABLE(src->obj), xsrc, ysrc, xdest, ydest, width, height);
+  gdk_draw_drawable(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),GDK_DRAWABLE(src->obj),xsrc,ysrc,xdest,ydest,width,height);
   return 0;
 }
 
 static int _wrap_gdk_draw_image(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *gc, *image;
   int xsrc, ysrc, xdest, ydest, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &nsp_type_gdkimage, &image, &xsrc, &ysrc, &xdest, &ydest, &width, &height) == FAIL) return RET_BUG;
-  gdk_draw_image(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), GDK_IMAGE(image->obj), xsrc, ysrc, xdest, ydest, width, height);
+  gdk_draw_image(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),GDK_IMAGE(image->obj),xsrc,ysrc,xdest,ydest,width,height);
   return 0;
 }
 
@@ -4431,7 +4431,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, obj,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,obj, t_end};
   NspGObject *gc, *font;
   int x, y;
   PangoGlyphString *glyphs = NULL;
@@ -4443,28 +4443,28 @@ static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int op
       Scierror( "glyphs should be a PangoGlyphString");
       return RET_BUG;
   }
-  gdk_draw_glyphs(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), PANGO_FONT(font->obj), x, y, glyphs);
+  gdk_draw_glyphs(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),PANGO_FONT(font->obj),x,y,glyphs);
   return 0;
 }
 
 static int _wrap_gdk_draw_layout(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, obj_check,t_end};
+  int_types T[] = {obj_check,s_int,s_int,obj_check, t_end};
   NspGObject *gc, *layout;
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &x, &y, &nsp_type_pangolayout, &layout) == FAIL) return RET_BUG;
-  gdk_draw_layout(GDK_DRAWABLE(self->obj), GDK_GC(gc->obj), x, y, PANGO_LAYOUT(layout->obj));
+  gdk_draw_layout(GDK_DRAWABLE(self->obj),GDK_GC(gc->obj),x,y,PANGO_LAYOUT(layout->obj));
   return 0;
 }
 
 static int _wrap_gdk_drawable_get_image(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int x, y, width, height;
   GdkImage *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  ret = gdk_drawable_get_image(GDK_DRAWABLE(self->obj), x, y, width, height);
+  ret =gdk_drawable_get_image(GDK_DRAWABLE(self->obj),x,y,width,height);
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4473,13 +4473,13 @@ static int _wrap_gdk_drawable_get_image(NspGdkDrawable *self,Stack stack,int rhs
 
 static int _wrap_gdk_image_get(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int x, y, width, height;
   GdkImage *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
   Scierror("%s: deprecated use GdkDrawable.get_image",NspFname(stack)); return RET_BUG;
-  ret = gdk_image_get(GDK_DRAWABLE(self->obj), x, y, width, height);
+  ret =gdk_image_get(GDK_DRAWABLE(self->obj),x,y,width,height);
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkimage))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4650,7 +4650,7 @@ static NspMethods *gdkdrawable_get_methods(void) { return gdkdrawable_methods;};
 static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkWindow ----------- */
+/* -----------NspGdkWindow ----------- */
 
 
 #define  NspGdkWindow_Private 
@@ -4677,34 +4677,34 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
 {
   NspTypeGdkWindow *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkwindow != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkwindow != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkwindow;
     }
-  if ((type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gdkdrawable(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkwindow_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkwindow_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkwindow_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkwindow_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkwindow;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkwindow */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkwindow_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkwindow_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkwindow_type_short_string;
-  /* top->create = (create_func*) int_gdkwindow_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkwindow_create;*/
+
   /* specific methods for gdkwindow */
-      
+
   type->init = (init_func *) init_gdkwindow;
 
   /* 
@@ -4728,8 +4728,8 @@ NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkwindow_id;
-       return type;
+      type->id = nsp_type_gdkwindow_id;
+      return type;
     }
 }
 
@@ -4742,10 +4742,10 @@ static int init_gdkwindow(NspGdkWindow *Obj,NspTypeGdkWindow *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -4754,7 +4754,7 @@ static int init_gdkwindow(NspGdkWindow *Obj,NspTypeGdkWindow *type)
 
 NspGdkWindow *new_gdkwindow() 
 {
-  NspGdkWindow *loc; 
+  NspGdkWindow *loc;
   /* type must exists */
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkWindow)))== NULLGDKWINDOW) return loc;
@@ -4786,10 +4786,10 @@ static char *nsp_gdkwindow_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkWindow objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkWindow *nsp_gdkwindow_object(NspObject *O)
+NspGdkWindow   *nsp_gdkwindow_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4802,7 +4802,7 @@ NspGdkWindow *nsp_gdkwindow_object(NspObject *O)
 
 int IsGdkWindowObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkwindow_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkwindow_id);
 }
 
 int IsGdkWindow(NspObject *O)
@@ -4869,14 +4869,14 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_input_set_extension_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, obj,t_end};
+  int_types T[] = {s_int,obj, t_end};
   int mask;
   GdkExtensionMode mode;
   NspObject *nsp_mode = NULL;
   if ( GetArgs(stack,rhs,opt,T,&mask, &nsp_mode) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_EXTENSION_MODE, nsp_mode, &mode)== FAIL)
       return RET_BUG;
-  gdk_input_set_extension_events(GDK_WINDOW(self->obj), mask, mode);
+  gdk_input_set_extension_events(GDK_WINDOW(self->obj),mask,mode);
   return 0;
 }
 
@@ -5052,25 +5052,25 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkAtom property;
   NspObject *nsp_property = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_property) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_property,&property)==FAIL) return RET_BUG;
-  gdk_property_delete(GDK_WINDOW(self->obj), property);
+  gdk_property_delete(GDK_WINDOW(self->obj),property);
   return 0;
 }
 
 static int _wrap_gdk_selection_convert(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, obj, s_int,t_end};
+  int_types T[] = {obj,obj,s_int, t_end};
   GdkAtom selection, target;
   NspObject *nsp_selection = NULL, *nsp_target = NULL;
   gulong time;
   if ( GetArgs(stack,rhs,opt,T,&nsp_selection, &nsp_target, &time) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_target,&target)==FAIL) return RET_BUG;
-  gdk_selection_convert(GDK_WINDOW(self->obj), selection, target, time);
+  gdk_selection_convert(GDK_WINDOW(self->obj),selection,target,time);
   return 0;
 }
 
@@ -5085,7 +5085,7 @@ static int _wrap_gdk_window_get_window_type(NspGdkWindow *self,Stack stack,int r
 {
   gint ret;
   CheckRhs(0,0);
-  ret = gdk_window_get_window_type(GDK_WINDOW(self->obj));
+  ret =gdk_window_get_window_type(GDK_WINDOW(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -5113,38 +5113,38 @@ static int _wrap_gdk_window_withdraw(NspGdkWindow *self,Stack stack,int rhs,int 
 
 static int _wrap_gdk_window_move(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  gdk_window_move(GDK_WINDOW(self->obj), x, y);
+  gdk_window_move(GDK_WINDOW(self->obj),x,y);
   return 0;
 }
 
 static int _wrap_gdk_window_resize(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int width, height;
   if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
-  gdk_window_resize(GDK_WINDOW(self->obj), width, height);
+  gdk_window_resize(GDK_WINDOW(self->obj),width,height);
   return 0;
 }
 
 static int _wrap_gdk_window_move_resize(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  gdk_window_move_resize(GDK_WINDOW(self->obj), x, y, width, height);
+  gdk_window_move_resize(GDK_WINDOW(self->obj),x,y,width,height);
   return 0;
 }
 
 static int _wrap_gdk_window_reparent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int, t_end};
   NspGObject *new_parent;
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &new_parent, &x, &y) == FAIL) return RET_BUG;
-  gdk_window_reparent(GDK_WINDOW(self->obj), GDK_WINDOW(new_parent->obj), x, y);
+  gdk_window_reparent(GDK_WINDOW(self->obj),GDK_WINDOW(new_parent->obj),x,y);
   return 0;
 }
 
@@ -5157,19 +5157,19 @@ static int _wrap_gdk_window_clear(NspGdkWindow *self,Stack stack,int rhs,int opt
 
 static int _wrap_gdk_window_clear_area(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  gdk_window_clear_area(GDK_WINDOW(self->obj), x, y, width, height);
+  gdk_window_clear_area(GDK_WINDOW(self->obj),x,y,width,height);
   return 0;
 }
 
 static int _wrap_gdk_window_clear_area_e(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  gdk_window_clear_area_e(GDK_WINDOW(self->obj), x, y, width, height);
+  gdk_window_clear_area_e(GDK_WINDOW(self->obj),x,y,width,height);
   return 0;
 }
 
@@ -5189,41 +5189,41 @@ static int _wrap_gdk_window_lower(NspGdkWindow *self,Stack stack,int rhs,int opt
 
 static int _wrap_gdk_window_focus(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"timestamp",s_int,NULLOBJ,-1}, 
+	{"timestamp",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   gulong timestamp = GDK_CURRENT_TIME;
   if ( GetArgs(stack,rhs,opt,T,opts, &timestamp) == FAIL) return RET_BUG;
-  gdk_window_focus(GDK_WINDOW(self->obj), timestamp);
+  gdk_window_focus(GDK_WINDOW(self->obj),timestamp);
   return 0;
 }
 
 static int _wrap_gdk_window_set_override_redirect(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int override_redirect;
   if ( GetArgs(stack,rhs,opt,T,&override_redirect) == FAIL) return RET_BUG;
-  gdk_window_set_override_redirect(GDK_WINDOW(self->obj), override_redirect);
+  gdk_window_set_override_redirect(GDK_WINDOW(self->obj),override_redirect);
   return 0;
 }
 
 static int _wrap_gdk_window_scroll(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int dx, dy;
   if ( GetArgs(stack,rhs,opt,T,&dx, &dy) == FAIL) return RET_BUG;
-  gdk_window_scroll(GDK_WINDOW(self->obj), dx, dy);
+  gdk_window_scroll(GDK_WINDOW(self->obj),dx,dy);
   return 0;
 }
 
 static int _wrap_gdk_window_shape_combine_mask(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int, t_end};
   NspGObject *shape_mask;
   int offset_x, offset_y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkbitmap, &shape_mask, &offset_x, &offset_y) == FAIL) return RET_BUG;
-  gdk_window_shape_combine_mask(GDK_WINDOW(self->obj), GDK_DRAWABLE(shape_mask->obj), offset_x, offset_y);
+  gdk_window_shape_combine_mask(GDK_WINDOW(self->obj),GDK_DRAWABLE(shape_mask->obj),offset_x,offset_y);
   return 0;
 }
 
@@ -5245,7 +5245,7 @@ static int _wrap_gdk_window_is_visible(NspGdkWindow *self,Stack stack,int rhs,in
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_window_is_visible(GDK_WINDOW(self->obj));
+  ret =gdk_window_is_visible(GDK_WINDOW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -5254,7 +5254,7 @@ static int _wrap_gdk_window_is_viewable(NspGdkWindow *self,Stack stack,int rhs,i
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_window_is_viewable(GDK_WINDOW(self->obj));
+  ret =gdk_window_is_viewable(GDK_WINDOW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -5263,60 +5263,60 @@ static int _wrap_gdk_window_get_state(NspGdkWindow *self,Stack stack,int rhs,int
 {
   guint ret;
   CheckRhs(0,0);
-  ret = gdk_window_get_state(GDK_WINDOW(self->obj));
+  ret =gdk_window_get_state(GDK_WINDOW(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_window_set_static_gravities(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int use_static, ret;
   if ( GetArgs(stack,rhs,opt,T,&use_static) == FAIL) return RET_BUG;
-  ret = gdk_window_set_static_gravities(GDK_WINDOW(self->obj), use_static);
+  ret =gdk_window_set_static_gravities(GDK_WINDOW(self->obj),use_static);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_window_set_hints(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   int x, y, min_width, min_height, max_width, max_height, flags;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &min_width, &min_height, &max_width, &max_height, &flags) == FAIL) return RET_BUG;
-  gdk_window_set_hints(GDK_WINDOW(self->obj), x, y, min_width, min_height, max_width, max_height, flags);
+  gdk_window_set_hints(GDK_WINDOW(self->obj),x,y,min_width,min_height,max_width,max_height,flags);
   return 0;
 }
 
 static int _wrap_gdk_window_set_type_hint(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkWindowTypeHint hint;
   NspObject *nsp_hint = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_hint) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_WINDOW_TYPE_HINT, nsp_hint, &hint)== FAIL)
       return RET_BUG;
-  gdk_window_set_type_hint(GDK_WINDOW(self->obj), hint);
+  gdk_window_set_type_hint(GDK_WINDOW(self->obj),hint);
   return 0;
 }
 
 static int _wrap_gdk_window_set_modal_hint(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int modal;
   if ( GetArgs(stack,rhs,opt,T,&modal) == FAIL) return RET_BUG;
-  gdk_window_set_modal_hint(GDK_WINDOW(self->obj), modal);
+  gdk_window_set_modal_hint(GDK_WINDOW(self->obj),modal);
   return 0;
 }
 
 static int _wrap_gdk_window_begin_paint_rect(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkRectangle rectangle = { 0, 0, 0, 0 };
   NspObject *nsp_rectangle;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rectangle) == FAIL) return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_rectangle, &rectangle))
       return RET_BUG;
-  gdk_window_begin_paint_rect(GDK_WINDOW(self->obj), &rectangle);
+  gdk_window_begin_paint_rect(GDK_WINDOW(self->obj),&rectangle);
   return 0;
 }
 
@@ -5329,34 +5329,34 @@ static int _wrap_gdk_window_end_paint(NspGdkWindow *self,Stack stack,int rhs,int
 
 static int _wrap_gdk_window_set_title(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *title;
   if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
-  gdk_window_set_title(GDK_WINDOW(self->obj), title);
+  gdk_window_set_title(GDK_WINDOW(self->obj),title);
   return 0;
 }
 
 static int _wrap_gdk_window_set_role(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *role;
   if ( GetArgs(stack,rhs,opt,T,&role) == FAIL) return RET_BUG;
-  gdk_window_set_role(GDK_WINDOW(self->obj), role);
+  gdk_window_set_role(GDK_WINDOW(self->obj),role);
   return 0;
 }
 
 static int _wrap_gdk_window_set_transient_for(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *leader;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &leader) == FAIL) return RET_BUG;
-  gdk_window_set_transient_for(GDK_WINDOW(self->obj), GDK_WINDOW(leader->obj));
+  gdk_window_set_transient_for(GDK_WINDOW(self->obj),GDK_WINDOW(leader->obj));
   return 0;
 }
 
 static int _wrap_gdk_window_set_background(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
@@ -5366,16 +5366,16 @@ static int _wrap_gdk_window_set_background(NspGdkWindow *self,Stack stack,int rh
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  gdk_window_set_background(GDK_WINDOW(self->obj), color);
+  gdk_window_set_background(GDK_WINDOW(self->obj),color);
   return 0;
 }
 
 static int _wrap_gdk_window_set_back_pixmap(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"pixmap",obj,NULLOBJ,-1}, 
-	{"parent_relative",s_bool,NULLOBJ,-1}, 
+	{"pixmap",obj,NULLOBJ,-1},
+	{"parent_relative",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkPixmap *pixmap = NULL;
   NspGObject *nsp_pixmap = NULL;
@@ -5389,15 +5389,15 @@ static int _wrap_gdk_window_set_back_pixmap(NspGdkWindow *self,Stack stack,int r
          return RET_BUG;
     }
   }
-  gdk_window_set_back_pixmap(GDK_WINDOW(self->obj), pixmap, parent_relative);
+  gdk_window_set_back_pixmap(GDK_WINDOW(self->obj),pixmap,parent_relative);
   return 0;
 }
 
 static int _wrap_gdk_window_set_cursor(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"cursor",obj,NULLOBJ,-1}, 
+	{"cursor",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkCursor *cursor = NULL;
   NspObject *nsp_cursor = NULL;
@@ -5410,7 +5410,7 @@ static int _wrap_gdk_window_set_cursor(NspGdkWindow *self,Stack stack,int rhs,in
       return RET_BUG;
     }
   }
-  gdk_window_set_cursor(GDK_WINDOW(self->obj), cursor);
+  gdk_window_set_cursor(GDK_WINDOW(self->obj),cursor);
   return 0;
 }
 
@@ -5482,13 +5482,13 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkRectangle rect = { 0, 0, 0, 0 };
   NspObject *nsp_rect;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rect) == FAIL) return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_rect, &rect))
       return RET_BUG;
-  gdk_window_get_frame_extents(GDK_WINDOW(self->obj), &rect);
+  gdk_window_get_frame_extents(GDK_WINDOW(self->obj),&rect);
   return 0;
 }
 
@@ -5511,7 +5511,7 @@ static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,in
   GdkWindow *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_window_get_parent(GDK_WINDOW(self->obj));
+  ret =gdk_window_get_parent(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -5523,7 +5523,7 @@ static int _wrap_gdk_window_get_toplevel(NspGdkWindow *self,Stack stack,int rhs,
   GdkWindow *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_window_get_toplevel(GDK_WINDOW(self->obj));
+  ret =gdk_window_get_toplevel(GDK_WINDOW(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -5563,7 +5563,7 @@ static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-  ret = gdk_window_peek_children(GDK_WINDOW(self->obj));
+  ret =gdk_window_peek_children(GDK_WINDOW(self->obj));
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -5572,83 +5572,83 @@ static int _wrap_gdk_window_get_events(NspGdkWindow *self,Stack stack,int rhs,in
 {
   guint ret;
   CheckRhs(0,0);
-  ret = gdk_window_get_events(GDK_WINDOW(self->obj));
+  ret =gdk_window_get_events(GDK_WINDOW(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_window_set_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkEventMask event_mask;
   NspObject *nsp_event_mask = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event_mask) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_EVENT_MASK, nsp_event_mask, &event_mask)==FAIL)
       return RET_BUG;
-  gdk_window_set_events(GDK_WINDOW(self->obj), event_mask);
+  gdk_window_set_events(GDK_WINDOW(self->obj),event_mask);
   return 0;
 }
 
 static int _wrap_gdk_window_set_icon_list(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {list,t_end};
+  int_types T[] = {list, t_end};
   NspList *nsp_pixbufs;
   GList *pixbufs;
   if ( GetArgs(stack,rhs,opt,T,&nsp_pixbufs) == FAIL) return RET_BUG;
   pixbufs=nsp_glist_from_nsplist(stack,nsp_pixbufs);
   if (pixbufs== NULL) return RET_BUG;
-  gdk_window_set_icon_list(GDK_WINDOW(self->obj), pixbufs);
+  gdk_window_set_icon_list(GDK_WINDOW(self->obj),pixbufs);
   return 0;
 }
 
 static int _wrap_gdk_window_set_icon(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, obj_check,t_end};
+  int_types T[] = {obj_check,obj_check,obj_check, t_end};
   NspGObject *icon_window, *pixmap, *mask;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &icon_window, &nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkbitmap, &mask) == FAIL) return RET_BUG;
-  gdk_window_set_icon(GDK_WINDOW(self->obj), GDK_WINDOW(icon_window->obj), GDK_PIXMAP(pixmap->obj), GDK_DRAWABLE(mask->obj));
+  gdk_window_set_icon(GDK_WINDOW(self->obj),GDK_WINDOW(icon_window->obj),GDK_PIXMAP(pixmap->obj),GDK_DRAWABLE(mask->obj));
   return 0;
 }
 
 static int _wrap_gdk_window_set_icon_name(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *name;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-  gdk_window_set_icon_name(GDK_WINDOW(self->obj), name);
+  gdk_window_set_icon_name(GDK_WINDOW(self->obj),name);
   return 0;
 }
 
 static int _wrap_gdk_window_set_group(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *leader;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &leader) == FAIL) return RET_BUG;
-  gdk_window_set_group(GDK_WINDOW(self->obj), GDK_WINDOW(leader->obj));
+  gdk_window_set_group(GDK_WINDOW(self->obj),GDK_WINDOW(leader->obj));
   return 0;
 }
 
 static int _wrap_gdk_window_set_decorations(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkWMDecoration decorations;
   NspObject *nsp_decorations = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_decorations) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_WM_DECORATION, nsp_decorations, &decorations)==FAIL)
       return RET_BUG;
-  gdk_window_set_decorations(GDK_WINDOW(self->obj), decorations);
+  gdk_window_set_decorations(GDK_WINDOW(self->obj),decorations);
   return 0;
 }
 
 static int _wrap_gdk_window_set_functions(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkWMFunction functions;
   NspObject *nsp_functions = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_functions) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_WM_FUNCTION, nsp_functions, &functions)==FAIL)
       return RET_BUG;
-  gdk_window_set_functions(GDK_WINDOW(self->obj), functions);
+  gdk_window_set_functions(GDK_WINDOW(self->obj),functions);
   return 0;
 }
 
@@ -5703,7 +5703,7 @@ static int _wrap_gdk_window_register_dnd(NspGdkWindow *self,Stack stack,int rhs,
 
 static int _wrap_gdk_window_begin_resize_drag(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj,s_int,s_int,s_int,s_int, t_end};
   GdkWindowEdge edge;
   NspObject *nsp_edge = NULL;
   int button, root_x, root_y;
@@ -5711,26 +5711,26 @@ static int _wrap_gdk_window_begin_resize_drag(NspGdkWindow *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_edge, &button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_WINDOW_EDGE, nsp_edge, &edge)== FAIL)
       return RET_BUG;
-  gdk_window_begin_resize_drag(GDK_WINDOW(self->obj), edge, button, root_x, root_y, timestamp);
+  gdk_window_begin_resize_drag(GDK_WINDOW(self->obj),edge,button,root_x,root_y,timestamp);
   return 0;
 }
 
 static int _wrap_gdk_window_begin_move_drag(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int, t_end};
   int button, root_x, root_y;
   gulong timestamp;
   if ( GetArgs(stack,rhs,opt,T,&button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
-  gdk_window_begin_move_drag(GDK_WINDOW(self->obj), button, root_x, root_y, timestamp);
+  gdk_window_begin_move_drag(GDK_WINDOW(self->obj),button,root_x,root_y,timestamp);
   return 0;
 }
 
 static int _wrap_gdk_window_invalidate_rect(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"rect",obj,NULLOBJ,-1}, 
-	{"invalidate_children",s_bool,NULLOBJ,-1}, 
+	{"rect",obj,NULLOBJ,-1},
+	{"invalidate_children",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkRectangle rect_rect = { 0, 0, 0, 0 }, *rect;
   NspObject *nsp_rect = NULL;
@@ -5742,7 +5742,7 @@ static int _wrap_gdk_window_invalidate_rect(NspGdkWindow *self,Stack stack,int r
       rect = &rect_rect;
   else
           return RET_BUG;
-  gdk_window_invalidate_rect(GDK_WINDOW(self->obj), rect, invalidate_children);
+  gdk_window_invalidate_rect(GDK_WINDOW(self->obj),rect,invalidate_children);
   return 0;
 }
 
@@ -5762,10 +5762,10 @@ static int _wrap_gdk_window_thaw_updates(NspGdkWindow *self,Stack stack,int rhs,
 
 static int _wrap_gdk_window_process_updates(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int update_children;
   if ( GetArgs(stack,rhs,opt,T,&update_children) == FAIL) return RET_BUG;
-  gdk_window_process_updates(GDK_WINDOW(self->obj), update_children);
+  gdk_window_process_updates(GDK_WINDOW(self->obj),update_children);
   return 0;
 }
 
@@ -5854,7 +5854,7 @@ static NspMethods *gdkwindow_get_methods(void) { return gdkwindow_methods;};
 static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkPixmap ----------- */
+/* -----------NspGdkPixmap ----------- */
 
 
 #define  NspGdkPixmap_Private 
@@ -5881,34 +5881,34 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
 {
   NspTypeGdkPixmap *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkpixmap != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkpixmap != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkpixmap;
     }
-  if ((type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gdkdrawable(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkpixmap_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkpixmap_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkpixmap_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkpixmap_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkpixmap;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkpixmap */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkpixmap_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkpixmap_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkpixmap_type_short_string;
-  /* top->create = (create_func*) int_gdkpixmap_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkpixmap_create;*/
+
   /* specific methods for gdkpixmap */
-      
+
   type->init = (init_func *) init_gdkpixmap;
 
   /* 
@@ -5932,8 +5932,8 @@ NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkpixmap_id;
-       return type;
+      type->id = nsp_type_gdkpixmap_id;
+      return type;
     }
 }
 
@@ -5946,10 +5946,10 @@ static int init_gdkpixmap(NspGdkPixmap *Obj,NspTypeGdkPixmap *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -5958,7 +5958,7 @@ static int init_gdkpixmap(NspGdkPixmap *Obj,NspTypeGdkPixmap *type)
 
 NspGdkPixmap *new_gdkpixmap() 
 {
-  NspGdkPixmap *loc; 
+  NspGdkPixmap *loc;
   /* type must exists */
   nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkPixmap)))== NULLGDKPIXMAP) return loc;
@@ -5990,10 +5990,10 @@ static char *nsp_gdkpixmap_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkPixmap objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkPixmap *nsp_gdkpixmap_object(NspObject *O)
+NspGdkPixmap   *nsp_gdkpixmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6006,7 +6006,7 @@ NspGdkPixmap *nsp_gdkpixmap_object(NspObject *O)
 
 int IsGdkPixmapObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkpixmap_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkpixmap_id);
 }
 
 int IsGdkPixmap(NspObject *O)
@@ -6048,12 +6048,12 @@ NspGdkPixmap *gdkpixmap_copy(NspGdkPixmap *self)
 static int
 _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"drawable",obj,NULLOBJ,-1}, 
-	{"width",s_int,NULLOBJ,-1}, 
-	{"height",s_int,NULLOBJ,-1}, 
-	{"depth",s_int,NULLOBJ,-1}, 
+	{"drawable",obj,NULLOBJ,-1},
+	{"width",s_int,NULLOBJ,-1},
+	{"height",s_int,NULLOBJ,-1},
+	{"depth",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkDrawable *drawable = NULL;
   NspGObject *nsp_drawable = NULL;
@@ -6068,7 +6068,7 @@ _wrap_gdkpixmap_new(Stack stack, int rhs, int opt, int lhs)
          return RET_BUG;
     }
   }
-  if ((ret = (GObject *)gdk_pixmap_new(drawable, width, height, depth))== NULL) return RET_BUG;
+  if ((ret = (GObject *)gdk_pixmap_new(drawable,width,height,depth))== NULL) return RET_BUG;
 
   nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkpixmap );
@@ -6085,7 +6085,7 @@ static NspMethods *gdkpixmap_get_methods(void) { return NULL;};
 static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkBitmap ----------- */
+/* -----------NspGdkBitmap ----------- */
 
 
 #define  NspGdkBitmap_Private 
@@ -6112,34 +6112,34 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
 {
   NspTypeGdkBitmap *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkbitmap != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkbitmap != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkbitmap;
     }
-  if ((type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGdkDrawable))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gdkdrawable(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkbitmap_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkbitmap_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkbitmap_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkbitmap_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkbitmap;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkbitmap */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkbitmap_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkbitmap_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkbitmap_type_short_string;
-  /* top->create = (create_func*) int_gdkbitmap_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkbitmap_create;*/
+
   /* specific methods for gdkbitmap */
-      
+
   type->init = (init_func *) init_gdkbitmap;
 
   /* 
@@ -6163,8 +6163,8 @@ NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkbitmap_id;
-       return type;
+      type->id = nsp_type_gdkbitmap_id;
+      return type;
     }
 }
 
@@ -6177,10 +6177,10 @@ static int init_gdkbitmap(NspGdkBitmap *Obj,NspTypeGdkBitmap *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -6189,7 +6189,7 @@ static int init_gdkbitmap(NspGdkBitmap *Obj,NspTypeGdkBitmap *type)
 
 NspGdkBitmap *new_gdkbitmap() 
 {
-  NspGdkBitmap *loc; 
+  NspGdkBitmap *loc;
   /* type must exists */
   nsp_type_gdkbitmap = new_type_gdkbitmap(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkBitmap)))== NULLGDKBITMAP) return loc;
@@ -6221,10 +6221,10 @@ static char *nsp_gdkbitmap_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkBitmap objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkBitmap *nsp_gdkbitmap_object(NspObject *O)
+NspGdkBitmap   *nsp_gdkbitmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6237,7 +6237,7 @@ NspGdkBitmap *nsp_gdkbitmap_object(NspObject *O)
 
 int IsGdkBitmapObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkbitmap_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkbitmap_id);
 }
 
 int IsGdkBitmap(NspObject *O)
@@ -6284,7 +6284,7 @@ static NspMethods *gdkbitmap_get_methods(void) { return NULL;};
 static AttrTab gdkbitmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkGC ----------- */
+/* -----------NspGdkGC ----------- */
 
 static int _wrap_gdk_gc_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
@@ -6313,34 +6313,34 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
 {
   NspTypeGdkGC *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkgc != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkgc != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkgc;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkgc_attrs ; 
-  type->get_attrs = (attrs_func *)  _wrap_gdk_gc_tp_getattr;
-  type->set_attrs = (attrs_func *)  _wrap_gdk_gc_tp_setattr;
-  type->methods = gdkgc_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkgc_attrs;
+  type->get_attrs = (attrs_func *) _wrap_gdk_gc_tp_getattr;
+  type->set_attrs = (attrs_func *) _wrap_gdk_gc_tp_setattr;
+  type->methods = gdkgc_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkgc;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkgc */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkgc_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkgc_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkgc_type_short_string;
-  /* top->create = (create_func*) int_gdkgc_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkgc_create;*/
+
   /* specific methods for gdkgc */
-      
+
   type->init = (init_func *) init_gdkgc;
 
   /* 
@@ -6364,8 +6364,8 @@ NspTypeGdkGC *new_type_gdkgc(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkgc_id;
-       return type;
+      type->id = nsp_type_gdkgc_id;
+      return type;
     }
 }
 
@@ -6378,10 +6378,10 @@ static int init_gdkgc(NspGdkGC *Obj,NspTypeGdkGC *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -6390,7 +6390,7 @@ static int init_gdkgc(NspGdkGC *Obj,NspTypeGdkGC *type)
 
 NspGdkGC *new_gdkgc() 
 {
-  NspGdkGC *loc; 
+  NspGdkGC *loc;
   /* type must exists */
   nsp_type_gdkgc = new_type_gdkgc(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkGC)))== NULLGDKGC) return loc;
@@ -6422,10 +6422,10 @@ static char *nsp_gdkgc_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkGC objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkGC *nsp_gdkgc_object(NspObject *O)
+NspGdkGC   *nsp_gdkgc_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -6438,7 +6438,7 @@ NspGdkGC *nsp_gdkgc_object(NspObject *O)
 
 int IsGdkGCObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkgc_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkgc_id);
 }
 
 int IsGdkGC(NspObject *O)
@@ -6622,7 +6622,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
@@ -6632,13 +6632,13 @@ static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int op
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  gdk_gc_set_foreground(GDK_GC(self->obj), color);
+  gdk_gc_set_foreground(GDK_GC(self->obj),color);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_background(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
@@ -6648,13 +6648,13 @@ static int _wrap_gdk_gc_set_background(NspGdkGC *self,Stack stack,int rhs,int op
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  gdk_gc_set_background(GDK_GC(self->obj), color);
+  gdk_gc_set_background(GDK_GC(self->obj),color);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_font(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkFont *font = NULL;
   NspObject *nsp_font;
   if ( GetArgs(stack,rhs,opt,T,&nsp_font) == FAIL) return RET_BUG;
@@ -6664,115 +6664,115 @@ static int _wrap_gdk_gc_set_font(NspGdkGC *self,Stack stack,int rhs,int opt,int 
       Scierror( "font should be a GdkFont");
       return RET_BUG;
   }
-  gdk_gc_set_font(GDK_GC(self->obj), font);
+  gdk_gc_set_font(GDK_GC(self->obj),font);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_function(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkFunction function;
   NspObject *nsp_function = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_function) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_FUNCTION, nsp_function, &function)== FAIL)
       return RET_BUG;
-  gdk_gc_set_function(GDK_GC(self->obj), function);
+  gdk_gc_set_function(GDK_GC(self->obj),function);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_fill(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkFill fill;
   NspObject *nsp_fill = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_fill) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_FILL, nsp_fill, &fill)== FAIL)
       return RET_BUG;
-  gdk_gc_set_fill(GDK_GC(self->obj), fill);
+  gdk_gc_set_fill(GDK_GC(self->obj),fill);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_tile(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *tile;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixmap, &tile) == FAIL) return RET_BUG;
-  gdk_gc_set_tile(GDK_GC(self->obj), GDK_PIXMAP(tile->obj));
+  gdk_gc_set_tile(GDK_GC(self->obj),GDK_PIXMAP(tile->obj));
   return 0;
 }
 
 static int _wrap_gdk_gc_set_stipple(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *stipple;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixmap, &stipple) == FAIL) return RET_BUG;
-  gdk_gc_set_stipple(GDK_GC(self->obj), GDK_PIXMAP(stipple->obj));
+  gdk_gc_set_stipple(GDK_GC(self->obj),GDK_PIXMAP(stipple->obj));
   return 0;
 }
 
 static int _wrap_gdk_gc_set_ts_origin(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  gdk_gc_set_ts_origin(GDK_GC(self->obj), x, y);
+  gdk_gc_set_ts_origin(GDK_GC(self->obj),x,y);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_clip_origin(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x, y;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  gdk_gc_set_clip_origin(GDK_GC(self->obj), x, y);
+  gdk_gc_set_clip_origin(GDK_GC(self->obj),x,y);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_clip_mask(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *mask;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkbitmap, &mask) == FAIL) return RET_BUG;
-  gdk_gc_set_clip_mask(GDK_GC(self->obj), GDK_DRAWABLE(mask->obj));
+  gdk_gc_set_clip_mask(GDK_GC(self->obj),GDK_DRAWABLE(mask->obj));
   return 0;
 }
 
 static int _wrap_gdk_gc_set_clip_rectangle(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkRectangle rectangle = { 0, 0, 0, 0 };
   NspObject *nsp_rectangle;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rectangle) == FAIL) return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_rectangle, &rectangle))
       return RET_BUG;
-  gdk_gc_set_clip_rectangle(GDK_GC(self->obj), &rectangle);
+  gdk_gc_set_clip_rectangle(GDK_GC(self->obj),&rectangle);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_subwindow(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkSubwindowMode mode;
   NspObject *nsp_mode = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_mode) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_SUBWINDOW_MODE, nsp_mode, &mode)== FAIL)
       return RET_BUG;
-  gdk_gc_set_subwindow(GDK_GC(self->obj), mode);
+  gdk_gc_set_subwindow(GDK_GC(self->obj),mode);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_exposures(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int exposures;
   if ( GetArgs(stack,rhs,opt,T,&exposures) == FAIL) return RET_BUG;
-  gdk_gc_set_exposures(GDK_GC(self->obj), exposures);
+  gdk_gc_set_exposures(GDK_GC(self->obj),exposures);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_line_attributes(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, obj, obj, obj,t_end};
+  int_types T[] = {s_int,obj,obj,obj, t_end};
   int line_width;
   GdkLineStyle line_style;
   NspObject *nsp_line_style = NULL, *nsp_cap_style = NULL, *nsp_join_style = NULL;
@@ -6785,7 +6785,7 @@ static int _wrap_gdk_gc_set_line_attributes(NspGdkGC *self,Stack stack,int rhs,i
       return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_JOIN_STYLE, nsp_join_style, &join_style)== FAIL)
       return RET_BUG;
-  gdk_gc_set_line_attributes(GDK_GC(self->obj), line_width, line_style, cap_style, join_style);
+  gdk_gc_set_line_attributes(GDK_GC(self->obj),line_width,line_style,cap_style,join_style);
   return 0;
 }
 
@@ -6818,28 +6818,28 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x_offset, y_offset;
   if ( GetArgs(stack,rhs,opt,T,&x_offset, &y_offset) == FAIL) return RET_BUG;
-  gdk_gc_offset(GDK_GC(self->obj), x_offset, y_offset);
+  gdk_gc_offset(GDK_GC(self->obj),x_offset,y_offset);
   return 0;
 }
 
 static int _wrap_gdk_gc_copy(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *src_gc;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &src_gc) == FAIL) return RET_BUG;
-  gdk_gc_copy(GDK_GC(self->obj), GDK_GC(src_gc->obj));
+  gdk_gc_copy(GDK_GC(self->obj),GDK_GC(src_gc->obj));
   return 0;
 }
 
 static int _wrap_gdk_gc_set_colormap(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *colormap;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap) == FAIL) return RET_BUG;
-  gdk_gc_set_colormap(GDK_GC(self->obj), GDK_COLORMAP(colormap->obj));
+  gdk_gc_set_colormap(GDK_GC(self->obj),GDK_COLORMAP(colormap->obj));
   return 0;
 }
 
@@ -6848,7 +6848,7 @@ static int _wrap_gdk_gc_get_colormap(NspGdkGC *self,Stack stack,int rhs,int opt,
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_gc_get_colormap(GDK_GC(self->obj));
+  ret =gdk_gc_get_colormap(GDK_GC(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -6857,7 +6857,7 @@ static int _wrap_gdk_gc_get_colormap(NspGdkGC *self,Stack stack,int rhs,int opt,
 
 static int _wrap_gdk_gc_set_rgb_fg_color(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
@@ -6867,13 +6867,13 @@ static int _wrap_gdk_gc_set_rgb_fg_color(NspGdkGC *self,Stack stack,int rhs,int 
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  gdk_gc_set_rgb_fg_color(GDK_GC(self->obj), color);
+  gdk_gc_set_rgb_fg_color(GDK_GC(self->obj),color);
   return 0;
 }
 
 static int _wrap_gdk_gc_set_rgb_bg_color(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
   NspObject *nsp_color;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
@@ -6883,7 +6883,7 @@ static int _wrap_gdk_gc_set_rgb_bg_color(NspGdkGC *self,Stack stack,int rhs,int 
       Scierror( "color should be a GdkColor");
       return RET_BUG;
   }
-  gdk_gc_set_rgb_bg_color(GDK_GC(self->obj), color);
+  gdk_gc_set_rgb_bg_color(GDK_GC(self->obj),color);
   return 0;
 }
 
@@ -7078,7 +7078,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #line 7079 "gdk.c"
 
 
-/* ----------- NspGdkImage ----------- */
+/* -----------NspGdkImage ----------- */
 
 
 #define  NspGdkImage_Private 
@@ -7105,34 +7105,34 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
 {
   NspTypeGdkImage *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkimage != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkimage != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkimage;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkimage_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkimage_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkimage_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkimage_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkimage;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkimage */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkimage_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkimage_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkimage_type_short_string;
-  /* top->create = (create_func*) int_gdkimage_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkimage_create;*/
+
   /* specific methods for gdkimage */
-      
+
   type->init = (init_func *) init_gdkimage;
 
   /* 
@@ -7156,8 +7156,8 @@ NspTypeGdkImage *new_type_gdkimage(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkimage_id;
-       return type;
+      type->id = nsp_type_gdkimage_id;
+      return type;
     }
 }
 
@@ -7170,10 +7170,10 @@ static int init_gdkimage(NspGdkImage *Obj,NspTypeGdkImage *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -7182,7 +7182,7 @@ static int init_gdkimage(NspGdkImage *Obj,NspTypeGdkImage *type)
 
 NspGdkImage *new_gdkimage() 
 {
-  NspGdkImage *loc; 
+  NspGdkImage *loc;
   /* type must exists */
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkImage)))== NULLGDKIMAGE) return loc;
@@ -7214,10 +7214,10 @@ static char *nsp_gdkimage_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkImage objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkImage *nsp_gdkimage_object(NspObject *O)
+NspGdkImage   *nsp_gdkimage_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7230,7 +7230,7 @@ NspGdkImage *nsp_gdkimage_object(NspObject *O)
 
 int IsGdkImageObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkimage_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkimage_id);
 }
 
 int IsGdkImage(NspObject *O)
@@ -7272,7 +7272,7 @@ NspGdkImage *gdkimage_copy(NspGdkImage *self)
 static int
 _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj, obj_check, s_int, s_int,t_end};
+  int_types T[] = {obj,obj_check,s_int,s_int, t_end};
   GdkImageType type;
   NspObject *nsp_type = NULL;
   NspGObject *visual;
@@ -7281,7 +7281,7 @@ _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_type, &nsp_type_gdkvisual, &visual, &width, &height) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_IMAGE_TYPE, nsp_type, &type)== FAIL)
       return RET_BUG;
-  if ((ret = (GObject *)gdk_image_new(type, GDK_VISUAL(visual->obj), width, height))== NULL) return RET_BUG;
+  if ((ret = (GObject *)gdk_image_new(type,GDK_VISUAL(visual->obj),width,height))== NULL) return RET_BUG;
 
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gdkimage );
@@ -7292,31 +7292,31 @@ _wrap_gdkimage_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_gdk_image_put_pixel(NspGdkImage *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int, t_end};
   int x, y;
   gulong pixel;
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &pixel) == FAIL) return RET_BUG;
-  gdk_image_put_pixel(GDK_IMAGE(self->obj), x, y, pixel);
+  gdk_image_put_pixel(GDK_IMAGE(self->obj),x,y,pixel);
   return 0;
 }
 
 static int _wrap_gdk_image_get_pixel(NspGdkImage *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x, y;
   gulong ret;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  ret = gdk_image_get_pixel(GDK_IMAGE(self->obj), x, y);
+  ret =gdk_image_get_pixel(GDK_IMAGE(self->obj),x,y);
  if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_image_set_colormap(NspGdkImage *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *colormap;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap) == FAIL) return RET_BUG;
-  gdk_image_set_colormap(GDK_IMAGE(self->obj), GDK_COLORMAP(colormap->obj));
+  gdk_image_set_colormap(GDK_IMAGE(self->obj),GDK_COLORMAP(colormap->obj));
   return 0;
 }
 
@@ -7325,7 +7325,7 @@ static int _wrap_gdk_image_get_colormap(NspGdkImage *self,Stack stack,int rhs,in
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_image_get_colormap(GDK_IMAGE(self->obj));
+  ret =gdk_image_get_colormap(GDK_IMAGE(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -7348,7 +7348,7 @@ static NspMethods *gdkimage_get_methods(void) { return gdkimage_methods;};
 static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkKeymap ----------- */
+/* -----------NspGdkKeymap ----------- */
 
 
 #define  NspGdkKeymap_Private 
@@ -7375,34 +7375,34 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
 {
   NspTypeGdkKeymap *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkkeymap != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkkeymap != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkkeymap;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkkeymap_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkkeymap_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkkeymap_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkkeymap_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkkeymap;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkkeymap */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkkeymap_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkkeymap_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkkeymap_type_short_string;
-  /* top->create = (create_func*) int_gdkkeymap_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkkeymap_create;*/
+
   /* specific methods for gdkkeymap */
-      
+
   type->init = (init_func *) init_gdkkeymap;
 
   /* 
@@ -7426,8 +7426,8 @@ NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkkeymap_id;
-       return type;
+      type->id = nsp_type_gdkkeymap_id;
+      return type;
     }
 }
 
@@ -7440,10 +7440,10 @@ static int init_gdkkeymap(NspGdkKeymap *Obj,NspTypeGdkKeymap *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -7452,7 +7452,7 @@ static int init_gdkkeymap(NspGdkKeymap *Obj,NspTypeGdkKeymap *type)
 
 NspGdkKeymap *new_gdkkeymap() 
 {
-  NspGdkKeymap *loc; 
+  NspGdkKeymap *loc;
   /* type must exists */
   nsp_type_gdkkeymap = new_type_gdkkeymap(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkKeymap)))== NULLGDKKEYMAP) return loc;
@@ -7484,10 +7484,10 @@ static char *nsp_gdkkeymap_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkKeymap objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkKeymap *nsp_gdkkeymap_object(NspObject *O)
+NspGdkKeymap   *nsp_gdkkeymap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7500,7 +7500,7 @@ NspGdkKeymap *nsp_gdkkeymap_object(NspObject *O)
 
 int IsGdkKeymapObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkkeymap_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkkeymap_id);
 }
 
 int IsGdkKeymap(NspObject *O)
@@ -7543,7 +7543,7 @@ static int _wrap_gdk_keymap_get_direction(NspGdkKeymap *self,Stack stack,int rhs
 {
   gint ret;
   CheckRhs(0,0);
-  ret = gdk_keymap_get_direction(GDK_KEYMAP(self->obj));
+  ret =gdk_keymap_get_direction(GDK_KEYMAP(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7561,7 +7561,7 @@ static NspMethods *gdkkeymap_get_methods(void) { return gdkkeymap_methods;};
 static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkPixbuf ----------- */
+/* -----------NspGdkPixbuf ----------- */
 
 
 #define  NspGdkPixbuf_Private 
@@ -7588,34 +7588,34 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
 {
   NspTypeGdkPixbuf *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkpixbuf != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkpixbuf != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkpixbuf;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkpixbuf_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkpixbuf_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkpixbuf_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkpixbuf_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkpixbuf;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkpixbuf */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkpixbuf_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkpixbuf_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkpixbuf_type_short_string;
-  /* top->create = (create_func*) int_gdkpixbuf_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkpixbuf_create;*/
+
   /* specific methods for gdkpixbuf */
-      
+
   type->init = (init_func *) init_gdkpixbuf;
 
   /* 
@@ -7639,8 +7639,8 @@ NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkpixbuf_id;
-       return type;
+      type->id = nsp_type_gdkpixbuf_id;
+      return type;
     }
 }
 
@@ -7653,10 +7653,10 @@ static int init_gdkpixbuf(NspGdkPixbuf *Obj,NspTypeGdkPixbuf *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -7665,7 +7665,7 @@ static int init_gdkpixbuf(NspGdkPixbuf *Obj,NspTypeGdkPixbuf *type)
 
 NspGdkPixbuf *new_gdkpixbuf() 
 {
-  NspGdkPixbuf *loc; 
+  NspGdkPixbuf *loc;
   /* type must exists */
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkPixbuf)))== NULLGDKPIXBUF) return loc;
@@ -7697,10 +7697,10 @@ static char *nsp_gdkpixbuf_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkPixbuf objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkPixbuf *nsp_gdkpixbuf_object(NspObject *O)
+NspGdkPixbuf   *nsp_gdkpixbuf_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -7713,7 +7713,7 @@ NspGdkPixbuf *nsp_gdkpixbuf_object(NspObject *O)
 
 int IsGdkPixbufObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkpixbuf_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkpixbuf_id);
 }
 
 int IsGdkPixbuf(NspObject *O)
@@ -7754,7 +7754,7 @@ NspGdkPixbuf *gdkpixbuf_copy(NspGdkPixbuf *self)
  *-------------------------------------------*/
 static int _wrap_gdk_pixbuf_render_to_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int, obj, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,s_int,s_int,s_int,s_int,obj,s_int,s_int, t_end};
   NspGObject *drawable, *gc;
   int src_x, src_y, dest_x, dest_y, width, height, x_dither, y_dither;
   GdkRgbDither dither;
@@ -7762,13 +7762,13 @@ static int _wrap_gdk_pixbuf_render_to_drawable(NspGdkPixbuf *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &nsp_type_gdkgc, &gc, &src_x, &src_y, &dest_x, &dest_y, &width, &height, &nsp_dither, &x_dither, &y_dither) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_RGB_DITHER, nsp_dither, &dither)== FAIL)
       return RET_BUG;
-  gdk_pixbuf_render_to_drawable(GDK_PIXBUF(self->obj), GDK_DRAWABLE(drawable->obj), GDK_GC(gc->obj), src_x, src_y, dest_x, dest_y, width, height, dither, x_dither, y_dither);
+  gdk_pixbuf_render_to_drawable(GDK_PIXBUF(self->obj),GDK_DRAWABLE(drawable->obj),GDK_GC(gc->obj),src_x,src_y,dest_x,dest_y,width,height,dither,x_dither,y_dither);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_render_to_drawable_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_int, s_int, obj, s_int, obj, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int,s_int,s_int,s_int,s_int,obj,s_int,obj,s_int,s_int, t_end};
   NspGObject *drawable;
   int src_x, src_y, dest_x, dest_y, width, height, alpha_threshold, x_dither, y_dither;
   GdkPixbufAlphaMode alpha_mode;
@@ -7779,7 +7779,7 @@ static int _wrap_gdk_pixbuf_render_to_drawable_alpha(NspGdkPixbuf *self,Stack st
       return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_RGB_DITHER, nsp_dither, &dither)== FAIL)
       return RET_BUG;
-  gdk_pixbuf_render_to_drawable_alpha(GDK_PIXBUF(self->obj), GDK_DRAWABLE(drawable->obj), src_x, src_y, dest_x, dest_y, width, height, alpha_mode, alpha_threshold, dither, x_dither, y_dither);
+  gdk_pixbuf_render_to_drawable_alpha(GDK_PIXBUF(self->obj),GDK_DRAWABLE(drawable->obj),src_x,src_y,dest_x,dest_y,width,height,alpha_mode,alpha_threshold,dither,x_dither,y_dither);
   return 0;
 }
 
@@ -7838,13 +7838,13 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *src, *cmap;
   int src_x, src_y, dest_x, dest_y, width, height;
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &src, &nsp_type_gdkcolormap, &cmap, &src_x, &src_y, &dest_x, &dest_y, &width, &height) == FAIL) return RET_BUG;
-  ret = gdk_pixbuf_get_from_drawable(GDK_PIXBUF(self->obj), GDK_DRAWABLE(src->obj), GDK_COLORMAP(cmap->obj), src_x, src_y, dest_x, dest_y, width, height);
+  ret =gdk_pixbuf_get_from_drawable(GDK_PIXBUF(self->obj),GDK_DRAWABLE(src->obj),GDK_COLORMAP(cmap->obj),src_x,src_y,dest_x,dest_y,width,height);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -7853,13 +7853,13 @@ static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int
 
 static int _wrap_gdk_pixbuf_get_from_image(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *src, *cmap;
   int src_x, src_y, dest_x, dest_y, width, height;
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkimage, &src, &nsp_type_gdkcolormap, &cmap, &src_x, &src_y, &dest_x, &dest_y, &width, &height) == FAIL) return RET_BUG;
-  ret = gdk_pixbuf_get_from_image(GDK_PIXBUF(self->obj), GDK_IMAGE(src->obj), GDK_COLORMAP(cmap->obj), src_x, src_y, dest_x, dest_y, width, height);
+  ret =gdk_pixbuf_get_from_image(GDK_PIXBUF(self->obj),GDK_IMAGE(src->obj),GDK_COLORMAP(cmap->obj),src_x,src_y,dest_x,dest_y,width,height);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -7870,7 +7870,7 @@ static int _wrap_gdk_pixbuf_get_n_channels(NspGdkPixbuf *self,Stack stack,int rh
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_n_channels(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_n_channels(GDK_PIXBUF(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7879,7 +7879,7 @@ static int _wrap_gdk_pixbuf_get_has_alpha(NspGdkPixbuf *self,Stack stack,int rhs
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_has_alpha(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_has_alpha(GDK_PIXBUF(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7888,7 +7888,7 @@ static int _wrap_gdk_pixbuf_get_bits_per_sample(NspGdkPixbuf *self,Stack stack,i
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_bits_per_sample(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_bits_per_sample(GDK_PIXBUF(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7922,7 +7922,7 @@ static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_width(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_width(GDK_PIXBUF(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7931,7 +7931,7 @@ static int _wrap_gdk_pixbuf_get_height(NspGdkPixbuf *self,Stack stack,int rhs,in
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_height(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_height(GDK_PIXBUF(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -7940,18 +7940,18 @@ static int _wrap_gdk_pixbuf_get_rowstride(NspGdkPixbuf *self,Stack stack,int rhs
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_get_rowstride(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_get_rowstride(GDK_PIXBUF(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_pixbuf_get_option(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *key;
   const gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&key) == FAIL) return RET_BUG;
-  ret = gdk_pixbuf_get_option(GDK_PIXBUF(self->obj), key);
+  ret =gdk_pixbuf_get_option(GDK_PIXBUF(self->obj),key);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -7961,9 +7961,9 @@ static int _wrap_gdk_pixbuf_copy(NspGdkPixbuf *self,Stack stack,int rhs,int opt,
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_copy(GDK_PIXBUF(self->obj));
+  ret =gdk_pixbuf_copy(GDK_PIXBUF(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -7971,10 +7971,10 @@ static int _wrap_gdk_pixbuf_copy(NspGdkPixbuf *self,Stack stack,int rhs,int opt,
 
 static int _wrap_gdk_pixbuf_fill(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int pixel;
   if ( GetArgs(stack,rhs,opt,T,&pixel) == FAIL) return RET_BUG;
-  gdk_pixbuf_fill(GDK_PIXBUF(self->obj), pixel);
+  gdk_pixbuf_fill(GDK_PIXBUF(self->obj),pixel);
   return 0;
 }
 
@@ -8078,14 +8078,14 @@ static NspSMatrix *writable_formats()
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_bool,s_int,s_int,s_int, t_end};
   int substitute_color, r, g, b;
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&substitute_color, &r, &g, &b) == FAIL) return RET_BUG;
-  ret = gdk_pixbuf_add_alpha(GDK_PIXBUF(self->obj), substitute_color, r, g, b);
+  ret =gdk_pixbuf_add_alpha(GDK_PIXBUF(self->obj),substitute_color,r,g,b);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -8093,28 +8093,28 @@ static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int
 
 static int _wrap_gdk_pixbuf_copy_area(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, s_int, s_int, obj_check, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,s_int,s_int,obj_check,s_int,s_int, t_end};
   int src_x, src_y, width, height, dest_x, dest_y;
   NspGObject *dest_pixbuf;
   if ( GetArgs(stack,rhs,opt,T,&src_x, &src_y, &width, &height, &nsp_type_gdkpixbuf, &dest_pixbuf, &dest_x, &dest_y) == FAIL) return RET_BUG;
-  gdk_pixbuf_copy_area(GDK_PIXBUF(self->obj), src_x, src_y, width, height, GDK_PIXBUF(dest_pixbuf->obj), dest_x, dest_y);
+  gdk_pixbuf_copy_area(GDK_PIXBUF(self->obj),src_x,src_y,width,height,GDK_PIXBUF(dest_pixbuf->obj),dest_x,dest_y);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_saturate_and_pixelate(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_double, s_bool,t_end};
+  int_types T[] = {obj_check,s_double,s_bool, t_end};
   NspGObject *dest;
   double saturation;
   int pixelate;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &saturation, &pixelate) == FAIL) return RET_BUG;
-  gdk_pixbuf_saturate_and_pixelate(GDK_PIXBUF(self->obj), GDK_PIXBUF(dest->obj), saturation, pixelate);
+  gdk_pixbuf_saturate_and_pixelate(GDK_PIXBUF(self->obj),GDK_PIXBUF(dest->obj),saturation,pixelate);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_scale(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_double, s_double, s_double, s_double, obj,t_end};
+  int_types T[] = {obj_check,s_int,s_int,s_int,s_int,s_double,s_double,s_double,s_double,obj, t_end};
   NspGObject *dest;
   int dest_x, dest_y, dest_width, dest_height;
   double offset_x, offset_y, scale_x, scale_y;
@@ -8123,13 +8123,13 @@ static int _wrap_gdk_pixbuf_scale(NspGdkPixbuf *self,Stack stack,int rhs,int opt
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &dest_x, &dest_y, &dest_width, &dest_height, &offset_x, &offset_y, &scale_x, &scale_y, &nsp_interp_type) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INTERP_TYPE, nsp_interp_type, &interp_type)== FAIL)
       return RET_BUG;
-  gdk_pixbuf_scale(GDK_PIXBUF(self->obj), GDK_PIXBUF(dest->obj), dest_x, dest_y, dest_width, dest_height, offset_x, offset_y, scale_x, scale_y, interp_type);
+  gdk_pixbuf_scale(GDK_PIXBUF(self->obj),GDK_PIXBUF(dest->obj),dest_x,dest_y,dest_width,dest_height,offset_x,offset_y,scale_x,scale_y,interp_type);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_composite(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_double, s_double, s_double, s_double, obj, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int,s_int,s_int,s_double,s_double,s_double,s_double,obj,s_int, t_end};
   NspGObject *dest;
   int dest_x, dest_y, dest_width, dest_height, overall_alpha;
   double offset_x, offset_y, scale_x, scale_y;
@@ -8138,13 +8138,13 @@ static int _wrap_gdk_pixbuf_composite(NspGdkPixbuf *self,Stack stack,int rhs,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &dest_x, &dest_y, &dest_width, &dest_height, &offset_x, &offset_y, &scale_x, &scale_y, &nsp_interp_type, &overall_alpha) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INTERP_TYPE, nsp_interp_type, &interp_type)== FAIL)
       return RET_BUG;
-  gdk_pixbuf_composite(GDK_PIXBUF(self->obj), GDK_PIXBUF(dest->obj), dest_x, dest_y, dest_width, dest_height, offset_x, offset_y, scale_x, scale_y, interp_type, overall_alpha);
+  gdk_pixbuf_composite(GDK_PIXBUF(self->obj),GDK_PIXBUF(dest->obj),dest_x,dest_y,dest_width,dest_height,offset_x,offset_y,scale_x,scale_y,interp_type,overall_alpha);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_composite_color(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_double, s_double, s_double, s_double, obj, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {obj_check,s_int,s_int,s_int,s_int,s_double,s_double,s_double,s_double,obj,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
   NspGObject *dest;
   int dest_x, dest_y, dest_width, dest_height, overall_alpha, check_x, check_y, check_size;
   double offset_x, offset_y, scale_x, scale_y;
@@ -8154,13 +8154,13 @@ static int _wrap_gdk_pixbuf_composite_color(NspGdkPixbuf *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &dest_x, &dest_y, &dest_width, &dest_height, &offset_x, &offset_y, &scale_x, &scale_y, &nsp_interp_type, &overall_alpha, &check_x, &check_y, &check_size, &color1, &color2) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INTERP_TYPE, nsp_interp_type, &interp_type)== FAIL)
       return RET_BUG;
-  gdk_pixbuf_composite_color(GDK_PIXBUF(self->obj), GDK_PIXBUF(dest->obj), dest_x, dest_y, dest_width, dest_height, offset_x, offset_y, scale_x, scale_y, interp_type, overall_alpha, check_x, check_y, check_size, color1, color2);
+  gdk_pixbuf_composite_color(GDK_PIXBUF(self->obj),GDK_PIXBUF(dest->obj),dest_x,dest_y,dest_width,dest_height,offset_x,offset_y,scale_x,scale_y,interp_type,overall_alpha,check_x,check_y,check_size,color1,color2);
   return 0;
 }
 
 static int _wrap_gdk_pixbuf_scale_simple(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, obj,t_end};
+  int_types T[] = {s_int,s_int,obj, t_end};
   int dest_width, dest_height;
   GdkInterpType interp_type;
   NspObject *nsp_interp_type = NULL, *nsp_ret;
@@ -8168,9 +8168,9 @@ static int _wrap_gdk_pixbuf_scale_simple(NspGdkPixbuf *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&dest_width, &dest_height, &nsp_interp_type) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INTERP_TYPE, nsp_interp_type, &interp_type)== FAIL)
       return RET_BUG;
-  ret = gdk_pixbuf_scale_simple(GDK_PIXBUF(self->obj), dest_width, dest_height, interp_type);
+  ret =gdk_pixbuf_scale_simple(GDK_PIXBUF(self->obj),dest_width,dest_height,interp_type);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -8178,7 +8178,7 @@ static int _wrap_gdk_pixbuf_scale_simple(NspGdkPixbuf *self,Stack stack,int rhs,
 
 static int _wrap_gdk_pixbuf_composite_color_simple(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int, obj, s_int, s_int, s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int,obj,s_int,s_int,s_int,s_int, t_end};
   int dest_width, dest_height, overall_alpha, check_size;
   GdkInterpType interp_type;
   NspObject *nsp_interp_type = NULL, *nsp_ret;
@@ -8187,9 +8187,9 @@ static int _wrap_gdk_pixbuf_composite_color_simple(NspGdkPixbuf *self,Stack stac
   if ( GetArgs(stack,rhs,opt,T,&dest_width, &dest_height, &nsp_interp_type, &overall_alpha, &check_size, &color1, &color2) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_INTERP_TYPE, nsp_interp_type, &interp_type)== FAIL)
       return RET_BUG;
-  ret = gdk_pixbuf_composite_color_simple(GDK_PIXBUF(self->obj), dest_width, dest_height, interp_type, overall_alpha, check_size, color1, color2);
+  ret =gdk_pixbuf_composite_color_simple(GDK_PIXBUF(self->obj),dest_width,dest_height,interp_type,overall_alpha,check_size,color1,color2);
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -8249,13 +8249,13 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
 }
 #line 8251 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
-  { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "pixel_array", (attr_get_function * )_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspGdkPixbufAnimation ----------- */
+/* -----------NspGdkPixbufAnimation ----------- */
 
 
 #define  NspGdkPixbufAnimation_Private 
@@ -8282,34 +8282,34 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
 {
   NspTypeGdkPixbufAnimation *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkpixbufanimation != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkpixbufanimation != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkpixbufanimation;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkpixbufanimation_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkpixbufanimation_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkpixbufanimation_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkpixbufanimation_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkpixbufanimation;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkpixbufanimation */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkpixbufanimation_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkpixbufanimation_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkpixbufanimation_type_short_string;
-  /* top->create = (create_func*) int_gdkpixbufanimation_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkpixbufanimation_create;*/
+
   /* specific methods for gdkpixbufanimation */
-      
+
   type->init = (init_func *) init_gdkpixbufanimation;
 
   /* 
@@ -8333,8 +8333,8 @@ NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkpixbufanimation_id;
-       return type;
+      type->id = nsp_type_gdkpixbufanimation_id;
+      return type;
     }
 }
 
@@ -8347,10 +8347,10 @@ static int init_gdkpixbufanimation(NspGdkPixbufAnimation *Obj,NspTypeGdkPixbufAn
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -8359,7 +8359,7 @@ static int init_gdkpixbufanimation(NspGdkPixbufAnimation *Obj,NspTypeGdkPixbufAn
 
 NspGdkPixbufAnimation *new_gdkpixbufanimation() 
 {
-  NspGdkPixbufAnimation *loc; 
+  NspGdkPixbufAnimation *loc;
   /* type must exists */
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkPixbufAnimation)))== NULLGDKPIXBUFANIMATION) return loc;
@@ -8391,10 +8391,10 @@ static char *nsp_gdkpixbufanimation_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkPixbufAnimation objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkPixbufAnimation *nsp_gdkpixbufanimation_object(NspObject *O)
+NspGdkPixbufAnimation   *nsp_gdkpixbufanimation_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8407,7 +8407,7 @@ NspGdkPixbufAnimation *nsp_gdkpixbufanimation_object(NspObject *O)
 
 int IsGdkPixbufAnimationObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkpixbufanimation_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkpixbufanimation_id);
 }
 
 int IsGdkPixbufAnimation(NspObject *O)
@@ -8449,12 +8449,12 @@ NspGdkPixbufAnimation *gdkpixbufanimation_copy(NspGdkPixbufAnimation *self)
 static int
 _wrap_gdkpixbufanimation_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *filename;
   GError *error = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
-  if ((ret = (GObject *)gdk_pixbuf_animation_new_from_file(filename, &error))== NULL) return RET_BUG;
+  if ((ret = (GObject *)gdk_pixbuf_animation_new_from_file(filename,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
@@ -8471,7 +8471,7 @@ static int _wrap_gdk_pixbuf_animation_get_width(NspGdkPixbufAnimation *self,Stac
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_get_width(GDK_PIXBUF_ANIMATION(self->obj));
+  ret =gdk_pixbuf_animation_get_width(GDK_PIXBUF_ANIMATION(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -8480,7 +8480,7 @@ static int _wrap_gdk_pixbuf_animation_get_height(NspGdkPixbufAnimation *self,Sta
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_get_height(GDK_PIXBUF_ANIMATION(self->obj));
+  ret =gdk_pixbuf_animation_get_height(GDK_PIXBUF_ANIMATION(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -8489,7 +8489,7 @@ static int _wrap_gdk_pixbuf_animation_is_static_image(NspGdkPixbufAnimation *sel
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_is_static_image(GDK_PIXBUF_ANIMATION(self->obj));
+  ret =gdk_pixbuf_animation_is_static_image(GDK_PIXBUF_ANIMATION(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -8499,7 +8499,7 @@ static int _wrap_gdk_pixbuf_animation_get_static_image(NspGdkPixbufAnimation *se
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_get_static_image(GDK_PIXBUF_ANIMATION(self->obj));
+  ret =gdk_pixbuf_animation_get_static_image(GDK_PIXBUF_ANIMATION(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -8522,7 +8522,7 @@ static NspMethods *gdkpixbufanimation_get_methods(void) { return gdkpixbufanimat
 static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkPixbufAnimationIter ----------- */
+/* -----------NspGdkPixbufAnimationIter ----------- */
 
 
 #define  NspGdkPixbufAnimationIter_Private 
@@ -8549,34 +8549,34 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
 {
   NspTypeGdkPixbufAnimationIter *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkpixbufanimationiter != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkpixbufanimationiter != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkpixbufanimationiter;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkpixbufanimationiter_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkpixbufanimationiter_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkpixbufanimationiter_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkpixbufanimationiter_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkpixbufanimationiter;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkpixbufanimationiter */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkpixbufanimationiter_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkpixbufanimationiter_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkpixbufanimationiter_type_short_string;
-  /* top->create = (create_func*) int_gdkpixbufanimationiter_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkpixbufanimationiter_create;*/
+
   /* specific methods for gdkpixbufanimationiter */
-      
+
   type->init = (init_func *) init_gdkpixbufanimationiter;
 
   /* 
@@ -8600,8 +8600,8 @@ NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkpixbufanimationiter_id;
-       return type;
+      type->id = nsp_type_gdkpixbufanimationiter_id;
+      return type;
     }
 }
 
@@ -8614,10 +8614,10 @@ static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *Obj,NspTypeGdk
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -8626,7 +8626,7 @@ static int init_gdkpixbufanimationiter(NspGdkPixbufAnimationIter *Obj,NspTypeGdk
 
 NspGdkPixbufAnimationIter *new_gdkpixbufanimationiter() 
 {
-  NspGdkPixbufAnimationIter *loc; 
+  NspGdkPixbufAnimationIter *loc;
   /* type must exists */
   nsp_type_gdkpixbufanimationiter = new_type_gdkpixbufanimationiter(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkPixbufAnimationIter)))== NULLGDKPIXBUFANIMATIONITER) return loc;
@@ -8658,10 +8658,10 @@ static char *nsp_gdkpixbufanimationiter_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkPixbufAnimationIter objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object(NspObject *O)
+NspGdkPixbufAnimationIter   *nsp_gdkpixbufanimationiter_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8674,7 +8674,7 @@ NspGdkPixbufAnimationIter *nsp_gdkpixbufanimationiter_object(NspObject *O)
 
 int IsGdkPixbufAnimationIterObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkpixbufanimationiter_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkpixbufanimationiter_id);
 }
 
 int IsGdkPixbufAnimationIter(NspObject *O)
@@ -8717,7 +8717,7 @@ static int _wrap_gdk_pixbuf_animation_iter_get_delay_time(NspGdkPixbufAnimationI
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_iter_get_delay_time(GDK_PIXBUF_ANIMATION_ITER(self->obj));
+  ret =gdk_pixbuf_animation_iter_get_delay_time(GDK_PIXBUF_ANIMATION_ITER(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -8727,7 +8727,7 @@ static int _wrap_gdk_pixbuf_animation_iter_get_pixbuf(NspGdkPixbufAnimationIter 
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_iter_get_pixbuf(GDK_PIXBUF_ANIMATION_ITER(self->obj));
+  ret =gdk_pixbuf_animation_iter_get_pixbuf(GDK_PIXBUF_ANIMATION_ITER(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -8738,7 +8738,7 @@ static int _wrap_gdk_pixbuf_animation_iter_on_currently_loading_frame(NspGdkPixb
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_animation_iter_on_currently_loading_frame(GDK_PIXBUF_ANIMATION_ITER(self->obj));
+  ret =gdk_pixbuf_animation_iter_on_currently_loading_frame(GDK_PIXBUF_ANIMATION_ITER(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -8758,7 +8758,7 @@ static NspMethods *gdkpixbufanimationiter_get_methods(void) { return gdkpixbufan
 static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkPixbufLoader ----------- */
+/* -----------NspGdkPixbufLoader ----------- */
 
 
 #define  NspGdkPixbufLoader_Private 
@@ -8785,34 +8785,34 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
 {
   NspTypeGdkPixbufLoader *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkpixbufloader != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkpixbufloader != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkpixbufloader;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkpixbufloader_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkpixbufloader_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkpixbufloader_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkpixbufloader_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkpixbufloader;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkpixbufloader */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkpixbufloader_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkpixbufloader_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkpixbufloader_type_short_string;
-  /* top->create = (create_func*) int_gdkpixbufloader_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkpixbufloader_create;*/
+
   /* specific methods for gdkpixbufloader */
-      
+
   type->init = (init_func *) init_gdkpixbufloader;
 
   /* 
@@ -8836,8 +8836,8 @@ NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkpixbufloader_id;
-       return type;
+      type->id = nsp_type_gdkpixbufloader_id;
+      return type;
     }
 }
 
@@ -8850,10 +8850,10 @@ static int init_gdkpixbufloader(NspGdkPixbufLoader *Obj,NspTypeGdkPixbufLoader *
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -8862,7 +8862,7 @@ static int init_gdkpixbufloader(NspGdkPixbufLoader *Obj,NspTypeGdkPixbufLoader *
 
 NspGdkPixbufLoader *new_gdkpixbufloader() 
 {
-  NspGdkPixbufLoader *loc; 
+  NspGdkPixbufLoader *loc;
   /* type must exists */
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkPixbufLoader)))== NULLGDKPIXBUFLOADER) return loc;
@@ -8894,10 +8894,10 @@ static char *nsp_gdkpixbufloader_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkPixbufLoader objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkPixbufLoader *nsp_gdkpixbufloader_object(NspObject *O)
+NspGdkPixbufLoader   *nsp_gdkpixbufloader_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -8910,7 +8910,7 @@ NspGdkPixbufLoader *nsp_gdkpixbufloader_object(NspObject *O)
 
 int IsGdkPixbufLoaderObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkpixbufloader_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkpixbufloader_id);
 }
 
 int IsGdkPixbufLoader(NspObject *O)
@@ -8952,12 +8952,12 @@ NspGdkPixbufLoader *gdkpixbufloader_copy(NspGdkPixbufLoader *self)
 static int
 _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *image_type;
   GError *error = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&image_type) == FAIL) return RET_BUG;
-  if ((ret = (GObject *)gdk_pixbuf_loader_new_with_type(image_type, &error))== NULL) return RET_BUG;
+  if ((ret = (GObject *)gdk_pixbuf_loader_new_with_type(image_type,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
@@ -8972,12 +8972,12 @@ _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_gdk_pixbuf_loader_write(NspGdkPixbufLoader *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, s_int,t_end};
+  int_types T[] = {string,s_int, t_end};
   guchar *buf;
   int count, ret;
   GError *error = NULL;
   if ( GetArgs(stack,rhs,opt,T,&buf, &count) == FAIL) return RET_BUG;
-  ret = gdk_pixbuf_loader_write(GDK_PIXBUF_LOADER(self->obj), buf, count, &error);
+  ret =gdk_pixbuf_loader_write(GDK_PIXBUF_LOADER(self->obj),buf,count,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
@@ -8991,7 +8991,7 @@ static int _wrap_gdk_pixbuf_loader_get_pixbuf(NspGdkPixbufLoader *self,Stack sta
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_loader_get_pixbuf(GDK_PIXBUF_LOADER(self->obj));
+  ret =gdk_pixbuf_loader_get_pixbuf(GDK_PIXBUF_LOADER(self->obj));
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9003,7 +9003,7 @@ static int _wrap_gdk_pixbuf_loader_get_animation(NspGdkPixbufLoader *self,Stack 
   GdkPixbufAnimation *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_loader_get_animation(GDK_PIXBUF_LOADER(self->obj));
+  ret =gdk_pixbuf_loader_get_animation(GDK_PIXBUF_LOADER(self->obj));
   nsp_type_gdkpixbufanimation = new_type_gdkpixbufanimation(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbufanimation))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9015,7 +9015,7 @@ static int _wrap_gdk_pixbuf_loader_close(NspGdkPixbufLoader *self,Stack stack,in
   GError *error = NULL;
   int ret;
   CheckRhs(0,0);
-  ret = gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(self->obj), &error);
+  ret =gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(self->obj),&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
@@ -9040,7 +9040,7 @@ static NspMethods *gdkpixbufloader_get_methods(void) { return gdkpixbufloader_me
 static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkScreen ----------- */
+/* -----------NspGdkScreen ----------- */
 
 
 #define  NspGdkScreen_Private 
@@ -9067,34 +9067,34 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
 {
   NspTypeGdkScreen *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkscreen != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkscreen != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkscreen;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkscreen_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkscreen_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkscreen_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkscreen_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkscreen;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkscreen */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkscreen_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkscreen_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkscreen_type_short_string;
-  /* top->create = (create_func*) int_gdkscreen_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkscreen_create;*/
+
   /* specific methods for gdkscreen */
-      
+
   type->init = (init_func *) init_gdkscreen;
 
   /* 
@@ -9118,8 +9118,8 @@ NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkscreen_id;
-       return type;
+      type->id = nsp_type_gdkscreen_id;
+      return type;
     }
 }
 
@@ -9132,10 +9132,10 @@ static int init_gdkscreen(NspGdkScreen *Obj,NspTypeGdkScreen *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -9144,7 +9144,7 @@ static int init_gdkscreen(NspGdkScreen *Obj,NspTypeGdkScreen *type)
 
 NspGdkScreen *new_gdkscreen() 
 {
-  NspGdkScreen *loc; 
+  NspGdkScreen *loc;
   /* type must exists */
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkScreen)))== NULLGDKSCREEN) return loc;
@@ -9176,10 +9176,10 @@ static char *nsp_gdkscreen_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkScreen objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkScreen *nsp_gdkscreen_object(NspObject *O)
+NspGdkScreen   *nsp_gdkscreen_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9192,7 +9192,7 @@ NspGdkScreen *nsp_gdkscreen_object(NspObject *O)
 
 int IsGdkScreenObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkscreen_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkscreen_id);
 }
 
 int IsGdkScreen(NspObject *O)
@@ -9236,7 +9236,7 @@ static int _wrap_gdk_screen_get_default_colormap(NspGdkScreen *self,Stack stack,
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_default_colormap(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_default_colormap(GDK_SCREEN(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9245,10 +9245,10 @@ static int _wrap_gdk_screen_get_default_colormap(NspGdkScreen *self,Stack stack,
 
 static int _wrap_gdk_screen_set_default_colormap(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *colormap;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap) == FAIL) return RET_BUG;
-  gdk_screen_set_default_colormap(GDK_SCREEN(self->obj), GDK_COLORMAP(colormap->obj));
+  gdk_screen_set_default_colormap(GDK_SCREEN(self->obj),GDK_COLORMAP(colormap->obj));
   return 0;
 }
 
@@ -9257,7 +9257,7 @@ static int _wrap_gdk_screen_get_system_colormap(NspGdkScreen *self,Stack stack,i
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_system_colormap(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_system_colormap(GDK_SCREEN(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9269,7 +9269,7 @@ static int _wrap_gdk_screen_get_system_visual(NspGdkScreen *self,Stack stack,int
   GdkVisual *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_system_visual(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_system_visual(GDK_SCREEN(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9281,7 +9281,7 @@ static int _wrap_gdk_screen_get_rgb_colormap(NspGdkScreen *self,Stack stack,int 
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_rgb_colormap(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_rgb_colormap(GDK_SCREEN(self->obj));
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9293,7 +9293,7 @@ static int _wrap_gdk_screen_get_rgb_visual(NspGdkScreen *self,Stack stack,int rh
   GdkVisual *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_rgb_visual(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_rgb_visual(GDK_SCREEN(self->obj));
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9305,7 +9305,7 @@ static int _wrap_gdk_screen_get_root_window(NspGdkScreen *self,Stack stack,int r
   GdkWindow *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_root_window(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_root_window(GDK_SCREEN(self->obj));
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9317,7 +9317,7 @@ static int _wrap_gdk_screen_get_display(NspGdkScreen *self,Stack stack,int rhs,i
   GdkDisplay *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_display(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_display(GDK_SCREEN(self->obj));
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -9328,7 +9328,7 @@ static int _wrap_gdk_screen_get_number(NspGdkScreen *self,Stack stack,int rhs,in
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_number(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_number(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -9337,7 +9337,7 @@ static int _wrap_gdk_screen_get_width(NspGdkScreen *self,Stack stack,int rhs,int
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_width(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_width(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -9346,7 +9346,7 @@ static int _wrap_gdk_screen_get_height(NspGdkScreen *self,Stack stack,int rhs,in
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_height(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_height(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -9355,7 +9355,7 @@ static int _wrap_gdk_screen_get_width_mm(NspGdkScreen *self,Stack stack,int rhs,
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_width_mm(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_width_mm(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -9364,7 +9364,7 @@ static int _wrap_gdk_screen_get_height_mm(NspGdkScreen *self,Stack stack,int rhs
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_height_mm(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_height_mm(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -9374,7 +9374,7 @@ static int _wrap_gdk_screen_list_visuals(NspGdkScreen *self,Stack stack,int rhs,
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-  ret = gdk_screen_list_visuals(GDK_SCREEN(self->obj));
+  ret =gdk_screen_list_visuals(GDK_SCREEN(self->obj));
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -9384,7 +9384,7 @@ static int _wrap_gdk_screen_get_toplevel_windows(NspGdkScreen *self,Stack stack,
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-  ret = gdk_screen_get_toplevel_windows(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_toplevel_windows(GDK_SCREEN(self->obj));
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -9393,7 +9393,7 @@ static int _wrap_gdk_screen_make_display_name(NspGdkScreen *self,Stack stack,int
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = gdk_screen_make_display_name(GDK_SCREEN(self->obj));
+  ret =gdk_screen_make_display_name(GDK_SCREEN(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -9403,48 +9403,48 @@ static int _wrap_gdk_screen_get_n_monitors(NspGdkScreen *self,Stack stack,int rh
 {
   int ret;
   CheckRhs(0,0);
-  ret = gdk_screen_get_n_monitors(GDK_SCREEN(self->obj));
+  ret =gdk_screen_get_n_monitors(GDK_SCREEN(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_screen_get_monitor_geometry(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, obj,t_end};
+  int_types T[] = {s_int,obj, t_end};
   int monitor_num;
   GdkRectangle dest = { 0, 0, 0, 0 };
   NspObject *nsp_dest;
   if ( GetArgs(stack,rhs,opt,T,&monitor_num, &nsp_dest) == FAIL) return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_dest, &dest))
       return RET_BUG;
-  gdk_screen_get_monitor_geometry(GDK_SCREEN(self->obj), monitor_num, &dest);
+  gdk_screen_get_monitor_geometry(GDK_SCREEN(self->obj),monitor_num,&dest);
   return 0;
 }
 
 static int _wrap_gdk_screen_get_monitor_at_point(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int x, y, ret;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  ret = gdk_screen_get_monitor_at_point(GDK_SCREEN(self->obj), x, y);
+  ret =gdk_screen_get_monitor_at_point(GDK_SCREEN(self->obj),x,y);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_screen_get_monitor_at_window(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *window;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window) == FAIL) return RET_BUG;
-  ret = gdk_screen_get_monitor_at_window(GDK_SCREEN(self->obj), GDK_WINDOW(window->obj));
+  ret =gdk_screen_get_monitor_at_window(GDK_SCREEN(self->obj),GDK_WINDOW(window->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_gdk_screen_broadcast_client_message(NspGdkScreen *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
   NspObject *nsp_event;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
@@ -9454,7 +9454,7 @@ static int _wrap_gdk_screen_broadcast_client_message(NspGdkScreen *self,Stack st
       Scierror( "event should be a GdkEvent");
       return RET_BUG;
   }
-  gdk_screen_broadcast_client_message(GDK_SCREEN(self->obj), event);
+  gdk_screen_broadcast_client_message(GDK_SCREEN(self->obj),event);
   return 0;
 }
 
@@ -9491,7 +9491,7 @@ static NspMethods *gdkscreen_get_methods(void) { return gdkscreen_methods;};
 static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspGdkVisual ----------- */
+/* -----------NspGdkVisual ----------- */
 
 
 #define  NspGdkVisual_Private 
@@ -9518,34 +9518,34 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
 {
   NspTypeGdkVisual *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gdkvisual != 0 && mode == T_BASE ) 
+  if (  nsp_type_gdkvisual != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gdkvisual;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = gdkvisual_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = gdkvisual_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = gdkvisual_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gdkvisual_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdkvisual;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for gdkvisual */ 
 
-  top->s_type =  (s_type_func *) nsp_gdkvisual_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_gdkvisual_type_as_string;
   top->sh_type = (sh_type_func *) nsp_gdkvisual_type_short_string;
-  /* top->create = (create_func*) int_gdkvisual_create;*/ 
-  
+  /* top->create = (create_func*) int_gdkvisual_create;*/
+
   /* specific methods for gdkvisual */
-      
+
   type->init = (init_func *) init_gdkvisual;
 
   /* 
@@ -9569,8 +9569,8 @@ NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_gdkvisual_id;
-       return type;
+      type->id = nsp_type_gdkvisual_id;
+      return type;
     }
 }
 
@@ -9583,10 +9583,10 @@ static int init_gdkvisual(NspGdkVisual *Obj,NspTypeGdkVisual *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -9595,7 +9595,7 @@ static int init_gdkvisual(NspGdkVisual *Obj,NspTypeGdkVisual *type)
 
 NspGdkVisual *new_gdkvisual() 
 {
-  NspGdkVisual *loc; 
+  NspGdkVisual *loc;
   /* type must exists */
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ( (loc = malloc(sizeof(NspGdkVisual)))== NULLGDKVISUAL) return loc;
@@ -9627,10 +9627,10 @@ static char *nsp_gdkvisual_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGdkVisual objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspGdkVisual *nsp_gdkvisual_object(NspObject *O)
+NspGdkVisual   *nsp_gdkvisual_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -9643,7 +9643,7 @@ NspGdkVisual *nsp_gdkvisual_object(NspObject *O)
 
 int IsGdkVisualObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gdkvisual_id);
+  return nsp_object_type(NthObj(i),nsp_type_gdkvisual_id);
 }
 
 int IsGdkVisual(NspObject *O)
@@ -9874,21 +9874,21 @@ static NspObject *_wrap_gdk_visual__get_blue_prec(NspObject *self,char *attr)
 }
 
 static AttrTab gdkvisual_attrs[] = {
-  { "type", (attr_get_function *)_wrap_gdk_visual__get_type, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "depth", (attr_get_function *)_wrap_gdk_visual__get_depth, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "byte_order", (attr_get_function *)_wrap_gdk_visual__get_byte_order, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "colormap_size", (attr_get_function *)_wrap_gdk_visual__get_colormap_size, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "bits_per_rgb", (attr_get_function *)_wrap_gdk_visual__get_bits_per_rgb, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "red_mask", (attr_get_function *)_wrap_gdk_visual__get_red_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "red_shift", (attr_get_function *)_wrap_gdk_visual__get_red_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "red_prec", (attr_get_function *)_wrap_gdk_visual__get_red_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "green_mask", (attr_get_function *)_wrap_gdk_visual__get_green_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "green_shift", (attr_get_function *)_wrap_gdk_visual__get_green_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "green_prec", (attr_get_function *)_wrap_gdk_visual__get_green_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "blue_mask", (attr_get_function *)_wrap_gdk_visual__get_blue_mask, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "blue_shift", (attr_get_function *)_wrap_gdk_visual__get_blue_shift, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "blue_prec", (attr_get_function *)_wrap_gdk_visual__get_blue_prec, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "type", (attr_get_function * )_wrap_gdk_visual__get_type, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "depth", (attr_get_function * )_wrap_gdk_visual__get_depth, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "byte_order", (attr_get_function * )_wrap_gdk_visual__get_byte_order, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "colormap_size", (attr_get_function * )_wrap_gdk_visual__get_colormap_size, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "bits_per_rgb", (attr_get_function * )_wrap_gdk_visual__get_bits_per_rgb, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "red_mask", (attr_get_function * )_wrap_gdk_visual__get_red_mask, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "red_shift", (attr_get_function * )_wrap_gdk_visual__get_red_shift, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "red_prec", (attr_get_function * )_wrap_gdk_visual__get_red_prec, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "green_mask", (attr_get_function * )_wrap_gdk_visual__get_green_mask, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "green_shift", (attr_get_function * )_wrap_gdk_visual__get_green_shift, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "green_prec", (attr_get_function * )_wrap_gdk_visual__get_green_prec, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "blue_mask", (attr_get_function * )_wrap_gdk_visual__get_blue_mask, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "blue_shift", (attr_get_function * )_wrap_gdk_visual__get_blue_shift, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "blue_prec", (attr_get_function * )_wrap_gdk_visual__get_blue_prec, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
@@ -9898,7 +9898,7 @@ static AttrTab gdkvisual_attrs[] = {
 int _wrap_gdk_notify_startup_complete(Stack stack, int rhs, int opt, int lhs) /* notify_startup_complete */
 {
   CheckRhs(0,0);
-gdk_notify_startup_complete();
+    gdk_notify_startup_complete();
   return 0;
 }
 
@@ -9906,7 +9906,7 @@ int _wrap_gdk_get_display_arg_name(Stack stack, int rhs, int opt, int lhs) /* ge
 {
   const gchar *ret;
   CheckRhs(0,0);
-ret = gdk_get_display_arg_name();
+    ret =gdk_get_display_arg_name();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -9915,17 +9915,17 @@ int _wrap_gdk_get_program_class(Stack stack, int rhs, int opt, int lhs) /* get_p
 {
   const gchar *ret;
   CheckRhs(0,0);
-ret = gdk_get_program_class();
+    ret =gdk_get_program_class();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_set_program_class(Stack stack, int rhs, int opt, int lhs) /* set_program_class */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *program_class;
   if ( GetArgs(stack,rhs,opt,T,&program_class) == FAIL) return RET_BUG;
-gdk_set_program_class(program_class);
+    gdk_set_program_class(program_class);
   return 0;
 }
 
@@ -9933,20 +9933,20 @@ int _wrap_gdk_get_display(Stack stack, int rhs, int opt, int lhs) /* get_display
 {
   const gchar *ret;
   CheckRhs(0,0);
-ret = gdk_get_display();
+    ret =gdk_get_display();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs) /* pointer_grab */
 {
-  int_types T[] = {obj_check,new_opts,t_end};
+  int_types T[] = {obj_check,new_opts, t_end};
   nsp_option opts[] = {
-	{"owner_events",s_bool,NULLOBJ,-1}, 
-	{"event_mask",obj,NULLOBJ,-1}, 
-	{"confine_to",obj,NULLOBJ,-1}, 
-	{"cursor",obj,NULLOBJ,-1}, 
-	{"time",s_int,NULLOBJ,-1}, 
+	{"owner_events",s_bool,NULLOBJ,-1},
+	{"event_mask",obj,NULLOBJ,-1},
+	{"confine_to",obj,NULLOBJ,-1},
+	{"cursor",obj,NULLOBJ,-1},
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   NspGObject *window, *nsp_confine_to = NULL;
   int owner_events = FALSE;
@@ -9975,36 +9975,36 @@ int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs) /* pointer_gr
       return RET_BUG;
     }
   }
-ret = gdk_pointer_grab(GDK_WINDOW(window->obj), owner_events, event_mask, confine_to, cursor, time);
+    ret =gdk_pointer_grab(GDK_WINDOW(window->obj),owner_events,event_mask,confine_to,cursor,time);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_pointer_ungrab(Stack stack, int rhs, int opt, int lhs) /* pointer_ungrab */
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"time",s_int,NULLOBJ,-1}, 
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   gulong time = GDK_CURRENT_TIME;
   if ( GetArgs(stack,rhs,opt,T,opts, &time) == FAIL) return RET_BUG;
-gdk_pointer_ungrab(time);
+    gdk_pointer_ungrab(time);
   return 0;
 }
 
 int _wrap_gdk_keyboard_grab(Stack stack, int rhs, int opt, int lhs) /* keyboard_grab */
 {
-  int_types T[] = {obj_check,new_opts,t_end};
+  int_types T[] = {obj_check,new_opts, t_end};
   nsp_option opts[] = {
-	{"owner_events",s_bool,NULLOBJ,-1}, 
-	{"time",s_int,NULLOBJ,-1}, 
+	{"owner_events",s_bool,NULLOBJ,-1},
+	{"time",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   NspGObject *window;
   int owner_events = FALSE;
   gulong time = GDK_CURRENT_TIME;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, opts, &owner_events, &time) == FAIL) return RET_BUG;
-ret = gdk_keyboard_grab(GDK_WINDOW(window->obj), owner_events, time);
+    ret =gdk_keyboard_grab(GDK_WINDOW(window->obj),owner_events,time);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10013,7 +10013,7 @@ int _wrap_gdk_pointer_is_grabbed(Stack stack, int rhs, int opt, int lhs) /* poin
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_pointer_is_grabbed();
+    ret =gdk_pointer_is_grabbed();
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10022,7 +10022,7 @@ int _wrap_gdk_screen_width(Stack stack, int rhs, int opt, int lhs) /* screen_wid
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_screen_width();
+    ret =gdk_screen_width();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10031,7 +10031,7 @@ int _wrap_gdk_screen_height(Stack stack, int rhs, int opt, int lhs) /* screen_he
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_screen_height();
+    ret =gdk_screen_height();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10040,7 +10040,7 @@ int _wrap_gdk_screen_width_mm(Stack stack, int rhs, int opt, int lhs) /* screen_
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_screen_width_mm();
+    ret =gdk_screen_width_mm();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10049,7 +10049,7 @@ int _wrap_gdk_screen_height_mm(Stack stack, int rhs, int opt, int lhs) /* screen
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_screen_height_mm();
+    ret =gdk_screen_height_mm();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10057,23 +10057,23 @@ ret = gdk_screen_height_mm();
 int _wrap_gdk_flush(Stack stack, int rhs, int opt, int lhs) /* flush */
 {
   CheckRhs(0,0);
-gdk_flush();
+    gdk_flush();
   return 0;
 }
 
 int _wrap_gdk_beep(Stack stack, int rhs, int opt, int lhs) /* beep */
 {
   CheckRhs(0,0);
-gdk_beep();
+    gdk_beep();
   return 0;
 }
 
 int _wrap_gdk_set_double_click_time(Stack stack, int rhs, int opt, int lhs) /* set_double_click_time */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int msec;
   if ( GetArgs(stack,rhs,opt,T,&msec) == FAIL) return RET_BUG;
-gdk_set_double_click_time(msec);
+    gdk_set_double_click_time(msec);
   return 0;
 }
 
@@ -10097,7 +10097,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs) /* threads_leave */
 {
   CheckRhs(0,0);
-gdk_threads_leave();
+    gdk_threads_leave();
   return 0;
 }
 
@@ -10187,16 +10187,16 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
 {
   CheckRhs(0,0);
-gdk_pre_parse_libgtk_only();
+    gdk_pre_parse_libgtk_only();
   return 0;
 }
 
 int _wrap_gdk_exit(Stack stack, int rhs, int opt, int lhs) /* exit */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int error_code;
   if ( GetArgs(stack,rhs,opt,T,&error_code) == FAIL) return RET_BUG;
-gdk_exit(error_code);
+    gdk_exit(error_code);
   return 0;
 }
 
@@ -10204,7 +10204,7 @@ int _wrap_gdk_set_locale(Stack stack, int rhs, int opt, int lhs) /* set_locale *
 {
   gchar *ret;
   CheckRhs(0,0);
-ret = gdk_set_locale();
+    ret =gdk_set_locale();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -10213,7 +10213,7 @@ ret = gdk_set_locale();
 int _wrap_gdk_error_trap_push(Stack stack, int rhs, int opt, int lhs) /* error_trap_push */
 {
   CheckRhs(0,0);
-gdk_error_trap_push();
+    gdk_error_trap_push();
   return 0;
 }
 
@@ -10221,17 +10221,17 @@ int _wrap_gdk_error_trap_pop(Stack stack, int rhs, int opt, int lhs) /* error_tr
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_error_trap_pop();
+    ret =gdk_error_trap_pop();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_set_use_xshm(Stack stack, int rhs, int opt, int lhs) /* set_use_xshm */
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int use_xshm;
   if ( GetArgs(stack,rhs,opt,T,&use_xshm) == FAIL) return RET_BUG;
-gdk_set_use_xshm(use_xshm);
+    gdk_set_use_xshm(use_xshm);
   return 0;
 }
 
@@ -10239,17 +10239,17 @@ int _wrap_gdk_get_use_xshm(Stack stack, int rhs, int opt, int lhs) /* get_use_xs
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_get_use_xshm();
+    ret =gdk_get_use_xshm();
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_input_remove(Stack stack, int rhs, int opt, int lhs) /* input_remove */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int tag;
   if ( GetArgs(stack,rhs,opt,T,&tag) == FAIL) return RET_BUG;
-gdk_input_remove(tag);
+    gdk_input_remove(tag);
   return 0;
 }
 
@@ -10283,7 +10283,7 @@ int _wrap_gdk_colormap_get_system(Stack stack, int rhs, int opt, int lhs) /* col
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_colormap_get_system();
+    ret =gdk_colormap_get_system();
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10294,7 +10294,7 @@ int _wrap_gdk_colormap_get_system_size(Stack stack, int rhs, int opt, int lhs) /
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_colormap_get_system_size();
+    ret =gdk_colormap_get_system_size();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10321,7 +10321,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs) /* gdk_draw_layout_with_colors */
 {
-  int_types T[] = {obj_check, obj_check, s_int, s_int, obj_check, obj, obj,t_end};
+  int_types T[] = {obj_check,obj_check,s_int,s_int,obj_check,obj,obj, t_end};
   NspGObject *drawable, *gc, *layout;
   int x, y;
   GdkColor *foreground = NULL, *background = NULL;
@@ -10339,7 +10339,7 @@ int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs) /*
       Scierror( "background should be a GdkColor");
       return RET_BUG;
   }
-gdk_draw_layout_with_colors(GDK_DRAWABLE(drawable->obj), GDK_GC(gc->obj), x, y, PANGO_LAYOUT(layout->obj), foreground, background);
+    gdk_draw_layout_with_colors(GDK_DRAWABLE(drawable->obj),GDK_GC(gc->obj),x,y,PANGO_LAYOUT(layout->obj),foreground,background);
   return 0;
 }
 
@@ -10347,7 +10347,7 @@ int _wrap_gdk_events_pending(Stack stack, int rhs, int opt, int lhs) /* events_p
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_events_pending();
+    ret =gdk_events_pending();
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10357,7 +10357,7 @@ int _wrap_gdk_event_get(Stack stack, int rhs, int opt, int lhs) /* event_get */
   GdkEvent *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_event_get();
+    ret =gdk_event_get();
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -10370,7 +10370,7 @@ int _wrap_gdk_event_peek(Stack stack, int rhs, int opt, int lhs) /* event_peek *
   GdkEvent *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_event_peek();
+    ret =gdk_event_peek();
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -10380,12 +10380,12 @@ ret = gdk_event_peek();
 
 int _wrap_gdk_event_get_graphics_expose(Stack stack, int rhs, int opt, int lhs) /* event_get_graphics_expose */
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *window;
   GdkEvent *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window) == FAIL) return RET_BUG;
-ret = gdk_event_get_graphics_expose(GDK_WINDOW(window->obj));
+    ret =gdk_event_get_graphics_expose(GDK_WINDOW(window->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_EVENT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkevent))== NULL)
     return RET_BUG;
@@ -10395,10 +10395,10 @@ ret = gdk_event_get_graphics_expose(GDK_WINDOW(window->obj));
 
 int _wrap_gdk_set_show_events(Stack stack, int rhs, int opt, int lhs) /* set_show_events */
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int show_events;
   if ( GetArgs(stack,rhs,opt,T,&show_events) == FAIL) return RET_BUG;
-gdk_set_show_events(show_events);
+    gdk_set_show_events(show_events);
   return 0;
 }
 
@@ -10406,7 +10406,7 @@ int _wrap_gdk_get_show_events(Stack stack, int rhs, int opt, int lhs) /* get_sho
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_get_show_events();
+    ret =gdk_get_show_events();
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -10432,7 +10432,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs) /* font_from_description */
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoFontDescription *font_desc = NULL;
   NspObject *nsp_font_desc, *nsp_ret;
   GdkFont *ret;
@@ -10443,7 +10443,7 @@ int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs) /* f
       Scierror( "font_desc should be a PangoFontDescription");
       return RET_BUG;
   }
-ret = gdk_font_from_description(font_desc);
+    ret =gdk_font_from_description(font_desc);
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkfont))== NULL)
     return RET_BUG;
@@ -10456,7 +10456,7 @@ int _wrap_gdk_devices_list(Stack stack, int rhs, int opt, int lhs) /* devices_li
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-ret = gdk_devices_list();
+    ret =gdk_devices_list();
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -10466,7 +10466,7 @@ int _wrap_gdk_device_get_core_pointer(Stack stack, int rhs, int opt, int lhs) /*
   GdkDevice *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_device_get_core_pointer();
+    ret =gdk_device_get_core_pointer();
   nsp_type_gdkdevice = new_type_gdkdevice(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdevice))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10478,7 +10478,7 @@ int _wrap_gdk_keymap_get_default(Stack stack, int rhs, int opt, int lhs) /* keym
   GdkKeymap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_keymap_get_default();
+    ret =gdk_keymap_get_default();
   nsp_type_gdkkeymap = new_type_gdkkeymap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkkeymap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10487,91 +10487,91 @@ ret = gdk_keymap_get_default();
 
 int _wrap_gdk_keyval_name(Stack stack, int rhs, int opt, int lhs) /* keyval_name */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval;
   const gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_name(keyval);
+    ret =gdk_keyval_name(keyval);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_from_name(Stack stack, int rhs, int opt, int lhs) /* keyval_from_name */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *keyval_name;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval_name) == FAIL) return RET_BUG;
-ret = gdk_keyval_from_name(keyval_name);
+    ret =gdk_keyval_from_name(keyval_name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_to_upper(Stack stack, int rhs, int opt, int lhs) /* keyval_to_upper */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval, ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_to_upper(keyval);
+    ret =gdk_keyval_to_upper(keyval);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_to_lower(Stack stack, int rhs, int opt, int lhs) /* keyval_to_lower */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval, ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_to_lower(keyval);
+    ret =gdk_keyval_to_lower(keyval);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_is_upper(Stack stack, int rhs, int opt, int lhs) /* keyval_is_upper */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval, ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_is_upper(keyval);
+    ret =gdk_keyval_is_upper(keyval);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_is_lower(Stack stack, int rhs, int opt, int lhs) /* keyval_is_lower */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval, ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_is_lower(keyval);
+    ret =gdk_keyval_is_lower(keyval);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_keyval_to_unicode(Stack stack, int rhs, int opt, int lhs) /* keyval_to_unicode */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int keyval;
   gulong ret;
   if ( GetArgs(stack,rhs,opt,T,&keyval) == FAIL) return RET_BUG;
-ret = gdk_keyval_to_unicode(keyval);
+    ret =gdk_keyval_to_unicode(keyval);
  if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_unicode_to_keyval(Stack stack, int rhs, int opt, int lhs) /* unicode_to_keyval */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong wc;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&wc) == FAIL) return RET_BUG;
-ret = gdk_unicode_to_keyval(wc);
+    ret =gdk_unicode_to_keyval(wc);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /* pixmap_create_from_data */
 {
-  int_types T[] = {obj_check, string, s_int, s_int, s_int, obj, obj,t_end};
+  int_types T[] = {obj_check,string,s_int,s_int,s_int,obj,obj, t_end};
   NspGObject *drawable;
   char *data;
   int width, height, depth;
@@ -10591,7 +10591,7 @@ int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /*
       Scierror( "bg should be a GdkColor");
       return RET_BUG;
   }
-ret = gdk_pixmap_create_from_data(GDK_DRAWABLE(drawable->obj), data, width, height, depth, fg, bg);
+    ret =gdk_pixmap_create_from_data(GDK_DRAWABLE(drawable->obj),data,width,height,depth,fg,bg);
   nsp_type_gdkpixmap = new_type_gdkpixmap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10702,12 +10702,12 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /* bitmap_create_from_data */
 {
-  int_types T[] = {new_opts,t_end};
+  int_types T[] = {new_opts, t_end};
   nsp_option opts[] = {
-	{"drawable",obj,NULLOBJ,-1}, 
-	{"data",string,NULLOBJ,-1}, 
-	{"width",s_int,NULLOBJ,-1}, 
-	{"height",s_int,NULLOBJ,-1}, 
+	{"drawable",obj,NULLOBJ,-1},
+	{"data",string,NULLOBJ,-1},
+	{"width",s_int,NULLOBJ,-1},
+	{"height",s_int,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GdkDrawable *drawable = NULL;
   NspGObject *nsp_drawable = NULL;
@@ -10724,7 +10724,7 @@ int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /*
          return RET_BUG;
     }
   }
-ret = gdk_bitmap_create_from_data(drawable, data, width, height);
+    ret =gdk_bitmap_create_from_data(drawable,data,width,height);
   nsp_type_gdkbitmap = new_type_gdkbitmap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkbitmap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10771,16 +10771,16 @@ int _wrap_gdk_pixmap_lookup(Stack stack, int rhs, int opt, int lhs) /* gdk_pixma
 
 int _wrap_gdk_atom_intern(Stack stack, int rhs, int opt, int lhs) /* atom_intern */
 {
-  int_types T[] = {string,new_opts,t_end};
+  int_types T[] = {string,new_opts, t_end};
   nsp_option opts[] = {
-	{"only_if_exists",s_bool,NULLOBJ,-1}, 
+	{"only_if_exists",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *atom_name;
   int only_if_exists = FALSE;
   GdkAtom ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&atom_name, opts, &only_if_exists) == FAIL) return RET_BUG;
-ret = gdk_atom_intern(atom_name, only_if_exists);
+    ret =gdk_atom_intern(atom_name,only_if_exists);
   if (( nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL))== NULL);
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10789,31 +10789,31 @@ ret = gdk_atom_intern(atom_name, only_if_exists);
 
 int _wrap_gdk_rgb_xpixel_from_rgb(Stack stack, int rhs, int opt, int lhs) /* rgb_xpixel_from_rgb */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   gulong rgb, ret;
   if ( GetArgs(stack,rhs,opt,T,&rgb) == FAIL) return RET_BUG;
-ret = gdk_rgb_xpixel_from_rgb(rgb);
+    ret =gdk_rgb_xpixel_from_rgb(rgb);
  if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_rgb_gc_set_foreground(Stack stack, int rhs, int opt, int lhs) /* rgb_gc_set_foreground */
 {
-  int_types T[] = {obj_check, s_int,t_end};
+  int_types T[] = {obj_check,s_int, t_end};
   NspGObject *gc;
   gulong rgb;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &rgb) == FAIL) return RET_BUG;
-gdk_rgb_gc_set_foreground(GDK_GC(gc->obj), rgb);
+    gdk_rgb_gc_set_foreground(GDK_GC(gc->obj),rgb);
   return 0;
 }
 
 int _wrap_gdk_rgb_gc_set_background(Stack stack, int rhs, int opt, int lhs) /* rgb_gc_set_background */
 {
-  int_types T[] = {obj_check, s_int,t_end};
+  int_types T[] = {obj_check,s_int, t_end};
   NspGObject *gc;
   gulong rgb;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &rgb) == FAIL) return RET_BUG;
-gdk_rgb_gc_set_background(GDK_GC(gc->obj), rgb);
+    gdk_rgb_gc_set_background(GDK_GC(gc->obj),rgb);
   return 0;
 }
 
@@ -10821,35 +10821,35 @@ int _wrap_gdk_rgb_ditherable(Stack stack, int rhs, int opt, int lhs) /* rgb_dith
 {
   int ret;
   CheckRhs(0,0);
-ret = gdk_rgb_ditherable();
+    ret =gdk_rgb_ditherable();
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 int _wrap_gdk_rgb_set_verbose(Stack stack, int rhs, int opt, int lhs) /* rgb_set_verbose */
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int verbose;
   if ( GetArgs(stack,rhs,opt,T,&verbose) == FAIL) return RET_BUG;
-gdk_rgb_set_verbose(verbose);
+    gdk_rgb_set_verbose(verbose);
   return 0;
 }
 
 int _wrap_gdk_rgb_set_install(Stack stack, int rhs, int opt, int lhs) /* rgb_set_install */
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int install;
   if ( GetArgs(stack,rhs,opt,T,&install) == FAIL) return RET_BUG;
-gdk_rgb_set_install(install);
+    gdk_rgb_set_install(install);
   return 0;
 }
 
 int _wrap_gdk_rgb_set_min_colors(Stack stack, int rhs, int opt, int lhs) /* rgb_set_min_colors */
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int min_colors;
   if ( GetArgs(stack,rhs,opt,T,&min_colors) == FAIL) return RET_BUG;
-gdk_rgb_set_min_colors(min_colors);
+    gdk_rgb_set_min_colors(min_colors);
   return 0;
 }
 
@@ -10858,7 +10858,7 @@ int _wrap_gdk_rgb_get_cmap(Stack stack, int rhs, int opt, int lhs) /* rgb_get_cm
   GdkColormap *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_rgb_get_cmap();
+    ret =gdk_rgb_get_cmap();
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10870,7 +10870,7 @@ int _wrap_gdk_rgb_get_visual(Stack stack, int rhs, int opt, int lhs) /* rgb_get_
   GdkVisual *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_rgb_get_visual();
+    ret =gdk_rgb_get_visual();
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10879,13 +10879,13 @@ ret = gdk_rgb_get_visual();
 
 int _wrap_gdk_selection_owner_get(Stack stack, int rhs, int opt, int lhs) /* selection_owner_get */
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   GdkAtom selection;
   NspObject *nsp_selection = NULL, *nsp_ret;
   GdkWindow *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_selection) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
-ret = gdk_selection_owner_get(selection);
+    ret =gdk_selection_owner_get(selection);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10916,19 +10916,19 @@ int _wrap_gdk_list_visuals(Stack stack, int rhs, int opt, int lhs) /* list_visua
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-ret = gdk_list_visuals();
+    ret =gdk_list_visuals();
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
 
 int _wrap_gdk_window_at_pointer(Stack stack, int rhs, int opt, int lhs) /* window_at_pointer */
 {
-  int_types T[] = {s_int, s_int,t_end};
+  int_types T[] = {s_int,s_int, t_end};
   int win_x, win_y;
   GdkWindow *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&win_x, &win_y) == FAIL) return RET_BUG;
-ret = gdk_window_at_pointer(&win_x, &win_y);
+    ret =gdk_window_at_pointer(&win_x,&win_y);
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -10977,10 +10977,10 @@ int _wrap_gdk_window_lookup(Stack stack, int rhs, int opt, int lhs) /* window_lo
 
 int _wrap_gdk_set_sm_client_id(Stack stack, int rhs, int opt, int lhs) /* set_sm_client_id */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *sm_client_id;
   if ( GetArgs(stack,rhs,opt,T,&sm_client_id) == FAIL) return RET_BUG;
-gdk_set_sm_client_id(sm_client_id);
+    gdk_set_sm_client_id(sm_client_id);
   return 0;
 }
 
@@ -10989,7 +10989,7 @@ int _wrap_gdk_window_get_toplevels(Stack stack, int rhs, int opt, int lhs) /* wi
   GList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-ret = gdk_window_get_toplevels();
+    ret =gdk_window_get_toplevels();
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -10997,16 +10997,16 @@ ret = gdk_window_get_toplevels();
 int _wrap_gdk_window_process_all_updates(Stack stack, int rhs, int opt, int lhs) /* window_process_all_updates */
 {
   CheckRhs(0,0);
-gdk_window_process_all_updates();
+    gdk_window_process_all_updates();
   return 0;
 }
 
 int _wrap_gdk_window_set_debug_updates(Stack stack, int rhs, int opt, int lhs) /* gdk_window_set_debug_updates */
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int setting;
   if ( GetArgs(stack,rhs,opt,T,&setting) == FAIL) return RET_BUG;
-gdk_window_set_debug_updates(setting);
+    gdk_window_set_debug_updates(setting);
   return 0;
 }
 
@@ -11015,7 +11015,7 @@ int _wrap_gdk_get_default_root_window(Stack stack, int rhs, int opt, int lhs) /*
   GdkWindow *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_get_default_root_window();
+    ret =gdk_get_default_root_window();
   nsp_type_gdkwindow = new_type_gdkwindow(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkwindow))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -11024,19 +11024,19 @@ ret = gdk_get_default_root_window();
 
 int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs) /* pixbuf_new_from_file */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *filename;
   GError *error = NULL;
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
-ret = gdk_pixbuf_new_from_file(filename, &error);
+    ret =gdk_pixbuf_new_from_file(filename,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -11069,20 +11069,20 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs) /* pixbuf_new_from_inline */
 {
-  int_types T[] = {s_int, string, s_bool,t_end};
+  int_types T[] = {s_int,string,s_bool, t_end};
   int data_length, copy_pixels;
   guchar *data;
   GError *error = NULL;
   GdkPixbuf *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&data_length, &data, &copy_pixels) == FAIL) return RET_BUG;
-ret = gdk_pixbuf_new_from_inline(data_length, data, copy_pixels, &error);
+    ret =gdk_pixbuf_new_from_inline(data_length,data,copy_pixels,&error);
   if ( error != NULL ) {
     Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) return RET_BUG;
   g_object_unref(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -11093,7 +11093,7 @@ int _wrap_gdk_pixbuf_loader_new(Stack stack, int rhs, int opt, int lhs) /* gdk_p
   GdkPixbufLoader *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_pixbuf_loader_new();
+    ret =gdk_pixbuf_loader_new();
   nsp_type_gdkpixbufloader = new_type_gdkpixbufloader(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkpixbufloader))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -11105,7 +11105,7 @@ int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_
   GdkScreen *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_screen_get_default();
+    ret =gdk_screen_get_default();
   nsp_type_gdkscreen = new_type_gdkscreen(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkscreen))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -11143,7 +11143,7 @@ int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk
   GdkDisplay *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_display_get_default();
+    ret =gdk_display_get_default();
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -11155,7 +11155,7 @@ int _wrap_gdk_display_open_default_libgtk_only(Stack stack, int rhs, int opt, in
   GdkDisplay *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-ret = gdk_display_open_default_libgtk_only();
+    ret =gdk_display_open_default_libgtk_only();
   nsp_type_gdkdisplay = new_type_gdkdisplay(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkdisplay))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -11168,103 +11168,103 @@ ret = gdk_display_open_default_libgtk_only();
  *----------------------------------------------------*/
 
 static OpTab gdk_func[]={
-  {"gdkfont_new", _wrap_gdkfont_new},
-  {"gdkcolor_new", _wrap_gdkcolor_new},
-  {"gdkcursor_new", _wrap_gdkcursor_new},
-  {"gdkrectangle_new", _wrap_gdkrectangle_new},
-  {"gdkcolormap_new", _wrap_gdkcolormap_new},
-  {"gdkdragcontext_new", _wrap_gdkdragcontext_new},
-  {"gdkpixmap_new", _wrap_gdkpixmap_new},
-  {"gdkgc_new", _wrap_gdkgc_new},
-  {"gdkimage_new", _wrap_gdkimage_new},
-  {"gdkpixbufanimation_new", _wrap_gdkpixbufanimation_new},
-  {"gdkpixbufloader_new", _wrap_gdkpixbufloader_new},
-  {"gdkvisual_new", _wrap_gdkvisual_new},
-  {"gdk_notify_startup_complete", _wrap_gdk_notify_startup_complete},
-  {"gdk_get_display_arg_name", _wrap_gdk_get_display_arg_name},
-  {"gdk_get_program_class", _wrap_gdk_get_program_class},
-  {"gdk_set_program_class", _wrap_gdk_set_program_class},
-  {"gdk_get_display", _wrap_gdk_get_display},
-  {"gdk_pointer_grab", _wrap_gdk_pointer_grab},
-  {"gdk_pointer_ungrab", _wrap_gdk_pointer_ungrab},
-  {"gdk_keyboard_grab", _wrap_gdk_keyboard_grab},
-  {"gdk_pointer_is_grabbed", _wrap_gdk_pointer_is_grabbed},
-  {"gdk_screen_width", _wrap_gdk_screen_width},
-  {"gdk_screen_height", _wrap_gdk_screen_height},
-  {"gdk_screen_width_mm", _wrap_gdk_screen_width_mm},
-  {"gdk_screen_height_mm", _wrap_gdk_screen_height_mm},
-  {"gdk_flush", _wrap_gdk_flush},
-  {"gdk_beep", _wrap_gdk_beep},
-  {"gdk_set_double_click_time", _wrap_gdk_set_double_click_time},
-  {"gdk_threads_enter", _wrap_gdk_threads_enter},
-  {"gdk_threads_leave", _wrap_gdk_threads_leave},
-  {"gdk_threads_init", _wrap_gdk_threads_init},
-  {"gdk_pre_parse_libgtk_only", _wrap_gdk_pre_parse_libgtk_only},
-  {"gdk_exit", _wrap_gdk_exit},
-  {"gdk_set_locale", _wrap_gdk_set_locale},
-  {"gdk_error_trap_push", _wrap_gdk_error_trap_push},
-  {"gdk_error_trap_pop", _wrap_gdk_error_trap_pop},
-  {"gdk_set_use_xshm", _wrap_gdk_set_use_xshm},
-  {"gdk_get_use_xshm", _wrap_gdk_get_use_xshm},
-  {"gdk_input_remove", _wrap_gdk_input_remove},
-  {"gdk_event_send_client_message_for_display", _wrap_gdk_event_send_client_message_for_display},
-  {"gdk_colormap_get_system", _wrap_gdk_colormap_get_system},
-  {"gdk_colormap_get_system_size", _wrap_gdk_colormap_get_system_size},
-  {"gdk_color_parse", _wrap_gdk_color_parse},
-  {"gdk_draw_layout_with_colors", _wrap_gdk_draw_layout_with_colors},
-  {"gdk_events_pending", _wrap_gdk_events_pending},
-  {"gdk_event_get", _wrap_gdk_event_get},
-  {"gdk_event_peek", _wrap_gdk_event_peek},
-  {"gdk_event_get_graphics_expose", _wrap_gdk_event_get_graphics_expose},
-  {"gdk_set_show_events", _wrap_gdk_set_show_events},
-  {"gdk_get_show_events", _wrap_gdk_get_show_events},
-  {"gdk_fontset_load", _wrap_gdk_fontset_load},
-  {"gdk_font_from_description", _wrap_gdk_font_from_description},
-  {"gdk_devices_list", _wrap_gdk_devices_list},
-  {"gdk_device_get_core_pointer", _wrap_gdk_device_get_core_pointer},
-  {"gdk_keymap_get_default", _wrap_gdk_keymap_get_default},
-  {"gdk_keyval_name", _wrap_gdk_keyval_name},
-  {"gdk_keyval_from_name", _wrap_gdk_keyval_from_name},
-  {"gdk_keyval_to_upper", _wrap_gdk_keyval_to_upper},
-  {"gdk_keyval_to_lower", _wrap_gdk_keyval_to_lower},
-  {"gdk_keyval_is_upper", _wrap_gdk_keyval_is_upper},
-  {"gdk_keyval_is_lower", _wrap_gdk_keyval_is_lower},
-  {"gdk_keyval_to_unicode", _wrap_gdk_keyval_to_unicode},
-  {"gdk_unicode_to_keyval", _wrap_gdk_unicode_to_keyval},
-  {"gdk_pixmap_create_from_data", _wrap_gdk_pixmap_create_from_data},
-  {"gdk_pixmap_create_from_xpm", _wrap_gdk_pixmap_create_from_xpm},
-  {"gdk_bitmap_create_from_data", _wrap_gdk_bitmap_create_from_data},
-  {"gdk_pixmap_foreign_new", _wrap_gdk_pixmap_foreign_new},
-  {"gdk_pixmap_lookup", _wrap_gdk_pixmap_lookup},
-  {"gdk_atom_intern", _wrap_gdk_atom_intern},
-  {"gdk_rgb_xpixel_from_rgb", _wrap_gdk_rgb_xpixel_from_rgb},
-  {"gdk_rgb_gc_set_foreground", _wrap_gdk_rgb_gc_set_foreground},
-  {"gdk_rgb_gc_set_background", _wrap_gdk_rgb_gc_set_background},
-  {"gdk_rgb_ditherable", _wrap_gdk_rgb_ditherable},
-  {"gdk_rgb_set_verbose", _wrap_gdk_rgb_set_verbose},
-  {"gdk_rgb_set_install", _wrap_gdk_rgb_set_install},
-  {"gdk_rgb_set_min_colors", _wrap_gdk_rgb_set_min_colors},
-  {"gdk_rgb_get_cmap", _wrap_gdk_rgb_get_cmap},
-  {"gdk_rgb_get_visual", _wrap_gdk_rgb_get_visual},
-  {"gdk_selection_owner_get", _wrap_gdk_selection_owner_get},
-  {"gdk_selection_send_notify", _wrap_gdk_selection_send_notify},
-  {"gdk_list_visuals", _wrap_gdk_list_visuals},
-  {"gdk_window_at_pointer", _wrap_gdk_window_at_pointer},
-  {"gdk_window_foreign_new", _wrap_gdk_window_foreign_new},
-  {"gdk_window_lookup", _wrap_gdk_window_lookup},
-  {"gdk_set_sm_client_id", _wrap_gdk_set_sm_client_id},
-  {"gdk_window_get_toplevels", _wrap_gdk_window_get_toplevels},
-  {"gdk_window_process_all_updates", _wrap_gdk_window_process_all_updates},
-  {"gdk_window_set_debug_updates", _wrap_gdk_window_set_debug_updates},
-  {"gdk_get_default_root_window", _wrap_gdk_get_default_root_window},
-  {"gdk_pixbuf_new_from_file", _wrap_gdk_pixbuf_new_from_file},
-  {"gdk_pixbuf_new_from_xpm_data", _wrap_gdk_pixbuf_new_from_xpm_data},
-  {"gdk_pixbuf_new_from_inline", _wrap_gdk_pixbuf_new_from_inline},
-  {"gdk_pixbuf_loader_new", _wrap_gdk_pixbuf_loader_new},
-  {"gdk_screen_get_default", _wrap_gdk_screen_get_default},
-  {"gdk_display_open", _wrap_gdk_display_open},
-  {"gdk_display_get_default", _wrap_gdk_display_get_default},
-  {"gdk_display_open_default_libgtk_only", _wrap_gdk_display_open_default_libgtk_only},
+  { "gdkfont_new", _wrap_gdkfont_new},
+  { "gdkcolor_new", _wrap_gdkcolor_new},
+  { "gdkcursor_new", _wrap_gdkcursor_new},
+  { "gdkrectangle_new", _wrap_gdkrectangle_new},
+  { "gdkcolormap_new", _wrap_gdkcolormap_new},
+  { "gdkdragcontext_new", _wrap_gdkdragcontext_new},
+  { "gdkpixmap_new", _wrap_gdkpixmap_new},
+  { "gdkgc_new", _wrap_gdkgc_new},
+  { "gdkimage_new", _wrap_gdkimage_new},
+  { "gdkpixbufanimation_new", _wrap_gdkpixbufanimation_new},
+  { "gdkpixbufloader_new", _wrap_gdkpixbufloader_new},
+  { "gdkvisual_new", _wrap_gdkvisual_new},
+  { "gdk_notify_startup_complete", _wrap_gdk_notify_startup_complete},
+  { "gdk_get_display_arg_name", _wrap_gdk_get_display_arg_name},
+  { "gdk_get_program_class", _wrap_gdk_get_program_class},
+  { "gdk_set_program_class", _wrap_gdk_set_program_class},
+  { "gdk_get_display", _wrap_gdk_get_display},
+  { "gdk_pointer_grab", _wrap_gdk_pointer_grab},
+  { "gdk_pointer_ungrab", _wrap_gdk_pointer_ungrab},
+  { "gdk_keyboard_grab", _wrap_gdk_keyboard_grab},
+  { "gdk_pointer_is_grabbed", _wrap_gdk_pointer_is_grabbed},
+  { "gdk_screen_width", _wrap_gdk_screen_width},
+  { "gdk_screen_height", _wrap_gdk_screen_height},
+  { "gdk_screen_width_mm", _wrap_gdk_screen_width_mm},
+  { "gdk_screen_height_mm", _wrap_gdk_screen_height_mm},
+  { "gdk_flush", _wrap_gdk_flush},
+  { "gdk_beep", _wrap_gdk_beep},
+  { "gdk_set_double_click_time", _wrap_gdk_set_double_click_time},
+  { "gdk_threads_enter", _wrap_gdk_threads_enter},
+  { "gdk_threads_leave", _wrap_gdk_threads_leave},
+  { "gdk_threads_init", _wrap_gdk_threads_init},
+  { "gdk_pre_parse_libgtk_only", _wrap_gdk_pre_parse_libgtk_only},
+  { "gdk_exit", _wrap_gdk_exit},
+  { "gdk_set_locale", _wrap_gdk_set_locale},
+  { "gdk_error_trap_push", _wrap_gdk_error_trap_push},
+  { "gdk_error_trap_pop", _wrap_gdk_error_trap_pop},
+  { "gdk_set_use_xshm", _wrap_gdk_set_use_xshm},
+  { "gdk_get_use_xshm", _wrap_gdk_get_use_xshm},
+  { "gdk_input_remove", _wrap_gdk_input_remove},
+  { "gdk_event_send_client_message_for_display", _wrap_gdk_event_send_client_message_for_display},
+  { "gdk_colormap_get_system", _wrap_gdk_colormap_get_system},
+  { "gdk_colormap_get_system_size", _wrap_gdk_colormap_get_system_size},
+  { "gdk_color_parse", _wrap_gdk_color_parse},
+  { "gdk_draw_layout_with_colors", _wrap_gdk_draw_layout_with_colors},
+  { "gdk_events_pending", _wrap_gdk_events_pending},
+  { "gdk_event_get", _wrap_gdk_event_get},
+  { "gdk_event_peek", _wrap_gdk_event_peek},
+  { "gdk_event_get_graphics_expose", _wrap_gdk_event_get_graphics_expose},
+  { "gdk_set_show_events", _wrap_gdk_set_show_events},
+  { "gdk_get_show_events", _wrap_gdk_get_show_events},
+  { "gdk_fontset_load", _wrap_gdk_fontset_load},
+  { "gdk_font_from_description", _wrap_gdk_font_from_description},
+  { "gdk_devices_list", _wrap_gdk_devices_list},
+  { "gdk_device_get_core_pointer", _wrap_gdk_device_get_core_pointer},
+  { "gdk_keymap_get_default", _wrap_gdk_keymap_get_default},
+  { "gdk_keyval_name", _wrap_gdk_keyval_name},
+  { "gdk_keyval_from_name", _wrap_gdk_keyval_from_name},
+  { "gdk_keyval_to_upper", _wrap_gdk_keyval_to_upper},
+  { "gdk_keyval_to_lower", _wrap_gdk_keyval_to_lower},
+  { "gdk_keyval_is_upper", _wrap_gdk_keyval_is_upper},
+  { "gdk_keyval_is_lower", _wrap_gdk_keyval_is_lower},
+  { "gdk_keyval_to_unicode", _wrap_gdk_keyval_to_unicode},
+  { "gdk_unicode_to_keyval", _wrap_gdk_unicode_to_keyval},
+  { "gdk_pixmap_create_from_data", _wrap_gdk_pixmap_create_from_data},
+  { "gdk_pixmap_create_from_xpm", _wrap_gdk_pixmap_create_from_xpm},
+  { "gdk_bitmap_create_from_data", _wrap_gdk_bitmap_create_from_data},
+  { "gdk_pixmap_foreign_new", _wrap_gdk_pixmap_foreign_new},
+  { "gdk_pixmap_lookup", _wrap_gdk_pixmap_lookup},
+  { "gdk_atom_intern", _wrap_gdk_atom_intern},
+  { "gdk_rgb_xpixel_from_rgb", _wrap_gdk_rgb_xpixel_from_rgb},
+  { "gdk_rgb_gc_set_foreground", _wrap_gdk_rgb_gc_set_foreground},
+  { "gdk_rgb_gc_set_background", _wrap_gdk_rgb_gc_set_background},
+  { "gdk_rgb_ditherable", _wrap_gdk_rgb_ditherable},
+  { "gdk_rgb_set_verbose", _wrap_gdk_rgb_set_verbose},
+  { "gdk_rgb_set_install", _wrap_gdk_rgb_set_install},
+  { "gdk_rgb_set_min_colors", _wrap_gdk_rgb_set_min_colors},
+  { "gdk_rgb_get_cmap", _wrap_gdk_rgb_get_cmap},
+  { "gdk_rgb_get_visual", _wrap_gdk_rgb_get_visual},
+  { "gdk_selection_owner_get", _wrap_gdk_selection_owner_get},
+  { "gdk_selection_send_notify", _wrap_gdk_selection_send_notify},
+  { "gdk_list_visuals", _wrap_gdk_list_visuals},
+  { "gdk_window_at_pointer", _wrap_gdk_window_at_pointer},
+  { "gdk_window_foreign_new", _wrap_gdk_window_foreign_new},
+  { "gdk_window_lookup", _wrap_gdk_window_lookup},
+  { "gdk_set_sm_client_id", _wrap_gdk_set_sm_client_id},
+  { "gdk_window_get_toplevels", _wrap_gdk_window_get_toplevels},
+  { "gdk_window_process_all_updates", _wrap_gdk_window_process_all_updates},
+  { "gdk_window_set_debug_updates", _wrap_gdk_window_set_debug_updates},
+  { "gdk_get_default_root_window", _wrap_gdk_get_default_root_window},
+  { "gdk_pixbuf_new_from_file", _wrap_gdk_pixbuf_new_from_file},
+  { "gdk_pixbuf_new_from_xpm_data", _wrap_gdk_pixbuf_new_from_xpm_data},
+  { "gdk_pixbuf_new_from_inline", _wrap_gdk_pixbuf_new_from_inline},
+  { "gdk_pixbuf_loader_new", _wrap_gdk_pixbuf_loader_new},
+  { "gdk_screen_get_default", _wrap_gdk_screen_get_default},
+  { "gdk_display_open", _wrap_gdk_display_open},
+  { "gdk_display_get_default", _wrap_gdk_display_get_default},
+  { "gdk_display_open_default_libgtk_only", _wrap_gdk_display_open_default_libgtk_only},
   { NULL, NULL}
 };
 
@@ -11283,7 +11283,7 @@ int gdk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void gdk_Interf_Info(int i, char **fname, function (**f))
+void gdk_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = gdk_func[i].name;
   *f = gdk_func[i].fonc;
@@ -11294,57 +11294,57 @@ void gdk_Interf_Info(int i, char **fname, function (**f))
 void
 gdk_add_constants(NspObject *module, const gchar *strip_prefix)
 {
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_COLORSPACE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_CURSOR_TYPE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_DRAG_ACTION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_DRAG_PROTOCOL, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_FILTER_RETURN, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_EVENT_TYPE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_EVENT_MASK, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_VISIBILITY_STATE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_SCROLL_DIRECTION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_NOTIFY_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_CROSSING_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_PROPERTY_STATE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_WINDOW_STATE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_SETTING_ACTION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_FONT_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_CAP_STYLE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_FILL, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_FUNCTION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_JOIN_STYLE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_LINE_STYLE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_SUBWINDOW_MODE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_GC_VALUES_MASK, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_IMAGE_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_EXTENSION_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_INPUT_SOURCE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_INPUT_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_AXIS_USE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_PROP_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_FILL_RULE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_OVERLAP_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_RGB_DITHER, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_BYTE_ORDER, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_MODIFIER_TYPE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_INPUT_CONDITION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_STATUS, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_GRAB_STATUS, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_VISUAL_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_WINDOW_CLASS, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_WINDOW_TYPE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_WINDOW_ATTRIBUTES_TYPE, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_WINDOW_HINTS, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_WINDOW_TYPE_HINT, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_WM_DECORATION, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, GDK_TYPE_WM_FUNCTION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_GRAVITY, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_WINDOW_EDGE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_PIXBUF_ALPHA_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_PIXBUF_ERROR, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_PIXBUF_ROTATION, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_INTERP_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, GDK_TYPE_OWNER_CHANGE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_COLORSPACE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_CURSOR_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_DRAG_ACTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_DRAG_PROTOCOL, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_FILTER_RETURN, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_EVENT_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_EVENT_MASK, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_VISIBILITY_STATE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_SCROLL_DIRECTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_NOTIFY_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_CROSSING_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_PROPERTY_STATE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_WINDOW_STATE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_SETTING_ACTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_FONT_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_CAP_STYLE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_FILL, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_FUNCTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_JOIN_STYLE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_LINE_STYLE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_SUBWINDOW_MODE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_GC_VALUES_MASK, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_IMAGE_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_EXTENSION_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_INPUT_SOURCE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_INPUT_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_AXIS_USE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_PROP_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_FILL_RULE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_OVERLAP_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_RGB_DITHER, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_BYTE_ORDER, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_MODIFIER_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_INPUT_CONDITION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_STATUS, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_GRAB_STATUS, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_VISUAL_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_WINDOW_CLASS, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_WINDOW_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_WINDOW_ATTRIBUTES_TYPE, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_WINDOW_HINTS, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_WINDOW_TYPE_HINT, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_WM_DECORATION, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, GDK_TYPE_WM_FUNCTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_GRAVITY, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_WINDOW_EDGE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_PIXBUF_ALPHA_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_PIXBUF_ERROR, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_PIXBUF_ROTATION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_INTERP_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, GDK_TYPE_OWNER_CHANGE, strip_prefix);
 }
 
 

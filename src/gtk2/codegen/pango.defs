@@ -193,6 +193,8 @@
   )
 )
 
+;; AttrList 
+
 (define-function pango_attr_list_get_type
   (c-name "pango_attr_list_get_type")
   (return-type "GType")
@@ -265,6 +267,8 @@
   (c-name "pango_attr_list_get_iterator")
   (return-type "PangoAttrIterator*")
 )
+
+;; PangoAttrIterator
 
 (define-method range
   (of-object "PangoAttrIterator")
@@ -749,14 +753,14 @@
   )
 )
 
-(define-function pango_font_description_from_string
-  (c-name "pango_font_description_from_string")
-  (is-constructor-of "PangoFontDescription")
-  (return-type "PangoFontDescription*")
-  (parameters
-    '("const-char*" "str")
-  )
-)
+;; (define-function pango_font_description_from_string
+;;   (c-name "pango_font_description_from_string")
+;;   (is-constructor-of "PangoFontDescription")
+;;   (return-type "PangoFontDescription*")
+;;   (parameters
+;;     '("const-char*" "str")
+;;   )
+;; )
 
 (define-method to_string
   (of-object "PangoFontDescription")

@@ -1,10 +1,14 @@
 ;; -*- scheme -*-
 
+(register "pango-types.defs")
+(register "atk-types.defs")
+(register "gdk-types.defs")
+(register "gtk-types.defs")
+
 (include "gtk-extrafuncs.defs")
 (include "gtk-types.defs")
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtk.h
-
 ;; From gtk/gtkaboutdialog.h
 
 (define-function gtk_about_dialog_get_type
@@ -7355,18 +7359,16 @@
    )
   )
 
-(define-function gtk_hscale_new_with_range
-  (c-name "gtk_hscale_new_with_range")
-  (is-constructor-of GtkHScale)
-  (return-type "GtkWidget*")
-  (parameters
-   '("gdouble" "min")
-   '("gdouble" "max")
-   '("gdouble" "step")    
-   )
-  )
-
-
+;; (define-function gtk_hscale_new_with_range
+;;   (c-name "gtk_hscale_new_with_range")
+;;   (is-constructor-of GtkHScale)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("gdouble" "min")
+;;    '("gdouble" "max")
+;;    '("gdouble" "step")    
+;;    )
+;;   )
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkhscrollbar.h
 
@@ -9114,14 +9116,14 @@
   (return-type "GtkWidget*")
   )
 
-(define-function gtk_invisible_new_for_screen
-  (c-name "gtk_invisible_new_for_screen")
-  (is-constructor-of "GtkInvisible")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GdkScreen*" "screen")
-   )
-  )
+;; (define-function gtk_invisible_new_for_screen
+;;   (c-name "gtk_invisible_new_for_screen")
+;;   (is-constructor-of "GtkInvisible")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GdkScreen*" "screen")
+;;    )
+;;   )
 
 (define-method set_screen
   (of-object "GtkInvisible")
@@ -11089,19 +11091,19 @@
   (varargs #t)
   )
 
-(define-function message_dialog_new_with_markup
-  (c-name "gtk_message_dialog_new_with_markup")
-  (is-constructor-of "GtkMessageDialog")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkWindow*" "parent")
-   '("GtkDialogFlags" "flags")
-   '("GtkMessageType" "type")
-   '("GtkButtonsType" "buttons")
-   '("const-gchar*" "message_format")
-   )
-  (varargs #t)
-  )
+;; (define-function message_dialog_new_with_markup
+;;   (c-name "gtk_message_dialog_new_with_markup")
+;;   (is-constructor-of "GtkMessageDialog")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkWindow*" "parent")
+;;    '("GtkDialogFlags" "flags")
+;;    '("GtkMessageType" "type")
+;;    '("GtkButtonsType" "buttons")
+;;    '("const-gchar*" "message_format")
+;;    )
+;;   (varargs #t)
+;;   )
 
 (define-method set_markup
   (of-object "GtkMessageDialog")
@@ -11881,14 +11883,10 @@
   (return-type "GdkNativeWindow")
   )
 
-
-
 (define-virtual embedded
   (of-object "GtkPlug")
   (return-type "none")
   )
-
-
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkpreview.h
 
@@ -12055,6 +12053,16 @@
   (return-type "GtkWidget*")
   )
 
+;; (define-function gtk_progress_bar_new_with_adjustment
+;;   (c-name "gtk_progress_bar_new_with_adjustment")
+;;   (is-constructor-of "GtkProgressBar")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
+;;    )
+;;   (deprecated "")
+;;   )
+
 (define-method pulse
   (of-object "GtkProgressBar")
   (c-name "gtk_progress_bar_pulse")
@@ -12120,15 +12128,7 @@
   (c-name "gtk_progress_bar_get_orientation")
   (return-type "GtkProgressBarOrientation")
   )
-(define-function gtk_progress_bar_new_with_adjustment
-  (c-name "gtk_progress_bar_new_with_adjustment")
-  (is-constructor-of "GtkProgressBar")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
-   )
-  (deprecated "")
-  )
+
 
 (define-method set_bar_style
   (of-object "GtkProgressBar")
@@ -12275,54 +12275,54 @@
    )
   )
 
-(define-function radio_button_new_from_widget
-  (is-constructor-of GtkRadioButton)
-  (c-name "gtk_radio_button_new_from_widget")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkRadioButton*" "group")
-   )
-  )
+;; (define-function radio_button_new_from_widget
+;;   (is-constructor-of GtkRadioButton)
+;;   (c-name "gtk_radio_button_new_from_widget")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkRadioButton*" "group")
+;;    )
+;;   )
 
-(define-function radio_button_new_with_label
-  (c-name "gtk_radio_button_new_with_label")
-  (is-constructor-of GtkRadioButton)
-  (return-type "GtkWidget*")
-  (parameters
-   '("GSList*" "group")
-   '("const-gchar*" "label")
-   )
-  )
+;; (define-function radio_button_new_with_label
+;;   (c-name "gtk_radio_button_new_with_label")
+;;   (is-constructor-of GtkRadioButton)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GSList*" "group")
+;;    '("const-gchar*" "label")
+;;    )
+;;   )
 
-(define-function radio_button_new_with_label_from_widget
-  (is-constructor-of GtkRadioButton)
-  (c-name "gtk_radio_button_new_with_label_from_widget")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkRadioButton" "*group")
-   '("const-gchar*" "label")
-   )
-  )
+;; (define-function radio_button_new_with_label_from_widget
+;;   (is-constructor-of GtkRadioButton)
+;;   (c-name "gtk_radio_button_new_with_label_from_widget")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkRadioButton" "*group")
+;;    '("const-gchar*" "label")
+;;    )
+;;   )
 
-(define-function radio_button_new_with_mnemonic
-  (c-name "gtk_radio_button_new_with_mnemonic")
-  (is-constructor-of GtkRadioButton)
-  (return-type "GtkWidget*")
-  (parameters
-   '("GSList*" "group")
-   '("const-gchar*" "label")
-   )
-  )
+;; (define-function radio_button_new_with_mnemonic
+;;   (c-name "gtk_radio_button_new_with_mnemonic")
+;;   (is-constructor-of GtkRadioButton)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GSList*" "group")
+;;    '("const-gchar*" "label")
+;;    )
+;;   )
 
-(define-function radio_button_new_with_mnemonic_from_widget
-  (is-constructor-of GtkRadioButton)
-  (c-name "gtk_radio_button_new_with_mnemonic_from_widget")
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkRadioButton" "*group")
-   '("const-gchar*" "label")
-   )
-  )
+;; (define-function radio_button_new_with_mnemonic_from_widget
+;;   (is-constructor-of GtkRadioButton)
+;;   (c-name "gtk_radio_button_new_with_mnemonic_from_widget")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkRadioButton" "*group")
+;;    '("const-gchar*" "label")
+;;    )
+;;   )
 
 (define-method get_group
   (of-object "GtkRadioButton")
@@ -12458,33 +12458,33 @@
   (return-type "GtkToolItem*")
   )
 
-(define-function radio_tool_button_new_from_stock
-  (c-name "gtk_radio_tool_button_new_from_stock")
-  (is-constructor-of "GtkRadioToolButton")
-  (return-type "GtkToolItem*")
-  (parameters
-   '("const-gchar*" "stock_id")
-   )
-  )
+;; (define-function radio_tool_button_new_from_stock
+;;   (c-name "gtk_radio_tool_button_new_from_stock")
+;;   (is-constructor-of "GtkRadioToolButton")
+;;   (return-type "GtkToolItem*")
+;;   (parameters
+;;    '("const-gchar*" "stock_id")
+;;    )
+;;   )
 
-(define-function radio_tool_button_new_from_widget
-  (c-name "gtk_radio_tool_button_new_from_widget")
-  (is-constructor-of "GtkRadioToolButton")
-  (return-type "GtkToolItem*")
-  (parameters
-   '("GtkRadioToolButton*" "group")
-   )
-  )
+;; (define-function radio_tool_button_new_from_widget
+;;   (c-name "gtk_radio_tool_button_new_from_widget")
+;;   (is-constructor-of "GtkRadioToolButton")
+;;   (return-type "GtkToolItem*")
+;;   (parameters
+;;    '("GtkRadioToolButton*" "group")
+;;    )
+;;   )
 
-(define-function radio_tool_button_new_with_stock_from_widget
-  (c-name "gtk_radio_tool_button_new_with_stock_from_widget")
-  (is-constructor-of "GtkRadioToolButton")
-  (return-type "GtkToolItem*")
-  (parameters
-   '("GtkRadioToolButton*" "group")
-   '("const-gchar*" "stock_id")
-   )
-  )
+;; (define-function radio_tool_button_new_with_stock_from_widget
+;;   (c-name "gtk_radio_tool_button_new_with_stock_from_widget")
+;;   (is-constructor-of "GtkRadioToolButton")
+;;   (return-type "GtkToolItem*")
+;;   (parameters
+;;    '("GtkRadioToolButton*" "group")
+;;    '("const-gchar*" "stock_id")
+;;    )
+;;   )
 
 (define-method set_group
   (of-object "GtkRadioToolButton")
@@ -13763,16 +13763,16 @@
    )
   )
 
-(define-function gtk_spin_button_new_with_range
-  (c-name "gtk_spin_button_new_with_range")
-  (is-constructor-of GtkSpinButton)
-  (return-type "GtkWidget*")
-  (parameters
-   '("gdouble" "min")
-   '("gdouble" "max")
-   '("gdouble" "step")
-   )
-  )
+;; (define-function gtk_spin_button_new_with_range
+;;   (c-name "gtk_spin_button_new_with_range")
+;;   (is-constructor-of GtkSpinButton)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("gdouble" "min")
+;;    '("gdouble" "max")
+;;    '("gdouble" "step")
+;;    )
+;;   )
 
 (define-method set_adjustment
   (of-object "GtkSpinButton")
@@ -18994,14 +18994,14 @@
   (return-type "GtkTreePath*")
   )
 
-(define-function gtk_tree_path_new_from_string
-  (c-name "gtk_tree_path_new_from_string")
-  (is-constructor-of GtkTreePath)
-  (return-type "GtkTreePath*")
-  (parameters
-   '("gchar*" "path")
-   )
-  )
+;; (define-function gtk_tree_path_new_from_string
+;;   (c-name "gtk_tree_path_new_from_string")
+;;   (is-constructor-of GtkTreePath)
+;;   (return-type "GtkTreePath*")
+;;   (parameters
+;;    '("gchar*" "path")
+;;    )
+;;   )
 
 (define-function gtk_tree_path_new_from_indices
   (c-name "gtk_tree_path_new_from_indices")
@@ -19137,16 +19137,16 @@
    )
   )
 
-(define-function gtk_tree_row_reference_new_proxy
-  (c-name "gtk_tree_row_reference_new_proxy")
-  (is-constructor-of GtkTreeRowReference)
-  (return-type "GtkTreeRowReference*")
-  (parameters
-   '("GObject*" "proxy")
-   '("GtkTreeModel*" "model")
-   '("GtkTreePath*" "path")
-   )
-  )
+;; (define-function gtk_tree_row_reference_new_proxy
+;;   (c-name "gtk_tree_row_reference_new_proxy")
+;;   (is-constructor-of GtkTreeRowReference)
+;;   (return-type "GtkTreeRowReference*")
+;;   (parameters
+;;    '("GObject*" "proxy")
+;;    '("GtkTreeModel*" "model")
+;;    '("GtkTreePath*" "path")
+;;    )
+;;   )
 
 (define-method get_path
   (of-object "GtkTreeRowReference")
@@ -20322,14 +20322,15 @@
   (return-type "GtkWidget*")
   )
 
-(define-function gtk_tree_view_new_with_model
-  (c-name "gtk_tree_view_new_with_model")
-  (is-constructor-of GtkTreeView)
-  (return-type "GtkWidget*")
-  (parameters
-   '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
-   )
-  )
+;; more than one constructor 
+;; (define-function gtk_tree_view_new_with_model
+;;   (c-name "gtk_tree_view_new_with_model")
+;;   (is-constructor-of GtkTreeView)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
+;;    )
+;;   )
 
 (define-method get_model
   (of-object "GtkTreeView")
@@ -21081,16 +21082,16 @@
   (return-type "GtkObject*")
   )
 
-(define-function gtk_tree_view_column_new_with_attributes
-  (c-name "gtk_tree_view_column_new_with_attributes")
-  (is-constructor-of GtkTreeViewColumn)
-  (return-type "GtkObject*")
-  (parameters
-   '("gchar*" "title")
-   '("GtkCellRenderer*" "cell")
-   )
-  (varargs #t)
-  )
+;; (define-function gtk_tree_view_column_new_with_attributes
+;;   (c-name "gtk_tree_view_column_new_with_attributes")
+;;   (is-constructor-of GtkTreeViewColumn)
+;;   (return-type "GtkObject*")
+;;   (parameters
+;;    '("gchar*" "title")
+;;    '("GtkCellRenderer*" "cell")
+;;    )
+;;   (varargs #t)
+;;   )
 
 (define-method pack_start
   (of-object "GtkTreeViewColumn")
@@ -21876,16 +21877,16 @@
    )
   )
 
-(define-function gtk_vscale_new_with_range
-  (c-name "gtk_vscale_new_with_range")
-  (is-constructor-of GtkVScale)
-  (return-type "GtkWidget*")
-  (parameters
-   '("gdouble" "min")
-   '("gdouble" "max")
-   '("gdouble" "step")    
-   )
-  )
+;; (define-function gtk_vscale_new_with_range
+;;   (c-name "gtk_vscale_new_with_range")
+;;   (is-constructor-of GtkVScale)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("gdouble" "min")
+;;    '("gdouble" "max")
+;;    '("gdouble" "step")    
+;;    )
+;;   )
 
 
 

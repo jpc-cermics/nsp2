@@ -1,14 +1,14 @@
 ;; -*- scheme -*-
 ; object definitions ...
 
-(define-object Colormap
+(define-object GdkColormap
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkColormap")
   (gtype-id "GDK_TYPE_COLORMAP")
 )
 
-(define-object Device
+(define-object GdkDevice
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDevice")
@@ -25,21 +25,21 @@
   )
 )
 
-(define-object Display
+(define-object GdkDisplay
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDisplay")
   (gtype-id "GDK_TYPE_DISPLAY")
 )
 
-(define-object DisplayManager
+(define-object GdkDisplayManager
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDisplayManager")
   (gtype-id "GDK_TYPE_DISPLAY_MANAGER")
 )
 
-(define-object DragContext
+(define-object GdkDragContext
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDragContext")
@@ -57,14 +57,14 @@
   )
 )
 
-(define-object Drawable
+(define-object GdkDrawable
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDrawable")
   (gtype-id "GDK_TYPE_DRAWABLE")
 )
 
-(define-object Window
+(define-object GdkWindow
   (in-module "Gdk")
   (parent "GdkDrawable")
   (c-name "GdkWindow")
@@ -72,14 +72,14 @@
 )
 
 ;; to be fixed XX parent should be defined 
-;; (define-object PangoRenderer
+;; (define-object GdkPangoRenderer
 ;;   (in-module "Gdk")
 ;;   (parent "PangoRenderer")
 ;;   (c-name "GdkPangoRenderer")
 ;;   (gtype-id "GDK_TYPE_PANGO_RENDERER")
 ;; )
 
-(define-object Pixmap
+(define-object GdkPixmap
   (in-module "Gdk")
   (parent "GdkDrawable")
   (c-name "GdkPixmap")
@@ -88,35 +88,35 @@
 
 ;; jpc added Bitmap
 
-(define-object Bitmap
+(define-object GdkBitmap
   (in-module "Gdk")
   (parent "GdkDrawable")
   (c-name "GdkBitmap")
   (gtype-id "GDK_TYPE_DRAWABLE")
 )
 
-(define-object GC
+(define-object GdkGC
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkGC")
   (gtype-id "GDK_TYPE_GC")
 )
 
-(define-object Image
+(define-object GdkImage
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkImage")
   (gtype-id "GDK_TYPE_IMAGE")
 )
 
-(define-object Keymap
+(define-object GdkKeymap
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkKeymap")
   (gtype-id "GDK_TYPE_KEYMAP")
 )
 
-(define-object Pixbuf
+(define-object GdkPixbuf
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkPixbuf")
@@ -127,21 +127,21 @@
   )
 )
 
-(define-object PixbufAnimation
+(define-object GdkPixbufAnimation
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkPixbufAnimation")
   (gtype-id "GDK_TYPE_PIXBUF_ANIMATION")
 )
 
-(define-object PixbufAnimationIter
+(define-object GdkPixbufAnimationIter
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkPixbufAnimationIter")
   (gtype-id "GDK_TYPE_PIXBUF_ANIMATION_ITER")
 )
 
-(define-object PixbufLoader
+(define-object GdkPixbufLoader
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkPixbufLoader")
@@ -149,28 +149,28 @@
 )
 
 ;; to be fixed XX 
-;; (define-object PixbufSimpleAnim
+;; (define-object GdkPixbufSimpleAnim
 ;;   (in-module "Gdk")
 ;;   (parent "GdkPixbufAnimation")
 ;;   (c-name "GdkPixbufSimpleAnim")
 ;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM")
 ;; )
 
-;; (define-object PixbufSimpleAnimIter
+;; (define-object GdkPixbufSimpleAnimIter
 ;;   (in-module "Gdk")
 ;;   (parent "GdkPixbufAnimationIter")
 ;;   (c-name "GdkPixbufSimpleAnimIter")
 ;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM_ITER")
 ;; )
 
-(define-object Screen
+(define-object GdkScreen
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkScreen")
   (gtype-id "GDK_TYPE_SCREEN")
 )
 
-(define-object Visual
+(define-object GdkVisual
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkVisual")
@@ -195,7 +195,7 @@
 
 ;; Boxed types ...
 
-(define-boxed Event
+(define-boxed GdkEvent
   (in-module "Gdk")
   (c-name "GdkEvent")
   (gtype-id "GDK_TYPE_EVENT")
@@ -203,7 +203,7 @@
   (release-func "gdk_event_free")
 )
 
-(define-boxed Font
+(define-boxed GdkFont
   (in-module "Gdk")
   (c-name "GdkFont")
   (gtype-id "GDK_TYPE_FONT")
@@ -216,7 +216,7 @@
   )
 )
 
-(define-boxed Color
+(define-boxed GdkColor
   (in-module "Gdk")
   (c-name "GdkColor")
   (gtype-id "GDK_TYPE_COLOR")
@@ -230,7 +230,7 @@
   )
 )
 
-(define-boxed Cursor
+(define-boxed GdkCursor
   (in-module "Gdk")
   (c-name "GdkCursor")
   (gtype-id "GDK_TYPE_CURSOR")
@@ -241,7 +241,7 @@
   )
 )
 
-(define-boxed Rectangle
+(define-boxed GdkRectangle
   (in-module "Gdk")
   (c-name "GdkRectangle")
   (gtype-id "GDK_TYPE_RECTANGLE")
@@ -254,7 +254,7 @@
 )
 
 ; need to be fixed for nsp XX 
-;(define-boxed Region
+;(define-boxed GdkRegion
 ;  (in-module "Gdk")
 ;  (c-name "GdkRegion")
 ;  (gtype-id "NSPGDK_TYPE_REGION")
@@ -262,7 +262,7 @@
 
 ;; Enumerations and flags ...
 
-(define-enum ColorSpace
+(define-enum GdkColorSpace
   (in-module "Gdk")
   (c-name "GdkColorSpace")
   (gtype-id "GDK_TYPE_COLORSPACE")
@@ -270,7 +270,7 @@
     '("rgb" "GDK_COLOR_SPACE_RGB")
   )
 )
-(define-enum CursorType
+(define-enum GdkCursorType
   (in-module "Gdk")
   (c-name "GdkCursorType")
   (gtype-id "GDK_TYPE_CURSOR_TYPE")
@@ -280,7 +280,7 @@
   )
 )
 
-(define-flags DragAction
+(define-flags GdkDragAction
   (in-module "Gdk")
   (c-name "GdkDragAction")
   (gtype-id "GDK_TYPE_DRAG_ACTION")
@@ -294,7 +294,7 @@
   )
 )
 
-(define-enum DragProtocol
+(define-enum GdkDragProtocol
   (in-module "Gdk")
   (c-name "GdkDragProtocol")
   (gtype-id "GDK_TYPE_DRAG_PROTOCOL")
@@ -309,7 +309,7 @@
   )
 )
 
-(define-enum FilterReturn
+(define-enum GdkFilterReturn
   (in-module "Gdk")
   (c-name "GdkFilterReturn")
   (gtype-id "GDK_TYPE_FILTER_RETURN")
@@ -320,7 +320,7 @@
   )
 )
 
-(define-enum EventType
+(define-enum GdkEventType
   (in-module "Gdk")
   (c-name "GdkEventType")
   (gtype-id "GDK_TYPE_EVENT_TYPE")
@@ -363,7 +363,7 @@
   )
 )
 
-(define-flags EventMask
+(define-flags GdkEventMask
   (in-module "Gdk")
   (c-name "GdkEventMask")
   (gtype-id "GDK_TYPE_EVENT_MASK")
@@ -393,7 +393,7 @@
   )
 )
 
-(define-enum VisibilityState
+(define-enum GdkVisibilityState
   (in-module "Gdk")
   (c-name "GdkVisibilityState")
   (gtype-id "GDK_TYPE_VISIBILITY_STATE")
@@ -404,7 +404,7 @@
   )
 )
 
-(define-enum ScrollDirection
+(define-enum GdkScrollDirection
   (in-module "Gdk")
   (c-name "GdkScrollDirection")
   (gtype-id "GDK_TYPE_SCROLL_DIRECTION")
@@ -416,7 +416,7 @@
   )
 )
 
-(define-enum NotifyType
+(define-enum GdkNotifyType
   (in-module "Gdk")
   (c-name "GdkNotifyType")
   (gtype-id "GDK_TYPE_NOTIFY_TYPE")
@@ -430,7 +430,7 @@
   )
 )
 
-(define-enum CrossingMode
+(define-enum GdkCrossingMode
   (in-module "Gdk")
   (c-name "GdkCrossingMode")
   (gtype-id "GDK_TYPE_CROSSING_MODE")
@@ -441,7 +441,7 @@
   )
 )
 
-(define-enum PropertyState
+(define-enum GdkPropertyState
   (in-module "Gdk")
   (c-name "GdkPropertyState")
   (gtype-id "GDK_TYPE_PROPERTY_STATE")
@@ -451,7 +451,7 @@
   )
 )
 
-(define-flags WindowState
+(define-flags GdkWindowState
   (in-module "Gdk")
   (c-name "GdkWindowState")
   (gtype-id "GDK_TYPE_WINDOW_STATE")
@@ -463,7 +463,7 @@
   )
 )
 
-(define-enum SettingAction
+(define-enum GdkSettingAction
   (in-module "Gdk")
   (c-name "GdkSettingAction")
   (gtype-id "GDK_TYPE_SETTING_ACTION")
@@ -474,7 +474,7 @@
   )
 )
 
-(define-enum FontType
+(define-enum GdkFontType
   (in-module "Gdk")
   (c-name "GdkFontType")
   (gtype-id "GDK_TYPE_FONT_TYPE")
@@ -484,7 +484,7 @@
   )
 )
 
-(define-enum CapStyle
+(define-enum GdkCapStyle
   (in-module "Gdk")
   (c-name "GdkCapStyle")
   (gtype-id "GDK_TYPE_CAP_STYLE")
@@ -496,7 +496,7 @@
   )
 )
 
-(define-enum Fill
+(define-enum GdkFill
   (in-module "Gdk")
   (c-name "GdkFill")
   (gtype-id "GDK_TYPE_FILL")
@@ -508,7 +508,7 @@
   )
 )
 
-(define-enum Function
+(define-enum GdkFunction
   (in-module "Gdk")
   (c-name "GdkFunction")
   (gtype-id "GDK_TYPE_FUNCTION")
@@ -532,7 +532,7 @@
   )
 )
 
-(define-enum JoinStyle
+(define-enum GdkJoinStyle
   (in-module "Gdk")
   (c-name "GdkJoinStyle")
   (gtype-id "GDK_TYPE_JOIN_STYLE")
@@ -543,7 +543,7 @@
   )
 )
 
-(define-enum LineStyle
+(define-enum GdkLineStyle
   (in-module "Gdk")
   (c-name "GdkLineStyle")
   (gtype-id "GDK_TYPE_LINE_STYLE")
@@ -554,7 +554,7 @@
   )
 )
 
-(define-enum SubwindowMode
+(define-enum GdkSubwindowMode
   (in-module "Gdk")
   (c-name "GdkSubwindowMode")
   (gtype-id "GDK_TYPE_SUBWINDOW_MODE")
@@ -564,7 +564,7 @@
   )
 )
 
-(define-flags GCValuesMask
+(define-flags GdkGCValuesMask
   (in-module "Gdk")
   (c-name "GdkGCValuesMask")
   (gtype-id "GDK_TYPE_GC_VALUES_MASK")
@@ -590,7 +590,7 @@
   )
 )
 
-(define-enum ImageType
+(define-enum GdkImageType
   (in-module "Gdk")
   (c-name "GdkImageType")
   (gtype-id "GDK_TYPE_IMAGE_TYPE")
@@ -601,7 +601,7 @@
   )
 )
 
-(define-enum ExtensionMode
+(define-enum GdkExtensionMode
   (in-module "Gdk")
   (c-name "GdkExtensionMode")
   (gtype-id "GDK_TYPE_EXTENSION_MODE")
@@ -612,7 +612,7 @@
   )
 )
 
-(define-enum InputSource
+(define-enum GdkInputSource
   (in-module "Gdk")
   (c-name "GdkInputSource")
   (gtype-id "GDK_TYPE_INPUT_SOURCE")
@@ -624,7 +624,7 @@
   )
 )
 
-(define-enum InputMode
+(define-enum GdkInputMode
   (in-module "Gdk")
   (c-name "GdkInputMode")
   (gtype-id "GDK_TYPE_INPUT_MODE")
@@ -635,7 +635,7 @@
   )
 )
 
-(define-enum AxisUse
+(define-enum GdkAxisUse
   (in-module "Gdk")
   (c-name "GdkAxisUse")
   (gtype-id "GDK_TYPE_AXIS_USE")
@@ -651,7 +651,7 @@
   )
 )
 
-(define-enum PropMode
+(define-enum GdkPropMode
   (in-module "Gdk")
   (c-name "GdkPropMode")
   (gtype-id "GDK_TYPE_PROP_MODE")
@@ -662,7 +662,7 @@
   )
 )
 
-(define-enum FillRule
+(define-enum GdkFillRule
   (in-module "Gdk")
   (c-name "GdkFillRule")
   (gtype-id "GDK_TYPE_FILL_RULE")
@@ -672,7 +672,7 @@
   )
 )
 
-(define-enum OverlapType
+(define-enum GdkOverlapType
   (in-module "Gdk")
   (c-name "GdkOverlapType")
   (gtype-id "GDK_TYPE_OVERLAP_TYPE")
@@ -683,7 +683,7 @@
   )
 )
 
-(define-enum RgbDither
+(define-enum GdkRgbDither
   (in-module "Gdk")
   (c-name "GdkRgbDither")
   (gtype-id "GDK_TYPE_RGB_DITHER")
@@ -694,7 +694,7 @@
   )
 )
 
-(define-enum ByteOrder
+(define-enum GdkByteOrder
   (in-module "Gdk")
   (c-name "GdkByteOrder")
   (gtype-id "GDK_TYPE_BYTE_ORDER")
@@ -704,7 +704,7 @@
   )
 )
 
-(define-flags ModifierType
+(define-flags GdkModifierType
   (in-module "Gdk")
   (c-name "GdkModifierType")
   (gtype-id "GDK_TYPE_MODIFIER_TYPE")
@@ -727,7 +727,7 @@
   )
 )
 
-(define-flags InputCondition
+(define-flags GdkInputCondition
   (in-module "Gdk")
   (c-name "GdkInputCondition")
   (gtype-id "GDK_TYPE_INPUT_CONDITION")
@@ -738,7 +738,7 @@
   )
 )
 
-(define-enum Status
+(define-enum GdkStatus
   (in-module "Gdk")
   (c-name "GdkStatus")
   (gtype-id "GDK_TYPE_STATUS")
@@ -751,7 +751,7 @@
   )
 )
 
-(define-enum GrabStatus
+(define-enum GdkGrabStatus
   (in-module "Gdk")
   (c-name "GdkGrabStatus")
   (gtype-id "GDK_TYPE_GRAB_STATUS")
@@ -764,7 +764,7 @@
   )
 )
 
-(define-enum VisualType
+(define-enum GdkVisualType
   (in-module "Gdk")
   (c-name "GdkVisualType")
   (gtype-id "GDK_TYPE_VISUAL_TYPE")
@@ -778,7 +778,7 @@
   )
 )
 
-(define-enum WindowClass
+(define-enum GdkWindowClass
   (in-module "Gdk")
   (c-name "GdkWindowClass")
   (gtype-id "GDK_TYPE_WINDOW_CLASS")
@@ -788,7 +788,7 @@
   )
 )
 
-(define-enum WindowType
+(define-enum GdkWindowType
   (in-module "Gdk")
   (c-name "GdkWindowType")
   (gtype-id "GDK_TYPE_WINDOW_TYPE")
@@ -802,7 +802,7 @@
   )
 )
 
-(define-flags WindowAttributesType
+(define-flags GdkWindowAttributesType
   (in-module "Gdk")
   (c-name "GdkWindowAttributesType")
   (gtype-id "GDK_TYPE_WINDOW_ATTRIBUTES_TYPE")
@@ -818,7 +818,7 @@
   )
 )
 
-(define-flags WindowHints
+(define-flags GdkWindowHints
   (in-module "Gdk")
   (c-name "GdkWindowHints")
   (gtype-id "GDK_TYPE_WINDOW_HINTS")
@@ -833,7 +833,7 @@
   )
 )
 
-(define-enum WindowTypeHint
+(define-enum GdkWindowTypeHint
   (in-module "Gdk")
   (c-name "GdkWindowTypeHint")
   (gtype-id "GDK_TYPE_WINDOW_TYPE_HINT")
@@ -845,7 +845,7 @@
   )
 )
 
-(define-flags WMDecoration
+(define-flags GdkWMDecoration
   (in-module "Gdk")
   (c-name "GdkWMDecoration")
   (gtype-id "GDK_TYPE_WM_DECORATION")
@@ -860,7 +860,7 @@
   )
 )
 
-(define-flags WMFunction
+(define-flags GdkWMFunction
   (in-module "Gdk")
   (c-name "GdkWMFunction")
   (gtype-id "GDK_TYPE_WM_FUNCTION")
@@ -874,7 +874,7 @@
   )
 )
 
-(define-enum Gravity
+(define-enum GdkGravity
   (in-module "Gdk")
   (c-name "GdkGravity")
   (gtype-id "GDK_TYPE_GRAVITY")
@@ -892,7 +892,7 @@
   )
 )
 
-(define-enum WindowEdge
+(define-enum GdkWindowEdge
   (in-module "Gdk")
   (c-name "GdkWindowEdge")
   (gtype-id "GDK_TYPE_WINDOW_EDGE")
@@ -908,7 +908,7 @@
   )
 )
 
-(define-enum PixbufAlphaMode
+(define-enum GdkPixbufAlphaMode
   (in-module "Gdk")
   (c-name "GdkPixbufAlphaMode")
   (gtype-id "GDK_TYPE_PIXBUF_ALPHA_MODE")
@@ -918,7 +918,7 @@
   )
 )
 
-;(define-enum Colorspace
+;(define-enum GdkColorspace
 ;   (in-module "Gdk")
 ;   (c-name "GdkColorspace")
 ;   (gtype-id "GDK_TYPE_COLORSPACE")
@@ -927,7 +927,7 @@
 ;   )
 ; )
 
-(define-enum PixbufError
+(define-enum GdkPixbufError
   (in-module "Gdk")
   (c-name "GdkPixbufError")
   (gtype-id "GDK_TYPE_PIXBUF_ERROR")
@@ -944,7 +944,7 @@
   )
 )
 
-(define-enum PixbufRotation
+(define-enum GdkPixbufRotation
   (in-module "Gdk")
   (c-name "GdkPixbufRotation")
   (gtype-id "GDK_TYPE_PIXBUF_ROTATION")
@@ -957,7 +957,7 @@
 )
 
 
-(define-enum InterpType
+(define-enum GdkInterpType
   (in-module "Gdk")
   (c-name "GdkInterpType")
   (gtype-id "GDK_TYPE_INTERP_TYPE")
@@ -969,7 +969,7 @@
   )
 )
 
-(define-enum OwnerChange
+(define-enum GdkOwnerChange
   (in-module "Gdk")
   (c-name "GdkOwnerChange")
   (gtype-id "GDK_TYPE_OWNER_CHANGE")
@@ -981,14 +981,14 @@
 )
 
 ;; need to be fixed for nsp 
-;; (define-object PixmapObject
+;; (define-object GdkPixmapObject
 ;;   (in-module "Gdk")
 ;;   (parent "GdkDrawable")
 ;;   (c-name "GdkPixmapObject")
 ;;   (gtype-id "GDK_TYPE_PIXMAP_OBJECT")
 ;; )
 
-;; (define-object WindowObject
+;; (define-object GdkWindowObject
 ;;   (in-module "Gdk")
 ;;   (parent "GdkDrawable")
 ;;   (c-name "GdkWindowObject")

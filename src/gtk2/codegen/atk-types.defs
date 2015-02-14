@@ -1,76 +1,76 @@
 ;; -*- scheme -*-
 ; object definitions ...
-(define-object Hyperlink
+(define-object AtkHyperlink
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkHyperlink")
   (gtype-id "ATK_TYPE_HYPERLINK")
 )
 
-;; (define-object GObjectAccessible
+;; (define-object AtkGObjectAccessible
 ;;   (in-module "Atk")
 ;;   (parent "AtkObject")
 ;;   (c-name "AtkGObjectAccessible")
 ;;   (gtype-id "ATK_TYPE_GOBJECT_ACCESSIBLE")
 ;; )
 
-(define-object Object
+(define-object AtkObject
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkObject")
   (gtype-id "ATK_TYPE_OBJECT")
 )
 
-(define-object NoOpObject
+(define-object AtkNoOpObject
   (in-module "Atk")
   (parent "AtkObject")
   (c-name "AtkNoOpObject")
   (gtype-id "ATK_TYPE_NO_OP_OBJECT")
 )
 
-(define-object ObjectFactory
+(define-object AtkObjectFactory
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkObjectFactory")
   (gtype-id "ATK_TYPE_OBJECT_FACTORY")
 )
 
-(define-object NoOpObjectFactory
+(define-object AtkNoOpObjectFactory
   (in-module "Atk")
   (parent "AtkObjectFactory")
   (c-name "AtkNoOpObjectFactory")
   (gtype-id "ATK_TYPE_NO_OP_OBJECT_FACTORY")
 )
 
-(define-object Registry
+(define-object AtkRegistry
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkRegistry")
   (gtype-id "ATK_TYPE_REGISTRY")
 )
 
-(define-object Relation
+(define-object AtkRelation
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkRelation")
   (gtype-id "ATK_TYPE_RELATION")
 )
 
-(define-object RelationSet
+(define-object AtkRelationSet
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkRelationSet")
   (gtype-id "ATK_TYPE_RELATION_SET")
 )
 
-(define-object StateSet
+(define-object AtkStateSet
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkStateSet")
   (gtype-id "ATK_TYPE_STATE_SET")
 )
 
-(define-object Util
+(define-object AtkUtil
   (in-module "Atk")
   (parent "GObject")
   (c-name "AtkUtil")
@@ -78,86 +78,85 @@
 )
 ;; interfaces
 
-
-(define-interface Action
+(define-interface AtkAction
   (in-module "Atk")
   (c-name "AtkAction")
   (gtype-id "ATK_TYPE_ACTION")
 )
 
-(define-interface Component
+(define-interface AtkComponent
   (in-module "Atk")
   (c-name "AtkComponent")
   (gtype-id "ATK_TYPE_COMPONENT")
 )
 
-(define-interface Document
+(define-interface AtkDocument
   (in-module "Atk")
   (c-name "AtkDocument")
   (gtype-id "ATK_TYPE_DOCUMENT")
 )
 
-(define-interface EditableText
+(define-interface AtkEditableText
   (in-module "Atk")
   (c-name "AtkEditableText")
   (gtype-id "ATK_TYPE_EDITABLE_TEXT")
 )
 
-(define-interface HyperlinkImpl
+(define-interface AtkHyperlinkImpl
   (in-module "Atk")
   (c-name "AtkHyperlinkImpl")
   (gtype-id "ATK_TYPE_HYPERLINK_IMPL")
 )
 
-(define-interface Hypertext
+(define-interface AtkHypertext
   (in-module "Atk")
   (c-name "AtkHypertext")
   (gtype-id "ATK_TYPE_HYPERTEXT")
 )
 
-(define-interface Image
+(define-interface AtkImage
   (in-module "Atk")
   (c-name "AtkImage")
   (gtype-id "ATK_TYPE_IMAGE")
 )
 
-(define-interface ImplementorIface
+(define-interface AtkImplementorIface
   (in-module "Atk")
   (c-name "AtkImplementorIface")
   (gtype-id "ATK_TYPE_IMPLEMENTOR")
 )
 
-(define-interface Selection
+(define-interface AtkSelection
   (in-module "Atk")
   (c-name "AtkSelection")
   (gtype-id "ATK_TYPE_SELECTION")
 )
 
-(define-interface StreamableContent
+(define-interface AtkStreamableContent
   (in-module "Atk")
   (c-name "AtkStreamableContent")
   (gtype-id "ATK_TYPE_STREAMABLE_CONTENT")
 )
 
-(define-interface Table
+(define-interface AtkTable
   (in-module "Atk")
   (c-name "AtkTable")
   (gtype-id "ATK_TYPE_TABLE")
 )
 
-(define-interface Text
+(define-interface AtkText
   (in-module "Atk")
   (c-name "AtkText")
   (gtype-id "ATK_TYPE_TEXT")
 )
 
-(define-interface Value
+(define-interface AtkValue
   (in-module "Atk")
   (c-name "AtkValue")
   (gtype-id "ATK_TYPE_VALUE")
 )
 
-(define-boxed Rectangle
+(define-boxed AtkRectangle
   (in-module "Atk")
   (c-name "AtkRectangle")
   (gtype-id "ATK_TYPE_RECTANGLE")
@@ -172,7 +171,7 @@
 
 ;; Enumerations and flags ...
 
-(define-enum Role
+(define-enum AtkRole
   (in-module "Atk")
   (c-name "AtkRole")
   (values
@@ -249,7 +248,7 @@
   )
 )
 
-(define-enum Layer
+(define-enum AtkLayer
   (in-module "Atk")
   (c-name "AtkLayer")
   (values
@@ -263,7 +262,7 @@
   )
 )
 
-(define-enum RelationType
+(define-enum AtkRelationType
   (in-module "Atk")
   (c-name "AtkRelationType")
   (values
@@ -278,7 +277,7 @@
   )
 )
 
-(define-enum StateType
+(define-enum AtkStateType
   (in-module "Atk")
   (c-name "AtkStateType")
   (values
@@ -315,7 +314,7 @@
   )
 )
 
-(define-enum TextAttribute
+(define-enum AtkTextAttribute
   (in-module "Atk")
   (c-name "AtkTextAttribute")
   (values
@@ -349,7 +348,7 @@
   )
 )
 
-(define-enum TextBoundary
+(define-enum AtkTextBoundary
   (in-module "Atk")
   (c-name "AtkTextBoundary")
   (values
@@ -363,7 +362,7 @@
   )
 )
 
-(define-enum KeyEventType
+(define-enum AtkKeyEventType
   (in-module "Atk")
   (c-name "AtkKeyEventType")
   (values
@@ -373,7 +372,7 @@
   )
 )
 
-(define-enum CoordType
+(define-enum AtkCoordType
   (in-module "Atk")
   (c-name "AtkCoordType")
   (values
@@ -382,7 +381,7 @@
   )
 )
 
-;; (define-flags HyperlinkStateFlags
+;; (define-flags AtkHyperlinkStateFlags
 ;;   (in-module "Atk")
 ;;   (c-name "AtkHyperlinkStateFlags")
 ;;   (gtype-id "ATK_TYPE_HYPERLINK_STATE_FLAGS")
@@ -391,7 +390,7 @@
 ;;   )
 ;; )
 
-;; (define-enum TextClipType
+;; (define-enum AtkTextClipType
 ;;   (in-module "Atk")
 ;;   (c-name "AtkTextClipType")
 ;;   (gtype-id "ATK_TYPE_TEXT_CLIP_TYPE")

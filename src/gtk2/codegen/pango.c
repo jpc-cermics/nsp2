@@ -54,7 +54,7 @@
 #include <nsp/gtk/pangolayout.h>
 
 
-/* ----------- NspPangoAttrList ----------- */
+/* -----------NspPangoAttrList ----------- */
 
 
 #define  NspPangoAttrList_Private 
@@ -81,34 +81,34 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
 {
   NspTypePangoAttrList *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangoattrlist != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangoattrlist != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangoattrlist;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangoattrlist_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangoattrlist_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangoattrlist_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangoattrlist_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangoattrlist;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangoattrlist */ 
 
-  top->s_type =  (s_type_func *) nsp_pangoattrlist_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangoattrlist_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangoattrlist_type_short_string;
-  /* top->create = (create_func*) int_pangoattrlist_create;*/ 
-  
+  /* top->create = (create_func*) int_pangoattrlist_create;*/
+
   /* specific methods for pangoattrlist */
-      
+
   type->init = (init_func *) init_pangoattrlist;
 
   /* 
@@ -132,8 +132,8 @@ NspTypePangoAttrList *new_type_pangoattrlist(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangoattrlist_id;
-       return type;
+      type->id = nsp_type_pangoattrlist_id;
+      return type;
     }
 }
 
@@ -146,10 +146,10 @@ static int init_pangoattrlist(NspPangoAttrList *Obj,NspTypePangoAttrList *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -158,7 +158,7 @@ static int init_pangoattrlist(NspPangoAttrList *Obj,NspTypePangoAttrList *type)
 
 NspPangoAttrList *new_pangoattrlist() 
 {
-  NspPangoAttrList *loc; 
+  NspPangoAttrList *loc;
   /* type must exists */
   nsp_type_pangoattrlist = new_type_pangoattrlist(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoAttrList)))== NULLPANGOATTRLIST) return loc;
@@ -190,10 +190,10 @@ static char *nsp_pangoattrlist_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoAttrList objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoAttrList *nsp_pangoattrlist_object(NspObject *O)
+NspPangoAttrList   *nsp_pangoattrlist_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -206,7 +206,7 @@ NspPangoAttrList *nsp_pangoattrlist_object(NspObject *O)
 
 int IsPangoAttrListObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangoattrlist_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangoattrlist_id);
 }
 
 int IsPangoAttrList(NspObject *O)
@@ -253,8 +253,8 @@ _wrap_pangoattrlist_new(Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)pango_attr_list_new())== NULL) return RET_BUG;
 
   nsp_type_pangoattrlist = new_type_pangoattrlist(T_BASE);
-  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_ATTR_LIST, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangoattrlist );
-   if ( nsp_ret == NULL) return RET_BUG;
+  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_ATTR_LIST, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangoattrlist);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -264,7 +264,7 @@ static int _wrap_pango_attr_list_copy(NspPangoAttrList *self,Stack stack,int rhs
   PangoAttrList *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_attr_list_copy(NSP_GBOXED_GET(self, PangoAttrList));
+  ret =pango_attr_list_copy(NSP_GBOXED_GET(self, PangoAttrList));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_ATTR_LIST, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangoattrlist))== NULL)
     return RET_BUG;
@@ -324,7 +324,7 @@ _wrap_pango_attr_list_change(NspObject *self, Stack stack,int rhs,int opt,int lh
 
 static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_int, s_int,t_end};
+  int_types T[] = {obj,s_int,s_int, t_end};
   PangoAttrList *other = NULL;
   NspObject *nsp_other;
   int pos, len;
@@ -335,7 +335,7 @@ static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int r
       Scierror( "other should be a PangoAttrList");
       return RET_BUG;
   }
-  pango_attr_list_splice(NSP_GBOXED_GET(self, PangoAttrList), other, pos, len);
+  pango_attr_list_splice(NSP_GBOXED_GET(self, PangoAttrList),other,pos,len);
   return 0;
 }
 
@@ -356,7 +356,7 @@ static NspMethods *pangoattrlist_get_methods(void) { return pangoattrlist_method
 static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoColor ----------- */
+/* -----------NspPangoColor ----------- */
 
 
 #define  NspPangoColor_Private 
@@ -383,34 +383,34 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
 {
   NspTypePangoColor *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangocolor != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangocolor != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangocolor;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangocolor_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangocolor_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangocolor_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangocolor_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangocolor;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangocolor */ 
 
-  top->s_type =  (s_type_func *) nsp_pangocolor_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangocolor_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangocolor_type_short_string;
-  /* top->create = (create_func*) int_pangocolor_create;*/ 
-  
+  /* top->create = (create_func*) int_pangocolor_create;*/
+
   /* specific methods for pangocolor */
-      
+
   type->init = (init_func *) init_pangocolor;
 
   /* 
@@ -434,8 +434,8 @@ NspTypePangoColor *new_type_pangocolor(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangocolor_id;
-       return type;
+      type->id = nsp_type_pangocolor_id;
+      return type;
     }
 }
 
@@ -448,10 +448,10 @@ static int init_pangocolor(NspPangoColor *Obj,NspTypePangoColor *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -460,7 +460,7 @@ static int init_pangocolor(NspPangoColor *Obj,NspTypePangoColor *type)
 
 NspPangoColor *new_pangocolor() 
 {
-  NspPangoColor *loc; 
+  NspPangoColor *loc;
   /* type must exists */
   nsp_type_pangocolor = new_type_pangocolor(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoColor)))== NULLPANGOCOLOR) return loc;
@@ -492,10 +492,10 @@ static char *nsp_pangocolor_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoColor objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoColor *nsp_pangocolor_object(NspObject *O)
+NspPangoColor   *nsp_pangocolor_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -508,7 +508,7 @@ NspPangoColor *nsp_pangocolor_object(NspObject *O)
 
 int IsPangoColorObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangocolor_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangocolor_id);
 }
 
 int IsPangoColor(NspObject *O)
@@ -568,11 +568,11 @@ _wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_pango_color_parse(NspPangoColor *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *spec;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&spec) == FAIL) return RET_BUG;
-  ret = pango_color_parse(NSP_GBOXED_GET(self, PangoColor), spec);
+  ret =pango_color_parse(NSP_GBOXED_GET(self, PangoColor),spec);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -609,15 +609,15 @@ static NspObject *_wrap_pango_color__get_blue(NspObject *self,char *attr)
 }
 
 static AttrTab pangocolor_attrs[] = {
-  { "red", (attr_get_function *)_wrap_pango_color__get_red, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "green", (attr_get_function *)_wrap_pango_color__get_green, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { "blue", (attr_get_function *)_wrap_pango_color__get_blue, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "red", (attr_get_function * )_wrap_pango_color__get_red, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "green", (attr_get_function * )_wrap_pango_color__get_green, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { "blue", (attr_get_function * )_wrap_pango_color__get_blue, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspPangoFontDescription ----------- */
+/* -----------NspPangoFontDescription ----------- */
 
 
 #define  NspPangoFontDescription_Private 
@@ -644,34 +644,34 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
 {
   NspTypePangoFontDescription *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontdescription != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontdescription != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontdescription;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontdescription_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontdescription_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontdescription_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontdescription_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontdescription;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontdescription */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontdescription_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontdescription_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontdescription_type_short_string;
-  /* top->create = (create_func*) int_pangofontdescription_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontdescription_create;*/
+
   /* specific methods for pangofontdescription */
-      
+
   type->init = (init_func *) init_pangofontdescription;
 
   /* 
@@ -695,8 +695,8 @@ NspTypePangoFontDescription *new_type_pangofontdescription(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontdescription_id;
-       return type;
+      type->id = nsp_type_pangofontdescription_id;
+      return type;
     }
 }
 
@@ -709,10 +709,10 @@ static int init_pangofontdescription(NspPangoFontDescription *Obj,NspTypePangoFo
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -721,7 +721,7 @@ static int init_pangofontdescription(NspPangoFontDescription *Obj,NspTypePangoFo
 
 NspPangoFontDescription *new_pangofontdescription() 
 {
-  NspPangoFontDescription *loc; 
+  NspPangoFontDescription *loc;
   /* type must exists */
   nsp_type_pangofontdescription = new_type_pangofontdescription(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontDescription)))== NULLPANGOFONTDESCRIPTION) return loc;
@@ -753,10 +753,10 @@ static char *nsp_pangofontdescription_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontDescription objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontDescription *nsp_pangofontdescription_object(NspObject *O)
+NspPangoFontDescription   *nsp_pangofontdescription_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -769,7 +769,7 @@ NspPangoFontDescription *nsp_pangofontdescription_object(NspObject *O)
 
 int IsPangoFontDescriptionObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontdescription_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontdescription_id);
 }
 
 int IsPangoFontDescription(NspObject *O)
@@ -853,7 +853,7 @@ static int _wrap_pango_font_description_copy_static(NspPangoFontDescription *sel
   PangoFontDescription *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_font_description_copy_static(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_copy_static(NSP_GBOXED_GET(self, PangoFontDescription));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
     return RET_BUG;
@@ -865,26 +865,26 @@ static int _wrap_pango_font_description_hash(NspPangoFontDescription *self,Stack
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_description_hash(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_hash(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_family(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *family;
   if ( GetArgs(stack,rhs,opt,T,&family) == FAIL) return RET_BUG;
-  pango_font_description_set_family(NSP_GBOXED_GET(self, PangoFontDescription), family);
+  pango_font_description_set_family(NSP_GBOXED_GET(self, PangoFontDescription),family);
   return 0;
 }
 
 static int _wrap_pango_font_description_set_family_static(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *family;
   if ( GetArgs(stack,rhs,opt,T,&family) == FAIL) return RET_BUG;
-  pango_font_description_set_family_static(NSP_GBOXED_GET(self, PangoFontDescription), family);
+  pango_font_description_set_family_static(NSP_GBOXED_GET(self, PangoFontDescription),family);
   return 0;
 }
 
@@ -892,20 +892,20 @@ static int _wrap_pango_font_description_get_family(NspPangoFontDescription *self
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_family(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_family(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_style(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoStyle style;
   NspObject *nsp_style = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_style) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_STYLE, nsp_style, &style)== FAIL)
       return RET_BUG;
-  pango_font_description_set_style(NSP_GBOXED_GET(self, PangoFontDescription), style);
+  pango_font_description_set_style(NSP_GBOXED_GET(self, PangoFontDescription),style);
   return 0;
 }
 
@@ -913,20 +913,20 @@ static int _wrap_pango_font_description_get_style(NspPangoFontDescription *self,
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_style(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_style(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_variant(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoVariant variant;
   NspObject *nsp_variant = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_variant) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_VARIANT, nsp_variant, &variant)== FAIL)
       return RET_BUG;
-  pango_font_description_set_variant(NSP_GBOXED_GET(self, PangoFontDescription), variant);
+  pango_font_description_set_variant(NSP_GBOXED_GET(self, PangoFontDescription),variant);
   return 0;
 }
 
@@ -934,20 +934,20 @@ static int _wrap_pango_font_description_get_variant(NspPangoFontDescription *sel
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_variant(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_variant(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_weight(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoWeight weight;
   NspObject *nsp_weight = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_weight) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, nsp_weight, &weight)== FAIL)
       return RET_BUG;
-  pango_font_description_set_weight(NSP_GBOXED_GET(self, PangoFontDescription), weight);
+  pango_font_description_set_weight(NSP_GBOXED_GET(self, PangoFontDescription),weight);
   return 0;
 }
 
@@ -955,20 +955,20 @@ static int _wrap_pango_font_description_get_weight(NspPangoFontDescription *self
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_weight(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_weight(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_stretch(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoStretch stretch;
   NspObject *nsp_stretch = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_stretch) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_STRETCH, nsp_stretch, &stretch)== FAIL)
       return RET_BUG;
-  pango_font_description_set_stretch(NSP_GBOXED_GET(self, PangoFontDescription), stretch);
+  pango_font_description_set_stretch(NSP_GBOXED_GET(self, PangoFontDescription),stretch);
   return 0;
 }
 
@@ -976,17 +976,17 @@ static int _wrap_pango_font_description_get_stretch(NspPangoFontDescription *sel
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_stretch(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_stretch(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_set_size(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int size;
   if ( GetArgs(stack,rhs,opt,T,&size) == FAIL) return RET_BUG;
-  pango_font_description_set_size(NSP_GBOXED_GET(self, PangoFontDescription), size);
+  pango_font_description_set_size(NSP_GBOXED_GET(self, PangoFontDescription),size);
   return 0;
 }
 
@@ -994,7 +994,7 @@ static int _wrap_pango_font_description_get_size(NspPangoFontDescription *self,S
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_size(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_size(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1003,26 +1003,26 @@ static int _wrap_pango_font_description_get_set_fields(NspPangoFontDescription *
 {
   guint ret;
   CheckRhs(0,0);
-  ret = pango_font_description_get_set_fields(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_get_set_fields(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_font_description_unset_fields(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoFontMask to_unset;
   NspObject *nsp_to_unset = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_to_unset) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(PANGO_TYPE_FONT_MASK, nsp_to_unset, &to_unset)==FAIL)
       return RET_BUG;
-  pango_font_description_unset_fields(NSP_GBOXED_GET(self, PangoFontDescription), to_unset);
+  pango_font_description_unset_fields(NSP_GBOXED_GET(self, PangoFontDescription),to_unset);
   return 0;
 }
 
 static int _wrap_pango_font_description_merge(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_bool,t_end};
+  int_types T[] = {obj,s_bool, t_end};
   PangoFontDescription *desc_to_merge = NULL;
   NspObject *nsp_desc_to_merge;
   int replace_existing;
@@ -1033,13 +1033,13 @@ static int _wrap_pango_font_description_merge(NspPangoFontDescription *self,Stac
       Scierror( "desc_to_merge should be a PangoFontDescription");
       return RET_BUG;
   }
-  pango_font_description_merge(NSP_GBOXED_GET(self, PangoFontDescription), desc_to_merge, replace_existing);
+  pango_font_description_merge(NSP_GBOXED_GET(self, PangoFontDescription),desc_to_merge,replace_existing);
   return 0;
 }
 
 static int _wrap_pango_font_description_merge_static(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, s_bool,t_end};
+  int_types T[] = {obj,s_bool, t_end};
   PangoFontDescription *desc_to_merge = NULL;
   NspObject *nsp_desc_to_merge;
   int replace_existing;
@@ -1050,13 +1050,13 @@ static int _wrap_pango_font_description_merge_static(NspPangoFontDescription *se
       Scierror( "desc_to_merge should be a PangoFontDescription");
       return RET_BUG;
   }
-  pango_font_description_merge_static(NSP_GBOXED_GET(self, PangoFontDescription), desc_to_merge, replace_existing);
+  pango_font_description_merge_static(NSP_GBOXED_GET(self, PangoFontDescription),desc_to_merge,replace_existing);
   return 0;
 }
 
 static int _wrap_pango_font_description_better_match(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, obj,t_end};
+  int_types T[] = {obj,obj, t_end};
   PangoFontDescription *old_match = NULL, *new_match = NULL;
   NspObject *nsp_old_match, *nsp_new_match;
   int ret;
@@ -1073,7 +1073,7 @@ static int _wrap_pango_font_description_better_match(NspPangoFontDescription *se
       Scierror( "new_match should be a PangoFontDescription");
       return RET_BUG;
   }
-  ret = pango_font_description_better_match(NSP_GBOXED_GET(self, PangoFontDescription), old_match, new_match);
+  ret =pango_font_description_better_match(NSP_GBOXED_GET(self, PangoFontDescription),old_match,new_match);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1082,7 +1082,7 @@ static int _wrap_pango_font_description_to_string(NspPangoFontDescription *self,
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = pango_font_description_to_string(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_to_string(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -1092,7 +1092,7 @@ static int _wrap_pango_font_description_to_filename(NspPangoFontDescription *sel
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = pango_font_description_to_filename(NSP_GBOXED_GET(self, PangoFontDescription));
+  ret =pango_font_description_to_filename(NSP_GBOXED_GET(self, PangoFontDescription));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -1133,7 +1133,7 @@ static NspMethods *pangofontdescription_get_methods(void) { return pangofontdesc
 static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFontMetrics ----------- */
+/* -----------NspPangoFontMetrics ----------- */
 
 
 #define  NspPangoFontMetrics_Private 
@@ -1160,34 +1160,34 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
 {
   NspTypePangoFontMetrics *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontmetrics != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontmetrics != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontmetrics;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontmetrics_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontmetrics_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontmetrics_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontmetrics_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontmetrics;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontmetrics */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontmetrics_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontmetrics_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontmetrics_type_short_string;
-  /* top->create = (create_func*) int_pangofontmetrics_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontmetrics_create;*/
+
   /* specific methods for pangofontmetrics */
-      
+
   type->init = (init_func *) init_pangofontmetrics;
 
   /* 
@@ -1211,8 +1211,8 @@ NspTypePangoFontMetrics *new_type_pangofontmetrics(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontmetrics_id;
-       return type;
+      type->id = nsp_type_pangofontmetrics_id;
+      return type;
     }
 }
 
@@ -1225,10 +1225,10 @@ static int init_pangofontmetrics(NspPangoFontMetrics *Obj,NspTypePangoFontMetric
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1237,7 +1237,7 @@ static int init_pangofontmetrics(NspPangoFontMetrics *Obj,NspTypePangoFontMetric
 
 NspPangoFontMetrics *new_pangofontmetrics() 
 {
-  NspPangoFontMetrics *loc; 
+  NspPangoFontMetrics *loc;
   /* type must exists */
   nsp_type_pangofontmetrics = new_type_pangofontmetrics(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontMetrics)))== NULLPANGOFONTMETRICS) return loc;
@@ -1269,10 +1269,10 @@ static char *nsp_pangofontmetrics_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontMetrics objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontMetrics *nsp_pangofontmetrics_object(NspObject *O)
+NspPangoFontMetrics   *nsp_pangofontmetrics_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1285,7 +1285,7 @@ NspPangoFontMetrics *nsp_pangofontmetrics_object(NspObject *O)
 
 int IsPangoFontMetricsObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontmetrics_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontmetrics_id);
 }
 
 int IsPangoFontMetrics(NspObject *O)
@@ -1328,7 +1328,7 @@ static int _wrap_pango_font_metrics_get_ascent(NspPangoFontMetrics *self,Stack s
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_metrics_get_ascent(NSP_GBOXED_GET(self, PangoFontMetrics));
+  ret =pango_font_metrics_get_ascent(NSP_GBOXED_GET(self, PangoFontMetrics));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1337,7 +1337,7 @@ static int _wrap_pango_font_metrics_get_descent(NspPangoFontMetrics *self,Stack 
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_metrics_get_descent(NSP_GBOXED_GET(self, PangoFontMetrics));
+  ret =pango_font_metrics_get_descent(NSP_GBOXED_GET(self, PangoFontMetrics));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1346,7 +1346,7 @@ static int _wrap_pango_font_metrics_get_approximate_char_width(NspPangoFontMetri
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_metrics_get_approximate_char_width(NSP_GBOXED_GET(self, PangoFontMetrics));
+  ret =pango_font_metrics_get_approximate_char_width(NSP_GBOXED_GET(self, PangoFontMetrics));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1355,7 +1355,7 @@ static int _wrap_pango_font_metrics_get_approximate_digit_width(NspPangoFontMetr
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_font_metrics_get_approximate_digit_width(NSP_GBOXED_GET(self, PangoFontMetrics));
+  ret =pango_font_metrics_get_approximate_digit_width(NSP_GBOXED_GET(self, PangoFontMetrics));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1376,7 +1376,7 @@ static NspMethods *pangofontmetrics_get_methods(void) { return pangofontmetrics_
 static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoGlyphString ----------- */
+/* -----------NspPangoGlyphString ----------- */
 
 
 #define  NspPangoGlyphString_Private 
@@ -1403,34 +1403,34 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
 {
   NspTypePangoGlyphString *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangoglyphstring != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangoglyphstring != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangoglyphstring;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangoglyphstring_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangoglyphstring_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangoglyphstring_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangoglyphstring_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangoglyphstring;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangoglyphstring */ 
 
-  top->s_type =  (s_type_func *) nsp_pangoglyphstring_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangoglyphstring_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangoglyphstring_type_short_string;
-  /* top->create = (create_func*) int_pangoglyphstring_create;*/ 
-  
+  /* top->create = (create_func*) int_pangoglyphstring_create;*/
+
   /* specific methods for pangoglyphstring */
-      
+
   type->init = (init_func *) init_pangoglyphstring;
 
   /* 
@@ -1454,8 +1454,8 @@ NspTypePangoGlyphString *new_type_pangoglyphstring(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangoglyphstring_id;
-       return type;
+      type->id = nsp_type_pangoglyphstring_id;
+      return type;
     }
 }
 
@@ -1468,10 +1468,10 @@ static int init_pangoglyphstring(NspPangoGlyphString *Obj,NspTypePangoGlyphStrin
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1480,7 +1480,7 @@ static int init_pangoglyphstring(NspPangoGlyphString *Obj,NspTypePangoGlyphStrin
 
 NspPangoGlyphString *new_pangoglyphstring() 
 {
-  NspPangoGlyphString *loc; 
+  NspPangoGlyphString *loc;
   /* type must exists */
   nsp_type_pangoglyphstring = new_type_pangoglyphstring(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoGlyphString)))== NULLPANGOGLYPHSTRING) return loc;
@@ -1512,10 +1512,10 @@ static char *nsp_pangoglyphstring_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoGlyphString objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoGlyphString *nsp_pangoglyphstring_object(NspObject *O)
+NspPangoGlyphString   *nsp_pangoglyphstring_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1528,7 +1528,7 @@ NspPangoGlyphString *nsp_pangoglyphstring_object(NspObject *O)
 
 int IsPangoGlyphStringObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangoglyphstring_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangoglyphstring_id);
 }
 
 int IsPangoGlyphString(NspObject *O)
@@ -1575,18 +1575,18 @@ _wrap_pangoglyphstring_new(Stack stack, int rhs, int opt, int lhs)
   if ((ret = (GObject *)pango_glyph_string_new())== NULL) return RET_BUG;
 
   nsp_type_pangoglyphstring = new_type_pangoglyphstring(T_BASE);
-  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_GLYPH_STRING, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangoglyphstring );
-   if ( nsp_ret == NULL) return RET_BUG;
+  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_GLYPH_STRING, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangoglyphstring);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
 static int _wrap_pango_glyph_string_set_size(NspPangoGlyphString *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int new_len;
   if ( GetArgs(stack,rhs,opt,T,&new_len) == FAIL) return RET_BUG;
-  pango_glyph_string_set_size(NSP_GBOXED_GET(self, PangoGlyphString), new_len);
+  pango_glyph_string_set_size(NSP_GBOXED_GET(self, PangoGlyphString),new_len);
   return 0;
 }
 
@@ -1595,7 +1595,7 @@ static int _wrap_pango_glyph_string_copy(NspPangoGlyphString *self,Stack stack,i
   PangoGlyphString *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_glyph_string_copy(NSP_GBOXED_GET(self, PangoGlyphString));
+  ret =pango_glyph_string_copy(NSP_GBOXED_GET(self, PangoGlyphString));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_GLYPH_STRING, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangoglyphstring))== NULL)
     return RET_BUG;
@@ -1709,13 +1709,13 @@ static NspObject *_wrap_pango_glyph_string__get_num_glyphs(NspObject *self,char 
 }
 
 static AttrTab pangoglyphstring_attrs[] = {
-  { "num_glyphs", (attr_get_function *)_wrap_pango_glyph_string__get_num_glyphs, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed, NULL },
-  { NULL,NULL,NULL,NULL,NULL},
+  { "num_glyphs", (attr_get_function * )_wrap_pango_glyph_string__get_num_glyphs, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspPangoLanguage ----------- */
+/* -----------NspPangoLanguage ----------- */
 
 
 #define  NspPangoLanguage_Private 
@@ -1742,34 +1742,34 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
 {
   NspTypePangoLanguage *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangolanguage != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangolanguage != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangolanguage;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangolanguage_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangolanguage_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangolanguage_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangolanguage_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangolanguage;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangolanguage */ 
 
-  top->s_type =  (s_type_func *) nsp_pangolanguage_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangolanguage_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangolanguage_type_short_string;
-  /* top->create = (create_func*) int_pangolanguage_create;*/ 
-  
+  /* top->create = (create_func*) int_pangolanguage_create;*/
+
   /* specific methods for pangolanguage */
-      
+
   type->init = (init_func *) init_pangolanguage;
 
   /* 
@@ -1793,8 +1793,8 @@ NspTypePangoLanguage *new_type_pangolanguage(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangolanguage_id;
-       return type;
+      type->id = nsp_type_pangolanguage_id;
+      return type;
     }
 }
 
@@ -1807,10 +1807,10 @@ static int init_pangolanguage(NspPangoLanguage *Obj,NspTypePangoLanguage *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1819,7 +1819,7 @@ static int init_pangolanguage(NspPangoLanguage *Obj,NspTypePangoLanguage *type)
 
 NspPangoLanguage *new_pangolanguage() 
 {
-  NspPangoLanguage *loc; 
+  NspPangoLanguage *loc;
   /* type must exists */
   nsp_type_pangolanguage = new_type_pangolanguage(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoLanguage)))== NULLPANGOLANGUAGE) return loc;
@@ -1851,10 +1851,10 @@ static char *nsp_pangolanguage_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoLanguage objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoLanguage *nsp_pangolanguage_object(NspObject *O)
+NspPangoLanguage   *nsp_pangolanguage_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1867,7 +1867,7 @@ NspPangoLanguage *nsp_pangolanguage_object(NspObject *O)
 
 int IsPangoLanguageObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangolanguage_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangolanguage_id);
 }
 
 int IsPangoLanguage(NspObject *O)
@@ -1908,11 +1908,11 @@ NspPangoLanguage *pangolanguage_copy(NspPangoLanguage *self)
  *-------------------------------------------*/
 static int _wrap_pango_language_matches(NspPangoLanguage *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *range_list;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&range_list) == FAIL) return RET_BUG;
-  ret = pango_language_matches(NSP_GBOXED_GET(self, PangoLanguage), range_list);
+  ret =pango_language_matches(NSP_GBOXED_GET(self, PangoLanguage),range_list);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1930,7 +1930,7 @@ static NspMethods *pangolanguage_get_methods(void) { return pangolanguage_method
 static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoTabArray ----------- */
+/* -----------NspPangoTabArray ----------- */
 
 
 #define  NspPangoTabArray_Private 
@@ -1957,34 +1957,34 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
 {
   NspTypePangoTabArray *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangotabarray != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangotabarray != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangotabarray;
     }
-  if ((type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangotabarray_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangotabarray_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangotabarray_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangotabarray_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangotabarray;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangotabarray */ 
 
-  top->s_type =  (s_type_func *) nsp_pangotabarray_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangotabarray_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangotabarray_type_short_string;
-  /* top->create = (create_func*) int_pangotabarray_create;*/ 
-  
+  /* top->create = (create_func*) int_pangotabarray_create;*/
+
   /* specific methods for pangotabarray */
-      
+
   type->init = (init_func *) init_pangotabarray;
 
   /* 
@@ -2008,8 +2008,8 @@ NspTypePangoTabArray *new_type_pangotabarray(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangotabarray_id;
-       return type;
+      type->id = nsp_type_pangotabarray_id;
+      return type;
     }
 }
 
@@ -2022,10 +2022,10 @@ static int init_pangotabarray(NspPangoTabArray *Obj,NspTypePangoTabArray *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2034,7 +2034,7 @@ static int init_pangotabarray(NspPangoTabArray *Obj,NspTypePangoTabArray *type)
 
 NspPangoTabArray *new_pangotabarray() 
 {
-  NspPangoTabArray *loc; 
+  NspPangoTabArray *loc;
   /* type must exists */
   nsp_type_pangotabarray = new_type_pangotabarray(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoTabArray)))== NULLPANGOTABARRAY) return loc;
@@ -2066,10 +2066,10 @@ static char *nsp_pangotabarray_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoTabArray objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoTabArray *nsp_pangotabarray_object(NspObject *O)
+NspPangoTabArray   *nsp_pangotabarray_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2082,7 +2082,7 @@ NspPangoTabArray *nsp_pangotabarray_object(NspObject *O)
 
 int IsPangoTabArrayObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangotabarray_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangotabarray_id);
 }
 
 int IsPangoTabArray(NspObject *O)
@@ -2124,15 +2124,15 @@ NspPangoTabArray *pangotabarray_copy(NspPangoTabArray *self)
 static int
 _wrap_pangotabarray_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {s_int, s_bool,t_end};
+  int_types T[] = {s_int,s_bool, t_end};
   int initial_size, positions_in_pixels;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&initial_size, &positions_in_pixels) == FAIL) return RET_BUG;
-  if ((ret = (GObject *)pango_tab_array_new(initial_size, positions_in_pixels))== NULL) return RET_BUG;
+  if ((ret = (GObject *)pango_tab_array_new(initial_size,positions_in_pixels))== NULL) return RET_BUG;
 
   nsp_type_pangotabarray = new_type_pangotabarray(T_BASE);
-  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_TAB_ARRAY, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangotabarray );
-   if ( nsp_ret == NULL) return RET_BUG;
+  nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_TAB_ARRAY, ret,TRUE,TRUE,(NspTypeBase *) nsp_type_pangotabarray);
+  if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -2142,7 +2142,7 @@ static int _wrap_pango_tab_array_copy(NspPangoTabArray *self,Stack stack,int rhs
   PangoTabArray *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_tab_array_copy(NSP_GBOXED_GET(self, PangoTabArray));
+  ret =pango_tab_array_copy(NSP_GBOXED_GET(self, PangoTabArray));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_TAB_ARRAY, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangotabarray))== NULL)
     return RET_BUG;
@@ -2154,30 +2154,30 @@ static int _wrap_pango_tab_array_get_size(NspPangoTabArray *self,Stack stack,int
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_tab_array_get_size(NSP_GBOXED_GET(self, PangoTabArray));
+  ret =pango_tab_array_get_size(NSP_GBOXED_GET(self, PangoTabArray));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_tab_array_resize(NspPangoTabArray *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int new_size;
   if ( GetArgs(stack,rhs,opt,T,&new_size) == FAIL) return RET_BUG;
-  pango_tab_array_resize(NSP_GBOXED_GET(self, PangoTabArray), new_size);
+  pango_tab_array_resize(NSP_GBOXED_GET(self, PangoTabArray),new_size);
   return 0;
 }
 
 static int _wrap_pango_tab_array_set_tab(NspPangoTabArray *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int, obj, s_int,t_end};
+  int_types T[] = {s_int,obj,s_int, t_end};
   int tab_index, location;
   PangoTabAlign alignment;
   NspObject *nsp_alignment = NULL;
   if ( GetArgs(stack,rhs,opt,T,&tab_index, &nsp_alignment, &location) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_TAB_ALIGN, nsp_alignment, &alignment)== FAIL)
       return RET_BUG;
-  pango_tab_array_set_tab(NSP_GBOXED_GET(self, PangoTabArray), tab_index, alignment, location);
+  pango_tab_array_set_tab(NSP_GBOXED_GET(self, PangoTabArray),tab_index,alignment,location);
   return 0;
 }
 
@@ -2226,7 +2226,7 @@ static int _wrap_pango_tab_array_get_positions_in_pixels(NspPangoTabArray *self,
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_tab_array_get_positions_in_pixels(NSP_GBOXED_GET(self, PangoTabArray));
+  ret =pango_tab_array_get_positions_in_pixels(NSP_GBOXED_GET(self, PangoTabArray));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2250,7 +2250,7 @@ static NspMethods *pangotabarray_get_methods(void) { return pangotabarray_method
 static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoContext ----------- */
+/* -----------NspPangoContext ----------- */
 
 
 #define  NspPangoContext_Private 
@@ -2277,34 +2277,34 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
 {
   NspTypePangoContext *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangocontext != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangocontext != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangocontext;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangocontext_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangocontext_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangocontext_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangocontext_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangocontext;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangocontext */ 
 
-  top->s_type =  (s_type_func *) nsp_pangocontext_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangocontext_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangocontext_type_short_string;
-  /* top->create = (create_func*) int_pangocontext_create;*/ 
-  
+  /* top->create = (create_func*) int_pangocontext_create;*/
+
   /* specific methods for pangocontext */
-      
+
   type->init = (init_func *) init_pangocontext;
 
   /* 
@@ -2328,8 +2328,8 @@ NspTypePangoContext *new_type_pangocontext(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangocontext_id;
-       return type;
+      type->id = nsp_type_pangocontext_id;
+      return type;
     }
 }
 
@@ -2342,10 +2342,10 @@ static int init_pangocontext(NspPangoContext *Obj,NspTypePangoContext *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2354,7 +2354,7 @@ static int init_pangocontext(NspPangoContext *Obj,NspTypePangoContext *type)
 
 NspPangoContext *new_pangocontext() 
 {
-  NspPangoContext *loc; 
+  NspPangoContext *loc;
   /* type must exists */
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoContext)))== NULLPANGOCONTEXT) return loc;
@@ -2386,10 +2386,10 @@ static char *nsp_pangocontext_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoContext objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoContext *nsp_pangocontext_object(NspObject *O)
+NspPangoContext   *nsp_pangocontext_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2402,7 +2402,7 @@ NspPangoContext *nsp_pangocontext_object(NspObject *O)
 
 int IsPangoContextObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangocontext_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangocontext_id);
 }
 
 int IsPangoContext(NspObject *O)
@@ -2465,7 +2465,7 @@ _wrap_pango_context_list_families(NspGObject *self)
 
 static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc, *nsp_ret;
   PangoFont *ret;
@@ -2476,7 +2476,7 @@ static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int r
       Scierror( "desc should be a PangoFontDescription");
       return RET_BUG;
   }
-  ret = pango_context_load_font(PANGO_CONTEXT(self->obj), desc);
+  ret =pango_context_load_font(PANGO_CONTEXT(self->obj),desc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -2485,7 +2485,7 @@ static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int r
 
 static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, obj,t_end};
+  int_types T[] = {obj,obj, t_end};
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc, *nsp_language, *nsp_ret;
   PangoLanguage *language = NULL;
@@ -2503,7 +2503,7 @@ static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,in
       Scierror( "language should be a PangoLanguage");
       return RET_BUG;
   }
-  ret = pango_context_load_fontset(PANGO_CONTEXT(self->obj), desc, language);
+  ret =pango_context_load_fontset(PANGO_CONTEXT(self->obj),desc,language);
   nsp_type_pangofontset = new_type_pangofontset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -2512,7 +2512,7 @@ static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,in
 
 static int _wrap_pango_context_get_metrics(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj, obj,t_end};
+  int_types T[] = {obj,obj, t_end};
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc, *nsp_language, *nsp_ret;
   PangoLanguage *language = NULL;
@@ -2530,7 +2530,7 @@ static int _wrap_pango_context_get_metrics(NspPangoContext *self,Stack stack,int
       Scierror( "language should be a PangoLanguage");
       return RET_BUG;
   }
-  ret = pango_context_get_metrics(PANGO_CONTEXT(self->obj), desc, language);
+  ret =pango_context_get_metrics(PANGO_CONTEXT(self->obj),desc,language);
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_METRICS, ret, FALSE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontmetrics))== NULL)
     return RET_BUG;
@@ -2540,7 +2540,7 @@ static int _wrap_pango_context_get_metrics(NspPangoContext *self,Stack stack,int
 
 static int _wrap_pango_context_set_font_description(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc) == FAIL) return RET_BUG;
@@ -2550,7 +2550,7 @@ static int _wrap_pango_context_set_font_description(NspPangoContext *self,Stack 
       Scierror( "desc should be a PangoFontDescription");
       return RET_BUG;
   }
-  pango_context_set_font_description(PANGO_CONTEXT(self->obj), desc);
+  pango_context_set_font_description(PANGO_CONTEXT(self->obj),desc);
   return 0;
 }
 
@@ -2559,7 +2559,7 @@ static int _wrap_pango_context_get_font_description(NspPangoContext *self,Stack 
   PangoFontDescription *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_context_get_font_description(PANGO_CONTEXT(self->obj));
+  ret =pango_context_get_font_description(PANGO_CONTEXT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
     return RET_BUG;
@@ -2572,7 +2572,7 @@ static int _wrap_pango_context_get_language(NspPangoContext *self,Stack stack,in
   PangoLanguage *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_context_get_language(PANGO_CONTEXT(self->obj));
+  ret =pango_context_get_language(PANGO_CONTEXT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_LANGUAGE, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangolanguage))== NULL)
     return RET_BUG;
@@ -2582,7 +2582,7 @@ static int _wrap_pango_context_get_language(NspPangoContext *self,Stack stack,in
 
 static int _wrap_pango_context_set_language(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoLanguage *language = NULL;
   NspObject *nsp_language;
   if ( GetArgs(stack,rhs,opt,T,&nsp_language) == FAIL) return RET_BUG;
@@ -2592,19 +2592,19 @@ static int _wrap_pango_context_set_language(NspPangoContext *self,Stack stack,in
       Scierror( "language should be a PangoLanguage");
       return RET_BUG;
   }
-  pango_context_set_language(PANGO_CONTEXT(self->obj), language);
+  pango_context_set_language(PANGO_CONTEXT(self->obj),language);
   return 0;
 }
 
 static int _wrap_pango_context_set_base_dir(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoDirection direction;
   NspObject *nsp_direction = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_direction) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_DIRECTION, nsp_direction, &direction)== FAIL)
       return RET_BUG;
-  pango_context_set_base_dir(PANGO_CONTEXT(self->obj), direction);
+  pango_context_set_base_dir(PANGO_CONTEXT(self->obj),direction);
   return 0;
 }
 
@@ -2612,7 +2612,7 @@ static int _wrap_pango_context_get_base_dir(NspPangoContext *self,Stack stack,in
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_context_get_base_dir(PANGO_CONTEXT(self->obj));
+  ret =pango_context_get_base_dir(PANGO_CONTEXT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -2639,7 +2639,7 @@ static NspMethods *pangocontext_get_methods(void) { return pangocontext_methods;
 static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFont ----------- */
+/* -----------NspPangoFont ----------- */
 
 
 #define  NspPangoFont_Private 
@@ -2666,34 +2666,34 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
 {
   NspTypePangoFont *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofont != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofont != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofont;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofont_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofont_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofont_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofont_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofont;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofont */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofont_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofont_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofont_type_short_string;
-  /* top->create = (create_func*) int_pangofont_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofont_create;*/
+
   /* specific methods for pangofont */
-      
+
   type->init = (init_func *) init_pangofont;
 
   /* 
@@ -2717,8 +2717,8 @@ NspTypePangoFont *new_type_pangofont(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofont_id;
-       return type;
+      type->id = nsp_type_pangofont_id;
+      return type;
     }
 }
 
@@ -2731,10 +2731,10 @@ static int init_pangofont(NspPangoFont *Obj,NspTypePangoFont *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -2743,7 +2743,7 @@ static int init_pangofont(NspPangoFont *Obj,NspTypePangoFont *type)
 
 NspPangoFont *new_pangofont() 
 {
-  NspPangoFont *loc; 
+  NspPangoFont *loc;
   /* type must exists */
   nsp_type_pangofont = new_type_pangofont(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFont)))== NULLPANGOFONT) return loc;
@@ -2775,10 +2775,10 @@ static char *nsp_pangofont_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFont objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFont *nsp_pangofont_object(NspObject *O)
+NspPangoFont   *nsp_pangofont_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2791,7 +2791,7 @@ NspPangoFont *nsp_pangofont_object(NspObject *O)
 
 int IsPangoFontObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofont_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofont_id);
 }
 
 int IsPangoFont(NspObject *O)
@@ -2835,7 +2835,7 @@ static int _wrap_pango_font_describe(NspPangoFont *self,Stack stack,int rhs,int 
   PangoFontDescription *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_font_describe(PANGO_FONT(self->obj));
+  ret =pango_font_describe(PANGO_FONT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
     return RET_BUG;
@@ -2845,7 +2845,7 @@ static int _wrap_pango_font_describe(NspPangoFont *self,Stack stack,int rhs,int 
 
 static int _wrap_pango_font_get_metrics(NspPangoFont *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoLanguage *language = NULL;
   NspObject *nsp_language, *nsp_ret;
   PangoFontMetrics *ret;
@@ -2856,7 +2856,7 @@ static int _wrap_pango_font_get_metrics(NspPangoFont *self,Stack stack,int rhs,i
       Scierror( "language should be a PangoLanguage");
       return RET_BUG;
   }
-  ret = pango_font_get_metrics(PANGO_FONT(self->obj), language);
+  ret =pango_font_get_metrics(PANGO_FONT(self->obj),language);
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_METRICS, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontmetrics))== NULL)
     return RET_BUG;
@@ -2901,7 +2901,7 @@ static NspMethods *pangofont_get_methods(void) { return pangofont_methods;};
 static AttrTab pangofont_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFontFace ----------- */
+/* -----------NspPangoFontFace ----------- */
 
 
 #define  NspPangoFontFace_Private 
@@ -2928,34 +2928,34 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
 {
   NspTypePangoFontFace *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontface != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontface != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontface;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontface_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontface_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontface_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontface_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontface;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontface */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontface_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontface_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontface_type_short_string;
-  /* top->create = (create_func*) int_pangofontface_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontface_create;*/
+
   /* specific methods for pangofontface */
-      
+
   type->init = (init_func *) init_pangofontface;
 
   /* 
@@ -2979,8 +2979,8 @@ NspTypePangoFontFace *new_type_pangofontface(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontface_id;
-       return type;
+      type->id = nsp_type_pangofontface_id;
+      return type;
     }
 }
 
@@ -2993,10 +2993,10 @@ static int init_pangofontface(NspPangoFontFace *Obj,NspTypePangoFontFace *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3005,7 +3005,7 @@ static int init_pangofontface(NspPangoFontFace *Obj,NspTypePangoFontFace *type)
 
 NspPangoFontFace *new_pangofontface() 
 {
-  NspPangoFontFace *loc; 
+  NspPangoFontFace *loc;
   /* type must exists */
   nsp_type_pangofontface = new_type_pangofontface(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontFace)))== NULLPANGOFONTFACE) return loc;
@@ -3037,10 +3037,10 @@ static char *nsp_pangofontface_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontFace objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontFace *nsp_pangofontface_object(NspObject *O)
+NspPangoFontFace   *nsp_pangofontface_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3053,7 +3053,7 @@ NspPangoFontFace *nsp_pangofontface_object(NspObject *O)
 
 int IsPangoFontFaceObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontface_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontface_id);
 }
 
 int IsPangoFontFace(NspObject *O)
@@ -3097,7 +3097,7 @@ static int _wrap_pango_font_face_describe(NspPangoFontFace *self,Stack stack,int
   PangoFontDescription *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_font_face_describe(PANGO_FONT_FACE(self->obj));
+  ret =pango_font_face_describe(PANGO_FONT_FACE(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
     return RET_BUG;
@@ -3109,7 +3109,7 @@ static int _wrap_pango_font_face_get_face_name(NspPangoFontFace *self,Stack stac
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = pango_font_face_get_face_name(PANGO_FONT_FACE(self->obj));
+  ret =pango_font_face_get_face_name(PANGO_FONT_FACE(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -3128,7 +3128,7 @@ static NspMethods *pangofontface_get_methods(void) { return pangofontface_method
 static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFontFamily ----------- */
+/* -----------NspPangoFontFamily ----------- */
 
 
 #define  NspPangoFontFamily_Private 
@@ -3155,34 +3155,34 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
 {
   NspTypePangoFontFamily *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontfamily != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontfamily != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontfamily;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontfamily_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontfamily_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontfamily_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontfamily_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontfamily;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontfamily */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontfamily_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontfamily_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontfamily_type_short_string;
-  /* top->create = (create_func*) int_pangofontfamily_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontfamily_create;*/
+
   /* specific methods for pangofontfamily */
-      
+
   type->init = (init_func *) init_pangofontfamily;
 
   /* 
@@ -3206,8 +3206,8 @@ NspTypePangoFontFamily *new_type_pangofontfamily(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontfamily_id;
-       return type;
+      type->id = nsp_type_pangofontfamily_id;
+      return type;
     }
 }
 
@@ -3220,10 +3220,10 @@ static int init_pangofontfamily(NspPangoFontFamily *Obj,NspTypePangoFontFamily *
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3232,7 +3232,7 @@ static int init_pangofontfamily(NspPangoFontFamily *Obj,NspTypePangoFontFamily *
 
 NspPangoFontFamily *new_pangofontfamily() 
 {
-  NspPangoFontFamily *loc; 
+  NspPangoFontFamily *loc;
   /* type must exists */
   nsp_type_pangofontfamily = new_type_pangofontfamily(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontFamily)))== NULLPANGOFONTFAMILY) return loc;
@@ -3264,10 +3264,10 @@ static char *nsp_pangofontfamily_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontFamily objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontFamily *nsp_pangofontfamily_object(NspObject *O)
+NspPangoFontFamily   *nsp_pangofontfamily_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3280,7 +3280,7 @@ NspPangoFontFamily *nsp_pangofontfamily_object(NspObject *O)
 
 int IsPangoFontFamilyObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontfamily_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontfamily_id);
 }
 
 int IsPangoFontFamily(NspObject *O)
@@ -3345,7 +3345,7 @@ static int _wrap_pango_font_family_get_name(NspPangoFontFamily *self,Stack stack
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = pango_font_family_get_name(PANGO_FONT_FAMILY(self->obj));
+  ret =pango_font_family_get_name(PANGO_FONT_FAMILY(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -3364,7 +3364,7 @@ static NspMethods *pangofontfamily_get_methods(void) { return pangofontfamily_me
 static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFontMap ----------- */
+/* -----------NspPangoFontMap ----------- */
 
 
 #define  NspPangoFontMap_Private 
@@ -3391,34 +3391,34 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
 {
   NspTypePangoFontMap *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontmap != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontmap != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontmap;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontmap_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontmap_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontmap_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontmap_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontmap;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontmap */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontmap_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontmap_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontmap_type_short_string;
-  /* top->create = (create_func*) int_pangofontmap_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontmap_create;*/
+
   /* specific methods for pangofontmap */
-      
+
   type->init = (init_func *) init_pangofontmap;
 
   /* 
@@ -3442,8 +3442,8 @@ NspTypePangoFontMap *new_type_pangofontmap(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontmap_id;
-       return type;
+      type->id = nsp_type_pangofontmap_id;
+      return type;
     }
 }
 
@@ -3456,10 +3456,10 @@ static int init_pangofontmap(NspPangoFontMap *Obj,NspTypePangoFontMap *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3468,7 +3468,7 @@ static int init_pangofontmap(NspPangoFontMap *Obj,NspTypePangoFontMap *type)
 
 NspPangoFontMap *new_pangofontmap() 
 {
-  NspPangoFontMap *loc; 
+  NspPangoFontMap *loc;
   /* type must exists */
   nsp_type_pangofontmap = new_type_pangofontmap(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontMap)))== NULLPANGOFONTMAP) return loc;
@@ -3500,10 +3500,10 @@ static char *nsp_pangofontmap_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontMap objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontMap *nsp_pangofontmap_object(NspObject *O)
+NspPangoFontMap   *nsp_pangofontmap_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3516,7 +3516,7 @@ NspPangoFontMap *nsp_pangofontmap_object(NspObject *O)
 
 int IsPangoFontMapObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontmap_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontmap_id);
 }
 
 int IsPangoFontMap(NspObject *O)
@@ -3557,7 +3557,7 @@ NspPangoFontMap *pangofontmap_copy(NspPangoFontMap *self)
  *-------------------------------------------*/
 static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj,t_end};
+  int_types T[] = {obj_check,obj, t_end};
   NspGObject *context;
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc, *nsp_ret;
@@ -3569,7 +3569,7 @@ static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int 
       Scierror( "desc should be a PangoFontDescription");
       return RET_BUG;
   }
-  ret = pango_font_map_load_font(PANGO_FONT_MAP(self->obj), PANGO_CONTEXT(context->obj), desc);
+  ret =pango_font_map_load_font(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3578,7 +3578,7 @@ static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int 
 
 static int _wrap_pango_font_map_load_fontset(NspPangoFontMap *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj, obj,t_end};
+  int_types T[] = {obj_check,obj,obj, t_end};
   NspGObject *context;
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc, *nsp_language, *nsp_ret;
@@ -3597,7 +3597,7 @@ static int _wrap_pango_font_map_load_fontset(NspPangoFontMap *self,Stack stack,i
       Scierror( "language should be a PangoLanguage");
       return RET_BUG;
   }
-  ret = pango_font_map_load_fontset(PANGO_FONT_MAP(self->obj), PANGO_CONTEXT(context->obj), desc, language);
+  ret =pango_font_map_load_fontset(PANGO_FONT_MAP(self->obj),PANGO_CONTEXT(context->obj),desc,language);
   nsp_type_pangofontset = new_type_pangofontset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofontset))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3640,7 +3640,7 @@ static NspMethods *pangofontmap_get_methods(void) { return pangofontmap_methods;
 static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoFontset ----------- */
+/* -----------NspPangoFontset ----------- */
 
 
 #define  NspPangoFontset_Private 
@@ -3667,34 +3667,34 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
 {
   NspTypePangoFontset *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangofontset != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangofontset != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangofontset;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangofontset_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangofontset_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangofontset_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangofontset_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangofontset;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangofontset */ 
 
-  top->s_type =  (s_type_func *) nsp_pangofontset_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangofontset_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangofontset_type_short_string;
-  /* top->create = (create_func*) int_pangofontset_create;*/ 
-  
+  /* top->create = (create_func*) int_pangofontset_create;*/
+
   /* specific methods for pangofontset */
-      
+
   type->init = (init_func *) init_pangofontset;
 
   /* 
@@ -3718,8 +3718,8 @@ NspTypePangoFontset *new_type_pangofontset(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangofontset_id;
-       return type;
+      type->id = nsp_type_pangofontset_id;
+      return type;
     }
 }
 
@@ -3732,10 +3732,10 @@ static int init_pangofontset(NspPangoFontset *Obj,NspTypePangoFontset *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3744,7 +3744,7 @@ static int init_pangofontset(NspPangoFontset *Obj,NspTypePangoFontset *type)
 
 NspPangoFontset *new_pangofontset() 
 {
-  NspPangoFontset *loc; 
+  NspPangoFontset *loc;
   /* type must exists */
   nsp_type_pangofontset = new_type_pangofontset(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoFontset)))== NULLPANGOFONTSET) return loc;
@@ -3776,10 +3776,10 @@ static char *nsp_pangofontset_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoFontset objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoFontset *nsp_pangofontset_object(NspObject *O)
+NspPangoFontset   *nsp_pangofontset_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -3792,7 +3792,7 @@ NspPangoFontset *nsp_pangofontset_object(NspObject *O)
 
 int IsPangoFontsetObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangofontset_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangofontset_id);
 }
 
 int IsPangoFontset(NspObject *O)
@@ -3833,12 +3833,12 @@ NspPangoFontset *pangofontset_copy(NspPangoFontset *self)
  *-------------------------------------------*/
 static int _wrap_pango_fontset_get_font(NspPangoFontset *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int wc;
   PangoFont *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&wc) == FAIL) return RET_BUG;
-  ret = pango_fontset_get_font(PANGO_FONTSET(self->obj), wc);
+  ret =pango_fontset_get_font(PANGO_FONTSET(self->obj),wc);
   nsp_type_pangofont = new_type_pangofont(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangofont))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -3850,7 +3850,7 @@ static int _wrap_pango_fontset_get_metrics(NspPangoFontset *self,Stack stack,int
   PangoFontMetrics *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_fontset_get_metrics(PANGO_FONTSET(self->obj));
+  ret =pango_fontset_get_metrics(PANGO_FONTSET(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_METRICS, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontmetrics))== NULL)
     return RET_BUG;
@@ -3872,7 +3872,7 @@ static NspMethods *pangofontset_get_methods(void) { return pangofontset_methods;
 static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspPangoLayout ----------- */
+/* -----------NspPangoLayout ----------- */
 
 
 #define  NspPangoLayout_Private 
@@ -3899,34 +3899,34 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
 {
   NspTypePangoLayout *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_pangolayout != 0 && mode == T_BASE ) 
+  if (  nsp_type_pangolayout != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_pangolayout;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = pangolayout_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = pangolayout_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = pangolayout_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = pangolayout_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_pangolayout;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for pangolayout */ 
 
-  top->s_type =  (s_type_func *) nsp_pangolayout_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_pangolayout_type_as_string;
   top->sh_type = (sh_type_func *) nsp_pangolayout_type_short_string;
-  /* top->create = (create_func*) int_pangolayout_create;*/ 
-  
+  /* top->create = (create_func*) int_pangolayout_create;*/
+
   /* specific methods for pangolayout */
-      
+
   type->init = (init_func *) init_pangolayout;
 
   /* 
@@ -3950,8 +3950,8 @@ NspTypePangoLayout *new_type_pangolayout(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_pangolayout_id;
-       return type;
+      type->id = nsp_type_pangolayout_id;
+      return type;
     }
 }
 
@@ -3964,10 +3964,10 @@ static int init_pangolayout(NspPangoLayout *Obj,NspTypePangoLayout *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -3976,7 +3976,7 @@ static int init_pangolayout(NspPangoLayout *Obj,NspTypePangoLayout *type)
 
 NspPangoLayout *new_pangolayout() 
 {
-  NspPangoLayout *loc; 
+  NspPangoLayout *loc;
   /* type must exists */
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
   if ( (loc = malloc(sizeof(NspPangoLayout)))== NULLPANGOLAYOUT) return loc;
@@ -4008,10 +4008,10 @@ static char *nsp_pangolayout_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPangoLayout objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspPangoLayout *nsp_pangolayout_object(NspObject *O)
+NspPangoLayout   *nsp_pangolayout_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -4024,7 +4024,7 @@ NspPangoLayout *nsp_pangolayout_object(NspObject *O)
 
 int IsPangoLayoutObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_pangolayout_id);
+  return nsp_object_type(NthObj(i),nsp_type_pangolayout_id);
 }
 
 int IsPangoLayout(NspObject *O)
@@ -4066,7 +4066,7 @@ NspPangoLayout *pangolayout_copy(NspPangoLayout *self)
 static int
 _wrap_pangolayout_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *context;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_pangocontext, &context) == FAIL) return RET_BUG;
@@ -4084,7 +4084,7 @@ static int _wrap_pango_layout_copy(NspPangoLayout *self,Stack stack,int rhs,int 
   PangoLayout *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_layout_copy(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_copy(PANGO_LAYOUT(self->obj));
   nsp_type_pangolayout = new_type_pangolayout(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangolayout))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4096,7 +4096,7 @@ static int _wrap_pango_layout_get_context(NspPangoLayout *self,Stack stack,int r
   PangoContext *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_context(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_context(PANGO_LAYOUT(self->obj));
   nsp_type_pangocontext = new_type_pangocontext(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_pangocontext))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -4105,7 +4105,7 @@ static int _wrap_pango_layout_get_context(NspPangoLayout *self,Stack stack,int r
 
 static int _wrap_pango_layout_set_attributes(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoAttrList *attrs = NULL;
   NspObject *nsp_attrs;
   if ( GetArgs(stack,rhs,opt,T,&nsp_attrs) == FAIL) return RET_BUG;
@@ -4115,7 +4115,7 @@ static int _wrap_pango_layout_set_attributes(NspPangoLayout *self,Stack stack,in
       Scierror( "attrs should be a PangoAttrList");
       return RET_BUG;
   }
-  pango_layout_set_attributes(PANGO_LAYOUT(self->obj), attrs);
+  pango_layout_set_attributes(PANGO_LAYOUT(self->obj),attrs);
   return 0;
 }
 
@@ -4124,7 +4124,7 @@ static int _wrap_pango_layout_get_attributes(NspPangoLayout *self,Stack stack,in
   PangoAttrList *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_attributes(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_attributes(PANGO_LAYOUT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_ATTR_LIST, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangoattrlist))== NULL)
     return RET_BUG;
@@ -4155,7 +4155,7 @@ static int _wrap_pango_layout_get_text(NspPangoLayout *self,Stack stack,int rhs,
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_text(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_text(PANGO_LAYOUT(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -4215,7 +4215,7 @@ _wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,i
 
 static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
   NspObject *nsp_desc;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc) == FAIL) return RET_BUG;
@@ -4225,16 +4225,16 @@ static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack st
       Scierror( "desc should be a PangoFontDescription");
       return RET_BUG;
   }
-  pango_layout_set_font_description(PANGO_LAYOUT(self->obj), desc);
+  pango_layout_set_font_description(PANGO_LAYOUT(self->obj),desc);
   return 0;
 }
 
 static int _wrap_pango_layout_set_width(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int width;
   if ( GetArgs(stack,rhs,opt,T,&width) == FAIL) return RET_BUG;
-  pango_layout_set_width(PANGO_LAYOUT(self->obj), width);
+  pango_layout_set_width(PANGO_LAYOUT(self->obj),width);
   return 0;
 }
 
@@ -4242,20 +4242,20 @@ static int _wrap_pango_layout_get_width(NspPangoLayout *self,Stack stack,int rhs
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_width(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_width(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_wrap(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoWrapMode wrap;
   NspObject *nsp_wrap = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_wrap) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_WRAP_MODE, nsp_wrap, &wrap)== FAIL)
       return RET_BUG;
-  pango_layout_set_wrap(PANGO_LAYOUT(self->obj), wrap);
+  pango_layout_set_wrap(PANGO_LAYOUT(self->obj),wrap);
   return 0;
 }
 
@@ -4263,17 +4263,17 @@ static int _wrap_pango_layout_get_wrap(NspPangoLayout *self,Stack stack,int rhs,
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_wrap(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_wrap(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_indent(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int indent;
   if ( GetArgs(stack,rhs,opt,T,&indent) == FAIL) return RET_BUG;
-  pango_layout_set_indent(PANGO_LAYOUT(self->obj), indent);
+  pango_layout_set_indent(PANGO_LAYOUT(self->obj),indent);
   return 0;
 }
 
@@ -4281,17 +4281,17 @@ static int _wrap_pango_layout_get_indent(NspPangoLayout *self,Stack stack,int rh
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_indent(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_indent(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_spacing(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int spacing;
   if ( GetArgs(stack,rhs,opt,T,&spacing) == FAIL) return RET_BUG;
-  pango_layout_set_spacing(PANGO_LAYOUT(self->obj), spacing);
+  pango_layout_set_spacing(PANGO_LAYOUT(self->obj),spacing);
   return 0;
 }
 
@@ -4299,17 +4299,17 @@ static int _wrap_pango_layout_get_spacing(NspPangoLayout *self,Stack stack,int r
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_spacing(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_spacing(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_justify(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int justify;
   if ( GetArgs(stack,rhs,opt,T,&justify) == FAIL) return RET_BUG;
-  pango_layout_set_justify(PANGO_LAYOUT(self->obj), justify);
+  pango_layout_set_justify(PANGO_LAYOUT(self->obj),justify);
   return 0;
 }
 
@@ -4317,20 +4317,20 @@ static int _wrap_pango_layout_get_justify(NspPangoLayout *self,Stack stack,int r
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_justify(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_justify(PANGO_LAYOUT(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_alignment(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoAlignment alignment;
   NspObject *nsp_alignment = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_alignment) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_ALIGNMENT, nsp_alignment, &alignment)== FAIL)
       return RET_BUG;
-  pango_layout_set_alignment(PANGO_LAYOUT(self->obj), alignment);
+  pango_layout_set_alignment(PANGO_LAYOUT(self->obj),alignment);
   return 0;
 }
 
@@ -4338,14 +4338,14 @@ static int _wrap_pango_layout_get_alignment(NspPangoLayout *self,Stack stack,int
 {
   gint ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_alignment(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_alignment(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_pango_layout_set_tabs(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj,t_end};
+  int_types T[] = {obj, t_end};
   PangoTabArray *tabs = NULL;
   NspObject *nsp_tabs;
   if ( GetArgs(stack,rhs,opt,T,&nsp_tabs) == FAIL) return RET_BUG;
@@ -4355,7 +4355,7 @@ static int _wrap_pango_layout_set_tabs(NspPangoLayout *self,Stack stack,int rhs,
       Scierror( "tabs should be a PangoTabArray");
       return RET_BUG;
   }
-  pango_layout_set_tabs(PANGO_LAYOUT(self->obj), tabs);
+  pango_layout_set_tabs(PANGO_LAYOUT(self->obj),tabs);
   return 0;
 }
 
@@ -4364,7 +4364,7 @@ static int _wrap_pango_layout_get_tabs(NspPangoLayout *self,Stack stack,int rhs,
   PangoTabArray *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_tabs(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_tabs(PANGO_LAYOUT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_TAB_ARRAY, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangotabarray))== NULL)
     return RET_BUG;
@@ -4374,10 +4374,10 @@ static int _wrap_pango_layout_get_tabs(NspPangoLayout *self,Stack stack,int rhs,
 
 static int _wrap_pango_layout_set_single_paragraph_mode(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int setting;
   if ( GetArgs(stack,rhs,opt,T,&setting) == FAIL) return RET_BUG;
-  pango_layout_set_single_paragraph_mode(PANGO_LAYOUT(self->obj), setting);
+  pango_layout_set_single_paragraph_mode(PANGO_LAYOUT(self->obj),setting);
   return 0;
 }
 
@@ -4385,7 +4385,7 @@ static int _wrap_pango_layout_get_single_paragraph_mode(NspPangoLayout *self,Sta
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_single_paragraph_mode(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_single_paragraph_mode(PANGO_LAYOUT(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -4541,7 +4541,7 @@ static int _wrap_pango_layout_get_line_count(NspPangoLayout *self,Stack stack,in
 {
   int ret;
   CheckRhs(0,0);
-  ret = pango_layout_get_line_count(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_line_count(PANGO_LAYOUT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -4551,7 +4551,7 @@ static int _wrap_pango_layout_get_lines(NspPangoLayout *self,Stack stack,int rhs
   GSList *ret, *tmp;
   NspList *nsp_list;
   CheckRhs(0,0);
-  ret = pango_layout_get_lines(PANGO_LAYOUT(self->obj));
+  ret =pango_layout_get_lines(PANGO_LAYOUT(self->obj));
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 
 }
@@ -4608,11 +4608,11 @@ static AttrTab pangolayout_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
  *-------------------------------------------*/
 int _wrap_pango_attr_type_register(Stack stack, int rhs, int opt, int lhs) /* pango_attr_type_register */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *name;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-ret = pango_attr_type_register(name);
+    ret =pango_attr_type_register(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -4949,35 +4949,35 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
 
 int _wrap_pango_find_paragraph_boundary(Stack stack, int rhs, int opt, int lhs) /* find_paragraph_boundary */
 {
-  int_types T[] = {string, s_int, s_int, s_int,t_end};
+  int_types T[] = {string,s_int,s_int,s_int, t_end};
   char *text;
   int length, paragraph_delimiter_index, next_paragraph_start;
   if ( GetArgs(stack,rhs,opt,T,&text, &length, &paragraph_delimiter_index, &next_paragraph_start) == FAIL) return RET_BUG;
-pango_find_paragraph_boundary(text, length, &paragraph_delimiter_index, &next_paragraph_start);
+    pango_find_paragraph_boundary(text,length,&paragraph_delimiter_index,&next_paragraph_start);
   return 0;
 }
 
 int _wrap_pango_reorder_items(Stack stack, int rhs, int opt, int lhs) /* reorder_items */
 {
-  int_types T[] = {list,t_end};
+  int_types T[] = {list, t_end};
   NspList *nsp_logical_items, *nsp_list;
   GList *logical_items, *ret, *tmp;
   if ( GetArgs(stack,rhs,opt,T,&nsp_logical_items) == FAIL) return RET_BUG;
   logical_items=nsp_glist_from_nsplist(stack,nsp_logical_items);
   if (logical_items== NULL) return RET_BUG;
-ret = pango_reorder_items(logical_items);
+    ret =pango_reorder_items(logical_items);
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
 
 int _wrap_pango_language_from_string(Stack stack, int rhs, int opt, int lhs) /* pango_language_from_string */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *language;
   PangoLanguage *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&language) == FAIL) return RET_BUG;
-ret = pango_language_from_string(language);
+    ret =pango_language_from_string(language);
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_LANGUAGE, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangolanguage))== NULL)
     return RET_BUG;
@@ -4991,32 +4991,32 @@ ret = pango_language_from_string(language);
  *----------------------------------------------------*/
 
 static OpTab pango_func[]={
-  {"pangoattrlist_new", _wrap_pangoattrlist_new},
-  {"pangocolor_new", _wrap_pangocolor_new},
-  {"pangofontdescription_new", _wrap_pangofontdescription_new},
-  {"pangoglyphstring_new", _wrap_pangoglyphstring_new},
-  {"pangotabarray_new", _wrap_pangotabarray_new},
-  {"pangolayout_new", _wrap_pangolayout_new},
-  {"pango_attr_type_register", _wrap_pango_attr_type_register},
-  {"pango_attr_language_new", _wrap_pango_attr_language_new},
-  {"pango_attr_family_new", _wrap_pango_attr_family_new},
-  {"pango_attr_foreground_new", _wrap_pango_attr_foreground_new},
-  {"pango_attr_background_new", _wrap_pango_attr_background_new},
-  {"pango_attr_size_new", _wrap_pango_attr_size_new},
-  {"pango_attr_style_new", _wrap_pango_attr_style_new},
-  {"pango_attr_weight_new", _wrap_pango_attr_weight_new},
-  {"pango_attr_variant_new", _wrap_pango_attr_variant_new},
-  {"pango_attr_stretch_new", _wrap_pango_attr_stretch_new},
-  {"pango_attr_font_desc_new", _wrap_pango_attr_font_desc_new},
-  {"pango_attr_underline_new", _wrap_pango_attr_underline_new},
-  {"pango_attr_strikethrough_new", _wrap_pango_attr_strikethrough_new},
-  {"pango_attr_rise_new", _wrap_pango_attr_rise_new},
-  {"pango_attr_shape_new", _wrap_pango_attr_shape_new},
-  {"pango_attr_scale_new", _wrap_pango_attr_scale_new},
-  {"pango_parse_markup", _wrap_pango_parse_markup},
-  {"pango_find_paragraph_boundary", _wrap_pango_find_paragraph_boundary},
-  {"pango_reorder_items", _wrap_pango_reorder_items},
-  {"pango_language_from_string", _wrap_pango_language_from_string},
+  { "pangoattrlist_new", _wrap_pangoattrlist_new},
+  { "pangocolor_new", _wrap_pangocolor_new},
+  { "pangofontdescription_new", _wrap_pangofontdescription_new},
+  { "pangoglyphstring_new", _wrap_pangoglyphstring_new},
+  { "pangotabarray_new", _wrap_pangotabarray_new},
+  { "pangolayout_new", _wrap_pangolayout_new},
+  { "pango_attr_type_register", _wrap_pango_attr_type_register},
+  { "pango_attr_language_new", _wrap_pango_attr_language_new},
+  { "pango_attr_family_new", _wrap_pango_attr_family_new},
+  { "pango_attr_foreground_new", _wrap_pango_attr_foreground_new},
+  { "pango_attr_background_new", _wrap_pango_attr_background_new},
+  { "pango_attr_size_new", _wrap_pango_attr_size_new},
+  { "pango_attr_style_new", _wrap_pango_attr_style_new},
+  { "pango_attr_weight_new", _wrap_pango_attr_weight_new},
+  { "pango_attr_variant_new", _wrap_pango_attr_variant_new},
+  { "pango_attr_stretch_new", _wrap_pango_attr_stretch_new},
+  { "pango_attr_font_desc_new", _wrap_pango_attr_font_desc_new},
+  { "pango_attr_underline_new", _wrap_pango_attr_underline_new},
+  { "pango_attr_strikethrough_new", _wrap_pango_attr_strikethrough_new},
+  { "pango_attr_rise_new", _wrap_pango_attr_rise_new},
+  { "pango_attr_shape_new", _wrap_pango_attr_shape_new},
+  { "pango_attr_scale_new", _wrap_pango_attr_scale_new},
+  { "pango_parse_markup", _wrap_pango_parse_markup},
+  { "pango_find_paragraph_boundary", _wrap_pango_find_paragraph_boundary},
+  { "pango_reorder_items", _wrap_pango_reorder_items},
+  { "pango_language_from_string", _wrap_pango_language_from_string},
   { NULL, NULL}
 };
 
@@ -5035,7 +5035,7 @@ int pango_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void pango_Interf_Info(int i, char **fname, function (**f))
+void pango_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = pango_func[i].name;
   *f = pango_func[i].fonc;
@@ -5046,18 +5046,18 @@ void pango_Interf_Info(int i, char **fname, function (**f))
 void
 pango_add_constants(NspObject *module, const gchar *strip_prefix)
 {
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_ATTR_TYPE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_UNDERLINE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_COVERAGE_LEVEL, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_STYLE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_VARIANT, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_WEIGHT, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_STRETCH, strip_prefix);
-  nsp_flags_add_constants((NspHash *)module, PANGO_TYPE_FONT_MASK, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_ALIGNMENT, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_WRAP_MODE, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_TAB_ALIGN, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_DIRECTION, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_ATTR_TYPE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_UNDERLINE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_COVERAGE_LEVEL, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_STYLE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_VARIANT, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_WEIGHT, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_STRETCH, strip_prefix);
+  nsp_flags_add_constants((NspHash * )module, PANGO_TYPE_FONT_MASK, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_ALIGNMENT, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_WRAP_MODE, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_TAB_ALIGN, strip_prefix);
+  nsp_enum_add_constants((NspHash  * )  module, PANGO_TYPE_DIRECTION, strip_prefix);
 }
 
 

@@ -70,7 +70,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #include <nsp/gtk/webkitnetworkrequest.h>
 
 
-/* ----------- NspWebKitWebView ----------- */
+/* -----------NspWebKitWebView ----------- */
 
 
 #define  NspWebKitWebView_Private 
@@ -97,34 +97,34 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
 {
   NspTypeWebKitWebView *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitwebview != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitwebview != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitwebview;
     }
-  if ((type =  malloc(sizeof(NspTypeGtkContainer))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGtkContainer))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gtkcontainer(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitwebview_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitwebview_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitwebview_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitwebview_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitwebview;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitwebview */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitwebview_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitwebview_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitwebview_type_short_string;
-  /* top->create = (create_func*) int_webkitwebview_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitwebview_create;*/
+
   /* specific methods for webkitwebview */
-      
+
   type->init = (init_func *) init_webkitwebview;
 
   /* 
@@ -148,8 +148,8 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_webkitwebview_id;
-       return type;
+      type->id = nsp_type_webkitwebview_id;
+      return type;
     }
 }
 
@@ -162,10 +162,10 @@ static int init_webkitwebview(NspWebKitWebView *Obj,NspTypeWebKitWebView *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -174,7 +174,7 @@ static int init_webkitwebview(NspWebKitWebView *Obj,NspTypeWebKitWebView *type)
 
 NspWebKitWebView *new_webkitwebview() 
 {
-  NspWebKitWebView *loc; 
+  NspWebKitWebView *loc;
   /* type must exists */
   nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitWebView)))== NULLWEBKITWEBVIEW) return loc;
@@ -206,10 +206,10 @@ static char *nsp_webkitwebview_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitWebView objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitWebView *nsp_webkitwebview_object(NspObject *O)
+NspWebKitWebView   *nsp_webkitwebview_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -222,7 +222,7 @@ NspWebKitWebView *nsp_webkitwebview_object(NspObject *O)
 
 int IsWebKitWebViewObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitwebview_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitwebview_id);
 }
 
 int IsWebKitWebView(NspObject *O)
@@ -277,10 +277,10 @@ _wrap_webkitwebview_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_webkit_web_view_set_maintains_back_forward_list(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int flag;
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
-  webkit_web_view_set_maintains_back_forward_list(WEBKIT_WEB_VIEW(self->obj), flag);
+  webkit_web_view_set_maintains_back_forward_list(WEBKIT_WEB_VIEW(self->obj),flag);
   return 0;
 }
 
@@ -289,7 +289,7 @@ static int _wrap_webkit_web_view_get_back_forward_list(NspWebKitWebView *self,St
   WebKitWebBackForwardList *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_back_forward_list(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_back_forward_list(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebbackforwardlist))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -298,11 +298,11 @@ static int _wrap_webkit_web_view_get_back_forward_list(NspWebKitWebView *self,St
 
 static int _wrap_webkit_web_view_go_to_back_forward_item(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *item;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &item) == FAIL) return RET_BUG;
-  ret = webkit_web_view_go_to_back_forward_item(WEBKIT_WEB_VIEW(self->obj), WEBKIT_WEB_HISTORY_ITEM(item->obj));
+  ret =webkit_web_view_go_to_back_forward_item(WEBKIT_WEB_VIEW(self->obj),WEBKIT_WEB_HISTORY_ITEM(item->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -311,7 +311,7 @@ static int _wrap_webkit_web_view_can_go_back(NspWebKitWebView *self,Stack stack,
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_can_go_back(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_can_go_back(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -320,7 +320,7 @@ static int _wrap_webkit_web_view_can_go_forward(NspWebKitWebView *self,Stack sta
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_can_go_forward(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_can_go_forward(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -341,10 +341,10 @@ static int _wrap_webkit_web_view_go_forward(NspWebKitWebView *self,Stack stack,i
 
 static int _wrap_webkit_web_view_go_back_or_forward(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int steps;
   if ( GetArgs(stack,rhs,opt,T,&steps) == FAIL) return RET_BUG;
-  webkit_web_view_go_back_or_forward(WEBKIT_WEB_VIEW(self->obj), steps);
+  webkit_web_view_go_back_or_forward(WEBKIT_WEB_VIEW(self->obj),steps);
   return 0;
 }
 
@@ -357,10 +357,10 @@ static int _wrap_webkit_web_view_stop_loading(NspWebKitWebView *self,Stack stack
 
 static int _wrap_webkit_web_view_open(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *uri;
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
-  webkit_web_view_open(WEBKIT_WEB_VIEW(self->obj), uri);
+  webkit_web_view_open(WEBKIT_WEB_VIEW(self->obj),uri);
   return 0;
 }
 
@@ -373,19 +373,19 @@ static int _wrap_webkit_web_view_reload(NspWebKitWebView *self,Stack stack,int r
 
 static int _wrap_webkit_web_view_load_html_string(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string,t_end};
+  int_types T[] = {string,string, t_end};
   char *content, *base_uri;
   if ( GetArgs(stack,rhs,opt,T,&content, &base_uri) == FAIL) return RET_BUG;
-  webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(self->obj), content, base_uri);
+  webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(self->obj),content,base_uri);
   return 0;
 }
 
 static int _wrap_webkit_web_view_load_string(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string, string, string,t_end};
+  int_types T[] = {string,string,string,string, t_end};
   char *content, *content_mimetype, *content_encoding, *base_uri;
   if ( GetArgs(stack,rhs,opt,T,&content, &content_mimetype, &content_encoding, &base_uri) == FAIL) return RET_BUG;
-  webkit_web_view_load_string(WEBKIT_WEB_VIEW(self->obj), content, content_mimetype, content_encoding, base_uri);
+  webkit_web_view_load_string(WEBKIT_WEB_VIEW(self->obj),content,content_mimetype,content_encoding,base_uri);
   return 0;
 }
 
@@ -394,7 +394,7 @@ static int _wrap_webkit_web_view_get_main_frame(NspWebKitWebView *self,Stack sta
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -406,7 +406,7 @@ static int _wrap_webkit_web_view_get_focused_frame(NspWebKitWebView *self,Stack 
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_focused_frame(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_focused_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -415,10 +415,10 @@ static int _wrap_webkit_web_view_get_focused_frame(NspWebKitWebView *self,Stack 
 
 static int _wrap_webkit_web_view_execute_script(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *script;
   if ( GetArgs(stack,rhs,opt,T,&script) == FAIL) return RET_BUG;
-  webkit_web_view_execute_script(WEBKIT_WEB_VIEW(self->obj), script);
+  webkit_web_view_execute_script(WEBKIT_WEB_VIEW(self->obj),script);
   return 0;
 }
 
@@ -426,48 +426,48 @@ static int _wrap_webkit_web_view_get_editable(NspWebKitWebView *self,Stack stack
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_editable(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_editable(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_set_editable(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int flag;
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
-  webkit_web_view_set_editable(WEBKIT_WEB_VIEW(self->obj), flag);
+  webkit_web_view_set_editable(WEBKIT_WEB_VIEW(self->obj),flag);
   return 0;
 }
 
 static int _wrap_webkit_web_view_search_text(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, s_bool, s_bool, s_bool,t_end};
+  int_types T[] = {string,s_bool,s_bool,s_bool, t_end};
   char *string;
   int case_sensitive, forward, wrap, ret;
   if ( GetArgs(stack,rhs,opt,T,&string, &case_sensitive, &forward, &wrap) == FAIL) return RET_BUG;
-  ret = webkit_web_view_search_text(WEBKIT_WEB_VIEW(self->obj), string, case_sensitive, forward, wrap);
+  ret =webkit_web_view_search_text(WEBKIT_WEB_VIEW(self->obj),string,case_sensitive,forward,wrap);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_mark_text_matches(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, s_bool, s_int,t_end};
+  int_types T[] = {string,s_bool,s_int, t_end};
   char *string;
   int case_sensitive, limit, ret;
   if ( GetArgs(stack,rhs,opt,T,&string, &case_sensitive, &limit) == FAIL) return RET_BUG;
-  ret = webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(self->obj), string, case_sensitive, limit);
+  ret =webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(self->obj),string,case_sensitive,limit);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_set_highlight_text_matches(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int highlight;
   if ( GetArgs(stack,rhs,opt,T,&highlight) == FAIL) return RET_BUG;
-  webkit_web_view_set_highlight_text_matches(WEBKIT_WEB_VIEW(self->obj), highlight);
+  webkit_web_view_set_highlight_text_matches(WEBKIT_WEB_VIEW(self->obj),highlight);
   return 0;
 }
 
@@ -510,7 +510,7 @@ static int _wrap_webkit_web_view_has_selection(NspWebKitWebView *self,Stack stac
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_has_selection(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_has_selection(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -524,10 +524,10 @@ static int _wrap_webkit_web_view_select_all(NspWebKitWebView *self,Stack stack,i
 
 static int _wrap_webkit_web_view_set_settings(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *settings;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebsettings, &settings) == FAIL) return RET_BUG;
-  webkit_web_view_set_settings(WEBKIT_WEB_VIEW(self->obj), WEBKIT_WEB_SETTINGS(settings->obj));
+  webkit_web_view_set_settings(WEBKIT_WEB_VIEW(self->obj),WEBKIT_WEB_SETTINGS(settings->obj));
   return 0;
 }
 
@@ -536,7 +536,7 @@ static int _wrap_webkit_web_view_get_settings(NspWebKitWebView *self,Stack stack
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_settings(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -547,17 +547,17 @@ static int _wrap_webkit_web_view_get_transparent(NspWebKitWebView *self,Stack st
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_transparent(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_transparent(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_set_transparent(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int flag;
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
-  webkit_web_view_set_transparent(WEBKIT_WEB_VIEW(self->obj), flag);
+  webkit_web_view_set_transparent(WEBKIT_WEB_VIEW(self->obj),flag);
   return 0;
 }
 
@@ -565,17 +565,17 @@ static int _wrap_webkit_web_view_get_zoom_level(NspWebKitWebView *self,Stack sta
 {
   double ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_set_zoom_level(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_double,t_end};
+  int_types T[] = {s_double, t_end};
   double zoom_level;
   if ( GetArgs(stack,rhs,opt,T,&zoom_level) == FAIL) return RET_BUG;
-  webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(self->obj), zoom_level);
+  webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(self->obj),zoom_level);
   return 0;
 }
 
@@ -597,17 +597,17 @@ static int _wrap_webkit_web_view_get_full_content_zoom(NspWebKitWebView *self,St
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_view_get_full_content_zoom(WEBKIT_WEB_VIEW(self->obj));
+  ret =webkit_web_view_get_full_content_zoom(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_view_set_full_content_zoom(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_bool,t_end};
+  int_types T[] = {s_bool, t_end};
   int full_content_zoom;
   if ( GetArgs(stack,rhs,opt,T,&full_content_zoom) == FAIL) return RET_BUG;
-  webkit_web_view_set_full_content_zoom(WEBKIT_WEB_VIEW(self->obj), full_content_zoom);
+  webkit_web_view_set_full_content_zoom(WEBKIT_WEB_VIEW(self->obj),full_content_zoom);
   return 0;
 }
 
@@ -661,7 +661,7 @@ static NspMethods *webkitwebview_get_methods(void) { return webkitwebview_method
 static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspWebKitWebFrame ----------- */
+/* -----------NspWebKitWebFrame ----------- */
 
 
 #define  NspWebKitWebFrame_Private 
@@ -688,34 +688,34 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
 {
   NspTypeWebKitWebFrame *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitwebframe != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitwebframe != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitwebframe;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitwebframe_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitwebframe_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitwebframe_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitwebframe_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitwebframe;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitwebframe */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitwebframe_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitwebframe_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitwebframe_type_short_string;
-  /* top->create = (create_func*) int_webkitwebframe_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitwebframe_create;*/
+
   /* specific methods for webkitwebframe */
-      
+
   type->init = (init_func *) init_webkitwebframe;
 
   /* 
@@ -739,8 +739,8 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_webkitwebframe_id;
-       return type;
+      type->id = nsp_type_webkitwebframe_id;
+      return type;
     }
 }
 
@@ -753,10 +753,10 @@ static int init_webkitwebframe(NspWebKitWebFrame *Obj,NspTypeWebKitWebFrame *typ
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -765,7 +765,7 @@ static int init_webkitwebframe(NspWebKitWebFrame *Obj,NspTypeWebKitWebFrame *typ
 
 NspWebKitWebFrame *new_webkitwebframe() 
 {
-  NspWebKitWebFrame *loc; 
+  NspWebKitWebFrame *loc;
   /* type must exists */
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitWebFrame)))== NULLWEBKITWEBFRAME) return loc;
@@ -797,10 +797,10 @@ static char *nsp_webkitwebframe_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitWebFrame objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitWebFrame *nsp_webkitwebframe_object(NspObject *O)
+NspWebKitWebFrame   *nsp_webkitwebframe_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -813,7 +813,7 @@ NspWebKitWebFrame *nsp_webkitwebframe_object(NspObject *O)
 
 int IsWebKitWebFrameObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitwebframe_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitwebframe_id);
 }
 
 int IsWebKitWebFrame(NspObject *O)
@@ -855,7 +855,7 @@ NspWebKitWebFrame *webkitwebframe_copy(NspWebKitWebFrame *self)
 static int
 _wrap_webkitwebframe_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *view;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
@@ -873,7 +873,7 @@ static int _wrap_webkit_web_frame_get_web_view(NspWebKitWebFrame *self,Stack sta
   WebKitWebView *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_frame_get_web_view(WEBKIT_WEB_FRAME(self->obj));
+  ret =webkit_web_frame_get_web_view(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebview))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -884,7 +884,7 @@ static int _wrap_webkit_web_frame_get_name(NspWebKitWebFrame *self,Stack stack,i
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_frame_get_name(WEBKIT_WEB_FRAME(self->obj));
+  ret =webkit_web_frame_get_name(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -893,7 +893,7 @@ static int _wrap_webkit_web_frame_get_title(NspWebKitWebFrame *self,Stack stack,
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_frame_get_title(WEBKIT_WEB_FRAME(self->obj));
+  ret =webkit_web_frame_get_title(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -902,7 +902,7 @@ static int _wrap_webkit_web_frame_get_uri(NspWebKitWebFrame *self,Stack stack,in
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_frame_get_uri(WEBKIT_WEB_FRAME(self->obj));
+  ret =webkit_web_frame_get_uri(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -912,7 +912,7 @@ static int _wrap_webkit_web_frame_get_parent(NspWebKitWebFrame *self,Stack stack
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_frame_get_parent(WEBKIT_WEB_FRAME(self->obj));
+  ret =webkit_web_frame_get_parent(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -921,10 +921,10 @@ static int _wrap_webkit_web_frame_get_parent(NspWebKitWebFrame *self,Stack stack
 
 static int _wrap_webkit_web_frame_load_request(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *request;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitnetworkrequest, &request) == FAIL) return RET_BUG;
-  webkit_web_frame_load_request(WEBKIT_WEB_FRAME(self->obj), WEBKIT_NETWORK_REQUEST(request->obj));
+  webkit_web_frame_load_request(WEBKIT_WEB_FRAME(self->obj),WEBKIT_NETWORK_REQUEST(request->obj));
   return 0;
 }
 
@@ -944,12 +944,12 @@ static int _wrap_webkit_web_frame_reload(NspWebKitWebFrame *self,Stack stack,int
 
 static int _wrap_webkit_web_frame_find_frame(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *name;
   WebKitWebFrame *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-  ret = webkit_web_frame_find_frame(WEBKIT_WEB_FRAME(self->obj), name);
+  ret =webkit_web_frame_find_frame(WEBKIT_WEB_FRAME(self->obj),name);
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -977,7 +977,7 @@ static NspMethods *webkitwebframe_get_methods(void) { return webkitwebframe_meth
 static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspWebKitWebHistoryItem ----------- */
+/* -----------NspWebKitWebHistoryItem ----------- */
 
 
 #define  NspWebKitWebHistoryItem_Private 
@@ -1004,34 +1004,34 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
 {
   NspTypeWebKitWebHistoryItem *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitwebhistoryitem != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitwebhistoryitem != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitwebhistoryitem;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitwebhistoryitem_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitwebhistoryitem_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitwebhistoryitem_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitwebhistoryitem_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitwebhistoryitem;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitwebhistoryitem */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitwebhistoryitem_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitwebhistoryitem_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitwebhistoryitem_type_short_string;
-  /* top->create = (create_func*) int_webkitwebhistoryitem_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitwebhistoryitem_create;*/
+
   /* specific methods for webkitwebhistoryitem */
-      
+
   type->init = (init_func *) init_webkitwebhistoryitem;
 
   /* 
@@ -1055,8 +1055,8 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_webkitwebhistoryitem_id;
-       return type;
+      type->id = nsp_type_webkitwebhistoryitem_id;
+      return type;
     }
 }
 
@@ -1069,10 +1069,10 @@ static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *Obj,NspTypeWebKitW
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1081,7 +1081,7 @@ static int init_webkitwebhistoryitem(NspWebKitWebHistoryItem *Obj,NspTypeWebKitW
 
 NspWebKitWebHistoryItem *new_webkitwebhistoryitem() 
 {
-  NspWebKitWebHistoryItem *loc; 
+  NspWebKitWebHistoryItem *loc;
   /* type must exists */
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitWebHistoryItem)))== NULLWEBKITWEBHISTORYITEM) return loc;
@@ -1113,10 +1113,10 @@ static char *nsp_webkitwebhistoryitem_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitWebHistoryItem objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitWebHistoryItem *nsp_webkitwebhistoryitem_object(NspObject *O)
+NspWebKitWebHistoryItem   *nsp_webkitwebhistoryitem_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1129,7 +1129,7 @@ NspWebKitWebHistoryItem *nsp_webkitwebhistoryitem_object(NspObject *O)
 
 int IsWebKitWebHistoryItemObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitwebhistoryitem_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitwebhistoryitem_id);
 }
 
 int IsWebKitWebHistoryItem(NspObject *O)
@@ -1186,7 +1186,7 @@ static int _wrap_webkit_web_history_item_get_title(NspWebKitWebHistoryItem *self
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_history_item_get_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
+  ret =webkit_web_history_item_get_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -1195,17 +1195,17 @@ static int _wrap_webkit_web_history_item_get_alternate_title(NspWebKitWebHistory
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_history_item_get_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
+  ret =webkit_web_history_item_get_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_history_item_set_alternate_title(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *title;
   if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
-  webkit_web_history_item_set_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj), title);
+  webkit_web_history_item_set_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj),title);
   return 0;
 }
 
@@ -1213,7 +1213,7 @@ static int _wrap_webkit_web_history_item_get_uri(NspWebKitWebHistoryItem *self,S
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_history_item_get_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
+  ret =webkit_web_history_item_get_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -1222,7 +1222,7 @@ static int _wrap_webkit_web_history_item_get_original_uri(NspWebKitWebHistoryIte
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_web_history_item_get_original_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
+  ret =webkit_web_history_item_get_original_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -1231,7 +1231,7 @@ static int _wrap_webkit_web_history_item_get_last_visited_time(NspWebKitWebHisto
 {
   double ret;
   CheckRhs(0,0);
-  ret = webkit_web_history_item_get_last_visited_time(WEBKIT_WEB_HISTORY_ITEM(self->obj));
+  ret =webkit_web_history_item_get_last_visited_time(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1254,7 +1254,7 @@ static NspMethods *webkitwebhistoryitem_get_methods(void) { return webkitwebhist
 static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspWebKitWebBackForwardList ----------- */
+/* -----------NspWebKitWebBackForwardList ----------- */
 
 
 #define  NspWebKitWebBackForwardList_Private 
@@ -1281,34 +1281,34 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
 {
   NspTypeWebKitWebBackForwardList *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitwebbackforwardlist != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitwebbackforwardlist != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitwebbackforwardlist;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitwebbackforwardlist_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitwebbackforwardlist_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitwebbackforwardlist_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitwebbackforwardlist_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitwebbackforwardlist;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitwebbackforwardlist */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitwebbackforwardlist_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitwebbackforwardlist_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitwebbackforwardlist_type_short_string;
-  /* top->create = (create_func*) int_webkitwebbackforwardlist_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitwebbackforwardlist_create;*/
+
   /* specific methods for webkitwebbackforwardlist */
-      
+
   type->init = (init_func *) init_webkitwebbackforwardlist;
 
   /* 
@@ -1332,8 +1332,8 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
     }
   else 
     {
-       type->id = nsp_type_webkitwebbackforwardlist_id;
-       return type;
+      type->id = nsp_type_webkitwebbackforwardlist_id;
+      return type;
     }
 }
 
@@ -1346,10 +1346,10 @@ static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *Obj,NspTyp
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1358,7 +1358,7 @@ static int init_webkitwebbackforwardlist(NspWebKitWebBackForwardList *Obj,NspTyp
 
 NspWebKitWebBackForwardList *new_webkitwebbackforwardlist() 
 {
-  NspWebKitWebBackForwardList *loc; 
+  NspWebKitWebBackForwardList *loc;
   /* type must exists */
   nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitWebBackForwardList)))== NULLWEBKITWEBBACKFORWARDLIST) return loc;
@@ -1390,10 +1390,10 @@ static char *nsp_webkitwebbackforwardlist_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitWebBackForwardList objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitWebBackForwardList *nsp_webkitwebbackforwardlist_object(NspObject *O)
+NspWebKitWebBackForwardList   *nsp_webkitwebbackforwardlist_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1406,7 +1406,7 @@ NspWebKitWebBackForwardList *nsp_webkitwebbackforwardlist_object(NspObject *O)
 
 int IsWebKitWebBackForwardListObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitwebbackforwardlist_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitwebbackforwardlist_id);
 }
 
 int IsWebKitWebBackForwardList(NspObject *O)
@@ -1448,7 +1448,7 @@ NspWebKitWebBackForwardList *webkitwebbackforwardlist_copy(NspWebKitWebBackForwa
 static int
 _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *view;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
@@ -1477,44 +1477,44 @@ static int _wrap_webkit_web_back_forward_list_go_back(NspWebKitWebBackForwardLis
 
 static int _wrap_webkit_web_back_forward_list_contains_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *history_item;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &history_item) == FAIL) return RET_BUG;
-  ret = webkit_web_back_forward_list_contains_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
+  ret =webkit_web_back_forward_list_contains_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_back_forward_list_go_to_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspGObject *history_item;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &history_item) == FAIL) return RET_BUG;
-  webkit_web_back_forward_list_go_to_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
+  webkit_web_back_forward_list_go_to_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
   return 0;
 }
 
 static int _wrap_webkit_web_back_forward_list_get_forward_list_with_limit(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int limit;
   GList *ret, *tmp;
   NspList *nsp_list;
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
-  ret = webkit_web_back_forward_list_get_forward_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
+  ret =webkit_web_back_forward_list_get_forward_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),limit);
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
 
 static int _wrap_webkit_web_back_forward_list_get_back_list_with_limit(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int limit;
   GList *ret, *tmp;
   NspList *nsp_list;
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
-  ret = webkit_web_back_forward_list_get_back_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
+  ret =webkit_web_back_forward_list_get_back_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),limit);
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 
 }
@@ -1524,7 +1524,7 @@ static int _wrap_webkit_web_back_forward_list_get_back_item(NspWebKitWebBackForw
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_back_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_back_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -1536,7 +1536,7 @@ static int _wrap_webkit_web_back_forward_list_get_current_item(NspWebKitWebBackF
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_current_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_current_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -1548,7 +1548,7 @@ static int _wrap_webkit_web_back_forward_list_get_forward_item(NspWebKitWebBackF
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_forward_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_forward_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -1557,12 +1557,12 @@ static int _wrap_webkit_web_back_forward_list_get_forward_item(NspWebKitWebBackF
 
 static int _wrap_webkit_web_back_forward_list_get_nth_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int index;
   WebKitWebHistoryItem *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
-  ret = webkit_web_back_forward_list_get_nth_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), index);
+  ret =webkit_web_back_forward_list_get_nth_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),index);
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -1573,7 +1573,7 @@ static int _wrap_webkit_web_back_forward_list_get_back_length(NspWebKitWebBackFo
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_back_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_back_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1582,7 +1582,7 @@ static int _wrap_webkit_web_back_forward_list_get_forward_length(NspWebKitWebBac
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_forward_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_forward_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -1591,17 +1591,17 @@ static int _wrap_webkit_web_back_forward_list_get_limit(NspWebKitWebBackForwardL
 {
   int ret;
   CheckRhs(0,0);
-  ret = webkit_web_back_forward_list_get_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
+  ret =webkit_web_back_forward_list_get_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
 static int _wrap_webkit_web_back_forward_list_set_limit(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {s_int,t_end};
+  int_types T[] = {s_int, t_end};
   int limit;
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
-  webkit_web_back_forward_list_set_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
+  webkit_web_back_forward_list_set_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj),limit);
   return 0;
 }
 
@@ -1631,7 +1631,7 @@ static NspMethods *webkitwebbackforwardlist_get_methods(void) { return webkitweb
 static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspWebKitWebSettings ----------- */
+/* -----------NspWebKitWebSettings ----------- */
 
 
 #define  NspWebKitWebSettings_Private 
@@ -1658,34 +1658,34 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
 {
   NspTypeWebKitWebSettings *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitwebsettings != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitwebsettings != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitwebsettings;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitwebsettings_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitwebsettings_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitwebsettings_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitwebsettings_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitwebsettings;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitwebsettings */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitwebsettings_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitwebsettings_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitwebsettings_type_short_string;
-  /* top->create = (create_func*) int_webkitwebsettings_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitwebsettings_create;*/
+
   /* specific methods for webkitwebsettings */
-      
+
   type->init = (init_func *) init_webkitwebsettings;
 
   /* 
@@ -1709,8 +1709,8 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_webkitwebsettings_id;
-       return type;
+      type->id = nsp_type_webkitwebsettings_id;
+      return type;
     }
 }
 
@@ -1723,10 +1723,10 @@ static int init_webkitwebsettings(NspWebKitWebSettings *Obj,NspTypeWebKitWebSett
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1735,7 +1735,7 @@ static int init_webkitwebsettings(NspWebKitWebSettings *Obj,NspTypeWebKitWebSett
 
 NspWebKitWebSettings *new_webkitwebsettings() 
 {
-  NspWebKitWebSettings *loc; 
+  NspWebKitWebSettings *loc;
   /* type must exists */
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitWebSettings)))== NULLWEBKITWEBSETTINGS) return loc;
@@ -1767,10 +1767,10 @@ static char *nsp_webkitwebsettings_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitWebSettings objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitWebSettings *nsp_webkitwebsettings_object(NspObject *O)
+NspWebKitWebSettings   *nsp_webkitwebsettings_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -1783,7 +1783,7 @@ NspWebKitWebSettings *nsp_webkitwebsettings_object(NspObject *O)
 
 int IsWebKitWebSettingsObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitwebsettings_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitwebsettings_id);
 }
 
 int IsWebKitWebSettings(NspObject *O)
@@ -1841,7 +1841,7 @@ static int _wrap_webkit_web_settings_copy(NspWebKitWebSettings *self,Stack stack
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-  ret = webkit_web_settings_copy(WEBKIT_WEB_SETTINGS(self->obj));
+  ret =webkit_web_settings_copy(WEBKIT_WEB_SETTINGS(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -1861,7 +1861,7 @@ static NspMethods *webkitwebsettings_get_methods(void) { return webkitwebsetting
 static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspWebKitNetworkRequest ----------- */
+/* -----------NspWebKitNetworkRequest ----------- */
 
 
 #define  NspWebKitNetworkRequest_Private 
@@ -1888,34 +1888,34 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
 {
   NspTypeWebKitNetworkRequest *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_webkitnetworkrequest != 0 && mode == T_BASE ) 
+  if (  nsp_type_webkitnetworkrequest != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_webkitnetworkrequest;
     }
-  if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = webkitnetworkrequest_attrs ; 
-  type->get_attrs = (attrs_func *)  int_get_attribute;
-  type->set_attrs = (attrs_func *)  int_set_attribute;
-  type->methods = webkitnetworkrequest_get_methods; 
-  type->gtk_methods = TRUE; 
+  type->attrs = webkitnetworkrequest_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = webkitnetworkrequest_get_methods;
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_webkitnetworkrequest;
-  
-  
+
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for webkitnetworkrequest */ 
 
-  top->s_type =  (s_type_func *) nsp_webkitnetworkrequest_type_as_string;    
+  top->s_type =  (s_type_func *) nsp_webkitnetworkrequest_type_as_string;
   top->sh_type = (sh_type_func *) nsp_webkitnetworkrequest_type_short_string;
-  /* top->create = (create_func*) int_webkitnetworkrequest_create;*/ 
-  
+  /* top->create = (create_func*) int_webkitnetworkrequest_create;*/
+
   /* specific methods for webkitnetworkrequest */
-      
+
   type->init = (init_func *) init_webkitnetworkrequest;
 
   /* 
@@ -1939,8 +1939,8 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_webkitnetworkrequest_id;
-       return type;
+      type->id = nsp_type_webkitnetworkrequest_id;
+      return type;
     }
 }
 
@@ -1953,10 +1953,10 @@ static int init_webkitnetworkrequest(NspWebKitNetworkRequest *Obj,NspTypeWebKitN
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
-  return OK;
+ return OK;
 }
 
 /*
@@ -1965,7 +1965,7 @@ static int init_webkitnetworkrequest(NspWebKitNetworkRequest *Obj,NspTypeWebKitN
 
 NspWebKitNetworkRequest *new_webkitnetworkrequest() 
 {
-  NspWebKitNetworkRequest *loc; 
+  NspWebKitNetworkRequest *loc;
   /* type must exists */
   nsp_type_webkitnetworkrequest = new_type_webkitnetworkrequest(T_BASE);
   if ( (loc = malloc(sizeof(NspWebKitNetworkRequest)))== NULLWEBKITNETWORKREQUEST) return loc;
@@ -1997,10 +1997,10 @@ static char *nsp_webkitnetworkrequest_type_short_string(NspObject *v)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspWebKitNetworkRequest objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspWebKitNetworkRequest *nsp_webkitnetworkrequest_object(NspObject *O)
+NspWebKitNetworkRequest   *nsp_webkitnetworkrequest_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -2013,7 +2013,7 @@ NspWebKitNetworkRequest *nsp_webkitnetworkrequest_object(NspObject *O)
 
 int IsWebKitNetworkRequestObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_webkitnetworkrequest_id);
+  return nsp_object_type(NthObj(i),nsp_type_webkitnetworkrequest_id);
 }
 
 int IsWebKitNetworkRequest(NspObject *O)
@@ -2055,7 +2055,7 @@ NspWebKitNetworkRequest *webkitnetworkrequest_copy(NspWebKitNetworkRequest *self
 static int
 _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *uri;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
@@ -2070,10 +2070,10 @@ _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_webkit_network_request_set_uri(NspWebKitNetworkRequest *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *uri;
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
-  webkit_network_request_set_uri(WEBKIT_NETWORK_REQUEST(self->obj), uri);
+  webkit_network_request_set_uri(WEBKIT_NETWORK_REQUEST(self->obj),uri);
   return 0;
 }
 
@@ -2081,7 +2081,7 @@ static int _wrap_webkit_network_request_get_uri(NspWebKitNetworkRequest *self,St
 {
   const gchar *ret;
   CheckRhs(0,0);
-  ret = webkit_network_request_get_uri(WEBKIT_NETWORK_REQUEST(self->obj));
+  ret =webkit_network_request_get_uri(WEBKIT_NETWORK_REQUEST(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
 }
@@ -2290,13 +2290,13 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab webkit_func[]={
-  {"webkitwebview_new", _wrap_webkitwebview_new},
-  {"webkitwebframe_new", _wrap_webkitwebframe_new},
-  {"webkitwebhistoryitem_new", _wrap_webkitwebhistoryitem_new},
-  {"webkitwebbackforwardlist_new", _wrap_webkitwebbackforwardlist_new},
-  {"webkitwebsettings_new", _wrap_webkitwebsettings_new},
-  {"webkitnetworkrequest_new", _wrap_webkitnetworkrequest_new},
-  {"webkit_getfile", _wrap_webkit_getfile},
+  { "webkitwebview_new", _wrap_webkitwebview_new},
+  { "webkitwebframe_new", _wrap_webkitwebframe_new},
+  { "webkitwebhistoryitem_new", _wrap_webkitwebhistoryitem_new},
+  { "webkitwebbackforwardlist_new", _wrap_webkitwebbackforwardlist_new},
+  { "webkitwebsettings_new", _wrap_webkitwebsettings_new},
+  { "webkitnetworkrequest_new", _wrap_webkitnetworkrequest_new},
+  { "webkit_getfile", _wrap_webkit_getfile},
   { NULL, NULL}
 };
 
@@ -2315,7 +2315,7 @@ int webkit_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void webkit_Interf_Info(int i, char **fname, function (**f))
+void webkit_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = webkit_func[i].name;
   *f = webkit_func[i].fonc;

@@ -1,0 +1,147 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <nsp/gtk/gobject.h>
+
+%%
+include-private GValue
+
+static void nsp_init_GValue(GValue *value);
+static int nsp_eq_GValue(GValue *v1, GValue *v2);
+static int nsp_GValue_full_copy(NspGValue *H,GValue *v,NspGValue *self);
+static int nsp_print_GValue(int indent,GValue *v,NspGValue *M);
+static int nsp_destroy_GValue(GValue *v,NspGValue *H);
+static int nsp_check_GValue(GValue *v,NspGValue *H);
+
+%%
+override-create GValue
+/* override the code for gvalue creation 
+ * we change the function nsp_gvalue_create 
+ * since H->value = value does not work for Gvalue 
+ */
+
+
+static NspGValue *nsp_gvalue_create_void(const char *name,NspTypeBase *type)
+{
+ NspGValue *H  = (type == NULL) ? new_gvalue() : type->new();
+ if ( H ==  NULLGVALUE)
+  {
+   Sciprintf("No more memory\n");
+   return NULLGVALUE;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLGVALUE;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_gvalue_create_partial(NspGValue *H)
+{
+  return OK;
+}
+
+int nsp_gvalue_check_values(NspGValue *H)
+{
+  if ( nsp_check_GValue(&H->value,H) == FAIL ) return FAIL;
+  return OK;
+}
+
+NspGValue *nsp_gvalue_create(const char *name,GValue value,NspTypeBase *type)
+{
+  NspGValue *H  = nsp_gvalue_create_void(name,type);
+  if ( H ==  NULLGVALUE) return NULLGVALUE;
+  memset(&H->value, 0, sizeof(H->value));
+  g_value_init (&H->value, G_VALUE_TYPE(&value));
+  g_value_copy (&value,&H->value);
+  return H;
+}
+
+NspGValue *nsp_gvalue_create_default(const char *name)
+{
+ NspGValue *H  = nsp_gvalue_create_void(name,NULL);
+ if ( H ==  NULLGVALUE) return NULLGVALUE;
+ memset(&H->value, 0, sizeof(H->value));
+ return H;
+}
+
+%%
+override-intcreate GValue 
+
+int int_gvalue_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspGValue *H;
+  int_types T[] = {s_int,t_end};
+  gulong test;
+  if ( GetArgs(stack,rhs,opt,T,&test) == FAIL) return RET_BUG;
+  /* want to be sure that type gvalue is initialized */
+  nsp_type_gvalue = new_type_gvalue(T_BASE);
+  if ((H = nsp_gvalue_create_default(NVOID)) == NULLGVALUE) return RET_BUG;
+  g_value_init (&H->value, G_TYPE_INT);
+  g_value_set_int (&H->value, test);
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+%%
+override GValue.get_value
+
+static int _wrap_get_value(NspGValue *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint ret;
+  CheckRhs(0,0);
+  if (G_VALUE_HOLDS_INT(&self->value)) 
+    {
+      ret = g_value_get_int (&self->value);
+      if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+    }
+  else
+    {
+      Scierror("Error: this gvalue does not contains an int \n");
+      return RET_BUG;
+    }
+  return 1;
+}
+
+%%
+last 
+
+static void nsp_init_GValue(GValue *value)
+{
+  memset(value, 0, sizeof(*value));
+}
+
+static int nsp_eq_GValue(GValue *v1, GValue *v2)
+{
+  return TRUE;
+}
+
+static int nsp_print_GValue(int indent,GValue *v,NspGValue *M)
+{
+  
+  return 0;
+}
+
+static int nsp_GValue_full_copy(NspGValue *H,GValue *value,NspGValue *self)
+{
+  /* v is not initialized */
+  memset(value, 0, sizeof(*value));
+  g_value_init (value, G_VALUE_TYPE(&self->value));
+  g_value_copy (&self->value,value);
+  return OK;
+}
+
+static int nsp_destroy_GValue(GValue *value,NspGValue *H)
+{
+  g_value_unset (value);
+  return OK;
+}
+
+static int nsp_check_GValue(GValue *v,NspGValue *H)
+{
+  return OK;
+}
+
+
+
+
+
+

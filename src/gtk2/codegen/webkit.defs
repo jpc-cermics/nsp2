@@ -18,44 +18,48 @@
 ;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 ;;
 
+(register "pango-types.defs")
+(register "atk-types.defs")
+(register "gdk-types.defs")
+(register "gtk-types.defs")
 
 ; object definitions ...
-(define-object WebView
+(define-object WebKitWebView
   (in-module "WebKit")
   (parent "GtkContainer")
   (c-name "WebKitWebView")
   (gtype-id "WEBKIT_TYPE_WEB_VIEW")
 )
 
-(define-object WebFrame
+(define-object WebKitWebFrame
   (in-module "WebKit")
   (parent "GObject")
   (c-name "WebKitWebFrame")
   (gtype-id "WEBKIT_TYPE_WEB_FRAME")
 )
 
-(define-object WebHistoryItem
+(define-object WebKitWebHistoryItem
   (in-module "WebKit")
   (parent "GObject")
   (c-name "WebKitWebHistoryItem")
   (gtype-id "WEBKIT_TYPE_WEB_HISTORY_ITEM")
 )
 
-(define-object WebBackForwardList
+(define-object WebKitWebBackForwardList
   (in-module "WebKit")
   (parent "GObject")
   (c-name "WebKitWebBackForwardList")
   (gtype-id "WEBKIT_TYPE_WEB_BACK_FORWARD_LIST")
 )
 
-(define-object WebSettings
+(define-object WebKitWebSettings
   (in-module "WebKit")
   (parent "GObject")
   (c-name "WebKitWebSettings")
   (gtype-id "WEBKIT_TYPE_WEB_SETTINGS")
 )
 
-(define-object NetworkRequest
+(define-object WebKitNetworkRequest
   (in-module "WebKit")
   (parent "GObject")
   (c-name "WebKitNetworkRequest")
@@ -63,26 +67,26 @@
 )
 
 ;; Enumerations and flags ...
-(enum NavigationResponse
-  (in-module "WebKit")
-  (c-name "WebKitNavigationResponse")
-  (gtype-id "WEBKIT_TYPE_NAVIGATION_RESPONSE")
-  (values
-   '("accept" "WEBKIT_NAVIGATION_RESPONSE_ACCEPT")
-   '("ignore" "WEBKIT_NAVIGATION_RESPONSE_IGNORE")
-   '("download" "WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD")
-   )
-)
+;; (define-enum WebKitNavigationResponse
+;;   (in-module "WebKit")
+;;   (c-name "WebKitNavigationResponse")
+;;   (gtype-id "WEBKIT_TYPE_NAVIGATION_RESPONSE")
+;;   (values
+;;    '("accept" "WEBKIT_NAVIGATION_RESPONSE_ACCEPT")
+;;    '("ignore" "WEBKIT_NAVIGATION_RESPONSE_IGNORE")
+;;    '("download" "WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD")
+;;    )
+;; )
 
-(enum WebViewTargetInfo
-  (in-module "WebKit")
-  (c-name "WebKitWebViewTargetInfo")
-  (gtype-id "WEBKIT_TYPE_WEB_VIEW_TARGET_INFO")
-  (values
-   '("html" "WEBKIT_WEB_VIEW_TARGET_INFO_HTML")
-   '("text" "WEBKIT_WEB_VIEW_TARGET_INFO_TEXT")
-   )
-)
+;; (define-enum WebKitWebViewTargetInfo
+;;   (in-module "WebKit")
+;;   (c-name "WebKitWebViewTargetInfo")
+;;   (gtype-id "WEBKIT_TYPE_WEB_VIEW_TARGET_INFO")
+;;   (values
+;;    '("html" "WEBKIT_WEB_VIEW_TARGET_INFO_HTML")
+;;    '("text" "WEBKIT_WEB_VIEW_TARGET_INFO_TEXT")
+;;    )
+;; )
 
 ;; From <webkit/webkitwebview.h>
 
@@ -538,20 +542,20 @@
   (return-type "WebKitWebHistoryItem*")
 )
 
-(define-function webkit_web_history_item_new_with_data
-  (is-constructor-of "WebKitWebHistoryItem")
-  (c-name "webkit_web_history_item_new_with_data")
-  (caller-owns-return #t)
-  (return-type "WebKitWebHistoryItem*")
-;;  (properties
-;;   '("uri" (argname "uri"))
-;;   '("title" (argname "title"))
-;;   )
-  (parameters
-   '("const-gchar*" "uri")
-   '("const-gchar*" "title")
-   )
-)
+;; (define-function webkit_web_history_item_new_with_data
+;;   (is-constructor-of "WebKitWebHistoryItem")
+;;   (c-name "webkit_web_history_item_new_with_data")
+;;   (caller-owns-return #t)
+;;   (return-type "WebKitWebHistoryItem*")
+;; ;;  (properties
+;; ;;   '("uri" (argname "uri"))
+;; ;;   '("title" (argname "title"))
+;; ;;   )
+;;   (parameters
+;;    '("const-gchar*" "uri")
+;;    '("const-gchar*" "title")
+;;    )
+;; )
 
 (define-method get_title
   (of-object "WebKitWebHistoryItem")
