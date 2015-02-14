@@ -24,12 +24,12 @@
 
 
 
-#line 84 "../types-test/codegen/agraph.override"
+#line 84 "codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
 
-/* ----------- NspAgraph ----------- */
+/* -----------NspAgraph ----------- */
 
 
 #define  NspAgraph_Private 
@@ -137,7 +137,7 @@ static int init_agraph(NspAgraph *Obj,NspTypeAgraph *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -184,7 +184,7 @@ static char *nsp_agraph_type_short_string(NspObject *v)
   return(agraph_short_type_name);
 }
 
-#line 429 "../types-test/codegen/agraph.override"
+#line 429 "codegen/agraph.override"
 
 /*
  *  A == B (we just compare the graph attribute not the gvc).
@@ -247,10 +247,10 @@ static NspAgraph  *nsp_agraph_xdr_load(XDR *xdrs)
 
 void nsp_agraph_destroy_partial(NspAgraph *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 171 "../types-test/codegen/agraph.override"
+#line 171 "codegen/agraph.override"
    /* verbatim in destroy */
    int l = nsp_agattr_refcount_set(H->obj->graph,AGRAPH,-1);
    /* Sciprintf("Warning: graph refcount is %d\n",l); */
@@ -321,11 +321,11 @@ int nsp_agraph_print(NspAgraph *M, int indent,const char *name, int rec_level)
           nsp_agraph_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"graph=0x%x\n",M->obj->graph);
-  Sciprintf1(indent+2,"gvc=0x%x\n",M->obj->gvc);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"graph=0x%x\n", M->obj->graph);
+  Sciprintf1(indent+2,"gvc=0x%x\n", M->obj->gvc);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -340,8 +340,8 @@ int nsp_agraph_latex(NspAgraph *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agraph_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"graph=0x%x\n",M->obj->graph);
-  Sciprintf1(indent+2,"gvc=0x%x\n",M->obj->gvc);
+  Sciprintf1(indent+2,"graph=0x%x\n", M->obj->graph);
+  Sciprintf1(indent+2,"gvc=0x%x\n", M->obj->gvc);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -357,7 +357,7 @@ NspAgraph   *nsp_agraph_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_agraph_id) == TRUE ) return ((NspAgraph *) O);
+  if ( check_cast (O,nsp_type_agraph_id)  == TRUE  ) return ((NspAgraph *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_agraph));
   return NULL;
@@ -437,7 +437,7 @@ NspAgraph *nsp_agraph_create_default(const char *name)
  NspAgraph *H  = nsp_agraph_create_void(name,NULL);
  if ( H ==  NULLAGRAPH) return NULLAGRAPH;
   if ( nsp_agraph_create_partial(H) == FAIL) return NULLAGRAPH;
- if ( nsp_agraph_check_values(H) == FAIL) return NULLAGRAPH;
+  if ( nsp_agraph_check_values(H) == FAIL) return NULLAGRAPH;
  return H;
 }
 
@@ -485,7 +485,7 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 100 "../types-test/codegen/agraph.override"
+#line 100 "codegen/agraph.override"
 
 /* describing the type of graph to be created. 
  * A graph can be directed or undirected. In addition, a graph can
@@ -563,7 +563,7 @@ static int _wrap_nsp_agnnodes(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 {
   int ret;
   CheckRhs(0,0);
-  ret = nsp_agnnodes(self);
+  ret =nsp_agnnodes(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -572,7 +572,7 @@ static int _wrap_nsp_agnedges(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 {
   int ret;
   CheckRhs(0,0);
-  ret = nsp_agnedges(self);
+  ret =nsp_agnedges(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -581,7 +581,7 @@ static int _wrap_nsp_agparent(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 {
   NspAgraph *ret;
   CheckRhs(0,0);
-  ret = nsp_agparent(self);
+  ret =nsp_agparent(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -591,7 +591,7 @@ static int _wrap_nsp_agroot(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspAgraph *ret;
   CheckRhs(0,0);
-  ret = nsp_agroot(self);
+  ret =nsp_agroot(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -601,13 +601,13 @@ static int _wrap_nsp_agnameof_g(NspAgraph *self,Stack stack,int rhs,int opt,int 
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = nsp_agnameof_g(self);
+  ret =nsp_agnameof_g(self);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
 }
 
-#line 357 "../types-test/codegen/agraph.override"
+#line 357 "codegen/agraph.override"
 
 static int _wrap_nsp_agaddnodes(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -633,7 +633,7 @@ static int _wrap_nsp_agaddnodes(NspAgraph *self,Stack stack,int rhs,int opt,int 
 #line 634 "agraph.c"
 
 
-#line 381 "../types-test/codegen/agraph.override"
+#line 381 "codegen/agraph.override"
 
 static int _wrap_nsp_agaddedges(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -653,7 +653,7 @@ static int _wrap_nsp_agaddedges(NspAgraph *self,Stack stack,int rhs,int opt,int 
 #line 654 "agraph.c"
 
 
-#line 330 "../types-test/codegen/agraph.override"
+#line 330 "codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -664,7 +664,7 @@ static int _wrap_nsp_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
 #line 665 "agraph.c"
 
 
-#line 315 "../types-test/codegen/agraph.override"
+#line 315 "codegen/agraph.override"
 
 static int _wrap_nsp_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -683,23 +683,23 @@ static int _wrap_nsp_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
 
 static int _wrap_nsp_gv_layout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *type;
   if ( GetArgs(stack,rhs,opt,T,&type) == FAIL) return RET_BUG;
-  nsp_gv_layout(self, type);
+  nsp_gv_layout(self,type);
   return 0;
 }
 
 static int _wrap_nsp_gv_render(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string,t_end};
+  int_types T[] = {string,string, t_end};
   char *type, *fname;
   if ( GetArgs(stack,rhs,opt,T,&type, &fname) == FAIL) return RET_BUG;
-  nsp_gv_render(self, type, fname);
+  nsp_gv_render(self,type,fname);
   return 0;
 }
 
-#line 209 "../types-test/codegen/agraph.override"
+#line 209 "codegen/agraph.override"
 
 /* generic function used to set a graph attribute */
 
@@ -759,13 +759,13 @@ static int _wrap_nsp_agraphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
 {
   NspSMatrix *ret;
   CheckRhs(0,0);
-  ret = nsp_agraphattrs(self);
+  ret =nsp_agraphattrs(self);
   if ( ret == NULLSMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
-#line 263 "../types-test/codegen/agraph.override"
+#line 263 "codegen/agraph.override"
 
 static int _wrap_nsp_agattr_n(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -779,13 +779,13 @@ static int _wrap_nsp_agnodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
 {
   NspSMatrix *ret;
   CheckRhs(0,0);
-  ret = nsp_agnodeattrs(self);
+  ret =nsp_agnodeattrs(self);
   if ( ret == NULLSMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
-#line 271 "../types-test/codegen/agraph.override"
+#line 271 "codegen/agraph.override"
 
 static int _wrap_nsp_agattr_e(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -799,7 +799,7 @@ static int _wrap_nsp_agedgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
 {
   NspSMatrix *ret;
   CheckRhs(0,0);
-  ret = nsp_agedgeattrs(self);
+  ret =nsp_agedgeattrs(self);
   if ( ret == NULLSMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -807,16 +807,16 @@ static int _wrap_nsp_agedgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int
 
 static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *chan;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&chan) == FAIL) return RET_BUG;
-  ret = nsp_gv_write(self, chan);
+  ret =nsp_gv_write(self,chan);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
-#line 279 "../types-test/codegen/agraph.override"
+#line 279 "codegen/agraph.override"
 static int _wrap_nsp_agisundirected(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -830,7 +830,7 @@ static int _wrap_nsp_agisundirected(NspAgraph *self,Stack stack,int rhs,int opt,
 #line 831 "agraph.c"
 
 
-#line 291 "../types-test/codegen/agraph.override"
+#line 291 "codegen/agraph.override"
 static int _wrap_nsp_agisdirected(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -844,7 +844,7 @@ static int _wrap_nsp_agisdirected(NspAgraph *self,Stack stack,int rhs,int opt,in
 #line 845 "agraph.c"
 
 
-#line 303 "../types-test/codegen/agraph.override"
+#line 303 "codegen/agraph.override"
 static int _wrap_nsp_agisstrict(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -862,7 +862,7 @@ static int _wrap_nsp_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 {
   NspAgnode *ret;
   CheckRhs(0,0);
-  ret = nsp_agfstnode(self);
+  ret =nsp_agfstnode(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -870,11 +870,11 @@ static int _wrap_nsp_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agnxtnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *n;
   NspAgnode *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agnxtnode(self, ((NspAgnode *) n));
+  ret =nsp_agnxtnode(self,((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -884,7 +884,7 @@ static int _wrap_nsp_aglstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 {
   NspAgnode *ret;
   CheckRhs(0,0);
-  ret = nsp_aglstnode(self);
+  ret =nsp_aglstnode(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -892,11 +892,11 @@ static int _wrap_nsp_aglstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agprvnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *n;
   NspAgnode *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agprvnode(self, ((NspAgnode *) n));
+  ret =nsp_agprvnode(self,((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -904,11 +904,11 @@ static int _wrap_nsp_agprvnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agfindnode_by_name(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *name;
   NspAgnode *ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-  ret = nsp_agfindnode_by_name(self, name);
+  ret =nsp_agfindnode_by_name(self,name);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -916,11 +916,11 @@ static int _wrap_nsp_agfindnode_by_name(NspAgraph *self,Stack stack,int rhs,int 
 
 static int _wrap_nsp_agfstedge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *n;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agfstedge(self, ((NspAgnode *) n));
+  ret =nsp_agfstedge(self,((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -928,11 +928,11 @@ static int _wrap_nsp_agfstedge(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agnxtedge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check, obj_check,t_end};
+  int_types T[] = {obj_check,obj_check, t_end};
   NspObject *e, *n;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e, &nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agnxtedge(self, ((NspAgedge *) e), ((NspAgnode *) n));
+  ret =nsp_agnxtedge(self,((NspAgedge *) e),((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -940,11 +940,11 @@ static int _wrap_nsp_agnxtedge(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agfstin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *n;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agfstin(self, ((NspAgnode *) n));
+  ret =nsp_agfstin(self,((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -952,11 +952,11 @@ static int _wrap_nsp_agfstin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
 
 static int _wrap_nsp_agnxtin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *e;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e) == FAIL) return RET_BUG;
-  ret = nsp_agnxtin(self, ((NspAgedge *) e));
+  ret =nsp_agnxtin(self,((NspAgedge *) e));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -964,11 +964,11 @@ static int _wrap_nsp_agnxtin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
 
 static int _wrap_nsp_agfstout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *n;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-  ret = nsp_agfstout(self, ((NspAgnode *) n));
+  ret =nsp_agfstout(self,((NspAgnode *) n));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -976,11 +976,11 @@ static int _wrap_nsp_agfstout(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 
 static int _wrap_nsp_agnxtout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *e;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e) == FAIL) return RET_BUG;
-  ret = nsp_agnxtout(self, ((NspAgedge *) e));
+  ret =nsp_agnxtout(self,((NspAgedge *) e));
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -988,11 +988,11 @@ static int _wrap_nsp_agnxtout(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 
 static int _wrap_nsp_agsubg(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *name;
   NspAgraph *ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
-  ret = nsp_agsubg(self, name);
+  ret =nsp_agsubg(self,name);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1002,7 +1002,7 @@ static int _wrap_nsp_agfstsubg(NspAgraph *self,Stack stack,int rhs,int opt,int l
 {
   NspAgraph *ret;
   CheckRhs(0,0);
-  ret = nsp_agfstsubg(self);
+  ret =nsp_agfstsubg(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1012,7 +1012,7 @@ static int _wrap_nsp_agnxtsubg(NspAgraph *self,Stack stack,int rhs,int opt,int l
 {
   NspAgraph *ret;
   CheckRhs(0,0);
-  ret = nsp_agnxtsubg(self);
+  ret =nsp_agnxtsubg(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1020,32 +1020,32 @@ static int _wrap_nsp_agnxtsubg(NspAgraph *self,Stack stack,int rhs,int opt,int l
 
 static int _wrap_nsp_agdelsubg(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *sub;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agraph, &sub) == FAIL) return RET_BUG;
-  nsp_agdelsubg(self, ((NspAgraph *) sub));
+  nsp_agdelsubg(self,((NspAgraph *) sub));
   return 0;
 }
 
 static int _wrap_nsp_agdelnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *arg_n;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &arg_n) == FAIL) return RET_BUG;
-  nsp_agdelnode(self, ((NspAgnode *) arg_n));
+  nsp_agdelnode(self,((NspAgnode *) arg_n));
   return 0;
 }
 
 static int _wrap_nsp_agdeledge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {obj_check,t_end};
+  int_types T[] = {obj_check, t_end};
   NspObject *arg_n;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &arg_n) == FAIL) return RET_BUG;
-  nsp_agdeledge(self, ((NspAgedge *) arg_n));
+  nsp_agdeledge(self,((NspAgedge *) arg_n));
   return 0;
 }
 
-#line 399 "../types-test/codegen/agraph.override"
+#line 399 "codegen/agraph.override"
 
 static int _wrap_nsp_agdegree(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1125,10 +1125,10 @@ static NspMethods *agraph_get_methods(void) { return agraph_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab agraph_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab agraph_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspAgnode ----------- */
+/* -----------NspAgnode ----------- */
 
 
 #define  NspAgnode_Private 
@@ -1236,7 +1236,7 @@ static int init_agnode(NspAgnode *Obj,NspTypeAgnode *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1293,7 +1293,7 @@ static int nsp_agnode_eq(NspAgnode *A, NspObject *B)
   if ( check_cast(B,nsp_type_agnode_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->node != loc->obj->node) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1347,10 +1347,10 @@ static NspAgnode  *nsp_agnode_xdr_load(XDR *xdrs)
 
 void nsp_agnode_destroy_partial(NspAgnode *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 190 "../types-test/codegen/agraph.override"
+#line 190 "codegen/agraph.override"
    /* verbatim in destroy */
    int l = nsp_agattr_refcount_set(H->obj->node,AGNODE,-1);
    /* Sciprintf("Warning: node refcount is %d\n",l); */
@@ -1410,10 +1410,10 @@ int nsp_agnode_print(NspAgnode *M, int indent,const char *name, int rec_level)
           nsp_agnode_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"node=0x%x\n",M->obj->node);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"node=0x%x\n", M->obj->node);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -1428,7 +1428,7 @@ int nsp_agnode_latex(NspAgnode *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"node=0x%x\n",M->obj->node);
+  Sciprintf1(indent+2,"node=0x%x\n", M->obj->node);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1444,7 +1444,7 @@ NspAgnode   *nsp_agnode_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_agnode_id) == TRUE ) return ((NspAgnode *) O);
+  if ( check_cast (O,nsp_type_agnode_id)  == TRUE  ) return ((NspAgnode *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_agnode));
   return NULL;
@@ -1522,7 +1522,7 @@ NspAgnode *nsp_agnode_create_default(const char *name)
  NspAgnode *H  = nsp_agnode_create_void(name,NULL);
  if ( H ==  NULLAGNODE) return NULLAGNODE;
   if ( nsp_agnode_create_partial(H) == FAIL) return NULLAGNODE;
- if ( nsp_agnode_check_values(H) == FAIL) return NULLAGNODE;
+  if ( nsp_agnode_check_values(H) == FAIL) return NULLAGNODE;
  return H;
 }
 
@@ -1577,10 +1577,10 @@ int int_agnode_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_agnode = new_type_agnode(T_BASE);
   if(( H = nsp_agnode_create_void(NVOID,(NspTypeBase *) nsp_type_agnode)) == NULLAGNODE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_agnode_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_agnode_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_agnode_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -1591,7 +1591,7 @@ static int _wrap_nsp_agnameof_n(NspAgnode *self,Stack stack,int rhs,int opt,int 
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = nsp_agnameof_n(self);
+  ret =nsp_agnameof_n(self);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -1601,13 +1601,15 @@ static int _wrap_nsp_agraphof(NspAgnode *self,Stack stack,int rhs,int opt,int lh
 {
   NspAgraph *ret;
   CheckRhs(0,0);
-  ret = nsp_agraphof(self);
+  ret =nsp_agraphof(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
-#line 339 "../types-test/codegen/agraph.override"
+
+
+#line 339 "codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int lhs)
@@ -1615,7 +1617,7 @@ static int _wrap_nsp_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->node,stack,rhs,opt,lhs);
 } 
 
-#line 1619 "agraph.c"
+#line 1621 "agraph.c"
 
 
 static NspMethods agnode_methods[] = {
@@ -1631,10 +1633,10 @@ static NspMethods *agnode_get_methods(void) { return agnode_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab agnode_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab agnode_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspAgedge ----------- */
+/* -----------NspAgedge ----------- */
 
 
 #define  NspAgedge_Private 
@@ -1742,7 +1744,7 @@ static int init_agedge(NspAgedge *Obj,NspTypeAgedge *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -1799,7 +1801,7 @@ static int nsp_agedge_eq(NspAgedge *A, NspObject *B)
   if ( check_cast(B,nsp_type_agedge_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->edge != loc->obj->edge) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -1853,10 +1855,10 @@ static NspAgedge  *nsp_agedge_xdr_load(XDR *xdrs)
 
 void nsp_agedge_destroy_partial(NspAgedge *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 198 "../types-test/codegen/agraph.override"
+#line 198 "codegen/agraph.override"
    /* verbatim in destroy */
    int l = nsp_agattr_refcount_set(H->obj->edge,AGEDGE,-1);
    /* Sciprintf("Warning: edge refcount is %d\n",l); */
@@ -1866,7 +1868,7 @@ void nsp_agedge_destroy_partial(NspAgedge *H)
      }
 
 
-#line 1870 "agraph.c"
+#line 1872 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -1919,10 +1921,10 @@ int nsp_agedge_print(NspAgedge *M, int indent,const char *name, int rec_level)
           nsp_agedge_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"edge=0x%x\n",M->obj->edge);
-      Sciprintf1(indent+1,"}\n");
+  Sciprintf1(indent+2,"edge=0x%x\n", M->obj->edge);
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -1937,7 +1939,7 @@ int nsp_agedge_latex(NspAgedge *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"edge=0x%x\n",M->obj->edge);
+  Sciprintf1(indent+2,"edge=0x%x\n", M->obj->edge);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1953,7 +1955,7 @@ NspAgedge   *nsp_agedge_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_agedge_id) == TRUE ) return ((NspAgedge *) O);
+  if ( check_cast (O,nsp_type_agedge_id)  == TRUE  ) return ((NspAgedge *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_agedge));
   return NULL;
@@ -2031,7 +2033,7 @@ NspAgedge *nsp_agedge_create_default(const char *name)
  NspAgedge *H  = nsp_agedge_create_void(name,NULL);
  if ( H ==  NULLAGEDGE) return NULLAGEDGE;
   if ( nsp_agedge_create_partial(H) == FAIL) return NULLAGEDGE;
- if ( nsp_agedge_check_values(H) == FAIL) return NULLAGEDGE;
+  if ( nsp_agedge_check_values(H) == FAIL) return NULLAGEDGE;
  return H;
 }
 
@@ -2086,10 +2088,10 @@ int int_agedge_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_agedge = new_type_agedge(T_BASE);
   if(( H = nsp_agedge_create_void(NVOID,(NspTypeBase *) nsp_type_agedge)) == NULLAGEDGE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_agedge_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_agedge_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_agedge_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -2100,7 +2102,7 @@ static int _wrap_nsp_agnameof_e(NspAgedge *self,Stack stack,int rhs,int opt,int 
 {
   gchar *ret;
   CheckRhs(0,0);
-  ret = nsp_agnameof_e(self);
+  ret =nsp_agnameof_e(self);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
   return 1;
@@ -2110,7 +2112,7 @@ static int _wrap_nsp_aghead(NspAgedge *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspAgnode *ret;
   CheckRhs(0,0);
-  ret = nsp_aghead(self);
+  ret =nsp_aghead(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -2120,13 +2122,15 @@ static int _wrap_nsp_agtail(NspAgedge *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspAgnode *ret;
   CheckRhs(0,0);
-  ret = nsp_agtail(self);
+  ret =nsp_agtail(self);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
 
-#line 348 "../types-test/codegen/agraph.override"
+
+
+#line 348 "codegen/agraph.override"
 
 /* fix an attribute of a node */
 static int _wrap_nsp_agset_e(NspAgedge *self,Stack stack,int rhs,int opt,int lhs)
@@ -2134,7 +2138,7 @@ static int _wrap_nsp_agset_e(NspAgedge *self,Stack stack,int rhs,int opt,int lhs
   return _wrap_nsp_agset_gen(self->obj->edge,stack,rhs,opt,lhs);
 } 
 
-#line 2138 "agraph.c"
+#line 2142 "agraph.c"
 
 
 static NspMethods agedge_methods[] = {
@@ -2151,10 +2155,10 @@ static NspMethods *agedge_get_methods(void) { return agedge_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab agedge_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static AttrTab agedge_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* ----------- NspAgsym ----------- */
+/* -----------NspAgsym ----------- */
 
 
 #define  NspAgsym_Private 
@@ -2262,7 +2266,7 @@ static int init_agsym(NspAgsym *Obj,NspTypeAgsym *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -2319,7 +2323,7 @@ static int nsp_agsym_eq(NspAgsym *A, NspObject *B)
   if ( check_cast(B,nsp_type_agsym_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -2375,7 +2379,7 @@ static NspAgsym  *nsp_agsym_xdr_load(XDR *xdrs)
 
 void nsp_agsym_destroy_partial(NspAgsym *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->Mcoord != NULL ) 
@@ -2432,12 +2436,12 @@ int nsp_agsym_print(NspAgsym *M, int indent,const char *name, int rec_level)
           nsp_agsym_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agsym_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agsym_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -2453,7 +2457,7 @@ int nsp_agsym_latex(NspAgsym *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agsym_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -2470,7 +2474,7 @@ NspAgsym   *nsp_agsym_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_agsym_id) == TRUE ) return ((NspAgsym *) O);
+  if ( check_cast (O,nsp_type_agsym_id)  == TRUE  ) return ((NspAgsym *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_agsym));
   return NULL;
@@ -2554,7 +2558,7 @@ NspAgsym *nsp_agsym_create_default(const char *name)
  NspAgsym *H  = nsp_agsym_create_void(name,NULL);
  if ( H ==  NULLAGSYM) return NULLAGSYM;
   if ( nsp_agsym_create_partial(H) == FAIL) return NULLAGSYM;
- if ( nsp_agsym_check_values(H) == FAIL) return NULLAGSYM;
+  if ( nsp_agsym_check_values(H) == FAIL) return NULLAGSYM;
  return H;
 }
 
@@ -2588,7 +2592,7 @@ NspAgsym *nsp_agsym_full_copy_partial(NspAgsym *H,NspAgsym *self)
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord", NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -2614,10 +2618,10 @@ int int_agsym_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_agsym = new_type_agsym(T_BASE);
   if(( H = nsp_agsym_create_void(NVOID,(NspTypeBase *) nsp_type_agsym)) == NULLAGSYM) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_agsym_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_agsym_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_agsym_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -2656,13 +2660,13 @@ static int _wrap_agsym_set_Mcoord(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab agsym_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_agsym_get_Mcoord, (attr_set_function *)_wrap_agsym_set_Mcoord,(attr_get_object_function *)_wrap_agsym_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function * )_wrap_agsym_get_Mcoord, (attr_set_function * )_wrap_agsym_set_Mcoord, (attr_get_object_function * )_wrap_agsym_get_obj_Mcoord, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 
-/* ----------- NspAgdisc ----------- */
+/* -----------NspAgdisc ----------- */
 
 
 #define  NspAgdisc_Private 
@@ -2770,7 +2774,7 @@ static int init_agdisc(NspAgdisc *Obj,NspTypeAgdisc *type)
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
-  return OK;
+ return OK;
 }
 
 /*
@@ -2827,7 +2831,7 @@ static int nsp_agdisc_eq(NspAgdisc *A, NspObject *B)
   if ( check_cast(B,nsp_type_agdisc_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
-  return TRUE;
+   return TRUE;
 }
 
 /*
@@ -2883,7 +2887,7 @@ static NspAgdisc  *nsp_agdisc_xdr_load(XDR *xdrs)
 
 void nsp_agdisc_destroy_partial(NspAgdisc *H)
 {
-  H->obj->ref_count--;
+   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
     if ( H->obj->Mcoord != NULL ) 
@@ -2940,12 +2944,12 @@ int nsp_agdisc_print(NspAgdisc *M, int indent,const char *name, int rec_level)
           nsp_agdisc_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agdisc_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agdisc_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
-      Sciprintf1(indent+1,"}\n");
+    Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
 }
@@ -2961,7 +2965,7 @@ int nsp_agdisc_latex(NspAgdisc *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agdisc_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord", rec_level+1)== FALSE ) return FALSE ;
     }
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -2978,7 +2982,7 @@ NspAgdisc   *nsp_agdisc_object(NspObject *O)
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_agdisc_id) == TRUE ) return ((NspAgdisc *) O);
+  if ( check_cast (O,nsp_type_agdisc_id)  == TRUE  ) return ((NspAgdisc *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_agdisc));
   return NULL;
@@ -3062,7 +3066,7 @@ NspAgdisc *nsp_agdisc_create_default(const char *name)
  NspAgdisc *H  = nsp_agdisc_create_void(name,NULL);
  if ( H ==  NULLAGDISC) return NULLAGDISC;
   if ( nsp_agdisc_create_partial(H) == FAIL) return NULLAGDISC;
- if ( nsp_agdisc_check_values(H) == FAIL) return NULLAGDISC;
+  if ( nsp_agdisc_check_values(H) == FAIL) return NULLAGDISC;
  return H;
 }
 
@@ -3096,7 +3100,7 @@ NspAgdisc *nsp_agdisc_full_copy_partial(NspAgdisc *H,NspAgdisc *self)
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord", NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -3122,10 +3126,10 @@ int int_agdisc_create(Stack stack, int rhs, int opt, int lhs)
   nsp_type_agdisc = new_type_agdisc(T_BASE);
   if(( H = nsp_agdisc_create_void(NVOID,(NspTypeBase *) nsp_type_agdisc)) == NULLAGDISC) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_agdisc_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+    if ( nsp_agdisc_create_partial(H) == FAIL) return RET_BUG;
+  if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_agdisc_check_values(H) == FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
+    MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
@@ -3164,7 +3168,7 @@ static int _wrap_agdisc_set_Mcoord(void *self,const char *attr, NspObject *O)
 }
 
 static AttrTab agdisc_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_agdisc_get_Mcoord, (attr_set_function *)_wrap_agdisc_set_Mcoord,(attr_get_object_function *)_wrap_agdisc_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
+  { "Mcoord", (attr_get_function * )_wrap_agdisc_get_Mcoord, (attr_set_function * )_wrap_agdisc_set_Mcoord, (attr_get_object_function * )_wrap_agdisc_get_obj_Mcoord, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -3174,11 +3178,11 @@ static AttrTab agdisc_attrs[] = {
  *-------------------------------------------*/
 int _wrap_nsp_agread(Stack stack, int rhs, int opt, int lhs) /* agread */
 {
-  int_types T[] = {string,t_end};
+  int_types T[] = {string, t_end};
   char *filename;
   NspAgraph *ret;
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
-    ret = nsp_agread(filename);
+    ret =nsp_agread(filename);
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -3190,7 +3194,7 @@ int _wrap_nsp_agread(Stack stack, int rhs, int opt, int lhs) /* agread */
  *----------------------------------------------------*/
 
 static OpTab Agraph_func[]={
-  {"agread", _wrap_nsp_agread},
+  { "agread", _wrap_nsp_agread},
   { "agraph_create", int_agraph_create},
   { NULL, NULL}
 };
@@ -3199,19 +3203,19 @@ static OpTab Agraph_func[]={
 
 int Agraph_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Agraph_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(Agraph_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void Agraph_Interf_Info(int i, char **fname, function (**f))
+void Agraph_Interf_Info(int i, char **fname, function ( **f))
 {
   *fname = Agraph_func[i].name;
   *f = Agraph_func[i].fonc;
 }
 
-#line 454 "../types-test/codegen/agraph.override"
+#line 454 "codegen/agraph.override"
 
 /* set of nsp function to facilitate methods or functions for graphviz functions */
 
@@ -3860,4 +3864,4 @@ static int nsp_agattr_refcount_get(Agraph_t *obj,int itype)
 
 
 
-#line 3864 "agraph.c"
+#line 3868 "agraph.c"
