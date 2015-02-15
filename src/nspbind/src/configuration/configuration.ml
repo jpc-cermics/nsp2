@@ -37,7 +37,7 @@ let conf = {
   Codegen_configuration.
   software_name = nsp_codegen_name;
   software_version = nsp_codegen_version;
-  
+
   verbose = false;
   debug = false;
   warnings = true;
@@ -128,9 +128,9 @@ let set_source_file_basename fname =
             src_name fname)
   | None ->
       conf.source_file_basename <- Some fname;
-      conf.definitions_source_file <- 
+      conf.definitions_source_file <-
 	Some (Path.add_extension fname definitions_source_file_extension);
-      conf.overrides_source_file <- 
+      conf.overrides_source_file <-
 	Some (Path.add_extension fname overrides_source_file_extension);
 ;;
 
@@ -166,30 +166,30 @@ let set_target_file fname =
     conf.target_file <- Some fname;
 ;;
 
-let set_prefix str = 
+let set_prefix str =
   conf.prefix <- Some str;
 ;;
 
-let default_prefix () = 
-  match conf.source_file_basename with 
+let default_prefix () =
+  match conf.source_file_basename with
   | Some fname -> Some (String.capitalize fname)
-  | None -> None 
+  | None -> None
 ;;
 
-let get_prefix () = 
-  match conf.prefix with 
-  | Some str -> str 
-  | None -> 
-      match default_prefix () with 
+let get_prefix () =
+  match conf.prefix with
+  | Some str -> str
+  | None ->
+      match default_prefix () with
       | Some fname -> fname
-      | _ -> failwith "undefined prefix" 
+      | _ -> failwith "undefined prefix"
 ;;
 
-let set_prefix_from_object str = 
-  match conf.prefix with 
-  | Some _fname -> 
+let set_prefix_from_object str =
+  match conf.prefix with
+  | Some _fname ->
       ()
-  | None -> 
+  | None ->
       set_prefix str
 ;;
 
@@ -228,13 +228,13 @@ let set_path_to_override_for_h fname =
       conf.path_to_override_for_h <- Some fname
 ;;
 
-let get_path_to_override_for_c () = 
+let get_path_to_override_for_c () =
   match conf.path_to_override_for_c with
   | None -> "codegen/"
   | Some fname -> fname
 ;;
 
-let get_path_to_override_for_h () = 
+let get_path_to_override_for_h () =
   match conf.path_to_override_for_h with
   | None -> "codegen/"
   | Some fname -> fname
