@@ -81,9 +81,6 @@ NSPBIND_LINK_BIN_OBJS=\
  $(NSPBIND_INTERNAL_LIBRARIES_BIN_OBJS)\
  $(NSPBIND_BIN_OBJS)\
 
-# Executables to build
-EXE=$(BIN_DIR)/nspbind
-
 .PHONY: nspbind exe_byt exe_bin info identity ignore
 .PHONY: bannerize bannerize-local bannerize-matlab bannerize-slx
 .PHONY: test test-no-warnings test-nw
@@ -93,13 +90,9 @@ EXE=$(BIN_DIR)/nspbind
 
 nspbind: $(NSPBIND_COMMAND)
 
-$(NSPBIND_COMMAND): $(NSPBIND_INTERNAL_LIBRARIES) byt bin
-	@echo "Binary linking program $(EXE)" && \
-	$(CAML_BIN) -o $(EXE) $(NSPBIND_LINK_BIN_OBJS)
-
-byt: $(NSPBIND_CAML_FILES) $(NSPBIND_BYT_OBJS)
-
-bin: $(NSPBIND_CAML_FILES) $(NSPBIND_BIN_OBJS)
+$(NSPBIND_COMMAND): $(NSPBIND_INTERNAL_LIBRARIES) $(NSPBIND_CAML_FILES) $(NSPBIND_BYT_OBJS) $(NSPBIND_BIN_OBJS)
+	@echo "Binary linking program $(NSPBIND_COMMAND)" && \
+	$(CAML_BIN) -o $(NSPBIND_COMMAND) $(NSPBIND_LINK_BIN_OBJS)
 
 test:
 	(cd test_data && $(MAKE) all)

@@ -1,83 +1,39 @@
-.SUFFIXES: .defs .diff .idiff .c $(SUFFIXES)
+.SUFFIXES: .defs .cdiff .hdiff .diff .c $(SUFFIXES)
 SHELL = /bin/sh
 
-ALL=  pango.c atk.c gdk.c gtk.c webkit.c 
+ALL=  pango.diff atk.diff gdk.diff gtk.diff webkit.diff
 
-DIFF=$(patsubst %.c,%.diff,$(ALL))
+PROG=../../../bin/nspbind -nw
+GTK=../../gtk2/codegen/
+ISRC=../../include/nsp/gtk/
 
-PROG=../bin/nspbind -nw 
-SRC=/usr/local/src/nsp2-ref/src/types-test/
-GTK=/usr/local/src/nsp2-ref/src/gtk2/codegen/
-ISRC=/usr/local/src/nsp2-ref/src/include/nsp/gtk/
+all:
+	cp $(GTK)/*.defs .
+	cp $(GTK)/*.override .
+	make diffs
 
-all:	$(ALL)
+diffs:	$(ALL)
 
-pango.c: pango.defs pango.override ../bin/nspbind
-	$(PROG) -p $* -o /tmp/$*.c $* 
-	@sed -e "s+codegen/++g" \
-	    -e "s+/tmp/pango.c+pango.c+g" /tmp/$*.c > $*.c
-	@rm -f /tmp/$*.c
-
-atk.c: atk.defs atk.override ../bin/nspbind
-	$(PROG) -p $* -o /tmp/$*.c $* 
-	@sed -e "s+codegen/++g" \
-	    -e "s+/tmp/atk.c+atk.c+g" /tmp/$*.c > $*.c
-	@rm -f /tmp/$*.c
-
-gdk.c: gdk.defs gdk.override ../bin/nspbind
-	$(PROG) -p $* -o /tmp/$*.c $* 
-	@sed -e "s+codegen/++g" \
-	    -e "s+/tmp/gdk.c+gdk.c+g" /tmp/$*.c > $*.c
-	@rm -f /tmp/$*.c
-
-gtk.c: gtk.defs gtk.override ../bin/nspbind
-	$(PROG) -p $* -o /tmp/$*.c $* 
-	@sed -e "s+codegen/++g" \
-	    -e "s+/tmp/gtk.c+gtk.c+g" /tmp/$*.c > $*.c
-	@rm -f /tmp/$*.c
-
-webkit.c: webkit.defs webkit.override ../bin/nspbind
-	$(PROG) -p $* -o /tmp/$*.c $* 
-	@sed -e "s+codegen/++g" \
-	    -e "s+/tmp/webkit.c+webkit.c+g" /tmp/$*.c > $*.c
-	@rm -f /tmp/$*.c
-
-
-%.diff: %.c	
+%.cdiff: %.c
 	@echo "-------- diff $*.c -------------------"
-	@diff -rw $*.c $(GTK); $$status 
+	@diff -rw $*.c $(GTK); $$status
 
-%.idiff: %.h	
+%.hdiff: %.h
 	@echo "-------- diff $*.h -------------------"
-	@diff -rw $*.h $(ISRC); $$status 
+	@diff -rw $*.h $(ISRC); $$status
 
-%.c: %.defs
-	$(PROG) -o $*.c $*
+%.diff: %.defs
+	@echo "-------- gen $*.c --------------------"
+	@$(PROG) -p $* -o $*.c $* -cp ""
+	@mv *.h headers/
+	@make -s $*.cdiff
+	@make headers
+	@$(RM) headers/*.h
 
-diff: $(DIFF)
+HEADERS=$(wildcard headers/*.h)
+H_DIFF=$(patsubst %.h,%.hdiff,$(HEADERS))
 
-HSRC=$(wildcard *.h)
-IDIFF=$(patsubst %.h,%.idiff,$(HSRC))
-
-idiff: $(IDIFF)
+headers: $(H_DIFF)
 
 clean:
-	rm -f *.c *.h
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	@$(RM) *.c *.h *.defs *.override
