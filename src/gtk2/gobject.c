@@ -1906,7 +1906,7 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
 /* -------------- GValue marshaling ------------------ */
 
 /**
- * nspg_value_from_pyobject:
+ * nspg_value_from_nspobject:
  * @value: the GValue object to store the converted value in.
  * @obj: the Nsp object to convert.
  *
