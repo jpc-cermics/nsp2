@@ -45,7 +45,7 @@ AC_ARG_WITH(fink,
     [  --with-fink             use /sw for searching packages instead of /opt/local (default=no) ])
 
 AC_ARG_WITH(openmp,
-    [  --with-openmp           use gcc openmp flags (default=no ])
+    [  --with-openmp           use gcc openmp flags (default=no) ])
 
 AC_ARG_WITH(addedf2c,
     [  --with-addedf2c         build a local f2c (src/f2c)])
@@ -55,6 +55,9 @@ AC_ARG_WITH(maxpluslib,
 
 AC_ARG_WITH(amoscephes,
     [  --with-amoscephes       add amoscephes lib ])
+
+AC_ARG_WITH(gi,
+    [  --with-gi               add  gobject-introspection lib (default=no) ])
 
 #########################################
 ## optional packages which can be omited 
@@ -1843,6 +1846,33 @@ fi
 
 
 #########################
+## gobject introspection
+#########################
+
+if test "$with_gi" != no; then                           
+   ## search for gobject introspection
+   if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(GIR, gobject-introspection-1.0 >= 1.0 , HAVE_GI="yes", HAVE_GI="no")
+      ## In case of success I just want  gobject-introspection-1.0 to be added in GTK_PKGS_CFLAGS 
+      if test "$HAVE_GI" = "yes"; then
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS  gobject-introspection-1.0"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS  gobject-introspection-1.0"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+      fi 
+   fi
+else
+   HAVE_GI="no"
+fi
+
+if test "$HAVE_GI" = "yes"; then
+  AC_DEFINE(WITH_GI,[],[gobject introspection library])
+fi
+
+#########################
 ## man vizualization 
 ## webkit should be mandatory.
 #########################
@@ -2002,6 +2032,7 @@ AC_SUBST(MONGODB_C_FILE)
 AC_SUBST(HAVE_FFTW3)
 AC_SUBST(WITH_GL)
 AC_SUBST(HAVE_SNDFILE)
+AC_SUBST(HAVE_GI)
 AC_SUBST(HAVE_PORTAUDIO)
 AC_SUBST(HAVE_MONGODB_C)
 AC_SUBST(HAVE_GRAPHVIZ)
@@ -2042,6 +2073,7 @@ echo "Clp support............:" $HAVE_CLP
 echo "Cholmod support........:" $HAVE_CHOLMOD
 echo "Umfpack support........:" $HAVE_UMFPACK 
 echo "GtkSourceView support..:" $have_gtksourceview
+echo "gobject-introspection..:" $HAVE_GI
 echo "man vizualization......:" $MAN_VIZUALIZATION
 echo ""
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
