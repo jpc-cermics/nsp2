@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define  NspGObject_Private 
+#define  NspGObject_Private
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
 #include <nsp/bmatrix.h>
@@ -34,13 +34,13 @@
 #include "nsp/gtk/gpointer.h"
 #include "nsp/gtk/gboxed.h"
 
-#include "nsp/pr-output.h" 
+#include "nsp/pr-output.h"
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/seval.h"
 
-/* class NspGObject 
- * NspGObject inherits from NspObject 
+/* class NspGObject
+ * NspGObject inherits from NspObject
  */
 
 static AttrTab gobjects_attrs[];
@@ -52,58 +52,58 @@ NspTypeGObject *new_type_gobject(type_mode mode)
 {
   NspTypeGObject *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_gobject != 0 && mode == T_BASE ) 
+  if (  nsp_type_gobject != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_gobject;
     }
-  
+
   if ((type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
   type->attrs = gobjects_attrs;
-  type->get_attrs = (attrs_func *) int_get_attribute; 
-  type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = gobject_get_methods; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gobject_get_methods;
   type->gtk_methods = TRUE;
   type->new = (new_func *) new_gobject;
 
   top= NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for gobject */ 
+  /* object methods redefined for gobject */
 
-  top->pr = (print_func *) gobject_print;                    
+  top->pr = (print_func *) gobject_print;
   top->dealloc = (dealloc_func *) gobject_destroy;
-  top->copy  =  (copy_func *) gobject_copy;                   
-  top->size  = (size_func *) gobject_size;                  
-  top->s_type =  (s_type_func *) gobject_type_as_string;    
+  top->copy  =  (copy_func *) gobject_copy;
+  top->size  = (size_func *) gobject_size;
+  top->s_type =  (s_type_func *) gobject_type_as_string;
   top->sh_type = (sh_type_func *) gobject_type_short_string;
-  top->info = (info_func *) gobject_info ;                    
+  top->info = (info_func *) gobject_info ;
   /* top->is_true = (is_true_func  *) NspGObjectIsTrue; */
   /* top->loop =(loop_func *) gobject_loop;*/
-  top->path_extract = (path_func *) gobject_path_extract ; 
+  top->path_extract = (path_func *) gobject_path_extract ;
   top->get_from_obj = (get_from_obj_func *) gobject_object;
   top->eq  = (eq_func *) gobject_eq;
   top->neq  = (eq_func *) gobject_neq;
   top->save  = (save_func *) gobject_xdr_save;
   top->load  = (load_func *) gobject_xdr_load;
-  
+
   /* specific methods for gobject */
-  
+
   type->init = (init_func *) init_gobject;
-  
-  /* 
-   * interfaces can be added here 
+
+  /*
+   * interfaces can be added here
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  
-  if ( nsp_type_gobject_id == 0 ) 
+
+  if ( nsp_type_gobject_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeGObject called nsp_type_gobject
        */
@@ -112,7 +112,7 @@ NspTypeGObject *new_type_gobject(type_mode mode)
       if ( nsp_register_type(nsp_type_gobject) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_gobject(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_gobject_id;
       return type;
@@ -120,29 +120,29 @@ NspTypeGObject *new_type_gobject(type_mode mode)
 }
 
 /*
- * initialize Gobject instances 
- * locally and by calling initializer on parent class 
+ * initialize Gobject instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_gobject(NspGObject *o,NspTypeGObject *type)
 {
-  /* to be done always */ 
+  /* to be done always */
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
+  o->type = type;
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   /* specific */
-  o->obj = NULL; 
+  o->obj = NULL;
   o->closures = NULL;
   return OK;
 }
 
 /*
- * new instance of GObject 
+ * new instance of GObject
  */
 
-NspGObject *new_gobject() 
+NspGObject *new_gobject()
 {
-  NspGObject *loc; 
+  NspGObject *loc;
   /* type must exists */
   nsp_type_gobject = new_type_gobject(T_BASE);
   if ( (loc = malloc(sizeof(NspGObject)))== NULLGOBJECT) return loc;
@@ -152,11 +152,11 @@ NspGObject *new_gobject()
 }
 
 /*----------------------------------------------
- * Object method redefined for NspGObject 
+ * Object method redefined for NspGObject
  *-----------------------------------------------*/
 
 /*
- * size 
+ * size
  */
 
 static int gobject_size(NspGObject *Mat, int flag)
@@ -165,7 +165,7 @@ static int gobject_size(NspGObject *Mat, int flag)
 }
 
 /*
- * type as string 
+ * type as string
  */
 
 static char gobject_type_name[]="GObject";
@@ -182,18 +182,18 @@ static char *gobject_type_short_string(NspObject *v)
 }
 
 /*
- * A == B 
+ * A == B
  */
 
 static int gobject_eq(NspGObject *A, NspObject *B)
 {
   if ( check_cast(B,nsp_type_gobject_id) == FALSE) return FALSE ;
-  if ( A->obj == ((NspGObject *)B)->obj ) return TRUE; 
+  if ( A->obj == ((NspGObject *)B)->obj ) return TRUE;
   return FALSE;
 }
 
 /*
- * A != B 
+ * A != B
  */
 
 static int gobject_neq(NspGObject *A, NspObject *B)
@@ -203,10 +203,10 @@ static int gobject_neq(NspGObject *A, NspObject *B)
   return TRUE;
 }
 
-/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
+/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val
  * note that H(exp1)= val          -> setrowscols
- *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then 
- *       iterate on the result 
+ *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then
+ *       iterate on the result
  */
 
 static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob, int *copy)
@@ -219,24 +219,24 @@ static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob, int 
 }
 
 /*
- * save 
+ * save
  */
 
 static int gobject_xdr_save(XDR  *xdrs, NspGObject *M)
 {
-#if 1 
+#if 1
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_gobject)) == FAIL) return FAIL;
 #else
   if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
-#endif 
+#endif
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("gobject_xdr_save: to be implemented \n");
   return OK;
 }
 
 /*
- * load 
+ * load
  */
 
 static NspGObject  *gobject_xdr_load(XDR  *xdrs)
@@ -249,14 +249,14 @@ static NspGObject  *gobject_xdr_load(XDR  *xdrs)
 }
 
 /*
- * delete 
+ * delete
  */
 
 void gobject_destroy(NspGObject *self)
 {
-  if (self->obj) 
+  if (self->obj)
     {
-      /* 
+      /*
 	 fprintf(stderr,"==>gobject_destroy (call unref)\n");
 	 nsp_object_print((NspObject *)self,0);
       */
@@ -269,41 +269,41 @@ void gobject_destroy(NspGObject *self)
 }
 
 /*
- * info 
+ * info
  */
 
 int gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(self)->name;
-  if ( self == NULLGOBJECT) 
+  if ( self == NULLGOBJECT)
     {
       Sciprintf("Null Pointer NspGObject \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(pname,NVOID) != 0) 
+      if ( strcmp(pname,NVOID) != 0)
 	{
 	  Sciprintf1(indent,"%s=unavalaible",pname);
 	}
-      else 
+      else
 	{
 	  Sciprintf1(indent,"unavailable");
 	}
     }
-  else 
+  else
     {
       /* A changer XXXX pour que GObject soit remplacé par le type GTk */
       Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d\n", pname,
 		self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
-		 NSP_POINTER_CAST_TO_INT self->obj, 
+		 NSP_POINTER_CAST_TO_INT self->obj,
 		((GObject *) self->obj)->ref_count);
     }
   return TRUE;
 }
 
 /*
- * print 
+ * print
  */
 
 int gobject_print(NspGObject *H, int indent,char *name, int rec_level)
@@ -313,9 +313,9 @@ int gobject_print(NspGObject *H, int indent,char *name, int rec_level)
 }
 
 /*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGObject objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * a set of functions used when writing interfaces
+ * for NspGObject objects
+ * Note that some of these functions could become MACROS XXXXX
  *-----------------------------------------------------*/
 
 NspGObject   *gobject_object(NspObject *O)
@@ -324,7 +324,7 @@ NspGObject   *gobject_object(NspObject *O)
   HOBJ_GET_OBJECT(O,NULL);
   /*Check type **/
   if ( check_cast(O,nsp_type_gobject_id) == TRUE) return ((NspGObject *) O);
-  else 
+  else
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_gobject));
   return(NULL);
 }
@@ -355,16 +355,16 @@ NspGObject  *GetGObject(Stack stack, int i)
 
 
 /*
- * constructor for gobject or derived classes 
+ * constructor for gobject or derived classes
  */
 
 NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
 {
   NspGObject *H;
-  /* when obj is NULL we return NULL 
-   * to simplify some automatic interfaces ? 
+  /* when obj is NULL we return NULL
+   * to simplify some automatic interfaces ?
    */
-  if ( obj == NULL ) 
+  if ( obj == NULL )
     {
       Scierror("Error: no gobject available\n");
       return NULLGOBJECT;
@@ -386,7 +386,7 @@ NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
 
 
 /*
- * copy a gobject or a derived object (which is copied as a derived object!) 
+ * copy a gobject or a derived object (which is copied as a derived object!)
  */
 
 NspGObject *gobject_copy(NspGObject *self)
@@ -396,27 +396,27 @@ NspGObject *gobject_copy(NspGObject *self)
 
 /*-------------------------------------------------------------------
  * wrappers for the NspGObject
- * i.e functions at Nsp level 
+ * i.e functions at Nsp level
  *-------------------------------------------------------------------*/
 
 /**
  * int_gobj_create:
- * @stack: 
- * @rhs: 
- * @opt: 
- * @lhs: 
- * 
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ *
  * interface that can be used to create a NspGObject given
  * its type and its properties.
  * gobject_create(a-type,hash-table).
- * 
- * Returns: 
+ *
+ * Returns:
  **/
 
 int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 {
-  int rep=RET_BUG; 
-  NspObject *type; 
+  int rep=RET_BUG;
+  NspObject *type;
   NspHash *h =NULL;
   GType object_type;
   guint n_params = 0, i;
@@ -425,7 +425,7 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
   GObject *gobj;
   NspObject *nsp_ret;
   int_types T[] = {obj_check,hash , t_end} ;
-  if (GetArgs(stack,rhs,opt,T, &nsp_type_type,&type,&h)== FAIL) 
+  if (GetArgs(stack,rhs,opt,T, &nsp_type_type,&type,&h)== FAIL)
     return RET_BUG;
 
   object_type  = g_type_from_name (type_get_name(((NspType *) type)->nsp_type));
@@ -433,24 +433,24 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
   if (!object_type)
     {
       Scierror("%s: first argument is not a GType \n", NspFname(stack));
-      return RET_BUG; 
+      return RET_BUG;
     }
   if (G_TYPE_IS_ABSTRACT(object_type)) {
     Scierror("%s: cannot create instance of abstract (non-instantiable) type `%s'\n",
 	     NspFname(stack),
 	     g_type_name(object_type));
-    return RET_BUG; 
+    return RET_BUG;
   }
   if ((class = g_type_class_ref (object_type)) == NULL) {
     Scierror("%s: could not get a reference to type class\n",NspFname(stack));
     return RET_BUG;
   }
 
-  if (h != NULL) 
+  if (h != NULL)
     {
       int i;
       params = g_new0(GParameter, h->hsize);
-      for ( i =0 ; i < h->hsize ; i++) 
+      for ( i =0 ; i < h->hsize ; i++)
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) h->htable) + i;
 	  if ( loc->used )
@@ -472,7 +472,7 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 	      n_params++;
 	    }
 	}
-    }      
+    }
   if ((gobj = g_object_newv(object_type, n_params, params))== NULL) goto cleanup;
   if ((nsp_ret =(NspObject *) nspgobject_new(NVOID,gobj))== NULL)  goto cleanup;
   MoveObj(stack,1,nsp_ret);
@@ -488,11 +488,11 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*------------------------------------------------------
- * attributes  (set/get methods) 
+ * attributes  (set/get methods)
  *------------------------------------------------------*/
 
-/* all the gobject have a user_data field in which 
- * an object can be stored and changed without copy 
+/* all the gobject have a user_data field in which
+ * an object can be stored and changed without copy
  */
 
 static NspObject * int_gobject_get_user_data(void *self,const char *attr)
@@ -520,20 +520,20 @@ static int int_gobject_set_user_data(void *self,const char *attr, NspObject *O)
   NspObject *data;
   quark = g_quark_from_string(attr);
   HOBJ_GET_OBJECT(O,FAIL);
-  if ((data = nsp_object_copy_and_name(attr,O)) == NULLOBJ) 
+  if ((data = nsp_object_copy_and_name(attr,O)) == NULLOBJ)
     return RET_BUG;
   g_object_set_qdata_full(((NspGObject *) self)->obj, quark, data , nspg_destroy_notify);
   return OK ;
 }
 
-/* self.user_data = , self.user_data and sef.user_data(....) = 
- * direct acces to user_data to mofify it without a need to get then set 
+/* self.user_data = , self.user_data and sef.user_data(....) =
+ * direct acces to user_data to mofify it without a need to get then set
  *
  */
 
 
 static AttrTab gobjects_attrs[] = {
-  { "user_data", int_gobject_get_user_data, int_gobject_set_user_data, int_gobject_get_user_data_obj, 
+  { "user_data", int_gobject_get_user_data, int_gobject_set_user_data, int_gobject_get_user_data_obj,
     (attr_set_object_function *)int_set_object_failed    },
   { (char *) 0, NULL}
 };
@@ -542,7 +542,7 @@ static AttrTab gobjects_attrs[] = {
 
 
 /*------------------------------------------------------
- * methods 
+ * methods
  *------------------------------------------------------*/
 
 static int nspgobject_ref(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -559,7 +559,7 @@ static int nspgobject_unref(NspGObject *self, Stack stack,int rhs,int opt,int lh
   return 0;
 }
 
-GType  nspg_type_from_object(NspObject *obj) 
+GType  nspg_type_from_object(NspObject *obj)
 {
   return g_type_from_name (NSP_OBJECT(obj)->type->s_type());
 }
@@ -570,7 +570,7 @@ GType  nspg_type_from_object(NspObject *obj)
 static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_flag)
 {
   NspSMatrix *nsp_ret;
-  GType type; 
+  GType type;
   GObjectClass *class;
   GParamSpec **specs;
   guint n_specs;
@@ -580,18 +580,18 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
 
   class = G_OBJECT_CLASS (g_type_class_peek (type));
   specs = g_object_class_list_properties (class, &n_specs);
-        
+
   if (n_specs == 0) {
     if ((nsp_ret = nsp_smatrix_create_with_length(NVOID,0,0,-1)) == NULL) return NULL;
     return nsp_ret;
   }
-  
-  /* first pass to count */ 
+
+  /* first pass to count */
 
   for (i = 0 ; i < n_specs ; i++)
     {
       GParamSpec *spec = specs[i];
-      /* 
+      /*
        *	 gboolean can_modify = ((spec->flags & G_PARAM_WRITABLE) != 0 &&
        *	 (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0);
        */
@@ -601,7 +601,7 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
           /* can't display unreadable properties */
           continue;
         }
-      
+
       if (type_only_flag == TRUE && spec->owner_type != type)
 	{
 	  /* we're only interested in params of type */
@@ -609,8 +609,8 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
 	}
       count++;
     }
-  
-        
+
+
   if (count == 0) {
     if ((nsp_ret = nsp_smatrix_create_with_length(NVOID,0,0,-1)) == NULL) return NULL;
     return nsp_ret;
@@ -621,18 +621,18 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
   for (i = 0 ; i < n_specs ; i++)
     {
       GParamSpec *spec = specs[i];
-      /* 
+      /*
        * gboolean can_modify =  ((spec->flags & G_PARAM_WRITABLE) != 0 &&
-       * (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0); 
+       * (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0);
        */
-      
-      if ((spec->flags & G_PARAM_READABLE) == 0) continue ; 
-      if (type_only_flag == TRUE && spec->owner_type != type) continue ; 
-      /* g_param_spec_get_nick (spec) */ 
-      if ((nsp_ret->S[count++] =new_nsp_string(spec->name)) == (nsp_string) 0 )  return NULLSMAT; 
+
+      if ((spec->flags & G_PARAM_READABLE) == 0) continue ;
+      if (type_only_flag == TRUE && spec->owner_type != type) continue ;
+      /* g_param_spec_get_nick (spec) */
+      if ((nsp_ret->S[count++] =new_nsp_string(spec->name)) == (nsp_string) 0 )  return NULLSMAT;
     }
   g_free (specs);
-  return nsp_ret; 
+  return nsp_ret;
 }
 
 
@@ -640,10 +640,10 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
 static int nspgobject_get_property_names(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspObject *ret;
-  int flag = TRUE; 
+  int flag = TRUE;
 
-  CheckRhs(0,1); 
-  if (rhs==1) { if ( GetScalarBool(stack,1,&flag) == FAIL) return RET_BUG;} 
+  CheckRhs(0,1);
+  if (rhs==1) { if ( GetScalarBool(stack,1,&flag) == FAIL) return RET_BUG;}
   if (( ret=(NspObject *) nsp_gobject_get_properties(self ,flag))== NULL) return RET_BUG;
   MoveObj(stack,1,ret);
   return 1;
@@ -656,7 +656,7 @@ static int nspgobject_get_property(NspGObject *self, Stack stack,int rhs,int opt
   GParamSpec *pspec;
   GValue value = { 0, };
   NspObject *ret;
-  
+
   int_types T[] = { string , t_end} ;
   if ( GetArgs(stack,rhs,opt,T, &param_name) == FAIL) return RET_BUG;
 
@@ -723,11 +723,11 @@ static int nspgobject_thaw_notify(NspGObject *self, Stack stack,int rhs,int opt,
   return 0;
 }
 
-/* we can attach data to a widget using .set_data[name=value,...] 
+/* we can attach data to a widget using .set_data[name=value,...]
  * and get_data through .get_data[name]
- * XXX The problem is that in order to modify datas we have to make a copy 
- * It should be good to implement extraction and insertion as in hash tables. 
- * or check why for methods x.get_data[name](2)=values is not accepted. 
+ * XXX The problem is that in order to modify datas we have to make a copy
+ * It should be good to implement extraction and insertion as in hash tables.
+ * or check why for methods x.get_data[name](2)=values is not accepted.
  */
 
 static int nspgobject_get_data(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -743,7 +743,7 @@ static int nspgobject_get_data(NspGObject *self, Stack stack,int rhs,int opt,int
   data = g_object_get_qdata(self->obj, quark);
   if (!data) {
     Scierror("Error: data %s does not exists\n",key);
-    return RET_BUG; 
+    return RET_BUG;
   }
   MoveObj(stack,1,data);
   return 1;
@@ -775,12 +775,12 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
   GQuark quark;
   NspObject *O;
   int i;
-  if ( rhs - opt != 0 ) 
+  if ( rhs - opt != 0 )
     {
       Scierror("%s: arguments must be given as name=val\n",NspFname(stack));
       return RET_BUG;
     }
-  for ( i = 1 ; i <= rhs ; i++) 
+  for ( i = 1 ; i <= rhs ; i++)
     {
       const char *key;
       /*get a copy of object (GetObj takes care of Hobj pointers) **/
@@ -791,13 +791,13 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
       g_object_set_qdata_full(self->obj, quark, O , nspg_destroy_notify);
     }
   return 0;
-} 
+}
 
 
 /*
  * method connect  self.connect['signal-name',function,list-of-extra-args];
- * 
- */ 
+ *
+ */
 
 static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
 {
@@ -810,12 +810,12 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
 
   CheckRhs(2,3);
   CheckLhs(1,1);
-  if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;             
+  if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;
   /*Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
   /*extra arguments **/
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
@@ -829,7 +829,7 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
   nspgobject_watch_closure((NspObject *)self, closure);
   handlerid = g_signal_connect_closure_by_id(self->obj, sigid, detail,
 					     closure, flag);
-  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
+  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
 }
 
@@ -858,19 +858,19 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   CheckRhs(3,4);
   CheckLhs(1,1);
 
-  if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;             
+  if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;
   /*Need a GetFunction here XXXXXX **/
   if (( callback =GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
   if (( object  =nsp_get_object_copy(stack,3)) == NULLOBJ ) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) object,"o")== FAIL)) return RET_BUG;
   /*list of extra arguments **/
-  if ( rhs == 4 ) 
+  if ( rhs == 4 )
     {
       if (( extra_args =  GetListCopy(stack,4)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *) extra_args,"m")== FAIL)) return RET_BUG;
     }
-  if (!g_signal_parse_name(name,G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE)) 
+  if (!g_signal_parse_name(name,G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE))
     {
       Scierror("method connect: unknown signal name (%s)\n",name);
       return RET_BUG;
@@ -878,17 +878,17 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   closure = nspg_closure_new(callback, extra_args, object );
   nspgobject_watch_closure((NspObject *)self, closure);
   handlerid = g_signal_connect_closure_by_id(self->obj, sigid, detail, closure, flag);
-  if ( nsp_move_double(stack,1,(double) handlerid)== FAIL) return RET_BUG; 
-  return 1; 
+  if ( nsp_move_double(stack,1,(double) handlerid)== FAIL) return RET_BUG;
+  return 1;
 }
 
-static int 
+static int
 nspgobject_connect_object(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
   return nspgobject_connect_object_general(self, stack, rhs,opt, lhs,FALSE);
 }
 
-static int 
+static int
 nspgobject_connect_object_after(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
   return nspgobject_connect_object_general(self, stack, rhs,opt, lhs,TRUE);
@@ -935,10 +935,10 @@ nspgobject_emit(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   GValue *params, ret = { 0, };
 
   CheckRhs(1,100) ; /* XXXX */
-  
+
   if ((name = GetString(stack,1)) == (char*)0) return RET_BUG;;
 
-  if (!g_signal_parse_name(name, G_OBJECT_TYPE(self->obj), &signal_id, &detail, TRUE)) 
+  if (!g_signal_parse_name(name, G_OBJECT_TYPE(self->obj), &signal_id, &detail, TRUE))
     {
       Scierror("unknown signal name %s\n",name);
       return RET_BUG;
@@ -951,7 +951,7 @@ nspgobject_emit(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   params = g_new0(GValue, query.n_params + 1);
   g_value_init(&params[0], G_OBJECT_TYPE(self->obj));
   g_value_set_object(&params[0], G_OBJECT(self->obj));
-  
+
   for (i = 0; i < query.n_params; i++)
     g_value_init(&params[i + 1],
 		 query.param_types[i] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
@@ -969,7 +969,7 @@ nspgobject_emit(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   }
   if (query.return_type != G_TYPE_NONE)
     g_value_init(&ret, query.return_type & ~G_SIGNAL_TYPE_STATIC_SCOPE);
-    
+
   g_signal_emitv(params, signal_id, detail, &ret);
   for (i = 0; i < query.n_params + 1; i++)
     g_value_unset(&params[i]);
@@ -1064,7 +1064,7 @@ nspgobject_chain_from_overridden(NspGObject *self, Stack stack,int rhs,int opt,i
   } else {
     return 0;
   }
-  
+
 }
 
 static NspMethods gobject_methods[] = {
@@ -1098,7 +1098,7 @@ static NspMethods gobject_methods[] = {
 static NspMethods *gobject_get_methods(void) { return gobject_methods;};
 
 /*-------------------------------------------
- * function 
+ * function
  *-------------------------------------------*/
 
 /* XXX
@@ -1137,39 +1137,39 @@ static int int_create_prop_editor(Stack stack,int rhs,int opt,int lhs)
   NspObject *nsp_ret;
   GType widget_type = 0;
   NspGObject *gobj1,*gobj2;
-  GtkWidget *wid; 
+  GtkWidget *wid;
   CheckRhs(1,2);
   CheckLhs(0,1);
-  if ( rhs == 2 ) 
+  if ( rhs == 2 )
     {
       int_types T[] = {obj_check, obj_check,t_end};
       if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &gobj1,&nsp_type_gobject, &gobj2) == FAIL) return RET_BUG;
       if ((widget_type = nspg_type_from_object((NspObject *) gobj2)) == FAIL)
 	return RET_BUG;
     }
-  else 
+  else
     {
       int_types T[] = {obj_check, t_end};
       if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &gobj1) == FAIL) return RET_BUG;
     }
   wid = create_prop_editor (G_OBJECT(gobj1->obj),widget_type);
   if (wid == NULL) return RET_BUG;
-  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) wid))== NULL) 
-    return RET_BUG;  
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) wid))== NULL)
+    return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
-
-
 /*----------------------------------------------------
- * Interface 
+ * Interface
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+extern function int_gvalue_create;
+
 static OpTab NspGObject_func[]={
-  /* #include "gobject-in.nam" */ 
-  {"gobject_create",int_gobj_create}, 
+  /* #include "gobject-in.nam" */
+  {"gobject_create",int_gobj_create},
   {"setrowscols_gobj",int_set_attribute},
   {"gtk_timeout_add",int_gtk_timeout_add},
   {"g_timeout_remove",int_gtk_timeout_remove},
@@ -1181,6 +1181,7 @@ static OpTab NspGObject_func[]={
   {"cellstostr",int_cells_to_str},
   {"pixbuf_get_channel",int_pixbuf_get_channel},
   {"create_prop_editor",int_create_prop_editor},
+  {"gvalue_create",int_gvalue_create},
   {(char *) 0, NULL}
 };
 
@@ -1191,7 +1192,7 @@ int GObject_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(NspGObject_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/*used to walk through the interface table 
+/*used to walk through the interface table
     (for adding or removing functions) **/
 
 void GObject_Interf_Info(int i, char **fname, function (**f))
@@ -1202,35 +1203,35 @@ void GObject_Interf_Info(int i, char **fname, function (**f))
 
 
 /*---------------------------------------------------
- * Utilities 
+ * Utilities
  *---------------------------------------------------*/
 
 /**
  * nspgobject_check:
  * @value: a void pointer that can be casted to a #NspObject
  * @type: a void pointer that can be casted to a #NspTypeBase
- * 
+ *
  * checks that object @value can be casted to an object of type @type
- * 
+ *
  * Returns: %TRUE or %FALSE.
  **/
 
 int nspgobject_check(void *value, void *type)
 {
-  return check_cast((NspObject *) value, ((NspTypeBase *) type)->id); 
+  return check_cast((NspObject *) value, ((NspTypeBase *) type)->id);
 }
 
 /**
  * nspgobject_new:
- * @name: a string 
+ * @name: a string
  * @obj: a #GObject
- * 
- * creates a new nsp object which belong to a class derived from #NspGObject. 
- * The nsp_type to use is extracted from the GType of the given GObject, 
- * this is only possible if the associated nsp type was registered using 
- * register_nsp_type_in_gtype(). 
- * 
- * Returns: a new #NspGObject 
+ *
+ * creates a new nsp object which belong to a class derived from #NspGObject.
+ * The nsp_type to use is extracted from the GType of the given GObject,
+ * this is only possible if the associated nsp type was registered using
+ * register_nsp_type_in_gtype().
+ *
+ * Returns: a new #NspGObject
  **/
 
 NspGObject *nspgobject_new(const char *name, GObject *obj)
@@ -1251,7 +1252,7 @@ void nspg_destroy_notify(gpointer user_data)
 {
   NspObject *obj = (NspObject *) user_data;
   nspg_block_threads();
-  /* 
+  /*
      fprintf(stderr,"==>destroy_notify activated on \n");
      nsp_object_print(obj,0);
   */
@@ -1263,21 +1264,21 @@ void nspg_destroy_notify(gpointer user_data)
  * nspgtk_custom_destroy_notify:
  * @custom: a NspGtkCustomNotify *
  *
- * A function used as GDestroyNotify callback in gtk.c 
+ * A function used as GDestroyNotify callback in gtk.c
  */
 
 void nspgtk_custom_destroy_notify(gpointer custom)
 {
-  NspGtkCustomNotify *ncustom= custom; 
+  NspGtkCustomNotify *ncustom= custom;
   nspg_block_threads();
-  /* 
+  /*
      printf(stderr,"==>custom_destroy_notify activated on \n");
      nsp_object_print(ncustom->func,0);
   */
   nsp_object_destroy(&ncustom->func);
   if ( ncustom->data != NULL)
     {
-      /* 
+      /*
        * nsp_object_print(ncustom->data,0);
        */
       nsp_object_destroy(&ncustom->data);
@@ -1309,7 +1310,7 @@ void nspg_block_threads(void) {};
 static GQuark	nsp_gobject_closures = 0;
 static void nsp_gobject_closures_destroy (gpointer data);
 
-int 
+int
 nspgobject_watch_closure(NspObject *self, GClosure *closure)
 {
   GSList *closures;
@@ -1321,9 +1322,9 @@ nspgobject_watch_closure(NspObject *self, GClosure *closure)
     nsp_gobject_closures = g_quark_from_static_string ("nsp-gobject-closures");
 
   closures = g_object_steal_qdata (((NspGObject *)self)->obj,nsp_gobject_closures);
-  
+
   if (g_slist_find(closures,closure) != NULL) return FAIL;
-  
+
   closures = g_slist_prepend(closures, g_closure_ref (closure));
   g_closure_sink (closure);
   g_object_set_qdata_full (((NspGObject *)self)->obj,nsp_gobject_closures,
@@ -1393,7 +1394,7 @@ nspg_closure_new(NspPList *callback, NspList *extra_args, NspObject *swap_data)
 }
 
 /*
- * execute the closure 
+ * execute the closure
  */
 
 static Stack Marshal_stack={0,NULL};
@@ -1413,100 +1414,100 @@ nspg_closure_marshal(GClosure *closure,
 		     gpointer invocation_hint,
 		     gpointer marshal_data)
 {
-  /* make a copy to be sure that some 
+  /* make a copy to be sure that some
    * values are preserved through recursion
    */
-  Stack stack = Marshal_stack; 
+  Stack stack = Marshal_stack;
   NspGClosure *pc = (NspGClosure *)closure;
   int nargs = 0, i, n;
   stack_count++; /* count recursive calls */
   nspg_block_threads();
-  if ( pc->callback  == NULLP_PLIST) 
+  if ( pc->callback  == NULLP_PLIST)
     {
       goto end;
     }
   /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
-  NspFname(stack) = "pipo"; 
+  NspFname(stack) = "pipo";
   stack.first =0;
 
   /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.val->S=<%lx>, first=%d\n",
-   *   stack_count, "pipo" ,(long) stack.val->S,stack.first); 
+   *   stack_count, "pipo" ,(long) stack.val->S,stack.first);
    */
-  if ( stack_count != 1 ) 
+  if ( stack_count != 1 )
     {
-      /* XXX trying to preserve the already stored objects */ 
+      /* XXX trying to preserve the already stored objects */
       NspObject **O= stack.val->S;
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
       stack.first = args ;
       /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
-  
+
   /* We put the params on the stack **/
-  for (i = 0; i < n_param_values; i++) 
+  for (i = 0; i < n_param_values; i++)
     {
       /* swap in a different initial data for connect_object() */
       if (i == 0 && G_CCLOSURE_SWAP_DATA(closure)) {
 	if (pc->swap_data == NULL) {
-	  goto end; 
+	  goto end;
 	}
-	stack.val->S[stack.first + nargs]= pc->swap_data; 
+	stack.val->S[stack.first + nargs]= pc->swap_data;
 	nargs++;
       } else {
-	NspObject *item; 
+	NspObject *item;
 	/* XXXX: */
-	if (( item = nspg_value_as_nspobject(&param_values[i], FALSE))== NULL) 
+	if (( item = nspg_value_as_nspobject(&param_values[i], FALSE))== NULL)
 	  {
-	    goto end; 
+	    goto end;
 	  }
-	stack.val->S[stack.first + nargs]= item; 
+	stack.val->S[stack.first + nargs]= item;
 	nargs++;
       }
     }
-  /* check if we have extra arguments and put add it on the stack 
-   * extra arguments are given as a list of extra args 
+  /* check if we have extra arguments and put add it on the stack
+   * extra arguments are given as a list of extra args
    */
   if ( pc->extra_args  != NULLLIST )
     {
-      /* 
+      /*
 	 Cell *C= pc->extra_args->first;
-	 while ( C != NULLCELL) 
+	 while ( C != NULLCELL)
 	 {
-	 if ( C->O != NULLOBJ )       
+	 if ( C->O != NULLOBJ )
 	 {
-	 stack.val->S[stack.first + nargs]= C->O; 
+	 stack.val->S[stack.first + nargs]= C->O;
 	 nargs++;
 	 }
 	 C = C->next ;
 	 }
       */
-      stack.val->S[stack.first + nargs]= (NspObject *) pc->extra_args ; 
+      stack.val->S[stack.first + nargs]= (NspObject *) pc->extra_args ;
       nargs++;
     }
 
   /* Calling a macro func is a macro coded in P_PList **/
-  
+
   if ((n=nsp_eval_func((NspObject *)pc->callback,NspFname(stack),2,stack,stack.first,nargs,0,-1)) < 0 )
     {
       nsp_error_message_show();
-      goto end; 
+      goto end;
     }
 
   /* fprintf(stderr,"Sortie de FuncEval avec %d arguments de retour et first=%d\n",n,stack.first); */
-  
-  
+
+
   /* FuncEval fait-il le menage tout seul ? XXXXX **/
   if ( n >= 1) {
     if (return_value) nspg_value_from_nspobject(return_value,stack.val->S[stack.first] );
   }
   /* clean the stack */
-  for (i = 0 ; i < n ; i++) 
+  for (i = 0 ; i < n ; i++)
     {
       nsp_void_object_destroy(&stack.val->S[stack.first+i]);
       stack.val->S[stack.first+i]= NULLOBJ;
     }
-  goto end; 
-  end : 
+  goto end;
+  end :
     {
       stack_count--;
       nspg_unblock_threads();
@@ -1517,18 +1518,18 @@ nspg_closure_marshal(GClosure *closure,
 
 /**
  * nsp_gtk_eval_function:
- * @func: code of function to be evaluated 
- * @args: array containing the input arguments 
- * @n_args: number of input arguments 
- * @ret:  array to be filled with returned arguments 
- * @nret: on entry, the number of expected returned arguments, 
+ * @func: code of function to be evaluated
+ * @args: array containing the input arguments
+ * @n_args: number of input arguments
+ * @ret:  array to be filled with returned arguments
+ * @nret: on entry, the number of expected returned arguments,
  *   on return the number of returned values (always less or equal to @nret)
- *   or a negative number (error code) in case of error 
- * 
+ *   or a negative number (error code) in case of error
+ *
  * evaluates the macro @func using the gtk stack.
- * this function should be replaced by #nsp_gtk_eval_function_catch which gives 
+ * this function should be replaced by #nsp_gtk_eval_function_catch which gives
  * more execution control.
- * 
+ *
  * Return value: %OK or %FAIL
  **/
 
@@ -1540,8 +1541,8 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret, FALSE, FALSE);
 }
 
-/* similar to the previous function but in a context 
- * where  errcatch and  pausecatch can be used 
+/* similar to the previous function but in a context
+ * where  errcatch and  pausecatch can be used
  */
 
 int nsp_gtk_eval_function_catch(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret,
@@ -1557,30 +1558,30 @@ int nsp_gtk_eval_function_catch(NspPList *func,NspObject *args[],int n_args,NspO
 
 static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret, int errcatch, int pausecatch)
 {
-  /* make a copy to be sure that some 
+  /* make a copy to be sure that some
    * values are preserved through recursion
    */
-  Stack stack = Marshal_stack; 
+  Stack stack = Marshal_stack;
   int nargs = 0, i, n=0,rep =FAIL;
   /* save current values */
   int errcatch_cur = Marshal_stack.val->errcatch;
   int pause_cur = Marshal_stack.val->pause;
   /* must be reset at the end */
-  stack.val->errcatch = errcatch; 
-  stack.val->pause = pausecatch; 
-  
+  stack.val->errcatch = errcatch;
+  stack.val->pause = pausecatch;
+
   stack_count++;
   nspg_block_threads();
-  if ( func  == NULLP_PLIST && fname == NULL) 
+  if ( func  == NULLP_PLIST && fname == NULL)
     {
       goto end;
     }
   /* nsp_init_stack(&stack,stack_S); */
   NspFname(stack) = fname;
   stack.first =0;
-  if ( stack_count != 1 ) 
+  if ( stack_count != 1 )
     {
-      /* XXX trying to preserve the already stored objects */ 
+      /* XXX trying to preserve the already stored objects */
       NspObject **O= stack.val->S;
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
@@ -1588,30 +1589,30 @@ static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *ar
       /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
   /*We put the params on the stack **/
-  for (i = 0; i < n_args ; i++) 
+  for (i = 0; i < n_args ; i++)
     stack.val->S[stack.first + nargs++]= args[i];
   /*Calling func is a macro coded in P_PList **/
   if ((n=nsp_eval_func((NspObject *) func,  NspFname(stack),2,stack,stack.first,nargs,0,*nret)) < 0 )
     {
       if ( errcatch == FALSE ) nsp_error_message_show();
-      goto end; 
+      goto end;
     }
   /*FuncEval fait-il le menage tout seul ? XXXXX **/
-  for ( i = 0 ; i < Min(n,*nret) ; i++) 
+  for ( i = 0 ; i < Min(n,*nret) ; i++)
     {
       ret[i]= stack.val->S[stack.first+i];
       stack.val->S[stack.first+i]= NULLOBJ;
     }
   *nret =Min(n,*nret);
   /* clean the stack */
-  for ( i = *nret ; i < n  ; i++) 
+  for ( i = *nret ; i < n  ; i++)
     {
       nsp_void_object_destroy(&stack.val->S[stack.first+i]);
       stack.val->S[stack.first+i]= NULLOBJ;
     }
   rep = OK;
-  goto end; 
-  end : 
+  goto end;
+  end :
     {
       stack_count--;
       Marshal_stack.val->errcatch= errcatch_cur;
@@ -1625,15 +1626,15 @@ static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *ar
 
 /**
  * nsp_gtk_eval_function_by_name:
- * @func: 
- * @args: 
- * @n_args: 
- * @ret: 
- * @nret: 
- * 
+ * @func:
+ * @args:
+ * @n_args:
+ * @ret:
+ * @nret:
+ *
  * evaluates the macro @func using the gtk stack.
- * 
- * Return value: 
+ *
+ * Return value:
  **/
 
 
@@ -1649,15 +1650,15 @@ int nsp_gtk_eval_function_by_name(const char *name,NspObject *args[],int n_args,
 
 /**
  * nsp_gtk_eval_function_by_name_catch:
- * @func: 
- * @args: 
- * @n_args: 
- * @ret: 
- * @nret: 
- * 
+ * @func:
+ * @args:
+ * @n_args:
+ * @ret:
+ * @nret:
+ *
  * evaluates the macro @func using the gtk stack.
- * 
- * Return value: 
+ *
+ * Return value:
  **/
 
 
@@ -1691,9 +1692,9 @@ nsp_constant_strip_prefix(const gchar *name, const gchar *strip_prefix)
 {
   gint prefix_len;
   guint j;
-    
+
   prefix_len = strlen(strip_prefix);
-    
+
   /* strip off prefix from value name, while keeping it a valid
    * identifier */
   for (j = prefix_len; j >= 0; j--) {
@@ -1706,7 +1707,7 @@ nsp_constant_strip_prefix(const gchar *name, const gchar *strip_prefix)
 
 /**
  * nsp_enum_add_constants:
- * @table: a hash table 
+ * @table: a hash table
  * @enum_type: the GType of the enumeration.
  * @strip_prefix: the prefix to strip from the constant names.
  *
@@ -1727,11 +1728,11 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
     Scierror("Warning: `%s' is not of enum type\n", g_type_name(enum_type));
     return FAIL;
   }
-  
+
   /* Sciprintf("XXXX: `%s' : enum type\n", g_type_name(enum_type)); */
 
   eclass = G_ENUM_CLASS(g_type_class_ref(enum_type));
-  
+
   for (i = 0; i < eclass->n_values; i++) {
     const gchar *name = eclass->values[i].value_name;
     gint value = eclass->values[i].value;
@@ -1739,11 +1740,11 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
     if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,(double)value))== NULL) return FAIL;
     /* XXXXX */
     /* Sciprintf("YYY: `%s' derived from %s\n",name,g_type_name(enum_type)); */
-    if (nsp_hash_find(table,name,&O)== OK) 
+    if (nsp_hash_find(table,name,&O)== OK)
       {
 	Scierror("Warning: %s is already stored in table %s\n",name,nsp_object_get_name((NspObject *)table));
       }
-    if (nsp_hash_enter(table,nsp_val) == FAIL) return FAIL; 
+    if (nsp_hash_enter(table,nsp_val) == FAIL) return FAIL;
   }
   g_type_class_unref(eclass);
   return OK;
@@ -1751,7 +1752,7 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
 
 /**
  * nsp_flags_add_constants:
- * @table: a hash table 
+ * @table: a hash table
  * @flags_type: the GType of the flags type.
  * @strip_prefix: the prefix to strip from the constant names.
  *
@@ -1759,7 +1760,7 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
  * the flags set.  A prefix will be stripped from each flag name.
  */
 
-int 
+int
 nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_prefix)
 {
   GFlagsClass *fclass;
@@ -1772,18 +1773,18 @@ nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_pref
   }
 
   fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
-  
+
   for (i = 0; i < fclass->n_values; i++) {
     const gchar *name = fclass->values[i].value_name;
     guint value = fclass->values[i].value;
     if (strip_prefix != NULL) name= nsp_constant_strip_prefix(name, strip_prefix);
     if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,(double)value))== NULL) return FAIL;
     /* XXXXX */
-    if (nsp_hash_find(table,name,&O)== OK) 
+    if (nsp_hash_find(table,name,&O)== OK)
       {
 	Scierror("Warning: %s is already stored in table %s \n",name,nsp_object_get_name((NspObject *)table));
       }
-    if (nsp_hash_enter(table,nsp_val) == FAIL) return FAIL; 
+    if (nsp_hash_enter(table,nsp_val) == FAIL) return FAIL;
   }
   g_type_class_unref(fclass);
   return OK;
@@ -1833,7 +1834,7 @@ gint nspg_enum_get_value(GType enum_type, NspObject *obj, void *val)
       }
       *gval = info->value;
       return OK;
-    } 
+    }
   Scierror("enum values must be strings or ints\n");
   return FAIL;
 }
@@ -1861,8 +1862,8 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
   GFlagsClass *fclass = NULL;
 
   if ( gval == NULL) return FAIL;
-  
-  if (!obj) { *gval = 0; return FAIL;} 
+
+  if (!obj) { *gval = 0; return FAIL;}
   if ( IntScalar(obj, gval) == OK ) { return OK;}
   if ( IsSMat(obj))
     {
@@ -1875,12 +1876,12 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
 	return FAIL;
       }
       *gval = 0;
-      for ( i= 0 ; i < ((NspSMatrix *)obj)->mn ; i ++) 
+      for ( i= 0 ; i < ((NspSMatrix *)obj)->mn ; i ++)
 	{
 	  char *str = ((NspSMatrix *)obj)->S[i];
 	  info = g_flags_get_value_by_name(fclass, str);
 	  g_type_class_unref(fclass);
-	
+
 	  if (!info)
 	    info = g_flags_get_value_by_nick(fclass, str);
 	  if (info) {
@@ -1889,7 +1890,7 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
 	    Scierror("could not convert string\n");
 	    return FAIL;
 	  }
-	} 
+	}
       g_type_class_unref(fclass);
       return OK;
     }
@@ -1900,7 +1901,7 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
 
 
 /*
- * NspObjects <--> GValues  
+ * NspObjects <--> GValues
  */
 
 /* -------------- GValue marshaling ------------------ */
@@ -1947,9 +1948,9 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
     if ((str =nsp_string_object(obj)) != NULL)
 #if GLIB_CHECK_VERSION(2,32,0)
       g_value_set_schar(value, str[0]);
-#else 
+#else
       g_value_set_char(value, str[0]);
-#endif 
+#endif
 
     else {
       return FAIL;
@@ -1958,13 +1959,13 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   case G_TYPE_BOOLEAN:
     if ( BoolScalar(obj, &bval) == OK)
       g_value_set_boolean(value, bval);
-    else 
+    else
       return FAIL;
     break;
   case G_TYPE_INT:
     if ( IntScalar(obj, &val) == OK)
       g_value_set_int(value, val);
-    else 
+    else
       return FAIL;
     break;
   case G_TYPE_UINT:
@@ -1974,13 +1975,13 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
 	g_value_set_uint(value, (guint)val);
       else
 	return FAIL;
-    } 
+    }
     break;
   case G_TYPE_LONG:
     /* a reprendre XXXXXX */
     if ( IntScalar(obj, &val) == OK )
       g_value_set_long(value, (long) val );
-    else 
+    else
       return FAIL;
     break;
   case G_TYPE_ULONG:
@@ -2014,37 +2015,37 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
     }
     break;
   case G_TYPE_FLOAT:
-    if ( DoubleScalar(obj,&dval) == OK) 
+    if ( DoubleScalar(obj,&dval) == OK)
       g_value_set_float(value, (float) dval);
     else
       return FAIL;
     break;
   case G_TYPE_DOUBLE:
-    if ( DoubleScalar(obj,&dval) == OK) 
+    if ( DoubleScalar(obj,&dval) == OK)
       g_value_set_double(value,dval);
-    else 
+    else
       return FAIL;
     break;
   case G_TYPE_STRING:
     if ((str =nsp_string_object(obj)) != NULL)
       g_value_set_string(value, str);
-    else 
+    else
       return FAIL;
     break;
   case G_TYPE_POINTER:
     return FAIL;
     break;
-  case G_TYPE_BOXED: 
+  case G_TYPE_BOXED:
     return FAIL;
     break;
   case G_TYPE_PARAM:
     return FAIL;
   case G_TYPE_OBJECT:
     if ( IsGObject(obj) && G_TYPE_CHECK_INSTANCE_TYPE( NSP_GOBJECT_GET(obj),
-						       G_VALUE_TYPE(value))) 
+						       G_VALUE_TYPE(value)))
       {
 	g_value_set_object(value, NSP_GOBJECT_GET(obj));
-      } 
+      }
     else
       return FAIL;
     break;
@@ -2058,12 +2059,12 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
 /**
  * nsp_type_from_gtype:
  * @gtype: a GType
- * 
+ *
  * utility function used to obtain a nsp type given a GType.
- * This is used when proper nsp objects are to be build from 
- * GObjects. 
- * It could be useful to also register basic Gtk types. 
- * 
+ * This is used when proper nsp objects are to be build from
+ * GObjects.
+ * It could be useful to also register basic Gtk types.
+ *
  * Returns: a #NspTypeBase
  **/
 
@@ -2074,26 +2075,26 @@ NspTypeBase * nsp_type_from_gtype(GType gtype)
 {
   NspTypeBase *type;
   type = (NspTypeBase *) g_type_get_qdata(gtype, nsp_gobject_class_key );
-  if ( type == NULL) 
+  if ( type == NULL)
     Scierror("get type in gtype failed for gtype %s \n",g_type_name(gtype));
   return type;
 }
 
 /**
  * register_nsp_type_in_gtype:
- * @type: 
- * @gtype: 
- * 
+ * @type:
+ * @gtype:
+ *
  * utility function used to attach a nsp type to a GType.
- * This is used when proper nsp objects are to be build from 
- * GObjects. 
- * It could be useful to also register basic Gtk types. 
- * 
+ * This is used when proper nsp objects are to be build from
+ * GObjects.
+ * It could be useful to also register basic Gtk types.
+ *
  **/
 
-void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype) 
+void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype)
 {
-  if ( gtype == G_TYPE_INVALID ) return ; 
+  if ( gtype == G_TYPE_INVALID ) return ;
   if (!nsp_gobject_class_key)
     nsp_gobject_class_key = g_quark_from_static_string(nsp_gobject_class_id);
   g_type_set_qdata(gtype, nsp_gobject_class_key, type);
@@ -2118,9 +2119,9 @@ NspObject *
 nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 {
   gpointer *gobj;
-  NspMatrix *M; 
+  NspMatrix *M;
 
-  switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(value))) 
+  switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(value)))
     {
     case G_TYPE_INTERFACE:
       if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_OBJECT))
@@ -2130,9 +2131,9 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
     case G_TYPE_CHAR: {
 #if GLIB_CHECK_VERSION(2,32,0)
       gint8 val = g_value_get_schar(value);
-#else 
+#else
       gint8 val = g_value_get_char(value);
-#endif 
+#endif
       return  nsp_new_string_obj(NVOID,(char *) &val,1);
     }
     case G_TYPE_UCHAR: {
@@ -2140,7 +2141,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       return  nsp_new_string_obj(NVOID,(char *) &val,1);
     }
     case G_TYPE_BOOLEAN: {
-      NspObject *val = g_value_get_boolean(value) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID); 
+      NspObject *val = g_value_get_boolean(value) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
       return val;
     }
     case G_TYPE_INT: NSP_MAT(g_value_get_int(value));
@@ -2149,7 +2150,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
     case G_TYPE_ULONG:NSP_MAT(g_value_get_ulong(value));
     case G_TYPE_INT64:NSP_MAT(g_value_get_int64(value));
     case G_TYPE_UINT64:NSP_MAT(g_value_get_uint64(value));
-    case G_TYPE_ENUM: NSP_MAT(g_value_get_enum(value)); 
+    case G_TYPE_ENUM: NSP_MAT(g_value_get_enum(value));
     case G_TYPE_FLAGS: NSP_MAT(g_value_get_flags(value));
     case G_TYPE_FLOAT: NSP_MAT(g_value_get_float(value));
     case G_TYPE_DOUBLE: NSP_MAT(g_value_get_double(value));
@@ -2161,7 +2162,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       return (NspObject *) gpointer_create(NVOID,G_VALUE_TYPE(value), g_value_get_pointer(value),NULL);
     case G_TYPE_BOXED: {
       NspTypeBase *type= nsp_type_from_gtype(G_VALUE_TYPE(value));
-      if ( type == NULL) 
+      if ( type == NULL)
 	{
 	  Scierror("nspg_value_as_nspobject: G_TYPE_BOXED is to be done for %s\n",
 		   g_type_name(G_VALUE_TYPE(value)));
@@ -2169,13 +2170,13 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	}
       if (copy_boxed)
 	return (NspObject *)gboxed_create(NVOID,G_VALUE_TYPE(value), g_value_get_boxed(value),TRUE,TRUE,type);
-      else 
+      else
 	return (NspObject *)gboxed_create(NVOID,G_VALUE_TYPE(value), g_value_get_boxed(value),FALSE,FALSE,type);
     }
 
-      /* 
+      /*
 	 PyGBoxedMarshal *bm;
-      
+
 	 if (G_VALUE_HOLDS(value, PY_TYPE_OBJECT)) {
 	 NspObject *ret = (NspObject *)g_value_dup_boxed(value);
 	 if (ret == NULL) {
@@ -2184,7 +2185,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	 }
 	 return ret;
 	 }
-	 
+
 	 bm = nspg_boxed_lookup(G_VALUE_TYPE(value));
 	 if (bm) {
 	 return bm->fromvalue(value);
@@ -2197,18 +2198,18 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	 g_value_get_boxed(value),FALSE,FALSE);
 	 }
       */
-      
+
     case G_TYPE_PARAM:
-      /* 
+      /*
       return nspg_param_spec_new(g_value_get_param(value));
       */
       Scierror("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
       return NULL;
     case G_TYPE_OBJECT:
-      /* we need here to return the most specific NspObject which contains the GObject */ 
+      /* we need here to return the most specific NspObject which contains the GObject */
       gobj = g_value_get_object(value);
       return (NspObject *) gobject_create(NVOID,(GObject *)gobj, nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
-      /* 
+      /*
       * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
       *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
       */
@@ -2221,25 +2222,25 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 }
 
 
-/* 
- * XXXX : to be stored elsewhere 
+/*
+ * XXXX : to be stored elsewhere
  */
 
-#include <gtk/gtk.h> 
+#include <gtk/gtk.h>
 #include "nsp/gtk/gboxed.h"
 
-int 
+int
 nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
 {
   HOBJ_GET_OBJECT(object,FALSE);
-  if (IsMat(object) && ((NspMatrix *) object)->rc_type == 'r'  ) 
+  if (IsMat(object) && ((NspMatrix *) object)->rc_type == 'r'  )
     {
       Mat2double((NspMatrix *) object); /* be sure that we are in a canonic mode */
-      rectangle->x= ((NspMatrix *) object)->R[0]; 
+      rectangle->x= ((NspMatrix *) object)->R[0];
       rectangle->y= ((NspMatrix *) object)->R[1];
-      rectangle->width= ((NspMatrix *) object)->R[2]; 
-      rectangle->height= ((NspMatrix *) object)->R[3]; 
-      return TRUE; 
+      rectangle->width= ((NspMatrix *) object)->R[2];
+      rectangle->height= ((NspMatrix *) object)->R[3];
+      return TRUE;
   }
   else if ( nspg_boxed_check(object, GDK_TYPE_RECTANGLE)) {
     *rectangle = *nspg_boxed_get(object, GdkRectangle);
@@ -2254,10 +2255,10 @@ nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
  * @obj: an object
  *
  * find a GType corresponding to the given object.
- * Returns: the corresponding GType or G_TYPE_NONE. 
- * 
- * This is usefull for list and tree where column 
- * types are to be given. 
+ * Returns: the corresponding GType or G_TYPE_NONE.
+ *
+ * This is usefull for list and tree where column
+ * types are to be given.
  */
 
 GType gtype_from_nsp_object(NspObject *obj)
@@ -2270,7 +2271,7 @@ GType gtype_from_nsp_object(NspObject *obj)
   if ( IsHobj(obj))
     {
       if (((NspHobj *) obj)->htype != 'g') obj = ((NspHobj *) obj)->O;
-      else 
+      else
 	{
 	  if ((obj= nsp_global_frame_search_object(NSP_OBJECT(obj)->name)) == NULLOBJ)
 	    {
@@ -2285,14 +2286,14 @@ GType gtype_from_nsp_object(NspObject *obj)
   else if (IsType(obj))
     {
       GType gtype;
-      NspTypeBase *type  = ((NspType *) obj)->nsp_type; 
+      NspTypeBase *type  = ((NspType *) obj)->nsp_type;
       /* Sciprintf("Gtype: %s\n",(type_get_name(type)));*/
-      if ((gtype= g_type_from_name (type_get_name(type))) != G_TYPE_INVALID) 
+      if ((gtype= g_type_from_name (type_get_name(type))) != G_TYPE_INVALID)
 	return gtype;
     }
-  else if (IsSMat(obj)) 
+  else if (IsSMat(obj))
     return G_TYPE_STRING;
-  else if (IsBMat(obj)) 
+  else if (IsBMat(obj))
     return G_TYPE_BOOLEAN;
   else if (IsMat(obj) || IsMpMat(obj))
     return G_TYPE_DOUBLE;
@@ -2300,7 +2301,7 @@ GType gtype_from_nsp_object(NspObject *obj)
     return G_OBJECT_TYPE( NSP_GOBJECT_GET(obj));
   else if (IsGBoxed(obj))
     return ((NspGBoxed *) obj)->gtype ;
-  
+
   Scierror("Error: could not get a gtype code from object of type %s\n",
 	   obj->type->s_type());
   return G_TYPE_INVALID;
@@ -2308,26 +2309,26 @@ GType gtype_from_nsp_object(NspObject *obj)
 
 
 /* -----------------------------------------------------------------
- * Utility function fill a row in a GtkListStore or GtkTreeStore 
+ * Utility function fill a row in a GtkListStore or GtkTreeStore
  * -----------------------------------------------------------------
- */ 
+ */
 
 /**
  * nsp_gtk_gtypes_from_list:
- * @L: a #NspList 
- * @len: an int pointer 
- * 
- * returns an array of GType from a #NspList object. 
- * if a list element is a mxn matrix then n Gtypes are added 
- * if a list element is itself a list(x1,....) then the Gtype associated to 
+ * @L: a #NspList
+ * @len: an int pointer
+ *
+ * returns an array of GType from a #NspList object.
+ * if a list element is a mxn matrix then n Gtypes are added
+ * if a list element is itself a list(x1,....) then the Gtype associated to
  * the first element is added.
- * As an example if @L is equal to 
- * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....)) 
+ * As an example if @L is equal to
+ * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....))
  * then the gtype array will contail
  * [double,double,double,string,string,boolean,double,pixbuf].
- * The caller will have to take care of freeing the returned value 
- * and the size of the returned array is returned in len 
- * 
+ * The caller will have to take care of freeing the returned value
+ * and the size of the returned array is returned in len
+ *
  * Returns: an array of #GType
  **/
 
@@ -2335,13 +2336,13 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
 {
   int n_columns=0,count;
   GType *column_types;
-  Cell *cloc = L->first ; 
+  Cell *cloc = L->first ;
 
-  /* first walk to count columns */ 
-  while ( cloc != NULLCELL) 
+  /* first walk to count columns */
+  while ( cloc != NULLCELL)
     {
 
-      if ( cloc->O == NULLOBJ ) 
+      if ( cloc->O == NULLOBJ )
 	{
 	  Scierror("Warning: list element %d is undefined\n",n_columns+1);
 	  return NULL;
@@ -2356,25 +2357,25 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
 	  /* n_columns coluns of object */
 	  n_columns +=nsp_object_get_size(cloc->O,2);
 	}
-      else 
+      else
 	{
 	  Scierror("list element %d has a wrong type %s to fill a GtkListStore\n",
 		   n_columns+1,cloc->O->type->s_type());
 	  return NULL;
 	}
       cloc = cloc->next;
-    } 
-  
+    }
+
   column_types = g_new(GType,n_columns);
   /* walk to fill column_types */
   count=0;
   cloc = L->first ;
-  while ( cloc != NULLCELL) 
+  while ( cloc != NULLCELL)
     {
       GType gtype = G_TYPE_NONE;
       if ( IsList(cloc->O))
 	{
-	  Cell *cloc1 = ((NspList *) cloc->O)->first ; 
+	  Cell *cloc1 = ((NspList *) cloc->O)->first ;
 	  if ( cloc1->O != NULLOBJ) gtype = gtype_from_nsp_object(cloc1->O);
 	  if ( gtype == G_TYPE_INVALID) goto fail;
 	  column_types[count++] = gtype;
@@ -2382,19 +2383,19 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
       else
 	{
 	  int n =nsp_object_get_size(cloc->O,2), n1 = count,i;
-	  if ( n != 0 ) 
+	  if ( n != 0 )
 	    {
 	      gtype = gtype_from_nsp_object(cloc->O);
 	      if ( gtype == G_TYPE_INVALID) goto fail;
 	      column_types[count++] = gtype;
-	      for (i=1 ; i < n ; i++) 
+	      for (i=1 ; i < n ; i++)
 		column_types[count++] = column_types[n1];
 	    }
 	}
       cloc = cloc->next;
     }
-  *len = n_columns ; 
-  return column_types; 
+  *len = n_columns ;
+  return column_types;
  fail:
   g_free(column_types);
   return NULL;
@@ -2404,18 +2405,18 @@ GType *nsp_gtk_gtypes_from_list(NspList *L,int *len)
 /**
  * nsp_gtk_list_store_new_from_list:
  * @L: a #NspList.
- * 
+ *
  * creates a GtkListStore from a list description.
- * 
+ *
  * Returns: a new #GtkListStore.
  **/
 
 GtkListStore *nsp_gtk_list_store_new_from_list(NspList *L)
 {
-  int ncols=0; 
+  int ncols=0;
   GtkListStore *ls;
   GType *column_types;
-  column_types = nsp_gtk_gtypes_from_list(L,&ncols); 
+  column_types = nsp_gtk_gtypes_from_list(L,&ncols);
   if (column_types == NULL) return NULL;
   /* create the list store */
   ls = gtk_list_store_newv(ncols, column_types);
@@ -2424,25 +2425,25 @@ GtkListStore *nsp_gtk_list_store_new_from_list(NspList *L)
     Scierror("could not create GtkListStore object\n");
     return NULL;
   }
-  return ls; 
+  return ls;
 }
 
 /**
  * nsp_gtk_tree_store_new_from_list:
  * @L:  a #NspList.
- * 
+ *
  * creates a GtkTreeStore from a list description.
- * 
+ *
  * Returns: a new #GtkTreeStore.
  **/
 
 GtkTreeStore *nsp_gtk_tree_store_new_from_list(NspList *L)
 {
-  int ncols=0; 
+  int ncols=0;
   GtkTreeStore *ts;
   GType *column_types;
-  column_types = nsp_gtk_gtypes_from_list(L,&ncols); 
-  if (column_types == NULL) return NULL; 
+  column_types = nsp_gtk_gtypes_from_list(L,&ncols);
+  if (column_types == NULL) return NULL;
   /* create the list store */
   ts = gtk_tree_store_newv(ncols, column_types);
   g_free(column_types);
@@ -2450,30 +2451,30 @@ GtkTreeStore *nsp_gtk_tree_store_new_from_list(NspList *L)
     Scierror("could not create GtkListStore object\n");
     return NULL;
   }
-  return ts; 
+  return ts;
 }
 
 /**
  * nsp_list_count_rows:
  * @L: a #NspList.
- * @n_rows: int pointer 
- * 
- * counts the number of  rows described in @L 
+ * @n_rows: int pointer
+ *
+ * counts the number of  rows described in @L
  * and check that all the list elements have the same number of rows.
  * This numbre is returned in @n_rows.
- * 
- * 
+ *
+ *
  * Returns: %OK or %FAIL
  **/
 
 int nsp_list_count_rows(NspList *L,int *n_rows)
 {
   int count,nrows=-1;
-  Cell *cloc = L->first ; 
+  Cell *cloc = L->first ;
   count=0;
-  while ( cloc != NULLCELL) 
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O == NULLOBJ ) 
+      if ( cloc->O == NULLOBJ )
 	{
 	  Scierror("Warning: list element %d is undefined\n",count+1);
 	  return FAIL;
@@ -2486,9 +2487,9 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
       else if ( IsList(cloc->O))
 	{
 	  int m =nsp_object_get_size(cloc->O,0);
-	  if ( nrows != -1) 
+	  if ( nrows != -1)
 	    {
-	      if ( m != nrows ) 
+	      if ( m != nrows )
 		{
 		  Scierror("column %d has wrong size %d expecting %d\n",count+1,m,nrows);
 		  return FAIL;
@@ -2499,10 +2500,10 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
 	}
       else if ( IsMat(cloc->O) ||  IsMpMat(cloc->O) || IsSMat(cloc->O) || IsBMat(cloc->O) )
 	{
-	  int m =nsp_object_get_size(cloc->O,1); 
-	  if ( nrows != -1) 
+	  int m =nsp_object_get_size(cloc->O,1);
+	  if ( nrows != -1)
 	    {
-	      if ( m != nrows ) 
+	      if ( m != nrows )
 		{
 		  Scierror("column %d has wrong size %d expecting %d\n",count+1,m,nrows);
 		  return FAIL;
@@ -2511,7 +2512,7 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
 	  else nrows = m;
 	  count +=nsp_object_get_size(cloc->O,2);
 	}
-      else 
+      else
 	{
 	  Scierror("list element %d has a wrong type %s to fill a GtkListStore\n",
 		   count+1,cloc->O->type->s_type());
@@ -2519,7 +2520,7 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
 	}
       cloc = cloc->next;
     }
-  *n_rows = nrows ; 
+  *n_rows = nrows ;
   return OK;
 }
 
@@ -2529,13 +2530,13 @@ int nsp_list_count_rows(NspList *L,int *n_rows)
  * @iter: a #GtkTreeIter
  * @parent: a #GtkTreeIter
  * @L: a #NspList.
- * 
- * 
+ *
+ *
  * fills @model (a #GtkTreeModel) with data given in list @L.
- * if iterator is given data is inserted at iterator position 
- * if iterator is null data is inserted at the end and rows are 
+ * if iterator is given data is inserted at iterator position
+ * if iterator is null data is inserted at the end and rows are
  * created accordingly.
- * 
+ *
  * Returns: %OK or %FAIL.
  **/
 
@@ -2543,7 +2544,7 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
 					      GtkTreeIter *parent, NspList *L)
 {
   int count,n_rows=-1;
-  Cell *cloc = L->first ; 
+  Cell *cloc = L->first ;
   /* counts the rows and check compatibility */
   GtkTreeIter iter1;
 
@@ -2554,9 +2555,9 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
   }
 
   if ( nsp_list_count_rows(L,&n_rows)== FAIL) return FAIL;
-  if ( n_rows == -1 ) return OK ; 
-      
-  if ( iter == NULL) 
+  if ( n_rows == -1 ) return OK ;
+
+  if ( iter == NULL)
     {
       int i;
       GtkTreeIter iter2;
@@ -2567,40 +2568,40 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
 	  /* fill the list store with enough rows */
 	  for (i = 1; i < n_rows ; i++)  gtk_list_store_append((GtkListStore *)model, &iter2);
 	}
-      else 
+      else
 	{
 	  gtk_tree_store_append((GtkTreeStore *)model,iter,parent);
 	  /* fill the list store with enough rows */
 	  for (i = 1; i < n_rows ; i++)  gtk_tree_store_append((GtkTreeStore *)model, &iter2,parent);
 	}
     }
-  else 
+  else
     {
       GtkTreeIter *h_iter;
       int i;
       /* check that we have enough rows */
-      if ((h_iter = gtk_tree_iter_copy(iter))== NULL) 
+      if ((h_iter = gtk_tree_iter_copy(iter))== NULL)
 	{
 	  Scierror("Unable to allocate iterator \n");
 	  return FAIL;
 	}
-      for ( i= 0 ; i < n_rows -1 ; i++) 
+      for ( i= 0 ; i < n_rows -1 ; i++)
 	{
-	  int rep = gtk_tree_model_iter_next(model, h_iter); 
-	  if (rep == FALSE) 
+	  int rep = gtk_tree_model_iter_next(model, h_iter);
+	  if (rep == FALSE)
 	    {
 	      /* need to append rows */
 	      GtkTreeIter iter2;
 	      int j;
 	      if (GTK_IS_LIST_STORE(model))
 		{
-		  for (j= i ; j < n_rows -1 ; j++) 
+		  for (j= i ; j < n_rows -1 ; j++)
 		    gtk_list_store_append((GtkListStore *) model, &iter2);
 		  break;
 		}
-	      else 
+	      else
 		{
-		  for (j= i ; j < n_rows -1 ; j++) 
+		  for (j= i ; j < n_rows -1 ; j++)
 		    gtk_tree_store_append((GtkTreeStore *)model, &iter2,parent);
 		  break;
 		}
@@ -2611,9 +2612,9 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
   /* now we fill the list_store rows using the list again */
   cloc = L->first;
   count=0;
-  while ( cloc != NULLCELL) 
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  if ( IsNone(cloc->O) )
 	    {
@@ -2623,29 +2624,29 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
 	  else if ( IsMat(cloc->O) || IsMpMat(cloc->O) )
 	    {
 	      Mat2double((NspMatrix *) cloc->O); /* be sure that we are in a canonic mode */
-	      if ( nsp_gtk_tree_model_set_col_from_mat(model,iter,(NspMatrix *) cloc->O,count)== FAIL) 
+	      if ( nsp_gtk_tree_model_set_col_from_mat(model,iter,(NspMatrix *) cloc->O,count)== FAIL)
 		return FAIL;
 	      count +=nsp_object_get_size(cloc->O,2);
 	    }
 	  else if ( IsSMat(cloc->O) )
 	    {
-	      if ( nsp_gtk_tree_model_set_col_from_smat(model,iter,(NspSMatrix *) cloc->O,count)== FAIL) 
+	      if ( nsp_gtk_tree_model_set_col_from_smat(model,iter,(NspSMatrix *) cloc->O,count)== FAIL)
 		return FAIL;
 	      count +=nsp_object_get_size(cloc->O,2);
 	    }
 	  else if (IsBMat(cloc->O) )
 	    {
-	      if ( nsp_gtk_tree_model_set_col_from_bmat(model,iter,(NspBMatrix *) cloc->O,count)== FAIL) 
+	      if ( nsp_gtk_tree_model_set_col_from_bmat(model,iter,(NspBMatrix *) cloc->O,count)== FAIL)
 		return FAIL;
 	      count +=nsp_object_get_size(cloc->O,2);
 	    }
 	  else if ( IsList(cloc->O) )
 	    {
-	      if ( nsp_gtk_tree_model_set_col_from_list(model,iter,(NspList *) cloc->O,count)== FAIL) 
+	      if ( nsp_gtk_tree_model_set_col_from_list(model,iter,(NspList *) cloc->O,count)== FAIL)
 		return FAIL;
 	      count++;
 	    }
-	  else 
+	  else
 	    {
 	      Scierror("Cannot set the column %d with Object of type %s\n",count+1,cloc->O->type->s_type());
 	      return FAIL;
@@ -2661,10 +2662,10 @@ int nsp_gtk_list_or_tree_store_fill_from_list(GtkTreeModel *model,GtkTreeIter *i
  * nsp_gtk_list_store_from_list:
  * @L: a #NspList.
  * @flag: an integer
- * 
+ *
  * creates a #GtkListStore using #NspList @L to set the column types.
  * If @flag is %TRUE then the list is also used to fill the #GtkListStore
- *   
+ *
  * Returns: a new #GtkListStore
  **/
 
@@ -2672,19 +2673,19 @@ GtkListStore *nsp_gtk_list_store_from_list(NspList *L,int flag)
 {
   GtkListStore *ls;
   if (( ls = nsp_gtk_list_store_new_from_list(L)) == NULL) return NULL;
-  if ( flag == TRUE ) 
+  if ( flag == TRUE )
     if ( nsp_gtk_list_or_tree_store_fill_from_list((GtkTreeModel *) ls,NULL,NULL,L)== FAIL) return NULL;
   return ls;
 }
 
 /**
  * nsp_gtk_tree_store_from_list:
- * @L: 
- * @flag: 
- * 
+ * @L:
+ * @flag:
+ *
  * creates a #GtkTreeStore using #NspList @L to set the column types.
  * If @flag is %TRUE then the list is also used to fill the #GtkTreeStore
- *   
+ *
  * Returns: a new #GtkTreeStore
  **/
 
@@ -2692,7 +2693,7 @@ GtkTreeStore *nsp_gtk_tree_store_from_list(NspList *L,int flag )
 {
   GtkTreeStore *ls;
   if (( ls = nsp_gtk_tree_store_new_from_list(L)) == NULL) return NULL;
-  if ( flag == TRUE) 
+  if ( flag == TRUE)
     if ( nsp_gtk_list_or_tree_store_fill_from_list((GtkTreeModel *) ls,NULL,NULL,L)== FAIL) return NULL;
   return ls;
 }
@@ -2701,11 +2702,11 @@ GtkTreeStore *nsp_gtk_tree_store_from_list(NspList *L,int flag )
  * nsp_gtk_tree_model_set_col_from_list:
  * @model: a #GtkTreeModel
  * @iter1: a #GtkTreeIter
- * @L: a #NspList 
- * @column: an integer 
- * 
+ * @L: a #NspList
+ * @column: an integer
+ *
  * fills a column in a GtkTreeModel from a #NspList.
- * 
+ *
  * Returns: %OK or %FAIL.
  **/
 
@@ -2715,35 +2716,35 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
   gint n_columns, count=0;
   GValue value = { 0, };
   GType model_type =  gtk_tree_model_get_column_type(model,column);
-  Cell *cloc = L->first ; 
+  Cell *cloc = L->first ;
 
   if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
     Scierror("can not set cells in this tree model\n");
     return FAIL;
   }
   /* items are given in a list */
-  
+
   n_columns = gtk_tree_model_get_n_columns(model);
-  if ( column > n_columns ) 
+  if ( column > n_columns )
     {
       Scierror("column %d does not exists in given tree model (n_columns=%d)\n",column,n_columns);
       return FAIL;
     }
 
-  if ( iter1 == NULL) 
+  if ( iter1 == NULL)
     {
       /* start from the begining */
       if (!gtk_tree_model_get_iter_first(model, &iter)) return FAIL;
     }
-  else 
+  else
     {
-      iter = *iter1; 
+      iter = *iter1;
     }
 
-  g_value_init(&value, model_type);  
-  while ( cloc != NULLCELL) 
+  g_value_init(&value, model_type);
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  if ( nspg_value_from_nspobject(&value, cloc->O)) {
 	    Scierror("value of list element %d is of wrong type for column %d\n",count+1,column);
@@ -2752,7 +2753,7 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
 	  if (GTK_IS_LIST_STORE(model))
 	    gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, column, &value);
 	  else if (GTK_IS_TREE_STORE(model))
-	    gtk_tree_store_set_value(GTK_TREE_STORE(model), &iter, column, &value);      
+	    gtk_tree_store_set_value(GTK_TREE_STORE(model), &iter, column, &value);
 	}
       cloc = cloc->next;
       count++;
@@ -2763,10 +2764,10 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
   return OK;
 }
 
-/* 
- * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore 
- * given an iterator 
- */ 
+/*
+ * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore
+ * given an iterator
+ */
 
 /**
  * nsp_gtk_tree_model_set_row:
@@ -2775,9 +2776,9 @@ int nsp_gtk_tree_model_set_col_from_list(GtkTreeModel *model,GtkTreeIter *iter1,
  * @parent: a #GtkTreeIter
  * @items: a #NspList
  *
- * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore 
- * given an iterator 
- * 
+ * Utility function fill a row (or a set of rows) in a GtkListStore or GtkTreeStore
+ * given an iterator
+ *
  * Returns: %OK or %FAIL.
  **/
 
@@ -2787,12 +2788,12 @@ int nsp_gtk_tree_model_set_row(GtkTreeModel *model, GtkTreeIter *iter,GtkTreeIte
 }
 
 
-/* 
- * Utility function: a list store from a generic Matrix 
- * the list_store is created and filled row by row 
- */ 
+/*
+ * Utility function: a list store from a generic Matrix
+ * the list_store is created and filled row by row
+ */
 
-typedef void (*set_val)(GValue *value,NspObject *M,int row,int col) ; 
+typedef void (*set_val)(GValue *value,NspObject *M,int row,int col) ;
 
 static int nsp_gtk_tree_model_set_row_from_generic_matrix(GtkTreeModel *model, GtkTreeIter *iter,set_val F,NspObject *M,int row);
 
@@ -2812,11 +2813,11 @@ static GtkListStore *nsp_gtk_list_store_from_generic_matrix(NspObject *M,set_val
   if (! ls) {
     Scierror("could not create GtkListStore object\n");
     return NULL;
-  }      
-  for (i = 0; i < nsp_object_get_size(M,1) ; i++) 
+  }
+  for (i = 0; i < nsp_object_get_size(M,1) ; i++)
     {
       gtk_list_store_append(ls, &iter);
-      if ( nsp_gtk_tree_model_set_row_from_generic_matrix(GTK_TREE_MODEL(ls), &iter,F,M,i) == FAIL) 
+      if ( nsp_gtk_tree_model_set_row_from_generic_matrix(GTK_TREE_MODEL(ls), &iter,F,M,i) == FAIL)
 	return NULL;
     }
   return ls;
@@ -2838,19 +2839,19 @@ static GtkTreeStore *nsp_gtk_tree_store_from_generic_matrix(NspObject *M,set_val
   if (! ts) {
     Scierror("could not create GtkListStore object\n");
     return NULL;
-  }      
-  for (i = 0; i < nsp_object_get_size(M,1) ; i++) 
+  }
+  for (i = 0; i < nsp_object_get_size(M,1) ; i++)
     {
       gtk_tree_store_append(ts, &iter,NULL);
-      if ( nsp_gtk_tree_model_set_row_from_generic_matrix(GTK_TREE_MODEL(ts), &iter,F,M,i) == FAIL) 
+      if ( nsp_gtk_tree_model_set_row_from_generic_matrix(GTK_TREE_MODEL(ts), &iter,F,M,i) == FAIL)
 	return NULL;
     }
   return ts;
 }
 
-/* 
- * Utility function fill a row in a GtkListStore or GtkTreeStore from a scalar Matrix 
- */ 
+/*
+ * Utility function fill a row in a GtkListStore or GtkTreeStore from a scalar Matrix
+ */
 
 static int nsp_gtk_tree_model_set_row_from_generic_matrix(GtkTreeModel *model, GtkTreeIter *iter,set_val F,NspObject *M,int row)
 {
@@ -2862,19 +2863,19 @@ static int nsp_gtk_tree_model_set_row_from_generic_matrix(GtkTreeModel *model, G
     return FAIL;
   }
   /* items are given in a matrix  */
-  
+
   n_columns = gtk_tree_model_get_n_columns(model);
-  if ( n_columns > nsp_object_get_size(M,2) ) 
+  if ( n_columns > nsp_object_get_size(M,2) )
     {
       Scierror("Tree model and given object (%s) have incompatible columns length (%d > %d)\n",
 	       M->type->s_type(), n_columns,nsp_object_get_size(M,2));
       return FAIL;
     }
 
-  for ( i= 0 ; i < n_columns ; i++) 
+  for ( i= 0 ; i < n_columns ; i++)
     {
-      g_value_init(&value, gtk_tree_model_get_column_type(model,i)); 
-      if ( G_VALUE_TYPE(&value) != type) 
+      g_value_init(&value, gtk_tree_model_get_column_type(model,i));
+      if ( G_VALUE_TYPE(&value) != type)
 	{
 	  Scierror("column %d in Tree model cannot accept values of type %s \n", M->type->s_type());
 	  return FAIL;
@@ -2883,17 +2884,17 @@ static int nsp_gtk_tree_model_set_row_from_generic_matrix(GtkTreeModel *model, G
       if (GTK_IS_LIST_STORE(model))
 	gtk_list_store_set_value(GTK_LIST_STORE(model), iter, i, &value);
       else if (GTK_IS_TREE_STORE(model))
-	gtk_tree_store_set_value(GTK_TREE_STORE(model), iter, i, &value);      
+	gtk_tree_store_set_value(GTK_TREE_STORE(model), iter, i, &value);
       g_value_unset(&value);
     }
   return OK;
 }
 
-/* 
- * Utility function fill a set of columns in a GtkListStore or GtkTreeStore from a scalar Matrix 
+/*
+ * Utility function fill a set of columns in a GtkListStore or GtkTreeStore from a scalar Matrix
  * the columns of Matrix are used to fill the liststore column starting at column column
  * the rows are filled starting at iter1 position if iter1 != NULL
- */ 
+ */
 
 static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,GtkTreeIter *iter1,set_val F,NspObject *M,int column)
 {
@@ -2902,46 +2903,46 @@ static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,Gt
   GValue value = { 0, };
   GType type = gtype_from_nsp_object((NspObject *) M);
   GType model_type;
-  
+
   if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
     Scierror("can not set cells in this tree model\n");
     return FAIL;
   }
   /* items are given in a matrix  */
-  
+
   n_columns = gtk_tree_model_get_n_columns(model);
 
 
-  for ( j = 0 ; j < nsp_object_get_size(M,2) ; j++) 
+  for ( j = 0 ; j < nsp_object_get_size(M,2) ; j++)
     {
-      if ( column >= n_columns ) 
+      if ( column >= n_columns )
 	{
 	  Scierror("column %d does not exists in given tree model (n_columns=%d)\n",column,n_columns);
 	  return FAIL;
 	}
       model_type =  gtk_tree_model_get_column_type(model,column);
-      if ( model_type != type) 
+      if ( model_type != type)
 	{
 	  Scierror("column %d in TreeModel cannot accept values of type %s \n",column, M->type->s_type());
 	  return FAIL;
 	}
       g_value_init(&value, model_type);
-      if ( iter1 == NULL) 
+      if ( iter1 == NULL)
 	{
 	  /* start from the begining */
 	  if (!gtk_tree_model_get_iter_first(model, &iter)) return FAIL;
 	}
-      else 
+      else
 	{
-	  iter = *iter1; 
+	  iter = *iter1;
 	}
-      for ( i= 0 ; i < nsp_object_get_size(M,1) ; i++) 
+      for ( i= 0 ; i < nsp_object_get_size(M,1) ; i++)
 	{
 	  (*F)(&value,M,i,j);
 	  if (GTK_IS_LIST_STORE(model))
 	    gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, column, &value);
 	  else if (GTK_IS_TREE_STORE(model))
-	    gtk_tree_store_set_value(GTK_TREE_STORE(model), &iter, column, &value);      
+	    gtk_tree_store_set_value(GTK_TREE_STORE(model), &iter, column, &value);
 	  if ( i < nsp_object_get_size(M,1)-1) { if (!gtk_tree_model_iter_next(model, &iter)) return FAIL; }
 	}
       g_value_unset(&value);
@@ -2950,9 +2951,9 @@ static int nsp_gtk_tree_model_set_col_from_generic_matrix(GtkTreeModel *model,Gt
   return OK;
 }
 
-/* 
- * Utility function: a list store from a Scalar Real Matrix 
- */ 
+/*
+ * Utility function: a list store from a Scalar Real Matrix
+ */
 
 static void set_value_from_mat(GValue *value,NspObject *M,int row,int col)
 {
@@ -2979,9 +2980,9 @@ int nsp_gtk_tree_model_set_col_from_mat(GtkTreeModel *model,GtkTreeIter *iter1,N
   return nsp_gtk_tree_model_set_col_from_generic_matrix(model,iter1,set_value_from_mat,(NspObject *) M,col);
 }
 
-/* 
- * Utility function: a list store from a String Matrix 
- */ 
+/*
+ * Utility function: a list store from a String Matrix
+ */
 
 static void set_value_from_smat(GValue *value,NspObject *M,int row,int col)
 {
@@ -3008,9 +3009,9 @@ int nsp_gtk_tree_model_set_col_from_smat(GtkTreeModel *model,GtkTreeIter *iter1,
   return nsp_gtk_tree_model_set_col_from_generic_matrix(model,iter1,set_value_from_smat,(NspObject *)M,col);
 }
 
-/* 
- * Utility function: a list store from a Boolean Matrix 
- */ 
+/*
+ * Utility function: a list store from a Boolean Matrix
+ */
 
 static void set_value_from_bmat(GValue *value,NspObject *M,int row,int col)
 {
@@ -3048,8 +3049,8 @@ static void nsp_gtk_destroy_closure (gpointer data);
 
 guint
 nsp_gtk_timeout_add_full (guint32  interval,
-			  NspPList *callback, 
-			  NspList *extra_args, 
+			  NspPList *callback,
+			  NspList *extra_args,
 			  NspObject *swap_data)
 {
   GClosure *closure;
@@ -3070,7 +3071,7 @@ nsp_gtk_invoke_idle_timeout (gpointer data)
   g_value_init(&ret, G_TYPE_BOOLEAN);
   /* invoke nspg_closure_marshal */
   closure->marshal(closure,&ret,0,NULL,NULL,NULL);
-  if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN) 
+  if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN)
     ret_val =  g_value_get_boolean(&ret);
   return ret_val;
 }
@@ -3098,13 +3099,13 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
   /* extra arguments **/
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
     }
   handlerid = nsp_gtk_timeout_add_full(interval,callback,extra_args,NULL);
-  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
+  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
 }
 
@@ -3119,7 +3120,7 @@ static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
- * idle 
+ * idle
  */
 
 
@@ -3144,7 +3145,7 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(1,1);
 
   if ( GetScalarInt(stack,1,&priority) == FAIL) return RET_BUG;
-  if ( priority > G_PRIORITY_DEFAULT_IDLE || priority < G_PRIORITY_HIGH_IDLE ) 
+  if ( priority > G_PRIORITY_DEFAULT_IDLE || priority < G_PRIORITY_HIGH_IDLE )
     {
       Scierror("Errpr: priority must be in the range [%d,%d] ([high,default])\n",
 	       G_PRIORITY_HIGH_IDLE, G_PRIORITY_DEFAULT_IDLE);
@@ -3154,18 +3155,18 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
   /* extra arguments **/
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
     }
   handlerid = nsp_gtk_idle_add_full(priority,callback,extra_args,NULL);
-  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
+  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
 }
 
 /*
- * quit add 
+ * quit add
  */
 
 static gboolean nsp_gtk_invoke_quit  (gpointer data);
@@ -3178,7 +3179,7 @@ nsp_gtk_quit_add_full (guint main_level,  NspPList *callback,   NspList *extra_a
   if ( closure == NULL) return 0;
   return gtk_quit_add_full(main_level,nsp_gtk_invoke_quit,NULL,closure, nspg_destroy_notify);
 }
- 
+
 static gboolean
 nsp_gtk_invoke_quit (gpointer data)
 {
@@ -3187,7 +3188,7 @@ nsp_gtk_invoke_quit (gpointer data)
   GValue ret = {0,};
   /* invoke nspg_closure_marshal */
   closure->marshal(closure,&ret,0,NULL,NULL,NULL);
-  if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN) 
+  if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN)
     ret_val =  g_value_get_boolean(&ret);
   return ret_val;
 }
@@ -3207,35 +3208,35 @@ static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs)
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"quitadd")== FAIL)) return RET_BUG;
   /* extra arguments **/
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
     }
   handlerid = nsp_gtk_quit_add_full(main_level, callback,extra_args,NULL);
-  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
+  if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
 }
 
 /*-------------------------------------------------
- * gslist, glist and nsplist utilities 
+ * gslist, glist and nsplist utilities
  *------------------------------------------------*/
 
 GList *glist_from_typed_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
 {
   GList *items = NULL;
-  Cell *cloc = L->first ; 
-  while ( cloc != NULLCELL) 
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
-	  if (! nspgobject_check(cloc->O, type)) 
+	  if (! nspgobject_check(cloc->O, type))
 	    {
 	      Scierror("%s:list item is not a %s",NspFname(stack),type_get_name(type));
 	      g_list_free(items);
 	      return NULL;
 	    }
-	  else 
+	  else
 	    {
 	      items = g_list_append(items, nspgobject_get(cloc->O));
 	    }
@@ -3248,10 +3249,10 @@ GList *glist_from_typed_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
 GList *nsp_glist_from_nsplist(Stack stack,NspList *L)
 {
   GList *items = NULL;
-  Cell *cloc = L->first ; 
-  while ( cloc != NULLCELL) 
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  items = g_list_append(items, nspgobject_get(cloc->O));
 	}
@@ -3263,10 +3264,10 @@ GList *nsp_glist_from_nsplist(Stack stack,NspList *L)
 GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L)
 {
   GSList *items = NULL;
-  Cell *cloc = L->first ; 
-  while ( cloc != NULLCELL) 
+  Cell *cloc = L->first ;
+  while ( cloc != NULLCELL)
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  items = g_slist_append(items, nspgobject_get(cloc->O));
 	}
@@ -3279,14 +3280,14 @@ GSList *nsp_gslist_from_nsplist(Stack stack,NspList *L)
 /**
  * nsp_get_matrix_from_list_or_tree_store:
  * @model: a #GtkTreeModel
- * 
- * extract a matrix with data from a model. This can only be done if the model 
- * is homogeneous, i.e all the columns share the same type which can be 
- * G_TYPE_STRING, G_TYPE_BOOLEAN or G_TYPE_DOUBLE. 
- * This could be extended to non homogeneous models and could return a list 
- * in that general case. 
- * 
- * Returns: a new #NspObject 
+ *
+ * extract a matrix with data from a model. This can only be done if the model
+ * is homogeneous, i.e all the columns share the same type which can be
+ * G_TYPE_STRING, G_TYPE_BOOLEAN or G_TYPE_DOUBLE.
+ * This could be extended to non homogeneous models and could return a list
+ * in that general case.
+ *
+ * Returns: a new #NspObject
  **/
 
 static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
@@ -3294,19 +3295,19 @@ static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
   GType mtype;
   GValue value = { 0, };
   int ncols,count=0,col;
-  GtkTreeIter iter; 
+  GtkTreeIter iter;
   NspObject *ret = NULLOBJ;
   if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
     Scierror("Error: expecting a list or tree store model\n");
     return NULLOBJ;
   }
-  /* get first element to detect the type to give to the matrix 
+  /* get first element to detect the type to give to the matrix
    */
   if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
   gtk_tree_model_get_value(model,&iter ,0, &value);
-  mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
-  if ( mtype != G_TYPE_STRING 
-       && mtype != G_TYPE_BOOLEAN 
+  mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value));
+  if ( mtype != G_TYPE_STRING
+       && mtype != G_TYPE_BOOLEAN
        && mtype != G_TYPE_DOUBLE )
     {
       Scierror("Do not know how to build an object from a gvalue of type %s\n",
@@ -3320,11 +3321,11 @@ static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
   while ( gtk_tree_model_iter_next(model,&iter) ) count++;
   /* Check that all the columns have the same type */
   if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
-  for ( col = 1 ; col < ncols  ; col++) 
+  for ( col = 1 ; col < ncols  ; col++)
     {
       GType ctype;
       gtk_tree_model_get_value(model,&iter ,col, &value);
-      ctype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+      ctype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value));
       g_value_unset(&value);
       if ( ctype != mtype )
 	{
@@ -3332,44 +3333,44 @@ static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
 	  return NULL;
 	}
     }
-  
+
   /* initialize matrix */
-  switch ( mtype ) 
+  switch ( mtype )
     {
-    case G_TYPE_STRING:  
+    case G_TYPE_STRING:
       if ((ret = (NspObject *) nsp_smatrix_create_with_length(NVOID,count,ncols,-1))== NULLOBJ)
-	return NULL;     
+	return NULL;
       break;
-    case G_TYPE_BOOLEAN: 
-      if ((ret = (NspObject *) nsp_bmatrix_create(NVOID,count,ncols))== NULLOBJ) 
-	return NULL;     
+    case G_TYPE_BOOLEAN:
+      if ((ret = (NspObject *) nsp_bmatrix_create(NVOID,count,ncols))== NULLOBJ)
+	return NULL;
       break;
       break;
     case G_TYPE_DOUBLE :
-      if ((ret = (NspObject *) nsp_matrix_create(NVOID,'r',count,ncols))== NULLOBJ) 
-	return NULL;     
+      if ((ret = (NspObject *) nsp_matrix_create(NVOID,'r',count,ncols))== NULLOBJ)
+	return NULL;
       break;
      }
-  for ( col = 0 ; col < ncols  ; col++) 
+  for ( col = 0 ; col < ncols  ; col++)
     {
       int i;
       if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
-      for ( i = 0 ; i < count ; i++) 
+      for ( i = 0 ; i < count ; i++)
 	{
 	  const gchar *str;
 	  gtk_tree_model_get_value(model,&iter ,col, &value);
-	  switch ( mtype ) 
+	  switch ( mtype )
 	    {
-	    case G_TYPE_STRING:  
+	    case G_TYPE_STRING:
 	      str = g_value_get_string(&value);
 	      ((NspSMatrix *) ret)->S[i+ count*col]=nsp_string_copy(str);
-	      if ( ((NspSMatrix *) ret)->S[i+ count*col] == NULL) 
+	      if ( ((NspSMatrix *) ret)->S[i+ count*col] == NULL)
 		return NULL;
 	      break;
-	    case G_TYPE_BOOLEAN: 
+	    case G_TYPE_BOOLEAN:
 	      ((NspBMatrix *) ret)->B[i+ count*col]= g_value_get_boolean(&value);
 	      break;
-	    case G_TYPE_DOUBLE: 
+	    case G_TYPE_DOUBLE:
 	      ((NspMatrix *) ret)->R[i+ count*col]= g_value_get_double(&value);
 	      break;
 	    }
@@ -3377,7 +3378,7 @@ static NspObject *nsp_get_matrix_from_list_or_tree_store(GtkTreeModel *model)
 	  gtk_tree_model_iter_next(model,&iter);
 	}
     }
-  if ( ret == NULLOBJ ) 
+  if ( ret == NULLOBJ )
     {
       Scierror("Error: get_value method return a NULL Object \n");
       return NULL;
@@ -3399,10 +3400,10 @@ NspObject *nsp_get_matrix_from_tree_store(GtkTreeStore *model)
 /**
  * nsp_get_list_from_list_or_tree_store:
  * @model: a #GtkTreeModel
- * 
- * extract data from a model as a list with one list element for each column. 
- * 
- * Returns: a new #NspObject 
+ *
+ * extract data from a model as a list with one list element for each column.
+ *
+ * Returns: a new #NspObject
  **/
 
 static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
@@ -3410,7 +3411,7 @@ static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
   GType mtype;
   GValue value = { 0, };
   int ncols,count=0,col,i;
-  GtkTreeIter iter; 
+  GtkTreeIter iter;
   NspList *L= NULLLIST;
 
   if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model)) {
@@ -3418,7 +3419,7 @@ static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
     return NULLOBJ;
   }
 
-  /* get first element to detect the type to give to the matrix 
+  /* get first element to detect the type to give to the matrix
    */
   /* count the rows and columns */
   ncols= gtk_tree_model_get_n_columns(GTK_TREE_MODEL(model));
@@ -3427,15 +3428,15 @@ static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
   while ( gtk_tree_model_iter_next(model,&iter) ) count++;
   /* count gives the number of rows */
   if ( (L=nsp_list_create(NVOID)) == NULLLIST ) return NULLOBJ;
-  
+
   for (col = ncols-1 ; col >=0  ; col-- )
     {
       NspObject *Col=NULLOBJ;
       if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
       gtk_tree_model_get_value(model,&iter ,col, &value);
-      mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
-      if ( mtype != G_TYPE_STRING 
-	   && mtype != G_TYPE_BOOLEAN 
+      mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value));
+      if ( mtype != G_TYPE_STRING
+	   && mtype != G_TYPE_BOOLEAN
 	   && mtype != G_TYPE_DOUBLE )
 	{
 	  Scierror("Do not know how to build an object from a gvalue of type %s\n",
@@ -3444,39 +3445,39 @@ static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
 	}
       g_value_unset(&value);
       /* initialize proper object for the column  */
-      switch ( mtype ) 
+      switch ( mtype )
 	{
-	case G_TYPE_STRING:  
+	case G_TYPE_STRING:
 	  if ((Col = (NspObject *) nsp_smatrix_create_with_length("le",count,1,-1))== NULLOBJ)
-	    return NULL;     
+	    return NULL;
 	  break;
-	case G_TYPE_BOOLEAN: 
-	  if ((Col = (NspObject *) nsp_bmatrix_create("le",count,1))== NULLOBJ) 
-	    return NULL;     
+	case G_TYPE_BOOLEAN:
+	  if ((Col = (NspObject *) nsp_bmatrix_create("le",count,1))== NULLOBJ)
+	    return NULL;
 	  break;
 	  break;
 	case G_TYPE_DOUBLE :
-	  if ((Col = (NspObject *) nsp_matrix_create("le",'r',count,1))== NULLOBJ) 
-	    return NULL;     
+	  if ((Col = (NspObject *) nsp_matrix_create("le",'r',count,1))== NULLOBJ)
+	    return NULL;
 	  break;
 	}
       if (!gtk_tree_model_get_iter_first(model, &iter)) return NULL;
-      for ( i = 0 ; i < count ; i++) 
+      for ( i = 0 ; i < count ; i++)
 	{
 	  const gchar *str;
 	  gtk_tree_model_get_value(model,&iter ,col, &value);
-	  switch ( mtype ) 
+	  switch ( mtype )
 	    {
-	    case G_TYPE_STRING:  
+	    case G_TYPE_STRING:
 	      str = g_value_get_string(&value);
 	      ((NspSMatrix *) Col)->S[i]=nsp_string_copy(str);
-	      if ( ((NspSMatrix *) Col)->S[i] == NULL) 
+	      if ( ((NspSMatrix *) Col)->S[i] == NULL)
 		return NULL;
 	      break;
-	    case G_TYPE_BOOLEAN: 
+	    case G_TYPE_BOOLEAN:
 	      ((NspBMatrix *) Col)->B[i]= g_value_get_boolean(&value);
 	      break;
-	    case G_TYPE_DOUBLE: 
+	    case G_TYPE_DOUBLE:
 	      ((NspMatrix *) Col)->R[i]= g_value_get_double(&value);
 	      break;
 	    }
@@ -3486,7 +3487,7 @@ static NspObject *nsp_get_list_from_list_or_tree_store(GtkTreeModel *model)
       /* now store the column in the returned list */
       if ( nsp_list_begin_insert(L,Col) == FAIL) return NULLOBJ;
     }
-  if (L == NULLLIST ) 
+  if (L == NULLLIST )
     {
       Scierror("Error: get_value method return a NULL Object \n");
       return NULL;
@@ -3508,12 +3509,12 @@ NspObject *nsp_get_list_from_tree_store(GtkTreeStore *model)
 
 /**
  * nsp_cells_to_string:
- * @ce: a #NspCells 
- * 
- * A utility function for editvar, which converts the cells elements 
- * to string. This is mainly used in editvar to fill the value field 
- * of list or hash elements. 
- * 
+ * @ce: a #NspCells
+ *
+ * A utility function for editvar, which converts the cells elements
+ * to string. This is mainly used in editvar to fill the value field
+ * of list or hash elements.
+ *
  * Returns: a new #NspSMatrix
  **/
 
@@ -3521,19 +3522,19 @@ NspSMatrix * nsp_cells_to_string(NspCells *ce)
 {
   int i;
   NspSMatrix *Loc;
-  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,ce->m,ce->n,-1)) == NULLSMAT) 
+  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,ce->m,ce->n,-1)) == NULLSMAT)
     return(NULLSMAT);
-  for ( i = 0 ; i < ce->mn ; i++) 
+  for ( i = 0 ; i < ce->mn ; i++)
     {
-      if ( ce->objs[i] == NULLOBJ) 
+      if ( ce->objs[i] == NULLOBJ)
 	{
 	  if ((Loc->S[i] =nsp_string_copy("*")) == (nsp_string) 0) return(NULLSMAT);
 	}
-      else 
+      else
 	{
 	  if (( IsMat(ce->objs[i]) ||  IsMpMat(ce->objs[i])) && ((NspMatrix *) ce->objs[i])->mn == 1 && ((NspMatrix *) ce->objs[i])->rc_type== 'r')
 	    {
-	      nsp_const_string format; 
+	      nsp_const_string format;
 	      char buf[1024];
 	      nsp_num_formats fmt;
 	      nsp_init_pr_format (&fmt);
@@ -3545,10 +3546,10 @@ NspSMatrix * nsp_cells_to_string(NspCells *ce)
 
 	  else if ( IsSMat(ce->objs[i]) && ((NspSMatrix *) ce->objs[i])->mn == 1)
 	    {
-	      if ((Loc->S[i] =nsp_string_copy(((NspSMatrix *) ce->objs[i])->S[0])) == (nsp_string) 0) 
+	      if ((Loc->S[i] =nsp_string_copy(((NspSMatrix *) ce->objs[i])->S[0])) == (nsp_string) 0)
 		return(NULLSMAT);
 	    }
-	  else if ( IsBMat(ce->objs[i]) && ((NspBMatrix *) ce->objs[i])->mn == 1) 
+	  else if ( IsBMat(ce->objs[i]) && ((NspBMatrix *) ce->objs[i])->mn == 1)
 	    {
 	      const char *str = ((NspBMatrix *) ce->objs[i])->B[0] ? "T": "F";
 	      if ((Loc->S[i] =nsp_string_copy(str)) == (nsp_string) 0)
