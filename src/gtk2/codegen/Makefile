@@ -8,6 +8,7 @@ DIFF=$(patsubst %.c,%.diff,$(ALL))
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
+	cd ../; make all
 
 %.c: %.defs
 	@echo "generating $*.c"
@@ -42,3 +43,4 @@ atk.c: atk.defs atk.override atk-types.defs
 gdk.c: gdk.defs gdk.override gdk-types.defs
 gtk.c: gtk.defs gtk.override gtk-types.defs
 webkit.c: webkit.defs webkit.override
+gvalue.c: gvalue.defs gvalue.override

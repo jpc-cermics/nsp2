@@ -111,7 +111,7 @@ static int nsp_GValue_full_copy(NspGValue *H,GValue *v,NspGValue *self);
 static int nsp_print_GValue(int indent,GValue *v,NspGValue *M);
 static int nsp_destroy_GValue(GValue *v,NspGValue *H);
 static int nsp_check_GValue(GValue *v,NspGValue *H);
-
+static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj);
 #line 116 "./gvalue.h"
 #endif /* NspGValue_Private */
 
