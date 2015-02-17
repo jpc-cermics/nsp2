@@ -17,12 +17,12 @@
  * Boston, MA 02111-1307, USA.
  *
  *
- * Call a function given (Int,Num) 
+ * Call a function given (Int,Num)
  */
 
-#include <nsp/nsp.h> 
-#include <nsp/hobj.h> 
-#include <nsp/stack.h> 
+#include <nsp/nsp.h>
+#include <nsp/hobj.h>
+#include <nsp/stack.h>
 #include <nsp/math.h>
 #include <nsp/plisttoken.h> /* for  name_maxl 52 */
 #include <nsp/sciio.h>
@@ -102,35 +102,35 @@ extern  sci_interface  Lapack_all_Interf ;extern  interface_info  Lapack_all_Int
 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #ifdef WITH_MAXPLUSLIB
-extern  sci_interface  Maxplus_Interf ;extern  interface_info  Maxplus_Interf_Info ; 
-#endif 
+extern  sci_interface  Maxplus_Interf ;extern  interface_info  Maxplus_Interf_Info ;
+#endif
 
-#ifdef EXTEND 
+#ifdef EXTEND
 extern  sci_interface  ClassD_Interf ;extern  interface_info  ClassD_Interf_Info ;
 extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
-#endif 
+#endif
 
 #ifdef WITH_SNDFILE
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
-#endif 
+#endif
 
 #ifdef WITH_PORTAUDIO
 extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info ;
-#endif 
+#endif
 
-#ifdef WITH_UMFPACK 
+#ifdef WITH_UMFPACK
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
-#endif 
+#endif
 
-#ifdef WITH_GLPK 
+#ifdef WITH_GLPK
 extern  sci_interface liblinprog_Interf ;extern  interface_info  liblinprog_Interf_Info ;
-#endif 
+#endif
 
 /* #define WITH_SQLITE3  */
 
-#ifdef WITH_SQLITE3 
+#ifdef WITH_SQLITE3
 extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
-#endif 
+#endif
 
 /* #define WITH_DCLASS */
 
@@ -138,14 +138,14 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
 
-/* the define is generated in config.h by configure when libscipy-nsp  exists 
+/* the define is generated in config.h by configure when libscipy-nsp  exists
  */
 #ifdef WITH_LIBAMOS
 extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Interf_Info ;
-#endif 
+#endif
 
-#define WITH_GRAPHIC_OBJECTS   
-#ifdef  WITH_GRAPHIC_OBJECTS 
+#define WITH_GRAPHIC_OBJECTS
+#ifdef  WITH_GRAPHIC_OBJECTS
 extern sci_interface Arrows_Interf;extern interface_info Arrows_Interf_Info;
 extern sci_interface Axes_Interf;extern interface_info Axes_Interf_Info;
 extern sci_interface Box3d_Interf;extern interface_info Box3d_Interf_Info;
@@ -176,17 +176,17 @@ extern sci_interface String3d_Interf;extern interface_info String3d_Interf_Info;
 extern sci_interface Surf_Interf;extern interface_info Surf_Interf_Info;
 extern sci_interface VField_Interf;extern interface_info VField_Interf_Info;
 
-#endif 
+#endif
 
 #ifdef HAVE_WEBKIT
 extern sci_interface webkit_Interf;extern interface_info webkit_Interf_Info;
-#endif 
+#endif
 
 extern sci_interface libminpack_Interf;extern interface_info libminpack_Interf_Info;
 
-#ifdef WITH_GRAPHVIZ 
+#ifdef WITH_GRAPHVIZ
 extern sci_interface Agraph_Interf;extern interface_info Agraph_Interf_Info;
-#endif 
+#endif
 
 extern  sci_interface  SpMaxpColMatrix_Interf  ;extern  interface_info  SpMaxpColMatrix_Interf_Info  ;
 
@@ -194,7 +194,13 @@ extern  sci_interface  Bvar_Interf  ;extern  interface_info  Bvar_Interf_Info  ;
 
 #ifdef WITH_MONGODB_C
 extern  sci_interface  Bson_Interf  ;extern  interface_info  Bson_Interf_Info  ;
-#endif 
+#endif
+
+#ifdef WITH_GI
+extern  sci_interface  girepository_Interf ;extern  interface_info  girepository_Interf_Info ;
+#endif
+
+
 
 /* for mixed int and scalar operations */
 extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf_Info;
@@ -202,7 +208,7 @@ extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf
 /* for value functions  */
 #ifdef XXWITH_CLP
 extern  sci_interface  Stochdec_Interf; extern  interface_info Stochdec_Interf_Info;
-#endif 
+#endif
 
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
@@ -217,15 +223,15 @@ InterfTab Interfaces[]={
   {SMatrix_Interf,SMatrix_Interf_Info},
   {File_Interf,File_Interf_Info},
   {SpRowMatrix_Interf,SpRowMatrix_Interf_Info},
-  {SpColMatrix_Interf,SpColMatrix_Interf_Info}, 
+  {SpColMatrix_Interf,SpColMatrix_Interf_Info},
   {Parse_Interf,Parse_Interf_Info},
   {Functions_Interf,Functions_Interf_Info},
   {Function_Interf,Function_Interf_Info},
   {mex_Interf,mex_Interf_Info},
   {Interf_Interf,Interf_Interf_Info},
   {Datas_Interf,Datas_Interf_Info},
-  {Graphics_Interf,Graphics_Interf_Info},  
-  {GraphicsUtil_Interf,GraphicsUtil_Interf_Info},  
+  {Graphics_Interf,Graphics_Interf_Info},
+  {GraphicsUtil_Interf,GraphicsUtil_Interf_Info},
   {GraphicsOld_Interf,GraphicsOld_Interf_Info},
   {Menus_Interf,Menus_Interf_Info},
   {Hobj_Interf,Hobj_Interf_Info},
@@ -255,19 +261,19 @@ InterfTab Interfaces[]={
   {Fft_Interf , Fft_Interf_Info },
   {Module_Interf , Module_Interf_Info },
   {ModuleElt_Interf , ModuleElt_Interf_Info },
-#ifdef EXTEND 
+#ifdef EXTEND
   {ClassD_Interf,ClassD_Interf_Info},
   {Gtk_Interf,Gtk_Interf_Info},
 #endif
   {MpMatrix_Interf, MpMatrix_Interf_Info},
 #ifdef WITH_MAXPLUSLIB
   {Maxplus_Interf, Maxplus_Interf_Info},
-#endif 
+#endif
   {Cells_Interf, Cells_Interf_Info},
   {PMatrix_Interf,PMatrix_Interf_Info},
 #ifdef WITH_PVM
   {Pvm_Interf , Pvm_Interf_Info},
-#endif 
+#endif
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
 #endif
@@ -284,7 +290,7 @@ InterfTab Interfaces[]={
   {gmarkup_node_Interf , gmarkup_node_Interf_Info},
   {scalexp_Interf , scalexp_Interf_Info},
   {gdate_Interf,  gdate_Interf_Info},
-#ifdef WITH_SQLITE3 
+#ifdef WITH_SQLITE3
   {sqlc_Interf , sqlc_Interf_Info},
 #endif
 #ifdef WITH_DCLASS
@@ -293,8 +299,8 @@ InterfTab Interfaces[]={
   {Mtlb_Interf, Mtlb_Interf_Info},
 #ifdef WITH_LIBAMOS
   {AmosCephes_Interf, AmosCephes_Interf_Info},
-#endif 
-#ifdef  WITH_GRAPHIC_OBJECTS 
+#endif
+#ifdef  WITH_GRAPHIC_OBJECTS
   {Arrows_Interf, Arrows_Interf_Info},
   {Axes_Interf, Axes_Interf_Info},
   {Box3d_Interf, Box3d_Interf_Info},
@@ -324,10 +330,10 @@ InterfTab Interfaces[]={
   {String3d_Interf, String3d_Interf_Info},
   {Surf_Interf, Surf_Interf_Info},
   {VField_Interf, VField_Interf_Info},
-#endif 
+#endif
 #ifdef HAVE_WEBKIT
   {webkit_Interf,webkit_Interf_Info},
-#endif 
+#endif
   {libminpack_Interf,libminpack_Interf_Info},
   {IMatrix_Interf,IMatrix_Interf_Info},
 #ifdef WITH_PORTAUDIO
@@ -335,23 +341,26 @@ InterfTab Interfaces[]={
 #endif
   {Optim_Interf, Optim_Interf_Info},
   {Lapack_all_Interf , Lapack_all_Interf_Info },
-#ifdef WITH_GRAPHVIZ 
+#ifdef WITH_GRAPHVIZ
   {Agraph_Interf , Agraph_Interf_Info },
-#endif 
-  {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info}, 
+#endif
+  {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info},
   {Bvar_Interf, Bvar_Interf_Info},
   {M2iMatrix_Interf, M2iMatrix_Interf_Info},
 #ifdef XXWITH_CLP
   {Stochdec_Interf, Stochdec_Interf_Info},
-#endif 
+#endif
 #ifdef WITH_MONGODB_C
   {Bson_Interf, Bson_Interf_Info},
-#endif 
+#endif
+#ifdef WITH_GI
+  {girepository_Interf, girepository_Interf_Info},
+#endif
   {NULL,NULL}
-}; 
+};
 
 /*
- * Call function number num in interface i 
+ * Call function number num in interface i
  */
 
 static int show_returned_positions(Stack stack,int pos);
@@ -362,13 +371,13 @@ static void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *messag
 {
   int count=0;
   NspObject**O;
-  if ( stack.first > 0 ) 
+  if ( stack.first > 0 )
     {
       int i;
       /* check that objects at the begining of the stack are non nul */
-      for ( i=0 ; i < stack.first ; i++ ) 
+      for ( i=0 ; i < stack.first ; i++ )
 	{
-	  if ( stack.val->S[i] == NULL) 
+	  if ( stack.val->S[i] == NULL)
 	    {
 	      fprintf(stderr,"Null object (%d) before stack.first=%d \n",i,stack.first);
 	      break;
@@ -377,34 +386,34 @@ static void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *messag
     }
   if ( stack.val->S[stack.first + rhs] != NULL )
     {
-      /* check that stack is null terminated */ 
+      /* check that stack is null terminated */
       fprintf(stderr,"%s %s \n",message, NspFname(stack));
       fprintf(stderr,"Non null objects found after rhs(=%d) !\n",rhs);
-      if ( name != 0) 
+      if ( name != 0)
 	fprintf(stderr,"previous call %s\n",name);
       fprintf(stderr,"stack.val->S=<%lx>, first=%d\n",(long) stack.val->S,stack.first);
-      O = stack.val->S + stack.first+rhs; 
-      while ( *O != NULL) 
-	{ 
-	  nsp_object_info(*O,1,NULL,0); 
+      O = stack.val->S + stack.first+rhs;
+      while ( *O != NULL)
+	{
+	  nsp_object_info(*O,1,NULL,0);
 	  *O = NULL;
 	  O++;
 	}
       fprintf(stderr,"I clean the stack and continue \n");
     }
-  
-  /* check that object on the stack have correct ret_pos initialization */ 
 
-  O = stack.val->S + stack.first; 
-  while ( *O != NULL ) 
+  /* check that object on the stack have correct ret_pos initialization */
+
+  O = stack.val->S + stack.first;
+  while ( *O != NULL )
     {
       count++;
-      if ( (*O)->ret_pos != -1 ) 
+      if ( (*O)->ret_pos != -1 )
 	{
 	  fprintf(stderr,"%s %s \n",message,  NspFname(stack));
 	  fprintf(stderr,"Stack is corrupted ret_pos(=%d) !=-1 for object at position %d ! but I go on ",
 		  (*O)->ret_pos,count);
-	  if ( name != 0) 
+	  if ( name != 0)
 	    fprintf(stderr,"previous call %s\n",name);
 	  fprintf(stderr,"stack.val->S=<%lx>, first=%d\n",(long) stack.val->S,stack.first);
 	  nsp_object_info(*O,1,NULL,0);
@@ -412,80 +421,80 @@ static void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *messag
 	  (*O)->ret_pos = -1 ;
 	}
       O++;
-    }  
+    }
 }
-#endif 
+#endif
 
 int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
 {
   int ret;
-#ifdef DEBUG_STACK 
-  /* debug */ 
+#ifdef DEBUG_STACK
+  /* debug */
   static int first = 0;
   static char buf[128];
   nsp_check_stack(stack,rhs,opt,lhs,
 		  "Something wrong before entering interface for",
-		  (first == 0) ? NULL: buf); 
-  first=1; 
+		  (first == 0) ? NULL: buf);
+  first=1;
   strcpy(buf,NspFname(stack));
-#endif 
-  if ( i >= DYN_INTERF_START ) 
+#endif
+  if ( i >= DYN_INTERF_START )
     {
       /** interface is a dynamically linked one **/
-      /* we check nothing here if k=(i - DYN_INTERF_START) 
-       * is in the range [0,MAXINTERF[ DynInterf is bound to something 
+      /* we check nothing here if k=(i - DYN_INTERF_START)
+       * is in the range [0,MAXINTERF[ DynInterf is bound to something
        */
       ret = (*(DynInterf[i - DYN_INTERF_START].func))(num,stack,rhs,opt,lhs);
     }
-  else 
+  else
     {
       /** Standard interfaces **/
       ret = (*(Interfaces[i].fonc))(num,stack,rhs,opt,lhs);
     }
-  
-  if ( ret == RET_BUG || ret == RET_ERROR_RAISED ) 
+
+  if ( ret == RET_BUG || ret == RET_ERROR_RAISED )
     {
       /* clean the stack before returning */
-      NspObject**O = stack.val->S + stack.first; 
-      while ( *O != NULL) 
-	{ 
+      NspObject**O = stack.val->S + stack.first;
+      while ( *O != NULL)
+	{
 	  (*O)->ret_pos= -1;
 	  O++;
 	}
       nsp_reorder_stack(stack,0);
       return ret;
     }
-  // take care that ret can be negative if we 
+  // take care that ret can be negative if we
   // propagate break,continue and return;
   ret = nsp_reorder_stack(stack,ret);
   return ret;
 }
 
-/* 
- * direct call to an interface 
+/*
+ * direct call to an interface
  */
 
 int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 {
   int ret;
-#ifdef DEBUG_STACK 
-  /* debug */ 
+#ifdef DEBUG_STACK
+  /* debug */
   static char buf[128];
   static int first = 0;
   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",
 		  (first == 0) ? NULL: buf);
-  first=1; 
+  first=1;
   strcpy(buf,NspFname(stack));
-#endif 
+#endif
   /* Standard interfaces */
   ret = (*f)(stack,rhs,opt,lhs);
-  
-  if ( ret == RET_BUG ) 
+
+  if ( ret == RET_BUG )
     {
       /* clean the stack before returning */
-      NspObject**O = stack.val->S + stack.first; 
-      while ( *O != NULL) 
-	{ 
+      NspObject**O = stack.val->S + stack.first;
+      while ( *O != NULL)
+	{
 	  (*O)->ret_pos= -1;
 	  O++;
 	}
@@ -502,15 +511,15 @@ int  nsp_reorder_stack(Stack stack, int ret)
   NspObject **O1=stack.val->S+stack.first, **obj=stack.val->S+stack.first-1;
   NspObject*O,*O2;
   int count=0, k, kn, ret_pos, must_be_reordered=0;
- 
+
   /* DEBUG XXXX */
   if ( NspFname(stack) == NULL)
     {
       NspFname(stack) = "";
     }
- 
+
   /* reordering and cleaning the stack */
- 
+
   /* first pass to deal with pointers */
   while ( *O1 != NULL)
     {
@@ -521,20 +530,20 @@ int  nsp_reorder_stack(Stack stack, int ret)
        */
       if ( IsHobj(O) && strcmp(NspFname(stack),"handler") != 0 && strcmp(NspFname(stack),"resize2vect_h") != 0)
 	{
-	  /* O is of type pointer, we take care here that 
-	   * O can points to a global value and the pointer must be updated 
-	   * This could be changed if the get functions took care of that 
+	  /* O is of type pointer, we take care here that
+	   * O can points to a global value and the pointer must be updated
+	   * This could be changed if the get functions took care of that
 	   */
-	  if (((NspHobj *)O)->htype != 'g') 
-	    O2 = ((NspHobj *) O)->O; 
-	  else 
-	    {								
-	      if ((O2= nsp_global_frame_search_object(NSP_OBJECT(O)->name)) 
+	  if (((NspHobj *)O)->htype != 'g')
+	    O2 = ((NspHobj *) O)->O;
+	  else
+	    {
+	      if ((O2= nsp_global_frame_search_object(NSP_OBJECT(O)->name))
 		  == NULLOBJ)
 		return RET_BUG;
 	      ((NspHobj *) O)->O= O2;
 	    }
-	  
+
 	  if ( IsHopt(O) )
 	    {
 	      if ( O->ret_pos != -1 )
@@ -636,7 +645,7 @@ static int show_returned_positions(Stack stack,int pos)
 {
   NspObject **obj = stack.val->S+stack.first+pos-1;
   fprintf(stderr,"from pos=%d ->[",pos);
-  while (*obj != NULL) 
+  while (*obj != NULL)
     {
       fprintf(stderr,"%d ",(*obj)->ret_pos);
       obj++;
