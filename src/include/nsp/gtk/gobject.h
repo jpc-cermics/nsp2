@@ -96,6 +96,7 @@ extern void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype) ;
 
 void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype) ;
 NspTypeBase * nsp_type_from_gtype(GType gtype);
+NspTypeBase * nsp_peek_type_from_gtype(GType gtype);
 
 /* closures 
  */

@@ -2081,6 +2081,21 @@ NspTypeBase * nsp_type_from_gtype(GType gtype)
 }
 
 /**
+ * nsp_peek_type_from_gtype:
+ * @gtype: a GType
+ * 
+ * Obtain a nsp type given a GType.
+ * If the nsp type is not registered the %NULL is returned 
+ * 
+ * Returns: a #NspTypeBase
+ **/
+
+NspTypeBase * nsp_peek_type_from_gtype(GType gtype)
+{
+  return g_type_get_qdata(gtype, nsp_gobject_class_key );
+}
+
+/**
  * register_nsp_type_in_gtype:
  * @type:
  * @gtype:
