@@ -16,20 +16,21 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * include for scicos 
+ * include for scicos
  *--------------------------------------------------------------------------*/
 
-#ifndef __SCICOS4_H 
-#define __SCICOS4_H 
+#ifndef __SCICOS4_H
+#define __SCICOS4_H
 
 #ifndef SCICOS44
 #define SCICOS44
-#endif 
+#endif
 
+#include <stdlib.h>
 /* define min max for win32 */
 #ifndef max
 #define max(a,b) ((a) >= (b) ? (a) : (b))
-#endif 
+#endif
 
 #ifndef min
 #define min(a,b) ((a) <= (b) ? (a) : (b))
@@ -64,15 +65,15 @@
 #define SCSBOOL_COP int
 #define SCSUNKNOW_COP double
 
-/* maximum value for sum of number of inputs 
- * and outputs ports of a given 
- * block of type 2 
+/* maximum value for sum of number of inputs
+ * and outputs ports of a given
+ * block of type 2
  */
 
 #define SZ_SIZE 60
 
-/* maximum value for sum of number of inputs 
- * and outputs of a given block 
+/* maximum value for sum of number of inputs
+ * and outputs of a given block
  * of type 0 */
 
 #define TB_SIZE 500
@@ -97,13 +98,13 @@ typedef void (*voidf)();
 
 typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMULATOR;
 
-/* we use here name with scicos prefixes and define names 
- * without prefixes for compatibility with previous 
- * blocks 
+/* we use here name with scicos prefixes and define names
+ * without prefixes for compatibility with previous
+ * blocks
  */
 
 #define do_cold_restart             scicos_do_cold_restart
-#define DoColdRestart(block)        (scicos_do_cold_restart()) 
+#define DoColdRestart(block)        (scicos_do_cold_restart())
 #define get_phase_simulation        scicos_get_phase_simulation
 #define GetSimulationPhase(block)   (scicos_get_phase_simulation())
 #define get_time                    scicos_get_time
@@ -120,7 +121,7 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define set_block_error             scicos_set_block_error
 #define SetBlockError(block,val)    (scicos_set_block_error(val))
 #define end_scicos_sim              scicos_end_scicos_sim
-#define StopSimulation(block,val)   (scicos_end_scicos_sim()) 
+#define StopSimulation(block,val)   (scicos_end_scicos_sim())
 #define what_is_hot                 scicos_what_is_hot
 #define IsHotReStart(block)         (scicos_what_is_hot())
 #define get_fcaller_id              scicos_get_fcaller_id
@@ -138,11 +139,11 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define GetInPortPtrs(blk,x) ((((x)>0)&((x)<=(blk->nin))) ? (blk->inptr[x-1]) : NULL)
 /* Get number of regular output port. */
 #define GetNout(blk) (blk->nout)
-/* Get regular output port pointer of port number x. 
- * outptr and inptr are by default void ** 
+/* Get regular output port pointer of port number x.
+ * outptr and inptr are by default void **
  */
-#define GetOutPtrs(blk) (blk->outptr)
-#define GetInPtrs(blk) (blk->inptr)
+#define GetOutPtrs(blk) ((void *) (blk->outptr))
+#define GetInPtrs(blk)  ((void *) (blk->inptr))
 #define GetOutPortPtrs(blk,x) ((((x)>0)&((x)<=(blk->nout))) ? ((blk->outptr[x-1])) : NULL)
 /* Get number of rows (first dimension) of regular input port number x.*/
 #define GetInPortRows(blk,x) ((((x)>0)&((x)<=(blk->nin))) ? (blk->insz[x-1]) : 0)
@@ -444,6 +445,6 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 /*
  *    Get the pointer of pointer of the Work array.
  */
-#define GetPtrWorkPtrs(blk) (blk->work)
+#define GetPtrWorkPtrs(blk) ((void *) (blk->work))
 
-#endif 
+#endif
