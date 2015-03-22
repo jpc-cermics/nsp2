@@ -63,7 +63,7 @@ function [sd]=gr_menu(sd,flag,noframe)
   
   if init==0 then redraw(sd,s_t); else sd=list('sd',cdef); end,
   if flag==1; xclip();return ;end
-  [menus]=resume(menus);
+  resume(menus);
   resume(pixmap=%f);
   //xset('pixmap',1);
 endfunction
