@@ -22,21 +22,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define IMatrix_Private 
-#include <nsp/object.h> 
-#include <nsp/matrix.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/imatrix.h> 
-#include <nsp/bmatrix.h> 
-#include <nsp/matint.h> 
-#include <nsp/cells.h> 
-#include <nsp/type.h> 
-#include <nsp/file.h> 
-#include <nsp/type.h> 
-#include <nsp/hobj.h> 
+#define IMatrix_Private
+#include <nsp/object.h>
+#include <nsp/matrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/imatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/matint.h>
+#include <nsp/cells.h>
+#include <nsp/type.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
 
 #include "nsp/datas.h"
-#include "nsp/pr-output.h" 
+#include "nsp/pr-output.h"
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
@@ -49,20 +49,20 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs);
  * SECTION:imatrix
  * @title: NspIMatrix
  * @short_description: An object used to implement boolean matrices.
- * @see_also: 
+ * @see_also:
  *
  * <para>
- * A #NspIMatrix is used to represent a boolean matrix. 
- * It can be filled with %TRUE and %FALSE values and is 
- * implemented as an array of integer. It implement the 
- * matint interface which is used for generic matrices 
- * operations. When using the matint interface a #NspIMatrix 
+ * A #NspIMatrix is used to represent a boolean matrix.
+ * It can be filled with %TRUE and %FALSE values and is
+ * implemented as an array of integer. It implement the
+ * matint interface which is used for generic matrices
+ * operations. When using the matint interface a #NspIMatrix
  * can always be casted to a #NspSMatrix.
  * </para>
  **/
 
 /*
- * NspIMatrix inherits from NspObject 
+ * NspIMatrix inherits from NspObject
  */
 
 int nsp_type_imatrix_id=0;
@@ -73,63 +73,63 @@ NspTypeIMatrix *new_type_imatrix(type_mode mode)
   NspTypeMatint *mati;/* interface */
   NspTypeIMatrix *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_imatrix != 0 && mode == T_BASE ) 
+  if (  nsp_type_imatrix != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_imatrix;
     }
-  
+
   if ((type  =  malloc(sizeof(NspTypeIMatrix))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
   type->attrs =  NULL; /*imatrix_attrs ; */
-  type->get_attrs = (attrs_func *) int_get_attribute; 
-  type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = imatrix_get_methods; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = imatrix_get_methods;
   type->gtk_methods = FALSE;
   type->new = (new_func *) new_imatrix;
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for imatrix */ 
+  /* object methods redefined for imatrix */
 
-  top->pr = (print_func *)nsp_imatrix_print;                    
-  top->dealloc = (dealloc_func *)nsp_imatrix_destroy;            
-  top->copy  =  (copy_func *)nsp_imatrix_copy;                   
-  top->size  = (size_func *) imatrix_size;                  
-  top->s_type =  (s_type_func *) imatrix_type_as_string;    
+  top->pr = (print_func *)nsp_imatrix_print;
+  top->dealloc = (dealloc_func *)nsp_imatrix_destroy;
+  top->copy  =  (copy_func *)nsp_imatrix_copy;
+  top->size  = (size_func *) imatrix_size;
+  top->s_type =  (s_type_func *) imatrix_type_as_string;
   top->sh_type = (sh_type_func *) imatrix_type_short_string;
-  top->info = (info_func *)nsp_imatrix_info;                    
-  top->is_true = (is_true_func  *) imatrix_is_true;           
+  top->info = (info_func *)nsp_imatrix_info;
+  top->is_true = (is_true_func  *) imatrix_is_true;
   top->loop =(loop_func *) imatrix_loop;
-  top->path_extract =  NULL;       
-  top->get_from_obj = (get_from_obj_func *)  IMatObj ;  
+  top->path_extract =  NULL;
+  top->get_from_obj = (get_from_obj_func *)  IMatObj ;
   top->eq  = (eq_func *) imatrix_eq;
   top->neq  = (eq_func *) imatrix_neq;
   top->save  = (save_func *) imatrix_xdr_save;
   top->load  = (load_func *) imatrix_xdr_load;
-  top->create = (create_func*) int_imatrix_create; 
+  top->create = (create_func*) int_imatrix_create;
   top->latex = (print_func *) nsp_imatrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_imatrix_as_index;
-  top->full_copy  =  (copy_func *)nsp_imatrix_copy;                   
+  top->full_copy  =  (copy_func *)nsp_imatrix_copy;
   /* specific methods for imatrix */
 
   type->init = (init_func *) init_imatrix;
-  /* 
-   * IMatrix interfaces can be added here 
+  /*
+   * IMatrix interfaces can be added here
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
   /*
-   * IMatrix implements Matint the matrix interface 
+   * IMatrix implements Matint the matrix interface
    * which is common to object that behaves like matrices.
    */
 
   mati = new_type_matint(T_DERIVED);
-  mati->methods = matint_get_methods; 
+  mati->methods = matint_get_methods;
   /* mati->redim = (matint_redim *) nsp_imatrix_redim; use default value */
   mati->resize = (matint_resize  *) nsp_imatrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
@@ -140,10 +140,10 @@ NspTypeIMatrix *new_type_imatrix(type_mode mode)
   mati->canonic =  nsp_matint_canonic;
   mati->copy_ind = nsp_matint_basic_copy;
   type->interface = (NspTypeBase *) mati;
-  
-  if ( nsp_type_imatrix_id == 0 ) 
+
+  if ( nsp_type_imatrix_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeIMatrix called nsp_type_imatrix
        */
@@ -152,7 +152,7 @@ NspTypeIMatrix *new_type_imatrix(type_mode mode)
       if ( nsp_register_type(nsp_type_imatrix) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_imatrix(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_imatrix_id;
       return type;
@@ -160,27 +160,27 @@ NspTypeIMatrix *new_type_imatrix(type_mode mode)
 }
 
 /*
- * initialize IMatrix instances 
- * locally and by calling initializer on parent class 
+ * initialize IMatrix instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_imatrix(NspIMatrix *o,NspTypeIMatrix *type)
 {
-  /* to be done always */ 
+  /* to be done always */
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
+  o->type = type;
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
 
 /*
- * new instance of IMatrix 
+ * new instance of IMatrix
  */
 
-NspIMatrix *new_imatrix() 
+NspIMatrix *new_imatrix()
 {
-  NspIMatrix *loc; 
+  NspIMatrix *loc;
   /* type must exists */
   nsp_type_imatrix = new_type_imatrix(T_BASE);
   if ( (loc = malloc(sizeof(NspIMatrix)))== NULLIMAT) return loc;
@@ -190,16 +190,16 @@ NspIMatrix *new_imatrix()
 }
 
 /*----------------------------------------------
- * Object method redefined for IMatrix 
+ * Object method redefined for IMatrix
  *-----------------------------------------------*/
 
 /*
- * size 
+ * size
  */
 
 static int imatrix_size(NspIMatrix *Mat, int flag)
 {
-  switch (flag) 
+  switch (flag)
     {
     case 0: return Mat->mn;
     case 1: return Mat->m;
@@ -209,7 +209,7 @@ static int imatrix_size(NspIMatrix *Mat, int flag)
 }
 
 /*
- * type as string 
+ * type as string
  */
 
 static char imat_type_name[]="IMat";
@@ -230,7 +230,7 @@ static char *imatrix_type_short_string(NspObject *v)
 static NspObject *imatrix_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep)
 {
   NspIMatrix *M= (NspIMatrix *) O1,*M1=NULLIMAT;
-  if ( O == NULLOBJ ) 
+  if ( O == NULLOBJ )
     {
       if (( M1= IMatLoopCol(str,NULLIMAT,M,i,rep))==NULLIMAT) return NULLOBJ;
       if (( *rep == RET_ENDFOR )) return NULLOBJ;
@@ -249,7 +249,7 @@ static int imatrix_eq(NspIMatrix *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_imatrix_id) == FALSE) return FALSE ;
-  if ( ! ( ((NspIMatrix *) A)->m == ((NspIMatrix *) B)->m 
+  if ( ! ( ((NspIMatrix *) A)->m == ((NspIMatrix *) B)->m
 	   && ((NspIMatrix *) A)->n == ((NspIMatrix *) B)->n)) return FALSE;
   if ( ((NspIMatrix *) A)->itype != ((NspIMatrix *) B)->itype) return FALSE;
   rep = nsp_imatrix_fullcomp (A, (NspIMatrix *) B, "==", &err);
@@ -265,7 +265,7 @@ static int imatrix_neq(NspIMatrix *A, NspObject *B)
 
 
 /*
- * Mat == TRUE ? 
+ * Mat == TRUE ?
  *  if Mat != [] and all the elements of Mat are non null
  */
 
@@ -281,17 +281,17 @@ static int imatrix_is_true(NspIMatrix *A)
 }
 
 /*
- * save 
+ * save
  */
 
 static int imatrix_xdr_save(XDR *xdrs, NspIMatrix *M)
 {
-#if 1 
+#if 1
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_imatrix)) == FAIL) return FAIL;
 #else
   if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
-#endif 
+#endif
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->m) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
@@ -301,7 +301,7 @@ static int imatrix_xdr_save(XDR *xdrs, NspIMatrix *M)
 }
 
 /*
- * load 
+ * load
  */
 
 static NspIMatrix  *imatrix_xdr_load(XDR *xdrs)
@@ -324,7 +324,7 @@ static NspIMatrix  *imatrix_xdr_load(XDR *xdrs)
  * @index: an #index_vector
  *
  * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
- * and computes the min and max of A (here staying "1-based")   
+ * and computes the min and max of A (here staying "1-based")
  */
 
 static int nsp_imatrix_bounds(const NspIMatrix *A,index_vector *index)
@@ -334,7 +334,7 @@ static int nsp_imatrix_bounds(const NspIMatrix *A,index_vector *index)
   index->max = 1;
   index->min = 1;
   index->flag = FALSE;
-  switch (  A->itype ) 
+  switch (  A->itype )
     {
     default:
       Scierror("Error:\tindices cannot be given by imatrix of %s type\n",names[A->itype]);
@@ -358,24 +358,24 @@ static int nsp_imatrix_bounds(const NspIMatrix *A,index_vector *index)
 
 /**
  * nsp_imatrix_as_index:
- * @M: a #NspIMatrix 
+ * @M: a #NspIMatrix
  * @index: an #index_vector
- * 
+ *
  * fills index vector @index with matrix values.
  *
- * Return value: %OK or %FAIL 
+ * Return value: %OK or %FAIL
  **/
 
 static int nsp_imatrix_as_index(NspIMatrix *M, index_vector *index)
 {
   index->nval = M->mn;
   if ( nsp_get_index_vector_cache(index) == FALSE) return FAIL;
-  if ( nsp_imatrix_bounds(M, index) == FAIL ) 
+  if ( nsp_imatrix_bounds(M, index) == FAIL )
     {
       /* we assume that index->error is set by nsp_matint_bounds
-       * free allocated memory and return 
+       * free allocated memory and return
        */
-      if (  index->val  != nsp_get_index_vector_work(index->iwork) ) 
+      if (  index->val  != nsp_get_index_vector_work(index->iwork) )
 	FREE(index->val);
       return FAIL;
     }
@@ -385,17 +385,17 @@ static int nsp_imatrix_as_index(NspIMatrix *M, index_vector *index)
 
 
 /*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for IMatrix objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * a set of functions used when writing interfaces
+ * for IMatrix objects
+ * Note that some of these functions could become MACROS XXXXX
  *-----------------------------------------------------*/
 
 /**
  * IMatObj:
- * @O: a #NspObject 
- * 
- * checks if @O can be casted to a #IMatObj. 
- * 
+ * @O: a #NspObject
+ *
+ * checks if @O can be casted to a #IMatObj.
+ *
  * Return value: %NULL or a #IMatObj.
  **/
 
@@ -405,7 +405,7 @@ NspIMatrix   *IMatObj(NspObject *O)
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_imatrix_id) == TRUE) return ((NspIMatrix *) O);
-  else 
+  else
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_imatrix));
   return(NULL);
 }
@@ -413,10 +413,10 @@ NspIMatrix   *IMatObj(NspObject *O)
 /**
  * IsIMatObj:
  * @stack: a #Stack
- * @i: an integer 
- * 
+ * @i: an integer
+ *
  * checks if #NspObject at position @i on the stack can be casted to a #IMatObj.
- * 
+ *
  * Return value: %TRUE or %FALSE
  **/
 
@@ -427,10 +427,10 @@ int IsIMatObj(Stack stack, int i)
 
 /**
  * IsIMat:
- * @O: a #NspObject 
- * 
+ * @O: a #NspObject
+ *
  * checks if object @O can be casted to a #IMatObj.
- * 
+ *
  * Return value:  %TRUE or %FALSE
  **/
 
@@ -442,11 +442,11 @@ int IsIMat(const NspObject *O)
 /**
  * GetIMatCopy:
  * @stack: a #Stack
- * @i: an integer 
- * 
+ * @i: an integer
+ *
  * checks if #NspObject at position @i on the stack can be casted to a #IMatObj and
  * if true returns a copy of that boolean matrix.
- * 
+ *
  * Return value: %NULL or a #NspIMatrix
  **/
 
@@ -459,11 +459,11 @@ NspIMatrix  *GetIMatCopy(Stack stack, int i)
 /**
  * GetIMat:
  * @stack: a #Stack
- * @i: an integer 
- * 
+ * @i: an integer
+ *
  * checks if #NspObject at position @i on the stack can be casted to a #IMatObj and
  * if true returns the matrix.
- * 
+ *
  * Return value:  %NULL or a #NspIMatrix
  **/
 
@@ -478,18 +478,18 @@ NspIMatrix  *GetIMat(Stack stack, int i)
 /**
  * GetScalarIMat:
  * @stack: a #Stack
- * @i: an integer 
- * 
- * checks if #NspObject at position @i on the stack can be casted to a #IMatObj 
+ * @i: an integer
+ *
+ * checks if #NspObject at position @i on the stack can be casted to a #IMatObj
  * of size 1x1 if returns the matrix.
- * 
+ *
  * Return value:  %NULL or a #NspIMatrix
  **/
 
 NspIMatrix  *GetScalarIMat(Stack stack, int i)
 {
   NspIMatrix *M;
-  if (( M = IMatObj(NthObj(i))) == NULLIMAT 
+  if (( M = IMatObj(NthObj(i))) == NULLIMAT
       || (M->mn != 1))
     {
       Scierror ("Error:\t%s", ArgPosition (i));
@@ -503,12 +503,12 @@ NspIMatrix  *GetScalarIMat(Stack stack, int i)
 
 
 /*-------------------------------------------------------------------
- * wrappers for the IMatrix 
- * i.e functions at Nsp level 
+ * wrappers for the IMatrix
+ * i.e functions at Nsp level
  *-------------------------------------------------------------------*/
 
 /*
- *  Creation of a NspIMatrix : created with true value 
+ *  Creation of a NspIMatrix : created with true value
  */
 
 static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
@@ -522,7 +522,7 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if ((rep = GetStringInArray(stack, 3, names, 0)) == -1 ) return RET_BUG;
       itype = (nsp_itype) rep;
@@ -536,11 +536,11 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
 
 
 /*------------------------------------------------------
- * attributes  (set/get methods) 
+ * attributes  (set/get methods)
  *------------------------------------------------------*/
 
 /*------------------------------------------------------
- * methods 
+ * methods
  *------------------------------------------------------*/
 
 
@@ -554,7 +554,7 @@ static int int_meth_imatrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-/* 
+/*
  *  scale_rows[x,op="*"|"/"]
  *
  *    multiply or divide row i of A by x[i]
@@ -565,7 +565,7 @@ static int int_meth_imatrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
 static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A = self, *x;
-  char *op=NULL; char ope='*'; 
+  char *op=NULL; char ope='*';
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
@@ -575,7 +575,7 @@ static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,i
   if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->m )
-    { 
+    {
       Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
       return RET_BUG;
     }
@@ -583,7 +583,7 @@ static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,i
   if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
     return RET_BUG;
 
-  if ( op != NULL) 
+  if ( op != NULL)
     {
       if ( strcmp(op,"*") == 0 )
 	ope = '*';
@@ -602,7 +602,7 @@ static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,i
   return 0;
 }
 
-/* 
+/*
  *  scale_cols[x,op='*'|'/']
  *
  *    multiply or divide column j of A by x[j]
@@ -613,7 +613,7 @@ static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,i
 static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A =  self, *x;
-  char *op=NULL; char ope='*'; 
+  char *op=NULL; char ope='*';
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
@@ -623,7 +623,7 @@ static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,i
   if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->n )
-    { 
+    {
       Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
       return RET_BUG;
     }
@@ -631,7 +631,7 @@ static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,i
   if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
     return RET_BUG;
 
-  if ( op != NULL) 
+  if ( op != NULL)
     {
       if ( strcmp(op,"*") == 0 )
 	ope = '*';
@@ -650,8 +650,8 @@ static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,i
   return 0;
 }
 
-/* 
- * get_nnz 
+/*
+ * get_nnz
  */
 
 static int int_meth_imatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
@@ -662,16 +662,16 @@ static int int_meth_imatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-/* this method is also implemented in matint for matrix 
+/* this method is also implemented in matint for matrix
  * this one is a short cut.
  */
 
-static int int_meth_imatrix_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+static int int_meth_imatrix_set_diag(NspObject *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspIMatrix *Diag;
   int k=0;
   CheckRhs (1,2);
-  CheckLhs (0,0); 
+  CheckLhs (0,0);
   if ((Diag = GetIMat (stack, 1)) == NULLIMAT)   return RET_BUG;
   if ( rhs == 2 )
     {
@@ -688,8 +688,8 @@ static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int l
   NspIMatrix *A = self, *x;
   NspBMatrix *B;
   NspMatrix *Ind,*Ind2;
-  
-  CheckRhs(1,1); 
+
+  CheckRhs(1,1);
   CheckLhs(1,3);
 
   if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
@@ -709,7 +709,7 @@ static int int_meth_imatrix_has(void *self, Stack stack, int rhs, int opt, int l
 }
 
 
-static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int opt, int lhs)
 {
   nsp_itype itype = nsp_gint;
   int rep;
@@ -724,7 +724,7 @@ static int int_imatrix_meth_retype(NspObject *self, Stack stack, int rhs, int op
 }
 
 
-static int int_imatrix_meth_itype(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+static int int_imatrix_meth_itype(NspObject *self, Stack stack, int rhs, int opt, int lhs)
 {
   NSP_ITYPE_NAMES(names);
   const char *st= NSP_ITYPE_NAME(names,((NspIMatrix *)self)->itype);
@@ -736,8 +736,8 @@ static int int_imatrix_meth_itype(NspObject *self, Stack stack, int rhs, int opt
 
 static NspMethods nsp_imatrix_methods[] = {
   { "add", int_meth_imatrix_add},
-  { "scale_rows",int_meth_imatrix_scale_rows}, 
-  { "scale_cols",int_meth_imatrix_scale_cols}, 
+  { "scale_rows",int_meth_imatrix_scale_rows},
+  { "scale_cols",int_meth_imatrix_scale_cols},
   { "get_nnz", int_meth_imatrix_get_nnz},
   { "has", int_meth_imatrix_has},
   { "set_diag",(nsp_method *) int_meth_imatrix_set_diag}, /* preferred to generic matint method */
@@ -749,7 +749,7 @@ static NspMethods nsp_imatrix_methods[] = {
 static NspMethods *imatrix_get_methods(void) { return nsp_imatrix_methods;}
 
 /*----------------------------------------------------
- * Interface 
+ * Interface
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
@@ -758,20 +758,20 @@ static int int_imatrix_impl (Stack stack, int rhs, int opt, int lhs)
   NspIMatrix *M;
   CheckRhs (2, 3);
   CheckLhs (1, 1);
-  NspIMatrix  *First, *Last, *Step= NULL; 
+  NspIMatrix  *First, *Last, *Step= NULL;
   if ((First= GetScalarIMat(stack,1))==  NULLIMAT ) return RET_BUG;
   if ((Last= GetScalarIMat(stack,2))==  NULLIMAT ) return RET_BUG;
-  if ( rhs -opt == 3) 
+  if ( rhs -opt == 3)
     {
       Step = Last;
       if ((Last= GetScalarIMat(stack,3))==  NULLIMAT ) return RET_BUG;
     }
-  if ( First->itype != Last->itype) 
+  if ( First->itype != Last->itype)
     {
       Scierror ("Error: %s should be used with elements of the same subtype\n", NspFname(stack));
       return RET_BUG;
     }
-  if ( Step != NULL && First->itype != Step->itype) 
+  if ( Step != NULL && First->itype != Step->itype)
     {
       Scierror ("Error: %s should be used with elements of the same subtype\n", NspFname(stack));
       return RET_BUG;
@@ -784,8 +784,8 @@ static int int_imatrix_impl (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Res =nsp_imatrix_copy(A) 
- * Creates a Copy of NspIMatrix A : A is not checked 
+ * Res =nsp_imatrix_copy(A)
+ * Creates a Copy of NspIMatrix A : A is not checked
  */
 
 static int int_imatrix_copy(Stack stack, int rhs, int opt, int lhs)
@@ -796,13 +796,13 @@ static int int_imatrix_copy(Stack stack, int rhs, int opt, int lhs)
   if (( HMat1 = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
   if (( HMat2 =nsp_imatrix_copy(HMat1)) == NULLIMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat2);
-  return 1;  
+  return 1;
 }
 
 
 
 /*
- * Operation leading to Boolean result 
+ * Operation leading to Boolean result
  */
 
 static int _int_imatrix_comp_gen (Stack stack, int rhs, int opt, int lhs, char *op)
@@ -815,7 +815,7 @@ static int _int_imatrix_comp_gen (Stack stack, int rhs, int opt, int lhs, char *
     return RET_BUG;
   if ((B = GetIMat (stack, 2)) == NULLIMAT)
     return RET_BUG;
-  if ( A->itype != B->itype ) 
+  if ( A->itype != B->itype )
     {
       Scierror("Error: arguments must have the same integer type\n");
       return RET_BUG;
@@ -860,7 +860,7 @@ int int_imatrix_ge (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Same but returns a unique boolean 
+ * Same but returns a unique boolean
  */
 
 static int
@@ -875,7 +875,7 @@ int_imatrix_f_gen (Stack stack, int rhs, int opt, int lhs, char *op)
     return RET_BUG;
   if ((B = GetIMat (stack, 2)) == NULLIMAT)
     return RET_BUG;
-  if ( A->itype != B->itype ) 
+  if ( A->itype != B->itype )
     {
       Scierror("Error: arguments must have the same integer type\n");
       return RET_BUG;
@@ -941,8 +941,8 @@ int_imatrix_fge (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * IMatAddCols: add n cols of zero to NspIMatrix A 
- * A= [A,ones(m,n)] 
+ * IMatAddCols: add n cols of zero to NspIMatrix A
+ * A= [A,ones(m,n)]
  * return 0 on failure ( no more space )
  */
 
@@ -960,9 +960,9 @@ static int int_imatrix_addcols(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Add Rows: Add m rows of zero to a NspIMatrix A 
+ * Add Rows: Add m rows of zero to a NspIMatrix A
  * A = [A;ones(m,n)]
- * return NULLIMAT on failure 
+ * return NULLIMAT on failure
  */
 
 static int int_imatrix_addrows(Stack stack, int rhs, int opt, int lhs)
@@ -979,7 +979,7 @@ static int int_imatrix_addrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *  diag function 
+ *  diag function
  */
 
 static int int_imatrix_diag (Stack stack, int rhs, int opt, int lhs)
@@ -999,7 +999,7 @@ static int int_imatrix_diag (Stack stack, int rhs, int opt, int lhs)
     Res = nsp_imatrix_create_diag (A, k1);
   else
     Res = nsp_imatrix_extract_diag (A, k1);
-      
+
   if (Res == NULLIMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);
@@ -1009,7 +1009,7 @@ static int int_imatrix_diag (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Returns the kthe diag of a NspIMatrix 
+ * Returns the kthe diag of a NspIMatrix
  */
 
 static int int_imatrix_diage(Stack stack, int rhs, int opt, int lhs)
@@ -1028,7 +1028,7 @@ static int int_imatrix_diage(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *  Creates a NspIMatrix with kth diag set to Diag 
+ *  Creates a NspIMatrix with kth diag set to Diag
  */
 
 static int int_imatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
@@ -1038,7 +1038,7 @@ static int int_imatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((Diag = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
-  if ( rhs == 2 ) 
+  if ( rhs == 2 )
     {
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
@@ -1050,7 +1050,7 @@ static int int_imatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * IMatresize: changes NspIMatrix dimensions
- * m,n are changed and the arrays enlarged 
+ * m,n are changed and the arrays enlarged
  */
 
 static int int_imatrix_resize(Stack stack, int rhs, int opt, int lhs)
@@ -1061,7 +1061,7 @@ static int int_imatrix_resize(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ( (HMat=GetIMatCopy(stack,1))== NULLIMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;      
+  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
   if (nsp_imatrix_resize(HMat,m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
@@ -1110,13 +1110,13 @@ static int int_imatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
   NspIMatrix *HMat;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((HMat = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;    
+  if ((HMat = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
   nsp_imatrix_latex_tab_print(HMat);
   return 0;
 }
 
 /*
- *   matrix to imatrix cast 
+ *   matrix to imatrix cast
  */
 
 static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
@@ -1133,8 +1133,8 @@ static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   CheckStdRhs(1,2);
   CheckLhs(1,1);
-  if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;    
-  if ( rhs -opt == 2 ) 
+  if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ( rhs -opt == 2 )
     {
       if ((rep = GetStringInArray(stack, 2, names, 0)) == -1 ) return RET_BUG;
       itype = (nsp_itype) rep;
@@ -1142,16 +1142,16 @@ static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
     return RET_BUG;
 
-  if ( mode != NULL ) 
+  if ( mode != NULL )
     {
       if ( (rep_type= is_string_in_array(mode, mode_options,1)) == -1 )
 	{
 	  string_not_in_array(stack,mode, mode_options , "optional argument mode");
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
     }
-  
-  if (rep_type == 0 ) 
+
+  if (rep_type == 0 )
     {
       /* cast */
       if ((BM =nsp_matrix_to_imatrix(M,itype)) == NULLIMAT ) return RET_BUG;
@@ -1175,7 +1175,7 @@ int int_imatrix_i2m(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((BM = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;    
+  if ((BM = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
   if ((M =nsp_imatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) M);
   return 1;
@@ -1185,7 +1185,7 @@ int int_imatrix_i2m(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Same but returns a unique boolean 
+ * Same but returns a unique boolean
  */
 
 static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
@@ -1198,16 +1198,16 @@ static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
   if ((B = GetIMat(stack,2)) == NULLIMAT) return RET_BUG;
   rep =nsp_imatrix_fullcomp(A,B,"<>",&err);
-  if ( err == 1) 
+  if ( err == 1)
     {
       Scierror("Error: operator %s , arguments with incompatible dimensions\n","<>");
       return RET_BUG;
     }
-  if ( rep == TRUE ) 
+  if ( rep == TRUE )
     {
       if (( Res =nsp_create_true_object(NVOID)) == NULLOBJ) return RET_BUG;
     }
-  else 
+  else
     {
       if (( Res =nsp_create_false_object(NVOID)) == NULLOBJ) return RET_BUG;
     }
@@ -1219,7 +1219,7 @@ static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Returns a kroeneker product A.*.B 
+ * Returns a kroeneker product A.*.B
  */
 
 int int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
@@ -1238,8 +1238,8 @@ int int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * MatSort 
- * [A_sorted,Index]=sort(A, type,dir ) 
+ * MatSort
+ * [A_sorted,Index]=sort(A, type,dir )
  *  type = "g"| "gs"| "gm"| "c"| "r"| "lr" | "lc" | "ldc"| "ldr"|"gb"|"gd"
  *  dir =  "i"| "d";
  */
@@ -1274,15 +1274,15 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
 
       if ( opt == 0 )
 	{
-	  if ((type = GetString(stack,2)) == NULLSTRING) return RET_BUG; 
-	  if (rhs >= 3) 
+	  if ((type = GetString(stack,2)) == NULLSTRING) return RET_BUG;
+	  if (rhs >= 3)
 	    {
-	      if ((dir = GetString(stack,3)) == NULLSTRING) return RET_BUG; 
+	      if ((dir = GetString(stack,3)) == NULLSTRING) return RET_BUG;
 	      if ( rhs >= 4 )
 		{
-		  if ((ind_type = GetString(stack,4)) == NULLSTRING) return RET_BUG; 
+		  if ((ind_type = GetString(stack,4)) == NULLSTRING) return RET_BUG;
 		}
-	    }  
+	    }
 	}
       else
 	{
@@ -1300,25 +1300,25 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
 	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, type, type_possible_choices, "optional argument type");
-	      return RET_BUG; 
+	      return RET_BUG;
 	    }
 	}
       if ( dir != NULL )
 	{
-	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) 
+	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, dir, dir_possible_choices, "optional argument dir");
 	      return RET_BUG;
-	    } 
+	    }
 	  direction = dir_possible_choices[rep_dir][0];
 	}
       if ( ind_type != NULL )
 	{
-	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
 	      return RET_BUG;
-	    } 
+	    }
 	  itype = ind_type_possible_choices[rep_ind_type][0];
 	}
      }
@@ -1330,11 +1330,11 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
 
   switch ( rep_type  )
     {
-    case sort_g : 
-    case sort_gs: 
-    case sort_gm: 
-    case sort_gb: 
-    case sort_gd: 
+    case sort_g :
+    case sort_gs:
+    case sort_gm:
+    case sort_gb:
+    case sort_gd:
       nsp_imatrix_sort(M,&Index,iflag,direction,rep_type,itype);
       break;
     case sort_c:
@@ -1361,11 +1361,11 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,2,Index);
     }
   return Max(lhs,1);
-} 
+}
 
 /*
- * nsp_mat_sum: s=sum(a[,dim_flag])  or s = sum(a, dim=dim_flag)  
- * a is unchanged 
+ * nsp_mat_sum: s=sum(a[,dim_flag])  or s = sum(a, dim=dim_flag)
+ * a is unchanged
  */
 
 typedef NspIMatrix *(*SuPro) (NspIMatrix * A, int dim);
@@ -1396,7 +1396,7 @@ int_imatrix_sum_gen (Stack stack, int rhs, int opt, int lhs, SuPro F)
 	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
 	    return RET_BUG;
  	}
- 
+
      if ( dim == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
@@ -1421,7 +1421,7 @@ int_imatrix_sum (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * matprod : product of all elements of a
- * a is unchanged 
+ * a is unchanged
  */
 
 int
@@ -1432,7 +1432,7 @@ int_imatrix_prod (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * matcusum : cumulative sum of all elements of a
- * a is unchanged 
+ * a is unchanged
  */
 
 int
@@ -1443,7 +1443,7 @@ int_imatrix_cusum (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * matcuprod : cumulative prod of all elements of a
- * a is unchanged 
+ * a is unchanged
  */
 
 int
@@ -1598,8 +1598,8 @@ int_imatrix_diff (Stack stack, int rhs, int opt, int lhs)
     }
   if ( dim == -2 )  /* matlab compatibility flag */
     dim = GiveMatlabDimFlag(HMat);
-  
-  
+
+
   if ((Res = nsp_imatrix_diff(HMat, order, dim)) == NULLIMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);
@@ -1608,7 +1608,7 @@ int_imatrix_diff (Stack stack, int rhs, int opt, int lhs)
 
 /*
  *nsp_imatrix_maxi: Maxi(*HMat);
- * A is unchanged 
+ * A is unchanged
  */
 
 typedef NspIMatrix *(*MiMax) (NspIMatrix * A, int dim, NspMatrix ** Imax,
@@ -1664,13 +1664,13 @@ int_imatrix_maxi_gen (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1
 	}
       MoveObj (stack, 1, (NspObject *) M);
     }
-  else        
+  else
     {
       /* Maxi(A1,A2,....,An)   */
       NspMatrix *Ind=NULL;
       int flag = 0, i;
 
-      if ( opt > 0 ) 
+      if ( opt > 0 )
 	{
 	  Scierror ("Error:\t named optional argument not supported in this form of %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -1712,8 +1712,8 @@ int_imatrix_maxi (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * nsp_imatrix_mini: Mini(A)
- * A is unchanged 
- * rs and ri are set to the result 
+ * A is unchanged
+ * rs and ri are set to the result
  */
 
 int
@@ -1723,7 +1723,7 @@ int_imatrix_mini (Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/* 
+/*
  *  [amin, amax, imin, imax] = minmax(A) or minmax(A,dir) or minmax(A,dim=dir)
  *  with dir = 'c','r','F','*' or 0, 1, 2
  *  to compute min and max at same time
@@ -1767,10 +1767,10 @@ int_imatrix_minmax(Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_imatrix_minmax(A, dim, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
     return RET_BUG;
-  
+
   MoveObj (stack, 1, (NspObject *) Amin);
   MoveObj (stack, 2, (NspObject *) Amax);
-  if ( lhs >= 3 ) 
+  if ( lhs >= 3 )
     {
       MoveObj (stack, 3, (NspObject *) Imin);
       if ( lhs == 4 )
@@ -1784,7 +1784,7 @@ int_imatrix_minmax(Stack stack, int rhs, int opt, int lhs)
 
 /*
  *nsp_imatrix_triu: A=Triu(a)
- * A is changed  
+ * A is changed
  */
 
 int
@@ -1808,7 +1808,7 @@ int_imatrix_triu (Stack stack, int rhs, int opt, int lhs)
 
 /*
  *nsp_imatrix_tril: A=Tril(A)
- * A is changed  
+ * A is changed
  */
 
 int
@@ -1849,7 +1849,7 @@ int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
   CheckLhs (1, 1);
   if ( IsSMatObj(stack,rhs) )
     {
-      /* is last element an int type 
+      /* is last element an int type
        */
       int rep;
       NSP_ITYPE_NAMES(names);
@@ -1861,37 +1861,37 @@ int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
     {
       NspMatrix *M;
       if ((M = GetRealMat (stack, 1)) == NULLMAT)
-	return RET_BUG; 
-      switch ( M->mn ) 
+	return RET_BUG;
+      switch ( M->mn )
 	{
-	case 0: 
+	case 0:
 	  Scierror("Error: in %s, size vector cannot be an empty matrix\n",NspFname(stack));
-	  return RET_BUG; 
+	  return RET_BUG;
 	case 1: m1 = n1 = (int) M->R[0]; break;
 	case 2: m1 = (int) M->R[0]; n1 = (int) M->R[1]; break;
 	default :
 	  Scierror("Error: in %s, size vector is too long\n",NspFname(stack));
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
     }
-  else 
+  else
     {
-      if ( last > 2 ) 
+      if ( last > 2 )
 	{
 	  Scierror("Error: in %s, n-arrays are not implemented, max dimensions is two\n",
 		   NspFname(stack));
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
       if (GetScalarInt (stack, 1, &m1) == FAIL)
 	return RET_BUG;
       CheckNonNegative(NspFname(stack),m1,1);
-      if (last == 2 ) 
+      if (last == 2 )
 	{
 	  if (GetScalarInt (stack, 2, &n1) == FAIL)
 	    return RET_BUG;
 	  CheckNonNegative(NspFname(stack),n1,2);
 	}
-      else 
+      else
 	{
 	  n1 = m1;
 	}
@@ -1938,7 +1938,7 @@ int_imatrix_izeros (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *  A=op(A) 
+ *  A=op(A)
  */
 
 typedef int (*M11) (NspIMatrix * A);
@@ -1991,7 +1991,7 @@ int_imatrix_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F)
 #endif
 
 /*
- * A=Abs(A), absolue value or module of each element 
+ * A=Abs(A), absolue value or module of each element
  */
 
 int
@@ -2002,8 +2002,8 @@ int_imatrix_abs (Stack stack, int rhs, int opt, int lhs)
 
 /*
  *nsp_mat_sign: A=Sign(A)
- * A is changed  
- * return 0 if error 
+ * A is changed
+ * return 0 if error
  */
 
 int
@@ -2014,14 +2014,14 @@ int_imatrix_sign (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * nsp_mat_minus: A=-(A)
- * A is changed  
- * return 0 if error 
+ * A is changed
+ * return 0 if error
  */
 
 int
 int_imatrix_minus (Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs -opt == 2 ) 
+  if ( rhs -opt == 2 )
     {
       Scierror("Error:\tUnknown function minus_%s_%s\n",
 	       nsp_object_type_short(NthObj (1)),
@@ -2057,7 +2057,7 @@ int int_imatrix_ishift (Stack stack, int rhs, int opt, int lhs)
       NSP_OBJECT (A)->ret_pos = 1;
       return 1;
     }
-  if (GetScalarInt (stack, 2, &shift) == FAIL) 
+  if (GetScalarInt (stack, 2, &shift) == FAIL)
     return RET_BUG;
   if (rhs >= 3)
     {
@@ -2075,7 +2075,7 @@ int int_imatrix_ishift (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * nsp_imatrix_mod: z = mod(x,y) x or y is changed 
+ * nsp_imatrix_mod: z = mod(x,y) x or y is changed
  */
 
 int
@@ -2114,8 +2114,8 @@ int_imatrix_mod(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *nsp_imatrix_modulo: A=Modulo(A) remainder in int division 
- * A is changed  
+ *nsp_imatrix_modulo: A=Modulo(A) remainder in int division
+ * A is changed
  */
 
 int
@@ -2129,14 +2129,14 @@ int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
   if ((B = GetIMat(stack, 2)) == NULLIMAT)
     return RET_BUG;
 
-  if ( B->mn != A->mn || B->mn != 1) 
+  if ( B->mn != A->mn || B->mn != 1)
     {
       Scierror("Error: second argument of %s should be 1x1 or %dx%d\n",
 	       NspFname(stack),A->m,A->n);
       return RET_BUG;
 
     }
-  if ( A->itype != B->itype ) 
+  if ( A->itype != B->itype )
     {
       Scierror("Error: the two arguments of %s must have the same integer type\n",
 	       NspFname(stack));
@@ -2149,7 +2149,7 @@ int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Mat : A= Idiv(A,b) quotient in int division
- * A is changed   A(i)=A(i)/b 
+ * A is changed   A(i)=A(i)/b
  */
 
 int int_imatrix_idiv (Stack stack, int rhs, int opt, int lhs)
@@ -2160,13 +2160,13 @@ int int_imatrix_idiv (Stack stack, int rhs, int opt, int lhs)
   if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)   return RET_BUG;
   if ((B = GetIMat (stack, 2)) == NULLIMAT)    return RET_BUG;
 
-  if ( B->mn != 1) 
+  if ( B->mn != 1)
     {
       Scierror("Error: second argument of %s should be 1x1\n",
 	       NspFname(stack));
       return RET_BUG;
     }
-  if ( A->itype != B->itype ) 
+  if ( A->itype != B->itype )
     {
       Scierror("Error: the two arguments of %s must have the same integer type\n",
 	       NspFname(stack));
@@ -2179,13 +2179,13 @@ int int_imatrix_idiv (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A generic function fo  A op B with 
- * special case for [] and A or B scalar 
+ * A generic function fo  A op B with
+ * special case for [] and A or B scalar
  *  [] op A ---> F4(A)  (only usefull for []-A )
- *  A op [] ---> A 
+ *  A op [] ---> A
  *  A op scalar --->  F1(A,scalar)
- *  A op B      --->  F2(A,B) 
- *  scalar op A --->  F3(A,scalar) 
+ *  A op B      --->  F2(A,B)
+ *  scalar op A --->  F3(A,scalar)
  */
 
 typedef int (*MPM) (NspIMatrix *, NspIMatrix *);
@@ -2259,7 +2259,7 @@ int_imatrix_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
     }
   else if (HMat1->mn == 1)
     {
-      /* since Mat1 is scalar we store the result in Mat2 so we 
+      /* since Mat1 is scalar we store the result in Mat2 so we
          must copy it * */
       if ((HMat2 = GetIMatCopy (stack, 2)) == NULLIMAT)
 	return RET_BUG;
@@ -2294,7 +2294,7 @@ int_imatrix_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
   if ( (HMat1 =GetIMat(stack, 1)) == NULLIMAT )
     return RET_BUG;
   HMat1_has_no_name = Ocheckname(HMat1,NVOID);
-  
+
   if ( (HMat2 =GetIMat(stack, 2)) == NULLIMAT )
     return RET_BUG;
   HMat2_has_no_name = Ocheckname(HMat2,NVOID);
@@ -2381,7 +2381,7 @@ int_imatrix_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
 
 
 /*
- * term to term addition 
+ * term to term addition
  * with special cases Mat + [] and Mat + scalar
  */
 
@@ -2389,29 +2389,29 @@ int
 int_imatrix_dadd (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
-			     nsp_imatrix_add_scalar_bis, nsp_imatrix_add_mat, 
+			     nsp_imatrix_add_scalar_bis, nsp_imatrix_add_mat,
 			     nsp_imatrix_add_scalar_bis);
 
 }
 
 
 /*
- * term to term substraction 
+ * term to term substraction
  * with special cases Mat - [] and Mat - scalar
- *  XXXXX Attention le cas F3 est faux scalar - Mat --> Mat -scalar  
+ *  XXXXX Attention le cas F3 est faux scalar - Mat --> Mat -scalar
  */
 
 int
 int_imatrix_dsub (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
-			     nsp_imatrix_sub_scalar_bis, nsp_imatrix_sub_mat, 
+			     nsp_imatrix_sub_scalar_bis, nsp_imatrix_sub_mat,
 			     nsp_scalar_sub_imatrix_bis);
 
 }
 
 /*
- * A=nsp_imatrix_pow(A,B), A^ B 
+ * A=nsp_imatrix_pow(A,B), A^ B
  */
 
 static int int_imatrix_pow (Stack stack, int rhs, int opt, int lhs)
@@ -2422,7 +2422,7 @@ static int int_imatrix_pow (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * A=nsp_imatrix_pow_el(A,B), A.^ B 
+ * A=nsp_imatrix_pow_el(A,B), A.^ B
  */
 
 int
@@ -2435,7 +2435,7 @@ int_imatrix_powel (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A=DivEl(A,B),  A ./ B 
+ * A=DivEl(A,B),  A ./ B
  */
 
 int
@@ -2448,7 +2448,7 @@ int_imatrix_divel (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A=BackDivEl(A,B),  A .\ B 
+ * A=BackDivEl(A,B),  A .\ B
  */
 
 int
@@ -2461,21 +2461,21 @@ int_imatrix_backdivel (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A=MultEl(A,B),  A .* B 
+ * A=MultEl(A,B),  A .* B
  */
 
 int
 int_imatrix_multel (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_mopscal_mtlb(stack, rhs, opt, lhs,
-			     nsp_imatrix_mult_scalar_bis, nsp_imatrix_mult_el, 
+			     nsp_imatrix_mult_scalar_bis, nsp_imatrix_mult_el,
 			     nsp_imatrix_mult_scalar_bis);
 }
 
 
 /*
- * NspMatrix multiplication  Res= A*B  
- * very similar to mopscal but MatMult returns a new matrix 
+ * NspMatrix multiplication  Res= A*B
+ * very similar to mopscal but MatMult returns a new matrix
  */
 
 int int_imatrix_mult (Stack stack, int rhs, int opt, int lhs)
@@ -2515,7 +2515,7 @@ int int_imatrix_mult (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * NspMatrix special multiplication  Res= A*B or A'*B or A*B' or A'*B'   
+ * NspMatrix special multiplication  Res= A*B or A'*B or A*B' or A'*B'
  *   pmult(A,B [,flag])   flag is optional and should be 0, 1, 2 or 3
  *   with default 1
  */
@@ -2552,9 +2552,9 @@ int int_imatrix_pmult (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A / B 
- * just implemented for scalars XXXXX 
- * result stored in A 
+ * A / B
+ * just implemented for scalars XXXXX
+ * result stored in A
  */
 
 int int_imatrix_div (Stack stack, int rhs, int opt, int lhs)
@@ -2582,7 +2582,7 @@ int int_imatrix_div (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * returns in a Matrix the indices for which the Matrix is true 
+ * returns in a Matrix the indices for which the Matrix is true
  */
 
 int
@@ -2633,9 +2633,9 @@ int_imatrix_find (Stack stack, int rhs, int opt, int lhs)
       int i, *indr, *indc;
       if ((val = nsp_imatrix_create(NVOID,((NspMatrix *)Rc)->m,((NspMatrix *)Rc)->n,A->itype))== NULLIMAT)
 	{
-	  nsp_object_destroy(&Rr); 
+	  nsp_object_destroy(&Rr);
 	  nsp_object_destroy(&Rc);
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
 
       if ( itype == 'd' )
@@ -2677,13 +2677,13 @@ int_imatrix_find (Stack stack, int rhs, int opt, int lhs)
 /*
  *  multiple find (mfind)
  *
- *  [ind1,...,indk,indk+1] = mfind( x, op1, sc1, ...., opk, sck ) 
+ *  [ind1,...,indk,indk+1] = mfind( x, op1, sc1, ...., opk, sck )
  *
  *    opj is a string defining a comparizon operator "<", "<=", ">", ">=", "==", "~=" or "<>"
  *
  *    x is a real matrix, scj a real scalar
  */
-#if 0 
+#if 0
 int
 int_imatrix_mfind (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2701,7 +2701,7 @@ int_imatrix_mfind (Stack stack, int rhs, int opt, int lhs)
     }
 
   m = (rhs-1)/2;
-  
+
   if ( (scalars = malloc(m*sizeof(double))) == NULL )
     goto err;
   if ( (ops = malloc(m*sizeof(char *))) == NULL )
@@ -2716,7 +2716,7 @@ int_imatrix_mfind (Stack stack, int rhs, int opt, int lhs)
 	goto err;
       if ( GetScalarDouble(stack, i+1, &scalars[j]) == FAIL )
 	goto err;
-    } 
+    }
 
   if ( (ind = malloc((m+1)*sizeof(NspMatrix *))) == NULL )
     goto err;
@@ -2739,7 +2739,7 @@ int_imatrix_mfind (Stack stack, int rhs, int opt, int lhs)
   free(ind);
   return RET_BUG;
 }
-#endif 
+#endif
 
 /*
  *  ndind2ind
@@ -2760,7 +2760,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
   if ( (Dims = GetIMat(stack, 1)) == NULLIMAT )
     return RET_BUG;
 
-  nd = Dims->mn; 
+  nd = Dims->mn;
 
   if ( rhs - 1 != nd )
     {
@@ -2794,7 +2794,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
     {
       if ( (ndind[i-2] =  GetIMat(stack, i)) == NULLIMAT )
 	goto err;
-    } 
+    }
 
   if ( nsp_imatrix_ndind2ind(dims, nd, ndind, &ind) == FAIL )
     goto err;
@@ -2810,7 +2810,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
   free(ndind);
   return RET_BUG;
 }
-#endif 
+#endif
 
 
 /*
@@ -2823,7 +2823,7 @@ int int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
   NspIMatrix *R;
   CheckRhs (1, 1);
   CheckLhs (0, 1);
-  if ( IsSMatObj(stack,1)) 
+  if ( IsSMatObj(stack,1))
     {
       int rep;
       NSP_ITYPE_NAMES(names);
@@ -2833,14 +2833,14 @@ int int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
   else
     {
       NspIMatrix *A;
-      if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+      if ((A = GetIMat (stack, 1)) == NULLIMAT)
 	return RET_BUG;
       itype = A->itype;
     }
   NSP_MAX_ITYPE(val,itype);
   if ((R = nsp_imatrix_create(NVOID,1,1,itype))== NULLIMAT)
     return RET_BUG;
-#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
+#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break;
   NSP_ITYPE_SWITCH(itype,IMAT_INTM,"");
 #undef IMAT_INTM
   MoveObj(stack,1,NSP_OBJECT(R));
@@ -2855,7 +2855,7 @@ int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
   NspIMatrix *R;
   CheckRhs (1, 1);
   CheckLhs (0, 1);
-  if ( IsSMatObj(stack,1)) 
+  if ( IsSMatObj(stack,1))
     {
       int rep;
       NSP_ITYPE_NAMES(names);
@@ -2865,14 +2865,14 @@ int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
   else
     {
       NspIMatrix *A;
-      if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+      if ((A = GetIMat (stack, 1)) == NULLIMAT)
 	return RET_BUG;
       itype = A->itype;
     }
   NSP_MIN_ITYPE(val,itype);
   if ((R = nsp_imatrix_create(NVOID,1,1,itype))== NULLIMAT)
     return RET_BUG;
-#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
+#define IMAT_INTM(name,type,arg) R->name[0] = val.name;break;
   NSP_ITYPE_SWITCH(itype,IMAT_INTM,"");
 #undef IMAT_INTM
   MoveObj(stack,1,NSP_OBJECT(R));
@@ -2881,7 +2881,7 @@ int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
 
 
 static int int_unique( Stack stack, int rhs, int opt, int lhs)
-{ 
+{
   Boolean first_ind;
   NspIMatrix *x;
   NspMatrix *occ, **Occ=NULL;
@@ -2897,28 +2897,28 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   const char *which_possible_choices[]={ "elements", "rows", "columns", NULL };
   int rep_ind_type, rep_which;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type, &which) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type, &which) == FAIL )
     return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
-  
+
   if ( ind_type != NULL )
     {
-      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 )
 	{
 	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
 	  return RET_BUG;
-	} 
+	}
       itype = ind_type_possible_choices[rep_ind_type][0];
     }
-  
+
   if ( which != NULL )
     {
-      if ( (rep_which= is_string_in_array(which, which_possible_choices,0)) == -1 ) 
+      if ( (rep_which= is_string_in_array(which, which_possible_choices,0)) == -1 )
 	{
 	  string_not_in_array(stack, which, which_possible_choices, "optional argument which");
 	  return RET_BUG;
-	} 
+	}
       iwhich = which_possible_choices[rep_which][0];
     }
 
@@ -2946,8 +2946,8 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
-  NSP_OBJECT(x)->ret_pos = 1; 
-  if ( lhs >= 2 ) 
+  NSP_OBJECT(x)->ret_pos = 1;
+  if ( lhs >= 2 )
     {
       MoveObj(stack,2,NSP_OBJECT(ind));
       if ( lhs >= 3 )
@@ -2981,19 +2981,19 @@ int_imatrix_issorted (Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack, rhs, opt, opts, &flag, &strict_order) == FAIL )
     return RET_BUG;
 
-  if ( flag != NULL) 
+  if ( flag != NULL)
     {
       rep = is_string_in_array(flag, flags_list, 1);
-      if ( rep < 0 ) 
+      if ( rep < 0 )
 	{
 	  string_not_in_array(stack, flag, flags_list, "optional argument");
 	  return RET_BUG;
 	}
     }
-  
+
   if ( (Res = nsp_imatrix_issorted(A, rep, strict_order)) == NULLBMAT )
     return RET_BUG;
-  
+
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
 }
@@ -3002,14 +3002,14 @@ int_imatrix_issorted (Stack stack, int rhs, int opt, int lhs)
 nsp_string nsp_dec2base( guint64 n,const char *str_base )
 {
   nsp_string str=NULL;
-  char basic[64]; 
+  char basic[64];
   int base = strlen(str_base), count=0, i;
   /* check that str_base contains unique symbols ? */
   while (1)
     {
       int rem = n % base;
       basic[count]= str_base[rem];
-      n /= base; 
+      n /= base;
       count++;
       if ( n == 0) break;
     }
@@ -3019,8 +3019,8 @@ nsp_string nsp_dec2base( guint64 n,const char *str_base )
   return str;
 }
 
-/* function dec2base 
- * similar to octave but no padding with leading zeros 
+/* function dec2base
+ * similar to octave but no padding with leading zeros
  */
 
 int int_dec2base(Stack stack, int rhs, int opt, int lhs)
@@ -3039,24 +3039,24 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
   if ( IsIMatObj(stack,1) )
     {
       if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
-      if ( IA->itype != nsp_guint64) 
+      if ( IA->itype != nsp_guint64)
 	{
 	  Scierror ("Error: integer matrix argument for %s should be of uint64 subtype\n", NspFname(stack));
 	  return RET_BUG;
 	}
     }
-  else 
+  else
     {
       if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
     }
-  
+
   if ( rhs -opt == 2 )
     {
       if ( IsMatObj(stack,2) )
 	{
-	  int ibase; 
+	  int ibase;
 	  if (GetScalarInt(stack,2,&ibase) == FAIL) return RET_BUG;
-	  if ( !(ibase >= 2 && ibase <= 36 )) 
+	  if ( !(ibase >= 2 && ibase <= 36 ))
 	    {
 	      Scierror("Error: base should be in [2,36]\n");
 	      return RET_BUG;
@@ -3079,13 +3079,13 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( A != NULL ) 
+  if ( A != NULL )
     {
-      if ( ( M =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) 
+      if ( ( M =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))
 	   == NULLSMAT) return RET_BUG;
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	if ((str =nsp_dec2base((guint64) A->R[i],base)) == NULL) 
+	if ((str =nsp_dec2base((guint64) A->R[i],base)) == NULL)
 	  {
 	    nsp_smatrix_destroy(M);
 	    return RET_BUG;
@@ -3095,11 +3095,11 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if ( ( M =nsp_smatrix_create_with_length(NVOID,IA->m,IA->n,-1)) 
+      if ( ( M =nsp_smatrix_create_with_length(NVOID,IA->m,IA->n,-1))
 	   == NULLSMAT) return RET_BUG;
       for ( i = 0 ; i < IA->mn ; i++ )
 	{
-	  if ((str =nsp_dec2base( IA->Guint64[i],base)) == NULL) 
+	  if ((str =nsp_dec2base( IA->Guint64[i],base)) == NULL)
 	    {
 	      nsp_smatrix_destroy(M);
 	      return RET_BUG;
@@ -3114,12 +3114,12 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * nsp_base2dec:
- * @n: 
- * @base: 
- * 
- * 
- * 
- * Returns: 
+ * @n:
+ * @base:
+ *
+ *
+ *
+ * Returns:
  **/
 
 guint64 nsp_base2dec(const char *n, int base)
@@ -3129,13 +3129,13 @@ guint64 nsp_base2dec(const char *n, int base)
   for ( i = 0 ; i < len  ; i++ )
     {
       code = n[i];
-      if ( code >= '0' && code <= '9') 
+      if ( code >= '0' && code <= '9')
 	code -= '0';
-      else if ( code >= 'a' && code <= 'z') 
+      else if ( code >= 'a' && code <= 'z')
 	code -= 'a' - 10;
-      else if ( code >= 'A' && code <= 'Z') 
+      else if ( code >= 'A' && code <= 'Z')
 	code -= 'A' - 10;
-      else 
+      else
 	code = 0;
       res = base*res + code;
     }
@@ -3151,12 +3151,12 @@ guint64 nsp_strbase2dec(const char *n, const char *base)
     {
       int ok=0;
       for ( j = 0 ; j < lenb ; j++)
-	if ( n[i]== base[j]) 
+	if ( n[i]== base[j])
 	  {
 	    res = lenb*res + j;
 	    ok = 1;
 	  }
-      if ( ok == 0 ) return 0.0/0.0; 
+      if ( ok == 0 ) return 0.0/0.0;
     }
   return res;
 }
@@ -3178,7 +3178,7 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
       if ( IsMatObj(stack,2) )
 	{
 	  if (GetScalarInt(stack,2,&base) == FAIL) return RET_BUG;
-	  if ( base < 2 || base > 36 ) 
+	  if ( base < 2 || base > 36 )
 	    {
 	      Scierror("base should be in [2,36]\n");
 	      return RET_BUG;
@@ -3203,10 +3203,10 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
       if ((IA = nsp_imatrix_create(NVOID,M->m,M->n, nsp_guint64)) == NULLIMAT)
 	return RET_BUG;
       if ( strbase != NULL )
-	for ( i = 0 ; i < IA->mn ; i++) 
+	for ( i = 0 ; i < IA->mn ; i++)
 	  IA->Guint64[i]= nsp_strbase2dec(M->S[i],strbase);
       else
-	for ( i = 0 ; i < IA->mn ; i++) 
+	for ( i = 0 ; i < IA->mn ; i++)
 	  IA->Guint64[i]= nsp_base2dec(M->S[i], base);
       MoveObj(stack,1,NSP_OBJECT(IA));
     }
@@ -3216,20 +3216,20 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
       if ((A = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT)
 	return RET_BUG;
       if ( strbase != NULL )
-	for ( i = 0 ; i < A->mn ; i++) 
+	for ( i = 0 ; i < A->mn ; i++)
 	  A->R[i]= nsp_strbase2dec(M->S[i],strbase);
       else
-	for ( i = 0 ; i < A->mn ; i++) 
+	for ( i = 0 ; i < A->mn ; i++)
 	  A->R[i]= nsp_base2dec(M->S[i], base);
       MoveObj(stack,1,NSP_OBJECT(A));
     }
   return 1;
 }
 
-/* interface for the  nsp_ext_euclide function 
+/* interface for the  nsp_ext_euclide function
  */
 
-typedef enum { comp_lcm , comp_euclide } euclide_type; 
+typedef enum { comp_lcm , comp_euclide } euclide_type;
 
 
 int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etype)
@@ -3243,7 +3243,7 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
     {
       if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
     }
-  else 
+  else
     {
       if ((A = GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
     }
@@ -3257,20 +3257,20 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
 	}
       CheckSameDims(NspFname(stack),1,2,IA,IB);
     }
-  else 
+  else
     {
       if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
       CheckSameDims(NspFname(stack),1,2,A,B);
     }
 
-  if ( (A != NULL && B== NULL) || 
+  if ( (A != NULL && B== NULL) ||
        (A == NULL && B!= NULL))
     {
       Scierror("Error: A and B should be both int matrices or double matrices\n");
       return RET_BUG;
     }
-  
-  if ( A != NULL ) 
+
+  if ( A != NULL )
     {
       NspCells *U = NULL;
       NspMatrix *res=NULL, *det=NULL,*Ue=NULL;
@@ -3281,7 +3281,7 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
 	  if (( U= nsp_cells_create(NVOID, A->m,A->n)) == NULL)
 	    return RET_BUG;
 	}
-      if ( lhs >= 3) 
+      if ( lhs >= 3)
 	{
 	  if (( det =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
 	    return RET_BUG;
@@ -3298,7 +3298,7 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
 	      for ( j=0; j < 4; j++) Ue->R[j]=iU[j];
 	      U->objs[i]= (NspObject *) Ue;
 	    }
-	  if ( lhs >= 3 ) 
+	  if ( lhs >= 3 )
 	    {
 	      /* return the value of det */
 	      det->R[i]=idet;
@@ -3351,7 +3351,7 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
 	    case comp_euclide:   res->name[i]=igcd; break;		\
 	    case comp_lcm:  res->name[i]= -igcd*iU[3]*iU[2];break;	\
 	    }								\
-	} break;							
+	} break;
       NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE,"");
 #undef IMAT_EUCLIDE
 
@@ -3376,7 +3376,7 @@ int int_ext_lcm(Stack stack, int rhs, int opt, int lhs)
 
 
 
-/* 
+/*
  *  B = scale_rows(A,x,op='*'|'/')  (exists as a method but useful as a function too)
  *
  */
@@ -3384,7 +3384,7 @@ int int_ext_lcm(Stack stack, int rhs, int opt, int lhs)
 static int int_imatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A, *x;
-  char *op=NULL; char ope='*'; 
+  char *op=NULL; char ope='*';
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(1,1);
@@ -3396,7 +3396,7 @@ static int int_imatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
   if ((x = GetIMat (stack, 2)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),2,x);
   if ( x->mn != A->m )
-    { 
+    {
       Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
       return RET_BUG;
     }
@@ -3404,7 +3404,7 @@ static int int_imatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
   if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
     return RET_BUG;
 
-  if ( op != NULL) 
+  if ( op != NULL)
     {
       if ( strcmp(op,"*") == 0 )
 	ope = '*';
@@ -3420,18 +3420,18 @@ static int int_imatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_imatrix_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
-  NSP_OBJECT(A)->ret_pos = 1; 
+  NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
-/* 
+/*
  *  B = scale_cols(A,x,op='*'|'/')  (exists as a method but useful as a function too)
  *
  */
 static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A, *x;
-  char *op=NULL; char ope='*'; 
+  char *op=NULL; char ope='*';
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(1,1);
@@ -3443,7 +3443,7 @@ static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
   if ((x = GetIMat (stack, 2)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),2,x);
   if ( x->mn != A->n )
-    { 
+    {
       Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
       return RET_BUG;
     }
@@ -3451,7 +3451,7 @@ static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
   if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
     return RET_BUG;
 
-  if ( op != NULL) 
+  if ( op != NULL)
     {
       if ( strcmp(op,"*") == 0 )
 	ope = '*';
@@ -3467,11 +3467,11 @@ static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_imatrix_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
-  NSP_OBJECT(A)->ret_pos = 1; 
+  NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
-/* 
+/*
  *   nnz(A)  number of non zero elements of A (exists as a method under
  *           the name get_nnz)
  *
@@ -3495,8 +3495,8 @@ static int int_imatrix_setrowscols(Stack stack, int rhs, int opt, int lhs)
 
   ObjA = NthObj(1); HOBJ_GET_OBJECT(ObjA, RET_BUG);
   ObjB = NthObj(rhs); HOBJ_GET_OBJECT(ObjB, RET_BUG);
-  
-  if ( ((NspIMatrix *) ObjA)->itype != ((NspIMatrix *) ObjB)->itype) 
+
+  if ( ((NspIMatrix *) ObjA)->itype != ((NspIMatrix *) ObjB)->itype)
     {
       Scierror("Error: the two matrices should share the same integer type \n");
       return RET_BUG;
@@ -3505,7 +3505,171 @@ static int int_imatrix_setrowscols(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * The Interface for basic matrices operation 
+ * ones   Ones array.
+ *   ones(N) is an N-by-N matrix of ones.
+ *   ones(M,N) or ones([M,N]) is an M-by-N matrix of ones.
+ *   ones(M,N,P,...) or ones([M N P ...]) is an M-by-N-by-P-by-... array of   ones.
+ *   ones(SIZE(A)) is the same size as A and all ones.
+ *   ones with no arguments is the scalar 1.
+ *   ones(M,N,...,CLASSNAME) or ones([M,N,...],CLASSNAME) is an M-by-N-by-...
+ *   array of ones of class CLASSNAME.
+ *   Example:
+ *      x = ones(2,3,'int8');
+ *    See also EYE, ZEROS.
+ */
+
+typedef NspMatrix *(*M_func) (int m, int n);
+typedef NspIMatrix *(*IM_func) (int m, int n,nsp_itype itype);
+typedef NspBMatrix *(*BM_func) (int m, int n);
+
+static int int_imatrix_ones_gen(Stack stack, int rhs, int opt, int lhs, M_func F, IM_func IF, BM_func BF)
+{
+  int type=0,itype=0;
+  nsp_option opts[] ={{"type",string,NULLOBJ,-1},
+		      {"like",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *type_str = NULL;
+  NspObject *Like = NULLOBJ;
+  int m1, n1;
+  NspObject *Obj;
+  CheckStdRhsMin(1);
+  CheckLhs (1, 1);
+  if ( get_optional_args(stack, rhs, opt, opts, &type_str,&Like ) == FAIL )
+    return RET_BUG;
+  if ( type_str != NULL && Like != NULL)
+    {
+      Scierror("Error: in %s, like and type are both present as optional arguments\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ( type_str != NULL )
+    {
+      const char *names[]={"double","boolean","m","b",NULL};
+      const int  inames[]={0,1,0,1,0};
+      NSP_ITYPE_NAMES(names1);
+      int rep;
+      if ((rep = is_string_in_array(type_str,names,1)) >=0  )
+	{
+	  type = inames[rep];
+	}
+      else if ((rep = is_string_in_array(type_str,names1,1)) >= 0 )
+	{
+	  itype = (nsp_itype) rep;
+	  /* we do not use int and uint */
+	  if ( itype == nsp_gint ) itype = nsp_gint32;
+	  else if ( itype == nsp_guint ) itype = nsp_guint32;
+	  type = 2;
+	}
+      else
+	{
+	  Scierror("Error: in %s, unkown type %s\n",NspFname(stack),type_str);
+	  return RET_BUG;
+	}
+    }
+  if ( Like != NULL )
+    {
+      if ( IsMat(Like) )
+	type = 0;
+      else if ( IsBMat(Like))
+	type = 1;
+      else if ( IsIMat(Like))
+	{
+	  type = 2; itype = ((NspIMatrix *) Like)->itype;
+	}
+      else
+	{
+	  Scierror("Error: in %s, optional argument like has a wrong type\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( rhs - opt == 1)
+    {
+      NspIMatrix *M;
+      if ((M = GetIMat (stack, 1)) == NULLIMAT)
+	return RET_BUG;
+      switch ( M->mn )
+	{
+	case 0:
+	  Scierror("Error: in %s, size vector cannot be an empty matrix\n",NspFname(stack));
+	  return RET_BUG;
+	case 1:
+#define NSP_IMAT_SCAL(name,type,arg) m1 = (int) M->name[arg]
+	  NSP_ITYPE_SWITCH(M->itype,NSP_IMAT_SCAL,0);
+#undef NSP_IMAT_SCAL
+	  n1=m1;
+	  break;
+	case 2:
+#define NSP_IMAT_SCAL(name,type,arg) m1 = (int) M->name[arg]
+	  NSP_ITYPE_SWITCH(M->itype,NSP_IMAT_SCAL,0);
+#undef NSP_IMAT_SCAL
+#define NSP_IMAT_SCAL(name,type,arg) n1 = (int) M->name[arg]
+	  NSP_ITYPE_SWITCH(M->itype,NSP_IMAT_SCAL,1);
+#undef NSP_IMAT_SCAL
+	  break;
+	default :
+	  Scierror("Error: in %s, size vector is too long\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      NspIMatrix *IM1,*IM2;
+      if (rhs - opt > 2 )
+	{
+	  Scierror("Error: in %s, n-arrays are not implemented, max dimensions is two\n",
+		   NspFname(stack));
+	  return RET_BUG;
+	}
+      if ((IM1=GetScalarIMat(stack,1)) == NULL)
+	return RET_BUG;
+#define NSP_IMAT_SCAL(name,type,arg) m1 = (int) IM1->name[arg]
+	  NSP_ITYPE_SWITCH(IM1->itype,NSP_IMAT_SCAL,0);
+#undef NSP_IMAT_SCAL
+      if ( rhs - opt == 2 )
+	{
+	  if ((IM2=GetScalarIMat(stack,2)) == NULL)
+	    return RET_BUG;
+#define NSP_IMAT_SCAL(name,type,arg) n1 = (int) IM1->name[arg]
+	  NSP_ITYPE_SWITCH(IM2->itype,NSP_IMAT_SCAL,0);
+#undef NSP_IMAT_SCAL
+	}
+      else
+	{
+	  n1 = m1;
+	}
+    }
+  if ( type_str == NULL && Like == NULL)  type =0;
+
+  switch (type)
+    {
+    default:
+    case 0: Obj = (NspObject *) (*F) (m1, n1); break;
+    case 1: Obj = (NspObject *) (*BF)(m1, n1); break;
+    case 2: Obj = (NspObject *) (*IF)(m1, n1,itype);break;
+    }
+  if ( Obj == NULL) return RET_BUG;
+  MoveObj (stack, 1, Obj);
+  return 1;
+}
+
+int int_ones_i (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_ones_gen(stack, rhs, opt, lhs, nsp_mat_ones, nsp_imatrix_ones,  nsp_bmatrix_ones);
+}
+
+int int_eye_i (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_ones_gen(stack, rhs, opt, lhs, nsp_mat_eye, nsp_imatrix_eye, nsp_bmatrix_eye);
+}
+
+int int_zeros_i (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_ones_gen(stack, rhs, opt, lhs, nsp_mat_zeros, nsp_imatrix_zeros, nsp_bmatrix_zeros);
+}
+
+
+/*
+ * The Interface for basic matrices operation
  */
 
 static OpTab IMatrix_func[]={
@@ -3515,10 +3679,10 @@ static OpTab IMatrix_func[]={
   {"impl_i", int_imatrix_impl},
   {"dec2base", int_dec2base},
   {"base2dec", int_base2dec},
-  {"extract_i", int_matint_extract}, 
-  {"extractelts_i", int_matint_extractelts}, 
-  {"extractcols_i", int_matint_extractcols}, 
-  {"extractrows_i", int_matint_extractrows_gen}, 
+  {"extract_i", int_matint_extract},
+  {"extractelts_i", int_matint_extractelts},
+  {"extractcols_i", int_matint_extractcols},
+  {"extractrows_i", int_matint_extractrows_gen},
   {"resize2vect_i", int_matint_resize2vect},
   {"setrowscols_i", int_imatrix_setrowscols},
   {"deleteelts_i", int_matint_deleteelts},
@@ -3543,8 +3707,8 @@ static OpTab IMatrix_func[]={
   {"diagcre_i",int_imatrix_diagcre},
   {"diage_i",int_imatrix_diage},
   {"m2i",int_imatrix_m2i},
-  {"redim_i",int_matint_redim}, 
-  {"reshape_i",int_matint_redim}, 
+  {"redim_i",int_matint_redim},
+  {"reshape_i",int_matint_redim},
   {"matrix_i", int_matint_redim},
   {"resize_i",int_imatrix_resize},
   {"eq_i_i" ,  int_imatrix_eq },
@@ -3565,7 +3729,7 @@ static OpTab IMatrix_func[]={
   {"sort_i", int_imatrix_sort},
   {"gsort_i", int_imatrix_sort},
   {"diff_i", int_imatrix_diff},
-  {"minmax_i", int_imatrix_minmax},  
+  {"minmax_i", int_imatrix_minmax},
   {"max_i", int_imatrix_maxi},
   {"max_i_i", int_imatrix_maxi},
   {"min_i", int_imatrix_mini},
@@ -3595,14 +3759,14 @@ static OpTab IMatrix_func[]={
   {"mod_i_i", int_imatrix_mod},
   {"dsl_i_i", int_imatrix_divel},
   {"dprim_i", int_imatrix_quote},
-  {"unique_i", int_unique}, 
+  {"unique_i", int_unique},
   {"plus_i_i", int_imatrix_dadd},
   {"minus_i_i", int_imatrix_dsub},
   {"minus_i", int_imatrix_minus},
   {"scale_rows_i_i", int_imatrix_scale_rows},
   {"scale_cols_i_i", int_imatrix_scale_cols},
   {"nnz_i", int_imatrix_nnz},
-  {"dst_i_i", int_imatrix_multel}, 
+  {"dst_i_i", int_imatrix_multel},
   {"dstd_i_i", int_imatrix_kron},
   {"dbs_i_i", int_imatrix_backdivel},
   {"sign_i", int_imatrix_sign},
@@ -3611,14 +3775,16 @@ static OpTab IMatrix_func[]={
   {"issorted_i", int_imatrix_issorted},
   {"div_i_i", int_imatrix_div},
   {"hat_i_i", int_imatrix_pow},
-
+  {"zeros_i",int_zeros_i},
+  {"ones_i",int_ones_i},
+  {"eye_i",int_eye_i},
 #if 0
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
   {"mfind_i", int_imatrix_mfind},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
-#endif 
+#endif
 
   {(char *) 0, NULL}
 };
@@ -3629,7 +3795,7 @@ int IMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
    (for adding or removing functions) **/
 
 void IMatrix_Interf_Info(int i, char **fname, function (**f))
@@ -3639,7 +3805,7 @@ void IMatrix_Interf_Info(int i, char **fname, function (**f))
 }
 
 
-/* wrapper for m2i conversions 
+/* wrapper for m2i conversions
  */
 
 static int int_m2i_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
@@ -3647,11 +3813,11 @@ static int int_m2i_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
   NspIMatrix *Res,*IM;
   NspMatrix *M;
   CheckRhs(1,2);
-  
-  if ( IsMatObj(stack,1) ) 
+
+  if ( IsMatObj(stack,1) )
     {
       if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-      if ( rhs - opt ==  1) 
+      if ( rhs - opt ==  1)
 	{
 	  if ((Res= nsp_matrix_to_imatrix(M, nsp_guint32))==NULL)
 	    return RET_BUG;
@@ -3681,9 +3847,9 @@ static int int_m2i_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
 }
 
 /*
- * Interface for IMatrix/Matrix Operations 
+ * Interface for IMatrix/Matrix Operations
  * which involves a conversion m2i + use of the imatrix interface.
- * 
+ *
  */
 
 #include "nsp/matrix-in.h"
@@ -3716,7 +3882,7 @@ int M2iMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(M2iMatrix_func[i].wrapper))(stack,rhs,opt,lhs,M2iMatrix_func[i].fonc);
 }
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
    (for adding or removing functions) **/
 
 void M2iMatrix_Interf_Info(int i, char **fname, function (**f))
@@ -3724,6 +3890,3 @@ void M2iMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = M2iMatrix_func[i].name;
   *f = M2iMatrix_func[i].fonc;
 }
-
-
-
