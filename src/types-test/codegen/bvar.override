@@ -204,7 +204,7 @@ int nsp_bvar_print(NspBvar *M, int indent,const char *name, int rec_level)
     }
   else
     {
-      Sciprintf1(indent,"%s\t= name=\"%s\",symbolic=%s,type=%s, size=[%d,%d]\n",
+      Sciprintf1(indent,"%s\t= name=\"%s\",symbolic=%s,type=%s,size=[%d,%d]\n",
 		 pname,M->varname, (M->sym == TRUE ) ? "%t" : "%f",
 		 nsp_object_type_as_string(M->value),
 		 nsp_object_get_size(M->value,0),
