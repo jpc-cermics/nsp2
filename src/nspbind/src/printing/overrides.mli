@@ -15,7 +15,7 @@
 (* $Id$ *)
 
 type override_keywords =
-    OVERRIDE_ATTR
+  | OVERRIDE_ATTR
   | OVERRIDE_FIELD_VOID_POINTER_COPY
   | OVERRIDE_SLOT
   | HEADERS

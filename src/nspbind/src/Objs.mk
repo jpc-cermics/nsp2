@@ -78,7 +78,8 @@ BASICS_ML_ONLY_FILES=\
  $(BASICS_DIR)/path_print.ml\
 
 BASICS_ML_FILES=\
- $(BASICS_DIR)/lib_print.ml\
+ $(BASICS_DIR)/og_precedence.ml\
+ $(BASICS_DIR)/og_printer.ml\
  $(BASICS_DIR)/location.ml\
  $(BASICS_DIR)/location_print.ml\
  $(BASICS_DIR)/path.ml\
@@ -88,7 +89,9 @@ BASICS_BYT_OBJS=\
  $(BASICS_ML_FILES:.ml=.cmo)\
 
 BASICS_MLI_FILES=\
- $(BASICS_DIR)/lib_print.mli\
+ $(BASICS_DIR)/og_types.mli\
+ $(BASICS_DIR)/og_precedence.mli\
+ $(BASICS_DIR)/og_printer.mli\
  $(BASICS_DIR)/location.mli\
  $(BASICS_DIR)/location_print.mli\
  $(BASICS_DIR)/path.mli\
