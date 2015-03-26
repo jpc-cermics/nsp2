@@ -796,10 +796,13 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+extern function int_class_create;
+
 static OpTab ClassA_func[]={
   { "clatest", _wrap_clatest},
   { "setrowscols_classa", _wrap_setrowscols_classa},
   { "classa_create", int_classa_create},
+  { "class_create", int_class_create},
   { NULL, NULL}
 };
 
