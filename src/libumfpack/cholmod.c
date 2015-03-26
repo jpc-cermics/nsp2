@@ -26,7 +26,6 @@
  * which are ZOMPLEX. 
  * For full matrices COMPLEX is preferred since it is the default 
  * in Nsp.
- *
  * 
  */
 
