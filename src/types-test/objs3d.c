@@ -27,9 +27,9 @@
 #line 70 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 35 "objs3d.c"
 
@@ -113,8 +113,8 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure;
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_objs3d_invalidate;
 
@@ -811,7 +811,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   double rho;
   if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
 
-  if ( ((NspObjs3d *) self)->obj->rho != rho) 
+  if ( ((NspObjs3d *) self)->obj->rho != rho)
     {
       ((NspObjs3d *) self)->obj->rho = rho;
       nsp_objs3d_invalidate((NspGraphic *) self);
@@ -919,20 +919,20 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
 
 #line 122 "codegen/objs3d.override"
 
-/* here we override get_obj  and set_obj 
- * we want get to be followed by a set to check that 
+/* here we override get_obj  and set_obj
+ * we want get to be followed by a set to check that
  * inserted value is correct thus we use copy = TRUE.
  */
 
 static NspObject *_wrap_objs3d_get_obj_children(void *self,char *attr, int *copy)
 {
   NspList *ret;
-  *copy = TRUE; 
+  *copy = TRUE;
   ret = ((NspList*) ((NspObjs3d *) self)->obj->children);
   return (NspObject *) ret;
 }
 
-/* in this function we can check that val is correct before 
+/* in this function we can check that val is correct before
  * setting the field with val. return FAIL if val is incorrect.
  */
 
@@ -941,15 +941,15 @@ static int _wrap_objs3d_set_obj_children(void *self,NspObject *val)
   double inside_bounds[6];
   if ( ! IsList(val) ) return FAIL;
   if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
-  if (((NspObjs3d *) self)->obj->children != NULL ) 
+  if (((NspObjs3d *) self)->obj->children != NULL )
     {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+      if ( ((NspGraphic *) self)->obj->Fig != NULL)
 	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
       nsp_list_destroy(((NspObjs3d *) self)->obj->children);
     }
   ((NspObjs3d *) self)->obj->children =  (NspList *) val;
   nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+  if ( ((NspGraphic *) self)->obj->Fig != NULL)
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspObjs3d *) self)->obj);
   return OK;
 }
@@ -960,15 +960,15 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
   NspList *children;
   if ( ! IsList(O) ) return FAIL;
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspObjs3d *) self)->obj->children != NULL ) 
+  if (((NspObjs3d *) self)->obj->children != NULL )
     {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+      if ( ((NspGraphic *) self)->obj->Fig != NULL)
 	nsp_list_unlink_figure(((NspObjs3d *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
       nsp_list_destroy(((NspObjs3d *) self)->obj->children);
     }
   ((NspObjs3d *) self)->obj->children= children;
   nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+  if ( ((NspGraphic *) self)->obj->Fig != NULL)
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig, ((NspObjs3d *) self)->obj);
   return OK;
 }
@@ -1159,7 +1159,7 @@ static AttrTab objs3d_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -1171,7 +1171,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -1225,10 +1225,10 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if ( Obj->obj->show == FALSE ) return;
 
   if ( rect != NULL) rect_a = *rect;
-  
+
   /* get the objs3d bounding rectangle */
-  
-  if ( P->obj->top == TRUE ) 
+
+  if ( P->obj->top == TRUE )
     {
       int wdim[2];
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
@@ -1239,7 +1239,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     }
   else
     {
-      /* non top level axe 
+      /* non top level axe
        * P->obj->wrect gives the position in father (up,left,w,h)
        */
       nsp_objs3d *A = ((NspGraphic *) P)->obj->Axe;
@@ -1248,7 +1248,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 		       &clip_axe.width,&clip_axe.height,1);
     }
 
-  if ( rect != NULL) 
+  if ( rect != NULL)
     {
       /*
        * check if we are in the draw zone given by rect
@@ -1259,25 +1259,25 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* we change the scale according to the objs3d */
   /* getscale2d(Xgc,WRect,FRect,logscale,ARect);*/
 
-  if ( P->obj->top == TRUE ) 
+  if ( P->obj->top == TRUE )
     {
-      /* This is a top level objs3d, wrect gives the objs3d position in the 
-       * enclosing graphic window. 
+      /* This is a top level objs3d, wrect gives the objs3d position in the
+       * enclosing graphic window.
        */
-      if ( Xgc->scales->scale_3drot_flag == FALSE) 
+      if ( Xgc->scales->scale_3drot_flag == FALSE)
 	set_scale(Xgc->scales,NULL,P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       wrect1= P->obj->wrect->R;
     }
-  else 
+  else
     {
       nsp_objs3d *A = ((NspGraphic *) P)->obj->Axe;
       double *ARect = A->arect->R, *FRect = A->frect->R, WRect1[4];
-      /* This is not a top level axes, we draw its enclosing rectangle 
+      /* This is not a top level axes, we draw its enclosing rectangle
        * if alpha is non nul we should draw a rotated rectangle
        */
       Xgc->graphic_engine->scale->drawrectangle(Xgc,P->obj->wrect->R);
-      /* wrect->R is [left,up,w,h] 
-       * we need to compute wrect->R in term on window/proportions 
+      /* wrect->R is [left,up,w,h]
+       * we need to compute wrect->R in term on window/proportions
        */
       WRect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
       WRect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
@@ -1287,35 +1287,35 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       Xgc->scales->cosa= cos( P->obj->rho);
       Xgc->scales->sina= sin( P->obj->rho);
     }
-  
-  if ( Xgc->scales->scale_3drot_flag == FALSE ) 
+
+  if ( Xgc->scales->scale_3drot_flag == FALSE )
     nsp_axes_update_frame_bounds(Xgc,wrect1,P->obj->frect->R,
 				 P->obj->arect->R,
 				 aaint,
 				 TRUE,
 				 TRUE,
 				 xf);
-  
+
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_3D_to_opengl(Xgc);
-  
+
   /* update inside bounds */
 
-  if (  P->obj->fixed == FALSE ) 
+  if (  P->obj->fixed == FALSE )
     {
-      /* actualize the inside bounds with objects 
-       * this should not be done systematically 
+      /* actualize the inside bounds with objects
+       * this should not be done systematically
        */
       nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
     }
-  else 
+  else
     {
       /* update inside_bounds with fixed data */
       memcpy(inside_bounds,P->obj->ebox->R,6*sizeof(double));
     }
-  
-  if ( 0) 
-    axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+
+  if ( 0)
+    axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1',
 	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1, -1);
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
@@ -1324,13 +1324,13 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
 
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
-  
-  /* Note that clipping is wrong when an axe is rotated 
-   * since clipping only works with rectangles 
+
+  /* Note that clipping is wrong when an axe is rotated
+   * since clipping only works with rectangles
    */
-  
+
   /* title if present */
-  if ( P->obj->title[0] != '\0') 
+  if ( P->obj->title[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
 
   /* scale back */
@@ -1340,8 +1340,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
 
 
-/* compute the bounds of the set of objects countained in the 
- * objs3d 
+/* compute the bounds of the set of objects countained in the
+ * objs3d
  */
 
 static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
@@ -1353,23 +1353,23 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
   NspObjs3d *P = (NspObjs3d *) Obj;
   L = P->obj->children;
   cloc = L->first ;
-  
-  if ( cloc == NULLCELL) 
+
+  if ( cloc == NULLCELL)
     {
       bounds[0]=bounds[1]=bounds[2]=bounds[3]=bounds[4]=bounds[5]=0;
       return;
     }
-  
+
   bounds[0]=bounds[2]=bounds[4]=LARGEST_REAL;
   bounds[1]=bounds[3]=bounds[5]=-LARGEST_REAL;
 
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  if ( G->type->bounds(G,l_bounds) == TRUE )
-	    for ( i = 0 ; i < 3 ; i++) 
+	    for ( i = 0 ; i < 3 ; i++)
 	      {
 		if ( l_bounds[2*i] < bounds[2*i] )   bounds[2*i]= l_bounds[2*i];
 		if ( l_bounds[2*i+1] > bounds[2*i+1])   bounds[2*i+1]= l_bounds[2*i+1];
@@ -1405,7 +1405,7 @@ static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of objs3d 
+/* compute in bounds the enclosing rectangle of objs3d
  *
  */
 
@@ -1484,25 +1484,25 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   int flagx;
   /* should be shared */
   int foreground_color;
-  /* 
+  /*
 
   int background_color;
   */
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_draw_3d_obj_ogl(Xgc,Obj,theta,alpha,legend,flag,ebox,with_box,box_color,box_style);
       nsp_ogl_set_2dview(Xgc);
-      return; 
+      return;
     }
 #endif
-  
+
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   /*
   background_color = flagx+2;
   */
-  /* allocate a structure for drawing purpose 
+  /* allocate a structure for drawing purpose
    * The unchanged values are kept in Lobj
    */
 
@@ -1513,7 +1513,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   cloc = Children->first ;
   nf = 0;
 
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
       NspGraphic *G = (NspGraphic *) cloc->O;
       nf += G->type->n_faces(Xgc,G);
@@ -1522,38 +1522,38 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
   x[0]= Box[0];y[0]= Box[1];zz[0]= Box[2];
   x[1]= Box[3];y[1]= Box[4];zz[1]= Box[5];
-  
+
   nsp_plot3d_update_bounds(Xgc,"box",x,y,zz,&two,&two,&theta,&alpha,legend,&flag[1],
 			   ebox,&zzmin,&zzmax,param3d_t);
   SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
 
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
   /* transmit info to opengl pretending we are doing 2d !!! */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_2dview(Xgc);
     }
 #endif
-  
+
   lim[0] = 1.e+10;
   lim[1] = 1.e+10;
   lim[2] = - 1.e+10;
 
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
- 
+
 #ifdef ALLOC_OBJ
   HF= malloc( nf * sizeof(HFstruct) );
   z = malloc( nf * sizeof(double) );
   p = malloc( nf * sizeof(int) );
   /* just to accelerate next step */
   objs_array = malloc( nbObj*sizeof(NspObject *));
-#else 
+#else
   HF= graphic_alloc(7, nf,  sizeof(HFstruct) );
   z = graphic_alloc(8, nf,  sizeof(double) );
   p = graphic_alloc(9, nf,  sizeof(int) );
   objs_array = graphic_alloc(10, nbObj,sizeof(NspObject *));
-#endif 
+#endif
 
 
   /* just to accelerate next step */
@@ -1561,24 +1561,24 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 
   cloc = Children->first ;
   n=0;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      objs_array[n++]= cloc->O; 
+      objs_array[n++]= cloc->O;
       cloc = cloc->next;
     }
-  
+
   /* step 1 : for each object :
    *            a/ get the coordinates in the local repair
    *               and determines the pos of each point within the pyramidal
    *               visible region (IN, OUT_XY, OUT_Z)
-   *            b/ then add the visible parts (faces, segments, points) in the z 
-   *               and HF arrays for the hidden face algorithm (only partial visible 
+   *            b/ then add the visible parts (faces, segments, points) in the z
+   *               and HF arrays for the hidden face algorithm (only partial visible
    *               parts without any OUT_Z point are included)
    */
   n = 0;k=0;
   cloc = Children->first ;
   nf = 0;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
       NspGraphic *G = (NspGraphic *) cloc->O;
       G->type->zmean(Xgc,G,z,HF,&n,k,lim);
@@ -1588,12 +1588,12 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
   nsp_obj3d_dsortc(z, &n, p);
 
-  /* step 3.1: a firts pass with data == -1 to tell each object to make 
-   * pre-drawing initializations 
+  /* step 3.1: a firts pass with data == -1 to tell each object to make
+   * pre-drawing initializations
    */
 
   cloc = Children->first ;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
       int mun=-1;
       NspGraphic *G = (NspGraphic *) cloc->O;
@@ -1613,7 +1613,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       /* XXX OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j); */
       ((NspGraphic *) objs_array[k])->type->draw(Xgc,(NspGraphic *) objs_array[k],NULL,&j);
     }
-  if ( with_box == TRUE  &&  B->box_style == SCILAB ) 
+  if ( with_box == TRUE  &&  B->box_style == SCILAB )
     nsp_obj3d_draw_near_box_segments(Xgc,B, foreground_color);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
 
@@ -1621,10 +1621,10 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   free(HF);
   free(z);
   free(p);
-#endif 
+#endif
 }
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,const char *legend,
 				 int *flag,double *ebox,int with_box,int box_color,int box_style)
@@ -1648,17 +1648,17 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   /*  background_color = flagx+2; */
 
 
-  /* allocate a structure for drawing purpose 
+  /* allocate a structure for drawing purpose
    * The unchanged values are kept in Lobj
    */
-  
+
   x[0]= Box[0];y[0]= Box[1];zz[0]= Box[2];
   x[1]= Box[3];y[1]= Box[4];zz[1]= Box[5];
 
   nsp_plot3d_update_bounds(Xgc,"box",x,y,zz,&two,&two,&theta,&alpha,legend,&flag[1],
 			   ebox,&zzmin,&zzmax,param3d_t);
   SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
-  
+
   lim[0] = 1.e+10;
   lim[1] = 1.e+10;
   lim[2] = - 1.e+10;
@@ -1668,7 +1668,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
     {
       B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim);
       nsp_obj3d_draw_box(Xgc,B,foreground_color);
-      if (B->box_style == SCILAB ) 
+      if (B->box_style == SCILAB )
 	nsp_obj3d_draw_near_box_segments(Xgc,B,foreground_color);
       nsp_obj3d_free_box(B);
     }
@@ -1677,7 +1677,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 
   /* firts pass for initialisation */
   cloc = Children->first ;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
       int mun=-1;
       NspGraphic *G = (NspGraphic *) cloc->O;
@@ -1686,9 +1686,9 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
     }
 
   cloc = Children->first ;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  nsp_ogl_set_3dview(Xgc);
@@ -1697,18 +1697,18 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
       cloc = cloc->next;
     }
 }
-#endif 
+#endif
 
-/* Obj is a Figure 
+/* Obj is a Figure
  *
  */
 
 int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt)
 {
   NspObjs3d *Obj3d;
-  if ( pt == NULL) 
+  if ( pt == NULL)
     Obj3d = (NspObjs3d *) nsp_check_for_current_objs3d();
-  else 
+  else
     Obj3d = (NspObjs3d *) nsp_check_pt_axes_or_objs3d(Xgc,pt);
   if ( Obj3d == NULL) return FALSE;
   if ( !IsObjs3d(NSP_OBJECT(Obj3d))) return FALSE;
@@ -1721,12 +1721,12 @@ int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int
 
 
 
-/* 
+/*
  *  Compute for each point the local coordinate (in the visualisation repair)
  *  then applies the perpective transform and test if the point is inside the
  *  troncated vision pyramide :  | loc_x | <= lim[0]
  *                               | loc_y | <= lim[1]
- *                               | loc_z | >= lim[2] 
+ *                               | loc_z | >= lim[2]
  */
 
 void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
@@ -1735,15 +1735,15 @@ void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos po
   double facteur;
   for (i = 0; i < 3*ncoord ; i += 3)
     {
-      /* take care that Coord and M can point to the same location 
+      /* take care that Coord and M can point to the same location
        * thus we have to copy
        */
       double v[3];
-      v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2]; 
+      v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2];
       Coord[i]   = TRX(Xgc->scales,v[0],v[1],v[2]);
       Coord[i+1] = TRY(Xgc->scales,v[0],v[1],v[2]);
       Coord[i+2] = TRZ(Xgc->scales,v[0],v[1],v[2]);
-      if ( Coord[i+2] < lim[2] )  
+      if ( Coord[i+2] < lim[2] )
 	{
 	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
 	}
@@ -1755,7 +1755,7 @@ void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos po
 	  Coord[i]   = facteur*Coord[i];
 	  Coord[i+1] = facteur*Coord[i+1];
 	  /* le point est-il dans le rectangle de visu ? */
-	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+1]) > lim[1] ) 
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+1]) > lim[1] )
 	    pos[k] = OUT_XY;
 	  else
 	    pos[k] = VIN;
@@ -1775,15 +1775,15 @@ void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos
   double facteur;
   for (i = 0; i < ncoord ; i++ )
     {
-      /* take care that Coord and M can point to the same location 
+      /* take care that Coord and M can point to the same location
        * thus we have to copy
        */
       double v[3];
-      v[0] = M[i];v[1] = M[i+Mm]; v[2] = M[i+2*Mm]; 
+      v[0] = M[i];v[1] = M[i+Mm]; v[2] = M[i+2*Mm];
       Coord[i]   = TRX(Xgc->scales,v[0],v[1],v[2]);
       Coord[i+Mm] = TRY(Xgc->scales,v[0],v[1],v[2]);
       Coord[i+2*Mm] = TRZ(Xgc->scales,v[0],v[1],v[2]);
-      if ( Coord[i+2*Mm] < lim[2] )  
+      if ( Coord[i+2*Mm] < lim[2] )
 	{
 	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
 	}
@@ -1795,7 +1795,7 @@ void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos
 	  Coord[i]   = facteur*Coord[i];
 	  Coord[i+Mm] = facteur*Coord[i+Mm];
 	  /* le point est-il dans le rectangle de visu ? */
-	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+Mm]) > lim[1] ) 
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+Mm]) > lim[1] )
 	    pos[k] = OUT_XY;
 	  else
 	    pos[k] = VIN;
@@ -1805,14 +1805,14 @@ void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos
 }
 
 
-/* A set of functions for 3D box which could be moved 
+/* A set of functions for 3D box which could be moved
  *
  */
 
 
 static int select_box_vertex(const double coord[]);
 static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks);
-static int build_ticks_segment(Plot3dBox *B, double xmin, double xmax, 
+static int build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
 			       double ymin, double ymax, double zmin, double zmax);
 static void build_xtick_seg(double *coord, int *num_sg, double x, double axe[], double sens[]);
 static void build_ytick_seg(double *coord, int *num_sg, double y, double axe[], double sens[]);
@@ -1824,6 +1824,7 @@ static void build_z_seg(double *coord, int *num_sg, double x, double y, double z
 
 static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B,int foreground_color);
 static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[]);
+static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[]);
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color);
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color);
 static void draw_justified_string(BCG *Xgc,char *str, double xx, double yy, int xj, int yj);
@@ -1840,7 +1841,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 {
   /*                      s0    s1    s2    s3    s4    s5    s6    s7    s8    s9    s10   s11  */
 
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
   double coord[24];
 #endif
   Plot3dBox *B;
@@ -1850,7 +1851,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 
   xmin = Box[0]; ymin = Box[1]; zmin = Box[2];
   xmax = Box[3]; ymax = Box[4]; zmax = Box[5];
-  
+
   if ( with_ticks )
     {
       B->with_ticks = BTRUE;
@@ -1864,7 +1865,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
     }
   else
     B->with_ticks = BFALSE;
-  
+
   B->box_style = box_style;
   B->segment = box_segments;
   B->face = box_faces;
@@ -1887,42 +1888,42 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
   B->coord[18] = xmax; B->coord[19] = ymin; B->coord[20] = zmin; //7
   B->coord[21] = xmin; B->coord[22] = ymax; B->coord[23] = zmax; //8
 
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       /* in open_gl we do not want to change coordinates */
       apply_transforms_new1(Xgc,coord,B->coord, B->pos, lim, 8);
-      B->inear = select_box_vertex(coord);       
+      B->inear = select_box_vertex(coord);
     }
-  else 
+  else
 #endif
     {
       apply_transforms_new1(Xgc,B->coord,B->coord, B->pos, lim, 8);
-      B->inear = select_box_vertex(B->coord);      
+      B->inear = select_box_vertex(B->coord);
     }
-  
+
   if ( B->with_ticks )
     {
       build_ticks_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->ticks_pos = malloc(2*(B->nb_xyz_ticks)*sizeof(VisionPos));
-#ifdef WITH_GTKGLEXT 
-      if ( Xgc->graphic_engine != &GL_gengine ) 
-#endif	
+#ifdef WITH_GTKGLEXT
+      if ( Xgc->graphic_engine != &GL_gengine )
+#endif
 	apply_transforms_new1(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks));
     }
   if ( B->with_ticks  &&  B->box_style == MATLAB )
     {
       build_box_others_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->others_pos = malloc(4*(B->nb_xyz_ticks)*sizeof(VisionPos));
-#ifdef WITH_GTKGLEXT 
-      if ( Xgc->graphic_engine != &GL_gengine ) 
-#endif	
+#ifdef WITH_GTKGLEXT
+      if ( Xgc->graphic_engine != &GL_gengine )
+#endif
 	apply_transforms_new1(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
-    }      
+    }
   return ( B );
 }
 
-static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax, 
+static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
 				double ymin, double ymax, double zmin, double zmax)
 {
   int i, sg=0;
@@ -1932,11 +1933,11 @@ static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
   dy = Abs(xmax-xmin)*0.05;
   dz = (xmax-xmin)*(xmax-xmin) + (ymax-ymin)*(ymax-ymin);
   dz = sqrt(dz);
-  
+
   B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
   if ( B->ticks_coord == NULL) return FAIL;
-  /* B->inear = 5,3,6,0 => zaxis ticks on the right 
-   * else zaxis ticks on the left 
+  /* B->inear = 5,3,6,0 => zaxis ticks on the right
+   * else zaxis ticks on the left
    */
   switch(B->inear)
     {
@@ -2016,7 +2017,7 @@ static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], 
   (*num_sg)++;
 }
 
-static int build_box_others_segment(Plot3dBox *B, double xmin, double xmax, 
+static int build_box_others_segment(Plot3dBox *B, double xmin, double xmax,
 				    double ymin, double ymax, double zmin, double zmax)
 {
   /* compute the 3 faces where these segments are drawn */
@@ -2093,10 +2094,10 @@ static void build_z_seg(double *coord, int *num_sg, double x, double y, double z
 
 
 static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks)
-{ 
+{
   int i, j, first, last, inc=1, nb_grad, nb_ticks;
   double work[20], *ticks;
-  
+
   gr_compute_ticks(vmin, vmax, work, &nb_grad);
   if ( nb_grad <= 2 )
     {
@@ -2105,28 +2106,28 @@ static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ti
     }
   else
     {
-      if ( work[0] < *vmin ) 
-	first = 1; 
-      else 
+      if ( work[0] < *vmin )
+	first = 1;
+      else
 	first = 0;
-      if ( work[nb_grad-1] > *vmax ) 
-	last = nb_grad-2; 
-      else 
+      if ( work[nb_grad-1] > *vmax )
+	last = nb_grad-2;
+      else
 	last = nb_grad-1;
-      
+
       nb_ticks = last - first + 1;
-      
+
       if ( nb_ticks < 2 )
 	{
 	  nb_ticks = 2; work[0] = *vmin; work[1] = *vmax;
 	  first = 0;
 	}
-      else if ( nb_ticks > 8 ) 
+      else if ( nb_ticks > 8 )
 	{
-	  nb_ticks = (nb_ticks+1)/2; inc = 2; 
+	  nb_ticks = (nb_ticks+1)/2; inc = 2;
 	}
     }
-  
+
   ticks = malloc(nb_ticks*sizeof(double));
   for ( i = 0, j = first ; i < nb_ticks ; i++, j+= inc )
     ticks[i] = work[j];
@@ -2178,14 +2179,25 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
 
       Xgc->graphic_engine->xset_font(Xgc,(ticks_font_type),(ticks_font_size), FALSE);
       for ( j = 0 ; j < B->nb_xticks ; j++)
-	draw_tick(Xgc,B,B->xticks[j], &(B->ticks_coord[6*j]));
+	{
+	  draw_tick(Xgc,B,B->xticks[j], &(B->ticks_coord[6*j]));
+	}
+      j =  B->nb_xticks/2;
+      draw_leg(Xgc,B,"X", &(B->ticks_coord[6*j]));
       b0 = 6*B->nb_xticks;
       for ( j = 0 ; j < B->nb_yticks ; j++)
-	draw_tick(Xgc,B,B->yticks[j], &(B->ticks_coord[6*j+b0]));
+	{
+	  draw_tick(Xgc,B,B->yticks[j], &(B->ticks_coord[6*j+b0]));
+	}
+      j =  B->nb_yticks/2;
+      draw_leg(Xgc,B,"Y", &(B->ticks_coord[6*j+b0]));
       b0 += 6*B->nb_yticks;
       for ( j = 0 ; j < B->nb_zticks ; j++)
-	draw_tick(Xgc,B,B->zticks[j], &(B->ticks_coord[6*j+b0]));
-
+	{
+	  draw_tick(Xgc,B,B->zticks[j], &(B->ticks_coord[6*j+b0]));
+	}
+      j = B->nb_zticks/2;
+      draw_leg(Xgc,B,"Z", &(B->ticks_coord[6*j+b0]));
       if ( B->box_style == MATLAB )
 	{
 	  Xgc->graphic_engine->xset_line_style(Xgc,2);
@@ -2202,20 +2214,20 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   int xj, yj;
   char buf[60];
 
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
       /* we move to 2d scale */
       double Tcoord[6];
-      apply_transforms_new1(Xgc,Tcoord,coord, B->pos,lim,2); 
+      apply_transforms_new1(Xgc,Tcoord,coord, B->pos,lim,2);
       vxt = Tcoord[3] - Tcoord[0];
       vyt = Tcoord[4] - Tcoord[1];
       xt = Tcoord[3] + 0.6*vxt;
       yt = Tcoord[4] + 0.6*vyt;
-    } 
-  else 
-#endif 
+    }
+  else
+#endif
     {
       vxt = coord[3] - coord[0];
       vyt = coord[4] - coord[1];
@@ -2236,17 +2248,77 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   sprintf(buf, "%g", val);
   xt = XScale(Xgc->scales,xt);
   yt = YScale(Xgc->scales,yt);
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_2dview(Xgc);
       draw_justified_string(Xgc,buf, xt, yt, xj, yj);
       nsp_ogl_set_3dview(Xgc);
       return ;
     }
-#endif 
-  draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+  else
+#endif
+    {
+      draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+    }
 }
+
+static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[])
+{
+  double xt, yt, vxt, vyt, normv, lim = 0.7071068;
+  int xj, yj;
+  char buf[60];
+  return;
+
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
+    {
+      const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
+      /* we move to 2d scale */
+      double Tcoord[6];
+      apply_transforms_new1(Xgc,Tcoord,coord, B->pos,lim,2);
+      vxt = Tcoord[3] - Tcoord[0];
+      vyt = Tcoord[4] - Tcoord[1];
+      xt = Tcoord[3] + 0.6*vxt;
+      yt = Tcoord[4] + 0.6*vyt;
+    }
+  else
+#endif
+    {
+      vxt = coord[3] - coord[0];
+      vyt = coord[4] - coord[1];
+      xt = coord[3] + 0.6*vxt;
+      yt = coord[4] + 0.6*vyt;
+    }
+  normv = sqrt( vxt*vxt + vyt*vyt );
+  vxt = vxt/normv;
+  vyt = vyt/normv;
+  if ( vxt >= lim )
+    { xj = LEFT; yj = CENTER; }
+  else if ( vxt <= -lim )
+    { xj = RIGHT; yj = CENTER; }
+  else if ( vyt >= lim )
+    { xj = CENTER; yj = UP; }
+  else
+    { xj = CENTER; yj = DOWN; }
+  sprintf(buf, "ZZ");
+  xt = XScale(Xgc->scales,xt);
+  yt = YScale(Xgc->scales,yt);
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
+    {
+      nsp_ogl_set_2dview(Xgc);
+      draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+      nsp_ogl_set_3dview(Xgc);
+      return ;
+    }
+  else
+#endif
+    {
+      draw_justified_string(Xgc,buf, xt, yt, xj, yj);
+    }
+}
+
 
 static void draw_far_box_segments(BCG *Xgc,Plot3dBox *B, int foreground_color)
 {
@@ -2267,21 +2339,21 @@ static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foregrou
   int k, ia, ib;
   if (B->pos[B->inear] == OUT_Z )
     return;
-  Xgc->graphic_engine->xset_line_style(Xgc,2); 
+  Xgc->graphic_engine->xset_line_style(Xgc,2);
   for ( k = 0 ; k < 12 ; k++ )
     {
       ia = B->segment[2*k]; ib = B->segment[2*k+1];
       if ( ia == B->inear ||  ib == B->inear )
 	draw_segment(Xgc,B->coord, ia, ib, foreground_color);
     };
-  Xgc->graphic_engine->xset_line_style(Xgc,1); 
+  Xgc->graphic_engine->xset_line_style(Xgc,1);
 }
 
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 {
   int x[2], y[2], n=2, flag=0;
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       double xd[2], yd[2],zd[2];
       int n=2, flag=0;
@@ -2292,7 +2364,7 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
       yd[1] = coord[3*ib+1];
       zd[1] = coord[3*ib+2];
       drawsegments3D(Xgc, xd, yd ,zd, n, &color, flag);
-      return; 
+      return;
     }
 #endif
   x[0] = XScale(Xgc->scales,coord[3*ia]);
@@ -2305,10 +2377,10 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 {
   int x[2], y[2], n=2, flag=0;
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
-      double x[2], y[2], z[2]; 
+      double x[2], y[2], z[2];
       int n=2, flag=0;
       x[0] = coord[6*ns];
       y[0] = coord[6*ns+1];
@@ -2330,10 +2402,10 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
 {
   int flag=0, rect[4], w, h;
-  double angle=0.0; 
+  double angle=0.0;
   Xgc->graphic_engine->boundingbox(Xgc,str,x,y, rect);
   w = rect[2]; h = rect[3];
-  if ( xj == CENTER ) 
+  if ( xj == CENTER )
     x -= w/2;
   else if ( xj == RIGHT )
     x -= w;
@@ -2351,8 +2423,8 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
   int x[4], y[4], i, numpt, np=1, m=4;
   const int *current_vertex;
 
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       double xd[4],yd[4],zd[4];
       current_vertex = &(B->face[4*j]);
@@ -2484,7 +2556,7 @@ static void nsp_obj3d_dsortc(double x[], int *n, int p[])
 
 
 
-static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q,
 			      double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
 			      double *zmax,nsp_plot3d_type type3d)
 {
@@ -2492,36 +2564,36 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
   int i;
   if (*flag!=0 && *flag!=1 && *flag!=3 && *flag!=5 && *flag != 7 )
     {
-      switch (type3d) 
+      switch (type3d)
 	{
 	case plot3d_t :
 	  bbox[0]=x[0];bbox[1]=x[*p-1];
 	  bbox[2]=y[0];bbox[3]=y[*q-1];
-	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q));
 	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
 	  break;
-	case facettes_t: 
+	case facettes_t:
 	  bbox[0]=(double) Mini(x,*p*(*q));
 	  bbox[1]=(double) Maxi(x,*p*(*q));
-	  bbox[2]=(double) Mini(y,*p*(*q)); 
+	  bbox[2]=(double) Mini(y,*p*(*q));
 	  bbox[3]=(double) Maxi(y,*p*(*q));
-	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q));
 	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
 	  break;
-	case param3d_t: 
+	case param3d_t:
 	  bbox[0]=(double) Mini(x,*p);bbox[1]=(double) Maxi(x,*p);
 	  bbox[2]=(double) Mini(y,*p);bbox[3]=(double) Maxi(y,*p);
 	  bbox[4]=(double) Mini(z,*p);bbox[5]=(double) Maxi(z,*p);
 	  break;
 	}
     }
-  if ( *flag==1 || *flag==3 || *flag==5 || *flag == 7 ) 
+  if ( *flag==1 || *flag==3 || *flag==5 || *flag == 7 )
     {
       *zmin=bbox[4];
       *zmax=bbox[5];
     }
 
-  if ( Xgc->scales->scale_flag3d != 0 ) 
+  if ( Xgc->scales->scale_flag3d != 0 )
     {
       if (*flag == 7 || *flag == 8 )
 	{
@@ -2530,48 +2602,48 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
 	  *zmin=bbox[4];
 	  *zmax=bbox[5];
 
-	  if ( bbox[0] < Xgc->scales->bbox1[0] 
-	       || bbox[1] > Xgc->scales->bbox1[1] 
-	       || bbox[2] < Xgc->scales->bbox1[2] 
-	       || bbox[3] > Xgc->scales->bbox1[3] 
-	       || bbox[4] < Xgc->scales->bbox1[4] 
+	  if ( bbox[0] < Xgc->scales->bbox1[0]
+	       || bbox[1] > Xgc->scales->bbox1[1]
+	       || bbox[2] < Xgc->scales->bbox1[2]
+	       || bbox[3] > Xgc->scales->bbox1[3]
+	       || bbox[4] < Xgc->scales->bbox1[4]
 	       || bbox[5] > Xgc->scales->bbox1[5] )
 	    redraw = TRUE;
 	  /* changing flag to the mode used by other recorded 3d plots */
 	  *flag=2*Xgc->scales->metric3d;
-	  if ( Xgc->scales->theta != *teta ||  Xgc->scales->alpha != *alpha ) 
+	  if ( Xgc->scales->theta != *teta ||  Xgc->scales->alpha != *alpha )
 	    redraw = TRUE;
 	}
 
     }
-  else 
+  else
     {
       if (*flag == 7 || *flag == 8 )
 	{
-	  /* we have used a superpose mode and there's no previous 
-	   * 3d graphics, we switch to default 
+	  /* we have used a superpose mode and there's no previous
+	   * 3d graphics, we switch to default
 	   */
 	  *flag= 1;
 	}
     }
   /* switch to mode with ebox to accelerate replot */
-  if ( *flag==2 || *flag==4 || *flag==6 || *flag == 8 ) 
+  if ( *flag==2 || *flag==4 || *flag==6 || *flag == 8 )
     (*flag)--;
 
   /* Redraw other graphics */
   if ( redraw == TRUE )
     {
-      
+
     }
 }
 
 
 
 /*-------------------------------------------------------------------
- * functions for 3D scales 
- * flag = 0: use current scale 
+ * functions for 3D scales
+ * flag = 0: use current scale
  * flag = 1: standard scale (the graphic is expanded).
- * flag = 2: iso mode but scale is such that it can contain the 
+ * flag = 2: iso mode but scale is such that it can contain the
  *           sphere circumscribing the box
  * flag = 3: iso mode (the graphic is expanded).
  *-------------------------------------------------------------------*/
@@ -2596,30 +2668,30 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   Xgc->scales->m[1][0]= -cost*cosa;   Xgc->scales->m[1][1]= -sint*cosa;    Xgc->scales->m[1][2]= sina;
   Xgc->scales->m[2][0]=  cost*sina;   Xgc->scales->m[2][1]= sint*sina;     Xgc->scales->m[2][2]= cosa;
 
-  /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box 
+  /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box
    * which contains the surface stored clockwise (one level then the other)
    *       Z
    *       |
-   *      4 ----- 5        
-   *       /    /|         
-   *     7----6  |__________ Y         
-   *      | 0 | / 1        
-   *     3----- 2          
+   *      4 ----- 5
+   *       /    /|
+   *     7----6  |__________ Y
+   *      | 0 | / 1
+   *     3----- 2
    *    /
    *    X
    */
-  for (ib=0;ib<6 ;ib++) 
-    { 
-      if (flag==0) 
+  for (ib=0;ib<6 ;ib++)
+    {
+      if (flag==0)
 	box->bbox[ib]=Xgc->scales->bbox1[ib];
-      else 
+      else
 	box->bbox[ib]=Xgc->scales->bbox1[ib]=bbox[ib];
     }
 
   Xgc->scales->c[0]=( box->bbox[0]+box->bbox[1])/2.0;
-  Xgc->scales->c[1]=( box->bbox[2]+box->bbox[3])/2.0; 
+  Xgc->scales->c[1]=( box->bbox[2]+box->bbox[3])/2.0;
   Xgc->scales->c[2]=( box->bbox[4]+box->bbox[5])/2.0;
-  
+
   box->x_r[0]=box->bbox[0]; box->y_r[0]=box->bbox[2];  box->z_r[0]=box->bbox[4];
   box->x_r[1]=box->bbox[0]; box->y_r[1]=box->bbox[3];  box->z_r[1]=box->bbox[4];
   box->x_r[2]=box->bbox[1]; box->y_r[2]=box->bbox[3];  box->z_r[2]=box->bbox[4];
@@ -2629,7 +2701,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   box->x_r[6]=box->bbox[1]; box->y_r[6]=box->bbox[3];  box->z_r[6]=box->bbox[5];
   box->x_r[7]=box->bbox[1]; box->y_r[7]=box->bbox[2];  box->z_r[7]=box->bbox[5];
 
-  for ( i = 0 ; i < 8 ; i++) 
+  for ( i = 0 ; i < 8 ; i++)
     {
       box->x[i]=TRX(Xgc->scales,box->x_r[i],box->y_r[i],box->z_r[i]);
       box->y[i]=TRY(Xgc->scales,box->x_r[i],box->y_r[i],box->z_r[i]);
@@ -2643,17 +2715,17 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
       ymmax=  (double) - Mini(box->y,8L);
       ymmin=  (double) - Maxi(box->y,8L);
     }
-  
+
   /* code added by es: isoview scaling */
   if ( flag == 2 || flag == 3 )
     {
       /* get current window size */
-      /* FIXME: getscale2d is useless here just use 
+      /* FIXME: getscale2d is useless here just use
        * WRect[i] <-> Xgc->scales->subwin_rect[i];
        */
       getscale2d(Xgc,WRect,FRect,logf,ARect);
       wmax=linint((double)wdim[0] * WRect[2]);
-      hmax=linint((double)wdim[1] * WRect[3]); 
+      hmax=linint((double)wdim[1] * WRect[3]);
     }
   if ( flag == 2 )
     {
@@ -2673,13 +2745,13 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
       /* adjust limits (code adapted from Plo2d.c & Stephane's patch) */
       hx=xmmax-xmmin;
       hy=ymmax-ymmin;
-      if ( hx/(double)wmax  < hy/(double)hmax ) 
+      if ( hx/(double)wmax  < hy/(double)hmax )
         {
           hx1=wmax*hy/hmax;
           xmmin=xmmin-(hx1-hx)/2.0;
           xmmax=xmmax+(hx1-hx)/2.0;
         }
-      else 
+      else
         {
           hy1=hmax*hx/wmax;
           ymmin=ymmin-(hy1-hy)/2.0;
@@ -2695,11 +2767,11 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
       Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
     }
-  
+
   /* end of code added by es */
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
   /* transmit info to opengl */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_3dview(Xgc);
     }
@@ -2709,7 +2781,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
 int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
 {
   int j;
-  for ( j =0 ; j < (*n) ; j++)	 
+  for ( j =0 ; j < (*n) ; j++)
     {
       double x1,y1;
       x1=TRX(Xgc->scales,x[j],y[j],z[j]);
@@ -2723,10 +2795,10 @@ int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
 
 
 /*
- * Interactive change of view angle 
- * with full redraw when the mouse moves 
- * The process is initiated by a click and 
- * stopped when the mouse is released 
+ * Interactive change of view angle
+ * with full redraw when the mouse moves
+ * The process is initiated by a click and
+ * stopped when the mouse is released
  *
  */
 
@@ -2740,7 +2812,7 @@ void nsp_3d_rotation(BCG *Xgc)
   double theta0,alpha0;
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y;
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL)
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
     }
@@ -2753,7 +2825,7 @@ void nsp_3d_rotation(BCG *Xgc)
   ibutton=-1;
   theta0 = theta = Xgc->scales->theta ;
   alpha0 = alpha = Xgc->scales->alpha ;
-  while ( ibutton == -1 ) 
+  while ( ibutton == -1 )
     {
       /* */
       theta_dir= ( sin(M_PI*alpha0/180.0) >= 0.0 ) ? 1.0 : -1.0;
@@ -2762,9 +2834,9 @@ void nsp_3d_rotation(BCG *Xgc)
       x0=x;y0=y;alpha0=alpha;theta0=theta;
 #ifdef ROTATION_NORESCALE
       Xgc->scales->scale_3drot_flag = TRUE;
-#endif 
-      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
-      /* just changes the angles in the objs3d which contains the 
+#endif
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta);
+      /* just changes the angles in the objs3d which contains the
        * point @pt and invalidate the objs3d.
        */
       nsp_figure_change3d_orientation(Xgc,theta,alpha,pt);
@@ -2774,7 +2846,7 @@ void nsp_3d_rotation(BCG *Xgc)
     }
   Xgc->scales->theta = theta;
   Xgc->scales->alpha = alpha;
-  Xgc->graphic_engine->xinfo(Xgc," "); 
+  Xgc->graphic_engine->xinfo(Xgc," ");
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = FALSE;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
@@ -2783,7 +2855,7 @@ void nsp_3d_rotation(BCG *Xgc)
 
 
 
-/* invalidate the drawing region associated to an axes object. 
+/* invalidate the drawing region associated to an axes object.
  */
 
 void nsp_objs3d_invalidate(NspGraphic *G)
@@ -2816,13 +2888,13 @@ void nsp_objs3d_invalidate(NspGraphic *G)
 /**
  * nsp_objs3d_insert_child:
  * @A: a #NspAxes
- * @G: a #NspGraphic 
- * 
- * inserts @G in the given axe @A. The bounds 
- * of the objs3d are updated accordingly and an 
- * invalidate operation is raised using the 
- * graphic object. 
- * 
+ * @G: a #NspGraphic
+ *
+ * inserts @G in the given axe @A. The bounds
+ * of the objs3d are updated accordingly and an
+ * invalidate operation is raised using the
+ * graphic object.
+ *
  * Returns: %OK or %FAIL
  **/
 
@@ -2832,10 +2904,10 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G, int invalidate)
     return FAIL;
   /* call the link_figure method */
   G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
-  
+
   /* updates the bounds of the axe */
   nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
-  
+
   /* raise an invalidate operation */
   if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);
   return OK;
@@ -2870,7 +2942,7 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *scale,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
 {
   /* XXX */
-  return TRUE; 
+  return TRUE;
 }
 
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
@@ -2880,15 +2952,15 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 
 
 
-/* set up the bounds of objs3d according to objects 
+/* set up the bounds of objs3d according to objects
  * already inserted and ebox (ebox can be NULL when unused)
  */
 
-void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale) 
+void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   /* use strf argument to change the objs3d */
-  switch (scale) 
+  switch (scale)
     {
     case 0: /* no computation, the plot use the previus (or default) scale */
       break;
@@ -2901,31 +2973,30 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
       break;
     case 5: /* enlarged for pretty objs3d from the ebox arg */
       memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
-      A->obj->fixed = TRUE; 
+      A->obj->fixed = TRUE;
       break;
     case 3: /* built for an isometric scale from the ebox arg */
       memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
-      A->obj->fixed = TRUE; 
+      A->obj->fixed = TRUE;
       break;
     case 2: /* from the min/max of the x, y datas */
       /* could be stored in a cache */
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case 8: /* backward compatibility  */
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case 6: /* enlarged for pretty objs3d from the min/max of the x, y datas */
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case 4: /* built for an isometric plot from the min/max of the x, y datas */
       nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     }
 }
 
-
-#line 2932 "objs3d.c"
+#line 3003 "objs3d.c"
