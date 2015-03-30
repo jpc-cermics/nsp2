@@ -154,7 +154,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 static int zone(double val, double valmin, double valmax, int nv);
 static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
 static void permut_of_sort(int *tab, int *perm);
-static void find_intersection(int *sx, int *sy, double *fxy, double z, 
+static void find_intersection(int *sx, int *sy, double *fxy, double z,
 			      int inda, int indb, int *xint, int *yint);
 
 #line 161 "./spolyhedron.h"
