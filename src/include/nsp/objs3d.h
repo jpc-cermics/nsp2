@@ -169,7 +169,8 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,
 				const char *legend,
 				int *flag,double *ebox,int with_box,int box_color,int box_style);
-static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[],
+			   const char *legend);
 static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color);
 static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foreground_color);
 static void nsp_obj3d_free_box(Plot3dBox *B);
@@ -190,6 +191,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 194 "./objs3d.h"
+#line 195 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

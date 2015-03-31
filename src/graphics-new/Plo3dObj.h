@@ -1,7 +1,7 @@
-#ifndef NSP_PLOT3DOBJ 
-#define  NSP_PLOT3DOBJ 
+#ifndef NSP_PLOT3DOBJ
+#define  NSP_PLOT3DOBJ
 
-/* plotting a set of 3d objects routine for Nsp 
+/* plotting a set of 3d objects routine for Nsp
  *
  * Copyright (C) 2005  Bruno Pincon
  *
@@ -20,9 +20,9 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Author: Bruno Pincon 
- * Adapted to nsp internals and _ogl added 
- *   Jean-Philippe Chancelier Mars 2005 
+ * Author: Bruno Pincon
+ * Adapted to nsp internals and _ogl added
+ *   Jean-Philippe Chancelier Mars 2005
  */
 
 #define DEFAULT_FONT 2
@@ -51,7 +51,7 @@ typedef enum ObjTypeEnum ObjType;
 
 typedef struct _hfstruct HFstruct ;
 
-/* func_3dobj is shared by all 3d Object 
+/* func_3dobj is shared by all 3d Object
  * a 3d Object can be casted to func_3dobj with OBJ3D
  */
 
@@ -96,7 +96,7 @@ typedef struct
   GBoolean with_mesh;
   /* keep some matrices for freeing allocated space */
   NspMatrix *Mcoord; /* les coordonnees */
-  NspMatrix *Mface; 
+  NspMatrix *Mface;
   NspMatrix *Mcolor;
   NspMatrix *Mback_color;
 } Polyhedron;
@@ -127,7 +127,7 @@ typedef struct
 } SPolyhedron;
 
 
-typedef struct 
+typedef struct
 {
   obj3d_draw_partial *draw_partial;
   obj3d_draw_ogl  *draw_ogl;
@@ -144,7 +144,7 @@ typedef struct
 
 
 
-typedef struct 
+typedef struct
 {
   obj3d_draw_partial *draw_partial;
   obj3d_draw_ogl  *draw_ogl;
@@ -159,7 +159,7 @@ typedef struct
   NspMatrix *Mcoord;
 } Points;
 
-typedef struct 
+typedef struct
 {
   obj3d_draw_partial *draw_partial;
   obj3d_draw_ogl  *draw_ogl;
@@ -176,7 +176,7 @@ typedef struct
 } String3d;
 
 
-/* this one is treated separately and do not share 
+/* this one is treated separately and do not share
  * func_3dobj
  */
 
@@ -204,10 +204,13 @@ typedef struct
   int nb_zticks;
   double *zticks;
   int nb_xyz_ticks;
+
+  double *leg_coord;
+  VisionPos *leg_pos;
 } Plot3dBox;
 
 
-typedef struct 
+typedef struct
 {
   ObjType obj_type;
   void *obj;

@@ -44,7 +44,8 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj);
 static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alpha,
 				const char *legend,
 				int *flag,double *ebox,int with_box,int box_color,int box_style);
-static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
+static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[],
+			   const char *legend);
 static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color);
 static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foreground_color);
 static void nsp_obj3d_free_box(Plot3dBox *B);
@@ -529,7 +530,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   lim[2] = - 1.e+10;
 
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
-  if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim);
+  if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim, legend);
 
 #ifdef ALLOC_OBJ
   HF= malloc( nf * sizeof(HFstruct) );
@@ -655,7 +656,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE  )
     {
-      B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim);
+      B = make_box(Xgc,Box, BTRUE, box_style,box_color,lim,legend);
       nsp_obj3d_draw_box(Xgc,B,foreground_color);
       if (B->box_style == SCILAB )
 	nsp_obj3d_draw_near_box_segments(Xgc,B,foreground_color);
@@ -803,6 +804,8 @@ static int select_box_vertex(const double coord[]);
 static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks);
 static int build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
 			       double ymin, double ymax, double zmin, double zmax);
+static int  build_legend_segment(Plot3dBox *B, double xmin, double xmax,
+				 double ymin, double ymax, double zmin, double zmax);
 static void build_xtick_seg(double *coord, int *num_sg, double x, double axe[], double sens[]);
 static void build_ytick_seg(double *coord, int *num_sg, double y, double axe[], double sens[]);
 static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], double sens[]);
@@ -826,7 +829,8 @@ static const int box_segments[24] = {0,2,  0,5,  0,6,  1,3,  1,4,  1,7,  2,4,  2
 static const int box_faces[24] = {0,5,3,6,  0,6,4,2,  0,2,7,5,  1,7,2,4,  1,3,5,7,  1,4,6,3};
 
 
-static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
+static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,
+			   int box_color, double lim[],const char *legend)
 {
   /*                      s0    s1    s2    s3    s4    s5    s6    s7    s8    s9    s10   s11  */
 
@@ -836,7 +840,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
   Plot3dBox *B;
   double xmin, ymin, zmin, xmax, ymax, zmax;
 
-  B = malloc(sizeof(Plot3dBox));
+  if ((B = malloc(sizeof(Plot3dBox)))== NULL) return NULL;
 
   xmin = Box[0]; ymin = Box[1]; zmin = Box[2];
   xmax = Box[3]; ymax = Box[4]; zmax = Box[5];
@@ -909,22 +913,34 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 #endif
 	apply_transforms_new1(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
     }
+
+  B->leg_pos = NULL;
+  B->leg_coord = NULL;
+
+  if ( 0 )
+    {
+      /* allocate and fill B->leg_coord */
+      build_legend_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
+      B->leg_pos = malloc(2*(3)*sizeof(VisionPos));
+#ifdef WITH_GTKGLEXT
+      /* no need for apply_transforms_new1 when we use the GL_gengine */
+      if ( Xgc->graphic_engine != &GL_gengine )
+#endif
+	{
+	  apply_transforms_new1(Xgc, B->leg_coord,B->leg_coord, B->leg_pos, lim, 2*(3));
+	}
+    }
+
   return ( B );
 }
 
-static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
-				double ymin, double ymax, double zmin, double zmax)
+
+static void build_ticks_data(Plot3dBox *B,double xmin, double xmax,
+			     double ymin, double ymax, double zmin, double zmax,
+			     double dx, double dy,
+			     double axe_x[2], double axe_y[2], double axe_z[2],
+			     double sens_x[2], double sens_y[2], double sens_z[2])
 {
-  int i, sg=0;
-  double dx,dy,dz, axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
-
-  dx = Abs(ymax-ymin)*0.05;
-  dy = Abs(xmax-xmin)*0.05;
-  dz = (xmax-xmin)*(xmax-xmin) + (ymax-ymin)*(ymax-ymin);
-  dz = sqrt(dz);
-
-  B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
-  if ( B->ticks_coord == NULL) return FAIL;
   /* B->inear = 5,3,6,0 => zaxis ticks on the right
    * else zaxis ticks on the left
    */
@@ -972,13 +988,53 @@ static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
       axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = 0 ; sens_z[1] = dx;
       break;
     }
+}
 
+static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
+				double ymin, double ymax, double zmin, double zmax)
+{
+  int i, sg=0;
+  double axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
+  double dx = Abs(ymax-ymin)*0.05;
+  double dy = Abs(xmax-xmin)*0.05;
+  /* double dz = sqrt((xmax-xmin)*(xmax-xmin) + (ymax-ymin)*(ymax-ymin)); */
+
+  B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
+  if ( B->ticks_coord == NULL) return FAIL;
+  /* B->inear = 5,3,6,0 => zaxis ticks on the right
+   * else zaxis ticks on the left
+   */
+
+  build_ticks_data(B, xmin, xmax, ymin, ymax, zmin, zmax, dx, dy,
+		   axe_x, axe_y, axe_z,sens_x, sens_y, sens_z);
   for ( i = 0 ; i < B->nb_xticks ; i++)
     build_xtick_seg(B->ticks_coord, &sg, B->xticks[i], axe_x, sens_x);
   for ( i = 0 ; i < B->nb_yticks ; i++)
     build_ytick_seg(B->ticks_coord, &sg, B->yticks[i], axe_y, sens_y);
   for ( i = 0 ; i < B->nb_zticks ; i++)
     build_ztick_seg(B->ticks_coord, &sg, B->zticks[i], axe_z, sens_z);
+  return OK;
+}
+
+static int  build_legend_segment(Plot3dBox *B, double xmin, double xmax,
+				 double ymin, double ymax, double zmin, double zmax)
+{
+  int i, sg=0;
+  double axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
+  double dx = 2.5*Abs(ymax-ymin)*0.05;
+  double dy = 2.5*Abs(xmax-xmin)*0.05;
+  /* double dz = sqrt((xmax-xmin)*(xmax-xmin) + (ymax-ymin)*(ymax-ymin)); */
+
+  B->leg_coord = malloc( 6*(3)*sizeof(double) );
+  if ( B->leg_coord == NULL) return FAIL;
+  build_ticks_data(B, xmin, xmax, ymin, ymax, zmin, zmax, dx, dy,
+		   axe_x, axe_y, axe_z,sens_x, sens_y, sens_z);
+  i= B->nb_xticks/2;
+  build_xtick_seg(B->leg_coord, &sg, B->xticks[i], axe_x, sens_x);
+  i= B->nb_yticks/2;
+  build_ytick_seg(B->leg_coord, &sg, B->yticks[i], axe_y, sens_y);
+  i= B->nb_zticks/2;
+  build_ztick_seg(B->leg_coord, &sg, B->zticks[i], axe_z, sens_z);
   return OK;
 }
 
@@ -1005,6 +1061,7 @@ static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], 
   coord[6*sg+3] = axe[0]+sens[0]; coord[6*sg+4] = axe[1]+sens[1]; coord[6*sg+5] = z;
   (*num_sg)++;
 }
+
 
 static int build_box_others_segment(Plot3dBox *B, double xmin, double xmax,
 				    double ymin, double ymax, double zmin, double zmax)
@@ -1171,22 +1228,16 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
 	{
 	  draw_tick(Xgc,B,B->xticks[j], &(B->ticks_coord[6*j]));
 	}
-      j =  B->nb_xticks/2;
-      draw_leg(Xgc,B,"X", &(B->ticks_coord[6*j]));
       b0 = 6*B->nb_xticks;
       for ( j = 0 ; j < B->nb_yticks ; j++)
 	{
 	  draw_tick(Xgc,B,B->yticks[j], &(B->ticks_coord[6*j+b0]));
 	}
-      j =  B->nb_yticks/2;
-      draw_leg(Xgc,B,"Y", &(B->ticks_coord[6*j+b0]));
       b0 += 6*B->nb_yticks;
       for ( j = 0 ; j < B->nb_zticks ; j++)
 	{
 	  draw_tick(Xgc,B,B->zticks[j], &(B->ticks_coord[6*j+b0]));
 	}
-      j = B->nb_zticks/2;
-      draw_leg(Xgc,B,"Z", &(B->ticks_coord[6*j+b0]));
       if ( B->box_style == MATLAB )
 	{
 	  Xgc->graphic_engine->xset_line_style(Xgc,2);
@@ -1194,6 +1245,12 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
 	    draw_segment_bis(Xgc,B->others_coord, j, foreground_color);
 	  Xgc->graphic_engine->xset_line_style(Xgc,1);
 	}
+    }
+  if ( 0 && B->leg_coord != NULL )
+    {
+      draw_leg(Xgc,B,"XXXX", B->leg_coord);
+      draw_leg(Xgc,B,"YYYY", B->leg_coord+6);
+      draw_leg(Xgc,B,"ZZZZ", B->leg_coord+12);
     }
 }
 
@@ -1257,7 +1314,6 @@ static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[])
   double xt, yt, vxt, vyt, normv, lim = 0.7071068;
   int xj, yj;
   char buf[60];
-  return;
 
 #ifdef WITH_GTKGLEXT
   if ( Xgc->graphic_engine == &GL_gengine )
@@ -1290,7 +1346,7 @@ static void draw_leg(BCG *Xgc,Plot3dBox *B,const char *leg,const double coord[])
     { xj = CENTER; yj = UP; }
   else
     { xj = CENTER; yj = DOWN; }
-  sprintf(buf, "ZZ");
+  sprintf(buf, "%s",leg);
   xt = XScale(Xgc->scales,xt);
   yt = YScale(Xgc->scales,yt);
 #ifdef WITH_GTKGLEXT
@@ -1455,6 +1511,8 @@ static void nsp_obj3d_free_box(Plot3dBox *B)
 	  free(B->others_pos);
 	}
     }
+  if ( B->leg_coord != NULL) free(B->leg_coord);
+  if ( B->leg_pos != NULL) free(B->leg_pos);
   free(B);
 }
 
