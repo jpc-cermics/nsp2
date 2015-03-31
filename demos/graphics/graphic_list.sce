@@ -60,7 +60,7 @@ graphic_test_3d = build_demo_list("demo_3d",14);
 // organize the previous list  for graphic demo widget 
 
 graphic_test_prim = list() 
-for i=1:3
+for i=1:4
   graphic_test_prim(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_prim_%d",i));
 end 
 
