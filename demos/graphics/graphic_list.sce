@@ -52,6 +52,10 @@ demo_3d_11_info="parametric surface nf3d";
 demo_3d_12_info="Cube";
 demo_3d_13_info="Tube";
 demo_3d_14_info="Shell";
+// XXXX 
+demo_3d_15_info="tobedone";
+demo_3d_16_info="tobedone";
+demo_3d_17_info="tobedone";
 
 // organize the previous list for graphic demo widget 
 graphic_test_3d = build_demo_list("demo_3d",14);
