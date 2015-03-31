@@ -38,7 +38,7 @@ function beziersurftest()
 // Show a Bezier surface
 // Copyright Enpc
   x=linspace(-%pi,%pi,5);
-  [x,y]=field(x,x);
+  [x,y]=ndgrid(x,x);x=x';y=y';
   z= 3*sin(x).*cos(y);
   [xb,yb,zb]=beziersurface(x,y,z);
   [xx,yy,zz]=nf3d(x,y,z);
@@ -55,14 +55,14 @@ function c1test()
 // Show how two bezier surfaces can be joined.
 // Copyright Enpc
 // first surface 
-  x1=dup(-0.5:0.25:0.5,5);
-  y1=dup([0,0,0,0,1],5);
-  z1=dup(2:0.25:3,5)';
+  x1=repmat(-0.5:0.25:0.5,5,1);
+  y1=repmat([0,0,0,0,1],5,1);
+  z1=repmat(2:0.25:3,5,1)';
   [xb1,yb1,zb1]=beziersurface(x1,y1,z1,10);
   // second surface 
-  x2=dup(-0.5:0.25:0.5,5);
+  x2=repmat(-0.5:0.25:0.5,5,1);
   y2=[(ones_new(4,5));[0,0,0,0,0]];
-  z2=-dup(-1:0.25:0,5)';
+  z2=-repmat(-1:0.25:0,5,1)';
   [xb2,yb2,zb2]=beziersurface(x2,y2,z2,10);
   // a surface to link the two previous ones 
   x=zeros_new(5,5); y=x; z=x;
@@ -91,6 +91,77 @@ function c1test()
   [xx,yy,zz]=nf3d([xb1;xb;xb2],[yb1;yb;yb2],[zb1;zb;zb2]);
   plot3d(xx,yy,zz,alpha=A,theta=T,flag=EB); 
 endfunction
+
+
+// library 
+
+
+
+function [z] = bezier(p,t)
+//comment : Computes a  Bezier curves.
+//For a test try:
+//beziertest; bezier3dtest; nurbstest; beziersurftest; c1test;
+//Uses the following functions:
+//bezier, bezier3d, nurbs, beziersurface
+//endcomment
+//reset();
+// Evaluate sum p_i B_{i,n}(t) the easy and direct way.
+// p must be a k x n+1 matrix (n+1) points, dimension k.
+// Copyright INRIA
+  n=size(p,'c')-1;// i=nonzeros(t~=1);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
+  T=repmat(t./t1,n,1)';
+  T1 = repmat((n-(1:n)+1)./(1:n),size(t,'c'),1);
+  b=[((1-t').^n),(T.*T1)];
+  b=cumprod(b,'c');
+  T3=repmat([ 0*ones_new(1,n),1],size(t1z,'c'),1);
+  if (size(t1z,'c')>0); b(t1z,:)= T3;end
+  z=p*b';
+endfunction
+
+function bezier3d (p)
+// Shows a 3D Bezier curve and its polygon
+// Copyright INRIA
+  t=linspace(0,1,300);
+  s=bezier(p,t);
+  d=xget("color");
+  xset("color",3)
+  param3d(p(1,:),p(2,:),p(3,:),alpha=34,theta=45)
+  xset("color",4);
+  param3d(s(1,:),s(2,:),s(3,:),alpha=34,theta=45,leg="x@y@z",flag=[0,0])
+  xset("color",d);
+  xtitle('A 3d polygon and its Bezier curve');
+endfunction	
+
+function [X,Y,Z]=beziersurface (x,y,z,n)
+// Compute a Bezier surface. Return {bx,by,bz}.
+// Copyright INRIA
+  if nargin <= 3 ; n=20;end 
+  t=linspace(0,1,n);
+  n=size(x,'r')-1; // i=nonzeros(t~=1);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
+  T=repmat(t./t1,n,1)';
+  T1 = repmat((n-(1:n)+1)./(1:n),size(t,'c'),1);
+  b1=[((1-t').^n),(T.*T1)];
+  b1=cumprod(b1,'c');
+  if (size(t1z,'c')>0); 
+    T3=repmat([ 0*ones_new(1,n),1],size(t1z,'c'),1);
+    b1(t1z,:)= T3;
+  end
+  n=size(x,'c')-1; // i=nonzeros(t~=1);
+  t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
+  T=repmat(t./t1,n,1)';
+  T1 = repmat((n-(1:n)+1)./(1:n),size(t,'c'),1);
+  b2=[((1-t').^n),(T.*T1)];
+  b2=cumprod(b2,'c');
+  if (size(t1z,'c')>0) then
+    T3=repmat([ 0*ones_new(1,n),1],size(t1z,'c'),1);
+    b2(t1z,:)= T3;
+  end;
+  X=b1*x*b2';Y=b1*y*b2';Z=b1*z*b2';
+endfunction
+
+
 
 
 
