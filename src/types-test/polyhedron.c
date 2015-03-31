@@ -1025,7 +1025,7 @@ void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax)
   double amin= A[0], amax=A[0];
   /* look for the first non Nan component */
   i = 0; i1 = 1;
-  while ( i1 <= n && ISNAN(A[i]) ) { i += incr; i1++; }
+  while ( i1 <= n && ( ISNAN(A[i]) || isinf(A[i]))) { i += incr; i1++; }
   if ( i1 <= n )
     {
       /* init with the first non Nan component then do the usual loop */
@@ -1033,13 +1033,16 @@ void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax)
       i1++; i+=incr;
       for (  ; i1 <= n ; i += incr, i1++ )
 	{
-	  if ( A[i] < amin )
+	  if ( !( ISNAN(A[i]) || isinf(A[i])))
 	    {
-	      amin = A[i];
-	    }
-	  else if ( A[i] > amax )
-	    {
-	      amax = A[i];
+	      if ( A[i] < amin )
+		{
+		  amin = A[i];
+		}
+	      else if ( A[i] > amax )
+		{
+		  amax = A[i];
+		}
 	    }
 	}
     }
@@ -1595,4 +1598,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1599 "polyhedron.c"
+#line 1602 "polyhedron.c"

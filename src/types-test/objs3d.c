@@ -2155,7 +2155,14 @@ static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ti
   int i, j, first, last, inc=1, nb_grad, nb_ticks;
   double work[20], *ticks;
 
-  gr_compute_ticks(vmin, vmax, work, &nb_grad);
+  if ( isinf(*vmin) || isinf(*vmax)) 
+    {
+      nb_grad =2;
+    }
+  else
+    {
+      gr_compute_ticks(vmin, vmax, work, &nb_grad);
+    }
   if ( nb_grad <= 2 )
     {
       nb_ticks = 2; work[0] = *vmin; work[1] = *vmax;
@@ -3067,4 +3074,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3071 "objs3d.c"
+#line 3078 "objs3d.c"

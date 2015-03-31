@@ -1752,11 +1752,12 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
   if ( Val->mn != 0)
     {
       int i=0,j;
-      while ( ISNAN(Val->R[i])) i++;
+      vmin = vmax =0;
+      while ( ISNAN(Val->R[i]) || isinf(Val->R[i])) i++;
       vmin = vmax = Val->R[i];
       for ( j = i+1 ; j < Val->mn ; j++)
 	{
-	  if ( ISNAN(Val->R[j])) continue;
+	  if ( ISNAN(Val->R[j]) ||  isinf(Val->R[j]) ) continue;
 	  if ( Val->R[j] < vmin) vmin = Val->R[j];
 	  if ( Val->R[j] > vmax) vmax = Val->R[j];
 	}
@@ -1814,11 +1815,12 @@ int nsp_spolyhedron_update_from_triplet(NspSPolyhedron *pol,double *x,double *y,
   if ( Val->mn != 0)
     {
       int i=0,j;
-      while ( ISNAN(Val->R[i])) i++;
+      vmin = vmax = 0;
+      while ( ISNAN(Val->R[i]) || isinf(Val->R[i])) i++;
       vmin = vmax = Val->R[i];
       for ( j = i+1 ; j < Val->mn ; j++)
 	{
-	  if ( ISNAN(Val->R[j])) continue;
+	  if ( ISNAN(Val->R[j]) || isinf(Val->R[j])) continue;
 	  if ( Val->R[j] < vmin) vmin = Val->R[j];
 	  if ( Val->R[j] > vmax) vmax = Val->R[j];
 	}
@@ -1847,11 +1849,12 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
        * properly remap zz to the range of the colormap
        */
       int i=0,j;
-      while ( ISNAN(Val->R[i])) i++;
+      vmin=vmax=0;
+      while ( ISNAN(Val->R[i]) || isinf(Val->R[i])) i++;
       vmin = vmax = Val->R[i];
       for ( j = i+1 ; j < Val->mn ; j++)
 	{
-	  if ( ISNAN(Val->R[j])) continue;
+	  if ( ISNAN(Val->R[j])|| isinf(Val->R[j])) continue;
 	  if ( Val->R[j] < vmin) vmin = Val->R[j];
 	  if ( Val->R[j] > vmax) vmax = Val->R[j];
 	}
@@ -1873,4 +1876,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1877 "spolyhedron.c"
+#line 1880 "spolyhedron.c"

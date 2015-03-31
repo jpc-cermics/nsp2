@@ -1145,7 +1145,14 @@ static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ti
   int i, j, first, last, inc=1, nb_grad, nb_ticks;
   double work[20], *ticks;
 
-  gr_compute_ticks(vmin, vmax, work, &nb_grad);
+  if ( isinf(*vmin) || isinf(*vmax)) 
+    {
+      nb_grad =2;
+    }
+  else
+    {
+      gr_compute_ticks(vmin, vmax, work, &nb_grad);
+    }
   if ( nb_grad <= 2 )
     {
       nb_ticks = 2; work[0] = *vmin; work[1] = *vmax;
