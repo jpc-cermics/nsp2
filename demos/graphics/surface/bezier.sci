@@ -20,7 +20,6 @@ function beziertest()
 // Copyright Enpc
   plot2d([],[],strf="011",rect=[-0.2,-0.2,1.2,1.2]);
   xtitle('Bezier Test : random polygon and bezier curve')
-  rand('uniform');
   p=rand(2,5);
   t=linspace(0,1,300);
   s=bezier(p,t);
@@ -35,7 +34,6 @@ function bezier3dtest ()
   bezier3d(p);
 endfunction
 
-
 function beziersurftest()
 // Show a Bezier surface
 // Copyright Enpc
@@ -44,14 +42,13 @@ function beziersurftest()
   z= 3*sin(x).*cos(y);
   [xb,yb,zb]=beziersurface(x,y,z);
   [xx,yy,zz]=nf3d(x,y,z);
-  xsetech([0,0,1.0,0.5]); 	
-  plot3d1(xx,yy,zz);
+  xsetech(wrect=[0,0,1.0,0.5],a3d = %t); 	
+  plot3d1(xx,yy,zz,colormap=jetcolormap(32));
   xtitle('A first surface ');
-  xsetech([0,0.5,1.0,0.5])
+  xsetech(wrect=[0,0.5,1.0,0.5],a3d = %t)
   [xx,yy,zz]=nf3d(xb,yb,zb);
-  plot3d1(xx,yy,zz);
+  plot3d1(xx,yy,zz,colormap=jetcolormap(32));
   xtitle('The bezier interpolated surface (n=10)');
-  xsetech([0,0,1,1]);
 endfunction
 
 function c1test()
@@ -81,21 +78,18 @@ function c1test()
   z(3,:)=(z(4,:)+z(2,:))/2;
   A=35,T=50,L=" ",EB=[4,2,0]
   [xb,yb,zb]=beziersurface(x,y,z,10);
-  xsetech([0,0,1,1]);
+  xsetech(wrect=[0,0,0.5,0.5],a3d = %t);
   xtitle('how two bezier surfaces can be joined');
-  xsetech([0,0,0.5,0.5]);
   [xx,yy,zz]=nf3d(xb1,yb1,zb1);
   plot3d(xx,yy,zz,alpha=A,theta=T,flag=EB); 
-  //xsetech([0.5,0,0.5,0.5]);plot3d2(xb,yb,zb,-1,A,T,L,EB); 
-  xsetech([0,0.5,0.5,0.5]);
+  xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t);
   [xx,yy,zz]=nf3d(xb2,yb2,zb2);
   plot3d(xx,yy,zz,alpha=A,theta=T,flag=EB); 
-  xsetech([0.5,0.0,0.5,1.0]);
+  xsetech(wrect=[0.5,0.0,0.5,1.0],a3d=%t);
   [n1,p1]=size(xb1);
   [n2,p2]=size(xb);
   [xx,yy,zz]=nf3d([xb1;xb;xb2],[yb1;yb;yb2],[zb1;zb;zb2]);
   plot3d(xx,yy,zz,alpha=A,theta=T,flag=EB); 
-  xsetech([0,0,1,1]);
 endfunction
 
 

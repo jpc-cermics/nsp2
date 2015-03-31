@@ -66,8 +66,7 @@ endfunction
 function [X,Y,Z]=beziersurface (x,y,z,n)
 // Compute a Bezier surface. Return {bx,by,bz}.
 // Copyright INRIA
-  [lhs,rhs]=argn(0);
-  if rhs <= 3 ; n=20;end 
+  if nargin <= 3 ; n=20;end 
   t=linspace(0,1,n);
   n=size(x,'r')-1; // i=nonzeros(t~=1);
   t1=(1-t); t1z= find(t1==0.0); t1(t1z)= ones(size(t1z));
@@ -118,9 +117,8 @@ function cplxroot(n,m,varargin)
 // Use polar coordinates, (r,theta).
 // Cover the unit disc n times.
 // Copyright INRIA
-  [lhs,rhs]=argn(0)
-  if rhs  < 1, n = 3; end
-  if rhs  < 2, m = 20; end
+  if nargin  < 1, n = 3; end
+  if nargin  < 2, m = 20; end
   r = (0:m)'/m;
   theta = - %pi*(-n*m:n*m)/m;
   z = r * exp(%i*theta);
