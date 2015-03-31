@@ -916,6 +916,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 
   B->leg_pos = NULL;
   B->leg_coord = NULL;
+  B->legend = legend;
 
   if ( 0 )
     {
@@ -1248,9 +1249,19 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
     }
   if ( 0 && B->leg_coord != NULL )
     {
-      draw_leg(Xgc,B,"XXXX", B->leg_coord);
-      draw_leg(Xgc,B,"YYYY", B->leg_coord+6);
-      draw_leg(Xgc,B,"ZZZZ", B->leg_coord+12);
+      char *legx,*legy,*legz; 
+      char *loc= malloc((strlen(B->legend)+1)*sizeof(char));
+      if ( loc == NULL )    
+	{
+	  Scistring("Objs3d: cannot allocate space for legends\n");
+	  return;
+	}
+      strcpy(loc,B->legend);
+      legx=strtok(loc,"@");legy=strtok((char *)0,"@");legz=strtok((char *)0,"@");
+      if (legx != NULL) draw_leg(Xgc,B,legx, B->leg_coord);
+      if (legy != NULL) draw_leg(Xgc,B,legy, B->leg_coord+6);
+      if (legz != NULL) draw_leg(Xgc,B,legz, B->leg_coord+12);
+      free(loc);
     }
 }
 

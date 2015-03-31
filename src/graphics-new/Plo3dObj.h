@@ -204,7 +204,8 @@ typedef struct
   int nb_zticks;
   double *zticks;
   int nb_xyz_ticks;
-
+  
+  const char *legend;
   double *leg_coord;
   VisionPos *leg_pos;
 } Plot3dBox;
