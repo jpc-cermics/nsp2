@@ -28,7 +28,8 @@ function sphere()
   x= cos(u)'*cos(v);
   y= cos(u)'*sin(v);
   z= sin(u)'*ones(size(v));
-  plot3d(x,y,z);
+  [xx,yy,zz]=nf3d(x,y,z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function shell()
@@ -37,7 +38,8 @@ function shell()
   x= (cos(u).*u)'*(1+cos(v)/2);
   y= (u/2)'*sin(v);
   z= (sin(u).*u)'*(1+cos(v)/2);
-  plot3d(x,y,z);
+  [xx,yy,zz]=nf3d(x,y,z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function spiral()
@@ -46,7 +48,8 @@ function spiral()
   x=r.*cos(a).*(1-a/20);
   y=r.*sin(a).*(1-a/20);
   z=z-1.5;
-  plot3d(x,y,z); 
+  [xx,yy,zz]=nf3d(x,y,z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function rings()
@@ -56,10 +59,13 @@ function rings()
   r=dup(1+cos(t)*rr,n)'; m=length(t);
   x=dup(cos(s),m).*r; y=dup(sin(s),m).*r;
   z=dup(sin(t)*rr,n)';
-  X=[x;(x+1.3);(x-1.3)];
-  Y=[y;-z;-z];
-  Z=[z;y;y];
-  plot3d(X,Y,Z,[m,2*m]);
+  // ring1 
+  [xx1,yy1,zz1]=nf3d(x,y,z);
+  // ring2 
+  [xx2,yy2,zz2]=nf3d(x+1.3,-z,y);
+  // ring3 
+  [xx3,yy3,zz3]=nf3d(x-1.3,-z,y);
+  plot3d([xx1,xx2,xx3],[yy1,yy2,yy3],[zz1,zz2,zz3]);
 endfunction
 
 function torus()
@@ -71,7 +77,8 @@ function torus()
   X=factor*diag(cos(x));
   Y=factor*diag(sin(x));
   Z=sin(y)*(cos(x)/2+0.6);
-  plot3d(X,Y,Z);
+  [xx,yy,zz]=nf3d(X,Y,Z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function torus1  ()    
@@ -82,7 +89,8 @@ function torus1  ()
   X=factor*cos(x);
   Y=factor*sin(x);
   Z=sin(y)*ones(size(x))+ ones(size(y))*cos(2*x);
-  plot3d(X,Y,Z);
+  [xx,yy,zz]=nf3d(X,Y,Z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function moebius()
@@ -93,7 +101,8 @@ function moebius()
   X=factor*diag(cos(2*x));
   Y=factor*diag(sin(2*x));
   Z=t*sin(x);
-  plot3d(X,Y,Z);
+  [xx,yy,zz]=nf3d(X,Y,Z);
+  plot3d1(xx,yy,zz);
 endfunction
 
 function tube(nn)
@@ -106,7 +115,8 @@ function tube(nn)
   f=dup(y',length(x));
   x1=f.*cosphi;     y1=f.*sinphi;
   z=dup(linspace(-2,2,prod(size(y)))',prod(size(x)));
-  plot3d(x1,y1,z,-1,35,70);
+  [xx,yy,zz]=nf3d(x1,y1,z);
+  plot3d1(xx,yy,zz,alpha=35,theta=70);
 endfunction
 
 function bh(nn)
@@ -116,5 +126,19 @@ function bh(nn)
   cosphi=dup(cos(x),length(t));
   sinphi=dup(sin(x),length(t));
   f=dup((t.*t+0.2)',length(x));
-  plot3d(f.*cosphi,f.*sinphi,dup(t'.*2-1,length(x)));
+  x=f.*cosphi;y=f.*sinphi ;z=dup(t'.*2-1,length(x));
+  [xx,yy,zz]=nf3d(x,y,z);
+  plot3d1(xx,yy,zz,alpha=70,theta=64);
 endfunction
+
+//xclear(); hole3d()
+//xclear(); hole3d1()
+xclear(); sphere();pause;
+xclear(); shell();pause;
+xclear(); spiral();pause;
+xclear(); rings();pause;
+xclear(); torus();pause;
+xclear(); torus1  ()    ;pause;
+xclear(); moebius();pause;
+xclear(); tube(30);pause;
+xclear(); bh(30);pause;
