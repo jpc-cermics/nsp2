@@ -1,3 +1,5 @@
+// demon of histograms created with xpoly functions
+
 function partie(f,xmin,xmax,couleur)
   x=linspace(xmin,xmax,100);
   y=f(x);
@@ -19,7 +21,6 @@ xpoly(xleft*[1;1],[0;0.3]);xstring(xleft-rect(3),0.3,'A');
 xright=2;
 partie(f,2,max(x),12);
 xpoly(xright*[1;1],[0;0.3]);xstring(xright,0.3,'B');
-////xs2ps(0,'capabilite.ps');
-////unix(SCI+'/bin/Blatexpr -p 1 1 capabilite.ps')  
+
 
 					    

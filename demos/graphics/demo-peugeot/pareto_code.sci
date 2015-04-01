@@ -1,5 +1,5 @@
 //driver('Rec')
-valeurs=10*rand(1,5,'u');
+valeurs=10*rand(1,5);
 n= size(valeurs,'*');
 noms='noms '+string(1:n);
 

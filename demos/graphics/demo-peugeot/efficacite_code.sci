@@ -15,5 +15,3 @@ plot2d(x,y,leg=leg,leg_pos="urm");
 //a.grid=[2,2];
 xgrid()
 xtitle('Courbe d''efficacité','CAP reel','Pa');
-////xs2ps(0,'efficacite.ps');
-//unix(SCI+'/bin/Blatexpr -p 1 1 efficacite.ps')  /// \sleftarrow{calling a Unix script}

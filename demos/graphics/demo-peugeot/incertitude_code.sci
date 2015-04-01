@@ -32,10 +32,7 @@ xsetech(wrect=[0,1/2,1/2,1/2]);
 histplot()
 //a=gca();
 //a.box="off";
-xsetech(wrect=[1/2,1/2,1/2,1/2]);
+xsetech(wrect=[1/2,1/2,1/2,1/2],a3d=%t);
 plot3d();
-
-////xs2ps(0,'incertitude.ps');
-//unix(SCI+'/bin/Blatexpr -p 1 1 incertitude.ps')  /// \sleftarrow{calling a Unix script}
 
 

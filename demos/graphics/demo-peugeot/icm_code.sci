@@ -1,6 +1,6 @@
 n=20;
-x=rand(n,1,'u');
-y=rand(n,1,'u');
+x=rand(n,1);
+y=rand(n,1);
 noms= 'Piece '+string(1:n);
 
 Ip=find(y>=0.6);
