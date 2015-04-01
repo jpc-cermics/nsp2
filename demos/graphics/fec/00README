@@ -1,0 +1,43 @@
+
+fec is used to plot contour level of a function defined on a mesh constituted of
+triangles and assuming that f is linear on triangles
+
+The best way to undersantd how it works is to look at the demo files 
+in demos/graphics/fec 
+
+Fec is used as folows : let no be the number of nodes and Ntr the number of triangles 
+
+fec(x,y,triangles,func,no,Ntr,...)
+
+	x and y are two vectors of size no 
+		 (x(i),y(i)) gives the coordinates of node i 
+	func is also a vector of size no : 
+		func(i) gives the value of the function for which we want
+		the level curves.
+
+	trianles : is a [Ntr,5] matrix 
+		each line of triangles specifies a triangle of the mesh 
+		triangle(j) = [number,node1,node2,node3,flag]
+		node1,node2,node3 : are the number of the nodes 
+		which constitues triangle(j)
+		number : is the number of the triangle 
+		flag is an integer not used in the fec function 
+
+===================================================================
+
+
+fec1.sce: is a simple demo file in which a mesh and a function 
+	  on that mesh is completely built in nsp syntax. 
+
+fec2.sce: is an example for which the mesh and the function value where 
+	  computed by an external `mesh builder  (amdba type mesh) and external program 
+	  A set of macros ( provided in file macros.sci) are used to read the to data files
+	  and plot the results.
+
+fec3.sce: an other example
+
+fec4.sce: an example which illustrate the available options.
+
+
+
+

@@ -3,18 +3,18 @@
 // Mesh of amdba type 
 // Copyright Enpc 
 
-path=getenv('SCI')+'/demos/graphics/fec/';
+if ~new_graphics() then switch_graphics();end 
+path='NSP/demos/graphics/fec/';
 exec(path+'macros.sci')
-amdbaR(path+'MESH')
+amdbaR(path+'MESH');
 meshvisu()
-xclear()
-xset("use color",1)
+xclick();xclear()
+xset('colormap',jetcolormap(32));
 emc2C(1,6,path+'MESH.VAL')
-//halt()
-xclick()
-xclear()
-xset("use color",1)
+xclick();xclear()
+xset('colormap',jetcolormap(32));
 emc2C(1,6,path+'MESH.VAL',[-2,-2,2,2])
-xclear();
+xclick();xclear();
+xset('colormap',jetcolormap(32));
 emc2V(2,3,6,20,path+'MESH.VAL',[-0.5,-0.5,2,0.5])
 

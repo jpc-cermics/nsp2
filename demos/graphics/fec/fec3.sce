@@ -3,7 +3,12 @@
 // and visualisation of a function linear on triangles
 // Copyright Enpc.
 
-load('NSP/macros/mottelet/tridem.nsp')
+if ~new_graphics() then switch_graphics();end 
+if file('exists',getenv('NSP')+'/macros/mottelet/tridem.nsp')
+  load('NSP/macros/mottelet/tridem.nsp')
+else
+  return;
+end
 
 ntri=size(nodes,2);
 T=[nodes'];
