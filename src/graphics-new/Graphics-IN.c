@@ -1016,9 +1016,11 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
   NspObjs3d *objs3d;
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   /* XXX : bbox should be used somewhere if needed */
-
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  /* parameter for scales */
+  objs3d->obj->scale_flag = flag[1];
+
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
       nsp_matrix_destroy(objs3d->obj->colormap);
@@ -1057,6 +1059,9 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  /* parameter for scales */
+  objs3d->obj->scale_flag = flag[1];
+
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
       nsp_matrix_destroy(objs3d->obj->colormap);
@@ -1093,6 +1098,9 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  /* parameter for scales */
+  objs3d->obj->scale_flag = flag[1];
+
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
       nsp_matrix_destroy(objs3d->obj->colormap);
@@ -1135,6 +1143,9 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
+  /* parameter for scales */
+  objs3d->obj->scale_flag = flag[1];
+
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
       nsp_matrix_destroy(objs3d->obj->colormap);

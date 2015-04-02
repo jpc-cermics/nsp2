@@ -67,6 +67,7 @@ struct _nsp_objs3d {
   int box_style;
   gboolean fixed;
   NspMatrix* ebox;
+  int scale_flag;
   int ref_count;
 };
 
@@ -96,7 +97,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspMatrix* ebox,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspMatrix* ebox,int scale_flag,NspTypeBase *type);
 extern NspObjs3d *nsp_objs3d_create_default(const char *name);
 
 /* from NspObjs3dObj.c */
@@ -139,7 +140,7 @@ extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, Visio
 				  const double lim[], int ncoord);
 
 
-#line 143 "./objs3d.h"
+#line 144 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -191,6 +192,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 195 "./objs3d.h"
+#line 196 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

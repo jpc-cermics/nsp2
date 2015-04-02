@@ -25,6 +25,7 @@
    '("int" "box_style" "std" "0")  ;; box style 
    '("gboolean" "fixed" "std" "FALSE")  ;; box style 
    '("NspMatrix*" "ebox" "std" "{0,0,0,0,0,0}" "6" ) ;; when fixed is true bounds are specified by ebox
+   '("int" "scale_flag" "std" "2") ;; 
    )
   (gtype-id "Objs3d")
 )

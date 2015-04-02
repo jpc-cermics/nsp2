@@ -229,6 +229,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
   if ( A->obj->fixed != loc->obj->fixed) return FALSE;
   if ( NSP_OBJECT(A->obj->ebox)->type->eq(A->obj->ebox,loc->obj->ebox) == FALSE ) return FALSE;
+  if ( A->obj->scale_flag != loc->obj->scale_flag) return FALSE;
    return TRUE;
 }
 
@@ -267,6 +268,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_save_i(xdrs, M->obj->box_style) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fixed) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->ebox)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->scale_flag) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
@@ -295,6 +297,7 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->box_style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fixed) == FAIL) return NULL;
   if ((M->obj->ebox =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->scale_flag) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -428,6 +431,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   if ( M->obj->ebox != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"scale_flag=%d\n", M->obj->scale_flag);
   nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
@@ -475,6 +479,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   if ( M->obj->ebox != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),indent+2,"ebox", rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"scale_flag=%d\n", M->obj->scale_flag);
   nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -562,6 +567,7 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->box_style = 0;
   H->obj->fixed = FALSE;
   H->obj->ebox = NULLMAT;
+  H->obj->scale_flag = 2;
   return OK;
 }
 
@@ -623,7 +629,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspMatrix* ebox,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspMatrix* ebox,int scale_flag,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -645,6 +651,7 @@ NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect
   H->obj->box_style=box_style;
   H->obj->fixed=fixed;
   H->obj->ebox= ebox;
+  H->obj->scale_flag=scale_flag;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
   return H;
 }
@@ -738,6 +745,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
     {
       if ((H->obj->ebox = (NspMatrix *) nsp_object_full_copy_and_name("ebox", NSP_OBJECT(self->obj->ebox))) == NULLMAT) return NULL;
     }
+  H->obj->scale_flag=self->obj->scale_flag;
   return H;
 }
 
@@ -819,7 +827,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 823 "objs3d.c"
+#line 831 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -974,7 +982,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 978 "objs3d.c"
+#line 986 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1132,6 +1140,21 @@ static int _wrap_objs3d_set_ebox(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_objs3d_get_scale_flag(void *self,const char *attr)
+{
+  int ret;
+  ret = ((NspObjs3d *) self)->obj->scale_flag;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_objs3d_set_scale_flag(void *self,const char *attr, NspObject *O)
+{
+  int scale_flag;
+  if ( IntScalar(O,&scale_flag) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->scale_flag= scale_flag;
+  return OK;
+}
+
 static AttrTab objs3d_attrs[] = {
   { "wrect", (attr_get_function * )_wrap_objs3d_get_wrect, (attr_set_function * )_wrap_objs3d_set_wrect, (attr_get_object_function * )_wrap_objs3d_get_obj_wrect, (attr_set_object_function * )int_set_object_failed },
   { "rho", (attr_get_function * )_wrap_objs3d_get_rho, (attr_set_function * )_wrap_objs3d_set_rho, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
@@ -1148,6 +1171,7 @@ static AttrTab objs3d_attrs[] = {
   { "box_style", (attr_get_function * )_wrap_objs3d_get_box_style, (attr_set_function * )_wrap_objs3d_set_box_style, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "fixed", (attr_get_function * )_wrap_objs3d_get_fixed, (attr_set_function * )_wrap_objs3d_set_fixed, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "ebox", (attr_get_function * )_wrap_objs3d_get_ebox, (attr_set_function * )_wrap_objs3d_set_ebox, (attr_get_object_function * )_wrap_objs3d_get_obj_ebox, (attr_set_object_function * )int_set_object_failed },
+  { "scale_flag", (attr_get_function * )_wrap_objs3d_get_scale_flag, (attr_set_function * )_wrap_objs3d_set_scale_flag, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1164,7 +1188,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1168 "objs3d.c"
+#line 1192 "objs3d.c"
 
 
 #line 191 "codegen/objs3d.override"
@@ -1176,7 +1200,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1180 "objs3d.c"
+#line 1204 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1215,7 +1239,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 {
   GdkRectangle clip_axe , r2, rect_a;
   nsp_gcscale scale_keep = *Xgc->scales;
-  int flag[]={1,2,4}, rep;
+  int flag[]={1,4,4}; /* XXX */
+  int rep;
   char legend[]="X@Y@Z";
   char xf[]="onn";
   char strflag[]="151";
@@ -1223,6 +1248,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int aaint[4]={10,2,10,2};
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( Obj->obj->show == FALSE ) return;
+
+  flag[1]= P->obj->scale_flag; /* XX flag should be replaced by P->obj->scale_flag */
 
   if ( rect != NULL) rect_a = *rect;
 
@@ -3074,4 +3101,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3078 "objs3d.c"
+#line 3105 "objs3d.c"

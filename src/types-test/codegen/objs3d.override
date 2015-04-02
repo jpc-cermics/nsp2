@@ -205,7 +205,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 {
   GdkRectangle clip_axe , r2, rect_a;
   nsp_gcscale scale_keep = *Xgc->scales;
-  int flag[]={1,2,4}, rep;
+  int flag[]={1,4,4}; /* XXX */
+  int rep;
   char legend[]="X@Y@Z";
   char xf[]="onn";
   char strflag[]="151";
@@ -213,6 +214,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int aaint[4]={10,2,10,2};
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( Obj->obj->show == FALSE ) return;
+
+  flag[1]= P->obj->scale_flag; /* XX flag should be replaced by P->obj->scale_flag */
 
   if ( rect != NULL) rect_a = *rect;
 
