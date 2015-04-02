@@ -1002,6 +1002,11 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   }
 }
 
+static void nsp_set_box_parameters(NspObjs3d *objs3d,int flag)
+{
+  objs3d->obj->with_box =( flag == 0 ) ? FALSE : TRUE;
+  objs3d->obj->box_style = (flag == 1 ) ? SCILAB : MATLAB;
+}
 
 static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *q,
 				  double *teta, double *alpha,const char *legend, int *flag,
@@ -1028,6 +1033,9 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
 
+  /* parameters for box drawing */
+  nsp_set_box_parameters(objs3d, flag[2]);
+  
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
@@ -1062,6 +1070,9 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
 
+  /* parameters for box drawing */
+  nsp_set_box_parameters(objs3d, flag[2]);
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
@@ -1093,12 +1104,17 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
   pol = nsp_spolyhedron_create_from_facets("pol",x,y,z,*p,*q,cvect,
 					   (izcol==1) ? *q : (izcol==2) ? *p*(*q) : 0, 1);
   if ( pol == NULL) return NULL;
+
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
   if ( flag[0] == 0)
     {
       pol->obj->mesh_only = TRUE;
     }
   pol->obj->shade = shade;
+
+  /* parameters for box drawing */
+  nsp_set_box_parameters(objs3d, flag[2]);
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
@@ -1126,6 +1142,7 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
     }
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_spolyhedron_create_from_triplet("pol",x,y,z,*p,*q,NULL,0);
+  if ( pol == NULL) return NULL;
 
   /* fix the mesh according to flag
    * Note that when flg == 0 we should
@@ -1138,7 +1155,9 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
     }
 
   pol->obj->shade = shade;
-  if ( pol == NULL) return NULL;
+
+  /* parameters for box drawing */
+  nsp_set_box_parameters(objs3d, flag[2]);
 
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
