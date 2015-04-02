@@ -1,0 +1,89 @@
+% -*- mode: latex -*-
+
+\mansection{xrects}
+\begin{mandesc}
+  \short{xrects}{draw or fill a set of rectangles}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  R=xrects(rects,[colors])
+  R=xrects(rects,color=..,thickness=..,background=..,compound=%t|%f);
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{rects}: matrix of size (4,n).
+    \vname{colors}: vector of size n.
+    \vname{background}: vector of size n.
+    \vname{color}: vector of size n.
+    \vname{thickness}: vector of size n.
+    \vname{compound}: a boolean.
+    \vname{R}: a graphic object.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xrects(rects,colors)! draws or fills a set of rectangles.
+  Each column of the variable \verb!rects! describes a rectangle
+  (upper-left point, width, height): \verb!rects=[x1 y1 w1 h1;x2 y2 w2 h2;...]'!.
+  The value of \verb!color(i)! gives the pattern or color to use for filling or drawing rectangle
+  \verb!i!:
+  \begin{itemize}
+  \item if \verb!fill(i) < 0!, rectangle \verb!i! is drawn using the line style (or
+    color) \verb!-fill(i)!
+  \item if \verb!fill(i) > !, rectangle \verb!i! is filled using the pattern (or
+    color) \verb!fill(i)!
+  \item if \verb!fill(i)=0!, rectangle \verb!i! is drawn using the current
+    line style (or color).
+  \end{itemize}
+
+  \verb!xrects(rects,color=..,thickness=..,background=..,compound=%t|%f);! draws a set of
+  rectangles. The color and thickness of drawing line can be given by optional arguments
+  color and thickness. If optional background argument is given it is used as color to fill
+  the rectangle. A graphic object is returned in argument \verb!R! if requested and by default
+  its is a compound which contains all the graphics rectangle objects.
+
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+A first example \verb!xrects(rects,cols)!
+
+\begin{Verbatim}
+  plot2d([-100,500],[-50,50],style=[-1,-1],strf="022")
+  cols=[-34,-33,-32,-20:5:20,32,33,34];
+  x=400*(0:14)/14; step=20;
+  rects=[x;10*ones(size(x));step*ones(size(x));30*ones(size(x))];
+  xrects(rects,cols)
+  xnumb(x,15*ones(size(x)),cols)
+\end{Verbatim}
+
+A second example with optional arguments
+
+\begin{Verbatim}
+  if ~new_graphics() then switch_graphics();end
+  plot2d([-100,500],[-50,50],style=[-1,-1],strf="022")
+  x=400*(0:14)/14; step=20;
+  rects=[x;10*ones(size(x));step*ones(size(x));30*ones(size(x))];
+  background=[4*ones(1,5),1:5,6*ones(1,5)];
+  color=[6*ones(1,5),ones(1,5),4*ones(1,5)];
+  thickness=[4*ones(1,5),ones(1,5),4*ones(1,5)];
+  xrects(rects,background=background,color=color,thickness=thickness);
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{xfrect}{xfrect} \manlink{xrect}{xrect}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
