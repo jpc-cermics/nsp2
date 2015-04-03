@@ -1019,7 +1019,7 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   /* parameter for scales */
-  objs3d->obj->scale_flag = flag[1];
+  if (flag[1] != 0 ) objs3d->obj->scale_flag = flag[1];
 
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
@@ -1060,7 +1060,7 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   /* parameter for scales */
-  objs3d->obj->scale_flag = flag[1];
+  if (flag[1] != 0 ) objs3d->obj->scale_flag = flag[1];
 
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
@@ -1099,7 +1099,7 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   /* parameter for scales */
-  objs3d->obj->scale_flag = flag[1];
+  if (flag[1] != 0 ) objs3d->obj->scale_flag = flag[1];
 
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
@@ -1144,7 +1144,7 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   /* parameter for scales */
-  objs3d->obj->scale_flag = flag[1];
+  if (flag[1] != 0 ) objs3d->obj->scale_flag = flag[1];
 
   if (colormap != NULL && objs3d->obj->colormap != NULL)
     {
