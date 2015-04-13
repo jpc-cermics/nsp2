@@ -522,8 +522,7 @@ static int int_meth_cells_get(void *self,Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if ((Ob= nsp_object_copy(C->objs[0]))==NULL)  return RET_BUG;
-  NthObj(rhs+1) = Ob ;
-  NSP_OBJECT(Ob)->ret_pos = 1;
+  MoveObj(stack,1,NSP_OBJECT(Ob)); 
   return 1;
 }
 
