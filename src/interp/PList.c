@@ -804,6 +804,10 @@ NspAst *nsp_plist_to_ast(const char *name,PList L)
     }
   /* then create an ast with tolevel object */
   if ((ast = nsp_plist_node_to_ast(name,L)) == NULLAST)  return NULLAST;
+  if ( ast->args != NULL) 
+    {
+      nsp_list_destroy(ast->args);
+    }
   ast->args = args;
   return ast;
  err:
