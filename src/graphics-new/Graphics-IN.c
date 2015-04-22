@@ -756,12 +756,14 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   int mesh=TRUE,mesh_only=FALSE, shade=TRUE;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
-  const char *leg=NULL, *leg1;
+  const char *leg=NULL, *leg1=NULL,*box_style_str=NULL;
   NspMatrix *x,*y,*z,*zloc=NULL,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL, *colormap=NULL;
   int izcol=0, *zcol=NULL,*iflag, ret=0;
   NspGraphic *nsp_ret;
-
+  int box_style = 2; /* matlab mode by default */
+  int surface_color= -1; /* blue in the default colormap */
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
+
 
   nsp_option opts[] ={{ "args",list,NULLOBJ,-1},
 		      { "alpha",s_double,NULLOBJ,-1},
@@ -774,10 +776,12 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 		      { "mesh", s_bool,NULLOBJ,-1},
 		      { "mesh_only", s_bool,NULLOBJ,-1},
 		      { "shade", s_bool,NULLOBJ,-1},
+		      { "box_style",string,NULLOBJ,-1},
+		      { "surface_color",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts,&args,&alpha,&colormap,
-	       &Mcolors,&Mebox,&Mflag,&leg,&theta,&mesh,&mesh_only,&shade) == FAIL)
+	       &Mcolors,&Mebox,&Mflag,&leg,&theta,&mesh,&mesh_only,&shade,&box_style_str,&surface_color) == FAIL)
     return RET_BUG;
 
   if (x->mn == 0) { return 0;}
@@ -804,6 +808,17 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       goto end;
     }
 
+  if ( box_style_str != NULL)
+    {
+      const char *box_style_table[] = {"none", "scilab", "matlab", NULL};
+      box_style = is_string_in_array(box_style_str,box_style_table,1);
+      if ( box_style < 0 )
+	{
+	  string_not_in_array(stack, box_style_str, box_style_table, "optional argument mode");
+	  return RET_BUG;
+	}
+    }
+  
   if (Mcolors == NULLMAT)
     {
       izcol=0;
@@ -812,7 +827,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
     {
       izcol = 1;
       zcol  = Mcolors->I;
-      CheckDimProp(NspFname(stack),3,opts[2].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
+      CheckDimProp(NspFname(stack),3,opts[3].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
       /*
        *   Added by E Segre 4/5/4000. In the case where zcol is a
        *   matrix of the same size as z, we set izcol to 2. This
@@ -883,15 +898,17 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
       if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
     }
-  /*
+
+  /* change iflag according to other options
    * check that iflag[2] and leg are compatible
    * i.e force visibility of axes names if they are given
    */
+  if ( surface_color > 0 ) iflag[0] = surface_color;
   if (leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
-
   if ( mesh == FALSE && iflag[0] > 0) iflag[0]= -iflag[0];
   if ( mesh_only == TRUE ) iflag[0] =0;
-
+  if ( box_style_str != NULL) iflag[2]= box_style;
+  
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { goto end;}
 
   nsp_gwin_clear();
