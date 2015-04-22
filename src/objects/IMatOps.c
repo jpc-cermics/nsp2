@@ -3587,20 +3587,20 @@ int nsp_imatrix_unique_columns(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, 
   if ( Ind == NULL )
     {
       if ( x->n <= 1 ) return OK;
-#define IMAT_AC(name,type,arg)				           \
+#define IMAT_AC(name,type,arg)					       \
       nsp_qsort_gen_lexicol_##type( x->Iv, NULL, 0, x->m, x->n, 'i');  \
-      j0 = 0;                                                      \
-      for ( j = 1 ; j < x->n ; j++ )                               \
-	{                                                          \
-	  for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )\
-	    equal = x->name[pj0] ==  x->name[pj];                  \
-	  if ( ! equal )                                           \
-	    {                                                      \
-	      j0++;                                                \
-	      memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type));\
-	    }                                                      \
-	}                                                          \
-      break;
+	j0 = 0;							       \
+	for ( j = 1 ; j < x->n ; j++ )				       \
+	  {								\
+	    for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ ) \
+	      equal = x->name[pj0] ==  x->name[pj];			\
+	    if ( ! equal )						\
+	      {								\
+		j0++;							\
+		if ( j0 != j) memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type)); \
+	      }								\
+	  }								\
+	break;
       NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
 #undef IMAT_AC
       nsp_imatrix_resize(x, x->m, j0+1);
@@ -3619,23 +3619,23 @@ int nsp_imatrix_unique_columns(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, 
       
       if ( x->n > 0 )
 	{
-#define IMAT_AC(name,type,arg)				                     \
-	  nsp_qsort_gen_lexicol_##type( x->Iv, index, 1, x->m, x->n, 'i');       \
-	  j0 = 0; j_old = 0;                                                 \
-	  for ( j = 1 ; j < x->n ; j++ )                                     \
-	    {                                                                \
-	      for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )\
-		equal = x->name[pj0] ==  x->name[pj];                        \
-	      if ( ! equal )                                                 \
-		{                                                            \
-		  if (Occ != NULL) { occ->R[j0] = j - j_old; j_old = j; }    \
-		  j0++;                                                      \
-		  memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type));  \
-		  index[j0] = index[j];                                      \
-		}                                                            \
-	      else                                                           \
-		if ( index[j] < index[j0] )  index[j0] = index[j];           \
-	    }                                                                \
+#define IMAT_AC(name,type,arg)						\
+	  nsp_qsort_gen_lexicol_##type( x->Iv, index, 1, x->m, x->n, 'i'); \
+	  j0 = 0; j_old = 0;						\
+	  for ( j = 1 ; j < x->n ; j++ )				\
+	    {								\
+	      for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ ) \
+		equal = x->name[pj0] ==  x->name[pj];			\
+	      if ( ! equal )						\
+		{							\
+		  if (Occ != NULL) { occ->R[j0] = j - j_old; j_old = j; } \
+		  j0++;							\
+		  if ( j0 != j) memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type)); \
+		  index[j0] = index[j];					\
+		}							\
+	      else							\
+		if ( index[j] < index[j0] )  index[j0] = index[j];	\
+	    }								\
 	  break;
 	  NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
 #undef IMAT_AC

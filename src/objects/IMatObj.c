@@ -1360,6 +1360,10 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
 	Index = (NspObject *) Mat2double( (NspMatrix *) Index);
       MoveObj(stack,2,Index);
     }
+  else
+    {
+      if ( Index != NULL) nsp_object_destroy(&Index);
+    }
   return Max(lhs,1);
 }
 

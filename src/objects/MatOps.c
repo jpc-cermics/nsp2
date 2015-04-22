@@ -6339,6 +6339,7 @@ int nsp_mat_unique_rows(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind
  *
  * Return value: %OK or %FAIL
  **/
+
 int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
 {
   int j0, i, j, j_old, *index, pj0, pj;
@@ -6357,7 +6358,7 @@ int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char 
 	  if ( ! equal )
 	    {
 	      j0++;
-	      memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+	      if ( j0 != j) memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
 	    }
 	}
       nsp_matrix_resize(x, x->m, j0+1);
@@ -6386,7 +6387,7 @@ int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char 
 		{
 		  if (Occ != NULL) { occ->R[j0] = j - j_old; j_old = j; }
 		  j0++;
-		  memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+		  if ( j0 != j) memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
 		  index[j0] = index[j];
 		}
 	      else 
