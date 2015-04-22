@@ -1108,7 +1108,9 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
       full_case = TRUE;
       if ((Bm = GetMat(stack,rhs)) == NULLMAT ) goto ret_bug;
       if ( rhs == 3 )
-	if ((B1= B=nsp_spcolmatrix_from_mat(Bm)) == NULLSPCOL) goto ret_bug;
+	{
+	  if ((B1= B=nsp_spcolmatrix_from_mat(Bm)) == NULLSPCOL) goto ret_bug;
+	}
     }
   else if ( IsSpColMatObj(stack,rhs)) 
     {
@@ -1281,6 +1283,7 @@ static int int_spcolmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
   /* Rows is changed by nsp_spcolmatrix_extract_rows */
   if ((Rows =nsp_get_object_copy(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_spcolmatrix_extract_rows( A,Rows,&err);
+  nsp_object_destroy(&Rows);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);

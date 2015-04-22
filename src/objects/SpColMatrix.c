@@ -1567,8 +1567,9 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
   
   if ( Col->size != 0) 
     {
-      FREE(Col->R); FREE(Col->J); FREE(Col);
+      FREE(Col->R); FREE(Col->J); 
     }
+  FREE(Col);
   A->D[jA] = ColNew;
 
   if ( do_clean )   /* some zeros have been inserted */

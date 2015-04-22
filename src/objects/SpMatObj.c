@@ -800,9 +800,10 @@ static int int_sprowmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  if ((Cols =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
+  if ((Cols =nsp_get_object_copy(stack,2)) == NULLOBJ) return RET_BUG;
+  /* Cols is changed by nsp_sprowmatrix_extract_cols*/
   Res =nsp_sprowmatrix_extract_cols( A,Cols,&err);
-  /* XXXXX Attention ici il faut un message d''erreur **/
+  nsp_object_destroy(&Cols);
   if ( err == 1) return RET_ENDFOR; 
   if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
@@ -822,8 +823,7 @@ static int int_sprowmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
-  /* XXX Rows is changed by nsp_spcolmatrix_extract_rows */
-  if ((Rows =nsp_get_object_copy(stack,2)) == NULLOBJ) return RET_BUG;
+  if ((Rows =nsp_get_object(stack,2)) == NULLOBJ) return RET_BUG;
   Res =nsp_sprowmatrix_extract_rows( A,Rows,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLSPROW) return RET_BUG;
