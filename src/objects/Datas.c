@@ -831,16 +831,16 @@ NspHash *nsp_current_frame_to_hash(void)
  * 
  * set the value of persistent variable to the value of #Obj if the persistent 
  * value has no value. The name of the persistent value to change is the 
- * object name.
+ * object name. When the value of #Obj is used the used variable is set to %TRUE else to %FALSE.
  *
  * Return value: %OK or %FAIL
  **/
 
-int nsp_frame_set_persistent_value(NspObject *Obj)
+int nsp_frame_set_persistent_value(NspObject *Obj, int *used)
 {
   nsp_datas *data = nsp_get_datas();
   if ( data->L == NULLLIST ) return FAIL;
-  return nsp_eframe_set_persistent_value((NspFrame *)data->L->first->O,Obj);
+  return nsp_eframe_set_persistent_value((NspFrame *)data->L->first->O,Obj,used);
 }
 
 /* */

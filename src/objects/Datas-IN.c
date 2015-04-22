@@ -170,19 +170,23 @@ static int int_global(Stack stack, int rhs, int opt, int lhs)
 static int int_persistent(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj=NULL;
-  int i;
+  int i, used= FALSE;
   CheckStdRhs(0,0);
   for ( i = rhs -opt+1 ; i <= rhs ; i++)
     {
       /* GetObj takes care of Hobj pointers */
       if (( Obj =nsp_object_copy(nsp_get_object(stack,i))) == NULLOBJ ) return RET_BUG;
       if (nsp_object_set_name(Obj,nsp_object_get_name(NthObj(i))) == FAIL) return RET_BUG;
-      if ( nsp_frame_set_persistent_value(Obj) == FAIL)
+      if ( nsp_frame_set_persistent_value(Obj,&used) == FAIL)
 	{
 	  const char *str =  nsp_object_get_name(Obj);
 	  Scierror("Error: failed to set persistent value for variable %s\n",str);
-	  nsp_object_destroy(&Obj); /* Obj was copied */
+	  nsp_object_destroy(&Obj); /* Obj was not used */
 	  return RET_BUG;
+	}
+      else
+	{
+	  if ( used == FALSE) nsp_object_destroy(&Obj);
 	}
     }
   return 0;

@@ -868,29 +868,37 @@ static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val)
 
 /**
  * nsp_eframe_set_persistent_value:
- * @F: 
- * @Obj: 
+ * @F: a #NspFrame
+ * @Obj: a nsp object
+ * @used: an int pointer
  * 
  * set the value of a persistent variable to #Obj if the 
- * persistent variable has no value. Taking care of copying object 
- * should be performed by the caller.
+ * persistent variable has no value. When the value of #Obj 
+ * is used the used variable is set to %TRUE else to %FALSE.
  *
  * Return value: %OK or %FAIL
  **/
     
-int nsp_eframe_set_persistent_value(NspFrame *F,NspObject *Obj)
+int nsp_eframe_set_persistent_value(NspFrame *F,NspObject *Obj, int *used)
 {
   const char *str =  nsp_object_get_name(Obj);
   int val;
+  *used = FALSE;
   if ( F->local_vars != NULL && VARS_LOCAL(str) )
     {
       /* Only search in local variables */
       NspObject *O1;
       val = VAR_ID(val);
       O1 = ((NspCells *) F->locals->objs[2])->objs[val];
-      if ( O1 != NULL ) return OK;
-      nsp_object_destroy(&O1);
-      ((NspCells *) F->locals->objs[2])->objs[val] = Obj;
+      if ( O1 != NULL ) 
+	{
+	  return OK;
+	}
+      else
+	{
+	  *used = TRUE;
+	  ((NspCells *) F->locals->objs[2])->objs[val] = Obj;
+	}
     }
   else 
     {
