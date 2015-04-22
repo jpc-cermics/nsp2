@@ -1959,7 +1959,7 @@ static int make_tetrahedra(double a, double b, double c, double d, double e, dou
 
 int int_int3d(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT, *z=NULLMAT, *xx=NULLMAT, *yy=NULLMAT, *zz=NULLMAT;
+  NspMatrix *x=NULLMAT, *y=NULLMAT, *z=NULLMAT, *xx=NULLMAT, *yy=NULLMAT, *zz=NULLMAT;
   NspObject *f=NULLOBJ, *args=NULLOBJ;
   double atol=1e-12, rtol=1e-7, Ia, ea;
   int limit = 10000, neval, ntused, stat, ier=0;
@@ -2017,7 +2017,7 @@ int int_int3d(Stack stack, int rhs, int opt, int lhs)
     goto err;
 
   /* allocate output var */
-  if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err;
+  /* if ( (res = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) goto err; */
 
   /* call the integrator  */
   limit = Max ( limit, x->n );
