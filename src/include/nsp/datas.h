@@ -26,7 +26,7 @@ extern int nsp_declare_global(const char *name,int id, NspObject *value) ;
 extern int nsp_frame_insert_hash_contents(NspHash *H);
 extern int nsp_frame_save(NspFile *F);
 extern int nsp_store_object(NspObject *Ob);
-extern int nsp_frame_set_persistent_value(NspObject *Obj);
+extern int nsp_frame_set_persistent_value(NspObject *Obj, int *used);
 
 #endif
 
