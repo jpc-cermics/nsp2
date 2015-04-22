@@ -279,7 +279,7 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
        * frame as a hash table : take care that frame must be deleted 
        * at the end. 
        */
-      if ( nsp_new_frame("datas") == FAIL) return RET_BUG;
+      if ( nsp_new_frame("datas") == FAIL) goto fail;
       /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
@@ -287,7 +287,7 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 	    {
 	      Scierror("Error: inserting values in environement failed\n");
 	      nsp_frame_delete();
-	      return RET_BUG; 
+	      goto fail;
 	    }
 	}
       rep =nsp_parse_eval_from_smat(S,display,echo,errcatch_all,(pausecatch_all == TRUE) ? FALSE: TRUE );
@@ -300,18 +300,21 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
     }
   if ( rep < 0 )
     {
-      if ( errcatch == FALSE ) return RET_BUG;
+      if ( errcatch == FALSE ) goto fail;
       if ( lhs == 2 ) H = nsp_hcreate(NVOID,1);
     }
-  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
+  if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) goto fail;
   MoveObj(stack,1,Ob);
-  nsp_smatrix_destroy(S);
   if ( lhs == 2) 
     {
-      if ( H == NULLHASH ) return RET_BUG;
+      if ( H == NULLHASH ) goto fail;
       MoveObj(stack,2,NSP_OBJECT(H));
     }
+  nsp_smatrix_destroy(S);
   return Max(1,lhs);
+ fail:
+  nsp_smatrix_destroy(S);
+  return RET_BUG;
 }
 
 
