@@ -252,6 +252,9 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
 {
   int ret;
   NspObject *ob = NthObj(1);
+#if 1 
+  NspObject *ob1 = ob;
+#endif 
   stack.first = first+1; 
   rhs--;
   NspFname(stack) = str;
@@ -282,8 +285,25 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
   else 
     {
       int i;
+#if 1
+      int free=TRUE;
+#endif 
       stack.first--; 
-      for (i = 0 ; i < ret ; i++) stack.val->S[stack.first+i]=stack.val->S[stack.first+i+1];
+      /* here we check if we can clean ob if ob is unnamed and not in the returned objects */
+      for (i = 0 ; i < ret ; i++) 
+	{
+	  stack.val->S[stack.first+i]=stack.val->S[stack.first+i+1];
+#if 1	  
+	  if (stack.val->S[stack.first+i] == ob1 ) free=FALSE;
+#endif 
+	}
+#if 1
+      /* if activated it causes a crash in polynoms */
+      if ( ret > 0 && Ocheckname(ob1,NVOID) && free == TRUE)
+	{
+	  nsp_object_destroy(&ob1);
+	}
+#endif 
       stack.val->S[stack.first+ret] = NULLOBJ;
     }
   return ret;

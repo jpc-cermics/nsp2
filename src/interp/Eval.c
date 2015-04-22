@@ -2849,6 +2849,18 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 			  nsp_void_seq_object_destroy(stack,first,first+count);
 			  SHOWBUG(stack,RET_BUG,L);
 			}
+		      if (copy_tag == FALSE)
+			{
+			  /* copy was not performed in path_extract */
+			  Ob = nsp_object_copy(Ob);
+			}
+		      if ( Ob == NULLOBJ ) 
+			{
+			  Scierror("Error: failed to copy an object in extracttion (step %d)\n",j);
+			  SHOWBUG(stack,RET_BUG,L);
+			}		      
+		      /* path_extract do not perform freeing */
+		      nsp_void_seq_object_destroy(stack,first+1,first+count);
 		      stack.val->S[first] = Ob;
 		      nret=1;
 		    }
