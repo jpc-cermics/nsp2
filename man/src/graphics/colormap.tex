@@ -1,0 +1,49 @@
+% -*- mode: latex -*-
+\mansection{colormap}
+\begin{mandesc}
+  \short{colormap}{using colormaps in graphics}\\ % @mandesc@
+  \short{graycolormap}{linear gray colormap from black to white}\\ % @mandesc@
+  \short{greencolormap}{linear green colormap}\\ % @mandesc@
+  \short{hotcolormap}{red to yellow colormap}\\ % @mandesc@
+  \short{jetcolormap}{blue to red colormap}\\ % @mandesc@
+\end{mandesc}
+\begin{calling_sequence}
+\begin{verbatim}
+  cmap=graycolormap(n)
+  cmap=greencolormap(n)
+  cmap=hotcolormap(n)
+  cmap=jetcolormap(n)
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: an integer giving the colormap size.
+    \vname{cmap}: a real matrix of size \verb!nx3!.
+\end{varlist}
+\end{parameters}
+\begin{mandescription}
+  A colormap \verb!cmap! is defined by a \verb!mx3! real matrix where \verb!m!
+  gives the number of colors. The \verb!i!-th row of the colormap gives the
+  red, green and blue intensity (numbers in $[0,1]$) of the \verb!i!-th color.
+  The functions \manlink{graycolormap}{graycolormap},
+  \manlink{greencolormap}{greencolormap}, \manlink{hotcolormap}{hotcolormap},
+  and \manlink{jetcolormap}{jetcolormap} provide default colormaps with
+  continuous variation of colors.
+\end{mandescription}
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    // set the current colormap
+    xset('colormap',hotcolormap(64));
+    A=1:64;plot2d([0,10],[0,10],style=0);Matplot1(A,[1,1,9,9]);
+    cmap=xget('colormap');
+    [n,m]=size(cmap)
+    // number of colors in the current colormap
+    n1= xget('lastpattern');
+    n1 == n
+  \end{Verbatim}
+\end{examples}
+%-- see also
+%\begin{manseealso}
+%\end{manseealso}

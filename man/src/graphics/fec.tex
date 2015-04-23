@@ -1,0 +1,172 @@
+% -*- mode: latex -*-
+
+\mansection{fec}
+\begin{mandesc}
+  \short{fec}{Plot of a function defined on a triangular mesh}\\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  fec(x,y,triangles,z,[option=value])
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two real vectors of size \verb!n! defining \verb!n! nodes.
+    The \verb!i!-th node has coordinates \verb!(x(i),y(i))!.
+    \vname{z}: a vector of size \verb!n! where \verb!z(i)!
+    gives the value at node \verb!i! of the function to be ploted.
+    \vname{triangles}: a \verb!mx5! matrix where in each row of the \verb!triangles! matrix
+    a triangle of the mesh is described by five numbers \verb![number,node1,node2,node3,flag]!.
+    \verb!node1,node2,node3! are the ids of the nodes composing the triangle.
+    \verb!number! is the number of the triangle and \verb!flag! is an unused value.
+    \vname{axesflag}:
+    \vname{colminmax}: vector of 2 positives integers [colmin colmax]
+    \vname{colout}: vector of 2 integers [under\_min\_col upper\_max\_col]
+    \vname{frameflag}:
+    \vname{leg}: see \manlink{plot2d}{plot2d}
+    \vname{leg_pos}:
+    \vname{logflag}:
+    \vname{mesh}: a boolean scalar (\verb!%f! as default value) controling the display of the grid mesh.
+    \vname{nax}: see \manlink{plot2d}{plot2d}
+    \vname{rect}: see \manlink{plot2d}{plot2d}
+    \vname{strf}: see \manlink{plot2d}{plot2d}
+    \vname{style}:
+    \vname{zminmax}: vector with 2 components [zmin zmax] (useful in particular for animation)
+    \vname{colorbar}: a boolean scalar controling the display of a side colorbar
+    \vname{paint}:
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function can be used to draw linear triangular finite element solutions
+  or more generally to draw a function defined on a triangulation. The color interpolation
+  is done through software computation and so it is not too fast.
+  The \verb!zminmax! argument gives the z values to be associated with the first and the last
+  color (of the current colormap). More precisely, if the colormap have nc colors and if we note
+  $dz = (zmax-zmin)/nc$, then the part of the triangulation where
+  $zmin + (i-1)dz \le z < zmin + i dz$ is filled with the color $i$.
+  By default \verb!zmin = min(z)! and \verb!zmax = max(z)!. When performing
+  an animation with time varying \verb!z! values, zmin and zmax should be set to
+  the global minimum and maximum of the varying \verb!z! values or something close.
+
+  The \verb!colout! argument is used to specify the colors to be used when drawing the
+  two extreme regions \verb!z < min! and \verb!z > zmax!, \verb!under_min_col! and
+  \verb!upper_max_col! may be equal (independently) to:
+  \begin{itemize}
+  \item \itemdesc{-1} : in this case the same color than in the neighbouring zone is used (CAUTION:
+    you don't see that the corresponding limit is crossed), this is the default case.
+  \item \itemdesc{0} : in this case the extreme region is not painted at all.
+  \item \itemdesc{k} : (k being a valid index to a color of the current colormap) the extreme region
+    is painted with color k.
+  \end{itemize}
+  If you don't want to use the complete colormap you may use the \verb!colminmax!
+  argument with \verb! 1 <= colmin < colmax <= nc! (nc being the number of colors
+  of the current colormap) so as to use only the \verb![colmin,colmax]!  sub-part of the colormap.
+  (by default all the colors of the colormap are used).
+
+  Some demo files are given in the \verb!NSP/demos/graphics/fec! directory.
+\end{mandescription}
+
+% --example
+\begin{examples}
+
+\noindent a first simple in which a triangulation and a function are
+built and given to \verb!fec!
+\begin{Verbatim}
+if ~new_graphics() then switch_graphics();end
+N=20;
+n=1:N;
+x=cos(n*2*%pi/N);
+y=sin(n*2*%pi/N);
+noeul=[(1:(N))',x',y',0*ones(N,1)];
+noeul=[noeul;(N+1),0,0,0];
+trianl=[(1:N)',[(2:N)';1],(N+1)*ones(N,1)];
+triangles=[(1:N)',trianl,zeros(N,1)];
+rect=[-1.2,-1.2,1.2,1.2];
+z=(1:N+1)';
+if new_graphics() then z(1:4)=%nan;end
+xset('colormap',jetcolormap(32));
+fec(noeul(:,2),noeul(:,3),triangles,z,strf='030',axesflag=2,rect=rect,mesh=%t);
+\end{Verbatim}
+
+\noindent a second example
+
+\begin{Verbatim}
+if ~new_graphics() then  switch_graphics(); end
+// define a mini triangulation (4 vertices, 2 triangles)
+x = [0 1 0 -1];
+y = [0 0 1  1];
+T = [1 1 2 3 1;
+     2 3 4 1 1];
+// values of the function at each vertices of the
+// triangulation;
+z = [0 1 0 -1];
+xclear();
+subplot(1,2,1)
+xset("colormap",jetcolormap(64))
+fec(x,y,T,z,strf="040",mesh=%t)
+xtitle("fec example (with the mesh)")
+
+subplot(1,2,2)
+fec(x,y,T,z,strf="040")  // rmq: mesh=%f by default
+xtitle("fec example (without the mesh)")
+\end{Verbatim}
+
+\noindent this example shows the effect of zminmax
+and needs the data of the previous example.
+
+\begin{Verbatim}
+if ~new_graphics() then  switch_graphics(); end
+xclear();
+xset("colormap",jetcolormap(64))
+fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], mesh=%t)
+xtitle("fec example : using zminmax argument")
+\end{Verbatim}
+
+\noindent this example shows the effect of zminmax
+and colout. Itneeds the data of the previous example.
+
+\begin{Verbatim}
+if ~new_graphics() then  switch_graphics(); end
+xclear();
+xset("colormap",jetcolormap(64))
+subplot(2,2,1)
+fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], colout=[0 0], mesh=%t)
+xtitle("fec example : using zminmax and colout =[0 0]")
+
+subplot(2,2,2)
+fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], colout=[67 67], mesh=%t)
+xtitle("fec example : using zminmax and colout =[67 67]")
+
+subplot(2,2,3)
+fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], colout=[-1 0], mesh=%t)
+xtitle("fec example : using zminmax and colout =[-1 0]")
+
+subplot(2,2,4)
+fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], colout=[0 -1], mesh=%t)
+xtitle("fec example : using zminmax and colout =[0 -1]")
+xselect()
+\end{Verbatim}
+
+\noindent this example shows how to use two colormaps one for each subplots. It
+also uses the first example data.
+
+\begin{Verbatim}
+if ~new_graphics() then  switch_graphics(); end
+xclear();
+xset("colormap",[hotcolormap(64);greencolormap(64)])
+subplot(1,2,1)
+fec(x,y,T,z,strf="040", colminmax=[1 64], mesh=%t)
+xtitle("fec using the hot colormap")
+
+subplot(1,2,2)
+fec(x,y,T,z,strf="040", colminmax=[65 128], mesh=%t)
+xtitle("fec using the greencolormap")
+xselect()
+\end{Verbatim}
+\end{examples}
+% -- see also
+  \begin{manseealso}
+    \manlink{colorbar}{colorbar} \manlink{Sfgrayplot}{Sfgrayplot} \manlink{Sgrayplot}{Sgrayplot}
+  \end{manseealso}
