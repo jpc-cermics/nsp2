@@ -27,9 +27,9 @@
 
 /**
  * NspAxes:
- * @obj: a #nsp_axes pointer 
+ * @obj: a #nsp_axes pointer
  *
- * inherits from #NspGraphics 
+ * inherits from #NspGraphics
  */
 
 #line 36 "./axes.h"
