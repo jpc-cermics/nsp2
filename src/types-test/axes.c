@@ -26,13 +26,13 @@
 
 #line 68 "codegen/axes.override"
 #include <nsp/objects.h>
-#include <nsp/graphics-new/Graphics.h> 
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 38 "axes.c"
 
@@ -116,8 +116,8 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
-  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure;
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_axes_invalidate;
 
@@ -897,7 +897,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   double rho;
   if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
 
-  if ( ((NspAxes *) self)->obj->rho != rho) 
+  if ( ((NspAxes *) self)->obj->rho != rho)
     {
       ((NspAxes *) self)->obj->rho = rho;
       nsp_axes_invalidate((NspGraphic *) self);
@@ -1043,20 +1043,20 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
 
 #line 123 "codegen/axes.override"
 
-/* here we override get_obj  and set_obj 
- * we want a get to be followed by a set to check that 
+/* here we override get_obj  and set_obj
+ * we want a get to be followed by a set to check that
  * inserted value is correct thus we use copy = TRUE.
  */
 
 static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
 {
   NspList *ret;
-  *copy = TRUE; 
+  *copy = TRUE;
   ret = ((NspList*) ((NspAxes *) self)->obj->children);
   return (NspObject *) ret;
 }
 
-/* in this function we can check that val is correct before 
+/* in this function we can check that val is correct before
  * setting the field with val. return FAIL if val is incorrect.
  */
 
@@ -1064,14 +1064,14 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
 {
   if ( ! IsList(val) ) return FAIL;
   if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
-  if (((NspAxes *) self)->obj->children != NULL ) 
+  if (((NspAxes *) self)->obj->children != NULL )
     {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+      if ( ((NspGraphic *) self)->obj->Fig != NULL)
 	nsp_list_unlink_figure(((NspAxes *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+  if ( ((NspGraphic *) self)->obj->Fig != NULL)
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
   /* some objects need an Xgc for computing their bounds */
   nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
@@ -1083,14 +1083,14 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   NspList *children;
   if ( ! IsList(O) ) return FAIL;
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspAxes *) self)->obj->children != NULL ) 
+  if (((NspAxes *) self)->obj->children != NULL )
     {
-      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+      if ( ((NspGraphic *) self)->obj->Fig != NULL)
 	nsp_list_unlink_figure(((NspAxes *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children= children;
-  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+  if ( ((NspGraphic *) self)->obj->Fig != NULL)
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
   nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   return OK;
@@ -1375,7 +1375,7 @@ static AttrTab axes_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -1387,7 +1387,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -1443,12 +1443,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
   if ( rect != NULL) rect_a = *rect;
-  
+
   /* get the axe bounding rectangle */
 
-  if ( P->obj->top == TRUE ) 
+  if ( P->obj->top == TRUE )
     {
-      /* top level axe 
+      /* top level axe
        * P->obj->wrect gives the position in window as proportions
        */
       int wdim[2];
@@ -1460,7 +1460,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     }
   else
     {
-      /* non top level axe 
+      /* non top level axe
        * P->obj->wrect gives the position in father (up,left,w,h)
        */
       nsp_axes *A = ((NspGraphic *) P)->obj->Axe;
@@ -1468,33 +1468,33 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       length_scale_f2i(&A->scale,P->obj->wrect->R+2,P->obj->wrect->R+3,
 		       &clip_axe.width,&clip_axe.height,1);
     }
-  
-  if ( rect != NULL) 
+
+  if ( rect != NULL)
     {
       /*
        * check if we are in the draw zone given by rect
        */
       if ( ! gdk_rectangle_intersect(&rect_a,&clip_axe,&r2)) return;
     }
-  
-  if ( P->obj->top == TRUE ) 
+
+  if ( P->obj->top == TRUE )
     {
-      /* This is a top level axes, wrect gives the axes position in the 
-       * enclosing graphic window. 
+      /* This is a top level axes, wrect gives the axes position in the
+       * enclosing graphic window.
        */
       set_scale(Xgc->scales,NULL,P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       memcpy(wrect1,P->obj->wrect->R,4*sizeof(double));
     }
-  else 
+  else
     {
       nsp_axes *A = ((NspGraphic *) P)->obj->Axe;
       double *ARect = A->arect->R, *FRect = A->frect->R;
-      /* This is not a top level axes, we draw its enclosing rectangle 
+      /* This is not a top level axes, we draw its enclosing rectangle
        * if alpha is non nul we should draw a rotated rectangle
        */
       Xgc->graphic_engine->scale->drawrectangle(Xgc,P->obj->wrect->R);
-      /* wrect->R is [left,up,w,h] 
-       * we need to compute wrect->R in term on window/proportions 
+      /* wrect->R is [left,up,w,h]
+       * we need to compute wrect->R in term on window/proportions
        */
       wrect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
       wrect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
@@ -1504,38 +1504,38 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       Xgc->scales->sina= sin( P->obj->rho);
     }
 
-  /* update frect 
+  /* update frect
    *
    */
 
-  if ( P->obj->fixed == FALSE ) 
+  if ( P->obj->fixed == FALSE )
     {
-      /* actualize the inside bounds with objects 
-       * this should not be done systematically 
+      /* actualize the inside bounds with objects
+       * this should not be done systematically
        */
       nsp_axes_compute_inside_bounds(Obj,inside_bounds);
       /*
-       * update frect with inside_bounds 
+       * update frect with inside_bounds
        */
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
     }
   else
     {
-      /* bounds of the plot are given by rect 
+      /* bounds of the plot are given by rect
        */
       memcpy(P->obj->frect->R,P->obj->rect->R,4*sizeof(double));
     }
 
   if ( P->obj->zoom == TRUE )
     {
-      /* when zooming zrect is used 
+      /* when zooming zrect is used
        */
       memcpy(P->obj->frect->R,P->obj->zrect->R,4*sizeof(double));
     }
-  
+
   if ( P->obj->xlog == TRUE ) xf[1]= 'l';
   if ( P->obj->ylog == TRUE ) xf[2]= 'l';
-  
+
   nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       P->obj->frect->R,
 			       P->obj->arect->R,
@@ -1547,63 +1547,63 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_2D_to_opengl(Xgc);
-  
+
   /* clip the enclosing rectangle of the  axe
    */
-  
+
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
-  
+
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
-  
+
   Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
   Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
   lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
-  
+
   /* draw axes, ticks */
   axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid, P->obj->background);
   /* legends */
   nsp_axes_legends(Xgc,P);
   /* title if present */
-  if ( P->obj->title[0] != '\0') 
+  if ( P->obj->title[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
-  if ( P->obj->x[0] != '\0') 
+  if ( P->obj->x[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
-  if ( P->obj->y[0] != '\0') 
+  if ( P->obj->y[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
-  
+
   Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
   Xgc->graphic_engine->xset_thickness(Xgc, lw);
-  
+
   /* clip the inside rectangle of the  axe
-   * Note that clipping is wrong when an axe is rotated 
-   * since clipping only works with rectangles 
+   * Note that clipping is wrong when an axe is rotated
+   * since clipping only works with rectangles
    */
-  
+
   clip = (  P->obj->clip == TRUE ) ?  Xgc->scales->Irect : clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
-  
+
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
-  
-  /* draw elements 
-   * we can limit the drawing to clip 
+
+  /* draw elements
+   * we can limit the drawing to clip
    */
 
   L = P->obj->children;
   cloc = L->first ;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  G->type->draw(Xgc,G,&clip,data);
 	}
       cloc = cloc->next;
     }
-  
+
   /* back to previous clip zone */
 
-  if ( rect != NULL ) 
+  if ( rect != NULL )
     {
       Xgc->graphic_engine->xset_clip(Xgc,rect);
     }
@@ -1611,14 +1611,14 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     {
       Xgc->graphic_engine->xset_unclip(Xgc);
     }
-  
+
   /* scale back */
   *Xgc->scales = scale_keep;
 }
 
 
 
-/* to be synchronized with the above function 
+/* to be synchronized with the above function
  *
  */
 
@@ -1627,7 +1627,7 @@ void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2])
   scale_i2f(&A->scale,pt,pt+1,&x,&y,1);
 }
 
-/* draw legends from information contained in axe 
+/* draw legends from information contained in axe
  */
 
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
@@ -1639,25 +1639,25 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
   Cell *cloc = L->first ;
   legend_pos = axe->obj->lpos;
   legends = nsp_smatrix_create_with_length(NVOID,0,0,-1);
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      if ( cloc->O != NULLOBJ && IsCurve(cloc->O) ) 
+      if ( cloc->O != NULLOBJ && IsCurve(cloc->O) )
 	{
 	  NspCurve *cv = (NspCurve *) cloc->O;
-	  if (cv->obj->legend[0] != '\0' ) 
+	  if (cv->obj->legend[0] != '\0' )
 	    {
 	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
 	      style[count++]= cv->obj->color;
-	      if (count >= 56 ) break; 
+	      if (count >= 56 ) break;
 	    }
 	}
       cloc = cloc->next;
     }
-  if ( count != 0) 
+  if ( count != 0)
     {
       legend = nsp_smatrix_row_concat(legends,"@",1);
-      if (legend != NULL) 
-	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@"); 
+      if (legend != NULL)
+	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@");
     }
   if ( legend != NULL) nsp_smatrix_destroy(legend);
   if ( legends != NULL) nsp_smatrix_destroy(legends);
@@ -1665,8 +1665,8 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 }
 
 
-/* compute the bounds of the set of objects countained in the 
- * axes 
+/* compute the bounds of the set of objects countained in the
+ * axes
  */
 
 static void nsp_axes_compute_inside_bounds(NspGraphic *Obj,double *bounds)
@@ -1684,45 +1684,45 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
   double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;
   int wdim[2];
   xmin=Min(frect[0],frect[2]);
-  ymin=Min(frect[1],frect[3]); 
+  ymin=Min(frect[1],frect[3]);
   xmax=Max(frect[0],frect[2]);
-  ymax=Max(frect[1],frect[3]); 
+  ymax=Max(frect[1],frect[3]);
 
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-  
+
   /*
-   * modify computed min,max if isoview requested 
+   * modify computed min,max if isoview requested
    */
-  
-  if ( isomode == TRUE ) 
+
+  if ( isomode == TRUE )
     {
       /* code by S. Mottelet 11/7/2000 */
       double hx=xmax-xmin,hy=ymax-ymin,hx1,hy1, dwdim[2];
-      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1]))); 
-      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3]))); 
-      if ( hx/dwdim[0] < hy/dwdim[1] ) 
+      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1])));
+      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3])));
+      if ( hx/dwdim[0] < hy/dwdim[1] )
 	{
 	  hx1=dwdim[0]*hy/dwdim[1];
 	  xmin=xmin-(hx1-hx)/2.0;
 	  xmax=xmax+(hx1-hx)/2.0;
 	}
-      else 
+      else
 	{
 	  hy1=dwdim[1]*hx/dwdim[0];
 	  ymin=ymin-(hy1-hy)/2.0;
 	  ymax=ymax+(hy1-hy)/2.0;
 	}
     }
-  
+
   /* Changing min,max and aaint if using log scaling X axis */
-  if ((int)strlen(xf) >= 2 && xf[1]=='l' ) 
+  if ((int)strlen(xf) >= 2 && xf[1]=='l' )
     {
       /* xaxis */
       if ( xmin >  0)
 	{
 	  xmax=ceil(log10(xmax));  xmin=floor(log10(xmin));
 	}
-      else 
+      else
 	{
 	  Scistring("Warning: Can't use Log on X-axis xmin is negative \n");
 	  xmax= 1; xmin= 0;
@@ -1731,51 +1731,51 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
     }
 
   /* Changing ymin,ymax and aaint if using log scaling Y axis */
-  if ((int)strlen(xf) >=3  && xf[2]=='l' ) 
+  if ((int)strlen(xf) >=3  && xf[2]=='l' )
     {
       /* y axis */
-      if ( ymin > 0 ) 
+      if ( ymin > 0 )
 	{
 	  ymax= ceil(log10(ymax)); ymin= floor(log10(ymin));
 	}
-      else 
+      else
 	{
 	  Scistring(" Can't use Log on y-axis ymin is negative \n");
 	  ymax= 1; ymin= 0;
 	}
       aaint[2]=1;aaint[3]=inint(ymax-ymin);
     }
-  
+
   /* FRect1 gives the plotting boundaries xmin,ymin,xmax,ymax */
   FRect1[0]=xmin;FRect1[1]=ymin;FRect1[2]=xmax;FRect1[3]=ymax;
   /* interval too small */
-  
-  if ( Abs(FRect1[0]- FRect1[2]) < 1.e-8 ) 
+
+  if ( Abs(FRect1[0]- FRect1[2]) < 1.e-8 )
     {
       FRect1[0] -= 1.e-8;
       FRect1[2] += 1.e-8;
     }
-  if ( Abs(FRect1[1]- FRect1[3]) < 1.e-8 ) 
+  if ( Abs(FRect1[1]- FRect1[3]) < 1.e-8 )
     {
       FRect1[1] -= 1.e-8;
       FRect1[3] += 1.e-8;
     }
-  
+
   /* pretty axes */
-  if ( auto_axes == TRUE ) 
+  if ( auto_axes == TRUE )
     {
       double FRect2[4];
       for (i=0; i< 4 ;i++) FRect2[i]=FRect1[i];
       /* change graduation */
       gr_rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
     }
-  
+
   /* Update the current scale */
-  
+
   set_scale(Xgc->scales,wdim,wrect,FRect1,aaint,xf+1,arect);
-  
+
   /* store information about graduation in xtics */
-  
+
   if ( auto_axes )
     {
       for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
@@ -1783,7 +1783,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       Xgc->scales->xtics[3] = aaint[1];
       Xgc->scales->ytics[3] = aaint[3];
     }
-  else 
+  else
     {
       Xgc->scales->xtics[0] = xmin;
       Xgc->scales->xtics[1] = xmax;
@@ -1795,9 +1795,9 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       Xgc->scales->ytics[2] = 0.0;
       Xgc->scales->ytics[3] = aaint[3];
     }
-  
+
   /* Changing back min,max and aaint if using log scaling X axis */
-  if ((int)strlen(xf) >= 2 && xf[1]=='l' ) 
+  if ((int)strlen(xf) >= 2 && xf[1]=='l' )
     {
       FRect1[0]=exp10(xmin);FRect1[2]=exp10(xmax);
     }
@@ -1807,14 +1807,14 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       FRect1[1]= exp10(ymin);FRect1[3]= exp10(ymax);
     }
 
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
   /* transmit info to opengl */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
       nsp_ogl_set_2dview(Xgc);
     }
 #endif
-  
+
 }
 
 
@@ -1846,7 +1846,7 @@ static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of axes 
+/* compute in bounds the enclosing rectangle of axes
  *
  */
 
@@ -1902,16 +1902,16 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
 }
 
 
-/* set up the bounds of axes according to objects 
+/* set up the bounds of axes according to objects
  * already inserted and rect. rect can be NULL when unused.
- * 
+ *
  */
 
 void nsp_strf_axes(NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   /* use strf argument to change the axes */
-  switch (scale) 
+  switch (scale)
     {
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
@@ -1930,41 +1930,41 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
       memcpy(A->obj->rect->R,rect,4*sizeof(double));
       A->obj->auto_axis = TRUE;
       A->obj->iso = FALSE;
-      A->obj->fixed = TRUE; 
+      A->obj->fixed = TRUE;
       break;
     case '3': /* built for an isometric scale from the rect arg */
       memcpy(A->obj->rect->R,rect,4*sizeof(double));
       A->obj->iso = TRUE;
       A->obj->auto_axis = TRUE;
-      A->obj->fixed = TRUE; 
+      A->obj->fixed = TRUE;
       break;
     case '2': /* from the min/max of the x, y datas */
       /* could be stored in a cache */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = FALSE;
       A->obj->auto_axis = FALSE;
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case '8': /* backward compatibility  */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->auto_axis = TRUE;
       A->obj->iso = FALSE;
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->auto_axis = TRUE;
       A->obj->iso = TRUE;
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     case '4': /* built for an isometric plot from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = TRUE;
       A->obj->auto_axis = TRUE;
-      A->obj->fixed = FALSE; 
+      A->obj->fixed = FALSE;
       break;
     }
-  if ( A->obj->fixed ) 
+  if ( A->obj->fixed )
     memcpy(A->obj->frect->R,A->obj->rect->R,4*sizeof(double));
   else
     memcpy(A->obj->frect->R,A->obj->bounds->R,4*sizeof(double));
@@ -1973,12 +1973,12 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
 
 /**
  * nsp_figure_zoom:
- * @Xgc: 
- * @box: 
- * 
- * select the axes to be zoomed by considering the 
- * center of the given @box. Then set the zoom 
- * scales on the axe and invalidate the axe. 
+ * @Xgc:
+ * @box:
+ *
+ * select the axes to be zoomed by considering the
+ * center of the given @box. Then set the zoom
+ * scales on the axe and invalidate the axe.
  *
  **/
 
@@ -2014,11 +2014,11 @@ void nsp_figure_zoom(BCG *Xgc,int *box)
 /**
  * nsp_figure_unzoom:
  * @Obj: a #NspGraphic
- * 
- * change the zoom flag for all the axes 
- * found in figure @Obj and invalidate the 
+ *
+ * change the zoom flag for all the axes
+ * found in figure @Obj and invalidate the
  * axes if necessary.
- * 
+ *
  **/
 
 void nsp_figure_unzoom(NspGraphic *Obj)
@@ -2030,13 +2030,13 @@ void nsp_figure_unzoom(NspGraphic *Obj)
 
   L= F->obj->children;
   cloc = L->first ;
-  while ( cloc != NULLCELL ) 
+  while ( cloc != NULLCELL )
     {
-      if ( cloc->O != NULLOBJ ) 
+      if ( cloc->O != NULLOBJ )
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  if ( IsAxes(NSP_OBJECT(G)))
-	    { 
+	    {
 	      NspAxes *A = (NspAxes *) G;
 	      if ( A->obj->zoom == TRUE)
 		{
@@ -2048,7 +2048,7 @@ void nsp_figure_unzoom(NspGraphic *Obj)
 	  else if ( IsObjs3d(NSP_OBJECT(G)))
 	    {
 	      /* NspObjs3d *A = (NspObjs3d *) G; */
-	      
+
 	    }
 	}
       cloc = cloc->next;
@@ -2057,9 +2057,9 @@ void nsp_figure_unzoom(NspGraphic *Obj)
 
 
 /*
- * here we compute new axis graduation 
- * but without changing FRect. The computed graduation does not 
- * necessary start at FRect boundaries but inside. 
+ * here we compute new axis graduation
+ * but without changing FRect. The computed graduation does not
+ * necessary start at FRect boundaries but inside.
  */
 
 
@@ -2068,12 +2068,12 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
   int i;
   double FRectO[4];
   double xtest;
-  if (logf[0] == 'n') 
+  if (logf[0] == 'n')
     {
       /* avoid infinite loop with nans */
       if ( isnan(FRectI[0]) || isnan(FRectI[2]) ) { FRectI[0]=-1;FRectI[1]=1;}
 
-      if ( FRectI[0]*FRectI[2] < 0 ) 
+      if ( FRectI[0]*FRectI[2] < 0 )
 	{
 	  double xmin,xmax;
 	  /* if zero is inside frect we try to find a graduation with zero inside */
@@ -2089,8 +2089,8 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
        * The problem is that proceding that way we can obtain just one point.
        */
       i=0;
-      while (1) { 
-	xtest= exp10((double)Xdec[2])*(Xdec[0] + i*(Xdec[1]-Xdec[0])/xnax[1]); 
+      while (1) {
+	xtest= exp10((double)Xdec[2])*(Xdec[0] + i*(Xdec[1]-Xdec[0])/xnax[1]);
 	if ( xtest >= FRectI[0] ) break;
 	i++;
       }
@@ -2098,7 +2098,7 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
       xnax[1] -= i;
       /* eliminate extra values at the end  */
       i=0;
-      while (1) 
+      while (1)
 	{
 	  xtest = exp10((double)Xdec[2])*(Xdec[0]+(xnax[1]-i)*(Xdec[1]-Xdec[0])/xnax[1]);
 	  if ( xtest <=  FRectI[2] ) break;
@@ -2114,12 +2114,12 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
       Xdec[1]=inint(FRectI[2]);
       Xdec[2]=0;
     }
-  if (logf[1] == 'n') 
+  if (logf[1] == 'n')
     {
       /* avoid infinite loop with nans */
       if ( isnan(FRectI[1]) || isnan(FRectI[3]) ) { FRectI[1]=-1;FRectI[3]=1;}
 
-      if ( FRectI[1]*FRectI[3] < 0 ) 
+      if ( FRectI[1]*FRectI[3] < 0 )
 	{
 	  double ymin,ymax;
 	  /* if zero is inside frect we try to find a graduation with zero inside */
@@ -2192,7 +2192,7 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *scale,NspAxes *M)
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
 {
   /* XXX */
-  return TRUE; 
+  return TRUE;
 }
 
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
@@ -2203,13 +2203,13 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 /**
  * nsp_axes_insert_child:
  * @A: a #NspAxes
- * @G: a #NspGraphic 
- * 
- * inserts @G in the given axe @A. The bounds 
- * of the axes are updated acordingly and an 
- * invalidate operation is raised on @G if @invalidate 
+ * @G: a #NspGraphic
+ *
+ * inserts @G in the given axe @A. The bounds
+ * of the axes are updated acordingly and an
+ * invalidate operation is raised on @G if @invalidate
  * is true.
- * 
+ *
  * Returns: %OK or %FAIL
  **/
 
@@ -2229,10 +2229,10 @@ int nsp_axes_insert_child(NspAxes *A, NspGraphic *G, int invalidate)
 
 /**
  * nsp_axes_invalidate:
- * @G: 
- * 
- * invalidate the drawing region associated to an axes object. 
- * 
+ * @G:
+ *
+ * invalidate the drawing region associated to an axes object.
+ *
  **/
 
 void nsp_axes_invalidate(NspGraphic *G)
@@ -2273,10 +2273,10 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
   int last = Xgc->graphic_engine->xget_last(Xgc);
   int clip[5];
   GdkRectangle rclip;
-  
+
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
   nb_colors = colminmax[1] - colminmax[0]+1;
-  
+
   /* frame rectangle */
   axrect[0]=P->wrect->R[0]*wdim[0];
   axrect[1]=P->wrect->R[1]*wdim[1];
@@ -2294,14 +2294,14 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
   rclip.width = rrect[2];
   rclip.height = rrect[3]+20;
   Xgc->graphic_engine->xset_clip(Xgc,&rclip);
-  
+
   /* colorbar rectangle */
   cpat = Xgc->graphic_engine->xset_pattern(Xgc,last+1);
   rect[0]=rrect[0]+4;
   rect[1]=rrect[1];
   rect[2]=rrect[2]/4;
   hr= rrect[3]/(double) nb_colors;
-  rect[3]=hr; 
+  rect[3]=hr;
   color= colminmax[1];
   for (i = 0 ; i < nb_colors ; i++)
     {
@@ -2311,15 +2311,15 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
       Xgc->graphic_engine->fillrectangle(Xgc,rect);
       color--;
     }
-  
+
   /* switch to black */
   Xgc->graphic_engine->xset_pattern(Xgc,last+1);
   rect[1]=rrect[1];
   rect[3]=(nb_colors)*hr;
   Xgc->graphic_engine->drawrectangle(Xgc,rect);
-  
+
   ntags = getticks(vmin,vmax,grads,&start);
-  
+
   for ( i = 0 ; i < ntags ; i++ )
     {
       int srect[4];
@@ -2332,11 +2332,11 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
       y = rect[1] + rect[3]*(1-((uval-vmin)/(vmax - vmin)));
       Xgc->graphic_engine->drawline(Xgc,rect[0]+rect[2],y,rect[0]+rect[2]+5,y);
       y += srect[3]/2;
-      Xgc->graphic_engine->displaystring(Xgc,str,rect[0]+rect[2]+8,y,TRUE,0,
+      Xgc->graphic_engine->displaystring(Xgc,str,rect[0]+rect[2]+8,y,FALSE,0,
 					 GR_STR_XLEFT, GR_STR_YBOTTOM);
     }
 
-  if ( clip[0]== 1 ) 
+  if ( clip[0]== 1 )
     {
       rclip.x = clip[1];
       rclip.y = clip[2];
@@ -2354,7 +2354,7 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 {
   int ngrads, n1, n2;
   gr_compute_ticks(&xmin, &xmax, grads, &ngrads);
-  n1 = 0; n2 = ngrads-1; 
+  n1 = 0; n2 = ngrads-1;
   if ( grads[n1] < xmin ) n1++;
   if ( grads[n2] > xmax ) n2--;
   ngrads = n2 - n1 + 1;
@@ -2362,5 +2362,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-
-#line 2367 "axes.c"
+#line 2366 "axes.c"

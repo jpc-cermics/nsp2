@@ -1248,7 +1248,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int aaint[4]={10,2,10,2};
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( Obj->obj->show == FALSE ) return;
-
+  
   flag[1]= P->obj->scale_flag; /* XX flag should be replaced by P->obj->scale_flag */
 
   if ( rect != NULL) rect_a = *rect;
