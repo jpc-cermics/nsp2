@@ -818,7 +818,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 	  return RET_BUG;
 	}
     }
-  
+
   if (Mcolors == NULLMAT)
     {
       izcol=0;
@@ -908,7 +908,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
   if ( mesh == FALSE && iflag[0] > 0) iflag[0]= -iflag[0];
   if ( mesh_only == TRUE ) iflag[0] =0;
   if ( box_style_str != NULL) iflag[2]= box_style;
-  
+
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { goto end;}
 
   nsp_gwin_clear();
@@ -1054,7 +1054,7 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
 
   /* parameters for box drawing */
   nsp_set_box_parameters(objs3d, flag[2]);
-  
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
@@ -3805,36 +3805,42 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe;
-  int close=0,color=-1,mark=-1,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1;
-  char *type= "lines";
+  int close=0,color=-1,mark=-2,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1;
+  char *type= NULL; /* "lines"; */
   NspMatrix *x,*y;
 
   nsp_option opts[] ={
-    { "close",s_bool,NULLOBJ,-1},
-    { "color",s_int,NULLOBJ,-1},
-    { "mark",s_int,NULLOBJ,-1},
-    { "thickness",s_int,NULLOBJ,-1},
-    { "type",string,NULLOBJ,-1},
+    { "close",s_bool,NULLOBJ,-1}, /* close the polyline */
+    { "color",s_int,NULLOBJ,-1},  /* line color */
+    { "mark",s_int,NULLOBJ,-1},   /* put a mark */
+    { "thickness",s_int,NULLOBJ,-1}, /* thickness of line */
+    { "type",string,NULLOBJ,-1},     /* deprecated */
+    { "mark_color",s_int,NULLOBJ,-1},/* color for mark  */
+    { "mark_size",s_int,NULLOBJ,-1}, /* size of font for mark  */
+    { "fill_color",s_int,NULLOBJ,-1},/* fill color */
     { NULL,t_end,NULLOBJ,-1}};
 
   CheckStdRhs(2,2);
   if ((x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
-  if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thickness,&type) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thickness,&type,
+			 &mark_color,&mark_size,&fill_color) == FAIL) return RET_BUG;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
-  if (strncmp(type,"marks",5) == 0)
+  if ( type != NULL)
     {
-      /* remove line, we need a way to fix the mark color */
-      color=-2;
+      /* deprecated parameter */
+      if (strncmp(type,"marks",5) == 0)  color=-2;
+      else if (strncmp(type,"lines",5) == 0) mark=-2;
+      else
+	{
+	  Scierror("Error: types should be equal to \"lines\" or \"marks\" \n");
+	  return RET_BUG;
+	}
     }
-  else
-    {
-      /* remove mark */
-      mark=-2;
-    }
+
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
 
@@ -3843,7 +3849,7 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
   /* insert the object in the axe */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, TRUE)== FAIL)
     {
-      Scierror("Error: failed to insert rectangle in Figure\n");
+      Scierror("Error: failed to insert a polyline in Figure\n");
       return RET_BUG;
     }
   if ( lhs == 1 )
@@ -5244,7 +5250,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 
   CheckLhs(0,1);
 
-  if ( rhs <= 0) { return nsp_graphic_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
+  if ( rhs <= 0) { return nsp_graphic_demo (NspFname(stack)," exec(\"NSP/demos/graphics/fec/fec1.sce\");",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,
