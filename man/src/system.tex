@@ -1,10 +1,10 @@
 \chapter*{Files, I/O, system functions}\addcontentsline{toc}{chapter}{files, I/O, system functions}
 
 \HCode{<hr>}
-Control execution 
+Control execution
 \begin{quote}
 \noindent
-\hyperlink{exec}{exec} - {executes file contents} \\ % 
+\hyperlink{exec}{exec} - {executes file contents} \\ %
 \end{quote}
 
 
@@ -23,7 +23,7 @@ Input/Output
 \hyperlink{fscanf}{fscanf} - fscanf input format conversion \\
 \hyperlink{sscanf}{sscanf} - sscanf input format conversion \\
 \hyperlink{get_matrix}{get\_matrix} - (method) read a matrix from a file stream\\
-\hyperlink{fscanfMat}{fscanfMat} - read a matrix in a file\\ 
+\hyperlink{fscanfMat}{fscanfMat} - read a matrix in a file\\
 \hyperlink{save}{save} - machine independent binary save of variables\\
 \hyperlink{load}{load} - load saved objects with save\\
 \end{quote}
@@ -32,12 +32,12 @@ Input/Output
 Files and pathnames
 \begin{quote}
 \noindent
-\hyperlink{cd}{cd} - {changes current directory} \\ % 
-\hyperlink{chdir}{chdir} - {changes current directory} \\ % 
+\hyperlink{cd}{cd} - {changes current directory} \\ %
+\hyperlink{chdir}{chdir} - {changes current directory} \\ %
 \hyperlink{file}{file} - file and pathnames\\
 \hyperlink{getcwd}{getcwd} - {get current directory} \\
-\hyperlink{ls}{ls} - {list directory contents} \\ % 
-\hyperlink{pwd}{pwd} - {print current directory} \\ % 
+\hyperlink{ls}{ls} - {list directory contents} \\ %
+\hyperlink{pwd}{pwd} - {print current directory} \\ %
 \hyperlink{registry}{registry} - get and set values of the windows registry\\
 \hyperlink{who}{who} - get current variables\\
 \end{quote}
@@ -45,7 +45,7 @@ Files and pathnames
 \HCode{<hr>}
 Dynamic library management
 \begin{quote}
-\noindent 
+\noindent
 \hyperlink{addinter}{addinter} - dynamic interface loader\\
 \hyperlink{c_link}{c\_link} - check entries from dynamic library \\
 \hyperlink{ilib_for_link}{ilib\_for\_link} - create a dynamic library and call link \\
@@ -54,18 +54,20 @@ Dynamic library management
 \end{quote}
 
 \HCode{<hr>}
-Miscellaneous 
+Miscellaneous
 \begin{quote}
-\noindent 
-\hyperlink{exists}{exists} - {checks for variables}\\
-\hyperlink{localtime}{localtime} - {get the current time}\\
-\hyperlink{input}{input} - {wait for user keyboard input} \\
-\hyperlink{timer}{timer} - {elapsed cpu time between timer calls} \\
-\hyperlink{cputime}{cputime} - {elapsed cpu time since session start} \\
-\hyperlink{toc}{toc} - {elapsed time since tic call}\\
-\hyperlink{tic}{tic} - {set a timer start}\\
-\hyperlink{global}{global} - {declare variables as global variables} \\
+\noindent
 \hyperlink{clearglobal}{clearglobal} - {undeclare variables as global variables} \\
+\hyperlink{cputime}{cputime} - {elapsed cpu time since session start} \\
+\hyperlink{exists}{exists} - {checks for variables}\\
+\hyperlink{global}{global} - {declare variables as global variables} \\
+\hyperlink{input}{input} - {wait for user keyboard input} \\
+\hyperlink{localtime}{localtime} - {get the current time}\\
+\hyperlink{realtime}{realtime} - set up dates origin or waits until date \\
+\hyperlink{realtimeinit}{realtimeinit} - set up time unit for realtime function \\
+\hyperlink{tic}{tic} - {set a timer start}\\
+\hyperlink{timer}{timer} - {elapsed cpu time between timer calls} \\
+\hyperlink{toc}{toc} - {elapsed time since tic call}\\
 \end{quote}
 
 \input system/exec.tex
@@ -73,17 +75,18 @@ Miscellaneous
 \input system/addinter.tex
 \input system/file.tex
 \input system/global.tex
-\input datatypes/file.tex 
-\input system/ilib_for_link.tex  
-\input system/link.tex  
+\input datatypes/file.tex
+\input system/ilib_for_link.tex
+\input system/link.tex
 \input system/load.tex
-\input system/localtime.tex 
+\input system/localtime.tex
 \input system/ls.tex
-\input system/print.tex 
-\input system/putgetmatrix.tex 
+\input system/print.tex
+\input system/putgetmatrix.tex
+\input system/realtime.tex
 \input system/registry.tex
-\input system/save.tex 
-\input system/scanf.tex 
-\input system/who.tex 
-\input system/input.tex 
-\input system/timer.tex 
+\input system/save.tex
+\input system/scanf.tex
+\input system/who.tex
+\input system/input.tex
+\input system/timer.tex

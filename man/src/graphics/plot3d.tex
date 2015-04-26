@@ -17,15 +17,15 @@
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x,y,z} first possible case: \verb!x! and \verb!y! can be vectors of respective size \verb!n1! and \verb!n2! and in that case 
-    they give x-axis and y-axis coordinates of the surface and \verb!z! must be a matrix of size \verb!n1 x n2!. 
-    \verb!z(i,j)! is the value of the surface at the point (x(i),y(j)). 
-    \vname{x,y,z} second possible case: \verb!x! and \verb!y! and \verb!z! are matrices of size \verb!nf x n!. 
+    \vname{x,y,z} first possible case: \verb!x! and \verb!y! can be vectors of respective size \verb!n1! and \verb!n2! and in that case
+    they give x-axis and y-axis coordinates of the surface and \verb!z! must be a matrix of size \verb!n1 x n2!.
+    \verb!z(i,j)! is the value of the surface at the point (x(i),y(j)).
+    \vname{x,y,z} second possible case: \verb!x! and \verb!y! and \verb!z! are matrices of size \verb!nf x n!.
     In that case, they define the \verb!n! facets which compose the surface. The i-th gacet is defined by a polygon with \verb!nf! points.
     The coordinates of the points of the i-th  facet are given respectively by \verb!xf(:,i)!,
     \verb!yf(:,i)! and \verb!zf(:,i)!.
     \vname{colors}: a vector of size \verb!n! giving the color of each facets or a matrix
-    of size \verb!nf x n! giving color at each facet extreme points. Facet colors are then interpolated or averaged depending 
+    of size \verb!nf x n! giving color at each facet extreme points. Facet colors are then interpolated or averaged depending
     on the optional \verb!shade! parameter.
     \vname{theta, alpha}: optional arguments giving in degree the spherical coordinates of the
     observation point.
@@ -44,7 +44,7 @@
       \end{varlist}
       \vname{type}: an integer (scaling).
       \begin{varlist}
-        \vname{type=0}: the plot is made using the current 3D scaling. 
+        \vname{type=0}: the plot is made using the current 3D scaling.
         \vname{type=1}: rescales automatically 3d boxes with extreme aspect
         ratios, the boundaries are specified by the value of the
         optional argument \verb!ebox!.
@@ -76,8 +76,8 @@
 
 \begin{mandescription}
 
-  When \verb!x! and \verb!y! are vectors of respective size \verb!n1! and \verb!n2! and \verb!z! is a matrix of size \verb!n1 x n2! 
-  a parametric surface which value $z(i,j)$ at point $(x(i),y(j)$ is drawn. 
+  When \verb!x! and \verb!y! are vectors of respective size \verb!n1! and \verb!n2! and \verb!z! is a matrix of size \verb!n1 x n2!
+  a parametric surface which value $z(i,j)$ at point $(x(i),y(j)$ is drawn.
   holes can be inserted in the surface by setting some values to \verb!%nan!.
 
   When \verb!x!, \verb!y!, and \verb!z! are matrices of the same size. They describe a set of facets which are drawn.
@@ -94,7 +94,7 @@
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t));
 \end{Verbatim}
 
-\noindent same example with mesh only 
+\noindent same example with mesh only
 
 \begin{Verbatim}
   if ~new_graphics() then switch_graphics();end;xclear();
@@ -126,12 +126,12 @@
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
   plot3d(xx,yy,zz,colors=linspace(1,40,400),colormap=hotcolormap(40));
-  // remode shade i.e one color per face 
+  // remode shade i.e one color per face
   xclear();
   plot3d(xx,yy,zz,colors=linspace(1,40,400),colormap=hotcolormap(40),shade=%f);
 \end{Verbatim}
 
-multiple plots by combining facets 
+multiple plots by combining facets
 
 \begin{Verbatim}
   if ~new_graphics() then switch_graphics();end;xclear();
@@ -144,7 +144,7 @@ multiple plots by combining facets
   plot3d([xx,xx1],[yy,yy1],[zz,zz1],colors=[20*ones(1,n),30*ones(1,n)],colormap=hotcolormap(40));
 \end{Verbatim}
 
-multiple plots using opengl 
+multiple plots using opengl
 
 \begin{Verbatim}
   if ~new_graphics() then switch_graphics();end;xclear();
@@ -152,7 +152,7 @@ multiple plots using opengl
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
   [m,n]=size(xx);
-  plot3d(xx,yy,zz,colors=[20*ones(1,n)],colormap=hotcolormap(40));  
+  plot3d(xx,yy,zz,colors=[20*ones(1,n)],colormap=hotcolormap(40));
   z=sin(2*t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
   plot3d(xx,yy,zz,colors=[30*ones(1,n)],colormap=hotcolormap(40));
@@ -161,7 +161,7 @@ multiple plots using opengl
 
 %-- see also
 \begin{manseealso}
-  \manlink{eval3dp}{eval3dp} \manlink{genfac3d}{genfac3d} \manlink{geom3d}{geom3d} 
+  \manlink{eval3dp}{eval3dp} \manlink{genfac3d}{genfac3d} \manlink{geom3d}{geom3d}
   \manlink{param3d}{param3d} \manlink{plot3d1}{plot3d1} \manlink{fec}{fec}
   \manlink{xdel}{xdel}
 \end{manseealso}

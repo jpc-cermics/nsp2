@@ -1,0 +1,50 @@
+% -*- mode: latex -*-
+\mansection{eval3dp}
+\begin{mandesc}
+  \short{eval3dp}{compute facets for a 3D parametric surface}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [x,y,z]=eval3dp(f,p1,p2)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{f}:  a nsp function.
+    \vname{p1}: a vector of size \verb!n!.
+    \vname{p2}: a vector of size \verb!m!.
+    \vname{x,y,z}: three real matrices of size \verb!(4,n-1*m-1)!. The \verb!i!-th column
+    of \verb!x!, \verb!y! and \verb!z! gives the coordinates of the 4 points of the
+    \verb!i!-th facet.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The function \verb!eval3dp! returns a four sided facets representation of a
+  3D parametric surface described by a function \verb!f!. The function \verb!f!
+  is assumed to return grid points on the surface when called with two vector of
+  parameters \verb!p1! and \verb!p2!.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    p1=linspace(0,2*%pi,10);
+    p2=linspace(0,2*%pi,10);
+    function [x,y,z]=scp(p1,p2)
+      x=p1.*sin(p1).*cos(p2);
+      y=p1.*cos(p1).*cos(p2);
+      z=p1.*sin(p2);
+    endfunction
+    [x,y,z]=eval3dp(scp,p1,p2);
+    plot3d1(x,y,z);
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{genfac3d}{genfac3d} \manlink{plot3d}{plot3d}
+\end{manseealso}

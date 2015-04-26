@@ -1,0 +1,107 @@
+% -*- mode: latex -*-
+
+\mansection{xfpolys}
+\begin{mandesc}
+  \short{xfpolys}{fill a set of polygons}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  A=xfpolys(xpols,ypols,fill,options=value)
+  A=xfpolys(xpols,ypols,options=value)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{xpols,ypols}: two real matrices of size \verb!pxn!.
+    \vname{fill}: vector of size \verb!n! or of size \verb!pxn!.
+    \vname{A}: if requested \verb!A! is a graphic polyline object or a graphic compound object.
+    \vname{color}: a scalar or a vector of size \verb!n!
+    \vname{compound}: a boolean  specifying if returned value is a compound or the last polyline.
+    \vname{fill_color}: a scalar or a vector of size \verb!n!
+    \vname{thickness}:  a scalar or a vector of size \verb!n!
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xfpolys! fills with colors a set of polygons of the same size defined by
+  the two matrices \verb!xpols! and \verb!ypols!. The coordinates of the points of the
+  \verb!i!-th polygon are given by columns \verb!i! of \verb!xpols! and \verb!ypols!.
+
+  % The polygons may be filled with a given color (flat) or painted with
+  % interpolated (shaded) colors.
+
+  % \begin{description}
+  % \item[flat color painting] In this case \verb!fill! should be a vector of size
+  %   \verb!n!. The color to be used for filling polygon number \verb!i! is given by \verb!fill(i)!:
+  %   \begin{description}
+  %   \item[-] if \verb!fill(i)$<$0!, the polygon is filled with color \verb!-fill(i)!.
+  %   \item[-] if \verb!fill(i)=0!, the polygon is drawn with the current color) and not filled.
+  %   \item[-] if \verb!fill(i)$>$0!, the polygon is filled with color \verb!fill(i)! and
+  %     the boundary is drawn with the current color.
+  %   \end{description}
+  % \item[interpolated color painting]
+  %   In this case \verb!fill! should be a matrix with same sizes
+  %   as \verb!xpols! and \verb!ypols!. Note that
+  %   \verb!p! must be equal to 3 or 4.
+  %   \verb!fill(k,i)! gives the color at the \verb!k!th edge
+  %   of polygon \verb!i!.
+  % \end{description}
+
+  The argument \verb!fill! is used to specify the colors to be used for drawing and filling polygons
+  The vector \verb!fill! should be a vector of size \verb!n! and the color to be used for filling
+  polygon number \verb!i! is given by \verb!fill(i)!:
+  \begin{description}
+  \item[-] if \verb!fill(i)$<$0!, the polygon is filled with color \verb!-fill(i)!.
+  \item[-] if \verb!fill(i)=0!, the polygon is drawn with the current color) and not filled.
+  \item[-] if \verb!fill(i)$>$0!, the polygon is filled with color \verb!fill(i)! and
+    the boundary is drawn with the current color.
+  \end{description}
+
+  The colors for drawing the boundaries and filling the polygons can also be given by
+  optional named parameters. Negative values for some optional named parameters like \verb!color! or
+  \verb!fill_color! have special meaning. Parameters are ignored when they are equal to \verb!-2!
+  and are set to default values if they are equal to \verb!-1!.
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+\noindent Using a \verb!fill! argument
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;
+    xsetech(frect=[-10,-10,210,40]);
+    x1=[0,10,20,30,20,10,0]';
+    y1=[15,30,30,15,0,0,15]';
+    xpols=[x1 x1 x1 x1]; xpols=xpols+[0,60,120,180].*.ones(size(x1));
+    ypols=[y1 y1 y1 y1];
+    xset('thickness',3);
+    xfpolys(xpols,ypols,[-1,0,10,13])
+  \end{Verbatim}
+
+\noindent Using options
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;
+    xsetech(frect=[-10,-10,210,40]);
+    x1=[0,10,20,30,20,10,0]';
+    y1=[15,30,30,15,0,0,15]';
+    xpols=[x1 x1 x1 x1]; xpols=xpols+[0,60,120,180].*.ones(size(x1));
+    ypols=[y1 y1 y1 y1];
+    xfpolys(xpols,ypols,color=[-2,-1,5,6], fill_color=[4,-2,10,13],thickness=3);
+  \end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{xfpoly}{xfpoly} \manlink{xpoly}{xpoly} \manlink{xpolys}{xpolys}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  J.Ph.C.
+
+\end{authors}

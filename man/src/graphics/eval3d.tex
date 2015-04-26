@@ -1,0 +1,52 @@
+% -*- mode: latex -*-
+\mansection{eval3d}
+\begin{mandesc}
+  \short{eval3d}{evaluates a function on a grid}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [z]=eval3d(fun,x,[y])
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{fun}: function accepting vectors as arguments.
+    \vname{x,y}: 2 vectors of size \verb!n1! and \verb!n2!. Vector \verb!y! can be omitted and
+    is then taken as equal to \verb!x!.
+    \vname{z}: matrix of size \verb!n1xn2!.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The function \verb!eval3d! returns a matrix \verb!z! of size \verb!n1xn2!
+  which is such that \verb!z(i,j)=fun(x(i),y(j))!. The evaluation uses
+  the fact that function \verb!fun! accept vectors as arguments, if this is not
+  the case one can use the primitive \verb!feval! or directly transmit the function
+  \verb!fun! to plot3d is the aim was to prepare data for 3d ploting.
+
+  Note that \verb!eval3d! is obtained by \verb![xx,yy] = ndgrid(x,y);z=fun(xx,yy)\verb!
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    x=-5:5;y=x;
+    function [z]=f(x,y); z= x.*y; endfunction;
+    z=eval3d(f,x,y);
+    plot3d(x,y,z);
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{feval}{feval}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  Steer S.; ; ;
+
+\end{authors}

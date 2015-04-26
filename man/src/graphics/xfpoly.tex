@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+\mansection{xfpoly}
+\begin{mandesc}
+  \short{xfpoly}{fill a polygon with color}\\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  p=xfpoly(x,y,fill_color=,color=,thickness)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two real vectors of same size \verb!pxn!.
+    \vname{color}: color to be used for drawing boundary (default \verb!-2!).
+    \vname{fill_color}: color for filling the polyline (default \verb!-1!).
+    \vname{thickness}: thickness of boundary (default \verb!-1!).
+    \vname{p}: a graphics polyline object.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xfpoly! fills a polygon with color and draws the boundary of
+  the polygon if color is not equal to \verb!-2!.
+
+  Negative values for some parameters have special meaning.
+  Parameters are ignored when they are equal to \verb!-2!
+  and are set to default values if they are equal to \verb!-1!.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    x=sin(2*%pi*(0:4)/5);
+    y=cos(2*%pi*(0:4)/5);
+    xsetech(frect=[-2,-2,2,2])
+    xfpoly(x,y,color=6,fill_color=4,thickness=3);
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{xfpolys}{xfpolys} \manlink{xpoly}{xpoly} \manlink{xpolys}{xpolys}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  J.Ph.C.
+
+\end{authors}

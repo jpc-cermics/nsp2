@@ -1,0 +1,38 @@
+% -*- mode: latex -*-
+\mansection{nf3d}
+\begin{mandesc}
+  \short{nf3d}{build rectangular facets adapted to plot3d} \\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xx,yy,zz]=nf3d(x,y,z [,q,orient])
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y,x}: real matrices of same size
+    \vname{xx,yy,zz}: real matrices of same size \verb!4xn!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Used to transform rectangular facets coded in matrices x,y,z
+  to facets representation accepted by \verb!plot3d! function.
+\end{mandescription}
+%--example
+\begin{examples}
+\noindent facets for describing a sphere
+  \begin{Verbatim}
+    u = linspace(-%pi/2,%pi/2,40);
+    v = linspace(0,2*%pi,20);
+    x = cos(u)'*cos(v);
+    y = cos(u)'*sin(v);
+    z = sin(u)'*ones(size(v));
+    [xx,yy,zz]=nf3d(x,y,z); plot3d(xx,yy,zz)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{plot3d}{plot3d}
+\end{manseealso}

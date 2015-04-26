@@ -6,13 +6,13 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  p=xpoly(xv,yv,options=value);
+  p=xpoly(x,y,options=value);
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{xv,yv}: two matrices of the same size (points of the polyline).
+    \vname{x,y}: two matrices of the same size (points of the polyline).
     \vname{close}: a boolean flag specifying to close or not the polyline.
     \vname{color}: color to be used for lines (default \verb!-1!).
     \vname{fill_color}: color for filling the polyline (default \verb!-2!).
@@ -25,8 +25,8 @@
 \end{parameters}
 \begin{mandescription}
   \verb!xpoly! draws a single polyline described by the vectors of
-  coordinates \verb!xv! and \verb!yv!. If \verb!xv! and
-  \verb!yv! are matrices they are considered as vectors by
+  coordinates \verb!x! and \verb!y!. If \verb!x! and
+  \verb!y! are matrices they are considered as vectors by
   concatenating their columns. The polyline is drawn using
   lines with color given by \verb!color!. If \verb!mark! is
   given the associated mark is also drawn at each polyline node.

@@ -1,5 +1,7 @@
 \chapter*{graphics}\addcontentsline{toc}{chapter}{graphics}
 
+\HCode{<hr>}
+Drawing functions
 \begin{quote}
 \noindent
 \hyperlink{colormap}{colormap} - using colormaps in graphics\\
@@ -8,9 +10,12 @@
 \hyperlink{greencolormap}{greencolormap} - linear green colormap\\
 \hyperlink{histplot}{histplot} - draw an histogram of the components of a vector of numbers\\
 \hyperlink{hotcolormap}{hotcolormap} - red to yellow colormap\\
-\hyperlink{jetcolormap}{jetcolormap} - blue to red colormap
+\hyperlink{jetcolormap}{jetcolormap} - blue to red colormap \\
 \hyperlink{plot2d}{plot2d} - draw two dimensional graphs\\
 \hyperlink{plot3d}{plot3d} - 3D plot of a surface \\
+\hyperlink{polarplot}{polarplot} - draw a curve given with polar coordinates \\
+\hyperlink{xfpolys}{xfpolys} - fill a set of polygons \\
+\hyperlink{xfpoly}{xfpoly} - fill a polygon with color \\
 \hyperlink{xpolys}{xpolys} - draw a set of polylines or polygons \\
 \hyperlink{xpoly}{xpoly} - draw a polyline or a polygon \\
 \hyperlink{xrects}{xrects} - draw a set of rectangles\\
@@ -18,13 +23,30 @@
 \hyperlink{xtitle}{xtitle} - sets the main title and the axis labels of a graph\\
 \end{quote}
 
+\HCode{<hr>}
+Dealing with surfaces data
+\begin{quote}
+\noindent
+\hyperlink{eval3d}{eval3d} - evaluates a function on a grid \\
+\hyperlink{eval3dp}{eval3dp} - compute facets for a 3D parametric surface\\
+\hyperlink{genfac3d}{genfac3d} - compute facets of a 3D surface\\
+\hyperlink{nf3d}{nf3d} - build rectangular facets adapted to plot3d \\
+\end{quote}
+
 \input graphics/colormap.tex
+\input graphics/eval3d.tex
+\input graphics/eval3dp.tex
 \input graphics/fec.tex
+\input graphics/genfac3d.tex
 \input graphics/histplot.tex
+\input graphics/nf3d.tex
 \input graphics/plot2d.tex
 \input graphics/plot3d.tex
-\input graphics/xpolys.tex
+\input graphics/polarplot.tex
+\input graphics/xfpoly.tex
+\input graphics/xfpolys.tex
 \input graphics/xpoly.tex
+\input graphics/xpolys.tex
 \input graphics/xrect.tex
 \input graphics/xrects.tex
 \input graphics/xtitle.tex
@@ -64,8 +86,6 @@
 % \input graphics/encours/driver.tex
 % \input graphics/encours/edit_curv.tex
 % \input graphics/encours/errbar.tex
-% \input graphics/encours/eval3dp.tex
-% \input graphics/encours/eval3d.tex
 % \input graphics/encours/evans.tex
 % \input graphics/encours/fac3d.tex
 % \input graphics/encours/fchamp.tex
@@ -83,7 +103,6 @@
 % \input graphics/encours/gcf.tex
 % \input graphics/encours/gda.tex
 % \input graphics/encours/gdf.tex
-% \input graphics/encours/genfac3d.tex
 % \input graphics/encours/geom3d.tex
 % \input graphics/encours/getcolor.tex
 % \input graphics/encours/getfont.tex
@@ -120,7 +139,6 @@
 % \input graphics/encours/move.tex
 % \input graphics/encours/name2rgb.tex
 % \input graphics/encours/newaxes.tex
-% \input graphics/encours/nf3d.tex
 % \input graphics/encours/nyquist.tex
 % \input graphics/encours/object_editor.tex
 % \input graphics/encours/oldplot.tex
@@ -143,7 +161,6 @@
 % \input graphics/encours/plotframe.tex
 % \input graphics/encours/plot.tex
 % \input graphics/encours/plzr.tex
-% \input graphics/encours/polarplot.tex
 % \input graphics/encours/polyline_properties.tex
 % \input graphics/encours/printing.tex
 % \input graphics/encours/rectangle_properties.tex

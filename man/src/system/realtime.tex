@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+% Copyright (C) 2008 - INRIA -
+%
+% This file must be used under the terms of the CeCILL.
+% This source file is licensed as described in the file COPYING, which
+% you should have received as part of this distribution.  The terms
+% are also available at
+% http://www.cecill.info/licences/Licence_CeCILL_V2-en.txt
+%
+\mansection{realtime}
+\begin{mandesc}
+  \short{realtimeinit}{set up time unit for realtime function} \\
+  \short{realtime}{set up dates origin or waits until date} \\
+\end{mandesc}
+\index{realtimeinit}\label{realtimeinit}
+\index{realtime}\label{realtime}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  realtimeinit(time_unit)
+  realtime(t)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{time\_unit}: a real number. The number of seconds associated to the \verb!realtime! argument
+    \vname{t}: a real number giving a date.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  These two functions can be used to handle real time in nsp.
+  The function \verb!realtimeinit(time_unit)! defines the time unit
+  associated to the \verb!realtime! argument \verb!t!. A first call to
+  \verb!realtime(t0)! sets the current date to (\verb!t0!). Then,
+  subsequent calls to \verb!realtime(t)! wait till date \verb!t! is
+  reached.
+
+  Note that Gtk events are not managed when function realtime is called.
+\end{mandescription}
+%--example
+\begin{examples}
+
+\noindent A first example
+  \begin{Verbatim}
+    realtimeinit(1/2);//sets time unit to half a second
+    realtime(0);//sets current date to 0
+    for k=1:10,realtime(k);printf('current time is '+string(k/2)+'sec .\n');end
+  \end{Verbatim}
+
+\noindent A second example which prints each 2 seconds the elapsed time since
+the call to \verb!tic!
+\begin{Verbatim}
+  function showtime()
+    tic();for k=1:10,realtime(k);printf('\r%5.2f',toc());end;printf('\n');
+    printf('Elapsed time %5.2f\n',toc());
+  endfunction
+
+  realtimeinit(2);realtime(0);showtime();
+\end{Verbatim}
+\end{examples}
+%-- see also

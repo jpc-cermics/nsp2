@@ -1,0 +1,45 @@
+% -*- mode: latex -*-
+
+\mansection{genfac3d}
+\begin{mandesc}
+  \short{genfac3d}{compute facets of a 3D surface}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xx,yy,zz]=genfac3d(x,y,z,[mask])
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{xx,yy,zz}: Three real matrices of size (4,\verb!n-1xm-1!).
+    \vname{x}: x-axis coordinates vector of size \verb!m!.
+    \vname{y}: y-axis coordinates vector of size \verb!n!.
+    \vname{z}: real matrix of size \verb!mxn!. The value of the surface at the point
+    \verb!(x(i),y(j))! is given by \verb!z(i,j)!.
+    \vname{mask}: optional boolean matrix of size \verb!mxn! used to select the entries
+    of matrix \verb!z! which are to be selected or removed in the facets representation.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The \verb!genfac3d! function is used to compute a facets representation of a surface of type
+  (\verb!z=f(x,y)!)  given by four sided facets. The coordinates of the points of the \verb!i!-th facet are
+  given by \verb!xx(:,i)!, \verb!yy(:,i)! and \verb!zz(:,i)!.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;
+    t=[0:0.3:2*%pi]'; z=sin(t)*cos(t');
+    [xx,yy,zz]=genfac3d(t,t,z);
+    plot3d(xx,yy,zz)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{eval3dp}{eval3dp} \manlink{plot3d}{plot3d}
+\end{manseealso}

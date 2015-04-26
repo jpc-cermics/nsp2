@@ -1,0 +1,29 @@
+% -*- mode: latex -*-
+\mansection{xpause}
+\begin{mandesc}
+  \short{xpause}{pause execution of nsp}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  xpause(d [,events])
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{d} a real scalar for the pause duration in microseconds.
+    \vname{events}: an optional boolean parameter
+  \end{varlist}
+\end{parameters}
+%
+\begin{mandescription}
+  The function \verb!xpause! pauses the current process for
+  a duration of \verb!d!-microseconds. If the second argument
+  is given and set to \verb!%t! then Gtk events are processed
+  during the pause. When the duration is set to \verb!0! pending
+  events are also processed.
+\end{mandescription}
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}

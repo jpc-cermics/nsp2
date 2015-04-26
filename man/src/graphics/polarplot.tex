@@ -1,0 +1,41 @@
+% -*- mode: latex -*-
+
+\mansection{polarplot}
+\begin{mandesc}
+  \short{polarplot}{draw a curve given with polar coordinates}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  polarplot(theta,rho,grid_color=,color=,rect=)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{rho}: the radius values as a real vector.
+    \vname{theta}: the angle values as a real vector.
+    \vname{grid_color}: color of the underlying grid.
+    \vname{color}: color of the curve.
+    \vname{rect}: enclosing rectangle.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The function \verb!polarplot! draw the curve described by the polar coordinates \verb!(theta,rho)!.
+  The vector \verb!theta! is the angle from the x-axis to the radius vector specified in radians.
+  The vector \verb!rho! is the length of the radius vector.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    t= 0:.01:2*%pi;
+    polarplot(sin(3*t),cos(2*t),color=10)
+    // add a second curve
+    theta= 2*%pi*linspace(0,1,50); rho=linspace(0,1,50);
+    xpoly(rho.*cos(theta),rho.*sin(theta),color=7,thickness=3);
+  \end{Verbatim}
+\end{examples}

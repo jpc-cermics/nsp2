@@ -53,13 +53,13 @@
   The \verb!colout! argument is used to specify the colors to be used when drawing the
   two extreme regions \verb!z < min! and \verb!z > zmax!, \verb!under_min_col! and
   \verb!upper_max_col! may be equal (independently) to:
-  \begin{itemize}
-  \item \itemdesc{-1} : in this case the same color than in the neighbouring zone is used (CAUTION:
+  \begin{description}
+  \item[-1]: in this case the same color than in the neighbouring zone is used (CAUTION:
     you don't see that the corresponding limit is crossed), this is the default case.
-  \item \itemdesc{0} : in this case the extreme region is not painted at all.
-  \item \itemdesc{k} : (k being a valid index to a color of the current colormap) the extreme region
+  \item[0]: in this case the extreme region is not painted at all.
+  \item[k]: (k being a valid index to a color of the current colormap) the extreme region
     is painted with color k.
-  \end{itemize}
+  \end{description}
   If you don't want to use the complete colormap you may use the \verb!colminmax!
   argument with \verb! 1 <= colmin < colmax <= nc! (nc being the number of colors
   of the current colormap) so as to use only the \verb![colmin,colmax]!  sub-part of the colormap.
