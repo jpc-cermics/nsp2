@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+\mansection{champ}
+\begin{mandesc}
+  \short{champ}{2D vector field plot}\\ % @mandesc@
+  \short{champ1}{2D vector field plot}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  champ(x,y,fx,fy,arfact=,rect=,strf=)
+  champ1(x,y,fx,fy,arfact=,rect=,strf=)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two vectors which define the grid points
+    \vname{fx,fy}: two matrices which describes the x and y component of the vector field.
+    \vname{arfact}: an optional argument of type real which gives a scale factor
+    for the drawing of the arrows head (default value is 1.0)
+    \vname{rect}: a vector \verb!rect=[xmin,ymin,xmax,ymax]! which gives
+    the boundaries of the graphics frame to use.
+    \vname{strf}: a string of length 3 "xyz" which has the same meaning as the
+    \verb!strf! parameter of \verb!plot2d!. The first
+    character x has no effect with \verb!champ!.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The functions \verb!champ! and \verb!champ1! are used to draw two dimensional
+  vector fields. When using \verb!champ!, the length of the arrows is proportional to the intensity of the field.
+  When using \verb!champ1! the color id used to draw the arrow is proportional to the intensity of the field.
+\end{mandescription}
+%--example
+\begin{examples}
+  \noindent A simple example with \verb!champ!
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    champ(-5:5,-5:5,rand(11,11),rand(11,11));
+  \end{Verbatim}
+  \noindent A simple example with \verb!champ1!
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    champ1(-5:5,-5:5,rand(11,11),rand(11,11),arfact=2,rect=[-10,-10,10,10]);
+  \end{Verbatim}
+\end{examples}
+%-- see also
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
