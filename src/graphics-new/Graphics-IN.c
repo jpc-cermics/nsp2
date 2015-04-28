@@ -3129,17 +3129,20 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *Mcolors = NULL, *Mthickness= NULL, *Mfill_colors= NULL;
   int compound = TRUE;
   NspList *L;
   NspCompound *C=NULL;
   nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
+		      { "thickness", realmat,NULLOBJ,-1}, /* thickness of lines */
+		      { "color", realmat ,NULLOBJ,-1},    /* color to use for drawing */
+		      { "fill_color",realmat ,NULLOBJ,-1},    /* color to use for filling  */
 		      { NULL,t_end,NULLOBJ,-1}};
   int i;
   NspPolyline *pl= NULL;
   NspAxes *axe;
   int color=-2,mark=-2,mark_size=-1,mark_color=-1,fill_color=-1,thickness=-1;
-  NspMatrix *x,*y;
-  NspMatrix *l1=NULL,*l2=NULL,*l3=NULL;
+  NspMatrix *x,*y, *l1=NULL,*l2=NULL,*l3=NULL;
   int v1 = 0;
 
   CheckStdRhs(2,3);
@@ -3148,7 +3151,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,l1,l2);
 
-  if (rhs == 3)
+  if (rhs - opt == 3)
     {
       if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
       if ( l3->mn == l1->mn )
@@ -3170,8 +3173,23 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&compound,&Mthickness,&Mcolors,&Mfill_colors) == FAIL)
     return RET_BUG;
+
+  if ( Mthickness != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[1].position, Mthickness->mn != l1->n && Mthickness->mn != 1)
+    }
+
+  if ( Mcolors != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[2].position, Mcolors->mn != l1->n && Mcolors->mn != 1)
+    }
+
+  if ( Mfill_colors != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[3].position, Mfill_colors->mn != l1->n && Mfill_colors->mn != 1)
+    }
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
@@ -3184,7 +3202,6 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
     {
       L = axe->obj->children;
     }
-
 
   /* loop on the polylines */
   for ( i = 0 ; i < l1->n ; i++)
@@ -3217,9 +3234,16 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 	fill_color= l3->R[i*l1->m];
 	break;
       default:
-	color=-1;
+	color=-2;
 	break;
       }
+
+      color = (Mcolors != NULL) ? ((Mcolors->mn == 1) ?  Mcolors->R[0] : Mcolors->R[i]) : color;
+      fill_color =
+	(Mfill_colors != NULL) ? ((Mfill_colors->mn == 1) ?  Mfill_colors->R[0] : Mfill_colors->R[i])
+	: fill_color;
+      thickness = (Mthickness != NULL) ? ((Mthickness->mn == 1) ? Mthickness->R[0] : Mthickness->R[i]) : -1;
+
       if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
@@ -3925,8 +3949,6 @@ static int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
  * @opt:
  * @lhs:
  *
- *
- *
  * Returns:
  **/
 
@@ -3935,16 +3957,18 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   int compound = TRUE;
   NspList *L;
   NspCompound *C = NULL;
-  int close=0,color=-1,mark=-2,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1,i;
+  NspMatrix *Mcolors = NULL, *Mmarks = NULL, *Mmark_sizes= NULL, *Mthickness= NULL, *Mmark_colors= NULL;
+  int close=0,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1,i;
   NspMatrix *x,*y,*style=NULL;
   NspPolyline *pl= NULL;
   NspAxes *axe;
-  nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
-		      { "thickness", s_int,NULLOBJ,-1},
-		      { "mark_size", s_int,NULLOBJ,-1},
-		      { "close", s_bool ,NULLOBJ,-1},
-		      { "color", s_int ,NULLOBJ,-1},
-		      { "mark", s_int ,NULLOBJ,-1},
+  nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1}, /* returns a compound or the last polyline */
+		      { "thickness", realmat,NULLOBJ,-1}, /* thickness of lines */
+		      { "mark_size", realmat,NULLOBJ,-1}, /* mark size */
+		      { "close", s_bool ,NULLOBJ,-1},   /* close the polylines */
+		      { "color", realmat ,NULLOBJ,-1},    /* color to use  */
+		      { "mark", realmat ,NULLOBJ,-1},     /*  id of mark  */
+		      { "mark_color", realmat ,NULLOBJ,-1},/* color to use for marks */
 		      { NULL,t_end,NULLOBJ,-1}};
 
   CheckStdRhs(2,3);
@@ -3952,18 +3976,20 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
 
-  if (rhs -opt == 3)
+  if (rhs - opt == 3)
     {
+      /* third argument is optional and should be deprecated */
       if ((style=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
       CheckVector(NspFname(stack),3,style);
       CheckDimProp(NspFname(stack),1,3, style->mn < x->n);
     }
 
-  if ( get_optional_args(stack,rhs,opt,opts,&compound,&thickness,&mark_size,
-			 &close,&color,&mark) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&compound,&Mthickness,&Mmark_sizes,
+			 &close,&Mcolors,&Mmarks,&Mmark_colors) == FAIL)
     return RET_BUG;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+
   if ( compound == TRUE )
     {
       if ((C= nsp_compound_create("c",NULL,NULL,2,-1,10,NULL))== NULL) return RET_BUG;
@@ -3974,15 +4000,52 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
       L = axe->obj->children;
     }
 
+  if ( Mthickness != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[1].position, Mthickness->mn != x->n && Mthickness->mn != 1)
+    }
+
+  if ( Mmark_sizes != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[2].position, Mmark_sizes->mn != x->n && Mmark_sizes->mn != 1)
+    }
+
+  if ( Mcolors != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[4].position, Mcolors->mn != x->n && Mcolors->mn != 1)
+    }
+
+  if ( Mmarks != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[5].position, Mmarks->mn != x->n && Mmarks->mn != 1)
+    }
+
+  if ( Mmark_colors != NULL )
+    {
+      CheckDimProp(NspFname(stack),1,opts[6].position, Mmark_colors->mn != x->n && Mmark_colors->mn != 1)
+    }
+
   for ( i = 0 ; i < x->n ; i++)
     {
-      int lmark=mark,lcolor=color;
+      int lmark,lcolor;
       NspMatrix *xp,*yp;
+      /* color to be used */
+      lcolor = (Mcolors != NULL) ? ((Mcolors->mn == 1) ?  Mcolors->R[0] : Mcolors->R[i]) : -1;
+      lcolor = ( style == NULL) ? lcolor : (( style->I[i] <= 0) ? -2 : style->I[i]);
+      /* mark to be used */
+      lmark = (Mmarks != NULL) ? ((Mmarks->mn == 1) ?  Mmarks->R[0] : Mmarks->R[i]) : -2;
+      lmark = ( style == NULL) ? lmark : (( style->I[i] <= 0) ? - style->I[i] : -2);
+      /* mark_size */
+      mark_size = (Mmark_sizes != NULL) ? ((Mmark_sizes->mn == 1) ? Mmark_sizes->R[0] : Mmark_sizes->R[i]) : -1;
+      /* mark_color */
+      mark_color = (Mmark_colors != NULL) ? ((Mmark_colors->mn == 1) ? Mmark_colors->R[0] : Mmark_colors->R[i]) : -1;
+      /* thickness */
+      thickness = (Mthickness != NULL) ? ((Mthickness->mn == 1) ? Mthickness->R[0] : Mthickness->R[i]) : -1;
+
       if ((xp= nsp_matrix_create_from_array("x",1,x->m,x->R + x->m*i,NULL))== NULL) return RET_BUG;
       if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
-      lmark = ( style == NULL) ? mark: (( style->I[i] <= 0) ?  - style->I[i] : -2);
-      lcolor= ( style == NULL) ? color: (( style->I[i] <= 0) ? -2 : style->I[i]);
-      if ((pl = nsp_polyline_create("pl",xp,yp,close,lcolor,lmark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
+      if ((pl = nsp_polyline_create("pl",xp,yp,close,lcolor,lmark,mark_size,mark_color,
+				    fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
       if ( compound == TRUE )
