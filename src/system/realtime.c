@@ -20,31 +20,25 @@
  * XXXX should be changed using glib portable primitives.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h> 
-#include <time.h>
-#include "nsp/machine.h"
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
+#include <nsp/nsp.h>
 #include <nsp/system.h>
 
-#ifdef HAVE_SYS_TIME_H 
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif 
+#endif
 
-#ifndef HAVE_INLINE 
+#ifndef HAVE_INLINE
 #define inline
 #endif
 
 #ifndef WIN32
 #include <unistd.h>
-#else 
+#else
 #include <windows.h>
 #endif /* WIN32 */
 
 int nsp_realtime(double *t);
-int nsp_realtime_init(double *t,double *scale); 
+int nsp_realtime_init(double *t,double *scale);
 
 #ifndef WIN32
 
@@ -71,7 +65,7 @@ static int simulation_doinit = 1;
 int nsp_realtime_init( double *t,  double *scale)
 {
   struct timeval now;
-  gettimeofday(&now, 0); 
+  gettimeofday(&now, 0);
   /*  printf("Realtime init %f %f\n", *t, *scale);*/
   realtime_start = TIME2ULL(now);
   simulation_doinit = 1;
@@ -89,11 +83,11 @@ int nsp_realtime(double *t)
     simulation_doinit = 0;
     simulation_start = *t;
   }
-  gettimeofday(&now, 0); 
+  gettimeofday(&now, 0);
   realtime_diff = TIME2ULL(now) - realtime_start;
   simulation_diff = (*t - simulation_start) * simulation_scale;
   delay = (long long)(simulation_diff * 1000000) - realtime_diff;
-  /*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n", 
+  /*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n",
    *  realtime_diff, simulation_diff, delay, *t);
    */
   if (delay > 0) {
@@ -114,13 +108,13 @@ static __int64 realtime_start = 0;
 static int simulation_doinit = 1;
 union {FILETIME ftFileTime;
   __int64  ftInt64;
-} ftRealTime; 
+} ftRealTime;
 
 int nsp_realtime_init( double *t,  double *scale)
 {
   SYSTEMTIME st;
   GetSystemTime(&st);
-  SystemTimeToFileTime(&st,&ftRealTime.ftFileTime); 
+  SystemTimeToFileTime(&st,&ftRealTime.ftFileTime);
 
   realtime_start = ftRealTime.ftInt64;
   simulation_doinit = 1;
@@ -145,7 +139,7 @@ int nsp_realtime(double *t)
   realtime_diff = ftRealTime.ftInt64  - realtime_start;
   simulation_diff = (*t - simulation_start) * simulation_scale;
   delay = (__int64)(simulation_diff * 10000000) - realtime_diff;
-  /*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n", 
+  /*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n",
    *  realtime_diff, simulation_diff, delay, *t);
    */
   if (delay > 0) {
