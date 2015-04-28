@@ -1,0 +1,61 @@
+% -*- mode: latex -*-
+\mansection{evans}
+\begin{mandesc}
+  \short{evans}{Evans root locus}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  evans(n,d, [,kmax])
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n,d}: Two polynomial.
+    \vname{kmax}: maximum gain requested for the plot as a real scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The \verb!evans! function draws the Evans root locus for a linear system
+  described by its transfer form \verb!(n(s),d(s))!. This is the locus of the
+  roots of \verb!1+k*n(s)/d(s)!, in the complex plane. For a selected sample of
+  gains \verb!k <= kmax!, the imaginary part of the roots of \verb!d(s)+k*n(s)!
+  is plotted vs the real part. To obtain the gain at a given point of the locus
+  you can simply execute the following instruction: \verb!z=[1,%i]*locate(1);!
+  and \verb!k=-1/real(horner(n,z){1}/horner(d,z){1})!
+  and click the desired point on the root locus. If the coordinates of the
+  selected point are in the real \verb!2x1! vector \verb!P=locate(1)! this \verb!k!
+  solves the equation \verb! k*n(w) + d(w) =0! with
+  \verb!w=P(1)+%i*P(2)=[1,%i]*P!.
+\end{mandescription}
+%--example
+\begin{examples}
+
+  \noindent A first example
+  \begin{Verbatim}
+    n = 352*poly(-5,'s'); d= poly([0,0,2000,200,25,1],'s','coeffs');
+    evans(n,d,100);
+    P=3.0548543 - 8.8491842*%i;    //P=selected point
+    k=-1/real(horner(n,P){1}/horner(d,P){1});
+    roots(d+k*n)     //contains P as particular root
+  \end{Verbatim}
+
+  \noindent A second example
+  \begin{Verbatim}
+    s=poly(0,'s');n=1+s;
+    d=real(poly([-1 -2 -%i %i],'s'));
+    evans(n,d,100);
+  \end{Verbatim}
+  \noindent A third example
+  \begin{Verbatim}
+    n=real(poly([0.1-%i 0.1+%i,-10],'s'));
+    d=real(poly([-1 -2 -%i %i],'s'));
+    evans(n,d,80);
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{kpure}{kpure} \manlink{krac2}{krac2} \manlink{locate}{locate}
+\end{manseealso}
