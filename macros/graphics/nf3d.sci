@@ -8,11 +8,11 @@ function [xf,yf,zf,qf] = nf3d(x,y,z,q,orient)
    //    - and also an orientation parameter
    //
    //   j+1 +----+     orient=1 corresponds to :
-   //       |    |       (i,j) -> (i,j+1) -> (i+1,j+1) -> (i+1,j) 
+   //       |    |       (i,j) -> (i,j+1) -> (i+1,j+1) -> (i+1,j)
    //    j  +----+
    //       i   i+1    orient=2 corresponds to :
-   //                    (i,j) -> (i+1,j) -> (i+1,j+1) -> (i,j+1) 
-   // 
+   //                    (i,j) -> (i+1,j) -> (i+1,j+1) -> (i,j+1)
+   //
    if nargin < 5 then, orient=2, end  // orientation of the old version
    if nargin < 3 then, error("nf3d needs at least 3 arguments"), end
    [n1,n2]=size(x)
