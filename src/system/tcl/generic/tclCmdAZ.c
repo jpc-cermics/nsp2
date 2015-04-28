@@ -417,7 +417,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       } 
     else 
       {
-	result = nsp_move_boolean(stack,1, (access(fileName, mode) != -1));
+	/* expand macros */
+	char Fname_expanded[FSIZE+1];
+	nsp_expand_file_with_exec_dir(&stack,fileName,Fname_expanded);
+	result = nsp_move_boolean(stack,1, (access(Fname_expanded, mode) != -1));
 	result = (result == FAIL) ? RET_BUG: 1;
       }
     goto done;
