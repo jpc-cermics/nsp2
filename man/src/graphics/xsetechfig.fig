@@ -1,0 +1,515 @@
+#FIG 3.2  Produced by xfig version 3.2.5c
+Portrait
+Center
+Inches
+A4      
+100.00
+Single
+-2
+1200 2
+0 32 #000000
+0 33 #0000ff
+0 34 #00ff00
+0 35 #00ffff
+0 36 #ff0000
+0 37 #ff00ff
+0 38 #ffff00
+0 39 #ffffff
+0 40 #000090
+0 41 #0000b0
+0 42 #0000d0
+0 43 #87ceff
+0 44 #009000
+0 45 #00b000
+0 46 #00d000
+0 47 #009090
+0 48 #00b0b0
+0 49 #00d0d0
+0 50 #900000
+0 51 #b00000
+0 52 #d00000
+0 53 #900090
+0 54 #b000b0
+0 55 #d000d0
+0 56 #803000
+0 57 #a04000
+0 58 #c06000
+0 59 #ff8080
+0 60 #ffa0a0
+0 61 #ffc0c0
+0 62 #ffe0e0
+0 63 #ffd700
+0 64 #000000
+0 65 #ffffff
+# 33 Setcolor
+# /absolu true def
+# 1 Setcolor
+# 1 Setcolor
+# 1 Setcolor
+# 1 Thickness
+# 1 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+# /Helvetica findfont 160 scalefont setfont
+# 1 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+# 32 Setcolor
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+# 32 Setcolor
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+# 32 Setcolor
+# 1 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+# 0 Setcolor
+# 3 Thickness
+# 2743 1260 4114 2907 setclipzone
+# -1 -1 200000 200000 setclipzone
+# 0 Setcolor
+# 33 Setcolor
+# Object : 0 drawpoly -<pat:-34,areafill=20,white=31>- 
+2 3 0 3 65 65 0 0 20 0.000 0 0 -1 0 0 5
+	 2743 1260 2743 4167 6857 4167 6857 1260 2743 1260
+# 2 Thickness
+# 4 Setcolor
+# 2 Thickness
+# Object : 0 drawbox -<0>- 
+2 2 0 2 36 7 0 0 -1 0.000 0 0 0 0 0 5
+	 1920 678 7680 678 7680 4748 1920 4748 1920 678
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 1920 4749 1866 4749
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 1920 3392 1893 3392
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 1920 2035 1893 2035
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 1920 678 1866 678
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 1920 4749 1920 4807
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3840 4749 3840 4778
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5760 4749 5760 4778
+# Object : 0 segments -<0>- 
+2 1 0 1 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 7680 4749 7680 4807
+# 3 Thickness
+# 13 Setcolor
+# 3 Thickness
+# Object : 0 drawbox -<0>- 
+2 2 0 3 45 7 0 0 -1 0.000 0 0 0 0 0 5
+	 2743 1260 6857 1260 6857 4167 2743 4167 2743 1260
+# 15 Setcolor
+# 3 Thickness
+# 2743 1260 4114 2907 setclipzone
+# 15 Setcolor
+# 3 Thickness
+# /closeflag false def
+# Object : 0 drawpoly -<pat:0,areafill=-1,white=31>- 
+2 1 0 3 47 7 0 0 -1 0.000 0 0 -1 0 0 101
+	 2743 2714 2784 2568 2825 2425 2866 2284 2907 2147 2949 2017
+	 2990 1893 3031 1777 3072 1671 3113 1575 3154 1490 3195 1418
+	 3237 1359 3278 1313 3319 1281 3360 1264 3401 1261 3442 1272
+	 3483 1298 3525 1338 3566 1392 3607 1459 3648 1538 3689 1630
+	 3730 1732 3771 1844 3813 1964 3854 2092 3895 2227 3936 2366
+	 3977 2508 4018 2653 4059 2798 4101 2943 4142 3085 4183 3224
+	 4224 3357 4265 3484 4306 3603 4347 3713 4389 3814 4430 3903
+	 4471 3981 4512 4045 4553 4097 4594 4135 4635 4158 4677 4167
+	 4718 4162 4759 4142 4800 4108 4841 4059 4882 3998 4923 3923
+	 4965 3837 5006 3739 5047 3631 5088 3514 5129 3389 5170 3257
+	 5211 3120 5253 2978 5294 2834 5335 2689 5376 2544 5417 2401
+	 5458 2261 5499 2125 5541 1995 5582 1873 5623 1759 5664 1654
+	 5705 1560 5746 1477 5787 1407 5829 1350 5870 1307 5911 1277
+	 5952 1262 5993 1261 6034 1275 6075 1304 6117 1346 6158 1402
+	 6199 1471 6240 1553 6281 1646 6322 1750 6363 1863 6405 1985
+	 6446 2114 6487 2250 6528 2390 6569 2533 6610 2678 6651 2823
+	 6693 2967 6734 3109 6775 3246 6816 3379 6857 3504
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 2743 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3154 4167 3154 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3566 4167 3566 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3977 4167 3977 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4389 4167 4389 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4800 4167 4800 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5211 4167 5211 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5623 4167 5623 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6034 4167 6034 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6446 4167 6446 4225
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6857 4167 6857 4225
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 2743 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2949 4167 2949 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3154 4167 3154 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3360 4167 3360 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3566 4167 3566 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3771 4167 3771 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 3977 4167 3977 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4183 4167 4183 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4389 4167 4389 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4594 4167 4594 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 4800 4167 4800 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5006 4167 5006 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5211 4167 5211 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5417 4167 5417 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5623 4167 5623 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 5829 4167 5829 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6034 4167 6034 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6240 4167 6240 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6446 4167 6446 4210
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 6651 4167 6651 4210
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 2689 4167
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3877 2689 3877
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3586 2689 3586
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3295 2689 3295
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3004 2689 3004
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2714 2689 2714
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2423 2689 2423
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2132 2689 2132
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1841 2689 1841
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1551 2689 1551
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1260 2689 1260
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 2703 4167
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4022 2703 4022
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3877 2703 3877
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3731 2703 3731
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3586 2703 3586
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3440 2703 3440
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3295 2703 3295
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3150 2703 3150
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 3004 2703 3004
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2859 2703 2859
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2714 2703 2714
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2568 2703 2568
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2423 2703 2423
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2277 2703 2277
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 2132 2703 2132
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1987 2703 1987
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1841 2703 1841
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1696 2703 1696
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1551 2703 1551
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 1405 2703 1405
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 6857 4167
+# 0 Setcolor
+# 0 Setcolor
+# Object : 0 segments -<0>- 
+2 1 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 2
+	 2743 4167 2743 1260
+# 0 Setcolor
+# Object : 0 drawbox -<0>- 
+2 2 0 3 32 7 0 0 -1 0.000 0 0 0 0 0 5
+	 2743 1260 6857 1260 6857 4167 2743 4167 2743 1260
+# 4 Setcolor
+# 1 Thickness
+# 4 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 4389 1260 4389 678
+# 4 Setcolor
+# 1 Thickness
+# 4 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 4575 4167 4575 4749
+# 4 Setcolor
+# 1 Thickness
+# 4 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 6857 2714 7680 2714
+# 4 Setcolor
+# 1 Thickness
+# 4 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 2743 2714 1920 2714
+# 1 Setcolor
+# 1 Thickness
+# 1 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 0 1 2
+	2 1 1.00 60.00 120.00
+	 1920 450 4512 450
+# Object : 1 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 0 2
+	2 1 1.00 60.00 120.00
+	 5088 475 7680 475
+# 1 Setcolor
+# 1 Thickness
+# 1 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 0 1 2
+	2 1 1.00 60.00 120.00
+	 1650 678 1650 2510
+# Object : 1 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 0 2
+	2 1 1.00 60.00 120.00
+	 1632 2917 1632 4749
+# 1 Setcolor
+# 1 Thickness
+# 1 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 0 4749 1920 4749
+# 1 Setcolor
+# 1 Thickness
+# 1 Setcolor
+# 1 Thickness
+# Object : 0 segments -<0>- 
+2 1 0 1 -1 7 0 0 -1 0.000 0 0 0 1 1 2
+	2 1 1.00 60.00 120.00
+	2 1 1.00 60.00 120.00
+	 1920 678 1920 0
+# 33 Setcolor
+# /absolu true def
+# 0 Setcolor
+# 0 Setcolor
+# 3 Thickness
+# 32 Setcolor
+# 3 Thickness
+# Object : 0 drawbox -<0>- 
+2 2 0 3 64 7 0 0 -1 0.000 0 0 0 0 0 5
+	 12 15 8700 15 8700 5925 12 5925 12 15
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 150 120 1632 2815 h\001
+4 0 36 0 0 12 10 -0.0000 4 105 90 1764 774 1\001
+4 0 36 0 0 12 10 -0.0000 4 105 90 7635 5011 1\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 150 435 4533 1071 ayup\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 150 495 2064 1351 ymax\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 195 690 4677 4458 aydown\001
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+4 0 64 0 0 16 10 -0.0000 4 150 345 75 225 (0,1)\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 150 510 2100 2625 axleft\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 195 660 6975 2550 axright\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 105 150 4725 525 w\001
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+4 0 64 0 0 16 10 -0.0000 4 120 315 525 4650 xleft\001
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+4 0 64 0 0 16 10 -0.0000 4 120 240 1575 225 yup\001
+# 13 Setcolor
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 195 465 2100 4200 ymin\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 150 465 2550 4500 xmin\001
+# 32 Setcolor
+# /Times-Bold findfont 192 scalefont setfont
+4 0 64 0 0 2 12 -0.0000 4 105 495 6600 4500 xmax\001
+# 32 Setcolor
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+4 0 64 0 0 16 10 -0.0000 4 150 345 225 5700 (0,0)\001
+# 32 Setcolor
+# /Helvetica findfont 160 scalefont setfont
+4 0 64 0 0 16 10 -0.0000 4 150 345 8250 5625 (1,0)\001

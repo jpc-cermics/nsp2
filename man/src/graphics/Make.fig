@@ -1,0 +1,18 @@
+#/* -*- Mode: Makefile -*- */
+
+SHELL=/bin/csh
+
+MAG=1.0 
+PS2PDF=ps2pdf -dEPSCrop 
+
+%.tex : %.fig
+	@NewXFlatexpr-sc $(MAG) $< 
+	@sed -e 's+$*+chapitre4/figures-jpc/$*+g' \
+	     -e 's+.eps++' $@ >! new$@
+	@mv -f new$@ $@
+	@$(PS2PDF) $*.eps 
+
+
+
+
+

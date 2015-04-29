@@ -1,0 +1,50 @@
+% -*- mode: latex -*-
+\mansection{xsegs}
+\begin{mandesc}
+  \short{xsegs}{draw unconnected segments}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  xsegs(xv,yv,style=)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{xv,yv}: matrices of the same size.
+    \vname{style}: vector or scalar. If \verb!style! is a positive scalar,
+    it gives the color to use for all segments. If \verb!style! is
+    a negative scalar, then current color is used. If \verb!style!
+    is a vector, then \verb!style(i)! gives the color to use for
+    segment \verb!i!.\end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xsegs! draws a set of unconnected segments given by \verb!xv! and
+  \verb!yv!. If \verb!xv! and \verb!yv! are matrices they are considered as
+  vectors by concatenating their columns. The coordinates of the two points
+  defining a segment are given by two consecutive values of \verb!xv! and
+  \verb!yv!:\verb!(xv(i),yv(i))--$>$(xv(i+1),yv(i+1))!. For instance, using
+  matrices of size \verb!2xn!, the segments can be defined by:
+  \begin{Verbatim}
+    xv=[xi_1 xi_2 ...; xf_1 xf_2 ...] yv=[yi_1 yi_2 ...; yf_1 yf_2  ...]
+  \end{Verbatim}
+  and the segments are \verb!(xi_k,yi_k)--$>$(xf_k,yf_k)!.
+\end{mandescription}
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;
+    x=2*%pi*(0:9)/10;
+    xv=[sin(x);9*sin(x)];
+    yv=[cos(x);9*cos(x)];
+    xsetech(frect=[-10,-10,10,10],fixed=%t);
+    xsegs(xv,yv,style=1:10);
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
