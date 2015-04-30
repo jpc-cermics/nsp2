@@ -67,6 +67,7 @@
 #include <nsp/contour.h>
 #include <nsp/contour3d.h>
 #include <nsp/nspthreads.h>
+#include <nsp/pr-output.h>
 
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos);
@@ -2541,9 +2542,7 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
       }
     }
 
-
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
   if ( Mstyle != NULL)
@@ -2557,7 +2556,7 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL)
     {
-      Scierror("Error: failed to insert rectangle in Figure\n");
+      Scierror("Error: failed to insert segments in Figure\n");
       return RET_BUG;
     }
   nsp_axes_invalidate((NspGraphic *)axe);
@@ -2807,11 +2806,13 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
   double *val=NULL;
   int color=-3,stroke_color=-2,width=-1;
   nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { "stroke_color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
-
+  if ( get_optional_args(stack,rhs,opt,opts,&color,&stroke_color,&width) == FAIL) return RET_BUG;
+  
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) color = -1;
@@ -2823,6 +2824,12 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   nsp_axes_invalidate(((NspGraphic *) axe));
+
+  if ( lhs == 1 )
+    {
+      MoveObj(stack,1,NSP_OBJECT(rect));
+      return 1;
+    }
   return 0;
 }
 
@@ -3744,11 +3751,34 @@ static int int_xlfont(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
-  NspMatrix *l1,*l2,*l3,*l5;
-  int flagx=0;
+  NspList *L = NULL;
+  NspCompound *C = NULL;
+  int i;
+  char buf[1024],format[256];
+  nsp_num_formats fmt;
+  int iposx = 0; /* left */
+  int iposy = 0; /* bottom */
+  NspGrstring *grs;
+  NspAxes *axe;
+  double angle=0.0, h = 0.0, w = 0.0;
+  int flagx=0, box=FALSE, fill= GR_no_box, fsiz = -1;
+  char *posx=NULL,*posy=NULL;
 
-  CheckRhs(3,5);
+  nsp_option opts[] ={
+    { "angle", s_double, NULLOBJ,-1},
+    { "box", s_bool,NULLOBJ,-1}, /* draw a box around the string */
+    { "fill", s_bool,NULLOBJ,-1}, /* when (w,h) is given the string must fill the
+				  * given box i.e change the font size */
+    { "h", s_double,NULLOBJ,-1},
+    { "w", s_double,NULLOBJ,-1},
+    { "posx", string ,NULLOBJ,-1},    /* position in x */
+    { "posy", string ,NULLOBJ,-1},    /* position in y */
+    { "size", s_int , NULLOBJ,-1},    /* font size in pixel */
+    { NULL,t_end,NULLOBJ,-1}};
+  
+  NspMatrix *l1,*l2,*l3,*l5=NULL;
+  
+  CheckStdRhs(3,5);
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
@@ -3758,21 +3788,84 @@ static int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 
   if ( l3->mn == 0) { return 0;}
 
-  if (rhs >= 4) {   if (GetScalarInt(stack,4,&flagx) == FAIL) return RET_BUG;}
-  if (rhs >= 5)
+  if (rhs -opt >= 5)
     {
       if ((l5=GetRealMat(stack,5)) == NULLMAT ) return RET_BUG;
       CheckSameDims(NspFname(stack),1,5,l1,l5);
     }
-  else
+  
+  if ( get_optional_args(stack,rhs,opt,opts,&angle,&box,&fill,&h,&w,&posx,&posy,&fsiz) == FAIL)
+    return RET_BUG;
+
+  if (rhs -opt >= 4) 
     {
-      if ((l5 =nsp_mat_zeros(1,l3->mn)) == NULLMAT) return RET_BUG;
+      /* box given by non optional argument */
+      if (GetScalarInt(stack,4,&flagx) == FAIL) return RET_BUG;
+      box= (flagx != 0) ? TRUE : FALSE;
+    }
+  
+  if ( posx != NULL)
+    {
+      const char *x_table[] = {"left","center", "right", NULL};
+      iposx  = is_string_in_array(posx, x_table,1);
+      if ( iposx < 0 )
+	{
+	  string_not_in_array(stack,posx,x_table,"optional argument mode");
+	  return RET_BUG;
+	}
     }
 
-  Xgc=nsp_check_graphic_context();
+  if ( posy != NULL)
+    {
+      const char *y_table[] = {"bottom","center", "baseline","up", NULL};
+      iposy = is_string_in_array(posy, y_table,1);
+      if ( iposy  < 0 )
+	{
+	  string_not_in_array(stack,posy,y_table,"optional argument mode");
+	  return RET_BUG;
+	}
+    }
 
-  Xgc->graphic_engine->scale->displaynumbers(Xgc,l1->R,l2->R,l3->mn,flagx,l3->R,l5->R);
-  if ( rhs < 5) nsp_matrix_destroy(l5);
+  if ( w != 0.0 && h != 0.0 )
+    {
+      fill = ( fill == TRUE ) ? GR_fill_box: GR_in_box;
+    }
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+
+  if ((C= nsp_compound_create("c",NULL,NULL,2,-1,10,NULL))== NULL) return RET_BUG;
+  L = C->obj->children;
+  
+  nsp_init_pr_format (&fmt);
+  nsp_matrix_set_format(&fmt,l3) ;
+  sprintf(format,"%s",fmt.curr_real_fmt);
+  
+  for ( i = 0 ; i < l1->mn ; i++)
+    {
+      NspSMatrix *Loc;
+      sprintf(buf,format,l3->R[i]);
+      if ((Loc =nsp_smatrix_create_with_length("str",1,1,strlen(buf)+1)) == NULLSMAT) 
+	return RET_BUG;
+      strcpy(Loc->S[0],buf);
+      if ( l5 != NULL ) angle = l5->R[i];
+      if (( grs = nsp_grstring_create("str",l1->R[i],l2->R[i],NULL,Loc,angle,w,h,fill,iposx,iposy,fsiz,NULL))== NULL)
+	return RET_BUG;
+      /* insert the new string in the compound */
+      if ( nsp_list_end_insert(L,(NspObject *) grs )== FAIL)
+	{
+	  Scierror("Error: failed to insert a string in Figure\n");
+	  return RET_BUG;
+	}
+    }
+
+  /* insert the compound in the axe */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) C, TRUE)== FAIL)
+    {
+      Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
+      return RET_BUG;
+    }
+  
+  if ( rhs -opt < 5) nsp_matrix_destroy(l5);
   return 0;
 }
 
@@ -5519,16 +5612,15 @@ static int int_xload_new(Stack stack, int rhs, int opt, int lhs)
  * @opt:
  * @lhs:
  *
- *
+ * 
  *
  * Returns:
  **/
+
 static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
 {
-
   NspMatrix *l1;
-  CheckRhs(0,1) ;
-
+  CheckStdRhs(0,1) ;
   if (rhs == 1)
     {
       int i;
