@@ -347,12 +347,16 @@ static NspHobj  *hobj_create_gen(const char *name, NspObject *Obj,char htype)
     return(NULLHOBJ);
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->htype = htype; 
-
+  H->owns = FALSE;
   /* take care here of the fact that O can also be a Hobj 
    * in that case we must get the object it points to 
    */
-  if ( IsHobj(Obj) )  Obj = ((NspHobj *) Obj)->O;
-  
+  if ( IsHobj(Obj) )  
+    {
+      /* keep track for opt of cases where we can free Obj at deletion of H */
+      Obj = ((NspHobj *) Obj)->O;
+      if ( Ocheckname(Obj,NVOID) &&  htype == 'o') H->owns = TRUE;
+    }
   H->O=Obj;
   return H;
 }
@@ -408,6 +412,10 @@ NspHobj  *nsp_hobj_copy(NspHobj *H)
 void nsp_hobj_destroy(NspHobj *H)
 {
   NSP_OBJECT(H)->type->set_name(NSP_OBJECT(H),NVOID);
+  if ( H->htype == 'o'&& H->owns == TRUE && H->O != NULL && Ocheckname(H->O,NVOID))
+    {
+      nsp_object_destroy(&H->O);
+    }
   FREE(H) ;
 }
 

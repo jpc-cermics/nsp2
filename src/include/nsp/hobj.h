@@ -27,10 +27,11 @@ struct _NspHobj {
   NspTypeHobj *type; 
   /*< public >*/
   char htype  ;   /* 'o' : optional argument 
-		  * 'h' : handler 
-		  * 'g' : global variable pointer 
-		  */
-  NspObject *O;        /* pointed object */
+		   * 'h' : handler 
+		   * 'g' : global variable pointer 
+		   */
+  int owns;        /* owns the pointed object */
+  NspObject *O;   /* pointed object */
 };
 
 INLIBNSP int nsp_type_hobj_id;
