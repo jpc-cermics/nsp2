@@ -29,15 +29,12 @@
   \verb!xrects(rects,colors)! draws or fills a set of rectangles.
   Each column of the variable \verb!rects! describes a rectangle
   (upper-left point, width, height): \verb!rects=[x1 y1 w1 h1;x2 y2 w2 h2;...]'!.
-  The value of \verb!color(i)! gives the pattern or color to use for filling or drawing rectangle
+  The value of \verb!colors(i)! gives the pattern or color to use for filling or drawing rectangle
   \verb!i!:
   \begin{itemize}
-  \item if \verb!fill(i) < 0!, rectangle \verb!i! is drawn using the line style (or
-    color) \verb!-fill(i)!
-  \item if \verb!fill(i) > !, rectangle \verb!i! is filled using the pattern (or
-    color) \verb!fill(i)!
-  \item if \verb!fill(i)=0!, rectangle \verb!i! is drawn using the current
-    line style (or color).
+  \item if \verb!colors(i) < 0!, rectangle \verb!i! is drawn using the color \verb!-colors(i)!
+  \item if \verb!colors(i) > !, rectangle \verb!i! is filled using the color \verb!colors(i)!
+  \item if \verb!colors(i)=0!, rectangle \verb!i! is drawn using the current color.
   \end{itemize}
 
   \verb!xrects(rects,color=..,thickness=..,background=..,compound=%t|%f);! draws a set of
@@ -54,6 +51,7 @@
 A first example \verb!xrects(rects,cols)!
 
 \begin{Verbatim}
+  if ~new_graphics() then switch_graphics();end
   plot2d([-100,500],[-50,50],style=[-1,-1],strf="022")
   cols=[-34,-33,-32,-20:5:20,32,33,34];
   x=400*(0:14)/14; step=20;

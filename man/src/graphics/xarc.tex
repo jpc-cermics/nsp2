@@ -1,31 +1,34 @@
 % -*- mode: latex -*-
-
-\mansection{xrect}
+\mansection{xarc}
 \begin{mandesc}
-  \short{xrect}{draw a rectangle}\\ % @mandesc@
+  \short{xarc}{draw a part of an ellipse} \\ % @mandesc@
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  R=xrect(x,y,w,h,color=..,thickness=..,background=..)
-  R=xrect(rect,color=..,thickness=..,background=..)
+  A=xarc(x,y,w,h,a1,a2,options=value)
+  A=xarc(arc,options=value)
 \end{verbatim}
 \end{calling_sequence}
-
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x,y,w,h}: four real values defining the rectangle.
-    \vname{rect}: a vector of size \verb!4! giving the rectangle
-    \verb![x,y,w,h]!.
+    \vname{x,y,w,h}: four real values defining a rectangle.
+    \vname{a1,a2}: real values defining a sector.
+    
     \vname{background, color, thickness}: optional arguments.
-    \vname{R}: a graphical rectangle object.
+    \vname{A}: a graphical rectangle object.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  \verb!xrect! draws a rectangle defined by \verb![x,y,w,h]!
-  (upper-left point, width, height) using the current scale and style.
+  \verb!xarc! draws a part of an ellipse contained in the rectangle 
+  \verb!(x,y,w,h)! (upper-left point, width, height), and in the sector 
+  defined by the angle \verb!alpha1! and the angle \verb!alpha1+alpha2!. 
+  The angles \verb!alpha1! and \verb!alpha2! are 
+  given respectively by \verb!a1/64! degrees and \verb!a2/64! degrees.
+  This function uses the current graphics scale and color.
+
   The color and thickness of drawing line can be given by optional arguments
   \verb!color! and \verb!thickness!. If optional \verb!background!
   argument is given it is used as color to fill the rectangle.
@@ -37,38 +40,23 @@
   If \verb!background! is positive it gives the color to be used for filling,
   if \verb!background=-1! the default filling color is used,
   if  \verb!background=-2! the rectangle is not filled.
-
 \end{mandescription}
 
 %--example
 \begin{examples}
-
-A first example
-
   \begin{Verbatim}
-    plot2d([-2,2],[-2,2],style=[-1,-1],strf="022");
-    xrect(-1,1,2,2,color=6,thickness=4,background=3);
-  \end{Verbatim}
-
-A second example
-
-  \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end
-    plot2d([-2,2],[-2,2],style=[-1,-1],strf="022");
-    xrect(-1,1,2,2,color=-1,thickness=4,background=3);
-    // we change the default color
-    xset('color',10);
-    F=get_current_figure();
-    F.invalidate[];// force redrawing;
+    if ~new_graphics() then switch_graphics();end;xclear();
+    xsetech(frect=[-2,-2,2,2],iso=%t,axesflag=0);
+    xarc(-1,1,2,2,0,90*64,background=7,color=3);
+    xarc(-1.5,1.5,3,3,0,360*64)
   \end{Verbatim}
 \end{examples}
-
 %-- see also
 \begin{manseealso}
-  \manlink{xfrect}{xfrect} \manlink{xrects}{xrects}
+  \manlink{xarcs}{xarcs} \manlink{xfarc}{xfarc} \manlink{xfarcs}{xfarcs} 
 \end{manseealso}
-
 %-- Author
 \begin{authors}
-  J.Ph.C.
+  J.-Ph. C.  
 \end{authors}
+

@@ -1,0 +1,71 @@
+% -*- mode: latex -*-
+\mansection{xfrect}
+\begin{mandesc}
+  \short{xfrect}{fill a rectangle}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  R=xfrect(x,y,w,h,options=value);
+  R=xfrect(rect,options=value) 
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y,w,h}: four real values defining the rectangle.
+    \vname{rect}: a vector of size \verb!4! giving the rectangle
+    \verb![x,y,w,h]!.
+    \vname{color, stroke_color, thickness}: optional arguments (default values -1, -2, -1).
+    \vname{R}: a graphical rectangle object.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xfrect! fills a rectangle defined by \verb![x,y,w,h]! 
+  (upper-left point, width, height) using the current scale and style.
+  The fill color, stroke color and thickness can be given by optional arguments
+  \verb!color!, \verb!stroke color! and \verb!thickness!. 
+
+  If \verb!color! is positive it gives the color to be used for painting,
+  if \verb!color=-1! the default color is used, if  \verb!color=-2! the
+  rectangle is not filled.
+
+  If \verb!stroke_color! is positive it gives the color to be used for drawing the rectangle 
+  boundary. if \verb!stroke_color=-1! the default color is used, if  \verb!stroke_color=-2! the rectangle 
+  boundary is not drawn. The parameter \verb!thickness! control the line thickness for drawing boundaries.
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+A first example
+
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end
+    xsetech(frect=[-2,-2,2,2]);
+    xfrect(-1,1,2,2,color=6,thickness=4,stroke_color=3);
+  \end{Verbatim}
+
+A second example
+
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end
+    xsetech(frect=[-2,-2,2,2]);
+    xfrect(-1,1,2,2,color=-1,thickness=4,stroke_color=3);
+    // we change the default color
+    xset('color',10);
+    F=get_current_figure();
+    F.invalidate[];// force redrawing;
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{xrect}{xrect} \manlink{xrects}{xrects} 
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.-Ph. C.  
+\end{authors}
+
