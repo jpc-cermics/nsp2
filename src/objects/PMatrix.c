@@ -3104,8 +3104,10 @@ NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b)
 	    }
 	}
     }
+  if ( coef != NULL)  nsp_matrix_destroy(coef);
   return res;
  err:
+  if ( coef != NULL)  nsp_matrix_destroy(coef);
   if ( term != NULL ) nsp_matrix_destroy(term);
   if ( res != NULL ) nsp_matrix_destroy(res);
   return NULL;

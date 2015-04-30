@@ -1025,28 +1025,21 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
     case 2: 
       if ( select == NULL) 
 	{
-	  NthObj(2) = NSP_OBJECT(A);
-	  NSP_OBJECT(A)->ret_pos = 2;
-	  NthObj(1) = NSP_OBJECT(U);
-	  NthObj(1)->ret_pos = 1;
+	  MoveObj(stack,2, NSP_OBJECT(A));
+	  MoveObj(stack,1,NSP_OBJECT(U));
 	  if (  Dim != NULL ) nsp_matrix_destroy(Dim);
 	}
       else 
 	{
-	  NthObj(2) = NSP_OBJECT(Dim);
-	  NSP_OBJECT(Dim)->ret_pos = 2;
-	  NthObj(1) = NSP_OBJECT(U);
-	  NthObj(1)->ret_pos = 1;
-	  nsp_matrix_destroy(A);
+	  MoveObj(stack,2, NSP_OBJECT(Dim));
+	  MoveObj(stack,1, NSP_OBJECT(U));
+	  /* nsp_matrix_destroy(A); */
 	}
       break;
     case 3: 
-      NthObj(3) = NSP_OBJECT(A);
-      NSP_OBJECT(A)->ret_pos = 3;
-      NthObj(2) = NSP_OBJECT(Dim);
-      NSP_OBJECT(Dim)->ret_pos = 2;
-      NthObj(1) = NSP_OBJECT(U);
-      NthObj(1)->ret_pos = 1;
+      MoveObj(stack,3, NSP_OBJECT(A));
+      MoveObj(stack,2, NSP_OBJECT(Dim));
+      MoveObj(stack,1, NSP_OBJECT(U));
       break;
     }
   return Max(lhs,1);
