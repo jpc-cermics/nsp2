@@ -1647,7 +1647,10 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 	  if (cv->obj->legend[0] != '\0' )
 	    {
 	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
-	      style[count++]= cv->obj->color;
+	      if ( cv->obj->color >= 0 ) 
+		style[count++]= cv->obj->color;
+	      else
+		style[count++]= - cv->obj->mark;
 	      if (count >= 56 ) break;
 	    }
 	}
@@ -2362,4 +2365,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2366 "axes.c"
+#line 2369 "axes.c"
