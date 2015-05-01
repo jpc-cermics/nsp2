@@ -2,12 +2,13 @@
 
 \mansection{grayplot}
 \begin{mandesc}
-  \short{grayplot}{2D plot of a surface using colors}\\ 
+  \short{grayplot}{2D plot of a surface using colors}\\
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
   grayplot(x,y,z,options=)
+  grayplot(x,y,f,options=)
 \end{verbatim}
 \end{calling_sequence}
 
@@ -15,8 +16,10 @@
 \begin{parameters}
   \begin{varlist}
     \vname{x,y}: two real vectors of size \verb!n1! and \verb!n2!.
-    \vname{z}: a real matrix of size \verb!n1xn2!. The value of the z-level of the 
+    \vname{z}: a real matrix of size \verb!n1xn2!. The value of the z-level of the
     surface at point \verb!(x(i),y(j))! is given by \verb!z(i,j)!.
+    \vname{f}: a nsp function. The value of the z-level of the
+    surface at point \verb!(x(i),y(j))! is given by \verb!f(x(i),y(j))!.
     \vname{axesflag}: see \manlink{plot2d}{plot2d}
     \vname{colminmax}: see \manlink{fec}{fec}
     \vname{colout}: see \manlink{fec}{fec}
@@ -26,20 +29,25 @@
     \vname{logflag}: see \manlink{plot2d}{plot2d}
     \vname{nax}: see \manlink{plot2d}{plot2d}
     \vname{rect}: see \manlink{plot2d}{plot2d}
-    \vname{remap}: If true then the \verb!z! values are scaled to match colors of the current colormap. 
-    If false the values of \verb!z! are directly considered as colorid. The default value for \verb!remap! is true.
-    \vname{shade}: If true the color in each rectangle of the surface are interpolated using colors at the 
-    corners. If false the color of each rectangle of the surface is the average of the colors of the rectangle corners.
-    \vname{strf}:  see \manlink{plot2d}{plot2d}
+    \vname{remap}: If true then the \verb!z! values are scaled to match colors
+    of the current colormap.  If false the values of \verb!z! are directly
+    considered as colorid. The default value for \verb!remap! is true.
+    \vname{shade}: If true the color in each rectangle of the surface are
+    interpolated using colors at the corners. If false the color of each
+    rectangle of the surface is the average of the colors of the rectangle
+    corners.
+    \vname{strf}: see \manlink{plot2d}{plot2d}
     \vname{zminmax}: see \manlink{fec}{fec}
     \end{varlist}
 \end{parameters}
-
 \begin{mandescription}
-  \verb!grayplot! makes a 2D plot of the surface described by its values \verb!z! on a grid defined by \verb!x! and \verb!y!.
-  Each rectangle on the grid is filled with a color level depending on the average value of \verb!z! on the corners of the
-  rectangle (If \verb!shade! is false) or by interpolated colors (If \verb!shade! is true). The way \verb!z! values 
-  are mapped to the colors of the current colormap is explained in the \verb!fec! manual.
+  \verb!grayplot! makes a 2D plot of the surface described by its values
+  \verb!z! or by a function \verb!f!  on a grid defined by \verb!x! and
+  \verb!y!.  Each rectangle on the grid is filled with a color level depending
+  on the average value of \verb!z! on the corners of the rectangle (If
+  \verb!shade! is false) or by interpolated colors (If \verb!shade! is
+  true). The way \verb!z! values are mapped to the colors of the current
+  colormap is explained in the \verb!fec! manual.
 \end{mandescription}
 
 %--example
@@ -52,8 +60,8 @@
     grayplot(x,y,m,rect=[-20,-20,20,20])
   \end{Verbatim}
 
-\noindent A second example. The values of \verb!m! are not remapped and 
-thus values above \verb!32! are ignored. 
+\noindent A second example. The values of \verb!m! are not remapped and
+thus values above \verb!32! are ignored.
 
   \begin{Verbatim}
     if ~new_graphics() then switch_graphics();end;xclear();
@@ -62,15 +70,16 @@ thus values above \verb!32! are ignored.
     grayplot(x,y,m,rect=[-20,-20,20,20] ,remap=%f);
   \end{Verbatim}
 
-\noindent A third example. The values of \verb!m! are remapped. 
-Remapped values inf the range given by \verb!zminmax! and associated to colors in the range 
+\noindent A third example with a function. The z-values of the surface are remapped.
+Remapped values in the range given by \verb!zminmax! and associated to colors in the range
 \verb!colminmax! and values above or below are painted with colors given by \verb!colout!
 
   \begin{Verbatim}
     if ~new_graphics() then switch_graphics();end;xclear();
-    t=-%pi:0.1:%pi;m=sin(t)'*cos(t);
+    function z=f(x,y); z = 30*sin(x)*cos(y);endfunction
+    t=-%pi:0.1:%pi;
     xset('colormap',jetcolormap(32));
-    grayplot(t,t,30*m,remap=%t,shade=%t,zminmax=[6,24],colminmax=[6,24],colout=[36,35])
+    grayplot(t,t,f,remap=%t,shade=%t,zminmax=[6,24],colminmax=[6,24],colout=[36,35])
   \end{Verbatim}
 \end{examples}
 

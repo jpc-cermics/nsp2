@@ -2,6 +2,7 @@
 \mansection{plot3d}
 \begin{mandesc}
   \short{plot3d}{3D plot of a surface}\\
+  \short{plot3d1}{3D plot of a surface}\\
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
@@ -82,16 +83,28 @@
 
   When \verb!x!, \verb!y!, and \verb!z! are matrices of the same size. They describe a set of facets which are drawn.
   In that case, specific color for each facet can be given through the optional parameter \verb!color!.
+
+  When \verb!plot3d1! is used instead of \verb!plot3d!, z-values are mapped to colors of the
+  current colormap.
+
 \end{mandescription}
 
 %--example
 \begin{examples}
 
-\noindent a first simple example
+\noindent a first simple example with \verb!plot3d!
 
 \begin{Verbatim}
   if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t));
+\end{Verbatim}
+
+\noindent a first simple example with \verb!plot3d1! (the default
+colormap is a jetcolormap.
+
+\begin{Verbatim}
+  if ~new_graphics() then switch_graphics();end;xclear();
+  t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));
 \end{Verbatim}
 
 \noindent same example with mesh only
@@ -107,7 +120,6 @@
   if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t),mesh=%f);
 \end{Verbatim}
-
 
 \noindent same example with a function
 
