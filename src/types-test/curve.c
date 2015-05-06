@@ -212,8 +212,9 @@ static int nsp_curve_eq(NspCurve *A, NspObject *B)
   if ( check_cast(B,nsp_type_curve_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->mark != loc->obj->mark) return FALSE;
+  if ( A->obj->mark_size != loc->obj->mark_size) return FALSE;
+  if ( A->obj->mark_color != loc->obj->mark_color) return FALSE;
   if ( A->obj->width != loc->obj->width) return FALSE;
-  if ( A->obj->style != loc->obj->style) return FALSE;
   if ( A->obj->color != loc->obj->color) return FALSE;
   if ( A->obj->mode != loc->obj->mode) return FALSE;
   if ( NSP_OBJECT(A->obj->Pts)->type->eq(A->obj->Pts,loc->obj->Pts) == FALSE ) return FALSE;
@@ -242,8 +243,9 @@ int nsp_curve_xdr_save(XDR *xdrs, NspCurve *M)
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_curve)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->width) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->style) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mode) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Pts)) == FAIL) return FAIL;
@@ -262,8 +264,9 @@ NspCurve  *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M)
   char name[NAME_MAXL];
   M->obj->ref_count=1;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->width) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mode) == FAIL) return NULL;
   if ((M->obj->Pts =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -358,8 +361,9 @@ int nsp_curve_print(NspCurve *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_curve_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n", M->obj->mark_color);
   Sciprintf1(indent+2,"width=%d\n", M->obj->width);
-  Sciprintf1(indent+2,"style=%d\n", M->obj->style);
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
   Sciprintf1(indent+2,"mode=%d\n", M->obj->mode);
   if ( M->obj->Pts != NULL)
@@ -383,8 +387,9 @@ int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_curve_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"mark=%d\n", M->obj->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n", M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n", M->obj->mark_color);
   Sciprintf1(indent+2,"width=%d\n", M->obj->width);
-  Sciprintf1(indent+2,"style=%d\n", M->obj->style);
   Sciprintf1(indent+2,"color=%d\n", M->obj->color);
   Sciprintf1(indent+2,"mode=%d\n", M->obj->mode);
   if ( M->obj->Pts != NULL)
@@ -462,8 +467,9 @@ int nsp_curve_create_partial(NspCurve *H)
   if((H->obj = calloc(1,sizeof(nsp_curve)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->mark = -1;
+  H->obj->mark_size = -1;
+  H->obj->mark_color = -1;
   H->obj->width = -1;
-  H->obj->style = 0;
   H->obj->color = 0;
   H->obj->mode = 0;
   H->obj->Pts = NULLMAT;
@@ -488,14 +494,15 @@ int nsp_curve_check_values(NspCurve *H)
   return OK;
 }
 
-NspCurve *nsp_curve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
+NspCurve *nsp_curve_create(const char *name,int mark,int mark_size,int mark_color,int width,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
 {
   NspCurve *H  = nsp_curve_create_void(name,type);
   if ( H ==  NULLCURVE) return NULLCURVE;
   if ( nsp_curve_create_partial(H) == FAIL) return NULLCURVE;
   H->obj->mark=mark;
+  H->obj->mark_size=mark_size;
+  H->obj->mark_color=mark_color;
   H->obj->width=width;
-  H->obj->style=style;
   H->obj->color=color;
   H->obj->mode=mode;
   H->obj->Pts= Pts;
@@ -542,8 +549,9 @@ NspCurve *nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self)
   if ((H->obj = calloc(1,sizeof(nsp_curve))) == NULL) return NULLCURVE;
   H->obj->ref_count=1;
   H->obj->mark=self->obj->mark;
+  H->obj->mark_size=self->obj->mark_size;
+  H->obj->mark_color=self->obj->mark_color;
   H->obj->width=self->obj->width;
-  H->obj->style=self->obj->style;
   H->obj->color=self->obj->color;
   H->obj->mode=self->obj->mode;
   if ( self->obj->Pts == NULL )
@@ -608,6 +616,36 @@ static int _wrap_curve_set_mark(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_curve_get_mark_size(void *self,const char *attr)
+{
+  int ret;
+  ret = ((NspCurve *) self)->obj->mark_size;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_curve_set_mark_size(void *self,const char *attr, NspObject *O)
+{
+  int mark_size;
+  if ( IntScalar(O,&mark_size) == FAIL) return FAIL;
+  ((NspCurve *) self)->obj->mark_size= mark_size;
+  return OK;
+}
+
+static NspObject *_wrap_curve_get_mark_color(void *self,const char *attr)
+{
+  int ret;
+  ret = ((NspCurve *) self)->obj->mark_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_curve_set_mark_color(void *self,const char *attr, NspObject *O)
+{
+  int mark_color;
+  if ( IntScalar(O,&mark_color) == FAIL) return FAIL;
+  ((NspCurve *) self)->obj->mark_color= mark_color;
+  return OK;
+}
+
 static NspObject *_wrap_curve_get_width(void *self,const char *attr)
 {
   int ret;
@@ -620,21 +658,6 @@ static int _wrap_curve_set_width(void *self,const char *attr, NspObject *O)
   int width;
   if ( IntScalar(O,&width) == FAIL) return FAIL;
   ((NspCurve *) self)->obj->width= width;
-  return OK;
-}
-
-static NspObject *_wrap_curve_get_style(void *self,const char *attr)
-{
-  int ret;
-  ret = ((NspCurve *) self)->obj->style;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_curve_set_style(void *self,const char *attr, NspObject *O)
-{
-  int style;
-  if ( IntScalar(O,&style) == FAIL) return FAIL;
-  ((NspCurve *) self)->obj->style= style;
   return OK;
 }
 
@@ -667,7 +690,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 671 "curve.c"
+#line 694 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -704,7 +727,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 708 "curve.c"
+#line 731 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -744,8 +767,9 @@ static int _wrap_curve_set_legend(void *self,const char *attr, NspObject *O)
 
 static AttrTab curve_attrs[] = {
   { "mark", (attr_get_function * )_wrap_curve_get_mark, (attr_set_function * )_wrap_curve_set_mark, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark_size", (attr_get_function * )_wrap_curve_get_mark_size, (attr_set_function * )_wrap_curve_set_mark_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "mark_color", (attr_get_function * )_wrap_curve_get_mark_color, (attr_set_function * )_wrap_curve_set_mark_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "width", (attr_get_function * )_wrap_curve_get_width, (attr_set_function * )_wrap_curve_set_width, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
-  { "style", (attr_get_function * )_wrap_curve_get_style, (attr_set_function * )_wrap_curve_set_style, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "color", (attr_get_function * )_wrap_curve_get_color, (attr_set_function * )_wrap_curve_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "mode", (attr_get_function * )_wrap_curve_get_mode, (attr_set_function * )_wrap_curve_set_mode, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "Pts", (attr_get_function * )_wrap_curve_get_Pts, (attr_set_function * )_wrap_curve_set_Pts, (attr_get_object_function * )_wrap_curve_get_obj_Pts, (attr_set_object_function * )_wrap_curve_set_obj_Pts },
@@ -766,7 +790,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 770 "curve.c"
+#line 794 "curve.c"
 
 
 #line 113 "codegen/curve.override"
@@ -779,7 +803,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 783 "curve.c"
+#line 807 "curve.c"
 
 
 /*----------------------------------------------------
@@ -826,13 +850,12 @@ typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int cmark=-1;
-  int xmark[2];
+  int xmark[2]={-1,-1};
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-
+  
   if (Obj->obj->show == FALSE ) return;
        
   /* check if the block is inside drawing rectangle
@@ -842,26 +865,34 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     {
       return ;
     }
-
+  
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
-  if ( P->obj->mark >= 0 ) 
+  if ( P->obj->mark >= -1 ) 
     {
-      /* use a mark */
+      /* we will use a mark */
       Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-      cmark=xmark[0];
-      Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+      if ( P->obj->mark_size >= 0 ) 
+	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
+      else
+	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
     }
-  if ( P->obj->color != -1 ) 
-    Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-  /*XXX: we should not be in Rec mode here */
+  
   switch ( P->obj->mode ) 
     {
     case curve_std: 
-      if ( P->obj->mark >= 0 )
-	Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
-      else
-	Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+      if ( P->obj->color >= -1 )
+	{
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	}
+      if ( P->obj->mark >= -1 )
+	{
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+	  Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	}
       break;
     case curve_stairs:
       {
@@ -883,10 +914,18 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  }
 	xm[2*(M->m-1)] = M->R[M->m-1];
 	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
-	if ( P->obj->mark >= 0  ) 
-	  Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
-	else 
-	  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	if ( P->obj->color >= -1 )
+	  {
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  }
+	if ( P->obj->mark >= -1 )
+	  {
+	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+	    Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
+	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  }
       }
       break;
     case curve_stem:
@@ -917,9 +956,9 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
-  if ( P->obj->mark >= 0 ) 
+  if ( P->obj->mark >= 0) 
     {
-      Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
+      Xgc->graphic_engine->xset_mark(Xgc,xmark[0],xmark[1]);
     }
 }
 
@@ -1003,4 +1042,4 @@ static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1007 "curve.c"
+#line 1046 "curve.c"

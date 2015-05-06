@@ -124,7 +124,7 @@ struct s_menu_entry
 
 
 typedef struct  _gtk_data {
-  void     *colors;                     /* an array of colors in a NspMatrix  */
+  void     *a_colors;                     /* an array of colors in a NspMatrix  */
   GQueue   *q_colors;                   /* an queue for storing colors        */
   GdkColormap *colormap ;               /* used to keep track of drawing colormap */
   GtkWidget *window;			/* Graphics frame */

@@ -1266,7 +1266,9 @@ typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char 
 
 static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,int *n2,
 				  int style[],char *strflag, const char *legend,int legend_pos,
-				  int mode,double brect[],int aaint[])
+				  int mode,double brect[],int aaint[],
+				  NspMatrix *Mmark,NspMatrix *Mmark_size,NspMatrix *Mmark_color,
+				  NspMatrix *Mline_color,NspMatrix *Mline_thickness)
 {
   NspCurve *curve = NULL;
   const char *l_c = legend, *l_n;
@@ -1323,7 +1325,7 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
   /* create a set of curves and insert them in axe */
   for ( i = 0 ; i < *n1 ; i++)
     {
-      int mark=-1,k;
+      int k;
       NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2);
       if ( Pts == NULL) return NULL;
       /* XXX: we should have to keep the log flags */
@@ -1342,7 +1344,6 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 	  break;
 	}
       memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      if ( style[i] <= 0 ) mark = -style[i];
       /* get legend for curve i*/
       l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
       if ( l_n > l_c )
@@ -1359,10 +1360,23 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 	  curve_l = NULL;
 	}
       l_c = ( *l_n == '@') ? l_n+1: l_n;
-      /* "mark", "width", "style", "color", "mode", "Pts", legend */
-      curve= nsp_curve_create("curve",mark,0,0,
-			      ( style[i] > 0 ) ?  style[i] : -1,
-			      mode,Pts,curve_l,NULL);
+      {
+	int cu_mark = ( style[i] <= 0 ) ? -style[i] : -2 ; 
+	int cu_mark_size = -1; 
+	int cu_mark_color = -1; 
+	int cu_width = -1; 
+	int cu_mode = mode;
+	int cu_color= (style[i] > 0 ) ? style[i] : -2 ;
+	
+	if (Mmark != NULL ) { cu_mark = Mmark->R[i];}
+	if (Mmark_color != NULL ) { cu_mark_color = Mmark_color->R[i];}	
+	if (Mmark_size != NULL ) { cu_mark_size = Mmark_size->R[i];}
+	if (Mline_color != NULL ) { cu_color = Mline_color->R[i];}
+	if (Mline_thickness != NULL ) { cu_width = Mline_thickness->R[i];}
+	curve= nsp_curve_create("curve",cu_mark,cu_mark_size,cu_mark_color,cu_width,
+				cu_color,cu_mode,Pts,curve_l,NULL);
+      }
+
       /* insert the new curve */
       if ( nsp_axes_insert_child(axe,(NspGraphic *) curve, FALSE)== FAIL)
 	{
@@ -1390,7 +1404,8 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
   int leg_posi;
-
+  NspMatrix *Mmark=NULL,*Mmark_size=NULL, *Mmark_color=NULL, *Mline_color=NULL, *Mline_thickness=NULL;
+  
   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
@@ -1399,12 +1414,18 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
-			 { "style",mat_int,NULLOBJ,-1},
+			 { "style",mat_int,NULLOBJ,-1}, /* old parameter for mark or line */
+			 { "mark",realmat,NULLOBJ,-1},
+			 { "mark_size",realmat,NULLOBJ,-1},
+			 { "mark_color",realmat,NULLOBJ,-1},
+			 { "line_color",realmat,NULLOBJ,-1},
+			 { "line_thickness",realmat,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
 
   int_types T[] = {realmat,obj,new_opts, t_end} ;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL)
+  if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,
+	       &Mnax,&Mrect,&strf,&Mstyle,&Mmark,&Mmark_size,&Mmark_color,&Mline_color,&Mline_thickness) == FAIL)
     return RET_BUG;
 
   if ( IsNspPList(fobj) )
@@ -1563,7 +1584,19 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   if ( int_check2d(stack,Mstyle,&Mistyle,ncurves,&strf,&leg,&leg_pos,&leg_posi,Mrect,
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
-
+  
+#define CheckArg(x,pos)				\
+  if ( x != NULL)							\
+    {									\
+      CheckLength(NspFname(stack),opts_2d[pos].position, x, ncurves);	\
+    }									\
+  
+  CheckArg(Mmark,9);
+  CheckArg(Mmark_size,10);
+  CheckArg(Mmark_color,11);
+  CheckArg(Mline_color,12);
+  CheckArg(Mline_thickness,13);
+  
   /* logflags */
   logflags[0]= tflag;
 
@@ -1583,7 +1616,9 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
     }
 
   ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
-		       leg,leg_posi,mode,rect,nax);
+		       leg,leg_posi,mode,rect,nax,
+		       Mmark,Mmark_size,Mmark_color,Mline_color,Mline_thickness);
+  
   if ( ret == NULL && ncurves != 0 )
     return RET_BUG;
   if ( Mstyle != Mistyle)
@@ -7018,6 +7053,7 @@ static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMa
       ival = var->I;
       if ( size == 1 && var->mn != 2)
 	{
+	  /* This option is not used any more */
 	  if ((loc_var = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return NULL;
 	  ival = loc_var->I;
 	  ival[0]=  var->I[0];
@@ -7026,7 +7062,6 @@ static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMa
     }
   return loc_var;
 }
-
 
 static const int iflag_def[]={2,8,4};
 static int iflag_loc[] = {2,8,4};

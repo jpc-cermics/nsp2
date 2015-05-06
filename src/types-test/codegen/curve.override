@@ -136,13 +136,12 @@ typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int cmark=-1;
-  int xmark[2];
+  int xmark[2]={-1,-1};
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-
+  
   if (Obj->obj->show == FALSE ) return;
        
   /* check if the block is inside drawing rectangle
@@ -152,26 +151,34 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     {
       return ;
     }
-
+  
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
-  if ( P->obj->mark >= 0 ) 
+  if ( P->obj->mark >= -1 ) 
     {
-      /* use a mark */
+      /* we will use a mark */
       Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-      cmark=xmark[0];
-      Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+      if ( P->obj->mark_size >= 0 ) 
+	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
+      else
+	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
     }
-  if ( P->obj->color != -1 ) 
-    Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-  /*XXX: we should not be in Rec mode here */
+  
   switch ( P->obj->mode ) 
     {
     case curve_std: 
-      if ( P->obj->mark >= 0 )
-	Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
-      else
-	Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+      if ( P->obj->color >= -1 )
+	{
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	}
+      if ( P->obj->mark >= -1 )
+	{
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+	  Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	}
       break;
     case curve_stairs:
       {
@@ -193,10 +200,18 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  }
 	xm[2*(M->m-1)] = M->R[M->m-1];
 	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
-	if ( P->obj->mark >= 0  ) 
-	  Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
-	else 
-	  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	if ( P->obj->color >= -1 )
+	  {
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  }
+	if ( P->obj->mark >= -1 )
+	  {
+	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+	    Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
+	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  }
       }
       break;
     case curve_stem:
@@ -227,9 +242,9 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
-  if ( P->obj->mark >= 0 ) 
+  if ( P->obj->mark >= 0) 
     {
-      Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
+      Xgc->graphic_engine->xset_mark(Xgc,xmark[0],xmark[1]);
     }
 }
 

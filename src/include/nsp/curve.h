@@ -46,8 +46,9 @@ struct _NspTypeCurve {
 typedef struct _nsp_curve nsp_curve;
 struct _nsp_curve {
   int mark;
+  int mark_size;
+  int mark_color;
   int width;
-  int style;
   int color;
   int mode;
   NspMatrix* Pts;
@@ -81,7 +82,7 @@ NspCurve *new_curve();
 
 #define NULLCURVE (NspCurve*) 0
 
-extern NspCurve *nsp_curve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
+extern NspCurve *nsp_curve_create(const char *name,int mark,int mark_size,int mark_color,int width,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
 extern NspCurve *nsp_curve_create_default(const char *name);
 
 /* from NspCurveObj.c */
@@ -109,7 +110,7 @@ extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 #line 9 "codegen/curve.override"
 /* inserted at the end of public part of include file */
 
-#line 113 "./curve.h"
+#line 114 "./curve.h"
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
@@ -133,6 +134,6 @@ static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 
-#line 137 "./curve.h"
+#line 138 "./curve.h"
 #endif /* NspCurve_Private */
 
