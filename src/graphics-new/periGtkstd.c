@@ -1078,9 +1078,9 @@ static int xset_default_colormap(BCG *Xgc)
     }
   else
     {
-      if ( Xgc->private->colors != NULL) 
-	nsp_matrix_destroy(Xgc->private->colors);
-      Xgc->private->colors = colors; 
+      if ( Xgc->private->a_colors != NULL) 
+	nsp_matrix_destroy(Xgc->private->a_colors);
+      Xgc->private->a_colors = colors; 
     }
   /* just in case: initialize the colormap */
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
@@ -1137,9 +1137,9 @@ static int xset_colormap(BCG *Xgc,void *a)
     }
   else
     {
-      if ( Xgc->private->colors != NULL) 
-	nsp_matrix_destroy(Xgc->private->colors);
-      Xgc->private->colors = colors; 
+      if ( Xgc->private->a_colors != NULL) 
+	nsp_matrix_destroy(Xgc->private->a_colors);
+      Xgc->private->a_colors = colors; 
     }
   /* just in case: initialize the colormap */
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
@@ -1191,7 +1191,7 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
 
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
-  NspMatrix *colors = Xgc->private->colors;
+  NspMatrix *colors = Xgc->private->a_colors;
   int m = Xgc->Numcolors,  i;
   NspFigure *F = Xgc->figure;
   NspFigureData *Gc = NULL;
@@ -1239,8 +1239,8 @@ static int xpush_colormap(BCG *Xgc,void *colors)
   if ( Xgc->private->q_colors == NULL) 
     Xgc->private->q_colors = g_queue_new();
   if ( Xgc->private->q_colors == NULL) return FAIL;
-  g_queue_push_head( Xgc->private->q_colors,Xgc->private->colors);
-  Xgc->private->colors = colors ;
+  g_queue_push_head( Xgc->private->q_colors,Xgc->private->a_colors);
+  Xgc->private->a_colors = colors ;
   nsp_set_colormap_constants(Xgc,((NspMatrix *) colors)->m);
   return OK;
 }
@@ -1256,7 +1256,7 @@ static int xpop_colormap(BCG *Xgc)
 {
   NspMatrix *C = g_queue_pop_head(Xgc->private->q_colors);
   if ( C == NULL ) return FAIL;
-  Xgc->private->colors = C; 
+  Xgc->private->a_colors = C; 
   nsp_set_colormap_constants(Xgc, C->m);
   return OK;
 }
@@ -1279,7 +1279,7 @@ static void xset_background(BCG *Xgc,int num)
     {
       double rgb[3];
       Xgc->NumBackground =  Max(1,Min(num,Xgc->Numcolors+predef));
-      nsp_get_color_rgb(Xgc,Xgc->NumBackground,rgb,Xgc->private->colors);
+      nsp_get_color_rgb(Xgc,Xgc->NumBackground,rgb,Xgc->private->a_colors);
       Xgc->private->gcol_bg.red   = (guint16)  (rgb[0]*65535);
       Xgc->private->gcol_bg.green = (guint16)  (rgb[1]*65535);
       Xgc->private->gcol_bg.blue  = (guint16)  (rgb[2]*65535);
@@ -1318,7 +1318,7 @@ static void xset_foreground(BCG *Xgc,int num)
     {
       double rgb[3];
       Xgc->NumForeground =  Max(1,Min(num,Xgc->Numcolors+predef));
-      nsp_get_color_rgb(Xgc,Xgc->NumForeground,rgb,Xgc->private->colors);
+      nsp_get_color_rgb(Xgc,Xgc->NumForeground,rgb,Xgc->private->a_colors);
       Xgc->private->gcol_fg.red   = (guint16)  (rgb[0]*65535);
       Xgc->private->gcol_fg.green = (guint16)  (rgb[1]*65535);
       Xgc->private->gcol_fg.blue  = (guint16)  (rgb[2]*65535);

@@ -762,13 +762,26 @@ static void delete_window(BCG *dd,int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
-  /* XXXX to be updated since colors can be allocated 
-   * for xgc or just be a link to a figure colormap 
-   if ( winxgc->private->colors != NULL) 
-   nsp_matrix_destroy(winxgc->private->colors);
-  */
   if ( winxgc->private->q_colors != NULL) 
-    g_queue_free( winxgc->private->q_colors);
+    {
+      if (g_queue_is_empty (winxgc->private->q_colors)) 
+	{
+	  /* When q_colors is empty then colors can be freed they 
+	   * correspond to colors initialy allocated and not to 
+	   * colors from a colormap 
+	   */
+	  if ( winxgc->private->a_colors != NULL) 
+	    {
+	      nsp_matrix_destroy(winxgc->private->a_colors);
+	      winxgc->private->a_colors= NULL;
+	    }
+	}
+      else 
+	{
+	  /* Sciprintf("The q_colors is not empty \n"); */
+	}
+      g_queue_free( winxgc->private->q_colors);
+    }
 
   /* free data associated to menus */
   menu_entry_delete(winxgc->private->menu_entries);
