@@ -2,12 +2,14 @@
 
 \mansection{xstring}
 \begin{mandesc}
-  \short{xstring}{draw a string matrix}\\
+  \short{xstring}{draw a string matrix} \\
+  \short{xstringl}{draw a string matrix} \\
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  xstring(x,y,S,options=value)
+  R=xstring(x,y,S,options=value);
+  rect=xstringl(x,y,S,options=value);
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -23,6 +25,8 @@
     \vname{posx}: a string selected among \verb!'left'!, \verb!'center'!, or \verb!'right'! (default value is \verb!'right'!)
     \vname{posy}: a string selected among \verb!'bottom'!, \verb!'center'!, \verb!'baseline'!, or \verb!'up'! (default value is \verb!'bottom'!).
     \vname{size}: a scalar int giving the font size to use in pixel.
+    \vname{R}: a string graphic object
+    \vname{rect}: a \verb!1x4! real matrix, \verb![x,y,w,h]!, giving a rectangle coordinates (upper-left point,width,height).
   \end{varlist}
 \end{parameters}
 
@@ -46,6 +50,9 @@
     position of the string matrix display from the point \verb!(x,y)!. They can be used
     when \verb!w!, \verb!h! and \verb!fill! are not given.
   \end{description}
+
+  \verb!xstringl! returns a \verb!1x4! matrix giving the coordinates of an enclosing rectangle.
+
 \end{mandescription}
 
 %--example
