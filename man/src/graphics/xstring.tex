@@ -1,0 +1,105 @@
+% -*- mode: latex -*-
+
+\mansection{xstring}
+\begin{mandesc}
+  \short{xstring}{draw a string matrix}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  xstring(x,y,S,options=value)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: real scalars, coordinates of a point.
+    \vname{S}: a string matrix.
+    \vname{angle}: a double, clockwise angle in degree; default is 0.
+    \vname{box}: a boolean (default is false).
+    \vname{color}: font color.
+    \vname{fill}: a boolean.
+    \vname{h,w}: two scalar doubles.
+    \vname{posx}: a string selected among \verb!'left'!, \verb!'center'!, or \verb!'right'! (default value is \verb!'right'!)
+    \vname{posy}: a string selected among \verb!'bottom'!, \verb!'center'!, \verb!'baseline'!, or \verb!'up'! (default value is \verb!'bottom'!).
+    \vname{size}: a scalar int giving the font size to use in pixel.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!xstring! draws the matrix of strings \verb!S! at location \verb!x,y!
+  in the current graphic window. Each row of the matrix
+  stands for a line of text where row elements are separated by a white space.
+  Optional parameters can be given to control the position, size and color of the
+  text.
+
+  \begin{description}
+  \item[angle]: it gives the slope in degree used for drawing the strings.
+    The rotation is around the point \verb!(x,y)! or around the center of the box \verb![x,y,w,h]!
+    when  \verb!w! and \verb!h! are given.
+  \item[size]: give the font size to use.
+  \item[w,h,fill]: when \verb!w! and \verb!h! are given and are not both equal to zero,
+    then the string matrix is drawn centered in the box \verb![x,y,w,h]! where
+    \verb!(x,y)! is the lower-left point of the box. Then, if \verb!fill! is true
+    then the font size is adapter for the string to be contained in the box.
+  \item[posx, posy]: The parameters \verb!posx! and \verb!posy! give the relative
+    position of the string matrix display from the point \verb!(x,y)!. They can be used
+    when \verb!w!, \verb!h! and \verb!fill! are not given.
+  \end{description}
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+\noindent A first example
+
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    xsetech(frect=[0,0,2,2],iso=%t);
+    xstring(1,1,["Nsp";"Graphics"])
+  \end{Verbatim}
+
+\noindent A second example where the string rotation is around \verb!(x,y)!.
+
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    xsetech(frect=[0,0,2,2],iso=%t);
+    xset('font size',3);
+    for A=[0:30:330];
+      x=1+0.5*cos(-%pi*A/180);y=1+0.5*sin(-%pi*A/180);
+      xstring(x,y,'Nsp',A,0,color=A/10);
+      xsegs([1;x],[1;y]);
+    end
+  \end{Verbatim}
+
+\noindent A second example where the string rotation is around the center of the
+  given box\verb!(x,y,w,h)!.
+
+  \begin{Verbatim}
+    if ~new_graphics() then switch_graphics();end;xclear();
+    xsetech(frect=[-1.0,-1.0,1.0,1.0],iso=%t);
+    w=0.2,h=0.2;
+    for A=[0:30:330];
+       x=0.5*cos(-%pi*A/180);y=0.5*sin(-%pi*A/180);
+       // (x,y) is upper-left point for xrect
+       R=xrect(-w/2,h/2,w,h);
+       R.rotate[[cos(-%pi*A/180),sin(-%pi*A/180)]];
+       R.translate[[x,y]];
+       // (x,y) is lower-left point for xstring
+       xstring(x-w/2,y-h/2,'Nsp',fill=%t,w=w,h=h,angle=A,color=A/10);
+       xsegs([0;x],[0;y]);
+    end
+  \end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{xnumb}{xnumb} \manlink{xstringb}{xstringb} \manlink{xstringl}{xstringl} \manlink{xtitle}{xtitle}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
