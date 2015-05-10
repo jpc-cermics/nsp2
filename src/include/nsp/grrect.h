@@ -112,7 +112,8 @@ extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
 /* inserted at the end of public part of include file */
 
-#line 116 "./grrect.h"
+
+#line 117 "./grrect.h"
 #endif /* NSP_INC_NspGrRect */ 
 
 #ifdef NspGrRect_Private 
@@ -127,7 +128,7 @@ static AttrTab grrect_attrs[];
 static NspMethods *grrect_get_methods(void);
 /* static int int_grrect_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrRect *nsp_grrect_create_void(const char *name,NspTypeBase *type);
-#line 15 "codegen/grrect.override"
+#line 16 "codegen/grrect.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -137,6 +138,6 @@ static void nsp_scale_grrect(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
 static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R);
 
-#line 141 "./grrect.h"
+#line 142 "./grrect.h"
 #endif /* NspGrRect_Private */
 

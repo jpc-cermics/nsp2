@@ -24,11 +24,11 @@
 
 
 
-#line 26 "codegen/grrect.override"
+#line 27 "codegen/grrect.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 
 #line 34 "grrect.c"
 
@@ -103,7 +103,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 
   type->init = (init_func *) init_grrect;
 
-#line 38 "codegen/grrect.override"
+#line 39 "codegen/grrect.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -113,8 +113,8 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
   /* next method are defined in NspGraphic and need not be changed here for GrRect */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 120 "grrect.c"
   /* 
@@ -723,11 +723,11 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 61 "codegen/grrect.override"
+#line 62 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -735,11 +735,11 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
 #line 736 "grrect.c"
 
 
-#line 71 "codegen/grrect.override"
+#line 72 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -776,7 +776,7 @@ void GrRect_Interf_Info(int i, char **fname, function ( **f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 82 "codegen/grrect.override"
+#line 83 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -786,15 +786,15 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int ccolor=-1,cthick=-1;
   NspGrRect *P = (NspGrRect *) Obj;
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
-  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
 
   if ( ! nsp_graphic_intersect_rectangle(Obj,rect))
     {
       /* Sciprintf("No need to draw one rectangle\n"); */
       return;
     }
-  
-  if (  P->obj->angle != 0.0 ) 
+
+  if (  P->obj->angle != 0.0 )
     {
       nsp_draw_grrect_rotate(Xgc,P);
       return;
@@ -805,40 +805,40 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   val[2]= P->obj->w;
   val[3]= P->obj->h;
 
-  if ( P->obj->fill_color != -2 ) 
+  if ( P->obj->fill_color != -2 )
     {
-      if (  P->obj->fill_color != -1) 
+      if (  P->obj->fill_color != -1)
 	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
-      if (  P->obj->fill_color != -1) 
+      if (  P->obj->fill_color != -1)
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
-  
-  if ( P->obj->color != -2 ) 
+
+  if ( P->obj->color != -2 )
     {
-      /* draw the rectangle */ 
-      if ( P->obj->color != -1 ) 
+      /* draw the rectangle */
+      if ( P->obj->color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
-      if ( P->obj->thickness != -1 ) 
+      if ( P->obj->thickness != -1 )
 	{
-	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc);
 	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
 	}
       Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
       /* reset to default values */
-      if ( P->obj->color != -1 ) 
+      if ( P->obj->color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
-      if ( P->obj->thickness != -1 ) 
+      if ( P->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
-  
+
   if (((NspGraphic *) P)->obj->hilited == TRUE )
     {
       int lock_size=6, lock_color=10;
       int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
       int x=lock_size,y=lock_size;
       double xd,yd;
-      double rect[4]; 
+      double rect[4];
       length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
       rect[0]=val[0] -xd/2.0;
       rect[1]=val[1] +yd/2.0;
@@ -863,7 +863,7 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
   double rvx[4],rvy[4],cx=R->obj->x+R->obj->w/2,cy=R->obj->y-R->obj->h/2;
   double cosa = cos(-R->obj->angle*M_PI/180);
   double sina = sin(-R->obj->angle*M_PI/180);
-  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
   int cthick=-1;
 
   for ( i= 0 ; i < 4; i++)
@@ -871,42 +871,42 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
       rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
       rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
     }
-  if ( R->obj->fill_color != -2 ) 
+  if ( R->obj->fill_color != -2 )
     {
-      if (  R->obj->fill_color != -1) 
+      if (  R->obj->fill_color != -1)
 	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->fill_color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
       /* Xgc->graphic_engine->scale->fillrectangle(Xgc,val); */
-      if (  R->obj->fill_color != -1) 
+      if (  R->obj->fill_color != -1)
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
-  
-  if ( R->obj->color != -2 ) 
+
+  if ( R->obj->color != -2 )
     {
-      /* draw the rectangle */ 
-      if ( R->obj->color != -1 ) 
+      /* draw the rectangle */
+      if ( R->obj->color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->color);
-      if ( R->obj->thickness != -1 ) 
+      if ( R->obj->thickness != -1 )
 	{
-	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc);
 	  Xgc->graphic_engine->xset_thickness(Xgc,R->obj->thickness);
 	}
       Xgc->graphic_engine->scale->drawpolyline(Xgc,rvx,rvy,4,1);
       /* Xgc->graphic_engine->scale->drawrectangle(Xgc,val); */
       /* reset to default values */
-      if ( R->obj->color != -1 ) 
+      if ( R->obj->color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
-      if ( R->obj->thickness != -1 ) 
+      if ( R->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
- 
+
   if (((NspGraphic *) R)->obj->hilited == TRUE )
     {
       int lock_size=6, lock_color=10;
       int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
       int x=lock_size,y=lock_size;
       double xd,yd;
-      double rect[4]; 
+      double rect[4];
       length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
       rect[0]=rvx[0] -xd/2.0;
       rect[1]=rvy[0] +yd/2.0;
@@ -936,9 +936,9 @@ static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
   NspGrRect *P = (NspGrRect *) Obj;
   double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  /* the rectangle is rotated in such a way that the 
-   * draw function will have to make a rotation with 
-   * center the center of the rectangle 
+  /* the rectangle is rotated in such a way that the
+   * draw function will have to make a rotation with
+   * center the center of the rectangle
    */
   /* rotate the center */
   x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y - P->obj->h/2);
@@ -959,14 +959,14 @@ static void nsp_scale_grrect(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of grrect 
+/* compute in bounds the enclosing rectangle of grrect
  *
  */
 
 static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
-  if (  P->obj->angle == 0.0 ) 
+  if (  P->obj->angle == 0.0 )
     {
       bounds[0]=P->obj->x;/* xmin */
       bounds[1]=P->obj->y-P->obj->h;/* ymin */
@@ -999,5 +999,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-
-#line 1004 "grrect.c"
+#line 1003 "grrect.c"

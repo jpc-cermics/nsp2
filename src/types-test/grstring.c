@@ -27,7 +27,7 @@
 #line 24 "codegen/grstring.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
@@ -36,24 +36,24 @@
 /* -----------NspGrstring ----------- */
 
 
-#define  NspGrstring_Private 
+#define  NspGrstring_Private
 #include <nsp/objects.h>
 #include <nsp/grstring.h>
 #include <nsp/interf.h>
 
-/* 
- * NspGrstring inherits from Graphic 
+/*
+ * NspGrstring inherits from Graphic
  */
 
 int nsp_type_grstring_id=0;
 NspTypeGrstring *nsp_type_grstring=NULL;
 
 /*
- * Type object for NspGrstring 
- * all the instance of NspTypeGrstring share the same id. 
- * nsp_type_grstring: is an instance of NspTypeGrstring 
- *    used for objects of NspGrstring type (i.e built with new_grstring) 
- * other instances are used for derived classes 
+ * Type object for NspGrstring
+ * all the instance of NspTypeGrstring share the same id.
+ * nsp_type_grstring: is an instance of NspTypeGrstring
+ *    used for objects of NspGrstring type (i.e built with new_grstring)
+ * other instances are used for derived classes
  */
 NspTypeGrstring *new_type_grstring(type_mode mode)
 {
@@ -79,7 +79,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for grstring */ 
+  /* object methods redefined for grstring */
 
   top->pr = (print_func *) nsp_grstring_print;
   top->dealloc = (dealloc_func *) nsp_grstring_destroy;
@@ -114,19 +114,19 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 121 "grstring.c"
-  /* 
-   * NspGrstring interfaces can be added here 
+  /*
+   * NspGrstring interfaces can be added here
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  if ( nsp_type_grstring_id == 0 ) 
+  if ( nsp_type_grstring_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeGrstring called nsp_type_grstring
        */
@@ -135,7 +135,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
       if ( nsp_register_type(nsp_type_grstring) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_grstring(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_grstring_id;
       return type;
@@ -143,13 +143,13 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 }
 
 /*
- * initialize NspGrstring instances 
- * locally and by calling initializer on parent class 
+ * initialize NspGrstring instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 {
-  /* initialize the surtype */ 
+  /* initialize the surtype */
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -159,10 +159,10 @@ static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 }
 
 /*
- * new instance of NspGrstring 
+ * new instance of NspGrstring
  */
 
-NspGrstring *new_grstring() 
+NspGrstring *new_grstring()
 {
   NspGrstring *loc;
   /* type must exists */
@@ -174,10 +174,10 @@ NspGrstring *new_grstring()
 }
 
 /*----------------------------------------------
- * Object method redefined for NspGrstring 
+ * Object method redefined for NspGrstring
  *-----------------------------------------------*/
 /*
- * size 
+ * size
  */
 
 static int nsp_grstring_size(NspGrstring *Mat, int flag)
@@ -186,7 +186,7 @@ static int nsp_grstring_size(NspGrstring *Mat, int flag)
 }
 
 /*
- * type as string 
+ * type as string
  */
 
 static char grstring_type_name[]="Grstring";
@@ -203,7 +203,7 @@ static char *nsp_grstring_type_short_string(NspObject *v)
 }
 
 /*
- * A == B 
+ * A == B
  */
 
 static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
@@ -222,11 +222,12 @@ static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
   if ( A->obj->posx != loc->obj->posx) return FALSE;
   if ( A->obj->posy != loc->obj->posy) return FALSE;
   if ( A->obj->size != loc->obj->size) return FALSE;
+  if ( A->obj->color != loc->obj->color) return FALSE;
    return TRUE;
 }
 
 /*
- * A != B 
+ * A != B
  */
 
 static int nsp_grstring_neq(NspGrstring *A, NspObject *B)
@@ -235,13 +236,13 @@ static int nsp_grstring_neq(NspGrstring *A, NspObject *B)
 }
 
 /*
- * save 
+ * save
  */
 
 int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grstring)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -256,12 +257,13 @@ int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
   if (nsp_xdr_save_i(xdrs, M->obj->posx) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->posy) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
 
 /*
- * load 
+ * load
  */
 
 NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
@@ -280,6 +282,7 @@ NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->posx) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->posy) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -303,7 +306,7 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
 }
 
 /*
- * delete 
+ * delete
  */
 
 void nsp_grstring_destroy_partial(NspGrstring *H)
@@ -313,7 +316,7 @@ void nsp_grstring_destroy_partial(NspGrstring *H)
   if ( H->obj->ref_count == 0 )
    {
   nsp_string_destroy(&(H->obj->font));
-    if ( H->obj->text != NULL ) 
+    if ( H->obj->text != NULL )
       nsp_smatrix_destroy(H->obj->text);
     FREE(H->obj);
    }
@@ -327,13 +330,13 @@ void nsp_grstring_destroy(NspGrstring *H)
 }
 
 /*
- * info 
+ * info
  */
 
 int nsp_grstring_info(NspGrstring *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
-  if ( M == NULLGRSTRING) 
+  if ( M == NULLGRSTRING)
     {
       Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
@@ -345,24 +348,24 @@ int nsp_grstring_info(NspGrstring *M,int indent,const char *name,int rec_level)
 }
 
 /*
- * print 
+ * print
  */
 
 int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLGRSTRING) 
+  if ( M == NULLGRSTRING)
     {
       Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
     }
-  if (user_pref.pr_as_read_syntax) 
-    { 
+  if (user_pref.pr_as_read_syntax)
+    {
       Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
-    } 
-  else 
-    { 
-      if ( user_pref.pr_depth  <= rec_level -1 ) 
+    }
+  else
+    {
+      if ( user_pref.pr_depth  <= rec_level -1 )
         {
           nsp_grstring_info(M,indent,pname,rec_level);
           return TRUE;
@@ -382,6 +385,7 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"posx=%d\n", M->obj->posx);
   Sciprintf1(indent+2,"posy=%d\n", M->obj->posy);
   Sciprintf1(indent+2,"size=%d\n", M->obj->size);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
   nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
@@ -389,7 +393,7 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
 }
 
 /*
- * latex print 
+ * latex print
  */
 
 int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_level)
@@ -411,14 +415,15 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"posx=%d\n", M->obj->posx);
   Sciprintf1(indent+2,"posy=%d\n", M->obj->posy);
   Sciprintf1(indent+2,"size=%d\n", M->obj->size);
+  Sciprintf1(indent+2,"color=%d\n", M->obj->color);
   nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
 /*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGrstring objects 
+ * a set of functions used when writing interfaces
+ * for NspGrstring objects
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
@@ -428,7 +433,7 @@ NspGrstring   *nsp_grstring_object(NspObject *O)
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
   if ( check_cast (O,nsp_type_grstring_id)  == TRUE  ) return ((NspGrstring *) O);
-  else 
+  else
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_grstring));
   return NULL;
 }
@@ -458,9 +463,9 @@ NspGrstring  *GetGrstring(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
- * constructor 
- * if type is non NULL it is a subtype which can be used to 
- * create a NspGrstring instance 
+ * constructor
+ * if type is non NULL it is a subtype which can be used to
+ * create a NspGrstring instance
  *-----------------------------------------------------*/
 
 static NspGrstring *nsp_grstring_create_void(const char *name,NspTypeBase *type)
@@ -492,17 +497,18 @@ int nsp_grstring_create_partial(NspGrstring *H)
   H->obj->posx = 0;
   H->obj->posy = 0;
   H->obj->size = 0;
+  H->obj->color = -1;
   return OK;
 }
 
 int nsp_grstring_check_values(NspGrstring *H)
 {
-  if ( H->obj->font == NULL) 
+  if ( H->obj->font == NULL)
     {
   if (( H->obj->font = nsp_string_copy("")) == NULL)
        return FAIL;
     }
-  if ( H->obj->text == NULLSMAT) 
+  if ( H->obj->text == NULLSMAT)
     {
      if (( H->obj->text = nsp_smatrix_create("text",0,0,"v",0)) == NULLSMAT)
        return FAIL;
@@ -511,7 +517,7 @@ int nsp_grstring_check_values(NspGrstring *H)
   return OK;
 }
 
-NspGrstring *nsp_grstring_create(const char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type)
+NspGrstring *nsp_grstring_create(const char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,int color,NspTypeBase *type)
 {
   NspGrstring *H  = nsp_grstring_create_void(name,type);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
@@ -527,6 +533,7 @@ NspGrstring *nsp_grstring_create(const char *name,double x,double y,char* font,N
   H->obj->posx=posx;
   H->obj->posy=posy;
   H->obj->size=size;
+  H->obj->color=color;
   if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
   return H;
 }
@@ -542,7 +549,7 @@ NspGrstring *nsp_grstring_create_default(const char *name)
 }
 
 /*
- * copy for gobject derived class  
+ * copy for gobject derived class
  */
 
 NspGrstring *nsp_grstring_copy_partial(NspGrstring *H,NspGrstring *self)
@@ -584,6 +591,7 @@ NspGrstring *nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self)
   H->obj->posx=self->obj->posx;
   H->obj->posy=self->obj->posy;
   H->obj->size=self->obj->size;
+  H->obj->color=self->obj->color;
   return H;
 }
 
@@ -598,7 +606,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
 
 /*-------------------------------------------------------------------
  * wrappers for the NspGrstring
- * i.e functions at Nsp level 
+ * i.e functions at Nsp level
  *-------------------------------------------------------------------*/
 
 int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
@@ -614,7 +622,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
     MoveObj(stack,1,(NspObject  *) H);
   return 1;
-} 
+}
 
 /*-------------------------------------------
  * Methods
@@ -697,7 +705,7 @@ static int _wrap_grstring_set_text(void *self,const char *attr, NspObject *O)
   NspSMatrix *text;
   if ( ! IsSMat(O) ) return FAIL;
   if ((text = (NspSMatrix *) nsp_object_copy_and_name(attr,O)) == NULLSMAT) return FAIL;
-  if (((NspGrstring *) self)->obj->text != NULL ) 
+  if (((NspGrstring *) self)->obj->text != NULL )
     nsp_smatrix_destroy(((NspGrstring *) self)->obj->text);
   ((NspGrstring *) self)->obj->text= text;
   return OK;
@@ -814,6 +822,21 @@ static int _wrap_grstring_set_size(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grstring_get_color(void *self,const char *attr)
+{
+  int ret;
+  ret = ((NspGrstring *) self)->obj->color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_grstring_set_color(void *self,const char *attr, NspObject *O)
+{
+  int color;
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspGrstring *) self)->obj->color= color;
+  return OK;
+}
+
 static AttrTab grstring_attrs[] = {
   { "x", (attr_get_function * )_wrap_grstring_get_x, (attr_set_function * )_wrap_grstring_set_x, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "y", (attr_get_function * )_wrap_grstring_get_y, (attr_set_function * )_wrap_grstring_set_y, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
@@ -826,40 +849,41 @@ static AttrTab grstring_attrs[] = {
   { "posx", (attr_get_function * )_wrap_grstring_get_posx, (attr_set_function * )_wrap_grstring_set_posx, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "posy", (attr_get_function * )_wrap_grstring_get_posy, (attr_set_function * )_wrap_grstring_set_posy, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "size", (attr_get_function * )_wrap_grstring_get_size, (attr_set_function * )_wrap_grstring_set_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "color", (attr_get_function * )_wrap_grstring_get_color, (attr_set_function * )_wrap_grstring_set_color, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
 
 /*-------------------------------------------
- * functions 
+ * functions
  *-------------------------------------------*/
 #line 59 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 846 "grstring.c"
+#line 870 "grstring.c"
 
 
 #line 69 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
 
-#line 859 "grstring.c"
+#line 883 "grstring.c"
 
 
 /*----------------------------------------------------
- * Interface 
+ * Interface
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
@@ -877,7 +901,7 @@ int Grstring_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return ( *(Grstring_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
     (for adding or removing functions) */
 
 void Grstring_Interf_Info(int i, char **fname, function ( **f))
@@ -893,13 +917,14 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str);
 
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int fontid[2];
+  int current_color=-1;
+  int fontid[2],box;
   double xd1, yd1;
   nsp_string str;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   double x=P->obj->x,y=P->obj->y;
-  
+
   if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
@@ -910,23 +935,27 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return ;
     }
 
-  /* S->n should be equal to 1 or 0 here 
+  /* S->n should be equal to 1 or 0 here
    * This is to be done at creation
    */
   if ( S->n == 0 ) return;
-  if ( S->mn != 1) 
+  if ( S->mn != 1)
     {
       if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return ;
     }
   else
     {
-      str = S->S[0]; 
+      str = S->S[0];
     }
+  box = 0; /* ( P->obj->box_color != -2 ); *//* we draw a box */
 
-  switch ( P->obj->fill ) 
+  current_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+
+  switch ( P->obj->fill )
     {
-    case GR_fill_box: 
-      /* draw the string inside a box: 
+    case GR_fill_box:
+      /* draw the string inside a box:
        * the font size is adapted so as to fill the box.
        */
       nsp_draw_grstring_in_box(Xgc,P,str);
@@ -935,26 +964,26 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       /* draw a string centered in a box */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
 	}
-      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 					 GR_STR_XCENTER,GR_STR_YCENTER);
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       break;
-    case GR_no_box : 
+    case GR_no_box :
       /* display a string */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
 	}
-      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 					 P->obj->posx, P->obj->posy);
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
@@ -962,44 +991,56 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
 
   if ( S->mn != 1 ) FREE(str);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,current_color);
 }
 
 static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
 {
+  int box = 0 ; /* ( P->obj->box_color != -2 );*/ /* we draw a box */
   double xd1,yd1;
-  int iw,ih,size_in= 1, size_out=50,size=size_in, count=0;
+  int iw,ih,size_in= 1, size_out=100,size=-1, count=0;
   int fontid[2], logrect[4], check= TRUE;
   length_scale_f2i(Xgc->scales,&P->obj->w,&P->obj->h,&iw,&ih,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
-  if ( P->obj->size != -1 ) 
+  /* try to detect if current value is OK. */
+  size = (P->obj->size == -1) ? fontid[1] : P->obj->size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
+  Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
+  if ( logrect[2] > iw || logrect[3] > ih )
     {
-      /* try to detect if current value is OK.
+      size_out = size;
+    }
+  else
+    {
+      size_in = size;
+      /* is size_out enough ?
+       * we first try size + 1
        */
-      size = P->obj->size;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],size+1,TRUE);
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
       if ( logrect[2] > iw || logrect[3] > ih )
 	{
-	  size_out = size;
+	  size_out = size+1;
+	  check = FALSE;
 	}
-      else 
+      /* loop to increase upper bound */
+      while (1)
 	{
-	  size_in = size;
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size+1,TRUE);
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size_out,TRUE);
 	  Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
-	  if (  logrect[2] > iw || logrect[3] > ih ) 
+	  if ( !( logrect[2] > iw || logrect[3] > ih) )
 	    {
-	      size_out = size +1;
-	      check = FALSE;
+	      size_out *= 2;
 	    }
+	  else
+	    break;
 	}
     }
-  else 
-    {
-      size = fontid[1];
-    }
+  size= (size_in + size_out)/2;
+  /* dichotomic search */
   while ( check  )
     {
+      /* Sciprintf("Search with [%d,%d] \n",size_in,size_out); */
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
       count++;
@@ -1007,19 +1048,20 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
 	{
 	  size_out = size;
 	}
-      else 
+      else
 	{
 	  size_in = size;
 	}
-      
+
       size = (size_in + size_out)/2;
       if ( size_out - size_in <= 1 ) break;
     }
+  /* Sciprintf("We quit with %d\n",size); */
   P->obj->size = size ;
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
   xd1 = XDouble2Pixel_d(Xgc->scales,P->obj->x + P->obj->w/2.0);
   yd1 = YDouble2Pixel_d(Xgc->scales,P->obj->y + P->obj->h/2.0);
-  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 				     GR_STR_XCENTER,GR_STR_YCENTER);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
@@ -1040,7 +1082,7 @@ static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
   double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
   /* rotate (x,y) */
-  switch ( P->obj->fill ) 
+  switch ( P->obj->fill )
     {
     case GR_fill_box:
     case GR_in_box:
@@ -1051,7 +1093,7 @@ static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
       P->obj->y = y1 - P->obj->h/2;
       P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
       break;
-    case GR_no_box : 
+    case GR_no_box :
       x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
       P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
       P->obj->x = x1;
@@ -1071,9 +1113,9 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in @bounds the enclosing rectangle of grstring 
- * Note that it only works when the grstring is inside a 
- * figure. 
+/* compute in @bounds the enclosing rectangle of grstring
+ * Note that it only works when the grstring is inside a
+ * figure.
  */
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
@@ -1086,20 +1128,20 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   nsp_axes *axe = Obj->obj->Axe;
   nsp_figure *F = Obj->obj->Fig;
   BCG *Xgc;
-  if ( S->mn != 1) 
+  if ( S->mn != 1)
     {
       if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return FALSE;
     }
   else
     {
-      str = S->S[0]; 
+      str = S->S[0];
     }
 
-  switch ( P->obj->fill ) 
+  switch ( P->obj->fill )
     {
-    case GR_fill_box: 
+    case GR_fill_box:
       bounds[0]= P->obj->x ;
-      bounds[2]= P->obj->x + P->obj->w; 
+      bounds[2]= P->obj->x + P->obj->w;
       bounds[1]= P->obj->y;
       bounds[3]= P->obj->y+  P->obj->h;;
       break;
@@ -1107,7 +1149,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       /* here we need a Figure */
       if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
       /* centered in a box  */
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
@@ -1117,15 +1159,16 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
-      bounds[0]= P->obj->x + P->obj->w/2 -width/2; 
+      /* Sciprintf("Taille de la boite [%f,%f] fontid=%d\n",width,height,P->obj->size); */
+      bounds[0]= P->obj->x + P->obj->w/2 -width/2;
       bounds[2]= P->obj->x + P->obj->w/2 +width/2;
       bounds[1]= P->obj->y + P->obj->h/2 -height/2;
       bounds[3]= P->obj->y + P->obj->h/2 + height/2;
       break;
-    case GR_no_box : 
+    case GR_no_box :
       /* no box case */
       if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
@@ -1135,32 +1178,32 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
-      switch( P->obj->posx ) 
+      switch( P->obj->posx )
 	{
 	case GR_STR_XLEFT: bounds[0]= P->obj->x; bounds[2]= P->obj->x+width; break;
 	case GR_STR_XCENTER: bounds[0]= P->obj->x -width/2; bounds[2]= P->obj->x+width/2; break;
 	case GR_STR_XRIGHT: bounds[0]= P->obj->x - width; bounds[2]= P->obj->x; break;
 	}
-      switch( P->obj->posy ) 
+      switch( P->obj->posy )
 	{
 	case GR_STR_YBOTTOM:bounds[1]= P->obj->y; bounds[3]= P->obj->y + height; break;
 	case GR_STR_YCENTER:bounds[1]= P->obj->y -height/2; bounds[3]= P->obj->y + height/2; break;
-	case GR_STR_YBASELINE: 
+	case GR_STR_YBASELINE:
 	  /* TO BE IMPROVED we give something bigger */
 	  bounds[1]= P->obj->y -height ; bounds[3]= P->obj->y + height; break;
 	case GR_STR_YUP:   bounds[1]= P->obj->y-height ; bounds[3]= P->obj->y; break;
 	}
       break;
     }
-  
-  if (P->obj->angle!=0.) 
+
+  if (P->obj->angle!=0.)
     {
       /* rotate the bounds */
       double diff[2],  bb[8], center[2]={0,0};
       double cosa = cos(-P->obj->angle*M_PI/180);
       double sina = sin(-P->obj->angle*M_PI/180);
 
-      switch ( P->obj->fill ) 
+      switch ( P->obj->fill )
 	{
 	case GR_fill_box:
 	case GR_in_box:
@@ -1168,19 +1211,19 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	  center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
 	  break;
 	case GR_no_box:
-	  switch( P->obj->posx ) 
+	  switch( P->obj->posx )
 	    {
 	    case GR_STR_XLEFT: center[0] = bounds[0]; break;
 	    case GR_STR_XCENTER: center[0]  = bounds[0] + width/2; break;
 	    case GR_STR_XRIGHT: center[0]  = bounds[0] + width; break;
 	    }
-	  switch( P->obj->posy ) 
+	  switch( P->obj->posy )
 	    {
 	    case GR_STR_YBOTTOM: center[1]  =bounds[1] ; break;
 	    case GR_STR_YCENTER:  center[1]  = bounds[1] + height/2; break;
 	    case GR_STR_YBASELINE: center[1] =bounds[1] ; break; /* wrong */
 	    case GR_STR_YUP:  center[1]  = bounds[1] +height; break;
-	    } 
+	    }
 	  break;
 	}
       /* rotate/translate the points */
@@ -1221,10 +1264,10 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       bounds[3]=Max(bounds[3],bb[5]);
       bounds[3]=Max(bounds[3],bb[7]);
     }
-    
+
   if ( FALSE && F != NULL && (Xgc = F->Xgc) != NULL)
     {
-      /* draw the bounds */
+      /* draw the bounds, if requested  */
       int xm[4],ym[4];
       double x[4],y[4];
       x[0]=bounds[0];
@@ -1242,5 +1285,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-
-#line 1247 "grstring.c"
+#line 1289 "grstring.c"

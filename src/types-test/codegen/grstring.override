@@ -23,14 +23,14 @@ static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
 %%
-init 
+init
 
-Init portion 
+Init portion
 
 %%
 override-type Grstring
@@ -43,8 +43,8 @@ override-type Grstring
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 %%
 modulename atk
@@ -59,7 +59,7 @@ override nsp_extractelts_grstring kwargs
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -69,7 +69,7 @@ override nsp_setrowscols_grstring kwargs
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -83,13 +83,14 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str);
 
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int fontid[2];
+  int current_color=-1;
+  int fontid[2],box;
   double xd1, yd1;
   nsp_string str;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   double x=P->obj->x,y=P->obj->y;
-  
+
   if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
@@ -100,23 +101,27 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return ;
     }
 
-  /* S->n should be equal to 1 or 0 here 
+  /* S->n should be equal to 1 or 0 here
    * This is to be done at creation
    */
   if ( S->n == 0 ) return;
-  if ( S->mn != 1) 
+  if ( S->mn != 1)
     {
       if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return ;
     }
   else
     {
-      str = S->S[0]; 
+      str = S->S[0];
     }
+  box = 0; /* ( P->obj->box_color != -2 ); *//* we draw a box */
 
-  switch ( P->obj->fill ) 
+  current_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+
+  switch ( P->obj->fill )
     {
-    case GR_fill_box: 
-      /* draw the string inside a box: 
+    case GR_fill_box:
+      /* draw the string inside a box:
        * the font size is adapted so as to fill the box.
        */
       nsp_draw_grstring_in_box(Xgc,P,str);
@@ -125,26 +130,26 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       /* draw a string centered in a box */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
 	}
-      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 					 GR_STR_XCENTER,GR_STR_YCENTER);
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       break;
-    case GR_no_box : 
+    case GR_no_box :
       /* display a string */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
 	}
-      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 					 P->obj->posx, P->obj->posy);
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
@@ -152,44 +157,56 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
 
   if ( S->mn != 1 ) FREE(str);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,current_color);
 }
 
 static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
 {
+  int box = 0 ; /* ( P->obj->box_color != -2 );*/ /* we draw a box */
   double xd1,yd1;
-  int iw,ih,size_in= 1, size_out=50,size=size_in, count=0;
+  int iw,ih,size_in= 1, size_out=100,size=-1, count=0;
   int fontid[2], logrect[4], check= TRUE;
   length_scale_f2i(Xgc->scales,&P->obj->w,&P->obj->h,&iw,&ih,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
-  if ( P->obj->size != -1 ) 
+  /* try to detect if current value is OK. */
+  size = (P->obj->size == -1) ? fontid[1] : P->obj->size;
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
+  Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
+  if ( logrect[2] > iw || logrect[3] > ih )
     {
-      /* try to detect if current value is OK.
+      size_out = size;
+    }
+  else
+    {
+      size_in = size;
+      /* is size_out enough ?
+       * we first try size + 1
        */
-      size = P->obj->size;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],size+1,TRUE);
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
       if ( logrect[2] > iw || logrect[3] > ih )
 	{
-	  size_out = size;
+	  size_out = size+1;
+	  check = FALSE;
 	}
-      else 
+      /* loop to increase upper bound */
+      while (1)
 	{
-	  size_in = size;
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size+1,TRUE);
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size_out,TRUE);
 	  Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
-	  if (  logrect[2] > iw || logrect[3] > ih ) 
+	  if ( !( logrect[2] > iw || logrect[3] > ih) )
 	    {
-	      size_out = size +1;
-	      check = FALSE;
+	      size_out *= 2;
 	    }
+	  else
+	    break;
 	}
     }
-  else 
-    {
-      size = fontid[1];
-    }
+  size= (size_in + size_out)/2;
+  /* dichotomic search */
   while ( check  )
     {
+      /* Sciprintf("Search with [%d,%d] \n",size_in,size_out); */
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,logrect);
       count++;
@@ -197,19 +214,20 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
 	{
 	  size_out = size;
 	}
-      else 
+      else
 	{
 	  size_in = size;
 	}
-      
+
       size = (size_in + size_out)/2;
       if ( size_out - size_in <= 1 ) break;
     }
+  /* Sciprintf("We quit with %d\n",size); */
   P->obj->size = size ;
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
   xd1 = XDouble2Pixel_d(Xgc->scales,P->obj->x + P->obj->w/2.0);
   yd1 = YDouble2Pixel_d(Xgc->scales,P->obj->y + P->obj->h/2.0);
-  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
 				     GR_STR_XCENTER,GR_STR_YCENTER);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
@@ -230,7 +248,7 @@ static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
   double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
   /* rotate (x,y) */
-  switch ( P->obj->fill ) 
+  switch ( P->obj->fill )
     {
     case GR_fill_box:
     case GR_in_box:
@@ -241,7 +259,7 @@ static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
       P->obj->y = y1 - P->obj->h/2;
       P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
       break;
-    case GR_no_box : 
+    case GR_no_box :
       x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
       P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
       P->obj->x = x1;
@@ -261,9 +279,9 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in @bounds the enclosing rectangle of grstring 
- * Note that it only works when the grstring is inside a 
- * figure. 
+/* compute in @bounds the enclosing rectangle of grstring
+ * Note that it only works when the grstring is inside a
+ * figure.
  */
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
@@ -276,20 +294,20 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   nsp_axes *axe = Obj->obj->Axe;
   nsp_figure *F = Obj->obj->Fig;
   BCG *Xgc;
-  if ( S->mn != 1) 
+  if ( S->mn != 1)
     {
       if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return FALSE;
     }
   else
     {
-      str = S->S[0]; 
+      str = S->S[0];
     }
 
-  switch ( P->obj->fill ) 
+  switch ( P->obj->fill )
     {
-    case GR_fill_box: 
+    case GR_fill_box:
       bounds[0]= P->obj->x ;
-      bounds[2]= P->obj->x + P->obj->w; 
+      bounds[2]= P->obj->x + P->obj->w;
       bounds[1]= P->obj->y;
       bounds[3]= P->obj->y+  P->obj->h;;
       break;
@@ -297,7 +315,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       /* here we need a Figure */
       if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
       /* centered in a box  */
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
@@ -307,15 +325,16 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
-      bounds[0]= P->obj->x + P->obj->w/2 -width/2; 
+      /* Sciprintf("Taille de la boite [%f,%f] fontid=%d\n",width,height,P->obj->size); */
+      bounds[0]= P->obj->x + P->obj->w/2 -width/2;
       bounds[2]= P->obj->x + P->obj->w/2 +width/2;
       bounds[1]= P->obj->y + P->obj->h/2 -height/2;
       bounds[3]= P->obj->y + P->obj->h/2 + height/2;
       break;
-    case GR_no_box : 
+    case GR_no_box :
       /* no box case */
       if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
-      if ( P->obj->size != -1 ) 
+      if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0], Max(P->obj->size,1),TRUE);
@@ -325,32 +344,32 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
-      switch( P->obj->posx ) 
+      switch( P->obj->posx )
 	{
 	case GR_STR_XLEFT: bounds[0]= P->obj->x; bounds[2]= P->obj->x+width; break;
 	case GR_STR_XCENTER: bounds[0]= P->obj->x -width/2; bounds[2]= P->obj->x+width/2; break;
 	case GR_STR_XRIGHT: bounds[0]= P->obj->x - width; bounds[2]= P->obj->x; break;
 	}
-      switch( P->obj->posy ) 
+      switch( P->obj->posy )
 	{
 	case GR_STR_YBOTTOM:bounds[1]= P->obj->y; bounds[3]= P->obj->y + height; break;
 	case GR_STR_YCENTER:bounds[1]= P->obj->y -height/2; bounds[3]= P->obj->y + height/2; break;
-	case GR_STR_YBASELINE: 
+	case GR_STR_YBASELINE:
 	  /* TO BE IMPROVED we give something bigger */
 	  bounds[1]= P->obj->y -height ; bounds[3]= P->obj->y + height; break;
 	case GR_STR_YUP:   bounds[1]= P->obj->y-height ; bounds[3]= P->obj->y; break;
 	}
       break;
     }
-  
-  if (P->obj->angle!=0.) 
+
+  if (P->obj->angle!=0.)
     {
       /* rotate the bounds */
       double diff[2],  bb[8], center[2]={0,0};
       double cosa = cos(-P->obj->angle*M_PI/180);
       double sina = sin(-P->obj->angle*M_PI/180);
 
-      switch ( P->obj->fill ) 
+      switch ( P->obj->fill )
 	{
 	case GR_fill_box:
 	case GR_in_box:
@@ -358,19 +377,19 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	  center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
 	  break;
 	case GR_no_box:
-	  switch( P->obj->posx ) 
+	  switch( P->obj->posx )
 	    {
 	    case GR_STR_XLEFT: center[0] = bounds[0]; break;
 	    case GR_STR_XCENTER: center[0]  = bounds[0] + width/2; break;
 	    case GR_STR_XRIGHT: center[0]  = bounds[0] + width; break;
 	    }
-	  switch( P->obj->posy ) 
+	  switch( P->obj->posy )
 	    {
 	    case GR_STR_YBOTTOM: center[1]  =bounds[1] ; break;
 	    case GR_STR_YCENTER:  center[1]  = bounds[1] + height/2; break;
 	    case GR_STR_YBASELINE: center[1] =bounds[1] ; break; /* wrong */
 	    case GR_STR_YUP:  center[1]  = bounds[1] +height; break;
-	    } 
+	    }
 	  break;
 	}
       /* rotate/translate the points */
@@ -411,10 +430,10 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       bounds[3]=Max(bounds[3],bb[5]);
       bounds[3]=Max(bounds[3],bb[7]);
     }
-    
+
   if ( FALSE && F != NULL && (Xgc = F->Xgc) != NULL)
     {
-      /* draw the bounds */
+      /* draw the bounds, if requested  */
       int xm[4],ym[4];
       double x[4],y[4];
       x[0]=bounds[0];
@@ -431,4 +450,3 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 
   return TRUE;
 }
-

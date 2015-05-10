@@ -5,21 +5,18 @@
   (parent "Graphic")
   (c-name "NspGrstring")
   (fields
-   '("double" "x" ) 
-   '("double" "y" ) 
-   '("char*" "font" ) 
-   '("NspSMatrix*" "text" ) 
-   '("double" "angle" "std" "0.0" ) 
+   '("double" "x" )
+   '("double" "y" )
+   '("char*" "font" )
+   '("NspSMatrix*" "text" )
+   '("double" "angle" "std" "0.0" )
    '("double" "w" "std" "0.0")
    '("double" "h" "std" "0.0")
    '("int" "fill" "std" "0")
-   '("int" "posx" ) 
-   '("int" "posy" ) 
-   '("int" "size" ) 
+   '("int" "posx" )
+   '("int" "posy" )
+   '("int" "size" )
+   '("int" "color" "std" "-1" ); color to be used
     )
   (gtype-id "Grstring")
 )
-
-
-
-

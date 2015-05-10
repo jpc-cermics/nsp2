@@ -37,7 +37,7 @@
 typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
-#line 61 "codegen/graphic.override"
+#line 66 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
@@ -58,9 +58,9 @@ struct _NspTypeGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
 
-#line 46 "codegen/graphic.override"
+#line 51 "codegen/graphic.override"
 
-  draw_func *draw; 
+  draw_func *draw;
   translate_func *translate;
   rotate_func *rotate;
   scale_func *scale;
@@ -68,7 +68,7 @@ struct _NspTypeGraphic {
   link_figure_func *link_figure;
   unlink_figure_func *unlink_figure;
   children_func *children;
-  zmean_func *zmean; 
+  zmean_func *zmean;
   n_faces_func *n_faces;
   invalidate_func *invalidate;
 
@@ -160,7 +160,12 @@ static NspGraphic *nsp_graphic_create_void(const char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static NspMatrix *graphic_get_bounds(NspGraphic *G);
+static int nsp_graphic_bounds(NspGraphic *Obj,double *bounds);
+static void nsp_graphic_draw(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
+static void nsp_graphic_translate(NspGraphic *o,const double *tr);
+static void nsp_graphic_rotate(NspGraphic *o,double *R);
+static void nsp_graphic_scale(NspGraphic *o,double *alpha);
 
-#line 165 "./graphic.h"
+#line 170 "./graphic.h"
 #endif /* NspGraphic_Private */
 

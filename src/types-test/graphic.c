@@ -24,10 +24,10 @@
 
 
 
-#line 22 "codegen/graphic.override"
+#line 27 "codegen/graphic.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/graphic.h>
 #include <nsp/axes.h>
@@ -107,22 +107,22 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 76 "codegen/graphic.override"
-  /* inserted verbatim in the type definition 
-   * here we define the default values for graphic methods 
-   * these methods of class Graphic are to be re-defined by subclasses 
+#line 81 "codegen/graphic.override"
+  /* inserted verbatim in the type definition
+   * here we define the default values for graphic methods
+   * these methods of class Graphic are to be re-defined by subclasses
    * if necessary.
    */
   type->gtk_methods = TRUE;
-  type->draw = NULL;
-  type->translate = NULL;
-  type->rotate = NULL;
-  type->scale = NULL;
-  type->bounds = NULL;
+  type->draw = nsp_graphic_draw;
+  type->translate = nsp_graphic_translate;
+  type->rotate = nsp_graphic_rotate;
+  type->scale =  nsp_graphic_scale;
+  type->bounds = nsp_graphic_bounds ;
   type->link_figure = nsp_graphic_link_figure;
   type->unlink_figure = nsp_graphic_unlink_figure;
   type->children = NULL;
-  type->zmean = NULL; 
+  type->zmean = NULL;
   type->n_faces = NULL;
   type->invalidate = nsp_graphic_invalidate;
 
@@ -529,9 +529,9 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 96 "codegen/graphic.override"
-/* take care that the name to give for override is the c-name of 
- * the method 
+#line 101 "codegen/graphic.override"
+/* take care that the name to give for override is the c-name of
+ * the method
  */
 static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -546,7 +546,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
 #line 547 "graphic.c"
 
 
-#line 111 "codegen/graphic.override"
+#line 116 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -561,7 +561,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 #line 562 "graphic.c"
 
 
-#line 124 "codegen/graphic.override"
+#line 129 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -575,7 +575,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 576 "graphic.c"
 
 
-#line 146 "codegen/graphic.override"
+#line 151 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -587,7 +587,7 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 588 "graphic.c"
 
 
-#line 136 "codegen/graphic.override"
+#line 141 "codegen/graphic.override"
 static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -694,18 +694,37 @@ void Graphic_Interf_Info(int i, char **fname, function ( **f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 156 "codegen/graphic.override"
+#line 161 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
 
+static void nsp_graphic_draw(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data) {}
+static void nsp_graphic_translate(NspGraphic *o,const double *tr) {}
+static void nsp_graphic_rotate(NspGraphic *o,double *R) {}
+static void nsp_graphic_scale(NspGraphic *o,double *alpha) {}
+
+/**
+ * nsp_graphic_bounds:
+ * @G: a #NspGraphic object
+ * @bounds: a double pointer to an array of 4 doubles.
+ *
+ * default method
+ *
+ **/
+
+static int nsp_graphic_bounds(NspGraphic *Obj,double *bounds)
+{
+  return FALSE;
+}
+
 /**
  * nsp_graphic_link_figure:
- * @G: a #NspGraphic object 
- * @F: a void pointer which is to be a #nsp_figure 
- * 
+ * @G: a #NspGraphic object
+ * @F: a void pointer which is to be a #nsp_figure
+ *
  * set the Fig field of @G.
- * 
+ *
  **/
 
 void nsp_graphic_link_figure(NspGraphic *G,void *F, void *A)
@@ -717,28 +736,28 @@ void nsp_graphic_link_figure(NspGraphic *G,void *F, void *A)
 
 /**
  * nsp_graphic_unlink_figure:
- * @G: a #NspGraphic object 
- * @F: a void pointer which is to be a #nsp_figure 
+ * @G: a #NspGraphic object
+ * @F: a void pointer which is to be a #nsp_figure
  *
- * if @G Fig field is equal to @F then Fig field 
+ * if @G Fig field is equal to @F then Fig field
  * if set to %NULL.
- * 
+ *
  **/
 
 void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
 {
   /* NspFigure *Fi = F;*/
-  if ( G->obj->Fig == F ) 
+  if ( G->obj->Fig == F )
     {
       G->obj->Fig = NULL ;
-      G->obj->Axe = NULL;	
+      G->obj->Axe = NULL;
     }
 }
 
 /* interface shared by all graphic objects */
 
 /*
- * Extract requested child of a graphicobject 
+ * Extract requested child of a graphicobject
  * the returned object is not copied.
  */
 
@@ -749,13 +768,13 @@ static int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
   NspObject *O;
   NspList *L;
   NspGraphic *Gr;
-  
+
   CheckRhs (2,2);
   if ((Gr=GetGraphic(stack,1)) == NULLGRAPHIC) return RET_BUG;
   if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
   if ( Gr->type->children == NULL) return RET_BUG;
   if ((L = Gr->type->children(Gr)) == NULLLIST) return RET_BUG;
-  
+
   nret = Elts->mn;
   L_name = Ocheckname(L,NVOID);
 
@@ -764,14 +783,14 @@ static int int_nspgraphic_extract_m(Stack stack, int rhs, int opt, int lhs)
       if ( (O=nsp_list_get_element(L,((int) Elts->R[i]))) ==  NULLOBJ )
 	return RET_BUG;  /* error message done in nsp_list_get_element */
       /* If NspList has no name or list element has no name we must copy */
-      if ( L_name || Ocheckname(O,NVOID) ) 
+      if ( L_name || Ocheckname(O,NVOID) )
 	if ( (O=nsp_object_copy(O)) == NULLOBJ )  return RET_BUG;
       NthObj(rhs+i+1) = O;
     }
 
   nsp_void_object_destroy(&NthObj(1));
   nsp_void_object_destroy(&NthObj(2));
-  for ( i = 0 ; i < nret ; i++) 
+  for ( i = 0 ; i < nret ; i++)
     {
       NthObj(i+1)= NthObj(i+rhs+1);
       NSP_OBJECT(NthObj(i+1))->ret_pos = i+1;
@@ -797,8 +816,8 @@ static int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
   if ((Gr= (NspObject *) GetGraphic(stack,1)) == NULLOBJ) return RET_BUG;
   for ( j = 2 ; j <= rhs ; j++ )
     {
-      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
-      for ( i = 0 ; i < S->mn ; i++ ) 
+      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;
+      for ( i = 0 ; i < S->mn ; i++ )
 	{
 	  Ret = nsp_get_attribute_util(Gr,Gr->basetype,S->S[i]);
 	  if ( Ret == NULL) return RET_BUG;
@@ -811,18 +830,18 @@ static int int_nspgraphic_extract_s(Stack stack, int rhs, int opt, int lhs)
   return count;
 }
 
-/* extraction part when argument is a list  */ 
+/* extraction part when argument is a list  */
 
 static int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
 {
   char name[NAME_MAXL];
   int rep,n ;
-  if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
-  if ( rep == 3 ) 
+  if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep;
+  if ( rep == 3 )
     {
-      /* last extraction : here O can be anything */ 
+      /* last extraction : here O can be anything */
       nsp_build_funcname("extractelts",&stack,stack.first+1,1,name);
-      if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0) 
+      if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0)
 	{
 	  return RET_BUG;
 	}
@@ -837,19 +856,19 @@ static int int_nspgraphic_extract_l(Stack stack, int rhs, int opt, int lhs)
 int int_nspgraphic_extract(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(2,2);
-  if (IsMatObj(stack,2)) 
+  if (IsMatObj(stack,2))
     {
       return int_nspgraphic_extract_m(stack,rhs,opt,lhs);
     }
-  else if (IsSMatObj(stack,2)) 
+  else if (IsSMatObj(stack,2))
     {
       return int_nspgraphic_extract_s(stack,rhs,opt,lhs);
     }
-  else if ( IsListObj(stack,2) ) 
+  else if ( IsListObj(stack,2) )
     {
       return int_nspgraphic_extract_l(stack,rhs,opt,lhs);
     }
-  else 
+  else
     {
       Scierror("Error: Wrong type for argument in list extraction int or list required\n");
       return RET_BUG;
@@ -858,7 +877,7 @@ int int_nspgraphic_extract(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * set an attribute value. 
+ * set an attribute value.
  */
 
 int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
@@ -871,9 +890,9 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
   if ((Gr= (NspObject *) GetGraphic(stack,1)) == NULLOBJ) return RET_BUG;
   if ( IsSMatObj(stack,2) )
     {
-      if ((name = GetString(stack,2)) == (char*)0) return RET_BUG;  
+      if ((name = GetString(stack,2)) == (char*)0) return RET_BUG;
     }
-  else 
+  else
     {
       Scierror("%s: indice for extraction should be a string\n",NspFname(stack));
       return RET_BUG;
@@ -884,10 +903,10 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* invalidate the drawing region associated to a graphic object. 
- * This function is to be called when the 
+/* invalidate the drawing region associated to a graphic object.
+ * This function is to be called when the
  * graphic object has changed and need to be drawn.
- * 
+ *
  */
 
 void nsp_graphic_invalidate(NspGraphic *G)
@@ -900,7 +919,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
   if ((Xgc= F->Xgc) == NULL) return ;
   if ( F->draw_now== FALSE) return;
   if ( G->obj->show == FALSE ) return;
-  if ( G->type->bounds(G,bounds)== TRUE) 
+  if ( G->type->bounds(G,bounds)== TRUE)
     {
       gint rect[4]; /* like a GdkRectangle */
       int xmin,xmax,ymin,ymax;
@@ -919,7 +938,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
 	    {
 	      nsp_axes_invalidate((NspGraphic *) obj);
 	    }
-	  else 
+	  else
 	    {
 	      nsp_objs3d_invalidate((NspGraphic *) obj);
 	    }
@@ -933,14 +952,14 @@ void nsp_graphic_invalidate(NspGraphic *G)
 
 /**
  * nsp_graphic_intersect_rectangle:
- * @G: 
- * @rect: 
- * 
- * 
- * 
- * Returns: 
+ * @G:
+ * @rect:
+ *
+ *
+ *
+ * Returns:
  **/
- 
+
 int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
 {
   nsp_axes *axe = ((NspGraphic *) G)->obj->Axe;
@@ -951,7 +970,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
   if ( G->type->bounds(G,bounds) == FALSE ) return TRUE; /* XXX */
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
-  r1.x = xmin-10; 
+  r1.x = xmin-10;
   r1.y = ymax-10;
   r1.width = xmax - xmin +20;
   r1.height = ymin - ymax +20 ;
@@ -968,4 +987,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 972 "graphic.c"
+#line 991 "graphic.c"
