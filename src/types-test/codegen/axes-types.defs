@@ -33,8 +33,9 @@
    '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
    '("gboolean" "clip" "std" "TRUE") ;; are we doing a clipgrf.
    '("int" "line_width" "std" "0") ;; default line width for axes  
-   '("int" "font_size" "std" "1") ;; font size for axes and titles 
+   '("int" "font_size" "std" "-1") ;; font size for axes and titles 
    '("int" "background" "std" "-1") ;; default color for the background
+   '("NspMatrix*" "nax" "std" "{2,10,2,10}" "4" ) ;; number of tick and subticks when not in auto mode
    )
   (gtype-id "Axes")
 )

@@ -78,6 +78,7 @@ struct _nsp_axes {
   int line_width;
   int font_size;
   int background;
+  NspMatrix* nax;
   int ref_count;
 };
 
@@ -107,7 +108,7 @@ NspAxes *new_axes();
 
 #define NULLAXES (NspAxes*) 0
 
-extern NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,int background,NspTypeBase *type);
+extern NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,int background,NspMatrix* nax,NspTypeBase *type);
 extern NspAxes *nsp_axes_create_default(const char *name);
 
 /* from NspAxesObj.c */
@@ -142,6 +143,7 @@ extern BCG *nsp_check_graphic_context(void);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_strf_axes(NspAxes *A,double *rect, char scale);
+extern void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso);
 extern int nsp_axes_insert_child(NspAxes *A, NspGraphic *G, int invalidate);
 extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
@@ -155,7 +157,7 @@ extern NspAxes *nsp_check_for_current_axes(void);
 extern NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect);
 
 
-#line 159 "./axes.h"
+#line 161 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -170,7 +172,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(const char *name,NspTypeBase *type);
-#line 40 "codegen/axes.override"
+#line 41 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of axes.h
@@ -197,6 +199,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 201 "./axes.h"
+#line 203 "./axes.h"
 #endif /* NspAxes_Private */
 

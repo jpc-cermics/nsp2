@@ -24,7 +24,7 @@
 
 
 
-#line 68 "codegen/axes.override"
+#line 69 "codegen/axes.override"
 #include <nsp/objects.h>
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/objs3d.h>
@@ -107,7 +107,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 84 "codegen/axes.override"
+#line 85 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -241,6 +241,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( A->obj->line_width != loc->obj->line_width) return FALSE;
   if ( A->obj->font_size != loc->obj->font_size) return FALSE;
   if ( A->obj->background != loc->obj->background) return FALSE;
+  if ( NSP_OBJECT(A->obj->nax)->type->eq(A->obj->nax,loc->obj->nax) == FALSE ) return FALSE;
    return TRUE;
 }
 
@@ -287,6 +288,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs, M->obj->line_width) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->background) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->nax)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
@@ -323,6 +325,7 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->line_width) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->font_size) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->background) == FAIL) return NULL;
+  if ((M->obj->nax =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -373,6 +376,8 @@ void nsp_axes_destroy_partial(NspAxes *H)
       nsp_matrix_destroy(H->obj->rect);
     if ( H->obj->zrect != NULL ) 
       nsp_matrix_destroy(H->obj->zrect);
+    if ( H->obj->nax != NULL ) 
+      nsp_matrix_destroy(H->obj->nax);
     FREE(H->obj);
    }
 }
@@ -467,6 +472,9 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  if ( M->obj->nax != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->nax),indent+2,"nax", rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
@@ -523,6 +531,9 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"line_width=%d\n", M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n", M->obj->font_size);
   Sciprintf1(indent+2,"background=%d\n", M->obj->background);
+  if ( M->obj->nax != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->nax),indent+2,"nax", rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -617,8 +628,9 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->zrect = NULLMAT;
   H->obj->clip = TRUE;
   H->obj->line_width = 0;
-  H->obj->font_size = 1;
+  H->obj->font_size = -1;
   H->obj->background = -1;
+  H->obj->nax = NULLMAT;
   return OK;
 }
 
@@ -687,11 +699,18 @@ int nsp_axes_check_values(NspAxes *H)
        return FAIL;
       memcpy(H->obj->zrect->R,x_def,4*sizeof(double));
   }
+  if ( H->obj->nax == NULLMAT) 
+    {
+     double x_def[4]={2,10,2,10};
+     if (( H->obj->nax = nsp_matrix_create("nax",'r',1,4)) == NULLMAT)
+       return FAIL;
+      memcpy(H->obj->nax->R,x_def,4*sizeof(double));
+  }
   nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
-NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,int background,NspTypeBase *type)
+NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,int background,NspMatrix* nax,NspTypeBase *type)
 {
   NspAxes *H  = nsp_axes_create_void(name,type);
   if ( H ==  NULLAXES) return NULLAXES;
@@ -722,6 +741,7 @@ NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,dou
   H->obj->line_width=line_width;
   H->obj->font_size=font_size;
   H->obj->background=background;
+  H->obj->nax= nax;
   if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
   return H;
 }
@@ -824,6 +844,12 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
   H->obj->line_width=self->obj->line_width;
   H->obj->font_size=self->obj->font_size;
   H->obj->background=self->obj->background;
+  if ( self->obj->nax == NULL )
+    { H->obj->nax = NULL;}
+  else
+    {
+      if ((H->obj->nax = (NspMatrix *) nsp_object_full_copy_and_name("nax", NSP_OBJECT(self->obj->nax))) == NULLMAT) return NULL;
+    }
   return H;
 }
 
@@ -890,7 +916,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 107 "codegen/axes.override"
+#line 108 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -905,7 +931,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 909 "axes.c"
+#line 935 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1041,7 +1067,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 123 "codegen/axes.override"
+#line 124 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj
  * we want a get to be followed by a set to check that
@@ -1097,7 +1123,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1101 "axes.c"
+#line 1127 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1340,6 +1366,32 @@ static int _wrap_axes_set_background(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_axes_get_nax(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspAxes *) self)->obj->nax;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_axes_get_obj_nax(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->nax);
+  return (NspObject *) ret;
+}
+
+static int _wrap_axes_set_nax(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *nax;
+  if ( ! IsMat(O) ) return FAIL;
+  if ((nax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspAxes *) self)->obj->nax != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->nax);
+  ((NspAxes *) self)->obj->nax= nax;
+  return OK;
+}
+
 static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function * )_wrap_axes_get_wrect, (attr_set_function * )_wrap_axes_set_wrect, (attr_get_object_function * )_wrap_axes_get_obj_wrect, (attr_set_object_function * )int_set_object_failed },
   { "rho", (attr_get_function * )_wrap_axes_get_rho, (attr_set_function * )_wrap_axes_set_rho, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
@@ -1364,6 +1416,7 @@ static AttrTab axes_attrs[] = {
   { "line_width", (attr_get_function * )_wrap_axes_get_line_width, (attr_set_function * )_wrap_axes_set_line_width, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "font_size", (attr_get_function * )_wrap_axes_get_font_size, (attr_set_function * )_wrap_axes_set_font_size, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "background", (attr_get_function * )_wrap_axes_get_background, (attr_set_function * )_wrap_axes_set_background, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
+  { "nax", (attr_get_function * )_wrap_axes_get_nax, (attr_set_function * )_wrap_axes_set_nax, (attr_get_object_function * )_wrap_axes_get_obj_nax, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1371,7 +1424,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 180 "codegen/axes.override"
+#line 181 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1380,10 +1433,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1384 "axes.c"
+#line 1437 "axes.c"
 
 
-#line 190 "codegen/axes.override"
+#line 191 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1393,7 +1446,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1397 "axes.c"
+#line 1450 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1424,7 +1477,7 @@ void Axes_Interf_Info(int i, char **fname, function ( **f))
   *f = Axes_func[i].fonc;
 }
 
-#line 201 "codegen/axes.override"
+#line 202 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
@@ -1432,11 +1485,10 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   nsp_gcscale scale_keep = *Xgc->scales;
-  int lw, font[2];
+  int lw=-1, font[2], nax[4], i;
   GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
   double wrect1[4], inside_bounds[4];
-  int aaint[4]={10,2,10,2};
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
@@ -1536,10 +1588,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->xlog == TRUE ) xf[1]= 'l';
   if ( P->obj->ylog == TRUE ) xf[2]= 'l';
 
+  for ( i= 0; i <4 ; i++) nax[i]=P->obj->nax->R[i];
+
   nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       P->obj->frect->R,
 			       P->obj->arect->R,
-			       aaint,
+			       nax,
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
@@ -1556,9 +1610,15 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
 
-  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
-  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
-  lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+  if (  P->obj->font_size != -1) 
+    {
+      Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
+      Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
+    }
+  if ( P->obj->line_width != -1 ) 
+    {
+      lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+    }
 
   /* draw axes, ticks */
   axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid, P->obj->background);
@@ -1572,9 +1632,16 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->y[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
 
-  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
-  Xgc->graphic_engine->xset_thickness(Xgc, lw);
+  if (  P->obj->font_size != -1) 
+    {
+      Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
+    }
 
+  if ( P->obj->line_width != -1 ) 
+    {
+      Xgc->graphic_engine->xset_thickness(Xgc, lw);
+    }
+  
   /* clip the inside rectangle of the  axe
    * Note that clipping is wrong when an axe is rotated
    * since clipping only works with rectangles
@@ -1966,6 +2033,36 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
       A->obj->iso = FALSE;
       A->obj->fixed = FALSE;
       break;
+    }
+  if ( A->obj->fixed )
+    memcpy(A->obj->frect->R,A->obj->rect->R,4*sizeof(double));
+  else
+    memcpy(A->obj->frect->R,A->obj->bounds->R,4*sizeof(double));
+}
+
+void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso)
+{
+  NspGraphic *G= (NspGraphic *) A;
+  A->obj->iso = iso;
+  A->obj->auto_axis = auto_axis;
+  /* use strf argument to change the axes */
+  switch (scale)
+    {
+    case '0': /* no computation, the plot use the previus (or default) scale */
+      break;
+    case '1': 
+    case '3': 
+    case '5': 
+    case '7': 
+      memcpy(A->obj->rect->R,rect,4*sizeof(double));
+      A->obj->fixed = TRUE;
+      break;
+    case '2': /* from the min/max of all the datas */
+    case '4': 
+    case '6': 
+    case '8': 
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
+      A->obj->fixed = FALSE;
     }
   if ( A->obj->fixed )
     memcpy(A->obj->frect->R,A->obj->rect->R,4*sizeof(double));
@@ -2365,4 +2462,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2369 "axes.c"
+#line 2466 "axes.c"

@@ -22,6 +22,7 @@ extern BCG *nsp_check_graphic_context(void);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_strf_axes(NspAxes *A,double *rect, char scale);
+extern void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso);
 extern int nsp_axes_insert_child(NspAxes *A, NspGraphic *G, int invalidate);
 extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
@@ -205,11 +206,10 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   nsp_gcscale scale_keep = *Xgc->scales;
-  int lw, font[2];
+  int lw=-1, font[2], nax[4], i;
   GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
   double wrect1[4], inside_bounds[4];
-  int aaint[4]={10,2,10,2};
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
@@ -309,10 +309,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->xlog == TRUE ) xf[1]= 'l';
   if ( P->obj->ylog == TRUE ) xf[2]= 'l';
 
+  for ( i= 0; i <4 ; i++) nax[i]=P->obj->nax->R[i];
+
   nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       P->obj->frect->R,
 			       P->obj->arect->R,
-			       aaint,
+			       nax,
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
@@ -329,9 +331,15 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
 
-  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
-  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
-  lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+  if (  P->obj->font_size != -1) 
+    {
+      Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
+      Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
+    }
+  if ( P->obj->line_width != -1 ) 
+    {
+      lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+    }
 
   /* draw axes, ticks */
   axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid, P->obj->background);
@@ -345,9 +353,16 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->y[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
 
-  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
-  Xgc->graphic_engine->xset_thickness(Xgc, lw);
+  if (  P->obj->font_size != -1) 
+    {
+      Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
+    }
 
+  if ( P->obj->line_width != -1 ) 
+    {
+      Xgc->graphic_engine->xset_thickness(Xgc, lw);
+    }
+  
   /* clip the inside rectangle of the  axe
    * Note that clipping is wrong when an axe is rotated
    * since clipping only works with rectangles
@@ -739,6 +754,36 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
       A->obj->iso = FALSE;
       A->obj->fixed = FALSE;
       break;
+    }
+  if ( A->obj->fixed )
+    memcpy(A->obj->frect->R,A->obj->rect->R,4*sizeof(double));
+  else
+    memcpy(A->obj->frect->R,A->obj->bounds->R,4*sizeof(double));
+}
+
+void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso)
+{
+  NspGraphic *G= (NspGraphic *) A;
+  A->obj->iso = iso;
+  A->obj->auto_axis = auto_axis;
+  /* use strf argument to change the axes */
+  switch (scale)
+    {
+    case '0': /* no computation, the plot use the previus (or default) scale */
+      break;
+    case '1': 
+    case '3': 
+    case '5': 
+    case '7': 
+      memcpy(A->obj->rect->R,rect,4*sizeof(double));
+      A->obj->fixed = TRUE;
+      break;
+    case '2': /* from the min/max of all the datas */
+    case '4': 
+    case '6': 
+    case '8': 
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
+      A->obj->fixed = FALSE;
     }
   if ( A->obj->fixed )
     memcpy(A->obj->frect->R,A->obj->rect->R,4*sizeof(double));

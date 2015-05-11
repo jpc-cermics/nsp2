@@ -36,24 +36,24 @@
 /* -----------NspGrstring ----------- */
 
 
-#define  NspGrstring_Private
+#define  NspGrstring_Private 
 #include <nsp/objects.h>
 #include <nsp/grstring.h>
 #include <nsp/interf.h>
 
-/*
- * NspGrstring inherits from Graphic
+/* 
+ * NspGrstring inherits from Graphic 
  */
 
 int nsp_type_grstring_id=0;
 NspTypeGrstring *nsp_type_grstring=NULL;
 
 /*
- * Type object for NspGrstring
- * all the instance of NspTypeGrstring share the same id.
- * nsp_type_grstring: is an instance of NspTypeGrstring
- *    used for objects of NspGrstring type (i.e built with new_grstring)
- * other instances are used for derived classes
+ * Type object for NspGrstring 
+ * all the instance of NspTypeGrstring share the same id. 
+ * nsp_type_grstring: is an instance of NspTypeGrstring 
+ *    used for objects of NspGrstring type (i.e built with new_grstring) 
+ * other instances are used for derived classes 
  */
 NspTypeGrstring *new_type_grstring(type_mode mode)
 {
@@ -79,7 +79,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for grstring */
+  /* object methods redefined for grstring */ 
 
   top->pr = (print_func *) nsp_grstring_print;
   top->dealloc = (dealloc_func *) nsp_grstring_destroy;
@@ -118,15 +118,15 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 121 "grstring.c"
-  /*
-   * NspGrstring interfaces can be added here
+  /* 
+   * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  if ( nsp_type_grstring_id == 0 )
+  if ( nsp_type_grstring_id == 0 ) 
     {
-      /*
+      /* 
        * the first time we get here we initialize the type id and
        * an instance of NspTypeGrstring called nsp_type_grstring
        */
@@ -135,7 +135,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
       if ( nsp_register_type(nsp_type_grstring) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_grstring(mode);
     }
-  else
+  else 
     {
       type->id = nsp_type_grstring_id;
       return type;
@@ -143,13 +143,13 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 }
 
 /*
- * initialize NspGrstring instances
- * locally and by calling initializer on parent class
+ * initialize NspGrstring instances 
+ * locally and by calling initializer on parent class 
  */
 
 static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 {
-  /* initialize the surtype */
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -159,10 +159,10 @@ static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 }
 
 /*
- * new instance of NspGrstring
+ * new instance of NspGrstring 
  */
 
-NspGrstring *new_grstring()
+NspGrstring *new_grstring() 
 {
   NspGrstring *loc;
   /* type must exists */
@@ -174,10 +174,10 @@ NspGrstring *new_grstring()
 }
 
 /*----------------------------------------------
- * Object method redefined for NspGrstring
+ * Object method redefined for NspGrstring 
  *-----------------------------------------------*/
 /*
- * size
+ * size 
  */
 
 static int nsp_grstring_size(NspGrstring *Mat, int flag)
@@ -186,7 +186,7 @@ static int nsp_grstring_size(NspGrstring *Mat, int flag)
 }
 
 /*
- * type as string
+ * type as string 
  */
 
 static char grstring_type_name[]="Grstring";
@@ -203,7 +203,7 @@ static char *nsp_grstring_type_short_string(NspObject *v)
 }
 
 /*
- * A == B
+ * A == B 
  */
 
 static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
@@ -227,7 +227,7 @@ static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
 }
 
 /*
- * A != B
+ * A != B 
  */
 
 static int nsp_grstring_neq(NspGrstring *A, NspObject *B)
@@ -236,13 +236,13 @@ static int nsp_grstring_neq(NspGrstring *A, NspObject *B)
 }
 
 /*
- * save
+ * save 
  */
 
 int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grstring)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -263,7 +263,7 @@ int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
 }
 
 /*
- * load
+ * load 
  */
 
 NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
@@ -306,7 +306,7 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
 }
 
 /*
- * delete
+ * delete 
  */
 
 void nsp_grstring_destroy_partial(NspGrstring *H)
@@ -316,7 +316,7 @@ void nsp_grstring_destroy_partial(NspGrstring *H)
   if ( H->obj->ref_count == 0 )
    {
   nsp_string_destroy(&(H->obj->font));
-    if ( H->obj->text != NULL )
+    if ( H->obj->text != NULL ) 
       nsp_smatrix_destroy(H->obj->text);
     FREE(H->obj);
    }
@@ -330,13 +330,13 @@ void nsp_grstring_destroy(NspGrstring *H)
 }
 
 /*
- * info
+ * info 
  */
 
 int nsp_grstring_info(NspGrstring *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
-  if ( M == NULLGRSTRING)
+  if ( M == NULLGRSTRING) 
     {
       Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
@@ -348,24 +348,24 @@ int nsp_grstring_info(NspGrstring *M,int indent,const char *name,int rec_level)
 }
 
 /*
- * print
+ * print 
  */
 
 int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLGRSTRING)
+  if ( M == NULLGRSTRING) 
     {
       Sciprintf("Null Pointer NspGrstring \n");
       return TRUE;
     }
-  if (user_pref.pr_as_read_syntax)
-    {
+  if (user_pref.pr_as_read_syntax) 
+    { 
       Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
-    }
-  else
-    {
-      if ( user_pref.pr_depth  <= rec_level -1 )
+    } 
+  else 
+    { 
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_grstring_info(M,indent,pname,rec_level);
           return TRUE;
@@ -393,7 +393,7 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
 }
 
 /*
- * latex print
+ * latex print 
  */
 
 int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_level)
@@ -422,8 +422,8 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
   return TRUE;
 }
 /*-----------------------------------------------------
- * a set of functions used when writing interfaces
- * for NspGrstring objects
+ * a set of functions used when writing interfaces 
+ * for NspGrstring objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
@@ -433,7 +433,7 @@ NspGrstring   *nsp_grstring_object(NspObject *O)
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
   if ( check_cast (O,nsp_type_grstring_id)  == TRUE  ) return ((NspGrstring *) O);
-  else
+  else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_grstring));
   return NULL;
 }
@@ -463,9 +463,9 @@ NspGrstring  *GetGrstring(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
- * constructor
- * if type is non NULL it is a subtype which can be used to
- * create a NspGrstring instance
+ * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspGrstring instance 
  *-----------------------------------------------------*/
 
 static NspGrstring *nsp_grstring_create_void(const char *name,NspTypeBase *type)
@@ -503,12 +503,12 @@ int nsp_grstring_create_partial(NspGrstring *H)
 
 int nsp_grstring_check_values(NspGrstring *H)
 {
-  if ( H->obj->font == NULL)
+  if ( H->obj->font == NULL) 
     {
   if (( H->obj->font = nsp_string_copy("")) == NULL)
        return FAIL;
     }
-  if ( H->obj->text == NULLSMAT)
+  if ( H->obj->text == NULLSMAT) 
     {
      if (( H->obj->text = nsp_smatrix_create("text",0,0,"v",0)) == NULLSMAT)
        return FAIL;
@@ -549,7 +549,7 @@ NspGrstring *nsp_grstring_create_default(const char *name)
 }
 
 /*
- * copy for gobject derived class
+ * copy for gobject derived class  
  */
 
 NspGrstring *nsp_grstring_copy_partial(NspGrstring *H,NspGrstring *self)
@@ -606,7 +606,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
 
 /*-------------------------------------------------------------------
  * wrappers for the NspGrstring
- * i.e functions at Nsp level
+ * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
 int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
@@ -622,7 +622,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
     MoveObj(stack,1,(NspObject  *) H);
   return 1;
-}
+} 
 
 /*-------------------------------------------
  * Methods
@@ -705,7 +705,7 @@ static int _wrap_grstring_set_text(void *self,const char *attr, NspObject *O)
   NspSMatrix *text;
   if ( ! IsSMat(O) ) return FAIL;
   if ((text = (NspSMatrix *) nsp_object_copy_and_name(attr,O)) == NULLSMAT) return FAIL;
-  if (((NspGrstring *) self)->obj->text != NULL )
+  if (((NspGrstring *) self)->obj->text != NULL ) 
     nsp_smatrix_destroy(((NspGrstring *) self)->obj->text);
   ((NspGrstring *) self)->obj->text= text;
   return OK;
@@ -855,7 +855,7 @@ static AttrTab grstring_attrs[] = {
 
 
 /*-------------------------------------------
- * functions
+ * functions 
  *-------------------------------------------*/
 #line 59 "codegen/grstring.override"
 
@@ -883,7 +883,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 
 
 /*----------------------------------------------------
- * Interface
+ * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
@@ -901,7 +901,7 @@ int Grstring_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return ( *(Grstring_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/* used to walk through the interface table
+/* used to walk through the interface table 
     (for adding or removing functions) */
 
 void Grstring_Interf_Info(int i, char **fname, function ( **f))
