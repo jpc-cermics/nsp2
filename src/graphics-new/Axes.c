@@ -48,14 +48,9 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
  * @scale: axis scale mode
  * 
  * draws axis or only rectangle in a graphic frame.
- * 
- *
- **/
-
-/* mode = strflag[2] ou '1' 
+ * mode = strflag[2] ou '1' 
  * scale = strflag[1] 
- *
- */
+ **/
 
 void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
 {
