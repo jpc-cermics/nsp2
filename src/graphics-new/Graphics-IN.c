@@ -1268,7 +1268,8 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 				  int style[],char *strflag, const char *legend,int legend_pos,
 				  int mode,double brect[],int aaint[],
 				  NspMatrix *Mmark,NspMatrix *Mmark_size,NspMatrix *Mmark_color,
-				  NspMatrix *Mline_color,NspMatrix *Mline_thickness)
+				  NspMatrix *Mline_color,NspMatrix *Mline_thickness,
+				  int auto_axis,int iso,int axes)
 {
   NspCurve *curve = NULL;
   const char *l_c = legend, *l_n;
@@ -1280,6 +1281,8 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
   if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
 
   axe->obj->lpos = legend_pos;
+
+  for (i=0; i < 4; i++) axe->obj->nax->R[i]= aaint[i];
 
   /* compute frect using brect or using data */
   switch (strflag[1])
@@ -1388,8 +1391,8 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 	}
     }
   /* updates the axes scale information */
-  nsp_strf_axes( axe , frect, strflag[1]);
-  axe->obj->axes = ( strlen(strflag) >= 2) ? strflag[2] - '0' : 1;
+  nsp_strf_axes_new( axe, frect, strflag[1], auto_axis, iso);
+  axe->obj->axes = axes; 
   axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
   nsp_axes_invalidate(((NspGraphic *) axe));
@@ -1408,7 +1411,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
   int leg_posi;
   NspMatrix *Mmark=NULL,*Mmark_size=NULL, *Mmark_color=NULL, *Mline_color=NULL, *Mline_thickness=NULL;
-
+  int auto_axis=TRUE,iso=FALSE;
   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
@@ -1423,12 +1426,15 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 			 { "mark_color",realmat,NULLOBJ,-1},
 			 { "line_color",realmat,NULLOBJ,-1},
 			 { "line_thickness",realmat,NULLOBJ,-1},
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
 
   int_types T[] = {realmat,obj,new_opts, t_end} ;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,
-	       &Mnax,&Mrect,&strf,&Mstyle,&Mmark,&Mmark_size,&Mmark_color,&Mline_color,&Mline_thickness) == FAIL)
+	       &Mnax,&Mrect,&strf,&Mstyle,&Mmark,&Mmark_size,&Mmark_color,&Mline_color,
+	       &Mline_thickness,&auto_axis,&iso) == FAIL)
     return RET_BUG;
 
   if ( IsNspPList(fobj) )
@@ -1441,7 +1447,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	  return RET_BUG;
 	}
     }
-
+  
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
       /* be sure that y is in a proper state */
@@ -1453,7 +1459,6 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       Scierror("%s: second argument should be a real matrix or a function\n",NspFname(stack));
       return RET_BUG;
     }
-
 
   /* decide what to do according to (x,y) dimensions */
 
@@ -1588,11 +1593,33 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
-#define CheckArg(x,pos)				\
+  if ( opts_2d[7].obj != NULLOBJ) 
+    {
+      /* strf is given use it to fix other arguments */
+      if ( opts_2d[14].obj == NULLOBJ) 
+	{
+	  /* auto_axis not given */
+	  auto_axis = TRUE;
+	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
+	}
+      if ( opts_2d[15].obj == NULLOBJ) 
+	{
+	  /* iso not given */
+	  iso = FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) auto_axis=FALSE;
+	}
+      if ( opts_2d[0].obj == NULLOBJ) 
+	{
+	  /* axes not given */
+	  axes = strf[2] - '0';
+	}
+    }
+  
+#define CheckArg(x,pos)							\
   if ( x != NULL)							\
     {									\
       CheckLength(NspFname(stack),opts_2d[pos].position, x, ncurves);	\
-    }									\
+    }								       
 
   CheckArg(Mmark,9);
   CheckArg(Mmark_size,10);
@@ -1617,10 +1644,11 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',strf);
     }
-
+  
   ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
 		       leg,leg_posi,mode,rect,nax,
-		       Mmark,Mmark_size,Mmark_color,Mline_color,Mline_thickness);
+		       Mmark,Mmark_size,Mmark_color,Mline_color,Mline_thickness,
+		       auto_axis,iso,axes);
 
   if ( ret == NULL && ncurves != 0 )
     return RET_BUG;
@@ -1769,7 +1797,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   int leg_posi;
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
   /* */
-  NspMatrix *x,*y,*z;
+  NspMatrix *x,*y,*z,*z1;
   NspGMatrix1 *gm;
   if ( rhs <= 0)
     {
@@ -1786,11 +1814,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
     {
       /* third argument can be a macro */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
-      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
-	{
-	  nsp_matrix_destroy(z);
-	  return RET_BUG;
-	}
+      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) goto bug;
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
@@ -1803,65 +1827,84 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( z->mn == 0) return 0;
-  if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
-    return RET_BUG;
-  }
-
-  CheckDimProp(NspFname(stack),1,3, x->mn != z->m);
-  CheckDimProp(NspFname(stack),2,3, y->mn != z->n);
-
-  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
-  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
-  if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) return RET_BUG;
-
+  if ( z->mn == 0) goto end0;
+  if ( z->m == 1 || z->n == 1) 
+    {
+      Scierror("%s: third argument is a vector, expecting a matrix \n",
+	       NspFname(stack));
+      goto bug;
+    }
+  
+  if (x->mn != z->m ) 
+    {
+      Scierror("%s: arguments %d and %d have incompatible size\n",
+	       NspFname(stack),1,3);
+      goto bug;
+    }
+  if ( y->mn != z->n) 
+    {
+      Scierror("%s: arguments %d and %d have incompatible size\n",
+	       NspFname(stack),2,3);
+      goto bug;
+    }
+  
+  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) goto bug;
+  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) goto bug;
+  if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) goto bug;
+  
   if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,
 		   Mnax,&nax,frame,axes,&logflags) != 0)
-    return RET_BUG;
+    goto bug;
 
   nsp_gwin_clear();
   /* colout to be added */
-  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
   axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
-  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
+  if ( ( z1 = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) goto bug;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) goto bug;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) goto bug;
   if ( Mcolminmax != NULL )
     {
       if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
-	return RET_BUG;
+	goto bug;
     }
   if ( Mzminmax != NULL)
     {
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
-	return RET_BUG;
+	goto bug;
     }
   if ( Mcolout != NULL)
     {
       if ( (Mcolout = (NspMatrix *) nsp_object_copy_and_name("com",NSP_OBJECT(Mcolout))) == NULLMAT)
-	return RET_BUG;
+	goto bug;
     }
-  gm = nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
-  if ( gm == NULL) return RET_BUG;
+  gm = nsp_gmatrix1_create("gm1",z1,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
+  if ( gm == NULL) goto bug;
   /* insert the new matrix */
   if ( nsp_axes_insert_child(axe,(NspGraphic *)gm, FALSE)== FAIL)
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
-      return RET_BUG;
+      goto bug;
     }
   /* updates the axes scale information */
   nsp_strf_axes( axe ,rect, strf[1]);
   nsp_axes_invalidate(((NspGraphic *) axe));
-  if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
+  if ( Mstyle != Mistyle) nsp_matrix_destroy(Mistyle);
+  if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
   if ( lhs == 1 )
     {
       MoveObj(stack,1,NSP_OBJECT(gm));
       return 1;
     }
   return 0;
+ end0: 
+  if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
+  return 0;
+ bug: 
+  if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
+  return RET_BUG;
 }
 
 /**
@@ -5316,10 +5359,10 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
     {
       ret = (NspObject *) Nsetscale2d_new(wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
     }
-  if ((ret =nsp_object_copy(ret)) == NULLOBJ)
-    return RET_BUG;
   if ( lhs == 1 )
     {
+      if ((ret =nsp_object_copy(ret)) == NULLOBJ)
+	return RET_BUG;
       MoveObj(stack,1,NSP_OBJECT(ret));
       return 1;
     }
