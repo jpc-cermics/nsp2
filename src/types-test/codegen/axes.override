@@ -420,7 +420,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 	  if (cv->obj->legend[0] != '\0' )
 	    {
 	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
-	      if ( cv->obj->color >= 0 ) 
+	      if ( cv->obj->color >= 0 )
 		style[count++]= cv->obj->color;
 	      else
 		style[count++]= - cv->obj->mark;
@@ -692,21 +692,16 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
     case '1': /* from the rect arg */
+      memcpy(A->obj->rect->R,rect,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      A->obj->fixed = TRUE;
+      break;
+    case '2': /* from the min/max of all the datas */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = FALSE;
       A->obj->auto_axis = FALSE;
-      break;
-    case '7': /* backward compatibility  */
-      memcpy(A->obj->rect->R,rect,4*sizeof(double));
-      A->obj->iso = FALSE;
-      A->obj->auto_axis = FALSE;
-      A->obj->fixed = TRUE;
-      break;
-    case '5': /* enlarged for pretty axes from the rect arg */
-      memcpy(A->obj->rect->R,rect,4*sizeof(double));
-      A->obj->auto_axis = TRUE;
-      A->obj->iso = FALSE;
-      A->obj->fixed = TRUE;
+      A->obj->fixed = FALSE;
       break;
     case '3': /* built for an isometric scale from the rect arg */
       memcpy(A->obj->rect->R,rect,4*sizeof(double));
@@ -714,18 +709,17 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
       A->obj->auto_axis = TRUE;
       A->obj->fixed = TRUE;
       break;
-    case '2': /* from the min/max of the x, y datas */
-      /* could be stored in a cache */
+    case '4': /* built for an isometric plot from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
-      A->obj->iso = FALSE;
-      A->obj->auto_axis = FALSE;
+      A->obj->iso = TRUE;
+      A->obj->auto_axis = TRUE;
       A->obj->fixed = FALSE;
       break;
-    case '8': /* backward compatibility  */
-      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
+    case '5': /* case 3 + enlarged for pretty axes from the rect arg */
+      memcpy(A->obj->rect->R,rect,4*sizeof(double));
       A->obj->auto_axis = TRUE;
       A->obj->iso = FALSE;
-      A->obj->fixed = FALSE;
+      A->obj->fixed = TRUE;
       break;
     case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
@@ -733,10 +727,16 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
       A->obj->iso = TRUE;
       A->obj->fixed = FALSE;
       break;
-    case '4': /* built for an isometric plot from the min/max of the x, y datas */
+    case '7': /* backward compatibility  */
+      memcpy(A->obj->rect->R,rect,4*sizeof(double));
+      A->obj->iso = FALSE;
+      A->obj->auto_axis = FALSE;
+      A->obj->fixed = TRUE;
+      break;
+    case '8': /* backward compatibility  */
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
-      A->obj->iso = TRUE;
       A->obj->auto_axis = TRUE;
+      A->obj->iso = FALSE;
       A->obj->fixed = FALSE;
       break;
     }
