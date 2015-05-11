@@ -1281,13 +1281,15 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 
   axe->obj->lpos = legend_pos;
 
-  /* compute brect if not given */
+  /* compute frect using brect or using data */
   switch (strflag[1])
     {
     case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
+      /* frect is given by brect */
       frect[0]=brect[0];frect[1]=brect[1];frect[2]=brect[2];frect[3]=brect[3];
       break;
     case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
+      /* logflag[0] can be e, o , g */
       if ( strlen(logflag) < 1) c='g' ; else c=logflag[0];
       switch ( c )
 	{
@@ -1306,6 +1308,7 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
 
   if (strflag[1] == '7' || strflag[1] == '8' )
     {
+      /* we merge with axes values */
       frect[0] = Min(frect[0], axe->obj->frect->R[0]);
       frect[2] = Max(frect[2], axe->obj->frect->R[2]);
       frect[1] = Min(frect[1], axe->obj->frect->R[1]);
@@ -4733,7 +4736,6 @@ static int int_xstringl_new(Stack stack, int rhs, int opt, int lhs)
 {
   return int_xstring_G(stack,rhs,opt,lhs,FALSE);
 }
-
 
 /*-----------------------------------------------------------
  * xtitle(tit,x,y)
