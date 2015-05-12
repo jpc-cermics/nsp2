@@ -565,7 +565,7 @@ static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 static int zone(double val, double valmin, double valmax, int nv)
 {
-  int z;
+  unsigned int z;
   if ( val > valmax )
     return (nv+1);
   else if ( val < valmin )
