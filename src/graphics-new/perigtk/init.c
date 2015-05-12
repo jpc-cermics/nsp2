@@ -20,55 +20,55 @@
  * jpc@cermics.enpc.fr
  *
  * Initialize a graphic window
- * Common code for Gtk/OpenGL and Cairo 
+ * Common code for Gtk/OpenGL and Cairo
  *--------------------------------------------------------------------------*/
 
 /*
  * initgraphic : initialize graphic window
- * If v2 is not a nul pointer *v2 is the window number to create 
- * EntryCounter is used to check for first Entry + to know the next 
- * available window number 
+ * If v2 is not a nul pointer *v2 is the window number to create
+ * EntryCounter is used to check for first Entry + to know the next
+ * available window number
  */
 
-#ifdef PERICAIRO 
+#ifdef PERICAIRO
 #include <cairo-pdf.h>
 #include <cairo-ps.h>
 #include <cairo-svg.h>
-#endif 
+#endif
 
 static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
 				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data, void *Fig);
 
 static void *initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,
 			 int *wpos,char mode, void *data,void *Fig)
-{ 
+{
   return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data,Fig);
 }
 
-/* used when a graphic window is to be inserted in a more complex 
- * widget hierarchy 
+/* used when a graphic window is to be inserted in a more complex
+ * widget hierarchy
  */
 
-#ifdef PERIGL 
+#ifdef PERIGL
 #define nsp_graphic_new_new nsp_graphic_new_gl_new
-#endif 
-#ifdef PERICAIRO 
+#endif
+#ifdef PERICAIRO
 #define nsp_graphic_new_new nsp_graphic_new_cairo_new
-#endif 
+#endif
 
 int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
+{
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL,NULL);
   return  nsp_get_win_counter()-1;
 }
 
-#ifdef PERIGTK 
+#ifdef PERIGTK
 /* this should be  moved in windows: keep track of window ids
  */
 static int EntryCounter = 0;
 int nsp_get_win_counter() { return EntryCounter;};
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
-#endif 
+#endif
 
 static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
 				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data,void *Fig)
@@ -81,47 +81,47 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   BCG *NewXgc ;
   /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX */
   int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
-  gui_private *private ; 
+  gui_private *private ;
 
   /* private Xgc data initialized to 0 */
-  if ( ( private = calloc(1,sizeof(gui_private)))== NULL) 
+  if ( ( private = calloc(1,sizeof(gui_private)))== NULL)
     {
       Sciprintf("initgraphics: running out of memory \n");
       return NULL;
     }
   /* default values  */
-  private->resize = 0; 
+  private->resize = 0;
   private->zzin_expose= FALSE;
   private->protect= FALSE;
   private->draw= FALSE;
   private->gcol_bg = white;
   private->gcol_fg = black;
-#ifdef PERIGL 
+#ifdef PERIGL
   private->gdk_only= FALSE;
   private->gl_only= FALSE;
-#endif 
+#endif
   private->invalidated.width = 0;
   private->invalidated.height = 0;
   private->invalidated.x = 0;
   private->invalidated.y = 0;
 
-  if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
+  if (( NewXgc = window_list_new(private) ) == (BCG *) 0)
     {
       Sciprintf("initgraphics: unable to alloc\n");
       return NULL;
     }
   NewXgc->CurWindow = WinNum;
 
-  /* the graphic engine associated to this graphic window */  
-#ifdef PERIGL 
+  /* the graphic engine associated to this graphic window */
+#ifdef PERIGL
   NewXgc->graphic_engine = &GL_gengine ;
-#else 
-#ifdef PERICAIRO 
+#else
+#ifdef PERICAIRO
   NewXgc->graphic_engine = &Cairo_gengine;
-#else   
+#else
   NewXgc->graphic_engine = &Gtk_gengine;
-#endif 
-#endif 
+#endif
+#endif
   NewXgc->actions = &nsp_gc_actions;
 
   start_sci_gtk(); /* be sure that gtk is started */
@@ -135,13 +135,13 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->ClipRegionSet=0;
   NewXgc->CurDashStyle=0;
   NewXgc->IDLastPattern=0;
-  NewXgc->Numcolors=0; 
+  NewXgc->Numcolors=0;
   NewXgc->NumBackground=0;
   NewXgc->NumForeground=0;
-  NewXgc->NumHidden3d=0; 
+  NewXgc->NumHidden3d=0;
   NewXgc->Autoclear=0;
   /* default colormap not instaled */
-  NewXgc->CmapFlag = -1; 
+  NewXgc->CmapFlag = -1;
   /* default resize not yet defined */
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
@@ -149,14 +149,14 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->figure_bg_draw = TRUE;
   /* cairo graphics without window */
 #ifdef PERICAIRO
-  if ( string == NULL || string[0]=='\0' ) 
+  if ( string == NULL || string[0]=='\0' )
     {
-#endif 
+#endif
       if ( win != NULL )
 	{
 	  gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
 	}
-      else 
+      else
 	{
 	  gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
 	}
@@ -166,30 +166,30 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
     {
       /* when string is non null then surface can be a transmited surface */
       cairo_t *cairo_cr = data;
-      if ( cairo_cr == NULL) 
+      if ( cairo_cr == NULL)
 	{
 	  cairo_surface_t *surface;
 	  surface = cairo_pdf_surface_create (string,400,600 );
 	  if ( surface != NULL)
 	    {
-	      cairo_cr = cairo_create (surface); 
-	      cairo_surface_destroy (surface); 
+	      cairo_cr = cairo_create (surface);
+	      cairo_surface_destroy (surface);
 	    }
 	}
       NewXgc->private->cairo_cr = cairo_cr;
     }
 #endif
 
-  /* next values are to be set since initialize_gc 
-   * action depend on the current state defined by these 
-   * variables. For pixmap, resizestatus and colorstatus 
-   * initialize performs a switch from old value to new value 
+  /* next values are to be set since initialize_gc
+   * action depend on the current state defined by these
+   * variables. For pixmap, resizestatus and colorstatus
+   * initialize performs a switch from old value to new value
    */
   /* Default value is without Pixmap */
-  NewXgc->CurPixmapStatus = 0; 
-#if defined(PERIGL) && !defined(PERIGLGTK) 
-  NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
-#endif 
+  NewXgc->CurPixmapStatus = 0;
+#if defined(PERIGL) && !defined(PERIGLGTK)
+  NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;
+#endif
   /* initialize a pango_layout */
   nsp_fonts_initialize(NewXgc);
   nsp_initialize_gc(NewXgc);
@@ -197,7 +197,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
 
   /* attach a figure to the graphic window */
-  if ( private->window != NULL) 
+  if ( private->window != NULL)
     {
       gname = gtk_window_get_title (GTK_WINDOW(private->window));
     }
@@ -226,8 +226,8 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
 
 
 /*
- * partial or full creation of a graphic nsp widget 
- * if is_top == FALSE a partial widget (vbox) is created 
+ * partial or full creation of a graphic nsp widget
+ * if is_top == FALSE a partial widget (vbox) is created
  */
 
 static GtkTargetEntry target_table[] = {
@@ -245,7 +245,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gint iw, ih;
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
-#if defined(PERIGL) && !defined(PERIGLGTK) 
+#if defined(PERIGL) && !defined(PERIGLGTK)
   guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
   GdkGLConfig *glconfig;
 
@@ -261,7 +261,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 	}
     }
   /* examine_gl_config_attrib(glconfig); */
-#endif 
+#endif
 
   /* initialise pointers */
   dd->private->drawing = NULL;
@@ -273,41 +273,41 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* gtk_widget_push_colormap(gdk_rgb_get_cmap()); */
 
   /* create window etc */
-  if ( wdim != NULL ) 
+  if ( wdim != NULL )
     {
       dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
       dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
     }
-  else 
+  else
     {
       dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
       dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
     }
 
-  if ( is_top == TRUE ) 
+  if ( is_top == TRUE )
     {
       dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-#if 1 
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); 
-#else 
-      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE); 
-#endif 
+#if 1
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+#else
+      gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
+#endif
       gtk_widget_realize(dd->private->window);
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
     }
-  else 
+  else
     {
       dd->private->window = win ;
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-#if 1 
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE); 
-#else 
+#if 1
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+#else
       gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
-#endif 
+#endif
       /* gtk_widget_realize(dd->private->window);*/
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER(box) , vbox);
@@ -341,7 +341,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   /* fix min size of the scrolled window */
-  if ( wpdim != NULL) 
+  if ( wpdim != NULL)
     gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
   else
     gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
@@ -350,7 +350,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
 
-  if ( is_top == TRUE ) 
+  if ( is_top == TRUE )
     gtk_widget_realize(scrolled_window);
   else
     gtk_widget_show(scrolled_window);
@@ -360,20 +360,20 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
 				(gfloat) viewport_pos[0]);
       gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[1]);      
+				(gfloat) viewport_pos[1]);
     }
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
-#if defined(PERIGL) && !defined(PERIGLGTK) 
-  /* Set OpenGL-capability to the widget 
-   * opengl rendering in the window 
+#if defined(PERIGL) && !defined(PERIGLGTK)
+  /* Set OpenGL-capability to the widget
+   * opengl rendering in the window
    */
   gtk_widget_set_gl_capability (dd->private->drawing,
 				glconfig,
 				NULL,
 				TRUE,
 				GDK_GL_RGBA_TYPE);
-#else 
+#else
   /* we use our own double buffer */
    gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
 
@@ -381,7 +381,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
 #if 0
-  gtk_drag_source_set(dd->private->window,GDK_BUTTON1_MASK | 
+  gtk_drag_source_set(dd->private->window,GDK_BUTTON1_MASK |
 		      GDK_BUTTON2_MASK | GDK_BUTTON3_MASK,
 		      target_table, n_targets ,GDK_ACTION_COPY);
   g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_get",
@@ -391,7 +391,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 #if 0
   g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_drop",
 		    G_CALLBACK( target_drag_drop), NULL);
-#endif 
+#endif
 
   g_signal_connect (GTK_OBJECT(dd->private->drawing), "drag_data_received",
 		    G_CALLBACK (target_drag_data_received), NULL);
@@ -415,16 +415,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
    * to reduce the number of GDK_MOTION_NOTIFY events received.
    */
 
-  gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
-			| GDK_BUTTON_PRESS_MASK 
+  gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK
+			| GDK_BUTTON_PRESS_MASK
 			| GDK_BUTTON_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK
 			/* get all motions */
-			| GDK_POINTER_MOTION_MASK 
+			| GDK_POINTER_MOTION_MASK
 			/* get motion when pressed buttons move*/
 			/* | GDK_BUTTON_MOTION_MASK */
 			| GDK_LEAVE_NOTIFY_MASK );
-  
+
   /* private->drawingarea properties */
   /* min size of the graphic window */
   gtk_widget_set_size_request(GTK_WIDGET (dd->private->drawing), iw, ih);
@@ -444,15 +444,15 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
 		   G_CALLBACK(expose_event_new), (gpointer) dd);
-  
-  /* 
-   *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
+
+  /*
+   *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint",
    *  G_CALLBACK (cairo_paint),(gpointer) dd );
    */
 
   g_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
 		   G_CALLBACK(sci_destroy_window), (gpointer) dd);
-  
+
   g_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
 		   G_CALLBACK(sci_delete_window), (gpointer) dd);
 
@@ -461,20 +461,20 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* show everything */
 
-  if ( is_top == TRUE ) 
+  if ( is_top == TRUE )
     {
-      /* create offscreen drawable : Already done in the realize_event 
+      /* create offscreen drawable : Already done in the realize_event
        */
-      if ( wpos != NULL ) 
+      if ( wpos != NULL )
 	gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
       gtk_widget_realize(dd->private->window);
       gtk_widget_show_all(dd->private->window);
     }
-  else 
+  else
     {
-      /* we need here to realize the dd->private->drawing 
+      /* we need here to realize the dd->private->drawing
        * this will create offscreen drawable : in realize_event
-       * and the initialize_gc 
+       * and the initialize_gc
        */
       gtk_widget_realize(dd->private->drawing);
     }

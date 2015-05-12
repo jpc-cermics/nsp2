@@ -1248,7 +1248,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int aaint[4]={10,2,10,2};
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( Obj->obj->show == FALSE ) return;
-  
+
   flag[1]= P->obj->scale_flag; /* XX flag should be replaced by P->obj->scale_flag */
 
   if ( rect != NULL) rect_a = *rect;
@@ -1545,14 +1545,14 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       nf += G->type->n_faces(Xgc,G);
       cloc = cloc->next;
     }
-  
+
   x[0]= Box[0];y[0]= Box[1];zz[0]= Box[2];
   x[1]= Box[3];y[1]= Box[4];zz[1]= Box[5];
 
   nsp_plot3d_update_bounds(Xgc,"box",x,y,zz,&two,&two,&theta,&alpha,legend,&flag[1],
 			   ebox,&zzmin,&zzmax,param3d_t);
   SetEch3d1(Xgc,&box,ebox,theta,alpha,(long)(flag[1]+1)/2);
-  
+
 #ifdef WITH_GTKGLEXT
   /* transmit info to opengl pretending we are doing 2d !!! */
   if ( Xgc->graphic_engine == &GL_gengine )
@@ -1568,22 +1568,10 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /* fabrication de la boite et calcul de ses coordonnees ds le repere local */
   if ( with_box == TRUE ) B = make_box(Xgc,Box, BTRUE, box_style,box_color, lim, legend);
 
-#ifdef ALLOC_OBJ
-  HF= malloc( nf * sizeof(HFstruct) );
-  z = malloc( nf * sizeof(double) );
-  p = malloc( nf * sizeof(int) );
-  /* just to accelerate next step */
-  objs_array = malloc( nbObj*sizeof(NspObject *));
-#else
   HF= graphic_alloc(7, nf,  sizeof(HFstruct) );
   z = graphic_alloc(8, nf,  sizeof(double) );
   p = graphic_alloc(9, nf,  sizeof(int) );
   objs_array = graphic_alloc(10, nbObj,sizeof(NspObject *));
-#endif
-
-
-  /* just to accelerate next step */
-  objs_array = malloc( nbObj*sizeof(NspObject *));
 
   cloc = Children->first ;
   n=0;
@@ -1592,7 +1580,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       objs_array[n++]= cloc->O;
       cloc = cloc->next;
     }
-  
+
   /* step 1 : for each object :
    *            a/ get the coordinates in the local repair
    *               and determines the pos of each point within the pyramidal
@@ -1643,11 +1631,6 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
     nsp_obj3d_draw_near_box_segments(Xgc,B, foreground_color);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
 
-#ifdef ALLOC_OBJ
-  free(HF);
-  free(z);
-  free(p);
-#endif
 }
 
 #ifdef  WITH_GTKGLEXT
@@ -2181,7 +2164,7 @@ static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ti
   int i, j, first, last, inc=1, nb_grad, nb_ticks;
   double work[20], *ticks;
 
-  if ( isinf(*vmin) || isinf(*vmax)) 
+  if ( isinf(*vmin) || isinf(*vmax))
     {
       nb_grad =2;
     }
@@ -2292,9 +2275,9 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
     }
   if ( 0 && B->leg_coord != NULL )
     {
-      char *legx,*legy,*legz; 
+      char *legx,*legy,*legz;
       char *loc= malloc((strlen(B->legend)+1)*sizeof(char));
-      if ( loc == NULL )    
+      if ( loc == NULL )
 	{
 	  Scistring("Objs3d: cannot allocate space for legends\n");
 	  return;
@@ -3100,4 +3083,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3104 "objs3d.c"
+#line 3087 "objs3d.c"

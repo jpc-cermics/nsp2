@@ -23,15 +23,15 @@
 #include <stdio.h>
 #include <math.h>
 #include <gtk/gtk.h>
-#include <nsp/figure.h> 
-#include <nsp/axes.h> 
-#include <nsp/curve.h> 
+#include <nsp/figure.h>
+#include <nsp/axes.h>
+#include <nsp/curve.h>
 #include "nsp/math.h"
 #include "nsp/graphics-new/Graphics.h"
 
 
 /*----------------------------------------------------
- *  legend="leg1@leg2@leg3@...."             
+ *  legend="leg1@leg2@leg3@...."
  *  legend contain legends separated by '@'
  *  if nlegend is the number of legends stored in legend
  *  then the function Legends draw  Min(*n1,6,nlegends) legends
@@ -44,7 +44,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 {
   int rect[4],box[4],xx=0,yy=0;
   char *loc;
-  double xoffset,yoffset;  
+  double xoffset,yoffset;
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
 
   Xgc->graphic_engine->boundingbox(Xgc,"pl",xx,yy,rect);
@@ -66,9 +66,9 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
       nsp_legends_box(Xgc,n1,style,loc,box,TRUE,xoffset,yoffset,pat,fg,sep);
       strcpy(loc,legend);
 
-      switch (pos) 
+      switch (pos)
 	{
-	case legend_ur: 
+	case legend_ur:
 	  /* upper right position of the legend box */
 	  box[0] = Xgc->scales->Irect.x + Xgc->scales->Irect.width;
 	  box[1] = Xgc->scales->Irect.y;
@@ -108,7 +108,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
 	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
-	case legend_dl: 
+	case legend_dl:
 	  /* down left  position  of the legend box */
 	  box[0] = Xgc->scales->Irect.x;
 	  box[1] = Xgc->scales->Irect.y  + Xgc->scales->Irect.height;;
@@ -129,8 +129,8 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
     }
 }
 
-/* 
- * draw or compute the bounding box 
+/*
+ * draw or compute the bounding box
  */
 
 static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int box[4],
@@ -145,11 +145,11 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
       box[2]= xi;
     }
   for ( i = 0 ; i < n1 ; i++)
-    {  
+    {
       xs=inint(box[0]+xi);
       ys=inint(yi);
       if ( i==0) legend=strtok(legend,sep); else legend=strtok((char *)0,sep);
-      if (legend != 0 && strcmp(legend,"") != 0 ) 
+      if (legend != 0 && strcmp(legend,"") != 0 )
 	{
 	  n1count++;
 	  if ( get_box == TRUE )
@@ -163,16 +163,18 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle
 						 ,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
+	      Xgc->graphic_engine->boundingbox(Xgc,legend,xs,ys,rect);
 	      if (style[i] > 0)
-		{ 
+		{
 		  int n=1,p=2;
 		  polyx[0]=inint(box[0]);polyx[1]=inint(box[0]+xoffset);
-		  polyy[0]=polyy[1]=inint(yi - rect[3]/2.0);
+		  polyy[0]=inint(yi - rect[3]/2.0);
+		  polyy[1]=polyy[0];
 		  lstyle[0]=style[i];
 		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
 	      else
-		{ 
+		{
 		  /* FIXME: should be affected by marksize */
 		  int n=1,p=1;
 		  polyx[0]=inint(box[0]+xoffset);
@@ -188,16 +190,14 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
     {
       box[3]= n1count*1.5*yoffset;
     }
-  else 
+  else
     {
       /* enlarged box which is drawn  */
       Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
-      box[0] -= rect[2]/2; 
-      box[1] -= rect[3]/2; 
-      box[2] += rect[2]; 
+      box[0] -= rect[2]/2;
+      box[1] -= rect[3]/2;
+      box[2] += rect[2];
       box[3] += rect[3];
       Xgc->graphic_engine->drawrectangle(Xgc,box);
     }
 }
-
-

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,14 +24,14 @@
 
 
 /*
- * cleararea: clear a rectangle zone 
+ * cleararea: clear a rectangle zone
  */
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
   int old;
   nsp_ogl_set_2dview(Xgc);
-  if ( r == NULL ) 
+  if ( r == NULL )
     {
       clearwindow(Xgc);
       return ;
@@ -48,68 +48,68 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
 }
 
 /*
- * line 
+ * line
  */
 
 static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
 {
-  
+
   glBegin(GL_LINES);
   glVertex2i(x1, y1);
   glVertex2i(x2, y2);
   glEnd();
 }
 
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
+/* Draw a set of segments
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * n is the size of vx and vy
  */
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
-  
+
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
 
-/* Draw a set of arrows 
- * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- * as is 10*arsize (arsize) the size of the arrow head in pixels 
+/* Draw a set of arrows
+ * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * n is the size of vx and vy
+ * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
-{ 
-  
+{
+
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
 /*
  * Rectangles
- * Draw or fill a set of rectangle 
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for x,y,width,height 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- * fillvect[*n] : specify the action  
- * if fillvect[i] is > 0 then fill the rectangle i 
- * if fillvect[i] is == 0  then only draw the rectangle i 
- *                         with the current private->drawing style 
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
+ * Draw or fill a set of rectangle
+ * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3])
+ * for x,y,width,height
+ * for i=0 step 4
+ * (*n) : number of rectangles
+ * fillvect[*n] : specify the action
+ * if fillvect[i] is > 0 then fill the rectangle i
+ * if fillvect[i] is == 0  then only draw the rectangle i
+ *                         with the current private->drawing style
+ * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  
+
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
 /* Draw one rectangle with current line style */
 
 static void drawrectangle(BCG *Xgc,const int rect[])
-{ 
-  
+{
+
   glBegin(GL_LINE_LOOP);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
@@ -121,7 +121,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 /* fill one rectangle, with current pattern */
 
 static void fillrectangle(BCG *Xgc,const int rect[])
-{ 
+{
   glBegin(GL_QUADS);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
@@ -131,78 +131,78 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 }
 
 /*
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
+ * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : is the value of a function on the grid defined by x,y
+ *  on each rectangle the average value of z is computed
  */
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
-  
+
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
 /*
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
+ * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
+ *  of each rectangle.
+ *  z[i,j] is the value on the middle of rectangle
  *        P1= x[i],y[j] x[i+1],y[j+1]
  */
 
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
-  
+
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
 
 /*
- * Circles and Ellipsis 
- * Draw or fill a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
- * with pattern fillvect[i] 
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
- * The private->drawing style is the current private->drawing 
+ * Circles and Ellipsis
+ * Draw or fill a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
+ * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i
+ * with pattern fillvect[i]
+ * if fillvect[i] is > lastpattern  then only draw the ellipsis i
+ * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
+static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 {
-  
+
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
 /*
- * Draw a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
+ * Draw a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
  */
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  
+
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
-/* Draw a single ellipsis or part of it 
+/* Draw a single ellipsis or part of it
  */
 
 static void drawarc(BCG *Xgc,int arc[])
-{ 
+{
    /* FIXME */
   Xgc->graphic_engine->generic->drawarc(Xgc,arc);
 }
@@ -210,31 +210,31 @@ static void drawarc(BCG *Xgc,int arc[])
 /* Fill a single elipsis or part of it with current pattern  */
 
 static void fillarc(BCG *Xgc,int arc[])
-{ 
+{
    /* FIXME */
   Xgc->graphic_engine->generic->fillarc(Xgc,arc);
 }
 
-/* 
- * Draw a set of (*n) polylines (each of which have (*p) points) 
- * with lines or marks 
+/*
+ * Draw a set of (*n) polylines (each of which have (*p) points)
+ * with lines or marks
  * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i 
+ * drawvect[i] >  0 use a line style for polyline i
  */
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
-{ 
-  
+{
+
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
 /*
- *  fill a set of polygons each of which is defined by 
- * (*p) points (*n) is the number of polygons 
- * the polygon is closed by the routine 
- * fillvect[*n] :         
- * if fillvect[i] == 0 draw the boundaries with current color 
- * if fillvect[i] > 0  draw the boundaries with current color 
+ *  fill a set of polygons each of which is defined by
+ * (*p) points (*n) is the number of polygons
+ * the polygon is closed by the routine
+ * fillvect[*n] :
+ * if fillvect[i] == 0 draw the boundaries with current color
+ * if fillvect[i] > 0  draw the boundaries with current color
  *               then fill with pattern fillvect[i]
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  */
@@ -245,13 +245,13 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  
+
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
-	{ 
+	{
 	  /* fill + boundaries **/
 	  xset_pattern(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
@@ -268,7 +268,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
-      else 
+      else
 	{
 	  xset_pattern(Xgc,-fillvect[i]);
 	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
@@ -279,19 +279,19 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
-/* 
- * Only draw one polygon  with current line style 
+/*
+ * Only draw one polygon  with current line style
  * according to *closeflag : it's a polyline or a polygon
- * n is the number of points of the polyline 
+ * n is the number of points of the polyline
  */
 
 static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
+{
   gint i;
   if ( n <= 1) return;
-  
+
   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  if ( closeflag == 1 ) 
+  if ( closeflag == 1 )
     glBegin(GL_LINE_LOOP);
   else
     glBegin(GL_LINE_STRIP);
@@ -300,34 +300,34 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
-/* 
- * Fill the polygon or polyline 
- * according to *closeflag : the given vector is a polyline or a polygon 
+/*
+ * Fill the polygon or polyline
+ * according to *closeflag : the given vector is a polyline or a polygon
  */
 
 /* FIXME: Attention ça ne marche que pour un polygone convexe !!!!!!
- * sinon il faut le trianguler 
+ * sinon il faut le trianguler
  */
 
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
+static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
-  
+
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
   glEnd();
-  
+
 }
 
-/* 
+/*
  * Draw the current mark centred at points defined
- * by vx and vy (vx[i],vy[i]) 
+ * by vx and vy (vx[i],vy[i])
  */
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-  
+
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -335,8 +335,8 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       for (i=0; i< n ; i++) glVertex2i( vx[i], vy[i]);
       glEnd();
     }
-  else 
-    { 
+  else
+    {
       int i,keepid,keepsize,hds;
       i=1;
       keepid =  Xgc->fontId;
@@ -352,7 +352,7 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z);
 
 void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
 {
-  
+
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -360,8 +360,8 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
       for (i=0; i< n ; i++) glVertex3f( vx[i], vy[i],vz[i]);
       glEnd();
     }
-  else 
-    { 
+  else
+    {
       int i,keepid,keepsize,hds;
       i=1;
       keepid =  Xgc->fontId;
@@ -375,28 +375,28 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
 
 
 /*
- *   Draw an axis whith a slope of alpha degree (clockwise) 
- *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
- *   following way : 
- *   \begin{itemize} 
- *   \item   $n=<n1,n2>$, 
- *   \begin{verbatim} 
- *   |            |           | 
- *   |----|---|---|---|---|---| 
- *   <-----n1---->                  
- *   <-------------n2--------> 
- *   \end{verbatim} 
- *   $n1$and $n2$ are int numbers for interval numbers. 
- *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
- *   two marks, $r$ size in points of small mark, $r*coeff$  
- *   size in points of big marks. (they are doubleing points numbers) 
- *   \item $init$. Initial point $<x,y>$.  
- *   \end{itemize} 
+ *   Draw an axis whith a slope of alpha degree (clockwise)
+ *   . Along the axis marks are set in the direction ( alpha + pi/2), in the
+ *   following way :
+ *   \begin{itemize}
+ *   \item   $n=<n1,n2>$,
+ *   \begin{verbatim}
+ *   |            |           |
+ *   |----|---|---|---|---|---|
+ *   <-----n1---->
+ *   <-------------n2-------->
+ *   \end{verbatim}
+ *   $n1$and $n2$ are int numbers for interval numbers.
+ *   \item $size=<dl,r,coeff>$. $dl$ distance in points between
+ *   two marks, $r$ size in points of small mark, $r*coeff$
+ *   size in points of big marks. (they are doubleing points numbers)
+ *   \item $init$. Initial point $<x,y>$.
+ *   \end{itemize}
  */
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  
+
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
@@ -408,15 +408,15 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  
+
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 
-/* drawing marks with pango 
+/* drawing marks with pango
  */
 
-static const int symbols[] = 
+static const int symbols[] =
   {
     0x22C5, /* lozenge */
     0x002B, /* plus sign */
@@ -441,9 +441,9 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 {
   double dx,dy;
   PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb]; 
+  int code = symbols[Xgc->CurHardSymb];
   gchar symbol_code[4], *iter = symbol_code;
-  
+
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
@@ -455,7 +455,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   xset_pattern(Xgc,Xgc->CurColor);
   glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-  if (0) 
+  if (0)
     {
       /* draw the ink_rectangle around the mark */
       int i;
@@ -469,7 +469,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 static void draw_mark3D(BCG *Xgc,double x, double y, double z)
 {
   PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb]; 
+  int code = symbols[Xgc->CurHardSymb];
   gchar symbol_code[4], *iter = symbol_code;
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
@@ -489,20 +489,20 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
 }
 
 
-/* text and rotated text with pango 
+/* text and rotated text with pango
  */
 
 static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
 				       const PangoMatrix *matrix, GdkRectangle *rect);
 
-/* 
- * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c 
- *        to deal with the case when string can be on multiple lines 
- *        but pango could make this directly. 
- * maybe we should change the display an consider that (x,y) is the baseline 
+/*
+ * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c
+ *        to deal with the case when string can be on multiple lines
+ *        but pango could make this directly.
+ * maybe we should change the display an consider that (x,y) is the baseline
  * of the string not its lower left boundary.
- * Note that if the string contains \n then the layout will have multiple lines 
- * 
+ * Note that if the string contains \n then the layout will have multiple lines
+ *
  */
 
 static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
@@ -510,11 +510,11 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  
+
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /*  PangoLayoutLine *line;
-   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
-   *  if ( nline == 1 ) 
+   *  nline = pango_layout_get_line_count(Xgc->private->layout);
+   *  if ( nline == 1 )
    *    {
    *   / * we want (x,y) to be at the baseline of the first string position * /
    *   line = pango_layout_get_line(Xgc->private->layout,0);
@@ -523,36 +523,36 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
    *   width = logical_rect.width/PANGO_SCALE;
    */
   /* used to position the descent of the last line of layout at y */
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-  if ( Abs(angle) >= 0.1) 
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
+  if ( Abs(angle) >= 0.1)
     {
       double xt,yt;
       GdkRectangle rect;
-      PangoMatrix matrix = PANGO_MATRIX_INIT; 
+      PangoMatrix matrix = PANGO_MATRIX_INIT;
       pango_matrix_rotate (&matrix, - angle );
       pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
       pango_layout_context_changed (Xgc->private->layout);
       pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context, 
+      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context,
 				 &matrix,&rect);
-      /* we want to change the transformation in order to have the upper left 
-       * point of the enclosing box after rotation at (0,0) since 
-       * gl_pango_ft2_render_layout seams not to work fine if it is not the case 
+      /* we want to change the transformation in order to have the upper left
+       * point of the enclosing box after rotation at (0,0) since
+       * gl_pango_ft2_render_layout seams not to work fine if it is not the case
        */
       matrix.x0= -rect.x; matrix.y0=-rect.y;
       pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
       pango_layout_context_changed (Xgc->private->layout);
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context, 
+      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context,
 				 &matrix,&rect);
-      /* the down, left point of the enclosing rectangle is at position (x,y) 
-       * we need to translate since we want the down left corner of the rotated rectangle 
+      /* the down, left point of the enclosing rectangle is at position (x,y)
+       * we need to translate since we want the down left corner of the rotated rectangle
        * to be at position (x,y)
        */
       xt = 0 * matrix.xx + height * matrix.xy + matrix.x0;
       yt = 0 * matrix.yx + height * matrix.yy + matrix.y0;
       glRasterPos2i(x-xt,y+rect.height  - yt);
       gl_pango_ft2_render_layout (Xgc->private->layout,&rect);
-      if (0) 
+      if (0)
 	{
 	  /* draw the enclosing rectangle */
 	  int myrect[]={ x-xt,y-yt ,rect.width,rect.height};
@@ -561,13 +561,13 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 	}
       pango_context_set_matrix (Xgc->private->ft2_context,NULL);
       pango_layout_context_changed (Xgc->private->layout);
-      if (0) 
+      if (0)
 	{
 	  /* draw the rotated enclosing rectangle */
 	  double xx[]={0,width},yy[]={0,height};
 	  int vx[4],vy[4],ik[]={0,1,3,2},i,j,k;
 	  double dx,dy;
-	  for ( i = 0 ; i < 2 ; i++) 
+	  for ( i = 0 ; i < 2 ; i++)
 	    {
 	      for ( j=0; j < 2 ; j++)
 		{
@@ -596,8 +596,8 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 }
 
 
-/* returns the enclosing rectangle of the pango layout transformed 
- * by matrix transformation: 
+/* returns the enclosing rectangle of the pango layout transformed
+ * by matrix transformation:
  */
 
 static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
@@ -613,10 +613,10 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
       for (j = 0; j < 2; j++)
 	{
 	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
-	  
+
 	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
 	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
-	  
+
 	  if (i == 0 && j == 0)
 	    {
 	      x_min = x_max = xt;
@@ -635,25 +635,25 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
 	    }
 	}
     }
-  
+
   rect->x = floor (x_min);
   rect->width = ceil (x_max) - rect->x;
   rect->y = floor (y_min);
   rect->height = floor (y_max) - rect->y;
 }
 
-/* returns the bounding box for a non rotated string 
+/* returns the bounding box for a non rotated string
  */
 
 static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
 
-/* pixbuf 
+/* pixbuf
  *
  */
 
@@ -673,7 +673,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
   glRasterPos2i(dest_x, dest_y );
   if ( nChannels == 4 )
     glDrawPixels( w,h,GL_RGBA,GL_UNSIGNED_BYTE, texpix);
-  else 
+  else
     glDrawPixels( w,h,GL_RGB,GL_UNSIGNED_BYTE, texpix);
   glPixelZoom (1.0,1.0);
 }
@@ -685,11 +685,11 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
 
 /**
  * xset_clip:
- * @Xgc: a graphic context 
- * @x: rectangle to be used for clipping 
- * 
- * Set a clip zone (rectangle) 
- * 
+ * @Xgc: a graphic context
+ * @x: rectangle to be used for clipping
+ *
+ * Set a clip zone (rectangle)
+ *
  **/
 
 static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
@@ -701,9 +701,9 @@ static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 
 /**
  * xset_unclip:
- * @Xgc: a #BCG  
- * 
- * unset clip zone 
+ * @Xgc: a #BCG
+ *
+ * unset clip zone
  **/
 
 static void xset_unclip(BCG *Xgc)
@@ -716,10 +716,10 @@ static void xset_unclip(BCG *Xgc)
 
 /**
  * xget_clip:
- * @Xgc: a #BCG  
- * @x: an int pointer 
- * 
- * Get the boundaries of the current clip zone 
+ * @Xgc: a #BCG
+ * @x: an int pointer
+ *
+ * Get the boundaries of the current clip zone
  **/
 
 static void xget_clip(BCG *Xgc,int *x)
@@ -735,7 +735,7 @@ static void xget_clip(BCG *Xgc,int *x)
 }
 
 
-/* Open GL clipping 
+/* Open GL clipping
  */
 
 static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
@@ -773,15 +773,15 @@ static void unclip_rectangle(const GdkRectangle *clip_rect)
 
 
 /* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations 
- * default value is GL_COPY for which we disable Xor mode 
+ * Not in Postscript, Read The X11 manual to get more informations
+ * default value is GL_COPY for which we disable Xor mode
  */
 
-static struct alinfo { 
+static struct alinfo {
   char *name;
   GLenum id;
   char *info;} AluStruc_[] =
-    { 
+    {
       {"GXclear" , GL_CLEAR," 0 "},
       {"GXand" , GL_AND," src AND dst "},
       {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
@@ -801,18 +801,18 @@ static struct alinfo {
     };
 
 static void xset_alufunction1(BCG *Xgc,int num)
-{   
-  GLenum value ; 
+{
+  GLenum value ;
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
-  /* FIXME: is it a good choice ? 
+  /* FIXME: is it a good choice ?
    * to disable by default for GL_COPY
    */
-  if ( value == GL_COPY ) 
+  if ( value == GL_COPY )
     {
       glDisable(GL_COLOR_LOGIC_OP);
     }
-  else 
+  else
     {
       glEnable(GL_COLOR_LOGIC_OP);
       glLogicOp(value);
@@ -820,16 +820,16 @@ static void xset_alufunction1(BCG *Xgc,int num)
 }
 
 static int xget_alufunction(BCG *Xgc)
-{ 
+{
   return  Xgc->CurDrawFunction ;
 }
 
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
-  if ( value == 0) 
+  if ( value == 0)
     {
-      /* 
+      /*
 	 gdk_gc_set_line_attributes(Xgc->private->wgc,
 	 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
 	 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
@@ -837,29 +837,29 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
       /* FIXME : */
       glLineWidth( ((Xgc->CurLineWidth <= 1) ? 2.0 : Xgc->CurLineWidth)*0.5);
     }
-  else 
+  else
     {
-#if 0 
+#if 0
       gint8 buffdash[18];
       int i;
       for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
       gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-      gdk_gc_set_line_attributes(Xgc->private->wgc, 
+      gdk_gc_set_line_attributes(Xgc->private->wgc,
 				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
 				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-#endif 
+#endif
     }
 }
 
 /**
  * pixmap_clear_rect:
- * @Xgc: a #BCG 
- * @x: integer 
- * @y: integer 
+ * @Xgc: a #BCG
+ * @x: integer
+ * @y: integer
  * @w: integer
  * @h: integer
- * 
- * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
+ *
+ * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h)
  * in the extra_pixmap using the background color.
  **/
 
@@ -867,11 +867,11 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
   /* XXX when PERIGLGTK is active  the current drawable which is always a pixmap */
-  int status = 1; 
-#ifndef PERIGLGTK 
+  int status = 1;
+#ifndef PERIGLGTK
   status = Xgc->CurPixmapStatus;
-#endif 
-  if ( status == 1 ) 
+#endif
+  if ( status == 1 )
     {
       glClearColor(Xgc->private->gcol_bg.red /255.0,
 		   Xgc->private->gcol_bg.green /255.0,
@@ -882,43 +882,43 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 
 /**
  * pixmap_resize:
- * @Xgc: a #BCG 
- * 
- * resizes, if present the extra_pixmap according to window size change 
+ * @Xgc: a #BCG
+ *
+ * resizes, if present the extra_pixmap according to window size change
  **/
 
 static void pixmap_resize(BCG *Xgc)
 {
-  if ( Xgc->CurPixmapStatus == 1) 
+  if ( Xgc->CurPixmapStatus == 1)
     {
-      int x= Xgc->CWindowWidth; 
+      int x= Xgc->CWindowWidth;
       int y= Xgc->CWindowHeight;
       /* create a new pixmap */
       GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
-      if ( temp  == NULL ) 
+      if ( temp  == NULL )
 	{
 	  xinfo(Xgc,"No more space to create Pixmaps");
 	  return;
 	}
-#if 1 
+#if 1
       g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
 #else
       gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
       g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
-#endif 
+#endif
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
       pixmap_clear_rect(Xgc,0,0,x,y);
     }
-} 
+}
 
 
-/* Change the private->pixmap status of a Graphic Window. 
- * adding or removing a Background Pixmap to it 
+/* Change the private->pixmap status of a Graphic Window.
+ * adding or removing a Background Pixmap to it
  */
 #ifndef PERIGLGTK
 static void xset_pixmapOn(BCG *Xgc,int num)
-{ 
+{
   int num1= Min(Max(num,0),1);
   /* Sciprintf("pixmap on is not implemented in OpenGL driver\n"); */
   if ( Xgc->CurPixmapStatus == num1 ) return;
@@ -929,11 +929,11 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
 					    Xgc->CWindowWidth, Xgc->CWindowHeight,
 					    -1);
-      if ( temp  == NULL ) 
+      if ( temp  == NULL )
 	{
 	  xinfo(Xgc, "Not enough space to switch to Animation mode");
 	}
-      else 
+      else
 	{
 	  int status;
 	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
@@ -943,31 +943,31 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	    {
 	      Sciprintf("Gl rendering off-screen not working !\n");
 	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
-	      Xgc->private->extra_pixmap = NULL;	
+	      Xgc->private->extra_pixmap = NULL;
 	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
 	      Xgc->private->glcontext = gtk_widget_get_gl_context (Xgc->private->drawing);
 	      Xgc->private->gldrawable = gtk_widget_get_gl_drawable (Xgc->private->drawing);
-	      return ; 
+	      return ;
 	    }
 	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	  Xgc->CurPixmapStatus = 1;
 	}
     }
-  else 
+  else
     {
       /* I remove the extra pixmap to the window **/
       xinfo(Xgc," ");
       g_object_unref (G_OBJECT (Xgc->private->drawable));
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
-      Xgc->CurPixmapStatus = 0; 
+      Xgc->CurPixmapStatus = 0;
       Xgc->private->glcontext = gtk_widget_get_gl_context (Xgc->private->drawing);
       Xgc->private->gldrawable = gtk_widget_get_gl_drawable (Xgc->private->drawing);
     }
 }
-#else 
+#else
 
 static void xset_pixmapOn(BCG *Xgc,int num)
-{ 
+{
   int num1= Min(Max(num,0),1);
   if ( Xgc->CurPixmapStatus == num1 ) return;
   if ( num1 == 1 )
@@ -977,13 +977,13 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
 					    Xgc->CWindowWidth, Xgc->CWindowHeight,
 					    -1);
-      if ( temp  == NULL ) 
+      if ( temp  == NULL )
 	{
 	  xinfo(Xgc, "Not enough space to switch to Animation mode");
 	}
-      else 
+      else
 	{
-	  int status ; 
+	  int status ;
 	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
 	  status = nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
@@ -991,56 +991,56 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	    {
 	      Sciprintf("Gl rendering off-screen not working !\n");
 	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
-	      Xgc->private->extra_pixmap = NULL;	
+	      Xgc->private->extra_pixmap = NULL;
 	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
 	      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
-	      return ; 
+	      return ;
 	    }
 	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	  Xgc->CurPixmapStatus = 1;
 	}
     }
-  else 
+  else
     {
       /* I remove the extra pixmap to the window */
       xinfo(Xgc," ");
-      if ( Xgc->private->gldrawable != NULL) 
+      if ( Xgc->private->gldrawable != NULL)
 	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
       gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
       g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
       /* gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap); */
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
-      Xgc->CurPixmapStatus = 0; 
+      Xgc->CurPixmapStatus = 0;
       nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
       pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
     }
 }
 
-#endif 
+#endif
 
 
-/* used to create a gldrawable and glcontex ref when 
- * we use a pixmap. Note that this function may not work 
- * since many drivers seems not to accept to render GL scenes 
+/* used to create a gldrawable and glcontex ref when
+ * we use a pixmap. Note that this function may not work
+ * since many drivers seems not to accept to render GL scenes
  * off-screen. In that case we return FALSE.
  */
 
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
 {
   static GdkGLConfig *glconfig;
-  if (glconfig == NULL)  
+  if (glconfig == NULL)
     glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB    |
 					  GDK_GL_MODE_DEPTH  |
 					  GDK_GL_MODE_SINGLE);
-  if (glconfig == NULL)  
+  if (glconfig == NULL)
     {
       Xgc->private->gldrawable= NULL;
       Xgc->private->glcontext = NULL;
       return FALSE;
     }
 
-  if ( Xgc->private->gldrawable != NULL 
+  if ( Xgc->private->gldrawable != NULL
        &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
      gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
 
@@ -1076,12 +1076,12 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
 
 /**
  * xset_pattern:
- * @Xgc: 
- * @num: 
- * 
- * 
- * 
- * Returns: 
+ * @Xgc:
+ * @num:
+ *
+ *
+ *
+ * Returns:
  **/
 
 static int  xset_pattern(BCG *Xgc,int color)
@@ -1090,7 +1090,7 @@ static int  xset_pattern(BCG *Xgc,int color)
   int old = xget_pattern(Xgc);
   if ( old == color ) return old;
   if ( Xgc->private->a_colors == NULL) return 1;
-  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL) 
+  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL)
     {
       gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
@@ -1102,7 +1102,7 @@ static int  xset_pattern(BCG *Xgc,int color)
 
 
 
-#if 0 
+#if 0
 static void print_gl_config_attrib (GdkGLConfig *glconfig,
 				    const gchar *attrib_str,
 				    int          attrib,
@@ -1139,9 +1139,9 @@ static void examine_gl_config_attrib (GdkGLConfig *glconfig)
 	   gdk_gl_config_has_stencil_buffer (glconfig) ? "TRUE" : "FALSE");
   g_print ("gdk_gl_config_has_accum_buffer (glconfig) = %s\n",
 	   gdk_gl_config_has_accum_buffer (glconfig) ? "TRUE" : "FALSE");
-     
+
   g_print ("\n");
-     
+
   print_gl_config_attrib (glconfig, "GDK_GL_USE_GL",           GDK_GL_USE_GL,           TRUE);
   print_gl_config_attrib (glconfig, "GDK_GL_BUFFER_SIZE",      GDK_GL_BUFFER_SIZE,      FALSE);
   print_gl_config_attrib (glconfig, "GDK_GL_LEVEL",            GDK_GL_LEVEL,            FALSE);
@@ -1161,7 +1161,7 @@ static void examine_gl_config_attrib (GdkGLConfig *glconfig)
   print_gl_config_attrib (glconfig, "GDK_GL_ACCUM_ALPHA_SIZE", GDK_GL_ACCUM_ALPHA_SIZE, FALSE);
   g_print ("\n");
 }
-#endif 
+#endif
 
 /*
  *
@@ -1196,7 +1196,7 @@ int use_camera(BCG *Xgc)
 	     Xgc->private->camera.orientation.x,
 	     Xgc->private->camera.orientation.y,
 	     Xgc->private->camera.orientation.z);
-  glMatrixMode(GL_PROJECTION); 
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(Xgc->private->camera.xmin ,
 	  Xgc->private->camera.xmax ,
@@ -1231,7 +1231,7 @@ void change_camera(BCG *Xgc,const double *val)
   expose_event_new( Xgc->private->drawing,NULL, Xgc);
 }
 
-/* select the view mode from 2d view to 
+/* select the view mode from 2d view to
  * 3d view.
  */
 
@@ -1241,7 +1241,7 @@ void nsp_ogl_set_view(BCG *Xgc)
     {
       nsp_ogl_set_2dview(Xgc);
     }
-  else 
+  else
     {
       nsp_ogl_set_3dview(Xgc);
     }
@@ -1249,14 +1249,14 @@ void nsp_ogl_set_view(BCG *Xgc)
 
 void nsp_ogl_set_2dview(BCG *Xgc)
 {
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
+  glViewport (0,  0, Xgc->private->drawing->allocation.width,
 	      Xgc->private->drawing->allocation.height);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
   gluLookAt (0,0,1,
 	     0,0,-1,
 	     0,1,0);
-  glMatrixMode(GL_PROJECTION); 
+  glMatrixMode(GL_PROJECTION);
 
   glLoadIdentity();
   glOrtho(0, Xgc->private->drawing->allocation.width,
@@ -1279,15 +1279,15 @@ void nsp_ogl_set_3dview(BCG *Xgc)
   double cy= Xgc->scales->c[1];
   double cz= Xgc->scales->c[2];
   /* radius and center of the sphere circumscribing the box */
-  double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
-  double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
+  double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0];
+  double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2];
   double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
-  double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2; 
+  double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
 
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
+  glViewport (0,  0, Xgc->private->drawing->allocation.width,
 	      Xgc->private->drawing->allocation.height);
-  /* 
-   * fix the model view using the box center 
+  /*
+   * fix the model view using the box center
    * and a point on the sphere circumscribing the box
    * qui sont important pour l'élimination des parties cachées
    */
@@ -1302,15 +1302,15 @@ void nsp_ogl_set_3dview(BCG *Xgc)
   glLoadIdentity();
 
   /*
-   * setting the modelview 
-   * we use the computed min max points 
-   * FIXME: when we use iso mode we have to change 
-   *      the next code 
-   * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer 
-   *      i.e donner l'info 
+   * setting the modelview
+   * we use the computed min max points
+   * FIXME: when we use iso mode we have to change
+   *      the next code
+   * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer
+   *      i.e donner l'info
    */
 
-  /* 
+  /*
      xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
      (1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
      ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
@@ -1335,7 +1335,7 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
-  
+
   glBegin(GL_LINES);
   glVertex3d(x1, y1, z1);
   glVertex3d(x2, y2, z2);
@@ -1345,7 +1345,7 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
 {
   int dash,color,i;
-  
+
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( iflag == 1) { /* one style per segment */
@@ -1357,7 +1357,7 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
   else {
     if (*style >= 1) xset_line_style(Xgc,*style);
     /* une fonction gtk existe ici FIXME */
-    for (i=0 ; i < n/2 ; i++) 
+    for (i=0 ; i < n/2 ; i++)
       drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
   }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -1370,11 +1370,11 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
 {
   gint i;
   if ( n <= 1) return;
-  
+
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0,1.0);
   glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) 
+  for ( i=0 ;  i< n ; i++)
     {
       xset_pattern(Xgc,Abs(colors[i]));
       glVertex2i( vx[i], vy[i]);
@@ -1384,26 +1384,26 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
 }
 
 /**
- * fillpolylines3D_shade: 
- * @Xgc: 
- * @vectsx: 
- * @vectsy: 
- * @vectsz: 
- * @fillvect: 
- * @n: 
- * @p: 
- * 
- * when we have one color for each node 
+ * fillpolylines3D_shade:
+ * @Xgc:
+ * @vectsx:
+ * @vectsy:
+ * @vectsz:
+ * @fillvect:
+ * @n:
+ * @p:
+ *
+ * when we have one color for each node
  **/
 
 
 static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
 
-void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, 
+void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 			   double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  
+
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
 
@@ -1411,7 +1411,7 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
     {
       /* for each polyline we only take a decision according to the first color */
       if (fillvect[i] > 0 )
-	{ 
+	{
 	  /* fill + boundaries **/
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
@@ -1429,7 +1429,7 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
-      else 
+      else
 	{
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
@@ -1440,21 +1440,21 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 }
 
 
-static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) 
+static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
-  
+
 #if 1
   glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) 
+  for ( i=0 ;  i< n ; i++)
     {
       xset_pattern(Xgc,Abs(colors[i]));
       glVertex3d( vx[i], vy[i], vz[i]);
     }
   glEnd();
-#else 
-  for ( i=0 ;  i < n-2 ; i++) 
+#else
+  for ( i=0 ;  i < n-2 ; i++)
     {
       int triangle[]= { 0, i+1,i+2};
       int j;
@@ -1467,37 +1467,37 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 	}
       glEnd();
     }
-#endif 
+#endif
 
 }
 
 
 /**
  * fillpolylines3D:
- * @Xgc: 
- * @vectsx: 
- * @vectsy: 
- * @vectsz: 
- * @fillvect: 
- * @n: 
- * @p: 
- * 
- * the same for 3D vertices 
- * FIXME: a rajouter ds la table et rendre statique 
+ * @Xgc:
+ * @vectsx:
+ * @vectsy:
+ * @vectsz:
+ * @fillvect:
+ * @n:
+ * @p:
+ *
+ * the same for 3D vertices
+ * FIXME: a rajouter ds la table et rendre statique
  **/
 
 
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  
+
   /* xget_dash_and_color(Xgc,&dash,&color); */
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
-	{ 
+	{
 	  /* fill + boundaries **/
 	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1515,7 +1515,7 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
-      else 
+      else
 	{
 	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
 	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
@@ -1526,11 +1526,11 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
-static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag) 
+static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
-  
+
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
   glEnd();
@@ -1538,12 +1538,12 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 
 
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
-{ 
+{
   gint i;
   if ( n <= 1) return;
-  
+
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  if ( closeflag == 1 ) 
+  if ( closeflag == 1 )
     glBegin(GL_LINE_LOOP);
   else
     glBegin(GL_LINE_STRIP);
@@ -1558,10 +1558,10 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
  */
 
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
-{ 
+{
   int symb[2],dash,color,i,close;
   /* store the current values */
-  
+
   Xgc->graphic_engine->xget_mark(Xgc,symb);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -1588,7 +1588,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 
 
 /*
- * FIXME : experimental for tests 
+ * FIXME : experimental for tests
  */
 
 #ifdef LIGHTS
@@ -1613,7 +1613,7 @@ static void init_gl_lights(GLfloat light0_pos[4])
   /* logical Ops */
   glEnable(GL_COLOR_LOGIC_OP);
 }
-#endif 
+#endif
 
 
 
@@ -1636,21 +1636,23 @@ static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sa
 
 static void nsp_fonts_finalize(BCG *Xgc)
 {
-  if ( Xgc->private->layout != NULL) 
+  if ( Xgc->private->layout != NULL)
     {
       g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
       pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
       pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
-      /* seams to crash randomly 
-       * g_object_unref (G_OBJECT (Xgc->private->ft2_context)); 
-       */
+#ifdef PANGO_VERSION_CHECK
+#if   PANGO_VERSION_CHECK(1,22,0)
+      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
+#endif
+#endif
     }
 }
 
 static void nsp_fonts_initialize(BCG *Xgc)
 {
-  if ( Xgc->private->layout == NULL) 
+  if ( Xgc->private->layout == NULL)
     {
       PangoFT2FontMap* pango_fm;
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
@@ -1660,22 +1662,21 @@ static void nsp_fonts_initialize(BCG *Xgc)
       pango_ft2_font_map_set_resolution (pango_fm,72,72);
 
 #ifdef PANGO_VERSION_CHECK
-#if   PANGO_VERSION_CHECK(1,22,0) 
-      Xgc->private->ft2_context= pango_font_map_create_context((PangoFontMap *)pango_fm);            
+#if   PANGO_VERSION_CHECK(1,22,0)
+      Xgc->private->ft2_context= pango_font_map_create_context((PangoFontMap *)pango_fm);
 #else
-      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);      
-#endif 
-#else 
-      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);      
-#endif 
+      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);
+#endif
+#else
+      Xgc->private->ft2_context= pango_ft2_font_map_create_context(pango_fm);
+#endif
       g_object_unref(pango_fm);
-      /* Xgc->private->ft2_context = pango_ft2_get_context (72, 72); */
       Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
       Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
-#else 
+#else
       Xgc->private->layout = NULL;
       Xgc->private->mark_layout = NULL;
-#endif 
+#endif
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }
@@ -1683,10 +1684,10 @@ static void nsp_fonts_initialize(BCG *Xgc)
 
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
-{ 
+{
   int i,fsiz, changed = TRUE;
   i = Min(FONTNUMBER-1,Max(fontid,0));
-  if ( full == TRUE ) 
+  if ( full == TRUE )
     {
       fsiz = Max(1,fontsize);
       changed = Xgc->fontId != i || Xgc->fontSize != fsiz ;
@@ -1699,7 +1700,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
       Xgc->fontSize = - fsiz ;
       fsiz = pango_size[fsiz];
     }
-  if ( changed  ) 
+  if ( changed  )
     {
       Xgc->fontId = i;
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
@@ -1709,7 +1710,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 }
 
 static void xset_mark(BCG *Xgc,int number, int size)
-{ 
+{
   int n_size;
   Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
   n_size  = Max(Min(FONTMAXSIZE-1,size),0);
@@ -1717,14 +1718,14 @@ static void xset_mark(BCG *Xgc,int number, int size)
     {
       Xgc->CurHardSymbSize = n_size;
       /* pango_font_description_set_size (Xgc->private->mark_desc, pango_size[fsiz] * PANGO_SCALE);*/
-      pango_font_description_set_absolute_size (Xgc->private->mark_desc, 
+      pango_font_description_set_absolute_size (Xgc->private->mark_desc,
 						pango_size[Xgc->CurHardSymbSize] * PANGO_SCALE);
       pango_layout_set_font_description (Xgc->private->mark_layout, Xgc->private->mark_desc);
     }
 }
 
 
-/* To get the  id and size of the current font 
+/* To get the  id and size of the current font
  */
 
 static void  xget_font(BCG *Xgc,int *font,int full)
@@ -1743,18 +1744,18 @@ static void xget_mark(BCG *Xgc,int *symb)
 
 
 static void loadfamily(char *name, int *j)
-{ 
+{
 }
 
 static void queryfamily(char *name, int *j,int *v3)
-{ 
+{
 }
 
 /*
- * rendering text with PangoFT2 
- * from: font-pangoft2.c written by Naofumi Yasufuku  
+ * rendering text with PangoFT2
+ * from: font-pangoft2.c written by Naofumi Yasufuku
  * <naofumi@users.sourceforge.net>
- * Note that if the layout uses a transformation matrix 
+ * Note that if the layout uses a transformation matrix
  * the enclosing rectangle is given by e_rect
  */
 
@@ -1765,7 +1766,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
   Sciprintf("Cannot render string in OpenGL missing pangoft2\n");
 }
 
-#else 
+#else
 
 static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
 {
@@ -1783,7 +1784,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
   pango_layout_get_extents (layout, NULL, &logical_rect);
   if (logical_rect.width == 0 || logical_rect.height == 0)
     return;
-  
+
   if ( e_rect == NULL )
     {
       bitmap.rows = PANGO_PIXELS (logical_rect.height);
@@ -1808,7 +1809,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
       if ( bitmap.rows * bitmap.width > size )
 	bitmap.buffer = g_realloc (bitmap.buffer, bitmap.rows * bitmap.width);
     }
-  else 
+  else
     {
       bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
     }
@@ -1816,21 +1817,21 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
   bitmap.pixel_mode = ft_pixel_mode_grays;
 
   memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
-  
+
   pango_ft2_render_layout (&bitmap, layout,x,y);
-  
-  if ( pixels != NULL) 
+
+  if ( pixels != NULL)
     {
       if ( bitmap.rows * bitmap.width > size )
 	pixels = g_realloc (pixels, bitmap.rows * bitmap.width*4);
     }
-  else 
+  else
     {
       pixels = g_malloc (bitmap.rows * bitmap.width * 4);
     }
   size = bitmap.rows * bitmap.width;
   p = (guint32 *) pixels;
-  
+
   glGetFloatv (GL_CURRENT_COLOR, color);
 #if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
   rgb =  ((guint32) (color[0] * 255.0))        |
@@ -1842,7 +1843,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
         (((guint32) (color[2] * 255.0)) << 8);
 #endif
   a = color[3];
-  
+
   row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
   row_end = bitmap.buffer;      /* beginning */
 
@@ -1874,7 +1875,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
         }
       while (row != row_end);
     }
-  
+
   glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
 
   glEnable (GL_BLEND);
@@ -1891,18 +1892,15 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rec
 #endif
 
   glDisable (GL_BLEND);
-  /* 
+  /*
   g_free (bitmap.buffer);
   g_free (pixels);
   */
 }
 
-#endif 
+#endif
 
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
 {
 
 }
-
-
-

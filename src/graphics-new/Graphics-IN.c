@@ -1392,7 +1392,7 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
     }
   /* updates the axes scale information */
   nsp_strf_axes_new( axe, frect, strflag[1], auto_axis, iso);
-  axe->obj->axes = axes; 
+  axe->obj->axes = axes;
   axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
   nsp_axes_invalidate(((NspGraphic *) axe));
@@ -1447,7 +1447,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	  return RET_BUG;
 	}
     }
-  
+
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
     {
       /* be sure that y is in a proper state */
@@ -1593,33 +1593,33 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
-  if ( opts_2d[7].obj != NULLOBJ) 
+  if ( opts_2d[7].obj != NULLOBJ)
     {
       /* strf is given use it to fix other arguments */
-      if ( opts_2d[14].obj == NULLOBJ) 
+      if ( opts_2d[14].obj == NULLOBJ)
 	{
 	  /* auto_axis not given */
 	  auto_axis = TRUE;
 	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
 	}
-      if ( opts_2d[15].obj == NULLOBJ) 
+      if ( opts_2d[15].obj == NULLOBJ)
 	{
 	  /* iso not given */
 	  iso = FALSE;
 	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) auto_axis=FALSE;
 	}
-      if ( opts_2d[0].obj == NULLOBJ) 
+      if ( opts_2d[0].obj == NULLOBJ)
 	{
 	  /* axes not given */
 	  axes = strf[2] - '0';
 	}
     }
-  
+
 #define CheckArg(x,pos)							\
   if ( x != NULL)							\
     {									\
       CheckLength(NspFname(stack),opts_2d[pos].position, x, ncurves);	\
-    }								       
+    }
 
   CheckArg(Mmark,9);
   CheckArg(Mmark_size,10);
@@ -1644,7 +1644,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',strf);
     }
-  
+
   ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
 		       leg,leg_posi,mode,rect,nax,
 		       Mmark,Mmark_size,Mmark_color,Mline_color,Mline_thickness,
@@ -1828,30 +1828,30 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( z->mn == 0) goto end0;
-  if ( z->m == 1 || z->n == 1) 
+  if ( z->m == 1 || z->n == 1)
     {
       Scierror("%s: third argument is a vector, expecting a matrix \n",
 	       NspFname(stack));
       goto bug;
     }
-  
-  if (x->mn != z->m ) 
+
+  if (x->mn != z->m )
     {
       Scierror("%s: arguments %d and %d have incompatible size\n",
 	       NspFname(stack),1,3);
       goto bug;
     }
-  if ( y->mn != z->n) 
+  if ( y->mn != z->n)
     {
       Scierror("%s: arguments %d and %d have incompatible size\n",
 	       NspFname(stack),2,3);
       goto bug;
     }
-  
+
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) goto bug;
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) goto bug;
   if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) goto bug;
-  
+
   if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,
 		   Mnax,&nax,frame,axes,&logflags) != 0)
     goto bug;
@@ -1899,10 +1899,10 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   return 0;
- end0: 
+ end0:
   if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
   return 0;
- bug: 
+ bug:
   if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
   return RET_BUG;
 }
@@ -6229,11 +6229,11 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
 {
   int i,j,dim=1;
   char ret_type;
-  NspMatrix *M, *Mreal;
+  NspMatrix *M=NULL, *Mreal=NULL;
   feval_data feval;
   NspObject *f= NULL;
   NspList *args=NULL;
-  NspMatrix *x,*y;
+  NspMatrix *x=NULL,*y=NULL;
   int_types T1[] = {realmat,obj,new_opts, t_end} ;
   int_types T2[] = {realmat,realmat,obj,new_opts, t_end} ;
 
@@ -6271,21 +6271,21 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( dim == 1 )
     {
-      if ((M = nsp_matrix_create(NVOID,'c',x->m,x->n))== NULLMAT) return RET_BUG;
+      if ((M = nsp_matrix_create(NVOID,'c',x->m,x->n))== NULLMAT) goto bug;
       for ( i = 0 ; i < x->mn ; i++)
 	{
 	  if ( feval_system(dim,x->R[i],0,&M->C[i],&feval)==FAIL)
-	    return RET_BUG;
+	    goto bug;
 	}
     }
   else
     {
-      if ((M = nsp_matrix_create(NVOID,'c',x->mn,y->mn))== NULLMAT) return RET_BUG;
+      if ((M = nsp_matrix_create(NVOID,'c',x->mn,y->mn))== NULLMAT) goto bug;
       for ( i = 0 ; i < x->mn ; i++)
 	for ( j = 0 ; j < y->mn ; j++)
 	  {
 	    if ( feval_system(dim,x->R[i],y->R[j],&M->C[i+M->m*j],&feval)==FAIL)
-	      return RET_BUG;
+	      goto bug;
 	  }
     }
   /*
@@ -6305,15 +6305,19 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
     }
   if (ret_type == 'r')
     {
-      if ((Mreal = nsp_matrix_create(NVOID,'r',M->m, M->n))== NULLMAT) return RET_BUG;
+      if ((Mreal = nsp_matrix_create(NVOID,'r',M->m, M->n))== NULLMAT) goto bug;
       for (i=0; i<M->mn; i++) Mreal->R[i] = M->C[i].r;
       nsp_matrix_destroy(M);
       M = Mreal;
     }
 
-  feval_clean(1,&feval);
+  feval_clean(dim,&feval);
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
+ bug:
+  if ( M != NULL )  nsp_matrix_destroy(M);
+  feval_clean(dim,&feval);
+  return RET_BUG;
 }
 
 
