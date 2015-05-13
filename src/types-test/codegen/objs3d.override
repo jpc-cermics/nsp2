@@ -1707,7 +1707,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   char logf[2];
 
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-  Xgc->scales->scale_flag3d = 1;
+  Xgc->scales->scale_flag3d = 0; /* bugs when changed to 1 */
   Xgc->scales->alpha = Alpha;
   Xgc->scales->theta = Teta;
   cost=cos((Teta)*M_PI/180.0);
