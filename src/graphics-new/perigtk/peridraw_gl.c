@@ -1043,6 +1043,11 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
   if ( Xgc->private->gldrawable != NULL
        &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
      gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
+  
+  if ( Xgc->private->drawing != NULL && Xgc->private->glcontext != gtk_widget_get_gl_context (Xgc->private->drawing))
+    {
+      g_object_unref(G_OBJECT(Xgc->private->glcontext));
+    }
 
   Xgc->private->gldrawable = GDK_GL_DRAWABLE (gdk_pixmap_set_gl_capability (pixmap,
 									    glconfig,
@@ -1059,7 +1064,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
       g_print ("Cannot create the OpenGL rendering context\n");
       return FALSE;
     }
-
+  
   gdk_error_trap_push ();
   gdk_gl_drawable_make_current(Xgc->private->gldrawable,Xgc->private->glcontext);
   gdk_flush ();
