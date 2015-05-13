@@ -3891,7 +3891,7 @@ static int int_xnumb(Stack stack, int rhs, int opt, int lhs)
       iposx  = is_string_in_array(posx, x_table,1);
       if ( iposx < 0 )
 	{
-	  string_not_in_array(stack,posx,x_table,"optional argument mode");
+	  string_not_in_array(stack,posx,x_table,"optional argument posx");
 	  return RET_BUG;
 	}
     }
@@ -3902,7 +3902,7 @@ static int int_xnumb(Stack stack, int rhs, int opt, int lhs)
       iposy = is_string_in_array(posy, y_table,1);
       if ( iposy  < 0 )
 	{
-	  string_not_in_array(stack,posy,y_table,"optional argument mode");
+	  string_not_in_array(stack,posy,y_table,"optional argument posy");
 	  return RET_BUG;
 	}
     }
@@ -4699,7 +4699,7 @@ static int int_xstring_G(Stack stack, int rhs, int opt, int lhs, int flag )
       iposx  = is_string_in_array(posx, x_table,1);
       if ( iposx < 0 )
 	{
-	  string_not_in_array(stack,posx,x_table,"optional argument mode");
+	  string_not_in_array(stack,posx,x_table,"optional argument posx");
 	  return RET_BUG;
 	}
     }
@@ -4710,7 +4710,7 @@ static int int_xstring_G(Stack stack, int rhs, int opt, int lhs, int flag )
       iposy = is_string_in_array(posy, y_table,1);
       if ( iposy  < 0 )
 	{
-	  string_not_in_array(stack,posy,y_table,"optional argument mode");
+	  string_not_in_array(stack,posy,y_table,"optional argument posy");
 	  return RET_BUG;
 	}
     }
