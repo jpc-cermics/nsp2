@@ -40,7 +40,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,
                           int grid_color, char logflag, int seg_flag);
 static double axes_number2str(char dir,char xy_type,char *res,char **str,const char *format,const char *c_format,const double *x,int i);
-static int nsp_fontsize_string_in_box(BCG *Xgc,double x,double y, double w, double h, int fsize, const char *str);
+static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
 
 
 /**
@@ -57,8 +57,9 @@ static int nsp_fontsize_string_in_box(BCG *Xgc,double x,double y, double w, doub
 void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
 {
   /* using foreground to draw axis */
-  int old_dash,pat, fg;
-  char c = mode ; /* (strlen(strflag) >= 3) ? strflag[2] : '1'; */
+  int old_dash,pat, fg, fontid[2]; 
+  char c = mode ;
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
   pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
@@ -87,6 +88,7 @@ void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
     }
   Xgc->graphic_engine->xset_dash(Xgc,old_dash);
   Xgc->graphic_engine->xset_pattern(Xgc,pat);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
 }
 
 /*--------------------------------------------------------------
@@ -249,6 +251,7 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
 static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics,
 		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
+  int auto_size=TRUE; /* font are resized automatically */
   char foo[256];
   int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;
@@ -274,16 +277,33 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
       fontid[1] = fontsize ;
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
     }
+
   if ( textcolor != -1 || ticscolor != -1 )
     {
       color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
+    }
+  
+  if ( auto_size) 
+    {
+      barlength = Xgc->scales->Irect.height/40.0;
+      strcpy(foo,"0");
+      fontid[1]= nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
+      smallersize= fontid[1]-2;// nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
+    }
+  else
+    {
+      if ( fontsize != -1 )
+	{
+	  fontid[1] = fontsize ;
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
+	}
+      smallersize=fontid[1]-2;
     }
 
   if (logflag == 'l' )
     {
       Xgc->graphic_engine->boundingbox(Xgc,"10",xx,yy,logrect);
-      smallersize=fontid[1]-2;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
     }
 
   /* Real to Pixel values */
@@ -306,6 +326,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
       sciprint("Sci_Axis: wrong type argument xy_type\r\n");
     }
 
+  
   /* Note that in that case xy_type = 'i' we can possibly
    * have x[3] or y[3] equal to zero which means that we
    * cannot distinguish the min and the max on the given interval
@@ -343,27 +364,6 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
-
-      /* compute the font size */
-#if 0
-      {
-	int count = 0;
-	for (i=0 ; i < Nx ; i++)
-	  {
-	    vxx=axes_number2str('x',xy_type,foo,str,format,c_format,x,i);
-	    count = Max(count, strlen(foo));
-	  }
-	for (i=0; i < count ; i++) foo[i]='x';
-	foo[count]='\0';
-	fontid[1]= nsp_fontsize_string_in_box(Xgc,0,0,d_barlength*2,d_barlength*3, -1,foo);
-	smallersize= nsp_fontsize_string_in_box(Xgc,0,0,d_barlength,d_barlength*2, -1,foo);
-	if (logflag == 'l' )
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, TRUE);
-	else
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
-      }
-#endif
-
       /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)
 	{
@@ -404,14 +404,24 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
+	  /* to vizualize control the box  
+	  {
+	    int val[]={posi[0],posi[1]- barlength*2,barlength*40,barlength*2};
+	    Xgc->graphic_engine->drawrectangle(Xgc,val);
+	  }
+	  */
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
-	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
-	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
-						 (posi[1] += logrect[3],posi[1]),flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, auto_size);
+	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], auto_size);
+	      Xgc->graphic_engine->displaystring(Xgc,"10",posi[0] - logrect[2],
+						 posi[1] + logrect[3]/2,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
+	    }
+	  else
+	    {
+	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
@@ -500,15 +510,19 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	    }
 
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
-	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,
-					     GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
-	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
-						 (posi[1] += logrect[3],posi[1]),flag,angle,
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, auto_size);
+	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1]- logrect[3]/2,flag,angle,
 						 GR_STR_XLEFT, GR_STR_YBOTTOM);
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], auto_size);
+	      Xgc->graphic_engine->displaystring(Xgc,"10",posi[0] - logrect[2],posi[1],flag,angle,
+						 GR_STR_XLEFT, GR_STR_YBOTTOM);
+	    }
+	  else
+	    {
+	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,
+						 GR_STR_XLEFT, GR_STR_YBOTTOM);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 
@@ -540,8 +554,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
   /* reset font to its current size */
   if ( fontsize != -1 || logflag == 'l' )
     {
-      fontid[1] = fontsize_kp;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontsize_kp, FALSE);
     }
   /* reset to current color */
   if ( textcolor != -1 || ticscolor != -1 )
@@ -750,11 +763,10 @@ static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
   Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
 }
 
-static int nsp_fontsize_string_in_box(BCG *Xgc,double x,double y, double w, double h, int fsize, const char *str)
+static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str)
 {
-  int iw,ih,size_in= 1, size_out=100,size=-1, count=0;
+  int size_in= 1, size_out=100,size=-1, count=0;
   int fontid[2], logrect[4], check= TRUE;
-  length_scale_f2i(Xgc->scales,&w,&h,&iw,&ih,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   /* try to detect if current value is OK. */
   size = (fsize == -1) ? fontid[1] : fsize;
@@ -812,16 +824,6 @@ static int nsp_fontsize_string_in_box(BCG *Xgc,double x,double y, double w, doub
     }
   /* Sciprintf("We quit with %d\n",size); */
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
-  /*
-    {
-     int box = 0 ;
-     double xd1,yd1;
-     xd1 = XDouble2Pixel_d(Xgc->scales, x + w/2.0);
-     yd1 = YDouble2Pixel_d(Xgc->scales, y + h/2.0);
-     Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,angle,
-     GR_STR_XCENTER,GR_STR_YCENTER);
-     }
-  */
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
   return size;
 }
