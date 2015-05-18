@@ -427,22 +427,41 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
-	  /* subtics */
+	  /* subtics: in fact its the nulber of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Nx-1 )
 	    {
 	      int j;
 	      double dx ;
-	      vxx1= x_convert(xy_type,x,i+1);
-	      dx = (vxx1-vxx)/subtics;
-	      for ( j = 1 ; j < subtics; j++)
+	      if ( logflag == 'l' ) 
 		{
-		  xd = vxx+dx*j;
-		  vx[0] = inint(XScaleR_d(Xgc->scales,xd,y[0]));
-		  vy[0] = inint(YScaleR_d(Xgc->scales,xd,y[0]));
+		  /* always 8 subtics in log mode */
+		  int xi,xl;
+		  xi    = inint(XScaleR_d(Xgc->scales,vxx,y[0]));
+		  vy[0] = inint(YScaleR_d(Xgc->scales,vxx,y[0]));
 		  yd = (pos == 'd') ? y[0] + d_barlength/2.0 : y[0] - d_barlength/2.0;
-		  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
-		  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  vy[1] = inint(YScaleR_d(Xgc->scales,vxx,yd));
+		  vxx1= x_convert(xy_type,x,i+1);
+		  xl=inint(XScaleR_d(Xgc->scales,vxx1,y[0]));
+		  for ( j = 2 ; j < 10; j++)
+		    {
+		      vx[0]=vx[1]= xi +  (xl-xi)*log(j)/log(10.0);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		    }
+		}
+	      else
+		{
+		  vxx1= x_convert(xy_type,x,i+1);
+		  dx = (vxx1-vxx)/subtics;
+		  for ( j = 1 ; j < subtics; j++)
+		    {
+		      xd = vxx+dx*j;
+		      vx[0] = inint(XScaleR_d(Xgc->scales,xd,y[0]));
+		      vy[0] = inint(YScaleR_d(Xgc->scales,xd,y[0]));
+		      yd = (pos == 'd') ? y[0] + d_barlength/2.0 : y[0] - d_barlength/2.0;
+		      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+		      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		    }
 		}
 	    }
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -528,23 +547,43 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
-	  /* subtics */
+	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Ny-1 )
 	    {
 	      int j;
 	      double dy ;
-	      vxx1= y_convert(xy_type,y,i+1);
-	      dy = (vxx1-vxx)/subtics;
-	      for ( j = 1 ; j < subtics; j++)
+	      if ( logflag == 'l' ) 
 		{
-		  yd= vxx+dy*j;
-		  xd= x[0];
-		  vx[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
-		  vy[0] = inint(YScaleR_d(Xgc->scales,xd,yd));
+		  /* always 8 subtics in log mode */
+		  int yi,yl;
+		  yi    = inint(YScaleR_d(Xgc->scales,x[0],vxx));
+		  vx[0] = inint(XScaleR_d(Xgc->scales,x[0],vxx));
 		  xd = ( pos == 'r' ) ? x[0] -d_barlength/2.0: x[0] +d_barlength/2.0;
-		  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
-		  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
+		  vxx1= y_convert(xy_type,y,i+1);
+		  yl=inint(YScaleR_d(Xgc->scales,x[0],vxx1));
+
+		  for ( j = 2 ; j < 10; j++)
+		    {
+		      vy[0]=vy[1]= yi -  (yi-yl)*log(j)/log(10.0);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		    }
+		}
+	      else
+		{
+		  vxx1= y_convert(xy_type,y,i+1);
+		  dy = (vxx1-vxx)/subtics;
+		  for ( j = 1 ; j < subtics; j++)
+		    {
+		      yd= vxx+dy*j;
+		      xd= x[0];
+		      vx[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
+		      vy[0] = inint(YScaleR_d(Xgc->scales,xd,yd));
+		      xd = ( pos == 'r' ) ? x[0] -d_barlength/2.0: x[0] +d_barlength/2.0;
+		      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+		      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		    }
 		}
 	    }
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -636,6 +675,27 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+	  /* loop on subtics for log only  */
+	  if ( i < Nx-1 && logflag == 'l')
+	    {
+	      int j;
+	      double vxx1 ;
+	      /* always 8 subtics in log mode */
+	      int xi,xl;
+	      xi    = inint(XScaleR_d(Xgc->scales,vxx,y[0]));
+	      vy[0] = inint(YScaleR_d(Xgc->scales,vxx,y[0]));
+	      yd = y[0] + d_barlength;
+	      vy[1] = inint(YScaleR_d(Xgc->scales,vxx,yd));
+	      vxx1= x_convert(xy_type,x,i+1);
+	      xl=inint(XScaleR_d(Xgc->scales,vxx1,y[0]));
+	      for ( j = 2 ; j < 10; j++)
+		{
+		  vx[0]=vx[1]= xi +  (xl-xi)*log(j)/log(10.0);
+		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+		}
+	    }
 	}
       break;
     case 'r' :
@@ -654,6 +714,27 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
+	  if ( i < Ny-1 && logflag == 'l' ) 
+	    {
+	      int j;
+	      double vxx1 ;
+	      /* always 8 subtics in log mode */
+	      int yi,yl;
+	      yi    = inint(YScaleR_d(Xgc->scales,x[0],vxx));
+	      vx[0] = inint(XScaleR_d(Xgc->scales,x[0],vxx));
+	      xd = x[0] + d_barlength;
+	      vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
+	      vxx1= y_convert(xy_type,y,i+1);
+	      yl=inint(YScaleR_d(Xgc->scales,x[0],vxx1));
+	      for ( j = 2 ; j < 10; j++)
+		{
+		  vy[0]=vy[1]= yi -  (yi-yl)*log(j)/log(10.0);
+		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+		}
+	    }
 	}
       break;
     }
@@ -739,27 +820,28 @@ static void nsp_draw_frame_rectangle(BCG *Xgc)
 static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
 {
   int ccolor  = Xgc->graphic_engine->xget_pattern(Xgc);
-
-  if (bg<=0) return;
-
+  if (bg <= 0) return;
   Xgc->graphic_engine->xset_pattern(Xgc,bg);
-  if ( Xgc->scales->cosa == 1.0 ) {
-    int rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
-                   Xgc->scales->Irect.width,Xgc->scales->Irect.height};
-    Xgc->graphic_engine->fillrectangle(Xgc,rect);
-  } else {
-    double x[4],y[4];
-    x[0]= Xgc->scales->frect[0];
-    y[0]= Xgc->scales->frect[1];
-    x[1]= Xgc->scales->frect[2];
-    y[1]= y[0];
-    x[2]= x[1];
-    y[2]= Xgc->scales->frect[3];
-    x[3]= x[0];
-    y[3]= y[2];
-    Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,4,1);
-    /*Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,4,1);*/
-  }
+  if ( Xgc->scales->cosa == 1.0 ) 
+    {
+      int rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+		     Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+      Xgc->graphic_engine->fillrectangle(Xgc,rect);
+    } 
+  else 
+    {
+      double x[4],y[4];
+      x[0]= Xgc->scales->frect[0];
+      y[0]= Xgc->scales->frect[1];
+      x[1]= Xgc->scales->frect[2];
+      y[1]= y[0];
+      x[2]= x[1];
+      y[2]= Xgc->scales->frect[3];
+      x[3]= x[0];
+      y[3]= y[2];
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,4,1);
+      /*Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,4,1);*/
+    }
   Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
 }
 
