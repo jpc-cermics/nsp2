@@ -627,7 +627,7 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->zoom = FALSE;
   H->obj->zrect = NULLMAT;
   H->obj->clip = TRUE;
-  H->obj->line_width = 0;
+  H->obj->line_width = -1;
   H->obj->font_size = -1;
   H->obj->background = -1;
   H->obj->nax = NULLMAT;
