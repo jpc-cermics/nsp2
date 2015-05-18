@@ -36,24 +36,24 @@ extern Gengine GL_gengine;
 /* -----------NspObjs3d ----------- */
 
 
-#define  NspObjs3d_Private
+#define  NspObjs3d_Private 
 #include <nsp/objects.h>
 #include <nsp/objs3d.h>
 #include <nsp/interf.h>
 
-/*
- * NspObjs3d inherits from Graphic
+/* 
+ * NspObjs3d inherits from Graphic 
  */
 
 int nsp_type_objs3d_id=0;
 NspTypeObjs3d *nsp_type_objs3d=NULL;
 
 /*
- * Type object for NspObjs3d
- * all the instance of NspTypeObjs3d share the same id.
- * nsp_type_objs3d: is an instance of NspTypeObjs3d
- *    used for objects of NspObjs3d type (i.e built with new_objs3d)
- * other instances are used for derived classes
+ * Type object for NspObjs3d 
+ * all the instance of NspTypeObjs3d share the same id. 
+ * nsp_type_objs3d: is an instance of NspTypeObjs3d 
+ *    used for objects of NspObjs3d type (i.e built with new_objs3d) 
+ * other instances are used for derived classes 
  */
 NspTypeObjs3d *new_type_objs3d(type_mode mode)
 {
@@ -79,7 +79,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for objs3d */
+  /* object methods redefined for objs3d */ 
 
   top->pr = (print_func *) nsp_objs3d_print;
   top->dealloc = (dealloc_func *) nsp_objs3d_destroy;
@@ -119,15 +119,15 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_objs3d_invalidate;
 
 #line 122 "objs3d.c"
-  /*
-   * NspObjs3d interfaces can be added here
+  /* 
+   * NspObjs3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  if ( nsp_type_objs3d_id == 0 )
+  if ( nsp_type_objs3d_id == 0 ) 
     {
-      /*
+      /* 
        * the first time we get here we initialize the type id and
        * an instance of NspTypeObjs3d called nsp_type_objs3d
        */
@@ -136,7 +136,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
       if ( nsp_register_type(nsp_type_objs3d) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_objs3d(mode);
     }
-  else
+  else 
     {
       type->id = nsp_type_objs3d_id;
       return type;
@@ -144,13 +144,13 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 }
 
 /*
- * initialize NspObjs3d instances
- * locally and by calling initializer on parent class
+ * initialize NspObjs3d instances 
+ * locally and by calling initializer on parent class 
  */
 
 static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
 {
-  /* initialize the surtype */
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
   Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
@@ -160,10 +160,10 @@ static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
 }
 
 /*
- * new instance of NspObjs3d
+ * new instance of NspObjs3d 
  */
 
-NspObjs3d *new_objs3d()
+NspObjs3d *new_objs3d() 
 {
   NspObjs3d *loc;
   /* type must exists */
@@ -175,10 +175,10 @@ NspObjs3d *new_objs3d()
 }
 
 /*----------------------------------------------
- * Object method redefined for NspObjs3d
+ * Object method redefined for NspObjs3d 
  *-----------------------------------------------*/
 /*
- * size
+ * size 
  */
 
 static int nsp_objs3d_size(NspObjs3d *Mat, int flag)
@@ -187,7 +187,7 @@ static int nsp_objs3d_size(NspObjs3d *Mat, int flag)
 }
 
 /*
- * type as string
+ * type as string 
  */
 
 static char objs3d_type_name[]="Objs3d";
@@ -204,7 +204,7 @@ static char *nsp_objs3d_type_short_string(NspObject *v)
 }
 
 /*
- * A == B
+ * A == B 
  */
 
 static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
@@ -234,7 +234,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
 }
 
 /*
- * A != B
+ * A != B 
  */
 
 static int nsp_objs3d_neq(NspObjs3d *A, NspObject *B)
@@ -243,13 +243,13 @@ static int nsp_objs3d_neq(NspObjs3d *A, NspObject *B)
 }
 
 /*
- * save
+ * save 
  */
 
 int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_objs3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -274,7 +274,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
 }
 
 /*
- * load
+ * load 
  */
 
 NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
@@ -321,7 +321,7 @@ static NspObjs3d  *nsp_objs3d_xdr_load(XDR *xdrs)
 }
 
 /*
- * delete
+ * delete 
  */
 
 void nsp_objs3d_destroy_partial(NspObjs3d *H)
@@ -330,21 +330,21 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
    H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-  nsp_destroy_nsp_gcscale(&H->obj->scale,H);
-    if ( H->obj->wrect != NULL )
+  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
+    if ( H->obj->wrect != NULL ) 
       nsp_matrix_destroy(H->obj->wrect);
-    if ( H->obj->bounds != NULL )
+    if ( H->obj->bounds != NULL ) 
       nsp_matrix_destroy(H->obj->bounds);
-    if ( H->obj->arect != NULL )
+    if ( H->obj->arect != NULL ) 
       nsp_matrix_destroy(H->obj->arect);
-    if ( H->obj->frect != NULL )
+    if ( H->obj->frect != NULL ) 
       nsp_matrix_destroy(H->obj->frect);
   nsp_string_destroy(&(H->obj->title));
-    if ( H->obj->children != NULL )
+    if ( H->obj->children != NULL ) 
       nsp_list_destroy(H->obj->children);
-    if ( H->obj->colormap != NULL )
+    if ( H->obj->colormap != NULL ) 
       nsp_matrix_destroy(H->obj->colormap);
-    if ( H->obj->ebox != NULL )
+    if ( H->obj->ebox != NULL ) 
       nsp_matrix_destroy(H->obj->ebox);
     FREE(H->obj);
    }
@@ -358,13 +358,13 @@ void nsp_objs3d_destroy(NspObjs3d *H)
 }
 
 /*
- * info
+ * info 
  */
 
 int nsp_objs3d_info(NspObjs3d *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
-  if ( M == NULLOBJS3D)
+  if ( M == NULLOBJS3D) 
     {
       Sciprintf("Null Pointer NspObjs3d \n");
       return TRUE;
@@ -376,24 +376,24 @@ int nsp_objs3d_info(NspObjs3d *M,int indent,const char *name,int rec_level)
 }
 
 /*
- * print
+ * print 
  */
 
 int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLOBJS3D)
+  if ( M == NULLOBJS3D) 
     {
       Sciprintf("Null Pointer NspObjs3d \n");
       return TRUE;
     }
-  if (user_pref.pr_as_read_syntax)
-    {
+  if (user_pref.pr_as_read_syntax) 
+    { 
       Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
-    }
-  else
-    {
-      if ( user_pref.pr_depth  <= rec_level -1 )
+    } 
+  else 
+    { 
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
           nsp_objs3d_info(M,indent,pname,rec_level);
           return TRUE;
@@ -439,7 +439,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
 }
 
 /*
- * latex print
+ * latex print 
  */
 
 int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
@@ -486,8 +486,8 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   return TRUE;
 }
 /*-----------------------------------------------------
- * a set of functions used when writing interfaces
- * for NspObjs3d objects
+ * a set of functions used when writing interfaces 
+ * for NspObjs3d objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
@@ -497,7 +497,7 @@ NspObjs3d   *nsp_objs3d_object(NspObject *O)
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
   if ( check_cast (O,nsp_type_objs3d_id)  == TRUE  ) return ((NspObjs3d *) O);
-  else
+  else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_objs3d));
   return NULL;
 }
@@ -527,9 +527,9 @@ NspObjs3d  *GetObjs3d(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
- * constructor
- * if type is non NULL it is a subtype which can be used to
- * create a NspObjs3d instance
+ * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspObjs3d instance 
  *-----------------------------------------------------*/
 
 static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type)
@@ -574,51 +574,51 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
 int nsp_objs3d_check_values(NspObjs3d *H)
 {
   if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
-  if ( H->obj->wrect == NULLMAT)
+  if ( H->obj->wrect == NULLMAT) 
     {
      double x_def[4]={0,0,1,1};
      if (( H->obj->wrect = nsp_matrix_create("wrect",'r',1,4)) == NULLMAT)
        return FAIL;
       memcpy(H->obj->wrect->R,x_def,4*sizeof(double));
   }
-  if ( H->obj->bounds == NULLMAT)
+  if ( H->obj->bounds == NULLMAT) 
     {
      double x_def[6]={0,0,0,0,0,0};
      if (( H->obj->bounds = nsp_matrix_create("bounds",'r',1,6)) == NULLMAT)
        return FAIL;
       memcpy(H->obj->bounds->R,x_def,6*sizeof(double));
   }
-  if ( H->obj->arect == NULLMAT)
+  if ( H->obj->arect == NULLMAT) 
     {
      double x_def[4]={1./8.,1./8.,1./8.,1./8.};
      if (( H->obj->arect = nsp_matrix_create("arect",'r',1,4)) == NULLMAT)
        return FAIL;
       memcpy(H->obj->arect->R,x_def,4*sizeof(double));
   }
-  if ( H->obj->frect == NULLMAT)
+  if ( H->obj->frect == NULLMAT) 
     {
      double x_def[4]={0,0,1,1};
      if (( H->obj->frect = nsp_matrix_create("frect",'r',1,4)) == NULLMAT)
        return FAIL;
       memcpy(H->obj->frect->R,x_def,4*sizeof(double));
   }
-  if ( H->obj->title == NULL)
+  if ( H->obj->title == NULL) 
     {
   if (( H->obj->title = nsp_string_copy("")) == NULL)
        return FAIL;
     }
-  if ( H->obj->children == NULLLIST)
+  if ( H->obj->children == NULLLIST) 
     {
      if (( H->obj->children = nsp_list_create("children")) == NULLLIST)
        return FAIL;
     }
-  if ( H->obj->colormap == NULLMAT)
+  if ( H->obj->colormap == NULLMAT) 
     {
        if (( H->obj->colormap = nsp_matrix_create("colormap",'r',0,0)) == NULLMAT)
        return FAIL;
 
     }
-  if ( H->obj->ebox == NULLMAT)
+  if ( H->obj->ebox == NULLMAT) 
     {
      double x_def[6]={0,0,0,0,0,0};
      if (( H->obj->ebox = nsp_matrix_create("ebox",'r',1,6)) == NULLMAT)
@@ -667,7 +667,7 @@ NspObjs3d *nsp_objs3d_create_default(const char *name)
 }
 
 /*
- * copy for gobject derived class
+ * copy for gobject derived class  
  */
 
 NspObjs3d *nsp_objs3d_copy_partial(NspObjs3d *H,NspObjs3d *self)
@@ -760,7 +760,7 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
 
 /*-------------------------------------------------------------------
  * wrappers for the NspObjs3d
- * i.e functions at Nsp level
+ * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
 int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
@@ -776,7 +776,7 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
     MoveObj(stack,1,(NspObject  *) H);
   return 1;
-}
+} 
 
 /*-------------------------------------------
  * Methods
@@ -806,7 +806,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   NspMatrix *wrect;
   if ( ! IsMat(O) ) return FAIL;
   if ((wrect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspObjs3d *) self)->obj->wrect != NULL )
+  if (((NspObjs3d *) self)->obj->wrect != NULL ) 
     nsp_matrix_destroy(((NspObjs3d *) self)->obj->wrect);
   ((NspObjs3d *) self)->obj->wrect= wrect;
   return OK;
@@ -874,7 +874,7 @@ static int _wrap_objs3d_set_arect(void *self,const char *attr, NspObject *O)
   NspMatrix *arect;
   if ( ! IsMat(O) ) return FAIL;
   if ((arect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspObjs3d *) self)->obj->arect != NULL )
+  if (((NspObjs3d *) self)->obj->arect != NULL ) 
     nsp_matrix_destroy(((NspObjs3d *) self)->obj->arect);
   ((NspObjs3d *) self)->obj->arect= arect;
   return OK;
@@ -900,7 +900,7 @@ static int _wrap_objs3d_set_frect(void *self,const char *attr, NspObject *O)
   NspMatrix *frect;
   if ( ! IsMat(O) ) return FAIL;
   if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspObjs3d *) self)->obj->frect != NULL )
+  if (((NspObjs3d *) self)->obj->frect != NULL ) 
     nsp_matrix_destroy(((NspObjs3d *) self)->obj->frect);
   ((NspObjs3d *) self)->obj->frect= frect;
   return OK;
@@ -1010,7 +1010,7 @@ static int _wrap_objs3d_set_colormap(void *self,const char *attr, NspObject *O)
   NspMatrix *colormap;
   if ( ! IsMat(O) ) return FAIL;
   if ((colormap = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspObjs3d *) self)->obj->colormap != NULL )
+  if (((NspObjs3d *) self)->obj->colormap != NULL ) 
     nsp_matrix_destroy(((NspObjs3d *) self)->obj->colormap);
   ((NspObjs3d *) self)->obj->colormap= colormap;
   return OK;
@@ -1134,7 +1134,7 @@ static int _wrap_objs3d_set_ebox(void *self,const char *attr, NspObject *O)
   NspMatrix *ebox;
   if ( ! IsMat(O) ) return FAIL;
   if ((ebox = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspObjs3d *) self)->obj->ebox != NULL )
+  if (((NspObjs3d *) self)->obj->ebox != NULL ) 
     nsp_matrix_destroy(((NspObjs3d *) self)->obj->ebox);
   ((NspObjs3d *) self)->obj->ebox= ebox;
   return OK;
@@ -1177,7 +1177,7 @@ static AttrTab objs3d_attrs[] = {
 
 
 /*-------------------------------------------
- * functions
+ * functions 
  *-------------------------------------------*/
 #line 181 "codegen/objs3d.override"
 
@@ -1204,7 +1204,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
 
 
 /*----------------------------------------------------
- * Interface
+ * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
@@ -1222,7 +1222,7 @@ int Objs3d_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return ( *(Objs3d_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/* used to walk through the interface table
+/* used to walk through the interface table 
     (for adding or removing functions) */
 
 void Objs3d_Interf_Info(int i, char **fname, function ( **f))
@@ -2677,9 +2677,6 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
       *zmax=bbox[5];
     }
 
-  Sciprintf("Xgc->scales->scale_flag3d vaut %d",
-	    Xgc->scales->scale_flag3d);
-
   if ( Xgc->scales->scale_flag3d != 0 )
     {
       if (*flag == 7 || *flag == 8 )
@@ -2744,7 +2741,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   char logf[2];
 
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-  Xgc->scales->scale_flag3d = 0;
+  Xgc->scales->scale_flag3d = 0; /* bugs when changed to 1 */
   Xgc->scales->alpha = Alpha;
   Xgc->scales->theta = Teta;
   cost=cos((Teta)*M_PI/180.0);
