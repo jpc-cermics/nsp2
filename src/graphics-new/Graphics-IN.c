@@ -950,7 +950,7 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       ret = 1;
     }
  end:
-  if ( Mcolors != NULL)   nsp_matrix_destroy(Mcolors);
+  /* if ( Mcolors != NULL)  nsp_matrix_destroy(Mcolors); */
   nsp_matrix_destroy(zloc);
   return ret;
 
