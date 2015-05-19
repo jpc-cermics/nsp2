@@ -1271,6 +1271,10 @@ int nsp_mat_get_real(NspMatrix *A)
   int incx=2,incy=1;
   if ( A->rc_type == 'r' )  return(OK);
   /* take care that R and C are at the same memory location */
+  if ( A->mn == 0 ) 
+    {
+      A->rc_type = 'r'; return OK;
+    }
   C = A->C;
   A->R =nsp_alloc_doubles(A->mn);
   if ( A->R == (double *) 0) 
@@ -1305,17 +1309,25 @@ int nsp_mat_get_imag(NspMatrix *A)
     }
   else
     {
-      /* take care that R and C are at the same memory location */
-      doubleC *C = A->C;
-      A->R =nsp_alloc_doubles(A->mn);
-      if ( A->R == (double *) 0) 
+      if (A->mn == 0) 
 	{
-	  Scierror("Error:\tRunning out of memory\n");
-	  return(FAIL);
+	  A->rc_type = 'r';
+	  return OK;
 	}
-      C2F(dcopy)(&(A->mn),((double *) C)+1,&incy,A->R,&inc);
-      A->rc_type = 'r';
-      FREE(C) ;
+      else
+	{
+	  /* take care that R and C are at the same memory location */
+	  doubleC *C = A->C;
+	  A->R =nsp_alloc_doubles(A->mn);
+	  if ( A->R == (double *) 0) 
+	    {
+	      Scierror("Error:\tRunning out of memory\n");
+	      return(FAIL);
+	    }
+	  C2F(dcopy)(&(A->mn),((double *) C)+1,&incy,A->R,&inc);
+	  A->rc_type = 'r';
+	  FREE(C) ;
+	}
     }
   return OK;
 }
