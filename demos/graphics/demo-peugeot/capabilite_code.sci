@@ -11,7 +11,7 @@ histplot([-6:0.4:6],randn(1,2000),rect=[-6,0,6,0.5])
 function [y]=f(x) ; y=exp(-x.*x/2)/sqrt(2*%pi);endfunction 
 x=-6:0.1:6;x=x';
 y=f(x);
-plot2d(x,y,style=2,strf="000");
+plot2d(x,y,style=2,rect=[-6,0,6,0.5])
 titre= 'macro histplot : Histogram plot';
 xtitle(titre,'Classes','N(C)/Nmax');
 xleft=-1;

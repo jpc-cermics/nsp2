@@ -1,3 +1,4 @@
+if ~new_graphics() then switch_graphics();end;xclear();
 xclear();
 exec('interpolation_code.sci');xset('wshow');xclick()
 xclear()
@@ -23,3 +24,7 @@ exec('pareto_code.sci');xset('wshow');xclick()
 xclear()
 exec('isovar_code.sci');xset('wshow');xclick()
 
+// anova 
+// chi2 
+// norm 
+// 

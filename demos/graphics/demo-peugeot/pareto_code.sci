@@ -15,7 +15,6 @@ function pareto(valeurs,valeurs1,noms,titre,couleur)
     return 
   end
   xsetech(wrect=[0,0,1,1],frect=[1,0,n+1,max(valeurs1)],arect=[0.125,0.125,0.125,0.35]);
-  //plot2d([],[],rect=[1,0,n+1,max(valeurs1)]);
   alpha=0.125;
   x=ones_new(4,1)*(1:n) + [alpha;1-alpha;1-alpha;alpha]*ones_new(1,n);
   y=[0*valeurs,0*valeurs,valeurs,valeurs]';
@@ -31,11 +30,5 @@ function pareto(valeurs,valeurs1,noms,titre,couleur)
   xtitle(titre);
 endfunction
 
-pareto(valeurs,cumsum(valeurs),noms,'Diagramme de Pareto ...',3);
-////xs2ps(0,'pareto1.ps');
-//unix(SCI+'/bin/Blatexpr -p 1 1 pareto1.ps')  /// \sleftarrow{calling a Unix script}
-
-xclear();
+//pareto(valeurs,cumsum(valeurs),noms,'Diagramme de Pareto ...',3);
 pareto(cumsum(valeurs),cumsum(valeurs),noms,'Diagramme de Pareto cumule ...',3);
-////xs2ps(0,'pareto2.ps');
-//unix(SCI+'/bin/Blatexpr -p 1 1 pareto2.ps')  /// \sleftarrow{calling a Unix script}

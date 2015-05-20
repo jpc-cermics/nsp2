@@ -1,26 +1,18 @@
-//driver('Rec')
+// colored marks 
 
-xclear();
-xsetech(wrect=[0,0,1,1/5],frect=[0,0,1,1])
-xset('font',2);
+xsetech(wrect=[0,0,1,1/5],frect=[0,0,1,1],axesflag=0)
 xstringb(0,0.0,'Nuages de points',1,1);
+
 h = (1-1/5);
 xsetech(wrect=[0,1/5,1/2,h]);
-x=1:1000;
-y=randn(1,1000);
-plot2d(x,y,style=0);
-xsetech(wrect=[1/2,1/5,1/2,h]);
-x=randn(1000,1);
-y=randn(1000,1);
-col=xget('color');
-xset('color',5);
-plot2d(x,y,style=-2,axesflag=0);
-x=randn(1000,1)+2;
-y=randn(1000,1);
-xset('color',9);
-plot2d(x,y,style=-4,axesflag=0);
-xset('color',col);
-plot2d([],[],strf='001');
+N=1000;
+x=randn(N,1);y=randn(N,1);
+plot2d(x,y,mark=0,line_color=-2,axesflag=5);
 
-////xs2ps(0,'nuages.ps');
-//unix(SCI+'/bin/Blatexpr -p 1 1 nuages.ps')  /// \sleftarrow{calling a Unix script}
+xsetech(wrect=[1/2,1/5,1/2,h],clip=%t);
+x=randn(N,1);y=randn(N,1);
+plot2d(x,y,line_color=-2,mark=8,mark_color=5,mark_size=2,axesflag=5);
+x=randn(N,1)+2;y=randn(N,1);
+plot2d(x,y,line_color=-2,mark=9,mark_color=9,mark_size=2,axesflag=5);
+
+
