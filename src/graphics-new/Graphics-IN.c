@@ -1310,7 +1310,7 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
       break;
     }
 
-  if (strflag[1] == '7' || strflag[1] == '8' )
+  if (axe->obj->fixed == TRUE && (strflag[1] == '7' || strflag[1] == '8' ))
     {
       /* we merge with axes values */
       frect[0] = Min(frect[0], axe->obj->frect->R[0]);
