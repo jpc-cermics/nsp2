@@ -27,7 +27,7 @@ function bode(hnum,hden,varargopt)
   if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;else frq=fmin;end;
+  if fmin.equal['sym'] then fmin = -fmax;end;
   // frq 
   frq=  varargopt.find['frq',def=[]];
   // title 

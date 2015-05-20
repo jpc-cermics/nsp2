@@ -27,7 +27,7 @@ function nyquist(hnum,hden,varargopt)
   if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;else frq=fmin;end;
+  if fmin.equal['sym'] then fmin = -fmax;end;
   // frq 
   frq=  varargopt.find['frq',def=[]];
   // title 
@@ -133,7 +133,7 @@ function nyquist(hnum,hden,varargopt)
   // axes with 0
   //Optional unit circle
   if varargopt.iskey['uc'] then 
-    t=(0:0.1:2*%pi)';
+    t= linspace(0,2*%pi,100)';
     plot2d(sin(t),cos(t),line_color=(mn+1),iso=%t,leg_pos="urm");
   end
   [v,rect]=xgetech();
