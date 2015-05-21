@@ -28,7 +28,7 @@
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/curve.h>
-#include <nsp/figuredata.h> 
+#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
 #line 35 "curve.c"
@@ -114,8 +114,8 @@ NspTypeCurve *new_type_curve(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Curve */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 121 "curve.c"
   /* 
@@ -706,14 +706,14 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 static NspObject *_wrap_curve_get_obj_Pts(void *self,char *attr, int *copy)
 {
   NspMatrix *ret;
-  *copy = TRUE; 
+  *copy = TRUE;
   ret = ((NspMatrix*) ((NspCurve *) self)->obj->Pts);
   return (NspObject *) ret;
 }
 
 static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 {
-  NspMatrix *M= (NspMatrix *) val ; 
+  NspMatrix *M= (NspMatrix *) val ;
   NspCurve *poly = self ;
   if ( M->rc_type != 'r' || M->n != 2 )
     {
@@ -785,7 +785,7 @@ static AttrTab curve_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -797,7 +797,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -837,16 +837,16 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
 #line 124 "codegen/curve.override"
 
 /* inserted verbatim at the end */
-/* 
-    '("int" "color"); curve color 
-    '("int" "mark") ; mark to be used 
-    '("double" "width"); line width 
-    '("int" "style"); line style 
+/*
+    '("int" "color"); curve color
+    '("int" "mark") ; mark to be used
+    '("double" "width"); line width
+    '("int" "style"); line style
     '("int" "mode"); mode: std, step, stem, arrow.
     '("NspMatrix*" "Pts")
 */
 
-typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ; 
+typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ;
 
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -855,9 +855,9 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   NspMatrix *M = P->obj->Pts;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  
+
   if (Obj->obj->show == FALSE ) return;
-       
+
   /* check if the block is inside drawing rectangle
    */
 
@@ -865,22 +865,22 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     {
       return ;
     }
-  
+
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
-  if ( P->obj->mark >= -1 ) 
+  if ( P->obj->mark >= -1 )
     {
       /* we will use a mark */
-      Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-      if ( P->obj->mark_size >= 0 ) 
+      Xgc->graphic_engine->xget_mark(Xgc,xmark);
+      if ( P->obj->mark_size >= 0 )
 	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
       else
 	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
     }
-  
-  switch ( P->obj->mode ) 
+
+  switch ( P->obj->mode )
     {
-    case curve_std: 
+    case curve_std:
       if ( P->obj->color >= -1 )
 	{
 	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
@@ -900,12 +900,12 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	int n= 2*M->m,i;
 	xm = graphic_alloc(0,n,sizeof(double));
 	ym = graphic_alloc(1,n,sizeof(double));
-	if ( xm == 0 || ym == 0) 
+	if ( xm == 0 || ym == 0)
 	  {
 	    Sciprintf("Error: cannot allocated points for drawing\n");
 	    return;
 	  }
-	for ( i=0 ; i < M->m -1 ; i++) 
+	for ( i=0 ; i < M->m -1 ; i++)
 	  {
 	    xm[2*i]= M->R[i];
 	    ym[2*i]= M->R[i+M->m];
@@ -917,7 +917,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	if ( P->obj->color >= -1 )
 	  {
 	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0); 
+	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0);
 	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 	  }
 	if ( P->obj->mark >= -1 )
@@ -935,12 +935,12 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	int n= 2*M->m,i;
 	xm = graphic_alloc(0,n,sizeof(double));
 	ym = graphic_alloc(1,n,sizeof(double));
-	if ( xm == 0 || ym == 0) 
+	if ( xm == 0 || ym == 0)
 	  {
 	    Sciprintf("Error: cannot allocated points for drawing\n");
 	    return;
 	  }
-	for ( i=0 ; i < M->m ; i++) 
+	for ( i=0 ; i < M->m ; i++)
 	  {
 	    xm[2*i]= M->R[i];
 	    ym[2*i]= 0;
@@ -950,13 +950,13 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&P->obj->color,iflag);
       }
       break;
-    case curve_arrow: 
+    case curve_arrow:
       /* a faire */
       break;
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
-  if ( P->obj->mark >= 0) 
+  if ( P->obj->mark >= 0)
     {
       Xgc->graphic_engine->xset_mark(Xgc,xmark[0],xmark[1]);
     }
@@ -964,12 +964,12 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 
 static void nsp_translate_curve(NspGraphic *Obj,const double *tr)
 {
-  int i; 
+  int i;
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < M->m ; i++) 
+  for ( i=0; i < M->m ; i++)
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
@@ -985,7 +985,7 @@ static void nsp_rotate_curve(NspGraphic *Obj,double *R)
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m,x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < M->m ; i++) 
+  for ( i=0; i < M->m ; i++)
     {
       x1 = R[0]*(*x) -R[1]*(*y);
       y1 = R[1]*(*x) +R[0]*(*y);
@@ -1002,7 +1002,7 @@ static void nsp_scale_curve(NspGraphic *Obj,double *alpha)
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < M->m ; i++) 
+  for ( i=0; i < M->m ; i++)
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
@@ -1010,36 +1010,21 @@ static void nsp_scale_curve(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of curve 
+/* compute in bounds the enclosing rectangle of curve
  *
  */
 
 static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
 {
-  int i;
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
-  double *x=M->R,*y= M->R+M->m, dval;
+  double *x=M->R,*y= M->R+M->m;
   if ( M->mn == 0) return FALSE;
-  bounds[0]=*x;/* xmin */
-  bounds[1]=*y;/* ymin */
-  bounds[2]=*x;/* xmax */
-  bounds[3]=*y;/* ymax */
-  for (i = 1; i < M->m; i++)
-    {
-      dval = x[i];
-      if ( dval > bounds[2] )
-	bounds[2] = dval;
-      else if ( dval < bounds[0] )
-	bounds[0] = dval;
-      dval = y[i];
-      if ( dval > bounds[3] )
-	bounds[3] = dval;
-      else if ( dval < bounds[1] )
-	bounds[1] = dval;
-    }
+  bounds[0]= Mini(x,M->m);
+  bounds[1]= Mini(y,M->m);
+  bounds[2]= Maxi(x,M->m);
+  bounds[3]= Maxi(y,M->m);
   return TRUE;
 }
 
-
-#line 1046 "curve.c"
+#line 1031 "curve.c"
