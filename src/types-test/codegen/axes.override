@@ -203,6 +203,8 @@ last
 /* inserted verbatim at the end */
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
+int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
+
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   nsp_gcscale scale_keep = *Xgc->scales;
@@ -331,38 +333,46 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
 
-  if (  P->obj->font_size != -1) 
+  if (  P->obj->font_size != -1)
     {
       Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
       Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
     }
-  if ( P->obj->line_width != -1 ) 
+  if ( P->obj->line_width != -1 )
     {
       lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
     }
 
   /* draw axes, ticks */
-  axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid, P->obj->background);
+  nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
+		P->obj->grid, P->obj->background);
   /* legends */
   nsp_axes_legends(Xgc,P);
   /* title if present */
-  if ( P->obj->title[0] != '\0')
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
-  if ( P->obj->x[0] != '\0')
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
-  if ( P->obj->y[0] != '\0')
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
+  if (1)
+    {
+      nsp_graphic_titles(Xgc,P->obj->title,P->obj->x,P->obj->y);
+    }
+  else
+    {
+      if ( P->obj->title[0] != '\0')
+	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
+      if ( P->obj->x[0] != '\0')
+	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
+      if ( P->obj->y[0] != '\0')
+	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
+    }
 
-  if (  P->obj->font_size != -1) 
+  if (  P->obj->font_size != -1)
     {
       Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
     }
 
-  if ( P->obj->line_width != -1 ) 
+  if ( P->obj->line_width != -1 )
     {
       Xgc->graphic_engine->xset_thickness(Xgc, lw);
     }
-  
+
   /* clip the inside rectangle of the  axe
    * Note that clipping is wrong when an axe is rotated
    * since clipping only works with rectangles
@@ -771,17 +781,17 @@ void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso
     {
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
-    case '1': 
-    case '3': 
-    case '5': 
-    case '7': 
+    case '1':
+    case '3':
+    case '5':
+    case '7':
       memcpy(A->obj->rect->R,rect,4*sizeof(double));
       A->obj->fixed = TRUE;
       break;
     case '2': /* from the min/max of all the datas */
-    case '4': 
-    case '6': 
-    case '8': 
+    case '4':
+    case '6':
+    case '8':
       nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->fixed = FALSE;
     }
