@@ -17,29 +17,29 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 /*------------------------------------------------------------------------
- * the functions in this file are stored in the global struct 
+ * the functions in this file are stored in the global struct
  * Gengine nsp_gengine1
- * they are used when a graphic order is to be recorded or 
- * if it needs scale changes from pixel to double or both. 
+ * they are used when a graphic order is to be recorded or
+ * if it needs scale changes from pixel to double or both.
  *--------------------------------------------------------------------------*/
 
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <gdk/gdk.h>
-#include "nsp/graphics-new/Graphics.h" 
+#include "nsp/graphics-new/Graphics.h"
 #include "nsp/math.h"
 #include "nsp/sciio.h"
 #include "nsp/object.h"
 #include "nsp/gtk/gobject.h"
 #include "new_graphics.h"
 
-#define PERI_SCALE_PRIVATE 
-#include "nsp/graphics-new/scale.h" 
+#define PERI_SCALE_PRIVATE
+#include "nsp/graphics-new/scale.h"
 
 static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
@@ -90,11 +90,11 @@ Gengine1 nsp_gengine1={
 
 
 /*------------------------------------------------
- * graphic context initialization 
+ * graphic context initialization
  *------------------------------------------------*/
 
-void nsp_initialize_gc_obsol( BCG *Xgc ) 
-{ 
+void nsp_initialize_gc_obsol( BCG *Xgc )
+{
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
   Xgc->graphic_engine->xset_font(Xgc,2,1, FALSE);
@@ -124,12 +124,12 @@ static void initialize_gc_1(BCG *Xgc)
 
 
 /**************************************************
- * Global values which are set at this level and 
+ * Global values which are set at this level and
  * not redirected to each driver
  **************************************************/
 
 /*-----------------------------------------------------------------------------
- *  xset_1 
+ *  xset_1
  *-----------------------------------------------------------------------------*/
 
 static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
@@ -151,7 +151,7 @@ static void xset_clip_1(BCG *Xgc,double x[])
   Xgc->graphic_engine->xset_clip(Xgc,&r);
 }
 
-static void xset_default_1(BCG *Xgc) 
+static void xset_default_1(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
 }
@@ -172,7 +172,7 @@ static void xset_mark_size_1(BCG *Xgc,int val)
 }
 
 static void drawarc_1(BCG *Xgc,double arc[])
-{ 
+{
   int iarc[6];
   rect2d_f2i(Xgc->scales,arc,iarc,4);
   iarc[4]=(int) arc[4];
@@ -209,18 +209,18 @@ static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 
 
 static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
-{ 
+{
   int *xm=NULL,*ym=NULL,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   /* is as < 0 --> not set */
-  if ( as < 0.0 ) 
+  if ( as < 0.0 )
     {
       int i;
       double Mnorm=0.0;
       for (i=0 ; i < n/2 ; i++)
-	{ 
+	{
 	  double dx,dy;
 	  dx=( vx[2*i+1]-vx[2*i]);
 	  dy=( vy[2*i+1]-vy[2*i]);
@@ -241,7 +241,7 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
   int initpoint1[2],alpha1;
   double size1[3];
   alpha1=inint( *alpha);
-  axis2d(Xgc->scales,alpha,initpoint,size,initpoint1,size1);  
+  axis2d(Xgc->scales,alpha,initpoint,size,initpoint1,size1);
   Xgc->graphic_engine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
 }
 
@@ -257,7 +257,7 @@ static void cleararea_1(BCG *Xgc,double *rect)
 
 
 static void xclick_1(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, double *y, int iflag,int motion,int release,int key, int istr)
-{ 
+{
   int x1,yy1,n=1;
 
   Xgc->graphic_engine->xclick(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key,istr);
@@ -265,7 +265,7 @@ static void xclick_1(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, doub
 }
 
 static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
-{ 
+{
   int x1,y1;
   Xgc->graphic_engine->xclick_any(Xgc,str,ibutton,imask,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
@@ -275,14 +275,14 @@ static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x,
 }
 
 static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, int *imask,double *x, double *y, int iflag, int motion,int release,int key)
-{ 
+{
   int x1,yy1;
   Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key);
   scale_i2f(Xgc->scales,x,y,&x1,&yy1,1);
 }
 
 static void fillarc_1(BCG *Xgc, double arc[])
-{ 
+{
   int iarc[6],n2=4;
   rect2d_f2i(Xgc->scales,arc,iarc,n2);
   iarc[4]=(int) arc[4];
@@ -292,7 +292,7 @@ static void fillarc_1(BCG *Xgc, double arc[])
 
 
 static void fillrectangle_1(BCG *Xgc,double rect[])
-{ 
+{
   int irect[4],n2=4;
   rect2d_f2i(Xgc->scales,rect,irect,n2);
   Xgc->graphic_engine->fillrectangle(Xgc,irect);
@@ -304,8 +304,17 @@ static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closefla
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
-  Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,n,closeflag);
+  /* take care of inf and nan */
+  while (1)
+    {
+      int last= scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
+      Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,last,closeflag);
+      if (last == n || last == n-1)
+	{
+	  break;
+	}
+      vx += last +1 ;vy +=last +1 ; n -= last+1;
+    }
 }
 
 /* XXXX*/
@@ -317,22 +326,31 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
-  /** and clipping is special its args are floats **/
+  /* and clipping is special its args are floats */
   scale_f2i(Xgc->scales,clip_rect,clip_rect+1,ix,ix+1,1);
   length_scale_f2i(Xgc->scales,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
   /* xxleft, int xxright, int yybot, int yytop)*/
   cb[0]=ix[0];cb[1]=ix[0]+ix[2];cb[2]=ix[1];cb[3]=ix[1]+ix[3];
-  Xgc->graphic_engine->drawpolyline_clip(Xgc,xm,ym,n,cb,closeflag);
+  /* take care of inf and nan */
+  while (1)
+    {
+      int last= scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
+      Xgc->graphic_engine->drawpolyline_clip(Xgc,xm,ym,last,cb,closeflag);
+      if (last == n || last == n-1)
+	{
+	  break;
+	}
+      vx += last +1 ;vy +=last +1 ; n -= last+1;
+    }
 }
 
-#if 0 
+#if 0
 static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag);
-#endif 
+#endif
 
 static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
-#if 0 
+#if 0
   int *xm=NULL,*ym=NULL,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err  ==   1) return;
@@ -340,11 +358,11 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
   if (v1 == 2) {
     for (i=0 ; i< (n) ;i++) nsp_shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
   }
-  else 
+  else
     Xgc->graphic_engine->fillpolylines(Xgc,xm,ym,fillvect,n,p);
-#else 
+#else
   Sciprintf("Warning: fillpolylines_1 should not be called\n");
-#endif 
+#endif
 
 }
 
@@ -352,40 +370,40 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
  *This function sorts the vertices such that the color value is in decreasing order
  *---------------------------------------------------------------------------------*/
 
-#if 0 
-static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, 
+#if 0
+static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin,
 			 int *polyx, int *polyy, int *fill)
-{ 
+{
   int tmp,k;
   for (k=0;k<3;k++) {polyx[k]=polyxin[k]; polyy[k]=polyyin[k]; fill[k]=fillin[k];}
-      
-  if (fill[0]<fill[1]) {  
+
+  if (fill[0]<fill[1]) {
     tmp=fill[0]; fill[0]=fill[1]; fill[1]=tmp;
     tmp=polyx[0]; polyx[0]=polyx[1]; polyx[1]=tmp;
     tmp=polyy[0]; polyy[0]=polyy[1]; polyy[1]=tmp;
   }
-  if (fill[0]<fill[2]) {  
+  if (fill[0]<fill[2]) {
     tmp=fill[0]; fill[0]=fill[2]; fill[2]=tmp;
     tmp=polyx[0]; polyx[0]=polyx[2]; polyx[2]=tmp;
     tmp=polyy[0]; polyy[0]=polyy[2]; polyy[2]=tmp;
   }
-  if (fill[1]<fill[2]) {  
+  if (fill[1]<fill[2]) {
     tmp=fill[1]; fill[1]=fill[2]; fill[2]=tmp;
     tmp=polyx[1]; polyx[1]=polyx[2]; polyx[2]=tmp;
     tmp=polyy[1]; polyy[1]=polyy[2]; polyy[2]=tmp;
   }
   return 0;
 }
-#endif 
+#endif
 
 /*-----------------------------------------------------------------------
  * This is the main shading function. When the polygon has 4 vertices, it
  * is splitted in two triangles and shade() is recursively called twice.
- * Author : mottelet 2000 
- * XXXX: remplacer les malloc par graphic_alloc pour uniformiser avec les autres 
- *       routines 
+ * Author : mottelet 2000
+ * XXXX: remplacer les malloc par graphic_alloc pour uniformiser avec les autres
+ *       routines
  *-----------------------------------------------------------------------*/
-#if 0 
+#if 0
 static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
 {
   int px[5],py[5],fil[4],is[3],ie[3],n[3];
@@ -394,15 +412,15 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
   double dx,dy;
 
   if (polysize == 3) { /* The triangle case */
- 
+
     triangleSort(polyx,polyy,fill,polyxs,polyys,fills);
-  
+
     is[0]=0; ie[0]=1;
     is[1]=1; ie[1]=2;
     is[2]=0; ie[2]=2;
-     
+
     /* Computation of coordinates of elementary polygons for each side */
-     
+
     for(i=0;i<3;i++) {
 
       s=is[i];
@@ -410,32 +428,32 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
       n[i]=fills[s]-fills[e];
 
       if (n[i]) {
-	
+
 	x[i]=(int *)malloc((n[i]+2)*sizeof(int));
-	y[i]=(int *)malloc((n[i]+2)*sizeof(int)); 
+	y[i]=(int *)malloc((n[i]+2)*sizeof(int));
 	if (x[i]==NULL || y[i]==NULL) {
 	  Scistring("shade : malloc No more Place\n");
 	  return 0;
 	}
-		
+
 	dx=((double)(polyxs[e]-polyxs[s]))/(double)n[i];
 	dy=((double)(polyys[e]-polyys[s]))/(double)n[i];
 
 	x[i][0]=polyxs[s];
 	y[i][0]=polyys[s];
-	   
+
 	for(k=0;k<n[i];k++) {
 	  x[i][k+1]=linint((double)polyxs[s] + (0.5+k)*dx);
 	  y[i][k+1]=linint((double)polyys[s] + (0.5+k)*dy);
 	}
-	   
+
 	x[i][n[i]+1]=polyxs[e];
 	y[i][n[i]+1]=polyys[e];
       }
     }
-     
+
     /* Fill the whole triangle with color fill[1] if all colors are equal */
-         
+
     if (!n[0] && !n[1]) {
 
       psize=3;
@@ -443,10 +461,10 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
       Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-Abs(col),&cols),npoly,psize);
       return(0);
     }
-     
+
     if (n[0]) {
       psize=4;
-      col=fills[0];  
+      col=fills[0];
       for(i=0;i<=n[0];i++) {
 	px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
 	py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
@@ -456,7 +474,7 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
       free(x[0]);
       free(y[0]);
     }
-     
+
     if (n[1]) {
       psize=4;
       col=fills[1];
@@ -467,7 +485,7 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
 	col--;
       }
       free(x[1]);
-      free(y[1]);  
+      free(y[1]);
     }
 
     if (n[2]) {
@@ -476,9 +494,9 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
     }
 
   }
-   
+
   else { /* The 4 vertices case  */
-     
+
     px[0]=polyx[0]; px[1]=polyx[1]; px[2]=polyx[2];
     py[0]=polyy[0]; py[1]=polyy[1]; py[2]=polyy[2];
     fil[0]=fill[0]; fil[1]=fill[1]; fil[2]=fill[2];
@@ -489,9 +507,9 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
     nsp_shade(Xgc,px,py,fil,3,flag);
   }
   return 0;
-}     
+}
 
-#endif 
+#endif
 
 
 
@@ -501,9 +519,17 @@ static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
-  Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,n);
-
+  /* take care of inf and nan */
+  while (1)
+    {
+      int last= scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
+      Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,last);
+      if (last == n || last == n-1)
+	{
+	  break;
+	}
+      vx += last +1 ;vy +=last +1 ; n -= last+1;
+    }
 }
 
 
@@ -544,7 +570,7 @@ static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 }
 
 static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
-{ 
+{
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
@@ -603,8 +629,8 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
       int wmax=0,htot=0,x1=0,yy1=0,rect[4];
       strcpy(loc,string);
       loc1=strtok(loc,"@");
-      while ( loc1 != ( char * ) 0) 
-	{  
+      while ( loc1 != ( char * ) 0)
+	{
 	  Xgc->graphic_engine->boundingbox(Xgc,loc1,x1,yy1,rect);
 	  if ( rect[2] >= wmax ) wmax=rect[2];
 	  htot += (int) (1.2*((double) rect[3]));
@@ -614,8 +640,8 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
       yy1=y - h + ( h - htot)/2 + rect[3];
       strcpy(loc,string);
       loc1=strtok(loc,"@");
-      while ( loc1 != ( char * ) 0) 
-	{  
+      while ( loc1 != ( char * ) 0)
+	{
 	  double angle=0.0;
 	  int flag=0;
 	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,yy1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
@@ -631,8 +657,8 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
 }
 
 /*
- * string are displayed vertically 
- * in the given box 
+ * string are displayed vertically
+ * in the given box
  */
 
 
@@ -647,8 +673,8 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
       int wmax=0,hl=0,x1=0,y1=0,rect[4];
       strcpy(loc,string);
       loc1=strtok(loc,"@");
-      while ( loc1 != ( char * ) 0) 
-	{  
+      while ( loc1 != ( char * ) 0)
+	{
 	  Xgc->graphic_engine->boundingbox(Xgc,loc1,x1,y1,rect);
 	  if ( rect[2] >= wmax ) wmax=rect[2];
 	  hl = Max(hl,rect[3]);
@@ -656,11 +682,11 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
 	  loc1=strtok((char *) 0,"@");
 	}
       y1= y - (h - wmax)/2;
-      x1= x + ( w - count*hl*1.5)/2.0 ; 
+      x1= x + ( w - count*hl*1.5)/2.0 ;
       strcpy(loc,string);
       loc1=strtok(loc,"@");
-      while ( loc1 != ( char * ) 0) 
-	{  
+      while ( loc1 != ( char * ) 0)
+	{
 	  x1 += hl*(1.25);
 	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,y1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  loc1=strtok((char *) 0,"@");
@@ -676,7 +702,7 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
 
 
 static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
-{ 
+{
   int x1,yy1,rect1[4];
   x1 = XDouble2Pixel(Xgc->scales,x);
   yy1 = YDouble2Pixel(Xgc->scales,y);
@@ -686,7 +712,7 @@ static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rec
 }
 
 /*-----------------------------------------------------------------------------
- * a string in a bounded box : with font size change to fit into the 
+ * a string in a bounded box : with font size change to fit into the
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
@@ -702,30 +728,30 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   size = FONTMAXSIZE;
   w = wbox +1;
-  if ( *fflag  ==  1 ) 
+  if ( *fflag  ==  1 )
     {
-      while ( (w > wbox || h > hbox) && size >=0  ) 
+      while ( (w > wbox || h > hbox) && size >=0  )
 	{
 	  size--;
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
 	  nsp_mstring(Xgc,0,x,y,str,&w,&h);
 	}
     }
-  else 
+  else
     {
       nsp_mstring(Xgc,0,x,y,str,&w,&h);
     }
   x = x +  (wbox - w)/2.0;
-  y = y -  (hbox - h)/2.0; 
+  y = y -  (hbox - h)/2.0;
   nsp_mstring(Xgc,1,x,y,str,&w,&h);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
 
 
 /*
- * StrMat = 'xxxxZxxxxZxxx....' Z = \n 
- * find the enclosing rectangle for drawing 
- * the string StrMat 
+ * StrMat = 'xxxxZxxxxZxxx....' Z = \n
+ * find the enclosing rectangle for drawing
+ * the string StrMat
  * and the string is Drawn if Dflag  == 1 ;
  */
 
@@ -736,26 +762,26 @@ static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, 
   int wc =0;
   p1 = plast = p+ strlen(p);
 
-  while (1) 
+  while (1)
     {
       int logrect[4];
       double angle=0.0;
       int flag=0;
       p2 =p1 ; *p1 = '\0';
-      while ( p1 != p && *p1 != '\n' ) 
+      while ( p1 != p && *p1 != '\n' )
 	p1--;
-      if ( Dflag  ==  1) 
+      if ( Dflag  ==  1)
 	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle,
 					   GR_STR_XLEFT, GR_STR_YBOTTOM);
       Xgc->graphic_engine->boundingbox(Xgc, ( p1  ==  p ) ? p1 : p1 +1, x,yi,logrect);
       if ( p2 != plast) 	*p2 = '\n';
       wc = Max( wc , logrect[2]);
-      if ( p  ==  p1 ) 
+      if ( p  ==  p1 )
 	{
 	  yi=yi- logrect[3];
 	  break;
-	}	
-      else 
+	}
+      else
 	{
 	  yi=yi-1.2*logrect[3];
 	}
@@ -765,38 +791,38 @@ static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, 
 }
 
 /*-----------------------------------------------------------------------------
- * pixbuf 
+ * pixbuf
  *-----------------------------------------------------------------------------*/
 
 static void draw_pixbuf_1(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,
 			  double dest_y,double w,double  h)
-{ 
+{
   GdkPixbuf *pixbuf=GDK_PIXBUF(((NspGObject *) pix)->obj);
   int idest_x,idest_y,iw,ih;
   scale_f2i(Xgc->scales,&dest_x,&dest_y,&idest_x,&idest_y,1);
   length_scale_f2i(Xgc->scales,&w,&h,&iw,&ih,1);
   Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, iw, ih);
-  
+
 }
 
 static void draw_pixbuf_from_file_1(BCG *Xgc,const char *fname,int src_x,int src_y,double dest_x,
 				    double dest_y,double w,double  h)
-{ 
+{
   int idest_x,idest_y,iw,ih;
   scale_f2i(Xgc->scales,&dest_x,&dest_y,&idest_x,&idest_y,1);
   length_scale_f2i(Xgc->scales,&w,&h,&iw,&ih,1);
   Xgc->graphic_engine->draw_pixbuf_from_file(Xgc,fname, src_x, src_y,idest_x,idest_y, iw, ih);
-  
+
 }
 
 
 /*
- * Utilities : Allocation 
+ * Utilities : Allocation
  */
 
 static void Myalloc(int **xm, int **ym, int n, int *err)
 {
-  if ( n != 0) 
+  if ( n != 0)
     {
       *xm= graphic_alloc(6,n,sizeof(int));
       *ym= graphic_alloc(7,n,sizeof(int));
@@ -810,7 +836,7 @@ static void Myalloc(int **xm, int **ym, int n, int *err)
 
 static void Myalloc1(int **xm, int n, int *err)
 {
-  if ( n != 0) 
+  if ( n != 0)
     {
       if (( *xm= graphic_alloc(6,n,sizeof(int)))   ==  0  )
 	{
@@ -819,5 +845,3 @@ static void Myalloc1(int **xm, int n, int *err)
 	}
     }
 }
-
-
