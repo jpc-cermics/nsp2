@@ -22,14 +22,11 @@
  * Axis drawing for 2d plots
  *--------------------------------------------------------------------------*/
 
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
 
-static double  x_convert (char xy_type,const double x[] ,int i);
-static double  y_convert (char xy_type,const double x[] ,int i);
+static double x_convert (char xy_type,const double x[] ,int i);
+static double y_convert (char xy_type,const double x[] ,int i);
 static void NumberFormat (char *str,int k,int a);
 static void aplotv1_new(BCG *Xgc,char mode, int grid_color);
 static void aplotv2 (BCG *Xgc,char mode, int grid_color);
@@ -42,7 +39,6 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 static double axes_number2str(char dir,char xy_type,char *res,char **str,const char *format,const char *c_format,const double *x,int i);
 static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
 
-
 /**
  * axis_draw:
  * @Xgc: a graphic context
@@ -54,10 +50,44 @@ static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize,
  * scale = strflag[1]
  **/
 
-void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
+void nsp_graphic_titles(BCG *Xgc,char *title,char *x,char *y)
+{
+  int auto_size=TRUE; /* font are resized automatically */
+  int barlength, fontid[2],fontsize_kp;
+
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
+  fontsize_kp = fontid[1] ;
+  if ( auto_size)
+    {
+      char foo[]="0";
+      barlength = Xgc->scales->Irect.height/40.0;
+      fontid[1]= nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
+    }
+  if ( title[0] != '\0')
+    Xgc->graphic_engine->scale->displaystringa(Xgc,title,1);
+  if ( x[0] != '\0')
+    Xgc->graphic_engine->scale->displaystringa(Xgc,x,2);
+  if ( y[0] != '\0')
+    Xgc->graphic_engine->scale->displaystringa(Xgc,y,3);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0], fontsize_kp, TRUE);
+}
+
+/**
+ * nsp_axis_draw:
+ * @Xgc: a graphic context
+ * @mode: axis drawing mode
+ * @scale: axis scale mode
+ *
+ * draws axis or only rectangle in a graphic frame.
+ * mode = strflag[2] ou '1'
+ * scale = strflag[1]
+ **/
+
+void nsp_axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
 {
   /* using foreground to draw axis */
-  int old_dash,pat, fg, fontid[2]; 
+  int old_dash,pat, fg, fontid[2];
   char c = mode ;
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -282,8 +312,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     {
       color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
     }
-  
-  if ( auto_size) 
+
+  if ( auto_size)
     {
       barlength = Xgc->scales->Irect.height/40.0;
       strcpy(foo,"0");
@@ -326,7 +356,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
       sciprint("Sci_Axis: wrong type argument xy_type\r\n");
     }
 
-  
+
   /* Note that in that case xy_type = 'i' we can possibly
    * have x[3] or y[3] equal to zero which means that we
    * cannot distinguish the min and the max on the given interval
@@ -404,7 +434,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
-	  /* to vizualize control the box  
+	  /* to vizualize control the box
 	  {
 	    int val[]={posi[0],posi[1]- barlength*2,barlength*40,barlength*2};
 	    Xgc->graphic_engine->drawrectangle(Xgc,val);
@@ -432,7 +462,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	    {
 	      int j;
 	      double dx ;
-	      if ( logflag == 'l' ) 
+	      if ( logflag == 'l' )
 		{
 		  /* always 8 subtics in log mode */
 		  int xi,xl;
@@ -552,7 +582,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	    {
 	      int j;
 	      double dy ;
-	      if ( logflag == 'l' ) 
+	      if ( logflag == 'l' )
 		{
 		  /* always 8 subtics in log mode */
 		  int yi,yl;
@@ -715,7 +745,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
-	  if ( i < Ny-1 && logflag == 'l' ) 
+	  if ( i < Ny-1 && logflag == 'l' )
 	    {
 	      int j;
 	      double vxx1 ;
@@ -822,13 +852,13 @@ static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
   int ccolor  = Xgc->graphic_engine->xget_pattern(Xgc);
   if (bg <= 0) return;
   Xgc->graphic_engine->xset_pattern(Xgc,bg);
-  if ( Xgc->scales->cosa == 1.0 ) 
+  if ( Xgc->scales->cosa == 1.0 )
     {
       int rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
 		     Xgc->scales->Irect.width,Xgc->scales->Irect.height};
       Xgc->graphic_engine->fillrectangle(Xgc,rect);
-    } 
-  else 
+    }
+  else
     {
       double x[4],y[4];
       x[0]= Xgc->scales->frect[0];
