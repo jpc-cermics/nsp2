@@ -40,14 +40,9 @@ static double axes_number2str(char dir,char xy_type,char *res,char **str,const c
 static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str);
 
 /**
- * axis_draw:
+ * nsp_graphic_titles:
  * @Xgc: a graphic context
- * @mode: axis drawing mode
- * @scale: axis scale mode
  *
- * draws axis or only rectangle in a graphic frame.
- * mode = strflag[2] ou '1'
- * scale = strflag[1]
  **/
 
 void nsp_graphic_titles(BCG *Xgc,char *title,char *x,char *y)
