@@ -1,58 +1,63 @@
 function bode(hnum,hden,varargopt)
-// varargopt: frq,fmin,fmax,step,title,dom 
+// varargopt: frq,fmin,fmax,step,title,dom
 // Copyright CECILL INRIA (from scilab).
-  
-  if nargin <= 0 then 
-    s=poly(0,'s');
+
+  if nargin <= 0 then
     s=poly(0,'s')
     n=(s^2+2*0.9*10*s+100);d=(s^2+2*0.3*10.1*s+102.01);
     n1=n*(s^2+2*0.1*15.1*s+228.01); d1=d*(s^2+2*0.9*15*s+225);
     bode([n;n1],[d;d1],fmin=0.01,fmax=100,title=['h1';'h'])
     return;
   end
-  
+
+  if type(hnum,'short')<>'p' then error("bode: Argument should be a polynomial matrix");end
+  if type(hden,'short')<>'p' then error("bide: Argument should be a polynomial matrix");end
+  sn=size(hnum);
+  sd=size(hden);
+  if ~sn.equal[sd] then error("bide; The two polynomial matrices should share the same size");end
+  if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
+
   l10=log(10);
   ilf=0
-  
-  // compute default values 
+
+  // compute default values
   //-----------------------
   dom = varargopt.find['dom',def='c'];
-  if ~(dom.equal['c'] || dom.equal['d'] || ( type(dom,'short')=='m' && sime(dom,'*')==1)) then 
+  if ~(dom.equal['c'] || dom.equal['d'] || ( type(dom,'short')=='m' && sime(dom,'*')==1)) then
     error("dom should be ''c'' or ''d'' or a scalar");
-    return 
+    return
   end
-  if  dom.equal['d'] then dom=1;end 
-  
-  step =  varargopt.find['step',def='auto']; 
+  if  dom.equal['d'] then dom=1;end
+  step =  varargopt.find['step',def='auto'];
   if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
   if fmin.equal['sym'] then fmin = -fmax;end;
-  // frq 
+  // frq
   frq=  varargopt.find['frq',def=[]];
-  // title 
+  // title
   title =  varargopt.find['title',def=""];
-    
+
   // compute frq repf splitf from fmin fmax step
   //---------------------------------------------
-  
-  if isempty(frq) then 
-    // compute frq 
+
+  if isempty(frq) then
+    // compute frq
     [frq,repf,splitf]=repfreq(hnum,hden,varargopt(:));
   end
-  
-  // check frequencies 
 
-  if type(dom,'short')=='m' then 
+  // check frequencies
+
+  if type(dom,'short')=='m' then
     nyq_frq=1/2/dom;
     if ~isempty(find(frq > nyq_frq)) then
       printf('There are frequencies beyond Nyquist f=%f!\n',nyq_frq);
     end
   end
-  
-  // compute phase and magnitude 
+
+  // compute phase and magnitude
   [phi,d]=phasemag(repf);
-    
+
   if ~new_graphics() then switch_graphics();end;xclear();
   [mn,n]=size(phi);
   //magnitude
