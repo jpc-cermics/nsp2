@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+\mansection{nyquist}
+\begin{mandesc}
+  \short{nyquist}{nyquist plot}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  bode(n,d,fmin=,fmax=,step=,frq=,title=,dom=,uc);
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n,d}: two polynomial matrices of size \verb!nx1!
+    \vname{fmin}: a real for minimal frequency bounds (in Hz) or \verb!sym!
+    \vname{fmax}: a real for maximal frequency bounds (in Hz).
+    \vname{step}: a real (logarithmic step) or a string \verb!'auto'!.
+    \vname{title}: a \verb!nx1! string matrix (captions for each curve).
+    \vname{frq}: a row vector or a \verb!nx1! matrix giving frequencies (in Hz).
+    \vname{dom}: time domain \verb!'c'! or \verb!'d'! or a positive real (default \verb!'c'!).
+    \vname{uc}: a boolean. If true then the unit circle is added on the graphic.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  Nyquist plot i.e Imaginary part versus Real part of the frequency
+  response of the system \verb!n/d!. The system can be a continuous-time (\verb!dom='c'!) or
+  discrete-time (\verb!dom='d'! or a positive real) SIMO system.
+
+  For continuous time systems \verb!(n/d)(2*%i*%pi*w)! is plotted.
+  For discrete time system or discretized systems \verb!(n/d)(exp(2*%i*%pi*w*fd)!
+  is used where \verb!fd=1! if \verb!dom='d'! and \verb!fd=dom! when \verb!dom! is a real scalar.
+
+  The frequencies are given by the matrix \verb!frq! or computed from
+  the bounds \verb!fmin! and \verb!fmax! (in Hz) and \verb!step! giving
+  the ( logarithmic ) discretization step which is automatically adapted if
+  (\verb!step='auto'!).
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    n=(s^2+2*0.9*10*s+100);
+    d=(s^2+2*0.3*10.1*s+102.01);
+    n1=n*(s^2+2*0.1*15.1*s+228.01);
+    d1=d*(s^2+2*0.9*15*s+225);
+    nyquist([n;n1],[d;d1],title=['h1','h2']);
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{nyquist}{nyquist}
+  \manlink{gainplot}{gainplot}
+  %\manlink{black}{black}
+  %\manlink{repfreq}{repfreq}
+  %\manlink{g\_margin}{g-margin}
+  %\manlink{p\_margin}{p-margin}
+  %\manlink{calfrq}{calfrq}
+  %\manlink{phasemag}{phasemag}
+\end{manseealso}
