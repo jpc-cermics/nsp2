@@ -379,6 +379,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 
 static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 {
+  int auto_axis=TRUE,iso=FALSE;
   NspMatrix *s=NULL;
   NspAxes *axe;
   NspContour *vf;
@@ -392,6 +393,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
+
   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
@@ -400,8 +402,16 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
-			 { "style",mat_int,NULLOBJ,-1},
+			 { "style",mat_int,NULLOBJ,-1}, /* old parameter for mark or line */
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
+
+  /* keep same order as in opts_2d */
+  enum  { axesflag_opts , frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , strf_opts, style_opts,
+	  auto_axis_opts, iso_opts};
+
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
 
   CheckLhs(0,1);
@@ -409,7 +419,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
   if (rhs <= 0) {return  nsp_graphic_demo(NspFname(stack),"contour2d(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&strf,&Mstyle,&auto_axis,&iso) == FAIL) return RET_BUG;
 
   CheckVector(NspFname(stack),1,x);
   CheckVector(NspFname(stack),2,y);
@@ -468,8 +478,49 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to insert contour in Figure\n");
       return RET_BUG;
     }
-  /* updates the axes scale information */
-  nsp_strf_axes( axe , rect, strf[1]);
+
+  /* updates the axe information according to optional values */
+  if ( opts_2d[strf_opts].obj != NULLOBJ)
+    {
+      /* strf is given use it to fix other arguments */
+      if ( opts_2d[auto_axis_opts].obj == NULLOBJ)
+	{
+	  /* auto_axis not given */
+	  auto_axis = TRUE;
+	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
+	}
+      if ( opts_2d[iso_opts].obj == NULLOBJ)
+	{
+	  /* iso not given */
+	  iso = FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) iso=TRUE;
+	}
+      if ( opts_2d[axesflag_opts].obj == NULLOBJ)
+	{
+	  /* axes not given */
+	  axes = strf[2] - '0';
+	}
+    }
+
+  if ( opts_2d[iso_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_2d[auto_axis_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_2d[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_2d[axesflag_opts].obj != NULLOBJ  || opts_2d[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_2d[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    }
+
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)
     nsp_matrix_destroy(Mistyle);
@@ -1638,8 +1689,8 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       }
 
     /* updates the axe information according to optional values */
-    if ( opts_2d[iso_opts].obj != NULLOBJ ) axe->obj->iso = iso;
-    if ( opts_2d[auto_axis_opts].obj != NULLOBJ ) axe->obj->auto_axis = auto_axis;
+    if ( opts_2d[iso_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->iso = iso;
+    if ( opts_2d[auto_axis_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
     if ( opts_2d[rect_opts].obj != NULLOBJ )
       {
 	memcpy(axe->obj->rect->R,frect,4*sizeof(double));
@@ -1795,7 +1846,16 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
 			 { "strf",string,NULLOBJ,-1},
 			 { "style",mat_int,NULLOBJ,-1},
 			 { "zminmax",mat,NULLOBJ,-1},
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
+
+  /* keep same order as in opts_2d */
+  enum  { axesflag_opts ,colminmax_opts, colout_opts, frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , remap_opts, shade_opts, strf_opts, style_opts,
+	  zminmax_opts, auto_axis_opts, iso_opts};
+
+  int auto_axis=TRUE,iso=FALSE;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1, remap=TRUE,shade=FALSE;
@@ -1813,7 +1873,8 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax,
+	       &auto_axis,&iso) == FAIL) return RET_BUG;
 
   CheckVector(NspFname(stack),1,x);
   CheckVector(NspFname(stack),2,y);
@@ -1897,7 +1958,48 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
       goto bug;
     }
   /* updates the axes scale information */
-  nsp_strf_axes( axe ,rect, strf[1]);
+
+  /* updates the axe information according to optional values */
+  if ( opts_mp[strf_opts].obj != NULLOBJ)
+    {
+      /* strf is given use it to fix other arguments */
+      if ( opts_mp[auto_axis_opts].obj == NULLOBJ)
+	{
+	  /* auto_axis not given */
+	  auto_axis = TRUE;
+	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
+	}
+      if ( opts_mp[iso_opts].obj == NULLOBJ)
+	{
+	  /* iso not given */
+	  iso = FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) iso=TRUE;
+	}
+      if ( opts_mp[axesflag_opts].obj == NULLOBJ)
+	{
+	  /* axes not given */
+	  axes = strf[2] - '0';
+	}
+    }
+
+  if ( opts_mp[iso_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_mp[auto_axis_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_mp[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_mp[axesflag_opts].obj != NULLOBJ  || opts_mp[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_mp[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    }
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle) nsp_matrix_destroy(Mistyle);
   if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
@@ -1941,10 +2043,18 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 			 { "strf",string,NULLOBJ,-1},
 			 { "style",mat_int,NULLOBJ,-1},
 			 { "zminmax",mat,NULLOBJ,-1},
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
+
+  /* keep same order as in opts_2d */
+  enum  { axesflag_opts ,colminmax_opts, frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , remap_opts, strf_opts, style_opts,
+	  zminmax_opts, auto_axis_opts, iso_opts};
 
   NspAxes *axe;
   NspMatrix *z;
+  int auto_axis=TRUE,iso=FALSE;
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1, remap=FALSE;
   NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
@@ -1956,7 +2066,8 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) {return   nsp_graphic_demo(NspFname(stack),"m=[1,2;3,4];Matplot(m);",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&z,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax,
+	       &auto_axis,&iso) == FAIL) return RET_BUG;
 
   if ( z->mn == 0) return 0;
 
@@ -2009,8 +2120,26 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
-  /* updates the axes scale information */
-  nsp_strf_axes( axe ,rect, strf[1]);
+
+  /* updates the axe information according to optional values */
+  if ( opts_mp[iso_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_mp[auto_axis_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_mp[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_mp[axesflag_opts].obj != NULLOBJ  || opts_mp[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_mp[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    }
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 )
@@ -2048,9 +2177,16 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 			 { "strf",string,NULLOBJ,-1},
 			 { "style",mat_int,NULLOBJ,-1},
 			 { "zminmax",mat,NULLOBJ,-1},
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
 
+  enum  { axesflag_opts , colminmax_opts, frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , remap_opts, strf_opts, style_opts,
+	  zminmax_opts, auto_axis_opts, iso_opts};
+
   /* for 2d optional arguments; */
+  int auto_axis=TRUE,iso=FALSE;
   int *nax, frame= -1, axes=-1, remap=FALSE,leg_posi;
   NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
   double *rect ;
@@ -2063,7 +2199,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
 
   if ( GetArgs(stack,rhs,opt,T,&M,&Rect,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax,&auto_axis,&iso) == FAIL) return RET_BUG;
 
   if (M->mn == 0) { return 0;}
 
@@ -2108,8 +2244,26 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
-  /* updates the axes scale information */
-  nsp_strf_axes( axe , NULL, '2');
+  /* updates the axe information according to optional values */
+  if ( opts_mp[iso_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_mp[auto_axis_opts].obj != NULLOBJ ||  opts_mp[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_mp[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_mp[axesflag_opts].obj != NULLOBJ  || opts_mp[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_mp[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    }
+
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 )
@@ -5431,8 +5585,17 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			  { "zminmax",mat,NULLOBJ,-1},
 			  { "colorbar",s_bool,NULLOBJ,-1},
 			  { "paint",s_bool,NULLOBJ,-1},
+			  { "auto_axis", s_bool,NULLOBJ,-1},
+			  { "iso", s_bool,NULLOBJ,-1},
 			  { NULL,t_end,NULLOBJ,-1}};
 
+  /* keep same order as in opts_2d */
+  enum  { axesflag_opts , colminmax_opts, colout_opts,
+	  frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , mesh_opts, nax_opts, rect_opts , strf_opts, style_opts,
+	  zminmax_opts, colorbar_opts, paint_opts, auto_axis_opts, iso_opts};
+
+  int auto_axis=TRUE,iso=FALSE;
   NspAxes *axe;
   NspMatrix *Mistyle,*x,*y,*Tr,*Tr1,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
   NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
@@ -5449,7 +5612,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,
-	       &colorbar,&paint) == FAIL)
+	       &colorbar,&paint,&auto_axis,&iso) == FAIL)
     return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
@@ -5473,6 +5636,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   nsp_gwin_clear();
   /* colout to be added */
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+
   axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
@@ -5518,8 +5682,46 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
-  /* updates the axes scale information */
-  nsp_strf_axes( axe ,rect, strf[1]);
+  /* updates the axe information according to optional values */
+  if ( opts_fec[strf_opts].obj != NULLOBJ)
+    {
+      /* strf is given use it to fix other arguments */
+      if ( opts_fec[auto_axis_opts].obj == NULLOBJ)
+	{
+	  /* auto_axis not given */
+	  auto_axis = TRUE;
+	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
+	}
+      if ( opts_fec[iso_opts].obj == NULLOBJ)
+	{
+	  /* iso not given */
+	  iso = FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) iso=TRUE;
+	}
+      if ( opts_fec[axesflag_opts].obj == NULLOBJ)
+	{
+	  /* axes not given */
+	  axes = strf[2] - '0';
+	}
+    }
+  if ( opts_fec[iso_opts].obj != NULLOBJ ||  opts_fec[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_fec[auto_axis_opts].obj != NULLOBJ ||  opts_fec[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_fec[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_fec[axesflag_opts].obj != NULLOBJ  || opts_fec[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_fec[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    }
   nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 )
     {
