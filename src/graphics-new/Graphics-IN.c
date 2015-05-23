@@ -1265,140 +1265,6 @@ typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char 
  *
  */
 
-static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,int *n2,
-				  int style[],char *strflag, const char *legend,int legend_pos,
-				  int mode,double brect[],int aaint[],
-				  NspMatrix *Mmark,NspMatrix *Mmark_size,NspMatrix *Mmark_color,
-				  NspMatrix *Mline_color,NspMatrix *Mline_thickness,
-				  int auto_axis,int iso,int axes)
-{
-  NspCurve *curve = NULL;
-  const char *l_c = legend, *l_n;
-  char *curve_l;
-  char c;
-  double frect[4],xmin,xmax,ymin,ymax;
-  int i;
-  NspAxes *axe;
-  if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
-
-  axe->obj->lpos = legend_pos;
-
-  for (i=0; i < 4; i++) axe->obj->nax->R[i]= aaint[i];
-
-  /* compute frect using brect or using data */
-  switch (strflag[1])
-    {
-    case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
-      /* frect is given by brect */
-      frect[0]=brect[0];frect[1]=brect[1];frect[2]=brect[2];frect[3]=brect[3];
-      break;
-    case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
-      /* logflag[0] can be e, o , g */
-      if ( strlen(logflag) < 1) c='g' ; else c=logflag[0];
-      switch ( c )
-	{
-	case 'e' : xmin= 1.0 ; xmax = (*n2);break;
-	case 'o' : xmax= Maxi(x,(*n2)); xmin= Mini(x,(*n2)); break;
-	case 'g' :
-	default: xmax= Maxi(x, (*n1)*(*n2)); xmin= Mini(x, (*n1)*(*n2)); break;
-	}
-      ymin=  Mini(y, (*n1)*(*n2)); ymax=  Maxi(y, (*n1)*(*n2));
-      /* back to default values for  x=[] and y = [] */
-      if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;}
-      if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;}
-      frect[0]=xmin;frect[1]=ymin;frect[2]=xmax;frect[3]=ymax;
-      break;
-    }
-
-  if (axe->obj->fixed == TRUE && (strflag[1] == '7' || strflag[1] == '8' ))
-    {
-      /* we merge with axes values */
-      frect[0] = Min(frect[0], axe->obj->frect->R[0]);
-      frect[2] = Max(frect[2], axe->obj->frect->R[2]);
-      frect[1] = Min(frect[1], axe->obj->frect->R[1]);
-      frect[3] = Max(frect[3], axe->obj->frect->R[3]);
-    }
-
-  /* set the axes frect
-   * note that this is also performed below
-   */
-
-  switch (strflag[1])
-    {
-    case '0': break;
-    default: memcpy(axe->obj->frect->R,frect,4*sizeof(double)); break;
-    }
-
-  /* create a set of curves and insert them in axe */
-  for ( i = 0 ; i < *n1 ; i++)
-    {
-      int k;
-      NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2);
-      if ( Pts == NULL) return NULL;
-      /* XXX: we should have to keep the log flags */
-      /* get x-values */
-      switch ( logflag[0] )
-	{
-	case 'e' : /* No X-value given by the user */
-	  for ( k=0 ; k < (*n2) ; k++)  Pts->R[k] = k+1.0;
-	  break ;
-	case 'o' : /* same X for all_curves */
-	  memcpy(Pts->R, x, (*n2)*sizeof(double));
-	  break;
-	case 'g' :
-	default: /* x are given for each curves */
-	  memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
-	  break;
-	}
-      memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      /* get legend for curve i*/
-      l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
-      if ( l_n > l_c )
-	{
-	  curve_l = new_nsp_string_n(l_n-l_c +1);
-	  if ( curve_l != NULL)
-	    {
-	      strncpy(curve_l,l_c,l_n-l_c+1);
-	      curve_l[l_n-l_c]='\0';
-	    }
-	}
-      else
-	{
-	  curve_l = NULL;
-	}
-      l_c = ( *l_n == '@') ? l_n+1: l_n;
-      {
-	int cu_mark = ( style[i] <= 0 ) ? -style[i] : -2 ;
-	int cu_mark_size = -1;
-	int cu_mark_color = -1;
-	int cu_width = -1;
-	int cu_mode = mode;
-	int cu_color= (style[i] > 0 ) ? style[i] : -2 ;
-
-	if (Mmark != NULL ) { cu_mark = Mmark->R[i];}
-	if (Mmark_color != NULL ) { cu_mark_color = Mmark_color->R[i];}
-	if (Mmark_size != NULL ) { cu_mark_size = Mmark_size->R[i];}
-	if (Mline_color != NULL ) { cu_color = Mline_color->R[i];}
-	if (Mline_thickness != NULL ) { cu_width = Mline_thickness->R[i];}
-	curve= nsp_curve_create("curve",cu_mark,cu_mark_size,cu_mark_color,cu_width,
-				cu_color,cu_mode,Pts,curve_l,NULL);
-      }
-
-      /* insert the new curve */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) curve, FALSE)== FAIL)
-	{
-	  Scierror("Error: failed to insert rectangle in Figure\n");
-	  return NULL;
-	}
-    }
-  /* updates the axes scale information */
-  nsp_strf_axes_new( axe, frect, strflag[1], auto_axis, iso);
-  axe->obj->axes = axes;
-  axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
-  axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
-  nsp_axes_invalidate(((NspGraphic *) axe));
-  return (NspGraphic *) curve ;
-}
 
 
 static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
@@ -1646,10 +1512,135 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       plot2d_strf_change('d',strf);
     }
 
-  ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
-		       leg,leg_posi,mode,rect,nax,
-		       Mmark,Mmark_size,Mmark_color,Mline_color,Mline_thickness,
-		       auto_axis,iso,axes);
+  {
+    int *style = Mistyle->I;
+    NspCurve *curve = NULL;
+    const char *l_c = leg, *l_n;
+    char *curve_l;
+    char c;
+    double frect[4],xmin,xmax,ymin,ymax;
+    int i;
+    NspAxes *axe;
+    if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+
+    axe->obj->lpos = leg_posi;
+
+    for (i=0; i < 4; i++) axe->obj->nax->R[i]= nax[i];
+
+    /* compute frect using brect or using data */
+    switch (strf[1])
+      {
+      case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
+	/* frect is given by rect */
+	frect[0]=rect[0];frect[1]=rect[1];frect[2]=rect[2];frect[3]=rect[3];
+	break;
+      case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
+	/* logflag[0] can be e, o , g */
+	if ( strlen(logflags) < 1) c='g' ; else c=logflags[0];
+	switch ( c )
+	  {
+	  case 'e' : xmin= 1.0 ; xmax = (lcurve);break;
+	  case 'o' : xmax= Maxi(x->R,(lcurve)); xmin= Mini(x->R,(lcurve)); break;
+	  case 'g' :
+	  default: xmax= Maxi(x->R, (ncurves)*(lcurve)); xmin= Mini(x->R, (ncurves)*(lcurve)); break;
+	  }
+	ymin=  Mini(y->R, (ncurves)*(lcurve)); ymax=  Maxi(y->R, (ncurves)*(lcurve));
+	/* back to default values for  x=[] and y = [] */
+	if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;}
+	if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;}
+	frect[0]=xmin;frect[1]=ymin;frect[2]=xmax;frect[3]=ymax;
+	break;
+      }
+
+    if (axe->obj->fixed == TRUE && (strf[1] == '7' || strf[1] == '8' ))
+      {
+	/* we merge with axes values */
+	frect[0] = Min(frect[0], axe->obj->frect->R[0]);
+	frect[2] = Max(frect[2], axe->obj->frect->R[2]);
+	frect[1] = Min(frect[1], axe->obj->frect->R[1]);
+	frect[3] = Max(frect[3], axe->obj->frect->R[3]);
+      }
+
+    /* set the axes frect
+     * note that this is also performed below
+     */
+
+    switch (strf[1])
+      {
+      case '0': break;
+      default: memcpy(axe->obj->frect->R,frect,4*sizeof(double)); break;
+      }
+
+    /* create a set of curves and insert them in axe */
+    for ( i = 0 ; i < ncurves ; i++)
+      {
+	int k;
+	NspMatrix *Pts = nsp_matrix_create("Pts",'r',lcurve,2);
+	if ( Pts == NULL) return RET_BUG;
+	/* XXX: we should have to keep the log flags */
+	/* get x-values */
+	switch ( logflags[0] )
+	  {
+	  case 'e' : /* No X-value given by the user */
+	    for ( k=0 ; k < (lcurve) ; k++)  Pts->R[k] = k+1.0;
+	    break ;
+	  case 'o' : /* same X for all_curves */
+	    memcpy(Pts->R, x->R, (lcurve)*sizeof(double));
+	    break;
+	  case 'g' :
+	  default: /* x are given for each curves */
+	    memcpy(Pts->R, x->R +(lcurve)*i, (lcurve)*sizeof(double));
+	    break;
+	  }
+	memcpy(Pts->R+Pts->m,y->R + (lcurve)*i, (lcurve)*sizeof(double));
+	/* get legend for curve i*/
+	l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
+	if ( l_n > l_c )
+	  {
+	    curve_l = new_nsp_string_n(l_n-l_c +1);
+	    if ( curve_l != NULL)
+	      {
+		strncpy(curve_l,l_c,l_n-l_c+1);
+		curve_l[l_n-l_c]='\0';
+	      }
+	  }
+	else
+	  {
+	    curve_l = NULL;
+	  }
+	l_c = ( *l_n == '@') ? l_n+1: l_n;
+	{
+	  int cu_mark = ( style[i] <= 0 ) ? -style[i] : -2 ;
+	  int cu_mark_size = -1;
+	  int cu_mark_color = -1;
+	  int cu_width = -1;
+	  int cu_mode = mode;
+	  int cu_color= (style[i] > 0 ) ? style[i] : -2 ;
+
+	  if (Mmark != NULL ) { cu_mark = Mmark->R[i];}
+	  if (Mmark_color != NULL ) { cu_mark_color = Mmark_color->R[i];}
+	  if (Mmark_size != NULL ) { cu_mark_size = Mmark_size->R[i];}
+	  if (Mline_color != NULL ) { cu_color = Mline_color->R[i];}
+	  if (Mline_thickness != NULL ) { cu_width = Mline_thickness->R[i];}
+	  curve= nsp_curve_create("curve",cu_mark,cu_mark_size,cu_mark_color,cu_width,
+				  cu_color,cu_mode,Pts,curve_l,NULL);
+	}
+
+	/* insert the new curve */
+	if ( nsp_axes_insert_child(axe,(NspGraphic *) curve, FALSE)== FAIL)
+	  {
+	    Scierror("Error: failed to insert rectangle in Figure\n");
+	    return RET_BUG;
+	  }
+      }
+    /* updates the axes scale information */
+    nsp_strf_axes_new( axe, frect, strf[1], auto_axis, iso);
+    axe->obj->axes = axes;
+    axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+    axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+    nsp_axes_invalidate(((NspGraphic *) axe));
+    ret = (NspGraphic *) curve ;
+  }
 
   if ( ret == NULL && ncurves != 0 )
     return RET_BUG;
@@ -1662,8 +1653,6 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
     }
   return 0;
 }
-
-
 
 /*
  * build y from f(x,fargs)
@@ -1725,35 +1714,35 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 
 static int int_plot2d_new( Stack stack, int rhs, int opt, int lhs)
 {
-  static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
+  static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
 }
 
 static int int_plot2d1_1_new( Stack stack, int rhs, int opt, int lhs)
 {
-  static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
+  static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,0,NULL);
 }
 
 static int int_plot2d1_2_new( Stack stack, int rhs, int opt, int lhs)
 {
-  static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
+  static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,1,NULL);
 }
 
 static int int_plot2d1_3_new( Stack stack, int rhs, int opt, int lhs)
 {
-  static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
+  static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,2,NULL);
 }
 
 static int int_plot2d1_4_new( Stack stack, int rhs, int opt, int lhs)
 {
-  static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
+  static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,3,NULL);
 }

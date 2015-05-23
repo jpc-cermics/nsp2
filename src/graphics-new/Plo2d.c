@@ -19,16 +19,19 @@
  * Graphic library
  *--------------------------------------------------------------------------*/
 
-#include <string.h> /* in case of dbmalloc use */
-#include <stdio.h>
-#include <math.h>
+#include <nsp/nsp.h>
 #include <gtk/gtk.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/curve.h>
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
+#include <nsp/math.h>
+#include <nsp/graphics-new/Graphics.h>
 
+static void nsp_legends_box(BCG *Xgc,int n1,
+			    const int *mark,const int *mark_size,
+			    const int *mark_color,const int *width,const int *color,
+			    char * legend,int box[4],
+			    int get_box,double xoffset,double yoffset,int pat,int fg,const char *sep);
 
 /*----------------------------------------------------
  *  legend="leg1@leg2@leg3@...."
@@ -37,10 +40,9 @@
  *  then the function Legends draw  Min(*n1,6,nlegends) legends
  *-----------------------------------------------------*/
 
-static void nsp_legends_box(BCG *Xgc,int n1,const int *style,char * legend,int box[4],int get_box,
-			    double xoffset,double yoffset,int pat,int fg,const char *sep);
-
-void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * legend,const char *sep)
+void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
+		 const int *mark,const int *mark_size, const int *mark_color,const int *width,const int *color,
+		 const char * legend,const char *sep)
 {
   int rect[4],box[4],xx=0,yy=0;
   char *loc;
@@ -63,7 +65,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
       /* y offset between legends */
       yoffset= rect[3];
       box[0]=box[1]=0;
-      nsp_legends_box(Xgc,n1,style,loc,box,TRUE,xoffset,yoffset,pat,fg,sep);
+      nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,TRUE,xoffset,yoffset,pat,fg,sep);
       strcpy(loc,legend);
 
       switch (pos)
@@ -74,7 +76,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y;
 	  box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
 	  box[1] += xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	case legend_urm:
 	  /* upper right margin */
@@ -82,7 +84,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y;
 	  box[0] += xoffset/2.0;
 	  box[1] += xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	case  legend_ul:
 	  /* upper left position  of the legend box */
@@ -90,7 +92,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y;
 	  box[0] += xoffset/2.0;
 	  box[1] += xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	case legend_dr :
 	  /* down right position  of the legend box */
@@ -98,7 +100,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y + Xgc->scales->Irect.height;;
 	  box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
 	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	case legend_drm:
 	  /* down right margin */
@@ -106,7 +108,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y + Xgc->scales->Irect.height;;
 	  box[0] += xoffset/2.0;
 	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	case legend_dl:
 	  /* down left  position  of the legend box */
@@ -114,7 +116,7 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
 	  box[1] = Xgc->scales->Irect.y  + Xgc->scales->Irect.height;;
 	  box[0] += xoffset/2.0;
 	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
-	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  nsp_legends_box(Xgc,n1,mark,mark_size,mark_color,width,color,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
 	  break;
 	default:
 	  Sciprintf("Error: unknow position\n");
@@ -133,17 +135,42 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
  * draw or compute the bounding box
  */
 
-static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int box[4],
-			    int get_box,double xoffset,double yoffset,int pat,int fg,const char *sep)
+static void nsp_legends_box(BCG *Xgc,int n1,
+			    const int *mark,const int *mark_size,
+			    const int *mark_color,const int *width,const int *color,
+			    char * legend,int box[4],
+			    int get_box,double xoffset,double yoffset,int c_color,int fg,const char *sep)
 {
+  int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
+  int bg= Xgc->graphic_engine->xget_background(Xgc);
+  int xmark[2]={-1,-1};
   int i,xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],rect[4],n1count=0;
-  double angle=0.0,yi,xi;
-  xi= 1.4*xoffset;
-  yi= box[1]+ yoffset*(1.25);
+  double angle=0.0;
+  int xi= 1.4*xoffset;
+  int yi= box[1]+ yoffset*(1.25);
+  /* get current mark */
+  Xgc->graphic_engine->xget_mark(Xgc,xmark);
+
+  /* fill the background */
+  if ( get_box == FALSE )
+    {
+      int nbox[4];
+      memcpy(nbox,box,4*sizeof(int));
+      Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
+      nbox[0] -= rect[2]/2;
+      nbox[1] -= rect[3]/2;
+      nbox[2] += rect[2];
+      nbox[3] += rect[3];
+      Xgc->graphic_engine->xset_pattern(Xgc,bg);
+      Xgc->graphic_engine->fillrectangle(Xgc,nbox);
+      Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+    }
+
   if ( get_box == TRUE )
     {
       box[2]= xi;
     }
+
   for ( i = 0 ; i < n1 ; i++)
     {
       xs=inint(box[0]+xi);
@@ -162,30 +189,40 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 	      Xgc->graphic_engine->xset_pattern(Xgc,fg);
 	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle
 						 ,GR_STR_XLEFT, GR_STR_YBOTTOM);
-	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
+	      Xgc->graphic_engine->xset_pattern(Xgc,c_color);
 	      Xgc->graphic_engine->boundingbox(Xgc,legend,xs,ys,rect);
-	      if (style[i] > 0)
+
+	      if ( width[i] >= 0 ) Xgc->graphic_engine->xset_thickness(Xgc,width[i]);
+
+	      if ( color[i] != -2 )
 		{
+		  /* we neeed to draw a line */
 		  int n=1,p=2;
 		  polyx[0]=inint(box[0]);polyx[1]=inint(box[0]+xoffset);
 		  polyy[0]=inint(yi - rect[3]/2.0);
 		  polyy[1]=polyy[0];
-		  lstyle[0]=style[i];
+		  lstyle[0]=color[i];
 		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
-	      else
+	      if ( mark[i] >= -1 )
 		{
-		  /* FIXME: should be affected by marksize */
+		  /* we need a mark */
 		  int n=1,p=1;
 		  polyx[0]=inint(box[0]+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
-		  lstyle[0]=style[i];
+		  lstyle[0]= - mark[i];
+		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark_size[i]);
+		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_pattern(Xgc, mark_color[i] );
 		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 		}
+	      if ( width[i] >= 0 ) Xgc->graphic_engine->xset_thickness(Xgc, c_width);
 	    }
 	}
       yi += yoffset*(1.5);
     }
+
   if ( get_box == TRUE )
     {
       box[3]= n1count*1.5*yoffset;

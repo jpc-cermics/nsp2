@@ -5,42 +5,42 @@
   (parent "Graphic")
   (c-name "NspAxes")
   (fields
-   ;; the position of this axes in a figure 
-   ;; or the position of this axes in an other axe if we are not a 
+   ;; the position of this axes in a figure
+   ;; or the position of this axes in an other axe if we are not a
    ;; top level axes.
    '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
-   '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") 
+   '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4")
    '("double" "rho")       ;; rotation of the rectangle which contains the axe
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the axe. 
-   '("NspMatrix*" "arect" "std" "{1/8.0,1/8.0,1/8.0,1/8.0}" "4") ;; 
+   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the axe.
+   '("NspMatrix*" "arect" "std" "{1/8.0,1/8.0,1/8.0,1/8.0}" "4") ;;
    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this axes defines if []
-   ;; frect is deduced from data. 
-   '("char*"  "title") 
-   '("char*"  "x") 
-   '("char*"  "y") 
-   '("NspList*" "children") ;; list of graphic object in the axe 
+   ;; frect is deduced from data.
+   '("char*"  "title")
+   '("char*"  "x")
+   '("char*"  "y")
+   '("NspList*" "children") ;; list of graphic object in the axe
    '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
-   '("gboolean" "iso" "std"  "TRUE") ;; iso mode 
-   '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis 
+   '("gboolean" "iso" "std"  "TRUE") ;; iso mode
+   '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis
    '("int"      "grid" "std" "-1") ;; color of grid if >= 0
    '("int"      "axes" "std" "1" );; where and how axes are drawn
-   '("gboolean" "xlog" "std" "FALSE");; log scale on x 
+   '("gboolean" "xlog" "std" "FALSE");; log scale on x
    '("gboolean" "ylog" "std" "FALSE");; log scale on y
    '("int"      "lpos" "std" "1" );; where legends are drawn
    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
-   '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
+   '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming
    '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
    '("gboolean" "clip" "std" "TRUE") ;; are we doing a clipgrf.
-   '("int" "line_width" "std" "-1") ;; default line width for axes  
-   '("int" "font_size" "std" "-1") ;; font size for axes and titles 
+   '("int" "line_width" "std" "-1") ;; default line width for axes
+   '("int" "font_size" "std" "-1") ;; font size for axes and titles
    '("int" "background" "std" "-1") ;; default color for the background
    '("NspMatrix*" "nax" "std" "{2,10,2,10}" "4" ) ;; number of tick and subticks when not in auto mode
    )
   (gtype-id "Axes")
 )
 
-;; defined in graphics-new 
+;; defined in graphics-new
 
 (define-struct nsp_gcscale
   (in-module "Axes")
@@ -48,5 +48,3 @@
   (c-name "nsp_gcscale")
   (gtype-id "nsp_gcscale")
 )
-
-

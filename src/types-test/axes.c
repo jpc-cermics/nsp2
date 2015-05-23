@@ -1487,7 +1487,7 @@ int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   nsp_gcscale scale_keep = *Xgc->scales;
-  int lw=-1, font[2], nax[4], i;
+  int lw=-1, font[2], nax[4], i,zfont[2];
   GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
   double wrect1[4], inside_bounds[4];
@@ -1610,13 +1610,17 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
 
+
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
+
+  Xgc->graphic_engine->xget_font(Xgc,zfont, FALSE);
 
   if (  P->obj->font_size != -1)
     {
       Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
       Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
     }
+
   if ( P->obj->line_width != -1 )
     {
       lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
@@ -1625,8 +1629,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   /* draw axes, ticks */
   nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
 		P->obj->grid, P->obj->background);
-  /* legends */
-  nsp_axes_legends(Xgc,P);
+
   /* title if present */
   if (1)
     {
@@ -1678,6 +1681,39 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       cloc = cloc->next;
     }
 
+  /* insert the legends at last since it must be above curves */
+
+  clip = clip_axe;
+  if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
+
+  Xgc->graphic_engine->xset_clip(Xgc, &clip);
+
+  Xgc->graphic_engine->xset_font(Xgc,zfont[0],zfont[1], FALSE);
+
+  if (  P->obj->font_size != -1)
+    {
+      Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
+    }
+
+  if ( P->obj->line_width != -1 )
+    {
+      lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+    }
+
+  /* legends */
+  nsp_axes_legends(Xgc,P);
+
+  if (  P->obj->font_size != -1)
+    {
+      Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
+    }
+
+  if ( P->obj->line_width != -1 )
+    {
+      Xgc->graphic_engine->xset_thickness(Xgc, lw);
+    }
+  /* end of legends */
+
   /* back to previous clip zone */
 
   if ( rect != NULL )
@@ -1709,7 +1745,13 @@ void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2])
 
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 {
-  int style[56],count=0,legend_pos=1;
+#define NC 256
+  int cu_mark[NC];
+  int cu_mark_size[NC];
+  int cu_mark_color[NC];
+  int cu_width[NC];
+  int cu_color[NC];
+  int count=0,legend_pos=1;
   NspSMatrix *legends=NULL,*legend=NULL;
   /* get and collect the legends */
   NspList *L = axe->obj->children;
@@ -1724,11 +1766,13 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 	  if (cv->obj->legend[0] != '\0' )
 	    {
 	      nsp_row_smatrix_append_string(legends,cv->obj->legend);
-	      if ( cv->obj->color >= 0 )
-		style[count++]= cv->obj->color;
-	      else
-		style[count++]= - cv->obj->mark;
-	      if (count >= 56 ) break;
+	      cu_mark[count]= cv->obj->mark;
+	      cu_mark_size[count]= cv->obj->mark_size;
+	      cu_mark_color[count]= cv->obj->mark_color;
+	      cu_width[count]= cv->obj->width;
+	      cu_color[count]= cv->obj->color;
+	      count++;
+	      if (count >= NC ) break;
 	    }
 	}
       cloc = cloc->next;
@@ -1737,7 +1781,11 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
     {
       legend = nsp_smatrix_row_concat(legends,"@",1);
       if (legend != NULL)
-	nsp_legends(Xgc,legend_pos,legends->mn,style,legend->S[0],"@");
+	{
+	  nsp_legends(Xgc,legend_pos,legends->mn,
+		      cu_mark,cu_mark_size,cu_mark_color,cu_width,cu_color,
+		      legend->S[0],"@");
+	}
     }
   if ( legend != NULL) nsp_smatrix_destroy(legend);
   if ( legends != NULL) nsp_smatrix_destroy(legends);
@@ -2472,4 +2520,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2476 "axes.c"
+#line 2524 "axes.c"
