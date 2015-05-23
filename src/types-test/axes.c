@@ -1752,7 +1752,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
   int cu_width[NC];
   int cu_color[NC];
   int count=0,legend_pos=1;
-  NspSMatrix *legends=NULL,*legend=NULL;
+  NspSMatrix *legends=NULL;
   /* get and collect the legends */
   NspList *L = axe->obj->children;
   Cell *cloc = L->first ;
@@ -1779,15 +1779,10 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
     }
   if ( count != 0)
     {
-      legend = nsp_smatrix_row_concat(legends,"@",1);
-      if (legend != NULL)
-	{
-	  nsp_legends(Xgc,legend_pos,legends->mn,
-		      cu_mark,cu_mark_size,cu_mark_color,cu_width,cu_color,
-		      legend->S[0],"@");
-	}
+      nsp_legends(Xgc,legend_pos,legends->mn,
+		  cu_mark,cu_mark_size,cu_mark_color,cu_width,cu_color,
+		  legends->S,"@");
     }
-  if ( legend != NULL) nsp_smatrix_destroy(legend);
   if ( legends != NULL) nsp_smatrix_destroy(legends);
   return OK;
 }
@@ -2520,4 +2515,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2524 "axes.c"
+#line 2519 "axes.c"

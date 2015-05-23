@@ -144,7 +144,7 @@ extern int CheckxfParam  (char *);
 typedef enum { legend_dl, legend_dr ,legend_drm, legend_ul,legend_ur,legend_urm } legends_pos;
 extern void nsp_legends(BCG *Xgc,legends_pos pos,int n1, const int *mark,const int *mark_size,
 			const int *mark_color,const int *width,const int *color,
-			const char * legend,const char *sep);
+			char **legends,const char *sep);
 
 /* Plo2dEch.c */
 
