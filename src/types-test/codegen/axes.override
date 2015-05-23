@@ -350,7 +350,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   /* draw axes, ticks */
   nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
 		P->obj->grid, P->obj->background);
-
   /* title if present */
   if (1)
     {

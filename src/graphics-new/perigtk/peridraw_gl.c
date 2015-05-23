@@ -1043,7 +1043,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
   if ( Xgc->private->gldrawable != NULL
        &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
      gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
-  
+
   if ( Xgc->private->drawing != NULL && Xgc->private->glcontext != gtk_widget_get_gl_context (Xgc->private->drawing))
     {
       g_object_unref(G_OBJECT(Xgc->private->glcontext));
@@ -1064,7 +1064,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
       g_print ("Cannot create the OpenGL rendering context\n");
       return FALSE;
     }
-  
+
   gdk_error_trap_push ();
   gdk_gl_drawable_make_current(Xgc->private->gldrawable,Xgc->private->glcontext);
   gdk_flush ();
@@ -1736,7 +1736,17 @@ static void xset_mark(BCG *Xgc,int number, int size)
 static void  xget_font(BCG *Xgc,int *font,int full)
 {
   font[0] = Xgc->fontId ;
-  font[1] = Xgc->fontSize ;
+  if ( full == TRUE )
+    {
+      /* returns font size in pixel */
+      font[1] = (Xgc->fontSize <= 0) ?
+	pango_size[-Xgc->fontSize]: Xgc->fontSize;
+    }
+  else
+    {
+      /* returns font size as an array indice */
+      font[1] = (Xgc->fontSize <= 0) ? -Xgc->fontSize : 0 ;
+    }
 }
 
 /* To get the current mark id */

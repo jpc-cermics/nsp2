@@ -21,7 +21,7 @@
    '("char*"  "y")
    '("NspList*" "children") ;; list of graphic object in the axe
    '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
-   '("gboolean" "iso" "std"  "TRUE") ;; iso mode
+   '("gboolean" "iso" "std"  "FALSE") ;; iso mode
    '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis
    '("int"      "grid" "std" "-1") ;; color of grid if >= 0
    '("int"      "axes" "std" "1" );; where and how axes are drawn

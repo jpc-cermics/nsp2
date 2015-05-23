@@ -616,7 +616,7 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->y = NULL;
   H->obj->children = NULLLIST;
   H->obj->fixed = FALSE;
-  H->obj->iso = TRUE;
+  H->obj->iso = FALSE;
   H->obj->auto_axis = TRUE;
   H->obj->grid = -1;
   H->obj->axes = 1;
@@ -1629,7 +1629,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   /* draw axes, ticks */
   nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
 		P->obj->grid, P->obj->background);
-
   /* title if present */
   if (1)
     {
@@ -2515,4 +2514,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2519 "axes.c"
+#line 2518 "axes.c"

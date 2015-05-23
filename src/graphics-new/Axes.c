@@ -65,7 +65,7 @@ void nsp_graphic_titles(BCG *Xgc,char *title,char *x,char *y)
     Xgc->graphic_engine->scale->displaystringa(Xgc,x,2);
   if ( y[0] != '\0')
     Xgc->graphic_engine->scale->displaystringa(Xgc,y,3);
-  Xgc->graphic_engine->xset_font(Xgc,fontid[0], fontsize_kp, TRUE);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0], fontsize_kp, FALSE);
 }
 
 /**

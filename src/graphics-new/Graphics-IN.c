@@ -21,9 +21,6 @@
  * interface for nsp
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <string.h>
-
 #include <nsp/nsp.h>
 #include <nsp/matrix.h>
 #include <nsp/bmatrix.h>
@@ -1297,6 +1294,12 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
 
+  /* keep same order as in opts_2d */
+  enum  { axesflag_opts , frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , strf_opts, style_opts,
+	  mark_opts, mark_size_opts, mark_color_opts, line_color_opts,
+	  line_thickness_opts, auto_axis_opts, iso_opts};
+
   int_types T[] = {realmat,obj,new_opts, t_end} ;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,
@@ -1460,22 +1463,22 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
-  if ( opts_2d[7].obj != NULLOBJ)
+  if ( opts_2d[strf_opts].obj != NULLOBJ)
     {
       /* strf is given use it to fix other arguments */
-      if ( opts_2d[14].obj == NULLOBJ)
+      if ( opts_2d[auto_axis_opts].obj == NULLOBJ)
 	{
 	  /* auto_axis not given */
 	  auto_axis = TRUE;
 	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
 	}
-      if ( opts_2d[15].obj == NULLOBJ)
+      if ( opts_2d[iso_opts].obj == NULLOBJ)
 	{
 	  /* iso not given */
 	  iso = FALSE;
-	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) auto_axis=FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) iso=TRUE;
 	}
-      if ( opts_2d[0].obj == NULLOBJ)
+      if ( opts_2d[axesflag_opts].obj == NULLOBJ)
 	{
 	  /* axes not given */
 	  axes = strf[2] - '0';
@@ -1488,11 +1491,11 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       CheckLength(NspFname(stack),opts_2d[pos].position, x, ncurves);	\
     }
 
-  CheckArg(Mmark,9);
-  CheckArg(Mmark_size,10);
-  CheckArg(Mmark_color,11);
-  CheckArg(Mline_color,12);
-  CheckArg(Mline_thickness,13);
+  CheckArg(Mmark,mark_opts);
+  CheckArg(Mmark_size,mark_size_opts);
+  CheckArg(Mmark_color,mark_color_opts);
+  CheckArg(Mline_color,line_color_opts);
+  CheckArg(Mline_thickness,line_thickness_opts);
 
   /* logflags */
   logflags[0]= tflag;
@@ -1633,11 +1636,26 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	    return RET_BUG;
 	  }
       }
-    /* updates the axes scale information */
-    nsp_strf_axes_new( axe, frect, strf[1], auto_axis, iso);
-    axe->obj->axes = axes;
-    axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
-    axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+
+    /* updates the axe information according to optional values */
+    if ( opts_2d[iso_opts].obj != NULLOBJ ) axe->obj->iso = iso;
+    if ( opts_2d[auto_axis_opts].obj != NULLOBJ ) axe->obj->auto_axis = auto_axis;
+    if ( opts_2d[rect_opts].obj != NULLOBJ )
+      {
+	memcpy(axe->obj->rect->R,frect,4*sizeof(double));
+	memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+	axe->obj->fixed = TRUE;
+      }
+    /* update the axesflag if given as options in axesflag or strf */
+    if ( opts_2d[axesflag_opts].obj != NULLOBJ  || opts_2d[strf_opts].obj != NULLOBJ)
+      {
+	axe->obj->axes = axes;
+      }
+    if ( opts_2d[logflag_opts].obj != NULLOBJ)
+      {
+	axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+	axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
+      }
     nsp_axes_invalidate(((NspGraphic *) axe));
     ret = (NspGraphic *) curve ;
   }
@@ -5200,56 +5218,6 @@ static int int_xinfo_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-
-static NspAxes *Nsetscale2d_new(const double *WRect,const double *ARect,
-				const double *FRect,const char *logscale, int fixed,
-				int axesflag,int iso,int clip)
-{
-  NspAxes *axe;
-  NspFigure *F = nsp_check_for_current_figure();
-  if ( F == NULL) return NULL;
-  axe = nsp_check_for_axes_in_figure(F,WRect);
-  if ( axe ==  NULL) return NULL;
-  axe->obj->xlog = ( strlen(logscale) >= 0) ? ((logscale[0]=='n') ? FALSE:TRUE) : FALSE;
-  axe->obj->ylog=  ( strlen(logscale) >= 1) ? ((logscale[1]=='n') ? FALSE:TRUE) : FALSE;
-
-  if ( WRect != NULL)   memcpy(axe->obj->wrect->R,WRect,4*sizeof(double));
-  if ( ARect != NULL)   memcpy(axe->obj->arect->R,ARect,4*sizeof(double));
-  if ( FRect != NULL)   memcpy(axe->obj->frect->R,FRect,4*sizeof(double));
-
-  if ( FRect != NULL)
-    {
-      axe->obj->fixed = fixed;
-      memcpy(axe->obj->rect->R,FRect,4*sizeof(double));
-    }
-  axe->obj->clip = clip;
-  axe->obj->axes = axesflag;
-  axe->obj->iso = iso;
-  nsp_axes_invalidate((NspGraphic *) axe);
-  return axe;
-}
-
-static NspObjs3d *Nsetscale3d_new(const double *WRect,const double *ARect,
-				  const double *FRect,const char *logscale, int fixed,
-				  int axesflag,int iso,int clip )
-{
-  NspObjs3d *objs3d;
-  NspFigure *F = nsp_check_for_current_figure();
-  if ( F == NULL) return NULL;
-  objs3d = nsp_check_for_objs3d_in_figure(F,WRect);
-  if (objs3d == NULL) return NULL;
-  if ( WRect != NULL)   memcpy(objs3d->obj->wrect->R,WRect,4*sizeof(double));
-  if ( ARect != NULL)   memcpy(objs3d->obj->arect->R,ARect,4*sizeof(double));
-  if ( FRect != NULL)   memcpy(objs3d->obj->frect->R,FRect,4*sizeof(double));
-  /*
-  objs3d->obj->clip = clip;
-  objs3d->obj->axes = axesflag;
-  objs3d->obj->iso = iso;
-  */
-  nsp_objs3d_invalidate((NspGraphic *) objs3d);
-  return objs3d ;
-}
-
 /**
  * int_xsetech
  * @stack:
@@ -5269,12 +5237,10 @@ static NspObjs3d *Nsetscale3d_new(const double *WRect,const double *ARect,
 
 static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int axesflag= -1, iso = FALSE, clip=TRUE;
+  int axesflag= -1, iso = -1 , clip=-1, fixed = -1 , axe3d=FALSE;
   NspObject *ret;
-  int fixed = TRUE, axe3d=FALSE;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
-  static char logflag_def[]="nn";
-  char *logflag = logflag_def;
+  char *logflag = NULL;
   NspMatrix *M;
 
   CheckLhs(0,1);
@@ -5333,22 +5299,70 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 	wrect = Mwrect->R;CheckLength(NspFname(stack),opts[3].position,Mwrect,4);
       }
 
-      if ( logflag != logflag_def ) {
-	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\n",
-		   NspFname(stack),strlen(logflag),2 );
-	  return RET_BUG;
+      if ( logflag != NULL )
+	{
+	  if ( strlen(logflag) != 2 ) {
+	    Scierror("%s: logflag argument has a wrong length %d expecting (%d)\n",
+		     NspFname(stack),strlen(logflag),2 );
+	    return RET_BUG;
+	  }
 	}
-      }
     }
+
   if ( axe3d == TRUE )
     {
-      ret = (NspObject *) Nsetscale3d_new(wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
+      NspObjs3d *objs3d;
+      NspFigure *F = nsp_check_for_current_figure();
+      if ( F == NULL) return RET_BUG;
+      objs3d = nsp_check_for_objs3d_in_figure(F,wrect);
+      if (objs3d == NULL) return RET_BUG;
+      if ( wrect != NULL)   memcpy(objs3d->obj->wrect->R,wrect,4*sizeof(double));
+      if ( arect != NULL)   memcpy(objs3d->obj->arect->R,arect,4*sizeof(double));
+      if ( frect != NULL)   memcpy(objs3d->obj->frect->R,frect,4*sizeof(double));
+      /*
+	objs3d->obj->clip = clip;
+	objs3d->obj->axes = axesflag;
+	objs3d->obj->iso = iso;
+      */
+      nsp_objs3d_invalidate((NspGraphic *) objs3d);
+      ret = (NspObject *) objs3d ;
     }
   else
     {
-      ret = (NspObject *) Nsetscale2d_new(wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
+      NspAxes *axe;
+      NspFigure *F = nsp_check_for_current_figure();
+      if ( F == NULL) return RET_BUG;
+      axe = nsp_check_for_axes_in_figure(F,wrect);
+      if ( axe ==  NULL) return RET_BUG;
+
+      if ( wrect != NULL)
+	{
+	  memcpy(axe->obj->wrect->R,wrect,4*sizeof(double));
+	}
+      if ( arect != NULL)
+	{
+	  memcpy(axe->obj->arect->R,arect,4*sizeof(double));
+	}
+      if ( frect != NULL)
+	{
+	  memcpy(axe->obj->frect->R,frect,4*sizeof(double));
+	  memcpy(axe->obj->rect->R,frect,4*sizeof(double));
+	  axe->obj->fixed = TRUE;
+	}
+      if ( logflag != NULL )
+	{
+	  axe->obj->xlog = (logflag[0]=='n') ? FALSE : TRUE;
+	  axe->obj->ylog = (logflag[1]=='n') ? FALSE : TRUE;
+	}
+      if ( clip != -1) axe->obj->clip = clip;
+      if ( axesflag != -1) axe->obj->axes = axesflag;
+      if ( iso != -1) axe->obj->iso = iso;
+      if ( fixed != -1) axe->obj->fixed = fixed;
+
+      nsp_axes_invalidate((NspGraphic *) axe);
+      ret =  (NspObject *) axe;
     }
+
   if ( lhs == 1 )
     {
       if ((ret =nsp_object_copy(ret)) == NULLOBJ)
