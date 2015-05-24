@@ -1627,22 +1627,11 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     }
 
   /* draw axes, ticks */
-  nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
-		P->obj->grid, P->obj->background);
+  /* nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
+     P->obj->grid, P->obj->background); */
+
   /* title if present */
-  if (1)
-    {
-      nsp_graphic_titles(Xgc,P->obj->title,P->obj->x,P->obj->y);
-    }
-  else
-    {
-      if ( P->obj->title[0] != '\0')
-	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
-      if ( P->obj->x[0] != '\0')
-	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
-      if ( P->obj->y[0] != '\0')
-	Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
-    }
+  nsp_graphic_titles(Xgc,P->obj->title,P->obj->x,P->obj->y);
 
   if (  P->obj->font_size != -1)
     {
@@ -1701,6 +1690,10 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   /* legends */
   nsp_axes_legends(Xgc,P);
+
+  /* draw axes, ticks */
+  nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
+		P->obj->grid, P->obj->background);
 
   if (  P->obj->font_size != -1)
     {
@@ -2514,4 +2507,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2518 "axes.c"
+#line 2511 "axes.c"
