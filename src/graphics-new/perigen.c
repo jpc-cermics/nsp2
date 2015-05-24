@@ -17,11 +17,11 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * 
- * A set of generic routines which can be used by all the drivers 
+ *
+ * A set of generic routines which can be used by all the drivers
  * if they do not wish to implement an accelerated version.
- * 
- * jpc@cermics.enpc.fr 
+ *
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -48,11 +48,11 @@ static driver_fillarcs fillarcs_gen;
 static driver_drawpolylines drawpolylines_gen;
 static driver_fillpolylines fillpolylines_gen;
 static driver_displaynumbers displaynumbers_gen;
-static driver_drawaxis drawaxis_gen; 
-static driver_drawarc drawarc_gen; 
-static driver_fillarc fillarc_gen; 
-static driver_draw_pixbuf draw_pixbuf_gen; 
-static driver_draw_pixbuf_from_file draw_pixbuf_from_file_gen; 
+static driver_drawaxis drawaxis_gen;
+static driver_drawarc drawarc_gen;
+static driver_fillarc fillarc_gen;
+static driver_draw_pixbuf draw_pixbuf_gen;
+static driver_draw_pixbuf_from_file draw_pixbuf_from_file_gen;
 static driver_xset_test xset_test;
 
 nsp_gengine_generic nsp_peri_generic = {
@@ -77,28 +77,28 @@ nsp_gengine_generic nsp_peri_generic = {
 
 /**
  * fill_grid_rectangles1_gen:
- * @Xgc: 
+ * @Xgc:
  * @x: array of int of size nc+1
  * @y: array of int of size nr+1
  * @z: array of double of size nr*nc
- * 
- * A generic function for drawing a set of rectangles 
- * which is accelerated on Gtk driver (see periGtk.c) 
- * 
- *  x : of size nc+1 gives the x-values of the grid 
- *  y : of size nr+1 gives the y-values of the grid 
- *  z : of size nr*nc  gives the color to be used 
+ *
+ * A generic function for drawing a set of rectangles
+ * which is accelerated on Gtk driver (see periGtk.c)
+ *
+ *  x : of size nc+1 gives the x-values of the grid
+ *  y : of size nr+1 gives the y-values of the grid
+ *  z : of size nr*nc  gives the color to be used
  *      on the rectangle defined by ( x[i],y[j], x[i+1],y[j+1])
- *  if zremap = %f then z values are considered as color id 
- *  if zremap = %t zvalues are remapped to colors 
- *      if colminmax== NULL then zmin,zmax are remapped to the min and max 
+ *  if zremap = %f then z values are considered as color id
+ *  if zremap = %t zvalues are remapped to colors
+ *      if colminmax== NULL then zmin,zmax are remapped to the min and max
  *         values of current colormap
- *      else  the zminmax range is remapped to the colmimax range 
- *         and rectangles outside the range are not drawn 
- * 
+ *      else  the zminmax range is remapped to the colmimax range
+ *         and rectangles outside the range are not drawn
+ *
  **/
 
-static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[], 
+static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[],
 				      int nr, int nc,
 				      int remap,const int *colminmax,const double *zminmax)
 {
@@ -107,18 +107,19 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
   int i,j,fill[1],cpat,xz[2];
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
-  
+
   nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
 
   for (i = 0 ; i < nr ; i++)
     for (j = 0 ; j < nc ; j++)
       {
 	int w,h;
-	fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
+	fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) :
+	  rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
 	if ( fill[0] < colmin || fill[0] > colmax )
 	  {
-	    /* do not draw rectangles which are outside the colormap range 
-	     * execpt if colout is non null 
+	    /* do not draw rectangles which are outside the colormap range
+	     * execpt if colout is non null
 	     */
 	    continue;
 	  }
@@ -139,24 +140,24 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
 
 /**
  * fill_grid_rectangles_gen:
- * @Xgc: 
- * @x: 
- * @y: 
- * @z: 
- * @nx: 
- * @ny: 
- * 
- * A generic function for drawing a set of rectangles 
- * which is accelerated on Gtk driver (see periGtk.c) 
- * 
- *  x : of size nx gives the x-values of the grid 
- *  y : of size ny gives the y-values of the grid 
- *  z : of size (nx)*(ny). 
- *  the rectangle ( x[i],y[j], x[i+1],y[j+1]) 
- *  the average value of z is computed on each corner of the rectangle 
- *  defined by ( x[i],y[j], x[i+1],y[j+1]). Then this value is 
+ * @Xgc:
+ * @x:
+ * @y:
+ * @z:
+ * @nx:
+ * @ny:
+ *
+ * A generic function for drawing a set of rectangles
+ * which is accelerated on Gtk driver (see periGtk.c)
+ *
+ *  x : of size nx gives the x-values of the grid
+ *  y : of size ny gives the y-values of the grid
+ *  z : of size (nx)*(ny).
+ *  the rectangle ( x[i],y[j], x[i+1],y[j+1])
+ *  the average value of z is computed on each corner of the rectangle
+ *  defined by ( x[i],y[j], x[i+1],y[j+1]). Then this value is
  *  converted to a colorvalue using the current colormap.
- * 
+ *
  **/
 
 static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
@@ -165,7 +166,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
   int colmin,colmax;
   double zmax,zmin,coeff,zmoy;
   int i,j,color,cpat,xz[2];
-  
+
   nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nx*ny);
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
@@ -191,7 +192,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 		int rect[]={x[i],y[j+1],w,h};
 		Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	      }
-	    else 
+	    else
 	      {
 		/* fprintf(stderr,"Rectangle too large \n"); */
 	      }
@@ -210,20 +211,20 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 {
   *colmin=1;
   *colmax=Xgc->graphic_engine->xget_last(Xgc);
-  if ( remap == TRUE) 
+  if ( remap == TRUE)
     {
-      if ( colminmax != NULL) 
+      if ( colminmax != NULL)
 	{
 	  *colmax = Min(*colmax,colminmax[1]);
 	  *colmin = Max(*colmin,colminmax[0]);
 	}
-      if ( zminmax == NULL) 
+      if ( zminmax == NULL)
 	{
 	  *zmin = Mini(z,zn);
 	  *zmax = Maxi(z,zn);
 	  *coeff = ( *zmin == *zmax ) ? 1.0: 1.0/(*zmax-*zmin);
 	}
-      else 
+      else
 	{
 	  *zmin = zminmax[0];
 	  *zmax = zminmax[1];
@@ -233,10 +234,10 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-/* Draw a set of segments 
+/* Draw a set of segments
  *
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2  n is the size of vx and vy 
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2  n is the size of vx and vy
  */
 
 static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
@@ -244,49 +245,49 @@ static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *style, int 
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( iflag == 1) 
-    { 
+  if ( iflag == 1)
+    {
       /* one style per segment */
-      for (i=0 ; i < n/2 ; i++) 
+      for (i=0 ; i < n/2 ; i++)
 	{
 	  Xgc->graphic_engine->xset_line_style(Xgc,style[i]);
 	  Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
 	}
     }
-  else 
+  else
     {
       if (*style >= 1) Xgc->graphic_engine->xset_line_style(Xgc,*style);
       /* une fonction gtk existe ici FIXME */
-      for (i=0 ; i < n/2 ; i++) 
+      for (i=0 ; i < n/2 ; i++)
 	Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
-/* Draw a set of arrows 
- * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- * as is 10*arsize (arsize) the size of the arrow head in pixels 
+/* Draw a set of arrows
+ * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * n is the size of vx and vy
+ * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
 static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
-{ 
+{
   int dash,color,i,lstyle,polyx[4],polyy[4];
   double cos20=cos(20.0*M_PI/180.0), sin20=sin(20.0*M_PI/180.0);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i=0 ; i < n/2 ; i++)
-    { 
+    {
       double dx,dy,norm;
-      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
+      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style;
       Xgc->graphic_engine->xset_line_style(Xgc,lstyle);
       Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
       dx=( vx[2*i+1]-vx[2*i]);
       dy=( vy[2*i+1]-vy[2*i]);
       norm = sqrt(dx*dx+dy*dy);
-      if ( Abs(norm) >  SMDOUBLE ) 
+      if ( Abs(norm) >  SMDOUBLE )
 	{
 	  int nn=1,p=3;
 	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
@@ -306,16 +307,16 @@ static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style
 
 /*
  * Rectangles
- * Draw or fill a set of rectangle 
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for x,y,width,height 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- * fillvect[*n] : specify the action  
- * if fillvect[i] is > 0 then fill the rectangle i 
- * if fillvect[i] is == 0  then only draw the rectangle i 
- *                         with the current private->drawing style 
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
+ * Draw or fill a set of rectangle
+ * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3])
+ * for x,y,width,height
+ * for i=0 step 4
+ * (*n) : number of rectangles
+ * fillvect[*n] : specify the action
+ * if fillvect[i] is > 0 then fill the rectangle i
+ * if fillvect[i] is == 0  then only draw the rectangle i
+ *                         with the current private->drawing style
+ * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
 static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, int n)
@@ -330,7 +331,7 @@ static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, in
 	  Xgc->graphic_engine->xset_line_style(Xgc,- fillvect[i]);
 	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
 	}
-      else if ( fillvect[i] == 0 ) 
+      else if ( fillvect[i] == 0 )
 	{
 	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
 	}
@@ -346,15 +347,15 @@ static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, in
 
 
 
-/* 
- * Draw a set of (*n) polylines (each of which have (*p) points) 
- * with lines or marks 
+/*
+ * Draw a set of (*n) polylines (each of which have (*p) points)
+ * with lines or marks
  * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i 
+ * drawvect[i] >  0 use a line style for polyline i
  */
 
 static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
-{ 
+{
   const int close =0;
   int symb[2],dash,color,i;
   /* store the current values */
@@ -364,7 +365,7 @@ static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,i
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
-	{ 
+	{
 	  /* we use the markid : drawvect[i] : with current dash */
 	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -385,12 +386,12 @@ static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,i
 }
 
 /*
- *  fill a set of polygons each of which is defined by 
- * (*p) points (*n) is the number of polygons 
- * the polygon is closed by the routine 
- * fillvect[*n] :         
- * if fillvect[i] == 0 draw the boundaries with current color 
- * if fillvect[i] > 0  draw the boundaries with current color 
+ *  fill a set of polygons each of which is defined by
+ * (*p) points (*n) is the number of polygons
+ * the polygon is closed by the routine
+ * fillvect[*n] :
+ * if fillvect[i] == 0 draw the boundaries with current color
+ * if fillvect[i] > 0  draw the boundaries with current color
  *               then fill with pattern fillvect[i]
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  *
@@ -404,7 +405,7 @@ static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,i
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
-	{ 
+	{
 	  /** fill + boundaries **/
 	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
 	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
@@ -417,7 +418,7 @@ static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,i
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
-      else 
+      else
 	{
 	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
 	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
@@ -429,12 +430,12 @@ static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,i
 }
 
 /*
- * Draw a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
+ * Draw a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
  */
 
 static void drawarcs_gen(BCG *Xgc, int *vects, int *style, int n)
@@ -453,20 +454,20 @@ static void drawarcs_gen(BCG *Xgc, int *vects, int *style, int n)
 }
 
 /*
- * Circles and Ellipsis 
- * Draw or fill a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
- * with pattern fillvect[i] 
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
- * The private->drawing style is the current private->drawing 
+ * Circles and Ellipsis
+ * Draw or fill a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
+ * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i
+ * with pattern fillvect[i]
+ * if fillvect[i] is > lastpattern  then only draw the ellipsis i
+ * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n) 
+static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n)
 {
   int i,cpat;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -488,21 +489,21 @@ static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n)
 
 
 /*
- *   Draw an axis whith a slope of alpha degree (clockwise) 
- *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
- *   following way : 
- *   \item   $n=<n1,n2>$, 
- *   \begin{verbatim} 
- *   |            |           | 
- *   |----|---|---|---|---|---| 
- *   <-----n1---->                  
- *   <-------------n2--------> 
- *   \end{verbatim} 
- *   $n1$and $n2$ are int numbers for interval numbers. 
- *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
- *   two marks, $r$ size in points of small mark, $r*coeff$  
- *   size in points of big marks. (they are doubleing points numbers) 
- *   \item $init$. Initial point $<x,y>$.  
+ *   Draw an axis whith a slope of alpha degree (clockwise)
+ *   . Along the axis marks are set in the direction ( alpha + pi/2), in the
+ *   following way :
+ *   \item   $n=<n1,n2>$,
+ *   \begin{verbatim}
+ *   |            |           |
+ *   |----|---|---|---|---|---|
+ *   <-----n1---->
+ *   <-------------n2-------->
+ *   \end{verbatim}
+ *   $n1$and $n2$ are int numbers for interval numbers.
+ *   \item $size=<dl,r,coeff>$. $dl$ distance in points between
+ *   two marks, $r$ size in points of small mark, $r*coeff$
+ *   size in points of big marks. (they are doubleing points numbers)
+ *   \item $init$. Initial point $<x,y>$.
  */
 
 static void drawaxis_gen(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
@@ -524,7 +525,7 @@ static void drawaxis_gen(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double
 	}
     }
   for (i=0; i <= nsteps[1]; i++)
-    { 
+    {
       xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
       yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
       xf = xi - ( size[1]*size[2]*sinal);
@@ -544,7 +545,7 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
   int i ;
   static char buf[56];
   for (i=0 ; i< n ; i++)
-    { 
+    {
       sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
       Xgc->graphic_engine->displaystring(Xgc,buf,x[i],y[i],flag,alpha[i],
 					 GR_STR_XLEFT, GR_STR_YBOTTOM);
@@ -554,7 +555,7 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
 
 
 static void drawarc_gen(BCG *Xgc,int arc[])
-{ 
+{
   int vx[365],vy[365],k,n;
   double alpha,fact=0.01745329251994330,w,h;
   int close = 0;
@@ -570,27 +571,27 @@ static void drawarc_gen(BCG *Xgc,int arc[])
 }
 
 static void fillarc_gen( BCG *Xgc,int arc[])
-{ 
+{
   int vx[365],vy[365],k,close = 1;
   double alpha,fact=0.01745329251994330;
   double w=arc[2]/2.0,h=arc[3]/2.0;
   /* drawarc_gen(Xgc,arc); */
   int n = Min((arc[5]/64),360), count=0;
-  
-  if (n != 360) 
+
+  if (n != 360)
     {
       vx[count] = arc[0] + w;
       vy[count] = arc[1] + h;
       count++;
     }
-  for (k = 0; k < n ; ++k) 
+  for (k = 0; k < n ; ++k)
     {
       alpha=((arc[4]/64)+k)*fact;
       vx[count] = arc[0] + w*(cos(alpha)+1.0);
       vy[count] = arc[1] * h*(-sin(alpha)+1.0);
       count++;
     }
-  if (n != 360) 
+  if (n != 360)
     {
       vx[count] = arc[0] + w;
       vy[count] = arc[1] + h;
@@ -620,8 +621,5 @@ static void draw_pixbuf_from_file_gen(BCG *Xgc,const char *pix,int src_x,int src
 
 static void   xset_test(BCG *Xgc)
 {
-  
+
 }
-
-
-

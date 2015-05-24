@@ -1,0 +1,110 @@
+% -*- mode: latex -*-
+\mansection{contour2d}
+\begin{mandesc}
+  \short{contour2d}{level curves of a surface on a 2 dimensional plot}\\
+  \short{contourf}{level curves of a surface on a 2 dimensional plot}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  contour2d(x,y,z,nv,options=values)
+  contourf(x,y,z,nv=,options=values)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two real vectors of size \verb!n1! and \verb!n2! defining a grid.
+    \vname{z}: real matrix of size \verb!(n1,n2)! giving the z-values of a surface on the grid
+    \verb!(x,y)! or a nsp function !z=f(x,y)!.
+    \vname{nv}: the requested level values or the number of contour levels.
+    \begin{varlist}
+      \vname{-}If \verb!nv! is scalar, its value gives the
+      number of level curves equally spaced from zmin to zmax as
+      follows \verb!z= zmin + (1:nv)*(zmax-zmin)/(nv+1)!
+      Note that the \verb!zmin! and \verb!zmax!
+      levels are not drawn (generically they are reduced to points)
+      but they can be added with
+      \begin{Verbatim}
+        [im,jm] = find(z == zmin); // or zmax
+        plot2d(x(im)',y(jm)',-9)
+      \end{Verbatim}
+      \vname{-}If \verb!nv! is a vector, \verb!nv(i)! gives
+      the value of the ith level curve.
+    \end{varlist}
+    \vname{style}: optional argument which gives the color to use for each level.
+    \vname{axesflag,frameflag}: see \manlink{plot2d}{plot2d}
+    \vname{leg}: see \manlink{plot2d}{plot2d}
+    \vname{leg_pos}: see \manlink{plot2d}{plot2d}
+    \vname{logflag}: see \manlink{plot2d}{plot2d}
+    \vname{nax}: see \manlink{plot2d}{plot2d}
+    \vname{rect}: see \manlink{plot2d}{plot2d}
+    \vname{strf}: deprecated replaced by specifying \verb!rect!, \verb!axesflag!.
+    \vname{auto_axis}: see \manlink{plot2d}{plot2d}
+    \vname{iso}: see \manlink{plot2d}{plot2d}
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!contour2d! draws level curves of a surface
+  \verb!z=f(x,y)! on a 2D plot. The values of \verb!f(x,y)! are
+  given by the matrix \verb!z! at the grid points defined by
+  \verb!x! and \verb!y!. The levels to be displayed are given by \verb!nv!.
+
+  \verb!contourf! paints between two consecutives level curves of the surface.
+
+  The format used to display level curve values can be changed by
+  using the command \verb!xset("fpf",string)! where \verb!string!
+  gives the requested format in a C format syntax (for example
+  \verb!string="%.3f"!). The format \verb!string=""! can be used
+  to switch back to default format and \verb!string=" "! to suppress printing. This
+  last feature is useful in conjunction with \manlink{legends}{legends} to display
+  the level numbers in a legend and not directly onto the level curves as
+  usual (see Examples).
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+\noindent A first example
+
+\begin{Verbatim}
+  contour2d(1:10,1:10,rand(10,10),5,rect=[0,0,11,11],style=1:5)
+  // changing the format of the printing of the levels
+  xset("fpf","%.2f");
+  F=get_current_figure();
+  F.invalidate[];
+\end{Verbatim}
+
+\noindent A second example
+
+\begin{Verbatim}
+  xset('colormap',jetcolormap(11));
+  x=linspace(0,2*%pi,20);y=linspace(1,10,50);
+  levels=-10:2:10;
+  xset('fpf',' ');
+  contour2d(x,y,sin(x)'*y,levels,style=1:11)
+  for i=1:11, plot2d(0,0,line_color=i,leg=string(levels(i)),leg_pos='urm');end
+  xtitle("level curves of function sin(x)*y");
+\end{Verbatim}
+
+\noindent A third example with \verb!contourf!
+
+\begin{Verbatim}
+  xset('colormap',jetcolormap(11));
+  x=linspace(0,2*%pi,20);y=linspace(1,10,50);
+  levels=-10:2:10;
+  contourf(x,y,sin(x)'*y,nv=levels);
+  xtitle("level curves of function sin(x)*y");
+\end{Verbatim}
+
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{contour}{contour} \manlink{contour2di}{contour2di} \manlink{plot2d}{plot2d}
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}

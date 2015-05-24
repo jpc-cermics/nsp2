@@ -17,15 +17,15 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * jpc@cermics.enpc.fr 
- * store a list of graphic contexts 
- * this is gui independant the gui dependant part is 
- * delegated to private member of winxgc  
+ * jpc@cermics.enpc.fr
+ * store a list of graphic contexts
+ * this is gui independant the gui dependant part is
+ * delegated to private member of winxgc
  *--------------------------------------------------------------------------*/
 
 #include <gtk/gtk.h>
-#include "nsp/graphics-old/Graphics.h" 
-#include "nsp/graphics-new/switch.h" 
+#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-new/switch.h"
 
 void nsp_switch_graphic_functions(void);
 
@@ -53,17 +53,17 @@ int nsp_graphic_new_cairo_old(GtkWidget *win,GtkWidget *box, int v2,int *wdim,in
 		       double *viewport_pos,int *wpos);
 
 
-int use_new_graphics=FALSE;
+int use_new_graphics=TRUE;
 
 BCG *window_list_search(int winnum)
-{ 
+{
   if (use_new_graphics)
     return window_list_search_new(winnum);
   else
     return window_list_search_old(winnum);
 }
 
-BCG *check_graphic_window(void) 
+BCG *check_graphic_window(void)
 {
   if (use_new_graphics)
     return check_graphic_window_new() ;
@@ -71,7 +71,7 @@ BCG *check_graphic_window(void)
     return check_graphic_window_old() ;
 }
 
-BCG *set_graphic_window(int num) 
+BCG *set_graphic_window(int num)
 {
   if (use_new_graphics)
     return set_graphic_window_new(num);
@@ -105,7 +105,7 @@ int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 }
 
 
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
 int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 			double *viewport_pos,int *wpos)
 {
@@ -114,7 +114,7 @@ int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdi
   else
     return nsp_graphic_new_gl_old(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
-#endif 
+#endif
 
 #ifdef WITH_CAIRO
 int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
@@ -125,13 +125,13 @@ int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *w
   else
     return nsp_graphic_new_cairo_old(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
-#endif 
+#endif
 
 
 /*
  *
  *
- */ 
+ */
 
 #include <nsp/callfunc.h>
 #include <nsp/funtab.h>
@@ -144,7 +144,7 @@ extern OpGrTab Graphics_func[];
 void nsp_switch_graphics(void)
 {
   int i=0, gr_new=-1,gr_old=-1,k;
-  while (1) 
+  while (1)
     {
       /* interfaces */
       interface_info *info = Interfaces[i].info;
@@ -166,23 +166,23 @@ void nsp_switch_graphics(void)
 
 
   k=0;
-  while (1) 
+  while (1)
     {
       if ( Graphics_func[k].name1 == NULL ) break;
-      if ( use_new_graphics ) 
-	nsp_enter_function(Graphics_func[k].name2,gr_new,k);
-      else 
+      if ( use_new_graphics )
 	nsp_enter_function(Graphics_func[k].name1,gr_new,k);
+      else
+	nsp_enter_function(Graphics_func[k].name2,gr_new,k);
       k++;
     }
   k=0;
-  while (1) 
+  while (1)
     {
       if ( GraphicsOld_func[k].name1 == NULL ) break;
       if ( use_new_graphics )
-	nsp_enter_function(GraphicsOld_func[k].name2,gr_old,k);
-      else
 	nsp_enter_function(GraphicsOld_func[k].name1,gr_old,k);
+      else
+	nsp_enter_function(GraphicsOld_func[k].name2,gr_old,k);
       k++;
     }
 }

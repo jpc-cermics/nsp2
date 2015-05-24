@@ -27,13 +27,13 @@
 #line 25 "codegen/gmatrix.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 39 "gmatrix.c"
 
@@ -118,8 +118,8 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_gmatrix  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 125 "gmatrix.c"
   /* 
@@ -765,7 +765,7 @@ static AttrTab gmatrix_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -777,7 +777,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -820,35 +820,34 @@ void GMatrix_Interf_Info(int i, char **fname, function ( **f))
 static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
-  int remap = P->obj->remap; 
+  int remap = P->obj->remap;
   double xx[]={ P->obj->rect->R[0],P->obj->rect->R[2]};
   double yy[]={ P->obj->rect->R[1],P->obj->rect->R[3]};
   int xx1[2],yy1[2];
   int *xm,*ym,  j;
-  int colminmax[2];
+  int *colminmax = NULL, icolminmax[2];
   double *zminmax = NULL;
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
-
   /* check if the block is inside drawing rectangle
    */
-
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
 
-  if ( P->obj->colminmax->mn == 2 ) 
+  if ( P->obj->colminmax->mn == 2 )
     {
-      colminmax[0] = P->obj->colminmax->R[0];
-      colminmax[1] = P->obj->colminmax->R[1];
+      icolminmax[0] = P->obj->colminmax->R[0];
+      icolminmax[1] = P->obj->colminmax->R[1];
+      colminmax = icolminmax;
     }
-  if ( P->obj->zminmax->mn == 2 ) 
-    zminmax = P->obj->zminmax->R;
-  else
-    remap = FALSE;
-  
-  if  (  Xgc->scales->cosa==1.0 ) 
+  if ( P->obj->zminmax->mn == 2 )
+    {
+      zminmax = P->obj->zminmax->R;
+    }
+
+  if  (  Xgc->scales->cosa==1.0 )
     {
       /* Boundaries of the matrix rectangle in pixel */
       scale_f2i(Xgc->scales,xx,yy,xx1,yy1,2);
@@ -857,14 +856,14 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       if ( xm == 0 || ym == 0 )
 	{
 	  Scistring("Xgray: running out of memory\n");
-	  return ; 
+	  return ;
 	}
-      for ( j =0 ; j < (P->obj->data->n+1) ; j++)	 
+      for ( j =0 ; j < (P->obj->data->n+1) ; j++)
 	xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
-      for ( j =0 ; j < (P->obj->data->m+1) ; j++)	 
+      for ( j =0 ; j < (P->obj->data->m+1) ; j++)
 	ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
       Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
-						 P->obj->data->m, 
+						 P->obj->data->m,
 						 P->obj->data->n,
 						 remap,
 						 colminmax,
@@ -881,7 +880,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       cpat = Xgc->graphic_engine->xget_pattern(Xgc);
       Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
       nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
-      
+
       for (i = 0 ; i < nc-1 ; i++)
 	for (j = 0 ; j < nr-1 ; j++)
 	  {
@@ -901,7 +900,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
 	  }
       Xgc->graphic_engine->xset_pattern(Xgc,cpat);
     }
-  
+
 }
 
 
@@ -935,7 +934,7 @@ static void nsp_scale_gmatrix(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of gmatrix 
+/* compute in bounds the enclosing rectangle of gmatrix
  *
  */
 
@@ -950,5 +949,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-
-#line 955 "gmatrix.c"
+#line 953 "gmatrix.c"

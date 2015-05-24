@@ -43,6 +43,19 @@
     if ~new_graphics() then switch_graphics();end;xclear();
     champ1(-5:5,-5:5,rand(11,11),rand(11,11),arfact=2,rect=[-10,-10,10,10]);
   \end{Verbatim}
+
+  \noindent Add a grid and a mark at each point of the grid.
+  \begin{Verbatim}
+    x=linspace(-%pi,%pi,20);
+    y=x;
+    gray=xget('lastpattern')+3;
+    xsegs([x;x],[min(y)*ones(size(x));max(y)*ones(size(x))],style=gray);
+    xsegs([min(x)*ones(size(y));max(x)*ones(size(y))],[y;y],style=gray);
+    champ1(x,y,sin(x'*y),cos(x'*y));
+    [X,Y]=ndgrid(x,y);
+    plot2d(X(:),Y(:),line_color=-2,mark=13,mark_size=3,mark_color=1);
+  \end{Verbatim}
+
 \end{examples}
 %-- see also
 %-- Author

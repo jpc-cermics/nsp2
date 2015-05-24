@@ -750,7 +750,7 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
  *
  */
 
-void nsp_strf_axes(NspAxes *A,double *rect, char scale)
+void nsp_strf_axes_deprecated(NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   /* use strf argument to change the axes */
@@ -813,7 +813,7 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
     memcpy(A->obj->frect->R,A->obj->bounds->R,4*sizeof(double));
 }
 
-void nsp_strf_axes_new(NspAxes *A,double *rect, char scale,int auto_axis,int iso)
+void nsp_strf_axes_new_deprecated(NspAxes *A,double *rect, char scale,int auto_axis,int iso)
 {
   NspGraphic *G= (NspGraphic *) A;
   A->obj->iso = iso;

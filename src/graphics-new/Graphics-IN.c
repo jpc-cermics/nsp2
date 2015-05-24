@@ -111,26 +111,50 @@ static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix
  * @func:
  * @colored:
  *
- *
+ * general interface for champ and champ1
+ * (XXX: The names should be changed)
  *
  * Returns:
  **/
 
 static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 {
+  int *nax, frame= -1, axes=-1;
+  NspMatrix *Mistyle=NULL, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
+  double *rect=NULL ;
+  char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
+  int leg_posi;
+  int auto_axis=TRUE,iso=FALSE;
+
   NspAxes *axe;
   NspVField *vf;
-  NspMatrix *x,*y,*fx,*fy,*rect=NULL;
-  double arfact =1.0,*R;
-  char *strf=NULL;
+  NspMatrix *x,*y,*fx,*fy;
+  double arfact =1.0;
+
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
 
-  nsp_option opts[] ={{ "arfact",s_double,NULLOBJ,-1},
-		      { "rect",realmat,NULLOBJ,-1},
-		      { "strf",string,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
+  nsp_option opts_2d[] ={{ "arfact",s_double,NULLOBJ,-1},
+			 { "axesflag",s_int,NULLOBJ,-1},
+			 { "frameflag",s_int,NULLOBJ,-1},
+			 { "leg",string,NULLOBJ,-1},
+			 { "leg_pos",string,NULLOBJ,-1},
+			 { "logflag",string,NULLOBJ,-1},
+			 { "nax",mat_int,NULLOBJ,-1},
+			 { "rect",realmat,NULLOBJ,-1},
+			 { "strf",string,NULLOBJ,-1},
+			 { "auto_axis",s_bool,NULLOBJ,-1},
+			 { "iso",s_bool,NULLOBJ,-1},
+			 { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fx,&fy,&opts,&arfact,&rect,&strf) == FAIL) return RET_BUG;
+  /* keep same order as in opts_2d */
+  enum  { arfact_opts, axesflag_opts , frameflag_opts, leg_opts, leg_pos_opts,
+	  logflag_opts , nax_opts, rect_opts , strf_opts,
+	  auto_axis_opts, iso_opts};
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fx,&fy,&opts_2d,&arfact,
+	       &axes,&frame,&leg,&leg_pos,&logflags,
+	       &Mnax,&Mrect,&strf,&auto_axis,&iso) == FAIL)
+    return RET_BUG;
 
   CheckSameDims(NspFname(stack),3,4,fx,fy);
   CheckDimProp(NspFname(stack),2,3, y->mn != fx->n);
@@ -138,9 +162,9 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 
   if ( fx->mn == 0) { return 0;}
 
-  if (( R = check_rect(stack,NspFname(stack),"rect",rect)) == NULL)  return RET_BUG;
-  if (( strf = check_strf(stack,NspFname(stack),"strf",strf))==NULL) return RET_BUG;
-  if ( R == rect_def ) strf[1]='5';
+  if ( int_check2d(stack,Mstyle,&Mistyle,0,&strf,&leg,&leg_pos,&leg_posi,
+		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0)
+    return RET_BUG;
 
   nsp_gwin_clear();
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
@@ -157,6 +181,48 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
+    }
+
+  /* updates the axe information according to optional values */
+  if ( opts_2d[strf_opts].obj != NULLOBJ)
+    {
+      /* strf is given use it to fix other arguments */
+      if ( opts_2d[auto_axis_opts].obj == NULLOBJ)
+	{
+	  /* auto_axis not given */
+	  auto_axis = TRUE;
+	  if ( strf[1] == '1' || strf[1] == '2' || strf[1] == '3' || strf[1] == '4' ) auto_axis=FALSE;
+	}
+      if ( opts_2d[iso_opts].obj == NULLOBJ)
+	{
+	  /* iso not given */
+	  iso = FALSE;
+	  if ( strf[1] == '3' || strf[1] == '4' || strf[1] == '5' || strf[1] == '6' ) iso=TRUE;
+	}
+      if ( opts_2d[axesflag_opts].obj == NULLOBJ)
+	{
+	  /* axes not given */
+	  axes = strf[2] - '0';
+	}
+    }
+
+  if ( opts_2d[iso_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->iso = iso;
+  if ( opts_2d[auto_axis_opts].obj != NULLOBJ ||  opts_2d[strf_opts].obj ) axe->obj->auto_axis = auto_axis;
+  if ( opts_2d[rect_opts].obj != NULLOBJ )
+    {
+      memcpy(axe->obj->rect->R,rect,4*sizeof(double));
+      memcpy(axe->obj->frect->R,axe->obj->rect->R,4*sizeof(double));
+      axe->obj->fixed = TRUE;
+    }
+  /* update the axesflag if given as options in axesflag or strf */
+  if ( opts_2d[axesflag_opts].obj != NULLOBJ  || opts_2d[strf_opts].obj != NULLOBJ)
+    {
+      axe->obj->axes = axes;
+    }
+  if ( opts_2d[logflag_opts].obj != NULLOBJ)
+    {
+      axe->obj->xlog = ( strlen(logflags) >= 1) ? ((logflags[1]=='n') ? FALSE:TRUE) : FALSE;
+      axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
     }
   /* invalidate the whole axe */
   nsp_axes_invalidate((NspGraphic *)axe);
@@ -290,10 +356,10 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 
   if ( iflag[0] >= 2 )
     {
-      /* mode=2:the level curves are drawn on a 2D plot.*/
-      NspMatrix *Mistyle=NULL;
-      /* This is in fact a 2D contour */
-      NspMatrix *s=NULL;
+      /* 2D contour:
+       * mode=2:the level curves are drawn on a 2D plot.
+       */
+      NspMatrix *Mistyle=NULL, *s=NULL;
       NspAxes *axe;
       NspContour *vf;
       if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
@@ -323,7 +389,6 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       /* updates the axes scale information */
-      nsp_strf_axes( axe , NULL, '2');
       nsp_axes_invalidate(((NspGraphic *) axe));
       ret = NSP_OBJECT(vf);
     }
@@ -362,9 +427,6 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-
-
-
 /**
  * int_contour2d_new:
  * @stack:
@@ -372,27 +434,26 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
  * @opt:
  * @lhs:
  *
- *
+ * interface for 2d contours
  *
  * Returns:
  **/
 
 static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 {
-  int auto_axis=TRUE,iso=FALSE;
+  int auto_axis=TRUE,iso=FALSE, z_allocated=FALSE;
+  NspObject *args = NULL,*fobj = NULL;/* when z is a function */
   NspMatrix *s=NULL;
   NspAxes *axe;
   NspContour *vf;
-  int flagx=0,nnz= 10; /* default number of level curves : 10 */
-  int frame= -1, axes=-1;
-  NspMatrix *x,*y,*z,*nz;
+  int flagx=0,nnz= 10, frame= -1, axes=-1;
+  NspMatrix *x,*y,*z,*zn,*nz;
   /* for 2d optional arguments; */
-  NspMatrix *Mistyle;
-  int *nax;
-  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
+  NspMatrix *Mistyle=NULL,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
+  int *nax;
 
   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
@@ -402,7 +463,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
-			 { "style",mat_int,NULLOBJ,-1}, /* old parameter for mark or line */
+			 { "style",mat_int,NULLOBJ,-1},
 			 { "auto_axis",s_bool,NULLOBJ,-1},
 			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
@@ -412,17 +473,39 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 	  logflag_opts , nax_opts, rect_opts , strf_opts, style_opts,
 	  auto_axis_opts, iso_opts};
 
-  int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
+  int_types T[] = {realmat,realmat,obj,realmat,new_opts, t_end} ;
 
   CheckLhs(0,1);
 
   if (rhs <= 0) {return  nsp_graphic_demo(NspFname(stack),"contour2d(1:5,1:10,rand(5,10),5);",1); }
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&strf,&Mstyle,&auto_axis,&iso) == FAIL) return RET_BUG;
 
   CheckVector(NspFname(stack),1,x);
   CheckVector(NspFname(stack),2,y);
+
+  if ( IsNspPList(fobj) )
+    {
+      /* third argument can be a macro */
+      if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
+      z_allocated= TRUE;
+      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL)
+	{
+	  nsp_matrix_destroy(z);
+	  return RET_BUG;
+	}
+    }
+  else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
+    {
+      z = Mat2double((NspMatrix *) fobj);
+    }
+  else
+    {
+      Scierror("%s: third argument should be a real matrix or a function\n",NspFname(stack));
+      return RET_BUG;
+    }
+
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
     Scierror("%s: third argument is a vector, expecting a matrix \n",NspFname(stack));
@@ -443,40 +526,38 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 
   if ( int_check2d(stack,Mstyle,&Mistyle,nnz,&strf,&leg,&leg_pos,&leg_posi,
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0)
-    return RET_BUG;
+    goto bug;
 
   if ( Mistyle->mn != nnz)
     {
       Scierror("%s: style should be of size %d\n",NspFname(stack),nnz);
-      return RET_BUG;
+      goto bug;
     }
 
   nsp_gwin_clear();
-  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-
-  axe->obj->axes = strf[2] -'0';
+  if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
 
   /* create a vfield and insert-it in axes */
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
-  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) goto bug;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) goto bug;
+  if ( ( zn = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) goto bug;
   if ( Mistyle != NULL)
     {
       if ( ( s = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(Mistyle))) == NULLMAT)
-	return RET_BUG;
+	goto bug;
     }
   if ( flagx==1)
     {
       if ( (nz = (NspMatrix *) nsp_object_copy_and_name("nz",NSP_OBJECT(nz))) == NULLMAT)
-	return RET_BUG;
+	goto bug;
     }
-  vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
-  if ( vf == NULL) return RET_BUG;
+  vf = nsp_contour_create("c",zn,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
+  if ( vf == NULL) goto bug;
   /* insert the new contour */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) vf , FALSE)== FAIL)
     {
       Scierror("Error: failed to insert contour in Figure\n");
-      return RET_BUG;
+      goto bug;
     }
 
   /* updates the axe information according to optional values */
@@ -529,12 +610,27 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,NSP_OBJECT(vf));
       return 1;
     }
+  if ( z_allocated ) nsp_matrix_destroy(z);
   return 0;
+ bug:
+  if ( z_allocated ) nsp_matrix_destroy(z);
+  return RET_BUG;
 }
 
-/* Interface to contour2di
+/**
+ * int_contour2di_new:
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ * @func:
+ * @colored:
+ *
+ * Interface to contour2di
  * which is used to get the values of the contours.
- */
+ *
+ * Returns:
+ **/
 
 static int int_contour2di_new( Stack stack, int rhs, int opt, int lhs)
 {
@@ -597,11 +693,11 @@ static int int_contour2di_new( Stack stack, int rhs, int opt, int lhs)
   return 2;
 }
 
-
-/*-----------------------------------------------------------
+/* deprecated:
  * used in contourf, to extract contour points
- *-----------------------------------------------------------*/
+ */
 
+#if 0
 static int int_c2dex( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *rep,*rep1;
@@ -638,6 +734,7 @@ static int int_c2dex( Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
+#endif
 
 /**
  * int_param3d_new:
@@ -669,7 +766,10 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( rhs <= 0) {return  nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
+  if ( rhs <= 0)
+    {
+      return nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1);
+    }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL)
     return RET_BUG;
@@ -787,7 +887,6 @@ static int int_geom3d( Stack stack, int rhs, int opt, int lhs)
 /*-----------------------------------------------------------
  * plot3dXXX(x,y,z,opts)
  *-----------------------------------------------------------*/
-
 
 typedef NspGraphic *(*f3d) (double *,double *,double *,int *p,int *q,double *,
 			    double *,const char *,int *,double *,  NspMatrix *,int shade);
@@ -1263,57 +1362,22 @@ static int int_plot3d1_new( Stack stack, int rhs, int opt, int lhs)
 		      nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
 
-
-/*-----------------------------------------------------------
- *   plot2d(x,y,[style,strf,leg,rect,nax])
- *   plot2dxx(x,y,[style,strf,leg,rect,nax])
- *-----------------------------------------------------------*/
+/**
+ * int_plot2d_G:
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ * @func:
+ * @colored:
+ *
+ * Interface to plot2d
+ *
+ * Returns:
+ **/
 
 static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs);
-
 typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
-
-/* a new version with objects
- *
- *  nsp_plot2d_obj(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
- *
- *  Draw *n1 curves of *n2 points each
- *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
- *  position of point i of curve j (i=0,*n2-1 j=0,*n1-1)
- *
- *  style[*n1]-> give the style to use for each curve
- *     if style is positive --> a mark is used (mark id = style[i])
- *     if style is strictly negative --> a dashed line is used
- *        (dash id = abs(style[i])
- *     if there's only one curve, style can be of type style[0]=style,
- *     style[1]=pos ( pos in [1,6])
- *     pos give the legend position (1 to 6) (this can be iteresting
- *     if you want to superpose curves with different legends by
- *     calling plot2d more than one time.
- *
- *  strflag[3] is a string
- *
- *     if strflag[0] == '1' then legends are added
- *        legend = "leg1@leg2@....@legn"; gives the legend for each curve
- *	else no legend
- *
- *     if strflag[1] == '1' then  the values of brect are used to fix
- *        the drawing boundaries :  brect[]= <xmin,ymin,xmax,ymax>;
- *	if strflag[1] == '2' then the values  are computed from data
- *	else if strflag[1]=='0' the previous values
- *                (previous call or defaut values) are used
- *
- *     if  strflag[2] == '1' ->then an axis is added
- *        the number of intervals
- *        is specified by the vector aaint[4] of ints
- *	   <aaint[0],aaint[1]> specifies the x-axis number of  points
- *	   <aaint[2],aaint[3]> same for y-axis
- *     if  strflag[2] == '2' -> no axis, only a box around the curves
- *     else no box and no axis
- *
- */
-
-
 
 static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
 {
@@ -1928,7 +1992,6 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   nsp_gwin_clear();
   /* colout to be added */
   if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
-  axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
   if ( ( z1 = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) goto bug;
@@ -2032,7 +2095,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
 static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
-			 { "colminmax",mat_int,NULLOBJ,-1},
+			 { "colminmax",mat,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
 			 { "leg_pos",string,NULLOBJ,-1},
@@ -2071,7 +2134,6 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( z->mn == 0) return 0;
 
-
   if (Mzminmax != NULL &&  Mzminmax->mn != 2 )
     {
       Scierror("%s: optional argument %s should be of size 2\n",NspFname(stack),"zminmax");
@@ -2093,7 +2155,6 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 
   nsp_gwin_clear();
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
   if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
@@ -2166,7 +2227,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
-			 { "colminmax",mat_int,NULLOBJ,-1},
+			 { "colminmax",mat,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
 			 { "leg_pos",string,NULLOBJ,-1},
@@ -2196,10 +2257,15 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 
   int_types T[] = {realmat, realmat, new_opts, t_end} ;
 
-  if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
+  if ( rhs <= 0)
+    {
+      return nsp_graphic_demo(NspFname(stack),
+			      "plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
+    }
 
   if ( GetArgs(stack,rhs,opt,T,&M,&Rect,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax,&auto_axis,&iso) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax,&auto_axis,&iso) == FAIL)
+    return RET_BUG;
 
   if (M->mn == 0) { return 0;}
 
@@ -2218,7 +2284,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 
   nsp_gwin_clear();
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  axe->obj->axes = strf[2] -'0';
+
   /* create a gmatrix and insert-it in axes */
   if ( ( M = (NspMatrix *)  nsp_object_copy_and_name("M",NSP_OBJECT(M))) == NULLMAT) return RET_BUG;
   if ( Mcolminmax != NULL )
@@ -5637,8 +5703,6 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   /* colout to be added */
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
-  axe->obj->axes = strf[2] -'0';
-
   /* create a gmatrix and insert-it in axes */
   if ( Tr->n == 3 )
     {
@@ -7105,12 +7169,12 @@ void GraphicsUtil_Interf_Info(int i, char **fname, function (**f))
   *f = GraphicsUtil_func[i].fonc;
 }
 
-#define NAMES(a) a "_new", a
+#define NAMES(a) a, a "_new"
 
 OpGrTab Graphics_func[]={
   {NAMES("Matplot"), int_matplot_new},
   {NAMES("Matplot1"),int_matplot1_new},
-  {NAMES("c2dex"),int_c2dex},
+  /* {NAMES("c2dex"),int_c2dex}, */
   {NAMES("champ"),int_champ_new},
   {NAMES("champ1"),int_champ1_new},
   {NAMES("contour"),int_contour_new},
@@ -7646,7 +7710,10 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
 		       int frameflag,int axesflag,char **logflags)
 {
   char *leg1;
-  if (( *Mstyle_new = check_style(stack,NspFname(stack),"style",Mstyle,ns))== NULL) return RET_BUG;
+  if (ns != 0 )
+    {
+      if (( *Mstyle_new = check_style(stack,NspFname(stack),"style",Mstyle,ns))== NULL) return RET_BUG;
+    }
   if (( *strf = check_strf(stack,NspFname(stack),"strf",*strf))==NULL) return RET_BUG;
   if (( leg1 = check_legend(stack,NspFname(stack),"leg",*leg))==NULL) return RET_BUG;
   if (( *leg_pos_i = check_legend_pos(stack,NspFname(stack),"leg",*leg_pos))== -1 ) return RET_BUG;
