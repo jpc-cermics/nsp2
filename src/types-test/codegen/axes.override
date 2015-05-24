@@ -750,7 +750,7 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
  *
  */
 
-void nsp_strf_axes_deprecated(NspAxes *A,double *rect, char scale)
+void nsp_strf_axes(NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   /* use strf argument to change the axes */
