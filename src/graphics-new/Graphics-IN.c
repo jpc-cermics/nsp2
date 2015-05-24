@@ -120,7 +120,7 @@ static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix
 static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 {
   int *nax, frame= -1, axes=-1;
-  NspMatrix *Mistyle=NULL, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
+  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   double *rect=NULL ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
@@ -162,7 +162,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 
   if ( fx->mn == 0) { return 0;}
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,0,&strf,&leg,&leg_pos,&leg_posi,
+  if ( int_check2d(stack,Mstyle,NULL,0,&strf,&leg,&leg_pos,&leg_posi,
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
@@ -1384,7 +1384,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   NspGraphic *ret;
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1,ncurves,lcurve;
-  NspMatrix *Mistyle, *x,*y, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
+  NspMatrix *Mistyle=NULL, *x=NULL,*y=NULL, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
@@ -7710,7 +7710,7 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
 		       int frameflag,int axesflag,char **logflags)
 {
   char *leg1;
-  if (ns != 0 )
+  if ( Mstyle_new != NULL)
     {
       if (( *Mstyle_new = check_style(stack,NspFname(stack),"style",Mstyle,ns))== NULL) return RET_BUG;
     }
