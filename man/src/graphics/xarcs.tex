@@ -26,12 +26,12 @@
 \end{parameters}
 
 \begin{mandescription}
-  \verb!xarcs! draws parts of a set of ellipses described by \verb!arcs!: 
-  \verb!arcs=[x y w h a1 a2;x y w h a1 a2;...]'! where each ellipse is defined 
+  \verb!xarcs! draws parts of a set of ellipses described by \verb!arcs!:
+  \verb!arcs=[x y w h a1 a2;x y w h a1 a2;...]'! where each ellipse is defined
   by the 6 parameters \verb!(x,y,w,h,a1,a2)! (see \verb!xarc!).
   The value of \verb!colors(i)! gives the color to use for drawing rectangle \verb!i!.
 
-  \verb!xarcs(arcs,color=..,thickness=..,background=..,compound=%t|%f);! 
+  \verb!xarcs(arcs,color=..,thickness=..,background=..,compound=%t|%f);!
   draws parts of a set of ellipses. The color and thickness of drawing line can be given by optional arguments
   color and thickness. If optional background argument is given it is used as color to fill
   the rectangle. A graphic object is returned in argument \verb!R! if requested and by default
@@ -40,27 +40,38 @@
 
 %--example
 \begin{examples}
-  \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end
-    xsetech(frect=[-1,-1,1,1]);
-    arcs=[-1.0 0.0 0.5; // upper left x
-           1.0 0.0 0.5; // upper left y
-           0.5 1.0 0.5; // width
-           0.5 0.5 1.0; // height
-           0.0 0.0 0.0; // angle 1
-           180*64 360*64 90*64]; // angle 2
-    xarcs(arcs,color=[1,2,3],thickness=[3,3,3],background=[-2,5,6])
-  \end{Verbatim}
+
+\noindent A simple example
+
+\begin{Verbatim}
+  xsetech(frect=[-1,-1,1,1]);
+  arcs=[-1.0 0.0 0.5; // upper left x
+  1.0 0.0 0.5; // upper left y
+  0.5 1.0 0.5; // width
+  0.5 0.5 1.0; // height
+  0.0 0.0 0.0; // angle 1
+  180*64 360*64 90*64]; // angle 2
+  xarcs(arcs,color=[1,2,3],thickness=[3,3,3],background=[-2,5,6])
+\end{Verbatim}
+
+\noindent Random circles and ellipses
+
+\begin{Verbatim}
+  x=rand(1,n);y=rand(1,n);w=rand(1,n);h=rand(1,n);
+  n=100;arcs=[x,y,w,h;0*ones(1,n);360*64*ones(1,n)];
+  xset('colormap',jetcolormap(32));
+  xarcs(arcs,color=rand(1,n)*32,background=rand(1,n)*32);
+\end{Verbatim}
+
 \end{examples}
 
 %-- see also
 \begin{manseealso}
-  \manlink{xarc}{xarc} \manlink{xfarc}{xfarc} \manlink{xfarcs}{xfarcs} 
+  \manlink{xarc}{xarc} \manlink{xfarc}{xfarc} \manlink{xfarcs}{xfarcs}
 \end{manseealso}
 
 %-- Author
 
 \begin{authors}
-  J.-Ph. C.;   
+  J.-Ph. C.;
 \end{authors}
-
