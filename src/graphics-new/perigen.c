@@ -588,7 +588,7 @@ static void fillarc_gen( BCG *Xgc,int arc[])
     {
       alpha=((arc[4]/64)+k)*fact;
       vx[count] = arc[0] + w*(cos(alpha)+1.0);
-      vy[count] = arc[1] * h*(-sin(alpha)+1.0);
+      vy[count] = arc[1] + h*(-sin(alpha)+1.0);
       count++;
     }
   if (n != 360)
