@@ -5008,9 +5008,17 @@ static int int_xstringl_new(Stack stack, int rhs, int opt, int lhs)
   return int_xstring_G(stack,rhs,opt,lhs,FALSE);
 }
 
-/*-----------------------------------------------------------
- * xtitle(tit,x,y)
- *-----------------------------------------------------------*/
+/**
+ * int_xtitle:
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ *
+ *
+ *
+ * Returns:
+ **/
 
 static int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 {
