@@ -13,5 +13,5 @@ function []=square(xmin,ymin,xmax,ymax)
   if nargin <=0 then xmin=-2;ymin=-2;xmax=2;ymax=2;end
   wdim=xget("wdim");
   xset("wdim",maxi(wdim),maxi(wdim));
-  plot2d(0,0,style=1,rect=[xmin,ymin,xmax,ymax]);
+  xsetech(rect=[xmin,ymin,xmax,ymax],fixed=%t);
 endfunction
