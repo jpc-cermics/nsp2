@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+
+\mansection{contour2di}
+\begin{mandesc}
+  \short{contour2di}{compute points of level curves of a surface}\\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xc,yc]=contour2di(x,y,z,nz)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two real row vectors of size n1 and n2: the grid.
+    \vname{z}: real matrix of size (n1,n2), the values of the function.
+    \vname{nz}: the level values or the number of levels.
+    \begin{varlist}
+      \vname{-}If \verb!nz! is an integer, its value gives the number of
+      level curves  equally spaced from zmin to zmax as follows:
+      \verb!z= zmin + (1:nz)*(zmax-zmin)/(nz+1)!
+      \vname{-} If \verb!nz! is a vector, \verb!nz(i)! gives the value of the ith level curve.
+    \end{varlist}
+    \vname{xc,yc}: vectors of same sizes containing the contours definitions.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!contour2di! computes points defining level curves of a surface \verb!z=f(x,y)!.
+  The values of \verb!f(x,y)! are given by the matrix \verb!z! at the grid points
+  defined by \verb!x! and \verb!y!.
+  \verb!xc(1)! contains the level associated with first contour path,
+  \verb!yc(1)! contains the number \verb!N1! of points defining this contour path
+  and (\verb!xc(1+(1:N1))!, \verb!yc(1+(1:N1))! ) contain the coordinates
+  of the paths points.
+  The second path begin at \verb!xc(2+N1)! and \verb!yc(2+N1)! and so on.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    [xc,yc]=contour2di(1:10,1:10,rand(10,10),5);
+    k=1;n=yc(k);c=1;
+    while k+yc(k) < size(xc,'*')
+    n=yc(k);
+    plot2d(xc(k+(1:n)),yc(k+(1:n)),line_color=c)
+    c=c+1;
+    k=k+n+1;
+    end
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{contour}{contour}
+  \manlink{fcontour}{fcontour}
+  \manlink{fcontour2d}{fcontour2d}
+  \manlink{contour2d}{contour2d}
+  \manlink{plot2d}{plot2d}
+  \manlink{xset}{xset}
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}

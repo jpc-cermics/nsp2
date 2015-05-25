@@ -1,0 +1,93 @@
+% -*- mode: latex -*-
+
+\mansection{Matplot}
+\begin{mandesc}
+  \short{Matplot}{2D plot of a matrix using colors}\\
+  \short{Matplot1}{2D plot of a matrix using colors}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  Matplot(M,options=values)
+  Matplot1(M,mrect,options=values)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}: real matrix of size (n1,n2).
+    \vname{mrect}: rectangle \verb![xmin,ymin,xmax,ymax]! giving the position where the matrix display must be inserted.
+    \vname{remap}: if true then the values in \verb!M! are mapped to colors
+    \vname{zminmax}: gives the range of values which must be remapped to colors (default value is
+    \verb![min(M),max(M)]!.
+    \vname{colminmax}: gives the range of colors to which \verb!zminmax! values are to be mapped
+    (default value is \verb![1,xget('lastpattern')]! i.e all the available colors in the current
+    colormap).
+    \vname{axesflag}: see \manlink{plot2d}{plot2d}
+    \vname{frameflag}: see \manlink{plot2d}{plot2d}
+    \vname{leg}:  see \manlink{plot2d}{plot2d}
+    \vname{leg_pos}:  see \manlink{plot2d}{plot2d}
+    \vname{logflag}:  see \manlink{plot2d}{plot2d}
+    \vname{nax}: see \manlink{plot2d}{plot2d}
+    \vname{rect}:  see \manlink{plot2d}{plot2d}
+    \vname{auto_axis}:  see \manlink{plot2d}{plot2d}
+    \vname{iso}:  see \manlink{plot2d}{plot2d}
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!Matplot! display matrix values as colored squares remapping values to colormap entries
+  if \verb!remap=%t! or using matrix values as color entries in current colormap
+  if \verb!remap=%f!.
+
+  When using \verb!Matplot1!, the second argument gives the rectangle coordinates
+  where the matrix is to be displayed.
+\end{mandescription}
+
+%--example
+\begin{examples}
+
+\noindent A simple example
+
+\begin{Verbatim}
+  xset('colormap',jetcolormap(100));
+  Matplot(testmatrix('magic',10))
+\end{Verbatim}
+
+\noindent Vizualize the current colormap
+
+\begin{Verbatim}
+  Matplot((1:xget("lastpattern")))
+\end{Verbatim}
+
+\noindent An example with \verb!Matplot1!.
+
+\begin{Verbatim}
+  N=32;
+  C=[jetcolormap(N);graycolormap(N);hotcolormap(N)];
+  xset('colormap',C);
+  M=[1:N;N+(1:N);2*N+(1:N)];
+  Matplot1(M,[1,1,32,3],rect=[-10,1,32,3],axesflag=2);
+  xstring(-8,1.4,'hotcolormap');
+  xstring(-8,2.0,'graycolormap');
+  xstring(-8,2.6,'jetcolormap');
+\end{Verbatim}
+
+\noindent An example with remap
+
+\begin{Verbatim}
+  N=32;C=[jetcolormap(N)]; xset('colormap',C);
+  Matplot(1:32,remap=%t,zminmax=[10,20],colminmax=[20,32]);
+\end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{colormap}{colormap}
+  \manlink{plot2d}{plot2d}
+  \manlink{Matplot1}{Matplot1}
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
