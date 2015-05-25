@@ -107,8 +107,15 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
     }
 
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
-  Mat2int(P->obj->style);
-  nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,P->obj->style->I);
+  if ( P->obj->style->mn == 0 )
+    {
+      nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,NULL);
+    }
+  else
+    {
+      Mat2int(P->obj->style);
+      nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,P->obj->style->I);
+    }
 }
 
 static void nsp_translate_contour(NspGraphic *Obj,const double *tr)

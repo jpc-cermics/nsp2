@@ -463,7 +463,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
-			 { "style",mat_int,NULLOBJ,-1},
+			 { "style",mat,NULLOBJ,-1},
 			 { "auto_axis",s_bool,NULLOBJ,-1},
 			 { "iso",s_bool,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
@@ -536,7 +536,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 
   nsp_gwin_clear();
   if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
-
+  
   /* create a vfield and insert-it in axes */
   if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) goto bug;
   if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) goto bug;
@@ -677,7 +677,7 @@ static int int_contour2di_new( Stack stack, int rhs, int opt, int lhs)
   for (i =0 ; i < ix4 ; ++i) ((int *) M->R)[i] = i+1;
   if  (nz == 1) ((int *) M->R)[1] =1;
   Xgc=nsp_check_graphic_context();
-  nsp_contour_if(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,(int *) M->R);
+  nsp_contour_if(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,NULL);/* (int *) M->R); */
   nsp_get_level_curves(&hl1, &hl2, &m, &n);
   if ( n== 0 ) m=0;
   if ((M1 = nsp_matrix_create(NVOID,'r',m,n))== NULLMAT) return RET_BUG;
@@ -1399,7 +1399,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
-			 { "style",mat_int,NULLOBJ,-1}, /* old parameter for mark or line */
+			 { "style",mat,NULLOBJ,-1}, /* old parameter for mark or line */
 			 { "mark",realmat,NULLOBJ,-1},
 			 { "mark_size",realmat,NULLOBJ,-1},
 			 { "mark_color",realmat,NULLOBJ,-1},
@@ -1631,7 +1631,6 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
     }
 
   {
-    int *style = Mistyle->I;
     NspCurve *curve = NULL;
     const char *l_c = leg, *l_n;
     char *curve_l;
@@ -1728,13 +1727,13 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	  }
 	l_c = ( *l_n == '@') ? l_n+1: l_n;
 	{
-	  int cu_mark = ( style[i] <= 0 ) ? -style[i] : -2 ;
+	  int style = Mistyle->R[i];
+	  int cu_mark = ( style <= 0 ) ? -style : -2 ;
 	  int cu_mark_size = -1;
 	  int cu_mark_color = -1;
 	  int cu_width = -1;
 	  int cu_mode = mode;
-	  int cu_color= (style[i] > 0 ) ? style[i] : -2 ;
-
+	  int cu_color= (style > 0 ) ? style : -2 ;
 	  if (Mmark != NULL ) { cu_mark = Mmark->R[i];}
 	  if (Mmark_color != NULL ) { cu_mark_color = Mmark_color->R[i];}
 	  if (Mmark_size != NULL ) { cu_mark_size = Mmark_size->R[i];}
@@ -1923,7 +1922,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   NspObject  *args = NULL,*fobj;/* when z is a function */
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1, remap=TRUE,shade=FALSE;
-  NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mcolout=NULL;
+  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mcolout=NULL;
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
@@ -1985,7 +1984,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) goto bug;
   if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) goto bug;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,
+  if ( int_check2d(stack,Mstyle,NULL,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,
 		   Mnax,&nax,frame,axes,&logflags) != 0)
     goto bug;
 
@@ -2064,7 +2063,6 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
       axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
     }
   nsp_axes_invalidate(((NspGraphic *) axe));
-  if ( Mstyle != Mistyle) nsp_matrix_destroy(Mistyle);
   if ( IsNspPList(fobj) ) nsp_matrix_destroy(z);
   if ( lhs == 1 )
     {
@@ -2120,7 +2118,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   int auto_axis=TRUE,iso=FALSE;
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1, remap=FALSE;
-  NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
+  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
@@ -2149,7 +2147,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,
+  if ( int_check2d(stack,Mstyle,NULL,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
@@ -2202,7 +2200,6 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
       axe->obj->ylog=  ( strlen(logflags) >= 2) ? ((logflags[2]=='n') ? FALSE:TRUE) : FALSE;
     }
   nsp_axes_invalidate(((NspGraphic *) axe));
-  if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 )
     {
       MoveObj(stack,1,NSP_OBJECT(gm));
@@ -2249,7 +2246,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
   /* for 2d optional arguments; */
   int auto_axis=TRUE,iso=FALSE;
   int *nax, frame= -1, axes=-1, remap=FALSE,leg_posi;
-  NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
+  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
   double *rect ;
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   NspMatrix *M,*Rect;
@@ -2278,7 +2275,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,M->mn,&strf,&leg,&leg_pos,&leg_posi,
+  if ( int_check2d(stack,Mstyle,NULL,M->mn,&strf,&leg,&leg_pos,&leg_posi,
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
@@ -2331,7 +2328,6 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
     }
 
   nsp_axes_invalidate(((NspGraphic *) axe));
-  if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 )
     {
       MoveObj(stack,1,NSP_OBJECT(gm));
@@ -5671,7 +5667,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 
   int auto_axis=TRUE,iso=FALSE;
   NspAxes *axe;
-  NspMatrix *Mistyle,*x,*y,*Tr,*Tr1,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
+  NspMatrix *x,*y,*Tr,*Tr1,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
   NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
   int *nax,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi,paint = TRUE;
@@ -5703,7 +5699,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
   if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) return RET_BUG;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,nnz,&strf,&leg,&leg_pos,&leg_posi,
+  if ( int_check2d(stack,Mstyle,NULL,nnz,&strf,&leg,&leg_pos,&leg_posi,
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0)
     return RET_BUG;
 
@@ -5748,7 +5744,6 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			       paint,Mcolout,colorbar,NULL);
   if ( fec == NULL) return RET_BUG;
   /* insert the new fec */
-  if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
   if ( nsp_axes_insert_child(axe,(NspGraphic *) fec, FALSE)== FAIL)
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
@@ -7304,8 +7299,7 @@ void Graphics_Interf_Info(int i, char **fname, function (**f))
  *
  * returns a #NspMatrix containing style values, if the returned
  * value is different from @var then a new matrix was allocated
- * and should be freed.
- *
+ * and should be freed. 
  *
  * Returns: %NULL or a new #NspMatrix
  **/
@@ -7313,15 +7307,12 @@ void Graphics_Interf_Info(int i, char **fname, function (**f))
 static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size)
 {
   NspMatrix *loc_var = var;
-  int i,*ival;
   if ( var == NULLMAT)
     {
-      size = Max(size,2);
       /* provide a default value */
+      int i;
       if (( loc_var = nsp_matrix_create(NVOID,'r',1,size))== NULLMAT) return NULL;
-      ival = (int *) loc_var->R;
-      for (i = 0 ; i < size ; ++i) ival[i]= i+1;
-      if ( size == 1) ival[1]= 1;
+      for (i = 0 ; i < size ; i++) loc_var->R[i]=i+1;
     }
   else
     {
@@ -7331,16 +7322,8 @@ static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMa
 	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
 	  return NULL;
 	}
-      loc_var = var;
-      ival = var->I;
-      if ( size == 1 && var->mn != 2)
-	{
-	  /* This option is not used any more */
-	  if ((loc_var = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return NULL;
-	  ival = loc_var->I;
-	  ival[0]=  var->I[0];
-	  ival[1]=1;
-	}
+      if (( loc_var = nsp_matrix_create(NVOID,'r',1,var->mn))== NULLMAT) return NULL;
+      memcpy(loc_var->R,var->R, var->mn*sizeof(double));
     }
   return loc_var;
 }

@@ -1626,9 +1626,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
     }
 
-  /* draw axes, ticks */
-  /* nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
-     P->obj->grid, P->obj->background); */
+  /* draw axes, ticks
+   * it should be better to draw the axis after the contents
+   * but the grid must be done before
+   */
+  nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
+		P->obj->grid, P->obj->background);
 
   /* title if present */
   nsp_graphic_titles(Xgc,P->obj->title,P->obj->x,P->obj->y);
@@ -1692,8 +1695,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   nsp_axes_legends(Xgc,P);
 
   /* draw axes, ticks */
-  nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
-		P->obj->grid, P->obj->background);
+  if ( 0 )
+    nsp_axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1',
+		  P->obj->grid, P->obj->background);
 
   if (  P->obj->font_size != -1)
     {
@@ -2507,4 +2511,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2511 "axes.c"
+#line 2515 "axes.c"
