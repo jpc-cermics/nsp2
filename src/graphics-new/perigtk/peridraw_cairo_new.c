@@ -1043,7 +1043,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   NspGraphic *G;
   int v1=-1,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
-  /* default is to follow the window size */
+  /* default is to follow the window size and increase resolution */
   int width = Xgc->CWindowWidth;
   int height= Xgc->CWindowHeight;
   cairo_surface_t *surface;
@@ -1083,8 +1083,8 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
       return FAIL;
     }
   Xgc1 = F->obj->Xgc;
-  Xgc1->CWindowWidth=   Xgc->CWindowWidth;
-  Xgc1->CWindowHeight=  Xgc->CWindowHeight;
+  Xgc1->CWindowWidth=  width;
+  Xgc1->CWindowHeight= height;
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
   Xgc1->figure_bg_draw = figure_bg_draw;
   G = (NspGraphic *) Xgc->figure ;
@@ -1103,12 +1103,10 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   return OK;
 }
 
-
 static  void xset_test(BCG *Xgc)
 {
   Xgc->graphic_engine->generic->xset_test(Xgc);
 }
-
 
 static void nsp_fonts_finalize(BCG *Xgc)
 {
