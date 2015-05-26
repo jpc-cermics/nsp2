@@ -57,8 +57,8 @@
 \noindent Random circles and ellipses
 
 \begin{Verbatim}
-  x=rand(1,n);y=rand(1,n);w=rand(1,n);h=rand(1,n);
-  n=100;arcs=[x,y,w,h;0*ones(1,n);360*64*ones(1,n)];
+  n=100;x=rand(1,n);y=rand(1,n);w=0.1*rand(1,n);h=0.1*rand(1,n);
+  arcs=[x;y;w;h;0*ones(1,n);360*64*ones(1,n)];
   xset('colormap',jetcolormap(32));
   xarcs(arcs,color=rand(1,n)*32,background=rand(1,n)*32);
 \end{Verbatim}
