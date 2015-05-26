@@ -596,29 +596,33 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
 
 static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
+  int w = Xgc->scales->wdim[0];
+  int h = Xgc->scales->wdim[1];
   switch ( ipos )
     {
     case 1:
-      xstringb(Xgc,string,Xgc->scales->Irect.x,Xgc->scales->Irect.y,Xgc->scales->Irect.width,
-	       Xgc->scales->Irect.y - Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[1]);
+      xstringb(Xgc,string,
+	       Xgc->scales->Irect.x,
+	       Xgc->scales->Irect.y,
+	       Xgc->scales->Irect.width,
+	       Xgc->scales->Irect.y - h*Xgc->scales->subwin_rect[1]);
       break;
     case 2:
-      xstringb(Xgc,string,Xgc->scales->Irect.x,
-	       Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3]),
+      xstringb(Xgc,string,
+	       Xgc->scales->Irect.x,
+	       h*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3]),
 	       Xgc->scales->Irect.width,
-	       (Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3])
+	       (h*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3])
 		- (Xgc->scales->Irect.y+Xgc->scales->Irect.height))*2.0/3.0);
       break;
     case 3:
-      xstringb_vert(Xgc,string,Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0],
+      xstringb_vert(Xgc,string,w*Xgc->scales->subwin_rect[0],
 		    Xgc->scales->Irect.y+Xgc->scales->Irect.height,
-		    (Xgc->scales->Irect.x-Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0]) /3.0,
+		    (Xgc->scales->Irect.x- w*Xgc->scales->subwin_rect[0]) /3.0,
 		    Xgc->scales->Irect.height);
       break;
     }
 }
-
-
 
 static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
 {

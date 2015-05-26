@@ -727,6 +727,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
     case 'l' :
       /* Vertical axes */
       d_barlength = Xgc->scales->Irect.width/Xgc->scales->Wscx1;
+
       /* loop on the ticks */
       for (i=0 ; i < Ny ; i++)
 	{

@@ -173,6 +173,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
 	  if ( surface != NULL)
 	    {
 	      cairo_cr = cairo_create (surface);
+	      /* cairo_scale(cairo_cr,0.5,0.5); */ /* ZZ */
 	      cairo_surface_destroy (surface);
 	    }
 	}
@@ -483,4 +484,3 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* gtk_widget_pop_visual(); */
   /* gtk_widget_pop_colormap(); */
 }
-

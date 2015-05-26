@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -180,7 +180,6 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-  
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
@@ -189,7 +188,6 @@ static void drawarc(BCG *Xgc,int arc[])
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-  
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
@@ -517,7 +515,7 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
     {
       gdk_gc_set_rgb_fg_color(Xgc->private->stdgc, &Xgc->private->gcol_bg);
       gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
-			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+			 0,0,w,h);
     }
 }
 

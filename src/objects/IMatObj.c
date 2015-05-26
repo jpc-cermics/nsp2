@@ -3534,7 +3534,7 @@ static int int_imatrix_ones_gen(Stack stack, int rhs, int opt, int lhs, M_func F
 		      { NULL,t_end,NULLOBJ,-1}};
   char *type_str = NULL;
   NspObject *Like = NULLOBJ;
-  int m1, n1;
+  int m1=0, n1=0;
   NspObject *Obj;
   CheckStdRhsMin(1);
   CheckLhs (1, 1);

@@ -730,7 +730,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
   if ( value == 0)
     {
       /* FIXME: proper width in double ? */
-      cairo_set_line_width(cr,(Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth*0.5);
+      cairo_set_line_width(cr,(Xgc->CurLineWidth <= 1) ? 0.5 : Xgc->CurLineWidth*0.5);
       cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
       cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
       /* remove dash */
@@ -747,7 +747,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
       int i;
       for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
       cairo_set_dash (cr,buffdash,*n,0.0);
-      cairo_set_line_width(cr,(Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth*0.5);
+      cairo_set_line_width(cr,(Xgc->CurLineWidth <= 1) ? 0.5 : Xgc->CurLineWidth*0.5);
       cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
       cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
       /*
@@ -778,7 +778,7 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 		       Xgc->private->gcol_bg.red/65535.0,
 		       Xgc->private->gcol_bg.green/65535.0,
 		       Xgc->private->gcol_bg.blue/65535.0);
-  cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+  cairo_rectangle (cr,0,0, w, h);
   cairo_fill (cr);
 }
 
