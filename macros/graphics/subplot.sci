@@ -1,4 +1,4 @@
-function subplot(m,n,p)
+function subplot(m,n,p,varargopt)
 //
   if nargin == 1 then
     p=modulo(m,10)
@@ -7,5 +7,7 @@ function subplot(m,n,p)
   end
   j=int((p-1)/n)
   i=p-1-n*j
-  xsetech(wrect=[i/n,j/m,1/n,1/m])
+  printf("%d/%d,%d/%d,%d/%d,%d/%d\n",i,n,j,m,1,n,1,m);
+  varargopt.wrect=[i/n,j/m,1/n,1/m];
+  xsetech(varargopt(:))
 endfunction

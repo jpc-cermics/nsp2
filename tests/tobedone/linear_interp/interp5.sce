@@ -6,7 +6,7 @@
 function y=f(x),y = cos(x), endfunction
 
 // interpolation interval
-a = 0; b = %pi;              
+a = 0; b = %pi;
 
 nn= [10 20 40 80 160 320];  // nb of interpolation points
 m = 5033;                   // discretisation for error computing
@@ -20,30 +20,24 @@ for n = nn
    y = f(x);
    el = max(abs(yy-linear_interpn(xx, x, y)));
    es4 = max(abs(yy-interp(xx,x,y,splin(x,y))));
-   es5 = max(abs(yy-interp(xx,x,y,splin(x,y,"clamped",[0,0]))));   
+   es5 = max(abs(yy-interp(xx,x,y,splin(x,y,"clamped",[0,0]))));
    es3 = max(abs(yy-interp(xx,x,y,splin(x,y,"fast"))));
-   es2 = max(abs(yy-interp(xx,x,y,splin(x,y,"natural"))));   
+   es2 = max(abs(yy-interp(xx,x,y,splin(x,y,"natural"))));
    er = [er ; [el es2 es3 es4 es5] ];
 end
 
-//xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
-xbasc()
 hh = (b-a)./(nn');
-
 A = [ones(size(hh)) log(hh)]; coefs = A\log(er);
-
 ylsl = exp(log(hh)*coefs(2,:) + ones(size(hh))*coefs(1,:));
 
-xset("font",6,1)
-xset("mark size", 2)
-plot2d(hh, er, style=-9:-5, strf="121", logflag = "ll", ...
+xsetech(arect=[1/8,2/8,1/8,1/8]);
+marks=9:-1:5;n = size(marks,'*');
+plot2d(hh, er, mark=marks,line_color=-2*ones(1,n),mark_size=2*ones(1,n), logflag = "ll", ...
        leg="linear interp@natural spline@fast sub spline@not_a_knot spline@clamped spline",...
-       leg_pos="ul")
+       leg_pos="ul");
 leg = strcat("slope="+m2s(coefs(2,:),"%g"),"@");
-plot2d(hh, ylsl, style=2:6, strf="000", logflag = "ll",leg=leg,leg_pos="dr")
+plot2d(hh, ylsl, style=2:6, logflag = "ll",leg=leg,leg_pos="urm");
 //xset("color",xget("foreground"))
-xset("font",6,2)
-xtitle("error function of h","h","e(h)")
+xgrid();
+xtitle("error function of h","h","e(h)");
 xselect()
-
-

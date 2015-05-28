@@ -20,38 +20,26 @@ zp4 = linear_interpn(XP, YP, x, y, z, "by_zero");
 zp5 = linear_interpn(XP, YP, x, y, z, "by_nan");
 
 xbasc()
-//xset("font",2,2)
-//xset("font size",2)
-subplot(2,3,1)
-//plot3d(x, y, z, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,1,a3d=%t)
 plot3d(x, y, z, leg="", flag = [2 4 0])
-//xtitle("Fonction to interpolate")
+xtitle("Fonction to interpolate")
 
-subplot(2,3,2)
-//plot3d(xp, yp, zp1, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,2,a3d=%t)
 plot3d(xp, yp, zp1, leg="", flag = [2 4 0])
-//xtitle("Natural")
+xtitle("Natural")
 
-subplot(2,3,3)
-//plot3d(xp, yp, zp2, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,3,a3d=%t)
 plot3d(xp, yp, zp2, leg="", flag = [2 4 0])
-//xtitle("Periodic")
+xtitle("Periodic")
 
-subplot(2,3,4)
-//plot3d(xp, yp, zp3, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,4,a3d=%t)
 plot3d(xp, yp, zp3, leg="", flag = [2 4 0])
-//xtitle("C0")
+xtitle("C0")
 
-
-subplot(2,3,5)
-//plot3d(xp, yp, zp4, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,5,a3d=%t)
 plot3d(xp, yp, zp4, leg="", flag = [2 4 0])
-//xtitle("by_zero")
+xtitle("by_zero")
 
-subplot(2,3,6)
-//plot3d(xp, yp, zp5, leg="x@y@z", flag = [2 4 4])
+subplot(2,3,6,a3d=%t)
 plot3d(xp, yp, zp5, leg="", flag = [2 4 0])
-//xtitle("by_nan")
-
-
-
+xtitle("by_nan")
