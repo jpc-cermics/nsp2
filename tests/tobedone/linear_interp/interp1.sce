@@ -10,22 +10,13 @@ x = linspace(0,1,6)';
 y = f(x);
 
 // evaluation points (some outside the interpolation domain)
+xsetech(arect=[1/8,2/8,1/8,1/8],frect=[-0.5,-0.3,1.5,0.3],axesflag=1);
 xx = linspace(-0.3,1.3,401)';
-yy0 = linear_interpn(xx,x,y,"C0");
-yy1 = linear_interpn(xx,x,y,"natural");
-yy2 = linear_interpn(xx,x,y,"periodic");
-yy3 = linear_interpn(xx,x,y,"by_zero");
-yy4 = linear_interpn(xx,x,y,"by_nan");
-yy5 = f(xx);
-
-//xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
-xbasc()
-//xset("font",6,1)
-xset("font size",1)
-plot2d(xx,[yy0 yy1 yy2 yy3 yy4 yy5],style=2:7,...
-       frameflag=2,leg_pos="dl",...
-       leg="C0@natural@periodic@by_zero@by_nan@exact function")
-plot2d(x,y,style=-9,leg="interpolation points", leg_pos="dr")
-//xset("font",6,2)
-xset("font size",2)
+yy = {};
+stype=["C0","natural","periodic","by_zero","by_nan"];
+for i=1:size(stype,'*')
+  yy = linear_interpn(xx,x,y,stype(i));
+  plot2d(xx,yy,line_color=i+1,line_thickness=2,leg=stype(i),leg_pos="urm");
+end
+plot2d(x,y,mark=9,line_color=-2,mark_size=2,leg="interpolation points", leg_pos="urm")
 xtitle(" different ways to evaluate outside the domain")
