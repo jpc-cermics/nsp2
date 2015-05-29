@@ -857,17 +857,20 @@ int nsp_check_polyline3d( NspPolyline3d *P)
 
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;
   const double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
   const int L_nb_colors = L->Mcolor->mn ;
   const int *L_color = L->Mcolor->I;
-  int x[2], y[2], color, n=2, flag=0;
+  int x[2], y[2], color, n=2;
   x[0] = XScale(Xgc->scales,L_coord[j]);
   y[0] = YScale(Xgc->scales,L_coord[j+L->Mcoord->m]);
   x[1] = XScale(Xgc->scales,L_coord[j+1]);
   y[1] = YScale(Xgc->scales,L_coord[j+1+L->Mcoord->m]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
-  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
+  Xgc->graphic_engine->xset_pattern(Xgc, color);
+  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
+  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 }
 
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
@@ -998,4 +1001,4 @@ extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1002 "polyline3d.c"
+#line 1005 "polyline3d.c"

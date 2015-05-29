@@ -2828,16 +2828,22 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe;
   NspSegments *pl;
-  NspMatrix *x,*y,*Mstyle=NULL,*color=NULL;
-
+  NspMatrix *x,*y,*Mstyle=NULL,*Mcolor=NULL,*color=NULL,*Mthickness=NULL,*thickness=NULL;
+  
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
 
+  /* style is synonym of color: its is maintained for backward compatibility */
+  
   nsp_option opts[] ={{ "style",mat_int,NULLOBJ,-1},
+		      { "color",mat_int,NULLOBJ,-1},
+		      { "thickness",mat_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&Mstyle,&Mcolor,&Mthickness) == FAIL) 
+    return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
+
   if ( Mstyle != NULL)
     {
       if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
@@ -2847,18 +2853,50 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
       }
     }
 
+  if ( Mcolor != NULL)
+    {
+      if ( Mcolor->mn != x->mn/2 && Mcolor->mn != 1 ) {
+	Scierror("%s: color has a wrong size (%d), expecting (%d) or (1)\n",
+		 NspFname(stack),Mcolor->mn,x->mn/2);
+	return RET_BUG;
+      }
+    }
+
+  if ( Mthickness != NULL)
+    {
+      if ( Mthickness->mn != x->mn/2 && Mthickness->mn != 1 ) {
+	Scierror("%s: thickness has a wrong size (%d), expecting (%d) or (1)\n",
+		 NspFname(stack),Mthickness->mn,x->mn/2);
+	return RET_BUG;
+      }
+    }
+
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
-  if ( Mstyle != NULL)
+  if ( Mcolor != NULL)
     {
-      if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL)
+      if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mcolor)))== NULL)
 	return RET_BUG;
     }
+  else
+    {
+      if ( Mstyle != NULL )
+	{
+	  if ((color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(Mstyle)))== NULL)
+	    return RET_BUG;
+	}
+    }
+  if ( Mthickness != NULL ) 
+    {
+      if ((thickness = (NspMatrix *) nsp_object_copy_and_name("thickness",NSP_OBJECT(Mthickness)))== NULL)
+	return RET_BUG;
+    }
+  
   /* passer color en entiers ? */
-  if ((pl = nsp_segments_create("ar",x,y,color,NULL))== NULL)
+  if ((pl = nsp_segments_create("ar",x,y,color,thickness,NULL))== NULL)
     return RET_BUG;
-
+  
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL)
     {
       Scierror("Error: failed to insert segments in Figure\n");

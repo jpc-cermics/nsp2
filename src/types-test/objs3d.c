@@ -2433,7 +2433,8 @@ static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foregrou
 
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 {
-  int x[2], y[2], n=2, flag=0;
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int x[2], y[2], n=2; 
 #ifdef WITH_GTKGLEXT
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -2453,12 +2454,15 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
   y[0] = YScale(Xgc->scales,coord[3*ia+1]);
   x[1] = XScale(Xgc->scales,coord[3*ib]);
   y[1] = YScale(Xgc->scales,coord[3*ib+1]);
-  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
+  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, color);
+  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
+  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 }
 
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 {
-  int x[2], y[2], n=2, flag=0;
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int x[2], y[2], n=2;
 #ifdef WITH_GTKGLEXT
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -2478,7 +2482,9 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
   y[0] = YScale(Xgc->scales,coord[6*ns+1]);
   x[1] = XScale(Xgc->scales,coord[6*ns+3]);
   y[1] = YScale(Xgc->scales,coord[6*ns+4]);
-  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
+  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, color);
+  Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
+  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 }
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
@@ -3083,4 +3089,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3087 "objs3d.c"
+#line 3093 "objs3d.c"

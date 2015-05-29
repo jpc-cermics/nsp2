@@ -2101,7 +2101,12 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* clear proper zone */
   if ( rect != NULL)
     {
-      Xgc->graphic_engine->cleararea(Xgc,rect);
+      GdkRectangle rect1 = *rect;
+      rect1.x *= Xgc->scale_factor;
+      rect1.y *= Xgc->scale_factor;
+      rect1.width *= Xgc->scale_factor;
+      rect1.height *= Xgc->scale_factor;      
+      Xgc->graphic_engine->cleararea(Xgc,&rect1);
 #if 0
       /* debug helper */
       {
@@ -2112,7 +2117,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
       }
 #endif
-      Xgc->graphic_engine->xset_clip(Xgc,rect);
+      Xgc->graphic_engine->xset_clip(Xgc,&rect1);
     }
   else
     {
@@ -3745,4 +3750,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3749 "figure.c"
+#line 3754 "figure.c"

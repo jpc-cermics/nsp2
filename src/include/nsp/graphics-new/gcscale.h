@@ -37,12 +37,13 @@ struct wcscalelist
   int Waaint1[4];                       /* tics and subtics numbers: [xint,xsubint,yint,ysubint] */
   double m[3][3];                       /* 3d geometric transformation */
   double bbox1[6];                      /* 3d bounds */
-  double c[3] ;                          /* center of 3d box */
+  double c[3] ;                         /* center of 3d box */
   double alpha,theta;                   /* polar coordinates of visualization point */
   int metric3d;                         /* added by es - metric mode  for 3d -> 2d */
   double cosa,sina;                     /* test ! */
-  window_scale_list *next;             /* points to next one */
-  window_scale_list *prev;             /* points to previous one */
+  window_scale_list *next;              /* points to next one */
+  window_scale_list *prev;              /* points to previous one */
+  double scale_factor;                  /* depends on the driver in use */
 };
 
 extern void nsp_scale_copy(nsp_gcscale *scale1,nsp_gcscale *scale2);

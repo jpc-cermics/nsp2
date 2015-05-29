@@ -48,6 +48,7 @@ struct _nsp_segments {
   NspMatrix* x;
   NspMatrix* y;
   NspMatrix* color;
+  NspMatrix* thickness;
   int ref_count;
 };
 
@@ -77,7 +78,7 @@ NspSegments *new_segments();
 
 #define NULLSEGMENTS (NspSegments*) 0
 
-extern NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type);
+extern NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspMatrix* thickness,NspTypeBase *type);
 extern NspSegments *nsp_segments_create_default(const char *name);
 
 /* from NspSegmentsObj.c */
@@ -106,7 +107,7 @@ extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
 /* inserted at the end of public part of include file */
 
-#line 110 "./segments.h"
+#line 111 "./segments.h"
 #endif /* NSP_INC_NspSegments */ 
 
 #ifdef NspSegments_Private 
@@ -131,6 +132,6 @@ static void nsp_rotate_segments(NspGraphic *o,double *R);
 static void nsp_scale_segments(NspGraphic *o,double *alpha);
 static int nsp_getbounds_segments(NspGraphic *o,double *bounds);
 
-#line 135 "./segments.h"
+#line 136 "./segments.h"
 #endif /* NspSegments_Private */
 

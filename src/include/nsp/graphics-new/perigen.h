@@ -128,6 +128,7 @@ struct __BCG
 			 * if false do not so as to obtain transparent icons 
 			 * used for creating icons from graphics.
 			 */
+  double scale_factor;  /* scale factor for cairo */
 } ;
 
 
@@ -181,16 +182,18 @@ typedef struct _nsp_box_3d {
  * Current geometric transformation : from double to pixel 
  */
 
-#define XScale_d(Scale,x)    ( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1) 
-#define XLogScale_d(Scale,x) ( Scale->Wscx1*(log10(x) -Scale->frect[0]) + Scale->Wxofset1)
-#define YScale_d(Scale,y)    ( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1)
-#define YLogScale_d(Scale,y) ( Scale->Wscy1*(-log10(y)+Scale->frect[3]) + Scale->Wyofset1)
+/* used when initializing cairo */
+#define CAIRO_SCALE 1
 
-#define XScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1) : \
-			  ( Scale->cosa*Scale->Wscx1*((x) -Scale->frect[0]) - Scale->sina*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wxofset1) 
-#define YScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1): \
-			  ( Scale->sina*Scale->Wscx1*((x) -Scale->frect[0]) + Scale->cosa*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wyofset1)
+#define XScale_d(Scale,x)    (Scale->scale_factor*( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1))
+#define XLogScale_d(Scale,x) (Scale->scale_factor*( Scale->Wscx1*(log10(x) -Scale->frect[0]) + Scale->Wxofset1))
+#define YScale_d(Scale,y)    (Scale->scale_factor*( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1))
+#define YLogScale_d(Scale,y) (Scale->scale_factor*( Scale->Wscy1*(-log10(y)+Scale->frect[3]) + Scale->Wyofset1))
 
+#define XScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? (Scale->scale_factor*(Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1)) : \
+			      (Scale->scale_factor*(( Scale->cosa*Scale->Wscx1*((x) -Scale->frect[0]) - Scale->sina*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wxofset1)))
+#define YScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? (Scale->scale_factor*(Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1)): \
+			      (Scale->scale_factor*(( Scale->sina*Scale->Wscx1*((x) -Scale->frect[0]) + Scale->cosa*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wyofset1)))
 
 #define XScale(Scale,x)    inint( XScale_d(Scale,x) )
 #define XLogScale(Scale,x) inint( XLogScale_d(Scale,x))
@@ -207,8 +210,8 @@ typedef struct _nsp_box_3d {
  * Current geometric transformation : from pixel to double 
  */
 
-#define XPi2R(Scale,x)  Scale->frect[0] + (1.0/Scale->Wscx1)*((x) - Scale->Wxofset1)
-#define YPi2R(Scale,y)  Scale->frect[3] - (1.0/Scale->Wscy1)*((y) - Scale->Wyofset1)
+#define XPi2R(Scale,x)  Scale->frect[0] + (1.0/(Scale->Wscx1*Scale->scale_factor))*((x) - Scale->Wxofset1)
+#define YPi2R(Scale,y)  Scale->frect[3] - (1.0/(Scale->Wscy1*Scale->scale_factor))*((y) - Scale->Wyofset1)
 #define XPi2LogR(Scale,x)  exp10( XPi2R(Scale,x))
 #define YPi2LogR(Scale,y)  exp10( YPi2R(y))
 #define XPixel2Double(Scale,x)  (( Scale->logflag[0] == 'l') ? XPi2LogR(Scale,x) : XPi2R(Scale,x))

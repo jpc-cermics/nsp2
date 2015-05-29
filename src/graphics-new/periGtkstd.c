@@ -266,7 +266,7 @@ static void clearwindow(BCG *Xgc)
 			   Xgc->private->gcol_bg.red/65535.0,
 			   Xgc->private->gcol_bg.green/65535.0,
 			   Xgc->private->gcol_bg.blue/65535.0);
-      cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+      cairo_rectangle (cr,0,0, Xgc->scale_factor*Xgc->CWindowWidth, Xgc->scale_factor*Xgc->CWindowHeight);
       cairo_fill (cr);
     }
 #endif
@@ -1589,7 +1589,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
 #ifdef  PERICAIRO
   dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-#endif
   return FALSE;
 }
 #endif
@@ -2131,7 +2130,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  */
 
 #ifdef PERIGTK
-#include "perigtk/peridraw_gdk.c"
+#include "perigtk/peridraw_gdk.c" 
 /* routines for allocating GdkPoints */
 #include "perigtk/points.c"
 #endif /* PERIGTK */

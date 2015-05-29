@@ -209,6 +209,7 @@ static int nsp_segments_eq(NspSegments *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->x)->type->eq(A->obj->x,loc->obj->x) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->y)->type->eq(A->obj->y,loc->obj->y) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->color)->type->eq(A->obj->color,loc->obj->color) == FALSE ) return FALSE;
+  if ( NSP_OBJECT(A->obj->thickness)->type->eq(A->obj->thickness,loc->obj->thickness) == FALSE ) return FALSE;
    return TRUE;
 }
 
@@ -235,6 +236,7 @@ int nsp_segments_xdr_save(XDR *xdrs, NspSegments *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->color)) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->thickness)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic * ) M)== FAIL) return FAIL;
   return OK;
 }
@@ -251,6 +253,7 @@ NspSegments  *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M)
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->color =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if ((M->obj->thickness =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -289,6 +292,8 @@ void nsp_segments_destroy_partial(NspSegments *H)
       nsp_matrix_destroy(H->obj->y);
     if ( H->obj->color != NULL ) 
       nsp_matrix_destroy(H->obj->color);
+    if ( H->obj->thickness != NULL ) 
+      nsp_matrix_destroy(H->obj->thickness);
     FREE(H->obj);
    }
 }
@@ -352,6 +357,9 @@ int nsp_segments_print(NspSegments *M, int indent,const char *name, int rec_leve
   if ( M->obj->color != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
     }
+  if ( M->obj->thickness != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->thickness),indent+2,"thickness", rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic * ) M,indent+2,NULL,rec_level);
     Sciprintf1(indent+1,"}\n");
     }
@@ -376,6 +384,9 @@ int nsp_segments_latex(NspSegments *M, int indent,const char *name, int rec_leve
     }
   if ( M->obj->color != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->color),indent+2,"color", rec_level+1)== FALSE ) return FALSE ;
+    }
+  if ( M->obj->thickness != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->thickness),indent+2,"thickness", rec_level+1)== FALSE ) return FALSE ;
     }
   nsp_graphic_latex((NspGraphic * ) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
@@ -450,6 +461,7 @@ int nsp_segments_create_partial(NspSegments *H)
   H->obj->x = NULLMAT;
   H->obj->y = NULLMAT;
   H->obj->color = NULLMAT;
+  H->obj->thickness = NULLMAT;
   return OK;
 }
 
@@ -473,11 +485,17 @@ int nsp_segments_check_values(NspSegments *H)
        return FAIL;
 
     }
+  if ( H->obj->thickness == NULLMAT) 
+    {
+       if (( H->obj->thickness = nsp_matrix_create("thickness",'r',0,0)) == NULLMAT)
+       return FAIL;
+
+    }
   nsp_graphic_check_values((NspGraphic * ) H);
   return OK;
 }
 
-NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type)
+NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspMatrix* thickness,NspTypeBase *type)
 {
   NspSegments *H  = nsp_segments_create_void(name,type);
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
@@ -485,6 +503,7 @@ NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspM
   H->obj->x= x;
   H->obj->y= y;
   H->obj->color= color;
+  H->obj->thickness= thickness;
   if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
   return H;
 }
@@ -543,6 +562,12 @@ NspSegments *nsp_segments_full_copy_partial(NspSegments *H,NspSegments *self)
   else
     {
       if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color", NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
+    }
+  if ( self->obj->thickness == NULL )
+    { H->obj->thickness = NULL;}
+  else
+    {
+      if ((H->obj->thickness = (NspMatrix *) nsp_object_full_copy_and_name("thickness", NSP_OBJECT(self->obj->thickness))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -662,10 +687,37 @@ static int _wrap_segments_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_segments_get_thickness(void *self,const char *attr)
+{
+  NspMatrix *ret;
+  ret = ((NspSegments *) self)->obj->thickness;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_segments_get_obj_thickness(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspSegments *) self)->obj->thickness);
+  return (NspObject *) ret;
+}
+
+static int _wrap_segments_set_thickness(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *thickness;
+  if ( ! IsMat(O) ) return FAIL;
+  if ((thickness = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspSegments *) self)->obj->thickness != NULL ) 
+    nsp_matrix_destroy(((NspSegments *) self)->obj->thickness);
+  ((NspSegments *) self)->obj->thickness= thickness;
+  return OK;
+}
+
 static AttrTab segments_attrs[] = {
   { "x", (attr_get_function * )_wrap_segments_get_x, (attr_set_function * )_wrap_segments_set_x, (attr_get_object_function * )_wrap_segments_get_obj_x, (attr_set_object_function * )int_set_object_failed },
   { "y", (attr_get_function * )_wrap_segments_get_y, (attr_set_function * )_wrap_segments_set_y, (attr_get_object_function * )_wrap_segments_get_obj_y, (attr_set_object_function * )int_set_object_failed },
   { "color", (attr_get_function * )_wrap_segments_get_color, (attr_set_function * )_wrap_segments_set_color, (attr_get_object_function * )_wrap_segments_get_obj_color, (attr_set_object_function * )int_set_object_failed },
+  { "thickness", (attr_get_function * )_wrap_segments_get_thickness, (attr_set_function * )_wrap_segments_set_thickness, (attr_get_object_function * )_wrap_segments_get_obj_thickness, (attr_set_object_function * )int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -682,7 +734,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 686 "segments.c"
+#line 738 "segments.c"
 
 
 #line 66 "codegen/segments.override"
@@ -695,7 +747,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 699 "segments.c"
+#line 751 "segments.c"
 
 
 /*----------------------------------------------------
@@ -732,7 +784,8 @@ void Segments_Interf_Info(int i, char **fname, function ( **f))
 
 static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int ccolor=-1;
+  int color_changed=FALSE,thickness_changed=FALSE;
+  int c_thickness,c_color;
   NspSegments *P = (NspSegments *) Obj;
   NspMatrix *nx = P->obj->x;
   NspMatrix *ny = P->obj->y;
@@ -742,23 +795,52 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     {
       return ;
     }
-
   if ( P->obj->x->mn == 0 )  return;
+
+  c_thickness = Xgc->graphic_engine->xget_pattern(Xgc);
+  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  
   if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
-      if ( P->obj->color->mn == 1) 
+      int *colors= ( P->obj->color->mn == 1) ? NULL : P->obj->color->I;
+      int *thickness= NULL;
+      if ( P->obj->color->mn == 1 && P->obj->color->I[0] >= 0) 
 	{
-	  ccolor = P->obj->color->I[0];
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+	  color_changed=TRUE;
+	  Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color->I[0]);
 	}
-      else 
+      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
 	{
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,P->obj->color->I,1);
+	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
+	  if ( P->obj->thickness->mn == 1 &&P->obj->thickness->I[0] >=0 )
+	    {
+	      thickness_changed = TRUE;
+	      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness->I[0] );
+	    }
 	}
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+      /* back to default */
+      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
+      if ( color_changed )  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
     }
-  else 
+  else
     {
-      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+      int *colors= NULL;
+      int *thickness= NULL;
+      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
+	{
+	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
+	  if ( P->obj->thickness->mn == 1 && P->obj->thickness->I[0] >=0 )
+	    {
+	      thickness_changed = TRUE;
+	      Xgc->graphic_engine->xset_thickness(Xgc, P->obj->thickness->I[0]);
+	    }
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+	  
+	}
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+      /* back to default */
+      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
     }
 }
 
@@ -838,4 +920,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 842 "segments.c"
+#line 924 "segments.c"

@@ -79,7 +79,8 @@ last
 
 static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int ccolor=-1;
+  int color_changed=FALSE,thickness_changed=FALSE;
+  int c_thickness,c_color;
   NspSegments *P = (NspSegments *) Obj;
   NspMatrix *nx = P->obj->x;
   NspMatrix *ny = P->obj->y;
@@ -89,23 +90,52 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     {
       return ;
     }
-
   if ( P->obj->x->mn == 0 )  return;
+
+  c_thickness = Xgc->graphic_engine->xget_pattern(Xgc);
+  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  
   if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
-      if ( P->obj->color->mn == 1) 
+      int *colors= ( P->obj->color->mn == 1) ? NULL : P->obj->color->I;
+      int *thickness= NULL;
+      if ( P->obj->color->mn == 1 && P->obj->color->I[0] >= 0) 
 	{
-	  ccolor = P->obj->color->I[0];
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+	  color_changed=TRUE;
+	  Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color->I[0]);
 	}
-      else 
+      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
 	{
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,P->obj->color->I,1);
+	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
+	  if ( P->obj->thickness->mn == 1 &&P->obj->thickness->I[0] >=0 )
+	    {
+	      thickness_changed = TRUE;
+	      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness->I[0] );
+	    }
 	}
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+      /* back to default */
+      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
+      if ( color_changed )  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
     }
-  else 
+  else
     {
-      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&ccolor,0);
+      int *colors= NULL;
+      int *thickness= NULL;
+      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
+	{
+	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
+	  if ( P->obj->thickness->mn == 1 && P->obj->thickness->I[0] >=0 )
+	    {
+	      thickness_changed = TRUE;
+	      Xgc->graphic_engine->xset_thickness(Xgc, P->obj->thickness->I[0]);
+	    }
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+	  
+	}
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
+      /* back to default */
+      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
     }
 }
 

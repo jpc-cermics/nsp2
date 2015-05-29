@@ -37,7 +37,7 @@ typedef void driver_drawpolylines( BCG *gc, int *vectsx, int *vectsy, int *drawv
 typedef void driver_drawpolymark( BCG *gc,  int *vx, int *vy,int n);
 typedef void driver_drawrectangle( BCG *gc,const int rect[]);
 typedef void driver_drawrectangles( BCG *gc,const int *vects,const int *fillvect, int n);
-typedef void driver_drawsegments( BCG *gc,int *vx, int *vy, int n, int *style, int iflag);
+typedef void driver_drawsegments( BCG *gc,int *vx, int *vy, int n, int *color, int *width);
 typedef void driver_drawline(BCG *Xgc,int x1, int yy1, int x2, int y2);
 typedef void driver_fillarc( BCG *gc, int arc[]);
 typedef void driver_fillarcs( BCG *gc, int *vects, int *fillvect, int n);

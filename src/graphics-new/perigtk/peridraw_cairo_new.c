@@ -93,12 +93,12 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
  * n is the size of vx and vy
  */
 
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *width)
 {
   /* cairo_t *cr =  Xgc->private->cairo_cr; */
   /* test */
   /* cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE); */
-  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
+  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,width);
 }
 
 
@@ -645,6 +645,7 @@ static void xset_clip(BCG *Xgc,const GdkRectangle *r)
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
   cairo_new_path (cr);
+  /* Sciprintf("clip in %d %d %d %d\n",r->x,r->y,r->width,r->height); */
   cairo_rectangle(cr,r->x,r->y,r->width,r->height);
   cairo_clip (cr);
 }

@@ -569,13 +569,13 @@ static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
   Xgc->graphic_engine->drawrectangles(Xgc,xm,fillvect,n);
 }
 
-static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
+static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int *width)
 {
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
-  Xgc->graphic_engine->drawsegments(Xgc,xm,ym,n,style,iflag);
+  Xgc->graphic_engine->drawsegments(Xgc,xm,ym,n,style,width);
 }
 
 

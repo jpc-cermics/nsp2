@@ -284,7 +284,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
   char c_format[5];
   int flag=0,xx=0,yy=0,posi[2],rect[4];
   int i,barlength;
-  int ns=2,style=0,iflag=0;
+  int ns=2;
   int fontid[2],fontsize_kp,logrect[4],smallersize=0,color_kp=0;
 
   /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001
@@ -366,8 +366,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
        * go in the direction of the strings
        */
       barlength = Xgc->scales->Irect.height/40.0;
-      d_barlength = barlength/Xgc->scales->Wscy1;
-      str_offset = Xgc->scales->Irect.height/60.0/Xgc->scales->Wscy1;
+      d_barlength = barlength/Xgc->scales->Wscy1/Xgc->scale_factor;
+      str_offset = Xgc->scales->Irect.height/60.0/Xgc->scales->Wscy1/Xgc->scale_factor;
 
       /* compute a format
        */
@@ -386,7 +386,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  vx[1] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
 	  vy[1] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
-	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,NULL,NULL);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       /* loop on the ticks */
@@ -407,11 +407,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      yd = y[0] + d_barlength;
 	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor);
 	      if ( d_barlength > 0 )
-		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1;
+		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1/Xgc->scale_factor;
 	      else
-		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1;
+		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1/Xgc->scale_factor;
 	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -421,7 +421,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      yd = y[0] - d_barlength;
 	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor);
 	      if ( d_barlength > 0 )
 		yd = y[0] + str_offset;
 	      else
@@ -448,10 +448,9 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	    {
 	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	    }
-	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  if ( textcolor != -1 || ticscolor != -1)  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 	  /* subtics: in fact its the nulber of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Nx-1 )
 	    {
@@ -470,7 +469,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		  for ( j = 2 ; j < 10; j++)
 		    {
 		      vx[0]=vx[1]= xi +  (xl-xi)*log(j)/log(10.0);
-		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		    }
 		}
 	      else
@@ -485,7 +484,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		      yd = (pos == 'd') ? y[0] + d_barlength/2.0 : y[0] - d_barlength/2.0;
 		      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 		      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		    }
 		}
 	    }
@@ -496,8 +495,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     case 'l' :
       /* Vertical axes */
       barlength = Xgc->scales->Irect.width/40.0;
-      d_barlength = barlength/Xgc->scales->Wscx1;
-      str_offset = Xgc->scales->Irect.width/60.0/Xgc->scales->Wscx1;
+      d_barlength = barlength/Xgc->scales->Wscx1/Xgc->scale_factor;
+      str_offset = Xgc->scales->Irect.width/60.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
       if (str == NULL &&  format == NULL )
 	switch (xy_type ) {
 	case 'v' : nsp_grformat_e1(c_format,y,Ny);break;
@@ -513,7 +512,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  vx[1] =  inint(XScaleR_d(Xgc->scales,x[0],yd));
 	  vy[1] = xm[0]= inint(YScaleR_d(Xgc->scales,x[0],yd));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
-	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,NULL,NULL);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       /* loop on the ticks */
@@ -535,7 +534,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		xd = x[0] + str_offset;
 	      else
 		xd = x[0] - d_barlength + str_offset;
-	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1/Xgc->scale_factor;
 	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -545,10 +544,10 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
 	      vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	      if ( d_barlength > 0)
-		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1;
+		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
 	      else
-		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1;
-	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
+		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1/Xgc->scale_factor;
 	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -568,10 +567,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,
 						 GR_STR_XLEFT, GR_STR_YBOTTOM);
 	    }
-	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
-
-	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  if ( textcolor != -1 || ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Ny-1 )
 	    {
@@ -591,7 +588,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		  for ( j = 2 ; j < 10; j++)
 		    {
 		      vy[0]=vy[1]= yi -  (yi-yl)*log(j)/log(10.0);
-		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		    }
 		}
 	      else
@@ -607,7 +604,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		      xd = ( pos == 'r' ) ? x[0] -d_barlength/2.0: x[0] +d_barlength/2.0;
 		      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 		      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		      Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		    }
 		}
 	    }
@@ -635,7 +632,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 {
   int Nx=0,Ny=0;
   double vxx,xd,yd,d_barlength;
-  int vx[2],vy[2],i, ns=2,style=0,iflag=0, color_kp=0;
+  int vx[2],vy[2],i, ns=2, color_kp=0;
 
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
@@ -684,7 +681,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
        * if the sign of d_barlength is changed ticks will
        * go in the direction of the strings
        */
-      d_barlength = Xgc->scales->Irect.height/Xgc->scales->Wscy1;
+      d_barlength = Xgc->scales->Irect.height/Xgc->scales->Wscy1/Xgc->scale_factor;
 
       /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)
@@ -698,7 +695,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	  /* loop on subtics for log only  */
 	  if ( i < Nx-1 && logflag == 'l')
@@ -717,7 +714,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 		{
 		  vx[0]=vx[1]= xi +  (xl-xi)*log(j)/log(10.0);
 		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 		}
 	    }
@@ -727,7 +724,6 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
     case 'l' :
       /* Vertical axes */
       d_barlength = Xgc->scales->Irect.width/Xgc->scales->Wscx1;
-
       /* loop on the ticks */
       for (i=0 ; i < Ny ; i++)
 	{
@@ -738,7 +734,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	  vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
 	  vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
-	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	  /* subtics: in fact its the number of sub-intervals i.e subtics -1 intervals */
 	  if ( i < Ny-1 && logflag == 'l' )
@@ -757,7 +753,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 		{
 		  vy[0]=vy[1]= yi -  (yi-yl)*log(j)/log(10.0);
 		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
-		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,NULL,NULL);
 		  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 		}
 	    }

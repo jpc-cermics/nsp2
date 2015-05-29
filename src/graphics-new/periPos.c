@@ -1145,21 +1145,23 @@ static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
 /* Draw a set of segments 
  * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
  * for i=0 step 2 
+ * XXX must take care of width 
  */
 
-static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *width)
 {
   int dash,color,i;
   xget_dash_and_color(Xgc,&dash,&color);
   /* store the current values */
-  if ( iflag == 0 )
+  if ( style == NULL) 
     {
-      /** all segments have the same color or dash style */
-      int lstyle = (*style < 1) ? color : *style; 
+      /* all segments have the same color or dash style */
+      int lstyle = color;
       WriteGeneric("drawsegs",(int)1L,n*2,vx,vy,n,(int)1L,&lstyle); 
     }
   else
     {
+      /* each segment has its own color */
       for ( i=0 ; i < n/2 ; i++) 
 	{
 	  int NDvalue =  style[i];

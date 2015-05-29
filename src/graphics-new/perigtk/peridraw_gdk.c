@@ -53,10 +53,9 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
  * n is the size of vx and vy 
  */
 
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *width)
 {
-  
-  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
+  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,width);
 }
 
 /* Draw a set of arrows 
@@ -68,7 +67,6 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 

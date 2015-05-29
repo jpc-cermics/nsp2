@@ -292,7 +292,12 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* clear proper zone */
   if ( rect != NULL)
     {
-      Xgc->graphic_engine->cleararea(Xgc,rect);
+      GdkRectangle rect1 = *rect;
+      rect1.x *= Xgc->scale_factor;
+      rect1.y *= Xgc->scale_factor;
+      rect1.width *= Xgc->scale_factor;
+      rect1.height *= Xgc->scale_factor;      
+      Xgc->graphic_engine->cleararea(Xgc,&rect1);
 #if 0
       /* debug helper */
       {
@@ -303,7 +308,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
       }
 #endif
-      Xgc->graphic_engine->xset_clip(Xgc,rect);
+      Xgc->graphic_engine->xset_clip(Xgc,&rect1);
     }
   else
     {

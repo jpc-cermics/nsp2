@@ -173,7 +173,6 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     case qcurve_stem:
       {
 	int nc = nsp_qcurve_get_len(P);
-	int iflag=0;
 	double *xm=NULL,*ym=NULL;
 	int n= 2*nc;
 	xm = graphic_alloc(0,n,sizeof(double));
@@ -184,7 +183,9 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	    return;
 	  }
 	nsp_qcurve_get_xy_stem(P,xm,ym);
-	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*nc,&P->obj->color,iflag);
+	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*nc,NULL,NULL);
+	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
       }
       break;
     case qcurve_std:

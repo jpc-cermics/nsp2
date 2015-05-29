@@ -1002,12 +1002,10 @@ static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
 /* Draw a set of segments 
  * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
  * for i=0 step 2 
- *   if iflag == 1 style[i] gives the style for each segment
- *     if iflag == 0 (if *style >0 ) it   gives the style for all the  segment 
- *   (if *style <0 ) The default style is used for all the  segment 
+ * should use width XXX
  */
 
-static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *width)
 {
   int NDvalue,i;
   int l_style=0,style_val=0,pen_color,fill_color;
@@ -1017,8 +1015,8 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
   xget_dash_and_color(Xgc,&dash,&color);
   for ( i =0 ; i < n/2 ; i++)
     {
-      if ( (int) iflag == 0) 
-	NDvalue=(*style < 0) ? color : *style; 
+      if ( style == NULL ) 
+	NDvalue= color; 
       else
 	NDvalue=(int) style[i];
       /* in case of min(max()) **/
@@ -1040,9 +1038,9 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
 }
 
 /* Draw a set of arrows 
-   if iflag == 1 style[i] gives the style for each arrow 
-   if iflag == 0 *style   gives the style for all the arrows
-**/
+ *   if iflag == 1 style[i] gives the style for each arrow 
+ *  if iflag == 0 *style   gives the style for all the arrows
+ */
 
 static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
 {

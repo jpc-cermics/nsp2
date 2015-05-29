@@ -1610,8 +1610,14 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
 
-
-  Xgc->graphic_engine->xset_clip(Xgc, &clip);
+  {
+    GdkRectangle clip1= clip;
+    clip1.x *= Xgc->scale_factor;
+    clip1.y *= Xgc->scale_factor;
+    clip1.width *= Xgc->scale_factor;
+    clip1.height *= Xgc->scale_factor;
+    Xgc->graphic_engine->xset_clip(Xgc, &clip1);
+  }
 
   Xgc->graphic_engine->xget_font(Xgc,zfont, FALSE);
 
@@ -1654,7 +1660,15 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   clip = (  P->obj->clip == TRUE ) ?  Xgc->scales->Irect : clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
 
-  Xgc->graphic_engine->xset_clip(Xgc, &clip);
+  {
+    GdkRectangle clip1= clip;
+    clip1.x *= Xgc->scale_factor;
+    clip1.y *= Xgc->scale_factor;
+    clip1.width *= Xgc->scale_factor;
+    clip1.height *= Xgc->scale_factor;
+    Xgc->graphic_engine->xset_clip(Xgc, &clip1);
+  }
+
 
   /* draw elements
    * we can limit the drawing to clip
@@ -1677,8 +1691,15 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
 
-  Xgc->graphic_engine->xset_clip(Xgc, &clip);
-
+  {
+    GdkRectangle clip1= clip;
+    clip1.x *= Xgc->scale_factor;
+    clip1.y *= Xgc->scale_factor;
+    clip1.width *= Xgc->scale_factor;
+    clip1.height *= Xgc->scale_factor;
+    Xgc->graphic_engine->xset_clip(Xgc, &clip1);
+  }
+  
   Xgc->graphic_engine->xset_font(Xgc,zfont[0],zfont[1], FALSE);
 
   if (  P->obj->font_size != -1)
@@ -1714,7 +1735,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   if ( rect != NULL )
     {
-      Xgc->graphic_engine->xset_clip(Xgc,rect);
+      GdkRectangle rect1= *rect;
+      rect1.x *= Xgc->scale_factor;
+      rect1.y *= Xgc->scale_factor;
+      rect1.width *= Xgc->scale_factor;
+      rect1.height *= Xgc->scale_factor;
+      Xgc->graphic_engine->xset_clip(Xgc, &rect1);
     }
   else
     {
@@ -2511,4 +2537,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2515 "axes.c"
+#line 2541 "axes.c"

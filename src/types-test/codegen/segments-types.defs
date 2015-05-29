@@ -8,6 +8,7 @@
     '("NspMatrix*" "x")
     '("NspMatrix*" "y")
     '("NspMatrix*" "color")
+    '("NspMatrix*" "thickness")
     )
   (gtype-id "Segments")
 )

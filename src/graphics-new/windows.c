@@ -62,8 +62,8 @@ static window_scale_list  default_scale =
   alpha:35.0, theta: 45.0,
   metric3d:1,                 /* added by es */
   cosa:1.0, sina: 0.0,           /* test: cosa, sina */
-  next: (window_scale_list *) 0, /*unused */
-  prev:(window_scale_list *) 0, /*unused */
+  next: (window_scale_list *) 0,
+  prev:(window_scale_list *) 0, 
   };
 
 /**
@@ -422,6 +422,7 @@ int xgc_add_default_scale(BCG *Xgc)
       Sciprintf("set_window_scale: running out of memory\n");
       return FAIL;
     }
+  Xgc->scales->scale_factor = Xgc->scale_factor;
   return OK;
 }
 
@@ -506,6 +507,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->theta = s2->theta;
   for ( i = 0 ; i < 3 ; i++) s1->c[i]= s2->c[i];
   s1->metric3d = s2->metric3d;
+  s1->scale_factor = s2->scale_factor;
 }
 
 /**

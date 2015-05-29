@@ -238,31 +238,46 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
  *
  * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
  * for i=0 step 2  n is the size of vx and vy
+ * style and thickness can be scalars or vectors 
  */
 
-static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *color, int *width)
 {
-  int dash,color,i;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( iflag == 1)
+  int i;
+  if ( color != NULL) 
     {
-      /* one style per segment */
-      for (i=0 ; i < n/2 ; i++)
+      int cur_dash = Xgc->graphic_engine->xget_dash(Xgc);
+      int cur_color = Xgc->graphic_engine->xget_pattern(Xgc);
+      /* one color per segment */
+      if ( width != NULL ) 
 	{
-	  Xgc->graphic_engine->xset_line_style(Xgc,style[i]);
-	  Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+	  /* one width per segment */
+	  int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
+	  for (i=0 ; i < n/2 ; i++)
+	    {
+	      Xgc->graphic_engine->xset_thickness(Xgc,width[i]);
+	      Xgc->graphic_engine->xset_line_style(Xgc,color[i]);
+	      Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+	    }
+	  Xgc->graphic_engine->xset_thickness(Xgc,c_width);
 	}
+      else
+	{
+	  /* common width */
+	  for (i=0 ; i < n/2 ; i++)
+	    {
+	      Xgc->graphic_engine->xset_line_style(Xgc,color[i]);
+	      Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+	    }
+	}
+      Xgc->graphic_engine->xset_dash(Xgc,cur_dash);
+      Xgc->graphic_engine->xset_pattern(Xgc,cur_color);
     }
   else
     {
-      if (*style >= 1) Xgc->graphic_engine->xset_line_style(Xgc,*style);
-      /* une fonction gtk existe ici FIXME */
       for (i=0 ; i < n/2 ; i++)
 	Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
     }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
 /* Draw a set of arrows
