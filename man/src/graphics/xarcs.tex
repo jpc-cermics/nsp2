@@ -63,6 +63,22 @@
   xarcs(arcs,color=rand(1,n)*32,background=rand(1,n)*32);
 \end{Verbatim}
 
+\noindent Mixing plot2d and xarcs 
+
+\begin{Verbatim}
+function plot2d_arcs(x,y,s,varargopt)
+  plot2d(x,y,varargopt(:));
+  z=ones(1,size(x,'*'));
+  arcs=[x(:)'-s/2;y(:)'+s/2;s*z;s*z;0*z;360*64*z];
+  v.background= z* varargopt.find['line_color',def=-1];
+  v.color=z;
+  v.thickness=z;
+  xarcs(arcs,v(:));
+endfunction
+
+  x=1:20;y=x.*sin(x);plot2d_arcs(x,y/3,0.3,line_color=6);
+\end{Verbatim}
+
 \end{examples}
 
 %-- see also
