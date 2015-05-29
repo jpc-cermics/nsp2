@@ -95,7 +95,6 @@
 \noindent a first simple example with \verb!plot3d!
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t));
 \end{Verbatim}
 
@@ -103,28 +102,24 @@
 colormap is a jetcolormap.
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));
 \end{Verbatim}
 
 \noindent same example with mesh only
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t),mesh_only=%t);
 \end{Verbatim}
 
 \noindent same example without mesh
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t),mesh=%f);
 \end{Verbatim}
 
 \noindent same example with a function
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   function z=f(x,y,args) z=sin(args(1)*x)*cos(args(2)*y);endfunction;
   // the optional argument arg is used to pass extra arguments to function f.
   t=-%pi:0.3:%pi;plot3d(t,t,f,args=list(1,2));
@@ -133,7 +128,6 @@ colormap is a jetcolormap.
 \noindent computing facets and plot facets with colors
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -146,7 +140,6 @@ colormap is a jetcolormap.
 multiple plots by combining facets
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   t=-%pi:0.3:%pi;
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -159,7 +152,6 @@ multiple plots by combining facets
 multiple plots using opengl
 
 \begin{Verbatim}
-  if ~new_graphics() then switch_graphics();end;xclear();
   xinit(opengl=%t);
   z=sin(t)'*cos(t);
   [xx,yy,zz]=genfac3d(t,t,z);

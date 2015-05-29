@@ -73,7 +73,6 @@
 \noindent a first simple in which a triangulation and a function are
 built and given to \verb!fec!
 \begin{Verbatim}
-if ~new_graphics() then switch_graphics();end
 N=20;
 n=1:N;
 x=cos(n*2*%pi/N);
@@ -84,7 +83,7 @@ trianl=[(1:N)',[(2:N)';1],(N+1)*ones(N,1)];
 triangles=[(1:N)',trianl,zeros(N,1)];
 rect=[-1.2,-1.2,1.2,1.2];
 z=(1:N+1)';
-if new_graphics() then z(1:4)=%nan;end
+z(1:4)=%nan;
 xset('colormap',jetcolormap(32));
 fec(noeul(:,2),noeul(:,3),triangles,z,strf='030',axesflag=2,rect=rect,mesh=%t);
 \end{Verbatim}
@@ -92,7 +91,6 @@ fec(noeul(:,2),noeul(:,3),triangles,z,strf='030',axesflag=2,rect=rect,mesh=%t);
 \noindent a second example
 
 \begin{Verbatim}
-if ~new_graphics() then  switch_graphics(); end
 // define a mini triangulation (4 vertices, 2 triangles)
 x = [0 1 0 -1];
 y = [0 0 1  1];
@@ -116,7 +114,6 @@ xtitle("fec example (without the mesh)")
 and needs the data of the previous example.
 
 \begin{Verbatim}
-if ~new_graphics() then  switch_graphics(); end
 xclear();
 xset("colormap",jetcolormap(64))
 fec(x,y,T,z,strf="040", zminmax=[-0.5 0.5], mesh=%t)
@@ -127,7 +124,6 @@ xtitle("fec example : using zminmax argument")
 and colout. Itneeds the data of the previous example.
 
 \begin{Verbatim}
-if ~new_graphics() then  switch_graphics(); end
 xclear();
 xset("colormap",jetcolormap(64))
 subplot(2,2,1)
@@ -152,7 +148,6 @@ xselect()
 also uses the first example data.
 
 \begin{Verbatim}
-if ~new_graphics() then  switch_graphics(); end
 xclear();
 xset("colormap",[hotcolormap(64);greencolormap(64)])
 subplot(1,2,1)

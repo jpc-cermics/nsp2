@@ -61,7 +61,6 @@
 \noindent A first example
 
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     xsetech(frect=[0,0,2,2],iso=%t);
     xstring(1,1,["Nsp";"Graphics"])
   \end{Verbatim}
@@ -69,7 +68,6 @@
 \noindent A second example where the string rotation is around \verb!(x,y)!.
 
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     xsetech(frect=[0,0,2,2],iso=%t);
     xset('font size',3);
     for A=[0:30:330];
@@ -83,7 +81,6 @@
   given box\verb!(x,y,w,h)!.
 
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     xsetech(frect=[-1.0,-1.0,1.0,1.0],iso=%t);
     w=0.2,h=0.2;
     for A=[0:30:330];

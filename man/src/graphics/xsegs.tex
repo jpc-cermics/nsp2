@@ -18,7 +18,10 @@
     it gives the color to use for all segments. If \verb!style! is
     a negative scalar, then current color is used. If \verb!style!
     is a vector, then \verb!style(i)! gives the color to use for
-    segment \verb!i!.\end{varlist}
+    segment \verb!i!.
+    \vname{thickness}: vector or scalar which gives the line thickness. 
+    When a value is negative the default thickness is used.
+    \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
@@ -36,12 +39,11 @@
 %--example
 \begin{examples}
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;
     x=2*%pi*(0:9)/10;
     xv=[sin(x);9*sin(x)];
     yv=[cos(x);9*cos(x)];
     xsetech(frect=[-10,-10,10,10],fixed=%t);
-    xsegs(xv,yv,style=1:10);
+    xsegs(xv,yv,style=1:10,thickness=2);
   \end{Verbatim}
 \end{examples}
 %-- Author

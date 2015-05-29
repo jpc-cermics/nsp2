@@ -55,7 +55,6 @@
 
 \noindent A first example.
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     x=-10:10; y=-10:10;m =rand(21,21);
     grayplot(x,y,m,rect=[-20,-20,20,20])
   \end{Verbatim}
@@ -64,7 +63,6 @@
 thus values above \verb!32! are ignored.
 
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     x=-10:10; y=-10:10;m = 64*rand(21,21);
     xset('colormap',jetcolormap(32));
     grayplot(x,y,m,rect=[-20,-20,20,20] ,remap=%f);
@@ -75,7 +73,6 @@ Remapped values in the range given by \verb!zminmax! and associated to colors in
 \verb!colminmax! and values above or below are painted with colors given by \verb!colout!
 
   \begin{Verbatim}
-    if ~new_graphics() then switch_graphics();end;xclear();
     function z=f(x,y); z = 30*sin(x)*cos(y);endfunction
     t=-%pi:0.1:%pi;
     xset('colormap',jetcolormap(32));
