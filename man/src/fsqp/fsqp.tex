@@ -1,0 +1,144 @@
+% -*- mode: latex -*-
+
+\mansection{fsqp}
+\begin{mandesc}
+  \short{fsqp}{FSQP solver}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  x=fsqp(x0,ipar,rpar,[bl,bu],obj,cntr,grob,grcn)  
+  x=fsqp(x0,ipar,rpar,[bl,bu],obj,cntr,"grob","grcn")  
+  x=fsqp(x0,ipar,rpar,[bl,bu],"obj","cntr","grob","grcn", [cd])  
+  x=fsqp(x0,ipar,rpar,[bl,bu],"obj","cntr","grobfd","grcnfd", [cd])  
+  [x,inform]=fsqp(...)  
+  [x,inform,f,g,lambda]=fsqp(...)  
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x0}
+    : real column vector (initial guess)
+    \vname{ipar}
+    : integer vector of size 8.
+    \vname{rpar}
+    : real vector of size 4.
+    \vname{[bl,bu]}
+    : real matrix with 2 columns and same row dimension as x0.
+    \vname{obj, cntr}
+    : either scilab functions or character strings (names of C functions) defining the objective function and the constraints function.
+    \vname{grob,grcn}
+    : either scilab functions or character strings (names of C functions) defining the gradient of objective function and the gradient of  constraints function.
+    \vname{cd}
+    : optional real vector (argument passed to C functions).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  
+  fsqp interface. This interface uses the notations of the cfsqp
+  user's guide. See doc/c\_manual.ps.
+  The four functions (objective, constraints, gradient-of-objective,
+  gradient-of-constraints) can be given either as C-functions dynamically
+  linked with Scilab or as Scilab functions (mixtures are allowed).
+  If a Scilab function is given as argument of fsqp, 
+  just use its name (without quotes). If a C function is to be called,
+  use a character string to define it. For instance fsqp(...,obj,...)
+  invokes fsqp with the Scilab function \verb!obj! and
+  \verb!fsqp(...,"obj",...)! invokes fsqp with the C function 
+  \verb!obj!, linked with Scilab by e.g. \verb! link("obj.o", "obj") !.
+  
+  The chains "grobfd" and "grcnfd" can be used as C functions to compute
+  the gradients of the functions obj and cntr by finite difference.
+  Notations:
+  
+  \begin{Verbatim}
+    ipar=[nf,nineqn,nineq,neqn,neq,modefsqp,miter,iprint];
+    rpar=[bigbnd,eps,epsneq,udelta];
+  \end{Verbatim}
+
+  \begin{Verbatim}
+    function fj=obj(j,x)
+    function  gj=cntr(j,x)
+    function gradf=grob(j,x)
+    function gradgj=grcn(j,x)
+  \end{Verbatim}
+
+  obj(j,x) returns the value of the jth objective, given x.
+  cntr(j,x) returns the value of the jth constraint, given x.
+  grob(j,x) (resp. grcn(j,x)) is the value at x of the gradient of the 
+  function x-$>$obj(j,x) (resp.  x-$>$cntr(j,x)).
+  
+  It may be useful to make use of the fsqp C variable x\_is\_new and to
+  evaluate these functions in a vector way. For instance the function
+  cntr can be replaced by the following cntr2 function:
+  
+  \begin{Verbatim}
+    function cj=cntr2(j,x)
+    if x_is_new() then
+    all_objectives=allobj(x);
+    all_constraints=allcntr(x);
+    all_gradobjectives=allgrob(x);
+    all_gradconstraints=allgrcn(x);
+    cj=all_constraints(j);
+    set_x_is_new(0);  //Use resume to define global Scilab variables
+    [all_objectives,all_constraints,all_gradobjectives,all_gradconstraints]=....
+    resume(all_objectives,all_constraints,all_gradobjectives,all_gradconstraints);
+    else
+    cj=all_constraints(j);
+    end
+  \end{Verbatim}
+
+  Here, the function allcntr(x) returns a vector all\_constraints whose
+  jth component all\_constraints(j) is cntr(j).
+  A typical example comes from discretized semi-infinite program. 
+  See example5.sci.
+  
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    //This is example 1 of the doc.
+    deff("fj=obj32(j,x)","fj=(x(1)+3*x(1)+x(2))^2+4*(x(1)-x(2))^2")
+
+    deff("gj=cntr32(j,x)",[
+      "select j";
+      "case 1"
+      "gj=x(1)^3-6*x(2)-4*x(3)+3;"
+      "case 2"  
+      "gj=1-sum(x);"
+      "end"]);
+
+    deff("gradf=grob32(j,x)",...
+    "fa=2*(x(1)+3*x(2)+x(3));fb=8*(x(1)-x(2));gradf=[fa+fb;3*fa-fb;fa]");
+
+    deff("gradgj=grcn32(j,x)",[
+      "select j";
+      "case 1"
+      "gradgj=[3*x(1)^2;-6;-4];"
+      "case 2"
+      "gradgj=[-1;-1;-1];"
+      "end"]);
+    x0=[0.1;0.7;0.2];
+
+    nf=1; nineqn=1; nineq=1; neqn=0; neq=1; modefsqp=100; miter=500; iprint=1;
+    ipar=[nf,nineqn,nineq,neqn,neq,modefsqp,miter,iprint];
+
+    bigbnd=1.e10; eps=1.e-8; epsneq=0.e0; udelta=0.e0;
+    rpar=[bigbnd,eps,epsneq,udelta];
+
+    bl=[0;0;0];
+    bu=[bigbnd;bigbnd;bigbnd];
+
+    x=fsqp(x0,ipar,rpar,[bl,bu],obj32,cntr32,grob32,grcn32)
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{srfsqp}{srfsqp} \manlink{x\_is\_new}{x-is-new} \manlink{set\_x\_is\_new}{set-x-is-new} 
+\end{manseealso}
+

@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+
+\mansection{x\_is\_new}
+\begin{mandesc}
+  \short{x\_is\_new}{utility function for FSQP solver}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  i=x_is_new()  
+  set_x_is_new(i)  
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{i}
+    : integer 0-1 valued number.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  
+  i=x\_is\_new() returns 1 (resp. 0) if the C variable x\_is\_new is set to 
+  TRUE (resp. FALSE). 
+  
+  set\_x\_is\_new(i) assigns the value i to x\_is\_new.
+  
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    x_is_new()
+    set_x_is_new(0)
+    x_is_new()
+    set_x_is_new(1)  //This is the default. 
+  \end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{fsqp}{fsqp} 
+\end{manseealso}
+

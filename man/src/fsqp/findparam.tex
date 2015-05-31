@@ -1,0 +1,80 @@
+% -*- mode: latex -*-
+
+\mansection{findparam}
+\begin{mandesc}
+  \short{findparam}{utility function for fsqp solver}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [nf,nineqn,nineq,neqn,neq,nfsr,ncsrl,ncsrn,mesh_pts,nf0,ng0,nc0,nh0,na0]=findparam(list_obj,list_cntr,x0)  
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{list\_objs}
+    : list made of two lists.
+    \vname{list\_cntr}
+    : list made of six lists.
+    \vname{x0}
+    : real column vector (e.g. initial guess)
+    \vname{nf, ..., ncsrn}
+    : integers (see fsqp-doc).
+    \vname{mesh\_pts}
+    : real vector.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  
+  Given a list of objective functions and a list of constraints
+  functions, and a vector x0, findparam returns useful fsqp
+  parameters.
+  The list of objectives should be: (use empty list when necessary: list() )
+  
+  \begin{Verbatim}
+    list_obj=list(...
+    list(f_1,...,f_nf0),...     //regular objectives
+    list(F_1,...,F_nfsr)        //SR objectives
+    )
+  \end{Verbatim}
+
+  The f\_i's are functions: y=f\_i(x) should return the value of the ith
+  regular objective as a function of x. y can be a column vector if
+  several regular objectives are stacked together.
+  y=F\_i(x) is the ith sequentially related objective. y is a column
+  vector which contains the ith set of SR-objectives (mesh\_pts(i) is
+  set to size(F\_i(x),1) by findparam).
+  
+  The list of constraints functions should be as follows:
+  
+  \begin{Verbatim}
+    list_cntr=list(...
+    list(g_1,...,g_ng0),...     //regular nonlinear inequality
+    list(G_1,...,G_ncsrn),...   //SR      nonlinear inequality
+    list(c_1,...,c_nc0),...     //regular linear    inequality
+    list(C_1,...,C_ncsrl),...   //SR      linear    inequality
+    list(h_1,...,h_nh0),...     //nonlinear         equality
+    list(A_1,...,A_na0)         //linear            equality
+    )
+  \end{Verbatim}
+
+  Functions g\_i's, c\_i's, h\_1 can return column vectors y (e.g. y=g\_1(x)) 
+  if several constraints are stacked together.
+  Functions G\_i's, C\_i's, A\_i's should return in a column vector the
+  set of appropriate SR constraints.
+  Examples are given at the end of examplei.sce files. See
+  listutils.sci: generic functions obj, cntr, grob, grcn are constructed
+  from the lists list\_obj, list\_cntr, and similar lists list\_grobj
+  and list\_cntr which contain the gradients of objectives and constraints
+  (matrices whith nparam=dim(x) columns).
+  
+\end{mandescription}
+
+%-- see also
+\begin{manseealso}
+  \manlink{srfsqp}{srfsqp} \manlink{x\_is\_new}{x-is-new} \manlink{set\_x\_is\_new}{set-x-is-new} 
+\end{manseealso}
+
