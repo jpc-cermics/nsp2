@@ -97,6 +97,7 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
 		       NspMatrix *Mrect,double **rect,
 		       NspMatrix *Mnax,int **nax,
 		       int frameflag,int axesflag,char **logflags);
+static void nsp_set_box_parameters(NspObjs3d *objs3d,int flag);
 
 static const double  rect_def[]= {0.,0.,10.0,10.0};
 static double rect_loc[]=  {0.,0.,10.0,10.0};
@@ -800,6 +801,9 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 
   nsp_gwin_clear();
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return RET_BUG;
+  /* parameters for box drawing */
+  nsp_set_box_parameters(objs3d, iflag[1]);
+
   /* Loop on the number of polylines */
   nb_poly = (x->m == 1) ? 1 : x->n;
   psize= (x->m==1) ? x->n : x->m;
@@ -837,7 +841,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  nsp_strf_objs3d( objs3d , ebox , iflag[1]);
+  nsp_strf_objs3d( objs3d , ebox , iflag[0]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return 0;
 }

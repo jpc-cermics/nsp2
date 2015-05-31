@@ -209,7 +209,7 @@ endfunction
 function demo_3d_2()
   t=-50*%pi:0.1:50*%pi;
   x=t.*sin(t);y=t.*cos(t);z=t.*abs(t)./(50*%pi);
-  param3d(x,y,z,alpha=45,theta=60);
+  param3d(x',y',z',alpha=45,theta=60,flag=[2,1],style=4);
   title=["param3d : parametric curves in R3 (t.sin(t),t.cos(t),t.|t|/50.%pi)"];
   xtitle(title," "," ");
 endfunction
