@@ -1,46 +1,204 @@
 function demo_lib()
-// A set of function for graphic demos 
+// A set of function for graphic demos
 endfunction
 
 function demo_2d_1()
-  t=(0:0.1:6)*%pi;
-  xset("font size",2);
+  t=linspace(0,6*%pi,100);
   plot2d(t,sin(t),style=2);
-  xtitle("One curve given by 2 row or column vectors","Time","sin(t)");
-  xgrid(5);
+  xtitle("One curve","Time","sin(t)");
+  xgrid();
 endfunction
 
 function demo_2d_2()
-  xset("font size",2);
-  plot2d([],(1:10:10000),logflag="nl",leg="log(t)",leg_pos="ur");
-  xtitle("plot2d1 log scale","t","y log scale");
-  xgrid(3);
+  t=linspace(0,6*%pi,100);
+  st=["stem","stairs","fill","stairs_fill"];
+  opts=hash(5,leg_pos="ul",line_color=2);
+  for i=1:4
+    subplot(2,2,i);
+    opts.mode=st(i);
+    opts.leg=sprintf("mode=''%s''",st(i));
+    plot2d(t,t.*sin(t),opts(:));
+  end
 endfunction
 
 function demo_2d_3()
-  n=32-1;t=(0:n)./n;
-  xset("font size",2);
-  u=sin(80*%pi*t)+sin(100*%pi*t);
-  plot2d3([],randn(100,1));
-  xtitle("plot2d3 (vertical bars plot)","t","f(t)");
+  x=1:10:10000;y=log(x)/log(10);
+  plot2d(x,y,style=5,logflag="ln",leg="log10(x)",leg_pos="ul");
+  plot2d(x,sin(y),style=2,leg="sin(log10(x))",leg_pos="ul");
+  xtitle("log(x) and sin(log10(x)) in log scale","x","y");
+  xgrid();
 endfunction
 
 function demo_2d_4()
-  v=(1:20)+(1:20).*randn(1,20);
-  xset("font size",2);
-  plot2d([],v);
-  plot2d([],(1:20),style=[2],strf="100",leg="estimated");
-  xtitle("plot2d1. Two curves drawn, the first one set the scale"," "," ");
+  n=32-1;t=(0:n)./n;
+  u=sin(80*%pi*t)+sin(100*%pi*t);
+  plot2d([],randn(100,1),mode="stem");
+  xtitle("stem plot","t","f(t)");
 endfunction
 
 function demo_2d_5()
   function y=f(x) ; y=sin(1/x); endfunction
-  plot2d(linspace(1.e-6,1,1000),f,leg="sin(1/x)",leg_pos="dr")
+  plot2d(linspace(1.e-6,1,1000),f,style=2,leg="sin(1/x)",leg_pos="dr")
   xtitle("plot2d(x,f,...)");
+  xgrid()
 endfunction
 
 function demo_2d_6()
   histplot();
+endfunction
+
+function demo_2d_7()
+  t=linspace(0,6*%pi,30)';// column vector
+  opts=hash(5,line_color=[2,5],mark=[10,11],mark_color=[2,5],mark_size=[4,4]);
+  plot2d(t,[sin(t),t.*cos(t)],opts(:),leg='sin@cos',leg_pos="urm");
+  xtitle("Curves with marks","","");
+  opts=hash(5,line_color=[-2],mark=[9],mark_color=[6],mark_size=[4]);
+  plot2d(t,exp(t/5),opts(:),leg='exp',leg_pos="urm");
+  xgrid();
+endfunction
+
+function demo_2d_8()
+  function hinton(A,varargopt)
+    xsetech(axesflag=2);
+    xset('colormap',graycolormap(8));
+    [m,n]=size(A);
+    x=1:m;y=1:n;  C=-sign(A);
+    [X,Y]=ndgrid(x,y);
+    X.redim[1,-1]; Y.redim[1,-1];
+    w=  abs(A(:))'/max(abs(A));
+    rects=[Y-w./2;X(m*n:-1:1)+w./2;w;w];
+    xfrect([0,m+1,n+1,m+1],color=11);
+    xrects(rects,color=4*(1+C(:)'),background=4*(1+C(:))');
+  endfunction
+  xtitle("Hinton Diagram","","");
+  hinton(randn(20,20));
+endfunction
+
+function demo_2d_9()
+  function plot2d_arcs(x,y,s,varargopt)
+    plot2d(x,y,varargopt(:));
+    z=ones(1,size(x,'*'));
+    arcs=[x(:)'-s/2;y(:)'+s/2;s*z;s*z;0*z;360*64*z];
+    v.background= z* varargopt.find['line_color',def=-1];
+    v.color=z;
+    v.thickness=z;
+    xarcs(arcs,v(:));
+  endfunction
+
+  function plot2d_polys(x,y,n,s,varargopt)
+    plot2d(x,y,varargopt(:));
+    z=ones(1,size(x,'*'));
+    p=[x(:)';y(:)'];
+    qx=p;qy=p;
+    for i=1:n
+      qx(i,:)=p(1,:)+s/2*cos(2*%pi*i/n);
+      qy(i,:)=p(2,:)+s/2*sin(2*%pi*i/n);
+    end
+    v.fill_color= z* varargopt.find['line_color',def=-1];
+    v.color=z;
+    xfpolys(qx,qy,v(:));
+  endfunction
+
+  xtitle("Mixing plo2d and xarcs or xpolys");
+  // iso mod to have circles
+  x=1:20;y=x.*sin(x);plot2d_arcs(x,y/3,1.0,iso=%t,line_color=6);
+  x=1:20;y=sin(x);plot2d_polys(x,y/3,5,0.7,line_color=5);
+  xgrid();
+endfunction
+
+function demo_2d_10()
+  xtitle("vector field and trajectories");
+  function y=f(t,x)
+    y=[0.8*x(1)*(1 - 0.5*x(2));
+       0.2*x(2)*(x(1)-3)];
+  endfunction
+  x=linspace(0,6,20);y=linspace(0,4,20);
+  [X,Y]=ndgrid(x,y);
+  m=size(x,'*');n=size(y,'*');
+  fx=zeros(m,n);fy=fx;
+  for i=1:size(X,'*');
+    yv=f(0,[X(i);Y(i)]);
+    fx(i)=yv(1); fy(i)=yv(2);
+  end
+  n=size(x,'*');
+  fx.redim[n,-1];fy.redim[n,-1];
+  xset('colormap',jetcolormap(64));
+  champ1(x,y,fx,fy);
+
+  t = linspace(0,10,100);
+  xo = ode([4;3],0,t,f);
+  red=xget('lastpattern')+7;
+  plot2d(xo(1,:),xo(2,:),mode='arrow',line_color=red,line_thickness=2)
+  xo = ode([4;3.5],0,t,f);
+  blue=xget('lastpattern')+4;
+  plot2d(xo(1,:),xo(2,:),line_color=blue,line_thickness=2)
+endfunction
+
+function demo_2d_11()
+// scatter plot
+  xsetech(wrect=[0,0,1,1/5],frect=[0,0,1,1],axesflag=0)
+  xstringb(0,0.0,'Nuages de points',1,1);
+
+  h = (1-1/5);
+  xsetech(wrect=[0,1/5,1/2,h]);
+  N=1000;
+  x=randn(N,1);y=randn(N,1);
+  plot2d(x,y,mark=0,line_color=-2,axesflag=5);
+
+  xsetech(wrect=[1/2,1/5,1/2,h],clip=%t);
+  x=randn(N,1);y=randn(N,1);
+  plot2d(x,y,line_color=-2,mark=8,mark_color=5,mark_size=2,axesflag=5);
+  x=randn(N,1)+2;y=randn(N,1);
+  plot2d(x,y,line_color=-2,mark=9,mark_color=9,mark_size=2,axesflag=5);
+endfunction
+
+// histogram
+
+function demo_2d_12()
+  function partie(f,xmin,xmax,couleur)
+    x=linspace(xmin,xmax,100);
+    y=f(x);
+    x=[x,xmax,xmin];y=[y,0,0];
+    xfpoly(x',y',couleur);
+  endfunction
+  histplot([-6:0.4:6],randn(1,2000),rect=[-6,0,6,0.5])
+  function [y]=f(x) ; y=exp(-x.*x/2)/sqrt(2*%pi);endfunction
+  x=-6:0.1:6;x=x';
+  y=f(x);
+  plot2d(x,y,style=2,rect=[-6,0,6,0.5])
+  titre= 'macro histplot : Histogram plot';
+  xtitle(titre,'Classes','N(C)/Nmax');
+  xleft=-1;
+  partie(f,min(x),xleft,15);
+  rect=xstringl(0,0,'A')
+  xpoly(xleft*[1;1],[0;0.3]);xstring(xleft-rect(3),0.3,'A');
+  xright=2;
+  partie(f,2,max(x),12);
+  xpoly(xright*[1;1],[0;0.3]);xstring(xright,0.3,'B');
+endfunction
+
+function demo_2d_14()
+  n=5;p=4;
+  val=10*rand(n,p);
+  nomsh='nh'+ string(1:p);
+  nomsv='nv '+ string(1:n)';
+
+  function mat_show(nomsh,nomsv,val)
+    x=1:p+1+1;
+    y=1:n+1+1;
+    xsetech(frect=[min(x),min(y),max(x),max(y)],axesflag=0,clip=%f);
+    xp=[x;x]; yp=[min(y)*ones(size(x));max(y)*ones(size(x))];
+    xpolys(xp,yp);
+    yp=[y;y]; xp=[min(x)*ones(size(y));max(x)*ones(size(y))];
+    xpolys(xp,yp);
+    S= [ '', nomsh; [ nomsv, string(val)]];
+    for i=1:n+1
+      for j=1:p+1
+	xstringb(x(j)+0.1,y(n+1-i+1)+0.1,S(i,j),0.8,0.8,'fill');
+      end
+    end
+  endfunction
+  mat_show(nomsh,nomsv,val);
 endfunction
 
 function demo_3d_1()
@@ -48,7 +206,7 @@ function demo_3d_1()
   xtitle("param3d : parametric curves in R3"," "," ");
 endfunction
 
-function demo_3d_2() 
+function demo_3d_2()
   t=-50*%pi:0.1:50*%pi;
   x=t.*sin(t);y=t.*cos(t);z=t.*abs(t)./(50*%pi);
   param3d(x,y,z,alpha=45,theta=60);
@@ -56,13 +214,13 @@ function demo_3d_2()
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_3() 
+function demo_3d_3()
   t=(-1:0.1:1)*%pi;plot3d(t,t,sin(t)'*cos(t),alpha=80,theta=70);
   title=["plot3d : z=sin(x)*cos(y)"];
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_4() 
+function demo_3d_4()
   xset('colormap',hotcolormap(45));
   t=(-1:0.1:1)*%pi;plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=70);
   title=["plot3d1 : z=sin(x)*cos(y)"];
@@ -77,7 +235,7 @@ function demo_3d_5()
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_6() 
+function demo_3d_6()
   t=linspace(-%pi,%pi,20);
   xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
   colormap= graycolormap(45);
@@ -97,17 +255,17 @@ function demo_3d_6()
   plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
 endfunction
 
-function demo_3d_7() 
-  //xset('colormap',hotcolormap(40));
+function demo_3d_7()
+//xset('colormap',hotcolormap(40));
   xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
-  // One facet with interpolated shading using colors Id 
+  // One facet with interpolated shading using colors Id
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,2,3]',flag=[1,1,3])
   xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t)
   // The number of sub-polygons depends on the distance in Id
   // between colors
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,6,12]',flag=[1,1,3])
   xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t)
-  // colors are set to zero : only draw polygons 
+  // colors are set to zero : only draw polygons
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=0*[1,2,3]',flag=[1,1,3])
   xsetech(wrect=[0.5,0.5,0.5,0.5],a3d=%t)
   // colors are negative: only painting no contour drawing
@@ -115,26 +273,26 @@ function demo_3d_7()
 endfunction
 
 
-function demo_3d_8() 
-// using genfac3d to compute facets and node colors 
-// from a standard description 
+function demo_3d_8()
+// using genfac3d to compute facets and node colors
+// from a standard description
   t=[-%pi/2,0,%pi/2]';
   z=sin(t)*cos(t');
-  [xx,yy,zz]=genfac3d(t,t,z); 
+  [xx,yy,zz]=genfac3d(t,t,z);
   col=[1,2,1;2,3,2;1,2,1]
-  [xx,yy,zzcol]=genfac3d(t,t,col); 
+  [xx,yy,zzcol]=genfac3d(t,t,col);
   xsetech(wrect=[0,0,0.5,1],a3d=%t)
-  // with generated facets 
+  // with generated facets
   plot3d(xx,yy,zz,colors=zzcol);
   xsetech(wrect=[0.5,0,0.5,1],a3d=%t)
-  // without facets 
+  // without facets
   plot3d1(t,t,z);
 endfunction
 
-function demo_3d_9() 
+function demo_3d_9()
   t=[(0:0.2:2)*%pi]'; z=sin(t)*cos(t');
   xset('colormap',hotcolormap(40));
-  // remapping zvalues to colors 
+  // remapping zvalues to colors
   zzc = 39*(z-min(z))/(max(z)- min(z))+1;
   [xx,yy,zzcolors]=genfac3d(t,t,zzc);
   [xx,yy,zz]=genfac3d(t,t,z);
@@ -144,14 +302,14 @@ function demo_3d_9()
   plot3d(xx,yy,zz,colors=zzcolors,alpha=45,theta=60);
 endfunction
 
-function demo_3d_10() 
-  // a demo by Quentin Quadrat.
-    demo_tree(1,5);
+function demo_3d_10()
+// a demo by Quentin Quadrat.
+  demo_tree(1,5);
 endfunction
 
-function demo_3d_11_old() 
-// parametric 3d surface 
-// nf3d 
+function demo_3d_11_old()
+// parametric 3d surface
+// nf3d
   u = %pi*(-1:0.2:1);
   v = %pi*(-1:0.2:1);
   n = size(u,'*');
@@ -166,25 +324,25 @@ function demo_3d_11_old()
   plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110)
 endfunction
 
-function demo_3d_11() 
+function demo_3d_11()
   u = %pi/2*(-1:0.2:1);
   v = %pi/2*(-1:0.2:1);
   n = size(u,'*');
   x= cos(u)'*exp(cos(v));
   y= cos(u)'*sin(v);
   z= sin(u)'*ones(size(v));
-  col=ones(size(u))'*cos(v); 
-  col=(n-1)*(col-min(col))/(max(col)-min(col))+1; 
+  col=ones(size(u))'*cos(v);
+  col=(n-1)*(col-min(col))/(max(col)-min(col))+1;
   xset('colormap',hotcolormap(n));
   [xx,yy,zz]=nf3d(x,y,z);
-  [xx,yy,zzcol]=nf3d(x,y,col); 
-  xx=[xx,-xx];yy=[yy,-yy];zz=[zz,zz];zzcol=[zzcol,zzcol]; 
-  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110,flag=[3,2,0]); 
+  [xx,yy,zzcol]=nf3d(x,y,col);
+  xx=[xx,-xx];yy=[yy,-yy];zz=[zz,zz];zzcol=[zzcol,zzcol];
+  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110,flag=[3,2,0]);
 endfunction
 
 
-function demo_3d_12() 
-  S=[1,-1,-1; 1,1,-1; -1,1,-1; -1,-1,-1; 
+function demo_3d_12()
+  S=[1,-1,-1; 1,1,-1; -1,1,-1; -1,-1,-1;
      1,1,1;-1,1,1; 1,-1,1; -1,-1,1];
 
   function F=faces(i)
@@ -211,14 +369,14 @@ function demo_3d_12()
   //colshade=[colors;colors+1;colors+2;colors+1];
   //plot3d(Fx',Fy',Fz',colors=colshade);
 endfunction
-  
 
-function demo_3d_13() 
-// following a parametric 3d curve 
+
+function demo_3d_13()
+// following a parametric 3d curve
   T=6;
   t=linspace(0,T,40);
   ptc=[sin(t);cos(t);t];
-    
+
   xpol=[];ypol=[];zpol=[];
   for i=1:(size(ptc,'c')-1)
     pt=ptc(:,i);
@@ -227,9 +385,9 @@ function demo_3d_13()
     u= u / sqrt(sum(u.*u))
     // find an orthogonal basis (u,v,w)
     I=find(u==0.0);
-    if ~isempty(I) then 
+    if ~isempty(I) then
       v=0*u;v(I(1))=1;
-    else 
+    else
       v=[u(2);-u(1);0];
       v= v / sqrt(sum(v.*v))
     end
@@ -241,7 +399,7 @@ function demo_3d_13()
     alpha=2*%pi*(0:n)/n;
     r=0.3;
     pts=r*v*cos(alpha)+r*w*sin(alpha);
-    if i==1 then 
+    if i==1 then
       ptg=pts+pt*ones(size(alpha));
     else
       ptg=ptd;
@@ -250,11 +408,11 @@ function demo_3d_13()
     xpol=[xpol,[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)]];
     ypol=[ypol,[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)]];
     zpol=[zpol,[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)]];
-  end 
+  end
   plot3d1(xpol,ypol,zpol);
 endfunction
 
-function demo_3d_14() 
+function demo_3d_14()
   t=4*%pi*(0:20)/20;
   ptc=[t.*sin(t);t.*cos(t);0*ones(size(t))];
   xpol=[];ypol=[];zpol=[];
@@ -265,22 +423,22 @@ function demo_3d_14()
     u= u / sqrt(sum(u.*u))
     // trouver un vecteur ds le plan orthogonal
     I=find(u==0.0);
-    if ~isempty(I) then 
+    if ~isempty(I) then
       v=0*u;v(I(1))=1;
-    else 
+    else
       v=[u(2);-u(1);0];
       v= v / sqrt(sum(v.*v))
     end
     w=[u(2)*v(3)-u(3)*v(2);
        -(u(1)*v(3)-u(3)*v(1))
        u(1)*v(2)-u(2)*v(1)];
-    
+
     n=10;
     alpha=2*%pi*(0:n)/n;
     r=t(i);
 
     pts=r*v*cos(alpha)+r*w*sin(alpha);
-    if i==1 then 
+    if i==1 then
       ptg=pts+pt*ones(size(alpha));
     else
       ptg=ptd;
@@ -290,7 +448,7 @@ function demo_3d_14()
     xpol=[xpol,[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)]];
     ypol=[ypol,[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)]];
     zpol=[zpol,[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)]];
-  end 
+  end
   plot3d1(xpol,ypol,zpol);
 endfunction
 
@@ -298,8 +456,9 @@ function demo_3d_15()
   t=%pi*(-10:10)./10;
   box=[-%pi,%pi,-%pi,%pi,-5,1];
   z=sin(t)'*cos(t);
+  xset('colormap',jetcolormap(64));
   contour(t,t,z,4,alpha=35,theta=45,flag=[1,1,0],ebox=box,zlevel=-5);
-  plot3d(t,t,z,alpha=35,theta=45,flag=[2,1,3],ebox=box);
+  plot3d1(t,t,z,alpha=35,theta=45,flag=[2,1,1],ebox=box);
   title=["plot3d and contour "];
   xtitle(title," "," ");
 endfunction
@@ -321,7 +480,7 @@ function demo_3d_16()
 endfunction
 
 function demo_3d_17()
-// this one should be used with opengl 
+// this one should be used with opengl
   t=%pi*(-10:10)./10;
   rect=[-%pi,%pi,-%pi,%pi,-1,1];
   z=sin(t)'*cos(t);
@@ -332,16 +491,11 @@ function demo_3d_17()
 endfunction
 
 function demo_prim_1()
-  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction
   xsetech(frect=[-100,-100,500,600]);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F=get_current_figure();
-    F.draw_latter[];
-  else
-    xset('clipgrf')
-  end
-  // xrects 
+  F=get_current_figure();
+  F.draw_latter[];
+  // xrects
   x=0:40:240;
   boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
   xstring(-50,-5,'xrects');
@@ -351,13 +505,13 @@ function demo_prim_1()
   pats=[0,4,8,12,15,xget("white"),0];
   xstring(-50,20,'xrects');
   xrects(boxes,pats);
-  // xarcs 
+  // xarcs
   boxes=[x;90*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*180*ones(size(x))];
   pats=[0,4,8,12,15,xget("white"),0];
   xstring(-50,75,'xarcs');
   xarcs(arcs,pats);
-  // xarcs 
+  // xarcs
   boxes=[x;135*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*360*ones(size(x))];
   xarcs(arcs);
@@ -368,45 +522,34 @@ function demo_prim_1()
 	 transl(x1,160);transl(x1,200);transl(x1,240)];
   ypols=[y1;y1;y1;y1;y1;y1;y1];
   xfpolys(xpols',ypols');
-  // xfpolys 
+  // xfpolys
   ypols=transl(ypols,60);
   pats=[0,4,8,12,15,xget("white"),0];
   xfpolys(xpols',ypols',pats);
-  // 
+  //
   ypols=transl(ypols,120);
   xpolys(xpols',ypols',1:7);
-  // 
+  //
   ypols=transl(ypols,180);
   xpolys(xpols',ypols',-(1:7));
-  // 
+  //
   xsegs([x;x+30*ones(size(x))],[(360+40)*ones(size(x));(360+70)*ones(size(x))]);
   xinfo("[I.5] xsegs(x,y)");
-  // 
+  //
   xarrows([x;x+30*ones(size(x))],[(360+70)*ones(size(x));(360+100)*ones(size(x))]);
   xinfo(["[I.6] xarrows(x,y)"]);
-  // 
+  //
   x=0:100:200;
   xnumb(x,500*ones(size(x)),[10,20,35],1);
   xnumb(x,550*ones(size(x)),[10,20,35],0);
   xinfo(["[[II.3] xnumb()"]);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F.draw_now[];
-  else
-    xset('clipoff')
-  end
+  F.draw_now[];
 endfunction
 
 function demo_prim_2()
-  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction
   xsetech(frect=[-100,-100,500,600]);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F=get_current_figure();
-    F.draw_latter[];
-  else
-    xset('clipgrf')
-  end
+  F.draw_latter[]; // not mandatory
   xrect(20,120,60,60)
   xfrect(100,120,60,60)
   xarc(20,200,50,70,0,64*(225))
@@ -434,8 +577,9 @@ function demo_prim_2()
   xrect(rect(1),rect(2),rect(3),rect(4));
   xrect(150,460,100,150);
 
-  // to be done with new graphics 
-  if new_graphics() 
+  // to be done with new graphics
+  if new_graphics()
+
   else
     xset('clipping',150,460,100,150);
     x=0:0.2:2*%pi;
@@ -462,14 +606,8 @@ function demo_prim_2()
   xset("font",4,5);
   xstring(0,350,"Scilab");
   xinfo(["[IV.5] Setting font style and size"]);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F.draw_now[];
-  else
-    xset('clipoff')
-  end
+  F.draw_now[];
 endfunction
-
 
 function demo_prim_3()
   xsetech(wrect=[0,0,0.5,0.5],frect=[-5,-5,5,5]);
@@ -480,13 +618,13 @@ function demo_prim_3()
   for k=2:n;  xx=[xx,x*(n-k)]; yy=[yy,y*(n-k)];end;
   c=0:(n-1);
   xfpolys(xx,yy,c);
-  // 
+  //
   xsetech(wrect=[0,0.5,0.5,0.5],frect=[0,0,100,100]);
   x=[0 25 25  0 0]';y=[0 0 25 25 0]';d=25*[1 1 1 1 1]';
   xx=[];yy=[];i=0;
   for k=1:4; for l=1:4 ; i=i+1; xx=[xx,(l-1)*d+x];yy=[yy,y+(k-1)*d]; end;end
   xfpolys(xx,yy,(1:16));
-  // 
+  //
   xsetech(wrect=[0.5,0,0.5,0.5],frect=[0,0,30,10]);
   x=[1 3 3 1 1]';
   y=[0 0 1 1 0]';
@@ -511,242 +649,293 @@ function demo_prim_4()
   xtitle('nsp plot2d','Time','Sin(t)')
 endfunction
 
+
 function demo_anim_1()
-  if new_graphics() then 
-    t=%pi*(-5:5)/5;
-    xset('colormap',jetcolormap(32));
-    P=plot3d1(t,t,sin(t)'*cos(t),alpha = 35,theta = 45);
-    st=5;
-    F=get_current_figure();
-    A=F(1);
-    P=A(1);
-    P.shade = %t;
-    for i=35 : st : 80 do
-      A.theta = 2*i;
-      A.alpha = i;
-      A.invalidate[]; // signal that Axis should be redrawn.
-      F.draw_now[]; // will activate a process_updates
-      xpause(100000,%t)// slow down animation
-    end
-  else
-    t=%pi*(-5:5)/5;
-    plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
-    st=1;
-    for i=35:st:80, // loop on theta angle
-      xclear();
-      plot3d1(t,t,sin(t)'*cos(t),alpha=i,theta=45,flag=[1,2,4])
-      xset("wshow");
-    end
-    for i=45:st:80, //loop on alpha angle
-      xclear()
-      plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=i,flag=[1,2,4])
-      xset("wshow");
-    end
+//
+  xsetech(frect=[-1,-1,1,1]*1.5,fixed=%t,clip=%t,iso=%t,axesflag=0);
+  xset('thickness',2);
+  xarc(-1,1,2,2,0,360*64,color=3,thickness=2);
+  x1=[0;cos(90*%pi/180)];
+  y1=[0;sin(90*%pi/180)];
+  A=xarrows(x1,y1,arsize=0.2,style=1);
+  S=xstring(-0.5,1.2," ",fill=%t,w=1,h=0.25);
+  P=xpoly([],[],color=5);
+  F=get_current_figure[];
+  p=5;
+  realtimeinit(1/p);//sets time unit to 1/p
+  realtime(0);//sets current date to 0
+  N=60;
+  for k=linspace(1,N,5*N);
+    realtime(k);
+    A.x(2)= cos((90-(p*k*360/60))*%pi/180)
+    A.y(2)= sin((90-(p*k*360/60))*%pi/180)
+    S.text=sprintf("T=%5.2f s.",k/p);
+    rk=k/N;
+    P.x=[P.x,rk*A.x(2)];
+    P.y=[P.y,rk*A.y(2)];
+    F.invalidate[];
+    F.process_updates[];
+    xpause(0,%t); // gtk events are managed here
   end
 endfunction
 
 function demo_anim_2()
-  if new_graphics() then 
-    np=10;
-    t=(0:0.1:np)'*%pi;
-    i=1;
-    param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
-	      i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
-    F=get_current_figure();
-    A=F(1);
-    P=A(1);
-    P.Mcolor= 2;
-    for i=1:1:30
-      P.Mcoord(:,3) = i*t/(np*%pi)
-      // P.Mcolor= i;
-      // P.invalidate[]; // A revoir.
-      A.invalidate[];
-      F.draw_now[]; // will activate a process_updates
-      xpause(100000,%t)// slow down animation
-    end
-  else
-    np=10;
-    t=(0:0.1:np)*%pi;
-    for i=1:1:30
-      xclear();
-      param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
-	      i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
-      xset("wshow");
-    end
+// the main circle
+  centeri=[0;1];r=1;
+  C=[centeri(1)-r;centeri(2)+r;2*r;2*r;0;360*64];
+  xsetech(frect=[-1,-0.5,8,2.5],iso=%t);
+  Circ=xarc(C);
+  // a point attached to the main circle
+  thetai=-%pi/2;
+  center1=centeri + [r*cos(thetai);r*sin(thetai)];
+  r1=r/15;
+  C1=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+  Circ1=xfarc(C1,color=5);
+  // keep track of the attached point
+  P=xpoly([],[],color=2);
+  if ~exists('anim') then anim=%t;end
+  Npt=100;
+  // successive positions of the x value of the center
+  xcenters=linspace(0,2*%pi*r,Npt);
+
+  for i=1:size(xcenters,'*');
+    center = centeri + [xcenters(i);0];
+    // the new position of the red circle;
+    theta  = thetai - (xcenters(i)/r);
+    C=[center(1)-r;center(2)+r;2*r;2*r;0;360*64];
+    center1= center + [r*cos(theta);r*sin(theta)];
+    C1=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+    P.x=[P.x,center1(1)];
+    P.y=[P.y,center1(2)];
+    P.invalidate[]; Circ.invalidate[]; Circ1.invalidate[];
+    Circ.x=C(1);Circ.y=C(2);Circ.w=C(3);Circ.h=C(4);
+    Circ1.x=C1(1);Circ1.y=C1(2);Circ1.w=C1(3);Circ1.h=C1(4);
+    Circ.invalidate[]; Circ1.invalidate[];
+    xpause(100000,%t);
   end
 endfunction
 
 function demo_anim_3()
-  if new_graphics() then 
-    t=-%pi:0.3:%pi;
-    i=35;
-    contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[0,2,4])
-    F=get_current_figure();
-    A=F(1);
-    A.box_style = 1;
-    for i=35:80
-      A.theta = 45;  A.alpha = i;
-      A.invalidate[]; // signal that Axis should be redrawn.
-      F.draw_now[]; // will activate a process_updates
-      xpause(10000,%t)// slow down animation
+// HYPOTROCHOÏDE
+  xsetech(frect=[-6,-6,6,6],iso=%t,axesflag=2);
+  // the bigest circle
+  R=5; xarc([-R;+R;2*R;2*R;0;360*64])
+  // the inside circle
+  centeri=[0;1];r=1;
+  c=[centeri(1)-r;centeri(2)+r;2*r;2*r;0;360*64];
+  C0=xarc(c,color=1);
+  // points attached to the main circle
+  thetai=-%pi/2;
+  r1=r/10;
+  rn=[r,r/2,2*r,-2*r];
+  n=size(rn,'*');
+  C=cell(1,n);P=cell(1,n);
+  for k=1:n
+    center1=centeri + rn(k)*[cos(thetai);sin(thetai)];
+    c=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+    C{k}=xfarc(c,color=k+1,background=k+1);
+    P{k}=xpoly([],[],color=k+1);
+  end
+  Pc1=xpoly([],[],color=0);
+  Pc2=xpoly([],[],color=0);
+  Npt=200;
+  L=linspace(0,10*%pi*r,Npt);
+
+  for i=1:size(L,'*');
+    beta= L(i)/R;
+    center = [(R-r)*cos(thetai+beta);(R-r)*sin(thetai+beta)];
+    // the new position of the red circle;
+    theta  = thetai - (L(i)/r);
+    c=[center(1)-r;center(2)+r;2*r;2*r;0;360*64];
+    C0.invalidate[];
+    C0.x=c(1);C0.y=c(2);C0.w=c(3);C0.h=c(4);
+    C0.invalidate[];
+    Pc1.invalidate[];Pc2.invalidate[];
+    Pc1.x = center(1)+2*r*[cos(theta),cos(theta+%pi)];
+    Pc1.y = center(2)+2*r*[sin(theta),sin(theta+%pi)];
+    Pc2.x = center(1)+r*[cos(theta+%pi/2),cos(theta+3*%pi/2)];
+    Pc2.y = center(2)+r*[sin(theta+%pi/2),sin(theta+3*%pi/2)];
+    Pc1.invalidate[];Pc2.invalidate[];
+    //
+    for k=1:n
+      center1= center + rn(k)*[cos(theta);sin(theta)];
+      P{k}.x=[P{k}.x,center1(1)];P{k}.y=[P{k}.y,center1(2)];
+      c=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+      C{k}.invalidate[];
+      C{k}.x=c(1);C{k}.y=c(2);C{k}.w=c(3);C{k}.h=c(4);
+      C{k}.invalidate[];
     end
-    for i=45:80,
-      A.theta = i;  A.alpha = 80;
-      A.invalidate[]; // signal that Axis should be redrawn.
-      F.draw_now[]; // will activate a process_updates
-      xpause(10000,%t)// slow down animation
-    end
-  else
-    t=-%pi:0.3:%pi;
-    for i=35:80,
-      xclear();
-      contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[1,2,4])
-      xset("wshow");
-    end
-    for i=45:80,
-      xclear();
-      contour(t,t,sin(t)'*cos(t),10,alpha=80,theta=i,flag=[1,2,4])
-      xset("wshow");
-    end
+    xpause(100000,%t);
   end
 endfunction
 
 function demo_anim_4()
-  if new_graphics() then 
-    t=%pi*(-1:0.1:1);
-    I=20:-1:1;
-    ebox=[min(t),max(t),min(t),max(t),-1,1];
-    i=1;
-    plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
-    F=get_current_figure();
-    A=F(1);
-    for i=1:size(I,'*')
-      F.children.remove_first[];
-      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
-      A.invalidate[]; // signal that Axis should be redrawn.
-      F.draw_now[]; // will activate a process_updates
-      xpause(100000,%t)// slow down animation
-    end
-  else
-    t=%pi*(-1:0.1:1);
-    I=20:-1:1;
-    ebox=[min(t),max(t),min(t),max(t),-1,1];
-    //realtimeinit(0.1)
-    for i=1:size(I,'*')
-      //realtime(i)
-      xclear();
-      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
-      xset("wshow");
-    end
+//
+  xsetech(frect=[-6,-6,6,6],iso=%t,axesflag=2);
+  // the main circle
+  centeri=[0;1];r=1;
+  c=[centeri(1)-r;centeri(2)+r;2*r;2*r;0;360*64];
+  C0=xarc(c,color=1);
+  // points attached to the main circle
+  thetai=-%pi/2;
+  r1=r/10;
+  center1=centeri + 2*r*[cos(thetai);sin(thetai)];
+  c=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+  C=xfarc(c,color=1,background=1);
+  P=xpoly([],[],color=5);
+  Pc1=xpoly([],[],color=0);
+  Pc2=xpoly([],[],color=0);
+  Npt=200;
+  // the bigest circle
+  R=5; xarc([-R;+R;2*R;2*R;0;360*64])
+  L=linspace(0,10*%pi*r,Npt);
+
+  for i=1:size(L,'*');
+    ri=2*r*sin(L(i)).^2;
+    beta= L(i)/R;
+    center = [(R-r)*cos(thetai+beta);(R-r)*sin(thetai+beta)];
+    // the new position of the red circle;
+    theta  = thetai - (L(i)/r);
+    c=[center(1)-r;center(2)+r;2*r;2*r;0;360*64];
+    C0.invalidate[];
+    C0.x=c(1);C0.y=c(2);C0.w=c(3);C0.h=c(4);
+    C0.invalidate[];
+    Pc1.invalidate[];Pc2.invalidate[];
+    Pc1.x = center(1)+ri*[cos(theta),cos(theta+%pi)];
+    Pc1.y = center(2)+ri*[sin(theta),sin(theta+%pi)];
+    Pc2.x = center(1)+r*[cos(theta+%pi/2),cos(theta+3*%pi/2)];
+    Pc2.y = center(2)+r*[sin(theta+%pi/2),sin(theta+3*%pi/2)];
+    Pc1.invalidate[];Pc2.invalidate[];
+    center1= center + ri*[cos(theta);sin(theta)];
+    P.x=[P.x,center1(1)];P.y=[P.y,center1(2)];
+    c=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
+    C.invalidate[];
+    C.x=c(1);C.y=c(2);C.w=c(3);C.h=c(4);
+    C.invalidate[];
+    xpause(100000,%t);
   end
-endfunction 
+endfunction
 
 function demo_anim_5()
-  t=%pi*(-5:5)/5;
-  plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
-  alpha=35 + (0:2:60)
-  theta=45 + (0:2:60)
-  if new_graphics() then
-    F=get_current_figure();
-    A=F(1);
-    for i=1:size(alpha,'*')
-      F.children(1).alpha = alpha(i);
-      F.children(1).theta = theta(i);
-      A.invalidate[];
-      F.draw_now[];
-      xpause(100000,%t)// slow down animation
-    end
-  else
-    w=xget('window')
-    for i=1:size(alpha,'*')
-      xclear(w,%f);// clear but keep recorded graphics 
-    xtape('replayna',w,theta(i),alpha(i));
-    xset("wshow");
-    end
+  a=ones_new(60,60);
+  plot2d([0,10],[0,10],style = 0);
+  F=get_current_figure();
+  i=-60;
+  b=3*tril(a,i)+2*triu(a,i+1);
+  M= Matplot1(b,[4,4,9,9]);
+  M1= Matplot1(b,[1,1,3,3]);
+  xset('wshow'); // force expose_events
+  for i=-60:60 do
+    b=3*tril(a,i)+2*triu(a,i+1);
+    M.data = b;
+    M.invalidate[];
+    M.translate[-[0,0.02]];
+    b=3*triu(a,i)+2*tril(a,i+1);
+    M1.data = b;
+    M1.translate[+[0,0.02]];
+    M1.invalidate[];
+    xpause(10000,events=%t);
   end
 endfunction
 
 function demo_anim_6()
-  a=ones_new(60,60);
-  if new_graphics() then
-    xclear();
-    plot2d([0,10],[0,10],style = 0);
-    F=get_current_figure();
-    i=-60;
-    b=3*tril(a,i)+2*triu(a,i+1);
-    M= Matplot1(b,[4,4,9,9]);
-    M1= Matplot1(b,[1,1,3,3]);
-    xset('wshow'); // force expose_events 
-    for i=-60:60 do
-      b=3*tril(a,i)+2*triu(a,i+1);
-      M.data = b;
-      M.invalidate[];
-      M.translate[-[0,0.01]];
-      b=3*triu(a,i)+2*tril(a,i+1);
-      M1.data = b;
-      M1.invalidate[];
-      xset('wshow'); // force expose_events 
-      //xpause(10,events=%t);
-    end
-  else
-    for i=-60:60 do
-      b=3*tril(a,i)+2*triu(a,i+1);
-      xclear();
-      plot2d([0,10],[0,10],style = 0);
-      Matplot1(b,[4,4,9,9]);
-      xset("wshow");
-    end
+  t=%pi*(-1:0.1:1);
+  I=20:-1:1;
+  ebox=[min(t),max(t),min(t),max(t),-1,1];
+  i=1;
+  xset('colormap',jetcolormap(32));
+  plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
+  F=get_current_figure();
+  A=F(1);
+  for i=1:size(I,'*')
+    F.children.remove_first[];
+    plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
+    A.invalidate[]; // signal that Axis should be redrawn.
+    // F.draw_now[]; // will activate a process_updates
+    xpause(100000,%t)// slow down animation
   end
 endfunction
 
-function demo_anim_7_other()
-  x=%pi*(-1:0.1:1);y=x;
-  i=1;
-  champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y));
-  F=get_current_figure();
-  for i=1:50
-    // removing and changing a graphic object is 
-    // better than xclear for smooth animation 
-    // because process_updates is not called 
-    // xclear();
-    F(1).children.remove_first[];
-    C=champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),...
-	     rect=[-%pi,-%pi,%pi,%pi],arfact=3)
-    C.invalidate[];
-    F.process_updates[];
-  end
-endfunction
 
 function demo_anim_7()
-  if new_graphics() then 
-    x=%pi*(-1:0.1:1);y=x;
-    M=x'*y;
-    i=1;
-    xset('thickness',2.0);
-    xset('colormap',jetcolormap(64));
-    C=champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y));
-    F=get_current_figure();
-    for i=1:50
-      C.fx = sin((i/10)+M).*M;
-      C.fy = cos((i/10)+M).*M;
-      C.invalidate[];
-      F.process_updates[];
-    end
-  else
-    x=%pi*(-1:0.1:1);y=x;
-    // xset('thickness',2.0);
-    for i=1:50
-      xclear();
-      champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),...
-	     rect=[-%pi,-%pi,%pi,%pi],arfact=3)
-      xset('wshow');
-    end
+  t=%pi*(-5:5)/5;
+  xset('colormap',jetcolormap(32));
+  P=plot3d1(t,t,sin(t)'*cos(t),alpha = 35,theta = 45);
+  st=5;
+  F=get_current_figure();
+  A=F(1);
+  P=A(1);
+  P.shade = %t;
+  for i=35 : st : 80 do
+    A.theta = 2*i;
+    A.alpha = i;
+    A.invalidate[]; // signal that Axis should be redrawn.
+    xpause(100000,%t)// slow down animation
   end
 endfunction
 
+function demo_anim_8()
+  x=%pi*(-1:0.1:1);y=x;
+  M=x'*y;
+  i=1;
+  // xset('thickness',2.0);
+  xset('colormap',jetcolormap(64));
+  C=champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y));
+  F=get_current_figure();
+  for i=1:100
+    C.fx = sin((i/10)+M).*M;
+    C.fy = cos((i/10)+M).*M;
+    C.invalidate[];
+    // F.process_updates[];
+    xpause(10000,events=%t);
+  end
+endfunction
+
+function demo_anim_9()
+  np=10;
+  t=(0:0.1:np)'*%pi;
+  i=1;
+  param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
+	  i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
+  F=get_current_figure();
+  A=F(1);
+  P=A(1);
+  P.Mcolor= 2;
+  for i=1:1:30
+    P.Mcoord(:,3) = i*t/(np*%pi)
+    P.Mcolor= 2;
+    P.invalidate[];
+    A.invalidate[];
+    // F.draw_now[]; // will activate a process_updates
+    xpause(100000,%t)// slow down animation
+  end
+endfunction
+
+function demo_anim_10()
+  t=-%pi:0.3:%pi;
+  i=35;
+  contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[0,2,4])
+  F=get_current_figure();
+  A=F(1);
+  A.box_style = 1;
+  for i=35:80
+    A.theta = 45;  A.alpha = i;
+    A.invalidate[]; // signal that Axis should be redrawn.
+    F.draw_now[]; // will activate a process_updates
+    xpause(10000,%t)// slow down animation
+  end
+  for i=45:80,
+    A.theta = i;  A.alpha = 80;
+    A.invalidate[]; // signal that Axis should be redrawn.
+    F.draw_now[]; // will activate a process_updates
+    xpause(10000,%t)// slow down animation
+  end
+endfunction
+
+
 function demo_contour_1()
-  // xset('colormap',hotcolormap(20)) 
-  xset('colormap',jetcolormap(20)) 
+// xset('colormap',hotcolormap(20))
+  xset('colormap',jetcolormap(20))
   t=-%pi:0.1:%pi;m=exp(sin(t))'*exp(cos(t));
   xsetech(wrect=[0,0,0.5,0.5])
   xtitle('grayplot default');
@@ -765,15 +954,15 @@ endfunction
 function demo_contour_2()
   xset('colormap',hotcolormap(20))
   N=4;
-  // build the nodes 
+  // build the nodes
   i=linspace(0,2*%pi,N+1); i($)=[];
   xn=[cos(i)';0];
   yn=[sin(i)';0];
   Nnodes=N+1;
-  // values at nodes 
+  // values at nodes
   val=ones_new(Nnodes,1);
   val($)=0;
-  // build the triangles 
+  // build the triangles
   Ntriang=N;
   triangles_nodes=[1:N;[(1:N-1)+1,1];(N+1)*ones_new(1,N)];
   triangles=[(1:N);triangles_nodes;zeros_new(1,N)]';
@@ -791,7 +980,7 @@ function demo_contour_2()
   xsetech(wrect=[0.5,0.5,0.5,0.5])
   xtitle('fec zminmax,colout=[1,1] and mesh=%t');
   fec(xn,yn,triangles,val,strf="032",
-      rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
+  rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
 endfunction
 
 function demo_contour_3()
@@ -807,19 +996,19 @@ function demo_contour_4()
 endfunction
 
 function demo_contour_5()
- function z=f(x,y)
-  z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
-       0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
- endfunction
+  function z=f(x,y)
+    z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
+    0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
+  endfunction
 
- x=-4:0.1:3;y=x;
- z=eval3d(f,x,y);
- m=30;
- xset('colormap',hotcolormap(m));
- xset('fpf',' ');
- contourf(x,y,z,nv=m,style=0*ones_new(1,m))
- //xset('fpf','');
- //contourf(x,y,z,nv=m);
+  x=-4:0.1:3;y=x;
+  z=eval3d(f,x,y);
+  m=30;
+  xset('colormap',hotcolormap(m));
+  xset('fpf',' ');
+  contourf(x,y,z,nv=m,style=0*ones_new(1,m))
+  //xset('fpf','');
+  //contourf(x,y,z,nv=m);
 endfunction
 
 function demo_contour_6()
@@ -837,71 +1026,49 @@ endfunction
 
 function demo_prim_new_rects()
   xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F=get_current_figure();
-    F.draw_latter[];
-  else
-    xset('clipgrf')
-  end
-  // xrects 
+  F=get_current_figure();
+  F.draw_latter[];
+  // xrects
   x=0:40:240;
   boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
-  // only draw with current color 
+  // only draw with current color
   xrects(boxes);
   // xrects(rect,colors)
   boxes=[x;45*ones(size(x));30*ones(size(x));30*ones(size(x))];
   pats=[0,4,8,12,15,xget("white"),0];
   xrects(boxes,pats);
-  // 
+  //
   boxes=[x;80*ones(size(x));30*ones(size(x));30*ones(size(x))];
   xrects(boxes,color=1:7,thickness=5*ones(1,7),background=8:8+6);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F.draw_now[];
-  end
+  F.draw_now[];
 endfunction
-
 
 function demo_prim_new_arcs()
   xsetech(frect=[-100,-100,500,600]);// ,fixed=%t);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F=get_current_figure();
-    F.draw_latter[];
-  else
-    xset('clipgrf')
-  end
-  // xrects 
+  F=get_current_figure();
+  F.draw_latter[];
+  // xrects
   x=0:40:200;
-  // xarcs 
+  // xarcs
   boxes=[x;90*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
   pats=[4,9,12,15,xget("white"),0];
   xfarcs(arcs,pats);
-  // xarcs 
+  // xarcs
   boxes=[x;130*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
   xarcs(arcs);
   boxes=[x;170*ones(size(x));30*ones(size(x));30*ones(size(x))];
   arcs=[boxes; 0*ones(size(x));64*linspace(0,360,6)];
   xarcs(arcs,color=1:6,thickness=4*ones(1,6),background=8:8+5);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F.draw_now[];
-  end
+  F.draw_now[];
 endfunction
 
 function demo_prim_new_xpolys()
-  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction 
+  function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction
   xsetech(frect=[-100,-100,500,600]);
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F=get_current_figure();
-    F.draw_latter[];
-  else
-    xset('clipgrf')
-  end
+  F=get_current_figure();
+  F.draw_latter[];
   // xfpolys
   x1=[0,10,20,30,20,10,0];
   y1=[15,30,30,15,0,0,15];y1=160*ones(size(y1))+y1;
@@ -910,18 +1077,15 @@ function demo_prim_new_xpolys()
 	 transl(x1,160);transl(x1,200);transl(x1,240)];
   ypols=[y1;y1;y1;y1;y1;y1;y1];
   xfpolys(xpols',ypols');
-  // xfpolys 
+  // xfpolys
   ypols=transl(ypols,60);
   pats=[0,4,8,12,15,xget("white"),0];
   xfpolys(xpols',ypols',pats);
-  // 
+  //
   ypols=transl(ypols,120);
   xpolys(xpols',ypols',1:7);
-  // 
+  //
   ypols=transl(ypols,180);
   xpolys(xpols',ypols',-(1:7));
-  if new_graphics() then 
-    // clipgrf is activated by default on Figures 
-    F.draw_now[];
-  end
+  F.draw_now[];
 endfunction
