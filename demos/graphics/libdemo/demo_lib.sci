@@ -463,6 +463,8 @@ function demo_3d_15()
   xtitle(title," "," ");
 endfunction
 
+// demo_3d_16: Copyright CECILL (from scilab).
+
 function demo_3d_16()
   subplot(2,2,1,a3d=%t);
   function hole3d()
