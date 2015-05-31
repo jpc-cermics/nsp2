@@ -1,5 +1,4 @@
 % -*- mode: latex -*-
-
 \mansection{length, numel}
 \begin{mandesc}
   \short{length}{length of object} \\
@@ -8,8 +7,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-n = length(M)   
-nel = numel(M)   
+n = length(M)
+nel = numel(M)
 \end{verbatim}
 \end{calling_sequence}
 
@@ -19,16 +18,22 @@ nel = numel(M)
     \vname{M}: an object.
     \vname{n}: integer or integer matrix
     \vname{nel}: integer
+    \vname{mode}: an optional string argument which can be \verb!'bytes'! or \verb!'utf8'!
+    (default value is \verb!'bytes'!). It is used when \verb!M! is a string matrix.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
 \begin{itemize}
-  \item \verb!length(M)! is equal to \verb!size(M,'*')!, the number of entries of \verb!M! for all matrices 
+  \item \verb!length(M)! is equal to \verb!size(M,'*')!, the number of entries of \verb!M! for all matrices
     or for cells {\bf except} string matrices.
-  \item If \verb+M+ is a string matrix \verb+n=length(M)+ returns in a  numerical matrix of same size 
-    as \verb+M+ the length (\verb+strlen+) of each entries of \verb+M+. i.e, if \verb+L=length(M)+, 
+  \item If \verb+M+ is a string matrix \verb+n=length(M)+ returns in a  numerical matrix of same size
+    as \verb+M+ the length (\verb+strlen+) of each entries of \verb+M+. i.e, if \verb+L=length(M)+,
     \verb+n(i,j)+ is the length of string \verb+M(i,j)+.
+
+    The length of a string is counted in bytes or in utf8 characters accoding
+    to the optional \verb!mode! value.
+
   \item If \verb+M+ is a list, \verb+length+ returns as \verb+size+ the length of list \verb+M+.
   \item If \verb+M+ is a hash table \verb+length+ returns the number of entries in the hash table.
   \item \verb!numel(M)! is the same than \verb!length(M)! without the exception of string matrices, that
@@ -38,20 +43,20 @@ nel = numel(M)
 
 \begin{examples}
 \begin{Verbatim}
-// for matrices of strings length and numel are different: 
+// for matrices of strings length and numel are different:
 S = string(rand(3,4))
 length(S)
 numel(S)
 
 // for other objects, length and numel behave identically:
-L = list(1,2); L(5)=78; 
+L = list(1,2); L(5)=78;
 length(L)
 numel(L)
 
 A = rand(5,7);
 length(A)
 numel(A)
-    
+
 H = hash_create(A=9,B=%t);
 length(H)
 numel(H)
@@ -60,6 +65,5 @@ numel(H)
 
 % -- see also
 \begin{manseealso}
-  \manlink{size}{size}  
+  \manlink{size}{size}
 \end{manseealso}
-

@@ -7,7 +7,7 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-B=strstr(A,str)
+B=strstr(A,str,mode="bytes"|"utf8");
 \end{verbatim}
 \end{calling_sequence}
 
@@ -17,20 +17,25 @@ B=strstr(A,str)
     \vname{A}: a string matrix.
     \vname{str}: a string.
     \vname{B}: a matrix of indices of same size as \verb+A+.
+    \vname{mode}: an optional string argument which can be \verb!'bytes'! or \verb!'utf8'!
+    (default value is \verb!'bytes'!).
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  returns in \verb+B(i,j)+, the position of the first occurence 
-  of string \verb+str+ in string \verb+A(i,j)+ or zero if \verb+str+ 
+  returns in \verb+B(i,j)+, the position of the first occurence
+  of string \verb+str+ in string \verb+A(i,j)+ or zero if \verb+str+
   is not a substring of \verb+A(i,j)+.
+
+  The \verb!k!-th character of a string is counted in bytes or in utf8 characters accoding
+  to the \verb!mode! value.
 \end{mandescription}
 
 % -- see also
 \begin{manseealso}
-  \manlink{regexp}{regexp}, \manlink{strindex}{strindex}  
+  \manlink{regexp}{regexp}, \manlink{strindex}{strindex}
 \end{manseealso}
 
 \begin{manseealso}
-  \manlink{Smat}{Smat}  
+  \manlink{Smat}{Smat}
 \end{manseealso}
