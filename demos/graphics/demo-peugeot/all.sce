@@ -16,7 +16,7 @@ exec('capabilite_code.sci');xset('wshow');xclick()
 xclear()
 exec('diag_effets.sci');xset('wshow');xclick()
 xclear()
-exec('nuages_code.sci');xset('wshow');xclick()
+//exec('nuages_code.sci');xset('wshow');xclick()
 xclear()
 exec('plusieurs.sci');xset('wshow');xclick()
 xclear()
@@ -24,7 +24,7 @@ exec('pareto_code.sci');xset('wshow');xclick()
 xclear()
 exec('isovar_code.sci');xset('wshow');xclick()
 
-// anova 
-// chi2 
-// norm 
-// 
+// anova
+// chi2
+// norm
+//
