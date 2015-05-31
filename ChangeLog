@@ -1,3 +1,9 @@
+2015-05-31  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* new_graphics is now the default
+	* the class generator is now in ocaml (src/nspbind)
+	* many other changes since last change log entry.
+
 2012-01-08  Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* add glpk interface (linprog function).
@@ -308,6 +314,3 @@
 	of lapack based function (qr,svd,inv,...)
 	and their interfaces. This is unfinished and
 	not fully tested.
-
-
-
