@@ -17,48 +17,38 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h> /* isxxxx */
+#include <nsp/nsp.h>
 
-#define SMatrix_Private 
-#include <nsp/object.h> 
-#include <nsp/matrix.h> 
-#include <nsp/bmatrix.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/imatrix.h> 
-#include <nsp/matint.h> 
-#include <nsp/hobj.h> 
-#include <nsp/file.h> 
-#include <nsp/type.h> 
+#define SMatrix_Private
+#include <nsp/objects.h>
+#include <nsp/matint.h>
+#include <nsp/hobj.h>
 
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/smatrix-in.h"
-#include "nsp/datas.h"
-#include "nsp/gsort-p.h"
+#include <nsp/pr-output.h>
+#include <nsp/matutil.h>
+#include <nsp/smatrix-in.h>
+#include <nsp/datas.h>
+#include <nsp/gsort-p.h>
 
 static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs);
 
 /**
  * SECTION:smatrix
- * @title: NspSMatrix 
+ * @title: NspSMatrix
  * @short_description: An object used to implement string matrices.
- * @see_also: 
+ * @see_also:
  *
  * <para>
- * A #NspSMatrix is used to represent a string matrix. 
- * It can be filled with strings and string pointers are stored 
- * in a one dimensionnal array (column order). It implements the 
- * matint interface which is used for generic matrice operations. 
+ * A #NspSMatrix is used to represent a string matrix.
+ * It can be filled with strings and string pointers are stored
+ * in a one dimensionnal array (column order). It implements the
+ * matint interface which is used for generic matrice operations.
  * </para>
  **/
 
 /*
- * NspSMatrix inherits from NspObject 
+ * NspSMatrix inherits from NspObject
  */
 
 int nsp_type_smatrix_id=0;
@@ -83,67 +73,67 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
   type->attrs = NULL; /* smatrix_attrs ; */
-  type->get_attrs = (attrs_func *) int_get_attribute; 
-  type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods =  smatrix_get_methods; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods =  smatrix_get_methods;
   type->gtk_methods = FALSE;
   type->new = (new_func *) new_smatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for smatrix */ 
+  /* object methods redefined for smatrix */
 
-  top->pr = (print_func *)nsp_smatrix_print;                    /* printing*/   
-  top->dealloc = (dealloc_func *)nsp_smatrix_destroy;           /* dealloc */  
-  top->copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */  
-  top->size  = (size_func *)nsp_smatrix_size;                   /* m,n or m*n  */  
-  top->s_type =  (s_type_func *)nsp_smatrix_type_as_string;     /* type as a String */  
-  top->sh_type = (sh_type_func *)nsp_smatrix_type_short_string; /* type as a short string */  
-  top->info = (info_func *)nsp_smatrix_info;                    /* info */  
-  top->is_true = (is_true_func  *)nsp_smatrix_is_true;          /* check if object can be considered as true */  
-  top->loop =(loop_func *)nsp_smatrix_loop_extract;             /* for loops */  
-  top->path_extract =  NULL;                                    /* used for x(1)(2)(...) */  
-  top->get_from_obj = (get_from_obj_func *)nsp_smatrix_object;  /* get object stored in SciObj */  
-  top->eq  = (eq_func *)nsp_smatrix_eq;                         /* equality check */  
+  top->pr = (print_func *)nsp_smatrix_print;                    /* printing*/
+  top->dealloc = (dealloc_func *)nsp_smatrix_destroy;           /* dealloc */
+  top->copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */
+  top->size  = (size_func *)nsp_smatrix_size;                   /* m,n or m*n  */
+  top->s_type =  (s_type_func *)nsp_smatrix_type_as_string;     /* type as a String */
+  top->sh_type = (sh_type_func *)nsp_smatrix_type_short_string; /* type as a short string */
+  top->info = (info_func *)nsp_smatrix_info;                    /* info */
+  top->is_true = (is_true_func  *)nsp_smatrix_is_true;          /* check if object can be considered as true */
+  top->loop =(loop_func *)nsp_smatrix_loop_extract;             /* for loops */
+  top->path_extract =  NULL;                                    /* used for x(1)(2)(...) */
+  top->get_from_obj = (get_from_obj_func *)nsp_smatrix_object;  /* get object stored in SciObj */
+  top->eq  = (eq_func *)nsp_smatrix_eq;                         /* equality check */
   top->neq  = (eq_func *)nsp_smatrix_neq;                       /* non-equality check */
 
   top->save  = (save_func *)nsp_smatrix_xdr_save;
   top->load  = (load_func *)nsp_smatrix_xdr_load;
-  top->create = (create_func*) int_smatrix_create; 
+  top->create = (create_func*) int_smatrix_create;
   top->latex = (print_func *) nsp_smatrix_latex_print;
-  top->full_copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */  
+  top->full_copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */
 
   /* specific methods for smatrix */
   type->init = (init_func *) init_smatrix;
-  /* 
-   * interfaces can be added here 
+  /*
+   * interfaces can be added here
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
 
   /*
-   * Matrix implements Matint the matrix interface 
+   * Matrix implements Matint the matrix interface
    * which is common to object that behaves like matrices.
    */
 
   mati = new_type_matint(T_DERIVED);
-  mati->methods = matint_get_methods; 
+  mati->methods = matint_get_methods;
   /* mati->redim = (matint_redim *) nsp_smatrix_redim; use default value */
-  mati->resize = (matint_resize  *) nsp_smatrix_resize; 
+  mati->resize = (matint_resize  *) nsp_smatrix_resize;
   mati->free_elt = (matint_free_elt *) nsp_string_destroy;
   mati->elt_size = (matint_elt_size *) nsp_smatrix_elt_size ;
   mati->clone = (matint_clone *) nsp_smatrix_clone;
-  mati->copy_elt = (matint_copy_elt *) nsp_string_copy; 
+  mati->copy_elt = (matint_copy_elt *) nsp_string_copy;
   mati->enlarge = (matint_enlarge *) nsp_smatrix_enlarge;
   mati->canonic =  nsp_matint_canonic;
   mati->copy_ind = nsp_matint_basic_copy_pointer;
   type->interface = (NspTypeBase *) mati;
 
-  if ( nsp_type_smatrix_id == 0 ) 
+  if ( nsp_type_smatrix_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeMatrix called nsp_type_smatrix
        */
@@ -152,7 +142,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
       if ( nsp_register_type(nsp_type_smatrix) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_smatrix(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_smatrix_id;
       return type;
@@ -161,27 +151,27 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
 }
 
 /*
- * initialize Smatrix instances 
- * locally and by calling initializer on parent class 
+ * initialize Smatrix instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_smatrix(NspSMatrix *o,NspTypeSMatrix *type)
 {
-  /* to be done always */ 
+  /* to be done always */
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
+  o->type = type;
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
 
 /*
- * new instance of Smatrix 
+ * new instance of Smatrix
  */
 
-NspSMatrix *new_smatrix() 
+NspSMatrix *new_smatrix()
 {
-  NspSMatrix *loc; 
+  NspSMatrix *loc;
   /* type must exists */
   nsp_type_smatrix = new_type_smatrix(T_BASE);
   if ( (loc = malloc(sizeof(NspSMatrix)))== NULLSMAT) return loc;
@@ -192,12 +182,12 @@ NspSMatrix *new_smatrix()
 
 
 /*
- * MatSize : returns m,n,or m*n 
+ * MatSize : returns m,n,or m*n
  */
 
 int nsp_smatrix_size(NspSMatrix*Mat, int flag)
 {
-  switch (flag) 
+  switch (flag)
     {
     case 0: return Mat->mn;
     case 1: return Mat->m;
@@ -207,7 +197,7 @@ int nsp_smatrix_size(NspSMatrix*Mat, int flag)
 }
 
 /*
- * MatType 
+ * MatType
  */
 
 static char smat_type_name[]="SMat";
@@ -226,7 +216,7 @@ char *nsp_smatrix_type_short_string(NspObject *v)
 NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep)
 {
   NspSMatrix *M= (NspSMatrix *) O1,*M1=NULLSMAT;
-  if ( O == NULLOBJ ) 
+  if ( O == NULLOBJ )
     {
       if (( M1= SMatLoopCol(str,NULLSMAT,M,i,rep))==NULLSMAT) return NULLOBJ;
       if (( *rep == RET_ENDFOR )) return NULLOBJ;
@@ -245,7 +235,7 @@ int nsp_smatrix_eq(NspObject *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_smatrix_id) == FALSE) return FALSE ;
-  if ( ! ( ((NspSMatrix *) A)->m == ((NspSMatrix *) B)->m 
+  if ( ! ( ((NspSMatrix *) A)->m == ((NspSMatrix *) B)->m
 	   && ((NspSMatrix *) A)->n == ((NspSMatrix *) B)->n)) return FALSE;
   rep = SMatFullComp((NspSMatrix *)A, (NspSMatrix *) B, "==", &err);
   if (err == TRUE)
@@ -260,7 +250,7 @@ int nsp_smatrix_neq(NspObject *A, NspObject *B)
 }
 
 /*
- * SMat == TRUE ? 
+ * SMat == TRUE ?
  * if Mat != [] and all the elements of Mat are != ""
  */
 
@@ -268,14 +258,14 @@ int nsp_smatrix_is_true(NspSMatrix *M)
 {
   int i;
   if ( M->mn == 0) return FALSE;
-  for ( i = 0 ; i < M->mn ; i++ ) 
+  for ( i = 0 ; i < M->mn ; i++ )
     if ( strcmp(M->S[i],"") == 0) return FALSE;
   return TRUE;
 }
 
 
 /*
- * Save a String matrix NspSMatrix 
+ * Save a String matrix NspSMatrix
  */
 
 const int BUF_LEN=1024;
@@ -283,19 +273,19 @@ const int BUF_LEN=1024;
 int nsp_smatrix_xdr_save(XDR *xdrs, NspSMatrix *M)
 {
   int i;
-#if 1 
+#if 1
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_smatrix)) == FAIL) return FAIL;
 #else
   if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
-#endif 
+#endif
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->m) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
-  for ( i= 0 ; i < M->mn ; i++) 
+  for ( i= 0 ; i < M->mn ; i++)
     {
-      if (0 &&  strlen(M->S[i]) > BUF_LEN ) 
-	{ 
+      if (0 &&  strlen(M->S[i]) > BUF_LEN )
+	{
 	  Scierror("XXX Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return FAIL;
 	}
@@ -305,7 +295,7 @@ int nsp_smatrix_xdr_save(XDR *xdrs, NspSMatrix *M)
 }
 
 /*
- * Load a NspSMatrix 
+ * Load a NspSMatrix
  */
 
 NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
@@ -321,16 +311,16 @@ NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < m*n ; i++ )
     {
-#if 0 
+#if 0
       char s_buf[BUF_LEN+1];
-      if (nsp_xdr_load_string(xdrs,s_buf,BUF_LEN)== FAIL) 
+      if (nsp_xdr_load_string(xdrs,s_buf,BUF_LEN)== FAIL)
 	{
 	  Scierror("Warning: Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return NULLSMAT;
 	}
       if ((M->S[i] =nsp_string_copy(s_buf)) == NULLSTRING ) return(NULLSMAT);
-#else 
-      if (nsp_xdr_load_new_string(xdrs,&M->S[i]) == FAIL) 
+#else
+      if (nsp_xdr_load_new_string(xdrs,&M->S[i]) == FAIL)
 	return NULLSMAT;
 #endif
     }
@@ -340,7 +330,7 @@ NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
 
 /*
  * A =nsp_smatrix_object(O);
- * checks that O is an object of NspSMatrix type. 
+ * checks that O is an object of NspSMatrix type.
  * or a Hobj which points to an object of type SMatrix
  * if so, returns a pointer to that NspSMatrix and else returns NULL
  */
@@ -351,7 +341,7 @@ NspSMatrix   *nsp_smatrix_object(NspObject *O)
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_smatrix_id) == TRUE) return ((NspSMatrix *) O);
-  else 
+  else
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_smatrix));
   return(NULL);
 }
@@ -359,7 +349,7 @@ NspSMatrix   *nsp_smatrix_object(NspObject *O)
 /*
  * A =nsp_string_object(O);
  * checks that O is an object of type NspSMatrix (1x1)
- * or a Hobj which points to an object of type NspSMatrix 
+ * or a Hobj which points to an object of type NspSMatrix
  *    if so, returns a pointer to that Matrix and else returns
  *    NULL
  */
@@ -369,18 +359,18 @@ char *nsp_string_object(NspObject *O)
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
-  if ( check_cast(O,nsp_type_smatrix_id) == TRUE 
+  if ( check_cast(O,nsp_type_smatrix_id) == TRUE
        && ((NspSMatrix *) O)->mn == 1 )
     return ((NspSMatrix *) O)->S[0];
-  else 
+  else
     Scierror("Error:\tArgument should be a string \n");
   return(NULL);
 }
 
 /*
  * IsSMatObj(stack,i)
- * only checks that object at position 
- * first + i -1  is an object of type  SMatrix 
+ * only checks that object at position
+ * first + i -1  is an object of type  SMatrix
  * or a Hobj which points to an object of type SMatrix
  */
 
@@ -391,7 +381,7 @@ int IsSMatObj(Stack stack, int i)
 
 /*
  * IsSMat(O)
- * only checks that object is an object of type  SMatrix 
+ * only checks that object is an object of type  SMatrix
  * or a Hobj which points to an object of type SMatrix
  */
 
@@ -405,24 +395,24 @@ int IsString(const NspObject *O)
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,FALSE);
   /* Check type **/
-  if ( check_cast(O,nsp_type_smatrix_id ) == TRUE  
-       && ((NspSMatrix *)O)->mn == 1) 
+  if ( check_cast(O,nsp_type_smatrix_id ) == TRUE
+       && ((NspSMatrix *)O)->mn == 1)
     return TRUE;
-  else 
+  else
     return FALSE;
 }
 
 /**
  * GetSMatCopy:
- * @stack: calling stack 
- * @i: an integer 
- * 
- * Checks that object @i on the stack 
- * is a #NspSMatrix and returns that #NspSMatrix  
- * or a copy of that #NspSMatrix if its name 
- * is not NVOID 
- * 
- * Returns: a #NspMatrix 
+ * @stack: calling stack
+ * @i: an integer
+ *
+ * Checks that object @i on the stack
+ * is a #NspSMatrix and returns that #NspSMatrix
+ * or a copy of that #NspSMatrix if its name
+ * is not NVOID
+ *
+ * Returns: a #NspMatrix
  **/
 
 NspSMatrix*GetSMatCopy(Stack stack, int i)
@@ -433,13 +423,13 @@ NspSMatrix*GetSMatCopy(Stack stack, int i)
 
 /**
  * GetSMat:
- * @stack: calling stack 
- * @i: an integer 
- * 
- * Checks that first+i object on the stack 
- * is a NspSMatrix and returns that NspSMatrix  
- * 
- * Returns: a #NspMatrix 
+ * @stack: calling stack
+ * @i: an integer
+ *
+ * Checks that first+i object on the stack
+ * is a NspSMatrix and returns that NspSMatrix
+ *
+ * Returns: a #NspMatrix
  **/
 
 NspSMatrix*GetSMat(Stack stack, int i)
@@ -452,19 +442,19 @@ NspSMatrix*GetSMat(Stack stack, int i)
 
 /**
  * GetString:
- * @stack: calling stack 
- * @i: an integer 
- * 
- * Checks that first+i objects on the stack 
+ * @stack: calling stack
+ * @i: an integer
+ *
+ * Checks that first+i objects on the stack
  * is a string and returns a pointer to that string
- * 
- * Returns: a string 
+ *
+ * Returns: a string
  **/
 
 char *GetString(Stack stack, int i)
 {
   NspSMatrix *M;
-  if (( M =nsp_smatrix_object(NthObj(i))) == NULLSMAT 
+  if (( M =nsp_smatrix_object(NthObj(i))) == NULLSMAT
       || ( M->mn != 1 ))
     {
       Scierror("Error:\t%s", ArgPosition(i));
@@ -477,19 +467,19 @@ char *GetString(Stack stack, int i)
 
 /**
  * GetStringInArray:
- * @stack:  calling stack 
- * @ith: an integer 
+ * @stack:  calling stack
+ * @ith: an integer
  * @Table: an null terminated array of string
- * @flag: an integer 
+ * @flag: an integer
  *
- * Checks that first+i objects on the stack 
+ * Checks that first+i objects on the stack
  * is a string which is in the array Table
  * Table: last entry must be NULL and there must not be duplicate entries.
- * this function returns the index of string in the array A or -1 
- * Note that if flag == 0 abbreviation are accepted 
- * if they do not lead to ambiguity 
- * 
- * Returns: an integer 
+ * this function returns the index of string in the array A or -1
+ * Note that if flag == 0 abbreviation are accepted
+ * if they do not lead to ambiguity
+ *
+ * Returns: an integer
  **/
 
 int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int flag)
@@ -499,7 +489,7 @@ int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int fla
   const nsp_const_string *entry;
   if ((key = GetString(stack,ith)) == ((char *) 0) ) return -1;
   rep = is_string_in_array(key,Table,flag);
-  if ( rep < 0 ) 
+  if ( rep < 0 )
     {
       Scierror("Error:\t%s", ArgPosition(ith));
       ArgName(stack,ith);
@@ -513,9 +503,9 @@ int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int fla
 	  Scierror(", '%s'",*entry);
 	}
       }
-      if ( flag == 0 ) 
+      if ( flag == 0 )
 	Scierror("\n\tor an non ambiguous abbreviation\n");
-      else 
+      else
 	Scierror("\n");
       return -1;
     }
@@ -524,31 +514,31 @@ int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int fla
 
 /**
  * GetStringInStruct:
- * @stack:  calling stack 
- * @ith: an integer 
+ * @stack:  calling stack
+ * @ith: an integer
  * @T: a void *
- * @size: an integer 
- * @flag: an integer 
- * 
+ * @size: an integer
+ * @flag: an integer
+ *
  * Checks that object at position @i on the stack @stack
- * is a string which is in the array struct @T. We assume that 
- * the elements of array @T are of size @size and the first element 
+ * is a string which is in the array struct @T. We assume that
+ * the elements of array @T are of size @size and the first element
  * of the struct is a string.
- * This function returns the index of string in the struct @T or -1 
- * Note that if flag == 0 abbreviation are accepted 
+ * This function returns the index of string in the struct @T or -1
+ * Note that if flag == 0 abbreviation are accepted
  * if they do not lead to ambiguity.
- * 
- * Returns: an integer 
+ *
+ * Returns: an integer
  **/
 
-int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag) 
+int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag)
 {
   char **Table =(char **) T;
   int rep ;
   char *key, **entry;
   if ((key = GetString(stack,ith)) == ((char *) 0) ) return -1;
   rep = is_string_in_struct(key,(const void **)T,size,flag);
-  if ( rep < 0 ) 
+  if ( rep < 0 )
     {
       Scierror("Error:\t%s", ArgPosition(ith));
       ArgName(stack,ith);
@@ -563,9 +553,9 @@ int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag)
 	  Scierror(", '%s'",*entry);
 	}
       }
-      if ( flag == 0 ) 
+      if ( flag == 0 )
 	Scierror("\n\tor a non ambiguous abbreviation\n");
-      else 
+      else
 	Scierror("\n");
       return -1;
     }
@@ -574,14 +564,14 @@ int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag)
 
 /**
  * GetSMatUtf8:
- * @stack:  calling stack 
- * @pos: an integer 
- * 
- * checks if object at position @pos on the stack @stack is an 
- * utf8 string matrix or copy and convert the matrix if it is 
+ * @stack:  calling stack
+ * @pos: an integer
+ *
+ * checks if object at position @pos on the stack @stack is an
+ * utf8 string matrix or copy and convert the matrix if it is
  * a non utf8 string matrix.
- * 
- * Returns: a new #NspSMatrix 
+ *
+ * Returns: a new #NspSMatrix
  **/
 
 NspSMatrix *GetSMatUtf8(Stack stack,int pos)
@@ -592,7 +582,7 @@ NspSMatrix *GetSMatUtf8(Stack stack,int pos)
     {
       /* need to copy first */
       if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
-      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL)
  	{
  	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
  	  return NULLSMAT;
@@ -603,12 +593,12 @@ NspSMatrix *GetSMatUtf8(Stack stack,int pos)
 
 /**
  * GetStringUtf8:
- * @stack:  calling stack 
- * @pos: an integer 
- * 
+ * @stack:  calling stack
+ * @pos: an integer
+ *
  * checks if object at position @pos on the stack @stack is an utf8 string
  * or copy and convert the string if it is a non utf8 string.
- * 
+ *
  * Returns: a string pointer.
  **/
 
@@ -616,7 +606,7 @@ char *GetStringUtf8(Stack stack,int pos)
 {
   NspSMatrix *Sm;
   if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
-  if ( Sm->mn != 1 ) 
+  if ( Sm->mn != 1 )
     {
       Scierror("%s: %s should be a string\n",NspFname(stack),ArgPosition(pos));
       return NULL;
@@ -626,13 +616,13 @@ char *GetStringUtf8(Stack stack,int pos)
 
 /**
  * GetSMatCopyUtf8:
- * @stack:  calling stack 
- * @pos: an integer 
- * 
- * returns a copy of a string matrix converted to utf8 
- * or %NULL if object at position @pos on the stack is 
- * not a string matrix 
- * 
+ * @stack:  calling stack
+ * @pos: an integer
+ *
+ * returns a copy of a string matrix converted to utf8
+ * or %NULL if object at position @pos on the stack is
+ * not a string matrix
+ *
  * Returns: a #NspSMatrix
  **/
 
@@ -642,7 +632,7 @@ NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
   if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
   if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
     {
-      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL)
 	{
 	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
 	  return NULLSMAT;
@@ -654,19 +644,19 @@ NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
 
 /**
  * is_string_in_array:
- * @key: a constant string 
- * @Table: an null terminated array of constant strings 
- * @flag: an integer 
- * 
+ * @key: a constant string
+ * @Table: an null terminated array of constant strings
+ * @flag: an integer
+ *
  * Lookups @key in the table @Table and accept unique
  * abbreviations unless flag == 1;
- * return value is >=0  -> index in table 
- *              is  -1  -> bad key 
- *              is  -2  -> ambiguous key 
- * Note that if flag == 0 abbreviation are accepted 
- * if they do not lead to ambiguity. 
- * 
- * Returns: an integer 
+ * return value is >=0  -> index in table
+ *              is  -1  -> bad key
+ *              is  -2  -> ambiguous key
+ * Note that if flag == 0 abbreviation are accepted
+ * if they do not lead to ambiguity.
+ *
+ * Returns: an integer
  **/
 
 int is_string_in_array(const char *key,const nsp_const_string Table[], int flag)
@@ -710,12 +700,12 @@ int is_string_in_array(const char *key,const nsp_const_string Table[], int flag)
 /**
  * string_not_in_array:
  * @stack: nsp calling stack
- * @key:   key to search 
+ * @key:   key to search
  * @Table: array of char *
- * @message: error message 
- * 
- * used in conjunction with is_string_in_array for error 
- * message. 
+ * @message: error message
+ *
+ * used in conjunction with is_string_in_array for error
+ * message.
  *
  **/
 
@@ -736,17 +726,17 @@ void string_not_in_array(Stack stack,const char *key,const nsp_const_string *Tab
 
 /**
  * is_string_in_struct:
- * @key: key to search 
+ * @key: key to search
  * @Table: and array of struct, each element is of size @size and the last one must be %NULL.
  * @size: size of array elements in @Table
  * @flag: 1 for exact match, 0 to accept prefix match.
- * 
- * returns the index of @key in table @Table. @Table is an array 
- * of structs of size @size and each struct must start with a string 
- * in order to be casted to a string. Thus each element in @Table can be 
+ *
+ * returns the index of @key in table @Table. @Table is an array
+ * of structs of size @size and each struct must start with a string
+ * in order to be casted to a string. Thus each element in @Table can be
  * compared against @key. @Table should be ended by a %NULL element.
- * 
- * Returns: -1 if fail or a non negative integer 
+ *
+ * Returns: -1 if fail or a non negative integer
  **/
 
 int is_string_in_struct(const char *key,const void **Table,unsigned int size, int flag)
@@ -788,44 +778,44 @@ int is_string_in_struct(const char *key,const void **Table,unsigned int size, in
 
 
 
-/* 
- * concat down: just a test 
- * should add a flag to nsp_smatrix_resize 
+/*
+ * concat down: just a test
+ * should add a flag to nsp_smatrix_resize
  * to decide if new strings are to be allocated or not
  * here they should not since Scopy will do the job
  */
 
 extern int nsp_smatrix_concat_down1(NspSMatrix *A,NspSMatrix *B,int flag);
 
-static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,int lhs) 
+static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,int lhs)
 {
   int flag = FALSE;
   NspSMatrix *A=self,*B;
   CheckRhs (1,1);
   CheckLhs (0,0);
   if ((B = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( A->n != B->n && A->mn != 0 ) 
+  if ( A->n != B->n && A->mn != 0 )
     {
       Scierror("Error: [.;.] incompatible dimensions\n");
       return RET_BUG;
     }
-  if ( B->mn == 0 ) 
+  if ( B->mn == 0 )
     {
       MoveObj(stack,1,NSP_OBJECT(A));
       return 1;
     }
-  if ( A == B ) 
+  if ( A == B )
     {
       if ((B = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
     }
-  if (strcmp(nsp_object_get_name(NSP_OBJECT(B)),NVOID) == 0) 
+  if (strcmp(nsp_object_get_name(NSP_OBJECT(B)),NVOID) == 0)
     {
       flag = TRUE;
       NthObj(1)= NULLOBJ; /* B will be used and destroyed in nsp_smatrix_concat_down1 */
     }
   if ( nsp_smatrix_concat_down1(A,B,flag)== FAIL) return RET_BUG;
-  /* if B was destroyed by nsp_smatrix_concat_down1 we must remove it from the 
-   * calling stack 
+  /* if B was destroyed by nsp_smatrix_concat_down1 we must remove it from the
+   * calling stack
    */
   MoveObj(stack,1,NSP_OBJECT(A));
   return 1;
@@ -836,8 +826,8 @@ static int int_meth_smatrix_has(void *self, Stack stack, int rhs, int opt, int l
   NspSMatrix *A = (NspSMatrix *) self, *x;
   NspBMatrix *B;
   NspMatrix *Ind,*Ind2;
-  
-  CheckRhs(1,1); 
+
+  CheckRhs(1,1);
   CheckLhs(1,3);
 
   if ((x = GetSMat (stack, 1)) == NULLSMAT) return RET_BUG;
@@ -891,7 +881,7 @@ static int int_meth_smatrix_split_nc(void *self, Stack stack, int rhs, int opt, 
   CheckStdRhs(1,1);
   CheckLhs(0,1);
   if (GetScalarInt(stack,1,&nc) == FAIL) return RET_BUG;
-  if ( A->mn != 1) 
+  if ( A->mn != 1)
     {
       Scierror("Error: Object must be of size 1x1 for splitnc method\n");
       return RET_BUG;
@@ -921,7 +911,7 @@ NspMethods *smatrix_get_methods(void) { return smatrix_methods;};
  */
 
 /*
- * Creation of a NspSMatrix all the strings are created with "." value 
+ * Creation of a NspSMatrix all the strings are created with "." value
  */
 
 static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs)
@@ -934,29 +924,29 @@ static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if ( rhs == 3) 
+  if ( rhs == 3)
     {
       if ((str = GetString(stack,3)) == (char*)0) return RET_BUG;
       flag =1;
     }
-  if ((HMat =nsp_smatrix_create(NVOID,Max(m1,0),Max(n1,0),str,flag)) 
-      == NULLSMAT) 
+  if ((HMat =nsp_smatrix_create(NVOID,Max(m1,0),Max(n1,0),str,flag))
+      == NULLSMAT)
     return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat);
   return 1;
 }
 
 /*
- * Right Concatenation 
- * A= [A,B] 
+ * Right Concatenation
+ * A= [A,B]
  * return 0 on failure ( incompatible size or No more space )
- * provided through matint 
+ * provided through matint
  */
 
 
 /*
- * Right Concatenation 
- * Res = [A,B]  when A is a scalar matrix 
+ * Right Concatenation
+ * Res = [A,B]  when A is a scalar matrix
  * A is converted to SMatrix.
  */
 
@@ -984,8 +974,8 @@ int int_smxconcatr_m_s(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Right Concatenation 
- * Res = [A,B]  when B is a scalar matrix 
+ * Right Concatenation
+ * Res = [A,B]  when B is a scalar matrix
  */
 
 static int int_smxconcatr_s_m(Stack stack, int rhs, int opt, int lhs)
@@ -1008,7 +998,7 @@ static int int_smxconcatr_s_m(Stack stack, int rhs, int opt, int lhs)
       nsp_smatrix_destroy(Res);
       NSP_OBJECT(NthObj(1))->ret_pos = 1;
     }
-  else 
+  else
     {
       MoveObj(stack,1,NSP_OBJECT(Res));
     }
@@ -1016,16 +1006,16 @@ static int int_smxconcatr_s_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Down Concatenation 
- * Res = [A;B] 
+ * Down Concatenation
+ * Res = [A;B]
  * return NULLSMat on failure ( incompatible size or No more space )
- * A and B are left unchanged 
+ * A and B are left unchanged
  * provided by matint
  */
 
 /*
- * Down Concatenation 
- * Res = [A;B]  when A is a scalar matrix 
+ * Down Concatenation
+ * Res = [A;B]  when A is a scalar matrix
  * usefull when A=[]
  */
 
@@ -1053,8 +1043,8 @@ int int_smxconcatd_m_s(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Down Concatenation 
- * Res = [A;B]  when B is a scalar matrix 
+ * Down Concatenation
+ * Res = [A;B]  when B is a scalar matrix
  */
 
 static int int_smxconcatd_s_m(Stack stack, int rhs, int opt, int lhs)
@@ -1077,7 +1067,7 @@ static int int_smxconcatd_s_m(Stack stack, int rhs, int opt, int lhs)
       if (nsp_smatrix_concat_down1(HMat1,Res,TRUE)!= OK) return RET_BUG;
       NSP_OBJECT(NthObj(1))->ret_pos = 1;
     }
-  else 
+  else
     {
       MoveObj(stack,1,NSP_OBJECT(Res));
     }
@@ -1085,10 +1075,10 @@ static int int_smxconcatd_s_m(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *nsp_smatrix_add_columns: add n cols of zero to NspSMatrix A 
- * A= [A,ones(m,n)] 
+ *nsp_smatrix_add_columns: add n cols of zero to NspSMatrix A
+ * A= [A,ones(m,n)]
  * return 0 on failure ( No more space )
- * A is changed 
+ * A is changed
  */
 
 static int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
@@ -1106,10 +1096,10 @@ static int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * AddRows : Add m rows of zero to a NspSMatrix A 
+ * AddRows : Add m rows of zero to a NspSMatrix A
  * A = [A;ones(m,n)]
  * return NULLSMat on failure ( incompatible size or No more space )
- * A and B are left unchanged 
+ * A and B are left unchanged
  */
 
 static int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
@@ -1128,7 +1118,7 @@ static int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * columns extraction for do loop
- * Cols A --> (Cols,A,Cols(A))     
+ * Cols A --> (Cols,A,Cols(A))
  * FIXME ne sert plus ?
  */
 
@@ -1148,11 +1138,11 @@ static int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
   NthObj(3) = (NspObject *) Res;
   return 3;
 }
-#endif 
+#endif
 
 
 /*
- *  diag function 
+ *  diag function
  */
 
 static int int_smatrix_diag (Stack stack, int rhs, int opt, int lhs)
@@ -1172,7 +1162,7 @@ static int int_smatrix_diag (Stack stack, int rhs, int opt, int lhs)
     Res = nsp_smatrix_create_diag (A, k1);
   else
     Res = nsp_smatrix_extract_diag (A, k1);
-      
+
   if (Res == NULLSMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);
@@ -1180,7 +1170,7 @@ static int int_smatrix_diag (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Returns the kthe diag of a NspSMatrix 
+ * Returns the kthe diag of a NspSMatrix
  */
 
 static int int_smatrix_diage(Stack stack, int rhs, int opt, int lhs)
@@ -1199,7 +1189,7 @@ static int int_smatrix_diage(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *  Creates a NspSMatrix with kth diag set to Diag 
+ *  Creates a NspSMatrix with kth diag set to Diag
  */
 
 static int int_smatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
@@ -1209,7 +1199,7 @@ static int int_smatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((Diag = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( rhs == 2 ) 
+  if ( rhs == 2 )
     {
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
@@ -1221,12 +1211,12 @@ static int int_smatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
 
 /*
  *nsp_smatrix_resize: Changes NspSMatrix dimensions
- * Warning : this routine only enlarges the array 
- * of the NspSMatrix storage so as to contain mxn 
- * elements : the previous datas are not moved and 
- * occupy the first array cells 
- * The NspSMatrix is changed 
- * return 0 on failure 
+ * Warning : this routine only enlarges the array
+ * of the NspSMatrix storage so as to contain mxn
+ * elements : the previous datas are not moved and
+ * occupy the first array cells
+ * The NspSMatrix is changed
+ * return 0 on failure
  */
 
 static int int_smxresize(Stack stack, int rhs, int opt, int lhs)
@@ -1245,12 +1235,12 @@ static int int_smxresize(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * int = SMatConcatTT
- * Term to term concatenation 
- * A(i;j) = "A(i;j)cB(i;j)" : A is changed  B unchanged 
- * C unchanged : c is a 1x1 string 
+ * Term to term concatenation
+ * A(i;j) = "A(i;j)cB(i;j)" : A is changed  B unchanged
+ * C unchanged : c is a 1x1 string
  * C is used if flag == 1
  * here we need a column or row option XXXX
- * 
+ *
  */
 
 static int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
@@ -1262,23 +1252,23 @@ static int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetSMatCopy(stack,1))  == NULLSMAT) return RET_BUG;
   if ((B = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  if ( rhs == 3) 
+  if ( rhs == 3)
     {
       if ((str = GetString(stack,3)) == (char*)0) return RET_BUG;
       flag =1;
     }
-  if ( B->mn == 0) 
+  if ( B->mn == 0)
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ( A->mn == 0) 
+  if ( A->mn == 0)
     {
       NSP_OBJECT(B)->ret_pos = 1;
       return 1;
     }
-      
-  if ( A->mn == 1 && B->mn != 1) 
+
+  if ( A->mn == 1 && B->mn != 1)
     {
       /* must copy B */
       if ((B = GetSMatCopy(stack,2)) == NULLSMAT) return RET_BUG;
@@ -1286,7 +1276,7 @@ static int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
       NSP_OBJECT(B)->ret_pos = 1;
       return 1;
     }
-  if ( B->mn == 1 && A->mn != 1) 
+  if ( B->mn == 1 && A->mn != 1)
     {
       if (nsp_smatrix_concat_string_right(A,B,str,flag)== FAIL) return RET_BUG;
       NSP_OBJECT(A)->ret_pos = 1;
@@ -1298,9 +1288,9 @@ static int int_smxconcattt(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res =nsp_smatrix_strcmp(A,B) A and B are not changed 
- *  Res[i;j] = strcmp(A[i;j],B[i;j]) 
- * XXXX strcmp 
+ * Res =nsp_smatrix_strcmp(A,B) A and B are not changed
+ *  Res[i;j] = strcmp(A[i;j],B[i;j])
+ * XXXX strcmp
  */
 
 static int int_smxcomp(Stack stack, int rhs, int opt, int lhs)
@@ -1333,19 +1323,19 @@ static int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
 
   if ( GetArgs(stack,rhs,opt,T,&A,&opts,&col,&row,&sep) == FAIL) return RET_BUG;
-  if ( col  != NULL ) 
+  if ( col  != NULL )
     {
-      if ( row != NULL) 
+      if ( row != NULL)
 	{
 	  nsp_string str;
 	  if ((str=nsp_smatrix_elts_concat(A,row,1,col,1)) == NULL) return RET_BUG;
 	  rep =nsp_create_object_from_str(NVOID,str);
 	  nsp_string_destroy(&str);
 	}
-      else 
+      else
 	rep= (NspObject *)nsp_smatrix_column_concat(A,col,1);
     }
-  else if ( row != NULL)  
+  else if ( row != NULL)
     {
       rep=(NspObject *)nsp_smatrix_row_concat(A,row,1);
     }
@@ -1356,23 +1346,23 @@ static int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
       rep =nsp_create_object_from_str(NVOID,str);
       nsp_string_destroy(&str);
     }
-  else 
-    { 
+  else
+    {
       nsp_string str;
       if ((str=nsp_smatrix_elts_concat(A,sep,0,sep,0)) == NULL) return RET_BUG;
       rep =nsp_create_object_from_str(NVOID,str);
       nsp_string_destroy(&str);
     }
-    
+
   if ( rep == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,rep);
   return 1;
-}  
+}
 
 /*
- * Res= Part(A,Ind) 
- * part function of Scilab A is  unchanged 
- * Ind unchanged 
+ * Res= Part(A,Ind)
+ * part function of Scilab A is  unchanged
+ * Ind unchanged
  */
 
 static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
@@ -1390,18 +1380,18 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(2,2);
   CheckLhs(1,1);
   if ((A= GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( IsBMatObj(stack,2)  ) 
+  if ( IsBMatObj(stack,2)  )
     {
       /* Elts is boolean: use find(Elts) **/
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
+      if ((BElts = GetBMat(stack,2)) == NULLBMAT)
 	return RET_BUG;
-      if ((Ind =nsp_bmatrix_find(BElts)) == NULLMAT) 
+      if ((Ind =nsp_bmatrix_find(BElts)) == NULLMAT)
 	return RET_BUG;
       alloc = TRUE;
     }
   else
     {
-      if ((Ind = GetRealMat(stack,2)) == NULLMAT) 
+      if ((Ind = GetRealMat(stack,2)) == NULLMAT)
 	return RET_BUG;
     }
 
@@ -1412,12 +1402,12 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
       if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
 	{
 	  string_not_in_array(stack, mode, modes, "optional argument mode");
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
     }
-  if ( rep == 0 ) 
+  if ( rep == 0 )
     {
-      if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)  
+      if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)
 	{
 	  if ( alloc ) nsp_matrix_destroy(Ind) ;
 	  return RET_BUG;
@@ -1425,7 +1415,7 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if (( A =nsp_smatrix_part_utf8(A,Ind)) == NULLSMAT)  
+      if (( A =nsp_smatrix_part_utf8(A,Ind)) == NULLSMAT)
 	{
 	  if ( alloc ) nsp_matrix_destroy(Ind) ;
 	  return RET_BUG;
@@ -1437,10 +1427,10 @@ static int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res= length(A) 
- * return a matrix which contains the length of the strings 
- * contained in A 
- * A unchanged 
+ * Res= length(A)
+ * return a matrix which contains the length of the strings
+ * contained in A
+ * A unchanged
  */
 
 static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
@@ -1463,10 +1453,10 @@ static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
       if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
 	{
 	  string_not_in_array(stack, mode, modes, "optional argument mode");
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
     }
-  if ( rep == 0 ) 
+  if ( rep == 0 )
     {
       if (( Res=nsp_smatrix_elts_length(A)) == NULLMAT) return RET_BUG;
     }
@@ -1479,8 +1469,8 @@ static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res=nsp_matrix_to_smatrix(A) 
- * A is not changed 
+ * Res=nsp_matrix_to_smatrix(A)
+ * A is not changed
  */
 
 static int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
@@ -1504,7 +1494,7 @@ static int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Res= Mattoupper(A) 
+ * Res= Mattoupper(A)
  */
 
 static int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
@@ -1520,7 +1510,7 @@ static int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Res= Mattolower(A) 
+ * Res= Mattolower(A)
  */
 
 static int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
@@ -1535,7 +1525,7 @@ static int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res= capitalize(A) 
+ * Res= capitalize(A)
  */
 
 static int int_smxcapitalize(Stack stack, int rhs, int opt, int lhs)
@@ -1564,7 +1554,7 @@ static int int_smx_isxxx(Stack stack, int rhs, int opt, int lhs, IsF F)
   CheckLhs(1,1);
   if ((Str = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((A=nsp_bmatrix_create(NVOID,1,strlen(Str))) == NULLBMAT ) return RET_BUG;
-  for ( i = 0 ; i < (int) strlen(Str) ; i++ ) 
+  for ( i = 0 ; i < (int) strlen(Str) ; i++ )
     A->B[i] = (*F)( Str[i]) != 0 ? TRUE : FALSE ;
   MoveObj(stack,1,(NspObject *) A);
   return 1;
@@ -1644,7 +1634,7 @@ static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *B;
   CheckStdRhs(2,2);
   CheckLhs(1,1);
-  if (( A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;  
+  if (( A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if (( Str = GetString(stack,2)) == (char*)0) return RET_BUG;
   if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
     return RET_BUG;
@@ -1653,16 +1643,16 @@ static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
       if ( (rep= is_string_in_array(mode,modes,0)) == -1 )
 	{
 	  string_not_in_array(stack, mode, modes, "optional argument mode");
-	  return RET_BUG; 
+	  return RET_BUG;
 	}
     }
-  
+
   if (( B =nsp_smatrix_strstr(A,Str)) == NULLMAT ) return RET_BUG;
-  if ( rep == 1) 
+  if ( rep == 1)
     {
       for (i=0; i < B->mn ; i++)
 	{
-	  if (B->R[i] != 0) 
+	  if (B->R[i] != 0)
 	    B->R[i] = nsp_string_utf8_pos(A->S[i], B->R[i]-1) +1;
 	}
     }
@@ -1676,7 +1666,7 @@ static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
  * strindex(A,str)
  * str2 can be a string matrix.
  * same as in Scilab
- * 
+ *
  */
 
 static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
@@ -1689,7 +1679,7 @@ static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,2);
   if ((Str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((S=GetSMat(stack,2))== NULLSMAT) return RET_BUG;
-  for ( i = 0 ; i < S->mn ; i++) 
+  for ( i = 0 ; i < S->mn ; i++)
     {
       NspMatrix *ind1;
       if (( ind1 = nsp_smatrix_strindex(Str1,S->S[i])) == NULLMAT ) goto bug;
@@ -1703,18 +1693,18 @@ static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
 	      nsp_mat_set_rval(pos,(double) 1.00);
 	    }
 	}
-      else 
+      else
 	{
 	  /* add ind1 */
 	  int n = ind1->mn,xof=ind->mn,j;
-	  if ( n !=0 ) 
+	  if ( n !=0 )
 	    {
-	      if ( nsp_matrix_concat_right(ind,ind1) == FAIL) 
+	      if ( nsp_matrix_concat_right(ind,ind1) == FAIL)
 		{
 		  nsp_matrix_destroy(ind1);
 		  goto bug;
 		}
-	      if ( lhs == 2) 
+	      if ( lhs == 2)
 		{
 		  if ( nsp_matrix_resize(pos,1,xof+n) == FAIL) goto bug;
 		  for ( j=0; j < n ; j++) pos->R[j+xof]=(double)i+1;
@@ -1726,7 +1716,7 @@ static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) ind);
   if ( lhs == 2 )  MoveObj(stack,2,(NspObject *) pos);
   return Max(lhs,1);
- bug: 
+ bug:
   if ( ind != NULLMAT) nsp_matrix_destroy(ind);
   if ( pos != NULLMAT) nsp_matrix_destroy(pos);
   return RET_BUG;
@@ -1734,11 +1724,11 @@ static int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *nsp_smatrix_enlarge(A,m,n) 
+ *nsp_smatrix_enlarge(A,m,n)
  *  changes A to B= [ A , 0; 0,0 ]  where 0 stands for "." strings
  *  in such a way that B (max(A->m,m)xmax(A->n,n));
- *  The result is stored in A 
- * WARNING : no copy 
+ *  The result is stored in A
+ * WARNING : no copy
  */
 
 static int int_smxenlarge(Stack stack, int rhs, int opt, int lhs)
@@ -1768,7 +1758,7 @@ static int int_smatrix_ascii_to_smatrix(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( A = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ( A->rc_type == 'c' ) 
+  if ( A->rc_type == 'c' )
     {
       Scierror("\t%s", ArgPosition(1));
       ArgName(stack,1);
@@ -1803,7 +1793,7 @@ static int int_smatrix_ascii(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* FIXME
- * SMatSort 
+ * SMatSort
  * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
  */
 
@@ -1836,15 +1826,15 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 
       if ( opt == 0 )
 	{
-	  if ((type = GetString(stack,2)) == NULLSTRING) return RET_BUG; 
-	  if (rhs >= 3) 
+	  if ((type = GetString(stack,2)) == NULLSTRING) return RET_BUG;
+	  if (rhs >= 3)
 	    {
-	      if ((dir = GetString(stack,3)) == NULLSTRING) return RET_BUG; 
+	      if ((dir = GetString(stack,3)) == NULLSTRING) return RET_BUG;
 	      if ( rhs >= 4 )
 		{
-		  if ((ind_type = GetString(stack,4)) == NULLSTRING) return RET_BUG; 
+		  if ((ind_type = GetString(stack,4)) == NULLSTRING) return RET_BUG;
 		}
-	    }  
+	    }
 	}
       else
 	{
@@ -1862,25 +1852,25 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, type, type_possible_choices, "optional argument type");
-	      return RET_BUG; 
+	      return RET_BUG;
 	    }
 	}
       if ( dir != NULL )
 	{
-	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) 
+	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, dir, dir_possible_choices, "optional argument dir");
 	      return RET_BUG;
-	    } 
+	    }
 	  direction = dir_possible_choices[rep_dir][0];
 	}
       if ( ind_type != NULL )
 	{
-	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 )
 	    {
 	      string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
 	      return RET_BUG;
-	    } 
+	    }
 	  itype = ind_type_possible_choices[rep_ind_type][0];
 	}
     }
@@ -1892,7 +1882,7 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 
   switch ( rep_type  )
     {
-    case 0: 
+    case 0:
     case 1:
       nsp_smatrix_sort(M,&Index,iflag,direction,rep_type,itype);break;
     case 2:
@@ -1908,14 +1898,14 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
   if ( iflag == TRUE && Index == NULL) return RET_BUG;
   NSP_OBJECT(M)->ret_pos = 1;
 
-  if ( lhs == 2 ) 
+  if ( lhs == 2 )
     {
       if ( itype == 'd' ) /* back convert */
 	Index = (NspObject *) Mat2double( (NspMatrix *) Index);
       MoveObj(stack,2,Index);
     }
   return Max(lhs,1);
-} 
+}
 
 
 /*
@@ -1935,22 +1925,22 @@ static int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 		      { "sep",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&Src,&opts,&msep,&sep) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&Src,&opts,&msep,&sep) == FAIL)
     return RET_BUG;
   if ( sep  == NULL )
     sep = defsplit;
-  
-  if ( (A=nsp_smatrix_split(Src,sep,msep)) == NULLSMAT ) 
+
+  if ( (A=nsp_smatrix_split(Src,sep,msep)) == NULLSMAT )
     return RET_BUG;
   MoveObj(stack,1,(NspObject *)A);
   return 1;
 }
 
 /*
- * Operation leading to Boolean result 
+ * Operation leading to Boolean result
  */
 
-/* A < B */ 
+/* A < B */
 
 int int_smxlt(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2033,7 +2023,7 @@ static int int_smxge(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Same but returns a unique boolean 
+ * Same but returns a unique boolean
  */
 
 static int int_smxf_gen(Stack stack, int rhs, int opt, int lhs,char *op)
@@ -2045,16 +2035,16 @@ static int int_smxf_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ((B = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
   rep = SMatFullComp(A,B,op,&err);
-  if ( err == 1) 
+  if ( err == 1)
     {
       Scierror("Error: operator %s , arguments with incompatible dimensions\n",op);
       return RET_BUG;
     }
-  if ( rep == TRUE ) 
+  if ( rep == TRUE )
     {
       if (( Res =nsp_create_true_object(NVOID)) == NULLOBJ) return RET_BUG;
     }
-  else 
+  else
     {
       if (( Res =nsp_create_false_object(NVOID)) == NULLOBJ) return RET_BUG;
     }
@@ -2096,8 +2086,8 @@ static int int_smxfge(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Res =nsp_smatrix_copy(A) 
- * Creates a Copy of NspSMatrix A : A is not checked 
+ * Res =nsp_smatrix_copy(A)
+ * Creates a Copy of NspSMatrix A : A is not checked
  */
 
 static int int_smxtranspose(Stack stack, int rhs, int opt, int lhs)
@@ -2113,7 +2103,7 @@ static int int_smxtranspose(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * 
+ *
  */
 
 static int int_smatrix_2latexmat(Stack stack, int rhs, int opt, int lhs)
@@ -2135,13 +2125,13 @@ static int int_smatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *HMat;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;    
+  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   nsp_smatrix_latex_tab_print(HMat);
   return 0;
 }
 
 /*
- * Res =  subst(A,str,rep) 
+ * Res =  subst(A,str,rep)
  */
 
 static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
@@ -2153,7 +2143,7 @@ static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
   if (( HMat1 = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if (( Str =  GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
   if (( Rep =  GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
-  if ( Str->mn != Rep->mn ) 
+  if ( Str->mn != Rep->mn )
     {
       Scierror("Error: second and third arguments should have the same size\n");
       return RET_BUG;
@@ -2169,7 +2159,7 @@ static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
     {
       ((NspObject *) HMat1)->ret_pos = 1;
     }
-  else 
+  else
     MoveObj(stack,1,(NspObject *) Res2);
   return 1;
 }
@@ -2185,7 +2175,7 @@ static int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(1,1);
   if (( HMat1 = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( rhs == 2 ) 
+  if ( rhs == 2 )
     {
       if ( GetScalarBool(stack,2,&tab) == FAIL )
 	return RET_BUG;
@@ -2206,7 +2196,7 @@ static int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( A = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if (( loc = nsp_smatrix_utf8_from_unichar(A)) == NULLSMAT) return RET_BUG; 
+  if (( loc = nsp_smatrix_utf8_from_unichar(A)) == NULLSMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(loc));
   return 1;
 }
@@ -2223,7 +2213,7 @@ static int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( loc = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if (( A = nsp_smatrix_strtod(loc))== NULLMAT) return RET_BUG; 
+  if (( A = nsp_smatrix_strtod(loc))== NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(A));
   return 1;
 }
@@ -2231,18 +2221,18 @@ static int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
 static int int_smatrix_protect(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *rep ;
-  nsp_string str1,str2; 
+  nsp_string str1,str2;
   if ((str1 = GetString(stack,1)) == ((char *) 0) )
-    return RET_BUG; 
-  if ((str2 =nsp_string_protect(str1)) == NULL) 
-    return RET_BUG; 
+    return RET_BUG;
+  if ((str2 =nsp_string_protect(str1)) == NULL)
+    return RET_BUG;
   rep =nsp_create_object_from_str(NVOID,str2);
   MoveObj(stack,1,rep);
   return 1;
 }
 
 static int int_bpsqsort( Stack stack, int rhs, int opt, int lhs)
-{ 
+{
   NspSMatrix *x;
   NspMatrix *ind=NULLMAT;
   int *index;
@@ -2257,10 +2247,10 @@ static int int_bpsqsort( Stack stack, int rhs, int opt, int lhs)
   index = (int *) ind->R;
 
   nsp_sqsort_bp_nsp_string( x->S,  x->mn, index, 'i');
- 
+
   NSP_OBJECT(x)->ret_pos = 1;
- 
-  if ( lhs >= 2 ) 
+
+  if ( lhs >= 2 )
     {
       ind->convert = 'i';
       ind = Mat2double(ind);
@@ -2287,18 +2277,18 @@ static int int_smatrix_unique( Stack stack, int rhs, int opt, int lhs)
   const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   int rep_ind_type;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type) == FAIL )
     return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
-  
+
   if ( ind_type != NULL )
     {
-      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 )
 	{
 	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
 	  return RET_BUG;
-	} 
+	}
       itype = ind_type_possible_choices[rep_ind_type][0];
     }
 
@@ -2348,19 +2338,19 @@ int_smatrix_issorted (Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack, rhs, opt, opts, &flag, &strict_order) == FAIL )
     return RET_BUG;
 
-  if ( flag != NULL) 
+  if ( flag != NULL)
     {
       rep = is_string_in_array(flag, flags_list, 1);
-      if ( rep < 0 ) 
+      if ( rep < 0 )
 	{
 	  string_not_in_array(stack, flag, flags_list, "optional argument flag");
 	  return RET_BUG;
 	}
     }
-  
+
   if ( (Res = nsp_smatrix_issorted(A, rep, strict_order)) == NULLBMAT )
     return RET_BUG;
-  
+
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
 }
@@ -2380,7 +2370,7 @@ int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1, 1);
 
   if ((key = GetString(stack,1)) == ((char *) 0) )
-    return RET_BUG; 
+    return RET_BUG;
   if ((Table = GetSMat(stack, 2)) == NULLSMAT)
     return RET_BUG;
 
@@ -2393,17 +2383,17 @@ int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
     }
 
   rep = is_string_in_array(key,(const char **) Table->S, !abbrev);
-  if ( rep < 0 && names != NULLSMAT )  /* in this case an automatic treatment of the error is done */ 
+  if ( rep < 0 && names != NULLSMAT )  /* in this case an automatic treatment of the error is done */
     {
       Scierror("Error:\t argument %s of function %s has a wrong value '%s'\n",names->S[0],names->S[1],key);
       Scierror("\texpected values are ");
-      for (k = 0 ; k < Table->mn ; k++ ) 
+      for (k = 0 ; k < Table->mn ; k++ )
 	Scierror(" '%s' ",Table->S[k]);
       Scierror("\n");
       return RET_BUG;
     }
-  
-  if ( nsp_move_double(stack,1, (double) rep+1) == FAIL )	  
+
+  if ( nsp_move_double(stack,1, (double) rep+1) == FAIL )
     return RET_BUG;
   return 1;
 }
@@ -2443,7 +2433,7 @@ int_parse_dim_arg(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( nsp_move_double(stack,1, (double) dim) == FAIL )	  
+  if ( nsp_move_double(stack,1, (double) dim) == FAIL )
     return RET_BUG;
 
   return 1;
@@ -2468,12 +2458,12 @@ static int int_smatrix_to_base64(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1, 1);
   if ((A = GetSMat (stack, 1)) == NULLSMAT)
     return RET_BUG;
-  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL) 
+  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL)
     return RET_BUG;
   for ( i = 0 ; i < A->mn ; i++)
     {
       Res->S[i]=nsp_string_to_base64string(A->S[i],strlen(A->S[i]));
-      if ( Res->S[i] == NULL ) 
+      if ( Res->S[i] == NULL )
 	{
 	  nsp_smatrix_destroy(A);
 	  return RET_BUG;
@@ -2491,13 +2481,13 @@ static int int_base64_to_smatrix(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1, 1);
   if ((A = GetSMat (stack, 1)) == NULLSMAT)
     return RET_BUG;
-  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL) 
+  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL)
     return RET_BUG;
   for ( i = 0 ; i < A->mn ; i++)
     {
       int out;
       Res->S[i]=nsp_base64string_to_nsp_string(A->S[i],&out);
-      if ( Res->S[i] == NULL ) 
+      if ( Res->S[i] == NULL )
 	{
 	  nsp_smatrix_destroy(A);
 	  return RET_BUG;
@@ -2509,7 +2499,7 @@ static int int_base64_to_smatrix(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * push the smatrix  elements on the stack 
+ * push the smatrix  elements on the stack
  */
 
 static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
@@ -2519,14 +2509,14 @@ static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
   CheckRhs (1, 1);
   if ((M = GetSMat(stack, 1)) == NULLSMAT ) return RET_BUG;
   for ( i=0 ; i < M->mn ; i++)
-    {  
+    {
       NthObj(i+2)= nsp_create_object_from_str(NVOID,M->S[i]);
       NthObj(i+2)->ret_pos = i+1;
       if ( NthObj(i+2) == NULLOBJ ) { goto bug;}
     }
   return M->mn ;
- bug: 
-  for ( j= 2 ; j <= i +1  ; j++) 
+ bug:
+  for ( j= 2 ; j <= i +1  ; j++)
     {
       M = (NspSMatrix *) NthObj(j);
       nsp_smatrix_destroy(M);
@@ -2536,7 +2526,7 @@ static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * push the smatrix  elements on the stack 
+ * push the smatrix  elements on the stack
  */
 
 static int int_print_string_as_read (Stack stack, int rhs, int opt, int lhs)
@@ -2550,15 +2540,15 @@ static int int_print_string_as_read (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * The Interface for basic matrices operation 
+ * The Interface for basic matrices operation
  */
 
 static OpTab SMatrix_func[]={
   {"latex_codes", int_latex_codes},
-  {"extract_s", int_matint_extract}, 
-  {"extractelts_s", int_matint_extractelts}, 
-  {"extractcols_s", int_matint_extractcols}, 
-  {"extractrows_s", int_matint_extractrows_pointer}, 
+  {"extract_s", int_matint_extract},
+  {"extractelts_s", int_matint_extractelts},
+  {"extractcols_s", int_matint_extractcols},
+  {"extractrows_s", int_matint_extractrows_pointer},
   {"resize2vect_s", int_matint_resize2vect},
   {"setrowscols_s", int_matint_setrowscols},
   {"deleteelts_s", int_matint_deleteelts},
@@ -2653,7 +2643,7 @@ int SMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(SMatrix_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
    (for adding or removing functions) */
 
 void SMatrix_Interf_Info(int i, char **fname, function (**f))
@@ -2661,15 +2651,3 @@ void SMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = SMatrix_func[i].name;
   *f = SMatrix_func[i].fonc;
 }
-
-
-
-
-
-
-
-
-
-
-
-
