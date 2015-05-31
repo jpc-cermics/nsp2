@@ -7,7 +7,7 @@ function subplot(m,n,p,varargopt)
   end
   j=int((p-1)/n)
   i=p-1-n*j
-  printf("%d/%d,%d/%d,%d/%d,%d/%d\n",i,n,j,m,1,n,1,m);
+  // printf("%d/%d,%d/%d,%d/%d,%d/%d\n",i,n,j,m,1,n,1,m);
   varargopt.wrect=[i/n,j/m,1/n,1/m];
   xsetech(varargopt(:))
 endfunction
