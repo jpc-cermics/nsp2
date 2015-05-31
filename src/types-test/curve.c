@@ -24,7 +24,7 @@
 
 
 
-#line 23 "codegen/curve.override"
+#line 24 "codegen/curve.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/curve.h>
@@ -104,7 +104,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
   type->init = (init_func *) init_curve;
 
-#line 36 "codegen/curve.override"
+#line 37 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -676,7 +676,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 58 "codegen/curve.override"
+#line 59 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -698,7 +698,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 73 "codegen/curve.override"
+#line 74 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -781,7 +781,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 103 "codegen/curve.override"
+#line 104 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -793,7 +793,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 #line 794 "curve.c"
 
 
-#line 113 "codegen/curve.override"
+#line 114 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -834,7 +834,7 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
   *f = Curve_func[i].fonc;
 }
 
-#line 124 "codegen/curve.override"
+#line 125 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /*
@@ -842,16 +842,14 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
     '("int" "mark") ; mark to be used
     '("double" "width"); line width
     '("int" "style"); line style
-    '("int" "mode"); mode: std, step, stem, arrow.
+    '("int" "mode"); mode: std, step, stem, arrow, fill.
     '("NspMatrix*" "Pts")
 */
 
-typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ;
-
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int xmark[2]={-1,-1};
   NspCurve *P = (NspCurve *) Obj;
+  int xmark[2]={-1,-1},mode,obj_color=P->obj->color ;
   NspMatrix *M = P->obj->Pts;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -877,8 +875,9 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       else
 	Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
     }
-
-  switch ( P->obj->mode )
+  mode = P->obj->mode;
+ more :
+  switch ( mode )
     {
     case curve_std:
       if ( P->obj->color >= -1 )
@@ -895,14 +894,17 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	}
       break;
     case curve_stairs:
+    case curve_stairs_fill:
       {
 	double *xm=NULL,*ym=NULL;
-	int n= 2*M->m,i;
+	int n= ( P->obj->mode == curve_stairs ) ? 2*M->m -1 : 2*M->m+1 ,i;
+	/* stroke color */
+	int color= ( P->obj->mode == curve_stairs ) ? P->obj->color : -1;
 	xm = graphic_alloc(0,n,sizeof(double));
 	ym = graphic_alloc(1,n,sizeof(double));
 	if ( xm == 0 || ym == 0)
 	  {
-	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    Sciprintf("Error: cannot allocate points for drawing\n");
 	    return;
 	  }
 	for ( i=0 ; i < M->m -1 ; i++)
@@ -914,11 +916,26 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  }
 	xm[2*(M->m-1)] = M->R[M->m-1];
 	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
-	if ( P->obj->color >= -1 )
+	if ( P->obj->mode == curve_stairs_fill )
 	  {
-	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	    /* fill the stairs */
+	    xm[2*(M->m)-1]= M->R[M->m-1];
+	    ym[2*(M->m)-1]= 0.0;
+	    xm[2*(M->m)]= M->R[0];
+	    ym[2*(M->m)]=0.0;
+	    if ( P->obj->color >= -1 )
+	      {
+		if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+		Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
+		if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	      }
+	  }
+
+	if ( color >= -1 )
+	  {
+	    if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, color);
 	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0);
-	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	    if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 	  }
 	if ( P->obj->mark >= -1 )
 	  {
@@ -926,6 +943,8 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	    Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
 	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 	  }
+	/* if mode is  curve_stairs_fill then we also draw stems */
+	if ( P->obj->mode == curve_stairs_fill ) { mode = curve_stem; obj_color=-1;goto more;};
       }
       break;
     case curve_stem:
@@ -937,7 +956,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	ym = graphic_alloc(1,n,sizeof(double));
 	if ( xm == 0 || ym == 0)
 	  {
-	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    Sciprintf("Error: cannot allocate points for drawing\n");
 	    return;
 	  }
 	for ( i=0 ; i < M->m ; i++)
@@ -947,9 +966,9 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	    xm[2*i+1]= M->R[i];
 	    ym[2*i+1]= M->R[i+M->m];
 	  }
-	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, obj_color);
 	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,NULL,NULL);
-	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
       }
       break;
     case curve_arrow:
@@ -961,7 +980,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	ym = graphic_alloc(1,n,sizeof(double));
 	if ( xm == 0 || ym == 0)
 	  {
-	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    Sciprintf("Error: cannot allocate points for drawing\n");
 	    return;
 	  }
 	/* size of arrow */
@@ -978,6 +997,33 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	Xgc->graphic_engine->scale->drawarrows(Xgc,xm,ym,n,arsize,&P->obj->color,0);
       }
       break;
+    case curve_fill:
+      {
+	double *xm=NULL,*ym=NULL;
+	int n= M->m+2;
+	if (M->m == 0) return ;
+	xm = graphic_alloc(0,n,sizeof(double));
+	ym = graphic_alloc(1,n,sizeof(double));
+	if ( xm == 0 || ym == 0)
+	  {
+	    Sciprintf("Error: cannot allocate points for drawing\n");
+	    return;
+	  }
+	/* size of arrow */
+	memcpy(xm,M->R,M->m*sizeof(double));
+	memcpy(ym,M->R+M->m,M->m*sizeof(double));
+	xm[M->m]= M->R[M->m-1];
+	ym[M->m]=0.0;
+	xm[M->m+1]= M->R[0];
+	ym[M->m+1]=0.0;
+	if ( P->obj->color >= -1 )
+	  {
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	    Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
+	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  }
+	Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
+      }
     }
 
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
@@ -1053,4 +1099,4 @@ static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1057 "curve.c"
+#line 1103 "curve.c"

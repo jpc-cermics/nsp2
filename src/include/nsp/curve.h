@@ -109,8 +109,9 @@ extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 
 #line 9 "codegen/curve.override"
 /* inserted at the end of public part of include file */
+typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow, curve_fill, curve_stairs_fill } nsp_curve_mode ;
 
-#line 114 "./curve.h"
+#line 115 "./curve.h"
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
@@ -125,7 +126,7 @@ static AttrTab curve_attrs[];
 static NspMethods *curve_get_methods(void);
 /* static int int_curve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCurve *nsp_curve_create_void(const char *name,NspTypeBase *type);
-#line 13 "codegen/curve.override"
+#line 14 "codegen/curve.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -134,6 +135,6 @@ static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 
-#line 138 "./curve.h"
+#line 139 "./curve.h"
 #endif /* NspCurve_Private */
 

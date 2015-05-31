@@ -536,7 +536,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 
   nsp_gwin_clear();
   if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
-  
+
   /* create a vfield and insert-it in axes */
   if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) goto bug;
   if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) goto bug;
@@ -1379,7 +1379,7 @@ static int int_plot3d1_new( Stack stack, int rhs, int opt, int lhs)
 static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs);
 typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
 
-static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
+static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int imode,func_2d func)
 {
   NspGraphic *ret;
   /* for 2d optional arguments; */
@@ -1390,7 +1390,9 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
   int leg_posi;
   NspMatrix *Mmark=NULL,*Mmark_size=NULL, *Mmark_color=NULL, *Mline_color=NULL, *Mline_thickness=NULL;
-  int auto_axis=TRUE,iso=FALSE;
+  int auto_axis=TRUE,iso=FALSE, mode_opt;
+  char *mode= NULL;
+
   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
@@ -1407,20 +1409,36 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 			 { "line_thickness",realmat,NULLOBJ,-1},
 			 { "auto_axis",s_bool,NULLOBJ,-1},
 			 { "iso",s_bool,NULLOBJ,-1},
+			 { "mode",string,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
 
   /* keep same order as in opts_2d */
   enum  { axesflag_opts , frameflag_opts, leg_opts, leg_pos_opts,
 	  logflag_opts , nax_opts, rect_opts , strf_opts, style_opts,
 	  mark_opts, mark_size_opts, mark_color_opts, line_color_opts,
-	  line_thickness_opts, auto_axis_opts, iso_opts};
+	  line_thickness_opts, auto_axis_opts, iso_opts, mode_opts
+  };
 
   int_types T[] = {realmat,obj,new_opts, t_end} ;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,
 	       &Mnax,&Mrect,&strf,&Mstyle,&Mmark,&Mmark_size,&Mmark_color,&Mline_color,
-	       &Mline_thickness,&auto_axis,&iso) == FAIL)
+	       &Mline_thickness,&auto_axis,&iso,&mode) == FAIL)
     return RET_BUG;
+
+  if ( mode != NULL)
+    {
+      const char *mode_names[]={ "std", "stairs", "stem", "arrow", "fill","stairs_fill",  NULL };
+      if (( mode_opt= is_string_in_array(mode,mode_names,1)) < 0 )
+	{
+	  string_not_in_array(stack, mode, mode_names, "optional argument mode");
+	  return RET_BUG;
+	}
+      else
+	{
+	  imode = mode_opt;
+	}
+    }
 
   if ( IsNspPList(fobj) )
     {
@@ -1732,7 +1750,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	  int cu_mark_size = -1;
 	  int cu_mark_color = -1;
 	  int cu_width = -1;
-	  int cu_mode = mode;
+	  int cu_mode = imode;
 	  int cu_color= (style > 0 ) ? style : -2 ;
 	  if (Mmark != NULL ) { cu_mark = Mmark->R[i];}
 	  if (Mmark_color != NULL ) { cu_mark_color = Mmark_color->R[i];}
@@ -1877,6 +1895,20 @@ static int int_plot2d1_4_new( Stack stack, int rhs, int opt, int lhs)
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,3,NULL);
+}
+
+static int int_plot2d1_5_new( Stack stack, int rhs, int opt, int lhs)
+{
+  static char str[]="x=0:0.1:2*%pi;plot2d5([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[1,2,3],rect=[0,-2,2*%pi,2]);";
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
+  return int_plot2d_G(stack,rhs,opt,lhs,1,4,NULL);
+}
+
+static int int_plot2d1_6_new( Stack stack, int rhs, int opt, int lhs)
+{
+  static char str[]="x=0:0.1:2*%pi;plot2d6([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[1,2,3],rect=[0,-2,2*%pi,2]);";
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
+  return int_plot2d_G(stack,rhs,opt,lhs,1,5,NULL);
 }
 
 
@@ -2829,17 +2861,17 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe;
   NspSegments *pl;
   NspMatrix *x,*y,*Mstyle=NULL,*Mcolor=NULL,*color=NULL,*Mthickness=NULL,*thickness=NULL;
-  
+
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
 
   /* style is synonym of color: its is maintained for backward compatibility */
-  
+
   nsp_option opts[] ={{ "style",mat_int,NULLOBJ,-1},
 		      { "color",mat_int,NULLOBJ,-1},
 		      { "thickness",mat_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&Mstyle,&Mcolor,&Mthickness) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts,&Mstyle,&Mcolor,&Mthickness) == FAIL)
     return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
@@ -2887,16 +2919,16 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
 	}
     }
-  if ( Mthickness != NULL ) 
+  if ( Mthickness != NULL )
     {
       if ((thickness = (NspMatrix *) nsp_object_copy_and_name("thickness",NSP_OBJECT(Mthickness)))== NULL)
 	return RET_BUG;
     }
-  
+
   /* passer color en entiers ? */
   if ((pl = nsp_segments_create("ar",x,y,color,thickness,NULL))== NULL)
     return RET_BUG;
-  
+
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL)
     {
       Scierror("Error: failed to insert segments in Figure\n");
@@ -7233,6 +7265,8 @@ OpGrTab Graphics_func[]={
   {NAMES("plot2d2"),int_plot2d1_2_new},
   {NAMES("plot2d3"),int_plot2d1_3_new},
   {NAMES("plot2d4"),int_plot2d1_4_new},
+  {NAMES("plot2d5"),int_plot2d1_5_new},
+  {NAMES("plot2d6"),int_plot2d1_6_new},
   {NAMES("plot3d"),int_plot3d_new},
   {NAMES("plot3d1"),int_plot3d1_new},
   {NAMES("seteventhandler"),int_seteventhandler},
@@ -7337,7 +7371,7 @@ void Graphics_Interf_Info(int i, char **fname, function (**f))
  *
  * returns a #NspMatrix containing style values, if the returned
  * value is different from @var then a new matrix was allocated
- * and should be freed. 
+ * and should be freed.
  *
  * Returns: %NULL or a new #NspMatrix
  **/
