@@ -1,3 +1,13 @@
+//---------------------------------------------------
+// Copyright (C) 2004-2015 Jean-Philippe Chancelier Cermics/Enpc
+// jpc@cermics.enpc.fr
+// NSP  graphic demo
+//
+// Some functions have different copyright (from scilab)
+// see below.
+//---------------------------------------------------
+
+
 function demo_lib()
 // A set of function for graphic demos
 endfunction
@@ -177,7 +187,7 @@ function demo_2d_12()
   xpoly(xright*[1;1],[0;0.3]);xstring(xright,0.3,'B');
 endfunction
 
-function demo_2d_14()
+function demo_2d_13()
   n=5;p=4;
   val=10*rand(n,p);
   nomsh='nh'+ string(1:p);
