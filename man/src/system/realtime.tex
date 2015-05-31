@@ -60,21 +60,20 @@ the call to \verb!tic!
   realtimeinit(2);realtime(0);showtime();
 \end{Verbatim}
 
-\noindent An example with graphic animation 
+\noindent An example with graphic animation
 
 \begin{Verbatim}
-if ~new_graphics() then switch_graphics();end;
-xsetech(frect=[-1,-1,1,1]*1.5,fixed=%t,clip=%t,iso=%t,axesflag=0); 
+xsetech(frect=[-1,-1,1,1]*1.5,fixed=%t,clip=%t,iso=%t,axesflag=0);
 xset('thickness',2);
-xarc(-1,1,2,2,0,360*64,color=3,thickness=2); 
+xarc(-1,1,2,2,0,360*64,color=3,thickness=2);
 x1=[0;cos(90*%pi/180)];
 y1=[0;sin(90*%pi/180)];
 A=xarrows(x1,y1,arsize=0.2,style=1);
 S=xstring(-0.5,1.2," ",fill=%t,w=1,h=0.25);
 F=get_current_figure[];
 p=5;
-realtimeinit(1/p);//sets time unit to half a second
-realtime(0);//sets current date to 0 
+realtimeinit(1/p);//sets time unit to 1/p
+realtime(0);//sets current date to 0
 N=60;
 for k=linspace(1,N,5*N);
   realtime(k);

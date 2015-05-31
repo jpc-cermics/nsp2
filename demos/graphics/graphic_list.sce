@@ -60,10 +60,11 @@ demo_3d_12_info="Cube";
 demo_3d_13_info="Tube";
 demo_3d_14_info="Shell";
 demo_3d_15_info="plot3d and contours";
-demo_3d_16_info="tobedone";
+demo_3d_16_info="some surfaces";
 demo_3d_17_info="tobedone";
+demo_3d_18_info="tobedone";
 
-graphic_test_3d = build_demo_list("demo_3d",15);
+graphic_test_3d = build_demo_list("demo_3d",16);
 
 // ----------------------------
 // organize the previous list  for graphic demo widget

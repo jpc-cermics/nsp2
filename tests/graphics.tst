@@ -1,14 +1,32 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: scilab -*-
 
 // xinit(cairo=%t);
 
-if ~exists('tpause') then tpause=1.e6;end 
+if ~exists('tpause') then tpause=1.e6;end
 count=1;
 if ~exists('ps') then ps =%f;end
 
 //---------------------------------------------------------
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="std");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="stairs");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="stem");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="arrow");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="fill");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+xclear();x=0:0.1:2*%pi;plot2d(x,sin(x),style=[2],mode="stairs_fill");
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+//---------------------------------------------------------
 champ(-5:5,-5:5,rand(11,11),rand(11,11));
-
 if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
 xpause(tpause,%t);xclear();
 
@@ -750,4 +768,47 @@ N=32;C=[jetcolormap(N)]; xset('colormap',C);
 Matplot(1:32,remap=%t,zminmax=[10,20],colminmax=[20,32]);
 
 if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
 
+//---------------------------------------------------------
+function y=f(t,x)
+  y=[0.8*x(1)*(1 - 0.5*x(2));
+     0.2*x(2)*(x(1)-3)];
+endfunction
+x=linspace(0,6,20);y=x;
+[X,Y]=ndgrid(x,y);
+m=size(x,'*');n=size(y,'*');
+fx=zeros(m,n);fy=fx;
+for i=1:size(X,'*');
+  yv=f(0,[X(i);Y(i)]);
+  fx(i)=yv(1); fy(i)=yv(2);
+end
+n=size(x,'*');
+fx.redim[n,-1];fy.redim[n,-1];
+xset('colormap',jetcolormap(64));
+champ1(x,y,fx,fy);
+
+t = linspace(0,10,100);
+xo = ode([4;3],0,t,f);
+plot2d(xo(1,:),xo(2,:),line_color=1,line_thickness=2)
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+//---------------------------------------------------------
+
+function hinton(A,varargopt)
+  xsetech(axesflag=2);
+  xset('colormap',graycolormap(8));
+  [m,n]=size(A);
+  x=1:m;y=1:n;  C=-sign(A);
+  [X,Y]=ndgrid(x,y);
+  X.redim[1,-1]; Y.redim[1,-1];
+  w=  abs(A(:))'/max(abs(A));
+  rects=[Y-w./2;X(m*n:-1:1)+w./2;w;w];
+  xfrect([0,m+1,n+1,m+1],color=11);
+  xrects(rects,color=4*(1+C(:)'),background=4*(1+C(:))');
+endfunction
+
+hinton(randn(20,20));
+if ps then xexport(0,'file'+string(count)+'.eps');count=count+1;end
+xpause(tpause,%t);xclear();
+//---------------------------------------------------------

@@ -464,6 +464,70 @@ function demo_3d_15()
 endfunction
 
 function demo_3d_16()
+  subplot(2,2,1,a3d=%t);
+  function hole3d()
+  // Holes in surfaces using %inf
+    t=linspace(-%pi,%pi,40);z=sin(t)'*cos(t);
+    z1=find(abs(z) > 0.5);
+    z(z1)=%inf*z1;
+    plot3d1(t,t,z,alpha=78,theta=34,colormap=jetcolormap(32));
+  endfunction
+
+  hole3d();
+
+  subplot(2,2,2,a3d=%t);
+  function rings()
+    rr=0.2;
+    t=linspace(0,2*%pi,10);
+    s=linspace(0,2*%pi,41); n=length(s);
+    r=repmat(1+cos(t)*rr,n,1)'; m=length(t);
+    x=repmat(cos(s),m,1).*r; y=repmat(sin(s),m,1).*r;
+    z=repmat(sin(t)*rr,n,1)';
+    // ring1
+    [xx1,yy1,zz1]=nf3d(x,y,z);
+    // ring2
+    [xx2,yy2,zz2]=nf3d(x+1.3,-z,y);
+    // ring3
+    [xx3,yy3,zz3]=nf3d(x-1.3,-z,y);
+    [m,n]=size(xx1);
+    colors=[10*ones(1,n),20*ones(1,n),30*ones(1,n)];
+    plot3d([xx1,xx2,xx3],[yy1,yy2,yy3],[zz1,zz2,zz3],colors=colors,colormap=jetcolormap(32));
+  endfunction
+  rings();
+  subplot(2,2,3,a3d=%t);
+  function torus()
+  // some torus type bodies.
+    x=linspace(0,2*%pi,40);
+    y=linspace(0,2*%pi,20)';
+    // a torus with a thick and a thin side.
+    factor=1.5+cos(y)*(cos(x)/2+0.6);
+    X=factor*diag(cos(x));
+    Y=factor*diag(sin(x));
+    Z=sin(y)*(cos(x)/2+0.6);
+    [xx,yy,zz]=nf3d(X,Y,Z);
+    plot3d1(xx,yy,zz,colormap=jetcolormap(32));
+  endfunction
+
+  torus();
+  subplot(2,2,4,a3d=%t);
+
+  function bh(nn)
+  // a black hole
+    x=linspace(0,2*%pi,nn);
+    t=linspace(0,1,20);
+    cosphi=repmat(cos(x),length(t),1);
+    sinphi=repmat(sin(x),length(t),1);
+    f=repmat((t.*t+0.2)',1,length(x));
+    x=f.*cosphi;y=f.*sinphi ;z=repmat(t'.*2-1,length(x),1);
+    [xx,yy,zz]=nf3d(x,y,z);
+    plot3d1(xx,yy,zz,alpha=70,theta=64,colormap=jetcolormap(32));
+  endfunction
+
+  bh(30);
+endfunction
+
+
+function demo_3d_17()
   function [z]=surf(x,y); z=sin(x)*cos(y);endfunction;
   t=%pi*(-10:10)./10;
   plot3d(t,t,surf,alpha=35,theta=45,flag=[-6,2,3]);
@@ -479,7 +543,7 @@ function demo_3d_16()
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_17()
+function demo_3d_18()
 // this one should be used with opengl
   t=%pi*(-10:10)./10;
   rect=[-%pi,%pi,-%pi,%pi,-1,1];
