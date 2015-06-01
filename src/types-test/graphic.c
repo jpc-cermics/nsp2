@@ -911,7 +911,7 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 
 void nsp_graphic_invalidate(NspGraphic *G)
 {
-  double bounds[4];/* xmin,ymin,xmax, ymax */
+  NspObject *Obj;
   nsp_figure *F = G->obj->Fig;
   nsp_axes *A = G->obj->Axe;
   BCG *Xgc;
@@ -919,34 +919,39 @@ void nsp_graphic_invalidate(NspGraphic *G)
   if ((Xgc= F->Xgc) == NULL) return ;
   if ( F->draw_now== FALSE) return;
   if ( G->obj->show == FALSE ) return;
-  if ( G->type->bounds(G,bounds)== TRUE)
+  /* returns the NspObject of type NspAxes *A or NspObjs3d * such that 
+   * Obj->obj = G->obj->Axe
+   * XXX should also return a flag:
+   */
+  Obj= nsp_check_for_axes_or_objs3d_from_pointer(F,G->obj->Axe);
+  if ( Obj != NULL) 
     {
-      gint rect[4]; /* like a GdkRectangle */
-      int xmin,xmax,ymin,ymax;
-      scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
-      scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
-      rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
-      /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
-      Xgc->graphic_engine->invalidate(Xgc,rect);
-    }
-  else
-    {
-      NspObject *obj = nsp_check_for_axes_or_objs3d_from_pointer(F,G->obj->Axe);
-      if ( obj != NULL)
+      if ( IsAxes(Obj) )
 	{
-	  if (IsAxes(obj) )
+	  double bounds[4];/* xmin,ymin,xmax, ymax */
+	  if ( G->type->bounds(G,bounds)== TRUE)
 	    {
-	      nsp_axes_invalidate((NspGraphic *) obj);
+	      gint rect[4]; /* like a GdkRectangle */
+	      int xmin,xmax,ymin,ymax;
+	      scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
+	      scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
+	      rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
+	      /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
+	      Xgc->graphic_engine->invalidate(Xgc,rect);
 	    }
 	  else
 	    {
-	      nsp_objs3d_invalidate((NspGraphic *) obj);
+	      nsp_axes_invalidate((NspGraphic *) Obj);
 	    }
 	}
       else
 	{
-	  Xgc->graphic_engine->invalidate(Xgc,NULL);
+	  nsp_objs3d_invalidate((NspGraphic *) Obj);
 	}
+    }
+  else
+    {
+      Xgc->graphic_engine->invalidate(Xgc,NULL);
     }
 }
 
@@ -987,4 +992,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 991 "graphic.c"
+#line 996 "graphic.c"
