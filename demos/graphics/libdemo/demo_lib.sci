@@ -569,8 +569,6 @@ endfunction
 function demo_prim_1()
   function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction
   xsetech(frect=[-100,-100,500,600]);
-  F=get_current_figure();
-  F.draw_latter[];
   // xrects
   x=0:40:240;
   boxes=[x;10*ones(size(x));30*ones(size(x));30*ones(size(x))];
@@ -619,13 +617,11 @@ function demo_prim_1()
   xnumb(x,500*ones(size(x)),[10,20,35],1);
   xnumb(x,550*ones(size(x)),[10,20,35],0);
   xinfo(["[[II.3] xnumb()"]);
-  F.draw_now[];
 endfunction
 
 function demo_prim_2()
   function [v]=transl(x,t); v=x+t*ones(size(x)); endfunction
   xsetech(frect=[-100,-100,500,600]);
-  F.draw_latter[]; // not mandatory
   xrect(20,120,60,60)
   xfrect(100,120,60,60)
   xarc(20,200,50,70,0,64*(225))
@@ -652,11 +648,8 @@ function demo_prim_2()
   rect=xstringl(20,400,"Character string");
   xrect(rect(1),rect(2),rect(3),rect(4));
   xrect(150,460,100,150);
-
   // to be done with new graphics
-  if new_graphics()
-
-  else
+  if %t then 
     xset('clipping',150,460,100,150);
     x=0:0.2:2*%pi;
     x1=[sin(x);10*sin(x)];
@@ -682,7 +675,6 @@ function demo_prim_2()
   xset("font",4,5);
   xstring(0,350,"Scilab");
   xinfo(["[IV.5] Setting font style and size"]);
-  F.draw_now[];
 endfunction
 
 function demo_prim_3()
