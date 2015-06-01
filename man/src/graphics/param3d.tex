@@ -1,0 +1,98 @@
+% -*- mode: latex -*-
+\mansection{param3d}
+\begin{mandesc}
+  \short{param3d}{3D plot of a parametric curve}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  param3d(x,y,z,style=,alpha=,colormap=,ebox=,flag=,leg=,theta=);
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y,z}: three vectors of the same size (points of the parametric
+    curve).
+
+    \vname{style}: is a vector of size the number of curves \verb!nc!. If
+    \verb!style(i)! is negative the \verb!i!-th curve is plotted using mark with id equal to \verb!abs(style(i))! and
+    if \verb!style(i)! is positive, the \verb!i!-th curve is drawn with color id equal to \verb!style(i)!.
+
+    \vname{theta, alpha}: optional arguments giving in degree the spherical coordinates of the
+    observation point.
+    \vname{leg}: optional string defining the labels for each axis with \verb!@! as a field
+    separator, for example \verb!"X@Y@Z"!.
+    \vname{flag}: optional real vector of size three.
+    \verb!flag=[type,box]!.
+    \begin{varlist}
+      \vname{type}: an integer (scaling).
+      \begin{varlist}
+        \vname{type=0}: the plot is made using the current 3D scaling.
+        \vname{type=1}: rescales automatically 3d boxes with extreme aspect
+        ratios, the boundaries are specified by the value of the
+        optional argument \verb!ebox!.
+        \vname{type=2}: rescales automatically 3d boxes with extreme aspect
+        ratios, the boundaries are computed using the given
+        data.
+        \vname{type=3}: 3d isometric with box bounds given by optional \verb!ebox!, similarily to
+        \verb!type=1!.
+        \vname{type=4}: 3d isometric bounds derived from the data, similarily tp \verb!type=2!.
+        \vname{type=5}: 3d expanded isometric bounds with box bounds given by optional \verb!ebox!, similarily to
+        \verb!type=1!.
+        \vname{type=6}: 3d expanded isometric bounds derived from the data,
+        similarily to \verb!type=2!.
+      \end{varlist}
+      \vname{box}: an integer (frame around the plot).
+      \begin{varlist}
+        \vname{box=0}: nothing is drawn around the plot.
+        \vname{box=1}: unimplemented (like box=0).
+        \vname{box=2}: only the axes behind the surface are drawn.
+        \vname{box=3}: a box surrounding the surface is drawn and captions are added.
+        \vname{box=4}: a box surrounding the surface is drawn, captions and
+        axes are added.
+      \end{varlist}
+    \end{varlist}
+    \vname{ebox}: vector \verb![xmin,xmax,ymin,ymax,zmin,zmax]! used to fix the boundaries of the plot. This argument is used
+    when the optional argument \verb!flag! is given with type set to \verb!1!, or \verb!3!, or \verb!5!.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!param3d! is used to plot a 3D curve defined by its
+  coordinates \verb!x!, \verb!y! and \verb!z!. Note that
+  data can also be set or get through the surface entity properties (see
+  \manlink{surface\_properties}{surface-properties} ).Note that properties like \verb!rotation angles!,
+  \verb!colors! and \verb!thickness! of the plotted curves can
+  also be set through the param3d entity properties (see
+  \manlink{param3d\_properties}{param3d-properties} ).Use \verb!param3d1! to do multiple plots.Enter the command \verb!param3d()! to see a demo.
+\end{mandescription}
+
+%--example
+\begin{examples}
+\noindent A simple example
+\begin{Verbatim}
+  t=linspace(0,5*%pi,100)';
+  param3d(sin(t),cos(t),t/10);
+\end{Verbatim}
+\noindent using \verb!flag! and \verb!style!
+
+\begin{Verbatim}
+  t=linspace(0,5*%pi,100)';
+  param3d(sin(t),cos(t),t/10,flag=[2,1],style=-7);
+  param3d(sin(t)/2,cos(t)/2,t/10,flag=[2,1],style=7);
+\end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{param3d1}{param3d1} \manlink{plot3d}{plot3d}
+\end{manseealso}
+
+%-- Author
+
+\begin{authors}
+  J.Ph.C.
+
+\end{authors}
