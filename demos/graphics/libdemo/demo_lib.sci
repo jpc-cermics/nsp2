@@ -1000,6 +1000,74 @@ function demo_anim_10()
   end
 endfunction
 
+function demo_anim_11()
+// Demo of Hinton diagrams.
+// Initial idea from matplotlib
+
+  xsetech(axesflag=2);
+  xset('colormap',graycolormap(8));
+  n=20;
+  xfrect([0,n+1,n+1,n+1],color=11);
+  x=1:n; y=1:n;
+  [X,Y]=ndgrid(x,y);
+  X.redim[1,-1];Y.redim[1,-1];
+
+  F=get_current_figure[];
+  Axe=F(1);
+  B=randn(n,n);
+  A= tril(ones(n,n))+triu(-ones(n,n));
+  N=100; 
+  alpha=linspace(0,1,N);
+  for i=[1:N,N:-1:1]
+    M=alpha(i)*A+(1-alpha(i))*B;
+    C=-sign(M);
+    w= abs(M(:))'/max(abs(M));
+    rects=[Y-w./2;X(n*n:-1:1)+w./2;w;w];
+    if length(Axe.children) >= 2 then Axe.children.remove_last[];end
+    xrects(rects,color=4*(1+C(:)'),background=4*(1+C(:))');
+    Axe(1).invalidate[];
+    xpause(10000,%t);
+  end
+endfunction
+
+function demo_anim_12()
+  xtitle("vector field and trajectories");
+  function y=f(t,x)
+    y=[0.8*x(1)*(1 - 0.5*x(2));
+       0.2*x(2)*(x(1)-3)];
+  endfunction
+  x=linspace(0,6,20);y=linspace(0,4,20);
+  [X,Y]=ndgrid(x,y);
+  m=size(x,'*');n=size(y,'*');
+  fx=zeros(m,n);fy=fx;
+  for i=1:size(X,'*');
+    yv=f(0,[X(i);Y(i)]);
+    fx(i)=yv(1); fy(i)=yv(2);
+  end
+  n=size(x,'*');
+  fx.redim[n,-1];fy.redim[n,-1];
+  xset('colormap',jetcolormap(64));
+  xsetech(frect=[0,0,6,4],fixed=%t);
+  champ1(x,y,fx,fy);
+
+  t = linspace(0,40,200);
+  N=6;
+  x=cell(1,N);P=cell(1,N);
+  for i=1:N
+    x{i} = ode([4;2+i/3],0,t,f);
+    P{i} = xarc([x{i}(1),x{i}(2),0.1,0.1,0,360*64],background=5);
+  end
+  for j=1:size(t,'*')
+    for i=1:N
+      P{i}.invalidate[];P{i}.x = x{i}(1,j); P{i}.y = x{i}(2,j);P{i}.invalidate[];
+      xpause(10000,%t);
+    end
+  end
+endfunction
+
+
+
+
 
 function demo_contour_1()
 // xset('colormap',hotcolormap(20))
