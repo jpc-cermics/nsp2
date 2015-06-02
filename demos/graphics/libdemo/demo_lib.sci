@@ -649,7 +649,7 @@ function demo_prim_2()
   xrect(rect(1),rect(2),rect(3),rect(4));
   xrect(150,460,100,150);
   // to be done with new graphics
-  if %t then 
+  if %t then
     xset('clipping',150,460,100,150);
     x=0:0.2:2*%pi;
     x1=[sin(x);10*sin(x)];
@@ -1016,7 +1016,7 @@ function demo_anim_11()
   Axe=F(1);
   B=randn(n,n);
   A= tril(ones(n,n))+triu(-ones(n,n));
-  N=100; 
+  N=100;
   alpha=linspace(0,1,N);
   for i=[1:N,N:-1:1]
     M=alpha(i)*A+(1-alpha(i))*B;
@@ -1050,7 +1050,7 @@ function demo_anim_12()
   xsetech(frect=[0,0,6,4],fixed=%t);
   champ1(x,y,fx,fy);
 
-  t = linspace(0,40,200);
+  t = linspace(0,20,100);
   N=6;
   x=cell(1,N);P=cell(1,N);
   for i=1:N

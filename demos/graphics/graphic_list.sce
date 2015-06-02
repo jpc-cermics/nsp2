@@ -88,10 +88,10 @@ demo_anim_7_info="plot3d1";
 demo_anim_8_info="champ1";
 demo_anim_9_info="param3d1";
 demo_anim_10_info="contours";
-demo_anim_11_info="Vector field and ode";
-demo_anim_12_info="Hinton";
+demo_anim_11_info="Hinton";
+demo_anim_12_info="Vector field and ode";
 
-graphic_test_anim =build_demo_list("demo_anim",10);
+graphic_test_anim =build_demo_list("demo_anim",12);
 
 // ------------------------------
 // contours: Matplot Matplot1 fec grayplot
