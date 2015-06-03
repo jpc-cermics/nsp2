@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  *
  * Nsp menu functions
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -32,10 +32,10 @@
 
 #include <nsp/nsp.h>
 #include <nsp/command.h>
-#include <nsp/graphics-new/periGtk.h> 
-#include <nsp/menus.h> 
-#include <nsp/system.h> 
-#include <nsp/sciio.h> 
+#include <nsp/graphics-new/periGtk.h>
+#include <nsp/menus.h>
+#include <nsp/system.h>
+#include <nsp/sciio.h>
 #include <nsp/gtksci.h>
 #include <nsp/nsptcl.h>
 
@@ -52,7 +52,7 @@ static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *a
 static int is_menu_name(const char *name,const char *name1) ;
 
 /*--------------------------------------------------------------
- * main menu. i.e the menu of the main scilab window 
+ * main menu. i.e the menu of the main scilab window
  *            this menu is attached to a zterm through a plug widget
  *--------------------------------------------------------------*/
 
@@ -60,19 +60,19 @@ static menu_entry *main_menu_entries = NULL;
 static GtkWidget  *main_menu_menubar = NULL;
 
 /*
- * used when the menu is plugged 
+ * used when the menu is plugged
  */
 
 void create_plugged_main_menu(void)
 {
-  static int first = 0; 
+  static int first = 0;
   static GtkWidget *Plug;
-  GtkAccelGroup *accel_group = NULL ; 
+  GtkAccelGroup *accel_group = NULL ;
   const char * plug_info = nsp_getenv("SCIWIN");
 
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
-    Plug = gtk_plug_new((GdkNativeWindow) NSP_POINTER_CAST_TO_INT 
+    Plug = gtk_plug_new((GdkNativeWindow) NSP_POINTER_CAST_TO_INT
 			atoi(nsp_getenv("SCIWIN")));
     main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
@@ -83,21 +83,21 @@ void create_plugged_main_menu(void)
   /* This function generates the menu items from scilab description */
   main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group);
   /* Attach the new accelerator group to the window. */
-  /* gtk_window_add_accel_group (GTK_WINDOW (window), accel_group); */ 
+  /* gtk_window_add_accel_group (GTK_WINDOW (window), accel_group); */
   gtk_container_add(GTK_CONTAINER(Plug),main_menu_menubar);
   gtk_window_add_accel_group (GTK_WINDOW (Plug), accel_group);
   gtk_widget_show_all(Plug);
 }
 
 /*
- * used when zterm is plugged 
+ * used when zterm is plugged
  */
 
 GtkWidget *create_main_menu( GtkWidget  *window)
 {
   static int first = 0;
-  GtkAccelGroup *accel_group = NULL ; 
-  
+  GtkAccelGroup *accel_group = NULL ;
+
   /* Make an accelerator group (shortcut keys) */
   if ( window != NULL)  accel_group = gtk_accel_group_new ();
 
@@ -108,13 +108,13 @@ GtkWidget *create_main_menu( GtkWidget  *window)
   }
   /* This function generates the menu items from scilab description */
   main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group);
-  /* Finally, return the actual menu bar created by the item factory. */ 
+  /* Finally, return the actual menu bar created by the item factory. */
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
   return main_menu_menubar;
 }
 
 /*--------------------------------------------------------------
- * Change the Graphic Window menu when graphic window ID changes  
+ * Change the Graphic Window menu when graphic window ID changes
  *--------------------------------------------------------------*/
 
 static integer lab_count = 0;
@@ -124,11 +124,11 @@ void MenuFixCurrentWin(int ivalue)
 {
   int w=-1;
   char *graphic_entries[] = { "Create or Select||$gwselect",
-			      "Raise||$gwraise", 
+			      "Raise||$gwraise",
 			      "Delete||$gwdelete",
 			      "+||$gwplus" ,
 			      "-||$gwminus" } ;
-  if ( ivalue == lab_count ) return ; 
+  if ( ivalue == lab_count ) return ;
   if ( main_menu_menubar == NULL ) return;
   sprintf( gwin_name, "Graphic Window %d", (int) lab_count );
   nsp_menus_delete_button(w, gwin_name);
@@ -141,7 +141,7 @@ void MenuFixCurrentWin(int ivalue)
 
 
 /*--------------------------------------------------------------
- * Graphic window menu 
+ * Graphic window menu
  *--------------------------------------------------------------*/
 
 void create_graphic_window_menu(BCG *dd)
@@ -164,8 +164,8 @@ void create_graphic_window_menu(BCG *dd)
  */
 
 /*---------------------------------------------------
- * Delete the button named button_name in the menu of window 
- * number win_num 
+ * Delete the button named button_name in the menu of window
+ * number win_num
  *---------------------------------------------------*/
 
 int nsp_menus_delete_button(int win_num,const char *button_name)
@@ -173,19 +173,19 @@ int nsp_menus_delete_button(int win_num,const char *button_name)
   static char btn[64];
   char *p;
   const char *but= button_name;
-  p = btn ; 
+  p = btn ;
   *(p++) = '/';
   while ( *but != '\0' ) {
-    if ( *but == '/') break ; 
-    else if ( *but == '_') but++ ; 
+    if ( *but == '/') break ;
+    else if ( *but == '_') but++ ;
     else { *(p++)= *(but++);}
   }
   *p = '\0';
-  if ( win_num == -1 ) 
+  if ( win_num == -1 )
     {
       nsp_menu_delete_menuitem(&main_menu_entries,button_name);
     }
-  else 
+  else
     {
       BCG *dd = window_list_search(win_num);
       if ( dd == NULL) return 0;
@@ -203,27 +203,27 @@ int nsp_menus_delete_button(int win_num,const char *button_name)
  *  typ         : Action mode
  *                typ==0 : interpreted (execution of scilab instruction
  *  typ!=0 : hard coded a routine is called
- *  fname;      : name of the action function  
+ *  fname;      : name of the action function
  *---------------------------------------------------*/
 
 int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,int typ,char *fname)
-{ 
-  if ( win_num == -1 ) 
+{
+  if ( win_num == -1 )
     {
-      /* Scilab main menu */ 
+      /* Scilab main menu */
       if ( main_menu_menubar == NULL ) return OK;
-      if ( nsp_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 ) 
+      if ( nsp_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 )
 	{
 	  return FAIL;
 	}
       sci_menubar_add_last_menu_entry(NULL,main_menu_menubar,main_menu_entries);
     }
-  else 
+  else
     {
       BCG *dd = window_list_search(win_num);
       if ( dd == NULL ) return OK;
       if ( nsp_menu_add(&dd->private->menu_entries,win_num,button_name,entries,
-			ne,typ,fname) == 1 ) 
+			ne,typ,fname) == 1 )
 	{
 	  return FAIL;
 	}
@@ -233,39 +233,39 @@ int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,in
 }
 
 /*--------------------------------------------------
- * Activate or deactivate a menu 
+ * Activate or deactivate a menu
  *---------------------------------------------------*/
 
 static void nsp_menus_set_unset(int win_num,const char *name,int subid,int status)
-{ 
+{
   menu_entry *entries;
-  if ( win_num == -1 ) 
+  if ( win_num == -1 )
     {
       entries =main_menu_entries;
     }
-  else 
+  else
     {
       BCG *dd = window_list_search(win_num);
       if ( dd == NULL ) return ;
       entries = dd->private->menu_entries;
     }
   /* find name in the entries */
-  while ( entries != NULL) 
+  while ( entries != NULL)
     {
-      if ( is_menu_name(entries->name,name)==0) 
+      if ( is_menu_name(entries->name,name)==0)
 	{
-	  if ( subid == 0) 
+	  if ( subid == 0)
 	    {
 	      entries->status = status ;
 	      gtk_widget_set_sensitive (entries->widget,status);
 	      return;
 	    }
-	  else 
+	  else
 	    {
 	      int count;
 	      /* walk to find submenu number subid */
-	      entries = entries->subs; 
-	      for ( count = 0 ; count < subid -1 ; count++) 
+	      entries = entries->subs;
+	      for ( count = 0 ; count < subid -1 ; count++)
 		entries = (entries == NULL) ? NULL : entries->next ;
 	      if ( entries == NULL) return;
 	      entries->status = status;
@@ -290,22 +290,22 @@ void nsp_menus_unset(int win_num,const char *button_name,int ne)
 }
 
 /*--------------------------------------------------------
- * A Set of functions to make addmenu/delmenu/set-unsetmenu 
- * work with itemfactory menus of gtk 
- * It seams that toplevel menu buttons cannot 
- * be deleted in itemfactory. 
- * thus we recreate a new menubar when menus are deleted 
+ * A Set of functions to make addmenu/delmenu/set-unsetmenu
+ * work with itemfactory menus of gtk
+ * It seams that toplevel menu buttons cannot
+ * be deleted in itemfactory.
+ * thus we recreate a new menubar when menus are deleted
  *--------------------------------------------------------*/
 
 static void submenu_entry_set_menu(menu_entry *subs,menu_entry *father);
 
 /* checks that name and name1 are the same taking care of _ */
 
-static int is_menu_name(const char *name,const char *name1) 
+static int is_menu_name(const char *name,const char *name1)
 {
-  while ( *name != 0) 
+  while ( *name != 0)
     {
-      if ( *name == '_' ) 
+      if ( *name == '_' )
 	{
 	  name++;
 	  if ( *name1 == '_' )  name1++;
@@ -327,9 +327,9 @@ void menu_entry_show(menu_entry *m)
   fprintf(stdout,"name = %s ",m->name);
   fprintf(stdout,"status %d nsub=%d win=%d action=%d fname=%s\n",
 	  m->status,m->nsub,m->winid,m->action_type,m->fname);
-  if ( m->accel != NULL) 
+  if ( m->accel != NULL)
     fprintf(stdout,"accel %s \n",m->accel);
-  if ( m->subs != NULL) 
+  if ( m->subs != NULL)
     {
       fprintf(stdout,"{\n");
       menu_entry_show(m->subs);
@@ -341,31 +341,31 @@ void menu_entry_show(menu_entry *m)
 static menu_entry *new_menu_entry(const char *name,const char *accel,const char *stock_name,int status,int nsub,
 				  menu_entry *subs,int winid, int action_type,const char *fname)
 {
-  menu_entry *loc; 
-  if ((loc = MALLOC(sizeof(menu_entry)))== NULL) 
+  menu_entry *loc;
+  if ((loc = MALLOC(sizeof(menu_entry)))== NULL)
     return NULL;
-  if ((loc->name = MALLOC((strlen(name)+1)*sizeof(char)))==NULL) 
+  if ((loc->name = MALLOC((strlen(name)+1)*sizeof(char)))==NULL)
     return NULL;
   strcpy(loc->name,name);
-  if (accel != NULL) 
+  if (accel != NULL)
     {
-      if ((loc->accel = MALLOC((strlen(accel)+1)*sizeof(accel)))==NULL) 
+      if ((loc->accel = MALLOC((strlen(accel)+1)*sizeof(accel)))==NULL)
 	return NULL;
       strcpy(loc->accel,accel);
     }
   else loc->accel = NULL;
-  
-  if ( stock_name  != NULL) 
+
+  if ( stock_name  != NULL)
     {
-      if ((loc->stock_name = MALLOC((strlen(stock_name)+1)*sizeof(stock_name)))==NULL) 
+      if ((loc->stock_name = MALLOC((strlen(stock_name)+1)*sizeof(stock_name)))==NULL)
 	return NULL;
       strcpy(loc->stock_name,stock_name);
     }
   else loc->stock_name = NULL;
 
-  if (fname != NULL) 
+  if (fname != NULL)
     {
-      if ((loc->fname = MALLOC((strlen(fname)+1)*sizeof(fname)))==NULL) 
+      if ((loc->fname = MALLOC((strlen(fname)+1)*sizeof(fname)))==NULL)
 	return NULL;
       strcpy(loc->fname,fname);
     }
@@ -398,10 +398,10 @@ void menu_entry_delete(menu_entry *me)
 {
   if ( me == NULL) return ;
   /* recursive free  */
-  FREE(me->name); 
-  FREE(me->fname); 
-  FREE(me->accel); 
-  FREE(me->stock_name); 
+  FREE(me->name);
+  FREE(me->fname);
+  FREE(me->accel);
+  FREE(me->stock_name);
   menu_entry_delete(me->subs);
   menu_entry_delete(me->next);
   FREE(me);
@@ -409,10 +409,10 @@ void menu_entry_delete(menu_entry *me)
 
 /*
  * decode a name = "entry|accel|action|stock-name";
- * by returning pointers to entry accel and action 
- * the pointers give position in a new allocated string 
- * which is returned in entry. entry is to be freed 
- * when entry, accel and action are no more used 
+ * by returning pointers to entry accel and action
+ * the pointers give position in a new allocated string
+ * which is returned in entry. entry is to be freed
+ * when entry, accel and action are no more used
  */
 
 static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char **action,char **stock_name)
@@ -420,19 +420,19 @@ static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char
   *accel = NULL,*action=NULL,*stock_name = NULL;
   if ((*entry=strdup(name))== NULL) return;
   *accel = strchr(*entry,'|');
-  if ( *accel != NULL) 
+  if ( *accel != NULL)
     {
       **accel = '\0';
       (*accel)++;
       *action = strchr(*accel,'|');
-      if ( *action != NULL ) 
-	{ 
+      if ( *action != NULL )
+	{
 	  **action = '\0';
 	  (*action)++;
 	  if ( *action == *accel + 1) *accel = NULL;
 	  *stock_name = strchr(*action,'|');
-	  if ( *stock_name != NULL ) 
-	    { 
+	  if ( *stock_name != NULL )
+	    {
 	      **stock_name = '\0';
 	      (*stock_name)++;
 	      if ( *stock_name == *action +  1) *action = NULL;
@@ -446,31 +446,31 @@ static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char
  * Add a menu in a menu_item list
  *  win_num     : graphic window number or -1 for main scilab window
  *  name        : label of menu button
- *  entries     : labels of submenus if any. each entry is a string 
+ *  entries     : labels of submenus if any. each entry is a string
  *                "entry_name" or "entry_name|accelerator|specific_action"
- * 
+ *
  *  ne          : number of submenus
  *  action_type : Action mode
  *                action_type==0 : interpreted (execution of scilab instruction
  *                action_type!=0 : hard coded a routine is called
- *  fname;      : name of the action function  
+ *  fname;      : name of the action function
  *----------------------------------------------------------------*/
 
-static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne, 
+static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,
 			int action_type,char *fname)
-{  
+{
   char *e_entry,*e_accel,*e_action,*e_stock_name,*action;
   int i;
   /* here we must find the menu_entry associated to win_num */
   menu_entry *me1=NULL,*me2,*top,*subs=NULL;
   /* first build the sub_menus */
-  for (i=0 ; i < ne ;i++) 
+  for (i=0 ; i < ne ;i++)
     {
       nsp_menu_decode_name(entries[i],&e_entry,&e_accel,&e_action,&e_stock_name);
       action = (e_action != NULL) ? e_action : fname ;
       me2 = new_menu_entry(e_entry,e_accel,e_stock_name,1,i+1,NULL,winid, action_type,action);
       if(e_entry != NULL) free(e_entry);
-      if ( me2 == NULL) 
+      if ( me2 == NULL)
 	{
 	  return 1;
 	}
@@ -483,14 +483,14 @@ static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries
   action = (e_action != NULL) ? e_action : fname ;
   top = new_menu_entry(e_entry,e_accel,e_stock_name,1,1,subs,winid,action_type,action);
   if(e_entry != NULL) free(e_entry);
-  if ( top == NULL) 
+  if ( top == NULL)
     {
       return 1;
     }
   if ( *m == NULL) *m = top ;
-  else 
-    { 
-      menu_entry *loc= *m ; 
+  else
+    {
+      menu_entry *loc= *m ;
       while (loc->next != NULL) loc=loc->next;
       loc->next = top;
     }
@@ -499,22 +499,22 @@ static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries
 
 
 /*----------------------------------------------------------------
- *Delete the menu name in menu_entry list 
+ *Delete the menu name in menu_entry list
  *----------------------------------------------------------------*/
 
-static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) 
-{ 
+static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
+{
   menu_entry *loc,*nloc;
   if ( *m == NULL ) return ;
   /* we want to delete a toplevel menu */
   loc = *m ;
-  if ( is_menu_name((*m)->name,name) ==0) 
+  if ( is_menu_name((*m)->name,name) ==0)
     {
       /* we delete the first entry of m */
-      *m = (*m)->next ; 
+      *m = (*m)->next ;
       /* change loc->next to prevent menu_entry_delete to recursively delete */
       loc->next = NULL;
-      /* 
+      /*
        * if ( loc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(loc->widget),NULL);
        */
       gtk_widget_destroy(loc->widget);
@@ -522,14 +522,14 @@ static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
       return ;
     }
   nloc = loc->next;
-  while ( nloc != NULL) 
+  while ( nloc != NULL)
     {
-      if ( is_menu_name(nloc->name,name)==0) 
+      if ( is_menu_name(nloc->name,name)==0)
 	{
 	  loc->next = nloc->next ;
 	  /* change nloc->next to prevent menu_entry_delete to recursively delete */
 	  nloc->next = NULL;
-	  /* 
+	  /*
 	   * if ( nloc->subs != NULL) gtk_menu_item_set_submenu (GTK_MENU_ITEM(nloc->widget),NULL);
 	   */
 	  gtk_widget_destroy(nloc->widget);
@@ -543,14 +543,14 @@ static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
 
 
 /*------------------------------------------------------
- * fill an item factory with a menu_entry description 
+ * fill an item factory with a menu_entry description
  *------------------------------------------------------*/
 
 static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group)
 {
   GtkWidget *menubar= gtk_menu_bar_new ();
   g_object_set_data (G_OBJECT (menubar), "user_data", accel_group);
-  while ( m != NULL) 
+  while ( m != NULL)
     {
       sci_menubar_add_menu_entry(Xgc,menubar,m);
       m= m->next;
@@ -559,20 +559,20 @@ static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *a
 }
 
 /*-------------------------------------------------------------------
- * build items associated to the last menu_entry contained in m 
- * and add them in the factory ifactory 
+ * build items associated to the last menu_entry contained in m
+ * and add them in the factory ifactory
  *-------------------------------------------------------------------*/
 
 static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m)
 {
   if ( m == NULL ) return ;
-  while ( m->next != NULL) m = m->next ; 
+  while ( m->next != NULL) m = m->next ;
   sci_menubar_add_menu_entry(Xgc,menubar,m);
 }
 
 /*-------------------------------------------------------------------
- * build items associated to the first menu_entry contained in m 
- * and add them in the factory ifactory 
+ * build items associated to the first menu_entry contained in m
+ * and add them in the factory ifactory
  *-------------------------------------------------------------------*/
 
 static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data);
@@ -582,14 +582,14 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   GtkAccelGroup *accel_group = g_object_get_data (G_OBJECT (menubar), "user_data");
   GtkWidget *menuitem;
   if ( m == NULL ) return ;
-  if ( m->stock_name != NULL ) 
+  if ( m->stock_name != NULL )
     {
       menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
       /* Attention 2.16 only */
       /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem),TRUE);*/
     }
 
-  else 
+  else
     menuitem = gtk_menu_item_new_with_mnemonic (m->name);
   if ( m->accel != NULL )
     {
@@ -601,7 +601,7 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   /* keep ref in m */
   m->widget = menuitem;
   m->gc = Xgc ;
-  if ( m->subs != NULL) 
+  if ( m->subs != NULL)
     {
       menu_entry *loc;
       GtkWidget *menu;
@@ -609,20 +609,20 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
       menu = gtk_menu_new ();
       gtk_menu_set_accel_group (GTK_MENU (menu), accel_group);
       /* gtk_item_factory_create_item(ifactory,&entry,(void *)m,1); */
-      loc =  m->subs ; 
-      while ( loc != NULL) 
+      loc =  m->subs ;
+      while ( loc != NULL)
 	{
-	  if ( loc->stock_name != NULL ) 
+	  if ( loc->stock_name != NULL )
 	    {
 	      menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL);
 	      /* 2.16 only */
 	      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem1),TRUE); */
 	    }
-	  else 
+	  else
 	    menuitem1 = gtk_menu_item_new_with_mnemonic(loc->name);
 	  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem1);
 	  /* entry.callback = sci_menu_default_callback; */
-	  if ( loc->accel != NULL ) 
+	  if ( loc->accel != NULL )
 	    {
 	      guint keyval;
 	      GdkModifierType mods;
@@ -636,9 +636,9 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
 	}
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
     }
-  else 
+  else
     {
-      g_signal_connect(menuitem,  "activate",G_CALLBACK ( nsp_menu_default_callback),m); 
+      g_signal_connect(menuitem,  "activate",G_CALLBACK ( nsp_menu_default_callback),m);
       /*
 	g_signal_connect(menuitem,  "activate-item",G_CALLBACK ( nsp_menu_default_callback_item),m);
       */
@@ -655,39 +655,39 @@ static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data)
   if ( m== NULL) return ;
 
   if ( nsp_call_predefined_callbacks(m->gc, m->fname, m->winid)==1) return ;
-  if (m->action_type == 0) 
-    { 
+  if (m->action_type == 0)
+    {
       /* Interpreted mode : we store the action on a queue */
-      if ( m->winid < 0 ) 
+      if ( m->winid < 0 )
 	sprintf(buf,"execstr(%s(%d))",m->fname,m->nsub);
-      else 
+      else
 	sprintf(buf,"execstr(%s_%d(%d))",m->fname,m->winid,m->nsub);
       enqueue_nsp_command(buf);
     }
-  else if (m->action_type == 2) 
-    { 
+  else if (m->action_type == 2)
+    {
       /* Interpreted mode : we store the action on a queue */
-      if ( m->winid < 0 ) 
+      if ( m->winid < 0 )
 	sprintf(buf,"%s(%d)",m->fname,m->nsub);
-      else 
+      else
 	sprintf(buf,"%s(%d,%d)",m->fname,m->nsub,m->winid);
       enqueue_nsp_command(buf);
     }
-  else 
-    { 
+  else
+    {
       /* hard coded mode XXXX */
       Sciprintf("Hardcoded button: to be done \n");
       /*
 	int rep ;
 	C2F(setfbutn)(m->fname,&rep);
-	if ( rep == 0) 
+	if ( rep == 0)
 	F2C(fbutn)((m->fname),&(m->winid),&(m->nsub));
       */
     }
 }
 
 
-void * graphic_initial_menu(int winid) 
+void * graphic_initial_menu(int winid)
 {
   menu_entry *m = NULL;
   char *file_entries[] = { "_Clear||$clear|gtk-clear",
@@ -729,18 +729,18 @@ static void * nsp_window_create_initial_menu(void)
  } ;
 
   char *graphic_entries[] = { "Create or Select||$gwselect",
-			      "Raise||$gwraise", 
+			      "Raise||$gwraise",
 			      "Delete||$gwdelete",
 			      "+||$gwplus" ,
 			      "-||$gwminus" } ;
-	
+
   char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
 			   "About||$about|gtk-about"};
 #ifdef WITH_PORTAUDIO
   n_control_entries=5;
-#else 
+#else
   n_control_entries=4;
-#endif 
+#endif
 
   nsp_menu_add(&m,winid,"_File",file_entries,9,0,"$file");
   nsp_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
@@ -755,25 +755,25 @@ static void * nsp_window_create_initial_menu(void)
 
 /**
  * nspg_menu_erase:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * clear the graphic window and clear the recorded graphics 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * clear the graphic window and clear the recorded graphics
+ *
  **/
 
-static void nspg_menu_erase(BCG *Xgc, int winid) 
+static void nspg_menu_erase(BCG *Xgc, int winid)
 {
   if ( Xgc != NULL )  Xgc->actions->erase(Xgc);
 }
 
 /**
  * nspg_menu_select:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * selects the graphic window @Xgc 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * selects the graphic window @Xgc
+ *
  **/
 
 static void nspg_menu_select(BCG *Xgc, int winid)
@@ -783,15 +783,15 @@ static void nspg_menu_select(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_delete:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * delete a graphic window 
- * 
- * Returns: 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * delete a graphic window
+ *
+ * Returns:
  **/
 
-static void nspg_menu_delete(BCG *Xgc, int winid) 
+static void nspg_menu_delete(BCG *Xgc, int winid)
 {
   if ( Xgc != NULL )  Xgc->actions->destroy(Xgc);
 }
@@ -799,22 +799,22 @@ static void nspg_menu_delete(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_print:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ *
  **/
 
 /* for use inside menus */
 #if TEST_GTK_PRINT
 extern  void do_print (GtkAction *action,int winid);
-#endif 
+#endif
 
 static void nspg_menu_print(BCG *Xgc, int winid)
 {
 #if TEST_GTK_PRINT
   do_print (NULL,winid);
-#else 
+#else
   char *printer;
   const char *p1;
   int colored,orientation,type;
@@ -825,7 +825,7 @@ static void nspg_menu_print(BCG *Xgc, int winid)
     }
   Sciprintf("To be done: %s %d %d %d\n",printer,colored,orientation,type);
   nsp_string_destroy(&printer);
-  /* 
+  /*
      sprintf(bufname,"%s/scilab-%d",p1,(int)winid);
      scig_tops(winid,colored,bufname,"Pos",'n');
      sprintf(bufname,"$SCI/bin/scilab -%s %s/scilab-%d %s",
@@ -833,20 +833,20 @@ static void nspg_menu_print(BCG *Xgc, int winid)
      p1,(int)winid,printer);
      system(bufname);
   */
-#endif 
+#endif
 }
 
-void nspg_print(int winid) 
+void nspg_print(int winid)
 {
   nspg_menu_print(NULL, winid);
 }
 
 /**
  * nspg_menu_export:
- * @Xgc: a graphic context 
- * @winid: an integer 
+ * @Xgc: a graphic context
+ * @winid: an integer
  *
- * activate a gtk dialog fro graphic export 
+ * activate a gtk dialog fro graphic export
  **/
 
 static void nspg_menu_export(BCG *Xgc, int winid)
@@ -855,40 +855,36 @@ static void nspg_menu_export(BCG *Xgc, int winid)
   integer colored,orientation,type;
   if ( Xgc == NULL ) return;
   if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
-  switch (type ) 
+  /* type: "pdf","svg", "eps", "png",  "Postscript",  "Postscript No Preamble", "Postscript-Latex", "Xfig"*/
+
+  switch (type )
     {
-    case 1 : /* "Postscript" */
-    case 3 : /* "Postscript LaTeX" */
-      switch ( orientation ) 
+    case 1 : /* cairo-pdf */
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-pdf",'n', TRUE);
+      break;
+    case 2: /* cairo-svg */
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-svg",'n', TRUE);
+      break;
+    case 3: /* cairo-ps */
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-ps",'n', TRUE);
+      break;
+    case 4: /* cairo-png */
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-png",'n', TRUE);
+      break;
+    case 5 : /* Xfig */
+      Xgc->actions->tops(Xgc,colored,fname,"Fig",'n', TRUE);
+      break;
+    case 6 : /* "Postscript" old driver */
+    case 7 : /* "Postscript LaTeX" old driver */
+      switch ( orientation )
 	{
 	case 0: Xgc->actions->tops(Xgc,colored,fname,"Pos",'l', TRUE );break;
 	case 1: Xgc->actions->tops(Xgc,colored,fname,"Pos",'p', TRUE);break;
 	case 2: Xgc->actions->tops(Xgc,colored,fname,"Pos",'k', TRUE);break;
-	}    
+	}
       break;
-    case 2 : /* "Postscript No Preamble" */
+    case 8 : /* "Postscript No Preamble" old */
       Xgc->actions->tops(Xgc,colored,fname,"Pos",'n', TRUE);
-      break;
-    case 4 : /* Xfig */
-      Xgc->actions->tops(Xgc,colored,fname,"Fig",'n', TRUE);
-      break;
-    case 5 : /* Gif */
-      Xgc->actions->tops(Xgc,colored,fname,"GIF",'n', TRUE);
-      break;
-    case 6 : /* PPM */
-      Xgc->actions->tops(Xgc,colored,fname,"PPM",'n', TRUE);
-      break;
-    case 7 : /* cairo-pdf */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-pdf",'n', TRUE);
-      break;
-    case 8: /* cairo-svg */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-svg",'n', TRUE);
-      break;
-    case 9: /* cairo-ps */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-ps",'n', TRUE);
-      break;
-    case 10: /* cairo-png */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-png",'n', TRUE);
       break;
     }
   nsp_string_destroy(&fname);
@@ -896,17 +892,17 @@ static void nspg_menu_export(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_save:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
  * save a graphic window
  **/
 
-static void nspg_menu_save(BCG *Xgc, int winid) 
+static void nspg_menu_save(BCG *Xgc, int winid)
 {
   char *filename;
   if ( Xgc == NULL ) return;
-  if ((filename = nsp_get_filename_save("Save Graphic File",NULL,NULL,NULL)) != NULL) 
+  if ((filename = nsp_get_filename_save("Save Graphic File",NULL,NULL,NULL)) != NULL)
     {
       /* nsp_gr_savesg(filename,winid); */
       Xgc->actions->savesg(Xgc,filename);
@@ -915,17 +911,17 @@ static void nspg_menu_save(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_load:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
  **/
 
-static void nspg_menu_load(BCG *Xgc, int winid) 
+static void nspg_menu_load(BCG *Xgc, int winid)
 {
   char *filename;
   static char *filters[] ={"Nsp binary graphics","*.scg",NULL};
   if ( Xgc == NULL ) return;
-  if ((filename = nsp_get_filename_open("Load Graphic File",NULL,filters)) != NULL) 
+  if ((filename = nsp_get_filename_open("Load Graphic File",NULL,filters)) != NULL)
     {
       Xgc->actions->loadsg(Xgc, filename);
     }
@@ -933,8 +929,8 @@ static void nspg_menu_load(BCG *Xgc, int winid)
 
 /**
  * nsp_menu_file_exec:
- * @void: 
- * 
+ * @void:
+ *
  * run the exec nsp command on selected file.
  **/
 
@@ -942,10 +938,10 @@ static void nsp_menu_file_exec(void)
 {
   nsp_string loc;
   char * file = NULL;
-  if ((file = nsp_get_filename_open("Exec file",NULL,NULL)) == NULL) 
-    return; 
+  if ((file = nsp_get_filename_open("Exec file",NULL,NULL)) == NULL)
+    return;
   if ((loc =new_nsp_string_n(strlen(file)+strlen("exec('');"))) == (nsp_string) 0)
-    return; 
+    return;
   sprintf(loc,"exec('%s');",file);
   enqueue_nsp_command(loc);
   FREE(loc);
@@ -954,8 +950,8 @@ static void nsp_menu_file_exec(void)
 
 /**
  * nsp_menu_file_load:
- * @void: 
- * 
+ * @void:
+ *
  * run the load nsp command on selected file.
  **/
 
@@ -963,10 +959,10 @@ static void nsp_menu_file_load(void)
 {
   nsp_string loc;
   char * file = NULL;
-  if ((file = nsp_get_filename_open("Load file",NULL,NULL)) == NULL) 
-    return; 
+  if ((file = nsp_get_filename_open("Load file",NULL,NULL)) == NULL)
+    return;
   if ((loc =new_nsp_string_n(strlen(file)+strlen("load('');"))) == (nsp_string) 0)
-    return; 
+    return;
   sprintf(loc,"load('%s');",file);
   enqueue_nsp_command(loc);
   FREE(loc);
@@ -975,8 +971,8 @@ static void nsp_menu_file_load(void)
 
 /**
  * nsp_menu_toolbox_load:
- * @void: 
- * 
+ * @void:
+ *
  * run the load nsp command on selected toolbox.
  **/
 
@@ -988,8 +984,8 @@ static void nsp_menu_toolbox_load(void)
 
 /**
  * nsp_menu_chdir:
- * @void: 
- * 
+ * @void:
+ *
  * run the chdir nsp command on selected path.
  **/
 
@@ -997,10 +993,10 @@ static void nsp_menu_chdir(void)
 {
   nsp_string loc;
   char * file = NULL;
-  if ((file = nsp_get_filename_folder("Select a folder",NULL)) == NULL) 
-    return; 
+  if ((file = nsp_get_filename_folder("Select a folder",NULL)) == NULL)
+    return;
   if ((loc =new_nsp_string_n(strlen(file)+strlen("chdir('');"))) == (nsp_string) 0)
-    return; 
+    return;
   sprintf(loc,"chdir('%s');",file);
   enqueue_nsp_command(loc);
   FREE(loc);
@@ -1009,7 +1005,7 @@ static void nsp_menu_chdir(void)
 
 /**
  * nsp_menu_pwd:
- * 
+ *
  * run the pwd nsp command on selected file.
  **/
 
@@ -1020,14 +1016,14 @@ static void nsp_menu_pwd(void)
 
 /**
  * nspg_menu_zoom:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * 2D zoom callback 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * 2D zoom callback
+ *
  **/
 
-static void nspg_menu_zoom(BCG *Xgc, int winid) 
+static void nspg_menu_zoom(BCG *Xgc, int winid)
 {
   int ne=0;
   if ( Xgc == NULL ) return;
@@ -1045,14 +1041,14 @@ static void nspg_menu_zoom(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_unzoom:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * unzoom callback 
- * 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * unzoom callback
+ *
  **/
 
-static void nspg_menu_unzoom(BCG *Xgc, int winid) 
+static void nspg_menu_unzoom(BCG *Xgc, int winid)
 {
   int ne=0;
   if ( Xgc == NULL ) return;
@@ -1064,13 +1060,13 @@ static void nspg_menu_unzoom(BCG *Xgc, int winid)
 
 /**
  * nspg_menu_rot3d:
- * @Xgc: a graphic context 
- * @winid: an integer 
- * 
- * 3D rotation callback 
+ * @Xgc: a graphic context
+ * @winid: an integer
+ *
+ * 3D rotation callback
  **/
 
-static void nspg_menu_rot3d(BCG *Xgc, int winid) 
+static void nspg_menu_rot3d(BCG *Xgc, int winid)
 {
   int ne=0;
   if ( Xgc == NULL ) return;
@@ -1088,9 +1084,9 @@ static void nspg_menu_rot3d(BCG *Xgc, int winid)
 
 /**
  * nsp_menu_kill:
- * @void: 
- * 
- * kill application 
+ * @void:
+ *
+ * kill application
  **/
 
 static void nsp_menu_kill(void)
@@ -1100,22 +1096,22 @@ static void nsp_menu_kill(void)
 
 /**
  * nsp_menu_stop:
- * @void: 
- * 
+ * @void:
+ *
  * stops execution.
  **/
 
 static void nsp_menu_stop (void)
 {
-  /* int j = SIGINT; */ 
+  /* int j = SIGINT; */
   /* Sciprintf("sci_menu_stop: to be done \n"); */
   /* if (get_is_reading()) nsp_input_feed(""); */
 }
 
 /**
  * nsp_menu_stop_audio:
- * @void: 
- * 
+ * @void:
+ *
  * stops a portaudio execution.
  **/
 
@@ -1123,15 +1119,15 @@ static void nsp_menu_stop_audio (void)
 {
 #ifdef WITH_PORTAUDIO
   nsp_pa_stop();
-#endif 
+#endif
 }
 
 /**
  * set_stop_button_handler:
- * @f: 
- * 
- * changes the default stop_button handler 
- * 
+ * @f:
+ *
+ * changes the default stop_button handler
+ *
  * Return value: the previous stop_button   handler
  **/
 
@@ -1139,7 +1135,7 @@ void nsp_stop_menu_handler_void(void) {};
 
 static Stop_menu_handler nsp_stop_menu_handler = nsp_stop_menu_handler_void;
 
-Stop_menu_handler set_stop_menu_handler( Stop_menu_handler f) 
+Stop_menu_handler set_stop_menu_handler( Stop_menu_handler f)
 {
   Stop_menu_handler old =  nsp_stop_menu_handler;
   nsp_stop_menu_handler=f;
@@ -1153,8 +1149,8 @@ void reset_stop_menu_handler(void)
 
 /**
  * nsp_menu_scicos_stop:
- * @void: 
- * 
+ * @void:
+ *
  * stops a scicos execution.
  **/
 
@@ -1165,8 +1161,8 @@ static void nsp_menu_scicos_stop (void)
 
 /**
  * nsp_menu_help:
- * @void: 
- * 
+ * @void:
+ *
  * run the help browser
  **/
 static void nsp_menu_help(void)
@@ -1176,10 +1172,10 @@ static void nsp_menu_help(void)
 
 /**
  * nsp_edit:
- * @filename: 
- * @read_only: 
- * @wait: 
- * 
+ * @filename:
+ * @read_only:
+ * @wait:
+ *
  * start nsp editor
  **/
 
@@ -1192,9 +1188,9 @@ static void nsp_menu_start_editor(void)
 
 /**
  * nsp_menu_demos:
- * @void: 
- * 
- * run the demo menu 
+ * @void:
+ *
+ * run the demo menu
  **/
 
 static void nsp_menu_demos(void)
@@ -1204,27 +1200,27 @@ static void nsp_menu_demos(void)
 
 /**
  * nsp_menu_gwplus:
- * @void: 
- * 
+ * @void:
+ *
  * increase the graphic window counter
  **/
 
 static void nsp_menu_gwplus(void)
 {
-  MenuFixCurrentWin(lab_count+1); 
+  MenuFixCurrentWin(lab_count+1);
 }
 
 /**
  * nsp_menu_gwminus:
- * @void: 
- * 
- * 
+ * @void:
+ *
+ *
  * decrease the graphic window counter
  **/
 
 static void nsp_menu_gwminus(void)
 {
-  MenuFixCurrentWin(lab_count-1); 
+  MenuFixCurrentWin(lab_count-1);
 }
 
 static void nsp_menu_gwcreate_or_select(void)
@@ -1234,8 +1230,8 @@ static void nsp_menu_gwcreate_or_select(void)
 
 /**
  * nsp_menu_gwraise:
- * @void: 
- * 
+ * @void:
+ *
  * raise a graphic window.
  **/
 
@@ -1246,8 +1242,8 @@ static void nsp_menu_gwraise(void)
 
 /**
  * nsp_menu_gwdelete:
- * @void: 
- * 
+ * @void:
+ *
  * delete a graphic window.
  **/
 
@@ -1259,12 +1255,12 @@ static void nsp_menu_gwdelete(void)
 
 /**
  * nsp_call_predefined_callbacks:
- * @Xgc: 
- * @name: 
- * @winid: 
- * 
- * call predefined callbacks 
- * 
+ * @Xgc:
+ * @name:
+ * @winid:
+ *
+ * call predefined callbacks
+ *
  * Returns: 0 or 1
  **/
 
@@ -1272,7 +1268,7 @@ int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
 {
   if      (strcmp(name,"$clear")== 0)  nspg_menu_erase(Xgc,winid);
   else if (strcmp(name,"$select")== 0) nspg_menu_select(Xgc,winid) ;
-  else if (strcmp(name,"$print")== 0)  nspg_menu_print(Xgc,winid); 
+  else if (strcmp(name,"$print")== 0)  nspg_menu_print(Xgc,winid);
   else if (strcmp(name,"$export")== 0) nspg_menu_export(Xgc,winid);
   else if (strcmp(name,"$save")== 0)   nspg_menu_save(Xgc,winid);
   else if (strcmp(name,"$load")== 0)   nspg_menu_load(Xgc,winid);
@@ -1306,5 +1302,3 @@ int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
   else return 0;
   return 1;
 }
-
-

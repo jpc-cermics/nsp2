@@ -17,33 +17,33 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/object.h"
-#define PERI_ACTION_PRIVATE 
-#include "nsp/graphics-new/actions.h"
-#include "nsp/command.h"
+#include <nsp/math.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/object.h>
+#define PERI_ACTION_PRIVATE
+#include <nsp/graphics-new/actions.h>
+#include <nsp/command.h>
 #include <nsp/system.h> /* FSIZE */
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
+#include <nsp/axes.h>
 
 static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox);
 static int nsp_gr_buzy = 0;
 
 /*
- * the functions in this file are called from 
- * callback ( see jpc_SGraph.c ) for the XWindow version 
+ * the functions in this file are called from
+ * callback ( see jpc_SGraph.c ) for the XWindow version
  *
  */
 
 /*
- * sets a specific draw handler for a graphic window 
- * which is called by tape_replay. 
- */ 
+ * sets a specific draw handler for a graphic window
+ * which is called by tape_replay.
+ */
 
 static int nsp_gr_handler_none(BCG *Xgc,int win_num) {return win_num;}
 
@@ -62,9 +62,9 @@ void __nsp_gr_reset_handler(void)
 }
 
 /*
- * sets a specific handler which is called on a delete event for window 
+ * sets a specific handler which is called on a delete event for window
  * win_num.
- */ 
+ */
 
 /* add handlers for delete action */
 
@@ -89,7 +89,7 @@ Scig_deletegwin_handler __nsp_gr_set_deletegwin_handler(Scig_deletegwin_handler 
   return old;
 }
 
-void __nsp_gr_reset_deletegwin_handler(void) 
+void __nsp_gr_reset_deletegwin_handler(void)
 {
   nsp_gr_deletegwin_handler = nsp_gr_deletegwin_handler_none;
 }
@@ -98,12 +98,12 @@ void __nsp_gr_reset_deletegwin_handler(void)
 /**
  * nsp_gr_delete:
  * @winid: graphic window number.
- * 
+ *
  * Delete graphic window @win_num. and associated data.
- * 
+ *
  **/
 
-void nsp_gr_delete(int winid) 
+void nsp_gr_delete(int winid)
 {
   BCG *Xgc;
   if ( (Xgc= window_list_search(winid)) == NULL) return;
@@ -116,10 +116,10 @@ void nsp_gr_delete(int winid)
  * @winid: graphic window number.
  * @color: b&w (0) or colour export (1),
  * @option: a character among 'd', 'l', 'n', 'p', 'k'.
- * @driver: driver to use for output. 
+ * @driver: driver to use for output.
  *
- * export recorded graphics to file @fname 
- * 
+ * export recorded graphics to file @fname
+ *
  **/
 
 void nsp_gr_export(const char *fname, int winid, int color,const char *driver,char option, int figure_export)
@@ -132,11 +132,11 @@ void nsp_gr_export(const char *fname, int winid, int color,const char *driver,ch
 }
 
 /**
- * nsp_gr_raise: 
+ * nsp_gr_raise:
  * @win_num: graphic window number.
- * 
+ *
  * raises window @win_num.
- */ 
+ */
 
 void nsp_gr_new_raise(int win_num)
 {
@@ -146,40 +146,40 @@ void nsp_gr_new_raise(int win_num)
 }
 
 /**
- * nsp_gr_change: 
+ * nsp_gr_change:
  * @win_num: graphic window number.
- * 
- * set window @win_num as the current graphic window. 
- * 
+ *
+ * set window @win_num as the current graphic window.
+ *
  * return value: the former current graphic window.
- */ 
+ */
 
 int nsp_gr_new_change(int win_num)
 {
   BCG *Xgc = check_graphic_window_new();
-  if ( Xgc != NULL ) 
+  if ( Xgc != NULL )
     {
-      if ( Xgc->CurWindow != win_num) 
+      if ( Xgc->CurWindow != win_num)
 	Xgc->graphic_engine->xset_curwin(win_num,TRUE);
-      return Xgc->CurWindow; 
+      return Xgc->CurWindow;
     }
-  else 
-    return -1; 
+  else
+    return -1;
 }
 
 
 /**
  * nsp_gr_set_graphic_eventhandler:
- * @win_num: 
- * @name: 
- * @ierr: 
- * 
- * FIXME: Feature to be removed: Used to set the EventHandler field of win_num properties 
- * this is to be changed one day. 
+ * @win_num:
+ * @name:
+ * @ierr:
+ *
+ * FIXME: Feature to be removed: Used to set the EventHandler field of win_num properties
+ * this is to be changed one day.
  **/
 
 void nsp_gr_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
-{  
+{
   BCG *SciGc;
   /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
   *ierr = 0;
@@ -190,17 +190,17 @@ void nsp_gr_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
 
 
 /*-------------------------------------------------------
- * set of actions that can be performed on a Xgc. The 
+ * set of actions that can be performed on a Xgc. The
  * next functions are static and inserted in Xgc->actions
  *
- *-------------------------------------------------------*/ 
+ *-------------------------------------------------------*/
 
 /**
  * nsp_gc_delete:
  * @Xgc: a graphic context.
- * 
+ *
  * Delete graphic window @win_num. and associated data.
- * 
+ *
  **/
 
 static void nsp_gc_delete(BCG *Xgc)
@@ -210,9 +210,9 @@ static void nsp_gc_delete(BCG *Xgc)
 }
 
 /**
- * nsp_gc_replay: 
+ * nsp_gc_replay:
  * @Xgc: a graphic context
- * 
+ *
  * redraws the recorded graphics associated to graphic window @win_num.
  */
 
@@ -223,34 +223,34 @@ static void nsp_gc_replay(BCG *Xgc)
 }
 
 /**
- * nsp_gc_expose: 
+ * nsp_gc_expose:
  * @Xgc: a graphic context.
- * 
- * Used to deal with an expose event. If the graphic window 
- * is in pixmap mode we can perform a wshow 
- * else we perform a sgig_replay. 
+ *
+ * Used to deal with an expose event. If the graphic window
+ * is in pixmap mode we can perform a wshow
+ * else we perform a sgig_replay.
  */
 
 static void nsp_gc_expose(BCG *Xgc)
 {
   int pix = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  if ( pix == 0) 
+  if ( pix == 0)
     {
       Xgc->graphic_engine->invalidate(Xgc,NULL);
       Xgc->graphic_engine->process_updates(Xgc);
     }
   else
     {
-      Xgc->graphic_engine->xset_show(Xgc);    
+      Xgc->graphic_engine->xset_show(Xgc);
     }
 }
 
 /**
  * nsp_gc_resize:
  * @Xgc: a graphic context.
- * 
- * Redraws graphic window @win_num  after resizing. 
- */ 
+ *
+ * Redraws graphic window @win_num  after resizing.
+ */
 
 
 static void nsp_gc_resize(BCG *Xgc)
@@ -264,9 +264,9 @@ static void nsp_gc_resize(BCG *Xgc)
 /**
  * nsp_gc_resize_pixmap:
  * @Xgc: a graphic context.
- * 
+ *
  * resize the pixmap associated to graphic window @win_num.
- */ 
+ */
 
 static void nsp_gc_resize_pixmap(BCG *Xgc)
 {
@@ -276,11 +276,11 @@ static void nsp_gc_resize_pixmap(BCG *Xgc)
 /**
  * nsp_gc_erase:
  * @Xgc: a graphic context.
- * 
- * clears the graphic window @win_num and the associated 
- * recorded data. The figure contained in graphic 
- * window is not removed. 
- */ 
+ *
+ * clears the graphic window @win_num and the associated
+ * recorded data. The figure contained in graphic
+ * window is not removed.
+ */
 
 static void  nsp_gc_erase(BCG *Xgc)
 {
@@ -297,16 +297,16 @@ static void  nsp_gc_erase(BCG *Xgc)
  * @Xgc: a graphic context.
  * @colored: b&w (0) or colour export (1),
  * @bufname: file name;
- * @driver: driver to use for output. 
+ * @driver: driver to use for output.
  *
- * Sends recorded graphics to file @bufname 
+ * Sends recorded graphics to file @bufname
  * using syntax described by @driver ("Pos","Fig",...).
- * 
- */ 
+ *
+ */
 
 extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
 extern BCG ScilabGCXfig ;
-extern Gengine Pos_gengine, XFig_gengine ; 
+extern Gengine Pos_gengine, XFig_gengine ;
 
 extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option,
 			    int figure_bg_draw);
@@ -319,55 +319,55 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
   int wdim[2],*wdim_p=NULL;
   BCG *Ggc;
   int zero=0,un=1;
-  if ( strcmp(driver,"Pos")==0 ) 
+  if ( strcmp(driver,"Pos")==0 )
     {
       Ggc = &ScilabGCPos;
-      Ggc->graphic_engine = &Pos_gengine ; 
+      Ggc->graphic_engine = &Pos_gengine ;
     }
-  else if ( strcmp(driver,"Fig")==0 ) 
+  else if ( strcmp(driver,"Fig")==0 )
     {
       Ggc = &ScilabGCXfig;
-      Ggc->graphic_engine = &XFig_gengine ; 
+      Ggc->graphic_engine = &XFig_gengine ;
     }
-  else 
+  else
     {
-      /* Try to switch to export via cairo. 
+      /* Try to switch to export via cairo.
        */
       int rep = nsp_cairo_export(Xgc,Xgc->CurWindow,colored,bufname,driver,option,figure_bg_draw);
-      if ( rep == OK ) 
+      if ( rep == OK )
 	{
 	  nsp_gr_buzy = 0;
-	  return ; 
+	  return ;
 	}
       Sciprintf("Unknow driver %s using Pos\n",driver);
       Ggc = &ScilabGCPos;
-      Ggc->graphic_engine = &Pos_gengine ; 
+      Ggc->graphic_engine = &Pos_gengine ;
     }
-  if ( option == 'k') 
+  if ( option == 'k')
     {
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       wdim_p = wdim;
     }
   Ggc->graphic_engine->initgraphic(bufname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,option,NULL,NULL);
-  if (colored==1) 
+  if (colored==1)
     Ggc->graphic_engine->xset_usecolor(Ggc,un);
   else
     Ggc->graphic_engine->xset_usecolor(Ggc,zero);
-  Ggc->figure = Xgc->figure ; 
+  Ggc->figure = Xgc->figure ;
   xgc_reset_scales_to_default(Ggc);
   if ((G = (NspGraphic *) Xgc->figure)!= NULL)
     G->type->draw(Ggc,G,NULL,NULL);
-  Ggc->figure = NULL ; 
+  Ggc->figure = NULL ;
   Ggc->graphic_engine->xend(Xgc);
 }
 
 
 /**
- * nsp_gc_2dzoom: 
+ * nsp_gc_2dzoom:
  * @Xgc: a graphic context.
- * 
+ *
  * zoom the graphics of graphic window @win_num.
- */ 
+ */
 
 static void nsp_gc_2dzoom(BCG *Xgc)
 {
@@ -380,11 +380,11 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 }
 
 /**
- * nsp_gc_unzoom: 
+ * nsp_gc_unzoom:
  * @Xgc: a graphic context.
- * 
+ *
  * Unzoom the graphics of graphic window @win_num.
- */ 
+ */
 
 static void  nsp_gc_unzoom(BCG *Xgc)
 {
@@ -396,11 +396,11 @@ static void  nsp_gc_unzoom(BCG *Xgc)
 
 
 /**
- * nsp_gc_3drot: 
+ * nsp_gc_3drot:
  * @Xgc: a graphic context.
- * 
+ *
  * Rotation of 3d plots of graphic window @win_num.
- */ 
+ */
 
 
 static void nsp_gc_3drot(BCG *Xgc)
@@ -410,11 +410,11 @@ static void nsp_gc_3drot(BCG *Xgc)
 
 
 /**
- * nsp_gc_sel: 
+ * nsp_gc_sel:
  * @Xgc: a graphic context.
- * 
+ *
  * selects window @win_num as the current graphic window.
- */ 
+ */
 
 static void nsp_gc_sel(BCG *Xgc)
 {
@@ -422,11 +422,11 @@ static void nsp_gc_sel(BCG *Xgc)
 }
 
 /**
- * nsp_gc_raise: 
+ * nsp_gc_raise:
  * @Xgc: a graphic context.
- * 
+ *
  * raises window @win_num.
- */ 
+ */
 
 static void nsp_gc_raise(BCG *Xgc)
 {
@@ -434,34 +434,34 @@ static void nsp_gc_raise(BCG *Xgc)
 }
 
 /**
- * nsp_gc_change: 
+ * nsp_gc_change:
  * @Xgc: a graphic context.
- * 
- * set window @win_num as the current graphic window. 
- * 
+ *
+ * set window @win_num as the current graphic window.
+ *
  * return value: the former current graphic window.
- */ 
+ */
 
 static int nsp_gc_change(BCG *Xgc)
 {
   BCG *Cgc = check_graphic_window_new();
-  if ( Cgc != NULL ) 
+  if ( Cgc != NULL )
     {
-      if ( Cgc->CurWindow != Xgc->CurWindow) 
+      if ( Cgc->CurWindow != Xgc->CurWindow)
 	Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-      return Cgc->CurWindow; 
+      return Cgc->CurWindow;
     }
-  else 
-    return -1; 
+  else
+    return -1;
 }
 
 /**
- * nsp_gc_savesg: 
+ * nsp_gc_savesg:
  * @Xgc: a graphic context.
- * @filename: a filename 
- * 
+ * @filename: a filename
+ *
  * save graphic data from graphic window @win_num to file @filename.
- */ 
+ */
 
 static int nsp_gc_savesg(BCG *Xgc,const char *filename )
 {
@@ -469,11 +469,11 @@ static int nsp_gc_savesg(BCG *Xgc,const char *filename )
   /* expand keys in path name result in buf */
   if ( Xgc == NULL || Xgc->figure == NULL) return FAIL;
   if (( F =nsp_file_open_xdr_w(filename)) == NULLSCIFILE) return FAIL;
-  if (nsp_object_xdr_save(F->obj->xdrs,Xgc->figure)== FAIL) 
+  if (nsp_object_xdr_save(F->obj->xdrs,Xgc->figure)== FAIL)
     return FAIL;
   /* flag for detecting end of obj at reload */
   nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id);
-  if (nsp_file_close_xdr_w(F) == FAIL) 
+  if (nsp_file_close_xdr_w(F) == FAIL)
     {
       nsp_file_destroy(F);
       return FAIL;
@@ -484,25 +484,25 @@ static int nsp_gc_savesg(BCG *Xgc,const char *filename )
 
 
 /**
- * nsp_gc_loadsg: 
+ * nsp_gc_loadsg:
  * @Xgc: a graphic context.
- * @filename: a filename 
- * 
- * graphics reloaded from file @filename are displayed on graphic window 
+ * @filename: a filename
+ *
+ * graphics reloaded from file @filename are displayed on graphic window
  * @win_num.
- */ 
+ */
 
 static int nsp_gc_loadsg(BCG *Xgc,const char *filename)
 {
   NspFile *F;
-  NspObject *O; 
+  NspObject *O;
   int cur;
   cur = Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,FALSE);
-  if (( F =nsp_file_open_xdr_r(filename)) == NULLSCIFILE) 
+  if (( F =nsp_file_open_xdr_r(filename)) == NULLSCIFILE)
     return FAIL;
-  if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) 
+  if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ )
     return FAIL;
-  if ( ! IsFigure(O)) 
+  if ( ! IsFigure(O))
     return FAIL;
   if (nsp_file_close_xdr_r(F) == FAIL)
     {
@@ -511,7 +511,7 @@ static int nsp_gc_loadsg(BCG *Xgc,const char *filename)
     }
   nsp_file_destroy(F);
   /*
-   * use the given figure in Xgc 
+   * use the given figure in Xgc
    */
   Xgc->graphic_engine->xset_curwin(cur,FALSE);
   return OK;
@@ -521,19 +521,19 @@ static int nsp_gc_loadsg(BCG *Xgc,const char *filename)
 
 /**
  * zoom_get_rectangle:
- * @Xgc: 
- * @bbox: 
- * @ibbox: 
- * 
- * A version for drivers who do not have Xor mode 
- * we have to redraw while acquiring the zoom rectangle 
- * we could also try to keep the graphic in a backing store 
- * pixmap. 
+ * @Xgc:
+ * @bbox:
+ * @ibbox:
  *
- * XXXX : a revoir en regardant ce qui est fait dans 
+ * A version for drivers who do not have Xor mode
+ * we have to redraw while acquiring the zoom rectangle
+ * we could also try to keep the graphic in a backing store
+ * pixmap.
+ *
+ * XXXX : a revoir en regardant ce qui est fait dans
  *        diagram pour minimiser les redessins.
  *
- * 
+ *
  **/
 
 static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
@@ -543,9 +543,9 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,xl,yl;
   int    ix0,iy0,ix,iy,ixl,iyl;
-  if ( Xgc == NULL ) return; 
+  if ( Xgc == NULL ) return;
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
-  /* 
+  /*
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
   */
@@ -562,10 +562,10 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   x=x0;y=y0;
   ix=ix0;iy=iy0;
   ibutton=-1;
-  while ( ibutton == -1 ) 
+  while ( ibutton == -1 )
     {
       double rect[4]= {Min(x0,x),Max(y0,y),Abs(x0-x),Abs(y0-y)};
-      Xgc->graphic_engine->clearwindow(Xgc);    
+      Xgc->graphic_engine->clearwindow(Xgc);
       rect2d_f2i(Xgc->scales,rect,Xgc->zrect,1);
       Xgc->graphic_engine->invalidate(Xgc,NULL);
       nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
@@ -576,7 +576,7 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
     }
   nsp_set_cursor(Xgc,-1);
   /* Back to the default driver which must be Rec and redraw the recorded
-   * graphics with the new scales 
+   * graphics with the new scales
    */
   bbox[0]=Min(x0,x);
   bbox[1]=Min(y0,y);
@@ -596,5 +596,3 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   Xgc->graphic_engine->xinfo(Xgc," ");
   Xgc->graphic_engine->invalidate(Xgc,NULL);
 }
-
-

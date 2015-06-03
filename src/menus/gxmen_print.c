@@ -26,7 +26,7 @@ int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format
 {
   static NspList *L=NULL;
   char *title="Print dialog";
-  char *formats[] = {"Postscript", "Postscript No Preamble",  
+  char *formats[] = {"Postscript", "Postscript No Preamble",
 		    "Postscript-Latex","Xfig","Gif","PPM", NULL };
   char *printer[]={ "lpr ", NULL};
   char *types[]={ "color", "black and white",NULL};
@@ -36,7 +36,7 @@ int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format
   int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
   int_types Ret1[]={ obj,obj,obj,obj, t_end};
   /* test the list builder **/
-  if ( L == NULL) 
+  if ( L == NULL)
     {
       if (( S = nsp_smatrix_create_from_table(formats)) == NULL) return FAIL;
       if (( L1 = BuildListFromArgs("lel",Ret,"combo","Format",1,S)) == NULL ) return FAIL;
@@ -79,20 +79,21 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
 {
   static NspList *L=NULL;
   char *title="Export dialog";
-  char *formats[] = {"Postscript", 
-		     "Postscript No Preamble",  
-		     "Postscript-Latex",
-		     "Xfig",
-		     "Gif",
-		     "PPM",
-#ifdef WITH_CAIRO 
-		     "pdf",
-		     "svg",
-		     "eps",
-		     "png",
-#endif 
-		     NULL };
-  
+  char *formats[] = {
+#ifdef WITH_CAIRO
+    "pdf",
+    "svg",
+    "eps",
+    "png",
+#endif
+    "xfig",
+    /*
+    "Postscript",
+    "Postscript No Preamble",
+    "Postscript-Latex",
+    */
+    NULL };
+
   char *types[]={ "color", "black and white",NULL};
   char *orientations[]={"landscape", "portrait", "keep size",NULL };
   char *save[]={"Untitled.eps",NULL};
@@ -101,7 +102,7 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
   int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
   int_types Ret1[]={ obj,obj,obj,obj, t_end};
   /* test the list builder **/
-  if ( L == NULL) 
+  if ( L == NULL)
     {
       if (( S = nsp_smatrix_create_from_table(formats)) == NULL) return FAIL;
       if (( L1 = BuildListFromArgs("lel",Ret,"combo","Format",1,S)) == NULL ) return FAIL;
