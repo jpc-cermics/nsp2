@@ -767,6 +767,9 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
+  /* keep same order as in opts */
+  enum  {alpha_opts, ebox_opts, flag_opts, leg_opts, style_opts, theta_opts};
+
   if ( rhs <= 0)
     {
       return nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1);
@@ -802,7 +805,19 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
   nsp_gwin_clear();
   if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return RET_BUG;
   /* parameters for box drawing */
-  nsp_set_box_parameters(objs3d, iflag[1]);
+  if ( opts[flag_opts].obj != NULLOBJ)
+    {
+      nsp_set_box_parameters(objs3d, iflag[1]);
+    }
+
+  if ( opts[alpha_opts].obj != NULLOBJ)
+    {
+      objs3d->obj->alpha=alpha;
+    }
+  if ( opts[alpha_opts].obj != NULLOBJ)
+    {
+      objs3d->obj->theta=theta;
+    }
 
   /* Loop on the number of polylines */
   nb_poly = (x->m == 1) ? 1 : x->n;
