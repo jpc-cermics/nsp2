@@ -212,94 +212,91 @@ function demo_2d_13()
 endfunction
 
 function demo_3d_1()
-  param3d();
+  xsetech(wrect=[0,0,0.5,0.5],a3d=%t);
+  t=0:0.1:5*%pi;param3d(sin(t)',cos(t)',t'*0.1,flag=[2,1],style=2);
   xtitle("param3d : parametric curves in R3"," "," ");
-endfunction
-
-function demo_3d_2()
+  //
+  xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t);
   t=-50*%pi:0.1:50*%pi;
   x=t.*sin(t);y=t.*cos(t);z=t.*abs(t)./(50*%pi);
   param3d(x',y',z',alpha=45,theta=60,flag=[2,1],style=4);
-  title=["param3d : parametric curves in R3 (t.sin(t),t.cos(t),t.|t|/50.%pi)"];
-  xtitle(title," "," ");
+  title=["param3d : parametric curves in R3 style=4"];
+  //
+  xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t);
+  t=-50*%pi:0.5:50*%pi;
+  x=t.*sin(t);y=t.*cos(t);z=t.*abs(t)./(50*%pi);
+  param3d(x',y',z',alpha=45,theta=60,flag=[2,1],style=-4);
+  F=get_current_figure[];A=F(1);C=A(1);C.color=5;
+  x=max(t)*sin(t);y=max(t)*cos(t);z=max(t)*ones(size(t));
+  param3d(x',y',z',alpha=45,theta=60,flag=[2,1],style=2);
+  x=min(t)*sin(t);y=min(t)*cos(t);z=min(t)*ones(size(t));
+  param3d(x',y',z',alpha=45,theta=60,flag=[2,1],style=2,alpha=63,theta=60);
+  title=["param3d : parametric curves in R3 style=-4"];
 endfunction
 
-function demo_3d_3()
+function demo_3d_2()
+  xsetech(wrect=[0,0,0.5,1.0],a3d=%t);
   t=(-1:0.1:1)*%pi;plot3d(t,t,sin(t)'*cos(t),alpha=80,theta=70);
   title=["plot3d : z=sin(x)*cos(y)"];
   xtitle(title," "," ");
-endfunction
-
-function demo_3d_4()
-  xset('colormap',hotcolormap(45));
-  t=(-1:0.1:1)*%pi;plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=70);
+  xsetech(wrect=[0.5,0.0,0.5,1.0],a3d=%t);
+  cmap=hotcolormap(45);
+  t=(-1:0.1:1)*%pi;plot3d1(t,t,sin(t)'*cos(t),...
+			   alpha=80,theta=70,colormap=cmap);
   title=["plot3d1 : z=sin(x)*cos(y)"];
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_5()
+function demo_3d_3()
   function z=f(x,y); z= sin(exp(2*(x+0.2)))*cos(y);endfunction
   xset('colormap',hotcolormap(45));
-  t=(-1:0.1:1);plot3d1(t,t,f)
+  t=(-1:0.1:1);plot3d1(t,t,f,theta=-65,alpha=75)
   title=["plot3d1(.,.,f,..) with a function f"];
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_6()
+function demo_3d_4()
   t=linspace(-%pi,%pi,20);
   xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
+  xtitle("graycolormap"," ", " ");
   colormap= graycolormap(45);
-  xset('colormap',colormap);
   plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
   xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t)
+  xtitle("hotcolormap"," "," ");
   colormap=hotcolormap(45);
-  xset('colormap',colormap);
   plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
   xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t)
-  xset('default_colormap');
-  colormap=xget('colormap');
+  xtitle("jetcolormap"," "," ");
+  colormap=jetcolormap(45);
   plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
   xsetech(wrect=[0.5,0.5,0.5,0.5],a3d=%t)
+  xtitle("greencolormap"," "," ");
   colormap=greencolormap(34);
-  xset('colormap',colormap);
   plot3d1(t,t,sin(t)'*cos(t),colormap=colormap);
 endfunction
 
-function demo_3d_7()
+function demo_3d_5()
 //xset('colormap',hotcolormap(40));
   xsetech(wrect=[0,0,0.5,0.5],a3d=%t)
+  xtitle("Interpolated shading colors=[1,5,3]","","");
   // One facet with interpolated shading using colors Id
-  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,2,3]',flag=[1,1,3])
+  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,5,3]',flag=[1,1,3]);
   xsetech(wrect=[0.5,0,0.5,0.5],a3d=%t)
+  xtitle("Interpolated shading colors=[1,10,3]","","");
   // The number of sub-polygons depends on the distance in Id
   // between colors
-  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,6,12]',flag=[1,1,3])
+  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,10,3]',flag=[1,1,3])
   xsetech(wrect=[0,0.5,0.5,0.5],a3d=%t)
+  xtitle("mesh only","","");
   // colors are set to zero : only draw polygons
-  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=0*[1,2,3]',flag=[1,1,3])
+  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,10,3]',mesh_only=%t,flag=[1,1,3])
   xsetech(wrect=[0.5,0.5,0.5,0.5],a3d=%t)
+  xtitle("no mesh","","");
   // colors are negative: only painting no contour drawing
-  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=-[1,6,12]',flag=[1,1,3])
+  plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,10,3]',mesh=%f,flag=[1,1,3])
 endfunction
 
-
-function demo_3d_8()
-// using genfac3d to compute facets and node colors
-// from a standard description
-  t=[-%pi/2,0,%pi/2]';
-  z=sin(t)*cos(t');
-  [xx,yy,zz]=genfac3d(t,t,z);
-  col=[1,2,1;2,3,2;1,2,1]
-  [xx,yy,zzcol]=genfac3d(t,t,col);
-  xsetech(wrect=[0,0,0.5,1],a3d=%t)
-  // with generated facets
-  plot3d(xx,yy,zz,colors=zzcol);
-  xsetech(wrect=[0.5,0,0.5,1],a3d=%t)
-  // without facets
-  plot3d1(t,t,z);
-endfunction
-
-function demo_3d_9()
+function demo_3d_6()
   t=[(0:0.2:2)*%pi]'; z=sin(t)*cos(t');
   xset('colormap',hotcolormap(40));
   // remapping zvalues to colors
@@ -307,34 +304,19 @@ function demo_3d_9()
   [xx,yy,zzcolors]=genfac3d(t,t,zzc);
   [xx,yy,zz]=genfac3d(t,t,z);
   xsetech(wrect=[0,0,0.5,1.0],a3d=%t)
+  xtitle("plot3d1"," "," ");
   plot3d1(t,t,z,alpha=45,theta=60);
   xsetech(wrect=[0.5,0,0.5,1],a3d=%t)
+  xtitle("plot3d1 with facets"," "," ");
   plot3d(xx,yy,zz,colors=zzcolors,alpha=45,theta=60);
 endfunction
 
-function demo_3d_10()
+function demo_3d_7()
 // a demo by Quentin Quadrat.
   demo_tree(1,5);
 endfunction
 
-function demo_3d_11_old()
-// parametric 3d surface
-// nf3d
-  u = %pi*(-1:0.2:1);
-  v = %pi*(-1:0.2:1);
-  n = size(u,'*');
-  x= cos(u)'*exp(cos(v));
-  y= cos(u)'*sin(v);
-  z= sin(u)'*ones(size(v));
-  col=ones(size(u))'*cos(v);
-  col=(n-1)*(col-min(col))/(max(col)-min(col))+1;
-  xset('colormap',hotcolormap(n));
-  [xx,yy,zzcol]=nf3d(x,y,col);
-  [xx,yy,zz]=nf3d(x,y,z);
-  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110)
-endfunction
-
-function demo_3d_11()
+function demo_3d_8()
   u = %pi/2*(-1:0.2:1);
   v = %pi/2*(-1:0.2:1);
   n = size(u,'*');
@@ -351,7 +333,7 @@ function demo_3d_11()
 endfunction
 
 
-function demo_3d_12()
+function demo_3d_9()
   S=[1,-1,-1; 1,1,-1; -1,1,-1; -1,-1,-1;
      1,1,1;-1,1,1; 1,-1,1; -1,-1,1];
 
@@ -381,7 +363,7 @@ function demo_3d_12()
 endfunction
 
 
-function demo_3d_13()
+function demo_3d_10()
 // following a parametric 3d curve
   T=6;
   t=linspace(0,T,40);
@@ -422,7 +404,7 @@ function demo_3d_13()
   plot3d1(xpol,ypol,zpol);
 endfunction
 
-function demo_3d_14()
+function demo_3d_11()
   t=4*%pi*(0:20)/20;
   ptc=[t.*sin(t);t.*cos(t);0*ones(size(t))];
   xpol=[];ypol=[];zpol=[];
@@ -462,7 +444,7 @@ function demo_3d_14()
   plot3d1(xpol,ypol,zpol);
 endfunction
 
-function demo_3d_15()
+function demo_3d_12()
   t=%pi*(-10:10)./10;
   box=[-%pi,%pi,-%pi,%pi,-5,1];
   z=sin(t)'*cos(t);
@@ -475,7 +457,7 @@ endfunction
 
 // demo_3d_16: Copyright CECILL (from scilab).
 
-function demo_3d_16()
+function demo_3d_13()
   subplot(2,2,1,a3d=%t);
   function hole3d()
   // Holes in surfaces using %inf
@@ -539,7 +521,7 @@ function demo_3d_16()
 endfunction
 
 
-function demo_3d_17()
+function demo_3d_14()
   function [z]=surf(x,y); z=sin(x)*cos(y);endfunction;
   t=%pi*(-10:10)./10;
   plot3d(t,t,surf,alpha=35,theta=45,flag=[-6,2,3]);
@@ -717,9 +699,9 @@ function demo_prim_4()
   xtitle('nsp plot2d','Time','Sin(t)')
 endfunction
 
+// realtime clock demo
 
 function demo_anim_1()
-//
   xsetech(frect=[-1,-1,1,1]*1.5,fixed=%t,clip=%t,iso=%t,axesflag=0);
   xset('thickness',2);
   xarc(-1,1,2,2,0,360*64,color=3,thickness=2);
@@ -746,6 +728,8 @@ function demo_anim_1()
     xpause(0,%t); // gtk events are managed here
   end
 endfunction
+
+// a Cycloid
 
 function demo_anim_2()
 // the main circle
@@ -837,6 +821,8 @@ function demo_anim_3()
   end
 endfunction
 
+// hypothrocoid variation
+
 function demo_anim_4()
 //
   xsetech(frect=[-6,-6,6,6],iso=%t,axesflag=2);
@@ -850,8 +836,8 @@ function demo_anim_4()
   center1=centeri + 2*r*[cos(thetai);sin(thetai)];
   c=[center1(1)-r1;center1(2)+r1;2*r1;2*r1;0;360*64];
   C=xfarc(c,color=1,background=1);
-  P=xpoly([],[],color=5);
-  Pc1=xpoly([],[],color=0);
+  P=xpoly([],[],color=5); // keep track of the created curve
+  Pc1=xpoly([],[],color=0); // diameters of the running circle
   Pc2=xpoly([],[],color=0);
   Npt=200;
   // the bigest circle
@@ -1065,9 +1051,38 @@ function demo_anim_12()
   end
 endfunction
 
+function demo_anim_13()
 
+  function [ydot]=lorenz(t,y)
+    a=[-10,10,0;
+       28,-1,-y(1);
+       0,y(1),-8/3];
+    ydot=a*y;
+  endfunction
 
+  function [j]=Jlorenz(t,y)
+    x=y(1);yy=y(2);z=y(3);
+    j=[-10,10,0;28-z,-1,-x;-yy,x,-8/3];
+  endfunction
 
+  N=10000;
+  d=100;
+  t=linspace(0,30,N);
+  y=ode(1.e-8*[1;1;1],0,t,lorenz);
+
+  C=jetcolormap(128);
+  xset('colormap',C($:-1:1,:));
+  lpat=xget("lastpattern");
+  y1=y(1,:);y1.redim[d,-1];y1($+1,:)=[y1(1,2:$),y1($,$)]
+  y2=y(2,:);y2.redim[d,-1];y2($+1,:)=[y2(1,2:$),y2($,$)]
+  y3=y(3,:);y3.redim[d,-1];y3($+1,:)=[y3(1,2:$),y3($,$)]
+  style=modulo(1:(N/d),lpat-1);
+  for i=1:(N/d)
+    param3d1(y1(:,i),y2(:,i),y3(:,i),style=style(i),alpha=30, ...
+	     theta=67,ebox=[-20,20,-20,20,0,50],flag=[3,1]);
+    xpause(100000,%t);
+  end
+endfunction
 
 function demo_contour_1()
 // xset('colormap',hotcolormap(20))

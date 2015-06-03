@@ -46,23 +46,20 @@ graphic_test_2d = build_demo_list("demo_2d",13);
 // -----------------------
 
 demo_3d_1_info="param3d";
-demo_3d_2_info="param3d";
-demo_3d_3_info="plot3d";
-demo_3d_4_info="plot3d1";
-demo_3d_5_info="plot3d with function";
-demo_3d_6_info="multiple colormaps";
-demo_3d_7_info="interpolated shading";
-demo_3d_8_info="genfact and interp. shad.";
-demo_3d_9_info="genfact and interp. shad.";
-demo_3d_10_info="Tree";
-demo_3d_11_info="parametric surface nf3d";
-demo_3d_12_info="Cube";
-demo_3d_13_info="Tube";
-demo_3d_14_info="Shell";
-demo_3d_15_info="plot3d and contours";
-demo_3d_16_info="some surfaces";
-demo_3d_17_info="tobedone";
-demo_3d_18_info="tobedone";
+demo_3d_2_info="plot3d and plot3d1";
+demo_3d_3_info="plot3d with function";
+demo_3d_4_info="multiple colormaps";
+demo_3d_5_info="interpolated shading";
+demo_3d_6_info="genfact and interp. shad.";
+demo_3d_7_info="Tree";
+demo_3d_8_info="parametric surface nf3d";
+demo_3d_9_info="Cube";
+demo_3d_10_info="Tube";
+demo_3d_11_info="Shell";
+demo_3d_12_info="plot3d and contours";
+demo_3d_13_info="some surfaces";
+demo_3d_14_info="tobedone";
+demo_3d_15_info="tobedone";
 
 graphic_test_3d = build_demo_list("demo_3d",16);
 
@@ -90,8 +87,9 @@ demo_anim_9_info="param3d1";
 demo_anim_10_info="contours";
 demo_anim_11_info="Hinton";
 demo_anim_12_info="Vector field and ode";
+demo_anim_13_info="lorenz";
 
-graphic_test_anim =build_demo_list("demo_anim",12);
+graphic_test_anim =build_demo_list("demo_anim",13);
 
 // ------------------------------
 // contours: Matplot Matplot1 fec grayplot
