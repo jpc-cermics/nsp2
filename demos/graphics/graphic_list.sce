@@ -88,8 +88,9 @@ demo_anim_10_info="contours";
 demo_anim_11_info="Hinton";
 demo_anim_12_info="Vector field and ode";
 demo_anim_13_info="lorenz";
+demo_anim_14_info="contours";
 
-graphic_test_anim =build_demo_list("demo_anim",13);
+graphic_test_anim =build_demo_list("demo_anim",14);
 
 // ------------------------------
 // contours: Matplot Matplot1 fec grayplot

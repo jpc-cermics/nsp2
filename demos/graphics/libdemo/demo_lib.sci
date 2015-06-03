@@ -1084,6 +1084,40 @@ function demo_anim_13()
   end
 endfunction
 
+function demo_anim_14()
+
+  t=linspace(-%pi,%pi,40);
+  m=1-abs(sin(t)'*cos(t));
+  [xc,yc]=contour2di(t,t,m,128);
+  k=1;n=yc(k);level=xc(k);c=1;
+  F=get_current_figure[];
+  xsetech(wrect=[0,0,0.5,1],a3d=%t);
+  plot3d1(t,t,m,alpha=70,theta=40);
+
+  xsetech(wrect=[0.5,0,0.5,1],frect=%pi*[-1,-1,1,1]);
+  xset('colormap',jetcolormap(128));
+  t=linspace(-%pi,%pi,40);
+  m=1-abs(sin(t)'*cos(t));
+  while %t
+    A=F(1);A.children = list();
+    // make a loop, to plot level curves at level level
+    while %t
+      n=yc(k);
+      plot2d(xc(k+(1:n)),yc(k+(1:n)),line_color=c,line_thickness=2,rect=%pi*[-1,-1,1,1]);
+      k=k+n+1;
+      if k > size(yc,'*') then break;end
+      nlevel=xc(k);
+      if abs(nlevel-level) >= 1.e-4 then break;end
+    end
+    xtitle(sprintf("level=%f",level),"","");
+    if k > size(yc,'*') then break;end;
+    xpause(100000,%t);
+    // start a new level
+    level=nlevel;
+    c=c+1;
+  end
+endfunction
+
 function demo_contour_1()
 // xset('colormap',hotcolormap(20))
   xset('colormap',jetcolormap(20))
