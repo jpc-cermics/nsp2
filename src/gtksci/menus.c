@@ -815,24 +815,24 @@ static void nspg_menu_print(BCG *Xgc, int winid)
 #if TEST_GTK_PRINT
   do_print (NULL,winid);
 #else
-  char *printer;
+  char Fname[FSIZE],command[512], *printer;
   const char *p1;
   int colored,orientation,type;
+  if ( Xgc == NULL ) return;
   if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
   if ( ( p1 = nsp_getenv("NSP_TMPDIR"))  == (char *) 0 )
     {
       sciprint("Cannot find environment variable NSP_TMPDIR\r\n");
+      return;
     }
-  Sciprintf("To be done: %s %d %d %d\n",printer,colored,orientation,type);
+  sprintf(Fname,"%s/untitled.eps",p1);
+  Xgc->actions->tops(Xgc,colored,Fname,"cairo-ps",'n', TRUE);
+  sprintf(command,"%s %s",printer,Fname);
+  if ( system(command) == -1)
+    {
+      Sciprintf("Error: failed to execute %s\n",command);
+    }
   nsp_string_destroy(&printer);
-  /*
-     sprintf(bufname,"%s/scilab-%d",p1,(int)winid);
-     scig_tops(winid,colored,bufname,"Pos",'n');
-     sprintf(bufname,"$SCI/bin/scilab -%s %s/scilab-%d %s",
-     (orientation == 1) ? "print_l" : "print_p",
-     p1,(int)winid,printer);
-     system(bufname);
-  */
 #endif
 }
 
@@ -851,40 +851,68 @@ void nspg_print(int winid)
 
 static void nspg_menu_export(BCG *Xgc, int winid)
 {
-  char *fname;
+  char Fname[FSIZE], *fname;
   integer colored,orientation,type;
   if ( Xgc == NULL ) return;
-  if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
-  /* type: "pdf","svg", "eps", "png",  "Postscript",  "Postscript No Preamble", "Postscript-Latex", "Xfig"*/
-
+  while (1)
+    {
+      const char *extension;
+      char *extensions[]={".pdf",".svg", ".eps", ".png", ".fig"};
+      if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
+      /* type: "pdf","svg", "eps", "png", "Xfig",
+       * deprecated: "Postscript",  "Postscript No Preamble", "Postscript-Latex", "Xfig"
+       */
+      type = Min(5,Max(1,type));
+      /* check that fname and type are ok */
+      if ( fname[0]== '\0' )
+	{
+	  int rep;
+	  char* buttons_def[] = { "gtk-close", NULL };
+	  sprintf(Fname,"Untitled%s",extensions[type-1]);
+	  char message[512];
+	  sprintf(message,"Figure exported to file\n%s",Fname);
+	  nsp_message_(message, buttons_def,1,&rep);
+	  break;
+	}
+      extension = nsp_get_extension(fname);
+      if ( extension == NULL )
+	{
+	  sprintf(Fname,"%s%s",fname,extensions[type-1]);
+	  break;
+	}
+      else if ( strcmp(extension, extensions[type-1]) == 0)
+	{
+	  strcpy(Fname,fname);
+	  break;
+	}
+      else
+	{
+	  int rep;
+	  char* buttons_def[] = { "gtk-close", NULL };
+	  char message[512];
+	  sprintf(message,"Error: extension should be %s",extensions[type-1]);
+	  nsp_message_(message, buttons_def,1,&rep);
+	  return;
+	}
+    }
   switch (type )
     {
-    case 1 : /* cairo-pdf */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-pdf",'n', TRUE);
-      break;
-    case 2: /* cairo-svg */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-svg",'n', TRUE);
-      break;
-    case 3: /* cairo-ps */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-ps",'n', TRUE);
-      break;
-    case 4: /* cairo-png */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-png",'n', TRUE);
-      break;
-    case 5 : /* Xfig */
-      Xgc->actions->tops(Xgc,colored,fname,"Fig",'n', TRUE);
-      break;
-    case 6 : /* "Postscript" old driver */
-    case 7 : /* "Postscript LaTeX" old driver */
+    case 1: Xgc->actions->tops(Xgc,colored,Fname,"cairo-pdf",'n', TRUE); break;
+    case 2: Xgc->actions->tops(Xgc,colored,Fname,"cairo-svg",'n', TRUE); break;
+    case 3: Xgc->actions->tops(Xgc,colored,Fname,"cairo-ps",'n', TRUE);  break;
+    case 4: Xgc->actions->tops(Xgc,colored,Fname,"cairo-png",'n', TRUE); break;
+    case 5: Xgc->actions->tops(Xgc,colored,Fname,"Fig",'n', TRUE);       break;
+    case 6 :
+    case 7 :
       switch ( orientation )
 	{
-	case 0: Xgc->actions->tops(Xgc,colored,fname,"Pos",'l', TRUE );break;
-	case 1: Xgc->actions->tops(Xgc,colored,fname,"Pos",'p', TRUE);break;
-	case 2: Xgc->actions->tops(Xgc,colored,fname,"Pos",'k', TRUE);break;
+	case 0: Xgc->actions->tops(Xgc,colored,Fname,"Pos",'l', TRUE );break;
+	case 1: Xgc->actions->tops(Xgc,colored,Fname,"Pos",'p', TRUE);break;
+	case 2: Xgc->actions->tops(Xgc,colored,Fname,"Pos",'k', TRUE);break;
 	}
       break;
     case 8 : /* "Postscript No Preamble" old */
-      Xgc->actions->tops(Xgc,colored,fname,"Pos",'n', TRUE);
+      Xgc->actions->tops(Xgc,colored,Fname,"Pos",'n', TRUE);
       break;
     }
   nsp_string_destroy(&fname);

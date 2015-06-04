@@ -19,15 +19,14 @@
  * menu for graphic print and export
  *--------------------------------------------------------------------------*/
 
-#include "nsp/menus.h"
-#include "nsp/interf.h"
+#include <nsp/menus.h>
+#include <nsp/interf.h>
 
 int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format)
 {
   static NspList *L=NULL;
   char *title="Print dialog";
-  char *formats[] = {"Postscript", "Postscript No Preamble",
-		    "Postscript-Latex","Xfig","Gif","PPM", NULL };
+  char *formats[] = {"eps", NULL };
   char *printer[]={ "lpr ", NULL};
   char *types[]={ "color", "black and white",NULL};
   char *orientations[]={"landscape", "portrait", "keep size",NULL };
