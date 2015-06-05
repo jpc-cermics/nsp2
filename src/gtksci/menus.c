@@ -800,43 +800,71 @@ static void nspg_menu_delete(BCG *Xgc, int winid)
 /**
  * nspg_menu_print:
  * @Xgc: a graphic context
- * @winid: an integer
+ * @winid: an integer (unused)
  *
- *
+ * 
  **/
 
-/* for use inside menus */
-#if TEST_GTK_PRINT
-extern  void do_print (GtkAction *action,int winid);
-#endif
+extern int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figure_bg_draw, double width, double height);
+
+static void draw_page(GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, BCG *Xgc) 
+{
+  GtkPageSetup *page = gtk_print_context_get_page_setup (context);
+  GtkPageOrientation orientation= gtk_page_setup_get_orientation (page);
+  gdouble width=gtk_print_context_get_width(context);
+  gdouble height=gtk_print_context_get_height(context);
+  cairo_t *cr = gtk_print_context_get_cairo_context(context);
+  switch ( orientation ){
+  case GTK_PAGE_ORIENTATION_PORTRAIT:
+  case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
+    height = height/2.0; break;
+  case GTK_PAGE_ORIENTATION_LANDSCAPE:
+  case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
+    break;
+  }
+  nsp_cairo_draw_to_cr(cr, Xgc, TRUE,'n', TRUE,width,height);
+  return;
+}
 
 static void nspg_menu_print(BCG *Xgc, int winid)
 {
-#if TEST_GTK_PRINT
-  do_print (NULL,winid);
-#else
-  char Fname[FSIZE],command[512], *printer;
-  const char *p1;
-  int colored,orientation,type;
-  if ( Xgc == NULL ) return;
-  if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
-  if ( ( p1 = nsp_getenv("NSP_TMPDIR"))  == (char *) 0 )
-    {
-      sciprint("Cannot find environment variable NSP_TMPDIR\r\n");
-      return;
-    }
-  sprintf(Fname,"%s/untitled.eps",p1);
-  Xgc->actions->tops(Xgc,colored,Fname,"cairo-ps",'n', TRUE);
-  sprintf(command,"%s %s",printer,Fname);
-  if ( system(command) == -1)
-    {
-      Sciprintf("Error: failed to execute %s\n",command);
-    }
-  nsp_string_destroy(&printer);
-#endif
+  GtkPrintOperation *operation;
+  GError *error = NULL;
+  GtkPrintOperationResult res;
+  /*
+  GtkPrintSettings *print_settings;
+  GtkPageSetup *page_setup;
+  print_settings = gtk_print_settings_new();
+  gtk_print_settings_set_orientation(print_settings,GTK_PAGE_ORIENTATION_PORTRAIT);
+  gtk_print_settings_set_paper_size(print_settings,gtk_paper_size_new(GTK_PAPER_NAME_A4));
+  page_setup = gtk_page_setup_new();
+  gtk_page_setup_set_orientation(page_setup,GTK_PAGE_ORIENTATION_PORTRAIT);
+  gtk_page_setup_set_paper_size_and_default_margins(page_setup,gtk_paper_size_new(GTK_PAPER_NAME_A4));
+  */
+  operation = gtk_print_operation_new();
+  /* 
+  gtk_print_operation_set_print_settings(operation,print_settings);
+  gtk_print_operation_set_default_page_setup(operation,page_setup);
+  */
+  gtk_print_operation_set_show_progress(operation,TRUE);
+  gtk_print_operation_set_track_print_status(operation, TRUE);
+  g_signal_connect(G_OBJECT(operation), "draw-page", G_CALLBACK(draw_page), Xgc);
+  gtk_print_operation_set_n_pages(operation, 1);
+  
+  /* NULL could be replaced by a gtk window GTK_WINDOW(Xgc->window) */
+  res = gtk_print_operation_run(operation, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, NULL,&error);
+  if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
+    /* g_object_unref(print_settings);
+    print_settings = g_object_ref(gtk_print_operation_get_print_settings(operation));
+    */
+  }
+ 
+  g_object_unref(operation);
+  return;
 }
 
-void nspg_print(int winid)
+
+void nspg_print(int winid) 
 {
   nspg_menu_print(NULL, winid);
 }

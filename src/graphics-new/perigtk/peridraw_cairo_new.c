@@ -905,7 +905,6 @@ static int  xset_pattern(BCG *Xgc,int color)
   return old;
 }
 
-
 /* export cairo graphics to files in various formats
  * This cairo facilities should be checked by configure
  */
@@ -914,82 +913,13 @@ static int  xset_pattern(BCG *Xgc,int color)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,const char *driver,
-				char option,int figure_bg_draw);
+int nsp_cairo_draw_to_file(const char *fname,const char *driver,BCG *Xgc,int colored,int figure_bg_draw,char option);
+int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figure_bg_draw, double width, double height);
 
-int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option,
+int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *fname,const char *driver,char option,
 		     int figure_bg_draw)
 {
-  NspGraphic *G;
-  /* default is to follow the window size */
-  int width = Xgc->CWindowWidth;
-  int height= Xgc->CWindowHeight;
-  int uc;
-  cairo_surface_t *surface;
-  cairo_t *cr, *cr_current;
-
-  if ( Xgc->graphic_engine != &Cairo_gengine )
-    {
-#if 0
-      Sciprintf("cannot export a non cairo graphic\n");
-      return FAIL;
-#else
-      /* we are trying to export with cairo a non cairo window */
-      return nsp_cairo_export_mix(Xgc,win_num,colored,bufname,driver,option,figure_bg_draw);
-#endif
-    }
-  if ( strcmp(driver,"cairo-pdf")==0 )
-    {
-      surface = cairo_pdf_surface_create (bufname,width, height );
-    }
-  else if ( strcmp(driver,"cairo-svg")==0 )
-    {
-      surface = cairo_svg_surface_create (bufname,width, height );
-    }
-  else if ( strcmp(driver,"cairo-ps")==0 )
-    {
-      surface = cairo_ps_surface_create (bufname,width, height );
-    }
-  else if ( strcmp(driver,"cairo-png")==0 )
-    {
-      surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,  width, height );
-    }
-  else
-    {
-      return FAIL;
-    }
-  if ( surface == NULL) return FAIL;
-  cr = cairo_create (surface);
-  if ( cr == NULL)
-    {
-      cairo_surface_destroy (surface);
-      return FAIL;
-    }
-  cairo_save (cr);
-  cr_current =  Xgc->private->cairo_cr;
-  Xgc->private->cairo_cr = cr;
-  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
-  if (colored==1 )
-    Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  else
-    Xgc->graphic_engine->xset_usecolor(Xgc,0);
-
-  Xgc->figure_bg_draw = figure_bg_draw;
-
-  if ((G = (NspGraphic *) Xgc->figure)!= NULL)
-    {
-      G->type->draw(Xgc,G,NULL,NULL);
-    }
-
-  Xgc->figure_bg_draw = TRUE;
-
-  Xgc->private->cairo_cr = cr_current;
-  Xgc->graphic_engine->xset_usecolor(Xgc,uc);
-  cairo_show_page (cr);
-  cairo_restore (cr);
-  cairo_destroy (cr);
-  cairo_surface_destroy (surface);
-  return OK;
+  return nsp_cairo_draw_to_file(fname,driver,Xgc, colored,figure_bg_draw,option);
 }
 
 /* the nex function is used by the print menu
@@ -1032,34 +962,26 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
   return OK;
 }
 
-/* this function is used to export a non-cairo graphics with cairo
- * we create a Cairo Xgc which is connected just to a surface
+/* draws the figure contained in Xgc->figure using a cairo surface 
+ * 
  */
 
-
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
-				const char *driver,char option, int figure_bg_draw)
+int nsp_cairo_draw_to_file(const char *fname,const char *driver,BCG *Xgc,int colored,int figure_bg_draw,char option)
 {
-  NspFigure *F;
-  NspGraphic *G;
-  int v1=-1,cwin;
-  BCG *Xgc1=Xgc; /* used for drawing */
-  /* default is to follow the window size and increase resolution */
-  int width = Xgc->CWindowWidth;
-  int height= Xgc->CWindowHeight;
+  int width = Xgc->CWindowWidth, height= Xgc->CWindowHeight, rep;
   cairo_surface_t *surface;
   cairo_t *cr;
   if ( strcmp(driver,"cairo-pdf")==0 )
     {
-      surface = cairo_pdf_surface_create (bufname,width, height );
+      surface = cairo_pdf_surface_create (fname,width, height );
     }
   else if ( strcmp(driver,"cairo-svg")==0 )
     {
-      surface = cairo_svg_surface_create (bufname,width, height );
+      surface = cairo_svg_surface_create (fname,width, height );
     }
   else if ( strcmp(driver,"cairo-ps")==0 )
     {
-      surface = cairo_ps_surface_create (bufname,width, height );
+      surface = cairo_ps_surface_create (fname,width, height );
     }
   else if ( strcmp(driver,"cairo-png")==0 )
     {
@@ -1072,15 +994,36 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   if ( surface == NULL) return FAIL;
   cr = cairo_create (surface);
   if ( cr == NULL) return FAIL;
+  rep = nsp_cairo_draw_to_cr(cr,Xgc,colored,option,figure_bg_draw,Xgc->CWindowWidth,Xgc->CWindowHeight);
+  cairo_show_page (cr);
+  if ( strcmp(driver,"cairo-png")==0 )
+    {
+      cairo_surface_write_to_png (surface,fname);
+    }
+  cairo_destroy (cr);
+  cairo_surface_destroy (surface);
+  return rep;
+}
+
+/* draws the figure contained in Xgc->figure using the cairo driver with cairo_t *cr
+ */
+
+int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figure_bg_draw, double width, double height)
+{
+  NspFigure *F;
+  NspGraphic *G;
+  int v1=-1,cwin;
+  BCG *Xgc1= NULL; 
+  if ( cr == NULL) return FAIL;
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
-  /* create a new graphic with cairo */
-  F = Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr,NULL);
+  /* create a new graphic with cairo not attached to a Widget */
+  F = Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,option,cr,NULL);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
   if ( F == NULL )
     {
-      Sciprintf("cannot export a non cairo graphic\n");
+      Sciprintf("cannot export graphics\n");
       return FAIL;
     }
   Xgc1 = F->obj->Xgc;
@@ -1090,15 +1033,10 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   Xgc1->figure_bg_draw = figure_bg_draw;
   G = (NspGraphic *) Xgc->figure ;
   G->type->draw(Xgc1,G,NULL,NULL);
-  cairo_show_page (cr);
-  if ( strcmp(driver,"cairo-png")==0 )
-    cairo_surface_write_to_png (surface,bufname);
   Xgc1->figure_bg_draw = TRUE;
-  cairo_destroy (cr);
-  cairo_surface_destroy (surface);
-  if ( Xgc1 != Xgc )
+  if ( Xgc != Xgc1 ) 
     {
-      /* delete the localy created <<window>> */
+      /* Is it possible that Xgc == Xgc1 ? */
       Xgc1->actions->destroy(Xgc1);
     }
   return OK;
