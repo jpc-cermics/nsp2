@@ -1,30 +1,30 @@
-#ifndef __NSP_PERIGTK 
-#define __NSP_PERIGTK 
+#ifndef __NSP_PERIGTK
+#define __NSP_PERIGTK
 
-/* 
+/*
  * common to cairo, gtk and opengl
  */
 
-#ifdef PERICAIRO 
+#ifdef PERICAIRO
 #include <cairo.h>
 #define WITH_PANGO
 #endif /* PERICAIRO */
 
-#ifdef PERIGL 
-#ifdef WIN32 
-#include <windows.h> 
-#endif 
+#ifdef PERIGL
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <gtk/gtkgl.h>
 
 /* should be checked in configure */
 #define HAVE_FREETYPE
 #ifdef  HAVE_FREETYPE
-#ifndef PANGO_DISABLE_DEPRECATED  
-#define PANGO_DISABLE_DEPRECATED 
-#endif 
+#ifndef PANGO_DISABLE_DEPRECATED
+#define PANGO_DISABLE_DEPRECATED
+#endif
 /* #undef PANGO_DISABLE_DEPRECATED */
-#include <pango/pangoft2.h> 
-#endif 
+#include <pango/pangoft2.h>
+#endif
 
 #ifdef __APPLE__
 #   include <OpenGL/gl.h>
@@ -89,7 +89,7 @@ typedef struct
 #endif /* PERIGL  */
 
 /*
- * private data for the gtk widget 
+ * private data for the gtk widget
  */
 
 typedef struct _GTK_locator_info GTK_locator_info;
@@ -105,8 +105,8 @@ struct _GTK_locator_info {
 
 typedef struct s_menu_entry menu_entry;
 
-struct s_menu_entry 
-{ 
+struct s_menu_entry
+{
   char *name; /* name of the entry */
   char *accel;/* name of accelerator */
   int status; /* active 1, not active 0, deleted -1 */
@@ -124,7 +124,7 @@ struct s_menu_entry
 
 
 typedef struct  _gtk_data {
-  void     *a_colors;                     /* an array of colors in a NspMatrix  */
+  void     *a_colors;                   /* an array of colors in a NspMatrix  */
   GQueue   *q_colors;                   /* an queue for storing colors        */
   GdkColormap *colormap ;               /* used to keep track of drawing colormap */
   GtkWidget *window;			/* Graphics frame */
@@ -139,10 +139,10 @@ typedef struct  _gtk_data {
   GdkDrawable *drawable;                /* can be set to drawing->window, pixmap or extra_pixmap */
   GdkGC *wgc;
   GdkGC *stdgc;
-  GdkColor gcol_bg; 
-  GdkColor gcol_fg; 
+  GdkColor gcol_bg;
+  GdkColor gcol_fg;
   GdkRectangle clip;
-  GdkCursor *gcursor;                   /* xclick cursor */ 
+  GdkCursor *gcursor;                   /* xclick cursor */
   GdkCursor *ccursor;                   /* standard cursor */
   GdkCursor *extra_cursor;              /* extra cursor */
   GdkFont *font;
@@ -160,7 +160,7 @@ typedef struct  _gtk_data {
   GtkWidget *cairo_drawing;             /* Drawable window for cairo */
   cairo_t *cairo_cr;                    /* used to draw on the private */
 #endif
-#ifdef PERIGL 
+#ifdef PERIGL
   int gdk_only;                         /* when true only gdk draw  */
   int gl_only;                          /* when true only gl draw  */
   TextureImage  tab_textures_font[2];   /* caracters as textures */
@@ -170,7 +170,7 @@ typedef struct  _gtk_data {
   t_camera camera;             /*   opengl camera */
   GdkGLContext *glcontext ;
   GdkGLDrawable *gldrawable;
-#endif 
+#endif
   GdkRectangle invalidated;             /* used for expose_event */
 } gui_private ;
 
@@ -178,11 +178,11 @@ typedef struct  _gtk_data {
 extern void menu_entry_delete(menu_entry *me);
 
 /*-----------------------------------------------------------------
- * mix with generic data 
+ * mix with generic data
  *-----------------------------------------------------------------*/
 
 #define  GUI_PRIVATE
-#include "Graphics.h" 
+#include "Graphics.h"
 
 #ifdef PERI_PRIVATE
 
@@ -192,20 +192,20 @@ extern Gengine1 nsp_gengine1 ;
  * private functions for drivers
  *-----------------------------------------------------------------*/
 
-#ifdef PERIGTK 
-#define xx__gengine Gtk_gengine 
-#endif 
+#ifdef PERIGTK
+#define xx__gengine Gtk_gengine
+#endif
 
-#ifdef PERICAIRO  
-#define xx__gengine Cairo_gengine 
-#endif 
+#ifdef PERICAIRO
+#define xx__gengine Cairo_gengine
+#endif
 
 #ifdef PERIGL
-#define xx__gengine GL_gengine 
+#define xx__gengine GL_gengine
 #endif
 
 Gengine xx__gengine = {
-  &nsp_peri_generic, 
+  &nsp_peri_generic,
   "X11",
   0,
   &nsp_gengine1,
@@ -253,7 +253,7 @@ Gengine xx__gengine = {
   tape_replay_new_scale,
   tape_replay_undo_scale,
   tape_check_recorded_3D,
-  
+
   xget_windowpos,
   xset_windowpos,
   xget_windowdim,
@@ -332,7 +332,7 @@ Gengine xx__gengine = {
 #else /* PERI_PRIVATE */
 
 /*-----------------------------------------------------------------
- * exported Gtk graphic engine 
+ * exported Gtk graphic engine
  *-----------------------------------------------------------------*/
 
 extern Gengine Gtk_gengine ;
@@ -342,12 +342,12 @@ extern Gengine Gtk_gengine ;
 extern void nsp_ogl_set_view(BCG *Xgc);
 extern void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk();
-extern void change_camera(BCG *Xgc,const double *val); 
+extern void change_camera(BCG *Xgc,const double *val);
 
-#endif /* __NSP_PERIGTK */ 
+#endif /* __NSP_PERIGTK */
 
 /*------------------------------------------------------------------
- * private declarations and functions 
+ * private declarations and functions
  *------------------------------------------------------------------*/
 
 #ifdef  PERI_PRIVATE
@@ -374,18 +374,18 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 #ifdef LIGHTS
 static void init_gl_lights(GLfloat light0_pos[4]);
 #endif /* LIGHTS */
-#ifdef PERIGLGTK 
+#ifdef PERIGLGTK
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
-#endif 
+#endif
 #endif /* PERIGL */
 
 #ifdef PERIGTK
 static GdkPoint *gtk_get_xpoints(void);
 static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
-#if 1 
+#if 1
 static int gtk_store_points_remove_redundent (int n, int *vx,int *vy,int  onemore);
-#endif 
+#endif
 #ifndef WITH_PANGO
 static void LoadSymbFonts(void);
 static void loadfamily_n(char *name, int *j);
@@ -399,4 +399,3 @@ extern void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk();
 
 #endif /*  PERI_PRIVATE */
-

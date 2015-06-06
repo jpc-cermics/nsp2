@@ -1,11 +1,11 @@
-#ifndef NSP_PERIGEN_H 
-#define NSP_PERIGEN_H 
+#ifndef NSP_PERIGEN_H
+#define NSP_PERIGEN_H
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2015) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * This Software is GPL (Copyright ENPC 1998-2015)
+ * Jean-Philippe Chancelier Enpc/Cermics
  *
- * 
+ *
  */
 
 #include "nsp/plisttoken.h" /* for name */
@@ -13,24 +13,24 @@
 typedef struct __BCG BCG;
 typedef struct nsp_gengine Gengine;    /* drawing */
 
-#include "scale.h" 
+#include "scale.h"
 #include "actions.h"
-#include "driver.h" 
-#include "gcscale.h" 
+#include "driver.h"
+#include "gcscale.h"
 
 /*---------------------------------------------------------------------------
- *  graphic engine data 
+ *  graphic engine data
  *---------------------------------------------------------------------------*/
 
 /* all the plot records can be cast to a plot code */
 
 typedef struct _plot_code {
-  int code; 
-} plot_code ; 
+  int code;
+} plot_code ;
 
 typedef struct _listplot {
   /* int  window; */
-  void *theplot; 
+  void *theplot;
   struct _listplot   *next;
   struct _listplot   *previous;
 } list_plot ;
@@ -38,7 +38,7 @@ typedef struct _listplot {
 extern void window_scale_delete(int win);
 
 /*
- * a queue for storing mouse events in drivers 
+ * a queue for storing mouse events in drivers
  */
 
 typedef struct _nsp_gwin_event nsp_gwin_event ;
@@ -47,10 +47,10 @@ struct _nsp_gwin_event {
   int win,x,y,ibutton,mask,motion,release;
 };
 
-typedef enum { 
-  nsp_ev_motion = 0x1 , 
-  nsp_ev_release = 0x10, 
-  nsp_ev_getkey = 0x100, 
+typedef enum {
+  nsp_ev_motion = 0x1 ,
+  nsp_ev_release = 0x10,
+  nsp_ev_getkey = 0x100,
   nsp_ev_getmenu = 0x1000 } _nsp_ev_code;
 
 #define MaxCB 50
@@ -65,18 +65,18 @@ struct  _nsp_event_queue {
 
 
 
-/* 
- * structure for storing data associated to a graphic window  
+/*
+ * structure for storing data associated to a graphic window
  */
 
 #ifdef GUI_PRIVATE
-#define BCG_PRIVATE  gui_private 
-#else 
-#define BCG_PRIVATE  void 
-#endif 
+#define BCG_PRIVATE  gui_private
+#else
+#define BCG_PRIVATE  void
+#endif
 
-struct __BCG 
-{ 
+struct __BCG
+{
   Gengine *graphic_engine; /* the graphic engine associated to this graphic window */
   Nsp_gc_actions *actions; /* a set of actions */
   int CurWindow ;          /* Id of window */
@@ -105,7 +105,7 @@ struct __BCG
   int NumForeground; /* number of Foreground in the color table */
   int NumHidden3d;  /* color for hidden 3d facets **/
   char EventHandler[NAME_MAXL+1]; /* name of window event handler XXXX */
-  char fp_format[32]; 
+  char fp_format[32];
   int Autoclear;
   window_scale_list *scales; /* scales associated to graphic window subwins */
 
@@ -113,34 +113,33 @@ struct __BCG
   void *figure;    /* list of recorded plots */
   void *zz_last_plot;  /* unused but we must keep the same size as in old perigen.h */
   void *xdrs;            /* used to pass a xdr structure for saving data */
-  int zrect[4];          /* rectangle to be superposed on graphic window 
-			  * used for zoom 
+  int zrect[4];          /* rectangle to be superposed on graphic window
+			  * used for zoom
 			  */
 
 #ifdef __cplusplus
   /* private is a reserved keyword in C++ */
-  BCG_PRIVATE *private_gc ;  /* only visible when inside a specific driver */ 
-#else 
-  BCG_PRIVATE *private ;  /* only visible when inside a specific driver */ 
-#endif 
+  BCG_PRIVATE *private_gc ;  /* only visible when inside a specific driver */
+#else
+  BCG_PRIVATE *private ;  /* only visible when inside a specific driver */
+#endif
   nsp_event_queue queue; /* a queue for storing event when outside xclick */
-  int figure_bg_draw;   /* used in exporting: if true draw the figure background 
-			 * if false do not so as to obtain transparent icons 
+  int figure_bg_draw;   /* used in exporting: if true draw the figure background
+			 * if false do not so as to obtain transparent icons
 			 * used for creating icons from graphics.
 			 */
-  double scale_factor;  /* scale factor for cairo */
 } ;
 
 
 extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
 
 /* FIXME: A revoir */
-#ifndef CoordModeOrigin 
+#ifndef CoordModeOrigin
 #define CoordModeOrigin 0
-#endif 
-#ifndef CoordModePrevious 
+#endif
+#ifndef CoordModePrevious
 #define CoordModePrevious 1
-#endif 
+#endif
 
 void * graphic_initial_menu(int winid);
 
@@ -160,8 +159,8 @@ extern BCG *GetWindowXgcNumber  (int i);
 
 extern void nsp_initialize_gc( BCG *Xgc );
 
-/* 
- * 3d bounding box 
+/*
+ * 3d bounding box
  */
 
 typedef struct _nsp_box_3d {
@@ -173,27 +172,27 @@ typedef struct _nsp_box_3d {
 			       * after ratation and scaling */
   double xh[7],yh[7],zh[7];   /* coordinates of convex hull in in real space */
   int InsideU[4],InsideD[4];  /* indices of internal and external <<triedres>> */
-} nsp_box_3d; 
+} nsp_box_3d;
 
 
 /* scales */
 
 /*
- * Current geometric transformation : from double to pixel 
+ * Current geometric transformation : from double to pixel
  */
 
 /* used when initializing cairo */
 #define CAIRO_SCALE 1
 
-#define XScale_d(Scale,x)    (Scale->scale_factor*( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1))
-#define XLogScale_d(Scale,x) (Scale->scale_factor*( Scale->Wscx1*(log10(x) -Scale->frect[0]) + Scale->Wxofset1))
-#define YScale_d(Scale,y)    (Scale->scale_factor*( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1))
-#define YLogScale_d(Scale,y) (Scale->scale_factor*( Scale->Wscy1*(-log10(y)+Scale->frect[3]) + Scale->Wyofset1))
+#define XScale_d(Scale,x)    (( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1))
+#define XLogScale_d(Scale,x) (( Scale->Wscx1*(log10(x) -Scale->frect[0]) + Scale->Wxofset1))
+#define YScale_d(Scale,y)    (( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1))
+#define YLogScale_d(Scale,y) (( Scale->Wscy1*(-log10(y)+Scale->frect[3]) + Scale->Wyofset1))
 
-#define XScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? (Scale->scale_factor*(Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1)) : \
-			      (Scale->scale_factor*(( Scale->cosa*Scale->Wscx1*((x) -Scale->frect[0]) - Scale->sina*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wxofset1)))
-#define YScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? (Scale->scale_factor*(Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1)): \
-			      (Scale->scale_factor*(( Scale->sina*Scale->Wscx1*((x) -Scale->frect[0]) + Scale->cosa*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wyofset1)))
+#define XScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ((Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1)) : \
+			      ((( Scale->cosa*Scale->Wscx1*((x) -Scale->frect[0]) - Scale->sina*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wxofset1)))
+#define YScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ((Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1)): \
+			      ((( Scale->sina*Scale->Wscx1*((x) -Scale->frect[0]) + Scale->cosa*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wyofset1)))
 
 #define XScale(Scale,x)    inint( XScale_d(Scale,x) )
 #define XLogScale(Scale,x) inint( XLogScale_d(Scale,x))
@@ -207,18 +206,18 @@ typedef struct _nsp_box_3d {
 #define YDouble2Pixel(Scale,y) ((Scale->logflag[1] == 'n') ? ( YScale_d(Scale,y)) : ( YLogScale_d(Scale,y)))
 
 /*
- * Current geometric transformation : from pixel to double 
+ * Current geometric transformation : from pixel to double
  */
 
-#define XPi2R(Scale,x)  Scale->frect[0] + (1.0/(Scale->Wscx1*Scale->scale_factor))*((x) - Scale->Wxofset1)
-#define YPi2R(Scale,y)  Scale->frect[3] - (1.0/(Scale->Wscy1*Scale->scale_factor))*((y) - Scale->Wyofset1)
+#define XPi2R(Scale,x)  Scale->frect[0] + (1.0/(Scale->Wscx1))*((x) - Scale->Wxofset1)
+#define YPi2R(Scale,y)  Scale->frect[3] - (1.0/(Scale->Wscy1))*((y) - Scale->Wyofset1)
 #define XPi2LogR(Scale,x)  exp10( XPi2R(Scale,x))
 #define YPi2LogR(Scale,y)  exp10( YPi2R(y))
 #define XPixel2Double(Scale,x)  (( Scale->logflag[0] == 'l') ? XPi2LogR(Scale,x) : XPi2R(Scale,x))
 #define YPixel2Double(Scale,y)  (( Scale->logflag[1] == 'l') ? YPi2LogR(Scale,y) : YPi2R(Scale,y))
 
 /*
- * Current geometric transformation : 3D plots 
+ * Current geometric transformation : 3D plots
  */
 
 #define TRX(Scale,x1,y1,z1) ( Scale->m[0][0]*(x1-Scale->c[0]) +Scale->m[0][1]*(y1-Scale->c[1]) +Scale->m[0][2]*(z1-Scale->c[2]))
@@ -230,7 +229,7 @@ typedef struct _nsp_box_3d {
 
 extern void show_scales( BCG *Xgc);
 
-#ifdef WITH_GTKGLEXT 
+#ifdef WITH_GTKGLEXT
 extern void nsp_ogl_set_2dview(BCG *Xgc);
 extern void nsp_ogl_set_3dview(BCG *Xgc);
 extern void nsp_ogl_set_view(BCG *Xgc);
@@ -245,5 +244,4 @@ extern int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev);
 extern void window_list_clear_queue(BCG *Xgc);
 extern int window_list_search_from_drawing(void *win);
 
-#endif 
-
+#endif

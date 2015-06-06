@@ -1,14 +1,14 @@
-#ifndef NSP_GCSCALE_BCG 
-#define NSP_GCSCALE_BCG 
+#ifndef NSP_GCSCALE_BCG
+#define NSP_GCSCALE_BCG
 
 /*
- * This Software is GPL (Copyright ENPC 2009-2015) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * This Software is GPL (Copyright ENPC 2009-2015)
+ * Jean-Philippe Chancelier Enpc/Cermics
  *
- * The following functions perform scale changes and then redirect 
+ * The following functions perform scale changes and then redirect
  * to the graphics driver.
  *
- * structure for storing scale informations associated to an 
+ * structure for storing scale informations associated to an
  * axes. This should be similar to the same structure in Xgc
  * which will be removed in the future.
  */
@@ -16,7 +16,7 @@
 typedef struct wcscalelist window_scale_list;
 typedef struct wcscalelist nsp_gcscale;
 
-struct wcscalelist 
+struct wcscalelist
 {
   int    scale_flag ;                   /* zero when this is a default scale */
   int    scale_flag3d ;                 /* set to != 0 when 3d scales are active */
@@ -28,8 +28,8 @@ struct wcscalelist
   double axis[4];                       /* position of the axis rectangle */
                                         /* = [mfact_xl, mfact_xr,mfact_yu,mfact_yd]; */
   double xtics[4],ytics[4];             /* [xmin,ymin,nint] or [kmin,kmax,ar,nint]           */
-  char   strflag;                       /* the default mode used by stored graphics: 
-					 * supposed to be 1 or 3 or 5 
+  char   strflag;                       /* the default mode used by stored graphics:
+					 * supposed to be 1 or 3 or 5
 					 */
   double Wxofset1,Wyofset1,Wscx1,Wscy1; /* ofsets and scale factor for pixel<->double transf.*/
   char logflag[2];                      /* are we using logscale */
@@ -43,10 +43,9 @@ struct wcscalelist
   double cosa,sina;                     /* test ! */
   window_scale_list *next;              /* points to next one */
   window_scale_list *prev;              /* points to previous one */
-  double scale_factor;                  /* depends on the driver in use */
 };
 
 extern void nsp_scale_copy(nsp_gcscale *scale1,nsp_gcscale *scale2);
 extern void nsp_scale_default(nsp_gcscale *scale1);
 
-#endif 
+#endif

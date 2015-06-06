@@ -366,8 +366,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
        * go in the direction of the strings
        */
       barlength = Xgc->scales->Irect.height/40.0;
-      d_barlength = barlength/Xgc->scales->Wscy1/Xgc->scale_factor;
-      str_offset = Xgc->scales->Irect.height/60.0/Xgc->scales->Wscy1/Xgc->scale_factor;
+      d_barlength = barlength/Xgc->scales->Wscy1;
+      str_offset = Xgc->scales->Irect.height/60.0/Xgc->scales->Wscy1;
 
       /* compute a format
        */
@@ -407,11 +407,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      yd = y[0] + d_barlength;
 	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor);
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
 	      if ( d_barlength > 0 )
-		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1/Xgc->scale_factor;
+		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1;
 	      else
-		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1/Xgc->scale_factor;
+		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1;
 	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -421,7 +421,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      yd = y[0] - d_barlength;
 	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
-	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor);
+	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
 	      if ( d_barlength > 0 )
 		yd = y[0] + str_offset;
 	      else
@@ -495,8 +495,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     case 'l' :
       /* Vertical axes */
       barlength = Xgc->scales->Irect.width/40.0;
-      d_barlength = barlength/Xgc->scales->Wscx1/Xgc->scale_factor;
-      str_offset = Xgc->scales->Irect.width/60.0/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
+      d_barlength = barlength/Xgc->scales->Wscx1;
+      str_offset = Xgc->scales->Irect.width/60.0/Xgc->scales->Wscx1;
       if (str == NULL &&  format == NULL )
 	switch (xy_type ) {
 	case 'v' : nsp_grformat_e1(c_format,y,Ny);break;
@@ -534,7 +534,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		xd = x[0] + str_offset;
 	      else
 		xd = x[0] - d_barlength + str_offset;
-	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1/Xgc->scale_factor;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
 	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -544,10 +544,10 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
 	      vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	      if ( d_barlength > 0)
-		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
+		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1;
 	      else
-		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1/Xgc->scales->scale_factor;
-	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1/Xgc->scale_factor;
+		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1;
+	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
 	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
 	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
@@ -681,7 +681,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
        * if the sign of d_barlength is changed ticks will
        * go in the direction of the strings
        */
-      d_barlength = Xgc->scales->Irect.height/Xgc->scales->Wscy1/Xgc->scale_factor;
+      d_barlength = Xgc->scales->Irect.height/Xgc->scales->Wscy1;
 
       /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)

@@ -2102,10 +2102,6 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if ( rect != NULL)
     {
       GdkRectangle rect1 = *rect;
-      rect1.x *= Xgc->scale_factor;
-      rect1.y *= Xgc->scale_factor;
-      rect1.width *= Xgc->scale_factor;
-      rect1.height *= Xgc->scale_factor;      
       Xgc->graphic_engine->cleararea(Xgc,&rect1);
 #if 0
       /* debug helper */
@@ -3750,4 +3746,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3754 "figure.c"
+#line 3750 "figure.c"
