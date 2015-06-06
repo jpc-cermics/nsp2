@@ -1,7 +1,7 @@
 function A=emptystr(a,b)
-  if nargin==0 then 
+  if nargin==0 then
     A=smat_create(1,1);
-  elseif nargin==1 then 
+  elseif nargin==1 then
     A=smat_create(size(a,1),size(a,2));
   else
     A=smat_create(a,b);
@@ -9,17 +9,17 @@ function A=emptystr(a,b)
 endfunction
 
 function B=string(A)
-// a revoir 
-  if type(A,'short')=='s' then 
+// a revoir
+  if type(A,'short')=='s' then
     B=A;
-  elseif type(A,'short')=='b' then 
+  elseif type(A,'short')=='b' then
     B=string(b2m(A));
     B=strsubst(B,'1','T');
     B=strsubst(B,'0','F');
-  elseif type(A,'short')=='i' then 
+  elseif type(A,'short')=='i' then
     B=m2s(i2m(A));
   else
-    B=m2s(A);// used defaut format 
+    B=m2s(A);// used defaut format
   end
 endfunction
 
@@ -31,16 +31,8 @@ function y=typeof(x)
   end
 endfunction
 
-// function y=isempty(x)
-//   y=size(x,0)==0 
-// endfunction
-
-function xbasc()
-  xclear()
-endfunction
-
 function y=strcat(mat,sep)
-  if nargin <= 1, sep ="";end 
+  if nargin <= 1, sep ="";end
   y=catenate(mat,sep=sep);
 endfunction
 
@@ -59,8 +51,7 @@ function scicos_mputl(str,fname)
 endfunction
 
 function str=scicos_mgetl(fname)
-    F=fopen(fname,mode="r");
-    str=F.get_smatrix[];
-    F.close[];
+  F=fopen(fname,mode="r");
+  str=F.get_smatrix[];
+  F.close[];
 endfunction
-

@@ -303,6 +303,8 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 		      { "zlevel",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
+  enum  {alpha_opts, ebox_opts, flag_opts, leg_opts, theta_opts, zlevel_opts };
+
   if (rhs <= 0) { return nsp_graphic_demo(NspFname(stack),"contour(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&nz,&opts,&alpha,&Mebox,&Mflag,&leg,
@@ -408,6 +410,13 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
       if ( (nz = (NspMatrix *)  nsp_object_copy_and_name("nz",NSP_OBJECT(nz))) == NULLMAT)
 	return RET_BUG;
+
+      if ( opts[flag_opts].obj != NULLOBJ)
+	{
+	  nsp_set_box_parameters(objs3d, iflag[2]);
+	}
+
+
       vf = nsp_contour3d_create("c",x,y,z,nz,iflag[0],zlev,NULL);
       if ( vf == NULL) return RET_BUG;
       /* insert the new contour3d */
@@ -7298,6 +7307,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xchange"),int_xchange_new},
   {NAMES("xclea"),int_xclea_new},
   {NAMES("xclear"),int_xclear_new},
+  {NAMES("xbasc"),int_xclear_new},
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
   {NAMES("xdel"),int_xdel_new},

@@ -925,7 +925,7 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *fname,const c
 /* the nex function is used by the print menu
  */
 
-int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
+int nsp_cairo_print_deprecated(int win_num,cairo_t *cr, int width,int height)
 {
   NspGraphic *G ;
   NspFigure *F;
