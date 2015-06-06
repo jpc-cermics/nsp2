@@ -147,13 +147,6 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
   NewXgc->figure_bg_draw = TRUE;
-#ifdef PERICAIRO
-  NewXgc->scale_factor = CAIRO_SCALE; 
-  NewXgc->scales->scale_factor = CAIRO_SCALE; 
-#else 
-  NewXgc->scale_factor = 1;
-  NewXgc->scales->scale_factor = 1;
-#endif 
   /* cairo graphics without window */
 #ifdef PERICAIRO
   if ( string == NULL || string[0]=='\0' )

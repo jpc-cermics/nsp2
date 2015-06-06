@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -26,8 +26,8 @@
 #include <stdlib.h>
 
 #define PERI_PRIVATE 1
-#include <nsp/object.h> 
-#include <nsp/matrix.h> 
+#include <nsp/object.h>
+#include <nsp/matrix.h>
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics-new/periPos.h"
@@ -55,9 +55,9 @@ static int nsp_ps_header(FILE *out,char *bbox);
 
 #if defined(__CYGWIN32__) || defined(__MINGW32__) || defined(__GNUC__) || defined(__MSC__)
 static FILE *file= (FILE *) 0;
-#define FPRINTF(x) ( file != (FILE*) 0) ?  fprintf x  : 0 
-#else 
-#define FPRINTF(x) fprintf x  
+#define FPRINTF(x) ( file != (FILE*) 0) ?  fprintf x  : 0
+#else
+#define FPRINTF(x) fprintf x
 static FILE *file= stdout ;
 #endif
 
@@ -78,7 +78,7 @@ static void xselgraphic(BCG *Xgc) {}
 
 static void xendgraphic(BCG *Xgc)
 {
-  if (file != stdout && file != (FILE*) 0) 
+  if (file != stdout && file != (FILE*) 0)
     {
       FPRINTF((file,"\n%%Latex:\\end{picture}"));
       FPRINTF((file,"\n showpage\n"));
@@ -89,7 +89,7 @@ static void xendgraphic(BCG *Xgc)
   /* XXXXX attention, il faut nettoyer les echelles */
 }
 
-static void xend(BCG *Xgc) 
+static void xend(BCG *Xgc)
 {
   xendgraphic(Xgc);
 }
@@ -99,7 +99,7 @@ static void delete_window(BCG *dd,int intnum) {};
 /** Clear the current graphic window     **/
 /** In Postscript : nothing      **/
 
-static void clearwindow(BCG *Xgc) 
+static void clearwindow(BCG *Xgc)
 {
   /* FPRINTF((file,"\n showpage")); */
   /* Sending the scale etc.. in case we want an other plot */
@@ -114,7 +114,7 @@ static void invalidate(BCG *Xgc,void *rect) {}
 static void process_updates(BCG *Xgc) {}
 
 /*-----------------------------------------------------------------
- * Changes the graphic window popupname 
+ * Changes the graphic window popupname
  *-----------------------------------------------------------------*/
 
 static void setpopupname(BCG *Xgc,char *name){}
@@ -123,7 +123,7 @@ static void setpopupname(BCG *Xgc,char *name){}
 
 static void xset_win_protect(BCG *Xgc, int val){};
 
-static void xclick(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
+static void xclick(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {}
 
 static void xclick_any(BCG *Xgc,char *str, int *ibutton, int *imask,int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr) {};
 
@@ -137,7 +137,7 @@ void cleararea(BCG *Xgc,const GdkRectangle *r)
 }
 
 /************************************************************************
- * graphic context modifications 
+ * graphic context modifications
  ************************************************************************/
 
 /* record or not the graphic commands */
@@ -176,10 +176,10 @@ static int def_width =600;
 static int def_height =424;
 
 static void xget_windowdim(BCG *Xgc,int *x, int *y)
-{     
+{
   *x= def_width*prec_fact;
   *y= def_height*prec_fact;
-} 
+}
 
 /** To change the window dimensions : do Nothing in Postscript  **/
 
@@ -193,7 +193,7 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
 {
   *x= def_width*prec_fact;
   *y= def_height*prec_fact;
-} 
+}
 
 /** To change the popup window size  **/
 
@@ -203,7 +203,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 
 /** To get the viewport Upper/Left point Position **/
 
-static void xget_viewport(BCG *Xgc,int *x, int *y) {       *x = *y =0;} 
+static void xget_viewport(BCG *Xgc,int *x, int *y) {       *x = *y =0;}
 
 /** To change the window size  **/
 
@@ -213,7 +213,7 @@ static void xset_viewport(BCG *Xgc,int x, int y) {}
 
 static int xset_curwin(int intnum, int set_menu)
 {
-  BCG *Xgc = &ScilabGCPos; 
+  BCG *Xgc = &ScilabGCPos;
   int i =  Xgc->CurWindow;
   Xgc->CurWindow  = intnum;
   return i;
@@ -223,7 +223,7 @@ static int xset_curwin(int intnum, int set_menu)
 
 static int xget_curwin(void)
 {
-  BCG *Xgc = &ScilabGCPos; 
+  BCG *Xgc = &ScilabGCPos;
   return  Xgc->CurWindow ;
 }
 
@@ -263,8 +263,8 @@ static void xget_clip(BCG *Xgc,int *x)
 }
 
 /*----------------------------------------------------------
-  \encadre{For the drawing functions dealing with vectors of 
-  points, the following routine is used to select the mode 
+  \encadre{For the drawing functions dealing with vectors of
+  points, the following routine is used to select the mode
   absolute or relative }
   Absolute mode if *num==0, relative mode if *num != 0
   ------------------------------------------------------------*/
@@ -273,7 +273,7 @@ static void xset_absourel(BCG *Xgc,int num)
 {
   if (num == 0 )
     Xgc->CurVectorStyle =  CoordModeOrigin;
-  else 
+  else
     Xgc->CurVectorStyle =  CoordModePrevious ;
 }
 
@@ -291,7 +291,7 @@ static int xget_absourel(BCG *Xgc)
 /* static void xset_alufunction(BCG *Xgc,char *string) */
 /* {     */
 /*   int value; */
-  
+
 /*   idfromname(string,&value); */
 /*   if ( value != -1) */
 /*     { */
@@ -302,14 +302,14 @@ static int xget_absourel(BCG *Xgc)
 
 /** All the possibilities : Read The X11 manual to get more informations **/
 
-typedef struct _alinfo { 
+typedef struct _alinfo {
   char *name;
   char id;
   char *info;
 } alinfo ;
 
 static alinfo  AluStrucPos[] =
-    { 
+    {
       {"GXclear" ,GXclear," 0 "},
       {"GXand" ,GXand," src AND dst "},
       {"GXandReverse" ,GXandReverse," src AND NOT dst "},
@@ -345,7 +345,7 @@ static alinfo  AluStrucPos[] =
 
 
 static void xset_alufunction1(BCG *Xgc,int num)
-{     
+{
   int value;
   value=AluStrucPos[Min(15,Max(0,num))].id;
   if ( value != -1)
@@ -358,7 +358,7 @@ static void xset_alufunction1(BCG *Xgc,int num)
 /** To get the value of the alufunction **/
 
 static int xget_alufunction(BCG *Xgc)
-{ 
+{
   return  Xgc->CurDrawFunction ;
 }
 
@@ -368,7 +368,7 @@ static int xget_alufunction(BCG *Xgc)
 #define Thick_prec 5
 
 static int xset_thickness(BCG *Xgc,int value)
-{ 
+{
   int old = Xgc->CurLineWidth;
   Xgc->CurLineWidth =Max(0, value);
   FPRINTF((file,"\n%d Thickness",(int)Max(0,value*Thick_prec)));
@@ -381,12 +381,12 @@ static int xget_thickness(BCG *Xgc)
 {
   return  Xgc->CurLineWidth ;
 }
-     
+
 
 /*-------------------------------------------------
   \encadre{To set grey level for filing areas.
-  from black (*num =0 ) to white 
-  you must use the get function to get the id of 
+  from black (*num =0 ) to white
+  you must use the get function to get the id of
   the white pattern }
   ----------------------------------------------------*/
 
@@ -394,24 +394,24 @@ static int xset_pattern(BCG *Xgc,int num)
 {
   int i;
   int old = xget_pattern(Xgc);
-  if ( Xgc->CurColorStatus ==1) 
+  if ( Xgc->CurColorStatus ==1)
     {
       i= Max(0,Min(num-1,Xgc->Numcolors+1));
       Xgc->CurColor = i ;
       set_c_Pos(Xgc,i);
     }
-  else 
+  else
     {
-      /* used when printing from color to b&white color after GREYNUMBER 
+      /* used when printing from color to b&white color after GREYNUMBER
 	 are translated to black */
-      if ( num-1 > GREYNUMBER -1 ) 
+      if ( num-1 > GREYNUMBER -1 )
 	i=0;
-      else 
+      else
 	i= Max(0,Min(num-1,GREYNUMBER-1));
       Xgc->CurPattern = i;
       if (i ==0)
 	FPRINTF((file,"\nfillsolid"));
-      else 
+      else
 	FPRINTF((file,"\n%d Setgray",(int)i));
     }
   return old;
@@ -420,12 +420,12 @@ static int xset_pattern(BCG *Xgc,int num)
 /** To get the id of the current pattern  **/
 
 static int xget_pattern(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus ==1) 
+{
+  if ( Xgc->CurColorStatus ==1)
     {
       return  Xgc->CurColor +1 ;
     }
-  else 
+  else
     {
       return  Xgc->CurPattern +1 ;
     }
@@ -484,12 +484,12 @@ static void xset_line_style(BCG *Xgc,int value)
 /** if *value == 0, use a solid line, if *value != 0 **/
 /** the dash style is specified by the xx vector of n values **/
 /** xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots **/
-  
+
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
   int i ;
   if ( value == 0) FPRINTF((file,"\n[] 0 setdash"));
-  else 
+  else
     {
       FPRINTF((file,"\n["));
       for (i=0;i<*n;i++)
@@ -504,15 +504,15 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 static int xget_dash(BCG *Xgc)
 {
   return Xgc->CurDashStyle+1;
-  /* 
-     if ( *value == 1) 
+  /*
+     if ( *value == 1)
      { if (*verbose == 1) Scistring("\nLine style = Line Solid");}
-     else 
+     else
      {
      value[1]=4;
      *narg = value[1]+2;
      for ( i =0 ; i < value[1]; i++) value[i+2]=DashTabPos[*value-1][i];
-     if (*verbose ==1 ) 
+     if (*verbose ==1 )
      {
      sciprint("\nDash Style %d:<",(int)*value);
      for ( i =0 ; i < value[1]; i++)
@@ -536,7 +536,7 @@ static void xset_usecolor(BCG *Xgc,int num)
   FPRINTF((file,"\n%%--use color %d ",i));
   if ( Xgc->CurColorStatus != (int)i)
     {
-      if (Xgc->CurColorStatus == 1) 
+      if (Xgc->CurColorStatus == 1)
 	{
 	  /* je passe de Couleur a n&b */
 	  /* remise des couleurs a vide */
@@ -554,7 +554,7 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  FPRINTF((file,"\n/Setcolor { WhiteLev div setgray } def "));
 	  FPRINTF((file,"\n/usecolor 0  def "));
 	}
-      else 
+      else
 	{
 	  /* je passe en couleur */
 	  /* remise a zero des patterns et dash */
@@ -582,7 +582,7 @@ static int xget_usecolor(BCG *Xgc)
   return Xgc->CurColorStatus;
 }
 
-/* private pixmap for double buffering 
+/* private pixmap for double buffering
  */
 
 
@@ -608,20 +608,20 @@ static void sedeco(int flag)
 
 
 /*******************************************************
- * Setting the colormap 
- * WARNING 
+ * Setting the colormap
+ * WARNING
  * -------
- *   This function is only used when the Postscript driver is on 
- *   and xset('colormap',..) is used 
- *   (i.e driver('Pos');xset('colormap',....) 
- *   In the usual case (i.e when someone exports a graphic 
- *   which is displayed in a window) only the graphics 
- *   recorded commands are replayed and xset('colormap') belongs 
- *   to the non-recorded Scilab graphic commands 
- *   
- *   Only the <<current colormap>> of the window is translated 
- *   to Postscript when the Postscript file is opened 
- *   ( see  if (  CheckColormap(&m) == 1) in FileInt) 
+ *   This function is only used when the Postscript driver is on
+ *   and xset('colormap',..) is used
+ *   (i.e driver('Pos');xset('colormap',....)
+ *   In the usual case (i.e when someone exports a graphic
+ *   which is displayed in a window) only the graphics
+ *   recorded commands are replayed and xset('colormap') belongs
+ *   to the non-recorded Scilab graphic commands
+ *
+ *   Only the <<current colormap>> of the window is translated
+ *   to Postscript when the Postscript file is opened
+ *   ( see  if (  CheckColormap(&m) == 1) in FileInt)
  ******************************************************/
 
 static int check_colors(BCG *Xgc,int m,int n,void *colors);
@@ -725,9 +725,9 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 
 /**
  * xpush_colormap:
- * @Xgc: a #BCG  
- * 
- * Returns: 
+ * @Xgc: a #BCG
+ *
+ * Returns:
  **/
 
 static int xpush_colormap(BCG *Xgc,void *colors)
@@ -737,9 +737,9 @@ static int xpush_colormap(BCG *Xgc,void *colors)
 
 /**
  * xpop_colormap:
- * @Xgc: a #BCG  
- * 
- * Returns: 
+ * @Xgc: a #BCG
+ *
+ * Returns:
  **/
 
 static int xpop_colormap(BCG *Xgc)
@@ -747,8 +747,8 @@ static int xpop_colormap(BCG *Xgc)
   return OK;
 }
 
-/** 
-    Initial colormap : The arrays were filled with the numbers that we get with xget("colormap") 
+/**
+    Initial colormap : The arrays were filled with the numbers that we get with xget("colormap")
 **/
 
 
@@ -763,8 +763,8 @@ static void set_c_Pos(BCG *Xgc,int i)
 /** set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       Xgc->NumBackground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
       FPRINTF((file,"\n/background %d def PaintBackground",Xgc->NumBackground));
@@ -772,12 +772,12 @@ static void xset_background(BCG *Xgc,int num)
 }
 
 static int xget_background(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return  Xgc->NumBackground + 1;
     }
-  else 
+  else
     {
       return 1;
     }
@@ -787,20 +787,20 @@ static int xget_background(BCG *Xgc)
 /** set and get the number of the background or foreground */
 
 static void xset_foreground(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
     }
 }
 
 static int xget_foreground(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return  Xgc->NumForeground + 1;
     }
-  else 
+  else
     {
       return  1; /** the foreground is a solid line style in b&w */
     }
@@ -811,8 +811,8 @@ static int xget_foreground(BCG *Xgc)
 /** set and get the number of the hidden3d color */
 
 static void xset_hidden3d(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       /* es: Max(0,... -> Max(-1,... */
       Xgc->NumHidden3d = Max(-1,Min(num - 1,Xgc->Numcolors + 1));
@@ -820,12 +820,12 @@ static void xset_hidden3d(BCG *Xgc,int num)
 }
 
 static int xget_hidden3d(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return Xgc->NumHidden3d + 1;
     }
-  else 
+  else
     {
       return 1; /** the hidden3d is a solid line style in b&w */
     }
@@ -833,17 +833,17 @@ static int xget_hidden3d(BCG *Xgc)
 
 
 static void xset_autoclear(BCG *Xgc,int num)
-{ 
+{
   Xgc->Autoclear = Max(0,Min(1,num));
 }
 
-static void xset_autoclear_def(BCG *Xgc) 
+static void xset_autoclear_def(BCG *Xgc)
 {
   Xgc->Autoclear = 0;
 }
 
 static int xget_autoclear(BCG *Xgc)
-{ 
+{
   return  Xgc->Autoclear;
 }
 
@@ -852,12 +852,12 @@ static char *xget_fpf(BCG *Xgc)
   return( Xgc->fp_format);
 }
 
-static void xset_fpf(BCG *Xgc,char *fmt) 
+static void xset_fpf(BCG *Xgc,char *fmt)
 {
   strncpy(Xgc->fp_format,fmt,32);
 }
 
-static void xset_fpf_def(BCG *Xgc) 
+static void xset_fpf_def(BCG *Xgc)
 {
   Xgc->fp_format[0]='\0';
 }
@@ -875,7 +875,7 @@ static void xset_show(BCG *Xgc)
 static void pixmap_resize(BCG *Xgc)
 {
 
-} 
+}
 
 /*-----------------------------------------------------------
   \encadre{Functions for drawing}
@@ -884,13 +884,13 @@ static void pixmap_resize(BCG *Xgc)
 /*----------------------------------------------------
   \encadre{display of a string
   at (x,y) position whith angle (alpha). Angles in degree
-  positive when clockwise. If *flag ==1 a framed  box is added 
+  positive when clockwise. If *flag ==1 a framed  box is added
   around the string.}
   -----------------------------------------------------*/
 
 static void displaystring(BCG *Xgc,const char *string, int x, int y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
-{     
+{
   int i,rect[4] ;
   int yn = (int) (y + ascentPos(Xgc));
   boundingbox(Xgc,string,x,yn,rect);
@@ -899,31 +899,31 @@ static void displaystring(BCG *Xgc,const char *string, int x, int y, int flag, d
     {
       if (string[i]== '(' || string[i] == ')' )
 	FPRINTF((file,"%c%c",'\\',string[i]));
-      else 
+      else
 	FPRINTF((file,"%c",string[i]));
     }
   FPRINTF((file,") %d %d %d %5.2f [%d %d %d %d] Show", x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
   FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
 }
 
-#if 0 
-static double bsizePos[6][4]= 
+#if 0
+static double bsizePos[6][4]=
   {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
-   { 0.0,-9.0,5.74,12.0 },          
+   { 0.0,-9.0,5.74,12.0 },
    { 0.0,-11.0,6.74,14.0},
    { 0.0,-12.0,7.79,15.0},
    {0.0, -15.0,9.72,19.0 },
    {0.0,-20.0,13.41,26.0}};
-#endif 
+#endif
 
 /* ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) */
 
 struct posfont  /* a data type for handling a postscript font in scilab */
 {
-  char *name;           
+  char *name;
   int asc;              /* max ascender of all printable ascii char */
   int des;              /* min descender of all printable ascii char */
-  int mean_char_width;  /* the width used for all char if fixed_pitch=1 or for */ 
+  int mean_char_width;  /* the width used for all char if fixed_pitch=1 or for */
                         /* printable non ascii characters when fixed_pitch=0 */
   int fixed_pitch;
   int *char_width;      /* NULL if fixed_pitch = 1 (mean_char_width is used instead)  */
@@ -939,8 +939,8 @@ static PosFont Courier = { "Courier",
 			   600,         /* Mean Width */
 			   1,           /* Is Fixed Pitch */
 			   NULL };
-   
-   
+
+
 /**   datas for postscript font : Symbol   **/
 static int WidthSymbol[] = { 250 , 333 , 713 , 500 , 549 , 833 , 778 , 439 , 333 , 333 ,
 			     500 , 549 , 250 , 549 , 250 , 278 , 500 , 500 , 500 , 500 ,
@@ -958,8 +958,8 @@ static PosFont Symbol = { "Symbol",
 			  548,         /* Mean Width */
 			  0,           /* Is Fixed Pitch */
 			  WidthSymbol };
-   
-   
+
+
 /**   datas for postscript font : Times-Roman   **/
 static int WidthTimesR[] = { 250 , 333 , 408 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
 			     500 , 564 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
@@ -977,8 +977,8 @@ static PosFont TimesR = { "Times-Roman",
 			  512,         /* Mean Width */
 			  0,           /* Is Fixed Pitch */
 			  WidthTimesR };
-   
-   
+
+
 /**   datas for postscript font : Times-Italic   **/
 static int WidthTimesI[] = { 250 , 333 , 420 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
 			     500 , 675 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
@@ -996,8 +996,8 @@ static PosFont TimesI = { "Times-Italic",
 			  505,         /* Mean Width */
 			  0,           /* Is Fixed Pitch */
 			  WidthTimesI };
-   
-   
+
+
 /**   datas for postscript font : Times-Bold   **/
 static int WidthTimesB[] = { 250 , 333 , 555 , 500 , 500 ,1000 , 833 , 333 , 333 , 333 ,
 			     500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
@@ -1015,8 +1015,8 @@ static PosFont TimesB = { "Times-Bold",
 			  536,         /* Mean Width */
 			  0,           /* Is Fixed Pitch */
 			  WidthTimesB };
-   
-   
+
+
 /**   datas for postscript font : Times-BoldItalic   **/
 static int WidthTimesBI[] = { 250 , 389 , 555 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
 			      500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
@@ -1034,7 +1034,7 @@ static PosFont TimesBI = { "Times-BoldItalic",
 			   515,         /* Mean Width */
 			   0,           /* Is Fixed Pitch */
 			   WidthTimesBI };
-   
+
 #define NB_MAX_POS_FONT 6
 static PosFont *FontArray[NB_MAX_POS_FONT] = {&Courier, &Symbol, &TimesR, &TimesI, &TimesB, &TimesBI};
 
@@ -1042,18 +1042,18 @@ static PosFont *FontArray[NB_MAX_POS_FONT] = {&Courier, &Symbol, &TimesR, &Times
 static int Font_Size_in_pts[NB_MAX_SIZES] = {8, 10, 12, 14, 18, 24};
 
 
-static void PosStrBox(const char *str, int id_font, int id_size, 
+static void PosStrBox(const char *str, int id_font, int id_size,
 		      double *w, double *h)
 {
   /*
-   *   PURPOSE : computes the width w and the height h of a string in postscript  
-   *             
+   *   PURPOSE : computes the width w and the height h of a string in postscript
+   *
    *      NOTE : the computed h is for most cases too large because I use the
    *             max ascender and descender of the font (the previus datas
    *             font tables contains only the width of all the printable
    *             ascii characters).
    */
-  
+
   PosFont *font=FontArray[id_font];
   int nb_pts = Font_Size_in_pts[id_size];
 
@@ -1082,7 +1082,7 @@ static double PosStrAsc(int id_font, int id_size)
 {
   /*  correction pour centrer verticalement une chaine postscript il me semble ?
    *             a partir de la hauteur de la boite, h (= ascender max - descender max)
-   *             on calcule  Dy = h/2 pour centrer verticalement mais ceci n'est pas                  
+   *             on calcule  Dy = h/2 pour centrer verticalement mais ceci n'est pas
    *    -    -   tres precis => il faut une correction (et descender/2 a l'air de
    *    |    |                                          fonctionner...)
    *    |    | ascender max
@@ -1116,7 +1116,7 @@ void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
   rect[1]= (int)(y-h*prec_fact);
   rect[2]= (int)(w*prec_fact);
   rect[3]= (int)(h*prec_fact);
-  /* old code 
+  /* old code
      rect[0]= (int)(*x+bsizePos[font[1]][0]*((double) prec_fact));
      rect[1]= (int)(*y+bsizePos[font[1]][1]*((double) prec_fact));
      rect[2]= (int)(bsizePos[font[1]][2]*((double)prec_fact)*(int)strlen(string));
@@ -1124,11 +1124,11 @@ void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
   */
 }
 
-/* approximation of ascent using (asc + dsc) /2  */ 
+/* approximation of ascent using (asc + dsc) /2  */
 /* modified by Bruno */
 
-static double ascentPos(BCG *Xgc) 
-{ 
+static double ascentPos(BCG *Xgc)
+{
   int font[2];
   xget_font(Xgc,font, FALSE);
   return (PosStrAsc(font[0], font[1]) * prec_fact);
@@ -1137,15 +1137,15 @@ static double ascentPos(BCG *Xgc)
 
 /* Draw a single line in current style */
 
-static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2) 
-{ 
+static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
+{
   FPRINTF((file,"\n %d %d %d %d L",xx1,yy1,x2,y2));
 }
 
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * XXX must take care of width 
+/* Draw a set of segments
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * XXX must take care of width
  */
 
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *width)
@@ -1153,16 +1153,16 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *widt
   int dash,color,i;
   xget_dash_and_color(Xgc,&dash,&color);
   /* store the current values */
-  if ( style == NULL) 
+  if ( style == NULL)
     {
       /* all segments have the same color or dash style */
       int lstyle = color;
-      WriteGeneric("drawsegs",(int)1L,n*2,vx,vy,n,(int)1L,&lstyle); 
+      WriteGeneric("drawsegs",(int)1L,n*2,vx,vy,n,(int)1L,&lstyle);
     }
   else
     {
       /* each segment has its own color */
-      for ( i=0 ; i < n/2 ; i++) 
+      for ( i=0 ; i < n/2 ; i++)
 	{
 	  int NDvalue =  style[i];
 	  WriteGeneric("drawsegs",(int)1L,(int)4L,&vx[2*i],&vy[2*i],(int)2L,(int)1L,&NDvalue);
@@ -1183,12 +1183,12 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
       /** all the arrows have the same color **/
       int color1 = (*style < 1) ?  color : *style;
       xset_line_style(Xgc,color1);
-      WriteGeneric("drawarrows",(int)1L,n*2,vx,vy,n,(int)1L,&as); 
+      WriteGeneric("drawarrows",(int)1L,n*2,vx,vy,n,(int)1L,&as);
     }
   else
     {
       int i;
-      for ( i=0 ; i < n/2 ; i++) 
+      for ( i=0 ; i < n/2 ; i++)
 	{
 	  xset_line_style(Xgc,style[i]);
 	  /*setpattern(&NDvalue,PI0,PI0,PI0); commented out ss 13/09/00 */
@@ -1199,11 +1199,11 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
 }
 
 
-/* Draw or fill a set of rectangle 
- * rectangles are defined by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- *  fillvect[*n] : specify the action (see periX11.c) 
+/* Draw or fill a set of rectangle
+ * rectangles are defined by (vect[i],vect[i+1],vect[i+2],vect[i+3])
+ * for i=0 step 4
+ * (*n) : number of rectangles
+ *  fillvect[*n] : specify the action (see periX11.c)
  */
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
@@ -1225,17 +1225,17 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 /** Draw a filled rectangle **/
 
 static void fillrectangle(BCG *Xgc,const int rect[])
-{ 
+{
   int cpat = xget_pattern(Xgc);
   drawrectangles(Xgc,rect,&cpat,1);
 }
 
 /*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
+ * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : is the value of a function on the grid defined by x,y
+ *  on each rectangle the average value of z is computed
  *----------------------------------------------------------------------------------*/
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
@@ -1245,12 +1245,12 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 }
 
 /*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
+ * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
+ *  of each rectangle.
+ *  z[i,j] is the value on the middle of rectangle
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *----------------------------------------------------------------------------------*/
 
@@ -1284,7 +1284,7 @@ static void drawarcs( BCG *Xgc,int *vects, int *style, int n)
   int i,dash,color;
   /* store the current values */
   xget_dash_and_color(Xgc,&dash,&color);
-  for ( i=0 ; i < n ; i++) 
+  for ( i=0 ; i < n ; i++)
     {
       int fvect,na=1;
       /** to fix the style */
@@ -1302,7 +1302,7 @@ static void drawarcs( BCG *Xgc,int *vects, int *style, int n)
 /** caution angle=degreAngle*64          **/
 
 static void drawarc(BCG *Xgc,int arc[])
-{ 
+{
   int fvect;
   /** fvect set to tell that we only want to draw not to fill  */
   fvect = Xgc->IDLastPattern + 2  ;
@@ -1313,7 +1313,7 @@ static void drawarc(BCG *Xgc,int arc[])
 /** with current pattern **/
 
 static void fillarc(BCG *Xgc, int arc[])
-{ 
+{
   int cpat= xget_pattern(Xgc);
   fillarcs(Xgc,arc,&cpat,1);
 }
@@ -1352,12 +1352,12 @@ static void drawpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *drawvect, int
 }
 
 /**************************************************************
-  fill a set of polygons each of which is defined by 
- (*p) points (*n) is the number of polygons 
- the polygon is closed by the routine 
- fillvect[*n] :         
- if fillvect[i] == 0 draw the boundaries with current color 
- if fillvect[i] > 0  draw the boundaries with current color 
+  fill a set of polygons each of which is defined by
+ (*p) points (*n) is the number of polygons
+ the polygon is closed by the routine
+ fillvect[*n] :
+ if fillvect[i] == 0 draw the boundaries with current color
+ if fillvect[i] > 0  draw the boundaries with current color
                 then fill with pattern fillvect[i]
  if fillvect[i] < 0  fill with pattern - fillvect[i]
 **************************************************************/
@@ -1377,11 +1377,11 @@ static void fillpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *fillvect, int
 /** according to *closeflag : it's a polyline or a polygon **/
 
 static void drawpolyline( BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
+{
   int fvect=0;
   if (closeflag == 1 )
     FPRINTF((file,"\n/closeflag true def"));
-  else 
+  else
     FPRINTF((file,"\n/closeflag false def"));
   fillpolylines(Xgc,vx,vy,&fvect,1,n);
 }
@@ -1400,7 +1400,7 @@ static void fillpolyline(BCG *Xgc,  int *vx, int *vy,int n, int closeflag)
 /** by vx and vy (vx[i],vy[i]) **/
 
 static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
-{ 
+{
   int keepid,keepsize,i=1,sz=Xgc->CurHardSymbSize;
   keepid =  Xgc->fontId;
   keepsize= Xgc->fontSize;
@@ -1411,36 +1411,36 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
 
 /*-----------------------------------------------------
  *
- * Initialize the postscrip driver 
- * if wdim is non null it will be used as window dimensions 
- * mode = 'p': portrait 
- *        'l': landscape 
- *        'k': keep window sizes 
+ * Initialize the postscrip driver
+ * if wdim is non null it will be used as window dimensions
+ * mode = 'p': portrait
+ *        'l': landscape
+ *        'k': keep window sizes
  *        'd': default
- *        'n': no_header 
+ *        'n': no_header
  *------------------------------------------------------*/
 
 static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode,void *data,void *f)
-{ 
+{
   char bbox[256],geom[256];
   int x[2];
   char string1[256];
   static int EntryCounter = 0;
   int fnum;
-  BCG *Xgc = &ScilabGCPos; 
+  BCG *Xgc = &ScilabGCPos;
   Xgc->graphic_engine = &Pos_gengine ; /* the graphic engine associated to this graphic window */
 
   if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
 
   file=fopen(string1,"w");
-  if (file == 0) 
+  if (file == 0)
     {
       sciprint("Can't open file %s, I'll use stdout\r\n",string1);
       file =stdout;
     }
   if (EntryCounter == 0)
-    { 
+    {
       fnum=0;      loadfamily("Courier",&fnum);
       fnum=1;      loadfamily("Symbol",&fnum);
       fnum=2;      loadfamily("Times-Roman",&fnum);
@@ -1452,27 +1452,27 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,doubl
   Xgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   Xgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
 
-  if ( wdim != 0) 
+  if ( wdim != 0)
     {
       x[0]=wdim[0]*prec_fact;x[1]=wdim[1]*prec_fact;
     }
-  else 
+  else
     {
       xget_windowdim(Xgc,x,x+1);
     }
 
   get_ps_data(mode,bbox,geom,x);
 
-  switch (mode) 
+  switch (mode)
     {
     case 'p':
     case 'l':
-    case 'k': 
-    case 'd': 
+    case 'k':
+    case 'd':
       nsp_ps_header(file,bbox);
       FPRINTF((file,"%s",geom));
       break;
-    default: 
+    default:
       /* this is just for the no header case */
       FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
       FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
@@ -1496,14 +1496,14 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,doubl
 
 
 /*---------------------------------------------------------------------------
- * writes a message in the info widget associated to the current scilab window 
+ * writes a message in the info widget associated to the current scilab window
  *----------------------------------------------------------------------------*/
 
 static void xinfo(BCG *Xgc,char *format,...) {}
 
 
 /*--------------------------------------------------------
-  \encadre{Initialisation of the graphic context. Used also 
+  \encadre{Initialisation of the graphic context. Used also
   to come back to the default graphic state}
   ---------------------------------------------------------*/
 
@@ -1515,21 +1515,21 @@ static void xset_default(BCG *Xgc)
 
 /*-----------------------------------------------------
   \encadre{Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
+  . Along the axis marks are set in the direction ( alpha + pi/2), in the
   following way :
   \begin{itemize}
   \item   $n=<n1,n2>$,
   \begin{verbatim}
   |            |           |
   |----|---|---|---|---|---|
-  <-----n1---->                 
+  <-----n1---->
   <-------------n2-------->
   \end{verbatim}
   $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
-  two marks, $r$ size in points of small mark, $r*coeff$ 
+  \item $size=<dl,r,coeff>$. $dl$ distance in points between
+  two marks, $r$ size in points of small mark, $r*coeff$
   size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$. 
+  \item $init$. Initial point $<x,y>$.
   \end{itemize}
   }
 
@@ -1555,14 +1555,14 @@ static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, 
 }
 
 /*-------------------------------------------------------
-  \encadre{General routine for generating Postscript Code 
-  to deal with Vectors. The difficulty is that the size 
-  of vectors is limited by Postscript, so the routine 
+  \encadre{General routine for generating Postscript Code
+  to deal with Vectors. The difficulty is that the size
+  of vectors is limited by Postscript, so the routine
   must check size and cut into pieces big objects}
   \begin{verbatim}
   clear (string) sizeobj [fvect[0],...,fvect[nobj]]
   (si flag=1)  [ vx[0] vy[0] vx[1] vy[1] ...... vx[sizev] vy[sizev]]
-  (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey 
+  (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey
   \end{verbatim}
   ----------------------------------------------------------*/
 
@@ -1573,9 +1573,9 @@ static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, 
 #define PERLINE 20
 #define FORMATNUM "%d "
 
-static void WriteGeneric(char *string, int nobj, int sizeobj,const  int *vx, 
+static void WriteGeneric(char *string, int nobj, int sizeobj,const  int *vx,
 			 const int *vy, int sizev, int flag,const  int *fvect)
-{   
+{
   int nobjpos,objbeg;
   objbeg= 0 ;
   /**-- si MAXSIZE/sizeobj vaut zero chaque objet est trop gros **/
@@ -1590,24 +1590,24 @@ static void WriteGeneric(char *string, int nobj, int sizeobj,const  int *vx,
       WriteGeneric1(string,Min(nobjpos,objres),objbeg,sizeobj,vx,vy,flag,fvect);
       objbeg = objbeg+nobjpos;
     }
-  
+
 }
 
-static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, const int *vx, 
+static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, const int *vx,
 			  const int *vy, int flag,const  int *fvect)
 {
   int from,n,i;
-  if (flag == 1) 
+  if (flag == 1)
     {  from= (objbeg*sizeobj)/2;
     n= (nobjpos*sizeobj)/2;}
-  else 
+  else
     {  from= (objbeg*sizeobj);
     n= (nobjpos*sizeobj);
     }
   FPRINTF((file,"\n (%s) %d [",string,(int)Min(sizeobj,MAXSIZE)));
   /** exept for the drawarrows case fvect[i] is a pattern **/
   /** and we must change it **/
-  if ( strcmp(string,"drawarrows")== 0 
+  if ( strcmp(string,"drawarrows")== 0
        || strcmp(string,"drawbox")==0
        || strcmp(string,"drawpoly")==0)
     {
@@ -1628,26 +1628,26 @@ static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, co
 
   FPRINTF((file,"]\n"));
   /* Reste un probleme car si un unique objet doit etre dessine
-     et qu'il est trop gros cet objet est decoupe en bout mais 
+     et qu'il est trop gros cet objet est decoupe en bout mais
      il manque alors les raccords eventuels */
   Write2Vect(vx,vy,from,n,string,flag,fvect[objbeg]);
 }
 
 /*--------------------------------------------------
-  [  perline*valeurs de vx et vy 
+  [  perline*valeurs de vx et vy
   ......
   .....
-  ] string 
-  [ 
+  ] string
+  [
 
-  ] string 
-  chaque zone entre [] ne doit pas contenir plus de 
+  ] string
+  chaque zone entre [] ne doit pas contenir plus de
   maxsize valeurs.
   -------------------------------------------------------*/
 
 
 void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int flag, int fv)
-{ 
+{
   int i,j,k,co,nco;
   int fv1;
   if ( flag == 1) nco=2*n;else nco=n;
@@ -1665,7 +1665,7 @@ void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int 
 
   while( i < n)
     {
-      if ( i > 0) 
+      if ( i > 0)
 	FPRINTF((file,"\n (%s) %d [%d]\n",
 		 string,(int)Min(MAXSIZE,nco-(co-1)*MAXSIZE),fv1));
       co = co +1;
@@ -1677,10 +1677,10 @@ void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int 
 	  while ( k < PERLINE && i < n && j < MAXSIZE)
 	    {
 	      FPRINTF((file,FORMATNUM,(int)vx[i+from]));
-	      if (flag == 1) 
+	      if (flag == 1)
 		{ FPRINTF((file,FORMATNUM,(int) vy[i+from]));
 		k=k+2;i=i+1;j=j+2;}
-	      else 
+	      else
 		{k=k+1;i=i+1;j=j+1;}}
 	  FPRINTF((file,"\n"));
 	}
@@ -1703,20 +1703,20 @@ static int  isizePos[] = { 8 ,10,12,14,18,24};
 /** To set the current font id of font and size **/
 
 static int fontsizePos (BCG *Xgc)
-{ 
+{
   return isizePos[Xgc->fontSize];
 }
-	 
+
 
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
-{ 
+{
   int i,fsiz;
   i = Min(FONTNUMBER-1,Max(fontid,0));
   fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
   if ( FontInfoTabPos[i].ok !=1 )
     Scistring("\n Sorry This Font is Not available ");
-  else 
+  else
     {
       Xgc->fontId = i;
       Xgc->fontSize = fsiz;
@@ -1738,7 +1738,7 @@ static void xget_font(BCG *Xgc,int *font, int full)
 /** To set the current mark : using the symbol font of adobe **/
 
 static void xset_mark(BCG *Xgc,int number, int size)
-{ 
+{
   Xgc->CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
   Xgc->CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
   ;}
@@ -1753,7 +1753,7 @@ static void xget_mark(BCG *Xgc,int *symb)
 
 static char symb_listPos[] = {
   /*
-    0x2e : . alors que 0xb7 est un o plein trop gros 
+    0x2e : . alors que 0xb7 est un o plein trop gros
     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
@@ -1772,7 +1772,7 @@ static void displaysymbols(BCG *Xgc,int *vx, int *vy,int n)
 
 
 /*-------------------------------------------------------
-  \encadre{Check if a specified family of font exist in 
+  \encadre{Check if a specified family of font exist in
   Postscript }
   -------------------------------------------------------*/
 
@@ -1785,7 +1785,7 @@ static void loadfamily(char *name, int *j)
     }
   if  (FontsListPos[*j][0] == 0 )
     sciprint("\n unknown font family : %s \r\n",name);
-  else 
+  else
     {FontInfoTabPos[*j].ok = 1;
     strcpy(FontInfoTabPos[*j].fname,name) ;}
 }
@@ -1795,12 +1795,12 @@ static void loadfamily(char *name, int *j)
   ---------------------------------------------*/
 
 static int PosQueryFont(char *name)
-{ 
+{
   return(1);
 }
 
 static void queryfamily(char *name, int *j,int *v3)
-{ 
+{
   int i ;
   name[0]='\0';
   for (i=0;i<FONTNUMBER;i++) {
@@ -1813,16 +1813,16 @@ static void queryfamily(char *name, int *j,int *v3)
 
 /**
  * get_ps_data:
- * @orientation: 
- * @bbox: 
- * @geom: 
- * 
- * Utility function for postscript generation 
- * return in bbox a correct bounding box 
- * and in geom the proper geometric transformation 
- * for postscript according to mode 
+ * @orientation:
+ * @bbox:
+ * @geom:
+ *
+ * Utility function for postscript generation
+ * return in bbox a correct bounding box
+ * and in geom the proper geometric transformation
+ * for postscript according to mode
  * mode = 'p' 'l' 'k' 'e';
- * wdim is only used for 'k' 
+ * wdim is only used for 'k'
  **/
 
 static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
@@ -1836,17 +1836,17 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
   int w=wdef,h=hdef;
 
   if ( mode == 'k' )   {    w=wdim[0] ; h = wdim[1];   }
-  
+
   /* Compute proper bounding boxes */
-  switch (mode ) 
+  switch (mode )
     {
     case 'p' : /* portrait */
       ws = (wp-2*marg)/((double) w);
       hs = (hp-2*marg)/((double) h);
       sc = Min(ws,hs);
       ws = w*sc;
-      hs = h*sc; 
-      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 
+      hs = h*sc;
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n",
 	      (int) ((wp - ws)/(2*10.0)),
 	      (int) ((hp - hs)/(2*10.0)),
 	      (int) (ws/10.0 + (wp - ws)/(2*10.0)),
@@ -1858,8 +1858,8 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
       hs = (wp-2*marg)/((double) h);
       sc = Min(ws,hs);
       ws = w*sc;
-      hs = h*sc; 
-      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 
+      hs = h*sc;
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n",
 	      (int) ((wp - hs)/(2*10.0)),
 	      (int) ((hp - ws)/(2*10.0)),
 	      (int) (hs/10.0 + (wp - hs)/(2*10.0)) ,
@@ -1869,31 +1869,31 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
     case 'd' : /* default */
       sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 0,0,(int) (wdef/20.0),(int) (hdef/20.0));
       break;
-    default: 
+    default:
       ws = w;
       hs = h;
       sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 0,0,(int) (ws/10.0),(int) (hs/10.0));
     }
-  
+
   /* now compute the scales */
-  
-  switch (mode ) 
+
+  switch (mode )
     {
-    case 'p' : 
+    case 'p' :
       sprintf(geom,"\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
 	      2*sc,2*sc,(int) ((wp - ws)/(2)), (int) ((hp - hs)/(2) + hs));
       break;
     case 'l':
       sprintf(geom,"\n90 rotate 0 neg %d neg 10 div translate\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
-	      (int)(h/2.0) + (int) ((wp - hs)/(2.0)) ,2*sc,2*sc,(int) ((hp - ws)/2), (int)(h/2.0)); 
+	      (int)(h/2.0) + (int) ((wp - hs)/(2.0)) ,2*sc,2*sc,(int) ((hp - ws)/2), (int)(h/2.0));
       break;
-    case 'k': 
+    case 'k':
       scx = ws/(wdef/2.0);
       scy = hs/(hdef/2.0);
       sprintf(geom,"\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
 	      scx,scy,0,(int) hs);
       break;
-    default: 
+    default:
       sprintf(geom,"\n[0.5 10 div 0 0 0.5 10 div neg  0 %d 10 div] concat",(int) (hdef/2.0));
     }
 }
@@ -1908,35 +1908,35 @@ static int nsp_ps_header(FILE *out,char *bbox)
   char *env = nsp_getenv("SCI");
   FILE *fd;
   int stop=0;
-  if (env == NULL) 
+  if (env == NULL)
     {
       sciprint("Environment variable SCI must be defined\n");
       return FAIL;
     }
   sprintf(header,"%s/libs/NperiPos.ps",env);
   fd=fopen(header,"r");
-  if (fd == NULL) 
+  if (fd == NULL)
     {
       sciprint("Cannot open file %s\n",header);
       return FAIL;
     }
 
-  if ( buff == NULL) 
+  if ( buff == NULL)
     {
       buff = malloc(buflen*sizeof(char));
-      if ( buff == NULL) 
+      if ( buff == NULL)
 	{
 	  sciprint("Running out of space\n");
 	  return FAIL;
 	}
     }
   /* ommit first line */
-  read_one_line (&buff,&stop,fd,&buflen); 
+  read_one_line (&buff,&stop,fd,&buflen);
   FPRINTF((out,"%s","%!PS-Adobe-2.0 EPSF-2.0"));
   FPRINTF((out,"%s",bbox));
   while ( stop != 1)
-    { 
-      read_one_line (&buff,&stop,fd,&buflen); 
+    {
+      read_one_line (&buff,&stop,fd,&buflen);
       FPRINTF((out,"%s",buff));
     }
   fclose(fd);
@@ -1945,15 +1945,15 @@ static int nsp_ps_header(FILE *out,char *bbox)
 
 
 static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen)
-{ 
+{
   int i ,c ;
-  for ( i = 0 ;  (c =getc(fd)) !=  '\n' && c != EOF ; i++) 
+  for ( i = 0 ;  (c =getc(fd)) !=  '\n' && c != EOF ; i++)
     {
-      if ( i == *buflen -1 ) 
+      if ( i == *buflen -1 )
 	{
 	  *buflen += 512;
 	  *buff = realloc(*buff,*buflen*sizeof(char));
-	  if ( *buff == NULL) 
+	  if ( *buff == NULL)
 	    {
 	      fprintf(stderr,"Running out of space \n");
 	      exit(1);
@@ -1961,11 +1961,11 @@ static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen)
 	}
       (*buff)[i]= c ;
     }
-  if ( i+1 >= *buflen - 1 ) 
+  if ( i+1 >= *buflen - 1 )
     {
       *buflen += 512;
       *buff = realloc(*buff,*buflen*sizeof(char));
-      if ( *buff == NULL) 
+      if ( *buff == NULL)
 	{
 	  fprintf(stderr,"Running out of space \n");
 	  exit(1);
@@ -2012,12 +2012,12 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 	  for ( ch = 0 ; ch < 3 ; ch++)
 	    {
 	      guchar n= *(p+ch),n1,n2;
-	      n1 = n & 0x0f; 
+	      n1 = n & 0x0f;
 	      n2 = (n & 0xf0 ) >> 4;
 	      FPRINTF((file,"%c",(n2 < 10) ?  '0' + n2 : 'A' + n2 - 10));
 	      FPRINTF((file,"%c",(n1 < 10) ?  '0' + n1 : 'A' + n1 - 10));
 	    }
-	  if(fmod(col + 1, 13) == 0) FPRINTF((file, "\n")); 
+	  if(fmod(col + 1, 13) == 0) FPRINTF((file, "\n"));
 	}
       FPRINTF((file,"\n"));
     }

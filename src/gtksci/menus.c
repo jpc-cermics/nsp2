@@ -802,12 +802,12 @@ static void nspg_menu_delete(BCG *Xgc, int winid)
  * @Xgc: a graphic context
  * @winid: an integer (unused)
  *
- * 
+ *
  **/
 
 extern int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figure_bg_draw, double width, double height);
 
-static void draw_page(GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, BCG *Xgc) 
+static void draw_page(GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, BCG *Xgc)
 {
   GtkPageSetup *page = gtk_print_context_get_page_setup (context);
   GtkPageOrientation orientation= gtk_page_setup_get_orientation (page);
@@ -842,7 +842,7 @@ static void nspg_menu_print(BCG *Xgc, int winid)
   gtk_page_setup_set_paper_size_and_default_margins(page_setup,gtk_paper_size_new(GTK_PAPER_NAME_A4));
   */
   operation = gtk_print_operation_new();
-  /* 
+  /*
   gtk_print_operation_set_print_settings(operation,print_settings);
   gtk_print_operation_set_default_page_setup(operation,page_setup);
   */
@@ -850,7 +850,7 @@ static void nspg_menu_print(BCG *Xgc, int winid)
   gtk_print_operation_set_track_print_status(operation, TRUE);
   g_signal_connect(G_OBJECT(operation), "draw-page", G_CALLBACK(draw_page), Xgc);
   gtk_print_operation_set_n_pages(operation, 1);
-  
+
   /* NULL could be replaced by a gtk window GTK_WINDOW(Xgc->window) */
   res = gtk_print_operation_run(operation, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, NULL,&error);
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
@@ -858,13 +858,13 @@ static void nspg_menu_print(BCG *Xgc, int winid)
     print_settings = g_object_ref(gtk_print_operation_get_print_settings(operation));
     */
   }
- 
+
   g_object_unref(operation);
   return;
 }
 
 
-void nspg_print(int winid) 
+void nspg_print(int winid)
 {
   nspg_menu_print(NULL, winid);
 }
@@ -885,12 +885,12 @@ static void nspg_menu_export(BCG *Xgc, int winid)
   while (1)
     {
       const char *extension;
-      char *extensions[]={".pdf",".svg", ".eps", ".png", ".fig"};
+      char *extensions[]={".pdf",".svg", ".eps", ".png", ".fig", ".tikz" };
       if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
       /* type: "pdf","svg", "eps", "png", "Xfig",
        * deprecated: "Postscript",  "Postscript No Preamble", "Postscript-Latex", "Xfig"
        */
-      type = Min(5,Max(1,type));
+      type = Min(6,Max(1,type));
       /* check that fname and type are ok */
       if ( fname[0]== '\0' )
 	{
@@ -930,7 +930,7 @@ static void nspg_menu_export(BCG *Xgc, int winid)
     case 3: Xgc->actions->tops(Xgc,colored,Fname,"cairo-ps",'n', TRUE);  break;
     case 4: Xgc->actions->tops(Xgc,colored,Fname,"cairo-png",'n', TRUE); break;
     case 5: Xgc->actions->tops(Xgc,colored,Fname,"Fig",'n', TRUE);       break;
-    case 6 :
+    case 6 :Xgc->actions->tops(Xgc,colored,Fname,"Tikz",'n', TRUE);      break;
     case 7 :
       switch ( orientation )
 	{

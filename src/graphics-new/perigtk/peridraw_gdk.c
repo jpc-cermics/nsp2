@@ -22,35 +22,35 @@
  *--------------------------------------------------------------------------*/
 
 /*
- * clear a rectangle using background 
+ * clear a rectangle using background
  */
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
   int old= xset_pattern(Xgc,Xgc->NumBackground);
-  if ( r != NULL) 
+  if ( r != NULL)
     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
 		       r->x,r->y,r->width,r->height);
-  else 
+  else
     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
 		       0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
   xset_pattern(Xgc,old);
 }
 
 /*
- * line segments arrows 
+ * line segments arrows
  */
 
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
-  
+
   gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);
 }
 
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
+/* Draw a set of segments
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * n is the size of vx and vy
  */
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *width)
@@ -58,43 +58,42 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *wid
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,width);
 }
 
-/* Draw a set of arrows 
- * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- * as is 10*arsize (arsize) the size of the arrow head in pixels 
+/* Draw a set of arrows
+ * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
+ * n is the size of vx and vy
+ * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
-{ 
+{
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
 /*
  * Rectangles
- * Draw or fill a set of rectangle 
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for x,y,width,height 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- * fillvect[*n] : specify the action  
- * if fillvect[i] is > 0 then fill the rectangle i 
- * if fillvect[i] is == 0  then only draw the rectangle i 
- *                         with the current private->drawing style 
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
+ * Draw or fill a set of rectangle
+ * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3])
+ * for x,y,width,height
+ * for i=0 step 4
+ * (*n) : number of rectangles
+ * fillvect[*n] : specify the action
+ * if fillvect[i] is > 0 then fill the rectangle i
+ * if fillvect[i] is == 0  then only draw the rectangle i
+ *                         with the current private->drawing style
+ * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
 /* Draw one rectangle with current line style */
 
 static void drawrectangle(BCG *Xgc,const int rect[])
-{ 
-  
+{
+
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
 		     rect[0],rect[1],rect[2],rect[3]);
 }
@@ -102,17 +101,17 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 /* fill one rectangle, with current pattern */
 
 static void fillrectangle(BCG *Xgc,const int rect[])
-{ 
-  
+{
+
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
 }
 
 /*
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
+ * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : is the value of a function on the grid defined by x,y
+ *  on each rectangle the average value of z is computed
  */
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[],
@@ -123,12 +122,12 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 }
 
 /*
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
+ * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
+ *  of each rectangle.
+ *  z[i,j] is the value on the middle of rectangle
  *        P1= x[i],y[j] x[i+1],y[j+1]
  */
 
@@ -140,44 +139,42 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 }
 
 /*
- * Circles and Ellipsis 
- * Draw or fill a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
- * with pattern fillvect[i] 
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
- * The private->drawing style is the current private->drawing 
+ * Circles and Ellipsis
+ * Draw or fill a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
+ * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i
+ * with pattern fillvect[i]
+ * if fillvect[i] is > lastpattern  then only draw the ellipsis i
+ * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
+static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 {
-  
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
 /*
- * Draw a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
+ * Draw a set of ellipsis or part of ellipsis
+ * Each is defined by 6-parameters,
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
+ * <x,y,width,height> is the bounding box
+ * angle1,angle2 specifies the portion of the ellipsis
+ * caution : angle=degreangle*64
  */
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
 /* Draw a single ellipsis or part of it */
 
 static void drawarc(BCG *Xgc,int arc[])
-{ 
+{
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
@@ -185,31 +182,30 @@ static void drawarc(BCG *Xgc,int arc[])
 /* Fill a single elipsis or part of it with current pattern */
 
 static void fillarc(BCG *Xgc,int arc[])
-{ 
+{
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
 
-/* 
- * Draw a set of (*n) polylines (each of which have (*p) points) 
- * with lines or marks 
+/*
+ * Draw a set of (*n) polylines (each of which have (*p) points)
+ * with lines or marks
  * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i 
+ * drawvect[i] >  0 use a line style for polyline i
  */
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
-{ 
-  
+{
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
 /*
- * fills a set of polygons each of which is defined by 
- * (*p) points (*n) is the number of polygons 
- * the polygon is closed by the routine 
- * fillvect[*n] :         
- * if fillvect[i] == 0 draw the boundaries with current color 
- * if fillvect[i] > 0  draw the boundaries with current color 
+ * fills a set of polygons each of which is defined by
+ * (*p) points (*n) is the number of polygons
+ * the polygon is closed by the routine
+ * fillvect[*n] :
+ * if fillvect[i] == 0 draw the boundaries with current color
+ * if fillvect[i] > 0  draw the boundaries with current color
  *               then fill with pattern fillvect[i]
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  *
@@ -217,62 +213,62 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
-  
+
   Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
 }
 
-/* 
- * Only draw one polygon  with current line style 
+/*
+ * Only draw one polygon  with current line style
  * according to *closeflag : it's a polyline or a polygon
- * n is the number of points of the polyline 
+ * n is the number of points of the polyline
  */
 
 static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
+{
   int n1;
-  
+
   if (closeflag == 1) n1 =n+1;else n1= n;
-  if (n1 >= 2) 
+  if (n1 >= 2)
     {
 #if 1
       int nr= gtk_store_points_remove_redundent(n, vx, vy, closeflag);
-      if ( nr != -1 ) 
+      if ( nr != -1 )
 	{
 	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), nr);
 	}
-#else 
-      if ( gtk_store_points(n, vx, vy, closeflag)) 
+#else
+      if ( gtk_store_points(n, vx, vy, closeflag))
 	{
 	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
 	}
-#endif 
+#endif
     }
 }
 
-/* 
- * Fill the polygon or polyline 
- * according to *closeflag : the given vector is a polyline or a polygon 
+/*
+ * Fill the polygon or polyline
+ * according to *closeflag : the given vector is a polyline or a polygon
  */
 
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
+static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   int n1;
-  
+
   if (closeflag == 1) n1 = n+1;else n1= n;
-  if ( gtk_store_points(n, vx, vy, closeflag)) 
+  if ( gtk_store_points(n, vx, vy, closeflag))
     {
       gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
     }
 }
 
-/* 
+/*
  * Draw the current mark centred at points defined
- * by vx and vy (vx[i],vy[i]) 
+ * by vx and vy (vx[i],vy[i])
  */
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-  
+
   if ( Xgc->CurHardSymb == 0 )
     {
       if (gtk_store_points(n, vx, vy,(int)0L))
@@ -281,34 +277,34 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 			  Xgc->private->wgc,gtk_get_xpoints(), n);
 	}
     }
-  else 
-    { 
+  else
+    {
       int i;
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
     }
 }
 
 /*
- *   Draw an axis whith a slope of alpha degree (clockwise) 
- *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
- *   following way : 
- *   \item   $n=<n1,n2>$, 
- *   \begin{verbatim} 
- *   |            |           | 
- *   |----|---|---|---|---|---| 
- *   <-----n1---->                  
- *   <-------------n2--------> 
- *   \end{verbatim} 
- *   $n1$and $n2$ are int numbers for interval numbers. 
- *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
- *   two marks, $r$ size in points of small mark, $r*coeff$  
- *   size in points of big marks. (they are doubleing points numbers) 
- *   \item $init$. Initial point $<x,y>$.  
+ *   Draw an axis whith a slope of alpha degree (clockwise)
+ *   . Along the axis marks are set in the direction ( alpha + pi/2), in the
+ *   following way :
+ *   \item   $n=<n1,n2>$,
+ *   \begin{verbatim}
+ *   |            |           |
+ *   |----|---|---|---|---|---|
+ *   <-----n1---->
+ *   <-------------n2-------->
+ *   \end{verbatim}
+ *   $n1$and $n2$ are int numbers for interval numbers.
+ *   \item $size=<dl,r,coeff>$. $dl$ distance in points between
+ *   two marks, $r$ size in points of small mark, $r*coeff$
+ *   size in points of big marks. (they are doubleing points numbers)
+ *   \item $init$. Initial point $<x,y>$.
  */
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  
+
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
@@ -320,26 +316,26 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  
+
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 /**
  * draw_pixbuf:
- * @Xgc: 
- * @pix: 
- * @src_x: 
- * @src_y: 
- * @dest_x: 
- * @dest_y: 
- * @width: 
- * @height: 
- * 
- * src_x and src_y are unused here. 
- * The pixbuf is scaled in order to be drawn in the destination 
+ * @Xgc:
+ * @pix:
+ * @src_x:
+ * @src_y:
+ * @dest_x:
+ * @dest_y:
+ * @width:
+ * @height:
+ *
+ * src_x and src_y are unused here.
+ * The pixbuf is scaled in order to be drawn in the destination
  * rectangle.
- * 
- * 
+ *
+ *
  **/
 
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,
@@ -349,7 +345,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
   GdkPixbuf *scaled ;
   gint w = gdk_pixbuf_get_width (pixbuf);
   gint h = gdk_pixbuf_get_height (pixbuf);
-  if ( w == width && h == height) 
+  if ( w == width && h == height)
     gdk_draw_pixbuf(Xgc->private->drawable,
 		    Xgc->private->wgc,
 		    pixbuf,
@@ -384,11 +380,11 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,
 
 /**
  * xset_clip:
- * @Xgc: 
- * @x: 
- * 
- * Set a clip zone (rectangle) 
- * 
+ * @Xgc:
+ * @x:
+ *
+ * Set a clip zone (rectangle)
+ *
  **/
 
 static void xset_clip(BCG *Xgc,const GdkRectangle *r)
@@ -400,9 +396,9 @@ static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 
 /**
  * xset_unclip:
- * @Xgc: a #BCG  
- * 
- * unset clip zone 
+ * @Xgc: a #BCG
+ *
+ * unset clip zone
  **/
 
 static void xset_unclip(BCG *Xgc)
@@ -414,10 +410,10 @@ static void xset_unclip(BCG *Xgc)
 
 /**
  * xget_clip:
- * @Xgc: a #BCG  
- * @x: an int pointer 
- * 
- * Get the boundaries of the current clip zone 
+ * @Xgc: a #BCG
+ * @x: an int pointer
+ *
+ * Get the boundaries of the current clip zone
  **/
 
 static void xget_clip(BCG *Xgc,int *x)
@@ -434,61 +430,61 @@ static void xget_clip(BCG *Xgc,int *x)
 
 /**
  * xset_alufunction1:
- * @Xgc: a #BCG  
- * @num: 
- * 
- * unused 
+ * @Xgc: a #BCG
+ * @num:
+ *
+ * unused
  **/
 
 static void xset_alufunction1(BCG *Xgc,int num)
-{   
+{
   Xgc->CurDrawFunction = Min(15,Max(0,num));
 }
 
 
 /**
  * xget_alufunction:
- * @Xgc: a #BCG  
- * 
- * unused 
- * 
- * Returns: 
+ * @Xgc: a #BCG
+ *
+ * unused
+ *
+ * Returns:
  **/
 
 static int xget_alufunction(BCG *Xgc)
-{ 
+{
   return  Xgc->CurDrawFunction ;
 }
 
 /**
  * xset_dashstyle:
- * @Xgc: a #BCG  
- * @value: 
- * @xx: 
- * @n: 
- * 
+ * @Xgc: a #BCG
+ * @value:
+ * @xx:
+ * @n:
+ *
  *  To change The X11-default dash style
- * if *value == 0, use a solid line, if *value != 0 
- * the dash style is specified by the xx vector of n values 
- * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots 
- * 
+ * if *value == 0, use a solid line, if *value != 0
+ * the dash style is specified by the xx vector of n values
+ * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots
+ *
  **/
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
-  if ( value == 0) 
+  if ( value == 0)
     {
       gdk_gc_set_line_attributes(Xgc->private->wgc,
 				 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
 				 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
     }
-  else 
+  else
     {
       gint8 buffdash[18];
       int i;
       for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
       gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-      gdk_gc_set_line_attributes(Xgc->private->wgc, 
+      gdk_gc_set_line_attributes(Xgc->private->wgc,
 				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
 				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
     }
@@ -497,19 +493,19 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 
 /**
  * pixmap_clear_rect:
- * @Xgc: a #BCG 
- * @x: integer 
- * @y: integer 
+ * @Xgc: a #BCG
+ * @x: integer
+ * @y: integer
  * @w: integer
  * @h: integer
- * 
- * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h) 
+ *
+ * clears a rectangle defined by its upper-left position (x,y) and dimensions (w,h)
  * in the extra_pixmap using the background color.
  **/
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-  if ( Xgc->CurPixmapStatus == 1) 
+  if ( Xgc->CurPixmapStatus == 1)
     {
       gdk_gc_set_rgb_fg_color(Xgc->private->stdgc, &Xgc->private->gcol_bg);
       gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
@@ -521,20 +517,20 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 
 /**
  * pixmap_resize:
- * @Xgc: a #BCG 
- * 
- * resizes, if present the extra_pixmap according to window size change 
+ * @Xgc: a #BCG
+ *
+ * resizes, if present the extra_pixmap according to window size change
  **/
 
 static void pixmap_resize(BCG *Xgc)
 {
-  if ( Xgc->CurPixmapStatus == 1) 
+  if ( Xgc->CurPixmapStatus == 1)
     {
-      int x= Xgc->CWindowWidth; 
+      int x= Xgc->CWindowWidth;
       int y= Xgc->CWindowHeight;
       /* create a new pixmap */
       GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
-      if ( temp  == NULL ) 
+      if ( temp  == NULL )
 	{
 	  xinfo(Xgc,"No more space to create Pixmaps");
 	  return;
@@ -543,41 +539,41 @@ static void pixmap_resize(BCG *Xgc)
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       pixmap_clear_rect(Xgc,0,0,x,y);
     }
-} 
+}
 
 
 /**
  * xset_pixmapOn:
- * @Xgc: a #BCG  
- * @num: 
- * 
- * 
+ * @Xgc: a #BCG
+ * @num:
+ *
+ *
  **/
 
 static void xset_pixmapOn(BCG *Xgc,int num)
-{ 
+{
   int num1= Min(Max(num,0),2);
   if ( Xgc->CurPixmapStatus == num1 ) return;
   if ( num1 == 1 )
     {
       /* switch to extra pixmap mode */
-      if ( Xgc->private->extra_pixmap != NULL) 
+      if ( Xgc->private->extra_pixmap != NULL)
 	{
 	  Xgc->private->drawable = Xgc->private->extra_pixmap;
 	  Xgc->CurPixmapStatus = 1;
 	}
-      else 
+      else
 	{
 	  GdkDrawable *temp ;
 	  /* create a new pixmap */
 	  temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
 						Xgc->CWindowWidth, Xgc->CWindowHeight,
 						-1);
-	  if ( temp  == NULL ) 
+	  if ( temp  == NULL )
 	    {
 	      xinfo(Xgc,"Not enough space to switch to Animation mode");
 	    }
-	  else 
+	  else
 	    {
 	      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
@@ -586,35 +582,35 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	    }
 	}
     }
-  else if ( num1 == 0 ) 
+  else if ( num1 == 0 )
     {
       /* deleting and removing the extra pixmap as the default drawable */
       xinfo(Xgc," ");
       gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
-      Xgc->CurPixmapStatus = 0; 
+      Xgc->CurPixmapStatus = 0;
     }
   else
     {
-      /* removing the extra pixmap as the default drawable 
-       * but extra_pixmap is not destroyed 
+      /* removing the extra pixmap as the default drawable
+       * but extra_pixmap is not destroyed
        */
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
-      Xgc->CurPixmapStatus = 0; 
+      Xgc->CurPixmapStatus = 0;
     }
-  
+
 }
 
 
 /**
  * xset_pattern:
- * @Xgc: 
- * @num: 
- * 
- * 
- * 
- * Returns: 
+ * @Xgc:
+ * @num:
+ *
+ *
+ *
+ * Returns:
  **/
 
 static int  xset_pattern(BCG *Xgc,int color)
@@ -624,7 +620,7 @@ static int  xset_pattern(BCG *Xgc,int color)
   int old = xget_pattern(Xgc);
   if ( old == color ) return old;
   if ( Xgc->private->a_colors == NULL) return 1 ;
-  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL) 
+  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL)
     {
       gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
@@ -646,7 +642,7 @@ static  void xset_test(BCG *Xgc)
 
 
 /*
- * Text and symbols with pango 
+ * Text and symbols with pango
  */
 
 #define FONTNUMBER 6
@@ -660,7 +656,7 @@ static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sa
 
 static void nsp_fonts_finalize(BCG *Xgc)
 {
-  if ( Xgc->private->layout != NULL) 
+  if ( Xgc->private->layout != NULL)
     {
       g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
@@ -671,12 +667,12 @@ static void nsp_fonts_finalize(BCG *Xgc)
 
 static void nsp_fonts_initialize(BCG *Xgc)
 {
-  if ( Xgc->private->layout == NULL) 
+  if ( Xgc->private->layout == NULL)
     {
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
       Xgc->private->layout = pango_layout_new (Xgc->private->context);
       Xgc->private->mark_layout = pango_layout_new (Xgc->private->context);
-      
+
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }
@@ -692,18 +688,18 @@ static void queryfamily(char *name, int *j,int *v3)
   /* */
 }
 
-/* set up the private layout with proper font and font size 
- * 
+/* set up the private layout with proper font and font size
+ *
  * Xgc->fontSize is used to keep track of previous value
- *  if <=0 then previous value was an indice in the pango_size array 
+ *  if <=0 then previous value was an indice in the pango_size array
  *  if > 0 then previous value was an absolute value in pixel.
  */
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
-{ 
+{
   int i,fsiz, changed = TRUE;
   i = Min(FONTNUMBER-1,Max(fontid,0));
-  if ( full == TRUE ) 
+  if ( full == TRUE )
     {
       /* size is given in pixel */
       fsiz = Max(1,fontsize);
@@ -718,7 +714,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
       Xgc->fontSize = - fsiz ;
       fsiz = pango_size[fsiz];
     }
-  if ( changed  ) 
+  if ( changed  )
     {
       Xgc->fontId = i;
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
@@ -745,12 +741,12 @@ static void  xget_font(BCG *Xgc,int *font,int full)
     }
 }
 
-/* set up the private mark_layout with proper font 
+/* set up the private mark_layout with proper font
  *
  */
 
 static void xset_mark(BCG *Xgc,int number, int size)
-{ 
+{
   int n_size;
   Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
   n_size  = Max(Min(FONTMAXSIZE-1,size),0);
@@ -758,7 +754,7 @@ static void xset_mark(BCG *Xgc,int number, int size)
     {
       Xgc->CurHardSymbSize = n_size;
       /* pango_font_description_set_size (Xgc->private->mark_desc, pango_size[fsiz] * PANGO_SCALE);*/
-      pango_font_description_set_absolute_size (Xgc->private->mark_desc, 
+      pango_font_description_set_absolute_size (Xgc->private->mark_desc,
 						pango_size[Xgc->CurHardSymbSize] * PANGO_SCALE);
       pango_layout_set_font_description (Xgc->private->mark_layout, Xgc->private->mark_desc);
     }
@@ -773,10 +769,10 @@ static void xget_mark(BCG *Xgc,int *symb)
 }
 
 
-/* drawing marks with pango 
+/* drawing marks with pango
  */
 
-static const int symbols[] = 
+static const int symbols[] =
   {
     0x22C5, /* lozenge */
     0x002B, /* plus sign */
@@ -800,7 +796,7 @@ static const int symbols[] =
 
 /* utility to get the enclosing rectangle of a rotated string */
 
-static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *matrix, 
+static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *matrix,
 				       GdkRectangle *rect)
 {
   gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
@@ -859,14 +855,14 @@ static void get_rotated_layout_corners (PangoLayout  *layout, const PangoMatrix 
 }
 
 
-/* 
- * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c 
- *        to deal with the case when string can be on multiple lines 
- *        but pango could make this directly. 
- * maybe we should change the display an consider that (x,y) is the baseline 
+/*
+ * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c
+ *        to deal with the case when string can be on multiple lines
+ *        but pango could make this directly.
+ * maybe we should change the display an consider that (x,y) is the baseline
  * of the string not its lower left boundary.
- * Note that if the string contains \n then the layout will have multiple lines 
- * 
+ * Note that if the string contains \n then the layout will have multiple lines
+ *
  */
 
 static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
@@ -878,8 +874,8 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
   /* flag = TRUE; */
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-  if ( posy == GR_STR_YBASELINE ) 
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
+  if ( posy == GR_STR_YBASELINE )
     {
       /* we want (x,y) to be at the baseline of the first layout line */
       PangoLayoutLine *line;
@@ -887,32 +883,32 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
       pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
     }
   /* used to recenter the string */
-  switch( posx ) 
+  switch( posx )
     {
     case GR_STR_XLEFT: xpos = 0; break;
     case GR_STR_XCENTER: xpos = - width/2; break;
     case GR_STR_XRIGHT: xpos =  - width; break;
     }
-  switch( posy ) 
+  switch( posy )
     {
     case GR_STR_YBOTTOM: ypos = -height; break;
     case GR_STR_YCENTER:  ypos = - height/2; break;
     case GR_STR_YBASELINE: ypos = logical_rect.y; break;
     case GR_STR_YUP:  ypos = 0 ; break;
-    } 
-  if ( Abs(angle) >= 0.1) 
+    }
+  if ( Abs(angle) >= 0.1)
     {
       double xt,yt;
       GdkRectangle rect;
-      PangoMatrix matrix = PANGO_MATRIX_INIT; 
+      PangoMatrix matrix = PANGO_MATRIX_INIT;
       pango_matrix_rotate (&matrix, - angle );
       pango_context_set_matrix (Xgc->private->context, &matrix);
       pango_layout_context_changed (Xgc->private->layout);
       pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
-      /* 
-       * in gdk_draw_layout x and y specify the position of the top left corner 
-       * of the bounding box (in device space) of the transformed layout. 
-       * Here when alpha = 0, (x,y) is the lower left point of the bounding box 
+      /*
+       * in gdk_draw_layout x and y specify the position of the top left corner
+       * of the bounding box (in device space) of the transformed layout.
+       * Here when alpha = 0, (x,y) is the lower left point of the bounding box
        * of the string and dependfing on posx, posy the rotation center is different.
        * We must compute position to give to gdk_draw_layout with.
        */
@@ -923,17 +919,17 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
       pango_context_set_matrix (Xgc->private->context,NULL);
       pango_layout_context_changed (Xgc->private->layout);
-      if (flag == TRUE ) 
+      if (flag == TRUE )
 	{
 	  int i;
 	  double cx[4],cy[4];
 	  gint cxi[4],cyi[4];
 	  get_rotated_layout_corners (Xgc->private->layout,&matrix,cx,cy);
-	  for ( i = 0 ; i < 4 ; i++) 
-	    { 
+	  for ( i = 0 ; i < 4 ; i++)
+	    {
 	      cx[i] += x+xt;
 	      cy[i] += y+yt;
-	      cxi[i]=cx[i]; 
+	      cxi[i]=cx[i];
 	      cyi[i]=cy[i];
 	    }
 	  drawpolyline(Xgc,cxi,cyi,4,1);
@@ -956,11 +952,11 @@ static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
 
-/* draw a mark centred at (x,y) using the 
+/* draw a mark centred at (x,y) using the
  * symbol font and the mark_layout.
  */
 
@@ -968,9 +964,9 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 {
   double dx,dy;
   PangoRectangle ink_rect;
-  int code = symbols[Xgc->CurHardSymb]; 
+  int code = symbols[Xgc->CurHardSymb];
   gchar symbol_code[4], *iter = symbol_code;
-  
+
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
@@ -979,7 +975,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
   dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
   gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout);
-  if (0) 
+  if (0)
     {
       /* draw the ink_rectangle aroud the mark */
       int i;
@@ -993,10 +989,5 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
 {
-  
+
 }
-
-
-
-
-

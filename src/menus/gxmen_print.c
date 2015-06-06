@@ -86,6 +86,7 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
     "png",
 #endif
     "xfig",
+    "tikz",
     /*
     "Postscript",
     "Postscript No Preamble",

@@ -306,7 +306,8 @@ static void  nsp_gc_erase(BCG *Xgc)
 
 extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
 extern BCG ScilabGCXfig ;
-extern Gengine Pos_gengine, XFig_gengine ;
+extern BCG ScilabGCTikz ;
+extern Gengine Pos_gengine, XFig_gengine, Tikz_gengine ;
 
 extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option,
 			    int figure_bg_draw);
@@ -328,6 +329,11 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
     {
       Ggc = &ScilabGCXfig;
       Ggc->graphic_engine = &XFig_gengine ;
+    }
+  else if ( strcmp(driver,"Tikz")==0 )
+    {
+      Ggc = &ScilabGCTikz;
+      Ggc->graphic_engine = &Tikz_gengine ;
     }
   else
     {

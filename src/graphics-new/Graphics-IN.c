@@ -6067,9 +6067,9 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,const char *expor
     {
       const char *extension;
       int frep = 0;
-      const char *Etable[] = {".svg", ".pdf", ".eps", ".ps", ".fig", ".png", NULL};
+      const char *Etable[] = {".svg", ".pdf", ".eps", ".ps", ".fig", ".png", ".tikz", NULL};
       const char *Ftable[] =
-	{"cairo-svg", "cairo-pdf", "cairo-ps", "cairo-ps", "Fig", "cairo-png", NULL};
+	{"cairo-svg", "cairo-pdf", "cairo-ps", "cairo-ps", "Fig", "cairo-png", "Tikz", NULL};
       extension = nsp_get_extension(filename);
       if ( extension == NULL)
 	{

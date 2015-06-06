@@ -962,8 +962,8 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
   return OK;
 }
 
-/* draws the figure contained in Xgc->figure using a cairo surface 
- * 
+/* draws the figure contained in Xgc->figure using a cairo surface
+ *
  */
 
 int nsp_cairo_draw_to_file(const char *fname,const char *driver,BCG *Xgc,int colored,int figure_bg_draw,char option)
@@ -1013,7 +1013,7 @@ int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figu
   NspFigure *F;
   NspGraphic *G;
   int v1=-1,cwin;
-  BCG *Xgc1= NULL; 
+  BCG *Xgc1= NULL;
   if ( cr == NULL) return FAIL;
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
@@ -1034,7 +1034,7 @@ int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figu
   G = (NspGraphic *) Xgc->figure ;
   G->type->draw(Xgc1,G,NULL,NULL);
   Xgc1->figure_bg_draw = TRUE;
-  if ( Xgc != Xgc1 ) 
+  if ( Xgc != Xgc1 )
     {
       /* Is it possible that Xgc == Xgc1 ? */
       Xgc1->actions->destroy(Xgc1);

@@ -1589,7 +1589,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
 #ifdef  PERICAIRO
   dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-#endif 
+#endif
   return FALSE;
 }
 #endif
@@ -2131,7 +2131,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  */
 
 #ifdef PERIGTK
-#include "perigtk/peridraw_gdk.c" 
+#include "perigtk/peridraw_gdk.c"
 /* routines for allocating GdkPoints */
 #include "perigtk/points.c"
 #endif /* PERIGTK */
