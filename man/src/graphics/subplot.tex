@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+\mansection{subplot}
+\begin{mandesc}
+  \short{subplot}{graphic sub windows specification}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  subplot(m,n,p,options)
+  subplot(mnp)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m,n,p}: positive integers
+    \vname{mnp}: an integer with decimal notation \verb!mnp!
+    \vname{options}: named optional arguments which are transmited to \verb!xsetech!
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!subplot(m,n,p)! or \verb!subplot(mnp)! divide the
+  current graphic window into a m-by-n matrix of sub-windows and selects the
+  p-th sub-window as current axe for drawing.
+  The sub-window specified by \verb!p! is the at position \verb!(i,j)! where
+  \verb!p=(i-1)*n + j!.
+
+  \verb!options! are named optional arguments which are transmited to \verb!xsetech!.
+  Note that \verb!a3d=%t! must be used when 3d plots are performed.
+\end{mandescription}
+
+%--example
+\begin{examples}
+  \begin{Verbatim}
+    subplot(2,2,1);
+    plot2d();
+    subplot(2,2,2,a3d=%t);
+    plot3d();
+    subplot(2,2,3,a3d=%t);
+    param3d();
+    subplot(2,2,4);
+    histplot();
+  \end{Verbatim}
+\end{examples}
+%-- see also
+%\begin{manseealso}
+%\end{manseealso}

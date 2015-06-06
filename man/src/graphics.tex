@@ -29,9 +29,13 @@ Drawing functions
 \hyperlink{plot2d}{plot2d} - draw two dimensional graphs\\
 \hyperlink{plot3d}{plot3d} - 3D plot of a surface \\
 \hyperlink{polarplot}{polarplot} - draw a curve given with polar coordinates \\
+\hyperlink{subplot}{subplot} - graphic sub windows specification\\
+\hyperlink{winsid}{winsid} - graphics windows ids\\
 \hyperlink{xarcs}{xarcs} - draw parts of a set of ellipses \\
 \hyperlink{xarc}{xarc} - draw a part of an ellipse\\
 \hyperlink{xarrows}{xarrows} - draw a set of arrows \\
+\hyperlink{xclear}{xclear} - clears a graphics window \\
+\hyperlink{xexport}{export graphics to a file}\\
 \hyperlink{xfarcs}{xfarcs} - fill parts of a set of ellipses \\
 \hyperlink{xfarc}{xfarc} - fill part of an ellipse\\
 \hyperlink{xfpolys}{xfpolys} - fill a set of polygons \\
@@ -42,6 +46,7 @@ Drawing functions
 \hyperlink{xrects}{xrects} - draw a set of rectangles\\
 \hyperlink{xrect}{xrect} - draw a rectangle\\
 \hyperlink{xsegs}{xsegs} - draw unconnected segments \\
+\hyperlink{xselect}{xselect} - raise the current graphic window\\
 \hyperlink{xsetech}{xsetech} - set parameters of a subwindow in a graphic window\\
 \hyperlink{xstringl}{xstringl} - enclosing rectangle when drawing a string matrix \\
 \hyperlink{xstring}{xstring} - draw a string matrix \\
@@ -78,9 +83,13 @@ Dealing with surfaces data
 \input graphics/plot2d.tex
 \input graphics/plot3d.tex
 \input graphics/polarplot.tex
+\input graphics/subplot.tex
+\input graphics/winsid.tex
 \input graphics/xarcs.tex
 \input graphics/xarc.tex
 \input graphics/xarrows.tex
+\input graphics/xclear.tex
+\input graphics/xexport.tex
 \input graphics/xfarcs.tex
 \input graphics/xfarc.tex
 \input graphics/xfpoly.tex
@@ -90,6 +99,7 @@ Dealing with surfaces data
 \input graphics/xpolys.tex
 \input graphics/xrect.tex
 \input graphics/xrects.tex
+\input graphics/xselect.tex
 \input graphics/xsegs.tex
 \input graphics/xsetech.tex
 \input graphics/xstring.tex
@@ -213,7 +223,6 @@ Dealing with surfaces data
 % \input graphics/encours/show_pixmap.tex
 % \input graphics/encours/square.tex
 % \input graphics/encours/stringbox.tex
-% \input graphics/encours/subplot.tex
 % \input graphics/encours/surface_properties.tex
 % \input graphics/encours/surf.tex
 % \input graphics/encours/text_properties.tex
@@ -222,13 +231,11 @@ Dealing with surfaces data
 % \input graphics/encours/twinkle.tex
 % \input graphics/encours/unglue.tex
 % \input graphics/encours/unzoom.tex
-% \input graphics/encours/winsid.tex
 % \input graphics/encours/xaxis.tex
 % \input graphics/encours/xbasc.tex
 % \input graphics/encours/xbasimp.tex
 % \input graphics/encours/xbasr.tex
 % \input graphics/encours/xchange.tex
-% \input graphics/encours/xclear.tex
 % \input graphics/encours/xclea.tex
 % \input graphics/encours/xclick.tex
 % \input graphics/encours/xclip.tex
@@ -259,7 +266,6 @@ Dealing with surfaces data
 % \input graphics/encours/xs2ppm.tex
 % \input graphics/encours/xs2ps.tex
 % \input graphics/encours/xsave.tex
-% \input graphics/encours/xselect.tex
 % \input graphics/encours/xsetm.tex
 % \input graphics/encours/xset.tex
 % \input graphics/encours/xstringb.tex

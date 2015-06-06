@@ -1,51 +1,47 @@
 % -*- mode: latex -*-
-
 \mansection{xs2ps}
 \begin{mandesc}
-  \short{xexport}{export graphics to a file}\\ % @mandesc@
+  \short{xexport}{export graphics to a file}\\
 \end{mandesc}
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  xexport(winid,filename,color=,mode=figure_background=);
-  xs2ps(winid,filename,color=,mode=figure_background=);
-  xs2fig(winid,filename,color=,mode=figure_background=);
-  xs2pdf(winid,filename,color=,mode=figure_background=);
-  xs2png(winid,filename,color=,mode=figure_background=);
-  xs2svg(winid,filename,color=,mode=figure_background=);
-  xs2ps(winid,filename,color=,mode=figure_background=);
-  xs2eps(winid,filename,color=,mode=figure_background=);
-  xs2ps_old(winid,filename,color=,mode=figure_background=);
+  xexport(winid,filename,color=,figure_background=);
+  xs2eps(winid,filename,color=,figure_background=);
+  xs2fig(winid,filename,color=,figure_background=);
+  xs2pdf(winid,filename,color=,figure_background=);
+  xs2png(winid,filename,color=,figure_background=);
+  xs2ps(winid,filename,color=,figure_background=);
+  xs2svg(winid,filename,color=,figure_background=);
+  xs2ps_old(winid,filename,color=,figure_background=);
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{winid}: integer scalar.
-    \vname{filename}: a file name given as a string.
-    \vname{color}: optional boolean. 
-    \vname{figure\_background}: a boolean. 
+    \vname{winid}: the id of the graphic window as an integer.
+    \vname{filename}: a string giving the file name.
+    \vname{color}: optional boolean.
+    \vname{figure\_background}: optional boolean.
+    %% To be done:    \vname{mode}: a string taken among 'd', 'l', 'n', 'p', or 'k'.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  The function \verb!xexport! export graphics of the graphic window \verb!winid! to 
-  the file \verb!filename! in a format selected from the filename suffix. 
-  The possible suffixes are ".svg", ".pdf", ".eps", ".ps", ".fig", ".png". 
-  The optional parameter \verb!color! is used to select between colored or black and 
-  white graphics. The optional parameter \verb!figure\_background! is used to select 
-  or not in the export of the graphic the background rectangle. 
+  The function \verb!xexport! export the graphic contents of window \verb!winid! to
+  the file \verb!filename! in a format selected from the filename suffix.
+  The possible suffixes are ".svg", ".pdf", ".eps", ".ps", ".fig", ".png".
+  The optional parameter \verb!color! is used to select between colored or black and
+  white graphics. The optional parameter \verb!figure\_background! is used to select
+  or not in the export of the graphic the background rectangle.
+  %%To be done: The optional parameter  \verb!mode! is
 
-  Specialized functions can be used to generate graphic file with a specific format. 
+  Specialized functions can be used to generate graphic file with a specific format.
 \end{mandescription}
 %--example
 \begin{examples}
-  \begin{Verbatim} 
+  \begin{Verbatim}
     plot2d();
-    filename='foo'; // ! no extension
-    xs2ps(0,filename)
     xexport(0,'foo.svg')
   \end{Verbatim}
 \end{examples}
 %-- see also
-
-

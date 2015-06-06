@@ -1,0 +1,41 @@
+% -*- mode: latex -*-
+\mansection{xclear}
+\begin{mandesc}
+  \short{xclear}{clears a graphics window}
+  \short{xbasc}{clears a graphics window}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  xclear([ids],gc_reset=bool)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{ids}: a scalar matrix.
+    \vname{gc_reset}: optional argument, a boolean
+    (default value is true).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function clears the contents of graphic windows
+  whose ids are given by the argument \verb!ids!.
+  When \verb!ids! is not given, the function applies to
+  the current graphic window.
+
+  The function clears the graphic windows and remove the
+  graphic objects associated to the graphic window.
+  If \verb!gc_reset! is set to false, then the graphic context
+  associated to the graphic window is not cleared.
+
+  The function \verb!xbasc! is for backup compatibility and it is similar to \verb!xclear!.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{xbasc}{xbasc}
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.Ph.C.
+\end{authors}
