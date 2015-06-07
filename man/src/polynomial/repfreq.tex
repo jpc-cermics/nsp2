@@ -1,0 +1,65 @@
+% -*- mode: latex -*-
+% Copyright (C) CeCILL Inria (scilab)
+% -*- mode: latex -*-
+\mansection{repfreq}
+\begin{mandesc}
+  \short{repfreq}{frequency response} \\ % 
+\end{mandesc}
+%\index{repfreq}\label{repfreq}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ [frq,repf,split]= repfreq(n,d,fmin=,fmax=,step=,frq=)   
+ [repf]=repfreq(n,d,fmin=,fmax=,step=,frq=)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n,d}: two polynomial matrices of size \verb!nx1!
+    \vname{fmin}: a real for minimal frequency bounds (in Hz) or \verb!sym!
+    \vname{fmax}: a real for maximal frequency bounds (in Hz).
+    \vname{step}: a real (logarithmic step) or a string \verb!'auto'!.
+    \vname{frq}: a row vector or a \verb!nx1! matrix giving frequencies (in Hz).
+    \vname{dom}: time domain \verb!'c'! or \verb!'d'! or a positive real (default \verb!'c'!).
+    \vname{split}: vector of indexes of critical frequencies.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!repfreq! returns the frequency response calculation of a linear system \verb!n/d! at frequencies. 
+
+  The frequencies are given by the matrix \verb!frq! or computed from
+  the bounds \verb!fmin! and \verb!fmax! (in Hz) and \verb!step! giving
+  the ( logarithmic ) discretization step which is automatically adapted if
+  (\verb!step='auto'!).
+
+    
+  \begin{description}
+  \item[\verb!dom='c'!]: \verb!repf(k)=(n/d)(  2*%i*%pi*frq(k))! 
+  \item[\verb!dom='d'!]]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=1! 
+  \item[\verb!dom=d!]]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=d! 
+  \end{description}
+
+  The vector \verb!frq! is splitted into regular parts with the \verb!split! vector i.e 
+  \verb!frq(splitf(k):splitf(k+1)-1)! has no critical frequency. In other words, 
+  the system \verb!n/d! has a pole in the range \verb![frq(splitf(k)),frq(splitf(k)+1)]! and 
+  no poles outside.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{bode}{bode}
+  \manlink{freq}{freq} 
+  \manlink{calfrq}{calfrq} 
+  \manlink{horner}{horner} 
+  \manlink{nyquist}{nyquist} 
+  \manlink{dbphi}{dbphi}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Serge Steer
+\end{authors}
