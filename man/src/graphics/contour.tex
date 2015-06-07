@@ -1,0 +1,81 @@
+% -*- mode: latex -*-
+
+\mansection{contour}
+\begin{mandesc}
+  \short{contour}{level curves on a 3D surface}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  contour(x,y,z,nz,options)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y} vectors of respective size \verb!n1! and \verb!n2! and in that case they give x-axis
+    and y-axis coordinates of the surface.
+    \vname{z}:  a matrix of size \verb!n1 x n2! (\verb!z(i,j)! is the
+    value of the surface at the point \verb!(x(i),y(j))!) or a nsp function.
+    \vname{nz}: the level values or the number of levels.
+    \begin{varlist}
+      \vname{-}If \verb!nv! is scalar, its value gives the
+      number of level curves equally spaced from zmin to zmax as
+      follows \verb!z= zmin + (1:nv)*(zmax-zmin)/(nv+1)!
+      Note that the \verb!zmin! and \verb!zmax!
+      levels are not drawn (generically they are reduced to points)
+      but they can be added with
+      \begin{Verbatim}
+        [im,jm] = find(z == zmin); // or zmax
+        plot2d(x(im)',y(jm)',-9)
+      \end{Verbatim}
+      \vname{-}If \verb!nv! is a vector, \verb!nv(i)! gives
+      the value of the ith level curve.
+    \end{varlist}
+    \vname{alpha}: see \manlink{plot3d}{plot3d}
+    \vname{ebox}: see \manlink{plot3d}{plot3d}
+    \vname{flag}: see \manlink{plot3d}{plot3d}
+    \vname{leg}: see \manlink{plot3d}{plot3d}
+    \vname{theta}: see \manlink{plot3d}{plot3d}
+    \vname{zlevel}: position at which the level curves are drawn on a 3d plot.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb!contour! draws level curves of a surface \verb!z=f(x,y)!. The level curves are
+  drawn on a 3D surface. The optional arguments, except \verb!zlev!, are the same as
+  for the function \verb!plot3d!. The parameter \verb!flag(1)=mode! has a special meaning
+  described now:
+  \begin{description}
+  \item[mode=0] : the level curves are drawn on the surface defined by (x,y,z).
+  \item[mode=1] : the level curves are drawn on a 3D plot and on the plan defined
+    by  the equation z=zlev.
+  \item[mode=2] : the level curves are drawn on a 2D plot.
+  \end{description}
+
+  You can change the format of the floating point number printed on the levels
+  by using \verb!xset("fpf",string)! where \verb!string! gives the
+  format in C format syntax (for example \verb!string="%.3f"!). Use
+  \verb!string=""! to switch back to default format and Use
+  \verb!string=" "! to suppress printing.
+  Usually we use \verb!contour2d! to draw levels curves on a 2D plot.
+  Enter the command \verb!contour()! to see a demo.
+\end{mandescription}
+
+% --example
+\begin{examples}
+  \begin{Verbatim}
+    t=linspace(-%pi,%pi,30);
+    function z=my_surface(x,y),z=x*sin(x)^2*cos(y),endfunction
+    contour(t,t,my_surface,10,flag=[0,2,1])
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{contour2d}{contour2d} \manlink{plot3d}{plot3d}
+\end{manseealso}
+% -- Author
+\begin{authors}
+  J.-Ph. C.
+\end{authors}
