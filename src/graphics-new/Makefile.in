@@ -8,7 +8,7 @@ LIBRARY = graphics-new.a
 OBJSC = Graphics-IN.o periGtk.o @PERICAIRO@ @PERIGLEXT@ \
 	periPos.o periFig.o perigen.o Contour-new.o     \
 	Axes.o  Plo2d.o Plo2dEch.o Actions.o windows.o \
-	Xcall1.o Rec.o click.o
+	Xcall1.o Rec.o click.o periTikz.o
 
 OBJSF = 
 
