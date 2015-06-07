@@ -8,16 +8,18 @@ a=%types.ClassARef.new[cla_color=89,cla_thickness=56,cla_val=[]];
 
 a.__attrs
 
-a.cla_color = 32 
-a.cla_thickness = 2
-a.cla_val = testmatrix('magic',3);
+a.cla_color = 32 ;
+a.cla_thickness = 2;
+A=testmatrix('magic',3);
+a.cla_val = A;
 
-a.cla_color
-a.cla_thickness
-a.cla_val 
+if a.cla_color <> 32 then pause;end 
+if a.cla_thickness <> 2 then pause;end
+if a.cla_val <> A then pause;end
 
 a.cla_val(3,3) = 1;
-a.cla_val 
+A(3,3)=1;
+if a.cla_val <> A then pause;end
 
 // general access to attribute (method set of objects)
 

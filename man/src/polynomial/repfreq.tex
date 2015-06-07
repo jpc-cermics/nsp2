@@ -32,12 +32,11 @@
   the bounds \verb!fmin! and \verb!fmax! (in Hz) and \verb!step! giving
   the ( logarithmic ) discretization step which is automatically adapted if
   (\verb!step='auto'!).
-
     
   \begin{description}
-  \item[\verb!dom='c'!]: \verb!repf(k)=(n/d)(  2*%i*%pi*frq(k))! 
-  \item[\verb!dom='d'!]]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=1! 
-  \item[\verb!dom=d!]]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=d! 
+  \item[dom='c']: \verb!repf(k)=(n/d)(  2*%i*%pi*frq(k))! 
+  \item[dom='d']]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=1! 
+  \item[dom=x]]: \verb!repf(k)=(n/d)( 2*%i*%pi*dt*frq(k))! with \verb!dt=x! 
   \end{description}
 
   The vector \verb!frq! is splitted into regular parts with the \verb!split! vector i.e 
@@ -46,18 +45,18 @@
   no poles outside.
 \end{mandescription}
 %--example 
-\begin{examples}
-  \begin{Verbatim}
-  \end{Verbatim}
-\end{examples}
+% \begin{examples}
+%   \begin{Verbatim}
+%   \end{Verbatim}
+% \end{examples}
 %-- see also
 \begin{manseealso}
   \manlink{bode}{bode}
-  \manlink{freq}{freq} 
-  \manlink{calfrq}{calfrq} 
+%  \manlink{freq}{freq} 
+%  \manlink{calfrq}{calfrq} 
   \manlink{horner}{horner} 
   \manlink{nyquist}{nyquist} 
-  \manlink{dbphi}{dbphi}  
+%  \manlink{dbphi}{dbphi}  
 \end{manseealso}
 %-- Author
 \begin{authors}
