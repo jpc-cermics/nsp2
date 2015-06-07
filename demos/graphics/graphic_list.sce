@@ -61,7 +61,7 @@ demo_3d_13_info="some surfaces";
 demo_3d_14_info="tobedone";
 demo_3d_15_info="tobedone";
 
-graphic_test_3d = build_demo_list("demo_3d",15);
+graphic_test_3d = build_demo_list("demo_3d",13);
 
 // ----------------------------
 // organize the previous list  for graphic demo widget
