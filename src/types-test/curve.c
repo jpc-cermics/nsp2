@@ -24,7 +24,7 @@
 
 
 
-#line 24 "codegen/curve.override"
+#line 30 "codegen/curve.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/curve.h>
@@ -104,7 +104,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
   type->init = (init_func *) init_curve;
 
-#line 37 "codegen/curve.override"
+#line 43 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -676,7 +676,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 59 "codegen/curve.override"
+#line 65 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -698,7 +698,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 74 "codegen/curve.override"
+#line 80 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -781,7 +781,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 104 "codegen/curve.override"
+#line 110 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -793,7 +793,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 #line 794 "curve.c"
 
 
-#line 114 "codegen/curve.override"
+#line 120 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -834,7 +834,7 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
   *f = Curve_func[i].fonc;
 }
 
-#line 125 "codegen/curve.override"
+#line 131 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /*
@@ -894,58 +894,13 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	}
       break;
     case curve_stairs:
+      /* will just draw */
+      nsp_curve_stairs_fill_basic(Xgc,P,M);
+      break;
     case curve_stairs_fill:
-      {
-	double *xm=NULL,*ym=NULL;
-	int n= ( P->obj->mode == curve_stairs ) ? 2*M->m -1 : 2*M->m+1 ,i;
-	/* stroke color */
-	int color= ( P->obj->mode == curve_stairs ) ? P->obj->color : -1;
-	xm = graphic_alloc(0,n,sizeof(double));
-	ym = graphic_alloc(1,n,sizeof(double));
-	if ( xm == 0 || ym == 0)
-	  {
-	    Sciprintf("Error: cannot allocate points for drawing\n");
-	    return;
-	  }
-	for ( i=0 ; i < M->m -1 ; i++)
-	  {
-	    xm[2*i]= M->R[i];
-	    ym[2*i]= M->R[i+M->m];
-	    xm[2*i+1]= M->R[i+1];
-	    ym[2*i+1]= ym[2*i];
-	  }
-	xm[2*(M->m-1)] = M->R[M->m-1];
-	ym[2*(M->m-1)] = M->R[M->m-1+M->m];
-	if ( P->obj->mode == curve_stairs_fill )
-	  {
-	    /* fill the stairs */
-	    xm[2*(M->m)-1]= M->R[M->m-1];
-	    ym[2*(M->m)-1]= 0.0;
-	    xm[2*(M->m)]= M->R[0];
-	    ym[2*(M->m)]=0.0;
-	    if ( P->obj->color >= -1 )
-	      {
-		if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-		Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
-		if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
-	      }
-	  }
-
-	if ( color >= -1 )
-	  {
-	    if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, color);
-	    Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0);
-	    if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
-	  }
-	if ( P->obj->mark >= -1 )
-	  {
-	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
-	    Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
-	    if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
-	  }
-	/* if mode is  curve_stairs_fill then we also draw stems */
-	if ( P->obj->mode == curve_stairs_fill ) { mode = curve_stem; obj_color=-1;goto more;};
-      }
+      /* draw and fill with special algo for opengl */
+      nsp_curve_stairs_fill(Xgc,P,M);
+      if ( P->obj->mode == curve_stairs_fill ) { mode = curve_stem; obj_color=-1;goto more;};
       break;
     case curve_stem:
       {
@@ -998,32 +953,8 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       }
       break;
     case curve_fill:
-      {
-	double *xm=NULL,*ym=NULL;
-	int n= M->m+2;
-	if (M->m == 0) return ;
-	xm = graphic_alloc(0,n,sizeof(double));
-	ym = graphic_alloc(1,n,sizeof(double));
-	if ( xm == 0 || ym == 0)
-	  {
-	    Sciprintf("Error: cannot allocate points for drawing\n");
-	    return;
-	  }
-	/* size of arrow */
-	memcpy(xm,M->R,M->m*sizeof(double));
-	memcpy(ym,M->R+M->m,M->m*sizeof(double));
-	xm[M->m]= M->R[M->m-1];
-	ym[M->m]=0.0;
-	xm[M->m+1]= M->R[0];
-	ym[M->m+1]=0.0;
-	if ( P->obj->color >= -1 )
-	  {
-	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-	    Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
-	    if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
-	  }
-	Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
-      }
+      nsp_curve_fill(Xgc,P,M);
+      break;
     }
 
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
@@ -1099,4 +1030,222 @@ static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1103 "curve.c"
+/*  */
+extern Gengine GL_gengine;
+
+/* try to partially solve opengl pbs  */
+
+
+
+static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M)
+{
+#ifdef  WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
+    /* if we are using OpenGl we need to detect the convex parts */
+    {
+      nsp_curve_fill_ext(Xgc,C,M);
+    }
+  else
+    {
+      nsp_curve_fill_basic(Xgc,C,M);
+    }
+#else
+  nsp_curve_fill_basic(Xgc,C,M);
+#endif
+}
+
+static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
+{
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  double *xm=NULL,*ym=NULL;
+  int n= M->m+2;
+  if (M->m == 0) return ;
+  xm = graphic_alloc(0,n,sizeof(double));
+  ym = graphic_alloc(1,n,sizeof(double));
+  if ( xm == 0 || ym == 0)
+    {
+      Sciprintf("Error: cannot allocate points for drawing\n");
+      return;
+    }
+  memcpy(xm,M->R,M->m*sizeof(double));
+  memcpy(ym,M->R+M->m,M->m*sizeof(double));
+  xm[M->m]= M->R[M->m-1];
+  ym[M->m]=0.0;
+  xm[M->m+1]= M->R[0];
+  ym[M->m+1]=0.0;
+  if ( C->obj->color >= -1 )
+    {
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, C->obj->color);
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+    }
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
+}
+
+static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
+{
+  double xi ;
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int start=0;
+  if (M->m == 0) return;
+  xi=M->R[0];
+  while (1)
+    {
+      start=nsp_curve_fill_part(Xgc,C,M,start,&xi);
+      if ( start >= M->m) break;
+    }
+  if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+}
+
+static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi)
+{
+  int p,P,sign;
+  double *xm=NULL,*ym=NULL;
+  int n= M->m+2;
+  xm = graphic_alloc(0,n,sizeof(double));
+  ym = graphic_alloc(1,n,sizeof(double));
+  if ( xm == 0 || ym == 0)
+    {
+      Sciprintf("Error: cannot allocate points for drawing\n");
+      return M->m;
+    }
+  /* first point y=0 */
+  p = 0; P = start;
+  xm[p]= *xi;
+  ym[p]= 0.0;
+  p++;
+  while (1)
+    {
+      if ( M->R[P+M->m] != 0.0 ) break;
+      P++;
+      if ( P >= M->m) return P;
+    }
+  /* we are at the first non null point */
+  sign = (M->R[P+M->m]) >= 0;
+  while (1)
+    {
+      /* accumulate points until sign changes */
+      xm[p]= M->R[P];
+      ym[p]= M->R[P+M->m];
+      if ( ((ym[p]) >= 0) != sign )
+	{
+	  double alpha = (0- ym[p-1])/(ym[p]-ym[p-1]);
+	  *xi = (1-alpha)*xm[p-1] + alpha*xm[p];
+	  xm[p]=*xi;
+	  ym[p]=0.0;
+	  p++;
+	  break;
+	}
+      p++;P++;
+      if ( P >= M->m)
+	{
+	  /* we need a last point */
+	  xm[p]= xm[p-1];
+	  ym[p]= 0.0;
+	  p++;
+	  break;
+	}
+    }
+  /* */
+  if ( C->obj->color >= -1 )
+    {
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, C->obj->color);
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,p,1);
+    }
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,p,0);
+  return P;
+}
+
+static NspMatrix *nsp_curve_stairs_alloc(NspMatrix *M)
+{
+  double *xm,*ym;
+  int i, n= 2*M->m -1;
+  NspMatrix *loc;
+  if ((loc = nsp_matrix_create(NVOID,'r',n,2)) == NULLMAT)
+    return NULLMAT;
+  xm= loc->R; ym= loc->R + loc->m;
+  for ( i=0 ; i < M->m -1 ; i++)
+    {
+      xm[2*i]= M->R[i];
+      ym[2*i]= M->R[i+M->m];
+      xm[2*i+1]= M->R[i+1];
+      ym[2*i+1]= ym[2*i];
+    }
+  xm[2*(M->m-1)] = M->R[M->m-1];
+  ym[2*(M->m-1)] = M->R[M->m-1+M->m];
+  return loc;
+}
+
+static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M)
+{
+#ifdef  WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
+    /* if we are using OpenGl we need to detect the convex parts */
+    {
+      NspMatrix *loc;
+      if ((loc = nsp_curve_stairs_alloc(M))== NULL) return;
+      nsp_curve_fill_ext(Xgc,P,loc);
+      nsp_matrix_destroy(loc);
+    }
+  else
+    {
+      nsp_curve_stairs_fill_basic(Xgc,P,M);
+    }
+#else
+  nsp_curve_stairs_fill_basic(Xgc,P,M);
+#endif
+}
+
+static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
+{
+  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  double *xm=NULL,*ym=NULL;
+  int n= ( P->obj->mode == curve_stairs ) ? 2*M->m -1 : 2*M->m+1 ,i;
+  /* stroke color */
+  int color= ( P->obj->mode == curve_stairs ) ? P->obj->color : -1;
+  xm = graphic_alloc(0,n,sizeof(double));
+  ym = graphic_alloc(1,n,sizeof(double));
+  if ( xm == 0 || ym == 0)
+    {
+      Sciprintf("Error: cannot allocate points for drawing\n");
+      return;
+    }
+  for ( i=0 ; i < M->m -1 ; i++)
+    {
+      xm[2*i]= M->R[i];
+      ym[2*i]= M->R[i+M->m];
+      xm[2*i+1]= M->R[i+1];
+      ym[2*i+1]= ym[2*i];
+    }
+  xm[2*(M->m-1)] = M->R[M->m-1];
+  ym[2*(M->m-1)] = M->R[M->m-1+M->m];
+  if ( P->obj->mode == curve_stairs_fill )
+    {
+      /* fill the stairs */
+      xm[2*(M->m)-1]= M->R[M->m-1];
+      ym[2*(M->m)-1]= 0.0;
+      xm[2*(M->m)]= M->R[0];
+      ym[2*(M->m)]=0.0;
+      if ( P->obj->color >= -1 )
+	{
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	  Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	}
+    }
+
+  if ( color >= -1 )
+    {
+      if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, color);
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0);
+      if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+    }
+  if ( P->obj->mark >= -1 )
+    {
+      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+      Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
+      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+    }
+}
+
+#line 1252 "curve.c"
