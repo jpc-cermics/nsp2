@@ -39,7 +39,7 @@ static void menu_normal_font_size(GtkWidget *widget, gpointer data);
 static gint font_def_size=0;
 
 typedef struct _fsize_data fsize_data;
-struct _fsize_data 
+struct _fsize_data
 {
   GtkWidget *widget;
   gpointer data;
@@ -53,7 +53,7 @@ window_title_changed(GtkWidget *widget, gpointer win)
   g_return_if_fail(GTK_IS_WINDOW(win));
   g_return_if_fail(VTE_TERMINAL(widget)->window_title != NULL);
   window = GTK_WINDOW(win);
-  
+
   gtk_window_set_title(window, VTE_TERMINAL(widget)->window_title);
 }
 
@@ -77,6 +77,7 @@ char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
   GtkWindow *window;
   GdkGeometry geometry;
   int xpad, ypad;
+  GtkBorder *inner_border = NULL;
 
   g_return_if_fail(GTK_IS_WINDOW(data));
   g_return_if_fail(VTE_IS_TERMINAL(widget));
@@ -85,8 +86,14 @@ char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
   window = GTK_WINDOW(data);
   if (!GTK_WIDGET_REALIZED (window)) return;
 
-  vte_terminal_get_padding(terminal, &xpad, &ypad);
-  
+  /* deprecated:
+   * vte_terminal_get_padding(terminal, &xpad, &ypad);
+   */
+
+  gtk_widget_style_get (GTK_WIDGET (terminal), "inner-border", &inner_border, NULL);
+  xpad = (inner_border ? (inner_border->left + inner_border->right) : 0);
+  ypad = (inner_border ? (inner_border->top + inner_border->bottom) : 0);
+
   geometry.width_inc = width;
   geometry.height_inc = height;
   geometry.base_width = xpad;
@@ -104,35 +111,41 @@ char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
 static void
 char_size_realized(GtkWidget *widget, gpointer data)
 {
-	VteTerminal *terminal;
-	GtkWindow *window;
-	GdkGeometry geometry;
-	guint width, height;
-	int xpad, ypad;
+  VteTerminal *terminal;
+  GtkWindow *window;
+  GdkGeometry geometry;
+  guint width, height;
+  int xpad, ypad;
+  GtkBorder *inner_border = NULL;
+  g_assert(GTK_IS_WINDOW(data));
+  g_assert(VTE_IS_TERMINAL(widget));
 
-	g_assert(GTK_IS_WINDOW(data));
-	g_assert(VTE_IS_TERMINAL(widget));
+  terminal = VTE_TERMINAL(widget);
+  window = GTK_WINDOW(data);
+  if (!GTK_WIDGET_REALIZED (window))
+    return;
 
-	terminal = VTE_TERMINAL(widget);
-	window = GTK_WINDOW(data);
-	if (!GTK_WIDGET_REALIZED (window))
-		return;
+  /* deprecated:
+   * vte_terminal_get_padding(terminal, &xpad, &ypad);
+   */
 
-	vte_terminal_get_padding(terminal, &xpad, &ypad);
+  gtk_widget_style_get (GTK_WIDGET (terminal), "inner-border", &inner_border, NULL);
+  xpad = (inner_border ? (inner_border->left + inner_border->right) : 0);
+  ypad = (inner_border ? (inner_border->top + inner_border->bottom) : 0);
 
-	width = vte_terminal_get_char_width (terminal);
-	height = vte_terminal_get_char_height (terminal);
-	geometry.width_inc = width;
-	geometry.height_inc = height;
-	geometry.base_width = xpad;
-	geometry.base_height = ypad;
-	geometry.min_width = xpad + width * 2;
-	geometry.min_height = ypad + height * 2;
+  width = vte_terminal_get_char_width (terminal);
+  height = vte_terminal_get_char_height (terminal);
+  geometry.width_inc = width;
+  geometry.height_inc = height;
+  geometry.base_width = xpad;
+  geometry.base_height = ypad;
+  geometry.min_width = xpad + width * 2;
+  geometry.min_height = ypad + height * 2;
 
-	gtk_window_set_geometry_hints(window, widget, &geometry,
-				      GDK_HINT_RESIZE_INC |
-				      GDK_HINT_BASE_SIZE |
-				      GDK_HINT_MIN_SIZE);
+  gtk_window_set_geometry_hints(window, widget, &geometry,
+				GDK_HINT_RESIZE_INC |
+				GDK_HINT_BASE_SIZE |
+				GDK_HINT_MIN_SIZE);
 }
 
 
@@ -170,8 +183,8 @@ status_line_changed(GtkWidget *widget, gpointer data)
    */
 }
 
-/* menu for right click 
- */ 
+/* menu for right click
+ */
 
 static void
 copy_cb (GtkWidget *widget)
@@ -186,21 +199,21 @@ paste_cb (GtkWidget *widget)
 }
 
 
-static GtkWidget *popup_menu = NULL ; 
+static GtkWidget *popup_menu = NULL ;
 
-static GtkWidget *create_menu (GtkWidget *wterminal,  gpointer data) 
+static GtkWidget *create_menu (GtkWidget *wterminal,  gpointer data)
 {
   GtkWidget *menu;
   GtkWidget *menuitem;
   VteTerminal *terminal =  VTE_TERMINAL(wterminal);
   static fsize_data data1={NULL,NULL};
-  
+
   g_return_if_fail(GTK_IS_WINDOW(data));
-  
+
   if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
-  
+
   popup_menu = menu = gtk_menu_new ();
-  
+
   /* copy */
   menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
@@ -215,7 +228,7 @@ static GtkWidget *create_menu (GtkWidget *wterminal,  gpointer data)
   gtk_widget_show (menuitem);
   g_signal_connect_swapped (menuitem, "activate",
 			    G_CALLBACK (paste_cb),wterminal);
-  
+
   /* zoom data */
   data1.data = data;
   data1.widget = wterminal;
@@ -246,7 +259,7 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
   char *match;
   int tag;
   gint xpad, ypad;
-  
+
   switch (event->button) {
   case 3:
     terminal = VTE_TERMINAL(widget);
@@ -390,7 +403,7 @@ adjust_font_size(GtkWidget *widget, gpointer data, gint howmuch)
     {
       newsize = ( font_def_size == 0 ) ? 10 : font_def_size;
     }
-  else 
+  else
     {
       newsize = pango_font_description_get_size(desired) / PANGO_SCALE;
       newsize += howmuch;
@@ -398,13 +411,13 @@ adjust_font_size(GtkWidget *widget, gpointer data, gint howmuch)
   pango_font_description_set_size(desired,
 				  CLAMP(newsize, 4, 144) * PANGO_SCALE);
   /* Change the font, then resize the window so that we have the same
-   * number of rows and columns. 
+   * number of rows and columns.
    */
   vte_terminal_set_font(terminal, desired);
   gtk_window_resize(GTK_WINDOW(data),
 		    columns * terminal->char_width + owidth,
 		    rows * terminal->char_height + oheight);
-  
+
   pango_font_description_free(desired);
 }
 
@@ -452,12 +465,12 @@ read_and_feedXXX(GIOChannel *source, GIOCondition condition, gpointer data)
   g_return_val_if_fail(VTE_IS_TERMINAL(data), FALSE);
   status = g_io_channel_read_chars(source, buf, sizeof(buf),
 				   &size, NULL);
-  if ((status == G_IO_STATUS_NORMAL) && (size > 0)) 
+  if ((status == G_IO_STATUS_NORMAL) && (size > 0))
     {
       vte_terminal_feed(VTE_TERMINAL(data), buf, size);
       return TRUE;
     }
-  else 
+  else
     {
       vte_terminal_feed(VTE_TERMINAL(data),"X",1);
       return TRUE;
@@ -585,7 +598,7 @@ main(int argc, char **argv)
   }
   argv2[i] = NULL;
   g_assert(i < (g_list_length(args) + 2));
-  
+
   /* Parse some command-line options. */
   while ( cmdindex == 0 && (opt = getopt(argc, argv, "B:TN:2abe:df:ghkn:st:w:-")) != -1) {
     gboolean bail = FALSE;
@@ -656,11 +669,11 @@ main(int argc, char **argv)
     }
   }
 
-#ifdef __APPLE__ 
+#ifdef __APPLE__
   /* avoid a gtk warning about locale */
   gtk_disable_setlocale();
   setlocale(LC_ALL,"");
-#endif 
+#endif
 
   gtk_init(&argc, &argv);
   gdk_window_set_debug_updates(debug);
@@ -671,9 +684,9 @@ main(int argc, char **argv)
 				GTK_RESIZE_IMMEDIATE);
   g_signal_connect(G_OBJECT(window), "delete_event",
 		   GTK_SIGNAL_FUNC(deleted_and_quit), window);
-  if ( name != NULL) 
+  if ( name != NULL)
     gtk_window_set_title (GTK_WINDOW (window), name);
-  else 
+  else
     gtk_window_set_title (GTK_WINDOW (window), "Nsp");
 
   pixbuf = gdk_pixbuf_new_from_xpm_data (tumbi48_xpm);
@@ -682,7 +695,7 @@ main(int argc, char **argv)
   gtk_window_set_wmclass (GTK_WINDOW (window), "nsp", "Nsp");
 
   /* create vbox */
-  
+
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_box_set_spacing (GTK_BOX (vbox), 2);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 2);
@@ -785,7 +798,7 @@ main(int argc, char **argv)
   vte_terminal_set_scroll_on_output(VTE_TERMINAL(widget), FALSE);
   vte_terminal_set_scroll_on_keystroke(VTE_TERMINAL(widget), TRUE);
   vte_terminal_set_scrollback_lines(VTE_TERMINAL(widget), lines);
-  vte_terminal_set_mouse_autohide(VTE_TERMINAL(widget), TRUE); 
+  vte_terminal_set_mouse_autohide(VTE_TERMINAL(widget), TRUE);
   if (background != NULL) {
     vte_terminal_set_background_image_file(VTE_TERMINAL(widget),
 					   background);
@@ -799,18 +812,18 @@ main(int argc, char **argv)
   if (terminal != NULL) {
     vte_terminal_set_emulation(VTE_TERMINAL(widget), terminal);
   }
-  
+
   /* Set the default font. */
-  if (font != NULL) 
+  if (font != NULL)
     {
       char *f_name = g_strdup(font);
       int i ;
-      for ( i = 0 ; i < strlen(f_name); i++) 
+      for ( i = 0 ; i < strlen(f_name); i++)
 	if ( f_name[i] == '-') f_name[i]= ' ';
       vte_terminal_set_font_from_string(VTE_TERMINAL(widget), f_name);
       g_free(f_name);
     }
-  else 
+  else
     {
       vte_terminal_set_font_from_string(VTE_TERMINAL(widget), "monospace 10");
     }
@@ -829,11 +842,21 @@ main(int argc, char **argv)
   env_add[0]=buf;
   /* Launch a shell. */
   if ( cmdindex != 0 ) command_argv = &argv[cmdindex];
+
+  /* deprecated:
   vte_terminal_fork_command(VTE_TERMINAL(widget),
 			    command, command_argv, env_add,
 			    working_directory,
 			    FALSE, FALSE, FALSE);
-    
+  */
+  vte_terminal_fork_command_full(VTE_TERMINAL(widget),
+				 VTE_PTY_DEFAULT,
+				 working_directory,
+				 command_argv,
+				 env_add,
+				 G_SPAWN_SEARCH_PATH,
+				 NULL,NULL,NULL,NULL);
+
   if (command == NULL) {
     vte_terminal_feed_child(VTE_TERMINAL(widget),
 			    "pwd\n", -1);
@@ -841,8 +864,8 @@ main(int argc, char **argv)
 
   desired = vte_terminal_get_font(VTE_TERMINAL(widget));
   font_def_size = pango_font_description_get_size(desired) / PANGO_SCALE;
-  
-  
+
+
   gtk_main();
   g_assert(widget == NULL);
   g_assert(window == NULL);
@@ -854,5 +877,3 @@ main(int argc, char **argv)
   }
   return 0;
 }
-
-
