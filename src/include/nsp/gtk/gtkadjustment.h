@@ -23,20 +23,20 @@
 
 /* NspGtkAdjustment */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkAdjustment inherits from GtkObject
+ * NspGtkAdjustment inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkAdjustment ;
-typedef NspTypeGtkObject NspTypeGtkAdjustment ;
+typedef NspGObject NspGtkAdjustment ;
+typedef NspTypeGObject NspTypeGtkAdjustment ;
 
 extern int nsp_type_gtkadjustment_id;
 extern NspTypeGtkAdjustment *nsp_type_gtkadjustment;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode);
 

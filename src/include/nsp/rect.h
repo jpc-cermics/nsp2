@@ -14,7 +14,7 @@
 #include <nsp/objectf.h>
 #include "nsp/matrix.h"
 #include "nsp/smatrix.h"
-#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 /*
  * NspRect inherits from NspObject 

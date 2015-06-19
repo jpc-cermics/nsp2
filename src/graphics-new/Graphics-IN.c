@@ -687,8 +687,8 @@ static int int_contour2di_new( Stack stack, int rhs, int opt, int lhs)
   for (i =0 ; i < ix4 ; ++i) ((int *) M->R)[i] = i+1;
   if  (nz == 1) ((int *) M->R)[1] =1;
   Xgc=nsp_check_graphic_context();
-  nsp_contour_if(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,NULL);/* (int *) M->R); */
-  nsp_get_level_curves(&hl1, &hl2, &m, &n);
+  nsp_contour_if_new(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,NULL);/* (int *) M->R); */
+  nsp_get_level_curves_new(&hl1, &hl2, &m, &n);
   if ( n== 0 ) m=0;
   if ((M1 = nsp_matrix_create(NVOID,'r',m,n))== NULLMAT) return RET_BUG;
   NSP_OBJECT(M1)->ret_pos = 1;
@@ -2410,7 +2410,7 @@ extern Gengine GL_gengine;
 extern Gengine Cairo_gengine;
 #endif
 
-extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
+extern Gengine XFig_gengine, Pos_gengine, Cairo_gengine;
 extern BCG  ScilabGCPos, ScilabGCXfig;
 
 typedef enum { X11_driver, Win_driver, Gtk_driver,  Pos_driver , Fig_driver, Rec_driver } nsp_driver;
@@ -4054,7 +4054,7 @@ static int int_xinit(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      driver_initgraphic *initg = Gtk_gengine.initgraphic;
+      driver_initgraphic *initg = Cairo_gengine.initgraphic;
       if ( opengl == TRUE )
 	{
 #ifdef WITH_GTKGLEXT
@@ -6695,8 +6695,11 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
 #include "nsp/gtk/gdkimage.h"
 #include "nsp/gtk/gdkpixbuf.h"
 
-extern GdkImage* nsp_get_image(BCG *Xgc) ;
 extern GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) ;
+
+#ifdef KEEP_GTK2 
+extern GdkImage* nsp_get_image(BCG *Xgc) ;
+
 
 /* get the content of a graphic window as an image.
  *
@@ -6726,7 +6729,9 @@ static int int_get_image( Stack stack, int rhs, int opt, int lhs)
 /* get the content of a graphic window as a pixbuf
  *
  */
+#endif 
 
+#if 0
 static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ret1;
@@ -6749,6 +6754,7 @@ static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,ret1);
   return Max(lhs,1);
 }
+#endif 
 
 /* insert a pixbuf given by a file-name in a text  buffer
  * this can be used for display a pixbuf in text main interaction
@@ -6773,7 +6779,7 @@ static int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
  * plot2d();
  * xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,2,0,1,1)
  */
-
+#if 0
 static int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -6795,6 +6801,7 @@ static int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 					  width, height);
   return 0;
 }
+#endif
 /* experimental: draw a pixbuf in a region of a graphic window.
  * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
  * xdraw_pixbuf_from_file(0,gtk_logo_pixbuf,0,0,2,0,1,1)
@@ -7311,7 +7318,9 @@ OpGrTab Graphics_func[]={
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
   {NAMES("xdel"),int_xdel_new},
+#if 0
   {NAMES("xdraw_pixbuf"),int_draw_pixbuf},
+#endif
   {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
   {NAMES("xend"),int_xend_new},
   {NAMES("xexport"),int_xexport_new},
@@ -7322,8 +7331,12 @@ OpGrTab Graphics_func[]={
   {NAMES("xfpolys"),int_xfpolys_new},
   {NAMES("xfrect"),int_xfrect_new},
   {NAMES("xget"),int_xget_new},
+#ifdef KEEP_GTK2 
   {NAMES("xget_image"),int_get_image},
+#endif
+#if 0
   {NAMES("xget_pixbuf"),int_get_pixbuf},
+#endif
   {NAMES("xgetech"),int_xgetech_new},
   {NAMES("xgetmouse"),int_xgetmouse},
   {NAMES("xgraduate"),int_xgraduate},

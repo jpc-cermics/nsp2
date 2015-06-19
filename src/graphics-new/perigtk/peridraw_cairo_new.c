@@ -797,16 +797,19 @@ static void pixmap_resize(BCG *Xgc)
       int x= Xgc->CWindowWidth;
       int y= Xgc->CWindowHeight;
       /* create a new pixmap */
-      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
+      /* GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1); */
+      cairo_surface_t *temp = gdk_window_create_similar_surface (GS_GET_WINDOW(Xgc->private->drawing),
+								 CAIRO_CONTENT_COLOR,
+								 x,y);
       if ( temp  == NULL )
 	{
-	  xinfo(Xgc,"No more space to create Pixmaps");
+	  xinfo(Xgc,"No more space to create cairo surface");
 	  return;
 	}
       g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
+      Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
       pixmap_clear_rect(Xgc,0,0,x,y);
     }
 }
@@ -831,16 +834,19 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	{
 	  Xgc->private->drawable = Xgc->private->extra_pixmap;
 	  if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-	  Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
+	  Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
 	  Xgc->CurPixmapStatus = 1;
 	}
       else
 	{
-	  GdkDrawable *temp ;
 	  /* create a new pixmap */
-	  temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
-						Xgc->CWindowWidth, Xgc->CWindowHeight,
-						-1);
+	  /* GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
+							     Xgc->CWindowWidth, Xgc->CWindowHeight,
+							     -1);*/
+	  cairo_surface_t *temp = gdk_window_create_similar_surface (GS_GET_WINDOW(Xgc->private->drawing),
+							     CAIRO_CONTENT_COLOR,
+							     Xgc->CWindowWidth, Xgc->CWindowHeight);
+	  
 	  if ( temp  == NULL )
 	    {
 	      xinfo(Xgc,"Not enough space to switch to Animation mode");
@@ -850,7 +856,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
 	      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-	      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
+	      Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
 	      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	      Xgc->CurPixmapStatus = 1;
 	    }
@@ -862,9 +868,9 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       xinfo(Xgc," ");
       g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->extra_pixmap = NULL;
-      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      Xgc->private->drawable = Xgc->private->pixmap;
       if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->pixmap);
+      Xgc->private->cairo_cr = cairo_create (Xgc->private->pixmap);
       Xgc->CurPixmapStatus = 0;
     }
   else
@@ -872,9 +878,9 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       /* removing the extra pixmap as the default drawable
        * but extra_pixmap is not destroyed
        */
-      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      Xgc->private->drawable = Xgc->private->pixmap;
       if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->pixmap);
+      Xgc->private->cairo_cr = cairo_create (Xgc->private->pixmap);
       Xgc->CurPixmapStatus = 0;
     }
 

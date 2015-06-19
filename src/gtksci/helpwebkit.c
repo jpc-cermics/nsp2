@@ -269,34 +269,49 @@ static GtkWidget*create_toolbar ()
 {
   GtkWidget* uri_entry;
   GtkWidget* toolbar = gtk_toolbar_new ();
-
-  gtk_toolbar_set_orientation (GTK_TOOLBAR (toolbar), GTK_ORIENTATION_HORIZONTAL);
-  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
-
   GtkToolItem* item;
 
+  /*
+  gtk_toolbar_set_orientation (GTK_TOOLBAR (toolbar), GTK_ORIENTATION_HORIZONTAL);
+  */
+  gtk_orientable_set_orientation (GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
+  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+
   /* the back button */
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_GO_BACK);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_GO_BACK); */
+  item = gtk_tool_button_new (NULL, "go-back");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Go-Back");
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_back_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
   /* The forward button */
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_GO_FORWARD);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_GO_FORWARD); */
+  item = gtk_tool_button_new (NULL, "go-forward");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Go-Forward");
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_forward_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
 
 #ifdef HAVE_WEBKIT_ZOOM
   /* The zooms buttons */
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_IN); */
+  item = gtk_tool_button_new (NULL, "zoom-in");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Zoom-In");
+
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_in_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_OUT);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_OUT); */
+  item = gtk_tool_button_new (NULL, "zoom-out");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Zoom-Out");
+
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_out_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_100);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_100); */
+  item = gtk_tool_button_new (NULL, "zoom-100");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Zoom-100");
+
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_100_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 #endif 
@@ -311,7 +326,11 @@ static GtkWidget*create_toolbar ()
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
   /* The go button */
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_OK);
+  /* item = gtk_tool_button_new_from_stock (GTK_STOCK_OK); */
+  item = gtk_tool_button_new (NULL, "ok");
+  gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON(item),"Ok");
+
+
   g_signal_connect_swapped (G_OBJECT (item), "clicked", G_CALLBACK (activate_uri_entry_cb), (gpointer)uri_entry);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 

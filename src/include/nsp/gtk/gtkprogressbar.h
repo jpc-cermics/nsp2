@@ -23,20 +23,20 @@
 
 /* NspGtkProgressBar */
 
-#include <nsp/gtk/gtkprogress.h>
+#include <nsp/gtk/gtkwidget.h>
 
 /*
- * NspGtkProgressBar inherits from GtkProgress
+ * NspGtkProgressBar inherits from GtkWidget
  * just change some type attributes 
  */
 
-typedef NspGtkProgress NspGtkProgressBar ;
-typedef NspTypeGtkProgress NspTypeGtkProgressBar ;
+typedef NspGtkWidget NspGtkProgressBar ;
+typedef NspTypeGtkWidget NspTypeGtkProgressBar ;
 
 extern int nsp_type_gtkprogressbar_id;
 extern NspTypeGtkProgressBar *nsp_type_gtkprogressbar;
 
-/* type instances for gtkprogress */
+/* type instances for gtkwidget */
 
 NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode);
 

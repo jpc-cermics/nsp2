@@ -196,7 +196,7 @@ gtk_plug_set_is_child (GtkPlug  *plug,
        * here, but don't bother remapping -- we will get mapped
        * by gtk_widget_set_parent ().
        */
-      if (GTK_WIDGET_MAPPED (plug))
+      if (gtk_widget_get_mapped (plug))
 	gtk_widget_unmap (GTK_WIDGET (plug));
       
       GTK_WIDGET_UNSET_FLAGS (plug, GTK_TOPLEVEL);
@@ -612,7 +612,7 @@ gtk_plug_map (GtkWidget *widget)
 
       if (bin->child &&
 	  GTK_WIDGET_VISIBLE (bin->child) &&
-	  !GTK_WIDGET_MAPPED (bin->child))
+	  !gtk_widget_get_mapped (bin->child))
 	gtk_widget_map (bin->child);
 
       xembed_set_info (widget->window, XEMBED_MAPPED);

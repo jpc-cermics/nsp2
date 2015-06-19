@@ -20,11 +20,9 @@
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
-#include <string.h> /* in case of dbmalloc use */
-#include <stdio.h>
-#include <math.h>
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
+#include <nsp/nsp.h>
+#include <gtk/gtk.h>
+#include <nsp/graphics-new/Graphics.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -591,9 +589,8 @@ static int ffnd (BCG *Xgc,ptr_level_f func, int i1, int i2, int i3, int i4,
  *
  */
 
-static int *xcont=NULL,*ycont=NULL;
-static double *xdcont=NULL,*ydcont=NULL,*zdcont=NULL;
 static int cont_size ;
+static int *xcont=NULL,*ycont=NULL;
 
 /*
  * store a point in the current level curve if ival == 0 the level 
@@ -602,6 +599,9 @@ static int cont_size ;
  */
 
 #ifdef WITH_GTKGLEXT 
+
+static double *xdcont=NULL,*ydcont=NULL,*zdcont=NULL;
+
 
 static void
 G_Contstore_ogl(int ival, double xncont, double yncont, double zncont)

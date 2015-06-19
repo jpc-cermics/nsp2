@@ -21,6 +21,15 @@
  *
  *--------------------------------------------------------------------------*/
 
+
+#if GTK_CHECK_VERSION(3,0,0)
+#define MY_THREADS_LEAVE  /* GDK_THREADS_LEAVE (); */
+#define MY_THREADS_ENTER  /* GDK_THREADS_ENTER (); */
+#else
+#define MY_THREADS_LEAVE  gdk_threads_leave();
+#define MY_THREADS_ENTER  gdk_threads_enter();
+#endif 
+
 /* FIXME */
 extern char * nsp_string_to_utf8( char *str);
 static void nsp_event_pause(int number) ;
@@ -68,9 +77,9 @@ static void nsp_gtk_main(void)
   if (nsp_loop==NULL) {
     nsp_loop = g_main_loop_new (NULL, TRUE);
   }
-  GDK_THREADS_LEAVE ();
+  MY_THREADS_LEAVE;
   g_main_loop_run (nsp_loop);
-  GDK_THREADS_ENTER ();
+  MY_THREADS_ENTER;
 }
 
 /**
@@ -199,7 +208,12 @@ static gboolean locator_button_motion(GtkWidget *widget,
       gdk_event_request_motions(event);
 #else
       GdkModifierType state;
+#if GTK_CHECK_VERSION(3,0,0)
+      gdk_window_get_device_position(event->window,event->device, &x, &y, &state);
+#else 
       gdk_window_get_pointer (event->window, &x, &y, &state);
+#endif 
+
 #endif
     }
   else
@@ -266,13 +280,21 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	  /* here we are not in an xclick or xgetmouse
 	   * thus we have to store events in queue.
 	   */
-	  gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
+#if GTK_CHECK_VERSION(3,0,0)
+      gdk_window_get_device_position(GS_GET_WINDOW(gc->private->drawing), NULL, &x, &y, &state);
+#else 
+      gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state); 
+#endif
 	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
 	  nsp_enqueue(&gc->queue,&ev);
 	}
       else
 	{
+#if GTK_CHECK_VERSION(3,0,0)
+	  gdk_window_get_device_position(GS_GET_WINDOW(gc->private->drawing), NULL, &x, &y, &state);
+#else 
 	  gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
+#endif
 	  nsp_event_info.x=x ; nsp_event_info.y=y;
 	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow;
 	  nsp_event_info.button = event->keyval;
@@ -322,12 +344,12 @@ static gint timeout_menu_check (BCG *gc)
     if (  dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
 #endif
       {
-	GDK_THREADS_ENTER ();
+	MY_THREADS_ENTER;
 	nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
 	nsp_event_info.mask = 0;
 	nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
 	nsp_gtk_main_quit();
-	GDK_THREADS_LEAVE ();
+	MY_THREADS_LEAVE ;
 #ifdef  DEBUG_T
 	Sciprintf("quit the menu_check with a message\n");
 #endif
@@ -342,9 +364,9 @@ extern void nsp_flush_tkevents(void);
 
 static gint timeout_tk (void *v)
 {
-  GDK_THREADS_ENTER ();
+  MY_THREADS_ENTER;
   nsp_flush_tkevents();
-  GDK_THREADS_LEAVE ();
+  MY_THREADS_LEAVE;
   return TRUE;
 }
 
@@ -567,7 +589,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
 #endif
 #endif
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 void nsp_pause(int sec_time,int events)
 {
   if ( sec_time == 0 )
@@ -669,7 +691,7 @@ static void xinfo(BCG *Xgc,char *format,...)
 }
 
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 int window_list_check_top(BCG *dd,void *win)
 {
   return dd->private->window == (GtkWidget *) win ;
@@ -790,11 +812,37 @@ static void delete_window(BCG *dd,int intnum)
     }
   /* free data associated to menus */
   menu_entry_delete(winxgc->private->menu_entries);
-  if (winxgc->private->gcursor != NULL) gdk_cursor_unref (winxgc->private->gcursor);
-  if (winxgc->private->ccursor != NULL)gdk_cursor_unref (winxgc->private->ccursor);
-  if (winxgc->private->extra_cursor != NULL)gdk_cursor_unref (winxgc->private->extra_cursor);
+  if (winxgc->private->gcursor != NULL) 
+    {
+#if GTK_CHECK_VERSION(3,0,0)
+      g_object_unref (G_OBJECT(winxgc->private->gcursor));
+#else 
+      gdk_cursor_unref (winxgc->private->gcursor);
+#endif 
+      winxgc->private->gcursor= NULL;
+    }
+  if (winxgc->private->ccursor != NULL) 
+    {
+#if GTK_CHECK_VERSION(3,0,0)
+      g_object_unref (G_OBJECT(winxgc->private->ccursor));
+#else 
+      gdk_cursor_unref (winxgc->private->ccursor);
+#endif
+      winxgc->private->ccursor= NULL;
+    }
+  if (winxgc->private->extra_cursor != NULL) 
+    {
+#if GTK_CHECK_VERSION(3,0,0)
+      g_object_unref (G_OBJECT(winxgc->private->extra_cursor));
+#else 
+      gdk_cursor_unref(winxgc->private->extra_cursor);
+#endif 
+      winxgc->private->extra_cursor= NULL;
+    }
+  /* 
   if (winxgc->private->stdgc != NULL)g_object_unref(winxgc->private->stdgc);
   if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
+  */
   nsp_fonts_finalize(winxgc);
   FREE(winxgc->private);
   /* remove current window from window list */
@@ -807,23 +855,23 @@ static void scig_deconnect_handlers(BCG *winxgc)
   int n=0;
   if ( winxgc->private->window == NULL ) return;
 
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func(winxgc->private->drawing,
 					  G_CALLBACK( configure_event), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->drawing),
 					  G_CALLBACK( expose_event_new), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->window),
 					  G_CALLBACK(  sci_destroy_window ), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->window),
 					  G_CALLBACK(sci_delete_window), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
+  n+=g_signal_handlers_disconnect_by_func ((winxgc->private->window),
 					   G_CALLBACK( key_press_event_new), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->drawing),
 					  G_CALLBACK( locator_button_press), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->drawing),
 					  G_CALLBACK( locator_button_release), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->drawing),
 					  G_CALLBACK( locator_button_motion), (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+  n+=g_signal_handlers_disconnect_by_func((winxgc->private->drawing),
 					  G_CALLBACK( realize_event), (gpointer) winxgc);
 }
 
@@ -841,9 +889,9 @@ static void scig_deconnect_handlers(BCG *winxgc)
 
 static gint timeout_pause (void *data)
 {
-  GDK_THREADS_ENTER ();
+  MY_THREADS_ENTER;
   nsp_gtk_main_quit();
-  GDK_THREADS_LEAVE ();
+  MY_THREADS_LEAVE;
   return TRUE;
 }
 
@@ -872,7 +920,11 @@ target_drag_data_received  (GtkWidget          *widget,
 			    guint               info,
 			    guint               time)
 {
-
+#if GTK_CHECK_VERSION(3,0,0)
+  GdkAtom data_target = gtk_selection_data_get_selection (data);
+#else 
+  GdkAtom data_target = data->target;
+#endif
   if (gtk_drag_get_source_widget (context) == widget)
     {
       /* we stop if the drag was initiated by us */
@@ -881,7 +933,7 @@ target_drag_data_received  (GtkWidget          *widget,
     }
 
   /* if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW")) */
-  if (data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW",FALSE ))
+  if (data_target == gdk_atom_intern ("GTK_TREE_MODEL_ROW",FALSE ))
     {
       /* used when draging an icon from a scicos palette
        * the associated model row is transmited through drag and drop
@@ -944,7 +996,14 @@ target_drag_data_received  (GtkWidget          *widget,
 	       *  ids[0],ids[1],winnum);
 	       */
 	      Xgc = window_list_search(winnum);
+#if GTK_CHECK_VERSION(3,0,0)
+	      gdk_window_get_device_position(GS_GET_WINDOW(Xgc->private->drawing), 
+					     gdk_drag_context_get_device (context),
+					     &x1, &y1, &state);
+#else 
 	      gdk_window_get_pointer (GS_GET_WINDOW(Xgc->private->drawing), &x1, &y1, &state);
+#endif
+
 	      if ( nsp_new_graphics() == TRUE)
 		nsp_get_point_axes(Xgc,x1,y1,pt);
 	      else

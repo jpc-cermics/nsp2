@@ -126,7 +126,9 @@ struct s_menu_entry
 typedef struct  _gtk_data {
   void     *a_colors;                   /* an array of colors in a NspMatrix  */
   GQueue   *q_colors;                   /* an queue for storing colors        */
+#ifdef KEEP_GTK2   
   GdkColormap *colormap ;               /* used to keep track of drawing colormap */
+#endif
   GtkWidget *window;			/* Graphics frame */
   GtkWidget *drawing;                   /* gtk drawing area used for drawing */
   GtkWidget *scrolled;                  /* scrolled window which contains the drawing area*/
@@ -134,18 +136,26 @@ typedef struct  _gtk_data {
   GtkWidget *vbox;                      /* vbox */
   GtkWidget *menubar;
   menu_entry *menu_entries;             /* */
+#ifdef KEEP_GTK2   
   GdkPixmap *pixmap;                    /* backing store pixmap */
   GdkPixmap *extra_pixmap;              /* extra backing store pixmap used when pixmap mode is on  */
   GdkDrawable *drawable;                /* can be set to drawing->window, pixmap or extra_pixmap */
   GdkGC *wgc;
   GdkGC *stdgc;
+#else 
+  cairo_surface_t *pixmap;              /* backing store surface */
+  cairo_surface_t *extra_pixmap;        /* extra backing store pixmap used when pixmap mode is on  */
+  cairo_surface_t *drawable;            /* can be set to pixmap or extra_pixmap */
+#endif
   GdkColor gcol_bg;
   GdkColor gcol_fg;
   GdkRectangle clip;
   GdkCursor *gcursor;                   /* xclick cursor */
   GdkCursor *ccursor;                   /* standard cursor */
   GdkCursor *extra_cursor;              /* extra cursor */
+#ifdef KEEP_GTK2    
   GdkFont *font;
+#endif
   int resize;				/* Window resized */
   int zzin_expose;                      /* we are in an expose_event action*/
   int draw;                             /* when true need to redraw  */

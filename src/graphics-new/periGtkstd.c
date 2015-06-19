@@ -45,6 +45,7 @@
 
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
 
 #ifdef GSEAL_ENABLE
 #define GS_GET_WINDOW(x) gtk_widget_get_window(x)
@@ -54,11 +55,11 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 double nsp_predef_colors[] =
   {
     0,0,0,       /* black */
@@ -169,6 +170,7 @@ static void xset_pixmapclear(BCG *Xgc)
 
 static void xset_show(BCG *Xgc)
 {
+  cairo_t *cr;
   if ( Xgc->CurPixmapStatus == 1)
     {
 #ifdef PERIGLGTK
@@ -188,12 +190,19 @@ static void xset_show(BCG *Xgc)
       /* we copy the extra_pixmap to the window and to the backing store pixmap
        * except for perigl which draw without a Xgc->private->pixmap.
        */
-      gdk_draw_drawable(GS_GET_WINDOW(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
-		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-#ifndef PERIGK
-      gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
-		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-#endif
+      cr = gdk_cairo_create (GS_GET_WINDOW(Xgc->private->drawing));
+      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0); 
+      cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
+      cairo_rectangle (cr, 0, 0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+      cairo_fill (cr);
+      cairo_destroy (cr);
+      /* copy extra_pixmap to pixmap */
+      cr = cairo_create (Xgc->private->pixmap); /* pixmap is a surface */
+      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0); 
+      cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
+      cairo_rectangle (cr, 0, 0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      cairo_fill (cr);
+      cairo_destroy (cr);
 #endif
     }
   else
@@ -223,7 +232,7 @@ static void xselgraphic(BCG *Xgc)
   /* Test not really usefull: see sciwin in matdes.f */
   if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL)
     initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
-  gdk_window_show(Xgc->private->window->window);
+  gdk_window_show(GS_GET_WINDOW(Xgc->private->window));
   gdk_flush();
 }
 
@@ -323,7 +332,7 @@ static void xset_recording(BCG *Xgc, int val)
 static void xget_windowpos(BCG *Xgc,int *x,int *y)
 {
   gint xx,yy;
-  gdk_window_get_position (Xgc->private->window->window,&xx,&yy);
+  gdk_window_get_position (GS_GET_WINDOW(Xgc->private->window),&xx,&yy);
   *x = xx; *y =yy;
 }
 
@@ -342,7 +351,7 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
 {
   if (Xgc == NULL || Xgc->private->window ==  NULL)
     initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
-  gdk_window_move (Xgc->private->window->window, x,y);
+  gdk_window_move (GS_GET_WINDOW(Xgc->private->window), x,y);
 }
 
 /**
@@ -375,6 +384,14 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  *
  **/
 
+
+static void gtk_get_size(GtkWidget *widget, gint *ww, gint *wh)
+{
+  GdkWindow *window = gtk_widget_get_window(widget);
+  *ww = gdk_window_get_width(window);
+  *wh = gdk_window_get_height(window);
+}
+
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
   gint pw,ph,w,h;
@@ -382,15 +399,15 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
   if ( Xgc->CurResizeStatus == 1 )
     {
       /* here drawing and scrolled move together */
-      gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
+      gtk_get_size (Xgc->private->window,&pw,&ph);
+      gtk_get_size (Xgc->private->scrolled,&pw,&ph);
+      gtk_get_size (Xgc->private->drawing,&w,&h);
       /* resize the graphic window */
-      gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x,y);
+      gtk_window_resize(GTK_WINDOW(Xgc->private->drawing),x,y);
       /* resize the main window at init time */
-      /* gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));*/
+      /* gdk_window_resize(GS_GET_WINDOW(Xgc->private->window),x+Max((pw-w),0),y+Max((ph-h),0));*/
       /* resize the scrolled */
-      gdk_window_resize(Xgc->private->scrolled->window,x+Max((pw-w),0),y+Max((ph-h),0));
+      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x+Max((pw-w),0),y+Max((ph-h),0));
       /* we want the size to be ok now and not to wait for configure_event  */
       Xgc->CWindowWidth = x;
       Xgc->CWindowHeight = y;
@@ -411,11 +428,11 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       /* gint sc_w,sc_h;*/
       GdkGeometry geometry;
       GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE;
-      gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
+      gtk_get_size (Xgc->private->window,&pw,&ph);
+      gtk_get_size (Xgc->private->drawing,&w,&h);
       if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
       /* resize the graphic window */
-      gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x,y);
+      gtk_window_resize(GTK_WINDOW(Xgc->private->drawing),x,y);
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
       /* Limit the scolled window size  */
@@ -439,7 +456,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  if (  schrink == TRUE )
 	    {
 	      /* resize the main window */
-	      gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));
+	      gtk_window_resize(GTK_WINDOW(Xgc->private->window),x+Max((pw-w),0),y+Max((ph-h),0));
 	    }
 	}
       Xgc->CWindowWidth = x;
@@ -456,8 +473,6 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 }
 
 
-
-
 /**
  * xget_popupdim:
  * @Xgc: a #BCG
@@ -470,8 +485,8 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 {
   gint xx,yy;
-  /*   gdk_drawable_get_size (Xgc->private->window->window,&xx,&yy); */
-  gdk_drawable_get_size (Xgc->private->scrolled->window,&xx,&yy);
+  /*   gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->window),&xx,&yy); */
+  gtk_get_size (Xgc->private->scrolled,&xx,&yy);
   *x = xx ;  *y = yy ;
 }
 
@@ -490,8 +505,8 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
   if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2 )
     {
       int w,h,pw,ph, xoff, yoff;
-      gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
+      gtk_get_size (Xgc->private->scrolled,&pw,&ph);
+      gtk_get_size (Xgc->private->drawing,&w,&h);
       xoff = Max((pw-w),0);
       yoff= Max((ph-h),0);
       if ( (Xgc->CWindowWidth < x - xoff  ) || (Xgc->CWindowHeight <  y - yoff ))
@@ -507,12 +522,12 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 
 	}
       /* for a resize of the scrolled window */
-      gdk_window_resize(Xgc->private->scrolled->window,x,y);
+      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x,y);
     }
   else
     {
       /* now resize the scrolled window */
-      gdk_window_resize(Xgc->private->scrolled->window,x,y);
+      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x,y);
     }
 }
 
@@ -533,8 +548,8 @@ static void xget_viewport(BCG *Xgc,int *x, int *y)
       /* get the horizontal and vertival adjustments of the ? */
       H = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
       V = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
-      *x = (int) H->value;
-      *y = (int) V->value;
+      *x = gtk_adjustment_get_value(H);
+      *y = gtk_adjustment_get_value(V);
     }
   else
     {
@@ -610,7 +625,7 @@ static int xset_curwin(int intnum,int set_menu)
   /* be sure that the graphic window is realized */
   if ( new != NULL )
     {
-      if (! GTK_WIDGET_REALIZED(new->private->drawing))
+      if (! gtk_widget_get_realized(new->private->drawing))
 	gtk_widget_realize(new->private->drawing);
       if ( set_menu == TRUE) MenuFixCurrentWin(intnum);
     }
@@ -1010,7 +1025,7 @@ static void xset_wresize(BCG *Xgc,int num)
     {
       int w,h;
       if ( Xgc->private->drawing == NULL ) return;
-      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
+      gtk_get_size (Xgc->private->drawing,&w,&h);
       Xgc->CurResizeStatus = num1 ;
       xset_windowdim(Xgc,w,h);
     }
@@ -1083,9 +1098,10 @@ static int xset_default_colormap(BCG *Xgc)
       Xgc->private->a_colors = colors;
     }
   /* just in case: initialize the colormap */
+  /*
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL)
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
-
+  */
   for (i = 0; i < m; i++) {
     colors->R[i] = (default_colors[3*i]/(double) 255);
     colors->R[i+ colors->m] = (default_colors[3*i+1]/(double) 255);
@@ -1142,9 +1158,10 @@ static int xset_colormap(BCG *Xgc,void *a)
       Xgc->private->a_colors = colors;
     }
   /* just in case: initialize the colormap */
+  /* 
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL)
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
-
+  */
   for (i = 0; i < A->m; i++) {
     colors->R[i] = A->R[i];
     colors->R[i+ colors->m] =A->R[i+A->m];
@@ -1162,7 +1179,7 @@ static int xset_colormap(BCG *Xgc,void *a)
  *
  **/
 
-#ifdef  PERIGTK
+#ifdef  PERICAIRO
 void nsp_set_colormap_constants(BCG *Xgc,int m)
 {
   Xgc->Numcolors = m;
@@ -1483,7 +1500,7 @@ static void xset_fpf_def(BCG *Xgc)
  *
  **/
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 void nsp_initialize_gc( BCG *Xgc )
 {
   int i;
@@ -1533,8 +1550,10 @@ static void xset_default(BCG *Xgc)
 
 static gint realize_event_common(GtkWidget *widget, gpointer data)
 {
-  GdkColor white={0,0,0,0};
-  GdkColor black={0,65535,65535,65535};
+  /*
+    GdkColor white={0,0,0,0};
+    GdkColor black={0,65535,65535,65535};
+  */
   BCG *dd = (BCG *) data;
 
   g_return_val_if_fail(dd != NULL, FALSE);
@@ -1542,15 +1561,18 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
   /* create gc */
+  /*
   dd->private->stdgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing));
   gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+  */
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
-  dd->private->wgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing));
+  /* dd->private->wgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing)); */
+  /* 
   gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
-
+  */
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
@@ -1580,15 +1602,24 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
+      /* We could use 
+       * gtk_widget_get_allocated_width (widget),
+       * gtk_widget_get_allocated_height (widget));
+       */
+      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+							       CAIRO_CONTENT_COLOR,
+							       dd->CWindowWidth, dd->CWindowHeight);
+      /* 
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
+      */
     }
 
   /* default value is to use the background pixmap */
-  dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
+  dd->private->drawable= dd->private->pixmap;  /* XXXX */
 #ifdef  PERICAIRO
-  dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
+  dd->private->cairo_cr = cairo_create (dd->private->pixmap);
 #endif
   return FALSE;
 }
@@ -1642,9 +1673,14 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
+      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+							       CAIRO_CONTENT_COLOR,
+							       dd->CWindowWidth, dd->CWindowHeight);
+      /*
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
+      */
     }
 
   /* default value is to use the background pixmap */
@@ -1706,7 +1742,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   /* check for resize */
-  if(GTK_WIDGET_REALIZED(dd->private->drawing))
+  if(  gtk_widget_get_realized(dd->private->drawing))
     {
       if ( dd->CurResizeStatus == -1)
 	{
@@ -1780,7 +1816,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
-	      gdk_drawable_get_size (GS_GET_WINDOW(dd->private->drawing),&w,&h);
+	      gtk_get_size (dd->private->drawing,&w,&h);
 	      /* just to give the scrollbar the possibility to be updated */
 	      gtk_widget_set_size_request (dd->private->drawing,w,h);
 	    }
@@ -1826,14 +1862,20 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
        */
       dd->private->resize = 0;
       if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
+
+      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+							       CAIRO_CONTENT_COLOR,
+							       dd->CWindowWidth, dd->CWindowHeight);
+      /* 
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
+      */
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
-      dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
+      dd->private->cairo_cr = cairo_create (dd->private->pixmap);
 #endif
       /* if we have an extra pixmap we must resize */
       dd->graphic_engine->pixmap_resize(dd);
@@ -1859,28 +1901,49 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 
   if (event  != NULL)
     {
+      /* 
       gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
+      */
       /* uncomment to debug the drawing rectangle which is updated
       gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y,
 			 event->area.width, event->area.height);
       */
+      /* 
+      cairo_set_source_surface (cr, src_surface, x_dest - x_src, y_dest - y_src);
+      cairo_rectangle (cr, x_dest, y_dest, width, height);
+      */
+      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+      cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
+      cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
+      cairo_fill (cr);
+      cairo_destroy (cr);
     }
   else
     {
+      /* 
       gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
+      */
+      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+      cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
+      cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
+      cairo_fill (cr);
+      cairo_destroy (cr);
     }
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
-      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
-			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_rectangle (cr,dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+      cairo_stroke (cr);
     }
 
   dd->private->invalidated.x = 0;
@@ -1889,6 +1952,74 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   dd->private->invalidated.height = 0;
 
   gdk_flush();
+  return FALSE;
+}
+#endif
+
+#if defined(PERICAIRO)
+/* the draw callback for GTk3 */
+
+static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
+{
+  guint width, height;
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  
+  width = gtk_widget_get_allocated_width (widget);
+  height = gtk_widget_get_allocated_height (widget);
+  
+  if(dd->private->resize != 0)
+    {
+      /* we need to resize the surface used for drawing */
+      dd->private->resize = 0;
+      if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
+
+      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+							       CAIRO_CONTENT_COLOR,
+							       dd->CWindowWidth, dd->CWindowHeight);
+      /* update drawable */
+      if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
+      if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
+      dd->private->cairo_cr = cairo_create (dd->private->pixmap);
+      /* if we have an extra pixmap we must resize */
+      dd->graphic_engine->pixmap_resize(dd);
+      /* we want to redraw all the window */
+      dd->private->draw = TRUE;
+    }
+
+  if ( dd->private->draw == TRUE )
+    {
+      dd->private->draw = FALSE;
+      if (dd->figure == NULL)
+	{
+	  dd->graphic_engine->cleararea(dd,NULL);
+	}
+      else
+	{
+	  /* call a new draw when necessary here */
+	  NspGraphic *G = (NspGraphic *) dd->figure ;
+	  G->type->draw(dd,G,NULL,NULL);
+	}
+    }
+  
+  cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+  cairo_rectangle (cr, 0,0, width, height);
+  cairo_fill (cr);
+  
+  /* if a zrect exists then add it on graphics  */
+  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
+    {
+      cairo_rectangle (cr,dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+      cairo_stroke (cr);
+    }
+
+  dd->private->invalidated.x = 0;
+  dd->private->invalidated.y = 0;
+  dd->private->invalidated.width = 0;
+  dd->private->invalidated.height = 0;
+
   return FALSE;
 }
 #endif
@@ -2005,9 +2136,14 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}
       /* allocate a new pixmap and set its open Gl capabilities */
+      /* 
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
+					   -1);*/
+      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+							       CAIRO_CONTENT_COLOR,
+							       dd->CWindowWidth, dd->CWindowHeight);
+
       nsp_set_gldrawable(dd,dd->private->pixmap);
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
@@ -2103,13 +2239,17 @@ GdkImage* nsp_get_image(BCG *Xgc)
  * Returns:
  **/
 
-#if defined(PERIGTK)
+#if defined(PERICAIRO)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 {
+  /*
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
 				      gdk_drawable_get_colormap(Xgc->private->drawable),
 				      0,0,0,0,
 				      Xgc->CWindowWidth,Xgc->CWindowHeight);
+  */
+  Sciprintf("This is to be done with Cairo\n");
+  return NULL;
   /* gdk_colormap_get_system(), */
 }
 #endif
@@ -2144,7 +2284,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #include "perigtk/peridraw_gl.c"
 #endif /* PERIGL */
 
-#ifdef PERIGTK
+#ifdef PERICAIRO
 /* for all drivers */
 
 void nsp_set_cursor(BCG *Xgc,int id)
@@ -2152,22 +2292,34 @@ void nsp_set_cursor(BCG *Xgc,int id)
   GdkCursor *cursor;
   if ( id == -1 )
     {
-      if (Xgc->private->extra_cursor != NULL)
-	gdk_cursor_unref (Xgc->private->extra_cursor);
-      Xgc->private->extra_cursor = NULL;
       gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
 			     Xgc->private->ccursor);
+      if (Xgc->private->extra_cursor != NULL)
+	{
+#if GTK_CHECK_VERSION(3,0,0)
+	  g_object_unref (G_OBJECT(Xgc->private->extra_cursor));
+#else
+	  gdk_cursor_unref (Xgc->private->extra_cursor);
+#endif
+	}
+      Xgc->private->extra_cursor = NULL;
     }
   else
     {
       cursor = gdk_cursor_new(id);
       if ( cursor != NULL)
 	{
-	  if (Xgc->private->extra_cursor != NULL)
-	    gdk_cursor_unref (Xgc->private->extra_cursor);
-	  Xgc->private->extra_cursor = cursor;
 	  gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
 				 cursor);
+	  if (Xgc->private->extra_cursor != NULL)
+	    {
+#if GTK_CHECK_VERSION(3,0,0)
+	      g_object_unref (G_OBJECT(Xgc->private->extra_cursor));
+#else
+	      gdk_cursor_unref (Xgc->private->extra_cursor);
+#endif
+	    }
+	  Xgc->private->extra_cursor = cursor;
 	}
     }
 }
@@ -2175,6 +2327,7 @@ void nsp_set_cursor(BCG *Xgc,int id)
 
 NspObject *nsp_get_graphic_widget(int wid)
 {
+#if 0
   NspObject *Obj;
   BCG *Xgc;
   if ( (Xgc=window_list_search_new(wid)) == NULL) return NULL;
@@ -2184,6 +2337,8 @@ NspObject *nsp_get_graphic_widget(int wid)
     gobject_create(NVOID,(GObject *) Xgc->private->window,
 		   (NspTypeBase *) nsp_type_gtkwindow);
   return Obj;
+#endif 
+  return NULL;
 }
 
 #endif

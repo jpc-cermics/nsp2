@@ -56,12 +56,11 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
   start_sci_gtk(); /* be sure that gtk is started */
 
   window = gtk_dialog_new_with_buttons ("Nsp matrix", NULL, 0,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
 					NULL);
+  vbox =gtk_dialog_get_content_area( GTK_DIALOG(window));
 
-  vbox = GTK_DIALOG(window)->vbox;
-  
   nsp_dialogs_insert_title(title,vbox);
   
   /* initialize */
@@ -89,13 +88,14 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
 	list = nsp_matrix_table(Labels_v,Labels_h,M,entry_size);
       else 
 	list = nsp_matrix_create_tree_view(Labels_v,Labels_h,M);
-      gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list);
+      /* gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list); */
+      gtk_container_add(GTK_CONTAINER(scrolled_win),list);
     }
   else 
     { 
       /* no need to add a viewport */
       GtkWidget *frame = gtk_frame_new(NULL);
-      GtkWidget *fvbox  = gtk_vbox_new (FALSE, 0);
+      GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);  
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);
@@ -277,10 +277,12 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
   if ((entries=(GtkWidget **)MALLOC(  (M->mn)*sizeof(GtkWidget *)))== NULL)
     return NULL;
   
-  table = gtk_table_new (M->m+1,M->n+1, FALSE);
+  /* table = gtk_table_new (M->m+1,M->n+1, FALSE); */
+  table = gtk_grid_new();
+  
   g_object_set_data_full (G_OBJECT(table),"entries",entries, g_free);
 
-  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
+  /* gtk_table_set_homogeneous(GTK_TABLE(table),FALSE); */
   gtk_widget_show(table);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
   
@@ -292,7 +294,8 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  GtkWidget *label;
 	  label = gtk_label_new (Labels_v->S[j]);
 	  gtk_widget_show (label);
-	  gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0);
+	  /* gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0); */
+	  gtk_grid_attach(GTK_GRID (table),label,0,1,j+1,j+2);
 	}
     }
   
@@ -305,7 +308,8 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  GtkWidget *label;
 	  label = gtk_label_new (Labels_h->S[i]);
 	  gtk_widget_show (label);
-	  gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);
+	  /* gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);*/
+	  gtk_grid_attach (GTK_GRID(table),label,i+1,i+2,0,1);
 	}
       for (j=0 ; j< M->m ; j++)
 	{
@@ -316,7 +320,8 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  gtk_widget_set_size_request (entry,entry_size,-1);
 	  gtk_entry_set_text (GTK_ENTRY(entry),M->S[j+i*M->m]);
 	  gtk_widget_show (entry);
-	  gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
+	  /* gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
+	  gtk_grid_attach (GTK_GRID (table),entry,i+1,i+2,j+1,j+2);
 	}
     }
   return table;
@@ -331,7 +336,7 @@ static int nsp_matrix_table_get_values(GtkWidget *table,NspSMatrix *S)
     {
       char *loc;
       char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
-					   GTK_ENTRY(entries[i])->text_length);
+					   gtk_entry_get_text_length(GTK_ENTRY(entries[i])));
       if ( text == NULL ||  (loc =new_nsp_string(text)) == NULLSTRING)
 	{
 	  return FAIL;

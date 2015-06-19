@@ -887,7 +887,7 @@ gtk_menu_popup (GtkMenu		    *menu,
       
       while (tmp)
 	{
-	  if (!GTK_WIDGET_MAPPED (tmp))
+	  if (!gtk_widget_get_mapped (tmp))
 	    {
 	      viewable = FALSE;
 	      break;

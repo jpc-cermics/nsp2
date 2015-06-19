@@ -1270,7 +1270,7 @@ cursor_set_callback (GtkTextBuffer     *buffer,
   
   text_view = GTK_TEXT_VIEW (user_data);
   
-  if (GTK_WIDGET_MAPPED (text_view) &&
+  if (gtk_widget_get_mapped (text_view) &&
       mark == gtk_text_buffer_get_insert (buffer))
     {
       GdkWindow *tab_window;

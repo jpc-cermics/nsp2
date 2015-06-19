@@ -54,7 +54,6 @@ extern  sci_interface  Interf_Interf  ;extern  interface_info  Interf_Interf_Inf
 extern  sci_interface  Datas_Interf ;extern  interface_info  Datas_Interf_Info ;
 extern  sci_interface  Graphics_Interf ;extern  interface_info  Graphics_Interf_Info ;
 extern  sci_interface  GraphicsUtil_Interf ;extern  interface_info  GraphicsUtil_Interf_Info ;
-extern  sci_interface  GraphicsOld_Interf ;extern  interface_info  GraphicsOld_Interf_Info ;
 extern  sci_interface  None_Interf ;extern  interface_info  None_Interf_Info ;
 extern  sci_interface  Menus_Interf ;extern  interface_info  Menus_Interf_Info ;
 extern  sci_interface  Hobj_Interf ;extern  interface_info  Hobj_Interf_Info ;
@@ -113,6 +112,10 @@ extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 #ifdef WITH_SNDFILE
 extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
 #endif
+
+#ifdef WITH_PORTAUDIO
+#undef WITH_PORTAUDIO
+#endif 
 
 #ifdef WITH_PORTAUDIO
 extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info ;
@@ -178,6 +181,7 @@ extern sci_interface VField_Interf;extern interface_info VField_Interf_Info;
 
 #endif
 
+#undef HAVE_WEBKIT
 #ifdef HAVE_WEBKIT
 extern sci_interface webkit_Interf;extern interface_info webkit_Interf_Info;
 #endif
@@ -232,7 +236,6 @@ InterfTab Interfaces[]={
   {Datas_Interf,Datas_Interf_Info},
   {Graphics_Interf,Graphics_Interf_Info},
   {GraphicsUtil_Interf,GraphicsUtil_Interf_Info},
-  {GraphicsOld_Interf,GraphicsOld_Interf_Info},
   {Menus_Interf,Menus_Interf_Info},
   {Hobj_Interf,Hobj_Interf_Info},
   {Rect_Interf,Rect_Interf_Info},

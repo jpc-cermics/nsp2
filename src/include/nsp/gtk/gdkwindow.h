@@ -23,20 +23,20 @@
 
 /* NspGdkWindow */
 
-#include <nsp/gtk/gdkdrawable.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGdkWindow inherits from GdkDrawable
+ * NspGdkWindow inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGdkDrawable NspGdkWindow ;
-typedef NspTypeGdkDrawable NspTypeGdkWindow ;
+typedef NspGObject NspGdkWindow ;
+typedef NspTypeGObject NspTypeGdkWindow ;
 
 extern int nsp_type_gdkwindow_id;
 extern NspTypeGdkWindow *nsp_type_gdkwindow;
 
-/* type instances for gdkdrawable */
+/* type instances for gobject */
 
 NspTypeGdkWindow *new_type_gdkwindow(type_mode mode);
 

@@ -23,20 +23,20 @@
 
 /* NspGtkFileFilter */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkFileFilter inherits from GtkObject
+ * NspGtkFileFilter inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkFileFilter ;
-typedef NspTypeGtkObject NspTypeGtkFileFilter ;
+typedef NspGObject NspGtkFileFilter ;
+typedef NspTypeGObject NspTypeGtkFileFilter ;
 
 extern int nsp_type_gtkfilefilter_id;
 extern NspTypeGtkFileFilter *nsp_type_gtkfilefilter;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode);
 

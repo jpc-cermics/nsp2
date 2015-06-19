@@ -23,20 +23,20 @@
 
 /* NspGtkTreeSelection */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkTreeSelection inherits from GtkObject
+ * NspGtkTreeSelection inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkTreeSelection ;
-typedef NspTypeGtkObject NspTypeGtkTreeSelection ;
+typedef NspGObject NspGtkTreeSelection ;
+typedef NspTypeGObject NspTypeGtkTreeSelection ;
 
 extern int nsp_type_gtktreeselection_id;
 extern NspTypeGtkTreeSelection *nsp_type_gtktreeselection;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode);
 

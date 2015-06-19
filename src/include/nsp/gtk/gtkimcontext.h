@@ -23,20 +23,20 @@
 
 /* NspGtkIMContext */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkIMContext inherits from GtkObject
+ * NspGtkIMContext inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkIMContext ;
-typedef NspTypeGtkObject NspTypeGtkIMContext ;
+typedef NspGObject NspGtkIMContext ;
+typedef NspTypeGObject NspTypeGtkIMContext ;
 
 extern int nsp_type_gtkimcontext_id;
 extern NspTypeGtkIMContext *nsp_type_gtkimcontext;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode);
 

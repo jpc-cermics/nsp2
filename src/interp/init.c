@@ -29,9 +29,6 @@
 
 #include <nsp/version.h>
 #include <nsp/machine.h>
-#ifdef WITH_GTKGLEXT
-#include <gtk/gtkgl.h>
-#endif
 #include <gtk/gtk.h>
 #include <nsp/gtksci.h>
 #include <nsp/nsptcl.h>

@@ -225,7 +225,7 @@ static void nsptv_cursor_set_callback (GtkTextBuffer     *buffer,
    * on the mapped widget (windows may not exist before realization).
    */
   GtkTextView *text_view = GTK_TEXT_VIEW (user_data);
-  if (GTK_WIDGET_MAPPED (text_view) &&
+  if (gtk_widget_get_mapped (GTK_WIDGET (text_view)) &&
       mark == gtk_text_buffer_get_insert (buffer))
     {
 
@@ -1931,7 +1931,7 @@ void nsp_textview_destroy(void)
 #ifndef NSP_WITH_MAIN_GTK_THREAD
 static GMainLoop *nsp_textview_loop=NULL;
 
-static gint timeout_command (void *v);
+static gboolean timeout_command (void *v);
 
 static void  nsp_textview_gtk_main(void)
 {
@@ -1939,7 +1939,7 @@ static void  nsp_textview_gtk_main(void)
   if (nsp_textview_loop==NULL) {
     nsp_textview_loop = g_main_loop_new (NULL, TRUE);
   }    
-  timer= g_timeout_add(100,  (GtkFunction) timeout_command ,nsp_textview_loop);
+  timer= g_timeout_add(100,  (GSourceFunc) timeout_command ,nsp_textview_loop);
   /* at that point we are in a  GDK_THREADS_ENTER(); */
   GDK_THREADS_LEAVE();
   g_main_loop_run (nsp_textview_loop);
@@ -1953,7 +1953,7 @@ static void  nsp_textview_gtk_main_quit(void)
   g_main_loop_quit(nsp_textview_loop);
 }
 
-static gint timeout_command (void *v)
+static gboolean  timeout_command (void *v)
 {
   if ( checkqueue_nsp_command() == TRUE) 
     {

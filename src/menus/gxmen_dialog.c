@@ -103,14 +103,14 @@ static menu_answer nsp_dialog_(const char *title,const char *init_value,char **a
   start_sci_gtk(); /* be sure that gtk is started */
 
   window = gtk_dialog_new_with_buttons ("Nsp dialog",NULL, 0,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
 					NULL);
   /*
    *    gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
    *    gtk_window_set_wmclass (GTK_WINDOW (window), "dialog", "Nsp");
    */
-  vbox = GTK_DIALOG(window)->vbox;
+  vbox =gtk_dialog_get_content_area(GTK_DIALOG(window));
 
   nsp_dialogs_insert_title(title,vbox);
 

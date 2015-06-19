@@ -23,20 +23,20 @@
 
 /* NspGtkFileChooserButton */
 
-#include <nsp/gtk/gtkhbox.h>
+#include <nsp/gtk/gtkbox.h>
 
 /*
- * NspGtkFileChooserButton inherits from GtkHBox
+ * NspGtkFileChooserButton inherits from GtkBox
  * just change some type attributes 
  */
 
-typedef NspGtkHBox NspGtkFileChooserButton ;
-typedef NspTypeGtkHBox NspTypeGtkFileChooserButton ;
+typedef NspGtkBox NspGtkFileChooserButton ;
+typedef NspTypeGtkBox NspTypeGtkFileChooserButton ;
 
 extern int nsp_type_gtkfilechooserbutton_id;
 extern NspTypeGtkFileChooserButton *nsp_type_gtkfilechooserbutton;
 
-/* type instances for gtkhbox */
+/* type instances for gtkbox */
 
 NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode);
 

@@ -102,7 +102,7 @@ static int window_list_search_from_drawing__(WindowList *listptr,void *win);
  * Return value: the current BCG to be used
  **/
 
-extern Gengine Gtk_gengine; /* XXXXX */
+extern Gengine Cairo_gengine; /* XXXXX */
 
 BCG *check_graphic_window_new(void)
 {
@@ -112,7 +112,7 @@ BCG *check_graphic_window_new(void)
 #ifdef THREAD_VERSION
       gdk_threads_enter();
 #endif
-      Gtk_gengine.xset_curwin(0,TRUE);
+      Cairo_gengine.xset_curwin(0,TRUE);
 #ifdef THREAD_VERSION
       gdk_threads_leave();
 #endif
@@ -133,7 +133,7 @@ BCG *check_graphic_window_new(void)
 
 BCG *set_graphic_window_new(int num)
 {
-  Gtk_gengine.xset_curwin(Max(0,num),TRUE);
+  Cairo_gengine.xset_curwin(Max(0,num),TRUE);
   return  window_list_get_first();
 }
 

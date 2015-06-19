@@ -22,18 +22,15 @@
  *    plot3dg pour les echelles automatiques ds les autres graphiques.
  *--------------------------------------------------------------------------*/
 
-#include <string.h> /* in case of dbmalloc use */
-#include <math.h>
-#include <stdio.h>
-#include <gdk/gdk.h>
-#include "nsp/math.h"
-#include "nsp/graphics-old/Graphics.h"
-#include "nsp/gsort-p.h"
+#include <nsp/nsp.h>
+#include <gtk/gtk.h>
+#include <nsp/graphics-old/Graphics.h>
+#include <nsp/gsort-p.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine_old;
 #define PERIGL
-#include "nsp/graphics-old/periGtk.h"
+#include <nsp/graphics-old/periGtk.h>
 #endif 
 
 /* like GEOX or GEOY in PloEch.h but we keep values in xx1 and yy1 for finite check */ 

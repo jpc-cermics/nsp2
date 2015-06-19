@@ -95,18 +95,18 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 
   window = gtk_dialog_new_with_buttons ("Nsp choices",
 					NULL, 0,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
 					NULL);
 
   /* 
    * gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
    *  gtk_window_set_wmclass  (GTK_WINDOW (window), "choices", "Nsp");
    */
-
+  
   if ((combo_entry_array = malloc(n*sizeof(nsp_choice_array)))== NULL) return menu_fail;
 
-  mainbox = GTK_DIALOG(window)->vbox;
+  mainbox =gtk_dialog_get_content_area( GTK_DIALOG(window));
 
   /* title */
   
@@ -123,10 +123,13 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 	 gtk_box_pack_start (GTK_BOX (mainbox), labelw, FALSE, FALSE, 0);
 	 gtk_widget_show (labelw);
       */
-      table = gtk_table_new (n, 2, FALSE);    
+      /* table = gtk_table_new (n, 2, FALSE);     */
+      table = gtk_grid_new();
       gtk_container_set_border_width (GTK_CONTAINER (table),5);
+      /*
       gtk_table_set_col_spacing (GTK_TABLE (table), 0, 10);
       gtk_table_set_row_spacings (GTK_TABLE (table), 3);
+      */
       for ( i = 0 ; i < n ; i++) 
 	{
 	  if ( 	  nsp_setup_combo_from_list(&combo_entry_array[i],table,(NspList *) Loc->O,i)==
@@ -211,11 +214,19 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Mm,int Mn,int active)
 {
   int i;
+  /*
   GtkWidget *entry_box = gtk_combo_box_new_text ();
   for (i = 0 ; i < Mm*Mn ; i++) 
     gtk_combo_box_append_text (GTK_COMBO_BOX (entry_box),Ms[i]);
   gtk_combo_box_set_active (GTK_COMBO_BOX (entry_box),Max(0,Min(Mm*Mn-1,active)) );
   return  entry_box;
+  */
+  GtkWidget *entry_box = gtk_combo_box_text_new();
+  for (i = 0 ; i < Mm*Mn ; i++) 
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (entry_box),Ms[i]);
+  /* gtk_combo_box_set_active (GTK_COMBO_BOX_TEXT (entry_box),Max(0,Min(Mm*Mn-1,active)) ); */
+  return  entry_box;
+
 }
 
 /**
@@ -245,7 +256,7 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
   ca->widget = nsp_setup_choice(ca->type,title,Obj,Ms,Mm,Mn,active);
   tmp = gtk_frame_new (title);
   gtk_box_pack_start (GTK_BOX (box), tmp, FALSE, FALSE, 0);
-  boom = gtk_vbox_new (FALSE, 0);
+  boom = gtk_box_new(GTK_ORIENTATION_VERTICAL,0); 
   gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
   gtk_container_add (GTK_CONTAINER (tmp), boom);
   gtk_container_add (GTK_CONTAINER (boom),ca->widget);
@@ -260,8 +271,12 @@ static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,
   ca->widget = nsp_setup_choice(ca->type,title,Obj,Ms,Mm,Mn,active);
   tmp = gtk_label_new (title);
   gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
+  /* 
   gtk_table_attach (GTK_TABLE (table),tmp, 0, 1, row,row+1 , GTK_FILL, GTK_FILL,0,0);
   gtk_table_attach (GTK_TABLE (table), ca->widget, 1, 2, row,row+1,GTK_FILL | GTK_EXPAND,GTK_FILL,0,0 );
+  */
+  gtk_grid_attach (GTK_GRID(table),tmp, 0, 1, row,row+1 );
+  gtk_grid_attach (GTK_GRID(table), ca->widget, 1, 2, row,row+1);
 }
 
 /* creates a widget according to type  */
@@ -393,8 +408,8 @@ static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Mm,int
     {
       cbox = gtk_button_new_with_label("");
     }
-  g_signal_connect (GTK_OBJECT (cbox), "clicked",
-		    GTK_SIGNAL_FUNC(nsp_button_filename_save),
+  g_signal_connect (G_OBJECT (cbox), "clicked",
+		    G_CALLBACK(nsp_button_filename_save),
 		    title);
   return cbox;
 }
@@ -409,8 +424,8 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
   dialog = gtk_file_chooser_dialog_new (title,
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_ACCEPT,
 					NULL);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
@@ -508,8 +523,8 @@ static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm
   g_object_set_data_full (G_OBJECT(cbox),"button_open",data, g_free);
 
   /* the handler will have to free data */
-  gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
-		      GTK_SIGNAL_FUNC(nsp_button_filename_open),
+  g_signal_connect (G_OBJECT (cbox), "clicked",
+		    G_CALLBACK(nsp_button_filename_open),
 		      NULL);
   return  cbox;
 }
@@ -531,8 +546,8 @@ static void nsp_button_filename_open(GtkWidget *widget,void *args)
   dialog = gtk_file_chooser_dialog_new (data->title,
 					NULL,
 					action,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OPEN", GTK_RESPONSE_ACCEPT,
 					NULL);
 
   if (  data->Msmn > 2 ) 
@@ -678,7 +693,7 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	  {
 	    /* text is to be freed Free with g_free().*/
 	    char * text = gtk_editable_get_chars(GTK_EDITABLE(array[i].widget),0,
-						 GTK_ENTRY(array[i].widget)->text_length);
+						 gtk_entry_get_text_length(GTK_ENTRY(array[i].widget)));
 	    if ( text == NULL)
 	      {
 		if  ( nsp_smatrix_set_first(Ms,"") == FAIL) return FAIL;
@@ -829,7 +844,10 @@ static int nsp_smatrix_set_first(NspSMatrix *A,const char *str)
 static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size)
 {
   int i,j;
+  /* 
   GtkWidget *table = gtk_table_new (m,n, FALSE);
+  */
+  GtkWidget *table = gtk_grid_new ();
   /* GtkWidget *box; */
   GtkWidget **data = malloc(sizeof(GtkWidget *)*m*n);
   if ( data == NULL) return NULL;
@@ -848,7 +866,7 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
   gtk_widget_show(table);
   /* box= gtk_vbox_new (FALSE, 0); */
   /* gtk_container_add (GTK_CONTAINER (box),table); */
-  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
+  /* gtk_table_set_homogeneous(GTK_TABLE(table),FALSE); */
   for (i= 0 ; i < n ; i++) 
     for ( j = 0 ; j < m ; j++)
       {
@@ -856,7 +874,8 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
 	data[j+m*i]=entry;
 	gtk_entry_set_max_length(GTK_ENTRY(entry),0);
 	gtk_widget_set_size_request (entry,entry_size,-1);
-	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
+	/* gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
+	gtk_grid_attach (GTK_GRID (table),entry,i,i+1,j,j+1);
 	gtk_entry_set_text (GTK_ENTRY(entry),Ms[j+m*i]);
 	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
       }
@@ -893,14 +912,15 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size)
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
       table = nsp_setup_matrix_entry(scrolled_win,Ms,m,n,entry_size);
-      gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win),table);
+      /* gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win),table); */
+      gtk_container_add(GTK_CONTAINER(scrolled_win),table);
     }
   else 
     { 
       /* no need to add a viewport */
       GtkWidget *frame,*fvbox,*table;
       res = frame = gtk_frame_new(NULL);
-      fvbox  = gtk_vbox_new (FALSE, 0);
+      fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
       gtk_container_add (GTK_CONTAINER (frame),fvbox);
@@ -919,7 +939,7 @@ static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S)
     {
       char *loc;
       char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
-					   GTK_ENTRY(entries[i])->text_length);
+					   gtk_entry_get_text_length( GTK_ENTRY(entries[i])));
       if ( text == NULL ||  (loc =new_nsp_string(text)) == NULLSTRING)
 	{
 	  return FAIL;
@@ -958,7 +978,7 @@ static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size)
   /* value, lower, upper, step_increment, page_increment, page_size, climb_rate, digits*/
   GtkAdjustment *adj;
   adj = GTK_ADJUSTMENT (gtk_adjustment_new (*val,*(val+1),*(val+2),*(val+3),*(val+4),*(val+5)));
-  scale= gtk_hscale_new(adj);
+  scale= gtk_scale_new(GTK_ORIENTATION_HORIZONTAL,adj);
   gtk_scale_set_digits (GTK_SCALE(scale),*(val+7));
   gtk_scale_set_draw_value (GTK_SCALE(scale),TRUE);
   return scale;
@@ -990,7 +1010,7 @@ static void button_clicked(GtkWidget *widget, void *Obj)
 }
 
 #ifndef GTK_STOCK_EDIT 
-#define GTK_STOCK_EDIT GTK_STOCK_OK
+#define GTK_STOCK_EDIT "_OK"
 #endif 
 
 
@@ -998,9 +1018,10 @@ static void button_clicked(GtkWidget *widget, void *Obj)
 static GtkWidget *nsp_setup_choice_button(void *Obj,int entry_size)
 {
   GtkWidget *button;
-  button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+  /* button = gtk_button_new_from_stock(GTK_STOCK_EDIT); */
+  button = gtk_button_new_with_label("EDIT"); 
   g_object_set_data(G_OBJECT(button),"listarg",Obj);
-  g_signal_connect (button,"clicked",G_CALLBACK (button_clicked),Obj);
+  g_signal_connect (G_OBJECT(button),"clicked",G_CALLBACK (button_clicked),Obj);
   return button;
 }
   

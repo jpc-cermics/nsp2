@@ -23,20 +23,20 @@
 
 /* NspGtkWidget */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkWidget inherits from GtkObject
+ * NspGtkWidget inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkWidget ;
-typedef NspTypeGtkObject NspTypeGtkWidget ;
+typedef NspGObject NspGtkWidget ;
+typedef NspTypeGObject NspTypeGtkWidget ;
 
 extern int nsp_type_gtkwidget_id;
 extern NspTypeGtkWidget *nsp_type_gtkwidget;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkWidget *new_type_gtkwidget(type_mode mode);
 

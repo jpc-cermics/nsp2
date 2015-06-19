@@ -23,20 +23,20 @@
 
 /* NspGtkFileChooserWidget */
 
-#include <nsp/gtk/gtkvbox.h>
+#include <nsp/gtk/gtkbox.h>
 
 /*
- * NspGtkFileChooserWidget inherits from GtkVBox
+ * NspGtkFileChooserWidget inherits from GtkBox
  * just change some type attributes 
  */
 
-typedef NspGtkVBox NspGtkFileChooserWidget ;
-typedef NspTypeGtkVBox NspTypeGtkFileChooserWidget ;
+typedef NspGtkBox NspGtkFileChooserWidget ;
+typedef NspTypeGtkBox NspTypeGtkFileChooserWidget ;
 
 extern int nsp_type_gtkfilechooserwidget_id;
 extern NspTypeGtkFileChooserWidget *nsp_type_gtkfilechooserwidget;
 
-/* type instances for gtkvbox */
+/* type instances for gtkbox */
 
 NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode);
 

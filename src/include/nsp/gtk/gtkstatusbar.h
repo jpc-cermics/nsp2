@@ -23,20 +23,20 @@
 
 /* NspGtkStatusbar */
 
-#include <nsp/gtk/gtkhbox.h>
+#include <nsp/gtk/gtkbox.h>
 
 /*
- * NspGtkStatusbar inherits from GtkHBox
+ * NspGtkStatusbar inherits from GtkBox
  * just change some type attributes 
  */
 
-typedef NspGtkHBox NspGtkStatusbar ;
-typedef NspTypeGtkHBox NspTypeGtkStatusbar ;
+typedef NspGtkBox NspGtkStatusbar ;
+typedef NspTypeGtkBox NspTypeGtkStatusbar ;
 
 extern int nsp_type_gtkstatusbar_id;
 extern NspTypeGtkStatusbar *nsp_type_gtkstatusbar;
 
-/* type instances for gtkhbox */
+/* type instances for gtkbox */
 
 NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode);
 

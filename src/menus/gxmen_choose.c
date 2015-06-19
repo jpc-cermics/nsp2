@@ -51,18 +51,18 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
 
   if ( n_but != 0 )
     {
-      window = gtk_dialog_new_with_buttons ("Nsp choose",NULL, 0, NULL);
+      window = gtk_dialog_new_with_buttons ("Nsp choose",NULL, 0, NULL,NULL);
       gtk_dialog_add_button(GTK_DIALOG(window),but_names[0],GTK_RESPONSE_CANCEL);
     }
   else
     {
       window = gtk_dialog_new_with_buttons ("Nsp choose",
 					    NULL, 0,
-					    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					    "_CANCEL", GTK_RESPONSE_CANCEL,
 					    NULL);
     }
 
-  vbox = GTK_DIALOG(window)->vbox;
+  vbox = gtk_dialog_get_content_area( GTK_DIALOG(window));
   
   nsp_dialogs_insert_title(title,vbox);
   
@@ -76,19 +76,21 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
       /* here we need a scrolled window */ 
       scrolled_win = gtk_scrolled_window_new (NULL, NULL);
       gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 1);
-      gtk_widget_set_usize (scrolled_win,200,300);
+      /* gtk_widget_set_usize (scrolled_win,200,300); */
+      gtk_widget_set_size_request (scrolled_win,200,300); 
       gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
       list = nsp_choose_create_tree_view(Items,nItems);
-      gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list);
+      /* gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list);*/
+      gtk_container_add(GTK_CONTAINER(scrolled_win),list);
     }
   else 
     { 
       /* no need to add a viewport */
       GtkWidget *frame = gtk_frame_new(NULL);
-      GtkWidget *fvbox  = gtk_vbox_new (FALSE, 0);
+      GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0); 
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);

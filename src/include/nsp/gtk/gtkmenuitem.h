@@ -23,20 +23,20 @@
 
 /* NspGtkMenuItem */
 
-#include <nsp/gtk/gtkitem.h>
+#include <nsp/gtk/gtkbin.h>
 
 /*
- * NspGtkMenuItem inherits from GtkItem
+ * NspGtkMenuItem inherits from GtkBin
  * just change some type attributes 
  */
 
-typedef NspGtkItem NspGtkMenuItem ;
-typedef NspTypeGtkItem NspTypeGtkMenuItem ;
+typedef NspGtkBin NspGtkMenuItem ;
+typedef NspTypeGtkBin NspTypeGtkMenuItem ;
 
 extern int nsp_type_gtkmenuitem_id;
 extern NspTypeGtkMenuItem *nsp_type_gtkmenuitem;
 
-/* type instances for gtkitem */
+/* type instances for gtkbin */
 
 NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode);
 

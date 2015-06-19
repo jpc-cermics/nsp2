@@ -25,25 +25,25 @@
 #include <sys/ioctl.h>
 #endif
 #include <sys/stat.h>
-#include <string.h>
-#include <stdio.h>
-#include <errno.h>
+#include <nsp/nsp.h>
 #include <locale.h>
-#include "nsp/version.h"
-#include "nsp/machine.h"
+#include <gtk/gtk.h>
+#include <nsp/sciio.h>
+#include <nsp/system.h>
+#include <nsp/gtksci.h>
+#include <nsp/nsptcl.h>
+#include <gtk/gtk.h>
+
+#if GTK_CHECK_VERSION (3,0,0)
+#include <gtk/gtkx.h>
+#endif 
+
 #ifdef WITH_GTKGLEXT
 #include <gtk/gtkgl.h>
 #endif
-#include <gtk/gtk.h>
-#include "nsp/sciio.h"
-#include <nsp/system.h>
-#include "nsp/gtksci.h"
-#include "nsp/nsptcl.h"
 
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern void nsp_create_main_text_view(void);
-
-
 
 /* #define STATUS_BAR 1  */
 
@@ -83,7 +83,11 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
       gtk_disable_setlocale();
       setlocale(LC_ALL,"");
 #else
+#if GTK_CHECK_VERSION (3,0,0)
+      setlocale(LC_ALL,"");
+#else 
       gtk_set_locale();
+#endif 
 #endif
       gtk_init(&argc,&argv);
       /*
@@ -176,7 +180,11 @@ void start_sci_gtk(void)
   gtk_disable_setlocale();
   setlocale(LC_ALL,"");
 #else
+#if GTK_CHECK_VERSION (3,0,0)
+  setlocale(LC_ALL,"");
+#else
   gtk_set_locale();
+#endif
 #endif
   gtk_init(&argc,&argv);
   nsp_gtk_gl_init (&argc, &argv);
@@ -299,7 +307,16 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   char * shm = get_shared() ;
 #endif
   GtkWidget *vbox,*menubar, *socket_button;
-  gtk_set_locale();
+
+#ifdef __APPLE__
+      /* avoid a gtk warning about locale */
+      gtk_disable_setlocale();
+      setlocale(LC_ALL,"");
+#else
+      /* deprecated gtk_set_locale(); */
+      setlocale(LC_ALL,"");
+#endif
+ 
   gtk_init(&argc, &argv);
   nsp_gtk_gl_init (&argc, &argv);
   /*
@@ -309,13 +326,16 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   gtk_window_set_wmclass (GTK_WINDOW (window), "toplevel", "Scilab");
   gtk_widget_set_size_request (window,600,400);
   /* create vbox */
+#if GTK_CHECK_VERSION (3,0,0)
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+#else 
   vbox = gtk_vbox_new (FALSE, 0);
+#endif
   gtk_box_set_spacing (GTK_BOX (vbox), 2);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 0);
   gtk_container_add (GTK_CONTAINER (window), vbox);
 
   /* create the menu bar */
-
   menubar= create_main_menu( window);
   gtk_box_pack_start(GTK_BOX(vbox),menubar,FALSE,TRUE,0);
 
@@ -336,9 +356,12 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 #else
   *xid = GDK_WINDOW_XWINDOW(socket_button->window);
 #endif
-
+#else
+#if GTK_CHECK_VERSION (3,0,0)
+  *xid= gtk_socket_get_plug_window(GTK_SOCKET(socket_button));
 #else
   *xid = socket_button->window;
+#endif 
 #endif
   *shm = '*' ; /* just to tell that there's something to read */
 #endif

@@ -603,9 +603,11 @@ static int nsp_check_choice_list(Stack stack,NspList *L)
 
 static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int lhs)
 {
+#if 0
   BCG *Xgc;
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
+
   Xgc=check_graphic_window();
   if ((ret = (GObject *) nsp_gtkcombobox_colormap_new(Xgc,-1))== NULL) return RET_BUG;
   nsp_type_gtkcombobox = new_type_gtkcombobox(T_BASE);
@@ -613,6 +615,8 @@ static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int l
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
+#endif 
+  return RET_BUG;
 }
 
 /* 

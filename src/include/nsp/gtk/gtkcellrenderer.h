@@ -23,20 +23,20 @@
 
 /* NspGtkCellRenderer */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkCellRenderer inherits from GtkObject
+ * NspGtkCellRenderer inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkCellRenderer ;
-typedef NspTypeGtkObject NspTypeGtkCellRenderer ;
+typedef NspGObject NspGtkCellRenderer ;
+typedef NspTypeGObject NspTypeGtkCellRenderer ;
 
 extern int nsp_type_gtkcellrenderer_id;
 extern NspTypeGtkCellRenderer *nsp_type_gtkcellrenderer;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode);
 

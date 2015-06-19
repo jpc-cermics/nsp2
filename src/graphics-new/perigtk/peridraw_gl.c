@@ -1095,10 +1095,12 @@ static int  xset_pattern(BCG *Xgc,int color)
   int old = xget_pattern(Xgc);
   if ( old == color ) return old;
   if ( Xgc->private->a_colors == NULL) return 1;
+  /*
   if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL)
     {
       gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
+  */
   Xgc->CurColor = color = Max(1,color);
   nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->a_colors);
   glColor3d(rgb[0], rgb[1], rgb[2]);

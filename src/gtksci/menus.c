@@ -29,6 +29,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
+#include <gtk/gtkx.h>
 
 #include <nsp/nsp.h>
 #include <nsp/command.h>
@@ -72,8 +73,7 @@ void create_plugged_main_menu(void)
 
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
-    Plug = gtk_plug_new((GdkNativeWindow) NSP_POINTER_CAST_TO_INT
-			atoi(nsp_getenv("SCIWIN")));
+    Plug = gtk_plug_new(NSP_POINTER_CAST_TO_INT(atoi(nsp_getenv("SCIWIN"))));
     main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;
@@ -584,7 +584,8 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   if ( m == NULL ) return ;
   if ( m->stock_name != NULL )
     {
-      menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
+      /* menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL); */
+      menuitem = gtk_menu_item_new_with_label(m->stock_name);
       /* Attention 2.16 only */
       /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem),TRUE);*/
     }
@@ -614,7 +615,8 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
 	{
 	  if ( loc->stock_name != NULL )
 	    {
-	      menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL);
+	      /* menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL); */
+	      menuitem1 = gtk_menu_item_new_with_label(loc->stock_name);
 	      /* 2.16 only */
 	      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem1),TRUE); */
 	    }
@@ -1174,7 +1176,7 @@ static void nsp_menu_stop (void)
 static void nsp_menu_stop_audio (void)
 {
 #ifdef WITH_PORTAUDIO
-  nsp_pa_stop();
+  // nsp_pa_stop();
 #endif
 }
 
@@ -1241,6 +1243,15 @@ static void nsp_menu_start_editor(void)
 {
   nsp_edit(NULL,FALSE,FALSE);
 }
+
+void nsp_edit(char *filename,int read_only,int wait){};
+void nsp_edit_smatrix(char *filename,int read_only,int wait){};
+int nsp_help_browser(char *mandir, char *locale, char *help_file){return 0;};
+void nsp_text_view_screen_size(){};
+void nsp_textview_destroy(){};
+void nsp_create_main_text_view(){};
+void create_prop_editor(){};
+void nsp_insert_pixbuf_from_file(){};
 
 /**
  * nsp_menu_demos:

@@ -130,8 +130,8 @@ char * nsp_get_filename_save(const char *title,const char *dirname,const char *f
   dialog = gtk_file_chooser_dialog_new (title,
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_ACCEPT,
 					NULL);
   if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
   
@@ -185,8 +185,8 @@ char * nsp_get_filename_open(const char *title,const char *dirname,char **filter
   dialog = gtk_file_chooser_dialog_new (title,
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_OPEN,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OPEN", GTK_RESPONSE_ACCEPT,
 					NULL);
   if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
   if ( filters != NULL  ) 
@@ -239,8 +239,8 @@ char * nsp_get_filename_folder(const char *title,const char *dirname)
   dialog = gtk_file_chooser_dialog_new (title,
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_OPEN", GTK_RESPONSE_ACCEPT,
 					NULL);
   if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)

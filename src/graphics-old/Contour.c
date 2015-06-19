@@ -23,13 +23,14 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
-#include "nsp/math.h"
-#include "nsp/graphics-old/Graphics.h"
+#include <nsp/math.h>
+#include <nsp/graphics-old/Graphics.h>
+#include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine_old;
 #define PERIGL
-#include "nsp/graphics-old/periGtk.h"
+#include <nsp/graphics-old/periGtk.h>
 #endif 
 
 extern void drawpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,

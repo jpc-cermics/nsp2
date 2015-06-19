@@ -23,20 +23,20 @@
 
 /* NspGtkTreeViewColumn */
 
-#include <nsp/gtk/gtkobject.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGtkTreeViewColumn inherits from GtkObject
+ * NspGtkTreeViewColumn inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGtkObject NspGtkTreeViewColumn ;
-typedef NspTypeGtkObject NspTypeGtkTreeViewColumn ;
+typedef NspGObject NspGtkTreeViewColumn ;
+typedef NspTypeGObject NspTypeGtkTreeViewColumn ;
 
 extern int nsp_type_gtktreeviewcolumn_id;
 extern NspTypeGtkTreeViewColumn *nsp_type_gtktreeviewcolumn;
 
-/* type instances for gtkobject */
+/* type instances for gobject */
 
 NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode);
 

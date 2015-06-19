@@ -184,16 +184,16 @@ int gtkcombobox_select_color(BCG *Xgc,int init_color)
 
   window = gtk_dialog_new_with_buttons ("Choose color",
 					NULL, 0,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
 					NULL);
 
-  dvbox = GTK_DIALOG(window)->vbox;
+  dvbox = gtk_dialog_get_content_area (GTK_DIALOG(window));
 
   frame = gtk_frame_new ("Choose a color");
   gtk_box_pack_start (GTK_BOX(dvbox),frame, FALSE, FALSE, 0);
   
-  vbox = gtk_vbox_new (FALSE, 0);
+  vbox =  gtk_box_new(GTK_ORIENTATION_VERTICAL,0); 
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc,init_color);
@@ -246,16 +246,16 @@ int gtkcombobox_select_color_in_table(NspMatrix *table,int init_color)
 
   window = gtk_dialog_new_with_buttons ("Choose color",
 					NULL, 0,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
+					"_CANCEL", GTK_RESPONSE_CANCEL,
 					NULL);
 
-  dvbox = GTK_DIALOG(window)->vbox;
+  dvbox = gtk_dialog_get_content_area (GTK_DIALOG(window)); 
 
   frame = gtk_frame_new ("Choose a color");
   gtk_box_pack_start (GTK_BOX(dvbox),frame, FALSE, FALSE, 0);
   
-  vbox = gtk_vbox_new (FALSE, 0);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   comboboxgrid = nsp_gtkcombobox_colormap_new_from_colormap(table,init_color);

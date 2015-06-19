@@ -2145,7 +2145,7 @@ extern Gengine GL_gengine;
 #ifdef WITH_CAIRO
 extern Gengine Cairo_gengine;
 #endif
-extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
+extern Gengine XFig_gengine, Pos_gengine;
 
 /**
  * nsp_figure_connect:
@@ -2162,7 +2162,7 @@ extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
 static int nsp_figure_connect(NspFigure *F)
 {
   BCG *Xgc;
-  driver_initgraphic *initg = Gtk_gengine.initgraphic;
+  driver_initgraphic *initg = Cairo_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   if (F->obj->Xgc != NULL )
     {
@@ -2196,7 +2196,7 @@ static int nsp_figure_connect(NspFigure *F)
       wpos[1] = F->obj->position->R[1];
     }
 
-  if ( strcmp(F->obj->driver,"Gtk") == 0) initg = Gtk_gengine.initgraphic;
+  if ( strcmp(F->obj->driver,"Gtk") == 0) initg = Cairo_gengine.initgraphic;
   else if ( strcmp(F->obj->driver,"OpenGl") == 0)
     {
 #ifdef WITH_GTKGLEXT
@@ -2215,7 +2215,7 @@ static int nsp_figure_connect(NspFigure *F)
     }
   else
     {
-      initg = Gtk_gengine.initgraphic;
+      initg = Cairo_gengine.initgraphic;
     }
 
   v1 = -1;
