@@ -1256,6 +1256,15 @@
   (return-type "GtkType")
   )
 
+(define-function gtk_button_box_new
+  (c-name "gtk_button_box_new")
+  (is-constructor-of GtkButtonBox)
+  (return-type "GtkWidget*")
+  (parameters
+   '("GtkOrientation" "orientation")
+   )
+  )
+
 (define-method get_layout
   (of-object "GtkButtonBox")
   (c-name "gtk_button_box_get_layout")
@@ -1596,7 +1605,7 @@
   )
 
 ;; ;; 	gtk_box_get_center_widget ()
-;; ;;   version 3.12 
+;; ;;   version 3.12
 
 ;; (define-method get_center_widget
 ;;   (of-object "GtkBox")
@@ -1605,7 +1614,7 @@
 ;;   )
 
 ;; ;;	gtk_box_set_center_widget ()
-;; ;;   version 3.12 
+;; ;;   version 3.12
 ;; (define-method set_center_widget
 ;;   (of-object "GtkBox")
 ;;   (c-name "gtk_box_set_center_widget")
@@ -1872,9 +1881,9 @@
 
 ;; added
 
-(define-method is_marked
+(define-method get_day_is_marked
   (of-object "GtkCalendar")
-  (c-name "gtk_calendar_is_marked_day")
+  (c-name "gtk_calendar_get_day_is_marked")
   (return-type "gboolean")
   (parameters
    '("guint" "day")
@@ -1885,6 +1894,12 @@
   (of-object "GtkCalendar")
   (c-name "gtk_calendar_clear_marks")
   (return-type "none")
+  )
+
+(define-method get_display_options
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_get_display_options")
+  (return-type "guint")
   )
 
 ;; display_options is deprecated
@@ -1899,12 +1914,6 @@
 ;;    )
 ;;   )
 
-(define-method get_display_options
-  (of-object "GtkCalendar")
-  (c-name "gtk_calendar_get_display_options")
-  (return-type "guint")
-  )
-
 (define-method get_date
   (of-object "GtkCalendar")
   (c-name "gtk_calendar_get_date")
@@ -1916,49 +1925,81 @@
    )
   )
 
-;; (define-method freeze
-;;   (of-object "GtkCalendar")
-;;   (c-name "gtk_calendar_freeze")
-;;   (return-type "none")
-;;   (deprecated "don't use this")
-;;   )
+;; gtk_calendar_set_detail_func
 
-;; (define-method thaw
-;;   (of-object "GtkCalendar")
-;;   (c-name "gtk_calendar_thaw")
-;;   (return-type "none")
-;;   (deprecated "don't use this")
-;;   )
+;; gtk_calendar_get_detail_width_chars ()
+
+(define-method get_detail_width_chars
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_get_detail_width_chars")
+  (return-type "gint")
+  )
+
+;; gtk_calendar_set_detail_width_chars ()
+
+(define-method set_detail_width_chars
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_set_detail_width_chars")
+  (return-type "none")
+  (parameters
+   '("gint" "chars")
+   )
+  )
+
+;; gtk_calendar_get_detail_height_rows ()
+
+(define-method get_detail_height_rows
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_get_detail_height_rows")
+  (return-type "gint")
+  )
+
+;; gtk_calendar_set_detail_height_rows ()
+
+(define-method set_detail_height_rows
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_set_detail_height_rows")
+  (return-type "none")
+  (parameters
+   '("gint" "rows")
+   )
+  )
+;;
 
 (define-virtual month_changed
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual day_selected
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual day_selected_double_click
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual prev_month
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual next_month
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual prev_year
   (of-object "GtkCalendar")
   (return-type "none")
   )
+
 (define-virtual next_year
   (of-object "GtkCalendar")
   (return-type "none")
   )
-
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkcelleditable.h
 
@@ -4012,12 +4053,17 @@
   (varargs #t)
   )
 
-(define-method add_action_widget
+(define-method run
   (of-object "GtkDialog")
-  (c-name "gtk_dialog_add_action_widget")
+  (c-name "gtk_dialog_run")
+  (return-type "gint")
+  )
+
+(define-method response
+  (of-object "GtkDialog")
+  (c-name "gtk_dialog_response")
   (return-type "none")
   (parameters
-   '("GtkWidget*" "child")
    '("gint" "response_id")
    )
   )
@@ -4042,13 +4088,13 @@
   (varargs #t)
   )
 
-(define-method set_response_sensitive
+(define-method add_action_widget
   (of-object "GtkDialog")
-  (c-name "gtk_dialog_set_response_sensitive")
+  (c-name "gtk_dialog_add_action_widget")
   (return-type "none")
   (parameters
+   '("GtkWidget*" "child")
    '("gint" "response_id")
-   '("gboolean" "setting")
    )
   )
 
@@ -4061,6 +4107,16 @@
    )
   )
 
+(define-method set_response_sensitive
+  (of-object "GtkDialog")
+  (c-name "gtk_dialog_set_response_sensitive")
+  (return-type "none")
+  (parameters
+   '("gint" "response_id")
+   '("gboolean" "setting")
+   )
+  )
+
 (define-method get_response_for_widget
   (of-object "GtkDialog")
   (c-name "gtk_dialog_get_response_for_widget")
@@ -4070,36 +4126,45 @@
    )
   )
 
-;; (define-method set_has_separator
-;;   (of-object "GtkDialog")
-;;   (c-name "gtk_dialog_set_has_separator")
-;;   (return-type "none")
-;;   (parameters
-;;    '("gboolean" "setting")
-;;    )
-;;   )
-
-;; (define-method get_has_separator
-;;   (of-object "GtkDialog")
-;;   (c-name "gtk_dialog_get_has_separator")
-;;   (return-type "gboolean")
-;;   )
-
-(define-method response
+(define-method get_widget_for_response
   (of-object "GtkDialog")
-  (c-name "gtk_dialog_response")
-  (return-type "none")
+  (c-name "gtk_dialog_get_widget_for_response")
+  (return-type "GtkWidget*")
   (parameters
    '("gint" "response_id")
    )
   )
 
-(define-method run
+;; deprecated gtk_dialog_get_action_area
+
+;; (define-method get_action_area
+;;   (of-object "GtkDialog")
+;;   (c-name "gtk_dialog_get_action_area")
+;;   (return-type "GtkBox*")
+;;   )
+
+
+(define-method get_content_area
   (of-object "GtkDialog")
-  (c-name "gtk_dialog_run")
-  (return-type "gint")
+  (c-name "gtk_dialog_get_content_area")
+  (return-type "GtkBox*")
   )
 
+;; gtk_dialog_get_header_bar ()
+;; 3.12
+;; (define-method get_header_bar
+;;   (of-object "GtkDialog")
+;;   (c-name "gtk_dialog_header_bar")
+;;   (return-type "GtkWidget*")
+;;   )
+
+(define-function alternative_dialog_button_order
+  (c-name "gtk_alternative_dialog_button_order")
+  (return-type "gboolean")
+  (parameters
+   '("GdkScreen*" "screen" (null-ok) (default "NULL"))
+   )
+  )
 
 (define-method set_alternative_button_order
   (of-object "GtkDialog")
@@ -4121,14 +4186,6 @@
    )
   )
 
-(define-function alternative_dialog_button_order
-  (c-name "gtk_alternative_dialog_button_order")
-  (return-type "gboolean")
-  (parameters
-   '("GdkScreen*" "screen" (null-ok) (default "NULL"))
-   )
-  )
-
 (define-virtual response
   (of-object "GtkDialog")
   (return-type "none")
@@ -4141,8 +4198,6 @@
   (of-object "GtkDialog")
   (return-type "none")
   )
-
-
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkdnd.h
 
@@ -7280,16 +7335,20 @@
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkhbbox.h
 
-(define-function gtk_hbutton_box_get_type
-  (c-name "gtk_hbutton_box_get_type")
-  (return-type "GtkType")
-  )
+;; (define-function gtk_hbutton_box_get_type
+;;   (c-name "gtk_hbutton_box_get_type")
+;;   (return-type "GtkType")
+;;   )
 
-(define-function gtk_hbutton_box_new
-  (c-name "gtk_hbutton_box_new")
-  (is-constructor-of GtkHButtonBox)
-  (return-type "GtkWidget*")
-  )
+;; just to emulate old function
+
+;; (define-function gtkhbuttonbox_new
+;;   (c-name "gtk_button_box_new")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkOrientation" "orientation" (default "GTK_ORIENTATION_HORIZONTAL"))
+;;    )
+;;   )
 
 ;; (define-function hbutton_box_get_spacing_default
 ;;   (c-name "gtk_hbutton_box_get_spacing_default")
@@ -14491,14 +14550,14 @@
 ;;   (deprecated "")
 ;;   )
 
-;; (define-method draw_extension 
+;; (define-method draw_extension
 ;;   (of-object "GtkStyle")
 ;;   (c-name "gtk_draw_extension")
 ;;   (return-type "none")
 ;;   (parameters
 ;;    '("GdkWindow*" "window")
 ;;    '("GtkStateType" "state_type")
-;;    '("GtkShadowType" "shadow_type")	
+;;    '("GtkShadowType" "shadow_type")
 ;;    '("gint" "x")
 ;;    '("gint" "y")
 ;;    '("gint" "width")
@@ -15437,141 +15496,331 @@
   (return-type "GtkType")
   )
 
-(define-function gtk_table_new
-  (c-name "gtk_table_new")
-  (is-constructor-of GtkTable)
-  (return-type "GtkWidget*")
-  (parameters
-   '("guint" "rows" (default "1"))
-   '("guint" "columns" (default "1"))
-   '("gboolean" "homogeneous" (default "FALSE"))
-   )
+;; (define-function gtk_table_new
+;;   (c-name "gtk_table_new")
+;;   (is-constructor-of GtkTable)
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("guint" "rows" (default "1"))
+;;    '("guint" "columns" (default "1"))
+;;    '("gboolean" "homogeneous" (default "FALSE"))
+;;    )
+;;   )
+
+;; (define-method resize
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_resize")
+;;   (return-type "none")
+;;   (parameters
+;;    '("guint" "rows")
+;;    '("guint" "columns")
+;;    )
+;;   )
+
+;; (define-method attach
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_attach")
+;;   (return-type "none")
+;;   (parameters
+;;    '("GtkWidget*" "child")
+;;    '("guint" "left_attach")
+;;    '("guint" "right_attach")
+;;    '("guint" "top_attach")
+;;    '("guint" "bottom_attach")
+;;    '("GtkAttachOptions" "xoptions" (default "GTK_EXPAND|GTK_FILL"))
+;;    '("GtkAttachOptions" "yoptions" (default "GTK_EXPAND|GTK_FILL"))
+;;    '("guint" "xpadding" (default "0"))
+;;    '("guint" "ypadding" (default "0"))
+;;    )
+;;   )
+
+;; (define-method attach_defaults
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_attach_defaults")
+;;   (return-type "none")
+;;   (parameters
+;;    '("GtkWidget*" "widget")
+;;    '("guint" "left_attach")
+;;    '("guint" "right_attach")
+;;    '("guint" "top_attach")
+;;    '("guint" "bottom_attach")
+;;    )
+;;   )
+
+;; (define-method set_row_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_set_row_spacing")
+;;   (return-type "none")
+;;   (parameters
+;;    '("guint" "row")
+;;    '("guint" "spacing")
+;;    )
+;;   )
+
+;; (define-method get_row_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_get_row_spacing")
+;;   (return-type "guint")
+;;   (parameters
+;;    '("guint" "row")
+;;    )
+;;   )
+
+;; (define-method set_col_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_set_col_spacing")
+;;   (return-type "none")
+;;   (parameters
+;;    '("guint" "column")
+;;    '("guint" "spacing")
+;;    )
+;;   )
+
+;; (define-method get_col_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_get_col_spacing")
+;;   (return-type "guint")
+;;   (parameters
+;;    '("guint" "column")
+;;    )
+;;   )
+
+;; (define-method set_row_spacings
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_set_row_spacings")
+;;   (return-type "none")
+;;   (parameters
+;;    '("guint" "spacing")
+;;    )
+;;   )
+
+;; (define-method get_default_row_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_get_default_row_spacing")
+;;   (return-type "guint")
+;;   )
+
+;; (define-method set_col_spacings
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_set_col_spacings")
+;;   (return-type "none")
+;;   (parameters
+;;    '("guint" "spacing")
+;;    )
+;;   )
+
+;; (define-method get_default_col_spacing
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_get_default_col_spacing")
+;;   (return-type "guint")
+;;   )
+
+;; (define-method set_homogeneous
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_set_homogeneous")
+;;   (return-type "none")
+;;   (parameters
+;;    '("gboolean" "homogeneous")
+;;    )
+;;   )
+
+;; (define-method get_homogeneous
+;;   (of-object "GtkTable")
+;;   (c-name "gtk_table_get_homogeneous")
+;;   (return-type "gboolean")
+;;   )
+
+;; GtkGrid
+
+(Define-function gtk_grid_get_type
+  (c-name "gtk_grid_get_type")
+  (return-type "GtkType")
   )
 
-(define-method resize
-  (of-object "GtkTable")
-  (c-name "gtk_table_resize")
-  (return-type "none")
-  (parameters
-   '("guint" "rows")
-   '("guint" "columns")
-   )
+(define-function gtk_grid_new
+  (c-name "gtk_grid_new")
+  (is-constructor-of GtkGrid)
+  (return-type "GtkWidget*")
   )
 
 (define-method attach
-  (of-object "GtkTable")
-  (c-name "gtk_table_attach")
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_attach")
   (return-type "none")
   (parameters
    '("GtkWidget*" "child")
-   '("guint" "left_attach")
-   '("guint" "right_attach")
-   '("guint" "top_attach")
-   '("guint" "bottom_attach")
-   '("GtkAttachOptions" "xoptions" (default "GTK_EXPAND|GTK_FILL"))
-   '("GtkAttachOptions" "yoptions" (default "GTK_EXPAND|GTK_FILL"))
-   '("guint" "xpadding" (default "0"))
-   '("guint" "ypadding" (default "0"))
+   '("guint" "left")
+   '("guint" "top")
+   '("guint" "width")
+   '("guint" "height")
    )
   )
 
-(define-method attach_defaults
-  (of-object "GtkTable")
-  (c-name "gtk_table_attach_defaults")
+(define-method attach_next_to
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_attach_next_to")
   (return-type "none")
   (parameters
-   '("GtkWidget*" "widget")
-   '("guint" "left_attach")
-   '("guint" "right_attach")
-   '("guint" "top_attach")
-   '("guint" "bottom_attach")
+   '("GtkWidget*" "child")
+   '("GtkWidget*" "sibling")
+   '("GtkPositionType" "side")
+   '("guint" "width")
+   '("guint" "height")
    )
   )
 
-(define-method set_row_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_set_row_spacing")
+(define-method get_child_at
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_child_at")
+  (return-type "GtkWidget*")
+  (parameters
+   '("gint" "left")
+   '("gint" "top")
+   )
+  )
+
+(define-method insert_row
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_insert_row")
   (return-type "none")
   (parameters
-   '("guint" "row")
-   '("guint" "spacing")
+   '("gint" "position")
    )
   )
 
-(define-method get_row_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_get_row_spacing")
-  (return-type "guint")
-  (parameters
-   '("guint" "row")
-   )
-  )
-
-(define-method set_col_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_set_col_spacing")
+(define-method insert_column
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_insert_column")
   (return-type "none")
   (parameters
-   '("guint" "column")
-   '("guint" "spacing")
+   '("gint" "position")
    )
   )
 
-(define-method get_col_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_get_col_spacing")
-  (return-type "guint")
-  (parameters
-   '("guint" "column")
-   )
-  )
-
-(define-method set_row_spacings
-  (of-object "GtkTable")
-  (c-name "gtk_table_set_row_spacings")
+(define-method remove_row
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_remove_row")
   (return-type "none")
   (parameters
-   '("guint" "spacing")
+   '("gint" "position")
    )
   )
 
-(define-method get_default_row_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_get_default_row_spacing")
-  (return-type "guint")
-  )
-
-(define-method set_col_spacings
-  (of-object "GtkTable")
-  (c-name "gtk_table_set_col_spacings")
+(define-method remove_column
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_remove_column")
   (return-type "none")
   (parameters
-   '("guint" "spacing")
+   '("gint" "position")
    )
   )
 
-(define-method get_default_col_spacing
-  (of-object "GtkTable")
-  (c-name "gtk_table_get_default_col_spacing")
-  (return-type "guint")
+(define-method insert_next_to
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_insert_next_to")
+  (return-type "none")
+  (parameters
+   '("GtkWidget*" "sibling")
+   '("GtkPositionType" "side")
+   )
   )
 
-(define-method set_homogeneous
-  (of-object "GtkTable")
-  (c-name "gtk_table_set_homogeneous")
+(define-method set_row_homogeneous
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_row_homogeneous")
   (return-type "none")
   (parameters
    '("gboolean" "homogeneous")
    )
   )
 
-(define-method get_homogeneous
-  (of-object "GtkTable")
-  (c-name "gtk_table_get_homogeneous")
+(define-method get_row_homogeneous
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_row_homogeneous")
   (return-type "gboolean")
   )
 
 
+(define-method set_row_spacing
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_row_spacing")
+  (return-type "none")
+  (parameters
+   '("guint" "spacing")
+   )
+  )
+
+(define-method get_row_spacing
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_row_spacing")
+  (return-type "guint")
+  )
+
+(define-method set_column_homogeneous
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_column_homogeneous")
+  (return-type "none")
+  (parameters
+   '("gboolean" "homogeneous")
+   )
+  )
+
+(define-method get_column_homogeneous
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_column_homogeneous")
+  (return-type "gboolean")
+  )
+
+
+
+(define-method set_column_spacing
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_column_spacing")
+  (return-type "none")
+  (parameters
+   '("guint" "spacing")
+   )
+  )
+
+(define-method get_column_spacing
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_column_spacing")
+  (return-type "guint")
+  )
+
+(define-method get_baseline_row
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_baseline_row")
+  (return-type "guint")
+  )
+
+(define-method set_baseline_row
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_baseline_row")
+  (return-type "none")
+  (parameters
+   '("gint" "row")
+   )
+  )
+
+(define-method get_row_baseline_position
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_get_row_baseline_position")
+  (return-type "GtkBaselinePosition")
+    (parameters
+     '("gint" "row")
+     )
+    )
+
+(define-method set_row_baseline_position
+  (of-object "GtkGrid")
+  (c-name "gtk_grid_set_row_baseline_position")
+  (return-type "none")
+    (parameters
+     '("gint" "row")
+     '("GtkBaselinePosition" "pos")
+     )
+    )
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtktearoffmenuitem.h
 
@@ -17358,12 +17607,12 @@
   (return-type "GtkTextBuffer*")
   )
 
-(define-method scroll_to_iter
+(define-method scroll_to_mark
   (of-object "GtkTextView")
-  (c-name "gtk_text_view_scroll_to_iter")
-  (return-type "gboolean")
+  (c-name "gtk_text_view_scroll_to_mark")
+  (return-type "none")
   (parameters
-   '("GtkTextIter*" "iter")
+   '("GtkTextMark*" "mark")
    '("gdouble" "within_margin")
    '("gboolean" "use_align" (default "FALSE"))
    '("gdouble" "xalign" (default "0.5"))
@@ -17371,12 +17620,12 @@
    )
   )
 
-(define-method scroll_to_mark
+(define-method scroll_to_iter
   (of-object "GtkTextView")
-  (c-name "gtk_text_view_scroll_to_mark")
-  (return-type "none")
+  (c-name "gtk_text_view_scroll_to_iter")
+  (return-type "gboolean")
   (parameters
-   '("GtkTextMark*" "mark")
+   '("GtkTextIter*" "iter")
    '("gdouble" "within_margin")
    '("gboolean" "use_align" (default "FALSE"))
    '("gdouble" "xalign" (default "0.5"))
@@ -17442,6 +17691,20 @@
    )
   )
 
+
+
+
+(define-method get_line_yrange
+  (of-object "GtkTextView")
+  (c-name "gtk_text_view_get_line_yrange")
+  (return-type "none")
+  (parameters
+   '("const-GtkTextIter*" "iter")
+   '("gint*" "y")
+   '("gint*" "height")
+   )
+  )
+
 (define-method get_iter_at_location
   (of-object "GtkTextView")
   (c-name "gtk_text_view_get_iter_at_location")
@@ -17462,18 +17725,6 @@
    '("gint*" "trailing")
    '("gint" "x")
    '("gint" "y")
-   )
-  )
-
-
-(define-method get_line_yrange
-  (of-object "GtkTextView")
-  (c-name "gtk_text_view_get_line_yrange")
-  (return-type "none")
-  (parameters
-   '("const-GtkTextIter*" "iter")
-   '("gint*" "y")
-   '("gint*" "height")
    )
   )
 
@@ -17825,6 +18076,24 @@
   (c-name "gtk_text_view_get_default_attributes")
   (return-type "GtkTextAttributes*")
   )
+
+;; 3.16
+;; (define-method set_monospace
+;;   (of-object "GtkTextView")
+;;   (c-name "gtk_text_view_set_monospace")
+;;   (return-type "none")
+;;   (parameters
+;;    '("gboolean" "monospace")
+;;    )
+;;   )
+
+;; 3.16
+;; (define-method get_monospace
+;;   (of-object "GtkTextView")
+;;   (c-name "gtk_text_view_get_monospace")
+;;   (return-type "gboolean")
+;;   )
+
 (define-virtual set_scroll_adjustments
   (of-object "GtkTextView")
   (return-type "none")
@@ -21756,16 +22025,18 @@
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkvbbox.h
 
-(define-function gtk_vbutton_box_get_type
-  (c-name "gtk_vbutton_box_get_type")
-  (return-type "GtkType")
-  )
+;; (define-function gtk_vbutton_box_get_type
+;;   (c-name "gtk_vbutton_box_get_type")
+;;   (return-type "GtkType")
+;;   )
 
-(define-function gtk_vbutton_box_new
-  (c-name "gtk_vbutton_box_new")
-  (is-constructor-of GtkVButtonBox)
-  (return-type "GtkWidget*")
-  )
+;; (define-function gtkvbuttonbox_new
+;;   (c-name "gtk_button_box_new")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("GtkOrientation" "orientation" (default "GTK_ORIENTATION_VERTICAL"))
+;;    )
+;;   )
 
 ;; (define-function vbutton_box_get_spacing_default
 ;;   (c-name "gtk_vbutton_box_get_spacing_default")
@@ -22833,7 +23104,7 @@
 ;;   (return-type "none")
 ;;   )
 
-;; (define-function widget_pop_composite_child 
+;; (define-function widget_pop_composite_child
 ;;   (c-name "gtk_widget_pop_composite_child")
 ;;   (return-type "none")
 ;;   )

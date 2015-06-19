@@ -3756,7 +3756,6 @@ gtk_radio_menu_item_group
 gtk_radio_menu_item_set_group
 gtk_radio_button_group
 gtk_radio_button_set_group
-gtk_entry_new
 gtk_entry_select_region
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
@@ -4159,7 +4158,7 @@ typedef enum { FROM_pixmap, FROM_image, FROM_file,  FROM_pixbuf,  FROM_stock,  F
 
 static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lhs)
 {
-  /* 
+  /*
   char *str;
   int_types T[] = {string, obj_check, obj_check,t_end};
   NspGObject *pixmap, *mask;
@@ -4179,7 +4178,7 @@ static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lh
 
 static int _wrap_gtk_image_new_from_image(Stack stack, int rhs, int opt, int lhs)
 {
-  /* 
+  /*
   char *str;
   int_types T[] = {string,obj_check, obj_check,t_end};
   NspGObject *image, *mask;
@@ -4236,7 +4235,7 @@ static int _wrap_gtk_image_new_from_pixbuf(Stack stack, int rhs, int opt, int lh
 
 static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs)
 {
-  /* 
+  /*
   char *str;
   int_types T[] = {string,string, obj,t_end};
   char *stock_id;
@@ -4258,7 +4257,7 @@ static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs
 
 static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int lhs)
 {
-  /* 
+  /*
   char *str;
   int_types T[] = {string,obj, obj,t_end};
   NspObject *nsp_icon_set, *nsp_size = NULL, *nsp_ret;
@@ -4346,19 +4345,22 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
     {"mnemonic",string,NULLOBJ,-1},
     {"label",string,NULLOBJ,-1},
     {"stock",string,NULLOBJ,-1},
+    {"icon-name",string,NULLOBJ,-1},
     {NULL,t_end,NULLOBJ,-1} };
 
-  gchar *mnemonic = NULL, *label = NULL, *stock = NULL;
+  gchar *mnemonic = NULL, *label = NULL, *stock = NULL,*icon_name=NULL;
 
   if (GetArgs(stack,rhs,opt,T, &opts,&mnemonic, &label, &stock) == FAIL)  return RET_BUG;
-  if (0 && stock)
-    gobj = NULL; /* (GObject *)gtk_button_new_from_stock(stock); */
+  if ( stock )
+    gobj = (GObject *) gtk_button_new_from_stock(stock);
+  else if (icon_name)
+    gobj = (GObject *) gtk_button_new_from_icon_name(stock,GTK_ICON_SIZE_BUTTON);
   else if (mnemonic)
-    gobj = (GObject *)gtk_button_new_with_mnemonic(mnemonic);
+    gobj = (GObject *) gtk_button_new_with_mnemonic(mnemonic);
   else if (label)
-    gobj = (GObject *)gtk_button_new_with_mnemonic(label);
+    gobj = (GObject *) gtk_button_new_with_mnemonic(label);
   else
-    gobj = (GObject *)gtk_button_new();
+    gobj = (GObject *) gtk_button_new();
   if (gobj == NULL ) {
     Scierror( "%s: could not create GtkButton object",NspFname(stack));
     return RET_BUG;
@@ -6964,7 +6966,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
       /* int i; */
       return RET_BUG;
       /* if ((ret = (GObject *) gtk_combo_box_new_text()) == NULL) return RET_BUG; */
-      /* append smat 
+      /* append smat
       for ( i = 0 ; i < Smat->mn ; i++)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(ret),Smat->S[i]);
       */

@@ -1688,11 +1688,11 @@
   ;;   '("guint" "need_resize")
   ;;   '("guint" "resize_mode")
   ;;   '("guint" "reallocate_redraws")
-  ;;   '("guint" "has_focus_chain")    
+  ;;   '("guint" "has_focus_chain")
   ;; )
 )
 
-;; deprecated (jpc) 
+;; deprecated (jpc)
 ; (define-object GtkCTree
 ;   (in-module "Gtk")
 ;   (parent "GtkCList")
@@ -1809,11 +1809,11 @@
 ;;   ;;   '("GtkMenu*" "history_menu")
 ;;   ;;   '("GtkWidget*" "fileop_dialog")
 ;;   ;;   '("GtkWidget*" "fileop_entry")
-;;   ;;   '("gchar*"     "fileop_file")    
+;;   ;;   '("gchar*"     "fileop_file")
 ;;   ;;   '("GtkWidget*" "fileop_c_dir")
-;;   ;;   '("GtkWidget*" "fileop_del_file")    
-;;   ;;   '("GtkWidget*" "fileop_ren_file")        
-;;   ;;   '("GtkHButtonBox*" "button_area")        
+;;   ;;   '("GtkWidget*" "fileop_del_file")
+;;   ;;   '("GtkWidget*" "fileop_ren_file")
+;;   ;;   '("GtkHButtonBox*" "button_area")
 ;;   ;;   '("GtkHBox*" "action_area")
 ;;   ;; )
 ;; )
@@ -2036,7 +2036,7 @@
   ;;  )
 )
 
-; deprecated 
+; deprecated
 ; (define-object GtkList
 ;   (in-module "Gtk")
 ;   (parent "GtkContainer")
@@ -2166,7 +2166,7 @@
   ;;   )
 )
 
-;; jpc deprecated 
+;; jpc deprecated
 ; (define-object GtkPixmap
 ;   (in-module "Gtk")
 ;   (parent "GtkMisc")
@@ -2202,7 +2202,7 @@
   (gtype-id "GTK_TYPE_PROGRESS_BAR")
 )
 
-;; added July 2008 
+;; added July 2008
 ;; (define-object GtkRadioAction
 ;;   (in-module "Gtk")
 ;;   (parent "GtkToggleAction")
@@ -2362,6 +2362,24 @@
 ;;   ;; )
 ;;   (gtype-id "GTK_TYPE_STYLE")
 ;; )
+
+(define-object GtkGrid
+  (in-module "Gtk")
+  (parent "GtkContainer")
+  (c-name "GtkGrid")
+  (gtype-id "GTK_TYPE_GRID")
+)
+
+(define-enum GtkBaselinePosition
+  (in-module "Gtk")
+  (c-name "GtkBaselinePosition")
+  (gtype-id "GTK_TYPE_BASELINE_POSITION")
+  (values
+    '("top" "GTK_BASELINE_POSITION_TOP")
+    '("center" "GTK_BASELINE_POSITION_CENTER")
+    '("bottom" "GTK_BASELINE_POSITION_BOTTOM")
+    )
+  )
 
 ;; (define-object GtkTable
 ;;   (in-module "Gtk")
@@ -2598,7 +2616,7 @@
 ;;   (gtype-id "GTK_TYPE_VSEPARATOR")
 ;; )
 
-;; parent should be GInitiallyUnowned ? 
+;; parent should be GInitiallyUnowned ?
 
 (define-object GtkWidget
   (in-module "Gtk")
@@ -2638,18 +2656,18 @@
 ;;     '("guint" "configure_notify_received")
 ;;     '("guint" "need_default_position")
 ;;     '("guint" "need_default_size")
-;;     '("guint" "position")    
+;;     '("guint" "position")
 ;;     '("guint" "type")
 ;;     '("guint" "has_user_ref_count")
 ;;     '("guint" "has_focus")
 ;;     '("guint" "modal")
-;;     '("guint" "destroy_with_parent")    
-;;     '("guint" "has_frame")        
-;;     '("guint" "iconify_initially")            
-;;     '("guint" "stick_initially")                
-;;     '("guint" "maximize_initially")    
-;;     '("guint" "decorated")        
-;;     '("guint" "type_hint")            
+;;     '("guint" "destroy_with_parent")
+;;     '("guint" "has_frame")
+;;     '("guint" "iconify_initially")
+;;     '("guint" "stick_initially")
+;;     '("guint" "maximize_initially")
+;;     '("guint" "decorated")
+;;     '("guint" "type_hint")
 ;;     '("guint" "gravity")
 ;;     '("guint" "frame_left")
 ;;     '("guint" "frame_top")
@@ -2666,4 +2684,3 @@
   (c-name "GtkWindowGroup")
   (gtype-id "GTK_TYPE_WINDOW_GROUP")
 )
-

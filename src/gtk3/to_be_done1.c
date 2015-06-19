@@ -7,7 +7,7 @@
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 
-
+/* atk */
 extern void * new_type_atkhyperlink(type_mode);
 extern void * new_type_atkobject(type_mode);
 extern void * new_type_atknoopobject(type_mode);
@@ -19,7 +19,7 @@ extern void * new_type_atkrelationset(type_mode);
 extern void * new_type_atkstateset(type_mode);
 extern void * new_type_atkutil(type_mode);
 
-
+/* gdk */
 extern void * new_type_gdkatom(type_mode);
 extern void * new_type_gdkevent(type_mode);
 /* extern void * new_type_gdkfont(type_mode); */
@@ -45,8 +45,7 @@ extern void * new_type_gdkscreen(type_mode);
 extern void * new_type_gdkdisplay(type_mode);
 extern void   new_type_gpointer(type_mode);
 
-#if 0 
-
+/* gtk */
 extern void * new_type_gtkrequisition(type_mode);
 extern void * new_type_gtkiconset(type_mode);
 extern void * new_type_gtkiconsource(type_mode);
@@ -232,13 +231,12 @@ extern void * new_type_gtktoolbutton(type_mode);
 extern void * new_type_gtktoolitem(type_mode);
 extern void * new_type_gtktreemodelfilter(type_mode);
 extern void * new_type_gtktreerowreference(type_mode);
-#endif
 
 static int add_constants(void);
 
 /* init nsp gtk object types */
 
-void nsp_init_gtk_types(void) 
+void nsp_init_gtk_types(void)
 {
 #if GLIB_CHECK_VERSION(2,36,0)
   /* deprecated g_type_init */
@@ -277,11 +275,10 @@ void nsp_init_gtk_types(void)
   new_type_gobject(T_BASE);
   new_type_gpointer(T_BASE);
 
-#if 0 
-
   new_type_gtkrequisition(T_BASE);
-  new_type_gtkiconset(T_BASE);
+  /* new_type_gtkiconset(T_BASE);
   new_type_gtkiconsource(T_BASE);
+  */
   new_type_gtkselectiondata(T_BASE);
   new_type_gtktextattributes(T_BASE);
   new_type_gtktextiter(T_BASE);
@@ -289,9 +286,10 @@ void nsp_init_gtk_types(void)
   /* new_type_gtkctreenode(T_BASE); */
   new_type_gtkaccelgroup(T_BASE);
   new_type_gtkaccessible(T_BASE);
-  new_type_gtkiconfactory(T_BASE);
+  /* new_type_gtkiconfactory(T_BASE);
   new_type_gtkobject(T_BASE);
   new_type_gtkitemfactory(T_BASE);
+  */
   new_type_gtkimcontext(T_BASE);
   new_type_gtkimcontextsimple(T_BASE);
   new_type_gtkimmulticontext(T_BASE);
@@ -301,16 +299,16 @@ void nsp_init_gtk_types(void)
   new_type_gtkcellrenderertext(T_BASE);
   new_type_gtkcellrendererpixbuf(T_BASE);
   new_type_gtkadjustment(T_BASE);
-  new_type_gtkrcstyle(T_BASE);
+  /* new_type_gtkrcstyle(T_BASE); */
   new_type_gtksettings(T_BASE);
   new_type_gtksizegroup(T_BASE);
-  new_type_gtkstyle(T_BASE);
+  /* new_type_gtkstyle(T_BASE); */
   new_type_gtktextbuffer(T_BASE);
   new_type_gtktextchildanchor(T_BASE);
   new_type_gtktextmark(T_BASE);
   new_type_gtktexttag(T_BASE);
   new_type_gtktexttagtable(T_BASE);
-  new_type_gtktooltips(T_BASE);
+  /* new_type_gtktooltips(T_BASE); */
   new_type_gtkliststore(T_BASE);
   new_type_gtktreemodelsort(T_BASE);
   new_type_gtktreeselection(T_BASE);
@@ -318,22 +316,27 @@ void nsp_init_gtk_types(void)
   new_type_gtktreeviewcolumn(T_BASE);
   new_type_gtkwidget(T_BASE);
   new_type_gtkseparator(T_BASE);
-  new_type_gtkvseparator(T_BASE);
+  /* new_type_gtkvseparator(T_BASE);
   new_type_gtkhseparator(T_BASE);
+  */
+  /*
   new_type_gtkruler(T_BASE);
   new_type_gtkvruler(T_BASE);
   new_type_gtkhruler(T_BASE);
+  */
   new_type_gtkrange(T_BASE);
   new_type_gtkscrollbar(T_BASE);
-  new_type_gtkvscrollbar(T_BASE);
-  new_type_gtkhscrollbar(T_BASE);
+  /* new_type_gtkvscrollbar(T_BASE);
+     new_type_gtkhscrollbar(T_BASE);
+  */
   new_type_gtkscale(T_BASE);
-  new_type_gtkvscale(T_BASE);
+  /* new_type_gtkvscale(T_BASE);
   new_type_gtkhscale(T_BASE);
-  new_type_gtkprogress(T_BASE);
+  */
+  /* new_type_gtkprogress(T_BASE); */
   new_type_gtkprogressbar(T_BASE);
-  new_type_gtkpreview(T_BASE);
-  new_type_gtkoldeditable(T_BASE);
+  /* new_type_gtkpreview(T_BASE); */
+  /* new_type_gtkoldeditable(T_BASE);*/
   new_type_gtkmisc(T_BASE);
   /* new_type_gtkpixmap(T_BASE); */
   new_type_gtkarrow(T_BASE);
@@ -344,16 +347,16 @@ void nsp_init_gtk_types(void)
   new_type_gtkentry(T_BASE);
   new_type_gtkspinbutton(T_BASE);
   new_type_gtkdrawingarea(T_BASE);
-  new_type_gtkcurve(T_BASE);
+  /* new_type_gtkcurve(T_BASE); */
   new_type_gtkcontainer(T_BASE);
   new_type_gtktreeview(T_BASE);
   new_type_gtktoolbar(T_BASE);
   new_type_gtktextview(T_BASE);
-  new_type_gtktable(T_BASE);
-  new_type_gtksocket(T_BASE);
+  /* new_type_gtktable(T_BASE);	 */
+  /* new_type_gtksocket(T_BASE); */
   new_type_gtkpaned(T_BASE);
-  new_type_gtkvpaned(T_BASE);
-  new_type_gtkhpaned(T_BASE);
+  /* new_type_gtkvpaned(T_BASE); */
+  /* new_type_gtkhpaned(T_BASE); */
   new_type_gtknotebook(T_BASE);
   new_type_gtkmenushell(T_BASE);
   new_type_gtkmenu(T_BASE);
@@ -363,17 +366,17 @@ void nsp_init_gtk_types(void)
   new_type_gtkbin(T_BASE);
   new_type_gtkviewport(T_BASE);
   new_type_gtkscrolledwindow(T_BASE);
-  new_type_gtkitem(T_BASE);
+  /* new_type_gtkitem(T_BASE); */
   new_type_gtkmenuitem(T_BASE);
-  new_type_gtktearoffmenuitem(T_BASE);
+  /* new_type_gtktearoffmenuitem(T_BASE); */
   new_type_gtkseparatormenuitem(T_BASE);
   new_type_gtkcheckmenuitem(T_BASE);
   new_type_gtkradiomenuitem(T_BASE);
-  new_type_gtkimagemenuitem(T_BASE);
+  /* new_type_gtkimagemenuitem(T_BASE); */
   /* new_type_gtklist(T_BASE);
      new_type_gtklistitem(T_BASE);
   */
-  new_type_gtkhandlebox(T_BASE);
+  /* new_type_gtkhandlebox(T_BASE); */
   new_type_gtkframe(T_BASE);
   new_type_gtkaspectframe(T_BASE);
   new_type_gtkeventbox(T_BASE);
@@ -382,31 +385,31 @@ void nsp_init_gtk_types(void)
   new_type_gtktogglebutton(T_BASE);
   new_type_gtkcheckbutton(T_BASE);
   new_type_gtkradiobutton(T_BASE);
-  new_type_gtkoptionmenu(T_BASE);
+  /* new_type_gtkoptionmenu(T_BASE); */
   new_type_gtkbox(T_BASE);
-  new_type_gtkvbox(T_BASE);
-  new_type_gtkcolorselection(T_BASE);
-  new_type_gtkfontselection(T_BASE);
-  new_type_gtkgammacurve(T_BASE);
-  new_type_gtkhbox(T_BASE);
+  /* new_type_gtkvbox(T_BASE); */
+  /* new_type_gtkcolorselection(T_BASE); */
+  /* new_type_gtkfontselection(T_BASE); */
+  /* new_type_gtkgammacurve(T_BASE); */
+  /* new_type_gtkhbox(T_BASE); */
   new_type_gtkstatusbar(T_BASE);
-  new_type_gtkcombo(T_BASE);
+  /* new_type_gtkcombo(T_BASE); */
   new_type_gtkcombobox(T_BASE);
-  new_type_gtkcomboboxentry(T_BASE);
+  /* new_type_gtkcomboboxentry(T_BASE); */
   new_type_gtkbuttonbox(T_BASE);
-  new_type_gtkvbuttonbox(T_BASE);
-  new_type_gtkhbuttonbox(T_BASE);
+  /* new_type_gtkvbuttonbox(T_BASE); */
+  /* new_type_gtkhbuttonbox(T_BASE); */
   /* new_type_gtkclist(T_BASE);*/
   /* new_type_gtkctree(T_BASE);*/
   new_type_gtkcalendar(T_BASE);
   new_type_gtkwindow(T_BASE);
-  new_type_gtkplug(T_BASE);
+  /* new_type_gtkplug(T_BASE); */
   new_type_gtkdialog(T_BASE);
   new_type_gtkmessagedialog(T_BASE);
-  new_type_gtkinputdialog(T_BASE);
-  new_type_gtkfontselectiondialog(T_BASE);
-  new_type_gtkfileselection(T_BASE);
-  new_type_gtkcolorselectiondialog(T_BASE);
+  /* new_type_gtkinputdialog(T_BASE); */
+  /* new_type_gtkfontselectiondialog(T_BASE); */
+  /* new_type_gtkfileselection(T_BASE); */
+  /* new_type_gtkcolorselectiondialog(T_BASE); */
   new_type_gtkwindowgroup(T_BASE);
   new_type_gtkeditable(T_BASE);
   new_type_gtkcelleditable(T_BASE);
@@ -433,26 +436,24 @@ void nsp_init_gtk_types(void)
 
 #if GTK_CHECK_VERSION(2,6,0)
   new_type_gtkcellview(T_BASE);
-#endif 
-#endif 
+#endif
 
   add_constants();
 }
 
-/* more types 
+/* more types
  */
 
 void nsp_init_gtk_types_added(void)
 {
-#if 0 
   /* from glib */
   new_type_gdate(T_BASE);
   /* for gtk */
-  new_type_gtkaction(T_BASE);
-  new_type_gtkactiongroup(T_BASE);
-  new_type_gtktoggleaction(T_BASE);  
-  new_type_gtkradioaction(T_BASE);
-  new_type_gtkuimanager(T_BASE);
+  /* new_type_gtkaction(T_BASE); */
+  /* new_type_gtkactiongroup(T_BASE); */
+  /* new_type_gtktoggleaction(T_BASE); */
+  /* new_type_gtkradioaction(T_BASE); */
+  /* new_type_gtkuimanager(T_BASE); */
   new_type_gdkdisplaymanager(T_BASE);
   new_type_gtkaboutdialog(T_BASE);
   new_type_gtkaccelmap(T_BASE);
@@ -479,17 +480,17 @@ void nsp_init_gtk_types_added(void)
   new_type_gtktoolitem(T_BASE);
   new_type_gtktreemodelfilter(T_BASE);
   new_type_gtktreerowreference(T_BASE);
-#endif 
+
 }
 
 /*
- * registering constants in an Nsp Hash Table 
+ * registering constants in an Nsp Hash Table
  */
 
-NspHash *nsp_gtk_hash_table = NULL; 
-NspHash *nsp_gdk_hash_table = NULL; 
-NspHash *nsp_atk_hash_table = NULL; 
-NspHash *nsp_pango_hash_table = NULL; 
+NspHash *nsp_gtk_hash_table = NULL;
+NspHash *nsp_gdk_hash_table = NULL;
+NspHash *nsp_atk_hash_table = NULL;
+NspHash *nsp_pango_hash_table = NULL;
 
 #define PANGO_ENTER(name,value) \
   if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,value))== NULL) return FAIL; \
@@ -498,30 +499,30 @@ NspHash *nsp_pango_hash_table = NULL;
 static int add_constants(void)
 {
   NspObject *nsp_val;
-  if ( nsp_gtk_hash_table == NULLHASH ) 
+  if ( nsp_gtk_hash_table == NULLHASH )
     {
-      /* create and store in the protected frame XXXX  */  
-      if (( nsp_gtk_hash_table = nsp_hash_create("GTK",500))== NULLHASH) return FALSE;  
+      /* create and store in the protected frame XXXX  */
+      if (( nsp_gtk_hash_table = nsp_hash_create("GTK",500))== NULLHASH) return FALSE;
     }
-  gtk_add_constants(NSP_OBJECT(nsp_gtk_hash_table), "GTK_"); 
-  if ( nsp_gdk_hash_table == NULLHASH ) 
+  gtk_add_constants(NSP_OBJECT(nsp_gtk_hash_table), "GTK_");
+  if ( nsp_gdk_hash_table == NULLHASH )
     {
-      /* create and store in the protected frame XXXX  */  
-      if (( nsp_gdk_hash_table = nsp_hash_create("GDK",500))== NULLHASH) return FALSE;  
+      /* create and store in the protected frame XXXX  */
+      if (( nsp_gdk_hash_table = nsp_hash_create("GDK",500))== NULLHASH) return FALSE;
     }
-  gdk_add_constants(NSP_OBJECT(nsp_gdk_hash_table), "GDK_"); 
-  if ( nsp_atk_hash_table == NULLHASH ) 
+  gdk_add_constants(NSP_OBJECT(nsp_gdk_hash_table), "GDK_");
+  if ( nsp_atk_hash_table == NULLHASH )
     {
-      /* create and store in the protected frame XXXX  */  
-      if (( nsp_atk_hash_table = nsp_hash_create("ATK",500))== NULLHASH) return FALSE;  
+      /* create and store in the protected frame XXXX  */
+      if (( nsp_atk_hash_table = nsp_hash_create("ATK",500))== NULLHASH) return FALSE;
     }
-  atk_add_constants(NSP_OBJECT(nsp_atk_hash_table), "ATK_"); 
-  if ( nsp_pango_hash_table == NULLHASH ) 
+  atk_add_constants(NSP_OBJECT(nsp_atk_hash_table), "ATK_");
+  if ( nsp_pango_hash_table == NULLHASH )
     {
-      /* create and store in the protected frame XXXX  */  
-      if (( nsp_pango_hash_table = nsp_hash_create("PANGO",500))== NULLHASH) return FALSE;  
+      /* create and store in the protected frame XXXX  */
+      if (( nsp_pango_hash_table = nsp_hash_create("PANGO",500))== NULLHASH) return FALSE;
     }
-  pango_add_constants(NSP_OBJECT(nsp_pango_hash_table),"PANGO_"); 
+  pango_add_constants(NSP_OBJECT(nsp_pango_hash_table),"PANGO_");
 
   PANGO_ENTER( "SCALE_XX_SMALL",PANGO_SCALE_XX_SMALL);
   PANGO_ENTER( "SCALE_X_SMALL",PANGO_SCALE_X_SMALL);
@@ -529,7 +530,6 @@ static int add_constants(void)
   PANGO_ENTER( "SCALE_MEDIUM",PANGO_SCALE_MEDIUM);
   PANGO_ENTER( "SCALE_LARGE",PANGO_SCALE_LARGE);
   PANGO_ENTER( "SCALE_X_LARGE",PANGO_SCALE_X_LARGE);
-  PANGO_ENTER( "SCALE_XX_LARGE",PANGO_SCALE_XX_LARGE);    
+  PANGO_ENTER( "SCALE_XX_LARGE",PANGO_SCALE_XX_LARGE);
   return TRUE;
 }
-
