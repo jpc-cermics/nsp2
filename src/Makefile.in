@@ -2,8 +2,8 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zcalelm objects interp functions gtk2 \
-	system graphics-old graphics-new menus gtksci \
+SCIDIRS = zcalelm objects interp functions @GTKDIR@ \
+	system graphics-new menus gtksci \
 	@GZVT@ modules gobjects types-test librand \
 	libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
 	libminpack liboptim @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ @AMOS_CEPHES_LIB@
@@ -16,8 +16,8 @@ ALLSCIDIRS =zcalelm objects interp functions gtk2 \
 	libpvm libblas liblapack libxdr libsndfile libumfpack libportaudio \
 	libgraphviz libglpk @AMOS_CEPHES_LIB@
 
-SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
-ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS) 
+SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS)
+ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS)
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \

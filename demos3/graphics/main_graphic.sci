@@ -98,8 +98,9 @@ function [scrolled_window,buffer]=create_text(is_source)
   scrolled_window.add[text_view]
 
   if is_source then
-    font_desc = pangofontdescription_new ("Courier 12");
-    text_view.modify_font[font_desc]
+    // XXX
+    // font_desc = pangofontdescription_new ("Courier 12");
+    // text_view.modify_font[font_desc]
     text_view.set_wrap_mode[GTK.WRAP_NONE];
   else
     text_view.set_wrap_mode[GTK.WRAP_WORD];

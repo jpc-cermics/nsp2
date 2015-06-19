@@ -1,23 +1,23 @@
-// Button Boxes 
+// Button Boxes
 //-----------------------------------------------
 
 function demo_button_box()
-  // utility function 
+  // utility function
   function frame=create_bbox(horizontal,title,spacing)
-    // create a frame with three stock buttons 
+    // create a frame with three stock buttons
       layout = 'GTK_BUTTONBOX_'+toupper(title);
       frame = gtkframe_new (label=title);
       if (horizontal)
-	bbox = gtkhbuttonbox_new();
+	bbox = gtkbuttonbox_new("horizontal");
       else
-	bbox = gtkvbuttonbox_new();
+	bbox = gtkbuttonbox_new("vertical");
       end
       bbox.set_border_width[5];
       frame.add[bbox];
-      
+
       bbox.set_layout[layout];
       bbox.set_spacing[spacing];
-      
+
       for st=["gtk-ok","gtk-cancel","gtk-help"]
 	button = gtkbutton_new(stock=st);
 	bbox.add[button];

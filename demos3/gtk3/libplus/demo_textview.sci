@@ -4,8 +4,8 @@
 //  can be displayed by multiple GtkTextViews. This demo has two views
 //  displaying a single buffer, and shows off the widget's text
 //  formatting features.
-// 
-// FIXME: unfinished ...  reste du boulot !!!! 
+//
+// FIXME: unfinished ...  reste du boulot !!!!
 
 function create_tags (buffer)
 // Create a bunch of tags. Note that it's also possible to
@@ -25,18 +25,18 @@ function create_tags (buffer)
 // property affected by an earlier tag will override the earlier
 // tag.  You can modify tag priorities with
 // gtk_text_tag_set_priority().
-// XXXXX reste a regler le pb de size qui est pas clair 
-// d'autre part create_tag doit renvoyer un tag 
-// comment utilise-t-on les tags ensuite ? 
+// XXXXX reste a regler le pb de size qui est pas clair
+// d'autre part create_tag doit renvoyer un tag
+// comment utilise-t-on les tags ensuite ?
 
   buffer.create_tag[ "heading", weight= PANGO.WEIGHT_BOLD, scale= PANGO.SCALE_XX_LARGE];
   buffer.create_tag[ "italic",  style= PANGO.STYLE_ITALIC ];
-  buffer.create_tag[ "bold",    weight= PANGO.WEIGHT_BOLD ];  
+  buffer.create_tag[ "bold",    weight= PANGO.WEIGHT_BOLD ];
   buffer.create_tag[ "big",     size= 20 * PANGO.SCALE_MEDIUM ];
   buffer.create_tag[ "xx-small",scale= PANGO.SCALE_XX_SMALL ];
   buffer.create_tag[ "x-large", scale= PANGO.SCALE_X_LARGE ];
   buffer.create_tag[ "monospace",family= "monospace" ];
-  buffer.create_tag[ "blue_foreground", foreground= "blue" ];  
+  buffer.create_tag[ "blue_foreground", foreground= "blue" ];
   buffer.create_tag[ "red_background",  background= "red"];
   //stipple = gdk_bitmap_create_from_data (],gray50_bits, gray50_width,gray50_height);
   //buffer.create_tag[ "background_stipple", background_stipple= stipple ];
@@ -59,19 +59,19 @@ function create_tags (buffer)
   buffer.create_tag[ "subscript", rise= -10 * PANGO.SCALE_MEDIUM,  size= 8 * PANGO.SCALE_MEDIUM];
   buffer.create_tag[ "rtl_quote", wrap_mode= GTK.WRAP_WORD, direction= GTK.TEXT_DIR_RTL,
 		     indent= 30,  left_margin= 20, right_margin= 20];
-endfunction 
+endfunction
 
-function small_insert(buffer) 
+function small_insert(buffer)
   iter = buffer.get_iter_at_offset [0];
   buffer.insert_with_tags_by_name [iter, "The text widget can display text with all kinds of nifty attributes. It also supports multiple views of the same buffer; this demo is showing the same buffer in two places.\n\n","char_wrap"];
-endfunction 
+endfunction
 
 function insert_text (buffer)
-// XXXX attention a metre dans gtkpixbuf  
-  gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif';
+// XXXX attention a metre dans gtkpixbuf
+  gtk_logo = getenv('NSP')+'/demos3/gtk3/libplus/gtk-logo-rgb.gif';
   pix=gdk_pixbuf_new_from_file(gtk_logo);
   pix = pix.scale_simple[32,32, GDK.INTERP_BILINEAR];
-  
+
   // get start of buffer; each insertion will revalidate the
   // iterator to point to just after the inserted text.
   iter = buffer.get_iter_at_offset [0];
@@ -79,7 +79,7 @@ function insert_text (buffer)
   buffer.insert_with_tags_by_name [iter, "Font styles. ",   "heading"];
   buffer.insert [iter, "For example, you can have "];
   buffer.insert_with_tags_by_name [iter,  "italic",   "italic"];
-  buffer.insert [iter, ", "];  
+  buffer.insert [iter, ", "];
   buffer.insert_with_tags_by_name [iter,  "bold",   "bold"];
   buffer.insert [iter, ", or "];
   buffer.insert_with_tags_by_name [iter,  "monospace (typewriter)",   "monospace"];
@@ -92,16 +92,16 @@ function insert_text (buffer)
   buffer.insert_with_tags_by_name [iter,  "x-large",   "x-large"];
   buffer.insert [iter, " to ensure that your program properly adapts if the user changes the default font size.\n\n"];
   buffer.insert_with_tags_by_name [iter, "Colors. ",   "heading"];
-  buffer.insert [iter, "Colors such as "];  
+  buffer.insert [iter, "Colors such as "];
   buffer.insert_with_tags_by_name [iter,  "a blue foreground",  "blue_foreground"];
-  buffer.insert [iter, " or "];  
+  buffer.insert [iter, " or "];
   buffer.insert_with_tags_by_name [iter,  "a red background",  "red_background"];
-  buffer.insert [iter, " or even "];  
+  buffer.insert [iter, " or even "];
   buffer.insert_with_tags_by_name [iter,  "a stippled red background",  "red_background", "background_stipple"];
-  buffer.insert [iter, " or "];  
-  buffer.insert_with_tags_by_name [iter, "a stippled blue foreground on solid red background", 
+  buffer.insert [iter, " or "];
+  buffer.insert_with_tags_by_name [iter, "a stippled blue foreground on solid red background",
 		    "blue_foreground", "red_background", "foreground_stipple"]
-  buffer.insert [iter, " (select that to read it) can be used.\n\n"];  
+  buffer.insert [iter, " (select that to read it) can be used.\n\n"];
   buffer.insert_with_tags_by_name [iter, "Underline, strikethrough, and rise. ",  "heading"];
   buffer.insert_with_tags_by_name [iter, "Strikethrough",  "strikethrough"];
   buffer.insert [iter, ", "];
@@ -128,22 +128,22 @@ function insert_text (buffer)
   buffer.insert_with_tags_by_name [iter, "Editability. ",    "heading"];
   buffer.insert_with_tags_by_name [iter, "This line is ''locked down'' and can''t be edited by the user - just try it! You can''t delete this line.\n\n", "not_editable"];
   buffer.insert_with_tags_by_name [iter, "Wrapping. ",  "heading"];
-  buffer.insert [iter, "This line (and most of the others in this buffer) is word-wrapped, using the proper Unicode algorithm. Word wrap should work in all scripts and languages that GTK+ supports. Let''s make this a long paragraph to demonstrate: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah\n\n"];  
-  buffer.insert_with_tags_by_name [iter, "This line has character-based wrapping, and can wrap between any two character glyphs. Let''s make this a long paragraph to demonstrate: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah\n\n", 
+  buffer.insert [iter, "This line (and most of the others in this buffer) is word-wrapped, using the proper Unicode algorithm. Word wrap should work in all scripts and languages that GTK+ supports. Let''s make this a long paragraph to demonstrate: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah\n\n"];
+  buffer.insert_with_tags_by_name [iter, "This line has character-based wrapping, and can wrap between any two character glyphs. Let''s make this a long paragraph to demonstrate: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah\n\n",
 		    "char_wrap"];
-  
+
   buffer.insert_with_tags_by_name [iter, "This line has all wrapping turned off, so it makes the horizontal scrollbar appear.\n\n\n","no_wrap"];
-  buffer.insert_with_tags_by_name [iter, "Justification. ",   "heading"];  
+  buffer.insert_with_tags_by_name [iter, "Justification. ",   "heading"];
   buffer.insert_with_tags_by_name [iter,  "\nThis line has center justification.\n",  "center"];
   buffer.insert_with_tags_by_name [iter,  "This line has right justification.\n",  "right_justify"];
-  buffer.insert_with_tags_by_name [iter,  "\nThis line has big wide margins. Text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text.\n", 
-		    "wide_margins"];  
+  buffer.insert_with_tags_by_name [iter,  "\nThis line has big wide margins. Text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text.\n",
+		    "wide_margins"];
   buffer.insert_with_tags_by_name [iter, "Internationalization. ",   "heading"];
-  buffer.insert [iter,  "You can put all sorts of Unicode text in the buffer.\n\nGerman (Deutsch S\303\274d) Gr\303\274\303\237 Gott\nGreek (\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254) \316\223\316\265\316\271\316\254 \317\203\316\261\317\202\nHebrew	\327\251\327\234\327\225\327\235\nJapanese (\346\227\245\346\234\254\350\252\236)\n\nThe widget properly handles bidirectional text, word wrapping, DOS/UNIX/Unicode paragraph separators, grapheme boundaries, and so on using the Pango internationalization framework.\n"];  
+  buffer.insert [iter,  "You can put all sorts of Unicode text in the buffer.\n\nGerman (Deutsch S\303\274d) Gr\303\274\303\237 Gott\nGreek (\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254) \316\223\316\265\316\271\316\254 \317\203\316\261\317\202\nHebrew	\327\251\327\234\327\225\327\235\nJapanese (\346\227\245\346\234\254\350\252\236)\n\nThe widget properly handles bidirectional text, word wrapping, DOS/UNIX/Unicode paragraph separators, grapheme boundaries, and so on using the Pango internationalization framework.\n"];
 
   buffer.insert [iter, "Here''s a word-wrapped quote in a right-to-left language:\n"];
   //  buffer.insert_with_tags_by_name [iter, "\331\210\331\202\330\257 \330\250\330\257 \330\250\331\210\331\204\331\212\331\201\331\212\330\247.\n\n", "rtl_quote"];
-  
+
   buffer.insert [iter, "You can put widgets in the buffer: Here''s a button: "];
   anchor = buffer.create_child_anchor [iter];
   buffer.insert [iter, " and a menu: "];
@@ -155,7 +155,7 @@ function insert_text (buffer)
   buffer.insert [iter, " finally a text entry: "];
   anchor = buffer.create_child_anchor [iter];
   buffer.insert [iter, ".\n"];
-  
+
   buffer.insert [iter, "\n\nThis demo doesn''t demonstrate all the GtkTextBuffer features; it leaves out, for example: invisible/hidden text (doesn''t work in GTK 2, but planned), tab stops, application-drawn areas on the sides of the widget for displaying breakpoints and such..."];
 
   // Apply word_wrap tag to whole buffer */
@@ -167,8 +167,8 @@ function rep= find_anchor (iter)
   rep=%f;
   while iter.forward_char[]
     if iter.get_child_anchor[] then rep=%t;break;end
-  end 
-endfunction 
+  end
+endfunction
 
 function attach_widgets(text_view)
   buffer = text_view.get_buffer[];
@@ -176,7 +176,7 @@ function attach_widgets(text_view)
   i = 0;
   while iter.find_anchor[]
     anchor = iter.get_child_anchor[];
-    if i == 0  then 
+    if i == 0  then
       widget = gtkbutton_new(label="Click Me");
       widget.connect["clicked",easter_egg_callback];
     elseif i == 1
@@ -194,7 +194,7 @@ function attach_widgets(text_view)
       widget.set_range[ 0, 100];
       widget.set_size_request[70, -1];
     elseif i == 3
-      flop = getenv('NSP')+'/demos/gtk2/libplus/floppybuddy.gif";
+      flop = getenv('NSP')+'/demos3/gtk3/libplus/floppybuddy.gif";
       widget = gtkimage_new('file',flop);
     elseif i == 4
       widget = gtkentry_new ();
@@ -202,8 +202,8 @@ function attach_widgets(text_view)
     text_view.add_child_at_anchor[ widget, anchor];
     widget.show_all[];
     i=i+1;
-  end 
-endfunction 
+  end
+endfunction
 
 function demo_textview ()
   window = gtkwindow_new();
@@ -223,7 +223,7 @@ function demo_textview ()
   view1 = gtktextview_new ();
   buffer = view1.get_buffer[];
   view2 = gtktextview_new(buffer=buffer);
-  
+
   sw = gtkscrolledwindow_new();
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
   vpaned.add1[sw];
@@ -241,12 +241,12 @@ function demo_textview ()
   //XXXXX attach_widgets (view2);
   vpaned.show_all[];
   window.show[];
-endfunction 
+endfunction
 
 
 function recursive_attach_view (depth,view,anchor)
   if depth > 4 then return; end ;
-  
+
   child_view = gtktextview_new(buffer=view.get_buffer[]);
 
   // Event box is to add a black border around each child view */
@@ -261,7 +261,7 @@ function recursive_attach_view (depth,view,anchor)
   align.add[child_view];
   view.add_child_at_anchor[event_box, anchor];
   recursive_attach_view (depth + 1, child_view, anchor);
-endfunction 
+endfunction
 
 
 function easter_egg_callback (button, data)
@@ -279,6 +279,4 @@ function easter_egg_callback (button, data)
   sw.add[view];
   window.set_default_size[300,400];
   window.show_all[];
-endfunction 
-
-
+endfunction

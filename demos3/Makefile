@@ -3,10 +3,9 @@ TOP=..
 include $(TOP)/Path.incl
 include $(TOP)/Makefile.incl
 
-CFLAGS = $(CC_OPTIONS) 
+CFLAGS = $(CC_OPTIONS)
 
-SUBDIRS = graphics gtk2 
-
+SUBDIRS = graphics gtk3
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -35,7 +34,3 @@ install::
 	@echo "installing demos files"
 	@$(TOP)/config/install-sh -d $(DESTDIR)/demos
 	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/demos ; tar xfp - )
-
-
-
-

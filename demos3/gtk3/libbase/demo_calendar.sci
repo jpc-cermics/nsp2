@@ -1,5 +1,5 @@
-// Translated to nsp by J.Ph Chancelier 
-// from: 
+// Translated to nsp by J.Ph Chancelier
+// from:
 // Copyright (C) 1998 Cesar Miquel, Shawn T. Amundson, Mattias Grönlund
 // Copyright (C) 2000 Tony Gale
 //
@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
+
 function  demo_calendar()
-  
-  // names of toggle buttons 
-  
+
+  // names of toggle buttons
+
   flags=[ "Show Heading"
 	  "Show Day Names"
 	  "No Month Change"
 	  "Show Week Numbers"
-	  "Week Start Monday"]; 
-  
+	  "Week Start Monday"];
+
   window = gtkwindow_new();
   window.set_title["GtkCalendar Example"]
   window.set_border_width[  5]
@@ -40,7 +40,7 @@ function  demo_calendar()
 
   hbox = gtkbox_new("horizontal",spacing=10);
   vbox.pack_start[ hbox,expand=%t,fill=%t,padding=10]
-  hbbox = gtkhbuttonbox_new();
+  hbbox = gtkbuttonbox_new("horizontal");
   hbox.pack_start[ hbbox,expand=%f,fill=%f,padding=10]
   hbbox.set_layout[  GTK.BUTTONBOX_SPREAD]
   hbbox.set_spacing[  5]
@@ -49,12 +49,12 @@ function  demo_calendar()
   frame = gtkframe_new(label="Calendar");
   hbbox.pack_start[ frame,expand=%f,fill=%t,padding=10]
   calendar=gtkcalendar_new();
-  
-  // we store data in calendar 
+
+  // we store data in calendar
   settings=0*ones_new(1,5);
   calendar.set_data[window=calendar,settings=settings]
   calendar_set_flags(calendar,settings);
-  calendar.mark_day[19];	
+  calendar.mark_day[19];
   frame.add[calendar]
 
   calendar.connect["month_changed",calendar_month_changed]
@@ -70,22 +70,22 @@ function  demo_calendar()
 
   vbox2 = gtkbox_new("vertical",spacing=10);
   hbox.pack_start[ vbox2,expand=%f,fill=%f,padding=10]
-  
-  // Build the Right frame with the flags in */ 
+
+  // Build the Right frame with the flags in */
 
   frame = gtkframe_new(label="Flags");
   vbox2.pack_start[ frame,expand=%t,fill=%t,padding=10]
   vbox3 = gtkbox_new("vertical", spacing=5);
   frame.add[  vbox3]
 
-  for i=1:5 
+  for i=1:5
     toggle = gtkcheckbutton_new(label=flags[i]);
     toggle.set_data[number=i];
     toggle.connect[ "toggled", calendar_toggle_flag, list(calendar)]
     vbox3.pack_start[ toggle,expand=%t,fill=%t,padding=0]
   end
-      
-  // Build the right font-button */ 
+
+  // Build the right font-button */
   button = gtkbutton_new(label="Font...");
   button.connect[ "clicked", calendar_select_font, list(calendar)]
   vbox2.pack_start[ button,expand=%f,fill=%f,padding=0]
@@ -97,12 +97,12 @@ function  demo_calendar()
 
   vbox2 = gtkbox_new("vertical",spacing=5);
   frame.add[  vbox2]
-  
+
   hbox = gtkbox_new("horizontal",spacing=3);
   vbox2.pack_start[ hbox,expand=%f,fill=%t,padding=0]
   label = gtklabel_new(str="Signal:");
   hbox.pack_start[ label,expand=%f,fill=%t,padding=0]
-  
+
   last_sig = gtklabel_new(str="");
   hbox.pack_start[ last_sig,expand=%f,fill=%t,padding=0]
 
@@ -123,15 +123,15 @@ function  demo_calendar()
   calendar.set_data[prev_sig=prev_sig];
   calendar.set_data[prev2_sig=prev2_sig];
   calendar.set_data[last_sig=last_sig];
-  
-  
-  bbox = gtkhbuttonbox_new ();
+
+
+  bbox = gtkbuttonbox_new("horizontal");
   vbox.pack_start[ bbox,expand=%f,fill=%f,padding=0]
   bbox.set_layout[  GTK.BUTTONBOX_END]
 
   button = gtkbutton_new(label="Close");
   button.connect[  "clicked", button_destroy_win,list(window)];
-  
+
   bbox.add[  button]
   //button.set_flags[GTK.CAN_DEFAULT];
   button.grab_default[];
@@ -141,66 +141,66 @@ endfunction
 function str=calendar_date_to_string(calendar)
   date = calendar.get_date[]
   str=sprintf("%2.2d/%d/%d",date(2)+1,date(3),date(1));
-endfunction 
+endfunction
 
-function calendar_set_signal_strings (sig_str,calendar) 
+function calendar_set_signal_strings (sig_str,calendar)
   prev_sig=calendar.get_data['prev_sig'];
   prev2_sig=calendar.get_data['prev2_sig'];
   last_sig=calendar.get_data['last_sig'];
   prev2_sig.set_text[prev_sig.get_text[]];
   prev_sig.set_text[last_sig.get_text[]];
   last_sig.set_text[sig_str];
-endfunction 
+endfunction
 
 function calendar_month_changed (calendar)
   str="month_changed: " + calendar_date_to_string(calendar);
   calendar_set_signal_strings (str,calendar);
-endfunction 
+endfunction
 
 function calendar_day_selected (calendar)
   str= "day_selected: " + calendar_date_to_string (calendar)
   calendar_set_signal_strings (str, calendar);
-endfunction 
+endfunction
 
 function calendar_day_selected_double_click (calendar)
   str= "day_selected_double_click: "  + calendar_date_to_string (calendar)
   calendar_set_signal_strings (str, calendar);
   date = calendar.get_date[]
-  if calendar.is_marked[date(3)] then 
+  if calendar.is_marked[date(3)] then
     calendar.unmark_day[date(3)]
   else
     calendar.mark_day[date(3)]
   end
-endfunction 
+endfunction
 
-function calendar_prev_month (calendar) 
+function calendar_prev_month (calendar)
   str="prev_month: " + calendar_date_to_string(calendar);
   calendar_set_signal_strings (str,calendar);
-endfunction 
-    
+endfunction
 
-function calendar_next_month(calendar) 
+
+function calendar_next_month(calendar)
   str="next_month: " + calendar_date_to_string(calendar);
   calendar_set_signal_strings (str,calendar);
-endfunction 
+endfunction
 
-function calendar_prev_year(calendar) 
+function calendar_prev_year(calendar)
   str="prev_year: " + calendar_date_to_string(calendar);
   calendar_set_signal_strings (str,calendar);
-endfunction 
+endfunction
 
-function calendar_next_year(calendar) 
+function calendar_next_year(calendar)
   str="next_year: " + calendar_date_to_string(calendar);
   calendar_set_signal_strings (str,calendar);
-endfunction 
+endfunction
 
 // -------------------
 
 
 function calendar_set_flags(calendar,settings)
-  options = ((2).^[0:4])*settings';
-  calendar.set_display_options[options];
-endfunction 
+  // options = ((2).^[0:4])*settings';
+  // XXX calendar.set_display_options[options];
+endfunction
 
 function calendar_toggle_flag(toggle,args)
   calendar=args(1);
@@ -210,27 +210,27 @@ function calendar_toggle_flag(toggle,args)
   //printf("%d --> %d\n",i,settings(i))
   calendar.set_data[settings=settings]
   calendar_set_flags(calendar,settings);
-endfunction  
+endfunction
 
 function calendar_font_selection_ok(button,data)
   calendar = data(1);
   fdialog = calendar.get_data["font_dialog"]
   font_name =  fdialog.get_font_name[];
-  // FIXME : pb if using style 
+  // FIXME : pb if using style
   // style = gtkrcstyle_new (); // not found !!
   // pfd = pangofontdescription_new(font_name);
-  // style->font_desc = pfd 
+  // style->font_desc = pfd
   // calendar.modify_style[style]
   // But it works if we use modify_font
   pfd = pangofontdescription_new(font_name);
   calendar.modify_font[pfd]
   fdialog.destroy[];
-endfunction 
+endfunction
 
 function calendar_select_font(button,args)
   calendar = args(1)
   window = gtkfontselectiondialog_new ("Font Selection Dialog");
-  calendar.set_data[font_dialog=window] 
+  calendar.set_data[font_dialog=window]
   window.set_position[  GTK.WIN_POS_MOUSE]
   // window.connect["destroy",gtk_widget_destroyed, &calendar->font_dialog]
   window.ok_button.connect["clicked", calendar_font_selection_ok,list(calendar)];
@@ -242,5 +242,4 @@ function calendar_select_font(button,args)
   window.cancel_button.connect["clicked",destroy_fdialog,list(window)];
   window=calendar.get_data["font_dialog"];
   window.show[];
-endfunction 
-
+endfunction

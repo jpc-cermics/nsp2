@@ -1,45 +1,45 @@
-// -*- Mode: scilab -*- 
+// -*- Mode: scilab -*-
 
 function create_demo_window()
-  function [y]=hide(win, event) 
+  function [y]=hide(win, event)
   // printf("destroy activated \n");
   y=%f;
   endfunction
-  function [y]=delete(win, event) 
+  function [y]=delete(win, event)
   // printf("delete event  activated \n");
   y=%t;
   endfunction
-  function [y]=destroy(win, event) 
+  function [y]=destroy(win, event)
   // printf("destroy signal\n");
   y=%t;
   endfunction
-  function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction 
+  function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction
 
-  function nsp_graphics_demos() 
+  function nsp_graphics_demos()
     opengl=%f;
-    exec('NSP/demos/graphics/graphic_list.sce');
-  endfunction 
-  
-  function nsp_graphics_ogl_demos() 
-    opengl=%t;
-    exec('NSP/demos/graphics/graphic_list.sce');
-  endfunction 
+    exec('NSP/demos3/graphics/graphic_list.sce');
+  endfunction
 
-  function nsp_gtk2_demos() 
-    exec('NSP/demos/gtk2/main.sci');
-  endfunction 
-  
-  function nsp_gtk2_demos_plus() 
-    exec('NSP/demos/gtk2/mainplus.sci');
-  endfunction 
+  function nsp_graphics_ogl_demos()
+    opengl=%t;
+    exec('NSP/demos3/graphics/graphic_list.sce');
+  endfunction
+
+  function nsp_gtk3_demos()
+    exec('NSP/demos3/gtk3/main.sci');
+  endfunction
+
+  function nsp_gtk3_demos_plus()
+    exec('NSP/demos3/gtk3/mainplus.sci');
+  endfunction
 
   B = hash_create(100)
   B('Graphics')=  nsp_graphics_demos ;
   B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
-  B('Gtk2')=  nsp_gtk2_demos ;
-  B('Gtk2 more')=  nsp_gtk2_demos_plus ;
+  B('Gtk2')=  nsp_gtk3_demos ;
+  B('Gtk2 more')=  nsp_gtk3_demos_plus ;
   win = gtkwindow_new()
-  win.set_size_request[200,200]	
+  win.set_size_request[200,200]
   //win.set_uposition[20,20]
   win.connect["destroy",hide];
   win.connect["delete_event",hide];
@@ -50,7 +50,7 @@ function create_demo_window()
   scrolled_window = gtkscrolledwindow_new()
   scrolled_window.set_border_width[10]
   scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
-  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0] 	
+  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0]
   scrolled_window.show[]
   box2 = gtkbox_new("vertical",spacing=0)
   box2.set_border_width[0]
@@ -61,14 +61,14 @@ function create_demo_window()
   for i1 = 1:size(Bk,1)
     button = gtkbutton_new(label=Bk(i1,1))
     func= B.find[Bk(i1,1)]
-    if is(func,%types.PList) then 
+    if is(func,%types.PList) then
       button.connect["clicked",func];
     else
       button.set_sensitive[%f]
-    end 
+    end
     box2.pack_start[button]
     button.show[]
-  end 
+  end
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill= %f,padding=0]
   separator.show[]
@@ -86,10 +86,3 @@ function create_demo_window()
 endfunction
 
 create_demo_window()
-
-
-
-
-
-
-

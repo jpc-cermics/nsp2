@@ -1,5 +1,5 @@
-// Toolbar 
-// --------------------------------- 
+// Toolbar
+// ---------------------------------
 
 
 function set_toolbar_horizontal(_b,args)
@@ -8,7 +8,7 @@ endfunction
 function set_toolbar_vertical(_b,args)
   args(1).set_orientation[GTK.ORIENTATION_VERTICAL]
 endfunction
-function set_toolbar_icons(_b,args) 
+function set_toolbar_icons(_b,args)
   args(1).set_style[GTK.TOOLBAR_ICONS]
 endfunction
 function set_toolbar_text(_b,args)
@@ -33,12 +33,12 @@ endfunction
 function [toolbar]=make_toolbar(win)
   toolbar = gtktoolbar_new();
   win.realize[];
-  // FIXME: crashes if the window is not realized 
+  // FIXME: crashes if the window is not realized
   style = win.style.get_bg_gc[GTK.STATE_NORMAL]
   gdkwin = win.window;
-  [pix, mask] = gdk_pixmap_create_from_xpm(gdkwin, none_create(),getenv('NSP')+"/demos/gtk2/libbase/test.xpm")
+  [pix, mask] = gdk_pixmap_create_from_xpm(gdkwin, none_create(),getenv('NSP')+"/demos3/gtk3/libbase/test.xpm")
   pixmap = gtkimage_new("pixmap",pix,mask);
- 
+
   toolbar.append_item[text="Horizontal",tooltip_text= "Horizontal toolbar layout",...
 		      tooltip_private_text="Horizontal toolbar layout",...
 		      icon=pixmap,callback=set_toolbar_horizontal,params=list(toolbar)]
@@ -72,7 +72,7 @@ function [toolbar]=make_toolbar(win)
   pixmap = gtkimage_new("pixmap",pix,mask);
   toolbar.append_item[text="Disable",tooltip_text= "Disable tooltips",tooltip_private_text="Disable tooltips",...
 		      icon=pixmap,callback=set_toolbar_disable,params=list(toolbar)]
-endfunction 
+endfunction
 
 function demo_toolbar()
   win = gtkwindow_new()
@@ -83,4 +83,4 @@ function demo_toolbar()
   win.add[toolbar]
   toolbar.show[]
   win.show[]
-endfunction 
+endfunction
