@@ -1,0 +1,350 @@
+;; -*- scheme -*-
+; object definitions ...
+
+;; this define-struct is just used as a type declaration
+;; for GValue. GValue can then be used in  object definition
+
+(define-struct gvalue
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "GValue")
+  (gtype-id "gvalue")
+)
+
+;; Generic values -- A polymorphic type that can hold values of any other type
+;; (Extracted doc from pyobjects)
+;; The GValue structure is basically a variable container that consists of a type
+;; identifier and a specific value of that type. The type identifier within a
+;; GValue structure always determines the type of the associated value. To create a
+;; undefined GValue structure, simply create a zero-filled GValue structure. To
+;; initialize the GValue, use the g_value_init() function. A GValue cannot be used
+;; until it is initialized. The basic type operations (such as freeing and copying)
+;; are determined by the GTypeValueTable associated with the type ID stored in the
+;; GValue. Other GValue operations (such as converting values between types) are
+;; provided by this interface.
+
+(define-object GValue
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "NspGValue")
+  (fields
+    '("GValue" "value" "hidden" "-1" )
+  )
+  (gtype-id "gvalue")
+)
+
+;; this method is overriden
+
+(define-method get_value
+  (of-object "GValue")
+  (c-name "get_value")
+  (return-type "int")
+)
+
+;; Generic values -- A polymorphic type that can hold values of any other type
+;; Functions
+;; #define 	G_VALUE_HOLDS()
+;; #define 	G_VALUE_TYPE()
+;; #define 	G_VALUE_TYPE_NAME()
+;; #define 	G_TYPE_IS_VALUE()
+;; #define 	G_TYPE_IS_VALUE_ABSTRACT()
+;; #define 	G_IS_VALUE()
+;; #define 	G_TYPE_VALUE
+;; #define 	G_TYPE_VALUE_ARRAY
+;; GValue * 	g_value_init ()
+;; void 	g_value_copy ()
+;; GValue * 	g_value_reset ()
+;; void 	g_value_unset ()
+;; void 	g_value_init_from_instance ()
+;; void 	g_value_set_instance ()
+;; gboolean 	g_value_fits_pointer ()
+;; gpointer 	g_value_peek_pointer ()
+;; gboolean 	g_value_type_compatible ()
+;; gboolean 	g_value_type_transformable ()
+;; gboolean 	g_value_transform ()
+;; void 	(*GValueTransform) ()
+;; void 	g_value_register_transform_func ()
+;; gchar * 	g_strdup_value_contents ()
+;; Types and Values
+;; #define 	G_VALUE_INIT
+;;   	GValue
+;; Includes
+
+
+;; int2string (const GValue *src_value,
+;;             GValue       *dest_value)
+;; {
+;;   if (g_value_get_int (src_value) == 42)
+;;     g_value_set_static_string (dest_value, "An important number");
+;;   else
+;;     g_value_set_static_string (dest_value, "What's that?");
+;; }
+
+;; int
+;; main (int   argc,
+;;       char *argv[])
+;; {
+;;   // GValues must be initialized
+;;   GValue a = G_VALUE_INIT;
+;;   GValue b = G_VALUE_INIT;
+;;   const gchar *message;
+
+;;   // The GValue starts empty
+;;   g_assert (!G_VALUE_HOLDS_STRING (&a));
+
+;;   // Put a string in it
+;;   g_value_init (&a, G_TYPE_STRING);
+;;   g_assert (G_VALUE_HOLDS_STRING (&a));
+;;   g_value_set_static_string (&a, "Hello, world!");
+;;   g_printf ("%s\n", g_value_get_string (&a));
+
+;;   // Reset it to its pristine state
+;;   g_value_unset (&a);
+
+;;   // It can then be reused for another type
+;;   g_value_init (&a, G_TYPE_INT);
+;;   g_value_set_int (&a, 42);
+
+;;   // Attempt to transform it into a GValue of type STRING
+;;   g_value_init (&b, G_TYPE_STRING);
+
+;;   // An INT is transformable to a STRING
+;;   g_assert (g_value_type_transformable (G_TYPE_INT, G_TYPE_STRING));
+
+;;   g_value_transform (&a, &b);
+;;   g_printf ("%s\n", g_value_get_string (&b));
+
+;;   // Attempt to transform it again using a custom transform function
+;;   g_value_register_transform_func (G_TYPE_INT, G_TYPE_STRING, int2string);
+;;   g_value_transform (&a, &b);
+;;   g_printf ("%s\n", g_value_get_string (&b));
+;;   return 0;
+;; }
+
+
+;; ;; #define G_VALUE_HOLDS(value,type) (G_TYPE_CHECK_VALUE_TYPE ((value), (type)))
+;; Checks if value holds (or contains) a value of type . This macro will also check
+;; for value != NULL and issue a warning if the check fails.  Parameters
+
+;; value:  A GValue structure.
+;; type: A GType value.
+;; Returns TRUE if value holds the type .
+
+;; ;;//
+;; #define G_VALUE_TYPE(value)		(((GValue*) (value))->g_type)
+
+;; Get the type identifier of value .
+;; value A GValue structure.
+;; Returns the GType.
+
+;; ;;//
+;; #define G_VALUE_TYPE_NAME(value) (g_type_name (G_VALUE_TYPE (value)))
+
+;; Gets the type name of value .
+;; value A GValue structure.
+;; Returns the type name.
+
+;; ;;//
+;; #define G_TYPE_IS_VALUE(type)		(g_type_check_is_value_type (type))
+
+;; Checks whether the passed in type ID can be used for g_value_init(). That is,
+;; this macro checks whether this type provides an implementation of the
+;; GTypeValueTable functions required for a type to create a GValue of.  Parameters
+
+;; type A GType value.
+;; Returns Whether type is suitable as a GValue type.
+
+;; ;;//
+;; #define G_TYPE_IS_VALUE_ABSTRACT(type)          (g_type_test_flags ((type), G_TYPE_FLAG_VALUE_ABSTRACT))
+
+;; Checks if type is an abstract value type. An abstract value type introduces a value table,
+;; but can't be used for g_value_init() and is normally used as an abstract base type for derived value types.
+;; type A GType value
+;; Returns TRUE on success
+
+;; ;;//
+;; #define G_IS_VALUE(value)		(G_TYPE_CHECK_VALUE (value))
+
+;; Checks if value is a valid and initialized GValue structure.
+;; value A GValue structure.
+;; Returns TRUE on success.
+
+;; ;;//
+;; G_TYPE_VALUE
+
+;; #define G_TYPE_VALUE (g_value_get_type ())
+;; The type ID of the "GValue" type which is a boxed type, used to pass around pointers to GValues.
+
+;; ;;//
+;; GValue *g_value_init (GValue *value, GType g_type);
+;; Initializes value with the default value of type .
+;; value A zero-filled (uninitialized) GValue structure.
+;; g_type Type the GValue should hold values of.
+
+;; Returns the GValue structure that has been passed in.
+
+;; ;;//
+;; void g_value_copy (const GValue *src_value, GValue *dest_value);
+
+;; Copies the value of src_value into dest_value .
+;; Parameters
+;; src_value An initialized GValue structure.
+;; dest_value An initialized GValue structure of the same type as src_value .
+
+;; ;;//
+;; GValue *g_value_reset (GValue *value);
+
+;; Clears the current value in value and resets it to the default value (as if the value had just been initialized).
+;; Parameters
+;; value An initialized GValue structure.
+
+;; Returns the GValue structure that has been passed in
+
+;; ;;//
+;; g_value_unset ()
+;; void g_value_unset (GValue *value);
+
+;; Clears the current value in value and "unsets" the type, this releases all
+;; resources associated with this GValue. An unset value is the same as an
+;; uninitialized (zero-filled) GValue structure.  Parameters
+
+;; value An initialized GValue structure.
+
+;; ;;//
+;; void g_value_init_from_instance (GValue *value,  gpointer instance);
+
+;; Initializes and sets value from an instantiatable type via the value_table's
+;; collect_value() function.
+
+;; Note: The value will be initialised with the exact type of instance . If you
+;; wish to set the value 's type to a different GType (such as a parent class
+;; GType), you need to manually call g_value_init() and g_value_set_instance().
+;; Parameters
+
+;; value: An uninitialized GValue structure.
+;; instance: the instance
+
+;; ;;//
+;; Since 2.42
+;; void g_value_set_instance (GValue *value, gpointer instance);
+
+;; Sets value from an instantiatable type via the value_table's collect_value() function.
+;; Parameters
+
+;; value: An initialized GValue structure.
+;; instance: the instance.
+
+;; ;;//
+;; gboolean g_value_fits_pointer (const GValue *value);
+
+;; Determines if value will fit inside the size of a pointer value. This is an
+;; internal function introduced mainly for C marshallers.  Parameters
+
+;; value: An initialized GValue structure.
+;; Returns: TRUE if value will fit inside a pointer value.
+
+;; ;;//
+;; g_value_peek_pointer ()
+
+;; gpointer g_value_peek_pointer (const GValue *value);
+
+;; Returns the value contents as pointer. This function asserts that
+;; g_value_fits_pointer() returned TRUE for the passed in value. This is an
+;; internal function introduced mainly for C marshallers.  Parameters
+
+;; value: An initialized GValue structure
+;; Returns:the value contents as pointer.
+
+;; ;;//
+;; gboolean g_value_type_compatible (GType src_type,
+;;                          GType dest_type);
+
+;; Returns whether a GValue of type src_type can be copied into a GValue of type dest_type .
+;; src_type: source type to be copied.
+;; dest_type: destination type for copying.
+;; Returns TRUE if g_value_copy() is possible with src_type and dest_type .
+
+;; ;;//
+;; gboolean
+;; g_value_type_transformable (GType src_type,
+;;                             GType dest_type);
+
+;; Check whether g_value_transform() is able to transform values of type src_type
+;; into values of type dest_type . Note that for the types to be transformable,
+;; they must be compatible and a transform function must be registered.  Parameters
+
+;; src_type: Source type.
+;; dest_type: Target type.
+;; Returns: TRUE if the transformation is possible, FALSE otherwise.
+
+;; ;;//
+;; gboolean
+;; g_value_transform (const GValue *src_value,
+;;                    GValue *dest_value);
+
+;; Tries to cast the contents of src_value into a type appropriate to store in
+;; dest_value , e.g. to transform a G_TYPE_INT value into a G_TYPE_FLOAT
+;; value. Performing transformations between value types might incur precision
+;; lossage. Especially transformations into strings might reveal seemingly
+;; arbitrary results and shouldn't be relied upon for production code (such as
+;; rcfile value or object property serialization).  Parameters
+
+;; src_value: Source value.
+;; dest_value: Target value.
+
+;; Returns: Whether a transformation rule was found and could be applied. Upon failing transformations, dest_value is left untouched.
+
+;; ;;//
+;; void
+;; (*GValueTransform) (const GValue *src_value,
+;;                     GValue *dest_value);
+
+;; The type of value transformation functions which can be registered with
+;; g_value_register_transform_func().  Parameters
+
+;; src_value: Source value.
+;; dest_value: Target value.
+
+;; ;;//
+;; void
+;; g_value_register_transform_func (GType src_type,
+;;                                  GType dest_type,
+;;                                  GValueTransform transform_func);
+
+;; Registers a value transformation function for use in g_value_transform(). A
+;; previously registered transformation function for src_type and dest_type will be
+;; replaced.  Parameters
+
+;; src_type: Source type.
+;; dest_type: Target type.
+;; transform_func: a function which transforms values of type src_type into value of type dest_type
+
+;; ;;//
+;; g_strdup_value_contents ()
+;; gchar *
+;; g_strdup_value_contents (const GValue *value);
+
+;; Return a newly allocated string, which describes the contents of a GValue. The
+;; main purpose of this function is to describe GValue contents for debugging
+;; output, the way in which the contents are described may change between different
+;; GLib versions.  Parameters
+
+;; value: GValue which contents are to be described.
+;; Returns: Newly allocated string.
+
+;; ;;//
+;; Types and Values
+
+;; GValue value = G_VALUE_INIT;
+
+;; An opaque structure used to hold different types of values. The data within the
+;; structure has protected scope: it is accessible only to functions within a
+;; GTypeValueTable structure, or implementations of the g_value_*() API. That is,
+;; code portions which implement new fundamental types. GValue users cannot make
+;; any assumptions about how data is stored within the 2 element data union, and
+;; the g_type member should only be accessed through the G_VALUE_TYPE() macro.  See
+;; Also
+
+;; The fundamental types which all support GValue operations and thus can be used
+;; as a type initializer for g_value_init() are defined by a separate
+;; interface. See the standard values API for details

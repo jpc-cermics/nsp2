@@ -1,0 +1,235 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+
+#ifdef GetGValue
+#undef GetGValue
+#endif
+#include <nsp/gtk/gobject.h>
+
+%%
+include-private GValue
+
+static void nsp_init_GValue(GValue *value);
+static int nsp_eq_GValue(GValue *v1, GValue *v2);
+static int nsp_GValue_full_copy(NspGValue *H,GValue *v,NspGValue *self);
+static int nsp_print_GValue(int indent,GValue *v,NspGValue *M);
+static int nsp_destroy_GValue(GValue *v,NspGValue *H);
+static int nsp_check_GValue(GValue *v,NspGValue *H);
+static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj);
+%%
+override-create GValue
+
+/* override the code for gvalue creation
+ * we change the function nsp_gvalue_create
+ * since H->value = value does not work for Gvalue
+ */
+
+static NspGValue *nsp_gvalue_create_void(const char *name,NspTypeBase *type)
+{
+ NspGValue *H  = (type == NULL) ? new_gvalue() : type->new();
+ if ( H ==  NULLGVALUE)
+  {
+   Sciprintf("No more memory\n");
+   return NULLGVALUE;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLGVALUE;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_gvalue_create_partial(NspGValue *H)
+{
+  return OK;
+}
+
+int nsp_gvalue_check_values(NspGValue *H)
+{
+  if ( nsp_check_GValue(&H->value,H) == FAIL ) return FAIL;
+  return OK;
+}
+
+NspGValue *nsp_gvalue_create(const char *name,GValue value,NspTypeBase *type)
+{
+  NspGValue *H  = nsp_gvalue_create_void(name,type);
+  if ( H ==  NULLGVALUE) return NULLGVALUE;
+  memset(&H->value, 0, sizeof(H->value));
+  g_value_init (&H->value, G_VALUE_TYPE(&value));
+  g_value_copy (&value,&H->value);
+  return H;
+}
+
+NspGValue *nsp_gvalue_create_default(const char *name)
+{
+ NspGValue *H  = nsp_gvalue_create_void(name,NULL);
+ if ( H ==  NULLGVALUE) return NULLGVALUE;
+ memset(&H->value, 0, sizeof(H->value));
+ return H;
+}
+
+%%
+override-intcreate GValue
+
+/* override the default interface for gvalue_create */
+
+int int_gvalue_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  NspGValue *H;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if ((obj =nsp_get_object(stack,1)) == NULLOBJ) return RET_BUG;
+  /* want to be sure that type gvalue is initialized */
+  nsp_type_gvalue = new_type_gvalue(T_BASE);
+  if ((H = nsp_gvalue_create_default(NVOID)) == NULLGVALUE) return RET_BUG;
+  if ( nsp_fill_g_value_from_nspobject(&H->value,obj)== FAIL)
+    {
+      Scierror("Error: failed to create a gvalue\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+}
+
+%%
+override GValue.get_value
+
+#define NSP_MAT(val) \
+  if ( nsp_move_double(stack,1,(double) val)==FAIL) return RET_BUG;break;
+
+#define IMAT_ED(name,type,arg)  Loc->name[0] = val;break;
+#define NSP_IMAT(val,type)						\
+  NspIMatrix *Loc =nsp_imatrix_create(NVOID,1,1,CNAME(nsp_,type));	\
+  if ( Loc == NULL) return RET_BUG;					\
+  NSP_ITYPE_SWITCH(Loc->itype,IMAT_ED,"");				\
+  MoveObj(stack,1,NSP_OBJECT(Loc));
+
+static int _wrap_get_value(NspGValue *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&self->value)))
+    {
+    case G_TYPE_BOOLEAN:
+      {
+	if ( nsp_move_boolean(stack,1,g_value_get_boolean(&self->value)) == FAIL)
+	  return RET_BUG;
+	break;
+      }
+    case G_TYPE_INT: {gint val = g_value_get_int(&self->value); NSP_IMAT(val,gint);break;}
+    case G_TYPE_UINT:{guint val = g_value_get_uint(&self->value); NSP_IMAT(val,guint);break;}
+    case G_TYPE_LONG: {glong val = g_value_get_long(&self->value); NSP_IMAT(val,glong);break;}
+    case G_TYPE_ULONG: {gulong val = g_value_get_ulong(&self->value); NSP_IMAT(val,gulong);break;}
+    case G_TYPE_INT64: {gint64 val = g_value_get_int64(&self->value); NSP_IMAT(val,gint64);break;}
+    case G_TYPE_UINT64:{guint64 val = g_value_get_uint64(&self->value); NSP_IMAT(val,guint64);break;}
+
+    case G_TYPE_ENUM: NSP_MAT(g_value_get_enum(&self->value));
+    case G_TYPE_FLAGS: NSP_MAT(g_value_get_flags(&self->value));
+    case G_TYPE_FLOAT: NSP_MAT(g_value_get_float(&self->value));
+    case G_TYPE_DOUBLE: NSP_MAT(g_value_get_double(&self->value));
+    case G_TYPE_STRING:
+      {
+	const gchar *str = g_value_get_string(&self->value);
+	if ( nsp_move_string(stack,1, str,-1) ==FAIL) return RET_BUG;
+	break;
+      }
+    default:
+      Scierror("Error: this gvalue does not contains an int \n");
+      return RET_BUG;
+    }
+  return 1;
+}
+
+%%
+last
+
+static void nsp_init_GValue(GValue *value)
+{
+  memset(value, 0, sizeof(*value));
+}
+
+static int nsp_eq_GValue(GValue *v1, GValue *v2)
+{
+  return TRUE;
+}
+
+static int nsp_print_GValue(int indent,GValue *v,NspGValue *M)
+{
+  Sciprintf1(indent+1,"gvalue of type %s\n",
+	     G_VALUE_TYPE_NAME(v));
+  return 0;
+}
+
+static int nsp_GValue_full_copy(NspGValue *H,GValue *value,NspGValue *self)
+{
+  /* v is not initialized */
+  memset(value, 0, sizeof(*value));
+  g_value_init (value, G_VALUE_TYPE(&self->value));
+  g_value_copy (&self->value,value);
+  return OK;
+}
+
+static int nsp_destroy_GValue(GValue *value,NspGValue *H)
+{
+  g_value_unset (value);
+  return OK;
+}
+
+static int nsp_check_GValue(GValue *v,NspGValue *H)
+{
+  return OK;
+}
+
+#define NSP_ITYPE_SWITCH_UC(itype,X,arg)	\
+  switch (itype ) {				\
+  case nsp_gint: X(Gint,INT,int,arg);		\
+  case nsp_guint: X(Guint,UINT,uint,arg);	\
+  case nsp_gshort: X(Gshort,INT,int,arg);	\
+  case nsp_gushort: X(Gushort,UINT,uint,arg);	\
+  case nsp_glong : X(Glong,LONG,long,arg );	\
+  case nsp_gulong: X(Gulong,ULONG,ulong,arg);	\
+  case nsp_gint8: X(Gint8,INT,int,arg);		\
+  case nsp_guint8: X(Guint8,UINT,uint,arg);	\
+  case nsp_gint16: X(Gint16,INT,int,arg);	\
+  case nsp_guint16: X(Guint16,UINT,uint,arg);	\
+  case nsp_gint32: X(Gint32,INT,int,arg);	\
+  case nsp_guint32: X(Guint32,UINT,uint,arg);	\
+  case nsp_gint64 : X(Gint64,INT64,int64,arg );	\
+  case nsp_guint64 : X(Guint64,UINT64,uint64,arg );}
+
+
+static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj)
+{
+  if (IsMat(obj) && ((NspMatrix *) obj)->mn == 1 )
+    {
+      g_value_init (value, G_TYPE_DOUBLE);
+      g_value_set_double (value,((NspMatrix *) obj)->R[0] );
+    }
+  else if ( IsBMat(obj) && ((NspBMatrix *) obj)->mn == 1)
+    {
+      g_value_init (value, G_TYPE_BOOLEAN);
+      g_value_set_boolean (value,((NspMatrix *) obj)->R[0] );
+    }
+  else if ( IsSMat(obj) && ((NspSMatrix *) obj)->mn == 1 )
+    {
+      char *str = ((NspSMatrix *) obj)->S[0];
+      g_value_init (value, G_TYPE_STRING);
+      g_value_set_string(value,str);
+    }
+  else if ( IsIMat(obj) && ((NspIMatrix *) obj)->mn == 1 )
+    {
+      NspIMatrix *A=(NspIMatrix *) obj;
+#define IMAT_SWITCH(name,type_uc,type_lc,arg)			\
+      g_value_init (value, CNAME(G_TYPE_,type_uc));		\
+      CNAME(g_value_set_,type_lc)(value,A->name[0]);		\
+      break;
+      NSP_ITYPE_SWITCH_UC(A->itype,IMAT_SWITCH,"");
+#undef IMAT_SWITCH
+    }
+  else
+    {
+      return FAIL;
+    }
+  return OK;
+}
