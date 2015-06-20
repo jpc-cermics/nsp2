@@ -3203,7 +3203,7 @@
 
 ;; GtkComboBox
 
-(include "gtkcombobox.defs")
+(include "gtk/gtkcombobox.defs")
 
 ;; GtkComboBoxText
 
@@ -4542,7 +4542,7 @@
 
 ;; GtkEntry
 
-(include "gtkentry.defs")
+(include "gtk/gtkentry.defs")
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkentrycompletion.h
 
@@ -7272,7 +7272,7 @@
 
 ;; GtkIconTheme
 
-(include "gtkicontheme.defs" )
+(include "gtk/gtkicontheme.defs" )
 
 ;;
 (define-function gtk_icon_info_get_type
@@ -7850,7 +7850,7 @@
 
 ;; GtkImage
 
-(include "gtkimage.defs")
+(include "gtk/gtkimage.defs")
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimagemenuitem.h
 

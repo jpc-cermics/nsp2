@@ -4356,15 +4356,26 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &opts,&mnemonic, &label, &stock) == FAIL)  return RET_BUG;
   if ( stock )
-    gobj = (GObject *) gtk_button_new_from_stock(stock);
+    {
+      /* gobj = (GObject *) gtk_button_new_from_stock(stock); */
+      gobj = (GObject *) gtk_button_new_with_label(stock);
+    }
   else if (icon_name)
-    gobj = (GObject *) gtk_button_new_from_icon_name(stock,GTK_ICON_SIZE_BUTTON);
+    {
+      gobj = (GObject *) gtk_button_new_from_icon_name(icon_name,GTK_ICON_SIZE_BUTTON);
+    }
   else if (mnemonic)
-    gobj = (GObject *) gtk_button_new_with_mnemonic(mnemonic);
+    {
+      gobj = (GObject *) gtk_button_new_with_mnemonic(mnemonic);
+    }
   else if (label)
-    gobj = (GObject *) gtk_button_new_with_mnemonic(label);
+    {
+      gobj = (GObject *) gtk_button_new_with_mnemonic(label);
+    }
   else
-    gobj = (GObject *) gtk_button_new();
+    {
+      gobj = (GObject *) gtk_button_new();
+    }
   if (gobj == NULL ) {
     Scierror( "%s: could not create GtkButton object",NspFname(stack));
     return RET_BUG;
@@ -6067,6 +6078,21 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
+%%
+override gtk_dialog_get_content_area noargs
+static int _wrap_gtk_dialog_get_content_area(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GtkBox *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = (GtkBox *) gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
+  nsp_type_gtkbox = new_type_gtkbox(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkbox))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 %%
 override gtk_dialog_run noargs
 static int
