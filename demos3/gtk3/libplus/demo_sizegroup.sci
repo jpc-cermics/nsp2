@@ -2,9 +2,9 @@
 //
 // GtkSizeGroup provides a mechanism for grouping a number of
 // widgets together so they all request the same amount of space.
-// This is typically useful when you want a column of widgets to 
+// This is typically useful when you want a column of widgets to
 // have the same size, but you can't use a GtkTable widget.
-// 
+//
 // Note that size groups only affect the amount of space requested,
 // not the size that the widgets finally receive. If you want the
 // widgets in a GtkSizeGroup to actually be the same size, you need
@@ -16,7 +16,7 @@
 
 function [option_menu]=create_option_menu (strings)
   menu = gtkmenu_new ();
-  for str=strings 
+  for str=strings
     menu_item = gtkmenuitem_new(label=str);
     menu_item.show[];
     menu.append[  menu_item]
@@ -51,21 +51,22 @@ function demo_sizegroup ()
   color_options = [ "Red", "Green", "Blue"];
   dash_options = ["Solid", "Dashed", "Dotted"];
   end_options = ["Square", "Round", "Arrow"];
-    
+
   // XXXX a rechanger GTK.RESPONSE_NONE,
   //// ,buttons= GTK.STOCK_CLOSE);
   window = gtkdialog_new(title = "GtkSizeGroup")
   window.set_resizable[%f]
-  
+
   // XXX window.connect[  "response",gtk_widget_destroy, NULL]
   // window.connect[  "destroy",gtk_widget_destroyed, &window]
 
   vbox = gtkbox_new("vertical",spacing=5);
-  window.vbox.pack_start[ vbox,expand=%t,fill=%t,padding=0];
+  window_vbox = window.get_content_area[];
+  window_vbox.pack_start[ vbox,expand=%t,fill=%t,padding=0];
   vbox.set_border_width[  5]
 
   size_group = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
-      
+
   // Create one frame holding color options
 
   frame = gtkframe_new(label="Color Options");
@@ -81,10 +82,10 @@ function demo_sizegroup ()
   add_row (table, 1, size_group, "_Background", color_options);
 
   // And another frame holding line style options
-  
+
   frame = gtkframe_new(label="Line Options");
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
-  
+
   table = gtktable_new(rows=2,columns=2,homogeneous=%f);
   table.set_border_width[  5]
   table.set_row_spacings[  5]
@@ -97,9 +98,8 @@ function demo_sizegroup ()
   //  And a check button to turn grouping on and off */
   check_button = gtkcheckbutton_new(mnemonic="_Enable grouping");
   vbox.pack_start[ check_button,expand=%f,fill=%f,padding=0]
-      
+
   check_button.set_active[  %t]
   check_button.connect[  "toggled",toggle_grouping,list( size_group)]
   window.show_all[];
 endfunction
-

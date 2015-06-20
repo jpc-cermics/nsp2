@@ -428,14 +428,15 @@
   (gtype-id "GTK_TYPE_IMAGE_TYPE")
   (values
     '("empty" "GTK_IMAGE_EMPTY")
-    '("pixmap" "GTK_IMAGE_PIXMAP")
-    '("image" "GTK_IMAGE_IMAGE")
     '("pixbuf" "GTK_IMAGE_PIXBUF")
     '("stock" "GTK_IMAGE_STOCK")
     '("icon-set" "GTK_IMAGE_ICON_SET")
     '("animation" "GTK_IMAGE_ANIMATION")
+    '("icon-name" "GTK_IMAGE_ICON_NAME")
+    '("gicon" "GTK_IMAGE_GICON")
+    '("surface" "GTK_IMAGE_SURFACE")
+    )
   )
-)
 
 (define-enum GtkIMPreeditStyle
   (in-module "Gtk")
@@ -1650,32 +1651,23 @@
 ;;   ;; )
 ;; )
 
-;; (define-object GtkCombo
-;;   (in-module "Gtk")
-;;   (parent "GtkHBox")
-;;   (c-name "GtkCombo")
-;;   (gtype-id "GTK_TYPE_COMBO")
-;;   ;; (fields
-;;   ;;   '("GtkEntry*" "entry")
-;;   ;;   '("GtkList*" "list")
-;;   ;; )
-;; )
-
 (define-object GtkComboBox
   (in-module "Gtk")
   (parent "GtkBin")
   (c-name "GtkComboBox")
   (gtype-id "GTK_TYPE_COMBO_BOX")
   (implements "GtkCellLayout")
+  (implements "GtkCellEditable")
 )
 
-;; (define-object GtkComboBoxEntry
-;;   (in-module "Gtk")
-;;   (parent "GtkComboBox")
-;;   (c-name "GtkComboBoxEntry")
-;;   (gtype-id "GTK_TYPE_COMBO_BOX_ENTRY")
-;;   (implements "GtkCellLayout")
-;; )
+(define-object GtkComboBoxText
+  (in-module "Gtk")
+  (parent "GtkComboBox")
+  (c-name "GtkComboBoxText")
+  (gtype-id "GTK_TYPE_COMBO_BOX_TEXT")
+  (implements "GtkCellLayout")
+  (implements "GtkCellEditable")
+)
 
 (define-object GtkContainer
   (in-module "Gtk")
@@ -1735,6 +1727,13 @@
   (gtype-id "GTK_TYPE_ENTRY")
   (implements "GtkEditable")
   (implements "GtkCellEditable")
+)
+
+(define-object GtkEntryBuffer
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkEntryBuffer")
+  (gtype-id "GTK_TYPE_ENTRY_BUFFER")
 )
 
 (define-object GtkEntryCompletion
@@ -2379,6 +2378,17 @@
     '("center" "GTK_BASELINE_POSITION_CENTER")
     '("bottom" "GTK_BASELINE_POSITION_BOTTOM")
     )
+  )
+
+(define-enum GtkSensitivityType
+  (in-module "Gtk")
+  (c-name "GtkSensitivityType")
+  (gtype-id "GTK_TYPE_SENSITIVITY_TYPE")
+  (values
+   '("auto" "GTK_SENSITIVITY_AUTO")
+   '("on" "GTK_SENSITIVITY_ON")
+   '("off" "GTK_SENSITIVITY_OFF")
+   )
   )
 
 ;; (define-object GtkTable

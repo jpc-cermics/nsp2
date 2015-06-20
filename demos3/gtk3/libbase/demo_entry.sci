@@ -33,8 +33,8 @@ function demo_entry ()
 
   // window.connect[  "destroy",gtk_widget_destroyed, &window]
   // window.vbox.pack_start[hbox,expand=%f,fill=%f,padding=0]
-  box1 = window.vbox;
 
+  box1 = window.get_content_area[];
   box2 = gtkbox_new("vertical",spacing=10);
   box2.set_border_width[  10]
   box1.pack_start[ box2,expand=%t,fill=%t,padding=0]

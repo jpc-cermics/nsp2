@@ -12,11 +12,12 @@ function [y]=demo_idle(_button)
   // label.set_padding(10, 10)
   label.set_padding[10,10];
   //		win.vbox.pack_start(label)
-  win.vbox.pack_start[label]
+  win_vbox = win.get_content_area[];
+  win_vbox.pack_start[label]
   //		label.show()
   label.show[]
 
-  // function to be executed when idle 
+  // function to be executed when idle
   function [y]=idle_test(args)
     y=1
     count=args(1).get_data['idle_count'];
@@ -24,34 +25,34 @@ function [y]=demo_idle(_button)
     args(1).set_data[idle_count=count];
     //label.set_text("count: " + str(count[0]))
     args(2).set_text["count: " + m2s(count,"%5.0f")];
-  endfunction 
+  endfunction
 
-  // starts the idle handler 
+  // starts the idle handler
   function [y]=start_idle_test(_button,args)
     y=1
-    if args(1).get_data['idle_id'] == 0 then 
+    if args(1).get_data['idle_id'] == 0 then
       id = gtk_idle_add(200,args(1).get_data['idle_f'],args)
       args(1).set_data[idle_id=id ]
-    end 
+    end
   endfunction
-  
-  // stops  the idle handler 
-  function [y]=stop_idle_test(_button,args) 
+
+  // stops  the idle handler
+  function [y]=stop_idle_test(_button,args)
     y=1
     id = args(1).get_data['idle_id'];
-    if id <> 0 then 
+    if id <> 0 then
       gtk_idle_remove(id);
       args(1).set_data[idle_id=0];
     end
   endfunction
 
-  // attach data to the main windget 
-  // since they must be shared between handlers 
-  // and exists when returning from this function. 
+  // attach data to the main windget
+  // since they must be shared between handlers
+  // and exists when returning from this function.
   win.set_data[idle_f = idle_test];
   win.set_data[idle_id = 0];
   win.set_data[idle_count = 0];
-  
+
   button = gtkbutton_new(label="close")
   button.connect["clicked",button_destroy_win,list(win)];
   win.action_area.pack_start[button]

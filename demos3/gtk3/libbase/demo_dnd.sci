@@ -1,47 +1,48 @@
-// Drag and drop 
+// Drag and drop
 // note that these two functions don't use any global variables
 // to communicate.  In fact, try openning two copies of
 // testgtk.sci (or the C version) and drag between them.
-// To be finished XXXX 
+// To be finished XXXX
 
-function []=dnd_message_box(title, message, button) 
+function []=dnd_message_box(title, message, button)
     win = gtkdialog_new()
-    win.set_title[title]; 
+    win.set_title[title];
     win.connect[ "delete_event", demo_delete];
     //win.connect[ "destroy", do_quit];
     hbox = gtkbox_new("horizontal",spacing=5);
     hbox.set_border_width[5]
-    win.vbox.pack_start[hbox] 
-    hbox.show[] 
-    label = gtklabel_new(str=message) 
+    window_vbox = win.get_content_area[];
+    win_vbox.pack_start[hbox]
+    hbox.show[]
+    label = gtklabel_new(str=message)
     hbox.pack_start[label]
-    label.show[] 
+    label.show[]
     b = gtkbutton_new(label=button)
     //b.set_flags[GTK.CAN_DEFAULT]
     b.connect["clicked",button_destroy_win,list(win)];
     win.action_area.pack_start[b]
-    b.show[] 
+    b.show[]
     win.show[]
-endfunction 
+endfunction
 
 function dnd_drag_data_get(w, context, selection_data, info, time)
-  dnd_string = "Bill Gates demands royalties for\n" + 
+  dnd_string = "Bill Gates demands royalties for\n" +
   "your use of his innovation."
-  // methode set 
+  // methode set
   selection_data.set[selection_data.target, 8,dnd_string]
-endfunction 
+endfunction
 
 function dnd_drag_data_received(w, context, x, y, data, info, time)
-  if data.format == 8 
+  if data.format == 8
     msg = sprintf("Drop data of type %s was:\n\n%s",data.target.get_name[],data.data)
     dnd_message_box("Drop", msg,"Continue with life in\n" +
     "spite of this oppression")
   end
-endfunction 
+endfunction
 
-function demo_dnd() 
+function demo_dnd()
   targets = list(list('text/plain',GTK.TARGET_SAME_APP, 0))
-  win = gtkwindow_new() 
+  win = gtkwindow_new()
   win.connect["delete_event", demo_delete];
   win.set_title["Drag -N- Drop"];
   box1 = gtkbox_new("vertical",spacing=0)
@@ -91,4 +92,4 @@ function demo_dnd()
   button.show[]
   win.show[];
   // gtk_main()
-endfunction 
+endfunction

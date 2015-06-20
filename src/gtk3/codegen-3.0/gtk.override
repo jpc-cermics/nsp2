@@ -99,6 +99,7 @@ import gdk.Rectangle as GdkRectangle
 import gdk.Event as GdkEvent
 import gdk.Screen as GdkScreen
 import gdk.Display as GdkDisplay
+import gdk.Device as GdkDevice
 
 import gtk.Treemodel as GtkTreeModel
 import pango.Layout as PangoLayout
@@ -3833,6 +3834,37 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG;
   return 1;
 }
+
+%%
+override gtk_entry_new
+
+static int
+_wrap_gtkentry_new(Stack stack, int rhs, int opt, int lhs)
+{
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  if ((ret = (GObject *)gtk_entry_new())== NULL) return RET_BUG;
+  nsp_type_gtkentry = new_type_gtkentry(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkentry );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gtk_entry_get_text_area noargs
+static int _wrap_gtk_entry_get_text_area(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GdkRectangle ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  gtk_entry_get_text_area(GTK_ENTRY(self->obj),&ret);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE,&ret, TRUE, TRUE,NULL))==NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 %%
 override gtk_entry_get_layout_offsets noargs
 static int
@@ -4149,51 +4181,26 @@ _wrap_gtk_pixmap_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 %%
-ignore gtk_image_new_from_pixmap gtk_image_new_from_image gtk_image_new_from_file gtk_image_new_from_pixbuf gtk_image_new_from_stock gtk_image_new_from_icon_set gtk_image_new_from_animation
+ignore gtk_image_new_from_file
+ignore gtk_image_new_from_pixbuf
+ignore gtk_image_new_from_icon_set
+ignore gtk_image_new_from_animation
+ignore gtk_image_new_from_resource
+ignore gtk_image_new_from_icon_name
 %%
 override gtk_image_new
 
-static const char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
-typedef enum { FROM_pixmap, FROM_image, FROM_file,  FROM_pixbuf,  FROM_stock,  FROM_icon_set,FROM_animation} image_from;
+static const char *image_table[] = {
+  "file",  "pixbuf",  "animation", "icon_name", "gicon", "resource", "surface", NULL};
 
-static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lhs)
-{
-  /*
-  char *str;
-  int_types T[] = {string, obj_check, obj_check,t_end};
-  NspGObject *pixmap, *mask;
-  NspObject *nsp_ret;
-  GtkWidget *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
-    ret = gtk_image_new_from_pixmap(GDK_PIXMAP(pixmap->obj), GDK_PIXMAP(mask->obj));
-  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-  */
-  return RET_BUG;
-}
-
-
-static int _wrap_gtk_image_new_from_image(Stack stack, int rhs, int opt, int lhs)
-{
-  /*
-  char *str;
-  int_types T[] = {string,obj_check, obj_check,t_end};
-  NspGObject *image, *mask;
-  NspObject *nsp_ret;
-  GtkWidget *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkimage, &image, &nsp_type_gdkpixmap, &mask) == FAIL) return RET_BUG;
-    ret = gtk_image_new_from_image(GDK_IMAGE(image->obj), GDK_PIXMAP(mask->obj));
-  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-  */
-  return RET_BUG;
-}
+typedef enum {
+ FROM_file,
+ FROM_pixbuf,
+ FROM_animation,
+ FROM_icon_name ,
+ FROM_gicon,
+ FROM_resource,
+ FROM_surface}  image_from;
 
 static int _wrap_gtk_image_new_from_file(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4202,11 +4209,11 @@ static int _wrap_gtk_image_new_from_file(Stack stack, int rhs, int opt, int lhs)
   char *filename;
   NspObject *nsp_ret;
   GtkWidget *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&str,&filename) == FAIL) return RET_BUG;
-    ret = gtk_image_new_from_file(filename);
+  ret = gtk_image_new_from_file(filename);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
+    return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -4228,59 +4235,10 @@ static int _wrap_gtk_image_new_from_pixbuf(Stack stack, int rhs, int opt, int lh
       ret = gtk_image_new_from_pixbuf(GDK_PIXBUF(pixbuf->obj));
     }
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
+    return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
-}
-
-static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs)
-{
-  /*
-  char *str;
-  int_types T[] = {string,string, obj,t_end};
-  char *stock_id;
-  GtkIconSize size;
-  NspObject *nsp_size = NULL, *nsp_ret;
-  GtkWidget *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&str,&stock_id, &nsp_size) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, &size)== FAIL)
-      return RET_BUG;
-    ret = gtk_image_new_from_stock(stock_id, size);
-  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-  */
-  return RET_BUG;
-}
-
-static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int lhs)
-{
-  /*
-  char *str;
-  int_types T[] = {string,obj, obj,t_end};
-  NspObject *nsp_icon_set, *nsp_size = NULL, *nsp_ret;
-  GtkIconSize size;
-  GtkWidget *ret;
-  GtkIconSet *icon_set = NULL;
-
-  if ( GetArgs(stack,rhs,opt,T,&str,&nsp_icon_set, &nsp_size) == FAIL) return RET_BUG;
-  if (nspg_boxed_check(nsp_icon_set, GTK_TYPE_ICON_SET))
-      icon_set = nspg_boxed_get(nsp_icon_set, GtkIconSet);
-  else {
-      Scierror( "icon_set should be a GtkIconSet");
-      return RET_BUG;
-  }
-  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, &size)== FAIL)
-      return RET_BUG;
-    ret = gtk_image_new_from_icon_set(icon_set, size);
-  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-  */
-  return RET_BUG;
 }
 
 static int _wrap_gtk_image_new_from_animation(Stack stack, int rhs, int opt, int lhs)
@@ -4290,13 +4248,58 @@ static int _wrap_gtk_image_new_from_animation(Stack stack, int rhs, int opt, int
   NspGObject *animation;
   NspObject *nsp_ret;
   GtkWidget *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&str,&nsp_type_gdkpixbufanimation, &animation) == FAIL) return RET_BUG;
     ret = gtk_image_new_from_animation(GDK_PIXBUF_ANIMATION(animation->obj));
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
-  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL) return RET_BUG;
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
+    return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
+}
+
+static int _wrap_gtk_image_new_from_icon_name(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  int_types T[] = {string,obj,t_end};
+  GtkIconSize icon_size;
+  NspObject *nsp_icon_size;
+  NspObject *nsp_ret;
+  GtkWidget *ret;
+  if ( GetArgs(stack,rhs,opt,T,&str,&nsp_icon_size) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_icon_size,&icon_size)== FAIL) return RET_BUG;
+  ret = gtk_image_new_from_icon_name(str, icon_size);
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_image_new_from_gicon(Stack stack, int rhs, int opt, int lhs)
+{
+  Scierror("Error: to be done\n");
+  return RET_BUG;
+}
+
+static int _wrap_gtk_image_new_from_resource(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str,*resource;
+  int_types T[] = {string,string,t_end};
+  NspObject *nsp_ret;
+  GtkWidget *ret;
+  if ( GetArgs(stack,rhs,opt,T,&str,&resource) == FAIL) return RET_BUG;
+  ret = gtk_image_new_from_resource(resource);
+  nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_image_new_from_surface(Stack stack, int rhs, int opt, int lhs)
+{
+  Scierror("Error: to be done\n");
+  return RET_BUG;
 }
 
 static int
@@ -4317,14 +4320,15 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   else
     {
       if ((rep= GetStringInArray(stack,1,image_table,1)) == -1) return RET_BUG;
-      switch (rep) {
-      case FROM_pixmap: return _wrap_gtk_image_new_from_pixmap(stack,rhs,opt,lhs);
-      case FROM_image: return _wrap_gtk_image_new_from_image(stack,rhs,opt,lhs);
-      case FROM_file:  return _wrap_gtk_image_new_from_file(stack,rhs,opt,lhs);
-      case FROM_pixbuf:  return _wrap_gtk_image_new_from_pixbuf(stack,rhs,opt,lhs);
-      case FROM_stock:  return _wrap_gtk_image_new_from_stock(stack,rhs,opt,lhs);
-      case FROM_icon_set:return _wrap_gtk_image_new_from_icon_set(stack,rhs,opt,lhs);
-      case FROM_animation: return _wrap_gtk_image_new_from_animation(stack,rhs,opt,lhs);
+      switch (rep)
+	{
+	case FROM_file:  return _wrap_gtk_image_new_from_file(stack,rhs,opt,lhs);
+	case FROM_pixbuf:  return _wrap_gtk_image_new_from_pixbuf(stack,rhs,opt,lhs);
+	case FROM_animation: return _wrap_gtk_image_new_from_animation(stack,rhs,opt,lhs);
+	case FROM_icon_name : return _wrap_gtk_image_new_from_icon_name(stack,rhs,opt,lhs);
+	case FROM_gicon: return _wrap_gtk_image_new_from_gicon(stack,rhs,opt,lhs);
+	case FROM_resource: return _wrap_gtk_image_new_from_resource(stack,rhs,opt,lhs);
+	case FROM_surface: return _wrap_gtk_image_new_from_surface(stack,rhs,opt,lhs);
       }
     }
   return RET_BUG;;
@@ -6936,17 +6940,18 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
 
 %%
 ignore gtk_combo_box_new_with_model
-%%
-ignore gtk_combo_box_new_text
+ignore gtk_combo_box_new_with_model_and_entry
 %%
 override gtk_combo_box_new
 
-/* merging gtkcombobox _new, new_with_model, new_text
- *
+/* merging gtkcombobox_new, new_with_entry,
+ * new_with_model, new_with_model_and_entry
+ * we also build a gtkcomboboxtext when text is given
  */
 static int
 _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int with_entry = FALSE;
   GObject *ret; NspObject *nsp_ret;
   NspGObject *model = NULL;
   NspSMatrix *Smat = NULL;
@@ -6954,26 +6959,52 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] = {
 	{"model",obj_check,NULLOBJ,-1},
 	{"text",smat,NULLOBJ,-1},
+	{"with_entry",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
-  if ( GetArgs(stack,rhs,opt,T,opts,&nsp_type_gtktreemodel,&model,&Smat) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,opts,&nsp_type_gtktreemodel,&model,&Smat,&with_entry) == FAIL)
+    return RET_BUG;
   if ( model != NULL)
     {
-      if ((ret = (GObject *) gtk_combo_box_new_with_model(GTK_TREE_MODEL(model->obj)))
-	  == NULL) return RET_BUG;
+      if ( with_entry == FALSE )
+	{
+	  if ((ret = (GObject *) gtk_combo_box_new_with_model(GTK_TREE_MODEL(model->obj)))
+	      == NULL) return RET_BUG;
+	}
+      else
+	{
+	  if ((ret = (GObject *) gtk_combo_box_new_with_model_and_entry(GTK_TREE_MODEL(model->obj)))
+	      == NULL) return RET_BUG;
+	}
     }
   else if ( Smat != NULL)
     {
-      /* int i; */
-      return RET_BUG;
-      /* if ((ret = (GObject *) gtk_combo_box_new_text()) == NULL) return RET_BUG; */
-      /* append smat
+      int i;
+      if ( with_entry == TRUE )
+	{
+	  if ((ret = (GObject *) gtk_combo_box_text_new_with_entry()) == NULL) return RET_BUG;
+	}
+      else
+	{
+	  if ((ret = (GObject *) gtk_combo_box_text_new()) == NULL) return RET_BUG;
+	}
       for ( i = 0 ; i < Smat->mn ; i++)
-	gtk_combo_box_append_text(GTK_COMBO_BOX(ret),Smat->S[i]);
-      */
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(ret),Smat->S[i]);
+      nsp_type_gtkcomboboxtext = new_type_gtkcomboboxtext(T_BASE);
+      nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcomboboxtext );
+      if ( nsp_ret == NULL) return RET_BUG;
+      MoveObj(stack,1,nsp_ret);
+      return 1;
     }
   else
     {
-      if ((ret = (GObject *)gtk_combo_box_new())== NULL) return RET_BUG;
+      if ( with_entry == TRUE )
+	{
+	  if ((ret = (GObject *)gtk_combo_box_new_with_entry())== NULL) return RET_BUG;
+	}
+      else
+	{
+	  if ((ret = (GObject *)gtk_combo_box_new())== NULL) return RET_BUG;
+	}
     }
   nsp_type_gtkcombobox = new_type_gtkcombobox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombobox );
@@ -7446,6 +7477,71 @@ ret = gtk_plug_new_for_display(GDK_DISPLAY(display->obj), (GdkNativeWindow) NSP_
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
+}
+
+%%
+override gtk_icon_theme_choose_icon
+
+static int _wrap_gtk_icon_theme_choose_icon(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S=NULL;
+  int_types T[] = {smat,s_int,obj, t_end};
+  int size;
+  GtkIconLookupFlags flags;
+  NspObject *nsp_flags = NULL, *nsp_ret;
+  GtkIconInfo *ret;
+  if ( GetArgs(stack,rhs,opt,T,&S, &size, &nsp_flags) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(GTK_TYPE_ICON_LOOKUP_FLAGS, nsp_flags, &flags)==FAIL)
+      return RET_BUG;
+  ret =gtk_icon_theme_choose_icon(GTK_ICON_THEME(self->obj),(const gchar **)S->S,size,flags);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_ICON_INFO, ret, FALSE, TRUE,
+                                             (NspTypeBase *) nsp_type_gtkiconinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gtk_icon_theme_choose_icon_for_scale
+static int _wrap_gtk_icon_theme_choose_icon_for_scale(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *S=NULL;
+  int_types T[] = {smat,s_int,s_int,obj, t_end};
+  int size, scale;
+  GtkIconLookupFlags flags;
+  NspObject *nsp_flags = NULL, *nsp_ret;
+  GtkIconInfo *ret;
+  if ( GetArgs(stack,rhs,opt,T,S, &size, &scale, &nsp_flags) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(GTK_TYPE_ICON_LOOKUP_FLAGS, nsp_flags, &flags)==FAIL)
+      return RET_BUG;
+  ret =gtk_icon_theme_choose_icon_for_scale(GTK_ICON_THEME(self->obj),(const gchar **) S->S,size,scale,flags);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_ICON_INFO, ret, FALSE, TRUE,
+                                             (NspTypeBase *) nsp_type_gtkiconinfo))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gtk_icon_theme_list_icons
+
+static int _wrap_gtk_icon_theme_list_icons(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *context;
+  GList *ret, *tmp;
+  NspList *nsp_list;
+  if ( rhs <= 1 )
+    {
+      ret =gtk_icon_theme_list_icons(GTK_ICON_THEME(self->obj),NULL);
+    }
+  else
+    {
+      if ( GetArgs(stack,rhs,opt,T,&context) == FAIL) return RET_BUG;
+      ret =gtk_icon_theme_list_icons(GTK_ICON_THEME(self->obj),context);
+    }
+  /* objects are strings  */
+  NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
 %%
