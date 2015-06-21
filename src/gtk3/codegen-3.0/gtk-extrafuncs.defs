@@ -36,23 +36,7 @@
   (return-type "GList*")
 )
 
-(define-method set_all
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_set_all")
-  (return-type "none")
-  (parameters
-    '("gfloat" "value")
-    '("gfloat" "lower")
-    '("gfloat" "upper")
-    '("gfloat" "step_increment")
-    '("gfloat" "page_increment")
-    '("gfloat" "page_size")
-  )
-  (deprecated "use individual setters")
-)
-
-
-;; jpc extra function to access style array 
+;; jpc extra function to access style array
 
 (define-method get_fg
   (of-object "GtkStyle")
@@ -190,8 +174,8 @@
    '("gint" "pos"))
 )
 
-;; extra function to attach a nsp graphic window in a 
-;; gtk hierarchy 
+;; extra function to attach a nsp graphic window in a
+;; gtk hierarchy
 
 (define-function nsp_graphic_new
   (c-name "nsp_graphic_new")

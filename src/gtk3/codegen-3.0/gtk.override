@@ -4349,12 +4349,12 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
     {"mnemonic",string,NULLOBJ,-1},
     {"label",string,NULLOBJ,-1},
     {"stock",string,NULLOBJ,-1},
-    {"icon-name",string,NULLOBJ,-1},
+    {"icon_name",string,NULLOBJ,-1},
     {NULL,t_end,NULLOBJ,-1} };
 
   gchar *mnemonic = NULL, *label = NULL, *stock = NULL,*icon_name=NULL;
 
-  if (GetArgs(stack,rhs,opt,T, &opts,&mnemonic, &label, &stock) == FAIL)  return RET_BUG;
+  if (GetArgs(stack,rhs,opt,T, &opts,&mnemonic, &label, &stock,&icon_name) == FAIL)  return RET_BUG;
   if ( stock )
     {
       /* gobj = (GObject *) gtk_button_new_from_stock(stock); */
@@ -6574,86 +6574,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-%%
-override-attr GtkAdjustment.value
-static int
-_wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->value = val;
-  gtk_adjustment_value_changed(adjustment);
-  return 0;
-}
-%%
-override-attr GtkAdjustment.lower
-static int
-_wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->lower = val;
-  gtk_adjustment_changed(adjustment);
-  return 0;
-}
-%%
-override-attr GtkAdjustment.upper
-static int
-_wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->upper = val;
-  gtk_adjustment_changed(adjustment);
-  return 0;
-}
-%%
-override-attr GtkAdjustment.step_increment
-static int
-_wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->step_increment = val;
-  gtk_adjustment_changed(adjustment);
-  return 0;
-}
-%%
-override-attr GtkAdjustment.page_increment
-static int
-_wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->page_increment = val;
-  gtk_adjustment_changed(adjustment);
-  return 0;
-}
-%%
-override-attr GtkAdjustment.page_size
-static int
-_wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *value)
-{
-  double val;
-  GtkAdjustment *adjustment = GTK_ADJUSTMENT(self->obj);
-  if ( DoubleScalar(value,&val) == FAIL) return RET_BUG;
-  adjustment->page_size = val;
-  gtk_adjustment_changed(adjustment);
-  return 0;
-}
-%%
-override gtk_adjustment_set_all kwargs
-static int
-_wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Scierror("deprecated: use individual setters");
-  return RET_BUG;
-}
+
 %%
 override gtk_text_view_get_iter_location kwargs
 static int

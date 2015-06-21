@@ -1591,6 +1591,7 @@
   (parent "GtkWidget")
   (c-name "GtkProgressBar")
   (gtype-id "GTK_TYPE_PROGRESS_BAR")
+  (implements "GtkOrientable")
 )
 
 (define-object GtkLevelBar
@@ -2005,14 +2006,6 @@
   (parent "GObject")
   (c-name "GtkAdjustment")
   (gtype-id "GTK_TYPE_ADJUSTMENT")
-  ;; (fields
-  ;;   '("gfloat" "value")
-  ;;   '("gfloat" "lower")
-  ;;   '("gfloat" "upper")
-  ;;   '("gfloat" "step_increment")
-  ;;   '("gfloat" "page_increment")
-  ;;   '("gfloat" "page_size")
-  ;; )
 )
 
 (define-object GtkAlignment

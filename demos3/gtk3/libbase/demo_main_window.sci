@@ -30,7 +30,7 @@ function demo_main_window()
   B('dnd')= demo_dnd,
   B('spinbutton')= demo_spinbutton,
   B('progress bar')=  demo_progressbar,
-  B('gamma curve')=  demo_gamma_curve,
+  // B('gamma curve')=  demo_gamma_curve,
   B('test scrolling')= [],// None, //creaate_scroll_text,
   B('test selection')= [],// None, //demo_selection_test,
   B('test timeout')= demo_timeout,
@@ -38,11 +38,11 @@ function demo_main_window()
   B('test')= [],// None, //demo_test
   B('status bar')=  demo_statusbar,
   B('cursor')=  demo_cursor,
-  B('scribble')=  demo_scribble, 
+  B('scribble')=  demo_scribble,
   B('actions')= demo_actions,
   win = gtkwindow_new()
   win.set_title["main window"]
-  win.set_size_request[200, 400]	
+  win.set_size_request[200, 400]
   //win.set_uposition[20,20]
   //win.connect["destroy",hide];
   win.connect["delete_event", demo_delete];
@@ -53,7 +53,7 @@ function demo_main_window()
   scrolled_window = gtkscrolledwindow_new()
   scrolled_window.set_border_width[10]
   scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
-  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0] 	
+  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0]
   scrolled_window.show[]
   box2 = gtkbox_new("vertical",spacing=0)
   box2.set_border_width[0]
@@ -64,14 +64,14 @@ function demo_main_window()
   for i1 = 1:size(Bk,1)
     button = gtkbutton_new(label=Bk(i1,1))
     func= B.find[Bk(i1,1)]
-    if is(func,%types.PList) then 
+    if is(func,%types.PList) then
       button.connect["clicked",func];
     else
       button.set_sensitive[%f]
-    end 
+    end
     box2.pack_start[button]
     button.show[]
-  end 
+  end
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill= %f,padding=0]
   separator.show[]
@@ -89,31 +89,24 @@ function demo_main_window()
   //gtk_main()
 endfunction
 
-function [y]=demo_delete(win, event) 
-  // used when 
-  y=%f; // if false then destroy is performed 
-        // if true then destroy is not done 
-  if y==%t then 
+function [y]=demo_delete(win, event)
+  // used when
+  y=%f; // if false then destroy is performed
+        // if true then destroy is not done
+  if y==%t then
     // printf("in delete returning true (no destroy)\n");
   else
     // printf("in delete returning false (destroy)\n");
   end
 endfunction
 
-function destroy(win, event) 
-// called when window is destroyed 
+function destroy(win, event)
+// called when window is destroyed
 // printf("in destroy \n");
 endfunction
 
-function button_destroy_win(but,args)  
+function button_destroy_win(but,args)
   // button handler which destroy args(1)
   //printf("in win destroy \n");
   args(1).destroy[];
-endfunction 
-
-
-
-
-
-
-
+endfunction

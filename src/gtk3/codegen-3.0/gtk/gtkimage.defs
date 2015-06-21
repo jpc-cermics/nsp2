@@ -144,7 +144,6 @@
    )
   )
 
-
 (define-method set_from_file
   (of-object "GtkImage")
   (c-name "gtk_image_set_from_file")

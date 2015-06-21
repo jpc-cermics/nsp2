@@ -1,46 +1,41 @@
-
-// GtkStatusBar OK
-//-----------------------------------------------
+// GtkStatusBar
 
 function []=demo_statusbar()
-  win = gtkdialog_new()
-  win.connect[ "delete_event", demo_delete];
-  win.set_title["Status Bar Test"];
+//
+  dialog = gtkdialog_new()
+  dialog.connect[ "delete_event", demo_delete];
+  dialog.set_title["Status Bar Test"];
 
   statusbar = gtkstatusbar_new()
-  vbox = window.get_content_area[];
+  vbox = dialog.get_content_area[];
   vbox.add[statusbar];
   statusbar.show[]
   c = statusbar.get_context_id["test"];
   statusbar.push[c,"First message"]
   statusbar.set_data[statusbar_data=0];
 
-  function []=pop_statusbar_test(but,args)
-    args(1).pop[args(2)];
+  function []=pop_statusbar_test(statusbar,arg)
+    statusbar.pop[arg];
   endfunction
 
-  function []=push_statusbar_test(but,args)
-    count= args(1).get_data['statusbar_data'];
-    args(1).set_data[statusbar_data=count+1];
-    args(1).push[args(2),"Message "+m2s(count,"%5.0f")];
+  function []=push_statusbar_test(statusbar,arg)
+    count= statusbar.get_data['statusbar_data'];
+    statusbar.set_data[statusbar_data=count+1];
+    statusbar.push[arg,"Message "+m2s(count,"%5.0f")];
   endfunction
 
-  hbox = win.action_area; // .pack_start[vbox]; // XXXX
+  dialog.add_button["Pop",1];
+  dialog.add_button["Push",2];
+  dialog.add_button["Close",3];
+  dialog.show[];
 
-  button = gtkbutton_new(label="Pop")
-  button.connect["clicked", pop_statusbar_test,list(statusbar,c)];
-  hbox.add[button]
-  button.show[]
-  button = gtkbutton_new(label="Push")
-  button.connect["clicked", push_statusbar_test,list(statusbar,c)];
-  hbox.add[button]
-  button.show[]
-  button = gtkbutton_new(label="Close")
-  button.connect["clicked",button_destroy_win,list(win)];
-  hbox.add[button]
-  //button.set_flags[GTK.CAN_DEFAULT]
-  button.grab_default[]
-  button.show[]
-  win.show[]
-  //gtk_main()
+  while %t then
+    response = dialog.run[]
+    select response
+     case 1 then pop_statusbar_test(statusbar,c);
+     case 2 then push_statusbar_test(statusbar,c);
+     case 3 then; dialog.destroy[];break;
+    end
+  end
+
 endfunction

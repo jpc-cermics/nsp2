@@ -1104,12 +1104,12 @@ static NspMethods *gobject_get_methods(void) { return gobject_methods;};
 /* XXX
  * should be documented somewhere
  */
-#if 0 
+#if 0
 extern function int_cellstopixbuf;
 extern function int_pixbuftocells;
 extern function int_pixbuf_set_from_cells;
 extern function int_pixbuf_get_channel;
-#endif 
+#endif
 
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs);
@@ -1174,6 +1174,7 @@ static OpTab NspGObject_func[]={
   {"setrowscols_gobj",int_set_attribute},
   {"gtk_timeout_add",int_gtk_timeout_add},
   {"g_timeout_remove",int_gtk_timeout_remove},
+  {"g_source_remove",int_gtk_timeout_remove},
   {"gtk_quit_add",int_gtk_quit_add},
   {"gtk_idle_add",int_gtk_idle_add},
 #if 0
@@ -2086,10 +2087,10 @@ NspTypeBase * nsp_type_from_gtype(GType gtype)
 /**
  * nsp_peek_type_from_gtype:
  * @gtype: a GType
- * 
+ *
  * Obtain a nsp type given a GType.
- * If the nsp type is not registered the %NULL is returned 
- * 
+ * If the nsp type is not registered the %NULL is returned
+ *
  * Returns: a #NspTypeBase
  **/
 
@@ -3127,6 +3128,8 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/* this is in fact a g_source_destroy */
+
 static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -3197,7 +3200,7 @@ nsp_gtk_quit_add_full (guint main_level,  NspPList *callback,   NspList *extra_a
   if ( closure == NULL) return 0;
   /* return gtk_quit_add_full(main_level,nsp_gtk_invoke_quit,NULL,closure, nspg_destroy_notify); */
   return 0;
-} 
+}
 
 
 static gboolean

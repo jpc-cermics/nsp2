@@ -809,72 +809,9 @@
    )
   )
 
-;; From /opt/gtk2/include/gtk-2.0/gtk/gtkadjustment.h
+;; GtkAdjustment
 
-(define-function gtk_adjustment_get_type
-  (c-name "gtk_adjustment_get_type")
-  (return-type "GtkType")
-  )
-
-(define-function gtk_adjustment_new
-  (c-name "gtk_adjustment_new")
-  (is-constructor-of GtkAdjustment)
-  (return-type "GtkObject*")
-  (parameters
-   '("gdouble" "value" (default "0"))
-   '("gdouble" "lower" (default "0"))
-   '("gdouble" "upper" (default "0"))
-   '("gdouble" "step_incr" (default "0"))
-   '("gdouble" "page_incr" (default "0"))
-   '("gdouble" "page_size" (default "0"))
-   )
-  )
-
-(define-method changed
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_changed")
-  (return-type "none")
-  )
-
-(define-method value_changed
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_value_changed")
-  (return-type "none")
-  )
-
-(define-method clamp_page
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_clamp_page")
-  (return-type "none")
-  (parameters
-   '("gdouble" "lower")
-   '("gdouble" "upper")
-   )
-  )
-
-(define-method get_value
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_get_value")
-  (return-type "gdouble")
-  )
-
-(define-method set_value
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_set_value")
-  (return-type "none")
-  (parameters
-   '("gdouble" "value")
-   )
-  )
-
-(define-virtual changed
-  (of-object "GtkAdjustment")
-  (return-type "none")
-  )
-(define-virtual value_changed
-  (of-object "GtkAdjustment")
-  (return-type "none")
-  )
+(include "gtk/gtkadjustment.defs")
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkalignment.h
 
@@ -10893,29 +10830,10 @@
   (return-type "GtkWidget*")
   )
 
-;; (define-function gtk_progress_bar_new_with_adjustment
-;;   (c-name "gtk_progress_bar_new_with_adjustment")
-;;   (is-constructor-of "GtkProgressBar")
-;;   (return-type "GtkWidget*")
-;;   (parameters
-;;    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
-;;    )
-;;   (deprecated "")
-;;   )
-
 (define-method pulse
   (of-object "GtkProgressBar")
   (c-name "gtk_progress_bar_pulse")
   (return-type "none")
-  )
-
-(define-method set_text
-  (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_set_text")
-  (return-type "none")
-  (parameters
-   '("const-gchar*" "text")
-   )
   )
 
 (define-method set_fraction
@@ -10927,21 +10845,49 @@
    )
   )
 
-(define-method set_pulse_step
+(define-method get_fraction
   (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_set_pulse_step")
+  (c-name "gtk_progress_bar_get_fraction")
+  (return-type "gdouble")
+  )
+
+(define-method set_inverted
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_set_inverted")
   (return-type "none")
   (parameters
-   '("gdouble" "fraction")
+   '("gboolean" "inverted")
    )
   )
 
-(define-method set_orientation
+(define-method get_inverted
   (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_set_orientation")
+  (c-name "gtk_progress_bar_get_inverted")
+  (return-type "gboolean")
+  )
+
+(define-method set_show_text
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_set_show_text")
   (return-type "none")
   (parameters
-   '("GtkProgressBarOrientation" "orientation")
+   '("gboolean" "show_text")
+   )
+  )
+
+(define-method get_show_text
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_get_show_text")
+  (return-type "gboolean")
+  )
+
+
+(define-method set_text
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_set_text")
+  (return-type "none")
+  (parameters
+   '("const-gchar*" "text")
    )
   )
 
@@ -10950,75 +10896,6 @@
   (c-name "gtk_progress_bar_get_text")
   (return-type "const-gchar*")
   )
-
-(define-method get_fraction
-  (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_get_fraction")
-  (return-type "gdouble")
-  )
-
-(define-method get_pulse_step
-  (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_get_pulse_step")
-  (return-type "gdouble")
-  )
-
-(define-method get_orientation
-  (of-object "GtkProgressBar")
-  (c-name "gtk_progress_bar_get_orientation")
-  (return-type "GtkProgressBarOrientation")
-  )
-
-
-;; (define-method set_bar_style
-;;   (of-object "GtkProgressBar")
-;;   (c-name "gtk_progress_bar_set_bar_style")
-;;   (return-type "none")
-;;   (parameters
-;;    '("GtkProgressBarStyle" "style")
-;;    )
-;;   (deprecated "")
-;;   )
-
-;; (define-method set_discrete_blocks
-;;   (of-object "GtkProgressBar")
-;;   (c-name "gtk_progress_bar_set_discrete_blocks")
-;;   (return-type "none")
-;;   (parameters
-;;    '("guint" "blocks")
-;;    )
-;;   (deprecated "")
-;;   )
-
-;; (define-method set_activity_step
-;;   (of-object "GtkProgressBar")
-;;   (c-name "gtk_progress_bar_set_activity_step")
-;;   (return-type "none")
-;;   (parameters
-;;    '("guint" "step")
-;;    )
-;;   (deprecated "")
-;;   )
-
-;; (define-method set_activity_blocks
-;;   (of-object "GtkProgressBar")
-;;   (c-name "gtk_progress_bar_set_activity_blocks")
-;;   (return-type "none")
-;;   (parameters
-;;    '("guint" "blocks")
-;;    )
-;;   (deprecated "")
-;;   )
-
-;; (define-method update
-;;   (of-object "GtkProgressBar")
-;;   (c-name "gtk_progress_bar_update")
-;;   (return-type "none")
-;;   (parameters
-;;    '("gfloat" "percentage")
-;;    )
-;;   (deprecated "")
-;;   )
 
 (define-method set_ellipsize
   (of-object "GtkProgressBar")
@@ -11033,6 +10910,22 @@
   (of-object "GtkProgressBar")
   (c-name "gtk_progress_bar_get_ellipsize")
   (return-type "PangoEllipsizeMode")
+  )
+
+
+(define-method set_pulse_step
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_set_pulse_step")
+  (return-type "none")
+  (parameters
+   '("gdouble" "fraction")
+   )
+  )
+
+(define-method get_pulse_step
+  (of-object "GtkProgressBar")
+  (c-name "gtk_progress_bar_get_pulse_step")
+  (return-type "gdouble")
   )
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkradioaction.h
@@ -11379,6 +11272,7 @@
   (c-name "gtk_range_get_adjustment")
   (return-type "GtkAdjustment*")
   )
+
 
 (define-method set_inverted
   (of-object "GtkRange")
@@ -23348,4 +23242,22 @@
 (define-virtual keys_changed
   (of-object "GtkWindow")
   (return-type "none")
+  )
+
+;; GtkOrientable
+;; an interface with two methods
+
+(define-method get_orientation
+  (of-object "GtkOrientable")
+  (c-name "gtk_orientable_get_orientation")
+  (return-type "GtkOrientation")
+  )
+
+(define-method set_orientation
+  (of-object "GtkOrientable")
+  (c-name "gtk_orientable_set_orientation")
+  (return-type "none")
+  (parameters
+   '("GtkOrientation" "orientation")
+   )
   )

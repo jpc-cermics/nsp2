@@ -1,15 +1,13 @@
-//
 // GtkEntry
-//
 
 function demo_entry ()
 
   function return_handler(w,ev,data)
   // check if return was entered
   // all the codes can be found in nsp2/src/gtk3/codegen/keysyms.sce
-  if ev.keyval == 0xFF0D then
-    printf("Return pressed in entry: %s\n",w.get_text[]);
-  end
+    if ev.keyval == 0xFF0D then
+      printf("Return pressed in entry: %s\n",w.get_text[]);
+    end
   endfunction
 
   function entry_toggle_frame (checkbutton,args)
@@ -24,7 +22,6 @@ function demo_entry ()
    // window = create_prop_editor (entry, 0);
    // window.set_title[  "Entry Properties"]
   endfunction
-
 
   flags = ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),
   window = gtkdialog_new(title= "Entry demo",flags = flags,...
@@ -54,11 +51,13 @@ function demo_entry ()
   hbox.pack_start[ button,expand=%f,fill=%f,padding=0]
   button.connect[  "clicked", entry_props_clicked, list(entry) ]
 
-  cb = gtkcombo_new ();
-  cbitems = [ "item0", "item1 item1",  "item2 item2 item2"];
-  cb.set_popdown_strings[cbitems];
-  cb.entry.set_text["hello world \n\n\n foo"];
-  cb.entry.select_region[0, -1];
+  // An entry attached to a GtkComboText
+  text = sprintf('entry text %d',(1:5)');
+  cb =gtkcombobox_new(with_entry=%t,text=text);
+
+  //cb.entry.set_text["hello world \n\n\n foo"];
+  // cb.entry.select_region[0, -1];
+
   box2.pack_start[ cb,expand=%t,fill=%t,padding=0]
 
   sensitive_check = gtkcheckbutton_new(label="Sensitive");
@@ -75,6 +74,9 @@ function demo_entry ()
   // treeview.columns_autosize[];
   // a modal window undestroyed at end of run.
   response = window.run[];
+
+  printf('ComboBox active text: ''%s''\n',cb.get_active_text[]);
+
   if response == ok_rep;
     // GTK.RESPONSE_OK
     // print the entry ?
