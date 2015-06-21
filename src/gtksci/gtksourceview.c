@@ -1,8 +1,8 @@
-/* -*- Mode: C; 
+/* -*- Mode: C;
  *  test-widget.c
  *
  *  Copyright (C) 2001 -  Mikael Hermansson<tyan@linux.se>
- *  Copyright (C) 2003 - Gustavo Giráldez <gustavo.giraldez@gmx.net>
+ *  Copyright (C) 2003 - Gustavo Giraldez <gustavo.giraldez@gmx.net>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- *  This file is a modified version of the test-widget.c file of gtksourceview 
- *  with added functionality for nsp. Some of them inherited from testext.c demo file 
+ *  This file is a modified version of the test-widget.c file of gtksourceview
+ *  with added functionality for nsp. Some of them inherited from testext.c demo file
  *  from the gtk distribution (see gtktextview.c).
  *  Copyright (C) 2010-2015 Jean-Philippe Chancelier Enpc/Cermics
- *  
+ *
  */
 
 #include <stdio.h>
@@ -42,12 +42,12 @@
 #include <gtksourceview/gtksourceprintcompositor.h>
 #include <gtksourceview/gtksourceiter.h>
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
-#include <gtksourceview/gtksourcegutter.h> 
-#endif 
+#include <gtksourceview/gtksourcegutter.h>
+#endif
 
 #include <nsp/object.h>
-#include <nsp/smatrix.h> 
-#include <nsp/plist.h> 
+#include <nsp/smatrix.h>
+#include <nsp/plist.h>
 #include <nsp/parse.h>
 #include <nsp/nsptcl.h>
 #include <nsp/system.h> /* FSIZE */
@@ -74,26 +74,26 @@ static void execute_cb (GtkAction *action, gpointer user_data);
 static void execute_tag_error(GtkSourceBuffer *buffer,int line);
 static void save_as_cb   (GtkAction *action, gpointer user_data);
 static void save_cb   (GtkAction *action, gpointer user_data);
-static void print_file_cb(GtkAction *action, gpointer user_data); 
-static void find_cb(GtkAction *action, gpointer user_data);	
-static void replace_cb(GtkAction *action, gpointer user_data);	
+static void print_file_cb(GtkAction *action, gpointer user_data);
+static void find_cb(GtkAction *action, gpointer user_data);
+static void replace_cb(GtkAction *action, gpointer user_data);
 static void numbers_toggled_cb (GtkAction *action, gpointer user_data);
-static void marks_toggled_cb (GtkAction *action, gpointer user_data); 
-static void margin_toggled_cb (GtkAction *action, gpointer user_data); 
+static void marks_toggled_cb (GtkAction *action, gpointer user_data);
+static void margin_toggled_cb (GtkAction *action, gpointer user_data);
 static void hl_bracket_toggled_cb(GtkAction *action, gpointer user_data);
-static void hl_line_toggled_cb (GtkAction *action, gpointer user_data); 
+static void hl_line_toggled_cb (GtkAction *action, gpointer user_data);
 static void draw_spaces_toggled_cb(GtkAction *action, gpointer user_data);
 static void wrap_lines_toggled_cb (GtkAction *action, gpointer user_data);
 static void auto_indent_toggled_cb (GtkAction *action, gpointer user_data);
 static void insert_spaces_toggled_cb(GtkAction *action, gpointer user_data);
 static void silent_execute_toggled_cb (GtkAction *action, gpointer user_data);
-static void tabs_toggled_cb (GtkAction *action,GtkAction *current, gpointer user_data); 
-static void indent_toggled_cb(GtkAction *action,GtkAction *current, gpointer user_data); 
+static void tabs_toggled_cb (GtkAction *action,GtkAction *current, gpointer user_data);
+static void indent_toggled_cb(GtkAction *action,GtkAction *current, gpointer user_data);
 
 #ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
 static void forward_string_cb (GtkAction *action, gpointer user_data);
 static void backward_string_cb (GtkAction *action, gpointer user_data);
-#endif 
+#endif
 
 static GtkWidget *
 create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *comment, int close);
@@ -128,7 +128,7 @@ static GtkActionEntry view_action_entries[] = {
     "Forward to the start or end of the next string", G_CALLBACK (forward_string_cb) },
   { "BackwardString", NULL, "_Backward to string toggle", "<control><shift>S",
     "Backward to the start or end of the next string", G_CALLBACK (backward_string_cb) }
-#endif 
+#endif
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
@@ -242,7 +242,7 @@ static const gchar *view_ui_description =
   "      <separator/>"
   "      <menuitem action=\"ForwardString\"/>"
   "      <menuitem action=\"BackwardString\"/>"
-#endif 
+#endif
   "    </menu>"
   "  </menubar>"
   "</ui>";
@@ -331,7 +331,7 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
       g_free(buffer);
       return FALSE;
     }
-  
+
   gtk_source_buffer_begin_not_undoable_action (source_buffer);
   gtk_text_buffer_set_text (GTK_TEXT_BUFFER (source_buffer), buffer_utf8, -1);
   gtk_source_buffer_end_not_undoable_action (source_buffer);
@@ -341,7 +341,7 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (source_buffer), &iter);
   gtk_text_buffer_place_cursor (GTK_TEXT_BUFFER (source_buffer), &iter);
 
-  /* 
+  /*
   {
     GtkTextIter start, end;
     char *text;
@@ -397,7 +397,7 @@ get_language_for_file (GtkTextBuffer *buffer, const gchar *filename)
   language = gtk_source_language_manager_guess_language (manager,
 							 filename,
 							 content_type);
-  /* 
+  /*
   g_message ("Detected '%s' mime type for file %s, chose language %s",
 	     content_type ? content_type : "(null)",
 	     filename,
@@ -464,14 +464,14 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
   gchar *freeme = NULL;
   gboolean success = FALSE;
 
-  if ( filename == NULL) 
+  if ( filename == NULL)
     {
        remove_all_marks (buffer);
        language = nsp_gtksource_language ();
        gtk_source_buffer_set_language (buffer, language);
        return TRUE;
     }
-  
+
   if (!g_path_is_absolute (filename))
     {
       gchar *curdir = g_get_current_dir ();
@@ -479,9 +479,9 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
       filename = freeme;
       g_free (curdir);
     }
-  
+
   remove_all_marks (buffer);
-  
+
   success = gtk_source_buffer_load_file (buffer, filename, NULL);
 
   /* this will set language to nsp if filename == NULL */
@@ -498,14 +498,14 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
 			      "filename", g_strdup (filename),
 			      (GDestroyNotify) g_free);
       view =  g_object_get_data (G_OBJECT (buffer), "buffer_view");
-      if ( view) 
+      if ( view)
 	view_set_title (GTK_SOURCE_VIEW(view), FALSE);
     }
   g_free (freeme);
   return success;
 }
 
-/* S is assumed to be a utf8 matrix 
+/* S is assumed to be a utf8 matrix
  */
 
 static gboolean
@@ -514,13 +514,13 @@ gtk_source_buffer_load_smatrix (GtkSourceBuffer *source_buffer,
 {
   int i;
   GtkTextIter iter;
-  
+
   g_return_val_if_fail (GTK_IS_SOURCE_BUFFER (source_buffer), FALSE);
   g_return_val_if_fail (S != NULL, FALSE);
-  
+
   gtk_source_buffer_begin_not_undoable_action (source_buffer);
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (source_buffer), &iter);
-  for ( i = 0 ; i < S->mn ; i++) 
+  for ( i = 0 ; i < S->mn ; i++)
     {
       gtk_text_buffer_insert(GTK_TEXT_BUFFER (source_buffer),&iter, S->S[i],-1);
       gtk_text_buffer_insert(GTK_TEXT_BUFFER (source_buffer),&iter, "\n",-1);
@@ -562,14 +562,14 @@ static NspSMatrix *save_buffer_in_smatrix(GtkSourceBuffer *buffer)
   gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER (buffer), &start, 0);
   gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end);
   chars1= chars = gtk_text_buffer_get_slice (GTK_TEXT_BUFFER (buffer), &start, &end, FALSE);
-  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);	  
+  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);
   if ((S = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT)
     return S;
-  while ( *chars != '\0') 
+  while ( *chars != '\0')
     {
       char *tag = strstr(chars,"\n");
       if(tag != NULL) *tag ='\0';
-      if ( nsp_row_smatrix_append_string(S,chars) == FAIL) 
+      if ( nsp_row_smatrix_append_string(S,chars) == FAIL)
 	goto err;
       if ( tag == NULL) break;
       chars = tag+1;
@@ -577,7 +577,7 @@ static NspSMatrix *save_buffer_in_smatrix(GtkSourceBuffer *buffer)
   g_free (chars1);
   /* return a non-empty object if buffer is empty */
   if (S->mn==0) {
-    if ( nsp_row_smatrix_append_string(S,"") == FAIL) 
+    if ( nsp_row_smatrix_append_string(S,"") == FAIL)
       goto err;
   }
   return S;
@@ -597,25 +597,25 @@ static void execute_cb (GtkAction *action, gpointer user_data)
   GtkTextIter start,end;
   int display=FALSE,echo =FALSE,errcatch=TRUE,rep,pausecatch=TRUE,mtlb=FALSE;
   g_return_if_fail (GTK_IS_SOURCE_BUFFER (user_data));
-  
+
   /* save first */
   /* push_active_window (GTK_WINDOW (view->window)); */
 
   remove_all_marks (buffer);
   gtk_text_buffer_get_bounds (GTK_TEXT_BUFFER (buffer), &start, &end);
   filename = g_object_get_data (G_OBJECT (buffer), "filename");
-  
-  if ( filename ) 
+
+  if ( filename )
     {
       if (  save_buffer (buffer,filename)== FALSE) return;
       /* execute the file contents */
-      if ( execute_silently == FALSE ) 
+      if ( execute_silently == FALSE )
 	{
 	  display = echo = TRUE;
 	}
       rep =nsp_parse_eval_file(filename,display,echo,errcatch,
 			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
-      if ( rep < 0 ) 
+      if ( rep < 0 )
 	{
 	  char fname[FSIZE+1];
 	  /* get the line number of the Error */
@@ -626,14 +626,14 @@ static void execute_cb (GtkAction *action, gpointer user_data)
 	      Sciprintf("%s",error_msg->S[i]);
 	      if ( sscanf(error_msg->S[i],"\tline %d of file %s",&line,fname)==2)
 		{
-		  if ( strcmp(fname,filename) == 0) 
+		  if ( strcmp(fname,filename) == 0)
 		    {
-		      execute_tag_error(buffer,line); 
+		      execute_tag_error(buffer,line);
 		      break;
 		    }
 		}
 	    }
-	  /* 
+	  /*
 	  if ( sscanf(error_msg->S[error_msg->mn-1],"Error: at line %d of file",&line)==1)
 	    {
 	      execute_tag_error(view,line);
@@ -648,7 +648,7 @@ static void execute_cb (GtkAction *action, gpointer user_data)
       const char *buf_str= gtk_text_iter_get_text (&start, &end);
       nsp_eval_str_in_terminal(buf_str, execute_silently);
     }
-  /* 
+  /*
      pop_active_window ();
   */
 }
@@ -663,15 +663,15 @@ static void execute_selection_cb (GtkAction *action, gpointer user_data)
   /* save first */
   /* push_active_window (GTK_WINDOW (view->window)); */
   remove_all_marks (buffer);
-  
-  if (! gtk_text_buffer_get_selection_bounds (GTK_TEXT_BUFFER (buffer), &start, &end)) 
+
+  if (! gtk_text_buffer_get_selection_bounds (GTK_TEXT_BUFFER (buffer), &start, &end))
     return;
   str = gtk_text_iter_get_visible_text (&start, &end);
   nsp_eval_str_in_terminal(str,execute_silently);
   /* pop_active_window (); */
 }
 
-/* put line in red 
+/* put line in red
  *
  */
 
@@ -682,14 +682,14 @@ static void execute_tag_error(GtkSourceBuffer *buffer,int line)
   GtkTextIter istart;
   gtk_text_buffer_get_iter_at_line(GTK_TEXT_BUFFER(buffer),&istart,line-1);
   view =  g_object_get_data (G_OBJECT (buffer), "buffer_view");
-  if ( view ) 
+  if ( view )
     {
       gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(view),&istart,0.0,FALSE,0,0);
     }
 
   /* get the marks already in the line */
   mark_list = gtk_source_buffer_get_source_marks_at_line(buffer,line-1, MARK_TYPE_2);
-  
+
   if (mark_list == NULL)
     {
       /* no mark found: create one */
@@ -848,7 +848,7 @@ forward_string_cb (GtkAction *action,
   GtkTextMark *insert;
 
   g_return_if_fail (GTK_IS_SOURCE_VIEW (user_data));
-  
+
   view = GTK_SOURCE_VIEW (user_data);
   buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   insert = gtk_text_buffer_get_insert (GTK_TEXT_BUFFER (buffer));
@@ -893,7 +893,7 @@ backward_string_cb (GtkAction *action,
       gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (view), insert);
     }
 }
-#endif 
+#endif
 
 /* Buffer action callbacks ------------------------------------------------------------ */
 
@@ -1061,7 +1061,7 @@ open_file_cb (GtkAction *action, gpointer user_data)
 					 last_dir);
 
   response = gtk_dialog_run (GTK_DIALOG (chooser));
-  
+
   if (response == GTK_RESPONSE_OK)
     {
       gchar *filename;
@@ -1291,7 +1291,7 @@ print_file_cb (GtkAction *action, gpointer user_data)
 
 typedef gboolean (*FileselOKFunc) (const char *filename, gpointer data);
 
-static gboolean filechooser_save_run (GtkWindow    *parent, 
+static gboolean filechooser_save_run (GtkWindow    *parent,
 				      const char   *title,
 				      const char   *start_file,
 				      FileselOKFunc func,
@@ -1302,23 +1302,23 @@ static gboolean filechooser_save_run (GtkWindow    *parent,
   GtkWidget *dialog;
 
   /* XXX if (!parent)  parent = get_active_window (); */
-  
+
   dialog = gtk_file_chooser_dialog_new (title,
 					parent,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 					NULL);
-    
+
   /* if (parent)  gtk_window_set_transient_for (GTK_WINDOW (dialog), parent); */
 
   if (start_file)
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), start_file);
-  
+
   while (1)
     {
       int rep = gtk_dialog_run (GTK_DIALOG (dialog));
-      if ( rep ==  GTK_RESPONSE_ACCEPT ) 
+      if ( rep ==  GTK_RESPONSE_ACCEPT )
 	{
 	  filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	  if ((*func) (filename,data))
@@ -1336,7 +1336,7 @@ static gboolean filechooser_save_run (GtkWindow    *parent,
   return result;
 }
 
-/* save buffer in filename 
+/* save buffer in filename
  */
 
 static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
@@ -1347,7 +1347,7 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
   gboolean have_backup = FALSE;
   gchar *bak_filename;
   FILE *file;
-  
+
   g_return_val_if_fail (filename != NULL, FALSE);
   bak_filename = g_strconcat (filename, "~", NULL);
   if ( g_rename (filename, bak_filename) != 0)
@@ -1363,7 +1363,7 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
     }
   else
     have_backup = TRUE;
-  
+
   file = fopen (filename, "wb"); /* see porting issue bellow for binary */
   if (!file)
     {
@@ -1373,11 +1373,11 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
     {
       gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER (buffer), &start, 0);
       gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end);
-  
+
       chars = gtk_text_buffer_get_slice (GTK_TEXT_BUFFER (buffer), &start, &end, FALSE);
 
-      /* porting issue for win32 
-       * If the stream is from a file opened in text mode, any linefeed embedded 
+      /* porting issue for win32
+       * If the stream is from a file opened in text mode, any linefeed embedded
        * in the output string is translated to carriage-return linefeed on output
        */
       if (fputs (chars, file) == EOF ||
@@ -1390,12 +1390,12 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
 	  /* Success
 	   */
 	  result = TRUE;
-	  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);	  
+	  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);
 	}
-	
+
       g_free (chars);
     }
-  
+
   if (!result && have_backup)
     {
       if ( g_rename (bak_filename, filename) != 0)
@@ -1414,7 +1414,7 @@ save_as_ok_func (const char *filename, gpointer data)
 {
   GtkSourceBuffer *buffer= data;
   char *old_filename = g_object_get_data (G_OBJECT (buffer), "filename");
-  
+
   if (! old_filename  || strcmp (filename, old_filename) != 0)
     {
       struct stat statbuf;
@@ -1473,13 +1473,13 @@ save_cb (GtkAction *action, gpointer user_data)
   char *filename = g_object_get_data (G_OBJECT (buffer), "filename");
   g_return_if_fail (GTK_IS_SOURCE_BUFFER (user_data));
   buffer = GTK_SOURCE_BUFFER (user_data);
-  if ( filename == NULL) 
+  if ( filename == NULL)
     save_as_cb(action,user_data);
   else
     save_buffer (buffer, filename );
 }
 
-/*  
+/*
  *
  */
 
@@ -1519,7 +1519,7 @@ close_cb (GtkAction *action, gpointer user_data)
   GtkWidget *window;
   GtkSourceBuffer *buffer= user_data;
   int *hus = g_object_get_data (G_OBJECT (buffer), "smatrix");
-  if ( hus != NULL) 
+  if ( hus != NULL)
     {
       NspSMatrix *S;
       /* this is a smatrix buffer */
@@ -1529,7 +1529,7 @@ close_cb (GtkAction *action, gpointer user_data)
     }
   else
     {
-      if ( action != NULL) 
+      if ( action != NULL)
 	check_buffer_saved (action, buffer);
       g_object_unref (buffer);
     }
@@ -1553,7 +1553,7 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
 #ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
   gchar **classes;
   gchar **classes_ptr;
-#endif 
+#endif
 
 
   g_return_if_fail (GTK_IS_SOURCE_VIEW (user_data));
@@ -1603,7 +1603,7 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
       ++classes_ptr;
     }
   g_strfreev (classes);
-#endif 
+#endif
 
   msg = g_strdup_printf ("char: %d, line: %d, column: %d, classes: %s", chars, row, col, str->str);
   gtk_label_set_text (pos_label, msg);
@@ -1650,7 +1650,7 @@ window_deleted_cb (GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
 static void
-line_mark_activated (GtkSourceGutter *gutter, 
+line_mark_activated (GtkSourceGutter *gutter,
                      GtkTextIter     *iter,
                      GdkEventButton  *ev,
                      GtkSourceView   *view)
@@ -1682,9 +1682,9 @@ line_mark_activated (GtkSourceGutter *gutter,
     }
   g_slist_free (mark_list);
 }
-#endif 
+#endif
 
-#if 0 
+#if 0
 static void
 drag_data_received_cb (GtkWidget        *widget,
 		       GdkDragContext   *context,
@@ -1699,7 +1699,7 @@ drag_data_received_cb (GtkWidget        *widget,
   char *drop= (gchar *) gtk_selection_data_get_data (selection_data);
   Sciprintf("drop: %s\n",drop);
 }
-#endif 
+#endif
 
 /* Window creation functions  */
 
@@ -1711,9 +1711,9 @@ mark_tooltip_func (GtkSourceMark *mark,
   GtkTextBuffer *buf;
   GtkTextIter iter;
   gint line, column;
-	
+
   buf = gtk_text_mark_get_buffer (GTK_TEXT_MARK (mark));
-	
+
   gtk_text_buffer_get_iter_at_mark (buf, &iter, GTK_TEXT_MARK (mark));
   line = gtk_text_iter_get_line (&iter) + 1;
   column = gtk_text_iter_get_line_offset (&iter);
@@ -1735,11 +1735,11 @@ add_source_mark_pixbufs (GtkSourceView *view)
 							 NULL,
 							 NULL);
 }
-#endif 
+#endif
 
 static void button_ok_clicked(GtkWidget *widget, void *user_data)
 {
-  close_cb (NULL,user_data); 
+  close_cb (NULL,user_data);
 }
 
 static void button_cancel_clicked(GtkWidget *widget, void *user_data)
@@ -1775,7 +1775,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
 
   /* view */
   view = gtk_source_view_new_with_buffer (buffer);
-	
+
   if (style_scheme)
     gtk_source_buffer_set_style_scheme (buffer, style_scheme);
 
@@ -1783,16 +1783,16 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
   g_signal_connect (buffer, "changed", G_CALLBACK (update_cursor_position), view);
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
   g_signal_connect (view,   "line-mark-activated", G_CALLBACK (line_mark_activated), view);
-#endif 
+#endif
 #if 0
   g_signal_connect (view,
 		    "drag_data_received",
-		    G_CALLBACK (drag_data_received_cb), 
+		    G_CALLBACK (drag_data_received_cb),
 		    view);
-#endif 
+#endif
 
   g_signal_connect (window, "delete-event", (GCallback) window_deleted_cb, view);
-  
+
   /* action group and UI manager */
   action_group = gtk_action_group_new ("ViewActions");
   gtk_action_group_add_actions (action_group, view_action_entries,
@@ -1812,20 +1812,20 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
   ui_manager = gtk_ui_manager_new ();
   gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
   g_object_unref (action_group);
-  
+
   /* save a reference to the ui manager in the window for later use */
   g_object_set_data_full (G_OBJECT (window), "ui_manager",
 			  ui_manager, (GDestroyNotify) g_object_unref);
-  
-  /* save a reference to the window in the buffer for later use 
+
+  /* save a reference to the window in the buffer for later use
    * but we could have more than one window for a unique buffer
    */
   g_object_set_data (G_OBJECT (buffer), "buffer_window", window);
   g_object_set_data (G_OBJECT (buffer), "buffer_view", view);
-  
+
   accel_group = gtk_ui_manager_get_accel_group (ui_manager);
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
-  
+
   error = NULL;
   if (!gtk_ui_manager_add_ui_from_string (ui_manager, view_ui_description, -1, &error))
     {
@@ -1841,7 +1841,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
 				       GTK_SHADOW_IN);
   pos_label = gtk_label_new ("Position");
   g_object_set_data (G_OBJECT (view), "pos_label", pos_label);
-  if ( comment != NULL ) 
+  if ( comment != NULL )
     {
       descr_label = gtk_label_new (comment);
       g_object_set_data (G_OBJECT (view), "descr_label", descr_label);
@@ -1855,8 +1855,8 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view);
   gtk_box_pack_start (GTK_BOX (vbox), pos_label, FALSE, FALSE, 0);
-  
-  if (close ) 
+
+  if (close )
     {
       GtkWidget *button,*hbox;
       hbox = gtk_hbox_new (0, FALSE);
@@ -1878,7 +1878,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
     }
   /* default value used */
   gtk_source_view_set_tab_width (GTK_SOURCE_VIEW(view),2);
-  	
+
   /* change view attributes to match those of from */
   if (from)
     {
@@ -1928,10 +1928,10 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
 	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), TRUE);
       g_free (tmp);
     }
-  
+
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
   add_source_mark_pixbufs (GTK_SOURCE_VIEW (view));
-#endif 
+#endif
 
   /* update the name */
   view_set_title (GTK_SOURCE_VIEW (view),FALSE);
@@ -1974,7 +1974,7 @@ create_main_window (GtkSourceBuffer *buffer,int flag,const char *comment,int clo
       g_error_free (error);
       exit (1);
     }
-    
+
   /* preselect menu checkitems */
   groups = gtk_ui_manager_get_action_groups (ui_manager);
   /* retrieve the view action group at position 0 in the list */
@@ -2007,17 +2007,17 @@ create_main_window (GtkSourceBuffer *buffer,int flag,const char *comment,int clo
   return window;
 }
 
-#ifdef TEST 
+#ifdef TEST
 static void test_get_language (void);
-#endif 
+#endif
 
 /**
  * nsp_edit:
  * @fname: file name of file to be edited or %NULL
- * @read_only: a boolean 
- * @wait:  a boolean 
- * 
- * creates a new edit function 
+ * @read_only: a boolean
+ * @wait:  a boolean
+ *
+ * creates a new edit function
  */
 
 int nsp_edit(const char *fname,int read_only, int wait)
@@ -2025,10 +2025,10 @@ int nsp_edit(const char *fname,int read_only, int wait)
   GtkWidget *window;
   GtkSourceBuffer *buffer;
   GMainLoop *loop=NULL;
-#ifdef TEST 
-  test_schemes () ; 
-  test_get_language (); 
-#endif 
+#ifdef TEST
+  test_schemes () ;
+  test_get_language ();
+#endif
   /* create buffer */
   buffer = gtk_source_buffer_new (NULL);
   open_file (buffer, fname);
@@ -2036,12 +2036,12 @@ int nsp_edit(const char *fname,int read_only, int wait)
   window = create_main_window (buffer,TRUE,NULL,FALSE);
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_widget_show (window);
-  if ( wait == TRUE ) 
+  if ( wait == TRUE )
     {
       loop = g_main_loop_new (NULL,FALSE);
     }
   g_object_set_data (G_OBJECT (window), "main_loop", loop);
-  if ( wait == TRUE ) 
+  if ( wait == TRUE )
     {
       GDK_THREADS_LEAVE();
       g_main_loop_run (loop);
@@ -2065,18 +2065,18 @@ NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_window_set_title (GTK_WINDOW (window), title);
   gtk_widget_show (window);
-  if ( wait == TRUE ) 
+  if ( wait == TRUE )
     {
       loop = g_main_loop_new (NULL,FALSE);
     }
   g_object_set_data (G_OBJECT (window), "main_loop", loop);
-  if ( wait == TRUE ) 
+  if ( wait == TRUE )
     {
       GDK_THREADS_LEAVE();
       g_main_loop_run (loop);
       GDK_THREADS_ENTER();
     }
-  
+
   Res = g_object_get_data (G_OBJECT (buffer), "smatrix_value");
   g_object_unref (buffer);
   return Res;
@@ -2084,7 +2084,7 @@ NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *
 
 int nsp_sourceview_cleanup(void)
 {
-  /* cleanup 
+  /* cleanup
   g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
   g_list_free (windows);
   g_object_unref (buffer);
@@ -2094,10 +2094,10 @@ int nsp_sourceview_cleanup(void)
 }
 
 /*
- * list the schemes 
+ * list the schemes
  */
 
-#ifdef TEST 
+#ifdef TEST
 static void test_schemes()
 {
   const gchar * const * schemes;
@@ -2130,7 +2130,7 @@ static void test_schemes()
 }
 
 /*
- * test function which list the languages 
+ * test function which list the languages
  */
 
 static void test_get_language (void)
@@ -2155,7 +2155,7 @@ static void test_get_language (void)
       ++ids;
     }
 }
-#endif 
+#endif
 
 
 static GtkSourceLanguage *nsp_gtksource_language (void)
@@ -2164,7 +2164,7 @@ static GtkSourceLanguage *nsp_gtksource_language (void)
   GtkSourceLanguage *nsp;
   gchar *lang_dirs[] = {NULL, NULL};
   char nsp_lang[FSIZE+1];
-  if ( lm == NULL ) 
+  if ( lm == NULL )
     {
       nsp_path_expand("NSP/config/language-specs",nsp_lang,FSIZE);
       lang_dirs[0]= nsp_lang;
@@ -2181,19 +2181,19 @@ static void view_set_title (GtkSourceView   *view, int read_only)
   GtkSourceBuffer *buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   char *pretty_name = buffer_pretty_name (buffer);
   char *title;
-  if (read_only == TRUE ) 
+  if (read_only == TRUE )
     title = g_strconcat ("nsp view - ", pretty_name, NULL);
-  else 
+  else
     title = g_strconcat ("nsp edit - ", pretty_name, NULL);
   window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
   if ( window)   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (pretty_name);
   g_free (title);
 }
-  
-/* return a name to store in the view 
+
+/* return a name to store in the view
  */
-  
+
 static char *buffer_pretty_name (GtkSourceBuffer *buffer)
 {
   static int untitled_serial=1;
@@ -2210,7 +2210,7 @@ static char *buffer_pretty_name (GtkSourceBuffer *buffer)
   else
     {
       int *hus = g_object_get_data (G_OBJECT (buffer), "untitled_serial"),us;
-      if ( hus == NULL) 
+      if ( hus == NULL)
 	{
 	  us = untitled_serial++;
 	  g_object_set_data (G_OBJECT (buffer), "untitled_serial", GINT_TO_POINTER(us));

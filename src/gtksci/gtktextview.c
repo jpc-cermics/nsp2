@@ -17,9 +17,9 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- *  This file is a modified version of the testfile testtext.c 
- *  from gtk distribution, modified to build a small text editor 
- *  for nsp 
+ *  This file is a modified version of the testfile testtext.c
+ *  from gtk distribution, modified to build a small text editor
+ *  for nsp
  *  Copyright (C) 2001-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  */
@@ -35,9 +35,9 @@
 #include <glib/gstdio.h>
 
 #include <nsp/object.h>
-#include <nsp/plist.h> 
-#include <nsp/file.h> 
-#include <nsp/smatrix.h> 
+#include <nsp/plist.h>
+#include <nsp/file.h>
+#include <nsp/smatrix.h>
 
 #include <nsp/parse.h>
 #include <nsp/system.h> /* FSIZE */
@@ -105,14 +105,14 @@ static void  view_set_title   (View   *view, int read_only);
 static void execute_tag_error(View *view,int line);
 typedef gboolean (*FileselOKFunc) (const char *filename, gpointer data);
 
-static gboolean filechooser_open_run (GtkWindow    *parent, 
+static gboolean filechooser_open_run (GtkWindow    *parent,
 				      const char   *title,
 				      const char   *start_file,
 				      FileselOKFunc func,
 				      gpointer      data);
 
 static
-gboolean filechooser_save_run (GtkWindow    *parent, 
+gboolean filechooser_save_run (GtkWindow    *parent,
 			       const char   *title,
 			       const char   *start_file,
 			       FileselOKFunc func,
@@ -146,7 +146,7 @@ get_active_window (void)
     return NULL;
 }
 
-static gboolean filechooser_open_run (GtkWindow    *parent, 
+static gboolean filechooser_open_run (GtkWindow    *parent,
 				      const char   *title,
 				      const char   *start_file,
 				      FileselOKFunc func,
@@ -157,23 +157,23 @@ static gboolean filechooser_open_run (GtkWindow    *parent,
   GtkWidget *dialog;
 
   if (!parent)  parent = get_active_window ();
-  
+
   dialog = gtk_file_chooser_dialog_new (title,
 					parent,
 					GTK_FILE_CHOOSER_ACTION_OPEN,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 					NULL);
-    
+
   /* if (parent)  gtk_window_set_transient_for (GTK_WINDOW (dialog), parent); */
 
   if (start_file)
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), start_file);
-  
+
   while (1)
     {
       int rep = gtk_dialog_run (GTK_DIALOG (dialog));
-      if ( rep ==  GTK_RESPONSE_ACCEPT ) 
+      if ( rep ==  GTK_RESPONSE_ACCEPT )
 	{
 	  filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	  if ((*func) (filename,data))
@@ -191,7 +191,7 @@ static gboolean filechooser_open_run (GtkWindow    *parent,
   return result;
 }
 
-static gboolean filechooser_save_run (GtkWindow    *parent, 
+static gboolean filechooser_save_run (GtkWindow    *parent,
 				      const char   *title,
 				      const char   *start_file,
 				      FileselOKFunc func,
@@ -202,23 +202,23 @@ static gboolean filechooser_save_run (GtkWindow    *parent,
   GtkWidget *dialog;
 
   if (!parent)  parent = get_active_window ();
-  
+
   dialog = gtk_file_chooser_dialog_new (title,
 					parent,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 					NULL);
-    
+
   /* if (parent)  gtk_window_set_transient_for (GTK_WINDOW (dialog), parent); */
 
   if (start_file)
     gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), start_file);
-  
+
   while (1)
     {
       int rep = gtk_dialog_run (GTK_DIALOG (dialog));
-      if ( rep ==  GTK_RESPONSE_ACCEPT ) 
+      if ( rep ==  GTK_RESPONSE_ACCEPT )
 	{
 	  filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	  if ((*func) (filename,data))
@@ -246,7 +246,7 @@ blink_timeout (gpointer data)
 {
   GtkTextTag *tag;
   static gboolean flip = FALSE;
-  
+
   tag = GTK_TEXT_TAG (data);
 
   g_object_set (tag,
@@ -268,13 +268,13 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
   GtkTextIter iter, end;
 
   f = fopen (filename, "r");
-  
+
   if (f == NULL)
     {
       error_dialog (NULL,"Cannot open file '%s': %s", filename, g_strerror (errno));
       return FALSE;
     }
-  
+
   gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
   while (!feof (f))
     {
@@ -286,7 +286,7 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
       buf[count + remaining] = '\0';
 
       g_utf8_validate (buf, count + remaining, &leftover);
-      
+
       g_assert (g_utf8_validate (buf, leftover - buf, NULL));
       gtk_text_buffer_insert (buffer, &iter, buf, leftover - buf);
 
@@ -301,13 +301,13 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
     {
       error_dialog (NULL,"Invalid UTF-8 data encountered reading file '%s'", filename);
     }
-  
+
   /* We had a newline in the buffer to begin with. (The buffer always contains
    * a newline, so we delete to the end of the buffer to clean up.
    */
   gtk_text_buffer_get_end_iter (buffer, &end);
   gtk_text_buffer_delete (buffer, &iter, &end);
-  
+
   gtk_text_buffer_set_modified (buffer, FALSE);
 
   return TRUE;
@@ -317,7 +317,7 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
 static gint
 delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
-  View *view = g_object_get_data (G_OBJECT (window), "view");      
+  View *view = g_object_get_data (G_OBJECT (window), "view");
   push_active_window (GTK_WINDOW (window));
   check_close_view (view);
   pop_active_window ();
@@ -357,29 +357,29 @@ open_ok_func (const char *filename, gpointer data)
       g_free (new_view->buffer->filename);
       new_view->buffer->filename = g_strdup (filename);
       buffer_filename_set (new_view->buffer);
-      
+
       return TRUE;
     }
 }
 
-/* get view for an action callback 
+/* get view for an action callback
  */
 
 static View *view_from_action (GtkAction *action)
 {
   GtkActionGroup *action_group;
-  GValue val = { 0, };  
+  GValue val = { 0, };
   g_value_init (&val, G_TYPE_OBJECT);
   g_object_get_property(G_OBJECT(action),"action-group",&val);
   action_group = g_value_get_object (&val);
   g_value_unset (&val);
-  return g_object_get_data (G_OBJECT (action_group), "view");      
+  return g_object_get_data (G_OBJECT (action_group), "view");
 }
 
 static void do_open(GtkAction *action)
 {
   View *view;
-  /* 
+  /*
   const gchar *name = gtk_action_get_name (action);
   const gchar *typename = G_OBJECT_TYPE_NAME (action);
   g_message ("Action %s (type=%s) activated", name, typename);
@@ -393,7 +393,7 @@ static void do_open(GtkAction *action)
 
 static void do_save_as(GtkAction *action)
 {
-  View *view = view_from_action (action);  
+  View *view = view_from_action (action);
 
   push_active_window (GTK_WINDOW (view->window));
   save_as_buffer (view->buffer);
@@ -426,7 +426,7 @@ static void do_new (GtkAction *action)
   nsp_edit(NULL,FALSE);
 }
 
-#ifdef EXIT_USED 
+#ifdef EXIT_USED
 static void do_exit(GtkAction *action)
 {
   View *view = view_from_action (action);
@@ -445,7 +445,7 @@ static void do_exit(GtkAction *action)
   /* gtk_main_quit (); */
   pop_active_window ();
 }
-#endif 
+#endif
 
 static void do_execute (GtkAction *action)
 {
@@ -454,7 +454,7 @@ static void do_execute (GtkAction *action)
   View *view = view_from_action (action);
   /* save first */
   push_active_window (GTK_WINDOW (view->window));
-  
+
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
                               &start, &end );
@@ -465,7 +465,7 @@ static void do_execute (GtkAction *action)
       /* execute the file contents */
       rep =nsp_parse_eval_file(view->buffer->filename,display,echo,errcatch,
 			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
-      if ( rep < 0 ) 
+      if ( rep < 0 )
 	{
 	  char fname[FSIZE+1];
 	  /* get the line number of the Error */
@@ -476,14 +476,14 @@ static void do_execute (GtkAction *action)
 	      Sciprintf("%s",error_msg->S[i]);
 	      if ( sscanf(error_msg->S[i],"\tline %d of file %s",&line,fname)==2)
 		{
-		  if ( strcmp(fname,view->buffer->filename) == 0) 
+		  if ( strcmp(fname,view->buffer->filename) == 0)
 		    {
 		      execute_tag_error(view,line);
 		      break;
 		    }
 		}
 	    }
-	  /* 
+	  /*
 	  if ( sscanf(error_msg->S[error_msg->mn-1],"Error: at line %d of file",&line)==1)
 	    {
 	      execute_tag_error(view,line);
@@ -508,19 +508,19 @@ static void do_execute_selection(GtkAction *action)
   View *view = view_from_action (action);
   /* save first */
   push_active_window (GTK_WINDOW (view->window));
-  
+
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
                               &start, &end );
 
-  if (! gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end)) 
+  if (! gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end))
     return;
   str = gtk_text_iter_get_visible_text (&start, &end);
   nsp_eval_str_in_terminal(str);
   pop_active_window ();
 }
 
-/* put line in red 
+/* put line in red
  *
  */
 
@@ -529,13 +529,13 @@ static void execute_tag_error(View *view,int line)
   GtkTextIter istart,iend;
   /* fprintf(stderr,"-line->%d\n",line); */
   gtk_text_buffer_get_iter_at_line(view->buffer->buffer,&istart,line-1);
-  
+
   gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&istart,0.0,FALSE,0,0);
   iend = istart ;
   gtk_text_iter_forward_sentence_end(&iend);
   gtk_text_buffer_apply_tag (view->buffer->buffer, view->buffer->found_text_tag,
 			     &istart, &iend);
-  
+
 }
 
 enum
@@ -558,11 +558,11 @@ dialog_response_callback (GtkWidget *dialog, gint response_id, gpointer data)
       gtk_widget_destroy (dialog);
       return;
     }
-  
+
   buffer = g_object_get_data (G_OBJECT (dialog), "buffer");
 
   gtk_text_buffer_get_bounds (buffer, &start, &end);
-  
+
   search_string = gtk_text_iter_get_text (&start, &end);
 
   g_print ("Searching for `%s'\n", search_string);
@@ -571,9 +571,9 @@ dialog_response_callback (GtkWidget *dialog, gint response_id, gpointer data)
     buffer_search_forward (view->buffer, search_string, view);
   else if (response_id == RESPONSE_BACKWARD)
     buffer_search_backward (view->buffer, search_string, view);
-    
+
   g_free (search_string);
-  
+
   gtk_widget_destroy (dialog);
 }
 
@@ -581,6 +581,7 @@ static void do_search (GtkAction *action)
 {
   View *view = view_from_action (action);
   GtkWidget *dialog;
+  GtkWidget *box;
   GtkWidget *search_text;
   GtkTextBuffer *buffer;
   dialog = gtk_dialog_new_with_buttons ("Search",
@@ -593,7 +594,10 @@ static void do_search (GtkAction *action)
   buffer = gtk_text_buffer_new (NULL);
   search_text = gtk_text_view_new_with_buffer (buffer);
   g_object_unref (buffer);
-  gtk_box_pack_end (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+
+  box = gtk_dialog_get_content_area (GTK_DIALOG(dialog));
+
+  gtk_box_pack_end (GTK_BOX(box),
                     search_text,
                     TRUE, TRUE, 0);
   g_object_set_data (G_OBJECT (dialog), "buffer", buffer);
@@ -624,16 +628,16 @@ static void do_select_all (GtkAction *action)
 static GtkActionEntry menu_actions[] = {
   {"FileAction", NULL, "_File" },
   {"EditAction", NULL, "_Edit" },
-  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)}, 
+  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)},
   {"Open", GTK_STOCK_OPEN,"_Open","<control>O",NULL, G_CALLBACK (do_open)},
   {"Save", GTK_STOCK_SAVE,"_Save","<control>S",NULL, G_CALLBACK (do_save)},
   {"SaveAs", GTK_STOCK_SAVE_AS, "Save _As...", NULL,NULL, G_CALLBACK (do_save_as)},
   {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
   {"ExecuteSelection",NULL, "Execute Selection", NULL,NULL, G_CALLBACK (do_execute_selection)},
   {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
-#ifdef EXIT_USED 
+#ifdef EXIT_USED
   {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
-#endif 
+#endif
   {"Find",GTK_STOCK_FIND, "Find...", NULL,NULL, G_CALLBACK (do_search)},
 #if GTK_CHECK_VERSION(2,10,0)
   {"SelectAll",GTK_STOCK_SELECT_ALL, "Select All", NULL ,NULL, G_CALLBACK (do_select_all)}
@@ -645,14 +649,14 @@ static guint n_menu_actions = G_N_ELEMENTS (menu_actions);
 static GtkActionEntry menu_actions_read[] = {
   {"FileAction", NULL, "_File" },
   {"EditAction", NULL, "_Edit" },
-  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)}, 
+  {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)},
   {"Open", GTK_STOCK_OPEN,"_Open","<control>O",NULL, G_CALLBACK (do_open)},
   {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
   {"ExecuteSelection",NULL, "Execute Selection", NULL,NULL, G_CALLBACK (do_execute_selection)},
   {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
-#ifdef EXIT_USED 
+#ifdef EXIT_USED
   {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
-#endif 
+#endif
   {"Find",GTK_STOCK_FIND, "Find...", NULL,NULL, G_CALLBACK (do_search)},
 #if GTK_CHECK_VERSION(2,10,0)
   {"SelectAll",GTK_STOCK_SELECT_ALL, "Select All", NULL ,NULL, G_CALLBACK (do_select_all)}
@@ -694,7 +698,7 @@ static gboolean save_buffer (Buffer *buffer)
   g_return_val_if_fail (buffer->filename != NULL, FALSE);
 
   bak_filename = g_strconcat (buffer->filename, "~", NULL);
-  
+
   if ( g_rename (buffer->filename, bak_filename) != 0)
     {
       if (errno != ENOENT)
@@ -706,7 +710,7 @@ static gboolean save_buffer (Buffer *buffer)
     }
   else
     have_backup = TRUE;
-  
+
   file = fopen (buffer->filename, "w");
   if (!file)
     {
@@ -717,7 +721,7 @@ static gboolean save_buffer (Buffer *buffer)
     {
       gtk_text_buffer_get_iter_at_offset (buffer->buffer, &start, 0);
       gtk_text_buffer_get_end_iter (buffer->buffer, &end);
-  
+
       chars = gtk_text_buffer_get_slice (buffer->buffer, &start, &end, FALSE);
 
       if (fputs (chars, file) == EOF ||
@@ -731,9 +735,9 @@ static gboolean save_buffer (Buffer *buffer)
 	  /* Success
 	   */
 	  result = TRUE;
-	  gtk_text_buffer_set_modified (buffer->buffer, FALSE);	  
+	  gtk_text_buffer_set_modified (buffer->buffer, FALSE);
 	}
-	
+
       g_free (chars);
     }
 
@@ -747,7 +751,7 @@ static gboolean save_buffer (Buffer *buffer)
     }
 
   g_free (bak_filename);
-  
+
   return result;
 }
 
@@ -780,7 +784,7 @@ save_as_ok_func (const char *filename, gpointer data)
 	  if (result != GTK_RESPONSE_ACCEPT ) return FALSE;
 	}
     }
-  
+
   buffer->filename = g_strdup (filename);
 
   if (save_buffer (buffer))
@@ -844,11 +848,11 @@ static Buffer *create_buffer (void)
   Buffer *buffer;
   PangoTabArray *tabs;
   gint i;
-  
+
   buffer = g_new (Buffer, 1);
 
   buffer->buffer = gtk_text_buffer_new (NULL);
-  
+
   buffer->refcount = 1;
   buffer->filename = NULL;
   buffer->untitled_serial = -1;
@@ -856,19 +860,19 @@ static Buffer *create_buffer (void)
   buffer->color_tags = NULL;
   buffer->color_cycle_timeout = 0;
   buffer->start_hue = 0.0;
-  
+
   i = 0;
   while (i < N_COLORS)
     {
       GtkTextTag *tag;
 
       tag = gtk_text_buffer_create_tag (buffer->buffer, NULL, NULL);
-      
+
       buffer->color_tags = g_slist_prepend (buffer->color_tags, tag);
-      
+
       ++i;
     }
-  
+
   buffer->not_editable_tag =
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
@@ -895,15 +899,15 @@ static Buffer *create_buffer (void)
                                              PANGO_TAB_LEFT, 30,
                                              PANGO_TAB_LEFT, 60,
                                              PANGO_TAB_LEFT, 120);
-  
+
   buffer->custom_tabs_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                                         "tabs", tabs,
                                                         "foreground", "green", NULL);
 
   pango_tab_array_free (tabs);
-  
+
   buffers = g_slist_prepend (buffers, buffer);
-  
+
   return buffer;
 }
 
@@ -958,12 +962,12 @@ buffer_search (Buffer     *buffer,
   GtkTextIter start, end;
   GtkWidget *dialog;
   int i;
-  
+
   /* remove tag from whole buffer */
   gtk_text_buffer_get_bounds (buffer->buffer, &start, &end);
   gtk_text_buffer_remove_tag (buffer->buffer,  buffer->found_text_tag,
                               &start, &end );
-  
+
   gtk_text_buffer_get_iter_at_mark (buffer->buffer, &iter,
                                     gtk_text_buffer_get_mark (buffer->buffer,
                                                               "insert"));
@@ -984,7 +988,7 @@ buffer_search (Buffer     *buffer,
               ++i;
               gtk_text_buffer_apply_tag (buffer->buffer, buffer->found_text_tag,
                                          &match_start, &match_end);
-              
+
               iter = match_end;
             }
         }
@@ -999,7 +1003,7 @@ buffer_search (Buffer     *buffer,
               ++i;
               gtk_text_buffer_apply_tag (buffer->buffer, buffer->found_text_tag,
                                          &match_start, &match_end);
-              
+
               iter = match_start;
             }
         }
@@ -1015,7 +1019,7 @@ buffer_search (Buffer     *buffer,
   g_signal_connect_swapped (dialog,
                             "response",
                             G_CALLBACK (gtk_widget_destroy), dialog);
-  
+
   gtk_widget_show (dialog);
 }
 
@@ -1072,15 +1076,15 @@ hsv_to_rgb (gdouble *h,
       hue = *h * 6.0;
       saturation = *s;
       value = *v;
-      
+
       if (hue >= 6.0)
 	hue = 0.0;
-      
+
       f = hue - (int) hue;
       p = value * (1.0 - saturation);
       q = value * (1.0 - saturation * f);
       t = value * (1.0 - saturation * (1.0 - f));
-      
+
       switch ((int) hue)
 	{
 	case 0:
@@ -1088,37 +1092,37 @@ hsv_to_rgb (gdouble *h,
 	  *s = t;
 	  *v = p;
 	  break;
-	  
+
 	case 1:
 	  *h = q;
 	  *s = value;
 	  *v = p;
 	  break;
-	  
+
 	case 2:
 	  *h = p;
 	  *s = value;
 	  *v = t;
 	  break;
-	  
+
 	case 3:
 	  *h = p;
 	  *s = q;
 	  *v = value;
 	  break;
-	  
+
 	case 4:
 	  *h = t;
 	  *s = p;
 	  *v = value;
 	  break;
-	  
+
 	case 5:
 	  *h = value;
 	  *s = p;
 	  *v = q;
 	  break;
-	  
+
 	default:
 	  g_assert_not_reached ();
 	}
@@ -1136,7 +1140,7 @@ hue_to_color (gdouble   hue,
   v = 1.0;
 
   g_return_if_fail (hue <= 1.0);
-  
+
   hsv_to_rgb (&h, &s, &v);
 
   color->red = h * 65535;
@@ -1169,14 +1173,14 @@ buffer_set_colors (Buffer  *buffer,
       g_source_remove (buffer->color_cycle_timeout);
       buffer->color_cycle_timeout = 0;
     }
-    
+
   tmp = buffer->color_tags;
   while (tmp != NULL)
     {
       if (enabled)
         {
           GdkColor color;
-          
+
           hue_to_color (hue, &color);
 
           g_object_set (tmp->data,
@@ -1189,7 +1193,7 @@ buffer_set_colors (Buffer  *buffer,
                       NULL);
 
       hue += 1.0 / N_COLORS;
-      
+
       tmp = g_slist_next (tmp);
     }
 }
@@ -1199,14 +1203,14 @@ buffer_cycle_colors (Buffer *buffer)
 {
   GSList *tmp;
   gdouble hue = buffer->start_hue;
-  
+
   tmp = buffer->color_tags;
   while (tmp != NULL)
     {
       GdkColor color;
-      
+
       hue_to_color (hue, &color);
-      
+
       g_object_set (tmp->data,
                     "foreground_gdk", &color,
                     NULL);
@@ -1214,7 +1218,7 @@ buffer_cycle_colors (Buffer *buffer)
       hue += 1.0 / N_COLORS;
       if (hue > 1.0)
         hue = 0.0;
-      
+
       tmp = g_slist_next (tmp);
     }
 
@@ -1245,9 +1249,9 @@ view_set_title (View *view, int read_only)
 {
   char *pretty_name = buffer_pretty_name (view->buffer);
   char *title;
-  if (read_only == TRUE ) 
+  if (read_only == TRUE )
     title = g_strconcat ("nsp view - ", pretty_name, NULL);
-  else 
+  else
     title = g_strconcat ("nsp edit - ", pretty_name, NULL);
 
   gtk_window_set_title (GTK_WINDOW (view->window), title);
@@ -1267,22 +1271,22 @@ cursor_set_callback (GtkTextBuffer     *buffer,
   /* Redraw tab windows if the cursor moves
    * on the mapped widget (windows may not exist before realization...
    */
-  
+
   text_view = GTK_TEXT_VIEW (user_data);
-  
-  if (gtk_widget_get_mapped (text_view) &&
+
+  if (gtk_widget_get_mapped (GTK_WIDGET(text_view)) &&
       mark == gtk_text_buffer_get_insert (buffer))
     {
       GdkWindow *tab_window;
 
       tab_window = gtk_text_view_get_window (text_view,
                                              GTK_TEXT_WINDOW_TOP);
-      if ( tab_window != NULL) 
+      if ( tab_window != NULL)
 	gdk_window_invalidate_rect (tab_window, NULL, FALSE);
-      
+
       tab_window = gtk_text_view_get_window (text_view,
                                              GTK_TEXT_WINDOW_BOTTOM);
-      if ( tab_window != NULL) 
+      if ( tab_window != NULL)
 	gdk_window_invalidate_rect (tab_window, NULL, FALSE);
     }
 }
@@ -1298,14 +1302,14 @@ get_lines (GtkTextView  *text_view,
 {
   GtkTextIter iter;
   gint count;
-  gint size;  
+  gint size;
 
   g_array_set_size (buffer_coords, 0);
   g_array_set_size (numbers, 0);
-  
+
   /* Get iter at first y */
   gtk_text_view_get_line_at_y (text_view, &iter, first_y, NULL);
-  
+
   /* For each iter, get its location and add it to the arrays.
    * Stop when we pass last_y
    */
@@ -1316,18 +1320,18 @@ get_lines (GtkTextView  *text_view,
     {
       gint y, height;
       gint line_num;
-      
+
       gtk_text_view_get_line_yrange (text_view, &iter, &y, &height);
 
       g_array_append_val (buffer_coords, y);
       line_num = gtk_text_iter_get_line (&iter);
       g_array_append_val (numbers, line_num);
-      
+
       ++count;
 
       if ((y + height) >= last_y)
         break;
-      
+
       gtk_text_iter_forward_line (&iter);
     }
 
@@ -1350,10 +1354,10 @@ line_numbers_expose (GtkWidget      *widget,
   PangoLayout *layout;
   GtkTextView *text_view;
   GtkTextWindowType type;
-  GdkDrawable *target;
-  
+  GdkWindow *target;
+
   text_view = GTK_TEXT_VIEW (widget);
-  
+
   /* See if this expose is on the line numbers window */
   left_win = gtk_text_view_get_window (text_view,
                                        GTK_TEXT_WINDOW_LEFT);
@@ -1373,7 +1377,7 @@ line_numbers_expose (GtkWidget      *widget,
     }
   else
     return FALSE;
-  
+
   first_y = event->area.y;
   last_y = first_y + event->area.height;
 
@@ -1393,24 +1397,24 @@ line_numbers_expose (GtkWidget      *widget,
 
   numbers = g_array_new (FALSE, FALSE, sizeof (gint));
   pixels = g_array_new (FALSE, FALSE, sizeof (gint));
-  
+
   get_lines (text_view,
              first_y,
              last_y,
              pixels,
              numbers,
              &count);
-  
+
   /* Draw fully internationalized numbers! */
-  
+
   layout = gtk_widget_create_pango_layout (widget, "");
-  
+
   i = 0;
   while (i < count)
     {
       gint pos;
       gchar *str;
-      
+
       gtk_text_view_buffer_to_window_coords (text_view,
                                              type,
                                              0,
@@ -1422,6 +1426,7 @@ line_numbers_expose (GtkWidget      *widget,
 
       pango_layout_set_text (layout, str, -1);
 
+      /* A revoir XXXXXX
       gtk_paint_layout (widget->style,
                         target,
                         GTK_WIDGET_STATE (widget),
@@ -1431,15 +1436,15 @@ line_numbers_expose (GtkWidget      *widget,
                         NULL,
                         2, pos + 2,
                         layout);
-
+      */
       g_free (str);
-      
+
       ++i;
     }
 
   g_array_free (pixels, TRUE);
   g_array_free (numbers, TRUE);
-  
+
   g_object_unref (layout);
 
   /* don't stop emission, need to draw children */
@@ -1447,7 +1452,7 @@ line_numbers_expose (GtkWidget      *widget,
 }
 
 
-/* called by the uimanager 
+/* called by the uimanager
  *
  */
 
@@ -1475,10 +1480,10 @@ create_view (Buffer *buffer,int read_only)
 
   view->buffer = buffer;
   buffer_ref (buffer);
-  
+
   view->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_object_set_data (G_OBJECT (view->window), "view", view);
-  
+
   g_signal_connect (view->window, "delete_event",
 		    G_CALLBACK (delete_event_cb), NULL);
 
@@ -1487,13 +1492,13 @@ create_view (Buffer *buffer,int read_only)
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
-  
+
   action_group = gtk_action_group_new ("TestActions");
   g_object_set_data (G_OBJECT (action_group), "view", view);
 
-  if ( read_only == TRUE ) 
+  if ( read_only == TRUE )
     gtk_action_group_add_actions (action_group,  menu_actions_read,  n_menu_actions_read, NULL);
-  else 
+  else
     gtk_action_group_add_actions (action_group,  menu_actions,  n_menu_actions, NULL);
   gtk_ui_manager_insert_action_group (merge, action_group, 0);
   g_signal_connect (merge, "add_widget", G_CALLBACK (add_widget), vbox);
@@ -1505,7 +1510,7 @@ create_view (Buffer *buffer,int read_only)
       g_message ("building menus failed: %s", error->message);
       g_error_free (error);
     }
-  
+
   sw = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
 				  GTK_POLICY_AUTOMATIC,
@@ -1518,7 +1523,7 @@ create_view (Buffer *buffer,int read_only)
   /* Make sure border width works, no real reason to do this other than testing */
   gtk_container_set_border_width (GTK_CONTAINER (view->text_view),
                                   5);
-  
+
   /* Draw tab stops in the top and bottom windows. */
   g_signal_connect (view->buffer->buffer,
 		    "mark_set",
@@ -1528,7 +1533,7 @@ create_view (Buffer *buffer,int read_only)
   /* Draw line numbers in the side windows; we should really be
    * more scientific about what width we set them to.
    */
-  
+
   gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
                                         GTK_TEXT_WINDOW_LEFT,
                                         30);
@@ -1537,7 +1542,7 @@ create_view (Buffer *buffer,int read_only)
                     G_CALLBACK (line_numbers_expose),
                     NULL);
 
-  if ( read_only == TRUE ) 
+  if ( read_only == TRUE )
     gtk_text_view_set_editable (GTK_TEXT_VIEW (view->text_view),FALSE);
 
   gtk_box_pack_end (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
@@ -1550,7 +1555,7 @@ create_view (Buffer *buffer,int read_only)
 }
 
 /*
- * utility function 
+ * utility function
  */
 
 static void error_dialog (GtkWindow *parent, const gchar *msg, ...)
@@ -1575,7 +1580,7 @@ static void error_dialog (GtkWindow *parent, const gchar *msg, ...)
 }
 
 
-#ifdef ALONE 
+#ifdef ALONE
 int
 main (int argc, char** argv)
 {
@@ -1584,18 +1589,18 @@ main (int argc, char** argv)
   int i;
 
   gtk_init (&argc, &argv);
-  
+
   buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
-  
+
   push_active_window (GTK_WINDOW (view->window));
   pop_active_window ();
   gtk_main ();
   return 0;
 }
 
-#else 
+#else
 
 int nsp_edit(char *filename, int read_only)
 {
@@ -1620,5 +1625,3 @@ NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *
 
 
 #endif
-
-

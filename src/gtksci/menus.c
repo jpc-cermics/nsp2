@@ -1246,7 +1246,6 @@ static void nsp_menu_start_editor(void)
 
 void nsp_edit(char *filename,int read_only,int wait){};
 void nsp_edit_smatrix(char *filename,int read_only,int wait){};
-int nsp_help_browser(char *mandir, char *locale, char *help_file){return 0;};
 void nsp_text_view_screen_size(){};
 void nsp_textview_destroy(){};
 void nsp_create_main_text_view(){};
