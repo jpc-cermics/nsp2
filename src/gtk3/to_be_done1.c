@@ -69,11 +69,11 @@ extern void * new_type_gtkcellrenderertext(type_mode);
 extern void * new_type_gtkcellrendererpixbuf(type_mode);
 extern void * new_type_gtkadjustment(type_mode);
 extern void * new_type_gtkrcstyle(type_mode);
-extern void * new_type_gtksettings(type_mode);
+/* extern void * new_type_gtksettings(type_mode); */
 extern void * new_type_gtksizegroup(type_mode);
 extern void * new_type_gtkstyle(type_mode);
 extern void * new_type_gtktextbuffer(type_mode);
-extern void * new_type_gtktextchildanchor(type_mode);
+/* extern void * new_type_gtktextchildanchor(type_mode); */
 extern void * new_type_gtktextmark(type_mode);
 extern void * new_type_gtktexttag(type_mode);
 extern void * new_type_gtktexttagtable(type_mode);
@@ -103,7 +103,7 @@ extern void * new_type_gtkpreview(type_mode);
 extern void * new_type_gtkoldeditable(type_mode);
 extern void * new_type_gtkmisc(type_mode);
 /* extern void *new_type_gtkpixmap(type_mode); */
-extern void * new_type_gtkarrow(type_mode);
+/* extern void * new_type_gtkarrow(type_mode); */
 extern void * new_type_gtkimage(type_mode);
 extern void * new_type_gtklabel(type_mode);
 extern void * new_type_gtkaccellabel(type_mode);
@@ -143,7 +143,7 @@ extern void * new_type_gtkhandlebox(type_mode);
 extern void * new_type_gtkframe(type_mode);
 extern void * new_type_gtkaspectframe(type_mode);
 extern void * new_type_gtkeventbox(type_mode);
-extern void * new_type_gtkalignment(type_mode);
+/* extern void * new_type_gtkalignment(type_mode); */
 extern void * new_type_gtkbutton(type_mode);
 extern void * new_type_gtktogglebutton(type_mode);
 extern void * new_type_gtkcheckbutton(type_mode);
@@ -207,7 +207,7 @@ extern void * new_type_gtkuimanager(type_mode);
 
 extern void * new_type_gdkdisplaymanager(type_mode);
 extern void * new_type_gtkaboutdialog(type_mode);
-extern void * new_type_gtkaccelmap(type_mode);
+/* extern void * new_type_gtkaccelmap(type_mode); */
 extern void * new_type_gtkborder(type_mode);
 extern void * new_type_gtkcellrenderercombo(type_mode);
 extern void * new_type_gtkcellrendererprogress(type_mode);
@@ -300,11 +300,11 @@ void nsp_init_gtk_types(void)
   new_type_gtkcellrendererpixbuf(T_BASE);
   new_type_gtkadjustment(T_BASE);
   /* new_type_gtkrcstyle(T_BASE); */
-  new_type_gtksettings(T_BASE);
+  /* new_type_gtksettings(T_BASE); */
   new_type_gtksizegroup(T_BASE);
   /* new_type_gtkstyle(T_BASE); */
   new_type_gtktextbuffer(T_BASE);
-  new_type_gtktextchildanchor(T_BASE);
+  /* new_type_gtktextchildanchor(T_BASE); */
   new_type_gtktextmark(T_BASE);
   new_type_gtktexttag(T_BASE);
   new_type_gtktexttagtable(T_BASE);
@@ -339,7 +339,7 @@ void nsp_init_gtk_types(void)
   /* new_type_gtkoldeditable(T_BASE);*/
   new_type_gtkmisc(T_BASE);
   /* new_type_gtkpixmap(T_BASE); */
-  new_type_gtkarrow(T_BASE);
+  /* new_type_gtkarrow(T_BASE); */
   new_type_gtkimage(T_BASE);
   new_type_gtklabel(T_BASE);
   new_type_gtkaccellabel(T_BASE);
@@ -380,7 +380,7 @@ void nsp_init_gtk_types(void)
   new_type_gtkframe(T_BASE);
   new_type_gtkaspectframe(T_BASE);
   new_type_gtkeventbox(T_BASE);
-  new_type_gtkalignment(T_BASE);
+  /* new_type_gtkalignment(T_BASE); */
   new_type_gtkbutton(T_BASE);
   new_type_gtktogglebutton(T_BASE);
   new_type_gtkcheckbutton(T_BASE);
@@ -456,7 +456,7 @@ void nsp_init_gtk_types_added(void)
   /* new_type_gtkuimanager(T_BASE); */
   new_type_gdkdisplaymanager(T_BASE);
   new_type_gtkaboutdialog(T_BASE);
-  new_type_gtkaccelmap(T_BASE);
+  /* new_type_gtkaccelmap(T_BASE); */
   new_type_gtkborder(T_BASE);
   new_type_gtkcellrenderercombo(T_BASE);
   new_type_gtkcellrendererprogress(T_BASE);

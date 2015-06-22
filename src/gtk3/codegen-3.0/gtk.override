@@ -6886,13 +6886,15 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
 }
 
 %%
+ignore gtk_combo_box_new_with_area
+ignore gtk_combo_box_new_with_area_and_entry
 ignore gtk_combo_box_new_with_model
 ignore gtk_combo_box_new_with_model_and_entry
 %%
 override gtk_combo_box_new
 
 /* merging gtkcombobox_new, new_with_entry,
- * new_with_model, new_with_model_and_entry
+ * new_with_model, new_with_model_and_entry, new_with_area, new_with_area_and_entry
  * we also build a gtkcomboboxtext when text is given
  */
 static int
@@ -6901,16 +6903,32 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   int with_entry = FALSE;
   GObject *ret; NspObject *nsp_ret;
   NspGObject *model = NULL;
+  NspGObject *area = NULL;
   NspSMatrix *Smat = NULL;
   int_types T[] = {new_opts,t_end};
   nsp_option opts[] = {
 	{"model",obj_check,NULLOBJ,-1},
 	{"text",smat,NULLOBJ,-1},
 	{"with_entry",s_bool,NULLOBJ,-1},
+	{"area",obj_check,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
-  if ( GetArgs(stack,rhs,opt,T,opts,&nsp_type_gtktreemodel,&model,&Smat,&with_entry) == FAIL)
+  if ( GetArgs(stack,rhs,opt,T,opts,&nsp_type_gtktreemodel,&model,&Smat,&with_entry,
+	       &nsp_type_gtkcellarea,&area) == FAIL)
     return RET_BUG;
-  if ( model != NULL)
+  if ( area != NULL )
+    {
+      if ( with_entry == FALSE )
+	{
+	  if ((ret = (GObject *) gtk_combo_box_new_with_area(GTK_CELL_AREA(area->obj)))
+	      == NULL) return RET_BUG;
+	}
+      else
+	{
+	  if ((ret = (GObject *) gtk_combo_box_new_with_area_and_entry(GTK_CELL_AREA(area->obj)))
+	      == NULL) return RET_BUG;
+	}
+    }
+  else if ( model != NULL)
     {
       if ( with_entry == FALSE )
 	{
@@ -6959,6 +6977,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
 %%
 ignore gtk_combo_box_entry_new_with_model
 %%
