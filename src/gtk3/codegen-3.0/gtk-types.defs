@@ -2500,9 +2500,7 @@
 ;;   )
 ;; )
 
-
-
-(define-enum GtkWidgetHelpType
+(define-enum WidgetHelpType
   (in-module "Gtk")
   (c-name "GtkWidgetHelpType")
   (gtype-id "GTK_TYPE_WIDGET_HELP_TYPE")
