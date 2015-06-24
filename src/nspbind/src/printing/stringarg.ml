@@ -223,6 +223,7 @@ type function_obj = {
     in_module: string;  (* XXX *)
     typecode: string;
     f_options: bool; (* some arguments are named options *)
+    availability: string;
   }
 ;;
 

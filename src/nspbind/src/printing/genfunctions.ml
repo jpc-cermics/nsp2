@@ -18,7 +18,7 @@ open Stringarg;;
 
 let b = Buffer.create 10240;;
 
-let function_tmpl = 
+let function_tmpl =
   "int _wrap_$(cname_1)(Stack stack, int rhs, int opt, int lhs) /* $(name) */\n" ^
   "{\n" ^
   "$(varlist)" ^
@@ -31,47 +31,116 @@ let function_tmpl =
 
 (* check matchers *)
 
-let check_matcher str = 
+let check_matcher str =
   Say.debug (Printf.sprintf "check matcher for %s" str);
-  try 
-    let _handler = Stringarg.matcher_get str in 
-    true 
-  with  _ -> 
+  try
+    let _handler = Stringarg.matcher_get str in
+    true
+  with  _ ->
     false
 ;;
 
-let rec check_matchers_params params = 
-  match params with 
+let rec check_matchers_params params =
+  match params with
   | [] -> (true , "")
-  | param :: others -> 
-      if check_matcher param.ptype then 
-	check_matchers_params others 
+  | param :: others ->
+      if check_matcher param.ptype then
+	check_matchers_params others
       else
 	(false , param.ptype)
 ;;
 
-let check_matchers params ret = 
-  if  check_matcher ret then 
+let check_matchers params ret =
+  if  check_matcher ret then
     check_matchers_params params
   else
-    (false, ret ) 
+    (false, ret )
 ;;
 
-let write_param info param byref = 
+let write_param info param byref =
   let handler = Stringarg.matcher_get param.ptype in
   handler.write_param "" param info byref
 ;;
 
-let rec write_params info params byref = 
-  match params with 
-  | [] -> info 
-  | param :: rest -> 
+let rec write_params info params byref =
+  match params with
+  | [] -> info
+  | param :: rest ->
       write_params (write_param info param byref) rest byref
 ;;
 
-(**) 
+let get_list_names str =
+  let bb = Buffer.create 1024 in
+  let rec get_names str n k bb names =
+    let rec get_name str n k bb =
+      if k < n  then
+	match str.[k] with
+	| '_' -> k
+	| c ->
+	    Buffer.add_char bb c;
+	    get_name str n (k+1) bb
+      else
+	k
+    in
+    Buffer.clear bb;
+    if k >= n then
+      names
+    else
+      let pos = get_name str n k bb in
+      let name = Buffer.contents bb in
+      name :: (get_names str n (pos+1) bb names)
+  in
+  get_names str (String.length str) 0 bb []
+;;
 
-let write_function_wrapper or_c_name or_byref f_obj template handle_return is_method substdict = 
+let rec major_minor l major =
+  match l with
+  | [] -> (major, "0")
+  | x :: [] -> (major, x)
+  | x :: res -> (major_minor res x )
+;;
+
+let availability_tmpl =
+  "#else\n" ^
+  "int _wrap_$(cname_1)(Stack stack, int rhs, int opt, int lhs) /* $(name) */\n" ^
+  "{\n" ^
+  "  Scierror(\"Error: function $(cname_1) not available\\n\");\n" ^
+  "  return RET_BUG;\n" ^
+  "}\n#endif\n"
+;;
+
+let deprecated_tmpl =
+  "int _wrap_$(cname_1)(Stack stack, int rhs, int opt, int lhs) /* $(name) */\n" ^
+  "{\n" ^
+  "  Scierror(\"Error: function $(cname_1) is deprecated\\n\");\n" ^
+  "  return RET_BUG;\n" ^
+  "}\n"
+;;
+
+let code_availability f_obj code substdict =
+  if f_obj.availability <> "" then
+    let l = get_list_names f_obj.availability in
+    let tag = (List.hd (List.tl l)) in
+    let (major,minor) = major_minor l "" in
+    if tag = "AVAILABLE" then
+      "#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n" ^
+      code ^
+      File.pattern_to_code_with_buffer availability_tmpl substdict
+    else if tag = "DEPRECATED" then
+      "#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n" ^
+      File.pattern_to_code_with_buffer deprecated_tmpl substdict ^
+      "#else\n" ^
+      code ^
+      "#endif\n"
+    else
+      code
+  else
+    code
+;;
+
+(**)
+
+let write_function_wrapper or_c_name or_byref f_obj template handle_return is_method substdict =
   let info = {
     optional_args = f_obj.f_options;
     varargs = f_obj.f_varargs;
@@ -89,10 +158,10 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
     kwlist= [];
     tylist= [];
     setobj= false;
-  } in 
+  } in
 
-  (* 
-  if info.optional_args then 
+  (*
+  if info.optional_args then
     Printf.printf "function with options %s\n" f_obj.f_c_name;
    *)
 
@@ -105,10 +174,10 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
   Hashtbl.replace substdict "setreturn" "";
   Hashtbl.replace substdict "errorreturn" "NULL";
 
-  let info = write_params info f_obj.params or_byref  in 
+  let info = write_params info f_obj.params or_byref  in
 
-  let info = 
-    if handle_return then 
+  let info =
+    if handle_return then
       (
        (
 	match f_obj.ret with
@@ -116,66 +185,66 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
 	| Some _ -> Hashtbl.replace substdict "setreturn" "ret =";
 	| _ -> ();
        );
-       let owns_return = 
+       let owns_return =
 	 match f_obj.caller_owns_return with
-	 | Some x -> x 
+	 | Some x -> x
 	 | None -> false in
        let ret = match f_obj.ret with
-       | Some x -> x 
+       | Some x -> x
        | None -> "none" in
-       let handler = Stringarg.matcher_get ret in 
+       let handler = Stringarg.matcher_get ret in
        handler.write_return ret owns_return info
       )
     else
-      info in 
-  
-  let deprecated = 
+      info in
+
+  let deprecated =
     if f_obj.deprecated  then
       Printf.sprintf "  Scierror(\"%%s: deprecated %s\",NspFname(stack)); return RET_BUG;\n"
         f_obj.deprecated_msg
     else
-      "" in 
+      "" in
   (* if name isn't set, set it to f_obj.name *)
   Hashtbl.replace substdict "name" f_obj.f_name;
-  if or_c_name = "" then 
+  if or_c_name = "" then
     Hashtbl.replace substdict "typename" or_c_name;
-  
+
   Hashtbl.replace substdict "cname"  f_obj.f_c_name;
   Hashtbl.replace substdict "cname_1"  f_obj.f_c_name;
   Hashtbl.replace substdict "varlist"  (get_varlist info);
   Hashtbl.replace substdict "typecodes"  info.parsestr;
   Hashtbl.replace substdict "parselist"  (get_parselist info);
-  
-  let info = 
-    if is_method then 
+
+  let info =
+    if is_method then
       (* the list will be reversed and we need a , after self *)
-      {info with arglist = info.arglist @ [""];} 
+      {info with arglist = info.arglist @ [""];}
     else
-      info in 
+      info in
   Hashtbl.replace substdict "arglist"  (get_arglist info);
-  Hashtbl.replace substdict "codebefore"  
-    ( deprecated ^ 
-      (Str.global_replace (Str.regexp_string "return NULL") 
+  Hashtbl.replace substdict "codebefore"
+    ( deprecated ^
+      (Str.global_replace (Str.regexp_string "return NULL")
 	 ( "return" ^ Hashtbl.find substdict "errorreturn")
 	 (get_codebefore info)));
-  Hashtbl.replace substdict "codeafter" 
-    (Str.global_replace (Str.regexp_string "return NULL") 
+  Hashtbl.replace substdict "codeafter"
+    (Str.global_replace (Str.regexp_string "return NULL")
        ( "return" ^ Hashtbl.find substdict "errorreturn")
        (get_codeafter info));
-  let flags = 
-    if info.parsestr <> "" then 
+  let flags =
+    if info.parsestr <> "" then
       (
-       if get_parselist info = "" then 
+       if get_parselist info = "" then
 	 Hashtbl.replace substdict "parseargs" "  CheckRhs(0,0);\n"
        else
 	 (
-	  let parse_tmpl = "  if ( GetArgs(stack,rhs,opt,T,$(parselist)) == FAIL) return RET_BUG;\n" in 
-	  Hashtbl.replace substdict "parseargs"  
+	  let parse_tmpl = "  if ( GetArgs(stack,rhs,opt,T,$(parselist)) == FAIL) return RET_BUG;\n" in
+	  Hashtbl.replace substdict "parseargs"
 	    (File.pattern_to_code_with_buffer parse_tmpl  substdict)
 	 );
        Hashtbl.replace substdict "extraparams" ", NspObject *args, NspObject *kwargs";
        (* # prepend the keyword list to the variable list *)
-       Hashtbl.replace substdict "varlist" 
+       Hashtbl.replace substdict "varlist"
 	 (
 	  (get_tylist info) ^ (get_kwlist info) ^ (Hashtbl.find substdict "varlist"));
        "METH_?"
@@ -187,12 +256,13 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
        Hashtbl.replace substdict "parseargs" "";
        Hashtbl.replace substdict "extraparams" "";
        "METH_NOARGS"
-      ) in 
-  (File.pattern_to_code_with_buffer template substdict, flags)
-
+      ) in
+  let code = File.pattern_to_code_with_buffer template substdict in
+  let code = code_availability f_obj code substdict in
+  (code, flags)
 ;;
 
-let get_function_code or_c_name or_byref func = 
+let get_function_code or_c_name or_byref func =
   if Overrides.is_ignored func.f_c_name then
     (true)
   else
@@ -202,50 +272,50 @@ let get_function_code or_c_name or_byref func =
        File.write_string "\n\n";
        false
       )
-    else 
+    else
       (
-       Say.debug 
+       Say.debug
 	 (Printf.sprintf "check function or method %s" func.f_name);
-       let handle_return, is_method = (true , false) in 
+       let handle_return, is_method = (true , false) in
        let substdict =  Hashtbl.create 256 in
-       let ret = 
+       let ret =
 	 match func.ret with
-	 | Some x -> x 
+	 | Some x -> x
 	 | None -> "none" in
-       let (test, str) =  check_matchers func.params ret in 
-       if test then 
+       let (test, str) =  check_matchers func.params ret in
+       if test then
 	 (
 	  Say.debug "matcher found";
-	  try 
-	    let code, _methflags = 
-	      write_function_wrapper 
-		or_c_name or_byref func function_tmpl handle_return is_method substdict in 
+	  try
+	    let code, _methflags =
+	      write_function_wrapper
+		or_c_name or_byref func function_tmpl handle_return is_method substdict in
 	    File.write_string code;
 	    false;
 	  with _ -> (Say.debug "to be checked, a matcher failed"; true)
 	 )
        else
 	 (
-	  Say.debug 
+	  Say.debug
 	    (Printf.sprintf "Warning: Failed to generate %s: matcher missing for %s" func.f_name str);
 	  true
 	 )
       );
 ;;
 
-(* write functions code *) 
+(* write functions code *)
 
-let write_functions failed_tbl = 
-  let type_tmpl_2 = 
+let write_functions failed_tbl =
+  let type_tmpl_2 =
     "/*-------------------------------------------\n" ^
     " * functions \n" ^
-    " *-------------------------------------------*/\n" in 
+    " *-------------------------------------------*/\n" in
   File.write_string type_tmpl_2;
-  List.iter 
-    (fun x-> 
-      if not x.is_method && x.is_constructor_of = "" then 
+  List.iter
+    (fun x->
+      if not x.is_method && x.is_constructor_of = "" then
 	(
-	 if get_function_code "" false x then 
+	 if get_function_code "" false x then
 	   (
 	    Hashtbl.replace failed_tbl x.f_c_name "_" ;
 	   )
@@ -255,72 +325,72 @@ let write_functions failed_tbl =
 ;;
 
 (* write a function table *)
-(*------------------------*) 
+(*------------------------*)
 
-let buffer_add_function_entries constructions is_gtk_class failed_tbl = 
+let buffer_add_function_entries constructions is_gtk_class failed_tbl =
   (* filter methods and ignored functions *)
 
-  let functions = 
+  let functions =
     List.fold_left
-      (fun accu f -> 
-         if not (f.is_method || Overrides.is_ignored f.f_c_name) then 
-           f :: accu 
-         else accu) [] Stringarg.parser.functions in 
-  
-  let constructions = 
-    List.fold_left
-      (fun accu f -> 
-         if not (f.is_method || Overrides.is_ignored f.f_c_name) then 
-           f :: accu 
-         else accu) [] constructions in 
+      (fun accu f ->
+         if not (f.is_method || Overrides.is_ignored f.f_c_name) then
+           f :: accu
+         else accu) [] Stringarg.parser.functions in
 
-  let buffer_add_construction_entry f = 
+  let constructions =
+    List.fold_left
+      (fun accu f ->
+         if not (f.is_method || Overrides.is_ignored f.f_c_name) then
+           f :: accu
+         else accu) [] constructions in
+
+  let buffer_add_construction_entry f =
     let entry =  ((String.lowercase f.is_constructor_of) ^ "_new" ) in
     let wrapper = ((String.lowercase f.is_constructor_of) ^ "_new" ) in
-    if not (Hashtbl.mem failed_tbl wrapper) then 
-      Buffer.add_string b 
+    if not (Hashtbl.mem failed_tbl wrapper) then
+      Buffer.add_string b
 	  (Printf.sprintf "  { \"%s\", _wrap_%s},\n" entry wrapper) in
 
-  let buffer_add_function_entry f = 
-    if not (f.is_method || Overrides.is_ignored f.f_c_name) then 
+  let buffer_add_function_entry f =
+    if not (f.is_method || Overrides.is_ignored f.f_c_name) then
       let entry = (if is_gtk_class then f.f_c_name else f.f_name) in
-      let wrapper = f.f_c_name in 
-      if not (Hashtbl.mem failed_tbl wrapper) then 
-	Buffer.add_string b 
+      let wrapper = f.f_c_name in
+      if not (Hashtbl.mem failed_tbl wrapper) then
+	Buffer.add_string b
 	  (Printf.sprintf "  { \"%s\", _wrap_%s},\n" entry wrapper) in
-  (* first constructors *) 
-  List.iter 
-    (fun f -> 
-       if f.is_constructor_of <> "" then 
+  (* first constructors *)
+  List.iter
+    (fun f ->
+       if f.is_constructor_of <> "" then
          buffer_add_construction_entry f) constructions;
 
   (* then functions *)
-  List.iter 
-    (fun f -> 
-       if f.is_constructor_of = "" then 
+  List.iter
+    (fun f ->
+       if f.is_constructor_of = "" then
          buffer_add_function_entry f) functions;
 ;;
 
-(* the create function is named with the prefix value 
- * note that we could have more than one create function 
+(* the create function is named with the prefix value
+ * note that we could have more than one create function
  * up to now we limit the insertion to the first one
  *)
 
-let buffer_add_create_entries prefix = 
-  let get_create_entry obj = 
-    let name = String.lowercase obj.or_name in 
-    Printf.sprintf "  { \"%s_create\", int_%s_create},\n" 
-      (String.lowercase prefix) name  in 
-  if List.length Stringarg.parser.objects <> 0 then 
+let buffer_add_create_entries prefix =
+  let get_create_entry obj =
+    let name = String.lowercase obj.or_name in
+    Printf.sprintf "  { \"%s_create\", int_%s_create},\n"
+      (String.lowercase prefix) name  in
+  if List.length Stringarg.parser.objects <> 0 then
     List.iter
-      (fun x -> Buffer.add_string b (get_create_entry x)) 
+      (fun x -> Buffer.add_string b (get_create_entry x))
       (* we just generate interface for the first class *)
-      [List.hd 
+      [List.hd
 	 (List.rev Stringarg.parser.objects)]
 ;;
 
-let type_tmpl_4 name = 
-  Printf.sprintf 
+let type_tmpl_4 name =
+  Printf.sprintf
     "  { NULL, NULL}\
    \n};\
    \n\
@@ -338,11 +408,11 @@ let type_tmpl_4 name =
    \n{\
    \n  *fname = %s_func[i].name;\
    \n  *f = %s_func[i].fonc;\
-   \n}\n" name name name name name name 
+   \n}\n" name name name name name name
 ;;
 
-let type_tmpl_4_gtk name = 
-  Printf.sprintf 
+let type_tmpl_4_gtk name =
+  Printf.sprintf
     "  { NULL, NULL}\
    \n};\
    \n\
@@ -365,7 +435,7 @@ let type_tmpl_4_gtk name =
    \n{\
    \n  *fname = %s_func[i].name;\
    \n  *f = %s_func[i].fonc;\
-   \n}\n" name name name name name name name 
+   \n}\n" name name name name name name name
 ;;
 
 let ftable_init =
@@ -376,20 +446,20 @@ let ftable_init =
  \n\n"
 ;;
 
-let write_function_table constructors is_gtk_class failed_tbl = 
-  let prefix = Configuration.get_prefix () in 
+let write_function_table constructors is_gtk_class failed_tbl =
+  let prefix = Configuration.get_prefix () in
   Buffer.clear b;
   Buffer.add_string b ftable_init;
   Buffer.add_string b (Printf.sprintf "static OpTab %s_func[]={\n" prefix);
   Say.debug "Enter function entries";
   buffer_add_function_entries constructors  is_gtk_class failed_tbl;
-  if not is_gtk_class then 
+  if not is_gtk_class then
     (
      Say.debug "Enter create entries";
      buffer_add_create_entries prefix;
     );
 
-  if is_gtk_class then 
+  if is_gtk_class then
     Buffer.add_string b (type_tmpl_4_gtk prefix)
   else
     Buffer.add_string b (type_tmpl_4 prefix);

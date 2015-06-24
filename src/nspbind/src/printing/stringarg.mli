@@ -103,6 +103,7 @@ type function_obj = {
   in_module : string;
   typecode : string;
   f_options : bool;
+  availability : string;
 }
 type ptype = string
 type pname = string
