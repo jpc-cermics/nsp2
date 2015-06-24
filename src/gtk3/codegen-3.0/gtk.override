@@ -5175,48 +5175,6 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 %%
 override gtk_drag_dest_set kwargs
 
-static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list,int *n_targets)
-{
-  int i=0;
-  GtkTargetEntry *targets;
-  Cell *cloc = list->first ;
-
-  while ( cloc != NULLCELL) {
-    if ( cloc->O != NULLOBJ ) i++;
-    cloc = cloc->next;
-  }
-  *n_targets = i;
-
-  if (( targets = g_new(GtkTargetEntry, *n_targets))== NULL) return targets;
-  i=0;
-  cloc = list->first ;
-  while ( cloc != NULLCELL)
-    {
-      if ( cloc->O != NULLOBJ )
-	{
-	  if (! IsList(cloc->O) )
-	    {
-	      Scierror("%s: list item %d is not a list \n",NspFname(stack),i+1);
-	      g_free(targets);
-	      return NULL;
-	    }
-	  else
-	    {
-	      NspList *loc = (NspList *)cloc->O;
-	      int_types T[] = { string,s_int,s_int, t_end} ;
-	      if ( GetListArgs(loc,i+1,T, &targets[i].target,&targets[i].flags, &targets[i].info)== FAIL)
-		{
-		  g_free(targets);
-		  return NULL;
-		}
-	    }
-	}
-      cloc = cloc->next;
-      i++;
-    }
-
-  return targets;
-}
 
 
 static int
@@ -7523,3 +7481,47 @@ ignore-win32
         gtk_plug_get_id
 
 %%
+last
+
+static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list,int *n_targets)
+{
+  int i=0;
+  GtkTargetEntry *targets;
+  Cell *cloc = list->first ;
+
+  while ( cloc != NULLCELL) {
+    if ( cloc->O != NULLOBJ ) i++;
+    cloc = cloc->next;
+  }
+  *n_targets = i;
+
+  if (( targets = g_new(GtkTargetEntry, *n_targets))== NULL) return targets;
+  i=0;
+  cloc = list->first ;
+  while ( cloc != NULLCELL)
+    {
+      if ( cloc->O != NULLOBJ )
+	{
+	  if (! IsList(cloc->O) )
+	    {
+	      Scierror("%s: list item %d is not a list \n",NspFname(stack),i+1);
+	      g_free(targets);
+	      return NULL;
+	    }
+	  else
+	    {
+	      NspList *loc = (NspList *)cloc->O;
+	      int_types T[] = { string,s_int,s_int, t_end} ;
+	      if ( GetListArgs(loc,i+1,T, &targets[i].target,&targets[i].flags, &targets[i].info)== FAIL)
+		{
+		  g_free(targets);
+		  return NULL;
+		}
+	    }
+	}
+      cloc = cloc->next;
+      i++;
+    }
+
+  return targets;
+}

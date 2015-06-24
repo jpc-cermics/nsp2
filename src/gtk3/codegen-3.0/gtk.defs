@@ -20701,36 +20701,9 @@
 ;;   )
 
 
-(define-function widget_set_default_direction
-  (c-name "gtk_widget_set_default_direction")
-  (return-type "none")
-  (parameters
-   '("GtkTextDirection" "dir")
-   )
-  )
-
-(define-function widget_get_default_direction
-  (c-name "gtk_widget_get_default_direction")
-  (return-type "GtkTextDirection")
-  )
-
-
 (define-function gtk_requisition_get_type
   (c-name "gtk_requisition_get_type")
   (return-type "GType")
-  )
-
-(define-method copy
-  (of-object "GtkRequisition")
-  (c-name "gtk_requisition_copy")
-  (return-type "GtkRequisition*")
-  (caller-owns-return #t)
-  )
-
-(define-method free
-  (of-object "GtkRequisition")
-  (c-name "gtk_requisition_free")
-  (return-type "none")
   )
 
 (define-function gtk_selection_incr_event
