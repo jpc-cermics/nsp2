@@ -1452,12 +1452,12 @@
 ;; GtkThemingEngine - Theming renderers
 
 ;; GtkAlignment - deprecated 3.14
-;; (define-object GtkAlignment
-;;   (in-module "Gtk")
-;;   (parent "GtkBin")
-;;   (c-name "GtkAlignment")
-;;   (gtype-id "GTK_TYPE_ALIGNMENT")
-;;   )
+(define-object GtkAlignment
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkAlignment")
+  (gtype-id "GTK_TYPE_ALIGNMENT")
+  )
 
 ;; XXX A RANGER
 
