@@ -346,11 +346,20 @@ let buffer_add_function_entries constructions is_gtk_class failed_tbl =
 
   let buffer_add_construction_entry f =
     let entry =  ((String.lowercase f.is_constructor_of) ^ "_new" ) in
-    let wrapper = ((String.lowercase f.is_constructor_of) ^ "_new" ) in
-    if not (Hashtbl.mem failed_tbl wrapper) then
-      Buffer.add_string b
-	  (Printf.sprintf "  { \"%s\", _wrap_%s},\n" entry wrapper) in
-
+    let str = f.f_c_name in
+    let l = String.length str in
+    let new_ended = str.[l-1] = 'w' &&  str.[l-2] = 'e' &&  str.[l-3] = 'n' &&  str.[l-4] = '_' in
+    if not (Hashtbl.mem failed_tbl entry) then
+      (
+       Buffer.add_string b
+	 (Printf.sprintf "  { \"%s\", _wrap_%s},\n" f.f_c_name f.f_c_name );
+       if new_ended then
+	 Buffer.add_string b
+	   (Printf.sprintf "  { \"%s\", _wrap_%s},\n" entry f.f_c_name ))
+    else
+      (
+       Buffer.add_string b (Printf.sprintf " /* %s %s */\n" entry f.f_c_name )
+      ) in
   let buffer_add_function_entry f =
     if not (f.is_method || Overrides.is_ignored f.f_c_name) then
       let entry = (if is_gtk_class then f.f_c_name else f.f_name) in

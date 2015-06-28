@@ -3454,10 +3454,31 @@ let gtk_object_arg_write_return object_data ptype ownsreturn info =
  let (_flag, ptype) = strip_type ptype in
  let varlist = varlist_add  info.varlist  ptype "*ret" in
  let varlist = varlist_add  varlist "NspObject" "*nsp_ret" in
+ let name = String.lowercase object_data.od_objname in
  let codeafter =
+   if name = "gtkwidget" then
+   (
    if ownsreturn then
      (
-      let name = String.lowercase object_data.od_objname in
+      Printf.sprintf
+	"  nsp_type_%s = new_type_%s(T_BASE);\
+        \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;\
+        \n  g_object_unref(ret);\
+        \n  MoveObj(stack,1,nsp_ret);\n  return 1;" name name;
+      )
+   else
+     (
+      Printf.sprintf
+	"  nsp_type_%s = new_type_%s(T_BASE);\
+        \n  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;\
+        \n  MoveObj(stack,1,nsp_ret);\n  return 1;"
+        name name ;
+     )
+   )
+   else
+   (
+   if ownsreturn then
+     (
       Printf.sprintf
 	"  nsp_type_%s = new_type_%s(T_BASE);\
         \n  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret, (NspTypeBase *) nsp_type_%s))== NULL) return RET_BUG;\
@@ -3466,13 +3487,13 @@ let gtk_object_arg_write_return object_data ptype ownsreturn info =
       )
    else
      (
-       let name = String.lowercase object_data.od_objname in
-       Printf.sprintf
+      Printf.sprintf
 	 "  nsp_type_%s = new_type_%s(T_BASE);\
         \n  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_%s))== NULL) return RET_BUG;\
         \n  MoveObj(stack,1,nsp_ret);\n  return 1;"
         name name name;
      )
+   )
    in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;

@@ -43,6 +43,16 @@ let get_hidden_status name =
   if name = "hidden" then true else false
 ;;
 
+let fix_names name =
+  match name with
+  | "rhs" -> "g_rhs"
+  | "lhs" -> "g_lhs"
+  | "stack" -> "g_stack"
+  | "opt" -> "g_opt"
+  | x -> x
+;;
+
+
 let rec get_parameter_slots sexp int value =
   match sexp with
   | Cons { car = Atom name ; cdr = sexp;} ->
@@ -50,7 +60,7 @@ let rec get_parameter_slots sexp int value =
 	(
 	 match int with
 	 | 1 -> {value with ptype = name }
-	 | 2 -> {value with pname = name }
+	 | 2 -> {value with pname = fix_names name }
 	 | 3 -> {value with hidden = get_hidden_status name }
 	 | 4 -> {value with pdflt = Some name }
 	 | 5 -> {value with psize = name }
