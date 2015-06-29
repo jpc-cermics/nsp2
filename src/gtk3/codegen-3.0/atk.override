@@ -28,8 +28,9 @@ ignore-glob
   *_get_type
 %%
 override atk_relation_new kwargs
+
 static int
-_wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
+_wrap_atk_relation_new(Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {list, s_int , t_end} ;
   /* targets" "relationship" */

@@ -8,7 +8,8 @@ DIFF=$(patsubst %.c,%.diff,$(ALL))
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
-	cd ../; make all
+	cd ../; make
+
 
 %.c: %.defs
 	@echo "generating $*.c"

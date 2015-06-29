@@ -67,7 +67,7 @@ pango_shape
 %%
 override pango_color_new kwargs
 static int
-_wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
+_wrap_pango_color_new(Stack stack, int rhs, int opt, int lhs)
 {
   PangoColor src={0,0,0};
   GObject *ret; NspObject *nsp_ret;
@@ -380,7 +380,7 @@ ignore pango_font_description_from_string
 %%
 override pango_font_description_new kwargs
 static int
-_wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
+_wrap_pango_font_description_new( Stack stack,int rhs,int opt,int lhs)
 {
   gpointer  *boxed ;
   NspObject *ret;

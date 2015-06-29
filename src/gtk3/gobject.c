@@ -294,10 +294,11 @@ int gobject_info(NspGObject *self, int indent,char *name,int rec_level)
   else
     {
       /* A changer XXXX pour que GObject soit remplacé par le type GTk */
-      Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d\n", pname,
-		self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
+      Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d, %s\n", pname,
+		 self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
 		 NSP_POINTER_CAST_TO_INT self->obj,
-		((GObject *) self->obj)->ref_count);
+		 ((GObject *) self->obj)->ref_count,
+		 nsp_object_type_as_string(NSP_OBJECT(self)));
     }
   return TRUE;
 }
@@ -1064,8 +1065,85 @@ nspgobject_chain_from_overridden(NspGObject *self, Stack stack,int rhs,int opt,i
   } else {
     return 0;
   }
-
 }
+
+/* WIP: cast from different types
+ * NspGObject *nspgobject_new(const char *name, GObject *obj) will create an object
+ *           with the most specific type of obj
+ * XXX
+ * Pour résoudre le pb suivant
+ *  gobj  =gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
+ * la fonction précédente dans gtk.defs renvoit un GtkWidget et pas un GtkBox
+ * le générateur de code va donc faire de même au niveau nsp
+ * Pour obtenir l'object nsp le plus spécifique il faut utiliser
+ * nspgobject_new et pas le code generé par defaut qui est
+ *
+ * gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))
+ *
+ * Ceci étant on peut vouloir faire explicitement des casts
+ * la fonction qui suit est un début pur faire cela.
+ */
+
+
+static int
+nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspTypeBase *type;
+  GType gtype;
+  NspObject *nsp_ret;
+  GObject *gobj = self->obj;
+  NspObject *Obj;
+  int_types T[] = { obj ,t_end} ;
+  /*
+  int ret;
+  gchar *stype;
+
+  if ( GetArgs(stack,rhs,opt,T,&stype) == FAIL) return RET_BUG;
+  if ( strcmp(stype,"widget")==0)
+    ret = GTK_IS_WIDGET(self->obj);
+  else if ( strcmp(stype,"container")==0)
+    ret = GTK_IS_CONTAINER(self->obj);
+  else
+    return RET_BUG;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  */
+
+  if (GetArgs(stack,rhs,opt,T, &Obj)== FAIL)
+    return RET_BUG;
+  if (IsType(Obj))
+    {
+      NspTypeBase *type  = ((NspType *) Obj)->nsp_type;
+      gtype= g_type_from_name (type_get_name(type));
+      if ( gtype == G_TYPE_INVALID)
+	{
+	  Scierror("Error: invalid type %s\n",type_get_name(type));
+	  return RET_BUG;
+	}
+      else
+	Sciprintf("type %s\n",type_get_name(type));
+    }
+  else
+    {
+      Scierror("Error: first argument should be a type\n");
+      return RET_BUG;
+    }
+  type = nsp_type_from_gtype(gtype);
+  if ( type == NULL )
+    {
+       Scierror("Error: type is NULL\n");
+    }
+
+  gobj  =gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
+
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
+
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj,
+					 nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
+
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 
 static NspMethods gobject_methods[] = {
   {"ref",  (nsp_method *) nspgobject_ref},
@@ -1091,6 +1169,7 @@ static NspMethods gobject_methods[] = {
   { "stop_emission", (nsp_method *) nspgobject_stop_emission},
   { "emit_stop_by_name", (nsp_method *) nspgobject_stop_emission},
   { "chain", (nsp_method *) nspgobject_chain_from_overridden},
+  { "is",  (nsp_method *) nspgobject_is},
   { NULL, NULL }
 };
 

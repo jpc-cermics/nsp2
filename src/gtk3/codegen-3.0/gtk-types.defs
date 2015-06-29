@@ -19,7 +19,7 @@
 (define-interface GtkActionable
   (in-module "Gtk")
   (c-name "GtkActionable")
-  (gtype-id "GTK_TYPE_ORIENTABLE")
+  (gtype-id "GTK_TYPE_ACTIONABLE")
   (vtable "GtkActionableClass")
   (prerequisite "GtkWidget")
   )
@@ -36,7 +36,7 @@
 (define-interface GtkBuildable
   (in-module "Gtk")
   (c-name "GtkBuildable")
-  (gtype-id "GTK_TYPE_ORIENTABLE")
+  (gtype-id "GTK_TYPE_BUILDABLE")
   (vtable "GtkBuildableClass")
   (prerequisite "GtkWidget")
   )
