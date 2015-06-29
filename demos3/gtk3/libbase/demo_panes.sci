@@ -10,35 +10,69 @@
 // (VPaned) widget, and allows you to adjust the options for
 // each side of each widget.
 
-function toggle_resize (widget,args)
-  // should be easier to be alble to set child_resize and child_shrink XXXXX
-  paned = args(1);
-  num= args(2);
-  ch = paned.get_children[];   
-  if num == 1 then 
-    paned.remove[ch(1)];
-    paned.pack1[ch(1), resize=~paned.child1_resize, shrink=paned.child1_shrink];
-  else
-    paned.remove[ch(2)];
-    paned.pack2[ch(2), resize=~paned.child2_resize, shrink=paned.child2_shrink];
-  end
-endfunction
-
-function toggle_shrink (widget,args)
-  // should be easier to be alble to set child_resize and child_shrink XXXXX
-  paned = args(1);
-  num= args(2);
-  ch = paned.get_children[];   
-  if num == 1 then 
-    paned.remove[ch(1)];
-    paned.pack1[ch(1), resize=paned.child1_resize, shrink= ~paned.child1_shrink];
-  else
-    paned.remove[ch(2)];
-    paned.pack2[ch(2), resize=paned.child2_resize, shrink= ~paned.child2_shrink];
-  end
-endfunction 
 
 function demo_panes ()
+
+  function toggle_resize (widget,args)
+    paned = args(1);
+    num= args(2);
+    ch = paned.get_children[];   
+    if num == 1 then 
+      paned.remove[ch(1)];
+      paned.pack1[ch(1), resize=~paned.child1_resize, shrink=paned.child1_shrink];
+    else
+      paned.remove[ch(2)];
+      paned.pack2[ch(2), resize=~paned.child2_resize, shrink=paned.child2_shrink];
+    end
+  endfunction
+
+  function toggle_shrink (widget,args)
+    paned = args(1);
+    num= args(2);
+    ch = paned.get_children[];   
+    if num == 1 then 
+      paned.remove[ch(1)];
+      paned.pack1[ch(1), resize=paned.child1_resize, shrink= ~paned.child1_shrink];
+    else
+      paned.remove[ch(2)];
+      paned.pack2[ch(2), resize=paned.child2_resize, shrink= ~paned.child2_shrink];
+    end
+  endfunction 
+  
+  function [frame]=create_pane_options (paned,frame_label,label1,label2)
+    frame = gtkframe_new(label=frame_label);
+    frame.set_border_width[  4]
+    
+    table = gtkgrid_new();
+    frame.add[table]
+    
+    label = gtklabel_new(str=label1);
+    table.attach[  label,0,0,1,1]
+    
+    check_button = gtkcheckbutton_new(mnemonic="_Resize");
+    table.attach[check_button, 0, 1, 1,1]
+    check_button.connect[  "toggled", toggle_resize, list(paned,1)]
+
+    check_button = gtkcheckbutton_new(mnemonic="_Shrink");
+    table.attach[  check_button,  0, 2,1,1]
+    check_button.set_active[ %t]
+    check_button.connect[  "toggled", toggle_shrink, list(paned,1)]
+    
+    label = gtklabel_new(str=label2);
+    table.attach[  label,  1, 0, 1,1]
+    
+    check_button = gtkcheckbutton_new(mnemonic="_Resize");
+    table.attach[  check_button, 1, 1,1,1]
+    check_button.set_active[  %t]
+    check_button.connect[  "toggled", toggle_resize, list(paned,2)];
+    
+    check_button = gtkcheckbutton_new(mnemonic="_Shrink");
+    table.attach[  check_button, 1, 2, 1, 1]
+    check_button.set_active[ %t]
+    check_button.connect[  "toggled", toggle_shrink, list(paned,2)];
+
+  endfunction 
+  
   window = gtkwindow_new()// GTK.WINDOW_TOPLEVEL
   //XXXX window.connect[  "destroy",gtk_widget_destroyed];
   window.set_title["Panes"]
@@ -46,12 +80,12 @@ function demo_panes ()
 
   vbox = gtkbox_new("vertical",spacing=0);
   window.add[  vbox]
-      
-  vpaned = gtkvpaned_new();
+  
+  vpaned = gtkpaned_new("vertical");
   vbox.pack_start[vpaned,expand=%t,fill=%t,padding=0]
   vpaned.set_border_width[5]
 
-  hpaned = gtkhpaned_new();
+  hpaned = gtkpaned_new("horizontal");
   vpaned.add1[hpaned];
 
   frame = gtkframe_new();
@@ -80,36 +114,3 @@ function demo_panes ()
   window.show[];
 endfunction
 
-function [frame]=create_pane_options (paned,frame_label,label1,label2)
-  frame = gtkframe_new(label=frame_label);
-  frame.set_border_width[  4]
-  
-  table = gtktable_new(rows=3,columns=2,homogeneous=%t);
-  frame.add[table]
-  
-  label = gtklabel_new(str=label1);
-  table.attach_defaults[  label, 0, 1, 0, 1]
-  
-  check_button = gtkcheckbutton_new(mnemonic="_Resize");
-  table.attach_defaults[  check_button, 0, 1, 1, 2]
-  check_button.connect[  "toggled", toggle_resize, list(paned,1)]
-
-  check_button = gtkcheckbutton_new(mnemonic="_Shrink");
-  table.attach_defaults[  check_button,  0, 1, 2, 3]
-  check_button.set_active[ %t]
-  check_button.connect[  "toggled", toggle_shrink, list(paned,1)]
-  
-  label = gtklabel_new(str=label2);
-  table.attach_defaults[  label,  1, 2, 0, 1]
-  
-  check_button = gtkcheckbutton_new(mnemonic="_Resize");
-  table.attach_defaults[  check_button, 1, 2, 1, 2]
-  check_button.set_active[  %t]
-  check_button.connect[  "toggled", toggle_resize, list(paned,2)];
-  
-  check_button = gtkcheckbutton_new(mnemonic="_Shrink");
-  table.attach_defaults[  check_button, 1, 2, 2, 3]
-  check_button.set_active[ %t]
-  check_button.connect[  "toggled", toggle_shrink, list(paned,2)];
-
-endfunction 
