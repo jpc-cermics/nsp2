@@ -1,24 +1,24 @@
-// Menus OK 
+// Menus OK
 //---------------------------------------------
 
 function [menu]=demo_menu(depth)
   if depth < 1 then return; end;
   // menu = GtkMenu()
   menu = gtkmenu_new()
-  i=1; 
-  menuitem= gtkradiomenuitem_new(label=sprintf("item %2d - %d",depth, i))  
+  i=1;
+  menuitem= gtkradiomenuitem_new(label=sprintf("item %2d - %d",depth, i))
   group = menuitem;
   menu.append[menuitem];
-  for i = 2:4 
-    menuitem= gtkradiomenuitem_new(group=group,label=sprintf("item %2d - %d",depth, i))  
+  for i = 2:4
+    menuitem= gtkradiomenuitem_new(group=group,label=sprintf("item %2d - %d",depth, i))
     menu.append[menuitem];
     menuitem.show[]
-    if depth > 1 then 
+    if depth > 1 then
       submenu = demo_menu(depth - 1)
       menuitem.set_submenu[submenu];
     end
   end
-endfunction 
+endfunction
 
 function demo_menus()
   win = gtkwindow_new()
@@ -34,15 +34,15 @@ function demo_menus()
   menuitem.set_submenu[demo_menu(2)];
   menubar.append[menuitem];
   menuitem.show[]
-  
+
   menuitem = gtkmenuitem_new("foo");
   menuitem.set_submenu[demo_menu(2)];
   menubar.append[menuitem];
   menuitem.show[]
-  
+
   menuitem = gtkmenuitem_new("bar");
   menuitem.set_submenu[demo_menu(2)];
-  menuitem.set_right_justified[%t];
+  // menuitem.set_right_justified[%t];
   menubar.append[menuitem];
   menuitem.show[]
 
@@ -50,7 +50,7 @@ function demo_menus()
   box2.set_border_width[10]
   box1.pack_start[box2]
   box2.show[]
-  
+
   optionmenu = gtkoptionmenu_new()
   optionmenu.set_menu[demo_menu(1)];
   box2.pack_start[optionmenu]

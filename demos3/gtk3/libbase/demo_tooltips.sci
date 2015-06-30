@@ -1,11 +1,10 @@
 // Tooltips.
-// 
 
 function demo_tooltips()
+// demo of set_tooltip_text[] and set_tooltip_markup[]
   win = gtkwindow_new()
   win.connect["delete_event", demo_delete];
   win.set_title["tooltips"];
-  tooltips = gtktooltips_new()
   box1 = gtkbox_new("vertical",spacing=0)
   win.add[box1]
   box1.show[]
@@ -15,17 +14,16 @@ function demo_tooltips()
   box2.show[]
   button = gtktogglebutton_new(label="button1")
   box2.pack_start[button]
-  button.show[]
-  tooltips.set_tip[ button ,"This is button 1", tip_private="button 1"];
+  button.show[],
+  button.set_tooltip_text["This is a tooltip text for button 1"];
   button = gtktogglebutton_new(label="button2")
   box2.pack_start[button]
   button.show[]
-  tooltips.set_tip[ button ,"This is button 2", tip_private="button 2"];
+  button.set_tooltip_markup["This is a <span foreground=''blue''>tooltip markup</span>"];
   button = gtktogglebutton_new(label="button3");
   box2.pack_start[button]
   button.show[]
-  title= "This is button 3.  This is also a really long tooltip which probably won''t fit on a single line and will therefore need to be wrapped.  Hopefully the wrapping will work correctly."
-  tooltips.set_tip[button,title,tip_private= "long"];
+  button.set_tooltip_text["This is button 3.\nThis is also a long\ntooltip on several lines\n"];
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill=%t,padding=0]
   separator.show[]
@@ -39,8 +37,6 @@ function demo_tooltips()
   //button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]
   button.show[]
-  tooltips.set_tip[ button , "Push this button to close window",tip_private="push"];
-  tooltips.enable[];
+  button.set_tooltip_text["Push this button to close window"];
   win.show[]
-endfunction 
-
+endfunction

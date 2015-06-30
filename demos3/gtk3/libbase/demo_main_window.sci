@@ -8,7 +8,7 @@ function demo_main_window()
   B('radio buttons')=  demo_radio_buttons,
   B('calendar')=  demo_calendar,
   B('toolbar')=  demo_toolbar,
-  B('handle box')= demo_handle_box,
+  // B('handle box')= demo_handle_box, // deprecated
   B('reparent')=  demo_reparent,
   B('tooltips')= demo_tooltips,
   B('menus')=  demo_menus,
@@ -39,7 +39,9 @@ function demo_main_window()
   B('status bar')=  demo_statusbar,
   B('cursor')=  demo_cursor,
   B('scribble')=  demo_scribble,
-  B('actions')= demo_actions,
+  // B('actions')= demo_actions,
+
+
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]
