@@ -15230,8 +15230,8 @@
   (is-constructor-of "GtkMenuToolButton")
   (return-type "GtkMenuToolButton*")
   (parameters
-    '("GtkWidget*" "icon_widget")
-    '("const-gchar*" "label")
+    '("GtkWidget*" "icon_widget" (null-ok))
+    '("const-gchar*" "label" (null-ok))
   )
 )
 

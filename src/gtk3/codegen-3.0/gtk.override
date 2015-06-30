@@ -4416,7 +4416,7 @@ _wrap_gtk_toggle_button_new(Stack stack,int rhs,int opt,int lhs)
   else if (label)
     gobj = (GObject *)gtk_toggle_button_new_with_mnemonic(label);
   else
-    gobj = (GObject *)gtk_button_new();
+    gobj = (GObject *)gtk_toggle_button_new();
   if (gobj == NULL ) {
     Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
     return RET_BUG;
@@ -4449,9 +4449,9 @@ _wrap_gtk_check_button_new(Stack stack,int rhs,int opt,int lhs)
   else if (label)
     gobj = (GObject *)gtk_check_button_new_with_mnemonic(label);
   else
-    gobj = (GObject *)gtk_button_new();
+    gobj = (GObject *)gtk_check_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
+    Scierror( "%s: could not create GtkCheckButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtkcheckbutton = new_type_gtkcheckbutton(T_BASE);
@@ -7192,6 +7192,7 @@ ignore radio_tool_button_new_from_stock
 ignore radio_tool_button_new_with_widget
 %%
 override gtk_radio_tool_button_new noargs
+
 /* mixes all the constructors */
 static int
 _wrap_gtk_radio_tool_button_new(Stack stack, int rhs, int opt, int lhs)
@@ -7240,12 +7241,23 @@ _wrap_gtk_radio_tool_button_new(Stack stack, int rhs, int opt, int lhs)
 	  if ((ret = gtk_radio_tool_button_new_from_widget(group)) == NULL) return RET_BUG;
 	}
     }
-  nsp_type_gtktoolbutton = new_type_gtktoolbutton(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *) ret,(NspTypeBase *) nsp_type_gtktoolbutton );
+  nsp_type_gtkradiotoolbutton = new_type_gtkradiotoolbutton(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *) ret,(NspTypeBase *) nsp_type_gtkradiotoolbutton );
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
+%%
+override gtk_radio_tool_button_get_group noargs
+static int
+_wrap_gtk_radio_tool_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,int lhs) {
+  NspList *nsp_list;
+  GSList *list, *tmp;
+  list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(self->obj));
+  NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
+}
+
 
 %%
 override gtk_radio_action_set_current_value

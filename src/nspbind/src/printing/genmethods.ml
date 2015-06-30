@@ -236,7 +236,7 @@ let write_constructors objinfo is_gtk_class failed_tbl =
       let _str, flag = (write_method objinfo is_gtk_class x (constructor_tmpl objinfo) false false) in
       if flag then
 	(
-	 Hashtbl.add failed_tbl ((String.lowercase x.is_constructor_of) ^ "_new" ) "_"
+	 Hashtbl.add failed_tbl x.f_c_name  "_"
 	);
     )
     constructors;
