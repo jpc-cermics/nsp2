@@ -7,7 +7,7 @@
 
 (include "gtk-extrafuncs.defs")
 (include "gtk-types.defs")
-
+(include "gtk-enums.defs")
 
 ;; From gtk-a11y.h
 

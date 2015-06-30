@@ -1,0 +1,2061 @@
+;; -*- scheme -*-
+;; Enumerations ...
+;;-----------------------
+;; Enumerations and flags ...
+
+(define-enum GtkLicense
+  (in-module "Gtk")
+  (c-name "GtkLicense")
+  (gtype-id "GTK_TYPE_LICENSE")
+  (values
+    '("unknown" "GTK_LICENSE_UNKNOWN")
+    '("custom" "GTK_LICENSE_CUSTOM")
+    '("gpl-2-0" "GTK_LICENSE_GPL_2_0")
+    '("gpl-3-0" "GTK_LICENSE_GPL_3_0")
+    '("lgpl-2-1" "GTK_LICENSE_LGPL_2_1")
+    '("lgpl-3-0" "GTK_LICENSE_LGPL_3_0")
+    '("bsd" "GTK_LICENSE_BSD")
+    '("mit-x11" "GTK_LICENSE_MIT_X11")
+    '("artistic" "GTK_LICENSE_ARTISTIC")
+    '("gpl-2-0-only" "GTK_LICENSE_GPL_2_0_ONLY")
+    '("gpl-3-0-only" "GTK_LICENSE_GPL_3_0_ONLY")
+    '("lgpl-2-1-only" "GTK_LICENSE_LGPL_2_1_ONLY")
+    '("lgpl-3-0-only" "GTK_LICENSE_LGPL_3_0_ONLY")
+  )
+)
+
+(define-flags GtkAccelFlags
+  (in-module "Gtk")
+  (c-name "GtkAccelFlags")
+  (gtype-id "GTK_TYPE_ACCEL_FLAGS")
+  (values
+    '("visible" "GTK_ACCEL_VISIBLE")
+    '("locked" "GTK_ACCEL_LOCKED")
+    '("mask" "GTK_ACCEL_MASK")
+  )
+)
+
+(define-flags GtkApplicationInhibitFlags
+  (in-module "Gtk")
+  (c-name "GtkApplicationInhibitFlags")
+  (gtype-id "GTK_TYPE_APPLICATION_INHIBIT_FLAGS")
+  (values
+    '("logout" "GTK_APPLICATION_INHIBIT_LOGOUT")
+    '("switch" "GTK_APPLICATION_INHIBIT_SWITCH")
+    '("suspend" "GTK_APPLICATION_INHIBIT_SUSPEND")
+    '("idle" "GTK_APPLICATION_INHIBIT_IDLE")
+  )
+)
+
+(define-enum GtkAssistantPageType
+  (in-module "Gtk")
+  (c-name "GtkAssistantPageType")
+  (gtype-id "GTK_TYPE_ASSISTANT_PAGE_TYPE")
+  (values
+    '("content" "GTK_ASSISTANT_PAGE_CONTENT")
+    '("intro" "GTK_ASSISTANT_PAGE_INTRO")
+    '("confirm" "GTK_ASSISTANT_PAGE_CONFIRM")
+    '("summary" "GTK_ASSISTANT_PAGE_SUMMARY")
+    '("progress" "GTK_ASSISTANT_PAGE_PROGRESS")
+    '("custom" "GTK_ASSISTANT_PAGE_CUSTOM")
+  )
+)
+
+(define-enum GtkButtonBoxStyle
+  (in-module "Gtk")
+  (c-name "GtkButtonBoxStyle")
+  (gtype-id "GTK_TYPE_BUTTON_BOX_STYLE")
+  (values
+    '("spread" "GTK_BUTTONBOX_SPREAD")
+    '("edge" "GTK_BUTTONBOX_EDGE")
+    '("start" "GTK_BUTTONBOX_START")
+    '("end" "GTK_BUTTONBOX_END")
+    '("center" "GTK_BUTTONBOX_CENTER")
+    '("expand" "GTK_BUTTONBOX_EXPAND")
+  )
+)
+
+(define-enum GtkBuilderError
+  (in-module "Gtk")
+  (c-name "GtkBuilderError")
+  (gtype-id "GTK_TYPE_BUILDER_ERROR")
+  (values
+    '("invalid-type-function" "GTK_BUILDER_ERROR_INVALID_TYPE_FUNCTION")
+    '("unhandled-tag" "GTK_BUILDER_ERROR_UNHANDLED_TAG")
+    '("missing-attribute" "GTK_BUILDER_ERROR_MISSING_ATTRIBUTE")
+    '("invalid-attribute" "GTK_BUILDER_ERROR_INVALID_ATTRIBUTE")
+    '("invalid-tag" "GTK_BUILDER_ERROR_INVALID_TAG")
+    '("missing-property-value" "GTK_BUILDER_ERROR_MISSING_PROPERTY_VALUE")
+    '("invalid-value" "GTK_BUILDER_ERROR_INVALID_VALUE")
+    '("version-mismatch" "GTK_BUILDER_ERROR_VERSION_MISMATCH")
+    '("duplicate-id" "GTK_BUILDER_ERROR_DUPLICATE_ID")
+    '("object-type-refused" "GTK_BUILDER_ERROR_OBJECT_TYPE_REFUSED")
+    '("template-mismatch" "GTK_BUILDER_ERROR_TEMPLATE_MISMATCH")
+    '("invalid-property" "GTK_BUILDER_ERROR_INVALID_PROPERTY")
+    '("invalid-signal" "GTK_BUILDER_ERROR_INVALID_SIGNAL")
+  )
+)
+
+(define-flags GtkCalendarDisplayOptions
+  (in-module "Gtk")
+  (c-name "GtkCalendarDisplayOptions")
+  (gtype-id "GTK_TYPE_CALENDAR_DISPLAY_OPTIONS")
+  (values
+    '("show-heading" "GTK_CALENDAR_SHOW_HEADING")
+    '("show-day-names" "GTK_CALENDAR_SHOW_DAY_NAMES")
+    '("no-month-change" "GTK_CALENDAR_NO_MONTH_CHANGE")
+    '("show-week-numbers" "GTK_CALENDAR_SHOW_WEEK_NUMBERS")
+    '("show-details" "GTK_CALENDAR_SHOW_DETAILS")
+  )
+)
+
+(define-flags GtkCellRendererState
+  (in-module "Gtk")
+  (c-name "GtkCellRendererState")
+  (gtype-id "GTK_TYPE_CELL_RENDERER_STATE")
+  (values
+    '("selected" "GTK_CELL_RENDERER_SELECTED")
+    '("prelit" "GTK_CELL_RENDERER_PRELIT")
+    '("insensitive" "GTK_CELL_RENDERER_INSENSITIVE")
+    '("sorted" "GTK_CELL_RENDERER_SORTED")
+    '("focused" "GTK_CELL_RENDERER_FOCUSED")
+    '("expandable" "GTK_CELL_RENDERER_EXPANDABLE")
+    '("expanded" "GTK_CELL_RENDERER_EXPANDED")
+  )
+)
+
+(define-enum GtkCellRendererMode
+  (in-module "Gtk")
+  (c-name "GtkCellRendererMode")
+  (gtype-id "GTK_TYPE_CELL_RENDERER_MODE")
+  (values
+    '("inert" "GTK_CELL_RENDERER_MODE_INERT")
+    '("activatable" "GTK_CELL_RENDERER_MODE_ACTIVATABLE")
+    '("editable" "GTK_CELL_RENDERER_MODE_EDITABLE")
+  )
+)
+
+(define-enum GtkCellRendererAccelMode
+  (in-module "Gtk")
+  (c-name "GtkCellRendererAccelMode")
+  (gtype-id "GTK_TYPE_CELL_RENDERER_ACCEL_MODE")
+  (values
+    '("gtk" "GTK_CELL_RENDERER_ACCEL_MODE_GTK")
+    '("other" "GTK_CELL_RENDERER_ACCEL_MODE_OTHER")
+  )
+)
+
+;; (define-enum GtkColorScaleType
+;;   (in-module "Gtk")
+;;   (c-name "GtkColorScaleType")
+;;   (gtype-id "GTK_TYPE_COLOR_SCALE_TYPE")
+;;   (values
+;;     '("hue" "GTK_COLOR_SCALE_HUE")
+;;     '("alpha" "GTK_COLOR_SCALE_ALPHA")
+;;   )
+;; )
+
+(define-enum GtkResizeMode
+  (in-module "Gtk")
+  (c-name "GtkResizeMode")
+  (gtype-id "GTK_TYPE_RESIZE_MODE")
+  (values
+    '("parent" "GTK_RESIZE_PARENT")
+    '("queue" "GTK_RESIZE_QUEUE")
+    '("immediate" "GTK_RESIZE_IMMEDIATE")
+  )
+)
+
+;; (define-enum GtkCssImageBuiltinType
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssImageBuiltinType")
+;;   (gtype-id "GTK_TYPE_CSS_IMAGE_BUILTIN_TYPE")
+;;   (values
+;;     '("none" "GTK_CSS_IMAGE_BUILTIN_NONE")
+;;     '("check" "GTK_CSS_IMAGE_BUILTIN_CHECK")
+;;     '("check-checked" "GTK_CSS_IMAGE_BUILTIN_CHECK_CHECKED")
+;;     '("check-inconsistent" "GTK_CSS_IMAGE_BUILTIN_CHECK_INCONSISTENT")
+;;     '("option" "GTK_CSS_IMAGE_BUILTIN_OPTION")
+;;     '("option-checked" "GTK_CSS_IMAGE_BUILTIN_OPTION_CHECKED")
+;;     '("option-inconsistent" "GTK_CSS_IMAGE_BUILTIN_OPTION_INCONSISTENT")
+;;     '("arrow-up" "GTK_CSS_IMAGE_BUILTIN_ARROW_UP")
+;;     '("arrow-down" "GTK_CSS_IMAGE_BUILTIN_ARROW_DOWN")
+;;     '("arrow-left" "GTK_CSS_IMAGE_BUILTIN_ARROW_LEFT")
+;;     '("arrow-right" "GTK_CSS_IMAGE_BUILTIN_ARROW_RIGHT")
+;;     '("expander-horizontal-left" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_LEFT")
+;;     '("expander-vertical-left" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_LEFT")
+;;     '("expander-horizontal-right" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_RIGHT")
+;;     '("expander-vertical-right" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_RIGHT")
+;;     '("expander-horizontal-left-expanded" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_LEFT_EXPANDED")
+;;     '("expander-vertical-left-expanded" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_LEFT_EXPANDED")
+;;     '("expander-horizontal-right-expanded" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_RIGHT_EXPANDED")
+;;     '("expander-vertical-right-expanded" "GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_RIGHT_EXPANDED")
+;;     '("grip-topleft" "GTK_CSS_IMAGE_BUILTIN_GRIP_TOPLEFT")
+;;     '("grip-top" "GTK_CSS_IMAGE_BUILTIN_GRIP_TOP")
+;;     '("grip-topright" "GTK_CSS_IMAGE_BUILTIN_GRIP_TOPRIGHT")
+;;     '("grip-right" "GTK_CSS_IMAGE_BUILTIN_GRIP_RIGHT")
+;;     '("grip-bottomright" "GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOMRIGHT")
+;;     '("grip-bottom" "GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOM")
+;;     '("grip-bottomleft" "GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOMLEFT")
+;;     '("grip-left" "GTK_CSS_IMAGE_BUILTIN_GRIP_LEFT")
+;;     '("pane-separator" "GTK_CSS_IMAGE_BUILTIN_PANE_SEPARATOR")
+;;     '("handle" "GTK_CSS_IMAGE_BUILTIN_HANDLE")
+;;     '("spinner" "GTK_CSS_IMAGE_BUILTIN_SPINNER")
+;;   )
+;; )
+
+;; (define-flags GtkCssNumberParseFlags
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssNumberParseFlags")
+;;   (gtype-id "GTK_TYPE_CSS_NUMBER_PARSE_FLAGS")
+;;   (values
+;;     '("positive-only" "GTK_CSS_POSITIVE_ONLY")
+;;     '("parse-percent" "GTK_CSS_PARSE_PERCENT")
+;;     '("parse-number" "GTK_CSS_PARSE_NUMBER")
+;;     '("number-as-pixels" "GTK_CSS_NUMBER_AS_PIXELS")
+;;     '("parse-length" "GTK_CSS_PARSE_LENGTH")
+;;     '("parse-angle" "GTK_CSS_PARSE_ANGLE")
+;;     '("parse-time" "GTK_CSS_PARSE_TIME")
+;;   )
+;; )
+
+(define-enum GtkCssProviderError
+  (in-module "Gtk")
+  (c-name "GtkCssProviderError")
+  (gtype-id "GTK_TYPE_CSS_PROVIDER_ERROR")
+  (values
+    '("failed" "GTK_CSS_PROVIDER_ERROR_FAILED")
+    '("syntax" "GTK_CSS_PROVIDER_ERROR_SYNTAX")
+    '("import" "GTK_CSS_PROVIDER_ERROR_IMPORT")
+    '("name" "GTK_CSS_PROVIDER_ERROR_NAME")
+    '("deprecated" "GTK_CSS_PROVIDER_ERROR_DEPRECATED")
+    '("unknown-value" "GTK_CSS_PROVIDER_ERROR_UNKNOWN_VALUE")
+  )
+)
+
+;; (define-enum GtkCssRepeatStyle
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssRepeatStyle")
+;;   (gtype-id "GTK_TYPE_CSS_REPEAT_STYLE")
+;;   (values
+;;     '("no-repeat" "GTK_CSS_REPEAT_STYLE_NO_REPEAT")
+;;     '("stretch" "GTK_CSS_REPEAT_STYLE_STRETCH")
+;;     '("repeat" "GTK_CSS_REPEAT_STYLE_REPEAT")
+;;     '("round" "GTK_CSS_REPEAT_STYLE_ROUND")
+;;     '("space" "GTK_CSS_REPEAT_STYLE_SPACE")
+;;   )
+;; )
+
+(define-enum GtkCssSectionType
+  (in-module "Gtk")
+  (c-name "GtkCssSectionType")
+  (gtype-id "GTK_TYPE_CSS_SECTION_TYPE")
+  (values
+    '("document" "GTK_CSS_SECTION_DOCUMENT")
+    '("import" "GTK_CSS_SECTION_IMPORT")
+    '("color-definition" "GTK_CSS_SECTION_COLOR_DEFINITION")
+    '("binding-set" "GTK_CSS_SECTION_BINDING_SET")
+    '("ruleset" "GTK_CSS_SECTION_RULESET")
+    '("selector" "GTK_CSS_SECTION_SELECTOR")
+    '("declaration" "GTK_CSS_SECTION_DECLARATION")
+    '("value" "GTK_CSS_SECTION_VALUE")
+    '("keyframes" "GTK_CSS_SECTION_KEYFRAMES")
+  )
+)
+
+;; (define-flags GtkCssChange
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssChange")
+;;   (gtype-id "GTK_TYPE_CSS_CHANGE")
+;;   (values
+;;     '("class" "GTK_CSS_CHANGE_CLASS")
+;;     '("name" "GTK_CSS_CHANGE_NAME")
+;;     '("id" "GTK_CSS_CHANGE_ID")
+;;     '("region" "GTK_CSS_CHANGE_REGION")
+;;     '("position" "GTK_CSS_CHANGE_POSITION")
+;;     '("state" "GTK_CSS_CHANGE_STATE")
+;;     '("sibling-class" "GTK_CSS_CHANGE_SIBLING_CLASS")
+;;     '("sibling-name" "GTK_CSS_CHANGE_SIBLING_NAME")
+;;     '("sibling-position" "GTK_CSS_CHANGE_SIBLING_POSITION")
+;;     '("sibling-state" "GTK_CSS_CHANGE_SIBLING_STATE")
+;;     '("parent-class" "GTK_CSS_CHANGE_PARENT_CLASS")
+;;     '("parent-name" "GTK_CSS_CHANGE_PARENT_NAME")
+;;     '("parent-region" "GTK_CSS_CHANGE_PARENT_REGION")
+;;     '("parent-position" "GTK_CSS_CHANGE_PARENT_POSITION")
+;;     '("parent-state" "GTK_CSS_CHANGE_PARENT_STATE")
+;;     '("parent-sibling-class" "GTK_CSS_CHANGE_PARENT_SIBLING_CLASS")
+;;     '("parent-sibling-name" "GTK_CSS_CHANGE_PARENT_SIBLING_NAME")
+;;     '("parent-sibling-position" "GTK_CSS_CHANGE_PARENT_SIBLING_POSITION")
+;;     '("parent-sibling-state" "GTK_CSS_CHANGE_PARENT_SIBLING_STATE")
+;;     '("source" "GTK_CSS_CHANGE_SOURCE")
+;;     '("animate" "GTK_CSS_CHANGE_ANIMATE")
+;;     '("reserved-bit" "GTK_CSS_CHANGE_RESERVED_BIT")
+;;   )
+;; )
+
+;; (define-flags GtkCssDependencies
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssDependencies")
+;;   (gtype-id "GTK_TYPE_CSS_DEPENDENCIES")
+;;   (values
+;;     '("depends-on-parent" "GTK_CSS_DEPENDS_ON_PARENT")
+;;     '("equals-parent" "GTK_CSS_EQUALS_PARENT")
+;;     '("depends-on-color" "GTK_CSS_DEPENDS_ON_COLOR")
+;;     '("depends-on-font-size" "GTK_CSS_DEPENDS_ON_FONT_SIZE")
+;;   )
+;; )
+
+;; (define-flags GtkCssAffects
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssAffects")
+;;   (gtype-id "GTK_TYPE_CSS_AFFECTS")
+;;   (values
+;;     '("foreground" "GTK_CSS_AFFECTS_FOREGROUND")
+;;     '("background" "GTK_CSS_AFFECTS_BACKGROUND")
+;;     '("border" "GTK_CSS_AFFECTS_BORDER")
+;;     '("font" "GTK_CSS_AFFECTS_FONT")
+;;     '("text" "GTK_CSS_AFFECTS_TEXT")
+;;     '("icon" "GTK_CSS_AFFECTS_ICON")
+;;     '("outline" "GTK_CSS_AFFECTS_OUTLINE")
+;;     '("clip" "GTK_CSS_AFFECTS_CLIP")
+;;     '("size" "GTK_CSS_AFFECTS_SIZE")
+;;   )
+;; )
+
+;; (define-enum GtkCssArea
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssArea")
+;;   (gtype-id "GTK_TYPE_CSS_AREA")
+;;   (values
+;;     '("border-box" "GTK_CSS_AREA_BORDER_BOX")
+;;     '("padding-box" "GTK_CSS_AREA_PADDING_BOX")
+;;     '("content-box" "GTK_CSS_AREA_CONTENT_BOX")
+;;   )
+;; )
+
+;; (define-enum GtkCssDirection
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssDirection")
+;;   (gtype-id "GTK_TYPE_CSS_DIRECTION")
+;;   (values
+;;     '("normal" "GTK_CSS_DIRECTION_NORMAL")
+;;     '("reverse" "GTK_CSS_DIRECTION_REVERSE")
+;;     '("alternate" "GTK_CSS_DIRECTION_ALTERNATE")
+;;     '("alternate-reverse" "GTK_CSS_DIRECTION_ALTERNATE_REVERSE")
+;;   )
+;; )
+
+;; (define-enum GtkCssPlayState
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssPlayState")
+;;   (gtype-id "GTK_TYPE_CSS_PLAY_STATE")
+;;   (values
+;;     '("running" "GTK_CSS_PLAY_STATE_RUNNING")
+;;     '("paused" "GTK_CSS_PLAY_STATE_PAUSED")
+;;   )
+;; )
+
+;; (define-enum GtkCssFillMode
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssFillMode")
+;;   (gtype-id "GTK_TYPE_CSS_FILL_MODE")
+;;   (values
+;;     '("none" "GTK_CSS_FILL_NONE")
+;;     '("forwards" "GTK_CSS_FILL_FORWARDS")
+;;     '("backwards" "GTK_CSS_FILL_BACKWARDS")
+;;     '("both" "GTK_CSS_FILL_BOTH")
+;;   )
+;; )
+
+;; (define-enum GtkCssImageEffect
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssImageEffect")
+;;   (gtype-id "GTK_TYPE_CSS_IMAGE_EFFECT")
+;;   (values
+;;     '("none" "GTK_CSS_IMAGE_EFFECT_NONE")
+;;     '("highlight" "GTK_CSS_IMAGE_EFFECT_HIGHLIGHT")
+;;     '("dim" "GTK_CSS_IMAGE_EFFECT_DIM")
+;;   )
+;; )
+
+;; (define-enum GtkCssIconStyle
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssIconStyle")
+;;   (gtype-id "GTK_TYPE_CSS_ICON_STYLE")
+;;   (values
+;;     '("requested" "GTK_CSS_ICON_STYLE_REQUESTED")
+;;     '("regular" "GTK_CSS_ICON_STYLE_REGULAR")
+;;     '("symbolic" "GTK_CSS_ICON_STYLE_SYMBOLIC")
+;;   )
+;; )
+
+;; (define-enum GtkCssFontSize
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssFontSize")
+;;   (gtype-id "GTK_TYPE_CSS_FONT_SIZE")
+;;   (values
+;;     '("smaller" "GTK_CSS_FONT_SIZE_SMALLER")
+;;     '("larger" "GTK_CSS_FONT_SIZE_LARGER")
+;;     '("xx-small" "GTK_CSS_FONT_SIZE_XX_SMALL")
+;;     '("x-small" "GTK_CSS_FONT_SIZE_X_SMALL")
+;;     '("small" "GTK_CSS_FONT_SIZE_SMALL")
+;;     '("medium" "GTK_CSS_FONT_SIZE_MEDIUM")
+;;     '("large" "GTK_CSS_FONT_SIZE_LARGE")
+;;     '("x-large" "GTK_CSS_FONT_SIZE_X_LARGE")
+;;     '("xx-large" "GTK_CSS_FONT_SIZE_XX_LARGE")
+;;   )
+;; )
+
+;; (define-enum GtkCssSide
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssSide")
+;;   (gtype-id "GTK_TYPE_CSS_SIDE")
+;;   (values
+;;     '("top" "GTK_CSS_TOP")
+;;     '("right" "GTK_CSS_RIGHT")
+;;     '("bottom" "GTK_CSS_BOTTOM")
+;;     '("left" "GTK_CSS_LEFT")
+;;   )
+;; )
+
+;; (define-enum GtkCssCorner
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssCorner")
+;;   (gtype-id "GTK_TYPE_CSS_CORNER")
+;;   (values
+;;     '("top-left" "GTK_CSS_TOP_LEFT")
+;;     '("top-right" "GTK_CSS_TOP_RIGHT")
+;;     '("bottom-right" "GTK_CSS_BOTTOM_RIGHT")
+;;     '("bottom-left" "GTK_CSS_BOTTOM_LEFT")
+;;   )
+;; )
+
+;; (define-enum GtkCssUnit
+;;   (in-module "Gtk")
+;;   (c-name "GtkCssUnit")
+;;   (gtype-id "GTK_TYPE_CSS_UNIT")
+;;   (values
+;;     '("number" "GTK_CSS_NUMBER")
+;;     '("percent" "GTK_CSS_PERCENT")
+;;     '("px" "GTK_CSS_PX")
+;;     '("pt" "GTK_CSS_PT")
+;;     '("em" "GTK_CSS_EM")
+;;     '("ex" "GTK_CSS_EX")
+;;     '("pc" "GTK_CSS_PC")
+;;     '("in" "GTK_CSS_IN")
+;;     '("cm" "GTK_CSS_CM")
+;;     '("mm" "GTK_CSS_MM")
+;;     '("rad" "GTK_CSS_RAD")
+;;     '("deg" "GTK_CSS_DEG")
+;;     '("grad" "GTK_CSS_GRAD")
+;;     '("turn" "GTK_CSS_TURN")
+;;     '("s" "GTK_CSS_S")
+;;     '("ms" "GTK_CSS_MS")
+;;   )
+;; )
+
+(define-flags GtkDebugFlag
+  (in-module "Gtk")
+  (c-name "GtkDebugFlag")
+  (gtype-id "GTK_TYPE_DEBUG_FLAG")
+  (values
+    '("misc" "GTK_DEBUG_MISC")
+    '("plugsocket" "GTK_DEBUG_PLUGSOCKET")
+    '("text" "GTK_DEBUG_TEXT")
+    '("tree" "GTK_DEBUG_TREE")
+    '("updates" "GTK_DEBUG_UPDATES")
+    '("keybindings" "GTK_DEBUG_KEYBINDINGS")
+    '("multihead" "GTK_DEBUG_MULTIHEAD")
+    '("modules" "GTK_DEBUG_MODULES")
+    '("geometry" "GTK_DEBUG_GEOMETRY")
+    '("icontheme" "GTK_DEBUG_ICONTHEME")
+    '("printing" "GTK_DEBUG_PRINTING")
+    '("builder" "GTK_DEBUG_BUILDER")
+    '("size-request" "GTK_DEBUG_SIZE_REQUEST")
+    '("no-css-cache" "GTK_DEBUG_NO_CSS_CACHE")
+    '("baselines" "GTK_DEBUG_BASELINES")
+    '("pixel-cache" "GTK_DEBUG_PIXEL_CACHE")
+    '("no-pixel-cache" "GTK_DEBUG_NO_PIXEL_CACHE")
+    '("interactive" "GTK_DEBUG_INTERACTIVE")
+    '("touchscreen" "GTK_DEBUG_TOUCHSCREEN")
+    '("actions" "GTK_DEBUG_ACTIONS")
+  )
+)
+
+(define-flags GtkDialogFlags
+  (in-module "Gtk")
+  (c-name "GtkDialogFlags")
+  (gtype-id "GTK_TYPE_DIALOG_FLAGS")
+  (values
+    '("modal" "GTK_DIALOG_MODAL")
+    '("destroy-with-parent" "GTK_DIALOG_DESTROY_WITH_PARENT")
+    '("use-header-bar" "GTK_DIALOG_USE_HEADER_BAR")
+  )
+)
+
+(define-enum GtkResponseType
+  (in-module "Gtk")
+  (c-name "GtkResponseType")
+  (gtype-id "GTK_TYPE_RESPONSE_TYPE")
+  (values
+    '("none" "GTK_RESPONSE_NONE")
+    '("reject" "GTK_RESPONSE_REJECT")
+    '("accept" "GTK_RESPONSE_ACCEPT")
+    '("delete-event" "GTK_RESPONSE_DELETE_EVENT")
+    '("ok" "GTK_RESPONSE_OK")
+    '("cancel" "GTK_RESPONSE_CANCEL")
+    '("close" "GTK_RESPONSE_CLOSE")
+    '("yes" "GTK_RESPONSE_YES")
+    '("no" "GTK_RESPONSE_NO")
+    '("apply" "GTK_RESPONSE_APPLY")
+    '("help" "GTK_RESPONSE_HELP")
+  )
+)
+
+(define-flags GtkDestDefaults
+  (in-module "Gtk")
+  (c-name "GtkDestDefaults")
+  (gtype-id "GTK_TYPE_DEST_DEFAULTS")
+  (values
+    '("motion" "GTK_DEST_DEFAULT_MOTION")
+    '("highlight" "GTK_DEST_DEFAULT_HIGHLIGHT")
+    '("drop" "GTK_DEST_DEFAULT_DROP")
+    '("all" "GTK_DEST_DEFAULT_ALL")
+  )
+)
+
+(define-flags GtkTargetFlags
+  (in-module "Gtk")
+  (c-name "GtkTargetFlags")
+  (gtype-id "GTK_TYPE_TARGET_FLAGS")
+  (values
+    '("same-app" "GTK_TARGET_SAME_APP")
+    '("same-widget" "GTK_TARGET_SAME_WIDGET")
+    '("other-app" "GTK_TARGET_OTHER_APP")
+    '("other-widget" "GTK_TARGET_OTHER_WIDGET")
+  )
+)
+
+(define-enum GtkEntryIconPosition
+  (in-module "Gtk")
+  (c-name "GtkEntryIconPosition")
+  (gtype-id "GTK_TYPE_ENTRY_ICON_POSITION")
+  (values
+    '("primary" "GTK_ENTRY_ICON_PRIMARY")
+    '("secondary" "GTK_ENTRY_ICON_SECONDARY")
+  )
+)
+
+(define-enum GtkAlign
+  (in-module "Gtk")
+  (c-name "GtkAlign")
+  (gtype-id "GTK_TYPE_ALIGN")
+  (values
+    '("fill" "GTK_ALIGN_FILL")
+    '("start" "GTK_ALIGN_START")
+    '("end" "GTK_ALIGN_END")
+    '("center" "GTK_ALIGN_CENTER")
+    '("baseline" "GTK_ALIGN_BASELINE")
+  )
+)
+
+(define-enum GtkArrowType
+  (in-module "Gtk")
+  (c-name "GtkArrowType")
+  (gtype-id "GTK_TYPE_ARROW_TYPE")
+  (values
+    '("up" "GTK_ARROW_UP")
+    '("down" "GTK_ARROW_DOWN")
+    '("left" "GTK_ARROW_LEFT")
+    '("right" "GTK_ARROW_RIGHT")
+    '("none" "GTK_ARROW_NONE")
+  )
+)
+
+(define-enum GtkBaselinePosition
+  (in-module "Gtk")
+  (c-name "GtkBaselinePosition")
+  (gtype-id "GTK_TYPE_BASELINE_POSITION")
+  (values
+    '("top" "GTK_BASELINE_POSITION_TOP")
+    '("center" "GTK_BASELINE_POSITION_CENTER")
+    '("bottom" "GTK_BASELINE_POSITION_BOTTOM")
+  )
+)
+
+(define-enum GtkDeleteType
+  (in-module "Gtk")
+  (c-name "GtkDeleteType")
+  (gtype-id "GTK_TYPE_DELETE_TYPE")
+  (values
+    '("chars" "GTK_DELETE_CHARS")
+    '("word-ends" "GTK_DELETE_WORD_ENDS")
+    '("words" "GTK_DELETE_WORDS")
+    '("display-lines" "GTK_DELETE_DISPLAY_LINES")
+    '("display-line-ends" "GTK_DELETE_DISPLAY_LINE_ENDS")
+    '("paragraph-ends" "GTK_DELETE_PARAGRAPH_ENDS")
+    '("paragraphs" "GTK_DELETE_PARAGRAPHS")
+    '("whitespace" "GTK_DELETE_WHITESPACE")
+  )
+)
+
+(define-enum GtkDirectionType
+  (in-module "Gtk")
+  (c-name "GtkDirectionType")
+  (gtype-id "GTK_TYPE_DIRECTION_TYPE")
+  (values
+    '("tab-forward" "GTK_DIR_TAB_FORWARD")
+    '("tab-backward" "GTK_DIR_TAB_BACKWARD")
+    '("up" "GTK_DIR_UP")
+    '("down" "GTK_DIR_DOWN")
+    '("left" "GTK_DIR_LEFT")
+    '("right" "GTK_DIR_RIGHT")
+  )
+)
+
+(define-enum GtkIconSize
+  (in-module "Gtk")
+  (c-name "GtkIconSize")
+  (gtype-id "GTK_TYPE_ICON_SIZE")
+  (values
+    '("invalid" "GTK_ICON_SIZE_INVALID")
+    '("menu" "GTK_ICON_SIZE_MENU")
+    '("small-toolbar" "GTK_ICON_SIZE_SMALL_TOOLBAR")
+    '("large-toolbar" "GTK_ICON_SIZE_LARGE_TOOLBAR")
+    '("button" "GTK_ICON_SIZE_BUTTON")
+    '("dnd" "GTK_ICON_SIZE_DND")
+    '("dialog" "GTK_ICON_SIZE_DIALOG")
+  )
+)
+
+(define-enum GtkSensitivityType
+  (in-module "Gtk")
+  (c-name "GtkSensitivityType")
+  (gtype-id "GTK_TYPE_SENSITIVITY_TYPE")
+  (values
+    '("auto" "GTK_SENSITIVITY_AUTO")
+    '("on" "GTK_SENSITIVITY_ON")
+    '("off" "GTK_SENSITIVITY_OFF")
+  )
+)
+
+(define-enum GtkTextDirection
+  (in-module "Gtk")
+  (c-name "GtkTextDirection")
+  (gtype-id "GTK_TYPE_TEXT_DIRECTION")
+  (values
+    '("none" "GTK_TEXT_DIR_NONE")
+    '("ltr" "GTK_TEXT_DIR_LTR")
+    '("rtl" "GTK_TEXT_DIR_RTL")
+  )
+)
+
+(define-enum GtkJustification
+  (in-module "Gtk")
+  (c-name "GtkJustification")
+  (gtype-id "GTK_TYPE_JUSTIFICATION")
+  (values
+    '("left" "GTK_JUSTIFY_LEFT")
+    '("right" "GTK_JUSTIFY_RIGHT")
+    '("center" "GTK_JUSTIFY_CENTER")
+    '("fill" "GTK_JUSTIFY_FILL")
+  )
+)
+
+(define-enum GtkMenuDirectionType
+  (in-module "Gtk")
+  (c-name "GtkMenuDirectionType")
+  (gtype-id "GTK_TYPE_MENU_DIRECTION_TYPE")
+  (values
+    '("parent" "GTK_MENU_DIR_PARENT")
+    '("child" "GTK_MENU_DIR_CHILD")
+    '("next" "GTK_MENU_DIR_NEXT")
+    '("prev" "GTK_MENU_DIR_PREV")
+  )
+)
+
+(define-enum GtkMessageType
+  (in-module "Gtk")
+  (c-name "GtkMessageType")
+  (gtype-id "GTK_TYPE_MESSAGE_TYPE")
+  (values
+    '("info" "GTK_MESSAGE_INFO")
+    '("warning" "GTK_MESSAGE_WARNING")
+    '("question" "GTK_MESSAGE_QUESTION")
+    '("error" "GTK_MESSAGE_ERROR")
+    '("other" "GTK_MESSAGE_OTHER")
+  )
+)
+
+(define-enum GtkMovementStep
+  (in-module "Gtk")
+  (c-name "GtkMovementStep")
+  (gtype-id "GTK_TYPE_MOVEMENT_STEP")
+  (values
+    '("logical-positions" "GTK_MOVEMENT_LOGICAL_POSITIONS")
+    '("visual-positions" "GTK_MOVEMENT_VISUAL_POSITIONS")
+    '("words" "GTK_MOVEMENT_WORDS")
+    '("display-lines" "GTK_MOVEMENT_DISPLAY_LINES")
+    '("display-line-ends" "GTK_MOVEMENT_DISPLAY_LINE_ENDS")
+    '("paragraphs" "GTK_MOVEMENT_PARAGRAPHS")
+    '("paragraph-ends" "GTK_MOVEMENT_PARAGRAPH_ENDS")
+    '("pages" "GTK_MOVEMENT_PAGES")
+    '("buffer-ends" "GTK_MOVEMENT_BUFFER_ENDS")
+    '("horizontal-pages" "GTK_MOVEMENT_HORIZONTAL_PAGES")
+  )
+)
+
+(define-enum GtkScrollStep
+  (in-module "Gtk")
+  (c-name "GtkScrollStep")
+  (gtype-id "GTK_TYPE_SCROLL_STEP")
+  (values
+    '("steps" "GTK_SCROLL_STEPS")
+    '("pages" "GTK_SCROLL_PAGES")
+    '("ends" "GTK_SCROLL_ENDS")
+    '("horizontal-steps" "GTK_SCROLL_HORIZONTAL_STEPS")
+    '("horizontal-pages" "GTK_SCROLL_HORIZONTAL_PAGES")
+    '("horizontal-ends" "GTK_SCROLL_HORIZONTAL_ENDS")
+  )
+)
+
+(define-enum GtkOrientation
+  (in-module "Gtk")
+  (c-name "GtkOrientation")
+  (gtype-id "GTK_TYPE_ORIENTATION")
+  (values
+    '("horizontal" "GTK_ORIENTATION_HORIZONTAL")
+    '("vertical" "GTK_ORIENTATION_VERTICAL")
+  )
+)
+
+(define-enum GtkPackType
+  (in-module "Gtk")
+  (c-name "GtkPackType")
+  (gtype-id "GTK_TYPE_PACK_TYPE")
+  (values
+    '("start" "GTK_PACK_START")
+    '("end" "GTK_PACK_END")
+  )
+)
+
+(define-enum GtkPositionType
+  (in-module "Gtk")
+  (c-name "GtkPositionType")
+  (gtype-id "GTK_TYPE_POSITION_TYPE")
+  (values
+    '("left" "GTK_POS_LEFT")
+    '("right" "GTK_POS_RIGHT")
+    '("top" "GTK_POS_TOP")
+    '("bottom" "GTK_POS_BOTTOM")
+  )
+)
+
+(define-enum GtkReliefStyle
+  (in-module "Gtk")
+  (c-name "GtkReliefStyle")
+  (gtype-id "GTK_TYPE_RELIEF_STYLE")
+  (values
+    '("normal" "GTK_RELIEF_NORMAL")
+    '("half" "GTK_RELIEF_HALF")
+    '("none" "GTK_RELIEF_NONE")
+  )
+)
+
+(define-enum GtkScrollType
+  (in-module "Gtk")
+  (c-name "GtkScrollType")
+  (gtype-id "GTK_TYPE_SCROLL_TYPE")
+  (values
+    '("none" "GTK_SCROLL_NONE")
+    '("jump" "GTK_SCROLL_JUMP")
+    '("step-backward" "GTK_SCROLL_STEP_BACKWARD")
+    '("step-forward" "GTK_SCROLL_STEP_FORWARD")
+    '("page-backward" "GTK_SCROLL_PAGE_BACKWARD")
+    '("page-forward" "GTK_SCROLL_PAGE_FORWARD")
+    '("step-up" "GTK_SCROLL_STEP_UP")
+    '("step-down" "GTK_SCROLL_STEP_DOWN")
+    '("page-up" "GTK_SCROLL_PAGE_UP")
+    '("page-down" "GTK_SCROLL_PAGE_DOWN")
+    '("step-left" "GTK_SCROLL_STEP_LEFT")
+    '("step-right" "GTK_SCROLL_STEP_RIGHT")
+    '("page-left" "GTK_SCROLL_PAGE_LEFT")
+    '("page-right" "GTK_SCROLL_PAGE_RIGHT")
+    '("start" "GTK_SCROLL_START")
+    '("end" "GTK_SCROLL_END")
+  )
+)
+
+(define-enum GtkSelectionMode
+  (in-module "Gtk")
+  (c-name "GtkSelectionMode")
+  (gtype-id "GTK_TYPE_SELECTION_MODE")
+  (values
+    '("none" "GTK_SELECTION_NONE")
+    '("single" "GTK_SELECTION_SINGLE")
+    '("browse" "GTK_SELECTION_BROWSE")
+    '("multiple" "GTK_SELECTION_MULTIPLE")
+  )
+)
+
+(define-enum GtkShadowType
+  (in-module "Gtk")
+  (c-name "GtkShadowType")
+  (gtype-id "GTK_TYPE_SHADOW_TYPE")
+  (values
+    '("none" "GTK_SHADOW_NONE")
+    '("in" "GTK_SHADOW_IN")
+    '("out" "GTK_SHADOW_OUT")
+    '("etched-in" "GTK_SHADOW_ETCHED_IN")
+    '("etched-out" "GTK_SHADOW_ETCHED_OUT")
+  )
+)
+
+(define-enum GtkStateType
+  (in-module "Gtk")
+  (c-name "GtkStateType")
+  (gtype-id "GTK_TYPE_STATE_TYPE")
+  (values
+    '("normal" "GTK_STATE_NORMAL")
+    '("active" "GTK_STATE_ACTIVE")
+    '("prelight" "GTK_STATE_PRELIGHT")
+    '("selected" "GTK_STATE_SELECTED")
+    '("insensitive" "GTK_STATE_INSENSITIVE")
+    '("inconsistent" "GTK_STATE_INCONSISTENT")
+    '("focused" "GTK_STATE_FOCUSED")
+  )
+)
+
+(define-enum GtkToolbarStyle
+  (in-module "Gtk")
+  (c-name "GtkToolbarStyle")
+  (gtype-id "GTK_TYPE_TOOLBAR_STYLE")
+  (values
+    '("icons" "GTK_TOOLBAR_ICONS")
+    '("text" "GTK_TOOLBAR_TEXT")
+    '("both" "GTK_TOOLBAR_BOTH")
+    '("both-horiz" "GTK_TOOLBAR_BOTH_HORIZ")
+  )
+)
+
+(define-enum GtkWrapMode
+  (in-module "Gtk")
+  (c-name "GtkWrapMode")
+  (gtype-id "GTK_TYPE_WRAP_MODE")
+  (values
+    '("none" "GTK_WRAP_NONE")
+    '("char" "GTK_WRAP_CHAR")
+    '("word" "GTK_WRAP_WORD")
+    '("word-char" "GTK_WRAP_WORD_CHAR")
+  )
+)
+
+(define-enum GtkSortType
+  (in-module "Gtk")
+  (c-name "GtkSortType")
+  (gtype-id "GTK_TYPE_SORT_TYPE")
+  (values
+    '("ascending" "GTK_SORT_ASCENDING")
+    '("descending" "GTK_SORT_DESCENDING")
+  )
+)
+
+(define-enum GtkIMPreeditStyle
+  (in-module "Gtk")
+  (c-name "GtkIMPreeditStyle")
+  (gtype-id "GTK_TYPE_IM_PREEDIT_STYLE")
+  (values
+    '("nothing" "GTK_IM_PREEDIT_NOTHING")
+    '("callback" "GTK_IM_PREEDIT_CALLBACK")
+    '("none" "GTK_IM_PREEDIT_NONE")
+  )
+)
+
+(define-enum GtkIMStatusStyle
+  (in-module "Gtk")
+  (c-name "GtkIMStatusStyle")
+  (gtype-id "GTK_TYPE_IM_STATUS_STYLE")
+  (values
+    '("nothing" "GTK_IM_STATUS_NOTHING")
+    '("callback" "GTK_IM_STATUS_CALLBACK")
+    '("none" "GTK_IM_STATUS_NONE")
+  )
+)
+
+(define-enum GtkPackDirection
+  (in-module "Gtk")
+  (c-name "GtkPackDirection")
+  (gtype-id "GTK_TYPE_PACK_DIRECTION")
+  (values
+    '("ltr" "GTK_PACK_DIRECTION_LTR")
+    '("rtl" "GTK_PACK_DIRECTION_RTL")
+    '("ttb" "GTK_PACK_DIRECTION_TTB")
+    '("btt" "GTK_PACK_DIRECTION_BTT")
+  )
+)
+
+(define-enum GtkPrintPages
+  (in-module "Gtk")
+  (c-name "GtkPrintPages")
+  (gtype-id "GTK_TYPE_PRINT_PAGES")
+  (values
+    '("all" "GTK_PRINT_PAGES_ALL")
+    '("current" "GTK_PRINT_PAGES_CURRENT")
+    '("ranges" "GTK_PRINT_PAGES_RANGES")
+    '("selection" "GTK_PRINT_PAGES_SELECTION")
+  )
+)
+
+(define-enum GtkPageSet
+  (in-module "Gtk")
+  (c-name "GtkPageSet")
+  (gtype-id "GTK_TYPE_PAGE_SET")
+  (values
+    '("all" "GTK_PAGE_SET_ALL")
+    '("even" "GTK_PAGE_SET_EVEN")
+    '("odd" "GTK_PAGE_SET_ODD")
+  )
+)
+
+(define-enum GtkNumberUpLayout
+  (in-module "Gtk")
+  (c-name "GtkNumberUpLayout")
+  (gtype-id "GTK_TYPE_NUMBER_UP_LAYOUT")
+  (values
+    '("left-to-right-top-to-bottom" "GTK_NUMBER_UP_LAYOUT_LEFT_TO_RIGHT_TOP_TO_BOTTOM")
+    '("left-to-right-bottom-to-top" "GTK_NUMBER_UP_LAYOUT_LEFT_TO_RIGHT_BOTTOM_TO_TOP")
+    '("right-to-left-top-to-bottom" "GTK_NUMBER_UP_LAYOUT_RIGHT_TO_LEFT_TOP_TO_BOTTOM")
+    '("right-to-left-bottom-to-top" "GTK_NUMBER_UP_LAYOUT_RIGHT_TO_LEFT_BOTTOM_TO_TOP")
+    '("top-to-bottom-left-to-right" "GTK_NUMBER_UP_LAYOUT_TOP_TO_BOTTOM_LEFT_TO_RIGHT")
+    '("top-to-bottom-right-to-left" "GTK_NUMBER_UP_LAYOUT_TOP_TO_BOTTOM_RIGHT_TO_LEFT")
+    '("bottom-to-top-left-to-right" "GTK_NUMBER_UP_LAYOUT_BOTTOM_TO_TOP_LEFT_TO_RIGHT")
+    '("bottom-to-top-right-to-left" "GTK_NUMBER_UP_LAYOUT_BOTTOM_TO_TOP_RIGHT_TO_LEFT")
+  )
+)
+
+(define-enum GtkPageOrientation
+  (in-module "Gtk")
+  (c-name "GtkPageOrientation")
+  (gtype-id "GTK_TYPE_PAGE_ORIENTATION")
+  (values
+    '("portrait" "GTK_PAGE_ORIENTATION_PORTRAIT")
+    '("landscape" "GTK_PAGE_ORIENTATION_LANDSCAPE")
+    '("reverse-portrait" "GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT")
+    '("reverse-landscape" "GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE")
+  )
+)
+
+(define-enum GtkPrintQuality
+  (in-module "Gtk")
+  (c-name "GtkPrintQuality")
+  (gtype-id "GTK_TYPE_PRINT_QUALITY")
+  (values
+    '("low" "GTK_PRINT_QUALITY_LOW")
+    '("normal" "GTK_PRINT_QUALITY_NORMAL")
+    '("high" "GTK_PRINT_QUALITY_HIGH")
+    '("draft" "GTK_PRINT_QUALITY_DRAFT")
+  )
+)
+
+(define-enum GtkPrintDuplex
+  (in-module "Gtk")
+  (c-name "GtkPrintDuplex")
+  (gtype-id "GTK_TYPE_PRINT_DUPLEX")
+  (values
+    '("simplex" "GTK_PRINT_DUPLEX_SIMPLEX")
+    '("horizontal" "GTK_PRINT_DUPLEX_HORIZONTAL")
+    '("vertical" "GTK_PRINT_DUPLEX_VERTICAL")
+  )
+)
+
+(define-enum GtkUnit
+  (in-module "Gtk")
+  (c-name "GtkUnit")
+  (gtype-id "GTK_TYPE_UNIT")
+  (values
+    '("none" "GTK_UNIT_NONE")
+    '("points" "GTK_UNIT_POINTS")
+    '("inch" "GTK_UNIT_INCH")
+    '("mm" "GTK_UNIT_MM")
+  )
+)
+
+(define-enum GtkTreeViewGridLines
+  (in-module "Gtk")
+  (c-name "GtkTreeViewGridLines")
+  (gtype-id "GTK_TYPE_TREE_VIEW_GRID_LINES")
+  (values
+    '("none" "GTK_TREE_VIEW_GRID_LINES_NONE")
+    '("horizontal" "GTK_TREE_VIEW_GRID_LINES_HORIZONTAL")
+    '("vertical" "GTK_TREE_VIEW_GRID_LINES_VERTICAL")
+    '("both" "GTK_TREE_VIEW_GRID_LINES_BOTH")
+  )
+)
+
+(define-enum GtkDragResult
+  (in-module "Gtk")
+  (c-name "GtkDragResult")
+  (gtype-id "GTK_TYPE_DRAG_RESULT")
+  (values
+    '("success" "GTK_DRAG_RESULT_SUCCESS")
+    '("no-target" "GTK_DRAG_RESULT_NO_TARGET")
+    '("user-cancelled" "GTK_DRAG_RESULT_USER_CANCELLED")
+    '("timeout-expired" "GTK_DRAG_RESULT_TIMEOUT_EXPIRED")
+    '("grab-broken" "GTK_DRAG_RESULT_GRAB_BROKEN")
+    '("error" "GTK_DRAG_RESULT_ERROR")
+  )
+)
+
+(define-enum GtkSizeGroupMode
+  (in-module "Gtk")
+  (c-name "GtkSizeGroupMode")
+  (gtype-id "GTK_TYPE_SIZE_GROUP_MODE")
+  (values
+    '("none" "GTK_SIZE_GROUP_NONE")
+    '("horizontal" "GTK_SIZE_GROUP_HORIZONTAL")
+    '("vertical" "GTK_SIZE_GROUP_VERTICAL")
+    '("both" "GTK_SIZE_GROUP_BOTH")
+  )
+)
+
+(define-enum GtkSizeRequestMode
+  (in-module "Gtk")
+  (c-name "GtkSizeRequestMode")
+  (gtype-id "GTK_TYPE_SIZE_REQUEST_MODE")
+  (values
+    '("height-for-width" "GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH")
+    '("width-for-height" "GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT")
+    '("constant-size" "GTK_SIZE_REQUEST_CONSTANT_SIZE")
+  )
+)
+
+(define-enum GtkScrollablePolicy
+  (in-module "Gtk")
+  (c-name "GtkScrollablePolicy")
+  (gtype-id "GTK_TYPE_SCROLLABLE_POLICY")
+  (values
+    '("minimum" "GTK_SCROLL_MINIMUM")
+    '("natural" "GTK_SCROLL_NATURAL")
+  )
+)
+
+(define-flags GtkStateFlags
+  (in-module "Gtk")
+  (c-name "GtkStateFlags")
+  (gtype-id "GTK_TYPE_STATE_FLAGS")
+  (values
+    '("normal" "GTK_STATE_FLAG_NORMAL")
+    '("active" "GTK_STATE_FLAG_ACTIVE")
+    '("prelight" "GTK_STATE_FLAG_PRELIGHT")
+    '("selected" "GTK_STATE_FLAG_SELECTED")
+    '("insensitive" "GTK_STATE_FLAG_INSENSITIVE")
+    '("inconsistent" "GTK_STATE_FLAG_INCONSISTENT")
+    '("focused" "GTK_STATE_FLAG_FOCUSED")
+    '("backdrop" "GTK_STATE_FLAG_BACKDROP")
+    '("dir-ltr" "GTK_STATE_FLAG_DIR_LTR")
+    '("dir-rtl" "GTK_STATE_FLAG_DIR_RTL")
+    '("link" "GTK_STATE_FLAG_LINK")
+    '("visited" "GTK_STATE_FLAG_VISITED")
+    '("checked" "GTK_STATE_FLAG_CHECKED")
+  )
+)
+
+(define-flags GtkRegionFlags
+  (in-module "Gtk")
+  (c-name "GtkRegionFlags")
+  (gtype-id "GTK_TYPE_REGION_FLAGS")
+  (values
+    '("even" "GTK_REGION_EVEN")
+    '("odd" "GTK_REGION_ODD")
+    '("first" "GTK_REGION_FIRST")
+    '("last" "GTK_REGION_LAST")
+    '("only" "GTK_REGION_ONLY")
+    '("sorted" "GTK_REGION_SORTED")
+  )
+)
+
+(define-flags GtkJunctionSides
+  (in-module "Gtk")
+  (c-name "GtkJunctionSides")
+  (gtype-id "GTK_TYPE_JUNCTION_SIDES")
+  (values
+    '("none" "GTK_JUNCTION_NONE")
+    '("corner-topleft" "GTK_JUNCTION_CORNER_TOPLEFT")
+    '("corner-topright" "GTK_JUNCTION_CORNER_TOPRIGHT")
+    '("corner-bottomleft" "GTK_JUNCTION_CORNER_BOTTOMLEFT")
+    '("corner-bottomright" "GTK_JUNCTION_CORNER_BOTTOMRIGHT")
+    '("top" "GTK_JUNCTION_TOP")
+    '("bottom" "GTK_JUNCTION_BOTTOM")
+    '("left" "GTK_JUNCTION_LEFT")
+    '("right" "GTK_JUNCTION_RIGHT")
+  )
+)
+
+(define-enum GtkBorderStyle
+  (in-module "Gtk")
+  (c-name "GtkBorderStyle")
+  (gtype-id "GTK_TYPE_BORDER_STYLE")
+  (values
+    '("none" "GTK_BORDER_STYLE_NONE")
+    '("solid" "GTK_BORDER_STYLE_SOLID")
+    '("inset" "GTK_BORDER_STYLE_INSET")
+    '("outset" "GTK_BORDER_STYLE_OUTSET")
+    '("hidden" "GTK_BORDER_STYLE_HIDDEN")
+    '("dotted" "GTK_BORDER_STYLE_DOTTED")
+    '("dashed" "GTK_BORDER_STYLE_DASHED")
+    '("double" "GTK_BORDER_STYLE_DOUBLE")
+    '("groove" "GTK_BORDER_STYLE_GROOVE")
+    '("ridge" "GTK_BORDER_STYLE_RIDGE")
+  )
+)
+
+(define-enum GtkLevelBarMode
+  (in-module "Gtk")
+  (c-name "GtkLevelBarMode")
+  (gtype-id "GTK_TYPE_LEVEL_BAR_MODE")
+  (values
+    '("continuous" "GTK_LEVEL_BAR_MODE_CONTINUOUS")
+    '("discrete" "GTK_LEVEL_BAR_MODE_DISCRETE")
+  )
+)
+
+(define-enum GtkInputPurpose
+  (in-module "Gtk")
+  (c-name "GtkInputPurpose")
+  (gtype-id "GTK_TYPE_INPUT_PURPOSE")
+  (values
+    '("free-form" "GTK_INPUT_PURPOSE_FREE_FORM")
+    '("alpha" "GTK_INPUT_PURPOSE_ALPHA")
+    '("digits" "GTK_INPUT_PURPOSE_DIGITS")
+    '("number" "GTK_INPUT_PURPOSE_NUMBER")
+    '("phone" "GTK_INPUT_PURPOSE_PHONE")
+    '("url" "GTK_INPUT_PURPOSE_URL")
+    '("email" "GTK_INPUT_PURPOSE_EMAIL")
+    '("name" "GTK_INPUT_PURPOSE_NAME")
+    '("password" "GTK_INPUT_PURPOSE_PASSWORD")
+    '("pin" "GTK_INPUT_PURPOSE_PIN")
+  )
+)
+
+(define-flags GtkInputHints
+  (in-module "Gtk")
+  (c-name "GtkInputHints")
+  (gtype-id "GTK_TYPE_INPUT_HINTS")
+  (values
+    '("none" "GTK_INPUT_HINT_NONE")
+    '("spellcheck" "GTK_INPUT_HINT_SPELLCHECK")
+    '("no-spellcheck" "GTK_INPUT_HINT_NO_SPELLCHECK")
+    '("word-completion" "GTK_INPUT_HINT_WORD_COMPLETION")
+    '("lowercase" "GTK_INPUT_HINT_LOWERCASE")
+    '("uppercase-chars" "GTK_INPUT_HINT_UPPERCASE_CHARS")
+    '("uppercase-words" "GTK_INPUT_HINT_UPPERCASE_WORDS")
+    '("uppercase-sentences" "GTK_INPUT_HINT_UPPERCASE_SENTENCES")
+    '("inhibit-osk" "GTK_INPUT_HINT_INHIBIT_OSK")
+  )
+)
+
+;; (define-enum GtkPropagationPhase
+;;   (in-module "Gtk")
+;;   (c-name "GtkPropagationPhase")
+;;   (gtype-id "GTK_TYPE_PROPAGATION_PHASE")
+;;   (values
+;;     '("none" "GTK_PHASE_NONE")
+;;     '("capture" "GTK_PHASE_CAPTURE")
+;;     '("bubble" "GTK_PHASE_BUBBLE")
+;;     '("target" "GTK_PHASE_TARGET")
+;;   )
+;; )
+
+;; (define-enum GtkEventSequenceState
+;;   (in-module "Gtk")
+;;   (c-name "GtkEventSequenceState")
+;;   (gtype-id "GTK_TYPE_EVENT_SEQUENCE_STATE")
+;;   (values
+;;     '("none" "GTK_EVENT_SEQUENCE_NONE")
+;;     '("claimed" "GTK_EVENT_SEQUENCE_CLAIMED")
+;;     '("denied" "GTK_EVENT_SEQUENCE_DENIED")
+;;   )
+;; )
+
+;; (define-enum GtkPanDirection
+;;   (in-module "Gtk")
+;;   (c-name "GtkPanDirection")
+;;   (gtype-id "GTK_TYPE_PAN_DIRECTION")
+;;   (values
+;;     '("left" "GTK_PAN_DIRECTION_LEFT")
+;;     '("right" "GTK_PAN_DIRECTION_RIGHT")
+;;     '("up" "GTK_PAN_DIRECTION_UP")
+;;     '("down" "GTK_PAN_DIRECTION_DOWN")
+;;   )
+;; )
+
+(define-enum GtkFileChooserAction
+  (in-module "Gtk")
+  (c-name "GtkFileChooserAction")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_ACTION")
+  (values
+    '("open" "GTK_FILE_CHOOSER_ACTION_OPEN")
+    '("save" "GTK_FILE_CHOOSER_ACTION_SAVE")
+    '("select-folder" "GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER")
+    '("create-folder" "GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER")
+  )
+)
+
+(define-enum GtkFileChooserConfirmation
+  (in-module "Gtk")
+  (c-name "GtkFileChooserConfirmation")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_CONFIRMATION")
+  (values
+    '("confirm" "GTK_FILE_CHOOSER_CONFIRMATION_CONFIRM")
+    '("accept-filename" "GTK_FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME")
+    '("select-again" "GTK_FILE_CHOOSER_CONFIRMATION_SELECT_AGAIN")
+  )
+)
+
+(define-enum GtkFileChooserError
+  (in-module "Gtk")
+  (c-name "GtkFileChooserError")
+  (gtype-id "GTK_TYPE_FILE_CHOOSER_ERROR")
+  (values
+    '("nonexistent" "GTK_FILE_CHOOSER_ERROR_NONEXISTENT")
+    '("bad-filename" "GTK_FILE_CHOOSER_ERROR_BAD_FILENAME")
+    '("already-exists" "GTK_FILE_CHOOSER_ERROR_ALREADY_EXISTS")
+    '("incomplete-hostname" "GTK_FILE_CHOOSER_ERROR_INCOMPLETE_HOSTNAME")
+  )
+)
+
+;; (define-enum GtkFileChooserProp
+;;   (in-module "Gtk")
+;;   (c-name "GtkFileChooserProp")
+;;   (gtype-id "GTK_TYPE_FILE_CHOOSER_PROP")
+;;   (values
+;;     '("first" "GTK_FILE_CHOOSER_PROP_FIRST")
+;;     '("action" "GTK_FILE_CHOOSER_PROP_ACTION")
+;;     '("filter" "GTK_FILE_CHOOSER_PROP_FILTER")
+;;     '("local-only" "GTK_FILE_CHOOSER_PROP_LOCAL_ONLY")
+;;     '("preview-widget" "GTK_FILE_CHOOSER_PROP_PREVIEW_WIDGET")
+;;     '("preview-widget-active" "GTK_FILE_CHOOSER_PROP_PREVIEW_WIDGET_ACTIVE")
+;;     '("use-preview-label" "GTK_FILE_CHOOSER_PROP_USE_PREVIEW_LABEL")
+;;     '("extra-widget" "GTK_FILE_CHOOSER_PROP_EXTRA_WIDGET")
+;;     '("select-multiple" "GTK_FILE_CHOOSER_PROP_SELECT_MULTIPLE")
+;;     '("show-hidden" "GTK_FILE_CHOOSER_PROP_SHOW_HIDDEN")
+;;     '("do-overwrite-confirmation" "GTK_FILE_CHOOSER_PROP_DO_OVERWRITE_CONFIRMATION")
+;;     '("create-folders" "GTK_FILE_CHOOSER_PROP_CREATE_FOLDERS")
+;;     '("last" "GTK_FILE_CHOOSER_PROP_LAST")
+;;   )
+;; )
+
+(define-flags GtkFileFilterFlags
+  (in-module "Gtk")
+  (c-name "GtkFileFilterFlags")
+  (gtype-id "GTK_TYPE_FILE_FILTER_FLAGS")
+  (values
+    '("filename" "GTK_FILE_FILTER_FILENAME")
+    '("uri" "GTK_FILE_FILTER_URI")
+    '("display-name" "GTK_FILE_FILTER_DISPLAY_NAME")
+    '("mime-type" "GTK_FILE_FILTER_MIME_TYPE")
+  )
+)
+
+;; (define-enum GtkFontChooserProp
+;;   (in-module "Gtk")
+;;   (c-name "GtkFontChooserProp")
+;;   (gtype-id "GTK_TYPE_FONT_CHOOSER_PROP")
+;;   (values
+;;     '("first" "GTK_FONT_CHOOSER_PROP_FIRST")
+;;     '("font" "GTK_FONT_CHOOSER_PROP_FONT")
+;;     '("font-desc" "GTK_FONT_CHOOSER_PROP_FONT_DESC")
+;;     '("preview-text" "GTK_FONT_CHOOSER_PROP_PREVIEW_TEXT")
+;;     '("show-preview-entry" "GTK_FONT_CHOOSER_PROP_SHOW_PREVIEW_ENTRY")
+;;     '("last" "GTK_FONT_CHOOSER_PROP_LAST")
+;;   )
+;; )
+
+(define-flags GtkIconLookupFlags
+  (in-module "Gtk")
+  (c-name "GtkIconLookupFlags")
+  (gtype-id "GTK_TYPE_ICON_LOOKUP_FLAGS")
+  (values
+    '("no-svg" "GTK_ICON_LOOKUP_NO_SVG")
+    '("force-svg" "GTK_ICON_LOOKUP_FORCE_SVG")
+    '("use-builtin" "GTK_ICON_LOOKUP_USE_BUILTIN")
+    '("generic-fallback" "GTK_ICON_LOOKUP_GENERIC_FALLBACK")
+    '("force-size" "GTK_ICON_LOOKUP_FORCE_SIZE")
+    '("force-regular" "GTK_ICON_LOOKUP_FORCE_REGULAR")
+    '("force-symbolic" "GTK_ICON_LOOKUP_FORCE_SYMBOLIC")
+    '("dir-ltr" "GTK_ICON_LOOKUP_DIR_LTR")
+    '("dir-rtl" "GTK_ICON_LOOKUP_DIR_RTL")
+  )
+)
+
+(define-enum GtkIconThemeError
+  (in-module "Gtk")
+  (c-name "GtkIconThemeError")
+  (gtype-id "GTK_TYPE_ICON_THEME_ERROR")
+  (values
+    '("not-found" "GTK_ICON_THEME_NOT_FOUND")
+    '("failed" "GTK_ICON_THEME_FAILED")
+  )
+)
+
+(define-enum GtkIconViewDropPosition
+  (in-module "Gtk")
+  (c-name "GtkIconViewDropPosition")
+  (gtype-id "GTK_TYPE_ICON_VIEW_DROP_POSITION")
+  (values
+    '("no-drop" "GTK_ICON_VIEW_NO_DROP")
+    '("drop-into" "GTK_ICON_VIEW_DROP_INTO")
+    '("drop-left" "GTK_ICON_VIEW_DROP_LEFT")
+    '("drop-right" "GTK_ICON_VIEW_DROP_RIGHT")
+    '("drop-above" "GTK_ICON_VIEW_DROP_ABOVE")
+    '("drop-below" "GTK_ICON_VIEW_DROP_BELOW")
+  )
+)
+
+(define-enum GtkImageType
+  (in-module "Gtk")
+  (c-name "GtkImageType")
+  (gtype-id "GTK_TYPE_IMAGE_TYPE")
+  (values
+    '("empty" "GTK_IMAGE_EMPTY")
+    '("pixbuf" "GTK_IMAGE_PIXBUF")
+    '("stock" "GTK_IMAGE_STOCK")
+    '("icon-set" "GTK_IMAGE_ICON_SET")
+    '("animation" "GTK_IMAGE_ANIMATION")
+    '("icon-name" "GTK_IMAGE_ICON_NAME")
+    '("gicon" "GTK_IMAGE_GICON")
+    '("surface" "GTK_IMAGE_SURFACE")
+  )
+)
+
+(define-enum GtkArrowPlacement
+  (in-module "Gtk")
+  (c-name "GtkArrowPlacement")
+  (gtype-id "GTK_TYPE_ARROW_PLACEMENT")
+  (values
+    '("both" "GTK_ARROWS_BOTH")
+    '("start" "GTK_ARROWS_START")
+    '("end" "GTK_ARROWS_END")
+  )
+)
+
+;; (define-enum GtkSubmenuDirection
+;;   (in-module "Gtk")
+;;   (c-name "GtkSubmenuDirection")
+;;   (gtype-id "GTK_TYPE_SUBMENU_DIRECTION")
+;;   (values
+;;     '("left" "GTK_DIRECTION_LEFT")
+;;     '("right" "GTK_DIRECTION_RIGHT")
+;;   )
+;; )
+
+;; (define-enum GtkSubmenuPlacement
+;;   (in-module "Gtk")
+;;   (c-name "GtkSubmenuPlacement")
+;;   (gtype-id "GTK_TYPE_SUBMENU_PLACEMENT")
+;;   (values
+;;     '("top-bottom" "GTK_TOP_BOTTOM")
+;;     '("left-right" "GTK_LEFT_RIGHT")
+;;   )
+;; )
+
+;; (define-enum GtkMenuTrackerItemRole
+;;   (in-module "Gtk")
+;;   (c-name "GtkMenuTrackerItemRole")
+;;   (gtype-id "GTK_TYPE_MENU_TRACKER_ITEM_ROLE")
+;;   (values
+;;     '("normal" "GTK_MENU_TRACKER_ITEM_ROLE_NORMAL")
+;;     '("check" "GTK_MENU_TRACKER_ITEM_ROLE_CHECK")
+;;     '("radio" "GTK_MENU_TRACKER_ITEM_ROLE_RADIO")
+;;   )
+;; )
+
+(define-enum GtkButtonsType
+  (in-module "Gtk")
+  (c-name "GtkButtonsType")
+  (gtype-id "GTK_TYPE_BUTTONS_TYPE")
+  (values
+    '("none" "GTK_BUTTONS_NONE")
+    '("ok" "GTK_BUTTONS_OK")
+    '("close" "GTK_BUTTONS_CLOSE")
+    '("cancel" "GTK_BUTTONS_CANCEL")
+    '("yes-no" "GTK_BUTTONS_YES_NO")
+    '("ok-cancel" "GTK_BUTTONS_OK_CANCEL")
+  )
+)
+
+;; (define-enum GtkButtonRole
+;;   (in-module "Gtk")
+;;   (c-name "GtkButtonRole")
+;;   (gtype-id "GTK_TYPE_BUTTON_ROLE")
+;;   (values
+;;     '("normal" "GTK_BUTTON_ROLE_NORMAL")
+;;     '("check" "GTK_BUTTON_ROLE_CHECK")
+;;     '("radio" "GTK_BUTTON_ROLE_RADIO")
+;;   )
+;; )
+
+(define-enum GtkNotebookTab
+  (in-module "Gtk")
+  (c-name "GtkNotebookTab")
+  (gtype-id "GTK_TYPE_NOTEBOOK_TAB")
+  (values
+    '("first" "GTK_NOTEBOOK_TAB_FIRST")
+    '("last" "GTK_NOTEBOOK_TAB_LAST")
+  )
+)
+
+(define-flags GtkPlacesOpenFlags
+  (in-module "Gtk")
+  (c-name "GtkPlacesOpenFlags")
+  (gtype-id "GTK_TYPE_PLACES_OPEN_FLAGS")
+  (values
+    '("normal" "GTK_PLACES_OPEN_NORMAL")
+    '("new-tab" "GTK_PLACES_OPEN_NEW_TAB")
+    '("new-window" "GTK_PLACES_OPEN_NEW_WINDOW")
+  )
+)
+
+;; (define-enum GtkPrintBackendError
+;;   (in-module "Gtk")
+;;   (c-name "GtkPrintBackendError")
+;;   (gtype-id "GTK_TYPE_PRINT_BACKEND_ERROR")
+;;   (values
+;;     '("generic" "GTK_PRINT_BACKEND_ERROR_GENERIC")
+;;   )
+;; )
+
+;; (define-enum GtkPrintBackendStatus
+;;   (in-module "Gtk")
+;;   (c-name "GtkPrintBackendStatus")
+;;   (gtype-id "GTK_TYPE_PRINT_BACKEND_STATUS")
+;;   (values
+;;     '("unknown" "GTK_PRINT_BACKEND_STATUS_UNKNOWN")
+;;     '("ok" "GTK_PRINT_BACKEND_STATUS_OK")
+;;     '("unavailable" "GTK_PRINT_BACKEND_STATUS_UNAVAILABLE")
+;;   )
+;; )
+
+;; (define-flags GtkPrintCapabilities
+;;   (in-module "Gtk")
+;;   (c-name "GtkPrintCapabilities")
+;;   (gtype-id "GTK_TYPE_PRINT_CAPABILITIES")
+;;   (values
+;;     '("page-set" "GTK_PRINT_CAPABILITY_PAGE_SET")
+;;     '("copies" "GTK_PRINT_CAPABILITY_COPIES")
+;;     '("collate" "GTK_PRINT_CAPABILITY_COLLATE")
+;;     '("reverse" "GTK_PRINT_CAPABILITY_REVERSE")
+;;     '("scale" "GTK_PRINT_CAPABILITY_SCALE")
+;;     '("generate-pdf" "GTK_PRINT_CAPABILITY_GENERATE_PDF")
+;;     '("generate-ps" "GTK_PRINT_CAPABILITY_GENERATE_PS")
+;;     '("preview" "GTK_PRINT_CAPABILITY_PREVIEW")
+;;     '("number-up" "GTK_PRINT_CAPABILITY_NUMBER_UP")
+;;     '("number-up-layout" "GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT")
+;;   )
+;; )
+
+;; (define-enum GtkPrinterOptionType
+;;   (in-module "Gtk")
+;;   (c-name "GtkPrinterOptionType")
+;;   (gtype-id "GTK_TYPE_PRINTER_OPTION_TYPE")
+;;   (values
+;;     '("boolean" "GTK_PRINTER_OPTION_TYPE_BOOLEAN")
+;;     '("pickone" "GTK_PRINTER_OPTION_TYPE_PICKONE")
+;;     '("pickone-password" "GTK_PRINTER_OPTION_TYPE_PICKONE_PASSWORD")
+;;     '("pickone-passcode" "GTK_PRINTER_OPTION_TYPE_PICKONE_PASSCODE")
+;;     '("pickone-real" "GTK_PRINTER_OPTION_TYPE_PICKONE_REAL")
+;;     '("pickone-int" "GTK_PRINTER_OPTION_TYPE_PICKONE_INT")
+;;     '("pickone-string" "GTK_PRINTER_OPTION_TYPE_PICKONE_STRING")
+;;     '("alternative" "GTK_PRINTER_OPTION_TYPE_ALTERNATIVE")
+;;     '("string" "GTK_PRINTER_OPTION_TYPE_STRING")
+;;     '("filesave" "GTK_PRINTER_OPTION_TYPE_FILESAVE")
+;;     '("info" "GTK_PRINTER_OPTION_TYPE_INFO")
+;;   )
+;; )
+
+;; (define-enum GtkPageDrawingState
+;;   (in-module "Gtk")
+;;   (c-name "GtkPageDrawingState")
+;;   (gtype-id "GTK_TYPE_PAGE_DRAWING_STATE")
+;;   (values
+;;     '("ready" "GTK_PAGE_DRAWING_STATE_READY")
+;;     '("drawing" "GTK_PAGE_DRAWING_STATE_DRAWING")
+;;     '("deferred-drawing" "GTK_PAGE_DRAWING_STATE_DEFERRED_DRAWING")
+;;   )
+;; )
+
+(define-enum GtkPrintStatus
+  (in-module "Gtk")
+  (c-name "GtkPrintStatus")
+  (gtype-id "GTK_TYPE_PRINT_STATUS")
+  (values
+    '("initial" "GTK_PRINT_STATUS_INITIAL")
+    '("preparing" "GTK_PRINT_STATUS_PREPARING")
+    '("generating-data" "GTK_PRINT_STATUS_GENERATING_DATA")
+    '("sending-data" "GTK_PRINT_STATUS_SENDING_DATA")
+    '("pending" "GTK_PRINT_STATUS_PENDING")
+    '("pending-issue" "GTK_PRINT_STATUS_PENDING_ISSUE")
+    '("printing" "GTK_PRINT_STATUS_PRINTING")
+    '("finished" "GTK_PRINT_STATUS_FINISHED")
+    '("finished-aborted" "GTK_PRINT_STATUS_FINISHED_ABORTED")
+  )
+)
+
+(define-enum GtkPrintOperationResult
+  (in-module "Gtk")
+  (c-name "GtkPrintOperationResult")
+  (gtype-id "GTK_TYPE_PRINT_OPERATION_RESULT")
+  (values
+    '("error" "GTK_PRINT_OPERATION_RESULT_ERROR")
+    '("apply" "GTK_PRINT_OPERATION_RESULT_APPLY")
+    '("cancel" "GTK_PRINT_OPERATION_RESULT_CANCEL")
+    '("in-progress" "GTK_PRINT_OPERATION_RESULT_IN_PROGRESS")
+  )
+)
+
+(define-enum GtkPrintOperationAction
+  (in-module "Gtk")
+  (c-name "GtkPrintOperationAction")
+  (gtype-id "GTK_TYPE_PRINT_OPERATION_ACTION")
+  (values
+    '("print-dialog" "GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG")
+    '("print" "GTK_PRINT_OPERATION_ACTION_PRINT")
+    '("preview" "GTK_PRINT_OPERATION_ACTION_PREVIEW")
+    '("export" "GTK_PRINT_OPERATION_ACTION_EXPORT")
+  )
+)
+
+(define-enum GtkPrintError
+  (in-module "Gtk")
+  (c-name "GtkPrintError")
+  (gtype-id "GTK_TYPE_PRINT_ERROR")
+  (values
+    '("general" "GTK_PRINT_ERROR_GENERAL")
+    '("internal-error" "GTK_PRINT_ERROR_INTERNAL_ERROR")
+    '("nomem" "GTK_PRINT_ERROR_NOMEM")
+    '("invalid-file" "GTK_PRINT_ERROR_INVALID_FILE")
+  )
+)
+
+;; (define-flags GtkRBNodeColor
+;;   (in-module "Gtk")
+;;   (c-name "GtkRBNodeColor")
+;;   (gtype-id "GTK_TYPE_RB_NODE_COLOR")
+;;   (values
+;;     '("black" "GTK_RBNODE_BLACK")
+;;     '("red" "GTK_RBNODE_RED")
+;;     '("is-parent" "GTK_RBNODE_IS_PARENT")
+;;     '("is-selected" "GTK_RBNODE_IS_SELECTED")
+;;     '("is-prelit" "GTK_RBNODE_IS_PRELIT")
+;;     '("invalid" "GTK_RBNODE_INVALID")
+;;     '("column-invalid" "GTK_RBNODE_COLUMN_INVALID")
+;;     '("descendants-invalid" "GTK_RBNODE_DESCENDANTS_INVALID")
+;;     '("non-colors" "GTK_RBNODE_NON_COLORS")
+;;   )
+;; )
+
+(define-enum GtkRecentSortType
+  (in-module "Gtk")
+  (c-name "GtkRecentSortType")
+  (gtype-id "GTK_TYPE_RECENT_SORT_TYPE")
+  (values
+    '("none" "GTK_RECENT_SORT_NONE")
+    '("mru" "GTK_RECENT_SORT_MRU")
+    '("lru" "GTK_RECENT_SORT_LRU")
+    '("custom" "GTK_RECENT_SORT_CUSTOM")
+  )
+)
+
+(define-enum GtkRecentChooserError
+  (in-module "Gtk")
+  (c-name "GtkRecentChooserError")
+  (gtype-id "GTK_TYPE_RECENT_CHOOSER_ERROR")
+  (values
+    '("not-found" "GTK_RECENT_CHOOSER_ERROR_NOT_FOUND")
+    '("invalid-uri" "GTK_RECENT_CHOOSER_ERROR_INVALID_URI")
+  )
+)
+
+;; (define-enum GtkRecentChooserProp
+;;   (in-module "Gtk")
+;;   (c-name "GtkRecentChooserProp")
+;;   (gtype-id "GTK_TYPE_RECENT_CHOOSER_PROP")
+;;   (values
+;;     '("first" "GTK_RECENT_CHOOSER_PROP_FIRST")
+;;     '("recent-manager" "GTK_RECENT_CHOOSER_PROP_RECENT_MANAGER")
+;;     '("show-private" "GTK_RECENT_CHOOSER_PROP_SHOW_PRIVATE")
+;;     '("show-not-found" "GTK_RECENT_CHOOSER_PROP_SHOW_NOT_FOUND")
+;;     '("show-tips" "GTK_RECENT_CHOOSER_PROP_SHOW_TIPS")
+;;     '("show-icons" "GTK_RECENT_CHOOSER_PROP_SHOW_ICONS")
+;;     '("select-multiple" "GTK_RECENT_CHOOSER_PROP_SELECT_MULTIPLE")
+;;     '("limit" "GTK_RECENT_CHOOSER_PROP_LIMIT")
+;;     '("local-only" "GTK_RECENT_CHOOSER_PROP_LOCAL_ONLY")
+;;     '("sort-type" "GTK_RECENT_CHOOSER_PROP_SORT_TYPE")
+;;     '("filter" "GTK_RECENT_CHOOSER_PROP_FILTER")
+;;     '("last" "GTK_RECENT_CHOOSER_PROP_LAST")
+;;   )
+;; )
+
+(define-flags GtkRecentFilterFlags
+  (in-module "Gtk")
+  (c-name "GtkRecentFilterFlags")
+  (gtype-id "GTK_TYPE_RECENT_FILTER_FLAGS")
+  (values
+    '("uri" "GTK_RECENT_FILTER_URI")
+    '("display-name" "GTK_RECENT_FILTER_DISPLAY_NAME")
+    '("mime-type" "GTK_RECENT_FILTER_MIME_TYPE")
+    '("application" "GTK_RECENT_FILTER_APPLICATION")
+    '("group" "GTK_RECENT_FILTER_GROUP")
+    '("age" "GTK_RECENT_FILTER_AGE")
+  )
+)
+
+(define-enum GtkRecentManagerError
+  (in-module "Gtk")
+  (c-name "GtkRecentManagerError")
+  (gtype-id "GTK_TYPE_RECENT_MANAGER_ERROR")
+  (values
+    '("not-found" "GTK_RECENT_MANAGER_ERROR_NOT_FOUND")
+    '("invalid-uri" "GTK_RECENT_MANAGER_ERROR_INVALID_URI")
+    '("invalid-encoding" "GTK_RECENT_MANAGER_ERROR_INVALID_ENCODING")
+    '("not-registered" "GTK_RECENT_MANAGER_ERROR_NOT_REGISTERED")
+    '("read" "GTK_RECENT_MANAGER_ERROR_READ")
+    '("write" "GTK_RECENT_MANAGER_ERROR_WRITE")
+    '("unknown" "GTK_RECENT_MANAGER_ERROR_UNKNOWN")
+  )
+)
+
+(define-enum GtkRevealerTransitionType
+  (in-module "Gtk")
+  (c-name "GtkRevealerTransitionType")
+  (gtype-id "GTK_TYPE_REVEALER_TRANSITION_TYPE")
+  (values
+    '("none" "GTK_REVEALER_TRANSITION_TYPE_NONE")
+    '("crossfade" "GTK_REVEALER_TRANSITION_TYPE_CROSSFADE")
+    '("slide-right" "GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT")
+    '("slide-left" "GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT")
+    '("slide-up" "GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP")
+    '("slide-down" "GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN")
+  )
+)
+
+(define-enum GtkCornerType
+  (in-module "Gtk")
+  (c-name "GtkCornerType")
+  (gtype-id "GTK_TYPE_CORNER_TYPE")
+  (values
+    '("top-left" "GTK_CORNER_TOP_LEFT")
+    '("bottom-left" "GTK_CORNER_BOTTOM_LEFT")
+    '("top-right" "GTK_CORNER_TOP_RIGHT")
+    '("bottom-right" "GTK_CORNER_BOTTOM_RIGHT")
+  )
+)
+
+(define-enum GtkPolicyType
+  (in-module "Gtk")
+  (c-name "GtkPolicyType")
+  (gtype-id "GTK_TYPE_POLICY_TYPE")
+  (values
+    '("always" "GTK_POLICY_ALWAYS")
+    '("automatic" "GTK_POLICY_AUTOMATIC")
+    '("never" "GTK_POLICY_NEVER")
+    '("external" "GTK_POLICY_EXTERNAL")
+  )
+)
+
+;; (define-enum GtkSettingsSource
+;;   (in-module "Gtk")
+;;   (c-name "GtkSettingsSource")
+;;   (gtype-id "GTK_TYPE_SETTINGS_SOURCE")
+;;   (values
+;;     '("default" "GTK_SETTINGS_SOURCE_DEFAULT")
+;;     '("theme" "GTK_SETTINGS_SOURCE_THEME")
+;;     '("xsetting" "GTK_SETTINGS_SOURCE_XSETTING")
+;;     '("application" "GTK_SETTINGS_SOURCE_APPLICATION")
+;;   )
+;; )
+
+;; (define-flags GtkQueueResizeFlags
+;;   (in-module "Gtk")
+;;   (c-name "GtkQueueResizeFlags")
+;;   (gtype-id "GTK_TYPE_QUEUE_RESIZE_FLAGS")
+;;   (values
+;;     '("only" "GTK_QUEUE_RESIZE_INVALIDATE_ONLY")
+;;   )
+;; )
+
+(define-enum GtkSpinButtonUpdatePolicy
+  (in-module "Gtk")
+  (c-name "GtkSpinButtonUpdatePolicy")
+  (gtype-id "GTK_TYPE_SPIN_BUTTON_UPDATE_POLICY")
+  (values
+    '("always" "GTK_UPDATE_ALWAYS")
+    '("if-valid" "GTK_UPDATE_IF_VALID")
+  )
+)
+
+(define-enum GtkSpinType
+  (in-module "Gtk")
+  (c-name "GtkSpinType")
+  (gtype-id "GTK_TYPE_SPIN_TYPE")
+  (values
+    '("step-forward" "GTK_SPIN_STEP_FORWARD")
+    '("step-backward" "GTK_SPIN_STEP_BACKWARD")
+    '("page-forward" "GTK_SPIN_PAGE_FORWARD")
+    '("page-backward" "GTK_SPIN_PAGE_BACKWARD")
+    '("home" "GTK_SPIN_HOME")
+    '("end" "GTK_SPIN_END")
+    '("user-defined" "GTK_SPIN_USER_DEFINED")
+  )
+)
+
+(define-enum GtkStackTransitionType
+  (in-module "Gtk")
+  (c-name "GtkStackTransitionType")
+  (gtype-id "GTK_TYPE_STACK_TRANSITION_TYPE")
+  (values
+    '("none" "GTK_STACK_TRANSITION_TYPE_NONE")
+    '("crossfade" "GTK_STACK_TRANSITION_TYPE_CROSSFADE")
+    '("slide-right" "GTK_STACK_TRANSITION_TYPE_SLIDE_RIGHT")
+    '("slide-left" "GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT")
+    '("slide-up" "GTK_STACK_TRANSITION_TYPE_SLIDE_UP")
+    '("slide-down" "GTK_STACK_TRANSITION_TYPE_SLIDE_DOWN")
+    '("slide-left-right" "GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT")
+    '("slide-up-down" "GTK_STACK_TRANSITION_TYPE_SLIDE_UP_DOWN")
+    '("over-up" "GTK_STACK_TRANSITION_TYPE_OVER_UP")
+    '("over-down" "GTK_STACK_TRANSITION_TYPE_OVER_DOWN")
+    '("over-left" "GTK_STACK_TRANSITION_TYPE_OVER_LEFT")
+    '("over-right" "GTK_STACK_TRANSITION_TYPE_OVER_RIGHT")
+    '("under-up" "GTK_STACK_TRANSITION_TYPE_UNDER_UP")
+    '("under-down" "GTK_STACK_TRANSITION_TYPE_UNDER_DOWN")
+    '("under-left" "GTK_STACK_TRANSITION_TYPE_UNDER_LEFT")
+    '("under-right" "GTK_STACK_TRANSITION_TYPE_UNDER_RIGHT")
+    '("over-up-down" "GTK_STACK_TRANSITION_TYPE_OVER_UP_DOWN")
+    '("over-down-up" "GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP")
+    '("over-left-right" "GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT")
+    '("over-right-left" "GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT")
+  )
+)
+
+(define-enum GtkTextBufferTargetInfo
+  (in-module "Gtk")
+  (c-name "GtkTextBufferTargetInfo")
+  (gtype-id "GTK_TYPE_TEXT_BUFFER_TARGET_INFO")
+  (values
+    '("buffer-contents" "GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS")
+    '("rich-text" "GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT")
+    '("text" "GTK_TEXT_BUFFER_TARGET_INFO_TEXT")
+  )
+)
+
+;; (define-enum GtkTextHandlePosition
+;;   (in-module "Gtk")
+;;   (c-name "GtkTextHandlePosition")
+;;   (gtype-id "GTK_TYPE_TEXT_HANDLE_POSITION")
+;;   (values
+;;     '("cursor" "GTK_TEXT_HANDLE_POSITION_CURSOR")
+;;     '("selection-start" "GTK_TEXT_HANDLE_POSITION_SELECTION_START")
+;;     '("selection-end" "GTK_TEXT_HANDLE_POSITION_SELECTION_END")
+;;   )
+;; )
+
+;; (define-enum GtkTextHandleMode
+;;   (in-module "Gtk")
+;;   (c-name "GtkTextHandleMode")
+;;   (gtype-id "GTK_TYPE_TEXT_HANDLE_MODE")
+;;   (values
+;;     '("none" "GTK_TEXT_HANDLE_MODE_NONE")
+;;     '("cursor" "GTK_TEXT_HANDLE_MODE_CURSOR")
+;;     '("selection" "GTK_TEXT_HANDLE_MODE_SELECTION")
+;;   )
+;; )
+
+(define-flags GtkTextSearchFlags
+  (in-module "Gtk")
+  (c-name "GtkTextSearchFlags")
+  (gtype-id "GTK_TYPE_TEXT_SEARCH_FLAGS")
+  (values
+    '("visible-only" "GTK_TEXT_SEARCH_VISIBLE_ONLY")
+    '("text-only" "GTK_TEXT_SEARCH_TEXT_ONLY")
+    '("case-insensitive" "GTK_TEXT_SEARCH_CASE_INSENSITIVE")
+  )
+)
+
+(define-enum GtkTextWindowType
+  (in-module "Gtk")
+  (c-name "GtkTextWindowType")
+  (gtype-id "GTK_TYPE_TEXT_WINDOW_TYPE")
+  (values
+    '("private" "GTK_TEXT_WINDOW_PRIVATE")
+    '("widget" "GTK_TEXT_WINDOW_WIDGET")
+    '("text" "GTK_TEXT_WINDOW_TEXT")
+    '("left" "GTK_TEXT_WINDOW_LEFT")
+    '("right" "GTK_TEXT_WINDOW_RIGHT")
+    '("top" "GTK_TEXT_WINDOW_TOP")
+    '("bottom" "GTK_TEXT_WINDOW_BOTTOM")
+  )
+)
+
+;; (define-enum GtkTextViewLayer
+;;   (in-module "Gtk")
+;;   (c-name "GtkTextViewLayer")
+;;   (gtype-id "GTK_TYPE_TEXT_VIEW_LAYER")
+;;   (values
+;;     '("below" "GTK_TEXT_VIEW_LAYER_BELOW")
+;;     '("above" "GTK_TEXT_VIEW_LAYER_ABOVE")
+;;   )
+;; )
+
+;; (define-enum GtkTextExtendSelection
+;;   (in-module "Gtk")
+;;   (c-name "GtkTextExtendSelection")
+;;   (gtype-id "GTK_TYPE_TEXT_EXTEND_SELECTION")
+;;   (values
+;;     '("word" "GTK_TEXT_EXTEND_SELECTION_WORD")
+;;     '("line" "GTK_TEXT_EXTEND_SELECTION_LINE")
+;;   )
+;; )
+
+(define-enum GtkToolbarSpaceStyle
+  (in-module "Gtk")
+  (c-name "GtkToolbarSpaceStyle")
+  (gtype-id "GTK_TYPE_TOOLBAR_SPACE_STYLE")
+  (values
+    '("empty" "GTK_TOOLBAR_SPACE_EMPTY")
+    '("line" "GTK_TOOLBAR_SPACE_LINE")
+  )
+)
+
+(define-flags GtkToolPaletteDragTargets
+  (in-module "Gtk")
+  (c-name "GtkToolPaletteDragTargets")
+  (gtype-id "GTK_TYPE_TOOL_PALETTE_DRAG_TARGETS")
+  (values
+    '("items" "GTK_TOOL_PALETTE_DRAG_ITEMS")
+    '("groups" "GTK_TOOL_PALETTE_DRAG_GROUPS")
+  )
+)
+
+(define-flags GtkTreeModelFlags
+  (in-module "Gtk")
+  (c-name "GtkTreeModelFlags")
+  (gtype-id "GTK_TYPE_TREE_MODEL_FLAGS")
+  (values
+    '("iters-persist" "GTK_TREE_MODEL_ITERS_PERSIST")
+    '("list-only" "GTK_TREE_MODEL_LIST_ONLY")
+  )
+)
+
+;; (define-flags GtkTreeSelectMode
+;;   (in-module "Gtk")
+;;   (c-name "GtkTreeSelectMode")
+;;   (gtype-id "GTK_TYPE_TREE_SELECT_MODE")
+;;   (values
+;;     '("toggle" "GTK_TREE_SELECT_MODE_TOGGLE")
+;;     '("extend" "GTK_TREE_SELECT_MODE_EXTEND")
+;;   )
+;; )
+
+(define-enum GtkTreeViewDropPosition
+  (in-module "Gtk")
+  (c-name "GtkTreeViewDropPosition")
+  (gtype-id "GTK_TYPE_TREE_VIEW_DROP_POSITION")
+  (values
+    '("before" "GTK_TREE_VIEW_DROP_BEFORE")
+    '("after" "GTK_TREE_VIEW_DROP_AFTER")
+    '("into-or-before" "GTK_TREE_VIEW_DROP_INTO_OR_BEFORE")
+    '("into-or-after" "GTK_TREE_VIEW_DROP_INTO_OR_AFTER")
+  )
+)
+
+(define-enum GtkTreeViewColumnSizing
+  (in-module "Gtk")
+  (c-name "GtkTreeViewColumnSizing")
+  (gtype-id "GTK_TYPE_TREE_VIEW_COLUMN_SIZING")
+  (values
+    '("grow-only" "GTK_TREE_VIEW_COLUMN_GROW_ONLY")
+    '("autosize" "GTK_TREE_VIEW_COLUMN_AUTOSIZE")
+    '("fixed" "GTK_TREE_VIEW_COLUMN_FIXED")
+  )
+)
+
+(define-enum GtkWidgetHelpType
+  (in-module "Gtk")
+  (c-name "GtkWidgetHelpType")
+  (gtype-id "GTK_TYPE_WIDGET_HELP_TYPE")
+  (values
+    '("tooltip" "GTK_WIDGET_HELP_TOOLTIP")
+    '("whats-this" "GTK_WIDGET_HELP_WHATS_THIS")
+  )
+)
+
+(define-enum GtkWindowType
+  (in-module "Gtk")
+  (c-name "GtkWindowType")
+  (gtype-id "GTK_TYPE_WINDOW_TYPE")
+  (values
+    '("toplevel" "GTK_WINDOW_TOPLEVEL")
+    '("popup" "GTK_WINDOW_POPUP")
+  )
+)
+
+(define-enum GtkWindowPosition
+  (in-module "Gtk")
+  (c-name "GtkWindowPosition")
+  (gtype-id "GTK_TYPE_WINDOW_POSITION")
+  (values
+    '("none" "GTK_WIN_POS_NONE")
+    '("center" "GTK_WIN_POS_CENTER")
+    '("mouse" "GTK_WIN_POS_MOUSE")
+    '("center-always" "GTK_WIN_POS_CENTER_ALWAYS")
+    '("center-on-parent" "GTK_WIN_POS_CENTER_ON_PARENT")
+  )
+)
+
+;; (define-enum XEmbedMessageType
+;;   (in-module "XEmbed")
+;;   (c-name "XEmbedMessageType")
+;;   (gtype-id "X_TYPE_EMBED_MESSAGE_TYPE")
+;;   (values
+;;     '("embedded-notify" "XEMBED_EMBEDDED_NOTIFY")
+;;     '("window-activate" "XEMBED_WINDOW_ACTIVATE")
+;;     '("window-deactivate" "XEMBED_WINDOW_DEACTIVATE")
+;;     '("request-focus" "XEMBED_REQUEST_FOCUS")
+;;     '("focus-in" "XEMBED_FOCUS_IN")
+;;     '("focus-out" "XEMBED_FOCUS_OUT")
+;;     '("focus-next" "XEMBED_FOCUS_NEXT")
+;;     '("focus-prev" "XEMBED_FOCUS_PREV")
+;;     '("grab-key" "XEMBED_GRAB_KEY")
+;;     '("ungrab-key" "XEMBED_UNGRAB_KEY")
+;;     '("modality-on" "XEMBED_MODALITY_ON")
+;;     '("modality-off" "XEMBED_MODALITY_OFF")
+;;     '("gtk-grab-key" "XEMBED_GTK_GRAB_KEY")
+;;     '("gtk-ungrab-key" "XEMBED_GTK_UNGRAB_KEY")
+;;   )
+;; )
+
+;; ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+
+(define-enum GtkExpanderStyle
+  (in-module "Gtk")
+  (c-name "GtkExpanderStyle")
+  (gtype-id "GTK_TYPE_EXPANDER_STYLE")
+  (values
+    '("collapsed" "GTK_EXPANDER_COLLAPSED")
+    '("semi-collapsed" "GTK_EXPANDER_SEMI_COLLAPSED")
+    '("semi-expanded" "GTK_EXPANDER_SEMI_EXPANDED")
+    '("expanded" "GTK_EXPANDER_EXPANDED")
+  )
+)
+
+(define-enum GtkPathPriorityType
+  (in-module "Gtk")
+  (c-name "GtkPathPriorityType")
+  (gtype-id "GTK_TYPE_PATH_PRIORITY_TYPE")
+  (values
+    '("lowest" "GTK_PATH_PRIO_LOWEST")
+    '("gtk" "GTK_PATH_PRIO_GTK")
+    '("application" "GTK_PATH_PRIO_APPLICATION")
+    '("theme" "GTK_PATH_PRIO_THEME")
+    '("rc" "GTK_PATH_PRIO_RC")
+    '("highest" "GTK_PATH_PRIO_HIGHEST")
+  )
+)
+
+(define-enum GtkPathType
+  (in-module "Gtk")
+  (c-name "GtkPathType")
+  (gtype-id "GTK_TYPE_PATH_TYPE")
+  (values
+    '("widget" "GTK_PATH_WIDGET")
+    '("widget-class" "GTK_PATH_WIDGET_CLASS")
+    '("class" "GTK_PATH_CLASS")
+  )
+)
+
+(define-enum GtkRcTokenType
+  (in-module "Gtk")
+  (c-name "GtkRcTokenType")
+  (gtype-id "GTK_TYPE_RC_TOKEN_TYPE")
+  (values
+    '("invalid" "GTK_RC_TOKEN_INVALID")
+    '("include" "GTK_RC_TOKEN_INCLUDE")
+    '("normal" "GTK_RC_TOKEN_NORMAL")
+    '("active" "GTK_RC_TOKEN_ACTIVE")
+    '("prelight" "GTK_RC_TOKEN_PRELIGHT")
+    '("selected" "GTK_RC_TOKEN_SELECTED")
+    '("insensitive" "GTK_RC_TOKEN_INSENSITIVE")
+    '("fg" "GTK_RC_TOKEN_FG")
+    '("bg" "GTK_RC_TOKEN_BG")
+    '("text" "GTK_RC_TOKEN_TEXT")
+    '("base" "GTK_RC_TOKEN_BASE")
+    '("xthickness" "GTK_RC_TOKEN_XTHICKNESS")
+    '("ythickness" "GTK_RC_TOKEN_YTHICKNESS")
+    '("font" "GTK_RC_TOKEN_FONT")
+    '("fontset" "GTK_RC_TOKEN_FONTSET")
+    '("font-name" "GTK_RC_TOKEN_FONT_NAME")
+    '("bg-pixmap" "GTK_RC_TOKEN_BG_PIXMAP")
+    '("pixmap-path" "GTK_RC_TOKEN_PIXMAP_PATH")
+    '("style" "GTK_RC_TOKEN_STYLE")
+    '("binding" "GTK_RC_TOKEN_BINDING")
+    '("bind" "GTK_RC_TOKEN_BIND")
+    '("widget" "GTK_RC_TOKEN_WIDGET")
+    '("widget-class" "GTK_RC_TOKEN_WIDGET_CLASS")
+    '("class" "GTK_RC_TOKEN_CLASS")
+    '("lowest" "GTK_RC_TOKEN_LOWEST")
+    '("gtk" "GTK_RC_TOKEN_GTK")
+    '("application" "GTK_RC_TOKEN_APPLICATION")
+    '("theme" "GTK_RC_TOKEN_THEME")
+    '("rc" "GTK_RC_TOKEN_RC")
+    '("highest" "GTK_RC_TOKEN_HIGHEST")
+    '("engine" "GTK_RC_TOKEN_ENGINE")
+    '("module-path" "GTK_RC_TOKEN_MODULE_PATH")
+    '("im-module-path" "GTK_RC_TOKEN_IM_MODULE_PATH")
+    '("im-module-file" "GTK_RC_TOKEN_IM_MODULE_FILE")
+    '("stock" "GTK_RC_TOKEN_STOCK")
+    '("ltr" "GTK_RC_TOKEN_LTR")
+    '("rtl" "GTK_RC_TOKEN_RTL")
+    '("last" "GTK_RC_TOKEN_LAST")
+  )
+)
+
+(define-flags GtkAttachOptions
+  (in-module "Gtk")
+  (c-name "GtkAttachOptions")
+  (gtype-id "GTK_TYPE_ATTACH_OPTIONS")
+  (values
+    '("expand" "GTK_EXPAND")
+    '("shrink" "GTK_SHRINK")
+    '("fill" "GTK_FILL")
+  )
+)
+
+(define-flags GtkRcFlags
+  (in-module "Gtk")
+  (c-name "GtkRcFlags")
+  (gtype-id "GTK_TYPE_RC_FLAGS")
+  (values
+    '("fg" "GTK_RC_FG")
+    '("bg" "GTK_RC_BG")
+    '("text" "GTK_RC_TEXT")
+    '("base" "GTK_RC_BASE")
+  )
+)
+
+(define-flags GtkUIManagerItemType
+  (in-module "Gtk")
+  (c-name "GtkUIManagerItemType")
+  (gtype-id "GTK_TYPE_UI_MANAGER_ITEM_TYPE")
+  (values
+    '("auto" "GTK_UI_MANAGER_AUTO")
+    '("menubar" "GTK_UI_MANAGER_MENUBAR")
+    '("menu" "GTK_UI_MANAGER_MENU")
+    '("toolbar" "GTK_UI_MANAGER_TOOLBAR")
+    '("placeholder" "GTK_UI_MANAGER_PLACEHOLDER")
+    '("popup" "GTK_UI_MANAGER_POPUP")
+    '("menuitem" "GTK_UI_MANAGER_MENUITEM")
+    '("toolitem" "GTK_UI_MANAGER_TOOLITEM")
+    '("separator" "GTK_UI_MANAGER_SEPARATOR")
+    '("accelerator" "GTK_UI_MANAGER_ACCELERATOR")
+  )
+)
