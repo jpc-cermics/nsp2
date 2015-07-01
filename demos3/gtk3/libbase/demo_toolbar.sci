@@ -1,71 +1,56 @@
 // Toolbar
 // ---------------------------------
-
-function [tree_view,list_store]=create_items_list()
-  list_store = gtk_list_store_new (2, GTK_TYPE_TOOL_ITEM, G_TYPE_STRING);
-  tree_view = gtk_tree_view_new_with_model (list_store);
-  tree_view.insert_column_with_attributes[-1, "Tool Item", gtk_cell_renderer_text_new (),"text",1,NULL];
-  cell = gtk_cell_renderer_toggle_new ();
-  cell.connect["toggled",visibile_toggled,list(list_store)];
-
-  gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (tree_view),
-					      -1, "Visible",
-					      cell,
-					      set_visible_func, NULL, NULL);
-
-  cell = gtk_cell_renderer_toggle_new ();
-  cell.connect[ "toggled", expand_toggled, list(list_store)];
-  gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (tree_view),
-					      -1, "Expand",
-					      cell,
-					      set_expand_func, NULL, NULL);
-
-  cell = gtk_cell_renderer_toggle_new ();
-  cell.connect["toggled", homogeneous_toggled, list(list_store)];
-
-  gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (tree_view),
-					      -1, "Homogeneous",
-					      cell,
-					      set_homogeneous_func, NULL,NULL);
-
-  cell = gtk_cell_renderer_toggle_new ();
-  cell.connect["toggled", important_toggled, list(list_store)];
-
-  gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (tree_view),
-					      -1, "Important",
-					      cell,
-					      set_important_func, NULL, ...
-						  NULL);
-endfunction
+// XXX: reste le right to left et le drag and drop
 
 function demo_toolbar()
 
-  function set_toolbar_horizontal(_b,args)
-    args(1).set_orientation[GTK.ORIENTATION_HORIZONTAL]
-  endfunction
-  function set_toolbar_vertical(_b,args)
-    args(1).set_orientation[GTK.ORIENTATION_VERTICAL]
-  endfunction
-  function set_toolbar_icons(_b,args)
-    args(1).set_style[GTK.TOOLBAR_ICONS]
-  endfunction
-  function set_toolbar_text(_b,args)
-    args(1).set_style[GTK.TOOLBAR_TEXT]
-  endfunction
-  function set_toolbar_both(_b,args)
-    args(1).set_style[GTK.TOOLBAR_BOTH]
-  endfunction
-  function set_toolbar_small_space(_b,args)
-    args(1).insert_space[5]
-  endfunction
-  function set_toolbar_big_space(_b,args)
-    args(1).insert_space[10]
-  endfunction
-  function set_toolbar_enable(_b,args)
-    args(1).set_tooltips[%t]
-  endfunction
-  function set_toolbar_disable(_b,args)
-    args(1).set_tooltips[%f]
+  function [treeview,list_store]=create_items_list()
+
+    function item_toggled( cell, path, data)
+    // called when a toogle button is activated in the treeview
+      path = gtk_tree_path_new(path);
+      model=data(2);
+      iter = model.get_iter[path]
+      item = model.get_value[iter,0];
+      str=sprintf("rep=item.get_%s[]",data(1));
+      execstr(str);
+      rep=~rep;
+      str=sprintf("item.set_%s[rep]",data(1));
+      execstr(str);
+      cell.set_active[rep];
+      model.row_changed[path,iter];
+    endfunction
+
+    function set_render_func(tree_column, cell, model, iter, data)
+    // item is the tool widget.
+    // we get the visibility status of the item and set the cell value
+    // accordingly
+      item=model.get_value[iter,0]
+      str=sprintf("rep=item.get_%s[]",data(1));
+      execstr(str);
+      cell.set_active[rep];
+    endfunction
+
+    // the model contains a tool_item and a string
+    item = gtk_tool_item_new();
+    fls = list(list(item),"name")
+    list_store = gtkliststore_new(fls,%f);
+    treeview = gtk_tree_view_new_with_model (list_store);
+
+    col_id=1;
+    renderer = gtkcellrenderertext_new ();
+    //renderer.connect[  "edited",  cell_edited,list(model)]
+    renderer.set_data[column=col_id ];
+    attrs= hash_create(text= col_id, editable= col_id);
+    col= gtktreeviewcolumn_new(title="ToolItem",renderer=renderer,attrs=attrs);
+    treeview.append_column[col];
+
+    for str=["visible","expand","homogeneous","is_important"]
+      renderer = gtk_cell_renderer_toggle_new ();
+      renderer.connect["toggled", item_toggled , list(str,list_store)];
+      treeview.insert_column_with_data_func[ -1, capitalize(str), renderer, set_render_func,list(str)];
+    end
+
   endfunction
 
   window = gtk_window_new();
@@ -85,34 +70,104 @@ function demo_toolbar()
   hbox2.set_vexpand[%t];
   grid.attach[ hbox2, 1, 2, 1, 1];
 
+  //---- vertical
+
+  function change_orientation ( button, data)
+    toolbar=data(1);
+    grid = toolbar.get_parent[];
+    if button.get_active[] then
+      orientation = GTK.ORIENTATION_VERTICAL;
+    else
+      orientation = GTK.ORIENTATION_HORIZONTAL;
+    end;
+    grid.remove[toolbar];
+    toolbar.set_orientation[orientation];
+    if orientation == GTK.ORIENTATION_HORIZONTAL then
+      toolbar.set_hexpand[%t];
+      toolbar.set_vexpand[%f];
+      grid.attach[toolbar, 0, 0, 2, 1];
+    else
+      toolbar.set_hexpand[%f];
+      toolbar.set_vexpand[%t];
+      grid.attach[toolbar, 0, 0, 1, 5];
+    end
+  endfunction
+
   checkbox = gtk_check_button_new(mnemonic="_Vertical");
   hbox1.pack_start[checkbox,expand= %f,fill=%f,padding=0];
-  // checkbox.connect["toggled",change_orientation, list(toolbar)];
+  checkbox.connect["toggled",change_orientation, list(toolbar)];
+
+  //---- show arrow
+  function change_show_arrow (button, data)
+    toolbar = data(1)
+    toolbar.set_show_arrow[button.get_active[]];
+  endfunction
 
   checkbox = gtk_check_button_new(mnemonic="_Show Arrow");
   checkbox.set_active[%t];
+  checkbox.connect[ "toggled",change_show_arrow, list(toolbar)];
   hbox1.pack_start[ checkbox, expand= %f,fill=%f,padding=0];
-  // checkbox.connect[ "toggled",change_show_arrow, list(toolbar)];
+
+  //---- toolbar style
+
+  function set_toolbar_style_toggled (button, data)
+    toolbar = data(1);
+    option_menu = button.get_data["option_menu"];
+    if button.get_active[] then
+      style = option_menu.get_active[];
+      toolbar.set_style[style];
+      option_menu.set_sensitive[%t];
+    else
+      toolbar.unset_style[];
+      option_menu.set_sensitive[%f];
+    end
+  endfunction
 
   checkbox = gtk_check_button_new(mnemonic="_Set Toolbar Style:");
-  // checkbox.connect[ "toggled", set_toolbar_style_toggled, list(toolbar)];
+  checkbox.connect[ "toggled", set_toolbar_style_toggled, list(toolbar)];
   hbox1.pack_start[ checkbox,expand= %f,fill=%f,padding=0];
+
+  //---- the toolbar_style options
 
   option_menu = gtk_combo_box_text_new ();
   option_menu.set_sensitive[%f];
   checkbox.set_data[option_menu= option_menu];
-
-  toolbar_styles = 'S'+string(1:5);
-
+  toolbar_styles =["icons","text","both (vertical)","both (horizontal)"];
   for i=1:size(toolbar_styles,'*')
     option_menu.append_text[toolbar_styles(i)];
   end
   option_menu.set_active[toolbar.get_style[]];
+
+  function change_toolbar_style (option_menu, data)
+    toolbar = data(1);
+    style = option_menu.get_active[];
+    toolbar.set_style[style];
+  endfunction
+
+  option_menu.connect["changed",change_toolbar_style, list(toolbar)];
   hbox2.pack_start[ option_menu,expand= %f,fill=%f,padding=0];
-  // option_menu.connect["changed",change_toolbar_style, list(toolbar)];
+
+  //---- icon-size
+
+  function set_icon_size_toggled (button, data)
+    toolbar = data(1);
+    option_menu = button.get_data["option_menu"];
+    if button.get_active[] then
+      if option_menu.get_active[] == 0 then
+        icon_size = GTK.ICON_SIZE_SMALL_TOOLBAR;
+      else
+        icon_size = GTK.ICON_SIZE_LARGE_TOOLBAR;
+      end
+      toolbar.set_icon_size[icon_size];
+      option_menu.set_sensitive[%t];
+    else
+      toolbar.unset_icon_size[];
+      option_menu.set_sensitive[%f];
+    end
+  endfunction
 
   checkbox = gtk_check_button_new(mnemonic="_Set Icon Size:");
-  // checkbox.connect[ "toggled", set_icon_size_toggled, list(toolbar)];
+  checkbox.connect[ "toggled", set_icon_size_toggled, list(toolbar)];
   hbox2.pack_start[ checkbox,expand= %f,fill=%f,padding=0];
 
   option_menu = gtk_combo_box_text_new ();
@@ -121,8 +176,20 @@ function demo_toolbar()
   option_menu.append_text["small toolbar"];
   option_menu.append_text["large toolbar"];
 
+  function icon_size_history_changed (menu, data)
+    toolbar = data(1);
+    if menu.get_active[] == 0 then
+      icon_size = GTK.ICON_SIZE_SMALL_TOOLBAR;
+    else
+      icon_size = GTK.ICON_SIZE_LARGE_TOOLBAR;
+    end
+    toolbar.set_icon_size[ icon_size];
+  endfunction
+
   hbox2.pack_start[ option_menu,expand= %f,fill=%f,padding=0];
-  // option_menu.connect[ "changed",icon_size_history_changed, list(toolbar)];
+  option_menu.connect[ "changed",icon_size_history_changed, list(toolbar)];
+
+  //--- a scrolled window
 
   scrolled_window = gtk_scrolled_window_new();//(NULL, NULL);
   scrolled_window.set_policy[GTK.POLICY_AUTOMATIC, GTK.POLICY_AUTOMATIC];
@@ -130,13 +197,13 @@ function demo_toolbar()
   scrolled_window.set_vexpand[%t];
   grid.attach[ scrolled_window, 1, 3, 1, 1];
 
-  // store = create_items_list (&treeview);
-  // scrolled_window.add[treeview];
+  [treeview,store]=create_items_list();
+  scrolled_window.add[treeview];
 
   item = gtk_tool_button_new();// (NULL, NULL);
   item.set_icon_name["document-new"];
   item.set_label["Custom label"];
-  // add_item_to_list (store, item, "New");
+  store.append[list(list(item),"New")];
   toolbar.insert[item,-1];
   // gdk_threads_add_timeout (3000, (GSourceFunc) timeout_cb, item);
   item.set_expand[%t];
@@ -153,7 +220,7 @@ function demo_toolbar()
   item.set_icon_name[ "document-open"];
   item.set_label["Open"];
   item.set_menu[menu];
-  //add_item_to_list (store, item, "Open");
+  store.append[list(list(item),"Open")];
   toolbar.insert[ item, -1];
   // gdk_threads_add_timeout (3000, (GSourceFunc) timeout_cb1, item);
 
@@ -169,46 +236,46 @@ function demo_toolbar()
   item.set_icon_name[ "go-previous"];
   item.set_label[ "Back"];
   item.set_menu[menu];
-  // add_item_to_list (store, item, "BackWithHistory"];
+  store.append[list(list(item), "BackWithHistory")];
   toolbar.insert[ item, -1];
 
   item = gtk_separator_tool_item_new ();
-  // add_item_to_list (store, item, "-----");
+  store.append[list(list(item), "-----")];
   toolbar.insert[ item, -1];
 
   image = gtk_image_new_from_icon_name ("dialog-warning", GTK.ICON_SIZE_DIALOG);
   item = gtk_tool_item_new ();
   image.show[]
   item.add[image];
-  // add_item_to_list (store, item, "(Custom Item)"];
+  store.append[list(list(item), "(Custom Item)")];
   toolbar.insert[ item, -1];
 
   item = gtk_tool_button_new();//(NULL, NULL);
   item.set_icon_name[ "go-previous"];
   item.set_label[ "Back"];
-  // add_item_to_list (store, item, "Back"];
+  store.append[list(list(item), "Back")];
   toolbar.insert[ item, -1];
 
   item = gtk_separator_tool_item_new ();
-  // add_item_to_list (store, item, "-----");
+  store.append[list(list(item), "-----")];
   toolbar.insert[ item, -1];
 
   item = gtk_tool_button_new();// (NULL, NULL);
   item.set_icon_name[ "go-next"];
   item.set_label[ "Forward"];
-  // add_item_to_list (store, item, "Forward"];
+  store.append[list(list(item), "Forward")];
   toolbar.insert[ item, -1];
 
   item = gtk_toggle_tool_button_new ();
   item.set_label[ "Bold"];
   item.set_icon_name[ "format-text-bold"];
   // item.connect["toggled", bold_toggled];
-  // add_item_to_list (store, item, "Bold"];
+  store.append[list(list(item), "Bold")];
   toolbar.insert[ item, -1];
   item.set_sensitive[%f];
 
   item = gtk_separator_tool_item_new ();
-  // add_item_to_list (store, item, "-----");
+  store.append[list(list(item), "-----")];
   toolbar.insert[ item, -1];
   item.set_expand[%t];
   item.set_draw[%f];
@@ -218,7 +285,7 @@ function demo_toolbar()
   item.set_icon_name[ "format-justify-left"];
   group = item.get_group[];
 
-  // add_item_to_list (store, item, "Left"];
+  store.append[list(list(item), "Left")];
   toolbar.insert[ item, -1];
 
   // take care that group here is only given by an other
@@ -227,35 +294,35 @@ function demo_toolbar()
   item.set_label[ "Center"];
   item.set_icon_name[ "format-justify-center"];
   group = item.get_group[];
-  // add_item_to_list (store, item, "Center"];
+  store.append[list(list(item), "Center")];
   toolbar.insert[ item, -1];
 
   item = gtk_radio_tool_button_new (group=item);
   item.set_label[ "Right"];
   item.set_icon_name[ "format-justify-right"];
-  // add_item_to_list (store, item, "Right"];
+  store.append[list(list(item), "Right")];
   toolbar.insert[ item, -1];
   icon_widget=gtk_image_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/apple-red.png");
   item = gtk_tool_button_new (icon_widget=icon_widget,label= "_Apple");
-  // add_item_to_list (store, item, "Apple"];
+  store.append[list(list(item), "Apple")];
   toolbar.insert[ item, -1];
   item.set_use_underline[%t];
 
   // gicon = g_content_type_get_icon ("video/ogg");
   // image = gtk_image_new_from_gicon (gicon, GTK.ICON_SIZE_LARGE_TOOLBAR);
   // item = gtk_tool_button_new (icon_widget=image,label= "Video");
-  // // add_item_to_list (store, item, "Video"];
+  // store.append[list(list(item), "Video")];
   // toolbar.insert[ item, -1];
 
   image = gtk_image_new_from_icon_name ("utilities-terminal", GTK.ICON_SIZE_LARGE_TOOLBAR);
   item = gtk_tool_button_new (icon_widget=image,label= "Terminal");
-  // add_item_to_list (store, item, "Terminal");
+  store.append[list(list(item), "Terminal")];
   toolbar.insert[ item, -1];
 
   image = gtk_spinner_new ();
   image.start[];
   item = gtk_tool_button_new (icon_widget=image,label= "Spinner");
-  // add_item_to_list (store, item, "Spinner");
+  store.append[list(list(item), "Spinner")];
   toolbar.insert[ item, -1];
 
   hbox = gtk_box_new (GTK.ORIENTATION_HORIZONTAL, spacing=5);

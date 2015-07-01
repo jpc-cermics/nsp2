@@ -828,6 +828,7 @@
   (c-name "GtkToolbar")
   (gtype-id "GTK_TYPE_TOOLBAR")
   (implements "GtkBuildable")
+  (implements "GtkOrientable")
   )
 
 (define-object GtkToolItem
