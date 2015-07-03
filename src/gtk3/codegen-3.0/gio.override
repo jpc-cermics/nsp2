@@ -1,0 +1,34 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <gio/gio.h>
+#include <nsp/nsp.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/hash.h>
+#include <nsp/plist.h>
+#include <nsp/list.h>
+#include <nsp/cells.h>
+#include <nsp/none.h>
+#include <nsp/mpmatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+#include <nsp/interf.h>
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/gobject-util.h>
+
+%%
+init
+
+%%
+modulename gio
+
+%%
+ignore-glob
+*_get_type
+_*
+*_ref
+*_unref

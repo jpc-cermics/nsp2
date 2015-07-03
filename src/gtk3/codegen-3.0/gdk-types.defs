@@ -9,7 +9,6 @@
 ;;   (gtype-id "GDK_TYPE_COLORMAP")
 ;; )
 
-
 (define-object GdkDevice
   (in-module "Gdk")
   (parent "GObject")
@@ -59,7 +58,7 @@
   ;;)
 )
 
-;; removed 
+;; removed
 ;; (define-object GdkDrawable
 ;;   (in-module "Gdk")
 ;;   (parent "GObject")

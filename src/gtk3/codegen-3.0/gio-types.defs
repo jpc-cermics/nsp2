@@ -1,0 +1,1490 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object GAppInfo
+  (in-module "Gio")
+  (c-name "GAppInfo")
+  (gtype-id "G_TYPE_APP_INFO")
+)
+
+(define-object GAppLaunchContext
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GAppLaunchContext")
+  (gtype-id "G_TYPE_APP_LAUNCH_CONTEXT")
+)
+
+(define-object GApplication
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GApplication")
+  (gtype-id "G_TYPE_APPLICATION")
+)
+
+(define-object GApplicationCommandLine
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GApplicationCommandLine")
+  (gtype-id "G_TYPE_APPLICATION_COMMAND_LINE")
+)
+
+(define-object GAsyncInitable
+  (in-module "Gio")
+  (c-name "GAsyncInitable")
+  (gtype-id "G_TYPE_ASYNC_INITABLE")
+)
+
+(define-object GAsyncResult
+  (in-module "Gio")
+  (c-name "GAsyncResult")
+  (gtype-id "G_TYPE_ASYNC_RESULT")
+)
+
+(define-object GCancellable
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GCancellable")
+  (gtype-id "G_TYPE_CANCELLABLE")
+)
+
+(define-object GConverter
+  (in-module "Gio")
+  (c-name "GConverter")
+  (gtype-id "G_TYPE_CONVERTER")
+)
+
+(define-interface GDBusInterface
+  (in-module "Gio")
+  (c-name "GDBusInterface")
+  (vtable "GDBusInterfaceClass")
+  (gtype-id "G_TYPE_DBUS_INTERFACE")
+  (prerequisite "GObject")
+)
+
+(define-object GDBusInterfaceSkeleton
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusInterfaceSkeleton")
+  (gtype-id "G_TYPE_DBUS_INTERFACE_SKELETON")
+)
+
+(define-interface GDBusObject
+  (in-module "Gio")
+  (c-name "GDBusObject")
+  (gtype-id "G_TYPE_DBUS_OBJECT")
+  (prerequisite "GObject")
+)
+
+(Define-object GDBusObjectManager
+  (in-module "Gio")
+  (c-name "GDBusObjectManager")
+  (gtype-id "G_TYPE_DBUS_OBJECT_MANAGER")
+)
+
+(define-object GDBusObjectManagerClient
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusObjectManagerClient")
+  (gtype-id "G_TYPE_DBUS_OBJECT_MANAGER_CLIENT")
+)
+
+(define-object GDBusObjectManagerServer
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusObjectManagerServer")
+  (gtype-id "G_TYPE_DBUS_OBJECT_MANAGER_SERVER")
+)
+
+(define-object GDBusObjectProxy
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusObjectProxy")
+  (gtype-id "G_TYPE_DBUS_OBJECT_PROXY")
+)
+
+(define-object GDBusObjectSkeleton
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusObjectSkeleton")
+  (gtype-id "G_TYPE_DBUS_OBJECT_SKELETON")
+)
+
+(define-object GDBusProxy
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GDBusProxy")
+  (gtype-id "G_TYPE_DBUS_PROXY")
+)
+
+(define-object GDrive
+  (in-module "Gio")
+  (c-name "GDrive")
+  (gtype-id "G_TYPE_DRIVE")
+)
+
+(define-object GEmblemedIcon
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GEmblemedIcon")
+  (gtype-id "G_TYPE_EMBLEMED_ICON")
+)
+
+(define-object GFile
+  (in-module "Gio")
+  (c-name "GFile")
+  (gtype-id "G_TYPE_FILE")
+)
+
+(define-object GFileEnumerator
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GFileEnumerator")
+  (gtype-id "G_TYPE_FILE_ENUMERATOR")
+)
+
+(define-object GFileMonitor
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GFileMonitor")
+  (gtype-id "G_TYPE_FILE_MONITOR")
+)
+
+(define-object GIOStream
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GIOStream")
+  (gtype-id "G_TYPE_IO_STREAM")
+)
+
+(define-object GFileIOStream
+  (in-module "Gio")
+  (parent "GIOStream")
+  (c-name "GFileIOStream")
+  (gtype-id "G_TYPE_FILE_IO_STREAM")
+)
+
+(define-object GIcon
+  (in-module "Gio")
+  (c-name "GIcon")
+  (gtype-id "G_TYPE_ICON")
+)
+
+(define-object GInetAddress
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GInetAddress")
+  (gtype-id "G_TYPE_INET_ADDRESS")
+)
+
+(define-object GInetAddressMask
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GInetAddressMask")
+  (gtype-id "G_TYPE_INET_ADDRESS_MASK")
+)
+
+(define-object GInitable
+  (in-module "Gio")
+  (c-name "GInitable")
+  (gtype-id "G_TYPE_INITABLE")
+)
+
+(define-object GInputStream
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GInputStream")
+  (gtype-id "G_TYPE_INPUT_STREAM")
+)
+
+(define-object GFilterInputStream
+  (in-module "Gio")
+  (parent "GInputStream")
+  (c-name "GFilterInputStream")
+  (gtype-id "G_TYPE_FILTER_INPUT_STREAM")
+)
+
+(define-object GBufferedInputStream
+  (in-module "Gio")
+  (parent "GFilterInputStream")
+  (c-name "GBufferedInputStream")
+  (gtype-id "G_TYPE_BUFFERED_INPUT_STREAM")
+)
+
+(define-object GDataInputStream
+  (in-module "Gio")
+  (parent "GBufferedInputStream")
+  (c-name "GDataInputStream")
+  (gtype-id "G_TYPE_DATA_INPUT_STREAM")
+)
+
+(define-object GConverterInputStream
+  (in-module "Gio")
+  (parent "GFilterInputStream")
+  (c-name "GConverterInputStream")
+  (gtype-id "G_TYPE_CONVERTER_INPUT_STREAM")
+)
+
+(define-object GFileInputStream
+  (in-module "Gio")
+  (parent "GInputStream")
+  (c-name "GFileInputStream")
+  (gtype-id "G_TYPE_FILE_INPUT_STREAM")
+)
+
+(define-object GLoadableIcon
+  (in-module "Gio")
+  (c-name "GLoadableIcon")
+  (gtype-id "G_TYPE_LOADABLE_ICON")
+)
+
+(define-object GMemoryInputStream
+  (in-module "Gio")
+  (parent "GInputStream")
+  (c-name "GMemoryInputStream")
+  (gtype-id "G_TYPE_MEMORY_INPUT_STREAM")
+)
+
+(define-object GMenuAttributeIter
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GMenuAttributeIter")
+  (gtype-id "G_TYPE_MENU_ATTRIBUTE_ITER")
+)
+
+(define-object GMenuLinkIter
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GMenuLinkIter")
+  (gtype-id "G_TYPE_MENU_LINK_ITER")
+)
+
+(define-object GMenuModel
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GMenuModel")
+  (gtype-id "G_TYPE_MENU_MODEL")
+)
+
+(define-object GMount
+  (in-module "Gio")
+  (c-name "GMount")
+  (gtype-id "G_TYPE_MOUNT")
+)
+
+(define-object GMountOperation
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GMountOperation")
+  (gtype-id "G_TYPE_MOUNT_OPERATION")
+)
+
+(define-object GNetworkAddress
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GNetworkAddress")
+  (gtype-id "G_TYPE_NETWORK_ADDRESS")
+)
+
+(define-object GNetworkService
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GNetworkService")
+  (gtype-id "G_TYPE_NETWORK_SERVICE")
+)
+
+(define-object GOutputStream
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GOutputStream")
+  (gtype-id "G_TYPE_OUTPUT_STREAM")
+)
+
+(define-object GMemoryOutputStream
+  (in-module "Gio")
+  (parent "GOutputStream")
+  (c-name "GMemoryOutputStream")
+  (gtype-id "G_TYPE_MEMORY_OUTPUT_STREAM")
+)
+
+(define-object GFilterOutputStream
+  (in-module "Gio")
+  (parent "GOutputStream")
+  (c-name "GFilterOutputStream")
+  (gtype-id "G_TYPE_FILTER_OUTPUT_STREAM")
+)
+
+(define-object GBufferedOutputStream
+  (in-module "Gio")
+  (parent "GFilterOutputStream")
+  (c-name "GBufferedOutputStream")
+  (gtype-id "G_TYPE_BUFFERED_OUTPUT_STREAM")
+)
+
+(define-object GConverterOutputStream
+  (in-module "Gio")
+  (parent "GFilterOutputStream")
+  (c-name "GConverterOutputStream")
+  (gtype-id "G_TYPE_CONVERTER_OUTPUT_STREAM")
+)
+
+(define-object GDataOutputStream
+  (in-module "Gio")
+  (parent "GFilterOutputStream")
+  (c-name "GDataOutputStream")
+  (gtype-id "G_TYPE_DATA_OUTPUT_STREAM")
+)
+
+(define-object GFileOutputStream
+  (in-module "Gio")
+  (parent "GOutputStream")
+  (c-name "GFileOutputStream")
+  (gtype-id "G_TYPE_FILE_OUTPUT_STREAM")
+)
+
+(define-object GPermission
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GPermission")
+  (gtype-id "G_TYPE_PERMISSION")
+)
+
+(define-object GResolver
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GResolver")
+  (gtype-id "G_TYPE_RESOLVER")
+)
+
+(define-object GSeekable
+  (in-module "Gio")
+  (c-name "GSeekable")
+  (gtype-id "G_TYPE_SEEKABLE")
+)
+
+(define-object GSettings
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSettings")
+  (gtype-id "G_TYPE_SETTINGS")
+)
+
+;; (define-object GSettingsBackend
+;;   (in-module "Gio")
+;;   (parent "GObject")
+;;   (c-name "GSettingsBackend")
+;;   (gtype-id "G_TYPE_SETTINGS_BACKEND")
+;; )
+
+(define-object GSimpleActionGroup
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSimpleActionGroup")
+  (gtype-id "G_TYPE_SIMPLE_ACTION_GROUP")
+)
+
+(define-object GSimpleProxyResolver
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSimpleProxyResolver")
+  (gtype-id "G_TYPE_SIMPLE_PROXY_RESOLVER")
+)
+
+(define-object GSocket
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocket")
+  (gtype-id "G_TYPE_SOCKET")
+)
+
+(define-object GSocketAddress
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocketAddress")
+  (gtype-id "G_TYPE_SOCKET_ADDRESS")
+)
+
+(define-object GInetSocketAddress
+  (in-module "Gio")
+  (parent "GSocketAddress")
+  (c-name "GInetSocketAddress")
+  (gtype-id "G_TYPE_INET_SOCKET_ADDRESS")
+)
+
+(define-object GProxyAddress
+  (in-module "Gio")
+  (parent "GInetSocketAddress")
+  (c-name "GProxyAddress")
+  (gtype-id "G_TYPE_PROXY_ADDRESS")
+)
+
+(define-object GSocketAddressEnumerator
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocketAddressEnumerator")
+  (gtype-id "G_TYPE_SOCKET_ADDRESS_ENUMERATOR")
+)
+
+(define-object GProxyAddressEnumerator
+  (in-module "Gio")
+  (parent "GSocketAddressEnumerator")
+  (c-name "GProxyAddressEnumerator")
+  (gtype-id "G_TYPE_PROXY_ADDRESS_ENUMERATOR")
+)
+
+(define-object GSocketClient
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocketClient")
+  (gtype-id "G_TYPE_SOCKET_CLIENT")
+)
+
+(define-object GSocketConnectable
+  (in-module "Gio")
+  (c-name "GSocketConnectable")
+  (gtype-id "G_TYPE_SOCKET_CONNECTABLE")
+)
+
+(define-object GSocketConnection
+  (in-module "Gio")
+  (parent "GIOStream")
+  (c-name "GSocketConnection")
+  (gtype-id "G_TYPE_SOCKET_CONNECTION")
+)
+
+(define-object GSocketControlMessage
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocketControlMessage")
+  (gtype-id "G_TYPE_SOCKET_CONTROL_MESSAGE")
+)
+
+(define-object GSocketListener
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSocketListener")
+  (gtype-id "G_TYPE_SOCKET_LISTENER")
+)
+
+(define-object GSocketService
+  (in-module "Gio")
+  (parent "GSocketListener")
+  (c-name "GSocketService")
+  (gtype-id "G_TYPE_SOCKET_SERVICE")
+)
+
+(define-object GTcpConnection
+  (in-module "Gio")
+  (parent "GSocketConnection")
+  (c-name "GTcpConnection")
+  (gtype-id "G_TYPE_TCP_CONNECTION")
+)
+
+(define-object GTcpWrapperConnection
+  (in-module "Gio")
+  (parent "GTcpConnection")
+  (c-name "GTcpWrapperConnection")
+  (gtype-id "G_TYPE_TCP_WRAPPER_CONNECTION")
+)
+
+(define-object GThreadedSocketService
+  (in-module "Gio")
+  (parent "GSocketService")
+  (c-name "GThreadedSocketService")
+  (gtype-id "G_TYPE_THREADED_SOCKET_SERVICE")
+)
+
+(define-object GTlsCertificate
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GTlsCertificate")
+  (gtype-id "G_TYPE_TLS_CERTIFICATE")
+)
+
+(define-object GTlsConnection
+  (in-module "Gio")
+  (parent "GIOStream")
+  (c-name "GTlsConnection")
+  (gtype-id "G_TYPE_TLS_CONNECTION")
+)
+
+(define-object GTlsDatabase
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GTlsDatabase")
+  (gtype-id "G_TYPE_TLS_DATABASE")
+)
+
+(define-object GTlsInteraction
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GTlsInteraction")
+  (gtype-id "G_TYPE_TLS_INTERACTION")
+)
+
+(define-object GTlsPassword
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GTlsPassword")
+  (gtype-id "G_TYPE_TLS_PASSWORD")
+)
+
+(define-object GVfs
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GVfs")
+  (gtype-id "G_TYPE_VFS")
+)
+
+(define-object GVolume
+  (in-module "Gio")
+  (c-name "GVolume")
+  (gtype-id "G_TYPE_VOLUME")
+)
+
+(define-object GVolumeMonitor
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GVolumeMonitor")
+  (gtype-id "G_TYPE_VOLUME_MONITOR")
+)
+
+(define-object GNativeVolumeMonitor
+  (in-module "Gio")
+  (parent "GVolumeMonitor")
+  (c-name "GNativeVolumeMonitor")
+  (gtype-id "G_TYPE_NATIVE_VOLUME_MONITOR")
+)
+
+;; Enumerations and flags ...
+
+(define-flags GAppInfoCreateFlags
+  (in-module "Gio")
+  (c-name "GAppInfoCreateFlags")
+  (gtype-id "G_TYPE_APP_INFO_CREATE_FLAGS")
+  (values
+    '("none" "G_APP_INFO_CREATE_NONE")
+    '("needs-terminal" "G_APP_INFO_CREATE_NEEDS_TERMINAL")
+    '("supports-uris" "G_APP_INFO_CREATE_SUPPORTS_URIS")
+    '("supports-startup-notification" "G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION")
+  )
+)
+
+(define-flags GConverterFlags
+  (in-module "Gio")
+  (c-name "GConverterFlags")
+  (gtype-id "G_TYPE_CONVERTER_FLAGS")
+  (values
+    '("no-flags" "G_CONVERTER_NO_FLAGS")
+    '("input-at-end" "G_CONVERTER_INPUT_AT_END")
+    '("flush" "G_CONVERTER_FLUSH")
+  )
+)
+
+(define-enum GConverterResult
+  (in-module "Gio")
+  (c-name "GConverterResult")
+  (gtype-id "G_TYPE_CONVERTER_RESULT")
+  (values
+    '("error" "G_CONVERTER_ERROR")
+    '("converted" "G_CONVERTER_CONVERTED")
+    '("finished" "G_CONVERTER_FINISHED")
+    '("flushed" "G_CONVERTER_FLUSHED")
+  )
+)
+
+(define-enum GDataStreamByteOrder
+  (in-module "Gio")
+  (c-name "GDataStreamByteOrder")
+  (gtype-id "G_TYPE_DATA_STREAM_BYTE_ORDER")
+  (values
+    '("big-endian" "G_DATA_STREAM_BYTE_ORDER_BIG_ENDIAN")
+    '("little-endian" "G_DATA_STREAM_BYTE_ORDER_LITTLE_ENDIAN")
+    '("host-endian" "G_DATA_STREAM_BYTE_ORDER_HOST_ENDIAN")
+  )
+)
+
+(define-enum GDataStreamNewlineType
+  (in-module "Gio")
+  (c-name "GDataStreamNewlineType")
+  (gtype-id "G_TYPE_DATA_STREAM_NEWLINE_TYPE")
+  (values
+    '("lf" "G_DATA_STREAM_NEWLINE_TYPE_LF")
+    '("cr" "G_DATA_STREAM_NEWLINE_TYPE_CR")
+    '("cr-lf" "G_DATA_STREAM_NEWLINE_TYPE_CR_LF")
+    '("any" "G_DATA_STREAM_NEWLINE_TYPE_ANY")
+  )
+)
+
+(define-enum GFileAttributeType
+  (in-module "Gio")
+  (c-name "GFileAttributeType")
+  (gtype-id "G_TYPE_FILE_ATTRIBUTE_TYPE")
+  (values
+    '("invalid" "G_FILE_ATTRIBUTE_TYPE_INVALID")
+    '("string" "G_FILE_ATTRIBUTE_TYPE_STRING")
+    '("byte-string" "G_FILE_ATTRIBUTE_TYPE_BYTE_STRING")
+    '("boolean" "G_FILE_ATTRIBUTE_TYPE_BOOLEAN")
+    '("uint32" "G_FILE_ATTRIBUTE_TYPE_UINT32")
+    '("int32" "G_FILE_ATTRIBUTE_TYPE_INT32")
+    '("uint64" "G_FILE_ATTRIBUTE_TYPE_UINT64")
+    '("int64" "G_FILE_ATTRIBUTE_TYPE_INT64")
+    '("object" "G_FILE_ATTRIBUTE_TYPE_OBJECT")
+    '("stringv" "G_FILE_ATTRIBUTE_TYPE_STRINGV")
+  )
+)
+
+(define-flags GFileAttributeInfoFlags
+  (in-module "Gio")
+  (c-name "GFileAttributeInfoFlags")
+  (gtype-id "G_TYPE_FILE_ATTRIBUTE_INFO_FLAGS")
+  (values
+    '("none" "G_FILE_ATTRIBUTE_INFO_NONE")
+    '("copy-with-file" "G_FILE_ATTRIBUTE_INFO_COPY_WITH_FILE")
+    '("copy-when-moved" "G_FILE_ATTRIBUTE_INFO_COPY_WHEN_MOVED")
+  )
+)
+
+(define-enum GFileAttributeStatus
+  (in-module "Gio")
+  (c-name "GFileAttributeStatus")
+  (gtype-id "G_TYPE_FILE_ATTRIBUTE_STATUS")
+  (values
+    '("unset" "G_FILE_ATTRIBUTE_STATUS_UNSET")
+    '("set" "G_FILE_ATTRIBUTE_STATUS_SET")
+    '("error-setting" "G_FILE_ATTRIBUTE_STATUS_ERROR_SETTING")
+  )
+)
+
+(define-flags GFileQueryInfoFlags
+  (in-module "Gio")
+  (c-name "GFileQueryInfoFlags")
+  (gtype-id "G_TYPE_FILE_QUERY_INFO_FLAGS")
+  (values
+    '("none" "G_FILE_QUERY_INFO_NONE")
+    '("nofollow-symlinks" "G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS")
+  )
+)
+
+(define-flags GFileCreateFlags
+  (in-module "Gio")
+  (c-name "GFileCreateFlags")
+  (gtype-id "G_TYPE_FILE_CREATE_FLAGS")
+  (values
+    '("none" "G_FILE_CREATE_NONE")
+    '("private" "G_FILE_CREATE_PRIVATE")
+    '("replace-destination" "G_FILE_CREATE_REPLACE_DESTINATION")
+  )
+)
+
+(define-flags GFileMeasureFlags
+  (in-module "Gio")
+  (c-name "GFileMeasureFlags")
+  (gtype-id "G_TYPE_FILE_MEASURE_FLAGS")
+  (values
+    '("none" "G_FILE_MEASURE_NONE")
+    '("report-any-error" "G_FILE_MEASURE_REPORT_ANY_ERROR")
+    '("apparent-size" "G_FILE_MEASURE_APPARENT_SIZE")
+    '("no-xdev" "G_FILE_MEASURE_NO_XDEV")
+  )
+)
+
+(define-enum GMountMountFlags
+  (in-module "Gio")
+  (c-name "GMountMountFlags")
+  (gtype-id "G_TYPE_MOUNT_MOUNT_FLAGS")
+  (values
+    '("none" "G_MOUNT_MOUNT_NONE")
+  )
+)
+
+(define-flags GMountUnmountFlags
+  (in-module "Gio")
+  (c-name "GMountUnmountFlags")
+  (gtype-id "G_TYPE_MOUNT_UNMOUNT_FLAGS")
+  (values
+    '("none" "G_MOUNT_UNMOUNT_NONE")
+    '("force" "G_MOUNT_UNMOUNT_FORCE")
+  )
+)
+
+(define-enum GDriveStartFlags
+  (in-module "Gio")
+  (c-name "GDriveStartFlags")
+  (gtype-id "G_TYPE_DRIVE_START_FLAGS")
+  (values
+    '("none" "G_DRIVE_START_NONE")
+  )
+)
+
+(define-enum GDriveStartStopType
+  (in-module "Gio")
+  (c-name "GDriveStartStopType")
+  (gtype-id "G_TYPE_DRIVE_START_STOP_TYPE")
+  (values
+    '("unknown" "G_DRIVE_START_STOP_TYPE_UNKNOWN")
+    '("shutdown" "G_DRIVE_START_STOP_TYPE_SHUTDOWN")
+    '("network" "G_DRIVE_START_STOP_TYPE_NETWORK")
+    '("multidisk" "G_DRIVE_START_STOP_TYPE_MULTIDISK")
+    '("password" "G_DRIVE_START_STOP_TYPE_PASSWORD")
+  )
+)
+
+(define-flags GFileCopyFlags
+  (in-module "Gio")
+  (c-name "GFileCopyFlags")
+  (gtype-id "G_TYPE_FILE_COPY_FLAGS")
+  (values
+    '("none" "G_FILE_COPY_NONE")
+    '("overwrite" "G_FILE_COPY_OVERWRITE")
+    '("backup" "G_FILE_COPY_BACKUP")
+    '("nofollow-symlinks" "G_FILE_COPY_NOFOLLOW_SYMLINKS")
+    '("all-metadata" "G_FILE_COPY_ALL_METADATA")
+    '("no-fallback-for-move" "G_FILE_COPY_NO_FALLBACK_FOR_MOVE")
+    '("target-default-perms" "G_FILE_COPY_TARGET_DEFAULT_PERMS")
+  )
+)
+
+(define-flags GFileMonitorFlags
+  (in-module "Gio")
+  (c-name "GFileMonitorFlags")
+  (gtype-id "G_TYPE_FILE_MONITOR_FLAGS")
+  (values
+    '("none" "G_FILE_MONITOR_NONE")
+    '("watch-mounts" "G_FILE_MONITOR_WATCH_MOUNTS")
+    '("send-moved" "G_FILE_MONITOR_SEND_MOVED")
+    '("watch-hard-links" "G_FILE_MONITOR_WATCH_HARD_LINKS")
+  )
+)
+
+(define-enum GFileType
+  (in-module "Gio")
+  (c-name "GFileType")
+  (gtype-id "G_TYPE_FILE_TYPE")
+  (values
+    '("unknown" "G_FILE_TYPE_UNKNOWN")
+    '("regular" "G_FILE_TYPE_REGULAR")
+    '("directory" "G_FILE_TYPE_DIRECTORY")
+    '("symbolic-link" "G_FILE_TYPE_SYMBOLIC_LINK")
+    '("special" "G_FILE_TYPE_SPECIAL")
+    '("shortcut" "G_FILE_TYPE_SHORTCUT")
+    '("mountable" "G_FILE_TYPE_MOUNTABLE")
+  )
+)
+
+(define-enum GFilesystemPreviewType
+  (in-module "Gio")
+  (c-name "GFilesystemPreviewType")
+  (gtype-id "G_TYPE_FILESYSTEM_PREVIEW_TYPE")
+  (values
+    '("if-always" "G_FILESYSTEM_PREVIEW_TYPE_IF_ALWAYS")
+    '("if-local" "G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL")
+    '("never" "G_FILESYSTEM_PREVIEW_TYPE_NEVER")
+  )
+)
+
+(define-enum GFileMonitorEvent
+  (in-module "Gio")
+  (c-name "GFileMonitorEvent")
+  (gtype-id "G_TYPE_FILE_MONITOR_EVENT")
+  (values
+    '("changed" "G_FILE_MONITOR_EVENT_CHANGED")
+    '("changes-done-hint" "G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT")
+    '("deleted" "G_FILE_MONITOR_EVENT_DELETED")
+    '("created" "G_FILE_MONITOR_EVENT_CREATED")
+    '("attribute-changed" "G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED")
+    '("pre-unmount" "G_FILE_MONITOR_EVENT_PRE_UNMOUNT")
+    '("unmounted" "G_FILE_MONITOR_EVENT_UNMOUNTED")
+    '("moved" "G_FILE_MONITOR_EVENT_MOVED")
+  )
+)
+
+(define-enum GIOErrorEnum
+  (in-module "Gio")
+  (c-name "GIOErrorEnum")
+  (gtype-id "G_TYPE_IO_ERROR_ENUM")
+  (values
+    '("failed" "G_IO_ERROR_FAILED")
+    '("not-found" "G_IO_ERROR_NOT_FOUND")
+    '("exists" "G_IO_ERROR_EXISTS")
+    '("is-directory" "G_IO_ERROR_IS_DIRECTORY")
+    '("not-directory" "G_IO_ERROR_NOT_DIRECTORY")
+    '("not-empty" "G_IO_ERROR_NOT_EMPTY")
+    '("not-regular-file" "G_IO_ERROR_NOT_REGULAR_FILE")
+    '("not-symbolic-link" "G_IO_ERROR_NOT_SYMBOLIC_LINK")
+    '("not-mountable-file" "G_IO_ERROR_NOT_MOUNTABLE_FILE")
+    '("filename-too-long" "G_IO_ERROR_FILENAME_TOO_LONG")
+    '("invalid-filename" "G_IO_ERROR_INVALID_FILENAME")
+    '("too-many-links" "G_IO_ERROR_TOO_MANY_LINKS")
+    '("no-space" "G_IO_ERROR_NO_SPACE")
+    '("invalid-argument" "G_IO_ERROR_INVALID_ARGUMENT")
+    '("permission-denied" "G_IO_ERROR_PERMISSION_DENIED")
+    '("not-supported" "G_IO_ERROR_NOT_SUPPORTED")
+    '("not-mounted" "G_IO_ERROR_NOT_MOUNTED")
+    '("already-mounted" "G_IO_ERROR_ALREADY_MOUNTED")
+    '("closed" "G_IO_ERROR_CLOSED")
+    '("cancelled" "G_IO_ERROR_CANCELLED")
+    '("pending" "G_IO_ERROR_PENDING")
+    '("read-only" "G_IO_ERROR_READ_ONLY")
+    '("cant-create-backup" "G_IO_ERROR_CANT_CREATE_BACKUP")
+    '("wrong-etag" "G_IO_ERROR_WRONG_ETAG")
+    '("timed-out" "G_IO_ERROR_TIMED_OUT")
+    '("would-recurse" "G_IO_ERROR_WOULD_RECURSE")
+    '("busy" "G_IO_ERROR_BUSY")
+    '("would-block" "G_IO_ERROR_WOULD_BLOCK")
+    '("host-not-found" "G_IO_ERROR_HOST_NOT_FOUND")
+    '("would-merge" "G_IO_ERROR_WOULD_MERGE")
+    '("failed-handled" "G_IO_ERROR_FAILED_HANDLED")
+    '("too-many-open-files" "G_IO_ERROR_TOO_MANY_OPEN_FILES")
+    '("not-initialized" "G_IO_ERROR_NOT_INITIALIZED")
+    '("address-in-use" "G_IO_ERROR_ADDRESS_IN_USE")
+    '("partial-input" "G_IO_ERROR_PARTIAL_INPUT")
+    '("invalid-data" "G_IO_ERROR_INVALID_DATA")
+    '("dbus-error" "G_IO_ERROR_DBUS_ERROR")
+    '("host-unreachable" "G_IO_ERROR_HOST_UNREACHABLE")
+    '("network-unreachable" "G_IO_ERROR_NETWORK_UNREACHABLE")
+    '("connection-refused" "G_IO_ERROR_CONNECTION_REFUSED")
+    '("proxy-failed" "G_IO_ERROR_PROXY_FAILED")
+    '("proxy-auth-failed" "G_IO_ERROR_PROXY_AUTH_FAILED")
+    '("proxy-need-auth" "G_IO_ERROR_PROXY_NEED_AUTH")
+    '("proxy-not-allowed" "G_IO_ERROR_PROXY_NOT_ALLOWED")
+    '("broken-pipe" "G_IO_ERROR_BROKEN_PIPE")
+  )
+)
+
+(define-flags GAskPasswordFlags
+  (in-module "Gio")
+  (c-name "GAskPasswordFlags")
+  (gtype-id "G_TYPE_ASK_PASSWORD_FLAGS")
+  (values
+    '("need-password" "G_ASK_PASSWORD_NEED_PASSWORD")
+    '("need-username" "G_ASK_PASSWORD_NEED_USERNAME")
+    '("need-domain" "G_ASK_PASSWORD_NEED_DOMAIN")
+    '("saving-supported" "G_ASK_PASSWORD_SAVING_SUPPORTED")
+    '("anonymous-supported" "G_ASK_PASSWORD_ANONYMOUS_SUPPORTED")
+  )
+)
+
+(define-enum GPasswordSave
+  (in-module "Gio")
+  (c-name "GPasswordSave")
+  (gtype-id "G_TYPE_PASSWORD_SAVE")
+  (values
+    '("never" "G_PASSWORD_SAVE_NEVER")
+    '("for-session" "G_PASSWORD_SAVE_FOR_SESSION")
+    '("permanently" "G_PASSWORD_SAVE_PERMANENTLY")
+  )
+)
+
+(define-enum GMountOperationResult
+  (in-module "Gio")
+  (c-name "GMountOperationResult")
+  (gtype-id "G_TYPE_MOUNT_OPERATION_RESULT")
+  (values
+    '("handled" "G_MOUNT_OPERATION_HANDLED")
+    '("aborted" "G_MOUNT_OPERATION_ABORTED")
+    '("unhandled" "G_MOUNT_OPERATION_UNHANDLED")
+  )
+)
+
+(define-flags GOutputStreamSpliceFlags
+  (in-module "Gio")
+  (c-name "GOutputStreamSpliceFlags")
+  (gtype-id "G_TYPE_OUTPUT_STREAM_SPLICE_FLAGS")
+  (values
+    '("none" "G_OUTPUT_STREAM_SPLICE_NONE")
+    '("close-source" "G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE")
+    '("close-target" "G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET")
+  )
+)
+
+(define-flags GIOStreamSpliceFlags
+  (in-module "Gio")
+  (c-name "GIOStreamSpliceFlags")
+  (gtype-id "G_TYPE_IO_STREAM_SPLICE_FLAGS")
+  (values
+    '("none" "G_IO_STREAM_SPLICE_NONE")
+    '("close-stream1" "G_IO_STREAM_SPLICE_CLOSE_STREAM1")
+    '("close-stream2" "G_IO_STREAM_SPLICE_CLOSE_STREAM2")
+    '("wait-for-both" "G_IO_STREAM_SPLICE_WAIT_FOR_BOTH")
+  )
+)
+
+(define-enum GEmblemOrigin
+  (in-module "Gio")
+  (c-name "GEmblemOrigin")
+  (gtype-id "G_TYPE_EMBLEM_ORIGIN")
+  (values
+    '("unknown" "G_EMBLEM_ORIGIN_UNKNOWN")
+    '("device" "G_EMBLEM_ORIGIN_DEVICE")
+    '("livemetadata" "G_EMBLEM_ORIGIN_LIVEMETADATA")
+    '("tag" "G_EMBLEM_ORIGIN_TAG")
+  )
+)
+
+(define-enum GResolverError
+  (in-module "Gio")
+  (c-name "GResolverError")
+  (gtype-id "G_TYPE_RESOLVER_ERROR")
+  (values
+    '("not-found" "G_RESOLVER_ERROR_NOT_FOUND")
+    '("temporary-failure" "G_RESOLVER_ERROR_TEMPORARY_FAILURE")
+    '("internal" "G_RESOLVER_ERROR_INTERNAL")
+  )
+)
+
+(define-enum GResolverRecordType
+  (in-module "Gio")
+  (c-name "GResolverRecordType")
+  (gtype-id "G_TYPE_RESOLVER_RECORD_TYPE")
+  (values
+    '("srv" "G_RESOLVER_RECORD_SRV")
+    '("mx" "G_RESOLVER_RECORD_MX")
+    '("txt" "G_RESOLVER_RECORD_TXT")
+    '("soa" "G_RESOLVER_RECORD_SOA")
+    '("ns" "G_RESOLVER_RECORD_NS")
+  )
+)
+
+(define-enum GResourceError
+  (in-module "Gio")
+  (c-name "GResourceError")
+  (gtype-id "G_TYPE_RESOURCE_ERROR")
+  (values
+    '("not-found" "G_RESOURCE_ERROR_NOT_FOUND")
+    '("internal" "G_RESOURCE_ERROR_INTERNAL")
+  )
+)
+
+(define-flags GResourceFlags
+  (in-module "Gio")
+  (c-name "GResourceFlags")
+  (gtype-id "G_TYPE_RESOURCE_FLAGS")
+  (values
+    '("none" "G_RESOURCE_FLAGS_NONE")
+    '("compressed" "G_RESOURCE_FLAGS_COMPRESSED")
+  )
+)
+
+(define-enum GResourceLookupFlags
+  (in-module "Gio")
+  (c-name "GResourceLookupFlags")
+  (gtype-id "G_TYPE_RESOURCE_LOOKUP_FLAGS")
+  (values
+    '("none" "G_RESOURCE_LOOKUP_FLAGS_NONE")
+  )
+)
+
+(define-enum GSocketFamily
+  (in-module "Gio")
+  (c-name "GSocketFamily")
+  (gtype-id "G_TYPE_SOCKET_FAMILY")
+  (values
+    '("invalid" "G_SOCKET_FAMILY_INVALID")
+    '("unix" "G_SOCKET_FAMILY_UNIX")
+    '("ipv4" "G_SOCKET_FAMILY_IPV4")
+    '("ipv6" "G_SOCKET_FAMILY_IPV6")
+  )
+)
+
+(define-enum GSocketType
+  (in-module "Gio")
+  (c-name "GSocketType")
+  (gtype-id "G_TYPE_SOCKET_TYPE")
+  (values
+    '("invalid" "G_SOCKET_TYPE_INVALID")
+    '("stream" "G_SOCKET_TYPE_STREAM")
+    '("datagram" "G_SOCKET_TYPE_DATAGRAM")
+    '("seqpacket" "G_SOCKET_TYPE_SEQPACKET")
+  )
+)
+
+(define-enum GSocketMsgFlags
+  (in-module "Gio")
+  (c-name "GSocketMsgFlags")
+  (gtype-id "G_TYPE_SOCKET_MSG_FLAGS")
+  (values
+    '("none" "G_SOCKET_MSG_NONE")
+    '("oob" "G_SOCKET_MSG_OOB")
+    '("peek" "G_SOCKET_MSG_PEEK")
+    '("dontroute" "G_SOCKET_MSG_DONTROUTE")
+  )
+)
+
+(define-enum GSocketProtocol
+  (in-module "Gio")
+  (c-name "GSocketProtocol")
+  (gtype-id "G_TYPE_SOCKET_PROTOCOL")
+  (values
+    '("unknown" "G_SOCKET_PROTOCOL_UNKNOWN")
+    '("default" "G_SOCKET_PROTOCOL_DEFAULT")
+    '("tcp" "G_SOCKET_PROTOCOL_TCP")
+    '("udp" "G_SOCKET_PROTOCOL_UDP")
+    '("sctp" "G_SOCKET_PROTOCOL_SCTP")
+  )
+)
+
+(define-enum GZlibCompressorFormat
+  (in-module "Gio")
+  (c-name "GZlibCompressorFormat")
+  (gtype-id "G_TYPE_ZLIB_COMPRESSOR_FORMAT")
+  (values
+    '("zlib" "G_ZLIB_COMPRESSOR_FORMAT_ZLIB")
+    '("gzip" "G_ZLIB_COMPRESSOR_FORMAT_GZIP")
+    '("raw" "G_ZLIB_COMPRESSOR_FORMAT_RAW")
+  )
+)
+
+(define-enum GUnixSocketAddressType
+  (in-module "Gio")
+  (c-name "GUnixSocketAddressType")
+  (gtype-id "G_TYPE_UNIX_SOCKET_ADDRESS_TYPE")
+  (values
+    '("invalid" "G_UNIX_SOCKET_ADDRESS_INVALID")
+    '("anonymous" "G_UNIX_SOCKET_ADDRESS_ANONYMOUS")
+    '("path" "G_UNIX_SOCKET_ADDRESS_PATH")
+    '("abstract" "G_UNIX_SOCKET_ADDRESS_ABSTRACT")
+    '("abstract-padded" "G_UNIX_SOCKET_ADDRESS_ABSTRACT_PADDED")
+  )
+)
+
+(define-enum GBusType
+  (in-module "Gio")
+  (c-name "GBusType")
+  (gtype-id "G_TYPE_BUS_TYPE")
+  (values
+    '("starter" "G_BUS_TYPE_STARTER")
+    '("none" "G_BUS_TYPE_NONE")
+    '("system" "G_BUS_TYPE_SYSTEM")
+    '("session" "G_BUS_TYPE_SESSION")
+  )
+)
+
+(define-flags GBusNameOwnerFlags
+  (in-module "Gio")
+  (c-name "GBusNameOwnerFlags")
+  (gtype-id "G_TYPE_BUS_NAME_OWNER_FLAGS")
+  (values
+    '("none" "G_BUS_NAME_OWNER_FLAGS_NONE")
+    '("allow-replacement" "G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT")
+    '("replace" "G_BUS_NAME_OWNER_FLAGS_REPLACE")
+  )
+)
+
+(define-flags GBusNameWatcherFlags
+  (in-module "Gio")
+  (c-name "GBusNameWatcherFlags")
+  (gtype-id "G_TYPE_BUS_NAME_WATCHER_FLAGS")
+  (values
+    '("none" "G_BUS_NAME_WATCHER_FLAGS_NONE")
+    '("auto-start" "G_BUS_NAME_WATCHER_FLAGS_AUTO_START")
+  )
+)
+
+(define-flags GDBusProxyFlags
+  (in-module "Gio")
+  (c-name "GDBusProxyFlags")
+  (gtype-id "G_TYPE_DBUS_PROXY_FLAGS")
+  (values
+    '("none" "G_DBUS_PROXY_FLAGS_NONE")
+    '("do-not-load-properties" "G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES")
+    '("do-not-connect-signals" "G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS")
+    '("do-not-auto-start" "G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START")
+    '("get-invalidated-properties" "G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES")
+    '("do-not-auto-start-at-construction" "G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION")
+  )
+)
+
+(define-enum GDBusError
+  (in-module "Gio")
+  (c-name "GDBusError")
+  (gtype-id "G_TYPE_DBUS_ERROR")
+  (values
+    '("failed" "G_DBUS_ERROR_FAILED")
+    '("no-memory" "G_DBUS_ERROR_NO_MEMORY")
+    '("service-unknown" "G_DBUS_ERROR_SERVICE_UNKNOWN")
+    '("name-has-no-owner" "G_DBUS_ERROR_NAME_HAS_NO_OWNER")
+    '("no-reply" "G_DBUS_ERROR_NO_REPLY")
+    '("io-error" "G_DBUS_ERROR_IO_ERROR")
+    '("bad-address" "G_DBUS_ERROR_BAD_ADDRESS")
+    '("not-supported" "G_DBUS_ERROR_NOT_SUPPORTED")
+    '("limits-exceeded" "G_DBUS_ERROR_LIMITS_EXCEEDED")
+    '("access-denied" "G_DBUS_ERROR_ACCESS_DENIED")
+    '("auth-failed" "G_DBUS_ERROR_AUTH_FAILED")
+    '("no-server" "G_DBUS_ERROR_NO_SERVER")
+    '("timeout" "G_DBUS_ERROR_TIMEOUT")
+    '("no-network" "G_DBUS_ERROR_NO_NETWORK")
+    '("address-in-use" "G_DBUS_ERROR_ADDRESS_IN_USE")
+    '("disconnected" "G_DBUS_ERROR_DISCONNECTED")
+    '("invalid-args" "G_DBUS_ERROR_INVALID_ARGS")
+    '("file-not-found" "G_DBUS_ERROR_FILE_NOT_FOUND")
+    '("file-exists" "G_DBUS_ERROR_FILE_EXISTS")
+    '("unknown-method" "G_DBUS_ERROR_UNKNOWN_METHOD")
+    '("timed-out" "G_DBUS_ERROR_TIMED_OUT")
+    '("match-rule-not-found" "G_DBUS_ERROR_MATCH_RULE_NOT_FOUND")
+    '("match-rule-invalid" "G_DBUS_ERROR_MATCH_RULE_INVALID")
+    '("spawn-exec-failed" "G_DBUS_ERROR_SPAWN_EXEC_FAILED")
+    '("spawn-fork-failed" "G_DBUS_ERROR_SPAWN_FORK_FAILED")
+    '("spawn-child-exited" "G_DBUS_ERROR_SPAWN_CHILD_EXITED")
+    '("spawn-child-signaled" "G_DBUS_ERROR_SPAWN_CHILD_SIGNALED")
+    '("spawn-failed" "G_DBUS_ERROR_SPAWN_FAILED")
+    '("spawn-setup-failed" "G_DBUS_ERROR_SPAWN_SETUP_FAILED")
+    '("spawn-config-invalid" "G_DBUS_ERROR_SPAWN_CONFIG_INVALID")
+    '("spawn-service-invalid" "G_DBUS_ERROR_SPAWN_SERVICE_INVALID")
+    '("spawn-service-not-found" "G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND")
+    '("spawn-permissions-invalid" "G_DBUS_ERROR_SPAWN_PERMISSIONS_INVALID")
+    '("spawn-file-invalid" "G_DBUS_ERROR_SPAWN_FILE_INVALID")
+    '("spawn-no-memory" "G_DBUS_ERROR_SPAWN_NO_MEMORY")
+    '("unix-process-id-unknown" "G_DBUS_ERROR_UNIX_PROCESS_ID_UNKNOWN")
+    '("invalid-signature" "G_DBUS_ERROR_INVALID_SIGNATURE")
+    '("invalid-file-content" "G_DBUS_ERROR_INVALID_FILE_CONTENT")
+    '("selinux-security-context-unknown" "G_DBUS_ERROR_SELINUX_SECURITY_CONTEXT_UNKNOWN")
+    '("adt-audit-data-unknown" "G_DBUS_ERROR_ADT_AUDIT_DATA_UNKNOWN")
+    '("object-path-in-use" "G_DBUS_ERROR_OBJECT_PATH_IN_USE")
+  )
+)
+
+(define-flags GDBusConnectionFlags
+  (in-module "Gio")
+  (c-name "GDBusConnectionFlags")
+  (gtype-id "G_TYPE_DBUS_CONNECTION_FLAGS")
+  (values
+    '("none" "G_DBUS_CONNECTION_FLAGS_NONE")
+    '("authentication-client" "G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT")
+    '("authentication-server" "G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_SERVER")
+    '("authentication-allow-anonymous" "G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS")
+    '("message-bus-connection" "G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION")
+    '("delay-message-processing" "G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING")
+  )
+)
+
+(define-flags GDBusCapabilityFlags
+  (in-module "Gio")
+  (c-name "GDBusCapabilityFlags")
+  (gtype-id "G_TYPE_DBUS_CAPABILITY_FLAGS")
+  (values
+    '("none" "G_DBUS_CAPABILITY_FLAGS_NONE")
+    '("unix-fd-passing" "G_DBUS_CAPABILITY_FLAGS_UNIX_FD_PASSING")
+  )
+)
+
+(define-flags GDBusCallFlags
+  (in-module "Gio")
+  (c-name "GDBusCallFlags")
+  (gtype-id "G_TYPE_DBUS_CALL_FLAGS")
+  (values
+    '("none" "G_DBUS_CALL_FLAGS_NONE")
+    '("no-auto-start" "G_DBUS_CALL_FLAGS_NO_AUTO_START")
+  )
+)
+
+(define-enum GDBusMessageType
+  (in-module "Gio")
+  (c-name "GDBusMessageType")
+  (gtype-id "G_TYPE_DBUS_MESSAGE_TYPE")
+  (values
+    '("invalid" "G_DBUS_MESSAGE_TYPE_INVALID")
+    '("method-call" "G_DBUS_MESSAGE_TYPE_METHOD_CALL")
+    '("method-return" "G_DBUS_MESSAGE_TYPE_METHOD_RETURN")
+    '("error" "G_DBUS_MESSAGE_TYPE_ERROR")
+    '("signal" "G_DBUS_MESSAGE_TYPE_SIGNAL")
+  )
+)
+
+(define-flags GDBusMessageFlags
+  (in-module "Gio")
+  (c-name "GDBusMessageFlags")
+  (gtype-id "G_TYPE_DBUS_MESSAGE_FLAGS")
+  (values
+    '("none" "G_DBUS_MESSAGE_FLAGS_NONE")
+    '("no-reply-expected" "G_DBUS_MESSAGE_FLAGS_NO_REPLY_EXPECTED")
+    '("no-auto-start" "G_DBUS_MESSAGE_FLAGS_NO_AUTO_START")
+  )
+)
+
+(define-enum GDBusMessageHeaderField
+  (in-module "Gio")
+  (c-name "GDBusMessageHeaderField")
+  (gtype-id "G_TYPE_DBUS_MESSAGE_HEADER_FIELD")
+  (values
+    '("invalid" "G_DBUS_MESSAGE_HEADER_FIELD_INVALID")
+    '("path" "G_DBUS_MESSAGE_HEADER_FIELD_PATH")
+    '("interface" "G_DBUS_MESSAGE_HEADER_FIELD_INTERFACE")
+    '("member" "G_DBUS_MESSAGE_HEADER_FIELD_MEMBER")
+    '("error-name" "G_DBUS_MESSAGE_HEADER_FIELD_ERROR_NAME")
+    '("reply-serial" "G_DBUS_MESSAGE_HEADER_FIELD_REPLY_SERIAL")
+    '("destination" "G_DBUS_MESSAGE_HEADER_FIELD_DESTINATION")
+    '("sender" "G_DBUS_MESSAGE_HEADER_FIELD_SENDER")
+    '("signature" "G_DBUS_MESSAGE_HEADER_FIELD_SIGNATURE")
+    '("num-unix-fds" "G_DBUS_MESSAGE_HEADER_FIELD_NUM_UNIX_FDS")
+  )
+)
+
+(define-flags GDBusPropertyInfoFlags
+  (in-module "Gio")
+  (c-name "GDBusPropertyInfoFlags")
+  (gtype-id "G_TYPE_DBUS_PROPERTY_INFO_FLAGS")
+  (values
+    '("none" "G_DBUS_PROPERTY_INFO_FLAGS_NONE")
+    '("readable" "G_DBUS_PROPERTY_INFO_FLAGS_READABLE")
+    '("writable" "G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE")
+  )
+)
+
+(define-flags GDBusSubtreeFlags
+  (in-module "Gio")
+  (c-name "GDBusSubtreeFlags")
+  (gtype-id "G_TYPE_DBUS_SUBTREE_FLAGS")
+  (values
+    '("none" "G_DBUS_SUBTREE_FLAGS_NONE")
+    '("dispatch-to-unenumerated-nodes" "G_DBUS_SUBTREE_FLAGS_DISPATCH_TO_UNENUMERATED_NODES")
+  )
+)
+
+(define-flags GDBusServerFlags
+  (in-module "Gio")
+  (c-name "GDBusServerFlags")
+  (gtype-id "G_TYPE_DBUS_SERVER_FLAGS")
+  (values
+    '("none" "G_DBUS_SERVER_FLAGS_NONE")
+    '("run-in-thread" "G_DBUS_SERVER_FLAGS_RUN_IN_THREAD")
+    '("authentication-allow-anonymous" "G_DBUS_SERVER_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS")
+  )
+)
+
+(define-flags GDBusSignalFlags
+  (in-module "Gio")
+  (c-name "GDBusSignalFlags")
+  (gtype-id "G_TYPE_DBUS_SIGNAL_FLAGS")
+  (values
+    '("none" "G_DBUS_SIGNAL_FLAGS_NONE")
+    '("no-match-rule" "G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE")
+    '("match-arg0-namespace" "G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE")
+    '("match-arg0-path" "G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_PATH")
+  )
+)
+
+(define-flags GDBusSendMessageFlags
+  (in-module "Gio")
+  (c-name "GDBusSendMessageFlags")
+  (gtype-id "G_TYPE_DBUS_SEND_MESSAGE_FLAGS")
+  (values
+    '("none" "G_DBUS_SEND_MESSAGE_FLAGS_NONE")
+    '("preserve-serial" "G_DBUS_SEND_MESSAGE_FLAGS_PRESERVE_SERIAL")
+  )
+)
+
+(define-enum GCredentialsType
+  (in-module "Gio")
+  (c-name "GCredentialsType")
+  (gtype-id "G_TYPE_CREDENTIALS_TYPE")
+  (values
+    '("invalid" "G_CREDENTIALS_TYPE_INVALID")
+    '("linux-ucred" "G_CREDENTIALS_TYPE_LINUX_UCRED")
+    '("freebsd-cmsgcred" "G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED")
+    '("openbsd-sockpeercred" "G_CREDENTIALS_TYPE_OPENBSD_SOCKPEERCRED")
+    '("solaris-ucred" "G_CREDENTIALS_TYPE_SOLARIS_UCRED")
+  )
+)
+
+(define-enum GDBusMessageByteOrder
+  (in-module "Gio")
+  (c-name "GDBusMessageByteOrder")
+  (gtype-id "G_TYPE_DBUS_MESSAGE_BYTE_ORDER")
+  (values
+    '("big-endian" "G_DBUS_MESSAGE_BYTE_ORDER_BIG_ENDIAN")
+    '("little-endian" "G_DBUS_MESSAGE_BYTE_ORDER_LITTLE_ENDIAN")
+  )
+)
+
+(define-flags GApplicationFlags
+  (in-module "Gio")
+  (c-name "GApplicationFlags")
+  (gtype-id "G_TYPE_APPLICATION_FLAGS")
+  (values
+    '("flags-none" "G_APPLICATION_FLAGS_NONE")
+    '("is-service" "G_APPLICATION_IS_SERVICE")
+    '("is-launcher" "G_APPLICATION_IS_LAUNCHER")
+    '("handles-open" "G_APPLICATION_HANDLES_OPEN")
+    '("handles-command-line" "G_APPLICATION_HANDLES_COMMAND_LINE")
+    '("send-environment" "G_APPLICATION_SEND_ENVIRONMENT")
+    '("non-unique" "G_APPLICATION_NON_UNIQUE")
+  )
+)
+
+(define-enum GTlsError
+  (in-module "Gio")
+  (c-name "GTlsError")
+  (gtype-id "G_TYPE_TLS_ERROR")
+  (values
+    '("unavailable" "G_TLS_ERROR_UNAVAILABLE")
+    '("misc" "G_TLS_ERROR_MISC")
+    '("bad-certificate" "G_TLS_ERROR_BAD_CERTIFICATE")
+    '("not-tls" "G_TLS_ERROR_NOT_TLS")
+    '("handshake" "G_TLS_ERROR_HANDSHAKE")
+    '("certificate-required" "G_TLS_ERROR_CERTIFICATE_REQUIRED")
+    '("eof" "G_TLS_ERROR_EOF")
+  )
+)
+
+(define-flags GTlsCertificateFlags
+  (in-module "Gio")
+  (c-name "GTlsCertificateFlags")
+  (gtype-id "G_TYPE_TLS_CERTIFICATE_FLAGS")
+  (values
+    '("unknown-ca" "G_TLS_CERTIFICATE_UNKNOWN_CA")
+    '("bad-identity" "G_TLS_CERTIFICATE_BAD_IDENTITY")
+    '("not-activated" "G_TLS_CERTIFICATE_NOT_ACTIVATED")
+    '("expired" "G_TLS_CERTIFICATE_EXPIRED")
+    '("revoked" "G_TLS_CERTIFICATE_REVOKED")
+    '("insecure" "G_TLS_CERTIFICATE_INSECURE")
+    '("generic-error" "G_TLS_CERTIFICATE_GENERIC_ERROR")
+    '("validate-all" "G_TLS_CERTIFICATE_VALIDATE_ALL")
+  )
+)
+
+(define-enum GTlsAuthenticationMode
+  (in-module "Gio")
+  (c-name "GTlsAuthenticationMode")
+  (gtype-id "G_TYPE_TLS_AUTHENTICATION_MODE")
+  (values
+    '("none" "G_TLS_AUTHENTICATION_NONE")
+    '("requested" "G_TLS_AUTHENTICATION_REQUESTED")
+    '("required" "G_TLS_AUTHENTICATION_REQUIRED")
+  )
+)
+
+(define-enum GTlsRehandshakeMode
+  (in-module "Gio")
+  (c-name "GTlsRehandshakeMode")
+  (gtype-id "G_TYPE_TLS_REHANDSHAKE_MODE")
+  (values
+    '("never" "G_TLS_REHANDSHAKE_NEVER")
+    '("safely" "G_TLS_REHANDSHAKE_SAFELY")
+    '("unsafely" "G_TLS_REHANDSHAKE_UNSAFELY")
+  )
+)
+
+(define-enum GTlsInteractionResult
+  (in-module "Gio")
+  (c-name "GTlsInteractionResult")
+  (gtype-id "G_TYPE_TLS_INTERACTION_RESULT")
+  (values
+    '("unhandled" "G_TLS_INTERACTION_UNHANDLED")
+    '("handled" "G_TLS_INTERACTION_HANDLED")
+    '("failed" "G_TLS_INTERACTION_FAILED")
+  )
+)
+
+(define-flags GDBusInterfaceSkeletonFlags
+  (in-module "Gio")
+  (c-name "GDBusInterfaceSkeletonFlags")
+  (gtype-id "G_TYPE_DBUS_INTERFACE_SKELETON_FLAGS")
+  (values
+    '("none" "G_DBUS_INTERFACE_SKELETON_FLAGS_NONE")
+    '("handle-method-invocations-in-thread" "G_DBUS_INTERFACE_SKELETON_FLAGS_HANDLE_METHOD_INVOCATIONS_IN_THREAD")
+  )
+)
+
+(define-flags GDBusObjectManagerClientFlags
+  (in-module "Gio")
+  (c-name "GDBusObjectManagerClientFlags")
+  (gtype-id "G_TYPE_DBUS_OBJECT_MANAGER_CLIENT_FLAGS")
+  (values
+    '("none" "G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE")
+    '("do-not-auto-start" "G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_DO_NOT_AUTO_START")
+  )
+)
+
+(define-enum GTlsDatabaseVerifyFlags
+  (in-module "Gio")
+  (c-name "GTlsDatabaseVerifyFlags")
+  (gtype-id "G_TYPE_TLS_DATABASE_VERIFY_FLAGS")
+  (values
+    '("none" "G_TLS_DATABASE_VERIFY_NONE")
+  )
+)
+
+(define-enum GTlsDatabaseLookupFlags
+  (in-module "Gio")
+  (c-name "GTlsDatabaseLookupFlags")
+  (gtype-id "G_TYPE_TLS_DATABASE_LOOKUP_FLAGS")
+  (values
+    '("none" "G_TLS_DATABASE_LOOKUP_NONE")
+    '("keypair" "G_TLS_DATABASE_LOOKUP_KEYPAIR")
+  )
+)
+
+(define-enum GTlsCertificateRequestFlags
+  (in-module "Gio")
+  (c-name "GTlsCertificateRequestFlags")
+  (gtype-id "G_TYPE_TLS_CERTIFICATE_REQUEST_FLAGS")
+  (values
+    '("none" "G_TLS_CERTIFICATE_REQUEST_NONE")
+  )
+)
+
+(define-enum GIOModuleScopeFlags
+  (in-module "Gio")
+  (c-name "GIOModuleScopeFlags")
+  (gtype-id "G_TYPE_IO_MODULE_SCOPE_FLAGS")
+  (values
+    '("none" "G_IO_MODULE_SCOPE_NONE")
+    '("block-duplicates" "G_IO_MODULE_SCOPE_BLOCK_DUPLICATES")
+  )
+)
+
+(define-enum GSocketClientEvent
+  (in-module "Gio")
+  (c-name "GSocketClientEvent")
+  (gtype-id "G_TYPE_SOCKET_CLIENT_EVENT")
+  (values
+    '("resolving" "G_SOCKET_CLIENT_RESOLVING")
+    '("resolved" "G_SOCKET_CLIENT_RESOLVED")
+    '("connecting" "G_SOCKET_CLIENT_CONNECTING")
+    '("connected" "G_SOCKET_CLIENT_CONNECTED")
+    '("proxy-negotiating" "G_SOCKET_CLIENT_PROXY_NEGOTIATING")
+    '("proxy-negotiated" "G_SOCKET_CLIENT_PROXY_NEGOTIATED")
+    '("tls-handshaking" "G_SOCKET_CLIENT_TLS_HANDSHAKING")
+    '("tls-handshaked" "G_SOCKET_CLIENT_TLS_HANDSHAKED")
+    '("complete" "G_SOCKET_CLIENT_COMPLETE")
+  )
+)
+
+(define-enum GTestDBusFlags
+  (in-module "Gio")
+  (c-name "GTestDBusFlags")
+  (gtype-id "G_TYPE_TEST_DBUS_FLAGS")
+  (values
+    '("none" "G_TEST_DBUS_NONE")
+  )
+)
+
+(define-flags GSubprocessFlags
+  (in-module "Gio")
+  (c-name "GSubprocessFlags")
+  (gtype-id "G_TYPE_SUBPROCESS_FLAGS")
+  (values
+    '("none" "G_SUBPROCESS_FLAGS_NONE")
+    '("stdin-pipe" "G_SUBPROCESS_FLAGS_STDIN_PIPE")
+    '("stdin-inherit" "G_SUBPROCESS_FLAGS_STDIN_INHERIT")
+    '("stdout-pipe" "G_SUBPROCESS_FLAGS_STDOUT_PIPE")
+    '("stdout-silence" "G_SUBPROCESS_FLAGS_STDOUT_SILENCE")
+    '("stderr-pipe" "G_SUBPROCESS_FLAGS_STDERR_PIPE")
+    '("stderr-silence" "G_SUBPROCESS_FLAGS_STDERR_SILENCE")
+    '("stderr-merge" "G_SUBPROCESS_FLAGS_STDERR_MERGE")
+    '("inherit-fds" "G_SUBPROCESS_FLAGS_INHERIT_FDS")
+  )
+)
+
+(define-flags GSettingsBindFlags
+  (in-module "Gio")
+  (c-name "GSettingsBindFlags")
+  (gtype-id "G_TYPE_SETTINGS_BIND_FLAGS")
+  (values
+    '("default" "G_SETTINGS_BIND_DEFAULT")
+    '("get" "G_SETTINGS_BIND_GET")
+    '("set" "G_SETTINGS_BIND_SET")
+    '("no-sensitivity" "G_SETTINGS_BIND_NO_SENSITIVITY")
+    '("get-no-changes" "G_SETTINGS_BIND_GET_NO_CHANGES")
+    '("invert-boolean" "G_SETTINGS_BIND_INVERT_BOOLEAN")
+  )
+)

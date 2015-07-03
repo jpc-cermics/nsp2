@@ -794,6 +794,7 @@
 (define-function gtk_action_bar_new
   (c-name "gtk_action_bar_new")
   (is-constructor-of "GtkActionBar")
+  (available "GDK_AVAILABLE_IN_3_12")
   (return-type "GtkActionBar*")
 )
 
@@ -15556,9 +15557,8 @@
   (c-name "gtk_model_button_new")
   (is-constructor-of "GtkModelButton")
   (return-type "GtkModelButton*")
+  (available "GDK_AVAILABLE_IN_3_16")
 )
-
-
 
 ;; From gtkmodelmenuitem.h
 
@@ -16962,7 +16962,8 @@
   (return-type "GtkPopover*")
   (parameters
     '("GtkWidget*" "relative_to")
-  )
+    )
+  (available "GDK_AVAILABLE_IN_3_12")
 )
 
 (define-function gtk_popover_new_from_model
@@ -16973,6 +16974,7 @@
     '("GtkWidget*" "relative_to")
     '("GMenuModel*" "model")
   )
+  (available "GDK_AVAILABLE_IN_3_12")
 )
 
 (define-method set_relative_to
@@ -17087,6 +17089,7 @@
   (c-name "gtk_popover_menu_new")
   (is-constructor-of "GtkPopoverMenu")
   (return-type "GtkPopoverMenu*")
+  (available "GDK_AVAILABLE_IN_3_12")
 )
 
 (define-method open_submenu

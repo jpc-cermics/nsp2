@@ -1385,11 +1385,12 @@
   (return-type "int")
 )
 
-(define-function pango_font_metrics_new
-  (c-name "pango_font_metrics_new")
-  (is-constructor-of "PangoFontMetrics")
-  (return-type "PangoFontMetrics*")
-)
+;;PANGO_ENABLE_BACKEND
+;; (define-function pango_font_metrics_new
+;;   (c-name "pango_font_metrics_new")
+;;   (is-constructor-of "PangoFontMetrics")
+;;   (return-type "PangoFontMetrics*")
+;; )
 
 (define-function pango_font_family_get_type
   (c-name "pango_font_family_get_type")
@@ -1591,12 +1592,13 @@
   (return-type "none")
 )
 
-(define-method get_shape_engine_type
-  (of-object "PangoFontMap")
-  (c-name "pango_font_map_get_shape_engine_type")
-  (available "")
-  (return-type "const-char*")
-)
+;;  PANGO_ENABLE_BACKEND
+;; (define-method get_shape_engine_type
+;;   (of-object "PangoFontMap")
+;;   (c-name "pango_font_map_get_shape_engine_type")
+;;   (available "")
+;;   (return-type "const-char*")
+;; )
 
 
 
@@ -3788,21 +3790,22 @@
   )
 )
 
-(define-function pango_config_key_get_system
-  (c-name "pango_config_key_get_system")
-  (return-type "char*")
-  (parameters
-    '("const-char*" "key")
-  )
-)
+;; PANGO_ENABLE_BACKEND
+;; (define-function pango_config_key_get_system
+;;   (c-name "pango_config_key_get_system")
+;;   (return-type "char*")
+;;   (parameters
+;;     '("const-char*" "key")
+;;   )
+;; )
 
-(define-function pango_config_key_get
-  (c-name "pango_config_key_get")
-  (return-type "char*")
-  (parameters
-    '("const-char*" "key")
-  )
-)
+;; (define-function pango_config_key_get
+;;   (c-name "pango_config_key_get")
+;;   (return-type "char*")
+;;   (parameters
+;;     '("const-char*" "key")
+;;   )
+;; )
 
 (define-function pango_lookup_aliases
   (c-name "pango_lookup_aliases")
@@ -3866,15 +3869,16 @@
   )
 )
 
-(define-function pango_get_sysconf_subdirectory
-  (c-name "pango_get_sysconf_subdirectory")
-  (return-type "const-char*")
-)
+;; must use PANGO_ENABLE_BACKEND
+;; (define-function pango_get_sysconf_subdirectory
+;;   (c-name "pango_get_sysconf_subdirectory")
+;;   (return-type "const-char*")
+;; )
 
-(define-function pango_get_lib_subdirectory
-  (c-name "pango_get_lib_subdirectory")
-  (return-type "const-char*")
-)
+;; (define-function pango_get_lib_subdirectory
+;;   (c-name "pango_get_lib_subdirectory")
+;;   (return-type "const-char*")
+;; )
 
 (define-function pango_quantize_line_geometry
   (c-name "pango_quantize_line_geometry")

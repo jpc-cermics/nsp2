@@ -1,15 +1,14 @@
 .SUFFIXES: .defs .diff .idiff .c $(SUFFIXES)
 SHELL = /bin/sh
 
-ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c
+ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c gio.c
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
-	cd ../; make
-
+	cd ../; make -j
 
 %.c: %.defs
 	@echo "generating $*.c"

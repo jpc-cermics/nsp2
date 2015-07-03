@@ -178,13 +178,13 @@
 ;;   (implements "GtkBuildable")
 ;; )
 
-;; 3.12
-;; (define-object GtkActionBar
-;;   (in-module "Gtk")
-;;   (parent "GtkBin")
-;;   (c-name "GtkActionBar")
-;;   (gtype-id "GTK_TYPE_ACTION_BAR")
-;; )
+(define-object GtkActionBar
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkActionBar")
+  (available "GDK_AVAILABLE_IN_3_12")
+  (gtype-id "GTK_TYPE_ACTION_BAR")
+)
 
 (define-object GtkHeaderBar
   (in-module "Gtk")
@@ -415,14 +415,14 @@
   (implements "GtkBuildable")
   )
 
-;; 3.16
-;; (define-object GtkModelButton
-;;   (in-module "Gtk")
-;;   (parent "GtkButton")
-;;   (c-name "GtkModelButton")
-;;   (gtype-id "GTK_TYPE_MODEL_BUTTON")
-;;  (implements "GtkBuildable")
-;; )
+(define-object GtkModelButton
+  (in-module "Gtk")
+  (parent "GtkButton")
+  (c-name "GtkModelButton")
+  (gtype-id "GTK_TYPE_MODEL_BUTTON")
+  (available "GDK_AVAILABLE_IN_3_16")
+  (implements "GtkBuildable")
+  )
 
 ;; Objects: Numeric and Text Data Entry
 
@@ -829,6 +829,7 @@
   (gtype-id "GTK_TYPE_TOOLBAR")
   (implements "GtkBuildable")
   (implements "GtkOrientable")
+  (implements "GtkToolShell")
   )
 
 (define-object GtkToolItem
@@ -899,22 +900,24 @@
   )
 
 ;; defined 3.12
-;; (define-object GtkPopover
-;;   (in-module "Gtk")
-;;   (parent "GtkBin")
-;;   (c-name "GtkPopover")
-;;   (gtype-id "GTK_TYPE_POPOVER")
-;;   (implements "GtkBuildable")
-;;   )
+(define-object GtkPopover
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkPopover")
+  (gtype-id "GTK_TYPE_POPOVER")
+  (available "GDK_AVAILABLE_IN_3_12")
+  (implements "GtkBuildable")
+  )
 
 ;; defined 3.12
-;; (define-object GtkPopoverMenu
-;;   (in-module "Gtk")
-;;   (parent "GtkPopover")
-;;   (c-name "GtkPopoverMenu")
-;;   (gtype-id "GTK_TYPE_POPOVER_MENU")
-;;   (implements "GtkBuildable")
-;;   )
+(define-object GtkPopoverMenu
+  (in-module "Gtk")
+  (parent "GtkPopover")
+  (c-name "GtkPopoverMenu")
+  (gtype-id "GTK_TYPE_POPOVER_MENU")
+  (available "GDK_AVAILABLE_IN_3_12")
+  (implements "GtkBuildable")
+  )
 
 ;; Objects: Selector Widgets and Dialogs
 

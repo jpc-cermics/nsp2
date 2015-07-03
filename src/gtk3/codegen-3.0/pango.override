@@ -2,10 +2,8 @@
 %%
 headers
 
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
 #include <pango/pango.h>
-
+#include <pango/pango-utils.h>
 #include <nsp/nsp.h>
 #include <nsp/smatrix.h>
 #include <nsp/bmatrix.h>
@@ -13,7 +11,6 @@ headers
 #include <nsp/list.h>
 #include <nsp/cells.h>
 #include <nsp/none.h>
-#include <nsp/mpmatrix.h>
 #include <nsp/matrix.h>
 #include <nsp/file.h>
 #include <nsp/type.h>
@@ -861,4 +858,20 @@ _wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if (GetArgs(stack,rhs,opt,T,  &text, &length) == FAIL) return RET_BUG;
   pango_layout_set_text(PANGO_LAYOUT(self->obj), text, length);
   return 0;
+}
+
+%%
+override pango_layout_get_font_description
+static int
+_wrap_pango_layout_get_font_description(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
+{
+  PangoFontDescription *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = (PangoFontDescription *) pango_layout_get_font_description(PANGO_LAYOUT(self->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
 }

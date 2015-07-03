@@ -1,6 +1,6 @@
 ;; -*- scheme -*-
 
-(register "gtk/pango-types.defs")
+(register "pango-types.defs")
 (register "atk-types.defs")
 (register "gtk-types.defs")
 
