@@ -950,6 +950,41 @@ let get_initial_class_substdict objinfo =
       substdict
 ;;
 
+(* check availability of a class *)
+
+(* XXXX: already defined elsewhere *)
+
+let get_list_names str =
+  let bb = Buffer.create 1024 in
+  let rec get_names str n k bb names =
+    let rec get_name str n k bb =
+      if k < n  then
+	match str.[k] with
+	| '_' -> k
+	| c ->
+	    Buffer.add_char bb c;
+	    get_name str n (k+1) bb
+      else
+	k
+    in
+    Buffer.clear bb;
+    if k >= n then
+      names
+    else
+      let pos = get_name str n k bb in
+      let name = Buffer.contents bb in
+      name :: (get_names str n (pos+1) bb names)
+  in
+  get_names str (String.length str) 0 bb []
+;;
+
+let rec major_minor l major =
+  match l with
+  | [] -> (major, "0")
+  | x :: [] -> (major, x)
+  | x :: res -> (major_minor res x )
+;;
+
 (* write a class *)
 
 let write_class objinfo failed_tbl =
@@ -966,6 +1001,30 @@ let write_class objinfo failed_tbl =
     else
       objinfo in
 
+  let available_start () =
+    if objinfo.or_availability <> "" then
+      let l = get_list_names objinfo.or_availability in
+      let tag = (List.hd (List.tl l)) in
+      let (major,minor) = major_minor l "" in
+      (
+       if tag = "AVAILABLE" then
+	 File.write_string ("#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n")
+       else
+	 ( if tag = "DEPRECATED" then
+	   File.write_string ("#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n#else\n")
+	 else
+	   ()
+	  )
+      )
+    else
+      () in
+  let available_end () =
+    if objinfo.or_availability <> "" then
+      File.write_string "#endif /* GTK_CHECK_VERSION */\n"
+    else
+      () in
+
+  available_start () ;
   File.write_string  ("\n/* -----------" ^ objinfo.or_c_name ^ " ----------- */\n\n" );
   let substdict = get_initial_class_substdict objinfo in
   Hashtbl.replace substdict "classname"
@@ -1058,16 +1117,25 @@ let write_class objinfo failed_tbl =
     substdict;
   (* let ( _code1, _code2 ) = write_constructor objinfo in  *)
   (* Hashtbl.replace substdict "tp_init"  code1; *)
+
+  available_end();
+
   File.write_string "/*-------------------------------------------\n";
   File.write_string " * Methods\n";
   File.write_string " *-------------------------------------------*/\n";
   Say.debug (Printf.sprintf "write constructors for %s" objinfo.or_name);
   let constructors = Genmethods.write_constructors objinfo is_gtk_class failed_tbl in
   Say.debug (Printf.sprintf "write methods for %s" objinfo.or_name);
+
+  available_start();
   Genmethods.write_methods objinfo is_gtk_class;
+  available_end () ;
   Say.debug (Printf.sprintf "write getsets for %s" objinfo.or_name);
+
+  available_start() ;
   Gengetset.write_getsets objinfo is_gtk_class;
   write_slots objinfo.or_name ["tp_getattr";"tp_setattr"];
+  available_end () ;
   constructors;
 ;;
 

@@ -285,6 +285,7 @@ let object_rec = {
   or_implements = [];
   or_copy_func = "";
   or_release_func = "";
+  or_availability = "";
 }
 
 let object_rec_set_record name sexp f_rec =
@@ -300,6 +301,9 @@ let object_rec_set_record name sexp f_rec =
   | "release-func" -> { f_rec with or_release_func = (get_atom sexp);}
   | "vtable" -> f_rec
   | "prerequisite" -> f_rec
+  | "available" ->
+      let value = (get_atom sexp) in
+      { f_rec with or_availability = value;}
   | _ ->
       Printf.printf "keyword %s is not an object parameter\n" name;
       f_rec
@@ -380,6 +384,7 @@ let enum_rec = {
   e_typecode = "";
   e_module = "";
   is_enum = true;
+  e_availability = "";
 }
 
 let rec get_enum_parameter_slots sexp int value =
@@ -410,6 +415,9 @@ let enum_rec_set_record name sexp e_rec =
   | "values" -> { e_rec with e_values = List.rev (get_enum_parameters sexp);}
   | "gtype-id" -> { e_rec with e_typecode = (get_atom sexp);}
   | "in-module" -> { e_rec with e_module = (get_atom sexp);}
+  | "available" ->
+      let value = (get_atom sexp) in
+      { e_rec with e_availability = value;}
   | _ -> failwith (Printf.sprintf "keyword %s is not an enum parameter\n" name);
 ;;
 

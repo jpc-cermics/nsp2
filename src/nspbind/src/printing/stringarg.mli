@@ -24,6 +24,7 @@ type enum = {
   e_values : e_field list;
   e_typecode : string;
   e_module : string;
+  e_availability : string;
 }
 
 type var_list = (string, string list) Hashtbl.t
@@ -84,6 +85,8 @@ type object_rec = {
   or_implements : string list;
   or_copy_func : string;
   or_release_func : string;
+  or_availability : string;
+
 }
 
 val check_gtk_class : object_rec -> bool

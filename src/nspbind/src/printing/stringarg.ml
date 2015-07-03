@@ -38,6 +38,7 @@ type enum = {
     e_values: e_field list;
     e_typecode: string;
     e_module:string;
+    e_availability: string;
   }
 ;;
 
@@ -194,6 +195,7 @@ type object_rec = {
     or_implements: string list;
     or_copy_func: string;
     or_release_func: string;
+    or_availability: string;
   }
 ;;
 
@@ -203,7 +205,9 @@ let check_gtk_class objinfo =
   objinfo.or_module = "Pango"  ||
   objinfo.or_module = "Gdk" ||
   objinfo.or_module = "Gtk" ||
-  objinfo.or_module = "WebKit"
+  objinfo.or_module = "WebKit" ||
+  objinfo.or_module = "Gio" ||
+  objinfo.or_module = "G_TYPE"
 ;;
 
 (* a function or a method *)
@@ -1666,7 +1670,7 @@ let int64_arg_attr_write_set oname params info byref=
 
 let int64_arg_write_return _ptype _ownsreturn info =
   let varlist = varlist_add  info.varlist "gint64"  "ret" in
-  let codeafter = "  return PyLong_FromLongLong(ret);" in
+  let codeafter = "  return nsp_int_from_int64(ret);" in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
@@ -1731,11 +1735,11 @@ let int64_arg =
 
 let dflt pname =
   Printf.sprintf "  if (nsp_%s)\n" pname ^
-  Printf.sprintf "      %s = PyLong_AsUnsignedLongLong(nsp_%s);\n" pname pname
+  Printf.sprintf "      %s = nsp_int_to_uint64(nsp_%s);\n" pname pname
 ;;
 
 let before pname =
-   Printf.sprintf "  %s = PyLong_AsUnsignedLongLong(nsp_%s);\n" pname pname ;;
+   Printf.sprintf "  %s = nsp_int_to_uint64(nsp_%s);\n" pname pname ;;
 
 let uint64_arg_write_param _oname params info _byref=
   let varlist, code =
@@ -1747,7 +1751,7 @@ let uint64_arg_write_param _oname params info _byref=
 	( varlist_add info.varlist "guint64"  (params.pname ^ " = " ^ x),
 	  dflt params.pname) in
   let varlist = varlist_add varlist "NspObject"  ("*nsp_" ^ params.pname ^ " = NULL") in
-  let info = add_parselist info params.pvarargs "obj_check"  ["&PyLong_Type"; ("&nsp_" ^ params.pname)]  [params.pname] in
+  let info = add_parselist info params.pvarargs "obj_check"  ["&nsp_type_imatrix"; ("&nsp_" ^ params.pname)]  [params.pname] in
   { info with
     arglist = params.pname :: info.arglist;
     codebefore = code :: info.codebefore;
@@ -1763,7 +1767,7 @@ let uint64_arg_attr_write_set oname params info byref=
 
 let uint64_arg_write_return _ptype _ownsreturn info =
   let varlist = varlist_add  info.varlist "guint64"  "ret" in
-  let codeafter = "  return PyLong_FromUnsignedLongLong(ret);" in
+  let codeafter = "  return nsp_int_from_uint64(ret);" in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
@@ -4897,6 +4901,7 @@ let register_types parser =
 	  or_implements= [];
 	  or_copy_func= "";
 	  or_release_func="";
+	  or_availability ="";
 	}
 ;;
 
