@@ -200,7 +200,9 @@ function demo_toolbar()
   [treeview,store]=create_items_list();
   scrolled_window.add[treeview];
 
-  item = gtk_tool_button_new();// (NULL, NULL);
+  //--- document-new
+
+  item = gtk_tool_button_new();
   item.set_icon_name["document-new"];
   item.set_label["Custom label"];
   store.append[list(list(item),"New")];
@@ -215,6 +217,8 @@ function demo_toolbar()
     menuitem.show[];
     menu.append[menuitem];
   end
+
+  //--- document-open
 
   item = gtk_menu_tool_button_new();//(NULL, NULL);
   item.set_icon_name[ "document-open"];
@@ -232,6 +236,8 @@ function demo_toolbar()
     menu.append[ menuitem];
   end
 
+  //--- go-previous
+
   item = gtk_menu_tool_button_new();// (NULL, NULL);
   item.set_icon_name[ "go-previous"];
   item.set_label[ "Back"];
@@ -239,9 +245,13 @@ function demo_toolbar()
   store.append[list(list(item), "BackWithHistory")];
   toolbar.insert[ item, -1];
 
+  //--- separator
+
   item = gtk_separator_tool_item_new ();
   store.append[list(list(item), "-----")];
   toolbar.insert[ item, -1];
+
+  //--- image "dialog-warning"
 
   image = gtk_image_new_from_icon_name ("dialog-warning", GTK.ICON_SIZE_DIALOG);
   item = gtk_tool_item_new ();
@@ -250,21 +260,29 @@ function demo_toolbar()
   store.append[list(list(item), "(Custom Item)")];
   toolbar.insert[ item, -1];
 
+  //--- go-previous
+
   item = gtk_tool_button_new();//(NULL, NULL);
   item.set_icon_name[ "go-previous"];
   item.set_label[ "Back"];
   store.append[list(list(item), "Back")];
   toolbar.insert[ item, -1];
 
+  //--- separator
+
   item = gtk_separator_tool_item_new ();
   store.append[list(list(item), "-----")];
   toolbar.insert[ item, -1];
+
+  //--- go-next
 
   item = gtk_tool_button_new();// (NULL, NULL);
   item.set_icon_name[ "go-next"];
   item.set_label[ "Forward"];
   store.append[list(list(item), "Forward")];
   toolbar.insert[ item, -1];
+
+  //--- toggle_tool
 
   item = gtk_toggle_tool_button_new ();
   item.set_label[ "Bold"];
@@ -280,6 +298,8 @@ function demo_toolbar()
   item.set_expand[%t];
   item.set_draw[%f];
 
+  //---- radio tool
+
   item = gtk_radio_tool_button_new();// (NULL);
   item.set_label[ "Left"];
   item.set_icon_name[ "format-justify-left"];
@@ -288,8 +308,7 @@ function demo_toolbar()
   store.append[list(list(item), "Left")];
   toolbar.insert[ item, -1];
 
-  // take care that group here is only given by an other
-  // item
+  // take care that group here is only given by an other item
   item = gtk_radio_tool_button_new (group=item);
   item.set_label[ "Center"];
   item.set_icon_name[ "format-justify-center"];
@@ -302,33 +321,43 @@ function demo_toolbar()
   item.set_icon_name[ "format-justify-right"];
   store.append[list(list(item), "Right")];
   toolbar.insert[ item, -1];
+
+  //---- Apple
+
   icon_widget=gtk_image_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/apple-red.png");
   item = gtk_tool_button_new (icon_widget=icon_widget,label= "_Apple");
   store.append[list(list(item), "Apple")];
   toolbar.insert[ item, -1];
   item.set_use_underline[%t];
 
+  //----- Gicon
   // gicon = g_content_type_get_icon ("video/ogg");
   // image = gtk_image_new_from_gicon (gicon, GTK.ICON_SIZE_LARGE_TOOLBAR);
   // item = gtk_tool_button_new (icon_widget=image,label= "Video");
   // store.append[list(list(item), "Video")];
   // toolbar.insert[ item, -1];
 
+  //---- utilities-terminal
   image = gtk_image_new_from_icon_name ("utilities-terminal", GTK.ICON_SIZE_LARGE_TOOLBAR);
   item = gtk_tool_button_new (icon_widget=image,label= "Terminal");
   store.append[list(list(item), "Terminal")];
   toolbar.insert[ item, -1];
 
+  //---- spinner
   image = gtk_spinner_new ();
   image.start[];
   item = gtk_tool_button_new (icon_widget=image,label= "Spinner");
   store.append[list(list(item), "Spinner")];
   toolbar.insert[ item, -1];
 
+  //---- last row
+
   hbox = gtk_box_new (GTK.ORIENTATION_HORIZONTAL, spacing=5);
   hbox.set_border_width[5];
   hbox.set_hexpand[%t];
   grid.attach[ hbox, 1, 4, 1, 1];
+
+  //---- The Drag button
 
   button = gtk_button_new(label="Drag me to the toolbar");
   hbox.pack_start[ button,expand= %f,fill=%f,padding=0];
@@ -339,26 +368,57 @@ function demo_toolbar()
   label = gtk_label_new ();
   hbox.pack_start[ label,expand= %f,fill=%f,padding=0];
 
+  targets= list(list("application/x-toolbar-item", 0, 0));
+
+  gtk_drag_source_set(button,GDK.BUTTON1_MASK,targets, GDK.ACTION_MOVE);
+  gtk_drag_dest_set(button,GTK.DEST_DEFAULT_DROP,targets, GDK.ACTION_MOVE);
+
+  //---- the rtl
+
+  function rtl_toggled (check)
+    if check.get_active[] then
+      gtk_widget_set_default_direction (GTK.TEXT_DIR_RTL);
+    else
+      gtk_widget_set_default_direction (GTK.TEXT_DIR_LTR);
+    end
+  endfunction
+
   checkbox = gtk_check_button_new(mnemonic="_Right to left");
   if gtk_widget_get_default_direction () == GTK.TEXT_DIR_RTL then
     checkbox.set_active[%t];
   else
     checkbox.set_active[%f];
   end
-  // checkbox.connect[ "toggled", rtl_toggled];
+  checkbox.connect[ "toggled", rtl_toggled];
 
   hbox.pack_end[checkbox, expand= %f,fill=%f,padding=0];
 
-  // gtk_drag_source_set (button, GDK_BUTTON1_MASK,
-  // 		       target_table, G_N_ELEMENTS (target_table),
-  // 		       GDK_ACTION_MOVE);
-  // gtk_drag_dest_set (toolbar, GTK.DEST_DEFAULT_DROP,
-  // 		     target_table, G_N_ELEMENTS (target_table),
-  // 		     GDK_ACTION_MOVE);
+  // drag callbacks
 
-  // toolbar.connect["drag_motion", toolbar_drag_motion];
-  // toolbar.connect["drag_leave",toolbar_drag_leave];
-  // toolbar.connect["drag_drop",toolbar_drag_drop];
+  function y=toolbar_drag_drop (widget, context, x, y, time, label)
+    pause xxx;
+    buf=sprintf("%d", widget.get_drop_index[x,y]);
+    label.set_label[buf];
+    y=%t
+  endfunction
+
+  function y=toolbar_drag_motion (toolbar,context, x, y, time,data)
+    pause xxx;
+    drag_item = gtk_tool_button_new (label="A quite long button");
+    gdk_drag_status (context, GDK.ACTION_MOVE, time);
+    index = toolbar.get_drop_index[x,y];
+    toolbar.set_drop_highlight_item[drag_item,index];
+    y=%t
+  endfunction
+
+  function toolbar_drag_leave (toolbar,context, x, y, time,data)
+    pause xxx;
+    toolbar.set_drop_highlight_item[];
+  endfunction
+
+  toolbar.connect["drag_motion", toolbar_drag_motion];
+  toolbar.connect["drag_leave",toolbar_drag_leave];
+  toolbar.connect["drag_drop",toolbar_drag_drop,list(label)];
 
   window.show_all[];
   // window.connect["delete_event",gtk_main_quit];

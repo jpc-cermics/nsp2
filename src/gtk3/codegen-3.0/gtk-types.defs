@@ -934,6 +934,9 @@
   (c-name "GtkColorButton")
   (gtype-id "GTK_TYPE_COLOR_BUTTON")
   (implements "GtkBuildable")
+  (implements "GtkActionable")
+  ;;(implements "GtkActivatable")
+  (implements "GtkColorChooser")
   )
 
 (define-object GtkColorChooserWidget
@@ -943,6 +946,7 @@
   (gtype-id "GTK_TYPE_COLOR_CHOOSER_WIDGET")
   (implements "GtkColorChooser")
   (implements "GtkBuildable")
+  (implements "GtkOrientable")
   )
 
 (define-object GtkColorChooserDialog
@@ -950,8 +954,8 @@
   (parent "GtkDialog")
   (c-name "GtkColorChooserDialog")
   (gtype-id "GTK_TYPE_COLOR_CHOOSER_DIALOG")
-  (implements "GtkColorChooser")
   (implements "GtkBuildable")
+  (implements "GtkColorChooser")
   )
 
 (define-interface GtkFileChooser
@@ -1541,8 +1545,7 @@
 ;;  (implements "GtkBuildable")
 ;; )
 
-;; GtkActivatable - An interface for activatable widgets
-;; 3.xx
+;; ;; GtkActivatable - An interface for activatable widgets
 ;; (define-interface "GtkActivatable"
 ;;   (in-module "Gtk")
 ;;   (c-name "GtkActivatable")

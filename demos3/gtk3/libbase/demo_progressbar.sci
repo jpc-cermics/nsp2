@@ -61,12 +61,13 @@ function demo_progressbar()
   vbox.pack_start[ frame,expand=%f,fill=%t,padding=0]
   vbox2 = gtkbox_new("vertical",spacing=5);
   frame.add[ vbox2]
-  align = gtkalignment_new(xalign=0.5,yalign=0.5,xscale=0,yscale=0);
+
+  align = gtkbox_new("horizontal",spacing=5);
   vbox2.pack_start[ align,expand=%f,fill=%f,padding=5]
 
   pbar = gtkprogressbar_new();
   align.add[pbar];
-  align = gtkalignment_new(xalign=0.5,yalign=0.5,xscale=0,yscale=0);
+  align = gtkbox_new("horizontal",spacing=5);
   vbox2.pack_start[ align,expand=%f,fill=%f,padding=5]
   hbox = gtkbox_new("horizontal",spacing=5);
   align.add[ hbox]
@@ -94,7 +95,7 @@ function demo_progressbar()
   vbox2.pack_start[ tab,expand=%f,fill=%t,padding=0]
   //----- Orientation
   label = gtklabel_new(str="Orientation:");
-  label.set_alignment[  0, 0.5]
+  //label.set_alignment[  0, 0.5]
   tab.attach[label,0,0,1,1];
 
   // ---- select the orientation of the progressbar

@@ -29,7 +29,7 @@ function dnd_drag_data_get(w, context, selection_data, info, time)
   dnd_string = "Bill Gates demands royalties for\n" +
   "your use of his innovation."
   // methode set
-  selection_data.set[selection_data.target, 8,dnd_string]
+  selection_data.set[selection_data.get_target[], 8,dnd_string]
 endfunction
 
 function dnd_drag_data_received(w, context, x, y, data, info, time)
@@ -63,7 +63,7 @@ function demo_dnd()
   box3.pack_start[button]
   button.show[]
   button.connect['drag_data_get', dnd_drag_data_get];
-  button.drag_source_set[ior(GDK.BUTTON1_MASK,GDK.BUTTON3_MASK),targets, GDK.ACTION_COPY]
+  gtk_drag_source_set[button,ior(GDK.BUTTON1_MASK,GDK.BUTTON3_MASK),targets, GDK.ACTION_COPY]
   frame = gtkframe_new(label="Drop")
   box2.pack_start[frame]
   frame.show[]
@@ -76,7 +76,7 @@ function demo_dnd()
   button.show[]
   button.realize[]
   button.connect['drag_data_received', dnd_drag_data_received];
-  button.drag_dest_set[GTK.DEST_DEFAULT_ALL,targets,GDK.ACTION_COPY];
+  gtk_drag_dest_set[button,GTK.DEST_DEFAULT_ALL,targets,GDK.ACTION_COPY];
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill=%t,padding=0]
   separator.show[]

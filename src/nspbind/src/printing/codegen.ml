@@ -985,6 +985,32 @@ let rec major_minor l major =
   | x :: res -> (major_minor res x )
 ;;
 
+let available_start objinfo =
+  if objinfo.or_availability <> "" then
+    let l = get_list_names objinfo.or_availability in
+    let tag = (List.hd (List.tl l)) in
+    let (major,minor) = major_minor l "" in
+    (
+     if tag = "AVAILABLE" then
+       File.write_string ("#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n")
+     else
+       ( if tag = "DEPRECATED" then
+	 File.write_string ("#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n#else\n")
+       else
+	 ()
+	)
+    )
+  else
+    ()
+;;
+
+let available_end objinfo =
+  if objinfo.or_availability <> "" then
+    File.write_string "#endif /* GTK_CHECK_VERSION */\n"
+  else
+    ()
+;;
+
 (* write a class *)
 
 let write_class objinfo failed_tbl =
@@ -1001,30 +1027,8 @@ let write_class objinfo failed_tbl =
     else
       objinfo in
 
-  let available_start () =
-    if objinfo.or_availability <> "" then
-      let l = get_list_names objinfo.or_availability in
-      let tag = (List.hd (List.tl l)) in
-      let (major,minor) = major_minor l "" in
-      (
-       if tag = "AVAILABLE" then
-	 File.write_string ("#if GTK_CHECK_VERSION(" ^ major ^ "," ^ minor ^ ",0)\n")
-       else
-	 ( if tag = "DEPRECATED" then
-	   File.write_string ("#if GTK_CHECK_VERSION(" ^  major ^ "," ^ minor ^ ",0)\n#else\n")
-	 else
-	   ()
-	  )
-      )
-    else
-      () in
-  let available_end () =
-    if objinfo.or_availability <> "" then
-      File.write_string "#endif /* GTK_CHECK_VERSION */\n"
-    else
-      () in
 
-  available_start () ;
+  available_start objinfo ;
   File.write_string  ("\n/* -----------" ^ objinfo.or_c_name ^ " ----------- */\n\n" );
   let substdict = get_initial_class_substdict objinfo in
   Hashtbl.replace substdict "classname"
@@ -1118,7 +1122,7 @@ let write_class objinfo failed_tbl =
   (* let ( _code1, _code2 ) = write_constructor objinfo in  *)
   (* Hashtbl.replace substdict "tp_init"  code1; *)
 
-  available_end();
+  available_end objinfo;
 
   File.write_string "/*-------------------------------------------\n";
   File.write_string " * Methods\n";
@@ -1127,15 +1131,15 @@ let write_class objinfo failed_tbl =
   let constructors = Genmethods.write_constructors objinfo is_gtk_class failed_tbl in
   Say.debug (Printf.sprintf "write methods for %s" objinfo.or_name);
 
-  available_start();
+  available_start objinfo;
   Genmethods.write_methods objinfo is_gtk_class;
-  available_end () ;
+  available_end objinfo ;
   Say.debug (Printf.sprintf "write getsets for %s" objinfo.or_name);
 
-  available_start() ;
+  available_start objinfo ;
   Gengetset.write_getsets objinfo is_gtk_class;
   write_slots objinfo.or_name ["tp_getattr";"tp_setattr"];
-  available_end () ;
+  available_end objinfo ;
   constructors;
 ;;
 
@@ -1167,11 +1171,11 @@ let insert_enum  enum =
     (
      if enum.is_enum then
        File.write_string
-	 (Printf.sprintf "  nsp_enum_add_constants((NspHash  * )  module, %s, strip_prefix);\n"
+	 (Printf.sprintf "  nsp_enum_add_constants((NspHash  * ) module, %s, strip_prefix);\n"
 	    enum.e_typecode)
      else
        File.write_string
-	 (Printf.sprintf "  nsp_flags_add_constants((NspHash * )module, %s, strip_prefix);\n"
+	 (Printf.sprintf "  nsp_flags_add_constants((NspHash * ) module, %s, strip_prefix);\n"
 	    enum.e_typecode)
     )
 ;;
@@ -1331,6 +1335,25 @@ let write_source fp parser prefix =
   (* enums  *)
   Say.debug "Enter write enums";
   write_enums parser prefix fp;
+
+  (* initialize types *)
+
+  let rec initialize_types classes=
+    match classes with
+    | [] -> ()
+    | cl :: classes ->
+	if check_gtk_class cl then
+	  (
+	   available_start cl;
+	   File.write_string
+	     (Printf.sprintf "  new_type_%s(T_BASE);\n"
+		(String.lowercase cl.or_name));
+	   available_end cl);
+	initialize_types classes in
+  File.write_string (Printf.sprintf "void nsp_initialize_%s_types(void)\n{\n" prefix);
+  initialize_types classes;
+  File.write_string "}\n";
+
   (*  code added verbatim at the end  *)
   Say.debug "Enter write last";
   File.write_string "\n";

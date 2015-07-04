@@ -4,13 +4,13 @@
 // (i.e they are losing activation time)
 
 function demo_timeout(_button)
-  win = gtkdialog_new()
-  win.connect["delete_event", demo_delete];
-  win.set_title["Timeout Test"];
+  dialog = gtkdialog_new()
+  dialog.connect["delete_event", demo_delete];
+  dialog.set_title["Timeout Test"];
   label = gtklabel_new(str="count: 0")
-  label.set_padding[10,10]
-  win_vbox = win.get_content_area[];
-  win_vbox.pack_start[label];
+  //label.set_padding[10,10]
+  dialog_vbox = dialog.get_content_area[];
+  dialog_vbox.pack_start[label];
   label.show[]
 
   // function to be executed when timeout
@@ -24,44 +24,49 @@ function demo_timeout(_button)
   endfunction
 
   // starts the timeout handler
-  function [y]=start_timeout_test(_button,args)
+  function [y]=start_timeout_test(dialog,label)
     y=1
-    if args(1).get_data['timeout_id'] == 0 then
-      id = gtk_timeout_add(100,args(1).get_data['timeout_f'],args)
-      args(1).set_data[timeout_id=id ]
+    if dialog.get_data['timeout_id'] == 0 then
+      id = gtk_timeout_add(100,dialog.get_data['timeout_f'],list(dialog,label));
+      dialog.set_data[timeout_id=id ]
     end
   endfunction
 
   // stops  the timeout handler
-  function [y]=stop_timeout_test(_button,args)
+  function [y]=stop_timeout_test(dialog,label)
     y=1
-    id = args(1).get_data['timeout_id'];
+    id = dialog.get_data['timeout_id'];
     if id <> 0 then
-      gtk_timeout_remove(id);
-      args(1).set_data[timeout_id=0];
+      g_source_remove(id);
+      dialog.set_data[timeout_id=0];
     end
   endfunction
 
-  // attach data to the main windget
+  // attach data to the dialog
   // since they must be shared between handlers
   // and exists when returning from this function.
-  win.set_data[timeout_f = timeout_test];
-  win.set_data[timeout_id = 0];
-  win.set_data[timeout_count = 0];
 
-  button = gtkbutton_new(label="close")
-  button.connect["clicked",button_destroy_win,list(win)];
-  win.action_area.pack_start[button]
-  //button.set_flags[GTK.CAN_DEFAULT]
-  button.grab_default[]
-  button.show[]
-  button = gtkbutton_new(label="start")
-  button.connect["clicked", start_timeout_test,list(win,label)];
-  win.action_area.pack_start[button]
-  button.show[]
-  button = gtkbutton_new(label="stop")
-  button.connect["clicked", stop_timeout_test,list(win)];
-  win.action_area.pack_start[button];
-  button.show[]
-  win.show[]
+  dialog.set_data[timeout_f = timeout_test];
+  dialog.set_data[timeout_id = 0];
+  dialog.set_data[timeout_count = 0];
+
+  dialog.add_button["Close",1];
+  dialog.add_button["Start",2];
+  dialog.add_button["Stop",3];
+  dialog.show_all[];
+  while %t
+    response = dialog.run[]
+    select response
+     case 1 then
+      // Close button
+      dialog.destroy[];
+      return;
+     case 2 then
+      // Start
+      start_timeout_test(dialog,label);
+     case 3 then
+      // Stop
+      stop_timeout_test(dialog,label);
+    end
+  end
 endfunction
