@@ -1338,7 +1338,16 @@ let write_source fp parser prefix =
 
   (* initialize types *)
 
-  let rec initialize_types classes=
+  let initialize_chek classes =
+    match classes with
+    | [] -> false
+    | cl :: _classes ->
+	if check_gtk_class cl then
+	  true
+	else
+	  false in
+
+  let rec initialize_types classes =
     match classes with
     | [] -> ()
     | cl :: classes ->
@@ -1350,9 +1359,12 @@ let write_source fp parser prefix =
 		(String.lowercase cl.or_name));
 	   available_end cl);
 	initialize_types classes in
-  File.write_string (Printf.sprintf "void nsp_initialize_%s_types(void)\n{\n" prefix);
+
+  if initialize_chek classes then
+    File.write_string (Printf.sprintf "void nsp_initialize_%s_types(void)\n{\n" prefix);
   initialize_types classes;
-  File.write_string "}\n";
+  if initialize_chek classes then
+    File.write_string "}\n";
 
   (*  code added verbatim at the end  *)
   Say.debug "Enter write last";
