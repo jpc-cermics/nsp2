@@ -1133,7 +1133,7 @@ nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
        Scierror("Error: type is NULL\n");
     }
 
-  gobj  =gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
+  gobj  =(GObject *) gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
 
   nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
 
@@ -1191,7 +1191,8 @@ extern function int_pixbuf_get_channel;
 #endif
 
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
-static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs);
+static int int_g_source_remove(Stack stack,int rhs,int opt,int lhs);
+static int int_g_source_destroy(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs);
 
@@ -1252,8 +1253,8 @@ static OpTab NspGObject_func[]={
   {"gobject_create",int_gobj_create},
   {"setrowscols_gobj",int_set_attribute},
   {"gtk_timeout_add",int_gtk_timeout_add},
-  {"g_timeout_remove",int_gtk_timeout_remove},
-  {"g_source_remove",int_gtk_timeout_remove},
+  {"g_source_destroy",int_g_source_destroy},
+  {"g_source_remove",int_g_source_remove},
   {"gtk_quit_add",int_gtk_quit_add},
   {"gtk_idle_add",int_gtk_idle_add},
 #if 0
@@ -3209,15 +3210,25 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
 
 /* this is in fact a g_source_destroy */
 
-static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs)
+static int int_g_source_destroy(Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
-  int timeout_handler_id;
-
-  if ( GetArgs(stack,rhs,opt,T,&timeout_handler_id) == FAIL) return RET_BUG;
-  g_source_destroy(g_main_context_find_source_by_id(NULL,timeout_handler_id));
+  int id;
+  if ( GetArgs(stack,rhs,opt,T,&id) == FAIL) return RET_BUG;
+  g_source_destroy(g_main_context_find_source_by_id(NULL,id));
   return 0;
 }
+
+static int int_g_source_remove(Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int id;
+  if ( GetArgs(stack,rhs,opt,T,&id) == FAIL) return RET_BUG;
+  g_source_remove(id);
+  return 0;
+}
+
+
 
 /*
  * idle
@@ -3269,7 +3280,9 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
  * quit add
  */
 
+#if 0
 static gboolean nsp_gtk_invoke_quit  (gpointer data);
+#endif
 
 guint
 nsp_gtk_quit_add_full (guint main_level,  NspPList *callback,   NspList *extra_args,   NspObject *swap_data)
@@ -3281,7 +3294,7 @@ nsp_gtk_quit_add_full (guint main_level,  NspPList *callback,   NspList *extra_a
   return 0;
 }
 
-
+#if 0
 static gboolean
 nsp_gtk_invoke_quit (gpointer data)
 {
@@ -3294,6 +3307,8 @@ nsp_gtk_invoke_quit (gpointer data)
     ret_val =  g_value_get_boolean(&ret);
   return ret_val;
 }
+#endif
+
 
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs)
 {

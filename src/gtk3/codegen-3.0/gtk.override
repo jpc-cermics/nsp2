@@ -101,7 +101,7 @@ import gdk.Event as GdkEvent
 import gdk.Screen as GdkScreen
 import gdk.Display as GdkDisplay
 import gdk.Device as GdkDevice
-
+import gdk.FrameClock as GdkFrameClock
 import gtk.Treemodel as GtkTreeModel
 
 import pango.Layout as PangoLayout

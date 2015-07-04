@@ -1122,7 +1122,7 @@
 (define-function gtk_adjustment_new
   (c-name "gtk_adjustment_new")
   (is-constructor-of GtkAdjustment)
-  (return-type "GtkObject*")
+  (return-type "GtkAdjustment*")
   (parameters
    '("gdouble" "value" (default "0"))
    '("gdouble" "lower" (default "0"))

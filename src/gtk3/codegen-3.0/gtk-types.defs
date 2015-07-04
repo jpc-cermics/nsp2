@@ -1570,6 +1570,7 @@
 ;; GtkStatusIcon - Display an icon in the system tray
 ;; GtkThemingEngine - Theming renderers
 
+
 ;; GtkAlignment - deprecated 3.14
 (define-object GtkAlignment
   (in-module "Gtk")

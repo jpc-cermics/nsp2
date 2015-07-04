@@ -1,29 +1,18 @@
 ;; -*- scheme -*-
 ;; object definitions ...
 
-;; deprecated
-;; (define-object GdkColormap
-;;   (in-module "Gdk")
-;;   (parent "GObject")
-;;   (c-name "GdkColormap")
-;;   (gtype-id "GDK_TYPE_COLORMAP")
-;; )
-
 (define-object GdkDevice
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkDevice")
   (gtype-id "GDK_TYPE_DEVICE")
-  ;; (fields
-  ;;   '("gchar*" "name")
-  ;;   '("GdkInputSource" "source")
-  ;;   '("GdkInputMode" "mode")
-  ;;   '("gboolean" "has_cursor")
-  ;;   '("gint" "num_axes")
-  ;;   '("GdkDeviceAxis*" "axes")
-  ;;   '("gint" "num_keys")
-  ;;   '("GdkDeviceKey*" "keys")
-  ;; )
+)
+
+(define-object GdkDeviceManager
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkDeviceManager")
+  (gtype-id "GDK_TYPE_DEVICE_MANAGER")
 )
 
 (define-object GdkDisplay
@@ -45,26 +34,30 @@
   (parent "GObject")
   (c-name "GdkDragContext")
   (gtype-id "GDK_TYPE_DRAG_CONTEXT")
-  ;; (fields
-  ;;   '("GdkDragProtocol" "protocol")
-  ;;   '("gboolean" "is_source")
-  ;;   '("GdkWindow*" "source_window")
-  ;;   '("GdkWindow*" "dest_window")
-  ;;   '("GList*" "targets")
-  ;;   '("GdkDragAction" "actions")
-  ;;   '("GdkDragAction" "suggested_action")
-  ;;   '("GdkDragAction" "action")
-  ;;   '("guint32" "start_time")
-  ;;)
 )
 
-;; removed
-;; (define-object GdkDrawable
-;;   (in-module "Gdk")
-;;   (parent "GObject")
-;;   (c-name "GdkDrawable")
-;;   (gtype-id "GDK_TYPE_DRAWABLE")
-;; )
+(define-object GdkFrameClock
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkFrameClock")
+  (gtype-id "GDK_TYPE_FRAME_CLOCK")
+)
+
+(define-object GdkFrameClockIdle
+  (in-module "Gdk")
+  (parent "GdkFrameClock")
+  (c-name "GdkFrameClockIdle")
+  (available "GDK_AVAILABLE_IN_3_16")
+  (gtype-id "GDK_TYPE_FRAME_CLOCK_IDLE")
+)
+
+(define-object GdkGLContext
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkGLContext")
+  (available "GDK_AVAILABLE_IN_3_16")
+  (gtype-id "GDK_TYPE_GL_CONTEXT")
+)
 
 ;; parent is now GObject
 (define-object GdkWindow
@@ -74,46 +67,13 @@
   (gtype-id "GDK_TYPE_WINDOW")
 )
 
-;; to be fixed XX parent should be defined
-;; (define-object GdkPangoRenderer
-;;   (in-module "Gdk")
-;;   (parent "PangoRenderer")
-;;   (c-name "GdkPangoRenderer")
-;;   (gtype-id "GDK_TYPE_PANGO_RENDERER")
-;; )
-
-;; deprecated
-;; (define-object GdkPixmap
-;;   (in-module "Gdk")
-;;   (parent "GdkDrawable")
-;;   (c-name "GdkPixmap")
-;;   (gtype-id "GDK_TYPE_PIXMAP")
-;; )
-
-
-;; ;; deprecated
-;; (define-object GdkBitmap
-;;   (in-module "Gdk")
-;;   (parent "GdkDrawable")
-;;   (c-name "GdkBitmap")
-;;   (gtype-id "GDK_TYPE_DRAWABLE")
-;; )
-
-;; ;; deprecated
-;; (define-object GdkGC
-;;   (in-module "Gdk")
-;;   (parent "GObject")
-;;   (c-name "GdkGC")
-;;   (gtype-id "GDK_TYPE_GC")
-;; )
-
-;; ;; deprecated
-;; (define-object GdkImage
-;;   (in-module "Gdk")
-;;   (parent "GObject")
-;;   (c-name "GdkImage")
-;;   (gtype-id "GDK_TYPE_IMAGE")
-;; )
+(define-object GdkWindowImpl
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkWindowImpl")
+  (available "GDK_AVAILABLE_IN_3_16")
+  (gtype-id "GDK_TYPE_WINDOW_IMPL")
+)
 
 (define-object GdkKeymap
   (in-module "Gdk")
@@ -121,53 +81,6 @@
   (c-name "GdkKeymap")
   (gtype-id "GDK_TYPE_KEYMAP")
 )
-
-(define-object GdkPixbuf
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkPixbuf")
-  (gtype-id "GDK_TYPE_PIXBUF")
-  (fields
-; XXXX this next one isn't a real field.  added for Python bindings
-   '("guchar*" "pixel_array")
-  )
-)
-
-(define-object GdkPixbufAnimation
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkPixbufAnimation")
-  (gtype-id "GDK_TYPE_PIXBUF_ANIMATION")
-)
-
-(define-object GdkPixbufAnimationIter
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkPixbufAnimationIter")
-  (gtype-id "GDK_TYPE_PIXBUF_ANIMATION_ITER")
-)
-
-(define-object GdkPixbufLoader
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkPixbufLoader")
-  (gtype-id "GDK_TYPE_PIXBUF_LOADER")
-)
-
-;; to be fixed XX
-;; (define-object GdkPixbufSimpleAnim
-;;   (in-module "Gdk")
-;;   (parent "GdkPixbufAnimation")
-;;   (c-name "GdkPixbufSimpleAnim")
-;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM")
-;; )
-
-;; (define-object GdkPixbufSimpleAnimIter
-;;   (in-module "Gdk")
-;;   (parent "GdkPixbufAnimationIter")
-;;   (c-name "GdkPixbufSimpleAnimIter")
-;;   (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM_ITER")
-;; )
 
 (define-object GdkScreen
   (in-module "Gdk")
@@ -181,25 +94,10 @@
   (parent "GObject")
   (c-name "GdkVisual")
   (gtype-id "GDK_TYPE_VISUAL")
-  ;; (fields
-  ;;   '("GdkVisualType" "type")
-  ;;   '("gint" "depth")
-  ;;   '("GdkByteOrder" "byte_order")
-  ;;   '("gint" "colormap_size")
-  ;;   '("gint" "bits_per_rgb")
-  ;;   '("guint32" "red_mask")
-  ;;   '("gint" "red_shift")
-  ;;   '("gint" "red_prec")
-  ;;   '("guint32" "green_mask")
-  ;;   '("gint" "green_shift")
-  ;;   '("gint" "green_prec")
-  ;;   '("guint32" "blue_mask")
-  ;;   '("gint" "blue_shift")
-  ;;   '("gint" "blue_prec")
-  ;; )
 )
 
-;; Boxed types ...
+;; Boxed types
+;; ----------------------------
 
 (define-boxed GdkEvent
   (in-module "Gdk")
@@ -208,20 +106,6 @@
   (copy-func "gdk_event_copy")
   (release-func "gdk_event_free")
 )
-
-;; deprecated in 3.0
-;; (define-boxed GdkFont
-;;   (in-module "Gdk")
-;;   (c-name "GdkFont")
-;;   (gtype-id "GDK_TYPE_FONT")
-;;   (copy-func "gdk_font_ref")
-;;   (release-func "gdk_font_unref")
-;;   (fields
-;;     '("GdkFontType" "type")
-;;     '("gint" "ascent")
-;;     '("gint" "descent")
-;;   )
-;; )
 
 (define-boxed GdkColor
   (in-module "Gdk")
@@ -268,15 +152,8 @@
 ;)
 
 ;; Enumerations and flags ...
+;; --------------------------
 
-(define-enum GdkColorSpace
-  (in-module "Gdk")
-  (c-name "GdkColorSpace")
-  (gtype-id "GDK_TYPE_COLORSPACE")
-  (values
-    '("rgb" "GDK_COLOR_SPACE_RGB")
-  )
-)
 (define-enum GdkCursorType
   (in-module "Gdk")
   (c-name "GdkCursorType")
@@ -287,338 +164,6 @@
   )
 )
 
-(define-flags GdkDragAction
-  (in-module "Gdk")
-  (c-name "GdkDragAction")
-  (gtype-id "GDK_TYPE_DRAG_ACTION")
-  (values
-    '("default" "GDK_ACTION_DEFAULT")
-    '("copy" "GDK_ACTION_COPY")
-    '("move" "GDK_ACTION_MOVE")
-    '("link" "GDK_ACTION_LINK")
-    '("private" "GDK_ACTION_PRIVATE")
-    '("ask" "GDK_ACTION_ASK")
-  )
-)
-
-(define-enum GdkDragProtocol
-  (in-module "Gdk")
-  (c-name "GdkDragProtocol")
-  (gtype-id "GDK_TYPE_DRAG_PROTOCOL")
-  (values
-    '("motif" "GDK_DRAG_PROTO_MOTIF")
-    '("xdnd" "GDK_DRAG_PROTO_XDND")
-    '("rootwin" "GDK_DRAG_PROTO_ROOTWIN")
-    '("none" "GDK_DRAG_PROTO_NONE")
-    '("win32-dropfiles" "GDK_DRAG_PROTO_WIN32_DROPFILES")
-    '("ole2" "GDK_DRAG_PROTO_OLE2")
-    '("local" "GDK_DRAG_PROTO_LOCAL")
-  )
-)
-
-(define-enum GdkFilterReturn
-  (in-module "Gdk")
-  (c-name "GdkFilterReturn")
-  (gtype-id "GDK_TYPE_FILTER_RETURN")
-  (values
-    '("continue" "GDK_FILTER_CONTINUE")
-    '("translate" "GDK_FILTER_TRANSLATE")
-    '("remove" "GDK_FILTER_REMOVE")
-  )
-)
-
-(define-enum GdkEventType
-  (in-module "Gdk")
-  (c-name "GdkEventType")
-  (gtype-id "GDK_TYPE_EVENT_TYPE")
-  (values
-    '("nothing" "GDK_NOTHING")
-    '("delete" "GDK_DELETE")
-    '("destroy" "GDK_DESTROY")
-    '("expose" "GDK_EXPOSE")
-    '("motion-notify" "GDK_MOTION_NOTIFY")
-    '("button-press" "GDK_BUTTON_PRESS")
-    '("2button-press" "GDK_2BUTTON_PRESS")
-    '("3button-press" "GDK_3BUTTON_PRESS")
-    '("button-release" "GDK_BUTTON_RELEASE")
-    '("key-press" "GDK_KEY_PRESS")
-    '("key-release" "GDK_KEY_RELEASE")
-    '("enter-notify" "GDK_ENTER_NOTIFY")
-    '("leave-notify" "GDK_LEAVE_NOTIFY")
-    '("focus-change" "GDK_FOCUS_CHANGE")
-    '("configure" "GDK_CONFIGURE")
-    '("map" "GDK_MAP")
-    '("unmap" "GDK_UNMAP")
-    '("property-notify" "GDK_PROPERTY_NOTIFY")
-    '("selection-clear" "GDK_SELECTION_CLEAR")
-    '("selection-request" "GDK_SELECTION_REQUEST")
-    '("selection-notify" "GDK_SELECTION_NOTIFY")
-    '("proximity-in" "GDK_PROXIMITY_IN")
-    '("proximity-out" "GDK_PROXIMITY_OUT")
-    '("drag-enter" "GDK_DRAG_ENTER")
-    '("drag-leave" "GDK_DRAG_LEAVE")
-    '("drag-motion" "GDK_DRAG_MOTION")
-    '("drag-status" "GDK_DRAG_STATUS")
-    '("drop-start" "GDK_DROP_START")
-    '("drop-finished" "GDK_DROP_FINISHED")
-    '("client-event" "GDK_CLIENT_EVENT")
-    '("visibility-notify" "GDK_VISIBILITY_NOTIFY")
-    '("no-expose" "GDK_NO_EXPOSE")
-    '("scroll" "GDK_SCROLL")
-    '("window-state" "GDK_WINDOW_STATE")
-    '("setting" "GDK_SETTING")
-  )
-)
-
-(define-flags GdkEventMask
-  (in-module "Gdk")
-  (c-name "GdkEventMask")
-  (gtype-id "GDK_TYPE_EVENT_MASK")
-  (values
-    '("exposure-mask" "GDK_EXPOSURE_MASK")
-    '("pointer-motion-mask" "GDK_POINTER_MOTION_MASK")
-    '("pointer-motion-hint-mask" "GDK_POINTER_MOTION_HINT_MASK")
-    '("button-motion-mask" "GDK_BUTTON_MOTION_MASK")
-    '("button1-motion-mask" "GDK_BUTTON1_MOTION_MASK")
-    '("button2-motion-mask" "GDK_BUTTON2_MOTION_MASK")
-    '("button3-motion-mask" "GDK_BUTTON3_MOTION_MASK")
-    '("button-press-mask" "GDK_BUTTON_PRESS_MASK")
-    '("button-release-mask" "GDK_BUTTON_RELEASE_MASK")
-    '("key-press-mask" "GDK_KEY_PRESS_MASK")
-    '("key-release-mask" "GDK_KEY_RELEASE_MASK")
-    '("enter-notify-mask" "GDK_ENTER_NOTIFY_MASK")
-    '("leave-notify-mask" "GDK_LEAVE_NOTIFY_MASK")
-    '("focus-change-mask" "GDK_FOCUS_CHANGE_MASK")
-    '("structure-mask" "GDK_STRUCTURE_MASK")
-    '("property-change-mask" "GDK_PROPERTY_CHANGE_MASK")
-    '("visibility-notify-mask" "GDK_VISIBILITY_NOTIFY_MASK")
-    '("proximity-in-mask" "GDK_PROXIMITY_IN_MASK")
-    '("proximity-out-mask" "GDK_PROXIMITY_OUT_MASK")
-    '("substructure-mask" "GDK_SUBSTRUCTURE_MASK")
-    '("scroll-mask" "GDK_SCROLL_MASK")
-    '("all-events-mask" "GDK_ALL_EVENTS_MASK")
-  )
-)
-
-(define-enum GdkVisibilityState
-  (in-module "Gdk")
-  (c-name "GdkVisibilityState")
-  (gtype-id "GDK_TYPE_VISIBILITY_STATE")
-  (values
-    '("unobscured" "GDK_VISIBILITY_UNOBSCURED")
-    '("partial" "GDK_VISIBILITY_PARTIAL")
-    '("fully-obscured" "GDK_VISIBILITY_FULLY_OBSCURED")
-  )
-)
-
-(define-enum GdkScrollDirection
-  (in-module "Gdk")
-  (c-name "GdkScrollDirection")
-  (gtype-id "GDK_TYPE_SCROLL_DIRECTION")
-  (values
-    '("up" "GDK_SCROLL_UP")
-    '("down" "GDK_SCROLL_DOWN")
-    '("left" "GDK_SCROLL_LEFT")
-    '("right" "GDK_SCROLL_RIGHT")
-  )
-)
-
-(define-enum GdkNotifyType
-  (in-module "Gdk")
-  (c-name "GdkNotifyType")
-  (gtype-id "GDK_TYPE_NOTIFY_TYPE")
-  (values
-    '("ancestor" "GDK_NOTIFY_ANCESTOR")
-    '("virtual" "GDK_NOTIFY_VIRTUAL")
-    '("inferior" "GDK_NOTIFY_INFERIOR")
-    '("nonlinear" "GDK_NOTIFY_NONLINEAR")
-    '("nonlinear-virtual" "GDK_NOTIFY_NONLINEAR_VIRTUAL")
-    '("unknown" "GDK_NOTIFY_UNKNOWN")
-  )
-)
-
-(define-enum GdkCrossingMode
-  (in-module "Gdk")
-  (c-name "GdkCrossingMode")
-  (gtype-id "GDK_TYPE_CROSSING_MODE")
-  (values
-    '("normal" "GDK_CROSSING_NORMAL")
-    '("grab" "GDK_CROSSING_GRAB")
-    '("ungrab" "GDK_CROSSING_UNGRAB")
-  )
-)
-
-(define-enum GdkPropertyState
-  (in-module "Gdk")
-  (c-name "GdkPropertyState")
-  (gtype-id "GDK_TYPE_PROPERTY_STATE")
-  (values
-    '("new-value" "GDK_PROPERTY_NEW_VALUE")
-    '("delete" "GDK_PROPERTY_DELETE")
-  )
-)
-
-(define-flags GdkWindowState
-  (in-module "Gdk")
-  (c-name "GdkWindowState")
-  (gtype-id "GDK_TYPE_WINDOW_STATE")
-  (values
-    '("withdrawn" "GDK_WINDOW_STATE_WITHDRAWN")
-    '("iconified" "GDK_WINDOW_STATE_ICONIFIED")
-    '("maximized" "GDK_WINDOW_STATE_MAXIMIZED")
-    '("sticky" "GDK_WINDOW_STATE_STICKY")
-  )
-)
-
-(define-enum GdkSettingAction
-  (in-module "Gdk")
-  (c-name "GdkSettingAction")
-  (gtype-id "GDK_TYPE_SETTING_ACTION")
-  (values
-    '("new" "GDK_SETTING_ACTION_NEW")
-    '("changed" "GDK_SETTING_ACTION_CHANGED")
-    '("deleted" "GDK_SETTING_ACTION_DELETED")
-  )
-)
-
-;; (define-enum GdkFontType
-;;   (in-module "Gdk")
-;;   (c-name "GdkFontType")
-;;   (gtype-id "GDK_TYPE_FONT_TYPE")
-;;   (values
-;;     '("font" "GDK_FONT_FONT")
-;;     '("fontset" "GDK_FONT_FONTSET")
-;;   )
-;; )
-
-;; (define-enum GdkCapStyle
-;;   (in-module "Gdk")
-;;   (c-name "GdkCapStyle")
-;;   (gtype-id "GDK_TYPE_CAP_STYLE")
-;;   (values
-;;     '("not-last" "GDK_CAP_NOT_LAST")
-;;     '("butt" "GDK_CAP_BUTT")
-;;     '("round" "GDK_CAP_ROUND")
-;;     '("projecting" "GDK_CAP_PROJECTING")
-;;   )
-;; )
-
-;; (define-enum GdkFill
-;;   (in-module "Gdk")
-;;   (c-name "GdkFill")
-;;   (gtype-id "GDK_TYPE_FILL")
-;;   (values
-;;     '("solid" "GDK_SOLID")
-;;     '("tiled" "GDK_TILED")
-;;     '("stippled" "GDK_STIPPLED")
-;;     '("opaque-stippled" "GDK_OPAQUE_STIPPLED")
-;;   )
-;; )
-
-;; (define-enum GdkFunction
-;;   (in-module "Gdk")
-;;   (c-name "GdkFunction")
-;;   (gtype-id "GDK_TYPE_FUNCTION")
-;;   (values
-;;     '("copy" "GDK_COPY")
-;;     '("invert" "GDK_INVERT")
-;;     '("xor" "GDK_XOR")
-;;     '("clear" "GDK_CLEAR")
-;;     '("and" "GDK_AND")
-;;     '("and-reverse" "GDK_AND_REVERSE")
-;;     '("and-invert" "GDK_AND_INVERT")
-;;     '("noop" "GDK_NOOP")
-;;     '("or" "GDK_OR")
-;;     '("equiv" "GDK_EQUIV")
-;;     '("or-reverse" "GDK_OR_REVERSE")
-;;     '("copy-invert" "GDK_COPY_INVERT")
-;;     '("or-invert" "GDK_OR_INVERT")
-;;     '("nand" "GDK_NAND")
-;;     '("nor" "GDK_NOR")
-;;     '("set" "GDK_SET")
-;;   )
-;; )
-
-;; (define-enum GdkJoinStyle
-;;   (in-module "Gdk")
-;;   (c-name "GdkJoinStyle")
-;;   (gtype-id "GDK_TYPE_JOIN_STYLE")
-;;   (values
-;;     '("miter" "GDK_JOIN_MITER")
-;;     '("round" "GDK_JOIN_ROUND")
-;;     '("bevel" "GDK_JOIN_BEVEL")
-;;   )
-;; )
-
-;; (define-enum GdkLineStyle
-;;   (in-module "Gdk")
-;;   (c-name "GdkLineStyle")
-;;   (gtype-id "GDK_TYPE_LINE_STYLE")
-;;   (values
-;;     '("solid" "GDK_LINE_SOLID")
-;;     '("on-off-dash" "GDK_LINE_ON_OFF_DASH")
-;;     '("double-dash" "GDK_LINE_DOUBLE_DASH")
-;;   )
-;; )
-
-;; (define-enum GdkSubwindowMode
-;;   (in-module "Gdk")
-;;   (c-name "GdkSubwindowMode")
-;;   (gtype-id "GDK_TYPE_SUBWINDOW_MODE")
-;;   (values
-;;     '("clip-by-children" "GDK_CLIP_BY_CHILDREN")
-;;     '("include-inferiors" "GDK_INCLUDE_INFERIORS")
-;;   )
-;; )
-
-;; (define-flags GdkGCValuesMask
-;;   (in-module "Gdk")
-;;   (c-name "GdkGCValuesMask")
-;;   (gtype-id "GDK_TYPE_GC_VALUES_MASK")
-;;   (values
-;;     '("foreground" "GDK_GC_FOREGROUND")
-;;     '("background" "GDK_GC_BACKGROUND")
-;;     '("font" "GDK_GC_FONT")
-;;     '("function" "GDK_GC_FUNCTION")
-;;     '("fill" "GDK_GC_FILL")
-;;     '("tile" "GDK_GC_TILE")
-;;     '("stipple" "GDK_GC_STIPPLE")
-;;     '("clip-mask" "GDK_GC_CLIP_MASK")
-;;     '("subwindow" "GDK_GC_SUBWINDOW")
-;;     '("ts-x-origin" "GDK_GC_TS_X_ORIGIN")
-;;     '("ts-y-origin" "GDK_GC_TS_Y_ORIGIN")
-;;     '("clip-x-origin" "GDK_GC_CLIP_X_ORIGIN")
-;;     '("clip-y-origin" "GDK_GC_CLIP_Y_ORIGIN")
-;;     '("exposures" "GDK_GC_EXPOSURES")
-;;     '("line-width" "GDK_GC_LINE_WIDTH")
-;;     '("line-style" "GDK_GC_LINE_STYLE")
-;;     '("cap-style" "GDK_GC_CAP_STYLE")
-;;     '("join-style" "GDK_GC_JOIN_STYLE")
-;;   )
-;; )
-
-;; (define-enum GdkImageType
-;;   (in-module "Gdk")
-;;   (c-name "GdkImageType")
-;;   (gtype-id "GDK_TYPE_IMAGE_TYPE")
-;;   (values
-;;     '("normal" "GDK_IMAGE_NORMAL")
-;;     '("shared" "GDK_IMAGE_SHARED")
-;;     '("fastest" "GDK_IMAGE_FASTEST")
-;;   )
-;; )
-
-;; (define-enum GdkExtensionMode
-;;   (in-module "Gdk")
-;;   (c-name "GdkExtensionMode")
-;;   (gtype-id "GDK_TYPE_EXTENSION_MODE")
-;;   (values
-;;     '("none" "GDK_EXTENSION_EVENTS_NONE")
-;;     '("all" "GDK_EXTENSION_EVENTS_ALL")
-;;     '("cursor" "GDK_EXTENSION_EVENTS_CURSOR")
-;;   )
-;; )
-
 (define-enum GdkInputSource
   (in-module "Gdk")
   (c-name "GdkInputSource")
@@ -628,6 +173,9 @@
     '("pen" "GDK_SOURCE_PEN")
     '("eraser" "GDK_SOURCE_ERASER")
     '("cursor" "GDK_SOURCE_CURSOR")
+    '("keyboard" "GDK_SOURCE_KEYBOARD")
+    '("touchscreen" "GDK_SOURCE_TOUCHSCREEN")
+    '("touchpad" "GDK_SOURCE_TOUCHPAD")
   )
 )
 
@@ -658,6 +206,325 @@
   )
 )
 
+(define-enum GdkDeviceType
+  (in-module "Gdk")
+  (c-name "GdkDeviceType")
+  (gtype-id "GDK_TYPE_DEVICE_TYPE")
+  (values
+    '("master" "GDK_DEVICE_TYPE_MASTER")
+    '("slave" "GDK_DEVICE_TYPE_SLAVE")
+    '("floating" "GDK_DEVICE_TYPE_FLOATING")
+  )
+)
+
+(define-flags GdkDragAction
+  (in-module "Gdk")
+  (c-name "GdkDragAction")
+  (gtype-id "GDK_TYPE_DRAG_ACTION")
+  (values
+    '("default" "GDK_ACTION_DEFAULT")
+    '("copy" "GDK_ACTION_COPY")
+    '("move" "GDK_ACTION_MOVE")
+    '("link" "GDK_ACTION_LINK")
+    '("private" "GDK_ACTION_PRIVATE")
+    '("ask" "GDK_ACTION_ASK")
+  )
+)
+
+(define-enum GdkDragProtocol
+  (in-module "Gdk")
+  (c-name "GdkDragProtocol")
+  (gtype-id "GDK_TYPE_DRAG_PROTOCOL")
+  (values
+    '("none" "GDK_DRAG_PROTO_NONE")
+    '("motif" "GDK_DRAG_PROTO_MOTIF")
+    '("xdnd" "GDK_DRAG_PROTO_XDND")
+    '("rootwin" "GDK_DRAG_PROTO_ROOTWIN")
+    '("win32-dropfiles" "GDK_DRAG_PROTO_WIN32_DROPFILES")
+    '("ole2" "GDK_DRAG_PROTO_OLE2")
+    '("local" "GDK_DRAG_PROTO_LOCAL")
+    '("wayland" "GDK_DRAG_PROTO_WAYLAND")
+  )
+)
+
+(define-enum GdkFilterReturn
+  (in-module "Gdk")
+  (c-name "GdkFilterReturn")
+  (gtype-id "GDK_TYPE_FILTER_RETURN")
+  (values
+    '("continue" "GDK_FILTER_CONTINUE")
+    '("translate" "GDK_FILTER_TRANSLATE")
+    '("remove" "GDK_FILTER_REMOVE")
+  )
+)
+
+(define-enum GdkEventType
+  (in-module "Gdk")
+  (c-name "GdkEventType")
+  (gtype-id "GDK_TYPE_EVENT_TYPE")
+  (values
+    '("nothing" "GDK_NOTHING")
+    '("delete" "GDK_DELETE")
+    '("destroy" "GDK_DESTROY")
+    '("expose" "GDK_EXPOSE")
+    '("motion-notify" "GDK_MOTION_NOTIFY")
+    '("button-press" "GDK_BUTTON_PRESS")
+    '("2button-press" "GDK_2BUTTON_PRESS")
+    '("double-button-press" "GDK_DOUBLE_BUTTON_PRESS")
+    '("3button-press" "GDK_3BUTTON_PRESS")
+    '("triple-button-press" "GDK_TRIPLE_BUTTON_PRESS")
+    '("button-release" "GDK_BUTTON_RELEASE")
+    '("key-press" "GDK_KEY_PRESS")
+    '("key-release" "GDK_KEY_RELEASE")
+    '("enter-notify" "GDK_ENTER_NOTIFY")
+    '("leave-notify" "GDK_LEAVE_NOTIFY")
+    '("focus-change" "GDK_FOCUS_CHANGE")
+    '("configure" "GDK_CONFIGURE")
+    '("map" "GDK_MAP")
+    '("unmap" "GDK_UNMAP")
+    '("property-notify" "GDK_PROPERTY_NOTIFY")
+    '("selection-clear" "GDK_SELECTION_CLEAR")
+    '("selection-request" "GDK_SELECTION_REQUEST")
+    '("selection-notify" "GDK_SELECTION_NOTIFY")
+    '("proximity-in" "GDK_PROXIMITY_IN")
+    '("proximity-out" "GDK_PROXIMITY_OUT")
+    '("drag-enter" "GDK_DRAG_ENTER")
+    '("drag-leave" "GDK_DRAG_LEAVE")
+    '("drag-motion" "GDK_DRAG_MOTION")
+    '("drag-status" "GDK_DRAG_STATUS")
+    '("drop-start" "GDK_DROP_START")
+    '("drop-finished" "GDK_DROP_FINISHED")
+    '("client-event" "GDK_CLIENT_EVENT")
+    '("visibility-notify" "GDK_VISIBILITY_NOTIFY")
+    '("scroll" "GDK_SCROLL")
+    '("window-state" "GDK_WINDOW_STATE")
+    '("setting" "GDK_SETTING")
+    '("owner-change" "GDK_OWNER_CHANGE")
+    '("grab-broken" "GDK_GRAB_BROKEN")
+    '("damage" "GDK_DAMAGE")
+    '("touch-begin" "GDK_TOUCH_BEGIN")
+    '("touch-update" "GDK_TOUCH_UPDATE")
+    '("touch-end" "GDK_TOUCH_END")
+    '("touch-cancel" "GDK_TOUCH_CANCEL")
+    '("event-last" "GDK_EVENT_LAST")
+  )
+)
+
+(define-enum GdkVisibilityState
+  (in-module "Gdk")
+  (c-name "GdkVisibilityState")
+  (gtype-id "GDK_TYPE_VISIBILITY_STATE")
+  (values
+    '("unobscured" "GDK_VISIBILITY_UNOBSCURED")
+    '("partial" "GDK_VISIBILITY_PARTIAL")
+    '("fully-obscured" "GDK_VISIBILITY_FULLY_OBSCURED")
+  )
+)
+
+(define-enum GdkScrollDirection
+  (in-module "Gdk")
+  (c-name "GdkScrollDirection")
+  (gtype-id "GDK_TYPE_SCROLL_DIRECTION")
+  (values
+    '("up" "GDK_SCROLL_UP")
+    '("down" "GDK_SCROLL_DOWN")
+    '("left" "GDK_SCROLL_LEFT")
+    '("right" "GDK_SCROLL_RIGHT")
+    '("smooth" "GDK_SCROLL_SMOOTH")
+  )
+)
+
+(define-enum GdkNotifyType
+  (in-module "Gdk")
+  (c-name "GdkNotifyType")
+  (gtype-id "GDK_TYPE_NOTIFY_TYPE")
+  (values
+    '("ancestor" "GDK_NOTIFY_ANCESTOR")
+    '("virtual" "GDK_NOTIFY_VIRTUAL")
+    '("inferior" "GDK_NOTIFY_INFERIOR")
+    '("nonlinear" "GDK_NOTIFY_NONLINEAR")
+    '("nonlinear-virtual" "GDK_NOTIFY_NONLINEAR_VIRTUAL")
+    '("unknown" "GDK_NOTIFY_UNKNOWN")
+  )
+)
+
+(define-enum GdkCrossingMode
+  (in-module "Gdk")
+  (c-name "GdkCrossingMode")
+  (gtype-id "GDK_TYPE_CROSSING_MODE")
+  (values
+    '("normal" "GDK_CROSSING_NORMAL")
+    '("grab" "GDK_CROSSING_GRAB")
+    '("ungrab" "GDK_CROSSING_UNGRAB")
+    '("gtk-grab" "GDK_CROSSING_GTK_GRAB")
+    '("gtk-ungrab" "GDK_CROSSING_GTK_UNGRAB")
+    '("state-changed" "GDK_CROSSING_STATE_CHANGED")
+    '("touch-begin" "GDK_CROSSING_TOUCH_BEGIN")
+    '("touch-end" "GDK_CROSSING_TOUCH_END")
+    '("device-switch" "GDK_CROSSING_DEVICE_SWITCH")
+  )
+)
+
+(define-enum GdkPropertyState
+  (in-module "Gdk")
+  (c-name "GdkPropertyState")
+  (gtype-id "GDK_TYPE_PROPERTY_STATE")
+  (values
+    '("new-value" "GDK_PROPERTY_NEW_VALUE")
+    '("delete" "GDK_PROPERTY_DELETE")
+  )
+)
+
+(define-flags GdkWindowState
+  (in-module "Gdk")
+  (c-name "GdkWindowState")
+  (gtype-id "GDK_TYPE_WINDOW_STATE")
+  (values
+    '("withdrawn" "GDK_WINDOW_STATE_WITHDRAWN")
+    '("iconified" "GDK_WINDOW_STATE_ICONIFIED")
+    '("maximized" "GDK_WINDOW_STATE_MAXIMIZED")
+    '("sticky" "GDK_WINDOW_STATE_STICKY")
+    '("fullscreen" "GDK_WINDOW_STATE_FULLSCREEN")
+    '("above" "GDK_WINDOW_STATE_ABOVE")
+    '("below" "GDK_WINDOW_STATE_BELOW")
+    '("focused" "GDK_WINDOW_STATE_FOCUSED")
+    '("tiled" "GDK_WINDOW_STATE_TILED")
+  )
+)
+
+(define-enum GdkSettingAction
+  (in-module "Gdk")
+  (c-name "GdkSettingAction")
+  (gtype-id "GDK_TYPE_SETTING_ACTION")
+  (values
+    '("new" "GDK_SETTING_ACTION_NEW")
+    '("changed" "GDK_SETTING_ACTION_CHANGED")
+    '("deleted" "GDK_SETTING_ACTION_DELETED")
+  )
+)
+
+(define-enum GdkOwnerChange
+  (in-module "Gdk")
+  (c-name "GdkOwnerChange")
+  (gtype-id "GDK_TYPE_OWNER_CHANGE")
+  (values
+    '("new-owner" "GDK_OWNER_CHANGE_NEW_OWNER")
+    '("destroy" "GDK_OWNER_CHANGE_DESTROY")
+    '("close" "GDK_OWNER_CHANGE_CLOSE")
+  )
+)
+
+(define-flags GdkFrameClockPhase
+  (in-module "Gdk")
+  (c-name "GdkFrameClockPhase")
+  (gtype-id "GDK_TYPE_FRAME_CLOCK_PHASE")
+  (values
+    '("none" "GDK_FRAME_CLOCK_PHASE_NONE")
+    '("flush-events" "GDK_FRAME_CLOCK_PHASE_FLUSH_EVENTS")
+    '("before-paint" "GDK_FRAME_CLOCK_PHASE_BEFORE_PAINT")
+    '("update" "GDK_FRAME_CLOCK_PHASE_UPDATE")
+    '("layout" "GDK_FRAME_CLOCK_PHASE_LAYOUT")
+    '("paint" "GDK_FRAME_CLOCK_PHASE_PAINT")
+    '("resume-events" "GDK_FRAME_CLOCK_PHASE_RESUME_EVENTS")
+    '("after-paint" "GDK_FRAME_CLOCK_PHASE_AFTER_PAINT")
+  )
+)
+
+;; (define-flags GdkColorInfoFlags
+;;   (in-module "Gdk")
+;;   (c-name "GdkColorInfoFlags")
+;;   (gtype-id "GDK_TYPE_COLOR_INFO_FLAGS")
+;;   (values
+;;     '("writeable" "GDK_COLOR_WRITEABLE")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-flags GdkEventFilterFlags
+;;   (in-module "Gdk")
+;;   (c-name "GdkEventFilterFlags")
+;;   (gtype-id "GDK_TYPE_EVENT_FILTER_FLAGS")
+;;   (values
+;;     '("removed" "GDK_EVENT_FILTER_REMOVED")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-flags GdkDebugFlag
+;;   (in-module "Gdk")
+;;   (c-name "GdkDebugFlag")
+;;   (gtype-id "GDK_TYPE_DEBUG_FLAG")
+;;   (values
+;;     '("misc" "GDK_DEBUG_MISC")
+;;     '("events" "GDK_DEBUG_EVENTS")
+;;     '("dnd" "GDK_DEBUG_DND")
+;;     '("xim" "GDK_DEBUG_XIM")
+;;     '("nograbs" "GDK_DEBUG_NOGRABS")
+;;     '("input" "GDK_DEBUG_INPUT")
+;;     '("cursor" "GDK_DEBUG_CURSOR")
+;;     '("multihead" "GDK_DEBUG_MULTIHEAD")
+;;     '("xinerama" "GDK_DEBUG_XINERAMA")
+;;     '("draw" "GDK_DEBUG_DRAW")
+;;     '("eventloop" "GDK_DEBUG_EVENTLOOP")
+;;     '("frames" "GDK_DEBUG_FRAMES")
+;;     '("settings" "GDK_DEBUG_SETTINGS")
+;;     '("opengl" "GDK_DEBUG_OPENGL")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-enum GdkRenderingMode
+;;   (in-module "Gdk")
+;;   (c-name "GdkRenderingMode")
+;;   (gtype-id "GDK_TYPE_RENDERING_MODE")
+;;   (values
+;;     '("similar" "GDK_RENDERING_MODE_SIMILAR")
+;;     '("image" "GDK_RENDERING_MODE_IMAGE")
+;;     '("recording" "GDK_RENDERING_MODE_RECORDING")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-flags GdkGLFlags
+;;   (in-module "Gdk")
+;;   (c-name "GdkGLFlags")
+;;   (gtype-id "GDK_TYPE_GL_FLAGS")
+;;   (values
+;;     '("disable" "GDK_GL_DISABLE")
+;;     '("always" "GDK_GL_ALWAYS")
+;;     '("software-draw-gl" "GDK_GL_SOFTWARE_DRAW_GL")
+;;     '("software-draw-surface" "GDK_GL_SOFTWARE_DRAW_SURFACE")
+;;     '("texture-rectangle" "GDK_GL_TEXTURE_RECTANGLE")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-enum GdkArgType
+;;   (in-module "Gdk")
+;;   (c-name "GdkArgType")
+;;   (gtype-id "GDK_TYPE_ARG_TYPE")
+;;   (values
+;;     '("string" "GDK_ARG_STRING")
+;;     '("int" "GDK_ARG_INT")
+;;     '("bool" "GDK_ARG_BOOL")
+;;     '("nobool" "GDK_ARG_NOBOOL")
+;;     '("callback" "GDK_ARG_CALLBACK")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
+;; (define-flags GdkEventFlags
+;;   (in-module "Gdk")
+;;   (c-name "GdkEventFlags")
+;;   (gtype-id "GDK_TYPE_EVENT_FLAGS")
+;;   (values
+;;     '("pending" "GDK_EVENT_PENDING")
+;;     '("pointer-emulated" "GDK_EVENT_POINTER_EMULATED")
+;;     '("flushed" "GDK_EVENT_FLUSHED")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
+
 (define-enum GdkPropMode
   (in-module "Gdk")
   (c-name "GdkPropMode")
@@ -668,38 +535,6 @@
     '("append" "GDK_PROP_MODE_APPEND")
   )
 )
-
-;; (define-enum GdkFillRule
-;;   (in-module "Gdk")
-;;   (c-name "GdkFillRule")
-;;   (gtype-id "GDK_TYPE_FILL_RULE")
-;;   (values
-;;     '("even-odd-rule" "GDK_EVEN_ODD_RULE")
-;;     '("winding-rule" "GDK_WINDING_RULE")
-;;   )
-;; )
-
-;; (define-enum GdkOverlapType
-;;   (in-module "Gdk")
-;;   (c-name "GdkOverlapType")
-;;   (gtype-id "GDK_TYPE_OVERLAP_TYPE")
-;;   (values
-;;     '("in" "GDK_OVERLAP_RECTANGLE_IN")
-;;     '("out" "GDK_OVERLAP_RECTANGLE_OUT")
-;;     '("part" "GDK_OVERLAP_RECTANGLE_PART")
-;;   )
-;; )
-
-;; (define-enum GdkRgbDither
-;;   (in-module "Gdk")
-;;   (c-name "GdkRgbDither")
-;;   (gtype-id "GDK_TYPE_RGB_DITHER")
-;;   (values
-;;     '("none" "GDK_RGB_DITHER_NONE")
-;;     '("normal" "GDK_RGB_DITHER_NORMAL")
-;;     '("max" "GDK_RGB_DITHER_MAX")
-;;   )
-;; )
 
 (define-enum GdkByteOrder
   (in-module "Gdk")
@@ -729,21 +564,41 @@
     '("button3-mask" "GDK_BUTTON3_MASK")
     '("button4-mask" "GDK_BUTTON4_MASK")
     '("button5-mask" "GDK_BUTTON5_MASK")
+    '("modifier-reserved-13-mask" "GDK_MODIFIER_RESERVED_13_MASK")
+    '("modifier-reserved-14-mask" "GDK_MODIFIER_RESERVED_14_MASK")
+    '("modifier-reserved-15-mask" "GDK_MODIFIER_RESERVED_15_MASK")
+    '("modifier-reserved-16-mask" "GDK_MODIFIER_RESERVED_16_MASK")
+    '("modifier-reserved-17-mask" "GDK_MODIFIER_RESERVED_17_MASK")
+    '("modifier-reserved-18-mask" "GDK_MODIFIER_RESERVED_18_MASK")
+    '("modifier-reserved-19-mask" "GDK_MODIFIER_RESERVED_19_MASK")
+    '("modifier-reserved-20-mask" "GDK_MODIFIER_RESERVED_20_MASK")
+    '("modifier-reserved-21-mask" "GDK_MODIFIER_RESERVED_21_MASK")
+    '("modifier-reserved-22-mask" "GDK_MODIFIER_RESERVED_22_MASK")
+    '("modifier-reserved-23-mask" "GDK_MODIFIER_RESERVED_23_MASK")
+    '("modifier-reserved-24-mask" "GDK_MODIFIER_RESERVED_24_MASK")
+    '("modifier-reserved-25-mask" "GDK_MODIFIER_RESERVED_25_MASK")
+    '("super-mask" "GDK_SUPER_MASK")
+    '("hyper-mask" "GDK_HYPER_MASK")
+    '("meta-mask" "GDK_META_MASK")
+    '("modifier-reserved-29-mask" "GDK_MODIFIER_RESERVED_29_MASK")
     '("release-mask" "GDK_RELEASE_MASK")
     '("modifier-mask" "GDK_MODIFIER_MASK")
   )
 )
 
-;; (define-flags GdkInputCondition
-;;   (in-module "Gdk")
-;;   (c-name "GdkInputCondition")
-;;   (gtype-id "GDK_TYPE_INPUT_CONDITION")
-;;   (values
-;;     '("read" "GDK_INPUT_READ")
-;;     '("write" "GDK_INPUT_WRITE")
-;;     '("exception" "GDK_INPUT_EXCEPTION")
-;;   )
-;; )
+(define-enum GdkModifierIntent
+  (in-module "Gdk")
+  (c-name "GdkModifierIntent")
+  (gtype-id "GDK_TYPE_MODIFIER_INTENT")
+  (values
+    '("primary-accelerator" "GDK_MODIFIER_INTENT_PRIMARY_ACCELERATOR")
+    '("context-menu" "GDK_MODIFIER_INTENT_CONTEXT_MENU")
+    '("extend-selection" "GDK_MODIFIER_INTENT_EXTEND_SELECTION")
+    '("modify-selection" "GDK_MODIFIER_INTENT_MODIFY_SELECTION")
+    '("no-text-input" "GDK_MODIFIER_INTENT_NO_TEXT_INPUT")
+    '("shift-group" "GDK_MODIFIER_INTENT_SHIFT_GROUP")
+  )
+)
 
 (define-enum GdkStatus
   (in-module "Gdk")
@@ -768,8 +623,64 @@
     '("invalid-time" "GDK_GRAB_INVALID_TIME")
     '("not-viewable" "GDK_GRAB_NOT_VIEWABLE")
     '("frozen" "GDK_GRAB_FROZEN")
+    '("failed" "GDK_GRAB_FAILED")
   )
 )
+
+(define-enum GdkGrabOwnership
+  (in-module "Gdk")
+  (c-name "GdkGrabOwnership")
+  (gtype-id "GDK_TYPE_GRAB_OWNERSHIP")
+  (values
+    '("none" "GDK_OWNERSHIP_NONE")
+    '("window" "GDK_OWNERSHIP_WINDOW")
+    '("application" "GDK_OWNERSHIP_APPLICATION")
+  )
+)
+
+(define-flags GdkEventMask
+  (in-module "Gdk")
+  (c-name "GdkEventMask")
+  (gtype-id "GDK_TYPE_EVENT_MASK")
+  (values
+    '("exposure-mask" "GDK_EXPOSURE_MASK")
+    '("pointer-motion-mask" "GDK_POINTER_MOTION_MASK")
+    '("pointer-motion-hint-mask" "GDK_POINTER_MOTION_HINT_MASK")
+    '("button-motion-mask" "GDK_BUTTON_MOTION_MASK")
+    '("button1-motion-mask" "GDK_BUTTON1_MOTION_MASK")
+    '("button2-motion-mask" "GDK_BUTTON2_MOTION_MASK")
+    '("button3-motion-mask" "GDK_BUTTON3_MOTION_MASK")
+    '("button-press-mask" "GDK_BUTTON_PRESS_MASK")
+    '("button-release-mask" "GDK_BUTTON_RELEASE_MASK")
+    '("key-press-mask" "GDK_KEY_PRESS_MASK")
+    '("key-release-mask" "GDK_KEY_RELEASE_MASK")
+    '("enter-notify-mask" "GDK_ENTER_NOTIFY_MASK")
+    '("leave-notify-mask" "GDK_LEAVE_NOTIFY_MASK")
+    '("focus-change-mask" "GDK_FOCUS_CHANGE_MASK")
+    '("structure-mask" "GDK_STRUCTURE_MASK")
+    '("property-change-mask" "GDK_PROPERTY_CHANGE_MASK")
+    '("visibility-notify-mask" "GDK_VISIBILITY_NOTIFY_MASK")
+    '("proximity-in-mask" "GDK_PROXIMITY_IN_MASK")
+    '("proximity-out-mask" "GDK_PROXIMITY_OUT_MASK")
+    '("substructure-mask" "GDK_SUBSTRUCTURE_MASK")
+    '("scroll-mask" "GDK_SCROLL_MASK")
+    '("touch-mask" "GDK_TOUCH_MASK")
+    '("smooth-scroll-mask" "GDK_SMOOTH_SCROLL_MASK")
+    '("all-events-mask" "GDK_ALL_EVENTS_MASK")
+  )
+)
+
+;; (define-enum GdkGLError
+;;   (in-module "Gdk")
+;;   (c-name "GdkGLError")
+;;   (gtype-id "GDK_TYPE_GL_ERROR")
+;;   (values
+;;     '("not-available" "GDK_GL_ERROR_NOT_AVAILABLE")
+;;     '("unsupported-format" "GDK_GL_ERROR_UNSUPPORTED_FORMAT")
+;;     '("unsupported-profile" "GDK_GL_ERROR_UNSUPPORTED_PROFILE")
+;;   )
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;; )
 
 (define-enum GdkVisualType
   (in-module "Gdk")
@@ -785,15 +696,15 @@
   )
 )
 
-;; (define-enum GdkWindowClass
-;;   (in-module "Gdk")
-;;   (c-name "GdkWindowClass")
-;;   (gtype-id "GDK_TYPE_WINDOW_CLASS")
-;;   (values
-;;     '("utput" "GDK_INPUT_OUTPUT")
-;;     '("nly" "GDK_INPUT_ONLY")
-;;   )
-;; )
+(define-enum GdkWindowWindowClass
+  (in-module "Gdk")
+  (c-name "GdkWindowWindowClass")
+  (gtype-id "GDK_TYPE_WINDOW_WINDOW_CLASS")
+  (values
+    '("output" "GDK_INPUT_OUTPUT")
+    '("only" "GDK_INPUT_ONLY")
+  )
+)
 
 (define-enum GdkWindowType
   (in-module "Gdk")
@@ -803,9 +714,10 @@
     '("root" "GDK_WINDOW_ROOT")
     '("toplevel" "GDK_WINDOW_TOPLEVEL")
     '("child" "GDK_WINDOW_CHILD")
-    '("dialog" "GDK_WINDOW_DIALOG")
     '("temp" "GDK_WINDOW_TEMP")
     '("foreign" "GDK_WINDOW_FOREIGN")
+    '("offscreen" "GDK_WINDOW_OFFSCREEN")
+    '("subsurface" "GDK_WINDOW_SUBSURFACE")
   )
 )
 
@@ -818,10 +730,10 @@
     '("x" "GDK_WA_X")
     '("y" "GDK_WA_Y")
     '("cursor" "GDK_WA_CURSOR")
-    '("colormap" "GDK_WA_COLORMAP")
     '("visual" "GDK_WA_VISUAL")
     '("wmclass" "GDK_WA_WMCLASS")
     '("noredir" "GDK_WA_NOREDIR")
+    '("type-hint" "GDK_WA_TYPE_HINT")
   )
 )
 
@@ -837,6 +749,8 @@
     '("aspect" "GDK_HINT_ASPECT")
     '("resize-inc" "GDK_HINT_RESIZE_INC")
     '("win-gravity" "GDK_HINT_WIN_GRAVITY")
+    '("user-pos" "GDK_HINT_USER_POS")
+    '("user-size" "GDK_HINT_USER_SIZE")
   )
 )
 
@@ -849,6 +763,16 @@
     '("dialog" "GDK_WINDOW_TYPE_HINT_DIALOG")
     '("menu" "GDK_WINDOW_TYPE_HINT_MENU")
     '("toolbar" "GDK_WINDOW_TYPE_HINT_TOOLBAR")
+    '("splashscreen" "GDK_WINDOW_TYPE_HINT_SPLASHSCREEN")
+    '("utility" "GDK_WINDOW_TYPE_HINT_UTILITY")
+    '("dock" "GDK_WINDOW_TYPE_HINT_DOCK")
+    '("desktop" "GDK_WINDOW_TYPE_HINT_DESKTOP")
+    '("dropdown-menu" "GDK_WINDOW_TYPE_HINT_DROPDOWN_MENU")
+    '("popup-menu" "GDK_WINDOW_TYPE_HINT_POPUP_MENU")
+    '("tooltip" "GDK_WINDOW_TYPE_HINT_TOOLTIP")
+    '("notification" "GDK_WINDOW_TYPE_HINT_NOTIFICATION")
+    '("combo" "GDK_WINDOW_TYPE_HINT_COMBO")
+    '("dnd" "GDK_WINDOW_TYPE_HINT_DND")
   )
 )
 
@@ -915,89 +839,12 @@
   )
 )
 
-(define-enum GdkPixbufAlphaMode
+(define-enum GdkFullscreenMode
   (in-module "Gdk")
-  (c-name "GdkPixbufAlphaMode")
-  (gtype-id "GDK_TYPE_PIXBUF_ALPHA_MODE")
+  (c-name "GdkFullscreenMode")
+  (gtype-id "GDK_TYPE_FULLSCREEN_MODE")
   (values
-    '("bilevel" "GDK_PIXBUF_ALPHA_BILEVEL")
-    '("full" "GDK_PIXBUF_ALPHA_FULL")
+    '("current-monitor" "GDK_FULLSCREEN_ON_CURRENT_MONITOR")
+    '("all-monitors" "GDK_FULLSCREEN_ON_ALL_MONITORS")
   )
 )
-
-;(define-enum GdkColorspace
-;   (in-module "Gdk")
-;   (c-name "GdkColorspace")
-;   (gtype-id "GDK_TYPE_COLORSPACE")
-;   (values
-;     '("b" "GDK_COLORSPACE_RGB")
-;   )
-; )
-
-(define-enum GdkPixbufError
-  (in-module "Gdk")
-  (c-name "GdkPixbufError")
-  (gtype-id "GDK_TYPE_PIXBUF_ERROR")
-  (values
-    '("header-corrupt" "GDK_PIXBUF_ERROR_HEADER_CORRUPT")
-    '("pixel-corrupt" "GDK_PIXBUF_ERROR_PIXEL_CORRUPT")
-    '("unknown-format" "GDK_PIXBUF_ERROR_UNKNOWN_FORMAT")
-    '("corrupt-image" "GDK_PIXBUF_ERROR_CORRUPT_IMAGE")
-    '("insufficient-memory" "GDK_PIXBUF_ERROR_INSUFFICIENT_MEMORY")
-    '("bad-option-value" "GDK_PIXBUF_ERROR_BAD_OPTION_VALUE")
-    '("unknown-type" "GDK_PIXBUF_ERROR_UNKNOWN_TYPE")
-    '("unsupported-operation" "GDK_PIXBUF_ERROR_UNSUPPORTED_OPERATION")
-    '("failed" "GDK_PIXBUF_ERROR_FAILED")
-  )
-)
-
-(define-enum GdkPixbufRotation
-  (in-module "Gdk")
-  (c-name "GdkPixbufRotation")
-  (gtype-id "GDK_TYPE_PIXBUF_ROTATION")
-  (values
-    '("none" "GDK_PIXBUF_ROTATE_NONE")
-    '("counterclockwise" "GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE")
-    '("upsidedown" "GDK_PIXBUF_ROTATE_UPSIDEDOWN")
-    '("clockwise" "GDK_PIXBUF_ROTATE_CLOCKWISE")
-  )
-)
-
-
-(define-enum GdkInterpType
-  (in-module "Gdk")
-  (c-name "GdkInterpType")
-  (gtype-id "GDK_TYPE_INTERP_TYPE")
-  (values
-    '("nearest" "GDK_INTERP_NEAREST")
-    '("tiles" "GDK_INTERP_TILES")
-    '("bilinear" "GDK_INTERP_BILINEAR")
-    '("hyper" "GDK_INTERP_HYPER")
-  )
-)
-
-(define-enum GdkOwnerChange
-  (in-module "Gdk")
-  (c-name "GdkOwnerChange")
-  (gtype-id "GDK_TYPE_OWNER_CHANGE")
-  (values
-    '("new-owner" "GDK_OWNER_CHANGE_NEW_OWNER")
-    '("destroy" "GDK_OWNER_CHANGE_DESTROY")
-    '("close" "GDK_OWNER_CHANGE_CLOSE")
-  )
-)
-
-;; need to be fixed for nsp
-;; (define-object GdkPixmapObject
-;;   (in-module "Gdk")
-;;   (parent "GdkDrawable")
-;;   (c-name "GdkPixmapObject")
-;;   (gtype-id "GDK_TYPE_PIXMAP_OBJECT")
-;; )
-
-;; (define-object GdkWindowObject
-;;   (in-module "Gdk")
-;;   (parent "GdkDrawable")
-;;   (c-name "GdkWindowObject")
-;;   (gtype-id "GDK_TYPE_WINDOW_OBJECT")
-;; )
