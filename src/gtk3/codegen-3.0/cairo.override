@@ -1,0 +1,37 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+#include <cairo/cairo.h>
+#include <cairo/cairo-gobject.h>
+#include <cairo/cairo-pdf.h>
+#include <cairo/cairo-ps.h>
+#include <cairo/cairo-svg.h>
+#include <nsp/nsp.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/hash.h>
+#include <nsp/list.h>
+#include <nsp/cells.h>
+#include <nsp/none.h>
+#include <nsp/matrix.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/gobject-util.h>
+#define  Nspcairo_t_Private
+#include <nsp/gtk/cairo_t.h>
+#define  Nspcairo_surface_t_Private
+#include <nsp/gtk/cairo_surface_t.h>
+
+%%
+init
+
+%%
+modulename cairo
+%%
+import gobject.GObject as GObject
+%%
+ignore-glob *_get_type

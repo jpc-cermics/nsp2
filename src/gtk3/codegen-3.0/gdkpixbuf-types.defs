@@ -1,0 +1,138 @@
+;; -*- scheme -*-
+; object definitions ...
+
+
+(define-object GdkPixbuf
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkPixbuf")
+  (gtype-id "GDK_TYPE_PIXBUF")
+  (fields
+;; XXXX this next one isn't a real field.
+   '("guchar*" "pixel_array")
+   )
+  )
+
+
+(define-object GdkPixbufAnimation
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkPixbufAnimation")
+  (gtype-id "GDK_TYPE_PIXBUF_ANIMATION")
+)
+
+(define-object GdkPixbufAnimationIter
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkPixbufAnimationIter")
+  (gtype-id "GDK_TYPE_PIXBUF_ANIMATION_ITER")
+)
+
+(define-object GdkPixbufLoader
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkPixbufLoader")
+  (gtype-id "GDK_TYPE_PIXBUF_LOADER")
+)
+
+;; Enumerations and flags ...
+
+(define-enum GdkPixbufAlphaMode
+  (in-module "Gdk")
+  (c-name "GdkPixbufAlphaMode")
+  (gtype-id "GDK_TYPE_PIXBUF_ALPHA_MODE")
+  (values
+    '("bilevel" "GDK_PIXBUF_ALPHA_BILEVEL")
+    '("full" "GDK_PIXBUF_ALPHA_FULL")
+  )
+)
+
+(define-enum GdkColorspace
+  (in-module "Gdk")
+  (c-name "GdkColorspace")
+  (gtype-id "GDK_TYPE_COLORSPACE")
+  (values
+    '("rgb" "GDK_COLORSPACE_RGB")
+  )
+)
+
+(define-enum GdkPixbufError
+  (in-module "Gdk")
+  (c-name "GdkPixbufError")
+  (gtype-id "GDK_TYPE_PIXBUF_ERROR")
+  (values
+    '("corrupt-image" "GDK_PIXBUF_ERROR_CORRUPT_IMAGE")
+    '("insufficient-memory" "GDK_PIXBUF_ERROR_INSUFFICIENT_MEMORY")
+    '("bad-option" "GDK_PIXBUF_ERROR_BAD_OPTION")
+    '("unknown-type" "GDK_PIXBUF_ERROR_UNKNOWN_TYPE")
+    '("unsupported-operation" "GDK_PIXBUF_ERROR_UNSUPPORTED_OPERATION")
+    '("failed" "GDK_PIXBUF_ERROR_FAILED")
+  )
+)
+
+;; (define-flags GdkPixbufFormatFlags
+;;   (in-module "Gdk")
+;;   (c-name "GdkPixbufFormatFlags")
+;;   (gtype-id "GDK_TYPE_PIXBUF_FORMAT_FLAGS")
+;;   (values
+;;     '("writable" "GDK_PIXBUF_FORMAT_WRITABLE")
+;;     '("scalable" "GDK_PIXBUF_FORMAT_SCALABLE")
+;;     '("threadsafe" "GDK_PIXBUF_FORMAT_THREADSAFE")
+;;   )
+;; )
+
+(define-enum GdkInterpType
+  (in-module "Gdk")
+  (c-name "GdkInterpType")
+  (gtype-id "GDK_TYPE_INTERP_TYPE")
+  (values
+    '("nearest" "GDK_INTERP_NEAREST")
+    '("tiles" "GDK_INTERP_TILES")
+    '("bilinear" "GDK_INTERP_BILINEAR")
+    '("hyper" "GDK_INTERP_HYPER")
+  )
+)
+
+(define-enum GdkPixbufRotation
+  (in-module "Gdk")
+  (c-name "GdkPixbufRotation")
+  (gtype-id "GDK_TYPE_PIXBUF_ROTATION")
+  (values
+    '("none" "GDK_PIXBUF_ROTATE_NONE")
+    '("counterclockwise" "GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE")
+    '("upsidedown" "GDK_PIXBUF_ROTATE_UPSIDEDOWN")
+    '("clockwise" "GDK_PIXBUF_ROTATE_CLOCKWISE")
+  )
+)
+
+;; (define-flags GdkPixdataType
+;;   (in-module "Gdk")
+;;   (c-name "GdkPixdataType")
+;;   (gtype-id "GDK_TYPE_PIXDATA_TYPE")
+;;   (values
+;;     '("color-type-rgb" "GDK_PIXDATA_COLOR_TYPE_RGB")
+;;     '("color-type-rgba" "GDK_PIXDATA_COLOR_TYPE_RGBA")
+;;     '("color-type-mask" "GDK_PIXDATA_COLOR_TYPE_MASK")
+;;     '("sample-width-8" "GDK_PIXDATA_SAMPLE_WIDTH_8")
+;;     '("sample-width-mask" "GDK_PIXDATA_SAMPLE_WIDTH_MASK")
+;;     '("encoding-raw" "GDK_PIXDATA_ENCODING_RAW")
+;;     '("encoding-rle" "GDK_PIXDATA_ENCODING_RLE")
+;;     '("encoding-mask" "GDK_PIXDATA_ENCODING_MASK")
+;;   )
+;; )
+
+;; (define-flags GdkPixdataDumpType
+;;   (in-module "Gdk")
+;;   (c-name "GdkPixdataDumpType")
+;;   (gtype-id "GDK_TYPE_PIXDATA_DUMP_TYPE")
+;;   (values
+;;     '("pixdata-stream" "GDK_PIXDATA_DUMP_PIXDATA_STREAM")
+;;     '("pixdata-struct" "GDK_PIXDATA_DUMP_PIXDATA_STRUCT")
+;;     '("macros" "GDK_PIXDATA_DUMP_MACROS")
+;;     '("gtypes" "GDK_PIXDATA_DUMP_GTYPES")
+;;     '("ctypes" "GDK_PIXDATA_DUMP_CTYPES")
+;;     '("static" "GDK_PIXDATA_DUMP_STATIC")
+;;     '("const" "GDK_PIXDATA_DUMP_CONST")
+;;     '("rle-decoder" "GDK_PIXDATA_DUMP_RLE_DECODER")
+;;   )
+;; )

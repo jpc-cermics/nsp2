@@ -1,0 +1,449 @@
+;; -*- scheme -*-
+; object definitions ...
+
+(define-boxed Cairo_t
+  (in-module "Cairo")
+  (c-name "cairo_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_CONTEXT")
+  ;;(copy-func "gtk_border_copy")
+  ;;(release-func "gtk_border_free")
+)
+
+(define-boxed Cairo_surface_t
+  (in-module "Cairo")
+  (c-name "cairo_surface_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_SURFACE")
+)
+
+(define-boxed Cairo_pattern_t
+  (in-module "Cairo")
+  (c-name "Cairo_pattern_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_PATTERN")
+)
+
+(define-boxed Cairo_region_t
+  (in-module "Cairo")
+  (c-name "Cairo_region_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_REGION")
+)
+
+(define-boxed Cairo_rectangle_t
+  (in-module "Cairo")
+  (c-name "Cairo_rectangle_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_RECTANGLE")
+)
+
+(define-boxed Cairo_matrix_t
+  (in-module "Cairo")
+  (c-name "Cairo_matrix_t")
+  (gtype-id "CAIRO_GOBJECT_TYPE_MATRIX")
+)
+
+;; enums
+
+(define-enum cairo_status_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_STATUS")
+  (in-module "Cairo")
+  (c-name "cairo_status_t")
+  (values
+   '("success" "CAIRO_STATUS_SUCCESS")
+   '("no_memory" "CAIRO_STATUS_NO_MEMORY")
+   '("invalid_restore" "CAIRO_STATUS_INVALID_RESTORE")
+   '("invalid_pop_group" "CAIRO_STATUS_INVALID_POP_GROUP")
+   '("no_current_point" "CAIRO_STATUS_NO_CURRENT_POINT")
+   '("invalid_matrix" "CAIRO_STATUS_INVALID_MATRIX")
+   '("invalid_status" "CAIRO_STATUS_INVALID_STATUS")
+   '("null_pointer" "CAIRO_STATUS_NULL_POINTER")
+   '("invalid_string" "CAIRO_STATUS_INVALID_STRING")
+   '("invalid_path_data" "CAIRO_STATUS_INVALID_PATH_DATA")
+   '("read_error" "CAIRO_STATUS_READ_ERROR")
+   '("write_error" "CAIRO_STATUS_WRITE_ERROR")
+   '("surface_finished" "CAIRO_STATUS_SURFACE_FINISHED")
+   '("surface_type_mismatch" "CAIRO_STATUS_SURFACE_TYPE_MISMATCH")
+   '("pattern_type_mismatch" "CAIRO_STATUS_PATTERN_TYPE_MISMATCH")
+   '("invalid_content" "CAIRO_STATUS_INVALID_CONTENT")
+   '("invalid_format" "CAIRO_STATUS_INVALID_FORMAT")
+   '("invalid_visual" "CAIRO_STATUS_INVALID_VISUAL")
+   '("file_not_found" "CAIRO_STATUS_FILE_NOT_FOUND")
+   '("invalid_dash" "CAIRO_STATUS_INVALID_DASH")
+   '("invalid_dsc_comment" "CAIRO_STATUS_INVALID_DSC_COMMENT")
+   '("invalid_index" "CAIRO_STATUS_INVALID_INDEX")
+   '("clip_not_representable" "CAIRO_STATUS_CLIP_NOT_REPRESENTABLE")
+   '("temp_file_error" "CAIRO_STATUS_TEMP_FILE_ERROR")
+   '("invalid_stride" "CAIRO_STATUS_INVALID_STRIDE")
+   '("font_type_mismatch" "CAIRO_STATUS_FONT_TYPE_MISMATCH")
+   '("user_font_immutable" "CAIRO_STATUS_USER_FONT_IMMUTABLE")
+   '("user_font_error" "CAIRO_STATUS_USER_FONT_ERROR")
+   '("negative_count" "CAIRO_STATUS_NEGATIVE_COUNT")
+   '("invalid_clusters" "CAIRO_STATUS_INVALID_CLUSTERS")
+   '("invalid_slant" "CAIRO_STATUS_INVALID_SLANT")
+   '("invalid_weight" "CAIRO_STATUS_INVALID_WEIGHT")
+   '("invalid_size" "CAIRO_STATUS_INVALID_SIZE")
+   '("user_font_not_implemented" "CAIRO_STATUS_USER_FONT_NOT_IMPLEMENTED")
+   '("device_type_mismatch" "CAIRO_STATUS_DEVICE_TYPE_MISMATCH")
+   '("device_error" "CAIRO_STATUS_DEVICE_ERROR")
+   '("invalid_mesh_construction" "CAIRO_STATUS_INVALID_MESH_CONSTRUCTION")
+   '("device_finished" "CAIRO_STATUS_DEVICE_FINISHED")
+   '("jbig2_global_missing" "CAIRO_STATUS_JBIG2_GLOBAL_MISSING")
+   '("last_status" "CAIRO_STATUS_LAST_STATUS")
+   )
+  )
+
+(define-enum cairo_content_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_CONTENT")
+  (in-module "Cairo")
+  (c-name "cairo_content_t")
+  (values
+   '("color" "CAIRO_CONTENT_COLOR")
+   '("alpha" "CAIRO_CONTENT_ALPHA")
+   '("color_alpha" "CAIRO_CONTENT_COLOR_ALPHA")
+   )
+  )
+
+(define-enum cairo_format_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FORMAT")
+  (in-module "Cairo")
+  (c-name "cairo_format_t")
+  (values
+   '("invalid" "CAIRO_FORMAT_INVALID")
+   '("argb32" "CAIRO_FORMAT_ARGB32")
+   '("rgb24" "CAIRO_FORMAT_RGB24")
+   '("a8" "CAIRO_FORMAT_A8")
+   '("a1" "CAIRO_FORMAT_A1")
+   '("rgb16_565" "CAIRO_FORMAT_RGB16_565")
+   '("rgb30" "CAIRO_FORMAT_RGB30")
+   )
+  )
+
+
+(define-enum cairo_operator_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_OPERATOR")
+  (in-module "Cairo")
+  (c-name "cairo_operator_t")
+  (values
+   '("clear" "CAIRO_OPERATOR_CLEAR")
+
+   '("source" "CAIRO_OPERATOR_SOURCE")
+   '("over" "CAIRO_OPERATOR_OVER")
+   '("in" "CAIRO_OPERATOR_IN")
+   '("out" "CAIRO_OPERATOR_OUT")
+   '("atop" "CAIRO_OPERATOR_ATOP")
+
+   '("dest" "CAIRO_OPERATOR_DEST")
+   '("dest_over" "CAIRO_OPERATOR_DEST_OVER")
+   '("dest_in" "CAIRO_OPERATOR_DEST_IN")
+   '("dest_out" "CAIRO_OPERATOR_DEST_OUT")
+   '("dest_atop" "CAIRO_OPERATOR_DEST_ATOP")
+
+   '("xor" "CAIRO_OPERATOR_XOR")
+   '("add" "CAIRO_OPERATOR_ADD")
+   '("saturate" "CAIRO_OPERATOR_SATURATE")
+
+   '("multiply" "CAIRO_OPERATOR_MULTIPLY")
+   '("screen" "CAIRO_OPERATOR_SCREEN")
+   '("overlay" "CAIRO_OPERATOR_OVERLAY")
+   '("darken" "CAIRO_OPERATOR_DARKEN")
+   '("lighten" "CAIRO_OPERATOR_LIGHTEN")
+   '("color_dodge" "CAIRO_OPERATOR_COLOR_DODGE")
+   '("color_burn" "CAIRO_OPERATOR_COLOR_BURN")
+   '("hard_light" "CAIRO_OPERATOR_HARD_LIGHT")
+   '("soft_light" "CAIRO_OPERATOR_SOFT_LIGHT")
+   '("difference" "CAIRO_OPERATOR_DIFFERENCE")
+   '("exclusion" "CAIRO_OPERATOR_EXCLUSION")
+   '("hsl_hue" "CAIRO_OPERATOR_HSL_HUE")
+   '("hsl_saturation" "CAIRO_OPERATOR_HSL_SATURATION")
+   '("hsl_color" "CAIRO_OPERATOR_HSL_COLOR")
+   '("hsl_luminosity" "CAIRO_OPERATOR_HSL_LUMINOSITY")
+   )
+  )
+
+
+(define-enum cairo_antialias_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_ANTIALIAS")
+  (in-module "Cairo")
+  (c-name "cairo_antialias_t")
+  (values
+   '("default" "CAIRO_ANTIALIAS_DEFAULT")
+   '("none" "CAIRO_ANTIALIAS_NONE")
+   '("gray" "CAIRO_ANTIALIAS_GRAY")
+   '("subpixel" "CAIRO_ANTIALIAS_SUBPIXEL")
+   '("fast" "CAIRO_ANTIALIAS_FAST")
+   '("good" "CAIRO_ANTIALIAS_GOOD")
+   '("best" "CAIRO_ANTIALIAS_BEST")
+   )
+  )
+
+
+(define-enum cairo_fill_rule_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FILL_RULE")
+  (in-module "Cairo")
+  (c-name "cairo_fill_rule_t")
+  (values
+   '("winding" "CAIRO_FILL_RULE_WINDING")
+   '("even_odd" "CAIRO_FILL_RULE_EVEN_ODD")
+   )
+  )
+
+
+(define-enum cairo_line_cap_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_LINE_CAP")
+  (in-module "Cairo")
+  (c-name "cairo_line_cap_t")
+  (values
+   '("butt" "CAIRO_LINE_CAP_BUTT")
+   '("round" "CAIRO_LINE_CAP_ROUND")
+   '("square" "CAIRO_LINE_CAP_SQUARE")
+   )
+  )
+
+
+(define-enum cairo_line_join_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_LINE_JOIN")
+  (in-module "Cairo")
+  (c-name "cairo_line_join_t")
+  (values
+   '("miter" "CAIRO_LINE_JOIN_MITER")
+   '("round" "CAIRO_LINE_JOIN_ROUND")
+   '("bevel" "CAIRO_LINE_JOIN_BEVEL")
+   )
+  )
+
+
+(define-enum cairo_text_cluster_flags_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_TEXT_CLUSTER_FLAGS")
+  (in-module "Cairo")
+  (c-name "cairo_text_cluster_flags_t")
+  (values
+   '("backward" "CAIRO_TEXT_CLUSTER_FLAG_BACKWARD")
+   )
+  )
+
+(define-enum cairo_font_slant_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FONT_SLANT")
+  (in-module "Cairo")
+  (c-name "cairo_font_slant_t")
+  (values
+   '("normal" "CAIRO_FONT_SLANT_NORMAL")
+   '("italic" "CAIRO_FONT_SLANT_ITALIC")
+   '("oblique" "CAIRO_FONT_SLANT_OBLIQUE")
+   )
+  )
+
+
+(define-enum cairo_font_weight_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FONT_WEIGHT")
+  (in-module "Cairo")
+  (c-name "cairo_font_weight_t")
+  (values
+   '("normal" "CAIRO_FONT_WEIGHT_NORMAL")
+   '("bold" "CAIRO_FONT_WEIGHT_BOLD")
+   )
+  )
+
+(define-enum cairo_subpixel_order_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_SUBPIXEL_ORDER")
+  (in-module "Cairo")
+  (c-name "cairo_subpixel_order_t")
+  (values
+   '("default" "CAIRO_SUBPIXEL_ORDER_DEFAULT")
+   '("rgb" "CAIRO_SUBPIXEL_ORDER_RGB")
+   '("bgr" "CAIRO_SUBPIXEL_ORDER_BGR")
+   '("vrgb" "CAIRO_SUBPIXEL_ORDER_VRGB")
+   '("vbgr" "CAIRO_SUBPIXEL_ORDER_VBGR")
+   )
+  )
+
+(define-enum cairo_hint_style_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_HINT_STYLE")
+  (in-module "Cairo")
+  (c-name "cairo_hint_style_t")
+  (values
+   '("default" "CAIRO_HINT_STYLE_DEFAULT")
+   '("none" "CAIRO_HINT_STYLE_NONE")
+   '("slight" "CAIRO_HINT_STYLE_SLIGHT")
+   '("medium" "CAIRO_HINT_STYLE_MEDIUM")
+   '("full" "CAIRO_HINT_STYLE_FULL")
+   )
+  )
+
+(define-enum cairo_hint_metrics_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_HINT_METRICS")
+  (in-module "Cairo")
+  (c-name "cairo_hint_metrics_t")
+  (values
+   '("default" "CAIRO_HINT_METRICS_DEFAULT")
+   '("off" "CAIRO_HINT_METRICS_OFF")
+   '("on" "CAIRO_HINT_METRICS_ON")
+   )
+  )
+
+(define-enum cairo_font_type_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FONT_TYPE")
+  (in-module "Cairo")
+  (c-name "cairo_font_type_t")
+  (values
+   '("toy" "CAIRO_FONT_TYPE_TOY")
+   '("ft" "CAIRO_FONT_TYPE_FT")
+   '("win32" "CAIRO_FONT_TYPE_WIN32")
+   '("quartz" "CAIRO_FONT_TYPE_QUARTZ")
+   '("user" "CAIRO_FONT_TYPE_USER")
+   )
+  )
+(define-enum cairo_path_data_type_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_PATH_DATA_TYPE")
+  (in-module "Cairo")
+  (c-name "cairo_path_data_type_t")
+  (values
+   '("move_to" "CAIRO_PATH_MOVE_TO")
+   '("line_to" "CAIRO_PATH_LINE_TO")
+   '("curve_to" "CAIRO_PATH_CURVE_TO")
+   '("close_path" "CAIRO_PATH_CLOSE_PATH")
+   )
+  )
+
+(define-enum cairo_device_type_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_DEVICE_TYPE")
+  (in-module "Cairo")
+  (c-name "cairo_device_type_t")
+  (values
+   '("drm" "CAIRO_DEVICE_TYPE_DRM")
+   '("gl" "CAIRO_DEVICE_TYPE_GL")
+   '("script" "CAIRO_DEVICE_TYPE_SCRIPT")
+   '("xcb" "CAIRO_DEVICE_TYPE_XCB")
+   '("xlib" "CAIRO_DEVICE_TYPE_XLIB")
+   '("xml" "CAIRO_DEVICE_TYPE_XML")
+   '("cogl" "CAIRO_DEVICE_TYPE_COGL")
+   '("win32" "CAIRO_DEVICE_TYPE_WIN32")
+
+   '("invalid" "CAIRO_DEVICE_TYPE_INVALID")
+   )
+  )
+
+;; (define-enum cairo_surface_observer_mode_t
+;;   (in-module "Cairo")
+;;   (c-name "cairo_surface_observer_mode_t")
+;;   (values
+;;    '("observer_normal" "CAIRO_SURFACE_OBSERVER_NORMAL")
+;;    '("observer_record_operations" "CAIRO_SURFACE_OBSERVER_RECORD_OPERATIONS")
+;;    )
+;;   )
+
+(define-enum cairo_surface_type_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_SURFACE_TYPE")
+  (in-module "Cairo")
+  (c-name "cairo_surface_type_t")
+  (values
+   '("image" "CAIRO_SURFACE_TYPE_IMAGE")
+   '("pdf" "CAIRO_SURFACE_TYPE_PDF")
+   '("ps" "CAIRO_SURFACE_TYPE_PS")
+   '("xlib" "CAIRO_SURFACE_TYPE_XLIB")
+   '("xcb" "CAIRO_SURFACE_TYPE_XCB")
+   '("glitz" "CAIRO_SURFACE_TYPE_GLITZ")
+   '("quartz" "CAIRO_SURFACE_TYPE_QUARTZ")
+   '("win32" "CAIRO_SURFACE_TYPE_WIN32")
+   '("beos" "CAIRO_SURFACE_TYPE_BEOS")
+   '("directfb" "CAIRO_SURFACE_TYPE_DIRECTFB")
+   '("svg" "CAIRO_SURFACE_TYPE_SVG")
+   '("os2" "CAIRO_SURFACE_TYPE_OS2")
+   '("win32_printing" "CAIRO_SURFACE_TYPE_WIN32_PRINTING")
+   '("quartz_image" "CAIRO_SURFACE_TYPE_QUARTZ_IMAGE")
+   '("script" "CAIRO_SURFACE_TYPE_SCRIPT")
+   '("qt" "CAIRO_SURFACE_TYPE_QT")
+   '("recording" "CAIRO_SURFACE_TYPE_RECORDING")
+   '("vg" "CAIRO_SURFACE_TYPE_VG")
+   '("gl" "CAIRO_SURFACE_TYPE_GL")
+   '("drm" "CAIRO_SURFACE_TYPE_DRM")
+   '("tee" "CAIRO_SURFACE_TYPE_TEE")
+   '("xml" "CAIRO_SURFACE_TYPE_XML")
+   '("skia" "CAIRO_SURFACE_TYPE_SKIA")
+   '("subsurface" "CAIRO_SURFACE_TYPE_SUBSURFACE")
+   '("cogl" "CAIRO_SURFACE_TYPE_COGL")
+   )
+  )
+
+(define-enum cairo_pattern_type_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_PATTERN_TYPE")
+  (in-module "Cairo")
+  (c-name "cairo_pattern_type_t")
+  (values
+   '("solid" "CAIRO_PATTERN_TYPE_SOLID")
+   '("surface" "CAIRO_PATTERN_TYPE_SURFACE")
+   '("linear" "CAIRO_PATTERN_TYPE_LINEAR")
+   '("radial" "CAIRO_PATTERN_TYPE_RADIAL")
+   '("mesh" "CAIRO_PATTERN_TYPE_MESH")
+   '("raster_source" "CAIRO_PATTERN_TYPE_RASTER_SOURCE")
+   )
+  )
+
+(define-enum cairo_extend_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_EXTEND")
+  (in-module "Cairo")
+  (c-name "cairo_extend_t")
+  (values
+   '("none" "CAIRO_EXTEND_NONE")
+   '("repeat" "CAIRO_EXTEND_REPEAT")
+   '("reflect" "CAIRO_EXTEND_REFLECT")
+   '("pad" "CAIRO_EXTEND_PAD")
+   )
+  )
+
+(define-enum cairo_filter_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_FILTER")
+  (in-module "Cairo")
+  (c-name "cairo_filter_t")
+  (values
+   '("fast" "CAIRO_FILTER_FAST")
+   '("good" "CAIRO_FILTER_GOOD")
+   '("best" "CAIRO_FILTER_BEST")
+   '("nearest" "CAIRO_FILTER_NEAREST")
+   '("bilinear" "CAIRO_FILTER_BILINEAR")
+   '("gaussian" "CAIRO_FILTER_GAUSSIAN")
+   )
+  )
+
+(define-enum cairo_region_overlap_t
+  (gtype-id "CAIRO_GOBJECT_TYPE_REGION_OVERLAP")
+  (in-module "Cairo")
+  (c-name "cairo_region_overlap_t")
+  (values
+   '("in" "CAIRO_REGION_OVERLAP_IN")
+   '("out" "CAIRO_REGION_OVERLAP_OUT")
+   '("part" "CAIRO_REGION_OVERLAP_PART")
+   )
+  )
+
+(define-enum cairo_pdf_version_t
+  (in-module "Cairo")
+  (c-name "cairo_pdf_version_t")
+  (values
+   '("1_4" "CAIRO_PDF_VERSION_1_4")
+   '("1_5" "CAIRO_PDF_VERSION_1_5")
+   )
+  )
+
+(define-enum cairo_ps_level_t
+  (in-module "Cairo")
+  (c-name "cairo_ps_level_t")
+  (values
+   '("2" "CAIRO_PS_LEVEL_2")
+   '("3" "CAIRO_PS_LEVEL_3")
+   )
+  )
+
+(define-enum cairo_script_mode_t
+  (in-module "Cairo")
+  (c-name "cairo_script_mode_t")
+  (values
+   '("ascii" "CAIRO_SCRIPT_MODE_ASCII")
+   '("binary" "CAIRO_SCRIPT_MODE_BINARY")
+   )
+  )
+
+(define-enum cairo_svg_version_t
+  (in-module "Cairo")
+  (c-name "cairo_svg_version_t")
+  (values
+   '("1_1" "CAIRO_SVG_VERSION_1_1")
+   '("1_2" "CAIRO_SVG_VERSION_1_2")
+   )
+  )
