@@ -19,12 +19,6 @@ all:	$(ALL)
 clean:
 	rm -f *.c *.h
 
-cairo.c: cairo.defs
-	@echo "generating $*.c"
-	@$(PROG) -cp "codegen-3.0/" -p $* -o $*.c $*
-	@mv *.h ../../include/nsp/
-	@mv $*.c ../
-
 pango.c: pango.defs pango.override pango-types.defs
 atk.c: atk.defs atk.override atk-types.defs
 gdk.c: gdk.defs gdk.override gdk-types.defs

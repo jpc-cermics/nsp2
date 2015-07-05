@@ -115,7 +115,7 @@ extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_In
 
 #ifdef WITH_PORTAUDIO
 #undef WITH_PORTAUDIO
-#endif 
+#endif
 
 #ifdef WITH_PORTAUDIO
 extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info ;
@@ -213,6 +213,8 @@ extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf
 #ifdef XXWITH_CLP
 extern  sci_interface  Stochdec_Interf; extern  interface_info Stochdec_Interf_Info;
 #endif
+
+extern  sci_interface  cairo_Interf; extern  interface_info cairo_Interf_Info;
 
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
@@ -359,6 +361,8 @@ InterfTab Interfaces[]={
 #ifdef WITH_GI
   {girepository_Interf, girepository_Interf_Info},
 #endif
+  {cairo_Interf, cairo_Interf_Info},
+
   {NULL,NULL}
 };
 

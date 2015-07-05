@@ -650,79 +650,90 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
+
 %%
-ignore gdk_cursor_new_from_pixmap
+override gdk_cursor_new_from_name kwargs
+
+/* changed not to perform a copy */
+static int
+_wrap_gdk_cursor_new_from_name(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,string, t_end};
+  NspGObject *display;
+  char *name;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &name) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)gdk_cursor_new_from_name(GDK_DISPLAY(display->obj),name))== NULL) return RET_BUG;
+
+  nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR, ret,FALSE,TRUE,(NspTypeBase *) nsp_type_gdkcursor);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_cursor_new_from_pixbu kwargs
+
+static int
+_wrap_gdk_cursor_new_from_pixbuf (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,obj_check,s_int,s_int, t_end};
+  NspGObject *display, *pixbuf;
+  int x, y;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_type_gdkpixbuf, &pixbuf, &x, &y) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)gdk_cursor_new_from_pixbuf(GDK_DISPLAY(display->obj),GDK_PIXBUF(pixbuf->obj),x,y))== NULL) return RET_BUG;
+
+  nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR, ret,FALSE,TRUE,(NspTypeBase *) nsp_type_gdkcursor);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 %%
 override gdk_cursor_new kwargs
 
-/* XXXX
-   GdkCursor * 	gdk_cursor_new_from_pixbuf ()
-   GdkCursor * 	gdk_cursor_new_from_surface ()
-   GdkCursor * 	gdk_cursor_new_from_name ()
-   GdkCursor * 	gdk_cursor_new_for_display ()
-*/
+static int
+_wrap_gdk_cursor_new (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GdkCursorType cursor_type;
+  NspObject *nsp_cursor_type = NULL;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cursor_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GDK_TYPE_CURSOR_TYPE, nsp_cursor_type, &cursor_type)== FAIL)
+      return RET_BUG;
+  if ((ret = (GObject *)gdk_cursor_new(cursor_type))== NULL) return RET_BUG;
+
+  nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR, ret,FALSE,TRUE,(NspTypeBase *) nsp_type_gdkcursor);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override gdk_cursor_new_for_display kwargs
 
 static int
-_wrap_gdk_cursor_new(Stack stack,int rhs,int opt,int lhs)
+_wrap_gdk_cursor_new_for_display (Stack stack, int rhs, int opt, int lhs)
 {
-  /*
-  static char *kwlist1[] = { "cursor_type", NULL };
-  static char *kwlist2[] = { "source", "mask", "fg", "bg", "x", "y", NULL };
-  */
-  NspObject *nsp_cursor_type, *nsp_ret;
-  gpointer gb=NULL;
-
-  CheckRhs(1,6);
-  if ( rhs == 1 )
-    {
-      GdkCursorType cursor_type;
-      if (( nsp_cursor_type =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
-      if (nspg_enum_get_value(GDK_TYPE_CURSOR_TYPE, nsp_cursor_type,&cursor_type)== FAIL)
-	return RET_BUG;
-      gb = gdk_cursor_new(cursor_type);
-    }
-  else
-    {
-#if 0
-      NspGObject *source, *mask;
-      NspObject  *fg, *bg;
-      gint x, y;
-      int_types T[] = { obj,obj,obj,obj, s_int, s_int,t_end};
-      if (GetArgs(stack,rhs,opt,T, &source, &mask, &fg, &bg, &x, &y) == FAIL )
-	return RET_BUG;
-      if (!nspgobject_check(source, (NspTypeBase *) nsp_type_gdkpixmap)) {
-	Scierror( "source should be a GdkPixmap\n");
-	return RET_BUG;
-      }
-      if (!nspgobject_check(mask, (NspTypeBase *) nsp_type_gdkpixmap)) {
-	Scierror( "mask should be a GdkPixmap\n");
-	return RET_BUG;
-      }
-      if (!nspg_boxed_check(fg, GDK_TYPE_COLOR)) {
-	Scierror( "fg should be a GdkColor\n");
-	return RET_BUG;
-      }
-      if (!nspg_boxed_check(bg, GDK_TYPE_COLOR)) {
-	Scierror( "bg should be a GdkColor\n");
-	return RET_BUG;
-      }
-      gb = gdk_cursor_new_from_pixmap(GDK_PIXMAP(source->obj),
-				      GDK_PIXMAP(mask->obj),
-				      nspg_boxed_get(fg, GdkColor),
-				      nspg_boxed_get(bg, GdkColor),
-				      x, y);
-#endif
-    }
-
-  if ( gb == NULL)
-    {
-      Scierror("Error: could not create a GdkCursor object\n");
+  int_types T[] = {obj_check,obj, t_end};
+  NspGObject *display;
+  GdkCursorType cursor_type;
+  NspObject *nsp_cursor_type = NULL;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_cursor_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GDK_TYPE_CURSOR_TYPE, nsp_cursor_type, &cursor_type)== FAIL)
       return RET_BUG;
-    }
-  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR,gb, TRUE, TRUE,/* XXXX */
-			  (NspTypeBase *) nsp_type_gdkcursor);
-  if ( nsp_ret == NULLOBJ) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) nsp_ret);
+  if ((ret = (GObject *)gdk_cursor_new_for_display(GDK_DISPLAY(display->obj),cursor_type))== NULL) return RET_BUG;
+
+  nsp_type_gdkcursor = new_type_gdkcursor(T_BASE);
+  nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR, ret,FALSE,TRUE,(NspTypeBase *) nsp_type_gdkcursor);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
   return 1;
 }
 

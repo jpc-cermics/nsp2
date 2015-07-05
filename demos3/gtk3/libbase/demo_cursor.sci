@@ -2,13 +2,12 @@
 // handlers to be done
 //-------------------------------------------------------
 
-
 function demo_cursor()
 
   function y=cursor_draw (widget,cr,data)
     width = widget.get_allocated_width[];
     height = widget.get_allocated_height[];
-    cairo_set_fill_rule (cr, CAIRO_FILL_RULE_EVEN_ODD);
+    cairo_set_fill_rule(cr, CAIRO.FILL_RULE_EVEN_ODD);
     cairo_rectangle (cr, 0, 0, width, height);
     cairo_rectangle (cr, width / 3, height / 3, width / 3, height / 3);
     cairo_clip (cr);
@@ -40,8 +39,10 @@ function demo_cursor()
     c= min(max(0,spinner.get_value_as_int[]),152);
     c = iand(c,254);  // 0xfe
     printf("valeur de c %d\n",c);
-    cursor = gdkcursor_new(c);
-    widget.get_window[].set_cursor[cursor=cursor]
+    //cursor = gdkcursor_new(c);
+    cursor = gdk_cursor_new_for_display(spinner.get_display[],c);
+    window=widget.get_window[];
+    window.set_cursor[cursor=cursor];
     // IL faut implementer la methode name XXXXXXXX
     // cur_name.set_text(cursor.name)
     // args(2).set_text[cursor.name]
@@ -81,7 +82,7 @@ function demo_cursor()
   cur_name = gtklabel_new()
   vbox.pack_start[cur_name,expand= %f,fill=%t,padding=0]
   cur_name.show[]
-  //darea.connect["expose_event",ct_expose_event];
+  darea.connect["draw", cursor_draw];
   darea.add_events[ior(GDK.EXPOSURE_MASK,GDK.BUTTON_PRESS_MASK)]
   darea.connect["button_press_event", ct_button_press,list( spinner)];
   spinner.connect["changed", set_cursor,list( darea, cur_name)];

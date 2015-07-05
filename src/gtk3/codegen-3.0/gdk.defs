@@ -428,31 +428,95 @@
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkcursor.h
 
-(define-function cursor_new
-  (is-constructor-of GdkCursor)
+
+(define-function gdk_cursor_get_type
+  (c-name "gdk_cursor_get_type")
+  (return-type "GType")
+)
+
+(define-function gdk_cursor_new_for_display
+  (c-name "gdk_cursor_new_for_display")
+  (is-constructor-of "GdkCursor")
+  (return-type "GdkCursor*")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("GdkCursorType" "cursor_type")
+  )
+)
+
+(define-function gdk_cursor_new
   (c-name "gdk_cursor_new")
+  (is-constructor-of "GdkCursor")
   (return-type "GdkCursor*")
   (parameters
     '("GdkCursorType" "cursor_type")
   )
 )
 
-;; (define-function cursor_new_from_pixmap
-;;   (is-constructor-of GdkCursor)
-;;   (c-name "gdk_cursor_new_from_pixmap")
-;;   (return-type "GdkCursor*")
-;;   (parameters
-;;     '("GdkPixmap*" "source")
-;;     '("GdkPixmap*" "mask")
-;;     '("GdkColor*" "fg")
-;;     '("GdkColor*" "bg")
-;;     '("gint" "x")
-;;     '("gint" "y")
-;;   )
-;; )
+(define-function gdk_cursor_new_from_pixbuf
+  (c-name "gdk_cursor_new_from_pixbuf")
+  (is-constructor-of "GdkCursor")
+  (return-type "GdkCursor*")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("GdkPixbuf*" "pixbuf")
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-function gdk_cursor_new_from_surface
+  (c-name "gdk_cursor_new_from_surface")
+  (is-constructor-of "GdkCursor")
+  (return-type "GdkCursor*")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("cairo_surface_t*" "surface")
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-function gdk_cursor_new_from_name
+  (c-name "gdk_cursor_new_from_name")
+  (is-constructor-of "GdkCursor")
+  (return-type "GdkCursor*")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_display
+  (of-object "GdkCursor")
+  (c-name "gdk_cursor_get_display")
+  (return-type "GdkDisplay*")
+)
+
+(define-method get_image
+  (of-object "GdkCursor")
+  (c-name "gdk_cursor_get_image")
+  (return-type "GdkPixbuf*")
+)
+
+(define-method get_surface
+  (of-object "GdkCursor")
+  (c-name "gdk_cursor_get_surface")
+  (available "GDK_AVAILABLE_IN_3_10")
+  (return-type "cairo_surface_t*")
+  (parameters
+    '("gdouble*" "x_hot")
+    '("gdouble*" "y_hot")
+  )
+)
+
+(define-method get_cursor_type
+  (of-object "GdkCursor")
+  (c-name "gdk_cursor_get_cursor_type")
+  (return-type "GdkCursorType")
+)
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkdnd.h
-;;
 
 (define-function drag_context_get_type
   (c-name "gdk_drag_context_get_type")

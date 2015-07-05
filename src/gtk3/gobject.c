@@ -2309,9 +2309,9 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       gobj = g_value_get_object(value);
       return (NspObject *) gobject_create(NVOID,(GObject *)gobj, nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
       /*
-      * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
-      *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
-      */
+       * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
+       *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
+       */
     default:
       break;
     }

@@ -356,6 +356,11 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
   if (copy_boxed)
     {
       boxed = g_boxed_copy(boxed_type, boxed);
+      if ( boxed == NULL)
+	{
+	  Scierror("Error: failed to copy a boxed %s\n",g_type_name(boxed_type));
+	  return NULL;
+	}
       own_ref = TRUE;
     }
   /*

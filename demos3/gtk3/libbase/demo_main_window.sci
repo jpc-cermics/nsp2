@@ -1,6 +1,7 @@
 
 function demo_main_window()
   B = hash_create(100);
+  B('cairo')=  demo_cairo,
   B('button box')=  demo_button_box,
   B('buttons')=  demo_buttons,
   B('toggle buttons')=  demo_toggle_buttons,

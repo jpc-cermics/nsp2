@@ -18,6 +18,8 @@ extern void nsp_initialize_gvalue_types(void);
 extern void nsp_initialize_pango_types(void);
 extern void nsp_initialize_webkit_types(void);
 
+extern void cairo_add_constants(NspObject *module, const gchar *strip_prefix);
+
 /* init nsp gtk object types */
 
 void nsp_init_gtk_types(void)
@@ -28,7 +30,7 @@ void nsp_init_gtk_types(void)
   g_type_init();
 #endif
   nsp_initialize_atk_types();
-  /* nsp_initialize_cairo_types(); */
+  nsp_initialize_cairo_types();
   nsp_initialize_gdk_types();
   nsp_initialize_gio_types();
   nsp_initialize_girepository_types();
@@ -55,6 +57,7 @@ NspHash *nsp_gtk_hash_table = NULL;
 NspHash *nsp_gdk_hash_table = NULL;
 NspHash *nsp_atk_hash_table = NULL;
 NspHash *nsp_pango_hash_table = NULL;
+NspHash *nsp_cairo_hash_table = NULL;
 
 #define PANGO_ENTER(name,value) \
   if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,value))== NULL) return FAIL; \
@@ -95,5 +98,14 @@ static int add_constants(void)
   PANGO_ENTER( "SCALE_LARGE",PANGO_SCALE_LARGE);
   PANGO_ENTER( "SCALE_X_LARGE",PANGO_SCALE_X_LARGE);
   PANGO_ENTER( "SCALE_XX_LARGE",PANGO_SCALE_XX_LARGE);
+
+  if ( nsp_cairo_hash_table == NULLHASH )
+    {
+      /* create and store in the protected frame XXXX  */
+      if (( nsp_cairo_hash_table = nsp_hash_create("CAIRO",500))== NULLHASH) return FALSE;
+    }
+  cairo_add_constants(NSP_OBJECT(nsp_cairo_hash_table),"CAIRO_");
+
   return TRUE;
+
 }
