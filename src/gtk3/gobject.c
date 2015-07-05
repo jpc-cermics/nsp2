@@ -1320,7 +1320,15 @@ int nspgobject_check(void *value, void *type)
 
 NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
-  NspTypeBase *type = nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(obj)));
+  GType gtype = G_OBJECT_TYPE(G_OBJECT(obj));
+  NspTypeBase *type = nsp_type_from_gtype(gtype);
+  if ( type == NULL)
+    {
+      /* Sciprintf("Error: no nsp type associated to GType `%s'\n",g_type_name(gtype)); */
+      gtype = g_type_parent (gtype);
+      /* Sciprintf("  trying wth parent `%s'\n",g_type_name(gtype)) */
+      type = nsp_type_from_gtype(gtype);
+    }
   return gobject_create(name,obj,type);
 }
 

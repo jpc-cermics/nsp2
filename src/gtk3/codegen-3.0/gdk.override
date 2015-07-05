@@ -4,11 +4,15 @@ headers
 
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <cairo/cairo.h>
+#include <cairo/cairo-gobject.h>
 #include <nsp/nsp.h>
 #include <nsp/none.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
+#include <nsp/gtk/cairo_t.h>
+#include <nsp/gtk/cairo_surface_t.h>
 
 /* #define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object)  */
 
@@ -1849,7 +1853,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 {
   gint x, y, width, height;
   gdk_window_get_geometry(GDK_WINDOW(self->obj), &x, &y, &width, &height);
-  if ( nsp_move_doubles(stack,1,1,5,(double) x,(double) y,
+  if ( nsp_move_doubles(stack,1,1,4,(double) x,(double) y,
 			(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
@@ -2524,5 +2528,27 @@ int _wrap_gdk_event_send_client_message_for_display(Stack stack, int rhs, int op
 ret = gdk_event_send_client_message_for_display(GDK_DISPLAY(display->obj), event,
 						(GdkNativeWindow)  NSP_POINTER_CAST_TO_INT winid);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override gdk_window_get_device_position noargs
+
+/* XXXX Comprendre pourquoi GdkModifierType n'est pas reconnu dans la traduction
+ * en enlevant le override
+ * peut-etre parce qu'il est en GdkModifierType*
+ */
+static int
+_wrap_gdk_window_get_device_position(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  GdkModifierType state;
+  gint x,y;
+  GdkWindow *window = GDK_WINDOW(self->obj);
+  NspGdkDevice *nsp_device;
+  int_types T[] = { obj_check, t_end};
+  if (GetArgs(stack,rhs,opt,T, &nsp_type_gdkdevice, &nsp_device) == FAIL)
+    return RET_BUG;
+  gdk_window_get_device_position(window, GDK_DEVICE(nsp_device->obj),&x,&y,&state);
+  if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y,(double) state) == FAIL) return RET_BUG;
   return 1;
 }
