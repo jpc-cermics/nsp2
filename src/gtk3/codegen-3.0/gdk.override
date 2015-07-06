@@ -1657,29 +1657,30 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
 }
 %%
 override gdk_drag_begin kwargs
+
 static int
-_wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+_wrap_gdk_drag_begin(Stack stack,int rhs,int opt,int lhs)
 {
-  /* static char *kwlist[] = { "targets", NULL };*/
+  NspGObject *nsp_window;
+  int_types T[] = {obj_check,realmat, t_end};
   NspMatrix * nsp_targets;
   GList *targets = NULL;
   guint i;
   GdkDragContext *context;
   NspObject *nsp_context;
-  int_types T[] = { realmat, t_end};
 
-  if (GetArgs(stack,rhs,opt,T, &nsp_targets) == FAIL )  return RET_BUG;
+  if (GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &nsp_window, &nsp_targets) == FAIL )  return RET_BUG;
 
   for (i = 0; i < nsp_targets->mn ; i++)
     targets = g_list_append(targets, GUINT_TO_POINTER((guint)nsp_targets->R[i]));
-  context = gdk_drag_begin(GDK_WINDOW(self->obj), targets);
+  context = gdk_drag_begin(GDK_WINDOW(nsp_window->obj), targets);
   g_list_free(targets);
   nsp_context = (NspObject *) nspgobject_new(NVOID,(GObject *)context);
-  /* gdk_drag_context_unref(context); */
   g_object_unref(G_OBJECT(context));
   MoveObj(stack,1, nsp_context);
   return 1;
 }
+
 %%
 override gdk_property_get kwargs
 static int
@@ -2480,15 +2481,17 @@ override gdk_selection_send_notify
 
 int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* selection_send_notify */
 {
-  int_types T[] = {s_int, obj, obj, obj, s_int,t_end};
-  gulong requestor, time;
+  int_types T[] = {obj_check, obj, obj, obj, s_int,t_end};
+  gulong time;
+  NspGObject *nsp_window;
   GdkAtom selection, target, property;
   NspObject *nsp_selection = NULL, *nsp_target = NULL, *nsp_property = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&requestor, &nsp_selection, &nsp_target, &nsp_property, &time) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &nsp_window, &nsp_selection, &nsp_target, &nsp_property, &time)
+       == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_selection,&selection)==FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_target,&target)==FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_property,&property)==FAIL) return RET_BUG;
-  gdk_selection_send_notify((GdkNativeWindow)  NSP_POINTER_CAST_TO_INT requestor, selection, target, property, time);
+  gdk_selection_send_notify(GDK_WINDOW(nsp_window->obj), selection, target, property, time);
   return 0;
 }
 
