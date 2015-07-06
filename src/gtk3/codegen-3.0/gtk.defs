@@ -30626,23 +30626,13 @@
   (return-type "GType")
 )
 
-
-
 ;; From gtktypes.h
-
-
 
 ;; From gtkunixprint-autocleanups.h
 
-
-
 ;; From gtkunixprint.h
 
-
-
 ;; From gtkversion.h
-
-
 
 ;; From gtkviewport.h
 
@@ -30702,8 +30692,6 @@
   (is-constructor-of "GtkVolumeButton")
   (return-type "GtkVolumeButton*")
 )
-
-
 
 ;; From gtkwidget.h
 

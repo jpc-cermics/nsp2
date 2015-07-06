@@ -1,26 +1,28 @@
 // Menus OK
 //---------------------------------------------
 
-function [menu]=demo_menu(depth)
-  if depth < 1 then return; end;
-  // menu = GtkMenu()
-  menu = gtkmenu_new()
-  i=1;
-  menuitem= gtkradiomenuitem_new(label=sprintf("item %2d - %d",depth, i))
-  group = menuitem;
-  menu.append[menuitem];
-  for i = 2:4
-    menuitem= gtkradiomenuitem_new(group=group,label=sprintf("item %2d - %d",depth, i))
-    menu.append[menuitem];
-    menuitem.show[]
-    if depth > 1 then
-      submenu = demo_menu(depth - 1)
-      menuitem.set_submenu[submenu];
-    end
-  end
-endfunction
 
 function demo_menus()
+
+  function [menu]=demo_menu(depth)
+    if depth < 1 then return; end;
+    // menu = GtkMenu()
+    menu = gtkmenu_new()
+    i=1;
+    menuitem= gtkradiomenuitem_new(label=sprintf("item %2d - %d",depth, i))
+    group = menuitem;
+    menu.append[menuitem];
+    for i = 2:4
+      menuitem= gtkradiomenuitem_new(group=group,label=sprintf("item %2d - %d",depth, i))
+      menu.append[menuitem];
+      menuitem.show[]
+      if depth > 1 then
+	submenu = demo_menu(depth - 1)
+	menuitem.set_submenu[submenu];
+      end
+    end
+  endfunction
+  
   win = gtkwindow_new()
   win.connect["delete_event", demo_delete];
   win.set_title["menus"];
@@ -50,11 +52,7 @@ function demo_menus()
   box2.set_border_width[10]
   box1.pack_start[box2]
   box2.show[]
-
-  optionmenu = gtkoptionmenu_new()
-  optionmenu.set_menu[demo_menu(1)];
-  box2.pack_start[optionmenu]
-  optionmenu.show[]
+  
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,padding= 0]
   separator.show[]
