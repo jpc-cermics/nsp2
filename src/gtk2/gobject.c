@@ -2339,7 +2339,7 @@ GType gtype_from_nsp_object(NspObject *obj)
  * the first element is added.
  * As an example if @L is equal to
  * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....))
- * then the gtype array will contail
+ * then the gtype array will contain
  * [double,double,double,string,string,boolean,double,pixbuf].
  * The caller will have to take care of freeing the returned value
  * and the size of the returned array is returned in len
