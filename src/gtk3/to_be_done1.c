@@ -37,8 +37,9 @@ void nsp_init_gtk_types(void)
   nsp_initialize_gtk_types();
   /* nsp_initialize_gvalue_types(); */
   nsp_initialize_pango_types();
+#ifdef  HAVE_WEBKIT
   nsp_initialize_webkit_types();
-
+#endif 
   add_constants();
 }
 

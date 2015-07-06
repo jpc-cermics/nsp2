@@ -1244,13 +1244,7 @@ static void nsp_menu_start_editor(void)
   nsp_edit(NULL,FALSE,FALSE);
 }
 
-void nsp_edit(char *filename,int read_only,int wait){};
-void nsp_edit_smatrix(char *filename,int read_only,int wait){};
-void nsp_text_view_screen_size(){};
-void nsp_textview_destroy(){};
-void nsp_create_main_text_view(){};
 void create_prop_editor(){};
-void nsp_insert_pixbuf_from_file(){};
 
 /**
  * nsp_menu_demos:

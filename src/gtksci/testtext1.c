@@ -450,6 +450,12 @@ static void nsptv_key_press_return(View *view,int stop_signal)
 /* callback dealing with keypressed in text view 
  */
 
+#if defined(USE_SHARP_SIGN)
+#define GDK_KEY(name) GDK_KEY_##name
+#else 
+#define GDK_KEY(name) GDK_KEY_/**/name
+#endif
+
 static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 {
   GtkTextIter start, end,iter;
@@ -464,23 +470,23 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
   /*fprintf(stderr,"key pressed\n");*/
   switch ( event->keyval ) 
     {
-    case GDK_Page_Up:
-    case GDK_Page_Down:
+    case GDK_KEY(Page_Up):
+    case GDK_KEY(Page_Down):
       return FALSE;
-    case GDK_Tab :
+    case GDK_KEY(Tab ):
       nsptv_insert_completions(view);
       return TRUE;
-    case GDK_KP_Enter:
-    case GDK_Return:
+    case GDK_KEY(KP_Enter):
+    case GDK_KEY(Return):
       nsptv_key_press_return(view,TRUE);
       return TRUE;
-    case GDK_Up:
+    case GDK_KEY(Up):
       if ( event->state & GDK_SHIFT_MASK ) {
         return FALSE;
       }
       goto up; 
       break;
-    case GDK_Down:
+    case GDK_KEY(Down):
       if ( event->state & GDK_SHIFT_MASK ) {
         return FALSE;
       }
@@ -514,14 +520,14 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 	}
       goto def;
       break;
-    case GDK_Left :
+ case GDK_KEY(Left ):
       if ( event->state & GDK_SHIFT_MASK ) {
         return FALSE;
       }
       cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
       gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
       gtk_text_iter_backward_char (&iter);
-      if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) ) {
+      if (gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view)))) {
         gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
         gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
                                      &iter,
@@ -543,7 +549,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 	  cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
 	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
 	  gtk_text_iter_backward_char (&iter);
-	  if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
+	  if (gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))))
 	    {
 	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
 	    }
@@ -569,8 +575,8 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 	}
       goto def; 
       break;
-    case GDK_KP_Home: 
-    case GDK_Home:
+ case GDK_KEY(KP_Home): 
+ case GDK_KEY(Home):
       if ( event->state & GDK_SHIFT_MASK ) {
         gtk_text_buffer_get_selection_bounds(view->buffer->buffer,&start, &end);
       }
@@ -586,8 +592,8 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
         */
        }
       return TRUE;
-    case GDK_KP_End:
-    case GDK_End:
+ case GDK_KEY(KP_End):
+ case GDK_KEY(End):
       if ( event->state & GDK_SHIFT_MASK ) {
         gtk_text_buffer_get_selection_bounds(view->buffer->buffer,&start, &end);
       }
@@ -604,8 +610,8 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 
        }
       return TRUE;
-    case GDK_Control_L :
-    case GDK_Control_R :
+ case GDK_KEY(Control_L ):
+ case GDK_KEY(Control_R ):
       /* fprintf(stderr,"un controle \n"); */
       return FALSE;
     default:
@@ -675,7 +681,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
    */
   cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
   gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
-  if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
+  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))))
     {
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
       gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
@@ -807,7 +813,7 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
   NspSMatrix *S = nsp_smatrix_split_string(nsp_expr,"\n",1);
   if ( S->mn == 1 && strlen(nsp_expr) >=1 && nsp_expr[strlen(nsp_expr)-1] != '\n')
     {
-      if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable)) 
+      if (gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))))
 	{
 	  gtk_text_buffer_insert (view->buffer->buffer, &iter, nsp_expr,-1);
 	  /* set the cursor at the end of insertion : 
@@ -932,7 +938,7 @@ static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int p
 {
   GtkTextIter start, pos=iter;
   if ( strlen(nsp_expr) == 0 ) return;
-  if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable)) 
+  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))) 
     {
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &pos);
     }
@@ -1093,6 +1099,8 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
   return FALSE;
 }
 
+#define XXX_AFAIRE 0
+#if XXX_AFAIRE
 static void
 gtk_text_view_drag_data_received (GtkWidget        *widget,
                                   GdkDragContext   *context,
@@ -1108,7 +1116,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   View *view= (View *) data;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   GtkTextBuffer *buffer = view->buffer->buffer;
-
+  GtkTextViewPrivate *priv =  text_view->priv;
   g_signal_stop_emission_by_name (widget, "drag_data_received");
 
   /*
@@ -1125,7 +1133,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   gtk_text_buffer_begin_user_action (buffer); 
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
-                                    text_view->dnd_mark);
+                                    priv->dnd_mark);
 #if GTK_CHECK_VERSION(2,10,0)
   if (info == GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS)
     {
@@ -1133,10 +1141,10 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
       GtkTextIter start, end;
       /* gboolean copy_tags = TRUE; */
 
-      if (selection_data->length != sizeof (src_buffer))
+      if (gtk_selection_data_get_length(selection_data) != sizeof (src_buffer))
         return;
 
-      memcpy (&src_buffer, selection_data->data, sizeof (src_buffer));
+      memcpy (&src_buffer, gtk_selection_data_get_data(selection_data), sizeof (src_buffer));
 
       if (src_buffer == NULL)
         return;
@@ -1155,7 +1163,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 
           atoms = gtk_text_buffer_get_deserialize_formats (buffer, &n_atoms);
 
-          for (list = context->targets; list; list = g_list_next (list))
+          for (list =gdk_drag_context_list_targets (context); list; list = g_list_next (list))
             {
               gint i;
 
@@ -1190,7 +1198,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  g_free (str);
         }
     }
-  else if (selection_data->length > 0 ) 
+  else if ( gtk_selection_data_get_length(selection_data) > 0 ) 
     {
       if ( info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT) 
 	{
@@ -1289,10 +1297,11 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 #endif
 	    
   gtk_drag_finish (context, success,
-		   success && context->action == GDK_ACTION_MOVE,
+		   success && gdk_drag_context_get_actions (context) == GDK_ACTION_MOVE,
 		   time);
   gtk_text_buffer_end_user_action (buffer);
 }
+#endif
 
 
 /**
@@ -1382,7 +1391,7 @@ static View *nsptv_create_view (Buffer *buffer)
    XXXX accel group to share with menu
   */
   
-  vbox = gtk_vbox_new (FALSE, 0);
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
   menu = create_main_menu(view->window);  
   gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
@@ -1397,7 +1406,7 @@ static View *nsptv_create_view (Buffer *buffer)
                                GTK_WRAP_CHAR); /* GTK_WRAP_WORD */
     
   PangoFontDescription* p = pango_font_description_from_string("Monospace");
-  gtk_widget_modify_font (GTK_WIDGET (view->text_view),p);
+  gtk_widget_override_font (GTK_WIDGET (view->text_view),p);
   pango_font_description_free (p);
 
   gtk_container_set_border_width (GTK_CONTAINER (view->text_view), 5);
@@ -1411,8 +1420,10 @@ static View *nsptv_create_view (Buffer *buffer)
 		   "button_press_event",
 		   G_CALLBACK (nsptv_button_press_callback),
 		   view);  
-
+#if XXX_AFAIRE
   g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
+#endif 
+
   g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
   g_signal_connect(view->text_view,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),view);
   
@@ -1941,9 +1952,9 @@ static void  nsp_textview_gtk_main(void)
   }    
   timer= g_timeout_add(100,  (GSourceFunc) timeout_command ,nsp_textview_loop);
   /* at that point we are in a  GDK_THREADS_ENTER(); */
-  GDK_THREADS_LEAVE();
+  /* GDK_THREADS_LEAVE(); */
   g_main_loop_run (nsp_textview_loop);
-  GDK_THREADS_ENTER();
+  /* GDK_THREADS_ENTER();*/
   g_source_remove(timer);
 }
 
@@ -1957,9 +1968,9 @@ static gboolean  timeout_command (void *v)
 {
   if ( checkqueue_nsp_command() == TRUE) 
     {
-      GDK_THREADS_ENTER();
+      /* GDK_THREADS_ENTER(); */
       g_main_loop_quit ((GMainLoop *) v);
-      GDK_THREADS_LEAVE();
+      /* GDK_THREADS_LEAVE();*/
     }
   return TRUE;
 }
