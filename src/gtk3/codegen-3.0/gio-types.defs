@@ -1,5 +1,6 @@
 ;; -*- scheme -*-
-; object definitions ...
+;; object definitions ...
+
 (define-object GAppInfo
   (in-module "Gio")
   (c-name "GAppInfo")
@@ -374,12 +375,47 @@
 ;;   (gtype-id "G_TYPE_SETTINGS_BACKEND")
 ;; )
 
+(define-object GSimpleAction
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GSimpleAction")
+  (gtype-id "G_TYPE_SIMPLE_ACTION")
+  (implements "GAction")
+)
+
+(define-interface GAction
+  (in-module "Gio")
+  (c-name "GAction")
+  (gtype-id "G_TYPE_ACTION")
+  (vtable "GActionClass")
+  (prerequisite "GObject")
+  )
+
 (define-object GSimpleActionGroup
   (in-module "Gio")
   (parent "GObject")
   (c-name "GSimpleActionGroup")
   (gtype-id "G_TYPE_SIMPLE_ACTION_GROUP")
+  (implements "GActionGroup")
+  (implements "GActionMap")
 )
+
+(define-interface GActionGroup
+  (in-module "Gio")
+  (c-name "GActionGroup")
+  (gtype-id "G_TYPE_ACTION_GROUP")
+  (vtable "GActionGroupClass")
+  (prerequisite "GObject")
+  )
+
+(define-interface GActionMap
+  (in-module "Gio")
+  (c-name "GActionMap")
+  (gtype-id "G_TYPE_ACTION_MAP")
+  (vtable "GActionMapClass")
+  (prerequisite "GObject")
+  )
+
 
 (define-object GSimpleProxyResolver
   (in-module "Gio")

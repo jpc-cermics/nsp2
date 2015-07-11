@@ -41,6 +41,17 @@
   (return-type "int")
 )
 
+(define-function g_value_new_boolean
+  (c-name "g_value_new_boolean")
+  (is-constructor-of "GValue")
+  (return-type "GValue*")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+
+
 ;; Generic values -- A polymorphic type that can hold values of any other type
 ;; Functions
 ;; #define 	G_VALUE_HOLDS()

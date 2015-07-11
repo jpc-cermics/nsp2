@@ -32,3 +32,61 @@ ignore-glob
 _*
 *_ref
 *_unref
+
+%%
+override g_menu_model_get_item_attribute
+
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_model_get_item_attribute(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *rep = NULL;
+  int_types T[] = {s_int,string,string, t_end};
+  int item_index, ret;
+  char *attribute, *format_string;
+  CheckLhs(1,2);
+  if ( GetArgs(stack,rhs,opt,T,&item_index, &attribute, &format_string) == FAIL) return RET_BUG;
+  if ( item_index < 0 || item_index >= g_menu_model_get_n_items (G_MENU_MODEL(self->obj)))
+    {
+      Scierror("Error: item should be in [0,%d)\n",g_menu_model_get_n_items (G_MENU_MODEL(self->obj)));
+      return RET_BUG;
+    }
+  ret =g_menu_model_get_item_attribute(G_MENU_MODEL(self->obj),item_index,attribute,format_string,&rep);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  if ( lhs == 2 )
+    {
+      nsp_move_string(stack,2,rep == NULL ? "":rep,-1);
+    }
+  return Max(lhs,1);
+}
+
+#else
+int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs) /* get_item_attribute */
+{
+  Scierror("Error: function g_menu_model_get_item_attribute not available\n");
+  return RET_BUG;
+}
+#endif
+
+%%
+override g_action_map_add_action_entries
+
+static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int i;
+  GActionEntry action_entry={ NULL,NULL,NULL,NULL,NULL};
+  int_types T[] = {smat, t_end};
+  NspSMatrix *entries;
+  CheckLhs(0,0);
+  if ( GetArgs(stack,rhs,opt,T,&entries) == FAIL) return RET_BUG;
+  if ( entries->n < 1 )
+    {
+      Scierror("Error: expecting at least a mx1 string matrix\n");
+      return RET_BUG;
+    }
+  for (i=0; i < entries->m; i++)
+    {
+      action_entry.name = entries->S[i];
+      g_action_map_add_action_entries(G_ACTION_MAP(self->obj),&action_entry,1,NULL);
+    }
+  return 0;
+}

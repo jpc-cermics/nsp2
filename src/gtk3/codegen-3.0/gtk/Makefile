@@ -2,7 +2,7 @@ SUFFIXES=.job
 
 H2DEF=./codegen/h2def.py
 
-all:	gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs
+all:	gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs glib.defs
 
 gtk.defs :
 	$(H2DEF) -s gtk ~/Downloads/gtk+-3.16.0/gtk/*.h
@@ -15,6 +15,9 @@ pango.defs: Makefile
 
 gio.defs: Makefile
 	$(H2DEF) -s gio /usr/include/glib-2.0/gio/*.h
+
+glib.defs: Makefile
+	$(H2DEF) -s glib /usr/include/glib-2.0/glib/*.h
 
 gdkpixbuf.defs: Makefile
 	$(H2DEF) -s gdkpixbuf /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/*.h
@@ -29,8 +32,7 @@ CAIRO_H= /usr/include/cairo/cairo-gobject.h \
 	/usr/include/cairo/cairo-version.h
 
 cairo.defs: Makefile
-	$(H2DEF) -s cairo pooh
-
+	$(H2DEF) -s cairo $(CAIRO_H)
 
 test	:
 	cat $(CAIRO_H) > cairo.h

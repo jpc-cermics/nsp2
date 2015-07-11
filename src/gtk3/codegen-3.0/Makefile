@@ -1,7 +1,7 @@
 .SUFFIXES: .defs .diff .idiff .c $(SUFFIXES)
 SHELL = /bin/sh
 
-ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c gio.c cairo.c
+ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c gio.c cairo.c glib.c
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 
@@ -26,3 +26,10 @@ gtk.c: gtk.defs gtk.override gtk-types.defs
 webkit.c: webkit.defs webkit.override
 gvalue.c: gvalue.defs gvalue.override
 cairo.c: cairo.defs cairo.override cairo-types.defs
+glib.c: glib.defs glib.override glib-types.defs
+
+glib.c: glib.defs
+	@echo "generating $*.c"
+	@$(PROG) -cp "codegen-3.0/" -p $* -o $*.c $*
+	@mv *.h ../../include/nsp/
+	@mv $*.c ../

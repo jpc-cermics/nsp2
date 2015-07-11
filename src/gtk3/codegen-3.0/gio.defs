@@ -9191,7 +9191,7 @@
     '("gint" "item_index")
     '("const-gchar*" "attribute")
     '("const-gchar*" "format_string")
-  )
+    )
   (varargs #t)
 )
 
@@ -11833,8 +11833,6 @@
   (is-constructor-of "GSimpleActionGroup")
   (return-type "GSimpleActionGroup*")
 )
-
-
 
 ;; From gsimpleasyncresult.h
 

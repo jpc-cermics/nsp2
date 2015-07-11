@@ -1320,14 +1320,20 @@ int nspgobject_check(void *value, void *type)
 
 NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
-  GType gtype = G_OBJECT_TYPE(G_OBJECT(obj));
+  GType gtype = G_OBJECT_TYPE(G_OBJECT(obj)), p_gtype;
   NspTypeBase *type = nsp_type_from_gtype(gtype);
   if ( type == NULL)
     {
       /* Sciprintf("Error: no nsp type associated to GType `%s'\n",g_type_name(gtype)); */
-      gtype = g_type_parent (gtype);
+      p_gtype = g_type_parent (gtype);
       /* Sciprintf("  trying wth parent `%s'\n",g_type_name(gtype)) */
-      type = nsp_type_from_gtype(gtype);
+      type = nsp_type_from_gtype(p_gtype);
+      if ( type == NULL)
+	{
+	  Sciprintf("Error: get type in gtype failed for gtype %s and parent %s\n",
+		    g_type_name(gtype), g_type_name(p_gtype));
+	  Sciprintf("\ta GObject is created\n");
+	}
     }
   return gobject_create(name,obj,type);
 }
@@ -2167,8 +2173,6 @@ NspTypeBase * nsp_type_from_gtype(GType gtype)
 {
   NspTypeBase *type;
   type = (NspTypeBase *) g_type_get_qdata(gtype, nsp_gobject_class_key );
-  if ( type == NULL)
-    Scierror("get type in gtype failed for gtype %s \n",g_type_name(gtype));
   return type;
 }
 
@@ -2313,13 +2317,24 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       Scierror("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
       return NULL;
     case G_TYPE_OBJECT:
-      /* we need here to return the most specific NspObject which contains the GObject */
-      gobj = g_value_get_object(value);
-      return (NspObject *) gobject_create(NVOID,(GObject *)gobj, nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
-      /*
-       * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
-       *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
-       */
+      {
+	NspTypeBase *type;
+	GType gtype;
+	/* we need here to return the most specific NspObject which contains the GObject */
+	gobj = g_value_get_object(value);
+	gtype = G_OBJECT_TYPE(G_OBJECT(gobj));
+	type = nsp_type_from_gtype(gtype);
+	if ( type == NULL)
+	  {
+	    Scierror("Error: get type in gtype failed for gtype %s \n",g_type_name(gtype));
+	    return NULL;
+	  }
+	return (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
+	/*
+	 * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
+	 *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
+	 */
+      }
     default:
       break;
     }
