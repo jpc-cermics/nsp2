@@ -16,6 +16,8 @@ headers
 #include <nsp/type.h>
 #include <nsp/hobj.h>
 #include <nsp/interf.h>
+#include <nsp/gvariant.h>
+#include <nsp/gvarianttype.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>

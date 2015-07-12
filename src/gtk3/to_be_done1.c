@@ -54,6 +54,14 @@ void nsp_init_gtk_types_added(void)
 {
 }
 
+void nsp_initialize_glib_types(void)
+{
+  new_type_gvariant(T_BASE);
+  new_type_gvarianttype(T_BASE);
+}
+
+
+
 /*
  * registering constants in an Nsp Hash Table
  */
@@ -65,6 +73,12 @@ NspHash *nsp_pango_hash_table = NULL;
 NspHash *nsp_cairo_hash_table = NULL;
 NspHash *nsp_gio_hash_table = NULL;
 NspHash *nsp_glib_hash_table = NULL;
+
+
+void glib_add_constants(NspObject *module, const gchar *strip_prefix)
+{
+}
+
 
 #define PANGO_ENTER(name,value) \
   if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,value))== NULL) return FAIL; \

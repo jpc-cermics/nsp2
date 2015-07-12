@@ -723,14 +723,14 @@
   )
 )
 
-(define-enum GMountMountFlags
-  (in-module "Gio")
-  (c-name "GMountMountFlags")
-  (gtype-id "G_TYPE_MOUNT_MOUNT_FLAGS")
-  (values
-    '("none" "G_MOUNT_MOUNT_NONE")
-  )
-)
+;; (define-enum GMountMountFlags
+;;   (in-module "Gio")
+;;   (c-name "GMountMountFlags")
+;;   (gtype-id "G_TYPE_MOUNT_MOUNT_FLAGS")
+;;   (values
+;;     '("none" "G_MOUNT_MOUNT_NONE")
+;;   )
+;; )
 
 (define-flags GMountUnmountFlags
   (in-module "Gio")
@@ -742,14 +742,14 @@
   )
 )
 
-(define-enum GDriveStartFlags
-  (in-module "Gio")
-  (c-name "GDriveStartFlags")
-  (gtype-id "G_TYPE_DRIVE_START_FLAGS")
-  (values
-    '("none" "G_DRIVE_START_NONE")
-  )
-)
+;; (define-enum GDriveStartFlags
+;;   (in-module "Gio")
+;;   (c-name "GDriveStartFlags")
+;;   (gtype-id "G_TYPE_DRIVE_START_FLAGS")
+;;   (values
+;;     '("none" "G_DRIVE_START_NONE")
+;;   )
+;; )
 
 (define-enum GDriveStartStopType
   (in-module "Gio")
@@ -1000,14 +1000,14 @@
   )
 )
 
-(define-enum GResourceLookupFlags
-  (in-module "Gio")
-  (c-name "GResourceLookupFlags")
-  (gtype-id "G_TYPE_RESOURCE_LOOKUP_FLAGS")
-  (values
-    '("none" "G_RESOURCE_LOOKUP_FLAGS_NONE")
-  )
-)
+;; (define-enum GResourceLookupFlags
+;;   (in-module "Gio")
+;;   (c-name "GResourceLookupFlags")
+;;   (gtype-id "G_TYPE_RESOURCE_LOOKUP_FLAGS")
+;;   (values
+;;     '("none" "G_RESOURCE_LOOKUP_FLAGS_NONE")
+;;   )
+;; )
 
 (define-enum GSocketFamily
   (in-module "Gio")
@@ -1033,17 +1033,17 @@
   )
 )
 
-(define-enum GSocketMsgFlags
-  (in-module "Gio")
-  (c-name "GSocketMsgFlags")
-  (gtype-id "G_TYPE_SOCKET_MSG_FLAGS")
-  (values
-    '("none" "G_SOCKET_MSG_NONE")
-    '("oob" "G_SOCKET_MSG_OOB")
-    '("peek" "G_SOCKET_MSG_PEEK")
-    '("dontroute" "G_SOCKET_MSG_DONTROUTE")
-  )
-)
+;; (define-enum GSocketMsgFlags
+;;   (in-module "Gio")
+;;   (c-name "GSocketMsgFlags")
+;;   (gtype-id "G_TYPE_SOCKET_MSG_FLAGS")
+;;   (values
+;;     '("none" "G_SOCKET_MSG_NONE")
+;;     '("oob" "G_SOCKET_MSG_OOB")
+;;     '("peek" "G_SOCKET_MSG_PEEK")
+;;     '("dontroute" "G_SOCKET_MSG_DONTROUTE")
+;;   )
+;; )
 
 (define-enum GSocketProtocol
   (in-module "Gio")
@@ -1430,14 +1430,14 @@
   )
 )
 
-(define-enum GTlsDatabaseVerifyFlags
-  (in-module "Gio")
-  (c-name "GTlsDatabaseVerifyFlags")
-  (gtype-id "G_TYPE_TLS_DATABASE_VERIFY_FLAGS")
-  (values
-    '("none" "G_TLS_DATABASE_VERIFY_NONE")
-  )
-)
+;; (define-enum GTlsDatabaseVerifyFlags
+;;   (in-module "Gio")
+;;   (c-name "GTlsDatabaseVerifyFlags")
+;;   (gtype-id "G_TYPE_TLS_DATABASE_VERIFY_FLAGS")
+;;   (values
+;;     '("none" "G_TLS_DATABASE_VERIFY_NONE")
+;;   )
+;; )
 
 (define-enum GTlsDatabaseLookupFlags
   (in-module "Gio")
@@ -1485,14 +1485,14 @@
   )
 )
 
-(define-enum GTestDBusFlags
-  (in-module "Gio")
-  (c-name "GTestDBusFlags")
-  (gtype-id "G_TYPE_TEST_DBUS_FLAGS")
-  (values
-    '("none" "G_TEST_DBUS_NONE")
-  )
-)
+;; (define-enum GTestDBusFlags
+;;   (in-module "Gio")
+;;   (c-name "GTestDBusFlags")
+;;   (gtype-id "G_TYPE_TEST_DBUS_FLAGS")
+;;   (values
+;;     '("none" "G_TEST_DBUS_NONE")
+;;   )
+;; )
 
 (define-flags GSubprocessFlags
   (in-module "Gio")

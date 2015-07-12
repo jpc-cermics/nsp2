@@ -82,6 +82,8 @@ extern NspHash *nsp_atk_hash_table;
 extern NspHash *nsp_gdk_hash_table;
 extern NspHash *nsp_pango_hash_table;
 extern NspHash *nsp_cairo_hash_table;
+extern NspHash *nsp_gio_hash_table;
+extern NspHash *nsp_glib_hash_table;
 
 extern void *nsp_get_type_from_name(const char *name);
 extern char *type_get_name(void *type);

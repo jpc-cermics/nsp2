@@ -4,12 +4,12 @@
 
 ;; From galloca.h
 
-(define-function alloca
-  (c-name "alloca")
-  (return-type "char*")
-  (parameters
-  )
-)
+;; (define-function alloca
+;;   (c-name "alloca")
+;;   (return-type "char*")
+;;   (parameters
+;;   )
+;; )
 
 
 
@@ -1680,15 +1680,15 @@
   )
 )
 
-(define-function g_filename_from_uri
-  (c-name "g_filename_from_uri")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "uri")
-    '("gchar**" "hostname")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_filename_from_uri
+;;   (c-name "g_filename_from_uri")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "uri")
+;;     '("gchar**" "hostname")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-function g_filename_to_uri
   (c-name "g_filename_to_uri")
@@ -1756,25 +1756,25 @@
   )
 )
 
-(define-function g_filename_from_uri_utf8
-  (c-name "g_filename_from_uri_utf8")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "uri")
-    '("gchar**" "hostname")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_filename_from_uri_utf8
+;;   (c-name "g_filename_from_uri_utf8")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "uri")
+;;     '("gchar**" "hostname")
+;;     '("GError**" "error")
+;;   )
+;; )
 
-(define-function g_filename_to_uri_utf8
-  (c-name "g_filename_to_uri_utf8")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "filename")
-    '("const-gchar*" "hostname")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_filename_to_uri_utf8
+;;   (c-name "g_filename_to_uri_utf8")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("const-gchar*" "hostname")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 
 
@@ -2015,13 +2015,13 @@
   )
 )
 
-(define-function g_date_valid_julian
-  (c-name "g_date_valid_julian")
-  (return-type "gboolean")
-  (parameters
-    '("guint32" "julian_date")
-  )
-)
+;; (define-function g_date_valid_julian
+;;   (c-name "g_date_valid_julian")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("guint32" "julian_date")
+;;   )
+;; )
 
 (define-function g_date_valid_dmy
   (c-name "g_date_valid_dmy")
@@ -2740,47 +2740,47 @@
   )
 )
 
-(define-function g_getenv_utf8
-  (c-name "g_getenv_utf8")
-  (return-type "const-gchar*")
-  (parameters
-    '("const-gchar*" "variable")
-  )
-)
+;; (define-function g_getenv_utf8
+;;   (c-name "g_getenv_utf8")
+;;   (return-type "const-gchar*")
+;;   (parameters
+;;     '("const-gchar*" "variable")
+;;   )
+;; )
 
-(define-function g_setenv_utf8
-  (c-name "g_setenv_utf8")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "variable")
-    '("const-gchar*" "value")
-    '("gboolean" "overwrite")
-  )
-)
+;; (define-function g_setenv_utf8
+;;   (c-name "g_setenv_utf8")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "variable")
+;;     '("const-gchar*" "value")
+;;     '("gboolean" "overwrite")
+;;   )
+;; )
 
-(define-function g_unsetenv_utf8
-  (c-name "g_unsetenv_utf8")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "variable")
-  )
-)
+;; (define-function g_unsetenv_utf8
+;;   (c-name "g_unsetenv_utf8")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "variable")
+;;   )
+;; )
 
 
 
 ;; From gerror.h
 
-(define-function g_error_new
-  (c-name "g_error_new")
-  (is-constructor-of "GError")
-  (return-type "GError*")
-  (parameters
-    '("GQuark" "domain")
-    '("gint" "code")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_error_new
+;;   (c-name "g_error_new")
+;;   (is-constructor-of "GError")
+;;   (return-type "GError*")
+;;   (parameters
+;;     '("GQuark" "domain")
+;;     '("gint" "code")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_error_new_literal
   (c-name "g_error_new_literal")
@@ -2827,17 +2827,17 @@
   )
 )
 
-(define-function g_set_error
-  (c-name "g_set_error")
-  (return-type "none")
-  (parameters
-    '("GError**" "err")
-    '("GQuark" "domain")
-    '("gint" "code")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_set_error
+;;   (c-name "g_set_error")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GError**" "err")
+;;     '("GQuark" "domain")
+;;     '("gint" "code")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_set_error_literal
   (c-name "g_set_error_literal")
@@ -2867,26 +2867,26 @@
   )
 )
 
-(define-function g_prefix_error
-  (c-name "g_prefix_error")
-  (return-type "none")
-  (parameters
-    '("GError**" "err")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_prefix_error
+;;   (c-name "g_prefix_error")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GError**" "err")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_propagate_prefixed_error
-  (c-name "g_propagate_prefixed_error")
-  (return-type "none")
-  (parameters
-    '("GError**" "dest")
-    '("GError*" "src")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_propagate_prefixed_error
+;;   (c-name "g_propagate_prefixed_error")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GError**" "dest")
+;;     '("GError*" "src")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 
 
@@ -2999,15 +2999,15 @@
   )
 )
 
-(define-function g_build_path
-  (c-name "g_build_path")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "separator")
-    '("const-gchar*" "first_element")
-  )
-  (varargs #t)
-)
+;; (define-function g_build_path
+;;   (c-name "g_build_path")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "separator")
+;;     '("const-gchar*" "first_element")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_build_pathv
   (c-name "g_build_pathv")
@@ -3018,14 +3018,14 @@
   )
 )
 
-(define-function g_build_filename
-  (c-name "g_build_filename")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "first_element")
-  )
-  (varargs #t)
-)
+;; (define-function g_build_filename
+;;   (c-name "g_build_filename")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "first_element")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_build_filenamev
   (c-name "g_build_filenamev")
@@ -3101,28 +3101,28 @@
   )
 )
 
-(define-function g_mkstemp_utf8
-  (c-name "g_mkstemp_utf8")
-  (return-type "gint")
-  (parameters
-    '("gchar*" "tmpl")
-  )
-)
+;; (define-function g_mkstemp_utf8
+;;   (c-name "g_mkstemp_utf8")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gchar*" "tmpl")
+;;   )
+;; )
 
-(define-function g_file_open_tmp_utf8
-  (c-name "g_file_open_tmp_utf8")
-  (return-type "gint")
-  (parameters
-    '("const-gchar*" "tmpl")
-    '("gchar**" "name_used")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_file_open_tmp_utf8
+;;   (c-name "g_file_open_tmp_utf8")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("const-gchar*" "tmpl")
+;;     '("gchar**" "name_used")
+;;     '("GError**" "error")
+;;   )
+;; )
 
-(define-function g_get_current_dir_utf8
-  (c-name "g_get_current_dir_utf8")
-  (return-type "gchar*")
-)
+;; (define-function g_get_current_dir_utf8
+;;   (c-name "g_get_current_dir_utf8")
+;;   (return-type "gchar*")
+;; )
 
 
 
@@ -5585,15 +5585,15 @@
   )
 )
 
-(define-function g_get_monotonic_time
-  (c-name "g_get_monotonic_time")
-  (return-type "gint64")
-)
+;; (define-function g_get_monotonic_time
+;;   (c-name "g_get_monotonic_time")
+;;   (return-type "gint64")
+;; )
 
-(define-function g_get_real_time
-  (c-name "g_get_real_time")
-  (return-type "gint64")
-)
+;; (define-function g_get_real_time
+;;   (c-name "g_get_real_time")
+;;   (return-type "gint64")
+;; )
 
 (define-function g_source_remove
   (c-name "g_source_remove")
@@ -5907,14 +5907,14 @@
   )
 )
 
-(define-function g_markup_printf_escaped
-  (c-name "g_markup_printf_escaped")
-  (return-type "gchar*")
-  (parameters
-    '("const-char*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_markup_printf_escaped
+;;   (c-name "g_markup_printf_escaped")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-char*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_markup_vprintf_escaped
   (c-name "g_markup_vprintf_escaped")
@@ -5925,19 +5925,19 @@
   )
 )
 
-(define-function g_markup_collect_attributes
-  (c-name "g_markup_collect_attributes")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "element_name")
-    '("const-gchar**" "attribute_names")
-    '("const-gchar**" "attribute_values")
-    '("GError**" "error")
-    '("GMarkupCollectType" "first_type")
-    '("const-gchar*" "first_attr")
-  )
-  (varargs #t)
-)
+;; (define-function g_markup_collect_attributes
+;;   (c-name "g_markup_collect_attributes")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "element_name")
+;;     '("const-gchar**" "attribute_names")
+;;     '("const-gchar**" "attribute_values")
+;;     '("GError**" "error")
+;;     '("GMarkupCollectType" "first_type")
+;;     '("const-gchar*" "first_attr")
+;;   )
+;;   (varargs #t)
+;; )
 
 
 
@@ -6137,16 +6137,16 @@
   )
 )
 
-(define-function g_log
-  (c-name "g_log")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "log_domain")
-    '("GLogLevelFlags" "log_level")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_log
+;;   (c-name "g_log")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "log_domain")
+;;     '("GLogLevelFlags" "log_level")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_logv
   (c-name "g_logv")
@@ -6218,14 +6218,14 @@
   )
 )
 
-(define-function g_printerr
-  (c-name "g_printerr")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_printerr
+;;   (c-name "g_printerr")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_set_printerr_handler
   (c-name "g_set_printerr_handler")
@@ -6777,34 +6777,34 @@
 
 ;; From gprintf.h
 
-(define-function g_printf
-  (c-name "g_printf")
-  (return-type "gint")
-  (parameters
-    '("gchar-const*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_printf
+;;   (c-name "g_printf")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gchar-const*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_fprintf
-  (c-name "g_fprintf")
-  (return-type "gint")
-  (parameters
-    '("FILE*" "file")
-    '("gchar-const*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_fprintf
+;;   (c-name "g_fprintf")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("FILE*" "file")
+;;     '("gchar-const*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_sprintf
-  (c-name "g_sprintf")
-  (return-type "gint")
-  (parameters
-    '("gchar*" "string")
-    '("gchar-const*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_sprintf
+;;   (c-name "g_sprintf")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gchar*" "string")
+;;     '("gchar-const*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_vprintf
   (c-name "g_vprintf")
@@ -7606,15 +7606,15 @@
   )
 )
 
-(define-function g_regex_check_replacement
-  (c-name "g_regex_check_replacement")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "replacement")
-    '("gboolean*" "has_references")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_regex_check_replacement
+;;   (c-name "g_regex_check_replacement")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "replacement")
+;;     '("gboolean*" "has_references")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-method get_regex
   (of-object "GMatchInfo")
@@ -7889,25 +7889,25 @@
   )
 )
 
-(define-method error
-  (of-object "GScanner")
-  (c-name "g_scanner_error")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method error
+;;   (of-object "GScanner")
+;;   (c-name "g_scanner_error")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method warn
-  (of-object "GScanner")
-  (c-name "g_scanner_warn")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method warn
+;;   (of-object "GScanner")
+;;   (c-name "g_scanner_warn")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 
 
@@ -8346,10 +8346,10 @@
   )
 )
 
-(define-function g_slice_debug_tree_statistics
-  (c-name "g_slice_debug_tree_statistics")
-  (return-type "none")
-)
+;; (define-function g_slice_debug_tree_statistics
+;;   (c-name "g_slice_debug_tree_statistics")
+;;   (return-type "none")
+;; )
 
 
 
@@ -8668,17 +8668,17 @@
   )
 )
 
-(define-function g_spawn_command_line_sync
-  (c-name "g_spawn_command_line_sync")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "command_line")
-    '("gchar**" "standard_output")
-    '("gchar**" "standard_error")
-    '("gint*" "exit_status")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_spawn_command_line_sync
+;;   (c-name "g_spawn_command_line_sync")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "command_line")
+;;     '("gchar**" "standard_output")
+;;     '("gchar**" "standard_error")
+;;     '("gint*" "exit_status")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-function g_spawn_command_line_async
   (c-name "g_spawn_command_line_async")
@@ -8756,126 +8756,110 @@
   )
 )
 
-(define-function g_spawn_command_line_sync_utf8
-  (c-name "g_spawn_command_line_sync_utf8")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "command_line")
-    '("gchar**" "standard_output")
-    '("gchar**" "standard_error")
-    '("gint*" "exit_status")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_spawn_command_line_sync_utf8
+;;   (c-name "g_spawn_command_line_sync_utf8")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "command_line")
+;;     '("gchar**" "standard_output")
+;;     '("gchar**" "standard_error")
+;;     '("gint*" "exit_status")
+;;     '("GError**" "error")
+;;   )
+;; )
 
-(define-function g_spawn_command_line_async_utf8
-  (c-name "g_spawn_command_line_async_utf8")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "command_line")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_spawn_command_line_async_utf8
+;;   (c-name "g_spawn_command_line_async_utf8")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "command_line")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 
 
 ;; From gstdio.h
 
-(define-function g_access
-  (c-name "g_access")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
+;; (define-function g_access
+;;   (c-name "g_access")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("int" "mode")
+;;   )
+;; )
 
-(define-function g_chdir
-  (c-name "g_chdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "path")
-  )
-)
+;; (define-function g_chdir
+;;   (c-name "g_chdir")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "path")
+;;   )
+;; )
 
-(define-function g_unlink
-  (c-name "g_unlink")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
+;; (define-function g_unlink
+;;   (c-name "g_unlink")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;   )
+;; )
 
-(define-function g_rmdir
-  (c-name "g_rmdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
+;; (define-function g_rmdir
+;;   (c-name "g_rmdir")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;   )
+;; )
 
-(define-function g_access
-  (c-name "g_access")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
+;; (define-function g_chmod
+;;   (c-name "g_chmod")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("int" "mode")
+;;   )
+;; )
 
-(define-function g_chmod
-  (c-name "g_chmod")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
+;; (define-function g_open
+;;   (c-name "g_open")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("int" "flags")
+;;     '("int" "mode")
+;;   )
+;; )
 
-(define-function g_open
-  (c-name "g_open")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "flags")
-    '("int" "mode")
-  )
-)
+;; (define-function g_creat
+;;   (c-name "g_creat")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("int" "mode")
+;;   )
+;; )
 
-(define-function g_creat
-  (c-name "g_creat")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
+;; (define-function g_rename
+;;   (c-name "g_rename")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "oldfilename")
+;;     '("const-gchar*" "newfilename")
+;;   )
+;; )
 
-(define-function g_rename
-  (c-name "g_rename")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "oldfilename")
-    '("const-gchar*" "newfilename")
-  )
-)
+;; (define-function g_mkdir
+;;   (c-name "g_mkdir")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("int" "mode")
+;;   )
+;; )
 
-(define-function g_mkdir
-  (c-name "g_mkdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-    '("int" "mode")
-  )
-)
-
-(define-function g_chdir
-  (c-name "g_chdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "path")
-  )
-)
 
 (define-function g_stat
   (c-name "g_stat")
@@ -8895,48 +8879,32 @@
   )
 )
 
-(define-function g_unlink
-  (c-name "g_unlink")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
+;; (define-function g_remove
+;;   (c-name "g_remove")
+;;   (return-type "int")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;   )
+;; )
 
-(define-function g_remove
-  (c-name "g_remove")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
+;; (define-function g_fopen
+;;   (c-name "g_fopen")
+;;   (return-type "FILE*")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("const-gchar*" "mode")
+;;   )
+;; )
 
-(define-function g_rmdir
-  (c-name "g_rmdir")
-  (return-type "int")
-  (parameters
-    '("const-gchar*" "filename")
-  )
-)
-
-(define-function g_fopen
-  (c-name "g_fopen")
-  (return-type "FILE*")
-  (parameters
-    '("const-gchar*" "filename")
-    '("const-gchar*" "mode")
-  )
-)
-
-(define-function g_freopen
-  (c-name "g_freopen")
-  (return-type "FILE*")
-  (parameters
-    '("const-gchar*" "filename")
-    '("const-gchar*" "mode")
-    '("FILE*" "stream")
-  )
-)
+;; (define-function g_freopen
+;;   (c-name "g_freopen")
+;;   (return-type "FILE*")
+;;   (parameters
+;;     '("const-gchar*" "filename")
+;;     '("const-gchar*" "mode")
+;;     '("FILE*" "stream")
+;;   )
+;; )
 
 (define-function g_utime
   (c-name "g_utime")
@@ -8947,14 +8915,14 @@
   )
 )
 
-(define-function g_close
-  (c-name "g_close")
-  (return-type "gboolean")
-  (parameters
-    '("gint" "fd")
-    '("GError**" "error")
-  )
-)
+;; (define-function g_close
+;;   (c-name "g_close")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("gint" "fd")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 
 
@@ -9121,25 +9089,25 @@
   )
 )
 
-(define-function g_ascii_strtoull
-  (c-name "g_ascii_strtoull")
-  (return-type "guint64")
-  (parameters
-    '("const-gchar*" "nptr")
-    '("gchar**" "endptr")
-    '("guint" "base")
-  )
-)
+;; (define-function g_ascii_strtoull
+;;   (c-name "g_ascii_strtoull")
+;;   (return-type "guint64")
+;;   (parameters
+;;     '("const-gchar*" "nptr")
+;;     '("gchar**" "endptr")
+;;     '("guint" "base")
+;;   )
+;; )
 
-(define-function g_ascii_strtoll
-  (c-name "g_ascii_strtoll")
-  (return-type "gint64")
-  (parameters
-    '("const-gchar*" "nptr")
-    '("gchar**" "endptr")
-    '("guint" "base")
-  )
-)
+;; (define-function g_ascii_strtoll
+;;   (c-name "g_ascii_strtoll")
+;;   (return-type "gint64")
+;;   (parameters
+;;     '("const-gchar*" "nptr")
+;;     '("gchar**" "endptr")
+;;     '("guint" "base")
+;;   )
+;; )
 
 (define-function g_ascii_dtostr
   (c-name "g_ascii_dtostr")
@@ -9223,40 +9191,40 @@
   )
 )
 
-(define-function g_strcasecmp
-  (c-name "g_strcasecmp")
-  (return-type "gint")
-  (parameters
-    '("const-gchar*" "s1")
-    '("const-gchar*" "s2")
-  )
-)
+;; (define-function g_strcasecmp
+;;   (c-name "g_strcasecmp")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("const-gchar*" "s1")
+;;     '("const-gchar*" "s2")
+;;   )
+;; )
 
-(define-function g_strncasecmp
-  (c-name "g_strncasecmp")
-  (return-type "gint")
-  (parameters
-    '("const-gchar*" "s1")
-    '("const-gchar*" "s2")
-    '("guint" "n")
-  )
-)
+;; (define-function g_strncasecmp
+;;   (c-name "g_strncasecmp")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("const-gchar*" "s1")
+;;     '("const-gchar*" "s2")
+;;     '("guint" "n")
+;;   )
+;; )
 
-(define-function g_strdown
-  (c-name "g_strdown")
-  (return-type "gchar*")
-  (parameters
-    '("gchar*" "string")
-  )
-)
+;; (define-function g_strdown
+;;   (c-name "g_strdown")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gchar*" "string")
+;;   )
+;; )
 
-(define-function g_strup
-  (c-name "g_strup")
-  (return-type "gchar*")
-  (parameters
-    '("gchar*" "string")
-  )
-)
+;; (define-function g_strup
+;;   (c-name "g_strup")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gchar*" "string")
+;;   )
+;; )
 
 (define-function g_strdup
   (c-name "g_strdup")
@@ -9266,14 +9234,14 @@
   )
 )
 
-(define-function g_strdup_printf
-  (c-name "g_strdup_printf")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_strdup_printf
+;;   (c-name "g_strdup_printf")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_strdup_vprintf
   (c-name "g_strdup_vprintf")
@@ -9302,23 +9270,23 @@
   )
 )
 
-(define-function g_strconcat
-  (c-name "g_strconcat")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "string1")
-  )
-  (varargs #t)
-)
+;; (define-function g_strconcat
+;;   (c-name "g_strconcat")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "string1")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_strjoin
-  (c-name "g_strjoin")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "separator")
-  )
-  (varargs #t)
-)
+;; (define-function g_strjoin
+;;   (c-name "g_strjoin")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "separator")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_strcompress
   (c-name "g_strcompress")
@@ -9695,15 +9663,15 @@
   )
 )
 
-(define-method printf
-  (of-object "GString")
-  (c-name "g_string_printf")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method printf
+;;   (of-object "GString")
+;;   (c-name "g_string_printf")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method append_vprintf
   (of-object "GString")
@@ -9715,15 +9683,15 @@
   )
 )
 
-(define-method append_printf
-  (of-object "GString")
-  (c-name "g_string_append_printf")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method append_printf
+;;   (of-object "GString")
+;;   (c-name "g_string_append_printf")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method append_uri_escaped
   (of-object "GString")
@@ -9800,35 +9768,35 @@
   )
 )
 
-(define-function g_test_minimized_result
-  (c-name "g_test_minimized_result")
-  (return-type "none")
-  (parameters
-    '("double" "minimized_quantity")
-    '("const-char*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_minimized_result
+;;   (c-name "g_test_minimized_result")
+;;   (return-type "none")
+;;   (parameters
+;;     '("double" "minimized_quantity")
+;;     '("const-char*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_test_maximized_result
-  (c-name "g_test_maximized_result")
-  (return-type "none")
-  (parameters
-    '("double" "maximized_quantity")
-    '("const-char*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_maximized_result
+;;   (c-name "g_test_maximized_result")
+;;   (return-type "none")
+;;   (parameters
+;;     '("double" "maximized_quantity")
+;;     '("const-char*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-function g_test_init
-  (c-name "g_test_init")
-  (return-type "none")
-  (parameters
-    '("int*" "argc")
-    '("char***" "argv")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_init
+;;   (c-name "g_test_init")
+;;   (return-type "none")
+;;   (parameters
+;;     '("int*" "argc")
+;;     '("char***" "argv")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_test_subprocess
   (c-name "g_test_subprocess")
@@ -9901,14 +9869,14 @@
   (return-type "none")
 )
 
-(define-function g_test_message
-  (c-name "g_test_message")
-  (return-type "none")
-  (parameters
-    '("const-char*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_message
+;;   (c-name "g_test_message")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-char*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_test_bug_base
   (c-name "g_test_bug_base")
@@ -10058,18 +10026,18 @@
   )
 )
 
-(define-function g_test_trap_assertions
-  (c-name "g_test_trap_assertions")
-  (return-type "none")
-  (parameters
-    '("const-char*" "domain")
-    '("const-char*" "file")
-    '("int" "line")
-    '("const-char*" "func")
-    '("guint64" "assertion_flags")
-    '("const-char*" "pattern")
-  )
-)
+;; (define-function g_test_trap_assertions
+;;   (c-name "g_test_trap_assertions")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-char*" "domain")
+;;     '("const-char*" "file")
+;;     '("int" "line")
+;;     '("const-char*" "func")
+;;     '("guint64" "assertion_flags")
+;;     '("const-char*" "pattern")
+;;   )
+;; )
 
 (define-function g_assertion_message
   (c-name "g_assertion_message")
@@ -10224,15 +10192,15 @@
   )
 )
 
-(define-function g_test_build_filename
-  (c-name "g_test_build_filename")
-  (return-type "gchar*")
-  (parameters
-    '("GTestFileType" "file_type")
-    '("const-gchar*" "first_path")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_build_filename
+;;   (c-name "g_test_build_filename")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("GTestFileType" "file_type")
+;;     '("const-gchar*" "first_path")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_test_get_dir
   (c-name "g_test_get_dir")
@@ -10242,15 +10210,15 @@
   )
 )
 
-(define-function g_test_get_filename
-  (c-name "g_test_get_filename")
-  (return-type "const-gchar*")
-  (parameters
-    '("GTestFileType" "file_type")
-    '("const-gchar*" "first_path")
-  )
-  (varargs #t)
-)
+;; (define-function g_test_get_filename
+;;   (c-name "g_test_get_filename")
+;;   (return-type "const-gchar*")
+;;   (parameters
+;;     '("GTestFileType" "file_type")
+;;     '("const-gchar*" "first_path")
+;;   )
+;;   (varargs #t)
+;; )
 
 
 
@@ -11690,16 +11658,16 @@
   )
 )
 
-(define-function g_snprintf
-  (c-name "g_snprintf")
-  (return-type "gint")
-  (parameters
-    '("gchar*" "string")
-    '("gulong" "n")
-    '("gchar-const*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_snprintf
+;;   (c-name "g_snprintf")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gchar*" "string")
+;;     '("gulong" "n")
+;;     '("gchar-const*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_vsnprintf
   (c-name "g_vsnprintf")
@@ -11720,22 +11688,22 @@
   )
 )
 
-(define-function g_format_size_full
-  (c-name "g_format_size_full")
-  (return-type "gchar*")
-  (parameters
-    '("guint64" "size")
-    '("GFormatSizeFlags" "flags")
-  )
-)
+;; (define-function g_format_size_full
+;;   (c-name "g_format_size_full")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("guint64" "size")
+;;     '("GFormatSizeFlags" "flags")
+;;   )
+;; )
 
-(define-function g_format_size
-  (c-name "g_format_size")
-  (return-type "gchar*")
-  (parameters
-    '("guint64" "size")
-  )
-)
+;; (define-function g_format_size
+;;   (c-name "g_format_size")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("guint64" "size")
+;;   )
+;; )
 
 (define-function g_atexit
   (c-name "g_atexit")
@@ -11761,14 +11729,14 @@
   )
 )
 
-(define-function g_bit_nth_lsf
-  (c-name "g_bit_nth_lsf")
-  (return-type "gint")
-  (parameters
-    '("gulong" "mask")
-    '("gint" "nth_bit")
-  )
-)
+;; (define-function g_bit_nth_lsf
+;;   (c-name "g_bit_nth_lsf")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gulong" "mask")
+;;     '("gint" "nth_bit")
+;;   )
+;; )
 
 (define-function g_bit_nth_msf
   (c-name "g_bit_nth_msf")
@@ -11812,15 +11780,16 @@
   (return-type "GVariant*")
 )
 
-(define-method ref_sink
-  (of-object "GVariant")
-  (c-name "g_variant_ref_sink")
-  (return-type "GVariant*")
-)
+;; (define-method ref_sink
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_ref_sink")
+;;   (return-type "GVariant*")
+;; )
 
 (define-method is_floating
   (of-object "GVariant")
   (c-name "g_variant_is_floating")
+  (call "  ret =g_variant_is_floating(self->obj->value);")
   (return-type "gboolean")
 )
 
@@ -11836,32 +11805,33 @@
   (return-type "const-GVariantType*")
 )
 
-(define-method get_type_string
-  (of-object "GVariant")
-  (c-name "g_variant_get_type_string")
-  (return-type "const-gchar*")
-)
+;; (define-method get_type_string
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_type_string")
+;;   (return-type "const-gchar*")
+;; )
 
-(define-method is_of_type
-  (of-object "GVariant")
-  (c-name "g_variant_is_of_type")
-  (return-type "gboolean")
-  (parameters
-    '("const-GVariantType*" "type")
-  )
-)
+;; (define-method is_of_type
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_is_of_type")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-GVariantType*" "type")
+;;   )
+;; )
 
 (define-method is_container
   (of-object "GVariant")
   (c-name "g_variant_is_container")
+  (call "  ret =g_variant_is_container(self->obj->value);")
   (return-type "gboolean")
 )
 
-(define-method classify
-  (of-object "GVariant")
-  (c-name "g_variant_classify")
-  (return-type "GVariantClass")
-)
+;; (define-method classify
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_classify")
+;;   (return-type "GVariantClass")
+;; )
 
 (define-function g_variant_new_boolean
   (c-name "g_variant_new_boolean")
@@ -11917,23 +11887,23 @@
   )
 )
 
-(define-function g_variant_new_int64
-  (c-name "g_variant_new_int64")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("gint64" "value")
-  )
-)
+;; (define-function g_variant_new_int64
+;;   (c-name "g_variant_new_int64")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("gint64" "value")
+;;   )
+;; )
 
-(define-function g_variant_new_uint64
-  (c-name "g_variant_new_uint64")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("guint64" "value")
-  )
-)
+;; (define-function g_variant_new_uint64
+;;   (c-name "g_variant_new_uint64")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("guint64" "value")
+;;   )
+;; )
 
 (define-function g_variant_new_handle
   (c-name "g_variant_new_handle")
@@ -11971,15 +11941,15 @@
   )
 )
 
-(define-function g_variant_new_printf
-  (c-name "g_variant_new_printf")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("const-gchar*" "format_string")
-  )
-  (varargs #t)
-)
+;; (define-function g_variant_new_printf
+;;   (c-name "g_variant_new_printf")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("const-gchar*" "format_string")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_variant_new_object_path
   (c-name "g_variant_new_object_path")
@@ -12015,14 +11985,14 @@
   )
 )
 
-(define-function g_variant_new_variant
-  (c-name "g_variant_new_variant")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("GVariant*" "value")
-  )
-)
+;; (define-function g_variant_new_variant
+;;   (c-name "g_variant_new_variant")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("GVariant*" "value")
+;;   )
+;; )
 
 (define-function g_variant_new_strv
   (c-name "g_variant_new_strv")
@@ -12078,72 +12048,83 @@
 (define-method get_boolean
   (of-object "GVariant")
   (c-name "g_variant_get_boolean")
+  (call "  ret =g_variant_get_boolean(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method get_byte
   (of-object "GVariant")
   (c-name "g_variant_get_byte")
+  (call "  ret =g_variant_get_byte(self->obj->value);")
   (return-type "guchar")
 )
 
 (define-method get_int16
   (of-object "GVariant")
   (c-name "g_variant_get_int16")
+  (call "  ret =g_variant_get_int16(self->obj->value);")
   (return-type "gint16")
 )
 
 (define-method get_uint16
   (of-object "GVariant")
   (c-name "g_variant_get_uint16")
+  (call "  ret =g_variant_get_uint16(self->obj->value);")
   (return-type "guint16")
 )
 
 (define-method get_int32
   (of-object "GVariant")
   (c-name "g_variant_get_int32")
+  (call "  ret =g_variant_get_int32(self->obj->value);")
   (return-type "gint32")
 )
 
 (define-method get_uint32
   (of-object "GVariant")
   (c-name "g_variant_get_uint32")
+  (call "  ret =g_variant_get_uint32(self->obj->value);")
+
   (return-type "guint32")
 )
 
-(define-method get_int64
-  (of-object "GVariant")
-  (c-name "g_variant_get_int64")
-  (return-type "gint64")
-)
+;; (define-method get_int64
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_int64")
+;;   (call "  ret =g_variant_get_int64(self->obj->value);")
+;;   (return-type "gint64")
+;; )
 
-(define-method get_uint64
-  (of-object "GVariant")
-  (c-name "g_variant_get_uint64")
-  (return-type "guint64")
-)
+;; (define-method get_uint64
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_uint64")
+;;   (call "  ret =g_variant_get_uint64(self->obj->value);")
+;;   (return-type "guint64")
+;; )
 
-(define-method get_handle
-  (of-object "GVariant")
-  (c-name "g_variant_get_handle")
-  (return-type "gint32")
-)
+;; (define-method get_handle
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_handle")
+;;   (return-type "gint32")
+;; )
 
 (define-method get_double
   (of-object "GVariant")
   (c-name "g_variant_get_double")
+  (call "  ret =g_variant_get_double(self->obj->value);")
   (return-type "gdouble")
 )
 
-(define-method get_variant
-  (of-object "GVariant")
-  (c-name "g_variant_get_variant")
-  (return-type "GVariant*")
-)
+;; (define-method get_variant
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_variant")
+;;   (return-type "GVariant*")
+;; )
 
 (define-method get_string
   (of-object "GVariant")
   (c-name "g_variant_get_string")
+  (call "  ret =g_variant_get_string(self->obj->value);")
   (return-type "const-gchar*")
   (parameters
     '("gsize*" "length")
@@ -12199,6 +12180,7 @@
 (define-method get_bytestring
   (of-object "GVariant")
   (c-name "g_variant_get_bytestring")
+  (call "  ret =g_variant_get_bytestring(self->obj->value);")
   (return-type "const-gchar*")
 )
 
@@ -12229,15 +12211,15 @@
   )
 )
 
-(define-function g_variant_new_maybe
-  (c-name "g_variant_new_maybe")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("const-GVariantType*" "child_type")
-    '("GVariant*" "child")
-  )
-)
+;; (define-function g_variant_new_maybe
+;;   (c-name "g_variant_new_maybe")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("const-GVariantType*" "child_type")
+;;     '("GVariant*" "child")
+;;   )
+;; )
 
 (define-function g_variant_new_array
   (c-name "g_variant_new_array")
@@ -12260,68 +12242,68 @@
   )
 )
 
-(define-function g_variant_new_dict_entry
-  (c-name "g_variant_new_dict_entry")
-  (is-constructor-of "GVariant")
-  (return-type "GVariant*")
-  (parameters
-    '("GVariant*" "key")
-    '("GVariant*" "value")
-  )
-)
+;; (define-function g_variant_new_dict_entry
+;;   (c-name "g_variant_new_dict_entry")
+;;   (is-constructor-of "GVariant")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("GVariant*" "key")
+;;     '("GVariant*" "value")
+;;   )
+;; )
 
-(define-method get_maybe
-  (of-object "GVariant")
-  (c-name "g_variant_get_maybe")
-  (return-type "GVariant*")
-)
+;; (define-method get_maybe
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_maybe")
+;;   (return-type "GVariant*")
+;; )
 
-(define-method n_children
-  (of-object "GVariant")
-  (c-name "g_variant_n_children")
-  (return-type "gsize")
-)
+;; (define-method n_children
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_n_children")
+;;   (return-type "gsize")
+;; )
 
-(define-method get_child
-  (of-object "GVariant")
-  (c-name "g_variant_get_child")
-  (return-type "none")
-  (parameters
-    '("gsize" "index_")
-    '("const-gchar*" "format_string")
-  )
-  (varargs #t)
-)
+;; (define-method get_child
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_child")
+;;   (return-type "none")
+;;   (parameters
+;;     '("gsize" "index_")
+;;     '("const-gchar*" "format_string")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method get_child_value
-  (of-object "GVariant")
-  (c-name "g_variant_get_child_value")
-  (return-type "GVariant*")
-  (parameters
-    '("gsize" "index_")
-  )
-)
+;; (define-method get_child_value
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_child_value")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("gsize" "index_")
+;;   )
+;; )
 
-(define-method lookup
-  (of-object "GVariant")
-  (c-name "g_variant_lookup")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "key")
-    '("const-gchar*" "format_string")
-  )
-  (varargs #t)
-)
+;; (define-method lookup
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_lookup")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "key")
+;;     '("const-gchar*" "format_string")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method lookup_value
-  (of-object "GVariant")
-  (c-name "g_variant_lookup_value")
-  (return-type "GVariant*")
-  (parameters
-    '("const-gchar*" "key")
-    '("const-GVariantType*" "expected_type")
-  )
-)
+;; (define-method lookup_value
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_lookup_value")
+;;   (return-type "GVariant*")
+;;   (parameters
+;;     '("const-gchar*" "key")
+;;     '("const-GVariantType*" "expected_type")
+;;   )
+;; )
 
 (define-method get_fixed_array
   (of-object "GVariant")
@@ -12336,6 +12318,7 @@
 (define-method get_size
   (of-object "GVariant")
   (c-name "g_variant_get_size")
+  (call "  ret =g_variant_get_size(self->obj->value);")
   (return-type "gsize")
 )
 
@@ -12361,14 +12344,14 @@
   )
 )
 
-(define-method print
-  (of-object "GVariant")
-  (c-name "g_variant_print")
-  (return-type "gchar*")
-  (parameters
-    '("gboolean" "type_annotate")
-  )
-)
+;; (define-method print
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_print")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gboolean" "type_annotate")
+;;   )
+;; )
 
 (define-method print_string
   (of-object "GVariant")
@@ -12397,23 +12380,23 @@
   )
 )
 
-(define-method get_normal_form
-  (of-object "GVariant")
-  (c-name "g_variant_get_normal_form")
-  (return-type "GVariant*")
-)
+;; (define-method get_normal_form
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get_normal_form")
+;;   (return-type "GVariant*")
+;; )
 
-(define-method is_normal_form
-  (of-object "GVariant")
-  (c-name "g_variant_is_normal_form")
-  (return-type "gboolean")
-)
+;; (define-method is_normal_form
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_is_normal_form")
+;;   (return-type "gboolean")
+;; )
 
-(define-method byteswap
-  (of-object "GVariant")
-  (c-name "g_variant_byteswap")
-  (return-type "GVariant*")
-)
+;; (define-method byteswap
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_byteswap")
+;;   (return-type "GVariant*")
+;; )
 
 (define-function g_variant_new_from_bytes
   (c-name "g_variant_new_from_bytes")
@@ -12603,15 +12586,15 @@
   (varargs #t)
 )
 
-(define-method get
-  (of-object "GVariant")
-  (c-name "g_variant_get")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format_string")
-  )
-  (varargs #t)
-)
+;; (define-method get
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_get")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format_string")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_variant_new_va
   (c-name "g_variant_new_va")
@@ -12635,16 +12618,16 @@
   )
 )
 
-(define-method check_format_string
-  (of-object "GVariant")
-  (c-name "g_variant_check_format_string")
-  (available "GLIB_AVAILABLE_IN_2_34")
-  (return-type "gboolean")
-  (parameters
-    '("const-gchar*" "format_string")
-    '("gboolean" "copy_only")
-  )
-)
+;; (define-method check_format_string
+;;   (of-object "GVariant")
+;;   (c-name "g_variant_check_format_string")
+;;   (available "GLIB_AVAILABLE_IN_2_34")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-gchar*" "format_string")
+;;     '("gboolean" "copy_only")
+;;   )
+;; )
 
 (define-function g_variant_parse
   (c-name "g_variant_parse")
@@ -12831,17 +12814,17 @@
   )
 )
 
-(define-method free
-  (of-object "GVariantType")
-  (c-name "g_variant_type_free")
-  (return-type "none")
-)
+;; (define-method free
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_free")
+;;   (return-type "none")
+;; )
 
-(define-method copy
-  (of-object "GVariantType")
-  (c-name "g_variant_type_copy")
-  (return-type "GVariantType*")
-)
+;; (define-method copy
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_copy")
+;;   (return-type "GVariantType*")
+;; )
 
 (define-function g_variant_type_new
   (c-name "g_variant_type_new")
@@ -12855,66 +12838,77 @@
 (define-method get_string_length
   (of-object "GVariantType")
   (c-name "g_variant_type_get_string_length")
+  (call "  ret =g_variant_type_get_string_length(self->obj->value);")
   (return-type "gsize")
 )
 
 (define-method peek_string
   (of-object "GVariantType")
   (c-name "g_variant_type_peek_string")
+  (call "  ret =g_variant_type_peek_string(self->obj->value);")
   (return-type "const-gchar*")
 )
 
 (define-method dup_string
   (of-object "GVariantType")
   (c-name "g_variant_type_dup_string")
+  (call "  ret =g_variant_type_dup_string(self->obj->value);")
   (return-type "gchar*")
 )
 
 (define-method is_definite
   (of-object "GVariantType")
   (c-name "g_variant_type_is_definite")
+  (call "  ret =g_variant_type_is_definite(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_container
   (of-object "GVariantType")
   (c-name "g_variant_type_is_container")
+  (call "  ret =g_variant_type_is_container(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_basic
   (of-object "GVariantType")
   (c-name "g_variant_type_is_basic")
+  (call "  ret =g_variant_type_is_basic(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_maybe
   (of-object "GVariantType")
   (c-name "g_variant_type_is_maybe")
+  (call "  ret =g_variant_type_is_maybe(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_array
   (of-object "GVariantType")
   (c-name "g_variant_type_is_array")
+  (call "  ret =g_variant_type_is_array(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_tuple
   (of-object "GVariantType")
   (c-name "g_variant_type_is_tuple")
+  (call "  ret =g_variant_type_is_tuple(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_dict_entry
   (of-object "GVariantType")
   (c-name "g_variant_type_is_dict_entry")
+  (call "  ret =g_variant_type_is_dict_entry(self->obj->value);")
   (return-type "gboolean")
 )
 
 (define-method is_variant
   (of-object "GVariantType")
   (c-name "g_variant_type_is_variant")
+  (call "  ret =g_variant_type_is_variant(self->obj->value);")
   (return-type "gboolean")
 )
 
@@ -12935,68 +12929,69 @@
   )
 )
 
-(define-method is_subtype_of
-  (of-object "GVariantType")
-  (c-name "g_variant_type_is_subtype_of")
-  (return-type "gboolean")
-  (parameters
-    '("const-GVariantType*" "supertype")
-  )
-)
+;; (define-method is_subtype_of
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_is_subtype_of")
+;;   (return-type "gboolean")
+;;   (parameters
+;;     '("const-GVariantType*" "supertype")
+;;   )
+;; )
 
-(define-method element
-  (of-object "GVariantType")
-  (c-name "g_variant_type_element")
-  (return-type "const-GVariantType*")
-)
+;; (define-method element
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_element")
+;;   (return-type "const-GVariantType*")
+;; )
 
-(define-method first
-  (of-object "GVariantType")
-  (c-name "g_variant_type_first")
-  (return-type "const-GVariantType*")
-)
+;; (define-method first
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_first")
+;;   (return-type "const-GVariantType*")
+;; )
 
-(define-method next
-  (of-object "GVariantType")
-  (c-name "g_variant_type_next")
-  (return-type "const-GVariantType*")
-)
+;; (define-method next
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_next")
+;;   (return-type "const-GVariantType*")
+;; )
 
 (define-method n_items
   (of-object "GVariantType")
   (c-name "g_variant_type_n_items")
+  (call "  ret =g_variant_type_n_items(self->obj->value);")
   (return-type "gsize")
 )
 
-(define-method key
-  (of-object "GVariantType")
-  (c-name "g_variant_type_key")
-  (return-type "const-GVariantType*")
-)
+;; (define-method key
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_key")
+;;   (return-type "const-GVariantType*")
+;; )
 
-(define-method value
-  (of-object "GVariantType")
-  (c-name "g_variant_type_value")
-  (return-type "const-GVariantType*")
-)
+;; (define-method value
+;;   (of-object "GVariantType")
+;;   (c-name "g_variant_type_value")
+;;   (return-type "const-GVariantType*")
+;; )
 
-(define-function g_variant_type_new_array
-  (c-name "g_variant_type_new_array")
-  (is-constructor-of "GVariantType")
-  (return-type "GVariantType*")
-  (parameters
-    '("const-GVariantType*" "element")
-  )
-)
+;; (define-function g_variant_type_new_array
+;;   (c-name "g_variant_type_new_array")
+;;   (is-constructor-of "GVariantType")
+;;   (return-type "GVariantType*")
+;;   (parameters
+;;     '("const-GVariantType*" "element")
+;;   )
+;; )
 
-(define-function g_variant_type_new_maybe
-  (c-name "g_variant_type_new_maybe")
-  (is-constructor-of "GVariantType")
-  (return-type "GVariantType*")
-  (parameters
-    '("const-GVariantType*" "element")
-  )
-)
+;; (define-function g_variant_type_new_maybe
+;;   (c-name "g_variant_type_new_maybe")
+;;   (is-constructor-of "GVariantType")
+;;   (return-type "GVariantType*")
+;;   (parameters
+;;     '("const-GVariantType*" "element")
+;;   )
+;; )
 
 (define-function g_variant_type_new_tuple
   (c-name "g_variant_type_new_tuple")
@@ -13008,15 +13003,15 @@
   )
 )
 
-(define-function g_variant_type_new_dict_entry
-  (c-name "g_variant_type_new_dict_entry")
-  (is-constructor-of "GVariantType")
-  (return-type "GVariantType*")
-  (parameters
-    '("const-GVariantType*" "key")
-    '("const-GVariantType*" "value")
-  )
-)
+;; (define-function g_variant_type_new_dict_entry
+;;   (c-name "g_variant_type_new_dict_entry")
+;;   (is-constructor-of "GVariantType")
+;;   (return-type "GVariantType*")
+;;   (parameters
+;;     '("const-GVariantType*" "key")
+;;     '("const-GVariantType*" "value")
+;;   )
+;; )
 
 (define-function g_variant_type_checked_
   (c-name "g_variant_type_checked_")
@@ -13048,79 +13043,79 @@
 
 ;; From gwin32.h
 
-(define-function g_win32_ftruncate
-  (c-name "g_win32_ftruncate")
-  (return-type "gint")
-  (parameters
-    '("gint" "f")
-    '("guint" "size")
-  )
-)
+;; (define-function g_win32_ftruncate
+;;   (c-name "g_win32_ftruncate")
+;;   (return-type "gint")
+;;   (parameters
+;;     '("gint" "f")
+;;     '("guint" "size")
+;;   )
+;; )
 
-(define-function g_win32_getlocale
-  (c-name "g_win32_getlocale")
-  (return-type "gchar*")
-)
+;; (define-function g_win32_getlocale
+;;   (c-name "g_win32_getlocale")
+;;   (return-type "gchar*")
+;; )
 
-(define-function g_win32_error_message
-  (c-name "g_win32_error_message")
-  (return-type "gchar*")
-  (parameters
-    '("gint" "error")
-  )
-)
+;; (define-function g_win32_error_message
+;;   (c-name "g_win32_error_message")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gint" "error")
+;;   )
+;; )
 
-(define-function g_win32_get_package_installation_directory
-  (c-name "g_win32_get_package_installation_directory")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "package")
-    '("const-gchar*" "dll_name")
-  )
-)
+;; (define-function g_win32_get_package_installation_directory
+;;   (c-name "g_win32_get_package_installation_directory")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "package")
+;;     '("const-gchar*" "dll_name")
+;;   )
+;; )
 
-(define-function g_win32_get_package_installation_subdirectory
-  (c-name "g_win32_get_package_installation_subdirectory")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "package")
-    '("const-gchar*" "dll_name")
-    '("const-gchar*" "subdir")
-  )
-)
+;; (define-function g_win32_get_package_installation_subdirectory
+;;   (c-name "g_win32_get_package_installation_subdirectory")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "package")
+;;     '("const-gchar*" "dll_name")
+;;     '("const-gchar*" "subdir")
+;;   )
+;; )
 
-(define-function g_win32_get_package_installation_directory_of_module
-  (c-name "g_win32_get_package_installation_directory_of_module")
-  (return-type "gchar*")
-  (parameters
-    '("gpointer" "hmodule")
-  )
-)
+;; (define-function g_win32_get_package_installation_directory_of_module
+;;   (c-name "g_win32_get_package_installation_directory_of_module")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("gpointer" "hmodule")
+;;   )
+;; )
 
-(define-function g_win32_get_windows_version
-  (c-name "g_win32_get_windows_version")
-  (return-type "guint")
-)
+;; (define-function g_win32_get_windows_version
+;;   (c-name "g_win32_get_windows_version")
+;;   (return-type "guint")
+;; )
 
-(define-function g_win32_locale_filename_from_utf8
-  (c-name "g_win32_locale_filename_from_utf8")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "utf8filename")
-  )
-)
+;; (define-function g_win32_locale_filename_from_utf8
+;;   (c-name "g_win32_locale_filename_from_utf8")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "utf8filename")
+;;   )
+;; )
 
-(define-function g_win32_get_command_line
-  (c-name "g_win32_get_command_line")
-  (return-type "gchar**")
-)
+;; (define-function g_win32_get_command_line
+;;   (c-name "g_win32_get_command_line")
+;;   (return-type "gchar**")
+;; )
 
-(define-function g_win32_get_package_installation_subdirectory_utf8
-  (c-name "g_win32_get_package_installation_subdirectory_utf8")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "package")
-    '("const-gchar*" "dll_name")
-    '("const-gchar*" "subdir")
-  )
-)
+;; (define-function g_win32_get_package_installation_subdirectory_utf8
+;;   (c-name "g_win32_get_package_installation_subdirectory_utf8")
+;;   (return-type "gchar*")
+;;   (parameters
+;;     '("const-gchar*" "package")
+;;     '("const-gchar*" "dll_name")
+;;     '("const-gchar*" "subdir")
+;;   )
+;; )

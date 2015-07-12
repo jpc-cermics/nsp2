@@ -229,6 +229,7 @@ type function_obj = {
     typecode: string;
     f_options: bool; (* some arguments are named options *)
     availability: string;
+    calling_code: string;
   }
 ;;
 
@@ -3407,7 +3408,7 @@ let make_object_arg  object_data =
 ;;
 
 
-(* gtk_object_arg: used when a NspObject is used as attribute or argument.
+(* gtk_object_arg: used when a NspGObject is used as attribute or argument.
  *------------------------------------------------------------------
  *)
 
@@ -3686,32 +3687,37 @@ let make_nsp_object_arg  ngd =
  }
 ;;
 
-
-(* struct_arg : structure without associated nsp class *)
+(* struct_arg : declared with define-struct
+ * we assume that a Nsp class is associated with same name
+ *)
 
 type struct_data = {
     sd_typename: string;
     sd_typecode: string;
+    sd_byref: bool;
   }
 ;;
 
-let struct_check name typename typecode =
- Printf.sprintf "  if (nspg_pointer_check(nsp_%s, %s))\
-  \n    %s = nspg_pointer_get(nsp_%s, %s);\
-  \n  else {\
-  \n      Scierror( \"%s should be a %s\");\
+let struct_check name typename _typecode byref =
+  let tag = if byref then "obj->" else "" in
+  Printf.sprintf "  if ( Is%s(nsp_%s))\
+  \n    { %s = ((Nsp%s *) nsp_%s)->%svalue;}\
+  \n  else\
+  \n    {\
+  \n      Scierror(\"Error: %s should be of type %s\");\
   \n      return RET_BUG;\
-  \n  }\n" name typecode name name typename name typename
+  \n    }\n" typename name name typename name tag name typename
   ;;
 
-let struct_null name typename typecode =
-  Printf.sprintf "  if (nspg_pointer_check(nsp_%s, %s))\
-  \n    %s = nspg_pointer_get(nsp_%s, %s);\
+let struct_null name typename _typecode byref =
+  let tag = if byref then "obj->" else "" in
+  Printf.sprintf "  if ( Is%s(nsp_%s))\
+  \n    %s = ((Nsp%s *) nsp_%s)->%svalue;\
   \n  else if ( ! IsNone(nsp_%s) ) {\
-  \n      Scierror( \"%s should be a %s or None\");\
+  \n      Scierror(\"Error: %s should be of type %s\");\
   \n      return RET_BUG;\
-  \n  }\n" name typecode name name typename name name typename
-;;
+  \n  }\n" typename name name typename name tag name name typename
+  ;;
 
 let struct_arg_write_param struct_data _oname params info _byref=
   let name = params.pname in
@@ -3719,9 +3725,9 @@ let struct_arg_write_param struct_data _oname params info _byref=
     struct_data.sd_typename ("*" ^ name ^ " = NULL") in
   let codebefore =
     if params.pnull then
-      struct_null name struct_data.sd_typename struct_data.sd_typecode
+      struct_null name struct_data.sd_typename struct_data.sd_typecode struct_data.sd_byref
     else
-      struct_check name struct_data.sd_typename struct_data.sd_typecode in
+      struct_check name struct_data.sd_typename struct_data.sd_typecode struct_data.sd_byref in
   let varlist =
     if params.pnull then
       varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL")
@@ -3749,13 +3755,16 @@ let struct_arg_write_return struct_data ptype _ownsreturn info =
       varlist_add  info.varlist  struct_data.sd_typename "*ret"
     else
       varlist_add  info.varlist  struct_data.sd_typename "ret" in
+  let name = struct_data.sd_typecode in
+  let varlist =
+    varlist_add varlist "NspObject" ("*nsp_ret") in
+  let tag = if flag then "" else "&" in
   let codeafter =
-    if flag then
-       "  /* nspg_pointer_new handles NULL checking */\n" ^
-       "Z2  return nspg_pointer_new(" ^ struct_data.sd_typecode ^ ", ret);"
-    else
-       "  /* nspg_pointer_new handles NULL checking */\n" ^
-       "Z2  return nspg_pointer_new(" ^ struct_data.sd_typecode ^ ", &ret);" in
+    "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
+    "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
+    tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
+    "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+    "  MoveObj(stack,1,nsp_ret);\n  return 1;" in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
@@ -3768,7 +3777,6 @@ let struct_arg_attr_write_return struct_data _objinfo _ownsreturn params info=
 	 varlist_add  info.varlist struct_data.sd_typename "ret" in
   let code = "  return NULL;\n" in
   { info with varlist = varlist ; attrcodeafter = code :: info.attrcodeafter ;}
-
 ;;
 
 let struct_arg_attr_free_fields _struct_data ptype pname _varname _byref =
@@ -3776,7 +3784,7 @@ let struct_arg_attr_free_fields _struct_data ptype pname _varname _byref =
   let (flag, ptype) = strip_type ptype in
   if flag then
     (Printf.sprintf "  if (H->%s != NULL)\n"  name)
-    ^ (Printf.sprintf "    { nsp_destroy_%s(H->%s,H);FREE(H->%s);}\n" ptype name name)
+    ^ (Printf.sprintf "    { nsp_destroy_%s(H->%s,H);}\n" ptype name )
   else
    Printf.sprintf "  nsp_destroy_%s(&H->%s,H); \n"  ptype name
 ;;
@@ -3846,15 +3854,6 @@ let struct_arg_attr_write_init _struct_data _objinfo varname params =
   else
     Printf.sprintf"  nsp_init_%s(&%s->%s);\n" ptype  varname  pname
 ;;
-
-(*
-
-let struct_arg_attr_equal_fields _struct_data objinfo _varname params=
-  let pname = if objinfo.or_byref then "obj->"^ params.pname else params.pname in
-  Printf.sprintf "  if ( NSP_OBJECT(A->%s)->type->eq(A->%s,loc->%s) == FALSE ) return FALSE;\n"
-    pname pname pname
-;;
-*)
 
 let struct_arg_attr_equal_fields _struct_data objinfo _varname params=
   let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
@@ -4006,6 +4005,178 @@ let make_boxed_arg boxed_data =
     attr_write_init = boxed_arg_attr_write_init  boxed_data;
     attr_equal_fields = boxed_arg_attr_equal_fields  boxed_data;
     attr_write_defval = boxed_arg_attr_write_defval  boxed_data; *)
+  }
+;;
+
+
+(* string_array_arg : char** NULL terminated array of string *)
+
+let string_array_check name =
+  Printf.sprintf "  if ( IsSMat(nsp_%s))\
+  \n    { %s = ((NspSMatrix *) nsp_%s)->S;}\
+  \n  else\
+  \n    {\
+  \n      Scierror(\"Error: %s should be of type SMat\");\
+  \n      return RET_BUG;\
+  \n    }\n" name name name name
+;;
+
+let string_array_null name =
+  Printf.sprintf "  if ( IsSMat(nsp_%s))\
+  \n    %s = ((NspSMatrix *) nsp_%s)->S;\
+  \n  else if ( ! IsNone(nsp_%s) ) {\
+  \n      Scierror(\"Error: %s should be of type SMat\");\
+  \n      return RET_BUG;\
+  \n  }\n" name name name name name
+  ;;
+
+let string_array_arg_write_param _oname params info _byref=
+  let name = params.pname in
+  let varlist = varlist_add info.varlist "gchar" ("**" ^ name ^ " = NULL") in
+  let codebefore =
+    if params.pnull then
+      string_array_null name
+    else
+      string_array_check name in
+  let varlist =
+    if params.pnull then
+      varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL")
+    else
+      varlist_add varlist "NspObject" ("*nsp_" ^ name) in
+  let info = add_parselist info params.pvarargs "obj" ["&nsp_" ^ name] [name] in
+  { info with
+    arglist = name :: info.arglist;
+    varlist = varlist ;
+    codebefore = codebefore :: info.codebefore ;
+    setobj = true;
+  }
+;;
+
+let string_array_arg_attr_write_set oname params info byref=
+  let pset_name = pset_name_set byref oname params.pname in
+  let info = string_array_arg_write_param oname params info byref in
+  { info with attrcodebefore = (Printf.sprintf "  /* %s= %s;*/\n" pset_name params.pname) :: info.attrcodebefore;}
+;;
+
+(* returning a gchar**: we assume that we can free the gchar** *)
+
+let string_array_arg_write_return _ptype _ownsreturn info =
+  let varlist = varlist_add  info.varlist "gchar" "**ret" in
+  let varlist = varlist_add varlist "NspObject" "*nsp_ret" in
+  let codeafter =
+    "  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);\n" ^
+    "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+    "  g_strfreev(ret);\n" ^
+    "  MoveObj(stack,1,nsp_ret);\n  return 1;" in
+  { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
+;;
+
+let string_array_arg_attr_write_return  _objinfo _ownsreturn _params info=
+  let varlist = varlist_add  info.varlist "gchar" "**ret" in
+  let code = "  return NULL;\n" in
+  { info with varlist = varlist ; attrcodeafter = code :: info.attrcodeafter ;}
+;;
+
+let string_array_arg_attr_free_fields _ptype pname _varname _byref =
+  let name = if _byref then  "obj->" ^ pname else pname in
+  Printf.sprintf "  if (H->%s != NULL) { g_strfreev(H->%s);}\n" name name
+;;
+
+let string_array_arg_attr_write_save _varname params _byref=
+  let pname = if _byref then  "obj->" ^ params.pname else params.pname in
+  Printf.sprintf "  if ( nsp_save_string_array(xdrs,M->%s,M) == FAIL ) return FAIL;\n" pname
+;;
+
+let string_array_arg_attr_write_load _varname params _byref=
+  let lname = "n_" ^ params.pname in
+  let lname = if _byref then  "obj->" ^ lname else lname in
+  let pname = if _byref then  "obj->" ^ params.pname else params.pname in
+  let (flag, ptype) = strip_type params.ptype in
+  if flag then
+    (Printf.sprintf "  if (( M->%s = malloc(M->%s*sizeof(%s))) == NULL )\n " pname lname ptype)
+    ^ (Printf.sprintf "    return NULL;\n")
+    ^ (Printf.sprintf "  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n" ptype pname)
+  else
+    Printf.sprintf "  if ( nsp_load_%s(xdrs,&M->%s,M) == FAIL ) return NULL;\n" ptype pname
+;;
+
+let rstrip str str_strip =
+  Str.global_replace (Str.regexp str_strip) "" str
+;;
+
+let string_array_arg_attr_write_copy _objinfo params left_varname right_varname f_copy_name =
+  let name = params.pname in
+  if right_varname <> "" then
+    if f_copy_name = "nsp_object_full_copy" then
+      let (flag, ptype) = strip_type params.ptype in
+      let tag = if flag then "" else "&" in
+      let vn = rstrip right_varname "->obj" in
+      let vl = rstrip left_varname "->obj" in
+      Printf.sprintf "  if( nsp_%s_full_copy(%s,%s%s->%s,%s)== FAIL) return NULL;\n"
+        ptype vl tag left_varname name vn
+    else
+      Printf.sprintf "  %s->%s = %s->%s;\n" left_varname name right_varname name
+  else
+    Printf.sprintf "  %s->%s = %s;\n" left_varname name name
+;;
+
+let string_array_arg_attr_write_info _ptype pname varname _byref =
+  (Printf.sprintf "ZZ  Sciprintf1(indent+2,\"%s=0x%%x\\n\" %s->%s);\n"  pname varname pname)
+;;
+
+let string_array_arg_attr_write_print objinfo _print_mode varname params =
+  (*  varname here already contains ->obj *)
+  let vn = rstrip varname "->obj" in
+  let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
+  let (flag, ptype) = strip_type params.ptype in
+  if flag then
+    Printf.sprintf  "  nsp_print_%s(indent+2,%s->%s,%s);\n" ptype vn pname vn
+  else
+    Printf.sprintf  "  nsp_print_%s(indent+2,&%s->%s,%s);\n" ptype vn pname vn
+;;
+
+let string_array_arg_attr_write_init  _objinfo varname params =
+  let (flag, ptype) = strip_type params.ptype in
+  let pname = params.pname in
+  if flag then
+    Printf.sprintf "  %s->%s = NULL;\n" varname pname
+  else
+    Printf.sprintf"  nsp_init_%s(&%s->%s);\n" ptype  varname  pname
+;;
+
+let string_array_arg_attr_equal_fields objinfo _varname params=
+  let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
+  let (flag, ptype) = strip_type params.ptype in
+  if flag then
+    Printf.sprintf "  if ( A->%s != loc->%s) return FALSE;\n"  pname pname
+  else
+    Printf.sprintf "  if ( nsp_eq_%s(&A->%s,&loc->%s)== FALSE) return FALSE;\n"  ptype pname pname
+;;
+
+let string_array_arg_attr_write_defval objinfo _varname params =
+  let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
+  let (flag, ptype) = strip_type params.ptype in
+  if flag then
+    Printf.sprintf "  if ( nsp_check_%s(H->%s,H) == FAIL ) return FAIL;\n"  ptype pname
+  else
+    Printf.sprintf "  if ( nsp_check_%s(&H->%s,H) == FAIL ) return FAIL;\n" ptype pname
+;;
+
+let string_array_arg =
+  { argtype with
+    write_param = string_array_arg_write_param ;
+    attr_write_set = string_array_arg_attr_write_set ;
+    write_return = string_array_arg_write_return ;
+    attr_write_return = string_array_arg_attr_write_return  ;
+    attr_free_fields = string_array_arg_attr_free_fields  ;
+    attr_write_save = string_array_arg_attr_write_save;
+    attr_write_load = string_array_arg_attr_write_load  ;
+    attr_write_copy = string_array_arg_attr_write_copy  ;
+    attr_write_info = string_array_arg_attr_write_info;
+    attr_write_print = string_array_arg_attr_write_print  ;
+    attr_write_init = string_array_arg_attr_write_init  ;
+    attr_equal_fields = string_array_arg_attr_equal_fields  ;
+    attr_write_defval = string_array_arg_attr_write_defval  ;
   }
 ;;
 
@@ -4752,6 +4923,7 @@ let matcher_hash = of_bindings [
   "@@TreePath", gtk_tree_path_arg; (* example ? *)
   "@@CustomBoxed", (make_custom_boxed_arg
                       (init_custom_boxed_data "getter" "checker" "new_s" "type_s"));
+  "gchar**", string_array_arg;
 ]
 ;;
 
@@ -4800,7 +4972,7 @@ let register_object object_rec =
     else
       (
        Say.debug
-	 (Printf.sprintf "Register %s %s\n" object_rec.or_c_name
+	 (Printf.sprintf "Register %s %s" object_rec.or_c_name
 	    (object_rec.or_c_name ^ "*"));
 	  make_object_arg od)
   in
@@ -4822,7 +4994,7 @@ let register_enum enum_rec =
      make_enum_arg ed
    else
      make_flag_arg ed in
-  (* Printf.printf "Debug: Register %s \n" enum_rec.e_c_name;  *)
+  (* Printf.printf "Debug: Register %s" enum_rec.e_c_name;  *)
   Hashtbl.add matcher_hash enum_rec.e_c_name arg;
 ;;
 
@@ -4832,6 +5004,7 @@ let register_struct object_rec =
   let sd = {
     sd_typename =   object_rec.or_c_name;
     sd_typecode =   object_rec.or_typecode;
+    sd_byref    =   object_rec.or_byref;
   } in
   let arg = make_struct_arg sd in
   Hashtbl.add matcher_hash object_rec.or_c_name arg;
@@ -4860,7 +5033,7 @@ let register_boxed object_rec =
       (* do not register GdkRectangle as boxed it is already in stringarg *)
       ()
   | _ ->
-      Say.debug (Printf.sprintf "Register boxed %s\n" name);
+      Say.debug (Printf.sprintf "Register boxed %s" name);
       Hashtbl.add matcher_hash name arg;
       Hashtbl.add matcher_hash (name ^ "*")  arg;
       Hashtbl.add matcher_hash ("const-" ^ name ^ "*")  arg;

@@ -603,7 +603,7 @@ static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret =graphic_get_bounds(self);
+    ret =graphic_get_bounds(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;

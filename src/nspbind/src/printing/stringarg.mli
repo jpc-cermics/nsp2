@@ -107,7 +107,9 @@ type function_obj = {
   typecode : string;
   f_options : bool;
   availability : string;
+  calling_code: string;
 }
+
 type ptype = string
 type pname = string
 type varname = string

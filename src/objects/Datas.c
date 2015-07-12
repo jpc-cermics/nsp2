@@ -218,6 +218,8 @@ static int nsp_constant_frame(nsp_datas *data,int argc, char **argv)
   nsp_frame_replace_object1(data,(NspObject *)nsp_atk_hash_table,-1);
   nsp_frame_replace_object1(data,(NspObject *)nsp_pango_hash_table,-1);
   nsp_frame_replace_object1(data,(NspObject *)nsp_cairo_hash_table,-1);
+  nsp_frame_replace_object1(data,(NspObject *)nsp_gio_hash_table,-1);
+  nsp_frame_replace_object1(data,(NspObject *)nsp_glib_hash_table,-1);
   /* ast */
   if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
   nsp_frame_replace_object1(data,O,-1);

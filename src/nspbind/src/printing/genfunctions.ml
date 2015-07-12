@@ -24,15 +24,18 @@ let function_tmpl =
   "$(varlist)" ^
   "$(parseargs)" ^
   "$(codebefore)" ^
-  "    $(setreturn)$(cname)($(arglist));\n" ^
+  "$(codecallf)" ^
   "$(codeafter)\n" ^
   "}\n\n"
+;;
+
+let function_call_tmpl =
+  "    $(setreturn)$(cname)($(arglist));\n"
 ;;
 
 (* check matchers *)
 
 let check_matcher str =
-  Say.debug (Printf.sprintf "check matcher for %s" str);
   try
     let _handler = Stringarg.matcher_get str in
     true
@@ -57,6 +60,7 @@ let check_matchers params ret =
     (false, ret )
 ;;
 
+(**)
 let write_param info param byref =
   let handler = Stringarg.matcher_get param.ptype in
   handler.write_param "" param info byref
@@ -140,7 +144,7 @@ let code_availability f_obj code substdict =
 
 (**)
 
-let write_function_wrapper or_c_name or_byref f_obj template handle_return is_method substdict =
+let write_function_wrapper or_c_name or_byref f_obj template template_call handle_return is_method substdict =
   let info = {
     optional_args = f_obj.f_options;
     varargs = f_obj.f_varargs;
@@ -166,10 +170,8 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
    *)
 
   if info.varargs then
-    (
-     (* Printf.printf "function with varargs %s\n" f_obj.f_c_name; *)
-     failwith "varargs are not taken into account"
-    );
+    Say.debug
+      (Printf.sprintf "function or method with varargs %s" f_obj.f_c_name);
 
   Hashtbl.replace substdict "setreturn" "";
   Hashtbl.replace substdict "errorreturn" "NULL";
@@ -257,6 +259,13 @@ let write_function_wrapper or_c_name or_byref f_obj template handle_return is_me
        Hashtbl.replace substdict "extraparams" "";
        "METH_NOARGS"
       ) in
+
+  let code_call = File.pattern_to_code_with_buffer template_call substdict in
+  (* is there a special code for calling function ? *)
+  if f_obj.calling_code <> "" then
+    Hashtbl.replace substdict "codecallf" (f_obj.calling_code ^ "\n")
+  else
+    Hashtbl.replace substdict "codecallf" code_call;
   let code = File.pattern_to_code_with_buffer template substdict in
   let code = code_availability f_obj code substdict in
   (code, flags)
@@ -285,19 +294,22 @@ let get_function_code or_c_name or_byref func =
        let (test, str) =  check_matchers func.params ret in
        if test then
 	 (
-	  Say.debug "matcher found";
+	  Say.debug "all matchers for params and returned value were found";
 	  try
 	    let code, _methflags =
 	      write_function_wrapper
-		or_c_name or_byref func function_tmpl handle_return is_method substdict in
+		or_c_name or_byref func function_tmpl function_call_tmpl handle_return is_method substdict in
 	    File.write_string code;
+	    (Say.debug (Printf.sprintf "code for function %s generated" or_c_name));
 	    false;
-	  with _ -> (Say.debug "to be checked, a matcher failed"; true)
+	  with _ ->
+	    (Say.debug (Printf.sprintf "Warning: failed to generate function %s" or_c_name);
+	     true)
 	 )
        else
 	 (
 	  Say.debug
-	    (Printf.sprintf "Warning: Failed to generate %s: matcher missing for %s" func.f_name str);
+	    (Printf.sprintf "Warning: failed to generate function %s: matcher missing for %s" func.f_name str);
 	  true
 	 )
       );

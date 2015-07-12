@@ -1,6 +1,7 @@
 ;; -*- scheme -*-
 
 (include "gio-types.defs")
+(register "glib-types.defs")
 
 ;; From gaction.h
 
@@ -18,6 +19,7 @@
 (define-method get_parameter_type
   (of-object "GAction")
   (c-name "g_action_get_parameter_type")
+  (call "  ret = (GVariantType *) g_action_get_parameter_type(G_ACTION(self->obj));")
   (return-type "const-GVariantType*")
 )
 
@@ -25,6 +27,7 @@
   (of-object "GAction")
   (c-name "g_action_get_state_type")
   (return-type "const-GVariantType*")
+  (call "  ret = (GVariantType *) g_action_get_state_type(G_ACTION(self->obj));")
 )
 
 (define-method get_state_hint
@@ -122,6 +125,7 @@
   (parameters
     '("const-gchar*" "action_name")
   )
+  (call "  ret =(GVariantType*) g_action_group_get_action_parameter_type(G_ACTION_GROUP(self->obj),action_name);")
 )
 
 (define-method get_action_state_type
@@ -130,7 +134,8 @@
   (return-type "const-GVariantType*")
   (parameters
     '("const-gchar*" "action_name")
-  )
+    )
+  (call "  ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name);")
 )
 
 (define-method get_action_state_hint
@@ -928,25 +933,25 @@
   (return-type "gboolean")
 )
 
-(define-method print
-  (of-object "GApplicationCommandLine")
-  (c-name "g_application_command_line_print")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method print
+;;   (of-object "GApplicationCommandLine")
+;;   (c-name "g_application_command_line_print")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method printerr
-  (of-object "GApplicationCommandLine")
-  (c-name "g_application_command_line_printerr")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-method printerr
+;;   (of-object "GApplicationCommandLine")
+;;   (c-name "g_application_command_line_printerr")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method get_exit_status
   (of-object "GApplicationCommandLine")
@@ -2787,17 +2792,17 @@
   )
 )
 
-(define-function g_dbus_error_set_dbus_error
-  (c-name "g_dbus_error_set_dbus_error")
-  (return-type "none")
-  (parameters
-    '("GError**" "error")
-    '("const-gchar*" "dbus_error_name")
-    '("const-gchar*" "dbus_error_message")
-    '("const-gchar*" "format")
-  )
-  (varargs #t)
-)
+;; (define-function g_dbus_error_set_dbus_error
+;;   (c-name "g_dbus_error_set_dbus_error")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GError**" "error")
+;;     '("const-gchar*" "dbus_error_name")
+;;     '("const-gchar*" "dbus_error_message")
+;;     '("const-gchar*" "format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-function g_dbus_error_set_dbus_error_valist
   (c-name "g_dbus_error_set_dbus_error_valist")

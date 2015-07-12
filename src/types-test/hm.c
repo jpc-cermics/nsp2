@@ -661,7 +661,7 @@ static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int 
   NspMatrix *M;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&M) == FAIL) return RET_BUG;
-  ret =nsp_hm_check_slope(self,M);
+    ret =nsp_hm_check_slope(self,M);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }

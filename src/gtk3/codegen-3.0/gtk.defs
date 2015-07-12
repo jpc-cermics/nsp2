@@ -34,15 +34,15 @@
   (return-type "GtkAboutDialog*")
 )
 
-(define-function gtk_show_about_dialog
-  (c-name "gtk_show_about_dialog")
-  (return-type "none")
-  (parameters
-    '("GtkWindow*" "parent")
-    '("const-gchar*" "first_property_name")
-  )
-  (varargs #t)
-)
+;; (define-function gtk_show_about_dialog
+;;   (c-name "gtk_show_about_dialog")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkWindow*" "parent")
+;;     '("const-gchar*" "first_property_name")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method get_program_name
   (of-object "GtkAboutDialog")
@@ -3792,38 +3792,38 @@
   )
 )
 
-(define-method add_with_properties
-  (of-object "GtkCellArea")
-  (c-name "gtk_cell_area_add_with_properties")
-  (return-type "none")
-  (parameters
-    '("GtkCellRenderer*" "renderer")
-    '("const-gchar*" "first_prop_name")
-  )
-  (varargs #t)
-)
+;; (define-method add_with_properties
+;;   (of-object "GtkCellArea")
+;;   (c-name "gtk_cell_area_add_with_properties")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkCellRenderer*" "renderer")
+;;     '("const-gchar*" "first_prop_name")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method cell_set
-  (of-object "GtkCellArea")
-  (c-name "gtk_cell_area_cell_set")
-  (return-type "none")
-  (parameters
-    '("GtkCellRenderer*" "renderer")
-    '("const-gchar*" "first_prop_name")
-  )
-  (varargs #t)
-)
+;; (define-method cell_set
+;;   (of-object "GtkCellArea")
+;;   (c-name "gtk_cell_area_cell_set")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkCellRenderer*" "renderer")
+;;     '("const-gchar*" "first_prop_name")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method cell_get
-  (of-object "GtkCellArea")
-  (c-name "gtk_cell_area_cell_get")
-  (return-type "none")
-  (parameters
-    '("GtkCellRenderer*" "renderer")
-    '("const-gchar*" "first_prop_name")
-  )
-  (varargs #t)
-)
+;; (define-method cell_get
+;;   (of-object "GtkCellArea")
+;;   (c-name "gtk_cell_area_cell_get")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkCellRenderer*" "renderer")
+;;     '("const-gchar*" "first_prop_name")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method cell_set_valist
   (of-object "GtkCellArea")
@@ -7134,15 +7134,15 @@
   )
 )
 
-(define-method add_buttons
-  (of-object "GtkDialog")
-  (c-name "gtk_dialog_add_buttons")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "first_button_text")
-  )
-  (varargs #t)
-)
+;; (define-method add_buttons
+;;   (of-object "GtkDialog")
+;;   (c-name "gtk_dialog_add_buttons")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "first_button_text")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method set_response_sensitive
   (of-object "GtkDialog")
@@ -15474,19 +15474,19 @@
   (varargs #t)
   )
 
-(define-function gtk_message_dialog_new_with_markup
-  (c-name "gtk_message_dialog_new_with_markup")
-  (is-constructor-of "GtkMessageDialog")
-  (return-type "GtkMessageDialog*")
-  (parameters
-    '("GtkWindow*" "parent")
-    '("GtkDialogFlags" "flags")
-    '("GtkMessageType" "type")
-    '("GtkButtonsType" "buttons")
-    '("const-gchar*" "message_format")
-  )
-  (varargs #t)
-)
+;; (define-function gtk_message_dialog_new_with_markup
+;;   (c-name "gtk_message_dialog_new_with_markup")
+;;   (is-constructor-of "GtkMessageDialog")
+;;   (return-type "GtkMessageDialog*")
+;;   (parameters
+;;     '("GtkWindow*" "parent")
+;;     '("GtkDialogFlags" "flags")
+;;     '("GtkMessageType" "type")
+;;     '("GtkButtonsType" "buttons")
+;;     '("const-gchar*" "message_format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method set_image
   (of-object "GtkMessageDialog")
@@ -15514,25 +15514,25 @@
   )
 )
 
-(define-method format_secondary_text
-  (of-object "GtkMessageDialog")
-  (c-name "gtk_message_dialog_format_secondary_text")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "message_format")
-  )
-  (varargs #t)
-)
+;; (define-method format_secondary_text
+;;   (of-object "GtkMessageDialog")
+;;   (c-name "gtk_message_dialog_format_secondary_text")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "message_format")
+;;   )
+;;   (varargs #t)
+;; )
 
-(define-method format_secondary_markup
-  (of-object "GtkMessageDialog")
-  (c-name "gtk_message_dialog_format_secondary_markup")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "message_format")
-  )
-  (varargs #t)
-)
+;; (define-method format_secondary_markup
+;;   (of-object "GtkMessageDialog")
+;;   (c-name "gtk_message_dialog_format_secondary_markup")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "message_format")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method get_message_area
   (of-object "GtkMessageDialog")
@@ -29640,16 +29640,16 @@
   )
 )
 
-(define-function gtk_tree_view_column_new_with_attributes
-  (c-name "gtk_tree_view_column_new_with_attributes")
-  (is-constructor-of "GtkTreeViewColumn")
-  (return-type "GtkTreeViewColumn*")
-  (parameters
-    '("const-gchar*" "title")
-    '("GtkCellRenderer*" "cell")
-  )
-  (varargs #t)
-)
+;; (define-function gtk_tree_view_column_new_with_attributes
+;;   (c-name "gtk_tree_view_column_new_with_attributes")
+;;   (is-constructor-of "GtkTreeViewColumn")
+;;   (return-type "GtkTreeViewColumn*")
+;;   (parameters
+;;     '("const-gchar*" "title")
+;;     '("GtkCellRenderer*" "cell")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method pack_start
   (of-object "GtkTreeViewColumn")
@@ -32091,15 +32091,15 @@
   )
 )
 
-(define-method style_get
-  (of-object "GtkWidget")
-  (c-name "gtk_widget_style_get")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "first_property_name")
-  )
-  (varargs #t)
-)
+;; (define-method style_get
+;;   (of-object "GtkWidget")
+;;   (c-name "gtk_widget_style_get")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-gchar*" "first_property_name")
+;;   )
+;;   (varargs #t)
+;; )
 
 (define-method set_direction
   (of-object "GtkWidget")

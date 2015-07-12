@@ -7563,6 +7563,55 @@ static int _wrap_gtk_builder_connect_signals(NspGtkBuilder *self,Stack stack,int
     }
 }
 
+
+%%
+override gtk_recent_chooser_dialog_new_for_manager
+
+static int
+_wrap_gtk_recent_chooser_dialog_new_for_manager (Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *cell;
+  int_types T[] = {string,obj_check,obj_check,obj_check,obj, t_end};
+  char *title;
+  NspGObject *parent, *manager;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&title, &nsp_type_gtkwindow, &parent,
+	       &nsp_type_gtkrecentmanager, &manager, &nsp_type_cells,&cell) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)gtk_recent_chooser_dialog_new_for_manager(title,GTK_WINDOW(parent->obj),
+								  GTK_RECENT_MANAGER(manager->obj),NULL,NULL))== NULL)
+    return RET_BUG;
+  Scierror("Error: Unfinished use the cell argument to add buttons to the dialog \n");
+  return RET_BUG;
+  nsp_type_gtkrecentchooserdialog = new_type_gtkrecentchooserdialog(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserdialog );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+
+%%
+override gtk_recent_chooser_dialog_new
+
+static int
+_wrap_gtk_recent_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *cell;
+  int_types T[] = {string,obj_check,obj_check, t_end};
+  char *title;
+  NspGObject *parent;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&title, &nsp_type_gtkwindow, &parent, &nsp_type_cells,&cell) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)gtk_recent_chooser_dialog_new(title,GTK_WINDOW(parent->obj),NULL,NULL))== NULL) return RET_BUG;
+  Scierror("Error: Unfinished use the cell argument to add buttons to the dialog \n");
+  return RET_BUG;
+  nsp_type_gtkrecentchooserdialog = new_type_gtkrecentchooserdialog(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkrecentchooserdialog );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 %%
 last
 

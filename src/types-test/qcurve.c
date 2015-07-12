@@ -600,7 +600,7 @@ static int _wrap_nsp_qcurve_addPts(NspQcurve *self,Stack stack,int rhs,int opt,i
   int_types T[] = {mat, t_end};
   NspMatrix *pts;
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
-  nsp_qcurve_addPts(self,pts);
+    nsp_qcurve_addPts(self,pts);
   return 0;
 }
 
@@ -609,7 +609,7 @@ static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,
   int_types T[] = {s_int, t_end};
   int pts, ret;
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
-  ret =nsp_qcurve_enlarge(self,pts);
+    ret =nsp_qcurve_enlarge(self,pts);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -617,7 +617,7 @@ static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,
 static int _wrap_nsp_qcurve_clear(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_qcurve_clear(self);
+    nsp_qcurve_clear(self);
   return 0;
 }
 
@@ -625,7 +625,7 @@ static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret =nsp_qcurve_get_pts(self);
+    ret =nsp_qcurve_get_pts(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -635,7 +635,7 @@ static int _wrap_nsp_qcurve_get_len(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   int ret;
   CheckRhs(0,0);
-  ret =nsp_qcurve_get_len(self);
+    ret =nsp_qcurve_get_len(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }

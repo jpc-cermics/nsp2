@@ -25,19 +25,24 @@ headers
 %%
 include-private GVariant
 
-static void nsp_init_GVariant(GVariant *value);
-static int nsp_eq_GVariant(GVariant *v1, GVariant *v2);
-static int nsp_GVariant_full_copy(NspGVariant *H,GVariant *v,NspGVariant *self);
-static int nsp_print_GVariant(int indent,GVariant *v,NspGVariant *M);
 static int nsp_destroy_GVariant(GVariant *v,NspGVariant *H);
+static int nsp_print_GVariant(int indent,GVariant *v,NspGVariant *M);
 static int nsp_check_GVariant(GVariant *v,NspGVariant *H);
-static int nsp_fill_g_variant_from_nspobject(GVariant *value, NspObject *obj);
+static int nsp_GVariant_full_copy(NspGVariant *H,GVariant *v,NspGVariant *self);
+
+%%
+include-private GVariantType
+
+static int nsp_destroy_GVariantType(GVariantType *v,NspGVariantType *H);
+static int nsp_print_GVariantType(int indent,GVariantType *v,NspGVariantType *M);
+static int nsp_check_GVariantType(GVariantType *v,NspGVariantType *H);
+static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *v,NspGVariantType *self);
 
 %%
 init
 
 %%
-modulename zzglib
+modulename glib
 
 %%
 ignore-glob
@@ -48,7 +53,7 @@ _*
 
 
 %%
-override-create GValue
+override-create ZZGVariant
 
 /* override the code for gvalue creation
  * we change the function nsp_gvalue_create
@@ -170,38 +175,83 @@ static int _wrap_get_value(NspGValue *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 %%
-last
+override g_variant_new
 
-static void nsp_init_GVariant(GVariant *value)
+static int
+_wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
 {
-  memset(value, 0, sizeof(*value));
+  GVariant *gvariant=NULL;
+  int_types T[] = {obj, t_end};
+  NspObject *Obj,*nsp_ret;
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&Obj) == FAIL) return RET_BUG;
+
+#define NSP_ITYPE_SWITCH_UC(itype,X,arg)	\
+  switch (itype ) {				\
+  case nsp_gint: X(Gint,INT,int32,arg);		\
+  case nsp_guint: X(Guint,UINT,uint32,arg);	\
+  case nsp_gshort: X(Gshort,INT,int16,arg);	\
+  case nsp_gushort: X(Gushort,UINT,uint16,arg);	\
+  case nsp_glong : X(Glong,LONG,int32,arg );	\
+  case nsp_gulong: X(Gulong,ULONG,uint32,arg);	\
+  case nsp_gint8: X(Gint8,INT,byte,arg);	\
+  case nsp_guint8: X(Guint8,UINT,byte,arg);	\
+  case nsp_gint16: X(Gint16,INT,int16,arg);	\
+  case nsp_guint16: X(Guint16,UINT,uint16,arg);	\
+  case nsp_gint32: X(Gint32,INT,int32,arg);	\
+  case nsp_guint32: X(Guint32,UINT,uint32,arg);	\
+  case nsp_gint64 : X(Gint64,INT64,int64,arg );	\
+  case nsp_guint64 : X(Guint64,UINT64,uint64,arg );}
+
+  if (IsMat(Obj) && ((NspMatrix *) Obj)->mn == 1 )
+    {
+      gvariant = g_variant_new_double (((NspMatrix *) Obj)->R[0] );
+    }
+  else if ( IsBMat(Obj) && ((NspBMatrix *) Obj)->mn == 1)
+    {
+      gvariant =  g_variant_new_boolean (((NspBMatrix *) Obj)->B[0] );
+    }
+  else if ( IsSMat(Obj) && ((NspSMatrix *) Obj)->mn == 1 )
+    {
+      char *str = ((NspSMatrix *) Obj)->S[0];
+      gvariant =  g_variant_new_string(str);
+    }
+  else if ( IsIMat(Obj) && ((NspIMatrix *) Obj)->mn == 1 )
+    {
+      NspIMatrix *A=(NspIMatrix *) Obj;
+#define IMAT_SWITCH(name,type_uc,type_lc,arg)			\
+      gvariant =  CNAME(g_variant_new_,type_lc)(A->name[0]);	\
+      break;
+      NSP_ITYPE_SWITCH_UC(A->itype,IMAT_SWITCH,"");
+#undef IMAT_SWITCH
+    }
+  else
+    {
+      Scierror("Error: unrecognized type for g_variant_new\n");
+      return RET_BUG;
+    }
+  nsp_type_gvariant = new_type_gvariant(T_BASE);
+  nsp_ret =(NspObject*) nsp_gvariant_create(NVOID,gvariant,(NspTypeBase *) nsp_type_gvariant);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
 }
 
-static int nsp_eq_GVariant(GVariant *v1, GVariant *v2)
+%%
+last
+
+static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
-  return TRUE;
+  g_variant_unref (value);
+  return OK;
 }
 
 static int nsp_print_GVariant(int indent,GVariant *v,NspGVariant *M)
 {
-  Sciprintf1(indent+1,"gvariant of type %s\n",
-	     G_VALUE_TYPE_NAME(v));
+  gchar *str = g_variant_print(v,TRUE);
+  Sciprintf1(indent+1,"gvariant: %s\n",str);
+  g_free(str);
   return 0;
-}
-
-static int nsp_GVariant_full_copy(NspGVariant *H,GVariant *value,NspGVariant *self)
-{
-  /* v is not initialized */
-  memset(value, 0, sizeof(*value));
-  g_variant_init (value, G_VALUE_TYPE(&self->value));
-  g_variant_copy (&self->value,value);
-  return OK;
-}
-
-static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
-{
-  g_variant_unset (value);
-  return OK;
 }
 
 static int nsp_check_GVariant(GVariant *v,NspGVariant *H)
@@ -209,55 +259,41 @@ static int nsp_check_GVariant(GVariant *v,NspGVariant *H)
   return OK;
 }
 
-#define NSP_ITYPE_SWITCH_UC(itype,X,arg)	\
-  switch (itype ) {				\
-  case nsp_gint: X(Gint,INT,int,arg);		\
-  case nsp_guint: X(Guint,UINT,uint,arg);	\
-  case nsp_gshort: X(Gshort,INT,int,arg);	\
-  case nsp_gushort: X(Gushort,UINT,uint,arg);	\
-  case nsp_glong : X(Glong,LONG,long,arg );	\
-  case nsp_gulong: X(Gulong,ULONG,ulong,arg);	\
-  case nsp_gint8: X(Gint8,INT,int,arg);		\
-  case nsp_guint8: X(Guint8,UINT,uint,arg);	\
-  case nsp_gint16: X(Gint16,INT,int,arg);	\
-  case nsp_guint16: X(Guint16,UINT,uint,arg);	\
-  case nsp_gint32: X(Gint32,INT,int,arg);	\
-  case nsp_guint32: X(Guint32,UINT,uint,arg);	\
-  case nsp_gint64 : X(Gint64,INT64,int64,arg );	\
-  case nsp_guint64 : X(Guint64,UINT64,uint64,arg );}
-
-
-static int nsp_fill_g_variant_from_nspobject(GVariant *value, NspObject *obj)
+static int nsp_GVariant_full_copy(NspGVariant *H,GVariant *value,NspGVariant *self)
 {
-  if (IsMat(obj) && ((NspMatrix *) obj)->mn == 1 )
-    {
-      g_variant_init (value, G_TYPE_DOUBLE);
-      g_variant_set_double (value,((NspMatrix *) obj)->R[0] );
-    }
-  else if ( IsBMat(obj) && ((NspBMatrix *) obj)->mn == 1)
-    {
-      g_variant_init (value, G_TYPE_BOOLEAN);
-      g_variant_set_boolean (value,((NspMatrix *) obj)->R[0] );
-    }
-  else if ( IsSMat(obj) && ((NspSMatrix *) obj)->mn == 1 )
-    {
-      char *str = ((NspSMatrix *) obj)->S[0];
-      g_variant_init (value, G_TYPE_STRING);
-      g_variant_set_string(value,str);
-    }
-  else if ( IsIMat(obj) && ((NspIMatrix *) obj)->mn == 1 )
-    {
-      NspIMatrix *A=(NspIMatrix *) obj;
-#define IMAT_SWITCH(name,type_uc,type_lc,arg)			\
-      g_variant_init (value, CNAME(G_TYPE_,type_uc));		\
-      CNAME(g_variant_set_,type_lc)(value,A->name[0]);		\
-      break;
-      NSP_ITYPE_SWITCH_UC(A->itype,IMAT_SWITCH,"");
-#undef IMAT_SWITCH
-    }
-  else
-    {
-      return FAIL;
-    }
+#if 0
+  memset(value, 0, sizeof(*value));
+  g_variant_init (value, G_VALUE_TYPE(&self->value));
+  g_variant_copy (&self->value,value);
+#endif
+  return OK;
+}
+
+
+static int nsp_destroy_GVariantType(GVariantType *value,NspGVariantType *H)
+{
+  g_variant_type_free(value);
+  return OK;
+}
+
+static int nsp_print_GVariantType(int indent,GVariantType *v,NspGVariantType *M)
+{
+  gchar *str = "xxx";/* g_variant_type_print(v,TRUE); */
+  Sciprintf1(indent+1,"gvariant_type: %s\n",str);
+  return 0;
+}
+
+static int nsp_check_GVariantType(GVariantType *v,NspGVariantType *H)
+{
+  return OK;
+}
+
+static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,NspGVariantType *self)
+{
+#if 0
+  memset(value, 0, sizeof(*value));
+  g_variant_init (value, G_VALUE_TYPE(&self->value));
+  g_variant_copy (&self->value,value);
+#endif
   return OK;
 }

@@ -16,13 +16,13 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * main 
+ * main
  *--------------------------------------------------------------------------*/
 
 #include <locale.h>
-#include <nsp/nsp.h> 
-#include <nsp/plist.h> 
-#include <nsp/plistc.h> 
+#include <nsp/nsp.h>
+#include <nsp/plist.h>
+#include <nsp/plistc.h>
 #include <nsp/parse.h>
 #include <nsp/seval.h>
 #include <nsp/libstab.h>
@@ -62,14 +62,14 @@ static void set_nsp_home_env(char *nsp_abs_path);
 /* needed when wekbit-gtk is used (in fact just in recent versions) */
 #if defined(HAVE_GTHREAD) && defined(HAVE_WEBKIT)
 #define ACTIVATE_THREAD
-#endif 
+#endif
 
 /* this is for a threaded main in nsp: still experimental */
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 static void *nsp_top_level_loop_thread(void *args);
 GThread *thread1=NULL,*thread2= NULL,*thmain=NULL;
-#endif 
+#endif
 
 typedef struct _nsp_thread_data nsp_thread_data;
 struct _nsp_thread_data {
@@ -83,17 +83,19 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   GError *error = NULL;
   nsp_thread_data data={argc,argv};
-#endif 
+#endif
   int use_stdlib = TRUE;
   char *initial_script = NULL;
   char *initial_code = NULL;
-  int initial_dir = FALSE; 
+  int initial_dir = FALSE;
   char *dir_name=NULL, *dir_pos = NULL;
   char startup[128];
   /* char *display = NULL; */
   int i;
   ProgramName = (argc > 0 ) ? argv[0]: "unknown";
 
+  /* Scierror is a printf */
+  nsp_set_error_io_basic();
   /* Initialize reader */
   nsp_intialize_reader();
   /* Initialize gtk evaluation stack */
@@ -110,77 +112,79 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   thmain = g_thread_self();
   nsp_new_interp(thmain,argc,argv);
-#else 
+#else
   nsp_new_interp(NULL,argc,argv);
-#endif 
+#endif
+  /* set default error function */
+  SetScilabErrorIO(NULL);
   /* MPI */
   /* MPI_Init(&argc,&argv); */
   /* MPI_Init(NULL,NULL); */
   /* provide a default SCI and HOME on win32  */
   set_nsp_env();
-  /* reload history: take care that this must be 
+  /* reload history: take care that this must be
    * called after set_nsp_env
    */
   nsp_read_history();
-  /* ignore error message produced during intialization 
-   * note that they are just warnings 
+  /* ignore error message produced during intialization
+   * note that they are just warnings
    */
   nsp_error_message_clear();
   /* scanning options */
-  for ( i=0 ; i < argc ; i++) 
+  for ( i=0 ; i < argc ; i++)
     {
       if ( strcmp(argv[i],"-nw") == 0) { no_window = TRUE; } /* no window mode */
-      else if (strcmp(argv[i],"-display") == 0) 
-	{ 
+      else if (strcmp(argv[i],"-display") == 0)
+	{
 	  /* X11 display */
-	  if ( i+1 < argc ) 
+	  if ( i+1 < argc )
 	    {
 	      /* display = argv[++i];*/ ++i;
-	      
+
 	    }
-	  else 
+	  else
 	    {
 	      Sciprintf("missing argument after %s\n",argv[i]);
 	    }
 	}
       else if (strcmp(argv[i],"-ns") == 0) { no_startup = TRUE ; } /* no start_up */
       else if (strcmp(argv[i],"-nb") == 0) { show_banner = FALSE; } /* no banner */
-      else if (strcmp(argv[i],"-tv") == 0) 
-	{ 
+      else if (strcmp(argv[i],"-tv") == 0)
+	{
 	  use_textview = TRUE;
-	} 
-      else if (strcmp(argv[i],"-f") == 0)  
+	}
+      else if (strcmp(argv[i],"-f") == 0)
 	{ /* execute file */
-	  if ( i+1 < argc ) 
+	  if ( i+1 < argc )
 	    initial_script = argv[++i];
-	  else 
+	  else
 	    {
 	      Sciprintf("missing argument after %s\n",argv[i]);
 	    }
-	} 
-      else if (strcmp(argv[i],"-e") == 0)  
+	}
+      else if (strcmp(argv[i],"-e") == 0)
 	{
-	  if ( i+1 < argc ) 
+	  if ( i+1 < argc )
 	    initial_code = argv[++i];  /* execute exp */
-	  else 
+	  else
 	    {
 	      Sciprintf("missing argument after %s\n",argv[i]);
 	    }
 	}
       else if (strcmp(argv[i],"-dir") == 0)   /* macros files .sci -> .bin */
 	{
-	  if ( i+1 < argc ) 
+	  if ( i+1 < argc )
 	    {
-	      initial_dir = TRUE; 
-	      dir_name = argv[++i]; 
+	      initial_dir = TRUE;
+	      dir_name = argv[++i];
 	      if ( i+1 < argc ) dir_pos = argv[++i] ;
 	    }
-	  else 
+	  else
 	    {
 	      Sciprintf("missing argument after %s\n",argv[i]);
 	    }
 	  use_stdlib = FALSE;
-	} 
+	}
       else if (strcmp(argv[i],"-echo") == 0) {init_echo = TRUE ; } /* echo mode for exec() */
       else if (strcmp(argv[i],"-show") == 0) {init_disp = TRUE ; } /* display mode for exec() */
       else if (strcmp(argv[i],"-errcatch") == 0) {init_errcatch = TRUE ;  } /* errcatch mode */
@@ -193,33 +197,33 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   if ( no_window == FALSE )
     {
       /* force textview on windows */
-      use_textview = TRUE;      
+      use_textview = TRUE;
     }
-#endif 
+#endif
 
   nsp_set_in_text_view(use_textview);
 
 #if (defined(NSP_WITH_MAIN_GTK_THREAD) || defined(ACTIVATE_THREAD))
-  /* init threads but useless after version 2.32 
-   * causes errors on win32 versions 
+  /* init threads but useless after version 2.32
+   * causes errors on win32 versions
    */
-#if !GLIB_CHECK_VERSION (2,32,0) 
+#if !GLIB_CHECK_VERSION (2,32,0)
     {
       g_thread_init(NULL);
       gdk_threads_init();
     }
-#endif 
-#endif 
+#endif
+#endif
 
   /* FIXME: should be moved here  */
   nsp_gtk_init(argc,argv,no_window,use_textview);
-  
+
   /* #define NSP_ENTRY_INPUT_TEST   */
-#ifdef NSP_ENTRY_INPUT_TEST 
+#ifdef NSP_ENTRY_INPUT_TEST
   if ( no_window == FALSE )
     term_output(argc, argv);
-#endif 
-  
+#endif
+
   /* Load initial macros */
   if ( use_stdlib == TRUE ) nsp_enter_macros("SCI/macros",TRUE,FALSE);
 
@@ -232,38 +236,38 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
       fflush (stdout);
     }
 
-  if ( no_startup == FALSE) 
+  if ( no_startup == FALSE)
     {
       char fname_expanded[FSIZE+1];
       FILE *input;
       /* try to execute a user startup */
       strcpy(startup,get_sci_data_strings(1));
       nsp_path_expand(startup,fname_expanded,FSIZE);
-      if ((input = fopen(fname_expanded,"r")) != NULL) 
+      if ((input = fopen(fname_expanded,"r")) != NULL)
 	{
 	  int rep =nsp_parse_eval_file(fname_expanded,init_disp,init_echo,init_errcatch,TRUE,FALSE );
-	  if  ( rep < 0 ) 
+	  if  ( rep < 0 )
 	    {
 	      Sciprintf("Warning: error during execution of the startup script %s\n",startup);
 	      nsp_error_message_show();
 	    }
 	}
     }
-  
-  if ( initial_dir  == TRUE  ) 
+
+  if ( initial_dir  == TRUE  )
     {
-      /* -dir dirname filename 
-       * or 
-       * -dir dirname filename 
-       * FIXME: dirname must be an absolute file name 
+      /* -dir dirname filename
+       * or
+       * -dir dirname filename
+       * FIXME: dirname must be an absolute file name
        * but can contain SCI, NSP etc.....
        */
       int rep;
-      if (dir_pos == NULL) 
+      if (dir_pos == NULL)
 	rep =nsp_parse_eval_dir_full(dir_name);
-      else 
+      else
 	rep =nsp_parse_eval_dir(dir_name,dir_pos);
-      if ( rep >= 0 || rep == RET_QUIT ) 
+      if ( rep >= 0 || rep == RET_QUIT )
 	{
 	  sci_clear_and_exit(0);
 	  return 0;
@@ -275,18 +279,18 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 	}
     }
 
-  if ( initial_script != NULL ) 
+  if ( initial_script != NULL )
     {
       /* execute initial script if given */
       int rep =nsp_parse_eval_file(initial_script,init_disp,init_echo,init_errcatch,TRUE,FALSE );
-      if ( rep == RET_QUIT ) 
+      if ( rep == RET_QUIT )
 	{
 	  sci_clear_and_exit(0);
 	  return 0;
 	}
-      else if  ( rep < 0 ) 
+      else if  ( rep < 0 )
 	{
-	  if ( init_errcatch== FALSE ) 
+	  if ( init_errcatch== FALSE )
 	    {
 	      Scierror("Error: during evaluation of %s\n",initial_code);
 	      nsp_error_message_show();
@@ -295,21 +299,21 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 	  return 1;
 	}
     }
-  
+
   if ( initial_code != NULL )
     {
-      /* then execute initial given code 
-       * we quit with status equal to 1 when an error occurs 
+      /* then execute initial given code
+       * we quit with status equal to 1 when an error occurs
        */
       int rep =nsp_parse_eval_from_string(initial_code,init_disp,init_echo,init_errcatch,TRUE );
-      if ( rep == RET_QUIT ) 
+      if ( rep == RET_QUIT )
 	{
 	  sci_clear_and_exit(0);
 	  return 0;
 	}
-      else if  ( rep < 0 ) 
+      else if  ( rep < 0 )
 	{
-	  if ( init_errcatch== FALSE ) 
+	  if ( init_errcatch== FALSE )
 	    {
 	      Scierror("Error: during evaluation of %s\n",initial_code);
 	      nsp_error_message_show();
@@ -322,13 +326,13 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   /* stop after initialization if requested */
   if ( loop == FALSE ) return 0;
 
-  /* enter normal loop 
-   * but we only want to stop on RET_QUIT and RET_EOF 
-   * i.e RET_ABORT should not stop. 
+  /* enter normal loop
+   * but we only want to stop on RET_QUIT and RET_EOF
+   * i.e RET_ABORT should not stop.
    */
-  
+
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-#if GLIB_CHECK_VERSION (2,32,0) 
+#if GLIB_CHECK_VERSION (2,32,0)
   if (! (thread1= g_thread_try_new("thread1",nsp_top_level_loop_thread,&data, &error)))
     {
       g_printerr ("Failed to create thread: %s\n", error->message);
@@ -339,7 +343,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
       g_printerr ("Failed to create thread: %s\n", error->message);
       return 1;
     }
-#else 
+#else
   if (! (thread1= g_thread_create(nsp_top_level_loop_thread,&data, FALSE, &error)))
     {
       g_printerr ("Failed to create thread: %s\n", error->message);
@@ -350,20 +354,20 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
       g_printerr ("Failed to create thread: %s\n", error->message);
       return 1;
     }
-#endif 
+#endif
   /* enter the GTK main loop */
   gdk_threads_enter();
   gtk_main();
   gdk_threads_leave();
-#else 
+#else
   gdk_threads_enter();
-  while (1) 
+  while (1)
     {
       if (  nsp_parse_eval_from_std(TRUE) == 0) break;
     }
   gdk_threads_leave();
-#endif 
-  
+#endif
+
   sci_clear_and_exit(0);
   return 0;
 }
@@ -374,10 +378,10 @@ static void *nsp_top_level_loop_thread(void *args)
   nsp_thread_data *data= args;
   int rep;
   nsp_new_interp(g_thread_self(),data->argc,data->argv);
-  while (1) 
+  while (1)
     {
-      /* FIXME : this is too much but we have to protect gtk_calls 
-       * gdk_threads_enter() etc.... should be moved in other places 
+      /* FIXME : this is too much but we have to protect gtk_calls
+       * gdk_threads_enter() etc.... should be moved in other places
        */
       rep = nsp_parse_eval_from_std(TRUE);
       if (  rep == 0) break;
@@ -385,10 +389,10 @@ static void *nsp_top_level_loop_thread(void *args)
   sci_clear_and_exit(0);
   return NULL;
 }
-#endif 
+#endif
 
 /*
- * nsp is called from texmacs ? 
+ * nsp is called from texmacs ?
  */
 
 int nsp_from_texmacs(void)
@@ -397,17 +401,17 @@ int nsp_from_texmacs(void)
 }
 
 /*-------------------------------------------------------
- * Exit function called by some 
- * X11 functions 
+ * Exit function called by some
+ * X11 functions
  * call sciquit which call clearexit
  *-------------------------------------------------------*/
 
 void sci_clear_and_exit(int n)
 {
-  if ( no_startup == FALSE) 
+  if ( no_startup == FALSE)
     {
       /* char *quit_script =  get_sci_data_strings(5);
-       * XXXX C2F(scirun)(quit_script,strlen(quit_script)); 
+       * XXXX C2F(scirun)(quit_script,strlen(quit_script));
        */
     }
   /* save history **/
@@ -415,15 +419,15 @@ void sci_clear_and_exit(int n)
   /* clean tmpfiles **/
   clean_tmpdir();
   /* clean ieee **/
-#ifdef sun 
+#ifdef sun
 #ifndef SYSV
 #include <sys/ieeefp.h>
   {
     char *mode, **out, *in;
     ieee_flags("clearall","exeption","all", &out);
   }
-#endif 
-#endif 
+#endif
+#endif
   /* clear the texview if we have one */
   nsp_textview_destroy();
   /* really exit */
@@ -432,18 +436,18 @@ void sci_clear_and_exit(int n)
 
 
 /*-------------------------------------------------------
- * usr1 signal : used to transmit a Control C to 
- * scilab 
+ * usr1 signal : used to transmit a Control C to
+ * scilab
  *-------------------------------------------------------*/
 
-void sci_usr1_signal(int n) 
+void sci_usr1_signal(int n)
 {
   controlC_handler(n);
 }
 
 /*-------------------------------------------------------
- * Ctrl-Z : stops the current computation 
- *          or the current interface call 
+ * Ctrl-Z : stops the current computation
+ *          or the current interface call
  *-------------------------------------------------------*/
 
 void  sci_sig_tstp(int n)
@@ -452,7 +456,7 @@ void  sci_sig_tstp(int n)
 }
 
 /*-------------------------------------------------------
- * Syntax 
+ * Syntax
  *-------------------------------------------------------*/
 
 static struct _options {
@@ -472,7 +476,7 @@ static struct _options {
   { "-dir",                  "load and save of sci files in a directory" },
   { NULL, NULL }};
 
-static void nsp_syntax (char *badOption) 
+static void nsp_syntax (char *badOption)
 {
   struct _options *opt;
   int col;
@@ -499,16 +503,16 @@ static void nsp_syntax (char *badOption)
 
 
 /*
- * Build environment variables 
- * SCI, NSP and TMPDIR 
- * 
+ * Build environment variables
+ * SCI, NSP and TMPDIR
+ *
  */
 
 static void set_nsp_env (void)
 {
   int i;
   const char *p1;
-  char *nsp_abs_path=NULL, *pname =ProgramName ; 
+  char *nsp_abs_path=NULL, *pname =ProgramName ;
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */
@@ -517,7 +521,7 @@ static void set_nsp_env (void)
       nsp_setenv("NSP",p1);
       return;
     }
-  /* we should check here if path is absolute or not 
+  /* we should check here if path is absolute or not
    * with nsp_get_path_type
    * fprintf(stderr,"No SCI trying with %s\n",ProgramName);
    */
@@ -531,9 +535,9 @@ static void set_nsp_env (void)
       if ( nsp_abs_path[i]=='\\') nsp_abs_path[i] ='/';
     }
   /* going upward and try removing the trailing /bin/program-name  */
-  for ( i = strlen(nsp_abs_path) ; i >= 0 ; i-- ) 
+  for ( i = strlen(nsp_abs_path) ; i >= 0 ; i-- )
     {
-      if ( nsp_abs_path[i]== '/'  ) 
+      if ( nsp_abs_path[i]== '/'  )
 	{
 	  nsp_abs_path[i]= '\0';
 	  if (strcmp(nsp_abs_path+i+1,"bin")== 0 )
@@ -554,37 +558,37 @@ static void set_nsp_env (void)
 
 static void set_nsp_home_env(char *nsp_abs_path)
 {
-#ifdef WIN32 
+#ifdef WIN32
   int k;
   char HOME[FSIZE+1];
   const char *hd, *hp;
   if ( nsp_getenv("HOME") != NULL)  return;
   hd = nsp_getenv ("HOMEDRIVE");
   hp = nsp_getenv ("HOMEPATH");
-  if ( hp == NULL || hd == NULL) 
+  if ( hp == NULL || hd == NULL)
     sprintf(HOME,"%s",nsp_abs_path);
   else
     sprintf(HOME,"%s%s",hd,hp);
   for (k=0 ; k < strlen(HOME) ;k++) if ( HOME[k]=='\\') HOME[k]='/';
   nsp_setenv("HOME",HOME);
-#endif 
+#endif
 }
 
 
-#ifdef FORTRAN_MAIN 
+#ifdef FORTRAN_MAIN
 
 /* utility */
 
-#define BSIZE 128 
+#define BSIZE 128
 
 /**
  * create_argv:
- * @argc: 
- * 
- * A utility which rebuild @argv and @argc when the 
- * main program was a Fortran main 
- * 
- * Return value: 
+ * @argc:
+ *
+ * A utility which rebuild @argv and @argc when the
+ * main program was a Fortran main
+ *
+ * Return value:
  **/
 
 /* two functions coming from Fortran */
@@ -599,7 +603,7 @@ static char ** create_argv(int *argc)
   char **argv;
   *argc = C2F(iargc)() + 1;
   if ( ( argv = malloc((*argc)*sizeof(char *))) == NULL) return NULL;
-  for ( i=0 ; i < *argc ; i++) 
+  for ( i=0 ; i < *argc ; i++)
     {
       char buf[BSIZE];
       C2F(getarg)(&i,buf,BSIZE);
@@ -610,7 +614,7 @@ static char ** create_argv(int *argc)
       strcpy(argv[i],buf);
 #ifdef DEBUG
       fprintf(stderr,"arg[%d] %s\n",i,argv[i]);
-#endif 
+#endif
     }
   return argv;
 }
@@ -618,9 +622,9 @@ static char ** create_argv(int *argc)
 
 /**
  * strip_blank:
- * @source: 
- * 
- * removes trailing white spaces. 
+ * @source:
+ *
+ * removes trailing white spaces.
  **/
 
 static void strip_blank(char *source)
@@ -637,4 +641,3 @@ static void strip_blank(char *source)
 
 
 #endif /*  FORTRAN_MAIN  */
-

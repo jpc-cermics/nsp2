@@ -29,12 +29,12 @@
 
 /**
  * DefScivprintf:
- * @fmt: a string 
- * @ap: variable list of arguments 
- * 
+ * @fmt: a string
+ * @ap: variable list of arguments
+ *
  * Default function used for printing. This function
  * should not be used directly but through Scivprintf
- * 
+ *
  * Returns: an integer
  **/
 
@@ -44,24 +44,24 @@ static int  DefScivprintf(const char *fmt, va_list ap)
 }
 
 /*
- * Scivprintf: 
+ * Scivprintf:
  *
- * a variable set to the default function used for 
+ * a variable set to the default function used for
  * printing. This variable can be changed using SetScilabIO().
  */
 
 static IOVFun Scivprintf = DefScivprintf;
 
 /**
- * Sciprintf: 
+ * Sciprintf:
  * @fmt: The  format  string
- * @...: format arguments 
+ * @...: format arguments
  *
- * This function is similar to function printf(format,args,....) and 
+ * This function is similar to function printf(format,args,....) and
  * should be used for nsp output. Sciprintf() redirect output to
- * the function Scivprintf(). Scivprintf is by default set to 
- * DefScivprintf() but using the function SetScilabIO() this default value can 
- * be changed. 
+ * the function Scivprintf(). Scivprintf is by default set to
+ * DefScivprintf() but using the function SetScilabIO() this default value can
+ * be changed.
  */
 
 int Sciprintf (const char *fmt, ...)
@@ -78,11 +78,11 @@ int Sciprintf (const char *fmt, ...)
  * Sciprintf1:
  * @indent: integer giving level of indentation
  * @fmt: The  format  string
- * @...: format arguments 
+ * @...: format arguments
  *
- * Similar to function Sciprintf, with an extra 
- * parameter giving a level of indentation. 
- *   
+ * Similar to function Sciprintf, with an extra
+ * parameter giving a level of indentation.
+ *
  */
 
 int  Sciprintf1 (int indent,const char *fmt,...)
@@ -98,15 +98,15 @@ int  Sciprintf1 (int indent,const char *fmt,...)
 
 /**
  * do_printf_stdout:
- * @ignore: 
- * @fmt: 
- * @: 
- * 
- * used in do_printf for stream stdout when 
- * we are using a texview widget as terminal. 
+ * @ignore:
+ * @fmt:
+ * @:
+ *
+ * used in do_printf for stream stdout when
+ * we are using a texview widget as terminal.
  * In a standard xterm this is not necessary.
- * 
- * Returns: 
+ *
+ * Returns:
  **/
 
 int do_printf_stdout(const FILE *ignore,const char *fmt, ...)
@@ -121,13 +121,13 @@ int do_printf_stdout(const FILE *ignore,const char *fmt, ...)
 
 
 /**
- * scidebug: 
+ * scidebug:
  * @indent: integer giving level of indentation
  * @fmt: The  format  string
- * @...: format arguments 
+ * @...: format arguments
  *
- * used for printing debug messages during parsing. 
- *   
+ * used for printing debug messages during parsing.
+ *
  */
 
 int scidebug(int indent,char *fmt,...)
@@ -145,20 +145,20 @@ int scidebug(int indent,char *fmt,...)
 
 /**
  * SetScilabIO:
- * @F: a function used for printing. 
- * 
- * This function is used to change the default function used 
- * for printing. When called with NULL argument default value is restored. 
- * 
+ * @F: a function used for printing.
+ *
+ * This function is used to change the default function used
+ * for printing. When called with NULL argument default value is restored.
+ *
  * Returns: previously used function.
  **/
 
 IOVFun SetScilabIO(IOVFun F)
 {
   IOVFun g = Scivprintf;
-  if ( F == NULL) 
+  if ( F == NULL)
     Scivprintf = DefScivprintf;
-  else 
+  else
     Scivprintf = F;
   return g;
 }
@@ -167,10 +167,10 @@ IOVFun SetScilabIO(IOVFun F)
  * DefScifprintf:
  * @f: a file descriptor
  * @fmt: The  format  string
- * @...: format arguments 
+ * @...: format arguments
  *
- * similar to function fprintf(file,format,args,....) 
- * for nsp output. 
+ * similar to function fprintf(file,format,args,....)
+ * for nsp output.
  */
 
 static int  DefScifprintf (FILE *f,const char *fmt,...)
@@ -185,11 +185,11 @@ static int  DefScifprintf (FILE *f,const char *fmt,...)
 
 /**
  * SetScifprintf:
- * @F: a function used for printing in a file.  
- * 
- * This function is used to change the current function used 
- * for printing in a file. 
- * 
+ * @F: a function used for printing in a file.
+ *
+ * This function is used to change the current function used
+ * for printing in a file.
+ *
  * Returns: previously used function
  **/
 
@@ -198,17 +198,17 @@ IOFun2 Scifprintf = DefScifprintf;
 IOFun2 SetScifprintf(IOFun2 F)
 {
   IOFun2 g = Scifprintf;
-  if ( F == NULL) 
+  if ( F == NULL)
     Scifprintf = DefScifprintf;
   else
     Scifprintf = F;
   return g;
 }
 
-/* 
- * redirection of nsp print routine in order to 
- * print in a row string matrix 
- * the string matrix is created if nsp_print_string 
+/*
+ * redirection of nsp print routine in order to
+ * print in a row string matrix
+ * the string matrix is created if nsp_print_string
  * is NULL;
  * XXX: buf could be dynamically enlarged
  *
@@ -220,13 +220,13 @@ static char buf[SIO_BUFSIZE+1];
 
 /**
  * Sciprint2string:
- * @fmt: a string 
- * @ap: variable list of arguments 
+ * @fmt: a string
+ * @ap: variable list of arguments
  *
- * This function can be given as argument to  SetScilabIO() 
+ * This function can be given as argument to  SetScilabIO()
  * in order to redirect printing to a NspSMatrix  nsp_print_string.
- * 
- * 
+ *
+ *
  * Returns: an integer.
  **/
 
@@ -239,15 +239,15 @@ int  Sciprint2string(const char *fmt, va_list ap)
   n= vsnprintf(buf+count,Max(0,SIO_BUFSIZE-count), fmt, ap );
   if ((line = strchr(buf+count,'\n')) != NULL)
     {
-      *line = '\0'; 
-      if ( nsp_print_string == NULL) 
+      *line = '\0';
+      if ( nsp_print_string == NULL)
 	nsp_print_string = nsp_smatrix_create_with_length(NVOID,0,0,-1);
       if ( nsp_print_string != NULL)  nsp_row_smatrix_append_string(nsp_print_string,buf);
-      for ( i = 0 ; i < n -( line-(buf+count))-1 ; i++) buf[i]= *(line+1+i); 
+      for ( i = 0 ; i < n -( line-(buf+count))-1 ; i++) buf[i]= *(line+1+i);
       count=  n -( line-(buf+count))-1;
       buf[count]='\0';
     }
-  else 
+  else
     {
       count+=n;
       count=Min(count,SIO_BUFSIZE);
@@ -257,10 +257,10 @@ int  Sciprint2string(const char *fmt, va_list ap)
 
 /**
  * Sciprint2string_reset:
- * 
- * returns the string matrix containing the output redirection. 
+ *
+ * returns the string matrix containing the output redirection.
  * And reset the variable nsp_print_string to NULL.
- * 
+ *
  * Returns: the value of nsp_print_string
  **/
 
@@ -268,7 +268,7 @@ NspObject *Sciprint2string_reset(void)
 {
   NspSMatrix *res;
   if ( count != 0 ) Sciprintf("\n");
-  res = nsp_print_string; 
+  res = nsp_print_string;
   nsp_print_string = NULL;
   return (NspObject *) res;
 }
@@ -276,10 +276,10 @@ NspObject *Sciprint2string_reset(void)
 /**
  * Sciprint_file:
  * @f: a FILE
- * 
+ *
  * sets the file that will be used as output file by
  * Sciprint2file() function.
- * 
+ *
  * Returns: previous value of nsp_print_file
  **/
 
@@ -294,13 +294,13 @@ FILE * Sciprint_file(FILE *f)
 
 /**
  * Sciprint2file:
- * @fmt: a string 
- * @ap: variable list of arguments 
+ * @fmt: a string
+ * @ap: variable list of arguments
  *
- * This function can be given as argument to  SetScilabIO() 
+ * This function can be given as argument to  SetScilabIO()
  * in order to redirect printing to nsp_print_file.
- * 
- * 
+ *
+ *
  * Returns: an integer.
  **/
 
@@ -309,8 +309,8 @@ int Sciprint2file(const char *fmt, va_list ap)
   return (nsp_print_file != NULL) ? vfprintf(nsp_print_file, fmt, ap ) : 0;
 }
 
-/* 
- * a diary redirection 
+/*
+ * a diary redirection
  *
  */
 
@@ -321,19 +321,19 @@ FILE * Sciprint_set_diary(FILE *f,int diary_echo )
 {
   FILE *f1 =   nsp_diary_file;
   nsp_diary_file = f;
-  nsp_diary_echo = diary_echo; 
+  nsp_diary_echo = diary_echo;
   return f1;
 }
 
 /**
  * Sciprint_diary:
- * @fmt: a string 
- * @ap: variable list of arguments 
+ * @fmt: a string
+ * @ap: variable list of arguments
  *
- * This function can be given as argument to  SetScilabIO() 
+ * This function can be given as argument to  SetScilabIO()
  * in order to add a diary redirection for nsp output.
- * 
- * 
+ *
+ *
  * Returns: an integer.
  **/
 
@@ -341,7 +341,7 @@ int Sciprint_diary(const char *fmt, va_list ap)
 {
   int n=0;
   /* to standard output */
-  if ( nsp_diary_echo ) n=DefScivprintf(fmt,ap); 
+  if ( nsp_diary_echo ) n=DefScivprintf(fmt,ap);
   /* to diary file */
   if ( nsp_diary_file)  vfprintf(nsp_diary_file, fmt, ap );
   return n;
@@ -349,13 +349,13 @@ int Sciprint_diary(const char *fmt, va_list ap)
 
 /**
  * Sciprint_diary:
- * @fmt: a string 
- * @ap: variable list of arguments 
+ * @fmt: a string
+ * @ap: variable list of arguments
  *
- * This function can be given as argument to  SetScilabIO() 
+ * This function can be given as argument to  SetScilabIO()
  * in order to redirect output to diary file.
- * 
- * 
+ *
+ *
  * Returns: an integer.
  **/
 
@@ -371,22 +371,22 @@ int Sciprint_diary_only (const char *fmt,...)
 
 /**
  * Sciprint_diary_on:
- * 
+ *
  * check if a diary redirection is active.
- * 
+ *
  * Returns: %TRUE or %FALSE.
  **/
 
-int Sciprint_diary_on(void) 
+int Sciprint_diary_on(void)
 {
   return (nsp_diary_file != NULL);
 }
 
 /*
- * Scierror :  Default value DefSciprintf 
- *   similar to function printf(format,args,....) 
- *   for Scilab error output 
- *   SetScilabError : function which can be used to 
+ * Scierror :  Default value DefSciprintf
+ *   similar to function printf(format,args,....)
+ *   for Scilab error output
+ *   SetScilabError : function which can be used to
  *               change scilab Scierror function
  */
 
@@ -398,7 +398,7 @@ int  def_nsp_error_vprintf(const char *fmt, va_list ap)
   char buf[size];
   int n;
   n=  vsnprintf(buf,size, fmt, ap );
-  if ( n > -1 ) 
+  if ( n > -1 )
     {
       Stack *stack = nsp_get_stack();
       nsp_row_smatrix_append_string((NspSMatrix *) stack->val->error_msg,buf);
@@ -408,21 +408,44 @@ int  def_nsp_error_vprintf(const char *fmt, va_list ap)
 
 IOVFun  nsp_error_vprintf = def_nsp_error_vprintf ;
 
+/* to be used at init time
+ */
+
+int  nsp_error_vprintf_basic(const char *fmt, va_list ap)
+{
+  const int size=256;
+  char buf[size];
+  int n;
+  n=  vsnprintf(buf,size, fmt, ap );
+  if ( n > -1 )
+    {
+      printf("%s",buf);
+    }
+  return 0;
+}
+
+IOVFun nsp_set_error_io_basic()
+{
+  IOVFun g = nsp_error_vprintf;
+  nsp_error_vprintf = nsp_error_vprintf_basic;
+  return g;
+}
+
 
 /**
  * SetScilabErrorIO:
- * @F: a function used for error printing. 
- * 
- * This function is used to change the default function used 
- * for error printing. When called with NULL argument default value is restored. 
- * 
+ * @F: a function used for error printing.
+ *
+ * This function is used to change the default function used
+ * for error printing. When called with NULL argument default value is restored.
+ *
  * Returns: previously used function.
  **/
 
 IOVFun SetScilabErrorIO(IOVFun F)
 {
   IOVFun g = nsp_error_vprintf;
-  if ( F == NULL) 
+  if ( F == NULL)
     nsp_error_vprintf = def_nsp_error_vprintf ;
   else
     nsp_error_vprintf = F;
@@ -430,21 +453,21 @@ IOVFun SetScilabErrorIO(IOVFun F)
 }
 
 /**
- * Scierror: 
+ * Scierror:
  * @fmt: The  format  string
- * @...: format arguments 
+ * @...: format arguments
  *
- * This function is similar to function printf(format,args,....) and 
+ * This function is similar to function printf(format,args,....) and
  * should be used for nsp error output. Sciprintf() redirect output to
- * the function nsp_error_vprintf(). nsp_error_vprintf is by default set to 
- * def_nsp_error_vprintf() but using the function SetScilabErrorIO() this default value can 
- * be changed. 
+ * the function nsp_error_vprintf(). nsp_error_vprintf is by default set to
+ * def_nsp_error_vprintf() but using the function SetScilabErrorIO() this default value can
+ * be changed.
  */
 
 int Scierror(const char *fmt,...)
 {
   va_list ap;
-  va_start(ap,fmt); 
+  va_start(ap,fmt);
   nsp_error_vprintf(fmt,ap);
   va_end(ap);
   return 0;
@@ -452,18 +475,18 @@ int Scierror(const char *fmt,...)
 
 /**
  * nsp_error_message_show:
- * @void: 
- * 
- * Print and then clear error message 
+ * @void:
+ *
+ * Print and then clear error message
  **/
 
 void nsp_error_message_show(void)
 {
   Stack *stack = nsp_get_stack();
-  if ( ((NspSMatrix *) stack->val->error_msg)->mn != 0 ) 
+  if ( ((NspSMatrix *) stack->val->error_msg)->mn != 0 )
     {
       int i;
-      for ( i = 0 ; i < ((NspSMatrix *) stack->val->error_msg)->mn; i++) 
+      for ( i = 0 ; i < ((NspSMatrix *) stack->val->error_msg)->mn; i++)
 	Sciprintf("%s",((NspSMatrix *) stack->val->error_msg)->S[i]);
       nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
     }
@@ -471,15 +494,15 @@ void nsp_error_message_show(void)
 
 /**
  * nsp_error_message_clear:
- * @void: 
- * 
+ * @void:
+ *
  * clear an error message if any.
  **/
 
 void nsp_error_message_clear(void)
 {
   Stack *stack = nsp_get_stack();
-  if ( ((NspSMatrix *)stack->val->error_msg)->mn != 0 ) 
+  if ( ((NspSMatrix *)stack->val->error_msg)->mn != 0 )
     {
       nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
     }
@@ -488,10 +511,10 @@ void nsp_error_message_clear(void)
 
 /**
  * nsp_error_message_to_lasterror:
- * @void: 
- * 
- * copy recorded error messages to lasterror and clear 
- * error message. 
+ * @void:
+ *
+ * copy recorded error messages to lasterror and clear
+ * error message.
  *
  **/
 
@@ -499,17 +522,17 @@ void nsp_error_message_to_lasterror(void)
 {
   Stack *stack = nsp_get_stack();
   int i;
-  if ( lasterror== NULLSMAT ) 
+  if ( lasterror== NULLSMAT )
     {
       lasterror =  nsp_smatrix_create(NVOID,0,0,NULL,0);
     }
-  else 
+  else
     {
       /* keep previous messages */
       /* nsp_smatrix_resize(lasterror,0,0); */
     }
-  if ( lasterror != NULLSMAT ) 
-    for ( i = 0 ; i < ((NspSMatrix *)stack->val->error_msg)->mn; i++) 
+  if ( lasterror != NULLSMAT )
+    for ( i = 0 ; i < ((NspSMatrix *)stack->val->error_msg)->mn; i++)
       nsp_row_smatrix_append_string(lasterror,((NspSMatrix *)stack->val->error_msg)->S[i]);
   nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
 }
@@ -517,31 +540,31 @@ void nsp_error_message_to_lasterror(void)
 
 /**
  * nsp_lasterror_get:
- * 
+ *
  * returns the value of lasterror
- * 
+ *
  * Returns: a NspSMatrix.
  **/
 
-NspSMatrix *nsp_lasterror_get(void) 
+NspSMatrix *nsp_lasterror_get(void)
 {
   return lasterror;
 }
 
 /**
  * nsp_lasterror_clear:
- * 
+ *
  * reset lasterror to a 0x0 string matrix.
- * 
+ *
  **/
 
-void nsp_lasterror_clear(void) 
+void nsp_lasterror_clear(void)
 {
   nsp_smatrix_resize(lasterror,0,0);
 }
 
 /*
- * functions to handle echo of typed scilab commands 
+ * functions to handle echo of typed scilab commands
  */
 
 static int echo_mode = TRUE;
@@ -558,7 +581,7 @@ int get_echo_mode(void)
 }
 
 /*
- * functions to handle echo of typed scilab commands 
+ * functions to handle echo of typed scilab commands
  */
 
 void set_is_reading(int mode)
@@ -572,8 +595,8 @@ int get_is_reading(void)
 }
 
 /*
- * functions to handle echo of typed scilab commands 
- * 
+ * functions to handle echo of typed scilab commands
+ *
  */
 
 static int nsp_echo_input_line = FALSE;

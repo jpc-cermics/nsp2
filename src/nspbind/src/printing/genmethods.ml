@@ -22,9 +22,13 @@ let method_tmpl_std =
   "$(varlist)" ^
   "$(parseargs)" ^
   "$(codebefore)" ^
-  "  $(setreturn)$(cname)($(self)$(arglist));\n" ^
+  "$(codecallf)" ^
   "$(codeafter)\n" ^
   "}\n\n"
+;;
+
+let method_call_tmpl_std =
+  "    $(setreturn)$(cname)($(self)$(arglist));\n"
 ;;
 
 let method_tmpl_boxed =
@@ -33,9 +37,13 @@ let method_tmpl_boxed =
   "$(varlist)" ^
   "$(parseargs)" ^
   "$(codebefore)" ^
-  "  $(setreturn)$(cname)(NSP_GBOXED_GET(self, $(typename_nn))$(arglist));\n" ^
+  "$(codecallf)" ^
   "$(codeafter)\n" ^
   "}\n\n"
+;;
+
+let method_call_tmpl_boxed =
+  "  $(setreturn)$(cname)(NSP_GBOXED_GET(self, $(typename_nn))$(arglist));\n"
 ;;
 
 let method_tmpl objinfo =
@@ -47,19 +55,50 @@ let method_tmpl objinfo =
   | Struct ->  method_tmpl_std
 ;;
 
+let method_call_tmpl objinfo =
+  match objinfo.or_kind with
+  | Boxed ->  method_call_tmpl_boxed
+  | Pointer
+  | Interface
+  | Object
+  | Struct ->  method_call_tmpl_std
+;;
+
 (*
  * nspgobject_new could be used instead of gobject_create
  *)
 
 let constructor_tmpl_std =
   "static int\n" ^
-  "_wrap_$(cname) /* ZZZ $(typename_dc)_new */(Stack stack, int rhs, int opt, int lhs)\n" ^
+  "_wrap_$(cname) (Stack stack, int rhs, int opt, int lhs)\n" ^
+  "{\n" ^
+  "$(varlist)" ^
+  "  void *ret; NspObject *nsp_ret;\n" ^
+  "$(parseargs)" ^
+  "$(codebefore)" ^
+  "$(codecallf)" ^
+  "$(codeafter)\n" ^
+  "  nsp_type_$(typename_dc) = new_type_$(typename_dc)(T_BASE);\n" ^
+  "  nsp_ret =(NspObject*) nsp_$(typename_dc)_create(NVOID,ret,(NspTypeBase *) nsp_type_$(typename_dc));\n" ^
+  "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+  "  MoveObj(stack,1,nsp_ret);\n" ^
+  "  return 1;\n" ^
+  "}\n\n"
+;;
+
+let constructor_call_tmpl_std =
+  "  if ((ret = $(cname)($(arglist)))== NULL) return RET_BUG;\n"
+;;
+
+let constructor_tmpl_std_gtkclass =
+  "static int\n" ^
+  "_wrap_$(cname) (Stack stack, int rhs, int opt, int lhs)\n" ^
   "{\n" ^
   "$(varlist)" ^
   "  GObject *ret; NspObject *nsp_ret;\n" ^
   "$(parseargs)" ^
   "$(codebefore)" ^
-  "  if ((ret = (GObject *)$(cname)($(arglist)))== NULL) return RET_BUG;\n" ^
+  "$(codecallf)" ^
   "$(codeafter)\n" ^
   "  nsp_type_$(typename_dc) = new_type_$(typename_dc)(T_BASE);\n" ^
   "  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_$(typename_dc) );\n " ^
@@ -69,15 +108,19 @@ let constructor_tmpl_std =
   "}\n\n"
 ;;
 
+let constructor_call_tmpl_std_gtkclass =
+  "  if ((ret = (GObject *)$(cname)($(arglist)))== NULL) return RET_BUG;\n"
+;;
+
 let constructor_tmpl_boxed =
   "static int\n" ^
-  "_wrap_$(cname) /* ZZZ $(typename_dc)_new */(Stack stack, int rhs, int opt, int lhs)\n" ^
+  "_wrap_$(cname) (Stack stack, int rhs, int opt, int lhs)\n" ^
   "{\n" ^
   "$(varlist)" ^
   "  GObject *ret; NspObject *nsp_ret;\n" ^
   "$(parseargs)" ^
   "$(codebefore)" ^
-  "  if ((ret = (GObject *)$(cname)($(arglist)))== NULL) return RET_BUG;\n" ^
+  "$(codecallf)" ^
   "$(codeafter)\n" ^
   "  nsp_type_$(typename_dc) = new_type_$(typename_dc)(T_BASE);\n" ^
   "  nsp_ret = (NspObject *) gboxed_create(NVOID,$(typecode), ret,TRUE,TRUE,(NspTypeBase *) nsp_type_$(typename_dc));\n" ^
@@ -87,13 +130,34 @@ let constructor_tmpl_boxed =
   "}\n\n"
 ;;
 
-let constructor_tmpl objinfo =
+let constructor_call_tmpl_boxed =
+  "  if ((ret = (GObject *)$(cname)($(arglist)))== NULL) return RET_BUG;\n"
+;;
+
+let constructor_tmpl objinfo is_gtk_class =
   match objinfo.or_kind with
   | Boxed ->   constructor_tmpl_boxed
   | Pointer
   | Interface
   | Object
-  | Struct ->   constructor_tmpl_std
+  | Struct ->
+      if is_gtk_class then
+	constructor_tmpl_std_gtkclass
+      else
+	constructor_tmpl_std
+;;
+
+let constructor_call_tmpl objinfo is_gtk_class =
+  match objinfo.or_kind with
+  | Boxed ->   constructor_call_tmpl_boxed
+  | Pointer
+  | Interface
+  | Object
+  | Struct ->
+      if is_gtk_class then
+	constructor_call_tmpl_std_gtkclass
+      else
+	constructor_call_tmpl_std
 ;;
 
 (* two methods can be implemented with the same c function
@@ -102,7 +166,7 @@ let constructor_tmpl objinfo =
 
 let written_overrides_table = Hashtbl.create 256;;
 
-let write_method objinfo is_gtk_class  meth template handle_return is_method =
+let write_method objinfo is_gtk_class  meth template template_call handle_return is_method =
   let fixname x = x in
   let method_name1 = meth.f_c_name in
   let method_name2 = objinfo.or_name  ^ "."  ^ meth.f_c_name in
@@ -139,7 +203,7 @@ let write_method objinfo is_gtk_class  meth template handle_return is_method =
 	else
 	  (
 	   Say.debug
-	     (Printf.sprintf "Found %s in not override \n" method_name1);
+	     (Printf.sprintf "method %s is not overriden" method_name1);
 	   let substdict=  Hashtbl.create 256 in
 	   Hashtbl.add substdict "typename"  objinfo.or_c_name;
 	   Hashtbl.add substdict "typename_nn"  objinfo.or_name;
@@ -162,22 +226,23 @@ let write_method objinfo is_gtk_class  meth template handle_return is_method =
 	   let (test, str) =  Genfunctions.check_matchers meth.params ret in
 	   if test then
 	     (
-	      Say.debug "matcher found";
+	      Say.debug "all matchers for params and returned value were found";
 	      ( try
 		let code, _methflags =
 		  Genfunctions.write_function_wrapper objinfo.or_c_name objinfo.or_byref meth template
-		    handle_return is_method substdict in
+		    template_call handle_return is_method substdict in
 		File.write_string code;
+		Say.debug (Printf.sprintf "code for method %s generated" meth.f_c_name);
 		(Printf.sprintf "  {\"%s\",(nsp_method *) %s},\n" (fixname meth.f_name) ("_wrap_"  ^ meth.f_c_name) , false)
 	      with _ ->
-		Say.debug "to be checked a matcher failed";
+		Say.debug (Printf.sprintf "Warning: failed to generate method %s" meth.f_c_name);
 		("", true)
 	       )
 	     )
 	   else
 	     (
 	      Say.warning
-		(Printf.sprintf "Failed to generate %s: matcher missing for %s" meth.f_name str);
+		(Printf.sprintf "Warning: failed to generate method %s: matcher missing for %s" meth.f_name str);
 	      ("",true)
 	     )
 	  )
@@ -199,7 +264,7 @@ let write_methods objinfo is_gtk_class =
   let methods =
     List.fold_right
       (fun x value ->
-	let xval, flag = (write_method objinfo is_gtk_class x (method_tmpl objinfo) true true) in
+	let xval, flag = (write_method objinfo is_gtk_class x (method_tmpl objinfo) (method_call_tmpl objinfo) true true) in
         if flag then value else xval :: value )
       methods [] in
   let lower_name = (String.lowercase objinfo.or_name) in
@@ -233,7 +298,8 @@ let write_constructors objinfo is_gtk_class failed_tbl =
   let constructors = find_constructors objinfo in
   List.iter
     (fun x ->
-      let _str, flag = (write_method objinfo is_gtk_class x (constructor_tmpl objinfo) false false) in
+      let _str, flag = (write_method objinfo is_gtk_class x (constructor_tmpl objinfo is_gtk_class)
+			  (constructor_call_tmpl objinfo is_gtk_class)  false false) in
       if flag then
 	(
 	 Hashtbl.add failed_tbl x.f_c_name  "_"

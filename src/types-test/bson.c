@@ -581,7 +581,7 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_bson_show(NspBson *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  bson_show(self);
+    bson_show(self);
   return 0;
 }
 

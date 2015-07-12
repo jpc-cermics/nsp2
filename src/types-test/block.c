@@ -26,7 +26,7 @@
 
 #line 123 "codegen/block.override"
 #include <nsp/objects.h>
-#include <nsp/graphics-new/Graphics.h> 
+#include <nsp/graphics-new/Graphics.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/axes.h"
@@ -117,7 +117,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_block  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_block  ;
   /* next method are defined in NspGraphic and need not be changed here for Block */
-  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_block_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_block_link_figure;
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_block_unlink_figure;
 
 #line 124 "block.c"
@@ -279,13 +279,13 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
 /* code used to override the save/load functions */
 
 /*
- * save 
+ * save
  */
 
 int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
-  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_block)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -304,7 +304,7 @@ int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
 }
 
 /*
- * load 
+ * load
  */
 
 NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
@@ -321,7 +321,7 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
   /* the lock points */
   if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
   if ( M->obj->locks != NULL) FREE(M->obj->locks);
-  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) 
+  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL )
     return NULLBLOCK;
   if ( nsp_load_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return NULL;
   if ((M->obj->icon= (NspGraphic *) nsp_object_xdr_load(xdrs))== NULL) return NULL;
@@ -360,7 +360,7 @@ void nsp_block_destroy_partial(NspBlock *H)
   if ( H->obj->ref_count == 0 )
    {
   if (H->obj->locks != NULL)
-    { nsp_destroy_grb_lock(H->obj->locks,H);FREE(H->obj->locks);}
+    { nsp_destroy_grb_lock(H->obj->locks,H);}
     if (H->obj->icon != NULL)
     nsp_object_destroy((NspObject **)&H->obj->icon);
     FREE(H->obj);
@@ -569,15 +569,15 @@ NspBlock *nsp_block_create(const char *name,void* object_sid,double* r,int color
   /* initial lock points */
   H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
-  for (i=0; i < H->obj->n_locks ; i++) 
+  for (i=0; i < H->obj->n_locks ; i++)
     {
-      H->obj->locks[i].port.object_id = NULL; 
-      H->obj->locks[i].port.object_sid = NULL; 
+      H->obj->locks[i].port.object_id = NULL;
+      H->obj->locks[i].port.object_sid = NULL;
     }
   /* fix the relative position of the four initial locks */
 
-  /* 
-   * move the lock pos to the triangle head XXX !! 
+  /*
+   * move the lock pos to the triangle head XXX !!
    */
   H->obj->locks[0].type = LD_NORTH | L_EVIN ;
   H->obj->locks[1].type = LD_SOUTH | L_EVOUT ;
@@ -669,7 +669,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
   NspMatrix *M1;
   int i;
   static double l[4];
-  switch ( rhs - opt ) 
+  switch ( rhs - opt )
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
@@ -677,7 +677,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = M1->R;
       break;
     case 4 :
-      for ( i = 1 ; i <= 4 ; i++) 
+      for ( i = 1 ; i <= 4 ; i++)
 	{
 	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
 	}
@@ -709,7 +709,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
      == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
-} 
+}
 
 
 #line 716 "block.c"
@@ -754,7 +754,7 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
 
 
 #line 470 "codegen/block.override"
-/* resize */ 
+/* resize */
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -773,8 +773,8 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
 
 #line 486 "codegen/block.override"
 
-/* fix a lock point position 
- * in relative coordinates 
+/* fix a lock point position
+ * in relative coordinates
  */
 
 static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -806,7 +806,7 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
   CheckRhs(1,1);
   CheckLhs(-1,1);
   if ((Pt= GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ( Pt->m != 3 ) 
+  if ( Pt->m != 3 )
     {
       Scierror("Error: wrong dimensions should have 3 rows\n");
       return RET_BUG;
@@ -913,7 +913,7 @@ static AttrTab block_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -925,7 +925,7 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -966,7 +966,7 @@ void Block_Interf_Info(int i, char **fname, function ( **f))
 
 /* inserted verbatim at the end */
 
-/* methods for the graphic class 
+/* methods for the graphic class
  *
  *
  */
@@ -985,7 +985,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 
   /* check the show attribute */
   if ( Obj->obj->show == FALSE ) return ;
-       
+
   /* check if the block is inside drawing rectangle
    */
 
@@ -996,18 +996,18 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-  
+
   /* first draw the block icon */
   switch ( B->obj->draw_mode )
     {
-    case 0: 
+    case 0:
     case 1:
-      if ( B->obj->icon == NULL ) 
+      if ( B->obj->icon == NULL )
 	{
-	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
+	  if ( nsp_block_create_icon(Xgc,B) == FAIL)
 	    Xgc->graphic_engine->xinfo(Xgc,"failed to create icon");
 	}
-      if ( B->obj->icon != NULL ) 
+      if ( B->obj->icon != NULL )
 	{
 	  B->obj->icon->type->draw(Xgc, B->obj->icon,rect,data);
 	}
@@ -1026,7 +1026,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       break;
     case 2:
       /*
-       * simple icon with just a string 
+       * simple icon with just a string
        */
       /* filling with white */
       Xgc->graphic_engine->xset_pattern(Xgc,8);
@@ -1038,8 +1038,8 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
     case 3:
-      /* 
-       * a rectangle with random color 
+      /*
+       * a rectangle with random color
        *
        */
       Xgc->graphic_engine->xset_pattern(Xgc,rand_ignuin(1,32));
@@ -1050,27 +1050,27 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
   draw_3d(Xgc,B->obj->r);
   Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
-  /* add the control points if block is hilited */ 
+  /* add the control points if block is hilited */
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( Obj->obj->hilited == TRUE ) 
+  if ( Obj->obj->hilited == TRUE )
     {
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
       loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
-  for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
+  for ( i=0 ; i < B->obj->n_locks  ; i++ )
     {
       int locked,type;
       if ( block_is_lock_connected(B,i)== TRUE)
 	{
 	  locked = TRUE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
 	}
-      else 
+      else
 	{
 	  locked = FALSE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,1); 
+	  Xgc->graphic_engine->xset_pattern(Xgc,1);
 	}
       block_get_lock_pos(B,i,loc);
       /* need a method here ? */
@@ -1096,16 +1096,16 @@ static void draw_3d(BCG *Xgc,double r[])
   Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
   Xgc->graphic_engine->scale->fillpolyline(Xgc,x1,y1,npt,TRUE);
   Xgc->graphic_engine->scale->drawpolyline(Xgc,x1,y1,npt,TRUE);
-  
+
 }
 
 /**
  * nsp_block_translate:
  * @B: a #NspBlock
- * @tr: translation vector 
- * 
- * Tranlates the block origin (upper left point) using the 
- * value of vector @tr. 
+ * @tr: translation vector
+ *
+ * Tranlates the block origin (upper left point) using the
+ * value of vector @tr.
  *
  **/
 
@@ -1123,7 +1123,7 @@ static void nsp_translate_block(NspGraphic *Obj,const double *tr)
 
 static void nsp_rotate_block(NspGraphic *Obj,double *R)
 {
-  
+
 }
 
 static void nsp_scale_block(NspGraphic *Obj,double *alpha)
@@ -1131,7 +1131,7 @@ static void nsp_scale_block(NspGraphic *Obj,double *alpha)
   /*   NspBlock *P = (NspBlock *) Obj; */
 }
 
-/* compute in bounds the enclosing rectangle of block 
+/* compute in bounds the enclosing rectangle of block
  *
  */
 
@@ -1146,71 +1146,71 @@ static int nsp_getbounds_block (NspGraphic *Obj,double *bounds)
 }
 
 /*
- * implementation of the GRint interface 
- * for a block 
- */ 
+ * implementation of the GRint interface
+ * for a block
+ */
 
 /**
  * block_get_hilited:
- * @B: a block 
+ * @B: a block
  *
  * Returns: the value of the hilited attribute of object @B.
  *
  **/
 
-int block_get_hilited(NspBlock *B) {  return ((NspGraphic *)B)->obj->hilited; } 
+int block_get_hilited(NspBlock *B) {  return ((NspGraphic *)B)->obj->hilited; }
 
 /**
  * block_set_hilited:
- * @B: a block 
- * @val: %True or %False. 
- * 
+ * @B: a block
+ * @val: %True or %False.
+ *
  * Sets the hilited status of the block @B.
  *
  **/
 
-void block_set_hilited(NspBlock *B,int val) 
+void block_set_hilited(NspBlock *B,int val)
 {
   NspGraphic *G =  (NspGraphic *) B;
   if ( G->obj->hilited == val) return;
-  G->obj->hilited = val; 
+  G->obj->hilited = val;
   nsp_graphic_invalidate(G);
-} 
+}
 
 /**
  * block_get_show:
- * @B: a block 
- * @val:  %True or %False. 
- * 
+ * @B: a block
+ * @val:  %True or %False.
+ *
  * Returns: the value of the show attribute of object @B.
  *
  **/
 
-int block_get_show(NspBlock *B) {  return ((NspGraphic *)B)->obj->show; } 
+int block_get_show(NspBlock *B) {  return ((NspGraphic *)B)->obj->show; }
 
 /**
  * block_set_show:
- * @B: a block 
+ * @B: a block
  *
  * Sets the show status of the given Block.
  *
  **/
 
-void block_set_show(NspBlock *B,int val) {  ((NspGraphic *)B)->obj->show = val; } 
+void block_set_show(NspBlock *B,int val) {  ((NspGraphic *)B)->obj->show = val; }
 
 /**
  * lock_draw:
- * @Xgc: a #BCG context 
- * @pt: a point 
+ * @Xgc: a #BCG context
+ * @pt: a point
  * @dir: direction of lock point #lock_dir
- * @typ: a #lock_type 
+ * @typ: a #lock_type
  * @locked: is lock point locked ?
- * 
- * draw a lock point at lock position @pt 
- * It a lock point in thus the lock point is a the 
- * arraw end 
- * 
- * Return value: 
+ *
+ * draw a lock point at lock position @pt
+ * It a lock point in thus the lock point is a the
+ * arraw end
+ *
+ * Return value:
  **/
 
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked)
@@ -1220,7 +1220,7 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
   const double alpha[]= {0,180,-90,90,0};
   const double lock_triangle_x[]={-lock_size/2,lock_size/2,0};
   const double lock_triangle_yout[]={-lock_size,-lock_size,0};
-  const double lock_triangle_yin[]={0,0,-lock_size}; 
+  const double lock_triangle_yin[]={0,0,-lock_size};
   const double lock_square_x[]={-lock_size/2,lock_size/2,lock_size/2,-lock_size/2};
   const double lock_square_y[]={-lock_size,-lock_size,0,0};
   const double *ly=NULL,*lx=NULL;
@@ -1228,33 +1228,33 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
   double x[4];
   double y[4];
   int npt=3 , i;
-  switch (typ) 
+  switch (typ)
     {
     case L_SQP:
-    case L_SQM: 
+    case L_SQM:
       npt=4;
       lx=  lock_square_x;
       ly=  lock_square_y;
       break;
     case L_IN:
-    case L_EVIN: 
-      ly = lock_triangle_yin; 
-      lx = lock_triangle_x; 
+    case L_EVIN:
+      ly = lock_triangle_yin;
+      lx = lock_triangle_x;
       break;
     case L_OUT:
-    case L_EVOUT: 
+    case L_EVOUT:
       ly = lock_triangle_yout;
-      lx = lock_triangle_x; 
+      lx = lock_triangle_x;
       break;
     }
   cosa= cos(alpha[dir]*M_PI/180);
   sina= sin(alpha[dir]*M_PI/180);
-  for ( i = 0 ; i < npt ; i++) 
+  for ( i = 0 ; i < npt ; i++)
     {
       x[i] = cosa*lx[i] -sina*ly[i]+pt[0];
       y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
     }
-  if ( locked ) 
+  if ( locked )
     Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
   Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
 }
@@ -1270,16 +1270,16 @@ int block_set_pos(NspBlock *B,const double tr[2])
 
 void block_get_pos(NspBlock *B, double tr[2])
 {
-  tr[0] = B->obj->r[0]; 
+  tr[0] = B->obj->r[0];
   tr[1] = B->obj->r[1];
 }
 
 /**
- * block_resize: 
- * @B: a block 
+ * block_resize:
+ * @B: a block
  * @size: new width and height of the block given in an array of double.
- * 
- * Resize the block using the value of vector @size. 
+ *
+ * Resize the block using the value of vector @size.
  *
  **/
 
@@ -1291,16 +1291,16 @@ void block_resize(NspBlock *B,const double size[2])
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change  */
   block_update_locks(B);
-  if ( Icon != NULL ) 
+  if ( Icon != NULL )
     {
       if (  IsAxes((NspObject *) Icon) )
 	{
-	  /* note that this should be the resize method for non 
-	   * top axes 
+	  /* note that this should be the resize method for non
+	   * top axes
 	   */
 	  memcpy(((NspAxes *) Icon)->obj->wrect->R,B->obj->r,4*sizeof(double));
 	}
-      else if ( IsGrImage((NspObject *) Icon)) 
+      else if ( IsGrImage((NspObject *) Icon))
 	{
 	  NspGrImage *I = (NspGrImage *) Icon;
 	  I->obj->w = size[0];
@@ -1313,8 +1313,8 @@ void block_resize(NspBlock *B,const double size[2])
 
 /**
  * block_update_locks:
- * @B: a block 
- * 
+ * @B: a block
+ *
  * Recomputes the positions of the locks point of the block.
  *
  **/
@@ -1324,7 +1324,7 @@ static void block_set_lock_pos_from_rel(NspBlock *B, int i);
 void block_update_locks(NspBlock *B)
 {
   int i;
-  for (i=0; i < B->obj->n_locks ; i++) 
+  for (i=0; i < B->obj->n_locks ; i++)
     {
       block_set_lock_pos_from_rel(B,i);
     }
@@ -1332,12 +1332,12 @@ void block_update_locks(NspBlock *B)
 
 /**
  * block_contains_pt
- * @B: a block 
- * @pt: a point position 
- * 
- * Checks if the given point is inside the block enclosing rectangle but not 
+ * @B: a block
+ * @pt: a point position
+ *
+ * Checks if the given point is inside the block enclosing rectangle but not
  * in a lock point of block @B.
- * 
+ *
  * Return value: %True or %False.
  **/
 
@@ -1347,10 +1347,10 @@ int block_contains_pt(const NspBlock *B,const double pt[2])
   if (rep == TRUE )
     {
       int i;
-      for ( i=0 ; i < B->obj->n_locks ; i++ ) 
+      for ( i=0 ; i < B->obj->n_locks ; i++ )
 	{
 	  double d= Max(Abs( B->obj->locks[i].pt[0] -pt[0]),Abs( B->obj->locks[i].pt[1] -pt[1])) ;
-	  if ( d < lock_size/2 ) 
+	  if ( d < lock_size/2 )
 	    return FALSE;
 	}
     }
@@ -1359,22 +1359,22 @@ int block_contains_pt(const NspBlock *B,const double pt[2])
 
 /**
  * block_control_near_pt:
- * @B: a block 
- * @pt: a point position 
+ * @B: a block
+ * @pt: a point position
  * @cp: the control point id in case of success.
- * 
- * Checks if the given point is near a block control point. Note 
- * that a block just have one control point which is the (down,right) 
- * corner used for resizing. 
- * 
+ *
+ * Checks if the given point is near a block control point. Note
+ * that a block just have one control point which is the (down,right)
+ * corner used for resizing.
+ *
  * Return value: %True or %False.
  **/
 
 int block_control_near_pt(const NspBlock *B,const double pt[2], int *cp)
 {
   double d = Max(Abs( B->obj->r[0]+B->obj->r[2] -pt[0]),Abs( B->obj->r[1]-B->obj->r[3] -pt[1])) ;
-  if ( d < lock_size ) 
-    { 
+  if ( d < lock_size )
+    {
       *cp = 0 ;
       return TRUE;
     }
@@ -1383,25 +1383,25 @@ int block_control_near_pt(const NspBlock *B,const double pt[2], int *cp)
 
 /**
  * block_lock_near_pt:
- * @B: a block 
- * @pt: a point position 
+ * @B: a block
+ * @pt: a point position
  * @cp: the control point id in case of success.
- * 
- * Checks if the given point is near a block lock point. 
- * If %True the given point is changed so as to contains 
- * the lock point coordinates and @cp is filled with the control point id. 
- * 
+ *
+ * Checks if the given point is near a block lock point.
+ * If %True the given point is changed so as to contains
+ * the lock point coordinates and @cp is filled with the control point id.
+ *
  * Return value: %True or %False.
  **/
 
 int block_lock_near_pt(const NspBlock *B,double pt[2], int *cp)
 {
   int i;
-  for ( i=0 ; i < B->obj->n_locks ; i++ ) 
+  for ( i=0 ; i < B->obj->n_locks ; i++ )
     {
       double d= Max(Abs( B->obj->locks[i].pt[0] -pt[0]),Abs( B->obj->locks[i].pt[1] -pt[1])) ;
-      if ( d < lock_size ) 
-	{ 
+      if ( d < lock_size )
+	{
 	  *cp = i;
 	  pt[0]=B->obj->locks[i].pt[0];
 	  pt[1]=B->obj->locks[i].pt[1];
@@ -1413,12 +1413,12 @@ int block_lock_near_pt(const NspBlock *B,double pt[2], int *cp)
 
 /**
  * block_move_control_init:
- * @B: a block 
+ * @B: a block
  * @ct: a control point id
- * @pts: point coordinates 
- * 
- * Used to init a control point interactive move. 
- * This function is empty for Blocks. 
+ * @pts: point coordinates
+ *
+ * Used to init a control point interactive move.
+ * This function is empty for Blocks.
  **/
 
 void block_move_control_init( NspBlock *B,int cp,double ptc[2])
@@ -1428,13 +1428,13 @@ void block_move_control_init( NspBlock *B,int cp,double ptc[2])
 
 /**
  * block_move_control:
- * @F: a graphic frame 
- * @B: a block 
- * mpt: point coordinates 
+ * @F: a graphic frame
+ * @B: a block
+ * mpt: point coordinates
  * @ct: a control point id
- * @ptc: point coordinates 
- * 
- * Updates the block structure when a control point (there's just one control point 
+ * @ptc: point coordinates
+ *
+ * Updates the block structure when a control point (there's just one control point
  * for blocks at down right corner) is moved.
  * @mpt gives the mouse position where the control point is to be moved.translation vector which is to be applied to the control point.
  **/
@@ -1450,49 +1450,49 @@ void block_move_control(void *F, NspBlock *B,const double mpt[2], int cp,double 
 }
 
 /**
- * block_get_number_of_locks: 
- * @B: a block 
- * 
- * Returns the number of lock points of the block 
- * 
+ * block_get_number_of_locks:
+ * @B: a block
+ *
+ * Returns the number of lock points of the block
+ *
  * Return value: the number of lock points
  **/
 
-int block_get_number_of_locks(const NspBlock *B) 
+int block_get_number_of_locks(const NspBlock *B)
 {
   return B->obj->n_locks;
 }
 
 /**
- * block_get_number_of_ports: 
- * @B: a block 
- * @lp: a lock point 
- * 
+ * block_get_number_of_ports:
+ * @B: a block
+ * @lp: a lock point
+ *
  * Returns the number of ports of lock points lp;
- * 
+ *
  * Return value: the number of ports
  **/
 
-int block_get_number_of_ports(const NspBlock *B,int lp) 
+int block_get_number_of_ports(const NspBlock *B,int lp)
 {
   return 1;
 }
 
 /**
- * block_get_lock_connection: 
- * @B: a block 
- * @i: a lock point id. 
+ * block_get_lock_connection:
+ * @B: a block
+ * @i: a lock point id.
  * @port: a port of the lock point @i;
- * 
- * Returns in a gr_port structure information about the object 
- * connected to the port @port of lock point @i. 
- * 
+ *
+ * Returns in a gr_port structure information about the object
+ * connected to the port @port of lock point @i.
+ *
  * Return value: #OK if lock point and port number exists or #FAIL
  **/
 
 int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
 {
-  if ( i >= 0 && i < B->obj->n_locks && port == 0  ) 
+  if ( i >= 0 && i < B->obj->n_locks && port == 0  )
     {
       *p = B->obj->locks[i].port;
       return OK;
@@ -1502,11 +1502,11 @@ int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
 
 /**
  * block_get_lock_pos:
- * @B: a block 
- * @i: a lock point id. 
+ * @B: a block
+ * @i: a lock point id.
  * @pt: point coordinates.
  *
- * @pt is filled with  the position of lock point @i. 
+ * @pt is filled with  the position of lock point @i.
  **/
 
 void block_get_lock_pos(const NspBlock *B, int i,double pt[])
@@ -1520,12 +1520,12 @@ void block_get_lock_pos(const NspBlock *B, int i,double pt[])
 
 /**
  * block_get_lock_dir:
- * @B: a #NspBlock 
- * @i: a lock point id. 
- * 
+ * @B: a #NspBlock
+ * @i: a lock point id.
+ *
  * returns the lock direction of selected lock point.
- * 
- * Return value: a #lock_dir 
+ *
+ * Return value: a #lock_dir
  **/
 
 lock_dir block_get_lock_dir(const NspBlock *B, int i)
@@ -1540,19 +1540,19 @@ lock_dir block_get_lock_dir(const NspBlock *B, int i)
 
 
 /**
- * block_set_lock_connection: 
- * @B: a block 
- * @i: a lock point id. 
+ * block_set_lock_connection:
+ * @B: a block
+ * @i: a lock point id.
  * @prt: a port id (0 for block).
  * @p: information to be connected to one port of lock point i;
- * 
- * the port described by @p is connected to a port of lock point i; 
- * return value: -2 or -1 or the port number used for connection. 
+ *
+ * the port described by @p is connected to a port of lock point i;
+ * return value: -2 or -1 or the port number used for connection.
  **/
 
 int block_set_lock_connection(NspBlock *B,int i,int prt,const gr_port *p)
 {
-  if ( i >=  0  && i < B->obj->n_locks ) 
+  if ( i >=  0  && i < B->obj->n_locks )
     {
       gr_port *port= &B->obj->locks[i].port;
       if ( port->object_id != NULL) return -2;
@@ -1563,13 +1563,13 @@ int block_set_lock_connection(NspBlock *B,int i,int prt,const gr_port *p)
 }
 
 /**
- * block_unset_lock_connection: 
- * @B: a block 
- * @i: a lock point id. 
- * @prt: a lock point port. 
- * 
+ * block_unset_lock_connection:
+ * @B: a block
+ * @i: a lock point id.
+ * @prt: a lock point port.
+ *
  * unconect the object locked to port @port of lock point @i.
- * 
+ *
  **/
 
 void block_unset_lock_connection(NspBlock *B,int i,int port)
@@ -1581,12 +1581,12 @@ void block_unset_lock_connection(NspBlock *B,int i,int port)
 }
 
 /**
- * block_is_lock_connectable: 
- * @B: a block 
- * @i: a lock point id. 
- * 
+ * block_is_lock_connectable:
+ * @B: a block
+ * @i: a lock point id.
+ *
  * Checks if there's a free port in lock point @i.
- * 
+ *
  * return value: #TRUE or #FALSE.
  **/
 
@@ -1594,38 +1594,38 @@ int block_is_lock_connectable(NspBlock *B,int i)
 {
   if ( i >=  0 && i < B->obj->n_locks )
     {
-      if ( B->obj->locks[i].port.object_id == NULL) return TRUE; 
+      if ( B->obj->locks[i].port.object_id == NULL) return TRUE;
     }
   return FALSE;
 }
 
 /**
- * block_is_lock_connected 
- * @B: a block 
- * @i: a lock point id. 
- * 
+ * block_is_lock_connected
+ * @B: a block
+ * @i: a lock point id.
+ *
  * Checks if there's a locked port for lock point @i.
- * 
+ *
  * return value: #TRUE or #FALSE.
  **/
 
 int block_is_lock_connected(NspBlock *B,int i)
 {
-  if ( i >=  0  && i < B->obj->n_locks ) 
+  if ( i >=  0  && i < B->obj->n_locks )
     {
-      if ( B->obj->locks[i].port.object_id != NULL) return TRUE; 
+      if ( B->obj->locks[i].port.object_id != NULL) return TRUE;
     }
   return FALSE;
 }
 
 /**
- * block_set_lock_pos: 
- * @B: a block 
- * @i: a lock point id. 
- * @pt: a point coordinates 
- * 
- * Sets the lock point @i position to @pt. 
- * XXXX : not supposed to call this function since 
+ * block_set_lock_pos:
+ * @B: a block
+ * @i: a lock point id.
+ * @pt: a point coordinates
+ *
+ * Sets the lock point @i position to @pt.
+ * XXXX : not supposed to call this function since
  *        relative positions should be moved !!
  *        But it is maybe only called for links.
  **/
@@ -1640,12 +1640,12 @@ static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_ang
 }
 
 /**
- * block_set_lock_pos_rel: 
- * @B: a block 
- * @i: a lock point id. 
- * @pt: a point coordinates 
- * 
- * Sets the lock point @i relative position (i.e in % of the 
+ * block_set_lock_pos_rel:
+ * @B: a block
+ * @i: a lock point id.
+ * @pt: a point coordinates
+ *
+ * Sets the lock point @i relative position (i.e in % of the
  * block rect) to @pt. The absolute value is updated accordingly.
  **/
 
@@ -1672,22 +1672,22 @@ static void block_set_lock_pos_from_rel(NspBlock *B, int i)
       int dir = B->obj->locks[i].type & LOCK_DIR_FLAG ;
       double xof = xoffset[dir];
       double yof = yoffset[dir];
-      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]+xof; 
+      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]+xof;
       B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1]+yof;
     }
 }
 
 /**
  * block_set_locks:
- * @B: a #NspBlock 
+ * @B: a #NspBlock
  * @Pt: 3xn  #NspMatrix
- * 
- * uses the @Pt matrix as the definition of the lock points 
- * of the block @B. Each lock point is defined by a column of 
- * @Pt which gives the lock type and its (x,y) position defined 
- * by its relative position inside the block enclosing rectangle. 
- * x and y are in the range (0,1). (0,0) is the upper left point 
- * and (0,1) the lower right point. 
+ *
+ * uses the @Pt matrix as the definition of the lock points
+ * of the block @B. Each lock point is defined by a column of
+ * @Pt which gives the lock type and its (x,y) position defined
+ * by its relative position inside the block enclosing rectangle.
+ * x and y are in the range (0,1). (0,0) is the upper left point
+ * and (0,1) the lower right point.
  *
  * Return value: %OK or %FAIL
  **/
@@ -1703,16 +1703,16 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt)
     }
   /* now create new lock */
   B->obj->n_locks = Pt->n ;
-  
-  if (( lock  = malloc(B->obj->n_locks*sizeof(grb_lock))) == NULL ) 
+
+  if (( lock  = malloc(B->obj->n_locks*sizeof(grb_lock))) == NULL )
     {
       Scierror("Error: no more memory\n");
       return FAIL;
     }
   B->obj->locks = lock;
-  for (i=0; i < B->obj->n_locks ; i++) 
+  for (i=0; i < B->obj->n_locks ; i++)
     {
-      B->obj->locks[i].port.object_id = NULL; 
+      B->obj->locks[i].port.object_id = NULL;
       B->obj->locks[i].type = (int) *(Pt->R+2*i+2);
       block_set_lock_pos_rel(B,i,Pt->R+2*i);
     }
@@ -1722,22 +1722,22 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt)
 
 /**
  * block_unlock:
- * @L: a #NspBlock 
+ * @L: a #NspBlock
  * @lp: an integer
- * 
+ *
  * unlock the lock point of the block with id @lp.
  **/
 
-static void block_unlock( NspBlock *B,int lp) 
+static void block_unlock( NspBlock *B,int lp)
 {
   NspObject *O1;
-  gr_port p; 
+  gr_port p;
   /* just test if unlock is necessary */
-  if ( block_is_lock_connected(B,lp)==FALSE ) return; 
+  if ( block_is_lock_connected(B,lp)==FALSE ) return;
   if ( block_get_lock_connection(B,lp,0,&p)==FAIL) return;
   /* we are locked to a block, unlock it */
   O1 = p.object_id;
-  if ( O1 != NULLOBJ ) 
+  if ( O1 != NULLOBJ )
     {
       /* propagate unlock to the locked object */
       GR_INT(O1->basetype->interface)->unset_lock_connection(O1,p.lock,p.port);
@@ -1759,12 +1759,13 @@ static void  nsp_destroy_grb_lock(grb_lock *locks,NspBlock *H)
     {
       block_unlock(H,i);
     }
+  FREE(H->obj->locks);
 }
 
 static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
 {
   int i;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+  for ( i = 0 ; i < M->obj->n_locks ; i++)
     {
       grb_lock *lock= M->obj->locks+i;
       if ( nsp_xdr_save_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
@@ -1779,11 +1780,11 @@ static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
   return OK;
 }
 
-  
+
 static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
 {
   int i,id;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+  for ( i = 0 ; i < M->obj->n_locks ; i++)
     {
       grb_lock *lock= M->obj->locks+i;
       if ( nsp_xdr_load_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
@@ -1814,7 +1815,7 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
   int i;
   grb_lock *gl1;
   if (( gl1 = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return FAIL;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+  for ( i = 0 ; i < M->obj->n_locks ; i++)
     {
       gl1[i]= M->obj->locks[i];
       gl1[i].port.object_id = NULLOBJ;
@@ -1829,26 +1830,26 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 
 /**
  * nsp_block_create_icon:
- * @Xgc: 
- * @B: 
- * 
- * execute a function which should return a 
- * compounf giving the block icon 
- * 
- * Returns: 
+ * @Xgc:
+ * @B:
+ *
+ * execute a function which should return a
+ * compounf giving the block icon
+ *
+ * Returns:
  **/
 
 #define USE_AXE
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 {
-  
+
   NspGraphic *G;
-#ifdef USE_AXE 
+#ifdef USE_AXE
   NspAxes *axe;
 #else
   double tr[2];
-#endif 
+#endif
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
@@ -1866,7 +1867,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 
   if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
 
-#ifdef USE_AXE 
+#ifdef USE_AXE
   if ( IsGrImage( nsp_ret[0]) )
     {
       NspGrImage *I = (NspGrImage *) nsp_ret[0];
@@ -1896,7 +1897,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 	goto stop;
       B->obj->icon = G;
     }
-#else 
+#else
   G= (NspGraphic *) nsp_ret[0] ;
   G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
 			((NspGraphic *) B)->obj->Axe);
@@ -1905,9 +1906,9 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   tr[0]= B->obj->r[0];
   tr[1]= B->obj->r[1] - B->obj->r[3];
   G->type->translate(G,tr);
-#endif 
+#endif
   return OK;
- stop: 
+ stop:
   for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);
   return FAIL;
 }
@@ -1932,4 +1933,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1936 "block.c"
+#line 1937 "block.c"

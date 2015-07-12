@@ -152,6 +152,7 @@ let function_rec =
    typecode = "";
    f_options = false; (* some arguments are named options *)
    availability = "";
+   calling_code = "";
  }
 ;;
 
@@ -181,6 +182,9 @@ let function_rec_set_record name sexp f_rec =
   | "available" ->
       let value = (get_atom sexp) in
       { f_rec with availability = value;}
+  | "call" ->
+      let value = (get_atom sexp) in
+      { f_rec with calling_code = value;}
   | _ ->
       Printf.printf "keyword %s is not a function or method parameter\n" name;
       f_rec
@@ -304,6 +308,7 @@ let object_rec_set_record name sexp f_rec =
   | "available" ->
       let value = (get_atom sexp) in
       { f_rec with or_availability = value;}
+
   | _ ->
       Printf.printf "keyword %s is not an object parameter\n" name;
       f_rec
@@ -335,6 +340,8 @@ let select_object sexp =
       object_body sexp { object_rec with or_kind = Interface;}
   | Cons { car = Atom "define-struct"; cdr = sexp;} ->
       object_body sexp { object_rec with or_kind = Struct;}
+  | Cons { car = Atom "define-structref"; cdr = sexp;} ->
+      object_body sexp { object_rec with or_kind = Struct; or_byref = true;}
   | Cons { car = Atom "define-pointer"; cdr = sexp;} ->
       object_body sexp { object_rec with or_kind = Pointer;}
   | Cons { car = Atom "define-boxed"; cdr = sexp;} ->

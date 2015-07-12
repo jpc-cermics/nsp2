@@ -215,6 +215,8 @@ extern  sci_interface  Stochdec_Interf; extern  interface_info Stochdec_Interf_I
 #endif
 
 extern  sci_interface  cairo_Interf; extern  interface_info cairo_Interf_Info;
+extern  sci_interface  gio_Interf; extern  interface_info gio_Interf_Info;
+extern  sci_interface  glib_Interf; extern  interface_info glib_Interf_Info;
 
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
@@ -362,6 +364,8 @@ InterfTab Interfaces[]={
   {girepository_Interf, girepository_Interf_Info},
 #endif
   {cairo_Interf, cairo_Interf_Info},
+  {gio_Interf, gio_Interf_Info},
+  {glib_Interf, glib_Interf_Info},
 
   {NULL,NULL}
 };

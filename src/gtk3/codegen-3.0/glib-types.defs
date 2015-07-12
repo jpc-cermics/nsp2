@@ -1,16 +1,16 @@
 ;; -*- scheme -*-
 ;; object definitions ...
 
-;; ? should we try a boxed ?
+;; a structure encapsulated in a Nsp object
 
-(define-struct gvariant
+(define-structref gvariant
   (in-module "Nsp")
   (parent "Object")
   (c-name "GVariant")
   (gtype-id "gvariant")
 )
 
-(define-object GVariant
+(define-objectref GVariant
   (in-module "Nsp")
   (parent "Object")
   (c-name "NspGVariant")
@@ -18,6 +18,25 @@
    '("GVariant*" "value" "hidden" "-1" )
   )
   (gtype-id "gvariant")
+)
+
+;; a structure encapsulated in a Nsp object
+
+(define-structref gvarianttype
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "GVariantType")
+  (gtype-id "gvarianttype")
+)
+
+(define-objectref GVariantType
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "NspGVariantType")
+  (fields
+   '("GVariantType*" "value" "hidden" "-1" )
+  )
+  (gtype-id "gvarianttype")
 )
 
 ;; Enumerations and flags ...
@@ -951,54 +970,54 @@
 ;;   )
 ;; )
 
-(define-enum GVariantClass
-  (in-module "GVariant")
-  (c-name "GVariantClass")
-  (gtype-id "G_TYPE_VARIANT_CLASS")
-  (values
-    '("boolean" "G_VARIANT_CLASS_BOOLEAN")
-    '("byte" "G_VARIANT_CLASS_BYTE")
-    '("int16" "G_VARIANT_CLASS_INT16")
-    '("uint16" "G_VARIANT_CLASS_UINT16")
-    '("int32" "G_VARIANT_CLASS_INT32")
-    '("uint32" "G_VARIANT_CLASS_UINT32")
-    '("int64" "G_VARIANT_CLASS_INT64")
-    '("uint64" "G_VARIANT_CLASS_UINT64")
-    '("handle" "G_VARIANT_CLASS_HANDLE")
-    '("double" "G_VARIANT_CLASS_DOUBLE")
-    '("string" "G_VARIANT_CLASS_STRING")
-    '("object-path" "G_VARIANT_CLASS_OBJECT_PATH")
-    '("signature" "G_VARIANT_CLASS_SIGNATURE")
-    '("variant" "G_VARIANT_CLASS_VARIANT")
-    '("maybe" "G_VARIANT_CLASS_MAYBE")
-    '("array" "G_VARIANT_CLASS_ARRAY")
-    '("tuple" "G_VARIANT_CLASS_TUPLE")
-    '("dict-entry" "G_VARIANT_CLASS_DICT_ENTRY")
-  )
-)
+;; (define-enum GVariantClass
+;;   (in-module "GVariant")
+;;   (c-name "GVariantClass")
+;;   (gtype-id "G_TYPE_VARIANT_CLASS")
+;;   (values
+;;     '("boolean" "G_VARIANT_CLASS_BOOLEAN")
+;;     '("byte" "G_VARIANT_CLASS_BYTE")
+;;     '("int16" "G_VARIANT_CLASS_INT16")
+;;     '("uint16" "G_VARIANT_CLASS_UINT16")
+;;     '("int32" "G_VARIANT_CLASS_INT32")
+;;     '("uint32" "G_VARIANT_CLASS_UINT32")
+;;     '("int64" "G_VARIANT_CLASS_INT64")
+;;     '("uint64" "G_VARIANT_CLASS_UINT64")
+;;     '("handle" "G_VARIANT_CLASS_HANDLE")
+;;     '("double" "G_VARIANT_CLASS_DOUBLE")
+;;     '("string" "G_VARIANT_CLASS_STRING")
+;;     '("object-path" "G_VARIANT_CLASS_OBJECT_PATH")
+;;     '("signature" "G_VARIANT_CLASS_SIGNATURE")
+;;     '("variant" "G_VARIANT_CLASS_VARIANT")
+;;     '("maybe" "G_VARIANT_CLASS_MAYBE")
+;;     '("array" "G_VARIANT_CLASS_ARRAY")
+;;     '("tuple" "G_VARIANT_CLASS_TUPLE")
+;;     '("dict-entry" "G_VARIANT_CLASS_DICT_ENTRY")
+;;   )
+;; )
 
-(define-enum GVariantParseError
-  (in-module "GVariant")
-  (c-name "GVariantParseError")
-  (gtype-id "G_TYPE_VARIANT_PARSE_ERROR")
-  (values
-    '("failed" "G_VARIANT_PARSE_ERROR_FAILED")
-    '("basic-type-expected" "G_VARIANT_PARSE_ERROR_BASIC_TYPE_EXPECTED")
-    '("cannot-infer-type" "G_VARIANT_PARSE_ERROR_CANNOT_INFER_TYPE")
-    '("definite-type-expected" "G_VARIANT_PARSE_ERROR_DEFINITE_TYPE_EXPECTED")
-    '("input-not-at-end" "G_VARIANT_PARSE_ERROR_INPUT_NOT_AT_END")
-    '("invalid-character" "G_VARIANT_PARSE_ERROR_INVALID_CHARACTER")
-    '("invalid-format-string" "G_VARIANT_PARSE_ERROR_INVALID_FORMAT_STRING")
-    '("invalid-object-path" "G_VARIANT_PARSE_ERROR_INVALID_OBJECT_PATH")
-    '("invalid-signature" "G_VARIANT_PARSE_ERROR_INVALID_SIGNATURE")
-    '("invalid-type-string" "G_VARIANT_PARSE_ERROR_INVALID_TYPE_STRING")
-    '("no-common-type" "G_VARIANT_PARSE_ERROR_NO_COMMON_TYPE")
-    '("number-out-of-range" "G_VARIANT_PARSE_ERROR_NUMBER_OUT_OF_RANGE")
-    '("number-too-big" "G_VARIANT_PARSE_ERROR_NUMBER_TOO_BIG")
-    '("type-error" "G_VARIANT_PARSE_ERROR_TYPE_ERROR")
-    '("unexpected-token" "G_VARIANT_PARSE_ERROR_UNEXPECTED_TOKEN")
-    '("unknown-keyword" "G_VARIANT_PARSE_ERROR_UNKNOWN_KEYWORD")
-    '("unterminated-string-constant" "G_VARIANT_PARSE_ERROR_UNTERMINATED_STRING_CONSTANT")
-    '("value-expected" "G_VARIANT_PARSE_ERROR_VALUE_EXPECTED")
-  )
-)
+;; (define-enum GVariantParseError
+;;   (in-module "GVariant")
+;;   (c-name "GVariantParseError")
+;;   (gtype-id "G_TYPE_VARIANT_PARSE_ERROR")
+;;   (values
+;;     '("failed" "G_VARIANT_PARSE_ERROR_FAILED")
+;;     '("basic-type-expected" "G_VARIANT_PARSE_ERROR_BASIC_TYPE_EXPECTED")
+;;     '("cannot-infer-type" "G_VARIANT_PARSE_ERROR_CANNOT_INFER_TYPE")
+;;     '("definite-type-expected" "G_VARIANT_PARSE_ERROR_DEFINITE_TYPE_EXPECTED")
+;;     '("input-not-at-end" "G_VARIANT_PARSE_ERROR_INPUT_NOT_AT_END")
+;;     '("invalid-character" "G_VARIANT_PARSE_ERROR_INVALID_CHARACTER")
+;;     '("invalid-format-string" "G_VARIANT_PARSE_ERROR_INVALID_FORMAT_STRING")
+;;     '("invalid-object-path" "G_VARIANT_PARSE_ERROR_INVALID_OBJECT_PATH")
+;;     '("invalid-signature" "G_VARIANT_PARSE_ERROR_INVALID_SIGNATURE")
+;;     '("invalid-type-string" "G_VARIANT_PARSE_ERROR_INVALID_TYPE_STRING")
+;;     '("no-common-type" "G_VARIANT_PARSE_ERROR_NO_COMMON_TYPE")
+;;     '("number-out-of-range" "G_VARIANT_PARSE_ERROR_NUMBER_OUT_OF_RANGE")
+;;     '("number-too-big" "G_VARIANT_PARSE_ERROR_NUMBER_TOO_BIG")
+;;     '("type-error" "G_VARIANT_PARSE_ERROR_TYPE_ERROR")
+;;     '("unexpected-token" "G_VARIANT_PARSE_ERROR_UNEXPECTED_TOKEN")
+;;     '("unknown-keyword" "G_VARIANT_PARSE_ERROR_UNKNOWN_KEYWORD")
+;;     '("unterminated-string-constant" "G_VARIANT_PARSE_ERROR_UNTERMINATED_STRING_CONSTANT")
+;;     '("value-expected" "G_VARIANT_PARSE_ERROR_VALUE_EXPECTED")
+;;   )
+;; )

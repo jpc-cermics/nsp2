@@ -712,28 +712,28 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_nsp_figure_connect(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_figure_connect(self);
+    nsp_figure_connect(self);
   return 0;
 }
 
 static int _wrap_nsp_figure_unconnect(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_figure_unconnect(self);
+    nsp_figure_unconnect(self);
   return 0;
 }
 
 static int _wrap_nsp_figure_draw_latter(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_figure_draw_latter(self);
+    nsp_figure_draw_latter(self);
   return 0;
 }
 
 static int _wrap_nsp_figure_draw_now(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_figure_draw_now(self);
+    nsp_figure_draw_now(self);
   return 0;
 }
 
@@ -741,7 +741,7 @@ static int _wrap_nsp_figure_draw_status(NspFigure *self,Stack stack,int rhs,int 
 {
   int ret;
   CheckRhs(0,0);
-  ret =nsp_figure_draw_status(self);
+    ret =nsp_figure_draw_status(self);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -749,14 +749,14 @@ static int _wrap_nsp_figure_draw_status(NspFigure *self,Stack stack,int rhs,int 
 static int _wrap_nsp_figure_process_updates(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_figure_process_updates(self);
+    nsp_figure_process_updates(self);
   return 0;
 }
 
 static int _wrap_nsp_set_current_figure(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
-  nsp_set_current_figure(self);
+    nsp_set_current_figure(self);
   return 0;
 }
 
@@ -804,7 +804,7 @@ static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,i
   int_types T[] = {obj_check, t_end};
   NspObject *g;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_graphic, &g) == FAIL) return RET_BUG;
-  nsp_figure_remove_element(self,((NspGraphic *) g));
+    nsp_figure_remove_element(self,((NspGraphic *) g));
   return 0;
 }
 

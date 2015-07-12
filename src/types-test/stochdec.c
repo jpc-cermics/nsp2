@@ -1704,7 +1704,7 @@ static int _wrap_nsp_gvf_get_nx(NspGridValueFn *self,Stack stack,int rhs,int opt
 {
   NspMatrix *ret;
   CheckRhs(0,0);
-  ret =nsp_gvf_get_nx(self);
+    ret =nsp_gvf_get_nx(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;

@@ -30,24 +30,24 @@
 
 /**
  * NspBlock:
- * @obj: a #nsp_block pointer 
+ * @obj: a #nsp_block pointer
  *
- * inherits from #NspObject and implements Grint. 
+ * inherits from #NspObject and implements Grint.
  * Used for graphic blocks for a C implementation of scicos.
  */
 
 /**
- * grb_lock: 
- *  @port: a #gr_port. 
+ * grb_lock:
+ *  @port: a #gr_port.
  *  @pt: position of the lock point in the frame
  *  @ptr: relative position of the lock point in the block
  *  @type: type of the lock point.
  *
- * used for storing information about lock points of a block. 
- * 
+ * used for storing information about lock points of a block.
+ *
  */
 
-typedef struct b_lock grb_lock ; 
+typedef struct b_lock grb_lock ;
 
 struct b_lock {
   gr_port port;  /* Only one port */
@@ -57,17 +57,17 @@ struct b_lock {
 };
 
 /**
- * nsp_block: 
- * @frame: a block must be in a frame to be drawn 
- * @object_sid: 
- * @r: the block enclosing rectangle 
+ * nsp_block:
+ * @frame: a block must be in a frame to be drawn
+ * @object_sid:
+ * @r: the block enclosing rectangle
  * @color: color of the block
- * @thickness: thickness of the enclosing rectangle 
+ * @thickness: thickness of the enclosing rectangle
  * @background: color of the background
- * @n_locks:  number of lock points 
- * @locks: array of lock points 
- * @hilited: is block hilited 
- * @show: is block to be visible 
+ * @n_locks:  number of lock points
+ * @locks: array of lock points
+ * @hilited: is block hilited
+ * @show: is block to be visible
  * @ref_count: a reference counter.
  *
  * used for storing information for a graphic block.
@@ -178,7 +178,7 @@ static NspMethods *block_get_methods(void);
 static NspBlock *nsp_block_create_void(const char *name,NspTypeBase *type);
 #line 63 "codegen/block.override"
 
-static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
+static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
@@ -193,19 +193,19 @@ static void nsp_block_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_block_unlink_figure(NspGraphic *G, void *F);
 
 /* set of methods for implementing Grint */
-static int block_get_hilited (NspBlock *B); 
-static void block_set_hilited (NspBlock *B, int val); 
-static int block_get_show (NspBlock *B); 
-static void block_set_show (NspBlock *B, int val); 
-static int block_set_pos (NspBlock *R, const double *pt); 
-static void block_get_pos (NspBlock *R, double *pt); 
-static void block_resize (NspBlock *R, const double *size); 
-static void block_update_locks (NspBlock *R); 
-static int block_contains_pt (const NspBlock *B, const double *pt); 
-static int block_control_near_pt (const NspBlock *B, const double *pt, int *cp); 
-static int block_lock_near_pt (const NspBlock *B, double *pt, int *cp); 
+static int block_get_hilited (NspBlock *B);
+static void block_set_hilited (NspBlock *B, int val);
+static int block_get_show (NspBlock *B);
+static void block_set_show (NspBlock *B, int val);
+static int block_set_pos (NspBlock *R, const double *pt);
+static void block_get_pos (NspBlock *R, double *pt);
+static void block_resize (NspBlock *R, const double *size);
+static void block_update_locks (NspBlock *R);
+static int block_contains_pt (const NspBlock *B, const double *pt);
+static int block_control_near_pt (const NspBlock *B, const double *pt, int *cp);
+static int block_lock_near_pt (const NspBlock *B, double *pt, int *cp);
 static void block_move_control_init( NspBlock *B,int cp,double ptc[2]);
-static void block_move_control (void *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
+static void block_move_control (void *F,NspBlock *B, const double *pt, int cp,double ptc[2]);
 
 static int block_get_number_of_locks(const NspBlock *B) ;
 static int block_get_number_of_ports(const NspBlock *B,int lp) ;

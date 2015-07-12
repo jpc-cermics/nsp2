@@ -209,7 +209,7 @@ static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj)
   else if ( IsBMat(obj) && ((NspBMatrix *) obj)->mn == 1)
     {
       g_value_init (value, G_TYPE_BOOLEAN);
-      g_value_set_boolean (value,((NspMatrix *) obj)->R[0] );
+      g_value_set_boolean (value,((NspBMatrix *) obj)->B[0] );
     }
   else if ( IsSMat(obj) && ((NspSMatrix *) obj)->mn == 1 )
     {
