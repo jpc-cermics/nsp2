@@ -82,12 +82,12 @@ void glib_add_constants(NspObject *module, const gchar *strip_prefix)
 
 #define PANGO_ENTER(name,value) \
   if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,value))== NULL) return FAIL; \
-  if (nsp_hash_enter(nsp_pango_hash_table,nsp_val) == FAIL) return FAIL; \
+  if (nsp_hash_enter(nsp_pango_hash_table,nsp_val) == FAIL) return FAIL;
 
-#define ADD_CONSTANTS(name,size,tag)					\
+#define ADD_CONSTANTS(name,size,name1,tag)				\
   if ( nsp_##name##_hash_table == NULLHASH )				\
     {									\
-      if (( nsp_##name##_hash_table = nsp_hash_create("GTK",size))== NULLHASH) return FALSE; \
+      if (( nsp_##name##_hash_table = nsp_hash_create(name1,size))== NULLHASH) return FALSE; \
     }									\
   name##_add_constants(NSP_OBJECT(nsp_##name##_hash_table), tag);
 
@@ -95,13 +95,13 @@ static int add_constants(void)
 {
   NspObject *nsp_val;
 
-  ADD_CONSTANTS(gtk,500,"GTK_");
-  ADD_CONSTANTS(gdk,500, "GDK_");
-  ADD_CONSTANTS(atk,500, "ATK_");
-  ADD_CONSTANTS(pango,500,"PANGO_");
-  ADD_CONSTANTS(cairo,500,"CAIRO_");
-  ADD_CONSTANTS(gio,500,"G_");
-  ADD_CONSTANTS(glib,500,"G_");
+  ADD_CONSTANTS(gtk,500,"GTK","GTK_");
+  ADD_CONSTANTS(gdk,500,"GDK","GDK_");
+  ADD_CONSTANTS(atk,500,"ATK", "ATK_");
+  ADD_CONSTANTS(pango,500,"PANGO","PANGO_");
+  ADD_CONSTANTS(cairo,500,"CAIRO","CAIRO_");
+  ADD_CONSTANTS(gio,500,"GIO","G_");
+  ADD_CONSTANTS(glib,500,"GLIB","G_");
 
   PANGO_ENTER( "SCALE_XX_SMALL",PANGO_SCALE_XX_SMALL);
   PANGO_ENTER( "SCALE_X_SMALL",PANGO_SCALE_X_SMALL);
