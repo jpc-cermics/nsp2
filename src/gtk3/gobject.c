@@ -1146,8 +1146,8 @@ nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 
 static NspMethods gobject_methods[] = {
-  {"ref",  (nsp_method *) nspgobject_ref},
-  {"unref", (nsp_method *)  nspgobject_unref},
+  { "ref",  (nsp_method *) nspgobject_ref},
+  { "unref", (nsp_method *)  nspgobject_unref},
   { "get_property", (nsp_method *) nspgobject_get_property},
   { "get_property_names", (nsp_method *) nspgobject_get_property_names},
   { "set_property", (nsp_method *) nspgobject_set_property},
