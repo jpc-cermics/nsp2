@@ -95,6 +95,10 @@ extern int int_gvarianttype_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGVariantType *nsp_gvarianttype_xdr_load_partial(XDR *xdrs, NspGVariantType *M);
 extern int nsp_gvarianttype_xdr_save(XDR  *xdrs, NspGVariantType *M);
 
+#line 47 "codegen/glib.override"
+GVariantType *nsp_copy_GVariantType(GVariantType *gv);
+
+#line 102 "./gvarianttype.h"
 #endif /* NSP_INC_NspGVariantType */ 
 
 #ifdef NspGVariantType_Private 
@@ -116,6 +120,6 @@ static int nsp_print_GVariantType(int indent,GVariantType *v,NspGVariantType *M)
 static int nsp_check_GVariantType(GVariantType *v,NspGVariantType *H);
 static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *v,NspGVariantType *self);
 
-#line 120 "./gvarianttype.h"
+#line 124 "./gvarianttype.h"
 #endif /* NspGVariantType_Private */
 

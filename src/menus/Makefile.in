@@ -9,7 +9,7 @@ OBJSC = gxmen_choice.o gxmen_choose.o gxmen_dialog.o gxmen_getfile.o \
 
 include ../../Makefile.incl
 
-CFLAGS = $(CC_OPTIONS) $(XFLAGS)
+CFLAGS = $(CC_OPTIONS) $(XFLAGS) -DGTK_DISABLE_DEPRECATED
 
 FFLAGS = $(FC_OPTIONS)
 

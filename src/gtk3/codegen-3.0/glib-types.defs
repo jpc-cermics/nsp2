@@ -2,6 +2,22 @@
 ;; object definitions ...
 
 ;; a structure encapsulated in a Nsp object
+(define-structref gvarianttype
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "GVariantType")
+  (gtype-id "gvarianttype")
+)
+
+(define-objectref GVariantType
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "NspGVariantType")
+  (fields
+   '("GVariantType*" "value" "hidden" "-1" )
+  )
+  (gtype-id "gvarianttype")
+)
 
 (define-structref gvariant
   (in-module "Nsp")
@@ -20,24 +36,6 @@
   (gtype-id "gvariant")
 )
 
-;; a structure encapsulated in a Nsp object
-
-(define-structref gvarianttype
-  (in-module "Nsp")
-  (parent "Object")
-  (c-name "GVariantType")
-  (gtype-id "gvarianttype")
-)
-
-(define-objectref GVariantType
-  (in-module "Nsp")
-  (parent "Object")
-  (c-name "NspGVariantType")
-  (fields
-   '("GVariantType*" "value" "hidden" "-1" )
-  )
-  (gtype-id "gvarianttype")
-)
 
 ;; Enumerations and flags ...
 

@@ -265,6 +265,13 @@
   (gtype-id "G_TYPE_MENU_MODEL")
 )
 
+(define-object GMenu
+  (in-module "Gio")
+  (parent "GMenuModel")
+  (c-name "GMenu")
+  (gtype-id "G_TYPE_MENU")
+)
+
 (define-object GMount
   (in-module "Gio")
   (c-name "GMount")

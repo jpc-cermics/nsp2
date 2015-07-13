@@ -11805,20 +11805,22 @@
   (return-type "const-GVariantType*")
 )
 
-;; (define-method get_type_string
-;;   (of-object "GVariant")
-;;   (c-name "g_variant_get_type_string")
-;;   (return-type "const-gchar*")
-;; )
+(define-method get_type_string
+  (of-object "GVariant")
+  (c-name "g_variant_get_type_string")
+  (return-type "const-gchar*")
+  (call "  ret =g_variant_get_type_string(self->obj->value);")
+)
 
-;; (define-method is_of_type
-;;   (of-object "GVariant")
-;;   (c-name "g_variant_is_of_type")
-;;   (return-type "gboolean")
-;;   (parameters
-;;     '("const-GVariantType*" "type")
-;;   )
-;; )
+(define-method is_of_type
+  (of-object "GVariant")
+  (c-name "g_variant_is_of_type")
+  (return-type "gboolean")
+  (parameters
+    '("const-GVariantType*" "type")
+  )
+  (call "  ret =g_variant_is_of_type(self->obj->value,type);")
+)
 
 (define-method is_container
   (of-object "GVariant")
@@ -12124,11 +12126,9 @@
 (define-method get_string
   (of-object "GVariant")
   (c-name "g_variant_get_string")
-  (call "  ret =g_variant_get_string(self->obj->value);")
+  (call "  ret =g_variant_get_string(self->obj->value,NULL);")
   (return-type "const-gchar*")
-  (parameters
-    '("gsize*" "length")
-  )
+  ;; (parameters '("int*" "length") )
 )
 
 (define-method dup_string

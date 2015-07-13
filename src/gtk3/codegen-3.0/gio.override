@@ -80,15 +80,82 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   NspSMatrix *entries;
   CheckLhs(0,0);
   if ( GetArgs(stack,rhs,opt,T,&entries) == FAIL) return RET_BUG;
-  if ( entries->n < 1 )
+  if ( entries->n < 3 )
     {
-      Scierror("Error: expecting at least a mx1 string matrix\n");
+      Scierror("Error: expecting at least a mx3 string matrix\n");
       return RET_BUG;
     }
   for (i=0; i < entries->m; i++)
     {
       action_entry.name = entries->S[i];
+      if (entries->S[i+entries->m][0] != '\0' )
+	action_entry.parameter_type = entries->S[i+entries->m];
+      if (entries->S[i+entries->m*2][0] != '\0' )
+	action_entry.state = entries->S[i+entries->m*2];
       g_action_map_add_action_entries(G_ACTION_MAP(self->obj),&action_entry,1,NULL);
     }
   return 0;
 }
+
+%%
+override g_menu_model_get_item_link
+
+/* XXX we want to return the most specialized type 
+ * i.e use nspgobject_new and not gobject_create
+ * XXX this should be the generic rule for all methods ?
+ */
+
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_model_get_item_link(NspGMenuModel *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,string, t_end};
+  int item_index;
+  char *link;
+  GMenuModel *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&item_index, &link) == FAIL) return RET_BUG;
+    ret =g_menu_model_get_item_link(G_MENU_MODEL(self->obj),item_index,link);
+  nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#else
+int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* get_item_link */
+{
+  Scierror("Error: function g_menu_model_get_item_link not available\n");
+  return RET_BUG;
+}
+#endif 
+
+%%
+override g_action_map_lookup_action
+
+/* XXX we want to return the most specialized type 
+ * i.e use nspgobject_new and not gobject_create
+ * XXX this should be the generic rule for all methods ?
+ */
+
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_action_map_lookup_action(NspGActionMap *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *action_name;
+  GAction *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&action_name) == FAIL) return RET_BUG;
+    ret =g_action_map_lookup_action(G_ACTION_MAP(self->obj),action_name);
+  nsp_type_gaction = new_type_gaction(T_BASE);
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#else
+int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* lookup_action */
+{
+  Scierror("Error: function g_action_map_lookup_action not available\n");
+  return RET_BUG;
+}
+#endif

@@ -367,8 +367,8 @@ NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
    */
   if ( obj == NULL )
     {
-      Scierror("Error: no gobject available\n");
-      return NULLGOBJECT;
+      Sciprintf("Error: no gobject available we return None\n");
+      return (NspGObject *) nsp_none_create(NVOID,NULL);
     }
   H = (type == NULL) ? new_gobject() : type->new();
   if ( H ==  NULLGOBJECT)
@@ -1320,8 +1320,14 @@ int nspgobject_check(void *value, void *type)
 
 NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
-  GType gtype = G_OBJECT_TYPE(G_OBJECT(obj)), p_gtype;
-  NspTypeBase *type = nsp_type_from_gtype(gtype);
+  GType gtype, p_gtype;
+  NspTypeBase *type;
+  if ( obj == NULL) 
+    {
+      return (NspGObject *) nsp_none_create(NVOID,NULL);
+    }
+  gtype = G_OBJECT_TYPE(G_OBJECT(obj));
+  type = nsp_type_from_gtype(gtype);
   if ( type == NULL)
     {
       /* Sciprintf("Error: no nsp type associated to GType `%s'\n",g_type_name(gtype)); */

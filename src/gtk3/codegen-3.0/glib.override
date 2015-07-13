@@ -39,6 +39,14 @@ static int nsp_check_GVariantType(GVariantType *v,NspGVariantType *H);
 static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *v,NspGVariantType *self);
 
 %%
+include-public GVariant
+GVariant *nsp_copy_GVariant(GVariant *gv);
+
+%%
+include-public GVariantType
+GVariantType *nsp_copy_GVariantType(GVariantType *gv);
+
+%%
 init
 
 %%
@@ -242,7 +250,7 @@ last
 
 static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
-  g_variant_unref (value);
+  g_variant_unref(value);
   return OK;
 }
 
@@ -272,14 +280,16 @@ static int nsp_GVariant_full_copy(NspGVariant *H,GVariant *value,NspGVariant *se
 
 static int nsp_destroy_GVariantType(GVariantType *value,NspGVariantType *H)
 {
+  /* nsp_print_GVariantType(0,value,H);  Sciprintf("Destroy a GVariantType\n");*/
   g_variant_type_free(value);
   return OK;
 }
 
 static int nsp_print_GVariantType(int indent,GVariantType *v,NspGVariantType *M)
 {
-  gchar *str = "xxx";/* g_variant_type_print(v,TRUE); */
+  gchar *str = g_variant_type_dup_string(v);
   Sciprintf1(indent+1,"gvariant_type: %s\n",str);
+  g_free(str);
   return 0;
 }
 
@@ -291,9 +301,22 @@ static int nsp_check_GVariantType(GVariantType *v,NspGVariantType *H)
 static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,NspGVariantType *self)
 {
 #if 0
+  /* XXXX */
   memset(value, 0, sizeof(*value));
   g_variant_init (value, G_VALUE_TYPE(&self->value));
   g_variant_copy (&self->value,value);
 #endif
   return OK;
 }
+
+GVariant *nsp_copy_GVariant(GVariant *gv)
+{
+  return g_variant_ref(gv); /* XXXX */
+}
+
+GVariantType *nsp_copy_GVariantType(GVariantType *gv)
+{
+  return g_variant_type_copy(gv);
+}
+
+

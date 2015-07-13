@@ -3687,8 +3687,9 @@ let make_nsp_object_arg  ngd =
  }
 ;;
 
-(* struct_arg : declared with define-struct
- * we assume that a Nsp class is associated with same name
+(* struct_arg : declared with define-struct or define-structref
+ * we assume that a Nsp class is associated and has the same name 
+ * when a struct arg is used as parameter or returned we make a copy
  *)
 
 type struct_data = {
@@ -3701,22 +3702,29 @@ type struct_data = {
 let struct_check name typename _typecode byref =
   let tag = if byref then "obj->" else "" in
   Printf.sprintf "  if ( Is%s(nsp_%s))\
-  \n    { %s = ((Nsp%s *) nsp_%s)->%svalue;}\
+  \n    { %s = ((Nsp%s *) nsp_%s)->%svalue;\
+  \n      if((%s = nsp_copy_%s(%s))==NULL) return RET_BUG;\
+  \n    }\
   \n  else\
   \n    {\
-  \n      Scierror(\"Error: %s should be of type %s\");\
+  \n      Scierror(\"Error: %s should be of type %s\\n\");\
   \n      return RET_BUG;\
-  \n    }\n" typename name name typename name tag name typename
+  \n    }\n" typename name name typename name tag name typename name name typename
   ;;
 
 let struct_null name typename _typecode byref =
   let tag = if byref then "obj->" else "" in
-  Printf.sprintf "  if ( Is%s(nsp_%s))\
-  \n    %s = ((Nsp%s *) nsp_%s)->%svalue;\
-  \n  else if ( ! IsNone(nsp_%s) ) {\
-  \n      Scierror(\"Error: %s should be of type %s\");\
-  \n      return RET_BUG;\
-  \n  }\n" typename name name typename name tag name name typename
+  Printf.sprintf 
+    "  if (nsp_%s != NULL)\
+  \n     {\
+  \n      if( Is%s(nsp_%s))\
+  \n        { %s = ((Nsp%s *) nsp_%s)->%svalue;}\
+  \n      else\
+  \n        {Scierror(\"Error: %s should be of type %s\\n\");\
+  \n         return RET_BUG;\
+  \n        }\
+  \n      if((%s = nsp_copy_%s(%s))==NULL) return RET_BUG;\
+  \n     }\n" name typename name name typename name tag name typename name typename name 
   ;;
 
 let struct_arg_write_param struct_data _oname params info _byref=
@@ -3761,6 +3769,7 @@ let struct_arg_write_return struct_data ptype _ownsreturn info =
   let tag = if flag then "" else "&" in
   let codeafter =
     "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
+    "  if((ret = nsp_copy_"^struct_data.sd_typename^"(ret))==NULL) return RET_BUG;\n" ^
     "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
     tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
     "  if ( nsp_ret == NULL) return RET_BUG;\n" ^

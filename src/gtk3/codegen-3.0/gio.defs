@@ -9183,7 +9183,7 @@
   (parameters
     '("gint" "item_index")
     '("const-gchar*" "attribute")
-    '("const-GVariantType*" "expected_type")
+    '("const-GVariantType*" "expected_type" (null-ok) (default "NULL"))
   )
 )
 
@@ -9209,6 +9209,8 @@
     '("gint" "item_index")
   )
 )
+
+;; We should get here something more specific than GMenuModel
 
 (define-method get_item_link
   (of-object "GMenuModel")
@@ -11790,7 +11792,7 @@
   (return-type "GSimpleAction*")
   (parameters
     '("const-gchar*" "name")
-    '("const-GVariantType*" "parameter_type")
+    '("const-GVariantType*" "parameter_type" (null-ok) (default "NULL"))
   )
 )
 
@@ -11800,8 +11802,8 @@
   (return-type "GSimpleAction*")
   (parameters
     '("const-gchar*" "name")
-    '("const-GVariantType*" "parameter_type")
-    '("GVariant*" "state")
+    '("const-GVariantType*" "parameter_type" (null-ok) (default "NULL"))
+    '("GVariant*" "state" (null-ok) (default "NULL"))
   )
 )
 
