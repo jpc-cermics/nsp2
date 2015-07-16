@@ -24,7 +24,6 @@ function demo_main_window()
   B('messages') = demo_messagedialog,
   B('miscellaneous')= [],// None,
   B('range controls')=  demo_range_controls,
-  B('rulers')= demo_rulers,
   B('notebook')=  demo_notebook,
   B('panes')=  demo_panes,
   B('shapes')= [],// None, //demo_shapes,
@@ -41,7 +40,10 @@ function demo_main_window()
   B('cursor')=  demo_cursor,
   B('scribble')=  demo_scribble,
   // B('actions')= demo_actions,
-
+  B('pickers') = demo_pickers,
+  B('stack') = demo_stack,
+  B('assistant') = demo_assistant,
+  B('gmenumodel') = demo_gmenumodel,
 
   win = gtkwindow_new()
   win.set_title["main window"]

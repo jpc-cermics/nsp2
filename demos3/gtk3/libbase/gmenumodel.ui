@@ -1,0 +1,55 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<interface>
+  <menu id='edit-menu'>
+    <section>
+      <item>
+	<attribute name='action'>undo</attribute>
+	<attribute name='label' translatable='yes' context='Stock label'>_Undo</attribute>
+      </item>
+      <item>
+	<attribute name='label' translatable='yes'>Redo</attribute>
+	<attribute name='action'>redo</attribute>
+      </item>
+    </section>
+    <section/>
+    <section>
+      <attribute name='label' translatable='yes'>Copy &amp; Paste</attribute>
+      <item>
+	<attribute name='label' translatable='yes'>Cut</attribute>
+	<attribute name='action'>cut</attribute>
+      </item>
+      <item>
+	<attribute name='label' translatable='yes'>Copy</attribute>
+	<attribute name='action'>copy</attribute>
+      </item>
+      <item>
+	<attribute name='label' translatable='yes'>Paste</attribute>
+	<attribute name='action'>paste</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name='label' translatable='yes'>Bold</attribute>
+	<attribute name='action'>bold</attribute>
+      </item>
+      <submenu>
+	<attribute name='label' translatable='yes'>Language</attribute>
+	<item>
+	  <attribute name='label' translatable='yes'>Latin</attribute>
+	  <attribute name='action'>lang</attribute>
+	  <attribute name='target'>latin</attribute>
+	</item>
+	<item>
+	  <attribute name='label' translatable='yes'>Greek</attribute>
+	  <attribute name='action'>lang</attribute>
+	  <attribute name='target'>greek</attribute>
+	</item>
+	<item>
+	  <attribute name='label' translatable='yes'>Urdu</attribute>
+	  <attribute name='action'>lang</attribute>
+	  <attribute name='target'>urdu</attribute>
+	</item>
+      </submenu>
+    </section>
+  </menu>
+</interface>

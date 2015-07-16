@@ -1,5 +1,5 @@
-// Rulers 
-// handlers unfinished XXXXXX 
+// Rulers
+// Deprecated and removed
 
 function demo_rulers()
   win = gtkwindow_new()
@@ -7,36 +7,36 @@ function demo_rulers()
   win.set_title["rulers"];
   win.set_size_request[300, 300]
   win.set_events[ior(GDK.POINTER_MOTION_MASK,GDK.POINTER_MOTION_HINT_MASK)]
-  table = gtktable_new(rows=2,columns=3,homogeneous=%f) 
+  table = gtk_grid_new();
   win.add[table]
   table.show[]
-  
-  // first the x-ruler 
-    
-  xruler = gtkhruler_new()
+
+  // first the x-ruler
+
+  xruler = gtk_ruler_new(GTK.ORIENTATION_HORIZONTAL)
   xruler.set_range[5, 15, 0, 20]
   //	ruler.set_metric(PIXELS)
   xruler.set_metric[GTK.PIXELS]
-  
+
   function [y]=motion_notify(obj, event)
     y=1;
     // printf("In motion notify\n");
     // pause
     // y = ruler.emit("motion_notify_event", event)
     // y = gtk_signal_emitv_by_name(xruler,"motion_notify_event",list( event))
-  endfunction 
+  endfunction
   win.connect["motion_notify_event", motion_notify];
   //	table.attach(ruler, 1,2, 0,1, yoptions=GTK.FILL)
-  xoptions=ior(GTK.EXPAND,GTK.FILL),  yoptions=GTK.FILL, 
+  xoptions=ior(GTK.EXPAND,GTK.FILL),  yoptions=GTK.FILL,
   table.attach[xruler,1,2,0,1,xoptions=xoptions,yoptions=yoptions];
   xruler.show[]
-  
-  // now the y-ruler 
-  
+
+  // now the y-ruler
+
   yruler = gtkvruler_new()
   yruler.set_range[5, 15, 0, 20]
   yruler.set_metric[GTK.PIXELS];
-  
+
   function [y]=motion_notify(obj, event) // ruler=ruler)
     y=1
     //return ruler.emit("motion_notify_event", event)
@@ -45,7 +45,7 @@ function demo_rulers()
     // printf("In motion notify\n");
   endfunction
   win.connect["motion_notify_event", motion_notify];
-  xoptions=GTK.FILL,  yoptions=ior(GTK.EXPAND, GTK.FILL), 
+  xoptions=GTK.FILL,  yoptions=ior(GTK.EXPAND, GTK.FILL),
   table.attach[yruler,0,1,1,2,xoptions=xoptions,yoptions=yoptions];
   yruler.show[]
   label = gtklabel_new(str = "The rulers now work!\n" +
