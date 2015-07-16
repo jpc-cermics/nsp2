@@ -3690,16 +3690,12 @@ let make_nsp_object_arg  ngd =
 (* struct_arg : declared with define-struct or define-structref
  * we assume that a Nsp class is associated and has the same name 
  * when a struct arg is used as parameter or returned we make a copy
+ * ----------------------------------------------------------------
  *)
 
-type struct_data = {
-    sd_typename: string;
-    sd_typecode: string;
-    sd_byref: bool;
-  }
-;;
-
-let struct_check name typename _typecode byref =
+let struct_check object_rec name = 
+  let typename = object_rec.or_c_name in
+  let byref = object_rec.or_byref in
   let tag = if byref then "obj->" else "" in
   Printf.sprintf "  if ( Is%s(nsp_%s))\
   \n    { %s = ((Nsp%s *) nsp_%s)->%svalue;\
@@ -3710,9 +3706,11 @@ let struct_check name typename _typecode byref =
   \n      Scierror(\"Error: %s should be of type %s\\n\");\
   \n      return RET_BUG;\
   \n    }\n" typename name name typename name tag name typename name name typename
-  ;;
+;;
 
-let struct_null name typename _typecode byref =
+let struct_null object_rec name =
+  let typename = object_rec.or_c_name in
+  let byref = object_rec.or_byref in
   let tag = if byref then "obj->" else "" in
   Printf.sprintf 
     "  if (nsp_%s != NULL)\
@@ -3727,20 +3725,21 @@ let struct_null name typename _typecode byref =
   \n     }\n" name typename name name typename name tag name typename name typename name 
   ;;
 
-let struct_arg_write_param struct_data _oname params info _byref=
+(* when a struct_arg is a parameter *)
+
+let struct_arg_write_param_gen object_rec _oname params info _byref set_value =
   let name = params.pname in
-  let varlist = varlist_add info.varlist
-    struct_data.sd_typename ("*" ^ name ^ " = NULL") in
+  let varlist = varlist_add info.varlist object_rec.or_c_name ("*" ^ name ^ " = NULL") in
   let codebefore =
     if params.pnull then
-      struct_null name struct_data.sd_typename struct_data.sd_typecode struct_data.sd_byref
+      struct_null object_rec name 
     else
-      struct_check name struct_data.sd_typename struct_data.sd_typecode struct_data.sd_byref in
-  let varlist =
-    if params.pnull then
-      varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL")
-    else
-      varlist_add varlist "NspObject" ("*nsp_" ^ name) in
+      struct_check object_rec name in
+  let initial_value = 
+    if set_value == "" then
+      (if params.pnull then" = NULL" else "")
+    else set_value in
+  let varlist = varlist_add varlist "NspObject" ("*nsp_" ^ name ^  initial_value) in
   let info = add_parselist info params.pvarargs "obj" ["&nsp_" ^ name] [name] in
   { info with
     arglist = name :: info.arglist;
@@ -3750,26 +3749,30 @@ let struct_arg_write_param struct_data _oname params info _byref=
   }
 ;;
 
-let struct_arg_attr_write_set struct_data oname params info byref=
+let struct_arg_write_param object_rec _oname params info _byref =
+  struct_arg_write_param_gen object_rec _oname params info _byref ""
+;;
+
+(* when the field is set *) 
+
+let struct_arg_attr_write_set object_rec oname params info byref=
   let pset_name = pset_name_set byref oname params.pname in
-  let info = struct_arg_write_param struct_data  oname params info byref in
+  let info = struct_arg_write_param_gen object_rec oname params info byref "= O" in
   { info with attrcodebefore = (Printf.sprintf "  /* %s= %s;*/\n" pset_name params.pname) :: info.attrcodebefore;}
 ;;
 
-let struct_arg_write_return struct_data ptype _ownsreturn info =
+(* when it's a returned value *)
+
+let struct_arg_write_return object_rec ptype _ownsreturn info =
   let (flag, _new_type) = strip_type ptype in
-  let varlist =
-    if flag then
-      varlist_add  info.varlist  struct_data.sd_typename "*ret"
-    else
-      varlist_add  info.varlist  struct_data.sd_typename "ret" in
-  let name = struct_data.sd_typecode in
-  let varlist =
-    varlist_add varlist "NspObject" ("*nsp_ret") in
   let tag = if flag then "" else "&" in
+  let tagdec = if flag then "*" else "" in
+  let varlist = varlist_add  info.varlist  object_rec.or_c_name (tagdec ^ "ret") in
+  let name = object_rec.or_name in
+  let varlist = varlist_add varlist "NspObject" ("*nsp_ret") in
   let codeafter =
     "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
-    "  if((ret = nsp_copy_"^struct_data.sd_typename^"(ret))==NULL) return RET_BUG;\n" ^
+    "  if((ret = nsp_copy_"^ object_rec.or_c_name ^"(ret))==NULL) return RET_BUG;\n" ^
     "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
     tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
     "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
@@ -3777,18 +3780,25 @@ let struct_arg_write_return struct_data ptype _ownsreturn info =
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
-let struct_arg_attr_write_return struct_data _objinfo _ownsreturn params info=
+(* when an attribute is returned  *)
+
+let struct_arg_attr_write_return object_rec _objinfo _ownsreturn params info= 
   let (flag, _ptype) = strip_type params.ptype in
-  let varlist =
-       if flag then
-         varlist_add  info.varlist struct_data.sd_typename "*ret"
-        else
-	 varlist_add  info.varlist struct_data.sd_typename "ret" in
-  let code = "  return NULL;\n" in
-  { info with varlist = varlist ; attrcodeafter = code :: info.attrcodeafter ;}
+  let tag = if flag then "" else "&" in
+  let tagdec = if flag then "*" else "" in
+  let varlist = varlist_add  info.varlist object_rec.or_c_name (tagdec ^ "ret") in
+  let name = object_rec.or_name in
+  let varlist = varlist_add varlist "NspObject" ("*nsp_ret") in
+  let codeafter =
+    "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
+    "  if((ret = nsp_copy_"^ object_rec.or_c_name ^"(ret))==NULL) return NULL;\n" ^
+    "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
+    tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
+    "  return nsp_ret;" in
+  { info with varlist = varlist ; attrcodeafter = codeafter :: info.attrcodeafter ;}
 ;;
 
-let struct_arg_attr_free_fields _struct_data ptype pname _varname _byref =
+let struct_arg_attr_free_fields _object_rec ptype pname _varname _byref =
   let name = if _byref then  "obj->" ^ pname else pname in
   let (flag, ptype) = strip_type ptype in
   if flag then
@@ -3807,7 +3817,7 @@ let struct_arg_attr_write_save _varname params _byref=
     Printf.sprintf "  if ( nsp_save_%s(xdrs,&M->%s,M) == FAIL ) return FAIL;\n" ptype pname
 ;;
 
-let struct_arg_attr_write_load _struct_data _varname params _byref=
+let struct_arg_attr_write_load _object_rec _varname params _byref=
   let pname = if _byref then  "obj->" ^ params.pname else params.pname in
   let (_flag, ptype) = strip_type params.ptype in
   (Printf.sprintf "  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n" ptype pname)
@@ -3817,7 +3827,7 @@ let rstrip str str_strip =
   Str.global_replace (Str.regexp str_strip) "" str
 ;;
 
-let struct_arg_attr_write_copy  _struct_data _objinfo params left_varname right_varname f_copy_name =
+let struct_arg_attr_write_copy  _object_rec _objinfo params left_varname right_varname f_copy_name =
   let name = params.pname in
   if right_varname <> "" then
     if f_copy_name = "nsp_object_full_copy" then
@@ -3837,7 +3847,7 @@ let struct_arg_attr_write_info _ptype pname varname _byref =
   (Printf.sprintf "ZZ  Sciprintf1(indent+2,\"%s=0x%%x\\n\" %s->%s);\n"  pname varname pname)
 ;;
 
-let struct_arg_attr_write_print _struct_data objinfo _print_mode varname params =
+let struct_arg_attr_write_print _object_rec objinfo _print_mode varname params =
   (*  varname here already contains ->obj *)
   let vn = rstrip varname "->obj" in
   let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
@@ -3848,7 +3858,7 @@ let struct_arg_attr_write_print _struct_data objinfo _print_mode varname params 
     Printf.sprintf  "  nsp_print_%s(indent+2,&%s->%s,%s);\n" ptype vn pname vn
 ;;
 
-let struct_arg_attr_write_init _struct_data _objinfo varname params =
+let struct_arg_attr_write_init _object_rec _objinfo varname params =
   let (flag, ptype) = strip_type params.ptype in
   let pname = params.pname in
   if flag then
@@ -3857,7 +3867,7 @@ let struct_arg_attr_write_init _struct_data _objinfo varname params =
     Printf.sprintf"  nsp_init_%s(&%s->%s);\n" ptype  varname  pname
 ;;
 
-let struct_arg_attr_equal_fields _struct_data objinfo _varname params=
+let struct_arg_attr_equal_fields _object_rec objinfo _varname params=
   let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
   let (flag, ptype) = strip_type params.ptype in
   if flag then
@@ -3866,7 +3876,7 @@ let struct_arg_attr_equal_fields _struct_data objinfo _varname params=
     Printf.sprintf "  if ( nsp_eq_%s(&A->%s,&loc->%s)== FALSE) return FALSE;\n"  ptype pname pname
 ;;
 
-let struct_arg_attr_write_defval _struct_data objinfo _varname params =
+let struct_arg_attr_write_defval _object_rec objinfo _varname params =
   let pname = if objinfo.or_byref then  "obj->" ^ params.pname else params.pname in
   let (flag, ptype) = strip_type params.ptype in
   if flag then
@@ -3875,21 +3885,21 @@ let struct_arg_attr_write_defval _struct_data objinfo _varname params =
     Printf.sprintf "  if ( nsp_check_%s(&H->%s,H) == FAIL ) return FAIL;\n" ptype pname
 ;;
 
-let make_struct_arg struct_data =
+let make_struct_arg object_rec =
   { argtype with
-    write_param = struct_arg_write_param struct_data;
-    attr_write_set = struct_arg_attr_write_set struct_data;
-    write_return = struct_arg_write_return struct_data;
-    attr_write_return = struct_arg_attr_write_return  struct_data;
-    attr_free_fields = struct_arg_attr_free_fields  struct_data;
+    write_param = struct_arg_write_param object_rec;
+    attr_write_set = struct_arg_attr_write_set object_rec;
+    write_return = struct_arg_write_return object_rec;
+    attr_write_return = struct_arg_attr_write_return  object_rec;
+    attr_free_fields = struct_arg_attr_free_fields  object_rec;
     attr_write_save = struct_arg_attr_write_save;
-    attr_write_load = struct_arg_attr_write_load  struct_data;
-    attr_write_copy = struct_arg_attr_write_copy  struct_data;
+    attr_write_load = struct_arg_attr_write_load  object_rec;
+    attr_write_copy = struct_arg_attr_write_copy  object_rec;
     attr_write_info = struct_arg_attr_write_info;
-    attr_write_print = struct_arg_attr_write_print  struct_data;
-    attr_write_init = struct_arg_attr_write_init  struct_data;
-    attr_equal_fields = struct_arg_attr_equal_fields  struct_data;
-    attr_write_defval = struct_arg_attr_write_defval  struct_data;
+    attr_write_print = struct_arg_attr_write_print  object_rec;
+    attr_write_init = struct_arg_attr_write_init  object_rec;
+    attr_equal_fields = struct_arg_attr_equal_fields  object_rec;
+    attr_write_defval = struct_arg_attr_write_defval  object_rec;
   }
 ;;
 
@@ -5003,12 +5013,7 @@ let register_enum enum_rec =
 (* register a structure *)
 
 let register_struct object_rec =
-  let sd = {
-    sd_typename =   object_rec.or_c_name;
-    sd_typecode =   object_rec.or_typecode;
-    sd_byref    =   object_rec.or_byref;
-  } in
-  let arg = make_struct_arg sd in
+  let arg = make_struct_arg object_rec in
   Hashtbl.add matcher_hash object_rec.or_c_name arg;
   Hashtbl.add matcher_hash (object_rec.or_c_name ^ "*")  arg;
   Hashtbl.add matcher_hash ("const-" ^ object_rec.or_c_name ^ "*")  arg;

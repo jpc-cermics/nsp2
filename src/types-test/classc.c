@@ -28,38 +28,38 @@
 
 #line 30 "classc.c"
 
-/* -----------NspStructex ----------- */
+/* -----------NspClassC ----------- */
 
 
-#define  NspStructex_Private 
+#define  NspClassC_Private 
 #include <nsp/objects.h>
 #include <nsp/classc.h>
 #include <nsp/interf.h>
 
 /* 
- * NspStructex inherits from Object 
+ * NspClassC inherits from Object 
  */
 
 int nsp_type_classc_id=0;
-NspTypeclassc *nsp_type_classc=NULL;
+NspTypeClassC *nsp_type_classc=NULL;
 
 /*
- * Type object for NspStructex 
- * all the instance of NspTypeclassc share the same id. 
- * nsp_type_classc: is an instance of NspTypeclassc 
- *    used for objects of NspStructex type (i.e built with new_classc) 
+ * Type object for NspClassC 
+ * all the instance of NspTypeClassC share the same id. 
+ * nsp_type_classc: is an instance of NspTypeClassC 
+ *    used for objects of NspClassC type (i.e built with new_classc) 
  * other instances are used for derived classes 
  */
-NspTypeclassc *new_type_classc(type_mode mode)
+NspTypeClassC *new_type_classc(type_mode mode)
 {
-  NspTypeclassc *type= NULL;
+  NspTypeClassC *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classc != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classc;
     }
-  if (( type =  malloc(sizeof(NspTypeclassc))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeClassC))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -100,7 +100,7 @@ NspTypeclassc *new_type_classc(type_mode mode)
   type->init = (init_func *) init_classc;
 
   /* 
-   * NspStructex interfaces can be added here 
+   * NspClassC interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -109,7 +109,7 @@ NspTypeclassc *new_type_classc(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeclassc called nsp_type_classc
+       * an instance of NspTypeClassC called nsp_type_classc
        */
       type->id =  nsp_type_classc_id = nsp_new_type_id();
       nsp_type_classc = type;
@@ -124,11 +124,11 @@ NspTypeclassc *new_type_classc(type_mode mode)
 }
 
 /*
- * initialize NspStructex instances 
+ * initialize NspClassC instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_classc(NspStructex *Obj,NspTypeclassc *type)
+static int init_classc(NspClassC *Obj,NspTypeClassC *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -140,28 +140,28 @@ static int init_classc(NspStructex *Obj,NspTypeclassc *type)
 }
 
 /*
- * new instance of NspStructex 
+ * new instance of NspClassC 
  */
 
-NspStructex *new_classc() 
+NspClassC *new_classc() 
 {
-  NspStructex *loc;
+  NspClassC *loc;
   /* type must exists */
   nsp_type_classc = new_type_classc(T_BASE);
-  if ( (loc = malloc(sizeof(NspStructex)))== NULLCLASSC) return loc;
+  if ( (loc = malloc(sizeof(NspClassC)))== NULLCLASSC) return loc;
   /* initialize object */
   if ( init_classc(loc,nsp_type_classc) == FAIL) return NULLCLASSC;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for NspStructex 
+ * Object method redefined for NspClassC 
  *-----------------------------------------------*/
 /*
  * size 
  */
 
-static int nsp_classc_size(NspStructex *Mat, int flag)
+static int nsp_classc_size(NspClassC *Mat, int flag)
 {
   return 1;
 }
@@ -170,7 +170,7 @@ static int nsp_classc_size(NspStructex *Mat, int flag)
  * type as string 
  */
 
-static char classc_type_name[]="classc";
+static char classc_type_name[]="ClassC";
 static char classc_short_type_name[]="classc";
 
 static char *nsp_classc_type_as_string(void)
@@ -187,9 +187,9 @@ static char *nsp_classc_type_short_string(NspObject *v)
  * A == B 
  */
 
-static int nsp_classc_eq(NspStructex *A, NspObject *B)
+static int nsp_classc_eq(NspClassC *A, NspObject *B)
 {
-  NspStructex *loc = (NspStructex *) B;
+  NspClassC *loc = (NspClassC *) B;
   if ( check_cast(B,nsp_type_classc_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->value != loc->obj->value) return FALSE;
@@ -200,7 +200,7 @@ static int nsp_classc_eq(NspStructex *A, NspObject *B)
  * A != B 
  */
 
-static int nsp_classc_neq(NspStructex *A, NspObject *B)
+static int nsp_classc_neq(NspClassC *A, NspObject *B)
 {
   return ( nsp_classc_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
@@ -209,14 +209,14 @@ static int nsp_classc_neq(NspStructex *A, NspObject *B)
  * save 
  */
 
-int nsp_classc_xdr_save(XDR *xdrs, NspStructex *M)
+int nsp_classc_xdr_save(XDR *xdrs, NspClassC *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classc)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if ( nsp_save_Structex(xdrs,M->obj->value,M) == FAIL ) return FAIL;
+  if ( nsp_save_ClassC(xdrs,M->obj->value,M) == FAIL ) return FAIL;
   return OK;
 }
 
@@ -224,16 +224,16 @@ int nsp_classc_xdr_save(XDR *xdrs, NspStructex *M)
  * load 
  */
 
-NspStructex  *nsp_classc_xdr_load_partial(XDR *xdrs, NspStructex *M)
+NspClassC  *nsp_classc_xdr_load_partial(XDR *xdrs, NspClassC *M)
 {
   M->obj->ref_count=1;
-  if ( nsp_load_Structex(xdrs,M->obj->value,M) == FAIL ) return NULL;
+  if ( nsp_load_ClassC(xdrs,M->obj->value,M) == FAIL ) return NULL;
  return M;
 }
 
-static NspStructex  *nsp_classc_xdr_load(XDR *xdrs)
+static NspClassC  *nsp_classc_xdr_load(XDR *xdrs)
 {
-  NspStructex *H = NULL;
+  NspClassC *H = NULL;
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSC;
   if ((H  = nsp_classc_create_void(name,(NspTypeBase *) nsp_type_classc))== NULLCLASSC) return H;
@@ -251,7 +251,7 @@ static NspStructex  *nsp_classc_xdr_load(XDR *xdrs)
  * delete 
  */
 
-void nsp_classc_destroy_partial(NspStructex *H)
+void nsp_classc_destroy_partial(NspClassC *H)
 {
    H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
@@ -261,12 +261,12 @@ void nsp_classc_destroy_partial(NspStructex *H)
 
 #line 263 "classc.c"
   if (H->obj->value != NULL)
-    { nsp_destroy_Structex(H->obj->value,H);}
+    { nsp_destroy_ClassC(H->obj->value,H);}
     FREE(H->obj);
    }
 }
 
-void nsp_classc_destroy(NspStructex *H)
+void nsp_classc_destroy(NspClassC *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
   nsp_classc_destroy_partial(H);
@@ -277,12 +277,12 @@ void nsp_classc_destroy(NspStructex *H)
  * info 
  */
 
-int nsp_classc_info(NspStructex *M,int indent,const char *name,int rec_level)
+int nsp_classc_info(NspClassC *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
   if ( M == NULLCLASSC) 
     {
-      Sciprintf("Null Pointer NspStructex \n");
+      Sciprintf("Null Pointer NspClassC \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
@@ -295,12 +295,12 @@ int nsp_classc_info(NspStructex *M,int indent,const char *name,int rec_level)
  * print 
  */
 
-int nsp_classc_print(NspStructex *M, int indent,const char *name, int rec_level)
+int nsp_classc_print(NspClassC *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( M == NULLCLASSC) 
     {
-      Sciprintf("Null Pointer NspStructex \n");
+      Sciprintf("Null Pointer NspClassC \n");
       return TRUE;
     }
   if (user_pref.pr_as_read_syntax) 
@@ -316,7 +316,7 @@ int nsp_classc_print(NspStructex *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_classc_type_short_string(NSP_OBJECT(M)), M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  nsp_print_Structex(indent+2,M->obj->value,M);
+  nsp_print_ClassC(indent+2,M->obj->value,M);
     Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -326,53 +326,53 @@ int nsp_classc_print(NspStructex *M, int indent,const char *name, int rec_level)
  * latex print 
  */
 
-int nsp_classc_latex(NspStructex *M, int indent,const char *name, int rec_level)
+int nsp_classc_latex(NspClassC *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_classc_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  nsp_print_Structex(indent+2,M->obj->value,M);
+  nsp_print_ClassC(indent+2,M->obj->value,M);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for NspStructex objects 
+ * for NspClassC objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspStructex   *nsp_classc_object(NspObject *O)
+NspClassC   *nsp_classc_object(NspObject *O)
 {
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_classc_id)  == TRUE  ) return ((NspStructex *) O);
+  if ( check_cast (O,nsp_type_classc_id)  == TRUE  ) return ((NspClassC *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_classc));
   return NULL;
 }
 
-int IsclasscObj(Stack stack, int i)
+int IsClassCObj(Stack stack, int i)
 {
   return nsp_object_type(NthObj(i),nsp_type_classc_id);
 }
 
-int Isclassc(NspObject *O)
+int IsClassC(NspObject *O)
 {
   return nsp_object_type(O,nsp_type_classc_id);
 }
 
-NspStructex  *GetclasscCopy(Stack stack, int i)
+NspClassC  *GetClassCCopy(Stack stack, int i)
 {
-  if (  Getclassc(stack,i) == NULL ) return NULL;
+  if (  GetClassC(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspStructex  *Getclassc(Stack stack, int i)
+NspClassC  *GetClassC(Stack stack, int i)
 {
-  NspStructex *M;
+  NspClassC *M;
   if (( M = nsp_classc_object(NthObj(i))) == NULLCLASSC)
      ArgMessage(stack,i);
   return M;
@@ -381,12 +381,12 @@ NspStructex  *Getclassc(Stack stack, int i)
 /*-----------------------------------------------------
  * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspStructex instance 
+ * create a NspClassC instance 
  *-----------------------------------------------------*/
 
-static NspStructex *nsp_classc_create_void(const char *name,NspTypeBase *type)
+static NspClassC *nsp_classc_create_void(const char *name,NspTypeBase *type)
 {
- NspStructex *H  = (type == NULL) ? new_classc() : type->new();
+ NspClassC *H  = (type == NULL) ? new_classc() : type->new();
  if ( H ==  NULLCLASSC)
   {
    Sciprintf("No more memory\n");
@@ -397,7 +397,7 @@ static NspStructex *nsp_classc_create_void(const char *name,NspTypeBase *type)
  return H;
 }
 
-int nsp_classc_create_partial(NspStructex *H)
+int nsp_classc_create_partial(NspClassC *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_classc)))== NULL ) return FAIL;
   H->obj->ref_count=1;
@@ -405,15 +405,15 @@ int nsp_classc_create_partial(NspStructex *H)
   return OK;
 }
 
-int nsp_classc_check_values(NspStructex *H)
+int nsp_classc_check_values(NspClassC *H)
 {
-  if ( nsp_check_Structex(H->obj->value,H) == FAIL ) return FAIL;
+  if ( nsp_check_ClassC(H->obj->value,H) == FAIL ) return FAIL;
   return OK;
 }
 
-NspStructex *nsp_classc_create(const char *name,Structex* value,NspTypeBase *type)
+NspClassC *nsp_classc_create(const char *name,ClassC* value,NspTypeBase *type)
 {
-  NspStructex *H  = nsp_classc_create_void(name,type);
+  NspClassC *H  = nsp_classc_create_void(name,type);
   if ( H ==  NULLCLASSC) return NULLCLASSC;
   if ( nsp_classc_create_partial(H) == FAIL) return NULLCLASSC;
   H->obj->value = value;
@@ -426,9 +426,9 @@ NspStructex *nsp_classc_create(const char *name,Structex* value,NspTypeBase *typ
 }
 
 
-NspStructex *nsp_classc_create_default(const char *name)
+NspClassC *nsp_classc_create_default(const char *name)
 {
- NspStructex *H  = nsp_classc_create_void(name,NULL);
+ NspClassC *H  = nsp_classc_create_void(name,NULL);
  if ( H ==  NULLCLASSC) return NULLCLASSC;
   if ( nsp_classc_create_partial(H) == FAIL) return NULLCLASSC;
   if ( nsp_classc_check_values(H) == FAIL) return NULLCLASSC;
@@ -439,15 +439,15 @@ NspStructex *nsp_classc_create_default(const char *name)
  * copy for gobject derived class  
  */
 
-NspStructex *nsp_classc_copy_partial(NspStructex *H,NspStructex *self)
+NspClassC *nsp_classc_copy_partial(NspClassC *H,NspClassC *self)
 {
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
 
-NspStructex *nsp_classc_copy(NspStructex *self)
+NspClassC *nsp_classc_copy(NspClassC *self)
 {
-  NspStructex *H  =nsp_classc_create_void(NVOID,(NspTypeBase *) nsp_type_classc);
+  NspClassC *H  =nsp_classc_create_void(NVOID,(NspTypeBase *) nsp_type_classc);
   if ( H ==  NULLCLASSC) return NULLCLASSC;
   if ( nsp_classc_copy_partial(H,self)== NULL) return NULLCLASSC;
 
@@ -457,17 +457,17 @@ NspStructex *nsp_classc_copy(NspStructex *self)
  * full copy for gobject derived class
  */
 
-NspStructex *nsp_classc_full_copy_partial(NspStructex *H,NspStructex *self)
+NspClassC *nsp_classc_full_copy_partial(NspClassC *H,NspClassC *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_classc))) == NULL) return NULLCLASSC;
   H->obj->ref_count=1;
-  if( nsp_Structex_full_copy(H,H->obj->value,self)== FAIL) return NULL;
+  if( nsp_ClassC_full_copy(H,H->obj->value,self)== FAIL) return NULL;
   return H;
 }
 
-NspStructex *nsp_classc_full_copy(NspStructex *self)
+NspClassC *nsp_classc_full_copy(NspClassC *self)
 {
-  NspStructex *H  =nsp_classc_create_void(NVOID,(NspTypeBase *) nsp_type_classc);
+  NspClassC *H  =nsp_classc_create_void(NVOID,(NspTypeBase *) nsp_type_classc);
   if ( H ==  NULLCLASSC) return NULLCLASSC;
   if ( nsp_classc_full_copy_partial(H,self)== NULL) return NULLCLASSC;
 #line 39 "codegen/classc.override"
@@ -478,13 +478,13 @@ NspStructex *nsp_classc_full_copy(NspStructex *self)
 }
 
 /*-------------------------------------------------------------------
- * wrappers for the NspStructex
+ * wrappers for the NspClassC
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
 int int_classc_create(Stack stack, int rhs, int opt, int lhs)
 {
-  NspStructex *H;
+  NspClassC *H;
   CheckStdRhs(0,0);
   /* want to be sure that type classc is initialized */
   nsp_type_classc = new_type_classc(T_BASE);
@@ -504,33 +504,75 @@ int int_classc_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static NspMethods *classc_get_methods(void) { return NULL;};
+static int _wrap_ZZg_action_get_parameter_type(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
+{
+  ClassC *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =ZZg_action_get_parameter_type(self);
+  nsp_type_classc= new_type_classc(T_BASE);
+  if((ret = nsp_copy_ClassC(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_classc_create(NVOID,ret,(NspTypeBase *) nsp_type_classc);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_ZZg_action_change_state(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  ClassC *value = NULL;
+  NspObject *nsp_value;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
+  if ( IsClassC(nsp_value))
+    { value = ((NspClassC *) nsp_value)->obj->value;
+      if((value = nsp_copy_ClassC(value))==NULL) return RET_BUG;
+    }
+  else
+    {
+      Scierror("Error: value should be of type ClassC\n");
+      return RET_BUG;
+    }
+    ZZg_action_change_state(self,value);
+  return 0;
+}
+
+static NspMethods classc_methods[] = {
+  {"test_return",(nsp_method *) _wrap_ZZg_action_get_parameter_type},
+  {"test_arg",(nsp_method *) _wrap_ZZg_action_change_state},
+  { NULL, NULL}
+};
+
+static NspMethods *classc_get_methods(void) { return classc_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
 
 static NspObject *_wrap_classc_get_value(void *self,const char *attr)
 {
-  Structex *ret;
-  ret = ((NspStructex *) self)->obj->value;
-  return NULL;
-
+  ClassC *ret;
+  NspObject *nsp_ret;
+  ret = ((NspClassC *) self)->obj->value;
+  nsp_type_classc= new_type_classc(T_BASE);
+  if((ret = nsp_copy_ClassC(ret))==NULL) return NULL;
+  nsp_ret =(NspObject*) nsp_classc_create(NVOID,ret,(NspTypeBase *) nsp_type_classc);
+  return nsp_ret;
 }
 
 static int _wrap_classc_set_value(void *self,const char *attr, NspObject *O)
 {
-  Structex *value = NULL;
-  NspObject *nsp_value;
-  if ( IsStructex(nsp_value))
-    { value = ((NspStructex *) nsp_value)->obj->value;
-      if((value = nsp_copy_Structex(value))==NULL) return RET_BUG;
+  ClassC *value = NULL;
+  NspObject *nsp_value= O;;
+  if ( IsClassC(nsp_value))
+    { value = ((NspClassC *) nsp_value)->obj->value;
+      if((value = nsp_copy_ClassC(value))==NULL) return RET_BUG;
     }
   else
     {
-      Scierror("Error: value should be of type Structex\n");
+      Scierror("Error: value should be of type ClassC\n");
       return RET_BUG;
     }
-  /* ((NspStructex *) self)->obj->value= value;*/
+  /* ((NspClassC *) self)->obj->value= value;*/
   return OK;
 }
 
@@ -548,67 +590,67 @@ static AttrTab classc_attrs[] = {
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab classc_func[]={
+static OpTab ClassC_func[]={
   { "classc_create", int_classc_create},
   { NULL, NULL}
 };
 
-/* call ith function in the classc interface */
+/* call ith function in the ClassC interface */
 
-int classc_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int ClassC_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return ( *(classc_func[i].fonc))(stack,rhs,opt,lhs);
+  return ( *(ClassC_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void classc_Interf_Info(int i, char **fname, function ( **f))
+void ClassC_Interf_Info(int i, char **fname, function ( **f))
 {
-  *fname = classc_func[i].name;
-  *f = classc_func[i].fonc;
+  *fname = ClassC_func[i].name;
+  *f = ClassC_func[i].fonc;
 }
 
 #line 47 "codegen/classc.override"
 
-/* A set of function provided for Structex */
+/* A set of function provided for ClassC */
 
-static int nsp_destroy_Structex(Structex *value,NspStructex *H)
+static int nsp_destroy_ClassC(ClassC *value,NspClassC *H)
 {
   return OK;
 }
 
-static int nsp_print_Structex(int indent,Structex *v,NspStructex *M)
+static int nsp_print_ClassC(int indent,ClassC *v,NspClassC *M)
 {
   Sciprintf1(indent+1,"print\n");
   return 0;
 }
 
-static int nsp_check_Structex(Structex *v,NspStructex *H)
+static int nsp_check_ClassC(ClassC *v,NspClassC *H)
 {
   return OK;
 }
 
-static int nsp_Structex_full_copy(NspStructex *H,Structex *value,NspStructex *self)
+static int nsp_ClassC_full_copy(NspClassC *H,ClassC *value,NspClassC *self)
 {
   return OK;
 }
 
-Structex *nsp_copy_Structex(Structex *gv)
+ClassC *nsp_copy_ClassC(ClassC *gv)
 {
   return gv;
 }
 
 /* needed if the field is not hidden */
-static int nsp_save_Structex(XDR *xdrs,Structex *value,NspStructex *self) 
+static int nsp_save_ClassC(XDR *xdrs,ClassC *value,NspClassC *self) 
 {
   return OK;
 }
 
 /* needed if the field is not hidden */
-static int nsp_load_Structex(XDR *xdrs,Structex *value,NspStructex *self) 
+static int nsp_load_ClassC(XDR *xdrs,ClassC *value,NspClassC *self) 
 {
   return OK;
 }
 
-#line 615 "classc.c"
+#line 657 "classc.c"
