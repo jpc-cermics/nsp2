@@ -26,7 +26,9 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyline3d(NspPolyline3d *P);
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
+#endif
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
@@ -242,9 +244,9 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 }
 
+#ifdef  WITH_GTKGLEXT
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
 {
-#ifdef  WITH_GTKGLEXT
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;
   int j,color;
   double x[2], y[2],z[2];
@@ -264,8 +266,8 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
       z[1] = L_coord[j+1+2*L->Mcoord->m];
       drawsegments3D(Xgc, x, y ,z, n, &color, flag);
     }
-#endif
 }
+#endif
 
 static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
 {

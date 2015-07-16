@@ -23,7 +23,9 @@ static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
+#endif 
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 static int zone(double val, double valmin, double valmax, int nv);
 static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
@@ -408,9 +410,9 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
 }
 
+#ifdef  WITH_GTKGLEXT
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 {
-#ifdef  WITH_GTKGLEXT
   int one_face_color = FALSE;
   int foreground_color = 1, cpat;
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
@@ -486,9 +488,8 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	}
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-
-#endif
 }
+#endif
 
 
 static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], int *n, int k)

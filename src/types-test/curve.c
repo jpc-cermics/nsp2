@@ -24,7 +24,7 @@
 
 
 
-#line 30 "codegen/curve.override"
+#line 34 "codegen/curve.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/curve.h>
@@ -104,7 +104,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
   type->init = (init_func *) init_curve;
 
-#line 43 "codegen/curve.override"
+#line 47 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -676,7 +676,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 65 "codegen/curve.override"
+#line 69 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -698,7 +698,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 80 "codegen/curve.override"
+#line 84 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -781,7 +781,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 110 "codegen/curve.override"
+#line 114 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -793,7 +793,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 #line 794 "curve.c"
 
 
-#line 120 "codegen/curve.override"
+#line 124 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -834,7 +834,7 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
   *f = Curve_func[i].fonc;
 }
 
-#line 131 "codegen/curve.override"
+#line 135 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /*
@@ -1082,6 +1082,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
 }
 
+#ifdef  WITH_GTKGLEXT
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
   double xi ;
@@ -1175,6 +1176,10 @@ static NspMatrix *nsp_curve_stairs_alloc(NspMatrix *M)
   ym[2*(M->m-1)] = M->R[M->m-1+M->m];
   return loc;
 }
+#endif 
+
+
+
 
 static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M)
 {
@@ -1248,4 +1253,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1252 "curve.c"
+#line 1257 "curve.c"

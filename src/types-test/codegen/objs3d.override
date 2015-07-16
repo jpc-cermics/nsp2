@@ -449,10 +449,10 @@ static NspList *nsp_objs3d_children(NspGraphic *Obj)
   return  ((NspObjs3d *) Obj)->obj->children;
 }
 
-
+#ifdef WITH_GTKGLEXT
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *,double theta,double alpha,const char *legend,
 				 int *flag,double *ebox,int with_box,int box_color,int box_style);
-
+#endif
 
 
 

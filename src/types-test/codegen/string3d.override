@@ -21,7 +21,9 @@ static int nsp_getbounds_string3d(NspGraphic *o,double *bounds);
 static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_string3d(NspString3d *P);
+#ifdef  WITH_GTKGLEXT
 static void draw_string3d_ogl(BCG *Xgc,void *Ob);
+#endif
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
@@ -211,8 +213,10 @@ int nsp_check_string3d( NspString3d *P)
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 static void draw_justified_string3d(BCG *Xgc,NspGraphic *V, int xj, int yj);
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj);
+#ifdef  WITH_GTKGLEXT
 static void draw_string3d_ogl(BCG *Xgc,void *Ob);
 static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj);
+#endif
 
 static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
@@ -255,6 +259,7 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
 
 }
 
+#ifdef  WITH_GTKGLEXT
 static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 {
   draw_justified_string3d_ogl(Xgc,Ob,CENTER,CENTER);
@@ -262,7 +267,6 @@ static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 
 static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
 {
-#ifdef  WITH_GTKGLEXT 
   int fontid[2],current_fontid[2];
   nsp_string3d *S = ((NspString3d *) Obj)->obj;
   const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
@@ -281,8 +285,8 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   draw_justified_string(Xgc,S->str,Tcoord[0],Tcoord[1], xj, yj);
   Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1], FALSE);
   nsp_ogl_set_3dview(Xgc);
-#endif 
 }
+#endif 
 
 
 static void zmean_faces_for_String3d(void *Obj, double z[], HFstruct HF[], int *n, int k)

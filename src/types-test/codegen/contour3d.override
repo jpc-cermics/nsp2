@@ -23,7 +23,9 @@ static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, i
 static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_contour3d(NspContour3d *P);
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
+#endif 
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
@@ -224,11 +226,12 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   nsp_contour3d_draw_new(Xgc,Q->x->R,Q->y->R,Q->z->R,Q->x->mn,Q->y->mn,nz, zz,Q->flag,Q->zlev);
 }
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob)
 {
   draw_contour3d_face(Xgc,Ob,0);
 }
-
+#endif 
 
 
 static void zmean_faces_for_Contour3d(void *Obj, double z[], HFstruct HF[], int *n, int k)

@@ -3808,16 +3808,9 @@ let struct_arg_attr_write_save _varname params _byref=
 ;;
 
 let struct_arg_attr_write_load _struct_data _varname params _byref=
-  let lname = "n_" ^ params.pname in
-  let lname = if _byref then  "obj->" ^ lname else lname in
   let pname = if _byref then  "obj->" ^ params.pname else params.pname in
-  let (flag, ptype) = strip_type params.ptype in
-  if flag then
-    (Printf.sprintf "  if (( M->%s = malloc(M->%s*sizeof(%s))) == NULL )\n " pname lname ptype)
-    ^ (Printf.sprintf "    return NULL;\n")
-    ^ (Printf.sprintf "  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n" ptype pname)
-  else
-    Printf.sprintf "  if ( nsp_load_%s(xdrs,&M->%s,M) == FAIL ) return NULL;\n" ptype pname
+  let (_flag, ptype) = strip_type params.ptype in
+  (Printf.sprintf "  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n" ptype pname)
 ;;
 
 let rstrip str str_strip =

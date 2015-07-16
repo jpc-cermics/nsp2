@@ -27,7 +27,9 @@ static int nsp_getbounds_polyhedron(NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);
+#ifdef  WITH_GTKGLEXT 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+#endif 
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
@@ -405,9 +407,9 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
-#ifdef  WITH_GTKGLEXT 
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
   int i,j, m;
   double x_def[128], y_def[128], z_def[128];
@@ -460,8 +462,8 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-#endif
 }
+#endif
 
 /* 
  * this function is to be called after a transformation which have filled 

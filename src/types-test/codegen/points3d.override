@@ -26,7 +26,9 @@ static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, in
 static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_points3d(NspPoints3d *P);
 
+#ifdef WITH_GTKGLEXT
 static void draw_points3d_ogl(BCG *Xgc,void *Ob);
+#endif
 static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
@@ -255,9 +257,9 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
 #endif 
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
-#ifdef  WITH_GTKGLEXT 
   int mark[2],current_mark[2],color=0;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   int j;
@@ -301,8 +303,8 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
     {
       Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
-#endif 
 }
+#endif 
 
 static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
 {

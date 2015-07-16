@@ -12,7 +12,7 @@ ALL=  classa.defs classb.defs classaref.defs classbref.defs \
 	gmatrix1.defs fec.defs contour3d.defs block.defs link.defs \
 	connector.defs diagram.defs grimage.defs epoints.defs sharedlib.defs \
 	hm.defs ast.defs astv.defs bvar.defs \
-	stochdec.defs bson.defs
+	stochdec.defs bson.defs classc.defs
 
 PROG=../../../bin/nspbind
 
@@ -27,7 +27,7 @@ all::	$(TARGET)
 	@echo "generate $*.c and include files"
 	@$(PROG) -o $*.c $*
 	@$(RM) ../$*.c ; mv $*.c ../
-	@$(RM) $(ISRC)/$*.h
+	@$(RM) -f $(ISRC)/$*.h
 	@mv $*.h $(ISRC)/$*.h
 
 ../../libgraphviz/agraph.c: agraph.defs
@@ -45,6 +45,7 @@ clean:
 
 ../classa.c : classa-types.defs classa.defs classa.override
 ../classb.c : classb-types.defs classb.defs  classb.override
+../classc.c : classc.defs  classc.override
 ../classaref.c : classaref-types.defs classaref.defs  classaref.override
 ../classbref.c : classbref-types.defs classbref.defs classbref.override
 ../polyline.c : polyline-types.defs polyline.defs  polyline.override
