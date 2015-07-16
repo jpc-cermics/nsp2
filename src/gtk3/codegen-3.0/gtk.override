@@ -1028,7 +1028,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
       /** A copy of object is entered as an object property **/
       /** GetObj takes care of Hobj pointers **/
       if (( nsp_value =nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
-      property_name =nsp_object_get_name(nsp_value);
+      property_name = nsp_object_get_name(NthObj(i));
       pspec = gtk_container_class_find_child_property(class, property_name);
       if (!pspec) {
 	Scierror("container does not support property `%s'",property_name);
@@ -1111,17 +1111,17 @@ override gtk_container_add_with_properties
 static int
 _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspGObject *pychild;
+  NspGObject *nsp_child;
   GtkContainer *container;
   GtkWidget *child;
   GObjectClass *class;
   int i;
 
   CheckRhs(1,100);
-  if ((pychild = GetGtkWidget(stack,1)) == NULL) return RET_BUG;
+  if ((nsp_child = GetGtkWidget(stack,1)) == NULL) return RET_BUG;
 
   container = GTK_CONTAINER(self->obj);
-  child = GTK_WIDGET(pychild->obj);
+  child = GTK_WIDGET(nsp_child->obj);
 
   gtk_widget_freeze_child_notify(child);
   gtk_container_add(container, child);
@@ -1139,10 +1139,10 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
 	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
-      /** A copy of object is entered as an object property **/
-      /** GetObj takes care of Hobj pointers **/
+      /* A copy of object is entered as an object property */
+      /* GetObj takes care of Hobj pointers */
       if (( nsp_value =nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
-      property_name =nsp_object_get_name(nsp_value);
+      property_name = nsp_object_get_name(NthObj(i));
       pspec = gtk_container_class_find_child_property(class, property_name);
       if (!pspec) {
 	Scierror("container does not support property `%s'",property_name);
@@ -1439,16 +1439,16 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
 {
   int_types T[] = {obj_check,t_end} ;
   /* static char *kwlist[] = { "child", NULL };*/
-  NspGObject *pychild;
+  NspGObject *nsp_child;
   GtkWidget *child;
   GList *children;
   gboolean expand, fill;
   guint padding;
   GtkPackType pack_type;
 
-  if (GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &pychild)== FAIL) return RET_BUG;
+  if (GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &nsp_child)== FAIL) return RET_BUG;
 
-  child = GTK_WIDGET(pychild->obj);
+  child = GTK_WIDGET(nsp_child->obj);
   children = gtk_container_get_children(GTK_CONTAINER(self->obj));
   if (g_list_find(children, child) == NULL) {
     Scierror(
@@ -3636,7 +3636,6 @@ gtk_signal_add_emission_hook*
 gtk_signal_connect*
 gtk_signal_new*
 gtk_target_list_*
-gtk_text_view_new
 %%
 ignore
 gtk_binding_set_new

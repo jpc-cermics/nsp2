@@ -12126,7 +12126,8 @@
 (define-method get_string
   (of-object "GVariant")
   (c-name "g_variant_get_string")
-  (call "  ret =g_variant_get_string(self->obj->value,NULL);")
+  ;; we need a copy
+  (call "  ret =g_variant_dup_string(self->obj->value,NULL);")
   (return-type "const-gchar*")
   ;; (parameters '("int*" "length") )
 )
@@ -12134,10 +12135,9 @@
 (define-method dup_string
   (of-object "GVariant")
   (c-name "g_variant_dup_string")
+  (call "  ret =g_variant_dup_string(self->obj->value,NULL);")
   (return-type "gchar*")
-  (parameters
-    '("gsize*" "length")
-  )
+  ;;(parameters'("gsize*" "length"))
 )
 
 (define-method get_strv

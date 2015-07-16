@@ -25857,7 +25857,7 @@
   (is-constructor-of "GtkTextView")
   (return-type "GtkTextView*")
   (parameters
-    '("GtkTextBuffer*" "buffer" (null-ok) (default "NULL"))
+    '("GtkTextBuffer*" "buffer" )
   )
 )
 

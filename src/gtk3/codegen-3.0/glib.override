@@ -264,6 +264,11 @@ static int nsp_print_GVariant(int indent,GVariant *v,NspGVariant *M)
 
 static int nsp_check_GVariant(GVariant *v,NspGVariant *H)
 {
+  if (g_variant_is_floating (v) )
+    {
+      /* Sciprintf("The variant is floating\n"); */
+    }
+  g_variant_ref_sink(v);
   return OK;
 }
 
@@ -318,5 +323,3 @@ GVariantType *nsp_copy_GVariantType(GVariantType *gv)
 {
   return g_variant_type_copy(gv);
 }
-
-

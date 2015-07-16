@@ -30,6 +30,8 @@
 #include <nsp/file.h>
 #include <nsp/type.h>
 #include <nsp/hobj.h>
+#include <glib.h>
+#include <nsp/gvariant.h>
 #include "nsp/gtk/gobject.h"
 #include "nsp/gtk/gpointer.h"
 #include "nsp/gtk/gboxed.h"
@@ -1253,6 +1255,7 @@ static OpTab NspGObject_func[]={
   {"gobject_create",int_gobj_create},
   {"setrowscols_gobj",int_set_attribute},
   {"gtk_timeout_add",int_gtk_timeout_add},
+  {"g_timeout_add",int_gtk_timeout_add},
   {"g_source_destroy",int_g_source_destroy},
   {"g_source_remove",int_g_source_remove},
   {"gtk_quit_add",int_gtk_quit_add},
@@ -1322,7 +1325,7 @@ NspGObject *nspgobject_new(const char *name, GObject *obj)
 {
   GType gtype, p_gtype;
   NspTypeBase *type;
-  if ( obj == NULL) 
+  if ( obj == NULL)
     {
       return (NspGObject *) nsp_none_create(NVOID,NULL);
     }
@@ -2290,32 +2293,6 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       else
 	return (NspObject *)gboxed_create(NVOID,G_VALUE_TYPE(value), g_value_get_boxed(value),FALSE,FALSE,type);
     }
-
-      /*
-	 PyGBoxedMarshal *bm;
-
-	 if (G_VALUE_HOLDS(value, PY_TYPE_OBJECT)) {
-	 NspObject *ret = (NspObject *)g_value_dup_boxed(value);
-	 if (ret == NULL) {
-	 Py_INCREF(Py_None);
-	 return Py_None;
-	 }
-	 return ret;
-	 }
-
-	 bm = nspg_boxed_lookup(G_VALUE_TYPE(value));
-	 if (bm) {
-	 return bm->fromvalue(value);
-	 } else {
-	 if (copy_boxed)
-	 return nspg_boxed_new(G_VALUE_TYPE(value),
-	 g_value_get_boxed(value), TRUE, TRUE);
-	 else
-	 return nspg_boxed_new(G_VALUE_TYPE(value),
-	 g_value_get_boxed(value),FALSE,FALSE);
-	 }
-      */
-
     case G_TYPE_PARAM:
       /*
       return nspg_param_spec_new(g_value_get_param(value));
@@ -2341,9 +2318,19 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	 *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
 	 */
       }
+
+    case G_TYPE_VARIANT :
+      {
+	GVariant *gv= g_value_get_variant(value);
+	if ( gv != NULL)
+	  return (NspObject*) nsp_gvariant_create(NVOID,gv,(NspTypeBase *) nsp_type_gvariant);
+	else
+	  return (NspObject *) nsp_none_create(NVOID,NULL);
+      }
     default:
       break;
     }
+  Sciprintf("Warning: Do not know how to build...\n");
   Scierror("Do not know how to build an object from a gvalue of type %s\n",
 	   g_type_name(G_VALUE_TYPE(value)));
   return NULL;
