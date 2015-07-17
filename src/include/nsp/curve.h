@@ -134,13 +134,17 @@ static void nsp_translate_curve(NspGraphic *o,const double *tr);
 static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
-static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi);
 static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M);
 static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M);
+
+#ifdef  WITH_GTKGLEXT
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M);
+static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi);
+#endif
+
 static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M);
 static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M);
 
-#line 145 "./curve.h"
+#line 149 "./curve.h"
 #endif /* NspCurve_Private */
 

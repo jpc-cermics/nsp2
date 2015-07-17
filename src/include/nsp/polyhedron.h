@@ -137,9 +137,11 @@ static int nsp_getbounds_polyhedron(NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);
+#ifdef  WITH_GTKGLEXT 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
+#endif 
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 144 "./polyhedron.h"
+#line 146 "./polyhedron.h"
 #endif /* NspPolyhedron_Private */
 

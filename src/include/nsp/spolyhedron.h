@@ -149,7 +149,9 @@ static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);
 
+#ifdef  WITH_GTKGLEXT 
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob);
+#endif 
 static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 static int zone(double val, double valmin, double valmax, int nv);
 static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, double *zlevel, int *fill);
@@ -157,6 +159,6 @@ static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z,
 			      int inda, int indb, int *xint, int *yint);
 
-#line 161 "./spolyhedron.h"
+#line 163 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 

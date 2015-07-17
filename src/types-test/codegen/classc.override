@@ -1,0 +1,86 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+%%
+include-start ClassC
+
+/* */
+typedef struct _ClassC ClassC;
+
+struct _ClassC {
+  int *s;
+};
+
+%%
+include-private ClassC
+
+static int nsp_destroy_ClassC(ClassC *v,NspClassC *H);
+static int nsp_print_ClassC(int indent,ClassC *v,NspClassC *M);
+static int nsp_check_ClassC(ClassC *v,NspClassC *H);
+static int nsp_ClassC_full_copy(NspClassC *H,ClassC *v,NspClassC *self);
+static int nsp_save_ClassC(XDR *xdrs,ClassC *value,NspClassC *self);
+static int nsp_load_ClassC(XDR *xdrs,ClassC *value,NspClassC *self);
+%%
+include-public ClassC
+
+ClassC *nsp_copy_ClassC(ClassC *gv);
+
+%%
+init 
+/ * init code  * /
+
+%%
+modulename 
+/* %%  import gobject.GObject as GObject */
+
+%%
+override-int-create-final ClassC 
+  /* verbatim in create interface  */
+
+%%
+override-destroy-prelim ClassC
+  /* verbatim in destroy */
+
+%%
+last 
+
+/* A set of function provided for ClassC */
+
+static int nsp_destroy_ClassC(ClassC *value,NspClassC *H)
+{
+  return OK;
+}
+
+static int nsp_print_ClassC(int indent,ClassC *v,NspClassC *M)
+{
+  Sciprintf1(indent+1,"print\n");
+  return 0;
+}
+
+static int nsp_check_ClassC(ClassC *v,NspClassC *H)
+{
+  return OK;
+}
+
+static int nsp_ClassC_full_copy(NspClassC *H,ClassC *value,NspClassC *self)
+{
+  return OK;
+}
+
+ClassC *nsp_copy_ClassC(ClassC *gv)
+{
+  return gv;
+}
+
+/* needed if the field is not hidden */
+static int nsp_save_ClassC(XDR *xdrs,ClassC *value,NspClassC *self) 
+{
+  return OK;
+}
+
+/* needed if the field is not hidden */
+static int nsp_load_ClassC(XDR *xdrs,ClassC *value,NspClassC *self) 
+{
+  return OK;
+}

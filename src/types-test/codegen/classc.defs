@@ -1,0 +1,44 @@
+;; -*- scheme -*-
+
+;; We give here an example of a struct 
+;; which can be encapsulated in a nsp-class 
+;; the user has to provide a minimal set of functions 
+;; in the override file 
+;; The class can be byref or not 
+
+(define-structref classc
+  (in-module "ClassC")
+  (parent "Object")
+  (c-name "ClassC")
+  (gtype-id ""); not used 
+)
+
+(define-objectref ClassC
+  (in-module "ClassC")
+  (parent "Object")
+  (c-name "NspClassC")
+  (fields
+   '("ClassC*" "value" );//"hidden" "-1" )
+   )
+  (gtype-id "ClassC"); not used 
+)
+
+;; when a function returns a Structex*
+
+(define-method test_return
+  (of-object "ClassC")
+  (c-name "ZZg_action_get_parameter_type")
+  (return-type "const-ClassC*")
+)
+
+;; when a function use a Structex* as argument
+
+(define-method test_arg  
+  (of-object "ClassC")
+  (c-name "ZZg_action_change_state")
+  (return-type "none")
+  (parameters
+    '("ClassC*" "value")
+  )
+)
+

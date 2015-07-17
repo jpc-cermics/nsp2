@@ -141,11 +141,13 @@ static void nsp_points3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, in
 static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_points3d(NspPoints3d *P);
 
+#ifdef WITH_GTKGLEXT
 static void draw_points3d_ogl(BCG *Xgc,void *Ob);
+#endif
 static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 150 "./points3d.h"
+#line 152 "./points3d.h"
 #endif /* NspPoints3d_Private */
 
