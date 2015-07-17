@@ -28,6 +28,7 @@
 (define-method test_return
   (of-object "ClassC")
   (c-name "ZZg_action_get_parameter_type")
+  (call " ret=NULL; ")
   (return-type "const-ClassC*")
 )
 
@@ -36,6 +37,7 @@
 (define-method test_arg  
   (of-object "ClassC")
   (c-name "ZZg_action_change_state")
+  (call "  ")
   (return-type "none")
   (parameters
     '("ClassC*" "value")

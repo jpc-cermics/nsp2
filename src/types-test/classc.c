@@ -509,7 +509,7 @@ static int _wrap_ZZg_action_get_parameter_type(NspClassC *self,Stack stack,int r
   ClassC *ret;
   NspObject *nsp_ret;
   CheckRhs(0,0);
-    ret =ZZg_action_get_parameter_type(self);
+ ret=NULL; 
   nsp_type_classc= new_type_classc(T_BASE);
   if((ret = nsp_copy_ClassC(ret))==NULL) return RET_BUG;
   nsp_ret =(NspObject*) nsp_classc_create(NVOID,ret,(NspTypeBase *) nsp_type_classc);
@@ -533,7 +533,7 @@ static int _wrap_ZZg_action_change_state(NspClassC *self,Stack stack,int rhs,int
       Scierror("Error: value should be of type ClassC\n");
       return RET_BUG;
     }
-    ZZg_action_change_state(self,value);
+  
   return 0;
 }
 
