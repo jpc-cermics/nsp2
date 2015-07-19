@@ -100,7 +100,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
 %%
 override g_menu_model_get_item_link
 
-/* XXX we want to return the most specialized type 
+/* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
  * XXX this should be the generic rule for all methods ?
  */
@@ -127,12 +127,12 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
   Scierror("Error: function g_menu_model_get_item_link not available\n");
   return RET_BUG;
 }
-#endif 
+#endif
 
 %%
 override g_action_map_lookup_action
 
-/* XXX we want to return the most specialized type 
+/* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
  * XXX this should be the generic rule for all methods ?
  */
@@ -159,3 +159,19 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
   return RET_BUG;
 }
 #endif
+
+%%
+override g_application_get_default
+/* XXX we want to return the most specialized type */
+
+int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g_application_get_default */
+{
+  GApplication *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_application_get_default();
+  nsp_type_gapplication = new_type_gapplication(T_BASE);
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *)ret)) == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}

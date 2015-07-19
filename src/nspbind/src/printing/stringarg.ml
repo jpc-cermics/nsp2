@@ -3688,12 +3688,12 @@ let make_nsp_object_arg  ngd =
 ;;
 
 (* struct_arg : declared with define-struct or define-structref
- * we assume that a Nsp class is associated and has the same name 
+ * we assume that a Nsp class is associated and has the same name
  * when a struct arg is used as parameter or returned we make a copy
  * ----------------------------------------------------------------
  *)
 
-let struct_check object_rec name = 
+let struct_check object_rec name =
   let typename = object_rec.or_c_name in
   let byref = object_rec.or_byref in
   let tag = if byref then "obj->" else "" in
@@ -3712,7 +3712,7 @@ let struct_null object_rec name =
   let typename = object_rec.or_c_name in
   let byref = object_rec.or_byref in
   let tag = if byref then "obj->" else "" in
-  Printf.sprintf 
+  Printf.sprintf
     "  if (nsp_%s != NULL)\
   \n     {\
   \n      if( Is%s(nsp_%s))\
@@ -3722,7 +3722,7 @@ let struct_null object_rec name =
   \n         return RET_BUG;\
   \n        }\
   \n      if((%s = nsp_copy_%s(%s))==NULL) return RET_BUG;\
-  \n     }\n" name typename name name typename name tag name typename name typename name 
+  \n     }\n" name typename name name typename name tag name typename name typename name
   ;;
 
 (* when a struct_arg is a parameter *)
@@ -3732,10 +3732,10 @@ let struct_arg_write_param_gen object_rec _oname params info _byref set_value =
   let varlist = varlist_add info.varlist object_rec.or_c_name ("*" ^ name ^ " = NULL") in
   let codebefore =
     if params.pnull then
-      struct_null object_rec name 
+      struct_null object_rec name
     else
       struct_check object_rec name in
-  let initial_value = 
+  let initial_value =
     if set_value == "" then
       (if params.pnull then" = NULL" else "")
     else set_value in
@@ -3753,7 +3753,7 @@ let struct_arg_write_param object_rec _oname params info _byref =
   struct_arg_write_param_gen object_rec _oname params info _byref ""
 ;;
 
-(* when the field is set *) 
+(* when the field is set *)
 
 let struct_arg_attr_write_set object_rec oname params info byref=
   let pset_name = pset_name_set byref oname params.pname in
@@ -3782,7 +3782,7 @@ let struct_arg_write_return object_rec ptype _ownsreturn info =
 
 (* when an attribute is returned  *)
 
-let struct_arg_attr_write_return object_rec _objinfo _ownsreturn params info= 
+let struct_arg_attr_write_return object_rec _objinfo _ownsreturn params info=
   let (flag, _ptype) = strip_type params.ptype in
   let tag = if flag then "" else "&" in
   let tagdec = if flag then "*" else "" in
@@ -4390,7 +4390,7 @@ let atom_arg_write_param _oname params info _byref=
 let atom_arg_write_return _ptype _ownsreturn info =
   let varlist = varlist_add info.varlist "GdkAtom" ( "ret") in
   let varlist = varlist_add varlist "NspObject" ( "*nsp_ret") in
-  let codeafter ="  if (( nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL))== NULL);\n"  ^
+  let codeafter ="  if (( nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,ret,NULL))== NULL)\n"  ^
     "    return RET_BUG;\n"  ^
     "  MoveObj(stack,1,nsp_ret);\n  return 1;" in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
@@ -4936,6 +4936,7 @@ let matcher_hash = of_bindings [
   "@@CustomBoxed", (make_custom_boxed_arg
                       (init_custom_boxed_data "getter" "checker" "new_s" "type_s"));
   "gchar**", string_array_arg;
+  "char**", string_array_arg;
 ]
 ;;
 

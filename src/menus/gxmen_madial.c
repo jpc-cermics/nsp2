@@ -62,11 +62,11 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
   vbox =gtk_dialog_get_content_area( GTK_DIALOG(window));
 
   nsp_dialogs_insert_title(title,vbox);
-  
+
   /* initialize */
-  
+
   maxl = 0;
-  for (i = 0; i < M->m ; i++) 
+  for (i = 0; i < M->m ; i++)
     {
       int maxj=0,j;
       for ( j=0 ; j < M->n ; j++)
@@ -74,9 +74,9 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
       maxl = Max(maxl,maxj);
     }
 
-  if ( maxl > 40 || M->n > 10 || M->m > 10 ) 
+  if ( maxl > 40 || M->n > 10 || M->m > 10 )
     {
-      /* here we need a scrolled window */ 
+      /* here we need a scrolled window */
       scrolled_win = gtk_scrolled_window_new (NULL, NULL);
       gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 1);
       gtk_widget_set_size_request (scrolled_win,400,300);
@@ -84,27 +84,27 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
-      if ( entry_style == TRUE ) 
+      if ( entry_style == TRUE )
 	list = nsp_matrix_table(Labels_v,Labels_h,M,entry_size);
-      else 
+      else
 	list = nsp_matrix_create_tree_view(Labels_v,Labels_h,M);
       /* gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list); */
       gtk_container_add(GTK_CONTAINER(scrolled_win),list);
     }
-  else 
-    { 
+  else
+    {
       /* no need to add a viewport */
       GtkWidget *frame = gtk_frame_new(NULL);
-      GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);  
+      GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);
       gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
       gtk_container_add (GTK_CONTAINER (frame),fvbox);
       gtk_widget_show(fvbox);
-      if ( entry_style == TRUE) 
+      if ( entry_style == TRUE)
 	list = nsp_matrix_table(Labels_v,Labels_h,M,entry_size);
-      else 
+      else
 	list = nsp_matrix_create_tree_view(Labels_v,Labels_h,M);
       gtk_container_add (GTK_CONTAINER (fvbox),list);
       gtk_widget_show(list);
@@ -116,11 +116,11 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
       case GTK_RESPONSE_ACCEPT:
       case GTK_RESPONSE_OK:
 	answer = menu_ok;
-	if ( entry_style == TRUE) 
+	if ( entry_style == TRUE)
 	  {
 	    if ( nsp_matrix_table_get_values(list,M)== FAIL) answer = menu_fail;
 	  }
-	else 
+	else
 	  {
 	    model  = gtk_tree_view_get_model (GTK_TREE_VIEW(list));
 	    if (nsp_smatrix_from_model(M, model)== FAIL)  answer = menu_fail;
@@ -137,7 +137,7 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
 
 static GtkListStore* create_list_model(NspSMatrix *rownames,NspSMatrix *M)
 {
-  GType *types; 
+  GType *types;
   GtkListStore *store;
   GtkTreeIter iter;
   gint i=0, ncol = ( rownames != NULL) ? M->n + 1 :  M->n;
@@ -190,13 +190,13 @@ static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *rownames,NspSMatrix *
   model = GTK_TREE_MODEL(create_list_model(rownames,S));
   tv = gtk_tree_view_new_with_model (model);
 
-  if ( colnames == NULL) 
+  if ( colnames == NULL)
     {
       /* pour ne pas voir les headers */
       gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tv),FALSE);
     }
   /* a cell renderer for row names */
-  if ( rownames != NULL) 
+  if ( rownames != NULL)
     {
       GValue value_c = { 0, };
       rend = gtk_cell_renderer_text_new ();
@@ -240,7 +240,7 @@ static int nsp_smatrix_from_model(NspSMatrix *M, GtkTreeModel *model)
   while ( g == TRUE)
     {
       int j,j1=0;
-      if (M->n < ncol ) 
+      if (M->n < ncol )
 	{
 	  /* rownames were inserted in model */
 	  j1=1;
@@ -251,7 +251,7 @@ static int nsp_smatrix_from_model(NspSMatrix *M, GtkTreeModel *model)
 	  const gchar *str;
 	  gtk_tree_model_get_value(GTK_TREE_MODEL (model),&iter,j+j1,&value);
 	  str = g_value_get_string(&value);
-	  if ( strcmp(str,M->S[row+M->m*j]) != 0) 
+	  if ( strcmp(str,M->S[row+M->m*j]) != 0)
 	    {
 	      char *s;
 	      if ((s =nsp_string_copy(str)) == (nsp_string) 0) return FAIL;
@@ -276,17 +276,17 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
   /* Allocation of table of widgets */
   if ((entries=(GtkWidget **)MALLOC(  (M->mn)*sizeof(GtkWidget *)))== NULL)
     return NULL;
-  
+
   /* table = gtk_table_new (M->m+1,M->n+1, FALSE); */
   table = gtk_grid_new();
-  
+
   g_object_set_data_full (G_OBJECT(table),"entries",entries, g_free);
 
   /* gtk_table_set_homogeneous(GTK_TABLE(table),FALSE); */
   gtk_widget_show(table);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
-  
-  if ( Labels_v != NULL) 
+
+  if ( Labels_v != NULL)
     {
       /* The first column : a set of labels */
       for (j=0 ; j < M->m ; j++)
@@ -295,21 +295,21 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  label = gtk_label_new (Labels_v->S[j]);
 	  gtk_widget_show (label);
 	  /* gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0); */
-	  gtk_grid_attach(GTK_GRID (table),label,0,1,j+1,j+2);
+	  gtk_grid_attach(GTK_GRID (table),label,0,j+1,1,1);
 	}
     }
-  
-  for (i=0 ; i< M->n ; i++) 
+
+  for (i=0 ; i< M->n ; i++)
     {
       /* The first row */
-      if ( Labels_h != NULL) 
+      if ( Labels_h != NULL)
 	{
-	  /* first a label */ 
+	  /* first a label */
 	  GtkWidget *label;
 	  label = gtk_label_new (Labels_h->S[i]);
 	  gtk_widget_show (label);
 	  /* gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);*/
-	  gtk_grid_attach (GTK_GRID(table),label,i+1,i+2,0,1);
+	  gtk_grid_attach (GTK_GRID(table),label,i+1,0,1,1);
 	}
       for (j=0 ; j< M->m ; j++)
 	{
@@ -321,7 +321,7 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  gtk_entry_set_text (GTK_ENTRY(entry),M->S[j+i*M->m]);
 	  gtk_widget_show (entry);
 	  /* gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
-	  gtk_grid_attach (GTK_GRID (table),entry,i+1,i+2,j+1,j+2);
+	  gtk_grid_attach (GTK_GRID (table),entry,i+1,j+1,1,1);
 	}
     }
   return table;
@@ -332,7 +332,7 @@ static int nsp_matrix_table_get_values(GtkWidget *table,NspSMatrix *S)
   int i;
   GtkWidget **entries=  g_object_get_data(G_OBJECT(table),"entries");
   if ( entries == NULL) return FAIL;
-  for (i=0; i < S->mn  ; i++) 
+  for (i=0; i < S->mn  ; i++)
     {
       char *loc;
       char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,

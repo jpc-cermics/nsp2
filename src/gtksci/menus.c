@@ -1255,7 +1255,12 @@ void create_prop_editor(){};
 
 static void nsp_menu_demos(void)
 {
+#if GTK_CHECK_VERSION (3,0,0)
+  enqueue_nsp_command( get_sci_data_strings(6));
+#else
   enqueue_nsp_command( get_sci_data_strings(2));
+#endif
+
 }
 
 /**

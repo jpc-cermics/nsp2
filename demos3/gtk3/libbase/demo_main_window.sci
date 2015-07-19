@@ -41,7 +41,7 @@ function demo_main_window()
   B('scribble')=  demo_scribble,
   // B('actions')= demo_actions,
   B('pickers') = demo_pickers,
-  B('stack') = demo_stack,
+  // B('stack') = demo_stack,
   B('assistant') = demo_assistant,
   B('gmenumodel') = demo_gmenumodel,
 

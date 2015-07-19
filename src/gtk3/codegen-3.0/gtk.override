@@ -23,6 +23,10 @@ headers
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 
+#include <nsp/all-glib.h>
+#include <nsp/gvariant.h>
+#include <nsp/gvarianttype.h>
+
 /* utility */
 
 #define nsp_style_color_array_get_bg(x,pos)   &((x)->bg[Min(4,Max(0,pos))])
@@ -513,21 +517,20 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 }
 %%
 override gtk_selection_data_get_text noargs
+
 static int
 _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,int lhs)
 {
-  /*
-  guchar *ret;
-  ret = gtk_selection_data_get_text(nspg_boxed_get(self, GtkSelectionData));
-  if (ret) {
-    NspObject *nsp_ret = NspUnicode_DecodeUTF8(ret, strlen(ret), "strict");
-    g_free(ret);
-    return nsp_ret;
-  }
-  */
-  Scierror("To be done XXXXX gtk_selection_data_get_text");
-  return 0;
+  guchar *ret =  gtk_selection_data_get_text(nspg_boxed_get(self, GtkSelectionData));
+  if ( nsp_move_string(stack,1,(gchar *) ret,-1)== FAIL)
+    {
+      g_free(ret);
+      return RET_BUG;
+    }
+  g_free(ret);
+  return 1;
 }
+
 %%
 override gtk_selection_data_get_targets noargs
 static int
@@ -4248,15 +4251,15 @@ static int _wrap1_gtk_image_new_from_animation(Stack stack, int rhs, int opt, in
 
 static int _wrap1_gtk_image_new_from_icon_name(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str;
-  int_types T[] = {string,obj,t_end};
+  char *str,*icon_name;
+  int_types T[] = {string,string,obj,t_end};
   GtkIconSize icon_size;
   NspObject *nsp_icon_size;
   NspObject *nsp_ret;
   GtkWidget *ret;
-  if ( GetArgs(stack,rhs,opt,T,&str,&nsp_icon_size) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&str,&icon_name,&nsp_icon_size) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_icon_size,&icon_size)== FAIL) return RET_BUG;
-  ret = gtk_image_new_from_icon_name(str, icon_size);
+  ret = gtk_image_new_from_icon_name(icon_name, icon_size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkimage))== NULL)
     return RET_BUG;
@@ -7610,6 +7613,27 @@ _wrap_gtk_recent_chooser_dialog_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override gtk_builder_add_from_string
+
+static int _wrap_gtk_builder_add_from_string(NspGtkBuilder *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  NspSMatrix *S,*S1;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((S1= nsp_smatrix_row_concat(S,"\n",1))  == NULLSMAT) return RET_BUG;
+  ret =gtk_builder_add_from_string(GTK_BUILDER(self->obj),S1->S[0],-1,NULL);
+  nsp_smatrix_destroy(S1);
+  if ( ret == 0 )
+    {
+      Scierror("Error: add_from_string failed for gtk_builder\n");
+      return RET_BUG;
+    }
+  return 0;
+}
+
 
 %%
 last

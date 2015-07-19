@@ -191,14 +191,14 @@ static void xset_show(BCG *Xgc)
        * except for perigl which draw without a Xgc->private->pixmap.
        */
       cr = gdk_cairo_create (GS_GET_WINDOW(Xgc->private->drawing));
-      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0); 
+      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_rectangle (cr, 0, 0, Xgc->CWindowWidth, Xgc->CWindowHeight);
       cairo_fill (cr);
       cairo_destroy (cr);
       /* copy extra_pixmap to pixmap */
       cr = cairo_create (Xgc->private->pixmap); /* pixmap is a surface */
-      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0); 
+      cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_rectangle (cr, 0, 0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       cairo_fill (cr);
@@ -1158,7 +1158,7 @@ static int xset_colormap(BCG *Xgc,void *a)
       Xgc->private->a_colors = colors;
     }
   /* just in case: initialize the colormap */
-  /* 
+  /*
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL)
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
   */
@@ -1569,7 +1569,7 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
   /* dd->private->wgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing)); */
-  /* 
+  /*
   gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
   */
@@ -1602,14 +1602,14 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
-      /* We could use 
+      /* We could use
        * gtk_widget_get_allocated_width (widget),
        * gtk_widget_get_allocated_height (widget));
        */
       dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
-      /* 
+      /*
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
@@ -1866,7 +1866,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
-      /* 
+      /*
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
@@ -1901,7 +1901,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 
   if (event  != NULL)
     {
-      /* 
+      /*
       gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
@@ -1912,12 +1912,12 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			 event->area.x, event->area.y,
 			 event->area.width, event->area.height);
       */
-      /* 
+      /*
       cairo_set_source_surface (cr, src_surface, x_dest - x_src, y_dest - y_src);
       cairo_rectangle (cr, x_dest, y_dest, width, height);
       */
       cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
-      cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+      cairo_set_source_surface(cr,dd->private->pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
       cairo_fill (cr);
@@ -1925,16 +1925,15 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
     }
   else
     {
-      /* 
+      /*
       gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
       */
       cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
-      cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+      cairo_set_source_surface(cr,dd->private->pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
-      cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
       cairo_fill (cr);
       cairo_destroy (cr);
     }
@@ -1966,10 +1965,10 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  
+
   width = gtk_widget_get_allocated_width (widget);
   height = gtk_widget_get_allocated_height (widget);
-  
+
   if(dd->private->resize != 0)
     {
       /* we need to resize the surface used for drawing */
@@ -2003,11 +2002,11 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 	  G->type->draw(dd,G,NULL,NULL);
 	}
     }
-  
-  cairo_set_source_surface(cr,dd->private->pixmap,0,0); 
+
+  cairo_set_source_surface(cr,dd->private->pixmap,0,0);
   cairo_rectangle (cr, 0,0, width, height);
   cairo_fill (cr);
-  
+
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
@@ -2136,7 +2135,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}
       /* allocate a new pixmap and set its open Gl capabilities */
-      /* 
+      /*
       dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);*/
@@ -2327,7 +2326,6 @@ void nsp_set_cursor(BCG *Xgc,int id)
 
 NspObject *nsp_get_graphic_widget(int wid)
 {
-#if 0
   NspObject *Obj;
   BCG *Xgc;
   if ( (Xgc=window_list_search_new(wid)) == NULL) return NULL;
@@ -2337,7 +2335,6 @@ NspObject *nsp_get_graphic_widget(int wid)
     gobject_create(NVOID,(GObject *) Xgc->private->window,
 		   (NspTypeBase *) nsp_type_gtkwindow);
   return Obj;
-#endif 
   return NULL;
 }
 

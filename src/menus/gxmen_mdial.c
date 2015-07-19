@@ -25,14 +25,14 @@
 menu_answer nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix *Init_values)
 {
   menu_answer rep;
-  char *labels  =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1); 
+  char *labels  =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
   int nv =  Init_values->mn;
   rep =  nsp_multi_dialog_(labels,Labels->S,Init_values->S, nv);
   nsp_string_destroy(&labels); /* works even if labels is null */
   return rep;
 }
 
-/* XXX : pszName[i] must be freed before replacement 
+/* XXX : pszName[i] must be freed before replacement
  * pszTitle and pszName must have the same size and be NULL terminated arrays
  *
  */
@@ -42,7 +42,7 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
   int use_scrolled=0, i , result;
   menu_answer answer = FALSE;
   GtkWidget *window = NULL;
-  GtkWidget **entries; 
+  GtkWidget **entries;
   GtkWidget *table;
   GtkWidget *label;
   GtkWidget *vbox;
@@ -62,7 +62,7 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
 
   nsp_dialogs_insert_title(title,vbox);
 
-  if (( entries = MALLOC( nv*sizeof(GtkWidget *))) == NULL)  
+  if (( entries = MALLOC( nv*sizeof(GtkWidget *))) == NULL)
     {
       return menu_fail;
     }
@@ -71,7 +71,7 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
 
   if (  nv > 15 ) use_scrolled = 1;
 
-  if ( use_scrolled == 1) 
+  if ( use_scrolled == 1)
     {
       scrolled_win = gtk_scrolled_window_new (NULL, NULL);
       gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 1);
@@ -83,35 +83,35 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
 				      GTK_POLICY_AUTOMATIC);
     }
 
-  /* table = gtk_table_new (nv, 2, TRUE); 
+  /* table = gtk_table_new (nv, 2, TRUE);
   gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
   */
   table = gtk_grid_new();
   gtk_widget_show (table);
 
-  if ( use_scrolled == 1) 
+  if ( use_scrolled == 1)
     {
       /* gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), table); */
       gtk_container_add(GTK_CONTAINER(scrolled_win),table);
-      gtk_widget_show(scrolled_win);  
+      gtk_widget_show(scrolled_win);
     }
-  else 
+  else
     gtk_box_pack_start (GTK_BOX (vbox), table , TRUE, TRUE , 0);
 
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
-  
-  for ( i = 0 ; i < nv ; i++) 
+
+  for ( i = 0 ; i < nv ; i++)
     {
       label = gtk_label_new (pszTitle[i]);
       gtk_widget_show (label);
       /* gtk_table_attach(GTK_TABLE (table),label,0,1,i,i+1,0,0,5,5); */
-      gtk_grid_attach(GTK_GRID(table),label,0,1,i,i+1);
-      entries[i] = gtk_entry_new() ; 
+      gtk_grid_attach(GTK_GRID(table),label,0,i,1,1);
+      entries[i] = gtk_entry_new() ;
       gtk_entry_set_text (GTK_ENTRY(entries[i]),  pszName[i]);
       gtk_widget_show (entries[i]);
       /* gtk_table_attach (GTK_TABLE (table), entries[i],1,2,i,i+1,
 	 GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
-      gtk_grid_attach (GTK_GRID (table), entries[i],1,2,i,i+1);
+      gtk_grid_attach (GTK_GRID (table), entries[i],1,i,1,1);
     }
 
   gtk_widget_show_all (window);
@@ -120,7 +120,7 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
     {
       case GTK_RESPONSE_ACCEPT:
       case GTK_RESPONSE_OK:
-	answer = TRUE;	
+	answer = TRUE;
 	for (i=0; i < nv  ; i++) {
 	  char *loc;
 	  char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
@@ -139,5 +139,3 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
   gtk_widget_destroy(window);
   return answer;
 }
-
-

@@ -4,9 +4,11 @@
 
 (define-object GtkApplication
   (in-module "Gtk")
-  (parent "GtkWindow")
+  (parent "GApplication")
   (c-name "GtkApplication")
   (gtype-id "GTK_TYPE_APPLICATION")
+  (implements "GActionGroup")
+  (implements "GActionMap")
   )
 
 (define-object GtkApplicationWindow
@@ -15,6 +17,8 @@
   (c-name "GtkApplicationWindow")
   (gtype-id "GTK_TYPE_APPLICATION_WINDOW")
   (implements "GtkBuildable")
+  (implements "GActionGroup")
+  (implements "GActionMap")
   )
 
 (define-interface GtkActionable
@@ -1494,46 +1498,45 @@
 
 ;; GtkUIManager - Constructing menus and toolbars from an XML description
 
-;; (define-object GtkUIManager
-;;   (in-module "Gtk")
-;;   (parent "GObject")
-;;   (c-name "GtkUIManager")
-;;   (gtype-id "GTK_TYPE_UI_MANAGER")
-;; )
+(define-object GtkUIManager
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkUIManager")
+  (gtype-id "GTK_TYPE_UI_MANAGER")
+)
 
 ;; GtkActionGroup - A group of actions
 
-;; (define-object GtkActionGroup
-;;   (in-module "Gtk")
-;;   (parent "GObject")
-;;   (c-name "GtkActionGroup")
-;;   (gtype-id "GTK_TYPE_ACTION_GROUP")
-;; )
+(define-object GtkActionGroup
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkActionGroup")
+  (gtype-id "GTK_TYPE_ACTION_GROUP")
+)
 
 ;; GtkAction - A deprecated action which can be triggered by a menu or toolbar item
-;; (define-object GtkAction
-;;   (in-module "Gtk")
-;;   (parent "GObject")
-;;   (c-name "GtkAction")
-;;   (gtype-id "GTK_TYPE_ACTION")
-;; )
+(define-object GtkAction
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkAction")
+  (gtype-id "GTK_TYPE_ACTION")
+)
 
 ;; GtkToggleAction - An action which can be toggled between two states
-;; (define-object GtkToggleAction
-;;   (in-module "Gtk")
-;;   (parent "GtkAction")
-;;   (c-name "GtkToggleAction")
-;;   (gtype-id "GTK_TYPE_TOGGLE_ACTION")
-;; )
+(define-object GtkToggleAction
+  (in-module "Gtk")
+  (parent "GtkAction")
+  (c-name "GtkToggleAction")
+  (gtype-id "GTK_TYPE_TOGGLE_ACTION")
+)
 
 ;; GtkRadioAction - An action of which only one in a group can be active
-
-;; (define-object GtkRadioAction
-;;   (in-module "Gtk")
-;;   (parent "GtkToggleAction")
-;;   (c-name "GtkRadioAction")
-;;   (gtype-id "GTK_TYPE_RADIO_ACTION")
-;; )
+(define-object GtkRadioAction
+  (in-module "Gtk")
+  (parent "GtkToggleAction")
+  (c-name "GtkRadioAction")
+  (gtype-id "GTK_TYPE_RADIO_ACTION")
+)
 
 ;; GtkRecentAction - An action of which represents a list of recently used files
 
@@ -1554,6 +1557,14 @@
 ;;   )
 
 ;; GtkImageMenuItem - A menu item with an icon
+
+(define-object GtkImageMenuItem
+  (in-module "Gtk")
+  (parent "GtkMenuItem")
+  (c-name "GtkImageMenuItem")
+  (gtype-id "GTK_TYPE_IMAGE_MENU_ITEM")
+)
+
 ;; GtkMisc - Base class for widgets with alignments and padding
 
 ;; deprecated 3.14 but used by GtkImage, GtkLabel,

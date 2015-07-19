@@ -562,7 +562,7 @@ static NspObject *_wrap_classc_get_value(void *self,const char *attr)
 static int _wrap_classc_set_value(void *self,const char *attr, NspObject *O)
 {
   ClassC *value = NULL;
-  NspObject *nsp_value= O;;
+  NspObject *nsp_value= O;
   if ( IsClassC(nsp_value))
     { value = ((NspClassC *) nsp_value)->obj->value;
       if((value = nsp_copy_ClassC(value))==NULL) return RET_BUG;

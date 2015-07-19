@@ -369,7 +369,7 @@ NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
    */
   if ( obj == NULL )
     {
-      Sciprintf("Error: no gobject available we return None\n");
+      Sciprintf("Error: no gobject available in gobject_create, returning None\n");
       return (NspGObject *) nsp_none_create(NVOID,NULL);
     }
   H = (type == NULL) ? new_gobject() : type->new();
@@ -1146,6 +1146,18 @@ nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/* cast to most specific type
+ */
+
+static int
+nspgobject_most_specific(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) self->obj))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 
 static NspMethods gobject_methods[] = {
   { "ref",  (nsp_method *) nspgobject_ref},
@@ -1172,6 +1184,7 @@ static NspMethods gobject_methods[] = {
   { "emit_stop_by_name", (nsp_method *) nspgobject_stop_emission},
   { "chain", (nsp_method *) nspgobject_chain_from_overridden},
   { "is",  (nsp_method *) nspgobject_is},
+  { "most_specific", (nsp_method *) nspgobject_most_specific },
   { NULL, NULL }
 };
 
@@ -1327,6 +1340,7 @@ NspGObject *nspgobject_new(const char *name, GObject *obj)
   NspTypeBase *type;
   if ( obj == NULL)
     {
+      Sciprintf("Error: no gobject available in gobject_create, returning None\n");
       return (NspGObject *) nsp_none_create(NVOID,NULL);
     }
   gtype = G_OBJECT_TYPE(G_OBJECT(obj));
@@ -2301,36 +2315,43 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       return NULL;
     case G_TYPE_OBJECT:
       {
+	gobj = g_value_get_object(value);
+	/* we use nspgobject_new to return the most specific NspObject which contains the GObject
+	 * if it fails it will return a None
+	 */
+	return (NspObject *) nspgobject_new(NVOID,(GObject *) gobj);
+	/*
 	NspTypeBase *type;
 	GType gtype;
-	/* we need here to return the most specific NspObject which contains the GObject */
-	gobj = g_value_get_object(value);
 	gtype = G_OBJECT_TYPE(G_OBJECT(gobj));
 	type = nsp_type_from_gtype(gtype);
 	if ( type == NULL)
 	  {
-	    Scierror("Error: get type in gtype failed for gtype %s \n",g_type_name(gtype));
+	    Sciprintf("Error: get type in gtype failed for gtype %s \n",g_type_name(gtype));
 	    return NULL;
 	  }
-	return (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
-	/*
-	 * return (NspObject *) gobject_create(NVOID, g_value_get_object(value),
-	 *  nsp_type_from_gtype(G_VALUE_TYPE(value)));
-	 */
+	  return (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
+	*/
+
       }
 
     case G_TYPE_VARIANT :
       {
 	GVariant *gv= g_value_get_variant(value);
 	if ( gv != NULL)
-	  return (NspObject*) nsp_gvariant_create(NVOID,gv,(NspTypeBase *) nsp_type_gvariant);
+	  {
+	    return (NspObject*) nsp_gvariant_create(NVOID,gv,(NspTypeBase *) nsp_type_gvariant);
+	  }
 	else
-	  return (NspObject *) nsp_none_create(NVOID,NULL);
+	  {
+	    return (NspObject *) nsp_none_create(NVOID,NULL);
+	  }
       }
     default:
       break;
     }
-  Sciprintf("Warning: Do not know how to build...\n");
+  Sciprintf("Warning: Do not know how to build an object from a gvalue of type %s\n",
+	    g_type_name(G_VALUE_TYPE(value)));
   Scierror("Do not know how to build an object from a gvalue of type %s\n",
 	   g_type_name(G_VALUE_TYPE(value)));
   return NULL;

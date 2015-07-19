@@ -783,7 +783,8 @@ fi
 # flag for possible compilations in configure
 
 if test "$with_gtk3" == yes; then
-CC_OPTIONS="${CC_OPTIONS} -DGTK_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED  -DGDK_DISABLE_DEPRECATED -DGSEAL_ENABLE -DPANGO_DISABLE_DEPRECATED"
+  # CC_OPTIONS="${CC_OPTIONS} -DGTK_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_DEPRECATED  -DGDK_DISABLE_DEPRECATED -DGSEAL_ENABLE -DPANGO_DISABLE_DEPRECATED"
+  CC_OPTIONS="${CC_OPTIONS} -DGTK_DISABLE_SINGLE_INCLUDES -DGSEAL_ENABLE"
 fi
 
 CFLAGS=$CC_OPTIONS
@@ -1257,9 +1258,27 @@ fi
 # check for gtksourceview-2.0
 #---------------------
 
-if test "$with_gtk3" == no; then
-PKG_CHECK_MODULES(gtksourceview, gtksourceview-2.0 , have_gtksourceview=yes, have_gtksourceview=no)
-if test "x${have_gtksourceview}" = "xyes" ; then
+if test "$with_gtk3" == yes; then
+  PKG_CHECK_MODULES(gtksourceview, gtksourceview-3.0 , have_gtksourceview=yes, have_gtksourceview=no)
+  if test "x${have_gtksourceview}" = "xyes" ; then
+     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtksourceview-3.0"
+     GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtksourceview-3.0"
+     GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+     GTKSOURCEVIEW_OBJS="gtksourceview.o"
+     AC_DEFINE(HAVE_GTKSOURCEVIEW,[] , [Whether gtksourceview-3.0 is available])
+     PKG_CHECK_MODULES(gtk_source_gutter_insert,  gtksourceview-3.0 >= 3.0.0 , have_gutter=yes, have_gutter=no)
+     if test "x${have_gutter}" = "xyes" ; then
+     	AC_DEFINE(HAVE_GTKSOURCEVIEW_GUTTER,[] , [Whether gtksourceview-3.0 has gutter API])
+     fi
+     PKG_CHECK_MODULES(gtk_source_buffer_get_context_classes_at_iter,  gtksourceview-3.0 >= 3.0.0 , have_context_class=yes, have_context_class=no)
+     if test "x${have_context_class}" = "xyes" ; then
+     	AC_DEFINE(HAVE_GTKSOURCEVIEW_CONTEXT_CLASS,[] , [Whether gtksourceview-3.0 has context_class API])
+     fi
+  fi
+else
+  PKG_CHECK_MODULES(gtksourceview, gtksourceview-2.0 , have_gtksourceview=yes, have_gtksourceview=no)
+  if test "x${have_gtksourceview}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtksourceview-2.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtksourceview-2.0"
      GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
@@ -1274,7 +1293,7 @@ if test "x${have_gtksourceview}" = "xyes" ; then
      if test "x${have_context_class}" = "xyes" ; then
      	AC_DEFINE(HAVE_GTKSOURCEVIEW_CONTEXT_CLASS,[] , [Whether gtksourceview-2.0 has context_class API])
      fi
-fi
+  fi
 fi
 
 #--------------------

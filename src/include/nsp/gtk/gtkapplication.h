@@ -23,20 +23,20 @@
 
 /* NspGtkApplication */
 
-#include <nsp/gtk/gtkwindow.h>
+#include <nsp/gtk/gapplication.h>
 
 /*
- * NspGtkApplication inherits from GtkWindow
+ * NspGtkApplication inherits from GApplication
  * just change some type attributes 
  */
 
-typedef NspGtkWindow NspGtkApplication ;
-typedef NspTypeGtkWindow NspTypeGtkApplication ;
+typedef NspGApplication NspGtkApplication ;
+typedef NspTypeGApplication NspTypeGtkApplication ;
 
 extern int nsp_type_gtkapplication_id;
 extern NspTypeGtkApplication *nsp_type_gtkapplication;
 
-/* type instances for gtkwindow */
+/* type instances for gapplication */
 
 NspTypeGtkApplication *new_type_gtkapplication(type_mode mode);
 

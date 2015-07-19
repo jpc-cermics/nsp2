@@ -19,6 +19,8 @@
   (parent "GObject")
   (c-name "GApplication")
   (gtype-id "G_TYPE_APPLICATION")
+  (implements "GActionGroup")
+  (implements "GActionMap")
 )
 
 (define-object GApplicationCommandLine

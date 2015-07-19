@@ -8480,12 +8480,10 @@
   (return-type "none")
 )
 
-(define-function g_io_module_query
-  (c-name "g_io_module_query")
-  (return-type "char**")
-)
-
-
+;; (define-function g_io_module_query
+;;   (c-name "g_io_module_query")
+;;   (return-type "char**")
+;; )
 
 ;; From gioscheduler.h
 

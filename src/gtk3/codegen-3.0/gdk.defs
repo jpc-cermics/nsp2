@@ -3157,6 +3157,18 @@
   )
 )
 
+(define-method get_pointer
+  (of-object "GdkWindow")
+  (c-name "gdk_window_get_pointer")
+  (return-type "none")
+  (deprecated "use gdk_window_get_device_position")
+  (parameters
+   '("gint" "x")
+   '("gint" "y")
+   '("GdkModifierType*" "mask")
+  )
+)
+
 (define-method coords_to_parent
   (of-object "GdkWindow")
   (c-name "gdk_window_coords_to_parent")

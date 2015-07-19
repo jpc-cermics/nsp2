@@ -4,43 +4,47 @@
 // testgtk.sci (or the C version) and drag between them.
 // To be finished XXXX
 
-function []=dnd_message_box(title, message, button)
-    win = gtkdialog_new()
-    win.set_title[title];
-    win.connect[ "delete_event", demo_delete];
-    //win.connect[ "destroy", do_quit];
-    hbox = gtkbox_new("horizontal",spacing=5);
-    hbox.set_border_width[5]
-    window_vbox = win.get_content_area[];
-    win_vbox.pack_start[hbox]
-    hbox.show[]
-    label = gtklabel_new(str=message)
-    hbox.pack_start[label]
-    label.show[]
-    b = gtkbutton_new(label=button)
-    //b.set_flags[GTK.CAN_DEFAULT]
-    b.connect["clicked",button_destroy_win,list(win)];
-    win.action_area.pack_start[b]
-    b.show[]
-    win.show[]
-endfunction
-
-function dnd_drag_data_get(w, context, selection_data, info, time)
-  dnd_string = "Bill Gates demands royalties for\n" +
-  "your use of his innovation."
-  // methode set
-  selection_data.set[selection_data.get_target[], 8,dnd_string]
-endfunction
-
-function dnd_drag_data_received(w, context, x, y, data, info, time)
-  if data.format == 8
-    msg = sprintf("Drop data of type %s was:\n\n%s",data.target.get_name[],data.data)
-    dnd_message_box("Drop", msg,"Continue with life in\n" +
-    "spite of this oppression")
-  end
-endfunction
 
 function demo_dnd()
+
+  function dnd_drag_data_get(w, context, selection_data, info, time)
+    dnd_string = "Bill Gates demands royalties for\n" +
+    "your use of his innovation."
+    // methode set
+    selection_data.set[selection_data.get_target[], 8,dnd_string]
+  endfunction
+
+  function dnd_drag_data_received(w, context, x, y, data, info, time)
+
+    function []=dnd_message_box(title, message, button)
+      dialog = gtkdialog_new()
+      dialog.set_title[title];
+      dialog.connect[ "delete_event", demo_delete];
+      hbox = gtkbox_new("horizontal",spacing=5);
+      hbox.set_border_width[5]
+      window_vbox = dialog.get_content_area[];
+      window_vbox.pack_start[hbox]
+      // hbox.show[]
+      label = gtklabel_new(str=message)
+      hbox.pack_start[label]
+      // label.show[]
+      dialog.add_button[button,10];
+      dialog.show_all[];
+      response = dialog.run[]
+      if response == 10 // Close button
+	dialog.destroy[];
+      end
+    endfunction
+
+    if data.get_format[] == 8
+      target=data.get_target[];
+      str = data.get_text[];
+      msg = sprintf("Drop data of type %s was:\n\n%s",target.get_name[],str);
+      dnd_message_box("Drop", msg,"Continue with life in\n" +
+      "spite of this oppression")
+    end
+  endfunction
+
   targets = list(list('text/plain',GTK.TARGET_SAME_APP, 0))
   win = gtkwindow_new()
   win.connect["delete_event", demo_delete];
