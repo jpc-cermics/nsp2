@@ -6697,7 +6697,7 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
 
 extern GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) ;
 
-#ifdef KEEP_GTK2 
+#ifdef KEEP_GTK2
 extern GdkImage* nsp_get_image(BCG *Xgc) ;
 
 
@@ -6729,7 +6729,7 @@ static int int_get_image( Stack stack, int rhs, int opt, int lhs)
 /* get the content of a graphic window as a pixbuf
  *
  */
-#endif 
+#endif
 
 #if 0
 static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
@@ -6754,7 +6754,7 @@ static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,ret1);
   return Max(lhs,1);
 }
-#endif 
+#endif
 
 /* insert a pixbuf given by a file-name in a text  buffer
  * this can be used for display a pixbuf in text main interaction
@@ -7081,9 +7081,15 @@ static gpointer run_thread (gpointer thread)
   g_source_set_callback (s, idle_thingy, NULL, NULL);
   g_source_attach (s, ct);
   g_source_unref (s);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_enter ();
+#endif
   create_event_box (NULL,"Thread event Box");
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave ();
+#endif
   g_main_loop_run (loop);
   g_main_loop_unref (loop);
   g_print ("Thread is done\n");
@@ -7097,9 +7103,15 @@ static int int_gtk_loop(Stack stack, int rhs, int opt, int lhs)
   g_thread_init (NULL);
   gdk_threads_init();
   thread = g_thread_create (run_thread, NULL, TRUE, NULL);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_enter ();
+#endif
   nsp_message_modeless_("Quit the thread message");
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave ();
+#endif
   g_print ("make the main thread sleep \n");
   sleep(60);
   g_print ("main thread re-activated \n");
@@ -7331,7 +7343,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xfpolys"),int_xfpolys_new},
   {NAMES("xfrect"),int_xfrect_new},
   {NAMES("xget"),int_xget_new},
-#ifdef KEEP_GTK2 
+#ifdef KEEP_GTK2
   {NAMES("xget_image"),int_get_image},
 #endif
 #if 0

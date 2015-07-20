@@ -356,18 +356,29 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
     }
 #endif
   /* enter the GTK main loop */
-  gdk_threads_enter();
-  gtk_main();
-  gdk_threads_leave();
+#if GTK_CHECK_VERSION(3,0,0)
 #else
-  gdk_threads_enter();
+  gdk_threads_enter ();
+#endif
+  gtk_main();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_leave();
+#endif
+#else
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   while (1)
     {
       if (  nsp_parse_eval_from_std(TRUE) == 0) break;
     }
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
 #endif
-
+#endif
   sci_clear_and_exit(0);
   return 0;
 }

@@ -81,9 +81,15 @@ struct _nsp_webkit_data {GAsyncQueue *queue;int ans; char *mandir,*locale,*help_
 static gboolean nsp_help_browser_idle(gpointer user_data)
 {
   nsp_webkit_data *data = user_data;
-  gdk_threads_enter();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   data->ans= nsp_help_browser(data->mandir,data->locale,data->help_file);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   g_async_queue_push(data->queue,data);
   return FALSE;
 }

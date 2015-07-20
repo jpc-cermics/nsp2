@@ -37,6 +37,7 @@
 #include <glib/gstdio.h>
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcelanguage.h>
+#include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourcelanguagemanager.h>
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
@@ -69,7 +70,7 @@ static int execute_silently= TRUE;
 /* Private data structures */
 #define MARK_TYPE_2      "two"
 
-static void view_set_title (GtkSourceView  *view, int read_only);
+static void view_set_title (GtkTextView  *view, int read_only);
 static char *buffer_pretty_name (GtkSourceBuffer *buffer);
 static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename );
 static GtkSourceLanguage *nsp_gtksource_language (void);
@@ -713,7 +714,7 @@ numbers_toggled_cb (GtkAction *action, gpointer user_data)
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_show_line_numbers (
-					 GTK_TEXT_VIEW (user_data),
+					 GTK_SOURCE_VIEW (user_data),
 					 gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -722,7 +723,7 @@ marks_toggled_cb (GtkAction *action, gpointer user_data)
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_show_line_marks (
-				       GTK_TEXT_VIEW (user_data),
+				       GTK_SOURCE_VIEW (user_data),
 				       gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -731,7 +732,7 @@ margin_toggled_cb (GtkAction *action, gpointer user_data)
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_show_right_margin (
-					 GTK_TEXT_VIEW (user_data),
+					 GTK_SOURCE_VIEW (user_data),
 					 gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -742,7 +743,7 @@ hl_bracket_toggled_cb (GtkAction *action, gpointer user_data)
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   buffer = gtk_text_view_get_buffer (user_data);
   gtk_source_buffer_set_highlight_matching_brackets (
-						     GTK_TEXT_BUFFER (buffer),
+						     GTK_SOURCE_BUFFER (buffer),
 						     gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -751,7 +752,7 @@ hl_line_toggled_cb (GtkAction *action, gpointer user_data)
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_highlight_current_line (
-					      GTK_TEXT_VIEW (user_data),
+					      GTK_SOURCE_VIEW (user_data),
 					      gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -764,7 +765,7 @@ draw_spaces_toggled_cb (GtkAction *action, gpointer user_data)
   draw_spaces = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
   if (draw_spaces)
-    gtk_source_view_set_draw_spaces (GTK_TEXT_VIEW (user_data),
+    gtk_source_view_set_draw_spaces (GTK_SOURCE_VIEW (user_data),
 				     GTK_SOURCE_DRAW_SPACES_ALL);
   else
     gtk_source_view_set_draw_spaces (GTK_SOURCE_VIEW (user_data),
@@ -786,7 +787,7 @@ auto_indent_toggled_cb (GtkAction *action,
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_auto_indent (
-				   GTK_TEXT_VIEW (user_data),
+				   GTK_SOURCE_VIEW (user_data),
 				   gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -796,7 +797,7 @@ insert_spaces_toggled_cb (GtkAction *action,
 {
   g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_insert_spaces_instead_of_tabs (
-						     GTK_TEXT_VIEW (user_data),
+						     GTK_SOURCE_VIEW (user_data),
 						     gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)));
 }
 
@@ -816,7 +817,7 @@ tabs_toggled_cb (GtkAction *action,
 {
   g_return_if_fail (GTK_IS_RADIO_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_tab_width (
-				 GTK_TEXT_VIEW (user_data),
+				 GTK_SOURCE_VIEW (user_data),
 				 gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action)));
 }
 
@@ -827,7 +828,7 @@ indent_toggled_cb (GtkAction *action,
 {
   g_return_if_fail (GTK_IS_RADIO_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_indent_width (
-				    GTK_TEXT_VIEW (user_data),
+				    GTK_SOURCE_VIEW (user_data),
 				    gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action)));
 }
 
@@ -838,7 +839,7 @@ smart_home_end_toggled_cb (GtkAction *action,
 {
   g_return_if_fail (GTK_IS_RADIO_ACTION (action) && GTK_IS_TEXT_VIEW (user_data));
   gtk_source_view_set_smart_home_end (
-				      GTK_TEXT_VIEW (user_data),
+				      GTK_SOURCE_VIEW (user_data),
 				      gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action)));
 }
 
@@ -856,8 +857,8 @@ forward_string_cb (GtkAction *action,
 
   g_return_if_fail (GTK_IS_TEXT_VIEW (user_data));
 
-  view = GTK_TEXT_VIEW (user_data);
-  buffer = GTK_TEXT_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  view = GTK_SOURCE_VIEW (user_data);
+  buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   insert = gtk_text_buffer_get_insert (GTK_TEXT_BUFFER (buffer));
 
   gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (buffer),
@@ -884,8 +885,8 @@ backward_string_cb (GtkAction *action,
 
   g_return_if_fail (GTK_IS_TEXT_VIEW (user_data));
 
-  view = GTK_TEXT_VIEW (user_data);
-  buffer = GTK_TEXT_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  view = GTK_SOURCE_VIEW (user_data);
+  buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   insert = gtk_text_buffer_get_insert (GTK_TEXT_BUFFER (buffer));
 
   gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (buffer),
@@ -1078,7 +1079,7 @@ open_file_cb (GtkAction *action, gpointer user_data)
 	{
 	  g_free (last_dir);
 	  last_dir = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (chooser));
-	  open_file (GTK_TEXT_BUFFER (user_data), filename);
+	  open_file (GTK_SOURCE_BUFFER (user_data), filename);
 	  g_free (filename);
 	}
     }
@@ -1219,9 +1220,9 @@ print_file_cb (GtkAction *action, gpointer user_data)
 
   g_return_if_fail (GTK_IS_TEXT_VIEW (user_data));
 
-  view = GTK_TEXT_VIEW (user_data);
+  view = GTK_SOURCE_VIEW (user_data);
 
-  buffer = GTK_TEXT_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
 
   filename = g_object_get_data (G_OBJECT (buffer), "filename");
   basename = g_filename_display_basename (filename);
@@ -1470,7 +1471,7 @@ save_as_cb (GtkAction *action, gpointer user_data)
 {
   GtkSourceBuffer *buffer;
   g_return_if_fail (GTK_IS_TEXT_BUFFER (user_data));
-  buffer = GTK_TEXT_BUFFER (user_data);
+  buffer = GTK_SOURCE_BUFFER (user_data);
   filechooser_save_run(NULL, "Save File", NULL, save_as_ok_func, buffer);
 }
 
@@ -1480,7 +1481,7 @@ save_cb (GtkAction *action, gpointer user_data)
   GtkSourceBuffer *buffer= user_data;
   char *filename = g_object_get_data (G_OBJECT (buffer), "filename");
   g_return_if_fail (GTK_IS_TEXT_BUFFER (user_data));
-  buffer = GTK_TEXT_BUFFER (user_data);
+  buffer = GTK_SOURCE_BUFFER (user_data);
   if ( filename == NULL)
     save_as_cb(action,user_data);
   else
@@ -1566,7 +1567,7 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
 
   g_return_if_fail (GTK_IS_TEXT_VIEW (user_data));
 
-  view = GTK_TEXT_VIEW (user_data);
+  view = GTK_SOURCE_VIEW (user_data);
   tabwidth = gtk_source_view_get_tab_width (view);
   pos_label = GTK_LABEL (g_object_get_data (G_OBJECT (view), "pos_label"));
 
@@ -1596,7 +1597,7 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
   str = g_string_new ("");
 
 #ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
-  classes = gtk_source_buffer_get_context_classes_at_iter (GTK_TEXT_BUFFER (buffer),
+  classes = gtk_source_buffer_get_context_classes_at_iter (GTK_SOURCE_BUFFER (buffer),
 							   &iter);
   classes_ptr = classes;
 
@@ -1637,9 +1638,9 @@ window_deleted_cb (GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 {
   GMainLoop *loop=NULL;
   GtkSourceBuffer *buffer;
-  GtkSourceView *view = GTK_TEXT_VIEW (user_data);
+  GtkSourceView *view = GTK_SOURCE_VIEW (user_data);
   g_return_val_if_fail (GTK_IS_TEXT_VIEW (user_data), TRUE);
-  buffer = GTK_TEXT_BUFFER ( gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  buffer = GTK_SOURCE_BUFFER ( gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   windows = g_list_remove (windows, widget);
   /* deinstall buffer motion signal handlers */
   g_signal_handlers_disconnect_matched (buffer,
@@ -1667,7 +1668,7 @@ line_mark_activated (GtkSourceGutter *gutter,
   GSList *mark_list;
   const gchar *mark_type = MARK_TYPE_2;
 
-  buffer = GTK_TEXT_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
 
   /* get the marks already in the line */
   mark_list = gtk_source_buffer_get_source_marks_at_line (buffer,
@@ -1703,7 +1704,7 @@ drag_data_received_cb (GtkWidget        *widget,
 		       guint             timestamp,
 		       gpointer          data)
 {
-  /* GtkSourceView *view = GTK_TEXT_VIEW (data); */
+  /* GtkSourceView *view = GTK_SOURCE_VIEW (data); */
   char *drop= (gchar *) gtk_selection_data_get_data (selection_data);
   Sciprintf("drop: %s\n",drop);
 }
@@ -1711,7 +1712,10 @@ drag_data_received_cb (GtkWidget        *widget,
 
 /* Window creation functions  */
 
+
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
+
+#if 0
 static gchar *
 mark_tooltip_func (GtkSourceMark *mark,
 		   gpointer	  user_data)
@@ -1728,6 +1732,7 @@ mark_tooltip_func (GtkSourceMark *mark,
   /*   if (strcmp (gtk_source_mark_get_category (mark), MARK_TYPE_1) == 0) */
   return g_strdup_printf ("<b>Line</b>: %d\n<i>Column</i>: %d", line, column);
 }
+#endif
 
 static void
 add_source_mark_pixbufs (GtkSourceView *view)
@@ -1887,7 +1892,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
       pango_font_description_free (font_desc);
     }
   /* default value used */
-  gtk_source_view_set_tab_width (GTK_TEXT_VIEW(view),2);
+  gtk_source_view_set_tab_width (GTK_SOURCE_VIEW(view),2);
 
   /* change view attributes to match those of from */
   if (from)
@@ -1940,7 +1945,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *co
     }
 
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
-  add_source_mark_pixbufs (GTK_TEXT_VIEW (view));
+  add_source_mark_pixbufs (GTK_SOURCE_VIEW (view));
 #endif
 
   /* update the name */
@@ -2185,10 +2190,10 @@ static GtkSourceLanguage *nsp_gtksource_language (void)
   return nsp;
 }
 
-static void view_set_title (GtkSourceView   *view, int read_only)
+static void view_set_title (GtkTextView   *view, int read_only)
 {
   GtkWidget *window;
-  GtkSourceBuffer *buffer = GTK_TEXT_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
+  GtkSourceBuffer *buffer = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (view)));
   char *pretty_name = buffer_pretty_name (buffer);
   char *title;
   if (read_only == TRUE )

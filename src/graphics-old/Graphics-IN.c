@@ -6883,9 +6883,15 @@ static gpointer run_thread (gpointer thread)
   g_source_set_callback (s, idle_thingy, NULL, NULL);
   g_source_attach (s, ct);
   g_source_unref (s);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_enter ();
+#endif
   create_event_box (NULL,"Thread event Box");
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave ();
+#endif
   g_main_loop_run (loop);
   g_main_loop_unref (loop);
   g_print ("Thread is done\n");

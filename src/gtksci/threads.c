@@ -16,7 +16,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -27,7 +27,7 @@
 void nsp_check_threads(const char *str)
 {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-  if ( g_thread_self() != thmain ) 
+  if ( g_thread_self() != thmain )
     {
       printf("Warning: nsp_check_threads was called outside thmain thread. %s\n",str);
     }
@@ -36,40 +36,46 @@ void nsp_check_threads(const char *str)
 
 /**
  * nsp_interface_idle_in_main_thread:
- * @user_data: a gpointer 
- * 
- * Utility function executed once by gtk main thread through 
+ * @user_data: a gpointer
+ *
+ * Utility function executed once by gtk main thread through
  * a idle_add.
  *
- * Returns: FALSE 
+ * Returns: FALSE
  **/
 
 static gboolean nsp_interface_idle_in_main_thread(gpointer user_data)
 {
   nsp_thread_interface *data = user_data;
-  gdk_threads_enter();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   printf("-->execution of interface %d in the main gtk thread (through idle)\n",data->i);
   data->ans = (*(data->fun))(*(data->stack), data->rhs, data->opt, data->lhs);
   printf("<--execution of interface %d in the main gtk thread (through idle)\n",data->i);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   g_async_queue_push(data->queue,data);
   return FALSE;
 }
 
 /**
  * nsp_interface_executed_in_main_thread:
- * @i: integer 
- * @f: interface function 
+ * @i: integer
+ * @f: interface function
  * @stack: nsp execution stack
- * @rhs: integer 
- * @opt: integer 
- * @lhs: integer 
- * 
+ * @rhs: integer
+ * @opt: integer
+ * @lhs: integer
+ *
  * call an nsp interface but the call is executed through g_idle_add
- * to force the execution in the main gtk thread. 
+ * to force the execution in the main gtk thread.
  * TO BE DONE ? : only one thread should call this function.
  *
- * Returns: an integer 
+ * Returns: an integer
  **/
 
 int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rhs, int opt, int lhs)
@@ -85,8 +91,8 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
       printf("<--quit the direct call\n");
       return n;
     }
-  
-  if ( queue == NULL) 
+
+  if ( queue == NULL)
     {
       queue= g_async_queue_new ();
       data.queue = queue;
@@ -103,43 +109,49 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
 
 /**
  * nsp_method_idle_in_main_thread:
- * @user_data: a gpointer 
- * 
- * Utility function executed once by gtk main thread through 
+ * @user_data: a gpointer
+ *
+ * Utility function executed once by gtk main thread through
  * a idle_add.
  *
- * Returns: FALSE 
+ * Returns: FALSE
  **/
 
 static gboolean nsp_method_idle_in_main_thread(gpointer user_data)
 {
   nsp_thread_method *data = user_data;
-  gdk_threads_enter();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   printf("-->execution of a method in the main gtk thread (through idle)\n");
   data->ans = (*(data->fun))(data->Obj,*(data->stack), data->rhs, data->opt, data->lhs);
   printf("<--execution of a method in the main gtk thread (through idle)\n");
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   g_async_queue_push(data->queue,data);
   return FALSE;
 }
 
 /**
  * nsp_method_executed_in_main_thread:
- * @i: integer 
- * @f: method function 
+ * @i: integer
+ * @f: method function
  * @stack: nsp execution stack
- * @rhs: integer 
- * @opt: integer 
- * @lhs: integer 
- * 
+ * @rhs: integer
+ * @opt: integer
+ * @lhs: integer
+ *
  * call an nsp method but the call is executed through g_idle_add
- * to force the execution in the main gtk thread. 
+ * to force the execution in the main gtk thread.
  * TO BE DONE ? : only one thread should call this function.
  *
- * Returns: an integer 
+ * Returns: an integer
  **/
 
-int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack, 
+int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack,
 				       int rhs, int opt, int lhs)
 {
   static GAsyncQueue *queue = NULL;
@@ -153,8 +165,8 @@ int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack,
       printf("<--quit the direct call\n");
       return n;
     }
-  
-  if ( queue == NULL) 
+
+  if ( queue == NULL)
     {
       queue= g_async_queue_new ();
       data.queue = queue;
@@ -173,18 +185,18 @@ int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack,
 
 /**
  * nsp_gtk_main_thread:
- * @void: 
- * 
+ * @void:
+ *
  * return the value of the main gtk thread.
- * 
- * Returns: a #GThread pointer 
+ *
+ * Returns: a #GThread pointer
  **/
 
 GThread *nsp_gtk_main_thread(void)
 {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   return thmain;
-#else 
+#else
   return NULL;
-#endif 
+#endif
 }

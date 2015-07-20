@@ -18,13 +18,13 @@
  * Boston, MA 02111-1307, USA.
  *
  *
- * Adapted from the testtext.c file in gtk+/tests 
+ * Adapted from the testtext.c file in gtk+/tests
  * to be used as a terminal for Nsp jpc (2006-2015).
- * Note: you can use 
+ * Note: you can use
  *   gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
- * to set up emacs editing mode in gtk widgets but note that some editing 
+ * to set up emacs editing mode in gtk widgets but note that some editing
  * keys are redefined here as in emacs mode.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -39,10 +39,10 @@
 #include <readline/history.h>
 
 #include <nsp/nsp.h>
-#include <nsp/file.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/gtksci.h> 
-#include <nsp/command.h> 
+#include <nsp/file.h>
+#include <nsp/smatrix.h>
+#include <nsp/gtksci.h>
+#include <nsp/command.h>
 #include <nsp/sciio.h>
 #include <nsp/eval.h>
 #include <nsp/nspthreads.h>
@@ -54,7 +54,7 @@
 #ifdef WIN32
 #define sigsetjmp(x,y) setjmp(x)
 #define siglongjmp(x,y) longjmp(x,y)
-#endif 
+#endif
 
 extern void controlC_handler (int sig);
 extern void controlC_handler_void (int sig);
@@ -96,7 +96,7 @@ struct _View
   view_history *view_history;
   gchar *nsp_expr; /* used to store string to pass to nsp interpreter*/
   GAsyncQueue *read_queue, *write_queue;
-  gpointer user_data; 
+  gpointer user_data;
 };
 
 static jmp_buf my_env;
@@ -105,10 +105,10 @@ static jmp_buf my_env;
 static Buffer *nsptv_create_buffer(void);
 static View   *nsptv_create_view(Buffer *buffer);
 static void    nsp_insert_prompt(View *view,const char *prompt);
-static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, 
+static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view,
 					      int position, GtkTextIter iter);
 static int     Xorgetchar_textview(void);
-static void    readline_textview(Tokenizer *T,char *prompt, char *buffer, 
+static void    readline_textview(Tokenizer *T,char *prompt, char *buffer,
 				 int *buf_size, int *len_line, int *eof);
 static int     nsp_print_to_textview(const char *fmt, va_list ap);
 static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list ap);
@@ -123,12 +123,12 @@ static void nsp_textview_awake_for_end_print_text(View *view);
 #else
 static void    nsp_textview_gtk_main(void);
 static void    nsp_textview_gtk_main_quit(void);
-#endif 
+#endif
 
 /**
  * nsptv_insert_logo:
- * @view: 
- * 
+ * @view:
+ *
  * insert the nsp logo in textview at first position.
  * must be called from gtk main thread
  *
@@ -151,13 +151,13 @@ static void nsptv_insert_logo (View *view)
 
 /**
  * nsptv_delete_callback:
- * @window: 
- * @event: 
- * @data: 
- * 
+ * @window:
+ * @event:
+ * @data:
+ *
  * delete callback for the text_view widget
- * 
- * Returns: 
+ *
+ * Returns:
  **/
 
 static gint nsptv_delete_callback (GtkWidget *window, GdkEventAny *event, gpointer data)
@@ -169,10 +169,10 @@ static gint nsptv_delete_callback (GtkWidget *window, GdkEventAny *event, gpoint
 
 /**
  * nsptv_create_buffer:
- * @void: 
- * 
+ * @void:
+ *
  * GtkTextBuffer creation.
- * 
+ *
  * Returns: a new #Buffer object.
  **/
 
@@ -183,15 +183,15 @@ static Buffer *nsptv_create_buffer (void)
   buffer->buffer = gtk_text_buffer_new (NULL);
   buffer->refcount = 1;
   buffer->not_editable_tag =
-#ifdef BEBUG_EDITABLE 
+#ifdef BEBUG_EDITABLE
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
                                 "foreground", "purple", NULL);
-#else 
+#else
   gtk_text_buffer_create_tag (buffer->buffer, NULL,
 			      "editable", FALSE,NULL);
-#endif 
-  buffer->center_tag = 
+#endif
+  buffer->center_tag =
     gtk_text_buffer_create_tag (buffer->buffer,NULL,
 				"justification", GTK_JUSTIFY_CENTER,NULL,
 				"editable",FALSE,"foreground", "purple", NULL);
@@ -238,16 +238,16 @@ static void nsptv_append_history(char *text,view_history *data, int readline_add
   if ( readline_add == TRUE)  add_history (text);
   /* textview history */
   if ( data == NULL) return ;
-  if ( data->history_tail == NULL) 
+  if ( data->history_tail == NULL)
     {
-      /* first insertion. 
+      /* first insertion.
        */
       data->history = g_list_append (NULL, g_strdup (text));
       data->history_tail =data->history_cur= data->history;
       data->dir = 0;
       return;
-    } 
-  if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
+    }
+  if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0)
     {
       /* do not insert repetitions */
       GList *loc=  g_list_append(data->history_tail, g_strdup (text));
@@ -255,25 +255,25 @@ static void nsptv_append_history(char *text,view_history *data, int readline_add
       data->history_tail =data->history_cur= data->history_tail->next;
       data->dir = 0;
     }
-  else 
+  else
     {
       /* no insertion */
       data->history_cur=data->history_tail;
       data->dir = 0;
-      return; 
+      return;
     }
-  
-  if (data->history_size == MAX_HISTORY_SIZE) 
+
+  if (data->history_size == MAX_HISTORY_SIZE)
     {
-      /* delete the first item in history 
-       * but we should only get here if an insertion 
+      /* delete the first item in history
+       * but we should only get here if an insertion
        * was performed.
        */
       g_free (data->history->data);
       data->history = g_list_delete_link (data->history, data->history);
       data->dir = 0;
-    } 
-  else 
+    }
+  else
     {
       data->history_size++;
     }
@@ -282,8 +282,8 @@ static void nsptv_append_history(char *text,view_history *data, int readline_add
 static void nsptv_clear_history(View *view)
 {
   view_history *data = view->view_history;
-  GList *history = data->history; 
-  while ( history != NULL) 
+  GList *history = data->history;
+  while ( history != NULL)
     {
       g_free (history->data);
       history = g_list_delete_link (history, history);
@@ -316,16 +316,16 @@ static char *nsptv_history_down(view_history *data)
   return data->history_cur->data;
 }
 
-/* delete the info text added when completion is inserted 
+/* delete the info text added when completion is inserted
  */
 
 static void nsptv_delete_completion_infos(View *view)
 {
   GtkTextIter start, end;
   GtkTextMark *completion_mark;
-  /* test if we have a completion mark by testing if the text buffer contains a 
+  /* test if we have a completion mark by testing if the text buffer contains a
    * mark named completion.
-   * if yes then delete the characters from the completion mark (in fact the completion mark + one 
+   * if yes then delete the characters from the completion mark (in fact the completion mark + one
    * character) to the end of the buffer.
    */
   completion_mark = gtk_text_buffer_get_mark(view->buffer->buffer, "completion");
@@ -333,15 +333,15 @@ static void nsptv_delete_completion_infos(View *view)
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &start,
 				    completion_mark);
-  /* delete from start+1 to end of buffer 
+  /* delete from start+1 to end of buffer
    */
   gtk_text_iter_forward_char (&start);
   gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
-  gtk_text_buffer_delete_mark(view->buffer->buffer, 
+  gtk_text_buffer_delete_mark(view->buffer->buffer,
 			      view->buffer->completion_mark);
 }
 
-/* insert possible completions for pathnames using 
+/* insert possible completions for pathnames using
  * readline to build the possible list.
  */
 
@@ -361,7 +361,7 @@ static void nsptv_insert_completions(View *view)
       gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
       search_string = gtk_text_iter_get_text (&iter, &end);
     }
-  else 
+  else
     {
       search_string = gtk_text_iter_get_text (&start, &end);
     }
@@ -377,10 +377,10 @@ static void nsptv_insert_completions(View *view)
   matches = rl_completion_matches (str_expanded, rl_filename_completion_function);
   if ( matches == NULL || matches[0] == NULL ) return ;
   /* we insert the proposed completion */
-  
-  gtk_text_buffer_insert (view->buffer->buffer, &end, 
+
+  gtk_text_buffer_insert (view->buffer->buffer, &end,
 			  matches[0] +strlen(str_expanded) ,-1);
-  if ( matches[1] != NULL ) 
+  if ( matches[1] != NULL )
     {
       int i=1;
       /* fix the completion mark before inserting possible completions */
@@ -388,14 +388,14 @@ static void nsptv_insert_completions(View *view)
       gtk_text_buffer_add_mark(view->buffer->buffer, view->buffer->completion_mark, &end);
       gtk_text_iter_forward_char (&end);
       gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
-      while ( matches[i] != NULL) 
+      while ( matches[i] != NULL)
 	{
 	  gtk_text_buffer_insert (view->buffer->buffer, &end,matches[i],-1);
 	  gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
 	  i++;
 	}
       /* put the mark before the completion */
-      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 					view->buffer->completion_mark);
       gtk_text_iter_forward_char (&iter);
       gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
@@ -415,22 +415,22 @@ static void nsptv_key_press_return(View *view,int stop_signal)
       gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
       search_string = gtk_text_iter_get_text (&iter, &end);
     }
-  else 
+  else
     {
       search_string = gtk_text_iter_get_text (&start, &end);
     }
-  if ( search_string[0] != '\0' && search_string[0] != '\n' ) 
+  if ( search_string[0] != '\0' && search_string[0] != '\n' )
     nsptv_append_history(search_string,  view->view_history, TRUE);
   if (1) /* search_string[strlen(search_string)-1] != '\n') */
     {
       gtk_text_buffer_insert (buffer, &end, "\n",-1);
       gtk_text_buffer_get_bounds (buffer, &start, &end);
-      if ( view->buffer->mark == NULL) 
+      if ( view->buffer->mark == NULL)
 	view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-      else 
+      else
 	gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
     }
-  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 				view->buffer->mark,
 				0, TRUE, 0.0, 1.0);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
@@ -440,19 +440,19 @@ static void nsptv_key_press_return(View *view,int stop_signal)
   if ( stop_signal == TRUE )
     g_signal_stop_emission_by_name (view->text_view, "key_press_event");
   view->nsp_expr= search_string;
-#ifdef NSP_WITH_MAIN_GTK_THREAD  
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   nsp_textview_awake_for_text(view);
-#else 
+#else
   nsp_textview_gtk_main_quit();
 #endif
 }
 
-/* callback dealing with keypressed in text view 
+/* callback dealing with keypressed in text view
  */
 
 #if defined(USE_SHARP_SIGN)
 #define GDK_KEY(name) GDK_KEY_##name
-#else 
+#else
 #define GDK_KEY(name) GDK_KEY_/**/name
 #endif
 
@@ -461,14 +461,14 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
   GtkTextIter start, end,iter;
   GtkTextMark *cursor_mark;
   View *view= xdata;
-  char *str; 
+  char *str;
   view_history *data  = view->view_history;
 
   /* delete extra info added by completion  */
   nsptv_delete_completion_infos(view);
 
   /*fprintf(stderr,"key pressed\n");*/
-  switch ( event->keyval ) 
+  switch ( event->keyval )
     {
     case GDK_KEY(Page_Up):
     case GDK_KEY(Page_Down):
@@ -484,7 +484,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       if ( event->state & GDK_SHIFT_MASK ) {
         return FALSE;
       }
-      goto up; 
+      goto up;
       break;
     case GDK_KEY(Down):
       if ( event->state & GDK_SHIFT_MASK ) {
@@ -492,29 +492,29 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       }
       goto down;
       break;
-    case 'p': 
-      if ( event->state & GDK_CONTROL_MASK ) 
+    case 'p':
+      if ( event->state & GDK_CONTROL_MASK )
 	{
 	  goto up;
 	}
       goto def;
       break;
     case 'n':
-      if ( event->state & GDK_CONTROL_MASK ) 
+      if ( event->state & GDK_CONTROL_MASK )
 	{
 	  goto down;
 	}
       goto def;
       break;
     case 'c':
-      if ( event->state & GDK_CONTROL_MASK ) 
+      if ( event->state & GDK_CONTROL_MASK )
 	{
 	  goto ctrl_c;
 	}
       goto def;
       break;
     case 'l' :
-      if ( event->state & GDK_CONTROL_MASK ) 
+      if ( event->state & GDK_CONTROL_MASK )
 	{
 	  goto ctrl_l;
 	}
@@ -529,22 +529,22 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       gtk_text_iter_backward_char (&iter);
       if (gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view)))) {
         gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
-        gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+        gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),
                                      &iter,
                                      0, FALSE, 0.0, 1.0);
       } else {
         if ( view->buffer->mark != NULL) {
           gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
           gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
-          gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+          gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
                                         view->buffer->mark,
                                         0, TRUE, 1.0, 1.0);
           }
-	
+
       }
       return TRUE;
     case 'b' :
-      if ( event->state & GDK_CONTROL_MASK ) 
+      if ( event->state & GDK_CONTROL_MASK )
 	{
 	  cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
 	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
@@ -553,29 +553,29 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
 	    {
 	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
 	    }
-          gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+          gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),
 					&iter,
 					0, TRUE, 0.0, 1.0);
 	  return TRUE;
 	}
       goto def;
       break;
-    case 'a': 
-      if ( event->state & GDK_CONTROL_MASK ) 
+    case 'a':
+      if ( event->state & GDK_CONTROL_MASK )
 	{
-	  if ( view->buffer->mark != NULL) 
+	  if ( view->buffer->mark != NULL)
 	    {
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
 	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
-              gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+              gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 					    view->buffer->mark,
 					    0, TRUE, 1.0, 1.0);
 	    }
 	  return TRUE;
 	}
-      goto def; 
+      goto def;
       break;
- case GDK_KEY(KP_Home): 
+ case GDK_KEY(KP_Home):
  case GDK_KEY(Home):
       if ( event->state & GDK_SHIFT_MASK ) {
         gtk_text_buffer_get_selection_bounds(view->buffer->buffer,&start, &end);
@@ -586,7 +586,7 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
         if ( event->state & GDK_SHIFT_MASK ) {
           gtk_text_buffer_select_range(view->buffer->buffer,&iter,&end);
         }
-        /*gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+        /*gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 	*			view->buffer->mark,
 	*			0, TRUE, 1.0, 1.0);
         */
@@ -632,13 +632,13 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
-    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view),
 				   cursor_mark,
 				   0, TRUE, 1.0, 1.0);
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
- down: 
+ down:
   str = nsptv_history_down(data);
   /* fprintf(stdout,"down pressed\n"); */
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
@@ -652,32 +652,32 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
-    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view),
 				   cursor_mark,
 				   0, TRUE, 1.0, 1.0);
   } else {
     if (view->buffer->mark != NULL) {
-        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 				view->buffer->mark,
 				0, TRUE, 1.0, 1.0);
     }
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
- ctrl_l : 
+ ctrl_l :
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
   gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
   /* nsp_textview_insert_logo(view); */
   nsptv_key_press_return(view,TRUE);
   return TRUE;
- ctrl_c: 
+ ctrl_c:
   /* fprintf(stderr,"un controle C\n"); */
   return FALSE;
- def: 
-  /* if we are at a position when insertion is not possible 
-   * we jump to end of text view where we are allowed 
-   * to enter text 
+ def:
+  /* if we are at a position when insertion is not possible
+   * we jump to end of text view where we are allowed
+   * to enter text
    */
   cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
   gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
@@ -686,13 +686,13 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
       gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
       cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
-      gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+      gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view),
 				   cursor_mark,
 				   0, FALSE, 1.0, 1.0);
     }
-  /* we can here return TRUE or FALSE 
-   * TRUE and character won't be echoed 
-   * FALSE and character will be echoed 
+  /* we can here return TRUE or FALSE
+   * TRUE and character won't be echoed
+   * FALSE and character will be echoed
    */
   return FALSE;
 }
@@ -721,7 +721,7 @@ nsptv_button_press_callback(GtkWidget *widget, GdkEventButton *event,gpointer xd
   gtk_widget_grab_focus (view->text_view);
 
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 2 ) 
+  if (event->type == GDK_BUTTON_PRESS && event->button == 2 )
     {
       gint x,y;
       GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
@@ -738,7 +738,7 @@ nsptv_button_press_callback(GtkWidget *widget, GdkEventButton *event,gpointer xd
       /* gtk_text_buffer_place_cursor (view->buffer->buffer,&iter); */
       /* buffer = view->buffer->buffer; */
       nsptv_delete_completion_infos(view);
-      if ( str ) 
+      if ( str )
 	{
 	  nsp_eval_pasted_from_clipboard(str,view,0,iter);
 	  g_free(str);
@@ -750,12 +750,12 @@ nsptv_button_press_callback(GtkWidget *widget, GdkEventButton *event,gpointer xd
 
 /**
  * Xorgetchar_textview:
- * @void: 
- * 
- * wait for a character when top level 
- * is a textview. This function is only used 
- * through  nsp_set_getchar_fun(Xorgetchar_textview). 
- * 
+ * @void:
+ *
+ * wait for a character when top level
+ * is a textview. This function is only used
+ * through  nsp_set_getchar_fun(Xorgetchar_textview).
+ *
  * Returns: an integer
  **/
 
@@ -765,7 +765,7 @@ static int Xorgetchar_textview(void)
   View *view;
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   view = nsptv_get_view("Xorgetchar_textview");
-  if ( view->nsp_expr != NULL ) 
+  if ( view->nsp_expr != NULL )
     {
       int val1;
       if (count <= strlen(view->nsp_expr))
@@ -782,10 +782,10 @@ static int Xorgetchar_textview(void)
 	}
       return val1;
     }
-  
+
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   nsp_textview_wait_for_text(view);
-#else 
+#else
   nsp_textview_gtk_main();
 #endif
 
@@ -797,13 +797,13 @@ static int Xorgetchar_textview(void)
 /**
  * nsp_eval_pasted_from_clipboard:
  * @nsp_expr: a string to be evaluated
- * @view: the view object. 
- * 
- * used for evaluation of sequence obtained 
- * by drag-drop or copy-paste. If the sequence 
- * is a string without return we paste it into the textview 
+ * @view: the view object.
+ *
+ * used for evaluation of sequence obtained
+ * by drag-drop or copy-paste. If the sequence
+ * is a string without return we paste it into the textview
  * else we evaluate the sequence.
- * 
+ *
  **/
 
 static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
@@ -816,7 +816,7 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
       if (gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))))
 	{
 	  gtk_text_buffer_insert (view->buffer->buffer, &iter, nsp_expr,-1);
-	  /* set the cursor at the end of insertion : 
+	  /* set the cursor at the end of insertion :
 	   * not done since it also has the effect that the selection is unselected
 	   */
 	  /* gtk_text_buffer_place_cursor (view->buffer->buffer,&iter); */
@@ -826,7 +826,7 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
 	  /* insert at the end */
 	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
 	  gtk_text_buffer_insert (view->buffer->buffer, &end, nsp_expr,-1);
-	  /* set the cursor at the end of insertion : 
+	  /* set the cursor at the end of insertion :
 	   * not done since it also has the effect that the selection is unselected
 	   */
 	}
@@ -834,15 +834,15 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
     }
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
-  for ( i = 0 ; i < S->mn ; i++ ) 
+  for ( i = 0 ; i < S->mn ; i++ )
     {
       nsptv_append_history(S->S[i], view->view_history, TRUE);
     }
   /* rep =*/  nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
   nsp_smatrix_destroy(S);
-  if ( get_is_reading() == TRUE ) 
+  if ( get_is_reading() == TRUE )
     {
-      /* force a key_press_return, to scroll to end 
+      /* force a key_press_return, to scroll to end
        * and recover a prompt
        */
       nsptv_key_press_return(view,FALSE);
@@ -852,19 +852,19 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
 /**
  * nsp_eval_str_in_textview:
  * @nsp_expr: a string to be evaluated
- * 
- * used when an execute selection is performed 
+ *
+ * used when an execute selection is performed
  * from an edit buffer.
- * 
+ *
  **/
 
-void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently) 
+void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently)
 {
   int key_press= FALSE;
   GtkTextIter start, end;
   int rep,  i;
   NspSMatrix *S;
-  View *view= nsptv_get_view("nsp_eval_str_in_textview");  
+  View *view= nsptv_get_view("nsp_eval_str_in_textview");
   if ( view == NULL) return;
   S = nsp_smatrix_split_string(nsp_expr,"\n",1);
   if ( execute_silently == FALSE )
@@ -872,14 +872,14 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently)
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
       gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
     }
-  for ( i = 0 ; i < S->mn ; i++ ) 
+  for ( i = 0 ; i < S->mn ; i++ )
     {
       nsptv_append_history(S->S[i], view->view_history, TRUE);
     }
-  if ( execute_silently == TRUE ) 
+  if ( execute_silently == TRUE )
     {
       rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,TRUE);
-      if ( rep < 0 ) 
+      if ( rep < 0 )
 	{
 	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
 	  gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
@@ -893,10 +893,10 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently)
     }
 
   nsp_smatrix_destroy(S);
-  if ( get_is_reading() == TRUE ) 
+  if ( get_is_reading() == TRUE )
     {
-      /* force a key_press_return, to scroll to end 
-       * and recover a promp. 
+      /* force a key_press_return, to scroll to end
+       * and recover a promp.
        */
       if ( execute_silently == FALSE || key_press==TRUE)
 	nsptv_key_press_return(view,FALSE);
@@ -905,7 +905,7 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently)
 
 void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
 {
-  if ( nsp_get_in_text_view() == TRUE ) 
+  if ( nsp_get_in_text_view() == TRUE )
     {
       nsp_eval_str_in_textview(str,execute_silently);
     }
@@ -914,9 +914,9 @@ void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
       NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
       nsp_readline_clear_line();
       Sciprintf("\n");
-      if ( execute_silently == TRUE ) 
+      if ( execute_silently == TRUE )
 	nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
-      else 
+      else
 	nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
       nsp_smatrix_destroy(S);
       /* restore a prompt */
@@ -925,20 +925,20 @@ void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
 }
 
 /**
- * nsp_eval_drag_drop_info_text: 
+ * nsp_eval_drag_drop_info_text:
  * @nsp_expr: a string to be evaluated
- * @view: the view object. 
- * 
- * used for evaluation of sequence obtained 
- * by drag-drop (drag/drop of a file). 
- * 
+ * @view: the view object.
+ *
+ * used for evaluation of sequence obtained
+ * by drag-drop (drag/drop of a file).
+ *
  **/
 #if 0
 static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
 {
   GtkTextIter start, pos=iter;
   if ( strlen(nsp_expr) == 0 ) return;
-  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))) 
+  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view)))
     {
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &pos);
     }
@@ -946,14 +946,14 @@ static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int p
   gtk_text_buffer_insert (view->buffer->buffer, &pos, nsp_expr ,-1);
   gtk_text_buffer_insert (view->buffer->buffer, &pos, "')",-1);
 }
-#endif 
+#endif
 /**
  * readline_textview_internal:
  * @prompt: a string giving the prompt to be used
- * 
- * this is the function used to read lines when interaction 
- * is performed in a textview. 
- * 
+ *
+ * this is the function used to read lines when interaction
+ * is performed in a textview.
+ *
  * Returns: the next acquired character
  **/
 
@@ -963,40 +963,40 @@ static char *readline_textview_internal(const char *prompt)
   static int use_prompt=1;
   if ( nsp_check_events_activated()== FALSE) return readline(prompt);
   view= nsptv_get_view("readline_textview_internal");
-  
-  if ( use_prompt == 1) 
+
+  if ( use_prompt == 1)
     {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
       nsp_insert_prompt_thread(view,prompt);
-#else 
+#else
       nsp_insert_prompt(view,prompt);
 #endif
     }
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   nsp_textview_wait_for_text(view);
-#else 
+#else
   nsp_textview_gtk_main();
 #endif
 
-  if ( checkqueue_nsp_command() == TRUE) 
+  if ( checkqueue_nsp_command() == TRUE)
     {
       char buf[256];
       dequeue_nsp_command(buf,255);
       use_prompt=1;
       /* fprintf(stderr,"Something in queue %s\n",buf); */
-      /* we should check here if echo is done or not 
-       * depending on which command is echoed 
-       * it's not a good idea to echo event_handlers 
-       * but event handlers do not use the nsp_command 
+      /* we should check here if echo is done or not
+       * depending on which command is echoed
+       * it's not a good idea to echo event_handlers
+       * but event handlers do not use the nsp_command
        * queue any more.
        */
-      if ( buf[0] != '\0' && buf[0] != '\n' ) 
+      if ( buf[0] != '\0' && buf[0] != '\n' )
         nsptv_append_history(buf,  view->view_history, TRUE);
       Sciprintf("%s\n",buf);
       return g_strdup(buf);
     }
-  else 
+  else
     {
       gchar *str = g_strdup(view->nsp_expr);
       use_prompt=1;
@@ -1007,18 +1007,18 @@ static char *readline_textview_internal(const char *prompt)
 }
 
 
-/* when we copy a zone : we change the zone to set it 
- * editable. The whole buffer is set to non editable 
- * after a <Return>. 
- * ZZZZ: est-ce que cela risque pas de finir par etre tres lent 
- * quand la taille va croitre ? 
+/* when we copy a zone : we change the zone to set it
+ * editable. The whole buffer is set to non editable
+ * after a <Return>.
+ * ZZZZ: est-ce que cela risque pas de finir par etre tres lent
+ * quand la taille va croitre ?
  */
 
 static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
   GtkClipboard *clipboard;
   View *view= user_data;
-  /* set the selection to be editable 
+  /* set the selection to be editable
      GtkTextIter start,end;
      gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end);
      gtk_text_buffer_remove_tag(view->buffer->buffer,view->buffer->not_editable_tag,
@@ -1028,8 +1028,8 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
   gtk_text_buffer_copy_clipboard(view->buffer->buffer,clipboard);
 }
 
-/* Note that even if paste_clipboard_callback is called after 
- * the default one we do not get the pasted date because 
+/* Note that even if paste_clipboard_callback is called after
+ * the default one we do not get the pasted date because
  * gtk_text_buffer_paste_clipboard is asynchronous.
  */
 
@@ -1041,7 +1041,7 @@ static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data
   gchar *str = gtk_clipboard_wait_for_text(clipboard);
   /* fprintf(stderr,"A clipboard text: %s\n",str); */
   g_signal_stop_emission_by_name (text_view, "paste_clipboard");
-  if ( str ) 
+  if ( str )
     {
       GtkTextIter iter;
       GtkTextMark *mark;
@@ -1052,9 +1052,9 @@ static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data
     }
 }
 
-/* change drag and drop behaviour because we want to 
- * be able to drop anywhere in the terminal window 
- * even in non editable zones. Because the evaluation 
+/* change drag and drop behaviour because we want to
+ * be able to drop anywhere in the terminal window
+ * even in non editable zones. Because the evaluation
  * of pasted data will be then added at the end.
  */
 
@@ -1067,7 +1067,7 @@ gtk_text_view_drag_end (GtkWidget        *widget,
   View *view= (View *) data;
   GtkTextBuffer *buffer = view->buffer->buffer;
   /*
-   * reset the non editable zone 
+   * reset the non editable zone
    */
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
@@ -1087,8 +1087,8 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
   View *view= (View *) data;
   GtkTextBuffer *buffer = view->buffer->buffer;
   GtkTextIter start, end;
-  /* during the drag_motion we set all position to editable 
-   * to enable a drop anywhere 
+  /* during the drag_motion we set all position to editable
+   * to enable a drop anywhere
    */
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
@@ -1120,7 +1120,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   g_signal_stop_emission_by_name (widget, "drag_data_received");
 
   /*
-   * reset the non editable zone 
+   * reset the non editable zone
    */
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
@@ -1129,8 +1129,8 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 			     &start, &end);
 
   /* deals with the drop */
-  
-  gtk_text_buffer_begin_user_action (buffer); 
+
+  gtk_text_buffer_begin_user_action (buffer);
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
                                     priv->dnd_mark);
@@ -1150,7 +1150,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
         return;
 
       g_return_if_fail (GTK_IS_TEXT_BUFFER (src_buffer));
-      
+
       if (gtk_text_buffer_get_tag_table (src_buffer) !=
           gtk_text_buffer_get_tag_table (buffer))
         {
@@ -1180,7 +1180,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
           if (target != GDK_NONE)
             {
               gtk_drag_get_data (widget, context, target, time);
-	      gtk_text_buffer_end_user_action (buffer); 
+	      gtk_text_buffer_end_user_action (buffer);
               return;
             }
         }
@@ -1192,18 +1192,18 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  GtkTextIter iter;
 	  gchar *str;
 	  str = gtk_text_iter_get_visible_text (&start, &end);
-	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
 	  nsp_eval_pasted_from_clipboard(str,view,1,iter);
 	  g_free (str);
         }
     }
-  else if ( gtk_selection_data_get_length(selection_data) > 0 ) 
+  else if ( gtk_selection_data_get_length(selection_data) > 0 )
     {
-      if ( info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT) 
+      if ( info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT)
 	{
 	  fprintf(stderr, "Selection contains rich text \n");
-	  /* 
+	  /*
 	     gboolean retval;
 	     GError *error = NULL;
 	     retval = gtk_text_buffer_deserialize (buffer, buffer,
@@ -1225,7 +1225,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  guchar *str;
 	  gint n_atoms=0;
 	  GdkAtom *targets;
-	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms)) 
+	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms))
 	    {
 	      if ( gtk_selection_data_targets_include_text (selection_data))
 		{
@@ -1251,14 +1251,14 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	      int n = strlen((char *) str);
 #endif
 	      GtkTextIter iter;
-	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 						GTK_TEXT_VIEW(view->text_view)->dnd_mark );
-	      /* we get here after a drag/drop from help or a drag/drop from desktop 
+	      /* we get here after a drag/drop from help or a drag/drop from desktop
 	       * we should find how to better detect each case
 	       */
 #if 1
 	      nsp_eval_pasted_from_clipboard((gchar *) str, view,1,iter);
-#else 
+#else
 	      /* remove trailing \r\n */
 	      if ( str[n-2] == '\r' ) str[n-2]='\0';
 	      if ( str[n-1] == '\n' ) str[n-2]='\0';
@@ -1274,7 +1274,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  guchar *str;
 	  gint n_atoms=0;
 	  GdkAtom *targets;
-	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms)) 
+	  if ( gtk_selection_data_get_targets (selection_data,&targets,&n_atoms))
 	    {
 	      if ( gtk_selection_data_targets_include_text (selection_data))
 			{
@@ -1289,13 +1289,13 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  if (str)
 	    {
 	      GtkTextIter iter;
-	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
 	      nsp_eval_pasted_from_clipboard((gchar *) str,view,1,iter);
 	      g_free (str);
 	    }
 #endif
-	    
+
   gtk_drag_finish (context, success,
 		   success && gdk_drag_context_get_actions (context) == GDK_ACTION_MOVE,
 		   time);
@@ -1306,13 +1306,13 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 
 /**
  * configure_event:
- * @widget: 
- * @event: 
- * @data: 
- * 
- * 
- * 
- * Returns: 
+ * @widget:
+ * @event:
+ * @data:
+ *
+ *
+ *
+ * Returns:
  **/
 
 static int tv_rows = 24;
@@ -1325,12 +1325,12 @@ static gint nsptv_configure_callback(GtkWidget *widget, GdkEventConfigure *event
   /* GdkRectangle rect; */
   int width,height;
   if ( view->text_view == NULL ) return FALSE;
-  /* 
+  /*
   gtk_text_view_get_visible_rect( GTK_TEXT_VIEW(view->text_view),
 				  &rect);
   gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(view->text_view),
 					GTK_TEXT_WINDOW_WIDGET,
-					rect.width, rect.height, 
+					rect.width, rect.height,
 					&width, &height);
   Sciprintf("windows %d %d\n", width,height);
   */
@@ -1347,7 +1347,7 @@ static gint nsptv_configure_callback(GtkWidget *widget, GdkEventConfigure *event
 void  nsp_text_view_screen_size(int *rows,int *cols)
 {
   *rows = tv_rows;
-  *cols = tv_cols; 
+  *cols = tv_cols;
 }
 
 static View *nsptv_create_view (Buffer *buffer)
@@ -1357,16 +1357,16 @@ static View *nsptv_create_view (Buffer *buffer)
   GtkWidget *sw;
   GtkWidget *vbox;
   GtkWidget *menu;
-  
+
   view = g_new0 (View, 1);
 
   view->view_history= malloc (sizeof(view_history));
-  if ( view->view_history != NULL) 
+  if ( view->view_history != NULL)
     {
       HISTORY_STATE *state = history_get_history_state();
       view_history *data =  view->view_history;
       data->history_cur =  data->history_tail =data->history = NULL;
-      data->history_size = 0;     
+      data->history_size = 0;
       for ( i = 0 ; i < state->length ; i++)
 	{
 	  nsptv_append_history(state->entries[i]->line,data, FALSE);
@@ -1375,27 +1375,27 @@ static View *nsptv_create_view (Buffer *buffer)
 
   view->buffer = buffer;
   nsptv_buffer_ref (buffer);
-  
+
   view->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   g_object_set_data (G_OBJECT (view->window), "view", view);
-  
+
   g_signal_connect (view->window, "delete_event",
 		    G_CALLBACK (nsptv_delete_callback), NULL);
 
   g_signal_connect( view->window, "configure_event",
 		    G_CALLBACK(nsptv_configure_callback), view);
 
-  /* 
+  /*
   view->accel_group = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
    XXXX accel group to share with menu
   */
-  
+
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
-  menu = create_main_menu(view->window);  
+  menu = create_main_menu(view->window);
   gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
-  
+
   sw = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
 				  GTK_POLICY_AUTOMATIC,
@@ -1404,7 +1404,7 @@ static View *nsptv_create_view (Buffer *buffer)
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
                                GTK_WRAP_CHAR); /* GTK_WRAP_WORD */
-    
+
   PangoFontDescription* p = pango_font_description_from_string("Monospace");
   gtk_widget_override_font (GTK_WIDGET (view->text_view),p);
   pango_font_description_free (p);
@@ -1414,19 +1414,19 @@ static View *nsptv_create_view (Buffer *buffer)
   g_signal_connect (view->text_view,
                     "key_press_event",
                     G_CALLBACK (nsptv_key_press_callback),
-                    view);  
+                    view);
 
   g_signal_connect(view->text_view,
 		   "button_press_event",
 		   G_CALLBACK (nsptv_button_press_callback),
-		   view);  
+		   view);
 #if XXX_AFAIRE
   g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
-#endif 
+#endif
 
   g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
   g_signal_connect(view->text_view,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),view);
-  
+
   g_signal_connect (view->text_view,
                     "copy_clipboard",
                     G_CALLBACK (copy_clipboard_callback),
@@ -1442,7 +1442,7 @@ static View *nsptv_create_view (Buffer *buffer)
 		    "mark_set",
 		    G_CALLBACK (nsptv_cursor_set_callback),
 		    view->text_view);
-  
+
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);
 
@@ -1450,17 +1450,17 @@ static View *nsptv_create_view (Buffer *buffer)
   /*   gtk_window_set_default_size (GTK_WINDOW (view->window), 600, 400); */
 
   gtk_widget_grab_focus (view->text_view);
-  
+
   gtk_widget_show_all (view->window);
 
   nsptv_insert_logo (view);
   /* used to store string to pass to nsp interpreter*/
-  view->nsp_expr=NULL; 
+  view->nsp_expr=NULL;
   /* initialize the queues */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   view->read_queue= g_async_queue_new ();
   view->write_queue= g_async_queue_new ();
-#else 
+#else
   view->read_queue= NULL;
   view->write_queue= NULL;
 #endif
@@ -1469,7 +1469,7 @@ static View *nsptv_create_view (Buffer *buffer)
   return view;
 }
 
-/* print to the textview 
+/* print to the textview
  *
  */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
@@ -1482,7 +1482,7 @@ static int nsp_tv_print(View *view,const char *fmt, ...)
   va_end(ap);
   return n;
 }
-#endif 
+#endif
 
 static int  nsp_print_to_textview(const char *fmt, va_list ap)
 {
@@ -1500,11 +1500,11 @@ static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list a
   int n;
   char *lbuf = buf ;
   /*fprintf(stderr," nsp_print_to_textview\n");*/
-  if ( xtag == FALSE ) 
+  if ( xtag == FALSE )
     {
       int i;/* {8,{9,{7,{6,{7,{2,8}}}}}} */
       const char *cnames[]={"blue","green","red","purple","lightblue"};
-      for ( i = 0 ; i < ncolor ; i++) 
+      for ( i = 0 ; i < ncolor ; i++)
 	color_tags[i] = gtk_text_buffer_create_tag (view->buffer->buffer, NULL,
 						    "foreground", cnames[i] , NULL);
       xtag = TRUE;
@@ -1522,7 +1522,7 @@ static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list a
 	  if (*lbuf != 'm')
 	    {
 	      char color = *lbuf;
-	      switch (color) 
+	      switch (color)
 		{
 		case '4': tag = color_tags[0];break;
 		case '2': tag = color_tags[1];break;
@@ -1532,35 +1532,35 @@ static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list a
 		}
 	      lbuf++;
 	    }
-	  else 
+	  else
 	    {
 	      tag = NULL;
 	    }
 	  lbuf++;
 	}
-      else 
+      else
 	{
-	  char *loc = lbuf; 
+	  char *loc = lbuf;
 	  int count = 0;
 	  while ( *loc != '\0' && *loc != '\033') loc++;
 	  count = loc -lbuf ;
-	  if ( tag != NULL) 
+	  if ( tag != NULL)
 	    gtk_text_buffer_insert_with_tags(view->buffer->buffer, &end,lbuf,count,tag,NULL);
 	  else
 	    gtk_text_buffer_insert (view->buffer->buffer, &end,lbuf,count);
 	  lbuf += count;
 	}
     }
-#else 
+#else
   gtk_text_buffer_insert (view->buffer->buffer, &end,buf,-1);
-#endif 
+#endif
 
-  if ( view->buffer->mark == NULL) 
+  if ( view->buffer->mark == NULL)
     view->buffer->mark = gtk_text_buffer_create_mark (view->buffer->buffer, NULL, &end, TRUE);
-  else 
+  else
     gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 				view->buffer->mark,
 				0, TRUE, 0.0, 1.0);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
@@ -1569,24 +1569,30 @@ static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list a
   return n;
 }
 
-/* should be used in the threaded version 
+/* should be used in the threaded version
  *
- */ 
+ */
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 static gboolean nsp_insert_idle_text(gpointer user_data)
 {
   View *view = (View *) user_data;
   char *text = view->user_data;
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_enter();
+#endif
   nsp_tv_print(view,"%s",text);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   nsp_textview_awake_for_end_print_text(view);
   return FALSE;
 }
-#endif 
+#endif
 
-/* It is safe to call this function from 
+/* It is safe to call this function from
  * non gtk thread.
  */
 
@@ -1609,7 +1615,7 @@ static int  nsp_print_to_textview_thread(const char *fmt, va_list ap)
     }
   return n;
 }
-#endif 
+#endif
 
 /* write the prompt prompt in textview */
 
@@ -1620,14 +1626,14 @@ static void nsp_insert_prompt(View *view,const char *prompt)
   buffer = view->buffer->buffer;
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   /* scroll to be sure that the prompt will be visible */
-  if (  view->buffer->mark != NULL) 
-    gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+  if (  view->buffer->mark != NULL)
+    gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
 				  view->buffer->mark,
 				  0, TRUE, 0.0, 1.0);
   gtk_text_buffer_insert (buffer, &end,prompt,-1);
-  if ( view->buffer->mark == NULL) 
+  if ( view->buffer->mark == NULL)
     view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-  else 
+  else
     gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
@@ -1641,15 +1647,21 @@ static void nsp_insert_prompt(View *view,const char *prompt)
 static gboolean nsp_insert_idle_prompt(gpointer user_data)
 {
   View *view = (View *) user_data;
-  gdk_threads_enter();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   nsp_insert_prompt(view,(const char *) view->user_data);
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   nsp_textview_awake_for_end_print_text(view);
   return FALSE;
 }
-#endif 
+#endif
 
-/* It is safe to call this function from 
+/* It is safe to call this function from
  * non gtk thread.
  */
 
@@ -1665,9 +1677,9 @@ static void nsp_insert_prompt_thread(View *view,const char *prompt)
       view->user_data= (gpointer) prompt;
       g_idle_add(nsp_insert_idle_prompt,(gpointer) view);
       nsp_textview_wait_for_end_print_text(view);
-    } 
+    }
 }
-#endif 
+#endif
 
 static View *views[2]={NULL,NULL};
 
@@ -1679,9 +1691,9 @@ View *nsp_create_main_text_view_(void)
   nsptv_buffer_unref (buffer);
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   SetScilabIO(nsp_print_to_textview_thread);
-#else 
+#else
   SetScilabIO(nsp_print_to_textview);
-#endif 
+#endif
   nsp_set_getchar_fun(Xorgetchar_textview);
   nsp_set_readline_fun(readline_textview);
   return view;
@@ -1700,23 +1712,23 @@ View *nsptv_get_view(const char *str)
 {
   static int use_view= 0;
   GThread *self= g_thread_self();
-  if ( self == thread1 ) 
+  if ( self == thread1 )
     {
       printf("appel de thread1 %s\n",str);
       use_view= 0;
     }
-  else if ( self == thread2 ) 
+  else if ( self == thread2 )
     {
       printf("appel de thread2 %s\n",str);
       use_view= 1;
     }
-  else 
+  else
     {
       printf("appel de main %s\n",str);
     }
   return views[use_view];
 }
-#else 
+#else
 void nsp_create_main_text_view(void)
 {
   views[0] = nsp_create_main_text_view_();
@@ -1726,9 +1738,9 @@ View *nsptv_get_view(const char *str)
 {
   return views[0];
 }
-#endif 
+#endif
 
-/* insert a graphic file in the textview 
+/* insert a graphic file in the textview
  *
  *
  */
@@ -1738,16 +1750,16 @@ int nsp_insert_pixbuf_from_file(char *filename)
   GtkTextIter start,end;
   GdkPixbuf*pixbuf;
   View *view= nsptv_get_view("nsp_insert_pixbuf_from_file");
-  if ( view != NULL) 
+  if ( view != NULL)
     {
       pixbuf =  gdk_pixbuf_new_from_file(filename,NULL);
       gtk_text_buffer_get_end_iter(view->buffer->buffer,&start);
       gtk_text_buffer_get_end_iter(view->buffer->buffer,&end);
       gtk_text_buffer_insert_pixbuf (view->buffer->buffer, &end, pixbuf);
       gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
-      if ( view->buffer->mark != NULL) 
+      if ( view->buffer->mark != NULL)
 	gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &start,view->buffer->mark);
-      else 
+      else
 	gtk_text_buffer_get_end_iter(view->buffer->buffer,&start);
 
       gtk_text_buffer_apply_tag (view->buffer->buffer,
@@ -1762,12 +1774,12 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 {
   static int use_prompt=1;
   static int tty =0, init_flag = TRUE, enter=0;
-  char * line=NULL ; 
+  char * line=NULL ;
   if(init_flag) {
-    /* the next line is useful for cut and paste 
-     * ehrlich juin 2001 
+    /* the next line is useful for cut and paste
+     * ehrlich juin 2001
      */
-    setvbuf(stdin, NULL, _IONBF, 0); 
+    setvbuf(stdin, NULL, _IONBF, 0);
     /* fd=fileno(stdin); */
     tty = isatty(fileno(stdin));
     init_flag = FALSE;
@@ -1777,16 +1789,16 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
   }
 
   set_is_reading(TRUE);
-  
-  if( !tty) 
-    { 
+
+  if( !tty)
+    {
       static int first = 0;
-      /* if not an interactive terminal use fgets 
+      /* if not an interactive terminal use fgets
        * should be changed for gtk events FIXME
-       */ 
+       */
       if ( nsp_from_texmacs() == TRUE )
 	{
-	  if ( first == 0 ) 
+	  if ( first == 0 )
 	    {
 	      fputs("\002verbatim:",stdout);
 	      first++;
@@ -1795,7 +1807,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 	  fputs("\002channel:prompt\005-nsp->\005",stdout);
 	  fflush (stdout);
 	}
-      else 
+      else
 	{
 	  fputs("-nsp->",stdout);
 	  fflush (stdout);
@@ -1809,7 +1821,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 	    *len_line -= 2;
 	  else if ( buffer[*len_line - 1] == '\n') (*len_line)--;
 	}
-      else if( *len_line >= 1) 
+      else if( *len_line >= 1)
 	{
 	  if ( buffer[*len_line - 1] == '\n') (*len_line)--;
 	}
@@ -1818,13 +1830,13 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
     }
   /* reentrant counter */
   enter++;
-  
-  if ( sigsetjmp(my_env,1)) 
+
+  if ( sigsetjmp(my_env,1))
     {
-      /* return from longjmp: we get here if there's a menu command 
-       * to be executed by nsp 
+      /* return from longjmp: we get here if there's a menu command
+       * to be executed by nsp
        */
-      if ( dequeue_nsp_command(buffer,*buf_size) == FAIL) 
+      if ( dequeue_nsp_command(buffer,*buf_size) == FAIL)
 	{
 	  *eof = -1;
 	  use_prompt=0;
@@ -1838,8 +1850,8 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 	  *len_line = strlen(buffer);
 	  goto end;
 	}
-    } 
-  else 
+    }
+  else
     {
       signal (SIGINT, controlC_handler_void);
       line = readline_textview_internal((use_prompt) ? prompt : "" );
@@ -1847,18 +1859,18 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
       signal (SIGINT, controlC_handler);
     }
 
-  if ( line == NULL) 
+  if ( line == NULL)
     {
       *len_line= 1;
       strncpy(buffer,"\n",1);
       *eof = FALSE;
     }
-  else 
+  else
     {
       *len_line= strlen(line);
       strncpy(buffer,line,*buf_size);
       /* Do not free line on reentrant calls  */
-      if ( enter == 1 ) 
+      if ( enter == 1 )
 	{
 	  free(line);
 	  line = NULL;
@@ -1867,17 +1879,17 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
     }
   if(get_echo_mode()==0)  set_echo_mode(TRUE);
   set_is_reading(FALSE);
- end: 
+ end:
   enter--;
   return;
 }
 
 /**
  * nsp_textview_destroy:
- * @void: 
- * 
+ * @void:
+ *
  * this is to be called in  sci_clear_and_exit;
- * 
+ *
  **/
 
 void nsp_textview_destroy_internal(void)
@@ -1897,13 +1909,19 @@ static gboolean nsptv_idle_destroy(gpointer user_data)
   GAsyncQueue *queue=  user_data;
   int x=0;
   printf("inside nsptv_idle_destroy\n");
-  gdk_threads_enter();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
+  gdk_threads_enter ();
+#endif
   nsp_textview_destroy_internal();
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   gdk_threads_leave();
+#endif
   g_async_queue_push(queue,&x);
   return FALSE;
 }
-#endif 
+#endif
 
 /* It is safe to call this function from non gtk thread.
  */
@@ -1925,18 +1943,18 @@ void nsp_textview_destroy(void)
       g_async_queue_pop(queue);
       g_async_queue_unref(queue);
     }
-#else 
+#else
   nsp_textview_destroy_internal();
-#endif 
+#endif
 }
 
 /**
  * nsp_textview_gtk_main:
- * @void: 
- * 
- * Enters a main loop with texview. We quit the 
+ * @void:
+ *
+ * Enters a main loop with texview. We quit the
  * main loop when a nsp_comman is found in the command queue.
- * 
+ *
  **/
 
 #ifndef NSP_WITH_MAIN_GTK_THREAD
@@ -1949,7 +1967,7 @@ static void  nsp_textview_gtk_main(void)
   guint timer;
   if (nsp_textview_loop==NULL) {
     nsp_textview_loop = g_main_loop_new (NULL, TRUE);
-  }    
+  }
   timer= g_timeout_add(100,  (GSourceFunc) timeout_command ,nsp_textview_loop);
   /* at that point we are in a  GDK_THREADS_ENTER(); */
   /* GDK_THREADS_LEAVE(); */
@@ -1966,7 +1984,7 @@ static void  nsp_textview_gtk_main_quit(void)
 
 static gboolean  timeout_command (void *v)
 {
-  if ( checkqueue_nsp_command() == TRUE) 
+  if ( checkqueue_nsp_command() == TRUE)
     {
       /* GDK_THREADS_ENTER(); */
       g_main_loop_quit ((GMainLoop *) v);
@@ -1974,14 +1992,14 @@ static gboolean  timeout_command (void *v)
     }
   return TRUE;
 }
-#endif 
+#endif
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 
 static gint nsptv_timeout_command_thread(gpointer user_data)
 {
   View *view =  user_data;
-  if ( checkqueue_nsp_command() == TRUE) 
+  if ( checkqueue_nsp_command() == TRUE)
     {
       nsp_textview_awake_for_text(view);
     }
@@ -1997,7 +2015,7 @@ static void nsp_textview_wait_for_text(View *view)
   g_source_remove(timer);
 }
 
-static void nsp_textview_awake_for_text(View *view) 
+static void nsp_textview_awake_for_text(View *view)
 {
   int x=0;
   g_async_queue_push(view->read_queue,&x);
@@ -2014,5 +2032,4 @@ static void nsp_textview_awake_for_end_print_text(View *view)
   g_async_queue_push(view->write_queue,&x);
 }
 
-#endif 
-
+#endif
