@@ -3455,14 +3455,14 @@
   (return-type "none")
 )
 
-;; (define-method set_display_options
-;;   (of-object "GtkCalendar")
-;;   (c-name "gtk_calendar_set_display_options")
-;;   (return-type "none")
-;;   (parameters
-;;     '("GtkCalendarDisplayOptions" "flags")
-;;   )
-;; )
+(define-method set_display_options
+  (of-object "GtkCalendar")
+  (c-name "gtk_calendar_set_display_options")
+  (return-type "none")
+  (parameters
+    '("GtkCalendarDisplayOptions" "flags")
+  )
+)
 
 (define-method get_display_options
   (of-object "GtkCalendar")

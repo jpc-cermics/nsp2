@@ -1338,14 +1338,16 @@ let write_source fp parser prefix =
 
   (* initialize types *)
 
-  let initialize_chek classes =
+  let initialize_check classes =
     match classes with
     | [] -> false
-    | cl :: _classes ->
+    | _cl :: _classes -> true  in
+	  (*
 	if check_gtk_class cl then
 	  true
 	else
 	  false in
+	   *)
 
   let rec initialize_types classes =
     match classes with
@@ -1357,13 +1359,19 @@ let write_source fp parser prefix =
 	   File.write_string
 	     (Printf.sprintf "  new_type_%s(T_BASE);\n"
 		(String.lowercase cl.or_name));
-	   available_end cl);
+	   available_end cl)
+	else
+	  (
+	   File.write_string
+	     (Printf.sprintf "  new_type_%s(T_BASE);\n"
+		(String.lowercase cl.or_name));
+	  );
 	initialize_types classes in
 
-  if initialize_chek classes then
+  if initialize_check classes then
     File.write_string (Printf.sprintf "void nsp_initialize_%s_types(void)\n{\n" prefix);
   initialize_types classes;
-  if initialize_chek classes then
+  if initialize_check classes then
     File.write_string "}\n";
 
   (*  code added verbatim at the end  *)

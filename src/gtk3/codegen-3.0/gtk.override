@@ -6,15 +6,10 @@ headers
 #include <gtk/gtkx.h>
 
 #include <nsp/nsp.h>
-#include <nsp/smatrix.h>
-#include <nsp/bmatrix.h>
-#include <nsp/hash.h>
-#include <nsp/plist.h>
-#include <nsp/list.h>
+#include <nsp/objects.h>
 #include <nsp/cells.h>
+#include <nsp/plist.h>
 #include <nsp/none.h>
-#include <nsp/mpmatrix.h>
-#include <nsp/matrix.h>
 #include <nsp/file.h>
 #include <nsp/type.h>
 #include <nsp/hobj.h>
@@ -22,66 +17,22 @@ headers
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
+#define  GtkCellEditable_Private
+#include <nsp/gtk/gtkcelleditable.h>
 
 #include <nsp/all-glib.h>
 #include <nsp/gvariant.h>
 #include <nsp/gvarianttype.h>
 
-/* utility */
-
-#define nsp_style_color_array_get_bg(x,pos)   &((x)->bg[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_fg(x,pos)   &((x)->fg[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_light(x,pos) &((x)->light[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_dark(x,pos) &((x)->dark[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_mid(x,pos) &((x)->mid[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_text(x,pos) &((x)->text[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_base(x,pos) &((x)->base[Min(4,Max(0,pos))])
-#define nsp_style_color_array_get_text_aa(x,pos) &((x)->text_aa[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_fg_gc(x,pos) ((x)->fg_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_bg_gc(x,pos) ((x)->bg_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_light_gc(x,pos) ((x)->light_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_dark_gc(x,pos) ((x)->dark_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_mid_gc(x,pos) ((x)->mid_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_text_gc(x,pos) ((x)->text_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_base_gc(x,pos) ((x)->base_gc[Min(4,Max(0,pos))])
-#define nsp_style_gc_array_get_text_aa_gc(x,pos) ((x)->text_aa_gc[Min(4,Max(0,pos))])
-#define nsp_style_pixmap_array_get_bg_pixmap(x,pos) ((x)->bg_pixmap[Min(4,Max(0,pos))])
-
-/* XXXX */
-
-#define GtkObject_Private
-#define GtkCellRenderer_Private
-#define GtkTreeModel_Private
-
-enum {STYLE_COLOUR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} type;
-
-/* XXXXX a revoir */
-
-#define PYGTK_TYPE_GENERIC_TREE_MODEL G_TYPE_INVALID
-#define PYGTK_TYPE_GENERIC_CELL_RENDERER G_TYPE_INVALID
-#define  GtkCellEditable_Private
-#include "nsp/gtk/gtkcelleditable.h"
-
 /* XXXX */
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 extern int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-
-/* XXXXX : only implemented in 2.4 */
-#define gtk_calendar_set_display_options gtk_calendar_display_options
-#define gtk_calendar_get_display_options(x) 0
 
 static void
 nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 			       GtkCellRenderer *cell,
 			       GtkTreeModel *tree_model,
 			       GtkTreeIter *iter, gpointer data);
-
-/* undefined macro */
-#ifndef GDK_DISPLAY
-#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object)
-#endif
-
-
 %%
 init
 %%
@@ -161,7 +112,7 @@ NspObject *nsp_gtk_tree_path_to_nspobject(GtkTreePath *path)
 GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
 {
   GtkTreePath *path;
-  /** Follow pointer **/
+  /* Follow pointer **/
   HOBJ_GET_OBJECT(object,NULL);
 
   if ( IsGtkTreePath(object) )
@@ -187,6 +138,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
 }
 %%
 override gtk_tree_path_get_indices
+
 static int
 _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -223,6 +175,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
+
 %%
 override-attr GtkStyle.fg
 static NspObject *
@@ -435,52 +388,7 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-%%
-override gtk_paint_polygon kwargs
-static int
-_wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {obj_check,obj,obj,obj,obj_check,string,realmat,s_bool, t_end} ;
-  /*  static char *kwlist[] = { "window", "state_type", "shadow_type", "area", "widget", "detail", "points", "fill", NULL }; */
-  NspObject *window, *nsp_state_type, *nsp_shadow_type, *nsp_area;
-  GtkStateType state_type;
-  GtkShadowType shadow_type;
-  GdkRectangle area;
-  NspObject *widget;
-  const gchar *detail;
-  NspMatrix *nsp_points;
-  gint npoints, i;
-  GdkPoint *points;
-  gboolean fill;
 
-  if (GetArgs(stack,rhs,opt,T,
-	      &nsp_type_gdkwindow, &window,
-	      &nsp_state_type, &nsp_shadow_type, &nsp_area,
-	      &nsp_type_gtkwidget, &widget, &detail,
-	      &nsp_points, &fill) == FAIL) return RET_BUG;
-
-  if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type,&state_type)== FAIL) return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_SHADOW_TYPE, nsp_shadow_type,&shadow_type) == FAIL) return RET_BUG;
-  if (!nsp_gdk_rectangle_from_object(nsp_area, &area)) return RET_BUG;
-
-  if ( nsp_points->n != 2) {
-    Scierror("%s: third argument should have two columns\n");
-    return RET_BUG;
-  }
-
-  npoints = nsp_points->m;
-  points = g_new(GdkPoint, npoints);
-  for (i = 0; i < npoints ; i++) {
-    points[i].x = nsp_points->R[i] ;
-    points[i].y = nsp_points->R[i +nsp_points->m ];
-    }
-  gtk_paint_polygon(GTK_STYLE(self->obj), GDK_WINDOW(nspgobject_get(window)),
-		    state_type, shadow_type, &area,
-		    GTK_WIDGET(nspgobject_get(widget)), detail,
-		    points, npoints, fill);
-  g_free(points);
-  return 0;
-}
 %%
 override-attr GtkSelectionData.data
 static NspObject *
@@ -550,6 +458,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1;
   NSP_LIST_CLEAN;
 }
+
 %%
 override gtk_tree_get_row_drag_data noargs
 
@@ -1028,8 +937,8 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
 	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
-      /** A copy of object is entered as an object property **/
-      /** GetObj takes care of Hobj pointers **/
+      /* A copy of object is entered as an object property **/
+      /* GetObj takes care of Hobj pointers **/
       if (( nsp_value =nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
       property_name = nsp_object_get_name(NthObj(i));
       pspec = gtk_container_class_find_child_property(class, property_name);
@@ -1201,7 +1110,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   CheckRhs(1,2);
   if (( func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 2 )
     {
       if (( arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
@@ -1776,7 +1685,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   if ( GetScalarInt(stack,1,&column) == FAIL) return RET_BUG;
   if (( nsp_func = (NspObject *) GetNspPListCopy(stack,2)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(nsp_func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 )
     {
       if (( nsp_arg = (NspObject *) GetListCopy(stack,3)) == NULL ) return RET_BUG;
@@ -1801,7 +1710,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
   CheckRhs(1,2);
   if (( nsp_func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(nsp_func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 2 )
     {
       if (( nsp_arg = (NspObject *) GetListCopy(stack,2)) == NULL) return RET_BUG;
@@ -2564,7 +2473,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
 
   if (( func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 2 )
     {
       if (( arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
@@ -2871,7 +2780,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
   cell = GTK_CELL_RENDERER(nspgobject_get(nsp_cell));
   if (( nsp_func = (NspObject *) GetNspPListCopy(stack,2)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(nsp_func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 )
     {
       if (( nsp_arg = (NspObject *) GetListCopy(stack,3)) == NULL ) return RET_BUG;
@@ -3345,7 +3254,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
 
   if (( func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 2 )
     {
       if (( arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
@@ -3407,7 +3316,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
 
   if (( func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 2 )
     {
       if (( arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
@@ -5371,11 +5280,9 @@ static int
 _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   /* static char *kwlist[] = { "end", NULL };*/
-  /*
   int_types T[] = {obj, t_end} ;
   NspObject *g_end;
   gchar *text;
-  NspObject *pytext;
 
   if (GetArgs(stack,rhs,opt,T, &g_end)  == FAIL) return RET_BUG;
   if (!nspg_boxed_check(g_end, GTK_TYPE_TEXT_ITER)) {
@@ -5384,13 +5291,13 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   }
   text = gtk_text_iter_get_slice(nspg_boxed_get(self, GtkTextIter),
 				 nspg_boxed_get(g_end, GtkTextIter));
-  pytext = NspUnicode_DecodeUTF8(text, strlen(text), "strict");
+  if ( nsp_move_string(stack,1,(gchar *) text,-1)== FAIL)
+    {
+      g_free(text);
+      return RET_BUG;
+    }
   g_free(text);
-  MoveObj(stack,1,pytext);
   return 1;
-  */
-  Scierror("XXXX To be done gtk_text_iter_get_slice");
-  return 0;
 }
 %%
 override gtk_text_iter_get_text kwargs
@@ -5398,11 +5305,9 @@ static int
 _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   /* static char *kwlist[] = { "end", NULL };*/
-  /*
   int_types T[] = {obj, t_end} ;
   NspObject *end;
   gchar *text;
-  NspObject *pytext;
 
   if (GetArgs(stack,rhs,opt,T, &end) == FAIL) return RET_BUG;;
   if (!nspg_boxed_check(end, GTK_TYPE_TEXT_ITER)) {
@@ -5411,69 +5316,66 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   }
   text = gtk_text_iter_get_text(nspg_boxed_get(self, GtkTextIter),
 				nspg_boxed_get(end, GtkTextIter));
-  pytext = NspUnicode_DecodeUTF8(text, strlen(text), "strict");
+  if ( nsp_move_string(stack,1,(gchar *) text,-1)== FAIL)
+    {
+      g_free(text);
+      return RET_BUG;
+    }
   g_free(text);
-  MoveObj(stack,1,pytext);
   return 1;
-  */
-  Scierror("To be done gtk_text_iter_get_text");
-  return 0;
 }
+
 %%
 override gtk_text_iter_get_visible_slice kwargs
 static int
 _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   /* static char *kwlist[] = { "end", NULL };*/
-  /*
-    int_types T[] = {obj, t_end} ;
+  int_types T[] = {obj, t_end} ;
 
-    NspObject *end;
-    gchar *text;
-    NspObject *pytext;
+  NspObject *end;
+  gchar *text;
 
-    if (GetArgs(stack,rhs,opt,T,&end)  == FAIL) return RET_BUG;;
-    if (!nspg_boxed_check(end, GTK_TYPE_TEXT_ITER)) {
-        Scierror( "end must be a GtkTextIter");
-        return RET_BUG;
+  if (GetArgs(stack,rhs,opt,T,&end)  == FAIL) return RET_BUG;;
+  if (!nspg_boxed_check(end, GTK_TYPE_TEXT_ITER)) {
+    Scierror( "end must be a GtkTextIter");
+    return RET_BUG;
+  }
+  text = gtk_text_iter_get_visible_slice(nspg_boxed_get(self, GtkTextIter),
+					 nspg_boxed_get(end, GtkTextIter));
+  if ( nsp_move_string(stack,1,(gchar *) text,-1)== FAIL)
+    {
+      g_free(text);
+      return RET_BUG;
     }
-    text = gtk_text_iter_get_visible_slice(nspg_boxed_get(self, GtkTextIter),
-                                           nspg_boxed_get(end, GtkTextIter));
-    pytext = NspUnicode_DecodeUTF8(text, strlen(text), "strict");
-    g_free(text);
-    MoveObj(stack,1,pytext);
-    return 1;
-  */
-  Scierror("To be done gtk_text_iter_get_visible_slice");
-  return 0;
+  g_free(text);
+  return 1;
 }
 %%
 override gtk_text_iter_get_visible_text kwargs
 static int
 _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
-    /* static char *kwlist[] = { "end", NULL };*/
+  /* static char *kwlist[] = { "end", NULL };*/
+  int_types T[] = { t_end} ;
+  NspObject *end;
+  gchar *text;
 
-  /*
-    int_types T[] = { t_end} ;
-    NspObject *end;
-    gchar *text;
-    NspObject *pytext;
-
-    if (GetArgs(stack,rhs,opt,T,&end)  == FAIL) return RET_BUG;
-    if (!nspg_boxed_check(end, GTK_TYPE_TEXT_ITER)) {
-        Scierror( "end must be a GtkTextIter");
-        return RET_BUG;
+  if (GetArgs(stack,rhs,opt,T,&end)  == FAIL) return RET_BUG;
+  if (!nspg_boxed_check(end, GTK_TYPE_TEXT_ITER)) {
+    Scierror( "end must be a GtkTextIter");
+    return RET_BUG;
+  }
+  text = gtk_text_iter_get_visible_text(nspg_boxed_get(self, GtkTextIter),
+					nspg_boxed_get(end, GtkTextIter));
+  if ( nsp_move_string(stack,1,(gchar *) text,-1)== FAIL)
+    {
+      g_free(text);
+      return RET_BUG;
     }
-    text = gtk_text_iter_get_visible_text(nspg_boxed_get(self, GtkTextIter),
-                                          nspg_boxed_get(end, GtkTextIter));
-    pytext = NspUnicode_DecodeUTF8(text, strlen(text), "strict");
-    g_free(text);
-    MoveObj(stack,1,pytext);
-    return 1;
-  */
-  Scierror("To be done gtk_text_iter_get_visible_text");
-  return 0;
+  g_free(text);
+  return 1;
+
 }
 %%
 override gtk_text_iter_get_marks noargs
@@ -6801,7 +6703,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
   cell = GTK_CELL_RENDERER(nspgobject_get(nsp_cell));
   if (( nsp_func = (NspObject *) GetNspPListCopy(stack,2)) == NULL) return RET_BUG;
   if ((nsp_object_set_name(nsp_func,"tree_foreach")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 )
     {
       if (( nsp_arg = (NspObject *) GetListCopy(stack,3)) == NULL ) return RET_BUG;

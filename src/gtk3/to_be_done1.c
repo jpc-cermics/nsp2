@@ -54,14 +54,6 @@ void nsp_init_gtk_types_added(void)
 {
 }
 
-void nsp_initialize_glib_types(void)
-{
-  new_type_gvariant(T_BASE);
-  new_type_gvarianttype(T_BASE);
-}
-
-
-
 /*
  * registering constants in an Nsp Hash Table
  */

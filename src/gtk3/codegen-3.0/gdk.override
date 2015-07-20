@@ -14,10 +14,6 @@ headers
 #include <nsp/gtk/cairo_t.h>
 #include <nsp/gtk/cairo_surface_t.h>
 
-/* #define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object)  */
-
-/* #include "pygtk-private.h" */
-
 %%
 modulename gtk.gdk
 %%
@@ -29,11 +25,7 @@ import gtk.Widget as GtkWidget
 import gdk.Atom as GdkAtom
 %%
 init
-/ *
-  #ifdef HAVE_NUMPY
-  import_array();
-  #endif
-* /
+
 %%
 ignore-glob
 *_get_type
