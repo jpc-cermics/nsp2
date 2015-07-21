@@ -722,7 +722,7 @@ esac
 if test X"$enable_wall" != Xno; then
    ENABLE_DEBUG=" Wall "
    if test X"$GCC" = Xyes ; then
-      CC_OPTIONS="${CC_OPTIONS} -Wall"
+      CC_OPTIONS="${CC_OPTIONS} -Wall -Wno-deprecated-declarations"
    fi
    if test X"$G77" = Xyes ; then
       FC_OPTIONS="${FC_OPTIONS} -Wall"

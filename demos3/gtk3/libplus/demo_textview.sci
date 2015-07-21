@@ -211,7 +211,7 @@ function demo_textview ()
   // XXXXX window.connect["destroy",gtk_widget_destroyed];
   window.set_title["TextView"];
   window.set_border_width[0];
-  vpaned = gtkvpaned_new ();
+  vpaned = gtk_paned_new (GTK.ORIENTATION_VERTICAL);
   vpaned.set_border_width[5];
   window.add[vpaned];
 
@@ -220,9 +220,9 @@ function demo_textview ()
   // by itself with gtk_text_buffer_new(), then later create
   // a view widget.
 
-  view1 = gtktextview_new ();
+  view1 = gtk_text_view_new ();
   buffer = view1.get_buffer[];
-  view2 = gtktextview_new(buffer=buffer);
+  view2 = gtk_text_view_new_with_buffer(buffer);
 
   sw = gtkscrolledwindow_new();
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];

@@ -1,73 +1,73 @@
 // Color Selector
-// GtkColorSelection lets the user choose a color. GtkColorSelectionDialog is
-// a prebuilt dialog containing a GtkColorSelection.
 
+function demo_colorsel ()
 
-function demo_colorsel () 
-
-  function y = expose_event_callback (widget,event,data) 
-    style = widget.get_style[];
-    widget.window.draw_rectangle[style.get_bg_gc[GTK.STATE_NORMAL], %t, event.area.x, event.area.y,
-		    event.area.width, event.area.height];
-    y=%t ;
+  function y = draw_callback (da,cr,data)
+    window=data(1);
+    color=window.get_data['color'];
+    CHECK_SIZE=30
+    SPACING=2
+    xcount = 0;
+    width = da.get_allocated_width[];
+    height = da.get_allocated_height[];
+    i = SPACING;
+    while (i < width)
+      j = SPACING;
+      ycount = modulo(xcount,2); // start with even/odd depending on row */
+      while (j < height)
+	if modulo(ycount,2)==0 then
+	  cairo_set_source_rgb (cr, color.red,color.green,color.blue);
+	else
+	  cairo_set_source_rgb (cr, 1, 1, 1);
+	end
+	// If we're outside the clip, this will do nothing.
+	cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
+	cairo_fill (cr);
+	j = j+ CHECK_SIZE + SPACING;
+	ycount=ycount+1;
+      end
+      i = i+ CHECK_SIZE + SPACING;
+      xcount = xcount+1;
+    end
+    y=%t;
   endfunction
 
-  function change_color_callback (button,args) 
+  function change_color_callback (button,args)
     window=args(1);
     da=args(2);
     color=window.get_data['color'];
-    dialog = gtkcolorselectiondialog_new ("Changing color");
+    dialog = gtk_color_chooser_dialog_new("Changing color",button);
     dialog.set_transient_for[args(1)]
-    colorsel = dialog.colorsel; 
-    
-    colorsel.set_previous_color[color];
-    colorsel.set_current_color[color];
-    colorsel.set_has_palette[%t]; 
+    dialog.set_rgba[color];
     response = dialog.run[];
-    if response == GTK.RESPONSE_OK 
-      color= colorsel.get_current_color[]
+    if response == GTK.RESPONSE_OK
+      color= dialog.get_rgba[];
       window.set_data[color=color];
-      args(2).modify_bg[ GTK.STATE_NORMAL,color]
     end
     dialog.destroy[];
-  endfunction 
-  
-  color= gdkcolor_new(0,0,65535,0); 
+  endfunction
+
   window = gtkwindow_new ();
   window.set_title[  "Color Selection"]
-
-  //window.connect[  "destroy", hide];
   window.set_border_width[  8]
+  color= gdk_rgba_new("rgb(0,0,65535)");
+  window.set_data[color=color];
 
   vbox = gtkbox_new("vertical",spacing=8);
   vbox.set_border_width[  8]
   window.add[  vbox]
-  window.set_data[color=color];
-    
-  // Create the color swatch area
-      
+
   frame = gtkframe_new();
   frame.set_shadow_type[GTK.SHADOW_IN];
   vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
 
-  da = gtkdrawingarea_new ();
-  da.connect[  "expose_event",expose_event_callback]
+  darea = gtkdrawingarea_new ();
+  darea.connect["draw", draw_callback,list(window)]
+  darea.set_size_request[  200, 200]
+  frame.add[  darea]
 
-  // set a minimum size */
-  da.set_size_request[  200, 200]
-  // set the color */
-  da.modify_bg[  GTK.STATE_NORMAL,color]
-      
-  frame.add[  da]
-
-  alignment = gtkalignment_new(xalign=1.0,yalign=0.5,xscale=0.0,yscale=0.0);
-      
   button = gtkbutton_new(mnemonic="_Change the above color");
-  alignment.add[  button]
-      
-  vbox.pack_start[ alignment,expand=%f,fill=%f,padding=0]
-      
-  button.connect[  "clicked",change_color_callback,list(window,da)];
+  vbox.pack_start[ button,expand=%f,fill=%f,padding=0]
+  button.connect[  "clicked",change_color_callback,list(window,darea)];
   window.show_all[];
-  
 endfunction

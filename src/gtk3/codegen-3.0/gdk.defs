@@ -3038,7 +3038,7 @@
   (c-name "gdk_window_set_background_rgba")
   (return-type "none")
   (parameters
-    '("const-GdkRGBA*" "rgba")
+   '("const-GdkRGBA*" "rgba")
   )
 )
 
@@ -4793,3 +4793,20 @@
 ;; From gdkdevicemanagerprivate.h
 
 ;; From gdkdeviceprivate.h
+
+;; rgba
+;; returns a new GdkRGBA with contents from spec
+
+(define-function "gdk_rgba_new"
+  (c-name "gdk_rgba_new")
+  (return-type "GdkRGBA*")
+  (parameters
+   '("const-gchar*" "spec")
+   )
+)
+
+(define-method to_string
+  (of-object "GdkRGBA")
+  (c-name "gdk_rgba_to_string")
+  (return-type "gchar*")
+)

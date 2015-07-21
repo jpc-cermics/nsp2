@@ -6,6 +6,7 @@
 (register "gtk-types.defs")
 (register "gio-types.defs")
 (register "glib-types.defs")
+(register "gdkpixbuf-types.defs")
 
 (include "gtk-extrafuncs.defs")
 (include "gtk-types.defs")
@@ -5287,15 +5288,14 @@
   (return-type "GType")
 )
 
+;; changed locally
 (define-method get_rgba
   (of-object "GtkColorChooser")
   (c-name "gtk_color_chooser_get_rgba")
   (available "GDK_AVAILABLE_IN_3_4")
-  (return-type "none")
-  (parameters
-    '("GdkRGBA*" "color")
+  (return-type "GdkRGBA*")
+  (call "GdkRGBA loc;ret=&loc;gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(self->obj),ret);")
   )
-)
 
 (define-method set_rgba
   (of-object "GtkColorChooser")
@@ -11654,19 +11654,19 @@
   )
 )
 
-(define-method load_symbolic
-  (of-object "GtkIconInfo")
-  (c-name "gtk_icon_info_load_symbolic")
-  (return-type "GdkPixbuf*")
-  (parameters
-    '("const-GdkRGBA*" "fg")
-    '("const-GdkRGBA*" "success_color")
-    '("const-GdkRGBA*" "warning_color")
-    '("const-GdkRGBA*" "error_color")
-    '("gboolean*" "was_symbolic")
-    '("GError**" "error")
-  )
-)
+;; (define-method load_symbolic
+;;   (of-object "GtkIconInfo")
+;;   (c-name "gtk_icon_info_load_symbolic")
+;;   (return-type "GdkPixbuf*")
+;;   (parameters
+;;     '("const-GdkRGBA*" "fg")
+;;     '("const-GdkRGBA*" "success_color")
+;;     '("const-GdkRGBA*" "warning_color")
+;;     '("const-GdkRGBA*" "error_color")
+;;     '("gboolean*" "was_symbolic")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-method load_symbolic_async
   (of-object "GtkIconInfo")
@@ -11684,17 +11684,17 @@
   )
 )
 
-(define-method load_symbolic_finish
-  (of-object "GtkIconInfo")
-  (c-name "gtk_icon_info_load_symbolic_finish")
-  (available "GDK_AVAILABLE_IN_3_8")
-  (return-type "GdkPixbuf*")
-  (parameters
-    '("GAsyncResult*" "res")
-    '("gboolean*" "was_symbolic")
-    '("GError**" "error")
-  )
-)
+;; (define-method load_symbolic_finish
+;;   (of-object "GtkIconInfo")
+;;   (c-name "gtk_icon_info_load_symbolic_finish")
+;;   (available "GDK_AVAILABLE_IN_3_8")
+;;   (return-type "GdkPixbuf*")
+;;   (parameters
+;;     '("GAsyncResult*" "res")
+;;     '("gboolean*" "was_symbolic")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-method load_symbolic_for_context
   (of-object "GtkIconInfo")
@@ -11720,17 +11720,18 @@
   )
 )
 
-(define-method load_symbolic_for_context_finish
-  (of-object "GtkIconInfo")
-  (c-name "gtk_icon_info_load_symbolic_for_context_finish")
-  (available "GDK_AVAILABLE_IN_3_8")
-  (return-type "GdkPixbuf*")
-  (parameters
-    '("GAsyncResult*" "res")
-    '("gboolean*" "was_symbolic")
-    '("GError**" "error")
-  )
-)
+;; GError: wrongly generate code
+;; (define-method load_symbolic_for_context_finish
+;;   (of-object "GtkIconInfo")
+;;   (c-name "gtk_icon_info_load_symbolic_for_context_finish")
+;;   (available "GDK_AVAILABLE_IN_3_8")
+;;   (return-type "GdkPixbuf*")
+;;   (parameters
+;;     '("GAsyncResult*" "res")
+;;     '("gboolean*" "was_symbolic")
+;;     '("GError**" "error")
+;;   )
+;; )
 
 (define-method set_raw_coordinates
   (of-object "GtkIconInfo")
@@ -25613,33 +25614,33 @@
   )
 )
 
-(define-method register_child
-  (of-object "GtkTextChildAnchor")
-  (c-name "gtk_text_child_anchor_register_child")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "child")
-    '("GtkTextLayout*" "layout")
-  )
-)
+;; (define-method register_child
+;;   (of-object "GtkTextChildAnchor")
+;;   (c-name "gtk_text_child_anchor_register_child")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkWidget*" "child")
+;;     '("GtkTextLayout*" "layout")
+;;   )
+;; )
 
-(define-method unregister_child
-  (of-object "GtkTextChildAnchor")
-  (c-name "gtk_text_child_anchor_unregister_child")
-  (return-type "none")
-  (parameters
-    '("GtkWidget*" "child")
-  )
-)
+;; (define-method unregister_child
+;;   (of-object "GtkTextChildAnchor")
+;;   (c-name "gtk_text_child_anchor_unregister_child")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkWidget*" "child")
+;;   )
+;; )
 
-(define-method queue_resize
-  (of-object "GtkTextChildAnchor")
-  (c-name "gtk_text_child_anchor_queue_resize")
-  (return-type "none")
-  (parameters
-    '("GtkTextLayout*" "layout")
-  )
-)
+;; (define-method queue_resize
+;;   (of-object "GtkTextChildAnchor")
+;;   (c-name "gtk_text_child_anchor_queue_resize")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkTextLayout*" "layout")
+;;   )
+;; )
 
 (define-function gtk_text_anchored_child_set_layout
   (c-name "gtk_text_anchored_child_set_layout")

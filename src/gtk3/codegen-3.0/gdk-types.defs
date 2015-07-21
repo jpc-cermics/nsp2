@@ -144,12 +144,29 @@
   )
 )
 
+(define-boxed GdkRGBA
+  (in-module "Gdk")
+  (c-name "GdkRGBA")
+  (gtype-id "GDK_TYPE_RGBA")
+  (fields
+    '("gdouble" "red")
+    '("gdouble" "green")
+    '("gdouble" "blue")
+    '("gdouble" "alpha")
+    )
+  (copy-func "gdk_event_copy")
+  (release-func "gdk_event_free")
+  )
+
 ; need to be fixed for nsp XX
 ;(define-boxed GdkRegion
 ;  (in-module "Gdk")
 ;  (c-name "GdkRegion")
 ;  (gtype-id "NSPGDK_TYPE_REGION")
 ;)
+
+
+
 
 ;; Enumerations and flags ...
 ;; --------------------------

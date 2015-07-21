@@ -2547,3 +2547,25 @@ _wrap_gdk_window_get_device_position(NspGObject *self, Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y,(double) state) == FAIL) return RET_BUG;
   return 1;
 }
+%%
+override gdk_rgba_new
+
+int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new */
+{
+  GdkRGBA ret={0,0,0,0};
+  int_types T[] = {string, t_end};
+  char *spec;
+  NspObject *nsp_ret;
+  CheckLhs(0,1);
+  if ( rhs != 0)
+    {
+      if ( GetArgs(stack,rhs,opt,T,&spec) == FAIL) return RET_BUG;
+      if ( gdk_rgba_parse (&ret,spec) == FALSE) return RET_BUG;
+    }
+  /* create a boxed with a copy of ret */
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RGBA, &ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gdkrgba))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}

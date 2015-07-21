@@ -544,6 +544,13 @@
   (implements "GtkBuildable")
   )
 
+(define-object GtkTextChildAnchor
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkTextChildAnchor")
+  (gtype-id "GTK_TYPE_TEXT_CHILD_ANCHOR")
+  )
+
 ;; Objects Tree, List and Icon Grid Widgets
 
 (define-interface GtkTreeModel

@@ -1,18 +1,16 @@
 ;; -*- scheme -*-
 ; object definitions ...
 
-
 (define-object GdkPixbuf
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkPixbuf")
   (gtype-id "GDK_TYPE_PIXBUF")
   (fields
-;; XXXX this next one isn't a real field.
+   ;; XXXX this next one isn't a real field.
    '("guchar*" "pixel_array")
    )
   )
-
 
 (define-object GdkPixbufAnimation
   (in-module "Gdk")
