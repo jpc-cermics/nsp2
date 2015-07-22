@@ -2,12 +2,15 @@
 
 function screen_display_check (widget,args)
   data= args(1).get_data['dpy_data'];
-  // data = list( combo_dpy.entry,  radio_dpy, window.get_toplevel[], valid_display_list)
+  // data = list( combo_dpy,  radio_dpy, window.get_toplevel[], valid_display_list)
   display = widget.get_display[];
   current_screen = widget.get_screen[];
   new_screen = [];
   if  data(2).get_active[] then
-    display_name = data(1).get_text[];
+    combo = data(1);
+    M= combo.get_model[]
+    iter=combo.get_active_iter[]
+    display_name = M.get_value[iter,0];
     display = gdk_display_open(display_name);
     if is(display,%types.None) then
       dialog = gtkmessagedialog_new(parent=widget.get_toplevel[], ...
@@ -24,7 +27,7 @@ function screen_display_check (widget,args)
 	new_screen = display.get_default_screen[];
     end
   else
-    number_of_screens = display.get_n_screens[];
+    number_of_screens =2;// display.get_n_screens[];
     screen_num = current_screen.get_number[];
     if ((screen_num +1) < number_of_screens)
       new_screen = display.get_screen[ screen_num + 1];
@@ -53,15 +56,10 @@ function demo_display_screen ()
   frame = gtkframe_new(label="Select screen or display");
   vbox.add[  frame]
 
-  table = gtktable_new(rows=2,columns=2,homogeneous=%t);
-  table.set_row_spacings[  3]
-  table.set_col_spacings[  3]
-
-  frame.add[  table]
-
+  table = gtkgrid_new();
+  frame.add[table]
   radio_dpy = gtkradiobutton_new (label="move to another X display");
-
-  ns= display.get_n_screens[];
+  ns= 2;//display.get_n_screens[];
 
   if ns > 1
     radio_scr = gtkradiobutton_new(group=radio_dpy,label= "move to next screen");
@@ -70,17 +68,17 @@ function demo_display_screen ()
     radio_scr.set_sensitive[%f]
   end
 
-  combo_dpy = gtkcombo_new ();
+
+
 
   valid_display_list = "diabolo:0.0";
+  combo_dpy = gtkcombobox_new (with_entry=%t,text=valid_display_list);
+  //combo_dpy.set_popdown_strings[ valid_display_list];
+  //combo_dpy.entry.set_text["<hostname>:<X Server Num>.<Screen Num>"];
 
-  combo_dpy.set_popdown_strings[ valid_display_list];
-
-  combo_dpy.entry.set_text["<hostname>:<X Server Num>.<Screen Num>"];
-
-  table.attach_defaults[  radio_dpy, 0, 1, 0, 1]
-  table.attach_defaults[  radio_scr, 0, 1, 1, 2]
-  table.attach_defaults[  combo_dpy, 1, 2, 0, 1]
+  table.attach[  radio_dpy, 0, 0,1, 1]
+  table.attach[  radio_scr, 0, 1,1, 1]
+  table.attach[  combo_dpy, 1, 0,1, 1]
 
   bbox = gtkbuttonbox_new("horizontal");
   applyb = gtkbutton_new(stock = "gtk-apply");
@@ -91,7 +89,7 @@ function demo_display_screen ()
   bbox.add[  applyb]
   bbox.add[  cancelb]
 
-  scr_dpy_data = list( combo_dpy.entry,  radio_dpy, window.get_toplevel[], valid_display_list)
+  scr_dpy_data = list( combo_dpy,  radio_dpy, window.get_toplevel[], valid_display_list)
   window.set_data[ dpy_data = scr_dpy_data];
   // cancelb.connect["clicked", screen_display_destroy_diag,list(window)]
   applyb.connect["clicked", screen_display_check, list(window) ]

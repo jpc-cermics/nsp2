@@ -4793,7 +4793,7 @@
   (c-name "gtk_cell_view_set_model")
   (return-type "none")
   (parameters
-    '("GtkTreeModel*" "model")
+    '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
   )
 )
 
@@ -4808,7 +4808,7 @@
   (c-name "gtk_cell_view_set_displayed_row")
   (return-type "none")
   (parameters
-    '("GtkTreePath*" "path")
+    '("GtkTreePath*" "path" (null-ok))
   )
 )
 
@@ -8475,7 +8475,7 @@
   (c-name "gtk_entry_completion_set_model")
   (return-type "none")
   (parameters
-    '("GtkTreeModel*" "model")
+    '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
   )
 )
 
@@ -34553,4 +34553,27 @@
   (of-object "GtkImageMenuItem")
   (c-name "gtk_image_menu_item_get_image")
   (return-type "GtkWidget*")
+  )
+
+;;
+
+(define-function icon_size_lookup
+  (c-name "gtk_icon_size_lookup")
+  (return-type "gboolean")
+  (parameters
+   '("GtkIconSize" "size")
+   '("gint*" "width")
+   '("gint*" "height")
+   )
+  )
+
+(define-function icon_size_lookup_for_settings
+  (c-name "gtk_icon_size_lookup_for_settings")
+  (return-type "gboolean")
+  (parameters
+   '("GtkSettings*" "settings")
+   '("GtkIconSize" "size")
+   '("gint*" "width")
+   '("gint*" "height")
+   )
   )
