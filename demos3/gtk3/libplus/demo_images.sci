@@ -10,14 +10,9 @@ function toggle_sensitivity_callback(togglebutton,args)
 endfunction
 
 function demo_images()
-  //
-  // Create an image from images stored in file
-  //
+// Create an image from images stored in file
   window = gtkwindow_new()
-  //window.connect[ "delete_event", demo_delete];
   window.set_title[" images "];
-  //window.connect[  "destroy",  gtk_widget_destroyed, &window]
-  //window.connect[  "destroy",	cleanup_callback, NULL]
   window.set_border_width[  8]
   vbox = gtkbox_new("vertical",spacing=8);
   vbox.set_border_width[  8]
@@ -60,8 +55,8 @@ function demo_images()
     end
   endfunction
 
-  [image,ok]=demo_image_from_pixmap_data(window)
-  demo_add_image(image,ok,"data ->pixmap ",vbox)
+  //[image,ok]=demo_image_from_pixmap_data(window)
+  //demo_add_image(image,ok,"data ->pixmap ",vbox)
 
   // Sensitivity control
   button = gtktogglebutton_new(mnemonic="_Insensitive");
