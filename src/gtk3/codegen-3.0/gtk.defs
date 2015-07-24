@@ -34501,17 +34501,20 @@
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimagemenuitem.h
 ;; deprecated but still in use
 
+;; deprecated Use gtk_menu_item_get_type
 (define-function gtk_image_menu_item_get_type
   (c-name "gtk_image_menu_item_get_type")
   (return-type "GtkType")
   )
 
+;; deprecated Use 'gtk_menu_item_new'
 (define-function gtk_image_menu_item_new
   (c-name "gtk_image_menu_item_new")
   (is-constructor-of GtkImageMenuItem)
   (return-type "GtkWidget*")
   )
 
+;; deprecated  Use 'gtk_menu_item_new_with_label'
 (define-function gtk_image_menu_item_new_with_label
   (c-name "gtk_image_menu_item_new_with_label")
   (is-constructor-of GtkImageMenuItem)
