@@ -133,7 +133,8 @@ static void    nsp_textview_gtk_main_quit(void);
  * must be called from gtk main thread
  *
  **/
-
+#if GTK_CHECK_VERSION(3,0,0)
+#else
 static void nsptv_insert_logo (View *view)
 {
   GtkTextIter iter,start,end;
@@ -148,6 +149,7 @@ static void nsptv_insert_logo (View *view)
 			     &start, &end);
   g_object_unref (pixbuf);
 }
+#endif
 
 /**
  * nsptv_delete_callback:
@@ -1452,8 +1454,12 @@ static View *nsptv_create_view (Buffer *buffer)
   gtk_widget_grab_focus (view->text_view);
 
   gtk_widget_show_all (view->window);
-
+#if GTK_CHECK_VERSION(3,0,0)
+  /* not fine with a back background */
+#else
   nsptv_insert_logo (view);
+#endif
+
   /* used to store string to pass to nsp interpreter*/
   view->nsp_expr=NULL;
   /* initialize the queues */

@@ -73,7 +73,8 @@ void create_plugged_main_menu(void)
 
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
-    Plug = gtk_plug_new(NSP_POINTER_CAST_TO_INT(atoi(nsp_getenv("SCIWIN"))));
+    guint32 xid = strtol (plug_info, NULL, 0);
+    Plug = gtk_plug_new(xid);
     main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;

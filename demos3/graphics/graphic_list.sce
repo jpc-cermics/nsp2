@@ -6,10 +6,10 @@
 
 // gtk-widget for demos
 
-exec('NSP/demos/graphics/main_graphic.sci');
+exec('NSP/demos3/graphics/main_graphic.sci');
 
 // demos are coded in libdemo
-add_lib('NSP/demos/graphics/libdemo');
+add_lib('NSP/demos3/graphics/libdemo');
 
 // utility function to build a list for demos
 

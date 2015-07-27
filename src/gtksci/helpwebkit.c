@@ -254,6 +254,8 @@ static GtkWidget*create_browser (WebKitWebView **web_view_p)
 	       */
                "default-font-size", 10 ,
                "default-monospace-font-size", 10 ,
+	       "enable-java-appleT",FALSE,
+	       "enable-plugins",FALSE,
                NULL);
   webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
   return scrolled_window;
