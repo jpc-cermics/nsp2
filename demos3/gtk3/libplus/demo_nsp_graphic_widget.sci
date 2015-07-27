@@ -11,19 +11,15 @@ function [id1,id2]=demo_nsp_graphic_widget()
     end
   endfunction
 
-  win = gtkdialog_new()
-  // win.connect["delete_event", delete];
-  win.set_title["dialog"];
-  win_vbox = win.get_content_area[];
-  id1=nsp_graphic_new(win,win_vbox,dim=[300,200]);
+  dialog = gtkdialog_new();
+  dialog.set_title["dialog"];
+  dialog_vbox = dialog.get_content_area[];
+  label = gtklabel_new(str="Insert a Nsp graphic window in a dialog");
+  dialog_vbox.pack_start[label, expand=%f,fill= %f,padding=5];
+  id1=nsp_graphic_new(dialog,dialog_vbox,dim=[600,400]);
   plot3d1();
-  id2=nsp_graphic_new(win,win_vbox,opengl=%t,dim=[300,200]);
-  plot3d1()
-  button = gtkbutton_new(label="close")
-  button.connect["clicked",button_destroy_win,list(win)];
-  win.action_area.pack_start[button]
-  //button.set_flags[GTK.CAN_DEFAULT]
-  button.grab_default[]
-  button.show[]
-  win.show_all[] // must be sure that graphic window is realized
+  dialog.add_button["Close",1];
+  dialog.show_all[];
+  response = dialog.run[];
+  dialog.destroy[];
 endfunction

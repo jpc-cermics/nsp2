@@ -176,37 +176,55 @@ function [simple_demo]=graphics_demos_test_list()
 endfunction
 
 function graphics_demo_in_gtk(demo_list,ogl)
+// 
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
   window.set_title[  "GTK+ Code Demos"]
-  //FIXME: to be added
   //window.connect[  "destroy", hide];
-  hbox = gtkbox_new("horizontal",spacing=0);
-  window.add[hbox]
+    
+  use_paned = %t;
+  if use_paned then 
+    hpaned = gtkpaned_new("horizontal");
+    hpaned.set_size_request[900, -1];
+    window.add[hpaned];
+  else
+    hbox = gtkbox_new("horizontal",spacing=0);
+    window.add[hbox]
+  end
+  
+  // the tree view 
   tree = create_tree (demo_list);
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
-  sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
+  sw.set_policy[ GTK.POLICY_NEVER,  GTK.POLICY_AUTOMATIC];
+  // sw.set_size_request[200, -1];
   sw.add[tree]
-  hbox.pack_start[ sw,expand=%f,fill=%t,padding=0]
-
-  notebook = gtknotebook_new ();
-  hbox.pack_start[ notebook,expand=%t,fill=%t,padding=0]
-
-  //[sw,info_buffer]=create_text ( %f);
-  //notebook.append_page[sw, gtklabel_new(mnemonic="_Info")];
+  
+  if use_paned then 
+    hpaned.add1[sw];
+  else
+    hbox.pack_start[ sw,expand=%f,fill=%t,padding=0]
+  end
+  
+  // notebook 
+  notebook = gtk_notebook_new ();
+  if use_paned then 
+    hpaned.add2[notebook];
+  else
+    hbox.pack_start[ notebook,expand=%t,fill=%t,padding=0]
+  end
   [sw,source_buffer]=create_text ( %t);
-  hb = gtkbox_new("horizontal",spacing=0);
+  hb = gtk_box_new("horizontal",spacing=0);
   notebook.append_page[hb, gtklabel_new(mnemonic="_Graphics")];
   notebook.append_page[sw, gtklabel_new(mnemonic="_Source")];
   //
-  winid=nsp_graphic_new(window,hb,opengl=ogl);
+  winid=nsp_graphic_new(window,hb,opengl=ogl,popup_dim=[600,400]);
   // we must keep track of the winid somewhere
   // just in case other graphics windows are also activated.
   // this is used in row_activated_cb
   tree.set_data[winid=winid];
 
   hb = gtkbox_new("horizontal",spacing=0);
-
+  
   selection = tree.get_selection[];
   model = tree.get_model[];
   selection.connect["changed", selection_cb,list(model,source_buffer)]

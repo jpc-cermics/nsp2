@@ -4,8 +4,8 @@ CFLAGS=`$(PKG_CONFIG) vte-2.90 --cflags --libs`
 
 all	::  ../../bin/zterm
 
-../../bin/zterm :  $(TERM_NAME).c
-	$(CC) -o ../../bin/zterm vteapp. $(LDFLAGS)
+../../bin/zterm :  vteapp.c
+	$(CC) -o ../../bin/zterm vteapp.c $(CFLAGS)
 
 distclean::
 	$(RM) -f ../../bin/zterm

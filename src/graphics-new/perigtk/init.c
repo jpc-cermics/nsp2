@@ -320,7 +320,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 #else 
       vbox = gtk_vbox_new (FALSE, 0);
 #endif
-      gtk_container_add (GTK_CONTAINER(box) , vbox);
+      gtk_box_pack_start (GTK_BOX (box), vbox, TRUE, TRUE, 0);
     }
 
   /* gtk_widget_show (vbox); */
@@ -330,7 +330,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   dd->private->vbox =  gtk_vbox_new (FALSE, 0); 
 #endif
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
-
+  
   /* menu */
   dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
   dd->private->menubar = NULL;
