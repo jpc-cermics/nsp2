@@ -846,7 +846,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  cairo_surface_t *temp = gdk_window_create_similar_surface (GS_GET_WINDOW(Xgc->private->drawing),
 							     CAIRO_CONTENT_COLOR,
 							     Xgc->CWindowWidth, Xgc->CWindowHeight);
-	  
+
 	  if ( temp  == NULL )
 	    {
 	      xinfo(Xgc,"Not enough space to switch to Animation mode");

@@ -2010,6 +2010,8 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
+      /* draw the zoom rectangle */
+      cairo_set_source_rgb(cr,0.0,0.0,0.0);
       cairo_rectangle (cr,dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       cairo_stroke (cr);
     }
