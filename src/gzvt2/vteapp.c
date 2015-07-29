@@ -141,7 +141,7 @@ destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
     g_object_unref (file);
   }
 #endif
-  gtk_widget_destroy (window);
+  if (GTK_IS_WIDGET(window)) gtk_widget_destroy (window);
   gtk_main_quit ();
 }
 
@@ -151,10 +151,12 @@ delete_event(GtkWidget *window, GdkEvent *event, gpointer terminal)
   destroy_and_quit(VTE_TERMINAL (terminal), window);
 }
 
+/* take care : no int status as second argument */
+
 static void
-child_exited(GtkWidget *terminal, int status, gpointer window)
+child_exited(GtkWidget *terminal, gpointer window)
 {
-  destroy_and_quit(VTE_TERMINAL (terminal), GTK_WIDGET (window));
+  destroy_and_quit(VTE_TERMINAL (terminal), window);
 }
 
 #ifndef NSP
@@ -1374,7 +1376,7 @@ main(int argc, char **argv)
 
 
   gtk_main();
-
+  
   g_assert(widget == NULL);
   g_assert(window == NULL);
 
