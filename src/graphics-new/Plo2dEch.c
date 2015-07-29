@@ -20,13 +20,12 @@
  * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
-
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
 #include <gdk/gdk.h>
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
+#include <nsp/math.h>
+#include <nsp/graphics-new/Graphics.h>
 
 /*--------------------------------------------------------------------
  * converts a rectangle into a wrect specification
@@ -133,7 +132,7 @@ int scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int
   return n;
 }
 
-/* same as scale_f2i but do not cast to int 
+/* same as scale_f2i but do not cast to int
  */
 
 int scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n)
@@ -219,6 +218,17 @@ void length_scale_f2i(nsp_gcscale *scales,const double *x,const double *y, int *
     {
       x1[i]=inint( scales->Wscx1*( x[i]));
       y1[i]=inint( scales->Wscy1*( y[i]));
+    }
+}
+
+void length_scale_double_to_pixels(nsp_gcscale *scales,const double *x,const double *y,
+				   double *x1, double *y1, int n)
+{
+  int i;
+  for ( i=0 ; i < n ; i++)
+    {
+      x1[i]= scales->Wscx1*( x[i]);
+      y1[i]= scales->Wscy1*( y[i]);
     }
 }
 
@@ -328,33 +338,27 @@ void rect2d_i2f(nsp_gcscale *scales,double x[],const  int x1[], int n)
     }
 }
 
-
-
-
-
-
-
 /* meme chose mais pour transformer des ellipses */
 
-void ellipse2d(nsp_gcscale *scales,double *x, int *x1, int *n, char *dir)
+void ellipse2d_new(nsp_gcscale *scales, double *x, double *x1, int n,const char *dir)
 {
   int i;
   if (strcmp("f2i",dir)==0)
     {
       /** double to int (pixel) direction **/
-      for ( i=0 ; i < (*n) ; i=i+6)
+      for ( i=0 ; i < n ; i=i+6)
 	{
 	  x1[i  ]= XScale(scales,x[i]);
 	  x1[i+1]= YScale(scales,x[i+1]);
-	  x1[i+2]= inint( scales->Wscx1*( x[i+2]));
-	  x1[i+3]= inint( scales->Wscy1*( x[i+3]));
-	  x1[i+4]= inint( x[i+4]);
-	  x1[i+5]= inint( x[i+5]);
+	  x1[i+2]= scales->Wscx1*( x[i+2]);
+	  x1[i+3]= scales->Wscy1*( x[i+3]);
+	  x1[i+4]= x[i+4];
+	  x1[i+5]= x[i+5];
 	}
     }
   else if (strcmp("i2f",dir)==0)
     {
-      for ( i=0 ; i < (*n) ; i=i+6)
+      for ( i=0 ; i < n ; i=i+6)
 	{
 	  x[i]=   XPi2R(scales,x1[i]);
 	  x[i+1]= YPi2R(scales, x1[i+1] );

@@ -27,13 +27,13 @@
 #line 34 "codegen/gmatrix1.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 39 "gmatrix1.c"
 
@@ -118,8 +118,8 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix1  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_gmatrix1  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix1 */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 125 "gmatrix1.c"
   /* 
@@ -894,7 +894,7 @@ static AttrTab gmatrix1_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -906,7 +906,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -941,21 +941,25 @@ void GMatrix1_Interf_Info(int i, char **fname, function ( **f))
   *fname = GMatrix1_func[i].name;
   *f = GMatrix1_func[i].fonc;
 }
+void nsp_initialize_GMatrix1_types(void)
+{
+  new_type_gmatrix1(T_BASE);
+}
 
 #line 94 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
 /*
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z, zmoy, is computed 
- *  and the rectangle is painted with a color which depends on 
- *  the value of zmoy 
+ *  z : is the value of a function on the grid defined by x,y
+ *  on each rectangle the average value of z, zmoy, is computed
+ *  and the rectangle is painted with a color which depends on
+ *  the value of zmoy
  *  the z values, or values from zminmax=[zmin,zmax] if @zminmax is non NULL
- *  are linearly remapped to the min and max values of colors in 
+ *  are linearly remapped to the min and max values of colors in
  *  the current colormap or to [colormin,colormax] if @colminmax is non NULL.
- *  if remap is set to false @z values are directly casted to color values. 
- *  colout can be used to give the colors for z values which are below 
+ *  if remap is set to false @z values are directly casted to color values.
+ *  colout can be used to give the colors for z values which are below
  *  zminmax[0] or above zminmax[1] (a zero value is interpreted as no painting).
  */
 
@@ -971,11 +975,11 @@ static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return ;
     }
 
-  if ( P->obj->shade==TRUE) 
+  if ( P->obj->shade==TRUE)
     nsp_draw_matrix_shade(Xgc,Obj,data);
   else
     nsp_draw_matrix_zmoy(Xgc,Obj,data);
-      
+
 }
 
 
@@ -985,11 +989,11 @@ static void nsp_translate_gmatrix1(NspGraphic *Obj,const double *tr)
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) += tr[0];
     }
-  for ( i=0; i < P->obj->y->mn ; i++) 
+  for ( i=0; i < P->obj->y->mn ; i++)
     {
       *(y++) += tr[1];
     }
@@ -998,7 +1002,7 @@ static void nsp_translate_gmatrix1(NspGraphic *Obj,const double *tr)
 
 static void nsp_rotate_gmatrix1(NspGraphic *Obj,double *R)
 {
-  
+
 }
 
 static void nsp_scale_gmatrix1(NspGraphic *Obj,double *alpha)
@@ -1007,18 +1011,18 @@ static void nsp_scale_gmatrix1(NspGraphic *Obj,double *alpha)
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) *= alpha[0];
     }
-  for ( i=0; i < P->obj->y->mn ; i++) 
+  for ( i=0; i < P->obj->y->mn ; i++)
     {
       *(y++) *= alpha[1];
     }
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of gmatrix1 
+/* compute in bounds the enclosing rectangle of gmatrix1
  *
  */
 
@@ -1039,51 +1043,51 @@ static int nsp_getbounds_gmatrix1 (NspGraphic *Obj,double *bounds)
 static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
-  int remap = P->obj->remap; 
+  int remap = P->obj->remap;
   int *xm,*ym,  j;
   int  *colminmax = NULL, *colout=NULL;
   double zminmax[2];
   if ( Obj->obj->show == FALSE ) return ;
 
-  if ( P->obj->colminmax->mn == 2 ) 
+  if ( P->obj->colminmax->mn == 2 )
     {
       /* colminmax is supposed to be converted to int */
       colminmax =  P->obj->colminmax->I;
     }
-  if ( P->obj->colout->mn == 2 ) 
+  if ( P->obj->colout->mn == 2 )
     {
       /* colout is supposed to be converted to int */
       colout =  P->obj->colout->I;
     }
 
-  if ( P->obj->zminmax->mn == 2 ) 
+  if ( P->obj->zminmax->mn == 2 )
     {
       zminmax[0]= P->obj->zminmax->R[0];
       zminmax[1]= P->obj->zminmax->R[1];
     }
   else
     {
-      /* it should be better not to compute max/min 
+      /* it should be better not to compute max/min
        * for each redraw.
        */
       zminmax[0]= Mini(P->obj->data->R,P->obj->data->mn);
       zminmax[1]= Maxi(P->obj->data->R,P->obj->data->mn);
     }
-  
+
   xm = graphic_alloc(0,P->obj->x->mn,sizeof(int));
   ym = graphic_alloc(1,P->obj->y->mn,sizeof(int));
-  
-  if ( xm == 0 || ym == 0) 
+
+  if ( xm == 0 || ym == 0)
     {
       sciprint("Running out of memory \n");
       return ;
-    }      
+    }
   /* Drawing the curves */
   for ( j =0 ; j < P->obj->x->mn ; j++)	 xm[j]= XScale(Xgc->scales,P->obj->x->R[j]);
-  for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(Xgc->scales,P->obj->y->R[j]); 
+  for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(Xgc->scales,P->obj->y->R[j]);
 
   Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,P->obj->data->R,
-					    P->obj->data->m, 
+					    P->obj->data->m,
 					    P->obj->data->n,
 					    remap,
 					    colminmax,
@@ -1094,41 +1098,41 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
 
 /**
  * nsp_draw_matrix_shade:
- * @Xgc: 
- * @x: 
- * @y: 
- * @z: 
- * @n1: 
- * @n2: 
- * @strflag: 
- * @brect: 
- * @aaint: 
- * @l1: 
- * 
- * similar to @nsp_draw_matrix but the we assume that the 
- * function is piecewise linear on triangles and we use 
- * code similar to code used in nsp_fec to linearly interpolate 
- * colors in triangles. 
- * The x,y grid is decomposed as follows 
- *  ______ 
- *  | /| /|
- *  |/_|/_|  
+ * @Xgc:
+ * @x:
+ * @y:
+ * @z:
+ * @n1:
+ * @n2:
+ * @strflag:
+ * @brect:
+ * @aaint:
+ * @l1:
+ *
+ * similar to @nsp_draw_matrix but the we assume that the
+ * function is piecewise linear on triangles and we use
+ * code similar to code used in nsp_fec to linearly interpolate
+ * colors in triangles.
+ * The x,y grid is decomposed as follows
+ *  ______
  *  | /| /|
  *  |/_|/_|
- * 
+ *  | /| /|
+ *  |/_|/_|
+ *
  */
 
 #if 1
 /* FIXME */
 extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
-  int remap = P->obj->remap; 
+  int remap = P->obj->remap;
   int nx = P->obj->x->mn;
   int ny = P->obj->y->mn;
   int *xm,*ym,i,  j, k;
@@ -1140,41 +1144,41 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
   if ( Obj->obj->show == FALSE ) return ;
 
 
-  if ( P->obj->colminmax->mn == 2 ) 
+  if ( P->obj->colminmax->mn == 2 )
     {
       colminmax = P->obj->colminmax->I;
     }
 
-  if ( P->obj->colout->mn == 2 ) 
+  if ( P->obj->colout->mn == 2 )
     {
       /* colout is supposed to be converted to int */
       colout =  P->obj->colout->I;
     }
 
-  if ( P->obj->zminmax->mn == 2 ) 
+  if ( P->obj->zminmax->mn == 2 )
     {
       zminmax[0]= P->obj->zminmax->R[0];
       zminmax[1]= P->obj->zminmax->R[1];
     }
   else
     {
-      /* it should be better not to compute max/min 
+      /* it should be better not to compute max/min
        * for each redraw.
        */
       zminmax[0]= Mini(P->obj->data->R,P->obj->data->mn);
       zminmax[1]= Maxi(P->obj->data->R,P->obj->data->mn);
     }
-  
+
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
   ym = graphic_alloc(1,Nnode,sizeof(int));
-  if ( xm == 0 || ym == 0) 
+  if ( xm == 0 || ym == 0)
     {
       sciprint("Running out of memory \n");
-    }      
-  
+    }
+
   for ( i = 0 ; i < nx  ; i++ )
-    for ( j = 0 ; j < ny  ; j++) 
+    for ( j = 0 ; j < ny  ; j++)
       {
 	double xp=P->obj->x->R[i],yp=P->obj->y->R[j];
 	scale_f2i(Xgc->scales,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
@@ -1184,7 +1188,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
   {
     int nz;
     int whiteid;
-    
+
     double *zlevel, dz, zmin, zmax, fxy[3], sx[3], sy[3];
     int *zone, *fill, kp, perm[3], zxy[3], color_min;
 
@@ -1192,42 +1196,42 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      * with the min and max z values.
      */
 
-    if ( zminmax == NULL  ) { 
+    if ( zminmax == NULL  ) {
       zmin=(double) Mini(func,Nnode);
       zmax=(double) Maxi(func,Nnode);
-    } 
+    }
     else {
       zmin = Min( zminmax[0] , zminmax[1] );
       zmax = Max( zminmax[0] , zminmax[1] );
     };
-      
+
     whiteid= Xgc->graphic_engine->xget_last(Xgc);
     nz=whiteid;
-    
-    /* choice for the colormap (in case of a user 's choice 
+
+    /* choice for the colormap (in case of a user 's choice
      * verify the parameter). For the automatic choice I have
-     * put colminmax[0]=colominmax[1]=1 in matdes.c  
+     * put colminmax[0]=colominmax[1]=1 in matdes.c
      */
 
     if ( colminmax == NULL  )  /* automatic choice (see matdes.c) */
-      color_min=1; 
+      color_min=1;
     else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) {
       /* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
       sciprint("Error: colminmax badly choosen it should be in [0,%d]\n",nz);
-      return; 
+      return;
     }
     else {
       color_min = colminmax[0];
       nz = colminmax[1] - colminmax[0] + 1;
     };
-      
-    /* 
+
+    /*
      *  1/ the purpose of the first part is to to compute the "zone" of each point :
-     *    
+     *
      *    - the array zlevel are the boundaries between the differents zones :
-     *        zlevel[0] = zmin, zlevel[nz] = zmax 
+     *        zlevel[0] = zmin, zlevel[nz] = zmax
      *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
-     *  
+     *
      *     - if  zlevel[j-1] <= func[i] < zlevel[j]  then zone[i] = j
      *       if func[i] > zmax  then zone[i] = nz+1
      *       if func[i] < zmin  then zone[i] = 0
@@ -1236,17 +1240,17 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      *     - if colout == NULL
      *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
      *        fill[nz+1] = color attributed for fill[nz] --/
-     *       else 
+     *       else
      *        fill[0]=- colout[0];
      *        fill[1]=- colout[1];
      */
- 
+
     /* allocations for some arrays ... */
 
     zone = graphic_alloc(2,Nnode,sizeof(int));
     zlevel = graphic_alloc(3,nz+1,sizeof(double));
     fill  = graphic_alloc(4,nz+2,sizeof(int));
-    if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL)) 
+    if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL))
       {
 	Scistring("fec: malloc No more Place\n");
 	return ;
@@ -1254,18 +1258,18 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
     /* compute the fill array (fill = - num color) */
     fill[1] = - color_min;
     for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-    if ( colout == NULL) 
+    if ( colout == NULL)
       {
 	fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
       }
-    else 
+    else
       {
 	fill[0] = - Max(colout[0],0) ; fill[nz+1] = - Max(colout[1],0);
       }
 
 
     /* finaly compute the zone of each point */
-    
+
     if (remap == FALSE && colminmax == NULL && P->obj->zminmax->mn != 2 )
       {
 	for (i = 0 ; i <= nz ; i++) zlevel[i] = i;
@@ -1287,20 +1291,20 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 	}
       }
 
-    /* 
-     * 2/ loop on the triangles : each triangle is finally decomposed 
-     *    into its differents zones (polygons) by the function PaintTriangle   
+    /*
+     * 2/ loop on the triangles : each triangle is finally decomposed
+     *    into its differents zones (polygons) by the function PaintTriangle
      */
 
-#ifdef  WITH_GTKGLEXT 
-    if (  Xgc->graphic_engine == &GL_gengine ) 
+#ifdef  WITH_GTKGLEXT
+    if (  Xgc->graphic_engine == &GL_gengine )
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
-	  for ( j = 0 ; j < ny -1 ; j++) 
+	  for ( j = 0 ; j < ny -1 ; j++)
 	    {
 	      int pos[4],colors[4],xp[4],yp[4];
 	      pos[0]=i+nx*j; pos[1]=pos[0]+nx;  pos[2]=pos[0]+nx+1, pos[3]=pos[0]+1;
-	      for ( k = 0 ; k < 4 ; k++ ) 
+	      for ( k = 0 ; k < 4 ; k++ )
 		{
 		  colors[k]= fill[zone[pos[k]]];
 		  xp[k]= xm[pos[k]];
@@ -1309,29 +1313,29 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 	      fillpolyline2D_shade(Xgc,xp,yp,colors,4,1);
 	    }
       }
-    else 
+    else
 #endif
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
-	  for ( j = 0 ; j < ny -1 ; j++) 
+	  for ( j = 0 ; j < ny -1 ; j++)
 	    {
 	      int pos[3],tr;
 	      for ( tr = 0 ; tr < 2 ; tr ++ )
 		{
 		  if ((i +j) % 2 == 0 )
 		    {
-		      if ( tr == 0 ) 
-			{ 
-			  /* 
-			   *  ___ upper triangle 
+		      if ( tr == 0 )
+			{
+			  /*
+			   *  ___ upper triangle
 			   *  | /
 			   *  |/
 			   */
 			  pos[0]=i+nx*j; pos[1]=pos[0]+nx;  pos[2]=pos[0]+nx+1;
 			}
-		      else 
+		      else
 			{
-			  /* 
+			  /*
 			   *   /|  lower triangle
 			   *  /_|
 			   */
@@ -1340,18 +1344,18 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 		    }
 		  else
 		    {
-		      if ( tr == 0 ) 
-			{ 
+		      if ( tr == 0 )
+			{
 			  /*
 			   *  |\    upper triangle
 			   *  |_\
 			   */
 			  pos[0]=i+nx*j; pos[1]=pos[0]+1;  pos[2]=pos[0]+nx;
 			}
-		      else 
+		      else
 			{
 			  /*
-			   *  ___  lower triangle 
+			   *  ___  lower triangle
 			   *  \ |
 			   *   \|
 			   */
@@ -1362,9 +1366,9 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 		  /* retrieve node numbers and functions values */
 		  for ( k = 0 ; k < 3 ; k++ ) zxy[k]= zone[pos[k]];
 		  /* get the permutation perm so as zxy[perm] is sorted */
-		  PermutOfSort(zxy, perm); 
+		  PermutOfSort(zxy, perm);
 		  /* apply the permutation to get the triangle 's vertices
-		   * in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) 
+		   * in increasing zone (zxy[0] <= zxy[1] <= zxy[2])
 		   */
 		  for ( k = 0 ; k < 3 ; k++ ) {
 		    kp = perm[k];
@@ -1386,17 +1390,17 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 
 /**
  * PermutOfSort:
- * @tab: 
- * @perm: 
- * 
+ * @tab:
+ * @perm:
+ *
  * functions used above (Bruno 01/02/2001)
- * 
+ *
  **/
 
 void PermutOfSort (const int *tab, int *perm)
 {
-  /* 
-   * get the permutation perm[3] which sort the array tab[3] in increasing order 
+  /*
+   * get the permutation perm[3] which sort the array tab[3] in increasing order
    */
   perm[0]=0; perm[1] = 1; perm[2] = 2;
   if ( tab[1] < tab[0] ) {
@@ -1404,7 +1408,7 @@ void PermutOfSort (const int *tab, int *perm)
   };
   if ( tab[2] < tab[perm[1]] ) {   /* sort not finish */
     if ( tab[2] < tab[perm[0]] ) {
-      perm[2] = perm[1]; perm[1] = perm[0]; perm[0] = 2; 
+      perm[2] = perm[1]; perm[1] = perm[0]; perm[0] = 2;
     }
     else {
       perm[2] = perm[1] ; perm[1] = 2;
@@ -1415,41 +1419,40 @@ void PermutOfSort (const int *tab, int *perm)
 
 /**
  * PaintTriangle:
- * @Xgc: 
- * @sx: 
+ * @Xgc:
+ * @sx:
  * @sy: vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
  * @fxy: fxy[i], (i=0,1,2) value of an affine function on the vertex Pi
  * @zxy: zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
  * @zlevel: a (0..nz) vector given the boundaries for color filling
- * @fill: fill[j] is the color pattern associated with zone[j] when fill[j]=0 the 
+ * @fill: fill[j] is the color pattern associated with zone[j] when fill[j]=0 the
  * zone is not painted.
- * 
+ *
  * decomposes the triangle into its different zones (which gives polygones) and
  * send them to the graphic driver. This is something like the shade function
  * (see Plo3d.c) but a little different as in shade a color is directly
  * associated with each vertex.
  *
- * Note that zxy is increasing when entering this function. 
+ * Note that zxy is increasing when entering this function.
  **/
 
-void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy,
 		    const int *zxy, const double *zlevel,const int *fill)
 {
-  int nb0, edge, izone, color, c_color;
-  int nr, resx[5],resy[5];
-  int xEdge2, yEdge2, xEdge, yEdge; 
-
-  /* 
-   * case of only one color for the triangle : 
+  int nb0, edge, izone, color, c_color, nr;
+  int xEdge2, yEdge2, xEdge, yEdge;
+  double resx[5],resy[5];
+  /*
+   * case of only one color for the triangle :
    */
 
   c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  
+
   if ( zxy[0] == zxy[2] ) {
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
-    if ( color != 0 ) 
+    if ( color != 0 )
       {
 	Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
 	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
@@ -1457,29 +1460,29 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
     return;
   }
 
-  /* 
+  /*
    *  at least 2 colors for painting the triangle : it is divided in elementary
    *  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
    *
-   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or
    *  Notations/Hints :       /\           zxy[0] <  zxy[1] <= zxy[2]
    *                  edge2  /  \ edge1    from a previus sort. All the polygons
    *                        /    \         have 2 points on edge2, the others points
    *                       /______\        are on edge0 and/or edge1. I name the 2 ends
-   *                     P0        P1      points on each poly PEdge2 and Pedge, they are 
+   *                     P0        P1      points on each poly PEdge2 and Pedge, they are
    *                         edge0         the 2 first points of the next poly. I start
    *  from P0 to form the first poly (a triangle or
    *  a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
    *  and finally the last one which comprise the P2 vertex.  In some special cases
-   *  we can have a degenerate poly but it doesn't matter ! 				  
+   *  we can have a degenerate poly but it doesn't matter !
    */
-  
+
   nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
 
   /*
-   *    compute the first poly    
+   *    compute the first poly
    */
-  
+
   resx[0]=inint(sx[0]); resy[0]=inint(sy[0]); nr = 1; edge = 0;
   if ( nb0 == 0 ) {    /* the intersection point is on Edge1 but the next point
                           of the poly is P1 */
@@ -1500,23 +1503,23 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
     }
 
   /*
-   *  compute the intermediary polygon(s) 
+   *  compute the intermediary polygon(s)
    */
 
-  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
+  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ )
     {
       resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
       resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
       if ( edge == 0 )
 	{
 	  /* the intersection point is perhaps on edge 0 */
-	  if (nb0 == 0 ) 
+	  if (nb0 == 0 )
 	    {
 	      /* no it is on edge 1 but the next point of the poly is P1 */
 	      resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
 	      edge = 1;          /* the next intersection points will be on edge1 */
-	    } 
-	  else 
+	    }
+	  else
 	    {
 	      nb0--;
 	    }
@@ -1528,7 +1531,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
       resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
       color = fill[izone];
-      if ( color != 0 ) 
+      if ( color != 0 )
 	{
 	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
 	  Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
@@ -1536,21 +1539,21 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       /*
        * this function could be used to draw levels as we can test here.
        */
-      if (0 && color != 0 ) 
+      if (0 && color != 0 )
 	{
 	  color = -  fill[izone];
 	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
 	  Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 	}
     }
-  
+
   /*
-   *  compute the last poly  
+   *  compute the last poly
    */
 
   resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
   resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
-  if ( edge == 0 ) 
+  if ( edge == 0 )
     {
       /* the next point of the poly is P1 */
       resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
@@ -1559,7 +1562,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
-  if ( color != 0 ) 
+  if ( color != 0 )
     {
       Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
       Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
@@ -1579,49 +1582,49 @@ static void FindIntersection(const double *sx,const double *sy,const double *fxy
 
 /**
  * DrawTriangle:
- * 
- * very similar to PaintTriangle but the polygons are not filled 
- * but partially painted. 
+ *
+ * very similar to PaintTriangle but the polygons are not filled
+ * but partially painted.
  **/
 
-void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy,
 		    const int *zxy, const double *zlevel,const int *fill)
 {
   int nb0, edge, izone, color, c_color;
   int nr, resx[5],resy[5];
-  int xEdge2, yEdge2, xEdge, yEdge; 
+  int xEdge2, yEdge2, xEdge, yEdge;
 
-  /* 
-   * case of only one color for the triangle : 
+  /*
+   * case of only one color for the triangle :
    */
 
   c_color = Xgc->graphic_engine->xget_pattern(Xgc);
 
   if ( zxy[0] == zxy[2] ) return;
-  
-  /* 
+
+  /*
    *  at least 2 colors for painting the triangle : it is divided in elementary
    *  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
    *
-   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or
    *  Notations/Hints :       /\           zxy[0] <  zxy[1] <= zxy[2]
    *                  edge2  /  \ edge1    from a previous sort. All the polygons
    *                        /    \         have 2 points on edge2, the others points
    *                       /______\        are on edge0 and/or edge1. I name the 2 ends
-   *                     P0        P1      points on each poly PEdge2 and Pedge, they are 
+   *                     P0        P1      points on each poly PEdge2 and Pedge, they are
    *                         edge0         the 2 first points of the next poly. I start
    *  from P0 to form the first poly (a triangle or
    *  a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
    *  and finally the last one which comprise the P2 vertex.  In some special cases
-   *  we can have a degenerate poly but it doesn't matter ! 				  
+   *  we can have a degenerate poly but it doesn't matter !
    */
-  
+
   nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
 
   /*
-   *    compute the first poly    
+   *    compute the first poly
    */
-  
+
   resx[0]=inint(sx[0]); resy[0]=inint(sy[0]); nr = 1; edge = 0;
   if ( nb0 == 0 ) {    /* the intersection point is on Edge1 but the next point
                           of the poly is P1 */
@@ -1642,23 +1645,23 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
     }
 
   /*
-   *  compute the intermediary polygon(s) 
+   *  compute the intermediary polygon(s)
    */
-  
-  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
+
+  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ )
     {
       resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
       resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
       if ( edge == 0 )
 	{
 	  /* the intersection point is perhaps on edge 0 */
-	  if (nb0 == 0 ) 
+	  if (nb0 == 0 )
 	    {
 	      /* no it is on edge 1 but the next point of the poly is P1 */
 	      resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
 	      edge = 1;          /* the next intersection points will be on edge1 */
-	    } 
-	  else 
+	    }
+	  else
 	    {
 	      nb0--;
 	    }
@@ -1670,7 +1673,7 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
       FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
       resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
       color = fill[izone];
-      if ( color != 0 ) 
+      if ( color != 0 )
 	{
 	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
 	  Xgc->graphic_engine->drawline(Xgc,resx[2],resy[2],resx[3],resy[3]);
@@ -1680,5 +1683,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
 }
 
-
-#line 1685 "gmatrix1.c"
+#line 1687 "gmatrix1.c"

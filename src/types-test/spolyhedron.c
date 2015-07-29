@@ -1070,6 +1070,10 @@ void SPolyhedron_Interf_Info(int i, char **fname, function ( **f))
   *fname = SPolyhedron_func[i].name;
   *f = SPolyhedron_func[i].fonc;
 }
+void nsp_initialize_SPolyhedron_types(void)
+{
+  new_type_spolyhedron(T_BASE);
+}
 
 #line 105 "codegen/spolyhedron.override"
 
@@ -1279,8 +1283,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
   int i, k, np=1, m, zero=0;
-  int x_def[128], y_def[128];
-  int *x=x_def, *y=y_def;
+  double x_def[128], y_def[128];
+  double *x=x_def, *y=y_def;
   int nbtri;
   int zxy[3], sx[3], sy[3];
   int numpt, *current_vertex, color, orient;
@@ -1308,8 +1312,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   if ( m > 128 )
     {
-      x = graphic_alloc(0,m,sizeof(int));
-      y = graphic_alloc(1,m,sizeof(int));
+      x = graphic_alloc(0,m,sizeof(double));
+      y = graphic_alloc(1,m,sizeof(double));
     }
 
   for (i = 0 ; i < m ; i++)
@@ -1555,7 +1559,8 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
   double fxy[3];
 
   int i, nb0, edge, izone, color;
-  int nr, resx[5],resy[5];
+  int nr;
+  double resx[5],resy[5];
   int xEdge2, yEdge2, xEdge, yEdge;
 
   permut_of_sort(z, perm);
@@ -1875,4 +1880,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   return NULL;
 }
 
-#line 1879 "spolyhedron.c"
+#line 1884 "spolyhedron.c"

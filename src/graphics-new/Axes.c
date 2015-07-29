@@ -278,18 +278,16 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 {
   int auto_size=TRUE; /* font are resized automatically */
   char foo[256];
+  char c_format[5];
   int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;
-  int vx[2],vy[2],xm[2]; /* ym[2]; */
-  char c_format[5];
-  int flag=0,xx=0,yy=0,posi[2],rect[4];
-  int i,barlength;
-  int ns=2;
-  int fontid[2],fontsize_kp,logrect[4],smallersize=0,color_kp=0;
-
-  /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001
-   * If  zero ticks are requested, exit
-   */
+  double vx[2],vy[2];
+  double logrect[4];
+  int xm[2];
+  int flag=0,xx=0,yy=0,posi[2];
+  double rect[4];
+  int i,barlength, ns=2;
+  int fontid[2],fontsize_kp,smallersize=0,color_kp=0;
 
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
@@ -632,7 +630,8 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 {
   int Nx=0,Ny=0;
   double vxx,xd,yd,d_barlength;
-  int vx[2],vy[2],i, ns=2, color_kp=0;
+  double vx[2],vy[2];
+  int i, ns=2, color_kp=0;
 
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
@@ -820,8 +819,8 @@ static void nsp_draw_frame_rectangle(BCG *Xgc)
 {
   if ( Xgc->scales->cosa == 1.0 )
     {
-      int rect[4]= {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
-		    Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+      double rect[4]= {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+		       Xgc->scales->Irect.width,Xgc->scales->Irect.height};
       Xgc->graphic_engine->drawrectangle(Xgc,rect);
     }
   else
@@ -846,8 +845,8 @@ static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
   Xgc->graphic_engine->xset_pattern(Xgc,bg);
   if ( Xgc->scales->cosa == 1.0 )
     {
-      int rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
-		     Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+      double rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+			Xgc->scales->Irect.width,Xgc->scales->Irect.height};
       Xgc->graphic_engine->fillrectangle(Xgc,rect);
     }
   else
@@ -870,7 +869,8 @@ static void nsp_draw_filled_rectangle(BCG *Xgc,int bg)
 static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize, const char *str)
 {
   int size_in= 1, size_out=100,size=-1, count=0;
-  int fontid[2], logrect[4], check= TRUE;
+  int fontid[2], check= TRUE;
+  double logrect[4];
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   /* try to detect if current value is OK. */
   size = (fsize == -1) ? fontid[1] : fsize;
@@ -961,7 +961,7 @@ static double axes_number2str(char dir,char xy_type,char *res,char **str,const c
 static void nsp_legends_box(BCG *Xgc,int n1,
 			    const int *mark,const int *mark_size,
 			    const int *mark_color,const int *width,const int *color,
-			    char **legends,int box[4],
+			    char **legends,double box[4],
 			    int get_box,double xoffset,double yoffset,int c_color,int fg,const char *sep);
 
 /*----------------------------------------------------
@@ -976,7 +976,9 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
 		 char **legend,const char *sep)
 {
   int fg,old_dash,pat;
-  int rect[4],box[4],xx=0,yy=0;
+  double rect[4];
+  int xx=0,yy=0;
+  double box[4];
   double xoffset,yoffset;
   int auto_size=TRUE; /* font are resized automatically */
   int fontid[2],fontsize_kp;
@@ -1069,14 +1071,17 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
 static void nsp_legends_box(BCG *Xgc,int n1,
 			    const int *mark,const int *mark_size,
 			    const int *mark_color,const int *width,const int *color,
-			    char **legends,int box[4],
+			    char **legends,double box[4],
 			    int get_box,double xoffset,double yoffset,int c_color,int fg,const char *sep)
 {
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int bg= Xgc->graphic_engine->xget_background(Xgc);
   int xmark[2]={-1,-1};
-  int i,xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],rect[4],n1count=0;
+  int i,xs,ys,flag=0;
+  double polyx[2],polyy[2];
+  int lstyle[1],n1count=0;
   double angle=0.0;
+  double rect[4];
   int xi= 1.4*xoffset;
   int yi= box[1]+ yoffset*(1.25);
   /* get current mark */
@@ -1085,8 +1090,8 @@ static void nsp_legends_box(BCG *Xgc,int n1,
   /* fill the background */
   if ( get_box == FALSE )
     {
-      int nbox[4];
-      memcpy(nbox,box,4*sizeof(int));
+      double nbox[4];
+      memcpy(nbox,box,4*sizeof(double));
       Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
       nbox[0] -= rect[2]/2;
       nbox[1] -= rect[3]/2;

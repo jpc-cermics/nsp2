@@ -28,13 +28,13 @@
 #line 38 "codegen/fec.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 40 "fec.c"
 
@@ -119,8 +119,8 @@ NspTypeFec *new_type_fec(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_fec  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Fec */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 126 "fec.c"
   /* 
@@ -973,7 +973,7 @@ static AttrTab fec_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -985,7 +985,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -1020,6 +1020,10 @@ void Fec_Interf_Info(int i, char **fname, function ( **f))
   *fname = Fec_func[i].name;
   *f = Fec_func[i].fonc;
 }
+void nsp_initialize_Fec_types(void)
+{
+  new_type_fec(T_BASE);
+}
 
 #line 97 "codegen/fec.override"
 
@@ -1031,11 +1035,11 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) += tr[0];
     }
-  for ( i=0; i < P->obj->y->mn ; i++) 
+  for ( i=0; i < P->obj->y->mn ; i++)
     {
       *(y++) += tr[1];
     }
@@ -1053,18 +1057,18 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) *= alpha[0];
     }
-  for ( i=0; i < P->obj->y->mn ; i++) 
+  for ( i=0; i < P->obj->y->mn ; i++)
     {
       *(y++) *= alpha[1];
     }
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of fec 
+/* compute in bounds the enclosing rectangle of fec
  *
  */
 
@@ -1084,7 +1088,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int cpat;
-  int *colout = NULL ; 
+  int *colout = NULL ;
   int *colminmax = NULL;
   NspFec *P = (NspFec *) Obj;
   double *zminmax = NULL;
@@ -1109,51 +1113,51 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       return ;
     }
 
-  if ( P->obj->colminmax->mn == 2 ) 
+  if ( P->obj->colminmax->mn == 2 )
     colminmax = P->obj->colminmax->I;
 
-  if ( P->obj->zminmax->mn == 2 ) 
+  if ( P->obj->zminmax->mn == 2 )
     zminmax = P->obj->zminmax->R;
 
-  if ( P->obj->colout->mn == 2) 
+  if ( P->obj->colout->mn == 2)
     colout = P->obj->colout->I;
 
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
   ym = graphic_alloc(1,Nnode,sizeof(int));
-  if ( xm == 0 || ym == 0) 
+  if ( xm == 0 || ym == 0)
     {
       sciprint("Running out of memory \n");
       return;
-    }      
-  
+    }
+
   scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
-    
+
   /* choice between zmin and zmax given by the user or computed
-   * with the min and max z values. 
+   * with the min and max z values.
    */
-    
-  if ( zminmax == NULL  ) { 
-    zmin=(double) Mini(func,Nnode); 
+
+  if ( zminmax == NULL  ) {
+    zmin=(double) Mini(func,Nnode);
     zmax=(double) Maxi(func,Nnode);
-  } 
+  }
   else {
     zmin = Min( zminmax[0] , zminmax[1] );
     zmax = Max( zminmax[0] , zminmax[1] );
   };
-    
-  
-  /* choice for the colormap (in case of a user 's choice 
-   * verify the parameter). 
+
+
+  /* choice for the colormap (in case of a user 's choice
+   * verify the parameter).
    */
-    
-  if ( colminmax == NULL ) 
+
+  if ( colminmax == NULL )
     {
-      colors_minmax[0]= 1; 
+      colors_minmax[0]= 1;
       colors_minmax[1]= Xgc->graphic_engine->xget_last(Xgc);
     }
-  else 
+  else
     {
       int nz= Xgc->graphic_engine->xget_last(Xgc);
       /* we project on accepted values */
@@ -1161,15 +1165,15 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       colors_minmax[1] = Min(nz,Max(Abs(colminmax[0]),Abs(colminmax[1])));
     }
   nz = colors_minmax[1]- colors_minmax[0]+ 1;
-  
-  /* 
+
+  /*
    *  1/ the purpose of the first part is to to compute the "zone" of each point :
-   *    
+   *
    *    - the array zlevel are the boundaries between the differents zones :
    *
-   *        zlevel[0] = zmin, zlevel[nz] = zmax 
+   *        zlevel[0] = zmin, zlevel[nz] = zmax
    *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
-   *  
+   *
    *     - if  zlevel[j-1] <= func[i] < zlevel[j]  then zone[i] = j
    *       if func[i] > zmax  then zone[i] = nz+1
    *       if func[i] < zmin  then zone[i] = 0
@@ -1178,17 +1182,17 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
    *     - if colout == NULL
    *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
    *        fill[nz+1] = color attributed for fill[nz] --/
-   *       else 
+   *       else
    *        fill[0]=- colout[0];
    *        fill[1]=- colout[1];
    */
- 
+
   /* allocations for some arrays ... */
 
   zone = graphic_alloc(2,(Nnode),sizeof(int));
   zlevel = graphic_alloc(3,nz+1,sizeof(double));
   fill  = graphic_alloc(4,nz+2,sizeof(int));
-  if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL)) 
+  if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL))
     {
       Scistring("fec: malloc No more Place\n");
       return;
@@ -1196,11 +1200,11 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   /* compute the fill array (fill = - num color) */
   fill[1] = - colors_minmax[0];
   for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-  if ( colout == NULL) 
+  if ( colout == NULL)
     {
       fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
     }
-  else 
+  else
     {
       fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
       fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
@@ -1220,32 +1224,32 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     else
       zone[i] = floor( (func[i] - zmin)/dz ) + 1;
   };
-  
-  /* 
-   *  2/ loop on the triangles : each triangle is finally decomposed 
-   *     into its differents zones (polygons) by the function PaintTriangle   
+
+  /*
+   *  2/ loop on the triangles : each triangle is finally decomposed
+   *     into its differents zones (polygons) by the function PaintTriangle
    */
   switch ( TRUE ) /* P->obj->shade */
     {
     case TRUE :
       cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-      for ( j = 0 ; j < Ntr ; j++) 
+      for ( j = 0 ; j < Ntr ; j++)
 	{
 	  int ii[3], perm[3],kp, stop = FALSE;
 	  double fxy[3];
-	    
+
 	  /* retrieve node numbers and functions values */
 	  for ( k = 0 ; k < 3 ; k++ ) {
 	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	    zxy[k] = zone[ii[k]];
 	  }
-	    
+
 	  for ( k = 0 ; k < 3 ; k++ )
 	    stop |=  ( isnan(func[ii[k]]));
 	  if ( stop == TRUE ) continue;
 
 	  /* get the permutation perm so as zxy[perm] is sorted */
-	  PermutOfSort(zxy, perm); 
+	  PermutOfSort(zxy, perm);
 
 	  /* apply the permutation to get the triangle 's vertices
 	     in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
@@ -1254,53 +1258,54 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
 	    fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
 	  };
-	    
+
 	  /* call the "painting" function */
-	  if ( P->obj->paint == TRUE ) 
+	  if ( P->obj->paint == TRUE )
 	    {
 	      /*   zxy[2]= zxy[0] = (zxy[0]+zxy[1]+zxy[2])/3.0; */
 	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 	    }
-	  if ( mesh == TRUE ) 
+	  if ( mesh == TRUE )
 	    {
 	      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-	      draw_triangle(Xgc,sx,sy); 
+	      draw_triangle(Xgc,sx,sy);
 	    }
 	}
       Xgc->graphic_engine->xset_pattern(Xgc,cpat);
       break;
     case FALSE:
       cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-      for ( j = 0 ; j < Ntr ; j++) 
+      for ( j = 0 ; j < Ntr ; j++)
 	{
-	  int ii[3],isx[3],isy[3]; 
+	  int ii[3];
+	  double isx[3],isy[3];
 	  /* retrieve node numbers and functions values */
 	  for ( k = 0 ; k < 3 ; k++ ) {
 	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	    zxy[k] = zone[ii[k]];
-	    isx[k]  = xm[ii[k]];   
+	    isx[k]  = xm[ii[k]];
 	    isy[k]  = ym[ii[k]];
 	    /* using ii for colors */
-	    ii[k]= - fill[zxy[k]]; 
+	    ii[k]= - fill[zxy[k]];
 	  };
 	  /* call the "painting" function */
-	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 )
 	    {
-	      if ( P->obj->paint == TRUE  ) 
+	      if ( P->obj->paint == TRUE  )
 		{
-#ifdef  WITH_GTKGLEXT 
-		  /* when using opengl we use gouraud shading ? 
+#ifdef  WITH_GTKGLEXT
+		  /* when using opengl we use gouraud shading ?
 		   */
-		  if ( Xgc->graphic_engine == &GL_gengine ) 
-		    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+		  if ( Xgc->graphic_engine == &GL_gengine )
+		    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1);
 		  else
-#endif 
+#endif
 		    {
 		      int color = (ii[0]+ii[1]+ii[2])/3.0;
 		      Xgc->graphic_engine->xset_pattern(Xgc,color);
 		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1);
 		    }
-		}     
+		}
 	      if ( mesh == TRUE )
 		{
 		  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
@@ -1312,18 +1317,18 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       break;
     }
 
-  if (  P->obj->colorbar ) 
+  if (  P->obj->colorbar )
     {
       nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);
     }
-  if ( FALSE ) 
+  if ( FALSE )
     nsp_draw_fec_levels(Xgc,Obj,rect,data);
 }
 
 
 static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int *colout = NULL ; 
+  int *colout = NULL ;
   int *colminmax = NULL;
   NspFec *P = (NspFec *) Obj;
   double *zminmax = NULL;
@@ -1347,51 +1352,51 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       return ;
     }
 
-  if ( P->obj->colminmax->mn == 2 ) 
+  if ( P->obj->colminmax->mn == 2 )
     colminmax = P->obj->colminmax->I;
 
-  if ( P->obj->zminmax->mn == 2 ) 
+  if ( P->obj->zminmax->mn == 2 )
     zminmax = P->obj->zminmax->R;
 
-  if ( P->obj->colout->mn == 2) 
+  if ( P->obj->colout->mn == 2)
     colout = P->obj->colout->I;
 
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
   ym = graphic_alloc(1,Nnode,sizeof(int));
-  if ( xm == 0 || ym == 0) 
+  if ( xm == 0 || ym == 0)
     {
       sciprint("Running out of memory \n");
       return;
-    }      
-  
+    }
+
   scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
-    
+
   /* choice between zmin and zmax given by the user or computed
-   * with the min and max z values. 
+   * with the min and max z values.
    */
-    
-  if ( zminmax == NULL  ) { 
-    zmin=(double) Mini(func,Nnode); 
+
+  if ( zminmax == NULL  ) {
+    zmin=(double) Mini(func,Nnode);
     zmax=(double) Maxi(func,Nnode);
-  } 
+  }
   else {
     zmin = Min( zminmax[0] , zminmax[1] );
     zmax = Max( zminmax[0] , zminmax[1] );
   };
-    
-  
-  /* choice for the colormap (in case of a user 's choice 
-   * verify the parameter). 
+
+
+  /* choice for the colormap (in case of a user 's choice
+   * verify the parameter).
    */
-    
-  if ( colminmax == NULL ) 
+
+  if ( colminmax == NULL )
     {
-      colors_minmax[0]= 1; 
+      colors_minmax[0]= 1;
       colors_minmax[1]= Xgc->graphic_engine->xget_last(Xgc);
     }
-  else 
+  else
     {
       int nz= Xgc->graphic_engine->xget_last(Xgc);
       /* we project on accepted values */
@@ -1399,17 +1404,17 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       colors_minmax[1] = Min(nz,Max(Abs(colminmax[0]),Abs(colminmax[1])));
     }
   nz = colors_minmax[1]- colors_minmax[0]+ 1;
-  
-  /* 
+
+  /*
    *    - the array zlevel are the boundaries between the differents zones :
-   *        zlevel[0] = zmin, zlevel[nz] = zmax 
+   *        zlevel[0] = zmin, zlevel[nz] = zmax
    *        and zlevel[i] = zmin + i*(zmax-zmin)/nz
    */
- 
+
   /* allocations for some arrays ... */
   zlevel = graphic_alloc(3,nz+1,sizeof(double));
   fill  = graphic_alloc(4,nz+2,sizeof(int));
-  if ( (zlevel == NULL) || (fill  == NULL)) 
+  if ( (zlevel == NULL) || (fill  == NULL))
     {
       Scistring("fec: malloc No more Place\n");
       return;
@@ -1417,11 +1422,11 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
   /* compute the fill array (fill = - num color) */
   fill[1] = - colors_minmax[0];
   for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-  if ( colout == NULL) 
+  if ( colout == NULL)
     {
       fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
     }
-  else 
+  else
     {
       fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
       fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
@@ -1432,46 +1437,46 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
   for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
   zlevel[nz] = zmax;
 
-  for ( j = 0 ; j < Ntr ; j++) 
+  for ( j = 0 ; j < Ntr ; j++)
     {
       int ii[3], perm[3],kp, stop = FALSE;
       double fxy[3];
-      
+
       /* retrieve node numbers and functions values */
       for ( k = 0 ; k < 3 ; k++ ) {
 	ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	fxy[k] = func[ii[k]];
       }
-      
+
       for ( k = 0 ; k < 3 ; k++ )
 	stop |=  ( isnan(fxy[k]));
       if ( stop == TRUE ) continue;
-      
+
       /* get the permutation perm so as zxy[perm] is sorted */
-      PermutOfSort_d(fxy, perm); 
-      
+      PermutOfSort_d(fxy, perm);
+
       /* apply the permutation to get the triangle 's vertices
-       * in increasing zone (fxy[0] <= fxy[1] <= fxy[2]) 
+       * in increasing zone (fxy[0] <= fxy[1] <= fxy[2])
        */
-      for ( k = 0 ; k < 3 ; k++ ) 
+      for ( k = 0 ; k < 3 ; k++ )
 	{
 	  kp = perm[k];
 	  sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
 	  fxy[k] = func[ii[kp]];
 	}
-      
-      for (i = 0 ; i < nz ; i++) 
+
+      for (i = 0 ; i < nz ; i++)
 	{
 	  double zl = zlevel[i] ;
-	  if ( zl < fxy[0]) continue; 
-	  if ( zl > fxy[2]) continue; 
-	  if ( fxy[2] - fxy[0] < 1.e-8 ) continue; 
-	  if ( zl <= fxy[1]) 
+	  if ( zl < fxy[0]) continue;
+	  if ( zl > fxy[2]) continue;
+	  if ( fxy[2] - fxy[0] < 1.e-8 ) continue;
+	  if ( zl <= fxy[1])
 	    {
 	      double xi,yi,xf,yf;
-	      if ( fxy[1]  - fxy[0] < 1.e-8 ) 
+	      if ( fxy[1]  - fxy[0] < 1.e-8 )
 		{
-		  /* special limit cases 
+		  /* special limit cases
 		   * we do nothing the levels will be drawn by other triangles
 		   */
 		  /*  Xgc->graphic_engine->drawline(Xgc,sx[0],sy[0],sx[1],sy[1]);*/
@@ -1485,7 +1490,7 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
 		  alpha =  (zl - fxy[0])/(fxy[2] - fxy[0]);
 		  xf = inint((1 - alpha)*sx[0] + alpha*sx[2]);
 		  yf = inint((1 - alpha)*sy[0] + alpha*sy[2]);
-		  if (! ( xi == sx[1] && xf == sx[2] 
+		  if (! ( xi == sx[1] && xf == sx[2]
 			  && yi == sy[1] && yf == sy[2] ))
 		    Xgc->graphic_engine->drawline(Xgc,xi,yi,xf,yf);
 		}
@@ -1507,7 +1512,7 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
 		  alpha =  (zl - fxy[0])/(fxy[2] - fxy[0]);
 		  xf = inint((1 - alpha)*sx[0] + alpha*sx[2]);
 		  yf = inint((1 - alpha)*sy[0] + alpha*sy[2]);
-		  if (! ( xi == sx[1] && xf == sx[2] 
+		  if (! ( xi == sx[1] && xf == sx[2]
 			  && yi == sy[1] && yf == sy[2] ))
 		    Xgc->graphic_engine->drawline(Xgc,xi,yi,xf,yf);
 		}
@@ -1519,17 +1524,17 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
 
 /**
  * PermutOfSort:
- * @tab: 
- * @perm: 
- * 
+ * @tab:
+ * @perm:
+ *
  * functions used above (Bruno 01/02/2001)
- * 
+ *
  **/
 
 static void PermutOfSort_d(const double *tab, int *perm)
 {
-  /* 
-   * get the permutation perm[3] which sort the array tab[3] in increasing order 
+  /*
+   * get the permutation perm[3] which sort the array tab[3] in increasing order
    */
   perm[0]=0; perm[1] = 1; perm[2] = 2;
   if ( tab[1] < tab[0] ) {
@@ -1537,7 +1542,7 @@ static void PermutOfSort_d(const double *tab, int *perm)
   };
   if ( tab[2] < tab[perm[1]] ) {   /* sort not finish */
     if ( tab[2] < tab[perm[0]] ) {
-      perm[2] = perm[1]; perm[1] = perm[0]; perm[0] = 2; 
+      perm[2] = perm[1]; perm[1] = perm[0]; perm[0] = 2;
     }
     else {
       perm[2] = perm[1] ; perm[1] = 2;
@@ -1548,11 +1553,7 @@ static void PermutOfSort_d(const double *tab, int *perm)
 
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
 {
-  int nr, resx[3],resy[3];
-  resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
-  resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
-  nr = 3;
-  Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
+  Xgc->graphic_engine->drawpolyline(Xgc,sx,sy,3,1);
 }
 
-#line 1559 "fec.c"
+#line 1560 "fec.c"

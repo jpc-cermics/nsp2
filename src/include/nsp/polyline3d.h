@@ -139,7 +139,7 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF,
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyline3d(NspPolyline3d *P);
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 #endif
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);

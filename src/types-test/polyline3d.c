@@ -732,6 +732,10 @@ void Polyline3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = Polyline3d_func[i].name;
   *f = Polyline3d_func[i].fonc;
 }
+void nsp_initialize_Polyline3d_types(void)
+{
+  new_type_polyline3d(T_BASE);
+}
 
 #line 108 "codegen/polyline3d.override"
 
@@ -862,7 +866,8 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   const double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
   const int L_nb_colors = L->Mcolor->mn ;
   const int *L_color = L->Mcolor->I;
-  int x[2], y[2], color, n=2;
+  double x[2], y[2];
+  int color, n=2;
   x[0] = XScale(Xgc->scales,L_coord[j]);
   y[0] = YScale(Xgc->scales,L_coord[j+L->Mcoord->m]);
   x[1] = XScale(Xgc->scales,L_coord[j+1]);
@@ -1001,4 +1006,4 @@ extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1005 "polyline3d.c"
+#line 1010 "polyline3d.c"

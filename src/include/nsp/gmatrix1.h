@@ -113,7 +113,7 @@ extern int nsp_gmatrix1_xdr_save(XDR  *xdrs, NspGMatrix1 *M);
 /* inserted at the end of public part of include file */
 
 extern void PermutOfSort (const int *tab, int *perm);
-extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy,
 			   const int *zxy, const double *zlevel,const int *fill);
 
 #line 120 "./gmatrix1.h"

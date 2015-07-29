@@ -1,39 +1,39 @@
-#ifndef NSP_DRIVER_BCG 
-#define NSP_DRIVER_BCG 
+#ifndef NSP_DRIVER_BCG
+#define NSP_DRIVER_BCG
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2015) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * This Software is GPL (Copyright ENPC 1998-2015)
+ * Jean-Philippe Chancelier Enpc/Cermics
  *
- * typedef for driver functions 
+ * typedef for driver functions
  * and driver structures.
  */
 
-#include <gdk/gdk.h> 
+#include <gdk/gdk.h>
 
 typedef enum { GR_STR_XLEFT ,GR_STR_XCENTER , GR_STR_XRIGHT} gr_str_posx;
 typedef enum { GR_STR_YBOTTOM ,GR_STR_YCENTER , GR_STR_YBASELINE, GR_STR_YUP } gr_str_posy;
 typedef enum { GR_in_box, GR_fill_box, GR_no_box} gr_str_box;
 
-extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
+extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
 
 typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 					 int remap,const int *colminmax,const double *zminmax,const int *colout);
 typedef void driver_fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 					  int remap,const int *colminmax,const double *zminmax);
 
-typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y, int *rect);
+typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y,double *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
-typedef void driver_displaynumbers( BCG *gc,int *x, int *y, int n, int flag, double *z, double *alpha);
-typedef void driver_drawpolyline_clip( BCG *gc, int *vx, int *vy, int n,int *clip_box,int closeflag);
+typedef void driver_displaynumbers( BCG *gc, double *x, double *y, int n, int flag, double *z, double *alpha);
+typedef void driver_drawpolyline_clip( BCG *gc, double *vx, double *vy, int n, double *clip_box,int closeflag);
 
 typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, double arc[]);
 typedef void driver_drawarcs( BCG *gc, double *vects, int *style, int n);
 typedef void driver_drawarrows( BCG *gc,double *vx, double *vy, int n, int as, int *style, int iflag);
 typedef void driver_drawaxis( BCG *gc, int alpha, int *nsteps,  int *initpoint, double *size);
-typedef void driver_drawpolyline( BCG *gc,  double *vx, double *vy, int n,int closeflag);
+typedef void driver_drawpolyline( BCG *gc, const double *vx,const double *vy, int n,int closeflag);
 typedef void driver_drawpolylines( BCG *gc, double *vectsx, double *vectsy, int *drawvect, int n, int p);
 typedef void driver_drawpolymark( BCG *gc,  double *vx, double *vy,int n);
 typedef void driver_drawrectangle( BCG *gc,const double rect[]);
@@ -42,11 +42,11 @@ typedef void driver_drawsegments( BCG *gc, double *vx, double *vy, int n, int *c
 typedef void driver_drawline(BCG *Xgc, double x1, double yy1, double x2, double y2);
 typedef void driver_fillarc( BCG *gc, double arc[]);
 typedef void driver_fillarcs( BCG *gc, double *vects, int *fillvect, int n);
-typedef void driver_fillpolyline( BCG *gc,  double *vx, double *vy,int n, int closeflag);
-typedef void driver_fillpolylines( BCG *gc, double *vectsx, double *vectsy, int *fillvect, int n, int p);
+typedef void driver_fillpolyline( BCG *gc,  const double *vx, const double *vy,int n, int closeflag);
+typedef void driver_fillpolylines( BCG *gc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p);
 typedef void driver_fillrectangle( BCG *gc,const double rect[]);
 
-typedef void driver_window_list_get_ids(int *Num,int ids[],int flag); 
+typedef void driver_window_list_get_ids(int *Num,int ids[],int flag);
 typedef void *driver_initgraphic(const char *string,int *num,int *wdim,int *wpdim,double *viewport_pos,
 				 int *wpos,char mode,void *data,void *Fig);
 typedef void driver_loadfamily(char *name, int *j);
@@ -66,7 +66,7 @@ typedef void driver_sedeco( int );
 typedef void driver_tape_replay(BCG *gc,const GdkRectangle *rect);
 typedef void driver_tape_clean_plots(BCG *gc,int winnumber);
 typedef void driver_tape_replay_new_angles(BCG *gc);
-typedef void driver_tape_replay_new_scale(BCG *gc,int winnumber, int *flag, int *aaint, 
+typedef void driver_tape_replay_new_scale(BCG *gc,int winnumber, int *flag, int *aaint,
 					  double *bbox, int *ibbox);
 typedef void driver_tape_replay_undo_scale(BCG *gc);
 typedef int  driver_tape_check_recorded_3D(BCG *gc,int winnumber);
@@ -139,8 +139,8 @@ typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,i
 					  int dest_y,int width,int height);
 
 typedef void driver_xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position);
-/* a set of generic functions which can be used or 
- * not by each driver 
+/* a set of generic functions which can be used or
+ * not by each driver
  */
 
 typedef struct _nsp_gengine_generic {
@@ -163,7 +163,7 @@ typedef struct _nsp_gengine_generic {
 
 } nsp_gengine_generic ;
 
-extern nsp_gengine_generic nsp_peri_generic; 
+extern nsp_gengine_generic nsp_peri_generic;
 
 struct nsp_gengine {
   nsp_gengine_generic *generic; /* A set of generic functions hidden here */
@@ -284,7 +284,7 @@ struct nsp_gengine {
   driver_xstring_pango *xstring_pango;
 };
 
-#endif 
+#endif
 
 
 #ifdef PERI_PRIVATE
@@ -395,9 +395,4 @@ static driver_xset_windowpos xset_windowpos;
 static driver_xset_wresize xset_wresize;
 static driver_xstring_pango xstring_pango;
 
-#endif 
-
-
-
-
-
+#endif

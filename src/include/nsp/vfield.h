@@ -130,8 +130,8 @@ static void nsp_translate_vfield(NspGraphic *o,const double *tr);
 static void nsp_rotate_vfield(NspGraphic *o,double *R);
 static void nsp_scale_vfield(NspGraphic *o,double *alpha);
 static int nsp_getbounds_vfield(NspGraphic *o,double *bounds);
-static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
-			     double *fx, double *fy, int n1, int n2,char *strflag, 
+static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y,
+			     double *fx, double *fy, int n1, int n2,char *strflag,
 			     double *brect, double *arfact);
 static double min_of_doubles (const double *x,int n);
 

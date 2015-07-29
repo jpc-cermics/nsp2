@@ -36,15 +36,15 @@
 #include <nsp/system.h> /* FSIZE */
 
 extern char *nsp_getenv (const char *name);
-static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
-static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
+static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const double *vx,const double *vy, int flag,const int *fvect);
+static void Write2Vect(const double *vx,const double *vy, int from, int n, char *string, int flag, int fv);
 static void WriteGeneric(char *string, int nobj, int sizeobj, const double *vx,const double *vy, int sizev, int flag, const int *fvect);
 static void set_c_Pos(BCG *Xgc,int i);
 /* static void idfromname (char *name1, int *num); */
 static double ascentPos(BCG *Xgc);
 static int fontsizePos (BCG *Xgc);
 static int PosQueryFont(char *name);
-static void displaysymbols( BCG *Xgc,int *vx, int *vy,int n);
+static void displaysymbols( BCG *Xgc,double *vx, double *vy,int n);
 static void WriteColorRGB(BCG *Xgc,char *str, void *tab, int ind);
 static void WriteColorRGBDef(BCG *Xgc,char *str,void *tab, int ind);
 
@@ -891,8 +891,8 @@ static void pixmap_resize(BCG *Xgc)
 static void displaystring(BCG *Xgc,const char *string, double x, double y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
-  int i,rect[4] ;
-  int yn = (int) (y + ascentPos(Xgc));
+  int i;
+  double rect[4], yn = y + ascentPos(Xgc);
   boundingbox(Xgc,string,x,yn,rect);
   FPRINTF((file,"\n("));
   for ( i=0; i < (int)strlen(string);i++)
@@ -902,8 +902,8 @@ static void displaystring(BCG *Xgc,const char *string, double x, double y, int f
       else
 	FPRINTF((file,"%c",string[i]));
     }
-  FPRINTF((file,") %d %d %d %5.2f [%d %d %d %d] Show", x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
-  FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
+  FPRINTF((file,") %5.2f %5.2f %d %5.2f [%5.2f %5.2f %5.2f %5.2f] Show", x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
+  FPRINTF((file,"\n%%Latex:\\myput{%5.2f}{%5.2f}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
 }
 
 #if 0
@@ -1106,7 +1106,7 @@ static double PosStrAsc(int id_font, int id_size)
 
 /*** modified by Bruno by using the previus datas and functions ***/
 
-void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,const char *string, int x, int y, double rect[])
 {
   int font[2];
   double h, w;
@@ -1139,7 +1139,7 @@ static double ascentPos(BCG *Xgc)
 
 static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2)
 {
-  FPRINTF((file,"\n %d %d %d %d L",xx1,yy1,x2,y2));
+  FPRINTF((file,"\n %5.2f %5.2f %5.2f %5.2f L",xx1,yy1,x2,y2));
 }
 
 /* Draw a set of segments
@@ -1361,7 +1361,7 @@ static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvec
  if fillvect[i] < 0  fill with pattern - fillvect[i]
 **************************************************************/
 
-static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect, int n, int p)
+static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p)
 {
   int cpat;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
@@ -1375,7 +1375,7 @@ static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvec
 /** Only draw one polygon with current line style **/
 /** according to *closeflag : it's a polyline or a polygon **/
 
-static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
+static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   int fvect=0;
   if (closeflag == 1 )
@@ -1387,7 +1387,7 @@ static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 
 /** Fill the polygon **/
 
-static void fillpolyline(BCG *Xgc, double *vx, double *vy,int n, int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
 {
   int cpat = xget_pattern(Xgc);
   /** just fill  ==> cpat < 0 **/
@@ -1548,7 +1548,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
  *   add a box around the string, only if slope =0}
  */
 
-static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
@@ -1592,8 +1592,8 @@ static void WriteGeneric(char *string, int nobj, int sizeobj,const double *vx,
 
 }
 
-static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, const int *vx,
-			  const int *vy, int flag,const  int *fvect)
+static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, const double *vx,
+			  const double *vy, int flag,const  int *fvect)
 {
   int from,n,i;
   if (flag == 1)
@@ -1645,7 +1645,7 @@ static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, co
   -------------------------------------------------------*/
 
 
-void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int flag, int fv)
+void Write2Vect(const double *vx,const double *vy, int from, int n, char *string, int flag, int fv)
 {
   int i,j,k,co,nco;
   int fv1;
@@ -1757,7 +1757,7 @@ static char symb_listPos[] = {
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
-static void displaysymbols(BCG *Xgc,int *vx, int *vy,int n)
+static void displaysymbols(BCG *Xgc, double *vx, double *vy,int n)
 {
   int fvect=  ( Xgc->CurColorStatus ==1) ? Xgc->CurColor : Xgc->CurPattern ;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)

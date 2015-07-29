@@ -130,7 +130,7 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
 	if ( w != 0 && h != 0 && x[j] < xz[0] && y[i] < xz[1] && x[j]+w > 0 && y[i]+h > 0 )
 	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
 	    {
-	      int rect[]={x[j],y[i],w,h};
+	      double rect[]={x[j],y[i],w,h};
 	      Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	    }
       }
@@ -189,7 +189,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 	  {
 	    if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
 	      {
-		int rect[]={x[i],y[j+1],w,h};
+		double rect[]={x[i],y[j+1],w,h};
 		Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	      }
 	    else
@@ -238,18 +238,18 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
  *
  * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
  * for i=0 step 2  n is the size of vx and vy
- * style and thickness can be scalars or vectors 
+ * style and thickness can be scalars or vectors
  */
 
 static void drawsegments_gen(BCG *Xgc, double *vx, double *vy, int n, int *color, int *width)
 {
   int i;
-  if ( color != NULL) 
+  if ( color != NULL)
     {
       int cur_dash = Xgc->graphic_engine->xget_dash(Xgc);
       int cur_color = Xgc->graphic_engine->xget_pattern(Xgc);
       /* one color per segment */
-      if ( width != NULL ) 
+      if ( width != NULL )
 	{
 	  /* one width per segment */
 	  int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
@@ -289,7 +289,8 @@ static void drawsegments_gen(BCG *Xgc, double *vx, double *vy, int n, int *color
 
 static void drawarrows_gen(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
-  int dash,color,i,lstyle,polyx[4],polyy[4];
+  int dash,color,i,lstyle;
+  double polyx[4],polyy[4];
   double cos20=cos(20.0*M_PI/180.0), sin20=sin(20.0*M_PI/180.0);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -308,10 +309,10 @@ static void drawarrows_gen(BCG *Xgc, double *vx, double *vy, int n, int as, int 
 	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
 	  polyx[0]= polyx[3]=vx[2*i+1];
 	  polyy[0]= polyy[3]=vy[2*i+1];
-	  polyx[1]= inint(polyx[0] - ( cos20*dx - sin20*dy));
-	  polyy[1]= inint(polyy[0] - ( sin20*dx + cos20*dy));
-	  polyx[2]= inint(polyx[0] - ( cos20*dx + sin20*dy));
-	  polyy[2]= inint(polyy[0] - (-sin20*dx + cos20*dy)) ;
+	  polyx[1]= polyx[0] - ( cos20*dx - sin20*dy);
+	  polyy[1]= polyy[0] - ( sin20*dx + cos20*dy);
+	  polyx[2]= polyx[0] - ( cos20*dx + sin20*dy);
+	  polyy[2]= polyy[0] - (-sin20*dx + cos20*dy);
 	  Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
 	}
     }
@@ -412,7 +413,7 @@ static void drawpolylines_gen(BCG *Xgc, double *vectsx, double *vectsy, int *dra
  *
  */
 
-static void fillpolylines_gen(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect,int n, int p)
+static void fillpolylines_gen(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
@@ -555,7 +556,7 @@ static void drawaxis_gen(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double
  *   add a box around the string, only if slope =0}
  */
 
-static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers_gen(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
   int i ;
   static char buf[56];
@@ -571,7 +572,8 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
 
 static void drawarc_gen(BCG *Xgc, double arc[])
 {
-  int vx[365],vy[365],k,n;
+  double vx[365],vy[365];
+  int k,n;
   double alpha,fact=0.01745329251994330,w,h;
   int close = 0;
   w = arc[2]/2.0;
@@ -587,12 +589,11 @@ static void drawarc_gen(BCG *Xgc, double arc[])
 
 static void fillarc_gen( BCG *Xgc, double arc[])
 {
-  int vx[365],vy[365],k,close = 1;
+  double vx[365],vy[365];
   double alpha,fact=0.01745329251994330;
   double w=arc[2]/2.0,h=arc[3]/2.0;
-  /* drawarc_gen(Xgc,arc); */
   int n = Min((arc[5]/64),360), count=0;
-
+  int k,close = 1;
   if (n != 360)
     {
       vx[count] = arc[0] + w;

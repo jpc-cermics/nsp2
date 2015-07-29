@@ -1147,9 +1147,9 @@ void nsp_axes_invalidate(NspGraphic *G)
 
 void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colminmax)
 {
-  double grads[20], axrect[4], hr;
-  int ntags,start, rect[4],color,i,cpat, wdim[2];
-  int nb_colors, rrect[4];
+  double grads[20], axrect[4], hr, rect[4], rrect[4];
+  int ntags,start, color,i,cpat, wdim[2];
+  int nb_colors;
   int last = Xgc->graphic_engine->xget_last(Xgc);
   int clip[5];
   GdkRectangle rclip;
@@ -1202,7 +1202,7 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
 
   for ( i = 0 ; i < ntags ; i++ )
     {
-      int srect[4];
+      double srect[4];
       int y;
       double uval;
       char str[256];

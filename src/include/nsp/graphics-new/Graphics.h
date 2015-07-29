@@ -84,8 +84,9 @@ extern void nsp_gr_set_graphic_eventhandler(int *win_num,char *name,int *ierr);
 extern void nsp_set_cursor(BCG *Xgc,int id);
 extern void getcolordef  (int *);
 extern int nsp_new_graphics(void);
-extern void clip_line  (int,int,int ,int,int *,int *,int *,int *,int *, int xleft,int xright,int ybot,int ytop);
-
+extern void clip_line(double x1, double yy1, double x2, double y2,
+		      double *x1n, double *yy1n, double *x2n, double *y2n,
+		      int *flag, int xleft,int xright,int ybot,int ytop);
 /* Alloc.c */
 
 void *graphic_alloc (int indice,int n,unsigned int size);
@@ -154,15 +155,22 @@ extern void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,
 				double *y, int *n1, int *n2, int *aaint,
 				char *strflag,double FRect[4]);
 extern void ellipse2d(nsp_gcscale *,double *,int *,int *,char *);
+extern void ellipse2d_new(nsp_gcscale *scales, double *x, double *x1, int n,const char *dir);
+
 extern void axis2d  (nsp_gcscale *scales,double *,double *,double *,int *,double *);
 extern void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n);
+extern void rect2d_double_to_pixels(nsp_gcscale *scales,const double x[], double x1[], int n);
+
 extern void scale_i2f(nsp_gcscale *scales, double x[], double y[],const int x1[],const int y1[],int n);
 extern int  scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int y1[],int n);
 
 extern int  scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int y1[],int n);
-extern int scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n);
+extern int  scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n);
 
 extern void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, const int *y1, int n);
+extern void length_scale_double_to_pixels(nsp_gcscale *scales,const double *x,const double *y,
+					  double *x1, double *y1, int n);
+
 extern void length_scale_f2i(nsp_gcscale *scales,const double *x,const double *y, int *x1, int *y1, int n);
 extern void scale_f2wrect(nsp_gcscale *scales,const double x[],double x1[]);
 

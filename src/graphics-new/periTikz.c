@@ -942,10 +942,10 @@ static void pixmap_resize(BCG *Xgc)
 static void displaystring(BCG *Xgc,const char *string, double x, double y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
-  int rect[4] ;
-  int yn = (int) (y + ascentPos(Xgc));
+  double rect[4] ;
+  double yn = y + ascentPos(Xgc);
   boundingbox(Xgc,string,x,yn,rect);
-  FPRINTF((file,"%% (%s) %d %d %d %5.2f [%d %d %d %d] Show\n",
+  FPRINTF((file,"%% (%s) %5.2f %5.2f %d %5.2f [%5.2f %5.2f %5.2f %5.2f] Show\n",
 	   string, x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
   FPRINTF((file,"\\draw (%f, %f) node{%s};\n",x/SCALE,- yn/SCALE,string));
 }
@@ -1151,7 +1151,7 @@ static double PosStrAsc(int id_font, int id_size)
 
 /*** modified by Bruno by using the previus datas and functions ***/
 
-void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,const char *string, int x, int y, double rect[])
 {
   int font[2];
   double h, w;
@@ -1373,7 +1373,7 @@ static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvec
  *
  */
 
-static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect,int n, int p)
+static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
   Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
 }
@@ -1381,7 +1381,7 @@ static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvec
 /** Only draw one polygon with current line style **/
 /** according to *closeflag : it's a polyline or a polygon **/
 
-static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
+static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   int i;
   int color=xget_pattern(Xgc);
@@ -1404,7 +1404,7 @@ static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 
 /* Fill the polygon */
 
-static void fillpolyline(BCG *Xgc,  double *vx, double *vy,int n, int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
 {
   /* if ( Xgc->CurVectorStyle !=  CoordModeOrigin) */
   int i;
@@ -1582,7 +1582,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
  *   add a box around the string, only if slope =0}
  */
 
-static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }

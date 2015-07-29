@@ -27,8 +27,8 @@
 #line 22 "codegen/polyline.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 
 #line 34 "polyline.c"
 
@@ -113,8 +113,8 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 120 "polyline.c"
   /* 
@@ -799,7 +799,7 @@ static AttrTab polyline_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -811,7 +811,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -847,6 +847,10 @@ void Polyline_Interf_Info(int i, char **fname, function ( **f))
   *fname = Polyline_func[i].name;
   *f = Polyline_func[i].fonc;
 }
+void nsp_initialize_Polyline_types(void)
+{
+  new_type_polyline(T_BASE);
+}
 
 #line 77 "codegen/polyline.override"
 
@@ -858,7 +862,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   int xmark[2];
   int ccolor=-1,cmark=-1,cmarksize=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
-  int *xm=NULL,*ym=NULL;
+  double *xm=NULL,*ym=NULL;
 
   if (((NspGraphic *) P)->obj->show == FALSE ) return;
   if ( P->obj->x->mn == 0) return ;
@@ -867,77 +871,77 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     {
       return ;
     }
-  
-  xm= graphic_alloc(6,P->obj->x->mn,sizeof(int));
-  ym= graphic_alloc(7,P->obj->x->mn,sizeof(int));
+
+  xm= graphic_alloc(6,P->obj->x->mn,sizeof(double));
+  ym= graphic_alloc(7,P->obj->x->mn,sizeof(double));
   if ( xm  ==  0 || ym  ==  0 ) return;
-  scale_f2i(Xgc->scales,P->obj->x->R,P->obj->y->R,xm,ym,P->obj->x->mn);
+  scale_double_to_pixels(Xgc->scales,P->obj->x->R,P->obj->y->R,xm,ym,P->obj->x->mn);
   /* fill polyline */
   if ( P->obj->fill_color != -2 )
     {
       /* set the fill color */
-      if ( P->obj->fill_color != -1 ) 
+      if ( P->obj->fill_color != -1 )
 	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
 	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
 	}
       /* fill */
       Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
       /* reset color */
-      if ( P->obj->fill_color != -1 ) 
+      if ( P->obj->fill_color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
   /* draw polyline */
-  if ( P->obj->color != -2 ) 
+  if ( P->obj->color != -2 )
     {
       /* we will draw polyline */
-      if ( P->obj->thickness != -1 ) 	
+      if ( P->obj->thickness != -1 )
 	{
-	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc);
 	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
 	}
-      if ( P->obj->color != -1 ) 
+      if ( P->obj->color != -1 )
 	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
 	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
 	}
       Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
-      if ( P->obj->thickness != -1 ) 
+      if ( P->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
       if ( P->obj->color != -1 )
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
   /* draw polymark */
-  if ( P->obj->mark != -2 ) 
+  if ( P->obj->mark != -2 )
     {
       /* we will draw marks */
-    
+
       /* save xgc current values for mark */
       if (( P->obj->mark != -1 ) || ( P->obj->mark_size != -1 )) {
-        Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+        Xgc->graphic_engine->xget_mark(Xgc,xmark);
         cmark=xmark[0];cmarksize=xmark[1];
       }
-      
+
       if ( P->obj->mark != -1 ) {
         Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
-        Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+        Xgc->graphic_engine->xget_mark(Xgc,xmark);
       }
-      
+
       if ( P->obj->mark_size != -1 )
         Xgc->graphic_engine->xset_mark(Xgc, xmark[0],P->obj->mark_size);
 
       if ( P->obj->mark_color != -1 ) {
-        ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+        ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
         Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
       }
 
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
-      
+
       /* restore xgc current values for mark */
       if (( P->obj->mark != -1 ) || ( P->obj->mark_size != -1 )) {
         Xgc->graphic_engine->xset_mark(Xgc,cmark,cmarksize);
       }
-      
+
       /* restore xgc current value for color */
       if ( P->obj->mark_color != -1 )
         Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
@@ -945,9 +949,10 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )
     {
-      int lock_size=6, lock_color=10, loc[4];
+      int lock_size=6, lock_color=10;
+      double loc[4];
       int i,color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-      for ( i=0 ; i < P->obj->x->mn ; i++) 
+      for ( i=0 ; i < P->obj->x->mn ; i++)
 	{
 	  loc[0]=xm[i]- lock_size/2; loc[1]=ym[i]-lock_size/2;
 	  loc[2]=lock_size; loc[3]=lock_size;
@@ -959,11 +964,11 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 
 static void nsp_translate_polyline(NspGraphic *Obj,const double *tr)
 {
-  int i; 
+  int i;
   NspPolyline *P = (NspPolyline *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
@@ -977,7 +982,7 @@ static void nsp_rotate_polyline(NspGraphic *Obj,double *R)
   NspPolyline *P = (NspPolyline *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R,x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       x1 = R[0]*(*x) -R[1]*(*y);
       y1 = R[1]*(*x) +R[0]*(*y);
@@ -993,7 +998,7 @@ static void nsp_scale_polyline(NspGraphic *Obj,double *alpha)
   NspPolyline *P = (NspPolyline *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i=0; i < P->obj->x->mn ; i++) 
+  for ( i=0; i < P->obj->x->mn ; i++)
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
@@ -1001,7 +1006,7 @@ static void nsp_scale_polyline(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of polyline 
+/* compute in bounds the enclosing rectangle of polyline
  *
  */
 
@@ -1031,5 +1036,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-
-#line 1036 "polyline.c"
+#line 1040 "polyline.c"

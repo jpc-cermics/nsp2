@@ -18,7 +18,7 @@
  *
  * Graphic library
  * jpc@cermics.enpc.fr
- * Xfig driver 
+ * Xfig driver
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -27,8 +27,8 @@
 #include <stdlib.h>
 
 #define PERI_PRIVATE 1
-#include <nsp/object.h> 
-#include <nsp/matrix.h> 
+#include <nsp/object.h>
+#include <nsp/matrix.h>
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics-new/periFig.h"
@@ -39,12 +39,13 @@
 #define WHITE 7
 #define BLACK 0
 
-static void Write2Vect(const int *vx,const  int *vy, int n, int flag); 
-static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int *vx, const int *vy, int sizev, int flag,const int *fvect);
+static void Write2Vect(const double *vx,const  double *vy, int n, int flag);
+static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const double *vx, const double *vy,
+			 int sizev, int flag,const int *fvect);
 static void InitScilabGCXfig(BCG *Xgc);
 static void set_c_Fig(BCG *Xgc,int i);
 static void idfromname (char *name1, int *num);
-static void displaysymbols (BCG *Xgc,int *vx, int *vy,int n);
+static void displaysymbols (BCG *Xgc,double *vx, double *vy,int n);
 static int FigQueryFont(char *name);
 static void fig_set_color(BCG *Xgc,int c, int *color);
 
@@ -65,17 +66,17 @@ static int  isizeXfig_[] = { 8,10,12,14,18,24};
 
 #if defined(__CYGWIN32__) || defined(__MINGW32__) || defined(__GNUC__) || defined(__MSC__)
 static FILE *file= (FILE *) 0;
-#define FPRINTF(x) ( file != (FILE*) 0) ?  fprintf x  : 0 
-#else 
+#define FPRINTF(x) ( file != (FILE*) 0) ?  fprintf x  : 0
+#else
 static FILE *file= stdout ;
-#define FPRINTF(x) fprintf x  
+#define FPRINTF(x) fprintf x
 #endif
 
 static void FileInit (BCG *Xgc);
 
 static char symb_list[] = {
   /*
-    0x2e : . alors que 0xb7 est un o plein trop gros 
+    0x2e : . alors que 0xb7 est un o plein trop gros
     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
@@ -86,7 +87,7 @@ static char symb_list[] = {
 BCG  ScilabGCXfig ;
 
 /*-----------------------------------------------------
- * default colormap coming from Xfig 
+ * default colormap coming from Xfig
  *-----------------------------------------------------*/
 
 /* These DEFAULTNUMCOLORS colors come from Xfig */
@@ -144,7 +145,7 @@ static void xendgraphic(BCG *Xgc)
   }
 }
 
-static void xend(BCG *Xgc) 
+static void xend(BCG *Xgc)
 {
   xendgraphic(Xgc);
 }
@@ -166,7 +167,7 @@ static void invalidate(BCG *Xgc,void *rect) {}
 static void process_updates(BCG *Xgc) {}
 
 /*-----------------------------------------------------------------
- * Changes the graphic window popupname 
+ * Changes the graphic window popupname
  *-----------------------------------------------------------------*/
 
 static void setpopupname(BCG *Xgc,char *name){}
@@ -175,7 +176,7 @@ static void xset_win_protect(BCG *Xgc, int val) {}
 
 /* Wait for mouse click in graphic window : Empty here **/
 
-static void xclick(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
+static void xclick(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {}
 
 static void xclick_any(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr) {};
 
@@ -189,7 +190,7 @@ void cleararea(BCG *Xgc,const GdkRectangle *r)
 }
 
 /*
- * graphic context modifications 
+ * graphic context modifications
  */
 
 /* record or not the graphic commands */
@@ -206,7 +207,7 @@ static void xset_recording(BCG *Xgc, int val)
 
 /* to get the window upper-left point coordinates **/
 
-void xget_windowpos(BCG *Xgc,int *x,int *y) 
+void xget_windowpos(BCG *Xgc,int *x,int *y)
 {
   *x = *y = 0;
 }
@@ -223,10 +224,10 @@ static int prec_fact =16;
 
 
 static void xget_windowdim(BCG *Xgc,int *x,int *y)
-{     
+{
   *x =  600*prec_fact;
   *y =  424*prec_fact;
-} 
+}
 
 /* To change the window dimensions : do Nothing in Postscript  **/
 
@@ -237,7 +238,7 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
 {
   *x= 600*prec_fact;
   *y= 424*prec_fact;
-} 
+}
 
 /* To change the popup window size  **/
 
@@ -247,7 +248,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 
 /* To get the viewport Upper/Left point Position **/
 
-static void xget_viewport(BCG *Xgc,int *x, int *y) {       *x = *y =0;} 
+static void xget_viewport(BCG *Xgc,int *x, int *y) {       *x = *y =0;}
 
 /* To change the window size  **/
 
@@ -257,7 +258,7 @@ static void xset_viewport(BCG *Xgc,int x, int y) {}
 
 static int xset_curwin(int intnum, int set_menu)
 {
-  BCG *Xgc = &ScilabGCXfig; 
+  BCG *Xgc = &ScilabGCXfig;
   int i =  Xgc->CurWindow;
   Xgc->CurWindow  = intnum;
   return i;
@@ -267,7 +268,7 @@ static int xset_curwin(int intnum, int set_menu)
 
 static int xget_curwin(void)
 {
-  BCG *Xgc = &ScilabGCXfig; 
+  BCG *Xgc = &ScilabGCXfig;
   return  Xgc->CurWindow ;
 }
 
@@ -309,8 +310,8 @@ static void xget_clip(BCG *Xgc, int *x)
 }
 
 /*----------------------------------------------------------
-  \encadre{For the drawing functions dealing with vectors of 
-  points, the following routine is used to select the mode 
+  \encadre{For the drawing functions dealing with vectors of
+  points, the following routine is used to select the mode
   absolute or relative }
   Absolute mode if *num==0, relative mode if *num != 0
   ------------------------------------------------------------*/
@@ -319,7 +320,7 @@ static void xset_absourel(BCG *Xgc,int num)
 {
   if (num == 0 )
     Xgc->CurVectorStyle =  CoordModeOrigin;
-  else 
+  else
     Xgc->CurVectorStyle =  CoordModePrevious ;
 }
 
@@ -336,7 +337,7 @@ static int xget_absourel(BCG *Xgc)
 /* Not in Postscript **/
 
 static void xset_alufunction(BCG *Xgc,char *string)
-{     
+{
   int value;
   idfromname(string,&value);
   if ( value != -1)
@@ -348,13 +349,13 @@ static void xset_alufunction(BCG *Xgc,char *string)
 
 /* All the possibilities : Read The X11 manual to get more informations **/
 
-typedef struct _alinfo { 
+typedef struct _alinfo {
   char *name;
   char id;
   char *info;} alinfo;
 
 static alinfo AluStrucXfig_[] =
-  { 
+  {
     {"GXclear" ,GXclear," 0 "},
     {"GXand" ,GXand," src AND dst "},
     {"GXandReverse" ,GXandReverse," src AND NOT dst "},
@@ -378,9 +379,9 @@ void idfromname(char *name1, int *num)
   int i;
   *num = -1;
   for ( i =0 ; i < 16;i++)
-    if (strcmp(AluStrucXfig_[i].name,name1)== 0) 
+    if (strcmp(AluStrucXfig_[i].name,name1)== 0)
       *num=AluStrucXfig_[i].id;
-  if (*num == -1 ) 
+  if (*num == -1 )
     {
       Scistring("\n Use the following keys :");
       for ( i=0 ; i < 16 ; i++)
@@ -393,7 +394,7 @@ void idfromname(char *name1, int *num)
 
 
 static void xset_alufunction1(BCG *Xgc,int num)
-{     
+{
   int value;
   value=AluStrucXfig_[Min(16,Max(0,num))].id;
   if ( value != -1)
@@ -406,7 +407,7 @@ static void xset_alufunction1(BCG *Xgc,int num)
 /* To get the value of the alufunction **/
 
 static int xget_alufunction(BCG *Xgc)
-{ 
+{
   return  Xgc->CurDrawFunction ;
 }
 
@@ -414,7 +415,7 @@ static int xget_alufunction(BCG *Xgc)
 /* give the thinest line **/
 
 static int xset_thickness(BCG *Xgc,int value)
-{ 
+{
   int old = Xgc->CurLineWidth;
   Xgc->CurLineWidth =Max(1,value);
   FPRINTF((file,"# %d Thickness\n",  Xgc->CurLineWidth ));
@@ -427,31 +428,31 @@ static int xget_thickness(BCG *Xgc)
 {
   return Xgc->CurLineWidth ;
 }
-     
+
 /*-------------------------------------------------
   \encadre{To set grey level for filing areas.
-  from black (*num =0 ) to white 
-  you must use the get function to get the id of 
+  from black (*num =0 ) to white
+  you must use the get function to get the id of
   the white pattern }
   ----------------------------------------------------*/
 
 static int xset_pattern(BCG *Xgc,int num)
-{ 
-  int i ; 
+{
+  int i ;
   int old = xget_pattern(Xgc);
-  if (  Xgc->CurColorStatus ==1) 
+  if (  Xgc->CurColorStatus ==1)
     {
       i= Max(0,Min(num-1,Xgc->Numcolors+1));
       Xgc->CurColor = i ;
       set_c_Fig(Xgc,i);
     }
-  else 
+  else
     {
       i= Max(0,Min(num-1,GREYNUMBER-1));
       Xgc->CurPattern = i;
       if (i ==0)
 	FPRINTF((file,"# fillsolid\n"));
-      else 
+      else
 	FPRINTF((file,"# %d Setgray\n",(int)i));
     }
   return old;
@@ -460,12 +461,12 @@ static int xset_pattern(BCG *Xgc,int num)
 /* To get the id of the current pattern  **/
 
 static int xget_pattern(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus ==1) 
+{
+  if ( Xgc->CurColorStatus ==1)
     {
       return Xgc->CurColor+1 ;
     }
-  else 
+  else
     {
       return  Xgc->CurPattern +1;
     }
@@ -510,10 +511,10 @@ static void xset_line_style(BCG *Xgc,int value)
 /* if *value == 0, use a solid line, if *value != 0 **/
 /* the dash style is specified by the xx vector of n values **/
 /* xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots **/
-  
+
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
-  
+
 }
 
 
@@ -522,7 +523,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 static void xset_dash_or_color(BCG *Xgc,int value)
 {
   static int maxdash = 6,l3 ;
-  if ( Xgc->CurColorStatus ==1) 
+  if ( Xgc->CurColorStatus ==1)
     {
       int i;
       i= Max(0,Min(value-1,Xgc->Numcolors+1));
@@ -555,20 +556,20 @@ static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 
 static int xget_dash(BCG *Xgc)
 {
-  return Xgc->CurDashStyle+1; 
-  /* 
+  return Xgc->CurDashStyle+1;
+  /*
    *narg = 3;
    value[0]=i+1;
    value[1]=DashTab[i];
    value[2]=DashTabStyle[i];
-   if (*verbose ==1 ) 
+   if (*verbose ==1 )
    {
    sciprint("\nDash Style %d.",(int) *value);
    sciprint("%d %d ",(int)value[1],(int)value[2]);
    Scistring(">\n");
    }
   */
- 
+
 }
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
@@ -582,9 +583,9 @@ static void xset_usecolor(BCG *Xgc,int num)
 {
   int i;
   i =  Min(Max(num,0),1);
-  if (  Xgc->CurColorStatus != (int) i) 
+  if (  Xgc->CurColorStatus != (int) i)
     {
-      if (Xgc->CurColorStatus == 1) 
+      if (Xgc->CurColorStatus == 1)
 	{
 	  /* je passe de Couleur a n&b */
 	  /* remise des couleurs a vide */
@@ -598,7 +599,7 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  xset_dash(Xgc,i);
           Xgc->IDLastPattern = GREYNUMBER - 1;
 	}
-      else 
+      else
 	{
 	  /* je passe en couleur */
 	  /* remise a zero des patterns et dash */
@@ -622,7 +623,7 @@ static int xget_usecolor(BCG *Xgc)
 }
 
 
-/* private pixmap for double buffering 
+/* private pixmap for double buffering
  */
 
 
@@ -740,9 +741,9 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 
 /**
  * xpush_colormap:
- * @Xgc: a #BCG  
- * 
- * Returns: 
+ * @Xgc: a #BCG
+ *
+ * Returns:
  **/
 
 static int xpush_colormap(BCG *Xgc,void *colors)
@@ -752,9 +753,9 @@ static int xpush_colormap(BCG *Xgc,void *colors)
 
 /**
  * xpop_colormap:
- * @Xgc: a #BCG  
- * 
- * Returns: 
+ * @Xgc: a #BCG
+ *
+ * Returns:
  **/
 
 static int xpop_colormap(BCG *Xgc)
@@ -774,20 +775,20 @@ static void set_c_Fig(BCG *Xgc,int i)
 /* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       Xgc->NumBackground = Max(0,Min(num - 1,Xgc->Numcolors+1));
     }
 }
 
 static int xget_background(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return Xgc->NumBackground + 1;
     }
-  else 
+  else
     {
       return  1;
     }
@@ -797,20 +798,20 @@ static int xget_background(BCG *Xgc)
 /* set and get the number of the background or foreground */
 
 static void xset_foreground(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors+1));
     }
 }
 
 static int xget_foreground(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return  Xgc->NumForeground + 1;
     }
-  else 
+  else
     {
       return Xgc->IDLastPattern + 1;
     }
@@ -819,8 +820,8 @@ static int xget_foreground(BCG *Xgc)
 /* set and get the number of the hidden3d color */
 
 static void xset_hidden3d(BCG *Xgc,int num)
-{ 
-  if (Xgc->CurColorStatus == 1) 
+{
+  if (Xgc->CurColorStatus == 1)
     {
       /* es: Max(0,... -> Max(-1,... */
       Xgc->NumHidden3d = Max(-1,Min(num - 1,Xgc->Numcolors + 1));
@@ -828,29 +829,29 @@ static void xset_hidden3d(BCG *Xgc,int num)
 }
 
 static int xget_hidden3d(BCG *Xgc)
-{ 
-  if ( Xgc->CurColorStatus == 1 ) 
+{
+  if ( Xgc->CurColorStatus == 1 )
     {
       return  Xgc->NumHidden3d + 1;
     }
-  else 
+  else
     {
       return 1;
     }
 }
 
 static void xset_autoclear(BCG *Xgc,int num)
-{ 
+{
   Xgc->Autoclear = Max(0,Min(1,num));
 }
 
-static void xset_autoclear_def(BCG *Xgc) 
+static void xset_autoclear_def(BCG *Xgc)
 {
   Xgc->Autoclear = 0;
 }
 
 static int xget_autoclear(BCG *Xgc)
-{ 
+{
   return  Xgc->Autoclear;
 }
 
@@ -859,12 +860,12 @@ static char *xget_fpf(BCG *Xgc)
   return( Xgc->fp_format);
 }
 
-static void xset_fpf(BCG *Xgc,char *fmt) 
+static void xset_fpf(BCG *Xgc,char *fmt)
 {
   strncpy(Xgc->fp_format,fmt,32);
 }
 
-static void xset_fpf_def(BCG *Xgc)  
+static void xset_fpf_def(BCG *Xgc)
 {
   Xgc->fp_format[0]='\0';
 }
@@ -881,7 +882,7 @@ static void xset_show(BCG *Xgc)
 static void pixmap_resize(BCG *Xgc)
 {
 
-} 
+}
 
 
 /*-----------------------------------------------------------
@@ -891,30 +892,29 @@ static void pixmap_resize(BCG *Xgc)
 /*----------------------------------------------------
   \encadre{display of a string
   at (x,y) position whith angle (alpha). Angles in degree
-  positive when clockwise. If *flag ==1 a framed  box is added 
+  positive when clockwise. If *flag ==1 a framed  box is added
   around the string.}
   -----------------------------------------------------*/
 
 static void displaystring(BCG *Xgc,const char *string, double x, double y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
-  int rect[4], font=-1,font_flag=2;
-  int Dvalue1;
-  int pen_color;
+  double rect[4];
+  int font=-1,font_flag=2, Dvalue1, pen_color;
   boundingbox(Xgc,string,x,y,rect);
-  if (string[0]== '$') 
+  if (string[0]== '$')
     {
       font=-1;
       font_flag=2;
     }
-  else 
+  else
     {
       font =  xfig_font[Xgc->fontId];
-      font_flag= 4; 
+      font_flag= 4;
     };
   Dvalue1 = xget_pattern(Xgc);
   fig_set_color(Xgc,Dvalue1,&pen_color);
-  FPRINTF((file,"4 0 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %d %d %s\\001\n",
+  FPRINTF((file,"4 0 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %5.2f %5.2f %s\\001\n",
 	   pen_color,
 	   (int)font,
 	   (int)isizeXfig_[Xgc->fontSize],/*prec_fact,*/
@@ -923,7 +923,7 @@ static void displaystring(BCG *Xgc,const char *string, double x, double y, int f
 	   (double) rect[3],
 	   (double) rect[2],
 	   x,y, string));
-  if ( flag == 1) 
+  if ( flag == 1)
     {
       rect[0]=rect[0]-4;rect[2]=rect[2]+6;
       drawrectangle(Xgc,rect);
@@ -939,19 +939,19 @@ static int bsizeXfig_[6][4]= {{ 0,-7,463,9  },
 
 /* To get the bounding rectangle of a string **/
 
-void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,const char *string, int x, int y, double rect[])
 {
   int font[2];
   xget_font(Xgc,font, FALSE);
-  rect[0]= (int)(x+bsizeXfig_[font[1]][0]*((double) prec_fact));
-  rect[1]= (int)(y+bsizeXfig_[font[1]][1]*((double) prec_fact));
-  rect[2]= (int)(((double)prec_fact)*(bsizeXfig_[font[1]][2]/100.0)*((double)strlen(string)));
-  rect[3]= (int)(bsizeXfig_[font[1]][3]*((double) prec_fact));
+  rect[0]= (x+bsizeXfig_[font[1]][0]*((double) prec_fact));
+  rect[1]= (y+bsizeXfig_[font[1]][1]*((double) prec_fact));
+  rect[2]= (((double)prec_fact)*(bsizeXfig_[font[1]][2]/100.0)*((double)strlen(string)));
+  rect[3]= (bsizeXfig_[font[1]][3]*((double) prec_fact));
 }
 
-/* 
+/*
    Bounding box for marks : we have used xfig to get the  bounding boxes
-   ie the correct w and h ( rect[2],rect[3]) 
+   ie the correct w and h ( rect[2],rect[3])
 **/
 
 
@@ -974,8 +974,8 @@ static int symb_yh[FONTMAXSIZE][SYMBOLNUMBER]={
 };
 
 
-/* To get the bounding rectangle of a symbol 
-   in fact just rect[3] is really used 
+/* To get the bounding rectangle of a symbol
+   in fact just rect[3] is really used
 **/
 
 
@@ -992,16 +992,16 @@ static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
 
 
 /* Draw a single line in current style **/
-/* Unused in fact **/ 
+/* Unused in fact **/
 
-static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2) 
-{ 
-  FPRINTF((file,"# %d %d %d %d L\n",xx1,yy1,x2,y2));
+static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2)
+{
+  FPRINTF((file,"# %5.2f %5.2f %5.2f %5.2f L\n",xx1,yy1,x2,y2));
 }
 
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
+/* Draw a set of segments
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1])
+ * for i=0 step 2
  * should use width XXX
  */
 
@@ -1015,8 +1015,8 @@ static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, in
   xget_dash_and_color(Xgc,&dash,&color);
   for ( i =0 ; i < n/2 ; i++)
     {
-      if ( style == NULL ) 
-	NDvalue= color; 
+      if ( style == NULL )
+	NDvalue= color;
       else
 	NDvalue=(int) style[i];
       /* in case of min(max()) **/
@@ -1037,8 +1037,8 @@ static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, in
     }
 }
 
-/* Draw a set of arrows 
- *   if iflag == 1 style[i] gives the style for each arrow 
+/* Draw a set of arrows
+ *   if iflag == 1 style[i] gives the style for each arrow
  *  if iflag == 0 *style   gives the style for all the arrows
  */
 
@@ -1053,7 +1053,7 @@ static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *sty
 
   for ( i = 0 ; i < n/2 ; i++)
     {
-      if ( iflag == 0) 
+      if ( iflag == 0)
 	NDvalue=(*style < 0) ? dash : *style;
       else
 	NDvalue=(int) style[i];
@@ -1096,7 +1096,7 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 /* Draw one rectangle **/
 
 static void drawrectangle(BCG *Xgc,const double rect[])
-{  
+{
   int fvect= 0;
   drawrectangles(Xgc,rect,&fvect,1);
 }
@@ -1104,17 +1104,17 @@ static void drawrectangle(BCG *Xgc,const double rect[])
 /* Draw a filled rectangle **/
 
 static void fillrectangle(BCG *Xgc,const double rect[])
-{ 
+{
   int cpat = xget_pattern(Xgc);
   drawrectangles(Xgc,rect,&cpat,1);
 }
 
 /*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
+ * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : is the value of a function on the grid defined by x,y
+ *  on each rectangle the average value of z is computed
  *----------------------------------------------------------------------------------*/
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
@@ -1124,12 +1124,12 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 }
 
 /*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
+ * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
+ *  x : of size n1 gives the x-values of the grid
+ *  y : of size n2 gives the y-values of the grid
+ *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
+ *  of each rectangle.
+ *  z[i,j] is the value on the middle of rectangle
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *----------------------------------------------------------------------------------*/
 
@@ -1148,8 +1148,8 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
-  int i, pat =  xget_pattern(Xgc);	
-  for ( i=0 ; i < n ; i++) 
+  int i, pat =  xget_pattern(Xgc);
+  for ( i=0 ; i < n ; i++)
     {
       /* to fix the style */
       xset_pattern(Xgc,fillvect[i]);
@@ -1171,7 +1171,7 @@ static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
   int dash,color, i;
   xget_dash_and_color(Xgc,&dash,&color);
-  for ( i=0 ; i < n ; i++) 
+  for ( i=0 ; i < n ; i++)
     {
       xset_line_style(Xgc,style[i]);
       drawarc(Xgc,vects+6*i);
@@ -1186,10 +1186,10 @@ static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 
 
 static void drawarc(BCG *Xgc, double arc[])
-{ 
-  int vx[365],vy[365],k,n;
-  float alpha,fact=0.01745329251994330,w,h;
-  int close = 0;
+{
+  double vx[365],vy[365];
+  double alpha,fact=0.01745329251994330,w,h;
+  int  k,n, close = 0;
   w = arc[2]/2.0;
   h = arc[3]/2.0;
   n = Min((arc[5]/64),360);
@@ -1210,30 +1210,29 @@ static void drawarc(BCG *Xgc, double arc[])
 
 
 static void fillarc( BCG *Xgc, double arc[])
-{ 
-  int vx[365],vy[365],k,k0,kmax,n;
-  float alpha,fact=0.01745329251994330,w,h;
-  int close = 1;
-
-  w = arc[2]/2.0;
-  h = arc[3]/2.0;
-  n = Min((arc[5]/64),360);
-
-  k0 = 0;
-  kmax = n-1;
-
-  if (n != 360) 
+{
+  double vx[365],vy[365];
+  int k, close = 1;
+  double alpha,fact=0.01745329251994330;
+  double w = arc[2]/2.0;
+  double h = arc[3]/2.0;
+  int n = Min((arc[5]/64),360);
+  int k0 = 0;
+  int kmax = n-1;
+  if (n != 360)
     {
       vx[0] = arc[0] + w;
       vy[0] = arc[1] + h;
       k0 = 1;
       kmax = n;
     }
-  for (k = k0; k <= kmax; ++k) {
-    alpha=(( arc[4]/64)+k)*fact;
-    vx[k] = arc[0] + w*(cos(alpha)+1.0);
-    vy[k] = arc[1] * h*(-sin(alpha)+1.0);}
-  if (n != 360) 
+  for (k = k0; k <= kmax; ++k)
+    {
+      alpha=(( arc[4]/64)+k)*fact;
+      vx[k] = arc[0] + w*(cos(alpha)+1.0);
+      vy[k] = arc[1] * h*(-sin(alpha)+1.0);
+    }
+  if (n != 360)
     {
       n++;
       vx[n] = arc[0] + w;
@@ -1244,9 +1243,9 @@ static void fillarc( BCG *Xgc, double arc[])
 }
 
 /*--------------------------------------------------------------
- * Draw a set of n polylines (each of which have (p) points) 
- * with lines or marks 
- * drawvect[i] >= use a mark for polyline i 
+ * Draw a set of n polylines (each of which have (p) points)
+ * with lines or marks
+ * drawvect[i] >= use a mark for polyline i
  * drawvect[i] < 0 use a line style for polyline i
  *--------------------------------------------------------------*/
 
@@ -1258,13 +1257,13 @@ static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvec
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
-	{ 
+	{
 	  /* using mark */
 	  xset_mark(Xgc,- drawvect[i],symb[1]);
           xset_dash(Xgc,dash);
 	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
 	}
-      else 
+      else
 	{/* using a dash style  **/
 	  xset_line_style(Xgc,drawvect[i]);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p, 0);
@@ -1278,13 +1277,13 @@ static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvec
 /* fill a set of polygons each of which is defined by **/
 /* (*p) points (*n) is the number of polygons **/
 /* the polygon is closed by the routine **/
-/*  if fillvect[i] == 0 draw the boundaries with current color 
-    if fillvect[i] > 0  draw the boundaries with current color 
+/*  if fillvect[i] == 0 draw the boundaries with current color
+    if fillvect[i] > 0  draw the boundaries with current color
     then fill with pattern fillvect[i]
     if fillvect[i] < 0  fill with pattern - fillvect[i]
 */
 
-static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect, int n, int p)
+static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p)
 {
   int cpat;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin) FPRINTF((file,"#/absolu false def\n"));
@@ -1298,21 +1297,21 @@ static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvec
 /* according to *closeflag : it's a polyline or a polygon **/
 /* XXXXXX To be done Closeflag is not used **/
 
-static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
-{ 
+static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
+{
   int i=1,fvect=0;
   if (closeflag == 1 )
     FPRINTF((file,"#/closeflag true def\n"));
-  else 
+  else
     FPRINTF((file,"#/closeflag false def\n"));
   if (Xgc->ClipRegionSet ==1 )
     {
-      /* FIXME 
+      /* FIXME
 	 analyze_points(Xgc,n, vx, vy, closeflag);
       */
       fillpolylines(Xgc,vx,vy,&fvect,i,n);
     }
-  else 
+  else
     {
       fillpolylines(Xgc,vx,vy,&fvect,i,n);
     }
@@ -1320,7 +1319,7 @@ static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 
 /* Fill the polygon **/
 
-static void fillpolyline( BCG *Xgc, double *vx, double *vy,int n, int closeflag)
+static void fillpolyline( BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
 {
   int i =1,  cpat = - xget_pattern(Xgc);
   /* just fill  ==> cpat < 0 **/
@@ -1340,28 +1339,28 @@ static void drawpolymark( BCG *Xgc, double *vx, double *vy,int n)
   displaysymbols(Xgc,vx,vy,n);
   xset_font(Xgc,keepid,keepsize, FALSE);
 }
- 
+
 /*-----------------------------------------------------
   \encadre{Routine for initialisation}
   ------------------------------------------------------*/
 
 static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data, void *f)
-{ 
+{
   char string1[256];
   static int EntryCounter = 0;
   int fnum;
-  BCG *Xgc = &ScilabGCXfig; 
+  BCG *Xgc = &ScilabGCXfig;
   Xgc->graphic_engine = &XFig_gengine ; /* the graphic engine associated to this graphic window */
   if (EntryCounter >= 1) xendgraphic(Xgc);
   strcpy(string1,string);
   file=fopen(string1,"w");
-  if (file == 0) 
+  if (file == 0)
     {
       sciprint("Can't open file %s, I'll use stdout\r\n",string1);
       file = stdout;
     }
   if (EntryCounter == 0)
-    { 
+    {
       fnum=0;      loadfamily("Courier",&fnum);
       fnum=1;      loadfamily("Symbol",&fnum);
       fnum=2;      loadfamily("Times-Roman",&fnum);
@@ -1394,7 +1393,7 @@ static void FileInit(BCG *Xgc)
   Xgc->NumBackground = m + 1;
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
-  
+
   FPRINTF((file,"2 2 0 0 -1 -1 0 0 -1 0.000 0 0 0 0 0 5\n"));
   FPRINTF((file," %d %d %d %d %d %d %d %d %d %d \n",
 	   0,0,(int)x[0],0,(int)x[0],(int)x[1],0,(int)x[1],0,0));
@@ -1402,14 +1401,14 @@ static void FileInit(BCG *Xgc)
 
 
 /*---------------------------------------------------------------------------
- * writes a message in the info widget associated to the current scilab window 
+ * writes a message in the info widget associated to the current scilab window
  *----------------------------------------------------------------------------*/
 
 static void xinfo(BCG *Xgc,char *format,...) {}
 
 
 /*--------------------------------------------------------
-  \encadre{Initialisation of the graphic context. Used also 
+  \encadre{Initialisation of the graphic context. Used also
   to come back to the default graphic state}
   ---------------------------------------------------------*/
 static void xset_default(BCG *Xgc)
@@ -1419,7 +1418,7 @@ static void xset_default(BCG *Xgc)
 
 
 void InitScilabGCXfig(BCG *Xgc)
-{ 
+{
   int col;
   Xgc->IDLastPattern = GREYNUMBER - 1; /* bug ?? **/
   Xgc->CurLineWidth=1 ;
@@ -1437,7 +1436,7 @@ void InitScilabGCXfig(BCG *Xgc)
   xset_pattern(Xgc,1);
   xset_dash(Xgc,1);
   xset_hidden3d(Xgc,1);
-  /* initialisation de la couleur par defaut */ 
+  /* initialisation de la couleur par defaut */
   Xgc->Numcolors = DEFAULTNUMCOLORS;
   Xgc->CurColorStatus = 1 ;
   xset_pattern(Xgc,1);
@@ -1447,8 +1446,8 @@ void InitScilabGCXfig(BCG *Xgc)
   /* Choix du mode par defaut (decide dans initgraphic_ */
   getcolordef(&col);
   /*
-   * we force CurColorStatus to th eopposite value of col 
-   * to force usecolorFig to perform initialisations 
+   * we force CurColorStatus to th eopposite value of col
+   * to force usecolorFig to perform initialisations
    **/
   Xgc->CurColorStatus = (col == 1) ? 0: 1;
   xset_usecolor(Xgc,col);
@@ -1461,21 +1460,21 @@ void InitScilabGCXfig(BCG *Xgc)
 
 /*------------------------------------------------------
   \encadre{Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
+  . Along the axis marks are set in the direction ( alpha + pi/2), in the
   following way :
   \begin{itemize}
   \item   $n=<n1,n2>$,
   \begin{verbatim}
   |            |           |
   |----|---|---|---|---|---|
-  <-----n1---->                 
+  <-----n1---->
   <-------------n2-------->
   \end{verbatim}
   $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
-  two marks, $r$ size in points of small mark, $r*coeff$ 
+  \item $size=<dl,r,coeff>$. $dl$ distance in points between
+  two marks, $r$ size in points of small mark, $r*coeff$
   size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$. 
+  \item $init$. Initial point $<x,y>$.
   \end{itemize}
   }
   -------------------------------------------------------------*/
@@ -1491,11 +1490,11 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
   FPRINTF((file,"# Begin Axis \n"));
   if ( alpha == 90 )
     {cosal = 0.0 ; sinal =1.0 ;}
-  else 
+  else
     {
       if ( alpha == -90 )
 	{cosal = 0.0 ; sinal = -1.0 ;}
-      else 
+      else
 	{
 	  cosal= cos( M_PI * (alpha)/180.0);
 	  sinal= sin( M_PI * (alpha)/180.0);
@@ -1544,34 +1543,34 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
   -----------------------------------------------------*/
 
 
-static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
-{ 
-  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha); 
+static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
+{
+  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 
 
 /*-------------------------------------------------------
-  \encadre{General routine for generating Postscript Code 
-  to deal with Vectors. The difficulty is that the size 
-  of vectors is limited by Postscript, so the routine 
+  \encadre{General routine for generating Postscript Code
+  to deal with Vectors. The difficulty is that the size
+  of vectors is limited by Postscript, so the routine
   must check size and cut into pieces big objects}
   \begin{verbatim}
   clear (string) sizeobj [fvect[0],...,fvect[nobj]]
   (si flag=1)  [ vx[0] vy[0] vx[1] vy[1] ...... vx[sizev] vy[sizev]]
-  (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey 
+  (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey
   \end{verbatim}
   ----------------------------------------------------------*/
 
 /*
- * give the correct pattern for xfig 0=white-> 20=black 
- * from our pattern coding 0=black    Xgc->IDLastPattern=white 
- *  we use xfig as follows : 
+ * give the correct pattern for xfig 0=white-> 20=black
+ * from our pattern coding 0=black    Xgc->IDLastPattern=white
+ *  we use xfig as follows :
  *  when use_color == 1 we use the 32 standard colors of xfig with 20 ( full saturation )
- *  as fill area 
- *  when use_color == 0 we use the white color + areafill from 0 to 20 to generate 
- *  shades of gray 
- * XXXXXX : xset("colormap") must be implemented 
+ *  as fill area
+ *  when use_color == 0 we use the white color + areafill from 0 to 20 to generate
+ *  shades of gray
+ * XXXXXX : xset("colormap") must be implemented
  */
 
 
@@ -1579,40 +1578,40 @@ static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, 
 
 /* FIXME: */
 
-static int CheckColormap(BCG *Xgc,int *m) 
+static int CheckColormap(BCG *Xgc,int *m)
 {
   return 0;
 }
 
 static void xset_pattern_or_color(BCG *Xgc,int pat, int *areafill, int *color)
 {
-  if (  Xgc->CurColorStatus == 1) 
+  if (  Xgc->CurColorStatus == 1)
     {
       int m;
       *color = pat-1 ; /* color value **/
-      if (  CheckColormap(Xgc,&m) == 1) 
+      if (  CheckColormap(Xgc,&m) == 1)
 	{
-	  /* fix the currennt color : if a colormap is set 
+	  /* fix the currennt color : if a colormap is set
 	     we must have an ofset of 32 **/
 	  *color += 32;
 	}
-      else 
+      else
 	{
 	  /* special case for B&white in the default colormap */
-	  if ( *color == 32 ) 
+	  if ( *color == 32 )
 	    {
 	      *color = DEFAULTBLACK;
 	    }
-	  else if ( *color == 33 ) 
+	  else if ( *color == 33 )
 	    {
 	      *color = DEFAULTWHITE;
 	    }
 	}
       *areafill = 20 ; /* full color saturation **/
     }
-  else 
+  else
     {
-      *color = WHITE ; 
+      *color = WHITE ;
       *areafill = AREAF(pat-1); /* shade of gray **/
     }
 }
@@ -1625,20 +1624,20 @@ static void fig_set_color(BCG *Xgc,int c, int *color)
     return;
   }
   *color = c-1 ; /* color value **/
-  if (  CheckColormap(Xgc,&m) == 1) 
+  if (  CheckColormap(Xgc,&m) == 1)
     {
-      /* fix the current color : if a colormap is set 
+      /* fix the current color : if a colormap is set
 	 we must have an ofset of 32 **/
       *color += 32;
     }
-  else 
+  else
     {
       /* special case for B&white in the default colormap */
-      if ( *color == 32 ) 
+      if ( *color == 32 )
 	{
 	  *color = DEFAULTBLACK;
 	}
-      else if ( *color == 33 ) 
+      else if ( *color == 33 )
 	{
 	  *color = DEFAULTWHITE;
 	}
@@ -1656,7 +1655,7 @@ static void fig_set_dash(BCG *Xgc,int dash, int *l_style, int *style_val)
 static void fig_set_dash_or_color(BCG *Xgc,int dash, int *l_style, int *style_val, int *color)
 {
   int j;
-  if (  Xgc->CurColorStatus == 1) 
+  if (  Xgc->CurColorStatus == 1)
     {
       j= Xgc->CurDashStyle + 1;
       fig_set_dash(Xgc,j,l_style,style_val);
@@ -1664,7 +1663,7 @@ static void fig_set_dash_or_color(BCG *Xgc,int dash, int *l_style, int *style_va
       *l_style = 0 ;/* solid line **/
       *style_val=0;
     }
-  else 
+  else
     {
       fig_set_dash(Xgc,dash,l_style,style_val);
       *color = BLACK;
@@ -1676,8 +1675,9 @@ static void fig_set_dash_or_color(BCG *Xgc,int dash, int *l_style, int *style_va
 /* ne pas oublier le blanc aprse %d **/
 #define FORMATNUM "%d "
 
-static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int *vx,const int *vy, int sizev, int flag,const int *fvect)
-{ 
+static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const double *vx,const double *vy,
+			 int sizev, int flag,const int *fvect)
+{
   int i, cpat, lg,type=1 ;
   int areafill,fill_color,pen_color,l_style,style_val;
   int dash = xget_dash(Xgc);
@@ -1705,9 +1705,9 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 	      areafill=-1;
 	      fill_color = WHITE;
 	    }
-	  else 
+	  else
 	    /* fill with pattern  and draw with current dash **/
-	    { 
+	    {
 	      xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
 	      fig_set_color(Xgc,cpat,&pen_color);
 	      fig_set_dash(Xgc,dash,&l_style,&style_val);
@@ -1726,7 +1726,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 	  Write2Vect(&vx[i*lg],&vy[i*lg],lg,flag);
 	}
     }
-  else 
+  else
     if ( strcmp(string,"drawbox")==0)
       {
 	for ( i =0 ; i < nobj ; i++)
@@ -1750,7 +1750,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		areafill = -1;
 		fill_color = WHITE;
 	      }
-	    else 
+	    else
 	      {
 		/* fills the rectangle **/
 		xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
@@ -1772,15 +1772,15 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		     (int)vx[deb]                , (int)vx[1+deb]));
 	  }
       }
-    else if ( strcmp(string,"drawsegs")==0)      
+    else if ( strcmp(string,"drawsegs")==0)
       {
 	/* see drawsegsXfig **/
       }
-    else if ( strcmp(string,"drawarrows")==0)      
+    else if ( strcmp(string,"drawarrows")==0)
       {
 	/* see drawarrowsXfig **/
       }
-    else if ( strcmp(string,"drawarc")==0)      
+    else if ( strcmp(string,"drawarc")==0)
       {
 	for ( i = 0 ; i < nobj ; i++)
 	  {
@@ -1791,7 +1791,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		areafill = -1;
 		fill_color = WHITE;
 	      }
-	    else 
+	    else
 	      {
 		/* fills the arc **/
 		xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
@@ -1806,14 +1806,14 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		     l_style,
 		     Xgc->CurLineWidth*prec_fact/16,
 		     pen_color,fill_color,areafill,style_val,
-		     (int)vx[6*i]+ (int)vx[6*i+2]/2, 
+		     (int)vx[6*i]+ (int)vx[6*i+2]/2,
 		     (int)vx[6*i+1]+ (int)vx[6*i+3]/2,
 		     (int)vx[6*i+2]/2, (int)vx[6*i+3]/2,
 		     (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1],
 		     (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1]));
 	  }
       }
-    else if ( strcmp(string,"Rdrawarc")==0)      
+    else if ( strcmp(string,"Rdrawarc")==0)
       {
 	/* store the current values */
 	for ( i = 0 ; i < nobj ; i++)
@@ -1834,9 +1834,9 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		     l_style,
 		     (int) (Xgc->CurLineWidth*prec_fact/16),
 		     pen_color,fill_color,
-		     areafill, 
+		     areafill,
 		     style_val,
-		     (int) (vx[6*i]+vx[6*i+2]/2), 
+		     (int) (vx[6*i]+vx[6*i+2]/2),
 		     (int) (vx[6*i+1]+vx[6*i+3]/2),
 		     (int) (vx[6*i+2]/2), (int) (vx[6*i+3]/2),
 		     (int) (vx[6*i]+ vx[6*i+2]/2), (int)vx[6*i+1],
@@ -1844,7 +1844,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 	  }
 	/*setdash( Dvalue,PI0,PI0,PI0);*/
       }
-    else if ( strcmp(string,"drawpolymark")==0)      
+    else if ( strcmp(string,"drawpolymark")==0)
       {
 	int rect[4],x=0,y=0;
 	int Dvalue1 = xget_pattern(Xgc);
@@ -1855,7 +1855,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 	for ( i =0 ; i < sizev ; i++)
 	  {
 	    int flag = 1;
-	    if ( Xgc->ClipRegionSet == 1 ) 
+	    if ( Xgc->ClipRegionSet == 1 )
 	      {
 		if ( vx[i] > Xgc->CurClipRegion.x
 		     +Xgc->CurClipRegion.width
@@ -1865,15 +1865,15 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 		     || vy[i] < Xgc->CurClipRegion.y )
 		  flag = 0;
 	      }
-	  
+
 	    /* polymarks are x-center justified sub-type =1  **/
-	    if ( flag == 1) 
+	    if ( flag == 1)
 	      FPRINTF((file,"4 1 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %d %d \\%o\\001\n",
 		       pen_color,
 		       32, /* Postscript font */
 		       (int)isizeXfig_[Xgc->fontSize], /*prec_fact,*/
 		       0.0,
-		       4,  
+		       4,
 		       (double) rect[3],
 		       (double) rect[2],
 		       (int)vx[i],
@@ -1887,7 +1887,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
       sciprint("Can't translate %s\r\n",string);
 }
 
-static void Write2Vect(const int *vx,const int *vy, int n, int flag)
+static void Write2Vect(const double *vx,const double *vy, int n, int flag)
 {
   int i,k;
   i=0;
@@ -1897,10 +1897,10 @@ static void Write2Vect(const int *vx,const int *vy, int n, int flag)
       while ( k < PERLINE && i < n )
 	{
 	  FPRINTF((file,FORMATNUM,(int) vx[i]));
-	  if (flag == 1) 
+	  if (flag == 1)
 	    {FPRINTF((file,FORMATNUM,(int) vy[i]));
 	    k += 2;i++;}
-	  else 
+	  else
 	    {k++;i++;}
 	}
       FPRINTF((file,"\n"));
@@ -1908,20 +1908,20 @@ static void Write2Vect(const int *vx,const int *vy, int n, int flag)
 }
 
 /*---------------------------------------------------------
- * Dealing with fonts 
+ * Dealing with fonts
  *---------------------------------------------------------*/
 
 
 /* To set the current font id of font and size **/
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize, int full)
-{ 
+{
   int i,fsiz;
   i = Min(FONTNUMBER-1,Max(fontid,0));
   fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
   if ( FontInfoTabXfig_[i].ok !=1 )
     Scistring("\n Sorry This Font is Not available\n");
-  else 
+  else
     {
       Xgc->fontId = i;
       Xgc->fontSize = fsiz;
@@ -1942,7 +1942,7 @@ static void xget_font(BCG *Xgc, int *font, int full)
 /* To set the current mark : using the symbol font of adobe **/
 
 void xset_mark(BCG *Xgc,int number,int size)
-{ 
+{
   Xgc->CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
   Xgc->CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
   ;}
@@ -1956,7 +1956,7 @@ static void xget_mark(BCG *Xgc,int *symb)
 }
 
 
-static void displaysymbols(BCG *Xgc, int *vx, int *vy,int n)
+static void displaysymbols(BCG *Xgc, double *vx, double *vy,int n)
 {
   int fvect =  Xgc->CurPattern;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
@@ -1969,12 +1969,12 @@ static void displaysymbols(BCG *Xgc, int *vx, int *vy,int n)
 
 
 /*-------------------------------------------------------
-  \encadre{Check if a specified family of font exist in 
+  \encadre{Check if a specified family of font exist in
   Figtscript }
   -------------------------------------------------------*/
 
 static void loadfamily(char *name, int *j)
-{ 
+{
   int i ;
   for ( i = 0; i < FONTMAXSIZE ; i++)
     {
@@ -1982,7 +1982,7 @@ static void loadfamily(char *name, int *j)
     }
   if  (FontsListXfig_[*j][0] == 0 )
     sciprint("\n unknown font family : %s\r\n",name);
-  else 
+  else
     {FontInfoTabXfig_[*j].ok = 1;
     strcpy(FontInfoTabXfig_[*j].fname,name) ;}
 }
@@ -1994,7 +1994,7 @@ static void loadfamily(char *name, int *j)
 static int FigQueryFont(char *name) { return(1);}
 
 static void queryfamily(char *name, int *j,int *v3)
-{ 
+{
   int i ;
   name[0]='\0';
   for (i=0;i<FONTNUMBER;i++) {

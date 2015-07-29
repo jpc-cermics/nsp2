@@ -26,15 +26,15 @@
 
 #line 33 "codegen/string3d.override"
 #include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 #line 40 "string3d.c"
 
@@ -119,8 +119,8 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
   /* next method are defined in NspGraphic and need not be chnaged here for String3d */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
 #line 127 "string3d.c"
@@ -291,7 +291,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
 #line 74 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+  if ( nsp_check_string3d(H)== FAIL) return NULL;
 
 #line 297 "string3d.c"
   return H;
@@ -511,7 +511,7 @@ NspString3d *nsp_string3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
 #line 74 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+  if ( nsp_check_string3d(H)== FAIL) return NULL;
 
 #line 517 "string3d.c"
   return H;
@@ -578,7 +578,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
 #line 74 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+  if ( nsp_check_string3d(H)== FAIL) return NULL;
 
 #line 584 "string3d.c"
   return H;
@@ -602,7 +602,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_string3d_check_values(H) == FAIL) return RET_BUG;
   #line 74 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
+  if ( nsp_check_string3d(H)== FAIL) return RET_BUG;
 
 #line 608 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -708,7 +708,7 @@ static AttrTab string3d_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -720,7 +720,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -756,6 +756,10 @@ void String3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = String3d_func[i].name;
   *f = String3d_func[i].fonc;
 }
+void nsp_initialize_String3d_types(void)
+{
+  new_type_string3d(T_BASE);
+}
 
 #line 105 "codegen/string3d.override"
 
@@ -763,7 +767,7 @@ void String3d_Interf_Info(int i, char **fname, function ( **f))
 
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int face; 
+  int face;
   if ( Obj->obj->show == FALSE ) return ;
 
   /*
@@ -773,35 +777,35 @@ static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
   */
 
-  if ( data != NULL &&  *((int *) data) < 0 ) 
+  if ( data != NULL &&  *((int *) data) < 0 )
     {
       nsp_check_string3d((NspString3d *) Obj);
       return;
     }
 
-#ifdef  WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef  WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
-      /* if we are using OpenGl we make a full draw of 
-       * object and return 
+      /* if we are using OpenGl we make a full draw of
+       * object and return
        */
       draw_string3d_ogl(Xgc,Obj);
-      nsp_ogl_set_2dview(Xgc); 
-      return; 
+      nsp_ogl_set_2dview(Xgc);
+      return;
     }
-#endif 
-  if ( data != NULL) 
+#endif
+  if ( data != NULL)
     {
       face = *((int *) data);
       draw_string3d_face(Xgc,Obj,face);
     }
-  else 
+  else
     {
       int i;
-      /* draw all the faces: this is not really used  
+      /* draw all the faces: this is not really used
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspString3d *) Obj)->obj->Mcoord->n; i++) 
+      for ( i= 0 ; i < ((NspString3d *) Obj)->obj->Mcoord->n; i++)
 	draw_string3d_face(Xgc,Obj,i);
     }
 }
@@ -821,7 +825,7 @@ static void nsp_scale_string3d(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of string3d 
+/* compute in bounds the enclosing rectangle of string3d
  *
  */
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
@@ -829,13 +833,13 @@ extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double 
 static int nsp_getbounds_string3d(NspGraphic *Obj,double *bounds)
 {
   int i;
-  /* this should be stored in a cache and recomputed when necessary 
+  /* this should be stored in a cache and recomputed when necessary
    *
    */
   nsp_string3d *Q= ((NspString3d *) Obj)->obj;
   nsp_check_string3d((NspString3d *) Obj);
   if ( Q->Mcoord->mn == 0) return FALSE;
-  for ( i = 0 ; i < Q->Mcoord->m ; i++) 
+  for ( i = 0 ; i < Q->Mcoord->m ; i++)
     nsp_gr_bounds_min_max(Q->Mcoord->n,Q->Mcoord->R+i,3,&bounds[2*i],&bounds[2*i+1]);
   return TRUE;
 }
@@ -845,20 +849,20 @@ int nsp_check_string3d( NspString3d *P)
   nsp_string3d *S = P->obj;
   int S_nb_coords = S->Mcoord->n;
 
-  if ( S->Mcoord->m != 3 || S->Mcoord->n != 1 ) 
+  if ( S->Mcoord->m != 3 || S->Mcoord->n != 1 )
     {
       Scierror("Error: bad coord for string3d\n");
       return FAIL;
     }
 
-  /* create extra data for qpos declared int* 
-   * Q->pos id only usefull for non opengl driver 
+  /* create extra data for qpos declared int*
+   * Q->pos id only usefull for non opengl driver
    */
   if ( S->pos == NULL) S->pos = malloc( S_nb_coords * sizeof(VisionPos));
   S->pos_length = S_nb_coords;
-  
+
   /* create extra data for Mcoord_l declared void* */
-  if ( S->Mcoord_l == NULL) 
+  if ( S->Mcoord_l == NULL)
     {
       S->Mcoord_l = nsp_matrix_create("local",'r',S->Mcoord->m, S->Mcoord->n);
     }
@@ -898,11 +902,12 @@ static void draw_justified_string3d(BCG *Xgc,NspGraphic *Obj, int xj, int yj)
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
 {
-  int flag=0, rect[4], w, h;
-  double angle=0.0; 
+  double rect[4];
+  int flag=0,w, h;
+  double angle=0.0;
   Xgc->graphic_engine->boundingbox(Xgc,str,x,y, rect);
   w = rect[2]; h = rect[3];
-  if ( xj == CENTER ) 
+  if ( xj == CENTER )
     x -= w/2;
   else if ( xj == RIGHT )
     x -= w;
@@ -930,7 +935,7 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   double Tcoord[3];
   double *S_coord = S->Mcoord->R;
 
-  apply_transforms_new1(Xgc,Tcoord,S_coord,S->pos,lim,1); 
+  apply_transforms_new1(Xgc,Tcoord,S_coord,S->pos,lim,1);
   Tcoord[0] = XScale(Xgc->scales,Tcoord[0]);
   Tcoord[1] = YScale(Xgc->scales,Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
@@ -942,7 +947,7 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1], FALSE);
   nsp_ogl_set_3dview(Xgc);
 }
-#endif 
+#endif
 
 
 static void zmean_faces_for_String3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
@@ -955,10 +960,10 @@ static void zmean_faces_for_String3d(void *Obj, double z[], HFstruct HF[], int *
   for ( j = 0 ; j < S_nb_coords ; j++)
     if (S->pos[j] == VIN)
       {
-	z[*n] = S_coord[3*j+2]; 
-	HF[*n].num_obj = k; 
+	z[*n] = S_coord[3*j+2];
+	HF[*n].num_obj = k;
 	HF[*n].num_in_obj = j;
-	(*n)++; 
+	(*n)++;
       }
 }
 
@@ -983,6 +988,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
   return ((NspString3d *) Obj)->obj->Mcoord->n;
 }
 
-
-
-#line 989 "string3d.c"
+#line 992 "string3d.c"

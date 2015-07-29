@@ -131,7 +131,7 @@ struct __BCG
 } ;
 
 
-extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
+extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
 
 /* FIXME: A revoir */
 #ifndef CoordModeOrigin

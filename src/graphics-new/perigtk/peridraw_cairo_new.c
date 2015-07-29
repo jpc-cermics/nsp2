@@ -281,9 +281,9 @@ static void drawpolylines(BCG *Xgc,double *vectsx, double *vectsy, int *drawvect
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  */
 
-static void filldrawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag, int color );
+static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color );
 
-static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect,int n, int p)
+static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
@@ -321,7 +321,7 @@ static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvec
  * n is the number of points of the polyline
  */
 
-static void drawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
+static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -348,7 +348,7 @@ static void drawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
  * according to *closeflag : the given vector is a polyline or a polygon
  */
 
-static void fillpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -368,7 +368,7 @@ static void fillpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
     }
 }
 
-static void filldrawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag, int color )
+static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color )
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -449,7 +449,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
  *   add a box around the string, only if slope =0}
  */
 
-static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
 
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
@@ -552,7 +552,7 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag
 }
 
 
-static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
+static void boundingbox(BCG *Xgc,const char *string, int x, int y, double *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);

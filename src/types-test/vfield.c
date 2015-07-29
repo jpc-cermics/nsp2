@@ -109,8 +109,8 @@ NspTypeVField *new_type_vfield(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
 
 #line 116 "vfield.c"
   /* 
@@ -755,7 +755,7 @@ static AttrTab vfield_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -767,7 +767,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -802,6 +802,10 @@ void VField_Interf_Info(int i, char **fname, function ( **f))
   *fname = VField_func[i].name;
   *f = VField_func[i].fonc;
 }
+void nsp_initialize_VField_types(void)
+{
+  new_type_vfield(T_BASE);
+}
 
 #line 78 "codegen/vfield.override"
 
@@ -809,10 +813,10 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 {
   double arfact = 2.0;
   NspVField *P = (NspVField *) Obj;
-  double *x= P->obj->x->R; 
-  double *y= P->obj->y->R; 
-  double *fx= P->obj->fx->R; 
-  double *fy= P->obj->fy->R; 
+  double *x= P->obj->x->R;
+  double *y= P->obj->y->R;
+  double *fx= P->obj->fx->R;
+  double *fy= P->obj->fy->R;
   int n1 = P->obj->x->mn;
   int n2 = P->obj->y->mn;
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
@@ -832,9 +836,9 @@ static void nsp_translate_vfield(NspGraphic *Obj,const double *tr)
   NspVField *P = (NspVField *) Obj;
   int i;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i = 0 ; i < P->obj->x->mn ; i++) 
+  for ( i = 0 ; i < P->obj->x->mn ; i++)
     P->obj->x->R[i] += tr[0];
-  for ( i = 0 ; i < P->obj->y->mn ; i++) 
+  for ( i = 0 ; i < P->obj->y->mn ; i++)
     P->obj->x->R[i] += tr[1];
   nsp_graphic_invalidate((NspGraphic *) Obj);
 
@@ -853,14 +857,14 @@ static void nsp_scale_vfield(NspGraphic *Obj,double *alpha)
   int i;
   NspVField *P = (NspVField *) Obj;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  for ( i = 0 ; i < P->obj->x->mn ; i++) 
+  for ( i = 0 ; i < P->obj->x->mn ; i++)
     P->obj->x->R[i] *= alpha[0];
-  for ( i = 0 ; i < P->obj->y->mn ; i++) 
+  for ( i = 0 ; i < P->obj->y->mn ; i++)
     P->obj->x->R[i] *= alpha[1];
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of vfield 
+/* compute in bounds the enclosing rectangle of vfield
  *
  */
 
@@ -869,12 +873,12 @@ static int nsp_getbounds_vfield (NspGraphic *Obj,double *bounds)
   NspVField *P = (NspVField *) Obj;
   if (  P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;
   /* get the bound in parent i.e given by wrect : upper-left w,h */
-  if ( P->obj->x->mn != 0 ) 
+  if ( P->obj->x->mn != 0 )
     {
       bounds[0]=P->obj->x->R[0]; /* xmin */
       bounds[2]=P->obj->x->R[P->obj->x->mn-1];/* xmax */
     }
-  if ( P->obj->y->mn != 0 ) 
+  if ( P->obj->y->mn != 0 )
     {
       bounds[1]=P->obj->y->R[0] ; /* ymin */
       bounds[3]=P->obj->y->R[P->obj->y->mn-1];/* ymax */
@@ -883,44 +887,45 @@ static int nsp_getbounds_vfield (NspGraphic *Obj,double *bounds)
 }
 
 
-static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
-			     double *fx, double *fy, int n1, int n2, char *strflag, 
+static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y,
+			     double *fx, double *fy, int n1, int n2, char *strflag,
 			     double *brect, double *arfact)
 {
-  int clip_box[4],  *xm,*ym,*zm=NULL,i,j,n,na,im;
+  int clip_box[4], *zm=NULL,i,j,n,na,im;
   int arsize, cpat,uc;
   double /*  xx[2],yy[2],*/ maxx,maxy, maxsf, nx,ny,sc,sfx,sfy,sfx2,sfy2;
   double  arsize1=0.5,arsize2=0.5;
+  double *xm=NULL,*ym=NULL;
 
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc)
     cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   else
     cpat = Xgc->graphic_engine->xget_dash(Xgc);
-  
+
   /* The arrowsize acording to the windowsize **/
   n=2*(n1)*(n2);
-  /* 
+  /*
   xx[0]=x[0];xx[1]=x[n1-1];
   yy[0]=y[0];yy[1]=y[n2-1];
   */
-  
+
   /* Allocation */
-  xm = graphic_alloc(0,n,sizeof(int));
-  ym = graphic_alloc(1,n,sizeof(int));
-  if ( xm == 0 || ym == 0) 
+  xm = graphic_alloc(0,n,sizeof(double));
+  ym = graphic_alloc(1,n,sizeof(double));
+  if ( xm == 0 || ym == 0)
     {
       sciprint("Running out of memory \n");
       return ;
-    }      
-  if ( colored != 0) 
+    }
+  if ( colored != 0)
     {
       zm = graphic_alloc(2,n/2,sizeof(int));
-      if (  zm == 0 ) 
+      if (  zm == 0 )
 	{
 	  sciprint("Running out of memory \n");
 	  return ;
-	}      
+	}
     }
   /* From double to pixels */
   for ( i = 0 ; i < n1 ; i++)
@@ -936,10 +941,10 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   sfy= Xgc->scales->Wscy1;
   sfx2= sfx*sfx;
   sfy2= sfy*sfy;
-  
+
   im=0;
   maxx = Abs(fx[0]);
-  while ( isnan(maxx) && im < (n1)*(n2) ) 
+  while ( isnan(maxx) && im < (n1)*(n2) )
     {
       maxx = Abs(fx[im++]);
     }
@@ -951,7 +956,7 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   maxx = ( maxx < SMDOUBLE) ? SMDOUBLE : maxx;
   im=0;
   maxy = Abs(fy[0]);
-  while ( isnan(maxy) && im < (n1)*(n2) ) 
+  while ( isnan(maxy) && im < (n1)*(n2) )
     {
       maxy = Abs(fy[im++]);
     }
@@ -963,26 +968,27 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   maxy = ( maxy < SMDOUBLE) ? SMDOUBLE : maxy;
   maxsf= sqrt(sfx2*maxx*maxx+sfy2*maxy*maxy);
   sc= sqrt(nx*nx+ny*ny)/maxsf;
-  
+
   /* size of arrow */
   arsize1= ((double) Xgc->scales->Irect.width)/(5*(n1));
   arsize2= ((double) Xgc->scales->Irect.height)/(5*(n2));
   arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
   arsize = (int)(arsize*(*arfact));
-  
+
   clip_box[0]=Xgc->scales->Irect.x;
   clip_box[1]=Xgc->scales->Irect.x+Xgc->scales->Irect.width;
   clip_box[2]=Xgc->scales->Irect.y;
   clip_box[3]=Xgc->scales->Irect.y+Xgc->scales->Irect.height;
 
-  if ( colored == 0 ) 
+  if ( colored == 0 )
     {
       int j=0;
       double scx= sfx*sc/2.0;
       double scy= sfy*sc/2.0;
       for ( i = 0 ; i < (n1)*(n2) ; i++)
 	{
-	  int x1n,y1n,x2n,y2n,flag1=0;
+	  double x1n,y1n,x2n,y2n;
+	  int flag1=0;
 	  xm[1+2*j]= (int)(scx*fx[i]+xm[2*i]);
 	  xm[2*j]  = (int)(-scx*fx[i]+xm[2*i]);
 	  ym[1+2*j]= (int)(-scy*fy[i]+ym[2*i]);
@@ -992,21 +998,22 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
 	  if (flag1 !=0)
 	    {
 	      /* do not want to clip since if clipped the arrow haed will
-		 be badly placed. just eliminate the totally out segments  
+		 be badly placed. just eliminate the totally out segments
 		 if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
 		 if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
 	      */
 	      j++;
-	    } 
+	    }
 	}
       na=2*j;
     }
-  else 
+  else
     {
       double maxn= sqrt(maxx*maxx+maxy*maxy);
       double scx= sfx*sc*maxsf/3.0;
       double scy= sfy*sc*maxsf/3.0;
-      int x1n,y1n,x2n,y2n,flag1=0, whiteid, j=0;
+      double x1n,y1n,x2n,y2n;
+      int flag1=0, whiteid, j=0;
       whiteid=  Xgc->graphic_engine->xget_last(Xgc);
       for ( i = 0 ; i < (n1)*(n2) ; i++)
 	{
@@ -1022,7 +1029,7 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
 	  if (flag1 !=0)
 	    {
 	      /* do not want to clip since if clipped the arrow head will
-		 be badly placed. just eliminate the totally out segments 
+		 be badly placed. just eliminate the totally out segments
 		 if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
 		 if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
 	      */
@@ -1032,15 +1039,15 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
       na=2*j;
     }
 
-  if ( colored ==0) 
+  if ( colored ==0)
     Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
   else
     Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
 }
 
 /*
- * Returns min( abs(x)) excluding null x(i)  values 
- * if x==0 then 1 is returned 
+ * Returns min( abs(x)) excluding null x(i)  values
+ * if x==0 then 1 is returned
  */
 
 static double min_of_doubles(const double *x, int n)
@@ -1050,7 +1057,7 @@ static double min_of_doubles(const double *x, int n)
   if ( n < 2 ) return(mindx);
   mindx= Abs(x[1]-x[0]);
   mindx = ( ~isnan(mindx) &&  mindx != 0 ) ? mindx : 1;
-  for ( i = 2 ; i < n ; i++) 
+  for ( i = 2 ; i < n ; i++)
     {
       dx = Abs(x[i]-x[i-1]);
       if ( ~isnan(dx) && dx < mindx && dx != 0 ) mindx=dx;
@@ -1058,6 +1065,4 @@ static double min_of_doubles(const double *x, int n)
   return(mindx);
 }
 
-
-
-#line 1064 "vfield.c"
+#line 1069 "vfield.c"

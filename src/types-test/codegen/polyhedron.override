@@ -11,10 +11,10 @@ include-public  Polyhedron
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
-extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn) ; 
+extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn) ;
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
-extern int nsp_obj3d_orientation(int x[], int y[], int n);
+extern int nsp_obj3d_orientation(double x[], double y[], int n);
 
 %%
 include-private  Polyhedron
@@ -27,16 +27,16 @@ static int nsp_getbounds_polyhedron(NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
-#endif 
+#endif
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figure.h> 
+#include <nsp/figure.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/gsort-p.h>
@@ -44,9 +44,9 @@ headers
 #include <nsp/grcommon.h>
 
 %%
-init 
+init
 
-Init portion 
+Init portion
 
 %%
 override-type Polyhedron
@@ -59,8 +59,8 @@ override-type Polyhedron
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyhedron  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyhedron  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyhedron */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_polyhedron_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_polyhedron_n_faces;
 
@@ -75,7 +75,7 @@ ignore-glob
 %%
 override-int-create-final Polyhedron
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_polyhedron(H)== FAIL) return %(ret)s; 
+  if ( nsp_check_polyhedron(H)== FAIL) return %(ret)s;
 
 %%
 override-destroy-prelim Polyhedron
@@ -87,7 +87,7 @@ override nsp_extractelts_polyhedron kwargs
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -97,7 +97,7 @@ override nsp_setrowscols_polyhedron kwargs
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -119,7 +119,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
 }
 
 %%
-override nsp_surf_to_faces 
+override nsp_surf_to_faces
 
 int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_face */
 {
@@ -156,7 +156,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_facets_to_faces(x->R, y->R, z->R,colors->I,colors->mn,x->m,x->n,&retc,&retf,hcol)== FAIL)
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(retc));
-  if ( lhs >= 2 ) 
+  if ( lhs >= 2 )
     {
       MoveObj(stack,2,NSP_OBJECT(retf));
     }
@@ -164,7 +164,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
     {
       nsp_matrix_destroy(retf);
     }
-  if ( lhs >= 3) 
+  if ( lhs >= 3)
     {
       MoveObj(stack,3,NSP_OBJECT(retcol));
     }
@@ -174,50 +174,50 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
 %%
 last
 
-/* function called when draw is needed 
- * data can be NULL and when non null 
- * it gives the face to draw for the polyhedron 
+/* function called when draw is needed
+ * data can be NULL and when non null
+ * it gives the face to draw for the polyhedron
  */
 
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int face; 
+  int face;
   if ( Obj->obj->show == FALSE ) return ;
-  /* 
+  /*
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
   */
-  if ( data != NULL &&  *((int *) data) < 0 ) 
+  if ( data != NULL &&  *((int *) data) < 0 )
     {
       nsp_check_polyhedron((NspPolyhedron *) Obj);
       return;
     }
 
-#ifdef  WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef  WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
-      /* if we are using OpenGl we make a full draw of 
-       * object and return 
+      /* if we are using OpenGl we make a full draw of
+       * object and return
        */
       draw_polyhedron_ogl(Xgc,Obj);
-      nsp_ogl_set_2dview(Xgc); 
-      return; 
+      nsp_ogl_set_2dview(Xgc);
+      return;
     }
-#endif 
-  if ( data != NULL) 
+#endif
+  if ( data != NULL)
     {
       face = *((int *) data);
       draw_polyhedron_face(Xgc,Obj,face);
     }
-  else 
+  else
     {
       int i;
-      /* draw all the faces: this is not really used  
+      /* draw all the faces: this is not really used
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspPolyhedron*) Obj)->obj->Mface->n ; i++) 
+      for ( i= 0 ; i < ((NspPolyhedron*) Obj)->obj->Mface->n ; i++)
 	draw_polyhedron_face(Xgc,Obj,i);
     }
 }
@@ -238,8 +238,8 @@ static void nsp_scale_polyhedron(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute the bounds of the polyhedron: 
- * note that for 3dobjets this is of length 6 
+/* compute the bounds of the polyhedron:
+ * note that for 3dobjets this is of length 6
  */
 
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
@@ -251,12 +251,12 @@ static int nsp_getbounds_polyhedron(NspGraphic *Obj,double *bounds)
   nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
   nsp_check_polyhedron((NspPolyhedron *) Obj);
   if ( Q->Mcoord->mn == 0) return FALSE;
-  for ( i = 0 ; i < Q->Mcoord->n ; i++) 
+  for ( i = 0 ; i < Q->Mcoord->n ; i++)
     nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return TRUE;
 }
 
-void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) 
+void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax)
 {
   int i,i1;
   double amin= A[0], amax=A[0];
@@ -288,8 +288,8 @@ void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax)
 }
 
 /* checks that polyhedron is OK:
- * converts matrices data to int 
- * allocated extra matrices 
+ * converts matrices data to int
+ * allocated extra matrices
  */
 
 int nsp_check_polyhedron( NspPolyhedron *P)
@@ -298,23 +298,23 @@ int nsp_check_polyhedron( NspPolyhedron *P)
   int Q_nb_faces = Q->Mface->n;
   int Q_nb_coords = Q->Mcoord->m;
 
-  if ( Q->Mcoord->n != 3 ) 
+  if ( Q->Mcoord->n != 3 )
     {
       Scierror("Error: bad coord for polyhedron, second dimension should be 3\n");
       return FAIL;
     }
-  if ( Q->Mface->m < 3 ) 
+  if ( Q->Mface->m < 3 )
     {
       Scierror("Error: bad face for polyhedron, first dimension should be >= 3\n");
       return FAIL;
     }
-  if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 ) 
+  if ( Q->Mcolor->mn !=  Q_nb_faces   && Q->Mcolor->mn != 1 )
     {
       Scierror("Error: bad color size for polyhedron, expecting 1 or %d\n", Q_nb_faces);
       return FAIL;
     }
-  
-  if ( Q->Mback_color->mn  !=  Q_nb_faces  && Q->Mback_color->mn != 1 ) 
+
+  if ( Q->Mback_color->mn  !=  Q_nb_faces  && Q->Mback_color->mn != 1 )
     {
       Scierror("Error: bad back_color size for polyhedron, expecting 1 or %d\n", Q_nb_faces);
       return FAIL;
@@ -324,14 +324,14 @@ int nsp_check_polyhedron( NspPolyhedron *P)
   Q->Mback_color = Mat2int(Q->Mback_color);
   Q->Mcolor = Mat2int(Q->Mcolor);
 
-  /* create extra data for qpos declared int* 
-   * Q->pos id only usefull for non opengl driver 
+  /* create extra data for qpos declared int*
+   * Q->pos id only usefull for non opengl driver
    */
   if ( Q->pos == NULL) Q->pos = malloc( Q_nb_coords * sizeof(int));
   Q->pos_length = Q_nb_coords;
 
   /* create extra data for Mcoord_l declared void* */
-  if ( Q->Mcoord_l == NULL) 
+  if ( Q->Mcoord_l == NULL)
     {
       Q->Mcoord_l = nsp_matrix_create("local",'r',Q->Mcoord->m, Q->Mcoord->n);
     }
@@ -339,7 +339,7 @@ int nsp_check_polyhedron( NspPolyhedron *P)
 }
 
 
-/* draw one face of a polyhedron 
+/* draw one face of a polyhedron
  * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
 
@@ -347,8 +347,8 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
   int i, np=1, m;
-  int x_def[128], y_def[128];
-  int *x=x_def, *y=y_def;
+  double x_def[128], y_def[128];
+  double *x=x_def, *y=y_def;
   int numpt, *current_vertex, color;
 
   int Q_nb_coords = Q->Mcoord->m;
@@ -361,14 +361,14 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int Q_nb_back_colors = Q->Mback_color->mn ;
   int * Q_back_color =  Q->Mback_color->I;
   int foreground_color = -1, cpat;
-  
+
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
 
-  if ( m > 128 ) 
+  if ( m > 128 )
     {
-      x = graphic_alloc(0,m,sizeof(int));
-      y = graphic_alloc(1,m,sizeof(int));
+      x = graphic_alloc(0,m,sizeof(double));
+      y = graphic_alloc(1,m,sizeof(double));
     }
 
   for (i = 0 ; i < m ; i++)
@@ -380,24 +380,24 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       z = Q_coord[numpt+2*Q_nb_coords];
       if ( ISNAN(z) || isinf(z)) return;
     }
-  
+
   color = ( Q_nb_colors == 1 ) ? Q_color[0] :  Q_color[j];
 
   /* color = 0;  permet de voir uniquement le maillage */
-  
+
   if ( color != 0 &&  nsp_obj3d_orientation(x, y, m) != -1 )
     {
       /* le repère de la caméra est indirect ! */
       color = ( Q_nb_back_colors == 1 ) ? Q_back_color[0] :  Q_back_color[j];
     }
-    
-  if ( ! Q->mesh ) 
+
+  if ( ! Q->mesh )
     {
       /* do not draw the mesh */
-      color = -color; 
+      color = -color;
     }
 
-  /* 
+  /*
    *  x, y : polygone(s) coordinates, nr : number of sides
    *  np : number of polygone(s) =1 here
    */
@@ -407,7 +407,7 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
@@ -426,7 +426,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
   /*   int Q_nb_back_colors = Q->Mback_color->mn ; */
   /* int * Q_back_color =  Q->Mback_color->I;*/
   int foreground_color = -1,cpat;
-  
+
   m = Q_nb_vertices_per_face;
 
   if ( m > 128 )
@@ -456,7 +456,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       if ( stop == TRUE ) continue;
       color = ( Q_nb_colors == 1 ) ? Q_color[0]: Q_color[j];
       /* le contour du polygone ne doit pas apparaitre */
-      if ( ! Q->mesh ) 	color = -color; 
+      if ( ! Q->mesh ) 	color = -color;
       /* color = 0;  permet de voir uniquement le maillage */
       /* draw one face */
       fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
@@ -465,8 +465,8 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 }
 #endif
 
-/* 
- * this function is to be called after a transformation which have filled 
+/*
+ * this function is to be called after a transformation which have filled
  * Q->Mcoord_l->R
  * Author: Bruno Pincon <Bruno.Pincon@iecn.u-nancy.fr>
  */
@@ -478,15 +478,15 @@ static void zmean_faces_for_Polyhedron(void *Obj, double z[], HFstruct HF[], int
   VisionPos pos_face, pos_vertex;
   double coef, zmean;
 
-  int Q_nb_coords = Q->Mcoord->m; 
+  int Q_nb_coords = Q->Mcoord->m;
   double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
   int Q_nb_vertices_per_face = Q->Mface->m;
   int Q_nb_faces = Q->Mface->n;
   int * Q_face = Q->Mface->I;
 
   nsp_check_polyhedron((NspPolyhedron *) Obj);
-  
-  m = Q_nb_vertices_per_face; 
+
+  m = Q_nb_vertices_per_face;
   coef = 1.0/m;
   current_vertex = Q_face;
   for ( j = 0 ; j < Q_nb_faces ; j++ )
@@ -510,12 +510,12 @@ static void zmean_faces_for_Polyhedron(void *Obj, double z[], HFstruct HF[], int
 	    pos_face = VIN;
 	  current_vertex++;
 	}
-      if (pos_face == VIN) 
+      if (pos_face == VIN)
 	{
 	  z[*n] = coef*zmean;
 	  HF[*n].num_obj = k;
 	  HF[*n].num_in_obj = j;
-	  (*n)++; 
+	  (*n)++;
 	}
     }
 }
@@ -542,23 +542,23 @@ static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-/* Utilities 
- * 
+/* Utilities
+ *
  */
 
 /**
  * nsp_polyhedron_create_from_triplet:
- * @name: name to give to new object 
+ * @name: name to give to new object
  * @x: array of size @m
  * @y: array of size @n
  * @z: array of size @mx@n
- * @m: size of @x array  
+ * @m: size of @x array
  * @n: size of @y array
- * 
- * creates a #NspPolyhedron from a triplet describing a 
- * surface. 
- * 
- * Returns: a new #NspPolyhedron or %NULL 
+ *
+ * creates a #NspPolyhedron from a triplet describing a
+ * surface.
+ *
+ * Returns: a new #NspPolyhedron or %NULL
  **/
 
 NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n)
@@ -578,17 +578,17 @@ NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y
 
 /**
  * nsp_polyhedron_create_from_facets:
- * @name: name to give to new object 
+ * @name: name to give to new object
  * @xx: array of size @mx@n
  * @yy: array of size @mx@n
  * @zz: array of size @mx@n
- * @m: size of each polygon 
+ * @m: size of each polygon
  * @n: number of polygons
  *
- * creates a #NspPolyhedron from a description 
+ * creates a #NspPolyhedron from a description
  * of a surface as a set of polyhedrons.
- * 
- * Returns: a new #NspPolyhedron or %NULL 
+ *
+ * Returns: a new #NspPolyhedron or %NULL
  **/
 
 NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n)
@@ -607,17 +607,17 @@ NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *y
 
 /**
  * nsp_surf_to_coords:
- * @name: 
- * @C: %NULL or a coord matrix to be filled 
- * @x: 
- * @y: 
- * @z: 
- * @m: 
- * @n: 
- * 
- * If C is non null it is filled and returned but compatibility sizes 
+ * @name:
+ * @C: %NULL or a coord matrix to be filled
+ * @x:
+ * @y:
+ * @z:
+ * @m:
+ * @n:
+ *
+ * If C is non null it is filled and returned but compatibility sizes
  * are not checked. If C is null a matrix is created.
- * 
+ *
  * Returns: a new #NspMatrix.
  **/
 
@@ -625,7 +625,7 @@ NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,
 {
   int i,j;
   NspMatrix *coord;
-  if ( C != NULL) 
+  if ( C != NULL)
     {
       coord = C;
     }
@@ -637,10 +637,10 @@ NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,
     {
       coord->R[i+2*coord->m]= z[i];
     }
-  for (j = 0 ; j < n ; j++) 
+  for (j = 0 ; j < n ; j++)
     for (i= 0 ; i < m;  i++)
       coord->R[i+j*(m)]= x[i];
-  for (j = 0 ; j < n ; j++) 
+  for (j = 0 ; j < n ; j++)
     for (i= 0 ; i < m;  i++)
       coord->R[i+j*(m)+coord->m]= y[j];
   return coord;
@@ -648,49 +648,49 @@ NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,
 
 /**
  * nsp_surf_to_faces:
- * @name: 
- * @F: 
- * @x: 
- * @xmn: 
- * @y: 
- * @ymn: 
- * 
- * If @F is non null it is filled and returned but compatibility sizes 
+ * @name:
+ * @F:
+ * @x:
+ * @xmn:
+ * @y:
+ * @ymn:
+ *
+ * If @F is non null it is filled and returned but compatibility sizes
  * are not checked. If @F is null a matrix is created.
- * 
- * 
- * Returns: 
+ *
+ *
+ * Returns:
  **/
 
-NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn)  
+NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn)
 {
   NspMatrix *face;
   int j,i,nface;
-  if ( F != NULL) 
+  if ( F != NULL)
     {
       face = F;
       face->convert = 'd';
     }
-  else 
+  else
     {
       if ((face = nsp_matrix_create(name,'r',4,(xmn-1)*(ymn-1)))==NULL) return NULL;
     }
   nface = 0;
-  for (j = 0 ; j < ymn -1 ; j++) 
+  for (j = 0 ; j < ymn -1 ; j++)
     {
       for ( i = 0 ; i < xmn-1 ; i++)
 	{
-	  face->R[ nface*4]   = i+j*(xmn)+1 ; 
-	  face->R[ nface*4+1] = i+1+j*(xmn)+1 ; 
-	  face->R[ nface*4+2] = (i+1)+(j+1)*(xmn)+1 ; 
-	  face->R[ nface*4+3] = (i)+(j+1)*(xmn)+1 ; 
+	  face->R[ nface*4]   = i+j*(xmn)+1 ;
+	  face->R[ nface*4+1] = i+1+j*(xmn)+1 ;
+	  face->R[ nface*4+2] = (i+1)+(j+1)*(xmn)+1 ;
+	  face->R[ nface*4+3] = (i)+(j+1)*(xmn)+1 ;
 	  nface++;
 	}
     }
   return face;
 }
 
-/* 
+/*
  *
  *
  */
@@ -711,7 +711,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
       C->R[i+C->m]= y[i];
       C->R[i+2*C->m]= z[i];
     }
-  /* sort the matrix 
+  /* sort the matrix
    * [Cs,ks]= sort(C,'ldr','i');
    */
   nsp_matrix_lexical_row_sort(C,&OIndex,TRUE,'i','d','d');
@@ -719,19 +719,19 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 
   if ( Colr != NULL)
     {
-      /* create a color matrix if requested 
-       * The size of Col is the same as the size of 
-       * Coordinates i.e m*n 
+      /* create a color matrix if requested
+       * The size of Col is the same as the size of
+       * Coordinates i.e m*n
        */
-      if ( ncol == m*n ) 
+      if ( ncol == m*n )
 	{
 	  if ((Col = nsp_matrix_create("Col",'r',m*n,1))==NULL) return FAIL;
 	  for ( i = 0 ; i < m*n ; i++)
 	    Col->R[i]=colors[Index->I[i]-1];
 	}
-      else if ( ncol == n ) 
+      else if ( ncol == n )
 	{
-	  /* colors given by colors: one for each facet 
+	  /* colors given by colors: one for each facet
 	   */
 	  if ((Col = nsp_matrix_create("Col",'r',n,1))==NULL) return FAIL;
 	  for ( i = 0 ; i < n ; i++)
@@ -745,9 +745,9 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 	    Col->R[i]=C->R[i+2*C->m];
 	}
     }
-  
-  /* create the facets 
-   * Fs = matrix(kp,m,n); 
+
+  /* create the facets
+   * Fs = matrix(kp,m,n);
    * Fs stocke la permutation inverse a celle de Index
    * kp(ks)=1:m*n;
    */
@@ -758,9 +758,9 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
     {
       Fs->I[Index->I[i]-1]= i+1;
     }
-  if ( switch_orient ) 
+  if ( switch_orient )
     {
-      for ( j = 0 ; j < Fs->n ; j++) 
+      for ( j = 0 ; j < Fs->n ; j++)
 	{
 	  int *col = Fs->I + j*Fs->m;
 	  for ( i = 0 ; i < Fs->m/2; i++)
@@ -771,7 +771,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
 	    }
 	}
     }
-  
+
   /* on enleve les redondances mise a jour de Fs */
   if ((Fc = nsp_matrix_create(NVOID,'r',m*n,1))==NULL) return FAIL;
   Fc->convert = 'i';
@@ -782,7 +782,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   k=1;
   for ( i = 1 ; i < m*n ; i++)
     {
-      if ( C->R[i] == C->R[i-1] && C->R[i+C->m] == C->R[i-1+C->m] && C->R[i+2*C->m] == C->R[i-1+2*C->m]) 
+      if ( C->R[i] == C->R[i-1] && C->R[i+C->m] == C->R[i-1+C->m] && C->R[i+2*C->m] == C->R[i-1+2*C->m])
 	{
 	  Fc->I[i]=k;
 	}
@@ -799,8 +799,8 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   if (( B = nsp_bmatrix_create(NVOID,Fc->mn,1)) ==NULL) return FAIL;
   B->B[0]= FALSE;
   for ( i=1 ; i < B->mn; i++)
-    B->B[i] =  Fc->I[i] == Fc->I[i-1]; 
-  
+    B->B[i] =  Fc->I[i] == Fc->I[i-1];
+
   index.iwork = matint_iwork1;
   if ( nsp_get_index_vector_from_object(NSP_OBJECT(B),&index) == FAIL) return FAIL;
   if ( nsp_matint_delete_rows_from_index(NSP_OBJECT(C),&index)==FAIL) return FAIL;
@@ -809,11 +809,11 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
       if ( nsp_matint_delete_rows_from_index(NSP_OBJECT(Col),&index)==FAIL) return FAIL;
     }
   nsp_free_index_vector_cache(&index);
-  
+
   nsp_matrix_destroy(Fc);
-  nsp_matrix_destroy(Fs); 
-  nsp_matrix_destroy(Index); 
-  nsp_bmatrix_destroy(B); 
+  nsp_matrix_destroy(Fs);
+  nsp_matrix_destroy(Index);
+  nsp_bmatrix_destroy(B);
   *Cr=C;
   *Fr=Fsc;
   if ( Colr != NULL)
@@ -823,14 +823,11 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   return OK;
 }
 
-int nsp_obj3d_orientation(int x[], int y[], int n)
+int nsp_obj3d_orientation(double x[], double y[], int n)
 {
   /* calcule l'orientation avec les 3 premiers points du polygone ... */
-  int a, b, c, d ;
-  a = x[1] - x[0]; c = x[2] - x[0]; 
+  double a, b, c, d ;
+  a = x[1] - x[0]; c = x[2] - x[0];
   b = y[1] - y[0]; d = y[2] - y[0];
-  if ( a*d - b*c >= 0)
-    return ( 1 );
-  else
-    return ( -1 );
+  return ( a*d - b*c >= 0) ? 1 : -1;
 }

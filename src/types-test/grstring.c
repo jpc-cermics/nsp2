@@ -909,6 +909,10 @@ void Grstring_Interf_Info(int i, char **fname, function ( **f))
   *fname = Grstring_func[i].name;
   *f = Grstring_func[i].fonc;
 }
+void nsp_initialize_Grstring_types(void)
+{
+  new_type_grstring(T_BASE);
+}
 
 #line 80 "codegen/grstring.override"
 
@@ -999,7 +1003,8 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
   int box = 0 ; /* ( P->obj->box_color != -2 );*/ /* we draw a box */
   double xd1,yd1;
   int iw,ih,size_in= 1, size_out=100,size=-1, count=0;
-  int fontid[2], logrect[4], check= TRUE;
+  int fontid[2],check= TRUE;
+  double logrect[4];
   length_scale_f2i(Xgc->scales,&P->obj->w,&P->obj->h,&iw,&ih,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   /* try to detect if current value is OK. */
@@ -1123,7 +1128,8 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   nsp_string str;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
-  int rect1[4],fontid[2];
+  int fontid[2];
+  double rect1[4];
   double width, height;
   nsp_axes *axe = Obj->obj->Axe;
   nsp_figure *F = Obj->obj->Fig;
@@ -1158,7 +1164,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
-      length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
+      length_scale_double_to_pixels(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       /* Sciprintf("Taille de la boite [%f,%f] fontid=%d\n",width,height,P->obj->size); */
       bounds[0]= P->obj->x + P->obj->w/2 -width/2;
       bounds[2]= P->obj->x + P->obj->w/2 +width/2;
@@ -1177,7 +1183,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
-      length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
+      length_scale_double_to_pixels(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       switch( P->obj->posx )
 	{
 	case GR_STR_XLEFT: bounds[0]= P->obj->x; bounds[2]= P->obj->x+width; break;
@@ -1268,7 +1274,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   if ( FALSE && F != NULL && (Xgc = F->Xgc) != NULL)
     {
       /* draw the bounds, if requested  */
-      int xm[4],ym[4];
+      double xm[4],ym[4];
       double x[4],y[4];
       x[0]=bounds[0];
       y[0]=bounds[1];
@@ -1278,11 +1284,11 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       y[2]=bounds[3];
       x[3]=bounds[0];
       y[3]=bounds[3];
-      scale_f2i(Xgc->scales,x,y,xm,ym,4);
+      scale_double_to_pixels(Xgc->scales,x,y,xm,ym,4);
       Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,4,TRUE);
     }
 
   return TRUE;
 }
 
-#line 1289 "grstring.c"
+#line 1295 "grstring.c"

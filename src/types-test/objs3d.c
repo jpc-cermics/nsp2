@@ -1230,6 +1230,10 @@ void Objs3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = Objs3d_func[i].name;
   *f = Objs3d_func[i].fonc;
 }
+void nsp_initialize_Objs3d_types(void)
+{
+  new_type_objs3d(T_BASE);
+}
 
 #line 201 "codegen/objs3d.override"
 
@@ -2434,7 +2438,8 @@ static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foregrou
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 {
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  int x[2], y[2], n=2; 
+  double x[2], y[2];
+  int n=2;
 #ifdef WITH_GTKGLEXT
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -2462,7 +2467,8 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 {
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  int x[2], y[2], n=2;
+  double x[2], y[2];
+  int n=2;
 #ifdef WITH_GTKGLEXT
   if ( Xgc->graphic_engine == &GL_gengine )
     {
@@ -2489,7 +2495,8 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
 {
-  int flag=0, rect[4], w, h;
+  double rect[4];
+  int flag=0, w, h;
   double angle=0.0;
   Xgc->graphic_engine->boundingbox(Xgc,str,x,y, rect);
   w = rect[2]; h = rect[3];
@@ -2508,7 +2515,8 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
 
 static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
 {
-  int x[4], y[4], i, numpt, np=1, m=4;
+  double x[4], y[4];
+  int i, numpt, np=1, m=4;
   const int *current_vertex;
 
 #ifdef WITH_GTKGLEXT
@@ -3089,4 +3097,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3093 "objs3d.c"
+#line 3101 "objs3d.c"

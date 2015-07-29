@@ -17,22 +17,21 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * jpc@cermics.enpc.fr 
+ * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------
- * Clipping functions 
- * to be used to draw a polyline with clipping box 
- * when native clipping do not work. 
- * use nsp_set_clip_box to set the clip box 
- * 
- * FIXME: a remetre ds periFig.c 
+ * Clipping functions
+ * to be used to draw a polyline with clipping box
+ * when native clipping do not work.
+ * use nsp_set_clip_box to set the clip box
+ *
+ * FIXME: a remetre ds periFig.c
  *----------------------------------------------------------*/
 
-#include "nsp/graphics-new/Graphics.h" 
+#include "nsp/graphics-new/Graphics.h"
 
-static void draw_clipped(BCG *Xgc,int j, int *vx, int *vy, int xleft,int xright,int ybot,int ytop);
-
+static void draw_clipped(BCG *Xgc,int j, double *vx, double *vy, int xleft,int xright,int ybot,int ytop);
 
 /* Test a single point to be within the xleft,xright,ybot,ytop bbox.
  * Sets the returned ints 4 l.s.b. as follows:
@@ -57,23 +56,22 @@ static int clip_point(int x, int y,int xleft,int xright,int ybot,int ytop)
 /* Clip the given line to private->drawing coords defined as xleft,xright,ybot,ytop.
  *   This routine uses the cohen & sutherland bit mapping for fast clipping -
  * see "Principles of Interactive Computer Graphics" Newman & Sproull page 65.
- * return 0  : segment out 
- *       1  : (x1,y1) changed 
- *	2  : (x2,y2) changed 
- *	3  : (x1,y1) and (x2,y2) changed 
- *	4  : segment in 
+ * return 0  : segment out
+ *       1  : (x1,y1) changed
+ *	2  : (x2,y2) changed
+ *	3  : (x1,y1) and (x2,y2) changed
+ *	4  : segment in
  */
 
-
-void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, int *y2n, int *flag, 
-	       int xleft,int xright,int ybot,int ytop)
+void clip_line(double x1, double yy1, double x2, double y2, double *x1n, double *yy1n, double *x2n, double *y2n,
+	       int *flag, int xleft,int xright,int ybot,int ytop)
 {
   int x, y, dx, dy, x_intr[2], y_intr[2], count, pos1, pos2;
   *x1n=x1;*yy1n=yy1;*x2n=x2;*y2n=y2;*flag=4;
   pos1 = clip_point(x1, yy1,xleft, xright, ybot,ytop);
   pos2 = clip_point(x2, y2,xleft, xright, ybot,ytop);
   if (pos1 || pos2) {
-    if (pos1 & pos2) { *flag=0;return;}	  
+    if (pos1 & pos2) { *flag=0;return;}
     /* segment is totally out. */
 
     /* Here part of the segment MAy be inside. test the intersection
@@ -92,26 +90,26 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
 	x_intr[count] = x;
 	y_intr[count++] = ybot;
       }
-      x = (ytop - y2) * ((double) dx / (double) dy) + x2; 
+      x = (ytop - y2) * ((double) dx / (double) dy) + x2;
       /* Test for ytop boundary. */
       if (x >= xleft && x <= xright) {
 	x_intr[count] = x;
 	y_intr[count++] = ytop;
       }
     }
-    if ( count < 2 ) 
+    if ( count < 2 )
       {
 	/* Find intersections with the y parallel bbox lines: */
 	if (dx != 0) {
-	  y = (xleft - x2) * ((double) dy / (double) dx) + y2;   
+	  y = (xleft - x2) * ((double) dy / (double) dx) + y2;
 	  /* Test for xleft boundary. */
 	  if (y >= ybot && y <= ytop) {
 	    x_intr[count] = xleft;
 	    y_intr[count++] = y;
 	  }
-	  if ( count < 2 ) 
-	    {  
-	      y = (xright - x2) * ((double) dy / (double) dx) + y2;  
+	  if ( count < 2 )
+	    {
+	      y = (xright - x2) * ((double) dy / (double) dx) + y2;
 	      /* Test for xright boundary. */
 	      if (y >= ybot && y <= ytop) {
 		x_intr[count] = xright;
@@ -122,7 +120,7 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
       }
 
 
-    if (count == 2) 
+    if (count == 2)
       {
 	if (pos1 && pos2) {	   /* Both were out - update both */
 	  *x1n = x_intr[0];
@@ -131,31 +129,31 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
 	  *y2n = y_intr[1];
 	  *flag=3;return;
 	}
-	else if (pos1) 
+	else if (pos1)
 	  {       /* Only x1/yy1 was out - update only it */
-	    
-	    if (dx * (x_intr[1] - x_intr[0]) + dy * (y_intr[1] - y_intr[0]) >= 0) 
+
+	    if (dx * (x_intr[1] - x_intr[0]) + dy * (y_intr[1] - y_intr[0]) >= 0)
 	      {
 		*x1n = x_intr[0];
 		*yy1n = y_intr[0];
 		*flag=1;return;
 	      }
-	    else 
+	    else
 	      {
 		*x1n = x_intr[1];
 		*yy1n = y_intr[1];
 		*flag=1;return;
 	      }
 	  }
-	else 
+	else
 	  {	         /* Only x2/y2 was out - update only it */
-	    if (dx * (x_intr[1] - x_intr[0]) + dy * (y_intr[1] - y_intr[0]) >= 0) 
+	    if (dx * (x_intr[1] - x_intr[0]) + dy * (y_intr[1] - y_intr[0]) >= 0)
 	      {
 		*x2n = x_intr[1];
 		*y2n = y_intr[1];
 		*flag=2;return;
 	      }
-	    else 
+	    else
 	      {
 		*x2n = x_intr[0];
 		*y2n = y_intr[0];
@@ -163,7 +161,7 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
 	      }
 	  }
       }
-    else 
+    else
       {
 	/* count != 0 */
 	*flag=0;return;
@@ -173,56 +171,57 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
 
 /**
  * MyDraw:
- * @Xgc: 
- * @iib: 
- * @iif: 
- * @vx: 
- * @vy: 
- * 
+ * @Xgc:
+ * @iib:
+ * @iif:
+ * @vx:
+ * @vy:
+ *
  * draw the polyline from (vx[iib-1],vy[iib-1])->(vx[iif],vy[iif])
- * we know that (vx[iib-1],vy[iib-1]) and (vx[iif],vy[iif]) are out 
- * all the other points are inside. 
- * 
+ * we know that (vx[iib-1],vy[iib-1]) and (vx[iif],vy[iif]) are out
+ * all the other points are inside.
+ *
  **/
 
-static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy, 
+static void MyDraw(BCG *Xgc,int iib, int iif, double *vx, double *vy,
 		   int xleft,int xright,int ybot,int ytop)
 {
   draw_clipped(Xgc,iib,vx,vy ,xleft, xright, ybot,ytop);
-  draw_clipped(Xgc,iif,vx,vy,xleft, xright, ybot,ytop); 
+  draw_clipped(Xgc,iif,vx,vy,xleft, xright, ybot,ytop);
   Xgc->graphic_engine->drawpolyline(Xgc,vx + iib,vy +iib,iif-iib,0);
 }
 
 /**
  * draw_clipped:
- * @Xgc: 
- * @j: 
- * @vx: 
- * @vy: 
- * 
- * draw the intersection of segment (vx[j-1],vy[j-1])->(vx[j],vy[j]) 
+ * @Xgc:
+ * @j:
+ * @vx:
+ * @vy:
+ *
+ * draw the intersection of segment (vx[j-1],vy[j-1])->(vx[j],vy[j])
  * with the clip_box;
  * knowing that the origin and destination points are out of the clip box.
- * FIXME: be sure that Xgc->graphic_engine->drawpolyline 
+ * FIXME: be sure that Xgc->graphic_engine->drawpolyline
  *        do not call clip_again
  **/
 
-static void draw_clipped(BCG *Xgc,int j, int *vx, int *vy,int xleft,int xright,int ybot,int ytop)
+static void draw_clipped(BCG *Xgc,int j, double *vx, double *vy, int xleft,int xright,int ybot,int ytop)
 {
-  int vxn[2],vyn[2],flag;
+  double vxn[2],vyn[2];
+  int flag;
   if ( j== 0) return;
   clip_line(vx[j-1],vy[j-1],vx[j],vy[j],&vxn[0],&vyn[0],&vxn[1],&vyn[1],&flag,
 	    xleft, xright, ybot,ytop);
   if ( flag != 0) Xgc->graphic_engine->drawpolyline(Xgc,vxn,vyn,2,0);
 }
 
-/* 
- *  returns the first (vx[.],vy[.]) point inside 
+/*
+ *  returns the first (vx[.],vy[.]) point inside
  *  xleft,xright,ybot,ytop bbox. begining at index ideb
- *  or zero if the whole polyline is out 
+ *  or zero if the whole polyline is out
  */
 
-static int first_in(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
+static int first_in(int n, int ideb, double *vx, double *vy, int xleft,int xright,int ybot,int ytop)
 {
   int i;
   for (i=ideb  ; i < n ; i++)
@@ -238,18 +237,18 @@ static int first_in(int n, int ideb, int *vx, int *vy, int xleft,int xright,int 
   return(-1);
 }
 
-/* 
+/*
  *  returns the first (vx[.],vy[.]) point outside
  *  xleft,xright,ybot,ytop bbox.
- *  or zero if the whole polyline is out 
+ *  or zero if the whole polyline is out
  */
 
-static int first_out(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
+static int first_out(int n, int ideb, double *vx, double *vy, int xleft,int xright,int ybot,int ytop)
 {
   int i;
   for (i=ideb  ; i < n ; i++)
     {
-      if ( vx[i]< xleft || vx[i]> xright  || vy[i] < ybot || vy[i] > ytop) 
+      if ( vx[i]< xleft || vx[i]> xright  || vy[i] < ybot || vy[i] > ytop)
 	{
 #ifdef DEBUG
 	  Sciprintf("first out %d->%d=(%d,%d)\n",ideb,i,vx[i],vy[i]);
@@ -262,77 +261,77 @@ static int first_out(int n, int ideb, int *vx, int *vy, int xleft,int xright,int
 
 /**
  * nsp_drawpolyline_clip:
- * @Xgc: 
- * @n: 
- * @vx: 
- * @vy: 
- * @onemore: 
- * 
- * can be used to draw a polyline clipped to 
+ * @Xgc:
+ * @n:
+ * @vx:
+ * @vy:
+ * @onemore:
+ *
+ * can be used to draw a polyline clipped to
  * be in a rectangle. It uses drawpolyline in the given @Xgc.
- * 
+ *
  **/
 
-void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy, int n,int *clip_box,int onemore)
-{ 
+void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box,int onemore)
+{
   int xleft=clip_box[0], xright=clip_box[1], ybot=clip_box[2], ytop=clip_box[3];
-  int iib,iif,ideb=0,vxl[2],vyl[2];
-#ifdef DEBUG 
+  int iib,iif,ideb=0;
+  double vxl[2],vyl[2];
+#ifdef DEBUG
   Sciprintf("inside analyze\n");
 #endif
-  while (1) 
-    { 
+  while (1)
+    {
       int j;
       iib=first_in(n,ideb,vx,vy, xleft, xright, ybot,ytop);
-      if (iib == -1) 
-	{ 
+      if (iib == -1)
+	{
 #ifdef DEBUG
 	  Sciprintf("[%d,end=%d] polyline is out\n",(int)ideb,(int)n);
-#endif 
-	  /* all points are out but segments can cross the box 
+#endif
+	  /* all points are out but segments can cross the box
 	   * we draw each intersected segments in a loop
 	   */
 	  for (j=ideb+1; j < n; j++) draw_clipped(Xgc,j,vx,vy , xleft, xright, ybot,ytop);
 	  break;
 	}
-      else 
+      else
 	{
-	  if ( iib - ideb > 1) 
+	  if ( iib - ideb > 1)
 	    {
-	      /* all points from ideb to iib -1 are out but segments can cross the box 
+	      /* all points from ideb to iib -1 are out but segments can cross the box
 	       * we draw each intersected segments in a loop
 	       */
 	      for (j=ideb+1; j < iib; j++) draw_clipped(Xgc,j,vx,vy, xleft, xright, ybot,ytop);
 	    };
 	}
       iif=first_out(n,iib,vx,vy,  xleft, xright, ybot,ytop);
-      if (iif == -1) 
+      if (iif == -1)
 	{
 	  /* special case the polyligne is totaly inside */
-	  if (iib == 0) 
+	  if (iib == 0)
 	    {
 	      Xgc->graphic_engine->drawpolyline(Xgc,vx,vy,n,onemore);
 	      /* no need to check the las segment here whe can return */
 	      return;
 	    }
-	  else 
+	  else
 	    {
 	      /* here the polyline is inside from iib to the end */
 	      MyDraw(Xgc,iib,n-1,vx,vy, xleft, xright, ybot,ytop);
-	    } 
-	  break; 
+	    }
+	  break;
 	}
 #ifdef DEBUG
       Sciprintf("Analysed : [%d,%d]\n",(int)iib,(int)iif);
-#endif 
+#endif
       MyDraw(Xgc,iib,iif,vx,vy, xleft, xright, ybot,ytop);
       ideb=iif;
     }
-  if (onemore == 1) 
+  if (onemore == 1)
     {
       /* The polyligne is closed we consider the closing segment */
       vxl[0]=vx[n-1];vxl[1]=vx[0];vyl[0]=vy[n-1];vyl[1]=vy[0];
       draw_clipped(Xgc,0,vxl,vyl, xleft, xright, ybot,ytop);
     }
 }
-

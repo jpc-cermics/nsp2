@@ -27,15 +27,15 @@
 #line 38 "codegen/points3d.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 extern Gengine GL_gengine;
-#endif 
+#endif
 
 
 #line 42 "points3d.c"
@@ -121,8 +121,8 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Points3d */
-  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
 
@@ -295,7 +295,7 @@ static NspPoints3d  *nsp_points3d_xdr_load(XDR *xdrs)
   if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
 #line 82 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+  if ( nsp_check_points3d(H)== FAIL) return NULL;
 
 #line 301 "points3d.c"
   return H;
@@ -514,7 +514,7 @@ NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord
   if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
 #line 82 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+  if ( nsp_check_points3d(H)== FAIL) return NULL;
 
 #line 520 "points3d.c"
   return H;
@@ -582,7 +582,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   if ( nsp_points3d_full_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 #line 82 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+  if ( nsp_check_points3d(H)== FAIL) return NULL;
 
 #line 588 "points3d.c"
   return H;
@@ -606,7 +606,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_points3d_check_values(H) == FAIL) return RET_BUG;
   #line 82 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
+  if ( nsp_check_points3d(H)== FAIL) return RET_BUG;
 
 #line 612 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -708,7 +708,7 @@ static AttrTab points3d_attrs[] = {
 
 extern function int_nspgraphic_extract;
 
-int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
@@ -720,7 +720,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
 
 extern function int_graphic_set_attribute;
 
-int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs) 
+int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
@@ -756,6 +756,10 @@ void Points3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = Points3d_func[i].name;
   *f = Points3d_func[i].fonc;
 }
+void nsp_initialize_Points3d_types(void)
+{
+  new_type_points3d(T_BASE);
+}
 
 #line 114 "codegen/points3d.override"
 
@@ -763,7 +767,7 @@ void Points3d_Interf_Info(int i, char **fname, function ( **f))
 
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int face; 
+  int face;
   if ( Obj->obj->show == FALSE ) return ;
 
   /*
@@ -773,37 +777,37 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
   */
 
-  if ( data != NULL &&  *((int *) data) < 0 ) 
+  if ( data != NULL &&  *((int *) data) < 0 )
     {
       nsp_check_points3d((NspPoints3d *) Obj);
       return;
     }
 
-#ifdef  WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+#ifdef  WITH_GTKGLEXT
+  if ( Xgc->graphic_engine == &GL_gengine )
     {
-      /* if we are using OpenGl we make a full draw of 
-       * object and return 
+      /* if we are using OpenGl we make a full draw of
+       * object and return
        */
       draw_points3d_ogl(Xgc,Obj);
-      nsp_ogl_set_2dview(Xgc); 
-      return; 
+      nsp_ogl_set_2dview(Xgc);
+      return;
     }
-#endif 
-  if ( data != NULL) 
+#endif
+  if ( data != NULL)
     {
       face = *((int *) data);
       draw_points3d_face(Xgc,Obj,face);
     }
-  else 
+  else
     {
       int i;
-      /* draw all the faces: this is not really used  
+      /* draw all the faces: this is not really used
        * since the face order is computed and sequenced in upper object.
        */
       nsp_points3d *L = ((NspPoints3d *) Obj)->obj;
       int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
-      for ( i= 0 ; i < npts-1; i++) 
+      for ( i= 0 ; i < npts-1; i++)
 	draw_points3d_face(Xgc,Obj,i);
     }
 }
@@ -823,7 +827,7 @@ static void nsp_scale_points3d(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of points3d 
+/* compute in bounds the enclosing rectangle of points3d
  *
  */
 
@@ -831,7 +835,7 @@ static void nsp_scale_points3d(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_points3d(NspGraphic *Obj,double *bounds)
 {
   int i,max;
-  /* this should be stored in a cache and recomputed when necessary 
+  /* this should be stored in a cache and recomputed when necessary
    *
    */
   nsp_points3d *Q= ((NspPoints3d *) Obj)->obj;
@@ -839,7 +843,7 @@ static int nsp_getbounds_points3d(NspGraphic *Obj,double *bounds)
   /* if qmax != -1 we ignore points after Q->max*/
   max = (Q->max >= 0 ) ? Q->max : Q->Mcoord->m;
   if ( max == 0) return FALSE;
-  for ( i = 0 ; i < Q->Mcoord->n ; i++) 
+  for ( i = 0 ; i < Q->Mcoord->n ; i++)
     nsp_gr_bounds_min_max(max,Q->Mcoord->R+i*Q->Mcoord->m,1,
 			  &bounds[2*i],&bounds[2*i+1]);
   return TRUE;
@@ -849,20 +853,20 @@ int nsp_check_points3d( NspPoints3d *Pt)
 {
   nsp_points3d *P = Pt->obj;
 
-  if ( P->Mcoord->n != 3 ) 
+  if ( P->Mcoord->n != 3 )
     {
       Scierror("Error: bad coord for points3d, second dimension should be 3\n");
       return FAIL;
     }
 
-  /* create extra data for qpos declared int* 
-   * Q->pos id only usefull for non opengl driver 
+  /* create extra data for qpos declared int*
+   * Q->pos id only usefull for non opengl driver
    */
   if ( P->pos == NULL) P->pos = malloc(P->Mcoord->m * sizeof(VisionPos));
   P->pos_length =P->Mcoord->m;
-  
+
   /* create extra data for Mcoord_l declared void* */
-  if ( P->Mcoord_l == NULL) 
+  if ( P->Mcoord_l == NULL)
     {
       P->Mcoord_l = nsp_matrix_create("local",'r',P->Mcoord->m, P->Mcoord->n);
     }
@@ -875,36 +879,36 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   int mark[2],current_mark[2],color=1;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   double * V_coord = ((NspMatrix *) V->Mcoord_l)->R;
-  int x, y; 
+  double x, y;
   x = XScale(Xgc->scales,V_coord[j]);
   y = YScale(Xgc->scales,V_coord[j+V->Mcoord->m]);
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
   mark[0]= ( V->mark_type < 0 ) ? current_mark[0] : V->mark_type;
   mark[1]= ( V->mark_size < 0 ) ? current_mark[1] : V->mark_size;
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
-  if ( V->color != -1 ) 
+  if ( V->color != -1 )
     {
       color = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->xset_pattern(Xgc,  V->color ); 
+      Xgc->graphic_engine->xset_pattern(Xgc,  V->color );
     }
   Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
-  if ( V->color != -1 ) 
+  if ( V->color != -1 )
     {
       Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
 }
 
-/* A revoir car en procedant comme cela les 
- * marques n'utilisent pas le zbuffer des 
+/* A revoir car en procedant comme cela les
+ * marques n'utilisent pas le zbuffer des
  * parties cachées. Il faut un drapolymark3d.
  */
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
-#endif 
+#endif
 
-#ifdef  WITH_GTKGLEXT 
+#ifdef  WITH_GTKGLEXT
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
   int mark[2],current_mark[2],color=0;
@@ -914,26 +918,26 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   double * V_coord = ((NspMatrix *) V->Mcoord)->R;
 
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
-  if ( V->color != -1 ) 
+  if ( V->color != -1 )
     {
       color = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->xset_pattern(Xgc,  V->color ); 
+      Xgc->graphic_engine->xset_pattern(Xgc,  V->color );
     }
   mark[0]= ( V->mark_type < 0 ) ? current_mark[0] : V->mark_type;
   mark[1]= ( V->mark_size < 0 ) ? current_mark[1] : V->mark_size;
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
-  for ( j = 0 ; j < npts ; j++) 
+  for ( j = 0 ; j < npts ; j++)
     {
-#if 0 
+#if 0
       int x,y;
       double Tp[3];
-#endif 
+#endif
       double Vp[3];
       Vp[0] = V_coord[j];
       Vp[1] = V_coord[j+V->Mcoord->m];
       Vp[2] = V_coord[j+2*V->Mcoord->m];
-#if 0      
-      apply_transforms_new1(Xgc,Tp,Vp,V->pos,lim,1); 
+#if 0
+      apply_transforms_new1(Xgc,Tp,Vp,V->pos,lim,1);
       Tp[0] = XScale(Xgc->scales,Tp[0]);
       Tp[1] = YScale(Xgc->scales,Tp[1]);
       nsp_ogl_set_2dview(Xgc);
@@ -941,17 +945,17 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       y = Tp[1];
       Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
       nsp_ogl_set_3dview(Xgc);
-#else 
+#else
       drawpolymark3D(Xgc,&Vp[0],&Vp[1],&Vp[2],1);
-#endif 
+#endif
     }
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
-  if ( V->color != -1 ) 
+  if ( V->color != -1 )
     {
       Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
 }
-#endif 
+#endif
 
 static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *n, int k)
 {
@@ -962,10 +966,10 @@ static void zmean_faces_for_Points3d(void *Obj, double z[], HFstruct HF[], int *
   for ( j = 0 ; j < npts ; j++)
     if (V->pos[j] == VIN)
       {
-	z[*n] = V_coord[j+2*V->Mcoord->m]; 
-	HF[*n].num_obj = k; 
+	z[*n] = V_coord[j+2*V->Mcoord->m];
+	HF[*n].num_obj = k;
 	HF[*n].num_in_obj = j;
-	(*n)++; 
+	(*n)++;
       }
 }
 
@@ -991,9 +995,9 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-/* increases the number of points of the polyline 
- * Note that its possible to draw a polyline without 
- * including all points by locally changing L->Mcoord->m 
+/* increases the number of points of the polyline
+ * Note that its possible to draw a polyline without
+ * including all points by locally changing L->Mcoord->m
  */
 
 extern int nsp_points3d_add_pts(NspGraphic *P,int k)
@@ -1012,24 +1016,24 @@ extern int nsp_points3d_add_pts(NspGraphic *P,int k)
       return FAIL;
     }
 
-  /* create extra data for qpos declared int* 
-   * Q->pos id only usefull for non opengl driver 
+  /* create extra data for qpos declared int*
+   * Q->pos id only usefull for non opengl driver
    */
-  if ( L->pos == NULL) 
+  if ( L->pos == NULL)
     L->pos = malloc( L->Mcoord->m * sizeof(VisionPos));
-  else 
+  else
     {
       void *old=L->pos;
       L->pos = malloc(L->Mcoord->m * sizeof(VisionPos));
-      if ( L->pos == NULL) 
+      if ( L->pos == NULL)
 	{
 	  Scierror("Failed to allocate points in a polyline3d\n");
 	  return FAIL;
 	}
       FREE(old);
     }
-  
+
   return OK;
 }
 
-#line 1036 "points3d.c"
+#line 1040 "points3d.c"

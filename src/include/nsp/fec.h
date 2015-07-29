@@ -108,9 +108,9 @@ extern int nsp_fec_xdr_save(XDR  *xdrs, NspFec *M);
 
 extern BCG *nsp_check_graphic_context(void);
 extern void PermutOfSort (const int *tab, int *perm);
-extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy,
 			   const int *zxy, const double *zlevel,const int *fill);
-extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy,
 			  const int *zxy, const double *zlevel,const int *fill);
 
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,

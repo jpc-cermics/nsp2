@@ -1476,6 +1476,10 @@ void Axes_Interf_Info(int i, char **fname, function ( **f))
   *fname = Axes_func[i].name;
   *f = Axes_func[i].fonc;
 }
+void nsp_initialize_Axes_types(void)
+{
+  new_type_axes(T_BASE);
+}
 
 #line 202 "codegen/axes.override"
 
@@ -2426,9 +2430,9 @@ void nsp_axes_invalidate(NspGraphic *G)
 
 void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colminmax)
 {
-  double grads[20], axrect[4], hr;
-  int ntags,start, rect[4],color,i,cpat, wdim[2];
-  int nb_colors, rrect[4];
+  double grads[20], axrect[4], hr, rect[4], rrect[4];
+  int ntags,start, color,i,cpat, wdim[2];
+  int nb_colors;
   int last = Xgc->graphic_engine->xget_last(Xgc);
   int clip[5];
   GdkRectangle rclip;
@@ -2481,7 +2485,7 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
 
   for ( i = 0 ; i < ntags ; i++ )
     {
-      int srect[4];
+      double srect[4];
       int y;
       double uval;
       char str[256];
@@ -2521,4 +2525,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2525 "axes.c"
+#line 2529 "axes.c"
