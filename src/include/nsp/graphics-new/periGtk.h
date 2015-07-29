@@ -365,7 +365,7 @@ extern void change_camera(BCG *Xgc,const double *val);
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_fonts_finalize(BCG *Xgc);
 static void nsp_fonts_initialize(BCG *Xgc);
-static void draw_mark(BCG *Xgc,int *x, int *y);
+static void draw_mark(BCG *Xgc,double *x, double *y);
 static void pixmap_clear_rect(BCG *Xgc,int x,int y,int w,int h);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin,int iflag,

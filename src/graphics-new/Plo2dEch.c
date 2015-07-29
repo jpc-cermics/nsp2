@@ -133,6 +133,66 @@ int scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int
   return n;
 }
 
+/* same as scale_f2i but do not cast to int 
+ */
+
+int scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n)
+{
+  double xd,yd;
+  int i;
+  if (scales->logflag[0] == 'n' )
+    {
+      if (scales->logflag[1] == 'n')
+	{
+	  for ( i=0 ; i < n  ; i++)
+	    {
+	      if (isinf(y[i]) || ISNAN(y[i])) return i;
+	      xd = XScaleR_d(scales,x[i],y[i]);
+	      yd = YScaleR_d(scales,x[i],y[i]);
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+      else
+	{
+	  for ( i=0 ; i < n  ; i++)
+	    {
+	      if (isinf(y[i]) || ISNAN(y[i])) return i;
+	      xd = XScaleR_d(scales,x[i],log10(y[i]));
+	      yd = YScaleR_d(scales,x[i],log10(y[i]));
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+    }
+  else
+    {
+      if (scales->logflag[1] == 'n')
+	{
+	  for ( i=0 ; i < n  ; i++)
+	    {
+	      if (isinf(y[i]) || ISNAN(y[i])) return i;
+	      xd = XScaleR_d(scales,log10(x[i]),y[i]);
+	      yd = YScaleR_d(scales,log10(x[i]),y[i]);
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+      else
+	{
+	  for ( i=0 ; i < n  ; i++)
+	    {
+	      if (isinf(y[i]) || ISNAN(y[i])) return i;
+	      xd = XScaleR_d(scales,log10(x[i]),log10(y[i]));
+	      yd = YScaleR_d(scales,log10(x[i]),log10(y[i]));
+	      x1[i]= Min(Max(-int16max,xd),int16max);
+	      y1[i]= Min(Max(-int16max,yd),int16max);
+	    }
+	}
+    }
+  return n;
+}
+
 void scale_i2f(nsp_gcscale *scales, double x[], double y[],const int x1[],const int y1[],int n)
 {
   int i;
@@ -177,6 +237,37 @@ void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, c
  */
 
 void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n)
+{
+  int i;
+  /** double to int (pixel) direction **/
+  for ( i=0 ; i < n ; i= i+4)
+    {
+      if ( scales->logflag[0] == 'n' )
+	{
+	  x1[i]=  XScale(scales,x[i]);
+	  /* x1[i+2]=inint( scales->Wscx1*( x[i+2])); */
+	  x1[i+2]= XScale(scales,x[i]+x[i+2]) -x1[i];
+	}
+      else
+	{
+	  x1[i]= XLogScale(scales,x[i]);
+	  x1[i+2]=inint( scales->Wscx1*(log10((x[i]+x[i+2])/x[i])));
+	}
+      if ( scales->logflag[1] == 'n' )
+	{
+	  x1[i+1]= YScale(scales,x[i+1]);
+	  /* x1[i+3]=inint( scales->Wscy1*( x[i+3]));*/
+	  x1[i+3]= YScale(scales,x[i+1]-x[i+3]) - x1[i+1];
+	}
+      else
+	{
+	  x1[i+1]= YLogScale(scales,x[i+1]);
+	  x1[i+3]=inint( scales->Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3]))));
+	}
+    }
+}
+
+void rect2d_double_to_pixels(nsp_gcscale *scales,const double x[], double x1[], int n)
 {
   int i;
   /** double to int (pixel) direction **/

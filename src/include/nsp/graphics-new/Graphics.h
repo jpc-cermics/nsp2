@@ -158,6 +158,10 @@ extern void axis2d  (nsp_gcscale *scales,double *,double *,double *,int *,double
 extern void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n);
 extern void scale_i2f(nsp_gcscale *scales, double x[], double y[],const int x1[],const int y1[],int n);
 extern int  scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int y1[],int n);
+
+extern int  scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int y1[],int n);
+extern int scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n);
+
 extern void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, const int *y1, int n);
 extern void length_scale_f2i(nsp_gcscale *scales,const double *x,const double *y, int *x1, int *y1, int n);
 extern void scale_f2wrect(nsp_gcscale *scales,const double x[],double x1[]);

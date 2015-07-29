@@ -241,7 +241,7 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
  * style and thickness can be scalars or vectors 
  */
 
-static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *color, int *width)
+static void drawsegments_gen(BCG *Xgc, double *vx, double *vy, int n, int *color, int *width)
 {
   int i;
   if ( color != NULL) 
@@ -287,7 +287,7 @@ static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *color, int 
  * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
-static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
+static void drawarrows_gen(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
   int dash,color,i,lstyle,polyx[4],polyy[4];
   double cos20=cos(20.0*M_PI/180.0), sin20=sin(20.0*M_PI/180.0);
@@ -334,7 +334,7 @@ static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
-static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, int n)
+static void drawrectangles_gen(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
   int i,dash,color;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
@@ -369,7 +369,7 @@ static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, in
  * drawvect[i] >  0 use a line style for polyline i
  */
 
-static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
+static void drawpolylines_gen(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect,int n, int p)
 {
   const int close =0;
   int symb[2],dash,color,i;
@@ -412,7 +412,7 @@ static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,i
  *
  */
 
-static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
+static void fillpolylines_gen(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
@@ -453,7 +453,7 @@ static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,i
  * caution : angle=degreangle*64
  */
 
-static void drawarcs_gen(BCG *Xgc, int *vects, int *style, int n)
+static void drawarcs_gen(BCG *Xgc, double *vects, int *style, int n)
 {
   int dash,color,i;
   /* store the current values */
@@ -482,7 +482,7 @@ static void drawarcs_gen(BCG *Xgc, int *vects, int *style, int n)
  * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n)
+static void fillarcs_gen(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   int i,cpat;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -569,7 +569,7 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
 
 
 
-static void drawarc_gen(BCG *Xgc,int arc[])
+static void drawarc_gen(BCG *Xgc, double arc[])
 {
   int vx[365],vy[365],k,n;
   double alpha,fact=0.01745329251994330,w,h;
@@ -585,7 +585,7 @@ static void drawarc_gen(BCG *Xgc,int arc[])
   Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n, close);
 }
 
-static void fillarc_gen( BCG *Xgc,int arc[])
+static void fillarc_gen( BCG *Xgc, double arc[])
 {
   int vx[365],vy[365],k,close = 1;
   double alpha,fact=0.01745329251994330;

@@ -73,6 +73,10 @@ extern const char *nsp_get_extension(const char *name);
 extern BCG *nsp_check_graphic_context(void);
 extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
+extern int nsp_contour_if_new(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2,
+			      int *flagnz, int *nz, double *zz, int *style);
+extern int nsp_get_level_curves_new(double **x, double **y, int *mm, int *n);
+
 static int nsp_graphic_demo (const char *fname,const char *code,int flag) ;
 static void  nsp_gwin_clear(void);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);

@@ -38,7 +38,7 @@
 extern char *nsp_getenv (const char *name);
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
-static void WriteGeneric(char *string, int nobj, int sizeobj, const int *vx,const  int *vy, int sizev, int flag, const int *fvect);
+static void WriteGeneric(char *string, int nobj, int sizeobj, const double *vx,const double *vy, int sizev, int flag, const int *fvect);
 static void set_c_Pos(BCG *Xgc,int i);
 /* static void idfromname (char *name1, int *num); */
 static double ascentPos(BCG *Xgc);
@@ -888,7 +888,7 @@ static void pixmap_resize(BCG *Xgc)
   around the string.}
   -----------------------------------------------------*/
 
-static void displaystring(BCG *Xgc,const char *string, int x, int y, int flag, double angle,
+static void displaystring(BCG *Xgc,const char *string, double x, double y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
   int i,rect[4] ;
@@ -1137,7 +1137,7 @@ static double ascentPos(BCG *Xgc)
 
 /* Draw a single line in current style */
 
-static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
+static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2)
 {
   FPRINTF((file,"\n %d %d %d %d L",xx1,yy1,x2,y2));
 }
@@ -1148,7 +1148,7 @@ static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
  * XXX must take care of width
  */
 
-static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *width)
+static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, int *width)
 {
   int dash,color,i;
   xget_dash_and_color(Xgc,&dash,&color);
@@ -1173,7 +1173,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int *widt
 
 /* Draw a set of arrows */
 
-static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
+static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
   int dash,color;
   xget_dash_and_color(Xgc,&dash,&color);
@@ -1206,7 +1206,7 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
  *  fillvect[*n] : specify the action (see periX11.c)
  */
 
-static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
+static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
   int cpat =  xget_pattern(Xgc);
   WriteGeneric("drawbox",n,(int)4L,vects,vects,4*n,(int)0L,fillvect);
@@ -1215,8 +1215,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 /* Draw one rectangle **/
 
-
-static void drawrectangle(BCG *Xgc,const int rect[])
+static void drawrectangle(BCG *Xgc,const double rect[])
 {
   int fvect= 0;
   drawrectangles(Xgc,rect,&fvect,1);
@@ -1224,7 +1223,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 
 /** Draw a filled rectangle **/
 
-static void fillrectangle(BCG *Xgc,const int rect[])
+static void fillrectangle(BCG *Xgc,const double rect[])
 {
   int cpat = xget_pattern(Xgc);
   drawrectangles(Xgc,rect,&cpat,1);
@@ -1265,7 +1264,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 /** fillvect[*n] : specify the action <?> **/
 /** caution angle=degreangle*64          **/
 
-static void fillarcs(BCG *Xgc, int *vects, int *fillvect, int n)
+static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   int cpat =  xget_pattern(Xgc);
   WriteGeneric("fillarc",n,(int)6L,vects,vects,6*n,(int)0L,fillvect);
@@ -1279,7 +1278,7 @@ static void fillarcs(BCG *Xgc, int *vects, int *fillvect, int n)
 /** angle1,angle2 specifies the portion of the ellipsis **/
 /** caution : angle=degreangle*64          **/
 
-static void drawarcs( BCG *Xgc,int *vects, int *style, int n)
+static void drawarcs( BCG *Xgc, double *vects, int *style, int n)
 {
   int i,dash,color;
   /* store the current values */
@@ -1301,7 +1300,7 @@ static void drawarcs( BCG *Xgc,int *vects, int *style, int n)
 /** Draw a single ellipsis or part of it **/
 /** caution angle=degreAngle*64          **/
 
-static void drawarc(BCG *Xgc,int arc[])
+static void drawarc(BCG *Xgc, double arc[])
 {
   int fvect;
   /** fvect set to tell that we only want to draw not to fill  */
@@ -1312,7 +1311,7 @@ static void drawarc(BCG *Xgc,int arc[])
 /** Fill a single elipsis or part of it **/
 /** with current pattern **/
 
-static void fillarc(BCG *Xgc, int arc[])
+static void fillarc(BCG *Xgc, double arc[])
 {
   int cpat= xget_pattern(Xgc);
   fillarcs(Xgc,arc,&cpat,1);
@@ -1327,7 +1326,7 @@ static void fillarc(BCG *Xgc, int arc[])
 /** drawvect[i] >= use a mark for polyline i **/
 /** drawvect[i] < 0 use a line style for polyline i **/
 
-static void drawpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *drawvect, int n, int p)
+static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect, int n, int p)
 {
   int symb[2],i,dash,color;
   /* get the current values */
@@ -1362,7 +1361,7 @@ static void drawpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *drawvect, int
  if fillvect[i] < 0  fill with pattern - fillvect[i]
 **************************************************************/
 
-static void fillpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *fillvect, int n, int p)
+static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect, int n, int p)
 {
   int cpat;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
@@ -1376,7 +1375,7 @@ static void fillpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *fillvect, int
 /** Only draw one polygon with current line style **/
 /** according to *closeflag : it's a polyline or a polygon **/
 
-static void drawpolyline( BCG *Xgc, int *vx, int *vy, int n,int closeflag)
+static void drawpolyline( BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 {
   int fvect=0;
   if (closeflag == 1 )
@@ -1388,7 +1387,7 @@ static void drawpolyline( BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 /** Fill the polygon **/
 
-static void fillpolyline(BCG *Xgc,  int *vx, int *vy,int n, int closeflag)
+static void fillpolyline(BCG *Xgc, double *vx, double *vy,int n, int closeflag)
 {
   int cpat = xget_pattern(Xgc);
   /** just fill  ==> cpat < 0 **/
@@ -1399,7 +1398,7 @@ static void fillpolyline(BCG *Xgc,  int *vx, int *vy,int n, int closeflag)
 /** Draw a set of  current mark centred at points defined **/
 /** by vx and vy (vx[i],vy[i]) **/
 
-static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
+static void drawpolymark( BCG *Xgc, double *vx, double *vy, int n)
 {
   int keepid,keepsize,i=1,sz=Xgc->CurHardSymbSize;
   keepid =  Xgc->fontId;
@@ -1573,8 +1572,8 @@ static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, 
 #define PERLINE 20
 #define FORMATNUM "%d "
 
-static void WriteGeneric(char *string, int nobj, int sizeobj,const  int *vx,
-			 const int *vy, int sizev, int flag,const  int *fvect)
+static void WriteGeneric(char *string, int nobj, int sizeobj,const double *vx,
+			 const double *vy, int sizev, int flag,const  int *fvect)
 {
   int nobjpos,objbeg;
   objbeg= 0 ;

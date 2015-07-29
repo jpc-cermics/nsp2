@@ -27,8 +27,7 @@
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #define PERIGL
-#include "nsp/graphics-new/periGtk.h"
-/* seams defined on WIN32 with gtkglext */
+#include <nsp/graphics-new/periGtk.h>
 #endif 
 
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,

@@ -21,29 +21,31 @@ typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],co
 					 int remap,const int *colminmax,const double *zminmax,const int *colout);
 typedef void driver_fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 					  int remap,const int *colminmax,const double *zminmax);
+
 typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y, int *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
 typedef void driver_displaynumbers( BCG *gc,int *x, int *y, int n, int flag, double *z, double *alpha);
-typedef void driver_displaystring( BCG *gc,const char *string, int x, int y, int flag, double angle,
-				   gr_str_posx posx, gr_str_posy posy);
-typedef void driver_drawarc( BCG *gc, int arc[]);
-typedef void driver_drawarcs( BCG *gc, int *vects, int *style, int n);
-typedef void driver_drawarrows( BCG *gc,int *vx, int *vy, int n, int as, int *style, int iflag);
+typedef void driver_drawpolyline_clip( BCG *gc, int *vx, int *vy, int n,int *clip_box,int closeflag);
+
+typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
+typedef void driver_drawarc( BCG *gc, double arc[]);
+typedef void driver_drawarcs( BCG *gc, double *vects, int *style, int n);
+typedef void driver_drawarrows( BCG *gc,double *vx, double *vy, int n, int as, int *style, int iflag);
 typedef void driver_drawaxis( BCG *gc, int alpha, int *nsteps,  int *initpoint, double *size);
-typedef void driver_drawpolyline( BCG *gc,  int *vx, int *vy, int n,int closeflag);
-typedef void driver_drawpolyline_clip( BCG *gc,  int *vx, int *vy, int n,int *clip_box,int closeflag);
-typedef void driver_drawpolylines( BCG *gc, int *vectsx, int *vectsy, int *drawvect, int n, int p);
-typedef void driver_drawpolymark( BCG *gc,  int *vx, int *vy,int n);
-typedef void driver_drawrectangle( BCG *gc,const int rect[]);
-typedef void driver_drawrectangles( BCG *gc,const int *vects,const int *fillvect, int n);
-typedef void driver_drawsegments( BCG *gc,int *vx, int *vy, int n, int *color, int *width);
-typedef void driver_drawline(BCG *Xgc,int x1, int yy1, int x2, int y2);
-typedef void driver_fillarc( BCG *gc, int arc[]);
-typedef void driver_fillarcs( BCG *gc, int *vects, int *fillvect, int n);
-typedef void driver_fillpolyline( BCG *gc,  int *vx, int *vy,int n, int closeflag);
-typedef void driver_fillpolylines( BCG *gc, int *vectsx, int *vectsy, int *fillvect, int n, int p);
-typedef void driver_fillrectangle( BCG *gc,const int rect[]);
+typedef void driver_drawpolyline( BCG *gc,  double *vx, double *vy, int n,int closeflag);
+typedef void driver_drawpolylines( BCG *gc, double *vectsx, double *vectsy, int *drawvect, int n, int p);
+typedef void driver_drawpolymark( BCG *gc,  double *vx, double *vy,int n);
+typedef void driver_drawrectangle( BCG *gc,const double rect[]);
+typedef void driver_drawrectangles( BCG *gc,const double *vects,const int *fillvect, int n);
+typedef void driver_drawsegments( BCG *gc, double *vx, double *vy, int n, int *color, int *width);
+typedef void driver_drawline(BCG *Xgc, double x1, double yy1, double x2, double y2);
+typedef void driver_fillarc( BCG *gc, double arc[]);
+typedef void driver_fillarcs( BCG *gc, double *vects, int *fillvect, int n);
+typedef void driver_fillpolyline( BCG *gc,  double *vx, double *vy,int n, int closeflag);
+typedef void driver_fillpolylines( BCG *gc, double *vectsx, double *vectsy, int *fillvect, int n, int p);
+typedef void driver_fillrectangle( BCG *gc,const double rect[]);
+
 typedef void driver_window_list_get_ids(int *Num,int ids[],int flag); 
 typedef void *driver_initgraphic(const char *string,int *num,int *wdim,int *wpdim,double *viewport_pos,
 				 int *wpos,char mode,void *data,void *Fig);

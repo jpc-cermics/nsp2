@@ -79,7 +79,7 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
  * line segments arrows
  */
 
-static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
+static void drawline(BCG *Xgc,double x1, double yy1, double x2, double y2)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_move_to(cr,x1,yy1);
@@ -93,7 +93,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
  * n is the size of vx and vy
  */
 
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *width)
+static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, int *width)
 {
   /* cairo_t *cr =  Xgc->private->cairo_cr; */
   /* test */
@@ -109,7 +109,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *wid
  * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
-static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
+static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
@@ -128,14 +128,14 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
-static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
+static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
 /* Draw one rectangle with current line style */
 
-static void drawrectangle(BCG *Xgc,const int rect[])
+static void drawrectangle(BCG *Xgc,const double rect[])
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
@@ -144,7 +144,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 
 /* fill one rectangle, with current pattern */
 
-static void fillrectangle(BCG *Xgc,const int rect[])
+static void fillrectangle(BCG *Xgc,const double rect[])
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
@@ -195,7 +195,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
+static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
@@ -209,14 +209,14 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
  * caution : angle=degreangle*64
  */
 
-static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
+static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
 /* Draw or Fill a single ellipsis or part of it */
 
-static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
+static void _draw_fill_arc(BCG *Xgc, double arc[], int flag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   double xc, yc, /* radius,*/ angle1, angle2;
@@ -246,14 +246,14 @@ static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
 
 /* Draw a single ellipsis or part of it */
 
-static void drawarc(BCG *Xgc,int arc[])
+static void drawarc(BCG *Xgc, double arc[])
 {
   _draw_fill_arc(Xgc,arc,FALSE);
 }
 
 /* Fill a single elipsis or part of it with current pattern */
 
-static void fillarc(BCG *Xgc,int arc[])
+static void fillarc(BCG *Xgc, double arc[])
 {
   _draw_fill_arc(Xgc,arc,TRUE);
 }
@@ -265,7 +265,7 @@ static void fillarc(BCG *Xgc,int arc[])
  * drawvect[i] >  0 use a line style for polyline i
  */
 
-static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
+static void drawpolylines(BCG *Xgc,double *vectsx, double *vectsy, int *drawvect,int n, int p)
 {
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
@@ -281,12 +281,10 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  */
 
-static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, int color );
+static void filldrawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag, int color );
 
-static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
+static void fillpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *fillvect,int n, int p)
 {
-
-  /* Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p); */
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -323,7 +321,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
  * n is the number of points of the polyline
  */
 
-static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
+static void drawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -350,7 +348,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
  * according to *closeflag : the given vector is a polyline or a polygon
  */
 
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
+static void fillpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -370,7 +368,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
     }
 }
 
-static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, int color )
+static void filldrawpolyline(BCG *Xgc, double *vx, double *vy, int n,int closeflag, int color )
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -398,9 +396,8 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
  * by vx and vy (vx[i],vy[i])
  */
 
-static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
+static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
 {
-
   if ( Xgc->CurHardSymb == 0 )
     {
       /* XXXX
@@ -462,7 +459,7 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
  *
  */
 
-static void draw_mark(BCG *Xgc,int *x, int *y)
+static void draw_mark(BCG *Xgc,double *x, double *y)
 {
   double dx,dy;
   PangoRectangle ink_rect;
@@ -489,7 +486,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 
 
 
-static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
+static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag,double angle,
 			  gr_str_posx posx, gr_str_posy posy )
 {
   PangoRectangle ink_rect,logical_rect;
