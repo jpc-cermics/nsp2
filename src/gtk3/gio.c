@@ -1545,7 +1545,7 @@ NspGActionMap *gactionmap_copy(NspGActionMap *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 134 "codegen-3.0/gio.override"
+#line 132 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -1630,16 +1630,14 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   for (i=0; i < entries->m; i++)
     {
       action_entry.name = entries->S[i];
-      if (entries->S[i+entries->m][0] != '\0' )
-	action_entry.parameter_type = entries->S[i+entries->m];
-      if (entries->S[i+entries->m*2][0] != '\0' )
-	action_entry.state = entries->S[i+entries->m*2];
+      action_entry.parameter_type = (entries->S[i+entries->m][0] != '\0' ) ? entries->S[i+entries->m]: NULL;
+      action_entry.state = (entries->S[i+entries->m*2][0] != '\0' ) ? entries->S[i+entries->m*2]: NULL;
       g_action_map_add_action_entries(G_ACTION_MAP(self->obj),&action_entry,1,NULL);
     }
   return 0;
 }
 
-#line 1643 "gio.c"
+#line 1641 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -13352,7 +13350,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13356 "gio.c"
+#line 13354 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -13377,7 +13375,7 @@ int _wrap_g_menu_model_iterate_item_links(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
-#line 102 "codegen-3.0/gio.override"
+#line 100 "codegen-3.0/gio.override"
 
 /* XXX we want to return the most specialized type
  * i.e use nspgobject_new and not gobject_create
@@ -13408,7 +13406,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13412 "gio.c"
+#line 13410 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -27293,7 +27291,7 @@ int _wrap_g_application_id_is_valid(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 165 "codegen-3.0/gio.override"
+#line 163 "codegen-3.0/gio.override"
 /* XXX we want to return the most specialized type */
 
 int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g_application_get_default */
@@ -27307,7 +27305,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27311 "gio.c"
+#line 27309 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28276,4 +28274,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 28280 "gio.c"
+#line 28278 "gio.c"

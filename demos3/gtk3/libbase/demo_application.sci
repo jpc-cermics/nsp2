@@ -48,33 +48,37 @@ function activate_radio (action, parameter, user_data)
 endfunction
 
 function activate_about (action,parameter, user_data)
-  pause xxx
-  window = user_data(1);
+  window = user_data;
 
-  authors[] = ["Peter Mattis",
-	       "Spencer Kimball",
-	       "Josh MacDonald",
-	       "and many more..."];
-  documentors[] = ["Owen Taylor",
-		   "Tony Gale",
-		   "Matthias Clasen <mclasen@redhat.com>",
-		   "and many more..."];
-  gtk_show_about_dialog (window,
-                         "program-name", "GTK+ Code Demos",
-                         "version", g_strdup_printf ("%s,\nRunning against GTK+ %d.%d.%d",
-                                                     PACKAGE_VERSION,
-                                                     gtk_get_major_version (),
-                                                     gtk_get_minor_version (),
-                                                     gtk_get_micro_version ()),
-                         "copyright", "(C) 1997-2013 The GTK+ Team",
-                         "license-type", GTK.LICENSE_LGPL_2_1,
-                         "website", "http://www.gtk.org",
-                         "comments", "Program to demonstrate GTK+ functions.",
-                         "authors", authors,
-                         "documenters", documentors,
-                         "logo-icon-name", "gtk3-demo",
-                         "title", "About GTK+ Code Demos",
-                         NULL);
+  authors = ["Peter Mattis",
+	     "Spencer Kimball",
+	     "Josh MacDonald",
+	     "and many more..."];
+  documentors = ["Owen Taylor",
+		 "Tony Gale",
+		 "Matthias Clasen <mclasen@redhat.com>",
+		 "and many more..."];
+
+  // gtk_show_about_dialog: to be done
+  about = gtk_about_dialog_new();
+  about.set_program_name["GTK+ Code Demos"];
+  
+  version = sprintf("Running against GTK+ %d.%d.%d", gtk_get_major_version (),...
+		    gtk_get_minor_version (),...
+		    gtk_get_micro_version ());
+  about.set_version[version];
+  about.set_copyright["(C) 1997-2015 The GTK+ Team"];
+  about.set_license_type[GTK.LICENSE_LGPL_2_1];
+  about.set_website["http://www.gtk.org"];
+  about.set_comments["Program to demonstrate GTK+ functions."];
+  // XXX about.set_authors[authors];
+  // XXX about.set_documenters[documentors];
+  // XXX about.set_logo_icon_name["gtk3-demo"];
+  about.set_title[ "About GTK+ Code Demos"];
+  
+  about.show[];
+  response = about.run[];
+  about.destroy[];
 endfunction
 
 function activate_quit (action, parameter, user_data)
@@ -147,6 +151,7 @@ function activate (app)
 
   win_entries = { "titlebar", activate_toggle, "", "false", change_titlebar_state,
 		  "shape", activate_radio, "s", "''oval''", change_radio_state,
+		  "color", activate_radio, "s", "''oval''", change_radio_state,
 		  "bold", activate_toggle, "", "false", "",
 		  "about", activate_about, "", "", "" ,
 		  "file1", activate_action, "", "", "",
@@ -167,8 +172,9 @@ function activate (app)
     if ~(type(win_entries{i,4},'short')== 's') then
       action.connect['change_state',win_entries{i,4}, window];
     end
+    action.set_enabled[%t];
   end
-
+  
   uiapp = getenv("NSP")+"/demos3/gtk3/libbase/application.ui";
   builder = gtk_builder_new_from_file(uiapp);
   //builder = gtk_builder_new ();
@@ -228,7 +234,8 @@ function []=demo_application()
       action.connect['change_state',app_entries{i,4}, app];
     end
   end
-  
+
+  // XXX how to connect the color action ? 
   action = settings.create_action["color"];
   app.add_action[action];
   
