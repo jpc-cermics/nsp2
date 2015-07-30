@@ -805,7 +805,7 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
 static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
 {
   NspPList  *callback;
-  NspList *extra_args = NULL;
+  NspObject *extra_args = NULL;
   gchar *name;
   guint handlerid, sigid;
   GQuark detail = 0;
@@ -814,24 +814,27 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
   CheckRhs(2,3);
   CheckLhs(1,1);
   if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;
-  /*Need a GetFunction here XXXXXX **/
+  /* Need a GetFunction here XXXXXX */
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
-  /*extra arguments **/
   if ( rhs == 3 )
     {
-      if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
+      /* extra arguments: can be any object */
+#if 1 
+      if (( extra_args = nsp_object_copy_and_name("m",nsp_get_object(stack,3)))== NULL) return RET_BUG;
+#else 
+      if (( extra_args =(NspObject *) GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
+#endif 
     }
 
   if (!g_signal_parse_name(name, G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE)) {
     Scierror("connect: unknown signal name (%s)\n",name);
     return RET_BUG;
   }
-  closure = nspg_closure_new(callback, extra_args, NULL);
+  closure = nspg_closure_new(callback, (NspList *) extra_args, NULL);
   nspgobject_watch_closure((NspObject *)self, closure);
-  handlerid = g_signal_connect_closure_by_id(self->obj, sigid, detail,
-					     closure, flag);
+  handlerid = g_signal_connect_closure_by_id(self->obj, sigid, detail, closure, flag);
   if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG;
   return 1;
 }
@@ -847,7 +850,10 @@ static int nspgobject_connect_after(NspGObject *self, Stack stack,int rhs,int op
   return nspgobject_connect_general(self, stack, rhs,opt, lhs,TRUE);
 }
 
-
+/* 
+ *
+ */
+#if 0
 static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
 {
   NspPList *callback;
@@ -862,16 +868,16 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   CheckLhs(1,1);
 
   if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;
-  /*Need a GetFunction here XXXXXX **/
+  /* Need a GetFunction here XXXXXX */
   if (( callback =GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
-  if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
+  if (( nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
   if (( object  =nsp_get_object_copy(stack,3)) == NULLOBJ ) return RET_BUG;
-  if ((nsp_object_set_name((NspObject *) object,"o")== FAIL)) return RET_BUG;
-  /*list of extra arguments **/
+  if (( nsp_object_set_name((NspObject *) object,"o")== FAIL)) return RET_BUG;
+  /* list of extra arguments */
   if ( rhs == 4 )
     {
       if (( extra_args =  GetListCopy(stack,4)) == NULLLIST ) return RET_BUG;
-      if ((nsp_object_set_name((NspObject *) extra_args,"m")== FAIL)) return RET_BUG;
+      if (( nsp_object_set_name((NspObject *) extra_args,"m")== FAIL)) return RET_BUG;
     }
   if (!g_signal_parse_name(name,G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE))
     {
@@ -884,17 +890,18 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   if ( nsp_move_double(stack,1,(double) handlerid)== FAIL) return RET_BUG;
   return 1;
 }
+#endif 
 
 static int
 nspgobject_connect_object(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
-  return nspgobject_connect_object_general(self, stack, rhs,opt, lhs,FALSE);
+  return nspgobject_connect_general(self, stack, rhs,opt, lhs,FALSE);
 }
 
 static int
 nspgobject_connect_object_after(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
-  return nspgobject_connect_object_general(self, stack, rhs,opt, lhs,TRUE);
+  return nspgobject_connect_general(self, stack, rhs,opt, lhs,TRUE);
 }
 
 static int
@@ -1472,12 +1479,13 @@ static void
 nspg_closure_invalidate(gpointer data, GClosure *closure)
 {
   NspGClosure *pc = (NspGClosure *)closure;
+  NspObject *extra = (NspObject *) pc->extra_args;
   nspg_block_threads();
   /*
     Sciprintf("==>nspg_closure_invalidate\n");
   */
   NspPListDestroy(pc->callback);
-  if (pc->extra_args != NULL)nsp_list_destroy(pc->extra_args);
+  if (pc->extra_args != NULL)nsp_object_destroy(&extra);
   if (pc->swap_data != NULL)nsp_object_destroy(&pc->swap_data);
   pc->callback = NULL;
   pc->extra_args = NULL;

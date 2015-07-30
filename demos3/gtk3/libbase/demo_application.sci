@@ -8,25 +8,28 @@
 
 function show_action_dialog (action)
   name = action.get_name[];
-  dialog = gtk_message_dialog_new (NULL,...
-				   GTK.DIALOG_DESTROY_WITH_PARENT,...
-				   GTK.MESSAGE_INFO,...
-				   GTK.BUTTONS_CLOSE,...
-				   "You activated action: ""%s""",...
-				   name);
-  dialog.connect["response",gtk_widget_destroy];
-  dialog.show[];
+  mes = sprintf("You activated action: ""%s""",name);
+  dialog = gtk_message_dialog_new (flags= GTK.DIALOG_DESTROY_WITH_PARENT,...
+				   type= GTK.MESSAGE_INFO,...
+				   buttons=GTK.BUTTONS_CLOSE,...
+				   message= mes);
+  dialog.run[];
+  dialog.destroy[];
 endfunction
 
 function show_action_infobar (action,parameter, window)
   name = action.get_name[];
   value = parameter.get_string[];
-  message = window.get_data[ "message"];
-  infobar = window.get_data[ "infobar"];
   text = sprintf("You activated radio action: ""%s"".\nCurrent value: %s",...
 		 name, value);
-  message.set_text[text];
-  infobar.show[];
+  if window.check_data[ "message"] then 
+    message = window.get_data[ "message"];
+    message.set_text[text];
+  end
+  if window.check_data["infobar"] then 
+    infobar = window.get_data[ "infobar"];
+    infobar.show[];
+  end
 endfunction
 
 function activate_action (action,parameter,user_data)
@@ -45,6 +48,7 @@ function activate_radio (action, parameter, user_data)
 endfunction
 
 function activate_about (action,parameter, user_data)
+  pause xxx
   window = user_data(1);
 
   authors[] = ["Peter Mattis",
@@ -84,9 +88,8 @@ function activate_quit (action, parameter, user_data)
   // end
 endfunction
 
-function update_statusbar (data)
+function update_statusbar (buffer,statusbar)
 //  clear any previous message, underflow is allowed
-  statusbar = data(1);
   c = statusbar.get_context_id["test"];
   statusbar.pop[c];
   count = buffer.get_char_count [];
@@ -97,9 +100,12 @@ function update_statusbar (data)
   statusbar.push[c, msg];
 endfunction
 
-function mark_set_callback (buffer, new_location, mark, data)
-  pause xxx
-  update_statusbar(buffer);
+function changed_callback(buffer, statusbar)
+  update_statusbar(buffer,statusbar);
+endfunction
+  
+function mark_set_callback (buffer, new_location, mark, statusbar)
+  update_statusbar(buffer,statusbar);
 endfunction
 
 function change_theme_state (action, state, user_data)
@@ -137,7 +143,7 @@ function activate (app)
   window = gtk_application_window_new (app);
   window.set_title[ "Application Class"];
   window.set_icon_name[ "document-open"];
-  window.set_default_size[200, 200];
+  window.set_default_size[400, 400];
 
   win_entries = { "titlebar", activate_toggle, "", "false", change_titlebar_state,
 		  "shape", activate_radio, "s", "''oval''", change_radio_state,
@@ -145,6 +151,7 @@ function activate (app)
 		  "about", activate_about, "", "", "" ,
 		  "file1", activate_action, "", "", "",
 		  "logo", activate_action, "", "", "" };
+
   // add_action_entries does not set up the callbacks we do it manually
   // here
   actions=m2s([]);
@@ -156,9 +163,9 @@ function activate (app)
 
   for i=1:size(win_entries,1)
     action= window.lookup_action[win_entries{i,1}];
-    action.connect['activate',win_entries{i,2},list(app)];
+    action.connect['activate',win_entries{i,2}, window];
     if ~(type(win_entries{i,4},'short')== 's') then
-      action.connect['change_state',win_entries{i,4},list(app)];
+      action.connect['change_state',win_entries{i,4}, window];
     end
   end
 
@@ -177,21 +184,21 @@ function activate (app)
   toolmenu = builder.get_object [ "toolmenu"];
 
   window.set_data[message=message];
-  window.set_data[infobar=infobar]
+  window.set_data[infobar=infobar];
   window.add[grid];
   menutool.set_menu[ gtk_menu_new_from_model(toolmenu)];
 
   contents.grab_focus[];
-  button.connect[ "clicked", clicked_cb, list(infobar)];
+  button.connect[ "clicked", clicked_cb, infobar];
 
   //  Show text widget info in the statusbar
   buffer = contents.get_buffer [];
-  // XXX no g_signal_connect_object
+  // connect_object is in fact similar to connect 
   // we increment the ref
   // This function should transmit buffer as first argument
-  buffer.connect_object["changed", update_statusbar, list(status)];
-  buffer.connect_object["mark-set",mark_set_callback, list(status)];
-  update_statusbar(list(status));
+  buffer.connect_object["changed", changed_callback, status];
+  buffer.connect_object["mark-set",mark_set_callback, status];
+  update_statusbar(buffer,status);
   window.show_all[];
 endfunction
 
@@ -205,9 +212,26 @@ function []=demo_application()
 
   app = gtk_application_new ("org.gtk.Demo2", 0);
   settings = g_settings_new ("org.gtk.Demo");
-  // XXXXX app.add_action_entries[app_entries, list(app)];
-  // action = g_settings_create_action (settings, "color");
-  // g_action_map_add_action (app, action);
+  // add_action_entries does not set up the callbacks we do it manually here
+
+  actions=m2s([]);
+  for i=1:size(app_entries,1)
+    actions(i,1:3)=[app_entries{i,1},app_entries{i,3},app_entries{i,4}];
+  end
+
+  app.add_action_entries[actions];
+
+  for i=1:size(app_entries,1)
+    action= app.lookup_action[app_entries{i,1}];
+    action.connect['activate',app_entries{i,2}, app];
+    if ~(type(app_entries{i,4},'short')== 's') then
+      action.connect['change_state',app_entries{i,4}, app];
+    end
+  end
+  
+  action = settings.create_action["color"];
+  app.add_action[action];
+  
   app.connect[ "startup", startup];
   app.connect[ "activate", activate];
   app.run[0,""];
