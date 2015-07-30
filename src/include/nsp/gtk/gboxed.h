@@ -88,7 +88,7 @@ static char *gboxed_type_as_string(void);
 static char *gboxed_type_short_string(NspObject *v);
 static int gboxed_eq(NspGBoxed *A, NspObject *B);
 static int gboxed_neq(NspGBoxed *A, NspObject *B);
-static NspMethods *gboxed_get_methods(void);
+static NspMethods *gboxed_get_methods(NspObject *Obj);
 #endif /* GBoxed_Private */
 
 #ifndef INC_NSP_GBoxedNsp

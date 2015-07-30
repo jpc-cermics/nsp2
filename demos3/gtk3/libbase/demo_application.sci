@@ -1,4 +1,3 @@
-
 //  Application Class
 //
 // Demonstrates a simple application.
@@ -85,21 +84,22 @@ function activate_quit (action, parameter, user_data)
   // end
 endfunction
 
-function update_statusbar (buffer, statusbar)
+function update_statusbar (data)
 //  clear any previous message, underflow is allowed
-  statusbar.pop[0];
+  statusbar = data(1);
+  c = statusbar.get_context_id["test"];
+  statusbar.pop[c];
   count = buffer.get_char_count [];
   iter = buffer.get_iter_at_mark[buffer.get_insert []];
-  //XX row = iter.get_line[];
-  //XX col = iter.get_line_offset[];
-  row=0
-  col=0
+  row = iter.get_line[];
+  col = iter.get_line_offset[];
   msg = sprintf ("Cursor at row %d column %d - %d chars in document",row,col,count);
-  // XXXX statusbar.add[0, msg];
+  statusbar.push[c, msg];
 endfunction
 
 function mark_set_callback (buffer, new_location, mark, data)
-  update_statusbar (buffer, data);
+  pause xxx
+  update_statusbar(buffer);
 endfunction
 
 function change_theme_state (action, state, user_data)
@@ -186,11 +186,12 @@ function activate (app)
 
   //  Show text widget info in the statusbar
   buffer = contents.get_buffer [];
-  //XXX g_signal_connect_object (buffer, "changed", update_statusbar, status, 0);
-  //XXX g_signal_connect_object (buffer, "mark-set",mark_set_callback, status, 0);
-
-  update_statusbar (buffer, status);
-
+  // XXX no g_signal_connect_object
+  // we increment the ref
+  // This function should transmit buffer as first argument
+  buffer.connect_object["changed", update_statusbar, list(status)];
+  buffer.connect_object["mark-set",mark_set_callback, list(status)];
+  update_statusbar(list(status));
   window.show_all[];
 endfunction
 

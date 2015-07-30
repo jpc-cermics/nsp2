@@ -20,9 +20,9 @@
 
 /**
  * SECTION:object
- * @title: #NspObject is the base class ob nsp objects 
+ * @title: #NspObject is the base class ob nsp objects
  * @short_description: The class shared by all nsp objects.
- * @see_also: 
+ * @see_also:
  *
  * <para>
  * All nsp objects inherit from  #NspObject.
@@ -30,13 +30,13 @@
  **/
 
 
-/* 
- * NspObject 
- * all objects can be casted to a NspObject 
+/*
+ * NspObject
+ * all objects can be casted to a NspObject
  */
 
-#include <stdio.h> 
-#include <stdlib.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include <glib.h>
 #define Object_Private
 #include <nsp/object.h>
@@ -53,7 +53,7 @@
 #include <nsp/interf.h>
 #include <nsp/system.h> /* FSIZE */
 #include <nsp/plistc.h> /* scigetline */
-#include <nsp/datas.h> 
+#include <nsp/datas.h>
 
 /* FIXME: to be moved in object.h private zone */
 static int object_size(NspObject *self, int flag);
@@ -72,7 +72,7 @@ static NspObject *nsp_object_full_copy_def(NspObject * M);
 static NspObject *nsp_object_convert_def(NspObject * M,NspObject *T, void *args);
 
 /*
- * base object : NspObject 
+ * base object : NspObject
  */
 
 int nsp_type_object_id =0;
@@ -80,32 +80,32 @@ NspTypeObject  *nsp_type_object= NULL;
 
 /**
  * new_type_object:
- * @mode: %T_BASE or %T_DERIVED 
- * 
- * used to create type instances for #NspObject object 
- * alls the instance of the #NspObject class share the 
- * same #NspTypeObject instance. 
- * 
+ * @mode: %T_BASE or %T_DERIVED
+ *
+ * used to create type instances for #NspObject object
+ * alls the instance of the #NspObject class share the
+ * same #NspTypeObject instance.
+ *
  * Return value: a #NspTypeObject or %NULL
  **/
 
 NspTypeObject *new_type_object(type_mode mode)
 {
   NspTypeObject *type= NULL;
-  if (  nsp_type_object != 0 && mode == T_BASE ) 
+  if (  nsp_type_object != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_object;
     }
-  
+
   if ((type =  malloc(sizeof(NspTypeObject))) == NULL) return NULL;
   type->surtype   = NULL;
   type->interface = NULL;
-  type->methods = object_get_methods; 
+  type->methods = object_get_methods;
   type->gtk_methods = FALSE;
   type->new = (new_func *) new_object;
-  
-  type->s_type =  (s_type_func *) object_type_as_string;    
+
+  type->s_type =  (s_type_func *) object_type_as_string;
   type->sh_type = (sh_type_func *) object_type_short_string;
   type->set_name = (set_name_func *) set_name;
   type->new = (new_func *) new_object;
@@ -115,20 +115,20 @@ NspTypeObject *new_type_object(type_mode mode)
   type->size = (size_func *) object_size;
   type->loop =(loop_func *) object_loop_def;
   type->attrs = NULL;
-  type->get_attrs = (attrs_func*) int_get_attribute ;  
-  type->set_attrs = (attrs_func *) int_set_attribute ; 
+  type->get_attrs = (attrs_func*) int_get_attribute ;
+  type->set_attrs = (attrs_func *) int_set_attribute ;
   type->create = (create_func*) int_object_create;
   type->save = (save_func *) nsp_object_save_def;
   type->load = (load_func *) nsp_object_load_def;
   type->latex = (print_func *) nsp_object_latex_def;
   type->as_index  = (get_index_vector_func *) nsp_object_as_index_def;
-  type->full_copy = (copy_func *) nsp_object_full_copy_def; 
+  type->full_copy = (copy_func *) nsp_object_full_copy_def;
   type->convert = (convert_func *) nsp_object_convert_def;
-    
 
-  if ( nsp_type_object_id == 0 ) 
+
+  if ( nsp_type_object_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeObject called nsp_type_object
        */
@@ -137,7 +137,7 @@ NspTypeObject *new_type_object(type_mode mode)
       if ( nsp_register_type(nsp_type_object) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_object(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_object_id;
       return type;
@@ -145,14 +145,14 @@ NspTypeObject *new_type_object(type_mode mode)
 }
 
 /*
- * initialize Object instances 
- * locally and by calling initializer on parent class 
+ * initialize Object instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_object(NspObject *o,NspTypeObject *type)
 {
-  /* to be done always */ 
-  o->type = type; 
+  /* to be done always */
+  o->type = type;
   o->basetype = (NspTypeBase *)type;
   /* specific */
   o->flag = 0;
@@ -161,16 +161,16 @@ static int init_object(NspObject *o,NspTypeObject *type)
 
 /**
  * new_object:
- * 
- * Creates a new instance of #NspObject. 
+ *
+ * Creates a new instance of #NspObject.
  * Not used directly since  #NspObject is an abstract class.
- * 
- * Return value: a #NspObject or %NULLOBJ 
+ *
+ * Return value: a #NspObject or %NULLOBJ
  **/
 
-NspObject *new_object(void) 
+NspObject *new_object(void)
 {
-  NspObject *loc; 
+  NspObject *loc;
   /* type must exists */
   nsp_type_object = new_type_object(T_BASE);
   if ( (loc = malloc(sizeof(NspObject)))== NULLOBJ) return loc;
@@ -180,34 +180,34 @@ NspObject *new_object(void)
 }
 
 /*
- * check that o can be casted to an object of type id 
+ * check that o can be casted to an object of type id
  */
 
 /**
  * check_cast:
- * @obj: any object to be checked 
+ * @obj: any object to be checked
  * @id: an type instance id.
- * 
- * checks that object given by @o inherits 
+ *
+ * checks that object given by @o inherits
  * from class type with @id signature.
- * 
+ *
  * Return value: %TRUE or %FALSE.
  **/
 
-#ifndef HAVE_INLINEXX 
+#ifndef HAVE_INLINEXX
 /* we need here to insert code */
-#define NSP_OBJECT_INLINED 
+#define NSP_OBJECT_INLINED
 #include "nsp/object-inlined.h"
 #endif
 
 /**
  * check_implements:
- * @obj: any object to be checked 
+ * @obj: any object to be checked
  * @id: an type instance id.
- * 
- * checks that object @o implements an interface 
+ *
+ * checks that object @o implements an interface
  * type with @id signature
- * Return value: a #NspTypeBase which contains the 
+ * Return value: a #NspTypeBase which contains the
  * interface instance for object @obj or %NULL.
  **/
 
@@ -217,10 +217,10 @@ NspTypeBase *check_implements(const void *obj,NspTypeId id)
   /* down to basetype */
   NspTypeBase *type = ob->basetype;
   /* now walk up and search interfaces */
-  while ( type != NULL) 
+  while ( type != NULL)
     {
       NspTypeBase *ob_interf = type->interface;
-      while ( ob_interf  != NULL) 
+      while ( ob_interf  != NULL)
 	{
 	  if ( ob_interf->id == id ) return ob_interf;
 	  ob_interf = ob_interf->interface;
@@ -232,12 +232,12 @@ NspTypeBase *check_implements(const void *obj,NspTypeId id)
 
 /**
  * object_size:
- * @self: a #NspObject. 
+ * @self: a #NspObject.
  * @flag: an int for selecting size to be returned.
- * 
+ *
  * a default size method which always returns 0.
  * This method is redefined in each concret class.
- * 
+ *
  * Return value: an integer.
  **/
 static int object_size(NspObject *self, int flag)
@@ -250,13 +250,13 @@ static char object_short_type_name[]="obj";
 
 /**
  * object_type_as_string:
- * 
- * a unique identifier for #NspObject objects 
- * as a short string or long string. 
- * This method is redefined for each concrete class 
+ *
+ * a unique identifier for #NspObject objects
+ * as a short string or long string.
+ * This method is redefined for each concrete class
  * which inherits from #NspObject.
- * 
- * Return value: a string 
+ *
+ * Return value: a string
  **/
 
 static char *object_type_as_string(void)
@@ -271,104 +271,104 @@ static char *object_type_short_string(NspObject *obj)
 
 /**
  * set_name:
- * @ob: a #NspObject 
- * @name: a string 
- * 
- * sets the name ob object #NspObject. Previous name 
+ * @ob: a #NspObject
+ * @name: a string
+ *
+ * sets the name ob object #NspObject. Previous name
  * is destroyed if it was not NVOID.
- * 
+ *
  * Return value: returns a pointer to the name or %NULLSTRING.
  **/
 
 static const char named_void[]="";
-#ifdef USE_CHUNKS 
+#ifdef USE_CHUNKS
 static GStringChunk *obj_names=NULL;
-#endif 
+#endif
 
 static const char *set_name(NspObject *ob,const char *name)
 {
   const char *name1 = named_void;
-#ifdef USE_CHUNKS 
-  if ( name[0] !='\0' ) 
+#ifdef USE_CHUNKS
+  if ( name[0] !='\0' )
     {
       if (( name1 =g_string_chunk_insert_const(obj_names,name)) == NULLSTRING)
 	return NULLSTRING;
     }
-#else 
-  if ( name[0] !='\0' ) 
+#else
+  if ( name[0] !='\0' )
     {
       if (( name1 =new_nsp_string(name)) == NULLSTRING)
 	return NULLSTRING;
     }
   if (ob->name != NULL && ob->name != named_void) FREE(ob->name) ;
-#endif 
+#endif
   return ob->name = name1;
 }
 
 /**
  * nsp_object_set_initial_name:
- * @ob: a #NspObject 
- * @name: a string 
- * 
+ * @ob: a #NspObject
+ * @name: a string
+ *
  * sets the name of object #NspObject. This function is to be called
- * the first time the name of object is set. 
- * If the name is NVOID then the string is not allocated but a pointer 
+ * the first time the name of object is set.
+ * If the name is NVOID then the string is not allocated but a pointer
  * to a shared value is returned.
- * 
+ *
  * Return value: returns a pointer to the name or %NULLSTRING.
  **/
 
 const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
 {
   const char *name1 = named_void;
-#ifdef USE_CHUNKS 
+#ifdef USE_CHUNKS
   static int init=0;
   if ( init == 0 )
     {
       obj_names = g_string_chunk_new(1024);
       init =1;
     }
-  if ( name[0] !='\0' ) 
+  if ( name[0] !='\0' )
     {
       if ((name1 = g_string_chunk_insert_const(obj_names,name)) == NULLSTRING)
 	return NULLSTRING;
     }
-#else 
-  if ( name[0] !='\0' ) 
+#else
+  if ( name[0] !='\0' )
     {
       if (( name1 =new_nsp_string(name)) == NULLSTRING)
 	return NULLSTRING;
     }
-#endif 
+#endif
   return ob->name = name1;
 }
 
 /**
  * nsp_object_destroy_name:
- * @ob: a #NspObject 
- * 
- * free the memory used by object name. Note that 
- * a direct call to free is not good since unnamed 
- * objects share the same empty name. 
+ * @ob: a #NspObject
+ *
+ * free the memory used by object name. Note that
+ * a direct call to free is not good since unnamed
+ * objects share the same empty name.
  **/
 
 void nsp_object_destroy_name(NspObject *ob)
 {
-#ifndef USE_CHUNKS 
+#ifndef USE_CHUNKS
   if ( ob->name[0] !='\0' )  FREE(ob->name);
 #endif
 }
 
 /**
  * get_name:
- * @ob:  a #NspObject 
- * 
+ * @ob:  a #NspObject
+ *
  * gets the name of object @ob.
- * 
- * Return value: a string. 
+ *
+ * Return value: a string.
  **/
 
-static const char *get_name(NspObject *ob) 
+static const char *get_name(NspObject *ob)
 {
   return ob->name;
 }
@@ -376,40 +376,40 @@ static const char *get_name(NspObject *ob)
 /**
  * object_is_true_def:
  * @self: a #NspObject.
- * 
- * can be redefined for each concrete class 
- * which inherits from #NspObject. It is used 
- * in if A then to check if A can be considered as 
- * a %TRUE value. The default method implemented 
- * here returns %FALSE which an error message at 
+ *
+ * can be redefined for each concrete class
+ * which inherits from #NspObject. It is used
+ * in if A then to check if A can be considered as
+ * a %TRUE value. The default method implemented
+ * here returns %FALSE which an error message at
  * nsp level.
- * 
+ *
  * Return value: %FALSE.
  **/
 
 static int object_is_true_def(NspObject *self)
 {
   Scierror("Error: is_true not implemented for value of type %s\n",
-	   self->type->s_type());  
+	   self->type->s_type());
   return FALSE;
 }
 
 /**
  * object_loop_def:
- * @str: a string 
- * @O: a #NspObject 
- * @O1: a #NspObject 
- * @i: an integer 
- * @rep: int pointer 
- * 
- * can be redefined for each concrete class 
- * which inherits from #NspObject. 
- * Default method for the loop iterator if x=A 
+ * @str: a string
+ * @O: a #NspObject
+ * @O1: a #NspObject
+ * @i: an integer
+ * @rep: int pointer
+ *
+ * can be redefined for each concrete class
+ * which inherits from #NspObject.
+ * Default method for the loop iterator if x=A
  * to iterate throught the columns of A.
- * The default method implemented 
- * here returns %FALSE which an error message at 
+ * The default method implemented
+ * here returns %FALSE which an error message at
  * nsp level.
- * 
+ *
  * Return value: %NULLOBJ.
  **/
 static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i, int *rep)
@@ -421,17 +421,17 @@ static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i,
 
 
 /*
- * save and load when not redefined locally 
+ * save and load when not redefined locally
  */
 
 /**
  * nsp_object_save_def:
- * @F: a void pointer 
- * @M: a nsp object 
- * 
- * This is the default handler for saving a nsp object in 
+ * @F: a void pointer
+ * @M: a nsp object
+ *
+ * This is the default handler for saving a nsp object in
  * a file. Each class has to redefine this function.
- * 
+ *
  * Returns: %FAIL
  **/
 int  nsp_object_save_def(void * F, NspObject * M)
@@ -443,11 +443,11 @@ int  nsp_object_save_def(void * F, NspObject * M)
 
 /**
  * nsp_object_load_def:
- * @F: a void pointer 
- * 
- * This is the default handler for loading a nsp object from 
+ * @F: a void pointer
+ *
+ * This is the default handler for loading a nsp object from
  * a file. Each class has to redefine this function.
- * 
+ *
  * Returns: %NULL
  **/
 
@@ -459,11 +459,11 @@ NspObject *nsp_object_load_def(void  * F)
 
 /**
  * nsp_object_latex_def:
- * @M: an object 
- * @indent: an integer 
+ * @M: an object
+ * @indent: an integer
  * @name: a string or %NULL
- * @rec_level: an integer 
- * 
+ * @rec_level: an integer
+ *
  * default function for printing an object in latex syntax.
  * Each class has to properly redefine this function.
  *
@@ -473,22 +473,22 @@ static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_l
 {
   const char *pname = (name != NULL) ? name : M->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[\n");
-  if ( strcmp(pname,NVOID) != 0) 
+  if ( strcmp(pname,NVOID) != 0)
     Sciprintf("%s : \\mbox{latex print not implemented for %s}\n",pname,M->type->s_type());
-  else 
+  else
     Sciprintf("\\mbox{latex print not implemented for %s}\n",M->type->s_type());
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
 
 /**
  * nsp_object_as_index_def:
- * @M: an object 
+ * @M: an object
  * @index: an #index_vector
- * 
- * default function for checking if object can be used as an index 
- * vector 
  *
- * Return value: %TRUE or %FALSE 
+ * default function for checking if object can be used as an index
+ * vector
+ *
+ * Return value: %TRUE or %FALSE
  **/
 
 
@@ -502,11 +502,11 @@ static int nsp_object_as_index_def(NspObject * M, index_vector *index)
 
 /**
  * nsp_object_full_copy_def:
- * @M: an object 
- * 
+ * @M: an object
+ *
  * make a full copy of given object
  *
- * Return value: %TRUE or %FALSE 
+ * Return value: %TRUE or %FALSE
  **/
 
 static NspObject *nsp_object_full_copy_def(NspObject * M)
@@ -518,9 +518,9 @@ static NspObject *nsp_object_full_copy_def(NspObject * M)
 
 /**
  * nsp_object_convert_def:
- * @M: an object 
- * @T: an object 
- * 
+ * @M: an object
+ * @T: an object
+ *
  *
  * Return value: %NULL
  **/
@@ -532,22 +532,22 @@ static NspObject *nsp_object_convert_def(NspObject * M,NspObject *T, void *args)
 
 
 /*------------------------------------------------------
- * methods 
+ * methods
  *------------------------------------------------------*/
 
 /**
  * int_object_create:
  * @stack: a #Stack
- * @rhs: an int the number of right hand side arguments 
- * @opt: the number of optional named arguments 
- * @lhs: the requested number of arguments to return 
- * 
- * deprecated ? 
- * A defaut interface for create method at nsp level. 
- * This method can be redefined for certain types instance 
+ * @rhs: an int the number of right hand side arguments
+ * @opt: the number of optional named arguments
+ * @lhs: the requested number of arguments to return
+ *
+ * deprecated ?
+ * A defaut interface for create method at nsp level.
+ * This method can be redefined for certain types instance
  * in order to give a defaut create method.
- * 
- * Return value: 
+ *
+ * Return value:
  **/
 
 static int int_object_create(Stack stack, int rhs, int opt, int lhs)
@@ -562,15 +562,15 @@ static int int_object_create(Stack stack, int rhs, int opt, int lhs)
  * int_meth_object_equal:
  * @self: an instance of a nsp object.
  * @stack: a #Stack
- * @rhs: an int the number of right hand side arguments 
- * @opt: the number of optional named arguments 
- * @lhs: the requested number of arguments to return 
- * 
- * a nsp method for checking object equality i.e checks if 
+ * @rhs: an int the number of right hand side arguments
+ * @opt: the number of optional named arguments
+ * @lhs: the requested number of arguments to return
+ *
+ * a nsp method for checking object equality i.e checks if
  * @self is a copy of the first object stored in the stack @stack.
  * x.equal[y]. The answer is stored in the calling stack @stack.
- * 
- * Return value: 1 
+ *
+ * Return value: 1
  **/
 
 static int int_meth_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
@@ -603,13 +603,13 @@ static int int_meth_object_not_equal(void *self,Stack stack,int rhs,int opt,int 
  * int_object_get_name:
  * @self: an instance of a nsp object.
  * @stack: a #Stack
- * @rhs: an int the number of right hand side arguments 
- * @opt: the number of optional named arguments 
- * @lhs: the requested number of arguments to return 
- * 
- * a nsp method for getting the name of @self. 
+ * @rhs: an int the number of right hand side arguments
+ * @opt: the number of optional named arguments
+ * @lhs: the requested number of arguments to return
+ *
+ * a nsp method for getting the name of @self.
  * The answer is stored in the calling stack @stack.
- * 
+ *
  * Return value: 1 or %RET_BUG.
  **/
 
@@ -618,7 +618,7 @@ static int int_meth_object_get_name(void *self,Stack stack,int rhs,int opt,int l
   CheckRhs(-1,0);
   CheckLhs(1,1);
   /* nsp_get_object takes care of Hobj pointers **/
-  if ( NSP_OBJECT(self)->name == NULL ) 
+  if ( NSP_OBJECT(self)->name == NULL )
     {
       Scierror("Error: given object has no name !\n");
       return RET_BUG;
@@ -632,26 +632,26 @@ static int int_meth_object_get_name(void *self,Stack stack,int rhs,int opt,int l
  * int_object_protect:
  * @self: an instance of a nsp object.
  * @stack: a #Stack
- * @rhs: an int the number of right hand side arguments 
- * @opt: the number of optional named arguments 
- * @lhs: the requested number of arguments to return 
- * 
- * a nsp method for getting the flag field of @self. 
- * 
+ * @rhs: an int the number of right hand side arguments
+ * @opt: the number of optional named arguments
+ * @lhs: the requested number of arguments to return
+ *
+ * a nsp method for getting the flag field of @self.
+ *
  * Return value: 1 or %RET_BUG.
  **/
 
 static int int_meth_object_protect(void *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int protect; 
+  int protect;
   CheckRhs(0,1);
   CheckLhs(1,1);
-  if ( rhs == 1 ) 
+  if ( rhs == 1 )
     {
        if ( GetScalarBool (stack,1,&protect) == FAIL) return RET_BUG;
        NSP_OBJECT(self)->flag = protect;
     }
-  else 
+  else
     {
       protect = NSP_OBJECT(self)->flag;
     }
@@ -662,29 +662,29 @@ static int int_meth_object_protect(void *self,Stack stack,int rhs,int opt,int lh
 
 /**
  * int_meth_object_set_attributes:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when the set method 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when the set method
  * is activated ob.set[ attr1=val1, attr2 = val2 ,....]
- * 
- * Returns: 0 
+ *
+ * Returns: 0
  **/
 
 static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Ob=ob;
   int i;
-  if ( rhs - opt > 0 ) 
+  if ( rhs - opt > 0 )
     {
       Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
-  CheckLhs(1,1); 
-  for ( i = 1 ; i <= rhs ; i++) 
+  CheckLhs(1,1);
+  for ( i = 1 ; i <= rhs ; i++)
     {
       NspObject *val = ((NspHobj *) NthObj(i))->O;
       if ( nsp_set_attribute_util(Ob,Ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
@@ -692,21 +692,21 @@ static int int_meth_object_set_attributes(void *ob,Stack stack, int rhs, int opt
   return 0;
 }
 
- 
+
 
 /**
  * int_meth_object_get_attributes:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when a get method 
- * is activated. ob.get[smat1,smat2,...] and the function 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when a get method
+ * is activated. ob.get[smat1,smat2,...] and the function
  * returns as many object as requested by given arguments.
- * 
- * Returns: an integer  
+ *
+ * Returns: an integer
  **/
 
 int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int lhs)
@@ -719,8 +719,8 @@ int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int l
   lhs=Max(lhs,1);
   for ( j = 1 ; j <= rhs ; j++ )
     {
-      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
-      for ( i = 0 ; i < S->mn ; i++ ) 
+      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;
+      for ( i = 0 ; i < S->mn ; i++ )
 	{
 	  Ret = nsp_get_attribute_util(Ob,Ob->basetype,S->S[i]);
 	  if ( Ret == NULL) return RET_BUG;
@@ -736,15 +736,15 @@ int int_meth_object_get_attributes(void *ob,Stack stack, int rhs, int opt, int l
 
 /**
  * int_meth_object_get_attribute_names:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when the get_attribute_names method 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when the get_attribute_names method
  * is activated ob.get_attribute_names[]
- * 
+ *
  * Returns: 1 or %RET_BUG.
  **/
 
@@ -753,22 +753,24 @@ static int int_meth_object_get_attribute_names(void *ob,Stack stack, int rhs, in
   NspObject *Ob=ob,*Res;
   CheckRhs(0,0);
   if ((Res= nsp_get_attribute_util(Ob,Ob->basetype,"__attrs"))== NULL)
-    return RET_BUG;  
+    return RET_BUG;
   MoveObj(stack,1,Res);
   return 1;
 }
 
 /**
  * nsp_get_methods:
- * @ob: a nsp object 
- * @type: a nsp type 
- * 
+ * @ob: a nsp object
+ * @type: a nsp type
+ *
  * get available methods in the given type. The @ob
- * argument is not used. 
- * 
- * 
- * Returns: a string matrix 
+ * argument is not used.
+ *
+ *
+ * Returns: a string matrix
  **/
+
+typedef NspMethods *(*f_methods)(NspObject *ob);
 
 static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
 {
@@ -777,54 +779,54 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
   NspSMatrix *sm=NULLSMAT,*sm1;
   NspTypeBase *interf ;
   /* build a string matrix with all methods */
-  while ( type != NULL) 
+  while ( type != NULL)
     {
       if ( level >= 0 && cu_level !=  level)
 	{
 	  type = type->surtype;cu_level++;continue;
 	}
-      methods = (type->methods != NULL) ? type->methods(): NULL;
+      methods = (type->methods != NULL) ? ((f_methods) type->methods)(ob): NULL;
       /* return attributes as a String Matrix */
       if ( methods != NULL)
 	{
 	  if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,methods,sizeof(NspMethods))) == NULLSMAT) return NULL;
 	  sm1->n=sm1->m;sm1->m=1;/* transpose vector */
-	  if ( sm != NULL) 
+	  if ( sm != NULL)
 	    {
 	      if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
 	      nsp_smatrix_destroy(sm1);
 	    }
-	  else 
+	  else
 	    {
 	      sm=sm1;
 	    }
 	}
       /* explore interfaces */
       interf = type->interface;
-      while ( interf != NULL) 
+      while ( interf != NULL)
 	{
-	  methods = (interf->methods != NULL) ? interf->methods(): NULL;
-	  if ( methods != NULL ) 
+	  methods = (interf->methods != NULL) ? ((f_methods) interf->methods)(ob): NULL;
+	  if ( methods != NULL )
 	    {
 	      if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,methods,sizeof(NspMethods))) == NULLSMAT) return NULL;
 	      sm1->n=sm1->m;sm1->m=1;/* transpose vector */
-	      if ( sm != NULL) 
+	      if ( sm != NULL)
 		{
 		  if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
 		  nsp_smatrix_destroy(sm1);
 		}
-	      else 
+	      else
 		{
 		  sm=sm1;
 		}
 
 	    }
 	  interf = interf->interface;
-	} 
+	}
       type = type->surtype;
       cu_level++;
     }
-  if ( sm == NULL) 
+  if ( sm == NULL)
     {
       if (( sm =nsp_smatrix_create(NVOID,0,0,NULL,0))  == NULLSMAT) return NULLSMAT;
     }
@@ -839,18 +841,18 @@ static NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type,int level)
 
 /**
  * int_meth_object_get_methods:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when the get_method_names method 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when the get_method_names method
  * is activated ob.get_method_names[] or ob.get_method_names[level];
- * Whith no arguments we obtain all the method names that can be used on 
- * object @ob. When level is given the methods of the base class is given 
- * for level=0 then the methods of father class for level=1 and so on. 
- * 
+ * Whith no arguments we obtain all the method names that can be used on
+ * object @ob. When level is given the methods of the base class is given
+ * for level=0 then the methods of father class for level=1 and so on.
+ *
  * Returns: 1 or %RET_BUG.
  **/
 
@@ -860,11 +862,11 @@ static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, i
   NspObject *Ob=ob;
   NspSMatrix *S;
   CheckRhs(0,1);
-  if ( rhs==1) 
+  if ( rhs==1)
     {
       if (GetScalarInt(stack,1,&level) == FAIL) return RET_BUG;
     }
-  if ((S = nsp_get_methods(Ob,Ob->basetype,level)) == NULL) 
+  if ((S = nsp_get_methods(Ob,Ob->basetype,level)) == NULL)
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
@@ -874,16 +876,16 @@ static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, i
 
 /**
  * int_meth_object_full_copy:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when the full_copy method and 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when the full_copy method and
  * returns a full copy of the object @ob.
  *
- * 
+ *
  * Returns: 1 or %RET_BUG.
  **/
 
@@ -915,7 +917,7 @@ static NspMethods *object_get_methods(void) { return object_methods;};
  * set of function for dealing with  object attributes
  *--------------------------------------------------*/
 
-/* default interface for set or get */ 
+/* default interface for set or get */
 
 NspObject * int_get_failed(NspObject *self, char *attr)
 {
@@ -945,11 +947,11 @@ int int_set_failed(NspObject *self,char *attr, NspObject *val)
 /**
  * int_set_attribute:
  * @stack: a #Stack
- * @rhs: an int the number of right hand side arguments 
- * @opt: the number of optional named arguments 
- * @lhs: the requested number of arguments to return 
- * 
- * an interface which is used when settin a nsp object attribute 
+ * @rhs: an int the number of right hand side arguments
+ * @opt: the number of optional named arguments
+ * @lhs: the requested number of arguments to return
+ *
+ * an interface which is used when settin a nsp object attribute
  * in R.exp = b expressions.
  *
  * Return value: 1 or %RET_BUG.
@@ -970,7 +972,7 @@ int int_set_attribute(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * ob.set[ attr1=val1, attr2 = val2 ,....]
- * FIXME ? obsolete and replaced by the next one 
+ * FIXME ? obsolete and replaced by the next one
  */
 
 int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
@@ -978,13 +980,13 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
   int i;
   NspObject *ob;
   if ((ob =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
-  if ( rhs - opt > 1 ) 
+  if ( rhs - opt > 1 )
     {
       Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
-  CheckLhs(1,1); 
-  for ( i = rhs-opt+1 ; i <= rhs ; i++) 
+  CheckLhs(1,1);
+  for ( i = rhs-opt+1 ; i <= rhs ; i++)
     {
       NspObject *val = ((NspHobj *) NthObj(i))->O;
       if ( nsp_set_attribute_util(ob,ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
@@ -995,29 +997,29 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * int_create_with_attributes:
- * @ob: a nsp object 
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
+ * @ob: a nsp object
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
  * utility function that can be used in the constructor of a class
- * to walk through optional named arguments and use them to initialize 
+ * to walk through optional named arguments and use them to initialize
  * fields of an object.
- * 
+ *
  * Returns: 1 or %RET_BUG
  **/
 
 int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int lhs)
 {
   int i;
-  if ( rhs - opt > 1 ) 
+  if ( rhs - opt > 1 )
     {
       Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
-  CheckLhs(1,1); 
-  for ( i = rhs-opt+1 ; i <= rhs ; i++) 
+  CheckLhs(1,1);
+  for ( i = rhs-opt+1 ; i <= rhs ; i++)
     {
       NspObject *val = ((NspHobj *) NthObj(i))->O;
       if ( nsp_set_attribute_util(ob,ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
@@ -1027,16 +1029,16 @@ int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int 
 
 /**
  * nsp_set_attribute_util:
- * @ob: an object 
- * @type: a type 
- * @attr: a string giving an attribute name 
+ * @ob: an object
+ * @type: a type
+ * @attr: a string giving an attribute name
  * @val: a nsp object.
- * 
- * set the field @attr of object @ob with value @val. If the 
- * field @attr is not a correct field then %FAIL is returned. 
- * Note that most of the time this function is called with 
+ *
+ * set the field @attr of object @ob with value @val. If the
+ * field @attr is not a correct field then %FAIL is returned.
+ * Note that most of the time this function is called with
  * type set to ob->basetype.
- * 
+ *
  * Returns: %OK or %FAIL
  **/
 
@@ -1049,11 +1051,11 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,Nsp
       attrs = type->attrs ;
       if ( attrs != NULL &&  (item=attr_search(attr,attrs)) >=0 )
 	{
-	  if ( attrs[item].set(ob,attr,val) == FAIL) 
+	  if ( attrs[item].set(ob,attr,val) == FAIL)
 	    {
 	      return FAIL;
 	    }
-	  else 
+	  else
 	    {
 	      ok=1;
 	      break;
@@ -1061,7 +1063,7 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,Nsp
 	}
       type = type->surtype;
     }
-  if ( ok == 0) 
+  if ( ok == 0)
     {
       Scierror("Error: attribute %s does not exists for instance of %s\n",
 	       attr,
@@ -1073,14 +1075,14 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,Nsp
 
 /**
  * int_get_attribute:
- * @stack: evaluation stack 
- * @rhs: an integer 
- * @opt: an integer 
- * @lhs: an integer 
- * 
- * This interface is called when trying to get an attribute value 
+ * @stack: evaluation stack
+ * @rhs: an integer
+ * @opt: an integer
+ * @lhs: an integer
+ *
+ * This interface is called when trying to get an attribute value
  * through the use of the dot operator: ob.attr
- * 
+ *
  * Returns: 1 or %RET_BUG.
  **/
 
@@ -1091,7 +1093,7 @@ int int_get_attribute(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,100); /* XXXXXX */
   CheckLhs(-1,1);
   if ((ob =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
-  if ((attr = GetString(stack,2)) == (char*)0) return RET_BUG;  
+  if ((attr = GetString(stack,2)) == (char*)0) return RET_BUG;
   ob = nsp_get_attribute_util(ob,ob->basetype,attr);
   if ( ob == NULLOBJ) return RET_BUG;
   MoveObj(stack,1,ob);
@@ -1100,29 +1102,29 @@ int int_get_attribute(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * nsp_get_attribute_util:
- * @ob: an object 
- * @type: a type 
- * @attr: a string 
- * 
- * returns if it exists the field @attr of object @ob. 
- * fields are searched in the given type. Note that most 
- * of the time @type is set to ob->basetype when calling this 
- * function. Note also that this function returns a copy of the 
+ * @ob: an object
+ * @type: a type
+ * @attr: a string
+ *
+ * returns if it exists the field @attr of object @ob.
+ * fields are searched in the given type. Note that most
+ * of the time @type is set to ob->basetype when calling this
+ * function. Note also that this function returns a copy of the
  * field object.
- * 
+ *
  * Returns: a #NspObject. or %NULLOBJ.
  **/
 
-NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *attr) 
+NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *attr)
 {
-  int item; 
+  int item;
   AttrTab *attrs;
   NspSMatrix *sm=NULLSMAT,*sm1;
   /* Check now if key is an attribute of object Object */
-  if ( strcmp(attr,"__attrs")==0) 
+  if ( strcmp(attr,"__attrs")==0)
     {
       /* build a string matrix with all attributes */
-      while ( type != NULL) 
+      while ( type != NULL)
 	{
 	  attrs = type->attrs ;
 	  /* return attributes as a String Matrix */
@@ -1130,19 +1132,19 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *at
 	    {
 	      if ( ( sm1 =nsp_smatrix_create_from_struct(NVOID,attrs,sizeof(AttrTab)) ) == NULLSMAT) return NULL;
 	      sm1->n=sm1->m;sm1->m=1;/* transpose vector */
-	      if ( sm != NULL) 
+	      if ( sm != NULL)
 		{
 		  if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULL;
 		  nsp_smatrix_destroy(sm1);
 		}
-	      else 
+	      else
 		{
 		  sm=sm1;
 		}
 	    }
 	  type = type->surtype;
 	}
-      if ( sm == NULL) 
+      if ( sm == NULL)
 	{
 	  if (( sm =nsp_smatrix_create(NVOID,0,0,NULL,0))  == NULLSMAT) return NULL;
 	}
@@ -1154,7 +1156,7 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *at
     }
   else
     {
-      while ( type != NULL) 
+      while ( type != NULL)
 	{
 	  if ((attrs = type->attrs) != NULL)
 	    {
@@ -1177,13 +1179,13 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const char *at
  * object_path_extract:
  * @a: a nsp object
  * @n: an integer
- * @ob: a pointer to a string object. 
- * 
- * This function is used when a field of an object is 
- * requested for modification more complex than the simple 
+ * @ob: a pointer to a string object.
+ *
+ * This function is used when a field of an object is
+ * requested for modification more complex than the simple
  * affectation. For example in obj.attr(4,5) = 7.
- * 
- * Returns: a #NspObject. 
+ *
+ * Returns: a #NspObject.
  *
  **/
 
@@ -1199,23 +1201,23 @@ NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy)
 
 /**
  * nsp_get_attribute_object:
- * @ob: an object 
- * @type: a type 
- * @attr: a string 
+ * @ob: an object
+ * @type: a type
+ * @attr: a string
  * @copy: an int pointer
- * 
- * utility function for #object_path_extract or similar functions. 
- * Returns the field @attr for object @ob for modifications by calling 
- * the get_object method of the object class. 
- * 
- * Returns: a #NspObject. 
+ *
+ * utility function for #object_path_extract or similar functions.
+ * Returns the field @attr for object @ob for modifications by calling
+ * the get_object method of the object class.
+ *
+ * Returns: a #NspObject.
  **/
 
-NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr, int *copy) 
+NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr, int *copy)
 {
-  int item; 
+  int item;
   AttrTab *attrs;
-  while ( type != NULL) 
+  while ( type != NULL)
     {
       if (( attrs = type->attrs) != NULL)
 	{
@@ -1232,26 +1234,26 @@ NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *
 
 /**
  * nsp_get_attribute_object:
- * @ob: an object 
- * @type: a type 
+ * @ob: an object
+ * @type: a type
  * @val: an object
- * 
- * utility function which is used to set a field of object @ob to value @val. 
- * The name of the field is given by the name of @val. This function is used after 
- * an object has been selected for modification by object_path_extract with a copy 
- * flag set to %TRUE. A copy of the attribute value is modified and at the end 
- * nsp_set_attribute_object is called to perform verifications before setting the 
- * attribute. 
- * 
+ *
+ * utility function which is used to set a field of object @ob to value @val.
+ * The name of the field is given by the name of @val. This function is used after
+ * an object has been selected for modification by object_path_extract with a copy
+ * flag set to %TRUE. A copy of the attribute value is modified and at the end
+ * nsp_set_attribute_object is called to perform verifications before setting the
+ * attribute.
+ *
  * Returns: %OK or %FAIL
  **/
 
 int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val)
 {
-  int item; 
+  int item;
   AttrTab *attrs;
   const char *attr = nsp_object_get_name(val);
-  while ( type != NULL) 
+  while ( type != NULL)
     {
       if (( attrs = type->attrs) != NULL)
 	{
@@ -1267,14 +1269,14 @@ int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val)
 
 
 /*---------------------------------------------------
- * set of function for dealing with  object methods 
+ * set of function for dealing with  object methods
  *--------------------------------------------------*/
 
 /*
  * the first stack element is the object the method is to be applied to (==ob)
  * type is the Type in which methods are to be searched (ob->basetype most of the time)
- * methods are searched from bottom to top and at each level implemented interfaces are 
- * searched too 
+ * methods are searched from bottom to top and at each level implemented interfaces are
+ * searched too
  */
 
 int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs)
@@ -1285,33 +1287,33 @@ int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack sta
     {
       NspTypeBase *interf = type->interface;
       /* explore methods */
-      methods = (type->methods != NULL) ? type->methods(): NULL;
+      methods = (type->methods != NULL) ? ((f_methods) type->methods)(ob) : NULL;
       if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
 	{
 	  /* execute the method */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	  if ( type->gtk_methods == TRUE ) 
+	  if ( type->gtk_methods == TRUE )
 	    return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
 	  else
 	    return  methods[item].meth(ob,stack,rhs,opt,lhs);
-#else 
+#else
 	  return  methods[item].meth(ob,stack,rhs,opt,lhs);
-#endif 
+#endif
 	}
       /* explore interfaces */
-      while ( interf != NULL) 
+      while ( interf != NULL)
 	{
-	  methods = (interf->methods != NULL) ? interf->methods(): NULL;
+	  methods = (interf->methods != NULL) ? ((f_methods) interf->methods)(ob): NULL;
 	  if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
 	    {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	      if ( type->gtk_methods == TRUE ) 
+	      if ( type->gtk_methods == TRUE )
 		return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
 	      else
 		return  methods[item].meth(ob,stack,rhs,opt,lhs);
-#else 
+#else
 	      return  methods[item].meth(ob,stack,rhs,opt,lhs);
-#endif 
+#endif
 	    }
 	  interf = interf->interface;
 	}
@@ -1322,20 +1324,20 @@ int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack sta
 }
 
 /*---------------------------------------------------
- * set of interfaced functions 
+ * set of interfaced functions
  *--------------------------------------------------*/
 
 /*
- * interface for operator \n 
+ * interface for operator \n
  * used when diplaying the result of an evaluation
- * x \n  or  
+ * x \n  or
  */
 
 int int_object_ret(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject **Ob = stack.val->S + stack.first;
   int i;
-  for ( i= 0 ; i < rhs ; i++) 
+  for ( i= 0 ; i < rhs ; i++)
     {
       (*Ob)->type->pr(*Ob,0,NULL,0);
       Ob++;
@@ -1344,9 +1346,9 @@ int int_object_ret(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for operator , 
+ * interface for operator ,
  * used when diplaying the result of an evaluation
- * x ,   or  
+ * x ,   or
  */
 
 int int_object_virg(Stack stack, int rhs, int opt, int lhs)
@@ -1355,7 +1357,7 @@ int int_object_virg(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for operator ; 
+ * interface for operator ;
  * x ;
  */
 
@@ -1366,9 +1368,9 @@ int int_object_pvirg(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * type(obj , 'short'|'string' ) return the type of object obj 
- *    Note that if obj is a pointer the type of object it points to 
- *    is returned 
+ * type(obj , 'short'|'string' ) return the type of object obj
+ *    Note that if obj is a pointer the type of object it points to
+ *    is returned
  */
 
 int int_object_type(Stack stack, int rhs, int opt, int lhs)
@@ -1376,29 +1378,29 @@ int int_object_type(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,2);
   CheckLhs(0,1);
   NspObject *Ob, *ret=NULL;
-  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if (rhs == 2 ) 
+  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG;
+  if (rhs == 2 )
     {
       int mode;
       const char *mode_Table[] = {  "short", "string", NULL};
-      if ((mode= GetStringInArray(stack,2,mode_Table,1)) == -1) return RET_BUG; 
+      if ((mode= GetStringInArray(stack,2,mode_Table,1)) == -1) return RET_BUG;
       switch (mode )
 	{
 	case 0: if ((ret =nsp_create_object_from_str(NVOID,(Ob)->type->sh_type(Ob)))== NULLOBJ) return RET_BUG;break;
 	case 1: if ((ret =nsp_create_object_from_str(NVOID,(Ob)->type->s_type()))== NULLOBJ) return RET_BUG;break;
 	}
     }
-  else 
+  else
     {
-      if ((ret = (NspObject *) type_create(NVOID,Ob->basetype,NULL))== NULLOBJ) return RET_BUG; 
+      if ((ret = (NspObject *) type_create(NVOID,Ob->basetype,NULL))== NULLOBJ) return RET_BUG;
     }
   MoveObj(stack,1,ret);
   return 1;
-}  
+}
 
 /*
- * is( obj , type ) 
- *   check if obj is of type type or is a subtype of type 
+ * is( obj , type )
+ *   check if obj is of type type or is a subtype of type
  */
 
 int int_object_is(Stack stack, int rhs, int opt, int lhs)
@@ -1407,15 +1409,15 @@ int int_object_is(Stack stack, int rhs, int opt, int lhs)
   NspType *type;
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ((type = GetType(stack,2))== NULLTYPE) return RET_BUG; 
+  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG;
+  if ((type = GetType(stack,2))== NULLTYPE) return RET_BUG;
   if ( nsp_move_boolean(stack,1, check_cast(Ob, type->nsp_type->id ))== FAIL) return RET_BUG;
   return 1;
 }
 
 /*
- * implements( obj , type ) 
- *   check if obj implements type type. Where type is the 
+ * implements( obj , type )
+ *   check if obj implements type type. Where type is the
  *   type of an interface.
  */
 
@@ -1425,26 +1427,26 @@ int int_object_implements(Stack stack, int rhs, int opt, int lhs)
   NspType *type;
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ((type = GetType(stack,2))== NULLTYPE) return RET_BUG; 
+  if ((Ob =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG;
+  if ((type = GetType(stack,2))== NULLTYPE) return RET_BUG;
   if ( nsp_move_boolean(stack,1, check_implements(Ob, type->nsp_type->id ) != NULL )== FAIL) return RET_BUG;
   return 1;
 }
 
 
-/* generic function for printing objects and 
+/* generic function for printing objects and
  * redirection of output to string, file or stdout
  */
 
-typedef enum { string_out, stdout_out, file_out } print_mode; 
+typedef enum { string_out, stdout_out, file_out } print_mode;
 
 static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mode mode, int info_only)
 {
   NspFile *F=NULL;
   FILE *f=NULL;
   IOVFun def=NULL ;
-  MoreFun mf=NULL; 
-  
+  MoreFun mf=NULL;
+
   NspObject *res, *object;
   print_func *pr;
   int dp=user_pref.pr_depth;
@@ -1467,50 +1469,50 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
 			   { "tree",s_bool,NULLOBJ,-1},
 			   { NULL,t_end,NULLOBJ,-1}};
 
-  if ( mode == file_out ) 
+  if ( mode == file_out )
     {
       CheckStdRhs(2,2);
-      if ((F= GetSciFile(stack,1))== NULL) return RET_BUG; 
-      if ((object =nsp_get_object(stack,2))== NULLOBJ) return RET_BUG; 
+      if ((F= GetSciFile(stack,1))== NULL) return RET_BUG;
+      if ((object =nsp_get_object(stack,2))== NULLOBJ) return RET_BUG;
 
     }
-  else 
+  else
     {
       CheckStdRhs(1,1);
-      if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
+      if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG;
     }
   CheckLhs(0,1);
 
-  if (info_only == TRUE ) 
+  if (info_only == TRUE )
     {
       if ( get_optional_args(stack, rhs, opt, info_opts,&depth,
-			     &indent,&name,&tree) == FAIL) 
+			     &indent,&name,&tree) == FAIL)
 	return RET_BUG;
     }
-  else 
+  else
     {
       if ( get_optional_args(stack, rhs, opt, print_opts,&as_read,&color,&depth,
-			     &indent,&latex,&name,&table) == FAIL) 
+			     &indent,&latex,&name,&table) == FAIL)
 	return RET_BUG;
     }
 
   /* initialize according to mode */
-  switch ( mode ) 
+  switch ( mode )
     {
-    case string_out: 
+    case string_out:
       def = SetScilabIO(Sciprint2string);
       mf =nsp_set_nsp_more(scimore_void);
       break;
     case stdout_out:
       break;
-    case file_out : 
+    case file_out :
       /* changes io in order to write to file F */
       if ( !IS_OPENED(F->obj->flag))
 	{
 	  Scierror("Warning:\tfile %s is already closed\n",F->obj->fname);
 	  return RET_BUG;
 	}
-      f=Sciprint_file(F->obj->file); 
+      f=Sciprint_file(F->obj->file);
       def = SetScilabIO(Sciprint2file);
       mf =nsp_set_nsp_more(scimore_void);
       break;
@@ -1522,12 +1524,12 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
   if (info_only == TRUE ) pr = object->type->info;
 
-  if ( as_read == TRUE ) 
+  if ( as_read == TRUE )
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
       user_pref.color=FALSE;
-      if ( latex == TRUE ) 
+      if ( latex == TRUE )
 	{
 	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
 	}
@@ -1537,7 +1539,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
       user_pref.list_as_tree=at;
       user_pref.color=cr;
     }
-  else 
+  else
     {
       pr(object,indent,name,0);
     }
@@ -1545,28 +1547,28 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   user_pref.list_as_tree=at;
   user_pref.color=cr;
   /* restore to default values */
-  switch ( mode ) 
+  switch ( mode )
     {
-    case string_out: 
-      res = Sciprint2string_reset(); 
+    case string_out:
+      res = Sciprint2string_reset();
       SetScilabIO(def);
       nsp_set_nsp_more(mf);
-      if ( res == NULL) return RET_BUG; 
+      if ( res == NULL) return RET_BUG;
       MoveObj(stack,1, res);
       return 1;
-    case stdout_out: 
+    case stdout_out:
       return 0;
     case file_out:
       SetScilabIO(def);
       nsp_set_nsp_more(mf);
-      Sciprint_file(f); 
+      Sciprint_file(f);
       return 0;
     }
   return 0;
 }
 
 /*
- *   display object using it's standard print function 
+ *   display object using it's standard print function
  */
 
 static int int_object_print(Stack stack, int rhs, int opt, int lhs)
@@ -1575,8 +1577,8 @@ static int int_object_print(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *   display object using it's standard print function 
- *   and redirect output to a string matrix 
+ *   display object using it's standard print function
+ *   and redirect output to a string matrix
  */
 
 static int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
@@ -1585,7 +1587,7 @@ static int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *   display object using it's standard print function 
+ *   display object using it's standard print function
  *   and redirect output to a file
  */
 
@@ -1594,7 +1596,7 @@ static int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
   return int_object_print_gen(stack,rhs,opt,lhs,file_out,FALSE);
 }
 /*
- *   display object using it's standard print function 
+ *   display object using it's standard print function
  */
 
 static int int_object_info(Stack stack, int rhs, int opt, int lhs)
@@ -1603,8 +1605,8 @@ static int int_object_info(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *   display object using it's standard print function 
- *   and redirect output to a string matrix 
+ *   display object using it's standard print function
+ *   and redirect output to a string matrix
  */
 
 static int int_object_sinfo(Stack stack, int rhs, int opt, int lhs)
@@ -1613,7 +1615,7 @@ static int int_object_sinfo(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *   display object using it's standard print function 
+ *   display object using it's standard print function
  *   and redirect output to a file
  */
 
@@ -1632,13 +1634,13 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
   static IOVFun def = NULL;
   CheckRhs(0,2);
   CheckLhs(0,1);
-  if ( rhs >= 1) 
+  if ( rhs >= 1)
     {
       int diary_echo = TRUE;
       char *fname;
-      if ((fname= GetString(stack,1))== NULL) return RET_BUG; 
+      if ((fname= GetString(stack,1))== NULL) return RET_BUG;
       if ((F=nsp_file_open(fname,"w",FALSE,FALSE))== NULL) return RET_BUG;
-      if (rhs >= 2 ) 
+      if (rhs >= 2 )
 	{
 	  if ( GetScalarBool (stack,2,&diary_echo) == FAIL) return RET_BUG;
 	}
@@ -1646,11 +1648,11 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
       Sciprint_set_diary(F->obj->file,diary_echo);
       def = SetScilabIO(Sciprint_diary);
     }
-  else 
+  else
     {
       /* end of diary */
-      if ( F != NULL) 
-	{ 
+      if ( F != NULL)
+	{
 	  nsp_file_close(F);
 	  nsp_file_destroy(F);
 	  F=NULL;
@@ -1664,19 +1666,19 @@ static int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Nsp printf(format,....) function 
+ * Nsp printf(format,....) function
  */
 
 int print_count_rows(Stack stack,int first_arg,int last_arg)
 {
-  NspObject *obj=NULL; 
+  NspObject *obj=NULL;
   int i, rows=0;
   if ( first_arg <= last_arg )
     {
       if ((obj =nsp_get_object(stack,first_arg))== NULL) return FAIL;
       rows =nsp_object_get_size(obj,1);
     }
-  for ( i= first_arg +1 ; i <= last_arg ; i++) 
+  for ( i= first_arg +1 ; i <= last_arg ; i++)
     {
       if ((obj =nsp_get_object(stack,i))== NULL) return FAIL;
       rows =Min(rows,nsp_object_get_size(obj,1));
@@ -1688,29 +1690,29 @@ int int_object_printf(Stack stack, int rhs, int opt, int lhs)
 {
   int i=0,rows;
   char *Format;
-  if ( rhs < 1 ) 
+  if ( rhs < 1 )
     { Scierror("Error:\tRhs must be > 0\n",rhs);return RET_BUG;}
   CheckLhs(0,1);
   if ((Format = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ( rhs >= 2 ) 
+  if ( rhs >= 2 )
     {
-      rows = print_count_rows(stack,2,rhs); 
+      rows = print_count_rows(stack,2,rhs);
       for ( i= 0 ; i < rows ; i++)
 	{
-	  if ( do_printf("printf",stdout,Format,stack,rhs,1,i,(char **) 0) < 0) 
+	  if ( do_printf("printf",stdout,Format,stack,rhs,1,i,(char **) 0) < 0)
 	    return RET_BUG;
 	}
     }
   else
     {
-      if ( do_printf("printf",stdout,Format,stack,rhs,1,i,(char **) 0) < 0) 
+      if ( do_printf("printf",stdout,Format,stack,rhs,1,i,(char **) 0) < 0)
 	return RET_BUG;
     }
   return 0;
-}  
+}
 
 /*
- * Nsp fprintf function 
+ * Nsp fprintf function
  */
 
 int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
@@ -1721,7 +1723,7 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if ( rhs>= 1 &&  IsSMatObj(stack,1) )
     return int_object_printf(stack,rhs,opt,lhs);
-  if ( rhs < 2 ) 
+  if ( rhs < 2 )
     { Scierror("Error:\tRhs must be >= 2 when first argument is not a string\n",rhs);return RET_BUG;}
   if ((F = GetSciFile(stack,1)) == NULLSCIFILE) return RET_BUG;
   if ( !IS_OPENED(F->obj->flag))
@@ -1730,26 +1732,26 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if ((Format = GetString(stack,2)) == (char*)0) return RET_BUG;
-  if ( rhs >= 3 ) 
+  if ( rhs >= 3 )
     {
-      rows = print_count_rows(stack,3,rhs); 
+      rows = print_count_rows(stack,3,rhs);
       for ( i= 0 ; i < rows ; i++)
 	{
-	  if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
+	  if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0)
 	    return RET_BUG;
 	}
     }
-  else 
+  else
     {
-      if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
+      if ( do_printf("printf",F->obj->file,Format,stack,rhs ,2,i,(char **) 0) < 0)
 	return RET_BUG;
     }
   return 0;
-}  
+}
 
 /*
- * Nsp eye(x) where x is an object 
- * return a Matrix 
+ * Nsp eye(x) where x is an object
+ * return a Matrix
  * idem for ones(x)
  */
 
@@ -1766,7 +1768,7 @@ int int_obj_gen_o2m(Stack stack, int rhs, int opt, int lhs, Mmn F)
   if ((A = (*F)(m,n) ) == NULLMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)A);
   return 1;
-}  
+}
 
 int int_object_eye(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1784,7 +1786,7 @@ int int_object_zeros(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Nsp sprintf function 
+ * Nsp sprintf function
  */
 
 int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
@@ -1793,13 +1795,13 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *obj;
   char *str;
   char *Format;
-  if ( rhs < 1 ) 
+  if ( rhs < 1 )
     { Scierror("Error:\tRhs must be >= 1\n",rhs);return RET_BUG;}
   CheckLhs(1,1);
-  if ( rhs >= 2 )  rows = print_count_rows(stack,2,rhs); 
+  if ( rhs >= 2 )  rows = print_count_rows(stack,2,rhs);
   if ((obj=nsp_smatrix_create_with_length(NVOID,rows,1,-1))== NULL) return RET_BUG;
   if ((Format = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ( rhs >= 2 ) 
+  if ( rhs >= 2 )
     {
       for ( i= 0 ; i < rows ; i++)
 	{
@@ -1814,7 +1816,7 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
     }
   MoveObj(stack,1,(NspObject *) obj);
   return 1;
-}  
+}
 
 /*
  * Nsp scanf function
@@ -1836,7 +1838,7 @@ static void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
 int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
 {
   char buf[256];
-  int buf_size= 256 -3, eof; 
+  int buf_size= 256 -3, eof;
   int args,i,ret,rep,iter = 1,iof=0;
   char *Format;
   CheckRhs(1,2);
@@ -1848,61 +1850,61 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
     }
   if ((Format = GetString(stack,iof+1)) == (char*)0) return RET_BUG;
   /*
-   * If we are in a window based Nsp we cannot use stdin 
-   * for scanning : we use Nsp function SciGetLine to 
-   * get a line of input and use this buffer for performing 
-   * a sscanf 
+   * If we are in a window based Nsp we cannot use stdin
+   * for scanning : we use Nsp function SciGetLine to
+   * get a line of input and use this buffer for performing
+   * a sscanf
    */
-  
+
   scanf_get_line("==>",buf,buf_size,&eof);
   stack.first += iof+1;
   rep = do_scanf("scanf",(FILE *) 0,Format,stack,0,&args,buf,&ret);
   stack.first -= iof+1;
-  if ( rep == FAIL ) return RET_BUG; 
+  if ( rep == FAIL ) return RET_BUG;
   rep = Min(args,lhs);
-  for ( i = 1 ; i <= rep ; i++) 
+  for ( i = 1 ; i <= rep ; i++)
     {
-      if ( NthObj(i+iof+1) == NULLOBJ ) 
+      if ( NthObj(i+iof+1) == NULLOBJ )
 	{
 	  Scierror("Error:\tRunning out of memory\n");
 	  return RET_BUG;
 	}
-      NthObj(i+iof+1)->ret_pos = i; 
+      NthObj(i+iof+1)->ret_pos = i;
     }
-  if ( iter > 0 ) 
+  if ( iter > 0 )
     {
       /* first pass to give proper dimensions to matrices */
-      for ( i = 1 ; i <= rep ; i++) 
+      for ( i = 1 ; i <= rep ; i++)
 	{
 	  NspObject *obj = NthObj(i+iof+1);
 	  if ( IsMat(obj) )
 	    {
 	      if ( nsp_matrix_resize((NspMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	    }
-	  else if ( IsSMat(obj)) 
+	  else if ( IsSMat(obj))
 	    {
 	      if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	    }
 	}
       /* read each line */
-      for ( i= 1 ; i < iter ; i++) 
+      for ( i= 1 ; i < iter ; i++)
 	{
 	  int rep1;
 	  scanf_get_line("==>",buf,buf_size,&eof);
 	  stack.first += iof+1;
 	  rep1 = do_scanf("scanf",(FILE *) 0,Format,stack,i,&args,buf,&ret);
 	  stack.first -= iof+1;
-	  if ( rep1 == FAIL ) return RET_BUG; 
+	  if ( rep1 == FAIL ) return RET_BUG;
 	}
     }
-  else if ( iter < 0 ) 
+  else if ( iter < 0 )
     {
       /* we must evaluate the number of lines */
       Scierror("%s: iter < 0 is invalid \n",NspFname(stack));
       return RET_BUG;
     }
   return rep;
-} 
+}
 
 /*
  * Nsp sscanf function
@@ -1917,7 +1919,7 @@ int int_object_sscanf(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,3);
   if ( lhs < 0  ) return 0;
 
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (GetScalarInt(stack,1,&iter) == FAIL) return RET_BUG;
       iof=1;
@@ -1927,47 +1929,47 @@ int int_object_sscanf(Stack stack, int rhs, int opt, int lhs)
   stack.first += iof+2;
   rep = do_scanf("sscanf",(FILE *)0,Format,stack,0,&args,Sm->S[0],&ret);
   stack.first -= iof+2;
-  if ( rep == FAIL ) return RET_BUG; 
+  if ( rep == FAIL ) return RET_BUG;
   rep = Min(args,lhs);
-  for ( i = 1 ; i <= rep ; i++) 
+  for ( i = 1 ; i <= rep ; i++)
     {
-      if ( NthObj(i+iof+2) == NULLOBJ ) 
+      if ( NthObj(i+iof+2) == NULLOBJ )
 	{
 	  Scierror("Error:\tRunning out of memory\n");
 	  return RET_BUG;
 	}
-      NthObj(i+iof+2)->ret_pos = i; 
+      NthObj(i+iof+2)->ret_pos = i;
     }
 
-  
-  if ( iter < 0 ) iter = Sm->m; 
+
+  if ( iter < 0 ) iter = Sm->m;
   else if ( iter == 0) iter = 1;
   else iter = Min(iter,Sm->m);
-  
+
   /* first pass to give proper dimensions to matrices */
-  for ( i = 1 ; i <= rep ; i++) 
+  for ( i = 1 ; i <= rep ; i++)
     {
       NspObject *obj = NthObj(i+iof+2);
       if ( IsMat(obj) )
 	{
 	  if ( nsp_matrix_resize((NspMatrix *)obj,iter,1) == FAIL) return RET_BUG;
 	}
-      else if ( IsSMat(obj)) 
+      else if ( IsSMat(obj))
 	{
 	  if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	}
     }
   /* read each line */
-  for ( i= 1 ; i < iter ; i++) 
+  for ( i= 1 ; i < iter ; i++)
     {
       int rep1;
       stack.first += iof+2;
       rep1 = do_scanf("sscanf",(FILE *) 0,Format,stack,i,&args,Sm->S[i],&ret);
       stack.first -= iof+2;
-      if ( rep1 == FAIL ) return RET_BUG; 
+      if ( rep1 == FAIL ) return RET_BUG;
     }
   return rep;
-}  
+}
 
 /*
  * Nsp fscanf function
@@ -1984,7 +1986,7 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,3);
   if ( lhs < 0  ) return 0;
 
-  if ( rhs == 3 ) 
+  if ( rhs == 3 )
     {
       if (GetScalarInt(stack,1,&iter) == FAIL) return RET_BUG;
       iof=1;
@@ -1999,60 +2001,60 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
   stack.first += iof+2;
   rep = do_scanf("fscanf",F->obj->file,Format,stack,0,&args,NULL,&ret);
   stack.first -= iof+2;
-  if ( rep == FAIL ) return RET_BUG; 
+  if ( rep == FAIL ) return RET_BUG;
   rep = Min(args,lhs);
-  for ( i = 1 ; i <= rep ; i++) 
+  for ( i = 1 ; i <= rep ; i++)
     {
-      if ( NthObj(i+iof+2) == NULLOBJ ) 
+      if ( NthObj(i+iof+2) == NULLOBJ )
 	{
 	  Scierror("Error:\tRunning out of memory\n");
 	  return RET_BUG;
 	}
-      NthObj(i+iof+2)->ret_pos = i; 
+      NthObj(i+iof+2)->ret_pos = i;
     }
-  
-  if ( iter < 0 ) 
+
+  if ( iter < 0 )
     {
-      /* estimates the number of lines from here to 
-       * the end of file 
+      /* estimates the number of lines from here to
+       * the end of file
        */
       if ( Format[strlen(Format)-1] == '\n')
 	iter = count_lines(F->obj->file)+1;
-      else 
+      else
 	iter = count_lines(F->obj->file);
       /* Scierror("Error:\tfound %d lines\n",iter);*/
     }
   else if ( iter == 0) iter = 1;
-  
+
   /* first pass to give proper dimensions to matrices */
-  for ( i = 1 ; i <= rep ; i++) 
+  for ( i = 1 ; i <= rep ; i++)
     {
       NspObject *obj = NthObj(i+iof+2);
       if ( IsMat(obj) )
 	{
 	  if ( nsp_matrix_resize((NspMatrix *)obj,iter,1) == FAIL) return RET_BUG;
 	}
-      else if ( IsSMat(obj)) 
+      else if ( IsSMat(obj))
 	{
 	  if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	}
     }
   /* read each line */
-  for ( i= 1 ; i < iter ; i++) 
+  for ( i= 1 ; i < iter ; i++)
     {
       int rep1;
       stack.first += iof+2;
       rep1 = do_scanf("fscanf",F->obj->file,Format,stack,i,&args,NULL,&ret);
       stack.first -= iof+2;
-      if ( rep1 == FAIL ) return RET_BUG; 
+      if ( rep1 == FAIL ) return RET_BUG;
     }
   return rep;
-}  
+}
 
 static int count_lines(FILE *f)
 {
   int n=0,c;
-  long pos; 
+  long pos;
   pos= ftell(f);
   while ((c = fgetc(f)) != EOF)
     {
@@ -2064,52 +2066,52 @@ static int count_lines(FILE *f)
 }
 
 /* size(Obj,..)
- * Nsp size function 
+ * Nsp size function
  */
 
 int int_object_size(Stack stack, int rhs, int opt, int lhs)
-{ 
+{
   double d;
-  const char *Table[]={ "*","r","c",NULL }; 
+  const char *Table[]={ "*","r","c",NULL };
   NspMatrix *Loc1;
   NspObject *O1,*O2;
   int size_f=-1;
   CheckRhs(1,2);
   CheckLhs(1,2);
-  if ( rhs == 2) 
+  if ( rhs == 2)
     {
-      if ( lhs > 1 ) 
+      if ( lhs > 1 )
 	{
 	  Scierror("Error: too many lhs (%d) for function %s with two rhs \n",lhs,NspFname(stack));
-	  return RET_BUG;	 
-	} 
-      if ( IsSMatObj(stack,2)  ) 
+	  return RET_BUG;
+	}
+      if ( IsSMatObj(stack,2)  )
 	{
 	  if (( size_f= GetStringInArray(stack,2,Table,1))== -1 ) return RET_BUG;
 	}
       else
 	{
 	  if (GetScalarInt(stack,2,&size_f) == FAIL) return RET_BUG;
-	  if ( size_f < 0 || size_f > 2 ) 
+	  if ( size_f < 0 || size_f > 2 )
 	    {
 	      Scierror("Error: second argument of function size should be 0, 1 or 2 not %d\n",size_f);
 	      return RET_BUG;
 	    }
 	}
     }
-  
-  if ( size_f == -1 ) 
-    { 
+
+  if ( size_f == -1 )
+    {
       if ( lhs == 2 )
 	{
-	  if (( O1 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),1))) == NULLOBJ ) 
+	  if (( O1 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),1))) == NULLOBJ )
 	    return RET_BUG;
-	  if (( O2 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),2))) == NULLOBJ ) 
+	  if (( O2 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),2))) == NULLOBJ )
 	    return RET_BUG;
 	  MoveObj(stack,1,O1);
 	  if ( rhs == 2 )
 	    MoveObj(stack,2,O2);
-	  else 
+	  else
 	    {NthObj(2) = O2; NSP_OBJECT(NthObj(2))->ret_pos = 2;}
 	  return 2;
 	}
@@ -2131,12 +2133,12 @@ int int_object_size(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   return lhs;
-}  
+}
 
 
 
 /* save(...) save objects in a file ( xdr format )
- * each object is saved using its own function 
+ * each object is saved using its own function
  */
 
 static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
@@ -2152,15 +2154,15 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
   nsp_expand_file_with_exec_dir(&stack,fname,buf);
   /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_w(buf)) == NULLSCIFILE) return RET_BUG;
-  if ( rhs == 1) 
+  if ( rhs == 1)
     {
       if (nsp_frame_save(F)== FAIL) rep = RET_BUG;
     }
-  else 
+  else
     {
       for ( i = 2 ; i <= rhs ; i++ )
 	{
-	  if (nsp_object_xdr_save(F->obj->xdrs,NthObj(i))== FAIL) 
+	  if (nsp_object_xdr_save(F->obj->xdrs,NthObj(i))== FAIL)
 	    {
 	      rep = RET_BUG;
 	      break;
@@ -2170,7 +2172,7 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
     }
 
   nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
-  if (nsp_file_close_xdr_w(F) == FAIL) 
+  if (nsp_file_close_xdr_w(F) == FAIL)
     {
       nsp_file_destroy(F);
       return RET_BUG;
@@ -2180,13 +2182,13 @@ static int int_object_xdr_save(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* load(Obj)
- * read saved object from a file 
+ * read saved object from a file
  */
 
 static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S);
 static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname);
 
-static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *S=NULLSMAT;
   NspHash *H=NULL;
@@ -2199,13 +2201,13 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   if (( fname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ( rhs -opt == 2)
     {
-      if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;        
+      if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
     }
   /* expand keys in path name result in buf */
   nsp_expand_file_with_exec_dir(&stack,fname,buf);
   /* nsp_path_expand(fname,buf,FSIZE); */
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
-  if ( lhs <= 0) 
+  if ( lhs <= 0)
     {
       rep = nsp_xdr_load_to_frame(F,S,fname);
     }
@@ -2222,9 +2224,9 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   nsp_file_destroy(F);
   if ( lhs <= 0 )
     {
-      if (rep == FAIL) 
+      if (rep == FAIL)
 	return RET_BUG;
-      else 
+      else
 	return 0;
     }
   else
@@ -2244,9 +2246,9 @@ static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S)
 {
   NspObject *Obj;
   NspHash *H;
-  if(( H = nsp_hash_create(NVOID,10)) == NULLHASH) 
+  if(( H = nsp_hash_create(NVOID,10)) == NULLHASH)
     return NULL;
-  while (1) 
+  while (1)
     {
       int ok = TRUE;
       if ((Obj=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
@@ -2254,7 +2256,7 @@ static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S)
 	{
 	  int i;
 	  ok=FALSE;
-	  for ( i = 0; i < S->mn; i++) 
+	  for ( i = 0; i < S->mn; i++)
 	    if ( strcmp(S->S[i],nsp_object_get_name(Obj))== 0 )
 	      {
 		ok = TRUE; break;
@@ -2269,12 +2271,12 @@ static NspHash* nsp_xdr_load_to_hash(NspFile *F, NspSMatrix *S)
  fail:
   nsp_hash_destroy(H);
   return NULL;
-} 
+}
 
 static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname)
 {
   NspObject *Obj;
-  while (1) 
+  while (1)
     {
       int ok = TRUE;
       if ((Obj=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
@@ -2282,7 +2284,7 @@ static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname)
 	{
 	  int i;
 	  ok=FALSE;
-	  for ( i = 0; i < S->mn; i++) 
+	  for ( i = 0; i < S->mn; i++)
 	    if ( strcmp(S->S[i],nsp_object_get_name(Obj))== 0 )
 	      {
 		ok = TRUE; break;
@@ -2290,7 +2292,7 @@ static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname)
 	}
       if ( ok == TRUE )
 	{
-	  if ( nsp_store_object(Obj) == FAIL) 
+	  if ( nsp_store_object(Obj) == FAIL)
 	    {
 	      Scierror("Error: failed to load object from %s\n", fname);
 	      return FAIL;
@@ -2298,7 +2300,7 @@ static int nsp_xdr_load_to_frame(NspFile *F, NspSMatrix *S,const char *fname)
 	}
     }
   return OK;
-} 
+}
 
 /*
  * the function xdr_opaque, always writes block of size BYTES_PER_XDR_UNIT. So
@@ -2314,7 +2316,7 @@ static u_int get_xdr_len (u_int cnt)
   return rndup + cnt;
 }
 
-/* load one object from a file but returns its serialized 
+/* load one object from a file but returns its serialized
  * version instead of the object itself.
  * Author: Jérôme Lelong.
  */
@@ -2325,10 +2327,10 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
   int len, offset, c ,n;
   NspSerial *S;
   char *name, *str, scis[]={"NspXdr_1.0"};
-  
+
   CheckStdRhs(1,1);
   CheckLhs(1,1);
-  
+
   name  = GetString(stack, 1);
   if ((FIC=fopen(name, "rb")) == NULL) return RET_BUG;
   len= 0;
@@ -2337,7 +2339,7 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
   rewind (FIC);
   n=fread (str, sizeof(char), len,  FIC);
   fclose (FIC);
-  if ( n != len ) 
+  if ( n != len )
     {
       Scierror ("Error: failed to read %d characters from %s\n",len,name);
       return RET_BUG;
@@ -2349,14 +2351,14 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   offset += get_xdr_len (strlen (scis));
-  
+
   /*
    *  a binary file containing an object always ends by the
    * an integer + an integer + the string "endsave"
    * the last but one integer should be 0 indicating that there is nothing left
    * to be read. The last integer is the length of the string "endsave"
    */
-    
+
   if ((S = nsp_serial_create(NVOID, str+offset,
 			     len - (offset+2*sizeof(u_int) +get_xdr_len(strlen("endsave")))))
       == NULLSERIAL) return RET_BUG;
@@ -2369,7 +2371,7 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes) 
+static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes)
 {
   NspObject *O1,*O2;
   CheckRhs(2,2);
@@ -2386,66 +2388,66 @@ static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes)
     }
   else
     {
-#if 1 
+#if 1
       Scierror("Warning: mixed unimplemented comparison %s %s %s\n",mes,
 		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
       return RET_BUG;
-#else 
+#else
       Sciprintf("Warning: mixed unimplemented comparison %s %s %s\n",mes,
 		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
 #endif
     }
-  nsp_move_boolean(stack,1,FALSE); 
-  return 1; 
-} 
+  nsp_move_boolean(stack,1,FALSE);
+  return 1;
+}
 
 /*
- * A == B 
- *  when A and B do not have the same type 
- *  and when a specialized function do not exists 
- *  when type(A) == type(B) a specialized function should 
+ * A == B
+ *  when A and B do not have the same type
+ *  and when a specialized function do not exists
+ *  when type(A) == type(B) a specialized function should
  *  exists if not a warning message is displayed
  */
 
-int int_object_eq(Stack stack, int rhs, int opt, int lhs) 
+int int_object_eq(Stack stack, int rhs, int opt, int lhs)
 {
   return  int_object_log_gen(stack,rhs,opt,lhs,"eq");
 }
 
 /*
- * the same for >= <= > < 
+ * the same for >= <= > <
  */
 
-int int_object_le(Stack stack, int rhs, int opt, int lhs) 
+int int_object_le(Stack stack, int rhs, int opt, int lhs)
 {
   return  int_object_log_gen(stack,rhs,opt,lhs,"le");
 }
 
-int int_object_lt(Stack stack, int rhs, int opt, int lhs) 
+int int_object_lt(Stack stack, int rhs, int opt, int lhs)
 {
   return  int_object_log_gen(stack,rhs,opt,lhs,"lt");
 }
 
-int int_object_ge(Stack stack, int rhs, int opt, int lhs) 
+int int_object_ge(Stack stack, int rhs, int opt, int lhs)
 {
   return  int_object_log_gen(stack,rhs,opt,lhs,"ge");
 }
 
-int int_object_gt(Stack stack, int rhs, int opt, int lhs) 
+int int_object_gt(Stack stack, int rhs, int opt, int lhs)
 {
   return  int_object_log_gen(stack,rhs,opt,lhs,"gt");
 }
 
 /*
- * A <> B 
- * when A and B do not have the same type 
- * and when a specialized function do not exists 
- * when type(A) == type(B) a specialized function should 
+ * A <> B
+ * when A and B do not have the same type
+ * and when a specialized function do not exists
+ * when type(A) == type(B) a specialized function should
  * exists if not a warning message is displayed
- * 
+ *
  */
 
-int int_object_neq(Stack stack, int rhs, int opt, int lhs) 
+int int_object_neq(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *O1,*O2;
   CheckRhs(2,2);
@@ -2460,70 +2462,70 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
 	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O1)->type->sh_type(O2));
       return RET_BUG;
     }
-  else 
+  else
     {
 #if 1
       Scierror("Warning: mixed unimplemented comparison %s %s %s\n","<>",
 	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
       return RET_BUG;
-#else 
+#else
       Sciprintf("Warning: mixed unimplemented comparison %s %s %s returning TRUE\n","<>",
 		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
 #endif
     }
-  nsp_move_boolean(stack,1,TRUE); 
-  return 1; 
-} 
+  nsp_move_boolean(stack,1,TRUE);
+  return 1;
+}
 
 /*
- * length(A) or numel(A) for all objects. length(A) or numel(A) 
- * give to the number of total elements of the object A (for a 
- * matrix this is the product m*n of the sizes of the 2 dimensions). 
- * BUT this rule have an exception for string matrix (where length 
- * returns a matrix with the length of each strings) and so length 
+ * length(A) or numel(A) for all objects. length(A) or numel(A)
+ * give to the number of total elements of the object A (for a
+ * matrix this is the product m*n of the sizes of the 2 dimensions).
+ * BUT this rule have an exception for string matrix (where length
+ * returns a matrix with the length of each strings) and so length
  * is redefined in SMatObj.c. numel have not this exception.
  *
  * Note that length and numel are redefined for sparse matrix because
  * the method uses here may be "corrupted" for such matrices (the
- * product m*n which is stored in a int variable could overflow).  
+ * product m*n which is stored in a int variable could overflow).
  */
 
-static int int_object_length(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_length(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(1,1);
-  nsp_move_double(stack,1,nsp_object_get_size(NthObj(1),0)); 
-  return 1; 
-} 
+  nsp_move_double(stack,1,nsp_object_get_size(NthObj(1),0));
+  return 1;
+}
 
 /*
  * isempty(A) for all objects
  */
 
-static int int_object_isempty(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_isempty(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(1,1);
-  nsp_move_boolean(stack,1,nsp_object_get_size(NthObj(1),0)==0); 
-  return 1; 
-} 
+  nsp_move_boolean(stack,1,nsp_object_get_size(NthObj(1),0)==0);
+  return 1;
+}
 
 /*
  * isscalar(A) for all objects
  */
 
-static int int_object_isscalar(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_isscalar(Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(1,1);
   CheckLhs(1,1);
-  nsp_move_boolean(stack,1,nsp_object_get_size(NthObj(1),0)==1); 
-  return 1; 
-} 
+  nsp_move_boolean(stack,1,nsp_object_get_size(NthObj(1),0)==1);
+  return 1;
+}
 
 /* serialize(A).
  */
 
-static int int_object_serialize(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_serialize(Stack stack, int rhs, int opt, int lhs)
 {
   char *str = "s";/* s for serial , m for matrix */
   NspObject *Obj,*Obj1;;
@@ -2536,7 +2538,7 @@ static int int_object_serialize(Stack stack, int rhs, int opt, int lhs)
     }
   Obj = nsp_object_serialize(NthObj(1));
   if ( Obj == NULLOBJ) return RET_BUG;
-  if ( strncmp(str,"m",1)==0) 
+  if ( strncmp(str,"m",1)==0)
     {
       /* serialize in a matrix */
       Obj1 = (NspObject *) nsp_serial_to_matrix((NspSerial *) Obj);
@@ -2544,7 +2546,7 @@ static int int_object_serialize(Stack stack, int rhs, int opt, int lhs)
       if ( Obj1 == NULLOBJ) return RET_BUG;
       Obj = Obj1;
     }
-  MoveObj(stack,1,Obj);      
+  MoveObj(stack,1,Obj);
   return 1;
 }
 
@@ -2560,8 +2562,8 @@ static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   if (( a= GetSerial(stack,1))== NULLSERIAL ) return RET_BUG;
   if ((Obj = nsp_object_unserialize(a))==NULLOBJ)
     return RET_BUG;
-  /* take care that nsp_object_unserialize returns a new object 
-   * but with a name, we have to delete the name here otherwise 
+  /* take care that nsp_object_unserialize returns a new object
+   * but with a name, we have to delete the name here otherwise
    * Obj will be copied at return and we will have unfreed memory.
    */
   if (nsp_object_set_name(Obj,NVOID) == FAIL) return RET_BUG;
@@ -2569,7 +2571,7 @@ static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* unserialize a serialized object stored in a numeric matrix 
+/* unserialize a serialized object stored in a numeric matrix
  */
 
 static int int_serial_munserialize(Stack stack, int rhs, int opt, int lhs)
@@ -2584,8 +2586,8 @@ static int int_serial_munserialize(Stack stack, int rhs, int opt, int lhs)
   Obj = nsp_object_unserialize(a);
   nsp_serial_destroy(a);
   if ( Obj == NULLOBJ ) return RET_BUG;
-  /* take care that nsp_object_unserialize returns a new object 
-   * but with a name, we have to delete the name here otherwise 
+  /* take care that nsp_object_unserialize returns a new object
+   * but with a name, we have to delete the name here otherwise
    * Obj will be copied at return and we will have unfreed memory.
    */
   if (nsp_object_set_name(Obj,NVOID) == FAIL) return RET_BUG;
@@ -2656,7 +2658,7 @@ int Obj_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
    (for adding or removing functions) */
 
 void Obj_Interf_Info(int i, char **fname, function (**f))
@@ -2664,8 +2666,3 @@ void Obj_Interf_Info(int i, char **fname, function (**f))
   *fname = Obj_func[i].name;
   *f = Obj_func[i].fonc;
 }
-
-
-
-
-

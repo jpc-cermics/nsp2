@@ -74,7 +74,7 @@ NspTypeGBoxed *new_type_gboxed(type_mode mode)
   type->attrs = NULL;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = gboxed_get_methods;
+  type->methods = (methods_func *) gboxed_get_methods;
   type->gtk_methods = TRUE;
   type->new = (new_func *) new_gboxed;
 
@@ -395,7 +395,15 @@ NspGBoxed *gboxed_copy(NspGBoxed *self)
  * methods
  *------------------------------------------------------*/
 
-static NspMethods *gboxed_get_methods(void) { return NULL;};
+static NspMethods *gboxed_get_methods(NspObject *Obj)
+{
+  /* here for gboxed, we need to serach the methods of
+   * the encapsulated object
+   */
+  NspGBoxed *self = (  NspGBoxed *) Obj;
+  NspTypeBase *type = nsp_type_from_gtype(self->gtype);
+  return type->methods();
+};
 
 /*-------------------------------------------
  * function
