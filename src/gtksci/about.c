@@ -24,7 +24,7 @@
 #include <gtk/gtk.h>
 #define KEEP_PACKAGE
 #include <nsp/nsp.h>
-#include "nsp-logo.xpm" 
+#include "nsp-tumbi.xpm" 
 
 void create_nsp_about(void)
 {
@@ -61,7 +61,7 @@ void create_nsp_about(void)
   
   pixbuf = NULL;
   transparent = NULL;
-  pixbuf =gdk_pixbuf_new_from_xpm_data (nsp_logo_xpm);
+  pixbuf =gdk_pixbuf_new_from_xpm_data (nsp_tumbi);
   transparent = gdk_pixbuf_add_alpha (pixbuf, TRUE, 0xff, 0xff, 0xff);
   g_object_unref (pixbuf);
   /* gtk_about_dialog_set_email_hook (activate_email, NULL, NULL); */
