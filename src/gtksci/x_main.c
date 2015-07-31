@@ -36,7 +36,7 @@
 
 #if GTK_CHECK_VERSION (3,0,0)
 #include <gtk/gtkx.h>
-#endif 
+#endif
 
 #ifdef WITH_GTKGLEXT
 #include <gtk/gtkgl.h>
@@ -85,9 +85,9 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #else
 #if GTK_CHECK_VERSION (3,0,0)
       setlocale(LC_ALL,"");
-#else 
+#else
       gtk_set_locale();
-#endif 
+#endif
 #endif
       gtk_init(&argc,&argv);
       /*
@@ -303,7 +303,7 @@ static char *get_shared(void)
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 {
 #if !defined(__MSC__) && ! defined(__MINGW32__)
-  guint32 *xid;
+  gulong *xid;
   char * shm = get_shared() ;
 #endif
   GtkWidget *vbox,*menubar, *socket_button;
@@ -316,7 +316,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
       /* deprecated gtk_set_locale(); */
       setlocale(LC_ALL,"");
 #endif
- 
+
   gtk_init(&argc, &argv);
   nsp_gtk_gl_init (&argc, &argv);
   /*
@@ -328,7 +328,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   /* create vbox */
 #if GTK_CHECK_VERSION (3,0,0)
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-#else 
+#else
   vbox = gtk_vbox_new (FALSE, 0);
 #endif
   gtk_box_set_spacing (GTK_BOX (vbox), 2);
@@ -349,19 +349,20 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   gtk_widget_grab_focus(socket_button);
 #if !defined(__MSC__) && ! defined(__MINGW32__)
   /* I transmit the socket Id via shared memory  */
-  xid = (guint32 *) (shm+1);
+  xid = (gulong *) (shm+1);
 #ifdef  GDK_WINDOW_XWINDOW
 #ifdef GSEAL_ENABLE
-  *xid = GDK_WINDOW_XWINDOW(gtk_socket_get_plug_window(GTK_SOCKET(socket_button)));
+  *xid = (gulong) GDK_WINDOW_XWINDOW(gtk_socket_get_plug_window(GTK_SOCKET(socket_button)));
 #else
   *xid = GDK_WINDOW_XWINDOW(socket_button->window);
 #endif
 #else
 #if GTK_CHECK_VERSION (3,0,0)
-  *xid= gtk_socket_get_plug_window(GTK_SOCKET(socket_button));
+  /* *xid= gtk_socket_get_plug_window(GTK_SOCKET(socket_button)); */
+  *xid= (gulong) gtk_socket_get_id(GTK_SOCKET(socket_button));
 #else
   *xid = socket_button->window;
-#endif 
+#endif
 #endif
   *shm = '*' ; /* just to tell that there's something to read */
 #endif

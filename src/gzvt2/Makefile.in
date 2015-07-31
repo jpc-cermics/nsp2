@@ -9,3 +9,5 @@ all	::  ../../bin/zterm
 
 distclean::
 	$(RM) -f ../../bin/zterm
+
+clean::
