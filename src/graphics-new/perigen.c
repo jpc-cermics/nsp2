@@ -24,19 +24,9 @@
  * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <stdarg.h>
-#include <gtk/gtk.h>
-#include "nsp/sciio.h"
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/graphics-new/perigen.h"
-#include "nsp/version.h"
-#include "nsp/graphics-new/color.h"
-#include "nsp/command.h"
-
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/graphics-new/perigen.h>
 
 static driver_fill_grid_rectangles fill_grid_rectangles_gen;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
