@@ -27,19 +27,12 @@
  * if it needs scale changes from pixel to double or both.
  *--------------------------------------------------------------------------*/
 
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
 #include <gdk/gdk.h>
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/math.h"
-#include "nsp/sciio.h"
-#include "nsp/object.h"
-#include "nsp/gtk/gobject.h"
-#include "new_graphics.h"
-
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/gtk/gobject.h>
 #define PERI_SCALE_PRIVATE
-#include "nsp/graphics-new/scale.h"
+#include <nsp/graphics-new/scale.h>
 
 static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
@@ -48,50 +41,43 @@ static void Myalloc_double_x (double **xm,int n,int *err);
 static void Myalloc_double_xy (double **xm,double **ym, int n, int *err);
 
 Gengine1 nsp_gengine1={
-  boundingbox_1,
-  cleararea_1,
-  displaynumbers_1,
-  displaystring_1,
-  displaystringa_1,
-  draw_pixbuf_1,
-  draw_pixbuf_from_file_1,
-  drawarc_1,
-  drawarcs_1,
-  drawarrows_1,
-  drawaxis_1,
-  drawpolyline_1,
-  drawpolyline_clip_1,
-  drawpolylines_1,
-  drawpolymark_1,
-  drawrectangle_1,
-  drawrectangles_1,
-  drawsegments_1,
-  fillarc_1,
-  fillarcs_1,
-  fillpolyline_1,
-  fillpolylines_1,
-  fillrectangle_1,
-  initialize_gc_1,
-  xclick_1,
-  xclick_any_1,
-  xgetmouse_1,
-  xset_clip_1,
-  xset_clipgrf_1,
-  xset_clipping_p_1,
-  xset_default_1,
-  xset_font_size_1,
-  xset_mark_size_1,
-  xstringb_1,
+ boundingbox:  boundingbox_1,
+ cleararea:  cleararea_1,
+ displaynumbers:   displaynumbers_1,
+ displaystring:   displaystring_1,
+ displaystringa:   displaystringa_1,
+ draw_pixbuf:   draw_pixbuf_1,
+ draw_pixbuf_from_file:   draw_pixbuf_from_file_1,
+ drawarc:   drawarc_1,
+ drawarcs:   drawarcs_1,
+ drawarrows:   drawarrows_1,
+ drawaxis:   drawaxis_1,
+ drawpolyline:   drawpolyline_1,
+ drawpolyline_clip:   drawpolyline_clip_1,
+ drawpolylines:   drawpolylines_1,
+ drawpolymark:   drawpolymark_1,
+ drawrectangle:   drawrectangle_1,
+ drawrectangles:   drawrectangles_1,
+ drawsegments:   drawsegments_1,
+ fillarc:   fillarc_1,
+ fillarcs:   fillarcs_1,
+ fillpolyline:   fillpolyline_1,
+ fillrectangle:   fillrectangle_1,
+ initialize_gc:   initialize_gc_1,
+ xclick:   xclick_1,
+ xclick_any:   xclick_any_1,
+ xgetmouse:   xgetmouse_1,
+ xset_clip:   xset_clip_1,
+ xset_clipgrf:   xset_clipgrf_1,
+ xset_clipping_p:   xset_clipping_p_1,
+ xstringb:   xstringb_1,
 };
 
+/* still used at initialization by periPos periFig periTikz
+ *
+ */
 
-
-
-/*------------------------------------------------
- * graphic context initialization
- *------------------------------------------------*/
-
-void nsp_initialize_gc_obsol( BCG *Xgc )
+static void initialize_gc_1(BCG *Xgc)
 {
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
@@ -115,21 +101,6 @@ void nsp_initialize_gc_obsol( BCG *Xgc )
   Xgc->graphic_engine->xset_fpf_def(Xgc) ;
 }
 
-static void initialize_gc_1(BCG *Xgc)
-{
-  nsp_initialize_gc_obsol(Xgc);
-}
-
-
-/**************************************************
- * Global values which are set at this level and
- * not redirected to each driver
- **************************************************/
-
-/*-----------------------------------------------------------------------------
- *  xset_1
- *-----------------------------------------------------------------------------*/
-
 static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
 {
   GdkRectangle r = { x,y,w,h};
@@ -147,26 +118,6 @@ static void xset_clip_1(BCG *Xgc,double x[])
   scale_f2i(Xgc->scales,x,x+1,&r.x,&r.y,1);
   length_scale_f2i(Xgc->scales,x+2,x+3,&r.width,&r.height,1);
   Xgc->graphic_engine->xset_clip(Xgc,&r);
-}
-
-static void xset_default_1(BCG *Xgc)
-{
-  nsp_initialize_gc(Xgc);
-}
-
-static void xset_font_size_1(BCG *Xgc,int val)
-{
-  int font[2];
-  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
-  Xgc->graphic_engine->xset_font(Xgc,font[0],val, FALSE);
-}
-
-static void xset_mark_size_1(BCG *Xgc,int val)
-{
-  int mark[2];
-  Xgc->graphic_engine->xget_mark(Xgc,mark);
-  mark[1]=val;
-  Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 }
 
 static void drawarc_1(BCG *Xgc,double arc[])
@@ -355,25 +306,6 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
 #if 0
 static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag);
 #endif
-
-static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
-{
-#if 0
-  double *xm=NULL,*ym=NULL;
-  int err=0,i;
-  Myalloc_double_xy(&xm,&ym,n*p,&err);
-  if (err  ==   1) return;
-  scale_double_to_pixels(Xgc->scales,vx,vy,xm,ym,n*p);
-  if (v1 == 2) {
-    for (i=0 ; i< (n) ;i++) nsp_shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
-  }
-  else
-    Xgc->graphic_engine->fillpolylines(Xgc,xm,ym,fillvect,n,p);
-#else
-  Sciprintf("Warning: fillpolylines_1 should not be called\n");
-#endif
-
-}
 
 /*---------------------------------------------------------------------------------
  *This function sorts the vertices such that the color value is in decreasing order

@@ -1,15 +1,15 @@
-#ifndef NSP_SCALE_BCG 
-#define NSP_SCALE_BCG 
+#ifndef NSP_SCALE_BCG
+#define NSP_SCALE_BCG
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2015) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * This Software is GPL (Copyright ENPC 1998-2015)
+ * Jean-Philippe Chancelier Enpc/Cermics
  *
- * The following functions perform scale changes and then redirect 
+ * The following functions perform scale changes and then redirect
  * to the graphics driver.
  */
 
-typedef struct _nsp_gengine1 Gengine1; 
+typedef struct _nsp_gengine1 Gengine1;
 
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);
 typedef void driver_s_cleararea(BCG *Xgc, double *r);
@@ -32,7 +32,6 @@ typedef void driver_s_drawsegments(BCG *Xgc,double *vx, double *vy,int n, int *s
 typedef void driver_s_fillarc(BCG *Xgc, double arc[]);
 typedef void driver_s_fillarcs(BCG *Xgc,double vects[],int fillvect[], int n);
 typedef void driver_s_fillpolyline(BCG *Xgc,double vx[], double vy[],int n,int closeflag);
-typedef void driver_s_fillpolylines(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p,int v1);
 typedef void driver_s_fillrectangle(BCG *Xgc,double rect[]);
 typedef void driver_s_initialize_gc(BCG *Xgc);
 typedef void driver_s_xclick(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, double *y, int iflag,int motion,int release,int key, int istr);
@@ -41,9 +40,9 @@ typedef void driver_s_xgetmouse(BCG *Xgc,char *str, int *ibutton, int *imask,dou
 typedef void driver_s_xset_clip(BCG *Xgc,double x[]);
 typedef void driver_s_xset_clipgrf(BCG *Xgc);
 typedef void driver_s_xset_clipping_p(BCG *Xgc,double x,double y,double w,double h);
-typedef void driver_s_xset_default(BCG *Xgc) ;
-typedef void driver_s_xset_font_size(BCG *Xgc,int val);
-typedef void driver_s_xset_mark_size(BCG *Xgc,int val);
+//typedef void driver_s_xset_default(BCG *Xgc) ;
+//typedef void driver_s_xset_font_size(BCG *Xgc,int val);
+//typedef void driver_s_xset_mark_size(BCG *Xgc,int val);
 typedef void driver_s_xstringb(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
 struct _nsp_gengine1 {
@@ -68,7 +67,6 @@ struct _nsp_gengine1 {
   driver_s_fillarc *fillarc;
   driver_s_fillarcs *fillarcs;
   driver_s_fillpolyline *fillpolyline;
-  driver_s_fillpolylines *zzfillpolylines; /* no more used */
   driver_s_fillrectangle *fillrectangle;
   driver_s_initialize_gc *initialize_gc;
   driver_s_xclick *xclick;
@@ -77,15 +75,17 @@ struct _nsp_gengine1 {
   driver_s_xset_clip *xset_clip;
   driver_s_xset_clipgrf *xset_clipgrf;
   driver_s_xset_clipping_p *xset_clipping_p;
-  driver_s_xset_default *xset_default;
+  /* driver_s_xset_default *xset_default; */
+  /*
   driver_s_xset_font_size *xset_font_size;
   driver_s_xset_mark_size *xset_mark_size;
+  */
   driver_s_xstringb *xstringb;
 };
 
-#endif 
+#endif
 
-#ifdef PERI_SCALE_PRIVATE 
+#ifdef PERI_SCALE_PRIVATE
 
 static  driver_s_boundingbox boundingbox_1;
 static  driver_s_cleararea cleararea_1;
@@ -108,7 +108,6 @@ static  driver_s_drawsegments drawsegments_1;
 static  driver_s_fillarc fillarc_1;
 static  driver_s_fillarcs fillarcs_1;
 static  driver_s_fillpolyline fillpolyline_1;
-static  driver_s_fillpolylines fillpolylines_1;
 static  driver_s_fillrectangle fillrectangle_1;
 static  driver_s_initialize_gc initialize_gc_1;
 static  driver_s_xclick xclick_1;
@@ -117,12 +116,10 @@ static  driver_s_xgetmouse xgetmouse_1;
 static  driver_s_xset_clip xset_clip_1;
 static  driver_s_xset_clipgrf xset_clipgrf_1;
 static  driver_s_xset_clipping_p xset_clipping_p_1;
-static  driver_s_xset_default xset_default_1;
-static  driver_s_xset_font_size xset_font_size_1;
-static  driver_s_xset_mark_size  xset_mark_size_1;
-static  driver_s_xset_mark_size xset_mark_size_1;
+//static  driver_s_xset_font_size xset_font_size_1;
+//static  driver_s_xset_mark_size  xset_mark_size_1;
 static  driver_s_xstringb xstringb_1;
 
 
 
-#endif 
+#endif
