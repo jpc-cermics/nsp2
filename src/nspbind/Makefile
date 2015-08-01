@@ -102,20 +102,7 @@ test-no-warnings:
 
 test-nw: test-no-warnings
 
-test-nsp:
-	(cd test_data && $(MAKE) compile-nsp)
-
-clean-test:
-	@(cd test_data && $(MAKE) clean-all)
-
-clean-all::
-	@$(RM) $(NSPBIND_INTERNAL_LIBS_DIR)/*/* &&\
-	(cd $(CAMLZIP_DIR) && $(MAKE) clean-all) &&\
-	(cd $(OCAML_XML_DIR) && $(MAKE) clean-all) &&\
-	$(MAKE) clean-test
-
-distclean: clean-all
-	$(RM) $(CONFIG_DIR)/banner $(MATLAB_DIR)/banner $(SLX_DIR)/banner
+distclean: clean
 
 clean::
 	@$(RM) $(EXE) $(EXE).b* &&\
