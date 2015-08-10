@@ -1193,7 +1193,8 @@ fi
 #--------------------
 # check for WebKit
 #---------------------
-
+HELP_OBJS=
+WEBKIT_GEN=
 
 if test "$with_gtk3" == no; then
    WEBKIT=webkit-1.0
@@ -1207,6 +1208,7 @@ if test "x${have_webkit}" = "xyes" ; then
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
      GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
      GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+     WEBKIT_GEN="webkit.o"
      if test "$with_gtk3" == no; then
        HELP_OBJS="helpwebkit2.o"
      else
@@ -2093,6 +2095,7 @@ AC_SUBST(PERIGLEXT)
 AC_SUBST(TERM_NAME)
 AC_SUBST(TERM_LDFLAGS)
 AC_SUBST(HELP_OBJS)
+AC_SUBST(WEBKIT_GEN)
 AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
@@ -2142,7 +2145,7 @@ AC_SUBST(SCICOS_GEN_LIB)
 AC_SUBST(GTKDIR)
 AC_SUBST(GRAPHICS_LIB_OLD)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak)
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile)
 
 echo
 echo
