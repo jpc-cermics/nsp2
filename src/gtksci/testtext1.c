@@ -1100,8 +1100,7 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
   return FALSE;
 }
 
-#define XXX_AFAIRE 0
-#if XXX_AFAIRE
+
 static void
 gtk_text_view_drag_data_received (GtkWidget        *widget,
                                   GdkDragContext   *context,
@@ -1117,7 +1116,9 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   View *view= (View *) data;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   GtkTextBuffer *buffer = view->buffer->buffer;
+  /*
   GtkTextViewPrivate *priv =  text_view->priv;
+  */
   g_signal_stop_emission_by_name (widget, "drag_data_received");
 
   /*
@@ -1132,9 +1133,16 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   /* deals with the drop */
 
   gtk_text_buffer_begin_user_action (buffer);
+#if GTK_CHECK_VERSION(3,0,0)
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
                                     priv->dnd_mark);
+#else 
+  gtk_text_buffer_get_iter_at_mark (buffer,
+                                    &drop_point,
+                                    text_view->dnd_mark);
+#endif 
+
 #if GTK_CHECK_VERSION(2,10,0)
   if (info == GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS)
     {
@@ -1302,8 +1310,6 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 		   time);
   gtk_text_buffer_end_user_action (buffer);
 }
-#endif
-
 
 /**
  * configure_event:
@@ -1428,9 +1434,8 @@ static View *nsptv_create_view (Buffer *buffer)
 		   "button_press_event",
 		   G_CALLBACK (nsptv_button_press_callback),
 		   view);
-#if XXX_AFAIRE
+
   g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
-#endif
 
   g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
   g_signal_connect(view->text_view,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),view);
