@@ -6695,7 +6695,6 @@ static int int_feval( Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-
 #include "nsp/gtk/gdkimage.h"
 #include "nsp/gtk/gdkpixbuf.h"
 
@@ -6735,7 +6734,7 @@ static int int_get_image( Stack stack, int rhs, int opt, int lhs)
  */
 #endif
 
-#if 0
+
 static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ret1;
@@ -6758,7 +6757,6 @@ static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,ret1);
   return Max(lhs,1);
 }
-#endif
 
 /* insert a pixbuf given by a file-name in a text  buffer
  * this can be used for display a pixbuf in text main interaction
@@ -6783,7 +6781,7 @@ static int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
  * plot2d();
  * xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,2,0,1,1)
  */
-#if 0
+
 static int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -6805,7 +6803,7 @@ static int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 					  width, height);
   return 0;
 }
-#endif
+
 /* experimental: draw a pixbuf in a region of a graphic window.
  * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
  * xdraw_pixbuf_from_file(0,gtk_logo_pixbuf,0,0,2,0,1,1)
@@ -7334,9 +7332,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
   {NAMES("xdel"),int_xdel_new},
-#if 0
   {NAMES("xdraw_pixbuf"),int_draw_pixbuf},
-#endif
   {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
   {NAMES("xend"),int_xend_new},
   {NAMES("xexport"),int_xexport_new},
@@ -7350,9 +7346,7 @@ OpGrTab Graphics_func[]={
 #ifdef KEEP_GTK2
   {NAMES("xget_image"),int_get_image},
 #endif
-#if 0
   {NAMES("xget_pixbuf"),int_get_pixbuf},
-#endif
   {NAMES("xgetech"),int_xgetech_new},
   {NAMES("xgetmouse"),int_xgetmouse},
   {NAMES("xgraduate"),int_xgraduate},

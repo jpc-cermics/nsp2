@@ -115,7 +115,6 @@ else
    GRAPHICS_LIB_OLD=
    with_gtk3=yes
    with_gtkglext=no
-   with_portaudio=no
 fi
 
 if test $with_allt = no; then
