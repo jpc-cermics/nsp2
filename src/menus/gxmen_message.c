@@ -92,8 +92,11 @@ menu_answer nsp_message_(const char *message,char **buttons,int n_buttons,int *r
 					NULL,NULL);
   for ( i= 0 ; i <  n_buttons ; i++) 
     gtk_dialog_add_button(GTK_DIALOG (dialog),buttons[i],i);
-
+#if GTK_CHECK_VERSION (3,0,0)  
   hbox =gtk_box_new(GTK_ORIENTATION_HORIZONTAL,8);
+#else 
+  hbox =gtk_hbox_new(TRUE,8);
+#endif 
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
   gtk_box_pack_start (GTK_BOX(gtk_dialog_get_content_area (GTK_DIALOG(dialog))),
 		      hbox, FALSE, FALSE, 0);

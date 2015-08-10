@@ -192,8 +192,11 @@ int gtkcombobox_select_color(BCG *Xgc,int init_color)
 
   frame = gtk_frame_new ("Choose a color");
   gtk_box_pack_start (GTK_BOX(dvbox),frame, FALSE, FALSE, 0);
-  
+#if GTK_CHECK_VERSION (3,0,0)  
   vbox =  gtk_box_new(GTK_ORIENTATION_VERTICAL,0); 
+#else 
+  vbox =  gtk_vbox_new(TRUE,0); 
+#endif 
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc,init_color);
@@ -254,8 +257,11 @@ int gtkcombobox_select_color_in_table(NspMatrix *table,int init_color)
 
   frame = gtk_frame_new ("Choose a color");
   gtk_box_pack_start (GTK_BOX(dvbox),frame, FALSE, FALSE, 0);
-  
+#if GTK_CHECK_VERSION (3,0,0)  
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else
+  vbox = gtk_vbox_new(TRUE,0);
+#endif 
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
   comboboxgrid = nsp_gtkcombobox_colormap_new_from_colormap(table,init_color);

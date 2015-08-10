@@ -482,6 +482,9 @@ NspHash *nsp_gtk_hash_table = NULL;
 NspHash *nsp_gdk_hash_table = NULL; 
 NspHash *nsp_atk_hash_table = NULL; 
 NspHash *nsp_pango_hash_table = NULL; 
+NspHash *nsp_cairo_hash_table = NULL;
+NspHash *nsp_gio_hash_table = NULL;
+NspHash *nsp_glib_hash_table = NULL;
 
 #define PANGO_ENTER(name,value) \
   if (( nsp_val = (NspObject *) nsp_matrix_create_from_doubles(name,1,1,value))== NULL) return FAIL; \

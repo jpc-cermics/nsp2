@@ -586,8 +586,11 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   if ( m == NULL ) return ;
   if ( m->stock_name != NULL )
     {
-      /* menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL); */
+#if GTK_CHECK_VERSION (3,0,0)
       menuitem = gtk_menu_item_new_with_label(m->stock_name);
+#else 
+      menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
+#endif 
       /* Attention 2.16 only */
       /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem),TRUE);*/
     }
@@ -617,10 +620,13 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
 	{
 	  if ( loc->stock_name != NULL )
 	    {
-	      /* menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL); */
+#if GTK_CHECK_VERSION (3,0,0)
 	      menuitem1 = gtk_menu_item_new_with_label(loc->stock_name);
+#else 
+	       menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL); 
 	      /* 2.16 only */
 	      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem1),TRUE); */
+#endif 
 	    }
 	  else
 	    menuitem1 = gtk_menu_item_new_with_mnemonic(loc->name);
@@ -1178,7 +1184,7 @@ static void nsp_menu_stop (void)
 static void nsp_menu_stop_audio (void)
 {
 #ifdef WITH_PORTAUDIO
-  // nsp_pa_stop();
+  nsp_pa_stop();
 #endif
 }
 
@@ -1246,7 +1252,10 @@ static void nsp_menu_start_editor(void)
   nsp_edit(NULL,FALSE,FALSE);
 }
 
+
+#if GTK_CHECK_VERSION (3,0,0)
 void create_prop_editor(){};
+#endif 
 
 /**
  * nsp_menu_demos:

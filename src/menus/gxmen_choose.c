@@ -90,7 +90,11 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
     { 
       /* no need to add a viewport */
       GtkWidget *frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION (3,0,0)        
       GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0); 
+#else
+      GtkWidget *fvbox  = gtk_vbox_new(TRUE,0); 
+#endif
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);

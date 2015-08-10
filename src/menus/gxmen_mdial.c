@@ -83,10 +83,12 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
 				      GTK_POLICY_AUTOMATIC);
     }
 
-  /* table = gtk_table_new (nv, 2, TRUE);
-  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
-  */
+#if GTK_CHECK_VERSION (3,0,0)    
   table = gtk_grid_new();
+#else
+  table = gtk_table_new (nv, 2, TRUE);
+  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
+#endif 
   gtk_widget_show (table);
 
   if ( use_scrolled == 1)
@@ -104,14 +106,20 @@ menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,
     {
       label = gtk_label_new (pszTitle[i]);
       gtk_widget_show (label);
-      /* gtk_table_attach(GTK_TABLE (table),label,0,1,i,i+1,0,0,5,5); */
+#if GTK_CHECK_VERSION (3,0,0)        
       gtk_grid_attach(GTK_GRID(table),label,0,i,1,1);
+#else
+      gtk_table_attach(GTK_TABLE (table),label,0,1,i,i+1,0,0,5,5);
+#endif 
       entries[i] = gtk_entry_new() ;
       gtk_entry_set_text (GTK_ENTRY(entries[i]),  pszName[i]);
       gtk_widget_show (entries[i]);
-      /* gtk_table_attach (GTK_TABLE (table), entries[i],1,2,i,i+1,
-	 GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
+#if GTK_CHECK_VERSION (3,0,0)        
       gtk_grid_attach (GTK_GRID (table), entries[i],1,i,1,1);
+#else
+      gtk_table_attach (GTK_TABLE (table), entries[i],1,2,i,i+1,
+			GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
+#endif
     }
 
   gtk_widget_show_all (window);

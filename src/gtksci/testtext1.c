@@ -1395,7 +1395,7 @@ static View *nsptv_create_view (Buffer *buffer)
 #if GTK_CHECK_VERSION (3,0,0)
       vbox =gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 #else
-      vbox =gtk_vbox_new (TRUE, 0);
+      vbox =gtk_vbox_new (FALSE, 0);
 #endif
 
   gtk_container_add (GTK_CONTAINER (view->window), vbox);

@@ -26,10 +26,13 @@ void nsp_dialogs_insert_title(const char *title,GtkWidget *vbox)
 {
   if ( title[0] != '\0' )
     {
+#if GTK_CHECK_VERSION (3,0,0)  
       GtkWidget *hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,0);
-
+#else
+      GtkWidget *hbox = gtk_hbox_new (TRUE,0);
+#endif 
       GtkWidget *image= gtk_image_new_from_icon_name ("dialog-question",
-						  GTK_ICON_SIZE_DIALOG);
+						      GTK_ICON_SIZE_DIALOG);
       gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 5);
       gtk_box_pack_start (GTK_BOX (hbox),image,FALSE, FALSE, 5);
       gtk_misc_set_alignment (GTK_MISC(image), 0.5, 0.0);
