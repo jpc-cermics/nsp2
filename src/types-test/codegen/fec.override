@@ -15,7 +15,7 @@ extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  doub
 
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
-extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
+extern void fillpolyline2D_shade(BCG *Xgc,double *vx, double *vy, int *colors, int n,int closeflag);
 
 /* inserted at the end of public part of include file */
 

@@ -877,6 +877,10 @@ void Bvar_Interf_Info(int i, char **fname, function ( **f))
   *fname = Bvar_func[i].name;
   *f = Bvar_func[i].fonc;
 }
+void nsp_initialize_Bvar_types(void)
+{
+  new_type_bvar(T_BASE);
+}
 
 #line 417 "codegen/bvar.override"
 
@@ -1618,4 +1622,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1622 "bvar.c"
+#line 1626 "bvar.c"

@@ -752,6 +752,10 @@ void Compound_Interf_Info(int i, char **fname, function ( **f))
   *fname = Compound_func[i].name;
   *f = Compound_func[i].fonc;
 }
+void nsp_initialize_Compound_types(void)
+{
+  new_type_compound(T_BASE);
+}
 
 #line 167 "codegen/compound.override"
 
@@ -1070,4 +1074,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 1074 "compound.c"
+#line 1078 "compound.c"

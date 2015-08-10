@@ -967,6 +967,10 @@ void Ast_Interf_Info(int i, char **fname, function ( **f))
   *fname = Ast_func[i].name;
   *f = Ast_func[i].fonc;
 }
+void nsp_initialize_Ast_types(void)
+{
+  new_type_ast(T_BASE);
+}
 
 #line 447 "codegen/ast.override"
 
@@ -1781,4 +1785,4 @@ int nsp_ast_set_str(NspAst *ast,const char *str)
 }
 
 
-#line 1785 "ast.c"
+#line 1789 "ast.c"

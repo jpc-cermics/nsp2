@@ -800,6 +800,10 @@ void Box3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = Box3d_func[i].name;
   *f = Box3d_func[i].fonc;
 }
+void nsp_initialize_Box3d_types(void)
+{
+  new_type_box3d(T_BASE);
+}
 
 #line 75 "codegen/box3d.override"
 
@@ -858,4 +862,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 862 "box3d.c"
+#line 866 "box3d.c"

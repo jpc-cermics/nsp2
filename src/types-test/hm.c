@@ -762,6 +762,10 @@ void Hm_Interf_Info(int i, char **fname, function ( **f))
   *fname = Hm_func[i].name;
   *f = Hm_func[i].fonc;
 }
+void nsp_initialize_Hm_types(void)
+{
+  new_type_hm(T_BASE);
+}
 
 #line 227 "codegen/hm.override"
 
@@ -1640,4 +1644,4 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M)
 }
 
 
-#line 1644 "hm.c"
+#line 1648 "hm.c"

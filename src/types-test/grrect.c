@@ -775,6 +775,10 @@ void GrRect_Interf_Info(int i, char **fname, function ( **f))
   *fname = GrRect_func[i].name;
   *f = GrRect_func[i].fonc;
 }
+void nsp_initialize_GrRect_types(void)
+{
+  new_type_grrect(T_BASE);
+}
 
 #line 83 "codegen/grrect.override"
 
@@ -999,4 +1003,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1003 "grrect.c"
+#line 1007 "grrect.c"

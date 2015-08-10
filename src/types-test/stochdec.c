@@ -2376,6 +2376,13 @@ void Stochdec_Interf_Info(int i, char **fname, function ( **f))
   *fname = Stochdec_func[i].name;
   *f = Stochdec_func[i].fonc;
 }
+void nsp_initialize_Stochdec_types(void)
+{
+  new_type_stochdec(T_BASE);
+  new_type_valuefn(T_BASE);
+  new_type_gridvaluefn(T_BASE);
+  new_type_cutsvaluefn(T_BASE);
+}
 
 #line 288 "codegen/stochdec.override"
 
@@ -2610,4 +2617,4 @@ NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
 }
 
 
-#line 2614 "stochdec.c"
+#line 2621 "stochdec.c"

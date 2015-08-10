@@ -537,6 +537,10 @@ void Epoints_Interf_Info(int i, char **fname, function ( **f))
   *fname = Epoints_func[i].name;
   *f = Epoints_func[i].fonc;
 }
+void nsp_initialize_Epoints_types(void)
+{
+  new_type_epoints(T_BASE);
+}
 
 #line 43 "codegen/epoints.override"
 /* inserted verbatim at the end */
@@ -674,4 +678,4 @@ NspSMatrix *nsp_epoints_find_by_shid(int shid)
   return Loc;
 }
 
-#line 678 "epoints.c"
+#line 682 "epoints.c"

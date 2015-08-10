@@ -795,6 +795,10 @@ void Connector_Interf_Info(int i, char **fname, function ( **f))
   *fname = Connector_func[i].name;
   *f = Connector_func[i].fonc;
 }
+void nsp_initialize_Connector_types(void)
+{
+  new_type_connector(T_BASE);
+}
 
 #line 427 "codegen/connector.override"
 
@@ -1520,4 +1524,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1524 "connector.c"
+#line 1528 "connector.c"

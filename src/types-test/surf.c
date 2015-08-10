@@ -877,6 +877,10 @@ void Surf_Interf_Info(int i, char **fname, function ( **f))
   *fname = Surf_func[i].name;
   *f = Surf_func[i].fonc;
 }
+void nsp_initialize_Surf_types(void)
+{
+  new_type_surf(T_BASE);
+}
 
 #line 76 "codegen/surf.override"
 
@@ -957,4 +961,4 @@ static int nsp_getbounds_surf(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 961 "surf.c"
+#line 965 "surf.c"

@@ -812,6 +812,10 @@ void GMatrix_Interf_Info(int i, char **fname, function ( **f))
   *fname = GMatrix_func[i].name;
   *f = GMatrix_func[i].fonc;
 }
+void nsp_initialize_GMatrix_types(void)
+{
+  new_type_gmatrix(T_BASE);
+}
 
 #line 84 "codegen/gmatrix.override"
 
@@ -949,4 +953,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 953 "gmatrix.c"
+#line 957 "gmatrix.c"

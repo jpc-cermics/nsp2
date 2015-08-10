@@ -693,6 +693,10 @@ void Graphic_Interf_Info(int i, char **fname, function ( **f))
   *fname = Graphic_func[i].name;
   *f = Graphic_func[i].fonc;
 }
+void nsp_initialize_Graphic_types(void)
+{
+  new_type_graphic(T_BASE);
+}
 
 #line 161 "codegen/graphic.override"
 
@@ -992,4 +996,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 996 "graphic.c"
+#line 1000 "graphic.c"

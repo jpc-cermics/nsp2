@@ -1325,6 +1325,10 @@ void Diagram_Interf_Info(int i, char **fname, function ( **f))
   *fname = Diagram_func[i].name;
   *f = Diagram_func[i].fonc;
 }
+void nsp_initialize_Diagram_types(void)
+{
+  new_type_diagram(T_BASE);
+}
 
 #line 770 "codegen/diagram.override"
 
@@ -2918,4 +2922,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2922 "diagram.c"
+#line 2926 "diagram.c"

@@ -777,6 +777,10 @@ void Segments_Interf_Info(int i, char **fname, function ( **f))
   *fname = Segments_func[i].name;
   *f = Segments_func[i].fonc;
 }
+void nsp_initialize_Segments_types(void)
+{
+  new_type_segments(T_BASE);
+}
 
 #line 77 "codegen/segments.override"
 
@@ -920,4 +924,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 924 "segments.c"
+#line 928 "segments.c"

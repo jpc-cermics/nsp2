@@ -961,6 +961,10 @@ void Block_Interf_Info(int i, char **fname, function ( **f))
   *fname = Block_func[i].name;
   *f = Block_func[i].fonc;
 }
+void nsp_initialize_Block_types(void)
+{
+  new_type_block(T_BASE);
+}
 
 #line 531 "codegen/block.override"
 
@@ -1933,4 +1937,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1937 "block.c"
+#line 1941 "block.c"

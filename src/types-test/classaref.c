@@ -786,5 +786,9 @@ void ClassARef_Interf_Info(int i, char **fname, function ( **f))
   *fname = ClassARef_func[i].name;
   *f = ClassARef_func[i].fonc;
 }
+void nsp_initialize_ClassARef_types(void)
+{
+  new_type_classaref(T_BASE);
+}
 
-#line 791 "classaref.c"
+#line 795 "classaref.c"

@@ -753,6 +753,10 @@ void Arrows_Interf_Info(int i, char **fname, function ( **f))
   *fname = Arrows_func[i].name;
   *f = Arrows_func[i].fonc;
 }
+void nsp_initialize_Arrows_types(void)
+{
+  new_type_arrows(T_BASE);
+}
 
 #line 78 "codegen/arrows.override"
 
@@ -869,4 +873,4 @@ static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 873 "arrows.c"
+#line 877 "arrows.c"

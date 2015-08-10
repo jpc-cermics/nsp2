@@ -833,6 +833,10 @@ void Curve_Interf_Info(int i, char **fname, function ( **f))
   *fname = Curve_func[i].name;
   *f = Curve_func[i].fonc;
 }
+void nsp_initialize_Curve_types(void)
+{
+  new_type_curve(T_BASE);
+}
 
 #line 135 "codegen/curve.override"
 
@@ -1253,4 +1257,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1257 "curve.c"
+#line 1261 "curve.c"

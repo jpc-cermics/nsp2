@@ -2075,6 +2075,11 @@ void Figure_Interf_Info(int i, char **fname, function ( **f))
   *fname = Figure_func[i].name;
   *f = Figure_func[i].fonc;
 }
+void nsp_initialize_Figure_types(void)
+{
+  new_type_figure(T_BASE);
+  new_type_figuredata(T_BASE);
+}
 
 #line 271 "codegen/figure.override"
 
@@ -3746,4 +3751,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3750 "figure.c"
+#line 3755 "figure.c"

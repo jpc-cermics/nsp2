@@ -861,6 +861,10 @@ void Contour3d_Interf_Info(int i, char **fname, function ( **f))
   *fname = Contour3d_func[i].name;
   *f = Contour3d_func[i].fonc;
 }
+void nsp_initialize_Contour3d_types(void)
+{
+  new_type_contour3d(T_BASE);
+}
 
 #line 102 "codegen/contour3d.override"
 
@@ -1028,4 +1032,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1032 "contour3d.c"
+#line 1036 "contour3d.c"

@@ -610,6 +610,10 @@ void ClassC_Interf_Info(int i, char **fname, function ( **f))
   *fname = ClassC_func[i].name;
   *f = ClassC_func[i].fonc;
 }
+void nsp_initialize_ClassC_types(void)
+{
+  new_type_classc(T_BASE);
+}
 
 #line 47 "codegen/classc.override"
 
@@ -653,4 +657,4 @@ static int nsp_load_ClassC(XDR *xdrs,ClassC *value,NspClassC *self)
   return OK;
 }
 
-#line 657 "classc.c"
+#line 661 "classc.c"

@@ -649,5 +649,9 @@ void ClassB_Interf_Info(int i, char **fname, function ( **f))
   *fname = ClassB_func[i].name;
   *f = ClassB_func[i].fonc;
 }
+void nsp_initialize_ClassB_types(void)
+{
+  new_type_classb(T_BASE);
+}
 
-#line 654 "classb.c"
+#line 658 "classb.c"

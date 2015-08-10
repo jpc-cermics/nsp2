@@ -2341,6 +2341,13 @@ void Bson_Interf_Info(int i, char **fname, function ( **f))
   *fname = Bson_func[i].name;
   *f = Bson_func[i].fonc;
 }
+void nsp_initialize_Bson_types(void)
+{
+  new_type_bson(T_BASE);
+  new_type_mclient(T_BASE);
+  new_type_mcollection(T_BASE);
+  new_type_mcursor(T_BASE);
+}
 
 #line 585 "codegen/bson.override"
 
@@ -2709,4 +2716,4 @@ static bson_t *nsp_bson_b_copy(const bson_t *b)
 }
 
 
-#line 2713 "bson.c"
+#line 2720 "bson.c"

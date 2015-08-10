@@ -657,5 +657,9 @@ void ClassBRef_Interf_Info(int i, char **fname, function ( **f))
   *fname = ClassBRef_func[i].name;
   *f = ClassBRef_func[i].fonc;
 }
+void nsp_initialize_ClassBRef_types(void)
+{
+  new_type_classbref(T_BASE);
+}
 
-#line 662 "classbref.c"
+#line 666 "classbref.c"

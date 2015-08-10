@@ -787,6 +787,10 @@ void Astv_Interf_Info(int i, char **fname, function ( **f))
   *fname = Astv_func[i].name;
   *f = Astv_func[i].fonc;
 }
+void nsp_initialize_Astv_types(void)
+{
+  new_type_astv(T_BASE);
+}
 
 #line 225 "codegen/astv.override"
 
@@ -815,4 +819,4 @@ NspAstv *nsp_astv(NspObject *Obj,int flag)
 
 
 
-#line 819 "astv.c"
+#line 823 "astv.c"

@@ -537,6 +537,10 @@ void Sharedlib_Interf_Info(int i, char **fname, function ( **f))
   *fname = Sharedlib_func[i].name;
   *f = Sharedlib_func[i].fonc;
 }
+void nsp_initialize_Sharedlib_types(void)
+{
+  new_type_sharedlib(T_BASE);
+}
 
 #line 45 "codegen/sharedlib.override"
 /* inserted verbatim at the end */
@@ -643,4 +647,4 @@ int nsp_sharedlib_table_find_symbol(const char *name)
   return FAIL;
 }
 
-#line 647 "sharedlib.c"
+#line 651 "sharedlib.c"

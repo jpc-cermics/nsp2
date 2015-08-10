@@ -848,6 +848,10 @@ void Link_Interf_Info(int i, char **fname, function ( **f))
   *fname = Link_func[i].name;
   *f = Link_func[i].fonc;
 }
+void nsp_initialize_Link_types(void)
+{
+  new_type_link(T_BASE);
+}
 
 #line 456 "codegen/link.override"
 
@@ -1904,4 +1908,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1908 "link.c"
+#line 1912 "link.c"

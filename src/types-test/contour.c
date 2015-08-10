@@ -862,6 +862,10 @@ void Contour_Interf_Info(int i, char **fname, function ( **f))
   *fname = Contour_func[i].name;
   *f = Contour_func[i].fonc;
 }
+void nsp_initialize_Contour_types(void)
+{
+  new_type_contour(T_BASE);
+}
 
 #line 90 "codegen/contour.override"
 
@@ -949,4 +953,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 953 "contour.c"
+#line 957 "contour.c"

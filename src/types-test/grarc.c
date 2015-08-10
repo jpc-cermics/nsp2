@@ -828,6 +828,10 @@ void GrArc_Interf_Info(int i, char **fname, function ( **f))
   *fname = GrArc_func[i].name;
   *f = GrArc_func[i].fonc;
 }
+void nsp_initialize_GrArc_types(void)
+{
+  new_type_grarc(T_BASE);
+}
 
 #line 82 "codegen/grarc.override"
 
@@ -1024,4 +1028,4 @@ static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P)
 }
 
 
-#line 1028 "grarc.c"
+#line 1032 "grarc.c"

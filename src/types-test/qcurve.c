@@ -870,6 +870,10 @@ void Qcurve_Interf_Info(int i, char **fname, function ( **f))
   *fname = Qcurve_func[i].name;
   *f = Qcurve_func[i].fonc;
 }
+void nsp_initialize_Qcurve_types(void)
+{
+  new_type_qcurve(T_BASE);
+}
 
 #line 129 "codegen/qcurve.override"
 
@@ -1254,4 +1258,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-#line 1258 "qcurve.c"
+#line 1262 "qcurve.c"

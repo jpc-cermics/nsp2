@@ -791,6 +791,10 @@ void GrImage_Interf_Info(int i, char **fname, function ( **f))
   *fname = GrImage_func[i].name;
   *f = GrImage_func[i].fonc;
 }
+void nsp_initialize_GrImage_types(void)
+{
+  new_type_grimage(T_BASE);
+}
 
 #line 81 "codegen/grimage.override"
 
@@ -904,4 +908,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 908 "grimage.c"
+#line 912 "grimage.c"

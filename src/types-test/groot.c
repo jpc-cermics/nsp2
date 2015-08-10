@@ -565,8 +565,12 @@ void GRoot_Interf_Info(int i, char **fname, function ( **f))
   *fname = GRoot_func[i].name;
   *f = GRoot_func[i].fonc;
 }
+void nsp_initialize_GRoot_types(void)
+{
+  new_type_groot(T_BASE);
+}
 
 #line 19 "codegen/groot.override"
 
 
-#line 573 "groot.c"
+#line 577 "groot.c"
