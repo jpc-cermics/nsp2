@@ -107,8 +107,10 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
   if ((combo_entry_array = malloc(n*sizeof(nsp_choice_array)))== NULL) return menu_fail;
 
   mainbox =gtk_dialog_get_content_area( GTK_DIALOG(window));
+#if GTK_CHECK_VERSION (3,0,0)  
   gtk_widget_set_hexpand (mainbox, TRUE);
-  /* gtk_widget_set_halign (mainbox, GTK_ALIGN_CENTER); */
+#else
+#endif
   /* title */
 
   nsp_dialogs_insert_title(title,mainbox);
@@ -122,14 +124,15 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 	 gtk_box_pack_start (GTK_BOX (mainbox), labelw, FALSE, FALSE, 0);
 	 gtk_widget_show (labelw);
       */
-      /* table = gtk_table_new (n, 2, FALSE);     */
+#if GTK_CHECK_VERSION (3,0,0)
       table = gtk_grid_new();
       gtk_widget_set_hexpand (table, TRUE);
-      gtk_container_set_border_width (GTK_CONTAINER (table),5);
-      /*
+#else
+      table = gtk_table_new (n, 2, FALSE);
       gtk_table_set_col_spacing (GTK_TABLE (table), 0, 10);
       gtk_table_set_row_spacings (GTK_TABLE (table), 3);
-      */
+#endif 
+      gtk_container_set_border_width (GTK_CONTAINER (table),5);
       for ( i = 0 ; i < n ; i++)
 	{
 	  if ( 	  nsp_setup_combo_from_list(&combo_entry_array[i],table,(NspList *) Loc->O,i)==
@@ -256,7 +259,11 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
   ca->widget = nsp_setup_choice(ca->type,title,Obj,Ms,Mm,Mn,active);
   tmp = gtk_frame_new (title);
   gtk_box_pack_start (GTK_BOX (box), tmp, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION (3,0,0)
   boom = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else 
+  boom = gtk_vbox_new(TRUE,0);
+#endif 
   gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
   gtk_container_add (GTK_CONTAINER (tmp), boom);
   gtk_container_add (GTK_CONTAINER (boom),ca->widget);
@@ -271,19 +278,15 @@ static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,
   ca->widget = nsp_setup_choice(ca->type,title,Obj,Ms,Mm,Mn,active);
   tmp = gtk_label_new (title);
   gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
-  /*
-  gtk_table_attach (GTK_TABLE (table),tmp, 0, 1, row,row+1 , GTK_FILL, GTK_FILL,0,0);
-  gtk_table_attach (GTK_TABLE (table), ca->widget, 1, 2, row,row+1,GTK_FILL | GTK_EXPAND,GTK_FILL,0,0 );
-  */
-  /* gtk_widget_set_hexpand (tmp, FALSE); */
+#if GTK_CHECK_VERSION (3,0,0)
   gtk_widget_set_halign (tmp, GTK_ALIGN_START);
   gtk_widget_set_valign (tmp, GTK_ALIGN_CENTER);
-  /* gtk_widget_set_hexpand (ca->widget, TRUE); */
-  /* gtk_widget_set_halign (ca->widget, GTK_ALIGN_START);
-     gtk_widget_set_valign (ca->widget, GTK_ALIGN_CENTER);
-  */
   gtk_grid_attach (GTK_GRID(table),tmp, 0, row, 1, 1 );
   gtk_grid_attach (GTK_GRID(table), ca->widget, 1, row, 1,1);
+#else 
+  gtk_table_attach (GTK_TABLE (table),tmp, 0, 1, row,row+1 , GTK_FILL, GTK_FILL,0,0);
+  gtk_table_attach (GTK_TABLE (table), ca->widget, 1, 2, row,row+1,GTK_FILL | GTK_EXPAND,GTK_FILL,0,0 );
+#endif 
 }
 
 /* creates a widget according to type  */
@@ -851,10 +854,11 @@ static int nsp_smatrix_set_first(NspSMatrix *A,const char *str)
 static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size)
 {
   int i,j;
-  /*
-  GtkWidget *table = gtk_table_new (m,n, FALSE);
-  */
+#if GTK_CHECK_VERSION (3,0,0)
   GtkWidget *table = gtk_grid_new ();
+#else
+  GtkWidget *table = gtk_table_new (m,n, FALSE);
+#endif 
   /* GtkWidget *box; */
   GtkWidget **data = malloc(sizeof(GtkWidget *)*m*n);
   if ( data == NULL) return NULL;
@@ -881,8 +885,11 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
 	data[j+m*i]=entry;
 	gtk_entry_set_max_length(GTK_ENTRY(entry),0);
 	gtk_widget_set_size_request (entry,entry_size,-1);
-	/* gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
+#if GTK_CHECK_VERSION (3,0,0)
 	gtk_grid_attach (GTK_GRID (table),entry,i,j,1,1);
+#else 
+	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
+#endif 
 	gtk_entry_set_text (GTK_ENTRY(entry),Ms[j+m*i]);
 	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
       }
@@ -927,7 +934,11 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size)
       /* no need to add a viewport */
       GtkWidget *frame,*fvbox,*table;
       res = frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION (3,0,0)
       fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else
+      fvbox  = gtk_vbox_new(TRUE,0);
+#endif 
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
       gtk_container_add (GTK_CONTAINER (frame),fvbox);
@@ -985,7 +996,11 @@ static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size)
   /* value, lower, upper, step_increment, page_increment, page_size, climb_rate, digits*/
   GtkAdjustment *adj;
   adj = GTK_ADJUSTMENT (gtk_adjustment_new (*val,*(val+1),*(val+2),*(val+3),*(val+4),*(val+5)));
+#if GTK_CHECK_VERSION (3,0,0)  
   scale= gtk_scale_new(GTK_ORIENTATION_HORIZONTAL,adj);
+#else
+  scale= gtk_hscale_new(adj);
+#endif 
   gtk_scale_set_digits (GTK_SCALE(scale),*(val+7));
   gtk_scale_set_draw_value (GTK_SCALE(scale),TRUE);
   return scale;

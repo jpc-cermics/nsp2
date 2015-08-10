@@ -560,7 +560,11 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
       	  g_error_free (error);
       	}
       menubar = gtk_ui_manager_get_widget (manager, "/MenuBar");
+#if GTK_CHECK_VERSION (3,0,0)
       vbox =gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+#else
+      vbox =gtk_vbox_new (TRUE, 0);
+#endif
       gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (), FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), create_browser (&web_view), TRUE, TRUE, 0);

@@ -325,7 +325,12 @@ egg_find_bar_init (EggFindBar *find_bar)
 
   /* Find: |_____| */
   item = gtk_tool_item_new ();
-  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,12);
+
+#if GTK_CHECK_VERSION (3,0,0)
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL,0);
+#else
+  box =gtk_hbox_new (TRUE, 0);
+#endif
 
   alignment = gtk_alignment_new (0.0, 0.5, 1.0, 0.0);
   gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 2, 2);

@@ -95,7 +95,12 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
     {
       /* no need to add a viewport */
       GtkWidget *frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION (3,0,0)
       GtkWidget *fvbox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else 
+      GtkWidget *fvbox  = gtk_vbox_new(TRUE,0);
+#endif 
+
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);
@@ -276,9 +281,11 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
   /* Allocation of table of widgets */
   if ((entries=(GtkWidget **)MALLOC(  (M->mn)*sizeof(GtkWidget *)))== NULL)
     return NULL;
-
-  /* table = gtk_table_new (M->m+1,M->n+1, FALSE); */
+#if GTK_CHECK_VERSION (3,0,0)
   table = gtk_grid_new();
+#else
+  table = gtk_table_new (M->m+1,M->n+1, FALSE);
+#endif 
 
   g_object_set_data_full (G_OBJECT(table),"entries",entries, g_free);
 
@@ -294,8 +301,11 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  GtkWidget *label;
 	  label = gtk_label_new (Labels_v->S[j]);
 	  gtk_widget_show (label);
-	  /* gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0); */
+#if GTK_CHECK_VERSION (3,0,0)
 	  gtk_grid_attach(GTK_GRID (table),label,0,j+1,1,1);
+#else
+	  gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0);
+#endif 
 	}
     }
 
@@ -308,8 +318,12 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  GtkWidget *label;
 	  label = gtk_label_new (Labels_h->S[i]);
 	  gtk_widget_show (label);
-	  /* gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);*/
+#if GTK_CHECK_VERSION (3,0,0)
 	  gtk_grid_attach (GTK_GRID(table),label,i+1,0,1,1);
+#else
+	  gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);
+#endif
+
 	}
       for (j=0 ; j< M->m ; j++)
 	{
@@ -320,8 +334,11 @@ GtkWidget *nsp_matrix_table(NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatri
 	  gtk_widget_set_size_request (entry,entry_size,-1);
 	  gtk_entry_set_text (GTK_ENTRY(entry),M->S[j+i*M->m]);
 	  gtk_widget_show (entry);
-	  /* gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0); */
+#if GTK_CHECK_VERSION (3,0,0)
 	  gtk_grid_attach (GTK_GRID (table),entry,i+1,j+1,1,1);
+#else
+	  gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
+#endif
 	}
     }
   return table;

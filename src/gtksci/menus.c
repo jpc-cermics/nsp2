@@ -29,8 +29,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
+#if GTK_CHECK_VERSION (3,0,0)
 #include <gtk/gtkx.h>
-
+#endif
 #include <nsp/nsp.h>
 #include <nsp/command.h>
 #include <nsp/graphics-new/periGtk.h>
