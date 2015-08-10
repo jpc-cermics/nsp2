@@ -621,6 +621,11 @@ int main(int argc, char **argv)
       "Enable various debugging checks", NULL
     },
     {
+      "command", 'e', 0,
+      G_OPTION_ARG_STRING, &command,
+      "Execute a command in the terminal", NULL
+    },
+    {
       "font", 'f', 0,
       G_OPTION_ARG_STRING, &font,
       "Specify a font to use", NULL
