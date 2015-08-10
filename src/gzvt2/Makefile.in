@@ -1,11 +1,11 @@
 include ../../Makefile.incl
 
-CFLAGS=`$(PKG_CONFIG) vte-2.90 --cflags --libs`
+CFLAGS=`$(PKG_CONFIG) @VTE_PKG@ --cflags --libs`
 
 all	::  ../../bin/zterm
 
-../../bin/zterm :  vteapp.c
-	$(CC) -o ../../bin/zterm vteapp.c $(CFLAGS)
+../../bin/zterm :  @VTE_FILE@
+	$(CC) -o ../../bin/zterm @VTE_FILE@ $(CFLAGS)
 
 distclean::
 	$(RM) -f ../../bin/zterm

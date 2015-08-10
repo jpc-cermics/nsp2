@@ -881,7 +881,7 @@ main(int argc, char **argv)
     gtk_widget_set_visual(GTK_WIDGET(window), visual);
 
   /* a global vbox*/
-  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, FALSE);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
   /* a test */
 #if 0
@@ -914,7 +914,7 @@ main(int argc, char **argv)
     gtk_box_pack_start(GTK_BOX(vbox), scrolled_window,TRUE,TRUE,0);
   } else {
     /* Create a box to hold everything. */
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, FALSE);
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     /* gtk_container_add(GTK_CONTAINER(window), hbox); */
     gtk_box_pack_start(GTK_BOX(vbox), hbox,TRUE,TRUE,0);
   }

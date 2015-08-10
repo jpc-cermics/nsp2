@@ -111,10 +111,14 @@ fi
 if test xx"$with_gtk3" = xx; then
    GRAPHICS_LIB_OLD=
    with_gtk3=no
+   VTE_PKG=vte
+   VTE_FILE=vteapp-gtk2.c
 else
    GRAPHICS_LIB_OLD=
    with_gtk3=yes
    with_gtkglext=no
+   VTE_PKG=vte-2.90
+   VTE_FILE=vteapp-gtk3.c
 fi
 
 if test $with_allt = no; then
@@ -2115,6 +2119,8 @@ AC_SUBST(GTKSOURCEVIEW_OBJS)
 AC_SUBST(AMOS_CEPHES_LIB)
 AC_SUBST(STDCPP_LIBS)
 AC_SUBST(MONGODB_C_FILE)
+AC_SUBST(VTE_FILE)
+AC_SUBST(VTE_PKG)
 
 # for summary file
 
