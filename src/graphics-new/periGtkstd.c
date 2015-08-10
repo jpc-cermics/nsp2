@@ -1844,9 +1844,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
 #if defined(PERIGTK) || defined(PERICAIRO)
 
-
-#if GTK_CHECK_VERSION(3,0,0)
-#else 
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   GdkRectangle *rect;
@@ -1962,7 +1959,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   gdk_flush();
   return FALSE;
 }
-#endif
 #endif
 
 #if defined(PERICAIRO)
