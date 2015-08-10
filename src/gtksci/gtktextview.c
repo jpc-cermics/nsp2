@@ -1301,8 +1301,7 @@ get_lines (GtkTextView  *text_view,
            gint         *countp)
 {
   GtkTextIter iter;
-  gint count;
-  gint size;
+  gint count=0;
 
   g_array_set_size (buffer_coords, 0);
   g_array_set_size (numbers, 0);
@@ -1313,8 +1312,6 @@ get_lines (GtkTextView  *text_view,
   /* For each iter, get its location and add it to the arrays.
    * Stop when we pass last_y
    */
-  count = 0;
-  size = 0;
 
   while (!gtk_text_iter_is_end (&iter))
     {
@@ -1338,10 +1335,16 @@ get_lines (GtkTextView  *text_view,
   *countp = count;
 }
 
+#if GTK_CHECK_VERSION(3,0,0)
+static gboolean
+line_numbers_draw(GtkWidget *widget,
+		  cairo_t   *cr)
+#else 
 static gint
 line_numbers_expose (GtkWidget      *widget,
                      GdkEventExpose *event,
                      gpointer        user_data)
+#endif
 {
   gint count;
   GArray *numbers;
@@ -1349,19 +1352,25 @@ line_numbers_expose (GtkWidget      *widget,
   gint first_y;
   gint last_y;
   gint i;
-  GdkWindow *left_win;
-  GdkWindow *right_win;
   PangoLayout *layout;
-  GtkTextView *text_view;
-  GtkTextWindowType type;
+  GtkTextView *text_view= GTK_TEXT_VIEW (widget);
+  GtkTextWindowType type=GTK_TEXT_WINDOW_LEFT;;
+#if GTK_CHECK_VERSION(3,0,0)
+  GtkAllocation allocation;
+  gtk_widget_get_allocation (widget,&allocation);
+  /* See if this expose is on the line numbers window */
+  type = GTK_TEXT_WINDOW_LEFT;
+  first_y = 0;
+  last_y = allocation.height + 30;
+
+#else 
   GdkWindow *target;
-
-  text_view = GTK_TEXT_VIEW (widget);
-
+  GdkWindow *right_win;
+  GdkWindow *left_win;
   /* See if this expose is on the line numbers window */
   left_win = gtk_text_view_get_window (text_view,
                                        GTK_TEXT_WINDOW_LEFT);
-
+  
   right_win = gtk_text_view_get_window (text_view,
                                         GTK_TEXT_WINDOW_RIGHT);
 
@@ -1377,9 +1386,9 @@ line_numbers_expose (GtkWidget      *widget,
     }
   else
     return FALSE;
-
   first_y = event->area.y;
   last_y = first_y + event->area.height;
+#endif 
 
   gtk_text_view_window_to_buffer_coords (text_view,
                                          type,
@@ -1404,11 +1413,10 @@ line_numbers_expose (GtkWidget      *widget,
              pixels,
              numbers,
              &count);
-
   /* Draw fully internationalized numbers! */
 
   layout = gtk_widget_create_pango_layout (widget, "");
-
+  
   i = 0;
   while (i < count)
     {
@@ -1425,8 +1433,12 @@ line_numbers_expose (GtkWidget      *widget,
       str = g_strdup_printf ("%d",1+ g_array_index (numbers, gint, i));
 
       pango_layout_set_text (layout, str, -1);
-
-      /* A revoir XXXXXX
+#if GTK_CHECK_VERSION(3,0,0)
+      {
+	GtkStyleContext *context = gtk_widget_get_style_context (widget);
+	gtk_render_layout (context, cr, 4, pos+4, layout);
+      }
+#else 
       gtk_paint_layout (widget->style,
                         target,
                         GTK_WIDGET_STATE (widget),
@@ -1436,7 +1448,7 @@ line_numbers_expose (GtkWidget      *widget,
                         NULL,
                         2, pos + 2,
                         layout);
-      */
+#endif 
       g_free (str);
 
       ++i;
@@ -1537,10 +1549,18 @@ create_view (Buffer *buffer,int read_only)
   gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
                                         GTK_TEXT_WINDOW_LEFT,
                                         30);
+
+#if GTK_CHECK_VERSION(3,0,0)
+  g_signal_connect (view->text_view,
+                    "draw",
+                    G_CALLBACK (line_numbers_draw),
+                    NULL);
+#else
   g_signal_connect (view->text_view,
                     "expose_event",
                     G_CALLBACK (line_numbers_expose),
                     NULL);
+#endif 
 
   if ( read_only == TRUE )
     gtk_text_view_set_editable (GTK_TEXT_VIEW (view->text_view),FALSE);
