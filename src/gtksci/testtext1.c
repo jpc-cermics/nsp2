@@ -934,18 +934,30 @@ void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
  * by drag-drop (drag/drop of a file).
  *
  **/
-#if 0
+
+#define DRAG_DROP_EVAL
+
+#ifdef DRAG_DROP_EVAL
+
 static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
 {
   GtkTextIter start, pos=iter;
   if ( strlen(nsp_expr) == 0 ) return;
-  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view)))
+  if ( ! gtk_text_iter_can_insert (&iter,gtk_text_view_get_editable(GTK_TEXT_VIEW(view->text_view))))
     {
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &pos);
     }
   gtk_text_buffer_insert (view->buffer->buffer, &pos, "eval_drop('",-1);
   gtk_text_buffer_insert (view->buffer->buffer, &pos, nsp_expr ,-1);
   gtk_text_buffer_insert (view->buffer->buffer, &pos, "')",-1);
+  if ( get_is_reading() == TRUE )
+    {
+      /* force a key_press_return, to scroll to end
+       * and recover a prompt
+       */
+      nsptv_key_press_return(view,FALSE);
+    }
+
 }
 #endif
 /**
@@ -1114,13 +1126,15 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   gboolean success = TRUE;
   GtkTextIter drop_point,start,end;
   View *view= (View *) data;
+#if GTK_CHECK_VERSION(3,0,0)
+#else
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
+#endif 
   GtkTextBuffer *buffer = view->buffer->buffer;
   /*
   GtkTextViewPrivate *priv =  text_view->priv;
   */
   g_signal_stop_emission_by_name (widget, "drag_data_received");
-
   /*
    * reset the non editable zone
    */
@@ -1136,7 +1150,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 #if GTK_CHECK_VERSION(3,0,0)
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
-                                    priv->dnd_mark);
+				    gtk_text_buffer_get_insert (view->buffer->buffer));
 #else 
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
@@ -1201,8 +1215,13 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  GtkTextIter iter;
 	  gchar *str;
 	  str = gtk_text_iter_get_visible_text (&start, &end);
+#if GTK_CHECK_VERSION(3,0,0)
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
+					    gtk_text_buffer_get_insert (view->buffer->buffer));
+#else
 	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+#endif 
 	  nsp_eval_pasted_from_clipboard(str,view,1,iter);
 	  g_free (str);
         }
@@ -1256,22 +1275,27 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
-#if 0
+#ifdef DRAG_DROP_EVAL
 	      int n = strlen((char *) str);
 #endif
 	      GtkTextIter iter;
+#if GTK_CHECK_VERSION(3,0,0)
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
+						gtk_text_buffer_get_insert (view->buffer->buffer));
+#else
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,
 						GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+#endif 
 	      /* we get here after a drag/drop from help or a drag/drop from desktop
 	       * we should find how to better detect each case
 	       */
-#if 1
-	      nsp_eval_pasted_from_clipboard((gchar *) str, view,1,iter);
-#else
+#ifdef DRAG_DROP_EVAL
 	      /* remove trailing \r\n */
 	      if ( str[n-2] == '\r' ) str[n-2]='\0';
 	      if ( str[n-1] == '\n' ) str[n-2]='\0';
 	      nsp_eval_drag_drop_info_text((gchar *) str,view,1,iter);
+#else
+	      nsp_eval_pasted_from_clipboard((gchar *) str, view,1,iter);
 #endif
 	      g_free (str);
 	    }
