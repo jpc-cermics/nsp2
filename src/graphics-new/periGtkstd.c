@@ -45,7 +45,12 @@
 
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+
+#ifdef PERICAIRO
+#if GTK_CHECK_VERSION(3,0,0)
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
+#endif 
+#endif 
 
 #ifdef GSEAL_ENABLE
 #define GS_GET_WINDOW(x) gtk_widget_get_window(x)
@@ -1838,6 +1843,10 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  **/
 
 #if defined(PERIGTK) || defined(PERICAIRO)
+
+
+#if GTK_CHECK_VERSION(3,0,0)
+#else 
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   GdkRectangle *rect;
@@ -1954,10 +1963,11 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   return FALSE;
 }
 #endif
+#endif
 
 #if defined(PERICAIRO)
 /* the draw callback for GTk3 */
-
+#if GTK_CHECK_VERSION(3,0,0)
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
   guint width, height;
@@ -2033,6 +2043,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   return FALSE;
 }
 #endif
+#endif
 
 #ifdef PERIGL
 #ifndef PERIGLGTK
@@ -2092,7 +2103,12 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  G->type->draw(dd,G,rect,NULL);
 	}
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
-	dd->graphic_engine->drawrectangle(dd,dd->zrect);
+	{
+	  double zrect[4];
+	  int i;
+	  for ( i = 0 ; i < 4 ; i++) zrect[i]=dd->zrect[i];
+	  dd->graphic_engine->drawrectangle(dd,zrect);
+	}
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
       else

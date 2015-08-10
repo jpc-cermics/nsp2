@@ -457,12 +457,13 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   g_signal_connect((dd->private->drawing), "configure_event",
 		   G_CALLBACK(configure_event), (gpointer) dd);
 
-  g_signal_connect((dd->private->drawing), "expose_event",
-		   G_CALLBACK(expose_event_new), (gpointer) dd);
-
+#if GTK_CHECK_VERSION(3,0,0)
   g_signal_connect((dd->private->drawing), "draw",
 		   G_CALLBACK(draw_callback), (gpointer) dd);
-
+#else
+  g_signal_connect((dd->private->drawing), "expose_event",
+		   G_CALLBACK(expose_event_new), (gpointer) dd);
+#endif 
   /*
    *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint",
    *  G_CALLBACK (cairo_paint),(gpointer) dd );

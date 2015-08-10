@@ -51,12 +51,11 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
  * line
  */
 
-static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
+static void drawline(BCG *Xgc, double x1, double y1, double x2, double y2)
 {
-
   glBegin(GL_LINES);
-  glVertex2i(x1, y1);
-  glVertex2i(x2, y2);
+  glVertex2d(x1, y1);
+  glVertex2d(x2, y2);
   glEnd();
 }
 
@@ -66,9 +65,8 @@ static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
  * n is the size of vx and vy
  */
 
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *width)
+static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, int *width)
 {
-
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,width);
 }
 
@@ -79,7 +77,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int *wid
  * as is 10*arsize (arsize) the size of the arrow head in pixels
  */
 
-static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
+static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
 
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
@@ -99,7 +97,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
 
-static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
+static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
 
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
@@ -107,26 +105,26 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 /* Draw one rectangle with current line style */
 
-static void drawrectangle(BCG *Xgc,const int rect[])
+static void drawrectangle(BCG *Xgc,const double rect[])
 {
 
   glBegin(GL_LINE_LOOP);
-  glVertex2i(rect[0]        ,rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2i(rect[0]        ,rect[1]+rect[3]);
+  glVertex2d(rect[0]        ,rect[1]);
+  glVertex2d(rect[0]+rect[2],rect[1]);
+  glVertex2d(rect[0]+rect[2],rect[1]+rect[3]);
+  glVertex2d(rect[0]        ,rect[1]+rect[3]);
   glEnd();
 }
 
 /* fill one rectangle, with current pattern */
 
-static void fillrectangle(BCG *Xgc,const int rect[])
+static void fillrectangle(BCG *Xgc,const double rect[])
 {
   glBegin(GL_QUADS);
-  glVertex2i(rect[0]        ,rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2i(rect[0]        ,rect[1]+rect[3]);
+  glVertex2d(rect[0]        ,rect[1]);
+  glVertex2d(rect[0]+rect[2],rect[1]);
+  glVertex2d(rect[0]+rect[2],rect[1]+rect[3]);
+  glVertex2d(rect[0]        ,rect[1]+rect[3]);
   glEnd();
 }
 
@@ -177,7 +175,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * The private->drawing style is the current private->drawing
  */
 
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
+static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
 
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
@@ -192,7 +190,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
  * caution : angle=degreangle*64
  */
 
-static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
+static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
 
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
@@ -201,17 +199,17 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 /* Draw a single ellipsis or part of it
  */
 
-static void drawarc(BCG *Xgc,int arc[])
+static void drawarc(BCG *Xgc, double arc[])
 {
-   /* FIXME */
+  /* FIXME */
   Xgc->graphic_engine->generic->drawarc(Xgc,arc);
 }
 
 /* Fill a single elipsis or part of it with current pattern  */
 
-static void fillarc(BCG *Xgc,int arc[])
+static void fillarc(BCG *Xgc, double arc[])
 {
-   /* FIXME */
+  /* FIXME */
   Xgc->graphic_engine->generic->fillarc(Xgc,arc);
 }
 
@@ -222,7 +220,7 @@ static void fillarc(BCG *Xgc,int arc[])
  * drawvect[i] >  0 use a line style for polyline i
  */
 
-static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
+static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect,int n, int p)
 {
 
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
@@ -242,7 +240,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 /* specific version for OpenGl to add a glEnable(GL_POLYGON_OFFSET_FILL);
  */
 
-static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
+static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
 
@@ -285,7 +283,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
  * n is the number of points of the polyline
  */
 
-static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
+static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
@@ -295,7 +293,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
     glBegin(GL_LINE_LOOP);
   else
     glBegin(GL_LINE_STRIP);
-  for (i=0; i < n ; i++) glVertex2i(vx[i], vy[i]);
+  for (i=0; i < n ; i++) glVertex2d(vx[i], vy[i]);
   glEnd();
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
@@ -309,13 +307,13 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
  * sinon il faut le trianguler
  */
 
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
 
   glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
+  for ( i=0 ;  i< n ; i++) glVertex2d( vx[i], vy[i]);
   glEnd();
 
 }
@@ -325,14 +323,14 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
  * by vx and vy (vx[i],vy[i])
  */
 
-static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
+static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
 {
 
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
       glBegin(GL_POINTS);
-      for (i=0; i< n ; i++) glVertex2i( vx[i], vy[i]);
+      for (i=0; i< n ; i++) glVertex2d( vx[i], vy[i]);
       glEnd();
     }
   else
@@ -406,7 +404,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
  *   add a box around the string, only if slope =0}
  */
 
-static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
 
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
@@ -437,7 +435,7 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
-static void draw_mark(BCG *Xgc,int *x, int *y)
+static void draw_mark(BCG *Xgc, double *x, double *y)
 {
   double dx,dy;
   PangoRectangle ink_rect,logical_rect;
@@ -460,7 +458,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
       /* draw the ink_rectangle around the mark */
       int i;
       double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
-      int myrect[]={*x,*y,0,0};
+      double myrect[]={*x,*y,0,0};
       for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
       drawrectangle(Xgc,myrect);
     }
@@ -505,7 +503,7 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
  *
  */
 
-static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
+static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag,double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
   PangoRectangle ink_rect,logical_rect;
@@ -555,7 +553,7 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
       if (0)
 	{
 	  /* draw the enclosing rectangle */
-	  int myrect[]={ x-xt,y-yt ,rect.width,rect.height};
+	  double myrect[]={ x-xt,y-yt ,rect.width,rect.height};
 	  drawrectangle(Xgc,myrect);
 	  fprintf(stderr,"rect = %d %d %d %d\n",rect.x,rect.y,rect.width,rect.height);
 	}
@@ -565,7 +563,8 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 	{
 	  /* draw the rotated enclosing rectangle */
 	  double xx[]={0,width},yy[]={0,height};
-	  int vx[4],vy[4],ik[]={0,1,3,2},i,j,k;
+	  double vx[4],vy[4];
+	  int ik[]={0,1,3,2},i,j,k;
 	  double dx,dy;
 	  for ( i = 0 ; i < 2 ; i++)
 	    {
@@ -586,7 +585,7 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
       if (0)
 	{
 	  /* draw enclosing rectangle */
-	  int rect[]={ x,y - height,width,height};
+	  double rect[]={ x,y - height,width,height};
 	  drawrectangle(Xgc,rect);
 	}
       /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout); */
@@ -645,7 +644,7 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
 /* returns the bounding box for a non rotated string
  */
 
-static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
+static void boundingbox(BCG *Xgc,const char *string, int x, int y, double *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);
@@ -1373,7 +1372,7 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
 
 
 
-void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
+void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
@@ -1384,7 +1383,7 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
   for ( i=0 ;  i< n ; i++)
     {
       xset_pattern(Xgc,Abs(colors[i]));
-      glVertex2i( vx[i], vy[i]);
+      glVertex2d( vx[i], vy[i]);
     }
   glEnd();
   glDisable(GL_POLYGON_OFFSET_FILL);

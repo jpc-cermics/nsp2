@@ -143,9 +143,16 @@ typedef struct  _gtk_data {
   GdkGC *wgc;
   GdkGC *stdgc;
 #else 
+#ifdef PERIGL
+  void *pixmap;              /* backing store surface */
+  void *extra_pixmap;        /* extra backing store pixmap used when pixmap mode is on  */
+  void *drawable;            /* can be set to pixmap or extra_pixmap */
+#else
   cairo_surface_t *pixmap;              /* backing store surface */
   cairo_surface_t *extra_pixmap;        /* extra backing store pixmap used when pixmap mode is on  */
   cairo_surface_t *drawable;            /* can be set to pixmap or extra_pixmap */
+#endif
+
 #endif
   GdkColor gcol_bg;
   GdkColor gcol_fg;
