@@ -1392,7 +1392,12 @@ static View *nsptv_create_view (Buffer *buffer)
    XXXX accel group to share with menu
   */
 
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+#if GTK_CHECK_VERSION (3,0,0)
+      vbox =gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+#else
+      vbox =gtk_vbox_new (TRUE, 0);
+#endif
+
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
   menu = create_main_menu(view->window);
   gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
@@ -1406,10 +1411,12 @@ static View *nsptv_create_view (Buffer *buffer)
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
                                GTK_WRAP_CHAR); /* GTK_WRAP_WORD */
 
+#if GTK_CHECK_VERSION(3,0,0)
   PangoFontDescription* p = pango_font_description_from_string("Monospace");
   gtk_widget_override_font (GTK_WIDGET (view->text_view),p);
   pango_font_description_free (p);
-
+#else
+#endif
   gtk_container_set_border_width (GTK_CONTAINER (view->text_view), 5);
 
   g_signal_connect (view->text_view,
