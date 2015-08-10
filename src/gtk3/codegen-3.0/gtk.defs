@@ -22188,11 +22188,7 @@
   )
 )
 
-
-
 ;; From gtksettingsprivate.h
-
-
 
 ;; From gtkshow.h
 
@@ -34580,3 +34576,4 @@
    '("gint*" "height")
    )
   )
+

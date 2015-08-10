@@ -5,7 +5,7 @@ H2DEF=./codegen/h2def.py
 all:	gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs glib.defs
 
 gtk.defs :
-	$(H2DEF) -s gtk ~/Downloads/gtk+-3.16.0/gtk/*.h
+	$(H2DEF) -s gtk /home3/softs/gtk/gtk+-3.16.4/gtk/gtksettings.h
 
 gdk.defs :
 	$(H2DEF) -s gdk ~/Downloads/gtk+-3.16.0/gdk/*.h

@@ -1341,6 +1341,13 @@
   (implements "GtkBuildable")
   )
 
+(define-object GtkSettings
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSettings")
+  (gtype-id "GTK_TYPE_SETTINGS")
+)
+
 ;; Gestures
 
 ;; XXXX
@@ -1733,3 +1740,6 @@
   (copy-func "gtk_tree_path_copy")
   (release-func "gtk_tree_path_free")
 )
+
+
+

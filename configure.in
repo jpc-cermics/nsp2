@@ -109,8 +109,8 @@ if test xx"$with_allt" = xx; then
 fi
 
 if test xx"$with_gtk3" = xx; then
+   GRAPHICS_LIB_OLD=
    with_gtk3=no
-   GRAPHICS_LIB_OLD="$(SCIDIR)/libs/graphics.a"
 else
    GRAPHICS_LIB_OLD=
    with_gtk3=yes
@@ -199,7 +199,7 @@ HPPA_OLD=
 MAIN='mainsci.o'
 # use cairo driver
 PERICAIRO=
-PERIGTK=periGtk.o
+PERIGTK=
 #
 GUILIB=gtksci
 # specific for gnome/gtk version
@@ -1092,7 +1092,7 @@ fi
 #################
 
 PKG_PROG_PKG_CONFIG()
-PERIGTK=periGtk.o
+PERIGTK=
 
 if test "$with_gtk3" == no; then
 GTKDIR=gtk2
@@ -1207,7 +1207,11 @@ if test "x${have_webkit}" = "xyes" ; then
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
      GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
      GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-     HELP_OBJS="helpwebkit.o"
+     if test "$with_gtk3" == no; then
+       HELP_OBJS="helpwebkit2.o"
+     else
+       HELP_OBJS="helpwebkit.o"
+     fi
      AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
      PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
      if test "x${have_webkit_zoom}" = "xyes" ; then

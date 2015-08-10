@@ -84,12 +84,10 @@ endfunction
 function activate_quit (action, parameter, user_data)
   app = user_data;
   list = app.get_windows [];
-  // while (list)
-  //   win = list->data;
-  //   next = list->next;
-  //   win.destroy[];
-  //   list = next;
-  // end
+  for i=1:length(list)
+    window= list(i);
+    window.destroy[];
+  end
 endfunction
 
 function update_statusbar (buffer,statusbar)
@@ -114,7 +112,8 @@ endfunction
 
 function change_theme_state (action, state, user_data)
   settings = gtk_settings_get_default ();
-  settings.set_value["gtk-application-prefer-dark-theme"=state.get_boolean[]];
+  // g_object property
+  settings.set_property["gtk-application-prefer-dark-theme",state.get_boolean[]];
   action.set_state[state];
 endfunction
 
@@ -151,7 +150,6 @@ function activate (app)
 
   win_entries = { "titlebar", activate_toggle, "", "false", change_titlebar_state,
 		  "shape", activate_radio, "s", "''oval''", change_radio_state,
-		  "color", activate_radio, "s", "''oval''", change_radio_state,
 		  "bold", activate_toggle, "", "false", "",
 		  "about", activate_about, "", "", "" ,
 		  "file1", activate_action, "", "", "",
@@ -169,8 +167,8 @@ function activate (app)
   for i=1:size(win_entries,1)
     action= window.lookup_action[win_entries{i,1}];
     action.connect['activate',win_entries{i,2}, window];
-    if ~(type(win_entries{i,4},'short')== 's') then
-      action.connect['change_state',win_entries{i,4}, window];
+    if ~(type(win_entries{i,5},'short')== 's') then
+      action.connect['change_state',win_entries{i,5}, window];
     end
     action.set_enabled[%t];
   end
@@ -208,18 +206,41 @@ function activate (app)
   window.show_all[];
 endfunction
 
+function activate_color(action, parameter, user_data)
+  name = action.get_name[];
+  value = parameter.get_string[];
+  action.change_state[parameter];
+  mes = sprintf("You activated radio action: ""%s"".\nCurrent value: %s\n",...
+		 name, value);
+  dialog = gtk_message_dialog_new (flags= GTK.DIALOG_DESTROY_WITH_PARENT,...
+				   type= GTK.MESSAGE_INFO,...
+				   buttons=GTK.BUTTONS_CLOSE,...
+				   message= mes);
+  dialog.run[];
+  dialog.destroy[];
+endfunction
+
+function change_color_state(action, state, user_data)
+  action.set_state[state];
+endfunction
+
 function []=demo_application()
   app_entries = { "new",  activate_action, "", "", "" ,
 		  "open", activate_action, "", "", "" ,
 		  "save", activate_action, "", "", "" ,
 		  "save-as", activate_action, "", "", "" ,
 		  "quit", activate_quit, "", "", "" ,
+		  "color", activate_color, "s", "''red''", change_color_state,
 		  "dark", activate_toggle, "", "false", change_theme_state};
 
   app = gtk_application_new ("org.gtk.Demo2", 0);
   settings = g_settings_new ("org.gtk.Demo");
-  // add_action_entries does not set up the callbacks we do it manually here
 
+  // prefer to add color in app_entries 
+  // action = settings.create_action["color"];
+  // app.add_action[action];
+ 
+  // add_action_entries does not set up the callbacks we do it manually here
   actions=m2s([]);
   for i=1:size(app_entries,1)
     actions(i,1:3)=[app_entries{i,1},app_entries{i,3},app_entries{i,4}];
@@ -230,14 +251,10 @@ function []=demo_application()
   for i=1:size(app_entries,1)
     action= app.lookup_action[app_entries{i,1}];
     action.connect['activate',app_entries{i,2}, app];
-    if ~(type(app_entries{i,4},'short')== 's') then
-      action.connect['change_state',app_entries{i,4}, app];
+    if ~(type(app_entries{i,5},'short')== 's') then
+      action.connect['change_state',app_entries{i,5}, app];
     end
   end
-
-  // XXX how to connect the color action ? 
-  action = settings.create_action["color"];
-  app.add_action[action];
   
   app.connect[ "startup", startup];
   app.connect[ "activate", activate];
