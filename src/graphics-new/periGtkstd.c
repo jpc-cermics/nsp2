@@ -1966,8 +1966,17 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
+#if GTK_CHECK_VERSION(3,0,0)
   width = gtk_widget_get_allocated_width (widget);
   height = gtk_widget_get_allocated_height (widget);
+#else
+  {
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget,&allocation);
+    width = allocation.width;
+    height = allocation.height;
+  }
+#endif 
 
   if(dd->private->resize != 0)
     {
