@@ -575,6 +575,79 @@ add_dingus (VteTerminal *terminal,
   }
 }
 
+
+/* change drag and drop behaviour because we want to
+ * be able to drop anywhere in the terminal window
+ * even in non editable zones. Because the evaluation
+ * of pasted data will be then added at the end.
+ */
+
+static void
+gtk_text_view_drag_end (GtkWidget        *widget,
+                        GdkDragContext   *context,
+			gpointer data)
+{
+
+}
+
+static gboolean
+gtk_text_view_drag_motion (GtkWidget        *widget,
+                           GdkDragContext   *context,
+                           gint              x,
+                           gint              y,
+                           guint             time,
+			   gpointer data)
+{
+  /* TRUE return means don't propagate the drag motion to parent
+   * widgets that may also be drop sites.
+   */
+  return FALSE;
+}
+
+
+
+static void
+gtk_text_view_drag_data_received (GtkWidget        *widget,
+                                  GdkDragContext   *context,
+                                  gint              x,
+                                  gint              y,
+                                  GtkSelectionData *selection_data,
+                                  guint             info,
+                                  guint             time,
+				  gpointer data)
+{
+  gboolean success = TRUE;
+  GtkTextIter drop_point,start,end;
+  g_signal_stop_emission_by_name (widget, "drag_data_received");
+  /* deals with the drop */
+  switch (info) {
+  case GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS:
+    break;
+  case GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT:
+    break;
+  case GTK_TEXT_BUFFER_TARGET_INFO_TEXT: 
+    {
+      guchar *str;
+      GdkAtom *targets;
+      str = gtk_selection_data_get_text (selection_data);
+      if (str)
+	{
+	  int n = strlen((char *) str);
+	 /* remove trailing \r\n */
+	 if ( str[n-2] == '\r' ) str[n-2]='\0';
+	 if ( str[n-1] == '\n' ) str[n-2]='\0';
+	 fprintf(stderr,"This is str %s\n",str);
+	 g_free (str);
+       }
+     break;
+   }
+  }
+  gtk_drag_finish (context, success,
+		   success && gdk_drag_context_get_actions (context) == GDK_ACTION_MOVE,
+		   time);
+}
+
+
 int
 main(int argc, char **argv)
 {
@@ -995,6 +1068,11 @@ main(int argc, char **argv)
   g_signal_connect(widget, "decrease-font-size",
 		   G_CALLBACK(decrease_font_size), window);
 
+  g_signal_connect(widget,"drag_data_received",
+		   G_CALLBACK (gtk_text_view_drag_data_received),NULL);
+
+  g_signal_connect(widget,"drag_end",G_CALLBACK (gtk_text_view_drag_end),NULL);
+  g_signal_connect(widget,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),NULL);
 
   /* Set some defaults. */
   vte_terminal_set_audible_bell(terminal, audible);

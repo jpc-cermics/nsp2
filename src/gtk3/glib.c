@@ -1182,8 +1182,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-
-#line 1187 "glib.c"
+#line 1186 "glib.c"
 
 
 static int
@@ -1649,6 +1648,30 @@ int _wrap_g_get_locale_variants(Stack stack, int rhs, int opt, int lhs) /* g_get
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
+#line 249 "codegen-3.0/glib.override"
+
+int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_from_uri */
+{
+  int_types T[] = {string, t_end};
+  char *uri;
+  gchar *ret;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret =g_filename_from_uri(uri,NULL,&error);
+  if ( error != NULL ) 
+    {
+      Scierror("%s: gtk error, %s\n",NspFname(stack),error->message);
+      g_error_free (error);
+      return RET_BUG;
+    }
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+#line 1674 "glib.c"
+
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
 {
@@ -3844,6 +3867,7 @@ static OpTab glib_func[]={
   { "g_base64_encode", _wrap_g_base64_encode},
   { "g_get_codeset", _wrap_g_get_codeset},
   { "g_get_locale_variants", _wrap_g_get_locale_variants},
+  { "g_filename_from_uri", _wrap_g_filename_from_uri},
   { "g_filename_to_uri", _wrap_g_filename_to_uri},
   { "g_filename_display_name", _wrap_g_filename_display_name},
   { "g_filename_display_basename", _wrap_g_filename_display_basename},
@@ -4053,7 +4077,7 @@ void nsp_initialize_glib_types(void)
   new_type_gvariant(T_BASE);
 }
 
-#line 250 "codegen-3.0/glib.override"
+#line 271 "codegen-3.0/glib.override"
 
 static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
@@ -4131,4 +4155,4 @@ GVariantType *nsp_copy_GVariantType(GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 4135 "glib.c"
+#line 4159 "glib.c"

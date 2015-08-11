@@ -244,6 +244,27 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override g_filename_from_uri
+
+int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_from_uri */
+{
+  int_types T[] = {string, t_end};
+  char *uri;
+  gchar *ret;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
+  ret =g_filename_from_uri(uri,NULL,&error);
+  if ( error != NULL ) 
+    {
+      Scierror("%s: gtk error, %s\n",NspFname(stack),error->message);
+      g_error_free (error);
+      return RET_BUG;
+    }
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
 
 %%
 last

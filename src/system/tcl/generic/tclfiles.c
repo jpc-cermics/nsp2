@@ -1695,10 +1695,10 @@ char *nsp_translate_file_name(const char *name,nsp_tcldstring *bufferPtr)
  * nsp_get_extension:
  * @name: File name to parse. 
  * 
- *	This function returns a pointer to the beginning of the
- *	extension part of a file name.
+ * This function returns a pointer to the beginning of the
+ * extension part of a file name. 
  * 
- * Return value: 	Returns a pointer into name which indicates where the extension
+ * Return value: Returns a pointer into string @name which indicates where the extension
  * starts.  If there is no extension, returns %NULL.
  **/
 
