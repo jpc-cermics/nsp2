@@ -1,0 +1,122 @@
+/* -*- Mode: C -*- */
+%%
+include-start GPixbuf
+/* inserted at the start of include file */
+#include <nsp/gtk/gobject.h>
+#include <nsp/figure.h>
+
+%%
+include-public  GPixbuf
+/* inserted at the end of public part of include file */
+
+%%
+include-private  GPixbuf
+/* inserted in the private part of include file */
+static void nsp_draw_gpixbuf(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
+static void nsp_translate_gpixbuf(NspGraphic *o,const double *tr);
+static void nsp_rotate_gpixbuf(NspGraphic *o,double *R);
+static void nsp_scale_gpixbuf(NspGraphic *o,double *alpha);
+static int nsp_getbounds_gpixbuf(NspGraphic *o,double *bounds);
+
+%%
+headers
+#include <gdk/gdk.h>
+#include <nsp/objects.h>
+#include <nsp/figuredata.h>
+#include <nsp/figure.h>
+#include <nsp/axes.h>
+
+#ifdef  WITH_GTKGLEXT
+extern Gengine GL_gengine;
+#endif
+
+%%
+init
+
+Init portion
+
+%%
+override-type GPixbuf
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gpixbuf;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gpixbuf ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gpixbuf  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gpixbuf  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_gpixbuf  ;
+  /* next method are defined in NspGraphic and need not be chnaged here for GPixbuf */
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */
+
+%%
+override-destroy-prelim GPixbuf
+  /* verbatim in destroy */
+  gobject_destroy(H->obj->pixbuf);
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_gpixbuf(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
+{
+  NspGPixbuf *P = (NspGPixbuf *) Obj;
+  if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
+  /* check if the block is inside drawing rectangle */
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect)) return ;
+
+  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,P->obj->pixbuf,
+					  P->obj->src_x, P->obj->src_y, P->obj->dest_x, P->obj->dest_y,
+					  P->obj->width, P->obj->height);
+
+
+}
+
+static void nsp_translate_gpixbuf(NspGraphic *Obj,const double *tr)
+{
+  NspGPixbuf *P = (NspGPixbuf *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+  P->obj->dest_x  += tr[0];
+  P->obj->dest_y  += tr[0];
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+}
+
+static void nsp_rotate_gpixbuf(NspGraphic *Obj,double *R)
+{
+  /* NspGPixbuf *P = (NspGPixbuf *) Obj; */
+  Sciprintf("rotate pixbuf not implemented yet\n");
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+}
+
+static void nsp_scale_gpixbuf(NspGraphic *Obj,double *alpha)
+{
+  NspGPixbuf *P = (NspGPixbuf *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+  P->obj->width *= alpha[0];
+  P->obj->height *= alpha[1];
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+}
+
+/* compute in bounds the enclosing rectangle of gpixbuf
+ *
+ */
+
+static int nsp_getbounds_gpixbuf (NspGraphic *Obj,double *bounds)
+{
+  NspGPixbuf *P = (NspGPixbuf *) Obj;
+  /* get the bound in parent i.e given by wrect : upper-left w,h */
+  bounds[0]=P->obj->dest_x; /* xmin */
+  bounds[1]=P->obj->dest_y - P->obj->height; /* ymin */
+  bounds[2]=bounds[0] + P->obj->width; /* xmax */
+  bounds[3]=P->obj->dest_y; /* ymax */
+  return TRUE;
+}

@@ -63,6 +63,7 @@
 #include <nsp/fec.h>
 #include <nsp/contour.h>
 #include <nsp/contour3d.h>
+#include <nsp/gpixbuf.h>
 #include <nsp/nspthreads.h>
 #include <nsp/pr-output.h>
 
@@ -6779,29 +6780,41 @@ static int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
  * gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
  * gtk_logo_pixbuf = gdk_pixbuf_new_from_file(gtk_logo);
  * plot2d();
- * xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,2,0,1,1)
+ * xdraw_pixbuf(gtk_logo_pixbuf,0,0,2,0,1,1)
  */
 
 static int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  NspAxes *axe;
+  NspGPixbuf *gp;
   /* window , pix,  src_x,src_y, dest_x,dest_y,  width,height */
-  int_types T[] = {s_int, obj_check, s_int, s_int, s_double, s_double, s_double, s_double ,t_end};
-  int src_x, src_y, win;
+  int_types T[] = { obj_check, s_int, s_int, s_double, s_double, s_double, s_double ,t_end};
+  int src_x, src_y;
   double  dest_x, dest_y, width, height;
   NspGObject *pixbuf;
-  Xgc=nsp_check_graphic_context();
-  if ( GetArgs(stack,rhs,opt,T,&win,&nsp_type_gdkpixbuf, &pixbuf, &src_x, &src_y,
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &pixbuf, &src_x, &src_y,
 	       &dest_x, &dest_y, &width, &height) == FAIL) return RET_BUG;
-  if ( Xgc->private == NULL)
+  if (( axe=  nsp_check_for_current_axes())== NULL) goto bug;
+  nsp_type_gpixbuf = new_type_gpixbuf(T_BASE);
+  gp = nsp_gpixbuf_create("pix",src_x,src_y,dest_x,dest_y,width,height,pixbuf,
+			  (NspTypeBase *)nsp_type_gpixbuf);
+  if ( gp == NULL) goto bug;
+  /* insert the new matrix */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gp, FALSE)== FAIL)
     {
-      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
-      return RET_BUG;
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      goto bug;
     }
-  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,pixbuf,
-					  src_x, src_y, dest_x, dest_y,
-					  width, height);
+  nsp_graphic_invalidate((NspGraphic *) gp);
+  if ( lhs == 1 )
+    {
+      MoveObj(stack,1,NSP_OBJECT(gp));
+      return 1;
+    }
   return 0;
+ bug:
+  return RET_BUG;
 }
 
 /* experimental: draw a pixbuf in a region of a graphic window.

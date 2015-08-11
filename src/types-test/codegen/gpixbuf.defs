@@ -1,0 +1,16 @@
+;; -*- scheme -*-
+
+(define-objectref GPixbuf
+  (in-module "GPixbuf")
+  (parent "Graphic")
+  (c-name "NspGPixbuf")
+  (fields
+   '("gint" "src_x" "std" "0")
+   '("gint" "src_y" "std" "0")
+   '("gdouble" "dest_x" "std" "0")
+   '("gdouble" "dest_y" "std" "0")
+   '("gdouble" "width" "std" "0")
+   '("gdouble" "height" "std" "0")
+   '("void*"   "pixbuf" "hidden" "NULL")
+   )
+)

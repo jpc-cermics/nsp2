@@ -11,7 +11,7 @@ ALL=  classa.defs classb.defs classaref.defs classbref.defs \
 	polyline3d.defs spolyhedron.defs string3d.defs compound.defs \
 	gmatrix1.defs fec.defs contour3d.defs block.defs link.defs \
 	connector.defs diagram.defs grimage.defs epoints.defs sharedlib.defs \
-	hm.defs ast.defs astv.defs bvar.defs \
+	hm.defs ast.defs astv.defs bvar.defs gpixbuf.defs \
 	stochdec.defs bson.defs classc.defs
 
 PROG=../../../bin/nspbind
