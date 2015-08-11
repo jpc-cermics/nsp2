@@ -20,17 +20,9 @@
  * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <string.h>
-#include <math.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <unistd.h>
 #include <gtk/gtk.h>
 #if GTK_CHECK_VERSION (3,0,0)
-#include <gtk/gtkx.h>
+#include <gtk/gtkx.h> 
 #endif
 #include <nsp/nsp.h>
 #include <nsp/command.h>
@@ -43,6 +35,7 @@
 
 extern void nsp_pa_stop(void);
 extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
+
 
 static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
@@ -587,7 +580,7 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   if ( m->stock_name != NULL )
     {
 #if GTK_CHECK_VERSION (3,0,0)
-      menuitem = gtk_menu_item_new_with_label(m->stock_name);
+      menuitem = gtk_menu_item_new_with_mnemonic (m->name);
 #else 
       menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
 #endif 
@@ -596,7 +589,9 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
     }
 
   else
-    menuitem = gtk_menu_item_new_with_mnemonic (m->name);
+    {
+      menuitem = gtk_menu_item_new_with_mnemonic (m->name);
+    }
   if ( m->accel != NULL )
     {
       guint keyval;
@@ -621,9 +616,10 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
 	  if ( loc->stock_name != NULL )
 	    {
 #if GTK_CHECK_VERSION (3,0,0)
-	      menuitem1 = gtk_menu_item_new_with_label(loc->stock_name);
+	      menuitem1 = gtk_menu_item_new_with_mnemonic (loc->name);
+	      /* menuitem1 = gtk_menu_item_new_with_label(loc->stock_name); */
 #else 
-	       menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL); 
+	      menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL); 
 	      /* 2.16 only */
 	      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem1),TRUE); */
 #endif 
@@ -728,7 +724,6 @@ static void * nsp_window_create_initial_menu(void)
 			   "_Edit||$editor",
 			   "_Kill||$kill",
 			   "_Quit|<control>Q|$quit|gtk-quit" };
-
   char *control_entries[] = { "Quit||$quit",
 			      "Abort||$abort",
 			      "Restart||$restart",
@@ -744,8 +739,10 @@ static void * nsp_window_create_initial_menu(void)
 			      "+||$gwplus" ,
 			      "-||$gwminus" } ;
 
-  char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
+
+  char *help_entries[] = { "Help|F1|$help|gtk-help",
 			   "About||$about|gtk-about"};
+
 #ifdef WITH_PORTAUDIO
   n_control_entries=5;
 #else
