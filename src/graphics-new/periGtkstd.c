@@ -2262,6 +2262,8 @@ GdkImage* nsp_get_image(BCG *Xgc)
  **/
 
 #if defined(PERICAIRO)
+
+#if GTK_CHECK_VERSION(3,0,0)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 {
   cairo_surface_t *surface;
@@ -2270,9 +2272,9 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
   int width, height;
   cairo_t *cr;
   if (  Xgc->private->drawing == NULL ) return NULL;
-
   width = gtk_widget_get_allocated_width (graphic_widget);
   height = gtk_widget_get_allocated_height (graphic_widget);
+  
   surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
 
   cr = cairo_create (surface);
@@ -2285,6 +2287,29 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
   cairo_surface_destroy (surface);
   return pixbuf;
 }
+
+#else 
+/* gtk-2 version */
+
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
+{
+  int width, height;
+  GdkPixbuf *pixbuf;
+  GdkPixmap *pixmap;
+  GtkWidget *graphic_widget = Xgc->private->drawing;
+  if (  Xgc->private->drawing == NULL ) return NULL;
+  pixmap = gtk_widget_get_snapshot (graphic_widget, NULL);
+  gdk_drawable_get_size (pixmap, &width, &height);
+  pixbuf = gdk_pixbuf_get_from_drawable (NULL, pixmap,
+					 gtk_widget_get_colormap (graphic_widget),
+					 0, 0,
+					 0, 0,
+					 width, height);
+  g_object_unref (pixmap);
+  return pixbuf;
+}
+#endif 
+
 #endif
 
 /*
