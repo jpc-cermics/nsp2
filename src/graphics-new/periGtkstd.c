@@ -2264,15 +2264,26 @@ GdkImage* nsp_get_image(BCG *Xgc)
 #if defined(PERICAIRO)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 {
-  /*
-  return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
-				      gdk_drawable_get_colormap(Xgc->private->drawable),
-				      0,0,0,0,
-				      Xgc->CWindowWidth,Xgc->CWindowHeight);
-  */
-  Sciprintf("This is to be done with Cairo\n");
-  return NULL;
-  /* gdk_colormap_get_system(), */
+  cairo_surface_t *surface;
+  GtkWidget *graphic_widget=  Xgc->private->drawing;
+  GdkPixbuf *pixbuf;
+  int width, height;
+  cairo_t *cr;
+  if (  Xgc->private->drawing == NULL ) return NULL;
+
+  width = gtk_widget_get_allocated_width (graphic_widget);
+  height = gtk_widget_get_allocated_height (graphic_widget);
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
+
+  cr = cairo_create (surface);
+  gtk_widget_draw (graphic_widget, cr);
+  cairo_destroy (cr);
+
+  pixbuf = gdk_pixbuf_get_from_surface (surface,
+					0, 0,
+					width, height);
+  cairo_surface_destroy (surface);
+  return pixbuf;
 }
 #endif
 

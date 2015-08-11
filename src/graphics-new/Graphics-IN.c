@@ -6730,11 +6730,11 @@ static int int_get_image( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+#endif
+
 /* get the content of a graphic window as a pixbuf
  *
  */
-#endif
-
 
 static int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
 {
