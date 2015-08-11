@@ -1943,7 +1943,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 void nsp_textview_destroy_internal(void)
 {
   View *view= nsptv_get_view("nsp_textview_destroy_internal");
-  printf("inside nsp_textview_destroy_internal\n");
+  /* printf("inside nsp_textview_destroy_internal\n"); */
   nsptv_clear_history(view);
   nsptv_buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
@@ -1978,7 +1978,7 @@ void nsp_textview_destroy(void)
   View *view= nsptv_get_view("nsp_textview_destroy");
   if ( nsp_get_in_text_view() == FALSE ) return;
   if ( view == NULL ) return;
-  printf("inside nsp_textview_destroy\n");
+  /* printf("inside nsp_textview_destroy\n"); */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   if ( g_thread_self() == thmain )
     {
