@@ -3000,7 +3000,13 @@ static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
- *   [x1,y1,rect]=xchange(x,y,dir)
+ * [x1,y1,rect]=xchange(x,y,dir)
+ * should be changed for new graphics 
+ * to convert from i2f we can use 
+ * F=get_figure(0);
+ * [pt,Axe]=F.axes_pt[x,y];
+ * pt are the float coordinates using Axes for conversion 
+ * the proper Axe is searched in F.
  *-----------------------------------------------------------*/
 
 static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)

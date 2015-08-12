@@ -124,6 +124,16 @@
    )
   )
 
+(define-method axes_pt
+  (of-object "Figure")
+  (c-name "nsp_get_point_axes")
+  (return-type "none")
+  (parameters
+   '("int" "x")
+   '("int" "y")
+   )
+  )
+
 (define-function get_current_figure 
   (c-name "nsp_check_for_current_figure")
   (return-type "NspFigure*")

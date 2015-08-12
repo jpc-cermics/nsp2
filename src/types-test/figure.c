@@ -794,9 +794,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   MoveObj(stack,1,NSP_OBJECT(C));
   return 1;
 }
-
-
-#line 800 "figure.c"
+#line 798 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -807,6 +805,29 @@ static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,i
     nsp_figure_remove_element(self,((NspGraphic *) g));
   return 0;
 }
+
+#line 217 "codegen/figure.override"
+
+static int _wrap_nsp_get_point_axes(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  BCG *Xgc =  self->obj->Xgc;
+  NspGraphic *G;
+  double pt[2];
+  int_types T[] = {s_int,s_int, t_end};
+  int x, y;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
+  if ( Xgc == NULL) return RET_BUG;
+  G=nsp_get_point_axes(Xgc,x,y,pt);
+  if (nsp_move_doubles(stack,1,1,2,pt[0],pt[1]) == FAIL) return RET_BUG;
+  if ( lhs == 2 ) 
+    {
+      MoveObj(stack,2,NSP_OBJECT(G));
+    }
+  return Max(lhs,1);
+}
+
+#line 830 "figure.c"
+
 
 static NspMethods figure_methods[] = {
   {"connect",(nsp_method *) _wrap_nsp_figure_connect},
@@ -820,6 +841,7 @@ static NspMethods figure_methods[] = {
   {"start_compound",(nsp_method *) _wrap_nsp_figure_start_compound},
   {"end_compound",(nsp_method *) _wrap_nsp_figure_end_compound},
   {"remove",(nsp_method *) _wrap_nsp_figure_remove_element},
+  {"axes_pt",(nsp_method *) _wrap_nsp_get_point_axes},
   { NULL, NULL}
 };
 
@@ -1019,7 +1041,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 1023 "figure.c"
+#line 1045 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1700,7 +1722,7 @@ static int _wrap_figuredata_set_background(void *self,const char *attr, NspObjec
   return OK;
 }
 
-#line 219 "codegen/figure.override"
+#line 238 "codegen/figure.override"
 
 static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
 {
@@ -1751,7 +1773,7 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1755 "figure.c"
+#line 1777 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
@@ -2030,7 +2052,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2034 "figure.c"
+#line 2056 "figure.c"
 
 
 #line 176 "codegen/figure.override"
@@ -2042,7 +2064,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2046 "figure.c"
+#line 2068 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2081,7 +2103,7 @@ void nsp_initialize_Figure_types(void)
   new_type_figuredata(T_BASE);
 }
 
-#line 271 "codegen/figure.override"
+#line 290 "codegen/figure.override"
 
 /**
  * nsp_draw_figure:
@@ -3751,4 +3773,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3755 "figure.c"
+#line 3777 "figure.c"
