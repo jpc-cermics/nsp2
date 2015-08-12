@@ -178,6 +178,7 @@ endfunction
 //---------------------------------------
 
 function [sd1]=gr_rect(action,sd,pt,pt1)
+  
   global(gr_objects=list());
   control_color=10;
   sd1=0;
@@ -237,6 +238,8 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
     // called when we interactively move object 
     gr_rect('translate',sd,pt);
    case 'move point init' then 
+    // initialize moving a control point 
+    gr_objects(sd)('gr')(1).hilited=%t;
     // nothing to do 
    case 'move point' then 
     printf('move point rect\n');
@@ -244,15 +247,35 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
     xinfo('inside the move point')
     gr_objects(sd)('data')(3:4)=max(gr_objects(sd)('data')(3:4)+[pt(1),-pt(2)],0);
     gr_rect('locks',sd);
+    gr=gr_objects(sd)('gr');
+    gr(1).invalidate[];
+    gr(1).w =     gr(1).w + pt(1);
+    gr(1).h =     gr(1).h - pt(2);
+    gr(1).invalidate[];
+    gr_rect('locks',sd);    
    case 'locks' then 
-    printf('locks\n');
-    // compute locks points 
-    rr=gr_objects(sd)('data');
-    sd1=[rr(1)+rr(3)/2,rr(2);
-	 rr(1)+rr(3)/2,rr(2)-rr(4);
-	 rr(1),rr(2)-rr(4)/2;
-	 rr(1)+rr(3),rr(2)-rr(4)/2];
-    gr_objects(sd)('locks')=sd1;
+    // updates locks and invalidate 
+    rect= gr_objects(sd);
+    gr = rect('gr');
+    if length(gr) <> 0 then 
+      rr=[gr(1).x,gr(1).y,gr(1).w,gr(1).h];
+    else
+      rr=rect('data')
+    end
+    rl=[rr(1)+rr(3)/2,rr(2);
+	rr(1)+rr(3)/2,rr(2)-rr(4);
+	rr(1),rr(2)-rr(4)/2;
+	rr(1)+rr(3),rr(2)-rr(4)/2];
+    gr_objects(sd)('locks')= rl;
+    if length(gr) <> 0 then 
+      for i=1:4 
+	glock=rect('gr')(1+i);
+	glock.invalidate[];
+	glock.x = rl(i,1);
+	glock.y = rl(i,2);
+	glock.invalidate[];
+      end
+    end
    case 'inside lock' then 
     printf('inside lock rect\n');
     // check if we are near a lock point 
@@ -822,6 +845,16 @@ function my_eventhandler(win,x,y,ibut)
     F=get_figure(win);
     pt=F.axes_pt[x,y];
     xinfo('Mouse position is ('+string(pt(1))+','+string(pt(2))+')');
+    // hilite object when we are over it
+    k = gr_find(pt(1),pt(2));
+    gr_unhilite(win=win);
+    if k<>0 then 
+      o=gr_objects(k);
+      if o.iskey['gr'] && ~o('gr')(1).hilited then 
+	o('gr')(1).hilited= %t;
+	o('gr')(1).invalidate[];
+      end
+    end    
   elseif ibut==0 then 
     //printf("(x,y)=%f,%f,%f\n",x,y,ibut);
     F=get_figure(win);
@@ -856,6 +889,7 @@ function my_eventhandler(win,x,y,ibut)
 	 end 
        else 
        	 // we are moving a control point of the object 
+	 printf('==>moving a control point\n');
 	 execstr('gr_'+o.type+'(''move point init'',k,ic(2));');
 	 [rep]=gr_frame_move(k,pt,-5,'move point',ic(2))
 	 if rep== -100 then  
@@ -1012,10 +1046,15 @@ function gr_unhilite(win=-1,draw=%t)
   if win == -1 then win=xget('window');end 
   for k=1:size(gr_objects)
     o=gr_objects(k);
-    if o('hilited') then ok=%t;end 
-    gr_objects(k)('hilited')=%f;
+    if o.iskey['gr'] then 
+      gr = o('gr');
+      for i=1:length(gr)
+	if gr(i).hilited then 
+	  gr(i).hilited=%f;gr(i).invalidate[];
+	end
+      end
+    end
   end
-  if ok & draw then gr_draw(win);end 
 endfunction 
 
 function gr_delete()

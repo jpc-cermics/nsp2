@@ -1899,6 +1899,7 @@ static int int_plot2d_new( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
+  // gdk_window_set_debug_updates(TRUE);
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
 }
 

@@ -940,7 +940,6 @@ void nsp_graphic_invalidate(NspGraphic *G)
 	      scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
 	      scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
 	      rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
-	      /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
 	      Xgc->graphic_engine->invalidate(Xgc,rect);
 	    }
 	  else
@@ -996,4 +995,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 1000 "graphic.c"
+#line 999 "graphic.c"
