@@ -71,7 +71,7 @@ enum {STYLE_COLOUR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} type;
 
 /* XXXX */
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-extern int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+extern int nsp_graphic_new_gl_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
 /* XXXXX : only implemented in 2.4 */
 #define gtk_calendar_set_display_options gtk_calendar_display_options
@@ -61586,7 +61586,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   if (wpos != NULL) {CheckDims(NspFname(stack),3,wpos,1,2);}
 #ifdef WITH_GTKGLEXT
   if ( open_gl == TRUE )
-    win_id= nsp_graphic_new_gl(GTK_WIDGET(window->obj), GTK_WIDGET(vbox->obj), winnum,
+    win_id= nsp_graphic_new_gl_new(GTK_WIDGET(window->obj), GTK_WIDGET(vbox->obj), winnum,
 			    (wdim) ? (int*) wdim->R: NULL ,
 			    (wpdim) ? (int*)wpdim->R: NULL,
 			    (viewport) ? viewport->R : NULL,
