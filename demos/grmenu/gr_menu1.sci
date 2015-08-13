@@ -358,18 +358,26 @@ function sd1 =gr_poly(action,sd,pt,pt1)
   sd1=0;
   select action 
    case 'draw' then 
-    sd = gr_objects(sd);
-    if sd('show') then
-      xpoly(sd('x'),sd('y'),type='lines');
-      if sd('hilited') then 
+    sd1 = gr_objects(sd);
+    if length(sd1('gr'))==0 then 
+      p=xpoly(sd1('x'),sd1('y'),type='lines');
+      gr_objects(sd)('gr')(1)=p;
+      if %f && sd1('hilited') then 
 	// hilited part 
-	rects=[sd('x')-1;sd('y')+1;2*ones(size(sd('x')));2*ones(size(sd('x')))];
+	rects=[sd1('x')-1;sd1('y')+1;2*ones(size(sd1('x')));2*ones(size(sd1('x')))];
 	n=size(rects,'c');
 	control_color=10;
 	colors=control_color*ones_new(1,n);
-	if sd('lock first')(1) then colors(1)=1;end 
-	if sd('lock last')(1) then colors($)=1;end 
+	if sd1('lock first')(1) then colors(1)=1;end 
+	if sd1('lock last')(1) then colors($)=1;end 
 	xrects(rects,colors);
+      end
+    else
+      p = gr_objects(sd)('gr')(1);
+      sd1=gr_objects(sd);
+      if ~p.x.equal[sd1('x')] || ~p.y.equal[sd1('y')] then 
+	p.x = sd1('x'); p.y = sd1('y');
+	p.invalidate[];
       end
     end
     
@@ -377,9 +385,12 @@ function sd1 =gr_poly(action,sd,pt,pt1)
     // translate sd with translation vector pt 
     gr_objects(sd)('x')=gr_objects(sd)('x')+pt(1);
     gr_objects(sd)('y')=gr_objects(sd)('y')+pt(2);
+    // translate the graphic objects
+    p= gr_objects(sd)('gr');
+    for i=1:length(p), p(i).translate[pt];end 
    case 'define' then 
-    sd1= tlist(["poly","show","hilited","x","y","color","thickness","lock first","lock last","locks status","pt"],...
-               %t,%f,sd(1,:),sd(2,:),30*rand(1),2,0,0,0,[0,0]);
+    sd1= tlist(["poly","show","hilited","x","y","color","thickness","lock first","lock last","locks status","pt","gr"],...
+               %t,%f,sd(1,:),sd(2,:),30*rand(1),2,0,0,0,[0,0],list());
     gr_objects($+1)=sd1;
    case 'move' then 
     gr_poly('translate',sd,[5,5]);
@@ -850,7 +861,7 @@ function my_eventhandler(win,x,y,ibut)
     gr_unhilite(win=win);
     if k<>0 then 
       o=gr_objects(k);
-      if o.iskey['gr'] && ~o('gr')(1).hilited then 
+      if o.iskey['gr'] && length(o.gr) >0 && ~o('gr')(1).hilited then 
 	o('gr')(1).hilited= %t;
 	o('gr')(1).invalidate[];
       end
