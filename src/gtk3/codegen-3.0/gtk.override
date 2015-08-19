@@ -1297,7 +1297,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
       geom_mask |= GDK_HINT_BASE_SIZE;
     }
 
-  if (width_inc != -100 0 || height_inc != -100) 
+  if (width_inc != -100 || height_inc != -100) 
     {
       geometry.width_inc = MAX(width_inc, -1);
       geometry.height_inc = MAX(height_inc, -1);
