@@ -4686,7 +4686,7 @@
 
 (define-function gtk_entry_new_with_max_length
   (c-name "gtk_entry_new_with_max_length")
-  (is-constructor-of GtkEntry)
+  ;;(is-constructor-of GtkEntry)
   (return-type "GtkWidget*")
   (parameters
    '("guint16" "max" (default "0"))

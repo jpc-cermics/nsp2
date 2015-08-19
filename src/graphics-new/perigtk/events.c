@@ -925,7 +925,7 @@ target_drag_data_received  (GtkWidget          *widget,
 #else
   GdkAtom data_target = data->target;
 #endif
-  Sciprintf("In target_drag_data_received\n");
+  /* Sciprintf("In target_drag_data_received\n"); */
   if (gtk_drag_get_source_widget (context) == widget)
     {
       /* we stop if the drag was initiated by us */

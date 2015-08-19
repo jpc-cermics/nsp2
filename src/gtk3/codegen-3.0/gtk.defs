@@ -7738,7 +7738,7 @@
 
 (define-function gtk_entry_new_with_buffer
   (c-name "gtk_entry_new_with_buffer")
-  (is-constructor-of "GtkEntry")
+  ;;(is-constructor-of "GtkEntry")
   (return-type "GtkEntry*")
   (parameters
     '("GtkEntryBuffer*" "buffer")

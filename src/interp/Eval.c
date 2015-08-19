@@ -121,8 +121,19 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   const char *s;
   char *fname ; 
   int j,rep;
-  stack.first = first;
 
+#define EVENTS 
+#ifdef EVENTS 
+  static int ecount = 0;
+  if ( 0 &&  ecount++ == 1000) 
+    {
+      // printf("check events\n");
+      nsp_check_gtk_events ();
+      ecount = 0;
+    }
+#endif 
+
+  stack.first = first;
 
 #ifdef  USE_GETRUSAGE 
   { struct rusage usage;

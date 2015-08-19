@@ -3766,7 +3766,6 @@ gtk_radio_menu_item_group
 gtk_radio_menu_item_set_group
 gtk_radio_button_group
 gtk_radio_button_set_group
-gtk_entry_new
 gtk_entry_select_region
 %%
 ignore gtk_object_new gtk_object_newv gtk_object_query_args
