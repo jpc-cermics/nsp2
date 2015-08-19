@@ -1246,7 +1246,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 {
   int_types T[] = { new_opts,t_end};
   nsp_option opts[] = {
-
+    
     {"geometry",obj_check,NULLOBJ,-1},
     { "min_width",s_int,NULLOBJ,-1},
     { "min_height",s_int,NULLOBJ,-1},
