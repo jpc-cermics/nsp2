@@ -1,6 +1,13 @@
 /* -*- Mode: C -*- */
 %%
 headers
+
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+
+#ifdef GetGValue
+#undef GetGValue
+#endif
 #include <nsp/gtk/gobject.h>
 
 %%

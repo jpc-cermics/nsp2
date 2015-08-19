@@ -1,11 +1,20 @@
 /* -*- Mode: C -*- */
 %%
 headers
+
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
+#include <nsp/nsp.h>
 #include <nsp/object.h>
+#include <nsp/smatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/list.h>
+#include <nsp/hash.h>
+#include <nsp/hobj.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
 
 /* on windows TRUE and FALSE are undef by 
  * "nsp/object.h"

@@ -3,6 +3,21 @@
 headers
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+
+#include <nsp/nsp.h>
+#include <nsp/object.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/hash.h>
+#include <nsp/plist.h>
+#include <nsp/list.h>
+#include <nsp/cells.h>
+#include <nsp/none.h>
+#include <nsp/mpmatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
@@ -396,7 +411,7 @@ gdk_color_hash gdk_color_equal
 %%
 override gdk_color_new kwargs
 static int
-_wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
+_wrap_gdk_color_new(Stack stack, int rhs, int opt, int lhs)
 {
   /* static char *kwlist[] = {"red", "green", "blue", "pixel", NULL };*/
   GdkColor colour = {0, 0, 0, 0};
@@ -652,7 +667,7 @@ ignore gdk_cursor_new_from_pixmap
 %%
 override gdk_cursor_new kwargs
 static int
-_wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
+_wrap_gdk_cursor_new(Stack stack,int rhs,int opt,int lhs)
 {
   /* 
   static char *kwlist1[] = { "cursor_type", NULL };
@@ -1272,7 +1287,7 @@ ignore  gdk_gc_new_with_values kwargs
 %%
 override gdk_gc_new 
 static int
-_wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
+_wrap_gdk_gc_new(Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, new_opts, t_end};
   nsp_option opts[] ={
@@ -2157,7 +2172,7 @@ override-slot GdkRectangle.tp_as_sequence
 %%
 override gdk_rectangle_new
 static int
-_wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
+_wrap_gdk_rectangle_new(Stack stack,int rhs,int opt,int lhs)
 {
   GdkRectangle re;
   NspGBoxed *H;
@@ -2232,7 +2247,7 @@ ignore gdk_visual_get_best_with_depth gdk_visual_get_best_with_type
 override gdk_visual_new kwargs
 static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
-_wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
+_wrap_gdk_visual_new(Stack stack, int rhs, int opt, int lhs)
 {
   GObject *ret; NspObject *nsp_ret;  
   if ( rhs - opt == 1) 

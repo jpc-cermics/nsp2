@@ -142,50 +142,50 @@
    )
   )
 
-(define-method get_authors
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_get_authors")
-  (return-type "gchar**")
-  )
+;; (define-method get_authors
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_get_authors")
+;;   (return-type "gchar**")
+;;   )
 
-(define-method set_authors
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_set_authors")
-  (return-type "none")
-  (parameters
-   '("gchar**" "authors")
-   )
-  )
+;; (define-method set_authors
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_set_authors")
+;;   (return-type "none")
+;;   (parameters
+;;    '("gchar**" "authors")
+;;    )
+;;   )
 
-(define-method get_documenters
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_get_documenters")
-  (return-type "gchar**")
-  )
+;; (define-method get_documenters
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_get_documenters")
+;;   (return-type "gchar**")
+;;   )
 
-(define-method set_documenters
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_set_documenters")
-  (return-type "none")
-  (parameters
-   '("gchar**" "documenters")
-   )
-  )
+;; (define-method set_documenters
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_set_documenters")
+;;   (return-type "none")
+;;   (parameters
+;;    '("gchar**" "documenters")
+;;    )
+;;   )
 
-(define-method get_artists
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_get_artists")
-  (return-type "gchar**")
-  )
+;; (define-method get_artists
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_get_artists")
+;;   (return-type "gchar**")
+;;   )
 
-(define-method set_artists
-  (of-object "GtkAboutDialog")
-  (c-name "gtk_about_dialog_set_artists")
-  (return-type "none")
-  (parameters
-   '("gchar**" "artists")
-   )
-  )
+;; (define-method set_artists
+;;   (of-object "GtkAboutDialog")
+;;   (c-name "gtk_about_dialog_set_artists")
+;;   (return-type "none")
+;;   (parameters
+;;    '("gchar**" "artists")
+;;    )
+;;   )
 
 (define-method get_translator_credits
   (of-object "GtkAboutDialog")
@@ -252,15 +252,15 @@
    )
   )
 
-(define-function show_about_dialog
-  (c-name "gtk_show_about_dialog")
-  (return-type "none")
-  (parameters
-   '("GtkWindow*" "parent")
-   '("const-gchar*" "first_property_name")
-   )
-  (varargs #t)
-  )
+;; (define-function show_about_dialog
+;;   (c-name "gtk_show_about_dialog")
+;;   (return-type "none")
+;;   (parameters
+;;    '("GtkWindow*" "parent")
+;;    '("const-gchar*" "first_property_name")
+;;    )
+;;   (varargs #t)
+;;   )
 
 
 
@@ -3992,15 +3992,15 @@
    )
   )
 
-(define-method add_buttons
-  (of-object "GtkDialog")
-  (c-name "gtk_dialog_add_buttons")
-  (return-type "none")
-  (parameters
-   '("const-gchar*" "first_button_text")
-   )
-  (varargs #t)
-  )
+;; (define-method add_buttons
+;;   (of-object "GtkDialog")
+;;   (c-name "gtk_dialog_add_buttons")
+;;   (return-type "none")
+;;   (parameters
+;;    '("const-gchar*" "first_button_text")
+;;    )
+;;   (varargs #t)
+;;   )
 
 (define-method set_response_sensitive
   (of-object "GtkDialog")
@@ -5852,18 +5852,18 @@
   (varargs #t)
   )
 
-(define-function file_chooser_dialog_new_with_backend
-  (c-name "gtk_file_chooser_dialog_new_with_backend")
-  (return-type "GtkWidget*")
-  (parameters
-   '("const-gchar*" "title")
-   '("GtkWindow*" "parent")
-   '("GtkFileChooserAction" "action")
-   '("const-gchar*" "backend")
-   '("const-gchar*" "first_button_text")
-   )
-  (varargs #t)
-  )
+;; (define-function file_chooser_dialog_new_with_backend
+;;   (c-name "gtk_file_chooser_dialog_new_with_backend")
+;;   (return-type "GtkWidget*")
+;;   (parameters
+;;    '("const-gchar*" "title")
+;;    '("GtkWindow*" "parent")
+;;    '("GtkFileChooserAction" "action")
+;;    '("const-gchar*" "backend")
+;;    '("const-gchar*" "first_button_text")
+;;    )
+;;   (varargs #t)
+;;   )
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilechooserwidget.h
 ;;----------------------------------------------------------
@@ -11115,25 +11115,25 @@
   )
 
 
-(define-method format_secondary_text
-  (of-object "GtkMessageDialog")
-  (c-name "gtk_message_dialog_format_secondary_text")
-  (return-type "none")
-  (parameters
-   '("const-gchar*" "message_format")
-   )
-  (varargs #t)
-  )
+;; (define-method format_secondary_text
+;;   (of-object "GtkMessageDialog")
+;;   (c-name "gtk_message_dialog_format_secondary_text")
+;;   (return-type "none")
+;;   (parameters
+;;    '("const-gchar*" "message_format")
+;;    )
+;;   (varargs #t)
+;;   )
 
-(define-method format_secondary_markup
-  (of-object "GtkMessageDialog")
-  (c-name "gtk_message_dialog_format_secondary_markup")
-  (return-type "none")
-  (parameters
-   '("const-gchar*" "message_format")
-   )
-  (varargs #t)
-  )
+;; (define-method format_secondary_markup
+;;   (of-object "GtkMessageDialog")
+;;   (c-name "gtk_message_dialog_format_secondary_markup")
+;;   (return-type "none")
+;;   (parameters
+;;    '("const-gchar*" "message_format")
+;;    )
+;;   (varargs #t)
+;;   )
 
 
 
@@ -17279,7 +17279,7 @@
 
 (define-function gtk_text_view_new_with_buffer
   (c-name "gtk_text_view_new_with_buffer")
-  (is-constructor-of GtkTextView)
+  ;; (is-constructor-of GtkTextView)
   (return-type "GtkWidget*")
   (parameters
    '("GtkTextBuffer*" "buffer" (null-ok) (default "NULL"))
@@ -22863,15 +22863,15 @@
    )
   )
 
-(define-method style_get
-  (of-object "GtkWidget")
-  (c-name "gtk_widget_style_get")
-  (return-type "none")
-  (parameters
-   '("const-gchar*" "first_property_name")
-   )
-  (varargs #t)
-  )
+;; (define-method style_get
+;;   (of-object "GtkWidget")
+;;   (c-name "gtk_widget_style_get")
+;;   (return-type "none")
+;;   (parameters
+;;    '("const-gchar*" "first_property_name")
+;;    )
+;;   (varargs #t)
+;;   )
 
 (define-function widget_get_default_style
   (c-name "gtk_widget_get_default_style")

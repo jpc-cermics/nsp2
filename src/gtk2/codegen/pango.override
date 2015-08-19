@@ -1,14 +1,29 @@
 /* -*- Mode: C -*- */
 %%
 headers
+
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <pango/pango.h>
+
+#include <nsp/nsp.h>
+#include <nsp/object.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/hash.h>
+#include <nsp/list.h>
+#include <nsp/cells.h>
+#include <nsp/none.h>
+#include <nsp/mpmatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
-#include <pango/pango.h>
-#include "nsp/gtk/pangoattribute.h"
-#include "nsp/all-pango.h"
+#include <nsp/gtk/pangoattribute.h>
+#include <nsp/all-pango.h>
 
 %%
 init
@@ -53,7 +68,7 @@ pango_shape
 %%
 override pango_color_new kwargs
 static int
-_wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
+_wrap_pango_color_new(Stack stack, int rhs, int opt, int lhs)
 {
   PangoColor src={0,0,0}; 
   GObject *ret; NspObject *nsp_ret;
@@ -366,7 +381,7 @@ ignore pango_font_description_from_string
 %%
 override pango_font_description_new kwargs
 static int
-_wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
+_wrap_pango_font_description_new( Stack stack,int rhs,int opt,int lhs)
 {
   gpointer  *boxed ;
   NspObject *ret;
