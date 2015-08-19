@@ -39,23 +39,37 @@ function create_demo_window()
   B('Gtk2')=  nsp_gtk2_demos ;
   B('Gtk2 more')=  nsp_gtk2_demos_plus ;
   win = gtkwindow_new()
-  win.set_size_request[200,200]	
+  win.set_size_request[200,-1];
+  //win.set_default_size[200,200];
   //win.set_uposition[20,20]
+
+  // here: when an argument is given the corresponding mask is added 
+  // here the window cannot be resized after creation
+  win.set_geometry_hints[min_height=-1,max_height=-1,min_width=-1,max_width=-1];
+  
   win.connect["destroy",hide];
   win.connect["delete_event",hide];
   win.set_title["nsp demos"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
   win.add[box1]
   box1.show[]
-  scrolled_window = gtkscrolledwindow_new()
-  scrolled_window.set_border_width[10]
-  scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
-  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0] 	
-  scrolled_window.show[]
-  box2 = gtkvbox_new(homogeneous=%f,spacing=0)
-  box2.set_border_width[0]
-  scrolled_window.add_with_viewport[box2];
-  box2.show[]
+  
+  if %f then 
+    scrolled_window = gtkscrolledwindow_new()
+    scrolled_window.set_border_width[10]
+    scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
+    box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0]
+    scrolled_window.show[]
+    box2 = gtkvbox_new(homogeneous=%f,spacing=0);
+    box2.set_border_width[0]
+    scrolled_window.add_with_viewport[box2];
+    box2.show[]
+  else
+    box2 = gtkvbox_new(homogeneous=%f,spacing=0);
+    box2.set_border_width[0]
+    box1.pack_start[box2, expand=%f,fill=%f,padding=0]
+    box2.show[]
+  end
   k = B.__keys;
   Bk = sort(k,'g','i');
   for i1 = 1:size(Bk,1)
