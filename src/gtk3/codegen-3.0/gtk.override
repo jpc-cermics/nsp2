@@ -1246,23 +1246,24 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 {
   int_types T[] = { new_opts,t_end};
   nsp_option opts[] = {
+
     {"geometry",obj_check,NULLOBJ,-1},
     { "min_width",s_int,NULLOBJ,-1},
     { "min_height",s_int,NULLOBJ,-1},
     { "max_width",s_int,NULLOBJ,-1},
     { "max_height",s_int,NULLOBJ,-1},
     { "base_width",s_int,NULLOBJ,-1},
-    {"base_height",s_int,NULLOBJ,-1},
+    { "base_height",s_int,NULLOBJ,-1},
     { "width_inc",s_int,NULLOBJ,-1},
     { "height_inc",s_int,NULLOBJ,-1},
-    {"min_aspect",s_int,NULLOBJ,-1},
+    { "min_aspect",s_int,NULLOBJ,-1},
     { "max_aspect",s_int,NULLOBJ,-1},
     {NULL,t_end,NULLOBJ,-1} };
 
   NspObject *nsp_geometry_widget = NULL;
   GtkWidget *geometry_widget = NULL;
-  gint min_width = -1, min_height = -1, max_width = -1, max_height = -1;
-  gint base_width = -1, base_height = -1, width_inc = -1, height_inc = -1;
+  gint min_width = -100, min_height = -100, max_width = -100, max_height = -100;
+  gint base_width = -100, base_height = -100, width_inc = -100, height_inc = -100;
   gdouble min_aspect = -1.0, max_aspect = -1.0;
   GdkGeometry geometry = { 0 };
   GdkWindowHints geom_mask = 0;
@@ -1275,27 +1276,34 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_geometry_widget != NULL)
     geometry_widget = GTK_WIDGET(nspgobject_get(nsp_geometry_widget));
 
-  if (min_width >= 0 || min_height >= 0) {
-    geometry.min_width = MAX(min_width, 0);
-    geometry.min_height = MAX(min_height, 0);
-    geom_mask |= GDK_HINT_MIN_SIZE;
+  if (min_width != -100 || min_height != -100 ) 
+    {
+      geometry.min_width = MAX(min_width, -1);
+      geometry.min_height = MAX(min_height, -1);
+      geom_mask |= GDK_HINT_MIN_SIZE;
   }
-  if (max_width >= 0 || max_height >= 0) {
-    geometry.max_width = MAX(max_width, 0);
-    geometry.max_height = MAX(max_height, 0);
-    geom_mask |= GDK_HINT_MAX_SIZE;
-  }
-  if (base_width >= 0 || base_height >= 0) {
-    geometry.base_width = MAX(base_width, 0);
-    geometry.base_height = MAX(base_height, 0);
-    geom_mask |= GDK_HINT_BASE_SIZE;
-  }
-  if (width_inc >= 0 || height_inc >= 0) {
-    geometry.width_inc = MAX(width_inc, 0);
-    geometry.height_inc = MAX(height_inc, 0);
-    geom_mask |= GDK_HINT_RESIZE_INC;
-  }
-  if (min_aspect >= 0.0 || max_aspect >= 0.0) {
+  
+  if (max_width != -100 || max_height != -100 )
+    {
+      geometry.max_width = MAX(max_width, -1);
+      geometry.max_height = MAX(max_height, -1);
+      geom_mask |= GDK_HINT_MAX_SIZE;
+    }
+
+  if (base_width != -100 || base_height != -100)
+    {
+      geometry.base_width = MAX(base_width, -1);
+      geometry.base_height = MAX(base_height, -1);
+      geom_mask |= GDK_HINT_BASE_SIZE;
+    }
+
+  if (width_inc != -100 0 || height_inc != -100) 
+    {
+      geometry.width_inc = MAX(width_inc, -1);
+      geometry.height_inc = MAX(height_inc, -1);
+      geom_mask |= GDK_HINT_RESIZE_INC;
+    }
+  if (min_aspect >= 0.0 || max_aspect >= 0.0 ) {
     if (min_aspect <= 0.0 || max_aspect <= 0.0) {
       Scierror( "aspect ratios must be positive\n");
       return RET_BUG;
