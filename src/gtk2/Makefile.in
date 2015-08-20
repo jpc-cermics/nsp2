@@ -11,7 +11,7 @@ OBJSC = gboxed.o gobject.o  gdkatom.o gtk.o atk.o \
 	pango.o gdk.o pangoattribute.o to_be_done.o \
 	to_be_done1.o gpointer.o strings.o graphics.o \
 	gmarkup.o gdate.o prop-editor.o gdatetime.o \
-	girepository.o gvalue.o @WEBKIT_GEN@
+	gvalue.o @WEBKIT_GEN@ @GI_FILE@
 
 OBJSF =
 
