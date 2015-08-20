@@ -20,21 +20,21 @@
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
 
-#define PList_Private 
-#include <nsp/object.h> 
-#include <nsp/type.h> 
-#include <nsp/hobj.h> 
-#include <nsp/plist.h> 
-#include <nsp/plistc.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/ivect.h> 
-#include <nsp/file.h> 
-#include <nsp/list.h> 
-#include <nsp/ast.h> 
-#include <nsp/cells.h> 
-#include <nsp/frame.h> 
+#define PList_Private
+#include <nsp/object.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+#include <nsp/plist.h>
+#include <nsp/plistc.h>
+#include <nsp/smatrix.h>
+#include <nsp/ivect.h>
+#include <nsp/file.h>
+#include <nsp/list.h>
+#include <nsp/ast.h>
+#include <nsp/cells.h>
+#include <nsp/frame.h>
 #include <nsp/system.h>
-#include "nsp/pr-output.h" 
+#include "nsp/pr-output.h"
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/libstab.h"
@@ -43,7 +43,7 @@ extern const char *nsp_get_libdir(int num);
 
 static NspMethods *nsp_macro_get_methods(void);
 /*
- * NspPList inherits from NspObject 
+ * NspPList inherits from NspObject
  */
 
 int nsp_type_plist_id=0;
@@ -63,8 +63,8 @@ NspTypePList *new_type_plist(type_mode mode)
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
   type->attrs = NULL; /* plist_attrs ; */
-  type->get_attrs = (attrs_func *) int_get_attribute; 
-  type->set_attrs = (attrs_func *) int_set_attribute; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = nsp_macro_get_methods;
   type->gtk_methods = FALSE;
   type->new = (new_func *) new_plist;
@@ -72,39 +72,39 @@ NspTypePList *new_type_plist(type_mode mode)
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for plist */ 
+  /* object methods redefined for plist */
 
-  top->pr = (print_func *) NspPListPrint;                    /* printing*/   
-  top->dealloc = (dealloc_func *) NspPListDestroy;              /* dealloc */  
-  top->copy  =  (copy_func *) NspPListCopy;                   /* copy object */  
-  top->size  = (size_func *) NspPListSize;                   /* m,n or m*n  */  
-  top->s_type =  (s_type_func *) NspPListType;                /* type as a String */  
-  top->sh_type = (sh_type_func *) NspPListShType ;              /* type as a short string */  
-  top->info = (info_func *) NspPListInfo;                    /* info */  
-  /*top->is_true = (is_true_func  *) PListIsTrue;  */           /* check if object can be considered as true */  
-  /*top->loop =(loop_func *) NspPListLoopExtract ; */               /* for loops */  
-  top->path_extract =  NULL;        /* used for x(1)(2)(...) */  
-  top->get_from_obj = (get_from_obj_func *)  NspPListObj ;    /* get object stored in SciObj */  
-  top->eq  = (eq_func *) NspPListObjEq;                       /* equality check */  
+  top->pr = (print_func *) NspPListPrint;                    /* printing*/
+  top->dealloc = (dealloc_func *) NspPListDestroy;              /* dealloc */
+  top->copy  =  (copy_func *) NspPListCopy;                   /* copy object */
+  top->size  = (size_func *) NspPListSize;                   /* m,n or m*n  */
+  top->s_type =  (s_type_func *) NspPListType;                /* type as a String */
+  top->sh_type = (sh_type_func *) NspPListShType ;              /* type as a short string */
+  top->info = (info_func *) NspPListInfo;                    /* info */
+  /*top->is_true = (is_true_func  *) PListIsTrue;  */           /* check if object can be considered as true */
+  /*top->loop =(loop_func *) NspPListLoopExtract ; */               /* for loops */
+  top->path_extract =  NULL;        /* used for x(1)(2)(...) */
+  top->get_from_obj = (get_from_obj_func *)  NspPListObj ;    /* get object stored in SciObj */
+  top->eq  = (eq_func *) NspPListObjEq;                       /* equality check */
   top->neq  = (eq_func *) NspPListObjNeq;                      /* non-equality check */
 
   top->save  = (save_func *) NspPListXdrSave;
   top->load  = (load_func *) NspPListXdrLoad;
 
-  top->full_copy  =  (copy_func *) NspPListCopy;                   /* copy object */  
+  top->full_copy  =  (copy_func *) NspPListCopy;                   /* copy object */
 
   /* specific methods for plist */
   type->init = (init_func *) init_plist;
-  /* 
-   * interfaces can be added here 
+  /*
+   * interfaces can be added here
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  
-  if ( nsp_type_plist_id == 0 ) 
+
+  if ( nsp_type_plist_id == 0 )
     {
-      /* 
+      /*
        * the first time we get here we initialize the type id and
        * an instance of NspTypeMatrix called nsp_type_plist
        */
@@ -113,7 +113,7 @@ NspTypePList *new_type_plist(type_mode mode)
       if ( nsp_register_type(nsp_type_plist) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_plist(mode);
     }
-  else 
+  else
     {
       type->id = nsp_type_plist_id;
       return type;
@@ -122,27 +122,27 @@ NspTypePList *new_type_plist(type_mode mode)
 }
 
 /*
- * initialize Plist instances 
- * locally and by calling initializer on parent class 
+ * initialize Plist instances
+ * locally and by calling initializer on parent class
  */
 
 static int init_plist(NspPList *o,NspTypePList *type)
 {
-  /* to be done always */ 
+  /* to be done always */
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
+  o->type = type;
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   /* specific */
   return OK;
 }
 
 /*
- * new instance of PList 
+ * new instance of PList
  */
 
-NspPList *new_plist() 
+NspPList *new_plist()
 {
-  NspPList *loc; 
+  NspPList *loc;
   /* type must exists */
   nsp_type_plist = new_type_plist(T_BASE);
   if ( (loc = malloc(sizeof(NspPList)))== NULLP_PLIST) return loc;
@@ -161,7 +161,7 @@ int NspPListSize(NspPList *Mat, int flag)
 }
 
 /*
- * MatType 
+ * MatType
  */
 
 static char plist_type_name[]="PList";
@@ -172,7 +172,7 @@ char *NspPListType(void)
   return(plist_type_name);
 }
 
-char *NspPListShType(void)	
+char *NspPListShType(void)
 {
   return(plist_short_type_name);
 }
@@ -186,7 +186,7 @@ int  NspPListFullComp(NspPList * A,NspPList * B,char *op,int *err)
 int NspPListObjEq(NspObject *A, NspObject *B)
 {
   if ( check_cast(B,nsp_type_plist_id) == FALSE) return FALSE ;
-  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE) 
+  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE)
     return TRUE;
   return FALSE;
 }
@@ -194,7 +194,7 @@ int NspPListObjEq(NspObject *A, NspObject *B)
 int NspPListObjNeq(NspObject *A, NspObject *B)
 {
   if ( check_cast(B,nsp_type_plist_id) == FALSE) return TRUE;
-  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE) 
+  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE)
     return FALSE;
   return TRUE;
 }
@@ -227,8 +227,8 @@ NspPList *NspPListXdrLoad(XDR *xdrs)
 {
   char buf[TBUF];
   PList L=NULLPLIST,L1;
-  char file_name[FSIZE]; 
-  char name[NAME_MAXL]; 
+  char file_name[FSIZE];
+  char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs, name,NAME_MAXL) == FAIL) return NULLP_PLIST;
   if (nsp_xdr_load_string(xdrs, file_name,FSIZE) == FAIL) return NULLP_PLIST;
   if ( PListXdrLoad(xdrs,&L,buf) == FAIL) return NULLP_PLIST;
@@ -241,15 +241,15 @@ NspPList *NspPListXdrLoad(XDR *xdrs)
 
 
 /*
- * Save a PList to a File 
+ * Save a PList to a File
  */
 
 int PListXdrSave_I(XDR *xdrs, PList L)
 {
   nsp_xdr_save_c(xdrs,'L');
-  while ( L != NULLPLIST ) 
+  while ( L != NULLPLIST )
     {
-      switch ( L->type ) 
+      switch ( L->type )
 	{
 	case STRING:
 	  nsp_xdr_save_c(xdrs,'S');
@@ -282,14 +282,15 @@ int PListXdrSave_I(XDR *xdrs, PList L)
 	case NAME :
 	  nsp_xdr_save_c(xdrs,'N');
 	  nsp_xdr_save_string(xdrs,(char *) L->O);
-#ifdef WITH_SYMB_TABLE 
+#ifdef WITH_SYMB_TABLE
 	  nsp_xdr_save_i(xdrs,L->arity);
-#endif 
+#endif
 	  break;
-	case OPNAME: 
+	case OPNAME:
 	  nsp_xdr_save_c(xdrs,'P');
 	  nsp_xdr_save_string(xdrs,(char *) L->O);
-	case OBJECT : 
+	  break;
+	case OBJECT :
 	  nsp_xdr_save_c(xdrs,'B');
 	  if (nsp_object_xdr_save(xdrs,L->O)== FAIL)
 	    return FAIL;
@@ -309,7 +310,7 @@ int PListXdrSave_I(XDR *xdrs, PList L)
 	}
       L = L->next ;
     }
-  nsp_xdr_save_c(xdrs,'E');  
+  nsp_xdr_save_c(xdrs,'E');
   return OK ;
 }
 
@@ -320,7 +321,7 @@ static int PListXdrSave(XDR *xdrs, PList L)
 }
 
 /*
- * Read a PList from a file 
+ * Read a PList from a file
  */
 
 static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
@@ -331,19 +332,19 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
   PList loc1=NULLPLIST;
   char c ;
   /* static int count = 0; count++;
-   * Sciprintf("Enter PListXdrLoad %d\n",count); 
+   * Sciprintf("Enter PListXdrLoad %d\n",count);
    */
-  while ( 1) 
+  while ( 1)
     {
       c= EOF;
       nsp_xdr_load_c(xdrs,&c);
-      switch (c) 
+      switch (c)
 	{
-	case 'S' : 
+	case 'S' :
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if (nsp_parse_add_string(plist,buf) == FAIL) goto fail;
 	  break;
-	case 'C' : 
+	case 'C' :
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if (nsp_parse_add_comment(plist,buf) == FAIL) goto fail;
 	  break;
@@ -369,11 +370,11 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 	  break;
 	case 'N':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-#ifdef WITH_SYMB_TABLE 
+#ifdef WITH_SYMB_TABLE
 	  nsp_xdr_load_i(xdrs,&arity);
-#else 
+#else
 	  arity=-1;
-#endif 
+#endif
 	  if (nsp_parse_add_name1(plist,buf,arity) == FAIL) goto fail;
 	  break;
 	case 'P':
@@ -390,7 +391,7 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) goto fail;
 	  if (nsp_parse_add_list(plist,&loc1)== FAIL)  goto fail;
 	  break;
-	case 'M': 
+	case 'M':
 	  nsp_xdr_load_i(xdrs,&oline);
 	  if (nsp_parse_add_last(plist,EMPTYMAT,0,oline) == FAIL) goto fail;
 	  break;
@@ -403,7 +404,7 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 	case 'E': goto ok; break;
 	case 'Z' :goto ok; break;
 	  break;
-	default: 
+	default:
 	  Scierror("Error:\tSomething wrong in saved plist\n");
 	  goto fail;
 	}
@@ -418,7 +419,7 @@ static int PListXdrLoad(XDR *xdrs, PList *plist,char *buf)
 
 /*
  * A = PListObj(O);
- * checks that O is an object of NspPList type. 
+ * checks that O is an object of NspPList type.
  * or a Hobj which points to an object of type PList
  * if so, returns a pointer to that NspPList and else returns NULL
  */
@@ -429,7 +430,7 @@ NspPList *NspPListObj(NspObject *O)
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_plist_id) == TRUE) return ((NspPList *) O);
-  else 
+  else
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_plist));
   return(NULL);
 }
@@ -437,8 +438,8 @@ NspPList *NspPListObj(NspObject *O)
 
 /*
  * IsPListObj(stack,i)
- * only checks that object at position 
- * first + i -1  is an object of type  PList 
+ * only checks that object at position
+ * first + i -1  is an object of type  PList
  * or a Hobj which points to an object of type PList
  */
 
@@ -449,7 +450,7 @@ int IsNspPListObj(Stack stack, int i)
 
 /*
  * IsPList(O)
- * only checks that object is an object of type  PList 
+ * only checks that object is an object of type  PList
  * or a Hobj which points to an object of type PList
  */
 
@@ -459,8 +460,8 @@ int IsNspPList(NspObject *O)
 }
 
 /*
- * Checks that i-th object on the stack 
- * is a NspList and returns that NspList or NULLLIST 
+ * Checks that i-th object on the stack
+ * is a NspList and returns that NspList or NULLLIST
  */
 
 NspPList *GetNspPList(Stack stack, int i)
@@ -473,10 +474,10 @@ NspPList *GetNspPList(Stack stack, int i)
 
 
 /*
- * Checks that first+i object on the stack 
- * is a LIST and returns that LIST  
- * or a copy of that LIST if its name 
- * is != NVOID 
+ * Checks that first+i object on the stack
+ * is a LIST and returns that LIST
+ * or a copy of that LIST if its name
+ * is != NVOID
  */
 
 NspPList *GetNspPListCopy(Stack stack, int i)
@@ -488,11 +489,11 @@ NspPList *GetNspPListCopy(Stack stack, int i)
 
 
 /*------------------------------------------------------
- * attributes  (set/get methods) 
+ * attributes  (set/get methods)
  *------------------------------------------------------*/
 
 /*------------------------------------------------------
- * methods 
+ * methods
  *------------------------------------------------------*/
 
 static int int_nsp_macro_get_name(NspPList *self,Stack stack, int rhs, int opt, int lhs)
@@ -513,7 +514,7 @@ static int int_nsp_macro_get_nargs(NspPList *self,Stack stack, int rhs, int opt,
   CheckLhs(0,2);
   nsp_plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1,NULL,NULL);
   if ( nsp_move_double(stack,1,(double) pl_lhs )== FAIL) return RET_BUG;
-  if ( lhs == 2 ) 
+  if ( lhs == 2 )
     {
       if ( nsp_move_double(stack,2,(double)pl_rhsp1-1 )== FAIL) return RET_BUG;
     }
@@ -526,18 +527,18 @@ static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, 
   int pl_lhs,pl_rhsp1;
   CheckRhs(0,0);
   CheckLhs(0,2);
-  if ( lhs >= 1) 
+  if ( lhs >= 1)
     {
       in = nsp_smatrix_create(NVOID,0,0,"v",0);
     }
-  if ( lhs >= 2) 
+  if ( lhs >= 2)
     {
       out = nsp_smatrix_create(NVOID,0,0,"v",0);
     }
   nsp_plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1,in,out);
-  if ( lhs >= 1) 
+  if ( lhs >= 1)
     MoveObj(stack,1,NSP_OBJECT(in));
-  if ( lhs >= 2) 
+  if ( lhs >= 2)
     MoveObj(stack,2,NSP_OBJECT(out));
   return Max(lhs,0);
 }
@@ -558,20 +559,20 @@ static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, i
 
 static int int_nsp_macro_reset_persistents(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
-  
+
   NspCells *T = (NspCells *) self->D->next->next->next->O;
   NspBHash *H = (NspBHash *) T->objs[0];
   int i=0,val;
   CheckStdRhs(0,1);
   CheckLhs(0,1);
-  if ( rhs - opt == 0) 
+  if ( rhs - opt == 0)
     {
-      while (1) 
+      while (1)
 	{
 	  char *str=NULL;
 	  int rep = nsp_bhash_get_next_object(H,&i,&str,&val);
 	  if ( str != NULL && VAR_IS_PERSISTENT(val))
-	    { 
+	    {
 	      val = VAR_ID(val);
 	      if ( ((NspCells *) T->objs[2])->objs[val] != NULLOBJ )
 		{
@@ -584,7 +585,7 @@ static int int_nsp_macro_reset_persistents(NspPList *self,Stack stack, int rhs, 
     }
   else
     {
-      NspSMatrix *S; 
+      NspSMatrix *S;
       if  ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
       for ( i= 0 ; i < S->mn ; i++)
 	{
@@ -684,7 +685,7 @@ static NspMethods *nsp_macro_get_methods(void) { return nsp_macro_methods;}
  *--------------------------------------------------------*/
 
 /*
- * NspPList2SMatrix 
+ * NspPList2SMatrix
  */
 
 int int_pl2s(Stack stack, int rhs, int opt, int lhs)
@@ -700,9 +701,9 @@ int int_pl2s(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * get rhs and lhs 
- * should be changed to also return opt 
- * FIXME: should be a method of NspPList 
+ * get rhs and lhs
+ * should be changed to also return opt
+ * FIXME: should be a method of NspPList
  */
 
 static int int_inout(Stack stack, int rhs, int opt, int lhs)
@@ -714,7 +715,7 @@ static int int_inout(Stack stack, int rhs, int opt, int lhs)
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
   nsp_plist_get_nargs(PL->D,&pl_lhs,&pl_rhsp1,NULL,NULL);
   if ( nsp_move_double(stack,1,(double)pl_lhs )== FAIL) return RET_BUG;
-  if ( lhs == 2 ) 
+  if ( lhs == 2 )
     {
       if ( nsp_move_double(stack,2,(double)pl_rhsp1-1 )== FAIL) return RET_BUG;
     }
@@ -795,7 +796,7 @@ int NspPList_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/* used to walk through the interface table 
+/* used to walk through the interface table
    (for adding or removing functions) **/
 
 void NspPList_Interf_Info(int i, char **fname, function (**f))
@@ -803,4 +804,3 @@ void NspPList_Interf_Info(int i, char **fname, function (**f))
   *fname = NspPList_func[i].name;
   *f = NspPList_func[i].fonc;
 }
-
