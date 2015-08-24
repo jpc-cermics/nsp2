@@ -1,9 +1,20 @@
-
-function gr_init()
-  cdef=[0 0 100 100];
-  xsetech(frect=cdef);
-  xrect([0,100,100,100]);
-endfunction
+// A small graphic editor using nsp graphics
+//
+// Copyright (C) 2014-2015  Jean-Philippe Chancelier Enpc/Cermics
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 function [sd]=gr_menu(sd,flag,noframe)
   global(gr_objects=list());
@@ -14,7 +25,7 @@ function [sd]=gr_menu(sd,flag,noframe)
 	'2        {5,2,5,2}';
 	'3        {5,3,2,3}';
 	'4        {8,3,2,3}';
-	'5        {11,3,2,3}'; 
+	'5        {11,3,2,3}';
 	'6        {11,3,5,3}}'];
 
   if nargin<=1,flag=0;end;
@@ -24,32 +35,27 @@ function [sd]=gr_menu(sd,flag,noframe)
     init=1
   else
      select type(sd,'string')
-      case 'Mat' then 
+      case 'Mat' then
        cdef=sd;init=1
       case 'List' then
        if sd(1)<>'sd' then
 	 error('l''entree n''est pas une liste de type sd'),
        end
        cdef=sd(2);init=0
-     else 
+     else
 	error('incorrect input:'+...
 	      '[xmin,ymin,xmax,ymax] ou list(''sd'',,,)')
      end
-  end 
-  
-  xset('recording',0);
+  end
   seteventhandler('my_eventhandler');
-  if type(gr_objects,'string')=='Mat' then gr_objects=list(); end 
-  
-  //now move the mouse over the graphic window/
-  //seteventhandler('') //suppress the event handler
+  if type(gr_objects,'string')=='Mat' then gr_objects=list(); end
   xsetech(frect=cdef);
   xrect([0,100,100,100]);
-  //plot2d(0,0,style=[1],strf=s_t,rect=cdef);
+  // plot2d(0,0,style=[1],strf=s_t,rect=cdef);
   // xsetech(frect=cdef);
   curwin=xget('window')
   //xset('clipgrf'); //xclip('clipgrf')
-  // menus : we return proper values in menus XXXX 
+  // menus : we return proper values in menus XXXX
   names = ['Edit','Settings','Objects'];
   Edit=['redraw','delete all','delete','copy','random','Exit']
   Settings=['dash style','pattern','thickness','mark','clip off','clip on']
@@ -59,7 +65,7 @@ function [sd]=gr_menu(sd,flag,noframe)
   Edit='menus(names(1))'+string(1:size(Edit,'*'))+')';
   Settings='menus(names(2))'+string(1:size(Settings,'*'))+')';
   Objects='menus(names(3))'+string(1:size(Objects,'*'))+')';
-  
+
   for k=1:size(names,'*') ;
     delmenu(curwin,names(k));
     addmenu(curwin,names(k),menus(names(k)),list(2,'gr_'+names(k)));
@@ -67,58 +73,75 @@ function [sd]=gr_menu(sd,flag,noframe)
   end
   unsetmenu(curwin,'File',7) //close
   unsetmenu(curwin,'3D Rot.')
-  
   if init==0 then redraw(sd,s_t); else sd=list('sd',cdef); end,
   if flag==1; xclip();return ;end
   resume(menus);
 endfunction
 
 //---------------------------------------
-// Edit menu 
+// Edit menu
 //---------------------------------------
 
 function str=gr_Edit(ind,win)
-  // Activated whith menu Edit 
+// actions activated by the edit menu
   global(gr_objects=list());
   str=menus.Edit(ind);
-  select str 
-   case 'redraw' then gr_draw(win);
-   case 'delete all' then gr_objects=list();
-   case 'delete' then gr_delete();gr_draw(win);
-   case 'copy'   then gr_copy();
-   case 'random' then 
+  select str
+   case 'redraw' then gr_invalidate(win);
+   case 'delete all' then gr_delete(win,all=%t);
+   case 'delete' then gr_delete(win);
+   case 'copy'   then gr_copy(win);
+   case 'random' then
     for i=1:50
       gr_rect('define',[100*rand(1,2),10,10]);
+      n = length(gr_objects);
+      gr_rect('draw',n);
       gr_poly('define',[100*rand(2,3)]);
+      n = length(gr_objects);
+      gr_poly('draw',n);
     end
-    gr_draw(win);
-  end 
+    gr_invalidate(win);
+  end
 endfunction
 
 //---------------------------------------
-// Object menu 
+// Object menu
 //---------------------------------------
 
 function str=gr_Objects(ind,win)
-// Activated whith menu Objects 
+// action activated by the object menu
+  function gr_create_rectangle()
+  // interactive acquisition of a rectangle
+    global(gr_objects=list());
+    gr_unhilite();
+    gr_rect('define',[0,100,10,10]);
+    n=size(gr_objects,0);
+    gr_objects(n)('hilited')=%t;
+    [rep]=gr_frame_move(n,[0,100],-5,'move draw',0)
+    if rep== -100 then  return;end
+    gr_rect('draw',n);
+  endfunction
+  // get proper action and execute the function
+
   str=menus.Objects(ind);
   execstr('gr_create_'+str+'()');
 endfunction
 
 function str=gr_Settings(ind,win)
+// actions activated by the settings menu
   str=menus.Settings(ind);
 endfunction
 
 function [sd1]=symbs(sd,del)
   sd1=[];
-  if nargin<=0 then 
+  if nargin<=0 then
     c=getsymbol("Choose a mark");
     if c==[] then
       c=xget('mark')
     end
     n1=c(1);dime=c(2)
     sd1=list("symbs",c(1),c(2));
-  else 
+  else
      n1=sd(2);dime=sd(3)
   end
   xset("mark",n1,dime);
@@ -126,29 +149,29 @@ endfunction
 
 function [sd1]=dashs(sd,del)
   sd1=[];
-  if nargin<=0 then 
+  if nargin<=0 then
     n1=x_choose(dash,"Choose a dash style");
-    if n1==[] then 
+    if n1==[] then
       sd1=list()
     else
        sd1=list("dashs",n1);
     end
-  else 
+  else
      n1=sd(2)
-  end 
+  end
   xset("dashes",n1);
 endfunction
 
 function [sd1]=patts(sd,del)
   sd1=[];
-  if nargin<=0 then 
+  if nargin<=0 then
     n1=getcolor('Choose a pattern ',0)
-    if n1==[] then 
+    if n1==[] then
       sd1=list()
     else
        sd1=list("patts",n1);
     end
-  else 
+  else
      n1=sd(2)
   end
   xset("pattern",n1);
@@ -156,108 +179,103 @@ endfunction
 
 function [sd1]=Thick(sd,del)
   sd1=[];
-  if nargin<=0 then 
+  if nargin<=0 then
     T=string(1:15)
     ll=list()
     t=xget('thickness')
     ll(1)=list('Thickness',t,T);
     [lrep,lres,n1]=x_choices('Choose a Thickness',ll);
-    if n1==[] then 
+    if n1==[] then
       sd1=list()
     else
        sd1=list("thick",n1);
     end
-  else 
+  else
      n1=sd(2)
   end
   xset("thickness",n1);
 endfunction
 
 //---------------------------------------
-// Rectangles 
+// Rectangles
 //---------------------------------------
 
 function [sd1]=gr_rect(action,sd,pt,pt1)
-  
+
   global(gr_objects=list());
   control_color=10;
   sd1=0;
-  select action 
-   case 'draw' then 
-    printf('draw rect\n');
-    // called for drawing the object sd 
+  select action
+   case 'draw' then
+    // create a graphics object if it does not exists and draw it
     sd1 = gr_objects(sd);
-    if length(sd1.gr) == 0 then 
+    if length(sd1.gr) == 0 then
       sd1.gr(1) = xrect(sd1('data'),thickness=sd1('thickness'),color=1,background=sd1('color'));
       rr=sd1('locks');
       cp=find(sd1('locks status')<>0);
-      for i=1:size(rr,1) ; sd1.gr(1+i)=xrect([rr(i,1:2)+[-1,1],2,2],color=1);end 
+      for i=1:size(rr,1) ; sd1.gr(1+i)=xrect([rr(i,1:2)+[-1,1],2,2],color=1);end
     end
     gr_objects(sd)= sd1;
-   case 'translate' then 
-    printf('translate rect\n');
+   case 'translate' then
+    // translate the rectangle and its associated locks points
     sd1 =  gr_objects(sd);
-    // translate sd with translation vector pt 
     gr_objects(sd)('data')=gr_objects(sd)('data') + [pt,0,0];
-    gr_rect('locks',sd);
-    // translate the graphic objects
-    for i=1:length(sd1.gr), sd1.gr(i).translate[pt];end 
+    sd1.gr(1).translate[pt];// translate the main rectangle
+    gr_rect('locks',sd); // update locks accordingly
    case 'define' then
     printf('define rect\n');
     sd1= tlist(["rect","show","hilited","data","color","thickness","locks","locks status","pt","gr"],...
                %t,%f,sd,30*rand(1),2,[],[],[0,0],list());
-    sd1('locks status')=0*ones_new(1,4); // 4 lock points 
+    sd1('locks status')=0*ones_new(1,4); // 4 lock points
     gr_objects($+1)=sd1;
     n=size(gr_objects,0);
     gr_rect('locks',n);
-   case 'move' then  
+   case 'move' then
     printf('move rect\n');
-    // used during copy this is to be changed 
+    // used during copy this is to be changed
     gr_rect('translate',sd,[5,5]);
     gr_rect('draw',sd)
-   case 'inside' then 
+   case 'inside' then
     printf('inside rect\n');
     // check if pt is inside boundaries of the rectangle
     br=gr_objects(sd)('data');
     sd1 = br(1) < pt(1) & br(2) >= pt(2) & br(1)+br(3) > pt(1) & br(2)-br(4) <= pt(2);
     printf('inside rect %d\n',sd1);
-   case 'inside control' then    
+   case 'inside control' then
     printf('inside control\n');
-    // check if we are near a control point 
-    // here the down-right point 
+    // check if we are near a control point
+    // here the down-right point
     d= gr_objects(sd)('data');
     d= max(abs(d(1)+d(3)-pt(1)),abs((d(2)-d(4)-pt(2))));
-    if d < 2 then 
+    if d < 2 then
       sd1=[1,1]
       xinfo('control point '+string(1));
-    else 
+    else
        sd1=[0]
     end
-   case 'move draw' then 
+   case 'move draw' then
     printf('move draw rect\n');
-    // called when we interactively move object 
+    // called when we interactively move object
     gr_rect('translate',sd,pt);
-   case 'move point init' then 
-    // initialize moving a control point 
-    gr_objects(sd)('gr')(1).hilited=%t;
-    // nothing to do 
-   case 'move point' then 
+   case 'move point init' then
+    // initialize moving a control point
+    // gr_objects(sd)('gr')(1).hilited=%t;
+    // nothing to do
+   case 'move point' then
     printf('move point rect\n');
-    // move a control point 
-    xinfo('inside the move point')
+    // move a control point: this enlarges the rectangle
     gr_objects(sd)('data')(3:4)=max(gr_objects(sd)('data')(3:4)+[pt(1),-pt(2)],0);
-    gr_rect('locks',sd);
     gr=gr_objects(sd)('gr');
     gr(1).invalidate[];
     gr(1).w =     gr(1).w + pt(1);
     gr(1).h =     gr(1).h - pt(2);
     gr(1).invalidate[];
-    gr_rect('locks',sd);    
-   case 'locks' then 
-    // updates locks and invalidate 
+    gr_rect('locks',sd); // updates the locks accordingly
+   case 'locks' then
+    // updates locks and invalidate
     rect= gr_objects(sd);
     gr = rect('gr');
-    if length(gr) <> 0 then 
+    if length(gr) <> 0 then
       rr=[gr(1).x,gr(1).y,gr(1).w,gr(1).h];
     else
       rr=rect('data')
@@ -266,9 +284,10 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
 	rr(1)+rr(3)/2,rr(2)-rr(4);
 	rr(1),rr(2)-rr(4)/2;
 	rr(1)+rr(3),rr(2)-rr(4)/2];
+    rl= rl + ones(4,1)*[-1,1]
     gr_objects(sd)('locks')= rl;
-    if length(gr) <> 0 then 
-      for i=1:4 
+    if length(gr) <> 0 then
+      for i=1:4
 	glock=rect('gr')(1+i);
 	glock.invalidate[];
 	glock.x = rl(i,1);
@@ -276,55 +295,53 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
 	glock.invalidate[];
       end
     end
-   case 'inside lock' then 
-    printf('inside lock rect\n');
-    // check if we are near a lock point 
-    d= gr_objects(sd)('locks'); 
-    d1= d - ones_new(4,1)*pt; 
+   case 'inside lock' then
+    // check if we are near a lock point
+    // and returns info on the lock point
+    d= gr_objects(sd)('locks');
+    d1= d - ones_new(4,1)*pt;
     [d1]= max(abs(d1),'c');
     [d1,kd]=min(d1);
-    if d1 < 5 then 
+    if d1 < 5 then
       sd1=[1,kd,d(kd,1:2)]
       xinfo('lock point '+string(kd));
-    else 
-       sd1=[0]
+    else
+      sd1=[0]
     end
-   case 'locks update' then 
-    printf('locks update rect\n');
-    // checks if locks point are to be updated 
+   case 'locks update' then
+    // checks if locks point are to be updated
     sd1=[]
     rr=gr_objects(sd)('locks');
     cp=gr_objects(sd)('locks status');
     for i=1:size(cp,'*') ;
-      if cp(i) > 0 then 
-	// update a lock last 
+      if cp(i) > 0 then
+	// update a lock last to the corresponding link
 	sd1=[sd1,cp(i)];
 	n= size(gr_objects(cp(i))('x'),'*');
 	gr_objects(cp(i))('x')(n)= rr(i,1);
-	gr_objects(cp(i))('y')(n)= rr(i,2);	
-      elseif cp(i) < 0 then 
+	gr_objects(cp(i))('y')(n)= rr(i,2);
+      elseif cp(i) < 0 then
 	 sd1=[sd1,-cp(i)];
-	 // update a lock first 
+	 // update a lock first to the corresponding link
 	 gr_objects(-cp(i))('x')(1)= rr(i,1);
 	 gr_objects(-cp(i))('y')(1)= rr(i,2);
       end
     end
-   case 'unlock all' then 
-    printf('unlock all rect\n');
-    // check that locks are released 
+   case 'unlock all' then
+    // check that locks are released
     cp=gr_objects(sd)('locks status');
     for i=1:size(cp,'*') ;
-      if cp(i) > 0 then 
-	// polyline  lock last 
+      if cp(i) > 0 then
+	// polyline  lock last
 	gr_objects(cp(i))('lock last')= 0;
-      elseif cp(i) < 0 then 
-	 // polyline  lock first 
+      elseif cp(i) < 0 then
+	 // polyline  lock first
 	gr_objects(-cp(i))('lock first')= 0;
       end
     end
     gr_objects(sd)('locks status')=0*cp;
-   case 'params' then 
-    printf('params rect\n');
+   case 'params' then
+    // edit parameters of rectangle
     colors=m2s(1:xget("lastpattern")+2,"%1.0f");
     lcols_bg=list('colors','Color',sd('color'),colors);
     [lrep,lres,rep]=x_choices('color settings',list(lcols_bg));
@@ -336,245 +353,235 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
   end
 endfunction
 
-function gr_create_rectangle()
-// interactive acquisition of a rectangle 
-  global(gr_objects=list());
-  gr_unhilite();   
-  gr_rect('define',[0,100,10,10]);
-  n=size(gr_objects,0);
-  gr_objects(n)('hilited')=%t;
-  [rep]=gr_frame_move(n,[0,100],-5,'move draw',0)
-  if rep== -100 then  return;end 
-  gr_rect('draw',n);
-endfunction
-
 // ------------------------------------------
-// polyline 
+// polyline
 // ------------------------------------------
 
 function sd1 =gr_poly(action,sd,pt,pt1)
   global(gr_objects=list());
   control_color=10;
   sd1=0;
-  select action 
-   case 'draw' then 
+  select action
+   case 'draw' then
+    // draw polyline
     sd1 = gr_objects(sd);
-    if length(sd1('gr'))==0 then 
+    if length(sd1('gr'))==0 then
       p=xpoly(sd1('x'),sd1('y'),type='lines');
       gr_objects(sd)('gr')(1)=p;
-      if %f && sd1('hilited') then 
-	// hilited part 
+      if %f && sd1('hilited') then
+	// hilited part
 	rects=[sd1('x')-1;sd1('y')+1;2*ones(size(sd1('x')));2*ones(size(sd1('x')))];
 	n=size(rects,'c');
 	control_color=10;
 	colors=control_color*ones_new(1,n);
-	if sd1('lock first')(1) then colors(1)=1;end 
-	if sd1('lock last')(1) then colors($)=1;end 
+	if sd1('lock first')(1) then colors(1)=1;end
+	if sd1('lock last')(1) then colors($)=1;end
 	xrects(rects,colors);
       end
     else
       p = gr_objects(sd)('gr')(1);
       sd1=gr_objects(sd);
-      if ~p.x.equal[sd1('x')] || ~p.y.equal[sd1('y')] then 
+      if ~p.x.equal[sd1('x')] || ~p.y.equal[sd1('y')] then
 	p.x = sd1('x'); p.y = sd1('y');
 	p.invalidate[];
       end
     end
-    
-   case 'translate' then 
-    // translate sd with translation vector pt 
+   case 'translate' then
+    // translate sd with translation vector pt
     gr_objects(sd)('x')=gr_objects(sd)('x')+pt(1);
     gr_objects(sd)('y')=gr_objects(sd)('y')+pt(2);
     // translate the graphic objects
     p= gr_objects(sd)('gr');
-    for i=1:length(p), p(i).translate[pt];end 
-   case 'define' then 
+    for i=1:length(p), p(i).translate[pt];end
+   case 'define' then
     sd1= tlist(["poly","show","hilited","x","y","color","thickness","lock first","lock last","locks status","pt","gr"],...
                %t,%f,sd(1,:),sd(2,:),30*rand(1),2,0,0,0,[0,0],list());
     gr_objects($+1)=sd1;
-   case 'move' then 
+   case 'move' then
     gr_poly('translate',sd,[5,5]);
     gr_poly('draw',sd)
-   case 'inside' then 
-    // is pointer near object 
+   case 'inside' then
+    // is pointer near object
     sd=gr_objects(sd);
     [pt,kmin,pmin,d]=gr_dist2polyline(sd('x'),sd('y'),pt);
-    if d < 3 then sd1=%t 
-    else 
+    if d < 3 then sd1=%t
+    else
        sd1=%f ;
     end
    case 'inside control' then
-    // check if we are near a control point 
+    // check if we are near a control point
     sd=gr_objects(sd);
     [d,k]=min( (sd('x')-pt(1)).^2 + (sd('y')-pt(2)).^2 )
-    if d < 2 then 
+    if d < 2 then
       sd1=[1,k]
       xinfo('control point '+string(k));
-    else 
-       sd1=[0]
+    else
+      sd1=[0]
     end
-   case 'move draw' then 
+   case 'move draw' then
     // translate then draw (forcing the show)
-    // used when object is moved 
+    // used when object is moved
     gr_poly('translate',sd,pt);
-   case 'move point init' then 
+   case 'move point init' then
     gr_objects(sd)('pt')=  [gr_objects(sd)('x')(pt),gr_objects(sd)('y')(pt)];
-   case 'move point' then 
-    // move a control point 
+   case 'move point' then
+    // move a control point
     xinfo('inside the move point '+string(pt1))
     xinfo('moving control '+string(pt1));
-    // force horizontal and vertical line 
-    // when we are in the vicinity of it 
+    // force horizontal and vertical line
+    // when we are in the vicinity of it
     n = size(gr_objects(sd)('x'),'*');
-    // we keep in pt the current point position 
-    // since magnetism can move us to a new position 
+    // we keep in pt the current point position
+    // since magnetism can move us to a new position
     ptc = gr_objects(sd)('pt');
     //ptc=[gr_objects(sd)('x')(pt1),gr_objects(sd)('y')(pt1)];
     ptnew = ptc+pt;
     gr_objects(sd)('pt')=ptnew;
-    if pt1 >= 2 & pt1 < n then 
-      // magnetism toward horizontal or vertival lines 
+    if pt1 >= 2 & pt1 < n then
+      // magnetism toward horizontal or vertival lines
       ptb=[gr_objects(sd)('x')(pt1-1),gr_objects(sd)('y')(pt1-1)];
       ptn=[gr_objects(sd)('x')(pt1+1),gr_objects(sd)('y')(pt1+1)];
       ptmin=min(ptb,ptn);ptmax=max(ptb,ptn);
       pts=[ptmin;ptmax;ptmin(1),ptmax(2);ptmax(1),ptmin(2)]
       dd= abs(pts-ones_new(4,1)*ptnew);
       k=find(max(dd,'c') < 5);
-      if ~isempty(k) then 
+      if ~isempty(k) then
 	xinfo('found '+string(pts(k(1),1))+' '+string(pts(k(1),2)));
 	ptnew= pts(k(1),:)
       end
-    elseif pt1==1 then 
-       // try to check if we are in the vicinity of 
+    elseif pt1==1 then
+       // try to check if we are in the vicinity of
        // a lock point lock points ptl=[lock-number,point]
        [k,ptl]=gr_lock(ptnew);
-       if k<>0 then 
-	 // we force the point to move to ptl(2:3) 
-	 // the lock point near ptnew position 
+       if k<>0 then
+	 // we force the point to move to ptl(2:3)
+	 // the lock point near ptnew position
 	 ptnew=ptl(2:3);
 	 rr = gr_objects(sd)('lock first');
-	 if  rr(1) == 1 ; 
-	   // we were already locked somewhere; unlock 
-	   gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+	 if  rr(1) == 1 ;
+	   // we were already locked somewhere; unlock
+	   gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
 	 end
-	 // lock at new point 
+	 // lock at new point
 	 xinfo('trying to lock '+string(k)+' '+string(ptl(1)));
 	 gr_objects(sd)('lock first')=[1,k,ptl(1)];
 	 gr_objects(k)('locks status')(ptl(1))= - sd ;// set lock (<0)
-	 
+
        else
-	  // just test if unlock is necessary 
+	  // just test if unlock is necessary
 	  rr= gr_objects(sd)('lock first');
-	  if  rr(1) == 1 ; 
+	  if  rr(1) == 1 ;
 	    xinfo('trying to unlock '+string(rr(2))+' '+string(rr(3)));
-	    gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+	    gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
 	    gr_objects(sd)('lock first')=0;
 	  end
        end
-    elseif pt1==n then 
-       // try to check if we are in the vivinity of 
+    elseif pt1==n then
+       // try to check if we are in the vivinity of
        // a lock point lock points ptl=[lock-number,point]
        [k,ptl]=gr_lock(ptnew);
-       if k<>0 then 
-	 // we force the point to move to ptl(2:3) 
-	 // the lock point near ptnew position 
+       if k<>0 then
+	 // we force the point to move to ptl(2:3)
+	 // the lock point near ptnew position
 	 ptnew=ptl(2:3);
 	 rr = gr_objects(sd)('lock last');
-	 if  rr(1) == 1 ; 
-	   // we were already locked somewhere; unlock 
-	   gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+	 if  rr(1) == 1 ;
+	   // we were already locked somewhere; unlock
+	   gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
 	 end
-	 // lock at new point 
+	 // lock at new point
 	 xinfo('trying to lock '+string(k)+' '+string(ptl(1)));
 	 gr_objects(sd)('lock last')=[1,k,ptl(1)];
 	 gr_objects(k)('locks status')(ptl(1))=sd ;// set lock (>0)
        else
-	  // just test if unlock is necessary 
+	  // just test if unlock is necessary
 	  rr= gr_objects(sd)('lock last');
-	  if  rr(1) == 1 ; 
+	  if  rr(1) == 1 ;
 	    xinfo('trying to unlock '+string(rr(2))+' '+string(rr(3)));
-	    gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+	    gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
 	    gr_objects(sd)('lock last')=0;
 	  end
        end
     end
+    gr_objects(sd)('gr')(1).invalidate[];
     gr_objects(sd)('x')(pt1)=ptnew(1);
     gr_objects(sd)('y')(pt1)=ptnew(2);
-   case 'locks' then 
-    // compute locks points 
+    gr_objects(sd)('gr')(1).invalidate[];
+   case 'locks' then
+    // compute locks points
     sd1=[];
-   case 'inside lock' then 
-    // check if we are near a lock point 
+   case 'inside lock' then
+    // check if we are near a lock point
     sd1=[0];
-   case 'locks update' then 
-    // nothing to update 
+   case 'locks update' then
+    // nothing to update
     sd1=[];
-   case 'unlock all' then 
-    // check that locks are released 
+   case 'unlock all' then
+    // check that locks are released
     rr=gr_objects(sd)('lock first');
-    if  rr(1) == 1 ; 
+    if  rr(1) == 1 ;
       gr_objects(sd)('lock first')=0;
-      gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+      gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
     end
     rr=gr_objects(sd)('lock last');
-    if  rr(1) == 1 ; 
+    if  rr(1) == 1 ;
       gr_objects(sd)('lock last')=0;
-      gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock 
+      gr_objects(rr(2))('locks status')(rr(3))=0;// set unlock
     end
   end
 endfunction
 
 function gr_create_polyline()
-// interactive acquisition of a polyline 
-// 
+// interactive acquisition of a polyline
+//
   global(gr_objects=list());
-  gr_unhilite();   
-  hvfactor=5;// magnetism toward horizontal and vertical line 
+  gr_unhilite();
+  hvfactor=5;// magnetism toward horizontal and vertical line
   xinfo('Enter polyline, Right click to stop');
   dr=driver();  if dr=='Rec' then driver('X11'),end
   rep(3)=%inf;
-  wstop = 0; 
+  wstop = 0;
   kstop = 2;
   count = 2;
   ok=%t;
-  // A améliorer XXX 
+  // A améliorer XXX
   [i,x,y]=xclick();
   gr_poly('define',[x,x;y,y]);
   n = size(gr_objects,0);
   gr_objects(n)('hilited')=%t;
-  xset('alufunction',6); // change alu mode 
-  if i==2 then ok=%f ; wstop=1; end 
+  xset('alufunction',6); // change alu mode
+  if i==2 then ok=%f ; wstop=1; end
   while wstop==0 , //move loop
     // draw block shape
-    // 
+    //
     gr_poly('draw',n);
     // get new position
-    if exists('%nsp') then 
+    if exists('%nsp') then
       rep=xgetmouse(clearq=%f,getmotion=%t,getrelease=%f);
-    else 
+    else
        rep=xgetmouse(0,[%t,%t])
     end
     xinfo('rep='+string(rep(3)));
     if rep(3)== -100 then
       rep =rep(3);
-      return; 
+      return;
     end ;
     // clear block shape
     gr_poly('draw',n);
     wstop= size(find(rep(3)== kstop),'*');
-    if rep(3) == 0 then   count =count +1;end 
-    if rep(3) == 0 | rep(3) == -1 then 
-      // are we near a lock point 
+    if rep(3) == 0 then   count =count +1;end
+    if rep(3) == 0 | rep(3) == -1 then
+      // are we near a lock point
       [k,ptl]=gr_lock(rep(1:2));
-      if k<>0 then 
+      if k<>0 then
 	gr_objects(n)('x')(count)=ptl(2);
 	gr_objects(n)('y')(count)=ptl(3);
 	gr_objects(n)('lock last')=[1,k,ptl(1)];
 	if rep(3)==0;wstop=1;end
-      else 
-	 // try to keep horizontal and vertical lines 
-	 if abs(gr_objects(n)('x')(count-1)- rep(1)) < hvfactor then rep(1)=gr_objects(n)('x')(count-1);end 
-	 if abs(gr_objects(n)('y')(count-1)- rep(2)) < hvfactor then rep(2)=gr_objects(n)('y')(count-1);end 
+      else
+	 // try to keep horizontal and vertical lines
+	 if abs(gr_objects(n)('x')(count-1)- rep(1)) < hvfactor then rep(1)=gr_objects(n)('x')(count-1);end
+	 if abs(gr_objects(n)('y')(count-1)- rep(2)) < hvfactor then rep(2)=gr_objects(n)('y')(count-1);end
 	 gr_objects(n)('x')(count)=rep(1);
 	 gr_objects(n)('y')(count)=rep(2);
 	 gr_objects(n)('lock last')=[0];
@@ -585,46 +592,46 @@ function gr_create_polyline()
   xset('alufunction',3);
   driver(dr);
   if ~ok then return ;end
-  // check if the polyline is locked at some rectangles lock point 
+  // check if the polyline is locked at some rectangles lock point
   [k,ptl]=gr_lock([gr_objects(n)('x')(1),gr_objects(n)('y')(1)]);
-  if k<>0 then 
+  if k<>0 then
     gr_objects(n)('x')(1)=ptl(2);
     gr_objects(n)('y')(1)=ptl(3);
     gr_objects(n)('lock first')=[1,k,ptl(1)];
     gr_objects(k)('locks status')(ptl(1))= - n;// set lock (<0)
-  end 
+  end
   //Attention ici $ est mal evalue XXXX
   //[k,ptl]=gr_lock([poly('x')($),poly('y')($)]);
   np=size(gr_objects(n)('x'),'*');
   [k,ptl]=gr_lock([gr_objects(n)('x')(np),gr_objects(n)('y')(np)]);
-  if k<>0 then 
+  if k<>0 then
     gr_objects(n)('x')(np)=ptl(2);
     gr_objects(n)('y')(np)=ptl(3);
     gr_objects(n)('lock last')=[1,k,ptl(1)];
     gr_objects(k)('locks status')(ptl(1))=n;// set lock (>0)
-  end 
+  end
   gr_poly('draw',n);
 endfunction
 
 
 //-----------------------------------
-// filled rectangle 
+// filled rectangle
 //-----------------------------------
 
 function sd1=frect(sd,del)
   sd1=[];
   if nargin<=0 then // get
-    [x1,y1,x2,y2,but]=xgetm(d_xrect) 
+    [x1,y1,x2,y2,but]=xgetm(d_xrect)
     if but==2 then sd1=list();return,end
     sd1=list("frect",x1,x2,y1,y2);
     d_xfrect(x1,y1,x2,y2);
   elseif nargin==1 then //draw
      x1=sd(2);x2=sd(3),y1=sd(4),y2=sd(5)
      d_xfrect(x1,y1,x2,y2);
-  elseif del=='del' then //erase    
+  elseif del=='del' then //erase
      x1=sd(2);x2=sd(3),y1=sd(4),y2=sd(5)
      d_xfrect(x1,y1,x2,y2);
-  elseif del=='mov' then //move      
+  elseif del=='mov' then //move
      x1=sd(2);x2=sd(3),y1=sd(4),y2=sd(5)
      x0=xx(1);y0=xx(2);
      [xo,yo]=move_object('d_xfrect(x1-(x0-xo),y1-(y0-yo),x2-(x0-xo),y2-(y0-yo))',x0,y0);
@@ -635,7 +642,7 @@ function sd1=frect(sd,del)
   end
 endfunction
 
-// circle 
+// circle
 
 function sd1=cerc(sd,del)
   sd1=[];
@@ -648,10 +655,10 @@ function sd1=cerc(sd,del)
   elseif nargin==1 then //draw
      c=sd(2);r=sd(3);
      d_circle(c,r);
-  elseif del=='del' then //erase      
+  elseif del=='del' then //erase
      c=sd(2);r=sd(3);
      d_circle(c,r);
-  elseif del=='mov' then //move        
+  elseif del=='mov' then //move
      c=sd(2);r=sd(3)
      x0=xx(1);y0=xx(2);
      [xo,yo]=move_object('d_circle(c-[x0-xo;y0-yo],r)',x0,y0);
@@ -659,7 +666,7 @@ function sd1=cerc(sd,del)
   end;
 endfunction
 
-// filled circle 
+// filled circle
 
 function sd1=fcerc(sd,del)
   sd1=[];
@@ -672,10 +679,10 @@ function sd1=fcerc(sd,del)
   elseif nargin==1 then //draw
      c=sd(2);r=sd(3)
      d_fcircle(c,r);
-  elseif del=='del' then //erase   
+  elseif del=='del' then //erase
      c=sd(2);r=sd(3)
      d_fcircle(c,r);
-  elseif del=='mov' then //move      
+  elseif del=='mov' then //move
      c=sd(2);r=sd(3)
      x0=xx(1);y0=xx(2);
      [xo,yo]=move_object('d_fcircle(c-[x0-xo;y0-yo],r)',x0,y0);
@@ -683,7 +690,7 @@ function sd1=fcerc(sd,del)
   end;
 endfunction
 
-// arrow 
+// arrow
 
 function [sd1]=fleche(sd,del)
   sd1=[]
@@ -700,7 +707,7 @@ function [sd1]=fleche(sd,del)
      sz=-1
      if size(sd)>=4 then sz=sd(4),end
      d_arrow(o1,o2,sz);
-  elseif del=='del' then //erase 
+  elseif del=='del' then //erase
      o1=sd(2),o2=sd(3),
      sz=-1
      if size(sd)>=4 then sz=sd(4),end
@@ -716,7 +723,7 @@ function [sd1]=fleche(sd,del)
   end
 endfunction
 
-// Text 
+// Text
 //-----
 
 function [sd1]=comment(sd,del)
@@ -724,27 +731,27 @@ function [sd1]=comment(sd,del)
   if nargin<=0 then // get
     [i,z1,z2]=xclick(0);z=[z1;z2];
     com=x_dialog("Enter string"," ");
-    if ~isempty(com) then  
+    if ~isempty(com) then
       sd1=list("comm",z,com),
       xstring(z(1),z(2),com,0,0);
     end
   elseif nargin==1 then //draw
      z=sd(2);com=sd(3);
      xstring(z(1),z(2),com,0,0);
-  elseif del=='del' then //erase 
+  elseif del=='del' then //erase
      z=sd(2);com=sd(3);
      xstring(z(1),z(2),com,0,0);
-  elseif del=='mov' then //move  
+  elseif del=='mov' then //move
      z=sd(2);com=sd(3);
      [xo,yo]=move_object('xstring(xo,yo,com,0,0)',z(1),z(2));
      sd1=sd;sd1(2)(1)=xo;sd1(2)(2)=yo;
   end;
 endfunction
 
-// ? 
+// ?
 
 function [sd1]=ligne(sd,del)
-// polyline 
+// polyline
   sd1=[];
   if nargin<=0 then // get
     z=xgetpoly(d_seg);
@@ -766,7 +773,7 @@ function [sd1]=ligne(sd,del)
 endfunction
 
 function [sd1]=fligne(sd,del)
-// filled polyline 
+// filled polyline
   sd1=[];
   if nargin<=0 then // get
     z=xgetpoly(d_seg);
@@ -788,7 +795,7 @@ function [sd1]=fligne(sd,del)
 endfunction
 
 function [sd1]=curve(sd,del)
-// smoothed curve 
+// smoothed curve
   sd1=[];
   if nargin<=0 then ,//get
     z=xgetpoly(d_seg);
@@ -804,7 +811,7 @@ function [sd1]=curve(sd,del)
 endfunction
 
 function [sd1]=points(sd,del)
-// polymark 
+// polymark
   sd1=[];
   if nargin<=0 then //get
     z=xgetpoly(d_point);
@@ -814,10 +821,10 @@ function [sd1]=points(sd,del)
   elseif nargin==1 then //draw
      z=sd(2);
      xpoly(z(1,:)',z(2,:)',type="marks");
-  elseif del=='del' then //erase  
+  elseif del=='del' then //erase
      z=sd(2);
      xpoly(z(1,:)',z(2,:)',type="marks");
-  elseif del=='mov' then //move  
+  elseif del=='mov' then //move
      z=sd(2);
      x0=xx(1);y0=xx(2);
      [xo,yo]=move_object('xfpoly(z(1,:)''-(x0-xo),z(2,:)''-(y0-yo),""marks"")',x0,y0);
@@ -844,95 +851,75 @@ endfunction
 function my_eventhandler(win,x,y,ibut)
   global(gr_objects=list());
   global('count');
-  //if count == 1 then 
+  //if count == 1 then
   //  printf("event handler aborted =%d\n",count)
   //  return
   //end
   count = 1;
-  if ibut == -100 then 
+  if ibut == -100 then
     printf('window killed ')
-  elseif ibut==-1 then 
+  elseif ibut==-1 then
     //printf("(x,y)=%f,%f,%f\n",x,y,ibut);
     F=get_figure(win);
     pt=F.axes_pt[x,y];
     xinfo('Mouse position is ('+string(pt(1))+','+string(pt(2))+')');
     // hilite object when we are over it
     k = gr_find(pt(1),pt(2));
-    gr_unhilite(win=win);
-    if k<>0 then 
+    if k<>0 then
+      gr_unhilite(win=win);
       o=gr_objects(k);
-      if o.iskey['gr'] && length(o.gr) >0 && ~o('gr')(1).hilited then 
+      if o.iskey['gr'] && length(o.gr) >0 && ~o('gr')(1).hilited then
 	o('gr')(1).hilited= %t;
 	o('gr')(1).invalidate[];
       end
-    end    
-  elseif ibut==0 then 
+    end
+  elseif ibut==0 then
     //printf("(x,y)=%f,%f,%f\n",x,y,ibut);
     F=get_figure(win);
     pt=F.axes_pt[x,y];
     k = gr_find(pt(1),pt(2));
-     if k<>0 then 
+     if k<>0 then
        rep(3)=-1
        o=gr_objects(k);
-       // are we moving the object or a control point 
+       // are we moving the object or a control point
        execstr('ic=gr_'+o.type+'(''inside control'',k,pt);');
-       // hide the moving object and its locked objects 
-       gr_objects(k)('show')=%f; 
        execstr('lcks=gr_'+o.type+'(''locks update'',k);');
-       for i=lcks 
-	 gr_objects(i)('show')=%f; 
-       end
-       gr_unhilite(draw=%f);
-       gr_objects(k)('hilited')=%t;
-       // global draw to hide current object 
-       gr_draw(win);
-       gr_objects(k)('show')=%t;
-       for i=lcks 
-	 gr_objects(i)('show')=%t;
-       end
-       // interactive move 
-       if ic(1)==0 then 
-	 // we are moving the object 
+       if ic(1)==0 then
+	 // we are moving the object
 	 [rep]=gr_frame_move(k,pt,-5,'move draw',0)
-	 if rep== -100 then  
-	   count= 0; 
-	   return;
-	 end 
-       else 
-       	 // we are moving a control point of the object 
+	 if rep== -100 then  count= 0;  return; end
+       else
+       	 // we are moving a control point of the object
 	 printf('==>moving a control point\n');
 	 execstr('gr_'+o.type+'(''move point init'',k,ic(2));');
 	 [rep]=gr_frame_move(k,pt,-5,'move point',ic(2))
-	 if rep== -100 then  
-	   count=0; 
-	   return;
-	 end 
+	 if rep== -100 then  count=0;  return; end
        end
-       gr_draw(win);
-     else 
-	xinfo('Click in empty region');
+       // gr_invalidate(win);
+     else
+       xinfo('Click in empty region');
      end
   elseif ibut==2
     //printf("(x,y)=%f,%f,%f\n",x,y,ibut);
     F=get_figure(win);
     pt=F.axes_pt[x,y];
     k = gr_find(pt(1),pt(2));
-    if k<>0 then 
+    if k<>0 then
       rep(3)=-1
       obj=gr_objects(k);
       execstr('obj1=gr_'+obj.type+'(''params'',obj,0);');
       gr_objects(k)=obj1;
-      // should check here if redraw is needed 
-      if ~obj1.equal[obj] then 
-	gr_draw(win);
+      // should check here if redraw is needed
+      if ~obj1.equal[obj] then
+	gr_invalidate(win);
       end
     end
-  elseif ibut==100 
-    gr_delete();
-    gr_draw(win);
+  elseif ibut==100
+    // delete current object
+    gr_delete(win);
   elseif ibut==99
-    gr_copy();
-    gr_draw(win);
+    // copy current object
+    gr_copy(win);
   else
     xinfo('Mouse action: ['+string(ibut)+']');
   end
@@ -940,51 +927,51 @@ function my_eventhandler(win,x,y,ibut)
 endfunction
 
 function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
-// move object frame in Xor mode 
+// move object frame in Xor mode
   global(gr_objects=list());
-  dr=driver(); 
+  dr=driver();
   if dr=='Rec' then driver('X11'),end
   xset('alufunction',6);
   rep=[0,0,%inf];
-  wstop = 0; 
+  wstop = 0;
   lcks=[];
-  otype = gr_objects(ko).type; 
+  otype = gr_objects(ko).type;
   of = 'gr_'+otype;
   while wstop==0 , //move loop
     // draw block shape
     execstr(of+'(''draw'',ko);');
-    if size(lcks,'*')<>0 then 
-      // draw connected links 
-      for lk= lcks 
+    if size(lcks,'*')<>0 then
+      // draw connected links
+      for lk= lcks
 	lo = gr_objects(lk);
-	execstr('gr_'+lo.type+'(''draw'',lk);');      
+	execstr('gr_'+lo.type+'(''draw'',lk);');
       end
     end
     // get new position
-    if exists('%nsp') then 
+    if exists('%nsp') then
       rep=xgetmouse(clearq=%f,getmotion=%t,getrelease=%t);
-    else 
+    else
        rep=xgetmouse(0,[%t,%t])
     end
-    if rep(3)== -100 then 
+    if rep(3)== -100 then
       rep =rep(3);
       xset('alufunction',3);
       driver(dr);
-      return; 
+      return;
     end ;
     wstop= size(find(rep(3)== kstop),'*');
     // clear block shape
     execstr(of+'(''draw'',ko);');
-    if size(lcks,'*')<>0 then 
-      // draw connected links 
-      for lk= lcks 
+    if size(lcks,'*')<>0 then
+      // draw connected links
+      for lk= lcks
 	lo = gr_objects(lk);
-	execstr('gr_'+lo.type+'(''draw'',lk);');      
+	execstr('gr_'+lo.type+'(''draw'',lk);');
       end
     end
-    // move object or point inside object 
+    // move object or point inside object
     execstr(of+'(action,ko,rep(1:2)- pt);');
-    // update associated lock; 
+    // update associated lock;
     execstr('lcks='+of+'(''locks update'',ko);');
     pt=rep(1:2);
   end
@@ -995,17 +982,17 @@ function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
 endfunction
 
 //---------------------------------
-// check if pt is in a lock point 
+// check if pt is in a lock point
 //---------------------------------
 
-function [k,rep]=gr_lock(pt) 
+function [k,rep]=gr_lock(pt)
   global(gr_objects=list());
   for k=1:size(gr_objects)
     o=gr_objects(k);
     execstr('rep=gr_'+o.type+'(''inside lock'',k,pt);');
     if rep(1)==1 then
       rep=rep(2:4);
-      return ;  
+      return ;
     end
   end
   k=0;rep=0;
@@ -1013,7 +1000,7 @@ endfunction
 
 
 //--------------------------------------
-// find object k for which [x,y] is inside 
+// find object k for which [x,y] is inside
 //--------------------------------------
 
 function k=gr_find(x,y)
@@ -1021,119 +1008,113 @@ function k=gr_find(x,y)
   for k=1:size(gr_objects)
     o=gr_objects(k);
     execstr('ok=gr_'+o.type+'(''inside'',k,[x,y]);');
-    if ok then return ; end 
+    if ok then return ; end
   end
   k=0;
 endfunction
 
 //--------------------------------------
-// draw all objects 
+// draw all objects
 //--------------------------------------
 
-function gr_draw(win)
-// redraw objects, in fact do nothing ....
-  return;
-  pause xxx
-  global(gr_objects=list());
-  xclear(win,%f);
-  xtape('replay',win);
-  fr=[0,0,100,100];
-  xsetech(frect=fr)
-  xrect([0,100,100,100]);
-  //pause
-  for k=1:size(gr_objects)
-    o=gr_objects(k);
-    execstr('gr_'+o.type+'(''draw'',k);');
-  end
-endfunction 
+function gr_invalidate(win)
+  F=get_figure(win);
+  F.invalidate[];
+endfunction
 
 //--------------------------------------
-// unhilite objects and redraw
+// unhilite objects
 //--------------------------------------
 
 function gr_unhilite(win=-1,draw=%t)
   global(gr_objects=list());
   ok=%f;
-  if win == -1 then win=xget('window');end 
+  if win == -1 then win=xget('window');end
   for k=1:size(gr_objects)
     o=gr_objects(k);
-    if o.iskey['gr'] then 
+    if o.iskey['gr'] then
       gr = o('gr');
       for i=1:length(gr)
-	if gr(i).hilited then 
+	if gr(i).hilited then
 	  gr(i).hilited=%f;gr(i).invalidate[];
 	end
       end
     end
   end
-endfunction 
+endfunction
 
-function gr_delete()
+function gr_delete(win,all=%f)
+  // delete hilited object
   global(gr_objects=list());
   g_rep=%f
+  F=get_figure(win);
   for k=size(gr_objects):-1:1
     o=gr_objects(k);
-    if o('hilited') then 
+    if o('gr')(1).hilited || all == %t then
       execstr('rep=gr_'+o.type+'(''unlock all'',k);');
+      for i=1:length(o('gr'))
+	F.remove[o('gr')(i)];
+      end
       gr_objects(k)=null();
-      // we must update all the numbers contained in lock 
+      // we must update all the numbers contained in lock
       for j=1:size(gr_objects)
 	lkcs=gr_objects(j)('locks status')
 	for i=1:size(lkcs,'*')
-	  if lkcs(i) >= k then 
+	  if lkcs(i) >= k then
 	    gr_objects(j)('locks status')(i)= lkcs(i)-1;
 	  end
 	end
       end
-      g_rep=%t ; 
-    end 
+      g_rep=%t ;
+    end
   end
-  if g_rep==%f then 
+  F.invalidate[];
+  if g_rep==%f then
     xinfo('No object selected fo deletion');
   end
-endfunction 
+endfunction
 
-function gr_copy()
-// copy  hilited objects 
+function gr_copy(win)
+// copy  hilited objects
   global(gr_objects=list());
   g_rep=%f
   k1=size(gr_objects):-1:1;
   for k=k1;
     o=gr_objects(k);
-    if o('hilited') then 
-      gr_objects($+1)=o;
-      n=size(gr_objects,0);
-      gr_objects(n)('hilited')=%f;
-      execstr('gr_'+o.type+'(''move'',n);');
-      g_rep=%t ; 
-    end 
+    if o('gr')(1).hilited then
+      n=size(gr_objects,0)+1;
+      gr_objects(n)=o;
+      gr_objects(n)('gr')=list();
+      gr_rect('draw',n);
+      gr_rect('translate',n,[5,5]);
+      g_rep=%t ;
+    end
   end
-  if g_rep==%f then 
+  if g_rep==%f then
     xinfo('No object selected fo copy');
   end
-endfunction 
+endfunction
 
 function [pt,kmin,pmin,dmin]=gr_dist2polyline(xp,yp,pt)
-// utility function 
-// distance from a point to a polyline 
-// the point is on the segment [kmin,kmin+1] (note that 
+// utility function
+// distance from a point to a polyline
+// the point is on the segment [kmin,kmin+1] (note that
 // kmin is < size(xp,'*'))
-// and its projection is at point 
+// and its projection is at point
 // pt = [ xp(kmin)+ pmin*(xp(kmin+1)-xp(kmin)) ;
-//        yp(kmin)+ pmin*(yp(kmin+1)-yp(kmin)) 
-// the distance is dmin 
-// Copyright ENPC
+//        yp(kmin)+ pmin*(yp(kmin+1)-yp(kmin))
+// the distance is dmin
   n=size(xp,'*');
   ux= xp(2:n)-xp(1:n-1);
   uy= yp(2:n)-yp(1:n-1);
   wx= pt(1) - xp(1:n-1);
   wy= pt(2) - yp(1:n-1);
   un= ux.*ux + uy.*uy
-  // XXXX %eps 
+  // XXXX %eps
   eps= 1.e-10;
-  un=max(un,100*eps); // to avoid pb with empty segments 
+  un=max(un,100*eps); // to avoid pb with empty segments
   p = max(min((ux.*wx+ uy.*wy)./un,1 ),0);
-  // the projection of pt on each segment 
+  // the projection of pt on each segment
   gx= wx -  p .* ux;
   gy= wy -  p .* uy;
   [d2min,kmin] = min(gx.*gx + gy.*gy );
@@ -1144,8 +1125,7 @@ endfunction
 
 
 function [gr_options,edited]=gr_do_options(gr_options)
-// Copyright ENPC/jpc  options for gr_menus 
-// 
+//
   colors=m2s(1:xget("lastpattern")+2,"%1.0f");
   fontsSiz=['08','10','12','14','18','24'];
   fontsIds=[ 'Courrier','Symbol','Times','Times Italic','Times Bold',
@@ -1172,7 +1152,3 @@ function [gr_options,edited]=gr_do_options(gr_options)
     edited=%t;
   end
 endfunction
-
-
-
-

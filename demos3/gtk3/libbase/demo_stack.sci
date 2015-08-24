@@ -103,7 +103,7 @@ function demo_stack()
 
   w2 = gtk_button_new(label="Gazoooooooooooooooonk");
   stack.add[w2];
-  stack.child_set[w2, "name"= "2", "title"= "2"];// "needs-attention"= %t];
+  stack.child_set[w2, name= "2",title= "2"];// "needs-attention"= %t];
 
   scrolled_win = gtk_scrolled_window_new ();
   scrolled_win.set_policy[GTK.POLICY_AUTOMATIC, GTK.POLICY_AUTOMATIC];
