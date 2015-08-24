@@ -13,7 +13,9 @@ extern void nsp_initialize_cairo_types(void);
 extern void nsp_initialize_gdk_types(void);
 extern void nsp_initialize_gio_types(void);
 extern void nsp_initialize_glib_types(void);
+#ifdef WITH_GI
 extern void nsp_initialize_girepository_types(void);
+#endif 
 extern void nsp_initialize_gtk_types(void);
 extern void nsp_initialize_gvalue_types(void);
 extern void nsp_initialize_pango_types(void);
@@ -37,7 +39,9 @@ void nsp_init_gtk_types(void)
   nsp_initialize_gdk_types();
   nsp_initialize_gio_types();
   nsp_initialize_glib_types();
+#ifdef WITH_GI
   nsp_initialize_girepository_types();
+#endif
   nsp_initialize_gtk_types();
   /* nsp_initialize_gvalue_types(); */
   nsp_initialize_pango_types();
