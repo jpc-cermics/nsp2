@@ -7740,6 +7740,8 @@
   (c-name "gtk_entry_new_with_buffer")
   ;;(is-constructor-of "GtkEntry")
   (return-type "GtkEntry*")
+  ;; change the cast since the C function returns a GtkWidget*
+  (call "  ret =(GtkEntry*) gtk_entry_new_with_buffer(GTK_ENTRY_BUFFER(buffer->obj));")
   (parameters
     '("GtkEntryBuffer*" "buffer")
   )
@@ -17110,7 +17112,7 @@
   (c-name "gtk_popover_menu_new")
   (is-constructor-of "GtkPopoverMenu")
   (return-type "GtkPopoverMenu*")
-  (available "GDK_AVAILABLE_IN_3_12")
+  (available "GDK_AVAILABLE_IN_3_16")
 )
 
 (define-method open_submenu
@@ -17127,14 +17129,12 @@
 
 ;; From gtkpopoverprivate.h
 
-(define-method update_position
-  (of-object "GtkPopover")
-  (c-name "gtk_popover_update_position")
-  (available "")
-  (return-type "none")
-)
-
-
+;; (define-method update_position
+;;   (of-object "GtkPopover")
+;;   (c-name "gtk_popover_update_position")
+;;   (available "")
+;;   (return-type "none")
+;; )
 
 ;; From gtkprint-win32.h
 

@@ -920,13 +920,13 @@
   (implements "GtkBuildable")
   )
 
-;; defined 3.12
+;; defined 3.16
 (define-object GtkPopoverMenu
   (in-module "Gtk")
   (parent "GtkPopover")
   (c-name "GtkPopoverMenu")
   (gtype-id "GTK_TYPE_POPOVER_MENU")
-  (available "GDK_AVAILABLE_IN_3_12")
+  (available "GDK_AVAILABLE_IN_3_16")
   (implements "GtkBuildable")
   )
 
