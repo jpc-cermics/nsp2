@@ -3555,25 +3555,6 @@ static int _wrap_gdk_display_get_device_manager(NspGdkDisplay *self,Stack stack,
   return 1;
 }
 
-#if GTK_CHECK_VERSION(3,16,0)
-static int _wrap_gdk_display_make_gl_context_current(NspGdkDisplay *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {obj_check, t_end};
-  NspGObject *context;
-  int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkglcontext, &context) == FAIL) return RET_BUG;
-    ret =gdk_display_make_gl_context_current(GDK_DISPLAY(self->obj),GDK_GL_CONTEXT(context->obj));
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-#else
-int _wrap_gdk_display_make_gl_context_current(Stack stack, int rhs, int opt, int lhs) /* make_gl_context_current */
-{
-  Scierror("Error: function gdk_display_make_gl_context_current not available\n");
-  return RET_BUG;
-}
-#endif
 static NspMethods gdkdisplay_methods[] = {
   {"get_name",(nsp_method *) _wrap_gdk_display_get_name},
   {"get_n_screens",(nsp_method *) _wrap_gdk_display_get_n_screens},
@@ -3603,7 +3584,6 @@ static NspMethods gdkdisplay_methods[] = {
   {"supports_composite",(nsp_method *) _wrap_gdk_display_supports_composite},
   {"notify_startup_complete",(nsp_method *) _wrap_gdk_display_notify_startup_complete},
   {"get_device_manager",(nsp_method *) _wrap_gdk_display_get_device_manager},
-  {"make_gl_context_current",(nsp_method *) _wrap_gdk_display_make_gl_context_current},
   { NULL, NULL}
 };
 
@@ -4458,7 +4438,7 @@ static NspMethods *gdkframeclock_get_methods(void) { return gdkframeclock_method
 
 static AttrTab gdkframeclock_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 
 /* -----------NspGdkFrameClockIdle ----------- */
 
@@ -4652,10 +4632,10 @@ NspGdkFrameClockIdle *gdkframeclockidle_copy(NspGdkFrameClockIdle *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 static NspMethods *gdkframeclockidle_get_methods(void) { return NULL;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -5074,6 +5054,7 @@ int _wrap_gdk_gl_context_make_current(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
+#if GTK_CHECK_VERSION(3,18,0)
 static int _wrap_gdk_gl_context_upload_texture(NspGdkGLContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,s_int,s_int,s_int, t_end};
@@ -5091,6 +5072,14 @@ static int _wrap_gdk_gl_context_upload_texture(NspGdkGLContext *self,Stack stack
   return 0;
 }
 
+#else
+int _wrap_gdk_gl_context_upload_texture(Stack stack, int rhs, int opt, int lhs) /* upload_texture */
+{
+  Scierror("Error: function gdk_gl_context_upload_texture not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(3,18,0)
 static int _wrap_gdk_gl_context_use_texture_rectangle(NspGdkGLContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -5100,6 +5089,14 @@ static int _wrap_gdk_gl_context_use_texture_rectangle(NspGdkGLContext *self,Stac
   return 1;
 }
 
+#else
+int _wrap_gdk_gl_context_use_texture_rectangle(Stack stack, int rhs, int opt, int lhs) /* use_texture_rectangle */
+{
+  Scierror("Error: function gdk_gl_context_use_texture_rectangle not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(3,18,0)
 static int _wrap_gdk_gl_context_has_framebuffer_blit(NspGdkGLContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -5109,6 +5106,14 @@ static int _wrap_gdk_gl_context_has_framebuffer_blit(NspGdkGLContext *self,Stack
   return 1;
 }
 
+#else
+int _wrap_gdk_gl_context_has_framebuffer_blit(Stack stack, int rhs, int opt, int lhs) /* has_framebuffer_blit */
+{
+  Scierror("Error: function gdk_gl_context_has_framebuffer_blit not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(3,18,0)
 static int _wrap_gdk_gl_context_has_frame_terminator(NspGdkGLContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -5118,6 +5123,13 @@ static int _wrap_gdk_gl_context_has_frame_terminator(NspGdkGLContext *self,Stack
   return 1;
 }
 
+#else
+int _wrap_gdk_gl_context_has_frame_terminator(Stack stack, int rhs, int opt, int lhs) /* has_frame_terminator */
+{
+  Scierror("Error: function gdk_gl_context_has_frame_terminator not available\n");
+  return RET_BUG;
+}
+#endif
 static NspMethods gdkglcontext_methods[] = {
   {"get_display",(nsp_method *) _wrap_gdk_gl_context_get_display},
   {"get_window",(nsp_method *) _wrap_gdk_gl_context_get_window},
@@ -5401,7 +5413,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 5405 "gdk.c"
+#line 5417 "gdk.c"
 
 
 #line 1740 "codegen-3.0/gdk.override"
@@ -5507,7 +5519,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 5511 "gdk.c"
+#line 5523 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6120,7 +6132,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6124 "gdk.c"
+#line 6136 "gdk.c"
 
 
 static int _wrap_gdk_window_get_width(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6151,7 +6163,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6155 "gdk.c"
+#line 6167 "gdk.c"
 
 
 #line 1866 "codegen-3.0/gdk.override"
@@ -6164,7 +6176,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6168 "gdk.c"
+#line 6180 "gdk.c"
 
 
 static int _wrap_gdk_window_get_root_coords(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6187,7 +6199,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6191 "gdk.c"
+#line 6203 "gdk.c"
 
 
 static int _wrap_gdk_window_coords_to_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6218,7 +6230,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6222 "gdk.c"
+#line 6234 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6270,7 +6282,7 @@ _wrap_gdk_window_get_device_position(NspGObject *self, Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y,(double) state) == FAIL) return RET_BUG;
   return 1;
 }
-#line 6274 "gdk.c"
+#line 6286 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6346,7 +6358,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 6350 "gdk.c"
+#line 6362 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -7134,7 +7146,7 @@ static NspMethods *gdkwindow_get_methods(void) { return gdkwindow_methods;};
 
 static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 
 /* -----------NspGdkWindowImpl ----------- */
 
@@ -7328,10 +7340,10 @@ NspGdkWindowImpl *gdkwindowimpl_copy(NspGdkWindowImpl *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 static NspMethods *gdkwindowimpl_get_methods(void) { return NULL;};
 #endif /* GTK_CHECK_VERSION */
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -8348,7 +8360,7 @@ _wrap_gdk_visual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 8352 "gdk.c"
+#line 8364 "gdk.c"
 
 
 static int _wrap_gdk_visual_get_screen(NspGdkVisual *self,Stack stack,int rhs,int opt,int lhs)
@@ -8639,7 +8651,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 8643 "gdk.c"
+#line 8655 "gdk.c"
 
 
 static int
@@ -8845,7 +8857,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 8849 "gdk.c"
+#line 8861 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -9000,7 +9012,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 9004 "gdk.c"
+#line 9016 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -9257,7 +9269,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 9261 "gdk.c"
+#line 9273 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function * )_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
   { NULL,NULL,NULL,NULL,NULL },
@@ -10301,7 +10313,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10305 "gdk.c"
+#line 10317 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
@@ -10344,7 +10356,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10348 "gdk.c"
+#line 10360 "gdk.c"
 
 
 int _wrap_gdk_drag_status(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_status */
@@ -10422,7 +10434,7 @@ _wrap_gdk_drag_begin(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10426 "gdk.c"
+#line 10438 "gdk.c"
 
 
 int _wrap_gdk_drag_begin_for_device(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_begin_for_device */
@@ -10790,7 +10802,7 @@ int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* s
   return 0;
 }
 
-#line 10794 "gdk.c"
+#line 10806 "gdk.c"
 
 
 int _wrap_gdk_selection_send_notify_for_display(Stack stack, int rhs, int opt, int lhs) /* gdk_selection_send_notify_for_display */
@@ -10936,7 +10948,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10940 "gdk.c"
+#line 10952 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_display_get_default */
@@ -10996,7 +11008,7 @@ int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new *
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 11000 "gdk.c"
+#line 11012 "gdk.c"
 
 
 /*----------------------------------------------------
@@ -11193,14 +11205,14 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkdisplaymanager(T_BASE);
   new_type_gdkdragcontext(T_BASE);
   new_type_gdkframeclock(T_BASE);
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
   new_type_gdkframeclockidle(T_BASE);
 #endif /* GTK_CHECK_VERSION */
 #if GTK_CHECK_VERSION(3,16,0)
   new_type_gdkglcontext(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gdkwindow(T_BASE);
-#if GTK_CHECK_VERSION(3,16,0)
+#if GTK_CHECK_VERSION(3,18,0)
   new_type_gdkwindowimpl(T_BASE);
 #endif /* GTK_CHECK_VERSION */
   new_type_gdkkeymap(T_BASE);
@@ -11212,4 +11224,4 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkpixbufloader(T_BASE);
 }
 
-#line 11216 "gdk.c"
+#line 11228 "gdk.c"

@@ -47,7 +47,7 @@
   (in-module "Gdk")
   (parent "GdkFrameClock")
   (c-name "GdkFrameClockIdle")
-  (available "GDK_AVAILABLE_IN_3_16")
+  (available "GDK_AVAILABLE_IN_3_18")
   (gtype-id "GDK_TYPE_FRAME_CLOCK_IDLE")
 )
 
@@ -71,7 +71,7 @@
   (in-module "Gdk")
   (parent "GObject")
   (c-name "GdkWindowImpl")
-  (available "GDK_AVAILABLE_IN_3_16")
+  (available "GDK_AVAILABLE_IN_3_18")
   (gtype-id "GDK_TYPE_WINDOW_IMPL")
 )
 

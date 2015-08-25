@@ -1149,8 +1149,6 @@
 ;;   )
 ;; )
 
-
-
 ;; From gdkframeclockidle.h
 
 (define-function gdk_frame_clock_idle_get_type
@@ -1158,11 +1156,7 @@
   (return-type "GType")
 )
 
-
-
 ;; From gdkframeclockprivate.h
-
-
 
 ;; From gdkframetimings.h
 
@@ -1363,7 +1357,7 @@
 (define-method upload_texture
   (of-object "GdkGLContext")
   (c-name "gdk_gl_context_upload_texture")
-  (available "")
+  (available "GDK_AVAILABLE_IN_3_18")
   (return-type "none")
   (parameters
     '("cairo_surface_t*" "image_surface")
@@ -1383,21 +1377,21 @@
 (define-method use_texture_rectangle
   (of-object "GdkGLContext")
   (c-name "gdk_gl_context_use_texture_rectangle")
-  (available "")
+  (available "GDK_AVAILABLE_IN_3_18")
   (return-type "gboolean")
 )
 
 (define-method has_framebuffer_blit
   (of-object "GdkGLContext")
   (c-name "gdk_gl_context_has_framebuffer_blit")
-  (available "")
+  (available "GDK_AVAILABLE_IN_3_18")
   (return-type "gboolean")
 )
 
 (define-method has_frame_terminator
   (of-object "GdkGLContext")
   (c-name "gdk_gl_context_has_frame_terminator")
-  (available "")
+  (available "GDK_AVAILABLE_IN_3_18")
   (return-type "gboolean")
 )
 
@@ -4459,18 +4453,16 @@
 
 ;; From gdkdisplayprivate.h
 
-(define-method make_gl_context_current
-  (of-object "GdkDisplay")
-  (c-name "gdk_display_make_gl_context_current")
-  (available "")
-  (return-type "gboolean")
-  (available "GDK_AVAILABLE_IN_3_16")
-  (parameters
-    '("GdkGLContext*" "context")
-  )
-)
-
-
+;; (define-method make_gl_context_current
+;;   (of-object "GdkDisplay")
+;;   (c-name "gdk_display_make_gl_context_current")
+;;   (available "")
+;;   (return-type "gboolean")
+;;   (available "GDK_AVAILABLE_IN_3_16")
+;;   (parameters
+;;     '("GdkGLContext*" "context")
+;;   )
+;; )
 
 ;; From gdkdevice.h
 
