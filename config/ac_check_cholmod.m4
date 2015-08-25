@@ -1,6 +1,6 @@
 dnl -*- mode: autoconf -*-
 dnl
-dnl detect colamd and cholmod Jean-Philippe Chancelier 2007 
+dnl detect colamd and cholmod Jean-Philippe Chancelier 2007
 dnl adapted from ac_check_umfpack.m4
 dnl
 dnl Distributed under the GPL(GNU Public License):
@@ -8,12 +8,12 @@ dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
 dnl the Free Software Foundation; either version 2 of the License, or
 dnl (at your option) any later version.
-dnl 
+dnl
 dnl This program is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
-dnl 
+dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -24,7 +24,7 @@ AC_DEFUN([AC_CHECK_COLAMD],
  ac_save_cppflags=${CPPFLAGS}
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
- # check colamd includes 
+ # check colamd includes
  #-------------------
  AC_MSG_CHECKING([for colamd include file directory])
  ac_colamd_includedirs="/usr/include/suitesparse /usr/include/colamd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/colamd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
@@ -32,32 +32,32 @@ AC_DEFUN([AC_CHECK_COLAMD],
  if test "x${colamd_includedir}" != "x" -a "x${colamd_includedir}" != "xNO"; then
   CPPFLAGS="-I${colamd_includedir} ${CPPFLAGS}"
  fi
- AC_MSG_RESULT([${colamd_includedir}])  
+ AC_MSG_RESULT([${colamd_includedir}])
 
  ac_save_ldflags=${LDFLAGS}
 
- # check colamd_library 
+ # check colamd_library
  #-------------------
  colamd_library=no
  AC_MSG_CHECKING([colamd library presence])
  ac_colamd_libdirs="/usr/lib /usr/local/lib /usr/lib/colamd /usr/local/lib/colamd /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libcolamd.a", $ac_colamd_libdirs, ac_colamd_libdir)
+ AC_FIND_FILE("libcolamd.so", $ac_colamd_libdirs, ac_colamd_libdir)
  if test "x${ac_colamd_libdir}" != "x" -a "x${ac_colamd_libdir}" != "xNO"; then
-  colamd_library=$ac_colamd_libdir/libcolamd.a
+  colamd_library=$ac_colamd_libdir/libcolamd.so
  fi
  AC_MSG_RESULT([$colamd_library])
 
- # check for colcolamd 
+ # check for colcolamd
  #----------------------------------
- if test "xx$colamd_library" != "xxno";then 
-    if test "${ac_colamd_libdir}" = "/usr/lib"; then 
+ if test "xx$colamd_library" != "xxno";then
+    if test "${ac_colamd_libdir}" = "/usr/lib"; then
       AC_CHECK_LIB(colamd,colamd,[colamd_libs="-lcolamd"])
-    else 
+    else
       LDFLAGS="-L${ac_colamd_libdir} ${LDFLAGS}"
       AC_CHECK_LIB(colamd,colamd,[colamd_libs="-L${ac_colamd_libdir} -lcolamd"])
     fi
- else 
-    # maybe we just have shared libraries in standard path 
+ else
+    # maybe we just have shared libraries in standard path
     AC_CHECK_LIB(colamd,colamd,[colamd_libs="-lcolamd"])
  fi
  CPPFLAGS=${ac_save_cppflags}
@@ -69,8 +69,8 @@ AC_DEFUN([AC_CHECK_COLAMD],
 
 # check for cholmod: you must have performed a AC_CHECK_COLAMD() before.
 # and AC_CHECK_AMD()
-# Note that lapack / blas are needed here so it won't work if scilab 
-# uses its own lapack/blas sources 
+# Note that lapack / blas are needed here so it won't work if scilab
+# uses its own lapack/blas sources
 #------------------------------------------------------------------
 
 AC_DEFUN([AC_CHECK_CHOLMOD],
@@ -80,42 +80,50 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  ac_save_ldflags=${LDFLAGS}
  LIBS="$colamd_libs $amd_libs $LAPACK_LIBS $BLAS_LIBS ${LIBS}"
 
- # check cholmod includes 
+ # check cholmod includes
  #-------------------
  AC_MSG_CHECKING([for cholmod include file directory])
  ac_umf_includedirs=" /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
  AC_FIND_FILE("cholmod.h", $ac_umf_includedirs, cholmod_includedir)
  if test "x${cholmod_includedir}" != "x" -a "x${cholmod_includedir}" != "xNO"; then
-#    if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 
-      CPPFLAGS="-I${cholmod_includedir} ${CPPFLAGS}"
-#    fi
+    CPPFLAGS="-I${cholmod_includedir} ${CPPFLAGS}"
  fi
- AC_MSG_RESULT([${cholmod_includedir}])  
- # check for cholmod 
+ AC_MSG_RESULT([${cholmod_includedir}])
+ # check for cholmod
  #-------------------
  cholmod_library=no
  AC_MSG_CHECKING([cholmod library presence])
  ac_cholmod_libdirs="/usr/lib /usr/local/lib /usr/lib/cholmod /usr/local/lib/cholmod /opt/local/lib"
- AC_FIND_FILE("libcholmod.a", $ac_cholmod_libdirs, ac_cholmod_libdir)
+ AC_FIND_FILE("libcholmod.so", $ac_cholmod_libdirs, ac_cholmod_libdir)
  if test "x${ac_cholmod_libdir}" != "x" -a "x${ac_cholmod_libdir}" != "xNO"; then
-     cholmod_library=$ac_cholmod_libdir/libcholmod.a
+     cholmod_library=$ac_cholmod_libdir/libcholmod.so
  fi
  AC_MSG_RESULT([$cholmod_library])
- if test "xx$cholmod_library" != "xxno";then 
-   if test "${ac_cholmod_libdir}" = "/usr/lib"; then 
-      AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
-   else 
+ if test "xx$cholmod_library" != "xxno";then
+   if test "${ac_cholmod_libdir}" = "/usr/lib"; then
+      AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod -lsuitesparseconfig ${colamd_libs} "])
+   else
       LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS}"
-      AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod ${colamd_libs} "])
+      AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod -lsuitesparseconfig ${colamd_libs} "])
+   fi
+   AC_MSG_RESULT([$cholmod_libs])
+   if test "xx$cholmod_libs" = "xx";then
+     # Try without suitesparseconfig
+     if test "${ac_cholmod_libdir}" = "/usr/lib"; then
+        AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
+     else
+        LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS}"
+        AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod ${colamd_libs} "])
+     fi
    fi
    # Try with c versions and metis (for macports)
    if test "xx$cholmod_libs" = "xx" ; then
       LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS} -lccolamd -lcamd -lmetis"
-      AC_CHECK_LIB(cholmod,cholmod_metis,[cholmod_libs="-lcholmod -lccolamd -lcamd ${colamd_libs} -lmetis "])	
-   fi 
+      AC_CHECK_LIB(cholmod,cholmod_metis,[cholmod_libs="-lcholmod -lccolamd -lcamd ${colamd_libs} -lmetis "])
+   fi
    AC_SUBST(cholmod_libs)
- else 
-    # maybe we just have shared libraries in standard path 
+ else
+    # maybe we just have shared libraries in standard path
     AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
  fi
  CPPFLAGS=${ac_save_cppflags}
@@ -123,8 +131,7 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  LDFLAGS=${ac_save_ldflags}
 ])
 
-
-# Rajouter metis au besoin 
+# Rajouter metis au besoin
 #
 # AC_ARG_WITH(cholmod,
 #   [AS_HELP_STRING([--without-cholmod],
@@ -167,4 +174,3 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
 # fi
 
 # AC_SUBST(TEXINFO_CHOLMOD)
-

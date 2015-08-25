@@ -1637,6 +1637,11 @@ static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse
 static void nsp_sputil_error_handler_mex (int status,const char *file, int line,const char *message);
 static void nsp_sputil_error_handler (int status, const char *file, int line,const char *message);
 
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3) )
+/* struct SuiteSparse_config_struct SuiteSparse_config ; */
+#endif
+
+
 static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 {
   /* cholmod_solve must return a real or zomplex X for MATLAB */

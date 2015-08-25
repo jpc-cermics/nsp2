@@ -10,12 +10,12 @@ dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
 dnl the Free Software Foundation; either version 2 of the License, or
 dnl (at your option) any later version.
-dnl 
+dnl
 dnl This program is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
-dnl 
+dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -26,7 +26,7 @@ AC_DEFUN([AC_CHECK_AMD],
  ac_save_cppflags=${CPPFLAGS}
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
- # check amd includes 
+ # check amd includes
  #-------------------
  AC_MSG_CHECKING([for amd include file directory])
  ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
@@ -34,29 +34,30 @@ AC_DEFUN([AC_CHECK_AMD],
  if test "x${amd_includedir}" != "x" -a "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
  fi
- AC_MSG_RESULT([${amd_includedir}])  
+ AC_MSG_RESULT([${amd_includedir}])
 
  ac_save_ldflags=${LDFLAGS}
- # check amd_library 
+ # check amd_library
  #-------------------
  amd_library=no
  AC_MSG_CHECKING([amd library presence])
  ac_amd_libdirs="/usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libamd.a", $ac_amd_libdirs, ac_amd_libdir)
+ AC_FIND_FILE("libamd.so", $ac_amd_libdirs, ac_amd_libdir)
  if test "x${ac_amd_libdir}" != "x" -a "x${ac_amd_libdir}" != "xNO"; then
-  amd_library=$ac_amd_libdir/libamd.a
+  amd_library=$ac_amd_libdir/libamd.so
  fi
- # check for amd_postorder in amd library 
+ AC_MSG_RESULT([$amd_library])
+ # check for amd_postorder in amd library
  #----------------------------------
- if test "xx$amd_library" != "xxno";then 
-    if test "${ac_amd_libdir}" = "/usr/lib"; then 
+ if test "xx$amd_library" != "xxno";then
+    if test "${ac_amd_libdir}" = "/usr/lib"; then
       AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-lamd"])
-    else 
+    else
       LDFLAGS="-L${ac_amd_libdir} ${LDFLAGS}"
       AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-L${ac_amd_libdir} -lamd"])
     fi
- else 
-    # maybe we just have shared libraries in standard path 
+ else
+    # maybe we just have shared libraries in standard path
     AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-lamd"])
  fi
  CPPFLAGS=${ac_save_cppflags}
@@ -73,50 +74,50 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
  LIBS="$amd_libs ${LIBS} ${BLAS_LIBS}"
- # check umfpack includes 
+ # check umfpack includes
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
  ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
  AC_FIND_FILE("umfpack.h", $ac_umf_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
-#    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
+#    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
       CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
 #    fi
  fi
- AC_MSG_RESULT([${umfpack_includedir}])  
- # check for umfpack 
+ AC_MSG_RESULT([${umfpack_includedir}])
+ # check for umfpack
  #-------------------
  umfpack_library=no
  AC_MSG_CHECKING([umfpack library presence])
  ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libumfpack.a", $ac_umfpack_libdirs, ac_umfpack_libdir)
+ AC_FIND_FILE("libumfpack.so", $ac_umfpack_libdirs, ac_umfpack_libdir)
  if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
-     umfpack_library=$ac_umfpack_libdir/libumfpack.a
+     umfpack_library=$ac_umfpack_libdir/libumfpack.so
  fi
  AC_MSG_RESULT([$umfpack_library])
- if test "xx$umfpack_library" != "xxno";then 
-   if test "${ac_umfpack_libdir}" = "/usr/lib"; then 
+ if test "xx$umfpack_library" != "xxno";then
+   if test "${ac_umfpack_libdir}" = "/usr/lib"; then
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
-   else 
+   else
       umfpack_fail=no
       # AC_MSG_CHECKING([umfpack link one])
       ac_save_ldflags_one=${LDFLAGS}
       LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
-      ## Invalidate the cache and try again without -lSuiteSparse 
+      ## Invalidate the cache and try again without -lSuiteSparse
       $as_unset ac_cv_lib_umfpack_umfpack_di_solve
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"],[umfpack_fail=yes]) 
-      if test "xx$umfpack_fail" == "xxyes";then 
-        ## Invalidate the cache and try again without -lSuiteSparse 
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"],[umfpack_fail=yes])
+      if test "xx$umfpack_fail" == "xxyes";then
+        ## Invalidate the cache and try again without -lSuiteSparse
 	$as_unset ac_cv_lib_umfpack_umfpack_di_solve
 	LDFLAGS=${ac_save_ldflags_one}
 	#  AC_MSG_CHECKING([umfpack link two])
         LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS}"
         AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
-      fi  
+      fi
    fi
    AC_SUBST(umfpack_libs)
- else 
-    # maybe we just have shared libraries in standard path 
+ else
+    # maybe we just have shared libraries in standard path
     AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
  fi
  CPPFLAGS=${ac_save_cppflags}
@@ -124,4 +125,3 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  LDFLAGS=${ac_save_ldflags}
 
 ])
-
