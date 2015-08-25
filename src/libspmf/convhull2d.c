@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2008-2015 Bruno Pincon Esial/Iecn 
+ * Copyright (C) 2008-2015 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,13 +16,13 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-   
+
 /*
  *    PURPOSE
  *      a 2d convex hull code (Graham algorithm (*) )
  *      (*) as explain in "Introduction to algorithmic" (T. Cormen,
  *      C. Leiserson, R. Rivest) with slight modifications.
- *    
+ *
  */
 
 #include <stdlib.h>  /* C std qsort is used */
@@ -50,10 +50,10 @@ static void init_perm(int p[], int N)
 static int find_bottom_left_point(double *x, double *y, int N)
 {
   int i, i_bl = 0;
-  
+
   for (i = 1; i < N; i++)
     {
-      if (     y[i] < y[i_bl]  
+      if (     y[i] < y[i_bl]
 	   || (y[i] == y[i_bl] && x[i] < x[i_bl]) )
 	i_bl = i;
     }
@@ -62,16 +62,16 @@ static int find_bottom_left_point(double *x, double *y, int N)
 
 static int comp_angle(const void * a1, const void * a2)
 {
-  /* 
+  /*
    *  comparaison entre les angles polaires P0P1 et  P0P2
    *  on veut trier en ordre croissant et donc ap P0P1 < P0P2 si
-   *     P2 est a gauche de P0P1, si on a le meme angle polaire 
+   *     P2 est a gauche de P0P1, si on a le meme angle polaire
    *     alors  P0P1 < P0P2  si P1 est + proche de P0 que P2
-   */    
+   */
 
   int k1, k2;
   double v1[2], v2[2], dv[2], area, r;
-  
+
   k1 = * (int *)a1; k2 = * (int *)a2;
 
   v1[0] = X[k1] - x_bl;
@@ -81,14 +81,14 @@ static int comp_angle(const void * a1, const void * a2)
   area = det(v1,v2);
   if ( area > 0 )
     return -1;
-  else if ( area < 0 ) 
+  else if ( area < 0 )
     return 1;
   else
-    {  
+    {
       /* v1, v2 colinear : v2 = r v1  */
       dv[0] =  v2[0] - v1[0]; dv[1] = v2[1] - v1[1];
       r = max(dv[0],dv[1]);
-      if ( r > 0 ) 
+      if ( r > 0 )
 	return -1;
       else if ( r < 0 )
 	return 1;
@@ -96,8 +96,8 @@ static int comp_angle(const void * a1, const void * a2)
 	return 0;
     }
 }
-    
-static int angle(k0, k1, k2)
+
+static int angle(int k0, int k1, int k2)
 {
   double v1[2], v2[2], area;
 
@@ -114,7 +114,7 @@ static int angle(k0, k1, k2)
   else
     return COLINEAR;
 }
-	  
+
 static void trivial_cases(int n, int *nhull, double *x, double *y, int *ind)
 {
   /* treats cases where the number of points (n) is <= 2 */
@@ -138,16 +138,16 @@ static void trivial_cases(int n, int *nhull, double *x, double *y, int *ind)
     }
 }
 
-	
+
 void nsp_convhull2d(int n, double *x, double *y, int *nhull, int *ind, int *p)
 {
   /*  n     : number of points
    *  x,y   : coordinates (x[i], y[i]) are the coord of point i
    *  nhull : on output number of edges of the convex hull
-   *  ind   : on output indices of the points of the convex hull  in trigo 
+   *  ind   : on output indices of the points of the convex hull  in trigo
    *          orientation(the calling routine must reserve n places but only
    *          the first nhull indices are meaningful)
-   *  p     : work array of length n : used to renumbering the points 
+   *  p     : work array of length n : used to renumbering the points
    */
   int i, i_bl, j, top;
 
@@ -166,13 +166,13 @@ void nsp_convhull2d(int n, double *x, double *y, int *nhull, int *ind, int *p)
   x_bl = x[i_bl]; y_bl = y[i_bl];
 
   /* step 2 : sort the points 1..n-1 with increasing polar angle P0Pi */
-  qsort(&(p[1]), n-1, sizeof(int), comp_angle );  
+  qsort(&(p[1]), n-1, sizeof(int), comp_angle );
 
 
   /* step 3 : init the stack with 3 points P0 and then generally P1 and P2
               but special cases may occur    */
   top = -1;   /* init stack */
-  push(p[0]); 
+  push(p[0]);
 
   /* push the next first point != left bottom point (p[0])  on the stack */
   j = 1;
@@ -196,7 +196,7 @@ void nsp_convhull2d(int n, double *x, double *y, int *nhull, int *ind, int *p)
 
   if ( j == n )
     goto end;
-    
+
   push(p[j]);
 
 
