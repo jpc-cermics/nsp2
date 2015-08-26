@@ -124,7 +124,14 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
    AC_SUBST(cholmod_libs)
  else
     # maybe we just have shared libraries in standard path
-    AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
+    # first try with suitesparseconfig
+    AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod -lsuitesparseconfig ${colamd_libs} "])
+    AC_MSG_RESULT([$cholmod_libs])
+    if test "xx$cholmod_libs" = "xx";then
+     # Try without suitesparseconfig
+     AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
+     AC_MSG_RESULT([$cholmod_libs])
+   fi
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
