@@ -1637,7 +1637,7 @@ static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse
 static void nsp_sputil_error_handler_mex (int status,const char *file, int line,const char *message);
 static void nsp_sputil_error_handler (int status, const char *file, int line,const char *message);
 
-#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3) )
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0) )
 /* struct SuiteSparse_config_struct SuiteSparse_config ; */
 #endif
 
@@ -1648,7 +1648,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
   cm->prefer_zomplex = TRUE ;
 
   /* use mxMalloc and related memory management routines */
-#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3) )
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0) )
   SuiteSparse_config.malloc_func  = mxMalloc ;
   SuiteSparse_config.free_func    = mxFree ;
   SuiteSparse_config.realloc_func = mxRealloc ;
@@ -1665,7 +1665,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
     {
       /* do not print anything from within CHOLMOD */
       cm->print = -1 ;
-#if  (CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3) )
+#if  (CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0) )
       SuiteSparse_config.printf_func  = NULL;
 #else
       cm->print_function = NULL ;
@@ -1678,7 +1678,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
        * spumoni = 2: also print a short summary of each object.
        */
       cm->print = spumoni + 2 ;
-#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3))
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0))
       SuiteSparse_config.printf_func  = mexPrintf;
 #else
       cm->print_function = mexPrintf ;
@@ -1696,7 +1696,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
     }
 
 /* complex arithmetic */
-#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3))
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0))
   SuiteSparse_config.divcomplex_func =  cholmod_divcomplex ;
   SuiteSparse_config.hypot_func =  cholmod_hypot ;
 #else
@@ -1708,7 +1708,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 #if defined(METIS_VERSION)
 #if (METIS_VERSION >= METIS_VER(4,0,2))
   /* METIS 4.0.2 uses function pointers for malloc and free */
-#if CHOLMOD_VERSION >= CHOLMOD_VER_CODE (1,3)
+#if CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0)
   METIS_malloc =   SuiteSparse_config.malloc_func;
   METIS_free   = SuiteSparse_config.free_fun;
 #else
