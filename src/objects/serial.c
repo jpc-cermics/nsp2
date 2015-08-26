@@ -582,6 +582,7 @@ NspSerial *nsp_serial_uncompress(const NspSerial *Sz)
 #ifdef HAVE_ZLIB
   NspSerial *S;
   unsigned long nb;
+  int nb1;
   int rep, zlen = strlen(nsp_zserial_header);
   int len = strlen(nsp_serial_header);
   if ( strncmp(Sz->val,nsp_serial_header,len) ==0) 
@@ -589,7 +590,8 @@ NspSerial *nsp_serial_uncompress(const NspSerial *Sz)
       return nsp_serial_copy(Sz);
     }
   /* get size after uncompression */
-  memcpy(&nb,Sz->val+ zlen ,sizeof(int));
+  memcpy(&nb1,Sz->val+ zlen ,sizeof(int));
+  nb= nb1;
   if ((S = _nsp_serial_create(NVOID,NULL,nb,NULL,FALSE))== NULL) 
     return NULL;
   rep = uncompress ((Bytef *) S->val + len ,&nb,
