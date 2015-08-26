@@ -1,4 +1,5 @@
 #include <nsp/nsp.h>
+#include <nsp/config.h>
 
 #ifdef WITH_GI
 #include "girepository.c"
