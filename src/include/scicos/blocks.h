@@ -18,19 +18,19 @@
  *
  *--------------------------------------------------------------------------*/
 
-#ifndef __SCICOS_BLOCKS__ 
-#define __SCICOS_BLOCKS__ 
+#ifndef __SCICOS_BLOCKS__
+#define __SCICOS_BLOCKS__
 
-/* 
- * block prototypes and block table 
+/*
+ * block prototypes and block table
  */
 
 #define scicos_args_base  int *flag__, int *nevprt, const double *t, double *xd, double *x, \
     int *nx, double *z__, int *nz, double *tvec, int *ntvec,		\
-    double *rpar, int *nrpar, int *ipar, int *nipar 
+    double *rpar, int *nrpar, int *ipar, int *nipar
 
 /* flag  nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  intabl  ni  outabl no */
-#define scicos_args_F0  scicos_args_base, double *u, int *nu, double *y, int *ny 
+#define scicos_args_F0  scicos_args_base, double *u, int *nu, double *y, int *ny
 
 /* flag  nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  u1 n1 u2 n2 .... */
 #define scicos_args_F  scicos_args_base, double *uy1, int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3, \
@@ -49,7 +49,7 @@
 /* flag  nclock t residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar */
 #define scicos_args_base_i  int *flag__, int *nevprt,const double *t,double *res, double *xd, double *x, \
     int *nx, double *z__, int *nz, double *tvec, int *ntvec,		\
-    double *rpar, int *nrpar, int *ipar, int *nipar 
+    double *rpar, int *nrpar, int *ipar, int *nipar
 
 /* flag  nclock t residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar u1 nu1 u2 nu2 .... */
 #define scicos_args_Fi scicos_args_base_i,  double *uy1, int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3, \
@@ -57,7 +57,7 @@
     int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,		\
     double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, \
     double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, \
-    double *uy17, int *nuy17, double *uy18, int *nuy18 
+    double *uy17, int *nuy17, double *uy18, int *nuy18
 
 /* flag  nclockf t  residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar    args_in sz_in, n_in  args_out sz_out, n_out  */
 #define scicos_args_Fi2 scicos_args_base_i, double **inptr, int *insz, int *nin, double **outptr, int *outsz, int *nout
@@ -65,10 +65,10 @@
 /* flag  nclockf t  residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar   args_in sz_in, n_in  args_out sz_out, n_out g ng */
 #define scicos_args_Fi2z scicos_args_Fi2, double *g , int *ng
 
-#define scicos_args_Fm1 int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu 
+#define scicos_args_Fm1 int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu
 
 typedef void (*ScicosF0) (scicos_args_F0);
-typedef void (*ScicosF) (scicos_args_F); 
+typedef void (*ScicosF) (scicos_args_F);
 typedef void (*ScicosF2) (scicos_args_F2);
 typedef void (*ScicosF2z) (scicos_args_F2z);
 typedef void (*ScicosFi) (scicos_args_Fi);
@@ -84,7 +84,7 @@ struct _scicos_block_table  {
   ScicosF fonc;
 };
 
-/* Multi declaration for block 
+/* Multi declaration for block
  */
 
 #define MULTI_DECLARATION(name)						\
@@ -105,7 +105,7 @@ struct _scicos_block_table  {
   { MD_NAME(name##_SCSINT8_COP), (ScicosF) name##_SCSINT8_COP},		\
   { MD_NAME(name##_SCSUINT32_COP), (ScicosF) name##_SCSUINT32_COP},	\
   { MD_NAME(name##_SCSUINT16_COP), (ScicosF) name##_SCSUINT16_COP},	\
-  { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP}	
+  { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP}
 
 #define MULTI2_DECLARATION(name)						\
   extern void name##_SCSREAL_COP_SCSREAL_COP (scicos_block *block,int flag);	\
@@ -157,7 +157,7 @@ struct _scicos_block_table  {
   extern void name##_SCSUINT8_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
   extern void name##_SCSUINT8_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
   extern void name##_SCSUINT8_COP_SCSUINT8_COP (scicos_block *block,int flag);
-  
+
 #define MULTI2_DECLARATION1(name)							 	\
   { MD_NAME(name##_SCSREAL_COP_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP_SCSREAL_COP},	 	\
   { MD_NAME(name##_SCSREAL_COP_SCSINT32_COP), (ScicosF) name##_SCSREAL_COP_SCSINT32_COP},	\
@@ -208,7 +208,7 @@ struct _scicos_block_table  {
   { MD_NAME(name##_SCSUINT8_COP_SCSUINT32_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT32_COP},	\
   { MD_NAME(name##_SCSUINT8_COP_SCSUINT16_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT16_COP},	\
   { MD_NAME(name##_SCSUINT8_COP_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT8_COP}
-  
+
 /* A set of old blocks */
 
 extern void scicos_affich_block(scicos_args_F0);
@@ -304,7 +304,7 @@ extern void scicos_zcross2_block(scicos_args_F0);
 
 /* new blocks */
 
-extern void scicos_absolute_value_block(scicos_block *block,int flag); 
+extern void scicos_absolute_value_block(scicos_block *block,int flag);
 extern void scicos_acos_block(scicos_block *block,int flag);
 extern void scicos_acosh_block(scicos_block *block,int flag);
 extern void scicos_asin_block(scicos_block *block,int flag);
@@ -322,6 +322,7 @@ extern void scicos_deadband_block(scicos_block *block,int flag);
 extern void scicos_deriv_block(scicos_block *block,int flag);
 extern void scicos_extractor_block(scicos_block *block,int flag);
 extern void scicos_gainblk_block(scicos_block *block,int flag);
+extern void scicos_gainblk_tt_block(scicos_block *block,int flag);
 extern void scicos_time_delay_block(scicos_block *block,int flag);
 extern void scicos_variable_delay_block(scicos_block *block,int flag);
 extern void scicos_step_func_block(scicos_block *block,int flag);
@@ -552,6 +553,26 @@ extern void gainblk_ui16e (scicos_block *block,int flag);
 extern void gainblk_ui8s (scicos_block *block,int flag);
 extern void gainblk_ui8n (scicos_block *block,int flag);
 extern void gainblk_ui8e (scicos_block *block,int flag);
+
+extern void gainblk_i32s_tt (scicos_block *block,int flag);
+extern void gainblk_i32n_tt (scicos_block *block,int flag);
+extern void gainblk_i32e_tt (scicos_block *block,int flag);
+extern void gainblk_i16s_tt (scicos_block *block,int flag);
+extern void gainblk_i16n_tt (scicos_block *block,int flag);
+extern void gainblk_i16e_tt (scicos_block *block,int flag);
+extern void gainblk_i8s_tt (scicos_block *block,int flag);
+extern void gainblk_i8n_tt (scicos_block *block,int flag);
+extern void gainblk_i8e_tt (scicos_block *block,int flag);
+extern void gainblk_ui32s_tt (scicos_block *block,int flag);
+extern void gainblk_ui32n_tt (scicos_block *block,int flag);
+extern void gainblk_ui32e_tt (scicos_block *block,int flag);
+extern void gainblk_ui16s_tt (scicos_block *block,int flag);
+extern void gainblk_ui16n_tt (scicos_block *block,int flag);
+extern void gainblk_ui16e_tt (scicos_block *block,int flag);
+extern void gainblk_ui8s_tt (scicos_block *block,int flag);
+extern void gainblk_ui8n_tt (scicos_block *block,int flag);
+extern void gainblk_ui8e_tt (scicos_block *block,int flag);
+
 extern void delay4_i32 (scicos_block *block,int flag);
 extern void delay4_i16 (scicos_block *block,int flag);
 extern void delay4_i8 (scicos_block *block,int flag);
@@ -714,7 +735,7 @@ scicos_block_table  tabsim[] ={
   {"cmatview",(ScicosF) cmatview},
   {"cmscope",(ScicosF) scicos_cmscope_block},
   {"constraint",(ScicosF) scicos_constraint_block},
-  {"constraint_c",(ScicosF) constraint_c}, 
+  {"constraint_c",(ScicosF) constraint_c},
   {"convert",(ScicosF) convert},
   /* {"cos_blk",(ScicosF) cos_blk}, */
   {"cos_blk",(ScicosF) scicos_cos_block},
@@ -1165,19 +1186,36 @@ scicos_block_table  tabsim[] ={
   {"writef",(ScicosF) scicos_writef_block},
   /*  {"zcross",(ScicosF) F2C(zcross)}, */
   {"zcross",(ScicosF) scicos_zcross_block} ,
-  {"zcross2",(ScicosF) scicos_zcross2_block},  
+  {"zcross2",(ScicosF) scicos_zcross2_block},
   /* {"zcross2",(ScicosF) zcross2}, */
-  {"sliderm",(ScicosF) scicos_sliderm_block},    
-  MULTI_DECLARATION1(absolute_valuei),  
+  {"sliderm",(ScicosF) scicos_sliderm_block},
+  MULTI_DECLARATION1(absolute_valuei),
   MULTI_DECLARATION1(switch2),
   {"derivz_SCSREAL_COP",(ScicosF) derivz_SCSREAL_COP},
   MULTI2_DECLARATION1(logic2),
-  MULTI2_DECLARATION1(satur_dyn), 
-  {"vumeter",(ScicosF) scicos_vumeter_block},  
-  {"assertion",(ScicosF) scicos_assertion_block},  
+  MULTI2_DECLARATION1(satur_dyn),
+  {"vumeter",(ScicosF) scicos_vumeter_block},
+  {"assertion",(ScicosF) scicos_assertion_block},
+  {"gainblk_tt",(ScicosF) scicos_gainblk_tt_block},
+  {"gainblk_i16e_tt",(ScicosF) gainblk_i16e_tt},
+  {"gainblk_i16n_tt",(ScicosF) gainblk_i16n_tt},
+  {"gainblk_i16s_tt",(ScicosF) gainblk_i16s_tt},
+  {"gainblk_i32e_tt",(ScicosF) gainblk_i32e_tt},
+  {"gainblk_i32n_tt",(ScicosF) gainblk_i32n_tt},
+  {"gainblk_i32s_tt",(ScicosF) gainblk_i32s_tt},
+  {"gainblk_i8e_tt",(ScicosF) gainblk_i8e_tt},
+  {"gainblk_i8n_tt",(ScicosF) gainblk_i8n_tt},
+  {"gainblk_i8s_tt",(ScicosF) gainblk_i8s_tt},
+  {"gainblk_ui16e_tt",(ScicosF) gainblk_ui16e_tt},
+  {"gainblk_ui16n_tt",(ScicosF) gainblk_ui16n_tt},
+  {"gainblk_ui16s_tt",(ScicosF) gainblk_ui16s_tt},
+  {"gainblk_ui32e_tt",(ScicosF) gainblk_ui32e_tt},
+  {"gainblk_ui32n_tt",(ScicosF) gainblk_ui32n_tt},
+  {"gainblk_ui32s_tt",(ScicosF) gainblk_ui32s_tt},
+  {"gainblk_ui8e_tt",(ScicosF) gainblk_ui8e_tt},
+  {"gainblk_ui8n_tt",(ScicosF) gainblk_ui8n_tt},
+  {"gainblk_ui8s_tt",(ScicosF) gainblk_ui8s_tt},
   {NULL , (ScicosF) 0}
 };
 
-#endif 
-
-
+#endif
