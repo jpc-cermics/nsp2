@@ -820,12 +820,12 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
   if ( rhs == 3 )
     {
       /* extra arguments: can be any object */
-#if 1 
+#if 1
       if (( extra_args = nsp_object_copy_and_name("m",nsp_get_object(stack,3)))== NULL) return RET_BUG;
-#else 
+#else
       if (( extra_args =(NspObject *) GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
       if ((nsp_object_set_name((NspObject *)extra_args,"m")== FAIL)) return RET_BUG;
-#endif 
+#endif
     }
 
   if (!g_signal_parse_name(name, G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE)) {
@@ -850,7 +850,7 @@ static int nspgobject_connect_after(NspGObject *self, Stack stack,int rhs,int op
   return nspgobject_connect_general(self, stack, rhs,opt, lhs,TRUE);
 }
 
-/* 
+/*
  *
  */
 #if 0
@@ -890,7 +890,7 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   if ( nsp_move_double(stack,1,(double) handlerid)== FAIL) return RET_BUG;
   return 1;
 }
-#endif 
+#endif
 
 static int
 nspgobject_connect_object(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -1076,79 +1076,39 @@ nspgobject_chain_from_overridden(NspGObject *self, Stack stack,int rhs,int opt,i
   }
 }
 
-/* WIP: cast from different types
- * NspGObject *nspgobject_new(const char *name, GObject *obj) will create an object
- *           with the most specific type of obj
- * XXX
- * Pour résoudre le pb suivant
- *  gobj  =gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
- * la fonction précédente dans gtk.defs renvoit un GtkWidget et pas un GtkBox
- * le générateur de code va donc faire de même au niveau nsp
- * Pour obtenir l'object nsp le plus spécifique il faut utiliser
- * nspgobject_new et pas le code generé par defaut qui est
- *
- * gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkwidget))
- *
- * Ceci étant on peut vouloir faire explicitement des casts
- * la fonction qui suit est un début pur faire cela.
+/* 
+ * cast a gtk_objet to parent 
  */
 
-
 static int
-nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+nspgobject_gcast_up(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
-  NspTypeBase *type;
   GType gtype;
   NspObject *nsp_ret;
   GObject *gobj = self->obj;
-  NspObject *Obj;
-  int_types T[] = { obj ,t_end} ;
-  /*
-  int ret;
-  gchar *stype;
-
-  if ( GetArgs(stack,rhs,opt,T,&stype) == FAIL) return RET_BUG;
-  if ( strcmp(stype,"widget")==0)
-    ret = GTK_IS_WIDGET(self->obj);
-  else if ( strcmp(stype,"container")==0)
-    ret = GTK_IS_CONTAINER(self->obj);
-  else
-    return RET_BUG;
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  */
-
-  if (GetArgs(stack,rhs,opt,T, &Obj)== FAIL)
-    return RET_BUG;
-  if (IsType(Obj))
+  NspTypeBase *surtype;
+  NspTypeBase *type = ((NspObject *) self)->basetype;
+  CheckRhs (0, 0);
+  CheckLhs (1, 1);
+  if ( type->surtype == NULL) 
     {
-      NspTypeBase *type  = ((NspType *) Obj)->nsp_type;
-      gtype= g_type_from_name (type_get_name(type));
-      if ( gtype == G_TYPE_INVALID)
-	{
-	  Scierror("Error: invalid type %s\n",type_get_name(type));
-	  return RET_BUG;
-	}
-      else
-	Sciprintf("type %s\n",type_get_name(type));
-    }
-  else
-    {
-      Scierror("Error: first argument should be a type\n");
+      Scierror("Error: cannot go up from type %s\n",type_get_name(type));
       return RET_BUG;
     }
-  type = nsp_type_from_gtype(gtype);
-  if ( type == NULL )
+  /* we need the BASE representant for type_surtype */
+  surtype = nsp_get_type_from_id(type->surtype->id);
+  gtype= g_type_from_name (type_get_name(surtype));
+  if ( gtype == G_TYPE_INVALID)
     {
-       Scierror("Error: type is NULL\n");
+      Scierror("Error: invalid gtype %s\n",type_get_name(surtype));
+      return RET_BUG;
     }
-
-  gobj  =(GObject *) gtk_dialog_get_content_area(GTK_DIALOG(self->obj));
-
-  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
-
-  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj,
-					 nsp_type_from_gtype(G_OBJECT_TYPE(G_OBJECT(gobj))));
-
+  else
+    {
+      /* Sciprintf("surtype is %s\n",type_get_name(surtype)); */
+    }
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj, surtype);
+  if (nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
@@ -1157,7 +1117,7 @@ nspgobject_is(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
  */
 
 static int
-nspgobject_most_specific(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+nspgobject_gcast_bottom(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspObject *nsp_ret;
   if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) self->obj))== NULL)
@@ -1190,8 +1150,8 @@ static NspMethods gobject_methods[] = {
   { "stop_emission", (nsp_method *) nspgobject_stop_emission},
   { "emit_stop_by_name", (nsp_method *) nspgobject_stop_emission},
   { "chain", (nsp_method *) nspgobject_chain_from_overridden},
-  { "is",  (nsp_method *) nspgobject_is},
-  { "most_specific", (nsp_method *) nspgobject_most_specific },
+  { "gcast_up",  (nsp_method *) nspgobject_gcast_up},
+  { "gcast_bottom",  (nsp_method *) nspgobject_gcast_bottom},
   { NULL, NULL }
 };
 
