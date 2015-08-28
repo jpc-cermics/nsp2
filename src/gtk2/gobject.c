@@ -294,10 +294,11 @@ int gobject_info(NspGObject *self, int indent,char *name,int rec_level)
   else
     {
       /* A changer XXXX pour que GObject soit remplacé par le type GTk */
-      Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d\n", pname,
+      Sciprintf1(indent,"%s\t= %s at 0x%lx ref_count=%d, %s\n", pname,
 		self->obj ? G_OBJECT_TYPE_NAME(self->obj) : "uninitialized",
 		 NSP_POINTER_CAST_TO_INT self->obj,
-		((GObject *) self->obj)->ref_count);
+		 ((GObject *) self->obj)->ref_count,
+		 nsp_object_type_as_string(NSP_OBJECT(self)));
     }
   return TRUE;
 }
@@ -1067,8 +1068,58 @@ nspgobject_chain_from_overridden(NspGObject *self, Stack stack,int rhs,int opt,i
 
 }
 
+/* 
+ * cast a gtk_objet to parent 
+ */
+
+static int
+nspgobject_gcast_up(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  GType gtype;
+  NspObject *nsp_ret;
+  GObject *gobj = self->obj;
+  NspTypeBase *surtype;
+  NspTypeBase *type = ((NspObject *) self)->basetype;
+  CheckRhs (0, 0);
+  CheckLhs (1, 1);
+  if ( type->surtype == NULL) 
+    {
+      Scierror("Error: cannot go up from type %s\n",type_get_name(type));
+      return RET_BUG;
+    }
+  /* we need the BASE representant for type_surtype */
+  surtype = nsp_get_type_from_id(type->surtype->id);
+  gtype= g_type_from_name (type_get_name(surtype));
+  if ( gtype == G_TYPE_INVALID)
+    {
+      Scierror("Error: invalid gtype %s\n",type_get_name(surtype));
+      return RET_BUG;
+    }
+  else
+    {
+      /* Sciprintf("surtype is %s\n",type_get_name(surtype)); */
+    }
+  nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)gobj, surtype);
+  if (nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+/* cast to most specific type
+ */
+
+static int
+nspgobject_gcast_bottom(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  if ((nsp_ret = (NspObject *) nspgobject_new(NVOID,(GObject *) self->obj))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static NspMethods gobject_methods[] = {
-  {"ref",  (nsp_method *) nspgobject_ref},
+  { "ref",  (nsp_method *) nspgobject_ref},
   {"unref", (nsp_method *)  nspgobject_unref},
   { "get_property", (nsp_method *) nspgobject_get_property},
   { "get_property_names", (nsp_method *) nspgobject_get_property_names},
@@ -1091,6 +1142,8 @@ static NspMethods gobject_methods[] = {
   { "stop_emission", (nsp_method *) nspgobject_stop_emission},
   { "emit_stop_by_name", (nsp_method *) nspgobject_stop_emission},
   { "chain", (nsp_method *) nspgobject_chain_from_overridden},
+  { "gcast_up",  (nsp_method *) nspgobject_gcast_up},
+  { "gcast_bottom",  (nsp_method *) nspgobject_gcast_bottom},
   { NULL, NULL }
 };
 
@@ -2339,7 +2392,7 @@ GType gtype_from_nsp_object(NspObject *obj)
  * the first element is added.
  * As an example if @L is equal to
  * list([1,2,3],["foo","bar";"zip","gz"],[%t],list(3,4),list(pixbuf....))
- * then the gtype array will contain
+ * then the gtype array will contail
  * [double,double,double,string,string,boolean,double,pixbuf].
  * The caller will have to take care of freeing the returned value
  * and the size of the returned array is returned in len
