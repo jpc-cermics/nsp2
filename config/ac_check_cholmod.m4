@@ -79,7 +79,7 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
  LIBS="$colamd_libs $amd_libs $LAPACK_LIBS $BLAS_LIBS ${LIBS}"
-
+ 
  # check cholmod includes
  #-------------------
  AC_MSG_CHECKING([for cholmod include file directory])
@@ -100,6 +100,8 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  fi
  AC_MSG_RESULT([$cholmod_library])
  if test "xx$cholmod_library" != "xxno";then
+   ac_save_libs1=${LIBS}
+   LIBS="-lsuitesparseconfig ${LIBS}"
    if test "${ac_cholmod_libdir}" = "/usr/lib"; then
       AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod -lsuitesparseconfig ${colamd_libs} "])
    else
@@ -107,14 +109,18 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
       AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod -lsuitesparseconfig ${colamd_libs} "])
    fi
    AC_MSG_RESULT([$cholmod_libs])
+   LIBS=${ac_save_libs1}
    if test "xx$cholmod_libs" = "xx";then
      # Try without suitesparseconfig
+     ## Invalidate the cache 
+     $as_unset ac_cv_lib_cholmod_cholmod_analyze
      if test "${ac_cholmod_libdir}" = "/usr/lib"; then
         AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
      else
         LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS}"
         AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod ${colamd_libs} "])
      fi
+     AC_MSG_RESULT([$cholmod_libs])	
    fi
    # Try with c versions and metis (for macports)
    if test "xx$cholmod_libs" = "xx" ; then
@@ -125,13 +131,17 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  else
     # maybe we just have shared libraries in standard path
     # first try with suitesparseconfig
+    ac_save_libs1=${LIBS}
+    LIBS="-lsuitesparseconfig ${LIBS}"
     AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod -lsuitesparseconfig ${colamd_libs} "])
     AC_MSG_RESULT([$cholmod_libs])
+    LIBS=${ac_save_libs1}
     if test "xx$cholmod_libs" = "xx";then
      # Try without suitesparseconfig
+     $as_unset ac_cv_lib_cholmod_cholmod_analyze
      AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-lcholmod ${colamd_libs} "])
      AC_MSG_RESULT([$cholmod_libs])
-   fi
+    fi
  fi
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
