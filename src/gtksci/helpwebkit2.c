@@ -31,25 +31,25 @@
 #include <nsp/nsp.h>
 #include <nsp/gtksci.h>
 #include <nsp/system.h>
-#include <nsp/hash.h> 
-#include <nsp/file.h> 
-#include <nsp/smatrix.h> 
+#include <nsp/hash.h>
+#include <nsp/file.h>
+#include <nsp/smatrix.h>
 
 #include "../system/regexp.h"
 #include "eggfindbar.h"
 
 #define N_(x) x
 
-/* on windows TRUE and FALSE are undef by 
+/* on windows TRUE and FALSE are undef by
  * "nsp/object.h"
  */
 
-#ifndef TRUE 
+#ifndef TRUE
 #define TRUE (1)
-#endif 
-#ifndef FALSE 
+#endif
+#ifndef FALSE
 #define FALSE (0)
-#endif 
+#endif
 
 #include <nsp/interf.h>
 #include <nsp/nsptcl.h>
@@ -87,14 +87,14 @@ static gboolean nsp_help_browser_idle(gpointer user_data)
   g_async_queue_push(data->queue,data);
   return FALSE;
 }
-#endif 
+#endif
 
-/* It is safe to call this function from 
+/* It is safe to call this function from
  * non gtk thread.
  */
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-int nsp_help_browser(char *mandir,char *locale,char *help_file) 
+int nsp_help_browser(char *mandir,char *locale,char *help_file)
 {
   if (  g_thread_self() == nsp_gtk_main_thread())
     {
@@ -110,12 +110,12 @@ int nsp_help_browser(char *mandir,char *locale,char *help_file)
     }
   return 0;
 }
-#else 
-int nsp_help_browser(char *mandir,char *locale,char *help_file) 
+#else
+int nsp_help_browser(char *mandir,char *locale,char *help_file)
 {
   return nsp_help_browser_internal(mandir,locale,help_file);
 }
-#endif 
+#endif
 
 static void activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
@@ -178,7 +178,7 @@ load_commit_cb (WebKitWebView* page, WebKitWebFrame* frame, gpointer data)
 static void
 destroy_cb (GtkWidget* widget, gpointer data)
 {
-  gtk_widget_destroy(main_window); 
+  gtk_widget_destroy(main_window);
   main_window=NULL;
 }
 
@@ -216,7 +216,7 @@ go_zoom_100_cb (GtkWidget* widget, gpointer data)
 {
   WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   double zl=webkit_web_view_get_zoom_level(web_view);
-  if ( zl != 1.0) 
+  if ( zl != 1.0)
     webkit_web_view_set_zoom_level(web_view,1.0);
 }
 #endif
@@ -226,6 +226,7 @@ static GtkWidget*create_browser (WebKitWebView **web_view_p)
   WebKitWebView *web_view;
   WebKitWebSettings * settings;
   GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   *web_view_p= web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
   g_object_set_data(G_OBJECT (main_window),"help_web_view",web_view);
@@ -236,20 +237,34 @@ static GtkWidget*create_browser (WebKitWebView **web_view_p)
   g_signal_connect (G_OBJECT (web_view), "load-committed", G_CALLBACK (load_commit_cb), web_view);
   g_signal_connect (G_OBJECT (web_view), "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
 
-  /*  change default settings 
+  /*  change default settings
    *
    */
   settings = webkit_web_settings_new();
+#ifdef WIN32
   g_object_set(G_OBJECT(settings),
-	       /*   "serif-font-family", x, 
-               "sans-serif-font-family", x,
-               "monospace-font-family", x, 
-               "default-font-family", x,
+    /* "serif-font-family", x,
+       "sans-serif-font-family", x,
+    */
+    "monospace-font-family", "Courier New",
+    "default-font-family", "Times New Roman",
+    "default-font-size", 10 ,
+    "default-monospace-font-size", 10 ,
+    NULL);
+
+#else
+  g_object_set(G_OBJECT(settings),
+	       /*   "serif-font-family", x,
+		    "sans-serif-font-family", x,
+		    "monospace-font-family", x,
+		    "default-font-family", x,
 	       */
-               "default-font-size", 10 ,
-               "default-monospace-font-size", 10 ,
-               NULL);
+	       "default-font-size", 10 ,
+	       "default-monospace-font-size", 10 ,
+	       NULL);
+#endif
   webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
+  webkit_web_view_set_full_content_zoom(WEBKIT_WEB_VIEW(web_view), TRUE);
   return scrolled_window;
 }
 
@@ -299,7 +314,7 @@ static GtkWidget*create_toolbar ()
   item = gtk_tool_button_new_from_stock (GTK_STOCK_ZOOM_100);
   g_signal_connect (G_OBJECT (item), "clicked", G_CALLBACK (go_zoom_100_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
-#endif 
+#endif
 
   /* The URL entry */
   item = gtk_tool_item_new ();
@@ -325,7 +340,6 @@ create_window ()
   gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
   gtk_widget_set_name (window, "Nsp Help");
   g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
-
   return window;
 }
 
@@ -340,7 +354,7 @@ window_activate_print (GtkAction *action,  void  *window)
 static void
 window_activate_close (GtkAction *action,  void  *window)
 {
-  gtk_widget_destroy(main_window); 
+  gtk_widget_destroy(main_window);
   main_window=NULL;
 }
 
@@ -350,7 +364,7 @@ window_activate_copy (GtkAction *action,  void  *window)
   /* window is main_window */
   GtkWidget *widget =  gtk_window_get_focus (GTK_WINDOW (window));
   WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
-  if (GTK_IS_EDITABLE (widget)) 
+  if (GTK_IS_EDITABLE (widget))
     {
       gtk_editable_copy_clipboard (GTK_EDITABLE (widget));
     }
@@ -402,10 +416,10 @@ static void window_activate_zoom_default(GtkAction *action,  void  *window)
 {
   WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   double zl=webkit_web_view_get_zoom_level(web_view);
-  if ( zl != 1.0) 
+  if ( zl != 1.0)
     webkit_web_view_set_zoom_level(web_view,1.0);
 }
-#endif 
+#endif
 
 
 static const GtkActionEntry actions[] = {
@@ -428,7 +442,7 @@ static const GtkActionEntry actions[] = {
     G_CALLBACK (window_find_next_cb) },
   { "Find Previous", GTK_STOCK_GO_BACK, N_("Find Previous"), "<shift><control>G", NULL,
     G_CALLBACK (window_find_previous_cb) },
-  /* 
+  /*
   { "Preferences", GTK_STOCK_PREFERENCES, NULL, NULL, NULL,
     G_CALLBACK (window_activate_preferences) },
   */
@@ -450,7 +464,7 @@ static const GtkActionEntry actions[] = {
   { "ZoomDefault", GTK_STOCK_ZOOM_100, N_("_Normal Size"), "<ctrl>0",
     N_("Use the normal text size"),
     G_CALLBACK (window_activate_zoom_default) },
-#endif 
+#endif
 
 };
 
@@ -468,9 +482,9 @@ static const gchar *view_ui_description =
   "      <menuitem action=\"Find\"/>"
   "      <menuitem action=\"Find Next\"/>"
   "      <menuitem action=\"Find Previous\"/>"
-  /* 
+  /*
   "      <separator/>"
-  "      <menuitem action=\"Preferences\"/>" 
+  "      <menuitem action=\"Preferences\"/>"
   */
   "    </menu>"
 #ifdef HAVE_WEBKIT_ZOOM
@@ -479,7 +493,7 @@ static const gchar *view_ui_description =
   "      <menuitem action=\"ZoomOut\"/>"
   "      <menuitem action=\"ZoomDefault\"/>"
   "    </menu>"
-#endif 
+#endif
   "    <menu action=\"GoMenu\">"
   "      <menuitem action=\"Back\"/>"
   "      <menuitem action=\"Forward\"/>"
@@ -489,6 +503,9 @@ static const gchar *view_ui_description =
 
 static int open_webkit_window (const gchar *help_path,const gchar *locale,const gchar *help_file)
 {
+#ifdef WIN32
+  GdkGeometry geometry_hints;
+#endif
   GtkWidget     *find_bar;
   GtkUIManager  *manager;
   GtkAccelGroup *accel_group;
@@ -497,7 +514,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 
   start_sci_gtk(); /* in case gtk was not initialized */
 
-  if ( main_window == NULL) 
+  if ( main_window == NULL)
     {
       WebKitWebView *web_view;
       GtkActionGroup *action_group;
@@ -518,7 +535,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 	  g_message ("building view ui failed: %s", error->message);
 	  g_error_free (error);
 	}
-      /* directly build a menu: 
+      /* directly build a menu:
       gtk_ui_manager_add_ui(manager,gtk_ui_manager_new_merge_id (manager),
 			    "/MenuBar/GoMenu","poo",
 			    "Print",
@@ -560,7 +577,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 			G_CALLBACK (window_findbar_close_cb),
 			main_window);
       /* gtk_widget_grab_focus (GTK_WIDGET (web_view)); */
-      
+
       /* set proxy uri if defined by environment variable http_proxy */
 #ifdef SOUP_TYPE_PROXY_RESOLVER_DEFAULT
       soup_session_add_feature_by_type(webkit_get_default_session(),
@@ -568,7 +585,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 #else
       {
 	const char *httpProxy = g_getenv("http_proxy");
-	if (httpProxy) 
+	if (httpProxy)
 	  {
 	    SoupURI *proxyUri = soup_uri_new(httpProxy);
 	    g_object_set(webkit_get_default_session(),
@@ -578,8 +595,19 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
       }
 #endif
       gtk_widget_show_all (main_window);
+#ifdef WIN32
+      /* do not resiqe window on windows to prevent a crash */
+      geometry_hints.min_width = 800;
+      geometry_hints.max_width = 800;
+      geometry_hints.min_height = 600;
+      geometry_hints.max_height = 600;
+      gtk_window_set_geometry_hints (GTK_WINDOW(main_window),
+				     NULL,
+				     &geometry_hints,
+				     GDK_HINT_MAX_SIZE|GDK_HINT_MIN_SIZE);
+#endif
     }
-  else 
+  else
     {
       WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
       webkit_web_view_open (web_view, help_file );
@@ -591,35 +619,35 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 
 /*
  * mandir = man path or null (SCI+'man')
- * locale = "eng" or "fr" 
- * help_file = null or absolute (XXX) file name 
- * returns 0 on success and 1 if index.html not found 
+ * locale = "eng" or "fr"
+ * help_file = null or absolute (XXX) file name
+ * returns 0 on success and 1 if index.html not found
  */
 
 static int nsp_help_topic(const char *topic,char *buf);
 
-static int nsp_help_browser_internal(char *mandir,char *locale,char *help_file) 
+static int nsp_help_browser_internal(char *mandir,char *locale,char *help_file)
 {
   int free = FALSE;
   char buf[FSIZE+32];
-  const char *sci = nsp_getenv("SCI"); 
+  const char *sci = nsp_getenv("SCI");
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
 
-  if ( sci == NULL ) 
+  if ( sci == NULL )
     {
       Sciprintf("Error: Cannot find manual, SCI is undefined\n");
       return 0;
     }
-  if ( mandir == NULL) 
+  if ( mandir == NULL)
     {
       free = TRUE;
       mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
     }
-  
+
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
     {
-#ifdef WIN32 
+#ifdef WIN32
       int i;
       strcpy(buf,( strncmp(mandir,"//",2) == 0) ? "file:" : "file:///");
       strcat(buf, mandir);
@@ -627,27 +655,27 @@ static int nsp_help_browser_internal(char *mandir,char *locale,char *help_file)
 	{
 	  if ( buf[i] == '\\') buf[i]= '/';
 	}
-#else 
+#else
       strcpy(buf,mandir);
-#endif 
+#endif
       strcat(buf,"/generated/manual.html");
       /* Sciprintf("trying to see [%s]\n",buf); */
       open_webkit_window(mandir,l,buf);
     }
-  else if ( strncmp(help_file,"file:",5)==0 || strncmp(help_file,"http:",5)==0) 
+  else if ( strncmp(help_file,"file:",5)==0 || strncmp(help_file,"http:",5)==0)
     {
       strcpy(buf,help_file);
       open_webkit_window(mandir,l,buf);
     }
-  else  
+  else
     {
-      if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL; 
-      if ( buf[0]== '\0') return OK; 
+      if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL;
+      if ( buf[0]== '\0') return OK;
       /* Sciprintf("XXX Help with [%s] [%s] [%s] %d\n",mandir,l,buf,FSIZE); */
       open_webkit_window(mandir,l,buf);
     }
   if ( free == TRUE ) g_free(mandir);
-  return 0; 
+  return 0;
 }
 
 static NspHash *nsp_help_table = NULLHASH;
@@ -660,14 +688,14 @@ static int nsp_help_fill_help_table(const char *index_file)
   char buf[FSIZE+32];
   NspSMatrix *Sb = NULL;
   int xdr= FALSE,swap = TRUE,i;
-#ifdef WIN32 
+#ifdef WIN32
   int j;
-#endif 
+#endif
   NspFile *F;
   char *mode = "r";
-  if ( index_file != NULL) 
+  if ( index_file != NULL)
     nsp_path_expand(index_file,buf,FSIZE);
-  else 
+  else
     nsp_path_expand("NSP/man/html/generated/manual.4dx",buf,FSIZE);
 
   if ((dirname = nsp_dirname (buf))== NULL)return FAIL;
@@ -680,16 +708,16 @@ static int nsp_help_fill_help_table(const char *index_file)
       Scierror("Error %f not found\n",buf);
       return FAIL;
     }
-  if ( nsp_fscanf_smatrix(F,&Sb) == FAIL) 
+  if ( nsp_fscanf_smatrix(F,&Sb) == FAIL)
     {
       nsp_file_close(F);
       return FAIL;
     }
   if (nsp_file_close(F) == FAIL  ) return FAIL;
   /* initialize hash table for help */
-  if (  nsp_help_table == NULLHASH) 
+  if (  nsp_help_table == NULLHASH)
     {
-      if ( ( nsp_help_table = nsp_hash_create("%help",Sb->mn) ) == NULLHASH) 
+      if ( ( nsp_help_table = nsp_hash_create("%help",Sb->mn) ) == NULLHASH)
 	return  FAIL;
     }
   for ( i = 0 ; i < Sb->mn ; i++)
@@ -707,7 +735,7 @@ static int nsp_help_fill_help_table(const char *index_file)
       if ((nsp_tcl_regsub(Sb->S[i],regExpr,"\\2",&filename,&nmatch,all))==FAIL)  goto bug;
       str = str1= nsp_tcldstring_value(&name);
       /* remove \ from names */
-      while ( *str1 != '\0') 
+      while ( *str1 != '\0')
 	{
 	  if (*str1 == '\\' ) str1++;
 	  else *str++=*str1++;
@@ -716,32 +744,32 @@ static int nsp_help_fill_help_table(const char *index_file)
       /* fprintf(stderr,"val=[%s]\n",nsp_tcldstring_value(&name));*/
       /* need a join here */
       /* Sciprintf("dirname for help [%s]\n",dirname); */
-#ifdef WIN32 
+#ifdef WIN32
       strcpy(buf,( strncmp(dirname,"//",2) == 0) ? "file:" : "file:///");
       strcat(buf, dirname);
       for ( j = 0 ; j < strlen(buf) ; j++)
 	{
 	  if ( buf[i] == '\\') buf[i]= '/';
 	}
-#else 
+#else
       strcpy(buf,dirname);
-#endif 
+#endif
       strcat(buf,"/");
       strcat(buf,nsp_tcldstring_value(&filename));
       if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),buf,-1))
 	  == NULLOBJ)
 	goto bug;
       /* Sciprintf(" nsp_help_fill_help_table: Enter %s with buf=%s\n",nsp_tcldstring_value(&name),buf); */
-      nsp_tcldstring_free(&name);	 
-      nsp_tcldstring_free(&filename);	
-      
+      nsp_tcldstring_free(&name);
+      nsp_tcldstring_free(&filename);
+
       if (nsp_hash_enter(nsp_help_table,Obj) == FAIL) goto bug;
-    }  
+    }
   nsp_smatrix_destroy(Sb);
   return OK;
  bug:
-  nsp_tcldstring_free(&name);	 
-  nsp_tcldstring_free(&filename);	
+  nsp_tcldstring_free(&name);
+  nsp_tcldstring_free(&filename);
   nsp_smatrix_destroy(Sb);
   return FAIL;
 }
@@ -753,7 +781,7 @@ static int nsp_help_topic(const char *topic, char *buf)
   if ( strcmp(topic, "nsp")==0 )
     {
       /* re-initialize to scilab */
-      if ( nsp_help_fill_help_table(NULL) == FAIL 
+      if ( nsp_help_fill_help_table(NULL) == FAIL
 	   || nsp_help_table == NULLHASH)
 	{
 	  Scierror("Error: cannot build help table \n");
@@ -763,7 +791,7 @@ static int nsp_help_topic(const char *topic, char *buf)
     }
   if ( strcmp(topic, "scicoslab")==0 )
     {
-      if ( nsp_help_fill_help_table("NSP/contrib/scicoslab/man/html/generated/manual.4dx") 
+      if ( nsp_help_fill_help_table("NSP/contrib/scicoslab/man/html/generated/manual.4dx")
 	   || nsp_help_table == NULLHASH)
 	{
 	  Scierror("Error: cannot build help table \n");
@@ -772,10 +800,10 @@ static int nsp_help_topic(const char *topic, char *buf)
       return OK;
     }
 
-  if ( nsp_help_table == NULLHASH ) 
+  if ( nsp_help_table == NULLHASH )
     {
       /* initialize */
-      if ( nsp_help_fill_help_table(NULL) == FAIL 
+      if ( nsp_help_fill_help_table(NULL) == FAIL
 	   || nsp_help_table == NULLHASH)
 	{
 	  Scierror("Error: cannot build help table \n");
@@ -785,7 +813,7 @@ static int nsp_help_topic(const char *topic, char *buf)
   if ( strcmp(topic + strlen(topic) -3,"4dx")==0)
     {
       /* add contents of index file to help table */
-      if ( nsp_help_fill_help_table(topic) == FAIL ) 
+      if ( nsp_help_fill_help_table(topic) == FAIL )
 	{
 	  Scierror("Error: cannot add index file to help table \n");
 	  return FAIL;
@@ -793,7 +821,7 @@ static int nsp_help_topic(const char *topic, char *buf)
       return OK;
     }
 
-  if ( nsp_hash_find(nsp_help_table,topic,&Obj)== FAIL) 
+  if ( nsp_hash_find(nsp_help_table,topic,&Obj)== FAIL)
     {
       Sciprintf("No man found for topic %s\n",topic);
       strcpy(buf,"");
@@ -806,7 +834,7 @@ static int nsp_help_topic(const char *topic, char *buf)
   return OK;
 }
 
-/* handlers to interact with the egg_find_bar 
+/* handlers to interact with the egg_find_bar
  *
  */
 
@@ -841,7 +869,7 @@ window_find_case_changed_cb (GObject    *object,
   gboolean       case_sensitive;
   string = egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar));
   case_sensitive = egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar));
-  
+
   webkit_web_view_unmark_text_matches (web_view);
   webkit_web_view_mark_text_matches (web_view, string, case_sensitive, 0);
   webkit_web_view_set_highlight_text_matches (web_view, TRUE);
@@ -881,4 +909,3 @@ window_findbar_close_cb (GtkWidget *widget, void  *window)
   gtk_widget_hide (find_bar);
   webkit_web_view_set_highlight_text_matches (web_view, FALSE);
 }
-

@@ -246,19 +246,35 @@ static GtkWidget*create_browser (WebKitWebView **web_view_p)
    *
    */
   settings = webkit_web_settings_new();
+
+#ifdef WIN32
+  g_object_set(G_OBJECT(settings),
+    /* "serif-font-family", x,
+       "sans-serif-font-family", x,
+    */
+    "monospace-font-family", "Courier New",
+    "default-font-family", "Times New Roman",
+    "default-font-size", 10 ,
+    "default-monospace-font-size", 10 ,
+    NULL);
+
+#else
   g_object_set(G_OBJECT(settings),
 	       /*   "serif-font-family", x,
-               "sans-serif-font-family", x,
-               "monospace-font-family", x,
-               "default-font-family", x,
+		    "sans-serif-font-family", x,
+		    "monospace-font-family", x,
+		    "default-font-family", x,
 	       */
-               "default-font-size", 10 ,
-               "default-monospace-font-size", 10 ,
+	       "default-font-size", 10 ,
+	       "default-monospace-font-size", 10 ,
 	       "enable-java-appleT",FALSE,
 	       "enable-plugins",FALSE,
-               NULL);
+	       NULL);
+#endif
   webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
+  webkit_web_view_set_full_content_zoom(WEBKIT_WEB_VIEW(web_view), TRUE);
   return scrolled_window;
+
 }
 
 static GtkWidget*
