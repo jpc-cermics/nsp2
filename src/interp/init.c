@@ -58,6 +58,7 @@ static char *ProgramName = NULL;
 static void set_nsp_env (void);
 static void nsp_syntax (char *badOption) ;
 static void set_nsp_home_env(char *nsp_abs_path);
+static int nsp_execute_command_for_extension(const char *command_fmt,const char *fname,const char *error_fmt,int *ret);
 
 /* needed when wekbit-gtk is used (in fact just in recent versions) */
 #if defined(HAVE_GTHREAD) && defined(HAVE_WEBKIT)
@@ -76,7 +77,6 @@ struct _nsp_thread_data {
   int argc;
   char **argv;
 };
-
 
 int nsp_init_and_loop(int argc, char **argv,int loop)
 {
@@ -245,7 +245,9 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
       nsp_path_expand(startup,fname_expanded,FSIZE);
       if ((input = fopen(fname_expanded,"r")) != NULL)
 	{
-	  int rep =nsp_parse_eval_file(fname_expanded,init_disp,init_echo,init_errcatch,TRUE,FALSE );
+	  int rep;
+	  fclose(input);
+	  rep=nsp_parse_eval_file(fname_expanded,init_disp,init_echo,init_errcatch,TRUE,FALSE );
 	  if  ( rep < 0 )
 	    {
 	      Sciprintf("Warning: error during execution of the startup script %s\n",startup);
@@ -281,25 +283,75 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 
   if ( initial_script != NULL )
     {
-      /* execute initial script if given */
-      int rep =nsp_parse_eval_file(initial_script,init_disp,init_echo,init_errcatch,TRUE,FALSE );
-      if ( rep == RET_QUIT )
+      const char *extension;
+      char fname_expanded[FSIZE+1];
+      nsp_path_expand(initial_script,fname_expanded,FSIZE);
+      /* execute initial script if given 
+       * try to detect cos files 
+       */
+      extension = nsp_get_extension(initial_script);
+      if ( strcmp(extension,".cos") == 0  || strcmp(extension,".cosf") == 0) 
 	{
-	  sci_clear_and_exit(0);
-	  return 0;
+	  /* try to start scicos */
+	  int ret;
+	  if ( nsp_execute_command_for_extension("load_toolbox('scicos-4.4');scicos('%s');",
+						 initial_script,
+						 "Error: while loading scicos file %s\n",&ret) 
+	       == FAIL)
+	    return ret;
 	}
-      else if  ( rep < 0 )
+      else if ( strcmp(extension,".mdl")== 0 )
 	{
-	  if ( init_errcatch== FALSE )
+	  /* try to start scicos with a mdl file */
+	  int ret;
+	  const char *cmd="load_toolbox('scicos-4.4');scs_m = do_load_mdl(fname='%s',check_companion=%%f);if isempty(scs_m) then quit;end;scicos(scs_m);";
+	  if ( nsp_execute_command_for_extension(cmd,
+						 initial_script,
+						 "Error: while loading scicos file %s\n",&ret) 
+	       == FAIL)
+	    return ret;
+	}
+      else if ( strcmp(extension,".mat")== 0 )
+	{
+	  /* try to load a matfile */
+	  int ret;
+	  if ( nsp_execute_command_for_extension("loadmatfile('%s');",
+						 initial_script,
+						 "Error: while loading scicos file %s\n",&ret) 
+	       == FAIL)
+	    return ret;
+	}
+      else if ( strcmp(extension,".bin")== 0 )
+	{
+	  /* try to load a file */
+	  int ret;
+	  if ( nsp_execute_command_for_extension("load('%s');",
+						 initial_script,
+						 "Error: while loading scicos file %s\n",&ret) 
+	       == FAIL)
+	    return ret;
+	}
+      else
+	{
+	  int rep =nsp_parse_eval_file(fname_expanded,init_disp,init_echo,init_errcatch,TRUE,FALSE );
+	  if ( rep == RET_QUIT )
 	    {
-	      Scierror("Error: during evaluation of %s\n",initial_code);
-	      nsp_error_message_show();
+	      sci_clear_and_exit(0);
+	      return 0;
 	    }
-	  sci_clear_and_exit(1);
-	  return 1;
+	  else if  ( rep < 0 )
+	    {
+	      if ( init_errcatch== FALSE )
+		{
+		  Scierror("Error: during evaluation of %s\n",initial_script);
+		  nsp_error_message_show();
+		}
+	      sci_clear_and_exit(1);
+	      return 1;
+	    }
 	}
     }
-
+  
   if ( initial_code != NULL )
     {
       /* then execute initial given code
@@ -409,6 +461,38 @@ static void *nsp_top_level_loop_thread(void *args)
 int nsp_from_texmacs(void)
 {
   return use_texmacs ;
+}
+
+
+/* utility to execute commands associated to file name extension 
+ */
+
+static int nsp_execute_command_for_extension(const char *command_fmt,const char *fname,const char *error_fmt,int *ret)
+{
+  char fname_expanded[FSIZE+1];
+  char initial_code[FSIZE+1+128];
+  int rep;
+  nsp_path_expand(fname,fname_expanded,FSIZE);
+  sprintf(initial_code,command_fmt,fname_expanded);
+  rep =nsp_parse_eval_from_string(initial_code,init_disp,init_echo,init_errcatch,TRUE );
+  if ( rep == RET_QUIT )
+    {
+      sci_clear_and_exit(0);
+      *ret=0; 
+      return FAIL;
+    }
+  else if  ( rep < 0 )
+    {
+      if ( init_errcatch== FALSE )
+	{
+	  Scierror(error_fmt,fname);
+	  nsp_error_message_show();
+	}
+      sci_clear_and_exit(1);
+      *ret=1;
+      return FAIL;
+    }
+  return OK;
 }
 
 /*-------------------------------------------------------
