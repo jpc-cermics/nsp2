@@ -18,11 +18,20 @@
  */
 
 #define  NspBlock_Private 
-#include "nsp/object.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/parse.h"
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/object.h>
+#include <nsp/gframe.h>
+#include <nsp/block.h>
+#include <nsp/link.h>
+#include <nsp/connector.h>
+#include <nsp/grint.h> /* interface definition */
+#include <nsp/pr-output.h> 
+#include <nsp/interf.h>
+#include <nsp/matutil.h>
+#include <nsp/plist.h>
+#include <nsp/parse.h>
+
 
 /* 
  * NspBlock inherits from Graphic 
@@ -110,18 +119,18 @@ NspTypeBlock *new_type_block(type_mode mode)
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
   t_grint->get_show    	=(gr_get_show *) block_get_show;
-  t_grint->set_show		=(gr_set_show *) block_set_show;
-  t_grint->draw    		=(gr_draw *) block_draw;
+  t_grint->set_show	=(gr_set_show *) block_set_show;
+  t_grint->draw    	=(gr_draw *) block_draw;
   t_grint->translate 	=(gr_translate *) block_translate;
   t_grint->set_pos  	=(gr_set_pos *) block_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) block_get_pos;
   t_grint->get_rect  	=(gr_get_rect *) block_get_rect;
-  t_grint->resize 		=(gr_resize *) block_resize;
-  t_grint->update_locks 	=(gr_update_locks *) block_update_locks;
+  t_grint->resize 	=(gr_resize *) block_resize;
+  t_grint->update_locks	=(gr_update_locks *) block_update_locks;
   t_grint->contains_pt 	=(gr_contains_pt *) block_contains_pt;
   t_grint->control_near_pt 	=(gr_control_near_pt *) block_control_near_pt;
   t_grint->lock_near_pt 	=(gr_lock_near_pt *) block_lock_near_pt;
-  t_grint->move_control_init=(gr_move_control_init *) block_move_control_init;
+  t_grint->move_control_init    =(gr_move_control_init *) block_move_control_init;
   t_grint->move_control 	=(gr_move_control *) block_move_control;
 
   t_grint->get_number_of_locks =(gr_get_number_of_locks *) block_get_number_of_locks;

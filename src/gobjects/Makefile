@@ -4,8 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a 
 
-OBJSC = grint.o rect.o
-
+OBJSC = grint.o rect.o 
 
 OBJSF=
 

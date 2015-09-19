@@ -7,8 +7,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
-OBJSC = grint.obj rect.obj
-
+OBJSC = grint.obj rect.obj 
 
 OBJSF=
 

@@ -13,7 +13,6 @@
 #include "nsp/object.h"
 #include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
-#include "nsp/graphics-old/Graphics.h"
 
 /**
  * NspGridBlock:

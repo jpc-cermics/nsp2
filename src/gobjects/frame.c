@@ -18,11 +18,17 @@
  */
 
 #define  GFrame_Private 
-#include "nsp/graphics-old/Graphics.h"
-#include "nsp/object.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/object.h>
+#include <nsp/gframe.h>
+#include <nsp/block.h>
+#include <nsp/link.h>
+#include <nsp/connector.h>
+#include <nsp/grint.h> /* interface definition */
+#include <nsp/pr-output.h> 
+#include <nsp/interf.h>
+#include <nsp/matutil.h>
 #include "gridblock.h" 
 
 typedef enum _list_move_action list_move_action; 
@@ -805,7 +811,7 @@ static int int_meth_gf_get_selection_copy(void *self,Stack stack, int rhs, int o
    * we assume that obj implements grint interface 
    */
   bf = GR_INT(obj->basetype->interface);
-  if ((obj = bf->full_copy(obj))== NULLOBJ)  return RET_BUG;
+  if ((obj =nsp_object_full_copy(obj))== NULLOBJ)  return RET_BUG;
   if ((bool = nsp_create_boolean_object(NVOID,TRUE)));
   MoveObj(stack,1,bool);
   MoveObj(stack,2,obj);
@@ -1555,7 +1561,7 @@ NspList *nsp_gframe_get_hilited_list(nspgframe *gf, int full_copy)
 	    {
 	      if ( full_copy == TRUE ) 
 		{
-		  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  goto err;
+		  if ((obj =nsp_object_full_copy(cloc->O))== NULLOBJ) goto err;
 		  if ( nsp_object_set_name(obj,"lel") == FAIL)goto err;
 
 		}
@@ -2244,12 +2250,14 @@ NspObject * nsp_gframe_create_new_block(NspGFrame *F)
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
   NspBlock *B;
+  NspGraphic *G;
   /* unhilite all */
   nsp_gframe_unhilite_objs(F,FALSE);
   B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
+  G= (NspGraphic *) B;
   if ( B == NULLBLOCK) return NULLOBJ;
   B->obj->frame = F->obj;
-  B->obj->hilited = TRUE;
+  G->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
@@ -2318,12 +2326,13 @@ NspObject * nsp_gframe_create_new_connector(NspGFrame *F)
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,4,4}, pt[]={0,100};
   NspConnector *B;
+  NspGraphic *G = (NspGraphic *) B;
   /* unhilite all */
   nsp_gframe_unhilite_objs(F,FALSE);
   B=connector_create("fe",rect,color,thickness,background,NULL);
   if ( B == NULL) return NULLOBJ;
   B->obj->frame = F->obj;
-  B->obj->hilited = TRUE;
+  G->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
@@ -2382,6 +2391,7 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
   int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
+  NspGraphic *G;
   NspTypeGRint *bf;
   /* unhilite all */
   nsp_gframe_unhilite_objs(F,FALSE);
@@ -2393,12 +2403,11 @@ NspObject * nsp_gframe_create_new_link(NspGFrame *F)
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
+  G= (NspGraphic *)L;
   L->obj->frame = F->obj;
-
   bf = GR_INT(((NspObject *) L)->basetype->interface);
-
   if ( L == NULLLINK) return NULLOBJ;
-  L->obj->hilited = TRUE;
+  G->obj->hilited = TRUE;
   L->obj->poly->R[0]=mpt[0];
   L->obj->poly->R[1]=mpt[0];
   while ( wstop==0 ) 
@@ -2620,7 +2629,7 @@ static NspList * nsp_gframe_list_full_copy(NspList *L,int hilited_only)
 	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
 	  if ( hilited_only == FALSE || bf->get_hilited(cloc->O) == TRUE) 
 	    {
-	      if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	      if ((obj =nsp_object_full_copy(cloc->O))== NULLOBJ) goto err;
 	      if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }
