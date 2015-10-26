@@ -281,9 +281,9 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	   * thus we have to store events in queue.
 	   */
 #if GTK_CHECK_VERSION(3,0,0)
-      gdk_window_get_device_position(GS_GET_WINDOW(gc->private->drawing), NULL, &x, &y, &state);
+      gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), NULL, &x, &y, &state);
 #else
-      gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
+      gdk_window_get_pointer (gtk_widget_get_window(gc->private->drawing), &x, &y, &state);
 #endif
 	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
 	  nsp_enqueue(&gc->queue,&ev);
@@ -291,9 +291,9 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
       else
 	{
 #if GTK_CHECK_VERSION(3,0,0)
-	  gdk_window_get_device_position(GS_GET_WINDOW(gc->private->drawing), NULL, &x, &y, &state);
+	  gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), NULL, &x, &y, &state);
 #else
-	  gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
+	  gdk_window_get_pointer (gtk_widget_get_window(gc->private->drawing), &x, &y, &state);
 #endif
 	  nsp_event_info.x=x ; nsp_event_info.y=y;
 	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow;
@@ -409,7 +409,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
 	  if ( bcg  != NULL)
 	    {
 	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
-	      gdk_window_set_cursor(GS_GET_WINDOW(bcg->private->drawing),cursor);
+	      gdk_window_set_cursor(gtk_widget_get_window(bcg->private->drawing),cursor);
 	    }
 	}
     }
@@ -417,7 +417,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
     {
       if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
 	cursor =  ( flag == 0 ) ? Xgc->private->ccursor : Xgc->private->gcursor;
-	gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),cursor);
+	gdk_window_set_cursor (gtk_widget_get_window(Xgc->private->drawing),cursor);
       }
     }
 }
@@ -768,7 +768,7 @@ static void delete_window(BCG *dd,int intnum)
       if ( winxgc->private->window != NULL)
 	{
 #if defined(PERIGL) && !defined(PERIGLGTK)
-	  gdk_window_unset_gl_capability(GS_GET_WINDOW(winxgc->private->drawing));
+	  gdk_window_unset_gl_capability(gtk_widget_get_window(winxgc->private->drawing));
 #endif
 	  gtk_widget_destroy(winxgc->private->window);
 	}
@@ -998,11 +998,11 @@ target_drag_data_received  (GtkWidget          *widget,
 	       */
 	      Xgc = window_list_search(winnum);
 #if GTK_CHECK_VERSION(3,0,0)
-	      gdk_window_get_device_position(GS_GET_WINDOW(Xgc->private->drawing),
+	      gdk_window_get_device_position(gtk_widget_get_window(Xgc->private->drawing),
 					     gdk_drag_context_get_device (context),
 					     &x1, &y1, &state);
 #else
-	      gdk_window_get_pointer (GS_GET_WINDOW(Xgc->private->drawing), &x1, &y1, &state);
+	      gdk_window_get_pointer (gtk_widget_get_window(Xgc->private->drawing), &x1, &y1, &state);
 #endif
 
 	      if ( nsp_new_graphics() == TRUE)

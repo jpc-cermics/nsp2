@@ -224,7 +224,7 @@ function menu=create_right_menu (win,xc,yc)
   global('GF');
   s_win='win'+string(win);
   
-  tearoff=%t;
+  tearoff=exists('gtktearoffmenuitem_new','callable');
   menu = gtkmenu_new ();
   if tearoff then 
     menuitem = gtktearoffmenuitem_new ();

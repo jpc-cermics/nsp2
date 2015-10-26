@@ -103,6 +103,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   private->zzin_expose= FALSE;
   private->protect= FALSE;
   private->draw= FALSE;
+  private->draw_init= TRUE;
   private->gcol_bg = white;
   private->gcol_fg = black;
 #ifdef PERIGL
@@ -186,7 +187,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
 	      cairo_surface_destroy (surface);
 	    }
 	}
-      NewXgc->private->cairo_cr = cairo_cr;
+      NewXgc->private->cairo_drawable_cr = cairo_cr;
     }
 #endif
 
@@ -204,8 +205,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   nsp_fonts_initialize(NewXgc);
   nsp_initialize_gc(NewXgc);
   NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
-  NewXgc->graphic_engine->xset_wresize(NewXgc,1);
-
+  
   /* attach a figure to the graphic window */
   if ( private->window != NULL)
     {
@@ -248,6 +248,19 @@ static GtkTargetEntry target_table[] = {
 
 static guint n_targets = sizeof(target_table) / sizeof(target_table[0]);
 
+
+static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
+				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+
+static GtkWidget *nsp_gtk_vbox_new(void)
+{
+#if GTK_CHECK_VERSION(3,0,0)
+  return gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else 
+  return gtk_vbox_new (FALSE, 0);
+#endif
+}
+
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -285,12 +298,17 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* create window etc */
   if ( wdim != NULL )
     {
-      dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
+      dd->CWindowWidth = iw = wdim[0]; /*  / pixelWidth(); */
       dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
+    }
+  else if ( wpdim != NULL )
+    {
+      dd->CWindowWidth = iw = wpdim[0]; /*  / pixelWidth(); */
+      dd->CWindowHeight = ih = wpdim[1]; /*  pixelHeight(); */
     }
   else
     {
-      dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
+      dd->CWindowWidth = iw = 600; /*  / pixelWidth(); */
       dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
     }
 
@@ -314,67 +332,51 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
       gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
-      /* gtk_widget_realize(dd->private->window);*/
-#if GTK_CHECK_VERSION(3,0,0)
-      vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-#else 
-      vbox = gtk_vbox_new (FALSE, 0);
-#endif
+      vbox = nsp_gtk_vbox_new();
       gtk_box_pack_start (GTK_BOX (box), vbox, TRUE, TRUE, 0);
     }
-
-  /* gtk_widget_show (vbox); */
-#if GTK_CHECK_VERSION(3,0,0)
-  dd->private->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-#else 
-  dd->private->vbox =  gtk_vbox_new (FALSE, 0); 
-#endif
+  
+  dd->private->vbox = nsp_gtk_vbox_new();
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
   
-  /* menu */
+  /* menu will be inserted in private->vbox */
   dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
   dd->private->menubar = NULL;
   create_graphic_window_menu(dd);
-
   /* toolbar */
   /*
-    nsp_gwin_add_ui_manager(dd,vbox);
-  */
-
-  /* status bar */
-
+   * nsp_gwin_add_ui_manager(dd,vbox);
+   */
+  /* status bar in vbox */
   dd->private->CinfoW = gtk_statusbar_new ();
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
-
+  
   /* create a new scrolled window. */
   dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
 
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
   /* fix min size of the scrolled window */
   if ( wpdim != NULL)
-    gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
+    {
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+				      GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
+      gtk_widget_set_size_request (scrolled_window,Min(wpdim[0],iw),Min(wpdim[1],ih));
+    }
   else
-    gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
+    {
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+				      GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+      gtk_widget_set_size_request (scrolled_window,iw,ih);
+    }
 
   /* place and realize the scrolled window  */
-
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
-
+  
   if ( is_top == TRUE )
     gtk_widget_realize(scrolled_window);
   else
     gtk_widget_show(scrolled_window);
-
-  if ( viewport_pos != NULL )
-    {
-      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[0]);
-      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[1]);
-    }
+  
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
 #if defined(PERIGL) && !defined(PERIGLGTK)
@@ -399,9 +401,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		      target_table, n_targets ,GDK_ACTION_COPY);
   g_signal_connect ((dd->private->drawing), "drag_data_get",
 		    G_CALLBACK (target_drag_data_get), NULL);
-#endif
 
-#if 0
   g_signal_connect ((dd->private->drawing), "drag_drop",
 		    G_CALLBACK( target_drag_drop), NULL);
 #endif
@@ -457,9 +457,14 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   g_signal_connect((dd->private->drawing), "configure_event",
 		   G_CALLBACK(configure_event), (gpointer) dd);
 
+  g_signal_connect((dd->private->window), "configure_event",
+		   G_CALLBACK(window_configure_event), (gpointer) dd);
+
 #if GTK_CHECK_VERSION(3,0,0)
   g_signal_connect((dd->private->drawing), "draw",
 		   G_CALLBACK(draw_callback), (gpointer) dd);
+  g_signal_connect((dd->private->scrolled), "draw",
+		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
 #else
   g_signal_connect((dd->private->drawing), "expose_event",
 		   G_CALLBACK(expose_event_new), (gpointer) dd);
@@ -498,6 +503,23 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       gtk_widget_realize(dd->private->drawing);
     }
 
+  if ( viewport_pos != NULL )
+    {
+      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[0]);
+      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[1]);
+    }
+  
+  if ( wpdim != NULL)
+    {
+      dd->CurResizeStatus = 0;
+    }
+  else
+    {
+      dd->CurResizeStatus = 1;
+    }
+  
   /* let other widgets use the default colour settings */
   /* gtk_widget_pop_visual(); */
   /* gtk_widget_pop_colormap(); */

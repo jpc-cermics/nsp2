@@ -65,7 +65,7 @@ static const int symbols[] =
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   int old= xset_pattern(Xgc,Xgc->NumBackground);
   if ( r != NULL)
     cairo_rectangle (cr,r->x,r->y,r->width,r->height);
@@ -81,7 +81,7 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
 
 static void drawline(BCG *Xgc,double x1, double yy1, double x2, double y2)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_move_to(cr,x1,yy1);
   cairo_line_to(cr,x2,y2);
   cairo_stroke(cr);
@@ -137,7 +137,7 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 
 static void drawrectangle(BCG *Xgc,const double rect[])
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_stroke (cr);
 }
@@ -146,7 +146,7 @@ static void drawrectangle(BCG *Xgc,const double rect[])
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_fill (cr);
 }
@@ -218,7 +218,7 @@ static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 
 static void _draw_fill_arc(BCG *Xgc, double arc[], int flag)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   double xc, yc, /* radius,*/ angle1, angle2;
   xc = arc[0]+arc[2]/2.0;
   yc = arc[1]+arc[3]/2.0;
@@ -323,7 +323,7 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
 
 static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_status_t status;
   int n1,i;
   if (closeflag == 1) n1 =n+1;else n1= n;
@@ -350,7 +350,7 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 
 static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_status_t status;
   int i;
   /* if (closeflag == 1) n1 = n+1;else n1= n; */
@@ -370,7 +370,7 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 
 static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color )
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_status_t status;
   int i;
   /*    */
@@ -463,7 +463,7 @@ static void draw_mark(BCG *Xgc,double *x, double *y)
 {
   double dx,dy;
   PangoRectangle ink_rect;
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   int code = symbols[Xgc->CurHardSymb];
   gchar symbol_code[4], *iter = symbol_code;
 
@@ -491,7 +491,7 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
@@ -583,7 +583,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 {
   GdkPixbuf *pixbuf=pix;
   int w,h;
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_save (cr);
   w = gdk_pixbuf_get_width (pixbuf);
   h = gdk_pixbuf_get_height (pixbuf);
@@ -598,7 +598,7 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
 {
   int w,h, status ;
   cairo_surface_t *image;
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
 
   image = cairo_image_surface_create_from_png (fname);
   cairo_save (cr);
@@ -634,7 +634,7 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
 
 static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   if ( Xgc->ClipRegionSet == 1 )
     {
       cairo_reset_clip(cr);
@@ -656,7 +656,7 @@ static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 
 static void xset_unclip(BCG *Xgc)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
 
   if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
@@ -724,7 +724,7 @@ static int xget_alufunction(BCG *Xgc)
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   if ( value == 0)
     {
       /* FIXME: proper width in double ? */
@@ -771,7 +771,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_set_source_rgb(cr,
 		       Xgc->private->gcol_bg.red/65535.0,
 		       Xgc->private->gcol_bg.green/65535.0,
@@ -789,15 +789,14 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 
 static void pixmap_resize(BCG *Xgc)
 {
-  if ( Xgc->CurPixmapStatus == 1)
+  if ( Xgc->CurPixmapStatus != 0)
     {
-      int x= Xgc->CWindowWidth;
-      int y= Xgc->CWindowHeight;
-      /* create a new pixmap */
-      /* GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1); */
-      cairo_surface_t *temp = gdk_window_create_similar_surface (GS_GET_WINDOW(Xgc->private->drawing),
-								 CAIRO_CONTENT_COLOR,
-								 x,y);
+      int width, height;
+      cairo_surface_t *temp;
+      nsp_gtk_widget_get_size(Xgc->private->drawing,&width,&height);
+      temp = gdk_window_create_similar_surface (gtk_widget_get_window(Xgc->private->drawing),
+						CAIRO_CONTENT_COLOR,
+						width,height);
       if ( temp  == NULL )
 	{
 	  xinfo(Xgc,"No more space to create cairo surface");
@@ -805,12 +804,12 @@ static void pixmap_resize(BCG *Xgc)
 	}
       g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
-      pixmap_clear_rect(Xgc,0,0,x,y);
+      if ( Xgc->private->cairo_extra_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_extra_pixmap_cr);
+      Xgc->private->cairo_extra_pixmap_cr = cairo_create (Xgc->private->extra_pixmap);
+      Xgc->private->cairo_drawable_cr = Xgc->private->cairo_extra_pixmap_cr;
+      pixmap_clear_rect(Xgc,0,0,width,height);
     }
 }
-
 
 /**
  * xset_pixmapOn:
@@ -826,48 +825,37 @@ static void xset_pixmapOn(BCG *Xgc,int num)
   if ( Xgc->CurPixmapStatus == num1 ) return;
   if ( num1 == 1 )
     {
-      /* switch to extra pixmap mode */
-      if ( Xgc->private->extra_pixmap != NULL)
+      /* we switch to extra pixmap mode */
+      int width, height;
+      cairo_surface_t *temp;
+      nsp_gtk_widget_get_size(Xgc->private->drawing,&width,&height);
+      temp = gdk_window_create_similar_surface (gtk_widget_get_window(Xgc->private->drawing),
+						CAIRO_CONTENT_COLOR,
+						width,height);
+      if ( temp  == NULL )
 	{
-	  Xgc->private->drawable = Xgc->private->extra_pixmap;
-	  if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-	  Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
-	  Xgc->CurPixmapStatus = 1;
+	  xinfo(Xgc,"Not enough space to switch to Animation mode");
+	  return;
 	}
-      else
-	{
-	  /* create a new pixmap */
-	  /* GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
-							     Xgc->CWindowWidth, Xgc->CWindowHeight,
-							     -1);*/
-	  cairo_surface_t *temp = gdk_window_create_similar_surface (GS_GET_WINDOW(Xgc->private->drawing),
-							     CAIRO_CONTENT_COLOR,
-							     Xgc->CWindowWidth, Xgc->CWindowHeight);
-
-	  if ( temp  == NULL )
-	    {
-	      xinfo(Xgc,"Not enough space to switch to Animation mode");
-	    }
-	  else
-	    {
-	      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
-	      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-	      Xgc->private->cairo_cr = cairo_create (Xgc->private->extra_pixmap);
-	      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
-	      Xgc->CurPixmapStatus = 1;
-	    }
-	}
+      if ( Xgc->private->extra_pixmap != NULL) g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
+      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
+      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+      if ( Xgc->private->cairo_extra_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_extra_pixmap_cr);
+      Xgc->private->cairo_extra_pixmap_cr = cairo_create (Xgc->private->extra_pixmap);
+      Xgc->private->cairo_drawable_cr = Xgc->private->cairo_extra_pixmap_cr;
+      pixmap_clear_rect(Xgc,0,0, width,height);
+      Xgc->CurPixmapStatus = 1;
     }
   else if ( num1 == 0 )
     {
       /* deleting and removing the extra pixmap as the default drawable */
       xinfo(Xgc," ");
-      g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
+      if ( Xgc->private->extra_pixmap != NULL) g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = Xgc->private->pixmap;
-      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = cairo_create (Xgc->private->pixmap);
+      if ( Xgc->private->cairo_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_pixmap_cr);
+      Xgc->private->cairo_pixmap_cr = cairo_create (Xgc->private->pixmap);
+      Xgc->private->cairo_drawable_cr = Xgc->private->cairo_pixmap_cr;
       Xgc->CurPixmapStatus = 0;
     }
   else
@@ -876,11 +864,11 @@ static void xset_pixmapOn(BCG *Xgc,int num)
        * but extra_pixmap is not destroyed
        */
       Xgc->private->drawable = Xgc->private->pixmap;
-      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
-      Xgc->private->cairo_cr = cairo_create (Xgc->private->pixmap);
+      if ( Xgc->private->cairo_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_pixmap_cr);
+      Xgc->private->cairo_pixmap_cr = cairo_create (Xgc->private->pixmap);
+      Xgc->private->cairo_drawable_cr = Xgc->private->cairo_pixmap_cr;
       Xgc->CurPixmapStatus = 0;
     }
-
 }
 
 /**
@@ -895,7 +883,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 
 static int  xset_pattern(BCG *Xgc,int color)
 {
-  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   double rgb[3];
   int old = xget_pattern(Xgc);
   /* gives wrong results in new_graphics
@@ -958,7 +946,7 @@ int nsp_cairo_print_deprecated(int win_num,cairo_t *cr, int width,int height)
        * we need here to avoid the fact that during the
        * delete the window is erased
        */
-      Xgc1->private->cairo_cr = NULL;
+      Xgc1->private->cairo_drawable_cr = NULL;
       /* nsp_gr_delete(win); */
       Xgc1->actions->destroy(Xgc1);
     }
@@ -1068,8 +1056,8 @@ static void nsp_fonts_initialize(BCG *Xgc)
     {
       /* cairo is not always used for a widget */
       Xgc->private->context= NULL;
-      Xgc->private->layout = pango_cairo_create_layout(Xgc->private->cairo_cr);
-      Xgc->private->mark_layout = pango_cairo_create_layout(Xgc->private->cairo_cr);
+      Xgc->private->layout = pango_cairo_create_layout(Xgc->private->cairo_drawable_cr);
+      Xgc->private->mark_layout = pango_cairo_create_layout(Xgc->private->cairo_drawable_cr);
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }

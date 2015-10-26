@@ -45,18 +45,16 @@
 
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
+static void nsp_drawing_resize(BCG *dd,int width, int height);
 
 #ifdef PERICAIRO
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
+static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
 #endif 
 #endif 
-
-#ifdef GSEAL_ENABLE
-#define GS_GET_WINDOW(x) gtk_widget_get_window(x)
-#else
-#define GS_GET_WINDOW(x) (x)->window
-#endif
 
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
@@ -99,17 +97,10 @@ static void invalidate(BCG *Xgc,void *rect)
   if ( Xgc->private->drawing == NULL) return;
   if ( rect == NULL )
     {
-#ifdef GSEAL_ENABLE
       gtk_widget_get_allocation (Xgc->private->drawing,&Xgc->private->invalidated);
-      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),
+      gdk_window_invalidate_rect(gtk_widget_get_window(Xgc->private->drawing),
 				 &Xgc->private->invalidated,
 				 FALSE);
-#else
-      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),
-				 &Xgc->private->drawing->allocation,
-				 FALSE);
-      Xgc->private->invalidated = Xgc->private->drawing->allocation;
-#endif
     }
   else
     {
@@ -127,7 +118,7 @@ static void invalidate(BCG *Xgc,void *rect)
 	{
 	  Xgc->private->invalidated = *grect;
 	}
-      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),rect, FALSE);
+      gdk_window_invalidate_rect(gtk_widget_get_window(Xgc->private->drawing),rect, FALSE);
     }
 }
 
@@ -141,7 +132,7 @@ static void invalidate(BCG *Xgc,void *rect)
 static void process_updates(BCG *Xgc)
 {
   if ( Xgc->private->drawing == NULL) return;
-  gdk_window_process_updates (GS_GET_WINDOW(Xgc->private->drawing), FALSE);
+  gdk_window_process_updates (gtk_widget_get_window(Xgc->private->drawing), FALSE);
 }
 
 /*---------------------------------------------------------
@@ -184,7 +175,7 @@ static void xset_show(BCG *Xgc)
       if ( Xgc->private->gldrawable != NULL
 	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
 	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
-      gdk_draw_drawable(GS_GET_WINDOW(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(gtk_widget_get_window(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
@@ -195,7 +186,7 @@ static void xset_show(BCG *Xgc)
       /* we copy the extra_pixmap to the window and to the backing store pixmap
        * except for perigl which draw without a Xgc->private->pixmap.
        */
-      cr = gdk_cairo_create (GS_GET_WINDOW(Xgc->private->drawing));
+      cr = gdk_cairo_create (gtk_widget_get_window(Xgc->private->drawing));
       cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_rectangle (cr, 0, 0, Xgc->CWindowWidth, Xgc->CWindowHeight);
@@ -215,7 +206,7 @@ static void xset_show(BCG *Xgc)
       /* if we do not have an extra pixmap
        * we just make a gdk_window_process_updates
        */
-      gdk_window_process_updates (GS_GET_WINDOW(Xgc->private->drawing), FALSE);
+      gdk_window_process_updates (gtk_widget_get_window(Xgc->private->drawing), FALSE);
     }
 }
 
@@ -237,7 +228,7 @@ static void xselgraphic(BCG *Xgc)
   /* Test not really usefull: see sciwin in matdes.f */
   if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL)
     initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
-  gdk_window_show(GS_GET_WINDOW(Xgc->private->window));
+  gdk_window_show(gtk_widget_get_window(Xgc->private->window));
   gdk_flush();
 }
 
@@ -266,12 +257,8 @@ static void xend(BCG *Xgc)
 static void clearwindow(BCG *Xgc)
 {
 #ifdef PERICAIRO
-  cairo_t *cr;
-#endif
-  /* we use the private->stdgc graphic context */
-#ifdef PERICAIRO
-  cr =  Xgc->private->cairo_cr;
-  /* when exporting , figure background should not
+  cairo_t *cr = Xgc->private->cairo_drawable_cr;
+  /* when exporting, figure background should not
    * be painted when  Xgc->figure_bg_draw is not TRUE
    */
   if ( Xgc->figure_bg_draw == TRUE )
@@ -337,7 +324,7 @@ static void xset_recording(BCG *Xgc, int val)
 static void xget_windowpos(BCG *Xgc,int *x,int *y)
 {
   gint xx,yy;
-  gdk_window_get_position (GS_GET_WINDOW(Xgc->private->window),&xx,&yy);
+  gdk_window_get_position (gtk_widget_get_window(Xgc->private->window),&xx,&yy);
   *x = xx; *y =yy;
 }
 
@@ -356,24 +343,137 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
 {
   if (Xgc == NULL || Xgc->private->window ==  NULL)
     initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
-  gdk_window_move (GS_GET_WINDOW(Xgc->private->window), x,y);
+  gdk_window_move (gtk_widget_get_window(Xgc->private->window), x,y);
 }
 
 /**
  * xget_windowdim:
  * @Xgc: a #BCG
- * @x: an int pointer
- * @y: an int pointer
+ * @width: an int pointer
+ * @height: an int pointer
  *
  * set (@x,@y) to the dimension of the graphic area.
  *
  **/
 
-static void xget_windowdim(BCG *Xgc,int *x, int *y)
+static void xget_windowdim(BCG *Xgc,int *width, int *height)
 {
   /* the two dimensions are always updated */
-  *x =  Xgc->CWindowWidth;
-  *y =  Xgc->CWindowHeight;
+  nsp_gtk_widget_get_size (Xgc->private->drawing,width,height);
+#if 0 
+  {
+    int w,h;
+    nsp_gtk_widget_get_size (Xgc->private->window,&w,&h);
+    Sciprintf("window (%d,%d)\n",w,h);
+    nsp_gtk_widget_get_size (Xgc->private->vbox,&w,&h);
+    Sciprintf("vbox (%d,%d)\n",w,h);
+    nsp_gtk_widget_get_size (Xgc->private->scrolled,&w,&h);
+    Sciprintf("scrolled (%d,%d)\n",w,h);
+    nsp_gtk_widget_get_size (GTK_WIDGET(gtk_scrolled_window_get_hscrollbar(GTK_SCROLLED_WINDOW(Xgc->private->scrolled))),&w,&h);
+    Sciprintf("scrolled adjustment (%d,%d)\n",w,h);
+    Sciprintf("drawing (%d,%d)\n",w,h);
+  }
+#endif
+}
+
+/**
+ * nsp_gtk_widget_get_size:
+ * @widget: a #GtkWidget
+ * @width: a gint pointer 
+ * @height: a gint pointer 
+ * 
+ * returns in @width and @height the allocated sizes of the given 
+ * widget.
+ **/
+
+static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height)
+{
+#if GTK_CHECK_VERSION(3,0,0)
+  *width = gtk_widget_get_allocated_width (widget);
+  *height = gtk_widget_get_allocated_height (widget);
+#else
+  *width = widget->allocation.width;
+  *height = widget->allocation.height;
+#endif
+}
+
+/**
+ * nsp_remove_hints:
+ * @Xgc: a #BCG
+ *
+ * remove hints on the graphic widgets associated to @Xgc.
+ **/
+
+static void nsp_remove_hints(BCG *Xgc)
+{
+  Sciprintf("remove hints and size requests\n");
+  gtk_widget_set_size_request (Xgc->private->window,-1,-1);
+  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
+				 Xgc->private->window,
+				 NULL,0);
+  if ( Xgc->CurResizeStatus == 1 ) 
+    {
+      Sciprintf("remove hints to drawing\n");
+      gtk_widget_set_size_request (Xgc->private->drawing,-1,-1);
+      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
+				     Xgc->private->drawing,
+				     NULL,0);
+    }
+  gtk_widget_set_size_request (Xgc->private->scrolled,-1,-1);
+  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
+				 Xgc->private->scrolled,
+				 NULL,0);
+}
+
+/**
+ * nsp_set_geometry_hints:
+ * @Xgc: a #BCG
+ * @x: an integer
+ * @y: an integer
+ *
+ * force the size of the main widget to (@x,@y)
+ * by setting min and max hints.
+ **/
+
+static void _nsp_set_geometry_hints(GtkWidget *widget,GdkWindowHints geometry_mask,int x,int y)
+{
+  GdkGeometry geometry;
+  geometry.max_width = 	geometry.min_width = x;
+  geometry.max_height =	geometry.min_height = y;
+  gtk_window_set_geometry_hints (GTK_WINDOW(widget),widget,&geometry, geometry_mask);
+}
+
+static void nsp_set_geometry_hints(BCG *Xgc,int x,int y)
+{
+  int w,h;
+  nsp_gtk_widget_get_size (Xgc->private->window,&w,&h);
+  if ( w != x || h != y)
+    {
+      /* it is important here to call this function 
+       * only if the sizes are to be changed 
+       * because the hints will be removed by a configure event 
+       * and no configure event will be generated if the size is not changed
+       */
+      GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE |GDK_HINT_MIN_SIZE ;
+      Sciprintf("fix hints on window (%d,%d)\n",x,y);
+      _nsp_set_geometry_hints(Xgc->private->window,geometry_mask,x,y);
+    }
+}
+/**
+ * nsp_set_graphic_geometry_hints:
+ * @Xgc: a #BCG
+ * @x: an integer
+ * @y: an integer
+ *
+ * force the size of the graphic widget to min sizes (@x,@y)
+ * by setting min hints.
+ **/
+
+static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y)
+{
+  GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;
+  Sciprintf("fix min hints on graphic (%d,%d)\n",x,y);
+  _nsp_set_geometry_hints(widget,geometry_mask,x,y);
 }
 
 /**
@@ -382,101 +482,64 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * @x: an integer
  * @y: an integer
  *
- * To change the drawbox window size.
+ * Changes the drawing window size to (@x,@y)
  * Here this function set the min size of the graphic window
  * which means that if the scrolled window
- * is smaller than the min size scrollbar will be drawn
+ * is smaller than the min size scrollbar will be drawn.
  *
  **/
 
-
-static void gtk_get_size(GtkWidget *widget, gint *ww, gint *wh)
-{
-  GdkWindow *window = gtk_widget_get_window(widget);
-  *ww = gdk_window_get_width(window);
-  *wh = gdk_window_get_height(window);
-}
-
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
-  gint pw,ph,w,h;
+  gint pw,ph,w,h,sw,sh;
   if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
   if ( Xgc->CurResizeStatus == 1 )
     {
-      /* here drawing and scrolled move together */
-      gtk_get_size (Xgc->private->window,&pw,&ph);
-      gtk_get_size (Xgc->private->scrolled,&pw,&ph);
-      gtk_get_size (Xgc->private->drawing,&w,&h);
-      /* resize the graphic window */
-      gtk_window_resize(GTK_WINDOW(Xgc->private->drawing),x,y);
-      /* resize the main window at init time */
-      /* gdk_window_resize(GS_GET_WINDOW(Xgc->private->window),x+Max((pw-w),0),y+Max((ph-h),0));*/
-      /* resize the scrolled */
-      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x+Max((pw-w),0),y+Max((ph-h),0));
-      /* we want the size to be ok now and not to wait for configure_event  */
-      Xgc->CWindowWidth = x;
-      Xgc->CWindowHeight = y;
-      /* want the expose event to resize pixmap and redraw */
-      Xgc->private->resize = 1;
+      /* here drawing and scrolled have the same size */
+      nsp_gtk_widget_get_size (Xgc->private->window,&pw,&ph);
+      nsp_gtk_widget_get_size (Xgc->private->scrolled,&w,&h);
+      if ( w != x || h != y )
+	{
+	  gtk_widget_set_size_request(Xgc->private->drawing, x,y);
+	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
+	  nsp_set_geometry_hints(Xgc,x + (pw-w), y+ (ph-h));
+	  Sciprintf("fix the dimensions to (%d,%d)\n",x + (pw-w),y+(ph-h));
+	  Xgc->CWindowWidth = x;
+	  Xgc->CWindowHeight = y;
+	  Xgc->private->resize = 1;
+	}
     }
   else
     {
       /* here drawing and scrolled do not move together
-       * the scrolled window should stay larger than the drawing
+       * the scrolled window should stay smaller than the drawing
        */
-      /* inhibit_enlarge: can be changed not to allow the drawing
-       * window to be smaller than its container
-       *
-       */
-      int inhibit_enlarge = ( Xgc->CurResizeStatus == 2) ? FALSE : TRUE ;
-      int schrink = FALSE;
-      /* gint sc_w,sc_h;*/
-      GdkGeometry geometry;
-      GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE;
-      gtk_get_size (Xgc->private->window,&pw,&ph);
-      gtk_get_size (Xgc->private->drawing,&w,&h);
-      if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
-      /* resize the graphic window */
-      gtk_window_resize(GTK_WINDOW(Xgc->private->drawing),x,y);
-      /* want the scrolled window to be aware */
-      gtk_widget_set_size_request(Xgc->private->drawing, x,y);
-      /* Limit the scolled window size  */
-      /* gdk_drawable_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
-      if ( inhibit_enlarge == TRUE )
+      int hw,hh,vw,vh;
+      GtkWidget *hscrollbar= gtk_scrolled_window_get_hscrollbar(GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
+      GtkWidget *vscrollbar= gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
+      nsp_gtk_widget_get_size (Xgc->private->window,&pw,&ph);
+      nsp_gtk_widget_get_size (Xgc->private->scrolled,&sw,&sh);
+      nsp_gtk_widget_get_size (hscrollbar,&hw,&hh);
+      nsp_gtk_widget_get_size (vscrollbar,&vw,&vh);
+      nsp_gtk_widget_get_size (Xgc->private->drawing,&w,&h);
+      if ( w != x || h != y )
 	{
-	  geometry.max_width = x+15;
-	  geometry.max_height = y+15;
-	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
-					 Xgc->private->scrolled,
-					 &geometry, geometry_mask);
-	}
-      else
-	{
-	  geometry.max_width = G_MAXSHORT;
-	  geometry.max_height = G_MAXSHORT;
-	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
-					 Xgc->private->scrolled,
-					 &geometry, geometry_mask);
-	  /* if window was schrinked then scrolled must follow */
-	  if (  schrink == TRUE )
-	    {
-	      /* resize the main window */
-	      gtk_window_resize(GTK_WINDOW(Xgc->private->window),x+Max((pw-w),0),y+Max((ph-h),0));
-	    }
-	}
-      Xgc->CWindowWidth = x;
-      Xgc->CWindowHeight = y;
-      Xgc->private->resize = 1;/* be sure to put this */
-      /* here we will only generate a configure event and an expose event
-       * if the size is enlarged.
-       */
-      if ( schrink == FALSE && inhibit_enlarge == TRUE )
-	{
-	  expose_event_new( Xgc->private->drawing,NULL, Xgc);
+	  /* resize the graphic window to (x,y) 
+	   * even if the size is already correct then we will have a configure
+	   */
+	  gtk_widget_set_size_request(Xgc->private->drawing, x,y);
+	  nsp_set_graphic_geometry_hints(Xgc->private->drawing,x,y);
+	  /* the scrolled window should be Min(x+vw,sw)xMin(y+hh,sh) */
+	  gtk_widget_set_size_request(Xgc->private->scrolled, Min(x+vw,sw),Min(y+hh,sh));
+	  /* set hints on the main window */
+	  nsp_set_geometry_hints(Xgc, Min(x+vw,sw) + (pw-sw), Min(y+hh,sh) + (ph-sh));
+	  /* expose_event_new( Xgc->private->drawing,NULL, Xgc); */
+	  Xgc->CWindowWidth = x;
+	  Xgc->CWindowHeight = y;
+	  Xgc->private->resize = 1;
 	}
     }
 }
-
 
 /**
  * xget_popupdim:
@@ -484,15 +547,12 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
  * @x: an int pointer
  * @y: an int pointer
  *
- * To get the popup  window size
+ * To get the popup  window size (In fact the scrolled window)
  **/
 
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 {
-  gint xx,yy;
-  /*   gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->window),&xx,&yy); */
-  gtk_get_size (Xgc->private->scrolled,&xx,&yy);
-  *x = xx ;  *y = yy ;
+  nsp_gtk_widget_get_size (Xgc->private->scrolled,x,y);
 }
 
 /**
@@ -501,38 +561,44 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
  * @x:
  * @y:
  *
- * To change the popup window size
+ * To change the popup window size in fact the scrolled 
  *
  **/
 
 static void xset_popupdim(BCG *Xgc,int x, int y)
 {
-  if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2 )
+  GtkWidget *hscrollbar;
+  GtkWidget *vscrollbar;
+  int w,h,pw,ph,hw,hh,vw,vh,dw,dh;
+  if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
+  switch  ( Xgc->CurResizeStatus ) 
     {
-      int w,h,pw,ph, xoff, yoff;
-      gtk_get_size (Xgc->private->scrolled,&pw,&ph);
-      gtk_get_size (Xgc->private->drawing,&w,&h);
-      xoff = Max((pw-w),0);
-      yoff= Max((ph-h),0);
-      if ( (Xgc->CWindowWidth < x - xoff  ) || (Xgc->CWindowHeight <  y - yoff ))
+    case 1:  /* scrolled and graphics have the same dimensions and no-scrolled bars */
+      xset_windowdim(Xgc,x,y);
+      break;
+    case 0:
+    case 2:
+      hscrollbar= gtk_scrolled_window_get_hscrollbar(GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
+      vscrollbar= gtk_scrolled_window_get_vscrollbar(GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
+      nsp_gtk_widget_get_size (Xgc->private->window,&pw,&ph);
+      nsp_gtk_widget_get_size (Xgc->private->scrolled,&w,&h);
+      nsp_gtk_widget_get_size (Xgc->private->drawing,&dw,&dh);
+      nsp_gtk_widget_get_size (hscrollbar,&hw,&hh);
+      nsp_gtk_widget_get_size (vscrollbar,&vw,&vh);
+      if ( x != w || y != h ) 
 	{
-	  /* scrolled is larger than child we must enlarge the child
-	   * we use gtk_widget_set_size_request because if
-	   * gdk_window_resize is used the scroll bars of the scrolled window
-	   * are not properly updated.
-	   */
-	  /*  gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x-xoff,y-yoff);
-	   */
-	  gtk_widget_set_size_request (Xgc->private->drawing,x-xoff,y-yoff);
-
+	  /* resize the drawing window expecting that it generates a configure  */
+	  nsp_set_graphic_geometry_hints(Xgc->private->drawing,Max(x-vw,dw)+1, Max(y -hh,dh)+1);
+	  gtk_widget_set_size_request(Xgc->private->drawing, Max(x-vw,dw)+1, Max(y -hh,dh)+1);
+	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
+	  /* we force (x,y) sizes for scrolled by giving hints on the main widget  */
+	  nsp_set_geometry_hints(Xgc, x + (pw-w), y+(ph-h));
+	  Sciprintf("fix window to (%d,%d)\n", x + (pw-w), y+(ph-h));
+	  Xgc->CWindowWidth =  Max(x-vw,dw)+1;
+	  Xgc->CWindowHeight = Max(y-hh,dh)+1;
+	  Xgc->private->resize = 1;
 	}
-      /* for a resize of the scrolled window */
-      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x,y);
-    }
-  else
-    {
-      /* now resize the scrolled window */
-      gtk_window_resize(GTK_WINDOW(Xgc->private->scrolled),x,y);
+      break;
     }
 }
 
@@ -1008,34 +1074,49 @@ static int xget_pixmapOn(BCG *Xgc)
 
 static void xset_wresize(BCG *Xgc,int num)
 {
-  GdkGeometry geometry;
-  GdkWindowHints geometry_mask;
+  int w,h,sw,sh;
   int num1= Min(Max(num,0),2);
-  if ( num1 != Xgc->CurResizeStatus && num1 == 1)
+  switch ( Xgc->CurResizeStatus )
     {
-      /* we want here that the graphic window follows the viewport resize
-       * remove the scrolled window size hints
-       */
-      if ( Xgc->private->window == NULL ) return;
-      geometry.max_width = G_MAXSHORT;
-      geometry.max_height = G_MAXSHORT;
-      geometry_mask = GDK_HINT_MAX_SIZE ;
-      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
-				     &geometry, geometry_mask);
-      /* remove the min size request */
-      gtk_widget_set_size_request(Xgc->private->drawing,0,0);
-      Xgc->CurResizeStatus = num1 ;
+    case 0:
+    case 2:
+      switch (num1) 
+	{
+	case 0: break;
+	case 1: 
+	  nsp_gtk_widget_get_size (Xgc->private->drawing,&w,&h);
+	  nsp_gtk_widget_get_size (Xgc->private->scrolled,&sw,&sh);
+	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (Xgc->private->scrolled),
+					  GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+	  Xgc->CurResizeStatus = 1;
+	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
+					 Xgc->private->drawing,
+					 NULL,0);
+	  /* adding 1 to force a configure event */
+	  xset_windowdim(Xgc,w+1,h+1);
+	  break;
+	case 2: break;
+	}
+      break;
+    case 1:
+      switch (num1) 
+	{
+	case 1: break;
+	case 0: 
+	case 2: 
+	  nsp_gtk_widget_get_size (Xgc->private->drawing,&w,&h);
+	  nsp_gtk_widget_get_size (Xgc->private->scrolled,&sw,&sh);
+	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (Xgc->private->scrolled),
+					  GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
+	  Xgc->CurResizeStatus = num1;
+	  /* adding 1 to force a configure event */
+	  xset_windowdim(Xgc,w+1,h+1);
+	  break;
+	}
+      break;
     }
-  else
-    {
-      int w,h;
-      if ( Xgc->private->drawing == NULL ) return;
-      gtk_get_size (Xgc->private->drawing,&w,&h);
-      Xgc->CurResizeStatus = num1 ;
-      xset_windowdim(Xgc,w,h);
-    }
+  Xgc->CurResizeStatus = num1;
 }
-
 
 /**
  * xget_wresize:
@@ -1045,6 +1126,7 @@ static void xset_wresize(BCG *Xgc,int num)
  *
  * Returns:
  **/
+
 static int xget_wresize(BCG *Xgc)
 {
   return Xgc->CurResizeStatus;
@@ -1555,39 +1637,17 @@ static void xset_default(BCG *Xgc)
 
 static gint realize_event_common(GtkWidget *widget, gpointer data)
 {
-  /*
-    GdkColor white={0,0,0,0};
-    GdkColor black={0,65535,65535,65535};
-  */
   BCG *dd = (BCG *) data;
 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-
-  /* create gc */
-  /*
-  dd->private->stdgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing));
-  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
-  */
-  /* standard gc : for private->pixmap copies */
-  /* this gc could be shared by all windows */
-  /* dd->private->wgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing)); */
-  /*
-  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
-  */
-  /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
   dd->private->extra_cursor = NULL;
-  gdk_window_set_cursor(GS_GET_WINDOW(dd->private->drawing), dd->private->ccursor);
+  gdk_window_set_cursor(gtk_widget_get_window(dd->private->drawing), dd->private->ccursor);
   return TRUE;
 }
-
-
-
 
 /**
  * realize_event:
@@ -1602,30 +1662,15 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
 #if defined(PERIGTK) || defined(PERICAIRO)
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
-  BCG *dd = (BCG *) data;
+  BCG *Xgc = (BCG *) data;
   if ( realize_event_common(widget,data) == FALSE ) return FALSE;
-
-  if ( dd->private->pixmap == NULL)
-    {
-      /* We could use
-       * gtk_widget_get_allocated_width (widget),
-       * gtk_widget_get_allocated_height (widget));
-       */
-      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
-							       CAIRO_CONTENT_COLOR,
-							       dd->CWindowWidth, dd->CWindowHeight);
-      /*
-      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
-      */
-    }
-
-  /* default value is to use the background pixmap */
-  dd->private->drawable= dd->private->pixmap;  /* XXXX */
-#ifdef  PERICAIRO
-  dd->private->cairo_cr = cairo_create (dd->private->pixmap);
-#endif
+  {
+    int width, height;
+    nsp_gtk_widget_get_size (Xgc->private->drawing,&width,&height);
+    Sciprintf("In realize (%d,%d) and (%d,%d)\n",
+	      width,height, Xgc->CWindowWidth, Xgc->CWindowHeight);
+  }
+  nsp_drawing_resize(Xgc, Xgc->CWindowWidth, Xgc->CWindowHeight);
   return FALSE;
 }
 #endif
@@ -1678,14 +1723,9 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
-      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+      dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
-      /*
-      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
-      */
     }
 
   /* default value is to use the background pixmap */
@@ -1742,94 +1782,88 @@ static void realize_event_ogl(BCG *dd )
 
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
+  int width, height;
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   /* check for resize */
-  if(  gtk_widget_get_realized(dd->private->drawing))
+  if( ! gtk_widget_get_realized(dd->private->drawing) ) return FALSE;
+  if ( dd->CurResizeStatus == -1)
     {
-      if ( dd->CurResizeStatus == -1)
+      /* before initialization */
+      return FALSE ;
+    }
+  nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
+  nsp_remove_hints(dd);
+  Sciprintf("In configure: drawing is (%d,%d) event is (%d,%d)\n",
+	    width,height, event->width,event->height);
+  Sciprintf("old values were: (%d,%d)\n",
+	    dd->CWindowWidth, dd->CWindowHeight);
+
+  dd->CWindowWidth = event->width;
+  dd->CWindowHeight = event->height;
+  /* alert draw that the drawing window was resized */
+  dd->private->resize = 1;
+  if ( dd->CurResizeStatus == 2 )
+    {
+      if (0 )
 	{
-	  /* before initialization */
-	  return FALSE ;
-	}
-      else if ( dd->CurResizeStatus == 1)
-	{
-	  if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
-	    {
-	      /* printf("XXX changed to %d %d\n",event->width,event->height); */
-	      dd->CWindowWidth = event->width;
-	      dd->CWindowHeight = event->height;
-	      dd->private->resize = 1;
-	    }
+	  /* The next command when activated during a nsp_gtk_main() loop
+	   * (for example while in a xclick() or xgetmouse() will activate
+	   * the timeout_menu_check function in perigtk/event.c
+	   * and thus will produce a call to nsp_gtk_main_quit.
+	   * Unfortunately, on windows (at least with the version of gtk we use)
+	   * the  nsp_gtk_main_quit call will not produce an exit from nsp_gtk_main
+	   * while the graphic window is enlarged. That's why we have the next
+	   * hack and do not use the enqueue_nsp_command.
+	   */
+	  enqueue_nsp_command("redraw_requested");
 	}
       else
 	{
-	  /* The following code is useless if
-	   * inhibit_enlarge == TRUE in xset_windowdim
+	  /* This is a hack for scicos that should possibly be moved elsewhere.
+	   * when using  dd->CurResizeStatus == 2 we do not want the
+	   * graphic to be scaled when enlarging the drawing area. Thus
+	   * the scales are changed in order to take care of a larger
+	   * drawing area without scaling the graphics.
+	   *
 	   */
-	  if ( (dd->CWindowWidth < event->width) || (dd->CWindowHeight < event->height))
+	  if (dd->figure != NULL)
 	    {
-	      int w,h;
-	      if (0 &&  dd->CurResizeStatus == 2 )
+	      NspObject *Obj;
+	      if ( (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ )
 		{
-		  /* The next command when activated during a nsp_gtk_main() loop
-		   * (for example while in a xclick() or xgetmouse() will activate
-		   * the timeout_menu_check function in perigtk/event.c
-		   * and thus will produce a call to nsp_gtk_main_quit.
-		   * Unfortunately, on windows (at least with the version of gtk we use)
-		   * the  nsp_gtk_main_quit call will not produce an exit from nsp_gtk_main
-		   * while the graphic window is enlarged. That's why we have the next
-		   * hack and do not use the enqueue_nsp_command.
-		   */
-		  enqueue_nsp_command("redraw_requested");
-		}
-	      if ( dd->CurResizeStatus == 2 )
-		{
-		  /* This is a hack for scicos that should possibly be moved elsewhere.
-		   * when using  dd->CurResizeStatus == 2 we do not want the
-		   * graphic to be scaled when enlarging the drawing area. Thus
-		   * the scales are changed in order to take care of a larger
-		   * drawing area without scaling the graphics.
-		   *
-		   */
-		  if (dd->figure != NULL)
+		  if ( IsAxes(Obj))
 		    {
-		      NspObject *Obj;
-		      if ( (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ )
-			{
-			  if ( IsAxes(Obj))
-			    {
-			      double w1,w2, h1, h2, dw,dh;
-			      NspAxes *Axes = (NspAxes *) Obj;
-			      scale_i2f(&Axes->obj->scale,&w1,&h1,&dd->CWindowWidth, &dd->CWindowHeight,1);
-			      scale_i2f(&Axes->obj->scale,&w2,&h2, &event->width,  &event->height, 1);
-			      Axes->obj->arect->R[0] = Axes->obj->arect->R[0] * dd->CWindowWidth/event->width;
-			      Axes->obj->arect->R[1] = Axes->obj->arect->R[1] * dd->CWindowWidth/event->width;
-			      Axes->obj->arect->R[2] = Axes->obj->arect->R[2] * dd->CWindowHeight/event->height;
-			      Axes->obj->arect->R[3] = Axes->obj->arect->R[3] * dd->CWindowHeight/event->height;
-			      Axes->obj->frect->R[2] += (dw=w2-w1,dw);
-			      Axes->obj->rect->R[2]  += dw;
-			      Axes->obj->frect->R[1] += (dh=h2-h1,dh);
-			      Axes->obj->rect->R[1]  += dh;
-			    }
-			}
+		      double w1,w2, h1, h2, dw,dh;
+		      NspAxes *Axes = (NspAxes *) Obj;
+		      scale_i2f(&Axes->obj->scale,&w1,&h1,&dd->CWindowWidth, &dd->CWindowHeight,1);
+		      scale_i2f(&Axes->obj->scale,&w2,&h2, &event->width,  &event->height, 1);
+		      Axes->obj->arect->R[0] = Axes->obj->arect->R[0] * dd->CWindowWidth/event->width;
+		      Axes->obj->arect->R[1] = Axes->obj->arect->R[1] * dd->CWindowWidth/event->width;
+		      Axes->obj->arect->R[2] = Axes->obj->arect->R[2] * dd->CWindowHeight/event->height;
+		      Axes->obj->arect->R[3] = Axes->obj->arect->R[3] * dd->CWindowHeight/event->height;
+		      Axes->obj->frect->R[2] += (dw=w2-w1,dw);
+		      Axes->obj->rect->R[2]  += dw;
+		      Axes->obj->frect->R[1] += (dh=h2-h1,dh);
+		      Axes->obj->rect->R[1]  += dh;
 		    }
 		}
-	      /* printf("XXX changed to %d %d\n",event->width,event->height); */
-	      dd->CWindowWidth = event->width;
-	      dd->CWindowHeight = event->height;
-	      dd->private->resize = 1;
-	      gtk_get_size (dd->private->drawing,&w,&h);
-	      /* just to give the scrollbar the possibility to be updated */
-	      gtk_widget_set_size_request (dd->private->drawing,w,h);
 	    }
 	}
     }
   return FALSE;
 }
 
+static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->window != NULL, FALSE);
+  Sciprintf("configure event for window\n");
+  return FALSE;
+}
 
 /**
  * expose_event_new:
@@ -1852,6 +1886,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
+  Sciprintf("Expose event\n");
   /*
    * redraw rectangle:
    * here we use dd->private->invalidated and not
@@ -1862,26 +1897,22 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
    */
   rect = ( event != NULL) ? &dd->private->invalidated : NULL;
 
-  if(dd->private->resize != 0)
+  if( dd->private->resize != 0)
     {
       /* we need to resize the pixmap used for drawing
        */
       dd->private->resize = 0;
       if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
 
-      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+      dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
-      /*
-      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
-      */
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
 #ifdef PERICAIRO
-      if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
-      dd->private->cairo_cr = cairo_create (dd->private->pixmap);
+      if ( dd->private->cairo_pixmap_cr != NULL) cairo_destroy (dd->private->cairo_pixmap_cr);
+      dd->private->cairo_pixmap_cr = cairo_create (dd->private->pixmap);
+      dd->private->cairo_drawable_cr = dd->private->cairo_pixmap_cr;
 #endif
       /* if we have an extra pixmap we must resize */
       dd->graphic_engine->pixmap_resize(dd);
@@ -1908,13 +1939,13 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   if (event  != NULL)
     {
       /*
-      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
+      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       */
       /* uncomment to debug the drawing rectangle which is updated
-      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
+      gdk_draw_rectangle(gtk_widget_get_window(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y,
 			 event->area.width, event->area.height);
       */
@@ -1922,7 +1953,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       cairo_set_source_surface (cr, src_surface, x_dest - x_src, y_dest - y_src);
       cairo_rectangle (cr, x_dest, y_dest, width, height);
       */
-      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_t *cr = gdk_cairo_create (gtk_widget_get_window(dd->private->drawing));
       cairo_set_source_surface(cr,dd->private->pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
@@ -1932,12 +1963,12 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   else
     {
       /*
-      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc,
+      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc,
 			dd->private->pixmap,
 			0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
       */
-      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_t *cr = gdk_cairo_create (gtk_widget_get_window(dd->private->drawing));
       cairo_set_source_surface(cr,dd->private->pixmap,0,0);
       cairo_pattern_set_extend (cairo_get_source (cr), CAIRO_EXTEND_REPEAT);
       cairo_fill (cr);
@@ -1946,7 +1977,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
-      cairo_t *cr = gdk_cairo_create (GS_GET_WINDOW(dd->private->drawing));
+      cairo_t *cr = gdk_cairo_create (gtk_widget_get_window(dd->private->drawing));
       cairo_rectangle (cr,dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       cairo_stroke (cr);
     }
@@ -1962,50 +1993,95 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 #endif
 
 #if defined(PERICAIRO)
-/* the draw callback for GTk3 */
+
+/* resize/create surfaces associated to the drawing widget */
+
+static void nsp_drawing_surface_resize(BCG *dd,int width,int height,int extra_surface)
+{
+  cairo_surface_t *surface = (extra_surface) ? dd->private->pixmap : dd->private->extra_pixmap;
+  cairo_t *cr = (extra_surface) ? dd->private->cairo_pixmap_cr : dd->private->cairo_extra_pixmap_cr;
+  if ( surface ) g_object_unref(G_OBJECT(surface));
+  surface = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
+					       CAIRO_CONTENT_COLOR,
+					       width,height);
+  if ( cr != NULL) cairo_destroy (cr);
+  cr = cairo_create (surface);
+  dd->private->cairo_drawable_cr = cr;
+  dd->private->drawable = surface;
+  pixmap_clear_rect(dd,0,0,width,height);
+  if ( extra_surface) 
+    {
+      dd->private->extra_pixmap = surface;
+      dd->private->cairo_extra_pixmap_cr = cr;
+    }
+  else
+    {
+      dd->private->pixmap = surface;
+      dd->private->cairo_pixmap_cr = cr;
+    }
+}
+
+static void nsp_drawing_resize(BCG *dd,int width, int height)
+{
+  nsp_drawing_surface_resize(dd,width,height, FALSE);
+  if ( dd->CurPixmapStatus != 0)
+      {
+	/* we are using also an extra surface */
+	nsp_drawing_surface_resize(dd,width,height, TRUE);
+      }
+}
+
+
+/* the draw callback for GTk3 
+ * XXX: we use a non-double buffered window 
+ * Thus begin/end paint are not called before the 
+ * draw_callback 
+ * we should use gdk_window_set_invalidate_handler 
+ * to know the region which need to be redrawn 
+ * it is possible to obtain the extends of the region.
+ */
+
 #if GTK_CHECK_VERSION(3,0,0)
+
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
-  guint width, height;
+  gint width, height;
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  
+  nsp_gtk_widget_get_size(dd->private->drawing,&width,&height);
+  Sciprintf("Drawing: the drawing area is of size (%d,%d)\n",width,height);
 
-#if GTK_CHECK_VERSION(3,0,0)
-  width = gtk_widget_get_allocated_width (widget);
-  height = gtk_widget_get_allocated_height (widget);
-#else
-  {
-    GtkAllocation allocation;
-    gtk_widget_get_allocation (widget,&allocation);
-    width = allocation.width;
-    height = allocation.height;
-  }
-#endif 
-
-  if(dd->private->resize != 0)
+  if( dd->private->draw_init) 
+    {
+      /* first time we are in draw_callback, we need to initialize 
+       * the surface 
+       */
+      pixmap_clear_rect(dd,0,0,width,height);
+      dd->private->draw_init = FALSE;
+    }
+  
+  if( dd->private->resize != 0 ) 
     {
       /* we need to resize the surface used for drawing */
       dd->private->resize = 0;
-      if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
-
-      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
-							       CAIRO_CONTENT_COLOR,
-							       dd->CWindowWidth, dd->CWindowHeight);
-      /* update drawable */
-      if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
-      if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
-      dd->private->cairo_cr = cairo_create (dd->private->pixmap);
-      /* if we have an extra pixmap we must resize */
-      dd->graphic_engine->pixmap_resize(dd);
+      nsp_drawing_resize(dd,width,height);
       /* we want to redraw all the window */
       dd->private->draw = TRUE;
     }
-
+  
   if ( dd->private->draw == TRUE )
     {
+      /* this is a full draw which draws the current figure to 
+       * dd->private->drawable. 
+       */
       dd->private->draw = FALSE;
+      /* Here we should be able to redraw with a clip 
+       * rectangle as in expose function 
+       * XXXXXX
+       */
       if (dd->figure == NULL)
 	{
 	  dd->graphic_engine->cleararea(dd,NULL);
@@ -2017,11 +2093,18 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 	  G->type->draw(dd,G,NULL,NULL);
 	}
     }
-
+  
+  /* draws dd->private->pixmap to physical window 
+   * cr is dealing with clip not to draw everything.
+   */
+  cairo_set_source_rgb(cr,
+		       dd->private->gcol_bg.red/65535.0,
+		       dd->private->gcol_bg.green/65535.0,
+		       dd->private->gcol_bg.blue/65535.0);
   cairo_set_source_surface(cr,dd->private->pixmap,0,0);
   cairo_rectangle (cr, 0,0, width, height);
   cairo_fill (cr);
-
+  
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
@@ -2030,7 +2113,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
       cairo_rectangle (cr,dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       cairo_stroke (cr);
     }
-
+  
   dd->private->invalidated.x = 0;
   dd->private->invalidated.y = 0;
   dd->private->invalidated.width = 0;
@@ -2038,6 +2121,13 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 
   return FALSE;
 }
+
+static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
+{
+  return FALSE;
+}
+
+
 #endif
 #endif
 
@@ -2144,7 +2234,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   rect =  ( event != NULL) ? &dd->private->invalidated : NULL;
 
 
-  if(dd->private->resize != 0)
+  if( dd->private->resize != 0)
     {
       /* we need to resize the pixmap used for drawing
        */
@@ -2157,15 +2247,9 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  /* gdk_pixmap_unref(dd->private->pixmap); */
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}
-      /* allocate a new pixmap and set its open Gl capabilities */
-      /*
-      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);*/
-      dd->private->pixmap = gdk_window_create_similar_surface (GS_GET_WINDOW(dd->private->drawing),
+      dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
-
       nsp_set_gldrawable(dd,dd->private->pixmap);
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
@@ -2201,23 +2285,23 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 
   if (event  != NULL)
     {
-      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,
+      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       /* debug the drawing rectangle which is updated              */
-      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
+      gdk_draw_rectangle(gtk_widget_get_window(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y,
 			 event->area.width, event->area.height);
     }
   else
     {
-      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
     }
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
-      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
+      gdk_draw_rectangle(gtk_widget_get_window(dd->private->drawing),dd->private->wgc,FALSE,
 			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
@@ -2350,7 +2434,7 @@ void nsp_set_cursor(BCG *Xgc,int id)
   GdkCursor *cursor;
   if ( id == -1 )
     {
-      gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
+      gdk_window_set_cursor (gtk_widget_get_window(Xgc->private->drawing),
 			     Xgc->private->ccursor);
       if (Xgc->private->extra_cursor != NULL)
 	{
@@ -2367,7 +2451,7 @@ void nsp_set_cursor(BCG *Xgc,int id)
       cursor = gdk_cursor_new(id);
       if ( cursor != NULL)
 	{
-	  gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
+	  gdk_window_set_cursor (gtk_widget_get_window(Xgc->private->drawing),
 				 cursor);
 	  if (Xgc->private->extra_cursor != NULL)
 	    {

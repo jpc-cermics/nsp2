@@ -164,6 +164,7 @@ typedef struct  _gtk_data {
   GdkFont *font;
 #endif
   int resize;				/* Window resized */
+  int draw_init;			/* true when first time in draw callback */
   int zzin_expose;                      /* we are in an expose_event action*/
   int draw;                             /* when true need to redraw  */
   int protect;                          /* when true window cannot be deleted */
@@ -175,14 +176,16 @@ typedef struct  _gtk_data {
   PangoFontDescription *mark_desc;
 #ifdef PERI_PRIVATE_CAIRO
   GtkWidget *cairo_drawing;             /* Drawable window for cairo */
-  cairo_t *cairo_cr;                    /* used to draw on the private */
+  cairo_t *cairo_pixmap_cr;             /* used to draw on the private surface pixmap */
+  cairo_t *cairo_extra_pixmap_cr;       /* used to draw on the private surface pixmap */
+  cairo_t *cairo_drawable_cr;           /* set to one of the two previous */
 #endif
 #ifdef PERIGL
   int gdk_only;                         /* when true only gdk draw  */
   int gl_only;                          /* when true only gl draw  */
   TextureImage  tab_textures_font[2];   /* caracters as textures */
-  GLuint   fonte_encours;
-  GLuint   tab_base[2];
+  GLuint  fonte_encours;
+  GLuint  tab_base[2];
   GLuint  base_encours;
   t_camera camera;             /*   opengl camera */
   GdkGLContext *glcontext ;
