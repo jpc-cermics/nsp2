@@ -242,6 +242,16 @@ void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, c
     }
 }
 
+void length_scale_pixels_to_double(nsp_gcscale *scales,double *x, double *y, const double *x1, const double *y1, int n)
+{
+  int i;
+  for ( i=0 ; i < n ; i++)
+    {
+      x[i]=x1[i]/scales->Wscx1;
+      y[i]=y1[i]/scales->Wscy1;
+    }
+}
+
 /* Utilities
  * scale conversions
  */

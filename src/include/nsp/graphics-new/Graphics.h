@@ -168,10 +168,11 @@ extern int  scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int 
 extern int  scale_double_to_pixels(nsp_gcscale *scales,const double x[],const double y[],double x1[],double y1[],int n);
 
 extern void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, const int *y1, int n);
-extern void length_scale_double_to_pixels(nsp_gcscale *scales,const double *x,const double *y,
-					  double *x1, double *y1, int n);
+extern void length_scale_pixels_to_double(nsp_gcscale *scales,double *x, double *y, const double *x1, const double *y1, int n);
 
 extern void length_scale_f2i(nsp_gcscale *scales,const double *x,const double *y, int *x1, int *y1, int n);
+extern void length_scale_double_to_pixels(nsp_gcscale *scales,const double *x,const double *y, double *x1, double *y1, int n);
+
 extern void scale_f2wrect(nsp_gcscale *scales,const double x[],double x1[]);
 
 extern void Gr_Rescale_new  (char *,double *,int *,int *,int *,int *);

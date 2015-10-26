@@ -326,7 +326,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
-      length_scale_double_to_pixels(&axe->scale,&width,&height,rect1+2,rect1+3,1);
+      length_scale_pixels_to_double(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       /* Sciprintf("Taille de la boite [%f,%f] fontid=%d\n",width,height,P->obj->size); */
       bounds[0]= P->obj->x + P->obj->w/2 -width/2;
       bounds[2]= P->obj->x + P->obj->w/2 +width/2;
@@ -345,7 +345,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       if ( P->obj->size != -1 )
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
-      length_scale_double_to_pixels(&axe->scale,&width,&height,rect1+2,rect1+3,1);
+      length_scale_pixels_to_double(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       switch( P->obj->posx )
 	{
 	case GR_STR_XLEFT: bounds[0]= P->obj->x; bounds[2]= P->obj->x+width; break;
