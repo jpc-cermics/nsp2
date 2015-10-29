@@ -48,6 +48,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
 static void nsp_drawing_resize(BCG *dd,int width, int height);
+static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y);
 
 #ifdef PERICAIRO
 #if GTK_CHECK_VERSION(3,0,0)
@@ -404,7 +405,7 @@ static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height
  * remove hints on the graphic widgets associated to @Xgc.
  **/
 
-static void nsp_remove_hints(BCG *Xgc)
+static void nsp_remove_hints(BCG *Xgc,int width,int height)
 {
   Sciprintf("remove hints and size requests\n");
   gtk_widget_set_size_request (Xgc->private->window,-1,-1);
@@ -418,6 +419,12 @@ static void nsp_remove_hints(BCG *Xgc)
       gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 				     Xgc->private->drawing,
 				     NULL,0);
+    }
+  else
+    {
+      Sciprintf("update hints of drawing\n");
+      gtk_widget_set_size_request (Xgc->private->drawing,width,height);
+      nsp_set_graphic_geometry_hints(Xgc->private->drawing,width,height);
     }
   gtk_widget_set_size_request (Xgc->private->scrolled,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
@@ -1795,7 +1802,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
       return FALSE ;
     }
   nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
-  nsp_remove_hints(dd);
+  nsp_remove_hints(dd,width,height);
   Sciprintf("In configure: drawing is (%d,%d) event is (%d,%d)\n",
 	    width,height, event->width,event->height);
   Sciprintf("old values were: (%d,%d)\n",
@@ -1805,6 +1812,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   dd->CWindowHeight = event->height;
   /* alert draw that the drawing window was resized */
   dd->private->resize = 1;
+  
   if ( dd->CurResizeStatus == 2 )
     {
       if (0 )
