@@ -268,7 +268,15 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
   gint x,y;
   GdkModifierType state;
-
+#if GTK_CHECK_VERSION(3,0,0)
+  static GdkDevice *device= NULL;
+  if ( device == NULL ) 
+    {
+      GdkDisplay *display=gdk_display_get_default ();
+      GdkDeviceManager *device_manager=gdk_display_get_device_manager(display);
+      device = gdk_device_manager_get_client_pointer(device_manager);
+    }
+#endif
   if (nsp_event_info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
@@ -281,9 +289,9 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	   * thus we have to store events in queue.
 	   */
 #if GTK_CHECK_VERSION(3,0,0)
-      gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), NULL, &x, &y, &state);
+	  gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), device, &x, &y, &state);
 #else
-      gdk_window_get_pointer (gtk_widget_get_window(gc->private->drawing), &x, &y, &state);
+	  gdk_window_get_pointer (gtk_widget_get_window(gc->private->drawing), &x, &y, &state);
 #endif
 	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
 	  nsp_enqueue(&gc->queue,&ev);
@@ -291,7 +299,7 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
       else
 	{
 #if GTK_CHECK_VERSION(3,0,0)
-	  gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), NULL, &x, &y, &state);
+	  gdk_window_get_device_position(gtk_widget_get_window(gc->private->drawing), device, &x, &y, &state);
 #else
 	  gdk_window_get_pointer (gtk_widget_get_window(gc->private->drawing), &x, &y, &state);
 #endif
