@@ -95,10 +95,11 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 
   window = gtk_dialog_new_with_buttons ("Nsp choices",
 					NULL, 0,
+					"_Cancel", GTK_RESPONSE_CANCEL,
 					"_OK", GTK_RESPONSE_OK,
-					"_CANCEL", GTK_RESPONSE_CANCEL,
 					NULL);
 
+  /* gtk_dialog_set_default_response (GTK_DIALOG(window),  GTK_RESPONSE_OK); */
   /*
    * gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
    *  gtk_window_set_wmclass  (GTK_WINDOW (window), "choices", "Nsp");
@@ -119,11 +120,6 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 
   if ( use_table == TRUE  )
     {
-      /* label in a frame
-	 labelw = gtk_frame_new (title);
-	 gtk_box_pack_start (GTK_BOX (mainbox), labelw, FALSE, FALSE, 0);
-	 gtk_widget_show (labelw);
-      */
 #if GTK_CHECK_VERSION (3,0,0)
       table = gtk_grid_new();
       gtk_widget_set_hexpand (table, TRUE);
@@ -217,17 +213,10 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Mm,int Mn,int active)
 {
   int i;
-  /*
-  GtkWidget *entry_box = gtk_combo_box_new_text ();
-  for (i = 0 ; i < Mm*Mn ; i++)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (entry_box),Ms[i]);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (entry_box),Max(0,Min(Mm*Mn-1,active)) );
-  return  entry_box;
-  */
   GtkWidget *entry_box = gtk_combo_box_text_new();
   for (i = 0 ; i < Mm*Mn ; i++)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (entry_box),Ms[i]);
-  /* gtk_combo_box_set_active (GTK_COMBO_BOX_TEXT (entry_box),Max(0,Min(Mm*Mn-1,active)) ); */
+  gtk_combo_box_set_active (GTK_COMBO_BOX(entry_box), Max(0,Min(Mm*Mn-1,active)) ); 
   return  entry_box;
 
 }
@@ -434,9 +423,12 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
   dialog = gtk_file_chooser_dialog_new (title,
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
-					"_CANCEL", GTK_RESPONSE_CANCEL,
+					"_Cancel", GTK_RESPONSE_CANCEL,
 					"_OK", GTK_RESPONSE_ACCEPT,
 					NULL);
+
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog),  GTK_RESPONSE_ACCEPT);
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       char *filename,*base;
@@ -556,9 +548,11 @@ static void nsp_button_filename_open(GtkWidget *widget,void *args)
   dialog = gtk_file_chooser_dialog_new (data->title,
 					NULL,
 					action,
-					"_CANCEL", GTK_RESPONSE_CANCEL,
-					"_OPEN", GTK_RESPONSE_ACCEPT,
+					"_Cancel", GTK_RESPONSE_CANCEL,
+					"_Open", GTK_RESPONSE_ACCEPT,
 					NULL);
+  
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog),  GTK_RESPONSE_ACCEPT);
 
   if (  data->Msmn > 2 )
     {
@@ -1031,17 +1025,11 @@ static void button_clicked(GtkWidget *widget, void *Obj)
     }
 }
 
-#ifndef GTK_STOCK_EDIT
-#define GTK_STOCK_EDIT "_OK"
-#endif
-
-
-
 static GtkWidget *nsp_setup_choice_button(void *Obj,int entry_size)
 {
   GtkWidget *button;
   /* button = gtk_button_new_from_stock(GTK_STOCK_EDIT); */
-  button = gtk_button_new_with_label("EDIT");
+  button = gtk_button_new_with_label("Edit");
   g_object_set_data(G_OBJECT(button),"listarg",Obj);
   g_signal_connect (G_OBJECT(button),"clicked",G_CALLBACK (button_clicked),Obj);
   return button;
