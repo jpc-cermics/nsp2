@@ -49,6 +49,7 @@ static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, 
 static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
 static void nsp_drawing_resize(BCG *dd,int width, int height);
 static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y);
+static void nsp_configure_wait(BCG *dd);
 
 #ifdef PERICAIRO
 #if GTK_CHECK_VERSION(3,0,0)
@@ -361,7 +362,7 @@ static void xget_windowdim(BCG *Xgc,int *width, int *height)
 {
   /* the two dimensions are always updated */
   nsp_gtk_widget_get_size (Xgc->private->drawing,width,height);
-#if 0 
+#if 1
   {
     int w,h;
     nsp_gtk_widget_get_size (Xgc->private->window,&w,&h);
@@ -372,6 +373,7 @@ static void xget_windowdim(BCG *Xgc,int *width, int *height)
     Sciprintf("scrolled (%d,%d)\n",w,h);
     nsp_gtk_widget_get_size (GTK_WIDGET(gtk_scrolled_window_get_hscrollbar(GTK_SCROLLED_WINDOW(Xgc->private->scrolled))),&w,&h);
     Sciprintf("scrolled adjustment (%d,%d)\n",w,h);
+    nsp_gtk_widget_get_size (Xgc->private->drawing,&w,&h);
     Sciprintf("drawing (%d,%d)\n",w,h);
   }
 #endif
@@ -407,14 +409,15 @@ static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height
 
 static void nsp_remove_hints(BCG *Xgc,int width,int height)
 {
-  Sciprintf("remove hints and size requests\n");
+  Sciprintf("enter: nsp_remove_hints (hints and size requests)\n");
+  Xgc->private->configured = TRUE;
   gtk_widget_set_size_request (Xgc->private->window,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
 				 Xgc->private->window,
 				 NULL,0);
   if ( Xgc->CurResizeStatus == 1 ) 
     {
-      Sciprintf("remove hints to drawing\n");
+      Sciprintf("nsp_remove_hints: remove hints to drawing\n");
       gtk_widget_set_size_request (Xgc->private->drawing,-1,-1);
       gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 				     Xgc->private->drawing,
@@ -422,7 +425,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     }
   else
     {
-      Sciprintf("update hints of drawing\n");
+      Sciprintf("nsp_remove_hints: update hints of drawing\n");
       gtk_widget_set_size_request (Xgc->private->drawing,width,height);
       nsp_set_graphic_geometry_hints(Xgc->private->drawing,width,height);
     }
@@ -430,6 +433,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
 				 Xgc->private->scrolled,
 				 NULL,0);
+  Sciprintf("quit: nsp_remove_hints (hints and size requests)\n");
 }
 
 /**
@@ -462,7 +466,7 @@ static void nsp_set_geometry_hints(BCG *Xgc,int x,int y)
        * and no configure event will be generated if the size is not changed
        */
       GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE |GDK_HINT_MIN_SIZE ;
-      Sciprintf("fix hints on window (%d,%d)\n",x,y);
+      Sciprintf("fix hints on window (%d,%d)->(%d,%d)\n",w,h,x,y);
       _nsp_set_geometry_hints(Xgc->private->window,geometry_mask,x,y);
     }
 }
@@ -510,10 +514,10 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  gtk_widget_set_size_request(Xgc->private->drawing, x,y);
 	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
 	  nsp_set_geometry_hints(Xgc,x + (pw-w), y+ (ph-h));
-	  Sciprintf("fix the dimensions to (%d,%d)\n",x + (pw-w),y+(ph-h));
 	  Xgc->CWindowWidth = x;
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;
+	  nsp_configure_wait(Xgc);
 	}
     }
   else
@@ -544,6 +548,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowWidth = x;
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;
+	  nsp_configure_wait(Xgc);
 	}
     }
 }
@@ -594,16 +599,19 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
       nsp_gtk_widget_get_size (vscrollbar,&vw,&vh);
       if ( x != w || y != h ) 
 	{
-	  /* resize the drawing window expecting that it generates a configure  */
-	  nsp_set_graphic_geometry_hints(Xgc->private->drawing,Max(x-vw,dw)+1, Max(y -hh,dh)+1);
-	  gtk_widget_set_size_request(Xgc->private->drawing, Max(x-vw,dw)+1, Max(y -hh,dh)+1);
+	  int dw1 = Max(x-vw,dw), dh1 = Max(y -hh,dh);
+	  /* be sure that drawing window size changes to generates a configure  */
+	  if ( dw1 == dw && dh1 == dh ) {dw1 +=1;dh1 +=1;}
+	  nsp_set_graphic_geometry_hints(Xgc->private->drawing,dw1, dh1);
+	  gtk_widget_set_size_request(Xgc->private->drawing, dw1,dh1);
 	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
 	  /* we force (x,y) sizes for scrolled by giving hints on the main widget  */
 	  nsp_set_geometry_hints(Xgc, x + (pw-w), y+(ph-h));
 	  Sciprintf("fix window to (%d,%d)\n", x + (pw-w), y+(ph-h));
-	  Xgc->CWindowWidth =  Max(x-vw,dw)+1;
-	  Xgc->CWindowHeight = Max(y-hh,dh)+1;
+	  Xgc->CWindowWidth =  dw1;
+	  Xgc->CWindowHeight = dh1;
 	  Xgc->private->resize = 1;
+	  nsp_configure_wait(Xgc);
 	}
       break;
     }
@@ -641,18 +649,31 @@ static void xget_viewport(BCG *Xgc,int *x, int *y)
  * @x: an integer
  * @y: an integer
  *
- * To change the window size
+ * To change the drawing area position inside the 
+ * scrolled window. 
+ * If x or y is -1 we center the drawing area 
  **/
-
 
 static void xset_viewport(BCG *Xgc,int x, int y)
 {
   if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2)
     {
-      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled)),
-				(gfloat) x);
-      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled)),
-				(gfloat) y);
+      GtkScrolledWindow *scrolled_window = GTK_SCROLLED_WINDOW (Xgc->private->scrolled);
+      GtkAdjustment *hadjustment = gtk_scrolled_window_get_hadjustment(scrolled_window);
+      GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(scrolled_window);
+      if ( x == -1 || y == -1 )
+	{
+	  gdouble hpage_size, vpage_size;
+	  hpage_size = gtk_adjustment_get_page_size (hadjustment);
+	  vpage_size = gtk_adjustment_get_page_size (vadjustment);
+	  gtk_adjustment_set_value( hadjustment,(gfloat) (Xgc->CWindowWidth - hpage_size)/2);
+	  gtk_adjustment_set_value( vadjustment,(gfloat) (Xgc->CWindowHeight - vpage_size)/2);
+	}
+      else 
+	{
+	  gtk_adjustment_set_value( hadjustment, (gfloat) x);
+	  gtk_adjustment_set_value( vadjustment, (gfloat) y);
+	}
     }
 }
 
@@ -1807,11 +1828,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	    width,height, event->width,event->height);
   Sciprintf("old values were: (%d,%d)\n",
 	    dd->CWindowWidth, dd->CWindowHeight);
-
-  dd->CWindowWidth = event->width;
-  dd->CWindowHeight = event->height;
-  /* alert draw that the drawing window was resized */
-  dd->private->resize = 1;
   
   if ( dd->CurResizeStatus == 2 )
     {
@@ -1861,15 +1877,64 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	    }
 	}
     }
+
+  dd->CWindowWidth = event->width;
+  dd->CWindowHeight = event->height;
+  /* alert draw that the drawing window was resized */
+  dd->private->resize = 1;
+
   return FALSE;
+}
+
+/* wait for a configure event in the graphic window */
+
+static gint timeout_configured (void *data)
+{
+  BCG *dd = (BCG *) data;
+  if ( dd->private->configured == TRUE ) 
+    {
+      Sciprintf("TIMEOUT: Configured\n");
+      MY_THREADS_ENTER;
+      nsp_gtk_main_quit();
+      MY_THREADS_LEAVE;
+      return FALSE;
+    }
+  else
+    {
+      Sciprintf("TIMEOUT: Not configured\n");
+      return TRUE;
+    }
+}
+
+extern void controlC_handler (int sig);
+static void controlC_handler_configured(int sig)
+{
+  MY_THREADS_ENTER;
+  nsp_gtk_main_quit();
+  MY_THREADS_LEAVE;
+}
+
+static void nsp_configure_wait(BCG *dd)
+{
+  guint tid;
+  Sciprintf("enter: nsp_configure_wait\n");
+  dd->private->configured = FALSE;
+  signal(SIGINT,controlC_handler_configured);
+  tid=g_timeout_add(100,(GSourceFunc) timeout_configured, dd);
+  nsp_gtk_main();
+  g_source_remove(tid);
+  signal(SIGINT,controlC_handler);
+  Sciprintf("quit: nsp_configure_wait\n");
 }
 
 static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
+#if 0 
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->window != NULL, FALSE);
   Sciprintf("configure event for window\n");
+#endif
   return FALSE;
 }
 
