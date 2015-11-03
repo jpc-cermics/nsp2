@@ -280,7 +280,6 @@ int Xorgetchar_select(void)
 /*
  * This routine can be called to checks for all events 
  * except typed text (but testing Ctrl) and to deal with them 
- * This function is unused in the gtk version. 
  */
 
 void  nsp_check_gtk_events(void)
