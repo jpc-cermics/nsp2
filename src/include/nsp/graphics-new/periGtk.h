@@ -187,11 +187,12 @@ typedef struct  _gtk_data {
   GLuint  fonte_encours;
   GLuint  tab_base[2];
   GLuint  base_encours;
-  t_camera camera;             /*   opengl camera */
+  t_camera camera;                      /*   opengl camera */
   GdkGLContext *glcontext ;
   GdkGLDrawable *gldrawable;
 #endif
   GdkRectangle invalidated;             /* used for expose_event */
+  int          configured;              /* used to wait for configure event */
 } gui_private ;
 
 
