@@ -46,12 +46,14 @@
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+static gint scrolled_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
-static void nsp_drawing_resize(BCG *dd,int width, int height);
 static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y);
 static void nsp_configure_wait(BCG *dd);
+static void size_allocate_event (GtkWidget *widget, GdkRectangle *allocation, gpointer data);
 
 #ifdef PERICAIRO
+static void nsp_drawing_resize(BCG *dd,int width, int height);
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
 static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
@@ -409,7 +411,7 @@ static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height
 
 static void nsp_remove_hints(BCG *Xgc,int width,int height)
 {
-  Sciprintf("enter: nsp_remove_hints (hints and size requests)\n");
+  Sciprintf("enter: nsp_remove_hints size=(%d,%d)\n",width,height);
   Xgc->private->configured = TRUE;
   gtk_widget_set_size_request (Xgc->private->window,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
@@ -425,9 +427,11 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     }
   else
     {
+      int w= Xgc->CWindowWidth;
+      int h= Xgc->CWindowHeight;
       Sciprintf("nsp_remove_hints: update hints of drawing\n");
-      gtk_widget_set_size_request (Xgc->private->drawing,width,height);
-      nsp_set_graphic_geometry_hints(Xgc->private->drawing,width,height);
+      gtk_widget_set_size_request (Xgc->private->drawing,w,h);
+      nsp_set_graphic_geometry_hints(Xgc->private->drawing,w,h);
     }
   gtk_widget_set_size_request (Xgc->private->scrolled,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
@@ -485,6 +489,10 @@ static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y)
   GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;
   Sciprintf("fix min hints on graphic (%d,%d)\n",x,y);
   _nsp_set_geometry_hints(widget,geometry_mask,x,y);
+  /* 
+     gtk_window_resize(GTK_WINDOW(widget),x,y);
+     gtk_window_set_resizable (GTK_WINDOW(widget),FALSE);
+  */
 }
 
 /**
@@ -544,7 +552,6 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  gtk_widget_set_size_request(Xgc->private->scrolled, Min(x+vw,sw),Min(y+hh,sh));
 	  /* set hints on the main window */
 	  nsp_set_geometry_hints(Xgc, Min(x+vw,sw) + (pw-sw), Min(y+hh,sh) + (ph-sh));
-	  /* expose_event_new( Xgc->private->drawing,NULL, Xgc); */
 	  Xgc->CWindowWidth = x;
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;
@@ -1796,6 +1803,14 @@ static void realize_event_ogl(BCG *dd )
 #endif
 
 
+static void size_allocate_event (GtkWidget    *widget,
+               GdkRectangle *allocation,
+               gpointer      user_data)
+{
+  Sciprintf("A size allocate: (%d,%d)\n",allocation->width,allocation->height);
+}
+
+
 
 /**
  * configure_event:
@@ -1823,11 +1838,11 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
       return FALSE ;
     }
   nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
+  Sciprintf("In drawing configure: wdim (%d,%d), get_size=(%d,%d) event=(%d,%d)\n",
+	    dd->CWindowWidth, dd->CWindowHeight,
+	    width,height, 
+	    event->width,event->height);
   nsp_remove_hints(dd,width,height);
-  Sciprintf("In configure: drawing is (%d,%d) event is (%d,%d)\n",
-	    width,height, event->width,event->height);
-  Sciprintf("old values were: (%d,%d)\n",
-	    dd->CWindowWidth, dd->CWindowHeight);
   
   if ( dd->CurResizeStatus == 2 )
     {
@@ -1929,12 +1944,19 @@ static void nsp_configure_wait(BCG *dd)
 
 static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
-#if 0 
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->window != NULL, FALSE);
-  Sciprintf("configure event for window\n");
-#endif
+  Sciprintf("In window configure: event (%d,%d)\n",event->width,event->height);
+  return FALSE;
+}
+
+static gint scrolled_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
+{
+  BCG *dd = (BCG *) data;
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->window != NULL, FALSE);
+  Sciprintf("In scrolled configure: event (%d,%d)\n",event->width,event->height);
   return FALSE;
 }
 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -442,23 +442,30 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* min size of the graphic window */
   gtk_widget_set_size_request(GTK_WIDGET (dd->private->drawing), iw, ih);
 
-  /* place and realize the private->drawing area */
-  /* gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),
-     GTK_WIDGET (dd->private->drawing));
-  */
+  /* insert drawing area in the scrolled window */
+#if GTK_CHECK_VERSION(3,0,0)
   gtk_container_add(GTK_CONTAINER(scrolled_window),GTK_WIDGET (dd->private->drawing));
-
+#else 
+  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),
+					  GTK_WIDGET (dd->private->drawing));
+#endif 
   if ( is_top == TRUE )
     gtk_widget_realize(dd->private->drawing);
   else
     gtk_widget_show(dd->private->drawing);
-
+  
   /* connect to signal handlers, etc */
   g_signal_connect((dd->private->drawing), "configure_event",
 		   G_CALLBACK(configure_event), (gpointer) dd);
 
   g_signal_connect((dd->private->window), "configure_event",
 		   G_CALLBACK(window_configure_event), (gpointer) dd);
+
+  g_signal_connect((dd->private->scrolled), "configure_event",
+		   G_CALLBACK(scrolled_configure_event), (gpointer) dd);
+
+  g_signal_connect((dd->private->drawing), "size_allocate",
+		   G_CALLBACK(size_allocate_event), (gpointer) dd);
 
 #if GTK_CHECK_VERSION(3,0,0)
   g_signal_connect((dd->private->drawing), "draw",
@@ -519,8 +526,4 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     {
       dd->CurResizeStatus = 1;
     }
-  
-  /* let other widgets use the default colour settings */
-  /* gtk_widget_pop_visual(); */
-  /* gtk_widget_pop_colormap(); */
 }
