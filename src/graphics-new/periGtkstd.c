@@ -427,8 +427,8 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     }
   else
     {
-      int w= Xgc->CWindowWidth;
-      int h= Xgc->CWindowHeight;
+      int w= width;// Xgc->CWindowWidth;
+      int h= height;// Xgc->CWindowHeight;
       Sciprintf("nsp_remove_hints: update hints of drawing\n");
       gtk_widget_set_size_request (Xgc->private->drawing,w,h);
       nsp_set_graphic_geometry_hints(Xgc->private->drawing,w,h);
