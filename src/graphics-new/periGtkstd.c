@@ -45,12 +45,10 @@
 
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
-static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
-static gint scrolled_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
 static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y);
 static void nsp_configure_wait(BCG *dd);
-static void size_allocate_event (GtkWidget *widget, GdkRectangle *allocation, gpointer data);
+/* static void size_allocate_event (GtkWidget *widget, GdkRectangle *allocation, gpointer data); */
 
 #ifdef PERICAIRO
 static void nsp_drawing_resize(BCG *dd,int width, int height);
@@ -364,7 +362,7 @@ static void xget_windowdim(BCG *Xgc,int *width, int *height)
 {
   /* the two dimensions are always updated */
   nsp_gtk_widget_get_size (Xgc->private->drawing,width,height);
-#if 1
+#if 0
   {
     int w,h;
     nsp_gtk_widget_get_size (Xgc->private->window,&w,&h);
@@ -1802,14 +1800,12 @@ static void realize_event_ogl(BCG *dd )
 }
 #endif
 
-
-static void size_allocate_event (GtkWidget    *widget,
-               GdkRectangle *allocation,
-               gpointer      user_data)
+/*
+static void size_allocate_event (GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
   Sciprintf("A size allocate: (%d,%d)\n",allocation->width,allocation->height);
 }
-
+*/
 
 
 /**
@@ -1940,24 +1936,6 @@ static void nsp_configure_wait(BCG *dd)
   g_source_remove(tid);
   signal(SIGINT,controlC_handler);
   Sciprintf("quit: nsp_configure_wait\n");
-}
-
-static gint window_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
-{
-  BCG *dd = (BCG *) data;
-  g_return_val_if_fail(dd != NULL, FALSE);
-  g_return_val_if_fail(dd->private->window != NULL, FALSE);
-  Sciprintf("In window configure: event (%d,%d)\n",event->width,event->height);
-  return FALSE;
-}
-
-static gint scrolled_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
-{
-  BCG *dd = (BCG *) data;
-  g_return_val_if_fail(dd != NULL, FALSE);
-  g_return_val_if_fail(dd->private->window != NULL, FALSE);
-  Sciprintf("In scrolled configure: event (%d,%d)\n",event->width,event->height);
-  return FALSE;
 }
 
 /**

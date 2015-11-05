@@ -457,15 +457,10 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* connect to signal handlers, etc */
   g_signal_connect((dd->private->drawing), "configure_event",
 		   G_CALLBACK(configure_event), (gpointer) dd);
-
-  g_signal_connect((dd->private->window), "configure_event",
-		   G_CALLBACK(window_configure_event), (gpointer) dd);
-
-  g_signal_connect((dd->private->scrolled), "configure_event",
-		   G_CALLBACK(scrolled_configure_event), (gpointer) dd);
-
+  /* 
   g_signal_connect((dd->private->drawing), "size_allocate",
 		   G_CALLBACK(size_allocate_event), (gpointer) dd);
+  */
 
 #if GTK_CHECK_VERSION(3,0,0)
   g_signal_connect((dd->private->drawing), "draw",
