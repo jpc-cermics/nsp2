@@ -55,6 +55,7 @@ static void nsp_drawing_resize(BCG *dd,int width, int height);
 #if GTK_CHECK_VERSION(3,0,0)
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
 static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
+static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *region);
 #endif 
 #endif 
 
@@ -605,8 +606,11 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
       if ( x != w || y != h ) 
 	{
 	  int dw1 = Max(x-vw,dw), dh1 = Max(y -hh,dh);
+#define SEND_CONFIGURE 
+#if ! defined(SEND_CONFIGURE)
 	  /* be sure that drawing window size changes to generates a configure  */
 	  if ( dw1 == dw && dh1 == dh ) {dw1 +=1;dh1 +=1;}
+#endif 
 	  nsp_set_graphic_geometry_hints(Xgc->private->drawing,dw1, dh1);
 	  gtk_widget_set_size_request(Xgc->private->drawing, dw1,dh1);
 	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
@@ -616,7 +620,25 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowWidth =  dw1;
 	  Xgc->CWindowHeight = dh1;
 	  Xgc->private->resize = 1;
+#if ! defined(SEND_CONFIGURE)
 	  nsp_configure_wait(Xgc);
+#else 
+	  {
+	    /* we directly send a configure */
+	    GdkEvent *event = gdk_event_new (GDK_CONFIGURE);
+	    GtkAllocation allocation;
+	    gtk_widget_get_allocation (Xgc->private->drawing, &allocation);
+	    event->configure.window = g_object_ref (gtk_widget_get_window(Xgc->private->drawing));
+	    event->configure.send_event = TRUE;
+	    event->configure.x = allocation.x;
+	    event->configure.y = allocation.y;
+	    event->configure.width = allocation.width;
+	    event->configure.height = allocation.height;
+	    gtk_widget_event (Xgc->private->drawing, event);
+	    gdk_event_free (event);
+	    nsp_check_gtk_events();
+	  }
+#endif 
 	}
       break;
     }
@@ -2105,6 +2127,15 @@ static void nsp_drawing_resize(BCG *dd,int width, int height)
 }
 
 
+#if GTK_CHECK_VERSION(3,0,0)
+static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *region)
+{
+  Sciprintf("Inside the nsp_drawing_invalidate_handler\n");
+}
+
+#endif 
+
+
 /* the draw callback for GTk3 
  * XXX: we use a non-double buffered window 
  * Thus begin/end paint are not called before the 
@@ -2126,6 +2157,11 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   nsp_gtk_widget_get_size(dd->private->drawing,&width,&height);
   Sciprintf("Drawing: the drawing area is of size (%d,%d)\n",width,height);
+  {
+    double x1,x2,x3,x4;
+    cairo_clip_extents (cr,&x1,&x2,&x3,&x4);
+    Sciprintf("Clip extents %f,%f,%f,%f\n",x1,x2,x3,x4);
+  }
 
   if( dd->private->draw_init) 
     {
@@ -2138,6 +2174,8 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if( dd->private->resize != 0 ) 
     {
+      Sciprintf("Drawing: make a resize of pixmap \n");
+
       /* we need to resize the surface used for drawing */
       dd->private->resize = 0;
       nsp_drawing_resize(dd,width,height);
@@ -2147,6 +2185,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if ( dd->private->draw == TRUE )
     {
+      Sciprintf("Drawing: redraw to pixmap \n");
       /* this is a full draw which draws the current figure to 
        * dd->private->drawable. 
        */
