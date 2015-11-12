@@ -410,7 +410,7 @@ static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height
 
 static void nsp_remove_hints(BCG *Xgc,int width,int height)
 {
-  Sciprintf("enter: nsp_remove_hints size=(%d,%d)\n",width,height);
+  Sciprintf("nsp_remove_hints size=(%d,%d)",width,height);
   Xgc->private->configured = TRUE;
   gtk_widget_set_size_request (Xgc->private->window,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
@@ -418,7 +418,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
 				 NULL,0);
   if ( Xgc->CurResizeStatus == 1 ) 
     {
-      Sciprintf("nsp_remove_hints: remove hints to drawing\n");
+      Sciprintf(" drawing hints removed ");
       gtk_widget_set_size_request (Xgc->private->drawing,-1,-1);
       gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 				     Xgc->private->drawing,
@@ -426,9 +426,9 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     }
   else
     {
-      int w= width;// Xgc->CWindowWidth;
-      int h= height;// Xgc->CWindowHeight;
-      Sciprintf("nsp_remove_hints: update hints of drawing\n");
+      int w= width;
+      int h= height;
+      Sciprintf(" drawing hints=(%d,%d)", w,h);
       gtk_widget_set_size_request (Xgc->private->drawing,w,h);
       nsp_set_graphic_geometry_hints(Xgc->private->drawing,w,h);
     }
@@ -436,7 +436,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
 				 Xgc->private->scrolled,
 				 NULL,0);
-  Sciprintf("quit: nsp_remove_hints (hints and size requests)\n");
+  Sciprintf(" quit\n");
 }
 
 /**
@@ -606,7 +606,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
       if ( x != w || y != h ) 
 	{
 	  int dw1 = Max(x-vw,dw), dh1 = Max(y -hh,dh);
-#define SEND_CONFIGURE 
+/* #define SEND_CONFIGURE  */
 #if ! defined(SEND_CONFIGURE)
 	  /* be sure that drawing window size changes to generates a configure  */
 	  if ( dw1 == dw && dh1 == dh ) {dw1 +=1;dh1 +=1;}

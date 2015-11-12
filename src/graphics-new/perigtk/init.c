@@ -468,7 +468,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   g_signal_connect((dd->private->scrolled), "draw",
 		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
   
-  gdk_window_set_invalidate_handler (GDK_WINDOW(dd->private->scrolled),
+  gdk_window_set_invalidate_handler (GDK_WINDOW(dd->private->window),
 				     nsp_drawing_invalidate_handler);
   
 #else
