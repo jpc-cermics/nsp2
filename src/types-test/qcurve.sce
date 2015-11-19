@@ -17,7 +17,7 @@ function [F,cu]=new_plot(x,y,rect,varargopt)
   A.auto_axis=%t;
   F.children(1)= A;
   varargopt.Pts=[x(:),y(:)]; 
-  cu = qcurve_create(varargopt(:)); 
+  cu = qcurve_create(varargopt(:),mode=0); 
   A.children($+1)= cu;
   F.connect[];
   F.invalidate[];
@@ -26,10 +26,11 @@ endfunction
 
 function oscillo1(fixedminmax=%t)
 // create a Figure with a qcurve 
-// The qcurve can contain atmost 8000 pts 
-  [F,Q]=new_plot(1:8000,ones(1,8000),[0,-2,100,2],color=6);
+// The qcurve can contain atmost 8000 pts
+  npts=64000;
+  [F,Q]=new_plot(1:npts,ones(1,npts),[0,-2,500,2],color=6);
   n=200;
-  nt=200;
+  nt=2;
   t=linspace(0,500,n);
   for i= 1:n-1
     // adding and drawing nt points.
@@ -51,7 +52,7 @@ function oscillo1(fixedminmax=%t)
       // we let moving data fix the scales 
       A.fixed=%f;
     end
-    xpause(0,%t);
+    xpause(1000,%t);
   end
 endfunction
 
@@ -90,6 +91,6 @@ function oscillo2(fixedminmax=%t)
       // we let moving data fix the scales 
       A.fixed=%f;
     end
-    xpause(0,%t);
+    xpause(100000,%t);
   end
 endfunction

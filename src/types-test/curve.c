@@ -908,25 +908,19 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       break;
     case curve_stem:
       {
-	double *xm=NULL,*ym=NULL;
-	int n= 2*M->m,i;
-	if ( n== 0) break;
-	xm = graphic_alloc(0,n,sizeof(double));
-	ym = graphic_alloc(1,n,sizeof(double));
-	if ( xm == 0 || ym == 0)
-	  {
-	    Sciprintf("Error: cannot allocate points for drawing\n");
-	    return;
-	  }
+	double xm[2],vx[2],ym[2],vy[2];
+	int i;
+	if ( M->m == 0) break;
+	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, obj_color);
 	for ( i=0 ; i < M->m ; i++)
 	  {
-	    xm[2*i]= M->R[i];
-	    ym[2*i]= 0;
-	    xm[2*i+1]= M->R[i];
-	    ym[2*i+1]= M->R[i+M->m];
+	    xm[0]= M->R[i];
+	    ym[0]= 0;
+	    xm[1]= M->R[i];
+	    ym[1]= M->R[i+M->m];
+	    scale_double_to_pixels(Xgc->scales,xm,ym,vx,vy,2);
+	    Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
 	  }
-	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, obj_color);
-	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,NULL,NULL);
 	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
       }
       break;
@@ -1257,4 +1251,4 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
     }
 }
 
-#line 1261 "curve.c"
+#line 1255 "curve.c"

@@ -788,64 +788,46 @@ void nsp_initialize_Segments_types(void)
 
 static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int color_changed=FALSE,thickness_changed=FALSE;
-  int c_thickness,c_color;
+  int c_width, c_color;
+  int width, color;
+  int *colors=NULL, *widths=NULL;
+  int i;
+  
   NspSegments *P = (NspSegments *) Obj;
-  NspMatrix *nx = P->obj->x;
-  NspMatrix *ny = P->obj->y;
   if ( Obj->obj->show == FALSE ) return;
-
-  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
-    {
-      return ;
-    }
   if ( P->obj->x->mn == 0 )  return;
-
-  c_thickness = Xgc->graphic_engine->xget_pattern(Xgc);
-  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect)) return;
+  
+  width = c_width = Xgc->graphic_engine->xget_thickness(Xgc);
+  color = c_color = Xgc->graphic_engine->xget_pattern(Xgc);
   
   if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
-      int *colors= ( P->obj->color->mn == 1) ? NULL : P->obj->color->I;
-      int *thickness= NULL;
-      if ( P->obj->color->mn == 1 && P->obj->color->I[0] >= 0) 
-	{
-	  color_changed=TRUE;
-	  Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color->I[0]);
-	}
-      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
-	{
-	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
-	  if ( P->obj->thickness->mn == 1 &&P->obj->thickness->I[0] >=0 )
-	    {
-	      thickness_changed = TRUE;
-	      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness->I[0] );
-	    }
-	}
-      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
-      /* back to default */
-      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
-      if ( color_changed )  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+      colors= ( P->obj->color->mn == 1) ? NULL : P->obj->color->I;
+      color = ( P->obj->color->mn == 1) ? P->obj->color->I[0] : c_color ;
     }
-  else
+  if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 )
     {
-      int *colors= NULL;
-      int *thickness= NULL;
-      if ( P->obj->thickness != NULLMAT && P->obj->thickness->mn != 0 ) 
-	{
-	  thickness =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
-	  if ( P->obj->thickness->mn == 1 && P->obj->thickness->I[0] >=0 )
-	    {
-	      thickness_changed = TRUE;
-	      Xgc->graphic_engine->xset_thickness(Xgc, P->obj->thickness->I[0]);
-	    }
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
-	  
-	}
-      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,colors,thickness);
-      /* back to default */
-      if ( thickness_changed )  Xgc->graphic_engine->xset_thickness(Xgc, c_thickness);
+      widths =  ( P->obj->thickness->mn == 1) ? NULL : P->obj->thickness->I;
+      width  =  ( P->obj->thickness->mn == 1) ? P->obj->thickness->I[0] : c_width ;
     }
+  for (i=0 ; i < P->obj->x->mn/2 ; i++)
+    {
+      int segment_color= (colors != NULL) ? P->obj->color->I[0] : color;
+      int segment_width= (widths != NULL) ? P->obj->thickness->I[0]: width;
+      double cx[]={ P->obj->x->R[2*i], P->obj->x->R[2*i+1]};
+      double cy[]={ P->obj->y->R[2*i],P->obj->y->R[2*i+1]};
+      double vx[2],vy[2];
+      scale_double_to_pixels(Xgc->scales,cx,cy,vx,vy,2);
+      Xgc->graphic_engine->xset_thickness(Xgc,segment_width);
+      Xgc->graphic_engine->xset_line_style(Xgc,segment_color);
+      Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
+    }
+  width = Xgc->graphic_engine->xget_thickness(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  /* back to default */
+  if ( c_width != width)  Xgc->graphic_engine->xset_thickness(Xgc, c_width);
+  if ( c_color != color)  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 }
 
 static void nsp_translate_segments(NspGraphic *Obj,const double *tr)
@@ -924,4 +906,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 928 "segments.c"
+#line 910 "segments.c"

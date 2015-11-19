@@ -22,6 +22,7 @@ ISRC=../../include/nsp/
 TARGET=$(patsubst %.defs,../%.c,$(ALL)) ../../libgraphviz/agraph.c
 
 all::	$(TARGET)
+	cd ../; make 
 
 ../%.c: %.defs
 	@echo "generate $*.c and include files"

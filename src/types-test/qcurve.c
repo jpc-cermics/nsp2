@@ -932,9 +932,8 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	    Sciprintf("Error: cannot allocated points for drawing\n");
 	    return;
 	  }
-	nsp_qcurve_get_xy_stem(P,xm,ym);
 	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
-	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*nc,NULL,NULL);
+	nsp_qcurve_stem_draw(Xgc,P);
 	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
       }
       break;
@@ -1162,8 +1161,8 @@ void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
 void nsp_qcurve_get_xy_stem(NspQcurve *C,double *cx,double *cy)
 {
   int i=0 ,pos,max;
-  NspMatrix *M = C->obj->Pts;
-  double *x=M->R,*y= M->R+M->m;
+  const NspMatrix *M = C->obj->Pts;
+  const double *x=M->R,*y= M->R+M->m;
   pos = C->obj->start;
   max =( pos <= C->obj->last )
     ? C->obj->last :  M->m -1 ;
@@ -1187,6 +1186,40 @@ void nsp_qcurve_get_xy_stem(NspQcurve *C,double *cx,double *cy)
 	  cx[2*i+1]  = x[pos];
 	  cy[2*i+1]  = y[pos];
 	  pos++;i++;
+	}
+    }
+}
+
+static void nsp_qcurve_stem_draw(BCG *Xgc,NspQcurve *C)
+{
+  double cx[2],vx[2],cy[2],vy[2];
+  int pos = C->obj->start;
+  const NspMatrix *M = C->obj->Pts;
+  const double *x=M->R,*y= M->R+M->m;
+  const int max = ( pos <= C->obj->last ) ? C->obj->last :  M->m -1 ;
+  if ( pos == -1 ) return;
+  while ( pos <= max )
+    {
+      cx[0]  = x[pos];
+      cy[0]  = 0;
+      cx[1]  = x[pos];
+      cy[1]  = y[pos];
+      scale_double_to_pixels(Xgc->scales,cx,cy,vx,vy,2);
+      Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
+      pos++;
+    }
+  if ( C->obj->last < C->obj->start )
+    {
+      pos = 0;
+      while ( pos <= C->obj->last )
+	{
+	  cx[0]  = x[pos];
+	  cy[0]  = 0;
+	  cx[1]  = x[pos];
+	  cy[1]  = y[pos];
+	  scale_double_to_pixels(Xgc->scales,cx,cy,vx,vy,2);
+	  Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
+	  pos++;
 	}
     }
 }
@@ -1258,4 +1291,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-#line 1262 "qcurve.c"
+#line 1295 "qcurve.c"

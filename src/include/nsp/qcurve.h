@@ -143,7 +143,7 @@ static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
 static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_qcurve(NspGraphic *o,double *bounds);
-
+static void nsp_qcurve_stem_draw(BCG *Xgc,NspQcurve *C);
 
 #line 149 "./qcurve.h"
 #endif /* NspQcurve_Private */

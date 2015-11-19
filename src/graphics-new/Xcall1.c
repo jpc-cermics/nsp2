@@ -37,7 +37,6 @@
 static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
 static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h);
-static void Myalloc_double_x (double **xm,int n,int *err);
 static void Myalloc_double_xy (double **xm,double **ym, int n, int *err);
 
 Gengine1 nsp_gengine1={
@@ -49,7 +48,6 @@ Gengine1 nsp_gengine1={
  draw_pixbuf:   draw_pixbuf_1,
  draw_pixbuf_from_file:   draw_pixbuf_from_file_1,
  drawarc:   drawarc_1,
- drawarcs:   drawarcs_1,
  drawarrows:   drawarrows_1,
  drawaxis:   drawaxis_1,
  drawpolyline:   drawpolyline_1,
@@ -57,10 +55,7 @@ Gengine1 nsp_gengine1={
  drawpolylines:   drawpolylines_1,
  drawpolymark:   drawpolymark_1,
  drawrectangle:   drawrectangle_1,
- drawrectangles:   drawrectangles_1,
- drawsegments:   drawsegments_1,
  fillarc:   fillarc_1,
- fillarcs:   fillarcs_1,
  fillpolyline:   fillpolyline_1,
  fillrectangle:   fillrectangle_1,
  initialize_gc:   initialize_gc_1,
@@ -127,26 +122,6 @@ static void drawarc_1(BCG *Xgc,double arc[])
   iarc[4]= arc[4];
   iarc[5]= arc[5];
   Xgc->graphic_engine->drawarc(Xgc,iarc);
-}
-
-static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
-{
-  double *xm=NULL;
-  int err=0;
-  Myalloc_double_x(&xm,6*n,&err);
-  if (err  ==   1) return;
-  ellipse2d_new(Xgc->scales,vects,xm,6*n,"f2i");
-  Xgc->graphic_engine->fillarcs(Xgc,xm,fillvect,n);
-}
-
-static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
-{
-  double *xm=NULL;
-  int err=0;
-  Myalloc_double_x(&xm,6*n,&err);
-  if (err  ==   1) return;
-  ellipse2d_new(Xgc->scales,vects,xm,6*(n),"f2i");
-  Xgc->graphic_engine->drawarcs(Xgc,xm,style,n);
 }
 
 static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
@@ -504,27 +479,6 @@ static void drawrectangle_1(BCG *Xgc,double rect[])
   Xgc->graphic_engine->drawrectangle(Xgc,xm);
 }
 
-static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
-{
-  double *xm=NULL;
-  int err=0;
-  Myalloc_double_x(&xm,4*(n),&err);
-  if (err  ==   1) return;
-  rect2d_double_to_pixels(Xgc->scales,vects,xm,4*(n));
-  Xgc->graphic_engine->drawrectangles(Xgc,xm,fillvect,n);
-}
-
-static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int *width)
-{
-  double *xm=NULL,*ym=NULL;
-  int err=0;
-  Myalloc_double_xy(&xm,&ym,n,&err);
-  if (err  ==   1) return;
-  scale_double_to_pixels(Xgc->scales,vx,vy,xm,ym,n);
-  Xgc->graphic_engine->drawsegments(Xgc,xm,ym,n,style,width);
-}
-
-
 static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
 {
   int w,h,ix1,iy1;;
@@ -786,14 +740,3 @@ static void Myalloc_double_xy(double **xm, double **ym, int n, int *err)
     }
 }
 
-static void Myalloc_double_x(double **xm, int n, int *err)
-{
-  if ( n != 0)
-    {
-      if (( *xm= graphic_alloc(6,n,sizeof(double)))   ==  0  )
-	{
-	  Scistring("malloc: Running out of memory\n");
-	  *err=1;
-	}
-    }
-}
