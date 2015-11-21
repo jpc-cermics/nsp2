@@ -52,7 +52,7 @@ Gengine1 nsp_gengine1={
  drawaxis:   drawaxis_1,
  drawpolyline:   drawpolyline_1,
  drawpolyline_clip:   drawpolyline_clip_1,
- drawpolylines:   drawpolylines_1,
+ /* drawpolylines:   drawpolylines_1, */
  drawpolymark:   drawpolymark_1,
  drawrectangle:   drawrectangle_1,
  fillarc:   fillarc_1,
@@ -249,9 +249,6 @@ static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closefla
       vx += last +1 ;vy +=last +1 ; n -= last+1;
     }
 }
-
-/* XXXX*/
-extern void nsp_set_clip_box(int xxleft, int xxright, int yybot, int yytop);
 
 static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *clip_rect, int closeflag)
 {
@@ -460,7 +457,7 @@ static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,doubl
   Xgc->graphic_engine->displaynumbers(Xgc,xm,ym,n,flag,z,alpha);
 }
 
-
+#if 0
 static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
   double *xm=NULL,*ym=NULL;
@@ -470,7 +467,7 @@ static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n
   scale_double_to_pixels(Xgc->scales,vx,vy,xm,ym,n*p);
   Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,drawvect,n,p);
 }
-
+#endif
 
 static void drawrectangle_1(BCG *Xgc,double rect[])
 {
