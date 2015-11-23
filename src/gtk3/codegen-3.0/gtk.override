@@ -3172,6 +3172,54 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
+%%
+override gtk_tree_view_get_tooltip_context kwargs
+static int
+_wrap_gtk_tree_view_get_tooltip_context (NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GtkTreeModel *g_model;
+  GtkTreePath *path = gtk_tree_path_new();
+  GtkTreeIter iter;
+  NspGObject *model;
+  gint x,y;
+  gboolean keyboard_tip;
+  gboolean ok;
+  int_types T[] = {s_int,s_int,s_bool,obj_check, t_end} ;
+  if (GetArgs(stack,rhs,opt,T, &x,&y,&keyboard_tip,&nsp_type_gtktreemodel, &model)   == FAIL) 
+    return RET_BUG;;
+  g_model= GTK_TREE_MODEL(model->obj);
+  ok = gtk_tree_view_get_tooltip_context(GTK_TREE_VIEW(self->obj),&x,&y,keyboard_tip,&g_model,&path,&iter);
+  if ( nsp_move_boolean(stack,1,ok)==FAIL) return RET_BUG;
+  if ( lhs >= 2)
+    {
+      if ( nsp_move_double(stack,2,(double)x ) == FAIL) return RET_BUG;
+    }
+  if ( lhs >= 3)
+    {
+      if ( nsp_move_double(stack,3,(double) y ) == FAIL) return RET_BUG;
+    }
+  if ( lhs >= 4)
+    {
+      NspObject *nsp_ret;
+      if (( nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE,nsp_type_gtktreeiter)) == NULL) 
+	return RET_BUG;
+      MoveObj(stack,4,nsp_ret);
+    }
+  if ( lhs >= 5)
+    {
+      NspObject *nsp_ret;
+      nsp_type_gtktreepath = new_type_gtktreepath(T_BASE);
+      /* no need to copy path here */
+      nsp_ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_PATH,path,FALSE,TRUE,(NspTypeBase *) nsp_type_gtktreepath );
+      if ( nsp_ret == NULL) return RET_BUG;
+      MoveObj(stack,5,nsp_ret);
+    }
+  else
+    {
+      gtk_tree_path_free(path);
+    }
+  return Max(lhs,1);
+}
 
 %%
 override gtk_tree_selection_get_selected noargs
@@ -5505,14 +5553,14 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
   gchar *text;
   GtkTextIter *iter, start;
 
-  if (rhs-opt < 1) {
-    Scierror("GtkTextBuffer.insert_with_tags_by_name requires at least 1 meth. argument");
+  if (rhs - opt < 1) {
+    Scierror("GtkTextBuffer.insert_with_tags requires at least one argument (iter)");
     return RET_BUG;
   }
-
+  
   if (( nsp_iter = (NspObject *) GetGtkTextIter(stack,1)) == NULL) return RET_BUG;
   iter = nspg_boxed_get(nsp_iter, GtkTextIter);
-
+  
   if ( rhs >= 2)
     {
       if (( text = GetString(stack,2))== NULL) return RET_BUG;
@@ -5522,9 +5570,10 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   for (i = 3; i <= rhs ; i++)
     {
-      GtkTextTag *tag;
-      if (( tag = (GtkTextTag *) GetGtkTextTag(stack,i))== NULL) return RET_BUG;
-      gtk_text_buffer_apply_tag(GTK_TEXT_BUFFER(self->obj),tag, &start, iter);
+      NspGtkTextTag *Tag;
+      if (( Tag = (NspGtkTextTag *) GetGtkTextTag(stack,i))== NULL) return RET_BUG;
+      gtk_text_buffer_apply_tag(GTK_TEXT_BUFFER(self->obj),
+				GTK_TEXT_TAG(Tag->obj), &start, iter);
     }
   return 0;
 }
@@ -5539,13 +5588,13 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
   GtkTextIter *iter, start;
 
   if (rhs-opt < 1) {
-    Scierror("GtkTextBuffer.insert_with_tags_by_name requires at least 1 meth. argument");
+    Scierror("GtkTextBuffer.insert_with_tags_by_name requires at least one argument (iter)");
     return RET_BUG;
   }
 
   if (( nsp_iter =(NspObject *)  GetGtkTextIter(stack,1)) == NULL) return RET_BUG;
   iter = nspg_boxed_get(nsp_iter, GtkTextIter);
-
+  
   if ( rhs >= 2)
     {
       if (( text = GetString(stack,2))== NULL) return RET_BUG;
@@ -6516,6 +6565,29 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
+
+%%
+override gtk_text_view_get_iter_at_position kwargs
+static int
+_wrap_gtk_text_view_get_iter_at_position(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,s_int,t_end} ;
+  GtkTextIter iter;
+  gint x, y, trailing;
+  NspObject *ret;
+  CheckLhs(0,2);
+  if (GetArgs(stack,rhs,opt,T, &x, &y)  == FAIL) return RET_BUG;;
+  gtk_text_view_get_iter_at_position(GTK_TEXT_VIEW(self->obj), &iter, &trailing,x, y);
+  if ((ret = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE,NULL)) == NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  if ( lhs == 2 )
+    {
+      if (  nsp_move_doubles(stack,2,1,1,(double) trailing) == FAIL)
+	return RET_BUG;
+    }
+  return Max(lhs,1);
+}
+
 %%
 override gtk_file_selection_get_selections noargs
 static int
