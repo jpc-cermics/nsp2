@@ -234,7 +234,8 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
+static void nsp_block_draw_string(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
-#line 239 "./block.h"
+#line 240 "./block.h"
 #endif /* NspBlock_Private */
 

@@ -34,7 +34,7 @@
 #define PERI_SCALE_PRIVATE
 #include <nsp/graphics-new/scale.h>
 
-static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
+
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
 static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h);
 static void Myalloc_double_xy (double **xm,double **ym, int n, int *err);
@@ -43,7 +43,7 @@ Gengine1 nsp_gengine1={
  boundingbox:  boundingbox_1,
  cleararea:  cleararea_1,
  displaynumbers:   displaynumbers_1,
- displaystring:   displaystring_1,
+ /* displaystring:   displaystring_1, */
  displaystringa:   displaystringa_1,
  draw_pixbuf:   draw_pixbuf_1,
  draw_pixbuf_from_file:   draw_pixbuf_from_file_1,
@@ -65,7 +65,7 @@ Gengine1 nsp_gengine1={
  xset_clip:   xset_clip_1,
  xset_clipgrf:   xset_clipgrf_1,
  xset_clipping_p:   xset_clipping_p_1,
- xstringb:   xstringb_1,
+ /* xstringb:   xstringb_1, */
 };
 
 /* still used at initialization by periPos periFig periTikz
@@ -476,6 +476,7 @@ static void drawrectangle_1(BCG *Xgc,double rect[])
   Xgc->graphic_engine->drawrectangle(Xgc,xm);
 }
 
+#if 0
 static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
 {
   int w,h,ix1,iy1;;
@@ -489,7 +490,7 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
   if ( ix1 > w || iy1 > h ) return;
   Xgc->graphic_engine->displaystring(Xgc,string,ix1,iy1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 }
-
+#endif 
 
 static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
@@ -620,7 +621,10 @@ static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rec
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
+#if 0 
 #define FONTMAXSIZE 6
+
+static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 
 static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
 {
@@ -692,6 +696,7 @@ static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, 
   *w = wc ;
   *h = y - yi;
 }
+#endif 
 
 /*-----------------------------------------------------------------------------
  * pixbuf

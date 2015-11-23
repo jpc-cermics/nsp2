@@ -139,6 +139,8 @@ static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
 static void nsp_draw_polyline_grarc(BCG *Xgc,NspGrArc *P);
 static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P);
-#line 143 "./grarc.h"
+/* static void nsp_grarc_draw_arc(BCG *Xgc,double arc[]); */
+
+#line 145 "./grarc.h"
 #endif /* NspGrArc_Private */
 

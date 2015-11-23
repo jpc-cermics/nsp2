@@ -14,7 +14,7 @@ typedef struct _nsp_gengine1 Gengine1;
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);
 typedef void driver_s_cleararea(BCG *Xgc, double *r);
 typedef void driver_s_displaynumbers(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
-typedef void driver_s_displaystring(BCG *Xgc,char *string,double x, double y,int flag, double angle);
+/* typedef void driver_s_displaystring(BCG *Xgc,char *string,double x, double y,int flag, double angle);*/
 typedef void driver_s_displaystringa(BCG *Xgc,char *string, int ipos);
 typedef void driver_s_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,double dest_y,double width,double height);
 typedef void driver_s_draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,double dest_x,double dest_y,double width,double height);
@@ -40,13 +40,13 @@ typedef void driver_s_xgetmouse(BCG *Xgc,char *str, int *ibutton, int *imask,dou
 typedef void driver_s_xset_clip(BCG *Xgc,double x[]);
 typedef void driver_s_xset_clipgrf(BCG *Xgc);
 typedef void driver_s_xset_clipping_p(BCG *Xgc,double x,double y,double w,double h);
-typedef void driver_s_xstringb(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
+/* typedef void driver_s_xstringb(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd); */
 
 struct _nsp_gengine1 {
   driver_s_boundingbox *boundingbox;
   driver_s_cleararea *cleararea;
   driver_s_displaynumbers *displaynumbers;
-  driver_s_displaystring *displaystring;
+  /* driver_s_displaystring *displaystring; */
   driver_s_displaystringa *displaystringa;
   driver_s_draw_pixbuf *draw_pixbuf;
   driver_s_draw_pixbuf_from_file *draw_pixbuf_from_file;
@@ -72,7 +72,7 @@ struct _nsp_gengine1 {
   driver_s_xset_clip *xset_clip;
   driver_s_xset_clipgrf *xset_clipgrf;
   driver_s_xset_clipping_p *xset_clipping_p;
-  driver_s_xstringb *xstringb;
+  /*  driver_s_xstringb *xstringb; */
 };
 
 #endif
@@ -82,7 +82,7 @@ struct _nsp_gengine1 {
 static  driver_s_boundingbox boundingbox_1;
 static  driver_s_cleararea cleararea_1;
 static  driver_s_displaynumbers displaynumbers_1;
-static  driver_s_displaystring displaystring_1;
+/* static  driver_s_displaystring displaystring_1; */
 static  driver_s_displaystringa displaystringa_1;
 static  driver_s_draw_pixbuf draw_pixbuf_1;
 static  driver_s_draw_pixbuf_from_file draw_pixbuf_from_file_1;
@@ -108,6 +108,6 @@ static  driver_s_xgetmouse xgetmouse_1;
 static  driver_s_xset_clip xset_clip_1;
 static  driver_s_xset_clipgrf xset_clipgrf_1;
 static  driver_s_xset_clipping_p xset_clipping_p_1;
-static  driver_s_xstringb xstringb_1;
+/* static  driver_s_xstringb xstringb_1; */
 
 #endif
