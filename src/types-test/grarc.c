@@ -24,7 +24,7 @@
 
 
 
-#line 26 "codegen/grarc.override"
+#line 28 "codegen/grarc.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/grarc.h>
@@ -104,7 +104,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
 
   type->init = (init_func *) init_grarc;
 
-#line 39 "codegen/grarc.override"
+#line 41 "codegen/grarc.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -776,7 +776,7 @@ static AttrTab grarc_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 61 "codegen/grarc.override"
+#line 63 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -788,7 +788,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
 #line 789 "grarc.c"
 
 
-#line 71 "codegen/grarc.override"
+#line 73 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -833,7 +833,7 @@ void nsp_initialize_GrArc_types(void)
   new_type_grarc(T_BASE);
 }
 
-#line 82 "codegen/grarc.override"
+#line 84 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 

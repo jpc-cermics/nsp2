@@ -24,7 +24,7 @@
 
 
 
-#line 123 "codegen/block.override"
+#line 124 "codegen/block.override"
 #include <nsp/objects.h>
 #include <nsp/graphics-new/Graphics.h>
 #include "nsp/link.h"
@@ -107,7 +107,7 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   type->init = (init_func *) init_block;
 
-#line 137 "codegen/block.override"
+#line 138 "codegen/block.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -129,7 +129,7 @@ NspTypeBlock *new_type_block(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase * ) t_grint;
-#line 151 "codegen/block.override"
+#line 152 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
@@ -274,7 +274,7 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-#line 180 "codegen/block.override"
+#line 181 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -506,7 +506,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 255 "codegen/block.override"
+#line 256 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(const char *name,NspTypeBase *type)
@@ -659,7 +659,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 354 "codegen/block.override"
+#line 355 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -716,7 +716,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 437 "codegen/block.override"
+#line 438 "codegen/block.override"
 
 /* translate */
 
@@ -735,7 +735,7 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
 #line 736 "block.c"
 
 
-#line 454 "codegen/block.override"
+#line 455 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -753,7 +753,7 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
 #line 754 "block.c"
 
 
-#line 470 "codegen/block.override"
+#line 471 "codegen/block.override"
 /* resize */
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -771,7 +771,7 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
 #line 772 "block.c"
 
 
-#line 486 "codegen/block.override"
+#line 487 "codegen/block.override"
 
 /* fix a lock point position
  * in relative coordinates
@@ -794,7 +794,7 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
 #line 795 "block.c"
 
 
-#line 507 "codegen/block.override"
+#line 508 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -909,7 +909,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 416 "codegen/block.override"
+#line 417 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -921,7 +921,7 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
 #line 922 "block.c"
 
 
-#line 426 "codegen/block.override"
+#line 427 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -966,7 +966,7 @@ void nsp_initialize_Block_types(void)
   new_type_block(T_BASE);
 }
 
-#line 531 "codegen/block.override"
+#line 532 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1024,8 +1024,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  /* drawing a string */
 	  Xgc->graphic_engine->xset_pattern(Xgc,0);
 	  loc[0] = B->obj->r[1] - B->obj->r[3];
-	  Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,
-					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+	  nsp_block_draw_string(Xgc,str,&fill,B->obj->r,loc,B->obj->r+2,B->obj->r+3);
 	}
       break;
     case 2:
@@ -1038,8 +1037,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       /* drawing a string */
       Xgc->graphic_engine->xset_pattern(Xgc,0);
       loc[0] = B->obj->r[1] - B->obj->r[3];
-      Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
-					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+      nsp_block_draw_string(Xgc,str1,&fill, B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
     case 3:
       /*
@@ -1937,4 +1935,90 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1941 "block.c"
+
+
+
+
+/*
+ * a string in a bounded box : with font size change to fit into the
+ * specified box (only works with driver which properly estimate string sizes)
+ */
+
+#define FONTMAXSIZE 6
+
+static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
+
+static void nsp_block_draw_string(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+{
+  int x,y,w,h,wbox,hbox,size;
+  int fontid[2];
+  x = XDouble2Pixel(Xgc->scales,*xd);
+  y = YDouble2Pixel(Xgc->scales,*yd);
+  length_scale_f2i(Xgc->scales,wd,hd,&wbox,&hbox,1);
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
+  size = FONTMAXSIZE;
+  w = wbox +1;
+  if ( *fflag  ==  1 )
+    {
+      while ( (w > wbox || h > hbox) && size >=0  )
+	{
+	  size--;
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
+	  nsp_mstring(Xgc,0,x,y,str,&w,&h);
+	}
+    }
+  else
+    {
+      nsp_mstring(Xgc,0,x,y,str,&w,&h);
+    }
+  x = x +  (wbox - w)/2.0;
+  y = y -  (hbox - h)/2.0;
+  nsp_mstring(Xgc,1,x,y,str,&w,&h);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
+}
+
+
+/*
+ * StrMat = 'xxxxZxxxxZxxx....' Z = \n
+ * find the enclosing rectangle for drawing
+ * the string StrMat
+ * and the string is Drawn if Dflag  == 1 ;
+ */
+
+static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
+{
+  char *p = StrMat,*p1,*p2,*plast;
+  int yi=y;
+  int wc =0;
+  p1 = plast = p+ strlen(p);
+
+  while (1)
+    {
+      double logrect[4], angle=0.0;
+      int flag=0;
+      p2 =p1 ; *p1 = '\0';
+      while ( p1 != p && *p1 != '\n' )
+	p1--;
+      if ( Dflag  ==  1)
+	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle,
+					   GR_STR_XLEFT, GR_STR_YBOTTOM);
+      Xgc->graphic_engine->boundingbox(Xgc, ( p1  ==  p ) ? p1 : p1 +1, x,yi,logrect);
+      if ( p2 != plast) 	*p2 = '\n';
+      wc = Max( wc , logrect[2]);
+      if ( p  ==  p1 )
+	{
+	  yi=yi- logrect[3];
+	  break;
+	}
+      else
+	{
+	  yi=yi-1.2*logrect[3];
+	}
+    }
+  *w = wc ;
+  *h = y - yi;
+}
+
+
+
+#line 2025 "block.c"

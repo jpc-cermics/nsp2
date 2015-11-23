@@ -117,6 +117,7 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
+static void nsp_block_draw_string(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
 %%
 headers
@@ -585,8 +586,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  /* drawing a string */
 	  Xgc->graphic_engine->xset_pattern(Xgc,0);
 	  loc[0] = B->obj->r[1] - B->obj->r[3];
-	  Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,
-					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+	  nsp_block_draw_string(Xgc,str,&fill,B->obj->r,loc,B->obj->r+2,B->obj->r+3);
 	}
       break;
     case 2:
@@ -599,8 +599,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       /* drawing a string */
       Xgc->graphic_engine->xset_pattern(Xgc,0);
       loc[0] = B->obj->r[1] - B->obj->r[3];
-      Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
-					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+      nsp_block_draw_string(Xgc,str1,&fill, B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
     case 3:
       /*
@@ -1497,3 +1496,88 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   /* unlink Icon */
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
+
+/*
+ * draw a string in a bounded box : with font size change to fit into the
+ * specified box (only works with driver which properly estimate string sizes)
+ * Note that the string may contain \n 
+ * XXXX: a simplifier en regardant ce qui est dans Xgc->graphic_engine->displaystring
+ * où cette option existe déjà ? 
+ */
+
+#define FONTMAXSIZE 6
+
+static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
+
+static void nsp_block_draw_string(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+{
+  int x,y,w,h,wbox,hbox,size;
+  int fontid[2];
+  x = XDouble2Pixel(Xgc->scales,*xd);
+  y = YDouble2Pixel(Xgc->scales,*yd);
+  length_scale_f2i(Xgc->scales,wd,hd,&wbox,&hbox,1);
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
+  size = FONTMAXSIZE;
+  w = wbox +1;
+  if ( *fflag  ==  1 )
+    {
+      while ( (w > wbox || h > hbox) && size >=0  )
+	{
+	  size--;
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
+	  nsp_mstring(Xgc,0,x,y,str,&w,&h);
+	}
+    }
+  else
+    {
+      nsp_mstring(Xgc,0,x,y,str,&w,&h);
+    }
+  x = x +  (wbox - w)/2.0;
+  y = y -  (hbox - h)/2.0;
+  nsp_mstring(Xgc,1,x,y,str,&w,&h);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
+}
+
+
+/*
+ * StrMat = 'xxxxZxxxxZxxx....' Z = \n
+ * find the enclosing rectangle for drawing
+ * the string StrMat
+ * and the string is Drawn if Dflag  == 1 ;
+ */
+
+static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
+{
+  char *p = StrMat,*p1,*p2,*plast;
+  int yi=y;
+  int wc =0;
+  p1 = plast = p+ strlen(p);
+
+  while (1)
+    {
+      double logrect[4], angle=0.0;
+      int flag=0;
+      p2 =p1 ; *p1 = '\0';
+      while ( p1 != p && *p1 != '\n' )
+	p1--;
+      if ( Dflag  ==  1)
+	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle,
+					   GR_STR_XLEFT, GR_STR_YBOTTOM);
+      Xgc->graphic_engine->boundingbox(Xgc, ( p1  ==  p ) ? p1 : p1 +1, x,yi,logrect);
+      if ( p2 != plast) 	*p2 = '\n';
+      wc = Max( wc , logrect[2]);
+      if ( p  ==  p1 )
+	{
+	  yi=yi- logrect[3];
+	  break;
+	}
+      else
+	{
+	  yi=yi-1.2*logrect[3];
+	}
+    }
+  *w = wc ;
+  *h = y - yi;
+}
+
+
