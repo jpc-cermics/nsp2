@@ -603,8 +603,6 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
     }
 }
 
-
-
 static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
 {
   int x1,yy1;
@@ -615,88 +613,6 @@ static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rec
   scale_double_to_pixels(Xgc->scales,rect,rect+1,rect1,rect1+1,1);
   length_scale_double_to_pixels(Xgc->scales,rect+2,rect+3,rect1+2,rect1+3,1);
 }
-
-/*-----------------------------------------------------------------------------
- * a string in a bounded box : with font size change to fit into the
- * specified box (only works with driver which properly estimate string sizes)
- *-----------------------------------------------------------------------------*/
-
-#if 0 
-#define FONTMAXSIZE 6
-
-static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
-
-static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
-{
-  int x,y,w,h,wbox,hbox,size;
-  int fontid[2];
-  x = XDouble2Pixel(Xgc->scales,*xd);
-  y = YDouble2Pixel(Xgc->scales,*yd);
-  length_scale_f2i(Xgc->scales,wd,hd,&wbox,&hbox,1);
-  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
-  size = FONTMAXSIZE;
-  w = wbox +1;
-  if ( *fflag  ==  1 )
-    {
-      while ( (w > wbox || h > hbox) && size >=0  )
-	{
-	  size--;
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
-	  nsp_mstring(Xgc,0,x,y,str,&w,&h);
-	}
-    }
-  else
-    {
-      nsp_mstring(Xgc,0,x,y,str,&w,&h);
-    }
-  x = x +  (wbox - w)/2.0;
-  y = y -  (hbox - h)/2.0;
-  nsp_mstring(Xgc,1,x,y,str,&w,&h);
-  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
-}
-
-
-/*
- * StrMat = 'xxxxZxxxxZxxx....' Z = \n
- * find the enclosing rectangle for drawing
- * the string StrMat
- * and the string is Drawn if Dflag  == 1 ;
- */
-
-static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
-{
-  char *p = StrMat,*p1,*p2,*plast;
-  int yi=y;
-  int wc =0;
-  p1 = plast = p+ strlen(p);
-
-  while (1)
-    {
-      double logrect[4], angle=0.0;
-      int flag=0;
-      p2 =p1 ; *p1 = '\0';
-      while ( p1 != p && *p1 != '\n' )
-	p1--;
-      if ( Dflag  ==  1)
-	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle,
-					   GR_STR_XLEFT, GR_STR_YBOTTOM);
-      Xgc->graphic_engine->boundingbox(Xgc, ( p1  ==  p ) ? p1 : p1 +1, x,yi,logrect);
-      if ( p2 != plast) 	*p2 = '\n';
-      wc = Max( wc , logrect[2]);
-      if ( p  ==  p1 )
-	{
-	  yi=yi- logrect[3];
-	  break;
-	}
-      else
-	{
-	  yi=yi-1.2*logrect[3];
-	}
-    }
-  *w = wc ;
-  *h = y - yi;
-}
-#endif 
 
 /*-----------------------------------------------------------------------------
  * pixbuf
