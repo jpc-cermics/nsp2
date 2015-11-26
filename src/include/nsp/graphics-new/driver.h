@@ -30,7 +30,7 @@ typedef void driver_drawpolyline_clip( BCG *gc, double *vx, double *vy, int n, d
 
 typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, double arc[]);
-typedef void driver_drawarcs( BCG *gc, double *vects, int *style, int n);
+/* typedef void driver_drawarcs( BCG *gc, double *vects, int *style, int n); */
 typedef void driver_drawarrows( BCG *gc,double *vx, double *vy, int n, int as, int *style, int iflag);
 typedef void driver_drawaxis( BCG *gc, int alpha, int *nsteps,  int *initpoint, double *size);
 typedef void driver_drawpolyline( BCG *gc, const double *vx,const double *vy, int n,int closeflag);
@@ -41,7 +41,7 @@ typedef void driver_drawrectangles( BCG *gc,const double *vects,const int *fillv
 typedef void driver_drawsegments( BCG *gc, double *vx, double *vy, int n, int *color, int *width);
 typedef void driver_drawline(BCG *Xgc, double x1, double yy1, double x2, double y2);
 typedef void driver_fillarc( BCG *gc, double arc[]);
-typedef void driver_fillarcs( BCG *gc, double *vects, int *fillvect, int n);
+/* typedef void driver_fillarcs( BCG *gc, double *vects, int *fillvect, int n); */
 typedef void driver_fillpolyline( BCG *gc,  const double *vx, const double *vy,int n, int closeflag);
 typedef void driver_fillpolylines( BCG *gc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p);
 typedef void driver_fillrectangle( BCG *gc,const double rect[]);
@@ -149,8 +149,8 @@ typedef struct _nsp_gengine_generic {
   driver_drawarrows *drawarrows;
   driver_drawsegments *drawsegments;
   driver_drawrectangles *drawrectangles;
-  driver_drawarcs *drawarcs;
-  driver_fillarcs *fillarcs;
+  /* driver_drawarcs *drawarcs; */
+  /* driver_fillarcs *fillarcs; */
   driver_drawpolylines *drawpolylines;
   driver_fillpolylines *fillpolylines;
   driver_displaynumbers *displaynumbers;
@@ -178,7 +178,7 @@ struct nsp_gengine {
   driver_displaynumbers *displaynumbers;
   driver_displaystring *displaystring;
   driver_drawarc *drawarc;
-  driver_drawarcs *drawarcs;
+  /* driver_drawarcs *drawarcs; */
   driver_drawarrows *drawarrows;
   driver_drawaxis *drawaxis;
   driver_drawpolyline *drawpolyline;
@@ -190,7 +190,7 @@ struct nsp_gengine {
   driver_drawsegments *drawsegments;
   driver_drawline *drawline;
   driver_fillarc *fillarc;
-  driver_fillarcs *fillarcs;
+  /* driver_fillarcs *fillarcs; */
   driver_fillpolyline *fillpolyline;
   driver_fillpolylines *fillpolylines;
   driver_fillrectangle *fillrectangle;
@@ -299,7 +299,7 @@ static driver_displaystring displaystring;
 static driver_draw_pixbuf draw_pixbuf;
 static driver_draw_pixbuf_from_file draw_pixbuf_from_file;
 static driver_drawarc drawarc;
-static driver_drawarcs drawarcs;
+/* static driver_drawarcs drawarcs; */
 static driver_drawarrows drawarrows;
 static driver_drawaxis drawaxis;
 static driver_drawline drawline;
@@ -312,7 +312,7 @@ static driver_drawsegments drawsegments;
 static driver_fill_grid_rectangles fill_grid_rectangles;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1;
 static driver_fillarc fillarc;
-static driver_fillarcs fillarcs;
+/* static driver_fillarcs fillarcs; */
 static driver_fillpolyline fillpolyline;
 static driver_fillpolylines fillpolylines;
 static driver_fillrectangle fillrectangle;

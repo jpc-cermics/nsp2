@@ -57,7 +57,7 @@ Gengine Tikz_gengine = {
   displaynumbers,
   displaystring,
   drawarc,
-  drawarcs,
+  /* drawarcs, */
   drawarrows,
   drawaxis,
   drawpolyline,
@@ -69,7 +69,7 @@ Gengine Tikz_gengine = {
   drawsegments,
   drawline,
   fillarc,
-  fillarcs,
+  /* fillarcs, */
   fillpolyline,
   fillpolylines,
   fillrectangle,

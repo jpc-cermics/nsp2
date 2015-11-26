@@ -1307,12 +1307,12 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i
  * The private->drawing style is the current private->drawing
  */
-
+#if 0
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
-
+#endif 
 /*
  * Draw a set of ellipsis or part of ellipsis
  * Each is defined by 6-parameters,
@@ -1321,11 +1321,12 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
  * angle1,angle2 specifies the portion of the ellipsis
  * caution : angle=degreangle*64
  */
-
+#if 0
 static void drawarcs( BCG *Xgc, double *vects, int *style, int n)
 {
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
+#endif 
 
 /* Draw a single ellipsis or part of it */
 

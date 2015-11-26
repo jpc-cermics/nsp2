@@ -238,7 +238,7 @@ Gengine xx__gengine = {
   displaynumbers,
   displaystring,
   drawarc,
-  drawarcs,
+  /* drawarcs, */
   drawarrows,
   drawaxis,
   drawpolyline,
@@ -250,7 +250,7 @@ Gengine xx__gengine = {
   drawsegments,
   drawline,
   fillarc,
-  fillarcs,
+  /* fillarcs, */
   fillpolyline,
   fillpolylines,
   fillrectangle,

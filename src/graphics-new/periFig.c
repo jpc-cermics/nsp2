@@ -1145,7 +1145,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 /* fillvect[*n] : specify the action <?> **/
 /* caution angle=degreangle*64          **/
 /* old version no more used because it allows only full ellipse */
-
+#if 0
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   int i, pat =  xget_pattern(Xgc);
@@ -1157,7 +1157,7 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
     }
   xset_pattern(Xgc,pat);
 }
-
+#endif 
 /* Draw a set of ellipsis or part of ellipsis **/
 /* Each is defined by 6-parameters, **/
 /* ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ **/
@@ -1166,7 +1166,7 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 /* caution : angle=degreangle*64          **/
 
 /* Old definition no more used because it allows only full ellipse */
-
+#if 0
 static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
   int dash,color, i;
@@ -1178,7 +1178,7 @@ static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
     }
   xset_dash_and_color(Xgc,dash,color);
 }
-
+#endif 
 /* Draw a single ellipsis or part of it **/
 /* caution angle=degreAngle*64          **/
 

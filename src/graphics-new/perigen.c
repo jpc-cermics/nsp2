@@ -33,8 +33,8 @@ static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
 static driver_drawarrows drawarrows_gen;
 static driver_drawsegments drawsegments_gen;
 static driver_drawrectangles drawrectangles_gen;
-static driver_drawarcs drawarcs_gen;
-static driver_fillarcs fillarcs_gen;
+/* static driver_drawarcs drawarcs_gen; */
+/* static driver_fillarcs fillarcs_gen; */
 static driver_drawpolylines drawpolylines_gen;
 static driver_fillpolylines fillpolylines_gen;
 static driver_displaynumbers displaynumbers_gen;
@@ -51,8 +51,8 @@ nsp_gengine_generic nsp_peri_generic = {
   drawarrows_gen,
   drawsegments_gen,
   drawrectangles_gen,
-  drawarcs_gen,
-  fillarcs_gen,
+  /* drawarcs_gen,
+     fillarcs_gen, */
   drawpolylines_gen,
   fillpolylines_gen,
   displaynumbers_gen,
@@ -443,7 +443,7 @@ static void fillpolylines_gen(BCG *Xgc, const double *vectsx, const double *vect
  * angle1,angle2 specifies the portion of the ellipsis
  * caution : angle=degreangle*64
  */
-
+#if 0
 static void drawarcs_gen(BCG *Xgc, double *vects, int *style, int n)
 {
   int dash,color,i;
@@ -458,6 +458,7 @@ static void drawarcs_gen(BCG *Xgc, double *vects, int *style, int n)
   Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
+#endif 
 
 /*
  * Circles and Ellipsis
@@ -472,7 +473,7 @@ static void drawarcs_gen(BCG *Xgc, double *vects, int *style, int n)
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i
  * The private->drawing style is the current private->drawing
  */
-
+#if 0
 static void fillarcs_gen(BCG *Xgc, double *vects, int *fillvect, int n)
 {
   int i,cpat;
@@ -492,7 +493,7 @@ static void fillarcs_gen(BCG *Xgc, double *vects, int *fillvect, int n)
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
-
+#endif 
 
 /*
  *   Draw an axis whith a slope of alpha degree (clockwise)

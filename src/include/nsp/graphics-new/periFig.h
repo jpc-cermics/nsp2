@@ -53,7 +53,7 @@ Gengine XFig_gengine = {
   displaynumbers,
   displaystring,
   drawarc,
-  drawarcs,
+  /* drawarcs, */
   drawarrows,
   drawaxis,
   drawpolyline,
@@ -65,7 +65,7 @@ Gengine XFig_gengine = {
   drawsegments,
   drawline,
   fillarc,
-  fillarcs,
+  /* fillarcs, */
   fillpolyline,
   fillpolylines,
   fillrectangle,
