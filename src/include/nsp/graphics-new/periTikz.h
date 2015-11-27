@@ -57,19 +57,14 @@ Gengine Tikz_gengine = {
   displaynumbers,
   displaystring,
   drawarc,
-  /* drawarcs, */
   drawarrows,
-  drawaxis,
   drawpolyline,
   nsp_drawpolyline_clip,
-  /* drawpolylines, */
   drawpolymark,
   drawrectangle,
-  drawrectangles,
   drawsegments,
   drawline,
   fillarc,
-  /* fillarcs, */
   fillpolyline,
   fillpolylines,
   fillrectangle,
@@ -86,14 +81,6 @@ Gengine Tikz_gengine = {
   xpause,
   xselgraphic ,
   sedeco,
-
-  tape_replay,
-  tape_clean_plots,
-  tape_replay_new_angles,
-  tape_replay_new_scale,
-  tape_replay_undo_scale,
-  tape_check_recorded_3D,
-
   xget_windowpos,
   xset_windowpos,
   xget_windowdim,

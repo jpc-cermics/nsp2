@@ -518,24 +518,6 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 }
 
 
-/* old version of setdashXfig retained for compatibility */
-
-static void xset_dash_or_color(BCG *Xgc,int value)
-{
-  static int maxdash = 6,l3 ;
-  if ( Xgc->CurColorStatus ==1)
-    {
-      int i;
-      i= Max(0,Min(value-1,Xgc->Numcolors+1));
-      Xgc->CurColor =i;
-      set_c_Fig(Xgc,i);
-    }
-  else
-    {
-      l3 = Max(0,Min(maxdash-1,value-1));
-      Xgc->CurDashStyle = l3;
-    }
-}
 
 static int xset_dash(BCG *Xgc,int value)
 {
@@ -1373,7 +1355,6 @@ void InitScilabGCXfig(BCG *Xgc)
 
 
 
-
 /*------------------------------------------------------
   \encadre{Draw an axis whith a slope of alpha degree (clockwise)
   . Along the axis marks are set in the direction ( alpha + pi/2), in the
@@ -1394,6 +1375,26 @@ void InitScilabGCXfig(BCG *Xgc)
   \end{itemize}
   }
   -------------------------------------------------------------*/
+#if 0
+
+/* old version of setdashXfig retained for compatibility */
+
+static void xset_dash_or_color(BCG *Xgc,int value)
+{
+  static int maxdash = 6,l3 ;
+  if ( Xgc->CurColorStatus ==1)
+    {
+      int i;
+      i= Max(0,Min(value-1,Xgc->Numcolors+1));
+      Xgc->CurColor =i;
+      set_c_Fig(Xgc,i);
+    }
+  else
+    {
+      l3 = Max(0,Min(maxdash-1,value-1));
+      Xgc->CurDashStyle = l3;
+    }
+}
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
 {
@@ -1450,7 +1451,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
   FPRINTF((file," %d %d %d %d \n",  (int)xi,  (int)yi, (int) xf, (int)yf));
   FPRINTF((file,"# End Of Axis \n"));
 }
-
+#endif 
 
 /*-----------------------------------------------------
   \encadre{Display numbers z[i] at location (x[i],y[i])

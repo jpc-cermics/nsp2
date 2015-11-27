@@ -30,18 +30,13 @@ typedef void driver_drawpolyline_clip( BCG *gc, double *vx, double *vy, int n, d
 
 typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, double arc[]);
-/* typedef void driver_drawarcs( BCG *gc, double *vects, int *style, int n); */
 typedef void driver_drawarrows( BCG *gc,double *vx, double *vy, int n, int as, int *style, int iflag);
-typedef void driver_drawaxis( BCG *gc, int alpha, int *nsteps,  int *initpoint, double *size);
 typedef void driver_drawpolyline( BCG *gc, const double *vx,const double *vy, int n,int closeflag);
-/* typedef void driver_drawpolylines( BCG *gc, double *vectsx, double *vectsy, int *drawvect, int n, int p); */
 typedef void driver_drawpolymark( BCG *gc,  double *vx, double *vy,int n);
 typedef void driver_drawrectangle( BCG *gc,const double rect[]);
-typedef void driver_drawrectangles( BCG *gc,const double *vects,const int *fillvect, int n);
 typedef void driver_drawsegments( BCG *gc, double *vx, double *vy, int n, int *color, int *width);
 typedef void driver_drawline(BCG *Xgc, double x1, double yy1, double x2, double y2);
 typedef void driver_fillarc( BCG *gc, double arc[]);
-/* typedef void driver_fillarcs( BCG *gc, double *vects, int *fillvect, int n); */
 typedef void driver_fillpolyline( BCG *gc,  const double *vx, const double *vy,int n, int closeflag);
 typedef void driver_fillpolylines( BCG *gc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p);
 typedef void driver_fillrectangle( BCG *gc,const double rect[]);
@@ -63,13 +58,6 @@ typedef void driver_xinfo( BCG *gc,char *message,...);
 typedef void driver_xpause( int sec_time,int events);
 typedef void driver_xselgraphic ( BCG *gc);
 typedef void driver_sedeco( int );
-typedef void driver_tape_replay(BCG *gc,const GdkRectangle *rect);
-typedef void driver_tape_clean_plots(BCG *gc,int winnumber);
-typedef void driver_tape_replay_new_angles(BCG *gc);
-typedef void driver_tape_replay_new_scale(BCG *gc,int winnumber, int *flag, int *aaint,
-					  double *bbox, int *ibbox);
-typedef void driver_tape_replay_undo_scale(BCG *gc);
-typedef int  driver_tape_check_recorded_3D(BCG *gc,int winnumber);
 typedef void driver_xget_windowpos(BCG *gc,int *x,int *y);
 typedef void driver_xset_windowpos(BCG *gc,int x, int y);
 typedef void driver_xget_windowdim(BCG *gc,int *x, int *y);
@@ -148,13 +136,12 @@ typedef struct _nsp_gengine_generic {
   driver_fill_grid_rectangles1 *fill_grid_rectangles1 ;
   driver_drawarrows *drawarrows;
   driver_drawsegments *drawsegments;
-  driver_drawrectangles *drawrectangles;
+  /* driver_drawrectangles *drawrectangles; */
   /* driver_drawarcs *drawarcs; */
   /* driver_fillarcs *fillarcs; */
   /* driver_drawpolylines *drawpolylines; */
   driver_fillpolylines *fillpolylines;
   driver_displaynumbers *displaynumbers;
-  driver_drawaxis *drawaxis;
   driver_drawarc *drawarc;
   driver_fillarc *fillarc;
   driver_draw_pixbuf *draw_pixbuf;
@@ -178,19 +165,14 @@ struct nsp_gengine {
   driver_displaynumbers *displaynumbers;
   driver_displaystring *displaystring;
   driver_drawarc *drawarc;
-  /* driver_drawarcs *drawarcs; */
   driver_drawarrows *drawarrows;
-  driver_drawaxis *drawaxis;
   driver_drawpolyline *drawpolyline;
   driver_drawpolyline_clip *drawpolyline_clip;
-  /* driver_drawpolylines *drawpolylines; */
   driver_drawpolymark *drawpolymark;
   driver_drawrectangle *drawrectangle;
-  driver_drawrectangles *drawrectangles;
   driver_drawsegments *drawsegments;
   driver_drawline *drawline;
   driver_fillarc *fillarc;
-  /* driver_fillarcs *fillarcs; */
   driver_fillpolyline *fillpolyline;
   driver_fillpolylines *fillpolylines;
   driver_fillrectangle *fillrectangle;
@@ -207,12 +189,6 @@ struct nsp_gengine {
   driver_xpause *xpause;
   driver_xselgraphic  *xselgraphic ;
   driver_sedeco *sedeco;
-  driver_tape_replay *tape_replay;
-  driver_tape_clean_plots *tape_clean_plots;
-  driver_tape_replay_new_angles *tape_replay_new_angles;
-  driver_tape_replay_new_scale *tape_replay_new_scale;
-  driver_tape_replay_undo_scale *tape_replay_undo_scale;
-  driver_tape_check_recorded_3D *tape_check_recorded_3D;
   driver_xget_windowpos *xget_windowpos;
   driver_xset_windowpos *xset_windowpos;
   driver_xget_windowdim *xget_windowdim;
@@ -277,10 +253,8 @@ struct nsp_gengine {
   driver_process_updates *process_updates;
   driver_draw_pixbuf *draw_pixbuf;
   driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
-
   driver_xpush_colormap *xpush_colormap;
   driver_xpop_colormap *xpop_colormap;
-
   driver_xstring_pango *xstring_pango;
 };
 
@@ -299,20 +273,15 @@ static driver_displaystring displaystring;
 static driver_draw_pixbuf draw_pixbuf;
 static driver_draw_pixbuf_from_file draw_pixbuf_from_file;
 static driver_drawarc drawarc;
-/* static driver_drawarcs drawarcs; */
 static driver_drawarrows drawarrows;
-static driver_drawaxis drawaxis;
 static driver_drawline drawline;
 static driver_drawpolyline drawpolyline;
-/* static driver_drawpolylines drawpolylines; */
 static driver_drawpolymark drawpolymark;
 static driver_drawrectangle drawrectangle;
-static driver_drawrectangles drawrectangles;
 static driver_drawsegments drawsegments;
 static driver_fill_grid_rectangles fill_grid_rectangles;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1;
 static driver_fillarc fillarc;
-/* static driver_fillarcs fillarcs; */
 static driver_fillpolyline fillpolyline;
 static driver_fillpolylines fillpolylines;
 static driver_fillrectangle fillrectangle;

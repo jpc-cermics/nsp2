@@ -32,30 +32,21 @@ static driver_fill_grid_rectangles fill_grid_rectangles_gen;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
 static driver_drawarrows drawarrows_gen;
 static driver_drawsegments drawsegments_gen;
-static driver_drawrectangles drawrectangles_gen;
+/* static driver_drawrectangles drawrectangles_gen;*/
 static driver_fillpolylines fillpolylines_gen;
 static driver_displaynumbers displaynumbers_gen;
-static driver_drawaxis drawaxis_gen;
 static driver_drawarc drawarc_gen;
 static driver_fillarc fillarc_gen;
-static driver_draw_pixbuf draw_pixbuf_gen;
-static driver_draw_pixbuf_from_file draw_pixbuf_from_file_gen;
-static driver_xset_test xset_test;
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
   fill_grid_rectangles1_gen,
   drawarrows_gen,
   drawsegments_gen,
-  drawrectangles_gen,
   fillpolylines_gen,
   displaynumbers_gen,
-  drawaxis_gen,
   drawarc_gen,
   fillarc_gen,
-  draw_pixbuf_gen,
-  draw_pixbuf_from_file_gen,
-  xset_test,
 };
 
 /**
@@ -303,47 +294,6 @@ static void drawarrows_gen(BCG *Xgc, double *vx, double *vy, int n, int as, int 
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
-
-/*
- * Rectangles
- * Draw or fill a set of rectangle
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3])
- * for x,y,width,height
- * for i=0 step 4
- * (*n) : number of rectangles
- * fillvect[*n] : specify the action
- * if fillvect[i] is > 0 then fill the rectangle i
- * if fillvect[i] is == 0  then only draw the rectangle i
- *                         with the current private->drawing style
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
- */
-
-static void drawrectangles_gen(BCG *Xgc,const double *vects,const int *fillvect, int n)
-{
-  int i,dash,color;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i = 0 ; i < n ; i++)
-    {
-      if ( fillvect[i] < 0 )
-	{
-	  Xgc->graphic_engine->xset_line_style(Xgc,- fillvect[i]);
-	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
-	}
-      else if ( fillvect[i] == 0 )
-	{
-	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
-	}
-      else
-	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
-	  Xgc->graphic_engine->fillrectangle(Xgc,vects+4*i);
-	}
-    }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-}
-
 /*
  *  fill a set of polygons each of which is defined by
  * (*p) points (*n) is the number of polygons
@@ -388,6 +338,8 @@ static void fillpolylines_gen(BCG *Xgc, const double *vectsx, const double *vect
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
+
+#if 0
 /*
  *   Draw an axis whith a slope of alpha degree (clockwise)
  *   . Along the axis marks are set in the direction ( alpha + pi/2), in the
@@ -433,6 +385,7 @@ static void drawaxis_gen(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double
       Xgc->graphic_engine->drawline(Xgc, xi,yi,xf,yf) ;
     }
 }
+#endif 
 
 /*
  * Display numbers z[i] at location (x[i],y[i])
@@ -496,26 +449,4 @@ static void fillarc_gen( BCG *Xgc, double arc[])
       count++;
     }
   Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,count,close);
-}
-
-/*
- *
- */
-
-static void   draw_pixbuf_gen(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
-{
-  Sciprintf("draw_pixbuf not implemented in this driver\n");
-}
-
-static void draw_pixbuf_from_file_gen(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
-{
-  Sciprintf("draw_pixbuf not implemented in this driver\n");
-}
-
-#define XN2DD 2
-#define NCURVES2DD  1
-
-static void   xset_test(BCG *Xgc)
-{
-
 }

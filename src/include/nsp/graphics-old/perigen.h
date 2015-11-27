@@ -394,19 +394,11 @@ typedef struct _nsp_gengine_generic {
   driver_fill_grid_rectangles1 *fill_grid_rectangles1 ;
   driver_drawarrows *drawarrows;
   driver_drawsegments *drawsegments;
-  driver_drawrectangles *drawrectangles;
-  driver_drawarcs *drawarcs;
-  driver_fillarcs *fillarcs;
-  driver_drawpolylines *drawpolylines;
   driver_fillpolylines *fillpolylines;
   driver_displaynumbers *displaynumbers;
   driver_drawaxis *drawaxis;
   driver_drawarc *drawarc;
   driver_fillarc *fillarc;
-  driver_draw_pixbuf *draw_pixbuf;
-  driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
-  driver_xset_test *xset_test;
-
 } nsp_gengine_generic ;
 
 extern nsp_gengine_generic nsp_peri_generic_old; 

@@ -43,16 +43,13 @@ Gengine1 nsp_gengine1={
  boundingbox:  boundingbox_1,
  cleararea:  cleararea_1,
  displaynumbers:   displaynumbers_1,
- /* displaystring:   displaystring_1, */
  displaystringa:   displaystringa_1,
  draw_pixbuf:   draw_pixbuf_1,
  draw_pixbuf_from_file:   draw_pixbuf_from_file_1,
  drawarc:   drawarc_1,
  drawarrows:   drawarrows_1,
- drawaxis:   drawaxis_1,
  drawpolyline:   drawpolyline_1,
  drawpolyline_clip:   drawpolyline_clip_1,
- /* drawpolylines:   drawpolylines_1, */
  drawpolymark:   drawpolymark_1,
  drawrectangle:   drawrectangle_1,
  fillarc:   fillarc_1,
@@ -65,7 +62,6 @@ Gengine1 nsp_gengine1={
  xset_clip:   xset_clip_1,
  xset_clipgrf:   xset_clipgrf_1,
  xset_clipping_p:   xset_clipping_p_1,
- /* xstringb:   xstringb_1, */
 };
 
 /* still used at initialization by periPos periFig periTikz
@@ -163,7 +159,7 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
   Xgc->graphic_engine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);
 }
 
-
+#if 0
 static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size)
 {
   int initpoint1[2],alpha1;
@@ -172,7 +168,7 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
   axis2d(Xgc->scales,alpha,initpoint,size,initpoint1,size1);
   Xgc->graphic_engine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
 }
-
+#endif 
 
 static void cleararea_1(BCG *Xgc,double *rect)
 {

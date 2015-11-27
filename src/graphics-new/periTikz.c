@@ -1232,11 +1232,12 @@ static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *sty
  * (*n) : number of rectangles
  *  fillvect[*n] : specify the action (see periX11.c)
  */
-
+#if 0
 static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
+#endif 
 
 /* Draw one rectangle using current color and line width */
 
@@ -1498,37 +1499,6 @@ static void xset_default(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
 }
-
-
-/*-----------------------------------------------------
-  \encadre{Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the
-  following way :
-  \begin{itemize}
-  \item   $n=<n1,n2>$,
-  \begin{verbatim}
-  |            |           |
-  |----|---|---|---|---|---|
-  <-----n1---->
-  <-------------n2-------->
-  \end{verbatim}
-  $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between
-  two marks, $r$ size in points of small mark, $r*coeff$
-  size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$.
-  \end{itemize}
-  }
-
-  -------------------------------------------------------------*/
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
-{
-  FPRINTF((file,"%% %d [%d %d] [%f %f %f] [%d %d] drawaxis\n",
-	   alpha,nsteps[0],nsteps[1],size[0],size[1],size[2],
-	   initpoint[0],initpoint[1]));
-}
-
 
 /*
  * Display numbers z[i] at location (x[i],y[i])

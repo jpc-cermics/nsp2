@@ -127,11 +127,12 @@ static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *sty
  *                         with the current private->drawing style
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
-
+#if 0 
 static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
+#endif 
 
 /* Draw one rectangle with current line style */
 
@@ -382,30 +383,6 @@ static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
       Xgc->graphic_engine->xset_pattern(Xgc,cpat);
     }
-}
-
-/*
- *   Draw an axis whith a slope of alpha degree (clockwise)
- *   . Along the axis marks are set in the direction ( alpha + pi/2), in the
- *   following way :
- *   \item   $n=<n1,n2>$,
- *   \begin{verbatim}
- *   |            |           |
- *   |----|---|---|---|---|---|
- *   <-----n1---->
- *   <-------------n2-------->
- *   \end{verbatim}
- *   $n1$and $n2$ are int numbers for interval numbers.
- *   \item $size=<dl,r,coeff>$. $dl$ distance in points between
- *   two marks, $r$ size in points of small mark, $r*coeff$
- *   size in points of big marks. (they are doubleing points numbers)
- *   \item $init$. Initial point $<x,y>$.
- */
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
-{
-
-  Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
 /*

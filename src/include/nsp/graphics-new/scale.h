@@ -21,7 +21,6 @@ typedef void driver_s_draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,i
 typedef void driver_s_drawarc(BCG *Xgc,double arc[]);
 /* typedef void driver_s_drawarcs(BCG *Xgc,double vects[], int style[], int n); */
 typedef void driver_s_drawarrows(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag);
-typedef void driver_s_drawaxis(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size);
 typedef void driver_s_drawpolyline(BCG *Xgc, double *vx, double *vy ,int n, int closeflag);
 typedef void driver_s_drawpolyline_clip(BCG *Xgc, double *vx, double *vy ,int n,double *clip_r, int closeflag);
 /* typedef void driver_s_drawpolylines(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p); */
@@ -46,23 +45,16 @@ struct _nsp_gengine1 {
   driver_s_boundingbox *boundingbox;
   driver_s_cleararea *cleararea;
   driver_s_displaynumbers *displaynumbers;
-  /* driver_s_displaystring *displaystring; */
   driver_s_displaystringa *displaystringa;
   driver_s_draw_pixbuf *draw_pixbuf;
   driver_s_draw_pixbuf_from_file *draw_pixbuf_from_file;
   driver_s_drawarc *drawarc;
-  /* driver_s_drawarcs *drawarcs; */
   driver_s_drawarrows *drawarrows;
-  driver_s_drawaxis *drawaxis;
   driver_s_drawpolyline *drawpolyline;
   driver_s_drawpolyline_clip *drawpolyline_clip;
-  /* driver_s_drawpolylines *drawpolylines; */
   driver_s_drawpolymark *drawpolymark;
   driver_s_drawrectangle *drawrectangle;
-  /*  driver_s_drawrectangles *drawrectangles;*/
-  /* driver_s_drawsegments *drawsegments; */
   driver_s_fillarc *fillarc;
-  /* driver_s_fillarcs *fillarcs; */
   driver_s_fillpolyline *fillpolyline;
   driver_s_fillrectangle *fillrectangle;
   driver_s_initialize_gc *initialize_gc;
@@ -72,7 +64,6 @@ struct _nsp_gengine1 {
   driver_s_xset_clip *xset_clip;
   driver_s_xset_clipgrf *xset_clipgrf;
   driver_s_xset_clipping_p *xset_clipping_p;
-  /*  driver_s_xstringb *xstringb; */
 };
 
 #endif
@@ -82,23 +73,16 @@ struct _nsp_gengine1 {
 static  driver_s_boundingbox boundingbox_1;
 static  driver_s_cleararea cleararea_1;
 static  driver_s_displaynumbers displaynumbers_1;
-/* static  driver_s_displaystring displaystring_1; */
 static  driver_s_displaystringa displaystringa_1;
 static  driver_s_draw_pixbuf draw_pixbuf_1;
 static  driver_s_draw_pixbuf_from_file draw_pixbuf_from_file_1;
 static  driver_s_drawarc drawarc_1;
-/* static  driver_s_drawarcs drawarcs_1; */
 static  driver_s_drawarrows drawarrows_1;
-static  driver_s_drawaxis drawaxis_1;
 static  driver_s_drawpolyline drawpolyline_1;
 static  driver_s_drawpolyline_clip drawpolyline_clip_1;
-/* static  driver_s_drawpolylines drawpolylines_1; */
 static  driver_s_drawpolymark drawpolymark_1;
 static  driver_s_drawrectangle drawrectangle_1;
-/* static  driver_s_drawrectangles drawrectangles_1; */
-/* static  driver_s_drawsegments drawsegments_1;  */
 static  driver_s_fillarc fillarc_1;
-/* static  driver_s_fillarcs fillarcs_1; */
 static  driver_s_fillpolyline fillpolyline_1;
 static  driver_s_fillrectangle fillrectangle_1;
 static  driver_s_initialize_gc initialize_gc_1;
@@ -108,6 +92,5 @@ static  driver_s_xgetmouse xgetmouse_1;
 static  driver_s_xset_clip xset_clip_1;
 static  driver_s_xset_clipgrf xset_clipgrf_1;
 static  driver_s_xset_clipping_p xset_clipping_p_1;
-/* static  driver_s_xstringb xstringb_1; */
 
 #endif

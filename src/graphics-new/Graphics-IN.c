@@ -2981,12 +2981,13 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 /*-----------------------------------------------------------
  * old version : kept for backward compatibility
  *-----------------------------------------------------------*/
+
 static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
 {
+#if 0
   BCG *Xgc;
   double l1;
   NspMatrix *l2,*l3,*l4;
-
   CheckRhs(4,4);
   if (GetScalarDouble(stack,1,&l1) == FAIL) return RET_BUG;
   if ((l2=GetRealMatInt(stack,2)) == NULLMAT ) return RET_BUG;
@@ -2998,6 +2999,9 @@ static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   Xgc->graphic_engine->scale->drawaxis(Xgc,&l1,(int *)l2->R,l3->R,l4->R);
   return 0;
+#endif 
+  Scierror("Error: xaxis is deprecated in nsp new graphics\n");
+  return RET_BUG;
 }
 
 /*-----------------------------------------------------------

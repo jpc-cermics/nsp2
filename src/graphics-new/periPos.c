@@ -1457,37 +1457,6 @@ static void xset_default(BCG *Xgc)
   nsp_initialize_gc(Xgc);
 }
 
-
-/*-----------------------------------------------------
-  \encadre{Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the
-  following way :
-  \begin{itemize}
-  \item   $n=<n1,n2>$,
-  \begin{verbatim}
-  |            |           |
-  |----|---|---|---|---|---|
-  <-----n1---->
-  <-------------n2-------->
-  \end{verbatim}
-  $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between
-  two marks, $r$ size in points of small mark, $r*coeff$
-  size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$.
-  \end{itemize}
-  }
-
-  -------------------------------------------------------------*/
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
-{
-  FPRINTF((file,"\n %d [%d %d] [%f %f %f] [%d %d] drawaxis",
-	   alpha,nsteps[0],nsteps[1],size[0],size[1],size[2],
-	   initpoint[0],initpoint[1]));
-}
-
-
 /*
  * Display numbers z[i] at location (x[i],y[i])
  *   with a slope alpha[i] (see displaystring), if flag==1
