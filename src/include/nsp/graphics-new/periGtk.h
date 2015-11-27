@@ -243,7 +243,7 @@ Gengine xx__gengine = {
   drawaxis,
   drawpolyline,
   nsp_drawpolyline_clip,
-  drawpolylines,
+  /* drawpolylines,*/
   drawpolymark,
   drawrectangle,
   drawrectangles,

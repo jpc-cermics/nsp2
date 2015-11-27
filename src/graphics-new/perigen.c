@@ -33,9 +33,6 @@ static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
 static driver_drawarrows drawarrows_gen;
 static driver_drawsegments drawsegments_gen;
 static driver_drawrectangles drawrectangles_gen;
-/* static driver_drawarcs drawarcs_gen; */
-/* static driver_fillarcs fillarcs_gen; */
-static driver_drawpolylines drawpolylines_gen;
 static driver_fillpolylines fillpolylines_gen;
 static driver_displaynumbers displaynumbers_gen;
 static driver_drawaxis drawaxis_gen;
@@ -51,9 +48,6 @@ nsp_gengine_generic nsp_peri_generic = {
   drawarrows_gen,
   drawsegments_gen,
   drawrectangles_gen,
-  /* drawarcs_gen,
-     fillarcs_gen, */
-  drawpolylines_gen,
   fillpolylines_gen,
   displaynumbers_gen,
   drawaxis_gen,
@@ -63,7 +57,6 @@ nsp_gengine_generic nsp_peri_generic = {
   draw_pixbuf_from_file_gen,
   xset_test,
 };
-
 
 /**
  * fill_grid_rectangles1_gen:
@@ -351,46 +344,6 @@ static void drawrectangles_gen(BCG *Xgc,const double *vects,const int *fillvect,
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
-
-
-/*
- * Draw a set of (*n) polylines (each of which have (*p) points)
- * with lines or marks
- * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i
- */
-
-static void drawpolylines_gen(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect,int n, int p)
-{
-  const int close =0;
-  int symb[2],dash,color,i;
-  /* store the current values */
-  Xgc->graphic_engine->xget_mark(Xgc,symb);
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i=0 ; i< n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{
-	  /* we use the markid : drawvect[i] : with current dash */
-	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
-	  Xgc->graphic_engine->drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
-	}
-      else
-	{
-	  /* we use the line-style number abs(drawvect[i])  */
-	  Xgc->graphic_engine->xset_line_style(Xgc, *(drawvect+i));
-	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,close);
-	}
-    }
-  /* back to default values */
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-  Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
-}
-
 /*
  *  fill a set of polygons each of which is defined by
  * (*p) points (*n) is the number of polygons
@@ -434,66 +387,6 @@ static void fillpolylines_gen(BCG *Xgc, const double *vectsx, const double *vect
   Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
-
-/*
- * Draw a set of ellipsis or part of ellipsis
- * Each is defined by 6-parameters,
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
- * <x,y,width,height> is the bounding box
- * angle1,angle2 specifies the portion of the ellipsis
- * caution : angle=degreangle*64
- */
-#if 0
-static void drawarcs_gen(BCG *Xgc, double *vects, int *style, int n)
-{
-  int dash,color,i;
-  /* store the current values */
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i=0 ; i< n ; i++)
-    {
-      Xgc->graphic_engine->xset_line_style(Xgc,style[i]);
-      Xgc->graphic_engine->drawarc(Xgc,vects+6*i);
-    }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
-}
-#endif 
-
-/*
- * Circles and Ellipsis
- * Draw or fill a set of ellipsis or part of ellipsis
- * Each is defined by 6-parameters,
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
- * <x,y,width,height> is the bounding box
- * angle1,angle2 specifies the portion of the ellipsis
- * caution : angle=degreangle*64
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i
- * with pattern fillvect[i]
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i
- * The private->drawing style is the current private->drawing
- */
-#if 0
-static void fillarcs_gen(BCG *Xgc, double *vects, int *fillvect, int n)
-{
-  int i,cpat;
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-  for (i=0 ; i< n ; i++)
-    {
-      if (fillvect[i] > Xgc->IDLastPattern + 1)
-	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-	  Xgc->graphic_engine->drawarc(Xgc,vects+6*i);
-	}
-      else
-	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
-	  Xgc->graphic_engine->fillarc(Xgc,vects+6*i);
-	}
-    }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-}
-#endif 
 
 /*
  *   Draw an axis whith a slope of alpha degree (clockwise)
@@ -559,8 +452,6 @@ static void displaynumbers_gen(BCG *Xgc, double *x, double *y, int n, int flag, 
     }
 }
 
-
-
 static void drawarc_gen(BCG *Xgc, double arc[])
 {
   double vx[365],vy[365];
@@ -620,8 +511,6 @@ static void draw_pixbuf_from_file_gen(BCG *Xgc,const char *pix,int src_x,int src
 {
   Sciprintf("draw_pixbuf not implemented in this driver\n");
 }
-
-
 
 #define XN2DD 2
 #define NCURVES2DD  1

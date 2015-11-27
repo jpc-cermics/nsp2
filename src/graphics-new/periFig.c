@@ -546,12 +546,6 @@ static int xset_dash(BCG *Xgc,int value)
   return old;
 }
 
-static void xset_dash_and_color(BCG *Xgc,int dash,int color)
-{
-  xset_dash(Xgc,dash);
-  xset_pattern(Xgc,color);
-}
-
 /* to get the current dash-style */
 
 static int xget_dash(BCG *Xgc)
@@ -1139,51 +1133,9 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
-
-/* Draw or fill a set of ellipsis or part of ellipsis **/
-/* Each is defined by 6-parameters, **/
-/* fillvect[*n] : specify the action <?> **/
-/* caution angle=degreangle*64          **/
-/* old version no more used because it allows only full ellipse */
-#if 0
-static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
-{
-  int i, pat =  xget_pattern(Xgc);
-  for ( i=0 ; i < n ; i++)
-    {
-      /* to fix the style */
-      xset_pattern(Xgc,fillvect[i]);
-      fillarc(Xgc,vects+6*i);
-    }
-  xset_pattern(Xgc,pat);
-}
-#endif 
-/* Draw a set of ellipsis or part of ellipsis **/
-/* Each is defined by 6-parameters, **/
-/* ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ **/
-/* <x,y,width,height> is the bounding box **/
-/* angle1,angle2 specifies the portion of the ellipsis **/
-/* caution : angle=degreangle*64          **/
-
-/* Old definition no more used because it allows only full ellipse */
-#if 0
-static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
-{
-  int dash,color, i;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for ( i=0 ; i < n ; i++)
-    {
-      xset_line_style(Xgc,style[i]);
-      drawarc(Xgc,vects+6*i);
-    }
-  xset_dash_and_color(Xgc,dash,color);
-}
-#endif 
 /* Draw a single ellipsis or part of it **/
 /* caution angle=degreAngle*64          **/
-
 /*  Old definition no more used  because it allows only full ellipse */
-
 
 static void drawarc(BCG *Xgc, double arc[])
 {
@@ -1201,13 +1153,9 @@ static void drawarc(BCG *Xgc, double arc[])
   drawpolyline(Xgc,vx, vy,n, close);
 }
 
-
 /* Fill a single elipsis or part of it **/
 /* with current pattern **/
-
 /* Old definition commented out because it allows only full ellipse */
-
-
 
 static void fillarc( BCG *Xgc, double arc[])
 {
@@ -1240,38 +1188,6 @@ static void fillarc( BCG *Xgc, double arc[])
       n++;
     }
   fillpolyline(Xgc,vx, vy,n,close);
-}
-
-/*--------------------------------------------------------------
- * Draw a set of n polylines (each of which have (p) points)
- * with lines or marks
- * drawvect[i] >= use a mark for polyline i
- * drawvect[i] < 0 use a line style for polyline i
- *--------------------------------------------------------------*/
-
-static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect, int n, int p)
-{
-  int symb[2],i, dash,color;
-  xget_mark(Xgc,symb);
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i< n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{
-	  /* using mark */
-	  xset_mark(Xgc,- drawvect[i],symb[1]);
-          xset_dash(Xgc,dash);
-	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
-	}
-      else
-	{/* using a dash style  **/
-	  xset_line_style(Xgc,drawvect[i]);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p, 0);
-	}
-    }
-  /* back to default values **/
-  xset_dash_and_color(Xgc,dash,color);
-  xset_mark(Xgc,symb[0],symb[1]);
 }
 
 /* fill a set of polygons each of which is defined by **/

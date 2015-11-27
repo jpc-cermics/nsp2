@@ -1293,41 +1293,6 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
-
-/*
- * Circles and Ellipsis
- * Draw or fill a set of ellipsis or part of ellipsis
- * Each is defined by 6-parameters,
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
- * <x,y,width,height> is the bounding box
- * angle1,angle2 specifies the portion of the ellipsis
- * caution : angle=degreangle*64
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i
- * with pattern fillvect[i]
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i
- * The private->drawing style is the current private->drawing
- */
-#if 0
-static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
-{
-  Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
-}
-#endif 
-/*
- * Draw a set of ellipsis or part of ellipsis
- * Each is defined by 6-parameters,
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$
- * <x,y,width,height> is the bounding box
- * angle1,angle2 specifies the portion of the ellipsis
- * caution : angle=degreangle*64
- */
-#if 0
-static void drawarcs( BCG *Xgc, double *vects, int *style, int n)
-{
-  Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
-}
-#endif 
-
 /* Draw a single ellipsis or part of it */
 
 static void drawarc(BCG *Xgc, double arc[])
@@ -1348,18 +1313,6 @@ static void fillarc(BCG *Xgc, double arc[])
   int y= (arc[1] + (arc[1]+arc[3]))/2;
   */
   /* rectangle and 2 angles arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]); */
-}
-
-/*
- * Draw a set of (*n) polylines (each of which have (*p) points)
- * with lines or marks
- * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i
- */
-
-static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect, int n, int p)
-{
-  Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
 /*

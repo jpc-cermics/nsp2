@@ -1068,6 +1068,9 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
  * or just compute the bounding box according to get_box parameter
  */
 
+static void nsp_draw_legend_polyline(BCG *Xgc, double *vectsx, double *vectsy, int color, int p);
+static void nsp_draw_legend_polymark(BCG *Xgc, double *vectsx, double *vectsy, int mark, int p);
+
 static void nsp_legends_box(BCG *Xgc,int n1,
 			    const int *mark,const int *mark_size,
 			    const int *mark_color,const int *width,const int *color,
@@ -1079,7 +1082,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,
   int xmark[2]={-1,-1};
   int i,xs,ys,flag=0;
   double polyx[2],polyy[2];
-  int lstyle[1],n1count=0;
+  int n1count=0;
   double angle=0.0;
   double rect[4];
   int xi= 1.4*xoffset;
@@ -1134,23 +1137,18 @@ static void nsp_legends_box(BCG *Xgc,int n1,
 	      if ( color[i] != -2 )
 		{
 		  /* we neeed to draw a line */
-		  int n=1,p=2;
 		  polyx[0]=inint(box[0]);polyx[1]=inint(box[0]+xoffset);
 		  polyy[0]=inint(yi - rect[3]/2.0);
 		  polyy[1]=polyy[0];
-		  lstyle[0]=color[i];
-		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		  nsp_draw_legend_polyline(Xgc,polyx,polyy,color[i],2);
 		}
 	      if ( mark[i] >= -1 )
 		{
-		  /* we need a mark */
-		  int n=1,p=1;
 		  polyx[0]=inint(box[0]+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
-		  lstyle[0]= - mark[i];
 		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark_size[i]);
 		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_pattern(Xgc, mark_color[i] );
-		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		  nsp_draw_legend_polymark(Xgc,polyx,polyy,mark[i],1);
 		  if ( mark_color[i] >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
 		  if ( mark_size[i] >= 0 ) Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 		}
@@ -1173,5 +1171,33 @@ static void nsp_legends_box(BCG *Xgc,int n1,
       box[2] += rect[2];
       box[3] += rect[3];
       Xgc->graphic_engine->drawrectangle(Xgc,box);
+    }
+}
+
+static void nsp_draw_legend_polyline(BCG *Xgc, double *vectsx, double *vectsy, int color, int p)
+{
+  if ( color >= 0 ) 
+    {
+      Xgc->graphic_engine->xset_line_style(Xgc, color);
+    }
+  Xgc->graphic_engine->drawpolyline(Xgc,vectsx,vectsy,p,0);
+  if ( color >= 0) 
+    {
+      Xgc->graphic_engine->xset_line_style(Xgc, color);
+    }
+}
+
+static void nsp_draw_legend_polymark(BCG *Xgc, double *vectsx, double *vectsy, int mark, int p)
+{
+  int symb[2];
+  Xgc->graphic_engine->xget_mark(Xgc,symb);
+  if ( mark >= 0)
+    {
+      Xgc->graphic_engine->xset_mark(Xgc, mark,symb[1]);
+    }
+  Xgc->graphic_engine->drawpolymark(Xgc,vectsx,vectsy,p);
+  if ( mark >= 0)
+    {
+      Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
     }
 }

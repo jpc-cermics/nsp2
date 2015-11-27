@@ -58,7 +58,7 @@ Gengine XFig_gengine = {
   drawaxis,
   drawpolyline,
   nsp_drawpolyline_clip,
-  drawpolylines,
+  /* drawpolylines, */
   drawpolymark,
   drawrectangle,
   drawrectangles,

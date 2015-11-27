@@ -1272,33 +1272,6 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
   xset_pattern(Xgc,cpat);
 }
 
-/** Draw a set of ellipsis or part of ellipsis **/
-/** Each is defined by 6-parameters, **/
-/** ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ **/
-/** <x,y,width,height> is the bounding box **/
-/** angle1,angle2 specifies the portion of the ellipsis **/
-/** caution : angle=degreangle*64          **/
-
-#if 0
-static void drawarcs( BCG *Xgc, double *vects, int *style, int n)
-{
-  int i,dash,color;
-  /* store the current values */
-  xget_dash_and_color(Xgc,&dash,&color);
-  for ( i=0 ; i < n ; i++)
-    {
-      int fvect,na=1;
-      /** to fix the style */
-      xset_line_style(Xgc,style[i]);
-
-      /** to say that we don't want to fill the arcs */
-      fvect = Xgc->IDLastPattern  +2;
-      fillarcs(Xgc,&vects[(6)*i],&fvect,na);
-    }
-  xset_dash_and_color(Xgc,dash,color);
-}
-#endif 
-
 /** Draw a single ellipsis or part of it **/
 /** caution angle=degreAngle*64          **/
 
@@ -1322,35 +1295,6 @@ static void fillarc(BCG *Xgc, double arc[])
 /*--------------------------------------------------------------
   \encadre{Filling or Drawing Polylines and Polygons}
   ---------------------------------------------------------------*/
-
-/** Draw a set of *n polylines (each of which have (*p) points) **/
-/** with lines or marks **/
-/** drawvect[i] >= use a mark for polyline i **/
-/** drawvect[i] < 0 use a line style for polyline i **/
-
-static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect, int n, int p)
-{
-  int symb[2],i,dash,color;
-  /* get the current values */
-  xget_mark(Xgc,symb);
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i< n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{ /** on utilise la marque de numero associ\'ee **/
-	  xset_mark(Xgc,- drawvect[i],symb[1]);
-	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
-	}
-      else
-	{/** on utilise un style pointill\'e  **/
-	  xset_line_style(Xgc,drawvect[i]);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,0);
-	}
-    }
-  /** back to default values **/
-  xset_dash_and_color(Xgc,dash,color);
-  xset_mark(Xgc,symb[0],symb[1]);
-}
 
 /**************************************************************
   fill a set of polygons each of which is defined by
