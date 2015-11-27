@@ -344,35 +344,19 @@ static int xget_thickness(BCG *Xgc)
   the white pattern }
   ----------------------------------------------------*/
 
-static int xset_pattern(BCG *Xgc,int num)
+static int xset_color(BCG *Xgc,int color)
 {
-  int i;
-  int old = xget_pattern(Xgc);
-  if ( Xgc->CurColorStatus ==1)
-    {
-      i= Max(0,Min(num-1,Xgc->Numcolors+1));
-      Xgc->CurColor = i ;
-    }
-  else
-    {
-      /* used when printing from color to b&white color after GREYNUMBER
-	 are translated to black */
-      if ( num-1 > GREYNUMBER -1 )
-	i=0;
-      else
-	i= Max(0,Min(num-1,GREYNUMBER-1));
-      Xgc->CurPattern = i;
-      if (i ==0)
-	FPRINTF((file,"%% fillsolid\n"));
-      else
-	FPRINTF((file,"%% %d Setgray\n",(int)i));
-    }
+  int old = Xgc->CurColor;
+  color = Max(1,color);
+  if ( Xgc->CurColor == color ) return old;
+  color = Max(0,Min(color-1,Xgc->Numcolors+1));
+  Xgc->CurColor = color ;
   return old;
 }
 
 /** To get the id of the current pattern  **/
 
-static int xget_pattern(BCG *Xgc)
+static int xget_color(BCG *Xgc)
 {
   if ( Xgc->CurColorStatus ==1)
     {
@@ -423,7 +407,7 @@ static void xset_line_style(BCG *Xgc,int value)
     xset_dash(Xgc,value);
   else {
     xset_dash(Xgc,Xgc->CurDashStyle + 1);
-    xset_pattern(Xgc,value);
+    xset_color(Xgc,value);
   }
 }
 
@@ -482,11 +466,11 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  /* je passe de Couleur a n&b */
 	  /* remise des couleurs a vide */
 	  Xgc->CurColorStatus = 1;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  /* passage en n&b */
 	  Xgc->CurColorStatus = 0;
 	  i= Xgc->CurPattern+1;
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
 	  i= Xgc->CurDashStyle+1;
 	  xset_dash(Xgc,i);
 	  Xgc->IDLastPattern = GREYNUMBER - 1;
@@ -501,12 +485,12 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  /* remise a zero des patterns et dash */
 	  /* remise des couleurs a vide */
 	  Xgc->CurColorStatus = 0;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  xset_dash(Xgc,1);
 	  /* passage en couleur  */
 	  Xgc->CurColorStatus = 1;
 	  i= Xgc->CurColor+1;
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
 	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
 	  FPRINTF((file,"%%/WhiteLev %d def",Xgc->IDLastPattern));
 	  FPRINTF((file,"%%/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def \n"));
@@ -676,7 +660,7 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
   Xgc->CurColor = -1;
   Xgc->CmapFlag = 0;
   Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  Xgc->graphic_engine->xset_pattern(Xgc,m+1);
+  Xgc->graphic_engine->xset_color(Xgc,m+1);
   Xgc->graphic_engine->xset_foreground(Xgc,m+1);
   Xgc->graphic_engine->xset_background(Xgc,m+2);
 }
@@ -1184,7 +1168,7 @@ static double ascentPos(BCG *Xgc)
 
 static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2)
 {
-  int color=xget_pattern(Xgc);
+  int color=xget_color(Xgc);
   int thickness=xget_thickness(Xgc);
   FPRINTF((file,"\\draw[%s,line width=%5.2fmm] (%f, %f) --  (%f, %f); %% color=%d\n",
 	   nsp_tikz_print_color(Xgc,color),
@@ -1199,7 +1183,7 @@ static void drawline(BCG *Xgc,double xx1, double yy1, double x2, double y2)
 
 static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, int *width)
 {
-  int def_color=xget_pattern(Xgc), i;
+  int def_color=xget_color(Xgc), i;
   for ( i=0 ; i < n/2 ; i++)
     {
       int color = (style == NULL) ? def_color :  style[i];
@@ -1214,7 +1198,7 @@ static void drawsegments(BCG *Xgc, double *vx, double *vy, int n, int *style, in
 
 static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *style, int iflag)
 {
-  int def_color=xget_pattern(Xgc), i;
+  int def_color=xget_color(Xgc), i;
   for ( i=0 ; i < n/2 ; i++)
     {
       int color = (style == NULL) ? def_color :  style[i];
@@ -1243,7 +1227,7 @@ static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int
 
 static void drawrectangle(BCG *Xgc, const double rect[])
 {
-  int color=xget_pattern(Xgc);
+  int color=xget_color(Xgc);
   int thickness=xget_thickness(Xgc);
   FPRINTF((file,"\\draw[%s,line width=%5.2fmm]",
 	   nsp_tikz_print_color(Xgc,color),
@@ -1257,7 +1241,7 @@ static void drawrectangle(BCG *Xgc, const double rect[])
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
-  int color=xget_pattern(Xgc);
+  int color=xget_color(Xgc);
   FPRINTF((file,"\\fill[%s] (%f, %f) rectangle (%f, %f);%% should be filled",
 	   nsp_tikz_print_color(Xgc,color),
 	   rect[0]/SCALE,-rect[1]/SCALE,
@@ -1309,7 +1293,7 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
 static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
 {
   int i;
-  int color=xget_pattern(Xgc);
+  int color=xget_color(Xgc);
   int thickness=xget_thickness(Xgc);
   FPRINTF((file,"\\draw[%s,line width=%5.2fmm] %% color=%d\n",
 	   nsp_tikz_print_color(Xgc,color),
@@ -1333,7 +1317,7 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, in
 {
   /* if ( Xgc->CurVectorStyle !=  CoordModeOrigin) */
   int i;
-  int color=xget_pattern(Xgc);
+  int color=xget_color(Xgc);
   FPRINTF((file,"\\fill[%s] ",
 	   nsp_tikz_print_color(Xgc,color)));
   for (i=0 ; i < n ; i++)
@@ -1603,13 +1587,6 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
   Xgc->graphic_engine->generic->draw_pixbuf_from_file(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
-}
-
-
-
-static  void xset_test(BCG *Xgc)
-{
-  Xgc->graphic_engine->generic->xset_test(Xgc);
 }
 
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)

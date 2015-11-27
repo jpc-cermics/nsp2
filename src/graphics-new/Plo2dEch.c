@@ -20,11 +20,7 @@
  * jpc@cermics.enpc.fr
  *--------------------------------------------------------------------------*/
 
-#include <string.h> /* in case of dbmalloc use */
-#include <stdio.h>
-#include <math.h>
-#include <gdk/gdk.h>
-#include <nsp/math.h>
+#include <nsp/nsp.h> 
 #include <nsp/graphics-new/Graphics.h>
 
 /*--------------------------------------------------------------------
@@ -265,7 +261,6 @@ void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n)
       if ( scales->logflag[0] == 'n' )
 	{
 	  x1[i]=  XScale(scales,x[i]);
-	  /* x1[i+2]=inint( scales->Wscx1*( x[i+2])); */
 	  x1[i+2]= XScale(scales,x[i]+x[i+2]) -x1[i];
 	}
       else
@@ -276,7 +271,6 @@ void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n)
       if ( scales->logflag[1] == 'n' )
 	{
 	  x1[i+1]= YScale(scales,x[i+1]);
-	  /* x1[i+3]=inint( scales->Wscy1*( x[i+3]));*/
 	  x1[i+3]= YScale(scales,x[i+1]-x[i+3]) - x1[i+1];
 	}
       else
@@ -383,37 +377,3 @@ void ellipse2d_new(nsp_gcscale *scales, double *x, double *x1, int n,const char 
 }
 
 
-/* meme chose mais pour axis */
-
-void axis2d(nsp_gcscale *scales,double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
-{
-  double sina ,cosa;
-  double xx,yy,scl;
-  /* pour eviter des problemes numerique quand scales->scx1 ou scales->scy1 sont
-   *  tres petits et cosal ou sinal aussi
-   */
-  if ( Abs(*alpha) == 90 )
-    {
-      scl=scales->Wscy1;
-    }
-  else
-    {
-      if (Abs(*alpha) == 0)
-	{
-	  scl=scales->Wscx1;
-	}
-      else
-	{
-	  sina= sin(*alpha * M_PI/180.0);
-	  cosa= cos(*alpha * M_PI/180.0);
-	  xx= cosa*scales->Wscx1; xx *= xx;
-	  yy= sina*scales->Wscy1; yy *= yy;
-	  scl= sqrt(xx+yy);
-	}
-    }
-  size1[0] = size[0]*scl;
-  size1[1]=  size[1]*scl;
-  size1[2]=  size[2];
-  initpoint1[0]= XScale(scales,initpoint[0]);
-  initpoint1[1]= YScale(scales,initpoint[1]);
-}

@@ -790,7 +790,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int ccolor=-1,cthick=-1;
   NspGrRect *P = (NspGrRect *) Obj;
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
-  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
+  ccolor = Xgc->graphic_engine->xget_color(Xgc);
 
   if ( ! nsp_graphic_intersect_rectangle(Obj,rect))
     {
@@ -812,17 +812,17 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if ( P->obj->fill_color != -2 )
     {
       if (  P->obj->fill_color != -1)
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
+	Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
       if (  P->obj->fill_color != -1)
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
 
   if ( P->obj->color != -2 )
     {
       /* draw the rectangle */
       if ( P->obj->color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+	Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
       if ( P->obj->thickness != -1 )
 	{
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc);
@@ -831,7 +831,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
       /* reset to default values */
       if ( P->obj->color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
       if ( P->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
@@ -839,7 +839,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if (((NspGraphic *) P)->obj->hilited == TRUE )
     {
       int lock_size=6, lock_color=10;
-      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int color = Xgc->graphic_engine->xset_color(Xgc,lock_color);
       int x=lock_size,y=lock_size;
       double xd,yd;
       double rect[4];
@@ -852,7 +852,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       rect[0]=val[0] + val[2]-xd/2.0;
       rect[1]=val[1] - val[3] + yd/2.0;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
     }
 
 }
@@ -867,7 +867,7 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
   double rvx[4],rvy[4],cx=R->obj->x+R->obj->w/2,cy=R->obj->y-R->obj->h/2;
   double cosa = cos(-R->obj->angle*M_PI/180);
   double sina = sin(-R->obj->angle*M_PI/180);
-  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
+  int ccolor = Xgc->graphic_engine->xget_color(Xgc);
   int cthick=-1;
 
   for ( i= 0 ; i < 4; i++)
@@ -878,18 +878,18 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
   if ( R->obj->fill_color != -2 )
     {
       if (  R->obj->fill_color != -1)
-	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->fill_color);
+	Xgc->graphic_engine->xset_color(Xgc,R->obj->fill_color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
       /* Xgc->graphic_engine->scale->fillrectangle(Xgc,val); */
       if (  R->obj->fill_color != -1)
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
 
   if ( R->obj->color != -2 )
     {
       /* draw the rectangle */
       if ( R->obj->color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->color);
+	Xgc->graphic_engine->xset_color(Xgc,R->obj->color);
       if ( R->obj->thickness != -1 )
 	{
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc);
@@ -899,7 +899,7 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
       /* Xgc->graphic_engine->scale->drawrectangle(Xgc,val); */
       /* reset to default values */
       if ( R->obj->color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
       if ( R->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
@@ -907,7 +907,7 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
   if (((NspGraphic *) R)->obj->hilited == TRUE )
     {
       int lock_size=6, lock_color=10;
-      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int color = Xgc->graphic_engine->xset_color(Xgc,lock_color);
       int x=lock_size,y=lock_size;
       double xd,yd;
       double rect[4];
@@ -920,7 +920,7 @@ static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
       rect[0]=rvx[2]-xd/2.0;
       rect[1]=rvy[2] + yd/2.0;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
     }
 
 }

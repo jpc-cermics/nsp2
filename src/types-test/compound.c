@@ -815,7 +815,7 @@ static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
 {
   NspCompound *P = (NspCompound *) Obj;
   NspGraphic *G =  (NspGraphic *) Obj;
-  int color = Xgc->graphic_engine->xset_pattern(Xgc,P->obj->hilite_color);
+  int color = Xgc->graphic_engine->xset_color(Xgc,P->obj->hilite_color);
   int x=lock_size,y=lock_size;
   double xd,yd, xdd=0.0,ydd=0.0, rect[4], bounds[4];
   
@@ -882,8 +882,8 @@ static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
 	  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 	}
     }
-  /* restore current pattern */
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  /* restore current color */
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 /**

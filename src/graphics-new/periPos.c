@@ -387,39 +387,41 @@ static int xget_thickness(BCG *Xgc)
   \encadre{To set grey level for filing areas.
   from black (*num =0 ) to white
   you must use the get function to get the id of
-  the white pattern }
+  the white color }
   ----------------------------------------------------*/
 
-static int xset_pattern(BCG *Xgc,int num)
+static int xset_color(BCG *Xgc,int color)
 {
-  int i;
-  int old = xget_pattern(Xgc);
-  if ( Xgc->CurColorStatus ==1)
-    {
-      i= Max(0,Min(num-1,Xgc->Numcolors+1));
-      Xgc->CurColor = i ;
-      set_c_Pos(Xgc,i);
-    }
-  else
-    {
-      /* used when printing from color to b&white color after GREYNUMBER
-	 are translated to black */
-      if ( num-1 > GREYNUMBER -1 )
-	i=0;
-      else
-	i= Max(0,Min(num-1,GREYNUMBER-1));
-      Xgc->CurPattern = i;
-      if (i ==0)
-	FPRINTF((file,"\nfillsolid"));
-      else
-	FPRINTF((file,"\n%d Setgray",(int)i));
-    }
+  int old = Xgc->CurColor;
+  color = Max(1,color);
+  if ( Xgc->CurColor == color ) return old;
+  color= Max(0,Min( color-1,Xgc->Numcolors+1));
+  Xgc->CurColor = color ;
+  set_c_Pos(Xgc, color);
   return old;
 }
 
-/** To get the id of the current pattern  **/
+#if 0
+static int xset_pattern(BCG *Xgc,int num)
+{
+  /* used when printing from color to b&white color after GREYNUMBER
+     are translated to black */
+  if ( num-1 > GREYNUMBER -1 )
+    i=0;
+  else
+    i= Max(0,Min(num-1,GREYNUMBER-1));
+  Xgc->CurPattern = i;
+  if (i ==0)
+    FPRINTF((file,"\nfillsolid"));
+  else
+    FPRINTF((file,"\n%d Setgray",(int)i));
+  return old;
+}
+#endif 
 
-static int xget_pattern(BCG *Xgc)
+/** To get the id of the current color  **/
+
+static int xget_color(BCG *Xgc)
 {
   if ( Xgc->CurColorStatus ==1)
     {
@@ -432,7 +434,7 @@ static int xget_pattern(BCG *Xgc)
 }
 
 
-/** To get the id of the last pattern **/
+/** To get the id of the last color **/
 
 static int xget_last(BCG *Xgc)
 {
@@ -465,7 +467,7 @@ static int xset_dash(BCG *Xgc,int value)
 static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 {
   xset_dash(Xgc,dash);
-  xset_pattern(Xgc,color);
+  xset_color(Xgc,color);
 }
 
 /* style arguments sets either dash style either color */
@@ -476,7 +478,7 @@ static void xset_line_style(BCG *Xgc,int value)
     xset_dash(Xgc,value);
   else {
     xset_dash(Xgc,Xgc->CurDashStyle + 1);
-    xset_pattern(Xgc,value);
+    xset_color(Xgc,value);
   }
 }
 
@@ -526,7 +528,7 @@ static int xget_dash(BCG *Xgc)
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
   *dash= xget_dash(Xgc);
-  *color=xget_pattern(Xgc);
+  *color=xget_color(Xgc);
 }
 
 static void xset_usecolor(BCG *Xgc,int num)
@@ -541,11 +543,11 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  /* je passe de Couleur a n&b */
 	  /* remise des couleurs a vide */
 	  Xgc->CurColorStatus = 1;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  /* passage en n&b */
 	  Xgc->CurColorStatus = 0;
 	  i= Xgc->CurPattern+1;
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
 	  i= Xgc->CurDashStyle+1;
 	  xset_dash(Xgc,i);
 	  Xgc->IDLastPattern = GREYNUMBER - 1;
@@ -557,15 +559,15 @@ static void xset_usecolor(BCG *Xgc,int num)
       else
 	{
 	  /* je passe en couleur */
-	  /* remise a zero des patterns et dash */
+	  /* remise a zero des colors et dash */
 	  /* remise des couleurs a vide */
 	  Xgc->CurColorStatus = 0;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  xset_dash(Xgc,1);
 	  /* passage en couleur  */
 	  Xgc->CurColorStatus = 1;
 	  i= Xgc->CurColor+1;
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
 	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
 	  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
 	  FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
@@ -645,7 +647,7 @@ static int xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,chec
   FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
   FPRINTF((file,"\n/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
   xset_alufunction1(Xgc,3);
-  xset_pattern(Xgc,Xgc->NumForeground+1);
+  xset_color(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
   return OK;
@@ -1208,9 +1210,9 @@ static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *sty
 
 static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
-  int cpat =  xget_pattern(Xgc);
+  int cpat =  xget_color(Xgc);
   WriteGeneric("drawbox",n,(int)4L,vects,vects,4*n,(int)0L,fillvect);
-  xset_pattern(Xgc,cpat);
+  xset_color(Xgc,cpat);
 }
 
 /* Draw one rectangle **/
@@ -1225,7 +1227,7 @@ static void drawrectangle(BCG *Xgc,const double rect[])
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
-  int cpat = xget_pattern(Xgc);
+  int cpat = xget_color(Xgc);
   drawrectangles(Xgc,rect,&cpat,1);
 }
 
@@ -1236,9 +1238,9 @@ static void fillrectangle(BCG *Xgc,const double rect[])
 
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
-  int cpat =  xget_pattern(Xgc);
+  int cpat =  xget_color(Xgc);
   WriteGeneric("fillarc",n,(int)6L,vects,vects,6*n,(int)0L,fillvect);
-  xset_pattern(Xgc,cpat);
+  xset_color(Xgc,cpat);
 }
 
 /** Draw a single ellipsis or part of it **/
@@ -1257,7 +1259,7 @@ static void drawarc(BCG *Xgc, double arc[])
 
 static void fillarc(BCG *Xgc, double arc[])
 {
-  int cpat= xget_pattern(Xgc);
+  int cpat= xget_color(Xgc);
   fillarcs(Xgc,arc,&cpat,1);
 }
 
@@ -1281,9 +1283,9 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
   int cpat;
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
     FPRINTF((file,"\n/absolu false def"));
-  cpat=xget_pattern(Xgc);
+  cpat=xget_color(Xgc);
   WriteGeneric("drawpoly",n,(p)*2,vectsx,vectsy,(p)*(n),(int)1L,fillvect);
-  xset_pattern(Xgc,cpat);
+  xset_color(Xgc,cpat);
   FPRINTF((file,"\n/absolu true def"));
 }
 
@@ -1304,7 +1306,7 @@ static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,in
 
 static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
 {
-  int cpat = xget_pattern(Xgc);
+  int cpat = xget_color(Xgc);
   /** just fill  ==> cpat < 0 **/
   cpat = -cpat;
   fillpolylines(Xgc,vx,vy,&cpat,1,n);
@@ -1899,13 +1901,6 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
   Xgc->graphic_engine->generic->draw_pixbuf_from_file(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
-}
-
-
-
-static  void xset_test(BCG *Xgc)
-{
-  Xgc->graphic_engine->generic->xset_test(Xgc);
 }
 
 void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)

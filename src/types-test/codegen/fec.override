@@ -300,7 +300,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   switch ( TRUE ) /* P->obj->shade */
     {
     case TRUE :
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cpat = Xgc->graphic_engine->xget_color(Xgc);
       for ( j = 0 ; j < Ntr ; j++)
 	{
 	  int ii[3], perm[3],kp, stop = FALSE;
@@ -335,14 +335,14 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    }
 	  if ( mesh == TRUE )
 	    {
-	      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+	      Xgc->graphic_engine->xset_color(Xgc,cpat);
 	      draw_triangle(Xgc,sx,sy);
 	    }
 	}
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->xset_color(Xgc,cpat);
       break;
     case FALSE:
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cpat = Xgc->graphic_engine->xget_color(Xgc);
       for ( j = 0 ; j < Ntr ; j++)
 	{
 	  int ii[3];
@@ -370,18 +370,18 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 #endif
 		    {
 		      int color = (ii[0]+ii[1]+ii[2])/3.0;
-		      Xgc->graphic_engine->xset_pattern(Xgc,color);
+		      Xgc->graphic_engine->xset_color(Xgc,color);
 		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1);
 		    }
 		}
 	      if ( mesh == TRUE )
 		{
-		  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+		  Xgc->graphic_engine->xset_color(Xgc,cpat);
 		  draw_triangle(Xgc,sx,sy);
 		}
 	    };
 	}
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->xset_color(Xgc,cpat);
       break;
     }
 

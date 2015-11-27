@@ -1135,12 +1135,12 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
 
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   th = Xgc->graphic_engine->xget_thickness(Xgc);
-  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  color= Xgc->graphic_engine->xget_color(Xgc);
   style = Xgc->graphic_engine->xget_dash(Xgc);
   fg    = Xgc->graphic_engine->xget_foreground(Xgc);
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
-  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  Xgc->graphic_engine->xset_color(Xgc,fg);
   x=pt[0];y=pt[1];
   rect[0]= x;
   rect[1]= y;
@@ -1198,7 +1198,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
   Xgc->graphic_engine->invalidate(Xgc,zrect1);
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
 }

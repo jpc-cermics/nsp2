@@ -228,7 +228,7 @@ int nsp_check_polyline3d( NspPolyline3d *P)
 
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;
   const double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
   const int L_nb_colors = L->Mcolor->mn ;
@@ -240,9 +240,9 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   x[1] = XScale(Xgc->scales,L_coord[j+1]);
   y[1] = YScale(Xgc->scales,L_coord[j+1+L->Mcoord->m]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
-  Xgc->graphic_engine->xset_pattern(Xgc, color);
+  Xgc->graphic_engine->xset_color(Xgc, color);
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
-  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+  Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
 #ifdef  WITH_GTKGLEXT

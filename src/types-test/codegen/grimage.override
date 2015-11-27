@@ -97,7 +97,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       return ;
     }
 
-  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  ccolor = Xgc->graphic_engine->xget_color(Xgc); 
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;
@@ -107,7 +107,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
     {
       /* draw the rectangle */ 
       if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+	Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
       if ( P->obj->thickness != -1 ) 
 	{
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
@@ -116,7 +116,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
       /* reset to default values */
       if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
       if ( P->obj->thickness != -1 ) 
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }

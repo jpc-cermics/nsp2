@@ -103,14 +103,14 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       /* set the fill color */
       if ( P->obj->fill_color != -1 )
 	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
-	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
+	  ccolor = Xgc->graphic_engine->xget_color(Xgc);
+	  Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
 	}
       /* fill */
       Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
       /* reset color */
       if ( P->obj->fill_color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
   /* draw polyline */
   if ( P->obj->color != -2 )
@@ -123,14 +123,14 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	}
       if ( P->obj->color != -1 )
 	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
-	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+	  ccolor = Xgc->graphic_engine->xget_color(Xgc);
+	  Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
 	}
       Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
       if ( P->obj->thickness != -1 )
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
       if ( P->obj->color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
   /* draw polymark */
   if ( P->obj->mark != -2 )
@@ -152,8 +152,8 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
         Xgc->graphic_engine->xset_mark(Xgc, xmark[0],P->obj->mark_size);
 
       if ( P->obj->mark_color != -1 ) {
-        ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
-        Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
+        ccolor = Xgc->graphic_engine->xget_color(Xgc);
+        Xgc->graphic_engine->xset_color(Xgc,P->obj->mark_color);
       }
 
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
@@ -165,21 +165,21 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 
       /* restore xgc current value for color */
       if ( P->obj->mark_color != -1 )
-        Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+        Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )
     {
       int lock_size=6, lock_color=10;
       double loc[4];
-      int i,color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int i,color = Xgc->graphic_engine->xset_color(Xgc,lock_color);
       for ( i=0 ; i < P->obj->x->mn ; i++)
 	{
 	  loc[0]=xm[i]- lock_size/2; loc[1]=ym[i]-lock_size/2;
 	  loc[2]=lock_size; loc[3]=lock_size;
 	  Xgc->graphic_engine->fillrectangle(Xgc,loc);
 	}
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
     }
 }
 

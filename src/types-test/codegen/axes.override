@@ -1176,7 +1176,7 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
   Xgc->graphic_engine->xset_clip(Xgc,&rclip);
 
   /* colorbar rectangle */
-  cpat = Xgc->graphic_engine->xset_pattern(Xgc,last+1);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,last+1);
   rect[0]=rrect[0]+4;
   rect[1]=rrect[1];
   rect[2]=rrect[2]/4;
@@ -1187,13 +1187,13 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
     {
       rect[1] = rrect[1]+ i*hr ;
       rect[3] = rrect[1]+ (i+1)*hr - rect[1];
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
       Xgc->graphic_engine->fillrectangle(Xgc,rect);
       color--;
     }
 
   /* switch to black */
-  Xgc->graphic_engine->xset_pattern(Xgc,last+1);
+  Xgc->graphic_engine->xset_color(Xgc,last+1);
   rect[1]=rrect[1];
   rect[3]=(nb_colors)*hr;
   Xgc->graphic_engine->drawrectangle(Xgc,rect);
@@ -1226,7 +1226,7 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
     }
 
   /* back to current value*/
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
 

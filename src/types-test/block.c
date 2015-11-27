@@ -998,7 +998,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       return ;
     }
 
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cpat = Xgc->graphic_engine->xget_color(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
   /* first draw the block icon */
@@ -1019,10 +1019,10 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	{
 	  char str[]="No icon";
 	  /* No icon available we use a default string */
-	  Xgc->graphic_engine->xset_pattern(Xgc,8);
+	  Xgc->graphic_engine->xset_color(Xgc,8);
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
 	  /* drawing a string */
-	  Xgc->graphic_engine->xset_pattern(Xgc,0);
+	  Xgc->graphic_engine->xset_color(Xgc,0);
 	  loc[0] = B->obj->r[1] - B->obj->r[3];
 	  nsp_block_draw_string(Xgc,str,&fill,B->obj->r,loc,B->obj->r+2,B->obj->r+3);
 	}
@@ -1032,10 +1032,10 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
        * simple icon with just a string
        */
       /* filling with white */
-      Xgc->graphic_engine->xset_pattern(Xgc,8);
+      Xgc->graphic_engine->xset_color(Xgc,8);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
       /* drawing a string */
-      Xgc->graphic_engine->xset_pattern(Xgc,0);
+      Xgc->graphic_engine->xset_color(Xgc,0);
       loc[0] = B->obj->r[1] - B->obj->r[3];
       nsp_block_draw_string(Xgc,str1,&fill, B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
@@ -1044,16 +1044,16 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
        * a rectangle with random color
        *
        */
-      Xgc->graphic_engine->xset_pattern(Xgc,rand_ignuin(1,32));
+      Xgc->graphic_engine->xset_color(Xgc,rand_ignuin(1,32));
       Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
       break;
     }
   /* draw frame rectangle */
-  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+  Xgc->graphic_engine->xset_color(Xgc,B->obj->color);
   draw_3d(Xgc,B->obj->r);
   Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
   /* add the control points if block is hilited */
-  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+  Xgc->graphic_engine->xset_color(Xgc,lock_color);
   if ( Obj->obj->hilited == TRUE )
     {
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
@@ -1067,12 +1067,12 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       if ( block_is_lock_connected(B,i)== TRUE)
 	{
 	  locked = TRUE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+	  Xgc->graphic_engine->xset_color(Xgc,lock_color);
 	}
       else
 	{
 	  locked = FALSE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,1);
+	  Xgc->graphic_engine->xset_color(Xgc,1);
 	}
       block_get_lock_pos(B,i,loc);
       /* need a method here ? */
@@ -1082,7 +1082,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
        *  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
        */
     }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 

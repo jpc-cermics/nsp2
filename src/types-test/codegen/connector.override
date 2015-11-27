@@ -449,7 +449,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
     }
 
   /* Xgc=B->obj->frame->Xgc; */
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cpat = Xgc->graphic_engine->xget_color(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
   locked =  connector_is_lock_connected(B,lockid);
@@ -457,7 +457,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
   if ( Obj->obj->hilited == TRUE || locked == FALSE ) 
     {
       /* draw frame rectangle if hilited or non connected connector */
-      Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+      Xgc->graphic_engine->xset_color(Xgc,B->obj->color);
       Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
     }
   if ( Obj->obj->hilited == TRUE ) 
@@ -481,11 +481,11 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
    */
   if ( locked == TRUE)
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+      Xgc->graphic_engine->xset_color(Xgc,lock_color); 
     }
   else 
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,1); 
+      Xgc->graphic_engine->xset_color(Xgc,1); 
     }
   connector_get_lock_pos(B,lockid,loc);
   loc[0] -= lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
@@ -503,7 +503,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
       Xgc->graphic_engine->scale->drawarc(Xgc,loc);
     }
   /* back to default */
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 

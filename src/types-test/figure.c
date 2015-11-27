@@ -2135,9 +2135,9 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       {
 	  static int nc=0;
 	  nc = (nc + 1) % 30;
-	  int color = Xgc->graphic_engine->xset_pattern(Xgc,nc);
+	  int color = Xgc->graphic_engine->xset_color(Xgc,nc);
 	  Xgc->graphic_engine->fillrectangle(Xgc,rect);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
       }
 #endif
       Xgc->graphic_engine->xset_clip(Xgc,&rect1);
@@ -3372,7 +3372,7 @@ static void nsp_figure_set_gc_values(NspFigure *F)
   BCG *Xgc =  F->obj->Xgc;
   Gc = F->obj->gc;
   if ( Xgc == NULL) return;
-  Xgc->graphic_engine->xset_pattern(Xgc,Gc->color);
+  Xgc->graphic_engine->xset_color(Xgc,Gc->color);
   if ( Gc->background != -1 )
     Xgc->graphic_engine->xset_background(Xgc,Gc->background);
   else
@@ -3439,8 +3439,8 @@ void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc)
       Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
       Xgc->graphic_engine->xset_background(Xgc,-1);
       Xgc->graphic_engine->xset_background(Xgc,Gc->background);
-      Xgc->graphic_engine->xset_pattern(Xgc,-1);
-      Xgc->graphic_engine->xset_pattern(Xgc,Gc->foreground);
+      Xgc->graphic_engine->xset_color(Xgc,-1);
+      Xgc->graphic_engine->xset_color(Xgc,Gc->foreground);
     }
 }
 

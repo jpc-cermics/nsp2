@@ -371,8 +371,8 @@ int int_grcreate(Stack stack, int rhs, int opt, int lhs)
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
   Xgc= check_graphic_window_new();
-  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_color(Xgc);
+  if ( color <= 0 ) color = Xgc->graphic_engine->xget_color(Xgc);
   if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
   if(( H = rect_create(NVOID,Xgc,val,color,thickness,back,NULL)) == NULLRECT) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -552,13 +552,13 @@ void RectDraw(NspRect *R)
   BCG *Xgc;
   int cpat, cwidth;
   Xgc=check_graphic_window_new();
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cpat = Xgc->graphic_engine->xget_color(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-  Xgc->graphic_engine->xset_pattern(Xgc,R->background);
+  Xgc->graphic_engine->xset_color(Xgc,R->background);
   Xgc->graphic_engine->scale->fillrectangle(Xgc,R->r);
-  Xgc->graphic_engine->xset_pattern(Xgc,R->color);
+  Xgc->graphic_engine->xset_color(Xgc,R->color);
   Xgc->graphic_engine->scale->drawrectangle(Xgc,R->r);
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 

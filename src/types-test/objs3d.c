@@ -2437,7 +2437,7 @@ static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foregrou
 
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 {
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double x[2], y[2];
   int n=2;
 #ifdef WITH_GTKGLEXT
@@ -2459,14 +2459,14 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
   y[0] = YScale(Xgc->scales,coord[3*ia+1]);
   x[1] = XScale(Xgc->scales,coord[3*ib]);
   y[1] = YScale(Xgc->scales,coord[3*ib+1]);
-  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, color);
+  if ( color >=  0) Xgc->graphic_engine->xset_color(Xgc, color);
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
-  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+  if ( color >=  0) Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
 static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 {
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double x[2], y[2];
   int n=2;
 #ifdef WITH_GTKGLEXT
@@ -2488,9 +2488,9 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
   y[0] = YScale(Xgc->scales,coord[6*ns+1]);
   x[1] = XScale(Xgc->scales,coord[6*ns+3]);
   y[1] = YScale(Xgc->scales,coord[6*ns+4]);
-  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, color);
+  if ( color >=  0) Xgc->graphic_engine->xset_color(Xgc, color);
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, NULL,NULL);
-  if ( color >=  0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+  if ( color >=  0) Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
@@ -2531,7 +2531,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
 	  yd[i] = B->coord[3*numpt+1];
 	  zd[i] = B->coord[3*numpt+2];
 	}
-      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+      Xgc->graphic_engine->xset_color(Xgc,foreground_color);
       fillpolylines3D(Xgc, xd, yd,zd, &B->color, np, m);
       return;
     }
@@ -2543,7 +2543,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
       x[i] = XScale(Xgc->scales,B->coord[3*numpt]);
       y[i] = YScale(Xgc->scales,B->coord[3*numpt+1]);
     }
-  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  Xgc->graphic_engine->xset_color(Xgc,foreground_color);
   Xgc->graphic_engine->fillpolylines(Xgc, x, y,&B->color, np, m);
 }
 

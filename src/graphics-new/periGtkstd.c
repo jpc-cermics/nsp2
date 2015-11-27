@@ -926,7 +926,7 @@ static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors)
 
 
 /**
- * xget_pattern:
+ * xget_color:
  * @Xgc: a #BCG
  *
  *  To get the id of the current pattern
@@ -934,12 +934,9 @@ static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors)
  * Returns:
  **/
 
-static int xget_pattern(BCG *Xgc)
+static int xget_color(BCG *Xgc)
 {
-  if ( Xgc->CurColorStatus == 1 )
-    return Xgc->CurColor;
-  else
-    return Xgc->CurPattern;
+  return Xgc->CurColor;
 }
 
 /**
@@ -1023,7 +1020,7 @@ static void xset_line_style(BCG *Xgc,int value)
     xset_dash(Xgc,value);
   else {
     xset_dash(Xgc,Xgc->CurDashStyle + 1);
-    xset_pattern(Xgc,value);
+    xset_color(Xgc,value);
   }
 }
 
@@ -1058,11 +1055,11 @@ static void xset_usecolor(BCG *Xgc,int num)
 	{
 	  /* from color to b&w */
 	  Xgc->CurColorStatus = 1;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  /* go to b&w */
 	  Xgc->CurColorStatus = 0;
 	  i= Xgc->CurPattern + 1;
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
 	  i= Xgc->CurDashStyle + 1;
 	  xset_dash(Xgc,i);
 	  Xgc->IDLastPattern = GREYNUMBER;
@@ -1073,13 +1070,13 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  /* patterns and dashes reinitialization */
 	  /* colors too */
 	  Xgc->CurColorStatus = 0;
-	  xset_pattern(Xgc,1);
+	  xset_color(Xgc,1);
 	  xset_dash(Xgc,1);
 	  /* switching to color mode */
 	  Xgc->CurColorStatus = 1;
 	  i= Xgc->CurColor + 1;
-	  xset_pattern(Xgc,i);
-	  xset_pattern(Xgc,i);
+	  xset_color(Xgc,i);
+	  xset_color(Xgc,i);
 	  Xgc->IDLastPattern = Xgc->Numcolors;
 	}
     }
@@ -1331,7 +1328,7 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
   Xgc->CurColor = -1;
   Xgc->CmapFlag = 0;
   Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  Xgc->graphic_engine->xset_pattern(Xgc,m+1);
+  Xgc->graphic_engine->xset_color(Xgc,m+1);
   Xgc->graphic_engine->xset_foreground(Xgc,m+1);
   Xgc->graphic_engine->xset_background(Xgc,m+2);
 }
@@ -1661,7 +1658,7 @@ void nsp_initialize_gc( BCG *Xgc )
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_hidden3d(Xgc,1);
   Xgc->graphic_engine->xset_thickness(Xgc,1);
-  Xgc->graphic_engine->xset_pattern(Xgc,1);
+  Xgc->graphic_engine->xset_color(Xgc,1);
   Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground);
   Xgc->graphic_engine->xset_background(Xgc,Xgc->NumBackground);
   Xgc->graphic_engine->xset_hidden3d(Xgc,4);

@@ -90,7 +90,7 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect)) return;
   
   width = c_width = Xgc->graphic_engine->xget_thickness(Xgc);
-  color = c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = c_color = Xgc->graphic_engine->xget_color(Xgc);
   
   if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
@@ -115,10 +115,10 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
     }
   width = Xgc->graphic_engine->xget_thickness(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
   /* back to default */
   if ( c_width != width)  Xgc->graphic_engine->xset_thickness(Xgc, c_width);
-  if ( c_color != color)  Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+  if ( c_color != color)  Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
 static void nsp_translate_segments(NspGraphic *Obj,const double *tr)

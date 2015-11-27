@@ -56,23 +56,20 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
-/* clear a rectangle by drawing with the background color
- * plot2d()
- * xclip(1,0,2,2)
- * xset('color',3);xfrect(1,0,2,6);
- * xclea(1,0,2,6)
+/* clear a rectangle zone by painting with the background color
+ * if r is NULL then entire graphics window is painted.
  */
 
 static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
   cairo_t *cr =  Xgc->private->cairo_drawable_cr;
-  int old= xset_pattern(Xgc,Xgc->NumBackground);
+  int old= xset_color(Xgc,Xgc->NumBackground);
   if ( r != NULL)
     cairo_rectangle (cr,r->x,r->y,r->width,r->height);
   else
     cairo_rectangle (cr,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
   cairo_fill (cr);
-  xset_pattern(Xgc,old);
+  xset_color(Xgc,old);
 }
 
 /*
@@ -221,34 +218,34 @@ static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n
 
 static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
-  int dash,color,i;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int i;
+  int dash = Xgc->graphic_engine->xget_dash(Xgc);
+  int color = Xgc->graphic_engine->xget_color(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
 	{
 	  /* fill + draw */
-	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
 	  filldrawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  /* just draw */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
       else
 	{
 	  /* fill */
-	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
+	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
 	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 /*
@@ -317,7 +314,7 @@ static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n
     cairo_line_to(cr,vx[i],vy[i]);
   if ( closeflag == 1) cairo_line_to(cr,vx[0],vy[0]);
   cairo_fill_preserve(cr);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
   cairo_stroke(cr);
   if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS)
     {
@@ -347,11 +344,11 @@ static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
   else
     {
       int i, cpat;
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cpat = Xgc->graphic_engine->xget_color(Xgc);
       Xgc->CurColor = -1; /* we want to force xset to change rgb color */
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->xset_color(Xgc,cpat);
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->xset_color(Xgc,cpat);
     }
 }
 
@@ -769,7 +766,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 }
 
 /**
- * xset_pattern:
+ * xset_color:
  * @Xgc:
  * @num:
  *
@@ -778,16 +775,15 @@ static void xset_pixmapOn(BCG *Xgc,int num)
  * Returns:
  **/
 
-static int  xset_pattern(BCG *Xgc,int color)
+static int  xset_color(BCG *Xgc,int color)
 {
   cairo_t *cr =  Xgc->private->cairo_drawable_cr;
+  int old = Xgc->CurColor;
   double rgb[3];
-  int old = xget_pattern(Xgc);
-  /* gives wrong results in new_graphics
-   * if ( old == color ) return old;
-   */
+  color = Max(1,color);
+  /* if ( Xgc->CurColor == color ) return old; */
   if ( Xgc->private->a_colors == NULL) return 1;
-  Xgc->CurColor = color = Max(1,color);
+  Xgc->CurColor = color; 
   nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->a_colors);
   cairo_set_source_rgb(cr, rgb[0], rgb[1], rgb[2]);
   return old;
@@ -928,11 +924,6 @@ int nsp_cairo_draw_to_cr(cairo_t *cr, BCG *Xgc,int colored,char option, int figu
       Xgc1->actions->destroy(Xgc1);
     }
   return OK;
-}
-
-static  void xset_test(BCG *Xgc)
-{
-  Xgc->graphic_engine->generic->xset_test(Xgc);
 }
 
 static void nsp_fonts_finalize(BCG *Xgc)

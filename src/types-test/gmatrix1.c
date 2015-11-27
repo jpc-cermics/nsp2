@@ -1446,7 +1446,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
    * case of only one color for the triangle :
    */
 
-  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  c_color = Xgc->graphic_engine->xget_color(Xgc);
 
   if ( zxy[0] == zxy[2] ) {
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
@@ -1454,7 +1454,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
     color = fill[zxy[0]]; nr = 3;
     if ( color != 0 )
       {
-	Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
       }
     return;
@@ -1498,7 +1498,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   color = fill[zxy[0]];
   if ( color != 0 )
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->xset_color(Xgc,Abs(color));
       Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
     }
 
@@ -1533,7 +1533,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       color = fill[izone];
       if ( color != 0 )
 	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	  Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
 	}
       /*
@@ -1542,7 +1542,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       if (0 && color != 0 )
 	{
 	  color = -  fill[izone];
-	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	  Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 	}
     }
@@ -1564,10 +1564,10 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   color = fill[zxy[2]];
   if ( color != 0 )
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->xset_color(Xgc,Abs(color));
       Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
     }
-  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
 }
 
 
@@ -1598,7 +1598,7 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
    * case of only one color for the triangle :
    */
 
-  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  c_color = Xgc->graphic_engine->xget_color(Xgc);
 
   if ( zxy[0] == zxy[2] ) return;
 
@@ -1640,7 +1640,7 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
   color = fill[zxy[0]];
   if ( color != 0 )
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->xset_color(Xgc,Abs(color));
       Xgc->graphic_engine->drawline(Xgc,resx[nr-2],resy[nr-2],resx[nr-1],resy[nr-1]);
     }
 
@@ -1675,12 +1675,12 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
       color = fill[izone];
       if ( color != 0 )
 	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->xset_color(Xgc,Abs(color));
 	  Xgc->graphic_engine->drawline(Xgc,resx[2],resy[2],resx[3],resy[3]);
 	}
     }
 
-  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
 }
 
 
@@ -1714,7 +1714,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
   int i,j,color,cpat,xz[2];
 
   nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nx*ny);
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cpat = Xgc->graphic_engine->xget_color(Xgc);
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   for (i = 0 ; i < (nx)-1 ; i++)
     for (j = 0 ; j < (ny)-1 ; j++)
@@ -1728,7 +1728,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 	    color = ( color < colmin ) ? colout[0] : colout[1];
 	    if ( color <= 0 ) continue;
 	  }
-	Xgc->graphic_engine->xset_pattern(Xgc,color);
+	Xgc->graphic_engine->xset_color(Xgc,color);
         w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
 	/* We don't trace rectangle which are totally out **/
 	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
@@ -1744,7 +1744,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 	      }
 	  }
       }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
 /*

@@ -856,7 +856,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   int xmark[2]={-1,-1},mode,obj_color=P->obj->color ;
   NspMatrix *M = P->obj->Pts;
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
 
   if (Obj->obj->show == FALSE ) return;
 
@@ -886,15 +886,15 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     case curve_std:
       if ( P->obj->color >= -1 )
 	{
-	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, P->obj->color);
 	  Xgc->graphic_engine->scale->drawpolyline(Xgc,M->R,M->R+M->m,M->m,0);
-	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
 	}
       if ( P->obj->mark >= -1 )
 	{
-	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_color(Xgc, P->obj->mark_color);
 	  Xgc->graphic_engine->scale->drawpolymark(Xgc,M->R,M->R+M->m,M->m);
-	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_color(Xgc, c_color);
 	}
       break;
     case curve_stairs:
@@ -911,7 +911,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	double xm[2],vx[2],ym[2],vy[2];
 	int i;
 	if ( M->m == 0) break;
-	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, obj_color);
+	if ( obj_color >= 0) Xgc->graphic_engine->xset_color(Xgc, obj_color);
 	for ( i=0 ; i < M->m ; i++)
 	  {
 	    xm[0]= M->R[i];
@@ -921,7 +921,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	    scale_double_to_pixels(Xgc->scales,xm,ym,vx,vy,2);
 	    Xgc->graphic_engine->drawline(Xgc,vx[0],vy[0],vx[1],vy[1]);
 	  }
-	if ( obj_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	if ( obj_color >= 0) Xgc->graphic_engine->xset_color(Xgc, c_color);
       }
       break;
     case curve_arrow:
@@ -956,7 +956,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     }
 
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
-  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
   if ( P->obj->mark >= 0)
     {
       Xgc->graphic_engine->xset_mark(Xgc,xmark[0],xmark[1]);
@@ -1054,7 +1054,7 @@ static void nsp_curve_fill(BCG *Xgc,NspCurve *C,NspMatrix *M)
 
 static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double *xm=NULL,*ym=NULL;
   int n= M->m+2;
   if (M->m == 0) return ;
@@ -1073,9 +1073,9 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
   ym[M->m+1]=0.0;
   if ( C->obj->color >= -1 )
     {
-      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, C->obj->color);
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
-      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
 }
@@ -1084,7 +1084,7 @@ static void nsp_curve_fill_basic(BCG *Xgc,NspCurve *C,NspMatrix *M)
 static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
 {
   double xi ;
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   int start=0;
   if (M->m == 0) return;
   xi=M->R[0];
@@ -1093,7 +1093,7 @@ static void nsp_curve_fill_ext(BCG *Xgc,NspCurve *C,NspMatrix *M)
       start=nsp_curve_fill_part(Xgc,C,M,start,&xi);
       if ( start >= M->m) break;
     }
-  if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+  if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
 }
 
 static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,double *xi)
@@ -1148,7 +1148,7 @@ static int nsp_curve_fill_part(BCG *Xgc,NspCurve *C, NspMatrix *M, int start,dou
   /* */
   if ( C->obj->color >= -1 )
     {
-      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, C->obj->color);
+      if ( C->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, C->obj->color);
       Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,p,1);
     }
   Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,p,0);
@@ -1201,7 +1201,7 @@ static void nsp_curve_stairs_fill(BCG *Xgc,NspCurve *P,NspMatrix *M)
 
 static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
 {
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
   double *xm=NULL,*ym=NULL;
   int n= ( P->obj->mode == curve_stairs ) ? 2*M->m -1 : 2*M->m+1 ,i;
   /* stroke color */
@@ -1231,23 +1231,23 @@ static void nsp_curve_stairs_fill_basic(BCG *Xgc,NspCurve *P,NspMatrix *M)
       ym[2*(M->m)]=0.0;
       if ( P->obj->color >= -1 )
 	{
-	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, P->obj->color);
 	  Xgc->graphic_engine->scale->fillpolyline(Xgc,xm,ym,n,0);
-	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	  if ( P->obj->color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
 	}
     }
 
   if ( color >= -1 )
     {
-      if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, color);
+      if ( color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, color);
       Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,2*M->m-1,0);
-      if ( color >= 0 ) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+      if ( color >= 0 ) Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
   if ( P->obj->mark >= -1 )
     {
-      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->mark_color);
+      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_color(Xgc, P->obj->mark_color);
       Xgc->graphic_engine->scale->drawpolymark(Xgc,xm,ym,2*M->m-1);
-      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+      if ( P->obj->mark_color >= 0) Xgc->graphic_engine->xset_color(Xgc, c_color);
     }
 }
 

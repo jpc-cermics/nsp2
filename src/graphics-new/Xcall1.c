@@ -80,7 +80,7 @@ static void initialize_gc_1(BCG *Xgc)
   getcolordef(&i); /* preferred color status */
   Xgc->graphic_engine->xset_alufunction1(Xgc,3);
   Xgc->graphic_engine->xset_usecolor(Xgc,i);
-  Xgc->graphic_engine->xset_pattern(Xgc,1);
+  Xgc->graphic_engine->xset_color(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_hidden3d(Xgc,1);
   Xgc->graphic_engine->xset_thickness(Xgc,1);;
@@ -157,17 +157,6 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
   ias=10*ias;
   Xgc->graphic_engine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);
 }
-
-#if 0
-static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size)
-{
-  int initpoint1[2],alpha1;
-  double size1[3];
-  alpha1=inint( *alpha);
-  axis2d(Xgc->scales,alpha,initpoint,size,initpoint1,size1);
-  Xgc->graphic_engine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
-}
-#endif 
 
 static void cleararea_1(BCG *Xgc,double *rect)
 {

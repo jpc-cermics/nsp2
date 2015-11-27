@@ -1331,8 +1331,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   orient = nsp_obj3d_orientation(x, y, m);
 
   foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
-  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
-  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
+  Xgc->graphic_engine->xset_color(Xgc,foreground_color);
 
   if ( m > 12 || ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ))
     {
@@ -1380,7 +1380,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
     }
 
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 
 }
 
@@ -1425,7 +1425,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 
 
   foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
-  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
 
   for ( j = 0 ; j < Q_nb_faces ; j++)
     {
@@ -1461,7 +1461,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
 	}
     }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 #endif
 

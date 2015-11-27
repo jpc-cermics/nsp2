@@ -617,14 +617,15 @@ static int  xset_pattern(BCG *Xgc,int color)
 {
   GdkColor temp;
   double rgb[3];
-  int old = xget_pattern(Xgc);
+  int old = Xgc->CurColor;
+  color = Max(1,color);
   if ( old == color ) return old;
   if ( Xgc->private->a_colors == NULL) return 1 ;
   if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL)
     {
       gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
-  Xgc->CurColor = color = Max(1,color);
+  Xgc->CurColor = color;
   nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->a_colors);
   temp.red   = (guint16)  (rgb[0]*65535);
   temp.green = (guint16)  (rgb[1]*65535);
@@ -632,14 +633,6 @@ static int  xset_pattern(BCG *Xgc,int color)
   gdk_gc_set_rgb_fg_color(Xgc->private->wgc,&temp);
   return old;
 }
-
-
-
-static  void xset_test(BCG *Xgc)
-{
-  Xgc->graphic_engine->generic->xset_test(Xgc);
-}
-
 
 /*
  * Text and symbols with pango

@@ -1169,9 +1169,9 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
    *  np : number of polygone(s) =1 here
    */
   foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
-  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
   Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
 #ifdef  WITH_GTKGLEXT
@@ -1204,7 +1204,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
     }
 
   foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
-  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  cpat = Xgc->graphic_engine->xset_color(Xgc,foreground_color);
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
       int stop = FALSE;
@@ -1228,7 +1228,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       /* draw one face */
       fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
     }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 #endif
 

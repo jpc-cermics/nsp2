@@ -888,14 +888,14 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
   if ( V->color != -1 )
     {
-      color = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->xset_pattern(Xgc,  V->color );
+      color = Xgc->graphic_engine->xget_color(Xgc);
+      Xgc->graphic_engine->xset_color(Xgc,  V->color );
     }
   Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
   if ( V->color != -1 )
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
     }
 }
 
@@ -920,8 +920,8 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
   if ( V->color != -1 )
     {
-      color = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->xset_pattern(Xgc,  V->color );
+      color = Xgc->graphic_engine->xget_color(Xgc);
+      Xgc->graphic_engine->xset_color(Xgc,  V->color );
     }
   mark[0]= ( V->mark_type < 0 ) ? current_mark[0] : V->mark_type;
   mark[1]= ( V->mark_size < 0 ) ? current_mark[1] : V->mark_size;
@@ -952,7 +952,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
   if ( V->color != -1 )
     {
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+      Xgc->graphic_engine->xset_color(Xgc,color);
     }
 }
 #endif

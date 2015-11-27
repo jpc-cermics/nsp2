@@ -895,7 +895,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   int xmark[2];
   NspQcurve *P = (NspQcurve *) Obj;
   int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
-  int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+  int c_color = Xgc->graphic_engine->xget_color(Xgc);
 
   if ( Obj->obj->show == FALSE ) return ;
 
@@ -916,7 +916,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->width);
     }
   if ( P->obj->color != -1 ) 
-    Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+    Xgc->graphic_engine->xset_color(Xgc, P->obj->color);
 
   switch ( P->obj->mode ) 
     {
@@ -932,9 +932,9 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	    Sciprintf("Error: cannot allocated points for drawing\n");
 	    return;
 	  }
-	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
+	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_color(Xgc, P->obj->color);
 	nsp_qcurve_stem_draw(Xgc,P);
-	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc, c_color);
+	if ( P->obj->color >= 0) Xgc->graphic_engine->xset_color(Xgc, c_color);
       }
       break;
     case qcurve_std:
@@ -960,7 +960,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       }
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
-  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+  Xgc->graphic_engine->xset_color(Xgc,c_color);
   if ( P->obj->mark >= 0 ) 
     {
       Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);

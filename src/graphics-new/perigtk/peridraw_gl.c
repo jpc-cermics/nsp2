@@ -36,14 +36,14 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
       clearwindow(Xgc);
       return ;
     }
-  old = xset_pattern(Xgc,Xgc->NumBackground);
+  old = xset_color(Xgc,Xgc->NumBackground);
   glBegin(GL_QUADS);
   glVertex2i(r->x        ,r->y);
   glVertex2i(r->x+r->width,r->y);
   glVertex2i(r->x+r->width,r->y+r->height);
   glVertex2i(r->x        ,r->y+r->height);
   glEnd();
-  xset_pattern(Xgc,old);
+  xset_color(Xgc,old);
   glClear (GL_DEPTH_BUFFER_BIT);
 }
 
@@ -116,7 +116,7 @@ static void drawrectangle(BCG *Xgc,const double rect[])
   glEnd();
 }
 
-/* fill one rectangle, with current pattern */
+/* fill one rectangle, with current color */
 
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
@@ -245,36 +245,36 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
   int dash,color,i;
 
   dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
 	{
 	  /* fill + boundaries **/
-	  xset_pattern(Xgc,fillvect[i]);
+	  xset_color(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
       else
 	{
-	  xset_pattern(Xgc,-fillvect[i]);
+	  xset_color(Xgc,-fillvect[i]);
 	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  xset_pattern(Xgc,color);
+	  xset_color(Xgc,color);
 	}
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 /*
@@ -450,7 +450,7 @@ static void draw_mark(BCG *Xgc, double *x, double *y)
   dx = ink_rect.x + ink_rect.width/2.0;
   dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
   Xgc->CurColor=1;
-  xset_pattern(Xgc,Xgc->CurColor);
+  xset_color(Xgc,Xgc->CurColor);
   glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
   if (0)
@@ -475,7 +475,7 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
   pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
   pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
   Xgc->CurColor=1;
-  xset_pattern(Xgc,Xgc->CurColor);
+  xset_color(Xgc,Xgc->CurColor);
   /* XXX  we need here to move x,y,z to center the mark at (x,y,z)  */
   /* double dx,dy;
   dx = ink_rect.x + ink_rect.width/2.0;
@@ -1079,7 +1079,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
 
 
 /**
- * xset_pattern:
+ * xset_color:
  * @Xgc:
  * @num:
  *
@@ -1088,25 +1088,18 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
  * Returns:
  **/
 
-static int  xset_pattern(BCG *Xgc,int color)
+static int  xset_color(BCG *Xgc,int color)
 {
+  int old = Xgc->CurColor;
   double rgb[3];
-  int old = xget_pattern(Xgc);
+  color = Max(1,color);
   if ( old == color ) return old;
   if ( Xgc->private->a_colors == NULL) return 1;
-  /*
-  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL)
-    {
-      gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
-    }
-  */
-  Xgc->CurColor = color = Max(1,color);
+  Xgc->CurColor = color;
   nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->a_colors);
   glColor3d(rgb[0], rgb[1], rgb[2]);
   return old;
 }
-
-
 
 #if 0
 static void print_gl_config_attrib (GdkGLConfig *glconfig,
@@ -1353,7 +1346,7 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
   int dash,color,i;
 
   dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
       xset_line_style(Xgc,style[i]);
@@ -1367,7 +1360,7 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
       drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
   }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 
@@ -1382,7 +1375,7 @@ void fillpolyline2D_shade(BCG *Xgc, double *vx, double *vy, int *colors, int n,i
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++)
     {
-      xset_pattern(Xgc,Abs(colors[i]));
+      xset_color(Xgc,Abs(colors[i]));
       glVertex2d( vx[i], vy[i]);
     }
   glEnd();
@@ -1411,7 +1404,7 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
   int dash,color,i;
 
   dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
 
   for (i = 0 ; i< n ; i++)
     {
@@ -1425,24 +1418,24 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else
 	{
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 
@@ -1455,7 +1448,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++)
     {
-      xset_pattern(Xgc,Abs(colors[i]));
+      xset_color(Xgc,Abs(colors[i]));
       glVertex3d( vx[i], vy[i], vz[i]);
     }
   glEnd();
@@ -1468,7 +1461,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
       for ( j = 0 ; j < 3 ; j++ )
 	{
 	  int k = triangle[j];
-	  xset_pattern(Xgc,Abs(colors[k]));
+	  xset_color(Xgc,Abs(colors[k]));
 	  glVertex3d( vx[k], vy[k], vz[k]);
 	}
       glEnd();
@@ -1499,37 +1492,37 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 
   /* xget_dash_and_color(Xgc,&dash,&color); */
   dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
 	{
 	  /* fill + boundaries **/
-	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  /* xset_dash_and_color(Xgc,&dash,&color); */
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else
 	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
+	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
 	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
@@ -1570,7 +1563,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 
   Xgc->graphic_engine->xget_mark(Xgc,symb);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  color = Xgc->graphic_engine->xget_color(Xgc);
 
   for (i=0 ; i< n ; i++)
     {
@@ -1588,7 +1581,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
     }
   /* back to default values **/
   Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
   Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
 }
 
@@ -1620,15 +1613,6 @@ static void init_gl_lights(GLfloat light0_pos[4])
   glEnable(GL_COLOR_LOGIC_OP);
 }
 #endif
-
-
-
-static  void xset_test(BCG *Xgc)
-{
-  Xgc->graphic_engine->generic->xset_test(Xgc);
-}
-
-
 
 #define FONTNUMBER 6
 #define FONTMAXSIZE 6

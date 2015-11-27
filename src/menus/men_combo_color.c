@@ -101,7 +101,7 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color)
 
   g_object_unref (store);
   if (init_color == -1 ) 
-    init_color=  Xgc->graphic_engine->xget_pattern(Xgc);
+    init_color=  Xgc->graphic_engine->xget_color(Xgc);
   gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color,0),n_colors-1));
   return combo;
 }

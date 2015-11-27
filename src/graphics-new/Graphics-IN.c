@@ -3887,7 +3887,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
       return 1;
       break;
     case xget_pattern:
-      val = Xgc->graphic_engine->xget_pattern(Xgc);
+      val = Xgc->graphic_engine->xget_color(Xgc);
       if ( nsp_move_double(stack,1,(double) Gc->pattern) == FAIL) return RET_BUG;
       return 1;
       break;
@@ -4431,8 +4431,8 @@ static int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
     {
       if ( opts[1].obj != NULLOBJ)
 	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc);
-	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  ccolor = Xgc->graphic_engine->xget_color(Xgc);
+	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
       if ( opts[2].obj != NULLOBJ)
 	{
@@ -4446,7 +4446,7 @@ static int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
   if ( opt != 0 )
     {
       /* reset to default values */
-      if ( opts[1].obj != NULLOBJ) Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+      if ( opts[1].obj != NULLOBJ) Xgc->graphic_engine->xset_color(Xgc,ccolor);
       if ( opts[2].obj != NULLOBJ) Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
 

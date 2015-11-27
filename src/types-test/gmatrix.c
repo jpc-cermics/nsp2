@@ -882,7 +882,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       int colmin,colmax;
       double zmin,zmax,coeff;
       int i,j,fill[1],cpat,xz[2];
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cpat = Xgc->graphic_engine->xget_color(Xgc);
       Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
       nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
 
@@ -892,7 +892,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
 	    fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
 	    /* do not draw rectangles which are outside the colormap range */
 	    if ( fill[0] < colmin || fill[0] > colmax ) continue ;
-	    Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
+	    Xgc->graphic_engine->xset_color(Xgc,fill[0]);
 	    xp[0]= (( xx[1]*i + xx[0]*(P->obj->data->n-i) )/((double) P->obj->data->n));
 	    yp[0]= (( yy[0]*j + yy[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
 	    xp[1]= xp[0];
@@ -903,7 +903,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
 	    yp[3]= yp[0];
 	    Xgc->graphic_engine->scale->fillpolyline(Xgc,xp,yp,4,1);
 	  }
-      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->xset_color(Xgc,cpat);
     }
 
 }
@@ -986,7 +986,7 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
   int colmin,colmax;
   double zmin,zmax,coeff;
   int i,j,fill[1],cpat,xz[2];
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cpat = Xgc->graphic_engine->xget_color(Xgc);
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
 
   nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
@@ -1004,7 +1004,7 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
 	     */
 	    continue;
 	  }
-	Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
+	Xgc->graphic_engine->xset_color(Xgc,fill[0]);
 	w=Abs(x[j+1]-x[j]);
 	h=Abs(y[i+1]-y[i]);
 	/* We don't trace rectangle which are totally out **/
@@ -1015,7 +1015,7 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
 	      Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	    }
       }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
 }
 
 #line 1022 "gmatrix.c"

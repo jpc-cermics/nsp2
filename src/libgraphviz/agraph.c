@@ -3214,6 +3214,14 @@ void Agraph_Interf_Info(int i, char **fname, function ( **f))
   *fname = Agraph_func[i].name;
   *f = Agraph_func[i].fonc;
 }
+void nsp_initialize_Agraph_types(void)
+{
+  new_type_agraph(T_BASE);
+  new_type_agnode(T_BASE);
+  new_type_agedge(T_BASE);
+  new_type_agsym(T_BASE);
+  new_type_agdisc(T_BASE);
+}
 
 #line 454 "codegen/agraph.override"
 
@@ -3864,4 +3872,4 @@ static int nsp_agattr_refcount_get(Agraph_t *obj,int itype)
 
 
 
-#line 3868 "agraph.c"
+#line 3876 "agraph.c"

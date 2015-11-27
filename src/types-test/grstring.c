@@ -953,8 +953,8 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
   box = 0; /* ( P->obj->box_color != -2 ); *//* we draw a box */
 
-  current_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+  current_color = Xgc->graphic_engine->xget_color(Xgc);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
 
   switch ( P->obj->fill )
     {
@@ -995,7 +995,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
 
   if ( S->mn != 1 ) FREE(str);
-  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_pattern(Xgc,current_color);
+  if ( P->obj->color >= 0) Xgc->graphic_engine->xset_color(Xgc,current_color);
 }
 
 static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)

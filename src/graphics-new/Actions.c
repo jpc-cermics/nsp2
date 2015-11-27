@@ -556,12 +556,12 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
   */
   th = Xgc->graphic_engine->xget_thickness(Xgc);
-  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  color= Xgc->graphic_engine->xget_color(Xgc);
   style = Xgc->graphic_engine->xget_dash(Xgc);
   fg    = Xgc->graphic_engine->xget_foreground(Xgc);
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
-  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  Xgc->graphic_engine->xset_color(Xgc,fg);
   nsp_set_cursor(Xgc,GDK_TOP_LEFT_CORNER );
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
   scale_i2f(Xgc->scales,&x0,&y0,&ix0,&iy0,1);
@@ -597,7 +597,7 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   Xgc->zrect[2]=   Xgc->zrect[3]=0;
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
-  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_color(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
   Xgc->graphic_engine->invalidate(Xgc,NULL);

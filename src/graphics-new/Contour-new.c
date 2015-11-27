@@ -718,9 +718,9 @@ static void ContourTrace(BCG *Xgc,double Cont, int style)
 
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc) {
-    pat = Xgc->graphic_engine->xset_pattern(Xgc,style);
+    pat = Xgc->graphic_engine->xset_color(Xgc,style);
     Xgc->graphic_engine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
-    Xgc->graphic_engine->xset_pattern(Xgc,pat);
+    Xgc->graphic_engine->xset_color(Xgc,pat);
   }
   else {
     old = Xgc->graphic_engine->xset_dash(Xgc,style);

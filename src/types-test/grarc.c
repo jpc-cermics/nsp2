@@ -853,26 +853,26 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       return ;
     }
 
-  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  ccolor = Xgc->graphic_engine->xget_color(Xgc); 
   
   if ( P->obj->fill_color != -2 ) 
     {
       /* fill the arc */ 
       if (  P->obj->fill_color != -1) 
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
+	Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
       if (  P->obj->angle != 0.0 ) 
 	nsp_fill_polyline_grarc(Xgc,P);
       else
 	Xgc->graphic_engine->scale->fillarc(Xgc,val);
       if (  P->obj->fill_color != -1) 
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
     }
   
   if ( P->obj->color != -2 ) 
     {
       /* draw the arc */ 
       if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+	Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
       if ( P->obj->thickness != -1 ) 
 	{
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
@@ -884,7 +884,7 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	Xgc->graphic_engine->scale->drawarc(Xgc,val);
       /* reset to default values */
       if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+	Xgc->graphic_engine->xset_color(Xgc,ccolor);
       if ( P->obj->thickness != -1 ) 
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
