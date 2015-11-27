@@ -42,7 +42,6 @@ static void Myalloc_double_xy (double **xm,double **ym, int n, int *err);
 Gengine1 nsp_gengine1={
  boundingbox:  boundingbox_1,
  cleararea:  cleararea_1,
- displaynumbers:   displaynumbers_1,
  displaystringa:   displaystringa_1,
  draw_pixbuf:   draw_pixbuf_1,
  draw_pixbuf_from_file:   draw_pixbuf_from_file_1,
@@ -442,51 +441,12 @@ static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
     }
 }
 
-
-static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
-{
-  double *xm=NULL,*ym=NULL;
-  int err=0;
-  Myalloc_double_xy(&xm,&ym,n,&err);
-  if (err  ==   1) return;
-  scale_double_to_pixels(Xgc->scales,x,y,xm,ym,n);
-  Xgc->graphic_engine->displaynumbers(Xgc,xm,ym,n,flag,z,alpha);
-}
-
-#if 0
-static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
-{
-  double *xm=NULL,*ym=NULL;
-  int err=0;
-  Myalloc_double_xy(&xm,&ym,(n)*(p),&err);
-  if (err  ==   1) return;
-  scale_double_to_pixels(Xgc->scales,vx,vy,xm,ym,n*p);
-  Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,drawvect,n,p);
-}
-#endif
-
 static void drawrectangle_1(BCG *Xgc,double rect[])
 {
   double xm[4];
   rect2d_double_to_pixels(Xgc->scales,rect,xm,4);
   Xgc->graphic_engine->drawrectangle(Xgc,xm);
 }
-
-#if 0
-static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
-{
-  int w,h,ix1,iy1;;
-  double xd1,yd1;
-  xd1 = XDouble2Pixel_d(Xgc->scales,x);
-  yd1 = YDouble2Pixel_d(Xgc->scales,y);
-  Xgc->graphic_engine->xget_windowdim(Xgc,&w,&h);
-  ix1 = (xd1 > int16max ) ? int16max :  ((xd1 < - int16max) ? - int16max : inint(xd1));
-  iy1 = (yd1 > int16max ) ? int16max :  ((yd1 < - int16max) ? - int16max : inint(yd1));
-  /* ignore points outside of window */
-  if ( ix1 > w || iy1 > h ) return;
-  Xgc->graphic_engine->displaystring(Xgc,string,ix1,iy1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
-}
-#endif 
 
 static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {

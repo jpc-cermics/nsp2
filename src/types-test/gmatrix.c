@@ -24,7 +24,7 @@
 
 
 
-#line 25 "codegen/gmatrix.override"
+#line 28 "codegen/gmatrix.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/figuredata.h>
@@ -108,7 +108,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
 
   type->init = (init_func *) init_gmatrix;
 
-#line 42 "codegen/gmatrix.override"
+#line 45 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -761,7 +761,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 64 "codegen/gmatrix.override"
+#line 67 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -773,7 +773,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
 #line 774 "gmatrix.c"
 
 
-#line 74 "codegen/gmatrix.override"
+#line 77 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -817,7 +817,7 @@ void nsp_initialize_GMatrix_types(void)
   new_type_gmatrix(T_BASE);
 }
 
-#line 84 "codegen/gmatrix.override"
+#line 87 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -866,12 +866,13 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
 	xm[j]= (int) (( xx1[1]*j + xx1[0]*(P->obj->data->n-j) )/((double) P->obj->data->n));
       for ( j =0 ; j < (P->obj->data->m+1) ; j++)
 	ym[j]= (int) (( yy1[0]*j + yy1[1]*(P->obj->data->m-j) )/((double) P->obj->data->m));
-      Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,P->obj->data->R,
-						 P->obj->data->m,
-						 P->obj->data->n,
-						 remap,
-						 colminmax,
-						 zminmax);
+      
+      fill_grid_rectangles1_gen(Xgc,xm,ym,P->obj->data->R,
+			    P->obj->data->m,
+			    P->obj->data->n,
+			    remap,
+			    colminmax,
+			    zminmax);
     }
   else
     {
@@ -953,4 +954,68 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 957 "gmatrix.c"
+
+
+/**
+ * fill_grid_rectangles1_gen:
+ * @Xgc:
+ * @x: array of int of size nc+1
+ * @y: array of int of size nr+1
+ * @z: array of double of size nr*nc
+ *
+ * A generic function for drawing a set of rectangles
+ * which is accelerated on Gtk driver (see periGtk.c)
+ *
+ *  x : of size nc+1 gives the x-values of the grid
+ *  y : of size nr+1 gives the y-values of the grid
+ *  z : of size nr*nc  gives the color to be used
+ *      on the rectangle defined by ( x[i],y[j], x[i+1],y[j+1])
+ *  if zremap = %f then z values are considered as color id
+ *  if zremap = %t zvalues are remapped to colors
+ *      if colminmax== NULL then zmin,zmax are remapped to the min and max
+ *         values of current colormap
+ *      else  the zminmax range is remapped to the colmimax range
+ *         and rectangles outside the range are not drawn
+ *
+ **/
+
+static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[],
+				      int nr, int nc,
+				      int remap,const int *colminmax,const double *zminmax)
+{
+  int colmin,colmax;
+  double zmin,zmax,coeff;
+  int i,j,fill[1],cpat,xz[2];
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
+
+  nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nr*nc);
+
+  for (i = 0 ; i < nr ; i++)
+    for (j = 0 ; j < nc ; j++)
+      {
+	int w,h;
+	fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) :
+	  rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
+	if ( fill[0] < colmin || fill[0] > colmax )
+	  {
+	    /* do not draw rectangles which are outside the colormap range
+	     * execpt if colout is non null
+	     */
+	    continue;
+	  }
+	Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
+	w=Abs(x[j+1]-x[j]);
+	h=Abs(y[i+1]-y[i]);
+	/* We don't trace rectangle which are totally out **/
+	if ( w != 0 && h != 0 && x[j] < xz[0] && y[i] < xz[1] && x[j]+w > 0 && y[i]+h > 0 )
+	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
+	    {
+	      double rect[]={x[j],y[i],w,h};
+	      Xgc->graphic_engine->fillrectangle(Xgc,rect);
+	    }
+      }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+}
+
+#line 1022 "gmatrix.c"

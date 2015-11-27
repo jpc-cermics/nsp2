@@ -13,23 +13,16 @@ typedef struct _nsp_gengine1 Gengine1;
 
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);
 typedef void driver_s_cleararea(BCG *Xgc, double *r);
-typedef void driver_s_displaynumbers(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
-/* typedef void driver_s_displaystring(BCG *Xgc,char *string,double x, double y,int flag, double angle);*/
 typedef void driver_s_displaystringa(BCG *Xgc,char *string, int ipos);
 typedef void driver_s_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,double dest_y,double width,double height);
 typedef void driver_s_draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,double dest_x,double dest_y,double width,double height);
 typedef void driver_s_drawarc(BCG *Xgc,double arc[]);
-/* typedef void driver_s_drawarcs(BCG *Xgc,double vects[], int style[], int n); */
 typedef void driver_s_drawarrows(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag);
 typedef void driver_s_drawpolyline(BCG *Xgc, double *vx, double *vy ,int n, int closeflag);
 typedef void driver_s_drawpolyline_clip(BCG *Xgc, double *vx, double *vy ,int n,double *clip_r, int closeflag);
-/* typedef void driver_s_drawpolylines(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p); */
 typedef void driver_s_drawpolymark(BCG *Xgc,double *vx, double *vy,int n);
 typedef void driver_s_drawrectangle(BCG *Xgc,double rect[]);
-/* typedef void driver_s_drawrectangles(BCG *Xgc,double vects[],int fillvect[], int n); */
-/* typedef void driver_s_drawsegments(BCG *Xgc,double *vx, double *vy,int n, int *style, int *width); */
 typedef void driver_s_fillarc(BCG *Xgc, double arc[]);
-/* typedef void driver_s_fillarcs(BCG *Xgc,double vects[],int fillvect[], int n); */
 typedef void driver_s_fillpolyline(BCG *Xgc,double vx[], double vy[],int n,int closeflag);
 typedef void driver_s_fillrectangle(BCG *Xgc,double rect[]);
 typedef void driver_s_initialize_gc(BCG *Xgc);
@@ -39,12 +32,10 @@ typedef void driver_s_xgetmouse(BCG *Xgc,char *str, int *ibutton, int *imask,dou
 typedef void driver_s_xset_clip(BCG *Xgc,double x[]);
 typedef void driver_s_xset_clipgrf(BCG *Xgc);
 typedef void driver_s_xset_clipping_p(BCG *Xgc,double x,double y,double w,double h);
-/* typedef void driver_s_xstringb(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd); */
 
 struct _nsp_gengine1 {
   driver_s_boundingbox *boundingbox;
   driver_s_cleararea *cleararea;
-  driver_s_displaynumbers *displaynumbers;
   driver_s_displaystringa *displaystringa;
   driver_s_draw_pixbuf *draw_pixbuf;
   driver_s_draw_pixbuf_from_file *draw_pixbuf_from_file;
@@ -72,7 +63,6 @@ struct _nsp_gengine1 {
 
 static  driver_s_boundingbox boundingbox_1;
 static  driver_s_cleararea cleararea_1;
-static  driver_s_displaynumbers displaynumbers_1;
 static  driver_s_displaystringa displaystringa_1;
 static  driver_s_draw_pixbuf draw_pixbuf_1;
 static  driver_s_draw_pixbuf_from_file draw_pixbuf_from_file_1;

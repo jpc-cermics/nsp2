@@ -1935,13 +1935,12 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-
-
-
-
 /*
- * a string in a bounded box : with font size change to fit into the
+ * draw a string in a bounded box : with font size change to fit into the
  * specified box (only works with driver which properly estimate string sizes)
+ * Note that the string may contain \n 
+ * XXXX: a simplifier en regardant ce qui est dans Xgc->graphic_engine->displaystring
+ * où cette option existe déjà ? 
  */
 
 #define FONTMAXSIZE 6
@@ -2021,4 +2020,4 @@ static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, 
 
 
 
-#line 2025 "block.c"
+#line 2024 "block.c"

@@ -17,15 +17,10 @@ typedef enum { GR_in_box, GR_fill_box, GR_no_box} gr_str_box;
 
 extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
 
-typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-					 int remap,const int *colminmax,const double *zminmax,const int *colout);
-typedef void driver_fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-					  int remap,const int *colminmax,const double *zminmax);
-
 typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y,double *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
-typedef void driver_displaynumbers( BCG *gc, double *x, double *y, int n, int flag, double *z, double *alpha);
+/* typedef void driver_displaynumbers( BCG *gc, double *x, double *y, int n, int flag, double *z, double *alpha); */
 typedef void driver_drawpolyline_clip( BCG *gc, double *vx, double *vy, int n, double *clip_box,int closeflag);
 
 typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
@@ -132,22 +127,15 @@ typedef void driver_xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int s
  */
 
 typedef struct _nsp_gengine_generic {
-  driver_fill_grid_rectangles *fill_grid_rectangles;
-  driver_fill_grid_rectangles1 *fill_grid_rectangles1 ;
   driver_drawarrows *drawarrows;
   driver_drawsegments *drawsegments;
-  /* driver_drawrectangles *drawrectangles; */
-  /* driver_drawarcs *drawarcs; */
-  /* driver_fillarcs *fillarcs; */
-  /* driver_drawpolylines *drawpolylines; */
   driver_fillpolylines *fillpolylines;
-  driver_displaynumbers *displaynumbers;
+  /* driver_displaynumbers *displaynumbers; */
   driver_drawarc *drawarc;
   driver_fillarc *fillarc;
   driver_draw_pixbuf *draw_pixbuf;
   driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
   driver_xset_test *xset_test;
-
 } nsp_gengine_generic ;
 
 extern nsp_gengine_generic nsp_peri_generic;
@@ -157,12 +145,10 @@ struct nsp_gengine {
   char *name;
   int id;
   Gengine1 *scale;  /* */
-  driver_fill_grid_rectangles *fill_grid_rectangles;
-  driver_fill_grid_rectangles1 *fill_grid_rectangles1 ;
   driver_boundingbox *boundingbox;
   driver_cleararea *cleararea;
   driver_clearwindow *clearwindow;
-  driver_displaynumbers *displaynumbers;
+  /* driver_displaynumbers *displaynumbers; */
   driver_displaystring *displaystring;
   driver_drawarc *drawarc;
   driver_drawarrows *drawarrows;
@@ -268,7 +254,7 @@ static driver_boundingbox boundingbox;
 static driver_cleararea cleararea;
 static driver_clearwindow clearwindow;
 static driver_delete_window delete_window;
-static driver_displaynumbers displaynumbers;
+/* static driver_displaynumbers displaynumbers; */
 static driver_displaystring displaystring;
 static driver_draw_pixbuf draw_pixbuf;
 static driver_draw_pixbuf_from_file draw_pixbuf_from_file;
@@ -279,8 +265,6 @@ static driver_drawpolyline drawpolyline;
 static driver_drawpolymark drawpolymark;
 static driver_drawrectangle drawrectangle;
 static driver_drawsegments drawsegments;
-static driver_fill_grid_rectangles fill_grid_rectangles;
-static driver_fill_grid_rectangles1 fill_grid_rectangles1;
 static driver_fillarc fillarc;
 static driver_fillpolyline fillpolyline;
 static driver_fillpolylines fillpolylines;

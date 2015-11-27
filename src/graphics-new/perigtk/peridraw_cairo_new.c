@@ -153,36 +153,6 @@ static void fillrectangle(BCG *Xgc,const double rect[])
 }
 
 /*
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
- *  x : of size n1 gives the x-values of the grid
- *  y : of size n2 gives the y-values of the grid
- *  z : is the value of a function on the grid defined by x,y
- *  on each rectangle the average value of z is computed
- */
-
-static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax,const int *colout)
-{
-  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
-}
-
-/*
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
- *  x : of size n1 gives the x-values of the grid
- *  y : of size n2 gives the y-values of the grid
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
- *  of each rectangle.
- *  z[i,j] is the value on the middle of rectangle
- *        P1= x[i],y[j] x[i+1],y[j+1]
- */
-
-static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
-}
-
-/*
  * Circles and Ellipsis
  * Draw or fill a set of ellipsis or part of ellipsis
  * Each is defined by 6-parameters,
@@ -385,18 +355,6 @@ static void drawpolymark(BCG *Xgc, double *vx, double *vy,int n)
     }
 }
 
-/*
- * Display numbers z[i] at location (x[i],y[i])
- *   with a slope alpha[i] (see displaystring), if flag==1
- *   add a box around the string, only if slope =0}
- */
-
-static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
-{
-
-  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
-}
-
 /* pango layout and cairo
  *
  */
@@ -493,7 +451,6 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag
     }
 }
 
-
 static void boundingbox(BCG *Xgc,const char *string, int x, int y, double *rect)
 {
   int width, height;
@@ -501,8 +458,6 @@ static void boundingbox(BCG *Xgc,const char *string, int x, int y, double *rect)
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height);
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
-
-
 
 /**
  * draw_pixbuf:

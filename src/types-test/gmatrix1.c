@@ -24,7 +24,7 @@
 
 
 
-#line 34 "codegen/gmatrix1.override"
+#line 36 "codegen/gmatrix1.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/figuredata.h>
@@ -108,7 +108,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 
   type->init = (init_func *) init_gmatrix1;
 
-#line 51 "codegen/gmatrix1.override"
+#line 53 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
@@ -890,7 +890,7 @@ static AttrTab gmatrix1_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 74 "codegen/gmatrix1.override"
+#line 76 "codegen/gmatrix1.override"
 
 extern function int_nspgraphic_extract;
 
@@ -902,7 +902,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
 #line 903 "gmatrix1.c"
 
 
-#line 84 "codegen/gmatrix1.override"
+#line 86 "codegen/gmatrix1.override"
 
 extern function int_graphic_set_attribute;
 
@@ -946,7 +946,7 @@ void nsp_initialize_GMatrix1_types(void)
   new_type_gmatrix1(T_BASE);
 }
 
-#line 94 "codegen/gmatrix1.override"
+#line 96 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
@@ -1086,13 +1086,13 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   for ( j =0 ; j < P->obj->x->mn ; j++)	 xm[j]= XScale(Xgc->scales,P->obj->x->R[j]);
   for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(Xgc->scales,P->obj->y->R[j]);
 
-  Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,P->obj->data->R,
-					    P->obj->data->m,
-					    P->obj->data->n,
-					    remap,
-					    colminmax,
-					    zminmax,
-					    colout);
+  fill_grid_rectangles_gen(Xgc,xm,ym,P->obj->data->R,
+			   P->obj->data->m,
+			   P->obj->data->n,
+			   remap,
+			   colminmax,
+			   zminmax,
+			   colout);
 }
 
 
@@ -1683,4 +1683,100 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
 }
 
-#line 1687 "gmatrix1.c"
+
+/**
+ * fill_grid_rectangles_gen:
+ * @Xgc:
+ * @x:
+ * @y:
+ * @z:
+ * @nx:
+ * @ny:
+ *
+ * A generic function for drawing a set of rectangles
+ * which is accelerated on Gtk driver (see periGtk.c)
+ *
+ *  x : of size nx gives the x-values of the grid
+ *  y : of size ny gives the y-values of the grid
+ *  z : of size (nx)*(ny).
+ *  the rectangle ( x[i],y[j], x[i+1],y[j+1])
+ *  the average value of z is computed on each corner of the rectangle
+ *  defined by ( x[i],y[j], x[i+1],y[j+1]). Then this value is
+ *  converted to a colorvalue using the current colormap.
+ *
+ **/
+
+static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
+				     int remap,const int *colminmax,const double *zminmax, const int *colout)
+{
+  int colmin,colmax;
+  double zmax,zmin,coeff,zmoy;
+  int i,j,color,cpat,xz[2];
+
+  nsp_remap_colors(Xgc,remap,&colmin,&colmax,&zmin,&zmax,&coeff,colminmax,zminmax,z,nx*ny);
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
+  for (i = 0 ; i < (nx)-1 ; i++)
+    for (j = 0 ; j < (ny)-1 ; j++)
+      {
+	int w,h;
+	zmoy=1/4.0*(z[i+nx*j]+z[i+nx*(j+1)]+z[i+1+nx*j]+z[i+1+nx*(j+1)]);
+	color = (remap == FALSE) ? rint(zmoy) : rint((colmax-colmin)*(zmoy - zmin)*coeff + colmin);
+	if (color < colmin || color > colmax )
+	  {
+	    if ( colout == NULL) continue;
+	    color = ( color < colmin ) ? colout[0] : colout[1];
+	    if ( color <= 0 ) continue;
+	  }
+	Xgc->graphic_engine->xset_pattern(Xgc,color);
+        w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
+	/* We don't trace rectangle which are totally out **/
+	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
+	  {
+	    if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
+	      {
+		double rect[]={x[i],y[j+1],w,h};
+		Xgc->graphic_engine->fillrectangle(Xgc,rect);
+	      }
+	    else
+	      {
+		/* fprintf(stderr,"Rectangle too large \n"); */
+	      }
+	  }
+      }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+}
+
+/*
+ */
+
+void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
+		      double *zmax,double *coeff,
+		      const int *colminmax,const double *zminmax,const double z[],int zn)
+{
+  *colmin=1;
+  *colmax=Xgc->graphic_engine->xget_last(Xgc);
+  if ( remap == TRUE)
+    {
+      if ( colminmax != NULL)
+	{
+	  *colmax = Min(*colmax,colminmax[1]);
+	  *colmin = Max(*colmin,colminmax[0]);
+	}
+      if ( zminmax == NULL)
+	{
+	  *zmin = Mini(z,zn);
+	  *zmax = Maxi(z,zn);
+	  *coeff = ( *zmin == *zmax ) ? 1.0: 1.0/(*zmax-*zmin);
+	}
+      else
+	{
+	  *zmin = zminmax[0];
+	  *zmax = zminmax[1];
+	  *coeff = ( *zmin == *zmax ) ? 1.0: 1.0/(*zmax-*zmin);
+	}
+    }
+}
+
+
+#line 1783 "gmatrix1.c"

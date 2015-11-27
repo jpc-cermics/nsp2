@@ -1085,36 +1085,6 @@ static void fillrectangle(BCG *Xgc,const double rect[])
   drawrectangles(Xgc,rect,&cpat,1);
 }
 
-/*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device
- *  x : of size n1 gives the x-values of the grid
- *  y : of size n2 gives the y-values of the grid
- *  z : is the value of a function on the grid defined by x,y
- *  on each rectangle the average value of z is computed
- *----------------------------------------------------------------------------------*/
-
-static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax,const int *colout)
-{
-  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
-}
-
-/*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
- *  x : of size n1 gives the x-values of the grid
- *  y : of size n2 gives the y-values of the grid
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle
- *  of each rectangle.
- *  z[i,j] is the value on the middle of rectangle
- *        P1= x[i],y[j] x[i+1],y[j+1]
- *----------------------------------------------------------------------------------*/
-
-static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
-}
-
 /* Draw a single ellipsis or part of it **/
 /* caution angle=degreAngle*64          **/
 /*  Old definition no more used  because it allows only full ellipse */
@@ -1452,20 +1422,6 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
   FPRINTF((file,"# End Of Axis \n"));
 }
 #endif 
-
-/*-----------------------------------------------------
-  \encadre{Display numbers z[i] at location (x[i],y[i])
-  with a slope alpha[i] (see displaystring_), if flag==1
-  add a box around the string.
-  -----------------------------------------------------*/
-
-
-static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
-{
-  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
-}
-
-
 
 /*-------------------------------------------------------
   \encadre{General routine for generating Postscript Code

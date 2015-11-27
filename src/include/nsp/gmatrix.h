@@ -132,7 +132,10 @@ static void nsp_translate_gmatrix(NspGraphic *o,const double *tr);
 static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
 static int nsp_getbounds_gmatrix(NspGraphic *o,double *bounds);
+static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[],
+				      int nr, int nc,
+				      int remap,const int *colminmax,const double *zminmax);
 
-#line 137 "./gmatrix.h"
+#line 140 "./gmatrix.h"
 #endif /* NspGMatrix_Private */
 

@@ -144,7 +144,9 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
+static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
+				     int remap,const int *colminmax,const double *zminmax, const int *colout);
 
-#line 149 "./gmatrix1.h"
+#line 151 "./gmatrix1.h"
 #endif /* NspGMatrix1_Private */
 

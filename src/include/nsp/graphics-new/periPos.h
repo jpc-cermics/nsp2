@@ -45,12 +45,10 @@ Gengine Pos_gengine = {
   "Pos",
   0,
   & nsp_gengine1 ,
-  fill_grid_rectangles ,
-  fill_grid_rectangles1 ,
   boundingbox,
   cleararea,
   clearwindow,
-  displaynumbers,
+  /* displaynumbers, */
   displaystring,
   drawarc,
   drawarrows,
