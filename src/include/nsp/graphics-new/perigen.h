@@ -8,43 +8,25 @@
  *
  */
 
-#include "nsp/plisttoken.h" /* for name */
+#include <nsp/plisttoken.h> /* for name */
 
+/* forward declaration */
 typedef struct __BCG BCG;
 typedef struct nsp_gengine Gengine;    /* drawing */
 
-#include "scale.h"
-#include "actions.h"
-#include "driver.h"
-#include "gcscale.h"
+#include <nsp/graphics-new/scale.h>
+#include <nsp/graphics-new/actions.h>
+#include <nsp/graphics-new/driver.h>
+#include <nsp/graphics-new/gcscale.h>
 
-/*---------------------------------------------------------------------------
- *  graphic engine data
- *---------------------------------------------------------------------------*/
-
-/* all the plot records can be cast to a plot code */
-
-typedef struct _plot_code {
-  int code;
-} plot_code ;
-
-typedef struct _listplot {
-  /* int  window; */
-  void *theplot;
-  struct _listplot   *next;
-  struct _listplot   *previous;
-} list_plot ;
-
-extern void window_scale_delete(int win);
-
-/*
+/* graphic engine data
  * a queue for storing mouse events in drivers
  */
 
 typedef struct _nsp_gwin_event nsp_gwin_event ;
 
 struct _nsp_gwin_event {
-  int win,x,y,ibutton,mask,motion,release;
+  int win, x, y, ibutton, mask, motion, release;
 };
 
 typedef enum {
@@ -61,9 +43,6 @@ struct  _nsp_event_queue {
   int in , out, size;
   nsp_gwin_event elems[MaxCB];
 };
-
-
-
 
 /*
  * structure for storing data associated to a graphic window
@@ -116,7 +95,6 @@ struct __BCG
   int zrect[4];          /* rectangle to be superposed on graphic window
 			  * used for zoom
 			  */
-
 #ifdef __cplusplus
   /* private is a reserved keyword in C++ */
   BCG_PRIVATE *private_gc ;  /* only visible when inside a specific driver */
@@ -130,9 +108,6 @@ struct __BCG
 			 */
 } ;
 
-
-extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
-
 /* FIXME: A revoir */
 #ifndef CoordModeOrigin
 #define CoordModeOrigin 0
@@ -140,24 +115,6 @@ extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, doubl
 #ifndef CoordModePrevious
 #define CoordModePrevious 1
 #endif
-
-void * graphic_initial_menu(int winid);
-
-/* jpc_SGraph.c **/
-
-extern int CheckClickQueue   (int *,int *x,int *y,int *ibut);
-extern int ClearClickQueue  (int);
-extern int PushClickQueue (int,int ,int y,int ibut,int m,int r);
-
-/* jpc_Xloop.c **/
-
-extern int C2F(ismenu) (void);
-extern int C2F(getmen) (char *btn_cmd,int *lb,int *entry);
-extern void MenuFixCurrentWin ( int ivalue);
-
-extern BCG *GetWindowXgcNumber  (int i);
-
-extern void nsp_initialize_gc( BCG *Xgc );
 
 /*
  * 3d bounding box
@@ -227,14 +184,18 @@ typedef struct _nsp_box_3d {
 #define GEOY(Scale,x1,y1,z1)  YScale(Scale,TRY(Scale,x1,y1,z1))
 #define GEOZ(Scale,x1,y1,z1)  TRZ(Scale,x1,y1,z1)
 
+extern void window_scale_delete(int win);
+extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
+extern void * graphic_initial_menu(int winid);
+extern int CheckClickQueue   (int *,int *x,int *y,int *ibut);
+extern int ClearClickQueue  (int);
+extern int PushClickQueue (int,int ,int y,int ibut,int m,int r);
+extern int C2F(ismenu) (void);
+extern int C2F(getmen) (char *btn_cmd,int *lb,int *entry);
+extern void MenuFixCurrentWin ( int ivalue);
+extern BCG *GetWindowXgcNumber  (int i);
+extern void nsp_initialize_gc( BCG *Xgc );
 extern void show_scales( BCG *Xgc);
-
-#ifdef WITH_GTKGLEXT
-extern void nsp_ogl_set_2dview(BCG *Xgc);
-extern void nsp_ogl_set_3dview(BCG *Xgc);
-extern void nsp_ogl_set_view(BCG *Xgc);
-#endif
-
 extern int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev);
 extern nsp_gwin_event nsp_dequeue(nsp_event_queue *q);
 extern nsp_gwin_event nsp_peekqueue(nsp_event_queue *q);
@@ -243,5 +204,10 @@ extern void nsp_clear_queue(nsp_event_queue *q);
 extern int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev);
 extern void window_list_clear_queue(BCG *Xgc);
 extern int window_list_search_from_drawing(void *win);
+#ifdef WITH_GTKGLEXT
+extern void nsp_ogl_set_2dview(BCG *Xgc);
+extern void nsp_ogl_set_3dview(BCG *Xgc);
+extern void nsp_ogl_set_view(BCG *Xgc);
+#endif
 
 #endif

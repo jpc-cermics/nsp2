@@ -3779,8 +3779,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
   switch (rep)
     {
     case xget_alufunction:
-      val = Xgc->graphic_engine->xget_alufunction(Xgc);
-      if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,1,(double) 0) == FAIL) return RET_BUG;
       return 1;
       break;
     case xget_background:

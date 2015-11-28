@@ -290,8 +290,8 @@ static void graduate1(const double *xmi,const double *xma, double *xi, double *x
       xma1 = *xmi+exp10((double) - iexp);
       if ( count > 1 ) 
 	{
-	  sciprint("Internal Error: Loop in graduate1 \r\n");
-	  sciprint("Please send a Bug report to scilab@inria.fr\r\n");
+	  Sciprintf("Internal Error: Loop in graduate1 \r\n");
+	  Sciprintf("Please send a Bug report to scilab@inria.fr\r\n");
 	}
       graduate1(&xmi1,&xma1,xi,xa,np1,np2,kminr,kmaxr,ar,count+1);
       return;

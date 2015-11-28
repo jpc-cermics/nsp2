@@ -551,10 +551,6 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   int    ix0,iy0,ix,iy,ixl,iyl;
   if ( Xgc == NULL ) return;
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
-  /*
-  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
-  */
   th = Xgc->graphic_engine->xget_thickness(Xgc);
   color= Xgc->graphic_engine->xget_color(Xgc);
   style = Xgc->graphic_engine->xget_dash(Xgc);

@@ -272,50 +272,6 @@ static int xget_absourel(BCG *Xgc)
   return Xgc->CurVectorStyle  ;
 }
 
-typedef struct _alinfo {
-  char *name;
-  char id;
-  char *info;
-} alinfo ;
-
-static alinfo  AluStrucPos[] =
-    {
-      {"GXclear" ,GXclear," 0 "},
-      {"GXand" ,GXand," src AND dst "},
-      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-      {"GXcopy" ,GXcopy," src "},
-      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-      {"GXnoop" ,GXnoop," dst "},
-      {"GXxor" ,GXxor," src XOR dst "},
-      {"GXor" ,GXor," src OR dst "},
-      {"GXnor" ,GXnor," NOT src AND NOT dst "},
-      {"GXequiv" ,GXequiv," NOT src XOR dst "},
-      {"GXinvert" ,GXinvert," NOT dst "},
-      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-      {"GXnand" ,GXnand," NOT src OR NOT dst "},
-      {"GXset" ,GXset," 1 "}
-    };
-
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  int value;
-  value=AluStrucPos[Min(15,Max(0,num))].id;
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      /* to be done */
-    }
-}
-
-/* To get the value of the alufunction */
-
-static int xget_alufunction(BCG *Xgc)
-{
-  return  Xgc->CurDrawFunction ;
-}
-
 /** to set the thickness of lines : 0 is a possible value **/
 /** give the thinest line **/
 
@@ -1313,9 +1269,8 @@ static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,in
 
 /* Fill the polygon */
 
-static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, int closeflag,int stroke_color)
 {
-  /* if ( Xgc->CurVectorStyle !=  CoordModeOrigin) */
   int i;
   int color=xget_color(Xgc);
   FPRINTF((file,"\\fill[%s] ",
@@ -1330,6 +1285,12 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n, in
     FPRINTF((file," -- cycle;\n"));
   else
     FPRINTF((file,";\n"));
+  if (stroke_color >= 0) 
+    {
+      xset_color(Xgc,stroke_color);
+      drawpolyline( Xgc, vx, vy, n, closeflag);
+      xset_color(Xgc,color);
+    }
 }
 
 /* Draw a set of  current mark centred at points defined */
@@ -1398,7 +1359,7 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,
   file=fopen(string1,"w");
   if (file == 0)
     {
-      sciprint("Can't open file %s, I'll use stdout\r\n",string1);
+      Sciprintf("Can't open file %s, I'll use stdout\r\n",string1);
       file =stdout;
     }
   if (EntryCounter == 0)
@@ -1472,7 +1433,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
   i = Min(FONTNUMBER-1,Max(fontid,0));
   fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
   if ( FontInfoTabPos[i].ok !=1 )
-    Scistring("\n Sorry This Font is Not available ");
+    Sciprintf("\n Sorry This Font is Not available ");
   else
     {
       Xgc->fontId = i;
@@ -1518,7 +1479,7 @@ static void loadfamily(char *name, int *j)
       FontsListPos[*j][i] = 1;
     }
   if  (FontsListPos[*j][0] == 0 )
-    sciprint("\n unknown font family : %s \r\n",name);
+    Sciprintf("\n unknown font family : %s \r\n",name);
   else
     {FontInfoTabPos[*j].ok = 1;
     strcpy(FontInfoTabPos[*j].fname,name) ;}

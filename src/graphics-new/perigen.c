@@ -142,33 +142,28 @@ static void drawarrows_gen(BCG *Xgc, double *vx, double *vy, int n, int as, int 
 
 static void fillpolylines_gen(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
-  int dash,color,i;
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  int color,i;
   color = Xgc->graphic_engine->xget_color(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
 	{
-	  /** fill + boundaries **/
+	  /* fill + stroke */
 	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
-	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color);
 	}
       else  if (fillvect[i] == 0 )
 	{
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
       else
 	{
 	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
-	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,-1);
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	}
     }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
@@ -264,5 +259,5 @@ static void fillarc_gen( BCG *Xgc, double arc[])
       vy[count] = arc[1] + h;
       count++;
     }
-  Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,count,close);
+  Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,count,close,-1);
 }

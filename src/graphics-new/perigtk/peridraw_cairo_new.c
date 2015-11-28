@@ -214,38 +214,9 @@ static void fillarc(BCG *Xgc, double arc[])
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
  */
 
-static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color );
-
 static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
-  int i;
-  int dash = Xgc->graphic_engine->xget_dash(Xgc);
-  int color = Xgc->graphic_engine->xget_color(Xgc);
-  for (i = 0 ; i< n ; i++)
-    {
-      if (fillvect[i] > 0 )
-	{
-	  /* fill + draw */
-	  Xgc->graphic_engine->xset_color(Xgc,fillvect[i]);
-	  filldrawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color);
-	}
-      else  if (fillvect[i] == 0 )
-	{
-	  /* just draw */
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	}
-      else
-	{
-	  /* fill */
-	  Xgc->graphic_engine->xset_color(Xgc,-fillvect[i]);
-	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  Xgc->graphic_engine->xset_color(Xgc,color);
-	}
-    }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
-  Xgc->graphic_engine->xset_color(Xgc,color);
+  Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
 }
 
 /*
@@ -281,7 +252,7 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
  * according to *closeflag : the given vector is a polyline or a polygon
  */
 
-static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color)
 {
   cairo_t *cr =  Xgc->private->cairo_drawable_cr;
   cairo_status_t status;
@@ -293,6 +264,8 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
     cairo_line_to(cr,vx[i],vy[i]);
   if ( closeflag == 1) cairo_line_to(cr,vx[0],vy[0]);
   cairo_fill_preserve(cr);
+  if ( color >=0 ) 
+    Xgc->graphic_engine->xset_color(Xgc,color);
   cairo_stroke(cr);
   if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS)
     {
@@ -300,29 +273,6 @@ static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 	       cairo_status_to_string(status));
     }
 }
-
-static void filldrawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color )
-{
-  cairo_t *cr =  Xgc->private->cairo_drawable_cr;
-  cairo_status_t status;
-  int i;
-  /*    */
-  /* if (closeflag == 1) n1 = n+1;else n1= n;*/
-  cairo_new_path(cr);
-  cairo_move_to(cr, vx[0],vy[0]);
-  for ( i = 1 ; i < n ; i++ )
-    cairo_line_to(cr,vx[i],vy[i]);
-  if ( closeflag == 1) cairo_line_to(cr,vx[0],vy[0]);
-  cairo_fill_preserve(cr);
-  Xgc->graphic_engine->xset_color(Xgc,color);
-  cairo_stroke(cr);
-  if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS)
-    {
-      fprintf (stderr, "Cairo is unhappy in fillpolyline : %s\n",
-	       cairo_status_to_string(status));
-    }
-}
-
 
 /*
  * Draw the current mark centred at points defined
@@ -577,34 +527,6 @@ static void xget_clip(BCG *Xgc,int *x)
       x[4] =Xgc->CurClipRegion.height;
     }
 }
-
-
-/**
- * xset_alufunction1:
- * @Xgc: a #BCG
- * @num:
- *
- *
- **/
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  Xgc->CurDrawFunction = Min(15,Max(0,num));
-}
-
-/**
- * xget_alufunction:
- * @Xgc: a #BCG
- *
- *
- *
- * Returns:
- **/
-
-static int xget_alufunction(BCG *Xgc)
-{
-  return  Xgc->CurDrawFunction ;
-}
-
 
 /**
  * xset_dashstyle:

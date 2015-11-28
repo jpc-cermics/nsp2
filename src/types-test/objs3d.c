@@ -2283,7 +2283,7 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
       char *loc= malloc((strlen(B->legend)+1)*sizeof(char));
       if ( loc == NULL )
 	{
-	  Scistring("Objs3d: cannot allocate space for legends\n");
+	  Sciprintf("Objs3d: cannot allocate space for legends\n");
 	  return;
 	}
       strcpy(loc,B->legend);
@@ -2910,10 +2910,6 @@ void nsp_3d_rotation(BCG *Xgc)
   double theta0,alpha0;
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y;
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL)
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
-    }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   /* pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc); */
   nsp_set_cursor(Xgc,GDK_EXCHANGE);
@@ -3097,4 +3093,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
     }
 }
 
-#line 3101 "objs3d.c"
+#line 3097 "objs3d.c"

@@ -88,7 +88,7 @@ void graphic_alloc_info(void)
   int i;
   for (i = 0 ; i < S_alloc_max ; i++) 
     if ( Storage[i].init == 1 ) gsize += Storage[i].size;
-  sciprint("Graphic allocated dynamic memory: %ud bytes\n",gsize);
+  Sciprintf("Graphic allocated dynamic memory: %ud bytes\n",gsize);
 }
 
 void graphic_alloc_free(void)

@@ -429,34 +429,6 @@ static void xget_clip(BCG *Xgc,int *x)
 }
 
 /**
- * xset_alufunction1:
- * @Xgc: a #BCG
- * @num:
- *
- * unused
- **/
-
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  Xgc->CurDrawFunction = Min(15,Max(0,num));
-}
-
-
-/**
- * xget_alufunction:
- * @Xgc: a #BCG
- *
- * unused
- *
- * Returns:
- **/
-
-static int xget_alufunction(BCG *Xgc)
-{
-  return  Xgc->CurDrawFunction ;
-}
-
-/**
  * xset_dashstyle:
  * @Xgc: a #BCG
  * @value:

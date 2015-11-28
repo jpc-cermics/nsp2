@@ -346,7 +346,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
       }
       break;
     default:
-      sciprint("Sci_Axis: wrong type argument xy_type\r\n");
+      Sciprintf("Sci_Axis: wrong type argument xy_type\r\n");
     }
 
 
@@ -653,7 +653,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
       }
       break;
     default:
-      sciprint("nsp_axis_grid: wrong type argument xy_type\r\n");
+      Sciprintf("nsp_axis_grid: wrong type argument xy_type\r\n");
     }
 
   if ( grid_color != -1 )

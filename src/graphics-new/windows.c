@@ -60,10 +60,8 @@ static window_scale_list  default_scale =
   bbox1:  {-1.0,1.0,-1.0,1.0,-1.0,1.0},
   c: {0.0,0.0,0.0},
   alpha:35.0, theta: 45.0,
-  metric3d:1,                 /* added by es */
-  cosa:1.0, sina: 0.0,           /* test: cosa, sina */
-  next: (window_scale_list *) 0,
-  prev:(window_scale_list *) 0,
+  metric3d:1,                   /* added by es */
+  cosa:1.0, sina: 0.0           /* test: cosa, sina */
   };
 
 /**
@@ -454,8 +452,6 @@ static window_scale_list *new_wcscale(window_scale_list *val)
 {
   window_scale_list *new ;
   if ((new = MALLOC(sizeof(window_scale_list))) == NULL) return NULL;
-  new->next = (window_scale_list *) 0;
-  new->prev = (window_scale_list *) 0;
   scale_copy(new,val);
   return new;
 }

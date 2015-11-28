@@ -276,8 +276,6 @@ Gengine xx__gengine = {
   xget_clip,
   xset_absourel,
   xget_absourel,
-  xset_alufunction1,
-  xget_alufunction,
   xset_thickness,
   xget_thickness,
   xset_color,

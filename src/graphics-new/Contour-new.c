@@ -192,7 +192,7 @@ int nsp_contour3d_draw_new(BCG *Xgc,double *x, double *y, double *z, int n1, int
       zmax=(double) Maxi(z,n1*(n2));
       if ((zconst = graphic_alloc(6,nz,sizeof(double)))== 0)
 	{
-	  sciprint("Running out of memory\r\n");
+	  Sciprintf("Running out of memory\r\n");
 	  return 0;
 	}
       for ( i =0 ; i < nz ; i++)
@@ -225,7 +225,7 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
       /* we draw nz level curves */
       if ((zz = graphic_alloc(6,nz,sizeof(double)))== 0)
 	{
-	  sciprint("Running out of memory\n");
+	  Sciprintf("Running out of memory\n");
 	  return 0;
 	}
       for ( i =0 ; i < nz ; i++)
@@ -267,7 +267,7 @@ int nsp_contour_if_new(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n
     {
       if ((zconst = graphic_alloc(6,(*nz),sizeof(double)))== 0)
 	{
-	  sciprint("Running out of memory\r\n");
+	  Sciprintf("Running out of memory\r\n");
 	  return 0;
 	}
       for ( i =0 ; i < *nz ; i++)
@@ -318,7 +318,7 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
   if ( (itg_cont == NULL) && n1*n2 != 0) check= 0;
   if ( check == 0)
     {
-      Scistring("contourI_: Running out of memory\n");
+      Sciprintf("contourI_: Running out of memory\n");
       return;
     }
   /* just a parametrization of the boundary points */
@@ -420,7 +420,7 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
 	      y_cont(j));
       break;
     default :
-      Scistring(" Error in case wrong value ");
+      Sciprintf(" Error in case wrong value ");
       break;
     }
   wflag=1;

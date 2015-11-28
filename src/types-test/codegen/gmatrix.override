@@ -125,7 +125,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
       ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
       if ( xm == 0 || ym == 0 )
 	{
-	  Scistring("Xgray: running out of memory\n");
+	  Sciprintf("Xgray: running out of memory\n");
 	  return ;
 	}
       for ( j =0 ; j < (P->obj->data->n+1) ; j++)

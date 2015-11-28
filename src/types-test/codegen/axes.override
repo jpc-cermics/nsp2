@@ -574,7 +574,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
 	}
       else
 	{
-	  Scistring("Warning: Can't use Log on X-axis xmin is negative \n");
+	  Sciprintf("Warning: Can't use Log on X-axis xmin is negative \n");
 	  xmax= 1; xmin= 0;
 	}
       aaint[0]=1;aaint[1]=inint(xmax-xmin);
@@ -590,7 +590,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
 	}
       else
 	{
-	  Scistring(" Can't use Log on y-axis ymin is negative \n");
+	  Sciprintf(" Can't use Log on y-axis ymin is negative \n");
 	  ymax= 1; ymin= 0;
 	}
       aaint[2]=1;aaint[3]=inint(ymax-ymin);

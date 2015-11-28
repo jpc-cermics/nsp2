@@ -78,7 +78,6 @@ static void initialize_gc_1(BCG *Xgc)
   /* initialisation des pattern dash par defaut en n&b */
   Xgc->graphic_engine->xset_default_colormap(Xgc);
   getcolordef(&i); /* preferred color status */
-  Xgc->graphic_engine->xset_alufunction1(Xgc,3);
   Xgc->graphic_engine->xset_usecolor(Xgc,i);
   Xgc->graphic_engine->xset_color(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
@@ -126,7 +125,7 @@ static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
   Myalloc_double_xy(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_double_to_pixels(Xgc->scales,vx,vy,xm,ym,n);
-  Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,n,closeflag);
+  Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,n,closeflag,-1);
 }
 
 
@@ -500,7 +499,7 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
     }
   else
     {
-      Scistring("xstring : No more Place  \n");
+      Sciprintf("xstring : No more space for allocation\n");
     }
 }
 
@@ -544,7 +543,7 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
     }
   else
     {
-      Scistring("xstring : No more Place  \n");
+      Sciprintf("xstring : No more Place  \n");
     }
 }
 
@@ -597,7 +596,7 @@ static void Myalloc_double_xy(double **xm, double **ym, int n, int *err)
       *ym= graphic_alloc(7,n,sizeof(double));
       if ( *xm  ==  0 || *ym  ==  0 )
 	{
-	  Scistring("malloc: Running out of memory\n");
+	  Sciprintf("malloc: Running out of memory\n");
 	  *err=1;
 	}
     }

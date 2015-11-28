@@ -770,60 +770,6 @@ static void unclip_rectangle(const GdkRectangle *clip_rect)
 #endif
 }
 
-
-/* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations
- * default value is GL_COPY for which we disable Xor mode
- */
-
-static struct alinfo {
-  char *name;
-  GLenum id;
-  char *info;} AluStruc_[] =
-    {
-      {"GXclear" , GL_CLEAR," 0 "},
-      {"GXand" , GL_AND," src AND dst "},
-      {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
-      {"GXcopy" , GL_COPY," src "},
-      {"GXandInverted" , GL_AND_INVERTED," NOT src AND dst "},
-      {"GXnoop" , GL_NOOP," dst "},
-      {"GXxor" , GL_XOR," src XOR dst "},
-      {"GXor" , GL_OR," src OR dst "},
-      {"GXnor" , GL_NOR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-      {"GXequiv" , GL_EQUIV," NOT src XOR dst "},
-      {"GXinvert" , GL_INVERT," NOT dst "},
-      {"GXorReverse" , GL_OR_REVERSE," src OR NOT dst "},
-      {"GXcopyInverted" , GL_COPY_INVERTED," NOT src "},
-      {"GXorInverted" , GL_OR_INVERTED," NOT src OR dst "},
-      {"GXnand" , GL_NAND," NOT src OR NOT dst "},
-      {"GXset" , GL_SET," 1 "}
-    };
-
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  GLenum value ;
-  Xgc->CurDrawFunction = Min(15,Max(0,num));
-  value = AluStruc_[Xgc->CurDrawFunction].id;
-  /* FIXME: is it a good choice ?
-   * to disable by default for GL_COPY
-   */
-  if ( value == GL_COPY )
-    {
-      glDisable(GL_COLOR_LOGIC_OP);
-    }
-  else
-    {
-      glEnable(GL_COLOR_LOGIC_OP);
-      glLogicOp(value);
-    }
-}
-
-static int xget_alufunction(BCG *Xgc)
-{
-  return  Xgc->CurDrawFunction ;
-}
-
-
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
   if ( value == 0)

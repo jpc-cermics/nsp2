@@ -1653,7 +1653,6 @@ void nsp_initialize_gc( BCG *Xgc )
   /* initialisation des pattern dash par defaut en n&b */
   Xgc->graphic_engine->xset_default_colormap(Xgc);
   getcolordef(&i); /* preferred color status */
-  Xgc->graphic_engine->xset_alufunction1(Xgc,3);
   Xgc->graphic_engine->xset_usecolor(Xgc,i);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_hidden3d(Xgc,1);

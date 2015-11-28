@@ -373,7 +373,7 @@ void ellipse2d_new(nsp_gcscale *scales, double *x, double *x1, int n,const char 
 	}
     }
   else
-    sciprint(" Wrong dir %s argument in echelle2d\r\n",dir);
+    Sciprintf(" Wrong dir %s argument in echelle2d\r\n",dir);
 }
 
 

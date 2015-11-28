@@ -9,8 +9,6 @@
  * to the graphics driver.
  */
 
-typedef struct _nsp_gengine1 Gengine1;
-
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);
 typedef void driver_s_cleararea(BCG *Xgc, double *r);
 typedef void driver_s_displaystringa(BCG *Xgc,char *string, int ipos);
@@ -32,6 +30,8 @@ typedef void driver_s_xgetmouse(BCG *Xgc,char *str, int *ibutton, int *imask,dou
 typedef void driver_s_xset_clip(BCG *Xgc,double x[]);
 typedef void driver_s_xset_clipgrf(BCG *Xgc);
 typedef void driver_s_xset_clipping_p(BCG *Xgc,double x,double y,double w,double h);
+
+typedef struct _nsp_gengine1 Gengine1;
 
 struct _nsp_gengine1 {
   driver_s_boundingbox *boundingbox;

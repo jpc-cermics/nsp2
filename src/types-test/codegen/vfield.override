@@ -182,7 +182,7 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   ym = graphic_alloc(1,n,sizeof(double));
   if ( xm == 0 || ym == 0)
     {
-      sciprint("Running out of memory \n");
+      Sciprintf("Running out of memory \n");
       return ;
     }
   if ( colored != 0)
@@ -190,7 +190,7 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
       zm = graphic_alloc(2,n/2,sizeof(int));
       if (  zm == 0 )
 	{
-	  sciprint("Running out of memory \n");
+	  Sciprintf("Running out of memory \n");
 	  return ;
 	}
     }

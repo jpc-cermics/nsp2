@@ -1127,7 +1127,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   ym = graphic_alloc(1,Nnode,sizeof(int));
   if ( xm == 0 || ym == 0)
     {
-      sciprint("Running out of memory \n");
+      Sciprintf("Running out of memory \n");
       return;
     }
 
@@ -1194,7 +1194,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   fill  = graphic_alloc(4,nz+2,sizeof(int));
   if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL))
     {
-      Scistring("fec: malloc No more Place\n");
+      Sciprintf("fec: malloc No more Place\n");
       return;
     }
   /* compute the fill array (fill = - num color) */
@@ -1303,7 +1303,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 		    {
 		      int color = (ii[0]+ii[1]+ii[2])/3.0;
 		      Xgc->graphic_engine->xset_color(Xgc,color);
-		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1);
+		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1,-1);
 		    }
 		}
 	      if ( mesh == TRUE )
@@ -1366,7 +1366,7 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
   ym = graphic_alloc(1,Nnode,sizeof(int));
   if ( xm == 0 || ym == 0)
     {
-      sciprint("Running out of memory \n");
+      Sciprintf("Running out of memory \n");
       return;
     }
 
@@ -1416,7 +1416,7 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
   fill  = graphic_alloc(4,nz+2,sizeof(int));
   if ( (zlevel == NULL) || (fill  == NULL))
     {
-      Scistring("fec: malloc No more Place\n");
+      Sciprintf("fec: malloc No more Place\n");
       return;
     }
   /* compute the fill array (fill = - num color) */

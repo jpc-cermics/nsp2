@@ -1079,7 +1079,7 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
 
   if ( xm == 0 || ym == 0)
     {
-      sciprint("Running out of memory \n");
+      Sciprintf("Running out of memory \n");
       return ;
     }
   /* Drawing the curves */
@@ -1174,7 +1174,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
   ym = graphic_alloc(1,Nnode,sizeof(int));
   if ( xm == 0 || ym == 0)
     {
-      sciprint("Running out of memory \n");
+      Sciprintf("Running out of memory \n");
     }
 
   for ( i = 0 ; i < nx  ; i++ )
@@ -1217,7 +1217,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
       color_min=1;
     else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) {
       /* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
-      sciprint("Error: colminmax badly choosen it should be in [0,%d]\n",nz);
+      Sciprintf("Error: colminmax badly choosen it should be in [0,%d]\n",nz);
       return;
     }
     else {
@@ -1252,7 +1252,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
     fill  = graphic_alloc(4,nz+2,sizeof(int));
     if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL))
       {
-	Scistring("fec: malloc No more Place\n");
+	Sciprintf("fec: malloc No more Place\n");
 	return ;
       }
     /* compute the fill array (fill = - num color) */
@@ -1455,7 +1455,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
     if ( color != 0 )
       {
 	Xgc->graphic_engine->xset_color(Xgc,Abs(color));
-	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
       }
     return;
   }
@@ -1499,7 +1499,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   if ( color != 0 )
     {
       Xgc->graphic_engine->xset_color(Xgc,Abs(color));
-      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
     }
 
   /*
@@ -1534,7 +1534,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       if ( color != 0 )
 	{
 	  Xgc->graphic_engine->xset_color(Xgc,Abs(color));
-	  Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+	  Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
 	}
       /*
        * this function could be used to draw levels as we can test here.
@@ -1565,7 +1565,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   if ( color != 0 )
     {
       Xgc->graphic_engine->xset_color(Xgc,Abs(color));
-      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1,-1);
     }
   Xgc->graphic_engine->xset_color(Xgc,c_color);
 }

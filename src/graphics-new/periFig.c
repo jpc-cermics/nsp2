@@ -44,7 +44,6 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const doub
 			 int sizev, int flag,const int *fvect);
 static void InitScilabGCXfig(BCG *Xgc);
 static void set_c_Fig(BCG *Xgc,int i);
-static void idfromname (char *name1, int *num);
 static void displaysymbols (BCG *Xgc,double *vx, double *vy,int n);
 static int FigQueryFont(char *name);
 static void fig_set_color(BCG *Xgc,int c, int *color);
@@ -332,85 +331,6 @@ static int xget_absourel(BCG *Xgc)
   return  Xgc->CurVectorStyle  ;
 }
 
-
-/* The alu function for drawing : Works only with X11 **/
-/* Not in Postscript **/
-
-static void xset_alufunction(BCG *Xgc,char *string)
-{
-  int value;
-  idfromname(string,&value);
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      FPRINTF((file,"# %d setalufunction\n",(int)value));
-    }
-}
-
-/* All the possibilities : Read The X11 manual to get more informations **/
-
-typedef struct _alinfo {
-  char *name;
-  char id;
-  char *info;} alinfo;
-
-static alinfo AluStrucXfig_[] =
-  {
-    {"GXclear" ,GXclear," 0 "},
-    {"GXand" ,GXand," src AND dst "},
-    {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-    {"GXcopy" ,GXcopy," src "},
-    {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-    {"GXnoop" ,GXnoop," dst "},
-    {"GXxor" ,GXxor," src XOR dst "},
-    {"GXor" ,GXor," src OR dst "},
-    {"GXnor" ,GXnor," NOT src AND NOT dst "},
-    {"GXequiv" ,GXequiv," NOT src XOR dst "},
-    {"GXinvert" ,GXinvert," NOT dst "},
-    {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-    {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-    {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-    {"GXnand" ,GXnand," NOT src OR NOT dst "},
-    {"GXset" ,GXset," 1 "}
-  };
-
-void idfromname(char *name1, int *num)
-{
-  int i;
-  *num = -1;
-  for ( i =0 ; i < 16;i++)
-    if (strcmp(AluStrucXfig_[i].name,name1)== 0)
-      *num=AluStrucXfig_[i].id;
-  if (*num == -1 )
-    {
-      Scistring("\n Use the following keys :");
-      for ( i=0 ; i < 16 ; i++)
-	{
-	  sciprint("\nkey %s ",AluStrucXfig_[i].name);
-	  sciprint("-> %s\r\n",AluStrucXfig_[i].info);
-	}
-    }
-}
-
-
-static void xset_alufunction1(BCG *Xgc,int num)
-{
-  int value;
-  value=AluStrucXfig_[Min(16,Max(0,num))].id;
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      /* to be done */
-    }
-}
-
-/* To get the value of the alufunction **/
-
-static int xget_alufunction(BCG *Xgc)
-{
-  return  Xgc->CurDrawFunction ;
-}
-
 /* to set the thickness of lines :min is 1 is a possible value **/
 /* give the thinest line **/
 
@@ -643,17 +563,17 @@ static int xset_colormap(BCG *Xgc,void *C)
   int m = A->m,n = A->n;
   double *a = A->R;
   int i;
-  Scistring("Warning : you will have to move the colors definition\n");
-  Scistring(" at the top of the xfig file \n");
+  Sciprintf("Warning : you will have to move the colors definition\n");
+  Sciprintf(" at the top of the xfig file \n");
   if ( n != 3 ||  m < 0) {
-    Scistring("Colormap must be a m x 3 array \n");
+    Sciprintf("Colormap must be a m x 3 array \n");
     return FAIL;
   }
   /* Checking RGB values */
   for (i = 0; i < m; i++) {
     if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
         a[i+2*m] < 0 || a[i+2*m]> 1) {
-      Scistring("RGB values must be between 0 and 1\n");
+      Sciprintf("RGB values must be between 0 and 1\n");
       return FAIL;
     }
   }
@@ -672,7 +592,6 @@ static int xset_colormap(BCG *Xgc,void *C)
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
   xset_usecolor(Xgc,i);
-  xset_alufunction1(Xgc,3);
   xset_color(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
@@ -684,8 +603,8 @@ static int xset_default_colormap(BCG *Xgc)
   unsigned short *a = default_colors;
   int   m = DEFAULTNUMCOLORS;
   int i;
-  Scistring("Warning : you will have to move the colors definition\n");
-  Scistring("at the top of the xfig file \n");
+  Sciprintf("Warning : you will have to move the colors definition\n");
+  Sciprintf("at the top of the xfig file \n");
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;
   Xgc->NumForeground = m;
@@ -701,7 +620,6 @@ static int xset_default_colormap(BCG *Xgc)
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
   FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
   xset_usecolor(Xgc,i);
-  xset_alufunction1(Xgc,3);
   xset_color(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
@@ -1139,7 +1057,7 @@ static void fillarc( BCG *Xgc, double arc[])
       vy[n] = arc[1] + h;
       n++;
     }
-  fillpolyline(Xgc,vx, vy,n,close);
+  fillpolyline(Xgc,vx, vy,n,close,-1);
 }
 
 /* fill a set of polygons each of which is defined by **/
@@ -1187,13 +1105,19 @@ static void drawpolyline( BCG *Xgc, const double *vx, const double *vy, int n,in
 
 /* Fill the polygon **/
 
-static void fillpolyline( BCG *Xgc, const double *vx, const double *vy, int n, int closeflag)
+static void fillpolyline( BCG *Xgc, const double *vx, const double *vy, int n, int closeflag, int stroke_color)
 {
-  int i =1,  cpat = - xget_color(Xgc);
-  /* just fill  ==> cpat < 0 **/
-  fillpolylines(Xgc,vx,vy,&cpat,i,n);
+  int cpat = xget_color(Xgc);
+  /* just fill  ==> cpat < 0 */
+  cpat = -cpat;
+  fillpolylines(Xgc,vx,vy,&cpat,1,n);
+  if ( stroke_color >=0 ) 
+    {
+      xset_color(Xgc,stroke_color);
+      drawpolyline( Xgc, vx, vy, n,closeflag);
+      xset_color(Xgc,-cpat);
+    }
 }
-
 
 /* Draw a set of  current mark centred at points defined **/
 /* by vx and vy (vx[i],vy[i]) **/
@@ -1224,7 +1148,7 @@ static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,doubl
   file=fopen(string1,"w");
   if (file == 0)
     {
-      sciprint("Can't open file %s, I'll use stdout\r\n",string1);
+      Sciprintf("Can't open file %s, I'll use stdout\r\n",string1);
       file = stdout;
     }
   if (EntryCounter == 0)
@@ -1291,7 +1215,6 @@ void InitScilabGCXfig(BCG *Xgc)
   Xgc->IDLastPattern = GREYNUMBER - 1; /* bug ?? **/
   Xgc->CurLineWidth=1 ;
   xset_thickness(Xgc,1);
-  xset_alufunction(Xgc,"GXcopy");
   /* retirer le clipping **/
   xset_unclip(Xgc);
   xset_dash(Xgc,0);
@@ -1757,7 +1680,7 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const doub
 	  }
       }
     else
-      sciprint("Can't translate %s\r\n",string);
+      Sciprintf("Can't translate %s\r\n",string);
 }
 
 static void Write2Vect(const double *vx,const double *vy, int n, int flag)
@@ -1793,7 +1716,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize, int full)
   i = Min(FONTNUMBER-1,Max(fontid,0));
   fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
   if ( FontInfoTabXfig_[i].ok !=1 )
-    Scistring("\n Sorry This Font is Not available\n");
+    Sciprintf("\n Sorry This Font is Not available\n");
   else
     {
       Xgc->fontId = i;
@@ -1854,7 +1777,7 @@ static void loadfamily(char *name, int *j)
       FontsListXfig_[*j][i] = FigQueryFont(name);
     }
   if  (FontsListXfig_[*j][0] == 0 )
-    sciprint("\n unknown font family : %s\r\n",name);
+    Sciprintf("\n unknown font family : %s\r\n",name);
   else
     {FontInfoTabXfig_[*j].ok = 1;
     strcpy(FontInfoTabXfig_[*j].fname,name) ;}

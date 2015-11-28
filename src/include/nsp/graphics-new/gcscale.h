@@ -11,6 +11,7 @@
  * structure for storing scale informations associated to an
  * axes. This should be similar to the same structure in Xgc
  * which will be removed in the future.
+ * Note: its called list but its no more a list 
  */
 
 typedef struct wcscalelist window_scale_list;
@@ -41,8 +42,6 @@ struct wcscalelist
   double alpha,theta;                   /* polar coordinates of visualization point */
   int metric3d;                         /* added by es - metric mode  for 3d -> 2d */
   double cosa,sina;                     /* test ! */
-  window_scale_list *next;              /* points to next one */
-  window_scale_list *prev;              /* points to previous one */
 };
 
 extern void nsp_scale_copy(nsp_gcscale *scale1,nsp_gcscale *scale2);

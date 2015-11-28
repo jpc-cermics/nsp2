@@ -9,21 +9,18 @@
  * and driver structures.
  */
 
-#include <gdk/gdk.h>
+#include <gdk/gdk.h> /* for GdkRectangle */
 
 typedef enum { GR_STR_XLEFT ,GR_STR_XCENTER , GR_STR_XRIGHT} gr_str_posx;
 typedef enum { GR_STR_YBOTTOM ,GR_STR_YCENTER , GR_STR_YBASELINE, GR_STR_YUP } gr_str_posy;
 typedef enum { GR_in_box, GR_fill_box, GR_no_box} gr_str_box;
 
-extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
-
 typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y,double *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
-/* typedef void driver_displaynumbers( BCG *gc, double *x, double *y, int n, int flag, double *z, double *alpha); */
 typedef void driver_drawpolyline_clip( BCG *gc, double *vx, double *vy, int n, double *clip_box,int closeflag);
-
-typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, double angle, gr_str_posx posx, gr_str_posy posy);
+typedef void driver_displaystring( BCG *gc,const char *string, double x, double y, int flag, 
+				   double angle, gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, double arc[]);
 typedef void driver_drawarrows( BCG *gc,double *vx, double *vy, int n, int as, int *style, int iflag);
 typedef void driver_drawpolyline( BCG *gc, const double *vx,const double *vy, int n,int closeflag);
@@ -32,10 +29,9 @@ typedef void driver_drawrectangle( BCG *gc,const double rect[]);
 typedef void driver_drawsegments( BCG *gc, double *vx, double *vy, int n, int *color, int *width);
 typedef void driver_drawline(BCG *Xgc, double x1, double yy1, double x2, double y2);
 typedef void driver_fillarc( BCG *gc, double arc[]);
-typedef void driver_fillpolyline( BCG *gc,  const double *vx, const double *vy,int n, int closeflag);
+typedef void driver_fillpolyline( BCG *gc,  const double *vx, const double *vy,int n, int closeflag,int stroke_color);
 typedef void driver_fillpolylines( BCG *gc, const double *vectsx, const double *vectsy, int *fillvect, int n, int p);
 typedef void driver_fillrectangle( BCG *gc,const double rect[]);
-
 typedef void driver_window_list_get_ids(int *Num,int ids[],int flag);
 typedef void *driver_initgraphic(const char *string,int *num,int *wdim,int *wpdim,double *viewport_pos,
 				 int *wpos,char mode,void *data,void *Fig);
@@ -68,8 +64,6 @@ typedef void driver_xset_unclip(BCG *gc);
 typedef void driver_xget_clip(BCG *gc,int *x);
 typedef void driver_xset_absourel(BCG *gc,int flag);
 typedef int driver_xget_absourel(BCG *gc);
-typedef void driver_xset_alufunction1(BCG *gc,int num);
-typedef int driver_xget_alufunction(BCG *gc);
 typedef int driver_xset_thickness(BCG *gc,int value);
 typedef int driver_xget_thickness(BCG *gc);
 typedef int driver_xset_color(BCG *gc,int num);
@@ -119,13 +113,15 @@ typedef void driver_process_updates(BCG *gc);
 typedef void driver_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height);
 typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y,int dest_x,
 					  int dest_y,int width,int height);
-
 typedef void driver_xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position);
-/* a set of generic functions which can be used or
- * not by each driver
- */
 
-typedef struct _nsp_gengine_generic {
+/* a set of generic functions which can be used by each driver */
+
+extern void nsp_drawpolyline_clip(BCG *Xgc, double *vx, double *vy, int n, double *clip_box , int onemore);
+
+typedef struct _nsp_gengine_generic  nsp_gengine_generic;
+
+struct _nsp_gengine_generic {
   driver_drawarrows *drawarrows;
   driver_drawsegments *drawsegments;
   driver_fillpolylines *fillpolylines;
@@ -134,7 +130,9 @@ typedef struct _nsp_gengine_generic {
   driver_fillarc *fillarc;
   driver_draw_pixbuf *draw_pixbuf;
   driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
-} nsp_gengine_generic ;
+};
+
+/* external object containing generic functions */
 
 extern nsp_gengine_generic nsp_peri_generic;
 
@@ -188,8 +186,6 @@ struct nsp_gengine {
   driver_xget_clip *xget_clip;
   driver_xset_absourel *xset_absourel;
   driver_xget_absourel *xget_absourel;
-  driver_xset_alufunction1 *xset_alufunction1;
-  driver_xget_alufunction *xget_alufunction;
   driver_xset_thickness *xset_thickness;
   driver_xget_thickness *xget_thickness;
   driver_xset_color *xset_color;
@@ -243,15 +239,16 @@ struct nsp_gengine {
 
 #endif
 
-
 #ifdef PERI_PRIVATE
-/* forward definitions */
+
+/* forward definitions: function to be implemented 
+ * by each driver 
+ */
 
 static driver_boundingbox boundingbox;
 static driver_cleararea cleararea;
 static driver_clearwindow clearwindow;
 static driver_delete_window delete_window;
-/* static driver_displaynumbers displaynumbers; */
 static driver_displaystring displaystring;
 static driver_draw_pixbuf draw_pixbuf;
 static driver_draw_pixbuf_from_file draw_pixbuf_from_file;
@@ -278,7 +275,6 @@ static driver_xclick xclick;
 static driver_xclick_any xclick_any;
 static driver_xend xend;
 static driver_xget_absourel xget_absourel;
-static driver_xget_alufunction xget_alufunction;
 static driver_xget_autoclear  xget_autoclear;
 static driver_xget_background  xget_background;
 static driver_xget_clip xget_clip;
@@ -308,7 +304,6 @@ static driver_xinfo xinfo;
 static driver_xpause xpause;
 static driver_xselgraphic  xselgraphic ;
 static driver_xset_absourel xset_absourel;
-static driver_xset_alufunction1 xset_alufunction1;
 static driver_xset_autoclear xset_autoclear;
 static driver_xset_autoclear_def xset_autoclear_def;
 static driver_xset_background xset_background;
