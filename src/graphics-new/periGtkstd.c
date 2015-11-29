@@ -1892,7 +1892,8 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	  if (dd->figure != NULL)
 	    {
 	      NspObject *Obj;
-	      if ( (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ )
+	      if ( nsp_list_length(((NspFigure *)dd->figure)->obj->children) > 0 
+		   && (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ )
 		{
 		  if ( IsAxes(Obj))
 		    {
