@@ -6185,6 +6185,31 @@ static int int_winsid_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/**
+ * int_window_exists:
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ *
+ *
+ * Returns:
+ **/
+
+static int int_window_exists(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  int id;
+  CheckRhs(1,1);
+  if (GetScalarInt(stack,1,&id) == FAIL) return RET_BUG;
+  Xgc=window_list_search_new(id);
+  if ( nsp_move_boolean(stack,1, Xgc != NULL)==FAIL) 
+    {
+      return RET_BUG;
+    }
+  return 1;
+}
+
 /*-----------------------------------------------------------
  * [xi,xa,np1,np2,kMinr,kMaxr,ar]=xgraduate(xmi,xma)
  * rajouter ds le man XXXX
@@ -7344,6 +7369,7 @@ OpGrTab Graphics_func[]={
   {NAMES("seteventhandler"),int_seteventhandler},
   {NAMES("show_pixbuf"),int_show_pixbuf},
   {NAMES("winsid"),int_winsid_new},
+  {NAMES("window_exists"),int_window_exists},
   {NAMES("xarc"),int_xarc_new},
   {NAMES("xarcs"),int_xarcs_new},
   {NAMES("xarrows"),int_xarrows_new},
