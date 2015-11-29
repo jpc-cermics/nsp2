@@ -43,6 +43,9 @@
 #include "nsp/axes.h"
 #include <nsp/gtk/gtkwindow.h>
 
+/* #define DEBUG_GRAPHICS(x) = x */
+#define DEBUG_GRAPHICS(x) 
+
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height);
@@ -361,8 +364,12 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
 
 static void xget_windowdim(BCG *Xgc,int *width, int *height)
 {
-  /* the two dimensions are always updated */
-  nsp_gtk_widget_get_size (Xgc->private->drawing,width,height);
+  /* do not use 
+   * nsp_gtk_widget_get_size (Xgc->private->drawing,width,height);
+   * since when exporting Xgc->private->drawing may be null 
+   */
+  *width= Xgc->CWindowWidth;
+  *height= Xgc->CWindowHeight;
 #if 0
   {
     int w,h;
@@ -410,7 +417,7 @@ static void nsp_gtk_widget_get_size(GtkWidget *widget, gint *width, gint *height
 
 static void nsp_remove_hints(BCG *Xgc,int width,int height)
 {
-  Sciprintf("nsp_remove_hints size=(%d,%d)",width,height);
+  DEBUG_GRAPHICS(Sciprintf("nsp_remove_hints size=(%d,%d)",width,height));
   Xgc->private->configured = TRUE;
   gtk_widget_set_size_request (Xgc->private->window,-1,-1);
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window),
@@ -418,7 +425,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
 				 NULL,0);
   if ( Xgc->CurResizeStatus == 1 ) 
     {
-      Sciprintf(" drawing hints removed ");
+      DEBUG_GRAPHICS(Sciprintf(" drawing hints removed "));
       gtk_widget_set_size_request (Xgc->private->drawing,-1,-1);
       gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 				     Xgc->private->drawing,
@@ -428,7 +435,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     {
       int w= width;
       int h= height;
-      Sciprintf(" drawing hints=(%d,%d)", w,h);
+      DEBUG_GRAPHICS(Sciprintf(" drawing hints=(%d,%d)", w,h));
       gtk_widget_set_size_request (Xgc->private->drawing,w,h);
       nsp_set_graphic_geometry_hints(Xgc->private->drawing,w,h);
     }
@@ -436,7 +443,7 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
 				 Xgc->private->scrolled,
 				 NULL,0);
-  Sciprintf(" quit\n");
+  DEBUG_GRAPHICS(Sciprintf(" quit\n"));
 }
 
 /**
@@ -469,7 +476,7 @@ static void nsp_set_geometry_hints(BCG *Xgc,int x,int y)
        * and no configure event will be generated if the size is not changed
        */
       GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE |GDK_HINT_MIN_SIZE ;
-      Sciprintf("fix hints on window (%d,%d)->(%d,%d)\n",w,h,x,y);
+      DEBUG_GRAPHICS(Sciprintf("fix hints on window (%d,%d)->(%d,%d)\n",w,h,x,y));
       _nsp_set_geometry_hints(Xgc->private->window,geometry_mask,x,y);
     }
 }
@@ -486,7 +493,7 @@ static void nsp_set_geometry_hints(BCG *Xgc,int x,int y)
 static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y)
 {
   GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;
-  Sciprintf("fix min hints on graphic (%d,%d)\n",x,y);
+  DEBUG_GRAPHICS(Sciprintf("fix min hints on graphic (%d,%d)\n",x,y));
   _nsp_set_geometry_hints(widget,geometry_mask,x,y);
   /* 
      gtk_window_resize(GTK_WINDOW(widget),x,y);
@@ -616,7 +623,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 	  gtk_widget_set_size_request(Xgc->private->scrolled, x,y);
 	  /* we force (x,y) sizes for scrolled by giving hints on the main widget  */
 	  nsp_set_geometry_hints(Xgc, x + (pw-w), y+(ph-h));
-	  Sciprintf("fix window to (%d,%d)\n", x + (pw-w), y+(ph-h));
+	  DEBUG_GRAPHICS(Sciprintf("fix window to (%d,%d)\n", x + (pw-w), y+(ph-h)));
 	  Xgc->CWindowWidth =  dw1;
 	  Xgc->CWindowHeight = dh1;
 	  Xgc->private->resize = 1;
@@ -1718,8 +1725,8 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   {
     int width, height;
     nsp_gtk_widget_get_size (Xgc->private->drawing,&width,&height);
-    Sciprintf("In realize (%d,%d) and (%d,%d)\n",
-	      width,height, Xgc->CWindowWidth, Xgc->CWindowHeight);
+    DEBUG_GRAPHICS(Sciprintf("In realize (%d,%d) and (%d,%d)\n",
+			     width,height, Xgc->CWindowWidth, Xgc->CWindowHeight));
   }
   nsp_drawing_resize(Xgc, Xgc->CWindowWidth, Xgc->CWindowHeight);
   return FALSE;
@@ -1852,10 +1859,10 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
       return FALSE ;
     }
   nsp_gtk_widget_get_size (dd->private->drawing,&width,&height);
-  Sciprintf("In drawing configure: wdim (%d,%d), get_size=(%d,%d) event=(%d,%d)\n",
+  DEBUG_GRAPHICS(Sciprintf("In drawing configure: wdim (%d,%d), get_size=(%d,%d) event=(%d,%d)\n",
 	    dd->CWindowWidth, dd->CWindowHeight,
 	    width,height, 
-	    event->width,event->height);
+			   event->width,event->height));
   nsp_remove_hints(dd,width,height);
   
   if ( dd->CurResizeStatus == 2 )
@@ -1922,7 +1929,7 @@ static gint timeout_configured (void *data)
   BCG *dd = (BCG *) data;
   if ( dd->private->configured == TRUE ) 
     {
-      Sciprintf("TIMEOUT: Configured\n");
+      DEBUG_GRAPHICS(Sciprintf("TIMEOUT: Configured\n"));
       MY_THREADS_ENTER;
       nsp_gtk_main_quit();
       MY_THREADS_LEAVE;
@@ -1930,7 +1937,7 @@ static gint timeout_configured (void *data)
     }
   else
     {
-      Sciprintf("TIMEOUT: Not configured\n");
+      DEBUG_GRAPHICS(Sciprintf("TIMEOUT: Not configured\n"));
       return TRUE;
     }
 }
@@ -1946,14 +1953,14 @@ static void controlC_handler_configured(int sig)
 static void nsp_configure_wait(BCG *dd)
 {
   guint tid;
-  Sciprintf("enter: nsp_configure_wait\n");
+  DEBUG_GRAPHICS(Sciprintf("enter: nsp_configure_wait\n"));
   dd->private->configured = FALSE;
   signal(SIGINT,controlC_handler_configured);
   tid=g_timeout_add(100,(GSourceFunc) timeout_configured, dd);
   nsp_gtk_main();
   g_source_remove(tid);
   signal(SIGINT,controlC_handler);
-  Sciprintf("quit: nsp_configure_wait\n");
+  DEBUG_GRAPHICS(Sciprintf("quit: nsp_configure_wait\n"));
 }
 
 /**
@@ -1977,7 +1984,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
-  Sciprintf("Expose event\n");
+  DEBUG_GRAPHICS(Sciprintf("Expose event\n"));
   /*
    * redraw rectangle:
    * here we use dd->private->invalidated and not
@@ -2126,7 +2133,7 @@ static void nsp_drawing_resize(BCG *dd,int width, int height)
 #if GTK_CHECK_VERSION(3,0,0)
 static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *region)
 {
-  Sciprintf("Inside the nsp_drawing_invalidate_handler\n");
+  DEBUG_GRAPHICS(Sciprintf("Inside the nsp_drawing_invalidate_handler\n"));
 }
 
 #endif 
@@ -2152,11 +2159,11 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
   nsp_gtk_widget_get_size(dd->private->drawing,&width,&height);
-  Sciprintf("Drawing: the drawing area is of size (%d,%d)\n",width,height);
+  DEBUG_GRAPHICS(Sciprintf("Drawing: the drawing area is of size (%d,%d)\n",width,height));
   {
     double x1,x2,x3,x4;
     cairo_clip_extents (cr,&x1,&x2,&x3,&x4);
-    Sciprintf("Clip extents %f,%f,%f,%f\n",x1,x2,x3,x4);
+    DEBUG_GRAPHICS(Sciprintf("Clip extents %f,%f,%f,%f\n",x1,x2,x3,x4));
   }
 
   if( dd->private->draw_init) 
@@ -2170,7 +2177,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if( dd->private->resize != 0 ) 
     {
-      Sciprintf("Drawing: make a resize of pixmap \n");
+      DEBUG_GRAPHICS(Sciprintf("Drawing: make a resize of pixmap \n"));
 
       /* we need to resize the surface used for drawing */
       dd->private->resize = 0;
@@ -2181,7 +2188,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if ( dd->private->draw == TRUE )
     {
-      Sciprintf("Drawing: redraw to pixmap \n");
+      DEBUG_GRAPHICS(Sciprintf("Drawing: redraw to pixmap \n"));
       /* this is a full draw which draws the current figure to 
        * dd->private->drawable. 
        */

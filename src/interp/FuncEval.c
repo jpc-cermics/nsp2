@@ -638,6 +638,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   nsp_new_frame(name); 
 #endif 
   stack.first = first;
+  /* Sciprintf("<-- %s\n",name); */
   if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs,0) ) == RET_BUG) 
     {
       /*clean the stack */
@@ -645,6 +646,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
     }
   /*Closing the frame **/
   nsp_frame_delete();
+  /* Sciprintf("--> %s\n",name);*/
 #ifdef NSP_PROFILING
   ((NspPList *) OF)->cpu +=  nsp_cputime() -cpu;
 #endif

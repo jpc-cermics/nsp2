@@ -81,7 +81,7 @@ last
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int xmark[2];
-  int ccolor=-1,cmark=-1,cmarksize=-1,cthick=-1;
+  int cmark=-1,cmarksize=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
   double *xm=NULL,*ym=NULL;
 
@@ -100,10 +100,12 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   /* fill polyline */
   if ( P->obj->fill_color != -2 &&  P->obj->color != -2 )
     {
+      int c_color = Xgc->graphic_engine->xget_color(Xgc);
+      int stroke_color= (P->obj->color== -1) ? c_color : P->obj->color;
       /* fill + stroke */
       if ( P->obj->fill_color != -1 )
 	{
-	  ccolor = Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
+	  Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
 	}
       if ( P->obj->thickness != -1 )
 	{
@@ -111,30 +113,33 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
 	}
       /* fill and stroke */
-      Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close,P->obj->color);
+      Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close,stroke_color);
       /* reset color */
-      if ( P->obj->fill_color != -1 && P->obj->color != -1 )
-	Xgc->graphic_engine->xset_color(Xgc,ccolor);
+      if ( P->obj->fill_color != -1 || P->obj->color != -1 )
+	Xgc->graphic_engine->xset_color(Xgc,c_color);
     }
   else
     {
+      int c_color=-1;
       if ( P->obj->fill_color != -2 )
 	{
 	  /* set the fill color */
 	  if ( P->obj->fill_color != -1 )
 	    {
-	      ccolor = Xgc->graphic_engine->xget_color(Xgc);
-	      Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
+	      c_color = Xgc->graphic_engine->xset_color(Xgc,P->obj->fill_color);
 	    }
 	  /* fill */
 	  Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close,-1);
 	  /* reset color */
 	  if ( P->obj->fill_color != -1 )
-	    Xgc->graphic_engine->xset_color(Xgc,ccolor);
+	    {
+	      Xgc->graphic_engine->xset_color(Xgc,c_color);
+	    }
 	}
       /* draw polyline */
       if ( P->obj->color != -2 )
 	{
+	  int c_color=-1;
 	  /* we will draw polyline */
 	  if ( P->obj->thickness != -1 )
 	    {
@@ -143,21 +148,22 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	    }
 	  if ( P->obj->color != -1 )
 	    {
-	      ccolor = Xgc->graphic_engine->xget_color(Xgc);
-	      Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
+	      c_color= Xgc->graphic_engine->xset_color(Xgc,P->obj->color);
 	    }
 	  Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
 	  if ( P->obj->thickness != -1 )
 	    Xgc->graphic_engine->xset_thickness(Xgc,cthick);
 	  if ( P->obj->color != -1 )
-	    Xgc->graphic_engine->xset_color(Xgc,ccolor);
+	    {
+	      Xgc->graphic_engine->xset_color(Xgc,c_color);
+	    }
 	}
     }
   /* draw polymark */
   if ( P->obj->mark != -2 )
     {
       /* we will draw marks */
-
+      int c_color=-1;
       /* save xgc current values for mark */
       if (( P->obj->mark != -1 ) || ( P->obj->mark_size != -1 )) {
         Xgc->graphic_engine->xget_mark(Xgc,xmark);
@@ -173,8 +179,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
         Xgc->graphic_engine->xset_mark(Xgc, xmark[0],P->obj->mark_size);
 
       if ( P->obj->mark_color != -1 ) {
-        ccolor = Xgc->graphic_engine->xget_color(Xgc);
-        Xgc->graphic_engine->xset_color(Xgc,P->obj->mark_color);
+        c_color = Xgc->graphic_engine->xset_color(Xgc,P->obj->mark_color);
       }
 
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
@@ -186,7 +191,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 
       /* restore xgc current value for color */
       if ( P->obj->mark_color != -1 )
-        Xgc->graphic_engine->xset_color(Xgc,ccolor);
+        Xgc->graphic_engine->xset_color(Xgc,c_color);
     }
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )
