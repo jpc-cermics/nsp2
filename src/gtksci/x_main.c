@@ -128,6 +128,13 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #endif
       nsp_set_emacs_key_theme() ;
 
+      /* XXX: change error handler to get rid of critical messages
+       * this should be activated or not depending on a parameter
+       * i.e activated when compiling in debug mode
+       */
+      g_log_set_default_handler (my_log_handler, NULL);
+      g_log_set_handler (NULL, G_LOG_LEVEL_WARNING, my_log_handler, NULL);
+
     }
   /* signals */
   signal(SIGSEGV,sci_clear_and_exit);
@@ -143,13 +150,6 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
   sci_winch_signal(0);
-  /* XXX: change error handler to get rid of critical messages
-   * this should be activated or not depending on a parameter
-   * i.e activated when compiling in debug mode
-   */
-  g_log_set_default_handler (my_log_handler, NULL);
-  g_log_set_handler (NULL, G_LOG_LEVEL_WARNING, my_log_handler, NULL);
-
 
 }
 

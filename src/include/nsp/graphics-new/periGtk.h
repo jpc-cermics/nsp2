@@ -193,6 +193,7 @@ typedef struct  _gtk_data {
 #endif
   GdkRectangle invalidated;             /* used for expose_event */
   int          configured;              /* used to wait for configure event */
+  cairo_rectangle_int_t invalidated_r;  /* filled in the nsp_drawing_invalidate_handler */
 } gui_private ;
 
 

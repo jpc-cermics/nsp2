@@ -2134,7 +2134,14 @@ static void nsp_drawing_resize(BCG *dd,int width, int height)
 #if GTK_CHECK_VERSION(3,0,0)
 static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *region)
 {
-  DEBUG_GRAPHICS(Sciprintf("Inside the nsp_drawing_invalidate_handler\n"));
+  GQuark quark = g_quark_from_string("xgc");
+  BCG *dd = g_object_get_qdata(G_OBJECT(window), quark);
+  cairo_rectangle_int_t r;
+  cairo_region_get_extents (region,&r);
+  /* Sciprintf("Inside the nsp_drawing_invalidate_handler [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);   */
+  if ( dd != NULL) dd->private->invalidated_r = r;
+  else
+    Sciprintf("Inside the nsp_drawing_invalidate_handler dd is null [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);
 }
 
 #endif 
@@ -2189,6 +2196,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if ( dd->private->draw == TRUE )
     {
+      cairo_rectangle_int_t r =dd->private->invalidated_r ;
       DEBUG_GRAPHICS(Sciprintf("Drawing: redraw to pixmap \n"));
       /* this is a full draw which draws the current figure to 
        * dd->private->drawable. 
@@ -2198,6 +2206,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
        * rectangle as in expose function 
        * XXXXXX
        */
+      Sciprintf("Inside the drawing callback [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);
       if (dd->figure == NULL)
 	{
 	  dd->graphic_engine->cleararea(dd,NULL);

@@ -199,7 +199,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   /* Default value is without Pixmap */
   NewXgc->CurPixmapStatus = 0;
 #if defined(PERIGL) && !defined(PERIGLGTK)
-  NewXgc->private->drawable =  NewXgc->private->drawing->window;
+  NewXgc->private->drawable = gtk_widget_get_window(NewXgc->private->drawing);
 #endif
   /* initialize a pango_layout */
   nsp_fonts_initialize(NewXgc);
@@ -467,10 +467,14 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		   G_CALLBACK(draw_callback), (gpointer) dd);
   g_signal_connect((dd->private->scrolled), "draw",
 		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
-  
-  gdk_window_set_invalidate_handler (GDK_WINDOW(dd->private->window),
+
+  {
+    GQuark quark = g_quark_from_string("xgc");
+    g_object_set_qdata_full(G_OBJECT(gtk_widget_get_window(dd->private->drawing)), quark, (gpointer) dd  , NULL);
+  }
+  gdk_window_set_invalidate_handler (
+				     gtk_widget_get_window(dd->private->drawing),
 				     nsp_drawing_invalidate_handler);
-  
 #else
   g_signal_connect((dd->private->drawing), "expose_event",
 		   G_CALLBACK(expose_event_new), (gpointer) dd);
