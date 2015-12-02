@@ -746,7 +746,7 @@ static void delete_window(BCG *dd,int intnum)
   if ( winxgc->CurPixmapStatus == 1 )
     {
       /* switch to non extra pixmap mode */
-      g_object_unref(G_OBJECT(winxgc->private->extra_pixmap));
+      cairo_surface_destroy(winxgc->private->extra_pixmap);
       winxgc->private->extra_pixmap = NULL;
       winxgc->private->drawable = NULL;
       winxgc->CurPixmapStatus = 0;
@@ -757,7 +757,7 @@ static void delete_window(BCG *dd,int intnum)
       gdk_pixmap_unset_gl_capability (winxgc->private->extra_pixmap);
 #endif
       /* we can have a non null extra_pixmap */
-      g_object_unref(G_OBJECT(winxgc->private->extra_pixmap));
+      cairo_surface_destroy(winxgc->private->extra_pixmap);
     }
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
@@ -767,7 +767,7 @@ static void delete_window(BCG *dd,int intnum)
 #if defined(PERIGL) && defined(PERIGLGTK)
       gdk_pixmap_unset_gl_capability (winxgc->private->pixmap);
 #endif
-      g_object_unref(G_OBJECT(winxgc->private->pixmap));
+      cairo_surface_destroy(winxgc->private->pixmap);
     }
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window);

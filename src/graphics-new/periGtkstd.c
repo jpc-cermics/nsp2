@@ -2001,8 +2001,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       /* we need to resize the pixmap used for drawing
        */
       dd->private->resize = 0;
-      if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
-
+      if ( dd->private->pixmap) cairo_surface_destroy(dd->private->pixmap);
+      
       dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
 							       CAIRO_CONTENT_COLOR,
 							       dd->CWindowWidth, dd->CWindowHeight);
@@ -2368,7 +2368,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	{
 	  /* free old pixmap */
 	  gdk_pixmap_unset_gl_capability (dd->private->pixmap);
-	  g_object_unref (G_OBJECT (dd->private->pixmap));
+	  cairo_surface_destroy (dd->private->pixmap);
 	  /* gdk_pixmap_unref(dd->private->pixmap); */
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}

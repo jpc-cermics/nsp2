@@ -618,7 +618,7 @@ static void pixmap_resize(BCG *Xgc)
 	  xinfo(Xgc,"No more space to create cairo surface");
 	  return;
 	}
-      g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
+      cairo_surface_destroy (Xgc->private->extra_pixmap);
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       if ( Xgc->private->cairo_extra_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_extra_pixmap_cr);
       Xgc->private->cairo_extra_pixmap_cr = cairo_create (Xgc->private->extra_pixmap);
@@ -653,7 +653,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  xinfo(Xgc,"Not enough space to switch to Animation mode");
 	  return;
 	}
-      if ( Xgc->private->extra_pixmap != NULL) g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
+      if ( Xgc->private->extra_pixmap != NULL) cairo_surface_destroy (Xgc->private->extra_pixmap);
       xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       if ( Xgc->private->cairo_extra_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_extra_pixmap_cr);
@@ -666,7 +666,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     {
       /* deleting and removing the extra pixmap as the default drawable */
       xinfo(Xgc," ");
-      if ( Xgc->private->extra_pixmap != NULL) g_object_unref(G_OBJECT(Xgc->private->extra_pixmap));
+      if ( Xgc->private->extra_pixmap != NULL)  cairo_surface_destroy (Xgc->private->extra_pixmap);
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = Xgc->private->pixmap;
       if ( Xgc->private->cairo_pixmap_cr != NULL) cairo_destroy (Xgc->private->cairo_pixmap_cr);

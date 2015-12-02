@@ -846,10 +846,10 @@ static void pixmap_resize(BCG *Xgc)
 	  return;
 	}
 #if 1
-      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      cairo_surface_destroy(Xgc->private->extra_pixmap);
 #else
       gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
-      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      cairo_surface_destroy(Xgc->private->extra_pixmap);
 #endif
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
@@ -887,7 +887,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  if ( status == FALSE )
 	    {
 	      Sciprintf("Gl rendering off-screen not working !\n");
-	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+	      cairo_surface_destroy(Xgc->private->extra_pixmap);
 	      Xgc->private->extra_pixmap = NULL;
 	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
 	      Xgc->private->glcontext = gtk_widget_get_gl_context (Xgc->private->drawing);
@@ -935,7 +935,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  if ( status == FALSE )
 	    {
 	      Sciprintf("Gl rendering off-screen not working !\n");
-	      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+	      cairo_surface_destroy(Xgc->private->extra_pixmap);
 	      Xgc->private->extra_pixmap = NULL;
 	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
 	      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
@@ -952,7 +952,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       if ( Xgc->private->gldrawable != NULL)
 	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
       gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
-      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      cairo_surface_destroy(Xgc->private->extra_pixmap);
       /* gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap); */
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
