@@ -151,8 +151,10 @@ int Xorgetchar_select(void)
 
   if ( first == 0) 
     {
+      GdkDisplay *display = gdk_display_get_default();
+      Display *xDisplay = (Display *)gdk_x11_display_get_xdisplay(display);
       first++;
-      GtkXsocket = ConnectionNumber(gdk_display_get_default());
+      GtkXsocket = ConnectionNumber(xDisplay);
       fd_in  = fileno(stdin) ;
       fd_out = fileno(stdout);
       fd_err = fileno(stderr);
