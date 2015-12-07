@@ -1899,7 +1899,6 @@ static int int_plot2d_new( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
-  // gdk_window_set_debug_updates(TRUE);
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
 }
 
@@ -4000,6 +3999,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
  *
  * Returns:
  **/
+
 static int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -6157,9 +6157,9 @@ static int int_xexport_new(Stack stack, int rhs, int opt, int lhs)
  * @opt:
  * @lhs:
  *
+ * returns a vector containing the ids of opened graphic windows
  *
- *
- * Returns:
+ * Returns: 1 or %RET_BUG;
  **/
 
 static int int_winsid_new(Stack stack, int rhs, int opt, int lhs)
@@ -6192,8 +6192,9 @@ static int int_winsid_new(Stack stack, int rhs, int opt, int lhs)
  * @opt:
  * @lhs:
  *
- *
- * Returns:
+ * checks if the given id correspond to an opened graphic window
+ * 
+ * Returns: 1 or %RET_BUG;
  **/
 
 static int int_window_exists(Stack stack, int rhs, int opt, int lhs)
@@ -6208,6 +6209,38 @@ static int int_window_exists(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   return 1;
+}
+
+/**
+ * int_window_newid:
+ * @stack:
+ * @rhs:
+ * @opt:
+ * @lhs:
+ *
+ * returns max(winsid())+1;
+ * 
+ * Returns: 1 or %RET_BUG;
+ **/
+
+static int int_window_newid(Stack stack, int rhs, int opt, int lhs)
+{
+  int id = window_list_get_max_id()+1;
+  CheckRhs(0,0);
+  if ( nsp_move_double(stack,1, id) ==FAIL) 
+    {
+      return RET_BUG;
+    }
+  return 1;
+}
+
+static int int_window_debug_updates(Stack stack, int rhs, int opt, int lhs)
+{
+  int flag=FALSE;
+  CheckStdRhs(1,1);
+  if (GetScalarBool(stack,1,&flag) == FAIL) return RET_BUG;
+  gdk_window_set_debug_updates(flag);
+  return 0;
 }
 
 /*-----------------------------------------------------------
@@ -7370,6 +7403,8 @@ OpGrTab Graphics_func[]={
   {NAMES("show_pixbuf"),int_show_pixbuf},
   {NAMES("winsid"),int_winsid_new},
   {NAMES("window_exists"),int_window_exists},
+  {NAMES("window_newid"),int_window_newid},
+  {NAMES("window_debug_updates"), int_window_debug_updates},
   {NAMES("xarc"),int_xarc_new},
   {NAMES("xarcs"),int_xarcs_new},
   {NAMES("xarrows"),int_xarrows_new},
