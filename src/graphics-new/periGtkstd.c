@@ -1970,7 +1970,7 @@ static void nsp_configure_wait(BCG *dd)
  * @event:
  * @data:
  *
- *
+ * used with Gtk+2 
  *
  * Returns:
  **/
@@ -2139,24 +2139,23 @@ static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *re
   cairo_rectangle_int_t r;
   cairo_region_get_extents (region,&r);
   /* Sciprintf("Inside the nsp_drawing_invalidate_handler [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);   */
-  if ( dd != NULL) dd->private->invalidated_r = r;
+  if ( dd != NULL) 
+    {
+      dd->private->invalidated_r = r;
+      dd->private->region = region ;
+    }
   else
     Sciprintf("Inside the nsp_drawing_invalidate_handler dd is null [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);
 }
 
 #endif 
 
-
-/* the draw callback for GTk3 
- * XXX: we use a non-double buffered window 
- * Thus begin/end paint are not called before the 
- * draw_callback 
- * we should use gdk_window_set_invalidate_handler 
- * to know the region which need to be redrawn 
- * it is possible to obtain the extends of the region.
- */
-
 #if GTK_CHECK_VERSION(3,0,0)
+
+/* the drawing callback for GTk+3 
+ * we use a non-double buffered window 
+ * Thus begin/end paint are not called before the draw_callback 
+ */
 
 static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
@@ -2168,12 +2167,14 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   nsp_gtk_widget_get_size(dd->private->drawing,&width,&height);
   DEBUG_GRAPHICS(Sciprintf("Drawing: the drawing area is of size (%d,%d)\n",width,height));
+  /* 
   {
     double x1,x2,x3,x4;
     cairo_clip_extents (cr,&x1,&x2,&x3,&x4);
     DEBUG_GRAPHICS(Sciprintf("Clip extents %f,%f,%f,%f\n",x1,x2,x3,x4));
   }
-
+  */
+  
   if( dd->private->draw_init) 
     {
       /* first time we are in draw_callback, we need to initialize 
@@ -2185,9 +2186,8 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if( dd->private->resize != 0 ) 
     {
-      DEBUG_GRAPHICS(Sciprintf("Drawing: make a resize of pixmap \n"));
-
       /* we need to resize the surface used for drawing */
+      DEBUG_GRAPHICS(Sciprintf("Drawing: make a resize of pixmap \n"));
       dd->private->resize = 0;
       nsp_drawing_resize(dd,width,height);
       /* we want to redraw all the window */
@@ -2196,32 +2196,55 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   
   if ( dd->private->draw == TRUE )
     {
-      cairo_rectangle_int_t r =dd->private->invalidated_r ;
+      /* we need to update the surface associated to the graphic 
+       * window 
+       */
       DEBUG_GRAPHICS(Sciprintf("Drawing: redraw to pixmap \n"));
-      /* this is a full draw which draws the current figure to 
-       * dd->private->drawable. 
-       */
+      
       dd->private->draw = FALSE;
-      /* Here we should be able to redraw with a clip 
-       * rectangle as in expose function 
-       * XXXXXX
+      /* we redraw with a clip rectangle given by the invalidate_handler 
+       * we could use dd->private->invalidated ? instead 
        */
-      Sciprintf("Inside the drawing callback [%d,%d,%d,%d]\n",r.x,r.y,r.width,r.height);
       if (dd->figure == NULL)
 	{
+	  /* nothing to do except clearing the window */
 	  dd->graphic_engine->cleararea(dd,NULL);
 	}
       else
 	{
 	  /* call a new draw when necessary here */
+	  GdkRectangle rect;
+	  /* 
+	  Sciprintf("Inside the drawing callback [%d,%d,%d,%d] and [%d,%d,%d,%d]\n",
+		    dd->private->invalidated_r.x,
+		    dd->private->invalidated_r.y,
+		    dd->private->invalidated_r.width,
+		    dd->private->invalidated_r.height,
+		    dd->private->invalidated.x,
+		    dd->private->invalidated.y,
+		    dd->private->invalidated.width,
+		    dd->private->invalidated.height);
+	  */
+	  if ( dd->private->invalidated.width == 0 ) 
+	    {
+	      rect = dd->private->invalidated_r;
+	    }
+	  else
+	    {
+	      rect = dd->private->invalidated;
+	    }
 	  NspGraphic *G = (NspGraphic *) dd->figure ;
-	  G->type->draw(dd,G,NULL,NULL);
+	  G->type->draw(dd,G,&rect,NULL);
 	}
     }
   
   /* draws dd->private->pixmap to physical window 
    * cr is dealing with clip not to draw everything.
+   * is this true when we do not use double buffering ? 
    */
+  if ( dd->private->region != NULL) 
+    gdk_window_begin_paint_region (gtk_widget_get_window(dd->private->drawing),
+				   dd->private->region);
   cairo_set_source_rgb(cr,
 		       dd->private->gcol_bg.red/65535.0,
 		       dd->private->gcol_bg.green/65535.0,
@@ -2229,7 +2252,14 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   cairo_set_source_surface(cr,dd->private->pixmap,0,0);
   cairo_rectangle (cr, 0,0, width, height);
   cairo_fill (cr);
+  if ( dd->private->region != NULL) 
+    {
+      gdk_window_end_paint(gtk_widget_get_window(dd->private->drawing));
+      dd->private->region = NULL;
+    }
   
+  
+
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
     {
@@ -2243,7 +2273,7 @@ static gint draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
   dd->private->invalidated.y = 0;
   dd->private->invalidated.width = 0;
   dd->private->invalidated.height = 0;
-
+  
   return FALSE;
 }
 
