@@ -1,16 +1,13 @@
 // test program for a scicos-like editor 
 // this works with objects of src/gobjects 
 
-// XXXX 
-// lenght et size pour un diagram doivent donner 
-// le nbre d'objets stockes.
+// to be done:  length and size for a diagram should return the number of children 
 
 function C=draw_vanne()
-  if ~new_graphics() then 
-    switch_graphics();
-  end
+// this function use a graphic window to create a graphic 
+// and encapsulate the graphic in a new compound 
+// the compound is returned by the function 
   new_win=%t
-  
   if new_win then 
     win=xget('window');
     xset('window',30);
@@ -38,9 +35,9 @@ function C=draw_vanne()
 endfunction;
 
 function C=draw_gmatrix()
-  if ~new_graphics() then 
-    switch_graphics();
-  end
+// this function use a graphic window to create a graphic 
+// and encapsulate the graphic in a new compound 
+// the compound is returned by the function 
   new_win=%t
   if new_win then 
     win=xget('window');
@@ -61,8 +58,6 @@ function C=draw_gmatrix()
 endfunction;
 
 function im=draw_tumbi()
-  if ~new_graphics() then switch_graphics();
-  end
   im = grimage_create(x=0,y=0,w=10,h=10,fname='config/tumbi.svg');
 endfunction;
 
@@ -468,10 +463,6 @@ endfunction;
 if ~exists('GF','global') then 
   global('GF');
   GF=hash_create(6);
-end
-
-if ~new_graphics() then 
-  switch_graphics();
 end
 
 xinit(cairo=%t,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
