@@ -7258,7 +7258,7 @@ static int int_nsp_graphic_widget(Stack stack, int rhs, int opt, int lhs)
 
 /* push string to the command queue for graphic window win
  * or if string is a predefined command it is executed directly
- *
+ * if only one argument is given it is a command which is enqueued 
  */
 
 static int int_nsp_enqueue_command(Stack stack, int rhs, int opt, int lhs)
@@ -7268,14 +7268,23 @@ static int int_nsp_enqueue_command(Stack stack, int rhs, int opt, int lhs)
   int wid;
   char *command;
   CheckLhs(0,1);
-  CheckStdRhs(2,2);
-  if (GetScalarInt(stack,1,&wid) == FAIL) return RET_BUG;
-  if ((command = GetString(stack,2)) == (char*)0) return RET_BUG;
-  if (( Xgc=window_list_search_new(wid))== NULL) return 0;
-  if ( nsp_call_predefined_callbacks(Xgc, command, wid) == 1)
-    return 0;
-  sprintf(buf,"%s",command);
-  enqueue_nsp_command(buf);
+  CheckStdRhs(1,2);
+  if (rhs == 1) 
+    {
+      if ((command = GetString(stack,1)) == (char*)0) return RET_BUG;
+      sprintf(buf,"%s",command);
+      enqueue_nsp_command(buf);
+    }
+  else
+    {
+      if (GetScalarInt(stack,1,&wid) == FAIL) return RET_BUG;
+      if ((command = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if (( Xgc=window_list_search_new(wid))== NULL) return 0;
+      if ( nsp_call_predefined_callbacks(Xgc, command, wid) == 1)
+	return 0;
+      sprintf(buf,"%s",command);
+      enqueue_nsp_command(buf);
+    }
   return 0;
 }
 
