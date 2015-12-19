@@ -132,9 +132,10 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
        * this should be activated or not depending on a parameter
        * i.e activated when compiling in debug mode
        */
+#if 0
       g_log_set_default_handler (my_log_handler, NULL);
       g_log_set_handler (NULL, G_LOG_LEVEL_WARNING, my_log_handler, NULL);
-
+#endif
     }
   /* signals */
   signal(SIGSEGV,sci_clear_and_exit);
