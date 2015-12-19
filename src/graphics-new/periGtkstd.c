@@ -496,7 +496,7 @@ static void nsp_set_geometry_hints(BCG *Xgc,int x,int y)
 
 static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y)
 {
-  GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;
+  /* GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;*/
   DEBUG_GRAPHICS(Sciprintf("fix min hints on graphic (%d,%d)\n",x,y));
   /* not a GTK_WINDOW  
   _nsp_set_geometry_hints(widget,geometry_mask,x,y);
@@ -1961,11 +1961,10 @@ static void controlC_handler_configured(int sig)
 
 static void nsp_configure_wait(BCG *dd)
 {
-  guint tid;
   DEBUG_GRAPHICS(Sciprintf("enter: nsp_configure_wait\n"));
   dd->private->configured = FALSE;
   signal(SIGINT,controlC_handler_configured);
-  tid=g_timeout_add(100,(GSourceFunc) timeout_configured, dd);
+  g_timeout_add(100,(GSourceFunc) timeout_configured, dd);
   nsp_gtk_main();
   /* g_source_remove(tid); this is done when timeout_configured return FALSE */
   signal(SIGINT,controlC_handler);
