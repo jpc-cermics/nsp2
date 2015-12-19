@@ -427,9 +427,11 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
     {
       DEBUG_GRAPHICS(Sciprintf(" drawing hints removed "));
       gtk_widget_set_size_request (Xgc->private->drawing,-1,-1);
+      /* not a  GTK_WINDOW
       gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 				     Xgc->private->drawing,
 				     NULL,0);
+      */
     }
   else
     {
@@ -440,9 +442,11 @@ static void nsp_remove_hints(BCG *Xgc,int width,int height)
       nsp_set_graphic_geometry_hints(Xgc->private->drawing,w,h);
     }
   gtk_widget_set_size_request (Xgc->private->scrolled,-1,-1);
+  /* 
   gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->scrolled),
 				 Xgc->private->scrolled,
 				 NULL,0);
+  */
   DEBUG_GRAPHICS(Sciprintf(" quit\n"));
 }
 
@@ -494,7 +498,9 @@ static void nsp_set_graphic_geometry_hints(GtkWidget *widget,int x,int y)
 {
   GdkWindowHints geometry_mask= GDK_HINT_MIN_SIZE ;
   DEBUG_GRAPHICS(Sciprintf("fix min hints on graphic (%d,%d)\n",x,y));
+  /* not a GTK_WINDOW  
   _nsp_set_geometry_hints(widget,geometry_mask,x,y);
+  */
   /* 
      gtk_window_resize(GTK_WINDOW(widget),x,y);
      gtk_window_set_resizable (GTK_WINDOW(widget),FALSE);
@@ -1148,9 +1154,11 @@ static void xset_wresize(BCG *Xgc,int num)
 	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (Xgc->private->scrolled),
 					  GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 	  Xgc->CurResizeStatus = 1;
+	  /* 
 	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->drawing),
 					 Xgc->private->drawing,
 					 NULL,0);
+	  */
 	  /* adding 1 to force a configure event */
 	  xset_windowdim(Xgc,w+1,h+1);
 	  break;
@@ -1959,7 +1967,7 @@ static void nsp_configure_wait(BCG *dd)
   signal(SIGINT,controlC_handler_configured);
   tid=g_timeout_add(100,(GSourceFunc) timeout_configured, dd);
   nsp_gtk_main();
-  g_source_remove(tid);
+  /* g_source_remove(tid); this is done when timeout_configured return FALSE */
   signal(SIGINT,controlC_handler);
   DEBUG_GRAPHICS(Sciprintf("quit: nsp_configure_wait\n"));
 }
