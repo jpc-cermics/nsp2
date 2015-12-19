@@ -1,0 +1,27 @@
+(define-objectref Block
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "NspBlock")
+  (implements "GRint")
+  (fields
+   '("void*" "object_sid" "hidden")
+   '("double[]" "r" "hidden" "{0,0,0,0}" "4" )   
+   '("int" "color")
+   '("int" "thickness")
+   '("int" "background")
+   '("int" "n_locks" "hidden" ) 
+   '("grb_lock*" "locks" "hidden" ) 
+   '("NspGraphic*" "icon" "std")
+   '("int" "draw_mode" "hidden" "0")
+  )
+  (gtype-id "Block")
+)
+
+(define-struct grb_lock 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "grb_lock")
+  (gtype-id "grb_lock")
+)
+
+

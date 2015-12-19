@@ -1,0 +1,15 @@
+;; -*- scheme -*-
+
+(register "graphic-types.defs")
+(register "block-types.defs")
+
+(define-objectref GridBlock
+  (in-module "Block")
+  (parent "Block")
+  (c-name "NspGridBlock")
+  (implements "GRint")
+  (fields
+   '("void*" "gframe" "hidden" "NULL"); a nspgframe
+  )
+  (gtype-id "GridBlock")
+)

@@ -12,7 +12,7 @@ ALL=  classa.defs classb.defs classaref.defs classbref.defs \
 	gmatrix1.defs fec.defs contour3d.defs block.defs link.defs \
 	connector.defs diagram.defs grimage.defs epoints.defs sharedlib.defs \
 	hm.defs ast.defs astv.defs bvar.defs gpixbuf.defs \
-	stochdec.defs bson.defs classc.defs
+	stochdec.defs bson.defs classc.defs gridblock.defs
 
 PROG=../../../bin/nspbind
 
@@ -77,6 +77,7 @@ clean:
 ../polyline3d.c : polyline3d-types.defs polyline3d.defs  polyline3d.override
 ../compound.c : compound-types.defs compound.defs  compound.override
 ../block.c : block.defs  block.override
+../gridblock.c : gridblock.defs  gridblock.override
 ../link.c : link.defs  link.override
 ../diagram.c : diagram.defs  diagram.override
 ../connector.c : connector.defs  connector.override

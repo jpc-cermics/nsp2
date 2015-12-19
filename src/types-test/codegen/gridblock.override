@@ -1,0 +1,89 @@
+/* -*- Mode: C -*- */
+%%
+include-start GridBlock 
+/* inserted at the start of include file */
+#include <stdio.h>   /* for file declaration */
+#include <nsp/figure.h>
+#include "nsp/grint.h" /* interface definition */
+#include "nsp/eval.h" /* interface definition */
+
+/**
+ * NspGridBlock:
+ * @obj: a #nsp_block pointer 
+ *
+ * inherits from #NspObject and implements Grint. 
+ * Used for graphic blocks for a C implementation of scicos.
+ */
+
+%%
+include-public  GridBlock
+
+/* inserted at the end of public part of include file */
+
+%%
+include-private  GridBlock
+
+/* local */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/axes.h"
+#include "nsp/grimage.h"
+
+%%
+init 
+
+Init portion 
+
+%%
+override-type GridBlock
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+
+%%
+override-implements GridBlock 
+
+
+  t_grint->get_hilited 	= ((NspTypeGRint *) type->surtype->interface)->get_hilited;
+  t_grint->set_hilited 	= ((NspTypeGRint *) type->surtype->interface)->set_hilited;
+  t_grint->get_show    	= ((NspTypeGRint *) type->surtype->interface)->get_show;
+  t_grint->set_show		= ((NspTypeGRint *) type->surtype->interface)->set_show;
+  t_grint->set_pos  	= ((NspTypeGRint *) type->surtype->interface)->set_pos;
+  t_grint->get_pos  	= ((NspTypeGRint *) type->surtype->interface)->get_pos;
+  t_grint->resize 		= ((NspTypeGRint *) type->surtype->interface)->resize;
+  t_grint->update_locks 	= ((NspTypeGRint *) type->surtype->interface)->update_locks;
+  t_grint->contains_pt 	= ((NspTypeGRint *) type->surtype->interface)->contains_pt;
+  t_grint->control_near_pt 	= ((NspTypeGRint *) type->surtype->interface)->control_near_pt;
+  t_grint->lock_near_pt 	= ((NspTypeGRint *) type->surtype->interface)->lock_near_pt;
+  t_grint->move_control_init= ((NspTypeGRint *) type->surtype->interface)->move_control_init;
+  t_grint->move_control 	= ((NspTypeGRint *) type->surtype->interface)->move_control;
+
+  t_grint->get_number_of_locks = ((NspTypeGRint *) type->surtype->interface)->get_number_of_locks;
+  t_grint->get_number_of_ports = ((NspTypeGRint *) type->surtype->interface)->get_number_of_ports;
+  t_grint->get_lock_connection = ((NspTypeGRint *) type->surtype->interface)->get_lock_connection;
+  t_grint->get_lock_pos = ((NspTypeGRint *) type->surtype->interface)->get_lock_pos;
+  t_grint->get_lock_dir = ((NspTypeGRint *) type->surtype->interface)->get_lock_dir;
+  t_grint->set_lock_connection = ((NspTypeGRint *) type->surtype->interface)->set_lock_connection;
+  t_grint->unset_lock_connection = ((NspTypeGRint *) type->surtype->interface)->unset_lock_connection;
+  t_grint->is_lock_connectable = ((NspTypeGRint *) type->surtype->interface)->is_lock_connectable;
+  t_grint->is_lock_connected = ((NspTypeGRint *) type->surtype->interface)->is_lock_connected;
+  t_grint->set_lock_pos = ((NspTypeGRint *) type->surtype->interface)->set_lock_pos;
+  t_grint->unlock = ((NspTypeGRint *) type->surtype->interface)->unlock;
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+
+
+
+
