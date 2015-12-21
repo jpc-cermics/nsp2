@@ -148,7 +148,9 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 
-#line 152 "./diagram.h"
+extern NspDiagram *nsp_diagram_from_gridblock(char *name,void *);/* NspGridBlock *B); */
+
+#line 154 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -163,7 +165,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(const char *name,NspTypeBase *type);
-#line 57 "codegen/diagram.override"
+#line 59 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -192,6 +194,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 196 "./diagram.h"
+#line 198 "./diagram.h"
 #endif /* NspDiagram_Private */
 
