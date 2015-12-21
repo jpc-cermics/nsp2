@@ -735,7 +735,7 @@ let insert_create typename objinfo substdict =
 
 (* ------------------- copy --------------------------------------- *)
 
-let type_tmpl_copy fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code str =
+let type_tmpl_copy copy_partial_parent fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code str =
   Printf.sprintf
   "/*\
  \n * copy for gobject derived class  \
@@ -743,7 +743,7 @@ let type_tmpl_copy fields_copy_self copy_partial fields_full_copy_partial_code f
  \n\
  \n$(typename_nn) *nsp_$(typename_dc)_copy_partial($(typename_nn) *H,$(typename_nn) *self)\
  \n{\
- \n%s  return H;\
+ \n%s%s  return H;\
  \n}\n\
  \n$(typename_nn) *nsp_$(typename_dc)_copy($(typename_nn) *self)\
  \n{\
@@ -763,11 +763,12 @@ let type_tmpl_copy fields_copy_self copy_partial fields_full_copy_partial_code f
  \n * wrappers for the $(typename_nn)\
  \n * i.e functions at Nsp level \
  \n *-------------------------------------------------------------------*/\
- \n\n" fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code str
+ \n\n" copy_partial_parent fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code str
 ;;
 
 let insert_copy  typename objinfo substdict =
   Hashtbl.replace substdict "ret" "NULL";
+  let copy_partial_parent = build_copy_partial_parent  objinfo "H" "" in
   let fields_copy_self = build_copy_fields objinfo "H" "self" "nsp_object_copy" in
   let copy_partial = build_copy_partial  objinfo "H" "" in
   let fields_full_copy_partial_code =
@@ -775,7 +776,7 @@ let insert_copy  typename objinfo substdict =
   let full_copy_code = build_full_copy_code objinfo substdict "H" in
   let pattern = get_override_pattern "override-int-create-final" typename in
   let pattern = type_tmpl_copy
-      fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code pattern in
+      copy_partial_parent fields_copy_self copy_partial fields_full_copy_partial_code full_copy_code pattern in
   File.write_substitute_pattern pattern substdict;
 ;;
 

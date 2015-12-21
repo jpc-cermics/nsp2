@@ -527,6 +527,7 @@ NspBox3d *nsp_box3d_create_default(const char *name)
 
 NspBox3d *nsp_box3d_copy_partial(NspBox3d *H,NspBox3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBOX3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -535,7 +536,6 @@ NspBox3d *nsp_box3d_copy(NspBox3d *self)
 {
   NspBox3d *H  =nsp_box3d_create_void(NVOID,(NspTypeBase *) nsp_type_box3d);
   if ( H ==  NULLBOX3D) return NULLBOX3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_copy_partial(H,self)== NULL) return NULLBOX3D;
 
   return H;
@@ -546,6 +546,7 @@ NspBox3d *nsp_box3d_copy(NspBox3d *self)
 
 NspBox3d *nsp_box3d_full_copy_partial(NspBox3d *H,NspBox3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBOX3D;
   if ((H->obj = calloc(1,sizeof(nsp_box3d))) == NULL) return NULLBOX3D;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -576,7 +577,6 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
 {
   NspBox3d *H  =nsp_box3d_create_void(NVOID,(NspTypeBase *) nsp_type_box3d);
   if ( H ==  NULLBOX3D) return NULLBOX3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
   return H;
 }

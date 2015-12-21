@@ -560,6 +560,7 @@ NspContour *nsp_contour_create_default(const char *name)
 
 NspContour *nsp_contour_copy_partial(NspContour *H,NspContour *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -568,7 +569,6 @@ NspContour *nsp_contour_copy(NspContour *self)
 {
   NspContour *H  =nsp_contour_create_void(NVOID,(NspTypeBase *) nsp_type_contour);
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_copy_partial(H,self)== NULL) return NULLCONTOUR;
 
   return H;
@@ -579,6 +579,7 @@ NspContour *nsp_contour_copy(NspContour *self)
 
 NspContour *nsp_contour_full_copy_partial(NspContour *H,NspContour *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR;
   if ((H->obj = calloc(1,sizeof(nsp_contour))) == NULL) return NULLCONTOUR;
   H->obj->ref_count=1;
   if ( self->obj->z == NULL )
@@ -619,7 +620,6 @@ NspContour *nsp_contour_full_copy(NspContour *self)
 {
   NspContour *H  =nsp_contour_create_void(NVOID,(NspTypeBase *) nsp_type_contour);
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_full_copy_partial(H,self)== NULL) return NULLCONTOUR;
   return H;
 }

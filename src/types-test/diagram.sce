@@ -204,12 +204,15 @@ function objet_menuitem_response(w,args)
     [test,obj]= GF(win).get_selection[];
     xinit(name='Super Block',dim=[1000,1000],popup_dim=[600,400])
     newwin= xget('window');
-    xset('recording',0)
     xsetech(arect=[0,0,0,0]);
     newgf=obj.edit[];
     winid= 'win'+string(newwin);
     GF(winid)= newgf;
-    GF(winid).attach_to_window[newwin];
+    F=get_figure(newwin);
+    A=F.children(1);
+    A.clip = %t; // do or do not clip inside the axes frame.
+    A.children(1)= newgf;
+    F.invalidate[];
     seteventhandler('my_eventhandler');
   end
 endfunction

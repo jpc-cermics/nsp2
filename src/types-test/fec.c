@@ -612,6 +612,7 @@ NspFec *nsp_fec_create_default(const char *name)
 
 NspFec *nsp_fec_copy_partial(NspFec *H,NspFec *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFEC;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -620,7 +621,6 @@ NspFec *nsp_fec_copy(NspFec *self)
 {
   NspFec *H  =nsp_fec_create_void(NVOID,(NspTypeBase *) nsp_type_fec);
   if ( H ==  NULLFEC) return NULLFEC;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFEC;
   if ( nsp_fec_copy_partial(H,self)== NULL) return NULLFEC;
 
   return H;
@@ -631,6 +631,7 @@ NspFec *nsp_fec_copy(NspFec *self)
 
 NspFec *nsp_fec_full_copy_partial(NspFec *H,NspFec *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFEC;
   if ((H->obj = calloc(1,sizeof(nsp_fec))) == NULL) return NULLFEC;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -685,7 +686,6 @@ NspFec *nsp_fec_full_copy(NspFec *self)
 {
   NspFec *H  =nsp_fec_create_void(NVOID,(NspTypeBase *) nsp_type_fec);
   if ( H ==  NULLFEC) return NULLFEC;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFEC;
   if ( nsp_fec_full_copy_partial(H,self)== NULL) return NULLFEC;
   return H;
 }

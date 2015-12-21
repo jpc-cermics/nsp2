@@ -607,6 +607,7 @@ NspFigure *nsp_figure_create_default(const char *name)
 
 NspFigure *nsp_figure_copy_partial(NspFigure *H,NspFigure *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFIGURE;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -615,7 +616,6 @@ NspFigure *nsp_figure_copy(NspFigure *self)
 {
   NspFigure *H  =nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure);
   if ( H ==  NULLFIGURE) return NULLFIGURE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_copy_partial(H,self)== NULL) return NULLFIGURE;
 
   return H;
@@ -626,6 +626,7 @@ NspFigure *nsp_figure_copy(NspFigure *self)
 
 NspFigure *nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLFIGURE;
   if ((H->obj = calloc(1,sizeof(nsp_figure))) == NULL) return NULLFIGURE;
   H->obj->ref_count=1;
   if ((H->obj->fname = nsp_string_copy(self->obj->fname)) == NULL) return NULL;
@@ -671,7 +672,6 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
 {
   NspFigure *H  =nsp_figure_create_void(NVOID,(NspTypeBase *) nsp_type_figure);
   if ( H ==  NULLFIGURE) return NULLFIGURE;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
 #line 101 "codegen/figure.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */

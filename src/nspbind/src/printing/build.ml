@@ -21,16 +21,21 @@ let bb = Buffer.create 10240;;
 let build_copy_partial objinfo _varname full =
   let lower_name = String.lowercase objinfo.or_name in 
   let upper_name = String.uppercase objinfo.or_name in 
-  let father = objinfo.or_parent in 
-  let str = 
-    if father <> "Object" then 
-      Printf.sprintf "  if ( nsp_%s_%scopy_partial((%s *) H,(%s * ) self ) == NULL) return NULL%s;\n" 
-	(String.lowercase father) full ("Nsp" ^father) ("Nsp" ^father) upper_name
-    else
-      "" in 
   Printf.sprintf  
-    "%s  if ( nsp_%s_%scopy_partial(H,self)== NULL) return NULL%s;\n" 
-    str lower_name full upper_name 
+    "  if ( nsp_%s_%scopy_partial(H,self)== NULL) return NULL%s;\n" 
+    lower_name full upper_name 
+;;
+
+(* returns a call to copy partial of parent class *) 
+
+let build_copy_partial_parent objinfo _varname full =
+  let upper_name = String.uppercase objinfo.or_name in 
+  let father = objinfo.or_parent in 
+  if father <> "Object" then 
+    Printf.sprintf "  if ( nsp_%s_%scopy_partial((%s *) H,(%s * ) self ) == NULL) return NULL%s;\n" 
+      (String.lowercase father) full ("Nsp" ^father) ("Nsp" ^father) upper_name
+  else
+    "" 
 ;;
 
 let build_fields objinfo =
@@ -150,13 +155,14 @@ let build_fields_full_copy_partial_code objinfo _substdic  left_varname right_va
   (*  for full_copy of byref objects. *)
   let lower_name = (String.lowercase objinfo.or_name) in 
   let fields_full_copy_self = (build_copy_fields objinfo "H" "self" "nsp_object_full_copy") in 
+  let parent_full_copy_partial = build_copy_partial_parent objinfo "unused" "full_" in
   if objinfo.or_byref = false then
     (*  if object is not by reference then full copy is similar to copy  *)
     (*  except that the full_copy object functions should be used *)
     Printf.sprintf 
       "$(typename_nn) *nsp_$(typename_dc)_full_copy_partial($(typename_nn) *H,$(typename_nn) *self)\
-      \n{\n%s  return H;\n}\n\n"
-      fields_full_copy_self
+      \n{\n%s%s  return H;\n}\n\n"
+      parent_full_copy_partial fields_full_copy_self
   else
     (
      let right_varname = right_varname  ^ "->obj" in 
@@ -164,6 +170,7 @@ let build_fields_full_copy_partial_code objinfo _substdic  left_varname right_va
      Buffer.clear bb;
      Buffer.add_string bb
        "$(typename_nn) *nsp_$(typename_dc)_full_copy_partial($(typename_nn) *H,$(typename_nn) *self)\n{\n";
+     Buffer.add_string bb parent_full_copy_partial;
      Buffer.add_string bb
 	    (Printf.sprintf "  if ((H->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL%s;\n" 
 	       lower_name (String.uppercase lower_name));
@@ -444,13 +451,14 @@ let build_full_copy_code objinfo _substdict _varname =
   else
     (
      let lower_name = (String.lowercase objinfo.or_name) in 
-     let father = objinfo.or_parent in 
+     (* let father = objinfo.or_parent in  *)
      Buffer.clear bb;
      Buffer.add_string bb
        "$(typename_nn) *nsp_$(typename_dc)_full_copy($(typename_nn) *self)\n";
      Buffer.add_string bb "{\n";
      Buffer.add_string bb "  $(typename_nn) *H  =nsp_$(typename_dc)_create_void(NVOID,(NspTypeBase *) nsp_type_$(typename_dc));\n";
      Buffer.add_string bb "  if ( H ==  NULL$(typename_uc)) return NULL$(typename_uc);\n";
+(*
      if father <> "Object" then
        (
 	Buffer.add_string bb
@@ -459,6 +467,7 @@ let build_full_copy_code objinfo _substdict _varname =
        )
      else
        ();
+*)
      Buffer.add_string bb 
        (Printf.sprintf "  if ( nsp_%s_full_copy_partial(H,self)== NULL) return NULL%s;\n" 
 	  lower_name (String.uppercase lower_name));

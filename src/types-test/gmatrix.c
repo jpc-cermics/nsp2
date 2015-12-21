@@ -541,6 +541,7 @@ NspGMatrix *nsp_gmatrix_create_default(const char *name)
 
 NspGMatrix *nsp_gmatrix_copy_partial(NspGMatrix *H,NspGMatrix *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGMATRIX;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -549,7 +550,6 @@ NspGMatrix *nsp_gmatrix_copy(NspGMatrix *self)
 {
   NspGMatrix *H  =nsp_gmatrix_create_void(NVOID,(NspTypeBase *) nsp_type_gmatrix);
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_copy_partial(H,self)== NULL) return NULLGMATRIX;
 
   return H;
@@ -560,6 +560,7 @@ NspGMatrix *nsp_gmatrix_copy(NspGMatrix *self)
 
 NspGMatrix *nsp_gmatrix_full_copy_partial(NspGMatrix *H,NspGMatrix *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGMATRIX;
   if ((H->obj = calloc(1,sizeof(nsp_gmatrix))) == NULL) return NULLGMATRIX;
   H->obj->ref_count=1;
   if ( self->obj->data == NULL )
@@ -594,7 +595,6 @@ NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
 {
   NspGMatrix *H  =nsp_gmatrix_create_void(NVOID,(NspTypeBase *) nsp_type_gmatrix);
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
   return H;
 }

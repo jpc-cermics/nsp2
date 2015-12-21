@@ -762,6 +762,7 @@ NspAxes *nsp_axes_create_default(const char *name)
 
 NspAxes *nsp_axes_copy_partial(NspAxes *H,NspAxes *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLAXES;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -770,7 +771,6 @@ NspAxes *nsp_axes_copy(NspAxes *self)
 {
   NspAxes *H  =nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes);
   if ( H ==  NULLAXES) return NULLAXES;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLAXES;
   if ( nsp_axes_copy_partial(H,self)== NULL) return NULLAXES;
 
   return H;
@@ -781,6 +781,7 @@ NspAxes *nsp_axes_copy(NspAxes *self)
 
 NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLAXES;
   if ((H->obj = calloc(1,sizeof(nsp_axes))) == NULL) return NULLAXES;
   H->obj->ref_count=1;
   if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
@@ -857,7 +858,6 @@ NspAxes *nsp_axes_full_copy(NspAxes *self)
 {
   NspAxes *H  =nsp_axes_create_void(NVOID,(NspTypeBase *) nsp_type_axes);
   if ( H ==  NULLAXES) return NULLAXES;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLAXES;
   if ( nsp_axes_full_copy_partial(H,self)== NULL) return NULLAXES;
   return H;
 }

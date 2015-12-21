@@ -65,7 +65,7 @@ val type_tmpl_create :
   string -> string -> string -> string -> string -> string -> string
 val insert_create :
   string -> Stringarg.object_rec -> (string, string) Hashtbl.t -> unit
-val type_tmpl_copy : string -> string -> string -> string -> string -> string
+val type_tmpl_copy : string -> string -> string -> string -> string -> string -> string
 val insert_copy :
   string -> Stringarg.object_rec -> (string, string) Hashtbl.t -> unit
 val type_tmpl_copy_gtk : string

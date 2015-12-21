@@ -569,6 +569,7 @@ NspLink *nsp_link_create_default(const char *name)
 
 NspLink *nsp_link_copy_partial(NspLink *H,NspLink *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLLINK;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -577,7 +578,6 @@ NspLink *nsp_link_copy(NspLink *self)
 {
   NspLink *H  =nsp_link_create_void(NVOID,(NspTypeBase *) nsp_type_link);
   if ( H ==  NULLLINK) return NULLLINK;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLLINK;
   if ( nsp_link_copy_partial(H,self)== NULL) return NULLLINK;
 
   return H;
@@ -588,6 +588,7 @@ NspLink *nsp_link_copy(NspLink *self)
 
 NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLLINK;
   if ((H->obj = calloc(1,sizeof(nsp_link))) == NULL) return NULLLINK;
   H->obj->ref_count=1;
   H->obj->object_sid = self->obj->object_sid;
@@ -609,7 +610,6 @@ NspLink *nsp_link_full_copy(NspLink *self)
 {
   NspLink *H  =nsp_link_create_void(NVOID,(NspTypeBase *) nsp_type_link);
   if ( H ==  NULLLINK) return NULLLINK;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLLINK;
   if ( nsp_link_full_copy_partial(H,self)== NULL) return NULLLINK;
   return H;
 }

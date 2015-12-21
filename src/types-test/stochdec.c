@@ -1467,6 +1467,7 @@ NspGridValueFn *nsp_gridvaluefn_create_default(const char *name)
 
 NspGridValueFn *nsp_gridvaluefn_copy_partial(NspGridValueFn *H,NspGridValueFn *self)
 {
+  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( self->nx == NULL )
     { H->nx = NULL;}
   else
@@ -1492,7 +1493,6 @@ NspGridValueFn *nsp_gridvaluefn_copy(NspGridValueFn *self)
 {
   NspGridValueFn *H  =nsp_gridvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_gridvaluefn);
   if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
-  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( nsp_gridvaluefn_copy_partial(H,self)== NULL) return NULLGRIDVALUEFN;
 
   return H;
@@ -1503,6 +1503,7 @@ NspGridValueFn *nsp_gridvaluefn_copy(NspGridValueFn *self)
 
 NspGridValueFn *nsp_gridvaluefn_full_copy_partial(NspGridValueFn *H,NspGridValueFn *self)
 {
+  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( self->nx == NULL )
     { H->nx = NULL;}
   else
@@ -1528,7 +1529,6 @@ NspGridValueFn *nsp_gridvaluefn_full_copy(NspGridValueFn *self)
 {
   NspGridValueFn *H  =nsp_gridvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_gridvaluefn);
   if ( H ==  NULLGRIDVALUEFN) return NULLGRIDVALUEFN;
-  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLGRIDVALUEFN;
   if ( nsp_gridvaluefn_full_copy_partial(H,self)== NULL) return NULLGRIDVALUEFN;
 
   return H;
@@ -2156,6 +2156,7 @@ NspCutsValueFn *nsp_cutsvaluefn_create_default(const char *name)
 
 NspCutsValueFn *nsp_cutsvaluefn_copy_partial(NspCutsValueFn *H,NspCutsValueFn *self)
 {
+  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( self->heights == NULL )
     { H->heights = NULL;}
   else
@@ -2175,7 +2176,6 @@ NspCutsValueFn *nsp_cutsvaluefn_copy(NspCutsValueFn *self)
 {
   NspCutsValueFn *H  =nsp_cutsvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_cutsvaluefn);
   if ( H ==  NULLCUTSVALUEFN) return NULLCUTSVALUEFN;
-  if ( nsp_valuefn_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( nsp_cutsvaluefn_copy_partial(H,self)== NULL) return NULLCUTSVALUEFN;
 
   return H;
@@ -2186,6 +2186,7 @@ NspCutsValueFn *nsp_cutsvaluefn_copy(NspCutsValueFn *self)
 
 NspCutsValueFn *nsp_cutsvaluefn_full_copy_partial(NspCutsValueFn *H,NspCutsValueFn *self)
 {
+  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( self->heights == NULL )
     { H->heights = NULL;}
   else
@@ -2205,7 +2206,6 @@ NspCutsValueFn *nsp_cutsvaluefn_full_copy(NspCutsValueFn *self)
 {
   NspCutsValueFn *H  =nsp_cutsvaluefn_create_void(NVOID,(NspTypeBase *) nsp_type_cutsvaluefn);
   if ( H ==  NULLCUTSVALUEFN) return NULLCUTSVALUEFN;
-  if ( nsp_valuefn_full_copy_partial((NspValueFn *) H,(NspValueFn * ) self ) == NULL) return NULLCUTSVALUEFN;
   if ( nsp_cutsvaluefn_full_copy_partial(H,self)== NULL) return NULLCUTSVALUEFN;
 
   return H;

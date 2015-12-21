@@ -543,6 +543,7 @@ NspConnector *nsp_connector_create_default(const char *name)
 
 NspConnector *nsp_connector_copy_partial(NspConnector *H,NspConnector *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONNECTOR;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -551,7 +552,6 @@ NspConnector *nsp_connector_copy(NspConnector *self)
 {
   NspConnector *H  =nsp_connector_create_void(NVOID,(NspTypeBase *) nsp_type_connector);
   if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONNECTOR;
   if ( nsp_connector_copy_partial(H,self)== NULL) return NULLCONNECTOR;
 
   return H;
@@ -562,6 +562,7 @@ NspConnector *nsp_connector_copy(NspConnector *self)
 
 NspConnector *nsp_connector_full_copy_partial(NspConnector *H,NspConnector *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONNECTOR;
   if ((H->obj = calloc(1,sizeof(nsp_connector))) == NULL) return NULLCONNECTOR;
   H->obj->ref_count=1;
   H->obj->object_sid = self->obj->object_sid;
@@ -577,7 +578,6 @@ NspConnector *nsp_connector_full_copy(NspConnector *self)
 {
   NspConnector *H  =nsp_connector_create_void(NVOID,(NspTypeBase *) nsp_type_connector);
   if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONNECTOR;
   if ( nsp_connector_full_copy_partial(H,self)== NULL) return NULLCONNECTOR;
   return H;
 }

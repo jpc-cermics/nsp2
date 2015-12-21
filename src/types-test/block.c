@@ -607,6 +607,7 @@ NspBlock *nsp_block_create_default(const char *name)
 
 NspBlock *nsp_block_copy_partial(NspBlock *H,NspBlock *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBLOCK;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -615,7 +616,6 @@ NspBlock *nsp_block_copy(NspBlock *self)
 {
   NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBLOCK;
   if ( nsp_block_copy_partial(H,self)== NULL) return NULLBLOCK;
 
   return H;
@@ -626,6 +626,7 @@ NspBlock *nsp_block_copy(NspBlock *self)
 
 NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLBLOCK;
   if ((H->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULLBLOCK;
   H->obj->ref_count=1;
   H->obj->object_sid = self->obj->object_sid;
@@ -649,7 +650,6 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
 {
   NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
   if ( nsp_block_full_copy_partial(H,self)== NULL) return NULLBLOCK;
   return H;
 }

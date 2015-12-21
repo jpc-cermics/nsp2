@@ -525,6 +525,7 @@ NspQcurve *nsp_qcurve_create_default(const char *name)
 
 NspQcurve *nsp_qcurve_copy_partial(NspQcurve *H,NspQcurve *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLQCURVE;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -533,7 +534,6 @@ NspQcurve *nsp_qcurve_copy(NspQcurve *self)
 {
   NspQcurve *H  =nsp_qcurve_create_void(NVOID,(NspTypeBase *) nsp_type_qcurve);
   if ( H ==  NULLQCURVE) return NULLQCURVE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLQCURVE;
   if ( nsp_qcurve_copy_partial(H,self)== NULL) return NULLQCURVE;
 
   return H;
@@ -544,6 +544,7 @@ NspQcurve *nsp_qcurve_copy(NspQcurve *self)
 
 NspQcurve *nsp_qcurve_full_copy_partial(NspQcurve *H,NspQcurve *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLQCURVE;
   if ((H->obj = calloc(1,sizeof(nsp_qcurve))) == NULL) return NULLQCURVE;
   H->obj->ref_count=1;
   H->obj->mark=self->obj->mark;
@@ -567,7 +568,6 @@ NspQcurve *nsp_qcurve_full_copy(NspQcurve *self)
 {
   NspQcurve *H  =nsp_qcurve_create_void(NVOID,(NspTypeBase *) nsp_type_qcurve);
   if ( H ==  NULLQCURVE) return NULLQCURVE;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLQCURVE;
   if ( nsp_qcurve_full_copy_partial(H,self)== NULL) return NULLQCURVE;
   return H;
 }

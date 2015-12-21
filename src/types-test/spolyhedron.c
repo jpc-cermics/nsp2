@@ -634,6 +634,7 @@ NspSPolyhedron *nsp_spolyhedron_create_default(const char *name)
 
 NspSPolyhedron *nsp_spolyhedron_copy_partial(NspSPolyhedron *H,NspSPolyhedron *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSPOLYHEDRON;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -642,7 +643,6 @@ NspSPolyhedron *nsp_spolyhedron_copy(NspSPolyhedron *self)
 {
   NspSPolyhedron *H  =nsp_spolyhedron_create_void(NVOID,(NspTypeBase *) nsp_type_spolyhedron);
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSPOLYHEDRON;
   if ( nsp_spolyhedron_copy_partial(H,self)== NULL) return NULLSPOLYHEDRON;
 
   return H;
@@ -653,6 +653,7 @@ NspSPolyhedron *nsp_spolyhedron_copy(NspSPolyhedron *self)
 
 NspSPolyhedron *nsp_spolyhedron_full_copy_partial(NspSPolyhedron *H,NspSPolyhedron *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSPOLYHEDRON;
   if ((H->obj = calloc(1,sizeof(nsp_spolyhedron))) == NULL) return NULLSPOLYHEDRON;
   H->obj->ref_count=1;
   if ( self->obj->Mcoord == NULL )
@@ -701,7 +702,6 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
 {
   NspSPolyhedron *H  =nsp_spolyhedron_create_void(NVOID,(NspTypeBase *) nsp_type_spolyhedron);
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSPOLYHEDRON;
   if ( nsp_spolyhedron_full_copy_partial(H,self)== NULL) return NULLSPOLYHEDRON;
 #line 75 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */

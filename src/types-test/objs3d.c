@@ -672,6 +672,7 @@ NspObjs3d *nsp_objs3d_create_default(const char *name)
 
 NspObjs3d *nsp_objs3d_copy_partial(NspObjs3d *H,NspObjs3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLOBJS3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -680,7 +681,6 @@ NspObjs3d *nsp_objs3d_copy(NspObjs3d *self)
 {
   NspObjs3d *H  =nsp_objs3d_create_void(NVOID,(NspTypeBase *) nsp_type_objs3d);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_copy_partial(H,self)== NULL) return NULLOBJS3D;
 
   return H;
@@ -691,6 +691,7 @@ NspObjs3d *nsp_objs3d_copy(NspObjs3d *self)
 
 NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLOBJS3D;
   if ((H->obj = calloc(1,sizeof(nsp_objs3d))) == NULL) return NULLOBJS3D;
   H->obj->ref_count=1;
   if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
@@ -753,7 +754,6 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
 {
   NspObjs3d *H  =nsp_objs3d_create_void(NVOID,(NspTypeBase *) nsp_type_objs3d);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_full_copy_partial(H,self)== NULL) return NULLOBJS3D;
   return H;
 }

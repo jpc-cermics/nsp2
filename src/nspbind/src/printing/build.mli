@@ -16,6 +16,7 @@
 
 val bb : Buffer.t
 val build_copy_partial : Stringarg.object_rec -> 'a -> string -> string
+val build_copy_partial_parent : Stringarg.object_rec -> 'a -> string -> string
 val build_fields : Stringarg.object_rec -> string
 val build_fields_ref : Stringarg.object_rec -> string
 val build_copy_fields :

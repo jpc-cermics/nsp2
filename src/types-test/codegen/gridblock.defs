@@ -9,7 +9,13 @@
   (c-name "NspGridBlock")
   (implements "GRint")
   (fields
-   '("void*" "gframe" "hidden" "NULL"); a nspgframe
-  )
+   '("void*" "diagram" "hidden" "NULL"); a diagram
+   )
   (gtype-id "GridBlock")
 )
+
+(define-method edit
+  (of-object "GridBlock")
+  (c-name "gridblock_edit")
+  (return-type "int")
+  )

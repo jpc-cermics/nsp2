@@ -552,6 +552,7 @@ NspSurf *nsp_surf_create_default(const char *name)
 
 NspSurf *nsp_surf_copy_partial(NspSurf *H,NspSurf *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSURF;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -560,7 +561,6 @@ NspSurf *nsp_surf_copy(NspSurf *self)
 {
   NspSurf *H  =nsp_surf_create_void(NVOID,(NspTypeBase *) nsp_type_surf);
   if ( H ==  NULLSURF) return NULLSURF;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSURF;
   if ( nsp_surf_copy_partial(H,self)== NULL) return NULLSURF;
 
   return H;
@@ -571,6 +571,7 @@ NspSurf *nsp_surf_copy(NspSurf *self)
 
 NspSurf *nsp_surf_full_copy_partial(NspSurf *H,NspSurf *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSURF;
   if ((H->obj = calloc(1,sizeof(nsp_surf))) == NULL) return NULLSURF;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -608,7 +609,6 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
 {
   NspSurf *H  =nsp_surf_create_void(NVOID,(NspTypeBase *) nsp_type_surf);
   if ( H ==  NULLSURF) return NULLSURF;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
   return H;
 }

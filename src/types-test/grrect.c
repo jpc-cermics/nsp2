@@ -508,6 +508,7 @@ NspGrRect *nsp_grrect_create_default(const char *name)
 
 NspGrRect *nsp_grrect_copy_partial(NspGrRect *H,NspGrRect *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRRECT;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -516,7 +517,6 @@ NspGrRect *nsp_grrect_copy(NspGrRect *self)
 {
   NspGrRect *H  =nsp_grrect_create_void(NVOID,(NspTypeBase *) nsp_type_grrect);
   if ( H ==  NULLGRRECT) return NULLGRRECT;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRRECT;
   if ( nsp_grrect_copy_partial(H,self)== NULL) return NULLGRRECT;
 
   return H;
@@ -527,6 +527,7 @@ NspGrRect *nsp_grrect_copy(NspGrRect *self)
 
 NspGrRect *nsp_grrect_full_copy_partial(NspGrRect *H,NspGrRect *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRRECT;
   if ((H->obj = calloc(1,sizeof(nsp_grrect))) == NULL) return NULLGRRECT;
   H->obj->ref_count=1;
   H->obj->x=self->obj->x;
@@ -544,7 +545,6 @@ NspGrRect *nsp_grrect_full_copy(NspGrRect *self)
 {
   NspGrRect *H  =nsp_grrect_create_void(NVOID,(NspTypeBase *) nsp_type_grrect);
   if ( H ==  NULLGRRECT) return NULLGRRECT;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRRECT;
   if ( nsp_grrect_full_copy_partial(H,self)== NULL) return NULLGRRECT;
   return H;
 }

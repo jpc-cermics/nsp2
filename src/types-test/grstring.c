@@ -554,6 +554,7 @@ NspGrstring *nsp_grstring_create_default(const char *name)
 
 NspGrstring *nsp_grstring_copy_partial(NspGrstring *H,NspGrstring *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRSTRING;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -562,7 +563,6 @@ NspGrstring *nsp_grstring_copy(NspGrstring *self)
 {
   NspGrstring *H  =nsp_grstring_create_void(NVOID,(NspTypeBase *) nsp_type_grstring);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_copy_partial(H,self)== NULL) return NULLGRSTRING;
 
   return H;
@@ -573,6 +573,7 @@ NspGrstring *nsp_grstring_copy(NspGrstring *self)
 
 NspGrstring *nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRSTRING;
   if ((H->obj = calloc(1,sizeof(nsp_grstring))) == NULL) return NULLGRSTRING;
   H->obj->ref_count=1;
   H->obj->x=self->obj->x;
@@ -599,7 +600,6 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
 {
   NspGrstring *H  =nsp_grstring_create_void(NVOID,(NspTypeBase *) nsp_type_grstring);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_full_copy_partial(H,self)== NULL) return NULLGRSTRING;
   return H;
 }

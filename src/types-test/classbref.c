@@ -467,6 +467,7 @@ NspClassBRef *nsp_classbref_create_default(const char *name)
 
 NspClassBRef *nsp_classbref_copy_partial(NspClassBRef *H,NspClassBRef *self)
 {
+  if ( nsp_classaref_copy_partial((NspClassARef *) H,(NspClassARef * ) self ) == NULL) return NULLCLASSBREF;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -475,7 +476,6 @@ NspClassBRef *nsp_classbref_copy(NspClassBRef *self)
 {
   NspClassBRef *H  =nsp_classbref_create_void(NVOID,(NspTypeBase *) nsp_type_classbref);
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
-  if ( nsp_classaref_copy_partial((NspClassARef *) H,(NspClassARef * ) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_copy_partial(H,self)== NULL) return NULLCLASSBREF;
 
   return H;
@@ -486,6 +486,7 @@ NspClassBRef *nsp_classbref_copy(NspClassBRef *self)
 
 NspClassBRef *nsp_classbref_full_copy_partial(NspClassBRef *H,NspClassBRef *self)
 {
+  if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef * ) self ) == NULL) return NULLCLASSBREF;
   if ((H->obj = calloc(1,sizeof(nsp_classbref))) == NULL) return NULLCLASSBREF;
   H->obj->ref_count=1;
   H->obj->clb_color=self->obj->clb_color;
@@ -503,7 +504,6 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
 {
   NspClassBRef *H  =nsp_classbref_create_void(NVOID,(NspTypeBase *) nsp_type_classbref);
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
-  if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
   return H;
 }

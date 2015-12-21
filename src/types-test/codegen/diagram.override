@@ -52,6 +52,8 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 
+extern NspDiagram *nsp_diagram_from_gridblock(char *name,void *);/* NspGridBlock *B); */
+
 %%
 include-private Diagram
 
@@ -88,6 +90,7 @@ headers
 #include <nsp/objects.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
+#include "nsp/gridblock.h"
 #include "nsp/connector.h"
 #include "nsp/figuredata.h"
 #include "nsp/figure.h"
@@ -2022,35 +2025,35 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2],int mo
 
 NspObject * nsp_diagram_create_new_gridblock(NspDiagram *F, int flag )
 {
-#if 0 
+#if 1 
   /* XXXX à revoir */
   NspDiagram *F1;
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
   NspGridBlock *B;
+  NspGraphic *G;
   /* create the gridblock */
   if ( flag == TRUE) 
     {
       /* empty super block */
-      B=gridblock_create("fe",rect,color,thickness,background,NULL);
+      B=nsp_gridblock_create_override("fe",rect,color,thickness,background);
       if ( B == NULLGRIDBLOCK) return NULLOBJ;
     }
   else 
     {
       if ((F1 = nsp_diagram_hilited_full_copy(F)) == NULLDIAGRAM) return NULLOBJ;
-      B=gridblock_create_from_nsp_diagram("fe",rect,color,thickness,background,F1);
+      B=nsp_gridblock_create_from_nsp_diagram("fe",rect,color,thickness,background,F1);
       nsp_diagram_destroy(F1);
       if ( B == NULLGRIDBLOCK) return NULLOBJ;
-      /* unhilite all */
+      /* delete hilited object */
       nsp_diagram_delete_hilited(F);
     }
-  ((NspBlock *)B)->obj->frame = F->obj;
-  ((NspBlock *)B)->obj->hilited = TRUE;
-  B->obj->Xgc = F->obj->Xgc;
+  G = (NspGraphic *) B;
+  G->obj->hilited = TRUE;
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
-  /* XXXX block_draw(B); */
   return NSP_OBJECT(B);
 #else
   return NULL;
@@ -2356,4 +2359,14 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
   return NULLLIST;
 } 
 
-
+NspDiagram *nsp_diagram_from_gridblock(char *name,void *B)
+{
+  NspDiagram *D  = nsp_diagram_create_void(name,NULL);
+  if ( D ==  NULLDIAGRAM ) return NULLDIAGRAM;
+  if ( nsp_diagram_create_partial(D) == FAIL) return NULLDIAGRAM;
+  nsp_gridblock_fix_diagram(B,D);
+  if ( nsp_diagram_check_values(D) == FAIL) return NULLDIAGRAM;
+  /* verbatim in create/load/full_copy interface use NULL for returned value */
+  nspdiagram_recompute_pointers(D->obj);
+  return D;
+}

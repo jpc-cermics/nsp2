@@ -454,6 +454,7 @@ NspClassB *nsp_classb_create_default(const char *name)
 
 NspClassB *nsp_classb_copy_partial(NspClassB *H,NspClassB *self)
 {
+  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   H->clb_color=self->clb_color;
   H->clb_thickness=self->clb_thickness;
   if ( self->clb_val == NULL )
@@ -469,7 +470,6 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  if ( nsp_classa_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   if ( nsp_classb_copy_partial(H,self)== NULL) return NULLCLASSB;
 
   return H;
@@ -480,6 +480,7 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 
 NspClassB *nsp_classb_full_copy_partial(NspClassB *H,NspClassB *self)
 {
+  if ( nsp_classa_full_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   H->clb_color=self->clb_color;
   H->clb_thickness=self->clb_thickness;
   if ( self->clb_val == NULL )
@@ -495,7 +496,6 @@ NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
   NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
-  if ( nsp_classa_full_copy_partial((NspClassA *) H,(NspClassA * ) self ) == NULL) return NULLCLASSB;
   if ( nsp_classb_full_copy_partial(H,self)== NULL) return NULLCLASSB;
 
   return H;

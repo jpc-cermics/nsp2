@@ -524,6 +524,7 @@ NspSegments *nsp_segments_create_default(const char *name)
 
 NspSegments *nsp_segments_copy_partial(NspSegments *H,NspSegments *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSEGMENTS;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -532,7 +533,6 @@ NspSegments *nsp_segments_copy(NspSegments *self)
 {
   NspSegments *H  =nsp_segments_create_void(NVOID,(NspTypeBase *) nsp_type_segments);
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_copy_partial(H,self)== NULL) return NULLSEGMENTS;
 
   return H;
@@ -543,6 +543,7 @@ NspSegments *nsp_segments_copy(NspSegments *self)
 
 NspSegments *nsp_segments_full_copy_partial(NspSegments *H,NspSegments *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSEGMENTS;
   if ((H->obj = calloc(1,sizeof(nsp_segments))) == NULL) return NULLSEGMENTS;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -576,7 +577,6 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
 {
   NspSegments *H  =nsp_segments_create_void(NVOID,(NspTypeBase *) nsp_type_segments);
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_full_copy_partial(H,self)== NULL) return NULLSEGMENTS;
   return H;
 }

@@ -527,6 +527,7 @@ NspCurve *nsp_curve_create_default(const char *name)
 
 NspCurve *nsp_curve_copy_partial(NspCurve *H,NspCurve *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCURVE;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -535,7 +536,6 @@ NspCurve *nsp_curve_copy(NspCurve *self)
 {
   NspCurve *H  =nsp_curve_create_void(NVOID,(NspTypeBase *) nsp_type_curve);
   if ( H ==  NULLCURVE) return NULLCURVE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCURVE;
   if ( nsp_curve_copy_partial(H,self)== NULL) return NULLCURVE;
 
   return H;
@@ -546,6 +546,7 @@ NspCurve *nsp_curve_copy(NspCurve *self)
 
 NspCurve *nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCURVE;
   if ((H->obj = calloc(1,sizeof(nsp_curve))) == NULL) return NULLCURVE;
   H->obj->ref_count=1;
   H->obj->mark=self->obj->mark;
@@ -568,7 +569,6 @@ NspCurve *nsp_curve_full_copy(NspCurve *self)
 {
   NspCurve *H  =nsp_curve_create_void(NVOID,(NspTypeBase *) nsp_type_curve);
   if ( H ==  NULLCURVE) return NULLCURVE;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCURVE;
   if ( nsp_curve_full_copy_partial(H,self)== NULL) return NULLCURVE;
   return H;
 }

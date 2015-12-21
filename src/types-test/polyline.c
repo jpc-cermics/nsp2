@@ -539,6 +539,7 @@ NspPolyline *nsp_polyline_create_default(const char *name)
 
 NspPolyline *nsp_polyline_copy_partial(NspPolyline *H,NspPolyline *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -547,7 +548,6 @@ NspPolyline *nsp_polyline_copy(NspPolyline *self)
 {
   NspPolyline *H  =nsp_polyline_create_void(NVOID,(NspTypeBase *) nsp_type_polyline);
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_copy_partial(H,self)== NULL) return NULLPOLYLINE;
 
   return H;
@@ -558,6 +558,7 @@ NspPolyline *nsp_polyline_copy(NspPolyline *self)
 
 NspPolyline *nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE;
   if ((H->obj = calloc(1,sizeof(nsp_polyline))) == NULL) return NULLPOLYLINE;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -586,7 +587,6 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
 {
   NspPolyline *H  =nsp_polyline_create_void(NVOID,(NspTypeBase *) nsp_type_polyline);
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
   return H;
 }

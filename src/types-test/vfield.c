@@ -531,6 +531,7 @@ NspVField *nsp_vfield_create_default(const char *name)
 
 NspVField *nsp_vfield_copy_partial(NspVField *H,NspVField *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLVFIELD;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -539,7 +540,6 @@ NspVField *nsp_vfield_copy(NspVField *self)
 {
   NspVField *H  =nsp_vfield_create_void(NVOID,(NspTypeBase *) nsp_type_vfield);
   if ( H ==  NULLVFIELD) return NULLVFIELD;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_copy_partial(H,self)== NULL) return NULLVFIELD;
 
   return H;
@@ -550,6 +550,7 @@ NspVField *nsp_vfield_copy(NspVField *self)
 
 NspVField *nsp_vfield_full_copy_partial(NspVField *H,NspVField *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLVFIELD;
   if ((H->obj = calloc(1,sizeof(nsp_vfield))) == NULL) return NULLVFIELD;
   H->obj->ref_count=1;
   if ( self->obj->fx == NULL )
@@ -584,7 +585,6 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
 {
   NspVField *H  =nsp_vfield_create_void(NVOID,(NspTypeBase *) nsp_type_vfield);
   if ( H ==  NULLVFIELD) return NULLVFIELD;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
   return H;
 }

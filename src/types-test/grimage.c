@@ -519,6 +519,7 @@ NspGrImage *nsp_grimage_create_default(const char *name)
 
 NspGrImage *nsp_grimage_copy_partial(NspGrImage *H,NspGrImage *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRIMAGE;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -527,7 +528,6 @@ NspGrImage *nsp_grimage_copy(NspGrImage *self)
 {
   NspGrImage *H  =nsp_grimage_create_void(NVOID,(NspTypeBase *) nsp_type_grimage);
   if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRIMAGE;
   if ( nsp_grimage_copy_partial(H,self)== NULL) return NULLGRIMAGE;
 
   return H;
@@ -538,6 +538,7 @@ NspGrImage *nsp_grimage_copy(NspGrImage *self)
 
 NspGrImage *nsp_grimage_full_copy_partial(NspGrImage *H,NspGrImage *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGRIMAGE;
   if ((H->obj = calloc(1,sizeof(nsp_grimage))) == NULL) return NULLGRIMAGE;
   H->obj->ref_count=1;
   H->obj->x=self->obj->x;
@@ -556,7 +557,6 @@ NspGrImage *nsp_grimage_full_copy(NspGrImage *self)
 {
   NspGrImage *H  =nsp_grimage_create_void(NVOID,(NspTypeBase *) nsp_type_grimage);
   if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRIMAGE;
   if ( nsp_grimage_full_copy_partial(H,self)== NULL) return NULLGRIMAGE;
   return H;
 }

@@ -509,6 +509,7 @@ NspGPixbuf *nsp_gpixbuf_create_default(const char *name)
 
 NspGPixbuf *nsp_gpixbuf_copy_partial(NspGPixbuf *H,NspGPixbuf *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGPIXBUF;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -517,7 +518,6 @@ NspGPixbuf *nsp_gpixbuf_copy(NspGPixbuf *self)
 {
   NspGPixbuf *H  =nsp_gpixbuf_create_void(NVOID,(NspTypeBase *) nsp_type_gpixbuf);
   if ( H ==  NULLGPIXBUF) return NULLGPIXBUF;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGPIXBUF;
   if ( nsp_gpixbuf_copy_partial(H,self)== NULL) return NULLGPIXBUF;
 
   return H;
@@ -528,6 +528,7 @@ NspGPixbuf *nsp_gpixbuf_copy(NspGPixbuf *self)
 
 NspGPixbuf *nsp_gpixbuf_full_copy_partial(NspGPixbuf *H,NspGPixbuf *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLGPIXBUF;
   if ((H->obj = calloc(1,sizeof(nsp_gpixbuf))) == NULL) return NULLGPIXBUF;
   H->obj->ref_count=1;
   H->obj->src_x=self->obj->src_x;
@@ -544,7 +545,6 @@ NspGPixbuf *nsp_gpixbuf_full_copy(NspGPixbuf *self)
 {
   NspGPixbuf *H  =nsp_gpixbuf_create_void(NVOID,(NspTypeBase *) nsp_type_gpixbuf);
   if ( H ==  NULLGPIXBUF) return NULLGPIXBUF;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGPIXBUF;
   if ( nsp_gpixbuf_full_copy_partial(H,self)== NULL) return NULLGPIXBUF;
   return H;
 }

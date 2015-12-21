@@ -536,6 +536,7 @@ NspPoints3d *nsp_points3d_create_default(const char *name)
 
 NspPoints3d *nsp_points3d_copy_partial(NspPoints3d *H,NspPoints3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOINTS3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -544,7 +545,6 @@ NspPoints3d *nsp_points3d_copy(NspPoints3d *self)
 {
   NspPoints3d *H  =nsp_points3d_create_void(NVOID,(NspTypeBase *) nsp_type_points3d);
   if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 
   return H;
@@ -555,6 +555,7 @@ NspPoints3d *nsp_points3d_copy(NspPoints3d *self)
 
 NspPoints3d *nsp_points3d_full_copy_partial(NspPoints3d *H,NspPoints3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOINTS3D;
   if ((H->obj = calloc(1,sizeof(nsp_points3d))) == NULL) return NULLPOINTS3D;
   H->obj->ref_count=1;
   if ( self->obj->Mcoord == NULL )
@@ -578,7 +579,6 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
 {
   NspPoints3d *H  =nsp_points3d_create_void(NVOID,(NspTypeBase *) nsp_type_points3d);
   if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_full_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 #line 82 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */

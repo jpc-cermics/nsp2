@@ -504,6 +504,7 @@ NspCompound *nsp_compound_create_default(const char *name)
 
 NspCompound *nsp_compound_copy_partial(NspCompound *H,NspCompound *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCOMPOUND;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -512,7 +513,6 @@ NspCompound *nsp_compound_copy(NspCompound *self)
 {
   NspCompound *H  =nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_copy_partial(H,self)== NULL) return NULLCOMPOUND;
 
   return H;
@@ -523,6 +523,7 @@ NspCompound *nsp_compound_copy(NspCompound *self)
 
 NspCompound *nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCOMPOUND;
   if ((H->obj = calloc(1,sizeof(nsp_compound))) == NULL) return NULLCOMPOUND;
   H->obj->ref_count=1;
   if ( self->obj->bounds == NULL )
@@ -547,7 +548,6 @@ NspCompound *nsp_compound_full_copy(NspCompound *self)
 {
   NspCompound *H  =nsp_compound_create_void(NVOID,(NspTypeBase *) nsp_type_compound);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_full_copy_partial(H,self)== NULL) return NULLCOMPOUND;
   return H;
 }

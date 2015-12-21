@@ -514,6 +514,7 @@ NspArrows *nsp_arrows_create_default(const char *name)
 
 NspArrows *nsp_arrows_copy_partial(NspArrows *H,NspArrows *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLARROWS;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -522,7 +523,6 @@ NspArrows *nsp_arrows_copy(NspArrows *self)
 {
   NspArrows *H  =nsp_arrows_create_void(NVOID,(NspTypeBase *) nsp_type_arrows);
   if ( H ==  NULLARROWS) return NULLARROWS;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLARROWS;
   if ( nsp_arrows_copy_partial(H,self)== NULL) return NULLARROWS;
 
   return H;
@@ -533,6 +533,7 @@ NspArrows *nsp_arrows_copy(NspArrows *self)
 
 NspArrows *nsp_arrows_full_copy_partial(NspArrows *H,NspArrows *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLARROWS;
   if ((H->obj = calloc(1,sizeof(nsp_arrows))) == NULL) return NULLARROWS;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -561,7 +562,6 @@ NspArrows *nsp_arrows_full_copy(NspArrows *self)
 {
   NspArrows *H  =nsp_arrows_create_void(NVOID,(NspTypeBase *) nsp_type_arrows);
   if ( H ==  NULLARROWS) return NULLARROWS;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLARROWS;
   if ( nsp_arrows_full_copy_partial(H,self)== NULL) return NULLARROWS;
   return H;
 }

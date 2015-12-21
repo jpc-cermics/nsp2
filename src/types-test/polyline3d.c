@@ -530,6 +530,7 @@ NspPolyline3d *nsp_polyline3d_create_default(const char *name)
 
 NspPolyline3d *nsp_polyline3d_copy_partial(NspPolyline3d *H,NspPolyline3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -538,7 +539,6 @@ NspPolyline3d *nsp_polyline3d_copy(NspPolyline3d *self)
 {
   NspPolyline3d *H  =nsp_polyline3d_create_void(NVOID,(NspTypeBase *) nsp_type_polyline3d);
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
 
   return H;
@@ -549,6 +549,7 @@ NspPolyline3d *nsp_polyline3d_copy(NspPolyline3d *self)
 
 NspPolyline3d *nsp_polyline3d_full_copy_partial(NspPolyline3d *H,NspPolyline3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLPOLYLINE3D;
   if ((H->obj = calloc(1,sizeof(nsp_polyline3d))) == NULL) return NULLPOLYLINE3D;
   H->obj->ref_count=1;
   if ( self->obj->Mcoord == NULL )
@@ -575,7 +576,6 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
 {
   NspPolyline3d *H  =nsp_polyline3d_create_void(NVOID,(NspTypeBase *) nsp_type_polyline3d);
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_full_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
 #line 77 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */

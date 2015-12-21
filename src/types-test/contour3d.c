@@ -563,6 +563,7 @@ NspContour3d *nsp_contour3d_create_default(const char *name)
 
 NspContour3d *nsp_contour3d_copy_partial(NspContour3d *H,NspContour3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -571,7 +572,6 @@ NspContour3d *nsp_contour3d_copy(NspContour3d *self)
 {
   NspContour3d *H  =nsp_contour3d_create_void(NVOID,(NspTypeBase *) nsp_type_contour3d);
   if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR3D;
   if ( nsp_contour3d_copy_partial(H,self)== NULL) return NULLCONTOUR3D;
 
   return H;
@@ -582,6 +582,7 @@ NspContour3d *nsp_contour3d_copy(NspContour3d *self)
 
 NspContour3d *nsp_contour3d_full_copy_partial(NspContour3d *H,NspContour3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLCONTOUR3D;
   if ((H->obj = calloc(1,sizeof(nsp_contour3d))) == NULL) return NULLCONTOUR3D;
   H->obj->ref_count=1;
   if ( self->obj->x == NULL )
@@ -617,7 +618,6 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
 {
   NspContour3d *H  =nsp_contour3d_create_void(NVOID,(NspTypeBase *) nsp_type_contour3d);
   if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR3D;
   if ( nsp_contour3d_full_copy_partial(H,self)== NULL) return NULLCONTOUR3D;
 #line 73 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */

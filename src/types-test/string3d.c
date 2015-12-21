@@ -533,6 +533,7 @@ NspString3d *nsp_string3d_create_default(const char *name)
 
 NspString3d *nsp_string3d_copy_partial(NspString3d *H,NspString3d *self)
 {
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSTRING3D;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -541,7 +542,6 @@ NspString3d *nsp_string3d_copy(NspString3d *self)
 {
   NspString3d *H  =nsp_string3d_create_void(NVOID,(NspTypeBase *) nsp_type_string3d);
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_copy_partial(H,self)== NULL) return NULLSTRING3D;
 
   return H;
@@ -552,6 +552,7 @@ NspString3d *nsp_string3d_copy(NspString3d *self)
 
 NspString3d *nsp_string3d_full_copy_partial(NspString3d *H,NspString3d *self)
 {
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLSTRING3D;
   if ((H->obj = calloc(1,sizeof(nsp_string3d))) == NULL) return NULLSTRING3D;
   H->obj->ref_count=1;
   if ( self->obj->Mcoord == NULL )
@@ -574,7 +575,6 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
 {
   NspString3d *H  =nsp_string3d_create_void(NVOID,(NspTypeBase *) nsp_type_string3d);
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
 #line 74 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
