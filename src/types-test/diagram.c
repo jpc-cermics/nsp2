@@ -504,7 +504,6 @@ NspDiagram *nsp_diagram_create_default(const char *name)
 
 NspDiagram *nsp_diagram_copy_partial(NspDiagram *H,NspDiagram *self)
 {
-  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLDIAGRAM;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -513,6 +512,7 @@ NspDiagram *nsp_diagram_copy(NspDiagram *self)
 {
   NspDiagram *H  =nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram);
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLDIAGRAM;
   if ( nsp_diagram_copy_partial(H,self)== NULL) return NULLDIAGRAM;
 
   return H;
@@ -523,7 +523,6 @@ NspDiagram *nsp_diagram_copy(NspDiagram *self)
 
 NspDiagram *nsp_diagram_full_copy_partial(NspDiagram *H,NspDiagram *self)
 {
-  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic * ) self ) == NULL) return NULLDIAGRAM;
   if ((H->obj = calloc(1,sizeof(nsp_diagram))) == NULL) return NULLDIAGRAM;
   H->obj->ref_count=1;
   if ( self->obj->bounds == NULL )
@@ -545,6 +544,7 @@ NspDiagram *nsp_diagram_full_copy(NspDiagram *self)
 {
   NspDiagram *H  =nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram);
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLDIAGRAM;
   if ( nsp_diagram_full_copy_partial(H,self)== NULL) return NULLDIAGRAM;
 #line 121 "codegen/diagram.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
