@@ -484,6 +484,7 @@ NspGridBlock *nsp_gridblock_create_default(const char *name)
 
 NspGridBlock *nsp_gridblock_copy_partial(NspGridBlock *H,NspGridBlock *self)
 {
+  if ( nsp_block_copy_partial((NspBlock *) H,(NspBlock * ) self ) == NULL) return NULLGRIDBLOCK;
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
@@ -492,7 +493,6 @@ NspGridBlock *nsp_gridblock_copy(NspGridBlock *self)
 {
   NspGridBlock *H  =nsp_gridblock_create_void(NVOID,(NspTypeBase *) nsp_type_gridblock);
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
-  if ( nsp_block_copy_partial((NspBlock *) H,(NspBlock * ) self ) == NULL) return NULLGRIDBLOCK;
   if ( nsp_gridblock_copy_partial(H,self)== NULL) return NULLGRIDBLOCK;
 
   return H;
@@ -503,6 +503,7 @@ NspGridBlock *nsp_gridblock_copy(NspGridBlock *self)
 
 NspGridBlock *nsp_gridblock_full_copy_partial(NspGridBlock *H,NspGridBlock *self)
 {
+  if ( nsp_block_full_copy_partial((NspBlock *) H,(NspBlock * ) self ) == NULL) return NULLGRIDBLOCK;
   if ((H->obj = calloc(1,sizeof(nsp_gridblock))) == NULL) return NULLGRIDBLOCK;
   H->obj->ref_count=1;
   H->obj->diagram = self->obj->diagram;
@@ -513,7 +514,6 @@ NspGridBlock *nsp_gridblock_full_copy(NspGridBlock *self)
 {
   NspGridBlock *H  =nsp_gridblock_create_void(NVOID,(NspTypeBase *) nsp_type_gridblock);
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
-  if ( nsp_block_full_copy_partial((NspBlock *) H,(NspBlock *) self ) == NULL) return NULLGRIDBLOCK;
   if ( nsp_gridblock_full_copy_partial(H,self)== NULL) return NULLGRIDBLOCK;
   return H;
 }
