@@ -1109,7 +1109,7 @@ static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rh
   NspDiagram *obj;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  if ((obj =nsp_diagram_hilited_full_copy((NspDiagram *) self)) == NULL) return RET_BUG;
+  if ((obj =nsp_diagram_hilited_full_copy(NVOID,(NspDiagram *) self)) == NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(obj));
   return 1;
 }
@@ -2603,9 +2603,9 @@ NspObject * nsp_diagram_create_new_gridblock(NspDiagram *F, int flag )
     }
   else 
     {
-      if ((F1 = nsp_diagram_hilited_full_copy(F)) == NULLDIAGRAM) return NULLOBJ;
+      /* F1 will be owned by B */
+      if ((F1 = nsp_diagram_hilited_full_copy("d",F)) == NULLDIAGRAM) return NULLOBJ;
       B=nsp_gridblock_create_from_nsp_diagram("fe",rect,color,thickness,background,F1);
-      nsp_diagram_destroy(F1);
       if ( B == NULLGRIDBLOCK) return NULLOBJ;
       /* delete hilited object */
       nsp_diagram_delete_hilited(F);
@@ -2863,15 +2863,15 @@ static NspDiagram *nsp_diagram_hilited_full_copy_partial(NspDiagram *H,NspDiagra
   H->obj->children =  self->obj->children;
   if ( H->obj->children != NULL) 
     {
-      H->obj->children = nsp_diagram_list_full_copy(H->obj->children, TRUE);
+      H->obj->children = nsp_diagram_list_full_copy_and_name(H->obj->children, TRUE);
       if (  H->obj->children == NULL) return NULL;
     }
   return H;
 }
 
-NspDiagram *nsp_diagram_hilited_full_copy(NspDiagram *self)
+NspDiagram *nsp_diagram_hilited_full_copy(const char *name,NspDiagram *self)
 {
-  NspDiagram *H  =nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram);
+  NspDiagram *H  =nsp_diagram_create_void(name,(NspTypeBase *) nsp_type_diagram);
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLDIAGRAM;
   if ( nsp_diagram_hilited_full_copy_partial(H,self)== NULL) return NULLDIAGRAM;
@@ -2880,7 +2880,7 @@ NspDiagram *nsp_diagram_hilited_full_copy(NspDiagram *self)
 }
 
 /**
- * nsp_diagram_list_full_copy:
+ * nsp_diagram_list_full_copy_and_name:
  * @L: a #NspList 
  * @hilited_only: %TRUE or %FALSE
  * 
@@ -2893,7 +2893,7 @@ NspDiagram *nsp_diagram_hilited_full_copy(NspDiagram *self)
  * Returns: a new #NspList
  **/
 
-static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only) 
+static NspList * nsp_diagram_list_full_copy_and_name(NspList *L,int hilited_only) 
 {
   NspObject *obj=NULL;
   NspList *Loc;
@@ -2923,14 +2923,8 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 NspDiagram *nsp_diagram_from_gridblock(char *name,void *B)
 {
-  NspDiagram *D  = nsp_diagram_create_void(name,NULL);
-  if ( D ==  NULLDIAGRAM ) return NULLDIAGRAM;
-  if ( nsp_diagram_create_partial(D) == FAIL) return NULLDIAGRAM;
-  nsp_gridblock_fix_diagram(B,D);
-  if ( nsp_diagram_check_values(D) == FAIL) return NULLDIAGRAM;
-  /* verbatim in create/load/full_copy interface use NULL for returned value */
-  nspdiagram_recompute_pointers(D->obj);
+  NspDiagram *D  = nsp_gridblock_get_diagram(B);
   return D;
 }
 
-#line 2937 "diagram.c"
+#line 2931 "diagram.c"

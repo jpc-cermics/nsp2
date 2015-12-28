@@ -623,7 +623,7 @@ NspGridBlock *nsp_gridblock_create_override(char *name,double *rect,int color,in
   B->obj->n_locks = 0;
   /* create the own part */
   if ((D = nsp_diagram_create_default("dg")) == NULL) return NULLGRIDBLOCK;
-  H->obj->diagram = D->obj;
+  H->obj->diagram = D;
   /* to prevent destruction of obj */
   D->obj->ref_count++;
 #if 0
@@ -646,7 +646,7 @@ NspGridBlock *nsp_gridblock_create_override(char *name,double *rect,int color,in
 
 NspGridBlock *nsp_gridblock_create_from_nsp_diagram(char *name,double *rect,int color,int thickness,int background, NspDiagram *D) 
 {
-  NspDiagram *D1;
+  NspGraphic *G;
   NspBlock *B;
   NspGridBlock *H;
   double rect1[]={0,100,25,25};
@@ -665,11 +665,12 @@ NspGridBlock *nsp_gridblock_create_from_nsp_diagram(char *name,double *rect,int 
   B->obj->locks = NULL;
   B->obj->draw_mode = 0;
   memcpy(B->obj->r,rect1,4*sizeof(double));
-  /* create the own part */
-  if ((D1 =nsp_diagram_full_copy(D)) == NULLDIAGRAM) return NULLGRIDBLOCK; 
-  H->obj->diagram = D1->obj;
+  /* create the own part, the Diagram given as argument must be a copy */
+  H->obj->diagram = D;
   /* to prevent destruction of obj */
-  D1->obj->ref_count++;
+  D->obj->ref_count++;
+  G = (NspGraphic *)D;
+  G->type->unlink_figure(G, ((NspGraphic *) D)->obj->Fig);
   return H;
 }
 
@@ -723,11 +724,10 @@ void gridblock_draw(NspGridBlock *B)
 #endif 
 
 
-void nsp_gridblock_fix_diagram(void *B1,NspDiagram *D)
+NspDiagram *nsp_gridblock_get_diagram(void *B1)
 {
-  NspGridBlock *B = B1;
-  D->obj = (nsp_diagram *) B->obj->diagram;
-  D->obj->ref_count++;
+  ((NspGridBlock *) B1)->obj->ref_count++;
+  return ((NspGridBlock *) B1)->obj->diagram;
 }
 
 #line 734 "gridblock.c"

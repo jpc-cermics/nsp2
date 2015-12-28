@@ -9,7 +9,7 @@
   (c-name "NspGridBlock")
   (implements "GRint")
   (fields
-   '("void*" "diagram" "hidden" "NULL"); a diagram
+   '("void*" "diagram" "hidden" "NULL"); a NspDiagram
    )
   (gtype-id "GridBlock")
 )
