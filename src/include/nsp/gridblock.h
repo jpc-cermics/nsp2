@@ -118,7 +118,7 @@ extern int nsp_gridblock_xdr_save(XDR  *xdrs, NspGridBlock *M);
 
 NspGridBlock *nsp_gridblock_create_override(char *name,double *rect,int color,int thickness,int background);
 NspGridBlock *nsp_gridblock_create_from_nsp_diagram(char *name,double *rect,int color,int thickness,int background, NspDiagram *D);
-void nsp_gridblock_fix_diagram(void *B1,NspDiagram *D);
+NspDiagram *nsp_gridblock_get_diagram(void *B1);
 
 #line 124 "./gridblock.h"
 #endif /* NSP_INC_NspGridBlock */ 

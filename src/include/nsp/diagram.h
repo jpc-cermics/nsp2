@@ -142,7 +142,7 @@ extern NspList *nsp_diagram_get_hilited_list(nsp_diagram *gf, int full_copy);
 extern int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double pt[2], int *click);
 extern int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,
 				     move_action action, int *click);
-extern NspDiagram *nsp_diagram_hilited_full_copy( NspDiagram *F);
+extern NspDiagram *nsp_diagram_hilited_full_copy(const char *name, NspDiagram *F);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 extern void link_check(NspDiagram *F,NspLink *L);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
@@ -192,7 +192,7 @@ static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
 static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
-static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
+static NspList * nsp_diagram_list_full_copy_and_name(NspList *L,int hilited_only);
 
 #line 198 "./diagram.h"
 #endif /* NspDiagram_Private */
