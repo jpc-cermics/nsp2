@@ -1922,7 +1922,7 @@ static void nsp_block_link_figure(NspGraphic *G, void *F, void *A)
   /* link toplevel, take care to use nsp_graphic field */
   nsp_graphic_link_figure(G, F,A);
   /* link Icon */
-  if ( Icon != NULL)  nsp_graphic_link_figure(Icon, F,A);
+  if ( Icon != NULL) Icon->type->link_figure(Icon,F,A);
 }
 
 
@@ -1932,7 +1932,7 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   /* unlink toplevel */
   nsp_graphic_unlink_figure(G,  F);
   /* unlink Icon */
-  if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
+  if ( Icon != NULL)  Icon->type->unlink_figure(Icon,F);
 }
 
 /*
