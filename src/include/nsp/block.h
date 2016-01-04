@@ -181,7 +181,7 @@ static NspBlock *nsp_block_create_void(const char *name,NspTypeBase *type);
 static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
-static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B,const char *func);
 
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);

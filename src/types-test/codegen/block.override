@@ -64,7 +64,7 @@ include-private  Block
 static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
-static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B,const char *func);
 
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -566,11 +566,13 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   /* first draw the block icon */
   switch ( B->obj->draw_mode )
     {
-    case 0:
-    case 1:
+      static const char *funcs[]={"draw_tumbi" , "draw_gmatrix", "draw_vanne"};
+    case 0: 
+    case 1: 
+    case 2: 
       if ( B->obj->icon == NULL )
 	{
-	  if ( nsp_block_create_icon(Xgc,B) == FAIL)
+	  if ( nsp_block_create_icon(Xgc,B,funcs[B->obj->draw_mode]) == FAIL)
 	    Xgc->graphic_engine->xinfo(Xgc,"failed to create icon");
 	}
       if ( B->obj->icon != NULL )
@@ -589,7 +591,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  nsp_block_draw_string(Xgc,str,&fill,B->obj->r,loc,B->obj->r+2,B->obj->r+3);
 	}
       break;
-    case 2:
+    case 3:
       /*
        * simple icon with just a string
        */
@@ -601,7 +603,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       loc[0] = B->obj->r[1] - B->obj->r[3];
       nsp_block_draw_string(Xgc,str1,&fill, B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
-    case 3:
+    case 4:
       /*
        * a rectangle with random color
        *
@@ -1405,7 +1407,7 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 
 #define USE_AXE
 
-static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B,const char *func)
 {
 
   NspGraphic *G;
@@ -1417,7 +1419,6 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
-  char *func = ( B->obj->draw_mode == 0) ? "draw_tumbi" : "draw_gmatrix";
 
   if ( nsp_gtk_eval_function_by_name(func,targs,nargs,nsp_ret,&nret)== FAIL)
     {
