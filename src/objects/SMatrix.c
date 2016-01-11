@@ -1250,6 +1250,7 @@ void nsp_string_destroy(nsp_string *str)
 nsp_string new_nsp_string_n(int n)
 {
   nsp_string loc;
+  n = Max(n,0);
   if ((loc = (nsp_string) MALLOC((n+1)*sizeof(char))) == (nsp_string) 0) 
     { 
       Scierror("NewString : Error no more space\n");
@@ -1495,11 +1496,12 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
  * returns a mx1 matrix such that Res(i) = "A(i,1)str A(i,2)str  ...A(i,n)"
  * white spaces are inserted and @str separator is used if @flag =1 
  * 
+ * WARNING: this function is not used !
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
 
-NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, int flag)
+NspSMatrix *nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,lentot=0;
   NspSMatrix *Loc;
@@ -1519,7 +1521,7 @@ NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, 
       Lw->R[j]= len;
       lentot +=len ;
     }
-  if ( flag == 1) lentot += (A->n -1)*strlen(str);
+  if ( flag == 1) lentot += Max((A->n -1),0)*strlen(str);
   /* New matrix creation */
   for ( i = 0 ; i < Loc->m ; i++ )
     {
@@ -1554,6 +1556,10 @@ NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A,nsp_const_string str, int fla
   int i,j,*Iloc;
   NspSMatrix *Loc;
   NspMatrix *Lw;
+  if ( A->n == 0) 
+    {
+      return nsp_smatrix_create(NVOID,A->m,0,"v",0);
+    }
   if ((Loc=nsp_smatrix_create(NVOID,A->m,1,"v",0))  == NULLSMAT) return(NULLSMAT);
   if ((Lw = nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT) return(NULLSMAT);
   Iloc = (int *) Lw->R;
@@ -1598,6 +1604,10 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
   int i,j,*Iloc;
   NspSMatrix *Loc;
   NspMatrix *Lw;
+  if ( A->m == 0)
+    {
+      return nsp_smatrix_create(NVOID,0,A->n,"v",0);
+    }
   if ((Loc=nsp_smatrix_create(NVOID,1,A->n,"v",0))  == NULLSMAT) return(NULLSMAT);
   if ((Lw = nsp_matrix_create(NVOID,'r',1,A->n)) == NULLMAT) return(NULLSMAT);
   Iloc = (int *) Lw->R;
@@ -1653,12 +1663,12 @@ nsp_string nsp_smatrix_elts_concat(const NspSMatrix *A,nsp_const_string rstr, in
   if ( rflag == 1)
     {
       lsr = strlen(rstr);
-      lentot += (A->m -1)*lsr;
+      lentot += Max((A->m -1),0)*lsr;
     }
   if ( cflag == 1)
     {
       lsc = strlen(cstr);
-      lentot += (A->m*(A->n -1))*lsc;
+      lentot += Max((A->m*(A->n -1)),0)*lsc;
     }
 
   /* New String */
