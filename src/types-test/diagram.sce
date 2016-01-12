@@ -230,7 +230,7 @@ function menu=create_right_menu (win,xc,yc)
     menuitem.show[];
   end
   //--  new
-  tags = ['link';'block (tumbi)';'block (matrix)';'block (string)';'block (test)';
+  tags = ['link';'block (tumbi)';'block (matrix)';'block (vanne)';'block (string)';'block (test)';
 	  'connector';'empty super block';'selection to super block']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
@@ -296,9 +296,11 @@ function menuitem_response(w,args)
    case 3 then  GF(win).new_block[[args(2),args(3)],1];
    case 4 then  GF(win).new_block[[args(2),args(3)],2];
    case 5 then  GF(win).new_block[[args(2),args(3)],3];
-   case 6 then  GF(win).new_connector[] ;
-   case 7 then  GF(win).new_gridblock[] ;
-   case 8 then  GF(win).new_gridblock_from_selection[] ;
+   case 6 then  GF(win).new_block[[args(2),args(3)],4];
+   case 7 then  GF(win).new_connector[] ;
+   case 8 then  GF(win).new_gridblock[] ;
+   case 9 then  GF(win).new_gridblock_from_selection[] ;
+   
    case 10 then 
     // copy selection into the clipboard 
     L= GF(win).get_selection_as_diagram[];
