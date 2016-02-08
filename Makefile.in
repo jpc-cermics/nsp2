@@ -1,10 +1,14 @@
+#/* -*- Mode: Makefile -*- */
+# Copyright ENPC
+# main Makefile 
+
 SHELL = /bin/sh
 TOP=.
 
 include Path.incl
 include Makefile.incl
 
-all:: bin/scilex  
+all:: bin/scilex @CROSS_POPULATE@
 
 # can be used to recreate all the .a 
 # 
@@ -182,3 +186,9 @@ shared:
 		$(LIBS) -lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) 
 
 
+# populate current directory with cross compiler files 
+# libraries, etc, share etc....
+# Only usefull for 
+
+cross-populate:
+	@./config/crosscopy.sh @NSP_HOST_TYPE@ @CROSS_VERSION@

@@ -693,7 +693,7 @@ esac
 
 
 # detect if we are cross-compiling a win32 or win64 version
-# i686-pc-mingw32 is for a 32 bits target
+# i686-w64-mingw32 is for a 32 bits target
 # x86_64-w64-mingw32 is for a 64 bits target
 # NSPISS is inserted in the package name built for windows
 # TARGET_MACHINE is the machine option transmited to msvc linker
@@ -701,20 +701,49 @@ esac
 NSP_ISS=
 TARGET_MACHINE=
 CROSS=no
+CROSS_VERSION=
+CROSS_POPULATE= 
 
 case "$host" in
   x86_64-w64-mingw32 )
+    # cross compilation target 64 bits
     AC_DEFINE(TARGET_W64,[],[Defined if target is 64bits windows])
     NSP_ISS=w64
     TARGET_MACHINE=x64
+    CROSS_VERSION=`x86_64-w64-mingw32-gcc -dumpversion`
     CROSS=yes
+    CROSS_POPULATE=cross-populate
     ;;
   i686-pc-mingw32 )
+    # cross compilation target 32 bits (old name)
     NSP_ISS=w32
     TARGET_MACHINE=ix86
+    CROSS_VERSION=`i686-w64-mingw32-gcc -dumpversion`
     CROSS=yes
+    CROSS_POPULATE=cross-populate
+    ;;
+  i686-w64-mingw32 )
+    # cross compilation target 32 bits
+    NSP_ISS=w32
+    TARGET_MACHINE=ix86
+    CROSS_VERSION=`i686-w64-mingw32-gcc -dumpversion`
+    CROSS=yes
+    CROSS_POPULATE=cross-populate
     ;;
 esac
+
+# visual linker needed to produce lib files 
+# from dlls 
+
+SHAREDWIN32=shared-win32
+LIBEXE=
+
+if test "$CROSS" == yes; then
+   AC_CHECK_TOOL(LIBEXE,lib.exe,no) 
+   if test "$LIBEXE" != no; then 
+      SHAREDWIN32=shared-win32-and-lib
+   fi 
+fi
 
 ############################################
 # add -Wall
@@ -1983,6 +2012,8 @@ fi
 ## substituting variables
 #########################
 
+AC_SUBST(SHAREDWIN32)
+AC_SUBST(LIBEXE)
 AC_SUBST(SHREXT_NAME)
 AC_SUBST(RM)
 AC_SUBST(AR)
@@ -2146,13 +2177,16 @@ AC_SUBST(CC_OPTIONS)
 AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 AC_SUBST(NSP_ISS)
-AC_SUBST(TARGET_MACHINE)
 AC_SUBST(SCICOS_GEN_LIB)
 AC_SUBST(GTKDIR)
 AC_SUBST(GRAPHICS_LIB_OLD)
 AC_SUBST(GI_FILE)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile)
+AC_SUBST(CROSS_VERSION)
+AC_SUBST(CROSS_POPULATE)
+AC_SUBST(TARGET_MACHINE)
+
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32)
 
 echo
 echo
