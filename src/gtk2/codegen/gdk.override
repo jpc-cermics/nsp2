@@ -3,21 +3,6 @@
 headers
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-
-#include <nsp/nsp.h>
-#include <nsp/object.h>
-#include <nsp/smatrix.h>
-#include <nsp/bmatrix.h>
-#include <nsp/hash.h>
-#include <nsp/plist.h>
-#include <nsp/list.h>
-#include <nsp/cells.h>
-#include <nsp/none.h>
-#include <nsp/mpmatrix.h>
-#include <nsp/matrix.h>
-#include <nsp/file.h>
-#include <nsp/type.h>
-#include <nsp/hobj.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
@@ -1058,8 +1043,8 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
     return nsp_new_double_obj((double) (event->any.send_event));
   if (!strcmp(attr, "__attrs"))
     {
-      static char *tab[] ={ "type", "window", "send_event",NULL};
-      return  (NspObject *)nsp_smatrix_create_from_table(tab);
+      static const char *tab[] ={ "type", "window", "send_event",NULL};
+      return  (NspObject *)nsp_smatrix_create_from_const_table(tab);
     }
   Scierror("Error: Event attributes not found \n");
   return NULL;
