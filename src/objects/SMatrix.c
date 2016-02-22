@@ -201,6 +201,34 @@ NspSMatrix *nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, 
 }
 
 /**
+ * nsp_smatrix_create_from_const_table:
+ * @T:  a %NULL terminated array of strings.
+ * 
+ * creates a  new #NspSMatrix using string copied from a given array @T.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
+
+NspSMatrix*nsp_smatrix_create_from_const_table(const char * const *T)
+{
+  NspSMatrix *Loc;
+  int i=0,count=0;
+  while ( T[count] != NULL) count++;
+  /* initial mxn matrix with unallocated elements **/
+  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,count,1,-1) ) == NULLSMAT) 
+    return NULLSMAT;
+  /* allocate elements and store copies of T elements in Loc **/
+  for ( i = 0 ; i < count ; i++ )
+    {
+      if ((Loc->S[ i] =nsp_string_copy(T[i])) == (nsp_string) 0)
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return NULLSMAT;
+	}
+    }
+  return Loc;
+}
+/**
  * nsp_smatrix_create_from_table:
  * @T:  a %NULL terminated array of strings.
  * 

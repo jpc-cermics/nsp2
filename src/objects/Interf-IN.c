@@ -384,12 +384,12 @@ static int int_mxtest10(Stack stack, int rhs, int opt, int lhs)
 static int int_mxtest11(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[]={string,s_int, s_double, s_bool, list_begin,s_int,string,list_end,mat,smat,t_end} ;
-  char *St[] ={ "one","two",NULL};
+  const char *St[] ={ "one","two",NULL};
   CheckRhs(0,0);
   CheckLhs(1,7);
   return  RetArgs(stack,lhs,T,"string",67,78.9,1,789,"string2",
 		  nsp_matrix_create_from_doubles(NVOID,2,2, 1.0,8.9,7.8,45.6), 
-		  nsp_smatrix_create_from_table(St));
+		  nsp_smatrix_create_from_const_table(St));
 }
 
 /* 
