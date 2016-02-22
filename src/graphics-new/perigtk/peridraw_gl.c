@@ -96,13 +96,12 @@ static void drawarrows(BCG *Xgc, double *vx, double *vy, int n, int as, int *sty
  *                         with the current private->drawing style
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i]
  */
-
+#if 0
 static void drawrectangles(BCG *Xgc,const double *vects,const int *fillvect, int n)
 {
-
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
-
+#endif
 /* Draw one rectangle with current line style */
 
 static void drawrectangle(BCG *Xgc,const double rect[])
@@ -136,13 +135,14 @@ static void fillrectangle(BCG *Xgc,const double rect[])
  *  on each rectangle the average value of z is computed
  */
 
+#if 0
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
 
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
-
+#endif 
 /*
  * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device
  *  x : of size n1 gives the x-values of the grid
@@ -152,14 +152,14 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
  *  z[i,j] is the value on the middle of rectangle
  *        P1= x[i],y[j] x[i+1],y[j+1]
  */
-
+#if 0
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
 
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
-
+#endif 
 
 /*
  * Circles and Ellipsis
@@ -174,13 +174,13 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i
  * The private->drawing style is the current private->drawing
  */
-
+#if 0
 static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
 {
 
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
-
+#endif 
 /*
  * Draw a set of ellipsis or part of ellipsis
  * Each is defined by 6-parameters,
@@ -189,13 +189,13 @@ static void fillarcs(BCG *Xgc, double *vects, int *fillvect, int n)
  * angle1,angle2 specifies the portion of the ellipsis
  * caution : angle=degreangle*64
  */
-
+#if 0
 static void drawarcs(BCG *Xgc, double *vects, int *style, int n)
 {
 
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
-
+#endif 
 /* Draw a single ellipsis or part of it
  */
 
@@ -219,13 +219,13 @@ static void fillarc(BCG *Xgc, double arc[])
  * drawvect[i] <= 0 use a mark for polyline i
  * drawvect[i] >  0 use a line style for polyline i
  */
-
+#if 0
 static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvect,int n, int p)
 {
 
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
-
+#endif 
 /*
  *  fill a set of polygons each of which is defined by
  * (*p) points (*n) is the number of polygons
@@ -242,10 +242,9 @@ static void drawpolylines(BCG *Xgc, double *vectsx, double *vectsy, int *drawvec
 
 static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, int *fillvect,int n, int p)
 {
-  int dash,color,i;
-
-  dash = Xgc->graphic_engine->xget_dash(Xgc);
-  color = Xgc->graphic_engine->xget_color(Xgc);
+  int i;
+  /* int dash = Xgc->graphic_engine->xget_dash(Xgc); */
+  int color = Xgc->graphic_engine->xget_color(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
@@ -254,26 +253,24 @@ static void fillpolylines(BCG *Xgc, const double *vectsx, const double *vectsy, 
 	  xset_color(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
-	  Xgc->graphic_engine->xset_color(Xgc,color);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  /* drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,color); */
 	}
       else  if (fillvect[i] == 0 )
 	{
-	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  /* Xgc->graphic_engine->xset_dash(Xgc,dash); */
 	  Xgc->graphic_engine->xset_color(Xgc,color);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
       else
 	{
 	  xset_color(Xgc,-fillvect[i]);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1,-1);
 	  xset_color(Xgc,color);
 	}
     }
-  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  /* Xgc->graphic_engine->xset_dash(Xgc,dash); */
   Xgc->graphic_engine->xset_color(Xgc,color);
 }
 
@@ -301,21 +298,22 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 /*
  * Fill the polygon or polyline
  * according to *closeflag : the given vector is a polyline or a polygon
+ * Note that it also draw the polyline 
  */
 
 /* FIXME: Attention ça ne marche que pour un polygone convexe !!!!!!
  * sinon il faut le trianguler
  */
 
-static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag)
+static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color)
 {
   gint i;
   if ( n <= 1) return;
-
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex2d( vx[i], vy[i]);
   glEnd();
-
+  if ( color >=0 ) Xgc->graphic_engine->xset_color(Xgc,color);
+  drawpolyline(Xgc,vx, vy, n,closeflag);
 }
 
 /*
@@ -391,25 +389,23 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
  *   \item $init$. Initial point $<x,y>$.
  *   \end{itemize}
  */
-
+#if 0
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
-
+#endif 
 /*
  * Display numbers z[i] at location (x[i],y[i])
  *   with a slope alpha[i] (see displaystring), if flag==1
  *   add a box around the string, only if slope =0}
  */
-
+#if 0
 static void displaynumbers(BCG *Xgc, double *x, double *y, int n, int flag, double *z, double *alpha)
 {
-
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
-
+#endif 
 
 /* drawing marks with pango
  */
