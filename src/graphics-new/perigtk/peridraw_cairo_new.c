@@ -250,6 +250,7 @@ static void drawpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int
 /*
  * Fill the polygon or polyline
  * according to *closeflag : the given vector is a polyline or a polygon
+ * Note that it also draw the polyline 
  */
 
 static void fillpolyline(BCG *Xgc, const double *vx, const double *vy, int n,int closeflag, int color)
