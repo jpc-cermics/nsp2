@@ -31,14 +31,7 @@
 #include <webkit/webkit.h>
 
 #include <nsp/nsp.h>
-#include <nsp/object.h>
-#include <nsp/smatrix.h>
-#include <nsp/matrix.h>
-#include <nsp/list.h>
-#include <nsp/hash.h>
-#include <nsp/hobj.h>
-#include <nsp/file.h>
-#include <nsp/type.h>
+#include <nsp/objects.h>
 
 /* on windows TRUE and FALSE are undef by 
  * "nsp/object.h"
@@ -69,7 +62,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 73 "webkit.c"
+#line 66 "webkit.c"
 /* ---------- forward type declarations ---------- */
 #include <nsp/gtk/webkitwebview.h>
 #include <nsp/gtk/webkitwebframe.h>
@@ -2111,7 +2104,7 @@ static AttrTab webkitnetworkrequest_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 66 "codegen/webkit.override"
+#line 59 "codegen/webkit.override"
 
 static NspSMatrix *nsp_smatrix_from_data(const char *s,int lenght)
 {
@@ -2290,7 +2283,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2294 "webkit.c"
+#line 2287 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2344,4 +2337,4 @@ void nsp_initialize_webkit_types(void)
   new_type_webkitnetworkrequest(T_BASE);
 }
 
-#line 2348 "webkit.c"
+#line 2341 "webkit.c"

@@ -2,7 +2,8 @@
 %%
 headers
 
-#include "nsp/gtk/gobject.h"
+#include <nsp/nsp.h>
+#include <nsp/gtk/gobject.h>
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>

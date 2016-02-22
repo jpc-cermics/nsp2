@@ -27,24 +27,11 @@
 #line 4 "codegen/atk.override"
 
 #include <nsp/nsp.h>
-#include <nsp/object.h>
-#include <nsp/smatrix.h>
-#include <nsp/bmatrix.h>
-#include <nsp/hash.h>
-#include <nsp/list.h>
-#include <nsp/cells.h>
-#include <nsp/none.h>
-#include <nsp/mpmatrix.h>
-#include <nsp/matrix.h>
-#include <nsp/file.h>
-#include <nsp/type.h>
-#include <nsp/hobj.h>
 #include <nsp/gtk/gobject.h>
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>
-
-#line 48 "atk.c"
+#line 35 "atk.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 /* ---------- forward type declarations ---------- */
@@ -5504,7 +5491,7 @@ NspAtkRelation *atkrelation_copy(NspAtkRelation *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 32 "codegen/atk.override"
+#line 19 "codegen/atk.override"
 static int
 _wrap_atk_relation_new (Stack stack,int rhs,int opt,int lhs)
 {
@@ -5545,7 +5532,7 @@ _wrap_atk_relation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 5549 "atk.c"
+#line 5536 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -6602,4 +6589,4 @@ void nsp_initialize_atk_types(void)
   new_type_atkutil(T_BASE);
 }
 
-#line 6606 "atk.c"
+#line 6593 "atk.c"

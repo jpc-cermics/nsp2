@@ -3,6 +3,9 @@
 headers
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/none.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
