@@ -4023,33 +4023,34 @@ let make_boxed_arg boxed_data =
 
 (* string_array_arg : char** NULL terminated array of string *)
 
-let string_array_check name =
+let string_array_check cast name =
   Printf.sprintf "  if ( IsSMat(nsp_%s))\
-  \n    { %s = ((NspSMatrix *) nsp_%s)->S;}\
+  \n    { %s = %s ((NspSMatrix *) nsp_%s)->S;}\
   \n  else\
   \n    {\
   \n      Scierror(\"Error: %s should be of type SMat\");\
   \n      return RET_BUG;\
-  \n    }\n" name name name name
+  \n    }\n" name name cast name name
 ;;
 
-let string_array_null name =
+let string_array_null cast name =
   Printf.sprintf "  if ( IsSMat(nsp_%s))\
-  \n    %s = ((NspSMatrix *) nsp_%s)->S;\
+  \n    %s = %s ((NspSMatrix *) nsp_%s)->S;\
   \n  else if ( ! IsNone(nsp_%s) ) {\
   \n      Scierror(\"Error: %s should be of type SMat\");\
   \n      return RET_BUG;\
-  \n  }\n" name name name name name
+  \n  }\n" name name cast name name name
   ;;
 
-let string_array_arg_write_param _oname params info _byref=
+let string_array_arg_write_param cast _oname params info _byref=
   let name = params.pname in
-  let varlist = varlist_add info.varlist "gchar" ("**" ^ name ^ " = NULL") in
+  let varlist = varlist_add info.varlist (cast ^ "gchar") ("**" ^ name ^ " = NULL") in
+  let cast = if cast = "" then "" else "(" ^ cast ^ "gchar **)" in
   let codebefore =
     if params.pnull then
-      string_array_null name
+      string_array_null cast name
     else
-      string_array_check name in
+      string_array_check cast name in
   let varlist =
     if params.pnull then
       varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL")
@@ -4064,27 +4065,40 @@ let string_array_arg_write_param _oname params info _byref=
   }
 ;;
 
-let string_array_arg_attr_write_set oname params info byref=
+let string_array_arg_attr_write_set cast oname params info byref=
   let pset_name = pset_name_set byref oname params.pname in
-  let info = string_array_arg_write_param oname params info byref in
+  let info = string_array_arg_write_param cast oname params info byref in
   { info with attrcodebefore = (Printf.sprintf "  /* %s= %s;*/\n" pset_name params.pname) :: info.attrcodebefore;}
 ;;
 
-(* returning a gchar**: we assume that we can free the gchar** *)
+(* returning a gchar**: we assume that we can free the gchar** 
+ * except if ownsreturn is not true.
+ *)
 
-let string_array_arg_write_return _ptype _ownsreturn info =
-  let varlist = varlist_add  info.varlist "gchar" "**ret" in
+let string_array_arg_write_return _ptype ownsreturn info =
+  let varlist = 
+    if ownsreturn then
+       varlist_add  info.varlist  "const gchar * const *" "ret" 
+    else
+       varlist_add  info.varlist  "gchar" "**ret" 
+  in
   let varlist = varlist_add varlist "NspObject" "*nsp_ret" in
   let codeafter =
-    "  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);\n" ^
-    "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
-    "  g_strfreev(ret);\n" ^
-    "  MoveObj(stack,1,nsp_ret);\n  return 1;" in
+    if ownsreturn then
+      "  nsp_ret = (NspObject *) nsp_smatrix_create_from_const_table(ret);\n" ^
+      "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+      "  MoveObj(stack,1,nsp_ret);\n  return 1;" 
+    else
+      "  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);\n" ^
+      "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+      "  g_strfreev(ret);\n" ^
+      "  MoveObj(stack,1,nsp_ret);\n  return 1;" 
+  in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 
-let string_array_arg_attr_write_return  _objinfo _ownsreturn _params info=
-  let varlist = varlist_add  info.varlist "gchar" "**ret" in
+let string_array_arg_attr_write_return cast _objinfo _ownsreturn _params info=
+  let varlist = varlist_add  info.varlist (cast ^ "gchar") "**ret" in
   let code = "  return NULL;\n" in
   { info with varlist = varlist ; attrcodeafter = code :: info.attrcodeafter ;}
 ;;
@@ -4176,10 +4190,28 @@ let string_array_arg_attr_write_defval objinfo _varname params =
 
 let string_array_arg =
   { argtype with
-    write_param = string_array_arg_write_param ;
-    attr_write_set = string_array_arg_attr_write_set ;
+    write_param = string_array_arg_write_param "" ;
+    attr_write_set = string_array_arg_attr_write_set "" ;
+    write_return = string_array_arg_write_return  ;
+    attr_write_return = string_array_arg_attr_write_return  "";
+    attr_free_fields = string_array_arg_attr_free_fields  ;
+    attr_write_save = string_array_arg_attr_write_save;
+    attr_write_load = string_array_arg_attr_write_load  ;
+    attr_write_copy = string_array_arg_attr_write_copy  ;
+    attr_write_info = string_array_arg_attr_write_info;
+    attr_write_print = string_array_arg_attr_write_print  ;
+    attr_write_init = string_array_arg_attr_write_init  ;
+    attr_equal_fields = string_array_arg_attr_equal_fields  ;
+    attr_write_defval = string_array_arg_attr_write_defval  ;
+  }
+;;
+
+let const_string_array_arg =
+  { argtype with
+    write_param = string_array_arg_write_param "const ";
+    attr_write_set = string_array_arg_attr_write_set "const " ;
     write_return = string_array_arg_write_return ;
-    attr_write_return = string_array_arg_attr_write_return  ;
+    attr_write_return = string_array_arg_attr_write_return "const " ;
     attr_free_fields = string_array_arg_attr_free_fields  ;
     attr_write_save = string_array_arg_attr_write_save;
     attr_write_load = string_array_arg_attr_write_load  ;
@@ -4936,6 +4968,7 @@ let matcher_hash = of_bindings [
   "@@CustomBoxed", (make_custom_boxed_arg
                       (init_custom_boxed_data "getter" "checker" "new_s" "type_s"));
   "gchar**", string_array_arg;
+  "const-gchar**", const_string_array_arg; 
   "char**", string_array_arg;
 ]
 ;;
