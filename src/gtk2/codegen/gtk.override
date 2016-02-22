@@ -60,8 +60,9 @@ enum {STYLE_COLOUR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} type;
 
 /* XXXX */
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+#ifdef WITH_GTKGLEXT
 extern int nsp_graphic_new_gl_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-
+#endif 
 /* XXXXX : only implemented in 2.4 */
 #define gtk_calendar_set_display_options gtk_calendar_display_options
 #define gtk_calendar_get_display_options(x) 0 
@@ -3844,6 +3845,15 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   return 1;
 }
 %%
+override gtk_entry_new
+
+static int
+_wrap_gtk_entry_new (Stack stack, int rhs, int opt, int lhs)
+{
+  return _wrap_gtk_entry_new_with_max_length (stack,rhs,opt,lhs);
+}
+
+%%
 override gtk_entry_get_layout_offsets noargs
 static int
 _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
@@ -5951,6 +5961,18 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
+
+%%
+override gtk_text_view_new kwargs
+
+int _wrap_gtk_text_view_new_with_buffer(Stack stack, int rhs, int opt, int lhs);
+
+static int
+_wrap_gtk_text_view_new(Stack stack, int rhs, int opt, int lhs)
+{
+  return _wrap_gtk_text_view_new_with_buffer (stack, rhs, opt, lhs);
+}
+
 %%
 override gtk_text_view_get_visible_rect noargs
 static int

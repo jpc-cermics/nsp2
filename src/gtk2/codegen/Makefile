@@ -20,7 +20,7 @@ girepository.c: girepository.defs
 	@echo "generating $*.c"
 	@$(PROG) -cp "codegen/" -p $* -o $*.c $*
 	@mv girepository.c ../
-	@(RM) *.h 
+	@rm -f *.h
 
 clean:
 	rm -f *.c *.h
@@ -38,5 +38,7 @@ gvalue.c: gvalue.defs gvalue.override
 	@echo "generating $*.c"
 	@$(PROG) -cp "codegen/" -p $* -o $*.c $*
 	@mv $*.c ../
-	@$(RM) *.h 
+	@rm -f *.h
+
+
 

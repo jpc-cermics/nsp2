@@ -142,50 +142,53 @@
    )
   )
 
-;; (define-method get_authors
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_get_authors")
-;;   (return-type "gchar**")
-;;   )
+(define-method get_authors
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_get_authors")
+  (caller-owns-return t)
+  (return-type "gchar**")
+  )
 
-;; (define-method set_authors
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_set_authors")
-;;   (return-type "none")
-;;   (parameters
-;;    '("gchar**" "authors")
-;;    )
-;;   )
+(define-method set_authors
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_set_authors")
+  (return-type "none")
+  (parameters
+   '("const-gchar**" "authors")
+   )
+  )
 
-;; (define-method get_documenters
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_get_documenters")
-;;   (return-type "gchar**")
-;;   )
+(define-method get_documenters
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_get_documenters")
+  (caller-owns-return t)
+  (return-type "gchar**")
+  )
 
-;; (define-method set_documenters
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_set_documenters")
-;;   (return-type "none")
-;;   (parameters
-;;    '("gchar**" "documenters")
-;;    )
-;;   )
+(define-method set_documenters
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_set_documenters")
+  (return-type "none")
+  (parameters
+   '("const-gchar**" "documenters")
+   )
+  )
 
-;; (define-method get_artists
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_get_artists")
-;;   (return-type "gchar**")
-;;   )
+(define-method get_artists
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_get_artists")
+  (caller-owns-return t)
+  (return-type "gchar**")
+  )
 
-;; (define-method set_artists
-;;   (of-object "GtkAboutDialog")
-;;   (c-name "gtk_about_dialog_set_artists")
-;;   (return-type "none")
-;;   (parameters
-;;    '("gchar**" "artists")
-;;    )
-;;   )
+(define-method set_artists
+  (of-object "GtkAboutDialog")
+  (c-name "gtk_about_dialog_set_artists")
+  (return-type "none")
+  (parameters
+   '("const-gchar**" "artists")
+   )
+  )
 
 (define-method get_translator_credits
   (of-object "GtkAboutDialog")
@@ -4686,7 +4689,7 @@
 
 (define-function gtk_entry_new_with_max_length
   (c-name "gtk_entry_new_with_max_length")
-  ;;(is-constructor-of GtkEntry)
+  (is-constructor-of GtkEntry)
   (return-type "GtkWidget*")
   (parameters
    '("guint16" "max" (default "0"))
@@ -17279,7 +17282,7 @@
 
 (define-function gtk_text_view_new_with_buffer
   (c-name "gtk_text_view_new_with_buffer")
-  ;; (is-constructor-of GtkTextView)
+  (is-constructor-of GtkTextView)
   (return-type "GtkWidget*")
   (parameters
    '("GtkTextBuffer*" "buffer" (null-ok) (default "NULL"))

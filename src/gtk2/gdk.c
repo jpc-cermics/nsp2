@@ -8101,14 +8101,14 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&filename, &type, &nsp_option_keys, &nsp_option_values) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_option_keys))
-    { option_keys = ((NspSMatrix *) nsp_option_keys)->S;}
+    { option_keys =  ((NspSMatrix *) nsp_option_keys)->S;}
   else
     {
       Scierror("Error: option_keys should be of type SMat");
       return RET_BUG;
     }
   if ( IsSMat(nsp_option_values))
-    { option_values = ((NspSMatrix *) nsp_option_values)->S;}
+    { option_values =  ((NspSMatrix *) nsp_option_values)->S;}
   else
     {
       Scierror("Error: option_values should be of type SMat");
