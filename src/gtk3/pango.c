@@ -5344,7 +5344,7 @@ int _wrap_pango_parse_enum(Stack stack, int rhs, int opt, int lhs) /* pango_pars
   if ((type = nspg_type_from_object(nsp_type)) == FAIL)
       return RET_BUG;
   if ( IsSMat(nsp_possible_values))
-    { possible_values = ((NspSMatrix *) nsp_possible_values)->S;}
+    { possible_values =  ((NspSMatrix *) nsp_possible_values)->S;}
   else
     {
       Scierror("Error: possible_values should be of type SMat");

@@ -1795,7 +1795,7 @@ int _wrap_g_environ_getenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
   const gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_envp))
-    { envp = ((NspSMatrix *) nsp_envp)->S;}
+    { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
       Scierror("Error: envp should be of type SMat");
@@ -1815,7 +1815,7 @@ int _wrap_g_environ_setenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
   int overwrite;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable, &value, &overwrite) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_envp))
-    { envp = ((NspSMatrix *) nsp_envp)->S;}
+    { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
       Scierror("Error: envp should be of type SMat");
@@ -1837,7 +1837,7 @@ int _wrap_g_environ_unsetenv(Stack stack, int rhs, int opt, int lhs) /* g_enviro
   char *variable;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_envp))
-    { envp = ((NspSMatrix *) nsp_envp)->S;}
+    { envp =  ((NspSMatrix *) nsp_envp)->S;}
   else
     {
       Scierror("Error: envp should be of type SMat");
@@ -1953,7 +1953,7 @@ int _wrap_g_file_open_tmp(Stack stack, int rhs, int opt, int lhs) /* g_file_open
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&tmpl, &nsp_name_used) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_name_used))
-    { name_used = ((NspSMatrix *) nsp_name_used)->S;}
+    { name_used =  ((NspSMatrix *) nsp_name_used)->S;}
   else
     {
       Scierror("Error: name_used should be of type SMat");
@@ -1993,7 +1993,7 @@ int _wrap_g_build_pathv(Stack stack, int rhs, int opt, int lhs) /* g_build_pathv
   NspObject *nsp_args;
   if ( GetArgs(stack,rhs,opt,T,&separator, &nsp_args) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_args))
-    { args = ((NspSMatrix *) nsp_args)->S;}
+    { args =  ((NspSMatrix *) nsp_args)->S;}
   else
     {
       Scierror("Error: args should be of type SMat");
@@ -2012,7 +2012,7 @@ int _wrap_g_build_filenamev(Stack stack, int rhs, int opt, int lhs) /* g_build_f
   NspObject *nsp_args;
   if ( GetArgs(stack,rhs,opt,T,&nsp_args) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_args))
-    { args = ((NspSMatrix *) nsp_args)->S;}
+    { args =  ((NspSMatrix *) nsp_args)->S;}
   else
     {
       Scierror("Error: args should be of type SMat");
@@ -2691,7 +2691,7 @@ int _wrap_g_strtod(Stack stack, int rhs, int opt, int lhs) /* g_strtod */
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nptr, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_endptr))
-    { endptr = ((NspSMatrix *) nsp_endptr)->S;}
+    { endptr =  ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
       Scierror("Error: endptr should be of type SMat");
@@ -2711,7 +2711,7 @@ int _wrap_g_ascii_strtod(Stack stack, int rhs, int opt, int lhs) /* g_ascii_strt
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nptr, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_endptr))
-    { endptr = ((NspSMatrix *) nsp_endptr)->S;}
+    { endptr =  ((NspSMatrix *) nsp_endptr)->S;}
   else
     {
       Scierror("Error: endptr should be of type SMat");
@@ -2934,7 +2934,7 @@ int _wrap_g_strjoinv(Stack stack, int rhs, int opt, int lhs) /* g_strjoinv */
   NspObject *nsp_str_array;
   if ( GetArgs(stack,rhs,opt,T,&separator, &nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
-    { str_array = ((NspSMatrix *) nsp_str_array)->S;}
+    { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
       Scierror("Error: str_array should be of type SMat");
@@ -2953,7 +2953,7 @@ int _wrap_g_strfreev(Stack stack, int rhs, int opt, int lhs) /* g_strfreev */
   NspObject *nsp_str_array;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
-    { str_array = ((NspSMatrix *) nsp_str_array)->S;}
+    { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
       Scierror("Error: str_array should be of type SMat");
@@ -2970,7 +2970,7 @@ int _wrap_g_strdupv(Stack stack, int rhs, int opt, int lhs) /* g_strdupv */
   NspObject *nsp_str_array, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
-    { str_array = ((NspSMatrix *) nsp_str_array)->S;}
+    { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
       Scierror("Error: str_array should be of type SMat");
@@ -2992,7 +2992,7 @@ int _wrap_g_strv_length(Stack stack, int rhs, int opt, int lhs) /* g_strv_length
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
-    { str_array = ((NspSMatrix *) nsp_str_array)->S;}
+    { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
   else
     {
       Scierror("Error: str_array should be of type SMat");
@@ -3487,6 +3487,26 @@ int _wrap_g_utf8_strreverse(Stack stack, int rhs, int opt, int lhs) /* g_utf8_st
   return 1;
 }
 
+int _wrap_g_utf8_validate(Stack stack, int rhs, int opt, int lhs) /* g_utf8_validate */
+{
+  int_types T[] = {string,s_int,obj, t_end};
+  char *str;
+  int max_len, ret;
+  const gchar **end = NULL;
+  NspObject *nsp_end;
+  if ( GetArgs(stack,rhs,opt,T,&str, &max_len, &nsp_end) == FAIL) return RET_BUG;
+  if ( IsSMat(nsp_end))
+    { end = (const gchar **) ((NspSMatrix *) nsp_end)->S;}
+  else
+    {
+      Scierror("Error: end should be of type SMat");
+      return RET_BUG;
+    }
+    ret =g_utf8_validate(str,max_len,end);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 int _wrap_g_utf8_strup(Stack stack, int rhs, int opt, int lhs) /* g_utf8_strup */
 {
   int_types T[] = {string,s_int, t_end};
@@ -3803,6 +3823,45 @@ int _wrap_g_variant_is_signature(Stack stack, int rhs, int opt, int lhs) /* g_va
   return 1;
 }
 
+int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_parse */
+{
+  int_types T[] = {obj,string,string,obj, t_end};
+  GVariantType *type = NULL;
+  NspObject *nsp_type, *nsp_endptr, *nsp_ret;
+  char *text, *limit;
+  const gchar **endptr = NULL;
+  GError *error = NULL;
+  GVariant *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type, &text, &limit, &nsp_endptr) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_type))
+    { type = ((NspGVariantType *) nsp_type)->obj->value;
+      if((type = nsp_copy_GVariantType(type))==NULL) return RET_BUG;
+    }
+  else
+    {
+      Scierror("Error: type should be of type GVariantType\n");
+      return RET_BUG;
+    }
+  if ( IsSMat(nsp_endptr))
+    { endptr = (const gchar **) ((NspSMatrix *) nsp_endptr)->S;}
+  else
+    {
+      Scierror("Error: endptr should be of type SMat");
+      return RET_BUG;
+    }
+    ret =g_variant_parse(type,text,limit,endptr,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  nsp_type_gvariant= new_type_gvariant(T_BASE);
+  if((ret = nsp_copy_GVariant(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvariant_create(NVOID,ret,(NspTypeBase *) nsp_type_gvariant);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 int _wrap_g_variant_type_string_is_valid(Stack stack, int rhs, int opt, int lhs) /* g_variant_type_string_is_valid */
 {
   int_types T[] = {string, t_end};
@@ -3810,6 +3869,26 @@ int _wrap_g_variant_type_string_is_valid(Stack stack, int rhs, int opt, int lhs)
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&type_string) == FAIL) return RET_BUG;
     ret =g_variant_type_string_is_valid(type_string);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_variant_type_string_scan(Stack stack, int rhs, int opt, int lhs) /* g_variant_type_string_scan */
+{
+  int_types T[] = {string,string,obj, t_end};
+  char *string, *limit;
+  const gchar **endptr = NULL;
+  NspObject *nsp_endptr;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&string, &limit, &nsp_endptr) == FAIL) return RET_BUG;
+  if ( IsSMat(nsp_endptr))
+    { endptr = (const gchar **) ((NspSMatrix *) nsp_endptr)->S;}
+  else
+    {
+      Scierror("Error: endptr should be of type SMat");
+      return RET_BUG;
+    }
+    ret =g_variant_type_string_scan(string,limit,endptr);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
@@ -4020,6 +4099,7 @@ static OpTab glib_func[]={
   { "g_utf8_strchr", _wrap_g_utf8_strchr},
   { "g_utf8_strrchr", _wrap_g_utf8_strrchr},
   { "g_utf8_strreverse", _wrap_g_utf8_strreverse},
+  { "g_utf8_validate", _wrap_g_utf8_validate},
   { "g_utf8_strup", _wrap_g_utf8_strup},
   { "g_utf8_strdown", _wrap_g_utf8_strdown},
   { "g_utf8_casefold", _wrap_g_utf8_casefold},
@@ -4050,7 +4130,9 @@ static OpTab glib_func[]={
   { "g_bit_nth_lsf", _wrap_g_bit_nth_lsf},
   { "g_variant_is_object_path", _wrap_g_variant_is_object_path},
   { "g_variant_is_signature", _wrap_g_variant_is_signature},
+  { "g_variant_parse", _wrap_g_variant_parse},
   { "g_variant_type_string_is_valid", _wrap_g_variant_type_string_is_valid},
+  { "g_variant_type_string_scan", _wrap_g_variant_type_string_scan},
   { "glib_check_version", _wrap_glib_check_version},
   { "glib_create", int_gvarianttype_create},
   { NULL, NULL}
@@ -4155,4 +4237,4 @@ GVariantType *nsp_copy_GVariantType(GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 4159 "glib.c"
+#line 4241 "glib.c"

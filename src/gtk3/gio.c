@@ -2835,7 +2835,7 @@ static int _wrap_g_application_run(NspGApplication *self,Stack stack,int rhs,int
   NspObject *nsp_argv;
   if ( GetArgs(stack,rhs,opt,T,&argc, &nsp_argv) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_argv))
-    { argv = ((NspSMatrix *) nsp_argv)->S;}
+    { argv =  ((NspSMatrix *) nsp_argv)->S;}
   else
     {
       Scierror("Error: argv should be of type SMat");
@@ -7927,7 +7927,7 @@ static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int 
   if (nspg_flags_get_value(G_TYPE_FILE_CREATE_FLAGS, nsp_flags, &flags)==FAIL)
       return RET_BUG;
   if ( IsSMat(nsp_new_etag))
-    { new_etag = ((NspSMatrix *) nsp_new_etag)->S;}
+    { new_etag =  ((NspSMatrix *) nsp_new_etag)->S;}
   else
     {
       Scierror("Error: new_etag should be of type SMat");
@@ -7952,7 +7952,7 @@ static int _wrap_g_file_replace_contents_finish(NspGFile *self,Stack stack,int r
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_new_etag) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_new_etag))
-    { new_etag = ((NspSMatrix *) nsp_new_etag)->S;}
+    { new_etag =  ((NspSMatrix *) nsp_new_etag)->S;}
   else
     {
       Scierror("Error: new_etag should be of type SMat");
@@ -12238,7 +12238,7 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
   GInputStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&size, &nsp_type, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_type))
-    { type = ((NspSMatrix *) nsp_type)->S;}
+    { type =  ((NspSMatrix *) nsp_type)->S;}
   else
     {
       Scierror("Error: type should be of type SMat");
@@ -12265,7 +12265,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
   GInputStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_type) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_type))
-    { type = ((NspSMatrix *) nsp_type)->S;}
+    { type =  ((NspSMatrix *) nsp_type)->S;}
   else
     {
       Scierror("Error: type should be of type SMat");
@@ -19477,7 +19477,7 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&default_proxy, &nsp_ignore_hosts) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_ignore_hosts))
-    { ignore_hosts = ((NspSMatrix *) nsp_ignore_hosts)->S;}
+    { ignore_hosts =  ((NspSMatrix *) nsp_ignore_hosts)->S;}
   else
     {
       Scierror("Error: ignore_hosts should be of type SMat");
@@ -19517,7 +19517,7 @@ static int _wrap_g_simple_proxy_resolver_set_ignore_hosts(NspGSimpleProxyResolve
   NspObject *nsp_ignore_hosts;
   if ( GetArgs(stack,rhs,opt,T,&nsp_ignore_hosts) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_ignore_hosts))
-    { ignore_hosts = ((NspSMatrix *) nsp_ignore_hosts)->S;}
+    { ignore_hosts =  ((NspSMatrix *) nsp_ignore_hosts)->S;}
   else
     {
       Scierror("Error: ignore_hosts should be of type SMat");
@@ -27514,7 +27514,7 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
   GIOStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_out_guid) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_out_guid))
-    { out_guid = ((NspSMatrix *) nsp_out_guid)->S;}
+    { out_guid =  ((NspSMatrix *) nsp_out_guid)->S;}
   else
     {
       Scierror("Error: out_guid should be of type SMat");
@@ -27542,7 +27542,7 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
   GIOStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&address, &nsp_out_guid, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_out_guid))
-    { out_guid = ((NspSMatrix *) nsp_out_guid)->S;}
+    { out_guid =  ((NspSMatrix *) nsp_out_guid)->S;}
   else
     {
       Scierror("Error: out_guid should be of type SMat");
