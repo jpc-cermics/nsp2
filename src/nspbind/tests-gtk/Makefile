@@ -4,12 +4,12 @@ SHELL = /bin/sh
 ALL=  pango.diff atk.diff gdk.diff gtk.diff webkit.diff
 
 PROG=../../../bin/nspbind -nw
-GTK=../../gtk2/codegen/
+GTK=../../gtk3/
 ISRC=../../include/nsp/gtk/
 
 all:
-	cp $(GTK)/*.defs .
-	cp $(GTK)/*.override .
+	cp $(GTK)codegen-3.0/*.defs .
+	cp $(GTK)codegen-3.0/*.override .
 	make diffs
 
 diffs:	$(ALL)
@@ -24,7 +24,7 @@ diffs:	$(ALL)
 
 %.diff: %.defs
 	@echo "-------- gen $*.c --------------------"
-	@$(PROG) -p $* -o $*.c $* -cp ""
+	@$(PROG) -p $* -o $*.c $* -cp "codegen-3.0/"
 	@mv *.h headers/
 	@make -s $*.cdiff
 	@make headers
