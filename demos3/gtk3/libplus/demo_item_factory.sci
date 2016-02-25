@@ -101,9 +101,8 @@ function demo_item_factory ()
   button = gtkbutton_new(label="close");
   button.connect[ "clicked",button_destroy_win,list(window)];
   box2.pack_start[ button,expand=%t,fill=%t,padding=0]
-  //button.set_flags[GTK.CAN_DEFAULT];
+  button.set_can_default[%t]
   button.grab_default[];
-  
   item_factory.delete_item["/Preferences/ShouldNotAppear"];
   window.show_all[];
 endfunction 

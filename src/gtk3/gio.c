@@ -889,7 +889,7 @@ static int _wrap_g_action_change_state(NspGAction *self,Stack stack,int rhs,int 
 {
   int_types T[] = {obj, t_end};
   GVariant *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))
     { value = ((NspGVariant *) nsp_value)->obj->value;
@@ -911,7 +911,7 @@ static int _wrap_g_action_activate(NspGAction *self,Stack stack,int rhs,int opt,
 	{"parameter",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GVariant *parameter = NULL;
-  NspObject *nsp_parameter;
+  NspObject *nsp_parameter = NULL;
   if ( GetArgs(stack,rhs,opt,T,opts, &nsp_parameter) == FAIL) return RET_BUG;
   if (nsp_parameter != NULL)
      {
@@ -1242,7 +1242,7 @@ static int _wrap_g_action_group_change_action_state(NspGActionGroup *self,Stack 
   int_types T[] = {string,obj, t_end};
   char *action_name;
   GVariant *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&action_name, &nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))
     { value = ((NspGVariant *) nsp_value)->obj->value;
@@ -1265,7 +1265,7 @@ static int _wrap_g_action_group_activate_action(NspGActionGroup *self,Stack stac
 	{NULL,t_end,NULLOBJ,-1} };
   char *action_name;
   GVariant *parameter = NULL;
-  NspObject *nsp_parameter;
+  NspObject *nsp_parameter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&action_name, opts, &nsp_parameter) == FAIL) return RET_BUG;
   if (nsp_parameter != NULL)
      {
@@ -1314,7 +1314,7 @@ static int _wrap_g_action_group_action_state_changed(NspGActionGroup *self,Stack
   int_types T[] = {string,obj, t_end};
   char *action_name;
   GVariant *state = NULL;
-  NspObject *nsp_state;
+  NspObject *nsp_state = NULL;
   if ( GetArgs(stack,rhs,opt,T,&action_name, &nsp_state) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_state))
     { state = ((NspGVariant *) nsp_state)->obj->value;
@@ -2832,7 +2832,7 @@ static int _wrap_g_application_run(NspGApplication *self,Stack stack,int rhs,int
   int_types T[] = {s_int,obj, t_end};
   int argc, ret;
   gchar **argv = NULL;
-  NspObject *nsp_argv;
+  NspObject *nsp_argv = NULL;
   if ( GetArgs(stack,rhs,opt,T,&argc, &nsp_argv) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_argv))
     { argv =  ((NspSMatrix *) nsp_argv)->S;}
@@ -5761,7 +5761,7 @@ static int _wrap_g_dbus_proxy_set_cached_property(NspGDBusProxy *self,Stack stac
   int_types T[] = {string,obj, t_end};
   char *property_name;
   GVariant *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&property_name, &nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))
     { value = ((NspGVariant *) nsp_value)->obj->value;
@@ -5815,7 +5815,7 @@ static int _wrap_g_dbus_proxy_call_sync(NspGDBusProxy *self,Stack stack,int rhs,
   int_types T[] = {string,obj,obj,s_int,obj_check, t_end};
   char *method_name;
   GVariant *parameters = NULL, *ret;
-  NspObject *nsp_parameters, *nsp_flags = NULL, *nsp_ret;
+  NspObject *nsp_parameters = NULL, *nsp_flags = NULL, *nsp_ret;
   GDBusCallFlags flags;
   int timeout_msec;
   NspGObject *cancellable;
@@ -7919,7 +7919,7 @@ static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int 
   char *contents, *etag;
   int length, make_backup, ret;
   GFileCreateFlags flags;
-  NspObject *nsp_flags = NULL, *nsp_new_etag;
+  NspObject *nsp_flags = NULL, *nsp_new_etag = NULL;
   gchar **new_etag = NULL;
   NspGObject *cancellable;
   GError *error = NULL;
@@ -7947,7 +7947,7 @@ static int _wrap_g_file_replace_contents_finish(NspGFile *self,Stack stack,int r
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *res;
   gchar **new_etag = NULL;
-  NspObject *nsp_new_etag;
+  NspObject *nsp_new_etag = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_new_etag) == FAIL) return RET_BUG;
@@ -12232,7 +12232,7 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
   int_types T[] = {s_int,obj,obj_check, t_end};
   int size;
   gchar **type = NULL;
-  NspObject *nsp_type, *nsp_ret;
+  NspObject *nsp_type = NULL, *nsp_ret;
   NspGObject *cancellable;
   GError *error = NULL;
   GInputStream *ret;
@@ -12260,7 +12260,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *res;
   gchar **type = NULL;
-  NspObject *nsp_type, *nsp_ret;
+  NspObject *nsp_type = NULL, *nsp_ret;
   GError *error = NULL;
   GInputStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_type) == FAIL) return RET_BUG;
@@ -13288,7 +13288,7 @@ static int _wrap_g_menu_model_get_item_attribute_value(NspGMenuModel *self,Stack
   int item_index;
   char *attribute;
   GVariantType *expected_type = NULL;
-  NspObject *nsp_expected_type, *nsp_ret;
+  NspObject *nsp_expected_type = NULL, *nsp_ret;
   GVariant *ret;
   if ( GetArgs(stack,rhs,opt,T,&item_index, &attribute, opts, &nsp_expected_type) == FAIL) return RET_BUG;
   if (nsp_expected_type != NULL)
@@ -18320,7 +18320,7 @@ static int _wrap_g_settings_set_value(NspGSettings *self,Stack stack,int rhs,int
   int_types T[] = {string,obj, t_end};
   char *key;
   GVariant *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&key, &nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))
@@ -18942,7 +18942,7 @@ _wrap_g_simple_action_new_stateful (Stack stack, int rhs, int opt, int lhs)
 	{NULL,t_end,NULLOBJ,-1} };
   char *name;
   GVariantType *parameter_type = NULL;
-  NspObject *nsp_parameter_type, *nsp_state;
+  NspObject *nsp_parameter_type = NULL, *nsp_state = NULL;
   GVariant *state = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name, opts, &nsp_parameter_type, &nsp_state) == FAIL) return RET_BUG;
@@ -18984,7 +18984,7 @@ _wrap_g_simple_action_new (Stack stack, int rhs, int opt, int lhs)
 	{NULL,t_end,NULLOBJ,-1} };
   char *name;
   GVariantType *parameter_type = NULL;
-  NspObject *nsp_parameter_type;
+  NspObject *nsp_parameter_type = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name, opts, &nsp_parameter_type) == FAIL) return RET_BUG;
   if (nsp_parameter_type != NULL)
@@ -19020,7 +19020,7 @@ static int _wrap_g_simple_action_set_state(NspGSimpleAction *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   GVariant *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))
     { value = ((NspGVariant *) nsp_value)->obj->value;
@@ -19473,7 +19473,7 @@ _wrap_g_simple_proxy_resolver_new (Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,obj, t_end};
   char *default_proxy;
   gchar **ignore_hosts = NULL;
-  NspObject *nsp_ignore_hosts;
+  NspObject *nsp_ignore_hosts = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&default_proxy, &nsp_ignore_hosts) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_ignore_hosts))
@@ -19514,7 +19514,7 @@ static int _wrap_g_simple_proxy_resolver_set_ignore_hosts(NspGSimpleProxyResolve
 {
   int_types T[] = {obj, t_end};
   gchar **ignore_hosts = NULL;
-  NspObject *nsp_ignore_hosts;
+  NspObject *nsp_ignore_hosts = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_ignore_hosts) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_ignore_hosts))
     { ignore_hosts =  ((NspSMatrix *) nsp_ignore_hosts)->S;}
@@ -23352,7 +23352,7 @@ static int _wrap_g_socket_listener_set_backlog(NspGSocketListener *self,Stack st
 static int _wrap_g_socket_listener_add_socket(NspGSocketListener *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj_check, t_end};
-  NspGObject *socket, *source_object;
+  NspGObject *socket, *source_object = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocket, &socket, &nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
@@ -23369,7 +23369,7 @@ static int _wrap_g_socket_listener_add_inet_port(NspGSocketListener *self,Stack 
 {
   int_types T[] = {s_int,obj_check, t_end};
   int port, ret;
-  NspGObject *source_object;
+  NspGObject *source_object = NULL;
   GError *error = NULL;
   if ( GetArgs(stack,rhs,opt,T,&port, &nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
     ret =g_socket_listener_add_inet_port(G_SOCKET_LISTENER(self->obj),port,G_OBJECT(source_object->obj),&error);
@@ -23384,7 +23384,7 @@ static int _wrap_g_socket_listener_add_inet_port(NspGSocketListener *self,Stack 
 static int _wrap_g_socket_listener_add_any_inet_port(NspGSocketListener *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspGObject *source_object;
+  NspGObject *source_object = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
@@ -27139,7 +27139,7 @@ int _wrap_g_action_print_detailed_name(Stack stack, int rhs, int opt, int lhs) /
   int_types T[] = {string,obj, t_end};
   char *action_name;
   GVariant *target_value = NULL;
-  NspObject *nsp_target_value;
+  NspObject *nsp_target_value = NULL;
   gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&action_name, &nsp_target_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_target_value))
@@ -27509,7 +27509,7 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *res;
   gchar **out_guid = NULL;
-  NspObject *nsp_out_guid, *nsp_ret;
+  NspObject *nsp_out_guid = NULL, *nsp_ret;
   GError *error = NULL;
   GIOStream *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res, &nsp_out_guid) == FAIL) return RET_BUG;
@@ -27536,7 +27536,7 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,obj,obj_check, t_end};
   char *address;
   gchar **out_guid = NULL;
-  NspObject *nsp_out_guid, *nsp_ret;
+  NspObject *nsp_out_guid = NULL, *nsp_ret;
   NspGObject *cancellable;
   GError *error = NULL;
   GIOStream *ret;
@@ -27697,7 +27697,7 @@ int _wrap_g_icon_deserialize(Stack stack, int rhs, int opt, int lhs) /* g_icon_d
 {
   int_types T[] = {obj, t_end};
   GVariant *value = NULL;
-  NspObject *nsp_value, *nsp_ret;
+  NspObject *nsp_value = NULL, *nsp_ret;
   GIcon *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_value))

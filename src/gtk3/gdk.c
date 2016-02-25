@@ -466,7 +466,7 @@ static int _wrap_gdk_events_get_distance(NspGdkEvent *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj,s_double, t_end};
   GdkEvent *event2 = NULL;
-  NspObject *nsp_event2;
+  NspObject *nsp_event2 = NULL;
   double distance;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event2, &distance) == FAIL) return RET_BUG;
@@ -485,7 +485,7 @@ static int _wrap_gdk_events_get_angle(NspGdkEvent *self,Stack stack,int rhs,int 
 {
   int_types T[] = {obj,s_double, t_end};
   GdkEvent *event2 = NULL;
-  NspObject *nsp_event2;
+  NspObject *nsp_event2 = NULL;
   double angle;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event2, &angle) == FAIL) return RET_BUG;
@@ -504,7 +504,7 @@ static int _wrap_gdk_events_get_center(NspGdkEvent *self,Stack stack,int rhs,int
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   GdkEvent *event2 = NULL;
-  NspObject *nsp_event2;
+  NspObject *nsp_event2 = NULL;
   double x, y;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event2, &x, &y) == FAIL) return RET_BUG;
@@ -1442,7 +1442,7 @@ _wrap_gdk_cursor_new_from_surface (Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj_check,obj,s_double,s_double, t_end};
   NspGObject *display;
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x, y;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_surface, &x, &y) == FAIL) return RET_BUG;
@@ -2690,7 +2690,7 @@ static int _wrap_gdk_device_grab(NspGdkDevice *self,Stack stack,int rhs,int opt,
   int_types T[] = {obj_check,obj,s_bool,obj,obj,s_int, t_end};
   NspGObject *window;
   GdkGrabOwnership grab_ownership;
-  NspObject *nsp_grab_ownership = NULL, *nsp_event_mask = NULL, *nsp_cursor;
+  NspObject *nsp_grab_ownership = NULL, *nsp_event_mask = NULL, *nsp_cursor = NULL;
   int owner_events;
   GdkEventMask event_mask;
   GdkCursor *cursor = NULL;
@@ -3390,7 +3390,7 @@ static int _wrap_gdk_display_put_event(NspGdkDisplay *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
@@ -5059,7 +5059,7 @@ static int _wrap_gdk_gl_context_upload_texture(NspGdkGLContext *self,Stack stack
 {
   int_types T[] = {obj,s_int,s_int,s_int, t_end};
   cairo_surface_t *image_surface = NULL;
-  NspObject *nsp_image_surface;
+  NspObject *nsp_image_surface = NULL;
   int width, height, texture_target;
   if ( GetArgs(stack,rhs,opt,T,&nsp_image_surface, &width, &height, &texture_target) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_image_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -5963,7 +5963,7 @@ static int _wrap_gdk_window_mark_paint_from_clip(NspGdkWindow *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -6044,7 +6044,7 @@ static int _wrap_gdk_window_set_background_rgba(NspGdkWindow *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GdkRGBA *rgba = NULL;
-  NspObject *nsp_rgba;
+  NspObject *nsp_rgba = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rgba) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
@@ -6095,7 +6095,7 @@ static int _wrap_gdk_window_set_device_cursor(NspGdkWindow *self,Stack stack,int
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *device;
   GdkCursor *cursor = NULL;
-  NspObject *nsp_cursor;
+  NspObject *nsp_cursor = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdevice, &device, &nsp_cursor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cursor, GDK_TYPE_CURSOR))
       cursor = nspg_boxed_get(nsp_cursor, GdkCursor);
@@ -6960,7 +6960,7 @@ static int _wrap_gdk_window_show_window_menu(NspGdkWindow *self,Stack stack,int 
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -9020,7 +9020,7 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
   int_types T[] = {string,string,obj,obj, t_end};
   char *filename, *type;
   gchar **option_keys = NULL, **option_values = NULL;
-  NspObject *nsp_option_keys, *nsp_option_values;
+  NspObject *nsp_option_keys = NULL, *nsp_option_values = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&filename, &type, &nsp_option_keys, &nsp_option_values) == FAIL) return RET_BUG;

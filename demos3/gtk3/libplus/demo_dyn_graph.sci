@@ -66,7 +66,7 @@ function demo_dyn_graph()
   button = gtkbutton_new(label="Close")
   button.connect["clicked", button_destroy_win,list(win)];
   box1.pack_start[button,expand=%f,fill=%f,padding=0]
-  //button.set_flags[GTK.CAN_DEFAULT]
+  button.set_can_default[%t]
   button.grab_default[]
   button.show[]
   win.show_all[]

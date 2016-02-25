@@ -337,7 +337,7 @@ static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int r
 {
   int_types T[] = {obj,s_int,s_int, t_end};
   PangoAttrList *other = NULL;
-  NspObject *nsp_other;
+  NspObject *nsp_other = NULL;
   int pos, len;
   if ( GetArgs(stack,rhs,opt,T,&nsp_other, &pos, &len) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_other, PANGO_TYPE_ATTR_LIST))
@@ -1066,7 +1066,7 @@ static int _wrap_pango_font_description_merge(NspPangoFontDescription *self,Stac
 {
   int_types T[] = {obj,s_bool, t_end};
   PangoFontDescription *desc_to_merge = NULL;
-  NspObject *nsp_desc_to_merge;
+  NspObject *nsp_desc_to_merge = NULL;
   int replace_existing;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc_to_merge, &replace_existing) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc_to_merge, PANGO_TYPE_FONT_DESCRIPTION))
@@ -1083,7 +1083,7 @@ static int _wrap_pango_font_description_merge_static(NspPangoFontDescription *se
 {
   int_types T[] = {obj,s_bool, t_end};
   PangoFontDescription *desc_to_merge = NULL;
-  NspObject *nsp_desc_to_merge;
+  NspObject *nsp_desc_to_merge = NULL;
   int replace_existing;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc_to_merge, &replace_existing) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc_to_merge, PANGO_TYPE_FONT_DESCRIPTION))
@@ -1100,7 +1100,7 @@ static int _wrap_pango_font_description_better_match(NspPangoFontDescription *se
 {
   int_types T[] = {obj,obj, t_end};
   PangoFontDescription *old_match = NULL, *new_match = NULL;
-  NspObject *nsp_old_match, *nsp_new_match;
+  NspObject *nsp_old_match = NULL, *nsp_new_match = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_old_match, &nsp_new_match) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_old_match, PANGO_TYPE_FONT_DESCRIPTION))
@@ -2626,7 +2626,7 @@ static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int r
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc, *nsp_ret;
+  NspObject *nsp_desc = NULL, *nsp_ret;
   PangoFont *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
@@ -2646,7 +2646,7 @@ static int _wrap_pango_context_load_fontset(NspPangoContext *self,Stack stack,in
 {
   int_types T[] = {obj,obj, t_end};
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc, *nsp_language, *nsp_ret;
+  NspObject *nsp_desc = NULL, *nsp_language = NULL, *nsp_ret;
   PangoLanguage *language = NULL;
   PangoFontset *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc, &nsp_language) == FAIL) return RET_BUG;
@@ -2673,7 +2673,7 @@ static int _wrap_pango_context_get_metrics(NspPangoContext *self,Stack stack,int
 {
   int_types T[] = {obj,obj, t_end};
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc, *nsp_language, *nsp_ret;
+  NspObject *nsp_desc = NULL, *nsp_language = NULL, *nsp_ret;
   PangoLanguage *language = NULL;
   PangoFontMetrics *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc, &nsp_language) == FAIL) return RET_BUG;
@@ -2701,7 +2701,7 @@ static int _wrap_pango_context_set_font_description(NspPangoContext *self,Stack 
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc;
+  NspObject *nsp_desc = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
@@ -2743,7 +2743,7 @@ static int _wrap_pango_context_set_language(NspPangoContext *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   PangoLanguage *language = NULL;
-  NspObject *nsp_language;
+  NspObject *nsp_language = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_language) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
       language = nspg_boxed_get(nsp_language, PangoLanguage);
@@ -3078,7 +3078,7 @@ static int _wrap_pango_font_get_metrics(NspPangoFont *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj, t_end};
   PangoLanguage *language = NULL;
-  NspObject *nsp_language, *nsp_ret;
+  NspObject *nsp_language = NULL, *nsp_ret;
   PangoFontMetrics *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_language) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
@@ -3837,7 +3837,7 @@ static int _wrap_pango_font_map_load_font(NspPangoFontMap *self,Stack stack,int 
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *context;
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc, *nsp_ret;
+  NspObject *nsp_desc = NULL, *nsp_ret;
   PangoFont *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_pangocontext, &context, &nsp_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
@@ -3858,7 +3858,7 @@ static int _wrap_pango_font_map_load_fontset(NspPangoFontMap *self,Stack stack,i
   int_types T[] = {obj_check,obj,obj, t_end};
   NspGObject *context;
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc, *nsp_language, *nsp_ret;
+  NspObject *nsp_desc = NULL, *nsp_language = NULL, *nsp_ret;
   PangoLanguage *language = NULL;
   PangoFontset *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_pangocontext, &context, &nsp_desc, &nsp_language) == FAIL) return RET_BUG;
@@ -4403,7 +4403,7 @@ static int _wrap_pango_layout_set_attributes(NspPangoLayout *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   PangoAttrList *attrs = NULL;
-  NspObject *nsp_attrs;
+  NspObject *nsp_attrs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_attrs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
@@ -4519,7 +4519,7 @@ static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack st
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *desc = NULL;
-  NspObject *nsp_desc;
+  NspObject *nsp_desc = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
       desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
@@ -4711,7 +4711,7 @@ static int _wrap_pango_layout_set_tabs(NspPangoLayout *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   PangoTabArray *tabs = NULL;
-  NspObject *nsp_tabs;
+  NspObject *nsp_tabs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_tabs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
@@ -5336,7 +5336,7 @@ int _wrap_pango_parse_enum(Stack stack, int rhs, int opt, int lhs) /* pango_pars
 {
   int_types T[] = {obj,string,s_int,s_bool,obj, t_end};
   GType type;
-  NspObject *nsp_type = NULL, *nsp_possible_values;
+  NspObject *nsp_type = NULL, *nsp_possible_values = NULL;
   char *str;
   int value, warn, ret;
   gchar **possible_values = NULL;

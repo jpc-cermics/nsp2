@@ -482,7 +482,7 @@ static int _wrap_gtk_text_iter_assign(NspGtkTextIter *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *other = NULL;
-  NspObject *nsp_other;
+  NspObject *nsp_other = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_other) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_other, GTK_TYPE_TEXT_ITER))
       other = nspg_boxed_get(nsp_other, GtkTextIter);
@@ -944,7 +944,7 @@ static int _wrap_gtk_text_iter_get_attributes(NspGtkTextIter *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GtkTextAttributes *values = NULL;
-  NspObject *nsp_values;
+  NspObject *nsp_values = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_values) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_values, GTK_TYPE_TEXT_ATTRIBUTES))
@@ -1465,7 +1465,7 @@ static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,in
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *g_rhs = NULL;
-  NspObject *nsp_g_rhs;
+  NspObject *nsp_g_rhs = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_g_rhs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_g_rhs, GTK_TYPE_TEXT_ITER))
@@ -1483,7 +1483,7 @@ static int _wrap_gtk_text_iter_compare(NspGtkTextIter *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *g_rhs = NULL;
-  NspObject *nsp_g_rhs;
+  NspObject *nsp_g_rhs = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_g_rhs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_g_rhs, GTK_TYPE_TEXT_ITER))
@@ -1501,7 +1501,7 @@ static int _wrap_gtk_text_iter_in_range(NspGtkTextIter *self,Stack stack,int rhs
 {
   int_types T[] = {obj,obj, t_end};
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
@@ -1525,7 +1525,7 @@ static int _wrap_gtk_text_iter_order(NspGtkTextIter *self,Stack stack,int rhs,in
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *second = NULL;
-  NspObject *nsp_second;
+  NspObject *nsp_second = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_second) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_second, GTK_TYPE_TEXT_ITER))
       second = nspg_boxed_get(nsp_second, GtkTextIter);
@@ -2889,7 +2889,7 @@ static int _wrap_gtk_selection_data_set_uris(NspGtkSelectionData *self,Stack sta
 {
   int_types T[] = {obj, t_end};
   gchar **uris = NULL;
-  NspObject *nsp_uris;
+  NspObject *nsp_uris = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_uris) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_uris))
@@ -3230,7 +3230,7 @@ static int _wrap_gtk_text_attributes_copy_values(NspGtkTextAttributes *self,Stac
 {
   int_types T[] = {obj, t_end};
   GtkTextAttributes *dest = NULL;
-  NspObject *nsp_dest;
+  NspObject *nsp_dest = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_dest) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_dest, GTK_TYPE_TEXT_ATTRIBUTES))
       dest = nspg_boxed_get(nsp_dest, GtkTextAttributes);
@@ -3676,9 +3676,9 @@ static int
 _wrap_gtk_tree_row_reference_new_proxy (Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,obj_check,obj, t_end};
-  NspGObject *proxy, *model;
+  NspGObject *proxy = NULL, *model;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &proxy, &nsp_type_gtktreemodel, &model, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -3702,7 +3702,7 @@ _wrap_gtk_tree_row_reference_new (Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *model;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktreemodel, &model, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -4123,7 +4123,7 @@ static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *b = NULL;
-  NspObject *nsp_b;
+  NspObject *nsp_b = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_b) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_b, GTK_TYPE_TREE_PATH))
@@ -4173,7 +4173,7 @@ static int _wrap_gtk_tree_path_is_ancestor(NspGtkTreePath *self,Stack stack,int 
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *descendant = NULL;
-  NspObject *nsp_descendant;
+  NspObject *nsp_descendant = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_descendant) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_descendant, GTK_TYPE_TREE_PATH))
@@ -4191,7 +4191,7 @@ static int _wrap_gtk_tree_path_is_descendant(NspGtkTreePath *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *ancestor = NULL;
-  NspObject *nsp_ancestor;
+  NspObject *nsp_ancestor = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_ancestor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_ancestor, GTK_TYPE_TREE_PATH))
@@ -4482,7 +4482,7 @@ static int _wrap_gtk_actionable_set_action_target_value(NspGtkActionable *self,S
 {
   int_types T[] = {obj, t_end};
   GVariant *target_value = NULL;
-  NspObject *nsp_target_value;
+  NspObject *nsp_target_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_target_value) == FAIL) return RET_BUG;
   if ( IsGVariant(nsp_target_value))
     { target_value = ((NspGVariant *) nsp_target_value)->obj->value;
@@ -4768,7 +4768,7 @@ static int _wrap_gtk_buildable_get_name(NspGtkBuildable *self,Stack stack,int rh
 static int _wrap_gtk_buildable_add_child(NspGtkBuildable *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj_check,string, t_end};
-  NspGObject *builder, *child;
+  NspGObject *builder, *child = NULL;
   char *type;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkbuilder, &builder, &nsp_type_gobject, &child, &type) == FAIL) return RET_BUG;
     gtk_buildable_add_child(GTK_BUILDABLE(self->obj),GTK_BUILDER(builder->obj),G_OBJECT(child->obj),type);
@@ -5694,7 +5694,7 @@ static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -5736,7 +5736,7 @@ static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int r
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter, *nsp_ret;
+  NspObject *nsp_iter = NULL, *nsp_ret;
   GtkTreePath *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -5789,7 +5789,7 @@ static int _wrap_gtk_tree_model_iter_previous(NspGtkTreeModel *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -5861,7 +5861,7 @@ static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -5968,7 +5968,7 @@ static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int r
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -5984,7 +5984,7 @@ static int _wrap_gtk_tree_model_unref_node(NspGtkTreeModel *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -6000,7 +6000,7 @@ static int _wrap_gtk_tree_model_get(NspGtkTreeModel *self,Stack stack,int rhs,in
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -6079,7 +6079,7 @@ static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,in
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -6102,7 +6102,7 @@ static int _wrap_gtk_tree_model_row_inserted(NspGtkTreeModel *self,Stack stack,i
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -6125,7 +6125,7 @@ static int _wrap_gtk_tree_model_row_has_child_toggled(NspGtkTreeModel *self,Stac
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -6148,7 +6148,7 @@ static int _wrap_gtk_tree_model_row_deleted(NspGtkTreeModel *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -6164,7 +6164,7 @@ static int _wrap_gtk_tree_model_rows_reordered(NspGtkTreeModel *self,Stack stack
 {
   int_types T[] = {obj,obj,s_int, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   int new_order;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_iter, &new_order) == FAIL) return RET_BUG;
@@ -6189,7 +6189,7 @@ static int _wrap_gtk_tree_model_rows_reordered_with_length(NspGtkTreeModel *self
 {
   int_types T[] = {obj,obj,s_int,s_int, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   int new_order, length;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_iter, &new_order, &length) == FAIL) return RET_BUG;
@@ -7204,7 +7204,7 @@ static int _wrap_gtk_cell_editable_start_editing(NspGtkCellEditable *self,Stack 
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
@@ -7756,7 +7756,7 @@ static int _wrap_gtk_color_chooser_set_rgba(NspGtkColorChooser *self,Stack stack
 {
   int_types T[] = {obj, t_end};
   GdkRGBA *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
@@ -7814,7 +7814,7 @@ static int _wrap_gtk_color_chooser_add_palette(NspGtkColorChooser *self,Stack st
 {
   int_types T[] = {obj,s_int,s_int,obj, t_end};
   GtkOrientation orientation;
-  NspObject *nsp_orientation = NULL, *nsp_colors;
+  NspObject *nsp_orientation = NULL, *nsp_colors = NULL;
   int colors_per_line, n_colors;
   GdkRGBA *colors = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_orientation, &colors_per_line, &n_colors, &nsp_colors) == FAIL) return RET_BUG;
@@ -9020,7 +9020,7 @@ static int _wrap_gtk_font_chooser_set_font_desc(NspGtkFontChooser *self,Stack st
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *font_desc = NULL;
-  NspObject *nsp_font_desc;
+  NspObject *nsp_font_desc = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_font_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_font_desc, PANGO_TYPE_FONT_DESCRIPTION))
       font_desc = nspg_boxed_get(nsp_font_desc, PangoFontDescription);
@@ -9446,7 +9446,7 @@ static int _wrap_gtk_scrollable_get_border(NspGtkScrollable *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   GtkBorder *border = NULL;
-  NspObject *nsp_border;
+  NspObject *nsp_border = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_border) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_border, GTK_TYPE_BORDER))
@@ -10424,7 +10424,7 @@ static int _wrap_gtk_tree_drag_dest_drag_data_received(NspGtkTreeDragDest *self,
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *dest = NULL;
-  NspObject *nsp_dest, *nsp_selection_data;
+  NspObject *nsp_dest = NULL, *nsp_selection_data = NULL;
   GtkSelectionData *selection_data = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_dest, &nsp_selection_data) == FAIL) return RET_BUG;
@@ -10449,7 +10449,7 @@ static int _wrap_gtk_tree_drag_dest_row_drop_possible(NspGtkTreeDragDest *self,S
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *dest_path = NULL;
-  NspObject *nsp_dest_path, *nsp_selection_data;
+  NspObject *nsp_dest_path = NULL, *nsp_selection_data = NULL;
   GtkSelectionData *selection_data = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_dest_path, &nsp_selection_data) == FAIL) return RET_BUG;
@@ -10679,7 +10679,7 @@ static int _wrap_gtk_tree_drag_source_row_draggable(NspGtkTreeDragSource *self,S
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -10697,7 +10697,7 @@ static int _wrap_gtk_tree_drag_source_drag_data_delete(NspGtkTreeDragSource *sel
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -10715,7 +10715,7 @@ static int _wrap_gtk_tree_drag_source_drag_data_get(NspGtkTreeDragSource *self,S
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_selection_data;
+  NspObject *nsp_path = NULL, *nsp_selection_data = NULL;
   GtkSelectionData *selection_data = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_selection_data) == FAIL) return RET_BUG;
@@ -11909,7 +11909,7 @@ static int _wrap_gtk_builder_add_objects_from_file(NspGtkBuilder *self,Stack sta
   int_types T[] = {string,obj, t_end};
   char *filename;
   gchar **object_ids = NULL;
-  NspObject *nsp_object_ids;
+  NspObject *nsp_object_ids = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&filename, &nsp_object_ids) == FAIL) return RET_BUG;
@@ -11935,7 +11935,7 @@ static int _wrap_gtk_builder_add_objects_from_resource(NspGtkBuilder *self,Stack
   int_types T[] = {string,obj, t_end};
   char *resource_path;
   gchar **object_ids = NULL;
-  NspObject *nsp_object_ids;
+  NspObject *nsp_object_ids = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&resource_path, &nsp_object_ids) == FAIL) return RET_BUG;
@@ -11968,7 +11968,7 @@ static int _wrap_gtk_builder_add_objects_from_string(NspGtkBuilder *self,Stack s
   char *buffer;
   int length, ret;
   gchar **object_ids = NULL;
-  NspObject *nsp_object_ids;
+  NspObject *nsp_object_ids = NULL;
   GError *error = NULL;
   if ( GetArgs(stack,rhs,opt,T,&buffer, &length, &nsp_object_ids) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_object_ids))
@@ -12022,7 +12022,7 @@ static int _wrap_gtk_builder_expose_object(NspGtkBuilder *self,Stack stack,int r
 {
   int_types T[] = {string,obj_check, t_end};
   char *name;
-  NspGObject *object;
+  NspGObject *object = NULL;
   if ( GetArgs(stack,rhs,opt,T,&name, &nsp_type_gobject, &object) == FAIL) return RET_BUG;
     gtk_builder_expose_object(GTK_BUILDER(self->obj),name,G_OBJECT(object->obj));
   return 0;
@@ -13140,7 +13140,7 @@ static int _wrap_gtk_window_activate_key(NspGtkWindow *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -13158,7 +13158,7 @@ static int _wrap_gtk_window_propagate_key_event(NspGtkWindow *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -14858,7 +14858,7 @@ static int _wrap_gtk_about_dialog_set_authors(NspGtkAboutDialog *self,Stack stac
 {
   int_types T[] = {obj, t_end};
   const gchar **authors = NULL;
-  NspObject *nsp_authors;
+  NspObject *nsp_authors = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_authors) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_authors))
     { authors = (const gchar **) ((NspSMatrix *) nsp_authors)->S;}
@@ -14875,7 +14875,7 @@ static int _wrap_gtk_about_dialog_set_documenters(NspGtkAboutDialog *self,Stack 
 {
   int_types T[] = {obj, t_end};
   const gchar **documenters = NULL;
-  NspObject *nsp_documenters;
+  NspObject *nsp_documenters = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_documenters) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_documenters))
     { documenters = (const gchar **) ((NspSMatrix *) nsp_documenters)->S;}
@@ -14892,7 +14892,7 @@ static int _wrap_gtk_about_dialog_set_artists(NspGtkAboutDialog *self,Stack stac
 {
   int_types T[] = {obj, t_end};
   const gchar **artists = NULL;
-  NspObject *nsp_artists;
+  NspObject *nsp_artists = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_artists) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_artists))
     { artists = (const gchar **) ((NspSMatrix *) nsp_artists)->S;}
@@ -14968,7 +14968,7 @@ static int _wrap_gtk_about_dialog_add_credit_section(NspGtkAboutDialog *self,Sta
   int_types T[] = {string,obj, t_end};
   char *section_name;
   const gchar **people = NULL;
-  NspObject *nsp_people;
+  NspObject *nsp_people = NULL;
   if ( GetArgs(stack,rhs,opt,T,&section_name, &nsp_people) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_people))
     { people = (const gchar **) ((NspSMatrix *) nsp_people)->S;}
@@ -22880,7 +22880,7 @@ static int _wrap_gtk_label_set_attributes(NspGtkLabel *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   PangoAttrList *attrs = NULL;
-  NspObject *nsp_attrs;
+  NspObject *nsp_attrs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_attrs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
@@ -28684,7 +28684,7 @@ _wrap_gtk_scale_button_new (Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj,s_double,s_double,s_double,obj, t_end};
   GtkIconSize size;
-  NspObject *nsp_size = NULL, *nsp_icons;
+  NspObject *nsp_size = NULL, *nsp_icons = NULL;
   double min, max, step;
   const gchar **icons = NULL;
   GObject *ret; NspObject *nsp_ret;
@@ -28711,7 +28711,7 @@ static int _wrap_gtk_scale_button_set_icons(NspGtkScaleButton *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   const gchar **icons = NULL;
-  NspObject *nsp_icons;
+  NspObject *nsp_icons = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_icons) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_icons))
     { icons = (const gchar **) ((NspSMatrix *) nsp_icons)->S;}
@@ -29859,7 +29859,7 @@ static int _wrap_gtk_entry_set_inner_border(NspGtkEntry *self,Stack stack,int rh
 {
   int_types T[] = {obj, t_end};
   GtkBorder *border = NULL;
-  NspObject *nsp_border;
+  NspObject *nsp_border = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_border) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_border, GTK_TYPE_BORDER))
       border = nspg_boxed_get(nsp_border, GtkBorder);
@@ -30456,7 +30456,7 @@ static int _wrap_gtk_entry_im_context_filter_keypress(NspGtkEntry *self,Stack st
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -30556,7 +30556,7 @@ static int _wrap_gtk_entry_set_attributes(NspGtkEntry *self,Stack stack,int rhs,
 {
   int_types T[] = {obj, t_end};
   PangoAttrList *attrs = NULL;
-  NspObject *nsp_attrs;
+  NspObject *nsp_attrs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_attrs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_attrs, PANGO_TYPE_ATTR_LIST))
       attrs = nspg_boxed_get(nsp_attrs, PangoAttrList);
@@ -30601,7 +30601,7 @@ static int _wrap_gtk_entry_set_tabs(NspGtkEntry *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj, t_end};
   PangoTabArray *tabs = NULL;
-  NspObject *nsp_tabs;
+  NspObject *nsp_tabs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_tabs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
@@ -32707,7 +32707,7 @@ static int _wrap_gtk_search_entry_handle_event(NspGtkSearchEntry *self,Stack sta
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -33040,7 +33040,7 @@ static int _wrap_gtk_search_bar_handle_event(NspGtkSearchBar *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -33694,7 +33694,7 @@ static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack
 {
   int_types T[] = {obj,obj,obj, t_end};
   GtkTextIter *iter = NULL, *start = NULL, *end = NULL;
-  NspObject *nsp_iter, *nsp_start, *nsp_end;
+  NspObject *nsp_iter = NULL, *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTextIter);
@@ -33722,7 +33722,7 @@ static int _wrap_gtk_text_buffer_insert_range_interactive(NspGtkTextBuffer *self
 {
   int_types T[] = {obj,obj,obj,s_bool, t_end};
   GtkTextIter *iter = NULL, *start = NULL, *end = NULL;
-  NspObject *nsp_iter, *nsp_start, *nsp_end;
+  NspObject *nsp_iter = NULL, *nsp_start = NULL, *nsp_end = NULL;
   int default_editable, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_start, &nsp_end, &default_editable) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -33824,7 +33824,7 @@ static int _wrap_gtk_text_buffer_insert_markup(NspGtkTextBuffer *self,Stack stac
 {
   int_types T[] = {obj,string,s_int, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   char *markup;
   int len;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &markup, &len) == FAIL) return RET_BUG;
@@ -33849,7 +33849,7 @@ static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int r
 {
   int_types T[] = {obj,obj, t_end};
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -33871,7 +33871,7 @@ static int _wrap_gtk_text_buffer_delete_interactive(NspGtkTextBuffer *self,Stack
 {
   int_types T[] = {obj,obj,s_bool, t_end};
   GtkTextIter *start_iter = NULL, *end_iter = NULL;
-  NspObject *nsp_start_iter, *nsp_end_iter;
+  NspObject *nsp_start_iter = NULL, *nsp_end_iter = NULL;
   int default_editable, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start_iter, &nsp_end_iter, &default_editable) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start_iter, GTK_TYPE_TEXT_ITER))
@@ -33895,7 +33895,7 @@ static int _wrap_gtk_text_buffer_backspace(NspGtkTextBuffer *self,Stack stack,in
 {
   int_types T[] = {obj,s_bool,s_bool, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int interactive, default_editable, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &interactive, &default_editable) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -33916,7 +33916,7 @@ static int _wrap_gtk_text_buffer_get_text(NspGtkTextBuffer *self,Stack stack,int
 	{"include_hidden_chars",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   int include_hidden_chars = TRUE;
   gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start, &nsp_end, opts, &include_hidden_chars) == FAIL) return RET_BUG;
@@ -33945,7 +33945,7 @@ static int _wrap_gtk_text_buffer_get_slice(NspGtkTextBuffer *self,Stack stack,in
 	{"include_hidden_chars",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   int include_hidden_chars = TRUE;
   gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start, &nsp_end, opts, &include_hidden_chars) == FAIL) return RET_BUG;
@@ -33971,7 +33971,7 @@ static int _wrap_gtk_text_buffer_insert_pixbuf(NspGtkTextBuffer *self,Stack stac
 {
   int_types T[] = {obj,obj_check, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   NspGObject *pixbuf;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_type_gdkpixbuf, &pixbuf) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -33988,7 +33988,7 @@ static int _wrap_gtk_text_buffer_insert_child_anchor(NspGtkTextBuffer *self,Stac
 {
   int_types T[] = {obj,obj_check, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   NspGObject *anchor;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_type_gtktextchildanchor, &anchor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -34005,7 +34005,7 @@ static int _wrap_gtk_text_buffer_create_child_anchor(NspGtkTextBuffer *self,Stac
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter, *nsp_ret;
+  NspObject *nsp_iter = NULL, *nsp_ret;
   GtkTextChildAnchor *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -34026,7 +34026,7 @@ static int _wrap_gtk_text_buffer_add_mark(NspGtkTextBuffer *self,Stack stack,int
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *mark;
   GtkTextIter *where = NULL;
-  NspObject *nsp_where;
+  NspObject *nsp_where = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktextmark, &mark, &nsp_where) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
@@ -34048,7 +34048,7 @@ static int _wrap_gtk_text_buffer_create_mark(NspGtkTextBuffer *self,Stack stack,
 	{NULL,t_end,NULLOBJ,-1} };
   char *mark_name = NULL;
   GtkTextIter *where = NULL;
-  NspObject *nsp_where, *nsp_ret;
+  NspObject *nsp_where = NULL, *nsp_ret;
   int left_gravity = FALSE;
   GtkTextMark *ret;
   if ( GetArgs(stack,rhs,opt,T,opts, &mark_name, &nsp_where, &left_gravity) == FAIL) return RET_BUG;
@@ -34070,7 +34070,7 @@ static int _wrap_gtk_text_buffer_move_mark(NspGtkTextBuffer *self,Stack stack,in
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *mark;
   GtkTextIter *where = NULL;
-  NspObject *nsp_where;
+  NspObject *nsp_where = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktextmark, &mark, &nsp_where) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
@@ -34110,7 +34110,7 @@ static int _wrap_gtk_text_buffer_move_mark_by_name(NspGtkTextBuffer *self,Stack 
   int_types T[] = {string,obj, t_end};
   char *name;
   GtkTextIter *where = NULL;
-  NspObject *nsp_where;
+  NspObject *nsp_where = NULL;
   if ( GetArgs(stack,rhs,opt,T,&name, &nsp_where) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
@@ -34159,7 +34159,7 @@ static int _wrap_gtk_text_buffer_place_cursor(NspGtkTextBuffer *self,Stack stack
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *where = NULL;
-  NspObject *nsp_where;
+  NspObject *nsp_where = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_where) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_where, GTK_TYPE_TEXT_ITER))
       where = nspg_boxed_get(nsp_where, GtkTextIter);
@@ -34175,7 +34175,7 @@ static int _wrap_gtk_text_buffer_select_range(NspGtkTextBuffer *self,Stack stack
 {
   int_types T[] = {obj,obj, t_end};
   GtkTextIter *ins = NULL, *bound = NULL;
-  NspObject *nsp_ins, *nsp_bound;
+  NspObject *nsp_ins = NULL, *nsp_bound = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_ins, &nsp_bound) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_ins, GTK_TYPE_TEXT_ITER))
       ins = nspg_boxed_get(nsp_ins, GtkTextIter);
@@ -34198,7 +34198,7 @@ static int _wrap_gtk_text_buffer_apply_tag(NspGtkTextBuffer *self,Stack stack,in
   int_types T[] = {obj_check,obj,obj, t_end};
   NspGObject *tag;
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktexttag, &tag, &nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -34221,7 +34221,7 @@ static int _wrap_gtk_text_buffer_remove_tag(NspGtkTextBuffer *self,Stack stack,i
   int_types T[] = {obj_check,obj,obj, t_end};
   NspGObject *tag;
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktexttag, &tag, &nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -34244,7 +34244,7 @@ static int _wrap_gtk_text_buffer_apply_tag_by_name(NspGtkTextBuffer *self,Stack 
   int_types T[] = {string,obj,obj, t_end};
   char *name;
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&name, &nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -34267,7 +34267,7 @@ static int _wrap_gtk_text_buffer_remove_tag_by_name(NspGtkTextBuffer *self,Stack
   int_types T[] = {string,obj,obj, t_end};
   char *name;
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&name, &nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -34289,7 +34289,7 @@ static int _wrap_gtk_text_buffer_remove_all_tags(NspGtkTextBuffer *self,Stack st
 {
   int_types T[] = {obj,obj, t_end};
   GtkTextIter *start = NULL, *end = NULL;
-  NspObject *nsp_start, *nsp_end;
+  NspObject *nsp_start = NULL, *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start, &nsp_end) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start, GTK_TYPE_TEXT_ITER))
       start = nspg_boxed_get(nsp_start, GtkTextIter);
@@ -34511,7 +34511,7 @@ static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self
 {
   int_types T[] = {obj,obj_check, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   NspGObject *anchor;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_type_gtktextchildanchor, &anchor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -34974,9 +34974,9 @@ static int _wrap_gtk_text_tag_set_priority(NspGtkTextTag *self,Stack stack,int r
 static int _wrap_gtk_text_tag_event(NspGtkTextTag *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj,obj, t_end};
-  NspGObject *event_object;
+  NspGObject *event_object = NULL;
   GdkEvent *event = NULL;
-  NspObject *nsp_event, *nsp_iter;
+  NspObject *nsp_event = NULL, *nsp_iter = NULL;
   GtkTextIter *iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &event_object, &nsp_event, &nsp_iter) == FAIL) return RET_BUG;
@@ -35523,7 +35523,7 @@ static int _wrap_gtk_text_view_scroll_to_iter(NspGtkTextView *self,Stack stack,i
 	{"yalign",s_double,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   double within_margin, xalign = 0.5, yalign = 0.5;
   int use_align = FALSE, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &within_margin, opts, &use_align, &xalign, &yalign) == FAIL) return RET_BUG;
@@ -35620,7 +35620,7 @@ static int _wrap_gtk_text_view_get_cursor_locations(NspGtkTextView *self,Stack s
 {
   int_types T[] = {obj,obj,obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter, *nsp_strong, *nsp_weak;
+  NspObject *nsp_iter = NULL, *nsp_strong, *nsp_weak;
   GdkRectangle strong = { 0, 0, 0, 0 }, weak = { 0, 0, 0, 0 };
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_strong, &nsp_weak) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35845,7 +35845,7 @@ static int _wrap_gtk_text_view_forward_display_line(NspGtkTextView *self,Stack s
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35863,7 +35863,7 @@ static int _wrap_gtk_text_view_backward_display_line(NspGtkTextView *self,Stack 
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35881,7 +35881,7 @@ static int _wrap_gtk_text_view_forward_display_line_end(NspGtkTextView *self,Sta
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35899,7 +35899,7 @@ static int _wrap_gtk_text_view_backward_display_line_start(NspGtkTextView *self,
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35917,7 +35917,7 @@ static int _wrap_gtk_text_view_starts_display_line(NspGtkTextView *self,Stack st
 {
   int_types T[] = {obj, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35935,7 +35935,7 @@ static int _wrap_gtk_text_view_move_visually(NspGtkTextView *self,Stack stack,in
 {
   int_types T[] = {obj,s_int, t_end};
   GtkTextIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int count, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &count) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TEXT_ITER))
@@ -35953,7 +35953,7 @@ static int _wrap_gtk_text_view_im_context_filter_keypress(NspGtkTextView *self,S
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -36215,7 +36215,7 @@ static int _wrap_gtk_text_view_set_tabs(NspGtkTextView *self,Stack stack,int rhs
 {
   int_types T[] = {obj, t_end};
   PangoTabArray *tabs = NULL;
-  NspObject *nsp_tabs;
+  NspObject *nsp_tabs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_tabs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_tabs, PANGO_TYPE_TAB_ARRAY))
       tabs = nspg_boxed_get(nsp_tabs, PangoTabArray);
@@ -37103,7 +37103,7 @@ static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack 
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -37119,7 +37119,7 @@ static int _wrap_gtk_tree_selection_unselect_path(NspGtkTreeSelection *self,Stac
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -37135,7 +37135,7 @@ static int _wrap_gtk_tree_selection_select_iter(NspGtkTreeSelection *self,Stack 
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -37151,7 +37151,7 @@ static int _wrap_gtk_tree_selection_unselect_iter(NspGtkTreeSelection *self,Stac
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -37167,7 +37167,7 @@ static int _wrap_gtk_tree_selection_path_is_selected(NspGtkTreeSelection *self,S
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -37185,7 +37185,7 @@ static int _wrap_gtk_tree_selection_iter_is_selected(NspGtkTreeSelection *self,S
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -37217,7 +37217,7 @@ static int _wrap_gtk_tree_selection_select_range(NspGtkTreeSelection *self,Stack
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *start_path = NULL, *end_path = NULL;
-  NspObject *nsp_start_path, *nsp_end_path;
+  NspObject *nsp_start_path = NULL, *nsp_end_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start_path, &nsp_end_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start_path, GTK_TYPE_TREE_PATH))
       start_path = nspg_boxed_get(nsp_start_path, GtkTreePath);
@@ -37239,7 +37239,7 @@ static int _wrap_gtk_tree_selection_unselect_range(NspGtkTreeSelection *self,Sta
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *start_path = NULL, *end_path = NULL;
-  NspObject *nsp_start_path, *nsp_end_path;
+  NspObject *nsp_start_path = NULL, *nsp_end_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_start_path, &nsp_end_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_start_path, GTK_TYPE_TREE_PATH))
       start_path = nspg_boxed_get(nsp_start_path, GtkTreePath);
@@ -38049,7 +38049,7 @@ static int _wrap_gtk_tree_view_column_cell_set_cell_data(NspGtkTreeViewColumn *s
   int_types T[] = {obj_check,obj,s_bool,s_bool, t_end};
   NspGObject *tree_model;
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int is_expander, is_expanded;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktreemodel, &tree_model, &nsp_iter, &is_expander, &is_expanded) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -38859,7 +38859,7 @@ static int _wrap_gtk_tree_view_scroll_to_cell(NspGtkTreeView *self,Stack stack,i
 	{"col_align",s_double,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GtkTreeViewColumn *column = NULL;
   NspGObject *nsp_column = NULL;
   int use_align = FALSE;
@@ -38887,7 +38887,7 @@ static int _wrap_gtk_tree_view_row_activated(NspGtkTreeView *self,Stack stack,in
 {
   int_types T[] = {obj,obj_check, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   NspGObject *column;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_type_gtktreeviewcolumn, &column) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -38918,7 +38918,7 @@ static int _wrap_gtk_tree_view_expand_to_path(NspGtkTreeView *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -38934,7 +38934,7 @@ static int _wrap_gtk_tree_view_expand_row(NspGtkTreeView *self,Stack stack,int r
 {
   int_types T[] = {obj,s_bool, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int open_all, ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &open_all) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -38952,7 +38952,7 @@ static int _wrap_gtk_tree_view_collapse_row(NspGtkTreeView *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -38970,7 +38970,7 @@ static int _wrap_gtk_tree_view_row_expanded(NspGtkTreeView *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -39010,7 +39010,7 @@ static int _wrap_gtk_tree_view_set_cursor(NspGtkTreeView *self,Stack stack,int r
 	{"start_editing",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GtkTreeViewColumn *focus_column = NULL;
   NspGObject *nsp_focus_column = NULL;
   int start_editing = FALSE;
@@ -39042,7 +39042,7 @@ static int _wrap_gtk_tree_view_set_cursor_on_cell(NspGtkTreeView *self,Stack sta
 	{"start_editing",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GtkTreeViewColumn *focus_column = NULL;
   NspGObject *nsp_focus_column = NULL, *nsp_focus_cell = NULL;
   GtkCellRenderer *focus_cell = NULL;
@@ -39297,7 +39297,7 @@ static int _wrap_gtk_tree_view_set_drag_dest_row(NspGtkTreeView *self,Stack stac
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_pos = NULL;
+  NspObject *nsp_path = NULL, *nsp_pos = NULL;
   GtkTreeViewDropPosition pos;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &nsp_pos) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -39584,7 +39584,7 @@ static int _wrap_gtk_tree_view_set_tooltip_row(NspGtkTreeView *self,Stack stack,
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *tooltip;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktooltip, &tooltip, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -39601,7 +39601,7 @@ static int _wrap_gtk_tree_view_set_tooltip_cell(NspGtkTreeView *self,Stack stack
   int_types T[] = {obj_check,obj,obj_check,obj_check, t_end};
   NspGObject *tooltip, *column, *cell;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktooltip, &tooltip, &nsp_path, &nsp_type_gtktreeviewcolumn, &column, &nsp_type_gtkcellrenderer, &cell) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -40108,7 +40108,7 @@ static int _wrap_gtk_cell_view_set_background_rgba(NspGtkCellView *self,Stack st
 {
   int_types T[] = {obj, t_end};
   GdkRGBA *rgba = NULL;
-  NspObject *nsp_rgba;
+  NspObject *nsp_rgba = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rgba) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
       rgba = nspg_boxed_get(nsp_rgba, GdkRGBA);
@@ -40741,7 +40741,7 @@ static int _wrap_gtk_icon_view_select_path(NspGtkIconView *self,Stack stack,int 
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -40757,7 +40757,7 @@ static int _wrap_gtk_icon_view_unselect_path(NspGtkIconView *self,Stack stack,in
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -40773,7 +40773,7 @@ static int _wrap_gtk_icon_view_path_is_selected(NspGtkIconView *self,Stack stack
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -40791,7 +40791,7 @@ static int _wrap_gtk_icon_view_get_item_row(NspGtkIconView *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -40809,7 +40809,7 @@ static int _wrap_gtk_icon_view_get_item_column(NspGtkIconView *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
@@ -40854,7 +40854,7 @@ static int _wrap_gtk_icon_view_item_activated(NspGtkIconView *self,Stack stack,i
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -40874,7 +40874,7 @@ static int _wrap_gtk_icon_view_set_cursor(NspGtkIconView *self,Stack stack,int r
 	{"start_editing",s_bool,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   GtkCellRenderer *cell = NULL;
   NspGObject *nsp_cell = NULL;
   int start_editing = FALSE;
@@ -40901,7 +40901,7 @@ static int _wrap_gtk_icon_view_scroll_to_path(NspGtkIconView *self,Stack stack,i
 {
   int_types T[] = {obj,s_bool,s_double,s_double, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   int use_align;
   double row_align, col_align;
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, &use_align, &row_align, &col_align) == FAIL) return RET_BUG;
@@ -41043,7 +41043,7 @@ static int _wrap_gtk_icon_view_get_cell_rect(NspGtkIconView *self,Stack stack,in
 {
   int_types T[] = {obj,obj_check,obj, t_end};
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_rect;
+  NspObject *nsp_path = NULL, *nsp_rect;
   NspGObject *cell;
   GdkRectangle rect = { 0, 0, 0, 0 };
   int ret;
@@ -41073,7 +41073,7 @@ static int _wrap_gtk_icon_view_set_tooltip_item(NspGtkIconView *self,Stack stack
   int_types T[] = {obj_check,obj, t_end};
   NspGObject *tooltip;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktooltip, &tooltip, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -41090,7 +41090,7 @@ static int _wrap_gtk_icon_view_set_tooltip_cell(NspGtkIconView *self,Stack stack
   int_types T[] = {obj_check,obj,obj_check, t_end};
   NspGObject *tooltip, *cell;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktooltip, &tooltip, &nsp_path, &nsp_type_gtkcellrenderer, &cell) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -41415,7 +41415,7 @@ static int _wrap_gtk_tree_model_sort_convert_child_path_to_path(NspGtkTreeModelS
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *child_path = NULL, *ret;
-  NspObject *nsp_child_path, *nsp_ret;
+  NspObject *nsp_child_path = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_child_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_child_path, GTK_TYPE_TREE_PATH))
       child_path = nspg_boxed_get(nsp_child_path, GtkTreePath);
@@ -41435,7 +41435,7 @@ static int _wrap_gtk_tree_model_sort_convert_child_iter_to_iter(NspGtkTreeModelS
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *sort_iter = NULL, *child_iter = NULL;
-  NspObject *nsp_sort_iter, *nsp_child_iter;
+  NspObject *nsp_sort_iter = NULL, *nsp_child_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_sort_iter, &nsp_child_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_sort_iter, GTK_TYPE_TREE_ITER))
@@ -41459,7 +41459,7 @@ static int _wrap_gtk_tree_model_sort_convert_path_to_child_path(NspGtkTreeModelS
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *sorted_path = NULL, *ret;
-  NspObject *nsp_sorted_path, *nsp_ret;
+  NspObject *nsp_sorted_path = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_sorted_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_sorted_path, GTK_TYPE_TREE_PATH))
       sorted_path = nspg_boxed_get(nsp_sorted_path, GtkTreePath);
@@ -41479,7 +41479,7 @@ static int _wrap_gtk_tree_model_sort_convert_iter_to_child_iter(NspGtkTreeModelS
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *child_iter = NULL, *sorted_iter = NULL;
-  NspObject *nsp_child_iter, *nsp_sorted_iter;
+  NspObject *nsp_child_iter = NULL, *nsp_sorted_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_child_iter, &nsp_sorted_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
@@ -41515,7 +41515,7 @@ static int _wrap_gtk_tree_model_sort_iter_is_valid(NspGtkTreeModelSort *self,Sta
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -41801,7 +41801,7 @@ static int _wrap_gtk_tree_model_filter_convert_child_iter_to_iter(NspGtkTreeMode
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *filter_iter = NULL, *child_iter = NULL;
-  NspObject *nsp_filter_iter, *nsp_child_iter;
+  NspObject *nsp_filter_iter = NULL, *nsp_child_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_filter_iter, &nsp_child_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_filter_iter, GTK_TYPE_TREE_ITER))
@@ -41825,7 +41825,7 @@ static int _wrap_gtk_tree_model_filter_convert_iter_to_child_iter(NspGtkTreeMode
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *child_iter = NULL, *filter_iter = NULL;
-  NspObject *nsp_child_iter, *nsp_filter_iter;
+  NspObject *nsp_child_iter = NULL, *nsp_filter_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_child_iter, &nsp_filter_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_child_iter, GTK_TYPE_TREE_ITER))
       child_iter = nspg_boxed_get(nsp_child_iter, GtkTreeIter);
@@ -41847,7 +41847,7 @@ static int _wrap_gtk_tree_model_filter_convert_child_path_to_path(NspGtkTreeMode
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *child_path = NULL, *ret;
-  NspObject *nsp_child_path, *nsp_ret;
+  NspObject *nsp_child_path = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_child_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_child_path, GTK_TYPE_TREE_PATH))
       child_path = nspg_boxed_get(nsp_child_path, GtkTreePath);
@@ -41867,7 +41867,7 @@ static int _wrap_gtk_tree_model_filter_convert_path_to_child_path(NspGtkTreeMode
 {
   int_types T[] = {obj, t_end};
   GtkTreePath *filter_path = NULL, *ret;
-  NspObject *nsp_filter_path, *nsp_ret;
+  NspObject *nsp_filter_path = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_filter_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_filter_path, GTK_TYPE_TREE_PATH))
       filter_path = nspg_boxed_get(nsp_filter_path, GtkTreePath);
@@ -42233,7 +42233,7 @@ static int _wrap_gtk_cell_area_apply_attributes(NspGtkCellArea *self,Stack stack
   int_types T[] = {obj_check,obj,s_bool,s_bool, t_end};
   NspGObject *tree_model;
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int is_expander, is_expanded;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtktreemodel, &tree_model, &nsp_iter, &is_expander, &is_expanded) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -43282,7 +43282,7 @@ static int _wrap_gtk_cell_renderer_get_preferred_size(NspGtkCellRenderer *self,S
   int_types T[] = {obj_check,obj,obj, t_end};
   NspGObject *widget;
   GtkRequisition *minimum_size = NULL, *natural_size = NULL;
-  NspObject *nsp_minimum_size, *nsp_natural_size;
+  NspObject *nsp_minimum_size = NULL, *nsp_natural_size = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &widget, &nsp_minimum_size, &nsp_natural_size) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_minimum_size, GTK_TYPE_REQUISITION))
       minimum_size = nspg_boxed_get(nsp_minimum_size, GtkRequisition);
@@ -45605,7 +45605,7 @@ static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -45704,7 +45704,7 @@ static int _wrap_gtk_list_store_insert_with_values(NspGtkListStore *self,Stack s
 {
   int_types T[] = {obj,s_int, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int position;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -45779,7 +45779,7 @@ static int _wrap_gtk_list_store_iter_is_valid(NspGtkListStore *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -45806,7 +45806,7 @@ static int _wrap_gtk_list_store_swap(NspGtkListStore *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *a = NULL, *b = NULL;
-  NspObject *nsp_a, *nsp_b;
+  NspObject *nsp_a = NULL, *nsp_b = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_a, &nsp_b) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_a, GTK_TYPE_TREE_ITER))
       a = nspg_boxed_get(nsp_a, GtkTreeIter);
@@ -45831,7 +45831,7 @@ static int _wrap_gtk_list_store_move_after(NspGtkListStore *self,Stack stack,int
 	{"position",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreeIter *iter = NULL, *position = NULL;
-  NspObject *nsp_iter, *nsp_position = NULL;
+  NspObject *nsp_iter = NULL, *nsp_position = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, opts, &nsp_position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -45858,7 +45858,7 @@ static int _wrap_gtk_list_store_move_before(NspGtkListStore *self,Stack stack,in
 	{"position",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreeIter *iter = NULL, *position = NULL;
-  NspObject *nsp_iter, *nsp_position = NULL;
+  NspObject *nsp_iter = NULL, *nsp_position = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, opts, &nsp_position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -46261,7 +46261,7 @@ static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -46382,7 +46382,7 @@ static int _wrap_gtk_tree_store_insert_with_values(NspGtkTreeStore *self,Stack s
 {
   int_types T[] = {obj,obj,s_int, t_end};
   GtkTreeIter *iter = NULL, *parent = NULL;
-  NspObject *nsp_iter, *nsp_parent;
+  NspObject *nsp_iter = NULL, *nsp_parent = NULL;
   int position;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_parent, &position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -46508,7 +46508,7 @@ static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,in
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *iter = NULL, *descendant = NULL;
-  NspObject *nsp_iter, *nsp_descendant;
+  NspObject *nsp_iter = NULL, *nsp_descendant = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, &nsp_descendant) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -46532,7 +46532,7 @@ static int _wrap_gtk_tree_store_iter_depth(NspGtkTreeStore *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -46557,7 +46557,7 @@ static int _wrap_gtk_tree_store_iter_is_valid(NspGtkTreeStore *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
@@ -46575,7 +46575,7 @@ static int _wrap_gtk_tree_store_reorder(NspGtkTreeStore *self,Stack stack,int rh
 {
   int_types T[] = {obj,s_int, t_end};
   GtkTreeIter *parent = NULL;
-  NspObject *nsp_parent;
+  NspObject *nsp_parent = NULL;
   int new_order;
   if ( GetArgs(stack,rhs,opt,T,&nsp_parent, &new_order) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_parent, GTK_TYPE_TREE_ITER))
@@ -46592,7 +46592,7 @@ static int _wrap_gtk_tree_store_swap(NspGtkTreeStore *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj,obj, t_end};
   GtkTreeIter *a = NULL, *b = NULL;
-  NspObject *nsp_a, *nsp_b;
+  NspObject *nsp_a = NULL, *nsp_b = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_a, &nsp_b) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_a, GTK_TYPE_TREE_ITER))
       a = nspg_boxed_get(nsp_a, GtkTreeIter);
@@ -46617,7 +46617,7 @@ static int _wrap_gtk_tree_store_move_before(NspGtkTreeStore *self,Stack stack,in
 	{"position",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreeIter *iter = NULL, *position = NULL;
-  NspObject *nsp_iter, *nsp_position = NULL;
+  NspObject *nsp_iter = NULL, *nsp_position = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, opts, &nsp_position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -46644,7 +46644,7 @@ static int _wrap_gtk_tree_store_move_after(NspGtkTreeStore *self,Stack stack,int
 	{"position",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   GtkTreeIter *iter = NULL, *position = NULL;
-  NspObject *nsp_iter, *nsp_position = NULL;
+  NspObject *nsp_iter = NULL, *nsp_position = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter, opts, &nsp_position) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -47185,7 +47185,7 @@ static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,
 {
   int_types T[] = {obj, t_end};
   GtkTreeIter *iter = NULL;
-  NspObject *nsp_iter;
+  NspObject *nsp_iter = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_iter) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_iter, GTK_TYPE_TREE_ITER))
       iter = nspg_boxed_get(nsp_iter, GtkTreeIter);
@@ -51186,7 +51186,7 @@ static int _wrap_gtk_tool_palette_get_drag_item(NspGtkToolPalette *self,Stack st
 {
   int_types T[] = {obj, t_end};
   GtkSelectionData *selection = NULL;
-  NspObject *nsp_selection, *nsp_ret;
+  NspObject *nsp_selection = NULL, *nsp_ret;
   GtkWidget *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_selection) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_selection, GTK_TYPE_SELECTION_DATA))
@@ -53998,7 +53998,7 @@ _wrap_gtk_color_button_new_with_rgba (Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, t_end};
   GdkRGBA *rgba = NULL;
-  NspObject *nsp_rgba;
+  NspObject *nsp_rgba = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_rgba) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_rgba, GDK_TYPE_RGBA))
@@ -61431,7 +61431,7 @@ static int _wrap_gtk_widget_get_preferred_size(NspGtkWidget *self,Stack stack,in
 {
   int_types T[] = {obj,obj, t_end};
   GtkRequisition *minimum_size = NULL, *natural_size = NULL;
-  NspObject *nsp_minimum_size, *nsp_natural_size;
+  NspObject *nsp_minimum_size = NULL, *nsp_natural_size = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_minimum_size, &nsp_natural_size) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_minimum_size, GTK_TYPE_REQUISITION))
       minimum_size = nspg_boxed_get(nsp_minimum_size, GtkRequisition);
@@ -61563,7 +61563,7 @@ static int _wrap_gtk_widget_event(NspGtkWidget *self,Stack stack,int rhs,int opt
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -61581,7 +61581,7 @@ static int _wrap_gtk_widget_send_expose(NspGtkWidget *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -61599,7 +61599,7 @@ static int _wrap_gtk_widget_send_focus_change(NspGtkWidget *self,Stack stack,int
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -62892,7 +62892,7 @@ static int _wrap_gtk_widget_override_color(NspGtkWidget *self,Stack stack,int rh
 {
   int_types T[] = {obj,obj, t_end};
   GtkStateFlags state;
-  NspObject *nsp_state = NULL, *nsp_color;
+  NspObject *nsp_state = NULL, *nsp_color = NULL;
   GdkRGBA *color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_state, &nsp_color) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GTK_TYPE_STATE_FLAGS, nsp_state, &state)==FAIL)
@@ -62919,7 +62919,7 @@ static int _wrap_gtk_widget_override_background_color(NspGtkWidget *self,Stack s
 {
   int_types T[] = {obj,obj, t_end};
   GtkStateFlags state;
-  NspObject *nsp_state = NULL, *nsp_color;
+  NspObject *nsp_state = NULL, *nsp_color = NULL;
   GdkRGBA *color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_state, &nsp_color) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GTK_TYPE_STATE_FLAGS, nsp_state, &state)==FAIL)
@@ -62946,7 +62946,7 @@ static int _wrap_gtk_widget_override_font(NspGtkWidget *self,Stack stack,int rhs
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *font_desc = NULL;
-  NspObject *nsp_font_desc;
+  NspObject *nsp_font_desc = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_font_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_font_desc, PANGO_TYPE_FONT_DESCRIPTION))
       font_desc = nspg_boxed_get(nsp_font_desc, PangoFontDescription);
@@ -62971,7 +62971,7 @@ static int _wrap_gtk_widget_override_symbolic_color(NspGtkWidget *self,Stack sta
   int_types T[] = {string,obj, t_end};
   char *name;
   GdkRGBA *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&name, &nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_RGBA))
       color = nspg_boxed_get(nsp_color, GdkRGBA);
@@ -62995,7 +62995,7 @@ static int _wrap_gtk_widget_override_cursor(NspGtkWidget *self,Stack stack,int r
 {
   int_types T[] = {obj,obj, t_end};
   GdkRGBA *cursor = NULL, *secondary_cursor = NULL;
-  NspObject *nsp_cursor, *nsp_secondary_cursor;
+  NspObject *nsp_cursor = NULL, *nsp_secondary_cursor = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cursor, &nsp_secondary_cursor) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cursor, GDK_TYPE_RGBA))
       cursor = nspg_boxed_get(nsp_cursor, GdkRGBA);
@@ -71468,7 +71468,7 @@ int _wrap_gtk_accel_map_add_filter(Stack stack, int rhs, int opt, int lhs) /* gt
 int _wrap_gtk_bindings_activate(Stack stack, int rhs, int opt, int lhs) /* gtk_bindings_activate */
 {
   int_types T[] = {obj_check,s_int,obj, t_end};
-  NspGObject *object;
+  NspGObject *object = NULL;
   int keyval, ret;
   GdkModifierType modifiers;
   NspObject *nsp_modifiers = NULL;
@@ -71483,9 +71483,9 @@ int _wrap_gtk_bindings_activate(Stack stack, int rhs, int opt, int lhs) /* gtk_b
 int _wrap_gtk_bindings_activate_event(Stack stack, int rhs, int opt, int lhs) /* gtk_bindings_activate_event */
 {
   int_types T[] = {obj_check,obj, t_end};
-  NspGObject *object;
+  NspGObject *object = NULL;
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &object, &nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -72232,7 +72232,7 @@ int _wrap_gtk_main_do_event(Stack stack, int rhs, int opt, int lhs) /* gtk_main_
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
@@ -72804,7 +72804,7 @@ int _wrap_gtk_tree_set_row_drag_data(Stack stack, int rhs, int opt, int lhs) /* 
 {
   int_types T[] = {obj,obj_check,obj, t_end};
   GtkSelectionData *selection_data = NULL;
-  NspObject *nsp_selection_data, *nsp_path;
+  NspObject *nsp_selection_data = NULL, *nsp_path = NULL;
   NspGObject *tree_model;
   GtkTreePath *path = NULL;
   int ret;
@@ -72870,9 +72870,9 @@ _wrap_gtk_tree_get_row_drag_data(Stack stack,int rhs,int opt,int lhs)
 int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_inserted */
 {
   int_types T[] = {obj_check,obj, t_end};
-  NspGObject *proxy;
+  NspGObject *proxy = NULL;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &proxy, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -72887,9 +72887,9 @@ int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs
 int _wrap_gtk_tree_row_reference_deleted(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_deleted */
 {
   int_types T[] = {obj_check,obj, t_end};
-  NspGObject *proxy;
+  NspGObject *proxy = NULL;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path;
+  NspObject *nsp_path = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &proxy, &nsp_path) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
       path = nspg_boxed_get(nsp_path, GtkTreePath);
@@ -72904,9 +72904,9 @@ int _wrap_gtk_tree_row_reference_deleted(Stack stack, int rhs, int opt, int lhs)
 int _wrap_gtk_tree_row_reference_reordered(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_reordered */
 {
   int_types T[] = {obj_check,obj,obj,s_int, t_end};
-  NspGObject *proxy;
+  NspGObject *proxy = NULL;
   GtkTreePath *path = NULL;
-  NspObject *nsp_path, *nsp_iter;
+  NspObject *nsp_path = NULL, *nsp_iter = NULL;
   GtkTreeIter *iter = NULL;
   int new_order;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &proxy, &nsp_path, &nsp_iter, &new_order) == FAIL) return RET_BUG;

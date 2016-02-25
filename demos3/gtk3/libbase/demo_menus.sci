@@ -63,7 +63,7 @@ function demo_menus()
   button = gtkbutton_new(label="close")
   button.connect["clicked", button_destroy_win,list(win)];
   box2.pack_start[button]
-  //button.set_flags[GTK.CAN_DEFAULT]
+  button.set_can_default[%t]
   button.grab_default[]
   button.show[]
   win.show[]

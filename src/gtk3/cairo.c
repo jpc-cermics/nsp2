@@ -1272,7 +1272,7 @@ int _wrap_cairo_create(Stack stack, int rhs, int opt, int lhs) /* cairo_create *
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *target = NULL;
-  NspObject *nsp_target, *nsp_ret;
+  NspObject *nsp_target = NULL, *nsp_ret;
   cairo_t *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_target) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_target, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -1293,7 +1293,7 @@ int _wrap_cairo_reference(Stack stack, int rhs, int opt, int lhs) /* cairo_refer
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL, *ret;
-  NspObject *nsp_cr, *nsp_ret;
+  NspObject *nsp_cr = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1313,7 +1313,7 @@ int _wrap_cairo_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo_destroy
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1329,7 +1329,7 @@ int _wrap_cairo_save(Stack stack, int rhs, int opt, int lhs) /* cairo_save */
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1345,7 +1345,7 @@ int _wrap_cairo_restore(Stack stack, int rhs, int opt, int lhs) /* cairo_restore
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1361,7 +1361,7 @@ int _wrap_cairo_push_group(Stack stack, int rhs, int opt, int lhs) /* cairo_push
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1377,7 +1377,7 @@ int _wrap_cairo_push_group_with_content(Stack stack, int rhs, int opt, int lhs) 
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_content = NULL;
+  NspObject *nsp_cr = NULL, *nsp_content = NULL;
   cairo_content_t content;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_content) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1396,7 +1396,7 @@ int _wrap_cairo_pop_group_to_source(Stack stack, int rhs, int opt, int lhs) /* c
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1412,7 +1412,7 @@ int _wrap_cairo_set_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_se
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_op = NULL;
+  NspObject *nsp_cr = NULL, *nsp_op = NULL;
   cairo_operator_t op;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_op) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1431,7 +1431,7 @@ int _wrap_cairo_set_source_rgb(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double red, green, blue;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &red, &green, &blue) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1448,7 +1448,7 @@ int _wrap_cairo_set_source_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double red, green, blue, alpha;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &red, &green, &blue, &alpha) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1465,7 +1465,7 @@ int _wrap_cairo_set_source_surface(Stack stack, int rhs, int opt, int lhs) /* ca
 {
   int_types T[] = {obj,obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_surface;
+  NspObject *nsp_cr = NULL, *nsp_surface = NULL;
   cairo_surface_t *surface = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_surface, &x, &y) == FAIL) return RET_BUG;
@@ -1489,7 +1489,7 @@ int _wrap_cairo_set_tolerance(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double tolerance;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &tolerance) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1506,7 +1506,7 @@ int _wrap_cairo_set_antialias(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_antialias = NULL;
+  NspObject *nsp_cr = NULL, *nsp_antialias = NULL;
   cairo_antialias_t antialias;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_antialias) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1525,7 +1525,7 @@ int _wrap_cairo_set_fill_rule(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_fill_rule = NULL;
+  NspObject *nsp_cr = NULL, *nsp_fill_rule = NULL;
   cairo_fill_rule_t fill_rule;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_fill_rule) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1544,7 +1544,7 @@ int _wrap_cairo_set_line_width(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double width;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &width) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1561,7 +1561,7 @@ int _wrap_cairo_set_line_cap(Stack stack, int rhs, int opt, int lhs) /* cairo_se
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_line_cap = NULL;
+  NspObject *nsp_cr = NULL, *nsp_line_cap = NULL;
   cairo_line_cap_t line_cap;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_line_cap) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1580,7 +1580,7 @@ int _wrap_cairo_set_line_join(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_line_join = NULL;
+  NspObject *nsp_cr = NULL, *nsp_line_join = NULL;
   cairo_line_join_t line_join;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_line_join) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1599,7 +1599,7 @@ int _wrap_cairo_set_miter_limit(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double limit;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &limit) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1616,7 +1616,7 @@ int _wrap_cairo_translate(Stack stack, int rhs, int opt, int lhs) /* cairo_trans
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double tx, ty;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &tx, &ty) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1633,7 +1633,7 @@ int _wrap_cairo_scale(Stack stack, int rhs, int opt, int lhs) /* cairo_scale */
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double sx, sy;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &sx, &sy) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1650,7 +1650,7 @@ int _wrap_cairo_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_rotate *
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double angle;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &angle) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1667,7 +1667,7 @@ int _wrap_cairo_identity_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1683,7 +1683,7 @@ int _wrap_cairo_user_to_device(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1700,7 +1700,7 @@ int _wrap_cairo_user_to_device_distance(Stack stack, int rhs, int opt, int lhs) 
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dx, dy;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dx, &dy) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1717,7 +1717,7 @@ int _wrap_cairo_device_to_user(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1734,7 +1734,7 @@ int _wrap_cairo_device_to_user_distance(Stack stack, int rhs, int opt, int lhs) 
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dx, dy;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dx, &dy) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1751,7 +1751,7 @@ int _wrap_cairo_new_path(Stack stack, int rhs, int opt, int lhs) /* cairo_new_pa
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1767,7 +1767,7 @@ int _wrap_cairo_move_to(Stack stack, int rhs, int opt, int lhs) /* cairo_move_to
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1784,7 +1784,7 @@ int _wrap_cairo_new_sub_path(Stack stack, int rhs, int opt, int lhs) /* cairo_ne
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1800,7 +1800,7 @@ int _wrap_cairo_line_to(Stack stack, int rhs, int opt, int lhs) /* cairo_line_to
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1817,7 +1817,7 @@ int _wrap_cairo_curve_to(Stack stack, int rhs, int opt, int lhs) /* cairo_curve_
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x1, y1, x2, y2, x3, y3;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x1, &y1, &x2, &y2, &x3, &y3) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1834,7 +1834,7 @@ int _wrap_cairo_arc(Stack stack, int rhs, int opt, int lhs) /* cairo_arc */
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double xc, yc, radius, angle1, angle2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &xc, &yc, &radius, &angle1, &angle2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1851,7 +1851,7 @@ int _wrap_cairo_arc_negative(Stack stack, int rhs, int opt, int lhs) /* cairo_ar
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double xc, yc, radius, angle1, angle2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &xc, &yc, &radius, &angle1, &angle2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1868,7 +1868,7 @@ int _wrap_cairo_rel_move_to(Stack stack, int rhs, int opt, int lhs) /* cairo_rel
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dx, dy;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dx, &dy) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1885,7 +1885,7 @@ int _wrap_cairo_rel_line_to(Stack stack, int rhs, int opt, int lhs) /* cairo_rel
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dx, dy;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dx, &dy) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1902,7 +1902,7 @@ int _wrap_cairo_rel_curve_to(Stack stack, int rhs, int opt, int lhs) /* cairo_re
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dx1, dy1, dx2, dy2, dx3, dy3;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dx1, &dy1, &dx2, &dy2, &dx3, &dy3) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1919,7 +1919,7 @@ int _wrap_cairo_rectangle(Stack stack, int rhs, int opt, int lhs) /* cairo_recta
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y, &width, &height) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1936,7 +1936,7 @@ int _wrap_cairo_close_path(Stack stack, int rhs, int opt, int lhs) /* cairo_clos
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1952,7 +1952,7 @@ int _wrap_cairo_path_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_pa
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x1, y1, x2, y2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x1, &y1, &x2, &y2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -1969,7 +1969,7 @@ int _wrap_cairo_paint(Stack stack, int rhs, int opt, int lhs) /* cairo_paint */
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -1985,7 +1985,7 @@ int _wrap_cairo_paint_with_alpha(Stack stack, int rhs, int opt, int lhs) /* cair
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double alpha;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &alpha) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2002,7 +2002,7 @@ int _wrap_cairo_mask_surface(Stack stack, int rhs, int opt, int lhs) /* cairo_ma
 {
   int_types T[] = {obj,obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_surface;
+  NspObject *nsp_cr = NULL, *nsp_surface = NULL;
   cairo_surface_t *surface = NULL;
   double surface_x, surface_y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_surface, &surface_x, &surface_y) == FAIL) return RET_BUG;
@@ -2026,7 +2026,7 @@ int _wrap_cairo_stroke(Stack stack, int rhs, int opt, int lhs) /* cairo_stroke *
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2042,7 +2042,7 @@ int _wrap_cairo_stroke_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2058,7 +2058,7 @@ int _wrap_cairo_fill(Stack stack, int rhs, int opt, int lhs) /* cairo_fill */
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2074,7 +2074,7 @@ int _wrap_cairo_fill_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo_f
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2090,7 +2090,7 @@ int _wrap_cairo_copy_page(Stack stack, int rhs, int opt, int lhs) /* cairo_copy_
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2106,7 +2106,7 @@ int _wrap_cairo_show_page(Stack stack, int rhs, int opt, int lhs) /* cairo_show_
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2122,7 +2122,7 @@ int _wrap_cairo_stroke_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x1, y1, x2, y2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x1, &y1, &x2, &y2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2139,7 +2139,7 @@ int _wrap_cairo_fill_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_fi
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x1, y1, x2, y2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x1, &y1, &x2, &y2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2156,7 +2156,7 @@ int _wrap_cairo_reset_clip(Stack stack, int rhs, int opt, int lhs) /* cairo_rese
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2172,7 +2172,7 @@ int _wrap_cairo_clip(Stack stack, int rhs, int opt, int lhs) /* cairo_clip */
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2188,7 +2188,7 @@ int _wrap_cairo_clip_preserve(Stack stack, int rhs, int opt, int lhs) /* cairo_c
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
       cr = nspg_boxed_get(nsp_cr, cairo_t);
@@ -2204,7 +2204,7 @@ int _wrap_cairo_clip_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_cl
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x1, y1, x2, y2;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x1, &y1, &x2, &y2) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2221,7 +2221,7 @@ int _wrap_cairo_select_font_face(Stack stack, int rhs, int opt, int lhs) /* cair
 {
   int_types T[] = {obj,string,obj,obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_slant = NULL, *nsp_weight = NULL;
+  NspObject *nsp_cr = NULL, *nsp_slant = NULL, *nsp_weight = NULL;
   char *family;
   cairo_font_slant_t slant;
   cairo_font_weight_t weight;
@@ -2244,7 +2244,7 @@ int _wrap_cairo_set_font_size(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double size;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &size) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2261,7 +2261,7 @@ int _wrap_cairo_show_text(Stack stack, int rhs, int opt, int lhs) /* cairo_show_
 {
   int_types T[] = {obj,string, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   char *utf8;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &utf8) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2278,7 +2278,7 @@ int _wrap_cairo_text_path(Stack stack, int rhs, int opt, int lhs) /* cairo_text_
 {
   int_types T[] = {obj,string, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   char *utf8;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &utf8) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2295,7 +2295,7 @@ int _wrap_cairo_get_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_ge
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2313,7 +2313,7 @@ int _wrap_cairo_get_tolerance(Stack stack, int rhs, int opt, int lhs) /* cairo_g
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2331,7 +2331,7 @@ int _wrap_cairo_get_antialias(Stack stack, int rhs, int opt, int lhs) /* cairo_g
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2349,7 +2349,7 @@ int _wrap_cairo_get_current_point(Stack stack, int rhs, int opt, int lhs) /* cai
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double x, y;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &x, &y) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2366,7 +2366,7 @@ int _wrap_cairo_get_fill_rule(Stack stack, int rhs, int opt, int lhs) /* cairo_g
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2384,7 +2384,7 @@ int _wrap_cairo_get_line_width(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2402,7 +2402,7 @@ int _wrap_cairo_get_line_cap(Stack stack, int rhs, int opt, int lhs) /* cairo_ge
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2420,7 +2420,7 @@ int _wrap_cairo_get_line_join(Stack stack, int rhs, int opt, int lhs) /* cairo_g
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2438,7 +2438,7 @@ int _wrap_cairo_get_miter_limit(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2456,7 +2456,7 @@ int _wrap_cairo_get_dash_count(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2474,7 +2474,7 @@ int _wrap_cairo_get_dash(Stack stack, int rhs, int opt, int lhs) /* cairo_get_da
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   double dashes, offset;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &dashes, &offset) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2491,7 +2491,7 @@ int _wrap_cairo_get_target(Stack stack, int rhs, int opt, int lhs) /* cairo_get_
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_ret;
+  NspObject *nsp_cr = NULL, *nsp_ret;
   cairo_surface_t *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2512,7 +2512,7 @@ int _wrap_cairo_get_group_target(Stack stack, int rhs, int opt, int lhs) /* cair
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr, *nsp_ret;
+  NspObject *nsp_cr = NULL, *nsp_ret;
   cairo_surface_t *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2533,7 +2533,7 @@ int _wrap_cairo_status(Stack stack, int rhs, int opt, int lhs) /* cairo_status *
 {
   int_types T[] = {obj, t_end};
   cairo_t *cr = NULL;
-  NspObject *nsp_cr;
+  NspObject *nsp_cr = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
@@ -2565,7 +2565,7 @@ int _wrap_cairo_surface_create_similar(Stack stack, int rhs, int opt, int lhs) /
 {
   int_types T[] = {obj,obj,s_int,s_int, t_end};
   cairo_surface_t *other = NULL, *ret;
-  NspObject *nsp_other, *nsp_content = NULL, *nsp_ret;
+  NspObject *nsp_other = NULL, *nsp_content = NULL, *nsp_ret;
   cairo_content_t content;
   int width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_other, &nsp_content, &width, &height) == FAIL) return RET_BUG;
@@ -2589,7 +2589,7 @@ int _wrap_cairo_surface_create_similar_image(Stack stack, int rhs, int opt, int 
 {
   int_types T[] = {obj,obj,s_int,s_int, t_end};
   cairo_surface_t *other = NULL, *ret;
-  NspObject *nsp_other, *nsp_format = NULL, *nsp_ret;
+  NspObject *nsp_other = NULL, *nsp_format = NULL, *nsp_ret;
   cairo_format_t format;
   int width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_other, &nsp_format, &width, &height) == FAIL) return RET_BUG;
@@ -2613,7 +2613,7 @@ int _wrap_cairo_surface_unmap_image(Stack stack, int rhs, int opt, int lhs) /* c
 {
   int_types T[] = {obj,obj, t_end};
   cairo_surface_t *surface = NULL, *image = NULL;
-  NspObject *nsp_surface, *nsp_image;
+  NspObject *nsp_surface = NULL, *nsp_image = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &nsp_image) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2635,7 +2635,7 @@ int _wrap_cairo_surface_create_for_rectangle(Stack stack, int rhs, int opt, int 
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_surface_t *target = NULL, *ret;
-  NspObject *nsp_target, *nsp_ret;
+  NspObject *nsp_target = NULL, *nsp_ret;
   double x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_target, &x, &y, &width, &height) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_target, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2656,7 +2656,7 @@ int _wrap_cairo_surface_observer_elapsed(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2674,7 +2674,7 @@ int _wrap_cairo_surface_reference(Stack stack, int rhs, int opt, int lhs) /* cai
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL, *ret;
-  NspObject *nsp_surface, *nsp_ret;
+  NspObject *nsp_surface = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2694,7 +2694,7 @@ int _wrap_cairo_surface_finish(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2710,7 +2710,7 @@ int _wrap_cairo_surface_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2726,7 +2726,7 @@ int _wrap_cairo_surface_status(Stack stack, int rhs, int opt, int lhs) /* cairo_
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2744,7 +2744,7 @@ int _wrap_cairo_surface_get_content(Stack stack, int rhs, int opt, int lhs) /* c
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2762,7 +2762,7 @@ int _wrap_cairo_surface_write_to_png(Stack stack, int rhs, int opt, int lhs) /* 
 {
   int_types T[] = {obj,string, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   char *filename;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &filename) == FAIL) return RET_BUG;
@@ -2781,7 +2781,7 @@ int _wrap_cairo_surface_flush(Stack stack, int rhs, int opt, int lhs) /* cairo_s
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2797,7 +2797,7 @@ int _wrap_cairo_surface_mark_dirty(Stack stack, int rhs, int opt, int lhs) /* ca
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2813,7 +2813,7 @@ int _wrap_cairo_surface_mark_dirty_rectangle(Stack stack, int rhs, int opt, int 
 {
   int_types T[] = {obj,s_int,s_int,s_int,s_int, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   int x, y, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x, &y, &width, &height) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2830,7 +2830,7 @@ int _wrap_cairo_surface_set_device_scale(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_scale, y_scale;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_scale, &y_scale) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2847,7 +2847,7 @@ int _wrap_cairo_surface_get_device_scale(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_scale, y_scale;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_scale, &y_scale) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2864,7 +2864,7 @@ int _wrap_cairo_surface_set_device_offset(Stack stack, int rhs, int opt, int lhs
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_offset, y_offset;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_offset, &y_offset) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2881,7 +2881,7 @@ int _wrap_cairo_surface_get_device_offset(Stack stack, int rhs, int opt, int lhs
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_offset, y_offset;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_offset, &y_offset) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2898,7 +2898,7 @@ int _wrap_cairo_surface_set_fallback_resolution(Stack stack, int rhs, int opt, i
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_pixels_per_inch, y_pixels_per_inch;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_pixels_per_inch, &y_pixels_per_inch) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2915,7 +2915,7 @@ int _wrap_cairo_surface_get_fallback_resolution(Stack stack, int rhs, int opt, i
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x_pixels_per_inch, y_pixels_per_inch;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x_pixels_per_inch, &y_pixels_per_inch) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -2932,7 +2932,7 @@ int _wrap_cairo_surface_copy_page(Stack stack, int rhs, int opt, int lhs) /* cai
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -2948,7 +2948,7 @@ int _wrap_cairo_surface_show_page(Stack stack, int rhs, int opt, int lhs) /* cai
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -3015,7 +3015,7 @@ int _wrap_cairo_image_surface_get_format(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   gint ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3033,7 +3033,7 @@ int _wrap_cairo_image_surface_get_width(Stack stack, int rhs, int opt, int lhs) 
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3051,7 +3051,7 @@ int _wrap_cairo_image_surface_get_height(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3069,7 +3069,7 @@ int _wrap_cairo_image_surface_get_stride(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3102,7 +3102,7 @@ int _wrap_cairo_recording_surface_ink_extents(Stack stack, int rhs, int opt, int
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double x0, y0, width, height;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &x0, &y0, &width, &height) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3142,7 +3142,7 @@ int _wrap_cairo_pdf_surface_restrict_to_version(Stack stack, int rhs, int opt, i
 {
   int_types T[] = {obj,obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface, *nsp_version = NULL;
+  NspObject *nsp_surface = NULL, *nsp_version = NULL;
   cairo_pdf_version_t version;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &nsp_version) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3175,7 +3175,7 @@ int _wrap_cairo_pdf_surface_set_size(Stack stack, int rhs, int opt, int lhs) /* 
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double width_in_points, height_in_points;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &width_in_points, &height_in_points) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3208,7 +3208,7 @@ int _wrap_cairo_ps_surface_restrict_to_level(Stack stack, int rhs, int opt, int 
 {
   int_types T[] = {obj,obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface, *nsp_level = NULL;
+  NspObject *nsp_surface = NULL, *nsp_level = NULL;
   cairo_ps_level_t level;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &nsp_level) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3241,7 +3241,7 @@ int _wrap_cairo_ps_surface_set_size(Stack stack, int rhs, int opt, int lhs) /* c
 {
   int_types T[] = {obj,s_double,s_double, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   double width_in_points, height_in_points;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &width_in_points, &height_in_points) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3258,7 +3258,7 @@ int _wrap_cairo_ps_surface_dsc_comment(Stack stack, int rhs, int opt, int lhs) /
 {
   int_types T[] = {obj,string, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   char *comment;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &comment) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
@@ -3275,7 +3275,7 @@ int _wrap_cairo_ps_surface_dsc_begin_setup(Stack stack, int rhs, int opt, int lh
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -3291,7 +3291,7 @@ int _wrap_cairo_ps_surface_dsc_begin_page_setup(Stack stack, int rhs, int opt, i
 {
   int_types T[] = {obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface;
+  NspObject *nsp_surface = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
       surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
@@ -3323,7 +3323,7 @@ int _wrap_cairo_svg_surface_restrict_to_version(Stack stack, int rhs, int opt, i
 {
   int_types T[] = {obj,obj, t_end};
   cairo_surface_t *surface = NULL;
-  NspObject *nsp_surface, *nsp_version = NULL;
+  NspObject *nsp_surface = NULL, *nsp_version = NULL;
   cairo_svg_version_t version;
   if ( GetArgs(stack,rhs,opt,T,&nsp_surface, &nsp_version) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))

@@ -65,6 +65,7 @@ function demo_gtk2_plus()
   button.connect["clicked",button_destroy_win,list(win)];
   //button.set_flags[GTK.CAN_DEFAULT]
   box2.pack_start[button]
+  button.set_can_default[%t]
   button.grab_default[]
   button.show[]
   win.show[]

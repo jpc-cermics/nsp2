@@ -2,41 +2,46 @@
 // que l'on peut obtenir avec un gtkbuilder
 // En voici un example
 // Some constants
-G_MENU_ATTRIBUTE_ACTION ="action";
-G_MENU_ATTRIBUTE_ACTION_NAMESPACE ="action-namespace";
-G_MENU_ATTRIBUTE_TARGET ="target";
-G_MENU_ATTRIBUTE_LABEL ="label";
-G_MENU_ATTRIBUTE_ICON ="icon";
-G_MENU_LINK_SUBMENU ="submenu";
-G_MENU_LINK_SECTION ="section";
 
-G_VARIANT_TYPE_BOOLEAN              ="b";
-G_VARIANT_TYPE_BYTE                 ="y";
-G_VARIANT_TYPE_INT16                ="n";
-G_VARIANT_TYPE_UINT16               ="q";
-G_VARIANT_TYPE_INT32                ="i";
-G_VARIANT_TYPE_UINT32               ="u";
-G_VARIANT_TYPE_INT64                ="x";
-G_VARIANT_TYPE_UINT64               ="t";
-G_VARIANT_TYPE_DOUBLE               ="d";
-G_VARIANT_TYPE_STRING               ="s";
-G_VARIANT_TYPE_OBJECT_PATH          ="o";
-G_VARIANT_TYPE_SIGNATURE            ="g";
-G_VARIANT_TYPE_VARIANT              ="v";
-G_VARIANT_TYPE_HANDLE               ="h";
-G_VARIANT_TYPE_UNIT                 ="()";
-G_VARIANT_TYPE_ANY                  ="*";
-G_VARIANT_TYPE_BASIC                ="?";
-G_VARIANT_TYPE_MAYBE                ="m*";
-G_VARIANT_TYPE_ARRAY                ="a*";
-G_VARIANT_TYPE_TUPLE                ="r";
-G_VARIANT_TYPE_DICT_ENTRY           ="{?*}";
-G_VARIANT_TYPE_DICTIONARY           ="a{?*}";
-G_VARIANT_TYPE_STRING_ARRAY         ="as";
-G_VARIANT_TYPE_OBJECT_PATH_ARRAY    ="ao";
-G_VARIANT_TYPE_BYTESTRING           ="ay";
-G_VARIANT_TYPE_BYTESTRING_ARRAY     ="aay";
-G_VARIANT_TYPE_VARDICT              ="a{sv}";
+function g_menu_names()
+  G_MENU_ATTRIBUTE_ACTION ="action";
+  G_MENU_ATTRIBUTE_ACTION_NAMESPACE ="action-namespace";
+  G_MENU_ATTRIBUTE_TARGET ="target";
+  G_MENU_ATTRIBUTE_LABEL ="label";
+  G_MENU_ATTRIBUTE_ICON ="icon";
+  G_MENU_LINK_SUBMENU ="submenu";
+  G_MENU_LINK_SECTION ="section";
+endfunction
+
+function g_variant_names()
+  G_VARIANT_TYPE_BOOLEAN              ="b";
+  G_VARIANT_TYPE_BYTE                 ="y";
+  G_VARIANT_TYPE_INT16                ="n";
+  G_VARIANT_TYPE_UINT16               ="q";
+  G_VARIANT_TYPE_INT32                ="i";
+  G_VARIANT_TYPE_UINT32               ="u";
+  G_VARIANT_TYPE_INT64                ="x";
+  G_VARIANT_TYPE_UINT64               ="t";
+  G_VARIANT_TYPE_DOUBLE               ="d";
+  G_VARIANT_TYPE_STRING               ="s";
+  G_VARIANT_TYPE_OBJECT_PATH          ="o";
+  G_VARIANT_TYPE_SIGNATURE            ="g";
+  G_VARIANT_TYPE_VARIANT              ="v";
+  G_VARIANT_TYPE_HANDLE               ="h";
+  G_VARIANT_TYPE_UNIT                 ="()";
+  G_VARIANT_TYPE_ANY                  ="*";
+  G_VARIANT_TYPE_BASIC                ="?";
+  G_VARIANT_TYPE_MAYBE                ="m*";
+  G_VARIANT_TYPE_ARRAY                ="a*";
+  G_VARIANT_TYPE_TUPLE                ="r";
+  G_VARIANT_TYPE_DICT_ENTRY           ="{?*}";
+  G_VARIANT_TYPE_DICTIONARY           ="a{?*}";
+  G_VARIANT_TYPE_STRING_ARRAY         ="as";
+  G_VARIANT_TYPE_OBJECT_PATH_ARRAY    ="ao";
+  G_VARIANT_TYPE_BYTESTRING           ="ay";
+  G_VARIANT_TYPE_BYTESTRING_ARRAY     ="aay";
+  G_VARIANT_TYPE_VARDICT              ="a{sv}";
+endfunction 
 
 // testgmenu.c
 // Copyright (C) 2011  Red Hat, Inc.
@@ -123,6 +128,8 @@ function item_activated (widget,data)
 endfunction
 
 function w=create_menuitem_from_model (model, item,group)
+  exec(g_variant_names)
+  exec(g_menu_names)
   [tag_label,label]= model.get_item_attribute[item,G_MENU_ATTRIBUTE_LABEL, "s"];
   [tag_action,action]=model.get_item_attribute[item,G_MENU_ATTRIBUTE_ACTION,"s"];
   if tag_action then
@@ -175,6 +182,7 @@ endfunction
 
 function append_items_from_model (menu,model,group,need_separator, ...
 				  heading)
+  exec(g_menu_names)
   n = model.get_n_items[];
   if need_separator && n > 0 then
     w = gtk_separator_menu_item_new ();
@@ -190,7 +198,6 @@ function append_items_from_model (menu,model,group,need_separator, ...
     w.set_sensitive[%f];
     menu.append[w];
   end
-
   for i = 0:n-1
     m = model.get_item_link[i, G_MENU_LINK_SECTION];
     if ~type(m,'short').equal['none'] then
@@ -326,6 +333,7 @@ function enabled_cell_func (column,cell,model,iter, data)
 endfunction
 
 function state_cell_func (column,cell,model,iter,data)
+  exec(g_variant_names)
   group = data(1);
   name = model.get_value[iter, 0];
   ok=execstr('state = group.get_action_state[name]',errcatch=%t);
@@ -362,6 +370,7 @@ function enabled_cell_toggled (cell,path_str,data)
 endfunction
 
 function state_cell_toggled (cell,path_str,data)
+  exec(g_variant_names)
   model = data(1);
   group = model.get_data["group"],
   path = gtk_tree_path_new(path_str);
@@ -456,7 +465,8 @@ endfunction
 //  Dynamic menu changes
 
 function toggle_sumerian (button, data)
-  //
+//
+  exec(g_menu_names)
   model = button.get_data[ "model"];
   adding = button.get_active[];
   m = model.get_item_link[model.get_n_items[] - 1, G_MENU_LINK_SECTION];
@@ -486,6 +496,7 @@ function action_list_remove (store, action)
 endfunction
 
 function toggle_italic (button, data)
+  exec(g_menu_names)
   tv = data(1);
   model = button.get_data["model"];
   group = button.get_data["group"];
@@ -506,6 +517,7 @@ function toggle_italic (button, data)
 endfunction
 
 function toggle_speed (button, data)
+  exec(g_menu_names)
   tv = data(1);
   model = button.get_data["model"];
   group = button.get_data["group"];

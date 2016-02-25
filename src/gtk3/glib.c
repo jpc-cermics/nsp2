@@ -1415,7 +1415,7 @@ static int _wrap_g_variant_is_of_type(NspGVariant *self,Stack stack,int rhs,int 
 {
   int_types T[] = {obj, t_end};
   GVariantType *type = NULL;
-  NspObject *nsp_type;
+  NspObject *nsp_type = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if ( IsGVariantType(nsp_type))
@@ -1790,7 +1790,7 @@ int _wrap_g_environ_getenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
 {
   int_types T[] = {obj,string, t_end};
   gchar **envp = NULL;
-  NspObject *nsp_envp;
+  NspObject *nsp_envp = NULL;
   char *variable;
   const gchar *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable) == FAIL) return RET_BUG;
@@ -1810,7 +1810,7 @@ int _wrap_g_environ_setenv(Stack stack, int rhs, int opt, int lhs) /* g_environ_
 {
   int_types T[] = {obj,string,string,s_bool, t_end};
   gchar **envp = NULL, **ret;
-  NspObject *nsp_envp, *nsp_ret;
+  NspObject *nsp_envp = NULL, *nsp_ret;
   char *variable, *value;
   int overwrite;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable, &value, &overwrite) == FAIL) return RET_BUG;
@@ -1833,7 +1833,7 @@ int _wrap_g_environ_unsetenv(Stack stack, int rhs, int opt, int lhs) /* g_enviro
 {
   int_types T[] = {obj,string, t_end};
   gchar **envp = NULL, **ret;
-  NspObject *nsp_envp, *nsp_ret;
+  NspObject *nsp_envp = NULL, *nsp_ret;
   char *variable;
   if ( GetArgs(stack,rhs,opt,T,&nsp_envp, &variable) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_envp))
@@ -1948,7 +1948,7 @@ int _wrap_g_file_open_tmp(Stack stack, int rhs, int opt, int lhs) /* g_file_open
   int_types T[] = {string,obj, t_end};
   char *tmpl;
   gchar **name_used = NULL;
-  NspObject *nsp_name_used;
+  NspObject *nsp_name_used = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&tmpl, &nsp_name_used) == FAIL) return RET_BUG;
@@ -1990,7 +1990,7 @@ int _wrap_g_build_pathv(Stack stack, int rhs, int opt, int lhs) /* g_build_pathv
   int_types T[] = {string,obj, t_end};
   char *separator;
   gchar **args = NULL, *ret;
-  NspObject *nsp_args;
+  NspObject *nsp_args = NULL;
   if ( GetArgs(stack,rhs,opt,T,&separator, &nsp_args) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_args))
     { args =  ((NspSMatrix *) nsp_args)->S;}
@@ -2009,7 +2009,7 @@ int _wrap_g_build_filenamev(Stack stack, int rhs, int opt, int lhs) /* g_build_f
 {
   int_types T[] = {obj, t_end};
   gchar **args = NULL, *ret;
-  NspObject *nsp_args;
+  NspObject *nsp_args = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_args) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_args))
     { args =  ((NspSMatrix *) nsp_args)->S;}
@@ -2687,7 +2687,7 @@ int _wrap_g_strtod(Stack stack, int rhs, int opt, int lhs) /* g_strtod */
   int_types T[] = {string,obj, t_end};
   char *nptr;
   gchar **endptr = NULL;
-  NspObject *nsp_endptr;
+  NspObject *nsp_endptr = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nptr, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_endptr))
@@ -2707,7 +2707,7 @@ int _wrap_g_ascii_strtod(Stack stack, int rhs, int opt, int lhs) /* g_ascii_strt
   int_types T[] = {string,obj, t_end};
   char *nptr;
   gchar **endptr = NULL;
-  NspObject *nsp_endptr;
+  NspObject *nsp_endptr = NULL;
   double ret;
   if ( GetArgs(stack,rhs,opt,T,&nptr, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_endptr))
@@ -2931,7 +2931,7 @@ int _wrap_g_strjoinv(Stack stack, int rhs, int opt, int lhs) /* g_strjoinv */
   int_types T[] = {string,obj, t_end};
   char *separator;
   gchar **str_array = NULL, *ret;
-  NspObject *nsp_str_array;
+  NspObject *nsp_str_array = NULL;
   if ( GetArgs(stack,rhs,opt,T,&separator, &nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
@@ -2950,7 +2950,7 @@ int _wrap_g_strfreev(Stack stack, int rhs, int opt, int lhs) /* g_strfreev */
 {
   int_types T[] = {obj, t_end};
   gchar **str_array = NULL;
-  NspObject *nsp_str_array;
+  NspObject *nsp_str_array = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
@@ -2967,7 +2967,7 @@ int _wrap_g_strdupv(Stack stack, int rhs, int opt, int lhs) /* g_strdupv */
 {
   int_types T[] = {obj, t_end};
   gchar **str_array = NULL, **ret;
-  NspObject *nsp_str_array, *nsp_ret;
+  NspObject *nsp_str_array = NULL, *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
     { str_array =  ((NspSMatrix *) nsp_str_array)->S;}
@@ -2988,7 +2988,7 @@ int _wrap_g_strv_length(Stack stack, int rhs, int opt, int lhs) /* g_strv_length
 {
   int_types T[] = {obj, t_end};
   gchar **str_array = NULL;
-  NspObject *nsp_str_array;
+  NspObject *nsp_str_array = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_str_array) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_str_array))
@@ -3493,7 +3493,7 @@ int _wrap_g_utf8_validate(Stack stack, int rhs, int opt, int lhs) /* g_utf8_vali
   char *str;
   int max_len, ret;
   const gchar **end = NULL;
-  NspObject *nsp_end;
+  NspObject *nsp_end = NULL;
   if ( GetArgs(stack,rhs,opt,T,&str, &max_len, &nsp_end) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_end))
     { end = (const gchar **) ((NspSMatrix *) nsp_end)->S;}
@@ -3827,7 +3827,7 @@ int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_p
 {
   int_types T[] = {obj,string,string,obj, t_end};
   GVariantType *type = NULL;
-  NspObject *nsp_type, *nsp_endptr, *nsp_ret;
+  NspObject *nsp_type = NULL, *nsp_endptr = NULL, *nsp_ret;
   char *text, *limit;
   const gchar **endptr = NULL;
   GError *error = NULL;
@@ -3878,7 +3878,7 @@ int _wrap_g_variant_type_string_scan(Stack stack, int rhs, int opt, int lhs) /* 
   int_types T[] = {string,string,obj, t_end};
   char *string, *limit;
   const gchar **endptr = NULL;
-  NspObject *nsp_endptr;
+  NspObject *nsp_endptr = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&string, &limit, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsSMat(nsp_endptr))
@@ -4229,7 +4229,7 @@ static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,Nsp
 
 GVariant *nsp_copy_GVariant(GVariant *gv)
 {
-  return g_variant_ref(gv); /* XXXX */
+  return (gv == NULL) ? NULL : g_variant_ref(gv); /* XXXX */
 }
 
 GVariantType *nsp_copy_GVariantType(GVariantType *gv)

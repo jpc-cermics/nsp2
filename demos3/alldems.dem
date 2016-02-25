@@ -94,6 +94,7 @@ function create_demo_window()
   button.connect["clicked",win_hide,list(win)];
   //button.set_flags[GTK.CAN_DEFAULT]
   box2.pack_start[button,expand= %f,fill=%f,padding=0];
+  button.set_can_default[%t];
   button.grab_default[]
   button.show[]
   win.show[]

@@ -62,6 +62,7 @@ function demo_notebook()
   button.connect["clicked", rotate_notebook,list(notebook)];
   box2.pack_start[button]
   //button.set_flags[GTK.CAN_DEFAULT]
+  button.set_can_default[%t]
   button.grab_default[]
   button.show[]
   win.show[]

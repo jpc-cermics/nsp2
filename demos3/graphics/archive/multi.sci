@@ -24,6 +24,7 @@ function create_graphics()
   button.connect["clicked", win_delete,list(win)];
   win.action_area.pack_start[button]
   //button.set_flags[GTK.CAN_DEFAULT]
+  button.set_can_default[%t]
   button.grab_default[]
   button.show[]
   win.show_all[] // must be sure that graphic window is realized

@@ -133,7 +133,7 @@ function  demo_calendar()
   button.connect[  "clicked", button_destroy_win,list(window)];
 
   bbox.add[  button]
-  //button.set_flags[GTK.CAN_DEFAULT];
+  button.set_can_default[%t]
   button.grab_default[];
   window.show_all[];
 endfunction

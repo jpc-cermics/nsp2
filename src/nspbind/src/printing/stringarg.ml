@@ -1932,7 +1932,7 @@ let file_arg_write_param _oname params info _byref=
       match params.pdflt with
       | None ->
 	  let varlist1 = varlist_add info.varlist "FILE"  ("*" ^ params.pname ^ " = NULL") in
-	  let varlist1 = varlist_add varlist1 "NspObject"  ("*nsp_" ^ params.pname) in
+	  let varlist1 = varlist_add varlist1 "NspObject"  ("*nsp_" ^ params.pname ^ " = NULL" ) in
 	  (varlist1, null params.pname  , params.pname , info )
       | Some x ->
 	  let varlist1 = varlist_add info.varlist "FILE"  ("*" ^ params.pname ^ " = " ^ x ) in
@@ -1941,7 +1941,7 @@ let file_arg_write_param _oname params info _byref=
     else
       match params.pdflt with
       | None ->
-	let varlist1 = varlist_add info.varlist "NspObject"  ("*" ^ params.pname) in
+	let varlist1 = varlist_add info.varlist "NspObject"  ("*" ^ params.pname ^ " = NULL" ) in
 	let info = add_parselist info params.pvarargs "obj_check"  ["&PyFile_Type"; ("&" ^ params.pname)]  [params.pname] in
 	(varlist1, (Printf.sprintf "%s" params.pname), "PyFile_AsFile(" ^ params.pname ^ ")" , info)
       | Some x ->
@@ -3234,7 +3234,7 @@ let object_arg_write_param object_data _oname params info _byref=
     match params.pdflt with
     | None ->
 	let varlist1 =varlist_add info.varlist object_data.od_objname ("*" ^ params.pname ^ " = NULL") in
-	let varlist1 = varlist_add varlist1 "NspObject" ("*nsp_" ^ params.pname) in
+	let varlist1 = varlist_add varlist1 "NspObject" ("*nsp_" ^ params.pname ^ " = NULL") in
 	(varlist1, null params.pname object_data.od_objname od_cast)
     | Some x ->
 	let varlist1 = varlist_add info.varlist object_data.od_objname  ("*" ^ params.pname ^ " = " ^ x) in
@@ -3262,7 +3262,7 @@ let object_arg_write_param object_data _oname params info _byref=
 	    match object_data.od_cast with
 	    | "GObject" -> "NspGObject"
 	    | _ -> "NspObject" in
-	  let varlist1 = varlist_add  info.varlist nsp_obj  ("*" ^ params.pname) in
+	  let varlist1 = varlist_add  info.varlist nsp_obj  ("*" ^ params.pname  ^ " = NULL") in
 	  ( varlist1, "",
 	    add_parselist info params.pvarargs "obj_check"  ["&nsp_type_" ^ tn; "&" ^ params.pname]  [params.pname],
 	    match object_data.od_cast with
@@ -3736,9 +3736,7 @@ let struct_arg_write_param_gen object_rec _oname params info _byref set_value =
     else
       struct_check object_rec name in
   let initial_value =
-    if set_value == "" then
-      (if params.pnull then" = NULL" else "")
-    else set_value in
+    if set_value = "" then " = NULL"  else set_value in
   let varlist = varlist_add varlist "NspObject" ("*nsp_" ^ name ^  initial_value) in
   let info = add_parselist info params.pvarargs "obj" ["&nsp_" ^ name] [name] in
   { info with
@@ -3942,7 +3940,7 @@ let boxed_arg_write_param boxed_data _oname params info _byref=
 	boxed_null pname boxed_data.bd_typename boxed_data.bd_typecode)
     else
       let varlist = varlist_add info.varlist boxed_data.bd_typename ( "*"  ^  pname  ^  " = NULL") in
-      ( varlist_add varlist "NspObject" ( "*nsp_"  ^  pname),
+      ( varlist_add varlist "NspObject" ( "*nsp_"  ^  pname ^ " = NULL"),
 	boxed_check pname boxed_data.bd_typename boxed_data.bd_typecode) in
   let (flag, new_type) = strip_type params.ptype in
   let arglist =
@@ -4052,10 +4050,7 @@ let string_array_arg_write_param cast _oname params info _byref=
     else
       string_array_check cast name in
   let varlist =
-    if params.pnull then
-      varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL")
-    else
-      varlist_add varlist "NspObject" ("*nsp_" ^ name) in
+    varlist_add varlist "NspObject" ("*nsp_" ^ name ^ " = NULL") in
   let info = add_parselist info params.pvarargs "obj" ["&nsp_" ^ name] [name] in
   { info with
     arglist = name :: info.arglist;
@@ -4264,7 +4259,7 @@ let custom_boxed_arg_write_param custom_boxed_data _oname params info _byref=
 	pname,
 	cba_null pname custom_boxed_data.cbd_getter custom_boxed_data.cbd_checker new_type)
     else
-      ( varlist_add info.varlist "NspObject" ( "*"  ^  pname),
+      ( varlist_add info.varlist "NspObject" ( "*"  ^  pname ^  " = NULL"),
 	add_parselist info params.pvarargs "obj_check" ["&"  ^  custom_boxed_data.cbd_nsp_type ^ "&"  ^  pname] [pname],
 	custom_boxed_data.cbd_getter  ^  "("  ^  pname  ^  ")",
 	""
@@ -4344,7 +4339,7 @@ let pointer_arg_write_param pointer_data _oname params info _byref=
        pa_null pname pointer_data.pd_typename pointer_data.pd_typecode)
     else
       let varlist = varlist_add info.varlist pointer_data.pd_typename ( "*"  ^  pname  ^  " = NULL") in
-      ( varlist_add varlist "NspObject" ( "*nsp_"  ^  pname),
+      ( varlist_add varlist "NspObject" ( "*nsp_"  ^  pname ^  " = NULL" ),
 	pa_check pname pointer_data.pd_typename pointer_data.pd_typecode) in
   let arglist = pname in
   let info = add_parselist info params.pvarargs "obj" ["&nsp_"  ^  pname] [pname] in
