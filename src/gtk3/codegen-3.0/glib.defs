@@ -12929,32 +12929,36 @@
   )
 )
 
-;; (define-method is_subtype_of
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_is_subtype_of")
-;;   (return-type "gboolean")
-;;   (parameters
-;;     '("const-GVariantType*" "supertype")
-;;   )
-;; )
+(define-method is_subtype_of
+  (of-object "GVariantType")
+  (c-name "g_variant_type_is_subtype_of")
+  (call " ret =g_variant_type_is_subtype_of(self->obj->value,supertype);")
+  (return-type "gboolean")
+  (parameters
+    '("const-GVariantType*" "supertype")
+  )
+)
 
-;; (define-method element
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_element")
-;;   (return-type "const-GVariantType*")
-;; )
+(define-method element
+  (of-object "GVariantType")
+  (c-name "g_variant_type_element")
+  (call "  ret = g_variant_type_element(self->obj->value);")
+  (return-type "const-GVariantType*")
+)
 
-;; (define-method first
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_first")
-;;   (return-type "const-GVariantType*")
-;; )
+(define-method first
+  (of-object "GVariantType")
+  (c-name "g_variant_type_first")
+  (call "  ret =g_variant_type_first(self->obj->value);")
+  (return-type "const-GVariantType*")
+)
 
-;; (define-method next
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_next")
-;;   (return-type "const-GVariantType*")
-;; )
+(define-method next
+  (of-object "GVariantType")
+  (c-name "g_variant_type_next")
+  (call "  ret =g_variant_type_next(self->obj->value);")
+  (return-type "const-GVariantType*")
+)
 
 (define-method n_items
   (of-object "GVariantType")
@@ -12963,35 +12967,39 @@
   (return-type "gsize")
 )
 
-;; (define-method key
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_key")
-;;   (return-type "const-GVariantType*")
-;; )
+;; XXX: we use call here since self is not the direct argument of the C-method 
 
-;; (define-method value
-;;   (of-object "GVariantType")
-;;   (c-name "g_variant_type_value")
-;;   (return-type "const-GVariantType*")
-;; )
+(define-method key
+  (of-object "GVariantType")
+  (c-name "g_variant_type_key")
+  (call "ret = g_variant_type_key(self->obj->value);")
+  (return-type "const-GVariantType*")
+)
 
-;; (define-function g_variant_type_new_array
-;;   (c-name "g_variant_type_new_array")
-;;   (is-constructor-of "GVariantType")
-;;   (return-type "GVariantType*")
-;;   (parameters
-;;     '("const-GVariantType*" "element")
-;;   )
-;; )
+(define-method value
+  (of-object "GVariantType")
+  (c-name "g_variant_type_value")
+  (call "  ret =g_variant_type_value(self->obj->value);")
+  (return-type "const-GVariantType*")
+)
 
-;; (define-function g_variant_type_new_maybe
-;;   (c-name "g_variant_type_new_maybe")
-;;   (is-constructor-of "GVariantType")
-;;   (return-type "GVariantType*")
-;;   (parameters
-;;     '("const-GVariantType*" "element")
-;;   )
-;; )
+(define-function g_variant_type_new_array
+  (c-name "g_variant_type_new_array")
+  (is-constructor-of "GVariantType")
+  (return-type "GVariantType*")
+  (parameters
+    '("const-GVariantType*" "element")
+  )
+)
+
+(define-function g_variant_type_new_maybe
+  (c-name "g_variant_type_new_maybe")
+  (is-constructor-of "GVariantType")
+  (return-type "GVariantType*")
+  (parameters
+    '("const-GVariantType*" "element")
+  )
+)
 
 (define-function g_variant_type_new_tuple
   (c-name "g_variant_type_new_tuple")
@@ -13003,15 +13011,15 @@
   )
 )
 
-;; (define-function g_variant_type_new_dict_entry
-;;   (c-name "g_variant_type_new_dict_entry")
-;;   (is-constructor-of "GVariantType")
-;;   (return-type "GVariantType*")
-;;   (parameters
-;;     '("const-GVariantType*" "key")
-;;     '("const-GVariantType*" "value")
-;;   )
-;; )
+(define-function g_variant_type_new_dict_entry
+  (c-name "g_variant_type_new_dict_entry")
+  (is-constructor-of "GVariantType")
+  (return-type "GVariantType*")
+  (parameters
+    '("const-GVariantType*" "key")
+    '("const-GVariantType*" "value")
+  )
+)
 
 (define-function g_variant_type_checked_
   (c-name "g_variant_type_checked_")
@@ -13020,8 +13028,6 @@
     '("const-gchar" "*")
   )
 )
-
-
 
 ;; From gversion.h
 

@@ -871,7 +871,7 @@ static int _wrap_nsp_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agnxtnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *n;
+  NspObject *n = NULL;
   NspAgnode *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agnxtnode(self,((NspAgnode *) n));
@@ -893,7 +893,7 @@ static int _wrap_nsp_aglstnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agprvnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *n;
+  NspObject *n = NULL;
   NspAgnode *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agprvnode(self,((NspAgnode *) n));
@@ -917,7 +917,7 @@ static int _wrap_nsp_agfindnode_by_name(NspAgraph *self,Stack stack,int rhs,int 
 static int _wrap_nsp_agfstedge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *n;
+  NspObject *n = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agfstedge(self,((NspAgnode *) n));
@@ -929,7 +929,7 @@ static int _wrap_nsp_agfstedge(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agnxtedge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,obj_check, t_end};
-  NspObject *e, *n;
+  NspObject *e = NULL, *n = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e, &nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agnxtedge(self,((NspAgedge *) e),((NspAgnode *) n));
@@ -941,7 +941,7 @@ static int _wrap_nsp_agnxtedge(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agfstin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *n;
+  NspObject *n = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agfstin(self,((NspAgnode *) n));
@@ -953,7 +953,7 @@ static int _wrap_nsp_agfstin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
 static int _wrap_nsp_agnxtin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *e;
+  NspObject *e = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e) == FAIL) return RET_BUG;
     ret =nsp_agnxtin(self,((NspAgedge *) e));
@@ -965,7 +965,7 @@ static int _wrap_nsp_agnxtin(NspAgraph *self,Stack stack,int rhs,int opt,int lhs
 static int _wrap_nsp_agfstout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *n;
+  NspObject *n = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
     ret =nsp_agfstout(self,((NspAgnode *) n));
@@ -977,7 +977,7 @@ static int _wrap_nsp_agfstout(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 static int _wrap_nsp_agnxtout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *e;
+  NspObject *e = NULL;
   NspAgedge *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &e) == FAIL) return RET_BUG;
     ret =nsp_agnxtout(self,((NspAgedge *) e));
@@ -1021,7 +1021,7 @@ static int _wrap_nsp_agnxtsubg(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agdelsubg(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *sub;
+  NspObject *sub = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agraph, &sub) == FAIL) return RET_BUG;
     nsp_agdelsubg(self,((NspAgraph *) sub));
   return 0;
@@ -1030,7 +1030,7 @@ static int _wrap_nsp_agdelsubg(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agdelnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *arg_n;
+  NspObject *arg_n = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &arg_n) == FAIL) return RET_BUG;
     nsp_agdelnode(self,((NspAgnode *) arg_n));
   return 0;
@@ -1039,7 +1039,7 @@ static int _wrap_nsp_agdelnode(NspAgraph *self,Stack stack,int rhs,int opt,int l
 static int _wrap_nsp_agdeledge(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspObject *arg_n;
+  NspObject *arg_n = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_agedge, &arg_n) == FAIL) return RET_BUG;
     nsp_agdeledge(self,((NspAgedge *) arg_n));
   return 0;

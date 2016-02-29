@@ -27,16 +27,16 @@
 
 (define-method test_return
   (of-object "ClassC")
-  (c-name "ZZg_action_get_parameter_type")
+  (c-name "g_action_get_parameter_type")
   (call " ret=NULL; ")
-  (return-type "const-ClassC*")
+  (return-type "ClassC*")
 )
 
 ;; when a function use a Structex* as argument
 
 (define-method test_arg  
   (of-object "ClassC")
-  (c-name "ZZg_action_change_state")
+  (c-name "g_action_change_state")
   (call "  ")
   (return-type "none")
   (parameters

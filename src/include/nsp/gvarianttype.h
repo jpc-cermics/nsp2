@@ -96,7 +96,7 @@ extern NspGVariantType *nsp_gvarianttype_xdr_load_partial(XDR *xdrs, NspGVariant
 extern int nsp_gvarianttype_xdr_save(XDR  *xdrs, NspGVariantType *M);
 
 #line 47 "codegen/glib.override"
-GVariantType *nsp_copy_GVariantType(GVariantType *gv);
+GVariantType *nsp_copy_GVariantType(const GVariantType *gv);
 
 #line 102 "./gvarianttype.h"
 #endif /* NSP_INC_NspGVariantType */ 

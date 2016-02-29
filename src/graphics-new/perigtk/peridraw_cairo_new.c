@@ -145,6 +145,37 @@ static void drawrectangle(BCG *Xgc,const double rect[])
 static void fillrectangle(BCG *Xgc,const double rect[])
 {
   cairo_t *cr =  Xgc->private->cairo_drawable_cr;
+  int cpat = Xgc->graphic_engine->xget_color(Xgc);
+#if 0
+  {
+    cairo_pattern_t *pat1;  
+    int length=10, xr = rect[0]+rect[2],yr=rect[1], yd=rect[1]+rect[3];
+    /* right */
+    pat1 = cairo_pattern_create_linear(xr,rect[1],xr+length,yr);
+    cairo_pattern_add_color_stop_rgb(pat1, 0, 0.5, 0.5, 0.5);
+    cairo_pattern_add_color_stop_rgb(pat1, 1.0, 1, 1, 1);
+    cairo_rectangle (cr,xr,yr,length,rect[3]);
+    cairo_set_source(cr, pat1);
+    cairo_fill(cr);  
+    cairo_pattern_destroy(pat1);
+    /* down */
+    pat1 = cairo_pattern_create_linear(rect[0],yd,rect[0],yd+length);
+    cairo_pattern_add_color_stop_rgb(pat1, 0, 0.5, 0.5, 0.5);
+    cairo_pattern_add_color_stop_rgb(pat1, 1.0, 1, 1, 1);
+    cairo_rectangle (cr,rect[0],yd,rect[2],length);
+    cairo_set_source(cr, pat1);
+    cairo_fill(cr);  
+    /* corner */
+    pat1 = cairo_pattern_create_linear(xr,yd,xr+length/2.0,yd+length/2.0);
+    cairo_pattern_add_color_stop_rgb(pat1, 0, 0.5, 0.5, 0.5);
+    cairo_pattern_add_color_stop_rgb(pat1, 1.0, 1, 1, 1);
+    cairo_rectangle (cr,xr,yd,length,length);
+    cairo_set_source(cr, pat1);
+    cairo_fill(cr);  
+    cairo_pattern_destroy(pat1);
+  }
+#endif 
+  Xgc->graphic_engine->xset_color(Xgc,cpat);
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_fill (cr);
 }

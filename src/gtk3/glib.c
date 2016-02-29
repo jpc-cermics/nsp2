@@ -503,6 +503,89 @@ int int_gvarianttype_create(Stack stack, int rhs, int opt, int lhs)
  * Methods
  *-------------------------------------------*/
 static int
+_wrap_g_variant_type_new_dict_entry (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj,obj, t_end};
+  const GVariantType *key = NULL, *value = NULL;
+  NspObject *nsp_key = NULL, *nsp_value = NULL;
+  void *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_key, &nsp_value) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_key))
+    { key = ((NspGVariantType *) nsp_key)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: key should be of type GVariantType\n");
+      return RET_BUG;
+    }
+  if ( IsGVariantType(nsp_value))
+    { value = ((NspGVariantType *) nsp_value)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: value should be of type GVariantType\n");
+      return RET_BUG;
+    }
+  if ((ret = g_variant_type_new_dict_entry(key,value))== NULL) return RET_BUG;
+
+  nsp_type_gvarianttype = new_type_gvarianttype(T_BASE);
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
+_wrap_g_variant_type_new_maybe (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj, t_end};
+  const GVariantType *element = NULL;
+  NspObject *nsp_element = NULL;
+  void *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_element) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_element))
+    { element = ((NspGVariantType *) nsp_element)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: element should be of type GVariantType\n");
+      return RET_BUG;
+    }
+  if ((ret = g_variant_type_new_maybe(element))== NULL) return RET_BUG;
+
+  nsp_type_gvarianttype = new_type_gvarianttype(T_BASE);
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
+_wrap_g_variant_type_new_array (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj, t_end};
+  const GVariantType *element = NULL;
+  NspObject *nsp_element = NULL;
+  void *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_element) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_element))
+    { element = ((NspGVariantType *) nsp_element)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: element should be of type GVariantType\n");
+      return RET_BUG;
+    }
+  if ((ret = g_variant_type_new_array(element))== NULL) return RET_BUG;
+
+  nsp_type_gvarianttype = new_type_gvarianttype(T_BASE);
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
 _wrap_g_variant_type_new (Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {string, t_end};
@@ -618,12 +701,107 @@ static int _wrap_g_variant_type_is_variant(NspGVariantType *self,Stack stack,int
   return 1;
 }
 
+static int _wrap_g_variant_type_is_subtype_of(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  const GVariantType *supertype = NULL;
+  NspObject *nsp_supertype = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_supertype) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_supertype))
+    { supertype = ((NspGVariantType *) nsp_supertype)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: supertype should be of type GVariantType\n");
+      return RET_BUG;
+    }
+ ret =g_variant_type_is_subtype_of(self->obj->value,supertype);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_variant_type_element(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const GVariantType *ret;
+  GVariantType *ret1;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = g_variant_type_element(self->obj->value);
+  nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_variant_type_first(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const GVariantType *ret;
+  GVariantType *ret1;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_variant_type_first(self->obj->value);
+  nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_variant_type_next(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const GVariantType *ret;
+  GVariantType *ret1;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_variant_type_next(self->obj->value);
+  nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static int _wrap_g_variant_type_n_items(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
   CheckRhs(0,0);
   ret =g_variant_type_n_items(self->obj->value);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_g_variant_type_key(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const GVariantType *ret;
+  GVariantType *ret1;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+ret = g_variant_type_key(self->obj->value);
+  nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_g_variant_type_value(NspGVariantType *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const GVariantType *ret;
+  GVariantType *ret1;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_variant_type_value(self->obj->value);
+  nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
@@ -639,7 +817,13 @@ static NspMethods gvarianttype_methods[] = {
   {"is_tuple",(nsp_method *) _wrap_g_variant_type_is_tuple},
   {"is_dict_entry",(nsp_method *) _wrap_g_variant_type_is_dict_entry},
   {"is_variant",(nsp_method *) _wrap_g_variant_type_is_variant},
+  {"is_subtype_of",(nsp_method *) _wrap_g_variant_type_is_subtype_of},
+  {"element",(nsp_method *) _wrap_g_variant_type_element},
+  {"first",(nsp_method *) _wrap_g_variant_type_first},
+  {"next",(nsp_method *) _wrap_g_variant_type_next},
   {"n_items",(nsp_method *) _wrap_g_variant_type_n_items},
+  {"key",(nsp_method *) _wrap_g_variant_type_key},
+  {"value",(nsp_method *) _wrap_g_variant_type_value},
   { NULL, NULL}
 };
 
@@ -1182,7 +1366,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1186 "glib.c"
+#line 1370 "glib.c"
 
 
 static int
@@ -1414,13 +1598,12 @@ static int _wrap_g_variant_get_type_string(NspGVariant *self,Stack stack,int rhs
 static int _wrap_g_variant_is_of_type(NspGVariant *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, t_end};
-  GVariantType *type = NULL;
+  const GVariantType *type = NULL;
   NspObject *nsp_type = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if ( IsGVariantType(nsp_type))
     { type = ((NspGVariantType *) nsp_type)->obj->value;
-      if((type = nsp_copy_GVariantType(type))==NULL) return RET_BUG;
     }
   else
     {
@@ -1670,7 +1853,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 1674 "glib.c"
+#line 1857 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -3826,7 +4009,7 @@ int _wrap_g_variant_is_signature(Stack stack, int rhs, int opt, int lhs) /* g_va
 int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_parse */
 {
   int_types T[] = {obj,string,string,obj, t_end};
-  GVariantType *type = NULL;
+  const GVariantType *type = NULL;
   NspObject *nsp_type = NULL, *nsp_endptr = NULL, *nsp_ret;
   char *text, *limit;
   const gchar **endptr = NULL;
@@ -3835,7 +4018,6 @@ int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_p
   if ( GetArgs(stack,rhs,opt,T,&nsp_type, &text, &limit, &nsp_endptr) == FAIL) return RET_BUG;
   if ( IsGVariantType(nsp_type))
     { type = ((NspGVariantType *) nsp_type)->obj->value;
-      if((type = nsp_copy_GVariantType(type))==NULL) return RET_BUG;
     }
   else
     {
@@ -3912,7 +4094,10 @@ int _wrap_glib_check_version(Stack stack, int rhs, int opt, int lhs) /* glib_che
 static OpTab glib_func[]={
   { "g_variant_type_new", _wrap_g_variant_type_new},
   { "gvarianttype_new", _wrap_g_variant_type_new},
+  { "g_variant_type_new_array", _wrap_g_variant_type_new_array},
+  { "g_variant_type_new_maybe", _wrap_g_variant_type_new_maybe},
  /* gvarianttype_new g_variant_type_new_tuple */
+  { "g_variant_type_new_dict_entry", _wrap_g_variant_type_new_dict_entry},
   { "g_variant_new_boolean", _wrap_g_variant_new_boolean},
   { "g_variant_new_byte", _wrap_g_variant_new_byte},
   { "g_variant_new_int16", _wrap_g_variant_new_int16},
@@ -4229,12 +4414,12 @@ static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,Nsp
 
 GVariant *nsp_copy_GVariant(GVariant *gv)
 {
-  return (gv == NULL) ? NULL : g_variant_ref(gv); /* XXXX */
+  return g_variant_ref(gv); /* XXXX */
 }
 
-GVariantType *nsp_copy_GVariantType(GVariantType *gv)
+GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
 {
   return g_variant_type_copy(gv);
 }
 
-#line 4241 "glib.c"
+#line 4426 "glib.c"

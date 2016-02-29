@@ -44,7 +44,7 @@ GVariant *nsp_copy_GVariant(GVariant *gv);
 
 %%
 include-public GVariantType
-GVariantType *nsp_copy_GVariantType(GVariantType *gv);
+GVariantType *nsp_copy_GVariantType(const GVariantType *gv);
 
 %%
 init
@@ -337,10 +337,10 @@ static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,Nsp
 
 GVariant *nsp_copy_GVariant(GVariant *gv)
 {
-  return (gv == NULL) ? NULL : g_variant_ref(gv); /* XXXX */
+  return g_variant_ref(gv); /* XXXX */
 }
 
-GVariantType *nsp_copy_GVariantType(GVariantType *gv)
+GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
 {
   return g_variant_type_copy(gv);
 }

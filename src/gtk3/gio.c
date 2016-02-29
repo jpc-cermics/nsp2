@@ -822,13 +822,14 @@ static int _wrap_g_action_get_name(NspGAction *self,Stack stack,int rhs,int opt,
 
 static int _wrap_g_action_get_parameter_type(NspGAction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  GVariantType *ret;
+  const GVariantType *ret;
+  GVariantType *ret1;
   NspObject *nsp_ret;
   CheckRhs(0,0);
   ret = (GVariantType *) g_action_get_parameter_type(G_ACTION(self->obj));
   nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
-  if((ret = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
-  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -836,13 +837,14 @@ static int _wrap_g_action_get_parameter_type(NspGAction *self,Stack stack,int rh
 
 static int _wrap_g_action_get_state_type(NspGAction *self,Stack stack,int rhs,int opt,int lhs)
 {
-  GVariantType *ret;
+  const GVariantType *ret;
+  GVariantType *ret1;
   NspObject *nsp_ret;
   CheckRhs(0,0);
   ret = (GVariantType *) g_action_get_state_type(G_ACTION(self->obj));
   nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
-  if((ret = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
-  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -1166,13 +1168,14 @@ static int _wrap_g_action_group_get_action_parameter_type(NspGActionGroup *self,
 {
   int_types T[] = {string, t_end};
   char *action_name;
-  GVariantType *ret;
+  const GVariantType *ret;
+  GVariantType *ret1;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&action_name) == FAIL) return RET_BUG;
   ret =(GVariantType*) g_action_group_get_action_parameter_type(G_ACTION_GROUP(self->obj),action_name);
   nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
-  if((ret = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
-  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -1182,13 +1185,14 @@ static int _wrap_g_action_group_get_action_state_type(NspGActionGroup *self,Stac
 {
   int_types T[] = {string, t_end};
   char *action_name;
-  GVariantType *ret;
+  const GVariantType *ret;
+  GVariantType *ret1;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&action_name) == FAIL) return RET_BUG;
   ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name);
   nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
-  if((ret = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
-  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret,(NspTypeBase *) nsp_type_gvarianttype);
+  if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);
   if ( nsp_ret == NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -1575,7 +1579,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 1579 "gio.c"
+#line 1583 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -1637,7 +1641,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 1641 "gio.c"
+#line 1645 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -13287,7 +13291,7 @@ static int _wrap_g_menu_model_get_item_attribute_value(NspGMenuModel *self,Stack
 	{NULL,t_end,NULLOBJ,-1} };
   int item_index;
   char *attribute;
-  GVariantType *expected_type = NULL;
+  const GVariantType *expected_type = NULL;
   NspObject *nsp_expected_type = NULL, *nsp_ret;
   GVariant *ret;
   if ( GetArgs(stack,rhs,opt,T,&item_index, &attribute, opts, &nsp_expected_type) == FAIL) return RET_BUG;
@@ -13299,7 +13303,6 @@ static int _wrap_g_menu_model_get_item_attribute_value(NspGMenuModel *self,Stack
         {Scierror("Error: expected_type should be of type GVariantType\n");
          return RET_BUG;
         }
-      if((expected_type = nsp_copy_GVariantType(expected_type))==NULL) return RET_BUG;
      }
     ret =g_menu_model_get_item_attribute_value(G_MENU_MODEL(self->obj),item_index,attribute,expected_type);
   nsp_type_gvariant= new_type_gvariant(T_BASE);
@@ -13350,7 +13353,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13354 "gio.c"
+#line 13357 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -13406,7 +13409,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13410 "gio.c"
+#line 13413 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -18941,7 +18944,7 @@ _wrap_g_simple_action_new_stateful (Stack stack, int rhs, int opt, int lhs)
 	{"state",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *name;
-  GVariantType *parameter_type = NULL;
+  const GVariantType *parameter_type = NULL;
   NspObject *nsp_parameter_type = NULL, *nsp_state = NULL;
   GVariant *state = NULL;
   GObject *ret; NspObject *nsp_ret;
@@ -18954,7 +18957,6 @@ _wrap_g_simple_action_new_stateful (Stack stack, int rhs, int opt, int lhs)
         {Scierror("Error: parameter_type should be of type GVariantType\n");
          return RET_BUG;
         }
-      if((parameter_type = nsp_copy_GVariantType(parameter_type))==NULL) return RET_BUG;
      }
   if (nsp_state != NULL)
      {
@@ -18983,7 +18985,7 @@ _wrap_g_simple_action_new (Stack stack, int rhs, int opt, int lhs)
 	{"parameter_type",obj,NULLOBJ,-1},
 	{NULL,t_end,NULLOBJ,-1} };
   char *name;
-  GVariantType *parameter_type = NULL;
+  const GVariantType *parameter_type = NULL;
   NspObject *nsp_parameter_type = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name, opts, &nsp_parameter_type) == FAIL) return RET_BUG;
@@ -18995,7 +18997,6 @@ _wrap_g_simple_action_new (Stack stack, int rhs, int opt, int lhs)
         {Scierror("Error: parameter_type should be of type GVariantType\n");
          return RET_BUG;
         }
-      if((parameter_type = nsp_copy_GVariantType(parameter_type))==NULL) return RET_BUG;
      }
   if ((ret = (GObject *)g_simple_action_new(name,parameter_type))== NULL) return RET_BUG;
 
@@ -27305,7 +27306,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27309 "gio.c"
+#line 27310 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28274,4 +28275,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 28278 "gio.c"
+#line 28279 "gio.c"

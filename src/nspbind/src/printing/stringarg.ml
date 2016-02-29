@@ -3725,16 +3725,66 @@ let struct_null object_rec name =
   \n     }\n" name typename name name typename name tag name typename name typename name
   ;;
 
+(* no need to make a copy if required argument is const *)
+
+let struct_check_const object_rec name =
+  let typename = object_rec.or_c_name in
+  let byref = object_rec.or_byref in
+  let tag = if byref then "obj->" else "" in
+  Printf.sprintf "  if ( Is%s(nsp_%s))\
+  \n    { %s = ((Nsp%s *) nsp_%s)->%svalue;\
+  \n    }\
+  \n  else\
+  \n    {\
+  \n      Scierror(\"Error: %s should be of type %s\\n\");\
+  \n      return RET_BUG;\
+  \n    }\n" typename name name typename name tag name typename
+;;
+
+(* no need to make a copy if required argument is const *)
+
+let struct_null_const object_rec name =
+  let typename = object_rec.or_c_name in
+  let byref = object_rec.or_byref in
+  let tag = if byref then "obj->" else "" in
+  Printf.sprintf
+    "  if (nsp_%s != NULL)\
+  \n     {\
+  \n      if( Is%s(nsp_%s))\
+  \n        { %s = ((Nsp%s *) nsp_%s)->%svalue;}\
+  \n      else\
+  \n        {Scierror(\"Error: %s should be of type %s\\n\");\
+  \n         return RET_BUG;\
+  \n        }\
+  \n     }\n" name typename name name typename name tag name typename 
+  ;;
+
 (* when a struct_arg is a parameter *)
 
+let string_is_const str = 
+  let start = String.sub str 0 6 in
+  start = "const-"
+;;
+
 let struct_arg_write_param_gen object_rec _oname params info _byref set_value =
+  let is_const = string_is_const params.ptype in
   let name = params.pname in
-  let varlist = varlist_add info.varlist object_rec.or_c_name ("*" ^ name ^ " = NULL") in
+  let ctype = 
+    if is_const then  ("const " ^ object_rec.or_c_name) 
+    else object_rec.or_c_name  in
+  let varlist = varlist_add info.varlist ctype ("*" ^ name ^ " = NULL") in
   let codebefore =
     if params.pnull then
-      struct_null object_rec name
+      if is_const then
+	struct_null_const object_rec name
+      else
+	struct_null object_rec name
     else
-      struct_check object_rec name in
+      if is_const then
+	struct_check_const object_rec name 
+      else
+	struct_check object_rec name 
+  in
   let initial_value =
     if set_value = "" then " = NULL"  else set_value in
   let varlist = varlist_add varlist "NspObject" ("*nsp_" ^ name ^  initial_value) in
@@ -3762,19 +3812,39 @@ let struct_arg_attr_write_set object_rec oname params info byref=
 (* when it's a returned value *)
 
 let struct_arg_write_return object_rec ptype _ownsreturn info =
-  let (flag, _new_type) = strip_type ptype in
+  let (flag, new_type) = strip_type ptype in
+  let is_const =  string_is_const new_type in
   let tag = if flag then "" else "&" in
   let tagdec = if flag then "*" else "" in
-  let varlist = varlist_add  info.varlist  object_rec.or_c_name (tagdec ^ "ret") in
+  let declaration = 
+    if is_const then
+      ("const " ^ object_rec.or_c_name) 
+    else
+      object_rec.or_c_name in
+  let varlist = varlist_add  info.varlist declaration (tagdec ^ "ret") in
+  let varlist = 
+    if is_const then
+      varlist_add  varlist object_rec.or_c_name (tagdec ^ "ret1") 
+    else
+      varlist in
   let name = object_rec.or_name in
   let varlist = varlist_add varlist "NspObject" ("*nsp_ret") in
   let codeafter =
-    "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
-    "  if((ret = nsp_copy_"^ object_rec.or_c_name ^"(ret))==NULL) return RET_BUG;\n" ^
-    "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
-    tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
-    "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
-    "  MoveObj(stack,1,nsp_ret);\n  return 1;" in
+    if is_const then
+      "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
+      "  if((ret1 = nsp_copy_"^ object_rec.or_c_name ^"(ret))==NULL) return RET_BUG;\n" ^
+      "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
+      tag ^ "ret1,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
+      "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+      "  MoveObj(stack,1,nsp_ret);\n  return 1;"
+    else
+      "  nsp_type_" ^ name ^"= new_type_"^ name^"(T_BASE);\n" ^
+      "  if((ret = nsp_copy_"^ object_rec.or_c_name ^"(ret))==NULL) return RET_BUG;\n" ^
+      "  nsp_ret =(NspObject*) nsp_"^ name^"_create(NVOID,"^
+      tag ^ "ret,(NspTypeBase *) nsp_type_"^ name ^");\n" ^
+      "  if ( nsp_ret == NULL) return RET_BUG;\n" ^
+      "  MoveObj(stack,1,nsp_ret);\n  return 1;"
+  in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 

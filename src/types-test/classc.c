@@ -504,7 +504,7 @@ int int_classc_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_ZZg_action_get_parameter_type(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
+static int _wrap_g_action_get_parameter_type(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
 {
   ClassC *ret;
   NspObject *nsp_ret;
@@ -518,11 +518,11 @@ static int _wrap_ZZg_action_get_parameter_type(NspClassC *self,Stack stack,int r
   return 1;
 }
 
-static int _wrap_ZZg_action_change_state(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
+static int _wrap_g_action_change_state(NspClassC *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, t_end};
   ClassC *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
   if ( IsClassC(nsp_value))
     { value = ((NspClassC *) nsp_value)->obj->value;
@@ -538,8 +538,8 @@ static int _wrap_ZZg_action_change_state(NspClassC *self,Stack stack,int rhs,int
 }
 
 static NspMethods classc_methods[] = {
-  {"test_return",(nsp_method *) _wrap_ZZg_action_get_parameter_type},
-  {"test_arg",(nsp_method *) _wrap_ZZg_action_change_state},
+  {"test_return",(nsp_method *) _wrap_g_action_get_parameter_type},
+  {"test_arg",(nsp_method *) _wrap_g_action_change_state},
   { NULL, NULL}
 };
 
