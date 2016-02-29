@@ -1019,3 +1019,46 @@
 ;;     '("value-expected" "G_VARIANT_PARSE_ERROR_VALUE_EXPECTED")
 ;;   )
 ;; )
+
+;; added by jpc 
+
+;; (define-enum GVariantTypes
+;;   (in-module "GVariant")
+;;   (c-name "GVariantType")
+;;   (gtype-id "G_VARIANT_TYPES")
+;;   (values
+;;    '("b"     "G_VARIANT_TYPE_BOOLEAN")
+;;    '("y"     "G_VARIANT_TYPE_BYTE")
+;;    '("n"     "G_VARIANT_TYPE_INT16")
+;;    '("q"     "G_VARIANT_TYPE_UINT16")
+;;    '("i"     "G_VARIANT_TYPE_INT32")
+;;    '("u"     "G_VARIANT_TYPE_UINT32")
+;;    '("x"     "G_VARIANT_TYPE_INT64")
+;;    '("t"     "G_VARIANT_TYPE_UINT64")
+;;    '("d"     "G_VARIANT_TYPE_DOUBLE")
+;;    '("s"     "G_VARIANT_TYPE_STRING")
+;;    '("o"     "G_VARIANT_TYPE_OBJECT_PATH")
+;;    '("g"     "G_VARIANT_TYPE_SIGNATURE")
+;;    '("v"     "G_VARIANT_TYPE_VARIANT")
+;;    '("h"     "G_VARIANT_TYPE_HANDLE")
+;;    '("()"    "G_VARIANT_TYPE_UNIT")
+;;    '("*"     "G_VARIANT_TYPE_ANY")
+;;    '("?"     "G_VARIANT_TYPE_BASIC")
+;;    '("m*"    "G_VARIANT_TYPE_MAYBE")
+;;    '("a*"    "G_VARIANT_TYPE_ARRAY")
+;;    '("r"     "G_VARIANT_TYPE_TUPLE")
+;;    '("{?*}"  "G_VARIANT_TYPE_DICT_ENTRY")
+;;    '("a{?*}" "G_VARIANT_TYPE_DICTIONARY")
+;;    '("as"    "G_VARIANT_TYPE_STRING_ARRAY")
+;;    '("ao"    "G_VARIANT_TYPE_OBJECT_PATH_ARRAY")
+;;    '("ay"    "G_VARIANT_TYPE_BYTESTRING")
+;;    '("aay"   "G_VARIANT_TYPE_BYTESTRING_ARRAY")
+;;    '("a{sv}" "G_VARIANT_TYPE_VARDICT")
+;;    )
+;;   )
+
+
+
+
+
+

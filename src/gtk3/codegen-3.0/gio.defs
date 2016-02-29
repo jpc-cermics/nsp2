@@ -135,7 +135,7 @@
   (parameters
     '("const-gchar*" "action_name")
     )
-  (call "  ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name);")
+  (call "  if((ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name))==NULL) return RET_BUG;")
 )
 
 (define-method get_action_state_hint

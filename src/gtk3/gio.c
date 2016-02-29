@@ -1189,7 +1189,7 @@ static int _wrap_g_action_group_get_action_state_type(NspGActionGroup *self,Stac
   GVariantType *ret1;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&action_name) == FAIL) return RET_BUG;
-  ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name);
+  if((ret =(GVariantType*) g_action_group_get_action_state_type(G_ACTION_GROUP(self->obj),action_name))==NULL) return RET_BUG;
   nsp_type_gvarianttype= new_type_gvarianttype(T_BASE);
   if((ret1 = nsp_copy_GVariantType(ret))==NULL) return RET_BUG;
   nsp_ret =(NspObject*) nsp_gvarianttype_create(NVOID,ret1,(NspTypeBase *) nsp_type_gvarianttype);

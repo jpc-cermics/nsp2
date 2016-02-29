@@ -4414,7 +4414,7 @@ static int nsp_GVariantType_full_copy(NspGVariantType *H,GVariantType *value,Nsp
 
 GVariant *nsp_copy_GVariant(GVariant *gv)
 {
-  return g_variant_ref(gv); /* XXXX */
+  return (gv == NULL) ? gv : g_variant_ref(gv); 
 }
 
 GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
