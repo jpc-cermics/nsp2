@@ -931,10 +931,14 @@ static double f_approx_gt_3(double x)
  *
  * Returns: a double
  **/
+
 double nsp_erfcx(double x)
 {
   double y = fabs(x);
   double res;
+
+  /* erfcx(-inf) = inf */
+  if (isinf(x) && x <=0) return -x;
 
   if ( y <= 0.46875 )
     {
