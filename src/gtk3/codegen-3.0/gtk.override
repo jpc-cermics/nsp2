@@ -5102,6 +5102,67 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
+/*
+ * method connect  self.connect['signal-name',function,list-of-extra-args];
+ *
+ */
+
+%%
+override gtk_calendar_set_detail_func 
+
+typedef struct _calendar_detail_func_data calendar_detail_func_data;
+ 
+struct _calendar_detail_func_data
+{
+  NspMatrix *ymd;      /* year, month, day */
+  NspObject *func;   /* function to integrate */
+  NspObject **targs;
+  int nargs;
+  int errcatch;
+  int pausecatch;
+};
+
+static void calendar_detail_func_clean(calendar_detail_func_data *obj);
+static gchar *calendar_detail_func(GtkCalendar *calendar, guint year, guint month, 
+				   guint day, gpointer user_data);
+
+static int _wrap_gtk_calendar_set_detail_func(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
+{
+  NspGtkCalendar *nsp_calendar = (NspGtkCalendar *) self;
+  GtkCalendar *calendar = (GtkCalendar *) nsp_calendar->obj;
+  static calendar_detail_func_data data;
+  NspPList  *callback;
+  CheckRhs(0,1);
+  CheckLhs(1,1);
+  if ( rhs >= 1 ) 
+    {
+      NspObject *nsp_calendar_copy;
+      GQuark quark;
+      if (( callback = GetNspPListCopy(stack,1)) == NULLP_PLIST) return RET_BUG;
+      if (( nsp_object_set_name((NspObject *) callback,"calendar_detail_func")== FAIL)) return RET_BUG;
+      data.func =(NspObject *) callback;
+      if ((data.ymd = nsp_matrix_create("ymd",'r',1,3))== NULL) return RET_BUG;
+      if ((data.targs = malloc(2*sizeof(NspObject *))) == NULL ) return RET_BUG;
+      if ((nsp_calendar_copy = nsp_object_copy_and_name("calendar", NSP_OBJECT(nsp_calendar))) == NULL) return RET_BUG;
+      data.targs[0] =  nsp_calendar_copy;
+      data.targs[1] =  NSP_OBJECT(data.ymd);
+      data.nargs = 2;
+      data.errcatch = FALSE;
+      data.pausecatch =FALSE;
+      
+      /*get a copy of object (GetObj takes care of Hobj pointers) **/
+      quark = g_quark_from_string("calendar_detail");
+      g_object_set_qdata_full( G_OBJECT(calendar), quark, &data, NULL);
+      gtk_calendar_set_detail_func(calendar, calendar_detail_func,NULL,NULL);
+    }
+  else
+    {
+      gtk_calendar_set_detail_func( (GtkCalendar *) ((NspGtkCalendar *) self)->obj,
+				    NULL,NULL,NULL);
+    }
+  return 0;
+}
+
 %%
 override gtk_calendar_get_date noargs
 static int
@@ -7663,4 +7724,64 @@ static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list
     }
 
   return targets;
+}
+
+/* detail func for calendar */
+
+/**
+ * calendar_detail_func_clean:
+ * @obj:  calendar_detail_func_data struct
+ * 
+ * clean after integration 
+ **/
+
+static void calendar_detail_func_clean(calendar_detail_func_data *obj)
+{
+  nsp_object_destroy( (NspObject **) &(obj->func));
+  nsp_matrix_destroy(obj->ymd);
+  free(obj->targs);
+}
+
+/**
+ * calendar_detail_func:
+ * 
+ **/
+
+static gchar *calendar_detail_func(GtkCalendar *calendar, guint year, guint month, 
+				   guint day, gpointer user_data)
+{
+  GQuark quark = g_quark_from_string("calendar_detail");
+  calendar_detail_func_data *df;
+  NspObject *nsp_ret;
+  int nret = 1;
+  df = g_object_get_qdata(G_OBJECT(calendar), quark);
+  
+  df->ymd->R[0] = year;
+  df->ymd->R[1] = month;
+  df->ymd->R[2] = day;
+  
+  if ( nsp_gtk_eval_function_catch((NspPList *) df->func, df->targs, df->nargs,
+				   &nsp_ret,&nret,df->errcatch,df->pausecatch)== FAIL) 
+    {
+      Scierror("Error: calendar_detail_func: failure in function evaluation\n");
+      return NULL;
+    }
+  
+  if (nret ==1 && IsSMat(nsp_ret) && ((NspSMatrix *) nsp_ret)->mn == 1 ) 
+    {
+      return ((NspSMatrix *) nsp_ret)->S[0];
+    }
+  else 
+    {
+      Scierror("Error:  calendar_detail_func : a problem occured in function evaluation:\n");
+      if ( nret != 1 )
+	Scierror("        function don't return one argument\n");
+      else if ( !IsSMat(nsp_ret) )
+	Scierror("        function don't return the good type (must be a SMat)\n");
+      else if ( ((NspMatrix *) nsp_ret)->mn != 1 )
+	Scierror("        function don't return a vector of good length (wait for %d and got %d) \n",
+		 1,((NspMatrix *) nsp_ret)->mn);
+      nsp_object_destroy((NspObject **) &nsp_ret);
+      return NULL;
+    }
 }
