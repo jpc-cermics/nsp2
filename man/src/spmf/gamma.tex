@@ -1,0 +1,56 @@
+% -*- mode: latex -*-
+\mansection{gamma,lngamma,digamma}
+\begin{mandesc}
+  \short{gamma}{Gamma function}\\
+  \short{lngamma}{Logarithm of gamma function}\\
+  \short{digamma}{logarithmic derivative of the gamma function}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  y = gamma(x);
+  y = lngamma(x);  
+  y = digamma(x);  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: real vector or matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The function \verb+gamma+ is defined by: 
+  \[
+  \operatorname(gamma) := \int_0^{+\infty} \exp(-y)y^{x-1} dy \,.
+  \]
+  The function \verb+lngamma+ is defined by:
+  \[
+  \operatorname{lngamma}(x) := ln(x)\Gamma(x) \,.
+  \]
+  The function \verb+digamma+ (also known as the \verb+psi+ function) 
+  is defined by:
+  \[
+  \operatorname{digamma}(x) := Gamma'(x)/Gamma(x)\,.
+  \]  
+\end{mandescription}
+%--example 
+\begin{examples}
+\begin{Verbatim}
+  function y=f(x); y = exp(-x.^2);endfunction;
+  intg(0,x,f)*2/sqrt(%pi) - gamma(x);
+\end{Verbatim}
+
+\begin{Verbatim}
+function y=f(x); y = digamma(x);endfunction;
+a=0.1;b=4;
+y= abs(intg(a,b,f) - (lngamma(b) -lngamma(a)))
+\end{Verbatim}
+
+\end{examples}
+%-- see also
+%\begin{manseealso}
+%\manlink{indexing arrays}{indexing arrays}
+%\end{manseealso}
+

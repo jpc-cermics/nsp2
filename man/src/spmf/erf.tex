@@ -1,0 +1,50 @@
+% -*- mode: latex -*-
+\mansection{erf,erfc,erfcx}
+\begin{mandesc}
+  \short{erf}{The error function.}\\
+  \short{erfc}{The complementary error function.}\\
+  \short{erfcx}{The scaled complementary error function.}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  y = erf(x);
+  y = erfc(x);  
+  y = erfcx(x);  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: real vector or matrix
+    \vname{y}: real vector or matrix (of same size than x)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The error function \verb+erf+ is defined by:
+\[
+  \operatorname{erf}(x) :=\frac{2}{\sqrt{\pi}} \int_0^x \exp(-y^2) dy \,.
+\]
+  The complementary error function \verb+erfc+ is defined by:
+\[
+\operatorname{erfc}(x) := 1 - \operatorname{erf}(x) = \frac{2}{\sqrt{\pi}} \int_x^{\infty} \exp(-y^2)dy \,.
+\]
+The scaled complementary error function \verb+erfcx+ is defined by:
+\[
+\operatorname{erfcx}(x) := \exp(x^2) \operatorname{erfc}(x)\,.
+\]
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+  function y=f(x); y = exp(-x.^2);endfunction;
+  intg(0,x,f)*2/sqrt(%pi) - erf(x);
+\end{Verbatim}
+\end{examples}
+%-- see also
+%\begin{manseealso}
+%\manlink{indexing arrays}{indexing arrays}
+%\end{manseealso}
+

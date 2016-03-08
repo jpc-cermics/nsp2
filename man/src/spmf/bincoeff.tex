@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+\mansection{bincoeff}
+\begin{mandesc}
+  \short{bincoeff}{binomial coefficients}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  c = bincoeff(n,k);
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n,k}: real vectors or matrices of the same size.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function returns in \verb+c(i)+ the binomial coefficients 
+  of \verb+n(i)+ and \verb+k(i)+ defined by: 
+\[
+   \operatorname{bincoeff}(n,k) = \binom{n}{k} := \frac{n!}{k! (n-k)!}
+\]
+\end{mandescription}
+% -- Authors
+\begin{examples}
+
+\begin{Verbatim}
+  N=10; n= N*ones(1,N+1),k=0:N;
+  c=bincoeff(n,k);
+  d= gamma(n+1) ./ (gamma(k+1).*gamma(n-k+1));
+  max(abs(c-d))
+\end{Verbatim}
+
+\paragraph{we check the following identity}
+\[
+(1+x)^n = \sum_{k=0}^n \binom{n}{k} x^k
+\]
+\begin{Verbatim}
+  n=10;
+  c=bincoeff(n*ones(1,n+1),0:n);
+  x=2; 
+  y=sum( c .* x.^(0:n));
+  y == (1+x)^n
+\end{Verbatim}
+
+\end{examples}

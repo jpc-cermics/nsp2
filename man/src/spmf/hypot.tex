@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{hypot}
+\begin{mandesc}
+  \short{hypot}{length of hypotenuse.}\\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  z = hypot(x,y);
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y,z}: real vectors or matrices of the same size.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function computes \verb!z=sqrt(x.^2+y.^2)! with accuracy and without
+  spurious underflow / overflow problems.
+\end{mandescription}
+% -- Authors
+\begin{authors}
+  Algorithm by William Kahan, which
+  appears in his article \emph{Branch cuts for complex elementary functions, or
+  much ado about nothing's sign bit},
+  in \emph{States of the Art in Numerical Analysis} Oxford, Clarendon Press, 1987 ISBN 0-19-853614-3 
+  Editors: Iserles, A. and Powell, M. J. D. 
+\end{authors}
+
