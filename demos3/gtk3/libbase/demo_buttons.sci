@@ -2,39 +2,31 @@
 //-----------------------------------------------
 
 function demo_buttons()
+// 
   win = gtkwindow_new()
   win.connect[ "delete_event", demo_delete];
   win.set_title["buttons"];
   box1 = gtkbox_new("vertical",spacing=0);
   win.add[box1];
   box1.show[]
-  if %t then
-    table = gtkgrid_new();
-    table.set_row_spacing[5]
-    table.set_column_spacing[5]
-    table.set_border_width[10]
-    box1.pack_start[table]
-    table.show[]
-  else
-    table = gtktable_new(rows=3,columns=3,homogeneous=%f)
-    table.set_row_spacings[5]
-    table.set_col_spacings[5]
-    table.set_border_width[10]
-    box1.pack_start[table]
-    table.show[]
-  end
-
+  table = gtkgrid_new();
+  table.set_row_spacing[5]
+  table.set_column_spacing[5]
+  table.set_border_width[10]
+  box1.pack_start[table]
+  table.show[]
+  
   function []=toggle_show(button,args)
-    if iand(args(1).flags[],GTK.VISIBLE) then
-      args(1).hide[]
+    button1 = args(1);
+    if button1.get_visible[] then 
+      button1.hide[]
     else
-      args(1).show[]
+      button1.show[]
     end
   endfunction
 
-  // division modulaire i=y*j + x
-
   function [y,x]=divmod(i,j)
+  // i= y*j + x
     y=idiv(i,j)
     x=modulo(i,j)
   endfunction
@@ -69,7 +61,6 @@ function demo_buttons()
   button = gtkbutton_new(label="Close")
   button.connect["clicked",button_destroy_win,list(win)];
   box2.pack_start[button]
-  //button.set_flags[GTK.CAN_DEFAULT]
   button.set_can_default[%t]
   button.grab_default[]
   button.show[];

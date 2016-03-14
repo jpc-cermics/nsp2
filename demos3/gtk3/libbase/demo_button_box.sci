@@ -2,28 +2,30 @@
 //-----------------------------------------------
 
 function demo_button_box()
-  // utility function
+
   function frame=create_bbox(horizontal,title,spacing)
-    // create a frame with three stock buttons
-      layout = 'GTK_BUTTONBOX_'+toupper(title);
-      frame = gtkframe_new (label=title);
-      if (horizontal)
-	bbox = gtkbuttonbox_new("horizontal");
-      else
-	bbox = gtkbuttonbox_new("vertical");
-      end
-      bbox.set_border_width[5];
-      frame.add[bbox];
-
-      bbox.set_layout[layout];
-      bbox.set_spacing[spacing];
-
-      for st=["gtk-ok","gtk-cancel","gtk-help"]
-	button = gtkbutton_new(stock=st);
-	bbox.add[button];
-      end
+  // utility function which creates a frame with 
+  // three stock buttons and specific layout and spacing.
+    
+    layout = 'GTK_BUTTONBOX_'+toupper(title);
+    frame = gtkframe_new (label=title);
+    if (horizontal)
+      bbox = gtkbuttonbox_new("horizontal");
+    else
+      bbox = gtkbuttonbox_new("vertical");
+    end
+    bbox.set_border_width[5];
+    frame.add[bbox];
+    
+    bbox.set_layout[layout];
+    bbox.set_spacing[spacing];
+    
+    for st=["OK","Cancel","Help"]
+      button = gtkbutton_new(stock=st);
+      bbox.add[button];
+    end
   endfunction
-
+  
   window = gtkwindow_new();
   window.set_title["Button Boxes"]
   // window.connect["destroy",...]
