@@ -19,8 +19,8 @@
 
 // 2, 2^8 et 2^-6 
 M=[2; 256; 0.015625; 2^8 ; 2^-6 ];
-S=sprintf("%a",M')
-if S<>["0x1p+1";"0x1p+8";"0x1p-6";"0x1p+8";"0x1p-6"] then pause;end 
+S=sprintf("%a",M);
+if or(S<>["0x1p+1";"0x1p+8";"0x1p-6";"0x1p+8";"0x1p-6"]) then pause;end 
 
 x="0x1.b7p-1";
 xn=sprintf("%a",sscanf(x,"%la"));
