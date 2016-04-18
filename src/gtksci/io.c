@@ -29,13 +29,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#ifdef aix
-#include <sys/select.h>
-#endif
-
-#ifndef WIN32 
-#include <gdk/gdkx.h>
-#else 
+#ifdef WIN32 
 #include <winsock.h>
 #endif 
 
@@ -43,7 +37,13 @@
 #include "nsp/math.h"
 #include "nsp/gtksci.h"
 #include "nsp/sciio.h"
+#include "nsp/config.h"
 
+#if defined(WITH_GTKOSX) || defined(WIN32) 
+/* do not use X-related stuffs */
+#else 
+#include <gdk/gdkx.h>
+#endif
 
 /* #define NSP_ENTRY_INPUT_TEST  */
 
@@ -135,7 +135,7 @@ void nsp_input_feed(char *s)
  * wait for a character and check for pending events 
  */
 
-#ifndef WIN32 
+#if ! (defined(WITH_GTKOSX) || defined(WIN32))
 int Xorgetchar_select(void)
 {
   int i;
@@ -282,6 +282,7 @@ int Xorgetchar_select(void)
 /*
  * This routine can be called to checks for all events 
  * except typed text (but testing Ctrl) and to deal with them 
+ * This function is unused in the gtk version. 
  */
 
 void  nsp_check_gtk_events(void)
@@ -405,7 +406,7 @@ int Xorgetchar_thread(void)
  *
  */
 
-#ifdef WIN32 
+#if (defined(WITH_GTKOSX) || defined(WIN32))
 Get_char Xorgetchar = Xorgetchar_thread ;
 #else 
 Get_char Xorgetchar = Xorgetchar_select ;
