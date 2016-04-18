@@ -39,17 +39,17 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libfontconfig-1.dll bin/
     cp -f /usr/$dist/bin/libfreetype-6.dll bin/
     cp -f /usr/$dist/bin/libgailutil-18.dll bin/
-    cp -f /usr/$dist/bin/libgcc_s_sjlj-1.dll bin/
     cp -f /usr/$dist/bin/libgdkglext-win32-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libgdk_pixbuf-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgdk-win32-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgeoclue-0.dll bin/
     cp -f /usr/$dist/bin/libgio-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglib-2.0-0.dll bin/
-    cp -f /usr/$dist/bin/libglpk.dll bin/
+    cp -f /usr/$dist/bin/libglpk*.dll bin/
+    cp -f /usr/$dist/bin/glpk*.dll bin/
     cp -f /usr/$dist/bin/libgmodule-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgmp-10.dll bin/
-    cp -f /usr/$dist/bin/libgnutls-28.dll bin/
+    cp -f /usr/$dist/bin/libgnutls-30.dll bin/
     cp -f /usr/$dist/bin/libgobject-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgstapp-0.10-0.dll bin/
     cp -f /usr/$dist/bin/libgstbase-0.10-0.dll bin/
@@ -70,7 +70,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgvplugin_poppler-6.dll bin/
     cp -f /usr/$dist/bin/libgvplugin_rsvg-6.dll bin/
     cp -f /usr/$dist/bin/libharfbuzz-0.dll bin/
-    cp -f /usr/$dist/bin/libhogweed-2-4.dll bin/
+    cp -f /usr/$dist/bin/libhogweed-4-2.dll bin/
     cp -f /usr/$dist/bin/libintl-8.dll bin/
     cp -f /usr/$dist/bin/libjasper-1.dll bin/
     cp -f /usr/$dist/bin/libjavascriptcoregtk-1.0-0.dll bin/
@@ -78,7 +78,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/liblapack.dll bin/
     cp -f /usr/$dist/bin/liblcms2-2.dll bin/
     cp -f /usr/$dist/bin/liblzma-5.dll bin/
-    cp -f /usr/$dist/bin/libnettle-4-6.dll bin/
+    cp -f /usr/$dist/bin/libnettle-6-2.dll bin/
     cp -f /usr/$dist/bin/libogg-0.dll bin/
     cp -f /usr/$dist/bin/libopenjpeg-1.dll bin/
     cp -f /usr/$dist/bin/libp11-kit-0.dll bin/
@@ -136,6 +136,10 @@ fi
 if [ -d "/usr/lib/gcc/$dist/$version" ]; then
     cp -f /usr/lib/gcc/$dist/$version/libgfortran-3.dll bin
     cp -f /usr/lib/gcc/$dist/$version/libquadmath-0.dll bin
+    cp -f /usr/lib/gcc/$dist/$version/libgcc_s_sjlj-1.dll bin/
+
 else
     echo directory /usr/lib/gcc/$dist/$version  does not exists
 fi
+
+chmod +x bin/*.dll

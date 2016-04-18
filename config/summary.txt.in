@@ -23,4 +23,7 @@ C compiler.............:@CC@
 C options..............:@CC_OPTIONS@
 Fortran compiler.......:@FC@
 Fortran options........:@FC_OPTIONS@
+Ocaml compiler.........:@OCAMLC@
+Ocamlopt compiler......:@OCAMLOPT@
 
+Toolboxes..............:@TOOLBOXES@

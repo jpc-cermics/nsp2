@@ -1,3 +1,4 @@
+Makefile.mingw32
 Makefile.ultrix 
 Makefile.aix 
 Makefile.linux 
