@@ -1,0 +1,32 @@
+% -*- mode: latex -*-
+\mansection{range}
+\begin{mandesc}
+  \short{range}{range (span) of $A^k$} \\ % 
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,dim]=range(A,k)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real square matrix
+    \vname{k}: integer
+    \vname{X}: non-singular real matrix
+    \vname{dim}: integer (dimension of subspace)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Computation of the range of matrix \verb!A^k!. The first \verb+dim+ columns of matrix 
+  \verb!X! span the range of matrix \verb!A^k!.
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{fullrfk}{fullrfk} \manlink{rowcomp}{rowcomp}  
+\end{manseealso}
+% -- Author
+\begin{authors}
+  Fran\c{c}ois Delebecque.
+\end{authors}

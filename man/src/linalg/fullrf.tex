@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+
+\mansection{fullrf}
+\begin{mandesc}
+  \short{fullrf}{full rank factorization} \\ % 
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Q,M,rk]=fullrf(A, tol=rscal)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real or complex matrix
+    \vname{tol=rscal}: optional named argument, \verb+rscal+ must be  a real positive scalar (default \verb+sqrt(%eps)*norm(A,1)+).
+    \vname{Q,M}: real or complex matrix
+    \vname{rk}: integer (rank of \verb!A!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Full rank factorization: \verb!fullrf! returns \verb!Q! and \verb!M! such
+  that \verb!A = Q*M!
+  with range(\verb!Q!)=range(\verb!A!) and ker(\verb!M!)=ker(\verb!A!),
+  \verb!Q! is full column rank , \verb!M! is full row rank,
+  \verb!rk = rank(A) = #columns(Q) = #rows(M)!. The rank \verb!rk! of \verb!A! is 
+  computed as the number of singular values larger than \verb!norm(A,1)*tol!.
+  If matrix \verb!A! is symmetric, \verb!fullrf! returns \verb!M=Q'!.
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(5,2)*rand(2,5);
+    [Q,M]=fullrf(A);
+    norm(Q*M-A,1)
+    [X,d]=rowcomp(A);Y=X';
+    svd([A,Y(:,1:d),Q])        //span(Q) = span(A) = span(Y(:,1:2))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{svd}{svd} \manlink{qr}{qr} \manlink{fullrfk}{fullrfk} \manlink{rowcomp}{rowcomp} \manlink{colcomp}{colcomp}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Fran\c{c}ois Delebecque.
+\end{authors}

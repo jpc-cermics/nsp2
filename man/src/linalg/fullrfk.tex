@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{fullrfk}
+\begin{mandesc}
+  \short{fullrfk}{full rank factorization of $A^k$} \\ % 
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Bk,Ck]=fullrfk(A,k)  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real or complex matrix
+    \vname{k}: integer
+    \vname{Bk,Ck}: real or complex matrices
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function computes the full rank factorization of \verb!A^k! i.e.
+  \verb!Bk*Ck=A^k! where \verb!Bk! is full column rank and \verb!Ck! full row rank.
+  One has range(\verb!Bk!)=range(\verb!A^k!) and ker(\verb!Ck!)=ker(\verb!A^k!).
+  For \verb!k=1!, \verb!fullrfk! is equivalent to \verb!fullrf!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(5,2)*rand(2,5);[Bk,Ck]=fullrfk(A,3);
+    norm(Bk*Ck-A^3,1)
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{fullrf}{fullrf} \manlink{range}{range}  
+\end{manseealso}
+% -- Author
+\begin{authors}
+  Fran\c{c}ois Delebecque
+\end{authors}

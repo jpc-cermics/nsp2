@@ -8,17 +8,18 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[X,dim] = rowcomp(A, meth=str, tol=rscal) 
+   [X,dim] = rowcomp(A, meth=str, tol=rscal) 
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
     \vname{A}:  numerical matrix (size $m \times n$), real or complex.
-    \vname{tol=rscal}: optional named argument, \verb+rscal+ must be  a real positive scalar (default \verb+sqrt(%eps)*norm(A,1)+).
-    \vname{meth=str}: optional named argument, a string among "svd" (default) or "qr"
+    \vname{tol=rscal}: optional named argument, \verb+rscal+ must be  a real positive scalar 
+    (default \verb+sqrt(%eps)*norm(A,1)+).
+    \vname{meth=str}: optional named argument, a string among \verb+"svd"+ (default) or \verb+"qr"+
     \vname{X}: numeric orthogonal (or hermitian) matrix.
-    \vname{dim}: the numerical rank of $A$
+    \vname{dim}: the numerical rank of matrix \verb!A!
   \end{varlist}
 \end{parameters}
 
@@ -47,27 +48,28 @@ neglecting the singular values less than $tol$.
 \end{mandescription}
 
 \begin{examples}
-\begin{Verbatim}
-A=randn(5,2)*randn(2,4);
-[X,rk]=rowcomp(A,'qr'); // rk is 2 
-Xp=X'; Im=Xp(:,1:dim); // Im = Image of A 
-svd([Im,orth(A)]; //2 non zero singular values
-\end{Verbatim}
-
-\begin{Verbatim}
-A=randn(5,2)*randn(2,4);
-x0=rand(4,1); b=A*x0; // b belongs to range(A)  
-[Y,rk]= rowcomp(A,meth='qr');
-Y*b // b belongs to range(A) (last components of Y*b are zero)   
-x1=A\b;  // Both A*x0 and A*x1 are solutions of A*x=b.
-\end{Verbatim}
+\paragraph{first example}
+  \begin{Verbatim}
+    A=randn(5,2)*randn(2,4);
+    [X,dim]=rowcomp(A,meth='qr'); // rk is 2 
+    Xp=X'; Im=Xp(:,1:dim); // Im = Image of A 
+    svd([Im,orth(A)]); //2 non zero singular values
+  \end{Verbatim}
+\paragraph{second example}
+  \begin{Verbatim}
+    A=randn(5,2)*randn(2,4);
+    x0=rand(4,1); b=A*x0; // b belongs to range(A)  
+    [Y,rk]= rowcomp(A,meth='qr');
+    Y*b // b belongs to range(A) (last components of Y*b are zero)   
+    x1=A\b;  // Both x0 and x1 are solutions of A*x=b.
+  \end{Verbatim}
 \end{examples}
 
 \begin{manseealso}
-  \manlink{qr}{qr}, \manlink{orth}{orth}, \manlink{svd}{svd}
+  \manlink{qr}{qr}, \manlink{orth}{orth}, \manlink{svd}{svd}, \manlink{colcomp}{colcomp}
 \end{manseealso}
 
 % -- Authors
 \begin{authors}
-   FD
+  Fran\c{c}ois Delebecque.
 \end{authors}

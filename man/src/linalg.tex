@@ -14,15 +14,19 @@ Matrix factorizations
 
 \begin{quote}
 \noindent
+\hyperlink{fullrk}{fullrf} - full rank factorization \\ 
+\hyperlink{fullrfk}{fullrfk} - {full rank factorization of $A^k$} \\
 \hyperlink{lu}{lu} - LU factorization (for full matrix) \\
-\hyperlink{umfpack_create}{umfpack\_create},\;
-\hyperlink{umfpack_solve}{umfpack\_solve} - LU factorization (for sparse matrix) \\
 \hyperlink{chol}{chol} - Cholesky factorization (for full matrix) \\
 \hyperlink{Cholmod}{Cholmod},\;
 \hyperlink{cholmod_create}{cholmod\_create} - Cholesky or LDLt factorization (for sparse matrix) \\
-\hyperlink{qr}{qr} - QR factorization
+\hyperlink{colcomp}{colcomp} - {column compression, kernel, nullspace} \\ 
+\hyperlink{qr}{qr} - QR factorization \\ 
+\hyperlink{umfpack_create}{umfpack\_create},\;
+\hyperlink{umfpack_solve}{umfpack\_solve} - LU factorization (for sparse matrix) \\
+\hyperlink{range}{range} - range (span) of $A^k$ \\ 
+\hyperlink{rowcomp}{rowcomp} - {performs a row compression of a matrix}
 \end{quote}
-
 
 \HCode{<hr>}
 Eigenvalues, Singular values and associated factorizations
@@ -78,9 +82,16 @@ Matrices zoology\dots
 \input linalg/inv.tex 
 \input linalg/solve.tex 
 \input linalg/lsmr.tex 
+
 \input linalg/lu.tex 
 \input linalg/chol.tex 
+\input linalg/colcomp.tex 
 \input linalg/qr.tex 
+\input linalg/rowcomp.tex 
+\input linalg/fullrf.tex 
+\input linalg/fullrfk.tex 
+\input linalg/range.tex 
+
 \input linalg/svd.tex
 \input linalg/spec.tex 
 \input linalg/schur.tex
