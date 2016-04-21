@@ -27,6 +27,8 @@ extern int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *s
 extern double nsp_cvf_get_value(NspCutsValueFn *Cvf,const double pt[]) ;
 extern int nsp_cvf_add_slope(NspCutsValueFn *Cvf,double height,double slope[]);
 extern int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t);
+extern NspMatrix *nsp_cvf_get_slopes(NspCutsValueFn *self);
+extern NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self);
 
 %%
 include-private Stochdec
@@ -80,7 +82,7 @@ int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs)
 override GridValueFn.nsp_gvf_ind_to_point
 
 /* method overriden  
- * take care that indices are starting at 0 
+ * take care that indices are starting at 0 and we want 1 at nsp level
  */
 
 static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -93,7 +95,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
   if ((ret = nsp_matrix_create(NVOID,'r', Vf->xdim,Ind->mn)) == NULLMAT) return RET_BUG;
   for (i=0; i < Ind->mn; i++)
     {      
-      if ( nsp_gvf_ind_to_point(self,ret->R+ ret->m*i,(int) Ind->R[i]) == FAIL)  return RET_BUG;
+      if ( nsp_gvf_ind_to_point(self,ret->R+ ret->m*i, -1 + (int) Ind->R[i]) == FAIL)  return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -118,7 +120,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
       Scierror("Error: first argument should be a %dxn matrix\n",Vf->xdim);
       return RET_BUG;
     }
-  ret = nsp_gvf_point_to_ind(self, pts->R);
+  ret = 1+ nsp_gvf_point_to_ind(self, pts->R);
   if ((Ret = (NspMatrix *)nsp_create_object_from_double(NVOID,ret)) == NULLMAT) return RET_BUG;
   MoveObj(stack,1, NSP_OBJECT(Ret));
   return 1;
@@ -149,7 +151,7 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
     }
   /* pt << 1 */
   for ( i= 0 ; i < pts->n ; i++ )
-    nsp_gvf_set_pt_value(self, pts->R + pts->m, val->R[i]);
+    nsp_gvf_set_pt_value(self, pts->R + i*pts->m, val->R[i]);
   return 0;
 }
 
@@ -164,7 +166,7 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   if ( GetArgs(stack,rhs,opt,T,&ind, &val) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,2, ind->mn != val->mn);
   for ( i = 0 ; i < ind->mn; i++)
-    nsp_gvf_set_i_value(self, ind->R[i], val->R[i]);
+    nsp_gvf_set_i_value(self, ((int) ind->R[i]) - 1, val->R[i]);
   return 0;
 }
 %%
@@ -203,7 +205,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   if ((ret = nsp_matrix_create(NVOID,'r', 1, ind->mn)) == NULLMAT) return RET_BUG;
   for ( i = 0 ; i < ret->mn ; i++)
     {
-      ret->R[i] = nsp_gvf_get_i_value(self, ind->R[i]);
+      ret->R[i] = nsp_gvf_get_i_value(self, ((int) ind->R[i]) -1);
     }
   MoveObj(stack,1, NSP_OBJECT(ret));
   return 1;
@@ -472,6 +474,15 @@ int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes)
   return OK;
 }
 
+NspMatrix *nsp_cvf_get_slopes(NspCutsValueFn *self)
+{
+  return  (NspMatrix *) nsp_object_copy(NSP_OBJECT(self->slopes));
+}
+
+NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self)
+{
+  return   (NspMatrix *) nsp_object_copy(NSP_OBJECT(self->heights));
+}
 
 NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf)
 {

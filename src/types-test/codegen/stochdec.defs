@@ -108,3 +108,16 @@
     '("NspMatrix*" "pts")
   )
 )
+
+(define-method get_slopes
+  (of-object "CutsValueFn")
+  (c-name "nsp_cvf_get_slopes")
+  (return-type "NspMatrix*")
+)
+
+(define-method get_heights
+  (of-object "CutsValueFn")
+  (c-name "nsp_cvf_get_heights")
+  (return-type "NspMatrix*")
+)
+
