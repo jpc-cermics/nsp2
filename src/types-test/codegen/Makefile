@@ -24,12 +24,13 @@ TARGET=$(patsubst %.defs,../%.c,$(ALL)) ../../libgraphviz/agraph.c
 all::	$(TARGET)
 	cd ../; make 
 
-../%.c: %.defs
-	@echo "generate $*.c and include files"
-	@$(PROG) -o $*.c $*
-	@$(RM) ../$*.c ; mv $*.c ../
-	@$(RM) -f $(ISRC)/$*.h
-	@mv $*.h $(ISRC)/$*.h
+../stochdec.c: stochdec.defs stochdec.override  stochdec-types.defs 
+	@echo "generate stochdec.c and include files"
+	@$(PROG) -o stochdec.c stochdec
+	@$(RM) ../stochdec.c ; mv stochdec.c ../
+	@$(RM) -f $(ISRC)/stochdec.h
+	@mv stochdec.h $(ISRC)/stochdec.h
+	@mv cutsvaluefn.h  gridvaluefn.h  valuefn.h $(ISRC)/
 
 ../../libgraphviz/agraph.c: agraph.defs
 	@echo "generate agraph.c and include files"
@@ -38,6 +39,14 @@ all::	$(TARGET)
 	@mv agraph.c ../../libgraphviz
 	@$(RM) $(ISRC)/agraph.h
 	@mv agraph.h $(ISRC)/agraph.h
+
+../%.c: %.defs
+	@echo "generate $*.c and include files"
+	@$(PROG) -o $*.c $*
+	@$(RM) ../$*.c ; mv $*.c ../
+	@$(RM) -f $(ISRC)/$*.h
+	@mv $*.h $(ISRC)/$*.h
+
 
 clean:
 	@$(RM) *.c *.h
