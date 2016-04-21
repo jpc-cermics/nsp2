@@ -24,7 +24,7 @@
 
 
 
-#line 39 "codegen/stochdec.override"
+#line 41 "codegen/stochdec.override"
 /* headers */
 
 #line 31 "stochdec.c"
@@ -248,7 +248,7 @@ static NspStochdec  *nsp_stochdec_xdr_load(XDR *xdrs)
 
 void nsp_stochdec_destroy_partial(NspStochdec *H)
 {
-#line 60 "codegen/stochdec.override"
+#line 62 "codegen/stochdec.override"
    /* verbatim in destroy */
 
 #line 255 "stochdec.c"
@@ -1556,10 +1556,10 @@ int int_gridvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 81 "codegen/stochdec.override"
+#line 83 "codegen/stochdec.override"
 
 /* method overriden  
- * take care that indices are starting at 0 
+ * take care that indices are starting at 0 and we want 1 at nsp level
  */
 
 static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
@@ -1572,7 +1572,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
   if ((ret = nsp_matrix_create(NVOID,'r', Vf->xdim,Ind->mn)) == NULLMAT) return RET_BUG;
   for (i=0; i < Ind->mn; i++)
     {      
-      if ( nsp_gvf_ind_to_point(self,ret->R+ ret->m*i,(int) Ind->R[i]) == FAIL)  return RET_BUG;
+      if ( nsp_gvf_ind_to_point(self,ret->R+ ret->m*i, -1 + (int) Ind->R[i]) == FAIL)  return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1581,7 +1581,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1582 "stochdec.c"
 
 
-#line 104 "codegen/stochdec.override"
+#line 106 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1599,7 +1599,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
       Scierror("Error: first argument should be a %dxn matrix\n",Vf->xdim);
       return RET_BUG;
     }
-  ret = nsp_gvf_point_to_ind(self, pts->R);
+  ret = 1+ nsp_gvf_point_to_ind(self, pts->R);
   if ((Ret = (NspMatrix *)nsp_create_object_from_double(NVOID,ret)) == NULLMAT) return RET_BUG;
   MoveObj(stack,1, NSP_OBJECT(Ret));
   return 1;
@@ -1608,7 +1608,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
 #line 1609 "stochdec.c"
 
 
-#line 158 "codegen/stochdec.override"
+#line 160 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1618,13 +1618,13 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   if ( GetArgs(stack,rhs,opt,T,&ind, &val) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,2, ind->mn != val->mn);
   for ( i = 0 ; i < ind->mn; i++)
-    nsp_gvf_set_i_value(self, ind->R[i], val->R[i]);
+    nsp_gvf_set_i_value(self, ((int) ind->R[i]) - 1, val->R[i]);
   return 0;
 }
 #line 1625 "stochdec.c"
 
 
-#line 129 "codegen/stochdec.override"
+#line 131 "codegen/stochdec.override"
 
 /* method overriden  
  * take care that indices are starting at 0 
@@ -1648,14 +1648,14 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
     }
   /* pt << 1 */
   for ( i= 0 ; i < pts->n ; i++ )
-    nsp_gvf_set_pt_value(self, pts->R + pts->m, val->R[i]);
+    nsp_gvf_set_pt_value(self, pts->R + i*pts->m, val->R[i]);
   return 0;
 }
 
 #line 1656 "stochdec.c"
 
 
-#line 196 "codegen/stochdec.override"
+#line 198 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1666,7 +1666,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   if ((ret = nsp_matrix_create(NVOID,'r', 1, ind->mn)) == NULLMAT) return RET_BUG;
   for ( i = 0 ; i < ret->mn ; i++)
     {
-      ret->R[i] = nsp_gvf_get_i_value(self, ind->R[i]);
+      ret->R[i] = nsp_gvf_get_i_value(self, ((int) ind->R[i]) -1);
     }
   MoveObj(stack,1, NSP_OBJECT(ret));
   return 1;
@@ -1674,7 +1674,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
 #line 1675 "stochdec.c"
 
 
-#line 172 "codegen/stochdec.override"
+#line 174 "codegen/stochdec.override"
 
 static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2233,7 +2233,7 @@ int int_cutsvaluefn_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 241 "codegen/stochdec.override"
+#line 243 "codegen/stochdec.override"
 
 /* method overriden */
 
@@ -2258,7 +2258,7 @@ static int _wrap_nsp_cvf_add_slopes(NspCutsValueFn *self,Stack stack,int rhs,int
 #line 2259 "stochdec.c"
 
 
-#line 264 "codegen/stochdec.override"
+#line 266 "codegen/stochdec.override"
 
 static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2284,9 +2284,31 @@ static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int 
 #line 2285 "stochdec.c"
 
 
+static int _wrap_nsp_cvf_get_slopes(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+  CheckRhs(0,0);
+    ret =nsp_cvf_get_slopes(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static int _wrap_nsp_cvf_get_heights(NspCutsValueFn *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+  CheckRhs(0,0);
+    ret =nsp_cvf_get_heights(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
 static NspMethods cutsvaluefn_methods[] = {
   {"add_slopes",(nsp_method *) _wrap_nsp_cvf_add_slopes},
   {"get_value",(nsp_method *) _wrap_nsp_cvf_get_value},
+  {"get_slopes",(nsp_method *) _wrap_nsp_cvf_get_slopes},
+  {"get_heights",(nsp_method *) _wrap_nsp_cvf_get_heights},
   { NULL, NULL}
 };
 
@@ -2300,7 +2322,7 @@ static AttrTab cutsvaluefn_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 64 "codegen/stochdec.override"
+#line 66 "codegen/stochdec.override"
 
 int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -2316,10 +2338,10 @@ int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2320 "stochdec.c"
+#line 2342 "stochdec.c"
 
 
-#line 213 "codegen/stochdec.override"
+#line 215 "codegen/stochdec.override"
 
 int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -2346,7 +2368,7 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2350 "stochdec.c"
+#line 2372 "stochdec.c"
 
 
 /*----------------------------------------------------
@@ -2384,7 +2406,7 @@ void nsp_initialize_Stochdec_types(void)
   new_type_cutsvaluefn(T_BASE);
 }
 
-#line 288 "codegen/stochdec.override"
+#line 290 "codegen/stochdec.override"
 
 /***************************************
  * a set of functions for GridValueFn 
@@ -2572,6 +2594,15 @@ int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes)
   return OK;
 }
 
+NspMatrix *nsp_cvf_get_slopes(NspCutsValueFn *self)
+{
+  return  (NspMatrix *) nsp_object_copy(NSP_OBJECT(self->slopes));
+}
+
+NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self)
+{
+  return   (NspMatrix *) nsp_object_copy(NSP_OBJECT(self->heights));
+}
 
 NspMatrix *nsp_gvf_get_nx(NspGridValueFn *Gvf)
 {
@@ -2617,4 +2648,4 @@ NspGridValueFn *nsp_gvf_create(NspMatrix *nx,NspMatrix *xmin,NspMatrix *xmax)
 }
 
 
-#line 2621 "stochdec.c"
+#line 2652 "stochdec.c"
