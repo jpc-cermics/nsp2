@@ -99,7 +99,6 @@ extern  sci_interface  Mtlb_Interf ;extern  interface_info  Mtlb_Interf_Info ;
 extern  sci_interface  Optim_Interf ;extern  interface_info  Optim_Interf_Info ;
 extern  sci_interface  Lapack_all_Interf ;extern  interface_info  Lapack_all_Interf_Info ;
 
-
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #ifdef WITH_MAXPLUSLIB
 extern  sci_interface  Maxplus_Interf ;extern  interface_info  Maxplus_Interf_Info ;
@@ -205,8 +204,6 @@ extern  sci_interface  Bson_Interf  ;extern  interface_info  Bson_Interf_Info  ;
 extern  sci_interface  girepository_Interf ;extern  interface_info  girepository_Interf_Info ;
 #endif
 
-
-
 /* for mixed int and scalar operations */
 extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf_Info;
 
@@ -214,6 +211,12 @@ extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf
 #ifdef XXWITH_CLP
 extern  sci_interface  Stochdec_Interf; extern  interface_info Stochdec_Interf_Info;
 #endif
+
+#define WITH_STOCHDEC
+
+#ifdef WITH_STOCHDEC 
+extern  sci_interface  Stochdec_Interf ;extern  interface_info  Stochdec_Interf_Info ;
+#endif 
 
 #if GTK_CHECK_VERSION(3,0,0)
 extern  sci_interface  cairo_Interf; extern  interface_info cairo_Interf_Info;
@@ -371,6 +374,9 @@ InterfTab Interfaces[]={
   {gio_Interf, gio_Interf_Info},
   {glib_Interf, glib_Interf_Info},
 #endif
+#ifdef WITH_STOCHDEC 
+  {Stochdec_Interf, Stochdec_Interf_Info},
+#endif 
   {NULL,NULL}
 };
 

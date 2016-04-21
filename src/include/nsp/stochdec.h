@@ -116,8 +116,10 @@ extern int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *s
 extern double nsp_cvf_get_value(NspCutsValueFn *Cvf,const double pt[]) ;
 extern int nsp_cvf_add_slope(NspCutsValueFn *Cvf,double height,double slope[]);
 extern int nsp_ind_to_point(NspMatrix *pt, int i, NspMatrix *min,NspMatrix *nx, NspMatrix *pasx, int t);
+extern NspMatrix *nsp_cvf_get_slopes(NspCutsValueFn *self);
+extern NspMatrix *nsp_cvf_get_heights(NspCutsValueFn *self);
 
-#line 121 "./stochdec.h"
+#line 123 "./stochdec.h"
 #endif /* NSP_INC_NspStochdec */ 
 
 #ifdef NspStochdec_Private 
@@ -132,11 +134,11 @@ static AttrTab stochdec_attrs[];
 static NspMethods *stochdec_get_methods(void);
 /* static int int_stochdec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspStochdec *nsp_stochdec_create_void(const char *name,NspTypeBase *type);
-#line 33 "codegen/stochdec.override"
+#line 35 "codegen/stochdec.override"
 /* inserted in the private part of include file
  * of ldfaure.h
  */
 
-#line 141 "./stochdec.h"
+#line 143 "./stochdec.h"
 #endif /* NspStochdec_Private */
 
