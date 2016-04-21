@@ -87,7 +87,8 @@ TESTS= \
 	scale_rc.dia \
 	percenta.dia \
 	ast.dia \
-	persistent.dia 
+	persistent.dia \
+	stochdec.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
