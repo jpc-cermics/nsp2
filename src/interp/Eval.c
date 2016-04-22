@@ -2862,12 +2862,21 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 			}
 		      if (copy_tag == FALSE)
 			{
-			  /* copy was not performed in path_extract */
-			  Ob = nsp_object_copy(Ob);
+			  /* copy was not performed in path_extract but it is not necessary in a EvalRhsList 
+			   *  If we make a copy here (without name) then the object will be freed latter and 
+			   *  maybe we will also extract a part of this object in next steps 
+			   *  we have the risk to free it twice. Thus not copying seams a better idea 
+			   * Ob = nsp_object_copy(Ob);
+			   */
+			  if ( Ocheckname(Ob,NVOID))
+			    {
+			      Scierror("Internal Error: an object in extraction from cells have non name \n");
+			      return RET_BUG;
+			    }
 			}
 		      if ( Ob == NULLOBJ ) 
 			{
-			  Scierror("Error: failed to copy an object in extracttion (step %d)\n",j);
+			  Scierror("Error: failed to copy an object in extraction (step %d)\n",j);
 			  SHOWBUG(stack,RET_BUG,L);
 			}		      
 		      /* path_extract do not perform freeing */
