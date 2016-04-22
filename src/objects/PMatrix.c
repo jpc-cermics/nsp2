@@ -282,7 +282,7 @@ NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M)
     return NULL;
   for ( i = 0 ; i < M->mn ; i++)
     {
-      if ((loc->objs[i] =(NspObject *) nsp_matrix_copy(M->S[i]))== NULL) 
+      if ((loc->objs[i] =(NspObject *) nsp_object_copy_and_name("c",NSP_OBJECT(M->S[i])))== NULL) 
 	return NULL;
     }
   return(loc);
