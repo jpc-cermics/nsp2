@@ -871,12 +871,15 @@ main(int argc, char **argv)
     _vte_debug_init();
   */
 
-  /* Have to do this early. */
+  /*   DEPRECATED:
+       Have to do this early. 
   if (getenv("VTE_PROFILE_MEMORY")) {
     if (atol(getenv("VTE_PROFILE_MEMORY")) != 0) {
       g_mem_set_vtable(glib_mem_profiler_table);
     }
   }
+  */
+  
   if (g_getenv("VTE_CJK_WIDTH")) {
     g_printerr("VTE_CJK_WIDTH is not supported anymore, use --cjk-width instead\n");
   }
@@ -936,9 +939,10 @@ main(int argc, char **argv)
   gtk_window_set_icon(GTK_WINDOW(window),pixbuf);
   gtk_window_set_wmclass (GTK_WINDOW (window), "nsp", "Nsp");
 #endif
-
+  /* DEPRECATED:
   gtk_container_set_resize_mode(GTK_CONTAINER(window),
 				GTK_RESIZE_IMMEDIATE);
+  */
   if (border_width_string) {
     guint w;
 
@@ -995,9 +999,12 @@ main(int argc, char **argv)
   /* Create the terminal widget and add it to the scrolling shell. */
   widget = vteapp_terminal_new();
   terminal = VTE_TERMINAL (widget);
+
+  /* DEPRECATED:
   if (!dbuffer) {
     gtk_widget_set_double_buffered(widget, dbuffer);
   }
+  */
   if (show_object_notifications)
     g_signal_connect(terminal, "notify", G_CALLBACK(terminal_notify_cb), NULL);
   if (use_scrolled_window) {
@@ -1089,7 +1096,7 @@ main(int argc, char **argv)
     g_free (transparent);
   }
 
-#ifndef NSP
+#ifdef NSP
   /* in NSP we try to obtain foregrounf and background from style_context after
    * widget is realized
    */
@@ -1404,6 +1411,7 @@ main(int argc, char **argv)
 
   gtk_widget_realize(widget);
 
+  /* DEPRECATED:
   {
     GdkColor *color = NULL;
     GtkStyleContext *context = gtk_widget_get_style_context (widget);
@@ -1430,7 +1438,8 @@ main(int argc, char **argv)
 	  }
 	  }
   }
-
+  */
+  
   if (geometry) {
     if (!gtk_window_parse_geometry (GTK_WINDOW(window), geometry)) {
       g_warning (_("Could not parse the geometry spec passed to --geometry"));
@@ -1455,9 +1464,11 @@ main(int argc, char **argv)
 
   gtk_main();
   
-  g_assert(widget == NULL);
-  g_assert(window == NULL);
-
+  /* 
+     g_assert(widget == NULL);
+     g_assert(window == NULL);
+  */
+  
   if (keep) {
     while (TRUE) {
       sleep(60);
@@ -1486,6 +1497,9 @@ main(int argc, char **argv)
  *
  * @terminal must be realized (see gtk_widget_get_realized()).
  */
+
+#if VTE_CHECK_VERSION(0,42,0)
+#else 
 static void
 vte_terminal_get_geometry_hints(VteTerminal *terminal,
                                 GdkGeometry *hints,
@@ -1511,6 +1525,8 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
   hints->min_width   = hints->base_width  + hints->width_inc  * min_columns;
   hints->min_height  = hints->base_height + hints->height_inc * min_rows;
 }
+#endif
+
 
 #if VTE_CHECK_VERSION(0,40,0)
 /* exists in VERSION(0,40,0) */
@@ -1612,7 +1628,7 @@ GtkWidget *nsp_create_menu (GtkWidget *wterminal,  gpointer data)
   VteTerminal *terminal =  VTE_TERMINAL(wterminal);
   static fsize_data data1={NULL,NULL};
 
-  g_return_if_fail(GTK_IS_WINDOW(data));
+  g_return_val_if_fail(GTK_IS_WINDOW(data),NULL);
 
   if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
 
