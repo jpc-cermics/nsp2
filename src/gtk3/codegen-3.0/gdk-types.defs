@@ -43,13 +43,13 @@
   (gtype-id "GDK_TYPE_FRAME_CLOCK")
 )
 
-(define-object GdkFrameClockIdle
-  (in-module "Gdk")
-  (parent "GdkFrameClock")
-  (c-name "GdkFrameClockIdle")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (gtype-id "GDK_TYPE_FRAME_CLOCK_IDLE")
-)
+;; (define-object GdkFrameClockIdle
+;;   (in-module "Gdk")
+;;   (parent "GdkFrameClock")
+;;   (c-name "GdkFrameClockIdle")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (gtype-id "GDK_TYPE_FRAME_CLOCK_IDLE")
+;; )
 
 (define-object GdkGLContext
   (in-module "Gdk")
@@ -67,13 +67,13 @@
   (gtype-id "GDK_TYPE_WINDOW")
 )
 
-(define-object GdkWindowImpl
-  (in-module "Gdk")
-  (parent "GObject")
-  (c-name "GdkWindowImpl")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (gtype-id "GDK_TYPE_WINDOW_IMPL")
-)
+;; (define-object GdkWindowImpl
+;;   (in-module "Gdk")
+;;   (parent "GObject")
+;;   (c-name "GdkWindowImpl")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (gtype-id "GDK_TYPE_WINDOW_IMPL")
+;; )
 
 (define-object GdkKeymap
   (in-module "Gdk")

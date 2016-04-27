@@ -1354,18 +1354,18 @@
 
 ;; From gdkglcontextprivate.h
 
-(define-method upload_texture
-  (of-object "GdkGLContext")
-  (c-name "gdk_gl_context_upload_texture")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (return-type "none")
-  (parameters
-    '("cairo_surface_t*" "image_surface")
-    '("int" "width")
-    '("int" "height")
-    '("guint" "texture_target")
-  )
-)
+;; (define-method upload_texture
+;;   (of-object "GdkGLContext")
+;;   (c-name "gdk_gl_context_upload_texture")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_surface_t*" "image_surface")
+;;     '("int" "width")
+;;     '("int" "height")
+;;     '("guint" "texture_target")
+;;   )
+;; )
 
 (define-method get_paint_data
   (of-object "GdkGLContext")
@@ -1374,37 +1374,37 @@
   (return-type "GdkGLContextPaintData*")
 )
 
-(define-method use_texture_rectangle
-  (of-object "GdkGLContext")
-  (c-name "gdk_gl_context_use_texture_rectangle")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (return-type "gboolean")
-)
+;; (define-method use_texture_rectangle
+;;   (of-object "GdkGLContext")
+;;   (c-name "gdk_gl_context_use_texture_rectangle")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (return-type "gboolean")
+;; )
 
-(define-method has_framebuffer_blit
-  (of-object "GdkGLContext")
-  (c-name "gdk_gl_context_has_framebuffer_blit")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (return-type "gboolean")
-)
+;; (define-method has_framebuffer_blit
+;;   (of-object "GdkGLContext")
+;;   (c-name "gdk_gl_context_has_framebuffer_blit")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (return-type "gboolean")
+;; )
 
-(define-method has_frame_terminator
-  (of-object "GdkGLContext")
-  (c-name "gdk_gl_context_has_frame_terminator")
-  (available "GDK_AVAILABLE_IN_3_18")
-  (return-type "gboolean")
-)
+;; (define-method has_frame_terminator
+;;   (of-object "GdkGLContext")
+;;   (c-name "gdk_gl_context_has_frame_terminator")
+;;   (available "GDK_AVAILABLE_IN_3_18")
+;;   (return-type "gboolean")
+;; )
 
-(define-method end_frame
-  (of-object "GdkGLContext")
-  (c-name "gdk_gl_context_end_frame")
-  (available "")
-  (return-type "none")
-  (parameters
-    '("cairo_region_t*" "painted")
-    '("cairo_region_t*" "damage")
-  )
-)
+;; (define-method end_frame
+;;   (of-object "GdkGLContext")
+;;   (c-name "gdk_gl_context_end_frame")
+;;   (available "")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_region_t*" "painted")
+;;     '("cairo_region_t*" "damage")
+;;   )
+;; )
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gdk/gdkfont.h
