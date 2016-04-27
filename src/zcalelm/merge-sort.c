@@ -43,6 +43,7 @@
 #define ELT_TYPE double
 #include "merge-sort-gen.c"
 #undef  ELT_TYPE
+#undef  DOUBLE_ONLY
 
 /*
  * all the imatrix sub-types 
