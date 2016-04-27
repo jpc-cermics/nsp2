@@ -1432,11 +1432,6 @@ if test "$MINGW32" = "yes" ; then
   check_vte=no
 fi
 
-dnl GRAPHICS_LIB_OLD=
-dnl with_gtk3=no
-dnl VTE_PKG=vte
-dnl VTE_FILE=vteapp-gtk2.c
-
 if test "$check_vte" = "yes" ; then
   # for gtk2 
   if test "$with_gtk2" = "yes"; then
