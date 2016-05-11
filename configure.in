@@ -1,4 +1,4 @@
-<dnl Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
 ## Copyright Enpc
 
 AC_REVISION($Revision$)dnl
@@ -1701,6 +1701,8 @@ UFSPARSE_LIB=
 
 builtin(include,config/ac_find_file.m4)
 builtin(include,config/ac_check_umfpack.m4)
+
+AC_SUITESPARSE_PATH()
 AC_CHECK_AMD()
 if test "xx${amd_libs}" != "xx" -a "x${amd_includedir}" != "xNO"; then
    AC_MSG_RESULT([using "$amd_libs" for amd libraries])
@@ -1749,6 +1751,24 @@ fi
 
 if test "xx$umfpack_libs" != "xx" ; then HAVE_UMFPACK="yes"; else HAVE_UMFPACK="no"; fi
 if test "xx$cholmod_libs" != "xx" ; then HAVE_CHOLMOD="yes"; else HAVE_CHOLMOD="no"; fi
+
+if test "xx$cholmod_libs" != "xx" ; then
+  AC_CHECK_SPQR()
+  if test "xx$spqr_libs" != "xx"  -a "x${spqr_includedir}" != "xNO" ; then
+   AC_DEFINE(WITH_SPQR,[],[spqr library])
+   AC_MSG_RESULT([using "$spqr_libs" for spqr libraries])
+   SPQR_LIBS=$spqr_libs
+   if test "x${spqr_includedir}" != "x${cholmod_includedir}"; then
+    AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+    CC_OPTIONS="${CC_OPTIONS} -I${spqr_includedir} "
+   else
+    AC_MSG_RESULT([using "-I${spqr_includedir}" for spqr includes])
+    CC_OPTIONS="${CC_OPTIONS}"
+   fi
+  fi
+fi
+
+if test "xx$spqr_libs" != "xx"    ; then HAVE_SPQR="yes"; else HAVE_SPQR="no"; fi
 
 # try a link of both libraries and suitesparseconfig
 
@@ -2323,6 +2343,7 @@ AC_SUBST(MPLUSLIBDIR)
 AC_SUBST(ENABLE_DEBUG)
 AC_SUBST(UMFPACK_LIBS)
 AC_SUBST(CHOLMOD_LIBS)
+AC_SUBST(SPQR_LIBS)
 AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
@@ -2354,6 +2375,7 @@ AC_SUBST(HAVE_GLPK)
 AC_SUBST(HAVE_CLP)
 AC_SUBST(HAVE_CHOLMOD)
 AC_SUBST(HAVE_UMFPACK)
+AC_SUBST(HAVE_SPQR)
 AC_SUBST(have_gtksourceview)
 AC_SUBST(MAN_VIZUALIZATION)
 AC_SUBST(GTK_PKGS_CFLAGS)
@@ -2410,6 +2432,9 @@ if test "xx$cholmod_libs" != "xx" ; then
 fi
 if test "xx$umfpack_libs" != "xx" ; then
    echo "umfpack................:" $UMFPACK_LIBS
+fi
+if test "xx$spqr_libs" != "xx" ; then
+   echo "spqr...................:" $SPQR_LIBS
 fi
 if test X"$enable_cairo_image" == Xyes; then
    echo "default graphic driver.:" gtk/cairo

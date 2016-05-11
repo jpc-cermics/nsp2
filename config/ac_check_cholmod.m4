@@ -19,6 +19,9 @@ dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
 
+
+# call AC_SUITESPARSE_PATH() before
+
 AC_DEFUN([AC_CHECK_COLAMD],
 [
  ac_save_cppflags=${CPPFLAGS}
@@ -27,26 +30,20 @@ AC_DEFUN([AC_CHECK_COLAMD],
  # check colamd includes
  #-------------------
  AC_MSG_CHECKING([for colamd include file directory])
- ac_colamd_includedirs="/usr/include/suitesparse /usr/include/colamd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/colamd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
- AC_FIND_FILE("colamd.h", $ac_colamd_includedirs,colamd_includedir)
+ AC_FIND_FILE("colamd.h", $ac_ssparse_includedirs,colamd_includedir)
  if test "x${colamd_includedir}" != "x" -a "x${colamd_includedir}" != "xNO"; then
   CPPFLAGS="-I${colamd_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${colamd_includedir}])
-
- ac_save_ldflags=${LDFLAGS}
-
  # check colamd_library
  #-------------------
  colamd_library=no
  AC_MSG_CHECKING([colamd library presence])
- ac_colamd_libdirs="/usr/lib /usr/local/lib /usr/lib/colamd /usr/local/lib/colamd /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libcolamd.so", $ac_colamd_libdirs, ac_colamd_libdir)
+ AC_FIND_FILE("libcolamd.so", $ac_ssparse_libdirs, ac_colamd_libdir)
  if test "x${ac_colamd_libdir}" != "x" -a "x${ac_colamd_libdir}" != "xNO"; then
   colamd_library=$ac_colamd_libdir/libcolamd.so
  fi
  AC_MSG_RESULT([$colamd_library])
-
  # check for colcolamd
  #----------------------------------
  if test "xx$colamd_library" != "xxno";then
@@ -65,8 +62,6 @@ AC_DEFUN([AC_CHECK_COLAMD],
  LDFLAGS=${ac_save_ldflags}
 ])
 
-
-
 # check for cholmod: you must have performed a AC_CHECK_COLAMD() before.
 # and AC_CHECK_AMD()
 # Note that lapack / blas are needed here so it won't work if scilab
@@ -79,27 +74,26 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  ac_save_libs=${LIBS}
  ac_save_ldflags=${LDFLAGS}
  LIBS="$colamd_libs $amd_libs $LAPACK_LIBS $BLAS_LIBS ${LIBS}"
- 
  # check cholmod includes
  #-------------------
  AC_MSG_CHECKING([for cholmod include file directory])
- ac_umf_includedirs=" /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
- AC_FIND_FILE("cholmod.h", $ac_umf_includedirs, cholmod_includedir)
+ AC_FIND_FILE("cholmod.h", $ac_ssparse_includedirs, cholmod_includedir)
  if test "x${cholmod_includedir}" != "x" -a "x${cholmod_includedir}" != "xNO"; then
     CPPFLAGS="-I${cholmod_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${cholmod_includedir}])
  # check for cholmod
  #-------------------
- cholmod_library=no
  AC_MSG_CHECKING([cholmod library presence])
- ac_cholmod_libdirs="/usr/lib /usr/local/lib /usr/lib/cholmod /usr/local/lib/cholmod /opt/local/lib"
- AC_FIND_FILE("libcholmod.so", $ac_cholmod_libdirs, ac_cholmod_libdir)
+ AC_FIND_FILE("libcholmod.so", $ac_ssparse_libdirs, ac_cholmod_libdir)
  if test "x${ac_cholmod_libdir}" != "x" -a "x${ac_cholmod_libdir}" != "xNO"; then
      cholmod_library=$ac_cholmod_libdir/libcholmod.so
+ else
+     cholmod_library=no
  fi
  AC_MSG_RESULT([$cholmod_library])
  if test "xx$cholmod_library" != "xxno";then
+   # cholmod library was found
    ac_save_libs1=${LIBS}
    LIBS="-lsuitesparseconfig ${LIBS}"
    if test "${ac_cholmod_libdir}" = "/usr/lib"; then
@@ -108,7 +102,6 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
       LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS}"
       AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod -lsuitesparseconfig ${colamd_libs} "])
    fi
-   AC_MSG_RESULT([$cholmod_libs])
    LIBS=${ac_save_libs1}
    if test "xx$cholmod_libs" = "xx";then
      # Try without suitesparseconfig
@@ -120,7 +113,6 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
         LDFLAGS="-L${ac_cholmod_libdir} ${LDFLAGS}"
         AC_CHECK_LIB(cholmod,cholmod_analyze,[cholmod_libs="-L${ac_cholmod_libdir} -lcholmod ${colamd_libs} "])
      fi
-     AC_MSG_RESULT([$cholmod_libs])	
    fi
    # Try with c versions and metis (for macports)
    if test "xx$cholmod_libs" = "xx" ; then
@@ -143,6 +135,50 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
      AC_MSG_RESULT([$cholmod_libs])
     fi
  fi
+ CPPFLAGS=${ac_save_cppflags}
+ LIBS=${ac_save_libs}
+ LDFLAGS=${ac_save_ldflags}
+])
+
+# check for spqr: you must have performed a AC_CHECK_CHOLMOD() before
+#------------------------------------------------------------------
+
+AC_DEFUN([AC_CHECK_SPQR],
+[
+ ac_save_cppflags=${CPPFLAGS}
+ ac_save_libs=${LIBS}
+ ac_save_ldflags=${LDFLAGS}
+ LIBS="$cholmod_libs $LAPACK_LIBS $BLAS_LIBS ${LIBS}"
+ # check spqr includes
+ #-------------------
+ AC_MSG_CHECKING([for spqr include file directory])
+ AC_FIND_FILE("SuiteSparseQR_C.h", $ac_ssparse_includedirs, spqr_includedir)
+ if test "x${spqr_includedir}" != "x" -a "x${spqr_includedir}" != "xNO"; then
+    CPPFLAGS="-I${spqr_includedir} ${CPPFLAGS}"
+ fi
+ AC_MSG_RESULT([${spqr_includedir}])
+ # check for spqr
+ #-------------------
+ AC_MSG_CHECKING([spqr library presence])
+ AC_FIND_FILE("libspqr.so", $ac_ssparse_libdirs, ac_spqr_libdir)
+ if test "x${ac_spqr_libdir}" != "x" -a "x${ac_spqr_libdir}" != "xNO"; then
+     spqr_library=$ac_spqr_libdir/libspqr.so
+ else
+     spqr_library=no
+ fi
+ AC_MSG_RESULT([$spqr_library])
+ if test "xx$spqr_library" != "xxno";then
+   if test "${ac_spqr_libdir}" = "/usr/lib" -o "${ac_spqr_libdir}" = "/usr/$host/lib"; then
+      AC_CHECK_LIB(spqr,SuiteSparseQR_C ,[spqr_libs="-lspqr"])
+   else
+      LDFLAGS="-L${ac_spqr_libdir} ${LDFLAGS}"
+      AC_CHECK_LIB(spqr,SuiteSparseQR_C ,[spqr_libs="-L${ac_spqr_libdir} -lspqr"])
+   fi
+ else
+    # maybe we just have shared libraries in standard path
+    AC_CHECK_LIB(spqr,SuiteSparseQR_C ,[spqr_libs="-lspqr"])
+ fi
+ AC_SUBST(spqr_libs)
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
  LDFLAGS=${ac_save_ldflags}

@@ -36,28 +36,14 @@ AC_DEFUN([AC_CHECK_SUITESPARSE],
  # check umfpack includes 
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
- ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
- ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- case "$host" in
-    *-*-darwin*)
-     if test $with_macports = yes; then
-        ac_umf_includedirs=" /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse /usr/include /opt/local/include/ufsparse /opt/local/include"
-        ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /opt/local/lib"
-     fi
-     if test $with_brew = yes; then
-        ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include "
-        ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack"
-     fi
-     ;;
-  esac
-  AC_FIND_FILE("umfpack.h", $ac_umf_includedirs, umfpack_includedir)
+ AC_FIND_FILE("umfpack.h", $ac_ssparse_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
     CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${umfpack_includedir}])  
 
  AC_MSG_CHECKING([for cholmod include file directory])
- AC_FIND_FILE("cholmod.h", $ac_umf_includedirs, cholmod_includedir)
+ AC_FIND_FILE("cholmod.h", $ac_ssparse_includedirs, cholmod_includedir)
  if test "x${cholmod_includedir}" != "x" -a "x${cholmod_includedir}" != "xNO"; then
    CPPFLAGS="-I${cholmod_includedir} ${CPPFLAGS}"
  fi
@@ -65,7 +51,7 @@ AC_DEFUN([AC_CHECK_SUITESPARSE],
  
  umfpack_library=no
  AC_MSG_CHECKING([umfpack library presence])
- AC_FIND_FILE("libumfpack.a", $ac_umfpack_libdirs, ac_umfpack_libdir)
+ AC_FIND_FILE("libumfpack.a", $ac_ssparse_libdirs, ac_umfpack_libdir)
  if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
      umfpack_library=$ac_umfpack_libdir/libumfpack.a
  fi

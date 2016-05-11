@@ -21,6 +21,47 @@ dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
 
+# typical places where we search for suitesparse 
+
+AC_DEFUN([AC_SUITESPARSE_PATH],
+[
+  ac_ssparse_includedirs="/usr/include /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse"
+  ac_ssparse_includedirs="$ac_ssparse_includedirs /usr/local/include/suitesparse /usr/local/include/ufsparse /usr/local/include"
+  ac_ssparse_includedirs="$ac_ssparse_includedirs /opt/local/include/suitesparse /opt/local/include/ufsparse /opt/local/include"
+  ac_ssparse_libdirs="/usr/lib /usr/lib/umfpack /usr/lib/suitesparse"
+  ac_ssparse_libdirs="$ac_ssparse_libdirs /usr/local/lib /usr/local/lib/umfpack /usr/local/lib/suitesparse"
+  ac_ssparse_libdirs="$ac_ssparse_libdirs /opt/local/lib /opt/local/lib/umfpack /opt/local/lib/suitesparse"
+
+ case "$host" in
+    i686-w64-mingw32)
+     # cross-compiling for windows 32bits 
+     ac_amd_includedirs="/usr/i686-w64-mingw32/include/suitesparse"
+     ac_amd_libdirs="/usr/i686-w64-mingw32/lib"
+     ;;
+    x86_64-w64-mingw32)
+     # cross-compiling for windows 64bits
+     ac_amd_includedirs="/usr/x86_64-w64-mingw32/include/suitesparse"
+     ac_amd_libdirs="/usr/x86_64-w64-mingw32/lib"
+     ;;
+    *-*-darwin*)
+     if test $with_macports = yes; then
+       # do not search in /usr/local 
+       ac_ssparse_includedirs="/usr/include /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse"
+       ac_ssparse_includedirs="$ac_ssparse_includedirs /opt/local/include/suitesparse /opt/local/include/ufsparse /opt/local/include"
+       ac_ssparse_libdirs="/usr/lib /usr/lib/umfpack /usr/lib/suitesparse"
+       ac_ssparse_libdirs="$ac_ssparse_libdirs /opt/local/lib /opt/local/lib/umfpack /opt/local/lib/suitesparse"
+     fi
+     if test $with_brew = yes; then
+       # do not search in /opt/local 
+       ac_ssparse_includedirs="/usr/include /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse"
+       ac_ssparse_includedirs="$ac_ssparse_includedirs /usr/local/include/suitesparse /usr/local/include/ufsparse /usr/local/include"
+       ac_ssparse_libdirs="/usr/lib /usr/lib/umfpack /usr/lib/suitesparse"
+       ac_ssparse_libdirs="$ac_ssparse_libdirs /usr/local/lib /usr/local/lib/umfpack /usr/local/lib/suitesparse"
+     fi
+     ;;
+  esac 
+])
+
 AC_DEFUN([AC_CHECK_AMD],
 [
  ac_save_cppflags=${CPPFLAGS}
@@ -29,20 +70,16 @@ AC_DEFUN([AC_CHECK_AMD],
  # check amd includes
  #-------------------
  AC_MSG_CHECKING([for amd include file directory])
- ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
- AC_FIND_FILE("amd.h", $ac_amd_includedirs, amd_includedir)
+ AC_FIND_FILE("amd.h", $ac_ssparse_includedirs, amd_includedir)
  if test "x${amd_includedir}" != "x" -a "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${amd_includedir}])
-
- ac_save_ldflags=${LDFLAGS}
  # check amd_library
  #-------------------
  amd_library=no
  AC_MSG_CHECKING([amd library presence])
- ac_amd_libdirs="/usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libamd.so", $ac_amd_libdirs, ac_amd_libdir)
+ AC_FIND_FILE("libamd.so", $ac_ssparse_libdirs, ac_amd_libdir)
  if test "x${ac_amd_libdir}" != "x" -a "x${ac_amd_libdir}" != "xNO"; then
   amd_library=$ac_amd_libdir/libamd.so
  fi
@@ -77,22 +114,18 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  # check umfpack includes
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
- ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
- AC_FIND_FILE("umfpack.h", $ac_umf_includedirs, umfpack_includedir)
+ AC_FIND_FILE("umfpack.h", $ac_ssparse_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
-#    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
-      CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
-#    fi
+    CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${umfpack_includedir}])
  # check for umfpack
  #-------------------
  umfpack_library=no
  AC_MSG_CHECKING([umfpack library presence])
- ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
- AC_FIND_FILE("libumfpack.so", $ac_umfpack_libdirs, ac_umfpack_libdir)
+ AC_FIND_FILE("libumfpack.so", $ac_ssparse_libdirs, ac_umfpack_libdir)
  if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
-     umfpack_library=$ac_umfpack_libdir/libumfpack.so
+    umfpack_library=$ac_umfpack_libdir/libumfpack.so
  fi
  AC_MSG_RESULT([$umfpack_library])
  if test "xx$umfpack_library" != "xxno";then
@@ -123,5 +156,4 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  CPPFLAGS=${ac_save_cppflags}
  LIBS=${ac_save_libs}
  LDFLAGS=${ac_save_ldflags}
-
 ])
