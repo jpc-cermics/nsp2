@@ -22,14 +22,11 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/icudata53.dll bin/
     cp -f /usr/$dist/bin/icui18n53.dll bin/
     cp -f /usr/$dist/bin/icuuc53.dll bin/
-    cp -f /usr/$dist/bin/libamd.dll bin/
     cp -f /usr/$dist/bin/libatk-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libblas.dll bin/
     cp -f /usr/$dist/bin/libcairo-2.dll bin/
     cp -f /usr/$dist/bin/libcdt-5.dll bin/
     cp -f /usr/$dist/bin/libcgraph-6.dll bin/
-    cp -f /usr/$dist/bin/libcholmod.dll bin/
-    cp -f /usr/$dist/bin/libcolamd.dll bin/
     cp -f /usr/$dist/bin/libcroco-0.6-3.dll bin/
     cp -f /usr/$dist/bin/libenchant.dll bin/
     cp -f /usr/$dist/bin/libexpat-1.dll bin/
@@ -46,7 +43,6 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgio-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglib-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglpk*.dll bin/
-    cp -f /usr/$dist/bin/glpk*.dll bin/
     cp -f /usr/$dist/bin/libgmodule-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgmp-10.dll bin/
     cp -f /usr/$dist/bin/libgnutls-30.dll bin/
@@ -102,7 +98,6 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libtasn1-6.dll bin/
     cp -f /usr/$dist/bin/libtermcap-0.dll bin/
     cp -f /usr/$dist/bin/libtiff-5.dll bin/
-    cp -f /usr/$dist/bin/libumfpack.dll bin/
     cp -f /usr/$dist/bin/libvorbis-0.dll bin/
     cp -f /usr/$dist/bin/libvorbisenc-2.dll bin/
     cp -f /usr/$dist/bin/libwebkitgtk-1.0-0.dll bin/
@@ -113,7 +108,21 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/zlib1.dll bin/
     cp -f /usr/$dist/bin/libdbus-1-3.dll bin/ 
     cp -f /usr/$dist/bin/libdbus-glib-1-2.dll bin/
-
+    cp -f /usr/$dist/bin/libamd.2.4.5.dll bin
+    cp -f /usr/$dist/bin/libbtf.1.2.5.dll bin
+    cp -f /usr/$dist/bin/libcamd.2.4.5.dll bin
+    cp -f /usr/$dist/bin/libccolamd.2.9.5.dll bin
+    cp -f /usr/$dist/bin/libcholmod.3.0.10.dll bin
+    cp -f /usr/$dist/bin/libcolamd.2.9.5.dll bin
+    cp -f /usr/$dist/bin/libcxsparse.3.1.8.dll bin
+    cp -f /usr/$dist/bin/libklu.1.3.7.dll bin
+    cp -f /usr/$dist/bin/libldl.2.2.5.dll bin
+    cp -f /usr/$dist/bin/libmetis.5.1.0.dll bin
+    cp -f /usr/$dist/bin/librbio.2.2.5.dll bin
+    cp -f /usr/$dist/bin/libspqr.2.0.6.dll bin
+    cp -f /usr/$dist/bin/libsuitesparseconfig.4.5.2.dll bin
+    cp -f /usr/$dist/bin/libumfpack.5.7.5.dll bin
+    
     subdirs="lib/gtk-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 etc share" 
     echo populate directories: lib, etc, share.
     for i in $subdirs ;
