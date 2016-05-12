@@ -15,7 +15,7 @@ function [W,rk]=colcomp(A, meth='svd', tol=[])
   if norm(A,1) < sqrt(%eps)/10 then rk=0,W=eye(na,na),return,end
   if isempty(tol) then tol=sqrt(%eps)*norm(A,1)*max(ma,na),end
   select meth
-   case 'qr' then [q,r,rk,e]=qr(A',tol=tol);  W=q(:,na:-1:1)
+   case 'qr' then [q,r,e,rk]=qr(A',tol=tol);  W=q(:,na:-1:1)
    case 'svd' then [u,s,v,rk]=svd(A',tol=tol);  W=u(:,na:-1:1)
   else
     error('rowcomp: meth optional argument should be ''qr'' or ''svd''');
