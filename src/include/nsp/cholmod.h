@@ -87,6 +87,12 @@ extern int IsCholmod(NspObject *O);
 extern NspCholmod *GetCholmodCopy (Stack stack, int i); 
 extern NspCholmod *GetCholmod (Stack stack, int i); 
 extern int int_cholmod_create(Stack stack, int rhs, int opt, int lhs);
+extern cholmod_sparse *cholmod_sparse_from_object(NspObject *Obj,double *dummy,
+						  int stype,int transpose, int is_long, cholmod_common *cm );
+extern void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex );
+extern NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_common *cm);
+extern void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *dummy) ;
+extern NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_common *cm);
 
 #endif /* NSP_INC_Cholmod */ 
 

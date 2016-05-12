@@ -20,13 +20,13 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Interface with the cholmod library using a NspCholmod Object.
+ * Interface with the spqr library using a NspCholmod Object.
  * We use ZOMPLEX for sparse Matrice since passing sparse matrices
  * from Nsp to cholmod uses Matlab sparse triplet (Sptriplet.c)
  * which are ZOMPLEX.
  * For full matrices COMPLEX is preferred since it is the default
  * in Nsp.
- *
+ * Fo spqr library we need SuiteSparse_long 
  *
  */
 
@@ -34,6 +34,7 @@
 #ifdef WITH_CHOLMOD
 
 #include <cholmod.h>
+#include <SuiteSparseQR_C.h>
 #define  Cholmod_Private
 #include <nsp/object.h>
 #include <nsp/cholmod.h>
@@ -52,17 +53,13 @@
 #define SPUMONI 0
 #endif
 
-static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex );
-static void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *dummy) ;
-static NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_common *cm);
 static void nsp_cholmod_sparse_free(cholmod_sparse *B);
-static NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_common *cm);
 static NspMatrix *nsp_matrix_from_int(const int *P,int n, int one_based);
 static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *beta,int stype,int transpose,
-				  int ll, int quick_return_if_not_posdef,int ordering,NspMatrix *Perm);
+				  int ll, int quick_return_if_not_posdef,int ordering,NspMatrix *Perm, int is_long);
 static int nsp_cholmod_set_ordering(int ordering,NspMatrix *Perm, cholmod_common *cm);
-static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,double *dummy,int stype, int transpose);
-static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse *Ashallow,double *dummy,int transpose, cholmod_common *cm );
+static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,double *dummy,int stype, int transpose,int is_long);
+static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,double *dummy,int transpose, cholmod_common *cm );
 /*
  * NspCholmod inherits from NspObject
  */
@@ -267,7 +264,7 @@ void nsp_cholmod_destroy(NspCholmod *H)
    {
      cholmod_free_factor (&(H->obj->L),&(H->obj->Common));
      cholmod_finish (&(H->obj->Common)) ;
-     cholmod_print_common (" ",&(H->obj->Common)) ;
+     /* cholmod_print_common (" ",&(H->obj->Common)) ; */
      FREE(H->obj);
    }
   FREE(H);
@@ -447,6 +444,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
       if ( rep == 1 ) transpose=TRUE;
       if ( rep == 2 )  /* use only upper part of the matrix (stype=1) but verify symmetry */
 	{
+	  stype=1;
 	  if ( ! nsp_spcolmatrix_is_symmetric(A) )
 	    {
 	      Scierror("Error: matrix is not symmetric\n");
@@ -475,9 +473,9 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Perm->I[k] = Perm->R[k]-1 ;
 	}
-      ordering = Perm->I[0];
+      ordering = CHOLMOD_GIVEN;
     }
-  if ( nsp_cholmod_from_spcol(H,A,beta,stype,transpose,ll , (lhs < 2),ordering,Perm ) == FAIL)
+  if ( nsp_cholmod_from_spcol(H,A,beta,stype,transpose,ll , (lhs < 2),ordering,Perm, FALSE) == FAIL)
     goto err;
 
   if ( lhs < 2 && H->obj->Common.status != CHOLMOD_OK)
@@ -590,7 +588,7 @@ static int int_cholmod_meth_solve(NspCholmod *self, Stack stack, int rhs, int op
 	  return RET_BUG;
 	}
       /* get sparse matrix B (unsymmetric) */
-      if ( nsp_spcol_to_cholmod_sparse(A,&Bspmatrix, &dummy, 0, FALSE)== FAIL)
+      if ( nsp_spcol_to_cholmod_sparse(A,&Bspmatrix, &dummy, 0, FALSE, FALSE)== FAIL)
 	return RET_BUG;
       Xs = cholmod_spsolve (imode, self->obj->L, &Bspmatrix, &(self->obj->Common)) ;
       nsp_cholmod_sparse_free( &Bspmatrix);
@@ -676,7 +674,7 @@ static int int_cholmod_meth_updown(NspCholmod *self, Stack stack, int rhs, int o
       return RET_BUG;
     }
   /* get sparse matrix B (unsymmetric) */
-  if ( nsp_spcol_to_cholmod_sparse(C,&Cspmatrix, &dummy, 0, FALSE)== FAIL)
+  if ( nsp_spcol_to_cholmod_sparse(C,&Cspmatrix, &dummy, 0, FALSE, FALSE)== FAIL)
 	return RET_BUG;
   if (!cholmod_updown (direction, &Cspmatrix, self->obj->L,  &(self->obj->Common)))
     {
@@ -714,7 +712,7 @@ static int int_cholmod_meth_resymbol(NspCholmod *self, Stack stack, int rhs, int
    *      A->xtype = CHOLMOD_PATTERN ;
    */
 
-  if ( nsp_spcol_to_cholmod_sparse(A,&Aspmatrix, &dummy, 0, FALSE)== FAIL)
+  if ( nsp_spcol_to_cholmod_sparse(A,&Aspmatrix, &dummy, 0, FALSE, FALSE)== FAIL)
 	return RET_BUG;
   Aspmatrix.xtype =  CHOLMOD_PATTERN;
   cholmod_resymbol (&Aspmatrix, NULL, 0, TRUE, self->obj->L,  &(self->obj->Common));
@@ -917,9 +915,9 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Perm->I[k] = Perm->R[k]-1 ;
 	}
-      ordering = Perm->I[0];
+      ordering = CHOLMOD_GIVEN;
     }
-  if ( nsp_cholmod_from_spcol(H,A,beta,stype,transpose,ll , (lhs < 2),ordering,Perm ) == FAIL)
+  if ( nsp_cholmod_from_spcol(H,A,beta,stype,transpose,ll , (lhs < 2),ordering,Perm, FALSE) == FAIL)
     goto err;
 
   if ( lhs < 2 && H->obj->Common.status != CHOLMOD_OK)
@@ -1041,7 +1039,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
   cholmod_factor *L ;
   cholmod_common cm;
   double dummy = 0;
-  cholmod_sparse Amatrix,*Ac;
+  cholmod_sparse *Ac;
   NspMatrix *Res;
   NspMatrix *Perm= NULL;
   char *sstype=NULL, *ctype=NULL;
@@ -1086,7 +1084,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Perm->I[k] = Perm->R[k]-1 ;
 	}
-      ordering = Perm->I[0];
+      ordering = CHOLMOD_GIVEN;
     }
 
   /*
@@ -1102,11 +1100,8 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
   if (  nsp_cholmod_set_ordering(ordering,Perm,&cm) == FAIL)
     return RET_BUG;
 
-  Ac = cholmod_pattern_from_object(Obj, &Amatrix,&dummy,transpose,&cm);
-
-  if ( Ac == NULL)
+  if ((Ac = cholmod_pattern_from_object(Obj, &dummy,transpose,&cm)) == NULL)
     return RET_BUG;
-
 
   if (stype != 0 &&  Ac->nrow != Ac->ncol )
     {
@@ -1115,9 +1110,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  /*
-   * analyze
-   */
+  /* analyze */
   L = cholmod_analyze_p (Ac,(Perm==NULL) ? NULL: Perm->I,NULL,0,&cm ) ;
 
   if ((Res = nsp_matrix_from_int(L->Perm,Ac->nrow, 1))== NULLMAT)
@@ -1131,13 +1124,9 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
     }
 
   cholmod_free_factor (&L, &cm) ;
-  if ( Ac != &Amatrix )
-    cholmod_free_sparse (&Ac, &cm) ;
-  else
-    nsp_cholmod_sparse_free( &Amatrix);
+  cholmod_free_sparse (&Ac, &cm) ;
   cholmod_finish (&cm) ;
   return Max(lhs,1);
-
 }
 
 static OpTab cholmod_func[]={
@@ -1190,7 +1179,7 @@ void cholmod_Interf_Info(int i, char **fname, function (**f))
  **/
 
 static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *beta,int stype,int transpose,
-				  int ll, int quick_return_if_not_posdef,int ordering,NspMatrix *Perm)
+				  int ll, int quick_return_if_not_posdef,int ordering,NspMatrix *Perm, int is_long)
 
 {
   double dummy = 0;
@@ -1243,7 +1232,7 @@ static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *be
   /* This will disable the supernodal LL', which will be slow. */
   /* Ch->objd->Common.supernodal = CHOLMOD_SIMPLICIAL ; */
 
-  if ( nsp_spcol_to_cholmod_sparse(Sp,&Amatrix, &dummy,stype,transpose)== FAIL)
+  if ( nsp_spcol_to_cholmod_sparse(Sp,&Amatrix, &dummy,stype,transpose, is_long)== FAIL)
     return FAIL;
   /*
    * analyze and factorize
@@ -1270,7 +1259,7 @@ static int nsp_cholmod_from_spcol(NspCholmod *Ch,NspSpColMatrix *Sp,  double *be
  *
  **/
 
-static void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *dummy)
+void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *dummy)
 {
   B->nrow = A->m;
   B->ncol = A->n;
@@ -1288,7 +1277,6 @@ static void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *d
   B->xtype = ( A->rc_type == 'c') ? CHOLMOD_COMPLEX : CHOLMOD_REAL;
 }
 
-
 /**
  * nsp_cholmod_dense_to_matrix:
  * @Ahandle: a handler to a cholmod_dense matrix
@@ -1297,12 +1285,11 @@ static void nsp_matrix_to_cholmod_dense(NspMatrix *A, cholmod_dense *B,double *d
  * returns a #NspMatrix from a cholmod_dense. The array of values
  * is nor copied but moved from one struture to the other and then
  * the cholmod_dense object is freed.
- * XXXX to be tested with complex
  *
  * Returns: a new #NspMatrix
  **/
 
-static NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_common *cm)
+NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_common *cm)
 {
   NspMatrix *A;
   cholmod_dense *Ac =*Ahandle;
@@ -1346,7 +1333,7 @@ static NspMatrix *nsp_cholmod_dense_to_matrix(cholmod_dense **Ahandle,cholmod_co
  * Returns: %OK or %FAIL
  **/
 
-static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,double *dummy,int stype, int transpose)
+static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,double *dummy,int stype, int transpose, int is_long)
 {
   int *Ap ;
   /* be sure that A contains a Matlab triplet */
@@ -1367,14 +1354,37 @@ static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,doub
 	  B->ncol = A->m;
 	}
     }
-  B->p = A->triplet.Jc;
-  B->i = A->triplet.Ir;
+  if ( is_long )
+    {
+      if ( sizeof(SuiteSparse_long) == sizeof(int))
+	{
+	  B->p = A->triplet.Jc;
+	  B->i = A->triplet.Ir;
+	}
+      else
+	{
+	  int i;
+	  /* we must copy since dimensions are not the same */
+	  if ((B->p = malloc(sizeof(SuiteSparse_long)*(A->m+1)))== NULL)
+	    return FAIL;
+	  if ((B->i = malloc(sizeof(SuiteSparse_long)*(A->triplet.Aisize)))== NULL)
+	    return FAIL;
+	  for (i=0 ; i < A->m+1;i++) ((SuiteSparse_long *) B->p)[i]=A->triplet.Jc[i];
+	  for (i=0 ; i < A->triplet.Aisize;i++) ((SuiteSparse_long *) B->i)[i]=A->triplet.Ir[i];
+	}
+      B->itype = CHOLMOD_LONG ;
+    }
+  else
+    {
+      B->p = A->triplet.Jc;
+      B->i = A->triplet.Ir;
+      B->itype = CHOLMOD_INT ;
+    }
   Ap = B->p ;
   B->nzmax = Ap [B->ncol] ;
   B->packed = TRUE ;
   B->sorted = TRUE ;
   B->nz = NULL ;
-  B->itype = CHOLMOD_INT ;
   B->dtype = CHOLMOD_DOUBLE ;
   B->stype = stype ;
   B->xtype = ( A->rc_type == 'c') ? CHOLMOD_ZOMPLEX : CHOLMOD_REAL ;
@@ -1391,6 +1401,11 @@ static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,doub
       B->z = A->triplet.Pi;
     }
   /* Be sure now that A won't free its triplet */
+  if ( is_long && (sizeof(SuiteSparse_long) != sizeof(int)))
+    {
+      FREE(A->triplet.Jc);
+      FREE(A->triplet.Ir);
+    }
   A->convert = 'v';
   A->triplet.Jc=NULL;
   A->triplet.Ir=NULL;
@@ -1432,19 +1447,35 @@ static void nsp_cholmod_sparse_free(cholmod_sparse *B)
  * Returns: a new #NspSpColMatrix or %NULL
  **/
 
-static NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_common *cm)
+NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_common *cm)
 {
   NspSpColMatrix *An;
   cholmod_sparse *A= *Ahandle;
   char rc = (A->xtype != CHOLMOD_REAL) ? 'c' : 'r' ;
   if ((An = nsp_spcolmatrix_create(NVOID,rc,0,0) ) == NULLSPCOL)
     return NULLSPCOL;
+    
   An->convert = 't' ;
   An->triplet.m = A->nrow;
   An->triplet.n = A->ncol;
   An->triplet.Aisize =  A->nzmax;
-  An->triplet.Jc =  A->p;
-  An->triplet.Ir =  A->i;
+  if ( (A->itype == CHOLMOD_LONG) && (sizeof(SuiteSparse_long) != sizeof(int)))
+    {
+      int i;
+      /* we must copy since dimensions are not the same */
+      if ((An->triplet.Jc = malloc(sizeof(int)*(An->triplet.m+1)))== NULL)
+	return NULLSPCOL;
+      if ((An->triplet.Ir = malloc(sizeof(int)*(An->triplet.Aisize)))== NULL)
+	return NULLSPCOL;
+      for (i=0 ; i < An->triplet.m+1;i++) An->triplet.Jc[i]= ((SuiteSparse_long *) A->p)[i];
+      for (i=0 ; i < An->triplet.Aisize;i++) An->triplet.Ir[i] = ((SuiteSparse_long *) A->i)[i];
+    }
+  else
+    {
+      An->triplet.Jc =  A->p;
+      An->triplet.Ir =  A->i;
+    }
+  
   An->triplet.Pr =  A->x;
   An->triplet.Pi =  NULL;
   if (A->xtype != CHOLMOD_REAL)
@@ -1452,6 +1483,11 @@ static NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, ch
       An->triplet.Pi =  A->z;
     }
   /* now we can free A protecting moved array */
+  if ( ( A->itype == CHOLMOD_LONG) && (sizeof(SuiteSparse_long) != sizeof(int)))
+    {
+      cholmod_l_free (An->triplet.m+1, sizeof (SuiteSparse_long), A->p, cm) ;
+      cholmod_l_free (An->triplet.Aisize, sizeof (SuiteSparse_long), A->i, cm) ;
+    }
   A->p = NULL ;
   A->i = NULL ;
   A->x = NULL ;
@@ -1558,68 +1594,82 @@ static int nsp_cholmod_set_ordering(int ordering,NspMatrix *Perm, cholmod_common
   return OK;
 }
 
-
-
-static cholmod_sparse *get_cholmod_pattern_from_matrix(NspMatrix *A,int transpose, cholmod_common *cm)
+static cholmod_sparse *get_cholmod_sparse_from_matrix(NspMatrix *A,int transpose, cholmod_common *cm, int flag,int is_long )
 {
   cholmod_sparse *Ac;
   double dummy;
   cholmod_dense Bmatrix;
   /* Bmatrix should not be freed */
   nsp_matrix_to_cholmod_dense(A,&Bmatrix,&dummy) ;
-  /* use FALSE to get a pattern matrix i.e spones (sparse(B))*/
-  Ac = cholmod_dense_to_sparse (&Bmatrix, FALSE, cm) ;
+  /* flag can be  FALSE to get a pattern matrix */
+  if ( is_long )
+    Ac = cholmod_l_dense_to_sparse (&Bmatrix, flag , cm) ;
+  else
+    Ac = cholmod_dense_to_sparse (&Bmatrix, flag , cm) ;
   if ( transpose)
     {
       cholmod_sparse *At;
-      At = cholmod_transpose (Ac, 0, cm) ;
+      if ( is_long )
+	At = cholmod_l_transpose (Ac, 0, cm) ;
+      else
+	At = cholmod_transpose (Ac, 0, cm) ;
       cholmod_free_sparse (&Ac,cm);
       Ac = At;
     }
   return Ac;
 }
 
-static cholmod_sparse *get_cholmod_pattern_from_bmatrix(NspBMatrix *B,int transpose, cholmod_common *cm)
+static cholmod_sparse *get_cholmod_sparse_from_bmatrix(NspBMatrix *B,int transpose, cholmod_common *cm,int flag,int is_long)
 {
   cholmod_sparse *Ac;
   NspMatrix *A=nsp_bmatrix_to_matrix(B);
   if ( A == NULL) return NULL;
-  Ac=get_cholmod_pattern_from_matrix(A, transpose,cm);
+  Ac=get_cholmod_sparse_from_matrix(A, transpose,cm,flag,is_long);
   nsp_matrix_destroy(A);
   return Ac;
 }
 
-static int get_cholmod_pattern_from_spcol(NspSpColMatrix *A, cholmod_sparse *B,double *dummy,int stype,int transpose)
+
+static cholmod_sparse *get_cholmod_sparse_from_spcol(NspSpColMatrix *A, double *dummy,int stype,int transpose, int is_long)
 {
-  if ( nsp_spcol_to_cholmod_sparse(A,B,dummy,stype,transpose) == FAIL) return FAIL;
-  if ( B->nrow != 0 && B->ncol != 0 )
-    {
-      FREE(B->x);
-      FREE(B->z);
-    }
-  B->xtype = CHOLMOD_PATTERN ;
-  return OK;
+  cholmod_sparse *B;
+  if ( (B = malloc(sizeof(cholmod_sparse))) == NULL) return NULL;
+  if ( nsp_spcol_to_cholmod_sparse(A,B,dummy,stype,transpose, is_long ) == FAIL) return NULL;
+  return B;
 }
 
-/* Create a CHOLMOD_PATTERN sparse matrix for a nsp matrix
- * NspMatrix or NspBMatrix or NspSpColMatrix
+
+/* returns a cholmod_sparse matrix which is a CHOLMOD_PATTERN from a nsp object
+ * which can be a NspMatrix or NspBMatrix or NspSpColMatrix
  *
- * A shallow copy or duplicate is returned; the shallow copy must not be freed.
- * For a shallow copy, the return value A is the same as Ashallow.  For a
- * complete duplicate, A and Ashallow will differ.
- * A shallow copy is returned for NspSpColMatrix argument
+ * Warning: when Obj is a NspSpColMatrix date is shared with the 
+ * returned cholmod_sparse object and care must be taken for freeing
  */
 
-static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse *Ashallow,double *dummy,int transpose, cholmod_common *cm )
+static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,double *dummy,int transpose, cholmod_common *cm )
 {
+  int is_long = FALSE;
+  int flag = FALSE; /* use FALSE to obtain a pattern */
   if ( IsMat(Obj))
-    return get_cholmod_pattern_from_matrix((NspMatrix *) Obj,transpose,cm);
+    {
+      return get_cholmod_sparse_from_matrix((NspMatrix *) Obj,transpose,cm,flag,is_long);
+    }
   else if ( IsBMat(Obj))
-    return get_cholmod_pattern_from_bmatrix((NspBMatrix *) Obj,transpose,cm);
+    {
+      return get_cholmod_sparse_from_bmatrix((NspBMatrix *) Obj,transpose,cm,flag,is_long);
+    }
   else if ( IsSpColMat(Obj))
     {
-      if ( get_cholmod_pattern_from_spcol((NspSpColMatrix *) Obj,Ashallow,dummy,0, transpose)==FAIL) return NULL;
-      return Ashallow;
+      cholmod_sparse *Res;
+      Res = get_cholmod_sparse_from_spcol((NspSpColMatrix *) Obj,dummy, 0, transpose, is_long);
+      if ( Res == NULL) return NULL;
+      if ( Res->nrow != 0 && Res->ncol != 0 )
+	{
+	  FREE(Res->x);
+	  FREE(Res->z);
+	}
+      Res->xtype = CHOLMOD_PATTERN ;
+      return Res;
     }
   else
     {
@@ -1628,6 +1678,25 @@ static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse
   return NULL;
 }
 
+/* returns a cholmod_sparse matrix from a nsp object
+ * which can be a NspMatrix or NspBMatrix or NspSpColMatrix
+ *
+ * Warning: when Obj is a NspSpColMatrix date is shared with the 
+ * returned cholmod_sparse object and care must be taken for freeing
+ */
+
+cholmod_sparse *cholmod_sparse_from_object(NspObject *Obj,double *dummy,int stype, int transpose, int is_long, cholmod_common *cm )
+{
+  if ( IsMat(Obj))
+    return get_cholmod_sparse_from_matrix((NspMatrix *) Obj,transpose,cm,TRUE,is_long);
+  else if ( IsBMat(Obj))
+    return get_cholmod_sparse_from_bmatrix((NspBMatrix *) Obj,transpose,cm,TRUE,is_long);
+  else if ( IsSpColMat(Obj))
+    return get_cholmod_sparse_from_spcol((NspSpColMatrix *) Obj, dummy,stype, transpose, is_long);
+  else
+    Scierror("Error: argument has wrong type matrix, bmatrix or sparse expected\n");
+  return NULL;
+}
 
 /* from cholmod_matlab
  * CHOLMOD/MATLAB Module.  Version 1.2.  Copyright (C) 2005-2006,
@@ -1642,8 +1711,12 @@ static void nsp_sputil_error_handler (int status, const char *file, int line,con
 #endif
 
 
-static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
+void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 {
+#if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0))
+  SuiteSparse_start ();
+#endif
+  
   /* cholmod_solve must return a real or zomplex X for MATLAB */
   cm->prefer_zomplex = TRUE ;
 
@@ -1697,8 +1770,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 
 /* complex arithmetic */
 #if ( CHOLMOD_VERSION >= CHOLMOD_VER_CODE (3,0))
-  SuiteSparse_config.divcomplex_func =  cholmod_divcomplex ;
-  SuiteSparse_config.hypot_func =  cholmod_hypot ;
+  /* done in  SuiteSparse_start */
 #else
   cm->complex_divide = cholmod_divcomplex ;
   cm->hypotenuse     = cholmod_hypot ;

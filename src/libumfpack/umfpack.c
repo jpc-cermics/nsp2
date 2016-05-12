@@ -1249,12 +1249,16 @@ static int int_umfpack_solve(Stack stack, int rhs, int opt, int lhs)
 extern function int_cholmod_analyze;
 extern function int_cholmod_chol;
 extern function int_cholmod_create;
+extern function int_spqr_create;
 
 static OpTab umfpack_func[]={
 #ifdef WITH_CHOLMOD
   { "analyze", int_cholmod_analyze}, /* cholmod */
   { "chol_sp", int_cholmod_chol},/* cholmod */
   { "cholmod_create", int_cholmod_create},/* cholmod */
+#endif
+#ifdef WITH_SPQR
+  { "spqr_create", int_spqr_create},/* spqr */
 #endif 
   { "umfpack_create", int_umfpack_create},
   { "umfpack_solve",int_umfpack_solve},

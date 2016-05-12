@@ -48,6 +48,10 @@ typedef struct _NspCells NspCells;
 #define NSP_INC_NspCholmod
 typedef struct _NspCholmod NspCholmod;
 #endif
+#ifndef NSP_INC_NspSpqr
+#define NSP_INC_NspSpqr
+typedef struct _NspSpqr NspSpqr;
+#endif
 #ifndef NSP_INC_NspFile
 #define NSP_INC_NspFile
 typedef struct _NspFile NspFile;
