@@ -1354,6 +1354,24 @@ static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,doub
 	  B->ncol = A->m;
 	}
     }
+  else
+    {
+      if ( transpose == TRUE )
+	{
+	  /* need to recreate the triplet */
+	  nsp_spcol_free_triplet(A);
+	  /* since we want to transpose the triplet must be created */
+	  if ( nsp_sprow_set_triplet_from_m((NspSpRowMatrix *)A,TRUE)==FAIL)
+	    return FAIL;
+	  B->nrow = A->n;
+	  B->ncol = A->m;
+	}
+      else
+	{
+	  B->nrow = A->m;
+	  B->ncol = A->n;
+	}
+    }
   if ( is_long )
     {
       if ( sizeof(SuiteSparse_long) == sizeof(int))
