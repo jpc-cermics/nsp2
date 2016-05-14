@@ -308,7 +308,7 @@ int nsp_spqr_print(NspSpqr *Mat, int indent,char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces
  * for Spqr objects
- * Note that some of these functions could become MACROS XXXXX
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspSpqr   *nsp_spqr_object(NspObject *O)
@@ -414,6 +414,8 @@ static int nsp_spqr_check_ordering(Stack stack, const char *ordering_s, int *ord
   return OK;
 }
 
+/* up and lo are ignored in qr factorization XXXX */
+
 static int nsp_spqr_check_type(Stack stack, const char *sstype, int *stype, int *transpose, const NspObject *Obj)
 {
   if ( sstype != NULL)
@@ -442,7 +444,8 @@ static int nsp_spqr_check_type(Stack stack, const char *sstype, int *stype, int 
 	      return FAIL;
 	    }
 	  break;
-	case 3:  /* use lower part */ *stype = -1; break;
+	case 3: /* use lower part but matrix must be square XXXX*/ *stype = -1; break;
+	case 4: /* use upper part but matrix must be square XXXX */  *stype = 1; break;
 	}
     }
   return OK;
@@ -488,7 +491,7 @@ int int_spqr_create(Stack stack, int rhs, int opt, int lhs)
   cholmod_l_start (&(H->obj->Common)) ;
   nsp_sputil_config (SPUMONI,&(H->obj->Common),FALSE) ;
   
-  H->obj->A = cholmod_sparse_from_object(Obj, &dummy,stype, transpose,TRUE, &(H->obj->Common));
+  H->obj->A = cholmod_sparse_from_object(Obj, &dummy,stype, transpose,TRUE, TRUE, &(H->obj->Common));
   H->obj->ordering = ordering;
   H->obj->tol = tol;
   if (H->obj->A  == NULL) return RET_BUG;
@@ -556,7 +559,7 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
   cholmod_sparse *Q=NULL;   // m-by-e sparse matrix
   cholmod_sparse *R=NULL;     // e-by-n sparse matrix
   long *E=NULL;               // size n column permutation, NULL if identity
-  long econ;
+  long econ=-1;
   long rk;
   NspSpColMatrix *Qs = NULL,*Rs = NULL;
   NspMatrix *Es = NULL,*Rk = NULL;
@@ -568,10 +571,12 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
   int transpose= FALSE;
   int ordering= SPQR_ORDERING_DEFAULT;
   char *ordering_s = NULL;
+  char *mode_s = NULL;
   NspSpqr *H=NULL;
   nsp_option opts[] ={{"type",string,NULLOBJ,-1},
 		      {"ordering",string,NULLOBJ,-1},
 		      {"tol",s_double,NULLOBJ,-1},
+		      {"mode",string,NULLOBJ,-1}, /* eco ? */
 		      { NULL,t_end,NULLOBJ,-1}};
   /* Get a sparse matrix */
   CheckStdRhs(1,1);
@@ -585,7 +590,7 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
   if ((Obj = nsp_get_object(stack,1)) == NULL)   return RET_BUG;
 
   /* optional arguments */
-  if ( get_optional_args(stack,rhs,opt,opts,&sstype,&ordering_s,&tol) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&sstype,&ordering_s,&tol,&mode_s) == FAIL)
     goto err;
 
   /* checks the optional type argument */
@@ -600,7 +605,7 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
   cholmod_l_start (&(H->obj->Common)) ;
   nsp_sputil_config (SPUMONI,&(H->obj->Common),FALSE) ;
   
-  H->obj->A = cholmod_sparse_from_object(Obj, &dummy,stype, transpose,TRUE, &(H->obj->Common));
+  H->obj->A = cholmod_sparse_from_object(Obj, &dummy,stype, transpose,TRUE, TRUE, &(H->obj->Common));
   H->obj->ordering = ordering;
   H->obj->tol = tol;
   if (H->obj->A  == NULL) return RET_BUG;
@@ -616,8 +621,11 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
 	  goto err;
 	}
     }
-
-  econ = H->obj->A->nrow;
+  if ( mode_s != NULL && strcmp(mode_s,"e") == 0)
+    econ = Min(H->obj->A->nrow,H->obj->A->ncol);
+  else
+    econ = H->obj->A->nrow;
+      
   rk=SuiteSparseQR_C_QR(H->obj->ordering,tol,econ,H->obj->A,&Q,&R,&E,&(H->obj->Common));
   if ( rk == -1 )
     {
@@ -918,7 +926,7 @@ static int int_spqr_meth_backslash(NspSpqr *self,Stack stack, int rhs, int opt, 
  	}
       
       /* get sparse matrix B (unsymmetric) */
-      Bspmatrix = cholmod_sparse_from_object(NSP_OBJECT(A), &dummy, 0,FALSE,TRUE, &(self->obj->Common));
+      Bspmatrix = cholmod_sparse_from_object(NSP_OBJECT(A), &dummy, 0,FALSE,TRUE, TRUE, &(self->obj->Common));
       if ( Bspmatrix == NULL) return RET_BUG;
       Xs = SuiteSparseQR_C_backslash_sparse(self->obj->ordering,self->obj->tol,
 					   self->obj->A,Bspmatrix,&(self->obj->Common));
