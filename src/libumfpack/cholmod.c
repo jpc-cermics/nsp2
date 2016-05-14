@@ -1492,7 +1492,10 @@ NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_c
   A->i = NULL ;
   A->x = NULL ;
   A->z = NULL ;
-  cholmod_free_sparse (Ahandle, cm) ;
+  if ( A->itype == CHOLMOD_LONG)
+    cholmod_l_free_sparse (Ahandle, cm) ;
+  else
+    cholmod_free_sparse (Ahandle, cm) ;
   /* be sure that A is nsp back converted */
   if ( nsp_spcol_update_from_triplet(An) == FAIL)
     return NULL;

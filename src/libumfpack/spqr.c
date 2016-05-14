@@ -508,38 +508,11 @@ int int_spqr_create(Stack stack, int rhs, int opt, int lhs)
 /* standard qr interface for sparses matrices (for compatibility) 
  */
 
-int nsp_spqr_get_qr(NspSpqr *self,cholmod_sparse *Q,cholmod_sparse *R, long *E,
+int nsp_spqr_get_qr(NspSpqr *self,cholmod_sparse *Q,cholmod_sparse *R, long *E, long rk,
 		    NspSpColMatrix **Qs, NspSpColMatrix **Rs, NspMatrix **Es, NspMatrix **Rk, int nargs)
 {
-  double tol;
-  long rk;
-  long econ;
-  int nc;
-  *Qs = NULL; *Rs = NULL;*Es = NULL; Rk=NULL;
-  if ( self->obj == NULL || self->obj->A  == NULL ) 
-    {
-      Scierror("Error: cholmod object is not properly built in spqr\n");
-      goto err;
-    }
-  nc= self->obj->A->ncol;
-  econ = self->obj->A->nrow;
-  tol =  self->obj->tol;
-  
-  if ( self->obj->QR  == NULL )
-    {
-      self->obj->QR = SuiteSparseQR_C_factorize( self->obj->ordering, self->obj->tol ,self->obj->A,&self->obj->Common);
-      if ( self->obj->QR == NULL ) 
-	{
-	  Scierror("Error: QR factorization fails\n");
-	  goto err;
-	}
-    }
-  
-  rk=SuiteSparseQR_C_QR(self->obj->ordering,tol,econ,self->obj->A,&Q,&R,&E,&(self->obj->Common));
-  if ( rk == -1 )
-    {
-      goto err;
-    }
+  int nc = self->obj->A->ncol;
+  *Qs = NULL; *Rs = NULL;*Es = NULL; *Rk=NULL;
   if ((*Qs = nsp_cholmod_to_spcol_sparse(&Q, &(self->obj->Common))) == NULL)
     goto err;
   if ( nargs >= 2 )
@@ -565,8 +538,8 @@ int nsp_spqr_get_qr(NspSpqr *self,cholmod_sparse *Q,cholmod_sparse *R, long *E,
     }
   if ( nargs >=4 )
     {
-      if (( *Es= nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
-      (*Es)->R[0]=rk;
+      if (( *Rk= nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      (*Rk)->R[0]=rk;
     }
   return OK;
  err:
@@ -584,8 +557,8 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
   long *E=NULL;               // size n column permutation, NULL if identity
   long econ;
   long rk;
-  NspSpColMatrix *Qs,*Rs;
-  NspMatrix *Es,*Rk;
+  NspSpColMatrix *Qs = NULL,*Rs = NULL;
+  NspMatrix *Es = NULL,*Rk = NULL;
   NspObject *Obj;
   double dummy = 0;
   double tol = SPQR_DEFAULT_TOL;
@@ -601,7 +574,7 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   /* Get a sparse matrix */
   CheckStdRhs(1,1);
-  CheckLhs(0,2);
+  CheckLhs(0,4);
   /* now we can store the Numeric part */
   /* want to be sure that type spqr is initialized */
   nsp_type_spqr = new_type_spqr(T_BASE);
@@ -650,15 +623,15 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
       goto err;
     }
 
-  if ( nsp_spqr_get_qr(H, Q,R,E, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
+  if ( nsp_spqr_get_qr(H, Q,R,E,rk, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
     {
       Scierror("Eror: failed to get QR factorization\n");
       goto err;
     }
   MoveObj(stack,1,NSP_OBJECT(Qs));
   if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(Rs));
-  if ( lhs >= 3)  MoveObj(stack,3,NSP_OBJECT(Es));
-  if ( lhs >=4 )  MoveObj(stack,3,NSP_OBJECT(Rk));
+  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(Es));
+  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(Rk));
   nsp_spqr_destroy(H);
   return Max(lhs,1);
  err:
@@ -871,15 +844,15 @@ static int int_spqr_meth_get_qr(NspSpqr *self,Stack stack, int rhs, int opt, int
       return RET_BUG;
     }
 
-  if ( nsp_spqr_get_qr(self,Q,R,E, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
+  if ( nsp_spqr_get_qr(self,Q,R,E,rk, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
     {
       Scierror("Eror: failed to get QR factorization\n");
       return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(Qs));
   if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(Rs));
-  if ( lhs >= 3)  MoveObj(stack,3,NSP_OBJECT(Es));
-  if ( lhs >=4 )  MoveObj(stack,3,NSP_OBJECT(Rk));
+  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(Es));
+  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(Rk));
   return Max(lhs,1);
 }
 
