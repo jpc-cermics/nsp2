@@ -30,7 +30,8 @@
  *
  */
 
-#include "nsp/machine.h"
+#include <nsp/machine.h>
+
 #ifdef WITH_SPQR
 
 #include <cholmod.h>
@@ -47,7 +48,6 @@
 #include <nsp/spcolmatrix.h>
 #include <nsp/sprowmatrix.h>
 #include "nsp/interf.h"
-#include "mex/mex.h"
 
 #ifndef SPUMONI
 #define SPUMONI 0
@@ -395,6 +395,59 @@ NspSpqr *nsp_spqr_copy(NspSpqr *self)
  * i.e functions at Nsp level
  *-------------------------------------------------------------------*/
 
+static int nsp_spqr_check_ordering(Stack stack, const char *ordering_s, int *ordering)
+{
+  if ( ordering_s != NULL)
+    {
+      const char *types[]={"fixed","natural","colamd","given","best","amd","metis","default",NULL};
+      int modes[]={SPQR_ORDERING_FIXED, SPQR_ORDERING_NATURAL, SPQR_ORDERING_COLAMD,
+		   SPQR_ORDERING_GIVEN, SPQR_ORDERING_CHOLMOD, SPQR_ORDERING_AMD,
+		   SPQR_ORDERING_METIS, SPQR_ORDERING_DEFAULT};
+      int rep = is_string_in_array(ordering_s, types,1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack,ordering_s,types,"optional argument");
+	  return FAIL;
+	}
+      *ordering = modes[rep];
+    }
+  return OK;
+}
+
+static int nsp_spqr_check_type(Stack stack, const char *sstype, int *stype, int *transpose, const NspObject *Obj)
+{
+  if ( sstype != NULL)
+    {
+      const char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
+      if ( !IsSpColMat(Obj))
+	{
+	  Scierror("Error: optional argument type= cannot be used when matrix is not sparse\n");
+	  stype = 0;
+	}
+      int rep = is_string_in_array(sstype, types,1);
+      if ( rep < 0 )
+	{
+	  string_not_in_array(stack,sstype,types,"optional argument");
+	  return FAIL;
+	}
+      switch ( rep )
+	{
+	case 0:/* use all of A */ *stype = 0; break;
+	case 1:/* use all of A */ *stype = 0; *transpose = TRUE; break;
+	case 2:/* use only upper part of the matrix (stype=1) but verify symmetry */ 
+	  *stype=1;
+	  if ( IsSpColMat(Obj) && ( ! nsp_spcolmatrix_is_symmetric((NspSpColMatrix *) Obj) ))
+	    {
+	      Scierror("Error: matrix is not symmetric\n");
+	      return FAIL;
+	    }
+	  break;
+	case 3:  /* use lower part */ *stype = -1; break;
+	}
+    }
+  return OK;
+}
+
 int int_spqr_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
@@ -426,43 +479,12 @@ int int_spqr_create(Stack stack, int rhs, int opt, int lhs)
     goto err;
 
   /* checks the optional type argument */
-  if ( ordering_s != NULL)
-    {
-      const char *types[]={"fixed","natural","colamd","given","best","amd","metis","default",NULL};
-      int modes[]={SPQR_ORDERING_FIXED, SPQR_ORDERING_NATURAL, SPQR_ORDERING_COLAMD,
-		   SPQR_ORDERING_GIVEN, SPQR_ORDERING_CHOLMOD, SPQR_ORDERING_AMD,
-		   SPQR_ORDERING_METIS, SPQR_ORDERING_DEFAULT};
-      int rep = is_string_in_array(ordering_s, types,1);
-      if ( rep < 0 ) 
-	{
-	  string_not_in_array(stack,ordering_s,types,"optional argument");
-	  return FAIL;
-	}
-      ordering = modes[rep];
-    }
-  if ( sstype != NULL)
-    {
-      const char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
-      int rep = is_string_in_array(sstype, types,1);
-      if ( rep < 0 )
-	{
-	  string_not_in_array(stack,sstype,types,"optional argument");
-	  goto err;
-	}
-      if ( rep == 0 || rep == 1 ) stype=0; /* use all of A */
-      if ( rep == 1 ) transpose=TRUE;
-      if ( rep == 2 )  /* use only upper part of the matrix (stype=1) but verify symmetry */
-	{
-	  stype=1;
-	  if ( IsSpColMat(Obj) && ( ! nsp_spcolmatrix_is_symmetric((NspSpColMatrix *) Obj) ))
-	    {
-	      Scierror("Error: matrix is not symmetric\n");
-	      goto err;
-	    }
-	}
-      if ( rep == 3 ) stype = -1; /* use lower part */
-    }
-  
+  if ( nsp_spqr_check_ordering(stack,ordering_s, &ordering) == FAIL)
+    goto err;
+
+  if ( nsp_spqr_check_type(stack,sstype, &stype, &transpose, Obj) == FAIL)
+    goto err;
+    
   cholmod_l_start (&(H->obj->Common)) ;
   nsp_sputil_config (SPUMONI,&(H->obj->Common),FALSE) ;
   
@@ -476,6 +498,168 @@ int int_spqr_create(Stack stack, int rhs, int opt, int lhs)
   
   /* we return H */
   MoveObj(stack,1,NSP_OBJECT(H));
+  return Max(lhs,1);
+ err:
+  if ( H != NULL) nsp_spqr_destroy(H);
+  return RET_BUG;
+}
+
+
+/* standard qr interface for sparses matrices (for compatibility) 
+ */
+
+int nsp_spqr_get_qr(NspSpqr *self,cholmod_sparse *Q,cholmod_sparse *R, long *E,
+		    NspSpColMatrix **Qs, NspSpColMatrix **Rs, NspMatrix **Es, NspMatrix **Rk, int nargs)
+{
+  double tol;
+  long rk;
+  long econ;
+  int nc;
+  *Qs = NULL; *Rs = NULL;*Es = NULL; Rk=NULL;
+  if ( self->obj == NULL || self->obj->A  == NULL ) 
+    {
+      Scierror("Error: cholmod object is not properly built in spqr\n");
+      goto err;
+    }
+  nc= self->obj->A->ncol;
+  econ = self->obj->A->nrow;
+  tol =  self->obj->tol;
+  
+  if ( self->obj->QR  == NULL )
+    {
+      self->obj->QR = SuiteSparseQR_C_factorize( self->obj->ordering, self->obj->tol ,self->obj->A,&self->obj->Common);
+      if ( self->obj->QR == NULL ) 
+	{
+	  Scierror("Error: QR factorization fails\n");
+	  goto err;
+	}
+    }
+  
+  rk=SuiteSparseQR_C_QR(self->obj->ordering,tol,econ,self->obj->A,&Q,&R,&E,&(self->obj->Common));
+  if ( rk == -1 )
+    {
+      goto err;
+    }
+  if ((*Qs = nsp_cholmod_to_spcol_sparse(&Q, &(self->obj->Common))) == NULL)
+    goto err;
+  if ( nargs >= 2 )
+    {
+      if ((*Rs = nsp_cholmod_to_spcol_sparse(&R, &(self->obj->Common))) == NULL)
+	goto err;
+    }
+  if ( nargs >= 3)
+    {
+      int i ;
+      if (( *Es= nsp_matrix_create(NVOID,'r',1,nc)) == NULLMAT ) goto err;
+      /* size n column permutation, NULL if identity */
+      if ( E == NULL)
+	{
+	  for (i = 0 ; i < nc ; i++) (*Es)->R[i]= (i+1);
+	}
+      else
+	{
+	  for (i = 0 ; i < nc ; i++) (*Es)->R[i]= (E[i]+1);
+	  /* need to clean E */
+	  cholmod_l_free (nc, sizeof (long), E, &(self->obj->Common)) ;
+	}
+    }
+  if ( nargs >=4 )
+    {
+      if (( *Es= nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      (*Es)->R[0]=rk;
+    }
+  return OK;
+ err:
+  if ( *Qs != NULL) nsp_spcolmatrix_destroy(*Qs);
+  if ( *Rs != NULL) nsp_spcolmatrix_destroy(*Rs);
+  if ( *Es != NULL) nsp_matrix_destroy(*Es);
+  if ( *Rk != NULL) nsp_matrix_destroy(*Rk);
+  return FAIL;
+}
+
+int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
+{
+  cholmod_sparse *Q=NULL;   // m-by-e sparse matrix
+  cholmod_sparse *R=NULL;     // e-by-n sparse matrix
+  long *E=NULL;               // size n column permutation, NULL if identity
+  long econ;
+  long rk;
+  NspSpColMatrix *Qs,*Rs;
+  NspMatrix *Es,*Rk;
+  NspObject *Obj;
+  double dummy = 0;
+  double tol = SPQR_DEFAULT_TOL;
+  char *sstype=NULL;
+  int stype=0;	
+  int transpose= FALSE;
+  int ordering= SPQR_ORDERING_DEFAULT;
+  char *ordering_s = NULL;
+  NspSpqr *H=NULL;
+  nsp_option opts[] ={{"type",string,NULLOBJ,-1},
+		      {"ordering",string,NULLOBJ,-1},
+		      {"tol",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  /* Get a sparse matrix */
+  CheckStdRhs(1,1);
+  CheckLhs(0,2);
+  /* now we can store the Numeric part */
+  /* want to be sure that type spqr is initialized */
+  nsp_type_spqr = new_type_spqr(T_BASE);
+  if(( H = spqr_create(NVOID,(NspTypeBase *) nsp_type_spqr)) == NULLSPQR)
+    goto err;
+
+  if ((Obj = nsp_get_object(stack,1)) == NULL)   return RET_BUG;
+
+  /* optional arguments */
+  if ( get_optional_args(stack,rhs,opt,opts,&sstype,&ordering_s,&tol) == FAIL)
+    goto err;
+
+  /* checks the optional type argument */
+  if ( nsp_spqr_check_ordering(stack,ordering_s, &ordering) == FAIL)
+    goto err;
+
+  if ( nsp_spqr_check_type(stack,sstype, &stype, &transpose, Obj) == FAIL)
+    goto err;
+
+  if ( lhs <= 2 ) ordering = SPQR_ORDERING_NATURAL; /* no ordering for [Q,R]=qr(A) */
+    
+  cholmod_l_start (&(H->obj->Common)) ;
+  nsp_sputil_config (SPUMONI,&(H->obj->Common),FALSE) ;
+  
+  H->obj->A = cholmod_sparse_from_object(Obj, &dummy,stype, transpose,TRUE, &(H->obj->Common));
+  H->obj->ordering = ordering;
+  H->obj->tol = tol;
+  if (H->obj->A  == NULL) return RET_BUG;
+
+  /* QR will be build latter if needed */
+  H->obj->QR = NULL;
+  if ( H->obj->QR  == NULL )
+    {
+      H->obj->QR = SuiteSparseQR_C_factorize( H->obj->ordering, H->obj->tol ,H->obj->A,&H->obj->Common);
+      if ( H->obj->QR == NULL ) 
+	{
+	  Scierror("Error: QR factorization fails\n");
+	  goto err;
+	}
+    }
+
+  econ = H->obj->A->nrow;
+  rk=SuiteSparseQR_C_QR(H->obj->ordering,tol,  econ,H->obj->A,&Q,&R,&E,&(H->obj->Common));
+  if ( rk == -1 )
+    {
+      goto err;
+    }
+
+  if ( nsp_spqr_get_qr(H, Q,R,E, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
+    {
+      Scierror("Eror: failed to get QR factorization\n");
+      goto err;
+    }
+  MoveObj(stack,1,NSP_OBJECT(Qs));
+  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(Rs));
+  if ( lhs >= 3)  MoveObj(stack,3,NSP_OBJECT(Es));
+  if ( lhs >=4 )  MoveObj(stack,3,NSP_OBJECT(Rk));
+  nsp_spqr_destroy(H);
   return Max(lhs,1);
  err:
   if ( H != NULL) nsp_spqr_destroy(H);
@@ -593,7 +777,7 @@ static int nsp_spqr_qmult_mode( Stack stack,char *mode, int *imode)
   return OK ;
 }
 
-static int int_cholmod_meth_qmult(NspSpqr *self, Stack stack, int rhs, int opt, int lhs)
+static int int_spqr_meth_qmult(NspSpqr *self, Stack stack, int rhs, int opt, int lhs)
 {
   char *mode = NULL;
   double dummy = 0;
@@ -651,6 +835,7 @@ static int int_cholmod_meth_qmult(NspSpqr *self, Stack stack, int rhs, int opt, 
 
 static int int_spqr_meth_get_qr(NspSpqr *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *Es,*Rk;
   double tol;
   long rk;
   long econ;  
@@ -658,7 +843,6 @@ static int int_spqr_meth_get_qr(NspSpqr *self,Stack stack, int rhs, int opt, int
   cholmod_sparse *R=NULL;     // e-by-n sparse matrix
   long *E=NULL;               // size n column permutation, NULL if identity
   NspSpColMatrix *Qs,*Rs;
-  int nc;
 
   CheckStdRhs(0,0);
   CheckLhs(1,4);
@@ -668,10 +852,9 @@ static int int_spqr_meth_get_qr(NspSpqr *self,Stack stack, int rhs, int opt, int
       Scierror("Error: cholmod object is not properly built\n");
       return RET_BUG;
     }
-  nc= self->obj->A->ncol;
   econ = self->obj->A->nrow;
   tol =  self->obj->tol;
-
+  
   if ( self->obj->QR  == NULL )
     {
       self->obj->QR = SuiteSparseQR_C_factorize( self->obj->ordering, self->obj->tol ,self->obj->A,&self->obj->Common);
@@ -687,39 +870,18 @@ static int int_spqr_meth_get_qr(NspSpqr *self,Stack stack, int rhs, int opt, int
     {
       return RET_BUG;
     }
-  if ((Qs = nsp_cholmod_to_spcol_sparse(&Q, &(self->obj->Common))) == NULL)
-    return RET_BUG;
+
+  if ( nsp_spqr_get_qr(self,Q,R,E, &Qs, &Rs, &Es, &Rk, lhs) == FAIL)
+    {
+      Scierror("Eror: failed to get QR factorization\n");
+      return RET_BUG;
+    }
   MoveObj(stack,1,NSP_OBJECT(Qs));
-  if ( lhs >= 2 )
-    {
-      if ((Rs = nsp_cholmod_to_spcol_sparse(&R, &(self->obj->Common))) == NULL)
-	return RET_BUG;
-      MoveObj(stack,2,NSP_OBJECT(Rs));
-    }
-  if ( lhs >= 3)
-    {
-      NspMatrix *Es;
-      int i ;
-      if (( Es= nsp_matrix_create(NVOID,'r',1,nc)) == NULLMAT ) return RET_BUG;
-      if ( E == NULL)
-	{
-	  for (i = 0 ; i < nc ; i++) Es->R[i]= (i+1);
-	}
-      else
-	{
-	  for (i = 0 ; i < nc ; i++) Es->R[i]= (E[i]+1);
-	  /* need to clean E */
-	  cholmod_l_free (nc, sizeof (long), E, &(self->obj->Common)) ;
-	}
-      MoveObj(stack,3,NSP_OBJECT(Es));
-    }
-  if ( lhs >=4 )
-    {
-      if ( nsp_move_double(stack,4,rk)==FAIL)return RET_BUG;
-    }
+  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(Rs));
+  if ( lhs >= 3)  MoveObj(stack,3,NSP_OBJECT(Es));
+  if ( lhs >=4 )  MoveObj(stack,3,NSP_OBJECT(Rk));
   return Max(lhs,1);
 }
-
 
 static int int_spqr_meth_backslash(NspSpqr *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -828,7 +990,7 @@ static int int_spqr_meth_get_ordering(NspSpqr *self,Stack stack, int rhs, int op
 static NspMethods cholmod_methods[] = {
   {"rsolve",(nsp_method *) int_spqr_meth_rsolve},
   {"backslash",(nsp_method *) int_spqr_meth_backslash},
-  {"qmult",(nsp_method *) int_cholmod_meth_qmult},
+  {"qmult",(nsp_method *) int_spqr_meth_qmult},
   {"isreal",(nsp_method *) int_spqr_meth_isreal},
   {"get_qr",(nsp_method *) int_spqr_meth_get_qr},
   {"get_ordering",(nsp_method *) int_spqr_meth_get_ordering},

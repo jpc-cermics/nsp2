@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2016 Jean-Philippe Chancelier Enpc/Cermics
  *
  * Some routines at the end are copied from CHOLMOD/MATLAB Module.
  * They are copyrighted by Timothy A. Davis Version 1.2.  Copyright (C) 2005-2006,
@@ -46,8 +46,8 @@
 #include <nsp/bmatrix.h>
 #include <nsp/spcolmatrix.h>
 #include <nsp/sprowmatrix.h>
-#include "nsp/interf.h"
-#include "mex/mex.h"
+#include <nsp/interf.h>
+#include <mex/mex.h>
 
 #ifndef SPUMONI
 #define SPUMONI 0
@@ -321,7 +321,7 @@ NspCholmod   *nsp_cholmod_object(NspObject *O)
   /* Check type */
   if ( check_cast (O,nsp_type_cholmod_id) == TRUE ) return ((NspCholmod *) O);
   else
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cholmod));
+    Scierror("Error: Argument should be a %s\n",type_get_name(nsp_type_cholmod));
   return NULL;
 }
 

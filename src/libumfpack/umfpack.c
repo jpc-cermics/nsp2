@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2016 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -32,14 +32,11 @@
 #include <nsp/hobj.h>
 #include <nsp/smatrix.h>
 #include <nsp/bmatrix.h>
-#include "nsp/interf.h"
-#include "mex/mex.h"
+#include <nsp/interf.h>
 
-#include "nsp/interf.h"
 #include <umfpack.h>
-#include "nsp/lapack-c.h"
-#include "nsp/spmf.h"
-
+#include <nsp/lapack-c.h>
+#include <nsp/spmf.h>
 
 /* 
  * NspUmfpack inherits from NspObject 
