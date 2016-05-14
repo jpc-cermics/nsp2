@@ -513,6 +513,7 @@ int nsp_spqr_get_qr(NspSpqr *self,cholmod_sparse *Q,cholmod_sparse *R, long *E, 
 {
   int nc = self->obj->A->ncol;
   *Qs = NULL; *Rs = NULL;*Es = NULL; *Rk=NULL;
+
   if ((*Qs = nsp_cholmod_to_spcol_sparse(&Q, &(self->obj->Common))) == NULL)
     goto err;
   if ( nargs >= 2 )
@@ -617,7 +618,7 @@ int int_spqr_qr(Stack stack, int rhs, int opt, int lhs)
     }
 
   econ = H->obj->A->nrow;
-  rk=SuiteSparseQR_C_QR(H->obj->ordering,tol,  econ,H->obj->A,&Q,&R,&E,&(H->obj->Common));
+  rk=SuiteSparseQR_C_QR(H->obj->ordering,tol,econ,H->obj->A,&Q,&R,&E,&(H->obj->Common));
   if ( rk == -1 )
     {
       goto err;

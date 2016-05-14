@@ -1365,11 +1365,11 @@ static int nsp_spcol_to_cholmod_sparse(NspSpColMatrix *A, cholmod_sparse *B,doub
 	{
 	  int i;
 	  /* we must copy since dimensions are not the same */
-	  if ((B->p = malloc(sizeof(SuiteSparse_long)*(A->m+1)))== NULL)
+	  if ((B->p = malloc(sizeof(SuiteSparse_long)*(B->ncol+1)))== NULL)
 	    return FAIL;
 	  if ((B->i = malloc(sizeof(SuiteSparse_long)*(A->triplet.Aisize)))== NULL)
 	    return FAIL;
-	  for (i=0 ; i < A->m+1;i++) ((SuiteSparse_long *) B->p)[i]=A->triplet.Jc[i];
+	  for (i=0 ; i < B->ncol+1;i++) ((SuiteSparse_long *) B->p)[i]=A->triplet.Jc[i];
 	  for (i=0 ; i < A->triplet.Aisize;i++) ((SuiteSparse_long *) B->i)[i]=A->triplet.Ir[i];
 	}
       B->itype = CHOLMOD_LONG ;
@@ -1463,11 +1463,11 @@ NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_c
     {
       int i;
       /* we must copy since dimensions are not the same */
-      if ((An->triplet.Jc = malloc(sizeof(int)*(An->triplet.m+1)))== NULL)
+      if ((An->triplet.Jc = malloc(sizeof(int)*(An->triplet.n+1)))== NULL)
 	return NULLSPCOL;
       if ((An->triplet.Ir = malloc(sizeof(int)*(An->triplet.Aisize)))== NULL)
 	return NULLSPCOL;
-      for (i=0 ; i < An->triplet.m+1;i++) An->triplet.Jc[i]= ((SuiteSparse_long *) A->p)[i];
+      for (i=0 ; i < An->triplet.n+1;i++) An->triplet.Jc[i]= ((SuiteSparse_long *) A->p)[i];
       for (i=0 ; i < An->triplet.Aisize;i++) An->triplet.Ir[i] = ((SuiteSparse_long *) A->i)[i];
     }
   else
@@ -1485,7 +1485,7 @@ NspSpColMatrix * nsp_cholmod_to_spcol_sparse(cholmod_sparse **Ahandle, cholmod_c
   /* now we can free A protecting moved array */
   if ( ( A->itype == CHOLMOD_LONG) && (sizeof(SuiteSparse_long) != sizeof(int)))
     {
-      cholmod_l_free (An->triplet.m+1, sizeof (SuiteSparse_long), A->p, cm) ;
+      cholmod_l_free (An->triplet.n+1, sizeof (SuiteSparse_long), A->p, cm) ;
       cholmod_l_free (An->triplet.Aisize, sizeof (SuiteSparse_long), A->i, cm) ;
     }
   A->p = NULL ;
