@@ -183,6 +183,13 @@ static int nsp_constant_frame(nsp_datas *data,int argc, char **argv)
   if ((O =nsp_create_false_object("%cholmod"))==NULLOBJ) return FAIL;
 #endif
   nsp_frame_replace_object1(data,O,-1);
+  /* flag to detect if we have spqr */
+#ifdef WITH_SPQR
+  if ((O =nsp_create_true_object("%spqr"))==NULLOBJ) return FAIL;
+#else
+  if ((O =nsp_create_false_object("%spqr"))==NULLOBJ) return FAIL;
+#endif
+  nsp_frame_replace_object1(data,O,-1);
   /* are we a windows version */
 #ifdef WIN32
   if ((O =nsp_create_true_object("%win32"))==NULLOBJ) return FAIL;
