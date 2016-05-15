@@ -721,13 +721,25 @@ static int int_spqr_meth_rsolve(NspSpqr *self, Stack stack, int rhs, int opt, in
     {
       NspMatrix *B,*Res;
       if ( (B = GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
-      if ( B->m != self->obj->A->nrow )
-	{
-	  Scierror("Error: argument should have %d rows\n",self->obj->A->nrow);
-	  return RET_BUG;
-	}
+      if ( imode == 0 || imode == 1)
+	if ( B->m != self->obj->A->nrow )
+	  {
+	    Scierror("Error: argument should have %d rows\n",self->obj->A->nrow);
+	    return RET_BUG;
+	  }
+      if ( imode == 2 || imode == 3)
+	if ( B->m != self->obj->A->ncol )
+	  {
+	    Scierror("Error: argument should have %d rows\n",self->obj->A->ncol);
+	    return RET_BUG;
+	  }
       nsp_matrix_to_cholmod_dense(B,&Bmatrix,&dummy) ;
       X = SuiteSparseQR_C_solve(imode, self->obj->QR, &Bmatrix, &(self->obj->Common)) ;
+      if ( X == NULL )
+	{
+	  Scierror("Error: failed to solve linear system\n");
+	  return RET_BUG;
+	}
       Res = nsp_cholmod_dense_to_matrix (&X, &(self->obj->Common)) ;
       if ( Res == NULL) return RET_BUG;
       MoveObj(stack,1,NSP_OBJECT(Res));

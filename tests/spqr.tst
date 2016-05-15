@@ -1,6 +1,6 @@
 // -*- Mode: scilab -*- 
-// tests for qr (Bruno July 06 2005).
-// same tests for sparse qr (2016) 
+// tests for sparse qr (Jean-Philippe Chancelier 2016) 
+// contains the tests for qr (Bruno July 06 2005).
 
 if %spqr==%f then quit;end
 
