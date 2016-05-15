@@ -4,8 +4,8 @@ TOP=..
 include $(TOP)/Path.incl
 include $(TOP)/Makefile.incl
 
-SUBDIRS =
-SUBDIRS_CLEAN =
+SUBDIRS= scicos-4.4
+SUBDIRS_CLEAN= scicos-4.4
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
