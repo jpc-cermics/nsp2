@@ -707,7 +707,7 @@ static int int_pmatrix_concatr_m_p(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(A)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix_with_varname(A,B->var)) == NULLPMAT) return RET_BUG;
   if ( B->mn != 0)
     {
       if (nsp_pmatrix_concat_right(Res,B)!= OK) return RET_BUG;
@@ -738,7 +738,7 @@ static int int_pmatrix_concatr_p_m(Stack stack, int rhs, int opt, int lhs)
   if ( A->mn == 0)
     {
       if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix_with_varname(B,A->var)) == NULLPMAT) return RET_BUG;
       if (A->m != P2->m && A->m != A->n ) 
 	{
 	  Scierror("Error: matrices should have same number of rows found %d and %d\n",
@@ -755,7 +755,7 @@ static int int_pmatrix_concatr_p_m(Stack stack, int rhs, int opt, int lhs)
   if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
   if ( B->mn != 0 )
     {
-      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix_with_varname(B,A->var)) == NULLPMAT) return RET_BUG;
       if (nsp_pmatrix_concat_right(A,P2) != OK) return RET_BUG;
       nsp_pmatrix_destroy(P2);
     }
@@ -799,7 +799,7 @@ static int int_pmatrix_concatd_m_p(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(A)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix_with_varname(A,B->var)) == NULLPMAT) return RET_BUG;
   if ( B->mn != 0)
     {
       if ((Res=nsp_pmatrix_concat_down(Res,B))== NULLPMAT ) return RET_BUG;
@@ -829,7 +829,7 @@ static int int_pmatrix_concatd_p_m(Stack stack, int rhs, int opt, int lhs)
   if ( A->mn == 0)
     {
       if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix_with_varname(B,A->var)) == NULLPMAT) return RET_BUG;
       if (A->n != P2->n && A->m != A->n ) 
 	{
 	  Scierror("Error: matrices should have same number of columns found %d and %d\n",
@@ -847,7 +847,7 @@ static int int_pmatrix_concatd_p_m(Stack stack, int rhs, int opt, int lhs)
   if ( B->mn != 0 )
     {
       NspPMatrix *Res;
-      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix_with_varname(B,A->var)) == NULLPMAT) return RET_BUG;
       if ((Res=nsp_pmatrix_concat_down(A,P2))== NULLPMAT ) return RET_BUG;
       nsp_pmatrix_destroy(P2);
       MoveObj(stack,1,NSP_OBJECT(Res));

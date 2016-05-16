@@ -335,8 +335,8 @@ NspPMatrix *nsp_cells_to_pmatrix(const char *name, NspCells *C)
 
 int nsp_pmatrix_same_varname(const NspPMatrix *P1,const NspPMatrix *P2)
 {
-  const char *name1 = ( P1-> var == NULL) ? "x": P1->var;
-  const char *name2 = ( P2-> var == NULL) ? "x": P2->var;
+  const char *name1 = ( P1->var == NULL) ? "x": P1->var;
+  const char *name2 = ( P2->var == NULL) ? "x": P2->var;
   return (strcmp(name1,name2) == 0) ? TRUE: FALSE;
 }
 
@@ -669,12 +669,45 @@ NspMatrix *nsp_pmatrix_length(NspPMatrix *A)
  * Returns: a new #NspPMatrix or %NULL
  **/
 
-NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A) 
+NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A)
 {
   int i;
   NspPMatrix *Loc;
   doubleC d={0,0};
   if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLPMAT) 
+    return(NULLPMAT);
+  for ( i = 0 ; i < Loc->mn ; i++ )
+    {
+      if ( A->rc_type == 'r') 
+	{
+	  d.r= A->R[i];
+	}
+      else
+	{ d.r= A->C[i].r; d.i= A->C[i].i;}
+      if ((Loc->S[i] =nsp_basic_to_polynom(&d,A->rc_type)) == (nsp_polynom ) 0)  return(NULLPMAT);
+    }
+  return(Loc);
+}
+
+/**
+ * nsp_matrix_to_pmatrix_with_varname:
+ * @A: a #NspMatrix
+ * @varname: a char pointer 
+ * 
+ * return a new mxn polynomial matrix if @A is 
+ * of size mxn. The (i,j)-th element of the result is the 
+ * polynomial of degree 0 equal to @A(i,j).
+ * @varname gives the polynomial variable name
+ * 
+ * Returns: a new #NspPMatrix or %NULL
+ **/
+
+NspPMatrix *nsp_matrix_to_pmatrix_with_varname(NspMatrix *A,const char *varname) 
+{
+  int i;
+  NspPMatrix *Loc;
+  doubleC d={0,0};
+  if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1, varname)) == NULLPMAT) 
     return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {

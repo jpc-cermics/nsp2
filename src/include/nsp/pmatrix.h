@@ -64,6 +64,7 @@ extern NspPMatrix *nsp_pmatrix_object(NspObject *O);
 
 extern NspMatrix *nsp_pmatrix_length(NspPMatrix *A); 
 extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A);
+extern NspPMatrix *nsp_matrix_to_pmatrix_with_varname(NspMatrix *A,const char *varname);
 extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M); 
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 

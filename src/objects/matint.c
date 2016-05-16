@@ -3838,13 +3838,17 @@ NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB)
 	  for ( j = 0 ; j < A->n ; j++ ) 
 	    {
 	      char **fromA= A->S+j*A->m;
-	      char **fromB= B->S+j*B->m;
-	      char **toA = C->S+j*(C->m),**toB = C->S+(j+A->n)*(C->m)+A->m;
+	      char **toA = C->S+j*(C->m);
 	      for ( i = 0 ; i < A->m ; i++ )
 		{
 		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
 		  toA[i]=elt;
 		}
+	    }
+	  for ( j = 0 ; j < B->n ; j++ ) 
+	    {
+	      char **fromB= B->S+j*B->m;
+	      char **toB = C->S+(j+A->n)*(C->m)+A->m;
 	      for ( i = 0 ; i < B->m ; i++ )
 		{
 		  if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
