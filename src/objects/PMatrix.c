@@ -1179,8 +1179,12 @@ NspMatrix *nsp_matrix_companion(NspMatrix *A)
 {
   int i,j;
   NspMatrix *B=NULL;
-  if ((B = nsp_matrix_create(NVOID,A->rc_type,A->mn-1, A->mn-1))== NULLMAT) return 
-    NULLMAT;
+  if ( A->mn == 0)
+    {
+      return nsp_matrix_create(NVOID,A->rc_type,0,0);
+    }
+  if ((B = nsp_matrix_create(NVOID,A->rc_type,A->mn-1, A->mn-1))== NULLMAT)
+    return NULLMAT;
   nsp_mat_set_rval (B,0.0);
   if ( A->rc_type == 'c') 
     {
