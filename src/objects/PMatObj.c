@@ -1222,15 +1222,46 @@ static int int_pmatrix_conj(Stack stack, int rhs, int opt, int lhs)
 
 static int int_pmatrix_companion_p(Stack stack, int rhs, int opt, int lhs)
 {
-  nsp_polynom P;
+  NspPMatrix *Pm;
   NspMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((P=GetPolynom(stack,1))== NULL) return RET_BUG;
-  if ((A= nsp_matrix_companion((NspMatrix *) P))== NULLMAT)
-    return RET_BUG;
-  MoveObj(stack,1,(NspObject *) A);
-  return 1;
+  if ((Pm= GetPMat(stack,1))== NULL) return RET_BUG;
+  if ( Pm->mn == 1 )
+    {
+      nsp_polynom P;
+      if ((P=GetPolynom(stack,1))== NULL) return RET_BUG;
+      if ((A= nsp_matrix_companion((NspMatrix *) P))== NULLMAT)
+	return RET_BUG;
+      MoveObj(stack,1,(NspObject *) A);
+      return 1;
+    }
+  else
+    {
+      int i;
+      if ( Pm->mn == 0)
+	{
+	  if ((A= nsp_matrix_create(NVOID,'r', Pm->m , Pm->n))==NULLMAT)
+	    return RET_BUG;
+	  MoveObj(stack,1,(NspObject *) A);
+	  return 1;
+	}
+      if ((A= nsp_matrix_companion(Pm->S[0]))== NULLMAT)
+	return RET_BUG;
+      for ( i= 1; i < Pm->mn ; i++)
+	{
+	  NspMatrix *loc,*loc1;
+	  if ((loc= nsp_matrix_companion(Pm->S[i]))== NULLMAT)
+	    return RET_BUG;
+	  if ((loc1 = nsp_matrix_concat_diag(A,loc)) == NULLMAT)
+	    return RET_BUG;
+	  nsp_matrix_destroy(loc);
+	  nsp_matrix_destroy(A);
+	  A=loc1;
+	}
+      MoveObj(stack,1,(NspObject *) A);
+      return 1;
+    }
 }
 
 static int int_pmatrix_companion_m(Stack stack, int rhs, int opt, int lhs)
