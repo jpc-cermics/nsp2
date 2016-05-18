@@ -10,9 +10,8 @@ function [X,dim,Y]=im_inv(A,B,tol)
 //              0   A22,0]
 //with B1 full row rank and rank(B1) = rank(B), A22 full column rank and
 //dim = # columns of A11.
-//
-// Copyright (C) 2007-2016 François Delebecque (GPL, scilab INRIA)
-//  
+// F.D.
+//!
   [nA,mA]=size(A);[nB,mB]=size(B);
   if nargin==2 then tol=100*%eps*mA*nA*nB*mB,end;
   if nA<>nB then error ('im_inv: uncompatible dimensions!'),return,end
