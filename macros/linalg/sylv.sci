@@ -61,7 +61,7 @@ function C = sylv(At,Bt,Ct,flag)
   endfunction
 
   
-  if rhs <= 3 then flag = 'c';end
+  if nargin <= 3 then flag = 'c';end
   if flag <> 'c' then 
     error(sprintf("Error: %s flag not implemented\n",flag));
     return;
