@@ -493,6 +493,14 @@ static int int_meth_set_varname(void *self, Stack stack, int rhs, int opt, int l
   return 0;
 }
 
+static int int_meth_get_varname(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *p=self;
+  CheckStdRhs(0,0);
+  if ( nsp_move_string(stack,1,(p->var != NULL) ? p->var : "x",-1 )== FAIL) return RET_BUG;
+  return 1;
+}
+
 static int int_meth_degree(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *D;
@@ -668,6 +676,7 @@ static NspMethods pmatrix_methods[] = {
   { "normalize", int_meth_normalize},
   { "derivative", int_meth_derivative},
   { "set_var", int_meth_set_varname},
+  { "get_var", int_meth_get_varname},
   { (char *) 0, NULL}
 };
 

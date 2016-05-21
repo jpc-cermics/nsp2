@@ -910,7 +910,7 @@ NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B)
       return NULLPMAT;
     }
   
-  Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0, NULL);
+  Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0, A->var);
   if ( Loc == NULLPMAT) 
     {
       Scierror("Error: running out of memory\n");
