@@ -47,7 +47,7 @@
  *    gaussian elimination with partial pivoting 
  */
 
-int C2F(dgefa) (double *a, int *lda, int *n, int *ipvt, int *info)
+int nsp_dgefa (double *a, int *lda, int *n, int *ipvt, int *info)
 {
   int c__1 = 1;
   int a_dim1, a_offset, i1, i2, i3;

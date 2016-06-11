@@ -5,7 +5,7 @@
 
 static int c__1 = 1;
 
-int C2F(dgesl) (double *a, int *lda, int *n, int *ipvt, double *b, int *job)
+int nsp_dgesl (double *a, int *lda, int *n, int *ipvt, double *b, int *job)
 {
   /* System generated locals */
   int a_dim1, a_offset, i__1, i__2;
