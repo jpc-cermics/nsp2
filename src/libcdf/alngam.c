@@ -36,7 +36,13 @@
 
 /* approche log(gamma(x))/(x-2) dans [2,3] */
 
-inline double f_approx_2_3(double x)
+#if defined(__GNUC__) && defined(__OPTIMIZE__)
+#define g_inline inline
+#else
+#define g_inline 
+#endif
+
+g_inline double f_approx_2_3(double x)
 {
     return((-0.2794541810411736E-2+(-0.1750088178423485E-1+(
 -0.6758249491763692E-2+(0.1888720066674089E-1+(0.7889156408246519E-2+(
@@ -48,7 +54,7 @@ inline double f_approx_2_3(double x)
 
 /* approche log(gamma(x))/(x-2) dans [1.5,2] */
 
-inline double f_approx_15_2(double x)
+g_inline  double f_approx_15_2(double x)
 {
     return((-0.3131749855875889E-2+(-0.3083317481667811E-1+(
 -0.3246981457626206E-1+(0.3683597860831141E-1+(0.2802282302892632E-1+(
@@ -58,7 +64,7 @@ inline double f_approx_15_2(double x)
 0.844861749564532E-1+0.1694223676885694E-1*x)*x)*x)*x));
 }
 
-inline double f_approx_1_15(double x)
+g_inline  double f_approx_1_15(double x)
 {
   return((-0.5652013301775986E-2+(-0.917908961418217E-1+(-0.2354081919178484+
 (-0.5713581783385663E-1+(0.8136406261691052E-1+(0.1046225196882071E-1+(
