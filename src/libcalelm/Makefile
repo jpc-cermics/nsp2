@@ -33,7 +33,8 @@ OBJSC = \
 	wsign.o	 \
 	wsqrt.o	 \
 	wswap.o	 \
-	wwdiv.o
+	wwdiv.o  \
+	coshin.o
 
 OBJSF =
 
