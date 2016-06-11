@@ -1013,14 +1013,14 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 	      /* L65: */
 	      dmy[i__ + i__ * dmy_dim1] += 1.;
 	    }
-	  C2F(dgefa) (&dmy[dmy_offset], ny, ny, &ipv2[1], &info);
+	  nsp_dgefa (&dmy[dmy_offset], ny, ny, &ipv2[1], &info);
 	}
       /* 
        *      Resolution de (dmy)t*X=p,la solution s'appelant p 
        *      p est alors p_kt,etat adjoint au pas kt 
        * 
        */
-      C2F(dgesl) (&dmy[dmy_offset], ny, ny, &ipv2[1], &p[1], &c__1);
+      nsp_dgesl (&dmy[dmy_offset], ny, ny, &ipv2[1], &p[1], &c__1);
       /* 
        *    *Calcul du gradient g au pas kt+1 
        *      calcul de la contribution gt au gradient au pas kt+1: 
@@ -1400,7 +1400,7 @@ int optim_icse1 (int *ind, int *nu, double *u, U_fp icsef, double *y0,
 	      /* L20: */
 	      dm[i__ + i__ * dm_dim1] += dtinv;
 	    }
-	  C2F(dgefa) (&dm[dm_offset], ny, ny, &ipv1[1], &info);
+	  nsp_dgefa (&dm[dm_offset], ny, ny, &ipv1[1], &info);
 	}
       /* 
        *    *Calcul de l'etat y_kt au pas kt: 
@@ -1491,7 +1491,7 @@ int optim_icse1 (int *ind, int *nu, double *u, U_fp icsef, double *y0,
        * 
        */
     L50:
-      C2F(dgesl) (&dm[dm_offset], ny, ny, &ipv1[1], &dif2[1], &c__0);
+      nsp_dgesl (&dm[dm_offset], ny, ny, &ipv1[1], &dif2[1], &c__0);
       /* 
        *        dif3=dif3+dif2 est le nouvel ecart 
        * 

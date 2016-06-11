@@ -36,8 +36,8 @@ struct _opt_simul_data
 typedef void (*U_fp)();
 
 /* for icse */
-extern int C2F(dgefa) (double *, int *, int *, int *, int *);
-extern int C2F(dgesl) (double *, int *, int *, int *, double *, int *);
+extern int nsp_dgefa (double *, int *, int *, int *, int *);
+extern int nsp_dgesl(double *, int *, int *, int *, double *, int *);
 extern int dmmul_scicos (double *,   int *,   double *,   int *,   double *, 
 			 int *,   int *,   int *,   int *);
 
