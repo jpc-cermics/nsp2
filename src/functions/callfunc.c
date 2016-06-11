@@ -224,6 +224,9 @@ extern  sci_interface  gio_Interf; extern  interface_info gio_Interf_Info;
 extern  sci_interface  glib_Interf; extern  interface_info glib_Interf_Info;
 #endif 
 
+extern  sci_interface  Control_Interf; extern  interface_info Control_Interf_Info;
+
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -376,7 +379,8 @@ InterfTab Interfaces[]={
 #endif
 #ifdef WITH_STOCHDEC 
   {Stochdec_Interf, Stochdec_Interf_Info},
-#endif 
+#endif
+  {Control_Interf, Control_Interf_Info},
   {NULL,NULL}
 };
 
