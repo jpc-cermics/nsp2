@@ -8834,7 +8834,7 @@ nsp_ode_dmatd (int *neq, double *x, double *y, double *yprime,
    * 
    */
  L230:
-  C2F(dgefa) (&wm[1], neq, neq, &iwm[lipvt], ier);
+  nsp_dgefa (&wm[1], neq, neq, &iwm[lipvt], ier);
   if (*ier != 0)
     {
       Sciprintf ("Singular Jacobian at IER = %d", *ier);
@@ -9017,7 +9017,7 @@ int nsp_ode_dslvd (int *neq, double *delta, double *wm, int *iwm)
    *    (WM*X=DELTA) 
    */
  L100:
-  C2F(dgesl) (&wm[1], neq, neq, &iwm[lipvt], &delta[1], &c__0);
+  nsp_dgesl (&wm[1], neq, neq, &iwm[lipvt], &delta[1], &c__0);
   return 0;
   /* 
    *    Dummy section for MTYPE=3. 

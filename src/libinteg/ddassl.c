@@ -613,7 +613,7 @@ nsp_ode_ddajac (int *neq, double *x, double *y, double *yprime,
    *    DO DENSE-MATRIX LU DECOMPOSITION ON PD 
    */
  L230:
-  C2F(dgefa) (&wm[1], neq, neq, &iwm[21], ier);
+  nsp_dgefa (&wm[1], neq, neq, &iwm[21], ier);
   return 0;
   /* 
    * 
@@ -876,7 +876,7 @@ int nsp_ode_ddaslv (int *neq, double *delta, double *wm, int *iwm)
    *    DENSE MATRIX 
    */
  L100:
-  C2F(dgesl) (&wm[1], neq, neq, &iwm[21], &delta[1], &c__0);
+  nsp_dgesl (&wm[1], neq, neq, &iwm[21], &delta[1], &c__0);
   return 0;
   /* 
    *    DUMMY SECTION FOR MTYPE=3 

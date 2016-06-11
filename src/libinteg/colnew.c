@@ -4261,7 +4261,7 @@ nsp_colnew_vwblok (double *xcol, double *hrho, int *jj, double *wi,
    * 
    */
   *msing = 0;
-  C2F(dgefa) (&wi[wi_offset], kd, kd, &ipvtw[1], msing);
+  nsp_dgefa (&wi[wi_offset], kd, kd, &ipvtw[1], msing);
   /* 
    *...   check for singularity 
    * 
@@ -4273,7 +4273,7 @@ nsp_colnew_vwblok (double *xcol, double *hrho, int *jj, double *wi,
   i__1 = colord_.mstar;
   for (j = 1; j <= i__1; ++j)
     {
-      C2F(dgesl) (&wi[wi_offset], kd, kd, &ipvtw[1],
+      nsp_dgesl (&wi[wi_offset], kd, kd, &ipvtw[1],
 		  &vi[j * vi_dim1 + 1], &c__0);
     }
   return 0;
@@ -4423,7 +4423,7 @@ nsp_colnew_gblock (double *h__, double *gi, int *nrow, int *irow, double *wi,
    * 
    */
  L110:
-  C2F(dgesl) (&wi[1], kd, kd, &ipvtw[1], &rhsdmz[1], &c__0);
+  nsp_dgesl (&wi[1], kd, kd, &ipvtw[1], &rhsdmz[1], &c__0);
   ir = *irow;
   i__1 = colord_.ncomp;
   for (jcomp = 1; jcomp <= i__1; ++jcomp)

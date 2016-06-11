@@ -161,7 +161,7 @@ nsp_ode_prepj (int *neq, double *y, double *yh, int *nyh, double *ewt,
     }
   /*do lu decomposition on p. -------------------------------------------- 
    */
-/*   C2F(dgefa) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier); */
+/*   nsp_dgefa (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier); */
 /* Note: dgefa replaced by lapack dgetrf */
   C2F(dgetrf) (&ls0001_1.n, &ls0001_1.n, &wm[3], &ls0001_1.n, &iwm[21], &ier);
   if (ier != 0)

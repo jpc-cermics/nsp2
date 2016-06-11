@@ -65,7 +65,7 @@ int nsp_ode_solsy (double *wm, int *iwm, double *x, double *tem)
       goto L400;
     }
  L100:
-/*   C2F(dgesl) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &x[1], &c0); */
+/*   nsp_dgesl (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &x[1], &c0); */
 /*  Note dgesl replaced by dgetrs (Bruno 6/08/2010) */
   C2F(dgetrs) ("N", &ls0001_1.n, &one, &wm[3], &ls0001_1.n, &iwm[21], &x[1], &ls0001_1.n, &rien, 1);
   return 0;

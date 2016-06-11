@@ -66,7 +66,7 @@ int nsp_ode_ainvg (lsodi_res res, ode_jac adda, int *neq, double *t, double *y,
     {
       return 0;
     }
-  C2F(dgefa) (&pw[1], neq, neq, &ipvt[1], ier);
+  nsp_dgefa (&pw[1], neq, neq, &ipvt[1], ier);
   if (*ier == 0)
     {
       goto L20;
@@ -75,7 +75,7 @@ int nsp_ode_ainvg (lsodi_res res, ode_jac adda, int *neq, double *t, double *y,
   return 0;
 
  L20:
-  C2F(dgesl) (&pw[1], neq, neq, &ipvt[1], &ydot[1], &c__0);
+  nsp_dgesl (&pw[1], neq, neq, &ipvt[1], &ydot[1], &c__0);
   return 0;
   /* 
    *band matrix case ----------------------------------------------------- 

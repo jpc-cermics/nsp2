@@ -202,7 +202,7 @@ nsp_ode_prepji (int *neq, double *y, double *yh, int *nyh,
     }
   /*do lu decomposition on p. -------------------------------------------- 
    */
-  C2F(dgefa) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier);
+  nsp_dgefa (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier);
   if (ier != 0)
     {
       ls0001_1.ierpj = 1;
