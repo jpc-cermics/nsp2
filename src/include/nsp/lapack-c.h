@@ -324,4 +324,28 @@ extern int C2F(zsycon)(char *uplo, int *n, doubleC *a, int *lda, int *ipiv, doub
 extern int C2F(zsytrs)(char *uplo, int *n, int *nrhs, doubleC *a, int *lda, int *ipiv, doubleC *b, int *ldb, int *info, int uplo_len);
 		      
 extern int C2F(zpocon)(char *uplo, int *n, doubleC *a, int *lda, double *anorm, double *rcond, doubleC *work, double *rwork, int *info, int uplo_len);
+
+extern int C2F(zgesv)(int *n,int *nrhs, doubleC * A,int * LDA, int *IPIV, doubleC *B,int * LDB,int * INFO );
+
+extern int C2F(dposv)(char *UPLO,int * N,int * NRHS,double * A,int * LDA,double * B, int *LDB, int *INFO,long int );
+
+extern int C2F(zlacp2)(char *, int *, int *, double *, int *, doubleC *, int *, long int);
+
+extern int C2F(zlatzm)(char *, int *, int *, doubleC *, int *, doubleC *, doubleC *,
+		       doubleC *, int *, doubleC *, long int);
+
+extern int C2F(zlapmt)(int *, int *, int *, doubleC *, int *, int *);
+
+extern int C2F(dpptrs)(char *, int *, int *, double *, double *, int *, int *, long int);
+
+extern int C2F(dlarnv)(int *, int *, int *, double *);
+
+extern int C2F(dsyevx)(char *, char *, char *, int *, double *, int *, double *, double *, int *,
+		       int *, double *, int *, double *, double *, int *, double *, int *, int *,
+		       int *, int *, long int, long int, long int);
+
+extern int C2F(zunmrq)(char *, char *, int *, int *, int *, doubleC *, int *,
+		       doubleC *, doubleC *, int *, doubleC *, int *, int *, long int, long int);
+
 #endif
+

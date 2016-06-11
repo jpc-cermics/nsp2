@@ -267,7 +267,10 @@ static GtkWidget*create_browser (WebKitWebView **web_view_p)
 	       */
 	       "default-font-size", 10 ,
 	       "default-monospace-font-size", 10 ,
+#if GTK_CHECK_VERSION(3,0,0)
+#else
 	       "enable-java-appleT",FALSE,
+#endif
 	       "enable-plugins",FALSE,
 	       NULL);
 #endif
