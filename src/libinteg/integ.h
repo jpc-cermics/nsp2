@@ -13,6 +13,7 @@
 #ifdef FORTRAN_NAMES 
 #define nsp_twodq C2F(twodq)
 #define nsp_ode_ainvg C2F(ainvg)
+#define nsp_ode_idamax C2F(idamax)
 #define nsp_ode_bnorm C2F(bnorm)
 #define nsp_ode_cfode C2F(cfode)
 #define nsp_ode_daxpy C2F(daxpy)
@@ -37,21 +38,18 @@
 #define nsp_ode_dhels C2F(dhels)
 #define nsp_ode_dheqr C2F(dheqr)
 #define nsp_ode_dinvwt C2F(dinvwt)
-/* #define nsp_ode_dlamch C2F(dlamch) */
 #define nsp_ode_dorth C2F(dorth)
 #define nsp_ode_drchek C2F(drchek)
 #define nsp_ode_droots C2F(droots)
 #define nsp_ode_droots0 C2F(droots0)
 #define nsp_ode_droots1 C2F(droots1)
 #define nsp_ode_droots2 C2F(droots2)
-#define nsp_ode_dscal C2F(dscal)
 #define nsp_ode_dslvd C2F(dslvd)
 #define nsp_ode_dyypnw C2F(dyypnw)
 #define nsp_ode_ewset C2F(ewset)
 #define nsp_ode_fehl2 C2F(fehl2)
 #define nsp_ode_fnorm C2F(fnorm)
 #define nsp_ode_greatr C2F(greatr)
-#define nsp_ode_idamax C2F(idamax)
 #define nsp_ode_intdy C2F(intdy)
 #define nsp_ode_lsdisc C2F(lsdisc)
 #define nsp_ode_lsoda C2F(lsoda)
@@ -427,11 +425,7 @@ extern int nsp_ode_greatr (double *a, double *b, int *nwds);
 
 extern double nsp_ode_vmnorm (const int *n,const double *v,const double *w);
 extern double nsp_ode_vnorm ( const int *n,const double *v,const  double *w);
-/* extern double nsp_ode_dlamch (char *, long int); */
-extern int nsp_ode_dcopy (int *, double *, int *,  double *, int *);
 extern int nsp_ode_dscal (int *, double *, double *, int *);
-extern double nsp_ode_ddot (int *, double *, int *, double *, int *);
-extern int nsp_ode_daxpy (int *, double *, double *, int *, double *, int *);
 extern double nsp_ode_ddanrm (int *, double *, double *, double *, int *);
 extern int nsp_ode_droots (int *, double *, int *, double *, double *, double *,
 			      double *, double *, double *, int *, int *, int *,
@@ -442,7 +436,6 @@ extern double nsp_ode_ddanrm (int *, double *, double *, double *, int *);
 extern int nsp_ode_xermsg (char *, char *, char *, int *, int *, long int, long int,  long int);
 extern double nsp_ode_ddanrm (int *, double *, double *, double *, int *);
 extern int nsp_ode_ddaslv (int *, double *, double *,    int *);
-extern int nsp_ode_idamax (int *, double *, int *);
 extern double nsp_ode_bnorm (const int *n,const double *a,const int *nra,
 				const int *ml,const int *mu, const double *w);
 
