@@ -3,24 +3,30 @@
 
 /* prototypes for blas routines */
 
+extern int C2F(dswap) (const int *n, double *dx, const int *incx, double *dy, const int *incy);
+extern int C2F(dcopy) (const int *n, const double *dx, const int *incx, double *dy, const int *incy);
+extern int C2F(idamax) (const int *n, const double *dx, const int *incx);
+extern double C2F(ddot) (const int *n,const double *dx,const int *incx,const  double *dy,const int *incy);
+extern double C2F(dnrm2) (const int *n,const double *x,const int *incx);
+extern int C2F(dscal) (const int *n,const double *da, double *dx, const int *incx);
+extern int C2F(daxpy) (const int *n, double *da, double *dx,const int *incx, double *dy,const int *incy);
+
 extern double C2F(dasum) (int *n, double *dx, int *incx);
-extern int C2F(daxpy) (int *n, double *da, double *dx, int *incx, double *dy, int *incy);
+
 extern double C2F(dcabs1) (doubleC *z__);
-extern int C2F(dcopy) (int *n, double *dx, int *incx, double *dy, int *incy);
-extern double C2F(ddot) (int *n, double *dx, int *incx, double *dy, int *incy);
+
 extern int C2F(dgbmv) (char *trans, int *m, int *n, int *kl, int *ku, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy, int trans_len);
 extern int C2F(dgemm) (char *transa, char *transb, int *m, int *n, int *k, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c__, int *ldc, int transa_len, int transb_len);
 extern int C2F(dgemv) (char *trans, int *m, int *n, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy, int trans_len);
 extern int C2F(dger) (int *m, int *n, double *alpha, double *x, int *incx, double *y, int *incy, double *a, int *lda);
-extern double C2F(dnrm2) (int *n, double *x, int *incx);
+
 extern int C2F(drot) (int *n, double *dx, int *incx, double *dy, int *incy, double *c__, double *s);
 extern int C2F(drotg) (double *da, double *db, double *c__, double *s);
 extern int C2F(dsbmv) (char *uplo, int *n, int *k, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy, int uplo_len);
-extern int C2F(dscal) (int *n, double *da, double *dx, int *incx);
+
 extern int C2F(dspmv) (char *uplo, int *n, double *alpha, double *ap, double *x, int *incx, double *beta, double *y, int *incy, int uplo_len);
 extern int C2F(dspr) (char *uplo, int *n, double *alpha, double *x, int *incx, double *ap, int uplo_len);
 extern int C2F(dspr2) (char *uplo, int *n, double *alpha, double *x, int *incx, double *y, int *incy, double *ap, int uplo_len);
-extern int C2F(dswap) (int *n, double *dx, int *incx, double *dy, int *incy);
 extern int C2F(dsymm) (char *side, char *uplo, int *m, int *n, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c__, int *ldc, int side_len, int uplo_len);
 extern int C2F(dsymv) (char *uplo, int *n, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy, int uplo_len);
 extern int C2F(dsyr) (char *uplo, int *n, double *alpha, double *x, int *incx, double *a, int *lda, int uplo_len);
@@ -37,7 +43,6 @@ extern int C2F(dtrsm) (char *side, char *uplo, char *transa, char *diag, int *m,
 extern int C2F(dtrsv) (char *uplo, char *trans, char *diag, int *n, double *a, int *lda, double *x, int *incx, int uplo_len, int trans_len, int diag_len);
 extern double C2F(dzasum) (int *n, doubleC *zx, int *incx);
 extern double C2F(dznrm2) (int *n, doubleC *x, int *incx);
-extern int C2F(idamax) (int *n, double *dx, int *incx);
 extern int C2F(izamax) (int *n, doubleC *zx, int *incx);
 extern int C2F(lsame) (char *ca, char *cb, int ca_len, int cb_len);
 extern int C2F(xerbla) (char *srname, int *info, int srname_len);
