@@ -182,10 +182,7 @@ if %f then
   [res]=residue(p,q,1) //  (res=-559.5)
 end
 
-function dg=degree_m(m)
-// is it really usefull !
-  dg = degree(m2p(m));
-endfunction
+
 
 
 
