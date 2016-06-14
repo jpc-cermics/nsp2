@@ -2344,6 +2344,22 @@ let make_nsp_generic_arg_smat nsp_generic_data =
     attr_write_defval = nsp_generic_arg_smat_attr_write_defval nsp_generic_data ;
  }
 ;;
+(* nsp_generic_arg_pmat *)
+
+let nsp_generic_arg_pmat_attr_write_defval  nsp_generic_data _objinfo varname params =
+  (Printf.sprintf "  if ( %s->%s == NULL%s) \n    {\n"
+     varname params.pname nsp_generic_data.ng_shortname_uc)
+  ^ (Printf.sprintf
+       "     if (( %s->%s = nsp_pmatrix_create(\"%s\",0,0,\"v\",0)) == NULL%s)\n       return FAIL;\n    }\n"
+       varname params.pname params.pname nsp_generic_data.ng_shortname_uc)
+;;
+
+let make_nsp_generic_arg_pmat nsp_generic_data =
+  let arg = make_nsp_generic_arg nsp_generic_data in
+  { arg with
+    attr_write_defval = nsp_generic_arg_pmat_attr_write_defval nsp_generic_data ;
+ }
+;;
 
 (* nsp_generic_arg_list *)
 
@@ -4985,7 +5001,7 @@ let matcher_hash = of_bindings [
   "NspSMatrix*", (make_nsp_generic_arg_smat
 		   (init_nsp_generic_data "NspSMatrix" "SMatrix" "SMat" "smat"));
 
-  "NspPMatrix*", (make_nsp_generic_arg_smat
+  "NspPMatrix*", (make_nsp_generic_arg_pmat
 		   (init_nsp_generic_data "NspPMatrix" "PMatrix" "PMat" "pmat"));
 
   "NspList*", (make_nsp_generic_arg_list
