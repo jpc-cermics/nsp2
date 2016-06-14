@@ -26,9 +26,9 @@ type t = {
   loc_beg : position;
   loc_end : position;
 }
-;;
 (** The location of an AST node,
     beginning and ending position of its source text. *)
+;;
 
 val init : Lexing.lexbuf -> Path.file_name -> unit;;
 val mk_loc : position -> position -> t;;

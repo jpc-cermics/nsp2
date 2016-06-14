@@ -17,9 +17,9 @@
 val main :
   (Format.formatter -> Path.file_name -> unit) ->
   Format.formatter -> unit
-;;
 (** [Arguments.main do_file ppf] applies the function [do_file] to all
   the file arguments of the command defined via [Arguments.main]. *)
+;;
 
 (*
  Local Variables:

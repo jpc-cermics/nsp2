@@ -22,8 +22,9 @@ val fatal_error : message -> 'a;;
 
 val debug : message -> unit;;
 
-val fdebug : (Format.formatter -> unit) -> unit;;
+val fdebug : (Format.formatter -> unit) -> unit
 (** [fdebug f] apply [f] to a formatter only if debug is set. *)
+;;
 
 (*
  Local Variables:
