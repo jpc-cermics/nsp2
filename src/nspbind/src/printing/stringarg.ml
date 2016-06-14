@@ -4978,10 +4978,16 @@ let matcher_hash = of_bindings [
 
   "NspMatrix*", (make_nsp_generic_arg_mat
 		  (init_nsp_generic_data "NspMatrix" "Matrix" "Mat" "mat"));
+
   "NspBMatrix*", (make_nsp_generic_arg_bmat
 		   (init_nsp_generic_data "NspBMatrix" "BMatrix" "BMat" "bmat"));
+
   "NspSMatrix*", (make_nsp_generic_arg_smat
 		   (init_nsp_generic_data "NspSMatrix" "SMatrix" "SMat" "smat"));
+
+  "NspPMatrix*", (make_nsp_generic_arg_smat
+		   (init_nsp_generic_data "NspPMatrix" "PMatrix" "PMat" "pmat"));
+
   "NspList*", (make_nsp_generic_arg_list
 		(init_nsp_generic_data "NspList" "List" "List" "list"));
   "NspSpColMatrix*", (make_nsp_generic_arg_spcol

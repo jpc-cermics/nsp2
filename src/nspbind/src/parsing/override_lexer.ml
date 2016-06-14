@@ -691,7 +691,7 @@ let __ocaml_lex_tables = {
 }
 
 let rec token lexbuf =
-  lexbuf.Lexing.lex_mem <- Array.create 20 (-1) ;   __ocaml_lex_token_rec lexbuf 0
+  lexbuf.Lexing.lex_mem <- Array.make 20 (-1) ;   __ocaml_lex_token_rec lexbuf 0
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
@@ -850,7 +850,8 @@ let
          lexbuf.lex_curr_p) )
 # 852 "src/parsing/override_lexer.ml"
 
-  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_token_rec lexbuf __ocaml_lex_state
+  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
+      __ocaml_lex_token_rec lexbuf __ocaml_lex_state
 
 and items lexbuf =
     __ocaml_lex_items_rec lexbuf 28
@@ -860,7 +861,7 @@ and __ocaml_lex_items_rec lexbuf __ocaml_lex_state =
 let
 # 358 "src/parsing/override_lexer.mll"
              s
-# 864 "src/parsing/override_lexer.ml"
+# 865 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 359 "src/parsing/override_lexer.mll"
     (
@@ -869,7 +870,7 @@ let
 	 (Printf.sprintf "--> NAME ->[%s]" s );
      NAME(s)
    )
-# 873 "src/parsing/override_lexer.ml"
+# 874 "src/parsing/override_lexer.ml"
 
   | 1 ->
 # 366 "src/parsing/override_lexer.mll"
@@ -879,9 +880,10 @@ let
 	 (Printf.sprintf "--> blank" );
      token lexbuf
    )
-# 883 "src/parsing/override_lexer.ml"
+# 884 "src/parsing/override_lexer.ml"
 
-  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_items_rec lexbuf __ocaml_lex_state
+  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
+      __ocaml_lex_items_rec lexbuf __ocaml_lex_state
 
 and code lexbuf =
     __ocaml_lex_code_rec lexbuf 32
@@ -891,7 +893,7 @@ and __ocaml_lex_code_rec lexbuf __ocaml_lex_state =
 let
 # 380 "src/parsing/override_lexer.mll"
                   s
-# 895 "src/parsing/override_lexer.ml"
+# 897 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 381 "src/parsing/override_lexer.mll"
       (
@@ -900,13 +902,13 @@ let
 	    (Printf.sprintf "get code up to end of file");
        store_string s;
      )
-# 904 "src/parsing/override_lexer.ml"
+# 906 "src/parsing/override_lexer.ml"
 
   | 1 ->
 let
 # 388 "src/parsing/override_lexer.mll"
                   s
-# 910 "src/parsing/override_lexer.ml"
+# 912 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_curr_pos + -2) in
 # 389 "src/parsing/override_lexer.mll"
       (
@@ -931,13 +933,13 @@ let
 	   code lexbuf;
 	  );
      )
-# 935 "src/parsing/override_lexer.ml"
+# 937 "src/parsing/override_lexer.ml"
 
   | 2 ->
 let
 # 411 "src/parsing/override_lexer.mll"
                      s
-# 941 "src/parsing/override_lexer.ml"
+# 943 "src/parsing/override_lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 412 "src/parsing/override_lexer.mll"
       (
@@ -947,7 +949,7 @@ let
        store_string s;
        code lexbuf;
      )
-# 951 "src/parsing/override_lexer.ml"
+# 953 "src/parsing/override_lexer.ml"
 
   | 3 ->
 # 421 "src/parsing/override_lexer.mll"
@@ -956,7 +958,7 @@ let
 	 prerr_endline 
 	   (Printf.sprintf "end of file " );
        )
-# 960 "src/parsing/override_lexer.ml"
+# 962 "src/parsing/override_lexer.ml"
 
   | 4 ->
 # 427 "src/parsing/override_lexer.mll"
@@ -966,9 +968,10 @@ let
 	store_string_char(Lexing.lexeme_char lexbuf 0);
         code lexbuf 
       )
-# 970 "src/parsing/override_lexer.ml"
+# 972 "src/parsing/override_lexer.ml"
 
-  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_code_rec lexbuf __ocaml_lex_state
+  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
+      __ocaml_lex_code_rec lexbuf __ocaml_lex_state
 
 ;;
 
@@ -984,4 +987,4 @@ let
 *)
 
 
-# 988 "src/parsing/override_lexer.ml"
+# 991 "src/parsing/override_lexer.ml"

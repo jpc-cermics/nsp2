@@ -230,9 +230,9 @@ let rec rmdir dir =
 ;;
 
 (* The search_path machinery *)
-type search_path = path list;;
+type search_path = path list
 (** A directory search_path is a list of directory names. *)
-
+;;
 let is_readable_directory d =
   try ignore (Sys.readdir d); true with
   | _ -> false
@@ -274,7 +274,6 @@ let kfind_search_path f search_path s =
         try f fname with
         | Sys_error _ -> do_in pts in
     do_in search_path
-;;
  (** val kfind_search_path : (explicit_file_name -> 'a) -> t -> file_name -> 'a;;
    [kfind_search_path f search_path s] applies [f] on any file named [s] in
    the search_path, and returns the result of the first call that does not
@@ -282,6 +281,7 @@ let kfind_search_path f search_path s =
    For instance, [kfind_search_path open_in (Path.get ()) "foo"] searches the
    current search path for a file ["foo"] and returns an input channel to that
    file. *)
+;;
 
 let kfind f fname =
   if Filename.is_implicit fname

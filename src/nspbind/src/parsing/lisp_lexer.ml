@@ -221,7 +221,8 @@ let
         ( EOF )
 # 223 "src/parsing/lisp_lexer.ml"
 
-  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; __ocaml_lex_token_rec lexbuf __ocaml_lex_state
+  | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
+      __ocaml_lex_token_rec lexbuf __ocaml_lex_state
 
 ;;
 
@@ -237,4 +238,4 @@ let
 *)
 
 
-# 241 "src/parsing/lisp_lexer.ml"
+# 242 "src/parsing/lisp_lexer.ml"
