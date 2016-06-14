@@ -27,9 +27,7 @@
 static int hermitian_redundancy_1d_test(NspMatrix *x, int dim);
 #else
 /* headers for fftpack */
-void C2F(zffti)(int *, double *);
-void C2F(zfftf)(int *, doubleC *, double *);
-void C2F(zfftb)(int *, doubleC *, double *);
+#include "fftpack.h"
 
 /* a routine used only when fftpack is used */
 static void transpose_cmplx_mat(NspMatrix *x, NspMatrix *y)
@@ -300,9 +298,9 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
   fftw_plan multi_plan;
 
   CheckRhs(1,2);
-  CheckOptRhs(0, 1)
+  CheckOptRhs(0, 1);
   CheckLhs(1,1);
-
+  
   if ((x = GetMat(stack,1)) == NULLMAT) 
     return RET_BUG;
 
@@ -321,7 +319,7 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
  	}
  
-     if ( dim_flag == -1 )
+      if ( dim_flag == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -517,7 +515,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
 
   CheckRhs(1,2);
   CheckOptRhs(0, 1)
-  CheckLhs(1,1);
+    CheckLhs(1,1);
 
   if ((x = GetMat(stack,1)) == NULLMAT) 
     return RET_BUG;
@@ -537,7 +535,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
  	}
  
-     if ( dim_flag == -1 )
+      if ( dim_flag == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -969,11 +967,11 @@ NspMatrix *nsp_fft(NspMatrix *x)
       free(wsave);
       if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&n, wsave);
+      fftpack_zffti(&n, wsave);
       last_n = n;
     }
 
-  C2F(zfftf)(&n, xx->C, wsave);
+  fftpack_zfftf(&n, xx->C, wsave);
   return xx;
  err:
   nsp_matrix_destroy(xx);
@@ -1008,12 +1006,12 @@ NspMatrix *nsp_ifft(NspMatrix *x)
       free(wsave);
       if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&n, wsave);
+      fftpack_zffti(&n, wsave);
       last_n = n;
       invn = 1.0 / (double) n;
     }
 
-  C2F(zfftb)(&n, xx->C, wsave);
+  fftpack_zfftb(&n, xx->C, wsave);
   for (k = 0 ; k < x->mn ; k++) { xx->C[k].r *= invn; xx->C[k].i *= invn; }
   return xx;
  err:
@@ -1103,7 +1101,7 @@ int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
       free(wsave);
       if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
 	return RET_BUG;
-      C2F(zffti)(&n, wsave);
+      fftpack_zffti(&n, wsave);
       last_n = n;
       invn = 1.0 / (double) n;
     }
@@ -1112,18 +1110,18 @@ int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
   if ( flag_orient == ALL || (flag_orient == BY_ROW && x->m == 1) )
     {  
       if ( s == -1 )
-	C2F(zfftf)(&n, x->C, wsave);
+	fftpack_zfftf(&n, x->C, wsave);
       else
-	C2F(zfftb)(&n, x->C, wsave);
+	fftpack_zfftb(&n, x->C, wsave);
     }
   else if ( flag_orient == BY_COL )
     {
       if ( s == -1 )
 	for ( k = 0 ; k < x->n ; k++ )
-	  C2F(zfftf)(&n, &(x->C[k*x->m]), wsave);
+	  fftpack_zfftf(&n, &(x->C[k*x->m]), wsave);
       else
 	for ( k = 0 ; k < x->n ; k++ )
-	  C2F(zfftb)(&n, &(x->C[k*x->m]), wsave);
+	  fftpack_zfftb(&n, &(x->C[k*x->m]), wsave);
     }
   else if ( flag_orient == BY_ROW )
     {
@@ -1132,10 +1130,10 @@ int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
       transpose_cmplx_mat(x, y);
       if ( s == -1 )
 	for ( k = 0 ; k < y->n ; k++ )
-	  C2F(zfftf)(&n, &(y->C[k*y->m]), wsave);
+	  fftpack_zfftf(&n, &(y->C[k*y->m]), wsave);
       else
 	for ( k = 0 ; k < y->n ; k++ )
-	  C2F(zfftb)(&n, &(y->C[k*y->m]), wsave);
+	  fftpack_zfftb(&n, &(y->C[k*y->m]), wsave);
       transpose_cmplx_mat(y, x);
       nsp_matrix_destroy(y);
     }
@@ -1160,7 +1158,7 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
   static int last_n=-1;
 
   CheckRhs(1,2);
-  CheckOptRhs(0, 1)
+  CheckOptRhs(0, 1);
   CheckLhs(1,1);
 
   if ((x = GetMat(stack,1)) == NULLMAT) 
@@ -1181,7 +1179,7 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
  	}
  
-     if ( dim_flag == -1 )
+      if ( dim_flag == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -1226,22 +1224,22 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
       free(wsave);
       if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&n, wsave);
+      fftpack_zffti(&n, wsave);
       last_n = n;
     }
 
   if ( dim_flag == 0 )
-    C2F(zfftf)(&n, xx->C, wsave);
+    fftpack_zfftf(&n, xx->C, wsave);
   else if ( dim_flag == 1 )
     for ( k = 0 ; k < xx->n ; k++ )
-      C2F(zfftf)(&n, &(xx->C[k*x->m]), wsave);
+      fftpack_zfftf(&n, &(xx->C[k*x->m]), wsave);
   else /* dim_flag == 2 */
     {
       if ( (y = nsp_matrix_create(NVOID, 'c', xx->n, xx->m)) == NULLMAT )
 	goto err;
       transpose_cmplx_mat(xx, y);
       for ( k = 0 ; k < y->n ; k++ )
-	C2F(zfftf)(&n, &(y->C[k*y->m]), wsave);
+	fftpack_zfftf(&n, &(y->C[k*y->m]), wsave);
       transpose_cmplx_mat(y, xx);
       nsp_matrix_destroy(y);
     }
@@ -1268,7 +1266,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
 
   CheckRhs(1,2);
   CheckOptRhs(0, 1)
-  CheckLhs(1,1);
+    CheckLhs(1,1);
 
   if ((x = GetMat(stack,1)) == NULLMAT) 
     return RET_BUG;
@@ -1288,7 +1286,7 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
 	    return RET_BUG;
  	}
  
-     if ( dim_flag == -1 )
+      if ( dim_flag == -1 )
 	{
 	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
 	  return RET_BUG;
@@ -1333,23 +1331,23 @@ int int_nsp_ifftnew( Stack stack, int rhs, int opt, int lhs)
       free(wsave);
       if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&n, wsave);
+      fftpack_zffti(&n, wsave);
       last_n = n;
       invn = 1.0 / (double) n;
     }
 
   if ( dim_flag == 0 )
-    C2F(zfftb)(&n, xx->C, wsave);
+    fftpack_zfftb(&n, xx->C, wsave);
   else if ( dim_flag == 1 )
     for ( k = 0 ; k < xx->n ; k++ )
-      C2F(zfftb)(&n, &(xx->C[k*x->m]), wsave);
+      fftpack_zfftb(&n, &(xx->C[k*x->m]), wsave);
   else /* dim_flag == 2 */
     {
       if ( (y = nsp_matrix_create(NVOID, 'c', xx->n, xx->m)) == NULLMAT )
 	goto err;
       transpose_cmplx_mat(xx, y);
       for ( k = 0 ; k < y->n ; k++ )
-	C2F(zfftb)(&n, &(y->C[k*y->m]), wsave);
+	fftpack_zfftb(&n, &(y->C[k*y->m]), wsave);
       transpose_cmplx_mat(y, xx);
       nsp_matrix_destroy(y);
     }
@@ -1405,21 +1403,21 @@ int int_nsp_fft2_deprecated( Stack stack, int rhs, int opt, int lhs)
 
   if ( (wsave = malloc((4*x->m+15)*sizeof(double))) == NULL )
     return RET_BUG;
-  C2F(zffti)(&(x->m), wsave);
+  fftpack_zffti(&(x->m), wsave);
 
   if ( s == -1 )
     for ( k = 0 ; k < x->n ; k++ )
-      C2F(zfftf)(&(x->m), &(x->C[k*x->m]), wsave);
+      fftpack_zfftf(&(x->m), &(x->C[k*x->m]), wsave);
   else
     for ( k = 0 ; k < x->n ; k++ )
-      C2F(zfftb)(&(x->m), &(x->C[k*x->m]), wsave);
+      fftpack_zfftb(&(x->m), &(x->C[k*x->m]), wsave);
 
   if ( x->n != x->m )
     {
       free(wsave);
       if ( (wsave = malloc((4*x->n+15)*sizeof(double))) == NULL )
 	return RET_BUG;
-      C2F(zffti)(&(x->n), wsave);
+      fftpack_zffti(&(x->n), wsave);
     }
 
   if ( (y = nsp_matrix_create(NVOID, 'c', x->n, x->m)) == NULLMAT )
@@ -1431,10 +1429,10 @@ int int_nsp_fft2_deprecated( Stack stack, int rhs, int opt, int lhs)
 
   if ( s == -1 )
     for ( k = 0 ; k < y->n ; k++ )
-      C2F(zfftf)(&(y->m), &(y->C[k*y->m]), wsave);
+      fftpack_zfftf(&(y->m), &(y->C[k*y->m]), wsave);
   else
     for ( k = 0 ; k < y->n ; k++ )
-      C2F(zfftb)(&(y->m), &(y->C[k*y->m]), wsave);
+      fftpack_zfftb(&(y->m), &(y->C[k*y->m]), wsave);
   transpose_cmplx_mat(y, x);
   free(wsave);
   nsp_matrix_destroy(y);
@@ -1487,17 +1485,17 @@ int int_nsp_fft2new( Stack stack, int rhs, int opt, int lhs)
 
   if ( (wsave = malloc((4*x->m+15)*sizeof(double))) == NULL )
     goto err;
-  C2F(zffti)(&(xx->m), wsave);
+  fftpack_zffti(&(xx->m), wsave);
 
   for ( k = 0 ; k < x->n ; k++ )
-    C2F(zfftf)(&(xx->m), &(xx->C[k*x->m]), wsave);
+    fftpack_zfftf(&(xx->m), &(xx->C[k*x->m]), wsave);
 
   if ( xx->n != xx->m )
     {
       free(wsave);
       if ( (wsave = malloc((4*xx->n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&(xx->n), wsave);
+      fftpack_zffti(&(xx->n), wsave);
     }
 
   if ( (y = nsp_matrix_create(NVOID, 'c', xx->n, xx->m)) == NULLMAT )
@@ -1505,7 +1503,7 @@ int int_nsp_fft2new( Stack stack, int rhs, int opt, int lhs)
 
   transpose_cmplx_mat(xx, y);
   for ( k = 0 ; k < y->n ; k++ )
-    C2F(zfftf)(&(y->m), &(y->C[k*y->m]), wsave);
+    fftpack_zfftf(&(y->m), &(y->C[k*y->m]), wsave);
   transpose_cmplx_mat(y, xx);
 
   free(wsave);
@@ -1559,17 +1557,17 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 
   if ( (wsave = malloc((4*x->m+15)*sizeof(double))) == NULL )
     goto err;
-  C2F(zffti)(&(xx->m), wsave);
+  fftpack_zffti(&(xx->m), wsave);
 
   for ( k = 0 ; k < x->n ; k++ )
-    C2F(zfftb)(&(xx->m), &(xx->C[k*x->m]), wsave);
+    fftpack_zfftb(&(xx->m), &(xx->C[k*x->m]), wsave);
 
   if ( xx->n != xx->m )
     {
       free(wsave);
       if ( (wsave = malloc((4*xx->n+15)*sizeof(double))) == NULL )
 	goto err;
-      C2F(zffti)(&(xx->n), wsave);
+      fftpack_zffti(&(xx->n), wsave);
     }
 
   if ( (y = nsp_matrix_create(NVOID, 'c', xx->n, xx->m)) == NULLMAT )
@@ -1577,7 +1575,7 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 
   transpose_cmplx_mat(xx, y);
   for ( k = 0 ; k < y->n ; k++ )
-    C2F(zfftb)(&(y->m), &(y->C[k*y->m]), wsave);
+    fftpack_zfftb(&(y->m), &(y->C[k*y->m]), wsave);
   transpose_cmplx_mat(y, xx);
 
   free(wsave);
@@ -1691,7 +1689,7 @@ static NspMatrix *nsp_mat_shift(NspMatrix *x, int dim_flag, char orient)
 	  memcpy(&y->C[(x->n-jm)*x->m], x->C, x->m*jm*sizeof(doubleC));
 	  memcpy(y->C, &x->C[jm*x->m], x->m*(x->n-jm)*sizeof(doubleC));
 	}
-     }
+    }
       
   return y;
 }
@@ -1942,22 +1940,22 @@ static int int_nsp_rot(Stack stack, int rhs, int opt, int lhs)
 }
 
 static OpTab Fft_func[]={
-    {"fft_m", int_nsp_fftnew},
-    {"fft_deprecated_m_m", int_nsp_fft_deprecated},
-    {"fftnew_m", int_nsp_fftnew},
-    {"ifftnew_m", int_nsp_ifftnew},
-    {"ifft_m", int_nsp_ifftnew},
-    {"fft2_m", int_nsp_fft2new},
-    {"fft2_deprecated_m_m", int_nsp_fft2_deprecated},
-    {"fft2new_m", int_nsp_fft2new},
-    {"ifft2new_m", int_nsp_ifft2new},
-    {"ifft2_m", int_nsp_ifft2new},
-    {"fftshift_m", int_nsp_fftshift},
-    {"ifftshift_m", int_nsp_ifftshift},
-    {"fliplr_m", int_nsp_fliplr},
-    {"flipud_m", int_nsp_flipud},
-    {"rot90_m", int_nsp_rot},
-    {(char *) 0, NULL}
+  {"fft_m", int_nsp_fftnew},
+  {"fft_deprecated_m_m", int_nsp_fft_deprecated},
+  {"fftnew_m", int_nsp_fftnew},
+  {"ifftnew_m", int_nsp_ifftnew},
+  {"ifft_m", int_nsp_ifftnew},
+  {"fft2_m", int_nsp_fft2new},
+  {"fft2_deprecated_m_m", int_nsp_fft2_deprecated},
+  {"fft2new_m", int_nsp_fft2new},
+  {"ifft2new_m", int_nsp_ifft2new},
+  {"ifft2_m", int_nsp_ifft2new},
+  {"fftshift_m", int_nsp_fftshift},
+  {"ifftshift_m", int_nsp_ifftshift},
+  {"fliplr_m", int_nsp_fliplr},
+  {"flipud_m", int_nsp_flipud},
+  {"rot90_m", int_nsp_rot},
+  {(char *) 0, NULL}
 };
 
 int Fft_Interf(int i, Stack stack, int rhs, int opt, int lhs)
