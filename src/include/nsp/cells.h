@@ -86,6 +86,7 @@ extern NspCells *nsp_cells_unique(NspCells *C, NspObject **Ind, NspMatrix **Occ,
 extern Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind);
 extern NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)  ;
 extern NspCells *nsp_cells_m2ce(NspMatrix *M, NspMatrix *Rows, NspMatrix *Cols);
+extern NspCells *nsp_cells_m2ce_full(NspMatrix *M);
 
 #define NULLCELLS (NspCells *) NULL
 

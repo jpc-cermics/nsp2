@@ -1261,12 +1261,19 @@ int int_m2ce(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M,*Rows,*Cols;
   NspCells *Res;
-  CheckStdRhs(3,3);
+  CheckStdRhs(1,3);
   CheckLhs(1,1);
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
-  if ((Res = nsp_cells_m2ce(M,Rows,Cols))== NULL)  return RET_BUG;
+  if ( rhs == 3 )
+    {
+      if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+      if ((Res = nsp_cells_m2ce(M,Rows,Cols))== NULL)  return RET_BUG;
+    }
+  else if (rhs == 1)
+    {
+      if ((Res = nsp_cells_m2ce_full(M))== NULL)  return RET_BUG;
+    }
   MoveObj(stack,1, NSP_OBJECT(Res));
   return 1;
 }

@@ -1291,7 +1291,7 @@ NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)
   return Res;
 } 
 
-
+/* partition a matrix into submatrices stored in a cell */
 
 NspCells *nsp_cells_m2ce(NspMatrix *M, NspMatrix *Rows, NspMatrix *Cols)
 {
@@ -1324,6 +1324,37 @@ NspCells *nsp_cells_m2ce(NspMatrix *M, NspMatrix *Rows, NspMatrix *Cols)
   nsp_matrix_destroy(R);
   return Res;
  end:
+  return NULL;
+} 
+
+/* partition a matrix into 1x1 submatrices stored in a cell */
+
+NspCells *nsp_cells_m2ce_full(NspMatrix *M)
+{
+  int i,j;
+  NspMatrix *R=NULL,*C=NULL;
+  NspCells *Res = nsp_cells_create(NVOID, M->m, M->n);
+  if ( Res == NULL) return NULL;
+  for ( i = 0 ; i < Res->m ; i++ )
+    for ( j = 0 ; j < Res->n ; j++ )
+      {
+	NspMatrix *Elt;
+	if (( Elt = nsp_matrix_create("ce",M->rc_type,1,1))== NULL) goto err;
+	if ( M->rc_type == 'r' )
+	  {
+	    Elt->R[0]= M->R[i+M->m*j];
+	  }
+	else
+	  {
+	    Elt->C[0]= M->C[i+M->m*j];
+	  }
+	Res->objs[i+Res->m*j] = (NspObject *) Elt;
+      }
+  nsp_matrix_destroy(C);
+  nsp_matrix_destroy(R);
+  return Res;
+ err:
+  if ( Res != NULL) nsp_cells_destroy(Res);
   return NULL;
 } 
 
