@@ -31,7 +31,7 @@ column cell vectors are considered as \verb!m x 1! matrices and row cell vectors
 as \verb!1 x n! matrices.
 
 Internally \emph{Cells} type are stored by default as a unidimensional array of \emph{Objects},
-It is therefore always possible to access elements with one indice assuming a column order 
+It is therefore always possible to access elements with one index assuming a column order 
 storage. 
 \end{mandescription}
 
@@ -64,10 +64,10 @@ element, or row ,or column indices of the matrix.
 \begin{itemize}
 \item \verb+A(I,J)+ is a new cell array build from \verb+A+ with entries in \verb+I+ and \verb+J+. 
 \item \verb+A(I,:)+ is a new cell array build from \verb+A+ with row indices in \verb+I+.
-\item \verb+A(:,J)+ is a new cell array build from \verb+A+ with comumn indices in \verb+I+.
+\item \verb+A(:,J)+ is a new cell array build from \verb+A+ with column indices in \verb+I+.
 \item \verb+A(:,:)+ is \verb+A+
 \item \verb+A(:)+ is a new cell array obtained by stacking the columns of \verb+A+.
-\item Note that a unique indice vector can be used using the column order storage.
+\item Note that a unique indices vector can be used using the column order storage.
 \end{itemize}
 
 \begin{itemize}
@@ -114,63 +114,87 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
 
 \itemdesc{Some functions}
 \begin{itemize}
-   \item \verb+unique(C)+ eliminate redundencies (in the equal sence) in cell array elements. 
+   \item \verb+unique(C)+ eliminate redundancies (in the equal sense) in cell array elements. 
    \item \verb+ce2m(C,indice=i,notm=val1,noti=val2)+ converts a cell array to numeric matrix
      with the following conventions if a \verb+C+ entry is not a numeric matrix then \verb!val1! is inserted 
      (default value \verb!%nan!). If \verb+C+ entry is a numeric matrix then entry \verb!i! of the matrix 
-     is extracted (default value \verb!1!) and if indice \verb!i! does not exists then \verb!val2! is inserted.
+     is extracted (default value \verb!1!) and if index \verb!i! does not exists then \verb!val2! is inserted.
+     \index{ce2m}\label{ce2m}
+   \item \verb+C=m2ce(M [,rows,cols])+ converts a matrix to a cell array \verb+rows+ and \verb+cols+ giving the 
+     partition of the matrix. When \verb+rows+ and \verb+cols+ are not given the matrix is partitioned into \verb!1x1! 
+     matrices.
+     \index{m2ce}\label{m2ce}
    \item \verb+map(C,f [,args])+ maps the function \verb!f! to each element of the cell array \verb!C! returning 
      a new cell array.
+     \index{map}\label{map}
 \end{itemize}
 
 \begin{examples}
 \begin{itemize}
 \item Creation, extraction, insertion with \verb+{.}+:
 \begin{Verbatim}
-M=rand(4,4);
-A={8,9,M,"nsp"};  
-b=A{1} 	
-[a,b]=A{[1,3]};
-A{1:2}=(M,78) ; 
-A{:} = (4,5,6,7); 
-A={8,9;M,"nsp"};  
-A{1:2,1}=(56,67);
-A{1:2,1:2}=(1,2,3,4);
-D{3}=8;
+  M=rand(4,4);
+  A={8,9,M,"nsp"};  
+  b=A{1} 	
+  [a,b]=A{[1,3]};
+  A{1:2}=(M,78) ; 
+  A{:} = (4,5,6,7); 
+  A={8,9;M,"nsp"};  
+  A{1:2,1}=(56,67);
+  A{1:2,1:2}=(1,2,3,4);
+  D{3}=8;
 \end{Verbatim}
 
 \item Using \verb+{.}+ to provide a sequence of arguments to a function
 \begin{Verbatim} 
-function y=f(varargin);y=length(varargin);endfunction;
-A={8,9,M,"nsp"}; // creation 
-f(A{:})
+  function y=f(varargin);y=length(varargin);endfunction;
+  A={8,9,M,"nsp"}; // creation 
+  f(A{:})
 \end{Verbatim}
 \item Creation, extraction, insertion with \verb+(.)+:
 \begin{Verbatim}
-A={}; 
-A([1,3]) = {7,8} // affectation 
-A([1:3]) // extraction of a sub cell array
-A(1,2) = {89};  // same result as A{1,2} = 89;
-A={1,2;3,4}
-{ A{:,1}}   // 1x2 
-A(:,1)      // 2x1 
+  A={}; 
+  A([1,3]) = {7,8} // affectation 
+  A([1:3]) // extraction of a sub cell array
+  A(1,2) = {89};  // same result as A{1,2} = 89;
+  A={1,2;3,4}
+  { A{:,1}}   // 1x2 
+  A(:,1)      // 2x1 
 \end{Verbatim}
 
 \item using \verb+map+:
 \begin{Verbatim}
-A={7,8,rand(4,6),'foo'}; 
-function y=len(x);y=length(x);endfunction;
-Res=map(A,len);
-function y=plus_val(x,args);y=x+args(1);endfunction;
-Res=map({7,8,rand(2,2)},plus_val,list(45))
+  A={7,8,rand(4,6),'foo'}; 
+  function y=len(x);y=length(x);endfunction;
+  Res=map(A,len);
+  function y=plus_val(x,args);y=x+args(1);endfunction;
+  Res=map({7,8,rand(2,2)},plus_val,list(45))
 \end{Verbatim}
+
+\item using \verb!ce2m! and \verb!m2ce!
+
+\begin{Verbatim}
+  A=testmatrix('magic',5);
+  C=m2ce(A,[1,2,5],[1,3,6]);
+
+  A=1:10;
+  C=m2ce(A,[1,2],1:11);
+  
+  C=cell(1,10);
+  for i=1:10 
+    C{i}=rand(1,2);
+  end 
+  A1=ce2m(C);
+  B1=ce2m(C,indice=5); 
+  C{1} = 'magic'
+  A1=ce2m(C,notm=%inf);
+  
+  A1=ce2m(C,indice=100,noti=67,notm=%inf);
+\end{Verbatim}
+
 \end{itemize}
 
 \end{examples}
-
-\begin{manseealso}
-
-\end{manseealso}
 
 % -- Authors
 \begin{authors}
