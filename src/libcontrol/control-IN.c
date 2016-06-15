@@ -1483,6 +1483,15 @@ extern int int_ppol(Stack stack, int rhs, int opt, int lhs);
 extern int int_residu(Stack stack, int rhs, int opt, int lhs);
 extern int int_rtitr(Stack stack, int rhs, int opt, int lhs);
 extern int int_tzer(Stack stack, int rhs, int opt, int lhs);
+extern int int_corr(Stack stack, int rhs, int opt, int lhs);
+
+extern int int_syredi (Stack stack, int rhs, int opt, int lhs);
+extern int int_delip (Stack stack, int rhs, int opt, int lhs);
+extern int int_amell (Stack stack, int rhs, int opt, int lhs);
+extern int int_remez (Stack stack, int rhs, int opt, int lhs);
+extern int int_conv2 (Stack stack, int rhs, int opt, int lhs);
+extern int int_rpem (Stack stack, int rhs, int opt, int lhs);
+extern int int_simp (Stack stack, int rhs, int opt, int lhs);
 
 /*
  * The Interface for basic matrices operation 
@@ -1503,6 +1512,16 @@ static OpTab Control_func[] = {
   {"residu", int_residu},
   {"rtitr", int_rtitr},
   {"tr_zer", int_tzer},
+  {"corr", int_corr},
+  {"syredi", int_syredi},
+  {"delip", int_delip},
+  {"amell", int_amell},
+  {"remez", int_remez},
+  {"simp", int_simp},
+  /*
+    {"conv2", int_conv2},
+    {"rpem", int_rpem},
+  */
   {(char *) 0, NULL}
 };
 

@@ -2350,7 +2350,7 @@ let nsp_generic_arg_pmat_attr_write_defval  nsp_generic_data _objinfo varname pa
   (Printf.sprintf "  if ( %s->%s == NULL%s) \n    {\n"
      varname params.pname nsp_generic_data.ng_shortname_uc)
   ^ (Printf.sprintf
-       "     if (( %s->%s = nsp_pmatrix_create(\"%s\",0,0,\"v\",0)) == NULL%s)\n       return FAIL;\n    }\n"
+       "     if (( %s->%s = nsp_pmatrix_create(\"%s\",0,0,NULL,-1,NULL)) == NULL%s)\n       return FAIL;\n    }\n"
        varname params.pname params.pname nsp_generic_data.ng_shortname_uc)
 ;;
 

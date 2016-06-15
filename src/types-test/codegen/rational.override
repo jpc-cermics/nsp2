@@ -1,0 +1,48 @@
+/* -*- Mode: C -*- */
+%%
+include-start Rational
+
+#include <nsp/pmatrix.h>
+#include <nsp/matint.h>
+
+%%
+include-public Rational
+
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+
+%%
+include-private Rational
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final Rational
+  /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+%%
+override-destroy-prelim  Rational
+  /* verbatim in destroy */
+
+
+

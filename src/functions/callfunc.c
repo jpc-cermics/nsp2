@@ -225,7 +225,7 @@ extern  sci_interface  glib_Interf; extern  interface_info glib_Interf_Info;
 #endif 
 
 extern  sci_interface  Control_Interf; extern  interface_info Control_Interf_Info;
-
+extern  sci_interface  Rational_Interf; extern  interface_info Rational_Interf_Info;
 
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
@@ -381,6 +381,7 @@ InterfTab Interfaces[]={
   {Stochdec_Interf, Stochdec_Interf_Info},
 #endif
   {Control_Interf, Control_Interf_Info},
+  {Rational_Interf, Rational_Interf_Info},
   {NULL,NULL}
 };
 
