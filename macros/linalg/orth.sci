@@ -1,5 +1,4 @@
 function [ImA] = orth(A,tol=[],meth="svd")
-
 // Copyright (C) 2007-2015 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify

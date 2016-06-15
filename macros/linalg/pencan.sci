@@ -1,5 +1,7 @@
-function [Bk,Ck]=fullrfk(A,k)
-// Copyright (C) 2007-2016 François Delebecque (GPL, scilab INRIA)
+function [Q,M,i1]=pencan(E,A)
+// Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+// Copyright (C) 1987-2016 - F. Delebecque (Inria)
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -14,20 +16,22 @@ function [Bk,Ck]=fullrfk(A,k)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-// This macro computes the full rank factorization of A^k i.e.
-// Bk*Ck=A^k where Bk is full column rank and Ck full row rank.
-// One has Range(Bk)=Range(A^k) and ker(Ck)=ker(A^k).
-// For k=1 fullrfk is the same as fullrf.
-//
 
-  if nargin <= 1 then k=1;end 
-  [n,m]=size(A);
-  if m<>n then error("fullrfk: matrix should be square");return;end
-  if k==0 then Bk=eye(n,n);Ck=Bk; return; end
-  if k==1 then [Bk,Ck]=fullrf(A); return; end 
-  [Bk,Ck]=fullrf(A);B=Bk;C=Ck;
-  for l=2:k
-    [B,C,dim]=fullrf(C*B);
-    Bk=Bk*B;Ck=C*Ck;     // Bk*Ck = A^k  (Full rank factorization)
-  end;
+// [Q,M,i1]=pencan(E,A)
+// Given the pencil s*E-A pencan returns matrices Q and M
+// such than M*(s*E-A)*Q is in "canonical" form i.e.
+// M*E*Q is a block matrix [I,0;
+//                         0,N]    with N nilpotent
+// and i1 = size of the I matrix above (# of finite zeros of (sE-A)).
+// M*A*Q is a block matrix [Ar,0;
+//                         0,I ]
+// See glever,  penlaur
+
+  if nargin==1 then [E,A]=pen2ea(E);end
+  [Si,Pi,Di,index]=penlaur(E,A);
+  [Q1,M1]=fullrf(Si);
+  [Q2,M2]=fullrf(Pi);
+  [i1,i2]=size(M1);
+  M=[M1;M2];
+  Q=[Q1,Q2];
 endfunction

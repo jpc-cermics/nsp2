@@ -1,5 +1,7 @@
-function [Bk,Ck]=fullrfk(A,k)
-// Copyright (C) 2007-2016 François Delebecque (GPL, scilab INRIA)
+function [u,c]=givens(x,y)
+// Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+// Copyright (C) 1987-2016 - F. Delebecque (Inria)
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -14,20 +16,24 @@ function [Bk,Ck]=fullrfk(A,k)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-// This macro computes the full rank factorization of A^k i.e.
-// Bk*Ck=A^k where Bk is full column rank and Ck full row rank.
-// One has Range(Bk)=Range(A^k) and ker(Ck)=ker(A^k).
-// For k=1 fullrfk is the same as fullrf.
+//Syntax : u=givens(xy)
+//         u=givens(x,y)
 //
-
-  if nargin <= 1 then k=1;end 
-  [n,m]=size(A);
-  if m<>n then error("fullrfk: matrix should be square");return;end
-  if k==0 then Bk=eye(n,n);Ck=Bk; return; end
-  if k==1 then [Bk,Ck]=fullrf(A); return; end 
-  [Bk,Ck]=fullrf(A);B=Bk;C=Ck;
-  for l=2:k
-    [B,C,dim]=fullrf(C*B);
-    Bk=Bk*B;Ck=C*Ck;     // Bk*Ck = A^k  (Full rank factorization)
-  end;
+// xy = [x;y], u=givens(xy)
+// returns a 2*2 matrix u such that u*xy=[r;0].
+// c is equal to u*xy
+// givens(x,y)=givens([x;y])
+//
+  if nargin==2 then x=[x;y];end
+  if or(size(x)<>[2 1]) then 
+    error('givens: argument must be a column vector')
+  end
+  if x(2)<>0 then
+    r = norm(x);
+    u = [x'; -x(2) x(1)]/r;
+    c = [r; 0];
+  else
+    u=eye(2,2)
+    c=x
+  end
 endfunction

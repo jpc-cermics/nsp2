@@ -1,5 +1,7 @@
-function [Bk,Ck]=fullrfk(A,k)
-// Copyright (C) 2007-2016 François Delebecque (GPL, scilab INRIA)
+function [U,S,V]=sva(A,tol)
+// Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+// Copyright (C) 1987-2016 - F. Delebecque (Inria)
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -14,20 +16,25 @@ function [Bk,Ck]=fullrfk(A,k)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-// This macro computes the full rank factorization of A^k i.e.
-// Bk*Ck=A^k where Bk is full column rank and Ck full row rank.
-// One has Range(Bk)=Range(A^k) and ker(Ck)=ker(A^k).
-// For k=1 fullrfk is the same as fullrf.
-//
-
-  if nargin <= 1 then k=1;end 
-  [n,m]=size(A);
-  if m<>n then error("fullrfk: matrix should be square");return;end
-  if k==0 then Bk=eye(n,n);Ck=Bk; return; end
-  if k==1 then [Bk,Ck]=fullrf(A); return; end 
-  [Bk,Ck]=fullrf(A);B=Bk;C=Ck;
-  for l=2:k
-    [B,C,dim]=fullrf(C*B);
-    Bk=Bk*B;Ck=C*Ck;     // Bk*Ck = A^k  (Full rank factorization)
-  end;
+// matrix rank approximation 
+  if isempty(A) then U=[],S=[],V=[],return,end
+  [U,S,V]=svd(A,mode="e")
+  if nargin <=1  then
+    tol = max(size(A)) * S(1) * %eps;
+    rk = size(find(diag(S) > tol),'*');
+  else
+    if tol > 1 then //rank given
+      rk=tol
+      if rk>min(size(A)) then 
+	error('Requested rank is greater than matrix dimension')
+      end
+    else
+      rk = size(find(diag(S) > tol),'*');
+    end
+  end
+  S=diag(S);
+  U=U(:,1:rk);S=S(1:rk,1:rk),V=V(:,1:rk)
 endfunction
+
+    
+    
