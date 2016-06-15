@@ -1,4 +1,3 @@
-
 function res=compose_fft_p(p,q)
 // Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
