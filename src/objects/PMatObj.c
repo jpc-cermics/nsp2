@@ -376,20 +376,39 @@ nsp_polynom GetPolynom(Stack stack, int i)
 /*
  * Matrix ( used ar row vector 1xn ) -> 1x1 polymatrix filled 
  * with one polynom of degree n-1
+ * 
  */
 
 static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 {
+  int dim=0;
   const char *var = NULL;
   nsp_option opts[] ={{"var",string,NULLOBJ,-1},
+		      {"dim",dim_arg,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspPMatrix *P; NspMatrix *A;
   CheckStdRhs(1,1);
   CheckLhs(1,1);
   if (( A=GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &var,&dim) == FAIL )
     return RET_BUG;
-  if (( P=nsp_matrix_to_polynom(A))== NULLPMAT) return RET_BUG;
+  if ( dim == -2 )
+    {
+      Scierror ("Error:\t dim flag equal to -2 or 'm' not supported for function %s\n", NspFname(stack));
+      return RET_BUG;
+    }
+  switch ( dim)
+    {
+    case 0:
+      if (( P=nsp_matrix_to_polynom(A))== NULLPMAT) return RET_BUG;
+      break;
+    case -1 :
+      if (( P=nsp_matrix_to_pmatrix(A))== NULLPMAT) return RET_BUG;
+      break;
+    default:
+      Scierror ("Error:\t dim flag equal to %d not supported for function %s\n",dim, NspFname(stack));
+      return RET_BUG;
+    }
   if ( nsp_pmatrix_set_varname(P,var) ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
