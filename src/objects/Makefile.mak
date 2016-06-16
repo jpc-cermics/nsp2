@@ -28,7 +28,8 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	SpColMatrix.obj SpColMatObj.obj \
 	eframe.obj mtlb.obj \
 	IMatrix.obj IMatObj.obj IMatOps.obj SMio.obj SMioObj.obj \
-	SpMaxpColMatrix.obj SpMaxpColMatObj.obj 
+	SpMaxpColMatrix.obj SpMaxpColMatObj.obj \
+	RMatrix.obj RMatObj.obj
 
 OLD=	gsort.obj qsort.obj	
 

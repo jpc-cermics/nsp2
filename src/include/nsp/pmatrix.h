@@ -144,6 +144,11 @@ extern NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b);
 extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 extern nsp_polynom nsp_polynom_mult_m(nsp_polynom p, void *v, char type);
 extern nsp_polynom nsp_polynom_div_m(nsp_polynom p, void *v, char type);
+extern nsp_polynom nsp_polynom_copy(nsp_polynom P);
+extern nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P);
+extern nsp_polynom nsp_polynom_copy_and_name(const char *name, nsp_polynom P);
+extern nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type);
+
 extern double nsp_hornerdd (const double *a,const int n, double x);
 extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
