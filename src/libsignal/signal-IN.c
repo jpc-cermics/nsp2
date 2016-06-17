@@ -779,10 +779,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *N;
   NspMatrix *Work;
-  int n,degree,deg2;
-  int iMaxIt = 100;
-  int iErr   = 0;
-  int iOne   = 1;
+  int degree,deg2, max_iteration = 100, err   = 0, one   = 1;
 
   CheckRhs(1,1);
   CheckLhs(0,1);
@@ -791,20 +788,20 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
         
   if ( N->mn == 1 ) 
     {
+      /* one polynomial */
       NspMatrix *Nmat = (NspMatrix *) N->S[0];
       if (Nmat->rc_type == 'c' )
 	{
 	  Scierror("Error: polynom should be real\n");
 	  return RET_BUG;
 	}
-      n = Nmat->mn;
-      degree = Max(n-1,0);
+      degree = Max( Nmat->mn - 1,0);
       deg2 = degree/2;
       if (2 * deg2 != degree)
 	{
 	  Scierror("Error: A symmetric polynom is expected.\n");return RET_BUG;
 	}
-      for (int i = 0; i < n; i++)
+      for (int i = 0; i < Nmat->mn; i++)
 	{
 	  if ( Nmat->R[i] != Nmat->R[degree - i])
 	    {
@@ -812,20 +809,22 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 	    }
 	}
       if (( Work = nsp_matrix_create(NVOID,'r',1, 7 * Nmat->mn))== NULL) return RET_BUG;
-      signal_sfact1( Nmat->R, &deg2, Work->R, &iMaxIt, &iErr);
-      if (iErr == 2)
+      signal_sfact1( Nmat->R, &deg2, Work->R, &max_iteration, &err);
+      nsp_matrix_destroy(Work);
+      if ( err < 0)
 	{
-	  Scierror("Error: Non negative value expected at degree %d.\n",n-1);
-	  return RET_BUG;
+	  Sciprintf("warning: Convergence at 10^%d near.\n",err);
 	}
-      else if (iErr == 1)
+      switch ( err )
 	{
+	case 2 :
+	  Scierror("Error: Non negative value expected at degree %d.\n", degree);
+	  return RET_BUG;
+	case 1 :
 	  Scierror("Error: Convergence problem.\n");
 	  return RET_BUG;
-	}
-      else if (iErr < 0)
-	{
-	  Sciprintf("warning: Convergence at 10^%d near.\n",iErr);
+	default :
+	  break;
 	}
       NSP_OBJECT(N)->ret_pos=1;
     }
@@ -842,7 +841,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
       max_degree = max_mn-1;
       max_dege2  = max_degree/2;
       n = max_dege2 + 1;
-
+      
       if ( ( Out = nsp_matrix_create(NVOID,'r',1, N->mn*n)) == NULL) return RET_BUG;
       memset(Out->R, 0x00, N->mn * n * sizeof(double));
 	
@@ -853,18 +852,18 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 	  int nc = 2 + Elt->mn - 1 - n;
 	  if ( nc > 0)
 	    {
-	      C2F(dcopy)(&nc, Elt->R + n - 1, &iOne, Out->R + i, &Elt->mn);
+	      C2F(dcopy)(&nc, Elt->R + n - 1, &one, Out->R + i, &Elt->mn);
 	    }
 	}
       int nm1 = n - 1;
-      iMaxIt += n;
-      signal_sfact2(Out->R, &N->m, &nm1, Work->R, &iMaxIt, &iErr);
-      if (iErr < 0)
+      max_iteration += n;
+      signal_sfact2(Out->R, &N->m, &nm1, Work->R, &max_iteration, &err);
+      if (err < 0)
 	{
 	  Scierror("Error: convergence problem.\n");
 	  return RET_BUG;
 	}
-      else if (iErr > 0)
+      else if (err > 0)
 	{
 	  Scierror("Erro: singular or asymmetric problem.\n");
 	  return RET_BUG;
@@ -877,8 +876,10 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 	  NspMatrix *Mout;
 	  if (( Mout = nsp_matrix_create("pe",'r',1,n))==NULL) return RET_BUG;
 	  Pout->S[i] = Mout;
-	  C2F(dcopy)(&n, Out->R + i, &N->mn, Mout->R, &iOne);
+	  C2F(dcopy)(&n, Out->R + i, &N->mn, Mout->R, &one);
 	}
+      nsp_matrix_destroy(Work);
+      nsp_matrix_destroy(Out);
       MoveObj(stack,1,NSP_OBJECT(Pout));
     }
   return Max(lhs,1);

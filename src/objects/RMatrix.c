@@ -735,7 +735,7 @@ NspRMatrix *nsp_matrices_to_rmatrix(NspMatrix *A,NspMatrix *B)
  * Returns: a new #NspRMatrix or %NULL
  **/
 
-NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp)
+NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B)
 {
   int i;
   NspRMatrix *Loc;
@@ -3258,6 +3258,77 @@ nsp_rational nsp_rational_div_m(nsp_rational p, void *v, char type)
 #endif
 
 
+/**
+ * nsp_cells_to_rmatrix:
+ * @C: a #NspCells of size mxn
+ * 
+ * returns a mxn #NspRMatrix. Each element of the 
+ * cell @C1 gives the coefficient of 
+ * the corresponding polynomial in the returned #NspPMatrix.
+ * 
+ * Returns: a #NspPMatrix object or %NULL
+ **/
+
+NspRMatrix *nsp_cells_to_rmatrix(const char *name, NspCells *C1, NspCells *C2)
+{
+  int i = 0 ,j = 0, k;
+  NspRMatrix *loc;
+  if ((loc =nsp_rmatrix_create(name,C1->m,C1->n,NULL,-1,NULL))== NULL) return(NULL);
+  for ( i= 0 ; i < C1->mn;i++)
+    {
+      nsp_rational rat;
+      loc->S[i]= NULL;
+      if ((rat = malloc(sizeof(struct _nsp_rational))) == NULL) goto bug;
+      rat->num = rat->den = NULL;
+      loc->S[i]= rat;
+    }
+  for ( i= 0 ; i < C1->mn;i++)
+    {
+      if ( IsMat(C1->objs[i]) )
+	{
+	  if ((loc->S[i]->num = nsp_polynom_copy_and_name("pe",(NspMatrix *)C1->objs[i]))== NULLPOLY )
+	    goto bug;
+	  /* be sure that polynom is expanded */
+	  if ((loc->S[i]->num = Mat2double(loc->S[i]->num)) == NULLPOLY) 
+	    goto bug;
+	}
+      else
+	{
+	  Scierror("Error: object stored at indice %d of a cell is not a Matrix \n",i);
+	  goto bug;
+	}
+    }
+  for ( j= 0 ; j < C2->mn;j++)
+    {
+      if ( IsMat(C2->objs[j]) )
+	{
+	  if ((loc->S[j]->den = nsp_polynom_copy_and_name("pe",(NspMatrix *)C2->objs[j]))== NULLPOLY )
+	    goto bug;
+	  /* be sure that polynom is expanded */
+	  if ((loc->S[j]->den = Mat2double(loc->S[j]->den)) == NULLPOLY) 
+	    goto bug;
+	}
+      else
+	{
+	  Scierror("Error: object stored at indice %d of a cell is not a Matrix \n",i);
+	  goto bug;
+	}
+    }
+  return(loc);
+ bug:
+  for ( k = 0 ; k < Max(i,j); k++) 
+    {
+      if ( loc->S[k] != NULL)
+	{
+	  nsp_matrix_destroy(loc->S[k]->num);
+	  nsp_matrix_destroy(loc->S[k]->den);
+	  free(loc->S[k]);
+	  loc->S[k]=NULL;
+	}
+    }
+  nsp_rmatrix_destroy(loc);
+  return NULLRMAT;
+}
 
 /*
  * routines for output of rationalial matrices 
@@ -3702,9 +3773,4 @@ static int pr_bar (int length, int do_print)
     }
   return Max(length,0);
 }
-
-
-
-
-
 

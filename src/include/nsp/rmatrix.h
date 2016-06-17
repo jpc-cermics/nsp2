@@ -123,7 +123,7 @@ extern int nsp_rmatrix_pdiv_tt(NspRMatrix *A, NspRMatrix *B, NspRMatrix **Q, Nsp
 extern NspRMatrix  *nsp_rmatrix_extract_diag(NspRMatrix *A, int k);
 extern int nsp_rmatrix_set_diag(NspRMatrix *A, NspRMatrix *Diag, int k);
 extern NspRMatrix  *nsp_rmatrix_create_diag(NspRMatrix *Diag, int k);
-extern NspRMatrix *nsp_cells_to_rmatrix(const char *name, NspCells *C);
+extern NspRMatrix *nsp_cells_to_rmatrix(const char *name, NspCells *C1,  NspCells *C2);
 extern int nsp_rmatrix_set_varname(NspRMatrix *p, const char *varname);
 extern int nsp_rmatrix_same_varname(const NspRMatrix *P1,const NspRMatrix *P2);
 extern NspRMatrix *nsp_rmatrix_sum(NspRMatrix *A, int dim);
@@ -133,6 +133,9 @@ extern int nsp_rmatrix_tril(NspRMatrix *A, int k);
 
 extern NspRMatrix *nsp_matrix_to_rational(NspMatrix *M);
 extern NspRMatrix *nsp_matrices_to_rational(NspMatrix *A,NspMatrix *B);
+extern NspRMatrix *nsp_pmatrix_to_rmatrix(NspPMatrix *A);
+extern NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B);
+  
 extern int nsp_rational_resize(nsp_rational poly);
 extern nsp_rational nsp_rational_add(nsp_rational P,nsp_rational Q);
 extern nsp_rational nsp_rational_minus(nsp_rational P,nsp_rational Q);

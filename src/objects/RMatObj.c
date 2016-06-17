@@ -463,28 +463,27 @@ static int int_rmatrix_p2r(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * build of polynomial matrix from its coefficients given 
- * in a cell
+ * build of rational matrix from its coefficients given 
+ * in two cells 
  */
 
-static int int_rmatrix_ce2p(Stack stack, int rhs, int opt, int lhs)
+static int int_rmatrix_ce2r(Stack stack, int rhs, int opt, int lhs)
 {
-  #if 0
   const char *var = NULL;
   nsp_option opts[] ={{"var",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  NspRMatrix *P; NspCells *C;
-  CheckStdRhs(1,1);
+  NspRMatrix *R; NspCells *C1, *C2;
+  CheckStdRhs(2,2);
   CheckLhs(1,1);
-  if (( C=GetCells(stack,1)) == NULL) return RET_BUG;
+  if (( C1=GetCells(stack,1)) == NULL) return RET_BUG;
+  if (( C2=GetCells(stack,2)) == NULL) return RET_BUG;
+  CheckSameDims (NspFname(stack), 1, 2, C1, C2);
   if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
     return RET_BUG;
-  if (( P=nsp_cells_to_rmatrix(NVOID,C))== NULLRMAT) return RET_BUG;
-  if ( nsp_rmatrix_set_varname(P,var) ) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) P);
+  if (( R=nsp_cells_to_rmatrix(NVOID,C1,C2))== NULLRMAT) return RET_BUG;
+  if ( nsp_rmatrix_set_varname(R,var) ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
   return 1;
-  #endif
-  return RET_BUG;
 }
 
 /*
@@ -1941,7 +1940,6 @@ static OpTab RMatrix_func[]={
   /* specific */
   {"m2r", int_rmatrix_m2r},
   {"p2r", int_rmatrix_p2r},
-  {"ce2p", int_rmatrix_ce2p},
   {"concatd_m_r",int_rmatrix_concatd_m_r},
   {"concatd_r_m",int_rmatrix_concatd_r_m},
   {"concatd_r_r",int_matint_concatd}, /*  int_rmatrix_concatd}, */
@@ -1974,6 +1972,7 @@ static OpTab RMatrix_func[]={
   {"conj_r", int_rmatrix_conj},
   {"tril_r", int_rmatrix_tril},
   {"triu_r", int_rmatrix_triu},
+  {"ce2r",  int_rmatrix_ce2r},
   
 #if 0
   {"companion_m",int_rmatrix_companion_m},
