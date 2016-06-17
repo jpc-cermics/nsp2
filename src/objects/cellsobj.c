@@ -1208,6 +1208,7 @@ int int_cells_transpose(Stack stack, int rhs, int opt, int lhs)
 
 int int_ce2m(Stack stack, int rhs, int opt, int lhs)
 {
+  char type = 'r';
   double d=0.0, nan = d/d, noti = nan, notm = nan;
   doubleC Cnoti;
   int indice = 1,i;
@@ -1222,31 +1223,48 @@ int int_ce2m(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_cells,&C,&opts,&indice,&noti,&notm) == FAIL) return RET_BUG;
   Cnoti.r = noti; Cnoti.i=noti;
-  if ((Res = nsp_matrix_create(NVOID,'r',C->m,C->n))== NULLMAT) return RET_BUG;
+
+  for (i= 0 ; i < C->mn ; i++) 
+    {
+      if ( IsMat(C->objs[i]) )
+	{
+	  NspMatrix *M= (NspMatrix *) C->objs[i];
+	  if ( M->rc_type == 'c' ) type = 'c';
+	}
+    }
+  
+  if ((Res = nsp_matrix_create(NVOID,type,C->m,C->n))== NULLMAT) return RET_BUG;
+
   for (i= 0 ; i < Res->mn ; i++) 
     {
       if ( IsMat(C->objs[i]) )
 	{
 	  NspMatrix *M= (NspMatrix *) C->objs[i];
-	  if ( M->rc_type == 'c' ) 
-	    {
-	      if ( Res->rc_type == 'r' )
-		{
-		  if (nsp_mat_complexify(Res,0.00) == FAIL ) return RET_BUG;
-		}
-	    }
 	  if ( Res->rc_type == 'r')
 	    {
 	      Res->R[i] = ( indice > 0 && indice <= M->mn ) ?  M->R[indice-1]: noti;
 	    }
 	  else 
 	    {
-	      Res->C[i] = ( indice > 0 && indice <= M->mn ) ?  M->C[indice-1]: Cnoti;
+	      if ( M->rc_type == 'r' )
+		{
+		  Res->C[i].r = ( indice > 0 && indice <= M->mn ) ?  M->R[indice-1]: Cnoti.r;
+		  Res->C[i].i = ( indice > 0 && indice <= M->mn ) ?  0.0 : Cnoti.i;
+		}
+	      else
+		{
+		  Res->C[i] = ( indice > 0 && indice <= M->mn ) ?  M->C[indice-1]: Cnoti;
+		}
 	    }
 	}
       else 
 	{
-	  Res->R[i]= notm;
+	  if ( Res->rc_type == 'r' )
+	    Res->R[i]= notm;
+	  else
+	    {
+	      Res->C[i].r= notm;Res->C[i].i = 0;
+	    }
 	}
     }
   MoveObj(stack,1,(NspObject *) Res);
@@ -1260,7 +1278,7 @@ int int_ce2m(Stack stack, int rhs, int opt, int lhs)
 int int_m2ce(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M,*Rows,*Cols;
-  NspCells *Res;
+  NspCells *Res=NULL;
   CheckStdRhs(1,3);
   CheckLhs(1,1);
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;

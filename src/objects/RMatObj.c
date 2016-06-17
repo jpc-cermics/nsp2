@@ -379,7 +379,7 @@ static int int_rmatrix_m2r(Stack stack, int rhs, int opt, int lhs)
   if (( A=GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ( rhs -opt == 2 )
     {
-      if (( B=GetMat(stack,1)) == NULLMAT) return RET_BUG;
+      if (( B=GetMat(stack,2)) == NULLMAT) return RET_BUG;
     }
   if ( get_optional_args(stack, rhs, opt, opts, &var,&dim) == FAIL )
     return RET_BUG;
@@ -416,6 +416,49 @@ static int int_rmatrix_m2r(Stack stack, int rhs, int opt, int lhs)
     }
   if ( nsp_rmatrix_set_varname(P,var) ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
+  return 1;
+}
+
+/*
+ * PMatrix ( used ar row vector 1xn ) -> 1x1 polymatrix filled 
+ * with one polynom of degree n-1
+ * 
+ */
+
+static int int_rmatrix_p2r(Stack stack, int rhs, int opt, int lhs)
+{
+  /* int simp = TRUE; */
+  const char *var = NULL;
+  nsp_option opts[] ={{"var",string,NULLOBJ,-1},
+		      /* {"simp",s_bool,NULLOBJ,-1}, */
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspRMatrix *R; NspPMatrix *A, *B=NULL;
+  CheckStdRhs(1,2);
+  CheckLhs(1,1);
+  if (( A=GetPMat(stack,1)) == NULL) return RET_BUG;
+  if ( rhs -opt == 2 )
+    {
+      if (( B=GetPMat(stack,2)) == NULL) return RET_BUG;
+    }
+  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+    return RET_BUG;
+  if ( rhs -opt == 1)
+    {
+      if (( R=nsp_pmatrix_to_rmatrix(A))== NULLRMAT) return RET_BUG;
+    }
+  else
+    {
+      if (( R=nsp_pmatrices_to_rmatrix(A,B))== NULLRMAT) return RET_BUG;
+    }
+  if ( var != NULL)
+    {
+      if ( nsp_rmatrix_set_varname(R,var) ) return RET_BUG;
+    }
+  else
+    {
+      if ( nsp_rmatrix_set_varname(R,A->var) ) return RET_BUG;
+    }
+  MoveObj(stack,1,(NspObject *) R);
   return 1;
 }
 
@@ -1842,6 +1885,7 @@ int int_rmatrix_prod (Stack stack, int rhs, int opt, int lhs)
 }
 
 */
+#endif 
 
 /*
  * nsp_rmatrix_triu: A=triu(a)
@@ -1887,7 +1931,7 @@ int int_rmatrix_tril (Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;
 }
-#endif
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1896,6 +1940,7 @@ int int_rmatrix_tril (Stack stack, int rhs, int opt, int lhs)
 static OpTab RMatrix_func[]={
   /* specific */
   {"m2r", int_rmatrix_m2r},
+  {"p2r", int_rmatrix_p2r},
   {"ce2p", int_rmatrix_ce2p},
   {"concatd_m_r",int_rmatrix_concatd_m_r},
   {"concatd_r_m",int_rmatrix_concatd_r_m},
@@ -1927,7 +1972,9 @@ static OpTab RMatrix_func[]={
   {"dprim_r", int_rmatrix_dprim_r},
   {"quote_r", int_rmatrix_quote_r},
   {"conj_r", int_rmatrix_conj},
-
+  {"tril_r", int_rmatrix_tril},
+  {"triu_r", int_rmatrix_triu},
+  
 #if 0
   {"companion_m",int_rmatrix_companion_m},
   {"companion_r",int_rmatrix_companion_r},
@@ -1993,8 +2040,6 @@ static OpTab RMatrix_func[]={
   {"cumprod_r_s", int_rmatrix_cuprod},
   {"cumprod_r", int_rmatrix_cuprod},
   */
-  {"tril_r", int_rmatrix_tril},
-  {"triu_r", int_rmatrix_triu},
 #endif
   
   {(char *) 0, NULL}

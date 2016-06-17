@@ -151,6 +151,59 @@ nsp_rational nsp_basic_to_rational(const doubleC *d, char type)
   rat->num = N; rat->den=D;
   return rat;
 }
+
+/**
+ * nsp_polynom_to_rational:
+ * @d: a double or doubleC pointer 
+ * @type: a character which gives the type of @d
+ * 
+ * returns a rational of 0 degree with coefficient set to@d.
+ * 
+ * Return value: a new #nsp_rational or %NULL
+ **/
+
+nsp_rational nsp_polynom_to_rational(NspMatrix *P)
+{
+  NspMatrix *N,*D;
+  nsp_rational rat;
+  if ((rat = malloc(sizeof(struct _nsp_rational))) == NULL) return NULL;
+  if ((N= (NspMatrix *) nsp_object_copy_and_name("pe",(NspObject *)P)) == NULL) return NULL;
+  if ((D= nsp_matrix_create("pe",N->rc_type,(int)1,(int)1))==NULLMAT)
+    return((nsp_rational ) 0);
+  if ( N->rc_type  == 'r') 
+    {
+      D->R[0] = 1;
+    }
+  else 
+    {
+      D->C[0].r =1;
+      D->C[0].i =0;
+    }
+  rat->num = N; rat->den=D;
+  return rat;
+}
+
+/**
+ * nsp_polynoms_to_rational:
+ * @d: a double or doubleC pointer 
+ * @type: a character which gives the type of @d
+ * 
+ * returns a rational of 0 degree with coefficient set to@d.
+ * 
+ * Return value: a new #nsp_rational or %NULL
+ **/
+
+nsp_rational nsp_polynoms_to_rational(NspMatrix *P,NspMatrix *Q)
+{
+  NspMatrix *N,*D;
+  nsp_rational rat;
+  if ((rat = malloc(sizeof(struct _nsp_rational))) == NULL) return NULL;
+  if ((N= (NspMatrix *) nsp_object_copy_and_name("pe",(NspObject *)P)) == NULL) return NULL;
+  if ((D= (NspMatrix *) nsp_object_copy_and_name("pe",(NspObject *)Q)) == NULL) return NULL;
+  rat->num = N; rat->den=D;
+  return rat;
+}
+
 /**
  * nsp_basic_to_rational:
  * @d: a double or doubleC pointer 
@@ -281,7 +334,7 @@ int nsp_rmatrix_same_varname(const NspRMatrix *P1,const NspRMatrix *P2)
 int nsp_rmatrix_info(NspRMatrix *Mat, int indent,const char *name,int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  Sciprintf1(indent,"%s\t= [%s]\t\tp %c (%dx%d)\n",pname,(Mat->mn == 0) ? "": "...",
+  Sciprintf1(indent,"%s\t= [%s]\t\tr %c (%dx%d)\n",pname,(Mat->mn == 0) ? "": "...",
 	     Mat->rc_type,Mat->m,Mat->n);
   return TRUE;
 }
@@ -312,7 +365,7 @@ int nsp_rmatrix_print(NspRMatrix *Mat, int indent,const char *name, int rec_leve
 	  nsp_rmatrix_info(Mat,indent,pname,rec_level);
 	  return rep;
 	}
-      Sciprintf1(indent,"%s\t=%s\t\tp (%dx%d)\n",pname,
+      Sciprintf1(indent,"%s\t=%s\t\tr (%dx%d)\n",pname,
 		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
@@ -422,7 +475,7 @@ NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cva
  * 
  * returns a new mxn #NspRMatrix. if @A is non null 
  * then it is used to initialize the result else 
- * rmatrix elements are  initialized to zero rationalial.
+ * rmatrix elements are  initialized to zero rational.
  * 
  * Returns:  a new #NspRMatrix or %NULL
  **/
@@ -573,9 +626,9 @@ NspRMatrix *nsp_rmatrix_copy(NspRMatrix *A)
  * nsp_matrix_to_rmatrix:
  * @A: a #NspMatrix
  * 
- * return a new mxn rationalial matrix if @A is 
+ * return a new mxn rational matrix if @A is 
  * of size mxn. The (i,j)-th element of the result is the 
- * rationalial of degree 0 equal to @A(i,j).
+ * rational of degree 0 equal to @A(i,j).
  * 
  * Returns: a new #NspRMatrix or %NULL
  **/
@@ -601,12 +654,36 @@ NspRMatrix *nsp_matrix_to_rmatrix(NspMatrix *A)
 }
 
 /**
+ * nsp_pmatrix_to_rmatrix:
+ * @A: a #NspMatrix
+ * 
+ * return a new mxn rational matrix if @A is 
+ * of size mxn. The (i,j)-th element of the result is the 
+ * rational of degree 0 equal to @A(i,j).
+ * 
+ * Returns: a new #NspRMatrix or %NULL
+ **/
+
+NspRMatrix *nsp_pmatrix_to_rmatrix(NspPMatrix *A)
+{
+  int i;
+  NspRMatrix *Loc;
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+    return(NULLRMAT);
+  for ( i = 0 ; i < Loc->mn ; i++ )
+    {
+      if ((Loc->S[i] = nsp_polynom_to_rational(A->S[i])) == (nsp_rational ) 0)  return(NULLRMAT);
+    }
+  return(Loc);
+}
+
+/**
  * nsp_matrices_to_rmatrix:
  * @A: a #NspMatrix
  * 
- * return a new mxn rationalial matrix if @A is 
+ * return a new mxn rational matrix if @A is 
  * of size mxn. The (i,j)-th element of the result is the 
- * rationalial of degree 0 equal to @A(i,j)/@B(i,j).
+ * rational of degree 0 equal to @A(i,j)/@B(i,j).
  * 
  * Returns: a new #NspRMatrix or %NULL
  **/
@@ -647,14 +724,49 @@ NspRMatrix *nsp_matrices_to_rmatrix(NspMatrix *A,NspMatrix *B)
 }
 
 /**
+ * nsp_pmatrices_to_rmatrix:
+ * @A: a #NspMatrix
+ * 
+ * return a new mxn rational matrix if @A is 
+ * of size mxn (@B should have same size). 
+ * The (i,j)-th element of the result is the 
+ * rational of degree 0 equal to @A(i,j)/@B(i,j).
+ * 
+ * Returns: a new #NspRMatrix or %NULL
+ **/
+
+NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp)
+{
+  int i;
+  NspRMatrix *Loc;
+  if ( A->m != B->m ||  A->n != B->n )
+    {
+      Scierror("Error: the two arguments should have same sizes\n");
+      return NULL;
+    }
+  if ( A->rc_type != B->rc_type )
+    {
+      Scierror("Error: the two arguments should be both reals or complex\n");
+      return NULL;
+    }
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+    return(NULLRMAT);
+  for ( i = 0 ; i < Loc->mn ; i++ )
+    {
+      if ((Loc->S[i] =nsp_polynoms_to_rational(A->S[i],B->S[i]))== NULL)  return(NULLRMAT);
+    }
+  return(Loc);
+}
+
+/**
  * nsp_matrix_to_rmatrix_with_varname:
  * @A: a #NspMatrix
  * @varname: a char pointer 
  * 
- * return a new mxn rationalial matrix if @A is 
+ * return a new mxn rational matrix if @A is 
  * of size mxn. The (i,j)-th element of the result is the 
- * rationalial of degree 0 equal to @A(i,j).
- * @varname gives the rationalial variable name
+ * rational of degree 0 equal to @A(i,j).
+ * @varname gives the rational variable name
  * 
  * Returns: a new #NspRMatrix or %NULL
  **/
@@ -704,7 +816,7 @@ unsigned int  nsp_rmatrix_elt_size(NspRMatrix *M)
  * the data array of @A to size mxn. The previous data are not moved and 
  * occupy the first array cells. Note that @A can be 
  * and empty matrix when calling this routine ( malloc() is used in that 
- * case ). The new elements of @A are filled with rationalial 0.
+ * case ). The new elements of @A are filled with rational 0.
  *
  * returns: : %OK or %FAIL. When %OK is returned @A is changed. 
  */
@@ -799,7 +911,7 @@ int nsp_rmatrix_concat_right(NspRMatrix *A,const NspRMatrix *B)
     }
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("PMatConcat: incompatible rationalial variable name\n");
+      Scierror("PMatConcat: incompatible rational variable name\n");
       return FAIL;
     }
 
@@ -863,7 +975,7 @@ NspRMatrix *nsp_rmatrix_concat_down(const NspRMatrix *A,const NspRMatrix *B)
 
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("PMatConcatD: incompatible rationalial variable name\n");
+      Scierror("PMatConcatD: incompatible rational variable name\n");
       return NULLRMAT;
     }
   
@@ -1054,7 +1166,7 @@ int nsp_rmatrix_set_diag(NspRMatrix *A, NspRMatrix *Diag, int k)
 
   if ( ! nsp_rmatrix_same_varname(A,Diag) )
     {
-      Scierror("Error: incompatible rationalial variable names in set_diag\n");
+      Scierror("Error: incompatible rational variable names in set_diag\n");
       return FAIL;
     }
 
@@ -1128,85 +1240,10 @@ NspRMatrix *nsp_rmatrix_transpose(const NspRMatrix *A)
   return(Loc);
 }
 
-#if 0
-#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
-
-NspRMatrix * nsp_rmatrix_minus_m(NspRMatrix *A,NspMatrix *B, int flag)
-{
-  int i;
-  NspRMatrix *loc;
-#define PM_MINUSM(s1,s2,i1,i2)						\
-  if ((loc =nsp_rmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLRMAT)\
-    return(NULLRMAT);							\
-  for (i=0; i < loc->mn ; i++)						\
-    {									\
-      if ((loc->S[i] = nsp_rational_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	return NULL;							\
-      if ( flag == FALSE ) nsp_mat_minus(loc->S[i]);			\
-    }		
-  if ( SameDim(A,B) ) 
-    {
-      PM_MINUSM(A->m,A->n,i,i);
-    }
-  else if ( A->mn == 1 )
-    {
-      PM_MINUSM(B->m,B->n,0,i);
-    }
-  else if ( B->mn == 1 )
-    {
-      PM_MINUSM(A->m,A->n,i,0);
-    }
-  else
-    {
-      Scierror("Error:\tArguments must have the same size\n");
-      return NULL;
-    }
-  return loc;
-}
-
-
-NspRMatrix * nsp_rmatrix_add_m(NspRMatrix *A,NspMatrix *B)
-{
-  int i;
-  NspRMatrix *loc;
-#define PM_ADDM(s1,s2,i1,i2)						\
-  if ((loc =nsp_rmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLRMAT) \
-    return(NULLRMAT);							\
-  if ( B->rc_type == 'r' )						\
-    for (i=0; i < loc->mn ; i++)					\
-      {									\
-	if ((loc->S[i] = nsp_rational_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	  return NULL;							\
-      }									\
-  else									\
-    for (i=0; i < loc->mn ; i++)					\
-      {									\
-	if ((loc->S[i] = nsp_rational_add_m(A->S[i1],B->C+i2,B->rc_type)) == NULL) \
-	  return NULL;							\
-      }			
-  
-  if ( SameDim(A,B) ) 
-    {
-      PM_ADDM(A->m,A->n,i,i);
-    }
-  else if ( A->mn == 1 )
-    {
-      PM_ADDM(B->m,B->n,0,i);
-    }
-  else if ( B->mn == 1 )
-    {
-      PM_ADDM(A->m,A->n,i,0);
-    }
-  else
-    {
-      Scierror("Error:\tArguments must have the same size\n");
-      return NULL;
-    }
-  return loc;
-}
-
 /* returns eye(P)
  */
+
+#if 0
 
 NspRMatrix *nsp_rmatrix_identity(NspRMatrix *P)
 {
@@ -1225,7 +1262,9 @@ NspRMatrix *nsp_rmatrix_identity(NspRMatrix *P)
       }
   return Q;
 }
+#endif
 
+#if 0
 NspRMatrix *nsp_rmatrix_hat_p_m(NspRMatrix *P,int n)
 {
   NspRMatrix *Q=NULL,*R=NULL,*loc=NULL;
@@ -1273,8 +1312,9 @@ NspRMatrix *nsp_rmatrix_hat_p_m(NspRMatrix *P,int n)
   return NULL;
 
 }
+#endif
 
-
+#if 0
 
 NspRMatrix *nsp_rmatrix_dh_p_m(const NspRMatrix *P,const NspMatrix *M) 
 {
@@ -1347,7 +1387,7 @@ NspBMatrix  *nsp_rmatrix_comp(NspRMatrix *A, NspRMatrix *B,const char *op)
 
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("Error: incompatible rationalial variable names in '%s' operator\n",op);
+      Scierror("Error: incompatible rational variable names in '%s' operator\n",op);
       return NULLBMAT;
     }
   
@@ -1436,7 +1476,7 @@ NspBMatrix  *nsp_rmatrix_comp(NspRMatrix *A, NspRMatrix *B,const char *op)
     }
   return(Loc);
  wrong:
-  Scierror("Error: operation %s is not implemented for rationalial matrices\n",op);
+  Scierror("Error: operation %s is not implemented for rational matrices\n",op);
   return NULLBMAT ;
 }
 
@@ -1475,7 +1515,7 @@ NspRMatrix *nsp_rmatrix_add(NspRMatrix *A, NspRMatrix *B)
 
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("Error: incompatible rationalial variable names in rationalial addition\n");
+      Scierror("Error: incompatible rational variable names in rational addition\n");
       return NULL;
     }
   
@@ -1515,7 +1555,9 @@ NspRMatrix *nsp_rmatrix_add(NspRMatrix *A, NspRMatrix *B)
       return NULL;
     }
 }
+#endif
 
+#if 0
 
 NspRMatrix *nsp_rmatrix_minus(NspRMatrix *A, NspRMatrix *B)
 {
@@ -1523,7 +1565,7 @@ NspRMatrix *nsp_rmatrix_minus(NspRMatrix *A, NspRMatrix *B)
 
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("Error: incompatible rationalial variable names in rationalial substraction\n");
+      Scierror("Error: incompatible rational variable names in rational substraction\n");
       return NULL;
     }
   
@@ -1564,8 +1606,6 @@ NspRMatrix *nsp_rmatrix_minus(NspRMatrix *A, NspRMatrix *B)
     }
 }
 
-
-
 /**
  * nsp_rational_add:
  * @P: a nsp_rational 
@@ -1575,6 +1615,10 @@ NspRMatrix *nsp_rmatrix_minus(NspRMatrix *A, NspRMatrix *B)
  * 
  * Returns: a new #nsp_rational or %NULL
  **/
+
+#endif
+
+#if 0
 
 nsp_rational nsp_rational_add(nsp_rational P,nsp_rational Q)
 {
@@ -1611,7 +1655,6 @@ nsp_rational nsp_rational_add(nsp_rational P,nsp_rational Q)
   return A;
 }
 
-
 /**
  * nsp_rational_add_in_place 
  * @P: a nsp_rational 
@@ -1622,6 +1665,10 @@ nsp_rational nsp_rational_add(nsp_rational P,nsp_rational Q)
  * 
  * Returns: a new #nsp_rational or %NULL
  **/
+
+#endif
+
+#if 0
 
 int nsp_rational_add_in_place(nsp_rational P,nsp_rational Q)
 {
@@ -1649,6 +1696,9 @@ int nsp_rational_add_in_place(nsp_rational P,nsp_rational Q)
   return OK;
 }
 
+#endif
+
+#if 0
 
 nsp_rational nsp_rational_zero_create(int degree, char rc_type)
 {
@@ -1669,6 +1719,9 @@ nsp_rational nsp_rational_zero_create(int degree, char rc_type)
  * 
  * Returns: a new #nsp_rational or %NULL
  **/
+#endif
+
+#if 0
 
 nsp_rational nsp_rational_minus(nsp_rational P,nsp_rational Q)
 {
@@ -1706,6 +1759,10 @@ nsp_rational nsp_rational_minus(nsp_rational P,nsp_rational Q)
     }
   return A;
 }
+
+#endif
+
+#if 0
 
 /* 
  * A*B A matrix B PMatrix 
@@ -1795,6 +1852,10 @@ NspRMatrix *nsp_rmatrix_mult_m_p(NspMatrix *A, NspRMatrix *B)
       return NULL;
     }
 }
+
+#endif
+
+#if 0
 
 NspRMatrix *nsp_rmatrix_mult_p_m(NspRMatrix *A, NspMatrix *B)
 {
@@ -1886,7 +1947,9 @@ NspRMatrix *nsp_rmatrix_mult_p_m(NspRMatrix *A, NspMatrix *B)
     }
 }
 
+#endif
 
+#if 0
 
 NspRMatrix *nsp_rmatrix_mult_p_p(NspRMatrix *A, NspRMatrix *B)
 {
@@ -1894,7 +1957,7 @@ NspRMatrix *nsp_rmatrix_mult_p_p(NspRMatrix *A, NspRMatrix *B)
 
   if ( ! nsp_rmatrix_same_varname(A,B) ) 
     {
-      Scierror("Error: incompatible rationalial variable names in rationalial multiplication\n");
+      Scierror("Error: incompatible rational variable names in rational multiplication\n");
       return NULL;
     }
 
@@ -1938,6 +2001,9 @@ NspRMatrix *nsp_rmatrix_mult_p_p(NspRMatrix *A, NspRMatrix *B)
     }
 }
 
+#endif
+
+#if 0
 
 NspRMatrix *nsp_rmatrix_mult_tt(NspRMatrix *A, NspRMatrix *B)
 {
@@ -1993,6 +2059,9 @@ NspRMatrix *nsp_rmatrix_mult_tt(NspRMatrix *A, NspRMatrix *B)
     }
 }
 
+#endif
+
+#if 0
 
 NspRMatrix *nsp_rmatrix_mult_tt_p_m(NspRMatrix *A, NspMatrix *B)
 {
@@ -2608,7 +2677,7 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
 }
 
 */
-
+#endif
 
 /**
  * nsp_rmatrix_triu:
@@ -2658,6 +2727,7 @@ int nsp_rmatrix_tril(NspRMatrix *A, int k)
   return OK;
 }
 
+#if 0
 /**
  * nsp_rational_mult_fft:
  * @a: a nsp_rational 
@@ -2793,113 +2863,14 @@ nsp_rational nsp_rational_mult_std(nsp_rational a,nsp_rational b)
   return M;
 }
 
-/**
- * nsp_hornerdd:
- * @a: Array of double, coefficients of the rationalial.
- * @n: Length of A, also degree of rationalial - 1.
- * @x: a double, point at which the rationalial is to be evaluated. 
- * 
- * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
- * 
- * Returns: a double 
- **/
-
-double nsp_hornerdd (const double *a,const int n, double x)
-{
-  double term;
-  int i;
-  term = a[n -1];
-  for (i = n - 2; i >= 0; --i)
-    {
-      term = a[i] + term * x;
-    }
-  return  term;
-}
-
-/**
- * nsp_hornercd:
- * @a: Array of complex, coefficients of the rationalial.
- * @n: Length of A, also degree of rationalial - 1.
- * @x: a double, point at which the rationalial is to be evaluated. 
- * 
- * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
- * 
- * Returns: a doubleC 
- **/
-
-
-doubleC nsp_hornercd(const doubleC *a,const int n, double x)
-{
-  doubleC term = a[n -1];
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      term.r *= x;
-      term.i *= x;
-      term.r += a[i].r;
-      term.i += a[i].i;
-    }
-  return  term;
-}
-
-
-/**
- * nsp_hornerdc:
- * @a: Array of double, coefficients of the rationalial.
- * @n: Length of A, also degree of rationalial - 1.
- * @x: a complex, point at which the rationalial is to be evaluated. 
- * 
- * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
- * 
- * Returns: a doubleC 
- **/
-
-doubleC nsp_hornerdc (const double *a,const int n, doubleC x)
-{
-  doubleC term={a[n -1],0};
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      /* term*x */
-      nsp_prod_c(&term,&x); 
-      term.r += a[i];
-    }
-  return  term;
-}
-
-
-/**
- * nsp_hornercc:
- * @a: Array of complex, coefficients of the rationalial.
- * @n: Length of A, also degree of rationalial - 1.
- * @x: a complex, point at which the rationalial is to be evaluated. 
- * 
- * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
- * 
- * Returns: a doubleC
- **/
-
-doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x)
-{
-  doubleC term = a[n -1];
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      /* term*x */
-      nsp_prod_c(&term,&x); 
-      term.r += a[i].r;
-      term.i += a[i].i;
-    }
-  return  term;
-}
 
 /**
  * nsp_rational_horner:
- * @P: a #nsp_rational 
+ * @R: a #nsp_rational 
  * @b: a #NspMatrix
  * 
  * return a #NspMatrix, with the same size as @b. 
- * element (i,j) of the result is filled with @P(@b(i,j)).
+ * element (i,j) of the result is filled with @R(@b(i,j)).
  * 
  * Returns: a new #NspMatrix or %NULL
  **/
@@ -2909,6 +2880,7 @@ NspMatrix *nsp_rational_horner(nsp_rational P,NspMatrix *b)
   int i;
   NspMatrix *loc; 
   char type = ( P->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
+  
   if ((loc = nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
     return NULL;
   if ( loc->rc_type == 'r' )
@@ -2944,6 +2916,7 @@ NspMatrix *nsp_rational_horner(nsp_rational P,NspMatrix *b)
     }
   return loc;
 }
+
 
 /**
  * nsp_rational_hornerm:
@@ -3644,7 +3617,7 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
 	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->C[i].r, fw,do_print);
 	      if (do_print)Sciprintf("+");count++;
 	      count +=nsp_pr_any_float_vs(fmt->curr_imag_fmt, m->C[i].i, fw,do_print);
-	      if (do_print)Sciprintf("i)");count++;
+	      if (do_print)Sciprintf("i)");count+=2;
 	      leading = FALSE;
 	       if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 
@@ -3718,10 +3691,14 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
 
 static int pr_bar (int length, int do_print)
 {
+  // unsigned char str[]={0xE2, 0x80 , 0x95 ,0};
   int i;
   if ( length > 0 && do_print)
     {
-      for ( i = 0 ; i < length ; i++) Sciprintf("-");
+      for ( i = 0 ; i < length ; i++)
+	{
+	  Sciprintf("%s","-");
+	}
     }
   return Max(length,0);
 }

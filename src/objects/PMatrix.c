@@ -1218,14 +1218,19 @@ NspPMatrix * nsp_pmatrix_minus_m(NspPMatrix *A,NspMatrix *B, int flag)
   int i;
   NspPMatrix *loc;
 #define PM_MINUSM(s1,s2,i1,i2)						\
-  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLPMAT)\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLPMAT) \
     return(NULLPMAT);							\
   for (i=0; i < loc->mn ; i++)						\
     {									\
-      if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	return NULL;							\
+      if ( B->rc_type == 'r')	{					\
+	if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	  return NULL;		}					\
+      else {								\
+	if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->C+i2,B->rc_type)) == NULL) \
+	  return NULL;		}					\
       if ( flag == FALSE ) nsp_mat_minus(loc->S[i]);			\
-    }		
+    }
+  
   if ( SameDim(A,B) ) 
     {
       PM_MINUSM(A->m,A->n,i,i);
@@ -3671,7 +3676,7 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
 		}
 	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->R[i], fw,do_print);
 	      leading = FALSE;
-	       if (do_print) Sciprintf("\033[%dm",colors[0]);
+	      if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 
 		{
 		  const char *name= ( vname == NULL) ? "x": vname;
@@ -3703,7 +3708,7 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
 	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->C[i].r, fw,do_print);
 	      if (do_print)Sciprintf("+");count++;
 	      count +=nsp_pr_any_float_vs(fmt->curr_imag_fmt, m->C[i].i, fw,do_print);
-	      if (do_print)Sciprintf("i)");count++;
+	      if (do_print)Sciprintf("i)");count +=2;
 	      leading = FALSE;
 	       if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 
@@ -3758,7 +3763,6 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
     }
   nsp_pr_white(length-count);
 }
-
 #endif 
 
 
