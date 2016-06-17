@@ -95,12 +95,12 @@ nsp_ctrlpack_qvalz (const int *nm, const int *n, double *a, double *b, const dou
   double d__1, d__2, d__3, d__4;
 
   /* Local variables */
-  double c__, d__, e;
+  double c__, d__, e = 0;
   int i__, j;
   double r__, s, t, a1, a2, u1, u2, v1, v2, a11, a12, a21, a22, b11, b12, b22,
     di, ei;
   int na;
-  double an, bn;
+  double an = 0, bn;
   int en;
   double cq, dr;
   int nn;

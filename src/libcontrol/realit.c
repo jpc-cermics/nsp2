@@ -16,25 +16,21 @@ struct
 
 #define gloglo_1 gloglo_
 
+/*variable-shift h polynomial iteration for a real 
+ *zero. 
+ *sss   - starting iterate 
+ *nz    - number of zero found 
+ *iflag - flag to indicate a pair of zero near real 
+ *        axis. 
+ */
+
 int nsp_ctrlpack_realit (double *sss, int *nz, int *iflag)
 {
-  /* System generated locals */
   int i__1;
   double d__1;
-
-  /* Local variables */
   int i__, j;
-  double s, t, ee, mp, ms, kv, pv;
-  /* int nm1; */
-  double omp;
-
-  /*variable-shift h polynomial iteration for a real 
-   *zero. 
-   *sss   - starting iterate 
-   *nz    - number of zero found 
-   *iflag - flag to indicate a pair of zero near real 
-   *        axis. 
-   */
+  double s, t =0 , ee, mp, ms, kv, pv;
+  double omp = 0;
   /* nm1 = gloglo_1.n - 1; */
   *nz = 0;
   s = *sss;

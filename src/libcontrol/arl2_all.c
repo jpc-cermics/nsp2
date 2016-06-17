@@ -765,7 +765,7 @@ int nsp_ctrlpack_tild (const int *n, const double *tp, double *tpti)
 
 int nsp_ctrlpack_watfac (const int *nq, const double *tq, int *nface, int *newrap, double *w)
 {
-  int i__1, fail, indi, lpol, nmod1, j, lzmod, lzi, lzr, degree;
+  int i__1, fail, indi=0, lpol, nmod1, j, lzmod, lzi, lzr, degree;
     
   --tq;
   --w;
@@ -2771,7 +2771,7 @@ nsp_ctrlpack_storl2 (int *neq, double *tq, double *tg, int *ng, int *imin,
   double d__1;
   int jinf;
   double paux;
-  int jsup;
+  int jsup =0;
   double diff0;
   int j, i__;
   double x;
@@ -3898,7 +3898,7 @@ nsp_ctrlpack_onface (int *nq, double *tq, double *tg, int *ng, int *nprox,
   /* Local variables */
   double srgd;
   int ndiv;
-  double beta0;
+  double beta0 =0 ;
   int lrgd0, lrgd1;
   double auxt1, taux2[3], auxt2;
   int i__, j, k;

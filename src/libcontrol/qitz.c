@@ -104,17 +104,15 @@ int
 nsp_ctrlpack_qitz (const int *nm, const int *n, double *a, double *b, double *eps1,
 		   const int *matq, double *q,const int *matz, double *z__, int *ierr)
 {
-  /* System generated locals */
   int a_dim1, a_offset, b_dim1, b_offset, z_dim1, z_offset, q_dim1, q_offset,
     i__1, i__2, i__3;
   double d__1, d__2, d__3;
 
-  /* Local variables */
   double epsa, epsb;
   int i__, j, k, l;
   double r__, s, t, anorm, bnorm;
   int enorn;
-  double a1, a2, a3;
+  double a1, a2, a3 = 0;
   int k1, k2, l1;
   double u1, u2, u3, v1, v2, v3, a11, a12, a21, a22, a33, a34, a43, a44, b11,
     b12, b22, b33;

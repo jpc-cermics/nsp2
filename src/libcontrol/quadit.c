@@ -1,11 +1,6 @@
-/* quadit.f -- translated by f2c (version 19961017).
- *
- *
- */
+/* quadit.f -- translated by f2c (version 19961017).  */
 
 #include "ctrlpack.h"
-
-/* Common Block Declarations */
 
 struct
 {
@@ -16,26 +11,7 @@ struct
 
 #define gloglo_1 gloglo_
 
-/* Table of constant values */
-
 static double c_b3 = 1.;
-
-int nsp_ctrlpack_quadit (double *uu, double *vv, int *nz)
-{
-  /* System generated locals */
-  int i__1;
-  double d__1, d__2;
-
-  /* Builtin functions */
-  double sqrt (double);
-
-  /* Local variables */
-  int type__, i__, j;
-  double t;
-  int tried;
-  double ee;
-  double ui, vi, mp, zm;
-  double relstp, omp;
 
   /*variable-shift k-polynomial iteration for a 
    *quadratic factor converges only if the zeros are 
@@ -43,6 +19,18 @@ int nsp_ctrlpack_quadit (double *uu, double *vv, int *nz)
    *uu,vv - coefficients of starting quadratic 
    *nz - number of zero found 
    */
+
+int nsp_ctrlpack_quadit (double *uu, double *vv, int *nz)
+{
+  int i__1;
+  double d__1, d__2;
+  int type__, i__, j;
+  double t;
+  int tried;
+  double ee;
+  double ui, vi, mp, zm;
+  double relstp = 0, omp = 0 ;
+
   *nz = 0;
   tried = FALSE;
   gloglo_1.u = *uu;
