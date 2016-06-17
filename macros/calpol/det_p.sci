@@ -28,7 +28,7 @@ function res=det_p(P,k=[])
 // adapted to nsp (jpc 2010-2015).
 // 
   if isempty(P) then
-    res=[]; 
+    res=P;  // empty polynomial
     return;
   end;
   if size(P,1)<>size(P,2) then 

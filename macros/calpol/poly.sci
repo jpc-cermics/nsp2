@@ -16,11 +16,12 @@ function y=poly(x,varargin,varargopt)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // emulation of the poly scilab function
-// and extensions using
+// and extensions using optional named arguments
 //
   opts=hash( var='x',roots=%t);
   if length(varargin) >= 1 then opts.var=varargin(1);end
-  if length(varargin) >= 2 then opts.roots= varargin(2)== 'roots';end
+  if length(varargin) >= 2 then 
+    opts.roots= (varargin(2)== 'roots' || varargin(2) == 'r');end
   opts.merge[varargopt];
     
   if size(x,1) <> 1 && size(x,2) <> 1 && size(x,1)==size(x,2) then

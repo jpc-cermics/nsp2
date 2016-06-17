@@ -25,15 +25,15 @@ function y=coeff(p,num)
     C=p.coeffs;
     d=max(p.degree[]);
     y=[];
+    if isempty(d) then return;end
     for i=1:d+1 
       y.concatr[ce2m(C,indice=i,noti=0)];
     end
   else
     C=p.coeffs;
-    d=max(p.degree[]);
     y=[];
     for i=num 
-      y.concatr[ce2m(C,indice=i-1,noti=0)];
+      y.concatr[ce2m(C,indice=i+1,noti=0)];
     end
   end
 endfunction

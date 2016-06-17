@@ -10,16 +10,7 @@ function bode(hnum,hden,varargopt)
     return;
   end
 
-  if type(hnum,'short')<>'p' then error("bode: Argument should be a polynomial matrix");end
-  if type(hden,'short')<>'p' then error("bide: Argument should be a polynomial matrix");end
-  sn=size(hnum);
-  sd=size(hden);
-  if ~sn.equal[sd] then error("bide; The two polynomial matrices should share the same size");end
-  if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
-
   l10=log(10);
-  ilf=0
-
   // compute default values
   //-----------------------
   dom = varargopt.find['dom',def='c'];
@@ -33,21 +24,39 @@ function bode(hnum,hden,varargopt)
   fmax= varargopt.find['fmax',def=fmax];
   fmin= varargopt.find['fmin',def='sym'];
   if fmin.equal['sym'] then fmin = -fmax;end;
-  // frq
-  frq=  varargopt.find['frq',def=[]];
   // title
   title =  varargopt.find['title',def=""];
-
+  
+  // select type of entries 
+  
+  if type(hnum,'short')== 'm' && type(hden,'short')== 'm' then 
+    if size(hnum,2)== size(hden,2) && size(hnum,1) <> size(hden,1) then
+      hnum = ones(size(hden,1),1)*hnum;
+    end
+    frq= hnum;
+    repf= hden;
+    sn=size(frq);
+    sd=size(repf);
+    if ~sn.equal[sd] then error("bode ww The two matrices should share the same size");end
+    
+  elseif  type(hnum,'short')== 'p' && type(hden,'short')== 'p' then 
+    sn=size(hnum);
+    sd=size(hden);
+    if ~sn.equal[sd] then error("bode; The two polynomial matrices should share the same size");end
+    if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
+    // frq
+    frq=  varargopt.find['frq',def=[]];
+    if isempty(frq) then
+      // compute frq
+      [frq,repf,splitf]=repfreq(hnum,hden,varargopt(:));
+    end
+  else
+    error("bode: Argument should be a matrix or polynomial matrix")
+  end
+  
   // compute frq repf splitf from fmin fmax step
   //---------------------------------------------
-
-  if isempty(frq) then
-    // compute frq
-    [frq,repf,splitf]=repfreq(hnum,hden,varargopt(:));
-  end
-
   // check frequencies
-
   if type(dom,'short')=='m' then
     nyq_frq=1/2/dom;
     if ~isempty(find(frq > nyq_frq)) then
