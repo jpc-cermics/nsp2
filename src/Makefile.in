@@ -6,7 +6,7 @@ SCIDIRS = zcalelm objects interp functions @GTKDIR@ \
 	system graphics-new menus gtksci \
 	@GZVT@ modules gobjects types-test librand \
 	libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
-	libminpack liboptim libcontrol libslicot libcalelm @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ @AMOS_CEPHES_LIB@
+	libminpack liboptim libcontrol libslicot libcalelm libsignal @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ @AMOS_CEPHES_LIB@
 
 ALLSCIDIRS =zcalelm objects interp functions gtk2 \
 	system graphics-old graphics-new menus gtksci \
