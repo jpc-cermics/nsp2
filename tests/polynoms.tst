@@ -38,7 +38,26 @@ function p3=pdotstar(p1,p2)
   end
 endfunction
 
+// creation
+// m2p 
+
 x=m2p([0,1]);
+
+p=m2p([0,1,2]);
+if ~p.equal[0+x+2*x^2] then pause;end 
+
+p=m2p([0,1,2],dim="."); 
+if ~p.equal[[m2p(0),m2p(1),m2p(2)]] then pause;end 
+
+// ce2p
+
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+if ~P(1).equal[m2p(1:3)] then pause;end 
+C1=P.coeffs
+if ~C.equal[C1]  then pause;end 
+P=ce2p(C,var='u');
+if ~P(1).equal[m2p(1:3,var='u')] then pause;end 
 
 // creation 
 // P = B + x*A 
@@ -171,6 +190,31 @@ Mp=ce2m(C,indice=1);
 Mq=ce2m(C,indice=2);
 if norm(Mp-Vp) > 10*%eps then pause;end 
 if norm(Mq-Vq) > 10*%eps then pause;end 
+
+// horner (ttmode=%t)
+//---------
+// (r,r)
+v=1:3;
+p=m2p(v);
+vc=[1:3] + [4:6]*%i;
+q=m2p(vc);
+P=[p,q];
+A=[6,7];
+C=horner(P,A,ttmode=%t);
+C1=[horner(P(1),A(1)),horner(P(2),A(2))];
+D=C-ce2m(C1);
+if norm(D) > 10*%eps then pause;end 
+//
+C=horner(p,A,ttmode=%t);
+C1=[horner(P(1),A(1)),horner(P(1),A(2))];
+D=C-ce2m(C1);
+if norm(D) > 10*%eps then pause;end 
+//
+C=horner([p,q],A(1),ttmode=%t);
+C1=[horner(P(1),A(1)),horner(P(2),A(1))];
+D=C-ce2m(C1);
+if norm(D) > 10*%eps then pause;end 
+// 
 
 // hornerm 
 //---------
@@ -327,16 +371,109 @@ for i=1:size(a,'*')
 end
 
 // ^
+//-------
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+R=P^2;
+if ~R.equal[P*P] then pause;end 
+
+// .^
+//-------
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+R=P.^2;
+if ~R.equal[P.*P] then pause;end 
 
 //sum 
+//-------
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+S=sum(P,'c');
+if ~S.equal[[P(1,1)+P(1,2);P(2,1)+P(2,2)]]  then pause;end
+S=sum(P,'r');
+if ~S.equal[[P(1,1)+P(2,1),P(1,2)+P(2,2)]]  then pause;end
+S=sum(P,'*');
+if ~S.equal[[P(1,1)+P(2,1)+P(1,2)+P(2,2)]]  then pause;end
+
 //prod
+//-------
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+S=prod(P,'c');
+if ~S.equal[[P(1,1)*P(1,2);P(2,1)*P(2,2)]]  then pause;end
+S=prod(P,'r');
+if ~S.equal[[P(1,1)*P(2,1),P(1,2)*P(2,2)]]  then pause;end
+S=prod(P,'*');
+if ~S.equal[[P(1,1)*P(2,1)*P(1,2)*P(2,2)]]  then pause;end
+
 //diag
 //triu
 //tril
 //varn
-//clean
-//simp
-//pdiv
-//bezout
-//sfact
+//-------
+C={1:3,1:2;5,[0,2,1]};
+P=ce2p(C);
+if P.get_var[] <> 'x' then pause;end 
+P.set_var['z'];
+if P.get_var[] <> 'z' then pause;end 
 
+//pdiv
+//---------
+
+p=m2p([]);
+[r,q]=pdiv(p,p);if r <> p| q <> p then pause,end
+if pdiv(p,p)<>p then pause,end
+
+x=poly(0,'x');
+p1=(1+x^2)*(1-x);p2=1-x;
+[r,q]=pdiv(p1,p2);
+if ~r.equal[m2p(0)] then pause;end 
+if ~q.equal[1+x^2] then pause;end 
+
+p3=(1+x^2)*(1-x)+5;p4=1-x;
+[r,q]=pdiv(p3,p4);
+if ~r.equal[m2p(5)] then pause;end 
+if ~q.equal[1+x^2] then pause;end 
+
+[r,q]=pdiv([p1,p3],[p2,p4]);
+if ~r.equal[m2p([0,5],dim=".")] then pause;end 
+
+//clean
+
+eps=1.e-10;
+a=[1,eps,eps,2];
+p=m2p(a);
+p=clean(p,10*eps);
+q=m2p(clean(a,10*eps));
+if ~p.equal[q] then pause;end 
+
+//simp
+
+s=poly(0,'s');
+p=(s+1)*(s+2);q=(s+1)*(s-2);
+[n,d]=simp(p,q);
+if ~n.equal[(s+2)] then pause;end 
+if ~d.equal[(s-2)] then pause;end 
+[n,d]=simp([p,q],[q,p]);
+if ~n.equal[[s+2,s-2]] then pause;end 
+if ~d.equal[[s-2,s+2]] then pause;end 
+
+//sfact
+if %f then
+p=(s-1/2)*(2-s);
+w=sfact(p); 
+r=w*horner(w, 1 ./ s){1}.num;
+e = r-p;
+if norm(e.coeffs{1}) > 20*%eps then pause;end 
+p1 = m2p([1,2,3,2,1],var='s');
+w=sfact(p1); 
+r=w*horner(w, 1 ./ s){1}.num;
+e = r-p1;
+if norm(e.coeffs{1}) > 200*%eps then pause;end 
+end
+
+w1=sfact([p,p1])
+
+//bezout
+//-------
+// XXX

@@ -16,7 +16,7 @@ GRAPHICS= figure.obj axes.obj polyline.obj curve.obj graphic.obj groot.obj gmatr
 OBJSC = classa.obj classb.obj classc.obj classaref.obj classbref.obj \
 	clip.obj Math.obj gr_alloc.obj Format.obj dsearch.obj \
 	switch.obj $(GRAPHICS) sharedlib.obj epoints.obj hm.obj ast.obj astv.obj \
-	bvar.obj bson.obj stochdec.obj  rational.obj
+	bvar.obj bson.obj stochdec.obj
 
 OBJSF=
 

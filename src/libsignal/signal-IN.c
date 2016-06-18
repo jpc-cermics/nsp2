@@ -811,6 +811,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
       if (( Work = nsp_matrix_create(NVOID,'r',1, 7 * Nmat->mn))== NULL) return RET_BUG;
       signal_sfact1( Nmat->R, &deg2, Work->R, &max_iteration, &err);
       nsp_matrix_destroy(Work);
+      nsp_matrix_resize(Nmat,1,deg2+1);
       if ( err < 0)
 	{
 	  Sciprintf("warning: Convergence at 10^%d near.\n",err);
@@ -833,7 +834,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
       NspMatrix *Out;
       NspPMatrix *Pout;
       int i, max_mn=0,  max_degree ,max_dege2,n;
-      CheckSquare(stack,1,N);
+      CheckSquare(NspFname(stack),1,N);
       for (i=0 ; i < N->mn ; i++)
 	{
 	  max_mn = Max(max_mn, ((NspMatrix *) N->S[i])->mn);

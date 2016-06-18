@@ -519,9 +519,9 @@ int int_ricc(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMatCopy (stack, 1 )) == NULLMAT)   return RET_BUG;
   CheckSquare(NspFname(stack), 1, A);
   if ((D = GetRealMatCopy (stack, 2 )) == NULLMAT)   return RET_BUG;
-  CheckSquare(NspFname(stack), 1, D);
+  CheckSquare(NspFname(stack), 2, D);
   if ((C = GetRealMatCopy (stack, 3 )) == NULLMAT)   return RET_BUG;
-  CheckSquare(NspFname(stack), 1, C);
+  CheckSquare(NspFname(stack), 3, C);
   if ( ! ( A->m == D->m && A->m == C->m))
     {
       Scierror("%s: The three first arguments mus have the same number of rows\n",NspFname(stack));
@@ -661,7 +661,7 @@ int int_ltitr(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(3,4);
   CheckLhs(1,2);
   if ((A = GetRealMatCopy (stack,1)) == NULLMAT)   return RET_BUG;      
-  CheckSquare(stack,1,A);
+  CheckSquare(NspFname(stack),1,A);
   if ((B = GetRealMatCopy (stack,2)) == NULLMAT)   return RET_BUG;      
   if ( A->m != B->m)
     {
@@ -775,7 +775,7 @@ static int int_freq_state(Stack stack, int rhs, int opt, int lhs)
   NspMatrix * W1 = NULL;
   
   if ((A = GetRealMatCopy (stack,1)) == NULLMAT)   return RET_BUG;
-  CheckSquare(stack,1,A);
+  CheckSquare(NspFname(stack),1,A);
   if ((B = GetRealMatCopy (stack,2)) == NULLMAT)   return RET_BUG;
   if ((C = GetRealMatCopy (stack,3)) == NULLMAT)   return RET_BUG;
 

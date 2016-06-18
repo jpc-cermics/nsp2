@@ -397,6 +397,8 @@ static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
       Scierror ("Error:\t dim flag equal to -2 or 'm' not supported for function %s\n", NspFname(stack));
       return RET_BUG;
     }
+  /* if A is 0xn or nx0 we want p to have same size, we force dim= -1 */
+  if ( A->mn == 0 ) dim = -1;
   switch ( dim)
     {
     case 0:
@@ -1469,8 +1471,9 @@ static int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* a horner_p_m */
 
-static int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_horner_p_m(Stack stack, int rhs, int opt, int lhs)
 {
   int i,flag = FALSE, ttmode = FALSE;
   NspCells *Res;
@@ -1835,13 +1838,20 @@ static int int_pmatrix_pdiv_p_p(Stack stack, int rhs, int opt, int lhs)
   NspPMatrix *A,*B;
   NspPMatrix *Q,*R;
   CheckRhs(2,2);
-  CheckLhs(2,2);
+  CheckLhs(0,2);
   if ((A=GetPMat(stack,1))== NULL) return RET_BUG;
   if ((B=GetPMat(stack,2))== NULL) return RET_BUG;
   if (nsp_pmatrix_pdiv_tt(A,B,&Q,&R)== FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) Q);
-  MoveObj(stack,2,(NspObject *) R);
-  return 2;
+  MoveObj(stack,1,(NspObject *) R);
+  if ( lhs >= 2)
+    {
+      MoveObj(stack,2,(NspObject *) Q);
+    }
+  else
+    {
+      nsp_pmatrix_destroy(Q);
+    }
+  return Max(lhs,1);
 }
 
 
@@ -1983,7 +1993,7 @@ static OpTab PMatrix_func[]={
   /* specific */
   {"companion_m",int_pmatrix_companion_m},
   {"companion_p",int_pmatrix_companion_p},
-  {"horner", int_pmatrix_horner},
+  {"horner_p_m", int_pmatrix_horner_p_m},
   {"hornerm", int_pmatrix_hornerm},
   {"m2p", int_pmatrix_m2p},
   {"ce2p", int_pmatrix_ce2p},

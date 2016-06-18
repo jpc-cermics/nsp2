@@ -29,7 +29,7 @@ function [r,q]=monodiv_p(a,alpha)
   r= gamma;
 endfunction
 
-function [q,r]=pdiv_soft_p_p(a,b) 
+function [r,q]=pdiv_soft_p_p(a,b) 
 // Copyright  2010-2015 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
@@ -100,15 +100,15 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
     // update the matrix M
     // note that M is unimodular 
     // and detM is the value of det(M)
-    [q,r]=pdiv_soft(v(1),v(2));
+    [r,q]=pdiv(v(1),v(2));
     M = [ q*M(1,1)+ M(1,2), M(1,1); 
 	  q*M(2,1)+ M(2,2), M(2,1)];
     detM=-detM;
     v  = [ v(2); r];
     // at this step we should have M*v == [f1;f2]
     // first way to stop 
-    [q1,r1]=pdiv_soft(f1,v(1));
-    [q2,r2]=pdiv_soft(f2,v(1));
+    [r1,q1]=pdiv(f1,v(1));
+    [r2,q2]=pdiv(f2,v(1));
     if norm(r1,1) < eps && norm(r2,1) < eps then 
       break;
     end

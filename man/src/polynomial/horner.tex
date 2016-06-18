@@ -15,32 +15,35 @@
     \vname{P}: polynomial matrix
     \vname{Q}: a polynomial or numerical matrix
     \vname{vdim, ttmode}: optional named boolean arguments.
-    \vname{R}: a cell whose elements are  polynomial or numerical matrices 
-    if \verb!ttmode! is false and a  polynomial or a numerical matrix if 
-    \verb!ttmode! is true.
+    \vname{R}: a cell if \verb!ttmode! is false and a 
+    polynomial or a numerical matrix if \verb!ttmode! is true.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  For a polynomial matrix \verb!P! returns \verb!P(Q)!. The evaluation 
-  is performed using the Horner algorithm. When \verb!Q! is a 
+  Evaluates the polynomial matrix \verb!P! at values given by \verb!Q! 
+  using the Horner algorithm. When \verb!Q! is a 
   numerical matrix the Horner algorithm is a builtin function 
   and when \verb!Q! is a  polynomial matrix the computation is 
   performed with a library nsp function. 
   
-  When \verb!ttmode! is false the returned value is a cell matrix 
+  \begin{itemize} 
+    \item When \verb!ttmode! is true then the performed operation is a term to term 
+      horner which implies that both matrices must have same dimensions (with 
+      the usual convention that \verb!1x1! matrices are promoted 
+      to any dimensions). The returned result, \verb!R! is a polynomial matrix if 
+      \verb!Q! is a polynomial matrix or a numerical matrix if \verb!Q! is numeric 
+      which is given by \verb!R(i,j) = horner(P(i,j),Q(i,j)\verb!
+    \item When 
+
+  \item When \verb!ttmode! is false the returned value, \verb!R! is a cell matrix 
   \begin{itemize}
     \item if \verb!vdim! is false the cell matrix has same dimension 
-      as \verb!P! and the cell element \verb!(i,j)! is the polynomial
-      matrix \verb!P(i,j)(Q)!. 
+      as \verb!P! and the cell element \verb!(i,j)! is the polynomial or 
+      numerical matrix \verb!P(i,j)(Q)!. 
     \item if \verb!vdim! is true the cell matrix has same dimension 
       as \verb!Q! and the cell element \verb!(i,j)! is the polynomial
-      matrix \verb!P(Q(i,j))!.
+      or numerical matrix \verb!P(Q(i,j))!.
   \end{itemize}
-  
-  When \verb!ttmode! is true then the operation is a term to term 
-  horner which implies that both matrices have same dimensions (with 
-  the usual convention that \verb!1x1! matrices are promoted 
-  to any dimensions).  The returned result is then a polynomial matrix. 
   
 \end{mandescription}
 %--example 
@@ -59,10 +62,12 @@
     \end{Verbatim}
   \item \verb!ttmode=%t!
     \begin{Verbatim}
-      p=m2p(1:3);
-      q=m2p(1:2);
-      r=[1,2;3,7];
-      R=horner([p,q;q,p],r,ttmode=%t);
+      P = ce2p({1:2,1;2,[1,-1]})
+      Q1 = ce2p({1,[1,4];[0,1],[1,-1]})
+      R1=horner(P,Q1,ttmode=%t);
+      
+      Q2 =[1,2;3,7];
+      R2=horner(P,Q2,ttmode=%t);
     \end{Verbatim}
   \end{itemize}
 \end{examples}

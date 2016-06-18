@@ -25,7 +25,7 @@ int int_mucomp(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(3,3);
   CheckLhs(1,3);
   if(( Z=GetMatCopy(stack,1)) ==NULL) return RET_BUG;
-  CheckSquare(stack,1,Z);
+  CheckSquare(NspFname(stack),1,Z);
   if( Z->n == 0)
     {
       if((Bound=nsp_matrix_create( NVOID,'r', Z->n, 1)) == NULL) return RET_BUG;
@@ -133,7 +133,7 @@ int int_hinf(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(4,5);
   
   if((lA=GetMatCopy(stack,1))==NULL) return RET_BUG;
-  CheckSquare(stack,1,lA);
+  CheckSquare(NspFname(stack),1,lA);
   if((lB=GetMatCopy(stack,2))==NULL) return RET_BUG;
 
   if ( lB->m != lA->m )
@@ -264,7 +264,7 @@ int int_dhinf(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(7,7);
   CheckLhs(4,5);
   if((lA=GetMatCopy(stack,1))==NULL) return RET_BUG;
-  CheckSquare(stack,1,lA);
+  CheckSquare(NspFname(stack),1,lA);
   if((lB=GetMatCopy(stack,2))==NULL) return RET_BUG;
 
   if ( lB->m != lA->m )
