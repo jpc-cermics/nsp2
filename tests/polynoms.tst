@@ -472,8 +472,32 @@ e = r-p1;
 if norm(e.coeffs{1}) > 200*%eps then pause;end 
 end
 
-w1=sfact([p,p1])
+// sfact for square matrices unfinished 
+// w1=sfact([p,p1])
 
-//bezout
+// bezout
 //-------
-// XXX
+// bezout is euclide in nsp 
+
+// inv for polynomials and rationals 
+
+s=poly(0,'s');h=[s,s ./ s^4;s^2,s^3];
+r=inv(h,'L');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+r=inv(h,'C');
+r1= r*h -m2r(eye(2,2),var='s',dim="."); 
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+if %f then 
+// XXXX 
+  r=inv(h,'A');
+  r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+  if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+end
+
+r=inv(h,'Cof');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
