@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{horner}
+\begin{mandesc}
+  \short{hornerm}{substituting matrix in polynomial indeterminate}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  R=hornerm(P,A)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: polynomial matrix
+    \vname{A}: a square numerical matrix
+    \vname{R}: a cell 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Evaluates the polynomial matrix \verb!P! at values given by the 
+  matrix \verb!A! using the Horner algorithm. The returned values 
+  are stored in a cell with same dimensions as \verb!P!.
+  The cell element \verb!R{i,j}! is the numerical matrix obtained 
+  by replacing the \verb!(i,j)! polynomial indeterminate variable by
+  the numerical variable \verb!A!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    p=m2p(1:3);
+    A=testmatrix('magic',3);
+    R=hornerm(p,A); 
+    R{1}.equal[A^0 + 2*A^1 + 3*A^2]
+  \end{Verbatim}
+\end{examples}
+%-- see also
+%\begin{manseealso}
+%\end{manseealso}
