@@ -620,12 +620,20 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
 
   if ((N = GetPMatCopy(stack,1))== NULL) return RET_BUG;
   if ((D = GetPMatCopy(stack,2))== NULL) return RET_BUG;
-  CheckSameDims (NspFname (stack), 1, 2, N, D);
-  
-  for (int i = 0; i < N->mn; i++)
+  if ( ! ( (N->mn == 1 && D->mn >0) || (N->mn > 0 && D->mn == 1) || N->mn == D->mn))
     {
-      int nd = Max(0,((NspMatrix *) N->S[i])->mn -1);
-      int dd = Max(0,((NspMatrix *) D->S[i])->mn -1);
+      Scierror("Error: arguments should have compatible sizes\n");
+      return RET_BUG;
+    }
+  if ( N->mn == 0 )
+    {
+      goto ret;
+    }
+    
+  for (int i = 0; i < Max(N->mn,D->mn); i++)
+    {
+      int nd = Max(0,((NspMatrix *) N->S[Min(i,N->mn-1)])->mn -1);
+      int dd = Max(0,((NspMatrix *) D->S[Min(i,D->mn-1)])->mn -1);
       Nd = Max(Nd, nd);
       Dd = Max(Dd, dd);
     }
@@ -634,11 +642,11 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
     
   if (( Work = nsp_matrix_create(NVOID,'r', 1, Work_size)) == NULLMAT) return RET_BUG;
   
-  for (int i = 0; i < N->mn; i++)
+  for (int i = 0; i < Max(N->mn,D->mn); i++)
     {
       int Nout=0, Dout=0;
-      NspMatrix *Nm= (NspMatrix *) N->S[i];
-      NspMatrix *Dm= (NspMatrix *) D->S[i];
+      NspMatrix *Nm= (NspMatrix *) N->S[Min(i,N->mn-1)];
+      NspMatrix *Dm= (NspMatrix *) D->S[Min(i,D->mn-1)];
       if ( Nm->mn != 0 && Nm->rc_type == 'r' && Dm->rc_type == 'r')
 	{
 	  int nd = Max(0, Nm->mn -1);
@@ -654,6 +662,7 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
 	  nsp_matrix_resize (Dm, 1, Dout);
 	}
     }
+ ret: 
   NSP_OBJECT(N)->ret_pos=1;
   if ( lhs >= 2)
     {

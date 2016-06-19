@@ -739,7 +739,7 @@ NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B)
 {
   int i;
   NspRMatrix *Loc;
-  if ( A->m != B->m ||  A->n != B->n )
+  if ( ! ( (A->mn == 1 && B->mn >0 ) || (A->mn >0 &&  B->mn == 1) || ( A->n = B->n && A->m == B->m )))
     {
       Scierror("Error: the two arguments should have same sizes\n");
       return NULL;
@@ -749,11 +749,12 @@ NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B)
       Scierror("Error: the two arguments should be both reals or complex\n");
       return NULL;
     }
-  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+  
+  if ((Loc =nsp_rmatrix_create(NVOID,Max(A->m,B->m),Max(A->n,B->n),NULL,-1, NULL)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[i] =nsp_polynoms_to_rational(A->S[i],B->S[i]))== NULL)  return(NULLRMAT);
+      if ((Loc->S[i] =nsp_polynoms_to_rational(A->S[Min(i,A->mn-1)],B->S[Min(i,B->mn-1)]))== NULL)  return(NULLRMAT);
     }
   return(Loc);
 }
