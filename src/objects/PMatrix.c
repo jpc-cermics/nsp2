@@ -149,16 +149,43 @@ void nsp_polynom_destroy(nsp_polynom *P)
  * Returns: %OK or %FAIL
  **/
 
-int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
-		     nsp_polynom *hr)
+int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq, nsp_polynom *hr)
 {
   const doubleC zero={0,0};
   int i ;
   nsp_polynom ca = NULL ,q = NULL , bc = NULL ;
   char res_type = ( a->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
 
+  if ( ((NspMatrix *) a )->mn ==1 && ((NspMatrix *) b )->mn == 1)
+    {
+      nsp_polynom r=NULL;
+      NspMatrix *Mq,*Mr;
+      if ((q = nsp_polynom_copy_and_name("pe",a))== NULL) goto fail;
+      if ((r = nsp_polynom_copy_and_name("pe",b))== NULL) goto fail;
+      Mq = (NspMatrix *) q;
+      Mr = (NspMatrix *) r;
+      if ( nsp_mat_div_tt(Mq,Mr) == FAIL)
+	{
+	  if ( r != NULL )  nsp_polynom_destroy(&r);
+	  if ( q != NULL )  nsp_polynom_destroy(&q);
+	  return FAIL;
+	}
+      if ( Mr->rc_type == 'r' )
+	{
+	  Mr->R[0] = 0.0;
+	}
+      else
+	{
+	  Mr->C[0].r = 0.0;
+	  Mr->C[0].i = 0.0;
+	}
+      *hq = q;
+      *hr = r;
+      return OK;
+    }
+  
   /* be sure that both p and q are real or complex */
-
+  
   if ((ca = nsp_polynom_copy_and_name("pe",a))== NULL) goto fail;
   if ( res_type == 'c' && a->rc_type == 'r' )
     {
@@ -177,7 +204,7 @@ int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
     {
       bc =b;
     }
-
+  
   if ( q->rc_type == 'r') 
     {
       for ( i = 0 ; i < ((NspMatrix *) q)->mn ; i++) 
@@ -2154,7 +2181,7 @@ NspPMatrix *nsp_pmatrix_mult_tt_p_m(NspPMatrix *A, NspMatrix *B)
   else if ( B->mn == 1 )
     {
       int i;
-      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL))== NULLPMAT) 
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1, A->var))== NULLPMAT) 
 	return(NULLPMAT);
       for (i=0; i < A->mn ; i++) 
 	{

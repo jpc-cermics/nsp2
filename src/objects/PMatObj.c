@@ -1842,14 +1842,17 @@ static int int_pmatrix_pdiv_p_p(Stack stack, int rhs, int opt, int lhs)
   if ((A=GetPMat(stack,1))== NULL) return RET_BUG;
   if ((B=GetPMat(stack,2))== NULL) return RET_BUG;
   if (nsp_pmatrix_pdiv_tt(A,B,&Q,&R)== FAIL) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) R);
   if ( lhs >= 2)
     {
+      /* [R,Q] returned */
+      MoveObj(stack,1,(NspObject *) R);
       MoveObj(stack,2,(NspObject *) Q);
     }
   else
     {
-      nsp_pmatrix_destroy(Q);
+      /* Q returned */
+      MoveObj(stack,1,(NspObject *) Q);
+      nsp_pmatrix_destroy(R);
     }
   return Max(lhs,1);
 }
