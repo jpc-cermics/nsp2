@@ -134,7 +134,7 @@ extern int nsp_rmatrix_tril(NspRMatrix *A, int k);
 extern NspRMatrix *nsp_matrix_to_rational(NspMatrix *M);
 extern NspRMatrix *nsp_matrices_to_rational(NspMatrix *A,NspMatrix *B);
 extern NspRMatrix *nsp_pmatrix_to_rmatrix(NspPMatrix *A);
-extern NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B);
+extern NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp);
   
 extern int nsp_rational_resize(nsp_rational poly);
 extern nsp_rational nsp_rational_add(nsp_rational P,nsp_rational Q);
@@ -163,6 +163,8 @@ extern nsp_rational nsp_rational_copy_with_name(nsp_rational P);
 extern nsp_rational nsp_rational_copy_and_name(const char *name, nsp_rational P);
 extern nsp_rational nsp_basic_to_rational(const doubleC *d, char type);
 extern void nsp_rational_destroy(nsp_rational *P); 
+extern int nsp_polynoms_simp(NspMatrix *P,NspMatrix *Q);
+
 
 #endif 
 

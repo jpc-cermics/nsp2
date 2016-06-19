@@ -427,10 +427,10 @@ static int int_rmatrix_m2r(Stack stack, int rhs, int opt, int lhs)
 
 static int int_rmatrix_p2r(Stack stack, int rhs, int opt, int lhs)
 {
-  /* int simp = TRUE; */
+  int simp = FALSE;
   const char *var = NULL;
   nsp_option opts[] ={{"var",string,NULLOBJ,-1},
-		      /* {"simp",s_bool,NULLOBJ,-1}, */
+		      {"simp",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspRMatrix *R; NspPMatrix *A, *B=NULL;
   CheckStdRhs(1,2);
@@ -440,7 +440,7 @@ static int int_rmatrix_p2r(Stack stack, int rhs, int opt, int lhs)
     {
       if (( B=GetPMat(stack,2)) == NULL) return RET_BUG;
     }
-  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &var,&simp) == FAIL )
     return RET_BUG;
   if ( rhs -opt == 1)
     {
@@ -448,7 +448,7 @@ static int int_rmatrix_p2r(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if (( R=nsp_pmatrices_to_rmatrix(A,B))== NULLRMAT) return RET_BUG;
+      if (( R=nsp_pmatrices_to_rmatrix(A,B,simp))== NULLRMAT) return RET_BUG;
     }
   if ( var != NULL)
     {

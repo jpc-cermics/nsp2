@@ -89,8 +89,8 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
   else
     f1 = b; f2= a; ind=[2,1];
   end
-  M= [ m2p(1),m2p(0);
-       m2p(0),m2p(1)];
+  vname = a.get_var[];
+  M = m2p(eye(2,2),var=vname,dim=".");
   detM=1;
   v= [f1;f2];
   // we start with [f1;f2]= M*v 

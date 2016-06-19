@@ -2277,11 +2277,15 @@ NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V)
   NspMatrix *loc; 
   /* compute the rc_type for result */
   char type = (V->rc_type == 'c') ? 'c' : 'r';
-  for ( i = 0 ; i < P->mn ; i++) 
-    if ( P->S[i]->rc_type == 'c') 
-      {
-	type = 'c'; break;
-      }
+  if ( type == 'r' )
+    {
+      for ( i = 0 ; i < P->mn ; i++) 
+	if ( P->S[i]->rc_type == 'c') 
+	  {
+	    type = 'c'; break;
+	  }
+    }
+  
 #define TT_HORNER(s1,s2,i1,i2)						\
   if ((loc = nsp_matrix_create(NVOID,type,s1,s2))==NULLMAT)		\
     return NULL;							\
@@ -2297,7 +2301,7 @@ NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V)
       /* polynom is complex or real */					\
       for ( i = 0 ; i < loc->mn ; i++)					\
 	{								\
-	  if ( P->S[i]->rc_type == 'r')					\
+	  if ( P->S[i1]->rc_type == 'r')				\
 	    {								\
 	      loc->C[i].r = nsp_hornerdd(P->S[i1]->R,P->S[i1]->mn,V->R[i2]); \
 	      loc->C[i].i = 0;						\
@@ -2311,7 +2315,7 @@ NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V)
       /* V is complex */						\
       for ( i = 0 ; i < loc->mn ; i++)					\
 	{								\
-	  if ( P->S[i]->rc_type == 'r')					\
+	  if ( P->S[i1]->rc_type == 'r')				\
 	    loc->C[i] = nsp_hornerdc(P->S[i1]->R,P->S[i1]->mn,V->C[i2]); \
 	  else								\
 	    loc->C[i] = nsp_hornercc(P->S[i1]->C,P->S[i1]->mn,V->C[i2]); \

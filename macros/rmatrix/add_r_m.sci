@@ -50,8 +50,7 @@ function r1=mult_r_r(r1,r2)
   n2=r2.num; d2=r2.den;
   [l1,m1]=size(n1);[l2,m2]=size(n2),
   if min([l1*m1,l2*m2])==1 then
-    num=n1*n2
-    den=d1*d2
+    [num,den]=simp(n1*n2,d1*d2);
   else
     if m1<>l2 then error("Error: incompatible dimensions");
     end
@@ -149,8 +148,12 @@ function r1=dsl_p_r(p,r)
 endfunction
 
 function r1=dsl_p_p(p1,p2)
-  if size(p1,'*')==1 || size(p2,'*')==1 || size(p1).equal[size(p2)] then 
-    // need to improve simp to support scalar promotion 
+  if size(p1,'*')==1 && size(p2,'*') > 0 then 
+    p1 = p1*ones(size(p2));
+  elseif size(p2,'*')==1 && size(p1,'*') > 0 then 
+    p2 = p2*ones(size(p1));
+  end
+  if size(p1).equal[size(p2)] then 
     [n1,d1]=simp( p1, p2)
     r1=p2r(n1,d1);
   else
@@ -160,8 +163,34 @@ function r1=dsl_p_p(p1,p2)
 endfunction
 
 function r1=dsl_m_p(m,p2)
-  [n1,d1]=simp( m2p(m,dim=".",var=p2.get_var[]), p2)
-  r1=p2r(n1,d1);
+  if size(m,'*')==1 && size(p2,'*') > 0 then 
+    m = m*ones(size(p2));
+  elseif size(p2,'*')==1 && size(m,'*') > 0 then 
+    p2 = p2*ones(size(m));
+  end
+  if size(p2).equal[size(p2)] then 
+    [n1,d1]=simp( m2p(m,dim=".",var=p2.get_var[]), p2)
+    r1=p2r(n1,d1);
+  else
+    error("Error: arguments should have compatible sizes\n");
+    return;
+  end
+endfunction
+
+function r1=dsl_p_m(p1,m)
+  if size(m,'*')==1 && size(p1,'*') > 0 then 
+    m = m*ones(size(p1));
+  elseif size(p1,'*')==1 && size(m,'*') > 0 then 
+    p1 = p1*ones(size(m));
+  end
+  if size(p1).equal[size(m)] then 
+    var = p1.get_var[];
+    [n1,d1]=simp( p1, m2p(m,dim=".",var=var));
+    r1=p2r(n1,d1);
+  else
+    error("Error: arguments should have compatible sizes\n");
+    return;
+  end
 endfunction
 
 // - 
@@ -293,3 +322,8 @@ function s1=r_r_r(s1,s2)
   end
 endfunction
 
+// clean 
+
+function r=clean_r(r,varargin)
+  r=p2r(clean(r.num,varargin(:)),clean(r.den,varargin(:)));
+endfunction

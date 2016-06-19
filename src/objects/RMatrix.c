@@ -37,6 +37,7 @@
 #include "nsp/pr-output.h"
 #include "nsp/cnumeric.h"
 #include "nsp/nsp_lapack.h"
+#include "../libsignal/signal.h"
 
 #if 1 
 #define nsp_rational_mult nsp_rational_mult_std
@@ -193,13 +194,14 @@ nsp_rational nsp_polynom_to_rational(NspMatrix *P)
  * Return value: a new #nsp_rational or %NULL
  **/
 
-nsp_rational nsp_polynoms_to_rational(NspMatrix *P,NspMatrix *Q)
+nsp_rational nsp_polynoms_to_rational(NspMatrix *P,NspMatrix *Q,int simp)
 {
   NspMatrix *N,*D;
   nsp_rational rat;
   if ((rat = malloc(sizeof(struct _nsp_rational))) == NULL) return NULL;
   if ((N= (NspMatrix *) nsp_object_copy_and_name("pe",(NspObject *)P)) == NULL) return NULL;
   if ((D= (NspMatrix *) nsp_object_copy_and_name("pe",(NspObject *)Q)) == NULL) return NULL;
+  if ( simp ) nsp_polynoms_simp(N,D);
   rat->num = N; rat->den=D;
   return rat;
 }
@@ -735,7 +737,7 @@ NspRMatrix *nsp_matrices_to_rmatrix(NspMatrix *A,NspMatrix *B)
  * Returns: a new #NspRMatrix or %NULL
  **/
 
-NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B)
+NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp)
 {
   int i;
   NspRMatrix *Loc;
@@ -754,7 +756,7 @@ NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B)
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[i] =nsp_polynoms_to_rational(A->S[Min(i,A->mn-1)],B->S[Min(i,B->mn-1)]))== NULL)  return(NULLRMAT);
+      if ((Loc->S[i] =nsp_polynoms_to_rational(A->S[Min(i,A->mn-1)],B->S[Min(i,B->mn-1)],simp))== NULL)  return(NULLRMAT);
     }
   return(Loc);
 }
@@ -3331,6 +3333,33 @@ NspRMatrix *nsp_cells_to_rmatrix(const char *name, NspCells *C1, NspCells *C2)
   return NULLRMAT;
 }
 
+int nsp_polynoms_simp(NspMatrix *P,NspMatrix *Q)
+{
+  NspMatrix *Work;
+  int err=0;
+  int nd = Max(P->mn -1,0);
+  int dd = Max(Q->mn -1,0);
+  int imax = Max(nd,dd) + 1;
+  int Work_size = 2 * (nd + dd) + Min(nd, dd) + 10 * imax + 3 * imax * imax + 4 +1;
+  int Nout=0, Dout=0;
+
+  if ( P->mn == 0 || Q->mn == 0) return OK;
+  if ( !( P->rc_type ==  'r' && Q->rc_type == 'r')) return OK;
+  
+  if (( Work = nsp_matrix_create(NVOID,'r', 1, Work_size)) == NULLMAT) return FAIL;
+  err = Work_size;
+  signal_dpsimp(P->R, &nd, Q->R, &dd, P->R, &Nout, Q->R , &Dout,Work->R, &err);
+  nsp_matrix_destroy(Work);
+  if (err)
+    {
+      Scierror("Error: work size too small in simp\n");
+      return FAIL;
+    }
+  nsp_matrix_resize (P, 1, Nout);
+  nsp_matrix_resize (Q, 1, Dout);
+  return OK;
+}
+
 /*
  * routines for output of rationalial matrices 
  */
@@ -3746,8 +3775,6 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
 }
 
 #endif 
-
-
 
 /**
  * pr_bar:

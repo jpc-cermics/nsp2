@@ -481,6 +481,8 @@ end
 
 // inv for polynomials and rationals 
 
+// inv for rationals 
+
 s=poly(0,'s');h=[s,s ./ s^4;s^2,s^3];
 r=inv(h,'L');
 r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
