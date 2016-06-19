@@ -149,8 +149,14 @@ function r1=dsl_p_r(p,r)
 endfunction
 
 function r1=dsl_p_p(p1,p2)
-  [n1,d1]=simp( p1, p2)
-  r1=p2r(n1,d1);
+  if size(p1,'*')==1 || size(p2,'*')==1 || size(p1).equal[size(p2)] then 
+    // need to improve simp to support scalar promotion 
+    [n1,d1]=simp( p1, p2)
+    r1=p2r(n1,d1);
+  else
+    error("Error: arguments should have compatible sizes\n");
+    return;
+  end
 endfunction
 
 function r1=dsl_m_p(m,p2)
@@ -283,7 +289,7 @@ function s1=r_r_r(s1,s2)
       for l=1:n;p(l,k)=p(l,k)*pdiv(pp,s2(l,k)),end
       s1(:,k)=s1(:,k)*pp
     end
-    s1=s1*invr(p)
+    s1=s1*inv(p)
   end
 endfunction
 
