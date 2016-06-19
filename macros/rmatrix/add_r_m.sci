@@ -75,11 +75,15 @@ function r1=mult_r_r(r1,r2)
 endfunction
 
 function r1=mult_r_m(r,m)
-  r1 = r * m2r(m,var=r.get_var[],dim=".");
+// XXX function crash if using 
+// r1 = r *  m2r(m,var=r.get_var[],dim=".");
+  var=r.get_var[]
+  r1 = r *  m2r(m,var=var,dim=".");
 endfunction
 
 function r1=mult_m_r(m,r)
-  r1 =  m2r(m,var=r.get_var[],dim=".")*r;
+  var = r.get_var[];
+  r1 =  m2r(m,var=var,dim=".")*r;
 endfunction
 
 function r1=mult_r_p(r,p)
@@ -257,7 +261,7 @@ endfunction
 function d=det_r(r)
 // copyright scilab 
   [n,d]=lcmdiag(r);
-  x=det(n) / det(d);
+  d = det(n) / det(d);
 endfunction
 
 //  operator / for rationals 

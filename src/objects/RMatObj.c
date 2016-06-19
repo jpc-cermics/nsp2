@@ -414,7 +414,7 @@ static int int_rmatrix_m2r(Stack stack, int rhs, int opt, int lhs)
       Scierror ("Error:\t dim flag equal to %d not supported for function %s\n",dim, NspFname(stack));
       return RET_BUG;
     }
-  if ( nsp_rmatrix_set_varname(P,var) ) return RET_BUG;
+  if ( nsp_rmatrix_set_varname(P,var)) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }
