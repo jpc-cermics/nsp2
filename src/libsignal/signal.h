@@ -10,6 +10,8 @@
 
 typedef int (*F_dget) (double *, int *, int *);
 
+extern int signal_recbez (double *p1, int *n1, double *p2, int *n2, double *best,
+			   int *ipb, double *w, double *err);
 
 extern int signal_sfact1 (double *b,const int *n, double *w,const int *maxit, int *ierr);
 

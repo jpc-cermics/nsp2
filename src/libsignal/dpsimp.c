@@ -6,8 +6,6 @@ static double c_b11 = 0.;
 static int signal_bezstp (double *p1, int *n1, double *p2, int *n2, double *a, int *na,
 			  double *u, int *nu, int *l, double *x, double *v, double *w,
 			  double *best, int *ipb, double *errr);
-static  int signal_recbez (double *p1, int *n1, double *p2, int *n2, double *best,
-			   int *ipb, double *w, double *err);
 static int signal_dpmul1 (double *p1, int *d1, double *p2, int *d2, double *p3);
 static int signal_dpmul (double *p1, int *d1, double *p2, int *d2, double *p3, int *d3);
   

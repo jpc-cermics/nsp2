@@ -1469,6 +1469,78 @@ int int_ldiv(Stack stack, int rhs, int opt, int lhs)
 
 #endif
 
+#include "../libsignal/signal.h"
+
+int int_bezout(Stack stack, int rhs, int opt, int lhs)
+{
+  int ipb[6],np,i;
+  NspPMatrix *P1,*P2,*U=NULL,*Gcd=NULL;
+  NspMatrix *P1m,*P2m,*Work=NULL,*Out=NULL;
+  double err= 0.0;
+  int P1_degree, P2_degree, max_size, min_size, Work_size, Out_size;
+
+  CheckRhs(2,2);
+  CheckLhs(2,3);
+
+  if ((P1 = GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((P2 = GetPMat(stack,2))== NULL) return RET_BUG;
+  if ( P1->mn != 1 || P2->mn != 1)
+    {
+      Scierror("Error: expecting 1x1 polynomial matrices \n");
+      return RET_BUG;
+    }
+  P1m = (NspMatrix *) P1->S[0];
+  P2m = (NspMatrix *) P2->S[0];
+  if ( P1m->rc_type == 'c' || P2m->rc_type == 'c' )
+    {
+      Scierror("Error: expecting 1x1 real polynomial matrices \n");
+      return RET_BUG;
+    }
+  P1_degree = Max(P1m->mn-1,0);
+  P2_degree = Max(P2m->mn-1,0);
+  max_size      = Max(P1m->mn,P2m->mn);
+  min_size      = Max(P1m->mn,P2m->mn);
+  Work_size = 10 * max_size + 3*max_size*max_size;
+  Out_size = 2 * ( P1_degree + P2_degree + 2) + min_size + 3;
+  if (( Out = nsp_matrix_create(NVOID,'r',1,Out_size))== NULL) goto err;
+  if (( Work = nsp_matrix_create(NVOID,'r',1,Work_size))== NULL) goto err;
+  signal_recbez(P1m->R, &P1_degree, P2m->R, &P2_degree, Out->R, ipb, Work->R, &err);
+  /* the gcd */
+  if ((Gcd =nsp_pmatrix_create(NVOID,1,1,NULL,-1, P1->var))== NULLPMAT) goto err;
+  np = ipb[1] - ipb[0];
+  if ((Gcd->S[0]=nsp_matrix_create("pe",'r',1,np))== NULL) goto err;
+  memcpy(((NspMatrix *) Gcd->S[0])->R, Out->R + ipb[0] - 1, np * sizeof(double));
+  /* the matrix */
+  if ( lhs >= 2 )
+    {
+      if ((U =nsp_pmatrix_create(NVOID,2,2,NULL,-1, P1->var))== NULLPMAT) goto err;
+      for (i = 0; i < U->mn; i++)
+	{
+	  int size = ipb[(i+1) + 1] - ipb[(i+1)];
+	  if ((U->S[i]=nsp_matrix_create("pe",'r',1,size))== NULL) goto err;
+	  memcpy(((NspMatrix *) U->S[i])->R, Out->R + ipb[i+1] - 1, size * sizeof(double));
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(Gcd));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(U));
+    }
+  if ( lhs >= 3 ) 
+    {
+      if ( nsp_move_double(stack,3,err)== FAIL) goto err;
+    }
+  nsp_matrix_destroy(Out);
+  nsp_matrix_destroy(Work);
+  return Max(lhs,1);
+ err:
+  if ( Out != NULL) nsp_matrix_destroy(Out);
+  if ( Work != NULL) nsp_matrix_destroy(Work);
+  if ( Gcd != NULL) nsp_pmatrix_destroy(Gcd);
+  if ( U != NULL) nsp_pmatrix_destroy(U);
+  return RET_BUG;
+}
+
 extern int int_arl2(Stack stack, int rhs, int opt, int lhs);
 extern int int_bdiag(Stack stack, int rhs, int opt, int lhs);
 extern int int_dhinf(Stack stack, int rhs, int opt, int lhs);
@@ -1521,6 +1593,7 @@ static OpTab Control_func[] = {
   {"simp", int_simp},
   {"conv2", int_conv2},
   {"sfact", int_sfact},
+  {"bezout", int_bezout},
   /*
   {"rpem", int_rpem},
   */
