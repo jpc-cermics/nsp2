@@ -74,7 +74,7 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
     
     //-compat ht==15 retained for list/tlist compatibility
     if ht==15|ht==16 then
-      z=varn(h(3));
+      z=h(3).get_var[];
       hcs=max(size(h(2)));
     end
     
@@ -85,7 +85,7 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
       //if ht==2 then h is a regular polynomial
       
       if ht==2 then
-	z=varn(h);
+	z=h.get_var[];
       end
       
       //get the derivative of h(z)
