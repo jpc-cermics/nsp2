@@ -55,7 +55,9 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
   // exists
     c = p.coeffs{1}
     d = p.degree[];
-    y= c($)
+    y= c($);
+    // force y to have x type when d==0
+    if d== 0 then y = y+0 *x;end
     for i=d:-1:1
       y = x.*y + c(i);
     end
@@ -83,9 +85,21 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
     end
     // 
     mnp =mp*np;mnq=mq*nq;
-    y={}
+    if type(x,'short')== 'r' then 
+      vname = x.get_var[];
+      y=m2r([],var= vname);
+    elseif type(x,'short')== 'p' then 
+      vname = x.get_var[];
+      y=m2p([],var= vname);
+    else
+      vname = p.get_var[];
+      y=m2p([],var= vname);
+    end
     for i=1:max(mnp,mnq)
-      y{i} = horner(p(min(i,mnp)),x(min(i,mnq)));
+      // need here vdim= %f for ce elements to have 
+      // the same type as x 
+      ce = horner(p(min(i,mnp)),x(min(i,mnq)));
+      y(i) = ce{1};
     end
   else
     if vdim then 

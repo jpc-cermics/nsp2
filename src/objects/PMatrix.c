@@ -3690,6 +3690,8 @@ static int nsp_print_exponent_utf8(int i, int do_print)
  * print a polynom. 
  **/
 
+static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_print, int flag);
+
 static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
 {
   int colors[]={ 34,32,31,35,36};
@@ -3705,7 +3707,7 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
 		  if (do_print) Sciprintf("+");
 		  count++;
 		}
-	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->R[i], fw,do_print);
+	      count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->R[i], fw,do_print,(i==0) ?TRUE:FALSE);
 	      leading = FALSE;
 	      if (do_print) Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) 
@@ -3736,9 +3738,9 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
 		  count++;
 		}
 	      if (do_print)Sciprintf("(");count++;
-	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->C[i].r, fw,do_print);
+	      count +=nsp_pr_any_float_vs_p(fmt->curr_real_fmt, m->C[i].r, fw,do_print,TRUE);
 	      if (do_print)Sciprintf("+");count++;
-	      count +=nsp_pr_any_float_vs(fmt->curr_imag_fmt, m->C[i].i, fw,do_print);
+	      count +=nsp_pr_any_float_vs_p(fmt->curr_imag_fmt, m->C[i].i, fw,do_print,TRUE);
 	      if (do_print)Sciprintf("i)");count +=2;
 	      leading = FALSE;
 	       if (do_print) Sciprintf("\033[%dm",colors[0]);
@@ -3767,6 +3769,41 @@ static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw,
     }
   return count;
 }
+
+/* like nsp_pr_any_float_vs but do not print `1' when it is the 
+ * coefficient of a polynomial indeterminate
+ * and return the number of spaces used.
+ */
+
+static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_print, int flag)
+{
+  if ( flag || d != 1 )
+    return nsp_pr_any_float_vs(fmt,d,fw,do_print);
+  else
+    {
+      int i;
+      char str[128],*str1;
+      sprintf(str,(fmt) ? fmt: "%f" ,d);
+      if ((str1=strstr(str,"."))!= 0 && strstr(str,"e") == 0 ) 
+	{
+	  for ( i = strlen(str1)-1; i >= 0 ; i--)
+	    {
+	      if (str1[i]== '0' ) str1[i]='\0';
+	      else break;
+	    }
+	  if (str1[i]== '.') str1[i]='\0';
+	}
+      i=0;
+      while (str[i]==' ' && i < strlen(str)) i++;
+      str1 = str+i;
+      if (do_print)  nsp_pr_white(strlen(str1));
+      return strlen(str1);
+    }
+  return 0;
+}
+
+
+
 
 /**
  * pr_poly_exp:

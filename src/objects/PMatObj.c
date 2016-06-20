@@ -1577,8 +1577,8 @@ static int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 static int int_pmatrix_clean (Stack stack, int rhs, int opt, int lhs)
 {
   int i;
-  double epsr=DBL_EPSILON;
-  double epsa=DBL_EPSILON;
+  double epsr= 1.e-10;/* DBL_EPSILON; */
+  double epsa= 1.e-10;/* DBL_EPSILON; */
   NspPMatrix *P;
   CheckStdRhs (1, 3);
   CheckLhs (1, 1);
@@ -1598,7 +1598,7 @@ static int int_pmatrix_clean (Stack stack, int rhs, int opt, int lhs)
   
   for ( i = 0 ; i < P->mn ; i++)
     {
-      nsp_mat_clean(P->S[i],rhs, epsa, epsr);
+      nsp_mat_clean(P->S[i],3, epsa, epsr);
       if ( nsp_polynom_resize(P->S[i]) == FAIL) 
 	return RET_BUG;
     }

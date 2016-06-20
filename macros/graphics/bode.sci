@@ -22,8 +22,7 @@ function bode(hnum,hden,varargopt)
   step =  varargopt.find['step',def='auto'];
   if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
   fmax= varargopt.find['fmax',def=fmax];
-  fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;end;
+  fmin= varargopt.find['fmin',def=1.d-3];
   // title
   title =  varargopt.find['title',def=""];
   
@@ -48,12 +47,12 @@ function bode(hnum,hden,varargopt)
     frq=  varargopt.find['frq',def=[]];
     if isempty(frq) then
       // compute frq
-      [frq,repf,splitf]=repfreq(hnum,hden,varargopt(:));
+      [frq,repf,splitf]=repfreq(hnum,hden,dom=dom,fmin=fmin,fmax=fmax,step=step);
     end
   else
     error("bode: Argument should be a matrix or polynomial matrix")
   end
-  
+
   // compute frq repf splitf from fmin fmax step
   //---------------------------------------------
   // check frequencies
