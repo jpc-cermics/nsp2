@@ -19,5 +19,6 @@ function num=numer_r(r)
 
 // numerator of a rational function matrix 
 // 
+  printf("Deprecated: use r.num\n");
   num = r.num;
 endfunction

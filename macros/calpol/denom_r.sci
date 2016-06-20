@@ -18,6 +18,6 @@ function den=denom_r(r)
 //
 
 // denominator of a rational matrix
-  printf("You should use r.den\n");
+  printf("Deprecated: use r.den\n");
   den = r.den 
 endfunction   
