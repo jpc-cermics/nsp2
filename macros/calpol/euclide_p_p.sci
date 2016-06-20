@@ -25,7 +25,7 @@ function [r,q]=monodiv_p(a,alpha)
     b(i) = alpha*b(i+1) + ca(i+1);
   end
   gamma= ca(1)+alpha*b(1)
-  q=m2p(b);
+  q=m2p(b,var=a.get_var[]);
   r= gamma;
 endfunction
 
@@ -67,11 +67,11 @@ function [r,q]=pdiv_soft_p_p(a,b)
       ca = a.coeffs{1};
       if size(ca,'*')== 1 then r=a;break;end 
       ca($)=0;
-      a = m2p(ca);
+      a = m2p(ca,var=a.get_var[]);
     end
   end
   if isempty(q) then q=0;end 
-  q=m2p(q);
+  q=m2p(q,var=a.get_var[]);
 endfunction
 
 function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
@@ -100,15 +100,15 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
     // update the matrix M
     // note that M is unimodular 
     // and detM is the value of det(M)
-    [r,q]=pdiv(v(1),v(2));
+    [r,q]=pdiv_soft(v(1),v(2));
     M = [ q*M(1,1)+ M(1,2), M(1,1); 
 	  q*M(2,1)+ M(2,2), M(2,1)];
     detM=-detM;
     v  = [ v(2); r];
     // at this step we should have M*v == [f1;f2]
     // first way to stop 
-    [r1,q1]=pdiv(f1,v(1));
-    [r2,q2]=pdiv(f2,v(1));
+    [r1,q1]=pdiv_soft(f1,v(1));
+    [r2,q2]=pdiv_soft(f2,v(1));
     if norm(r1,1) < eps && norm(r2,1) < eps then 
       break;
     end
