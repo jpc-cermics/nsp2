@@ -1,6 +1,15 @@
 function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
 // varargopt: frq fmin fmax step dom='c'
 // Copyright CECILL INRIA (from scilab)
+
+  function y=freq(hnum,hden,x)
+    ce_n=horner(hnum,x,vdim=%t);
+    ce_d=horner(hden,x,vdim=%t);
+    y=[];
+    for i=1:size(ce_n,'*')
+      y.concatr[ce_n{i}./ce_d{i}];
+    end
+  endfunction
   
   function [frq,bnds,splitf]=calfrq_p(hnum,hden,fmin,fmax,dom='c')
   // frequency response discretization
@@ -30,15 +39,6 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
 	  f=[f;f(1:nf)+2*%pi*kk*ones(nf,1)];;
 	end;
 	f=f(find((f>fmin-tol)&(f<fmax+tol)));
-      end
-    endfunction
-
-    function y=freq(hnum,hden,x)
-      ce_n=horner(hnum,x,vdim=%t);
-      ce_d=horner(hden,x,vdim=%t);
-      y=[];
-      for i=1:size(ce_n,'*')
-	y.concatr[ce_n{i}./ce_d{i}];
       end
     endfunction
 
@@ -271,16 +271,8 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
     frq( size(frq,'*') )=fmax;
     frq=frq/c;
   endfunction
-    
-  function y=freq(hnum,hden,x)
-    ce_n=horner(hnum,x,vdim=%t);
-    ce_d=horner(hden,x,vdim=%t);
-    y=[];
-    for i=1:size(ce_n,'*')
-      y.concatr[ce_n{i}./ce_d{i}];
-    end
-  endfunction
 
+  splitf=[];
   // compute default values 
   dom = varargopt.find['dom',def='c'];
   if ~(dom.equal['c'] || dom.equal['d'] || ( type(dom,'short')=='m' && sime(dom,'*')==1)) then 
@@ -336,4 +328,10 @@ function [frq,rep,splitf]=repfreq_p(hnum,hden,varargopt)
   end;
   // returned values 
   if nargout==1 then frq=rep,end
+endfunction
+
+function [frq,rep,splitf]=repfreq_r(r,varargopt)
+// varargopt: frq fmin fmax step dom='c'
+// Copyright CECILL INRIA (from scilab)
+  [frq,rep,splitf]=repfreq_p(r.num,r.den,varargopt(:))
 endfunction
