@@ -54,9 +54,14 @@ OBJSC = Slicot-IN.obj \
 	sb03qx.obj \
 	sb03qy.obj \
 	sb03mw.obj \
+	ab01od.obj \
+	ab01nd.obj \
+	mb01pd.obj \
+	mb03oy.obj \
+	mb01qd.obj \
 
 OBJSC_ALL = \
-    ab01md.obj ab01nd.obj ab01od.obj ab04md.obj ab05md.obj ab05nd.obj ab05od.obj \
+    ab01md.obj ab01nd.obj  ab04md.obj ab05md.obj ab05nd.obj ab05od.obj \
     ab05pd.obj ab05qd.obj ab05rd.obj ab05sd.obj ab07md.obj ab07nd.obj ab08md.obj \
     ab08mz.obj ab08nd.obj ab08nx.obj ab08nz.obj ab09ad.obj ab09ax.obj ab09bd.obj \
     ab09bx.obj ab09cd.obj ab09cx.obj ab09dd.obj ab09ed.obj ab09fd.obj ab09gd.obj \

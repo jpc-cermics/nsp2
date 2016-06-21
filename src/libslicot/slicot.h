@@ -34,7 +34,10 @@ extern double nsp_slicot_mb03ny (int *n, double *omega, double *a, int *lda, dou
 extern int nsp_slicot_ab01md (char *jobz, int *n, double *a, int *lda, double *b, int *ncont, double *z__, int *ldz, double *tau, double *tol, double *dwork, int *ldwork, int *info, long int jobz_len);
 extern int nsp_slicot_ab01nd (char *, int *, int *, double *, int *, double *, int *, int *, int *, int *, double *, int *, double *, double *, int *, double *, int *, int *, long int);
 extern int nsp_slicot_ab01nd (char *jobz, int *n, int *m, double *a, int *lda, double *b, int *ldb, int *ncont, int *indcon, int *nblk, double *z__, int *ldz, double *tau, double *tol, int *iwork, double *dwork, int *ldwork, int *info, long int jobz_len);
-extern int nsp_slicot_ab01od (char *stages, char *jobu, char *jobv, int *n, int *m, double *a, int *lda, double *b, int *ldb, double *u, int *ldu, double *v, int *ldv, int *ncont, int *indcon, int *kstair, double *tol, int *iwork, double *dwork, int *ldwork, int *info, long int stages_len, long int jobu_len, long int jobv_len);
+
+extern int nsp_slicot_ab01od (char *stages, char *jobu, char *jobv, int *n, int *m, double *a, int *lda, double *b, int *ldb,
+			      double *u, int *ldu, double *v, int *ldv, int *ncont, int *indcon, int *kstair, double *tol, int *iwork, double *dwork, int *ldwork, int *info, long int stages_len, long int jobu_len, long int jobv_len);
+
 extern int nsp_slicot_ab04md (char *, int *, int *, int *, double *, double *, double *, int *, double *, int *, double *, int *, double *, int *, int *, double *, int *, int *, long int);
 extern int nsp_slicot_ab04md (char *type__, int *n, int *m, int *p, double *alpha, double *beta, double *a, int *lda, double *b, int *ldb, double *c__, int *ldc, double *d__, int *ldd, int *iwork, double *dwork, int *ldwork, int *info, long int type_len);
 extern int nsp_slicot_ab05md (char *uplo, char *over, int *n1, int *m1, int *p1, int *n2, int *p2, double *a1, int *lda1, double *b1, int *ldb1, double *c1, int *ldc1, double *d1, int *ldd1, double *a2, int *lda2, double *b2, int *ldb2, double *c2, int *ldc2, double *d2, int *ldd2, int *n, double *a, int *lda, double *b, int *ldb, double *c__, int *ldc, double *d__, int *ldd, double *dwork, int *ldwork, int *info, long int uplo_len, long int over_len);

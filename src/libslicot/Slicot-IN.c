@@ -138,24 +138,24 @@ int int_hinf(Stack stack, int rhs, int opt, int lhs)
 
   if ( lB->m != lA->m )
     {
-      Scierror("%s: The two first arguments mus have the same number of rows\n",NspFname(stack));
+      Scierror("%s: The two first arguments must have the same number of rows\n",NspFname(stack));
       return RET_BUG;
     }
   if((lC=GetMatCopy(stack,3))==NULL) return RET_BUG;
   if(  lC->n != lA->n )
     {
-      Scierror("%s: The first and third arguments mus have the same number of columns\n",NspFname(stack));
+      Scierror("%s: The first and third arguments must have the same number of columns\n",NspFname(stack));
       return RET_BUG;
     }
   if((lD=GetMatCopy(stack,4))==NULL) return RET_BUG;
   if(  lD->n != lB->n )
     {
-      Scierror("%s: The second and fourth arguments mus have the same number of columns\n",NspFname(stack));
+      Scierror("%s: The second and fourth arguments must have the same number of columns\n",NspFname(stack));
       return RET_BUG;
     }
   if(  lC->m != lD->m )
     {
-      Scierror("%s: The third and fourth arguments mus have the same number of rows\n",NspFname(stack));
+      Scierror("%s: The third and fourth arguments must have the same number of rows\n",NspFname(stack));
       return RET_BUG;
     }
   N = lA->m; M = lB->n; R = lC->m;
@@ -269,25 +269,25 @@ int int_dhinf(Stack stack, int rhs, int opt, int lhs)
 
   if ( lB->m != lA->m )
     {
-      Scierror("%s: The two first arguments mus have the same number of rows\n",NspFname(stack));
+      Scierror("%s: The two first arguments must have the same number of rows\n",NspFname(stack));
       return RET_BUG;
     }
   if((lC=GetMatCopy(stack,3))==NULL) return RET_BUG;
   if(  lC->n != lA->n )
     {
-      Scierror("%s: The first and third arguments mus have the same number of columns\n",NspFname(stack));
+      Scierror("%s: The first and third arguments must have the same number of columns\n",NspFname(stack));
       return RET_BUG;
     }
 
   if((lD=GetMatCopy(stack,4))==NULL) return RET_BUG;
   if(  lD->n != lB->n )
     {
-      Scierror("%s: The second and fourth arguments mus have the same number of columns\n",NspFname(stack));
+      Scierror("%s: The second and fourth arguments must have the same number of columns\n",NspFname(stack));
       return RET_BUG;
     }
   if(  lC->m != lD->m )
     {
-      Scierror("%s: The third and fourth arguments mus have the same number of rows\n",NspFname(stack));
+      Scierror("%s: The third and fourth arguments must have the same number of rows\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -362,3 +362,124 @@ int int_dhinf(Stack stack, int rhs, int opt, int lhs)
   if(lhs >= 5) MoveObj(stack,5,NSP_OBJECT(lRCOND));
   return Max(lhs,1);
 }
+
+/* contr */
+
+int int_contr(Stack stack, int rhs, int opt, int lhs)
+{ 
+  int LDA,LDV;
+  int INFO, INDCON, Nb_cont;
+  char  *JOBU, *JOBV;
+  double tol;
+  int M,N,work_size;
+  NspMatrix *A=NULL,*B=NULL,*Work=NULL,*IWork=NULL,*Kstair=NULL,*U=NULL,*V=NULL,*Ncont=NULL,
+    *Ac=NULL,*Bc=NULL;
+  
+  /*     [NCONT,U,KSTAIR,V,A,B]=ab01od(A,B,[TOL])   */
+
+  CheckRhs(1,3);
+  CheckLhs(1,6);
+
+  tol = nsp_dlamch("eps");
+  if((A=GetMat(stack,1))==NULL) return RET_BUG;
+  CheckSquare(NspFname(stack),1,A);
+  if((B=GetMat(stack,2))==NULL) return RET_BUG;
+  if ( B->m != A->n )
+    {
+      Scierror("%s: The second argument should be of size %dxn\n",A->m);
+      return RET_BUG;
+    }
+  N=A->m;
+  tol=0.2*sqrt(2*tol)*N;
+  M=B->n;
+  if ( rhs == 3)
+    {
+      if (GetScalarDouble (stack, 3, &tol) == FAIL)  return RET_BUG;
+      if (tol>1.0||tol<0.0)
+	{
+	  Scierror("Error: tol must be in [0 1]\r\n");
+	  return RET_BUG;
+	}
+    }
+  /*     dimensions...    */
+  LDA=Max(1,A->m);
+  LDV=Max(1,B->n);
+  work_size = Max(1, N*M + Max(N,M) + Max(N,3*M));
+  if (( Ac = (NspMatrix *) nsp_object_copy(NSP_OBJECT(A)))== NULL)  return RET_BUG;
+  if (( Bc = (NspMatrix *) nsp_object_copy(NSP_OBJECT(B)))== NULL)  return RET_BUG;
+  
+  JOBU= (lhs >= 2) ? "I": "N";
+  JOBV= (lhs >= 4) ? "I": "N"; 
+  /*     creating NCONT,U,KSTAIR,V,IWORK,DWORK   */
+  if ((Ncont= nsp_matrix_create(NVOID,'r', 1, 1))==NULL) goto err; 
+  if ((U=nsp_matrix_create(NVOID,'r', N, N))==NULL) goto err; 
+  if ((Kstair = nsp_matrix_create(NVOID,'r', 1, N ))==NULL) goto err;
+  if ((V=nsp_matrix_create(NVOID,'r', M, M ))==NULL) goto err;
+  if ((IWork= nsp_matrix_create(NVOID,'r', 1, M ))==NULL) goto err;
+  if ((Work = nsp_matrix_create(NVOID,'r', 1, work_size)) ==NULL) goto err;
+      
+  nsp_slicot_ab01od( "A", JOBU, JOBV, &N, &M, Ac->R, &LDA,
+		     Bc->R, &LDA, U->R, &LDA, V->R, &LDV, 
+		     &Nb_cont, &INDCON, Kstair->I, &tol,  
+		     IWork->I,Work->R, &work_size, &INFO,1L, 1L,1L );
+  if (INFO != 0)
+    {
+      Scierror("Error: internal error in %s\n","ab01od");
+      return RET_BUG;
+    }
+  
+  Ncont->R[0]= Nb_cont;
+  if (lhs >= 3)
+    {
+      Kstair->convert = 'i'; Kstair=Mat2double(Kstair);
+      nsp_matrix_resize(Kstair,1,INDCON);
+    }
+
+  MoveObj(stack,1,NSP_OBJECT(Ncont));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(U));
+    }
+  else
+    {
+      nsp_matrix_destroy(U);
+    }
+  if ( lhs >= 3 )
+    {
+      MoveObj(stack,3,NSP_OBJECT(Kstair));
+    }
+  else
+    {
+      nsp_matrix_destroy(Kstair);
+    }
+  if ( lhs >= 4 )
+    {
+      MoveObj(stack,4,NSP_OBJECT(V));
+    }
+  else
+    {
+      nsp_matrix_destroy(V);
+    }
+  if ( lhs >= 5 )
+    {
+      MoveObj(stack,5,NSP_OBJECT(Ac));
+    }
+  else
+    {
+      nsp_matrix_destroy(Ac);
+    }
+  if ( lhs >= 6 )
+      {
+      MoveObj(stack,6,NSP_OBJECT(Bc));
+    }
+  else
+    {
+      nsp_matrix_destroy(Bc);
+    }
+
+  return Max(1,lhs);
+ err:
+  return RET_BUG;
+}
+
+

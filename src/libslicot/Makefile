@@ -51,9 +51,14 @@ OBJSC = Slicot-IN.o \
 	sb03qx.o \
 	sb03qy.o \
 	sb03mw.o \
+	ab01od.o \
+	ab01nd.o \
+	mb01pd.o \
+	mb03oy.o \
+	mb01qd.o \
 
 OBJSC_ALL = \
-    ab01md.o ab01nd.o ab01od.o ab04md.o ab05md.o ab05nd.o ab05od.o \
+    ab01md.o ab01nd.o  ab04md.o ab05md.o ab05nd.o ab05od.o \
     ab05pd.o ab05qd.o ab05rd.o ab05sd.o ab07md.o ab07nd.o ab08md.o \
     ab08mz.o ab08nd.o ab08nx.o ab08nz.o ab09ad.o ab09ax.o ab09bd.o \
     ab09bx.o ab09cd.o ab09cx.o ab09dd.o ab09ed.o ab09fd.o ab09gd.o \
