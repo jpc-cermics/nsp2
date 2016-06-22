@@ -128,23 +128,19 @@ function r=dsl_r_r(r1,r2)
 endfunction
 
 function r1=dsl_r_m(r,m)
-  [n1,d1]=simp(r.num,r.den .* m);
-  r1=p2r(n1,d1);
+  r1=p2r(r.num,r.den .* m,simp=%t);
 endfunction
 
 function r1=dsl_m_r(m,r)
-  [n1,d1]=simp( r.den .* m,r.num);
-  r1=p2r(n1,d1);
+  r1=p2r( r.den .* m, r.num ,simp=%t);
 endfunction
 
 function r1=dsl_r_p(r,p)
-  [n1,d1]=simp(r.num,r.den .* p);
-  r1=p2r(n1,d1);
+  r1=p2r(r.num,r.den .* p,simp=%t);
 endfunction
 
 function r1=dsl_p_r(p,r)
-  [n1,d1]=simp( p .* r.den,r.num);
-  r1=p2r(n1,d1);
+  r1=p2r( p .* r.den,r.num,simp=%t);
 endfunction
 
 function r1=dsl_p_p(p1,p2)
@@ -197,7 +193,7 @@ endfunction
 
 function r=minus_r_r(r1,r2)
   if size(r1,'*')==1 || size(r2,'*')==1 || size(r1).equal[size(r2)] then 
-    [n1,d1]=simp( r1.den.*r2.num - r2.den.*r1.num, r1.den.* r2.den);
+    [n1,d1]=simp( r1.num.*r2.den - r2.num.*r1.den, r1.den.* r2.den);
     r=p2r(n1,d1);
   else
     error("Error: arguments should have compatible sizes\n");
@@ -276,19 +272,23 @@ endfunction
 // concat 
 
 function y=concatr_r_p(r,p)
-  y=[r,p2r(p,var=r.get_var[])];
+  var = r.get_var[];
+  y=[r,p2r(p,var=var)];
 endfunction
   
 function y=concatr_p_r(p,r)
-  y=[p2r(p,var=r.get_var[]),r];
+  var = r.get_var[];
+  y=[p2r(p,var=var),r];
 endfunction
 
 function y=concatd_r_p(r,p)
-  y=[r;p2r(p,var=r.get_var[])];
+  var = r.get_var[];
+  y=[r;p2r(p,var=var)];
 endfunction
   
 function y=concatd_p_r(p,r)
-  y=[p2r(p,var=r.get_var[]);r];
+  var = r.get_var[];
+  y=[p2r(p,var=var);r];
 endfunction
 
 // det 
@@ -329,13 +329,44 @@ function r=clean_r(r,varargin)
 endfunction
 
 // div / 
-// a faire ailleurs 
+
+
+function r= div_r_r(r1,r2)
+  if size(r2,'*')== 1 then 
+    r = r1 ./ r2;
+  elseif size(r2,'r')==size(r2,'c') then 
+    r = inv(r2)*r1;
+  else
+    error("Unimplemented");
+  end
+endfunction
 
 function r= div_m_p(m,p)
   if size(p,'*')== 1 then 
     r = m ./ p;
   elseif size(p,'r')==size(p,'c') then 
     r = inv(p)*m;
+  else
+    error("Unimplemented");
+  end
+endfunction
+
+
+function r= div_m_r(m,r)
+  if size(r,'*')== 1 then 
+    r = m ./ r;
+  elseif size(r,'r')==size(r,'c') then 
+    r = inv(r)*m;
+  else
+    error("Unimplemented");
+  end
+endfunction
+
+function r= div_r_m(r,m)
+  if size(m,'*')== 1 then 
+    r = r ./ m;
+  elseif size(m,'r')==size(m,'c') then 
+    r = inv(m)*r;
   else
     error("Unimplemented");
   end
@@ -352,3 +383,15 @@ function r= dsl_m_p(m,p)
     error("Unimplemented");
   end
 endfunction
+
+function res= div_p_r(p,r)
+  if size(r,'*')== 1 then 
+    res = p ./ r;
+  elseif size(r,'r')==size(r,'c') then 
+    res = inv(r)*p;
+  else
+    error("Unimplemented");
+  end
+endfunction
+
+

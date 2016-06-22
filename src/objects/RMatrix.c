@@ -257,6 +257,7 @@ nsp_rational nsp_basics_to_rational(const doubleC *n,const doubleC *d, char type
 
 void nsp_rational_destroy(nsp_rational *P)
 {
+  if ( *P == NULL ) return ; 
   nsp_matrix_destroy((*P)->num);
   nsp_matrix_destroy((*P)->den);
   free(*P);

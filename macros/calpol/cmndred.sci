@@ -24,7 +24,9 @@ function [n,d]=cmndred(num,den)
 //!
 // 
   [m1,n1]=size(num)
-  d=1;for dk=matrix(den,1,m1*n1),d=lcm([d,dk]),end
+  d=1;
+  n = m2p([], var=num.get_var[]);
+  for i=1:size(den,'*');d=lcm([d,den(i)]),end
   for l=1:m1
     for k=1:n1
       n(l,k)=num(l,k)*pdiv(d,den(l,k));
