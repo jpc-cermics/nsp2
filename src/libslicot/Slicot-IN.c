@@ -6,13 +6,10 @@
 #include <nsp/interf.h>
 
 #include "slicot.h"
-
 /* WIP : */
-  
+
 /* interface for mucomp 
- *     [bound,D,G] = mucomp(Z,K,T)
- *    [bound,D] = mucomp(Z,K,T)
- *    bound = mucomp(Z,K,T)
+ * [bound,D,G] = mucomp(Z,K,T)
  * slicot routines 
  * XXXX: Z is a 'z' matrix ? 
  */

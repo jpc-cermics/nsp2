@@ -1565,6 +1565,7 @@ extern int int_rpem (Stack stack, int rhs, int opt, int lhs);
 extern int int_simp (Stack stack, int rhs, int opt, int lhs);
 extern int int_conv2 (Stack stack, int rhs, int opt, int lhs);
 extern int int_sfact (Stack stack, int rhs, int opt, int lhs);
+extern int int_contr(Stack stack, int rhs, int opt, int lhs);
 
 /*
  * The Interface for basic matrices operation 
@@ -1594,6 +1595,7 @@ static OpTab Control_func[] = {
   {"conv2", int_conv2},
   {"sfact", int_sfact},
   {"bezout", int_bezout},
+  {"contr", int_contr},
   /*
   {"rpem", int_rpem},
   */

@@ -1,7 +1,0 @@
-;; -*- scheme -*-
-
-(include "rational-types.defs")
-
-
-
-

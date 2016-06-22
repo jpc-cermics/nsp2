@@ -1988,6 +1988,8 @@ int int_pmatrix_tril (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern int_linearsys_create(Stack stack, int rhs, int opt, int lhs);
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -2092,6 +2094,7 @@ static OpTab PMatrix_func[]={
   */
   {"tril_p", int_pmatrix_tril},
   {"triu_p", int_pmatrix_triu},
+  {"linear_system",int_linearsys_create},
   {(char *) 0, NULL}
 };
 

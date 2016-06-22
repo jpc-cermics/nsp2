@@ -12,7 +12,7 @@ ALL=  classa.defs classb.defs classaref.defs classbref.defs \
 	gmatrix1.defs fec.defs contour3d.defs block.defs link.defs \
 	connector.defs diagram.defs grimage.defs epoints.defs sharedlib.defs \
 	hm.defs ast.defs astv.defs bvar.defs gpixbuf.defs \
-	stochdec.defs bson.defs classc.defs gridblock.defs rational.defs
+	stochdec.defs bson.defs classc.defs gridblock.defs linearsys.defs
 
 PROG=../../../bin/nspbind
 
@@ -53,7 +53,7 @@ clean:
 
 # dependencies
 
-../rational.c : rational-types.defs rational.defs rational.override
+../linearsys.c : linearsys-types.defs linearsys.defs linearsys.override
 ../classa.c : classa-types.defs classa.defs classa.override
 ../classb.c : classb-types.defs classb.defs  classb.override
 ../classc.c : classc.defs  classc.override

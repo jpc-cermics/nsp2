@@ -1,0 +1,30 @@
+;; -*- scheme -*-
+
+(define-object LinearSys
+  (in-module "LinearSys")
+  (parent "Object")
+  (c-name "NspLinearSys")
+  ;;(implements "Matint")
+  (fields
+   ;; "hidden" can be used if the field is to be excluded 
+   ;; from the get/set table 
+   ;; '("int" "cla_color" "hidden")
+   '("NspMatrix*" "A")
+   '("NspMatrix*" "B")
+   '("NspMatrix*" "C")
+   '("NspMatrix*" "D")
+   '("NspMatrix*" "X0")
+   '("char*" "dom" "u")
+   '("double" "dt" "-1")
+   )
+  (gtype-id "LinearSys")
+)
+
+
+
+
+
+
+
+
+

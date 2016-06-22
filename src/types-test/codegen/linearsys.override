@@ -1,0 +1,128 @@
+/* -*- Mode: C -*- */
+%%
+include-start LinearSys
+
+%%
+include-public LinearSys
+
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+
+%%
+include-private LinearSys
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final LinearSys
+  /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+%%
+override-destroy-prelim  LinearSys
+  /* verbatim in destroy */
+
+%%
+override-attr LinearSys.A
+
+static NspObject *_wrap_linearsys_get_A(void *self,const char *attr)
+{
+  /* O */
+  NspMatrix *ret;
+  ret = ((NspLinearSys *) self)->A;
+  return (NspObject *) ret;
+}
+
+static int _wrap_linearsys_set_A(void *self, char *attr, NspObject *O)
+{
+  NspMatrix *A = (NspMatrix *) O;
+  NspMatrix *As = ((NspLinearSys *) self)->A;
+  if ( ! IsMat(O) ) return FAIL;
+  if ( As->m != A->m || As->n != A->n)
+    {
+      Scierror("Error: attribute A should be a %dx%d matrix\n",As->m,As->n);
+      return FAIL;
+    }
+  if (( A = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULL) return FAIL;
+  if ( As != NULL ) nsp_matrix_destroy(As);
+  ((NspLinearSys *) self)->A= A;
+  return OK;
+}
+
+%%
+override-intcreate LinearSys
+
+int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspLinearSys *Lss;
+  char *dom = "c", *dom1;
+  double sample = 1;
+  NspMatrix *A, *B, *C, *D, *X0;
+  int_types T[] = {mat,mat,mat,mat,mat,new_opts, t_end} ;
+  nsp_option opts[] ={{ "dom", string,NULLOBJ,-1},
+		      { "sample",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&A,&B,&C,&D,&X0,&opts,&dom,&sample) == FAIL)
+    return RET_BUG;
+  if ( A->m != A->n )
+    {
+      Scierror("Error: A should be square");
+      return RET_BUG;
+    }
+  if ( B->m != A->m)
+    {
+      Scierror("Error: B number of rows, %d, is incompatible with A size %dx%d",B->m,A->m,A->m);
+      return RET_BUG;
+      
+    }
+  if ( C->n != A->m)
+    {
+      Scierror("Error: C number of columns, %d, is incompatible with A size %dx%d",C->n,A->m,A->m);
+      return RET_BUG;
+    }
+  if ( D->m != C->m || D->n != B->n)
+    {
+      Scierror("Error: D should be %dx%d", C->m,B->n);
+      return RET_BUG;
+    }
+  if ( X0->m != A->m || X0->n != 1)
+    {
+      Scierror("Error: X0 should be %dx%d",A->m,1);
+      return RET_BUG;
+    }
+  if (! ( strcmp(dom,"c") == 0 ||  strcmp(dom,"d") == 0 ||  strcmp(dom,"u") == 0 ))
+    {
+      Scierror("Error: dom should be \"c\", \"d\", \"s\" or \"u\"");
+      return RET_BUG;
+    }
+  if (( dom1 = nsp_string_copy(dom)) == NULL) return RET_BUG;
+  if (( A = (NspMatrix *) nsp_object_copy_and_name("A",NSP_OBJECT(A))) == NULL) return RET_BUG;
+  if (( B = (NspMatrix *)nsp_object_copy_and_name("B",NSP_OBJECT(B))) == NULL) return RET_BUG;
+  if (( C = (NspMatrix *)nsp_object_copy_and_name("C",NSP_OBJECT(C))) == NULL) return RET_BUG;
+  if (( D = (NspMatrix *)nsp_object_copy_and_name("D",NSP_OBJECT(D)) )== NULL) return RET_BUG;
+  if (( X0 = (NspMatrix *)nsp_object_copy_and_name("X0",NSP_OBJECT(X0))) == NULL) return RET_BUG;
+  Lss= nsp_linearsys_create(NVOID,A,B,C,D,X0,dom1,sample,NULL);
+  if ( Lss == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Lss));
+  return Max(lhs,1);
+}
+
