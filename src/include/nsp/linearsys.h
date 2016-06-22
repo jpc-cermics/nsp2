@@ -49,7 +49,7 @@ struct _NspLinearSys {
     NspMatrix* A;
   NspMatrix* B;
   NspMatrix* C;
-  NspMatrix* D;
+  NspPMatrix* D;
   NspMatrix* X0;
   char* dom;
   double dt;
@@ -73,7 +73,7 @@ NspLinearSys *new_linearsys();
 
 #define NULLLINEARSYS (NspLinearSys*) 0
 
-extern NspLinearSys *nsp_linearsys_create(const char *name,NspMatrix* A,NspMatrix* B,NspMatrix* C,NspMatrix* D,NspMatrix* X0,char* dom,double dt,NspTypeBase *type);
+extern NspLinearSys *nsp_linearsys_create(const char *name,NspMatrix* A,NspMatrix* B,NspMatrix* C,NspPMatrix* D,NspMatrix* X0,char* dom,double dt,NspTypeBase *type);
 extern NspLinearSys *nsp_linearsys_create_default(const char *name);
 
 /* from NspLinearSysObj.c */
@@ -101,10 +101,9 @@ extern int nsp_linearsys_xdr_save(XDR  *xdrs, NspLinearSys *M);
 #line 7 "codegen/linearsys.override"
 
 /* inserted at the end of public part of include file
- * of classa.h
  */
 
-#line 108 "./linearsys.h"
+#line 107 "./linearsys.h"
 #endif /* NSP_INC_NspLinearSys */ 
 
 #ifdef NspLinearSys_Private 
@@ -119,12 +118,11 @@ static AttrTab linearsys_attrs[];
 static NspMethods *linearsys_get_methods(void);
 /* static int int_linearsys_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspLinearSys *nsp_linearsys_create_void(const char *name,NspTypeBase *type);
-#line 14 "codegen/linearsys.override"
+#line 13 "codegen/linearsys.override"
 
 /* inserted in the private part of include file
- * of classa.h
  */
 
-#line 129 "./linearsys.h"
+#line 127 "./linearsys.h"
 #endif /* NspLinearSys_Private */
 

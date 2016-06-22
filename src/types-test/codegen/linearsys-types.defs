@@ -12,7 +12,7 @@
    '("NspMatrix*" "A")
    '("NspMatrix*" "B")
    '("NspMatrix*" "C")
-   '("NspMatrix*" "D")
+   '("NspPMatrix*" "D")
    '("NspMatrix*" "X0")
    '("char*" "dom" "u")
    '("double" "dt" "-1")
