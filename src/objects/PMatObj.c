@@ -1988,7 +1988,7 @@ int int_pmatrix_tril (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-extern int_linearsys_create(Stack stack, int rhs, int opt, int lhs);
+extern int int_linearsys_create(Stack stack, int rhs, int opt, int lhs);
 
 /*
  * The Interface for basic matrices operation 
@@ -2023,10 +2023,10 @@ static OpTab PMatrix_func[]={
   {"deleteelts_p", int_matint_deleteelts},
   {"deleterows_p", int_matint_deleterows},
   {"dh_p_m",  int_pmatrix_dh_p_m},
-  {"div_m_p",int_pmatrix_div_tt_m_p},
+  // {"div_m_p",int_pmatrix_div_tt_m_p}, macros in rmatrix 
   {"div_p_m",int_pmatrix_div_tt_p_m},
   {"dprim_p", int_pmatrix_dprim_p},
-  {"dsl_m_p",int_pmatrix_div_tt_m_p},
+  // {"dsl_m_p",int_pmatrix_div_tt_m_p}, macros in rmatrix 
   {"dsl_p_m",int_pmatrix_dsl_tt_p_m},
   {"dst_m_p",int_pmatrix_mult_tt_m_p},
   {"dst_p_m",int_pmatrix_mult_tt_p_m},

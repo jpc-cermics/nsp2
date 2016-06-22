@@ -167,7 +167,6 @@ extern NspPMatrix *nsp_pmatrix_prod(NspPMatrix *A, int dim);
 extern int nsp_pmatrix_triu(NspPMatrix *A, int k);
 extern int nsp_pmatrix_tril(NspPMatrix *A, int k);
 
-
 #endif 
 
 #ifdef PMatrix_Private 

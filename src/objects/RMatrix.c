@@ -3462,9 +3462,9 @@ static void Mp_set_format(nsp_num_formats *fmt,NspRMatrix *M)
  * Printing Nsp Polynomial Matrices 
  */
 
-static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
+extern  int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
 #ifndef POLY_EXP 
-static void pr_poly_exp  (NspMatrix *m, int fw, int length);
+extern void pr_poly_exp  (NspMatrix *m, int fw, int length);
 #endif 
 static int pr_bar (int length, int do_print);
 
@@ -3631,150 +3631,6 @@ static int nsp_rmatrix_print_internal (nsp_num_formats *fmt,NspRMatrix *M, int i
   FREE(Iloc);
   return TRUE ;
 }
-
-
-static int nsp_print_exponent_utf8(int i, int do_print)
-{
-  int j;
-  char str[8];
-  static unsigned char codes[][4]={{226,   129,   176,0},
-				   {194,   185,   0,  0},
-				   {194,   178,   0,  0},
-				   {194,   179,   0,  0},
-				   {226,   129,   180,0},
-				   {226,   129,   181,0},
-				   {226,   129,   182,0},
-				   {226,   129,   183,0},
-				   {226,   129,   184,0},
-				   {226,   129,   185,0}
-  };
-  sprintf(str,"%d",i);
-  if ( str[0] == '0') return 0;
-  if ( strcmp(str,"1")==0 ) return 0;
-  if ( do_print )
-    for ( j = 0 ; j < strlen(str); j++)
-      Sciprintf("%s",codes[Min(Max(str[j]- '0',0),9)]);
-  return strlen(str);
-}
-
-/**
- * pr_poly:
- * @fmt: 
- * @m: 
- * @fw: 
- * @length: length to be used. if positive it gives 
- *     the length that pr_poly should fill, completion by 
- *     white spaces is required.
- * 
- * print a rational. 
- **/
-
-static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
-{
-  int colors[]={ 34,32,31,35,36};
-  int i ,count = 0, leading = TRUE;
-  for ( i=0 ; i < m->mn ; i++) 
-    {
-      if ( m->rc_type == 'r') 
-	{
-	  if (  m->R[i] != 0.00 || m->mn == 1  )
-	    {
-	      if ( leading == FALSE && m->R[i] >= 0.00 ) 
-		{
-		  if (do_print) Sciprintf("+");
-		  count++;
-		}
-	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->R[i], fw,do_print);
-	      leading = FALSE;
-	       if (do_print) Sciprintf("\033[%dm",colors[0]);
-	      if ( i > 0 ) 
-		{
-		  const char *name= ( vname == NULL) ? "x": vname;
-		  if (do_print) 
-		    {
-		      Sciprintf("%s",name);
-		    }
-		  count += strlen(name);
-		}
-#ifdef POLY_EXP 
-	      count += nsp_print_exponent_utf8(i,do_print);
-#else 
-	      count += pr_poly_exp_size(i);
-	      if (do_print) nsp_pr_white(count);
-#endif 
-	       if (do_print) Sciprintf("\033[0m");
-	    }
-	}
-      else
-	{
-	  if ( ( m->C[i].r != 0.00 || m->C[i].i != 0.00)  || m->mn == 1  )
-	    {
-	      if ( leading == FALSE ) 
-		{
-		  if (do_print) Sciprintf("+");
-		  count++;
-		}
-	      if (do_print)Sciprintf("(");count++;
-	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->C[i].r, fw,do_print);
-	      if (do_print)Sciprintf("+");count++;
-	      count +=nsp_pr_any_float_vs(fmt->curr_imag_fmt, m->C[i].i, fw,do_print);
-	      if (do_print)Sciprintf("i)");count+=2;
-	      leading = FALSE;
-	       if (do_print) Sciprintf("\033[%dm",colors[0]);
-	      if ( i > 0 ) 
-		{
-		  const char *name= ( vname == NULL) ? "x": vname;
-		  if (do_print) 
-		    {
-		      Sciprintf("%s",name);
-		    }
-		  count += strlen(name);
-		}
-#ifdef POLY_EXP 
-	      count += nsp_print_exponent_utf8(i,do_print);
-#else 
-	      count += pr_poly_exp_size(i);
-	      if (do_print) nsp_pr_white(count);
-#endif 
-	       if (do_print) Sciprintf("\033[0m");
-	    }
-	}
-    }
-  if ( length > 0 ) 
-    {
-      if (do_print)  nsp_pr_white(length-count);
-    }
-  return count;
-}
-
-/**
- * pr_poly_exp:
- * @m: 
- * @fw: 
- * @length: 
- * 
- * prints the exponent part of the rational.
- **/
-#ifndef POLY_EXP
-static void pr_poly_exp (NspMatrix *m, int fw, int length)
-{
-  int i ,count = 0;
-  for ( i=0 ; i < m->mn ; i++) 
-    {
-      if ( m->rc_type == 'r') 
-	{
-	  if (  m->R[i] != 0.00 || m->mn == 1 )
-	    {
-	      count += fw+2 + pr_poly_exp_size(i);
-	      nsp_pr_white(fw+2);
-	      if ( i > 0 ) Sciprintf("%d",i);
-	    }
-	}
-    }
-  nsp_pr_white(length-count);
-}
-
-#endif 
 
 /**
  * pr_bar:

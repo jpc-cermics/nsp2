@@ -2263,7 +2263,7 @@ NspPMatrix *nsp_pmatrix_div_tt_p_m(NspPMatrix *A, NspMatrix *B,int flag )
 
 NspPMatrix *nsp_pmatrix_div_tt_m_p(NspMatrix *A, NspPMatrix *B)
 {
-  Scierror("Error: unimplemented \n");
+  Scierror("Error: unimplemented\n");
   return NULL;
 }
 
@@ -3534,9 +3534,9 @@ static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
  * Printing Nsp Polynomial Matrices 
  */
 
-static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
+int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print);
 #ifndef POLY_EXP 
-static void pr_poly_exp  (NspMatrix *m, int fw, int length);
+void pr_poly_exp  (NspMatrix *m, int fw, int length);
 #endif 
 
 
@@ -3692,7 +3692,7 @@ static int nsp_print_exponent_utf8(int i, int do_print)
 
 static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_print, int flag);
 
-static int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
+int pr_poly (nsp_num_formats *fmt,const char *vname,NspMatrix *m, int fw, int length, int do_print)
 {
   int colors[]={ 34,32,31,35,36};
   int i ,count = 0, leading = TRUE;
@@ -3814,7 +3814,7 @@ static int nsp_pr_any_float_vs_p (const char *fmt, double d, int fw, int do_prin
  * prints the exponent part of the polynom.
  **/
 #ifndef POLY_EXP
-static void pr_poly_exp (NspMatrix *m, int fw, int length)
+void pr_poly_exp (NspMatrix *m, int fw, int length)
 {
   int i ,count = 0;
   for ( i=0 ; i < m->mn ; i++) 

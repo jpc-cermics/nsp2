@@ -327,3 +327,28 @@ endfunction
 function r=clean_r(r,varargin)
   r=p2r(clean(r.num,varargin(:)),clean(r.den,varargin(:)));
 endfunction
+
+// div / 
+// a faire ailleurs 
+
+function r= div_m_p(m,p)
+  if size(p,'*')== 1 then 
+    r = m ./ p;
+  elseif size(p,'r')==size(p,'c') then 
+    r = inv(p)*m;
+  else
+    error("Unimplemented");
+  end
+endfunction
+
+function r= dsl_m_p(m,p)
+  if and(size(m)==size(p)) then 
+    r = p2r(m2p(m,var=p.get_var[],dim="."),p);
+  elseif size(m,'*') == 1 
+    r = p2r(m2p(m*ones(size(p)),var=p.get_var[], dim="."),p)
+  elseif size(p,'*')== 1 then 
+    r = p2r(m2p(m,var=p.get_var[], dim="."),p*ones(size(m)));
+  else
+    error("Unimplemented");
+  end
+endfunction
