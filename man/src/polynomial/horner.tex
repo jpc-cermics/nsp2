@@ -27,24 +27,22 @@
   performed with a library nsp function. 
   
   \begin{itemize} 
-    \item When \verb!ttmode! is true then the performed operation is a term to term 
-      horner which implies that both matrices must have same dimensions (with 
-      the usual convention that \verb!1x1! matrices are promoted 
-      to any dimensions). The returned result, \verb!R! is a polynomial matrix if 
-      \verb!Q! is a polynomial matrix or a numerical matrix if \verb!Q! is numeric 
-      which is given by \verb!R(i,j) = horner(P(i,j),Q(i,j)\verb!
-    \item When 
-
+  \item When \verb!ttmode! is true then the performed operation is a term to term 
+    horner which implies that both matrices must have same dimensions (with 
+    the usual convention that \verb!1x1! matrices are promoted 
+    to any dimensions). The returned result, \verb!R! is a polynomial matrix if 
+    \verb!Q! is a polynomial matrix or a numerical matrix if \verb!Q! is numeric 
+    which is given by \verb!R(i,j) = horner(P(i,j),Q(i,j)\verb!
   \item When \verb!ttmode! is false the returned value, \verb!R! is a cell matrix 
-  \begin{itemize}
+    \begin{itemize}
     \item if \verb!vdim! is false the cell matrix has same dimension 
       as \verb!P! and the cell element \verb!(i,j)! is the polynomial or 
       numerical matrix \verb!P(i,j)(Q)!. 
     \item if \verb!vdim! is true the cell matrix has same dimension 
       as \verb!Q! and the cell element \verb!(i,j)! is the polynomial
       or numerical matrix \verb!P(Q(i,j))!.
+    \end{itemize}
   \end{itemize}
-  
 \end{mandescription}
 %--example 
 \begin{examples}
