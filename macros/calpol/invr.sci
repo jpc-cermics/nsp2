@@ -60,7 +60,7 @@ function [f,d]=inv_p(h,flag)
 
   if nargin == 1 && ndeg==1 then
     //  try to detect a MATRIX PENCIL
-    printf("Matrix pencil case:\n");
+    // printf("Matrix pencil case:\n");
     E=coeff(h,1);A=-coeff(h,0);
     if norm(E-eye(size(E)),1) < 100*%eps then
       // sI -A 

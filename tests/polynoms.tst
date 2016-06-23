@@ -476,12 +476,31 @@ end
 // w1=sfact([p,p1])
 
 // bezout
-//-------
-// bezout is euclide in nsp 
 
-// inv for polynomials and rationals 
 
-// inv for rationals 
+// inv for polynomials
+
+s=poly(0,'s');h=[s, 1+s; 4+ s^2,s];
+r= inv(h,'L');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+r=inv(h,'C');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+// sE -A 
+
+s=poly(0,'s');h=[s, 1+s; 4+ s,s];
+r= inv(h,'L');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+r=inv(h,'C');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
+
+// rationals 
 
 s=poly(0,'s');h=[s,s ./ s^4;s^2,s^3];
 r=inv(h,'L');
@@ -492,12 +511,9 @@ r=inv(h,'C');
 r1= r*h -m2r(eye(2,2),var='s',dim="."); 
 if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
 
-if %f then 
-// XXXX 
-  r=inv(h,'A');
-  r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
-  if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
-end
+r=inv(h,'A');
+r1= r*h -m2r(eye(2,2),var='s',dim=".") ;
+if ~r1.equal[m2r(zeros(2,2),var='s',dim=".")]  then pause;end 
 
 r=inv(h,'Cof');
 r1= r*h -m2r(eye(2,2),var='s',dim=".") ;

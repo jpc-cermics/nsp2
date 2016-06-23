@@ -919,6 +919,21 @@ static int int_astv_create_1(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* assert */
+
+static int int_assert(Stack stack, int rhs, int opt, int lhs)
+{
+  int value = TRUE;
+  int_types T[] = {s_bool , t_end} ;
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&value) == FAIL)   return RET_BUG;
+  if ( value == FALSE )
+    {
+      Scierror("Error: assertion failed");
+      return RET_BUG;
+    }
+  return 0;
+}
 
 /*
  * The Interface for basic parse operations 
@@ -948,6 +963,7 @@ static OpTab Parse_func[]={
   {"parse_file",int_parse_file}, /* for ast */
   {"ast_create",int_ast_create_1}, /* for ast */
   {"astv_create",int_astv_create_1}, /* for astv */
+  {"assert",int_assert}, /* for astv */
   {(char *) 0, NULL}
 };
 
