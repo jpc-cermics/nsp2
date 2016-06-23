@@ -381,4 +381,50 @@ function res= div_p_r(p,r)
   end
 endfunction
 
+// .\ 
+
+function f=dbs_p_p(p1,p2)
+//f= p1.\p2
+  f= p2r(p2,p1,simp=%t);
+endfunction
+
+function r=dbs_p_r(p,r)
+// r= p.\ r   polynomial./rational
+  r= p2r(r.num, p.* r.den,simp=%t);
+endfunction
+
+function f=dbs_p_m(p1,m)
+// f=p.\m
+  var=p1.get_var[];
+  f= p2r( m2p(m, var=var,dim="."), p1, simp=%t);
+endfunction
+
+function f=dbs_r_p(f1,f2)
+//   r.\p
+  f= p2r( f1.den.*f2,f1.num,simp=%t);
+endfunction
+
+function s=dbs_r_r(s1,s2)
+// s= s1.\s2 
+//!
+// Copyright INRIA
+  //[s1,s2]=sysconv(s1,s2)
+  s = p2r( s1.den.*s2.num,s1.num.*s2.den,simp=%t);
+endfunction
+
+function res=dbs_r_m(r,m)
+//  r.\m
+  if size(m,'*')==0 then res=m2r([],var=r.get_var[]),return,end
+  res= p2r(r.den.*m,r.num,simp=%t);
+endfunction
+
+function [z]=dbs_m_p(x,y)
+// z = x .\ y 
+  z = y ./ x 
+endfunction
+
+function res=dbs_m_r(m,r)
+  if size(m,'*')==0 then res=m2r([],var=r.get_var[]),return,end
+  res= r ./ m;
+endfunction
 
