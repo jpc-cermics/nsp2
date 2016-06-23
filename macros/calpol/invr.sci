@@ -60,6 +60,7 @@ function [f,d]=inv_p(h,flag)
 
   if nargin == 1 && ndeg==1 then
     //  try to detect a MATRIX PENCIL
+    printf("Matrix pencil case:\n");
     E=coeff(h,1);A=-coeff(h,0);
     if norm(E-eye(size(E)),1) < 100*%eps then
       // sI -A 
@@ -92,6 +93,9 @@ function [f,d]=inv_p(h,flag)
     if d.degree[]==0 then d=coeff(d),end
     if nargout <=1 then f=f ./ d;end
     return;
+  else
+    error("Error: when given, flag should be ""C"" or ""L""");
+    return;
   end;
 endfunction 
 
@@ -113,7 +117,6 @@ function [f,d]=inv_r(h,flag)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-
   if nargin==1 then flag='C';end
   [m,n]=size(h);
   if m<>n then error("Error: matrix should be square");return;end
@@ -127,7 +130,7 @@ function [f,d]=inv_r(h,flag)
       f=b+eye(n,n)*d,
     end;
     b=h*f;d=0;for l=1:n,d=d+b(l,l),end;d=d ./ n,
-    if nargout==1 then f=f ./ d;end
+    if nargout <=1 then f=f ./ d;end
     return;
    case 'A'
     // lcm of all denominator entries
@@ -135,19 +138,19 @@ function [f,d]=inv_r(h,flag)
     Num=h*denh;Num=Num.num;
     [N,d]=coffg(Num);
     f=N*denh; 
-    if nargout==1 then f=f/d;end
+    if nargout <=1 then f=f/d;end
     return;
    case 'C'
     // default method by polynomial inverse
     [Nh,Dh]=lcmdiag(h); //h=Nh*inv(Dh); Dh diagonal;
     [N,d]=coffg(Nh);
     f=Dh*N;
-    if nargout==1 then f=f/d;end
+    if nargout <=1 then f=f/d;end
     return;
    case 'Cof'
     // cofactors method
     [f,d]=coffg(h);
-    if nargout==1 then f= f ./ d;end
+    if nargout <=1 then f= f ./ d;end
     return;
   end;
 endfunction

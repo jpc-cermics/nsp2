@@ -2,8 +2,7 @@
 
 function r=plus_r_r(r1,r2)
   if size(r1,'*')==1 || size(r2,'*')==1 || size(r1).equal[size(r2)] then 
-    [n1,d1]=simp( r1.den.*r2.num + r2.den.*r1.num, r1.den.* r2.den);
-    r=p2r(n1,d1);
+    r = p2r(r1.den.*r2.num + r2.den.*r1.num, r1.den.* r2.den,simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -12,9 +11,7 @@ endfunction
 
 function r1=plus_r_m(r,m)
   if size(m,'*')==1 || size(r).equal[size(m)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp(n+m.*d,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1 = p2r(r.num + m.*r.den, r.den,simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -27,9 +24,7 @@ endfunction
 
 function r1=plus_r_p(r,p)
   if size(p,'*')==1 || size(r).equal[size(p)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp(n+p*d,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1 = p2r(r.num + p.*r.den, r.den,simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -203,9 +198,7 @@ endfunction
 
 function r1=minus_r_m(r,m)
   if size(m,'*')==1 || size(r).equal[size(m)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp(n - m.*d,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1=p2r( r.num - m.*r.den,r.den, simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -218,9 +211,7 @@ endfunction
 
 function r1=minus_m_r(m,r)
   if size(m,'*')==1 || size(r).equal[size(m)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp( m.*d -n,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1=p2r( m.*r.den -r.num ,r.den, simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -229,9 +220,7 @@ endfunction
 
 function r1=minus_r_p(r,p)
   if size(p,'*')==1 || size(r).equal[size(p)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp(n - p*d,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1=p2r( r.num - p.*r.den,r.den, simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
@@ -240,9 +229,7 @@ endfunction
 
 function r1=minus_p_r(p,r)
   if size(p,'*')==1 || size(r).equal[size(p)] then 
-    n=r.num;d = r.den;
-    [n1,d1]=simp( p*d -n,d);
-    r1=r; r1.set_num[n1]; r1.set_den[d1];
+    r1=p2r( p.*r.den -r.num ,r.den, simp=%t);
   else
     error("Error: arguments should have compatible sizes\n");
     return;
