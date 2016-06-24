@@ -2,6 +2,8 @@
 
 (include "linearsys-types.defs")
 
-
-
+(define-function extractelts_linearsys 
+  (c-name "extractelts_linearsys")
+  (return-type "none")
+)
 
