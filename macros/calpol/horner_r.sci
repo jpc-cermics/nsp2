@@ -70,6 +70,8 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
     c = p.coeffs;
     d = max(p.degree[]);
     y= ce2m(c,indice=d+1,noti=0)
+    // force y to have x type when d==0
+    if d== 0 then y = y+0 *x;end
     for i=d:-1:1
       y = x*y + ce2m(c,indice=i,noti=0)
     end
@@ -101,6 +103,7 @@ function y=horner_p(p,x,vdim=%t,ttmode=%f)
       ce = horner(p(min(i,mnp)),x(min(i,mnq)));
       y(i) = ce{1};
     end
+    y.redim[max(mp,mq),max(np,nq)];
   else
     if vdim then 
       // y has x dimension 

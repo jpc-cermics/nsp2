@@ -359,6 +359,16 @@ function r= div_r_m(r,m)
   end
 endfunction
 
+function r= div_r_p(r,p)
+  if size(p,'*')== 1 then 
+    r = r ./ p;
+  elseif size(p,'r')==size(p,'c') then 
+    r = inv(p)*r;
+  else
+    error("Unimplemented");
+  end
+endfunction
+
 function r= dsl_m_p(m,p)
   if and(size(m)==size(p)) then 
     r = p2r(m2p(m,var=p.get_var[],dim="."),p);
