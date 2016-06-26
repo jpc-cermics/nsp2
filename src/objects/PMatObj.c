@@ -1990,7 +1990,8 @@ int int_pmatrix_tril (Stack stack, int rhs, int opt, int lhs)
 
 extern int int_linearsys_create(Stack stack, int rhs, int opt, int lhs);
 extern int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs);
-
+extern int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs);
+    
 /*
  * The Interface for basic matrices operation 
  */
@@ -2097,6 +2098,7 @@ static OpTab PMatrix_func[]={
   {"triu_p", int_pmatrix_triu},
   {"linear_system",int_linearsys_create},
   {"extractelts_linearsys",_wrap_extractelts_linearsys},
+  { "size_linearsys", _wrap_size_linearsys},
   {(char *) 0, NULL}
 };
 

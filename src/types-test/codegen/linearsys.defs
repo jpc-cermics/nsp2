@@ -7,3 +7,8 @@
   (return-type "none")
 )
 
+(define-function size_linearsys 
+  (c-name "size_linearsys")
+  (return-type "none")
+)
+

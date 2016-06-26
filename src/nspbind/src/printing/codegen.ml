@@ -368,13 +368,16 @@ let type_tmpl_type_as_string str =
  \n\n" str
 ;;
 
-let insert_type_as_string _typename is_gtk_class substdict =
-  let str = if is_gtk_class then
-    "$(typename)"
+let insert_type_as_string typename is_gtk_class substdict =
+  if Overrides.is "override-type-as-string" typename then
+    File.write_override "override-type-as-string" typename
   else
-    "$(typename_dc)"
-  in
-  File.write_substitute_pattern (type_tmpl_type_as_string str) substdict;
+    let str = if is_gtk_class then
+      "$(typename)"
+    else
+      "$(typename_dc)"
+    in
+    File.write_substitute_pattern (type_tmpl_type_as_string str) substdict;
 ;;
 
 (*--------------- equal and not equal---------------- *)

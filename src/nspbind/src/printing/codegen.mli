@@ -41,7 +41,7 @@ val insert_new : 'a -> 'b -> (string, string) Hashtbl.t -> unit
 val type_tmpl_size : string
 val insert_size : string -> (string, string) Hashtbl.t -> unit
 val type_tmpl_type_as_string : string -> string
-val insert_type_as_string : 'a -> bool -> (string, string) Hashtbl.t -> unit
+val insert_type_as_string : string -> bool -> (string, string) Hashtbl.t -> unit
 val type_tmpl_equalities : string -> string
 val insert_equal :
   string -> Stringarg.object_rec -> (string, string) Hashtbl.t -> unit

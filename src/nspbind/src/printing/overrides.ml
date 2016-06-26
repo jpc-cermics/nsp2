@@ -8,7 +8,8 @@ type override_keywords =
   | OVERRIDE_TYPE 
   | OVERRIDE_IMPLEMENTS  
   | OVERRIDE_SAVE_LOAD   
-  | OVERRIDE_SIZE  
+  | OVERRIDE_SIZE
+  | OVERRIDE_TYPE_AS_STRING
   | OVERRIDE_EQUAL   
   | OVERRIDE_CREATE   
   | OVERRIDE_INTCREATE  
@@ -49,6 +50,7 @@ let keyword_table =
   "override-implements" , OVERRIDE_IMPLEMENTS  ;
   "override-save-load" , OVERRIDE_SAVE_LOAD   ;
   "override-size" , OVERRIDE_SIZE  ;
+  "override-type-as-string" , OVERRIDE_TYPE_AS_STRING  ;
   "override-equal" , OVERRIDE_EQUAL   ;
   "override-create" , OVERRIDE_CREATE   ;
   "override-intcreate" , OVERRIDE_INTCREATE  ;

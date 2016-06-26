@@ -165,18 +165,22 @@ NspLinearSys *new_linearsys()
 /*----------------------------------------------
  * Object method redefined for NspLinearSys 
  *-----------------------------------------------*/
-/*
- * size 
- */
+#line 37 "codegen/linearsys.override"
 
 static int nsp_linearsys_size(NspLinearSys *Mat, int flag)
 {
-  return 1;
+  switch (flag )
+    {
+    case 0: return Mat->C->m*Mat->B->n;break;
+    case 1: return Mat->C->m;break;
+    case 2: return Mat->B->n;break;
+    case 3: return Mat->A->m;break;
+    }
+  return 0;
 }
 
-/*
- * type as string 
- */
+#line 183 "linearsys.c"
+#line 52 "codegen/linearsys.override"
 
 static char linearsys_type_name[]="LinearSys";
 static char linearsys_short_type_name[]="linearsys";
@@ -191,6 +195,7 @@ static char *nsp_linearsys_type_short_string(NspObject *v)
   return(linearsys_short_type_name);
 }
 
+#line 199 "linearsys.c"
 /*
  * A == B 
  */
@@ -264,9 +269,9 @@ static NspLinearSys  *nsp_linearsys_xdr_load(XDR *xdrs)
   if ( nsp_linearsys_create_partial(H) == FAIL) return NULLLINEARSYS;
   if ((H  = nsp_linearsys_xdr_load_partial(xdrs,H))== NULLLINEARSYS) return H;
   if ( nsp_linearsys_check_values(H) == FAIL) return NULLLINEARSYS;
-#line 37 "codegen/linearsys.override"
+#line 68 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 270 "linearsys.c"
+#line 275 "linearsys.c"
   return H;
 }
 
@@ -276,10 +281,10 @@ static NspLinearSys  *nsp_linearsys_xdr_load(XDR *xdrs)
 
 void nsp_linearsys_destroy_partial(NspLinearSys *H)
 {
-#line 40 "codegen/linearsys.override"
+#line 71 "codegen/linearsys.override"
   /* verbatim in destroy */
 
-#line 283 "linearsys.c"
+#line 288 "linearsys.c"
   if ( H->A != NULL ) 
     nsp_matrix_destroy(H->A);
   if ( H->B != NULL ) 
@@ -512,9 +517,9 @@ NspLinearSys *nsp_linearsys_create(const char *name,NspMatrix* A,NspMatrix* B,Ns
   H->dom = dom;
   H->dt=dt;
   if ( nsp_linearsys_check_values(H) == FAIL) return NULLLINEARSYS;
-#line 37 "codegen/linearsys.override"
+#line 68 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 518 "linearsys.c"
+#line 523 "linearsys.c"
   return H;
 }
 
@@ -623,9 +628,9 @@ NspLinearSys *nsp_linearsys_full_copy(NspLinearSys *self)
   if ( H ==  NULLLINEARSYS) return NULLLINEARSYS;
   if ( nsp_linearsys_full_copy_partial(H,self)== NULL) return NULLLINEARSYS;
 
-#line 37 "codegen/linearsys.override"
+#line 68 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 629 "linearsys.c"
+#line 634 "linearsys.c"
   return H;
 }
 
@@ -634,7 +639,7 @@ NspLinearSys *nsp_linearsys_full_copy(NspLinearSys *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 71 "codegen/linearsys.override"
+#line 102 "codegen/linearsys.override"
 
 int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
 {
@@ -694,6 +699,9 @@ int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
 	case 's': nsp_pmatrix_set_varname(Dp,"z");break;
 	case 'u': nsp_pmatrix_set_varname(Dp,"s");break;
 	}
+      if ( nsp_object_set_name(NSP_OBJECT(Dp),"D") == FAIL)
+	return RET_BUG;
+
     }
   else if ( IsPMat(D))
     {
@@ -715,7 +723,7 @@ int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 719 "linearsys.c"
+#line 727 "linearsys.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -724,7 +732,7 @@ static NspMethods *linearsys_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-#line 44 "codegen/linearsys.override"
+#line 75 "codegen/linearsys.override"
 
 static NspObject *_wrap_linearsys_get_A(void *self,const char *attr)
 {
@@ -750,7 +758,7 @@ static int _wrap_linearsys_set_A(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 754 "linearsys.c"
+#line 762 "linearsys.c"
 static NspObject *_wrap_linearsys_get_B(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -906,7 +914,7 @@ static AttrTab linearsys_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 153 "codegen/linearsys.override"
+#line 187 "codegen/linearsys.override"
 
 /* compatibility with scicoslab */
 
@@ -915,7 +923,7 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
   NspMatrix *M;
   NspLinearSys *sys;
   int ind;
-  NspObject *obj;
+  NspObject *obj=NULL;
     CheckRhs(2,2);
   if ((sys = GetLinearSys(stack,1)) == NULL) return RET_BUG;
   if (GetScalarInt (stack, 2, &ind) == FAIL) return RET_BUG;
@@ -940,6 +948,9 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
 	  break;
 	}
       return Max(lhs,1);
+    case 8:
+      if ( nsp_move_double(stack,1,sys->dt) == FAIL) return RET_BUG; break;
+      return Max(lhs,1);
     default:
       Scierror("Error: cannot extract element %d\n",ind);
       return RET_BUG;
@@ -949,8 +960,39 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
 }
 
 
+#line 964 "linearsys.c"
 
-#line 954 "linearsys.c"
+
+#line 234 "codegen/linearsys.override"
+
+extern int int_object_size(Stack stack, int rhs, int opt, int lhs);
+
+int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O1,*O2,*O3;
+  CheckRhs(1,2);
+  CheckLhs(1,3);
+  if ( lhs != 3 )
+    {
+      return int_object_size(stack,rhs,opt,lhs);
+    }
+  else
+    {
+      if (( O1 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),1))) == NULLOBJ )
+	return RET_BUG;
+      if (( O2 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),2))) == NULLOBJ )
+	return RET_BUG;
+      if (( O3 =nsp_create_object_from_int(NVOID,nsp_object_get_size(NthObj(1),3))) == NULLOBJ )
+	return RET_BUG;
+      MoveObj(stack,1,O1);
+      MoveObj(stack,2,O2);
+      MoveObj(stack,3,O3);
+    }
+  return Max(lhs,1);
+}
+
+
+#line 996 "linearsys.c"
 
 
 /*----------------------------------------------------
@@ -960,6 +1002,7 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
 
 static OpTab LinearSys_func[]={
   { "extractelts_linearsys", _wrap_extractelts_linearsys},
+  { "size_linearsys", _wrap_size_linearsys},
   { "linearsys_create", int_linearsys_create},
   { NULL, NULL}
 };
@@ -984,4 +1027,4 @@ void nsp_initialize_LinearSys_types(void)
   new_type_linearsys(T_BASE);
 }
 
-#line 988 "linearsys.c"
+#line 1031 "linearsys.c"
