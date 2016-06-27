@@ -87,6 +87,37 @@ OBJSC = Slicot-IN.obj \
 	mb04kd.obj \
 	ma02fd.obj \
 	mb01vd.obj \
+	sb04pd.obj \
+	sb04md.obj \
+	sb04qd.obj \
+	sb04nd.obj \
+	sb04py.obj \
+	sb04rd.obj \
+	sb04my.obj \
+	sb04mu.obj \
+	sb04qy.obj \
+	sb04qu.obj \
+	sb04nw.obj \
+	sb04ny.obj \
+	sb04nv.obj \
+	sb04nx.obj \
+	sb04rw.obj \
+	sb04ry.obj \
+	sb04rx.obj \
+	sb04mw.obj \
+	sb04mr.obj \
+	sb04qr.obj \
+	sb03md.obj \
+	sb03od.obj \
+	sb04rv.obj \
+	mb01rd.obj \
+	sb03ou.obj \
+	sb03ot.obj \
+	sb03oy.obj \
+	sb03or.obj \
+	sb03ov.obj \
+	mb04nd.obj \
+	mb04ny.obj \
 
 OBJSC_ALL = \
     ab01md.obj ab01nd.obj  ab04md.obj ab05md.obj ab05nd.obj ab05od.obj \

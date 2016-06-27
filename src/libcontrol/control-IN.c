@@ -1555,6 +1555,7 @@ extern int int_ppol(Stack stack, int rhs, int opt, int lhs);
 extern int int_residu(Stack stack, int rhs, int opt, int lhs);
 extern int int_rtitr(Stack stack, int rhs, int opt, int lhs);
 extern int int_tzer(Stack stack, int rhs, int opt, int lhs);
+extern int int_linmeq(Stack stack, int rhs, int opt, int lhs);
 
 extern int int_corr(Stack stack, int rhs, int opt, int lhs);
 extern int int_syredi (Stack stack, int rhs, int opt, int lhs);
@@ -1596,6 +1597,7 @@ static OpTab Control_func[] = {
   {"sfact", int_sfact},
   {"bezout", int_bezout},
   {"contr", int_contr},
+  {"linmeq", int_linmeq},
   /*
   {"rpem", int_rpem},
   */

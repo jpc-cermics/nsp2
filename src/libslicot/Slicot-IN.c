@@ -1548,3 +1548,684 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
 
 
 
+
+/*
+C Gateway function for solving Sylvester and Lyapunov matrix
+C            equations using SLICOT routines SB04MD, SB04ND, SB04PD,
+C            SB04QD, SB04RD, SB03MD, and SB03OD.
+C
+C Copyright INRIA 2001
+C Scilab syntax
+C   [X(,sep)] = linmeq(task,A(,B),C,flag,trans(,schur))
+C
+C   task = 1 :      [X] = linmeq(1,A,B,C,flag,trans,schur)
+C   task = 2 :  [X,sep] = linmeq(2,A,C,flag,trans)
+C                   [X] = linmeq(2,A,C,flag,trans)
+C   task = 3 :      [X] = linmeq(3,A,C,flag,trans)
+C         
+C Purpose:
+C   To solve the Sylvester and Lyapunov linear matrix equations
+C
+C   task = 1:
+C
+C         op(A)*X + X*op(B) = C,                          (1a)
+C
+C         op(A)*X*op(B) + X = C,                          (1b)
+C
+C   task = 2:
+C
+C         op(A)'*X + X*op(A) = C,                         (2a)
+C
+C         op(A)'*X*op(A) - X = C,                         (2b)
+C
+C   task = 3:
+C
+C         op(A)'*(op(X)'*op(X)) + (op(X)'*op(X))*op(A) =
+C                               -  op(C)'*op(C),          (3a)
+C
+C         op(A)'*(op(X)'*op(X))*op(A) - op(X)'*op(X) =
+C                                     - op(C)'*op(C),     (3b)
+C
+C   where op(M) = M, if trans = 0, and op(M) = M', if trans = 1.
+C
+C Input parameters: 
+C   task  - integer option to determine the equation type:
+C           = 1 : solve the Sylvester equation (1a) or (1b);
+C           = 2 : solve the Lyapunov equation (2a) or (2b);
+C           = 3 : solve for the Cholesky factor op(X) the Lyapunov
+C                 equation (3a) or (3b).
+C   A     - real coefficient N-by-N matrix.
+C           When task = 3, matrix A must be stable.
+C   B     - another real coefficient M-by-M matrix for
+C           equations (1a) or (1b).
+C   C     - right hand side matrix.
+C           task = 1 : C is N-by-M;
+C           task = 2 : C is N-by-N symmetric;
+C           task = 3 : op(C) is P-by-N.
+C   flag  - (optional) integer vector of length 3 or 2 containing
+C           options.
+C           task = 1 : flag has length 3
+C                flag(1) = 0 : solve the continuous-time equation (1a);
+C                              otherwise, solve the discrete-time
+C                              equation (1b).
+C                flag(2) = 1 : A is (quasi) upper triangular;
+C                          2 : A is upper Hessenberg;
+C                              otherwise, A is in general form.
+C                flag(3) = 1 : B is (quasi) upper triangular;
+C                          2 : B is upper Hessenberg;
+C                              otherwise, B is in general form.
+C           task = 2 : flag has length 2
+C                flag(1) = 0 : solve continuous-time equation (2a);
+C                              otherwise, solve discrete-time
+C                              equation (2b).
+C                flag(2) = 1 : A is (quasi) upper triangular;
+C                              otherwise, A is in general form.
+C           task = 3 : flag has length 2
+C                flag(1) = 0 : solve continuous-time equation (3a);
+C                              otherwise, solve discrete-time
+C                              equation (3b).
+C                flag(2) = 1 : A is (quasi) upper triangular;
+C                              otherwise, A is in general form.
+C           Default:    flag(1) = 0, flag(2) = 0 (, flag(3) = 0).
+C   trans - (optional) integer specifying a transposition option.
+C           trans = 0 : solve the equations (1) - (3) with op(M) = M.
+C           trans = 1 : solve the equations (1) - (3) with op(M) = M'.
+C           trans = 2 : solve the equations (1) with op(A) = A',
+C                                                    op(B) = B.
+C           trans = 3 : solve the equations (1) with op(A) = A,
+C                                                    op(B) = B'.
+C           Default:    trans = 0.
+C   schur - (optional) integer specifying whether the Hessenberg-Schur
+C           or Schur method should be used.
+C           Available for task = 1. 
+C           schur = 1 : Hessenberg-Schur method (one matrix is reduced
+C                       to Schur form).
+C           schur = 2 : Schur method (two matrices are reduced to Schur
+C                       form).
+C           Default:    schur = 1.
+C
+C Output parameters:
+C   X     - solution of the equation (or its Cholesky factor for (3)).
+C   sep   - (optional) estimator of Sep(op(A),-op(A)') for (2.a) or
+C           Sepd(A,A') for (2.b).
+C
+C Comments:
+C   1. For equation (1a) or (1b), when schur = 1, the Hessenberg-Schur 
+C      method is used, reducing one matrix to Hessenberg form and the
+C      other one to a real Schur form.
+C      Otherwise, both matrices are reduced to real Schur forms.
+C      If one or both matrices are already reduced to Schur/Hessenberg
+C      forms, this could be specified by flag(2) and flag(3).
+C      For general matrices, the Hessenberg-Schur method could be 
+C      significantly more efficient than the Schur method.
+C   2. For equation (3a) or (3b), the computed matrix X is the Cholesky
+C      factor of the solution, i.e., the real solution is op(X)'*op(X),
+C      where X is an N-by-N upper triangular matrix.
+C
+C References:
+C   This interface is based on the SLICOT routines:
+C   SB04PD, SB04MD, SB04QD, DTRSYL, SB04PY, SB04ND,  SB04RD, SB03MD, SB03OD
+C   
+C
+C Revisions:
+C   Adapted from the Slicot Matlab Mexfile by S. Steer Oct 2001
+*/
+
+int int_linmeq(Stack stack, int rhs, int opt, int lhs)
+{
+  int one=1;
+  NspMatrix *A,*B,*C,*Flag;
+  NspMatrix *Work=NULL,*U=NULL,*V=NULL,*Iwork=NULL,*WI=NULL,*WR=NULL,*SEP=NULL;
+  double ONE=1.0 ,ZERO=0, sep;
+  char *DICO, *FACT, *FACTA, *FACTB, *JOB, *SCHU, *TRANA, *TRANB, *ULA, *ULB ;
+  int INFO ,ISGN ,LDA ,LDB ,LDC ,LDU ,LDV ,NDWORK ,M ,N ,P;
+  double FERR ,SCALE ,TOL ;
+  int PERTRB, IB, IP, J, LDW1, LDW2, NIWORK,  MXMN,  NM, NSCHUR=1, TASK, TRANS ;
+  int Iflag[4]={0,0,0,0};
+  CheckRhs(3,7);
+  CheckLhs(1,2);
+  
+  /* task at position 1 */
+  if (GetScalarInt (stack, 1 , &TASK) == FAIL)  return RET_BUG;
+  if (TASK < 1 ||TASK > 3 )
+    {
+      Scierror ("task has 1, 2, or 3 as admissible values");
+    }
+  if (TASK == 1 )
+    {
+      if (rhs < 4 )
+	{
+	  Scierror ("Error: linmeq requires at least 4 input arguments when task equals 1");
+	  return RET_BUG;
+	}
+      IP =6;
+    }
+  else 
+    {
+      IP =5;
+    }
+  TRANS =0;
+  /* trans at position 6 or 5 */
+  if ( rhs >= IP )
+    {
+      if (GetScalarInt (stack, IP , &TRANS) == FAIL)  return RET_BUG;
+    }
+  if (TASK == 1 && (TRANS < 0  || TRANS > 3 ))
+    {
+      Scierror("Error: TRANS HAS 0, 1, 2, OR 3 as only admissible values");
+      return RET_BUG;
+    }
+  else
+    {
+      if ( TASK != 1  && (TRANS < 0  || TRANS > 1 ))
+	{
+	  Scierror("Error: TRANS HAS 0, OR 1 THE ONLY ADMISSIBLE VALUES");
+	  return RET_BUG;
+	}
+    }
+  /*  schur */
+  if (TASK == 1 )
+    {
+      NSCHUR =1;
+      if (rhs == IP +1)
+	{
+	  if (GetScalarInt (stack, IP+1 , &NSCHUR) == FAIL)  return RET_BUG;
+	  if (NSCHUR < 1  || NSCHUR > 2 )
+	    {
+	      Scierror("Error: SCHUR HAS 1, OR 2 THE ONLY ADMISSIBLE VALUES\n");
+	    }
+	}
+    }
+  /*  A(NxN), (B(MxM),) C(NxM), or C(NxN), or op(C)(PxN) */
+  
+  if((A=GetRealMatCopy(stack,2))==NULL) return RET_BUG;
+  CheckSquare(NspFname(stack),2,A);
+  N=A->m;
+  if (TASK == 1)
+    {
+      if((B=GetRealMatCopy(stack,3))==NULL) return RET_BUG;
+      CheckSquare(NspFname(stack),3,B);
+      M= B->m;
+      if((C=GetRealMatCopy(stack,4))==NULL) return RET_BUG;
+      if( C->m != A->m && C->n != B->m)
+	{
+	  Scierror("Error:");
+	  return RET_BUG;
+	}
+    }
+  else
+    {
+      if((C=GetRealMatCopy(stack,3))==NULL) return RET_BUG;
+      if (TRANS == 0 )
+	{
+	  P = C->m;
+	  if( C->n != A->m )
+	    {
+	      Scierror("Error:");
+	      return RET_BUG;
+	    }
+	}
+      else 
+	{
+	  if( C->m != A->m)
+	    {
+	      Scierror("Error:");
+	      return RET_BUG;
+	    }
+	  P = C->n;
+	}
+    }
+  if (TASK == 1)
+    IP=5;
+  else
+    IP=4;
+
+  /*    flag */
+  if (rhs >= IP )
+    {
+      int i;
+      if((Flag=GetRealMatCopy(stack,IP))==NULL) return RET_BUG;
+      if (TASK == 1 )
+	{
+	  if ( Flag->mn  > 3) {
+	    Scierror("FLAG MUST BE A VECTOR WITH AT MOST 3 ELEMENTS");
+	    return RET_BUG;
+	  }
+	}
+      else 
+	{if ( Flag->mn > 2 ) {
+	    Scierror("FLAG MUST BE A VECTOR WITH AT MOST 2 ELEMENTS");
+	    return RET_BUG;
+	  }
+	}
+      for ( i = 0 ; i < Flag->mn ; i++) Iflag[i+1]= Flag->R[i];
+    }
+  /* 
+     C
+     C Determine the lenghts of working arrays.
+     C Use a larger value for NDWORK for enabling calls of block algorithms
+     C in DGEES, and possibly in DGEHRD, DGEQRF, DGERQF, SB04PD.
+     C
+  */
+  LDA =Max (1,N );
+  if (TASK == 1 )
+    {
+      LDB =Max (1,M );
+      if (NSCHUR == 2 )
+	{
+	  if ( Iflag[2] == 1)
+	    {
+	      LDW1 =0;
+	      LDW2 =0;
+	    }
+	  else
+	    {
+	      LDW1 =1+2*N ;
+	      LDW2 =3*N;
+	    }
+	  IB =0;
+	  if ( Iflag[3] != 1)
+	    {
+	      IB =2*M ;
+	      if ( Iflag[2] == 1) IB =IB +1;
+	      LDW2 =Max (LDW2 ,IB +3*M );
+	    }
+	  LDW2 =Max (LDW2 ,IB +2*N );
+	  NDWORK =Max (1,LDW1 +LDW2 );
+	}
+      else
+	{
+	  if ( Iflag[2] * Iflag[3] == 1 ) 
+	    {
+	      /* */
+	      NIWORK =0;
+	      if ( Iflag[1] != 0)
+		NDWORK =2*N ;
+	      else 
+		NDWORK =0;
+	    }
+	  else if ( Iflag[2]*Iflag[3] == 2)
+	    {
+	      MXMN =Max (M ,N );
+	      NIWORK =2*MXMN ;
+	      NDWORK =2*MXMN *(4+2*MXMN );
+	    }
+	  else
+	    {
+	      NIWORK =4*N ;
+	      NDWORK =Max (1, Max(5*M ,N +M ));
+	      if ( Iflag[1] == 0)
+		NDWORK =Max (NDWORK , 2*N *N +8*N );
+	      else 
+		NDWORK =Max (NDWORK ,2*N *N +9*N );
+	    }
+	}
+      NM =M ;
+    }
+  else if (TASK == 2 )
+    {
+      NDWORK =Max (1, Max(N *N ,3*N ));
+      if (lhs == 2 ) {
+	NDWORK =Max (NDWORK ,2*N *N );
+	if ( Iflag[1] != 0) NDWORK =Max (NDWORK ,2*(N *N +N ));
+      }
+      NM =N ;
+    }
+  if (TASK != 3 ) 
+    LDC =LDA ;
+  else
+    {
+      if (TRANS == 0 ) 
+	LDC =Max (1, Max(N ,P) );
+      else 
+	LDC =LDA ;
+      MXMN =MIN (P ,N );
+      NDWORK =Max (1,4*N +MXMN );
+      NM =N ;
+    }
+  /* 
+   * Allocate variable dimension local arrays.
+   */
+  if (TASK == 1 )
+    {
+      if( (Work = nsp_matrix_create(NVOID,'r',NDWORK,1))== NULL) return RET_BUG;
+      if (NSCHUR == 2 )
+	{
+	  if ( Iflag[2] == 1) {
+	    FACTA ="S";
+	    LDU =1;
+	    if( (U = nsp_matrix_create(NVOID,'r',LDU,1))== NULL) return RET_BUG;}
+	  else {
+	    FACTA ="N";
+	    LDU =LDA ;
+	    if( (U = nsp_matrix_create(NVOID,'r',LDU,N))== NULL) return RET_BUG;
+	  }
+	  if ( Iflag[3] == 1){
+	    FACTB ="S";
+	    LDV =1;
+	    if( (V = nsp_matrix_create(NVOID,'r',LDV,1))== NULL) return RET_BUG;
+	  }
+	  else {
+	    FACTB ="N";
+	    LDV =LDB ;
+	    if( (V = nsp_matrix_create(NVOID,'r',LDV,M))== NULL) return RET_BUG;
+	  }
+	}
+      
+      else
+	{
+	  SCHU ="N";
+	  if( (Iwork=nsp_matrix_create(NVOID,'r',NIWORK,1))== NULL) return RET_BUG;
+	  if ( Iflag[2] == 1) {
+	    if (Iflag[3] == 1) 
+	      SCHU ="S";
+	    else if (Iflag[3] == 2)
+	      SCHU ="A";
+	  }
+	  else
+	    if (Iflag[2] == 2 &&  Iflag[3] == 1) {
+	      SCHU ="B";
+	    }
+	  if ( strcmp(SCHU ,"N") == 0)
+	    {
+	      LDU =LDB ;
+	      if( (U=nsp_matrix_create(NVOID,'r',LDU,M))== NULL) return RET_BUG; 
+	    }
+	}    
+    }
+  else
+    {
+      if (TASK == 2 )
+	{
+	  LDU =LDA ;
+	  if( (U=nsp_matrix_create(NVOID,'r',LDU,N)) == NULL) return RET_BUG;;
+	  if( (Work=nsp_matrix_create(NVOID,'r',NDWORK,1)) == NULL) return RET_BUG;;
+	  if( (WI=nsp_matrix_create(NVOID,'r',N,1)) == NULL) return RET_BUG;;
+	  if( (WR=nsp_matrix_create(NVOID,'r',N,1)) == NULL) return RET_BUG;;
+	  if (lhs <= 1 ) 
+	    {
+	      if((Iwork =nsp_matrix_create(NVOID,'r',1, 1)) == NULL) return RET_BUG;
+	    }
+	  else 
+	    {
+	      if((Iwork =nsp_matrix_create(NVOID,'r', N*N, 1)) == NULL) return RET_BUG;
+	    }
+	}
+      else 
+	{  LDU =LDA ;
+	  if( (U=nsp_matrix_create(NVOID,'r',LDU,N)) == NULL) return RET_BUG;;
+	  if( (Work=nsp_matrix_create(NVOID,'r',NDWORK,1)) == NULL) return RET_BUG;;
+	  if( (WI=nsp_matrix_create(NVOID,'r',N,1)) == NULL) return RET_BUG;;
+	  if( (WR=nsp_matrix_create(NVOID,'r',N,1)) == NULL) return RET_BUG;;
+	}
+    }
+  /*
+    C Do the actual computations.
+  */
+  if (TASK == 1 ) {
+    if (NSCHUR == 2 ) {
+      if (TRANS == 0 ) {
+	TRANA ="N";
+	TRANB ="N";}
+      else if (TRANS == 1 ){ 
+	TRANA ="T";
+	TRANB ="T";}
+      else if (TRANS == 2 ){ 
+	TRANA ="T";
+	TRANB ="N";}
+      else if (TRANS == 3 ){ 
+	TRANA ="N";
+	TRANB ="T";}
+      if (Iflag[1] != 0) 
+	DICO ="D";
+      else 
+	DICO ="C";
+      ISGN =1;
+      nsp_slicot_sb04pd (DICO ,FACTA ,FACTB ,TRANA ,TRANB ,&ISGN ,&N ,&M ,
+			 A->R, &LDA ,U->R,&LDU ,B->R,&LDB ,V->R,&LDV ,
+			 C->R, &LDC ,&SCALE ,Work->R,&NDWORK ,&INFO,1L,1L,1L,1L,1L );
+    }
+    else
+      {
+	if (TRANS == 0 ){ 
+	  if ( strcmp(SCHU ,"S")== 0)
+	    { 
+	      TRANA ="N";
+	      TRANB ="N";
+	    }
+	  else {
+	    ULA ="U";
+	    ULB ="U";
+	  }
+	}		  
+	else if (TRANS == 1 ){ 
+	  if ( strcmp(SCHU ,"S")==0 ){ 
+	    TRANA ="T";
+	    TRANB ="T";}
+	  else {
+	    ULA ="L";
+	    ULB ="L";
+	    for ( J =2 ; J <= N ; J++)
+	      {
+		int j = J-1;
+		C2F(dswap)(&j,A->R +1-1 +(J-1)*LDA,&one, (A->R+J- 1 +(1-1)*LDA),&LDA );
+	      }
+	    for ( J=2 ; J<= M ; J++)
+	      {
+		int j = J-1;
+		C2F(dswap) (&j, (B->R+1-1 +(J-1)*LDB),&one,(B->R+J- 1 +(1-1)*LDB),&LDB );
+	      }
+	  }
+	}
+	else if (TRANS == 2 ){ 
+	  if ( strcmp(SCHU ,"S")==0){ 
+	    TRANA ="T";
+	    TRANB ="N";}
+	  else {
+	    ULA ="L";
+	    ULB ="U";
+	    for ( J =2 ; J <= N ; J++)
+	      {
+		int j=J-1;
+		C2F(dswap) (&j,(A->R+1-1 +(J-1)*LDA),&one,(A->R+J-1 +(1-1)*LDA),&LDA );
+	      }
+	  }
+	}
+	else if (TRANS == 3 ){ 
+	  if ( strcmp(SCHU ,"S")==0){ 
+	    TRANA ="N";
+	    TRANB ="T";}
+	  else {
+	    ULA ="U";
+	    ULB ="L";
+	    for ( J =2 ; J <= M ; J++) {
+	      int j=J-1;
+	      C2F(dswap) (&j,(B->R+1-1 +(J-1)*LDB),&one,(B->R+J- 1 +(1-1)*LDB),&LDB );
+	    }
+	  }
+	}
+	if ( strcmp (SCHU ,"N")==0)
+	  { 
+	    SCALE =ONE ;
+	    if (Iflag[1] == 0) 
+	      nsp_slicot_sb04md (&N ,&M ,A->R,&LDA ,B->R,&LDB ,C->R,
+				 &LDC ,U->R,&LDU ,Iwork->I,Work->R,&NDWORK ,
+				 &INFO );
+	    else 
+	      nsp_slicot_sb04qd (&N ,&M ,A->R,&LDA ,B->R,&LDB ,C->R,
+				 &LDC ,U->R,&LDU ,Iwork->I,Work->R,&NDWORK ,
+				 &INFO );
+	  }
+	else if ( strcmp(SCHU ,"S")==0)
+	  { 
+	    if (Iflag[1] == 0)
+	      C2F(dtrsyl) (TRANA ,TRANB ,&one,&N ,&M ,A->R,&LDA , B->R,&LDB,C->R,&LDC,&SCALE,&INFO,1L,1L );
+	    else 
+	      nsp_slicot_sb04py (TRANA ,TRANB ,&one,&N ,&M ,A->R,&LDA , B->R,&LDB ,C->R,
+				 &LDC ,&SCALE ,Work->R,&INFO,1L,1L);
+	  }
+	else
+	  {
+	    SCALE =ONE ;
+	    TOL =ZERO; 
+	    /* C              Default tolerance (epsilon_machine) is used. */
+	    if (Iflag[1] == 0)
+	      nsp_slicot_sb04nd (SCHU ,ULA ,ULB ,&N ,&M ,A->R,&LDA ,
+				 B->R, &LDB ,C->R,&LDC ,&TOL , Iwork->I,
+				 Work->R, &NDWORK ,&INFO,1L,1L,1L );
+	    else 
+	      nsp_slicot_sb04rd (SCHU ,ULA ,ULB ,&N ,&M ,A->R,&LDA ,
+				 B->R, &LDB ,C->R,&LDC ,&TOL ,Iwork->I,
+				 Work->R, &NDWORK ,&INFO,1L,1L,1L );
+	  }
+      }
+  }
+  else
+    {
+      DICO = (Iflag[1] == 0) ? "C" : "D";
+      FACT = (Iflag[2] != 1) ? "N" : "F";
+      if ( FACT[0]== 'F') C2F(dlaset) ("FULL",&N ,&N ,&ZERO ,&ONE ,U->R,&LDU,1L );
+      TRANA = (TRANS == 0 ) ? "N": "T";
+
+      if (TASK == 2 )
+	{ 
+	  JOB =  (lhs == 2 ) ? "B": "X";
+	  nsp_slicot_sb03md (DICO ,JOB ,FACT ,TRANA ,&N ,A->R, &LDA ,
+			     U->R, &LDU ,C->R,&LDC ,&SCALE ,&sep ,&FERR, WR->R, 
+			     WI->R, Iwork->I, Work->R, &NDWORK ,&INFO,1L,1L,1L,1L );
+	}
+      else 
+	{
+	  nsp_slicot_sb03od (DICO ,FACT ,TRANA ,&N ,&P ,A->R,&LDA ,U->R ,
+			     &LDU ,C->R,&LDC ,&SCALE ,WR->R,WI->R,Work->R,
+			     &NDWORK ,&INFO,1L,1L,1L );
+	}
+    }
+  
+  PERTRB =(TASK == 1  && (INFO == N +M +1 ||  (Iflag[2]*Iflag[3]  == 1 &&  INFO == 1 ))) || 
+    (TASK == 2  && INFO == N +1) || (TASK == 3  && INFO == 1 );
+  if (INFO == 0  || PERTRB ){ 
+    if (lhs >= 1 ){ 
+      if (TASK == 3 ){ 
+	if (TRANS == 0  && P > N )
+	  C2F(dlacpy) ("UPPER",&N ,&N , C->R,&LDC ,C->R,&LDA,1L );
+	if (N > 1 ) {
+	  int nm1=N-1;
+	  C2F(dlaset) ("LOWER",&nm1,&nm1,&ZERO ,&ZERO ,(C->R+2-1 +(1-1)*LDC),&LDA,1L );
+	}
+      }
+    }
+    if (TASK == 2 ){ 
+      if (lhs >= 2 ){
+	double sep;
+	if (N == ZERO ) sep =ZERO ;
+	if( (SEP=nsp_matrix_create(NVOID,'r',1,1)) == NULL) return RET_BUG;;
+	SEP->R[0]=sep;
+      }
+    }
+  }
+  /* 
+   * Error and warning handling.
+   */
+  if (INFO > 0 )
+    { 
+      if (TASK == 1 ){ 
+	if (NSCHUR == 2 )
+	  { 
+	    if(INFO <= M+N) Scierror("Error: Failure when computing eigenvalues");
+	    else if(INFO > M+N)	Scierror("Error: equation is singular");
+	    goto err;
+	  }
+	else
+	  {
+	    if (strcmp(SCHU ,"N")==0)
+	      { 
+		if(INFO <= M) Scierror("Error: Failure when computing eigenvalues");
+		else if(INFO > M) Scierror("Error: equation is singular");
+	      }
+	    else
+	      {
+		Scierror("Error: equation is singular");
+	      }
+	    goto err;
+	  }
+      }
+      else if (TASK == 2 )
+	{ 
+	  if(INFO <= N) Scierror("Error: Failure when computing eigenvalues");
+	  else if(INFO > N) 		Scierror("Error: equation is singular");
+	  goto err;
+	}
+      else if (TASK == 3 )
+	{ 
+	  if (INFO == 1) Scierror("Error: equation is singular");
+	  else if (INFO == 2 || INFO == 3)
+	    {
+	      if( strcmp(DICO,"C")==0) Scierror("Error: Matrix is not stable (cont)");
+	      else Scierror("Error: not a schur form");
+	    }
+	  else if (INFO == 4 || INFO == 5)
+	    {
+	      Scierror("Error: not a schur form");
+	    }
+	  else if (INFO == 6) {
+	    Scierror("Error: Failure when computing eigenvalues");
+	  }
+	  goto err;
+	}
+    }
+  else if(INFO < 0)
+    {
+      Scierror("Error: internal error in linmeq");
+      goto err;
+    }
+  if ((INFO == 0  || PERTRB ) && SCALE != ONE )
+    {
+      double TEMP;
+      if (TASK >= 2 ) 
+	TEMP =SCALE ;
+      else 
+	TEMP =SCALE * SCALE;
+      printf("WARNING: THE RIGHT HAND SIDES WERE SCALED BY %f TO AVOID OVERFLOW\n",TEMP);
+    }
+  if (INFO != 0  &&  !PERTRB )
+    {
+      Scierror("Error: in linmeq");
+      goto err;
+    }
+  else if (SCALE != ONE )
+    { 
+      // msgs(1000,0);
+    }
+  if (PERTRB ){ 
+    printf("WARNING: THE EQUATION IS (ALMOST) SINGULAR; PERTURBED VALUES HAVE BEEN USED");
+  }
+  NSP_OBJECT(C)->ret_pos = 1;
+  if ( lhs >= 2 )
+    {
+      if (TASK == 2 )
+	{
+	  MoveObj(stack,2,NSP_OBJECT(SEP));
+	}
+      else
+	{
+	  Scierror("Error: lhs should be one whan task is not 2");
+	  goto err;
+	}
+    }
+  if ( Work !=NULL) nsp_matrix_destroy(Work);
+  if ( U !=NULL) nsp_matrix_destroy(U);
+  if ( V !=NULL) nsp_matrix_destroy(V);
+  if ( Iwork !=NULL) nsp_matrix_destroy(Iwork);
+  if ( WI !=NULL) nsp_matrix_destroy(WI);
+  if ( WR !=NULL) nsp_matrix_destroy(WR);
+  return Max(lhs,1);
+ err:
+  if ( Work !=NULL) nsp_matrix_destroy(Work);
+  if ( U !=NULL) nsp_matrix_destroy(U);
+  if ( V !=NULL) nsp_matrix_destroy(V);
+  if ( Iwork !=NULL) nsp_matrix_destroy(Iwork);
+  if ( WI !=NULL) nsp_matrix_destroy(WI);
+  if ( WR !=NULL) nsp_matrix_destroy(WR);
+  return RET_BUG;
+}
