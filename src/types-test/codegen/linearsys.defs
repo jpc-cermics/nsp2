@@ -12,3 +12,8 @@
   (return-type "none")
 )
 
+(define-function abcd_linearsys
+  (c-name "abcd_linearsys")
+  (return-type "none")
+)
+

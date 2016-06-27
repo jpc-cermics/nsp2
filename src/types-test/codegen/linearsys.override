@@ -160,7 +160,6 @@ int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( nsp_object_set_name(NSP_OBJECT(Dp),"D") == FAIL)
 	return RET_BUG;
-
     }
   else if ( IsPMat(D))
     {
@@ -173,9 +172,12 @@ int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
     }
   if (( dom1 = nsp_string_copy(dom)) == NULL) return RET_BUG;
   if (( A = (NspMatrix *) nsp_object_copy_and_name("A",NSP_OBJECT(A))) == NULL) return RET_BUG;
-  if (( B = (NspMatrix *)nsp_object_copy_and_name("B",NSP_OBJECT(B))) == NULL) return RET_BUG;
-  if (( C = (NspMatrix *)nsp_object_copy_and_name("C",NSP_OBJECT(C))) == NULL) return RET_BUG;
+  if (( B = (NspMatrix *) nsp_object_copy_and_name("B",NSP_OBJECT(B))) == NULL) return RET_BUG;
+  if (( C = (NspMatrix *) nsp_object_copy_and_name("C",NSP_OBJECT(C))) == NULL) return RET_BUG;
   if (( X0 = (NspMatrix *)nsp_object_copy_and_name("X0",NSP_OBJECT(X0))) == NULL) return RET_BUG;
+  if ( Dp->mn != 0 && C->mn == 0) C->m = Dp->m;
+  if ( Dp->mn != 0 && B->mn == 0) B->n = Dp->n;
+  
   Lss= nsp_linearsys_create(NVOID,A,B,C,Dp,X0,dom1,sample,NULL);
   if ( Lss == NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Lss));
@@ -255,6 +257,56 @@ int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,2,O2);
       MoveObj(stack,3,O3);
     }
+  return Max(lhs,1);
+}
+
+
+%%
+override abcd_linearsys
+
+int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *A,*B,*C,*D;
+  NspLinearSys *sys;
+  CheckRhs(1,1);
+  CheckLhs(1,4);
+  if ((sys = GetLinearSys(stack,1)) == NULL) return RET_BUG;
+  if ((A = nsp_object_copy((NspObject *) sys->A)) == NULL) return RET_BUG;
+  if ( lhs >=2)
+    {
+      if ((B = nsp_object_copy((NspObject *) sys->B)) == NULL) return RET_BUG;
+    }
+  if ( lhs >= 3)
+    {
+      if ((C = nsp_object_copy((NspObject *) sys->C)) == NULL) return RET_BUG;
+    }
+  if ( lhs >= 4)
+    {
+      int i,maxd=0;
+      for ( i = 0 ; i < sys->D->mn ; i++ ) 
+	{
+	  if ( Max(sys->D->S[i]->mn -1,0) > maxd)
+	    maxd = Max(sys->D->S[i]->mn -1,0);
+	}
+      if (maxd == 0)
+	{
+	  /* if degree is zero returns a matrix */
+	  if ((D= (NspObject *) nsp_matrix_create(NVOID,'r',sys->D->m,sys->D->n)) == NULL)
+	    return RET_BUG;
+	  for ( i = 0 ; i < sys->D->mn ; i++ )
+	    {
+	      ((NspMatrix *)D)->R[i]= sys->D->S[i]->R[0];
+	    }
+	}
+      else
+	{
+	  if ((D = nsp_object_copy((NspObject *) sys->D)) == NULL) return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(A));
+  if ( lhs >= 2)  MoveObj(stack,2,NSP_OBJECT(B));
+  if ( lhs >= 3)  MoveObj(stack,3,NSP_OBJECT(C));
+  if ( lhs >= 4)  MoveObj(stack,4,NSP_OBJECT(D));
   return Max(lhs,1);
 }
 

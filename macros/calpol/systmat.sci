@@ -23,20 +23,19 @@ function [Sm]=systmat(Sl);
 //      [    C     D]
 // To get the zeros use det or detr (for square systems)
 
-  ty=Sl(1);
-  ty=ty(1);
-  if ty=='lss' then
-    if Sl(7)=='d' then
+  if type(Sl,'short')=='linearsys' then
+    if Sl.dom=='d' then
       s=poly(0,'z');
     else
       s=poly(0,'s');
     end
-    Sm=[-s*eye(Sl(2))+Sl(2),Sl(3);Sl(4),Sl(5)];
+    Sm=[-s*eye(size(Sl(2)))+Sl(2),Sl(3);Sl(4),Sl(5)];
     return
   end
-  if part(ty,1)=='d' then
+  if type(Sl,'short')=='h' && Sl.iskey['type'] && Sl.type=='des' then 
+    // this is a descriptor for 
     s=poly(0,'s');
-    Sm=[-s*Sl(6)+Sl(2),Sl(3);Sl(4),Sl(5)];
+    Sm=[-s*Sl.E+Sl.A,Sl.B;Sl.C,Sl.D];
     return
   end
 endfunction
