@@ -24,7 +24,7 @@
 
 
 
-#line 19 "codegen/linearsys.override"
+#line 20 "codegen/linearsys.override"
 #include <nsp/objects.h>
 #include <nsp/pmatrix.h>
 
@@ -165,7 +165,7 @@ NspLinearSys *new_linearsys()
 /*----------------------------------------------
  * Object method redefined for NspLinearSys 
  *-----------------------------------------------*/
-#line 37 "codegen/linearsys.override"
+#line 38 "codegen/linearsys.override"
 
 static int nsp_linearsys_size(NspLinearSys *Mat, int flag)
 {
@@ -180,7 +180,7 @@ static int nsp_linearsys_size(NspLinearSys *Mat, int flag)
 }
 
 #line 183 "linearsys.c"
-#line 52 "codegen/linearsys.override"
+#line 53 "codegen/linearsys.override"
 
 static char linearsys_type_name[]="LinearSys";
 static char linearsys_short_type_name[]="linearsys";
@@ -269,7 +269,7 @@ static NspLinearSys  *nsp_linearsys_xdr_load(XDR *xdrs)
   if ( nsp_linearsys_create_partial(H) == FAIL) return NULLLINEARSYS;
   if ((H  = nsp_linearsys_xdr_load_partial(xdrs,H))== NULLLINEARSYS) return H;
   if ( nsp_linearsys_check_values(H) == FAIL) return NULLLINEARSYS;
-#line 68 "codegen/linearsys.override"
+#line 69 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 275 "linearsys.c"
   return H;
@@ -281,7 +281,7 @@ static NspLinearSys  *nsp_linearsys_xdr_load(XDR *xdrs)
 
 void nsp_linearsys_destroy_partial(NspLinearSys *H)
 {
-#line 71 "codegen/linearsys.override"
+#line 72 "codegen/linearsys.override"
   /* verbatim in destroy */
 
 #line 288 "linearsys.c"
@@ -517,7 +517,7 @@ NspLinearSys *nsp_linearsys_create(const char *name,NspMatrix* A,NspMatrix* B,Ns
   H->dom = dom;
   H->dt=dt;
   if ( nsp_linearsys_check_values(H) == FAIL) return NULLLINEARSYS;
-#line 68 "codegen/linearsys.override"
+#line 69 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 523 "linearsys.c"
   return H;
@@ -628,7 +628,7 @@ NspLinearSys *nsp_linearsys_full_copy(NspLinearSys *self)
   if ( H ==  NULLLINEARSYS) return NULLLINEARSYS;
   if ( nsp_linearsys_full_copy_partial(H,self)== NULL) return NULLLINEARSYS;
 
-#line 68 "codegen/linearsys.override"
+#line 69 "codegen/linearsys.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 634 "linearsys.c"
   return H;
@@ -639,7 +639,7 @@ NspLinearSys *nsp_linearsys_full_copy(NspLinearSys *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 102 "codegen/linearsys.override"
+#line 159 "codegen/linearsys.override"
 
 int int_linearsys_create(Stack stack, int rhs, int opt, int lhs)
 {
@@ -734,7 +734,7 @@ static NspMethods *linearsys_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-#line 75 "codegen/linearsys.override"
+#line 76 "codegen/linearsys.override"
 
 static NspObject *_wrap_linearsys_get_A(void *self,const char *attr)
 {
@@ -813,32 +813,62 @@ static int _wrap_linearsys_set_C(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+#line 103 "codegen/linearsys.override"
+
+/* always a polynomial */
+
 static NspObject *_wrap_linearsys_get_D(void *self,const char *attr)
 {
+  /* O */
   NspPMatrix *ret;
   ret = ((NspLinearSys *) self)->D;
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_linearsys_get_obj_D(void *self,const char *attr, int *copy)
+static int _wrap_linearsys_set_D(void *self, char *attr, NspObject *O)
 {
-  NspPMatrix *ret;
-  *copy = FALSE;
-  ret = ((NspPMatrix*) ((NspLinearSys *) self)->D);
-  return (NspObject *) ret;
-}
-
-static int _wrap_linearsys_set_D(void *self,const char *attr, NspObject *O)
-{
-  NspPMatrix *D;
-  if ( ! IsPMat(O) ) return FAIL;
-  if ((D = (NspPMatrix *) nsp_object_copy_and_name(attr,O)) == NULLPMAT) return FAIL;
-  if (((NspLinearSys *) self)->D != NULL ) 
-  nsp_pmatrix_destroy(((NspLinearSys *) self)->D);
+  NspLinearSys *sys = self;
+  NspPMatrix *D = (NspPMatrix *) O;
+  NspPMatrix *Ds = ((NspLinearSys *) self)->D;
+  if ( IsMat(O) )
+    {
+      NspMatrix *Dm=(NspMatrix *) D;
+      if ( Dm->m != Ds->m || Dm->n != Ds->n)
+	{
+	  Scierror("Error: attribute D should be a %dx%d matrix\n",Ds->m,Ds->n);
+	  return FAIL;
+	}
+      if (( D=nsp_matrix_to_pmatrix(Dm))== NULLPMAT) return RET_BUG;
+      switch ( sys->dom[0] )
+	{
+	case 'c': nsp_pmatrix_set_varname(D,"s");break;
+	case 'd': nsp_pmatrix_set_varname(D,"z");break;
+	case 's': nsp_pmatrix_set_varname(D,"z");break;
+	case 'u': nsp_pmatrix_set_varname(D,"s");break;
+	}
+      if ( nsp_object_set_name(NSP_OBJECT(D),"D") == FAIL)
+	return FAIL;
+    }
+  else if ( IsPMat(O) )
+    {
+      if ( Ds->m != D->m || Ds->n != D->n)
+	{
+	  Scierror("Error: attribute D should be a %dx%d matrix\n",Ds->m,Ds->n);
+	  return FAIL;
+	}
+      if (( D = (NspPMatrix *) nsp_object_copy_and_name(attr,O)) == NULL) return FAIL;
+    }
+  else
+    {
+      Scierror("Error: object should be a matrix or a polynomial matrix");
+      return FAIL;
+    }
+  if ( Ds != NULL ) nsp_pmatrix_destroy(Ds);
   ((NspLinearSys *) self)->D= D;
   return OK;
 }
 
+#line 872 "linearsys.c"
 static NspObject *_wrap_linearsys_get_X0(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -905,7 +935,7 @@ static AttrTab linearsys_attrs[] = {
   { "A", (attr_get_function * )_wrap_linearsys_get_A, (attr_set_function * )_wrap_linearsys_set_A, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "B", (attr_get_function * )_wrap_linearsys_get_B, (attr_set_function * )_wrap_linearsys_set_B, (attr_get_object_function * )_wrap_linearsys_get_obj_B, (attr_set_object_function * )int_set_object_failed },
   { "C", (attr_get_function * )_wrap_linearsys_get_C, (attr_set_function * )_wrap_linearsys_set_C, (attr_get_object_function * )_wrap_linearsys_get_obj_C, (attr_set_object_function * )int_set_object_failed },
-  { "D", (attr_get_function * )_wrap_linearsys_get_D, (attr_set_function * )_wrap_linearsys_set_D, (attr_get_object_function * )_wrap_linearsys_get_obj_D, (attr_set_object_function * )int_set_object_failed },
+  { "D", (attr_get_function * )_wrap_linearsys_get_D, (attr_set_function * )_wrap_linearsys_set_D, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "X0", (attr_get_function * )_wrap_linearsys_get_X0, (attr_set_function * )_wrap_linearsys_set_X0, (attr_get_object_function * )_wrap_linearsys_get_obj_X0, (attr_set_object_function * )int_set_object_failed },
   { "dom", (attr_get_function * )_wrap_linearsys_get_dom, (attr_set_function * )_wrap_linearsys_set_dom, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
   { "dt", (attr_get_function * )_wrap_linearsys_get_dt, (attr_set_function * )_wrap_linearsys_set_dt, (attr_get_object_function * )int_get_object_failed, (attr_set_object_function * )int_set_object_failed },
@@ -916,7 +946,7 @@ static AttrTab linearsys_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 189 "codegen/linearsys.override"
+#line 246 "codegen/linearsys.override"
 
 /* compatibility with scicoslab */
 
@@ -934,7 +964,7 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
     case 2: /* A */ if ((obj = nsp_object_copy(NSP_OBJECT(sys->A)))== NULL) return RET_BUG;break;
     case 3: /* B */ if ((obj = nsp_object_copy(NSP_OBJECT(sys->B)))== NULL) return RET_BUG;break;
     case 4: /* C */ if ((obj = nsp_object_copy(NSP_OBJECT(sys->C)))== NULL) return RET_BUG;break;
-    case 5: /* D */ if ((obj = nsp_object_copy(NSP_OBJECT(sys->D)))== NULL) return RET_BUG;break;
+    case 5: /* D */ if ((obj = nsp_linearsys_get_D(sys))== NULL) return RET_BUG;break;
     case 6: /* X */ if ((obj = nsp_object_copy(NSP_OBJECT(sys->X0)))== NULL) return RET_BUG;break;
     case 7: /* dom*/
       switch ( sys->dom[0] )
@@ -962,10 +992,10 @@ int _wrap_extractelts_linearsys(Stack stack, int rhs, int opt, int lhs) /* extra
 }
 
 
-#line 966 "linearsys.c"
+#line 996 "linearsys.c"
 
 
-#line 236 "codegen/linearsys.override"
+#line 293 "codegen/linearsys.override"
 
 extern int int_object_size(Stack stack, int rhs, int opt, int lhs);
 
@@ -994,10 +1024,10 @@ int _wrap_size_linearsys(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 998 "linearsys.c"
+#line 1028 "linearsys.c"
 
 
-#line 266 "codegen/linearsys.override"
+#line 323 "codegen/linearsys.override"
 
 int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1017,26 +1047,7 @@ int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
     }
   if ( lhs >= 4)
     {
-      int i,maxd=0;
-      for ( i = 0 ; i < sys->D->mn ; i++ ) 
-	{
-	  if ( Max(sys->D->S[i]->mn -1,0) > maxd)
-	    maxd = Max(sys->D->S[i]->mn -1,0);
-	}
-      if (maxd == 0)
-	{
-	  /* if degree is zero returns a matrix */
-	  if ((D= (NspObject *) nsp_matrix_create(NVOID,'r',sys->D->m,sys->D->n)) == NULL)
-	    return RET_BUG;
-	  for ( i = 0 ; i < sys->D->mn ; i++ )
-	    {
-	      ((NspMatrix *)D)->R[i]= sys->D->S[i]->R[0];
-	    }
-	}
-      else
-	{
-	  if ((D = nsp_object_copy((NspObject *) sys->D)) == NULL) return RET_BUG;
-	}
+      if ((D = nsp_linearsys_get_D(sys)) == NULL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(A));
   if ( lhs >= 2)  MoveObj(stack,2,NSP_OBJECT(B));
@@ -1045,8 +1056,7 @@ int _wrap_abcd_linearsys(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-
-#line 1050 "linearsys.c"
+#line 1060 "linearsys.c"
 
 
 /*----------------------------------------------------
@@ -1082,4 +1092,36 @@ void nsp_initialize_LinearSys_types(void)
   new_type_linearsys(T_BASE);
 }
 
-#line 1086 "linearsys.c"
+#line 353 "codegen/linearsys.override"
+
+/* When D is a zero degree polynomial return a Matrix 
+ * else returns a PMatrix which are copies of D
+ */
+
+NspObject *nsp_linearsys_get_D(  NspLinearSys *sys)
+{
+  NspObject *D;
+  int i,maxd=0;
+  for ( i = 0 ; i < sys->D->mn ; i++ ) 
+    {
+      if ( Max(sys->D->S[i]->mn -1,0) > maxd)
+	maxd = Max(sys->D->S[i]->mn -1,0);
+    }
+  if (maxd == 0)
+    {
+      /* if degree is zero returns a matrix */
+      if ((D= (NspObject *) nsp_matrix_create(NVOID,'r',sys->D->m,sys->D->n)) == NULL)
+	return NULL;
+      for ( i = 0 ; i < sys->D->mn ; i++ )
+	{
+	  ((NspMatrix *)D)->R[i]= sys->D->S[i]->R[0];
+	}
+    }
+  else
+    {
+      if ((D = nsp_object_copy((NspObject *) sys->D)) == NULL) return NULL;
+    }
+  return D;
+}
+
+#line 1128 "linearsys.c"

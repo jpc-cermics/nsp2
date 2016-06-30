@@ -3693,7 +3693,7 @@ NspObject *nsp_matint_concat_diag( NspObject *ObjA, NspObject *ObjB)
 
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
-
+  
   if ( A->m == 0  &&  A->n == 0 )
     {
       ObjC = nsp_object_copy(ObjB); 
@@ -3887,7 +3887,7 @@ int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((A = (NspSMatrix *)nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
   if ((B = (NspSMatrix *)nsp_get_object(stack, 2)) == NULL)   return RET_BUG;
-  if (A->mn == 0)
+  if (A->m  == 0 && A->n == 0)
     {
       /* this is a bit tricky since A and B may point to the same object */
       if ( A == B ) 
@@ -3902,7 +3902,7 @@ int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if (B->mn == 0)
+  if (B->m == 0 && B->n == 0)
     {
       /* this is a bit tricky since A and B may point to the same object */
       if ( A == B )  NthObj(2) = NULLOBJ;

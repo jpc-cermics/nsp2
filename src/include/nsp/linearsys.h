@@ -102,8 +102,9 @@ extern int nsp_linearsys_xdr_save(XDR  *xdrs, NspLinearSys *M);
 
 /* inserted at the end of public part of include file
  */
+extern NspObject *nsp_linearsys_get_D(  NspLinearSys *sys);
 
-#line 107 "./linearsys.h"
+#line 108 "./linearsys.h"
 #endif /* NSP_INC_NspLinearSys */ 
 
 #ifdef NspLinearSys_Private 
@@ -118,11 +119,11 @@ static AttrTab linearsys_attrs[];
 static NspMethods *linearsys_get_methods(void);
 /* static int int_linearsys_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspLinearSys *nsp_linearsys_create_void(const char *name,NspTypeBase *type);
-#line 13 "codegen/linearsys.override"
+#line 14 "codegen/linearsys.override"
 
 /* inserted in the private part of include file
  */
 
-#line 127 "./linearsys.h"
+#line 128 "./linearsys.h"
 #endif /* NspLinearSys_Private */
 

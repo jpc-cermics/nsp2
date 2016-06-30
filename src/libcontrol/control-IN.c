@@ -80,7 +80,7 @@ int int_bdiag(Stack stack, int rhs, int opt, int lhs)
   
   if ( rhs == 2)
     {
-      if (GetScalarDouble (stack, 1, &rMax) == FAIL)
+      if (GetScalarDouble (stack, 2, &rMax) == FAIL)
 	return RET_BUG;
     }
   else
@@ -1573,7 +1573,7 @@ extern int int_contr(Stack stack, int rhs, int opt, int lhs);
  */
 
 static OpTab Control_func[] = {
-  {"arl2", int_arl2},
+  {"arl2_ius", int_arl2},
   {"bdiag", int_bdiag},
   {"dhinf", int_dhinf},
   {"ereduc", int_ereduc},
