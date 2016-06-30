@@ -1931,6 +1931,20 @@ int int_rmatrix_tril (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int int_rmatrix_simp (Stack stack, int rhs, int opt, int lhs)
+{
+  int i = 0;
+  NspRMatrix *R;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((R = GetRMatCopy (stack, 1)) == NULLRMAT) return RET_BUG;
+  for ( i = 0 ; i < R->mn ; i++ )
+    {
+      nsp_polynoms_simp(R->S[i]->num,R->S[i]->den);
+    }
+  NSP_OBJECT(R)->ret_pos = 1;
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -1938,6 +1952,7 @@ int int_rmatrix_tril (Stack stack, int rhs, int opt, int lhs)
 
 static OpTab RMatrix_func[]={
   /* specific */
+  {"simp_r", int_rmatrix_simp},
   {"m2r", int_rmatrix_m2r},
   {"p2r", int_rmatrix_p2r},
   {"concatd_m_r",int_rmatrix_concatd_m_r},
