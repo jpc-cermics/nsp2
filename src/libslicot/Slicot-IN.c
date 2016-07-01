@@ -702,12 +702,11 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
   if ( rhs >= IP)
     {
       if (GetScalarInt (stack, IP , &PRINTW) == FAIL)  return RET_BUG;
-      if (ITMP < 0 ||ITMP > 1 )
+      if ( PRINTW < 0 || PRINTW > 1 )
 	{ 
 	  Scierror ("PRINTW HAS 0 OR 1 THE ONLY ADMISSIBLE VALUES");
 	  return RET_BUG;
 	} 
-      PRINTW = (ITMP == 1);
       IP =IP +1;
     }
   
@@ -912,7 +911,7 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
   char *ALG , *BATCH , *CONCT , *CTRL , *JOBD , *METH ;
   // .. Allocatable arrays ..
   // !Fortran 90/95 (Fixed dimensions should be used with Fortran 77.)
-  NspMatrix *IWORK, *DWORK, *R, *SV, *U, *Y;
+  NspMatrix *IWORK, *DWORK, *R=NULL, *SV, *U, *Y;
   NspMatrix *Rc, *Uc, *Yc;
   // .. Local variables and constant dimension arrays ..
   int IALG ,IBCH ,ICNC ,IJOB ,IMTH ,IP ,ITMP ,
@@ -1046,12 +1045,11 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 10 )
     {
       if (GetScalarInt (stack,10, &PRINTW) == FAIL)  return RET_BUG;
-      if (ITMP < 0 ||ITMP > 1 )
+      if ( PRINTW < 0 || PRINTW > 1 )
 	{ 
 	  Scierror ("PRINTW HAS 0 OR 1 THE ONLY ADMISSIBLE VALUES");
 	  return RET_BUG;
 	} 
-      PRINTW = ITMP == 1 ;
     }
   
   // Determine the lenghts of working arrays.
@@ -1145,7 +1143,7 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
   if((DWORK = nsp_matrix_create(NVOID,'r', 1,LDWORK)) == NULL) goto err;
 
   nsp_dset(&Rc->mn,&ZERO,Rc->R,&one);
-
+  
   // Copy inputs from MATLAB workspace to locally allocated arrays.
   //      
   COPY ( Y->R,Yc->R, Y->mn);
@@ -1153,7 +1151,8 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
    { 
      COPY ( U->R,Uc->R, U->mn);
    } 
-  if (rhs >= IP && (IBCH == 2 ||IBCH == 3 ))
+
+  if ( R != NULL)
     { 
       COPY ( R->R, Rc->R, R->mn);
       if (IALG == 2 ||ICNC == 1 )
@@ -1171,7 +1170,7 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
   
   // Do the actual computations.
   nsp_slicot_ib01ad (METH ,ALG ,JOBD ,BATCH ,CONCT ,CTRL ,&NOBR ,&M ,&L ,
-	  &NSMP ,U->R,&LDU ,Y->R,&LDY ,&N ,R->R,&LDR ,SV->R,&TOL1 ,
+	  &NSMP ,U->R,&LDU ,Y->R,&LDY ,&N ,Rc->R,&LDR ,SV->R,&TOL1 ,
 		     &TOL2 , IWORK->I,DWORK->R,&LDWORK ,&IWARN ,&INFO, 1L,1L,1L, 1L,1L,1L );
   if (IWARN != 0 && PRINTW ){ 
     Scierror("  IWARN = %d ON EXIT FROM IB01AD",  IWARN);
@@ -1180,9 +1179,10 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
     Scierror("INFO = %d ON EXIT FROM IB01AD", INFO);
   } 
 
-  // Copy output to MATLAB workspace.
+  // Copy output
+  
+  if ( LDR > NR ) C2F(dlacpy) ("FULL",&NR ,&NR ,Rc->R,&LDR ,R->R,&NR, 1L );
 
-  if (LDR > NR ) C2F(dlacpy) ("FULL",&NR ,&NR ,R->R,&LDR ,R->R,&NR, 1L );
   if ((IALG == 2 ||ICNC == 1 ) && IBCH <= 2 ){ 
     if (LDR == NR ){ 
       C2F(dcopy) (&NRSAVE ,DWORK->R,&one,R->R+1-1 +(NR+1-1*LDR),&one);
@@ -1190,18 +1190,19 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
       C2F(dcopy) (&NRSAVE ,DWORK->R,&one,R->R+NR*NR+1-1 +(1-1*LDR),&one);
     } 
   } 
-  MoveObj(stack,1,NSP_OBJECT(R));
+  /* XXXXX */
+  MoveObj(stack,1,NSP_OBJECT(Rc));
   if (IBCH > 2 )
     { 
-      if (lhs > 1 )
+      if (lhs >=2 )
 	{
 	  if ( nsp_move_double(stack,2,N)== FAIL) goto err;
 	}
-      if (lhs > 2 )
+      if (lhs >= 3 )
 	{
 	  MoveObj(stack,3,NSP_OBJECT(SV));
 	} 
-      if (IMTH == 2 && lhs > 3 )
+      if (IMTH == 2 && lhs >= 4 )
 	{
 	  int nc=2;
 	  NspMatrix *X;
@@ -1250,7 +1251,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *A, *B, *C, *D, *DWORK, *K, *Q,* R, *RY, *S;
   NspMatrix *Ac, *Cc, *Rc;
   // .. Local variables and constant dimension arrays ..
-  int ID ,IJOB ,IP ,ITMP ,LBWORK ,LDUNN ,LIWORK ,LL ,LNOBR ,MA ,
+  int ID ,IJOB ,IP,LBWORK ,LDUNN ,LIWORK ,LL ,LNOBR ,MA ,
     MNOBR ,MNOBRN ,N2 ,NA ,NCOL ,NL ,NN ,NPL ,NR ,NRC ,TASK ;
   int PRINTW ;
   
@@ -1358,12 +1359,11 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   if ( rhs >= 11 )
     {
       if (GetScalarInt (stack, 11 , &PRINTW) == FAIL)  return RET_BUG;
-      if (ITMP < 0 ||ITMP > 1 )
+      if ( PRINTW < 0 || PRINTW > 1 )
 	{ 
 	  Scierror ("PRINTW HAS 0 OR 1 THE ONLY ADMISSIBLE VALUES");
 	  return RET_BUG;
-	} 
-      PRINTW =ITMP == 1 ;
+	}
     }
   
   // Determine the lenghts of working arrays.

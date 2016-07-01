@@ -1551,6 +1551,8 @@ extern int int_hinf(Stack stack, int rhs, int opt, int lhs);
 extern int int_ldivp(Stack stack, int rhs, int opt, int lhs);
 extern int int_ltitr(Stack stack, int rhs, int opt, int lhs);
 extern int int_mucomp(Stack stack, int rhs, int opt, int lhs);
+extern int int_sorder(Stack stack, int rhs, int opt, int lhs);
+extern int int_sident(Stack stack, int rhs, int opt, int lhs);
 extern int int_ppol(Stack stack, int rhs, int opt, int lhs);
 extern int int_residu(Stack stack, int rhs, int opt, int lhs);
 extern int int_rtitr(Stack stack, int rhs, int opt, int lhs);
@@ -1583,6 +1585,8 @@ static OpTab Control_func[] = {
   {"ldivp", int_ldivp},
   {"ltitr", int_ltitr},
   {"mucomp", int_mucomp},
+  {"sorder", int_sorder},
+  {"sident", int_sident},
   {"ppol", int_ppol},
   {"residu", int_residu},
   {"rtitr", int_rtitr},
