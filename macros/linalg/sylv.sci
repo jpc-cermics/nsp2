@@ -1,4 +1,4 @@
-function C = sylv(At,Bt,Ct,flag)
+function C = sylv_deprecated(At,Bt,Ct,flag)
 // Copyright (C) XXXX-2016 François Delebecque (GPL, scilab INRIA)
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

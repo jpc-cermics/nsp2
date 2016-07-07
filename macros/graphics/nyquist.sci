@@ -152,3 +152,8 @@ function nyquist(hnum,hden,varargopt)
     xtitle('Nyquist plot ',['Re(h(exp(';'2i*pi*f*dt)))'],'Im(h(exp(2i*pi*f*dt)))');
   end
 endfunction
+
+
+function nyquist_r(h,varargopt)
+  nyquist(h.num,h.den,varargopt(:))
+endfunction

@@ -94,3 +94,10 @@ function bode(hnum,hden,varargopt)
   end
   xtitle('Phase ',' Hz','degrees');
 endfunction
+
+
+function bode_r(r,varargopt)
+  bode(r.num,r.den, varargopt(:));
+endfunction
+
+  

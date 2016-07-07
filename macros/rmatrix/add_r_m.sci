@@ -312,7 +312,7 @@ endfunction
 // clean 
 
 function r=clean_r(r,varargin)
-  r=p2r(clean(r.num,varargin(:)),clean(r.den,varargin(:)));
+  r=p2r(clean(r.num,varargin(:)),clean(r.den,varargin(:)),simp=%t);
 endfunction
 
 // div / 

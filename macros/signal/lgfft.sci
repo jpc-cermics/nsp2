@@ -18,11 +18,7 @@ function [y]=lgfft(x)
 //
   
 // 
-
-  if nargin < 1 then error(58); end;
-  if type(x,'short') <> "m" then error(53,1); end
-  //
-  //   z=x(:).';//testvec(x,'l');
+  if type(x,'short') <> "m" then error("Error: expecting a matrix");end;
   nz=max(size(x));
   pnz=int(log(nz)/log(2));
   rz=nz-2**pnz;

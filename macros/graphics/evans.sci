@@ -182,3 +182,9 @@ function []=evans(n,d,kmax)
   //col=int(l2/n1)+1;//row=modulo(l2,n1); racines(row,col) <-> seleceted
   //gain=kk(col);
 endfunction
+
+
+function evans_r(r,kmax)
+  if nargin <= 2 then kmax=0;end
+  evans(r.num,r.den,kmax);
+endfunction

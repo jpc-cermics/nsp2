@@ -10,7 +10,7 @@ function [xy]=rotate(xy,teta,orig)
 select nargin
  case 2 then orig=[0;0];
  case 3 then orig=matrix(orig,2,1);
- else error(39)
+ else error("Error: incorrect number of input arguments")
 end;
 //
 [m,n]=size(xy)
