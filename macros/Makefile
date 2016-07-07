@@ -14,8 +14,7 @@ WIP=	auto-sci \
 	lss-sci \
 
 SUBDIRS =  graphics miscellaneous system statistics linalg calpol \
-	ast rmatrix $(WIP)
-
+	ast rmatrix
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
