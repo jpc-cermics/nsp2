@@ -70,7 +70,7 @@ function res=compose_p(p,q)
 // computes R=P(Q) by standard way.
 // 
   pc = p.coeffs{1};
-  res = pc(1)*m2p([1]);
+  res = pc(1)*m2p([1],var=q.get_var[]);
   for i=2:size(pc,'*') 
     res = res + pc(i)*q^(i-1);
   end
