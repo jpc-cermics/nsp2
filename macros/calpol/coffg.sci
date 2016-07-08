@@ -40,11 +40,15 @@ function [Ns,d]=coffg(Fs)
   T=type(Fs);
   Ns=T.new[0,0,var=vname];
   n1=n;
-  for kk=1:n1 
-    for l=1:n1
-      signe=(-1)^(kk+l);
-      col=[1:kk-1,kk+1:n1];row=[1:l-1,l+1:n1];
-      Ns(kk,l)=-signe*det(Fs(row,col))
+  if n1 == 1 then 
+    Ns= 1 ./ Fs; d= Ns.den ; Ns=Ns.num;
+  else
+    for kk=1:n1 
+      for l=1:n1
+	signe=(-1)^(kk+l);
+	col=[1:kk-1,kk+1:n1];row=[1:l-1,l+1:n1];
+	Ns(kk,l)=-signe*det(Fs(row,col))
+      end
     end
   end
   Ns=-Ns;
