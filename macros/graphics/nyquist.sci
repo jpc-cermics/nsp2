@@ -19,7 +19,7 @@ function nyquist(hnum,hden,varargopt)
   if type(hden,'short')<>'p' then error("bide: Argument should be a polynomial matrix");end
   sn=size(hnum);
   sd=size(hden);
-  if ~sn.equal[sd] then error("bide; The two polynomial matrices should share the same size");end
+  if ~sn.equal[sd] then error("bode; The two polynomial matrices should share the same size");end
   if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
 
   // compute default values
