@@ -506,30 +506,29 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
   int PRINTW ;
   const int CSIZE =64000;
   
-  CheckRhs(2,2);
-  CheckLhs(0,1);
+  CheckRhs(2,11);
+  CheckLhs(0,5);
   
-  // Check dimensions of input parameters and read/set scalar parameters.
   //   jobx0
   if (GetScalarInt (stack, 1, &TASK) == FAIL)  return RET_BUG;
   if (TASK < 0 ||TASK > 1 )
     {
-      Scierror ("JOBX0 HAS 0 OR 1 THE ONLY ADMISSIBLE VALUES");
+      Scierror ("Error: JOBX0 HAS 0 OR 1 THE ONLY ADMISSIBLE VALUES");
     }
   JOBX0 = (TASK == 1 ) ? "X" : "N";
   // comuse
   if (GetScalarInt (stack, 2, &CUSE) == FAIL)  return RET_BUG;
   if (CUSE < 1 ||CUSE > 3 )
     {
-      Scierror ("COMUSE HAS 1, 2, OR 3 THE ONLY ADMISSIBLE VALUES");
+      Scierror ("Error: COMUSE HAS 1, 2, OR 3 THE ONLY ADMISSIBLE VALUES");
     }
   COMUSE = (CUSE == 1 ) ? "C" : ( (CUSE == 2 ) ? "U" : "N");
-    
+  
   if (TASK == 1 && CUSE == 3 )
     {
       if (rhs < 5 )
 	{
-	  Scierror ("FINDBD REQUIRES AT LEAST 5 INPUT ARGUMENTS");
+	  Scierror ("Error: findbd requires at least 5 input arguments");
 	}
     }
   else
@@ -538,7 +537,7 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (rhs < 6 )
 	    {
-	      Scierror ("FINDBD REQUIRES AT LEAST 6 INPUT ARGUMENTS");
+	      Scierror ("Error: findbd requires at least 6 input arguments");
 	    }
 	}
     }
@@ -547,7 +546,7 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
     {
       if (GetScalarInt (stack, 3, &IJOB) == FAIL)  return RET_BUG;
       if (IJOB < 1 ||IJOB > 2 ){
-	Scierror ("JOB HAS 1 OR 2 THE ONLY ADMISSIBLE VALUES");
+	Scierror ("Error: JOB HAS 1 OR 2 THE ONLY ADMISSIBLE VALUES");
       }
       IP =4;
       if (IJOB == 1 ){
@@ -565,11 +564,11 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
   if (TASK == 1 && CUSE == 2 )
     {
       if (IJOB == 1 && rhs < 7 ){
-	Scierror ( "FINDBD REQUIRES AT LEAST 7 INPUT ARGUMENTS");
+	Scierror ( "Error: FINDBD REQUIRES AT LEAST 7 INPUT ARGUMENTS");
       }
       else if (IJOB == 2 && rhs < 8 )
 	{
-	  Scierror ( "FINDBD REQUIRES AT LEAST 8 INPUT ARGUMENTS");
+	  Scierror ( "Error: FINDBD REQUIRES AT LEAST 8 INPUT ARGUMENTS");
 	}
     }
   /* A */
@@ -593,7 +592,7 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
       M =  B->n;
       if (NA != N )
 	{
-	  Scierror("B MUST HAVE %d ROWS",N);
+	  Scierror("Error: B MUST HAVE %d ROWS",N);
 	}
       IP =IP +1;
     }
@@ -606,12 +605,12 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
       NA = C->n;
       if (NA != N )
 	{
-	  Scierror("C MUST HAVE %d COLUMNS",N);
+	  Scierror("Error: C MUST HAVE %d COLUMNS",N);
 	}
       IP =IP +1;
       if (L <= 0 )
 	{
-	  Scierror ("THE SYSTEM HAS NO OUTPUTS");
+	  Scierror ("Error: THE SYSTEM HAS NO OUTPUTS");
 	}
     }
   //   D(l,m)
@@ -622,7 +621,7 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
       MA = D->n;
       if (NA != L )
 	{
-	  Scierror("D MUST HAVE %d ROWS", L );
+	  Scierror("Error: D MUST HAVE %d ROWS", L );
 	}
       if (MA != M )
 	{
@@ -647,13 +646,13 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
       MA = U->n;
       if (CUSE == 2 && MA != M )
 	{
-	  Scierror("U MUST HAVE %d COLUMNS",M);
+	  Scierror("Error: U MUST HAVE %d COLUMNS",M);
 	} else {
 	M =MA;
       }
       if (M > 0 ){
 	if ( U->m != NSMP ){
-	  Scierror ("U MUST HAVE THE SAME ROW DIMENSION AS Y");
+	  Scierror ("Error: U MUST HAVE THE SAME ROW DIMENSION AS Y");
 	}
       }
       IP =IP +1;
@@ -689,7 +688,7 @@ int int_findbd(Stack stack, int rhs, int opt, int lhs)
       IQ =MINSMP;
     }
   if (NSMP < MINSMP ){
-    Scierror(" THE NUMBER OF SAMPLES SHOULD BE AT LEAST %d", MINSMP);
+    Scierror("Error:  THE NUMBER OF SAMPLES SHOULD BE AT LEAST %d", MINSMP);
   }
   //     tol
   if ( rhs >= IP)
@@ -1235,50 +1234,40 @@ int int_sorder(Stack stack, int rhs, int opt, int lhs)
 
 int int_sident(Stack stack, int rhs, int opt, int lhs)
 {
-  int one=1;
-  int IAW;
-  static const double ZERO =0.0;
+  int one=1, IAW;
   // .. Scalar parameters used by SLICOT subroutines ..
-  double TOL ;
+  double TOL = 0.0 ;
   int INFO ,IWARN ,L ,LDA ,LDB ,LDC ,LDD ,LDK ,LDO ,LDQ ,LDR ,
     LDRY ,LDS ,LDWORK ,M ,N ,NOBR ,NSMPL ;
   char  *JOB ,*JOBCK ,*METH ;
-
-  // .. Allocatable arrays ..
-  // !Fortran 90/95 (Fixed dimensions should be used with Fortran 77.)
-  NspMatrix *IWORK;
-  NspMatrix *BWORK;
-  NspMatrix *A, *B, *C, *D, *DWORK, *K, *Q,* R, *RY, *S;
+  NspMatrix *IWORK, *BWORK, *A, *B, *C, *D, *DWORK, *K, *Q,* R, *RY, *S;
   NspMatrix *Ac, *Cc, *Rc;
-  // .. Local variables and constant dimension arrays ..
   int ID ,IJOB ,IP,LBWORK ,LDUNN ,LIWORK ,LL ,LNOBR ,MA ,
-    MNOBR ,MNOBRN ,N2 ,NA ,NCOL ,NL ,NN ,NPL ,NR ,NRC ,TASK ;
-  int PRINTW ;
+    MNOBR ,MNOBRN ,N2 ,NA ,NCOL ,NL ,NN ,NPL ,NR ,NRC ,TASK, PRINTW ;
   
-  // Check for proper number of arguments.
   CheckRhs(6,11);
   CheckLhs(0,9);
   
-  // 1 meth
+  // meth
   if (GetScalarInt (stack, 1 , &TASK) == FAIL)  return RET_BUG;
   if (TASK < 1 ||TASK > 3 )
     {
       Scierror ("METH HAS 1, 2, OR 3 THE ONLY ADMISSIBLE VALUES");
     }
   METH = (TASK == 1 ) ? "M" : ((TASK == 2 ) ? "N": "C");
-  // 2 job
+  // job
   if (GetScalarInt (stack, 2 , &IJOB) == FAIL)  return RET_BUG;
   if (IJOB < 1 ||IJOB > 4 ){ 
     Scierror ("JOB HAS 1, 2, 3 OR 4 THE ONLY ADMISSIBLE VALUES");
   }
   JOB = (IJOB == 1 ) ? "A": (IJOB == 2 ) ? "C" : (IJOB == 3 ) ? "B": "D";
-  //         
-  //   s
+  //        
+  // s
   if (GetScalarInt (stack, 3, &NOBR) == FAIL)  return RET_BUG;
   if (NOBR < 1 ){ 
     Scierror ("S MUST BE A POSITIVE int");
   }
-  //   n
+  // n
   if (GetScalarInt (stack, 4, &N) == FAIL)  return RET_BUG;
   if (N < 1 ){ 
     Scierror ("N MUST BE A POSITIVE int");
@@ -1288,7 +1277,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: THE ORDER SHOULD BE AT MOST %d\n",NOBR-1);
       return RET_BUG;
     } 
-  //  l
+  // l
   if (GetScalarInt (stack, 5, &L) == FAIL)  return RET_BUG;
   if (L < 1 ){ 
     Scierror ("THE SYSTEM HAS NO OUTPUTS");
@@ -1297,7 +1286,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   if(( R=GetRealMatCopy(stack,6)) ==NULL) return RET_BUG;
   NR = R->m;
   NCOL = R->n;
-  if (NR < 2 *L ){ 
+  if ( NR < 2 *L ){ 
     Scierror("R MUST HAVE AT LEAST %d ROWS", 2*L );
   } 
   if (NCOL < NR ){ 
@@ -1306,7 +1295,6 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   //   m
   M =NR /(2*NOBR )-L ;
   //   tol
-  TOL =ZERO;
   if ( rhs >= 7 ){
     if (GetScalarDouble (stack, 7 , &TOL) == FAIL)  return RET_BUG;
   } 
@@ -1326,7 +1314,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
 	JOBCK ="N";
       } 
     }
-  //   A(n,n)
+  // A(n,n)
   if (TASK >= 2 && IJOB >= 3 )
     {
       if ( ! (rhs >= 10))
@@ -1339,7 +1327,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
       MA = A->m;
       NA = A->n;
       if (MA != N ||NA != N ){ 
-	Scierror("A MUST HAVE %d ROWS AND COLUMNS", N);
+	Scierror("Error: 9-th arguments should be of size %dx%d",N,N);
       } 
       //   C(l,n)
       if(( C=GetRealMatCopy(stack,10)) ==NULL) return RET_BUG;
@@ -1347,15 +1335,15 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
       NA = C->n;
       if (MA != L )
 	{ 
-	  Scierror("C MUST HAVE %d ROWS",L );
+	  Scierror("Error: 10-th argument must have %d rows",L );
 	} 
       if (NA != N ){ 
-	Scierror("C MUST HAVE %d COLUMNS",N);
+	Scierror("Error: 10-th argument must have %d columns",N);
       } 
     }
   //     printw
   //   
-  PRINTW =FALSE;
+  PRINTW = FALSE;
   if ( rhs >= 11 )
     {
       if (GetScalarInt (stack, 11 , &PRINTW) == FAIL)  return RET_BUG;
@@ -1464,7 +1452,7 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   if((Rc = nsp_matrix_create(NVOID,'r',LDR,NCOL)) == NULL) goto err;;
   if((RY = nsp_matrix_create(NVOID,'r',LDRY,L)) == NULL) goto err;;
   if((S = nsp_matrix_create(NVOID,'r',LDS,L)) == NULL) goto err;;
-  if((B = nsp_matrix_create(NVOID,'r', LBWORK,1)) == NULL) goto err;;
+  if((BWORK = nsp_matrix_create(NVOID,'r', LBWORK,1)) == NULL) goto err;;
   if((K = nsp_matrix_create(NVOID,'r',LDK,L)) == NULL) goto err;;
 
   // Copy inputs from MATLAB workspace to locally allocated arrays.
@@ -1546,130 +1534,115 @@ int int_sident(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-
-
-
-/*
-C Gateway function for solving Sylvester and Lyapunov matrix
-C            equations using SLICOT routines SB04MD, SB04ND, SB04PD,
-C            SB04QD, SB04RD, SB03MD, and SB03OD.
-C
-C Copyright INRIA 2001
-C Scilab syntax
-C   [X(,sep)] = linmeq(task,A(,B),C,flag,trans(,schur))
-C
-C   task = 1 :      [X] = linmeq(1,A,B,C,flag,trans,schur)
-C   task = 2 :  [X,sep] = linmeq(2,A,C,flag,trans)
-C                   [X] = linmeq(2,A,C,flag,trans)
-C   task = 3 :      [X] = linmeq(3,A,C,flag,trans)
-C         
-C Purpose:
-C   To solve the Sylvester and Lyapunov linear matrix equations
-C
-C   task = 1:
-C
-C         op(A)*X + X*op(B) = C,                          (1a)
-C
-C         op(A)*X*op(B) + X = C,                          (1b)
-C
-C   task = 2:
-C
-C         op(A)'*X + X*op(A) = C,                         (2a)
-C
-C         op(A)'*X*op(A) - X = C,                         (2b)
-C
-C   task = 3:
-C
-C         op(A)'*(op(X)'*op(X)) + (op(X)'*op(X))*op(A) =
-C                               -  op(C)'*op(C),          (3a)
-C
-C         op(A)'*(op(X)'*op(X))*op(A) - op(X)'*op(X) =
-C                                     - op(C)'*op(C),     (3b)
-C
-C   where op(M) = M, if trans = 0, and op(M) = M', if trans = 1.
-C
-C Input parameters: 
-C   task  - integer option to determine the equation type:
-C           = 1 : solve the Sylvester equation (1a) or (1b);
-C           = 2 : solve the Lyapunov equation (2a) or (2b);
-C           = 3 : solve for the Cholesky factor op(X) the Lyapunov
-C                 equation (3a) or (3b).
-C   A     - real coefficient N-by-N matrix.
-C           When task = 3, matrix A must be stable.
-C   B     - another real coefficient M-by-M matrix for
-C           equations (1a) or (1b).
-C   C     - right hand side matrix.
-C           task = 1 : C is N-by-M;
-C           task = 2 : C is N-by-N symmetric;
-C           task = 3 : op(C) is P-by-N.
-C   flag  - (optional) integer vector of length 3 or 2 containing
-C           options.
-C           task = 1 : flag has length 3
-C                flag(1) = 0 : solve the continuous-time equation (1a);
-C                              otherwise, solve the discrete-time
-C                              equation (1b).
-C                flag(2) = 1 : A is (quasi) upper triangular;
-C                          2 : A is upper Hessenberg;
-C                              otherwise, A is in general form.
-C                flag(3) = 1 : B is (quasi) upper triangular;
-C                          2 : B is upper Hessenberg;
-C                              otherwise, B is in general form.
-C           task = 2 : flag has length 2
-C                flag(1) = 0 : solve continuous-time equation (2a);
-C                              otherwise, solve discrete-time
-C                              equation (2b).
-C                flag(2) = 1 : A is (quasi) upper triangular;
-C                              otherwise, A is in general form.
-C           task = 3 : flag has length 2
-C                flag(1) = 0 : solve continuous-time equation (3a);
-C                              otherwise, solve discrete-time
-C                              equation (3b).
-C                flag(2) = 1 : A is (quasi) upper triangular;
-C                              otherwise, A is in general form.
-C           Default:    flag(1) = 0, flag(2) = 0 (, flag(3) = 0).
-C   trans - (optional) integer specifying a transposition option.
-C           trans = 0 : solve the equations (1) - (3) with op(M) = M.
-C           trans = 1 : solve the equations (1) - (3) with op(M) = M'.
-C           trans = 2 : solve the equations (1) with op(A) = A',
-C                                                    op(B) = B.
-C           trans = 3 : solve the equations (1) with op(A) = A,
-C                                                    op(B) = B'.
-C           Default:    trans = 0.
-C   schur - (optional) integer specifying whether the Hessenberg-Schur
-C           or Schur method should be used.
-C           Available for task = 1. 
-C           schur = 1 : Hessenberg-Schur method (one matrix is reduced
-C                       to Schur form).
-C           schur = 2 : Schur method (two matrices are reduced to Schur
-C                       form).
-C           Default:    schur = 1.
-C
-C Output parameters:
-C   X     - solution of the equation (or its Cholesky factor for (3)).
-C   sep   - (optional) estimator of Sep(op(A),-op(A)') for (2.a) or
-C           Sepd(A,A') for (2.b).
-C
-C Comments:
-C   1. For equation (1a) or (1b), when schur = 1, the Hessenberg-Schur 
-C      method is used, reducing one matrix to Hessenberg form and the
-C      other one to a real Schur form.
-C      Otherwise, both matrices are reduced to real Schur forms.
-C      If one or both matrices are already reduced to Schur/Hessenberg
-C      forms, this could be specified by flag(2) and flag(3).
-C      For general matrices, the Hessenberg-Schur method could be 
-C      significantly more efficient than the Schur method.
-C   2. For equation (3a) or (3b), the computed matrix X is the Cholesky
-C      factor of the solution, i.e., the real solution is op(X)'*op(X),
-C      where X is an N-by-N upper triangular matrix.
-C
-C References:
-C   This interface is based on the SLICOT routines:
-C   SB04PD, SB04MD, SB04QD, DTRSYL, SB04PY, SB04ND,  SB04RD, SB03MD, SB03OD
-C   
-C
-C Revisions:
-C   Adapted from the Slicot Matlab Mexfile by S. Steer Oct 2001
-*/
+/* This interface is called through sylv 
+ * 
+ * interface function for solving Sylvester and Lyapunov matrix
+ * equations using SLICOT routines 
+ *
+ * Copyright INRIA 2001
+ * Scilab syntax
+ *   [X(,sep)] = linmeq(task,A(,B),C,flag,trans(,schur))
+ *   task = 1 :      [X] = linmeq(1,A,B,C,flag,trans,schur)
+ *   task = 2 :  [X,sep] = linmeq(2,A,C,flag,trans)
+ *                   [X] = linmeq(2,A,C,flag,trans)
+ *   task = 3 :      [X] = linmeq(3,A,C,flag,trans)
+ * Purpose:
+ *   To solve the Sylvester and Lyapunov linear matrix equations
+ *   task = 1:
+ *         op(A)*X + X*op(B) = C,                          (1a)
+ *         op(A)*X*op(B) + X = C,                          (1b)
+ *   task = 2:
+ *         op(A)'*X + X*op(A) = C,                         (2a)
+ *         op(A)'*X*op(A) - X = C,                         (2b)
+ *   task = 3:
+ *         op(A)'*(op(X)'*op(X)) + (op(X)'*op(X))*op(A) =
+ *                               -  op(C)'*op(C),          (3a)
+ *         op(A)'*(op(X)'*op(X))*op(A) - op(X)'*op(X) =
+ *                                     - op(C)'*op(C),     (3b)
+ *   where op(M) = M, if trans = 0, and op(M) = M', if trans = 1.
+ *
+ * Input parameters: 
+ *   task  - integer option to determine the equation type:
+ *           = 1 : solve the Sylvester equation (1a) or (1b);
+ *           = 2 : solve the Lyapunov equation (2a) or (2b);
+ *           = 3 : solve for the Cholesky factor op(X) the Lyapunov
+ *                 equation (3a) or (3b).
+ *   A     - real coefficient N-by-N matrix.
+ *           When task = 3, matrix A must be stable.
+ *   B     - another real coefficient M-by-M matrix for
+ *           equations (1a) or (1b).
+ *   C     - right hand side matrix.
+ *           task = 1 : C is N-by-M;
+ *           task = 2 : C is N-by-N symmetric;
+ *           task = 3 : op(C) is P-by-N.
+ *   flag  - (optional) integer vector of length 3 or 2 containing
+ *           options.
+ *           task = 1 : flag has length 3
+ *                flag(1) = 0 : solve the continuous-time equation (1a);
+ *                              otherwise, solve the discrete-time
+ *                              equation (1b).
+ *                flag(2) = 1 : A is (quasi) upper triangular;
+ *                          2 : A is upper Hessenberg;
+ *                              otherwise, A is in general form.
+ *                flag(3) = 1 : B is (quasi) upper triangular;
+ *                          2 : B is upper Hessenberg;
+ *                              otherwise, B is in general form.
+ *           task = 2 : flag has length 2
+ *                flag(1) = 0 : solve continuous-time equation (2a);
+ *                              otherwise, solve discrete-time
+ *                              equation (2b).
+ *                flag(2) = 1 : A is (quasi) upper triangular;
+ *                              otherwise, A is in general form.
+ *           task = 3 : flag has length 2
+ *                flag(1) = 0 : solve continuous-time equation (3a);
+ *                              otherwise, solve discrete-time
+ *                              equation (3b).
+ *                flag(2) = 1 : A is (quasi) upper triangular;
+ *                              otherwise, A is in general form.
+ *           Default:    flag(1) = 0, flag(2) = 0 (, flag(3) = 0).
+ *   trans - (optional) integer specifying a transposition option.
+ *           trans = 0 : solve the equations (1) - (3) with op(M) = M.
+ *           trans = 1 : solve the equations (1) - (3) with op(M) = M'.
+ *           trans = 2 : solve the equations (1) with op(A) = A',
+ *                                                    op(B) = B.
+ *           trans = 3 : solve the equations (1) with op(A) = A,
+ *                                                    op(B) = B'.
+ *           Default:    trans = 0.
+ *   schur - (optional) integer specifying whether the Hessenberg-Schur
+ *           or Schur method should be used.
+ *           Available for task = 1. 
+ *           schur = 1 : Hessenberg-Schur method (one matrix is reduced
+ *                       to Schur form).
+ *           schur = 2 : Schur method (two matrices are reduced to Schur
+ *                       form).
+ *           Default:    schur = 1.
+ *
+ * Output parameters:
+ *   X     - solution of the equation (or its Cholesky factor for (3)).
+ *   sep   - (optional) estimator of Sep(op(A),-op(A)') for (2.a) or
+ *           Sepd(A,A') for (2.b).
+ *
+ * Comments:
+ *   1. For equation (1a) or (1b), when schur = 1, the Hessenberg-Schur 
+ *      method is used, reducing one matrix to Hessenberg form and the
+ *      other one to a real Schur form.
+ *      Otherwise, both matrices are reduced to real Schur forms.
+ *      If one or both matrices are already reduced to Schur/Hessenberg
+ *      forms, this could be specified by flag(2) and flag(3).
+ *      For general matrices, the Hessenberg-Schur method could be 
+ *      significantly more efficient than the Schur method.
+ *   2. For equation (3a) or (3b), the computed matrix X is the Cholesky
+ *      factor of the solution, i.e., the real solution is op(X)'*op(X),
+ *      where X is an N-by-N upper triangular matrix.
+ *
+ * References:
+ *   This interface is based on the SLICOT routines:
+ *   SB04PD, SB04MD, SB04QD, DTRSYL, SB04PY, SB04ND,  SB04RD, SB03MD, SB03OD
+ *   
+ *
+ * Revisions:
+ *   Adapted from the Slicot Matlab Mexfile by S. Steer Oct 2001
+ */
 
 int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 {
