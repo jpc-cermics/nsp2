@@ -292,7 +292,7 @@ NspRMatrix *nsp_matrix_to_rational(NspMatrix *M)
       D->C[0].r =1;
       D->C[0].i =0;
     }
-  if ((loc =nsp_rmatrix_create(NVOID,1,1,NULL,-1,NULL))== NULLRMAT) return(NULLRMAT);
+  if ((loc =nsp_rmatrix_create(NVOID,1,1,NULL,-1,NULL,'u',1))== NULLRMAT) return(NULLRMAT);
   rat->num = N; rat->den=D;
   loc->S[0] = rat;
   return loc;
@@ -317,7 +317,7 @@ NspRMatrix *nsp_matrices_to_rational(NspMatrix *A,NspMatrix *B)
   if ((rat = malloc(sizeof(struct _nsp_rational))) == NULL) return NULL;
   if ((N = nsp_polynom_copy_and_name("pe",A))== NULLPOLY ) return NULL;
   if ((D = nsp_polynom_copy_and_name("pe",B))== NULLPOLY ) return NULL;
-  if ((loc =nsp_rmatrix_create(NVOID,1,1,NULL,-1,NULL))== NULLRMAT) return(NULLRMAT);
+  if ((loc =nsp_rmatrix_create(NVOID,1,1,NULL,-1,NULL,'u',1))== NULLRMAT) return(NULLRMAT);
   rat->num = N; rat->den=D;
   loc->S[0] = rat;
   return loc;
@@ -387,6 +387,8 @@ int nsp_rmatrix_print(NspRMatrix *Mat, int indent,const char *name, int rec_leve
  * @n: number of columns 
  * @cval: pointer to double or doubleC
  * @flag: an integer 
+ * @dom: a character
+ * @dample: a double 
  * 
  * returns a new mxn #NspRMatrix. if @flag 
  * is stricly negative the elements of the Matrix 
@@ -400,7 +402,8 @@ int nsp_rmatrix_print(NspRMatrix *Mat, int indent,const char *name, int rec_leve
 
 static const doubleC Czero={0.00,0.00};
 
-NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag, const char *varname)
+NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag, const char *varname,
+			       char dom, double sample)
 {
   int i;
   NspRMatrix *Loc;
@@ -425,7 +428,9 @@ NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cva
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
   Loc->S = NULL;
-
+  Loc->dom = 'u'; /* undefined domain */
+  Loc->dt = 1;
+  
   if ( varname != NULL)
     {
       if (( Loc->var = nsp_new_string(varname,-1))==NULL )
@@ -508,6 +513,8 @@ NspRMatrix *nsp_rmatrix_create_m(char *name, int m, int n,NspMatrix *Val, const 
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
   Loc->S = NULL;
+  Loc->dom = 'u'; /* undefined domain */
+  Loc->dt = 1;
 
   if ( varname != NULL)
     {
@@ -579,8 +586,11 @@ NspRMatrix *nsp_rmatrix_create_m(char *name, int m, int n,NspMatrix *Val, const 
 
 NspRMatrix *nsp_rmatrix_clone(char *name, NspRMatrix *A, int m, int n, int init)
 {
+  NspRMatrix *R;
+  if ((R =  nsp_rmatrix_create(name, m, n, NULL,(init == TRUE) ? 0 :  -1, A->var,A->dom,A->dt))== NULL)
+    return NULL;
   /* -1 for just allocating a matrix of pointers */
-  return nsp_rmatrix_create(name, m, n, NULL,(init == TRUE) ? 0 :  -1, A->var); 
+  return R;
 }
 
 /*
@@ -614,7 +624,7 @@ NspRMatrix *nsp_rmatrix_copy(NspRMatrix *A)
 {
   int i;
   NspRMatrix *Loc;
-  if ( ( Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, A->var)) == NULLRMAT) return(NULLRMAT);
+  if ( ( Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, A->var,A->dom,A->dt)) == NULLRMAT) return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
       if ( A->S[i] != NULL)
@@ -641,7 +651,7 @@ NspRMatrix *nsp_matrix_to_rmatrix(NspMatrix *A)
   int i;
   NspRMatrix *Loc;
   doubleC d={0,0};
-  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL,'u',1)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -671,7 +681,7 @@ NspRMatrix *nsp_pmatrix_to_rmatrix(NspPMatrix *A)
 {
   int i;
   NspRMatrix *Loc;
-  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL,'u',1)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -706,7 +716,7 @@ NspRMatrix *nsp_matrices_to_rmatrix(NspMatrix *A,NspMatrix *B)
       Scierror("Error: the two arguments should be both reals or complex\n");
       return NULL;
     }
-  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL)) == NULLRMAT) 
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, NULL,'u',1)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -753,7 +763,7 @@ NspRMatrix *nsp_pmatrices_to_rmatrix(NspPMatrix *A,NspPMatrix *B,int simp)
       return NULL;
     }
   
-  if ((Loc =nsp_rmatrix_create(NVOID,Max(A->m,B->m),Max(A->n,B->n),NULL,-1, NULL)) == NULLRMAT) 
+  if ((Loc =nsp_rmatrix_create(NVOID,Max(A->m,B->m),Max(A->n,B->n),NULL,-1, NULL,'u',1)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -780,7 +790,7 @@ NspRMatrix *nsp_matrix_to_rmatrix_with_varname(NspMatrix *A,const char *varname)
   int i;
   NspRMatrix *Loc;
   doubleC d={0,0};
-  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, varname)) == NULLRMAT) 
+  if ((Loc =nsp_rmatrix_create(NVOID,A->m,A->n,NULL,-1, varname,'u',1)) == NULLRMAT) 
     return(NULLRMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -983,7 +993,7 @@ NspRMatrix *nsp_rmatrix_concat_down(const NspRMatrix *A,const NspRMatrix *B)
       return NULLRMAT;
     }
   
-  Loc =nsp_rmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0, A->var);
+  Loc =nsp_rmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0, A->var,A->dom,A->dt);
   if ( Loc == NULLRMAT) 
     {
       Scierror("Error: running out of memory\n");
@@ -1122,10 +1132,10 @@ NspRMatrix  *nsp_rmatrix_extract_diag(NspRMatrix *A, int k)
   imax = Min(A->m,A->n -k );
   if ( imin > imax ) 
     {
-      Loc =nsp_rmatrix_create(NVOID,(int) 0 , (int) 0,&Czero, A->rc_type == 'c' ? 2 : 1, A->var );
+      Loc =nsp_rmatrix_create(NVOID,(int) 0 , (int) 0,&Czero, A->rc_type == 'c' ? 2 : 1, A->var,A->dom,A->dt );
       return(Loc);
     }
-  if (( Loc =nsp_rmatrix_create(NVOID,imax-imin,1,&Czero,A->rc_type == 'c' ? 2 : 1,A->var )) == NULLRMAT)
+  if (( Loc =nsp_rmatrix_create(NVOID,imax-imin,1,&Czero,A->rc_type == 'c' ? 2 : 1,A->var,A->dom,A->dt )) == NULLRMAT)
     return(NULLRMAT);
   j=0; 
   for ( i = imin ; i < imax ; i++ ) 
@@ -1206,7 +1216,8 @@ NspRMatrix  *nsp_rmatrix_create_diag(NspRMatrix *Diag, int k)
   NspRMatrix *Loc;
   imin = Max(0,-k);
   imax = Diag->mn +imin;
-  if (( Loc =nsp_rmatrix_create(NVOID,imax,imax+k,&Czero,Diag->rc_type == 'c' ? 2 : 1 , Diag->var )) == NULLRMAT) 
+  if (( Loc =nsp_rmatrix_create(NVOID,imax,imax+k,&Czero,Diag->rc_type == 'c' ? 2 : 1 , Diag->var
+				,Diag->dom,Diag->dt)) == NULLRMAT) 
     return(NULLRMAT);
   j=0;
   for ( i = imin ; i < imax ; i++ ) 
@@ -1232,7 +1243,7 @@ NspRMatrix *nsp_rmatrix_transpose(const NspRMatrix *A)
   int i,j;
   NspRMatrix *Loc;
   /* initial mxn matrix with unallocated elements **/
-  if ( ( Loc =nsp_rmatrix_create(NVOID,A->n,A->m,NULL,-1, A->var)) == NULLRMAT) 
+  if ( ( Loc =nsp_rmatrix_create(NVOID,A->n,A->m,NULL,-1, A->var,A->dom,A->dt)) == NULLRMAT) 
     return NULLRMAT;
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < Loc->m ; i++ )
@@ -3277,7 +3288,7 @@ NspRMatrix *nsp_cells_to_rmatrix(const char *name, NspCells *C1, NspCells *C2)
 {
   int i = 0 ,j = 0, k;
   NspRMatrix *loc;
-  if ((loc =nsp_rmatrix_create(name,C1->m,C1->n,NULL,-1,NULL))== NULL) return(NULL);
+  if ((loc =nsp_rmatrix_create(name,C1->m,C1->n,NULL,-1,NULL,'u',1))== NULL) return(NULL);
   for ( i= 0 ; i < C1->mn;i++)
     {
       nsp_rational rat;

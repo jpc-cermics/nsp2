@@ -41,6 +41,8 @@ struct _NspRmatrix {
   nsp_rational *S;  /* Each polynom is a Matrix **/
   char rc_type  ;   /* type 'r' or 'i' */
   char *var  ;      /* name of rational variable */
+  char dom;         /* domain: 'c','d','s','u' */
+  double dt;        /* sample */
 };
 
 typedef struct  _NspRmatrix NspRMatrix;
@@ -71,7 +73,8 @@ extern NspRMatrix *nsp_matrices_to_rmatrix(NspMatrix *A,NspMatrix *B);
 extern NspRMatrix *nsp_matrices_to_rmatrix_with_varname(NspMatrix *A,NspMatrix *B,const char *varname);
 extern NspRMatrix *nsp_rmatrix_concat_down(const NspRMatrix *A,const NspRMatrix *B); 
 extern NspRMatrix *nsp_rmatrix_copy(NspRMatrix *A); 
-extern NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag, const char *var_name); 
+extern NspRMatrix *nsp_rmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag,
+				      const char *var_name, char dom, double sample);
 extern NspRMatrix *nsp_rmatrix_create_m(char *name, int m, int n,NspMatrix *Val, const char *var_name);
 extern NspRMatrix *nsp_rmatrix_clone(char *name, NspRMatrix *A, int m, int n, int init);
 extern NspRMatrix *nsp_rmatrix_extract(NspRMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 

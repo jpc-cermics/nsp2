@@ -254,6 +254,8 @@ static int nsp_rmatrix_xdr_save(XDR *xdrs, NspRMatrix *M)
   if (nsp_xdr_save_i(xdrs, M->m) == FAIL)    return FAIL;
   if (nsp_xdr_save_i(xdrs, M->n) == FAIL)    return FAIL;
   if (nsp_xdr_save_c(xdrs, M->rc_type) == FAIL)  return FAIL;
+  if (nsp_xdr_save_c(xdrs, M->dom) == FAIL)  return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->dt) == FAIL)  return FAIL;
   for ( i = 0 ; i < M->mn ; i++ ) 
     {
       if (nsp_object_xdr_save(xdrs,(NspObject *) M->S[i]) == FAIL) return FAIL;
@@ -267,7 +269,8 @@ static int nsp_rmatrix_xdr_save(XDR *xdrs, NspRMatrix *M)
 
 static NspRMatrix *nsp_rmatrix_xdr_load(XDR *xdrs)
 {
-  char c;
+  char c,dom;
+  double dt;
   int m, n,i;
   NspRMatrix *M;
   static char name[NAME_MAXL];
@@ -275,7 +278,9 @@ static NspRMatrix *nsp_rmatrix_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs, &m) == FAIL) return NULLRMAT;
   if (nsp_xdr_load_i(xdrs, &n) == FAIL) return NULLRMAT;
   if (nsp_xdr_load_c(xdrs, &c) == FAIL) return NULLRMAT;
-  if ((M =nsp_rmatrix_create(name,m,n,NULL,-1, NULL))== NULLRMAT)
+  if (nsp_xdr_load_c(xdrs, &dom) == FAIL) return NULLRMAT;
+  if (nsp_xdr_load_d(xdrs, &dt) == FAIL) return NULLRMAT;
+  if ((M =nsp_rmatrix_create(name,m,n,NULL,-1, NULL,dom,dt))== NULLRMAT)
     return NULLRMAT;
   for ( i = 0 ; i < M->mn ; i++ ) 
     {
@@ -536,9 +541,25 @@ static NspObject *int_rmatrix_get_num(void *Hv,const char *attr)
   return NSP_OBJECT(loc);
 }
 
-static int int_rmatrix_set_num(void *Hv,const char *attr, NspObject *O)
+static int int_rmatrix_set_num(void *Hv,const char *attr, NspObject *Obj)
 {
-  Scierror("attribute __keys of hash instances cannot be set !\n");
+  int i;
+  NspRMatrix *R = Hv;
+  NspPMatrix *P = (NspPMatrix *) Obj;
+  if (IsPMat(Obj) && (R->m == P->m && R->n == P->n ))
+    {
+      for ( i = 0 ; i < R->mn ; i++)
+	{
+	  NspMatrix *M =  nsp_polynom_copy_and_name("pe",P->S[i]);
+	  if ( M == NULL) goto err;
+	  nsp_polynom_destroy(&R->S[i]->num);
+	  R->S[i]->num = M;
+	}
+      return OK;
+    }
+  Scierror("Error: argument should be a polynomial %dx%d matrix\n",R->m,R->n);
+  return FAIL;
+ err:
   return FAIL;
 }
 
@@ -557,15 +578,80 @@ static NspObject *int_rmatrix_get_den(void *Hv,const char *attr)
   return NSP_OBJECT(loc);
 }
 
-static int int_rmatrix_set_den(void *Hv,const char *attr, NspObject *O)
+static int int_rmatrix_set_den(void *Hv,const char *attr, NspObject *Obj)
 {
-  Scierror("attribute __keys of hash instances cannot be set !\n");
+  int i;
+  NspRMatrix *R = Hv;
+  NspPMatrix *P = (NspPMatrix *) Obj;
+  if (IsPMat(Obj) && (R->m == P->m && R->n == P->n ))
+    {
+      for ( i = 0 ; i < R->mn ; i++)
+	{
+	  NspMatrix *M =  nsp_polynom_copy_and_name("pe",P->S[i]);
+	  if ( M == NULL) goto err;
+	  nsp_polynom_destroy(&R->S[i]->den);
+	  R->S[i]->den = M;
+	}
+      return OK;
+    }
+  Scierror("Error: argument should be a polynomial %dx%d matrix\n",R->m,R->n);
   return FAIL;
+ err:
+  return FAIL;
+}
+static NspObject *int_rmatrix_get_sample(void *Hv,const char *attr)
+{
+  NspRMatrix *R = Hv;
+  NspMatrix *M;
+  if (( M = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) return NULL;
+  M->R[0] = R->dt;
+  return (NspObject *) M;
+}
+
+static int int_rmatrix_set_sample(void *Hv,const char *attr, NspObject *Obj)
+{
+  double d;
+  NspRMatrix *R = Hv;
+  if ( DoubleScalar(Obj,&d) == FAIL ) 
+    {
+      Scierror("Error: argument should be a double\n");
+      return FAIL;
+    }
+  R->dt = d;
+  return OK;
+}
+
+static NspObject *int_rmatrix_get_dom(void *Hv,const char *attr)
+{
+  char str[2]={((NspRMatrix *) Hv)->dom,0};
+  return nsp_new_string_obj(NVOID,str, -1);
+}
+
+static int int_rmatrix_set_dom(void *Hv,const char *attr, NspObject *Obj)
+{
+  if ( IsString(Obj))
+    {
+      char *str = ((NspSMatrix *) Obj)->S[0];
+      if ( strlen(str) > 0 ) ((NspRMatrix *) Hv)->dom = str[0];
+      else
+	{
+	  Scierror("Error: argument should be a sring of length >0 \n");
+	  return FAIL;
+	}
+    }
+  else
+    {
+      Scierror("Error: argument should be a sring\n");
+      return FAIL;
+    }
+  return OK;
 }
 
 static AttrTab rmatrix_attrs[] = {
   { "num", 	int_rmatrix_get_num , int_rmatrix_set_num , 	NULL, NULL  },
   { "den", 	int_rmatrix_get_den , int_rmatrix_set_den , 	NULL, NULL  },
+  { "dom", 	int_rmatrix_get_dom , int_rmatrix_set_dom , 	NULL, NULL  },
+  { "sample", 	int_rmatrix_get_sample , int_rmatrix_set_sample ,NULL, NULL  },
   { (char *) 0, NULL, NULL , NULL , NULL }
 };
 
