@@ -3,10 +3,10 @@ function plzr(a,b,c,d)
 // Copyright INRIA
   if type(a,'short')=='r' then
     sl=tf2ss(a),
-    a=sl.A,b=sl.B,c=sl.C,d=sl.D;
+    a=sl.A,b=sl.B,c=sl.C,d=sl(5);// 
   elseif type(a,'short')== 'linearsys' then 
     sl=a;
-    a=sl.A,b=sl.B,c=sl.C,d=sl.D;
+    a=sl.A,b=sl.B,c=sl.C,d=sl(5);//
   end;
   dr=spec(a)
   [al,be]=tr_zer(a,b,c,d)
@@ -29,10 +29,7 @@ function plzr(a,b,c,d)
     my=my+ay
   end
   rect=[mnx, -my, mxx, my];
-  plot2d(0,0,1,"051"," ",rect);
-
-  xx=xget("mark")
-  xset("mark",xx(1),xx(1)+1);
+  xsetech(frect=rect);
   if prod(size(nr))<>0 then
     plot2d(nr,ni,[-9,3],"100",'Zeros')
     strf='100'
@@ -41,11 +38,10 @@ function plzr(a,b,c,d)
     strf='100'
     pos=3
   end;
-  plot2d(dr,di,[-2,pos],strf,'Poles');
-  plot2d([mnx;mxx],[0;0],4,"000",' ')
-  plot2d([0;0],[-my;my],4,"000",' ')
+  plot2d(dr,di,style=-2,mark_size=8,leg='Poles');
+  plot2d([mnx;mxx],[0;0],style=4);
+  plot2d([0;0],[-my;my],style=4);
 
   xarc(-1,1,2,2,0,360*64)
   xtitle('transmission zeros and poles','real axis','imag. axis');
-  xset("mark",xx(1),xx(2));
 endfunction

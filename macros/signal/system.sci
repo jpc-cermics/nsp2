@@ -1,4 +1,4 @@
-function [x1,y]=system(x0,f,g,h,q,r)
+function [x1,y]=system_m(x0,f,g,h,q,r)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - C. Bunks (INRIA)
 //
@@ -37,11 +37,11 @@ function [x1,y]=system(x0,f,g,h,q,r)
 //and v is distribute N(0,r).
 // Author: C. Bunks  date: August 1988
 // 
-  rand('normal');
+  // rand('normal');
   q2=chol(q);
   r2=chol(r);
-  u=q2'*rand(ones_deprecated(x0));
-  v=r2'*rand(ones_deprecated(x0));
+  u=q2'*rand(x0);
+  v=r2'*rand(x0);
   x1=f*x0+g*u;
   y=h*x0+v;
 endfunction
