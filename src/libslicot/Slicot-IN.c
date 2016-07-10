@@ -479,9 +479,6 @@ int int_contr(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-
-/* WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW */
-
 /*
  *  FINDBD.F - Gateway function for computing the initial state and/or
  *             the matrices B and D of a discrete-time linear system,
