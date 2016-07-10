@@ -12,12 +12,14 @@ function chart(varargin,varargopt)
   if ~varargopt.iskey['superpose'] then 
     varargopt.superpose = %t;
   end
-  attenu=[-12,-8,-6,-5,-4,-3,-2,-1.4,-1,-.5,0.25,0.5,0.7,1,1.4,2,2.3,3,4,5,6,8,12];
-  angl=[-(1:10),-(20:10:160)];
   titre="Amplitude and phase contours of y/(1+y)"
   l10=log(10);
   ratio=%pi/180;
   
+  attenu=[-12,-8,-6,-5,-4,-3,-2,-1.4,-1,-.5,...
+	  0.25,0.5,0.7,1,1.4,2,2.3,3,4,5,6,8,12];
+  angl= [-(1:10),-(20:10:160)]*ratio;
+    
   if length(varargin) >= 1 then attenu = varargin(1);end
   if length(varargin) >= 2 then angl = -varargin(2)*ratio;end
   
@@ -44,10 +46,11 @@ function chart(varargin,varargopt)
     p=cell(0,0);m=cell(0,0);
     for i = 1:prod(size(attenu)),
       att=attenu(i);
-      if att<0 then 
-	w=%eps:0.03:%pi;
+      N= %pi/0.01;
+      if att < 0 then 
+	w=linspace(100*%eps,%pi,N);
       else 
-	w=-%pi:0.03:0;
+	w=linspace(-%pi,- 100*%eps,N);
       end;
       n=prod(size(w))
       rf=centre(i)*ones(size(w))+rayon(i)*exp(%i*w);
@@ -79,14 +82,14 @@ function chart(varargin,varargopt)
   //isophase curves
   if ~isempty(angl) then
     p=cell(0,0);m=cell(0,0);
-    eps=100*%eps;
+    eps=10*%eps;
     for teta=angl,
       if teta < -%pi/2 then
-	last=teta-eps,
+	last=teta-eps;
       else
-	last=teta+eps,
+	last=teta+eps;
       end;
-      w=[- (170*ratio):0.03:last,last]
+      w=[-(175*ratio):0.03:last,last]
       n=prod(size(w));
       module=real(20*log((sin(w)*cos(teta)/sin(teta)-cos(w)))/l10)
       w=w/ratio
@@ -100,6 +103,10 @@ function chart(varargin,varargopt)
 	end
       end
     end;
-    for pi=1:size(p,'*'); xpoly(p{pi},m{pi});end
+    pause 
+    for pi=1:size(p,'*');
+      I=isinf(m{i});p{i}(I)=[];m{i}(I)=[];
+      if size(p{i},'*')> 1 then  xpoly(p{pi},m{pi});end
+    end
   end
 endfunction
