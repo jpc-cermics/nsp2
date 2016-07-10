@@ -1,9 +1,9 @@
-function nyquist(hnum,hden,varargopt)
+function nyquist(varargin,varargopt)
 // varargopt: frq,fmin,fmax,step,title,dom
 // Nyquist plot
 // Copyright CECILL INRIA (from scilab).
 
-  if nargin <= 0 then
+  if length(varargin) == 0 then 
     s=poly(0,'s');
     n=(s^2+2*0.9*10*s+100);
     d=(s^2+2*0.3*10.1*s+102.01);
@@ -13,43 +13,102 @@ function nyquist(hnum,hden,varargopt)
     return;
   end
 
-  l10=log(10);
-
-  if type(hnum,'short')<>'p' then error("bode: Argument should be a polynomial matrix");end
-  if type(hden,'short')<>'p' then error("bide: Argument should be a polynomial matrix");end
-  sn=size(hnum);
-  sd=size(hden);
-  if ~sn.equal[sd] then error("bode; The two polynomial matrices should share the same size");end
-  if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
-
   // compute default values
   //-----------------------
   dom = varargopt.find['dom',def='c'];
-  if ~(dom.equal['c'] || dom.equal['d'] || ( type(dom,'short')=='m' && sime(dom,'*')==1)) then
-    error("dom should be ''c'' or ''d'' or a scalar");
+  if ~or(dom==['c','d','s','u']) then 
+    error("dom should be ''c'' or ''d'' or ''u''");
     return
   end
-  if  dom.equal['d'] then dom=1;end
+  if dom.equal['u'] then dom = 'c';end;
+  if dom.equal['s'] && ~varargopt.iskey['dt'] then 
+    error("Error: when dom is equal to ''s'' dt must be given");
+    return;
+  end
+  dt = varargopt.find['dt',def=1];
   step =  varargopt.find['step',def='auto'];
-  if dom=='c' then fmax=1.d3; else fmax=1/(2*dom),end
+  if dom.equal['c'] then fmax=1.d3; else fmax=1/(2*dt),end
   fmax= varargopt.find['fmax',def=fmax];
-  fmin= varargopt.find['fmin',def='sym'];
-  if fmin.equal['sym'] then fmin = -fmax;end;
-  // frq
-  frq=  varargopt.find['frq',def=[]];
+  fmin= varargopt.find['fmin',def=1.d-3];
   // title
   title =  varargopt.find['title',def=""];
-
+  
+  // select type of entries 
+  if type(varargin(1),'short')== 'm' then 
+    select length(varargin) 
+     case 2 then 
+      // frq, repf 
+      if type(varargin(2),'short') <> 'm' then 
+	error("Error: second argument should be a scalar matrix");
+	return;
+      end
+      frq= varargin(1);
+      repf= varargin(2);
+      if size(frq,2)== size(frq,2) && size(frq,1) <> size(frq,1) then
+	frq = ones(size(repf,1),1)*frq;
+      end
+      sn=size(frq);
+      sd=size(repf);
+      if ~sn.equal[sd] then 
+	error("Error: the two first arguments should share the same size");
+	return;
+      end
+      // compute phase and magnitude
+      //[phi,d]=phasemag(repf);
+     case 3 then 
+      // frq db phi
+      frq=varargin(1);
+      d=varargin(2);
+      phi=varargin(3);
+      repf=exp(log(10)*fmin/20 + %pi*%i/180*fmax);
+    else
+      error("Error: two or three matrix arguments expected");
+      return;
+    end
+    if min(frq)<=0 then
+      error('bode: requires strictly positive frequencies')
+    end
+  end
+  
+  if type(varargin(1),'short')== 'p' then 
+    // two polynomials 
+    if length(varargin) <> 2 then 
+      error("Error: expecting two non optional arguments for polynomial case");
+      return;
+    end;
+    if type(varargin(2),'short')<> 'p' then 
+      error("Error: second argument should be polynomial");
+      return
+    end
+    hnum=varargin(1);
+    hden=varargin(2);
+    sn=size(hnum);
+    sd=size(hden);
+    if ~sn.equal[sd] then error("bode; The two polynomial matrices should share the same size");end
+    if sn(2)<>1 then error("bode: The two polynomial matrices should be of size nx1");end
+    // frq
+    frq=  varargopt.find['frq',def=[]];
+    if isempty(frq) then
+      // compute frq
+      [frq,repf,splitf]=repfreq(hnum,hden,dom=dom,dt=dt,fmin=fmin,fmax=fmax,step=step);
+    end
+    // compute phase and magnitude
+    // [phi,d]=phasemag(repf);
+  end
+  
   // compute frq repf splitf from fmin fmax step
   //---------------------------------------------
-
-  if isempty(frq) then
-    // compute frq
-    [frq,repf,splitf]=repfreq(hnum,hden,varargopt(:));
+  // check frequencies
+  if dom.equal['s'] then
+    nyq_frq=1/2/dt;
+    if ~isempty(find(frq > nyq_frq)) then
+      printf('There are frequencies beyond Nyquist f=%f!\n',nyq_frq);
+    end
   end
-
+  
+  // Graphics 
+  // ---------
   [mn,n]=size(repf)
-  //trace d
   repi=imag(repf);repf=real(repf)
   mnx=min(repf);
   mny=min(repi);
@@ -63,7 +122,6 @@ function nyquist(hnum,hden,varargopt)
   if ~new_graphics() then switch_graphics();end;xclear();
 
   // each curve consists of parts
-
   legends=catenate(title,sep='@');
   H=hash(leg=legends,leg_pos="urm");
   splitf($+1)=n+1;
@@ -78,7 +136,7 @@ function nyquist(hnum,hden,varargopt)
   dx=rect(3)-rect(1)
   dy=rect(4)-rect(2)
   dx2=dx^2;dy2=dy^2
-  // collection significant frequencies along the curve
+  // collect significant frequencies along the curve
   //-------------------------------------------------------
   Ic=min(cumsum(sqrt(((repf(:,1:$-1)-repf(:,2:$)).^2)/dx2+((repi(:,1:$-1)-repi(:,2:$)).^2)/dy2),2),'r');
   kk=1
@@ -153,7 +211,15 @@ function nyquist(hnum,hden,varargopt)
   end
 endfunction
 
+function nyquist_r(r,varargopt)
+  if ~varargopt.iskey['dt'] then varargopt.dt= r.dt;end 
+  if ~varargopt.iskey['dom'] then varargopt.dom= r.dom;end 
+  nyquist(r.num,r.den, varargopt(:));
+endfunction
 
-function nyquist_r(h,varargopt)
+function nyquist_linearsys(sl,varargopt)
+  h=ss2tf(sl);
+  if ~varargopt.iskey['dt'] then varargopt.dt= sl.dt;end 
+  if ~varargopt.iskey['dom'] then varargopt.dom= sl.dom;end 
   nyquist(h.num,h.den,varargopt(:))
 endfunction

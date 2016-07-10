@@ -599,7 +599,7 @@ static int int_rmatrix_set_den(void *Hv,const char *attr, NspObject *Obj)
  err:
   return FAIL;
 }
-static NspObject *int_rmatrix_get_sample(void *Hv,const char *attr)
+static NspObject *int_rmatrix_get_dt(void *Hv,const char *attr)
 {
   NspRMatrix *R = Hv;
   NspMatrix *M;
@@ -608,7 +608,7 @@ static NspObject *int_rmatrix_get_sample(void *Hv,const char *attr)
   return (NspObject *) M;
 }
 
-static int int_rmatrix_set_sample(void *Hv,const char *attr, NspObject *Obj)
+static int int_rmatrix_set_dt(void *Hv,const char *attr, NspObject *Obj)
 {
   double d;
   NspRMatrix *R = Hv;
@@ -651,7 +651,7 @@ static AttrTab rmatrix_attrs[] = {
   { "num", 	int_rmatrix_get_num , int_rmatrix_set_num , 	NULL, NULL  },
   { "den", 	int_rmatrix_get_den , int_rmatrix_set_den , 	NULL, NULL  },
   { "dom", 	int_rmatrix_get_dom , int_rmatrix_set_dom , 	NULL, NULL  },
-  { "sample", 	int_rmatrix_get_sample , int_rmatrix_set_sample ,NULL, NULL  },
+  { "dt", 	int_rmatrix_get_dt  , int_rmatrix_set_dt  ,     NULL, NULL  },
   { (char *) 0, NULL, NULL , NULL , NULL }
 };
 

@@ -1,4 +1,19 @@
-function bode(varargin,varargopt)
+function black(varargin,varargopt)
+// Black's diagram (Nichols chart) for a linear system sl.
+// sl can be a continuous-time, discrete-time or sampled SIMO system
+//            
+//  fmin     : minimal frequency (in Hz).
+//  fmax     : maximal frequency (in Hz).
+//  pas      : logarithmic discretization step. (see calfrq for the
+//             choice of default value).
+//  comments : character strings to comment the curves.
+//
+//  frq      : (row)-vector of frequencies (in Hz) or (SIMO case) matrix
+//             of frequencies.
+//  db       : matrix of modulus (in Db). One row for each response.
+//  phi      : matrix of phases (in degrees). One row for each response.
+//  repf     : matrix of complex numbers. One row for each response.
+//
 // varargopt: frq,fmin,fmax,step,title,dom
 // Copyright GPL INRIA (from scilab).
   
@@ -6,7 +21,7 @@ function bode(varargin,varargopt)
     s=poly(0,'s')
     n=(s^2+2*0.9*10*s+100);d=(s^2+2*0.3*10.1*s+102.01);
     n1=n*(s^2+2*0.1*15.1*s+228.01); d1=d*(s^2+2*0.9*15*s+225);
-    bode([n;n1],[d;d1],fmin=0.01,fmax=100,title=['h1';'h'])
+    black([n;n1],[d;d1],fmin=0.01,fmax=100,title=['h1';'h'])
     return;
   end
 
@@ -29,7 +44,7 @@ function bode(varargin,varargopt)
   fmin= varargopt.find['fmin',def=1.d-3];
   // title
   title =  varargopt.find['title',def=""];
-  
+  ilf=0;
   // select type of entries 
   if type(varargin(1),'short')== 'm' then 
     select length(varargin) 
@@ -61,9 +76,12 @@ function bode(varargin,varargopt)
       error("Error: two or three matrix arguments expected");
       return;
     end
-    if min(frq)<=0 then
-      error('bode: requires strictly positive frequencies')
-    end
+    [mn,n]=size(frq);
+    if mn<>1 then
+      ilf=1;
+    else
+      ilf=0;
+    end;
   end
   
   if type(varargin(1),'short')== 'p' then 
@@ -101,47 +119,72 @@ function bode(varargin,varargopt)
       printf('There are frequencies beyond Nyquist f=%f!\n',nyq_frq);
     end
   end
-  
-  // Graphic parts 
+
+  // Graphics 
   if ~new_graphics() then switch_graphics();end;xclear();
-  //magnitude
-  rect=[min(frq),min(d),max(frq),max(d)]
-  // BUG here logflag is not used when given to xsetech
-  xsetech(wrect=[0,0,1,0.5],frect=rect,fixed=%t,logflag="ln");
+  [mn,n]=size(phi);
+  //
+  xmn=floor(min(phi)/90)*90
+  xmx=ceil(max(phi)/90)*90
+  ymn=min(d)
+  ymx=max(d)
+  rect=[ymn;xmn;ymx;xmx]
+  //[xmn,xmx,npx]=graduate(-360,0)
+  //[ymn,ymx,npy]=graduate(mini(d),maxi(d))
+  rect=[xmn,ymn,xmx,ymx]
+  // xsetech(wrect=[0,0,1,0.5],frect=rect,fixed=%t);
+  plot2d(phi',d',line_color=(1:mn),rect=rect);
   xgrid();
-  legends=catenate(title,sep='@');
-  plot2d(frq',d',rect=rect,logflag="ln",leg=legends,leg_pos="urm");
-  if type(dom,'short')=='s' then
-    [xx1,xx2]=xgetech();
-    val= xx2([2;4])';
-    // plot2d(max(frq)*[1;1],val,line_color=5,rect=rect,logflag="ln");
+  kf=1
+  phi1=phi+5*ones(size(phi));
+  //xgeti=xget("mark");
+  //xset("mark",2,xgeti(2));
+  //xset("clipgrf");
+  
+  kk=1;p0=[phi(:,kk) d(:,kk)];ks=1;dst=0;
+  dx=rect(3)-rect(1)
+  dy=rect(4)-rect(2)
+  dx2=dx^2;dy2=dy^2
+
+  while kk<n
+    kk=kk+1
+    dst=dst+min(((phi(:,kk-1)-phi(:,kk)).^2)/dx2+((d(:,kk-1)-d(:,kk)).^2)/dy2)
+    if dst>0.001 then
+      if min(abs(frq(:,ks(prod(size(ks))))-frq(:,kk))./frq(:,kk))>0.2 then
+	ks=[ks kk]
+	dst=0
+      end
+    end
   end
-  xtitle('Magnitude','Hz','db');
-  //phase
-  rect=[min(frq),min(phi),max(frq),max(phi)]
-  xsetech(wrect=[0,0.5,1,0.5],frect=rect,fixed=%t,logflag="ln");
-  xgrid();
-  //  now the curves
-  plot2d(frq',phi',rect=rect,logflag="ln") ;
-  if type(dom,'short')=='m' then
-    [xx1,xx2]=xgetech();
-    val= xx2([2;4])';
-    // plot2d1(max(frq)*[1;1],val,line_color=5,rect=rect,logflag="ln");
-  end
-  xtitle('Phase ',' Hz','degrees');
+  kf=1
+  for k=1:mn,
+    xnumb(phi(k,ks),d(k,ks),frq(kf,ks));
+    xpoly(phi(k,ks),d(k,ks),mark=1,mark_size=8,color=-2);
+    kf=kf+ilf
+  end;
+  //xclip();
+  xtitle('h(2i.pi.f) ','phase','magnitude');
+  //     contour 2.3 db
+  mbf=2.3;
+  lmda=exp(log(10)/20*mbf);
+  r=lmda/(lmda**2-1);
+  npts=100;
+  crcl=exp(%i*(-%pi:(2*%pi/npts):%pi));
+  lgmt=log(-r*crcl+r*lmda*ones(size(crcl)));
+  plot2d([180*(imag(lgmt)/%pi-ones(size(lgmt)))]',[(20/log(10)*real(lgmt))]',...
+	 style=[2],leg='2.3db curve'),
+  //xset("mark",xgeti(1),xgeti(2));
 endfunction
 
-function bode_r(r,varargopt)
+function black_r(r,varargopt)
   if ~varargopt.iskey['dt'] then varargopt.dt= r.dt;end 
   if ~varargopt.iskey['dom'] then varargopt.dom= r.dom;end 
-  bode(r.num,r.den, varargopt(:));
+  black(r.num,r.den, varargopt(:));
 endfunction
 
-function bode_linearsys(sl,varargopt)
+function black_linearsys(sl,varargopt)
   h=ss2tf(sl);
   if ~varargopt.iskey['dt'] then varargopt.dt= sl.dt;end 
   if ~varargopt.iskey['dom'] then varargopt.dom= sl.dom;end 
-  bode(h.num,h.den,varargopt(:))
+  black(h.num,h.den,varargopt(:))
 endfunction
-
-  
