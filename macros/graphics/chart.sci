@@ -103,7 +103,6 @@ function chart(varargin,varargopt)
 	end
       end
     end;
-    pause 
     for pi=1:size(p,'*');
       I=isinf(m{i});p{i}(I)=[];m{i}(I)=[];
       if size(p{i},'*')> 1 then  xpoly(p{pi},m{pi},color=xget('lastpattern')+3);end

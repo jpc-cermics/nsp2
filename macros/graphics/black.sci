@@ -121,7 +121,7 @@ function black(varargin,varargopt)
   end
 
   // Graphics 
-  if ~new_graphics() then switch_graphics();end;xclear();
+  if ~new_graphics() then switch_graphics();end;
   [mn,n]=size(phi);
   //
   xmn=floor(min(phi)/90)*90
