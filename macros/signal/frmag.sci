@@ -44,26 +44,21 @@ function [xm,fr]=frmag(num,den,npts)
   fr=(0:.5/(npts-1):.5);
   dfr=exp(2*%i*%pi*fr);
   if nargin==2 then
-    if type(num,'short')=='h' then
-      xm=abs(freq(num.n,num.d,dfr));
-    elseif type(num,'short') == 'p' then 
-      // rational case xm=abs(freq(num(2),num(3),dfr));
-      xm=abs(freq(num,poly(1,'z','c'),dfr));
-    elseif type(num,'short')=='m' then
-      xz=poly(num,'z','c');
-      xm=abs(freq(xz,1,dfr))
+    select type(num,'short')
+     case 'r' then  xm=abs(freq(num.num,num.den,dfr));
+     case 'p' then  xm=abs(freq(num,poly(1,'z','c'),dfr));
+     case 'm' then  xm=abs(freq(poly(num,'z','c'),poly(1,'z','c'),dfr));
     else
-      error('Error---Input arguments wrong data type')
+      error('Error: input argument has wrong type");
+      return;
     end
   elseif nargin==3 then
-    if type(num,'short')=='p' then
-      xm=abs(freq(num,den,dfr));
-    elseif type(num,'short')=='m' then
-      nz=poly(num,'z','c');
-      dz=poly(den,'z','c');
-      xm=abs(freq(nz,dz,dfr));
+    select type(num,'short')
+     case 'p' then xm=abs(freq(num,den,dfr));
+     case 'm' then xm=abs(freq(poly(num,'z','c'),poly(den,'z','c'),dfr));
     else
-      error('Error---Input arguments wrong data type')
+      error('Error: input argument has wrong type");
     end
   end
 endfunction
+

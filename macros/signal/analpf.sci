@@ -52,14 +52,14 @@ function [hs,pols,zers,gain]=analpf(n,fdesign,rp,omega)
    case 'cheb2' then
     att=1/rp(2);
     [zers,pols,gain]=zpch2(n,att,omega);
-    hs=p2r(m2p(gain*m2p(real(zers),var='s')), m2p(real(pols,var='s')));
+    hs=p2r(m2p(gain*m2p(real(zers),var='s')), m2p(real(pols),var='s'));
    case 'ellip' then
     epsilon=sqrt(-1+1/(1-rp(1))**2);
     att=1/rp(2);
     m=find_freq(epsilon,att,n);
     omegar=omega/sqrt(m);
     [zers,pols,gain]=zpell(epsilon,att,omega,omegar);
-    hs=p2r(gain*m2p(real(zers),var='s'),m2p(real(pols,var='s')));
+    hs=p2r(gain*m2p(real(zers),var='s'),m2p(real(pols),var='s'));
   else
     error('Unknown design type --- program termination'),
   end
