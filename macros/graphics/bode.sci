@@ -41,7 +41,7 @@ function bode(varargin,varargopt)
       end
       frq= varargin(1);
       repf= varargin(2);
-      if size(frq,2)== size(frq,2) && size(frq,1) <> size(frq,1) then
+      if size(frq,2) == size(repf,2) && size(frq,1) <> size(repf,1) then
 	frq = ones(size(repf,1),1)*frq;
       end
       sn=size(frq);

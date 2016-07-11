@@ -77,7 +77,7 @@ function chart(varargin,varargopt)
 	end
       end
     end;
-    for pi=1:size(p,'*'); xpoly(p{pi},m{pi});end
+    for pi=1:size(p,'*'); xpoly(p{pi},m{pi},color=xget('lastpattern')+3);end
   end
   //isophase curves
   if ~isempty(angl) then
@@ -106,7 +106,7 @@ function chart(varargin,varargopt)
     pause 
     for pi=1:size(p,'*');
       I=isinf(m{i});p{i}(I)=[];m{i}(I)=[];
-      if size(p{i},'*')> 1 then  xpoly(p{pi},m{pi});end
+      if size(p{i},'*')> 1 then  xpoly(p{pi},m{pi},color=xget('lastpattern')+3);end
     end
   end
 endfunction
