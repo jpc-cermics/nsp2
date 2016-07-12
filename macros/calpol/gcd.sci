@@ -43,6 +43,11 @@ function [g,uu]=gcd_i(p)
   end
 endfunction
 
+function [g,uu]=bezout_i_i(i1,i2)
+  [g,uu]=gcd_i([i1,i2])
+  uu=uu(:,$:-1:1);
+endfunction
+
 function [g,uu]=gcd_m(p)
 // g:  the gcd of a vector p casted to int
 // uu: a unimodular matrix u 
@@ -66,5 +71,10 @@ function [g,uu]=gcd_m(p)
     uu=[uu(:,1:(l-2)),uu(:,l-1)*u(1,[2 1])];
     uu(l,(l-1):l)=u(2,[2 1]);
   end
+endfunction
+
+function [g,uu]=bezout_m_m(i1,i2)
+  [g,uu]=gcd_m([i1,i2])
+  uu=uu(:,$:-1:1);
 endfunction
 

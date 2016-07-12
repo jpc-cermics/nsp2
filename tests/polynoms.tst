@@ -472,11 +472,27 @@ e = r-p1;
 if norm(e.coeffs{1}) > 200*%eps then pause;end 
 end
 
-// sfact for square matrices unfinished 
-// w1=sfact([p,p1])
+//bezout
 
-// bezout
+s=poly(0,'s');
 
+p1=(1+s)*(1+2*s)^2;p2=(1+s);
+[p,U]=bezout(p1,p2);
+if ~p.equal[1+s] then pause;end 
+
+if norm(coeff([p1 p2]*U-[p 0]))> 100*%eps  then pause,end
+
+//sfact
+s=poly(0,'s');
+p=(s-1/2)*(2-s);
+w=sfact(p);
+w1=w*horner(w,1/s,ttmode=%t);
+if norm(w1.num -p) >10*%eps  then pause,end
+
+F1=[s-1/2,s+1/2,s^2+2;1,s,-s;s^3+2*s,s,1/2-s];
+P=F1*gtild(F1,"d");
+F=sfact(P);if norm(coeff(P-F*gtild(F,"d")))>100*%eps  then pause,end
+F=sfact(P+0);if norm(coeff(P-F*gtild(F,"d")))>100*%eps  then pause,end
 
 // inv for polynomials
 
