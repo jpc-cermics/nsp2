@@ -865,7 +865,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 	  int nc = 2 + Elt->mn - 1 - n;
 	  if ( nc > 0)
 	    {
-	      C2F(dcopy)(&nc, Elt->R + n - 1, &one, Out->R + i, &Elt->mn);
+	      C2F(dcopy)(&nc, Elt->R + n - 1, &one, Out->R + i, &N->mn);
 	    }
 	}
       int nm1 = n - 1;

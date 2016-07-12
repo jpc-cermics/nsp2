@@ -36,8 +36,7 @@ static int c__1 = 1;
  * 
  */
 
-/* Subroutine */ int
-signal_sfact1 (double *b,const int *n, double *w,const int *maxit, int *ierr)
+int signal_sfact1 (double *b,const int *n, double *w,const int *maxit, int *ierr)
 {
   int i1, i2, i3;
   double d1;

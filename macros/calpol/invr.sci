@@ -21,7 +21,7 @@ function [f,d]=invr(h,flag)
 //computes h^(-1).
 //!
   if nargin==1 then flag='C';end
-  printf("Deprecated: you should call inv directly\n");
+  printf("Warning: invr is deprecated, you should call inv directly\n");
   if type(h,'short')=='m' then 
     f=inv(h);
     if nargout==2 then d=1;end

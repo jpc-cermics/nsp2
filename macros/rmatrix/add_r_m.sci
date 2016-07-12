@@ -1,4 +1,7 @@
+// A set of overloaded functions for rationals 
+
 // + 
+//-----------------------------------
 
 function r=plus_r_r(r1,r2)
   if size(r1,'*')==1 || size(r2,'*')==1 || size(r1).equal[size(r2)] then 
@@ -36,7 +39,7 @@ function r1=plus_p_r(p,r)
 endfunction
 
 // * 
-//------
+//-----------------------------------
 
 function r1=mult_r_r(r1,r2)
 //!
@@ -89,6 +92,7 @@ function r1=mult_p_r(p,r)
 endfunction
 
 // .* 
+//-----------------------------------
 
 function r=dst_r_r(r1,r2)
   [n1,d1]=simp(r1.num .* r2.num , r1.den .* r2.den);
@@ -116,6 +120,7 @@ function r1=dst_p_r(p,r)
 endfunction
 
 // ./   with r 
+//-----------------------------------
 
 function r=dsl_r_r(r1,r2)
   [n1,d1]=simp(r1.num .* r2.den,r1.den .* r2.num);
@@ -185,6 +190,7 @@ function r1=dsl_p_m(p1,m)
 endfunction
 
 // - 
+//-----------------------------------
 
 function r=minus_r_r(r1,r2)
   if size(r1,'*')==1 || size(r2,'*')==1 || size(r1).equal[size(r2)] then 
@@ -237,10 +243,13 @@ function r1=minus_p_r(p,r)
 endfunction
 
 // ^
+//-----------------------------------
 
 // .^
+//-----------------------------------
 
 // sum 
+//-----------------------------------
 function y=sum_r(r,tag)
   if nargin <= 1 then tag = '*';end
   if isempty(r) then y=zeros(0,1);end
@@ -257,7 +266,7 @@ function y=sum_r(r,tag)
 endfunction
 
 // concat 
-
+//-----------------------------------
 function y=concatr_r_p(r,p)
   var = r.get_var[];
   y=[r,p2r(p,var=var)];
@@ -279,6 +288,7 @@ function y=concatd_p_r(p,r)
 endfunction
 
 // det 
+//-----------------------------------
 
 function d=det_r(r)
 // copyright scilab 
@@ -286,37 +296,16 @@ function d=det_r(r)
   d = det(n) / det(d);
 endfunction
 
-//  operator / for rationals 
-
-function s1=r_r_r(s1,s2)
-// s1/s2    for rationals
-//!
-// Copyright INRIA
-  // [s1,s2]=sysconv(s1,s2),
-  [n,m]=size(s2.num)
-  if n<>m then error("Error: matrix should be square");return;end
-  if n*m==1 then
-    s1= s1 * p2r(s2.den,s2.num);
-  else
-    p=s2.num;
-    s2=s2.den;
-    for k=1:n
-      pp=lcm(s2(:,k))
-      for l=1:n;p(l,k)=p(l,k)*pdiv(pp,s2(l,k)),end
-      s1(:,k)=s1(:,k)*pp
-    end
-    s1=s1*inv(p)
-  end
-endfunction
 
 // clean 
+//-----------------------------------
 
 function r=clean_r(r,varargin)
   r=p2r(clean(r.num,varargin(:)),clean(r.den,varargin(:)),simp=%t);
 endfunction
 
 // div / 
-
+//-----------------------------------
 
 function r= div_r_r(r1,r2)
   if size(r2,'*')== 1 then 
@@ -324,7 +313,7 @@ function r= div_r_r(r1,r2)
   elseif size(r2,'r')==size(r2,'c') then 
     r = inv(r2)*r1;
   else
-    error("Unimplemented");
+    error("Error: r1/r2 is implemented for rationals when r2 is 1x1 or square");
   end
 endfunction
 
@@ -392,6 +381,7 @@ function res= div_p_r(p,r)
 endfunction
 
 // .\ 
+//-----------------------------------
 
 function f=dbs_p_p(p1,p2)
 //f= p1.\p2
@@ -415,10 +405,6 @@ function f=dbs_r_p(f1,f2)
 endfunction
 
 function s=dbs_r_r(s1,s2)
-// s= s1.\s2 
-//!
-// Copyright INRIA
-  //[s1,s2]=sysconv(s1,s2)
   s = p2r( s1.den.*s2.num,s1.num.*s2.den,simp=%t);
 endfunction
 
@@ -438,3 +424,70 @@ function res=dbs_m_r(m,r)
   res= r ./ m;
 endfunction
 
+
+// ^ 
+//-----------------------------------
+
+function res=hat_r_m(r,m)
+  if size(m,'*') <> 1 then 
+    error("Error: second arguments should be scalar");
+    return;
+  end
+  if int(m) <> m then 
+    error("Error: second arguments should be integer");
+    return;
+  end
+  if m == 0 then 
+    res=m2r(ones(size(r)),var=r.get_var[],dim='.');
+    return 
+  end
+  if size(r,1)<>size(r,2) then 
+    res = r .^ m;
+    return
+  end
+  if m >= 0 then
+    res= r;
+    for i=2:m, res = res*r;end 
+  else
+    // should detect non invertible matrices XXXXX
+    r = inv(r);
+    res= r;
+    for i=2:abs(m), res = res*r;end 
+  end
+endfunction
+
+function res=dh_r_m(r,m)
+  
+  if size(m,'*') == 1 && size(r,'*') == 1 then 
+    if m == 0 then 
+      res=m2r(ones(size(r)),var=r.get_var[],dim='.');
+      return 
+    end
+    if m >= 0 then 
+      res= r;
+      for i=2:m, res = res*r;end 
+    else
+      r=p2r(r.den,r.num);
+      res=r;
+      for i=2:abs(m), res = res*r;end 
+    end
+    return;
+  end
+  
+  if size(m,'*') == 1 then 
+    if int(m) <> m then 
+      error("Error: second arguments should be integer");
+      return;
+    end
+    res = r; for i=1:size(r,'*'); res(i) = r(i).^m;end
+    return;
+  end
+  
+  if ~size(m).equal[size(r)] then 
+    error("Error: the two arguments should have the same size");
+    return;
+  end
+  
+  res = r;
+  for i=1:size(r,'*');    res(i) = r(i).^ m(i); end 
+endfunction
