@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2016 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1445,6 +1445,7 @@ static int int_pmatrix_dsl_tt_p_m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+#if 0
 static int int_pmatrix_div_tt_m_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *P;
@@ -1458,6 +1459,7 @@ static int int_pmatrix_div_tt_m_p(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) R);
   return 1;
 }
+#endif
 
 static int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1650,6 +1652,10 @@ static int int_pmatrix_map_c (Stack stack, int rhs, int opt, int lhs, Fmatc f)
   return 1;
 }
 
+static int int_pmatrix_abs (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map_c(stack, rhs, opt, lhs, nsp_mat_abs);
+}
 
 static int int_pmatrix_real (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2011,6 +2017,7 @@ static OpTab PMatrix_func[]={
   {"pmat_create",int_pmatrix_create},
   {"roots_p",int_pmatrix_roots},
   /* standard */
+  {"abs_p", int_pmatrix_abs},
   {"addcols_p_m",int_pmatrix_addcols},
   {"addrows_p",int_pmatrix_addrows},
   {"ceil_p", int_pmatrix_ceil},

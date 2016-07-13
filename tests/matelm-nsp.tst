@@ -237,12 +237,12 @@ a=[1+%i 2;-3 4;5,-6];
 if or(abs(a)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 
-//TOBEDONE a=[1 2;-3 4;5, -6]+poly(0);
-//TOBEDONE if or(abs(a)<>[1 2;3 4;5 6]+poly(0)) then pause,end
-//TOBEDONE if or(abs(a+0)<>[1 2;3 4;5 6]+poly(0)) then pause,end
-//TOBEDONE a=[1+%i 2;-3 4;5 -6]+poly(0);
-//TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
-//TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
+a=[1 2;-3 4;5, -6]+poly(0);
+if or(abs(a)<>[1 2;3 4;5 6]+poly(0)) then pause,end
+if or(abs(a+0)<>[1 2;3 4;5 6]+poly(0)) then pause,end
+a=[1+%i 2;-3 4;5 -6]+poly(0);
+if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
+if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
 
 //real
 
@@ -641,30 +641,8 @@ if or(prod(a+0,n)<>[2;-12;-30]+0*%i) then pause,end
 a=[];
 if prod(a)<>1 then pause,end
 if prod([])<>1 then pause,end
-// the following tests depend upon mtlb_mode ...
-// $$$ if prod(a,'r')<>[] then pause,end
-// $$$ if prod([],'r')<>[] then pause,end
-// $$$ n='r';
-// $$$ if prod(a,n)<>[] then pause,end
-// $$$ if prod([],n)<>[] then pause,end
-// $$$ if prod(a,'r')<>[] then pause,end
-// $$$ if prod([],'r')<>[] then pause,end
-// $$$ n='r';
-// $$$ if prod(a,n)<>[] then pause,end
-// $$$ if prod([],n)<>[] then pause,end
-// $$$ 
-// $$$ if prod(a,'c')<>[] then pause,end
-// $$$ if prod([],'c')<>[] then pause,end
-// $$$ n='c';
-// $$$ if prod(a,n)<>[] then pause,end
-// $$$ if prod([],n)<>[] then pause,end
-// $$$ if prod(a,'c')<>[] then pause,end
-// $$$ if prod([],'c')<>[] then pause,end
-// $$$ n='c';
-// $$$ if prod(a,n)<>[] then pause,end
-// $$$ if prod([],n)<>[] then pause,end
 
-// Prod sur les sparses ? 
+// prod for sparse 
 // TOBEDONE 
 
 //cumsum
