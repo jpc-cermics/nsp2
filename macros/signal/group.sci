@@ -54,56 +54,38 @@ function [tg,fr]=group(npts,a1i,a2i,b1i,b2i)
     //get the type of h and the variable name
     
     h=a1i;
-    ht=type(h);
-    
+    ht=type(h,'short');
     //if ht==1 then h is a vector containing filter coefficients
-    
-    if ht==1 then
-      
+    if ht=='m' then
       //make h a rational polynomial
-      
       hs=max(size(h));
       z=poly(0,'z');
       h=poly(h,'z','c');
       h=gtild(h,'d')*(1/z^(hs-1));
       ht=16;
     end
-    
     //if ht==16 then h is a rational polynomial
     //(perhaps in cascade form)
-    
-    //-compat ht==15 retained for list/tlist compatibility
-    if ht==15|ht==16 then
-      z=h(3).get_var[];
-      hcs=max(size(h(2)));
+    if ht== 'r' then
+      z=h.num.get_var[];
+      hcs=max(size(h.num));
     end
     
     //if the rational polynomial is not in cascade form then
-    
     if hcs==1 then
-      
       //if ht==2 then h is a regular polynomial
-      
-      if ht==2 then
+      if ht=='p' then
 	z=h.get_var[];
       end
-      
       //get the derivative of h(z)
-      
       hzd=derivat(h);
-      
       //get the group delay of h(z)
-      
       z=poly(0,z);
       tgz=-z*hzd/h;
-      
       //evaluate tg
-      
       rfr=exp(2*%pi*%i*fr);
-      tg=real(freq(tgz(2),tgz(3),rfr));
-      
+      tg=real(freq(tgz.num,tgz.den,rfr));
       //done with non-cascade calculation of group delay
-      
     end
   end
   

@@ -48,7 +48,7 @@
   \begin{Verbatim}
     n=10;omegar=6;A=1/0.2;sample=0.0001:0.05:10;
     h2=cheb2mag(n,omegar,A,sample);
-    xbasc();plot2d(sample,log(h2)/log(10));
+    xbasc();plot2d(sample,log(h2)/log(10),style=2);
     xtitle('','frequencies','magnitude in dB')
     //Plotting of frequency edges
     minval=(-max(-log(h2)))/log(10);

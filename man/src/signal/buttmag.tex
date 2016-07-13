@@ -19,7 +19,7 @@
 
 \mansection{buttmag}
 \begin{mandesc}
-  \short{buttmag}{ response of Butterworth filter} \\ % 
+  \short{buttmag}{response of Butterworth filter} \\ % 
 \end{mandesc}
 % \index{buttmag}\label{buttmag}
 % -- Calling sequence section
@@ -43,12 +43,13 @@
 \end{mandescription}
 % --example 
 \begin{examples}
+  \paragraph{squared magnitude response of Butterworth filter}
   \begin{Verbatim}
-    //squared magnitude response of Butterworth filter
     h=buttmag(13,300,1:1000);
     mag=20*log(h)'/log(10);
-    xbasc();
+    xclear();
     plot2d((1:1000)',mag,line_color=2,rect=[0,-180,1000,20]);
+    xtitle('Butterworth filter');
   \end{Verbatim}
 \end{examples}
 % -- Author

@@ -3117,7 +3117,7 @@ NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
  * Returns: a new #NspMatrix or %NULL
  **/
 
-NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b)
+NspMatrix *nsp_polynom_hornerm(const char *name,nsp_polynom P,NspMatrix *b)
 {
   NspMatrix *res=NULL,*coef=NULL,*term=NULL;
   int i,j;
@@ -3125,7 +3125,7 @@ NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b)
 
   if ((coef= nsp_matrix_create(NVOID,P->rc_type,(int)1,(int)1))==NULLMAT)
     goto err;
-  if ((res= nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
+  if ((res= nsp_matrix_create(name,type,b->m,b->n))==NULLMAT)
     goto err;
   
   for (i = P->mn - 1; i > 0; --i)

@@ -1547,7 +1547,7 @@ static int int_pmatrix_hornerm(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   for ( i = 0 ; i < Res->mn ; i++)
     {
-      Res->objs[i] =(NspObject *) nsp_polynom_hornerm(P->S[i],V);
+      Res->objs[i] =(NspObject *) nsp_polynom_hornerm("ce",P->S[i],V);
       if ( Res->objs[i] == NULL ) return RET_BUG;
     }
   MoveObj(stack,1,(NspObject *) Res);

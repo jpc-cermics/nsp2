@@ -1682,14 +1682,14 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
     }
   if (TASK == 1 && (TRANS < 0  || TRANS > 3 ))
     {
-      Scierror("Error: TRANS HAS 0, 1, 2, OR 3 as only admissible values");
+      Scierror("Error: admissible values for trans are 0, 1, 2, OR 3 when task == 1\n");
       return RET_BUG;
     }
   else
     {
       if ( TASK != 1  && (TRANS < 0  || TRANS > 1 ))
 	{
-	  Scierror("Error: TRANS HAS 0, OR 1 THE ONLY ADMISSIBLE VALUES");
+	  Scierror("Error: admissible values for trans are 0, or 1 when task != 1");
 	  return RET_BUG;
 	}
     }
@@ -1697,12 +1697,13 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
   if (TASK == 1 )
     {
       NSCHUR =1;
-      if (rhs == IP +1)
+      if (rhs >= IP +1)
 	{
 	  if (GetScalarInt (stack, IP+1 , &NSCHUR) == FAIL)  return RET_BUG;
 	  if (NSCHUR < 1  || NSCHUR > 2 )
 	    {
-	      Scierror("Error: SCHUR HAS 1, OR 2 THE ONLY ADMISSIBLE VALUES\n");
+	      Scierror("Error: admissible values for schur are 1, or 2 when task == 1\n");
+	      return RET_BUG;
 	    }
 	}
     }
@@ -1717,9 +1718,9 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       CheckSquare(NspFname(stack),3,B);
       M= B->m;
       if((C=GetRealMatCopy(stack,4))==NULL) return RET_BUG;
-      if( C->m != A->m && C->n != B->m)
+      if( C->m != A->m || C->n != B->m)
 	{
-	  Scierror("Error:");
+	  Scierror("Error: C should be of size %dx%d\n",A->m,B->m);
 	  return RET_BUG;
 	}
     }
@@ -1731,7 +1732,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	  P = C->m;
 	  if( C->n != A->m )
 	    {
-	      Scierror("Error:");
+	      Scierror("Error: C should have %d columns\n",A->m);
 	      return RET_BUG;
 	    }
 	}
@@ -1739,7 +1740,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if( C->m != A->m)
 	    {
-	      Scierror("Error:");
+	      Scierror("Error: C should have %d rows\n",A->m);
 	      return RET_BUG;
 	    }
 	  P = C->n;
@@ -1758,25 +1759,24 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       if (TASK == 1 )
 	{
 	  if ( Flag->mn  > 3) {
-	    Scierror("FLAG MUST BE A VECTOR WITH AT MOST 3 ELEMENTS");
+	    Scierror("Error: flag must be a vector with at most 3 elements\n");
 	    return RET_BUG;
 	  }
 	}
       else 
 	{if ( Flag->mn > 2 ) {
-	    Scierror("FLAG MUST BE A VECTOR WITH AT MOST 2 ELEMENTS");
+	    Scierror("Error: flag must be a vector with at most 2 elements");
 	    return RET_BUG;
 	  }
 	}
       for ( i = 0 ; i < Flag->mn ; i++) Iflag[i+1]= Flag->R[i];
     }
   /* 
-     C
-     C Determine the lenghts of working arrays.
-     C Use a larger value for NDWORK for enabling calls of block algorithms
-     C in DGEES, and possibly in DGEHRD, DGEQRF, DGERQF, SB04PD.
-     C
-  */
+   * Determine the lenghts of working arrays.
+   * Use a larger value for NDWORK for enabling calls of block algorithms
+   * in DGEES, and possibly in DGEHRD, DGEQRF, DGERQF, SB04PD.
+   *
+   */
   LDA =Max (1,N );
   if (TASK == 1 )
     {
@@ -2102,44 +2102,44 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       if (TASK == 1 ){ 
 	if (NSCHUR == 2 )
 	  { 
-	    if(INFO <= M+N) Scierror("Error: Failure when computing eigenvalues");
-	    else if(INFO > M+N)	Scierror("Error: equation is singular");
+	    if(INFO <= M+N) Scierror("Error: Failure when computing eigenvalues\n");
+	    else if(INFO > M+N)	Scierror("Error: equation is singular\n");
 	    goto err;
 	  }
 	else
 	  {
 	    if (strcmp(SCHU ,"N")==0)
 	      { 
-		if(INFO <= M) Scierror("Error: Failure when computing eigenvalues");
-		else if(INFO > M) Scierror("Error: equation is singular");
+		if(INFO <= M) Scierror("Error: Failure when computing eigenvalues\n");
+		else if(INFO > M) Scierror("Error: equation is singular\n");
 	      }
 	    else
 	      {
-		Scierror("Error: equation is singular");
+		Scierror("Error: equation is singular\n");
 	      }
 	    goto err;
 	  }
       }
       else if (TASK == 2 )
 	{ 
-	  if(INFO <= N) Scierror("Error: Failure when computing eigenvalues");
-	  else if(INFO > N) 		Scierror("Error: equation is singular");
+	  if(INFO <= N) Scierror("Error: Failure when computing eigenvalues\n");
+	  else if(INFO > N) 		Scierror("Error: equation is singular\n");
 	  goto err;
 	}
       else if (TASK == 3 )
 	{ 
-	  if (INFO == 1) Scierror("Error: equation is singular");
+	  if (INFO == 1) Scierror("Error: equation is singular\n");
 	  else if (INFO == 2 || INFO == 3)
 	    {
-	      if( strcmp(DICO,"C")==0) Scierror("Error: Matrix is not stable (cont)");
-	      else Scierror("Error: not a schur form");
+	      if( strcmp(DICO,"C")==0) Scierror("Error: Matrix is not stable (cont)\n");
+	      else Scierror("Error: not a schur form\n");
 	    }
 	  else if (INFO == 4 || INFO == 5)
 	    {
 	      Scierror("Error: not a schur form");
 	    }
 	  else if (INFO == 6) {
-	    Scierror("Error: Failure when computing eigenvalues");
+	    Scierror("Error: Failure when computing eigenvalues\n");
 	  }
 	  goto err;
 	}
@@ -2156,7 +2156,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	TEMP =SCALE ;
       else 
 	TEMP =SCALE * SCALE;
-      printf("WARNING: THE RIGHT HAND SIDES WERE SCALED BY %f TO AVOID OVERFLOW\n",TEMP);
+      printf("warning: the right hand sides were scaled by %f to avoid overflow\n",TEMP);
     }
   if (INFO != 0  &&  !PERTRB )
     {
@@ -2168,7 +2168,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
       // msgs(1000,0);
     }
   if (PERTRB ){ 
-    printf("WARNING: THE EQUATION IS (ALMOST) SINGULAR; PERTURBED VALUES HAVE BEEN USED");
+    printf("warning: the equation is (almost) singular; perturbed values have been used\n");
   }
   NSP_OBJECT(C)->ret_pos = 1;
   if ( lhs >= 2 )
@@ -2179,7 +2179,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	}
       else
 	{
-	  Scierror("Error: lhs should be one whan task is not 2");
+	  Scierror("Error: lhs should be one whan task is not 2\n");
 	  goto err;
 	}
     }

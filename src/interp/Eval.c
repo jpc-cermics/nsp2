@@ -2870,7 +2870,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 			   */
 			  if ( Ocheckname(Ob,NVOID))
 			    {
-			      Scierror("Internal Error: an object in extraction from cells have non name \n");
+			      Scierror("Internal Error: extraction from cells of an object having no name\n");
 			      return RET_BUG;
 			    }
 			}

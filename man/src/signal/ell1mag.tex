@@ -58,7 +58,8 @@
     sample=0:0.01:20;
     //Now we map the positive real axis into the contour...
     z=alpha*%asn(sample/omegac,m)+beta*ones(size(sample));
-    xbasc();plot2d(sample,ell1mag(epsilon,m1,z))
+    xbasc();plot2d(sample,ell1mag(epsilon,m1,z),style=2,rect=[0,-0.2,20,1.2])
+    xgrid();
   \end{Verbatim}
 \end{examples}
 %-- see also

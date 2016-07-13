@@ -54,19 +54,19 @@
     t=2*%pi*(0:179)/179;
     xbasc();
     xsetech([0,0,0.5,1]);
-    plot2d(sin(t)',cos(t)',rect=rect)
-    plot2d([0 real(a)]',[0 imag(a)]');
+    plot2d(sin(t)',cos(t)',style=2,rect=rect)
+    plot2d([0 real(a)]',[0 imag(a)]',style=3);
     xsegs([-1.0,0;1.0,0],[0,-1.0;0,1.0])
     w0=.93*exp(-%i*%pi/15);w=exp(-(0:9)*log(w0));z=a*w;
     zr=real(z);zi=imag(z);
-    plot2d(zr',zi');
+    plot2d(zr',zi',style=5);
     xsetech([0.5,0,0.5,1]);
-    plot2d(sin(t)',cos(t)', rect=rect);
-    plot2d([0 real(a)]',[0 imag(a)]',line_color=-2);
+    plot2d(sin(t)',cos(t)',style=2, rect=rect);
+    plot2d([0 real(a)]',[0 imag(a)]', style=-1);
     xsegs([-1.0,0;1.0,0],[0,-1.0;0,1.0])
     w0=w0/(.93*.93);w=exp(-(0:9)*log(w0));z=a*w;
     zr=real(z);zi=imag(z);
-    plot2d(zr',zi');
+    plot2d(zr',zi',style=5);
   \end{Verbatim}
 \end{examples}
 %-- Author

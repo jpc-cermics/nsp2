@@ -140,7 +140,7 @@ extern nsp_polynom nsp_polynom_power(nsp_polynom p,int n);
 extern nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type);
 extern nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type);
 extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
-extern NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b);
+extern NspMatrix *nsp_polynom_hornerm(const char *name,nsp_polynom P,NspMatrix *b);
 extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 extern nsp_polynom nsp_polynom_mult_m(nsp_polynom p, void *v, char type);
 extern nsp_polynom nsp_polynom_div_m(nsp_polynom p, void *v, char type);
