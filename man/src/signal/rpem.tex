@@ -1,0 +1,81 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{rpem}
+\begin{mandesc}
+  \short{rpem}{RPEM estimation} \\ % 
+\end{mandesc}
+%\index{rpem}\label{rpem}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [w1,[v]]=rpem(w0,u0,y0,[lambda,[k,[c]]])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a,b,c}: \verb!a=[a(1),...,a(n)], b=[b(1),...,b(n)], c=[c(1),...,c(n)]!
+    \vname{w0}: \verb!list(theta,p,phi,psi,l)! where:
+    \begin{varlist}
+      \vname{theta}: [a,b,c] is a real vector of order \verb!3*n!
+      \vname{p}: (3*n x 3*n) real matrix.
+      \vname{phi,psi,l}: real vector of dimension \verb!3*n!
+    \end{varlist}
+    During the first call on can take:
+\begin{verbatim}
+  theta=phi=psi=l=0*ones(1,3*n). p=eye(3*n,3*n)
+\end{verbatim}
+    \vname{u0}: real vector of inputs (arbitrary size) (if no input take \verb!u0=[ ]!).
+    \vname{y0}: vector of outputs (same dimension as \verb!u0! if \verb!u0! is not empty). (\verb!y0(1)! is not used by rpem).
+    If the time domain is \verb!(t0,t0+k-1)! the \verb!u0! vector contains the inputs 
+    \verb!u(t0),u(t0+1),..,u(t0+k-1)! and \verb!y0! the outputs 
+    \verb!y(t0),y(t0+1),..,y(t0+k-1)!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Recursive estimation of parameters in an ARMAX model.
+  Uses Ljung-Soderstrom recursive prediction error method.
+  Model considered is the following:
+\begin{verbatim}
+  y(t)+a(1)*y(t-1)+...+a(n)*y(t-n)=
+  b(1)*u(t-1)+...+b(n)*u(t-n)+e(t)+c(1)*e(t-1)+...+c(n)*e(t-n)
+\end{verbatim}
+The effect of this command is to update the estimation of
+unknown parameter \verb!theta=[a,b,c]! with
+\verb!a=[a(1),...,a(n)], b=[b(1),...,b(n)], c=[c(1),...,c(n)]!.
+\end{mandescription}
+%-- section-Optional parameters
+\paragraph{Optional parameters}
+\begin{itemize}
+\item \itemdesc{lambda}: optional parameter (forgetting constant) choosed close to 1 as convergence occur:\verb!lambda=[lambda0,alfa,beta]! evolves according to:
+\begin{verbatim}
+  lambda(t)=alfa*lambda(t-1)+beta 
+\end{verbatim}
+with \verb!lambda(0)=lambda0!\verb!k!: contraction factor to be chosen close to 1 as convergence occurs.\verb!k=[k0,mu,nu]! evolves according to:
+\begin{verbatim}
+  k(t)=mu*k(t-1)+nu 
+\end{verbatim}
+with \verb!k(0)=k0!.\verb!c!: large parameter.(\verb!c=1000! is the default value). 
+\end{itemize}
+%-- section-Output parameters:
+\paragraph{Output parameters:}
+\verb!w1!: update for \verb!w0!.\verb!v!: sum of squared prediction errors on \verb!u0, y0!.(optional).
+In particular \verb!w1(1)! is the new estimate of \verb!theta!. If a new sample \verb!u1, y1! is available the update is obtained by:\verb![w2,[v]]=rpem(w1,u1,y1,[lambda,[k,[c]]])!. Arbitrary large series can thus be treated.
+

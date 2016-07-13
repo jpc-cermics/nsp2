@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{ffilt}
+\begin{mandesc}
+  \short{ffilt}{coefficients of FIR low-pass} \\ % 
+\end{mandesc}
+%\index{ffilt}\label{ffilt}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [x]=ffilt(ft,n,fl,fh)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{ft}: filter type where \verb!ft! can take the values
+    \begin{varlist}
+      \vname{"lp"  }: for low-pass filter
+      \vname{"hp"  }: for high-pass filter
+      \vname{"bp"  }: for band-pass filter
+      \vname{"sb"  }: for stop-band filter
+    \end{varlist}
+    \vname{n}: integer (number of filter samples desired)
+    \vname{fl}: real (low frequency cut-off)
+    \vname{fh}: real (high frequency cut-off)
+    \vname{x}: vector of filter coefficients
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Get \verb!n! coefficients of a FIR low-pass,
+  high-pass, band-pass, or stop-band filter.
+  For low and high-pass filters one cut-off
+  frequency must be specified whose value is
+  given in \verb!fl!. For band-pass and stop-band
+  filters two cut-off frequencies must be
+  specified for which the lower value is in
+  \verb!fl! and the higher value is in \verb!fh!
+\end{mandescription}
+%-- Author
+\begin{authors}
+    Carey Bunks  
+\end{authors}

@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{frmag}
+\begin{mandesc}
+  \short{frmag}{magnitude of FIR and IIR filters} \\ % 
+\end{mandesc}
+%\index{frmag}\label{frmag}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xm,fr]=frmag(num[,den],npts)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{npts}: integer (number of points in frequency response)
+    \vname{xm}: mvector of magnitude of frequency response at the points \verb!fr!
+    \vname{fr}: points in the frequency domain where magnitude is evaluated
+    \vname{num}: if \verb!den! is omitted vector coefficients/polynomial/rational polynomial of filter
+    \vname{num}: if \verb!den! is given vector coefficients/polynomial of filter numerator
+    \vname{den}: vector coefficients/polynomial of filter denominator
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  calculates the magnitude of the frequency responses of
+  FIR and IIR filters. The filter description can be
+  one or two vectors of coefficients, one or two polynomials,
+  or a rational polynomial.
+\end{mandescription}
+%-- Author
+\begin{authors}
+    Carey Bunks  
+\end{authors}

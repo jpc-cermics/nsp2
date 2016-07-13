@@ -1,0 +1,58 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{cepstrum}
+\begin{mandesc}
+  \short{cepstrum}{cepstrum calculation} \\ % 
+\end{mandesc}
+%\index{cepstrum}\label{cepstrum}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  fresp = cepstrum(w,mag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{w}: positive real vector of frequencies (rad/sec)
+    \vname{mag}: real vector of magnitudes (same size as \verb!w!)
+    \vname{fresp}: complex vector
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!fresp = cepstrum(w,mag)! returns a frequency response \verb!fresp(i)!
+  whose magnitude at frequency \verb!w(i)! equals \verb!mag(i)!  and such
+  that the phase of \verb!freq! corresponds to a stable and minimum phase
+  system. \verb!w! needs not to be sorted, but  minimal entry should not be
+  close to zero and all the entries of \verb!w! should be different.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    w=0.1:0.1:5;mag=1+abs(sin(w));
+    fresp=cepstrum(w,mag);
+    xbasc();
+    plot2d([w',w'],[mag(:),abs(fresp)])
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{frfit}{frfit}  
+\end{manseealso}

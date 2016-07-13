@@ -1,0 +1,64 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{cheb2mag}
+\begin{mandesc}
+  \short{cheb2mag}{response of type 2 Chebyshev filter} \\ % 
+\end{mandesc}
+%\index{cheb2mag}\label{cheb2mag}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [h2]=cheb2mag(n,omegar,A,sample)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: integer ; filter order
+    \vname{omegar}: real scalar: cut-off frequency
+    \vname{A}: attenuation in stop band
+    \vname{sample}: vector of frequencies where cheb2mag is evaluated
+    \vname{h2}: vector of Chebyshev II filter values at sample points
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Square magnitude response of a type 2 Chebyshev filter.\verb!omegar! = stopband edge, \verb!sample! = vector of 
+  frequencies where the square magnitude \verb!h2! is desired.
+\end{mandescription}
+%--example 
+\begin{examples}
+  Chebyshev; ripple in the stopband
+  \begin{Verbatim}
+    n=10;omegar=6;A=1/0.2;sample=0.0001:0.05:10;
+    h2=cheb2mag(n,omegar,A,sample);
+    xbasc();plot2d(sample,log(h2)/log(10));
+    xtitle('','frequencies','magnitude in dB')
+    //Plotting of frequency edges
+    minval=(-max(-log(h2)))/log(10);
+    plot2d([omegar;omegar],[minval;0]);
+    //Computation of the attenuation in dB at the stopband edge
+    attenuation=-log(A*A)/log(10);
+    plot2d(sample',attenuation*ones(size(sample))');
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{cheb1mag}{cheb1mag}  
+\end{manseealso}

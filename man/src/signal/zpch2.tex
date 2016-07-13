@@ -1,0 +1,52 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{zpch2}
+\begin{mandesc}
+  \short{zpch2}{Chebyshev analog filter} \\ % 
+\end{mandesc}
+%\index{zpch2}\label{zpch2}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [zeros,poles,gain]=zpch2(n,A,omegar)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: integer: filter order
+    \vname{A}: real: attenuation in stop band (\verb!A$>$1!)
+    \vname{omegar}: real: cut-off frequency in Hertz
+    \vname{zeros}: resulting filter zeros
+    \vname{poles}: resulting filter poles
+    \vname{gain}: Resulting filter gain
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Poles and zeros of a type 2 Chebyshev analog filter
+  gain is the gain of the filter
+\begin{verbatim}
+  H(s)=gain*poly(zeros,'s')/poly(poles,'s')
+\end{verbatim}
+\end{mandescription}
+%-- Author
+\begin{authors}
+  Fran\c{c}ois Delebecque  
+\end{authors}

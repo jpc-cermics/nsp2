@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{iirlp}
+\begin{mandesc}
+  \short{iirlp}{Lp IIR filter optimization} \\ % 
+\end{mandesc}
+%\index{iirlp}\label{iirlp}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [cost,grad,ind]=iirlp(x,ind,p,[flag],lambda,omega,ad,wa,td,wt)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: 1X2 vector of the module and argument of the poles and the zeros of the filters
+    \vname{flag}: string: \verb!'a'!  for amplitude, 'gd' for group delay; default case for amplitude and group delay.
+    \vname{omega}: frequencies where the filter specifications are given
+    \vname{wa,wt}: weighting functions for the amplitude and the group delay
+    \vname{lambda}: weighting (with \verb!1-lambda!) of the costs (\verb!'a'! and \verb!'gd'! for getting the global cost.
+    \vname{ad, td}: desired amplitude and group delay
+    \vname{cost, grad}: criterium and gradient values
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  optimization of IIR filters for the Lp criterium for the
+  amplitude and/or the group delay. (Rabiner \&amp; Gold pp270-273).
+\end{mandescription}

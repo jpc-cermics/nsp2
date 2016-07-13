@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{ell1mag}
+\begin{mandesc}
+  \short{ell1mag}{magnitude of elliptic filter} \\ % 
+\end{mandesc}
+%\index{ell1mag}\label{ell1mag}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [v]=ell1mag(eps,m1,z)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{eps}: passband ripple=\verb!1/(1+eps^2)!
+    \vname{m1}: stopband ripple=\verb!1/(1+(eps^2)/m1)!
+    \vname{z}: sample vector of values in the complex plane
+    \vname{v}: elliptic filter values at sample points
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Function used for squared magnitude of an elliptic filter.
+  Usually \verb!m1=eps*eps/(a*a-1)!. Returns 
+  \verb!v=real(ones(z)./(ones(z)+eps*eps*s.*s))! for \verb!s=%sn(z,m1)!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    function [alpha,beta]=alpha_beta(n,m,m1)
+      if 2*int(n/2)==n then beta=K1; else beta=0;end;
+      alpha=%k(1-m1)/%k(1-m);
+    endfunction
+    epsilon=0.1;A=10;  //ripple parameters
+    m1=(epsilon*epsilon)/(A*A-1);n=5;omegac=6;
+    m=find_freq(epsilon,A,n);omegar = omegac/sqrt(m)
+    %k(1-m1)*%k(m)/(%k(m1)*%k(1-m))-n   //Check...
+    [alpha,beta]=alpha_beta(n,m,m1)
+    alpha*%asn(1,m)-n*%k(m1)      //Check
+    sample=0:0.01:20;
+    //Now we map the positive real axis into the contour...
+    z=alpha*%asn(sample/omegac,m)+beta*ones(size(sample));
+    xbasc();plot2d(sample,ell1mag(epsilon,m1,z))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{buttmag}{buttmag}  
+\end{manseealso}

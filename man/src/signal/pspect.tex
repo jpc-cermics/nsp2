@@ -1,0 +1,78 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{pspect}
+\begin{mandesc}
+  \short{pspect}{cross-spectral estimate between 2 series} \\ % 
+\end{mandesc}
+%\index{pspect}\label{pspect}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sm,cwp]=pspect(sec_step,sec_leng,wtype,x,y,wpar)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: data if vector, amount of input data if scalar
+    \vname{y}: data if vector, amount of input data if scalar
+    \vname{sec\_step}: offset of each data window
+    \vname{sec\_leng}: length of each data window
+    \vname{wtype}: window type \verb!(re,tr,hm,hn,kr,ch)!
+    \vname{wpar}: optional parameters  for \verb!wtype='kr', wpar$>$0!  for \verb!wtype='ch', 0$<$wpar(1)$<$.5, wpar(2)$>$0!
+    \vname{sm}: power spectral estimate in the interval \verb![0,1]!
+    \vname{cwp}: unspecified Chebyshev window parameter
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Cross-spectral estimate between \verb!x! and \verb!y! if both are given
+  and auto-spectral estimate of \verb!x! otherwise.
+  Spectral estimate obtained using the modified periodogram method.
+\end{mandescription}
+%-- section-Reference
+\paragraph{Reference}
+Digital Signal Processing by Oppenheim and Schafer
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=randn(1:1024-33+1);
+    //make low-pass filter with eqfir
+    nf=33;bedge=[0 .1;.125 .5];des=[1 0];wate=[1 1];
+    h=eqfir(nf,bedge,des,wate);
+    //filter white data to obtain colored data 
+    h1=[h 0*ones(1,max(size(x))-1)];
+    x1=[x 0*ones(1,max(size(h))-1)];
+    hf= fft(h1);   xf=fft(x1);yf=hf.*xf;y=real(ifft(yf));
+    //plot magnitude of filter
+    //h2=[h 0*ones(1:968)];hf2=fft(h2,-1);hf2=real(hf2.*conj(hf2));
+    //hsize=maxi(size(hf2));fr=(1:hsize)/hsize;plot(fr,log(hf2));
+    //pspect example
+    sm=pspect(100,200,'tr',y);smsize=max(size(sm));fr=(1:smsize)/smsize;
+    xbasc();plot2d(fr,log(sm));
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{cspect}{cspect}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Carey Bunks
+\end{authors}

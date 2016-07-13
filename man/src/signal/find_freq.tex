@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{find\_freq}
+\begin{mandesc}
+  \shortunder{find\_freq}{find_freq}{parameter compatibility for elliptic filter design} \\ % 
+\end{mandesc}
+%\index{find\_freq}\label{find-freq}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [m]=find_freq(epsilon,A,n)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{epsilon}: passband ripple
+    \vname{A}: stopband attenuation
+    \vname{n}: filter order
+    \vname{m}: frequency needed for construction of elliptic filter
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Search for m such that \verb!n=K(1-m1)K(m)/(K(m1)K(1-m))!
+  with\verb!m1=(epsilon*epsilon)/(A*A-1)!;
+  If \verb!m = omegar^2/omegac^2!, the parameters
+  \verb!epsilon,A,omegac,omegar! and \verb!n! are then
+  compatible for defining a prototype elliptic filter.
+  Here, \verb!K=%k(m)! is the complete elliptic integral with parameter \verb!m!.
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{\%k}{-p-k}  
+\end{manseealso}
+% -- Author
+\begin{authors}
+  Fran\c{c}ois  Delebecque  
+\end{authors}

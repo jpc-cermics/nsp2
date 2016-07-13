@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{remez}
+\begin{mandesc}
+  \short{remez}{Remez's algorithm} \\ % 
+\end{mandesc}
+%\index{remez}\label{remez}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [an]=remez(nc,fg,ds,wt)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{nc}: integer, number of cosine functions
+    \vname{fg,ds,wt}: real vectors
+    \vname{fg}: grid of frequency points in [0,.5)
+      \vname{ds}: desired magnitude on grid \verb!fg!
+      \vname{wt}: weighting function on error on grid \verb!fg!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  minimax approximation of a frequency domain magnitude response.
+  The approximation takes the form
+\begin{verbatim}
+  h = sum[a(n)*cos(wn)]
+\end{verbatim}
+for n=0,1,...,nc. An FIR, linear-phase filter
+can be obtained from the the output of \verb!remez! by using the
+following commands:
+\begin{verbatim}
+  hn(1nc-1)=an(nc-12)/2;
+  hn(nc)=an(1);
+  hn(nc+12*nc-1)=an(2nc)/2;
+\end{verbatim}
+where \verb!an! = cosine filter coefficients
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{remezb}{remezb}  
+\end{manseealso}

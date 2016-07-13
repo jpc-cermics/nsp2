@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{sincd}
+\begin{mandesc}
+  \short{sincd}{digital sinc function or Direchlet kernel} \\ % 
+\end{mandesc}
+%\index{sincd}\label{sincd}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [s]=sincd(n,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: integer
+    \vname{flag}: if \verb!flag = 1! the function is centred around the origin; if \verb!flag = 2! the function is delayed by \verb!%pi/(2*n)!
+    \vname{s}: vector of values of the function on a dense grid of frequencies
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  function which calculates the function \verb!Sin(N*x)/N*Sin(x)!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    plot2d([],sincd(10,1)) 
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+  Georges Le Vey  
+\end{authors}

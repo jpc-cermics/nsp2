@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{wiener}
+\begin{mandesc}
+  \short{wiener}{ Wiener estimate} \\ % 
+\end{mandesc}
+%\index{wiener}\label{wiener}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xs,ps,xf,pf]=wiener(y,x0,p0,f,g,h,q,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{f, g, h}: system matrices in the interval \verb![t0,tf]!
+    \begin{varlist}
+      \vname{f} =\verb![f0,f1,...,ff]!, and \verb!fk! is a nxn matrix
+      \vname{g} =\verb![g0,g1,...,gf]!, and \verb!gk! is a nxn matrix
+      \vname{h} =\verb![h0,h1,...,hf]!, and \verb!hk! is a mxn matrix
+    \end{varlist}
+    \vname{q, r}: covariance matrices of dynamics and observation noise
+    \begin{varlist}
+      \vname{q} =\verb![q0,q1,...,qf]!, and \verb!qk! is a nxn matrix
+      \vname{r} =\verb![r0,r1,...,rf]!, and \verb!gk! is a mxm matrix
+    \end{varlist}
+    \vname{x0, p0}: initial state estimate and error variance
+    \vname{y}: observations in the interval \verb![t0,tf]!. \verb!y=[y0,y1,...,yf]!, and \verb!yk! is a column m-vector
+    \vname{xs}: Smoothed state estimate \verb!xs= [xs0,xs1,...,xsf]!, and \verb!xsk! is a column n-vector
+    \vname{ps}: Error covariance of smoothed estimate \verb!ps=[p0,p1,...,pf]!, and \verb!pk! is a nxn matrix
+    \vname{xf}: Filtered state estimate \verb!xf= [xf0,xf1,...,xff]!, and \verb!xfk! is a column n-vector
+    \vname{pf}: Error covariance of filtered estimate \verb!pf=[p0,p1,...,pf]!, and \verb!pk! is a nxn matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  function which gives the Wiener estimate using
+  the forward-backward Kalman filter formulation
+\end{mandescription}
+%-- Author
+\begin{authors}
+  Carey Bunks
+\end{authors}

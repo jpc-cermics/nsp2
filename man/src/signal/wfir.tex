@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{wfir}
+\begin{mandesc}
+  \short{wfir}{linear-phase FIR filters} \\ % 
+\end{mandesc}
+%\index{wfir}\label{wfir}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [wft,wfm,fr]=wfir(ftype,forder,cfreq,wtype,fpar)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{ftype}: string: \verb!'lp','hp','bp','sb'! (filter type)
+    \vname{forder}: Filter order (pos integer)(odd for \verb!ftype='hp'! or \verb!'sb'!)
+    \vname{cfreq}: 2-vector of cutoff frequencies (\verb!0$<$cfreq(1),cfreq(2)$<$.5!)  only \verb!cfreq(1)! is used when \verb!ftype='lp'! or \verb!'hp'!
+    \vname{wtype}: Window type (\verb!'re','tr','hm','hn','kr','ch'!)
+    \vname{fpar}: 2-vector of window parameters. Kaiser window \verb!fpar(1)$>$0 fpar(2)=0!. Chebyshev window  \verb!fpar(1)$>$0, fpar(2)$<$0! or \verb!fpar(1)$<$0, 0$<$fpar(2)$<$.5!
+    \vname{wft}: time domain filter coefficients
+    \vname{wfm}: frequency domain filter response on the grid fr
+    \vname{fr}: Frequency grid
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Function which makes linear-phase, FIR low-pass, band-pass,
+  high-pass, and stop-band filters
+  using the windowing technique.
+  Works interactively if called with no arguments.
+\end{mandescription}
+%-- Author
+\begin{authors}
+  Carey Bunks
+\end{authors}

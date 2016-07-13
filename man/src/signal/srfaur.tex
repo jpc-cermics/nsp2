@@ -1,0 +1,69 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{srfaur}
+\begin{mandesc}
+  \short{srfaur}{square-root algorithm} \\ % 
+\end{mandesc}
+%\index{srfaur}\label{srfaur}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [p,s,t,l,rt,tt]=srfaur(h,f,g,r0,n,p,s,t,l)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h, f, g}: convenient matrices of the state-space model.
+    \vname{r0}: E(yk*yk').
+    \vname{n}: number of iterations.
+    \vname{p}: estimate of the solution after n iterations.
+    \vname{s, t, l}: intermediate matrices for  successive iterations;
+    \vname{rt, tt}: gain matrices of the filter model after \verb!n! iterations.
+    \vname{p, s, t, l}: may be given as input if more than one recursion is desired (evaluation of intermediate values of \verb!p!).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  square-root algorithm for the algebraic Riccati equation.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    //GENERATE SIGNAL
+    x=%pi/10:%pi/10:102.4*%pi;
+
+    y=[1;1]*sin(x)+[sin(2*x);sin(1.9*x)]+rand(2,1024);
+    //COMPUTE CORRELATIONS
+    c=[];for j=1:2,for k=1:2,c=[c;corr(y(k,:),y(j,:),64)];end;end
+    c=matrix(c,2,128);
+    //FINDING H,F,G with 6 states
+    hk=hank(20,20,c);
+    [H,F,G]=phc(hk,2,6);
+    //SOLVING RICCATI EQN
+    r0=c(1:2,1:2);
+    [P,s,t,l,Rt,Tt]=srfaur(H,F,G,r0,200);
+    //Make covariance matrix exactly symetric
+    Rt=(Rt+Rt')/2
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{phc}{phc} \manlink{faurre}{faurre} \manlink{lindquist}{lindquist}  
+\end{manseealso}

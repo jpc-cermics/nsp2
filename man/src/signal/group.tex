@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{group}
+\begin{mandesc}
+  \short{group}{group delay for digital filter} \\ % 
+\end{mandesc}
+%\index{group}\label{group}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [tg,fr]=group(npts,a1i,a2i,b1i,b2i)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{npts}: integer: number of points desired in calculation of group delay
+    \vname{a1i}: in coefficient, polynomial, rational polynomial, or cascade polynomial form this variable is the transfer function of the filter. In coefficient polynomial form this is a vector of coefficients (see below).
+    \vname{a2i}: in coeff poly form this is a vector of coeffs
+    \vname{b1i}: in coeff poly form this is a vector of coeffs
+    \vname{b2i}: in coeff poly form this is a vector of coeffs
+    \vname{tg}: values of group delay evaluated on the grid fr
+    \vname{fr}: grid of frequency values where group delay is evaluated
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculate the group delay of a digital filter
+  with transfer function h(z).
+  The filter specification can be in coefficient form,
+  polynomial form, rational polynomial form, cascade
+  polynomial form, or in coefficient polynomial form.
+  In the coefficient polynomial form the transfer function is
+  formulated by the following expression\verb!h(z)=prod(a1i+a2i*z+z**2)/prod(b1i+b2i*z+z^2)!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    if %f then
+    z=poly(0,'z');
+    h=z/(z-.5);
+    [tg,fr]=group(100,h);
+    plot2d(fr,tg)
+    end
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+    Carey Bunks  
+\end{authors}

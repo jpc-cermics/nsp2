@@ -1,0 +1,79 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{iir}
+\begin{mandesc}
+  \short{iir}{iir digital filter} \\ % 
+\end{mandesc}
+%\index{iir}\label{iir}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [hz]=iir(n,ftype,fdesign,frq,delta)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: filter order (pos. integer)
+
+    \vname{ftype}: string specifying the filter type \verb!'lp','hp','bp','sb'!
+
+    \vname{fdesign}: string specifying the analog filter design
+    \verb!='butt','cheb1','cheb2','ellip'!
+
+    \vname{frq}: 2-vector of discrete cut-off frequencies (i.e.,
+    \verb!0$<$frq$<$.5!). For \verb!lp! and \verb!hp! filters only \verb!frq(1)!
+    is used. For \verb!bp! and \verb!sb! filters \verb!frq(1)! is the lower
+    cut-off frequency and \verb!frq(2)! is the upper cut-off frequency
+
+    \vname{delta}: 2-vector of error values for \verb!cheb1, cheb2!, and
+    \verb!ellip! filters where only \verb!delta(1)! is used for \verb!cheb1!
+    case, only \verb!delta(2)! is used for \verb!cheb2! case, and
+    \verb!delta(1)! and \verb!delta(2)! are both used for \verb!ellip!
+    case. \verb!0$<$delta(1),delta(2)$<$1!
+    \begin{itemize}
+    \item for \verb!cheb1! filters \verb!1-delta(1)$<$ripple$<$1! in passband
+    \item for \verb!cheb2! filters \verb!0$<$ripple$<$delta(2)! in stopband
+    \item for \verb!ellip! filters \verb!1-delta(1)$<$ripple$<$1! in passband
+      and \verb!0$<$ripple$<$delta(2)! in stopband \end{itemize}
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  function which designs an iir digital filter using analog filter designs.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    hz=iir(3,'bp','ellip',[.15 .25],[.08 .03]);
+    [hzm,fr]=frmag(hz,256);
+    xbasc();plot2d(fr',hzm')
+    xtitle('Discrete IIR filter band pass  0.15 < fr < 0.25 ',' ',' ');
+    q=poly(0,'q');     //to express the result in terms of the ...
+    hzd=horner(hz,1/q,ttmode=%t) //delay operator q=z^-1
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{eqfir}{eqfir} \manlink{eqiir}{eqiir}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+    Carey Bunks  
+\end{authors}

@@ -1,0 +1,72 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{analpf}
+\begin{mandesc}
+  \short{analpf}{create analog low-pass filter} \\ % 
+\end{mandesc}
+% \index{analpf}\label{analpf}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [hs,pols,zers,gain]=analpf(n,fdesign,rp,omega)  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: positive integer: filter order
+    \vname{fdesign}: string: filter design method: \verb!'butt'! or
+    \verb!'cheb1'! or \verb!'cheb2'! or \verb!'ellip'!
+    \vname{rp}: vector of size $2$ of error values for cheb1, cheb2 and ellip
+    filters where only \verb!rp(1)! is used for cheb1 case, only \verb!rp(2)! is
+    used for cheb2 case, and \verb!rp(1)! and \verb!rp(2)! are both used for
+    ellip case. The elements of \verb!rp! should be in $]0,1[$.
+    \begin{itemize}
+    \item for cheb1 filters \verb!1-rp(1)<ripple<1! in passband
+    \item for cheb2 filters \verb!0<ripple<rp(2)! in stopband
+    \item for ellip filters \verb!1-rp(1)<ripple<1! in passband 
+      \verb!0<ripple<rp(2)! in stopband
+    \end{itemize}
+    \vname{omega}: cut-off frequency of low-pass filter in Hertz
+    \vname{hs}: rational polynomial transfer function
+    \vname{pols}: poles of transfer function
+    \vname{zers}: zeros of transfer function
+    \vname{gain}: gain of transfer function
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Creates analog low-pass filter with cut-off frequency at
+  omega.\verb!hs=gain*poly(zers,'s')/poly(pols,'s')!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    //Evaluate magnitude response of continuous-time system 
+    hs=analpf(4,'cheb1',[.1 0],5);
+    fr=0:.1:15;
+    hf=freq(hs.num,hs.den,%i*fr);
+    hm=abs(hf);
+    plot2d(fr,hm)
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+  Carey Bunks  
+\end{authors}

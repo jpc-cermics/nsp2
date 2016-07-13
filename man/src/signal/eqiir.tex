@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{eqiir}
+\begin{mandesc}
+  \short{eqiir}{Design of iir filters} \\ % 
+\end{mandesc}
+%\index{eqiir}\label{eqiir}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [cells,fact,zzeros,zpoles]=eqiir(ftype,approx,om,deltap,deltas)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{ftype}: filter type (\verb!'lp','hp','sb','bp'!)
+    \vname{approx}: design approximation (\verb!'butt','cheb1','cheb2','ellip'!)
+    \vname{om}: 4-vector of cutoff frequencies (in radians)  \verb!om=[om1,om2,om3,om4]!, \verb!0 $<$= om1 $<$= om2 $<$= om3 $<$= om4 $<$= pi!.  When \verb!ftype!='lp' or 'hp', \verb!om3! and \verb!om4! are not used  and may be set to 0.
+    \vname{deltap}: ripple in the passband. \verb!0$<$= deltap $<$=1!
+    \vname{deltas}: ripple in the stopband. \verb!0$<$= deltas $<$=1!
+    \vname{cells}: realization of the filter as second order cells
+    \vname{fact}: normalization constant
+    \vname{zzeros}: zeros in the z-domain
+    \vname{zpoles}: poles in the z-domain
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Design of iir filter interface with eqiir (syredi)
+  The filter obtained is \verb!h(z)=fact!*product of the elements of
+  \verb!cells!.
+  That is \verb!hz=fact*prod(cells(2))./prod(cells(3))!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    if %f then
+    [cells,fact,zzeros,zpoles]=...
+    eqiir('lp','ellip',[2*%pi/10,4*%pi/10],0.02,0.001)
+    end
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{eqfir}{eqfir} \manlink{iir}{iir}  
+\end{manseealso}

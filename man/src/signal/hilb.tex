@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{hilb}
+\begin{mandesc}
+  \short{hilb}{Hilbert transform} \\ % 
+\end{mandesc}
+%\index{hilb}\label{hilb}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [xh]=hilb(n[,wtype][,par])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: odd integer: number of points in filter
+    \vname{wtype}: string: window type \verb!('re','tr','hn','hm','kr','ch')! (default \verb!='re'!)
+    \vname{par}: window parameter for \verb!wtype='kr' or 'ch'! default \verb!par=[0 0]! see the function window for more help
+    \vname{xh}: Hilbert transform
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the first n points of the
+  Hilbert transform centred around the origin.
+  That is, \verb!xh=(2/(n*pi))*(sin(n*pi/2))^2!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    plot2d([],hilb(51))
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+    Carey Bunks  
+\end{authors}

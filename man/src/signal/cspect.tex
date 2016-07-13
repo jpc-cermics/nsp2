@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{cspect}
+\begin{mandesc}
+  \short{cspect}{spectral estimation (correlation method)  } \\ % 
+\end{mandesc}
+%\index{cspect}\label{cspect}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sm,cwp]=cspect(nlags,ntp,wtype,x,y,wpar)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: data if vector, amount of input data if scalar
+    \vname{y}: data if vector, amount of input data if scalar
+    \vname{nlags}: number of correlation lags (positive integer)
+    \vname{ntp}: number of transform points (positive integer)
+    \vname{wtype}: string: \verb!'re','tr','hm','hn','kr','ch'! (window type)
+    \vname{wpar}: optional window parameters for \verb!wtype='kr', wpar$>$0! and for \verb!wtype='ch', 0 $<$ wpar(1) $<$ .5, wpar(2) $>$ 0!
+    \vname{sm}: power spectral estimate in the interval [0,1]
+    \vname{cwp}: calculated value of unspecified Chebyshev window parameter
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Spectral estimation using the  correlation method.
+  Cross-spectral estimate of \verb!x! and \verb!y! is calculated when both
+  \verb!x! and \verb!y! are given. Auto-spectral estimate of \verb!x! is calculated
+  if \verb!y! is not given.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=randn(1:1024-33+1);
+    //make low-pass filter with eqfir
+    nf=33;bedge=[0 .1;.125 .5];des=[1 0];wate=[1 1];
+    h=eqfir(nf,bedge,des,wate);
+    //filter white data to obtain colored data 
+    h1=[h 0*ones(1,max(size(x))-1)];
+    x1=[x 0*ones(1,max(size(h))-1)];
+    hf=fft(h1);   xf=fft(x1); yf=hf.*xf;y=real(ifft(yf));
+    sm=cspect(100,200,'tr',y);
+    smsize=max(size(sm));fr=(1:smsize)/smsize;
+    xbasc();plot2d(fr,log(sm))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pspect}{pspect}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Carey Bunks ;  Digital Signal Processing by Oppenheim and Schafer
+\end{authors}

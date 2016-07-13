@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{lindquist}
+\begin{mandesc}
+  \short{lindquist}{Lindquist's algorithm} \\ % 
+\end{mandesc}
+%\index{lindquist}\label{lindquist}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,R,T]=lindquist(n,H,F,G,R0)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: number of iterations.
+    \vname{H, F, G}: estimated triple from the covariance sequence of \verb!y!.
+    \vname{R0}: E(yk*yk')
+    \vname{P}: solution of the Riccati equation after n iterations.
+    \vname{R, T}: gain matrices of the filter.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes iteratively the minimal solution of the algebraic
+  Riccati equation and gives the matrices \verb!R! and \verb!T! of the 
+  filter model, by the Lindquist's algorithm.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{srfaur}{srfaur} \manlink{faurre}{faurre} \manlink{phc}{phc}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Georges Le Vey
+\end{authors}

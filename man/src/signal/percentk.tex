@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{\%k}
+\begin{mandesc}
+  \shortunder{\%k}{\%k}{Jacobi's complete elliptic integral} \\ % 
+\end{mandesc}
+%\index{\%k}\label{-p-k}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [K]=%k(m)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m}: parameter of the elliptic integral \verb!0$<$m$<$1! (\verb!m! can be a vector)
+    \vname{K}: value of the elliptic integral from 0 to 1 on the real axis
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Calculates Jacobi's complete elliptic integral
+  of the first kind:
+\end{mandescription}
+%-- section-References
+\paragraph{References}
+Abramowitz and Stegun page 598
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    m=0.4;
+    %asn(1,m)
+    %k(m)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{\%asn}{-p-asn}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Fran\c{c}ois Delebecque  
+\end{authors}

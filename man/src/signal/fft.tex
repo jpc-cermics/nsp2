@@ -144,6 +144,30 @@ xtitle("blue: coefs from fft, red: exact coefs")
   \end{Verbatim}
  \end{examples}
 
+% \begin{examples}
+%   \begin{itemize}
+%     \item Comparison with explicit formula
+%       \begin{Verbatim}
+%         a=[1;2;3];n=size(a,'*');
+%         norm(1/n*exp(2*%i*%pi*(0:n-1)'.*.(0:n-1)/n)*a - ifft(a))
+%         norm(exp(-2*%i*%pi*(0:n-1)'.*.(0:n-1)/n)*a - fft(a)) 
+%       \end{Verbatim}
+%     \item Frequency components of a signal, build a noise signal sampled at 1000Hz containing pure frequencies 
+%       at 50 and 70 Hz
+%       \begin{Verbatim}
+%         sample_rate=1000;
+%         t = 0:1/sample_rate:0.6;
+%         N=size(t,'*'); //number of samples
+%         s=sin(2*%pi*50*t)+sin(2*%pi*70*t+%pi/4)+grand(1,N,'nor',0,1);
+%         y=fft(s);
+%         //the fft response is symetric we retain only the first N/2 points
+%         f=sample_rate*(0:(N/2))/N; //associated frequency vector
+%         n=size(f,'*')
+%         plot2d(f,abs(y(1:n)))
+%       \end{Verbatim}
+%     \end{itemize}
+% \end{examples}
+
 \begin{manseealso}
   \manlink{fftshift}{fftshift}, \manlink{ifftshift}{ifftshift}
 \end{manseealso}

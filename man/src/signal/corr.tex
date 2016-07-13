@@ -1,0 +1,168 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{corr}
+\begin{mandesc}
+  \short{corr}{correlation, covariance} \\ % 
+\end{mandesc}
+% \index{corr}\label{corr}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [cov,Mean]=corr(x,[y],nlags)  
+  [cov,Mean]=corr('fft',xmacro,[ymacro],n,sect)  
+  [w,xu]=corr('updt',x1,[y1],w0)  
+  [w,xu]=corr('updt',x2,[y2],w,xu)  
+  ...  
+  [wk]=corr('updt',xk,[yk],w,xu)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x}: a real vector
+    \vname{y}: a real vector, default value x.
+    \vname{nlags}: integer, number of correlation coefficients desired.
+    \vname{xmacro}: a scilab external (see below).
+    \vname{ymacro}: a scilab external (see below), default value xmacro
+    \vname{n}: an integer, total size of the sequence (see below).
+    \vname{sect}: size of sections of the sequence (see below).
+    \vname{xi}: a real vector
+    \vname{yi}: a real vector,default value xi.
+    \vname{cov}: real vector, the correlation coefficients
+    \vname{Mean}: real number or vector,  the mean of x and if given y
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Computes
+\[
+   cov(m) = \sum_{k=1}^{n-m} 
+   (x(k)  - xmean) (y(m+k)      - ymean) \frac{1}{n}
+\]
+for m=0,\ldots,\verb!nlag-1! and two vectors 
+\verb!x=[x(1),..,x(n)]!\verb!y=[y(1),..,y(n)]!
+Note that if x and y sequences are differents corr(x,y,...) is
+different with corr(y,x,...)
+\begin{description}
+\item[Short sequences] \verb![cov,Mean]=corr(x,[y],nlags)! returns the first nlags
+  correlation coefficients and Mean = \verb!mean(x)!
+  (mean of \verb![x,y]! if \verb!y! is an argument).
+  The sequence \verb!x! (resp. \verb!y!) is assumed real, and \verb!x! 
+  and \verb!y! are of same dimension n.
+\item[Long sequences] \verb![cov,Mean]=corr('fft',xmacro,[ymacro],n,sect)! Here \verb!xmacro! is either
+  \begin{description}
+  \item[]  
+    a function of type \verb![xx]=xmacro(sect,istart)! which
+    returns a vector \verb!xx! of dimension
+    \verb!nsect! containing the part of the sequence with
+    indices from \verb!istart! to
+    \verb!istart+sect-1!.
+  \item[] 
+    a fortran subroutine or C procedure which performs the same
+    calculation. (See the source code of \verb!dgetx! for an
+    example). \verb!n! = total size of the
+    sequence. \verb!sect! = size of sections of the
+    sequence. \verb!sect! must be a power of
+    2. \verb!cov! has dimension
+    \verb!sect!. Calculation is performed by FFT. 
+  \end{description}
+\item[Updating method] 
+\begin{verbatim}
+  [w,xu]=corr('updt',x1,[y1],w0)
+  [w,xu]=corr('updt',x2,[y2],w,xu)
+  ...
+  wk=corr('updt',xk,[yk],w,xu)
+\end{verbatim}
+With this calling sequence the calculation is updated at each
+call to \verb!corr!.
+\begin{verbatim}
+  w0 = 0*ones(1,2*nlags);
+  nlags = power of 2.
+\end{verbatim}
+\verb!x1,x2,...! are parts of \verb!x! such that
+\verb!x=[x1,x2,...]! and sizes of \verb!xi! a power of
+2.  To get \verb!nlags! coefficients a final fft must be
+performed \verb!c=fft(w,1)/n!; \verb!cov=c(1nlags)!
+(\verb!n! is the size of \verb!x (y)!).  Caution: this
+calling sequence assumes that \verb!xmean = ymean = 0!. 
+\end{description}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=%pi/10:%pi/10:102.4*%pi;
+    y=[.8*sin(x)+.8*sin(2*x)+randn(x);
+       .8*sin(x)+.8*sin(1.99*x)+randn(x)];
+    c=[];
+    for j=1:2,for k=1:2,c=[c;corr(y(k,:),y(j,:),64)];end;end;
+    c=matrix(c,2,128);cov=[];
+    for j=1:64,cov=[cov;c(:,(j-1)*2+1:2*j)];end;
+  \end{Verbatim}
+
+  \begin{Verbatim}
+   if %f then
+      x=randn(1,256);y=-x;
+      function [z]=xx(inc,is)  z=x(is:is+inc-1);endfunction
+      function [z]=yy(inc,is), z=y(is:is+inc-1);endfunction
+      [c,mxy]=corr(x,y,32);
+      x=x-mxy(1)*ones(size(x));y=y-mxy(2)*ones(size(y));  //centering
+      c1=corr(x,y,32);c2=corr(x,32);
+      norm(c1+c2,1)
+      [c3,m3]=corr('fft',xx,yy,256,32);
+      norm(c1-c3,1)
+      [c4,m4]=corr('fft',xx,256,32);
+      norm(m3,1),norm(m4,1)
+      norm(c3-c1,1),norm(c4-c2,1);
+   end
+  \end{Verbatim}
+
+  \begin{Verbatim}
+    x1=x(1:128);x2=x(129:256);
+    y1=y(1:128);y2=y(129:256);
+    w0=0*ones(1,64);   //32 coeffs
+    [w1,xu]=corr('updt',x1,y1,w0);w2=corr('updt',x2,y2,w1,xu);
+    zz=real(ifft(w2))/256;c5=zz(1:32);
+    // norm(c5-c1,1)
+    [w1,xu]=corr('updt',x1,w0);w2=corr('updt',x2,w1,xu);
+    zz=real(ifft(w2))/256;c6=zz(1:32);
+    // norm(c6-c2,1)
+  \end{Verbatim}
+
+  \begin{Verbatim}
+   if %f then
+      // test for Fortran or C external 
+      function [y]=xmacro(sec,ist) y=sin(ist:(ist+sec-1));endfunction;
+      x=xmacro(100,1);
+      [cc1,mm1]=corr(x,2^3);
+      [cc,mm]=corr('fft',xmacro,100,2^3);
+      [cc2,mm2]=corr('fft','corexx',100,2^3);
+      [maxi(abs(cc-cc1)),maxi(abs(mm-mm1)),maxi(abs(cc-cc2)),maxi(abs(mm-mm2))]
+      function [y]=ymacro(sec,ist) y=cos(ist:(ist+sec-1));endfunction;
+      y=ymacro(100,1);
+      [cc1,mm1]=corr(x,y,2^3);
+      [cc,mm]=corr('fft',xmacro,ymacro,100,2^3);
+      [cc2,mm2]=corr('fft','corexx','corexy',100,2^3);
+      [maxi(abs(cc-cc1)),maxi(abs(mm-mm1)),maxi(abs(cc-cc2)),maxi(abs(mm-mm2))]
+    end
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{fft}{fft}  
+\end{manseealso}

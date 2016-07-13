@@ -1,0 +1,71 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{convol}
+\begin{mandesc}
+  \short{convol}{convolution} \\ % 
+\end{mandesc}
+%\index{convol}\label{convol}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [y]=convol(h,x)  
+  [y,e1]=convol(h,x,e0)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,h}:input sequences (\verb!h! is a "short" sequence, 
+    \verb!x! a "long" one)
+    \vname{e0}: old tail to overlap add (not used in first call)
+    \vname{y}: output of convolution
+    \vname{e1}: new tail to overlap add (not used in last call)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  calculates the convolution \verb!y= h*x! of two
+  discrete sequences by using the fft.  Overlap add method can be used.
+  USE OF OVERLAP ADD METHOD: 
+  For x=[x1,x2,...,xNm1,xN]
+  First call is [y1,e1]=convol(h,x1); 
+  Subsequent calls: [yk,ek]=convol(h,xk,ekm1);
+  Final call: [yN]=convol(h,xN,eNm1);
+  Finally y=[y1,y2,...,yNm1,yN]
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=1:3;
+    h1=[1,0,0,0,0];h2=[0,1,0,0,0];h3=[0,0,1,0,0];
+    x1=convol(h1,x),x2=convol(h2,x),x3=convol(h3,x),
+    convol(h1+h2+h3,x)
+    p1=poly(x,'x','coeff')
+    p2=poly(h1+h2+h3,'x','coeff')
+    p1*p2
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{corr}{corr} \manlink{fft}{fft} \manlink{pspect}{pspect}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Fran\c{c}ois D , Carey Bunks Date 3 Oct. 1988; ;   
+\end{authors}

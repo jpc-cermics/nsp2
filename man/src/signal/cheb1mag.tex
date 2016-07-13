@@ -1,0 +1,57 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{cheb1mag}
+\begin{mandesc}
+  \short{cheb1mag}{ response of Chebyshev type 1 filter} \\ % 
+\end{mandesc}
+%\index{cheb1mag}\label{cheb1mag}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [h2]=cheb1mag(n,omegac,epsilon,sample)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n}: integer: filter order
+    \vname{omegac}: real: cut-off frequency
+    \vname{epsilon}: real: ripple in pass band
+    \vname{sample}: vector of frequencies where \verb!cheb1mag! is evaluated
+    \vname{h2}: Chebyshev I filter values at sample points
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Square magnitude response of a type 1 Chebyshev filter.\verb!omegac!=passband edge.\verb!epsilon!: such that \verb!1/(1+epsilon^2)!=passband ripple.\verb!sample!: vector of frequencies where the square magnitude
+  is desired.
+\end{mandescription}
+%--example 
+\begin{examples}
+  Chebyshev; ripple in the passband
+  \begin{Verbatim}
+    n=13;epsilon=0.2;omegac=3;sample=0:0.05:10;
+    h=cheb1mag(n,omegac,epsilon,sample);
+    xbasc();plot2d(sample,h);xtitle('','frequencies','magnitude')
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{buttmag}{buttmag}  
+\end{manseealso}

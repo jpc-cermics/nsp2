@@ -1,0 +1,72 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{yulewalk}
+\begin{mandesc}
+  \short{yulewalk}{ least-square filter design} \\ % 
+\end{mandesc}
+%\index{yulewalk}\label{yulewalk}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  Hz = yulewalk(N,frq,mag)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{N}: integer (order of desired filter)
+    \vname{frq}: real row vector (non-decreasing order), frequencies.
+    \vname{mag}: non negative real row vector (same size as frq), desired magnitudes.
+    \vname{Hz}: filter \verb!B(z)/A(z)!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Hz = yulewalk(N,frq,mag) finds the N-th order iir filter
+\[
+H(z) = \frac{B(z)}{A(z)} = 
+\frac{ b(1)z^{n-1}+b(2)z^{n-2}+\cdots + b(n)}%
+{ z^{n-1}+a(2)z^{n-2}+\cdots + a(n)}
+\]
+% \begin{verbatim}
+%                   n-1         n-2            
+%       B(z)   b(1)z     + b(2)z    + .... + b(n)
+% H(z)= ---- = ---------------------------------
+%                 n-1       n-2
+%       A(z)    z   + a(2)z    + .... + a(n)
+% \end{verbatim}
+
+which matches the magnitude frequency response given by vectors frq and mag.
+Vectors frq and mag specify the frequency and magnitude of the desired
+frequency response. The frequencies in frq must be between 0.0 and 1.0,
+with 1.0 corresponding to half the sample rate. They must be in
+increasing order and start with 0.0 and end with 1.0.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    f=[0,0.4,0.4,0.6,0.6,1];H=[0,0,1,1,0,0];Hz=yulewalk(8,f,H);
+    fs=1000;fhz = f*fs/2;  
+    xbasc(0);xset('window',0);plot2d(fhz',H');
+    xtitle('Desired Frequency Response (Magnitude)')
+    [frq,repf]=repfreq(Hz.num,Hz.den,frq=0:0.001:0.5);
+    xbasc(1);xset('window',1);plot2d(fs*frq',abs(repf'));
+    xtitle('Obtained Frequency Response (Magnitude)')
+  \end{Verbatim}
+\end{examples}

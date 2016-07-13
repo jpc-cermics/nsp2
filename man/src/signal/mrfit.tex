@@ -1,0 +1,68 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                
+
+\mansection{mrfit}
+\begin{mandesc}
+  \short{mrfit}{frequency response fit} \\ % 
+\end{mandesc}
+%\index{mrfit}\label{mrfit}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  sys=mrfit(w,mag,order)  
+  [num,den]=mrfit(w,mag,order)  
+  sys=mrfit(w,mag,order,weight)  
+  [num,den]=mrfit(w,mag,order,weight)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{w}: positive real vector of frequencies (Hz)
+    \vname{mag}: real vector of frequency responses magnitude (same size as \verb!w!)
+    \vname{order}: integer (required order, degree of \verb!den!)
+    \vname{weight}: positive real vector (default value \verb!ones(w)!).
+    \vname{num,den}: stable polynomials
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!sys=mrfit(w,mag,order,weight)! returns a bi-stable transfer function
+  \verb!G(s)=sys=num/den!, of of given \verb!order! such that 
+  its frequency response magnitude \verb!abs(G(w(i)))! 
+  matches \verb!mag(i)! i.e. \verb!abs(freq(num,den,%i*w))! should be 
+  close to \verb!mag!.
+  \verb!weight(i)! is the weigth given to \verb!w(i)!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    w=0.01:0.01:2;s=poly(0,'s');
+    // syslin('c',Num,Den);
+    G=syslin('c',2*(s^2+0.1*s+2),(s^2+s+1)*(s^2+0.3*s+1)); 
+    fresp=repfreq(G,frq=w);
+    mag=abs(fresp);
+    Gid=mrfit(w,mag,4);
+    frespfit=repfreq(Gid.num,Gid.den,frq=w);
+    xbasc();plot2d([w',w'],[mag(:),abs(frespfit(:))])
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{cepstrum}{cepstrum} \manlink{frfit}{frfit} \manlink{freq}{freq} \manlink{calfrq}{calfrq}  
+\end{manseealso}
