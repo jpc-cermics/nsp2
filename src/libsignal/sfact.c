@@ -220,10 +220,10 @@ int signal_sfact1 (double *b,const int *n, double *w,const int *maxit, int *ierr
  *!methode 
  *    La methode de factorisation spectrale donnee ici est basee 
  *    dans la methode de factorisation de Cholesky. Elle est 
- *    iterative et asuure les convergences monotone et geometrique. 
+ *    iterative et assure les convergences monotone et geometrique. 
  *    En plus elle peut etre employee naturellement pour des 
- *    polynomes scalaires, cependant que dans ce cas existent 
- *    des algorithmes plus surs et rapides. 
+ *    polynomes scalaires, bien que dans ce cas existent 
+ *    des algorithmes plus surs et plus rapides. 
  * 
  *    Voir V. KUCERA.- Discrete linear Control (The polynomial 
  *    equation approach), J. Wiley & sons, 1979. Secs 2.10 et 7.13. 
@@ -266,9 +266,7 @@ int signal_sfact1 (double *b,const int *n, double *w,const int *maxit, int *ierr
  * 
  */
 
-
-/* Subroutine */ int
-signal_sfact2 (double *b,const int *l, const int *n, double *matg,const int *maxit, int *ierr)
+int signal_sfact2 (double *b,const int *l, const int *n, double *matg,const int *maxit, int *ierr)
 {
   int b_dim1, b_offset, i1, i2, i3, i__4;
   double d1;

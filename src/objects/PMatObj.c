@@ -196,7 +196,6 @@ char *nsp_pmatrix_type_short_string(NspObject *v)
   return(pmat_short_type_name);
 }
 
-
 static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err)
 {
   int i, rep;
@@ -204,6 +203,8 @@ static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err
   if ( ! nsp_pmatrix_same_varname(A,B))  return FALSE;
   for ( i = 0 ; i < A->mn ; i++ ) 
     {
+      if ( ! ( A->S[i]->m == B->S[i]->m && A->S[i]->n == B->S[i]->n ))
+	return FALSE;
       rep = nsp_mat_fullcomp (A->S[i],B->S[i],op, err);
       if ( *err == TRUE || rep == FALSE ) return FALSE;
     }
@@ -215,7 +216,7 @@ int nsp_pmatrix_eq(NspObject *A, NspObject *B)
   int err=0,rep;
   if ( check_cast(B,nsp_type_pmatrix_id) == FALSE) return FALSE ;
   rep = nsp_pmatrix_full_comp((NspPMatrix *) A,(NspPMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
+  if ( err == TRUE) return FALSE ; 
   return rep;
 }
 

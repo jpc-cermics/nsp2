@@ -1447,6 +1447,10 @@ NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M)
 static int nsp_polynom_eq(nsp_polynom p, nsp_polynom q)
 {
   int err;
+  /* take care that nsp_mat_fullcomp have scalar promotion 
+   * and it must be avoided here 
+   */
+  if ( ~ ( p->m == q->m  && p->n == q->n)) return FALSE;
   int rep = nsp_mat_fullcomp (p,q,"==", &err);
   if ( err == TRUE || rep == FALSE ) return FALSE;
   return TRUE;
