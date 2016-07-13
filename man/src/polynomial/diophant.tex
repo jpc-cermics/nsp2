@@ -1,0 +1,52 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 -  (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{diophant}
+\begin{mandesc}
+  \short{diophant}{diophantine (Bezout) equation} \\ % 
+\end{mandesc}
+%\index{diophant}\label{diophant}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [x,err]=diophant(p1p2,b)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{p1p2}: polynomial vector \verb!p1p2 = [p1 p2]!
+    \vname{b}: polynomial
+    \vname{x}: polynomial vector [x1;x2]
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb! diophant! solves the bezout equation:\verb!p1*x1+p2*x2=b! with  \verb!p1p2! a polynomial vector.
+  If the equation is not solvable
+  else \verb!err=0!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');p1=(s+3)^2;p2=(1+s);
+    x1=s;x2=(2+s);
+    [x,err]=diophant([p1,p2],p1*x1+p2*x2);
+    p1*x1+p2*x2-p1*x(1)-p2*x(2)
+  \end{Verbatim}
+\end{examples}

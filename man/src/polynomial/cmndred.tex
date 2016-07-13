@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 -  (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{cmndred}
+\begin{mandesc}
+  \short{cmndred}{common denominator form} \\ % 
+\end{mandesc}
+%\index{cmndred}\label{cmndred}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [n,d]=cmndred(num,den)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{num, den}: two polynomial matrices of same dimensions
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![n,d]=cmndred(num,den)! computes a polynomial matrix
+  \verb!n! and a common denominator polynomial \verb!d!
+  such that:\verb!n/d=num./den!
+  The rational matrix defined by \verb!num./den! is \verb!n/d!
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{simp}{simp} \manlink{clean}{clean}  
+\end{manseealso}

@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 -  (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{lcm}
+\begin{mandesc}
+  \short{lcm}{least common multiple} \\ % 
+\end{mandesc}
+%\index{lcm}\label{lcm}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [pp,fact]=lcm(p)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{p}:
+    \vname{fact}: polynomial vector or integer vector (type equal to 8)
+    \vname{pp}: polynomial or integer
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!pp=lcm(p)! computes the lcm \verb!pp! of polynomial vector \verb!p!.\verb![pp,fact]=lcm(p)! computes in addition the vector \verb!fact! such that:\verb!p.*fact=pp*ones(p)!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{itemize}
+  \item polynomial case
+    \begin{Verbatim}
+      s=poly(0,'s');
+      p=[s,s*(s+1)^2,s^2*(s+2)];
+      [pp,fact]=lcm(p);
+      p.*fact, pp
+    \end{Verbatim}
+  \item integer case
+    \begin{Verbatim}
+      V=m2i([2^2*3^5, 2^3*3^2,2^2*3^4*5]);
+      lcm(V)
+    \end{Verbatim}
+  \item scalar case
+    \begin{Verbatim}
+      V=m2i([2^2*3^5, 2^3*3^2,2^2*3^4*5]);
+      lcm(V)
+    \end{Verbatim}
+  \end{itemize}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{gcd}{gcd} \manlink{bezout}{bezout}  
+\end{manseealso}

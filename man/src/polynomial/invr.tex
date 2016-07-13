@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 -  (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{invr}
+\begin{mandesc}
+  \short{invr}{inversion of (rational) matrix} \\ % 
+\end{mandesc}
+%\index{invr}\label{invr}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  F = invr(H)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{H}: polynomial or rational matrix
+    \vname{F}: polynomial or rational matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function is deprecated, you can use \verb!inv! directly.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s')
+    H=[s,s*s+2;1-s,1+s]; 
+    inv(H)
+    H=[1/s,(s+1);1/(s+2),(s+3)/s];
+    inv(H)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{glever}{glever} \manlink{coffg}{coffg} \manlink{inv}{inv}  
+\end{manseealso}

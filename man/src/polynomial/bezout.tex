@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{bezout}
+\begin{mandesc}
+  \short{bezout}{Bezout equation for polynomials or integers} \\ % 
+\end{mandesc}
+%\index{bezout}\label{bezout}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [thegcd,U]=bezout(p1,p2)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{p1, p2}: two real polynomials or two integer scalars (type equal to 8)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![thegcd,U]=bezout(p1,p2)! computes GCD \verb!thegcd! of \verb!p1! and \verb!p2! and in addition a (2x2) 
+  unimodular matrix \verb!U! such that:\verb![p1,p2]*U = [thegcd,0]!
+  The lcm of \verb!p1! and \verb!p2! is given by:\verb!p1*U(1,2)! (or \verb!-p2*U(2,2)!)
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{itemize}
+  \item polynomial case 
+    \begin{Verbatim}
+      x=poly(0,'x');
+      p1=(x+1)*(x-3)^5;p2=(x-2)*(x-3)^3;
+      [thegcd,U]=bezout(p1,p2) 
+      det(U)
+      clean([p1,p2]*U)
+      thelcm=p1*U(1,2)
+      lcm([p1,p2])
+    \end{Verbatim}
+  \item integer case 
+    \begin{Verbatim}
+      i1=m2i(2*3^5); i2=m2i(2^3*3^2);
+      [thegcd,U]=bezout(i1,i2) 
+      V=m2i([2^2*3^5, 2^3*3^2,2^2*3^4*5]);
+      [thegcd,U]=gcd(V)
+      V*U
+      lcm(V)
+    \end{Verbatim}
+  \end{itemize}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{poly}{poly} \manlink{roots}{roots} \manlink{simp}{simp} \manlink{clean}{clean} \manlink{lcm}{lcm}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  S. Steer INRIA
+\end{authors}

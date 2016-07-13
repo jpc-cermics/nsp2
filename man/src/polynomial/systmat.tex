@@ -1,0 +1,52 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{systmat}
+\begin{mandesc}
+  \short{systmat}{system matrix} \\ % 
+\end{mandesc}
+%\index{systmat}\label{systmat}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Sm]=systmat(Sl);  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list) or descriptor system
+    \vname{Sm}: matrix pencil
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  System matrix of the linear system \verb!Sl! (\verb!syslin! list) 
+  in state-space form (utility function).
+  \begin{equation*}
+    Sm = \left( \begin{array}{cl} -s I + A & B \\C & D  \end{array}  \right)
+  \end{equation*}
+  For a descriptor system (\verb!Sl=list('des',A,B,C,D,E)!), \verb!systmat! returns:
+  \begin{equation*}
+    Sm = \left( \begin{array}{cl} -s E + A & B \\  C & D   \end{array} \right)
+  \end{equation*}
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{ss2des}{ss2des} \manlink{sm2des}{sm2des} \manlink{sm2ss}{sm2ss}  
+\end{manseealso}

@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+%% Scilab ( http:%%                                                                                                                                                          
+\mansection{sfact}
+\begin{mandesc}
+  \short{sfact}{discrete time spectral factorization} \\ % 
+\end{mandesc}
+%\index{sfact}\label{sfact}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  F=sfact(P)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: real polynomial matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Finds \verb!F!, a spectral factor of
+  \verb!P!. \verb!P! is a polynomial matrix such that
+  each root of \verb!P! has a mirror image w.r.t the unit
+  circle. Problem is singular if a root is on the unit circle.\verb!sfact(P)! returns a polynomial matrix
+  \verb!F(z)! which is antistable and such that\verb!P = F(z)* F(1/z) *z^n!
+  For scalar polynomials a specific algorithm is implemented.
+  Algorithms are adapted from Kucera's book.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{itemize}
+  \item polynomial (\verb1x1!) example
+    \begin{Verbatim}
+      z=poly(0,'z');
+      p=(z-1/2)*(2-z)
+      w=sfact(p);
+      w* (horner(w,1/z,ttmode=%t)).num
+    \end{Verbatim}
+  \item polynomial matrix example
+    \begin{Verbatim}
+      F1=[z-1/2,z+1/2,z^2+2;1,z,-z;z^3+2*z,z,1/2-z];
+      P=F1*gtild(F1,'d'); 
+
+\end{itemize}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{gtild}{gtild} \manlink{fspecg}{fspecg}  
+\end{manseealso}

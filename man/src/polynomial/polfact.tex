@@ -1,0 +1,53 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 -  (INRIA)
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%
+
+\mansection{polfact}
+\begin{mandesc}
+  \short{polfact}{minimal factors} \\ % 
+\end{mandesc}
+%\index{polfact}\label{polfact}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [f]=polfact(p)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{p}: polynomial
+    \vname{f}: vector \verb![f0 f1 ... fn]! such that \verb!p=prod(f)!
+    \begin{varlist}
+      \vname{f0}: constant
+      \vname{fi}: polynomial
+    \end{varlist}
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!f=polfact(p)! returns the minimal factors of p i.e. \verb!f=[f0 f1 ... fn]! such 
+  that \verb!p=prod(f)!
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{lcm}{lcm} \manlink{cmndred}{cmndred} \manlink{factors}{factors}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  S. Steer INRIA
+\end{authors}

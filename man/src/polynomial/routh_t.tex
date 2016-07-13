@@ -1,0 +1,25 @@
+% -*- mode: latex -*-
+\mansection{routh\_t}
+\begin{mandesc}
+  \shortunder{routh\_t}{routh_t}{Routh's table} \\ % 
+\end{mandesc}
+%\index{routh\_t}\label{routh-t}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  r=routh_t(h [,k]).  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: square rational matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!r=routh_t(h,k)! computes Routh's table of denominator of the
+  system described by transfer matrix SISO \verb!h! with the
+  feedback by the gain \verb!k!.
+  If  \verb!k=poly(0,'k')! we will have a polynomial matrix with dummy variable 
+  \verb!k!, formal expression of the Routh table.
+\end{mandescription}
