@@ -1,0 +1,85 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{quaskro}
+\begin{mandesc}
+  \short{quaskro}{quasi-Kronecker form} \\ % 
+\end{mandesc}
+%\index{quaskro}\label{quaskro}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Q,Z,Qd,Zd,numbeps,numbeta]=quaskro(F)  
+  [Q,Z,Qd,Zd,numbeps,numbeta]=quaskro(E,A)  
+  [Q,Z,Qd,Zd,numbeps,numbeta]=quaskro(F,tol)  
+  [Q,Z,Qd,Zd,numbeps,numbeta]=quaskro(E,A,tol)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{F}: real matrix pencil \verb!F=s*E-A!  (\verb!s=poly(0,'s')!)
+    \vname{E,A}: two real matrices of same dimensions
+    \vname{tol}: a real number (tolerance, default value=1.d-10)
+    \vname{Q,Z}: two square orthogonal matrices
+    \vname{Qd,Zd}: two vectors of integers
+    \vname{numbeps}: vector of integers
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Quasi-Kronecker form of matrix pencil: \verb!quaskro! computes two
+  orthogonal matrices \verb!Q, Z! which put the pencil \verb!F=s*E -A! into
+  upper-triangular form:
+
+  \begin{equation*}
+    Q(s E -A)Z = \left(
+    \begin{array}{cccc} 
+      sE(eps)-A(eps)  & \cdot & \cdot   \\
+      0               & sE(inf)-A(inf) & \cdot  \\
+      0               & 0              & sE(r)-A(r) 
+    \end{array}
+    \right) 
+  \end{equation*}
+% \begin{verbatim}
+%   | sE(eps)-A(eps) |        X       |      X     |
+%   |----------------|----------------|------------|
+%   |        O       | sE(inf)-A(inf) |      X     |
+%   Q(sE-A)Z = |=================================|============|
+%   |                                 |            |
+%   |                O                | sE(r)-A(r) |
+% \end{verbatim}
+The dimensions of the blocks are given by:\verb!eps=Qd(1) x Zd(1)!, \verb!inf=Qd(2) x Zd(2)!,
+\verb!r = Qd(3) x Zd(3)!
+The \verb!inf! block contains the infinite modes of
+the pencil.
+The \verb!f! block contains the finite modes of
+the pencil
+The structure of epsilon blocks are given by:\verb!numbeps(1)! = \verb!#! of eps blocks of size 0 x 1\verb!numbeps(2)! = \verb!#! of eps blocks of size 1 x 2\verb!numbeps(3)! = \verb!#! of eps blocks of size 2 x 3     etc...
+The complete (four blocks) Kronecker form is given by
+the function \verb!kroneck! which calls \verb!quaskro! on
+the (pertransposed) pencil \verb!sE(r)-A(r)!.
+The code is taken from T. Beelen
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{kroneck}{kroneck} \manlink{gschur}{gschur} \manlink{gspec}{gspec}  
+\end{manseealso}
+\begin{authors}
+  François Delebecque
+\end{authors}

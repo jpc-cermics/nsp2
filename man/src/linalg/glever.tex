@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{glever}
+\begin{mandesc}
+  \short{glever}{inverse of matrix pencil} \\ % 
+\end{mandesc}
+%\index{glever}\label{glever}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Bfs,Bis,chis]=glever(E,A [,s])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{E, A}: two real square matrices of same dimensions
+    \vname{s}: character string (default value '\verb!s!')
+    \vname{Bfs,Bis}: two polynomial matrices
+    \vname{chis}: polynomial
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Computation of\verb!(s*E-A)^-1!
+  by generalized Leverrier's algorithm for a matrix pencil.
+\begin{verbatim}
+  (s*E-A)^-1 = (Bfs/chis) - Bis.
+\end{verbatim}
+  \verb!chis! = characteristic polynomial (up to a multiplicative constant). 
+
+  \verb!Bfs!  = numerator polynomial matrix.
+
+  \verb!Bis!  = polynomial matrix ( - expansion of \verb!(s*E-A)^-1! at infinity).
+  Note the minus sign before \verb!Bis!.
+\end{mandescription}
+%-- section-Caution
+%\paragraph{Caution}
+%This function uses \verb!cleanp! to simplify \verb!Bfs,Bis! and \verb!chis!.
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');F=[-1,s,0,0;0,-1,0,0;0,0,s-2,0;0,0,0,s-1];
+    [Bfs,Bis,chis]=glever(F);
+    clean((Bfs - chis*Bis)*F -chis*eye(size(F)),1.e-14)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{rowshuff}{rowshuff} 
+  \manlink{det}{det} \manlink{invr}{invr} \manlink{coffg}{coffg} 
+  \manlink{pencan}{pencan} \manlink{penlaur}{penlaur}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

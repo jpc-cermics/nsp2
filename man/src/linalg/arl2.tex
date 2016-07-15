@@ -1,0 +1,82 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{arl2}
+\begin{mandesc}
+  \short{arl2}{SISO model realization by L2 transfer approximation} \\ % 
+\end{mandesc}
+% \index{arl2}\label{arl2}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [den,num,err]=arl2(y,den0,n ,imp=0, all=%f)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{y}: real vector or polynomial in \verb!z^-1!, it contains the
+    coefficients of the Fourier's series of the rational system to approximate
+    (the impulse response) 
+    
+    \vname{den0}: a polynomial which gives an initial guess of the solution, it
+    may be \verb!poly(1,'z','c')!
+    \vname{n}: integer, the degree of approximating transfer function (degree of den)
+    \vname{imp}: optional argument in \verb!(0,1,2)! (verbose mode)
+    \vname{den}: polynomial or vector of polynomials, contains the denominator(s) of the solution(s)
+    \vname{num}: polynomial or vector of polynomials, contains the numerator(s) of the solution(s)
+    \vname{err}: real constant or vector , the l2-error achieved for each solutions
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![den,num,err]=arl2(y,den0,n [,imp]) ! finds a pair of polynomials
+  \verb!num! and \verb!den! such that the transfer function \verb!num/den!
+  is stable and its impulse response approximates (with a minimal l2
+  norm) the vector \verb!y! assumed to be completed by an infinite number of zeros.
+  If \verb!y(z)  =  y(1)(1/z)+y(2)(1/z^2)+ ...+ y(ny)(1/z^ny)!
+  then l2-norm of \verb!num/den - y(z)! is \verb!err!.\verb!n! is the degree of the polynomial \verb!den!.
+  The \verb!num/den!  transfer function is a L2 approximant of the
+  Fourier's series of the rational system.
+  Various intermediate results are printed according to optional \verb!imp! argument. 
+  When the optional argument all is set to true \verb!arl2! returns in the
+  vectors of polynomials \verb!num! and \verb!den!  a set of local
+  optimums for the problem. The solutions are sorted with increasing
+  errors \verb!err!. In this last case \verb!den0! is already assumed to be 
+  \verb!poly(1,'z','c')!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    v=ones(1,20);
+    xbasc();
+    plot2d1('enn',0,[v';zeros(80,1)],2,'051',' ',[1,-0.5,100,1.5])
+    [d,n,e]=arl2(v,poly(1,'z','c'),1)
+    plot2d1('enn',0,ldiv(n,d,100),2,'000')
+    [d,n,e]=arl2(v,d,3)
+    plot2d1('enn',0,ldiv(n,d,100),3,'000')
+    [d,n,e]=arl2(v,d,8)
+    plot2d1('enn',0,ldiv(n,d,100),5,'000')
+    [d,n,e]=arl2(v,poly(1,'z','c'),4,all=%t)
+    plot2d1('enn',0,ldiv(n(1),d(1),100),10,'000')
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{ldiv}{ldiv}
+\end{manseealso}

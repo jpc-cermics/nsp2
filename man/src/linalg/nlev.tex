@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{nlev}
+\begin{mandesc}
+  \short{nlev}{Leverrier's algorithm} \\ % 
+\end{mandesc}
+%\index{nlev}\label{nlev}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [num,den]=nlev(A,z [,rmax])    
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real square matrix
+    \vname{z}: character string
+    \vname{rmax}: optional parameter (see \verb!bdiag!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![num,den]=nlev(A,z [,rmax])! computes
+  \verb!(z*eye()-A)^(-1)!
+  by block diagonalization of A followed by Leverrier's algorithm
+  on each block.
+  This algorithm is better than the usual leverrier algorithm but
+  still not perfect!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(3,3);x=poly(0,'x');
+    [n,d]=nlev(A,'x')
+    clean(d + poly(A,'x'))
+    clean( n*(x*eye(size(A))-A) -d*eye(size(A)),1.e-10)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{coff}{coff} \manlink{coffg}{coffg} \manlink{glever}{glever} \manlink{ss2tf}{ss2tf}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque, Serge Steer.     
+\end{authors}

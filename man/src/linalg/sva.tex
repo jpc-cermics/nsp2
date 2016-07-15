@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{sva}
+\begin{mandesc}
+  \short{sva}{singular value approximation} \\ % 
+\end{mandesc}
+%\index{sva}\label{sva}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [U,s,V]=sva(A,k)  
+  [U,s,V]=sva(A,tol)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real or complex matrix
+    \vname{k}: integer
+    \vname{tol}: nonnegative real number
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Singular value approximation.\verb![U,S,V]=sva(A,k)! with \verb!k! an integer
+  $>$=1, returns \verb!U,S! and \verb!V! such that
+  \verb!B=U*S*V'! is the best L2 approximation of
+  \verb!A! with rank(\verb!B!)=\verb!k!.\verb![U,S,V]=sva(A,tol)! with \verb!tol! a real
+  number, returns \verb!U,S! and \verb!V! such that
+  \verb!B=U*S*V'! such that L2-norm of \verb!A-B!
+  is at most \verb!tol!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(5,4)*rand(4,5);
+    [U,s,V]=sva(A,2);
+    B=U*s*V';
+    svd(A)
+    svd(B)
+    clean(svd(A-B))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{svd}{svd}  
+\end{manseealso}
+\begin{authors}
+  François Delebecque
+\end{authors}

@@ -1,0 +1,85 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{pbig}
+\begin{mandesc}
+  \short{pbig}{eigen-projection} \\ % 
+\end{mandesc}
+%\index{pbig}\label{pbig}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Q,M]=pbig(A,thres,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real square matrix
+    \vname{thres}: real number
+    \vname{flag}: character string (\verb!'c'! or \verb!'d'!)
+    \vname{Q,M}: real matrices
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Projection on eigen-subspace associated with eigenvalues with real
+  part $>$= \verb!thres! (\verb!flag='c'!) or
+  with magnitude $>$= \verb!thres!
+  (\verb!flag='d'!).
+  The projection is defined by \verb!Q*M!, \verb!Q! is
+  full column rank, \verb!M! is full row rank and
+  \verb!M*Q=eye!.
+  If \verb!flag='c'!, the eigenvalues of
+  \verb!M*A*Q! = eigenvalues of \verb!A! with real part
+  $>$= \verb!thres!.
+  If \verb!flag='d'!, the eigenvalues of
+  \verb!M*A*Q! = eigenvalues of \verb!A! with magnitude
+  $>$= \verb!thres!.
+  If \verb!flag='c'! and if \verb![Q1,M1]! =
+  full rank factorization (\verb!fullrf!) of
+  \verb!eye()-Q*M! then eigenvalues of \verb!M1*A*Q1! =
+  eigenvalues of \verb!A! with real part $<$
+  \verb!thres!.
+  If \verb!flag='d'! and if \verb![Q1,M1]! =
+  full rank factorization (\verb!fullrf!) of
+  \verb!eye()-Q*M! then eigenvalues of \verb!M1*A*Q1! =
+  eigenvalues of \verb!A! with magnitude $<$
+  \verb!thres!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([1,2,3]);X=rand(A);A=inv(X)*A*X;
+    [Q,M]=pbig(A,1.5,'d');
+    spec(M*A*Q);
+    QM=Q*M;
+    [Q1,M1]=fullrf(eye(size(QM))-QM);
+    spec(M1*A*Q1)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{psmall}{psmall} \manlink{projspec}{projspec} \manlink{fullrf}{fullrf} \manlink{schur}{schur}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}
+\verb!pbig! is based on the ordered schur form (scilab
+function \verb!schur!).

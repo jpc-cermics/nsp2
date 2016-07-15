@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{rowshuff}
+\begin{mandesc}
+  \short{rowshuff}{shuffle algorithm} \\ % 
+\end{mandesc}
+%\index{rowshuff}\label{rowshuff}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Ws,Fs1]=rowshuff(Fs, [alfa])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Fs}: square real pencil \verb!Fs = s*E-A!
+    \vname{Ws}: polynomial matrix
+    \vname{Fs1}: square real pencil \verb!F1s = s*E1 -A1! with \verb!E1! non-singular
+    \vname{alfa}: real number (\verb!alfa = 0! is the default value)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Shuffle algorithm: Given the pencil \verb!Fs=s*E-A!, returns Ws=W(s) 
+  (square polynomial matrix) such that:\verb! Fs1 = s*E1-A1 = W(s)*(s*E-A) ! is a pencil with non singular \verb!E1! matrix.
+  This is possible iff the pencil \verb!Fs = s*E-A! is regular (i.e. invertible).
+  The degree of \verb!Ws! is equal to the index of the pencil.
+  The poles at infinity of \verb!Fs! are put to \verb!alfa! and the zeros of \verb!Ws! are at \verb!alfa!.
+  Note that \verb!(s*E-A)^-1 = (s*E1-A1)^-1 * W(s) = (W(s)*(s*E-A))^-1 *W(s)!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    F=randpencil([],[2],[1,2,3],[]);
+    F=rand(5,5)*F*rand(5,5);   // 5 x 5 regular pencil with 3 evals at 1,2,3
+    [Ws,F1]=rowshuff(F,-1);
+    [E1,A1]=pen2ea(F1);
+    svd(E1)           //E1 non singular
+    roots(det(Ws))
+    // clean(inv(F)-inv(F1)*Ws,1.d-7)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pencan}{pencan} \manlink{glever}{glever} \manlink{penlaur}{penlaur}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

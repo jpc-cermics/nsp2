@@ -1,0 +1,59 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{proj}
+\begin{mandesc}
+  \short{proj}{projection} \\ % 
+\end{mandesc}
+%\index{proj}\label{proj}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  P = proj(X1,X2)    
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X1,X2}: two real matrices with equal number of columns
+    \vname{P}: real projection matrix (\verb!P^2=P!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!P! is the projection on \verb!X2! parallel to \verb!X1!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    X1=rand(5,2);X2=rand(5,3);
+    P=proj(X1,X2);
+    norm(P^2-P,1)
+    trace(P)    // This is dim(X2)
+    [Q,M]=fullrf(P);
+    svd([Q,X2])   // span(Q) = span(X2)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{projspec}{projspec} \manlink{orth}{orth} \manlink{fullrf}{fullrf}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

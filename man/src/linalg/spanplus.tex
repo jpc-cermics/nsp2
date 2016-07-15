@@ -1,0 +1,71 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{spanplus}
+\begin{mandesc}
+  \short{spanplus}{sum of subspaces} \\ % 
+\end{mandesc}
+%\index{spanplus}\label{spanplus}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,dim,dima]=spanplus(A,B[,tol])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, B}: two real or complex matrices with equal number of rows
+    \vname{X}: orthogonal or unitary square matrix
+    \vname{dim, dima}: integers, dimension of subspaces
+    \vname{tol}: nonnegative real number
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes a  basis X such that:
+  the first \verb!dima! columns of \verb!X! span Range(\verb!A!)
+  and the following (\verb!dim-dima!) columns make a basis of \verb!A+B!
+  relative to \verb!A!.
+  The \verb!dim! first columns of \verb!X! make a basis for \verb!A+B!.
+  One has the following canonical form for \verb![A,B]!:
+\begin{verbatim}
+  [*,*]    (dima rows)
+  X'*[A,B]=[0,*]    (dim-dima rows)
+  [0,0]    
+\end{verbatim}
+\verb!tol! is an optional argument (see function code).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(6,2)*rand(2,5);      // rank(A)=2
+    B=[A(:,1),rand(6,2)]*rand(3,3);   //two additional independent vectors
+    [X,dim,dimA]=spanplus(A,B);
+    dimA
+    dim
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{spaninter}{spaninter} \manlink{im\_inv}{im-inv} \manlink{spantwo}{spantwo}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

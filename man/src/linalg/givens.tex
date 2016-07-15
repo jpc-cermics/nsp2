@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{givens}
+\begin{mandesc}
+  \short{givens}{Givens transformation} \\ % 
+\end{mandesc}
+%\index{givens}\label{givens}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  U=givens(xy)  
+  U=givens(x,y)  
+  [U,c]=givens(xy)  
+  [U,c]=givens(x,y)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x,y}: two real or complex numbers
+    \vname{xy}:  real or complex size 2 column vector
+    \vname{U}:  a \verb!2!x\verb!2! unitary matrix
+    \vname{c}:  real or complex size 2 column vector
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!U = givens(x, y)! or \verb!U = givens(xy)! with \verb!xy = [x;y]!
+  returns a \verb!2!x\verb!2! unitary matrix \verb!U! such that:\verb!U*xy=[r;0]=c!.
+  Note that \verb!givens(x,y)! and \verb!givens([x;y])! are equivalent.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[3,4;5,6];
+    U=givens(A(:,1));
+    U*A
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{qr}{qr}  
+\end{manseealso}
+
+\begin{authors}
+  François Delebecque
+\end{authors}

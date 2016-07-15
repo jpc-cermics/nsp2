@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{randpencil}
+\begin{mandesc}
+  \short{randpencil}{random pencil} \\ % 
+\end{mandesc}
+%\index{randpencil}\label{randpencil}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  F=randpencil(eps,infi,fin,eta)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{eps}: vector of integers
+    \vname{infi}: vector of integers
+    \vname{fin}: real vector, or monic polynomial, or vector of monic polynomial
+    \vname{eta}: vector of integers
+    \vname{F}: real matrix pencil \verb!F=s*E-A!  (\verb!s=poly(0,'s')!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Utility function.
+  \verb!F=randpencil(eps,infi,fin,eta)! returns a random pencil \verb!F!
+  with given Kronecker structure. The structure is given by:
+  \verb!eps=[eps1,...,epsk]!: structure of epsilon blocks (size eps1x(eps1+1),....)
+  \verb!fin=[l1,...,ln]!  set of finite eigenvalues (assumed real)  (possibly [])
+  \verb!infi=[k1,...,kp]! size of J-blocks at infinity
+  \verb!ki$>$=1!  (infi=[] if no J blocks).
+  \verb!eta=[eta1,...,etap]!: structure ofeta blocks (size eta1+1)xeta1,...)\verb!epsi!'s should be $>$=0, \verb!etai!'s should be $>$=0, \verb!infi!'s should 
+  be $>$=1.
+  If \verb!fin! is a (monic) polynomial, the finite block admits the roots of 
+  \verb!fin! as eigenvalues.
+  If \verb!fin! is a vector of polynomial, they are the finite elementary
+  divisors of \verb!F! i.e. the roots of \verb!p(i)! are finite
+  eigenvalues of \verb!F!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    F=randpencil([0,1],[2],[-1,0,1],[3]);
+    [Q,Z,Qd,Zd,numbeps,numbeta]=kroneck(F);
+    Qd, Zd
+    s=poly(0,'s');
+    F=randpencil([],[1,2],s^3-2,[]); //regular pencil
+    det(F)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{kroneck}{kroneck} \manlink{pencan}{pencan} \manlink{penlaur}{penlaur}  
+\end{manseealso}
+\begin{authors}
+  François Delebecque
+\end{authors}

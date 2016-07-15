@@ -1,0 +1,64 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{spaninter}
+\begin{mandesc}
+  \short{spaninter}{subspace intersection} \\ % 
+\end{mandesc}
+%\index{spaninter}\label{spaninter}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,dim]=spaninter(A,B [,tol])    
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, B}: two real or complex matrices with equal number of rows
+    \vname{X}: orthogonal or unitary square matrix
+    \vname{dim}: integer, dimension of subspace range(\verb!A!) inter range(\verb!B!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes the intersection of range(\verb!A!) and range(\verb!B!).
+  The first \verb!dim! columns of \verb!X! span this intersection i.e.
+  \verb!X(:,1:dim)! is an orthogonal basis for
+  range(\verb!A!) inter range(\verb!B!)
+  In the \verb!X! basis \verb!A! and \verb!B! are respectively represented by:\verb!X'*A! and \verb!X'*B!.\verb!tol! is a threshold (\verb!sqrt(%eps)! is the default value).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(5,3)*rand(3,4);     // A is 5 x 4, rank=3
+    B=[A(:,2),rand(5,1)]*rand(2,2);
+    [X,dim]=spaninter(A,B);
+    X1=X(:,1:dim);    //The intersection
+    svd(A),svd([X1,A])   // X1 in span(A)
+    svd(B),svd([B,X1])   // X1 in span(B)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{spanplus}{spanplus} \manlink{spantwo}{spantwo}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

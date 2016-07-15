@@ -1,0 +1,70 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{penlaur}
+\begin{mandesc}
+  \short{penlaur}{Laurent coefficients of matrix pencil} \\ % 
+\end{mandesc}
+%\index{penlaur}\label{penlaur}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Si,Pi,Di,order]=penlaur(Fs)  
+  [Si,Pi,Di,order]=penlaur(E,A)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Fs}: a regular pencil \verb!s*E-A!
+    \vname{E, A}: two real square matrices
+    \vname{Si,Pi,Di}: three real square matrices
+    \vname{order}: integer
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!penlaur! computes the first Laurent coefficients of \verb!(s*E-A)^-1! at
+  infinity.\verb!(s*E-A)^-1 = ... + Si/s - Pi - s*Di + ...! at \verb!s! = infinity.\verb!order! = order of the singularity (order=index-1).
+  The matrix pencil \verb!Fs=s*E-A! should be invertible.
+  For a index-zero pencil, \verb!Pi, Di,...! are zero and \verb!Si=inv(E)!.
+  For a index-one pencil (order=0),\verb!Di! =0.
+  For higher-index pencils, the terms \verb! -s^2 Di(2), -s^3    Di(3),... ! are given by:\verb! Di(2)=Di*A*Di!, \verb! Di(3)=Di*A*Di*A*Di! (up
+  to \verb!Di(order)!).
+\end{mandescription}
+%-- section-Remark
+\paragraph{Remark}
+Experimental version: troubles when bad conditioning of \verb!so*E-A!
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    F=randpencil([],[1,2],[1,2,3],[]);
+    F=rand(6,6)*F*rand(6,6);[E,A]=pen2ea(F);
+    [Si,Pi,Di]=penlaur(F);
+    [Bfs,Bis,chis]=glever(F);
+    norm(coeff(Bis,1)-Di,1)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{glever}{glever} \manlink{pencan}{pencan} \manlink{rowshuff}{rowshuff}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

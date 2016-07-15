@@ -1,0 +1,61 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{coff}
+\begin{mandesc}
+  \short{coff}{resolvent (cofactor method)  } \\ % 
+\end{mandesc}
+%\index{coff}\label{coff}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [N,d]=coff(M [,var])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}: square real matrix
+    \vname{var}: character string
+    \vname{N}: polynomial matrix (same size as \verb!M!)
+    \vname{d}: polynomial (characteristic polynomial \verb!poly(A,'s')!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!coff! computes R=\verb!(s*eye(size(M))-M)^-1! for a real matrix \verb!M!. 
+  \verb!R! is given by \verb!N/d!. \verb!N! is the numerator as a polynomial matrix, \verb!d! is the 
+  common denominator. \verb!var! character string ('\verb!s!' if omitted)
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    M=[1,2;0,3];
+    [N,d]=coff(M,'s');
+    s=poly(0,'s');
+    clean(N*(s*eye(size(M))-M) - d*eye(size(M)))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  % \manlink{coffg}{coffg} \manlink{ss2tf}{ss2tf} 
+  \manlink{nlev}{nlev} \manlink{poly}{poly}  
+\end{manseealso}
+\begin{authors}
+  François Delebecque
+\end{authors}

@@ -1,0 +1,120 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{aff2ab}
+\begin{mandesc}
+  \short{aff2ab}{linear (affine) function to A,b conversion} \\ % 
+\end{mandesc}
+%\index{aff2ab}\label{aff2ab}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [A,b]=aff2ab(afunction,dimX,D [,flag])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{afunction}: a scilab function \verb! Y =fct(X,D) ! 
+    where \verb!X, D, Y! are \verb!list! of matrices
+    \vname{dimX}: a \verb!p! x \verb!2! integer matrix 
+    (\verb!p! is the number of matrices in \verb!X!)
+    \vname{D}: a \verb!list! of real matrices (or any other valid Scilab object).
+    \vname{flag}: optional parameter (\verb!flag='f'! or \verb!flag='sp'!)
+    \vname{A}: a real matrix
+    \vname{b}: a real vector having same row dimension as \verb!A!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!aff2ab! returns the matrix representation of an affine
+  function (in the canonical basis). The given function \verb!afunction!
+  should have the following prototype:
+  \verb! Y=afunction(X,D)!  where \verb! X=list(X1,X2,...,Xp)! is
+  a list of p real matrices, and \verb! Y=list(Y1,...,Yq)! is
+  a list of q real real matrices which depend linearly of
+  the \verb!Xi!'s. The (optional) input argument \verb!D! contains 
+  parameters needed to compute Y as a function of X and it is generally 
+  a list of matrices. The parameter \verb!dimX! is a \verb!p! x \verb!2! matrix: 
+  \verb!dimX(i)=[nri,nci]! is the actual number of rows and columns of matrix \verb!Xi!.
+  These dimensions determine \verb!na!, the column dimension of 
+  the resulting matrix \verb!A!: \verb!na=nr1*nc1 +...+ nrp*ncp!.
+  If the optional parameter \verb!flag='sp'! the resulting \verb!A!
+  matrix is returned as a sparse matrix.
+  This function is useful to solve a system of linear equations
+  where the unknown variables are matrices.
+\end{mandescription}
+%--example 
+\begin{examples}
+  Lyapunov equation solver (one unknown variable, one constraint)
+  \begin{Verbatim}
+    function Y=lyapunov(X,D)
+      [A,Q]=D(:);Xm=X(:); Y=list(A'*Xm+Xm*A-Q);
+    endfunction
+    A=rand(3,3);Q=rand(3,3);Q=Q+Q';D=list(A,Q);dimX=[3,3];
+    [Aly,bly]=aff2ab(lyapunov,dimX,D);
+    [Xl,kerA]=linsolve(Aly,bly); Xv=vec2list(Xl,dimX); lyapunov(Xv,D)
+    Xm=Xv(:); A'*Xm+Xm*A-Q
+  \end{Verbatim}
+    Lyapunov equation solver with redundant constraint X=X'
+    (one variable, two constraints) D is global variable.
+  \begin{Verbatim}
+    function Y=ly2(X,D)
+      [A,Q]=D(:);Xm=X(:); Y=list(A'*Xm+Xm*A-Q,Xm'-Xm);
+    endfunction
+    A=rand(3,3);Q=rand(3,3);Q=Q+Q';D=list(A,Q);dimX=[3,3];
+    [Aly,bly]=aff2ab(ly2,dimX,D);
+    [Xl,kerA]=linsolve(Aly,bly); Xv=vec2list(Xl,dimX); ly2(Xv,D)
+  \end{Verbatim}
+  Francis equations, find matrices \verb!X1! and \verb!X2! such that:
+    \begin{align*}
+      A1*X1 & - X1*A2 + B*X2 -A3 = 0\\
+      D1*X1 & -D2 = 0 
+    \end{align*}
+  \begin{Verbatim}
+    function Y=bruce(X,D)
+      [A1,A2,A3,B,D1,D2]=D(:),...
+      [X1,X2]=X(:);Y=list(A1*X1-X1*A2+B*X2-A3,D1*X1-D2);
+    endfunction
+    A1=[-4,10;-1,2];A3=[1;2];B=[0;1];A2=1;D1=[0,1];D2=1;
+    D=list(A1,A2,A3,B,D1,D2);
+    [n1,m1]=size(A1);[n2,m2]=size(A2);[n3,m3]=size(B);
+    dimX=[[m1,n2];[m3,m2]];
+    [Af,bf]=aff2ab(bruce,dimX,D);
+    [Xf,KerAf]=linsolve(Af,bf);Xsol=vec2list(Xf,dimX)
+    bruce(Xsol,D)
+  \end{Verbatim}
+  Find all X which commute with A
+  \begin{Verbatim}
+    function y=f(X,D) 
+      y=list(D(:)*X(:)-X(:)*D(:));
+    endfunction
+    A=rand(3,3);dimX=[3,3];[Af,bf]=aff2ab(f,dimX,list(A));
+    [Xf,KerAf]=linsolve(Af,bf);[p,q]=size(KerAf);
+    Xsol=vec2list(Xf+KerAf*rand(q,1),dimX);
+    C=Xsol(:); A*C-C*A
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{linsolve}{linsolve}  
+\end{manseealso}
+
+\begin{authors}
+  François Delebecque
+\end{authors}

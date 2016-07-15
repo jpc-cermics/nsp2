@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+%% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+%% Copyright (C) 1987-2016 - F. Delebecque
+%%
+%% This program is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with this program; if not, write to the Free Software
+%% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+%%                                                                                                
+
+\mansection{pencan}
+\begin{mandesc}
+  \short{pencan}{canonical form of matrix pencil} \\ % 
+\end{mandesc}
+%\index{pencan}\label{pencan}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Q,M,i1]=pencan(Fs)  
+  [Q,M,i1]=pencan(E,A)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Fs}: a regular pencil \verb!s*E-A!
+    \vname{E,A}: two real square matrices
+    \vname{Q,M}: two non-singular real matrices
+    \vname{i1}: integer
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given the regular pencil \verb!Fs=s*E-A!, \verb!pencan! returns matrices \verb!Q! 
+  and \verb!M!
+  such than \verb!M*(s*E-A)*Q! is in "canonical" form.\verb!M*E*Q! is a block matrix
+\begin{verbatim}
+  [I,0;
+    0,N]
+\end{verbatim}
+with \verb!N! nilpotent and \verb!i1! = size of the \verb!I! matrix above.\verb!M*A*Q! is a block matrix:
+\begin{verbatim}
+  [Ar,0;
+    0,I]
+\end{verbatim}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    F=randpencil([],[1,2],[1,2,3],[]);
+    F=rand(6,6)*F*rand(6,6);
+    [Q,M,i1]=pencan(F);
+    W=clean(M*F*Q)
+    roots(det(W(1:i1,1:i1)))
+    det(W($-2:$,$-2:$))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{glever}{glever} \manlink{penlaur}{penlaur} \manlink{rowshuff}{rowshuff}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

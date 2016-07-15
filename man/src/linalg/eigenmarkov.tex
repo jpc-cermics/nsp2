@@ -1,0 +1,47 @@
+\mansection{eigenmarkov}
+\begin{mandesc}
+  \short{eigenmarkov}{normalized left and right Markov eigenvectors} \\ % 
+\end{mandesc}
+%\index{eigenmarkov}\label{eigenmarkov}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [M,Q]=eigenmarkov(P)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: real N x N Markov matrix. Sum of entries in each row should add to one.
+    \vname{M}: real matrix with N columns.
+    \vname{Q}: real matrix with N rows.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Returns normalized left and right eigenvectors
+  associated with the eigenvalue 1 of the Markov transition matrix \verb!P!.
+  If the multiplicity of this eigenvalue is \verb!m! and \verb!P!
+  is \verb!N x N!, then \verb!M! is a \verb!m x N! matrix and \verb!Q! a \verb!N x m! matrix.
+  The row vector \verb!M(k,:)! is the probability distribution vector associated with the \verb!k!-th
+  ergodic set (recurrent class). The element \verb!M(k,x)! is zero if \verb!x! is not in the
+  \verb!k!-th recurrent class.
+  The element \verb!Q(x,k)! is the probability to end in the \verb!k!-th recurrent class starting
+  from \verb!x!. If \verb!P^k! converges for large \verb!k! (no eigenvalues on the
+  unit circle except 1), then the limit is \verb!Q*M! (eigenprojection).
+\end{mandescription}
+% --example 
+\begin{examples}
+  \paragraph{Example with two recurrent classes (with 2 and 1 states) and 2 transient states}
+  \begin{Verbatim}
+    P=genmarkov([2,1],2) 
+    [M,Q]=eigenmarkov(P);
+    P*Q-Q
+    Q*M-P^20
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{genmarkov}{genmarkov} \manlink{classmarkov}{classmarkov}  
+\end{manseealso}
+
+
