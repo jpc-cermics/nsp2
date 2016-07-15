@@ -374,11 +374,9 @@ int int_ppol(Stack stack, int rhs, int opt, int lhs)
     {
       Scierror("%s: Uncontrollable system.\n", "ppol");
     }
-
-  /* REvoir P parties reellles et imag et Z ? */
-  
+    
   nsp_ctrlpack_polmc (&P->mn, &B->n, &P->mn, &B->n, A->R, B->R,
-		      Res->R, P->R, P->R+P->m, Z->R, &indcon, Iwrk->I,
+		      Res->R, P->R, P->R+P->mn, Z->R, &indcon, Iwrk->I,
 		      &ierr, Wrk->I,
 		      Wrk->R + B->n,
 		      Wrk->R + B->n + B->n * B->n,
