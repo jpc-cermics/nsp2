@@ -1,4 +1,3 @@
-function [A,jb]=rref_m(A,tol)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque (Inria)
 //
@@ -16,6 +15,14 @@ function [A,jb]=rref_m(A,tol)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+
+
+function [A,jb]=rref(A,tol)
+  error("Error: rref only implemented for scalar or sparse matrices");
+  return;
+endfunction
+  
+function [A,jb]=rref_m(A,tol)
 //R = rref(A) produces the reduced row echelon form of A.  
 
   if nargin < 2 then  tol=2*%eps*norm(A,'inf')*max(size(A)); end
