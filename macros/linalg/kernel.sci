@@ -53,7 +53,8 @@ function [kerA] = kernel(A,tol=[],meth="svd")
     kerA = Q(:,rk+1:n)
   elseif meth.equal["svd"] then
     [U,s,V] = svd(A)
-    rk = max(find(s >= s(1)*tol))
+    rk = max(find(s > s(1)*tol));
+    if isempty(rk) then rk=0;end;
     kerA = V(:,rk+1:n)
   else
     error("bad optional argument meth (should be ""qr"" or ""svd"")")
