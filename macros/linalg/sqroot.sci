@@ -17,9 +17,9 @@ function [S]=sqroot(Q)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
   Q1=(Q+Q')/2;
-  if norm(Q1-Q,1) > 100*%eps then warning('sqroot: input not symmetric!');end
+  if norm(Q1-Q,1) > 100*%eps then printf('Warning: in sqroot, input is not symmetric!');end
   tt=min(spec(Q1));
-  if tt <-10*%eps then warning('sqroot: input not semi-definite positive!');end
+  if tt <-10*%eps then printf('Warning: in sqroot, input is not semi-definite positive!');end
   if norm(Q,1) < sqrt(%eps) then S=[];return;end
   [u,S,v,rk]=svd(Q);
   S=diag(S);
