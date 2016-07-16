@@ -39,126 +39,126 @@
 \end{parameters}
 
 \begin{mandescription}
-This function solves the linear system $Ax = b$ or solves 
-the least-squares problem:
-$$
-      \min \| A x - b \|^2_2. 
-$$
-if the system appears to be inconsistent (which means that there is no 
-$x$ such that $A x=b$ ($b \notin Range(A)$)). $A$ is a rectangular matrix of 
-dimension $m \times n$, where all cases are allowed: $m=n$, $m>n$, or $m<n$. 
-The matrix $A$ may be dense or sparse (usually sparse). Note that in case
-$A$ is not full rank (there is an infinity of solutions to the least square
-problem) lsmr should provide the minimum norm solution.
+  This function solves the linear system $Ax = b$ or solves 
+  the least-squares problem:
+  $$
+  \min \| A x - b \|^2_2. 
+  $$
+  if the system appears to be inconsistent (which means that there is no 
+  $x$ such that $A x=b$ ($b \notin Range(A)$)). $A$ is a rectangular matrix of 
+  dimension $m \times n$, where all cases are allowed: $m=n$, $m>n$, or $m<n$. 
+  The matrix $A$ may be dense or sparse (usually sparse). Note that in case
+  $A$ is not full rank (there is an infinity of solutions to the least square
+  problem) lsmr should provide the minimum norm solution.
+  
+  In place of $A$ you can provide a function (says $Afun$) which takes two 
+  arguments such that $Afun(x,1)$ returns $A x$ and   $Afun(x,2)$ 
+  returns $A^{\top} x$.
+  
+  When $\lambda$ is not $0$ lsmr solves the regularized least-squares problem:
+  $$
+  \min \| A x - b \|^2_2 + \lambda^2 \| x \|^2_2 
+  $$
+  The lsmr method is described in this \href{http://arxiv.org/abs/1006.0758}{paper}.
+  
+  \itemdesc{convergence and stopping criteria, istop output paramter}
 
-In place of $A$ you can provide a function (says $Afun$) which takes two 
-arguments such that $Afun(x,1)$ returns $A x$ and   $Afun(x,2)$ 
-returns $A^{\top} x$.
+  \begin{itemize}
+  \item lsmr continues iterations until a certain backward error estimate is smaller 
+    than some quantity depending on atol and btol. In the following we denote $r = A x - b$ 
+    the residual. If $A x = b$ seems to be consistent, lsmr terminates when:
+    $$
+    \| r \|_2  \le  atol \| A \|_F \| x \|_2 + btol \| b \|_2
+    $$
+    otherwise, lsmr terminates when;
+    $$
+    \| A^{\top}r \|_2  \le  atol \| A \|_F \| r \|_2
+    $$
+    (note that these 2 tests use the estimates of the quantities $\|r\|_2$, $\| A \|_F$ 
+    and  $\| A^{\top}r \|_2$).
 
-When $\lambda$ is not $0$ lsmr solves the regularized least-squares problem:
-$$
-      \min \| A x - b \|^2_2 + \lambda^2 \| x \|^2_2 
-$$
-The lsmr method is described in this \href{http://arxiv.org/abs/1006.0758}{paper}.
+    If both tolerances are 1.0e-6 (say), the final residual norm should be
+    accurate to about 6 digits. (The final $x$ will usually have fewer
+    correct digits, depending on $cond(A)$ and the size of $\lambda$.)
+    Ideally, $atol$ and $btol$ should be estimates of the relative error in the
+    entries of $A$ and $b$ respectively.  For example, if the entries of $A$
+    have 7 correct digits, set $atol = 1e-7$. This prevents the algorithm
+    from doing unnecessary work beyond the uncertainty of the input data.
 
-\itemdesc{convergence and stopping criteria, istop output paramter}
+  \item lsmr terminates if the estimate of $cond(A)$ exceeds $conlim$.
+    For compatible systems $Ax = b$, $conlim$ could be as large as $1.0e+12$ (say).  
+    For least-squares problems, $conlim$ should be less than $1.0e+8$. 
+    Maximum precision can be obtained by setting $atol = 0$, $btol = 0$, $conlim=0$, 
+    but the number of iterations may then be excessive.
 
-\begin{itemize}
-\item lsmr continues iterations until a certain backward error estimate is smaller 
-than some quantity depending on atol and btol. In the following we denote $r = A x - b$ 
-the residual. If $A x = b$ seems to be consistent, lsmr terminates when:
-$$
-   \| r \|_2  \le  atol \| A \|_F \| x \|_2 + btol \| b \|_2
-$$
-otherwise, lsmr terminates when;
-$$
-   \| A^{\top}r \|_2  \le  atol \| A \|_F \| r \|_2
-$$
-(note that these 2 tests use the estimates of the quantities $\|r\|_2$, $\| A \|_F$ 
-and  $\| A^{\top}r \|_2$).
+  \item lsmr terminates if the number of iterations reaches $itnlim$.
+    Note that for ill-conditioned systems, a larger value that the 
+    default one ($\min(m,n)$) may be needed.
+  \end{itemize}
 
-If both tolerances are 1.0e-6 (say), the final residual norm should be
-accurate to about 6 digits. (The final $x$ will usually have fewer
-correct digits, depending on $cond(A)$ and the size of $\lambda$.)
-Ideally, $atol$ and $btol$ should be estimates of the relative error in the
-entries of $A$ and $b$ respectively.  For example, if the entries of $A$
-have 7 correct digits, set $atol = 1e-7$. This prevents the algorithm
-from doing unnecessary work beyond the uncertainty of the input data.
-
-\item lsmr terminates if the estimate of $cond(A)$ exceeds $conlim$.
-For compatible systems $Ax = b$, $conlim$ could be as large as $1.0e+12$ (say).  
-For least-squares problems, $conlim$ should be less than $1.0e+8$. 
-Maximum precision can be obtained by setting $atol = 0$, $btol = 0$, $conlim=0$, 
-but the number of iterations may then be excessive.
-
-\item lsmr terminates if the number of iterations reaches $itnlim$.
-      Note that for ill-conditioned systems, a larger value that the 
-      default one ($\min(m,n)$) may be needed.
-\end{itemize}
-
-\noindent
-istop possible values:
-\begin{description}
-\item[istop=0] means that $x=0$ is a solution.
-\item[istop=1] means $x$ is an approximate solution to $Ax = b$ according to $atol$ and $btol$.
-\item[istop=2] means $x$ approximately solves the least-squares problem according to $atol$.
-\item[istop=3] means $cond(A)$ seems to be greater than $conlim$.
-\item[istop=4] is the same as 1 with $atol$ and $btol$ equal to $\epsilon_m$ (the epsilon machine \verb+%eps+).
-\item[istop=5] is the same as 2 with $atol = \epsilon_m$.
-\item[istop=6] is the same as 3 with $conlim = 1/\epsilon_m$.
-\item[istop=7]  means that $itn$ reached $itnlim$ before the other stopping conditions were satisfied
-\end{description}
+  \noindent
+  istop possible values:
+  \begin{description}
+  \item[istop=0] means that $x=0$ is a solution.
+  \item[istop=1] means $x$ is an approximate solution to $Ax = b$ according to $atol$ and $btol$.
+  \item[istop=2] means $x$ approximately solves the least-squares problem according to $atol$.
+  \item[istop=3] means $cond(A)$ seems to be greater than $conlim$.
+  \item[istop=4] is the same as 1 with $atol$ and $btol$ equal to $\epsilon_m$ (the epsilon machine \verb+%eps+).
+  \item[istop=5] is the same as 2 with $atol = \epsilon_m$.
+  \item[istop=6] is the same as 3 with $conlim = 1/\epsilon_m$.
+  \item[istop=7]  means that $itn$ reached $itnlim$ before the other stopping conditions were satisfied
+  \end{description}
 
 
-\itemdesc{reorthogonalization (localSize parameter)}
+  \itemdesc{reorthogonalization (localSize parameter)}
 
-If the optional localSize parameter is not 0, the last localSize v_k's
-(v-vectors generated by Golub-Kahan bidiagonalization) are reorthogonalized.
-When localSize is Inf lsmr performs reothogonalization on all v_k's. 
-Reorthgonalizing only u_k or both u_k and v_k are not an option here. 
-See the \href{http://arxiv.org/abs/1006.0758}{paper} for details.
+  If the optional localSize parameter is not 0, the last localSize v_k's
+  (v-vectors generated by Golub-Kahan bidiagonalization) are reorthogonalized.
+  When localSize is Inf lsmr performs reothogonalization on all v_k's. 
+  Reorthgonalizing only u_k or both u_k and v_k are not an option here. 
+  See the \href{http://arxiv.org/abs/1006.0758}{paper} for details.
 
 \end{mandescription}
 
 \begin{examples}
-\paragraph{example 1} A first basic test
-\begin{Verbatim}
-A = rand(40,20);
-b = ones(40,1);
-[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
-// compute the ``exact solution'' with backslash (QR factorization here)
-xx = A\b;
-// compute relative difference 
-norm(x-xx)/norm(x)
-
-// compute solution again with lsmr but with a more stringent atol parameter
-// (rmk: the max number of iterations should be increased too)
-[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
-// now the relative difference should be smaller
-norm(x-xx)/norm(x)
-
-// now we modify A such that it becomes rank deficient
-A(:,15:20) = A(1:6);
-// lsmr should find the minimum norm solution
-[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
-// compute the minimum norm solution with backslash
-xx = A\b;
-// compute relative difference
-norm(x-xx)/norm(x)
-\end{Verbatim}
-
-\paragraph{example 2} Another test, solve a square sparse linear system
-\begin{Verbatim}
-A = 2*speye(1e4,1e4) + sprand(1e4,1e4,1e-3);
-b = ones(1e4,1);
-[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
-// compute relative residual
-norm(A*x-b)/norm(b)
-
-// use more stringent atol and btol
-[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,btol=1e-12);
-// compute relative residual
-norm(A*x-b)/norm(b)
+  \paragraph{example 1} A first basic test
+  \begin{Verbatim}
+    A = rand(40,20);
+    b = ones(40,1);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+    // compute the ``exact solution'' with backslash (QR factorization here)
+    xx = A\b;
+    // compute relative difference 
+    norm(x-xx)/norm(x)
+    
+    // compute solution again with lsmr but with a more stringent atol parameter
+    // (rmk: the max number of iterations should be increased too)
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+    // now the relative difference should be smaller
+    norm(x-xx)/norm(x)
+    
+    // now we modify A such that it becomes rank deficient
+    A(:,15:20) = A(:,1:6);
+    // lsmr should find the minimum norm solution
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+    // compute the minimum norm solution with backslash
+    xx = A\b;
+    // compute relative difference
+    norm(x-xx)/norm(x)
+  \end{Verbatim}
+  
+  \paragraph{example 2} Another test, solve a square sparse linear system
+  \begin{Verbatim}
+    A = 2*speye(1e4,1e4) + sprand(1e4,1e4,1e-3);
+    b = ones(1e4,1);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+    // compute relative residual
+    norm(A*x-b)/norm(b)
+    
+    // use more stringent atol and btol
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,btol=1e-12);
+    // compute relative residual
+    norm(A*x-b)/norm(b)
 \end{Verbatim}
 
 \end{examples}

@@ -18,16 +18,17 @@
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  Returns normalized left and right eigenvectors
-  associated with the eigenvalue 1 of the Markov transition matrix \verb!P!.
-  If the multiplicity of this eigenvalue is \verb!m! and \verb!P!
-  is \verb!N x N!, then \verb!M! is a \verb!m x N! matrix and \verb!Q! a \verb!N x m! matrix.
-  The row vector \verb!M(k,:)! is the probability distribution vector associated with the \verb!k!-th
-  ergodic set (recurrent class). The element \verb!M(k,x)! is zero if \verb!x! is not in the
-  \verb!k!-th recurrent class.
-  The element \verb!Q(x,k)! is the probability to end in the \verb!k!-th recurrent class starting
-  from \verb!x!. If \verb!P^k! converges for large \verb!k! (no eigenvalues on the
-  unit circle except 1), then the limit is \verb!Q*M! (eigenprojection).
+  Returns normalized left and right eigenvectors associated with the eigenvalue
+  1 of the Markov transition matrix \verb!P!.  If the multiplicity of this
+  eigenvalue is \verb!m! and \verb!P!  is \verb!N x N!, then \verb!M! is a
+  \verb!m x N! matrix and \verb!Q! a \verb!N x m! matrix.  The row vector
+  \verb!M(k,:)! is the probability distribution vector associated with the
+  \verb!k!-th ergodic set (recurrent class). The element \verb!M(k,x)! is zero
+  if \verb!x! is not in the \verb!k!-th recurrent class.  The element
+  \verb!Q(x,k)! is the probability to end in the \verb!k!-th recurrent class
+  starting from \verb!x!. If \verb!P^k! converges for large \verb!k! (no
+  eigenvalues on the unit circle except 1), then the limit is \verb!Q*M!
+  (eigenprojection).
 \end{mandescription}
 % --example 
 \begin{examples}
@@ -35,8 +36,8 @@
   \begin{Verbatim}
     P=genmarkov([2,1],2) 
     [M,Q]=eigenmarkov(P);
-    P*Q-Q
-    Q*M-P^20
+    if norm(P*Q-Q) > 100*%eps then pause;end
+    if Q*M-P^20 > 100*%eps then pause;end
   \end{Verbatim}
 \end{examples}
 % -- see also
