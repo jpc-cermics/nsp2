@@ -69,13 +69,13 @@
     v=ones(1,20);
     xbasc();
     plot2d1([],[v';zeros(80,1)],style=2,rect=[1,-0.5,100,1.5]);
-    [d,n,e]=arl2(v,poly(1,'z','c'),1)
+    [d,n,e]=arl2(v,poly(1,'z','c'),1);
     plot2d1([],ldivp(n,d,100),style=2);
-    [d,n,e]=arl2(v,d,3)
+    [d,n,e]=arl2(v,d,3);
     plot2d1([],ldivp(n,d,100),style=3);
-    [d,n,e]=arl2(v,d,8)
+    [d,n,e]=arl2(v,d,8);
     plot2d1([],ldivp(n,d,100),style=5);
-    [d,n,e]=arl2(v,poly(1,'z','c'),4,all=%t)
+    [d,n,e]=arl2(v,poly(1,'z','c'),4,all=%t);
     plot2d1([],ldivp(n(1),d(1),100),style=10);
   \end{Verbatim}
 \end{examples}

@@ -58,7 +58,8 @@
   \begin{Verbatim}
     s=poly(0,'s');F=[-1,s,0,0;0,-1,0,0;0,0,s-2,0;0,0,0,s-1];
     [Bfs,Bis,chis]=glever(F);
-    clean((Bfs - chis*Bis)*F -chis*eye(size(F)),1.e-14)
+    P=clean((Bfs - chis*Bis)*F -chis*eye(size(F)),1.e-14);
+    if norm(norm(P)) > 100*%eps then pause;end
   \end{Verbatim}
 \end{examples}
 %-- see also
