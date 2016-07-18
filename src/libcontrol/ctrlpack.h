@@ -7,6 +7,15 @@
 #include "nsp/matutil.h" 
 #include "../libcalelm/calpack.h"
 
+typedef struct _pade_data pade_data;
+
+struct _pade_data 
+{
+  double b[41];
+  int n;
+};
+
+extern pade_data pade_dcoeff;
 
 typedef  int  (*ct_Ftest) (int *ls, double *alpha, double *beta, double *s, double *p);
 

@@ -63,6 +63,18 @@ OBJSC = control-IN.o \
 	wgefa.o \
 	wgesl.o \
 	wshrsl.o \
+	dgelsy1.o \
+	wexpm1.o \
+	wpade.o \
+	wclmat.o \
+	wcerr.o \
+	coef.o \
+	dexpm1.o \
+	pade.o \
+	dclmat.o \
+	cerr.o \
+
+
 
 OBJSF=
 

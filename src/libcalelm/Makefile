@@ -34,7 +34,10 @@ OBJSC = \
 	wsqrt.o	 \
 	wswap.o	 \
 	wwdiv.o  \
-	coshin.o
+	coshin.o \
+	dprxc.o \
+	wprxc.o \
+	rat.o \
 
 OBJSF =
 

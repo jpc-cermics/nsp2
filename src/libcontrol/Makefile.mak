@@ -66,6 +66,18 @@ OBJSC = control-IN.obj \
 	wgefa.obj \
 	wgesl.obj \
 	wshrsl.obj \
+	dgelsy1.obj \
+	wexpm1.obj \
+	wpade.obj \
+	wclmat.obj \
+	wcerr.obj \
+	coef.obj \
+	dexpm1.obj \
+	pade.obj \
+	dclmat.obj \
+	cerr.obj \
+
+
 
 OBJSF=
 
