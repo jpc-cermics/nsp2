@@ -1,0 +1,44 @@
+% -*- mode: latex -*-
+\mansection{tf2des}
+\begin{mandesc}
+  \short{tf2des}{transfer function to descriptor} \\ % 
+\end{mandesc}
+% \index{tf2des}\label{tf2des}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  S=tf2des(G [,flag])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: a linear system with possibly polynomial \verb!D! matrix
+    \vname{flag}: a character string \verb!"withD"!
+    \vname{S}: a hash table 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Transfer function to descriptor form (a hash table with \verb!(A,B,C,D,E)! fields).
+\begin{verbatim}
+  E*xdot = A*x+B*u
+  y = C*x + D*u
+\end{verbatim}
+Note that \verb!D=0! if the optional parameter flag=\verb!"withD"! is not
+given. Otherwise a maximal rank \verb!D! matrix is stored in the returned hash table.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    G=[1/(s-1),s;1,2/s^3];
+    S1=tf2des(G);
+    des2tf(S1)
+    S2=tf2des(G,"withD");
+    des2tf(S2)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pol2des}{pol2des} \manlink{tf2ss}{tf2ss} \manlink{ss2des}{ss2des} \manlink{des2tf}{des2tf}  
+\end{manseealso}

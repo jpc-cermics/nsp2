@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{cls2dls}
+\begin{mandesc}
+  \short{cls2dls}{bilinear transform} \\ % 
+\end{mandesc}
+%\index{cls2dls}\label{cls2dls}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sl1]=cls2dls(sl,T [,fp])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl,sl1}: linear systems (\verb!syslin! lists)
+    \vname{T}: real number, the sampling period
+    \vname{fp}: prevarping frequency in hertz
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  given \verb!sl=[A,B,C,D]! (\verb!syslin! list),a continuous time system 
+  \verb!cls2dls! returns the sampled system obtained by the 
+  bilinear transform \verb!s=(2/T)*(z-1)/(z+1)!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');z=poly(0,'z');
+    sl=syslin('c',(s+1)/(s^2-5*s+2));  //Continuous-time system in transfer form
+    slss=tf2ss(sl);  //Now in state-space form
+    sl1=cls2dls(slss,0.2);  //sl1= output of cls2dls
+    sl1t=ss2tf(sl1) // Converts in transfer form
+    sl2=horner(sl,(2/0.2)*(z-1)/(z+1))   //Compare sl2 and sl1
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{horner}{horner}  
+\end{manseealso}

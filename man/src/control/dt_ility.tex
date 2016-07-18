@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+\mansection{dt\_ility}
+\begin{mandesc}
+  \shortunder{dt\_ility}{dt_ility}{detectability test} \\ % 
+\end{mandesc}
+%\index{dt\_ility}\label{dt-ility}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [k, [n [,U [,Sld ] ] ]]=dt_ility(Sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list)
+    \vname{n}: dimension of unobservable subspace
+    \vname{k}: dimension of unstable, unobservable subspace (\verb! k$<$=n!).
+    \vname{U}: orthogonal matrix
+    \vname{Sld}: linear system (\verb!syslin! list)
+    \vname{tol}: threshold for controllability test.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Detectability test for \verb!sl!, a linear system in state-space
+  representation.  \verb!U! is a basis whose \verb!k! first columns span the
+  unstable, unobservable subspace of \verb!Sl! (intersection of unobservable
+  subspace of \verb!(A,C)! and unstable subspace of \verb!A!). Detectability
+  means \verb!k=0!.\verb!Sld = (U'*A*U,U'*B,C*U,D)! displays the "detectable
+  part" of \verb!Sl=(A,B,C,D)!, i.e.
+\begin{verbatim}
+  [*,*,*]
+  U'*A*U = [0,*,*]
+  [0,0,*]
+  C*U = [0,0,*]
+\end{verbatim}
+with \verb!(A33,C3)! observable (dimension \verb!nx-n!), \verb!A22! stable 
+(dimension \verb!n-k!) and \verb!A11! unstable (dimension \verb!k!).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[2,1,1;0,-2,1;0,0,3];
+    C=[0,0,1];
+    X=rand(3,3);A=inv(X)*A*X;C=C*X;
+    W=syslin('c',A,zeros(3,0),C);
+    [k,n,U,W1]=dt_ility(W);
+    W1.A
+    W1.C
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{contr}{contr} \manlink{st\_ility}{st-ility} \manlink{unobs}{unobs} \manlink{stabil}{stabil}  
+\end{manseealso}

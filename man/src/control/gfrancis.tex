@@ -1,0 +1,67 @@
+% -*- mode: latex -*-
+\mansection{gfrancis}
+\begin{mandesc}
+  \short{gfrancis}{Francis equations for tracking} \\ % 
+\end{mandesc}
+%\index{gfrancis}\label{gfrancis}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [L,M,T]=gfrancis(Plant,Model)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Plant}: \verb!syslin! list
+    \vname{Model}: \verb!syslin! list
+    \vname{L,M,T}: real matrices
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given the the linear plant:
+\begin{verbatim}
+  x'= F*x + G*u 
+  y = H*x + J*u
+\end{verbatim}
+and the linear model
+\begin{verbatim}
+  xm'= A*xm + B*um
+  ym = C*xm + D*um
+\end{verbatim}
+the goal is for the plant to track the model i.e. \verb!e = y - ym ---$>$ 0!
+while keeping stable the state x(t) of the plant. 
+\verb!u! is given by feedforward and feedback
+\begin{verbatim}
+  u = L*xm + M*um + K*(x-T*xm) = [K , L-K*T] *(x,xm) + M*um
+\end{verbatim}
+The matrices T,L,M satisfy generalized Francis equations
+\begin{verbatim}
+  F*T + G*L = T*A
+  H*T + J*L = C
+  G*M = T*B
+  J*M = D
+\end{verbatim}
+The matrix \verb!K! must be chosen as stabilizing the pair \verb!(F,G)!
+See example of use in directory \verb!demos/tracking!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    Plant=ssrand(1,3,5);
+    [F,G,H,J]=abcd(Plant);
+    nw=4;nuu=2;A=rand(nw,nw);
+    st=max(real(spec(A)));A=A-st*eye(size(A));
+    B=rand(nw,nuu);C=2*rand(1,nw);D=0*rand(C*B);
+    Model=syslin('c',A,B,C,D);
+    [L,M,T]=gfrancis(Plant,Model);
+    if norm(F*T+G*L-T*A,1) > 1000*%eps then pause;end
+    if norm(H*T+J*L-C,1)> 1000*%eps then pause;end
+    if norm(G*M-T*B,1)> 1000*%eps then pause;end
+    if norm(J*M-D,1)> 1000*%eps then pause;end
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{lqg}{lqg} \manlink{ppol}{ppol}  
+\end{manseealso}

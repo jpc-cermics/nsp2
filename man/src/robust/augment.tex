@@ -1,0 +1,98 @@
+% -*- mode: latex -*-
+%
+% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+% Copyright (C) 2008 - INRIA -  
+% 
+% This file must be used under the terms of the CeCILL.
+% This source file is licensed as described in the file COPYING, which
+% you should have received as part of this distribution.  The terms
+% are also available at    
+% http://www.cecill.info/licences/Licence_CeCILL_V2-en.txt
+%
+
+
+
+% -*- mode: latex -*-
+\mansection{augment}
+\begin{mandesc}
+  \short{augment}{augmented plant} \\ % 
+\end{mandesc}
+%\index{augment}\label{augment}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,r]=augment(G)  
+  [P,r]=augment(G,flag1)  
+  [P,r]=augment(G,flag1,flag2)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: linear system (\verb!syslin! list), the nominal plant
+    \vname{flag1}: one of the following (upper case) character string: \verb! 'S' !, \verb! 'R' !, \verb! 'T' !\verb! 'SR' !, \verb! 'ST' !, \verb! 'RT' !\verb! 'SRT' !
+    \vname{flag2}: one of the following character string: \verb! 'o' ! (stands for 'output', this is the default value) or \verb!'i'! (stands for 'input').
+    \vname{P}: linear system (\verb!syslin! list), the ``augmented'' plant
+    \vname{r}: 1x2 row vector, dimension of \verb!P22 = G!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  If \verb!flag1='SRT'! (default value), returns the "full" augmented plant
+\begin{verbatim}
+  [ I | -G]   --$>$'S'
+  [ 0 |  I]   --$>$'R'
+  P = [ 0 |  G]   --$>$'T'
+  [-------]
+  [ I | -G]
+\end{verbatim}
+\verb! 'S' !, \verb! 'R' !, \verb! 'T' ! refer to the first three (block) rows
+of \verb!P! respectively.
+If one of these letters is absent in \verb!flag1!, the corresponding
+row in \verb!P! is missing.
+If \verb!G! is given in state-space form, the returned \verb!P! is minimal.
+\verb!P! is calculated by: \verb![I,0,0;0,I,0;-I,0,I;I,0,0]*[I,-G;0,I;I,0]!.
+The augmented plant associated with input sensitivity functions, namely
+\begin{verbatim}
+  [ I | -I]   --$>$'S'  (input sensitivity)
+  [ G | -G]   --$>$'R'  (G*input sensitivity)
+  P = [ 0 |  I]   --$>$'T'  (K*G*input sensitivity)
+  [-------]
+  [ G | -G]
+\end{verbatim}
+is obtained by the command \verb![P,r]=augment(G,flag,'i')!. For
+state-space \verb!G!, this \verb!P!
+is calculated by: \verb![I,-I;0,0;0,I;0,0]+[0;I;0;I]*G*[I,-I]!
+and is thus generically minimal.
+Note that weighting functions can be introduced by left-multiplying
+\verb!P! by a diagonal system of appropriate dimension, e.g.,
+\verb! P = sysdiag(W1,W2,W3,eye(G))*P!.
+Sensitivity functions can be calculated by \verb!lft!. One has:
+For output sensitivity functions [P,r]=augment(P,'SRT'):
+lft(P,r,K)=[inv(eye()+G*K);K*inv(eye()+G*K);G*K*inv(eye()+G*K)];
+For input sensitivity functions [P,r]=augment(P,'SRT','i'):
+lft(P,r,K)=[inv(eye()+K*G);G*inv(eye()+K*G);K*G*inv(eye()+G*K)];
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    G=ssrand(2,3,2); //Plant
+    K=ssrand(3,2,2); //Compensator
+    [P,r]=augment(G,'T');
+    T=lft(P,r,K);   //Complementary sensitivity function
+    Ktf=ss2tf(K);Gtf=ss2tf(G);
+    Ttf=ss2tf(T);T11=Ttf(1,1);
+    Oloop=Gtf*Ktf;
+    Tn=Oloop*inv(eye(size(Oloop))+Oloop);
+    clean(T11-Tn(1,1));
+    //
+    [Pi,r]=augment(G,'T','i');
+    T1=lft(Pi,r,K);T1tf=ss2tf(T1); //Input Complementary sensitivity function
+    Oloop=Ktf*Gtf;
+    T1n=Oloop*inv(eye(size(Oloop))+Oloop);
+    clean(T1tf(1,1)-T1n(1,1))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{lft}{lft} \manlink{sensi}{sensi}  
+\end{manseealso}

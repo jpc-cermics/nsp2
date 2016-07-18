@@ -1,0 +1,111 @@
+% -*- mode: latex -*-
+\mansection{observer}
+\begin{mandesc}
+  \short{observer}{observer design} \\ % 
+\end{mandesc}
+%\index{observer}\label{observer}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  Obs=observer(Sys,J)  
+  [Obs,U,m]=observer(Sys [,flag,alfa])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sys}: \verb!syslin! list (linear system)
+    \vname{J}: nx x ny constant matrix (output injection matrix)
+    \vname{flag}: character strings (\verb!'pp'! or \verb!'st'! (default))
+    \vname{alfa}: location of closed-loop poles (optional parameter, default=-1)
+    \vname{Obs}: linear system (\verb!syslin! list), the observer
+    \vname{U}: orthogonal matrix (see \verb!dt_ility!)
+    \vname{m}: integer (dimension of unstable unobservable (\verb!st!)  or unobservable  (\verb!pp!) subspace)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!Obs=observer(Sys,J)! returns the observer 
+  \verb!Obs=syslin(td,A+J*C,[B+J*D,-J],eye(A))! obtained from \verb!Sys! 
+  by a \verb!J! output injection. (td is the time domain of \verb!Sys!).
+  More generally, \verb!observer! returns in \verb!Obs! an observer for 
+  the observable part of linear system 
+  \verb!Sys!: \verb!dotx=A x + Bu, y=Cx + Du!  represented by a \verb!syslin! list.
+  \verb!Sys! has \verb!nx! state variables, \verb!nu! inputs and \verb!ny! outputs.
+  \verb!Obs! is a linear system with matrices \verb![Ao,Bo,Identity]!, 
+  where \verb!Ao! is \verb!no x no!, \verb!Bo! is \verb!no x (nu+ny)!, \verb! Co! is
+  \verb!no x no! and \verb!no=nx-m!.
+  Input to \verb!Obs! is \verb![u,y]! and output of \verb!Obs! is:
+  xhat=estimate of x modulo unobservable subsp. (case \verb!flag='pp'!)
+  or
+  xhat=estimate of x modulo unstable unobservable subsp. (case \verb!flag='st'!)
+  case \verb!flag='st'!:
+  z=H*x can be estimated with stable observer iff \verb!H*U(:,1:m)=0!
+  and assignable poles of the observer are set to \verb!alfa(1),alfa(2),...!
+  case \verb!flag='pp'!:
+  z=H*x can be estimated with given error spectrum iff \verb!H*U(:,1:m)=0! 
+  all poles of the observer are assigned and set to \verb!alfa(1),alfa(2),...!
+  If H satifies the constraint: \verb!H*U(:,1:m)=0!  (ker(H) contains unobs-subsp.
+  of Sys) one has H*U=[0,H2] and the observer for 
+  z=H*x is H2*Obs with H2=H*U(:,m+1:nx) i.e. Co, the C-matrix of the
+  observer for H*x, is Co=H2.
+  In the particular case where the pair \verb!(A,C)! of \verb!Sys! is 
+  observable, one has \verb!m=0! and the linear system \verb!U*Obs! (resp.
+  \verb!H*U*Obs!) is an observer for \verb!x! (resp. \verb!Hx!). 
+  The error spectrum is \verb!alpha(1),alpha(2),...,alpha(nx)!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    nx=5;nu=1;ny=1;un=3;us=2;Sys=ssrand(ny,nu,nx,list('dt',us,us,un));
+    //nx=5 states, nu=1 input, ny=1 output, 
+    //un=3 unobservable states, us=2 of them unstable.
+    [Obs,U,m]=observer(Sys);  //Stable observer (default)
+    W=U';H=W(m+1:nx,:);[A,B,C,D]=abcd(Sys);  //H*U=[0,eye(no,no)];
+    Sys2=ss2tf(syslin('c',A,B,H))  //Transfer u--$>$z
+    Idu=eye(nu,nu);Sys3=ss2tf(H*U(:,m+1:$)*Obs*[Idu;Sys])  
+    //Transfer u--$>$[u;y=Sys*u]--$>$Obs--$>$xhat--$>$HUxhat=zhat  i.e. u--$>$output of Obs
+    //this transfer must equal Sys2, the u--$>$z transfer  (H2=eye).
+    //Assume a Kalman model
+    //dotx = A x + B u + G w
+    // y   = C x + D u + H w + v
+    //with Eww' = QN, Evv' = RN, Ewv' = NN
+    //To build a Kalman observer:
+    //1-Form BigR = [G*QN*G'         G*QN*H'+G*NN;
+    //               H*QN*G'+NN*G'   H*QN*H'+RN];
+    //the covariance matrix of the noise vector [Gw;Hw+v]
+    //2-Build the plant P21: dotx = A x + B1 e ; y = C2 x + D21 e 
+    //with e a unit white noise.
+    // [W,Wt]=fullrf(BigR);
+    //B1=W(1:size(G,1),:);D21=W(($+1-size(C,1)):$,:);
+    //C2=C;
+    //P21=syslin('c',A,B1,C2,D21);
+    //3-Compute the Kalman gain
+    //L = lqe(P21);
+    //4- Build an observer for the plant [A,B,C,D];
+    //Plant = syslin('c',A,B,C,D);
+    //Obs = observer(Plant,L);
+    //Test example:
+    A=-diag(1:4);
+    B=ones(4,1);
+    C=B'; D= 0; G=2*B; H=-3; QN=2;
+    RN=5; NN=0;
+    BigR = [G*QN*G'         G*QN*H'+G*NN;
+      H*QN*G'+NN*G'   H*QN*H'+RN];
+    [W,Wt]=fullrf(BigR);
+    B1=W(1:size(G,1),:);D21=W(($+1-size(C,1)):$,:);
+    C2=C;
+    P21=syslin('c',A,B1,C2,D21);
+    L = lqe(P21);
+    Plant = syslin('c',A,B,C,D);
+    Obs = observer(Plant,L);
+    spec(Obs.A)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{dt\_ility}{dt-ility} \manlink{unobs}{unobs} \manlink{stabil}{stabil}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.D.  
+\end{authors}

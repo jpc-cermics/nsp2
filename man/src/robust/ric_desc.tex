@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+\mansection{ric\_desc}
+\begin{mandesc}
+  \shortunder{ric\_desc}{ric_desc}{Riccati equation} \\ % 
+\end{mandesc}
+% \index{ric\_desc}\label{ric-desc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  X=ric_desc(H [,E))  
+    [X1,X2,zero]=ric_desc(H [,E])  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{H,E}: real square matrices
+    \vname{X1,X2}: real square matrices
+    \vname{zero}: real number
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Riccati solver with hamiltonian matrices as inputs.
+  In the continuous time case calling sequence is \verb!ric_descr(H)! (one input):
+  Riccati equation is:
+\begin{verbatim}
+  (Ec)   A'*X + X*A + X*R*X -Q = 0.
+\end{verbatim}
+  Defining the hamiltonian matrix \verb!H! by:
+\begin{verbatim}
+  H = [A  R;
+    Q -A']
+\end{verbatim}
+  with the calling sequence \verb![X1,X2,zero]=ric_descr(H)!, the 
+  solution \verb!X! is given by \verb!X=X1/X2!.\verb!zero! = L1 norm of rhs of (\verb!Ec!)
+  The solution \verb!X! is also given by \verb!X=riccati(A,Q,R,'c'))!
+  In the discrete-time case calling sequence is \verb!ric_descr(H,E)! (two inputs):
+  The Riccati equation is:
+\begin{verbatim}
+  (Ed)  A'*X*A-(A'*X*B*(R+B'*X*B)^-1)*(B'*X*A)+C-X = 0.
+\end{verbatim}
+  Defining \verb!G=B/R*B'! and the hamiltonian pencil \verb!(E,H)! by:
+\begin{verbatim}
+  E=[eye(n,n),G;               H=[A, 0*ones(n,n);
+      0*ones(n,n),A']             -C, eye(n,n)];
+\end{verbatim}
+  with the calling sequence \verb![X1,X2,err]=ric_descr(H,E)!, the 
+  solution \verb!X! is given by \verb!X=X1/X2!.\verb!zero!= L1 norm of rhs of (\verb!Ed!)
+  The solution \verb!X! is also given by \verb!X=riccati(A,G,C,'d')!  
+  with \verb!G=B/R*B'!
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{riccati}{riccati}  
+\end{manseealso}

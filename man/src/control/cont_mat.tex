@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{cont\_mat}
+\begin{mandesc}
+  \shortunder{cont\_mat}{cont_mat}{controllability matrix} \\ % 
+\end{mandesc}
+%\index{cont\_mat}\label{cont-mat}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  Cc=cont_mat(A,B)   
+  Cc=cont_mat(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a,b}: two real matrices of appropriate dimensions
+    \vname{sl}: linear system (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!cont_mat! returns the controllability 
+  matrix of the pair \verb!A,B! (resp. of the system \verb!sl=[A,B,C,D]!).
+\begin{verbatim}
+  Cc=[B, AB, A^2 B,..., A^(n-1) B]  
+\end{verbatim}
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{ctr\_gram}{ctr-gram} \manlink{contr}{contr} \manlink{canon}{canon} \manlink{st\_ility}{st-ility}  
+\end{manseealso}

@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{sm2ss}
+\begin{mandesc}
+  \short{sm2ss}{system matrix to state-space} \\ % 
+\end{mandesc}
+%\index{sm2ss}\label{sm2ss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Sl]=sm2ss(Sm);  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sm}: polynomial matrix (pencil system matrix)
+    \vname{Sl}: linear system (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Utility function: converts the system matrix:
+\begin{verbatim}
+  Sm = [-sI + A   B;
+       [    C     D]
+\end{verbatim}
+  to linear system in state-space representation.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{ss2des}{ss2des}  
+\end{manseealso}

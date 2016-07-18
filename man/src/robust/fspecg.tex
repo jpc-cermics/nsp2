@@ -1,0 +1,26 @@
+% -*- mode: latex -*-
+\mansection{fspecg}
+\begin{mandesc}
+  \short{fspecg}{stable factorization} \\ % 
+\end{mandesc}
+%\index{fspecg}\label{fspecg}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [gm]=fspecg(g).  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{g,gm}: \verb!syslin! lists (linear systems in state-space representation)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns \verb!gm! with \verb!gm! and \verb!gm^-1! stable such that:
+\begin{verbatim}
+  gtild(g)*g = gtild(gm)*gm
+\end{verbatim}
+  \verb!g! and \verb!gm! are continuous-time linear systems in state-space form.
+  Imaginary-axis poles are forbidden.
+\end{mandescription}

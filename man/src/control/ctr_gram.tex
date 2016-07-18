@@ -1,0 +1,43 @@
+% -*- mode: latex -*-
+\mansection{ctr\_gram}
+\begin{mandesc}
+  \shortunder{ctr\_gram}{ctr_gram}{controllability gramian} \\ % 
+\end{mandesc}
+%\index{ctr\_gram}\label{ctr-gram}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Gc]=ctr_gram(A,B [,dom])  
+  [Gc]=ctr_gram(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: two real matrices of appropriate dimensions
+    \vname{dom}: character string (\verb!'c'! (default value) or \verb!'d'!)
+    \vname{sl}: linear system, \verb!syslin! list
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Controllability gramian of \verb!(A,B)! or \verb!sl! (a \verb!syslin! 
+  linear system).\verb!dom! character string giving the time domain: \verb!"d"! for a
+  discrete time system and \verb!"c"! for continuous time (default case).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([-1,-2,-3]);B=rand(3,2);
+    Wc=ctr_gram(A,B)
+    U=rand(3,3);A1=U*A/U;B1=U*B;
+    Wc1=ctr_gram(A1,B1)    //Not invariant!
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{equil1}{equil1} \manlink{obs\_gram}{obs-gram} \manlink{contr}{contr} \manlink{cont\_mat}{cont-mat} \manlink{cont\_frm}{cont-frm} \manlink{contrss}{contrss}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  S. Steer INRIA 1988
+\end{authors}

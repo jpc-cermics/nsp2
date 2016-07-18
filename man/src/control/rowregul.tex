@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+\mansection{rowregul}
+\begin{mandesc}
+  \short{rowregul}{removing poles and zeros at infinity} \\ % 
+\end{mandesc}
+%\index{rowregul}\label{rowregul}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Stmp,Ws]=rowregul(Sl,alfa,beta)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl,Stmp}: \verb!syslin! lists
+    \vname{alfa,beta}: real numbers (new pole and zero positions)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes a postfilter \verb!Ws! such that \verb!Stmp=Ws*Sl! is proper and with
+  full rank \verb!D! matrix.  Poles at infinity of \verb!Sl! are moved to
+  \verb!alfa!; Zeros at infinity of \verb!Sl! are moved to \verb!beta!;\verb!Sl!
+  is a assumed to be a right invertible linear system (\verb!syslin! list) in
+  state-space representation with possibly a polynomial \verb!D! matrix.  This
+  function is the dual of colregul (see function code).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    w=[1/s,0;s/(s^3+2),2/s];
+    Sl=tf2ss(w);
+    [Stmp,Ws]=rowregul(Sl,-1,-2);
+    Stmp.D
+    clean(ss2tf(Stmp))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{invsyslin}{invsyslin} \manlink{colregul}{colregul}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F. D. , R. N. ;   
+\end{authors}

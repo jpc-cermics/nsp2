@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{equil}
+\begin{mandesc}
+  \short{equil}{balancing of pair of symmetric matrices} \\ % 
+\end{mandesc}
+% \index{equil}\label{equil}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  T=equil(P,Q)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P, Q}: two positive definite symmetric matrices
+    \vname{T}: nonsingular matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!equil! returns \verb!t! such that:\verb!T*P*T'! and  \verb!inv(T)'*Q*inv(T)!  are both equal to a same 
+  diagonal and positive matrix.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    P=rand(4,4);P=P*P';
+    Q=rand(4,4);Q=Q*Q';
+    T=equil(P,Q)
+    clean(T*P*T')
+    clean(inv(T)'*Q*inv(T))
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{equil1}{equil1} \manlink{balanc}{balanc} \manlink{ctr\_gram}{ctr-gram}  
+\end{manseealso}

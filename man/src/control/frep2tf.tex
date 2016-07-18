@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+\mansection{frep2tf}
+\begin{mandesc}
+  \short{frep2tf}{transfer function realization from frequency response} \\ % 
+\end{mandesc}
+%\index{frep2tf}\label{frep2tf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [h [,err]]=frep2tf(frq,repf,dg [,dom,tols,weight])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{frq}: vector of frequencies in Hz.
+    \vname{repf}: vector of frequency response
+    \vname{dg}: degree of linear system
+    \vname{dom}: time domain (\verb!'c'! or \verb!'d'! or \verb!dt!)
+    \vname{tols}: a vector of size 3 giving the relative and absolute tolerance
+    and the maximum number of iterations (default values are
+    \verb!rtol=1.e-2; atol=1.e-4, N=10!).
+    \vname{weight}: vector of weights on frequencies
+    \vname{h}: SISO transfer function
+    \vname{err}: error (for example if \verb!dom='c'! error is given by 
+    \verb!sum(abs(h(2i*pi*frq) - rep)^2)/size(frq,*)!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Frequency response to  transfer function conversion. The order of \verb!h!
+  is a priori given in \verb!dg! which must be provided.
+  The following linear system is solved in the least square sense.
+\begin{verbatim}
+  weight(k)*(n( phi_k) - d(phi_k)*rep_k)=0, k=1,..,n
+\end{verbatim}
+  where \verb!phi_k= 2*%i*%pi*frq! when \verb!dom='c'! and
+  \verb!phi_k=exp(2*%i*%pi*dom*frq! if not. If the \verb!weight! vector is not
+  given a default
+  penalization is used (when \verb!dom='c'!).  A stable and minimum phase system
+  can be obtained by using function \verb!factors!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=syslin('c',(s-1)/(s^3+5*s+20))
+    frq=0:0.05:3;repf=repfreq(h,frq=frq);
+    clean(frep2tf(frq,repf,3))
+    Sys=ssrand(1,1,10); 
+    frq=logspace(-3,2,200);
+    [frq,rep]=repfreq(Sys,frq=frq);  //Frequency response of Sys
+    [Sys2,err]=frep2tf(frq,rep,10);Sys2=clean(Sys2)//Sys2 obtained from freq. resp of Sys
+    [frq,rep2]=repfreq(Sys2,frq=frq); //Frequency response of Sys2
+    xbasc();bode(frq,[rep;rep2])   //Responses of Sys and Sys2
+    // 
+    sp1 = spec(Sys.A);
+    [vsp,isp]=sort(real(sp1));sp1=sp1(isp);
+    sp2 = roots(Sys2.den);
+    [vsp,isp]=sort(real(sp2));sp2=sp2(isp);
+    [sp1,sp2] //poles
+    dom=1/1000; // Sampling time 
+    z=poly(0,'z');
+    h=syslin(dom,(z^2+0.5)/(z^3+0.1*z^2-0.5*z+0.08))
+    frq=(0:0.01:0.5)/dom;repf=repfreq(h,frq=frq);
+    [Sys2,err]=frep2tf(frq,repf,3,dom);
+    [frq,rep2]=repfreq(Sys2,frq=frq); //Frequency response of Sys2
+    xbasc();plot2d1(frq',abs([repf;rep2])');
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{imrep2ss}{imrep2ss} \manlink{arl2}{arl2} \manlink{time\_id}{time-id} \manlink{armax}{armax} \manlink{frfit}{frfit}  
+\end{manseealso}

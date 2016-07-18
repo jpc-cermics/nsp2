@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+%
+% Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
+% Copyright (C) 2008 - INRIA -  
+% 
+% This file must be used under the terms of the CeCILL.
+% This source file is licensed as described in the file COPYING, which
+% you should have received as part of this distribution.  The terms
+% are also available at    
+% http://www.cecill.info/licences/Licence_CeCILL_V2-en.txt
+%
+
+
+
+% -*- mode: latex -*-
+\mansection{colregul}
+\begin{mandesc}
+  \short{colregul}{removing poles and zeros at infinity} \\ % 
+\end{mandesc}
+%\index{colregul}\label{colregul}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Stmp,Ws]=colregul(Sl,alfa,beta)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl,Stmp}: \verb!syslin! lists
+    \vname{alfa,beta}: reals (new pole and zero positions)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes a prefilter \verb!Ws! such that \verb!Stmp=Sl*Ws! is proper and 
+  with full rank \verb!D! matrix.
+  Poles at infinity of \verb!Sl! are moved to \verb!alfa!;
+  Zeros at infinity of \verb!Sl! are moved to \verb!beta!;\verb!Sl! is a assumed to be a left invertible linear system (\verb!syslin! list)
+  in state-space representation with possibly a polynomial \verb!D! matrix.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{invsyslin}{invsyslin} \manlink{inv}{inv} \manlink{rowregul}{rowregul} \manlink{rowshuff}{rowshuff}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F. D. , R. N. ;   
+\end{authors}

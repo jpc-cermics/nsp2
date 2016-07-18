@@ -1,0 +1,29 @@
+% -*- mode: latex -*-
+\mansection{dhnorm}
+\begin{mandesc}
+  \short{dhnorm}{discrete H-infinity norm} \\ % 
+\end{mandesc}
+%\index{dhnorm}\label{dhnorm}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  hinfnorm=dhnorm(sl,[tol],[normax])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: the state space system (\verb!syslin! list) (discrete-time)
+    \vname{tol}: tolerance in bisection step, default value \verb!0.01!
+    \vname{normax}: upper bound for the norm , default value is \verb!1000!
+    \vname{hinfnorm}: the discrete infinity norm of \verb!Sl!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  produces the discrete-time infinity norm  of a state-space system 
+  (the maximum over all frequencies on the unit circle of the maximum singular value).
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{h\_norm}{h-norm} \manlink{linfn}{linfn}  
+\end{manseealso}

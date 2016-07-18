@@ -1,0 +1,34 @@
+% -*- mode: latex -*-
+\mansection{gfare}
+\begin{mandesc}
+  \short{gfare}{filter Riccati equation} \\ % 
+\end{mandesc}
+%\index{gfare}\label{gfare}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Z,H]=gfare(Sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list)
+    \vname{Z}: symmetric matrix
+    \vname{H}: real matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Generalized Filter Algebraic Riccati Equation (GFARE).
+  \verb!Z! = solution, \verb!H! = gain.
+  The GFARE for \verb!Sl=[A,B,C,D]! is:
+\begin{verbatim}
+  (A-B*D'*Ri*C)*Z+Z*(A-B*D'*Ri*C)'-Z*C'*Ri*C*Z+B*Si*B'=0
+\end{verbatim}
+where \verb!S=(eye()+D'*D)!, \verb!Si=inv(S)!, \verb!R=(eye()+D*D')!, \verb!Ri=inv(R)!
+and \verb!H=-(B*D'+Z*C')*Ri! is such that \verb!A+H*C! is stable.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{gcare}{gcare}  
+\end{manseealso}

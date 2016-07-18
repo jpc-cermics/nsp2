@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{dtsi}
+\begin{mandesc}
+  \short{dtsi}{stable anti-stable decomposition} \\ % 
+\end{mandesc}
+%\index{dtsi}\label{dtsi}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Ga,Gs,Gi]=dtsi(G,[tol])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: linear system (\verb!syslin! list)
+    \vname{Ga}: linear system (\verb!syslin! list) antistable and strictly proper
+    \vname{Gs}: linear system (\verb!syslin! list) stable and strictly proper
+    \vname{Gi}: real matrix (or polynomial matrix for improper systems)
+    \vname{tol}: optional parameter for detecting stables poles. Default value: \verb!100*%eps!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the stable-antistable decomposition of
+  \verb!G!:\verb!G = Ga + Gs + Gi!, \verb!(Gi = G(oo))!\verb!G! can be given in
+  state-space form or in transfer form.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{pbig}{pbig} \manlink{psmall}{psmall} \manlink{pfss}{pfss}  
+\end{manseealso}

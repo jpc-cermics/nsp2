@@ -1,0 +1,56 @@
+% -*- mode: latex -*-
+\mansection{des2tf}
+\begin{mandesc}
+  \short{des2tf}{descriptor to transfer function conversion} \\ % 
+\end{mandesc}
+% \index{des2tf}\label{des2tf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [S]=des2tf(sl)  
+  [Bfs,Bis,chis]=des2tf(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: list (linear system in descriptor form)
+    \vname{Bfs, Bis}: two polynomial matrices
+    \vname{chis}: polynomial
+    \vname{S}: rational matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given the linear system in descriptor form, 
+  \verb!des2tf! converts \verb!sl! into
+  its transfer function representation:
+\begin{verbatim}
+  S=C*(s*E-A)^(-1)*B+D
+\end{verbatim}
+
+  Called with 3 outputs arguments \verb!des2tf! returns
+  \verb!Bfs! and \verb!Bis! two polynomial matrices, and \verb!chis!
+  polynomial such that \verb!S=Bfs/chis - Bis!
+  where \verb!chis! is the determinant of \verb!(s*E-A)! (up to a constant);
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    G=[1/(s+1),s;1+s^2,3*s^3];
+    De=tf2des(G);
+    Tf1=des2tf(De)
+    De2=tf2des(G,"withD");
+    Tf2=des2tf(De2)
+    A=De2.A;B=De2.B;C=De2.C;D=De2.D;E=De2.E;
+    Tf3=C*inv(s*E-A)*B+D
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{glever}{glever} \manlink{pol2des}{pol2des} \manlink{tf2des}{tf2des} \manlink{ss2tf}{ss2tf} \manlink{des2ss}{des2ss} \manlink{rowshuff}{rowshuff}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F. D.  
+\end{authors}

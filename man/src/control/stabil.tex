@@ -1,0 +1,64 @@
+% -*- mode: latex -*-
+\mansection{stabil}
+\begin{mandesc}
+  \short{stabil}{stabilization} \\ % 
+\end{mandesc}
+%\index{stabil}\label{stabil}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  F=stabil(A,B,alfa)  
+  K=stabil(Sys,alfa,beta)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: square real matrix (\verb!nx x nx!)
+    \vname{B}:  real matrix (\verb!nx x nu!)
+
+    \vname{alfa, beta}: real or complex vector (in conjugate pairs) or real
+    number.
+
+    \vname{F}: real matrix (\verb!nx x nu!)
+
+    \vname{Sys}: linear system (\verb!syslin! list) (\verb!m! inputs, \verb!p!
+    outputs).
+
+    \vname{K}: linear system (\verb!p! inputs, \verb!m! outputs)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!F=stabil(A,B,alfa)! returns a gain matrix \verb!F! such that
+  \verb!A+B*F! is stable if pair \verb!(A,B)! is stabilizable.  Assignable poles
+  are set to \verb!alfa(1),alfa(2),...!.  If \verb!(A,B)! is not stabilizable a
+  warning is given and assignable poles are set to \verb!alfa(1),alfa(2),...!.
+  If \verb!alfa! is a number all eigenvalues are set to this \verb!alfa!
+  (default value is \verb!alfa=-1!).\verb!K=stabil(Sys,alfa,beta)! returns
+  \verb!K!, a compensator for \verb!Sys!  such that \verb!(A,B)!-controllable
+  eigenvalues are set to \verb!alfa! and \verb!(C,A)!-observable eigenvalues are
+  set to \verb!beta!.  All assignable closed loop poles (which are given by the
+  eigenvalues of \verb!Aclosed=h_cl(Sys,K)! are set to \verb!alfa(i)!'s and
+  \verb!beta(j)!'s.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    // Gain:
+    Sys=ssrand(0,2,5,list('st',2,3,3));
+    A=Sys.A;B=Sys.B;F=stabil(A,B);
+    spec(A) //2 controllable modes 2 unstable uncontrollable modes
+    //and one stable uncontrollable mode
+    spec(A+B*F) //the two controllable modes are set to -1.
+    // Compensator:
+    Sys=ssrand(3,2,5,list('st',2,3,3)); //3 outputs, 2 inputs, 5 states
+    //2 controllables modes, 3 controllable or stabilizable modes.
+    K=stabil(Sys,-2,-3);  //Compensator for Sys.
+    spec(Sys.A)
+    spec(h_cl(Sys,K))   //K Stabilizes what can be stabilized.
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{st\_ility}{st-ility} \manlink{contr}{contr} \manlink{ppol}{ppol}  
+\end{manseealso}

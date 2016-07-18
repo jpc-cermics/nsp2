@@ -1,0 +1,72 @@
+% -*- mode: latex -*-
+\mansection{canon}
+\begin{mandesc}
+  \short{canon}{canonical controllable form} \\ % 
+\end{mandesc}
+%\index{canon}\label{canon}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Ac,Bc,U,ind]=canon(A,B)    
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Ac,Bc}: canonical form
+    \vname{U}: current basis (square nonsingular matrix)
+    \vname{ind}: vector of integers, controllability indices
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  gives the canonical controllable form of the pair \verb!(A,B)!.\verb!Ac=inv(U)*A*U, Bc=inv(U)*B!
+  The vector \verb!ind! is made of the \verb!epsilon_i!'s indices
+  of the pencil \verb![sI - A ,  B]! (decreasing order).
+  For example with \verb!ind=[3,2]!, \verb!Ac! and \verb!Bc! are as follows:
+\begin{verbatim}
+        [*,*,*,*,*]           [*]
+        [1,0,0,0,0]           [0]
+  Ac=   [0,1,0,0,0]        Bc=[0]
+        [*,*,*,*,*]           [*]
+        [0,0,0,1,0]           [0]
+\end{verbatim}
+  If \verb!(A,B)! is controllable, by an appropriate choice 
+  of \verb!F! the \verb!*! entries of \verb!Ac+Bc*F! 
+  can be arbitrarily set to desired values (pole placement).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[1,2,3,4,5;
+      1,0,0,0,0;
+      0,1,0,0,0;
+      6,7,8,9,0;
+      0,0,0,1,0];
+    B=[1,2;
+      0,0;
+      0,0;
+      2,1;
+      0,0];
+    X=rand(5,5);A=X*A*inv(X);B=X*B;    //Controllable pair 
+    [Ac,Bc,U,ind]=canon(A,B);  //Two indices --$>$ ind=[3.2];
+    index=1;for k=1:size(ind,'*')-1,index=[index,1+sum(ind(1:k))];end
+    Acstar=Ac(index,:);Bcstar=Bc(index,:);
+    s=poly(0,'s');
+    p1=s^3+2*s^2-5*s+3;p2=(s-5)*(s-3);   
+    //p1 and p2 are desired closed-loop polynomials with degrees 3,2
+    c1=coeff(p1);c1=c1($-1:-1:1);c2=coeff(p2);c2=c2($-1:-1:1);
+    Acstardesired=[-c1,0,0;0,0,0,-c2];  
+    //Acstardesired(index,:) is companion matrix with char. pol=p1*p2
+    F=Bcstar\(Acstardesired-Acstar);   //Feedbak gain
+    Ac+Bc*F         // Companion form 
+    spec(A+B*F/U)   // F/U is the gain matrix in original basis.
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{obsv\_mat}{obsv-mat} \manlink{cont\_mat}{cont-mat} \manlink{ctr\_gram}{ctr-gram} \manlink{contrss}{contrss} \manlink{ppol}{ppol} \manlink{contr}{contr} \manlink{stabil}{stabil}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.D.  
+\end{authors}

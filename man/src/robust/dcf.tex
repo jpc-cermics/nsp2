@@ -1,0 +1,33 @@
+% -*- mode: latex -*-
+\mansection{dcf}
+\begin{mandesc}
+  \short{dcf}{double coprime factorization} \\ % 
+\end{mandesc}
+%\index{dcf}\label{dcf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [N,M,X,Y,NT,MT,XT,YT]=dcf(G,[polf,polc,[tol]])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: \verb!syslin! list (continuous-time linear system)
+    
+    \vname{polf, polc}: respectively the poles of \verb!XT! and \verb!YT! and
+    the poles of \verb!N!  and \verb!M! (default values =\verb!-1!).
+    
+    \vname{tol}: real threshold for detecting stable poles (default value \verb!100*%eps!).
+    
+    \vname{N,M,XT,YT,NT,MT,X,Y}: linear systems. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns eight stable systems \verb!(N,M,X,Y,NT,MT,XT,YT) !
+  for the doubly coprime factorization\verb!G! must be stabilizable and detectable.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{copfac}{copfac}  
+\end{manseealso}

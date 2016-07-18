@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{hankelsv}
+\begin{mandesc}
+  \short{hankelsv}{Hankel singular values} \\ % 
+\end{mandesc}
+%\index{hankelsv}\label{hankelsv}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [nk2,W]=hankelsv(sl [,tol])  
+  [nk2]=hankelsv(sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}:  a linear system (state-space).
+    \vname{tol}: tolerance parameter for detecting imaginary axis modes 
+    (default value is \verb!1000*%eps!).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns \verb!nk2!, the squared Hankel singular values of \verb!sl!
+  and \verb!W = P*Q! = controllability gramian times observability
+  gramian.\verb!nk2! is the vector of eigenvalues of \verb!W!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([-1,-2,-3]);
+    sl=syslin('c',A,rand(3,2),rand(2,3));
+    [nk2,W]=hankelsv(sl)
+    [Q,M]=pbig(W,nk2(2)-%eps,'c');
+    slr=projsl(sl,Q,M);hankelsv(slr)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{balreal}{balreal} \manlink{equil}{equil} \manlink{equil1}{equil1}  
+\end{manseealso}

@@ -1,0 +1,45 @@
+% -*- mode: latex -*-
+\mansection{des2ss}
+\begin{mandesc}
+  \short{des2ss}{descriptor to state-space} \\ % 
+\end{mandesc}
+%\index{des2ss}\label{des2ss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Sl]=des2ss(A,B,C,D,E [,tol])  
+  [Sl]=des2ss(Des)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B,C,D,E}: real matrices of appropriate dimensions
+    \vname{Des}: list
+    \vname{Sl}: \verb!syslin! list
+    \vname{tol}: real parameter (threshold) (default value \verb!100*%eps!).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Descriptor to state-space transform.\verb!Sl=des2ss(A,B,C,D,E)! returns a
+  linear system \verb!Sl! equivalent to the descriptor system
+  \verb!(E,A,B,C,D)!.  For index one \verb!(E,A)! pencil, explicit formula is
+  used and for higher index pencils \verb!rowshuff! is
+  used.\verb!Sl=des2ss(Des)! with \verb!Des=list('des',A,B,C,D,E)! returns a
+  linear system \verb!Sl! in state-space form with possibly a polynomial
+  \verb!D! matrix.  A generalized Leverrier algorithm is used.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');G=[1/(s-1),s;1,2/s^3];
+    S1=tf2des(G);S2=tf2des(G,"withD");
+    W1=des2ss(S1);W2=des2ss(S2);
+    clean(ss2tf(W1))
+    clean(ss2tf(W2))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{des2tf}{des2tf} \manlink{glever}{glever} \manlink{rowshuff}{rowshuff}  
+\end{manseealso}

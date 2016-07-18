@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{kpure}
+\begin{mandesc}
+  \short{kpure}{continuous SISO system limit feedback gain} \\ % 
+\end{mandesc}
+%\index{kpure}\label{kpure}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  g=kpure(sys)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sys}: SISO linear system (syslin)
+    \vname{g}: constant
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!kpure(sys)! computes the gains \verb!g! such that the system
+  \verb!sys! feedback by g (\verb!sys/.g!) has  poles on imaginary axis.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=syslin('c',(s-1)/(1+5*s+s^2+s^3))
+    xbasc();
+    evans(h.num,h.den)
+    g=kpure(h)
+    hf=h / g(1)
+    roots(hf.den)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{evans}{evans} \manlink{krac2}{krac2}  
+\end{manseealso}

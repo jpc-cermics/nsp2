@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+\mansection{svplot}
+\begin{mandesc}
+  \short{svplot}{singular-value sigma-plot} \\ % 
+\end{mandesc}
+%\index{svplot}\label{svplot}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [SVM]=svplot(sl,[w])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: \verb!syslin! list (continuous, discrete or sampled system)
+    \vname{w}: real vector (optional parameter)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes for the system \verb!sl=(A,B,C,D)!
+  the singular values of its transfer function matrix:
+\begin{verbatim}
+  G(jw) = C(jw*I-A)B^-1+D
+  or
+  G(exp(jw)) = C(exp(jw)*I-A)B^-1+D
+  or
+  G(exp(jwT)) = C(exp(jw*T)*I-A)B^-1+D
+\end{verbatim}
+  evaluated over the frequency range specified by \verb!w!. (T is the sampling
+  period, \verb!T=sl('dt')! for sampled systems).\verb!sl! is a \verb!syslin! list representing the system
+  \verb![A,B,C,D]! in state-space form. \verb!sl! can be continous or
+  discrete time or sampled system.
+  The \verb!i!-th column of the output matrix \verb!SVM! contains the singular
+  values of \verb!G! for the \verb!i!-th frequency value \verb!w(i)!.
+\begin{verbatim}
+  SVM = svplot(sl)
+\end{verbatim}
+  is equivalent to
+\begin{verbatim}
+  SVM = svplot(sl,logspace(-3,3))  (continuous)
+\end{verbatim}
+\begin{verbatim}
+  SVM = svplot(sl,logspace(-3,%pi)) (discrete)
+\end{verbatim}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=logspace(-3,3,10);
+    y=svplot(ssrand(2,2,4),x);
+    xbasc();plot2d1(x',20*log(y')/log(10),logflag='ln');
+    xgrid(12)
+    xtitle("Singular values plot","(Rd/sec)", "Db");
+  \end{Verbatim}
+\end{examples}
+%-- Author
+\begin{authors}
+  F.D; ;   
+\end{authors}

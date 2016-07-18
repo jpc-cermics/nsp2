@@ -1,0 +1,30 @@
+% -*- mode: latex -*-
+\mansection{obsv\_mat}
+\begin{mandesc}
+  \shortunder{obsv\_mat}{obsv_mat}{observability matrix} \\ % 
+\end{mandesc}
+%\index{obsv\_mat}\label{obsv-mat}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [O]=obsv_mat(A,C)  
+  [O]=obsv_mat(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,C,O}: real matrices
+    \vname{sl}: \verb!syslin! list
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!obsv_mat! returns the observability matrix:
+\begin{verbatim}
+  O=[C; CA; CA^2;...; CA^(n-1) ]
+\end{verbatim}
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{contrss}{contrss} \manlink{obsvss}{obsvss} \manlink{obs\_gram}{obs-gram}  
+\end{manseealso}

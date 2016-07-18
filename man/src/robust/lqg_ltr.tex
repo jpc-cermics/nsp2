@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+\mansection{lqg\_ltr}
+\begin{mandesc}
+  \shortunder{lqg\_ltr}{lqg_ltr}{LQG with loop transform recovery} \\ % 
+\end{mandesc}
+%\index{lqg\_ltr}\label{lqg-ltr}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [kf,kc]=lqg_ltr(sl,mu,ro)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: linear system in state-space form (\verb!syslin! list)
+    \vname{mu,ro}:  real positive numbers chosen ``small enough''
+    \vname{kf,kc}: controller and observer Kalman gains.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the Kalman gains for:
+\begin{verbatim}
+  x = a*x + b*u + l*w1   
+  (sl)
+  y = c*x + mu*I*w2
+  z = h*x
+\end{verbatim}
+Cost function:
+\begin{verbatim}
+  /+oo
+  |
+  J    = E(| [z(t)'*z(t) + ro^2*u(t)'*u(t)]dt)
+  lqg     |
+  / 0
+\end{verbatim}
+The lqg/ltr approach looks for \verb!L,mu,H,ro! such that:
+J(lqg) = J(freq) where
+\begin{verbatim}
+  /+oo        *  *           *
+  J    =  | tr[S  W  W  S ] + tr[T  T]dw
+  freq   |
+  /0
+\end{verbatim}
+and
+\begin{verbatim}
+  S = (I + G*K)^(-1)  
+  T = G*K*(I+G*K)^(-1)
+\end{verbatim}
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin}  
+\end{manseealso}

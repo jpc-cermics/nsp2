@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{obsvss}
+\begin{mandesc}
+  \short{obsvss}{observable part} \\ % 
+\end{mandesc}
+%\index{obsvss}\label{obsvss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Ao,Bo,Co]=obsvss(A,B,C [,tol])  
+  [slo]=obsvss(sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B,C,Ao,Bo,Co}: real matrices
+    \vname{sl,slo}: \verb!syslin! lists
+    \vname{tol}: real (threshold) (default value \verb!100*%eps!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!slo=(Ao,Bo,Co)! is the observable part of linear system
+  \verb!sl=(A,B,C)! (\verb!syslin! list)\verb!tol!  threshold to test
+  controllability (see \verb!contr!); default value = \verb!100*%eps!
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{contr}{contr} \manlink{contrss}{contrss} 
+  \manlink{obsv\_mat}{obsv-mat} \manlink{obs\_gram}{obs-gram}  
+\end{manseealso}

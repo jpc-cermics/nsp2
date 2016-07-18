@@ -1,0 +1,172 @@
+% -*- mode: latex -*-
+\mansection{abinv}
+\begin{mandesc}
+  \short{abinv}{AB invariant subspace} \\ % 
+\end{mandesc}
+% \index{abinv}\label{abinv}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,dims,F,U,k,Z]=abinv(Sys,alfa,beta,flag)  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sys}:  a linear system object.
+    \vname{alfa}: (optional) real number or vector (possibly complex, location of closed loop poles)
+    \vname{beta}: (optional) real number or vector (possibly complex, location of closed loop poles)
+    \vname{flag}: (optional) character string \verb!'ge'! (default) or \verb!'st'! or \verb!'pp'!
+    \vname{X}: orthogonal matrix of size nx (dim of state space).
+    \vname{dims}: integer row vector \verb!dims=[dimR,dimVg,dimV,noc,nos]! with 
+    \verb!dimR! $\le$ \verb!dimVg! $\le$ \verb!dimV! $\le$ \verb!noc! $\le$ \verb!nos!. 
+    If \verb!flag='st'!, (resp. \verb!'pp'!), \verb!dims! has 4 (resp. 3) components.
+    \vname{F}: real matrix (state feedback)
+    \vname{k}: integer (normal rank of \verb!Sys!)
+    \vname{Z}: non-singular linear system (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Output nulling subspace (maximal unobservable subspace) for
+  \verb!Sys! = linear system defined by a syslin list containing
+  the matrices [A,B,C,D] of \verb!Sys!.
+  The vector \verb!dims=[dimR,dimVg,dimV,noc,nos]! gives the dimensions
+  of subspaces defined as columns of \verb!X! according to partition given
+  below.
+  The \verb!dimV! first columns of \verb!X! i.e \verb!V=X(:,1:dimV)!, 
+  span the AB-invariant subspace of \verb!Sys! i.e the unobservable subspace of 
+  \verb!(A+B*F,C+D*F)!. (\verb!dimV=nx!  iff \verb!C^(-1)(D)=X!).
+  The \verb!dimR! first columns of \verb!X! i.e. \verb!R=X(:,1:dimR)! spans  
+  the controllable part of \verb!Sys! in \verb!V!, \verb!(dimR$<$=dimV)!. (\verb!dimR=0!
+  for a left invertible system). \verb!R! is the maximal controllability
+  subspace of \verb!Sys! in \verb!kernel(C)!.
+  The \verb!dimVg! first columns of \verb!X! spans 
+  \verb!Vg!=maximal AB-stabilizable subspace of \verb!Sys!. \verb!(dimR$<$=dimVg$<$=dimV)!.\verb!F! is a decoupling feedback: for \verb!X=[V,X2] (X2=X(:,dimV+1:nx))! one has 
+  \verb!X2'*(A+B*F)*V=0 and (C+D*F)*V=0!.
+  The zeros od \verb!Sys! are given by: \verb!X0=X(:,dimR+1:dimV); spec(X0'*(A+B*F)*X0)!
+  i.e. there are \verb!dimV-dimR! closed-loop fixed modes.
+  If the optional parameter \verb!alfa! is given as input, 
+  the \verb!dimR! controllable modes of \verb!(A+BF)! in \verb!V! 
+  are set to \verb!alfa! (or to \verb![alfa(1), alfa(2), ...]!.
+  (\verb!alfa! can be a vector (real or complex pairs) or a (real) number).
+  Default value \verb!alfa=-1!.
+  If the optional real parameter \verb!beta! is given as input, 
+  the \verb!noc-dimV! controllable modes of \verb!(A+BF)! "outside" \verb!V! 
+  are set to \verb!beta! (or \verb![beta(1),beta(2),...]!). Default value \verb!beta=-1!.
+  In the \verb!X,U! bases, the matrices 
+  \verb![X'*(A+B*F)*X,X'*B*U;(C+D*F)*X,D*U]! 
+  are displayed as follows:
+\begin{verbatim}
+  [A11,*,*,*,*,*]  [B11 * ]
+  [0,A22,*,*,*,*]  [0   * ]
+  [0,0,A33,*,*,*]  [0   * ]
+  [0,0,0,A44,*,*]  [0  B42]
+  [0,0,0,0,A55,*]  [0   0 ]
+  [0,0,0,0,0,A66]  [0   0 ]
+  [0,0,0,*,*,*]    [0  D2]
+\end{verbatim}
+  where the X-partitioning is defined by \verb!dims! and the U-partitioning is
+  defined by \verb!k!.\verb!A11! is \verb!(dimR x dimR)! and has its eigenvalues
+  set to \verb!alfa(i)'s!.  The pair \verb!(A11,B11)! is controllable and
+  \verb!B11! has \verb!nu-k! columns.  \verb!A22! is a stable
+  \verb!(dimVg-dimR x dimVg-dimR)! matrix.  \verb!A33! is an unstable
+  \verb!(dimV-dimVg x dimV-dimVg)! matrix (see \verb!st_ility!).\verb!A44! is
+  \verb!(noc-dimV x noc-dimV)! and has its eigenvalues set to \verb!beta(i)'s!.
+  The pair \verb!(A44,B42)! is controllable.  \verb!A55! is a stable
+  \verb!(nos-noc x nos-noc)! matrix.  \verb!A66! is an unstable
+  \verb!(nx-nos x nx-nos)! matrix (see \verb!st_ility!).\verb!Z! is a column
+  compression of \verb!Sys! and \verb!k! is the normal rank of \verb!Sys! i.e
+  \verb!Sys*Z! is a column-compressed linear system. \verb!k! is the column
+  dimensions of \verb!B42,B52,B62! and \verb!D2!.  \verb![B42;B52;B62;D2]! is
+  full column rank and has rank \verb!k!.  If \verb!flag='st'! is given, a five
+  blocks partition of the matrices is returned and \verb!dims! has four
+  components. If \verb!flag='pp'! is given a four blocks partition is
+  returned. In case \verb!flag='ge'! one has
+  \verb!dims=[dimR,dimVg,dimV,dimV+nc2,dimV+ns2]! where \verb!nc2!
+  (resp. \verb!ns2!) is the dimension of the controllable (resp.  stabilizable)
+  pair \verb!(A44,B42)! (resp. (\verb![A44,*;0,A55],[B42;0])!).  In case
+  \verb!flag='st'! one has \verb!dims=[dimR,dimVg,dimVg+nc,dimVg+ns]!  and in
+  case \verb!flag='pp'! one has \verb!dims=[dimR,dimR+nc,dimR+ns]!.  \verb!nc!
+  (resp. \verb!ns!) is here the dimension of the controllable
+  (resp. stabilizable) subspace of the blocks 3 to 6 (resp. 2 to 6).  This
+  function can be used for the (exact) disturbance decoupling problem.
+\begin{verbatim}
+  DDPS:
+  Find u=Fx+Rd=[F,R]*[x;d] which rejects Q*d and stabilizes the plant:
+  xdot = Ax+Bu+Qd
+  y = Cx+Du+Td
+  DDPS has a solution if Im(Q) is included in Vg + Im(B) and stabilizability
+  assumption is satisfied. 
+  Let G=(X(:,dimVg+1:$))'= left annihilator of Vg i.e. G*Vg=0;
+  B2=G*B; Q2=G*Q; DDPS solvable iff [B2;D]*R + [Q2;T] =0 has a solution.
+  The pair F,R  is the solution  (with F=output of abinv).
+  Im(Q2) is in Im(B2) means row-compression of B2=$>$row-compression of Q2
+  Then C*[(sI-A-B*F)^(-1)+D]*(Q+B*R) =0   ($<$=$>$G*(Q+B*R)=0)
+\end{verbatim}
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    nu=3;ny=4;nx=7;
+    nrt=2;ngt=3;ng0=3;nvt=5;rk=2;
+    flag=list('on',nrt,ngt,ng0,nvt,rk);
+    Sys=ssrand(ny,nu,nx,flag);alfa=-1;beta=-2;
+    [X,dims,F,U,k,Z]=abinv(Sys,alfa,beta);
+    [A,B,C,D]=abcd(Sys);dimV=dims(3);dimR=dims(1);
+    V=X(:,1:dimV);X2=X(:,dimV+1:nx);
+    X2'*(A+B*F)*V
+    (C+D*F)*V
+    X0=X(:,dimR+1:dimV); spec(X0'*(A+B*F)*X0)
+    trzeros(Sys)
+    spec(A+B*F)   //nr=2 evals at -1 and noc-dimV=2 evals at -2.
+    clean(ss2tf(Sys*Z))
+
+    // 2nd Example
+    nx=6;ny=3;nu=2;
+    A=diag(1:6);A(2,2)=-7;A(5,5)=-9;B=[1,2;0,3;0,4;0,5;0,0;0,0];
+    C=[zeros(ny,ny),eye(ny,ny)];D=[0,1;0,2;0,3];
+    sl=syslin('c',A,B,C,D);//sl=ss2ss(sl,rand(6,6))*rand(2,2);
+    [A,B,C,D]=abcd(sl);  //The matrices of sl.
+    alfa=-1;beta=-2;
+    [X,dims,F,U,k,Z]=abinv(sl,alfa,beta);dimVg=dims(2);
+    clean(X'*(A+B*F)*X)
+    clean(X'*B*U)
+    clean((C+D*F)*X)
+    clean(D*U)
+    G=(X(:,dimVg+1:$))';
+    B2=G*B;nd=3;
+    R=rand(nu,nd);Q2T=-[B2;D]*R;
+    p=size(G,1);Q2=Q2T(1:p,:);T=Q2T(p+1:$,:);
+    Q=G\Q2;   //a valid [Q;T] since 
+    [G*B;D]*R + [G*Q;T]  // is zero
+    closed=syslin('c',A+B*F,Q+B*R,C+D*F,T+D*R); // closed loop: d--$>$y
+    ss2tf(closed)       // Closed loop is zero
+    spec(closed.A)   //The plant is not stabilizable!
+    [ns,nc,W,sl1]=st_ility(sl);
+    [A,B,C,D]=abcd(sl1);A=A(1:ns,1:ns);B=B(1:ns,:);C=C(:,1:ns);
+    slnew=syslin('c',A,B,C,D);  //Now stabilizable
+    //Fnew=stabil(slnew('A'),slnew('B'),-11);
+    //slnew('A')=slnew('A')+slnew('B')*Fnew;
+    //slnew('C')=slnew('C')+slnew('D')*Fnew;
+    [X,dims,F,U,k,Z]=abinv(slnew,alfa,beta);dimVg=dims(2);
+    [A,B,C,D]=abcd(slnew);
+    G=(X(:,dimVg+1:$))';
+    B2=G*B;nd=3;
+    R=rand(nu,nd);Q2T=-[B2;D]*R;
+    p=size(G,1);Q2=Q2T(1:p,:);T=Q2T(p+1:$,:);
+    Q=G\Q2;   //a valid [Q;T] since 
+    [G*B;D]*R + [G*Q;T]  // is zero
+    closed=syslin('c',A+B*F,Q+B*R,C+D*F,T+D*R); // closed loop: d--$>$y
+    ss2tf(closed)       // Closed loop is zero
+    spec(closed.A)
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{cainv}{cainv} \manlink{st\_ility}{st-ility} \manlink{ssrand}{ssrand} 
+  \manlink{ss2ss}{ss2ss} \manlink{ddp}{ddp}  
+\end{manseealso}
+% -- Author
+\begin{authors}
+  F.D.  
+\end{authors}

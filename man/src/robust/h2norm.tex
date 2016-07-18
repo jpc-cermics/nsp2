@@ -1,0 +1,24 @@
+% -*- mode: latex -*-
+\mansection{h2norm}
+\begin{mandesc}
+  \short{h2norm}{H2 norm} \\ % 
+\end{mandesc}
+%\index{h2norm}\label{h2norm}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [n]=h2norm(Sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list)
+    \vname{n}: real scalar
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  produces the H2 norm  of a linear continuous time system \verb!Sl!.
+  (For \verb!Sl! in state-space form \verb!h2norm! uses the observability
+  gramian and for \verb!Sl! in transfer form \verb!h2norm! uses a residue method)
+\end{mandescription}

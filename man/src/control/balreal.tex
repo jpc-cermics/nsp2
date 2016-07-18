@@ -1,0 +1,41 @@
+% -*- mode: latex -*-
+\mansection{balreal}
+\begin{mandesc}
+  \short{balreal}{balanced realization} \\ % 
+\end{mandesc}
+%\index{balreal}\label{balreal}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [slb [,U] ] = balreal(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl,slb}: linear systems (\verb!syslin! lists)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Balanced realization of linear system \verb!sl=[A,B,C,D]!. \verb!sl!
+  can be a continuous-time or discrete-time state-space system. 
+  sl is assumed stable.
+\begin{verbatim}
+  slb=[inv(U)*A*U ,inv(U)*B , C*U , D]
+\end{verbatim}
+is the balanced realization.\verb!slb! is returned as a \verb!syslin! list.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([-1,-2,-3,-4,-5]);B=rand(5,2);C=rand(1,5);
+    sl=syslin('c',A,B,C);
+    [slb,U]=balreal(sl);
+    Wc=clean(ctr_gram(slb))
+    W0=clean(obs_gram(slb))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{ctr\_gram}{ctr-gram} \manlink{obs\_gram}{obs-gram} \manlink{hankelsv}{hankelsv} \manlink{equil}{equil} \manlink{equil1}{equil1}  
+\end{manseealso}

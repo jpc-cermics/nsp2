@@ -1,0 +1,55 @@
+% -*- mode: latex -*-
+\mansection{sysfact}
+\begin{mandesc}
+  \short{sysfact}{system factorization} \\ % 
+\end{mandesc}
+%\index{sysfact}\label{sysfact}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [S,Series]=sysfact(Sys,Gain,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sys}: \verb!syslin! list containing the matrices \verb![A,B,C,D]!.
+    \vname{Gain}: real matrix
+    \vname{flag}: string \verb!'post'! or \verb!'pre'!
+    \vname{S}: \verb!syslin! list
+    \vname{Series}: \verb!syslin! list
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  If \verb!flag! equals \verb!'post'!, \verb!sysfact! returns in \verb!S! the linear 
+  system with ABCD matrices \verb!(A+B*Gain, B , Gain, I)!, and   \verb!Series!, 
+  a minimal realization of the series system \verb!Sys*S!.
+  If \verb!flag! equals \verb!'pre'!,  \verb!sysfact! returns  the linear system
+  \verb!(A+Gain*C, Gain , C, I)! and \verb!Series!, a minimal realization of the 
+  series system \verb!S*Sys!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    //Kalman filter
+    Sys=ssrand(3,2,4);
+    Sys.D=rand(3,2);
+    S=sysfact(Sys,lqr(Sys),'post');
+    ww=minss(Sys*S);
+    ss2tf(gtild(ww)*ww)
+    // Sys.D*Sys.D
+    //Kernel
+    Sys=ssrand(2,3,4);
+    [X,d,F,U,k,Z]=abinv(Sys);
+    ss2tf(Sys*Z)
+    ss2tf(Sys*sysfact(Sys,F,'post')*U)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{lqr}{lqr} \manlink{lqe}{lqe}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.D.  
+\end{authors}

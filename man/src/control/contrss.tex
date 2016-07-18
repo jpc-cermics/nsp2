@@ -1,0 +1,35 @@
+% -*- mode: latex -*-
+\mansection{contrss}
+\begin{mandesc}
+  \short{contrss}{controllable part} \\ % 
+\end{mandesc}
+%\index{contrss}\label{contrss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [slc]=contrss(sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: linear system (\verb!syslin! list)
+    \vname{tol}: is a threshold for controllability (see \verb!contr!).  default value is \verb!sqrt(%eps)!.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the controllable part of the linear 
+  system \verb!sl = (A,B,C,D)! in state-space form.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[1,1;0,2];B=[1;0];C=[1,1];sl=syslin('c',A,B,C);  //Non minimal
+    slc=contrss(sl);
+    sl1=ss2tf(sl);sl2=ss2tf(slc);      //Compare sl1 and sl2
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{cont\_mat}{cont-mat} \manlink{ctr\_gram}{ctr-gram} \manlink{cont\_frm}{cont-frm} \manlink{contr}{contr}  
+\end{manseealso}

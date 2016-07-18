@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+\mansection{ss2des}
+\begin{mandesc}
+  \short{ss2des}{(polynomial) state-space to descriptor form} \\ % 
+\end{mandesc}
+% \index{ss2des}\label{ss2des}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  S=ss2des(Sl [,flag])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: a \verb!syslin! object. 
+    \vname{flag}: a character string \verb!"withD"!
+    \vname{S}: a hash table 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given the linear system in state-space representation 
+  \verb!Sl! (\ref{syslin}, with a \verb!D! matrix which is either
+  polynomial or constant, but not zero \verb!ss2des!
+  returns a descriptor system as a hash table containing keys \verb!(A,B,C,D,E)!
+  such that: \verb!Sl=C*(s*E-A)^(-1)*B!.
+
+  If the flag \verb!"withD"! is given, the returned hash table contains 
+  a \verb!D! matrix of maximal rank.
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    G=[1/(s+1),s;1+s^2,3*s^3];
+    Sl=tf2ss(G);
+    S=ss2des(Sl)
+    S1=ss2des(Sl,"withD")
+    Des=des2ss(S);
+    clean(Des.D)
+    Des1=des2ss(S1)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pol2des}{pol2des} \manlink{tf2des}{tf2des} \manlink{des2ss}{des2ss}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  François Delebecque
+\end{authors}

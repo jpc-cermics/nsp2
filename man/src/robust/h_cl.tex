@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{h\_cl}
+\begin{mandesc}
+  \shortunder{h\_cl}{h_cl}{closed loop matrix} \\ % 
+\end{mandesc}
+%\index{h\_cl}\label{h-cl}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Acl]=h_cl(P,r,K)  
+  [Acl]=h_cl(P22,K)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P, P22}: linear system (\verb!syslin! list), augmented plant or nominal plant respectively
+    \vname{r}: 1x2 row vector, dimensions of 2,2 part of \verb!P! (\verb!r=[rows,cols]=size(P22)!)
+    \vname{K}: linear system (\verb!syslin! list), controller
+    \vname{Acl}: real square matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given the standard plant \verb!P! (with \verb!r=size(P22)!) and the controller
+  \verb!K!, this function returns the closed loop matrix \verb!Acl!.  The poles
+  of \verb!Acl! must be stable for the internal stability of the closed loop
+  system.\verb!Acl! is the \verb!A!-matrix of the linear system
+  \verb![I -P22;-K I]^-1! i.e.  the \verb!A!-matrix of \verb!lft(P,r,K)!
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{lft}{lft}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F. D.  
+\end{authors}

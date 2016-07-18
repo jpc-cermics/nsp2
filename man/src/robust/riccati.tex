@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{riccati}
+\begin{mandesc}
+  \short{riccati}{Riccati equation} \\ % 
+\end{mandesc}
+%\index{riccati}\label{riccati}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  X=riccati(A,B,C,dom,[typ])  
+  [X1,X2]=riccati(A,B,C,dom,[typ])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B,C}: real matrices nxn, \verb!B! and  \verb!C! symetric.
+    \vname{dom}: \verb!'c'! or \verb!'d'! for the time domain (continuous or discrete)
+    \vname{typ}: string: \verb!'eigen'! for block diagonalization or \verb!schur'! for  Schur method.
+    \vname{X1,X2,X}: square real matrices (X2 invertible), X symmetric
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!X=riccati(A,B,C,dom,[typ])! solves the Riccati equation:
+\begin{verbatim}
+  A'*X+X*A-X*B*X+C=0 
+\end{verbatim}
+  in continuous time case, or:
+\begin{verbatim}
+  A'*X*A-(A'*X*B1/(B2+B1'*X*B1))*(B1'*X*A)+C-X
+\end{verbatim}
+  with \verb!B=B1/B2*B1'! in the discrete time case.
+  If called with two output arguments, \verb!riccati! returns \verb!X1,X2!
+  such that \verb!X=X1/X2!.
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{ricc}{ricc} \manlink{ric\_desc}{ric-desc}  
+\end{manseealso}

@@ -1,0 +1,38 @@
+% -*- mode: latex -*-
+\mansection{arhnk}
+\begin{mandesc}
+  \short{arhnk}{Hankel norm approximant} \\ % 
+\end{mandesc}
+%\index{arhnk}\label{arhnk}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [slm]=arhnk(sl,ord,[tol])     
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: linear system (\verb!syslin! list)
+    \vname{ord}: integer, order of the approximant
+    \vname{tol}: threshold for rank determination in \verb!equil1!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes \verb!slm!, the optimal Hankel norm approximant of the stable
+  continuous-time linear system \verb!sl! with matrices \verb![A,B,C,D]!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([-1,-2,-3,-4,-5]);B=rand(5,1);C=rand(1,5);
+    sl=syslin('c',A,B,C);
+    slapprox=arhnk(sl,2);
+    [nk,W]=hankelsv(sl);nk
+    [nkred,Wred]=hankelsv(slapprox);nkred
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{equil}{equil} \manlink{equil1}{equil1} \manlink{hankelsv}{hankelsv}  
+\end{manseealso}

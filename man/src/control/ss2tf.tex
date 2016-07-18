@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+\mansection{ss2tf}
+\begin{mandesc}
+  \short{ss2tf}{conversion from state-space to transfer function} \\ % 
+\end{mandesc}
+%\index{ss2tf}\label{ss2tf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [h]=ss2tf(sl)   
+  [Ds,NUM,chi]=ss2tf(sl)  
+  [h]=ss2tf(sl,"b")   
+  [Ds,NUM,chi]=ss2tf(sl,"b")  
+  [h]=ss2tf(sl,rmax)   
+  [Ds,NUM,chi]=ss2tf(sl,rmax)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: linear system (\verb!syslin! list)
+    \vname{h}: transfer matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Called with three outputs \verb![Ds,NUM,chi]=ss2tf(sl)! returns 
+  the numerator polynomial matrix \verb!NUM!, the characteristic
+  polynomial \verb!chi! and the polynomial part \verb!Ds! separately i.e.:
+\begin{verbatim}
+  h=NUM/chi + Ds
+\end{verbatim}
+Method:
+One uses the characteristic polynomial and 
+\verb!det(A+Eij)=det(A)+C(i,j)! where \verb!C! is the adjugate 
+matrix of \verb!A!.
+With \verb!rmax! or \verb!"b"! argument uses a block diagonalization of
+sl.A matrix and applies "Leverrier" algorithm on blocks.
+If given, \verb!rmax! controls the conditionning (see bdiag).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=[1,1/s;1/(s^2+1),s/(s^2-2)]
+    sl=tf2ss(h);
+    h=clean(ss2tf(sl))
+    [Ds,NUM,chi]=ss2tf(sl)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{tf2ss}{tf2ss} \manlink{syslin}{syslin} 
+  \manlink{nlev}{nlev} \manlink{glever}{glever}  
+\end{manseealso}

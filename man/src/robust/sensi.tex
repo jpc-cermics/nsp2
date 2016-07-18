@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+\mansection{sensi}
+\begin{mandesc}
+  \short{sensi}{sensitivity functions} \\ % 
+\end{mandesc}
+%\index{sensi}\label{sensi}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Se,Re,Te]=sensi(G,K)  
+  [Si,Ri,Ti]=sensi(G,K,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: standard plant (\verb!syslin! list)
+    \vname{K}: compensator (\verb!syslin! list)
+    \vname{flag}: character string \verb!'o'! (default value) or \verb!'i'!
+    \vname{Se}: output sensitivity function \verb!(I+G*K)^-1!
+    \vname{Re}: \verb!K*Se!
+    \vname{Te}: \verb!G*K*Se! (output complementary sensitivity function)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!sensi! computes sensitivity functions. If \verb!G! and \verb!K! are
+  given in state-space form, the systems returned are generically minimal. 
+  Calculation is made by \verb!lft!, e.g., 
+  \verb!Se! can be given by the commands 
+  \verb! P = augment(G,'S')!, \verb!Se=lft(P,K)!.
+  If \verb!flag! = \verb!'i'!, \verb![Si,Ri,Ti]=sensi(G,K,'i')!
+  returns the input sensitivity functions.
+\begin{verbatim}
+  [Se;Re;Te]= [inv(eye()+G*K);K*inv(eye()+G*K);G*K*inv(eye()+G*K)];
+  [Si;Ri;Ti]= [inv(eye()+K*G);G*inv(eye()+K*G);K*G*inv(eye()+K*G)];
+\end{verbatim}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    G=ssrand(1,1,3);K=ssrand(1,1,3);
+    [Se,Re,Te]=sensi(G,K);
+    Se1=inv(eye(size(G*K))+G*K);  //Other way to compute
+    ss2tf(Se)    //Se seen in transfer form
+    ss2tf(Se1)
+    ss2tf(Te)
+    ss2tf(G*K*Se1)
+    [Si,Ri,Ti]=sensi(G,K,'i');
+    w1=[ss2tf(Si);ss2tf(Ri);ss2tf(Ti)]
+    KG=K*G;
+    w2=[ss2tf(inv(eye(size(KG))+KG));
+        ss2tf(G*inv(eye(size(KG))+KG));
+        ss2tf(K*G*inv(eye(size(KG))+KG))];
+    clean(w1-w2)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{augment}{augment} \manlink{lft}{lft} \manlink{h\_cl}{h-cl}  
+\end{manseealso}

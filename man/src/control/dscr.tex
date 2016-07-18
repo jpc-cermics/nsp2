@@ -1,0 +1,38 @@
+% -*- mode: latex -*-
+\mansection{dscr}
+\begin{mandesc}
+  \short{dscr}{ discretization of linear system} \\ % 
+\end{mandesc}
+%\index{dscr}\label{dscr}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sld [,r]]=dscr(sl,dt [,m])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: \verb!syslin! list containing \verb![A,B,C,D]!.
+    \vname{dt}: real number, sampling period
+    \vname{m}: covariance of the input noise (continuous time)(default value=0)
+    \vname{r}: covariance of the output noise (discrete time) given if \verb!m! is  given as input
+    \vname{sld}: sampled (discrete-time) linear system, \verb!syslin! list
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Discretization of linear system. \verb!sl! is a continuous-time system:\verb!dx/dt=A*x+B*u (+ noise)!.\verb!sld! is the discrete-time system obtained by 
+  sampling \verb!sl! with the sampling period \verb!dt!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    Sys=syslin('c',[1,1/(s+1);2*s/(s^2+2),1/s])
+    ss2tf(dscr(tf2ss(Sys),0.1))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{flts}{flts} \manlink{dsimul}{dsimul}  
+\end{manseealso}

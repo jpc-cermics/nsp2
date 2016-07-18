@@ -1,0 +1,158 @@
+% -*- mode: latex -*-
+\mansection{linmeq}
+\begin{mandesc}
+  \short{linmeq}{Sylvester and Lyapunov equations solver} \\ % 
+\end{mandesc}
+%\index{linmeq}\label{linmeq}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X(,sep)] = linmeq(task,A,(B,)C,flag,trans(,schur))  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{task}: integer option to determine the equation type:
+    \begin{varlist}
+      \vname{1}: solve the Sylvester equation (1a) or (1b);
+      \vname{2}: solve the Lyapunov equation (2a) or (2b);
+      \vname{3}: solve for the Cholesky factor op(X) the Lyapunov equation (3a) or (3b).
+    \end{varlist}
+    \vname{A}: real matrix
+    \vname{B}: real matrix
+    \vname{C}: real matrix
+    \vname{flag}: (optional) integer vector of length 3 or 2 containing options.
+    \begin{varlist}
+      \vname{task} = 1: flag has length 3
+      \begin{varlist}
+        \vname{flag(1)} = 0: solve the continuous-time equation (1a); otherwise, solve the discrete-time equation (1b).
+        \vname{flag(2)} = 1: A is (quasi) upper triangular;
+        \vname{flag(2)} = 2: A is upper Hessenberg;
+        \vname{otherwise} A is in general form.
+        \vname{flag(3)} = 1: B is (quasi) upper triangular;
+        \vname{flag(3)} = 2: B is upper Hessenberg;
+        \vname{otherwise} B is in general form.
+      \end{varlist}
+      \vname{task} = 2: flag has length 2
+      \begin{varlist}
+        \vname{flag(1)}: if 0 solve continuous-time equation
+        (2a), otherwise, solve discrete-time equation (2b).
+        \vname{flag(2)} = 1: A is (quasi) upper triangular     otherwise, A is in general form.
+      \end{varlist}
+      \vname{task} = 3: flag has length 2
+      \begin{varlist}
+        \vname{flag(1)} = 0: solve continuous-time equation (3a); otherwise, solve discrete-time equation (3b).
+        \vname{flag(2)} = 1: A is (quasi) upper triangular; otherwise, A is in general form.
+      \end{varlist}
+    \end{varlist}
+    Default:    flag(1) = 0, flag(2) = 0 (, flag(3) = 0).
+    \vname{trans}: (optional) integer specifying a transposition option.
+    \begin{varlist}
+      \vname{0}: solve the equations (1) - (3) with op(M) = M.
+      \vname{1}: solve the equations (1) - (3) with op(M) = M'.
+      \vname{2}: solve the equations (1) with op(A) = A';  op(B) = B;
+      \vname{3}: solve the equations (1) with op(A) = A;   op(B) = B'.
+    \end{varlist}
+    Default: trans = 0.
+    \vname{schur}: (optional) integer specifying whether the Hessenberg-Schur or Schur method should be used. Available for task = 1.
+    \begin{varlist}
+      \vname{1}: Hessenberg-Schur method (one matrix is reduced} to Schur form).
+      \vname{2}: Schur method (two matrices are reduced to Schur} form).
+    \end{varlist}
+    Default:    schur = 1.
+    \vname{X}:
+    \vname{sep}: (optional) estimator of Sep(op(A),-op(A)') for (2.a) or Sepd(A,A') for (2.b).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  linmeq function solves Sylvester and Lyapunov equations (using SLICOT routines)
+\begin{verbatim}
+  [X] = linmeq(1,A,B,C,flag,trans,schur)
+  [X,sep] = linmeq(2,A,C,flag,trans)
+  [X] = linmeq(2,A,C,flag,trans)
+  [X] = linmeq(3,A,C,flag,trans)
+\end{verbatim}
+linmeq solves various Sylvester and Lyapunov matrix equations:
+\begin{verbatim}
+  op(A)*X + X*op(B) = C,                           (1a)
+  op(A)*X*op(B) + X = C,                           (1b)
+  op(A)'*X + X*op(A) = C,                          (2a)
+  op(A)'*X*op(A) - X = C,                          (2b)
+  op(A)'*(op(X)'*op(X)) + (op(X)'*op(X))*op(A) =
+  -  op(C)'*op(C),           (3a)
+  op(A)'*(op(X)'*op(X))*op(A) - op(X)'*op(X) =
+  - op(C)'*op(C),      (3b)
+\end{verbatim}
+where op(M) = M, or M'.
+\end{mandescription}
+%-- section-Comments
+\paragraph{Comments}
+\begin{itemize}
+\item \itemdesc{1.} For equation (1a) or (1b), when schur = 1, the Hessenberg-Schur
+  method is used, reducing one matrix to Hessenberg form and the other
+  one to a real Schur form. Otherwise, both matrices are reduced to real
+  Schur forms. If one or both matrices are already reduced to
+  Schur/Hessenberg forms, this could be specified by flag(2) and
+  flag(3). For general matrices, the Hessenberg-Schur method could be
+  significantly more efficient than the Schur method.
+\item \itemdesc{2.} For equation (2a) or (2b), matrix C is assumed symmetric.
+\item \itemdesc{3.} For equation (3a) or (3b), matrix A must be stable or convergent, respectively.
+\item \itemdesc{4.} For equation (3a) or (3b), the computed matrix X is the Cholesky factor of the solution, i.e., the real solution is op(X)'*op(X), where X is an upper triangular matrix. 
+\end{itemize}
+%-- section-Revisions
+\paragraph{Revisions}
+V. Sima, Katholieke Univ. Leuven, Belgium, May 1999, May, Sep. 2000. V. Sima, University of Bucharest, Romania, May 2000.
+%--example 
+\begin{examples}
+\begin{itemize}
+  \item (1a) and (1b)
+    \begin{Verbatim}
+      n=40;m=30;
+      A=rand(n,n);C=rand(n,m);B=rand(m,m);
+      X = linmeq(1,A,B,C);
+      norm(A*X+X*B-C,1)
+      flag=[1,0,0]
+      X = linmeq(1,A,B,C,flag);
+      norm(A*X*B+X-C,1)
+    \end{Verbatim}
+  \item (2a) and (2b)
+    \begin{Verbatim}
+      n=40;
+      A=rand(n,n);C=rand(A);C=C+C';
+      X = linmeq(2,A,C);
+      norm(A'*X + X*A -C,1)
+      X = linmeq(2,A,C,[1 0]);
+      norm(A'*X*A -X-C,1)
+    \end{Verbatim}
+  \item (3a)
+    \begin{Verbatim}
+      n=40;
+      A=rand(n,n);
+      A=A-(max(real(spec(A)))+1)*eye(size(A)); //shift eigenvalues
+      C=rand(A);
+      X=linmeq(3,A,C);
+      norm(A'*X'*X+X'*X*A +C'*C,1)
+    \end{Verbatim}
+  \item (3b)
+    \begin{Verbatim}
+      A = [-0.02, 0.02,-0.10, 0.02,-0.03, 0.12;
+      0.02, 0.14, 0.12,-0.10,-0.02,-0.14;     
+      -0.10, 0.12, 0.05, 0.03,-0.04,-0.04;     
+      0.02,-0.10, 0.03,-0.06, 0.08, 0.11;      
+      -0.03,-0.02,-0.04, 0.08, 0.14,-0.07;   
+      0.12,-0.14,-0.04, 0.11,-0.07, 0.04]    
+      C=rand(A);
+      X=linmeq(3,A,C,[1 0]);
+      norm(A'*X'*X*A - X'*X +C'*C,1)
+    \end{Verbatim}
+  \end{itemize}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{sylv}{sylv} \manlink{lyap}{lyap}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  H. Xu, TU Chemnitz, FR Germany, Dec. 1998.  
+\end{authors}

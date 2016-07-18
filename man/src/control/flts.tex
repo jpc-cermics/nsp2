@@ -1,0 +1,99 @@
+% -*- mode: latex -*-
+\mansection{flts}
+\begin{mandesc}
+  \short{flts}{time response (discrete time, sampled system)  } \\ % 
+\end{mandesc}
+%\index{flts}\label{flts}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [y [,x]]=flts(u,sl [,x0])  
+  [y]=flts(u,sl [,past])    
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{u}: matrix (input vector)
+    \vname{sl}: list (linear system \verb!syslin!)
+    \vname{x0}: vector (initial state ; default value=\verb!0!)
+    \vname{past}: matrix (of the past ; default value=\verb!0!)
+    \vname{x,y}: matrices (state and output)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  State-space form:\verb!sl! is a \verb!syslin! list containing the matrices of the 
+  following linear system\verb!sl=syslin('d',A,B,C,D)! (see \verb!syslin!):
+\begin{verbatim}
+  x[t+1] = A x[t] + B u[t]
+  y[t] = C x[t] + D u[t]
+\end{verbatim}
+or, more generally, if \verb!D! is a polynomial matrix (\verb!p = degree(D(z))!):
+Transfer form:\verb! y=flts(u,sl[,past])!. Here \verb!sl! is a linear system in 
+transfer matrix  representation i.e\verb!sl=syslin('d',transfer_matrix)! (see \verb!syslin!).
+is the matrix of past values of u and y.
+nd is the maximum of degrees of lcm's of each row of the denominator
+matrix of sl.
+\begin{verbatim}
+  u=[u0 u1 ... un]  (input)
+  y=[y0 y1 ... yn]  (output)
+\end{verbatim}
+p is the difference between maximum degree of numerator and 
+maximum degree of denominator
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    sl=syslin('d',1,1,1);u=1:10;
+    y=flts(u,sl); 
+    plot2d2((1:size(u,'c'))',y')
+    [y1,x1]=flts(u(1:5),sl);y2=flts(u(6:10),sl,x1);
+    y-[y1,y2]
+    //With polynomial D:
+    z=poly(0,'z');
+    D=1+z+z^2; p =D.degree[];
+    sl=syslin('d',1,1,1,D);
+    y=flts(u,sl);[y1,x1]=flts(u(1:5),sl);
+    y2=flts(u(5-p+1:10),sl,x1);  // (update)
+    y-[y1,y2]
+    //Delay (transfer form): flts(u,1/z)
+    // Usual responses
+    z=poly(0,'z');
+    h=(1-2*z)/(z^2+0.3*z+1)
+    u=zeros(1,20);u(1)=1;
+    imprep=flts(u,tf2ss(h));   //Impulse response
+    plot2d2((1:size(u,'c'))',imprep')
+    u=ones(1,20);
+    stprep=flts(u,tf2ss(h));   //Step response
+    plot2d2((1:size(u,'c'))',stprep')
+    //
+    // Other examples
+    A=[1 2 3;0 2 4;0 0 1];B=[1 0;0 0;0 1];C=eye(3,3);Sys=syslin('d',A,B,C);
+    H=ss2tf(Sys); u=[1;-1]*(1:10);
+    //
+    yh=flts(u,H); ys=flts(u,Sys);
+    norm(yh-ys,1)    
+    //hot restart
+    [ys1,x]=flts(u(:,1:4),Sys);ys2=flts(u(:,5:10),Sys,x);
+    norm([ys1,ys2]-ys,1)
+    //
+    yh1=flts(u(:,1:4),H);yh2=flts(u(:,5:10),H,[u(:,2:4);yh(:,2:4)]);
+    norm([yh1,yh2]-yh,1)
+    //with D$<$$>$0
+    D=[-3 8;4 -0.5;2.2 0.9];
+    Sys=syslin('d',A,B,C,D);
+    H=ss2tf(Sys); u=[1;-1]*(1:10);
+    rh=flts(u,H); rs=flts(u,Sys);
+    norm(rh-rs,1)
+    //hot restart
+    [ys1,x]=flts(u(:,1:4),Sys);ys2=flts(u(:,5:10),Sys,x);
+    norm([ys1,ys2]-rs,1)
+    //With H:
+    yh1=flts(u(:,1:4),H);yh2=flts(u(:,5:10),H,[u(:,2:4); yh1(:,2:4)]);
+    norm([yh1,yh2]-rh)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{ltitr}{ltitr} \manlink{dsimul}{dsimul} \manlink{rtitr}{rtitr}  
+\end{manseealso}

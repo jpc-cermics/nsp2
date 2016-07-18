@@ -1,0 +1,57 @@
+% -*- mode: latex -*-
+\mansection{fstabst}
+\begin{mandesc}
+  \short{fstabst}{Youla's parametrization} \\ % 
+\end{mandesc}
+%\index{fstabst}\label{fstabst}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [J]=fstabst(P,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: \verb!syslin! list (linear system)
+    \vname{r}: 1x2 row vector, dimension of \verb!P22!
+    \vname{J}: \verb!syslin! list (linear system in state-space representation)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Parameterization of all stabilizing feedbacks.\verb!P! is partitioned as follows:
+\begin{verbatim}
+  P=[ P11 P12;
+    P21 P22]  
+\end{verbatim}
+(in state-space or transfer form: automatic conversion in state-space is
+done for the computations)\verb!r! = size of  \verb!P22! subsystem, (2,2) block of \verb!P!
+\begin{verbatim}
+  J =[ J11 J12;
+    J21 J22]
+\end{verbatim}
+\verb!K! is a stabilizing controller for \verb!P! (i.e. \verb!P22!) iff 
+\verb!K=lft(J,r,Q)! with \verb!Q! stable.
+The central part of \verb!J! , \verb!J11! is the lqg regulator for \verb!P!
+This \verb!J! is such that defining \verb!T! as the 2-port \verb!lft! of \verb!P!
+and \verb!J!: \verb![T,rt]=lft(P,r,J,r)! one has that \verb!T12! is inner
+and \verb!T21! is co-inner.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    ny=2;nu=3;nx=4;
+    P22=ssrand(ny,nu,nx);
+    bigQ=rand(nx+nu,nx+nu);bigQ=bigQ*bigQ';
+    bigR=rand(nx+ny,nx+ny);bigR=bigR*bigR';
+    [P,r]=lqg2stan(P22,bigQ,bigR);
+    J=fstabst(P,r);
+    Q=ssrand(nu,ny,1);Q.A=-1;  //Stable Q
+    K=lft(J,r,Q);
+    A=h_cl(P,r,K); spec(A)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{obscont}{obscont} \manlink{lft}{lft} \manlink{lqg}{lqg} \manlink{lqg2stan}{lqg2stan}  
+\end{manseealso}

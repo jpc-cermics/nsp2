@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+\mansection{minreal}
+\begin{mandesc}
+  \short{minreal}{minimal balanced realization} \\ % 
+\end{mandesc}
+%\index{minreal}\label{minreal}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  slb=minreal(sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl,slb}: \verb!syslin! lists
+    \vname{tol}: real (threshold)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![ae,be,ce]=minreal(a,b,c,domain [,tol]) !  returns the balanced
+  realization of linear system \verb!sl! (\verb!syslin! list).\verb!sl! is
+  assumed stable.\verb!tol! threshold used in \verb!equil1!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[-eye(2,2),rand(2,2);zeros(2,2),-2*eye(2,2)];
+    B=[rand(2,2);zeros(2,2)];C=rand(2,4);
+    sl=syslin('c',A,B,C);
+    slb=minreal(sl);
+    ss2tf(sl)
+    ss2tf(slb)
+    ctr_gram(sl)
+    clean(ctr_gram(slb))
+    clean(obs_gram(slb))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{minss}{minss} \manlink{balreal}{balreal} \manlink{arhnk}{arhnk} \manlink{equil}{equil} \manlink{equil1}{equil1}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  S. Steer INRIA 1987
+\end{authors}

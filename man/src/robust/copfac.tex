@@ -1,0 +1,32 @@
+% -*- mode: latex -*-
+\mansection{copfac}
+\begin{mandesc}
+  \short{copfac}{right coprime factorization} \\ % 
+\end{mandesc}
+%\index{copfac}\label{copfac}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [N,M,XT,YT]=copfac(G [,polf,polc,tol])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: \verb!syslin! list  (continuous-time linear system )
+    \vname{polf, polc}: respectively the poles of \verb!XT! and \verb!YT! and the poles of \verb!n!  and \verb!M! (default values =-1).
+    \vname{tol}: real threshold for detecting stable poles (default value \verb!100*%eps!)
+    \vname{N,M,XT,YT}: linear systems represented by \verb!syslin! lists
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![N,M,XT,YT]=copfac(G,[polf,polc,[tol]])! returns a right coprime
+  factorization of \verb!G!.\verb!G = N*M^-1! where \verb!N! and \verb!M! are
+  stable, proper and right coprime.  (i.e. \verb![N M]! left-invertible with
+  stability)\verb!XT! and \verb!YT! satisfy:\verb![XT -YT].[M N]' = eye! (Bezout
+  identity)\verb!G! is assumed stabilizable and detectable.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{lcf}{lcf}  
+\end{manseealso}

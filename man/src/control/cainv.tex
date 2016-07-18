@@ -1,0 +1,85 @@
+% -*- mode: latex -*-
+\mansection{cainv}
+\begin{mandesc}
+  \short{cainv}{ Dual of abinv} \\ % 
+\end{mandesc}
+%\index{cainv}\label{cainv}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,dims,J,Y,k,Z]=cainv(Sl,alfa,beta,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: \verb!syslin! list containing the matrices \verb![A,B,C,D]!.
+    \vname{alfa}: real number or vector (possibly complex, location of closed loop poles)
+    \vname{beta}: real number or vector (possibly complex, location of closed loop poles)
+    \vname{flag}: (optional) character string \verb!'ge'! (default) or \verb!'st'! or \verb!'pp'!
+    \vname{X}: orthogonal matrix of size nx (dim of state space).
+    \vname{dims}: integer row vector \verb!dims=[nd1,nu1,dimS,dimSg,dimN]!  (5
+    entries, nondecreasing order).If \verb!flag='st'!, (resp. \verb!'pp'!),
+    \verb!dims! has 4 (resp. 3) components.
+    \vname{J}: real matrix (output injection)
+    \vname{Y}: orthogonal matrix of size ny (dim of output space).
+    \vname{k}: integer (normal rank of \verb!Sl!)
+    \vname{Z}: non-singular linear system (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!cainv! finds a bases \verb!(X,Y)! (of state space and output space resp.)
+  and output injection matrix \verb!J! such that the matrices of Sl in 
+  bases (X,Y) are displayed as:
+\begin{verbatim}
+               [A11,*,*,*,*,*]                [*]
+               [0,A22,*,*,*,*]                [*]
+X'*(A+J*C)*X = [0,0,A33,*,*,*]   X'*(B+J*D) = [*]
+               [0,0,0,A44,*,*]                [0]
+               [0,0,0,0,A55,*]                [0]
+               [0,0,0,0,0,A66]                [0]
+
+Y*C*X = [0,0,C13,*,*,*]          Y*D = [*]
+        [0,0,0,0,0,C26]                [0]
+\end{verbatim}
+
+The partition of \verb!X! is defined by the vector 
+\verb!dims=[nd1,nu1,dimS,dimSg,dimN]! and the partition of \verb!Y!
+is determined by \verb!k!.
+Eigenvalues of \verb!A11!\verb!(nd1 x nd1)! are unstable.
+Eigenvalues of \verb!A22!\verb!(nu1-nd1 x nu1-nd1)! are stable.
+The pair \verb!(A33, C13)!\verb!(dimS-nu1 x dimS-nu1, k x dimS-nu1)! is observable, 
+and eigenvalues of \verb!A33! are set to \verb!alfa!.
+Matrix \verb!A44!\verb!(dimSg-dimS x dimSg-dimS)! is unstable.
+Matrix \verb!A55!\verb!(dimN-dimSg,dimN-dimSg)! is stable
+The pair \verb!(A66,C26)!\verb!(nx-dimN x nx-dimN)! is observable, 
+and eigenvalues of \verb!A66! set to \verb!beta!.
+The \verb!dimS! first columns of \verb!X! span S= smallest (C,A) invariant
+subspace which contains Im(B), \verb!dimSg! first columns of \verb!X!
+span Sg the maximal "complementary detectability subspace" of \verb!Sl!
+The \verb!dimN! first columns of \verb!X! span the maximal
+"complementary observability subspace" of \verb!Sl!. 
+(\verb!dimS=0! if B(ker(D))=0).
+If \verb!flag='st'! is given, a five blocks partition of the matrices is 
+returned and \verb!dims! has four components. If \verb!flag='pp'! is 
+given a four blocks partition is returned (see abinv).
+This function can be used to calculate an unknown input observer:
+\begin{verbatim}
+  // DDEP: dot(x)=A x + Bu + Gd
+  //           y= Cx   (observation)
+  //           z= Hx    (z=variable to be estimated, d=disturbance)
+  //  Find: dot(w) = Fw + Ey + Ru such that
+  //          zhat = Mw + Ny
+  //           z-Hx goes to zero at infinity
+  //  Solution exists iff Ker H contains Sg(A,C,G) inter KerC (assuming detectability)
+  //i.e. H is such that:
+  // For any W which makes a column compression of [Xp(1:dimSg,:);C]
+  // with Xp=X' and [X,dims,J,Y,k,Z]=cainv(syslin('c',A,G,C));
+  // [Xp(1:dimSg,:);C]*W = [0 | *] one has
+  // H*W = [0 | *]  (with at least as many aero columns as above).
+\end{verbatim}
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{abinv}{abinv} \manlink{dt\_ility}{dt-ility} \manlink{ui\_observer}{ui-observer}  
+\end{manseealso}

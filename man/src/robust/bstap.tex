@@ -1,0 +1,27 @@
+% -*- mode: latex -*-
+\mansection{bstap}
+\begin{mandesc}
+  \short{bstap}{hankel approximant} \\ % 
+\end{mandesc}
+%\index{bstap}\label{bstap}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Q]=bstap(Sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: linear system (\verb!syslin! list) assumed continuous-time and anti-stable.
+    \vname{Q}: best stable approximation of \verb!Sl! (\verb!syslin! list).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Computes the best approximant \verb!Q! of the linear system \verb!Sl! where
+  ||T|| is the  H-infinity norm of the Hankel operator associated with \verb!Sl!.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin}  
+\end{manseealso}

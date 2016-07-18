@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{freson}
+\begin{mandesc}
+  \short{freson}{peak frequencies} \\ % 
+\end{mandesc}
+%\index{freson}\label{freson}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  fr=freson(h)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: \verb!syslin! list
+    \vname{fr}: vector of peak frequencies in Hz
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the vector of peak frequencies in Hz for the SISO plant
+  \verb!h!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=syslin('c',-1+s,(3+2*s+s^2)*(50+0.1*s+s^2))
+    fr=freson(h)
+    bode(h);
+    g=20*log(abs(repfreq(h,frq=fr)))/log(10)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{frep2tf}{frep2tf} \manlink{zgrid}{zgrid} \manlink{h\_norm}{h-norm}  
+\end{manseealso}

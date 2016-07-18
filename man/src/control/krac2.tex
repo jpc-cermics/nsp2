@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{krac2}
+\begin{mandesc}
+  \short{krac2}{continuous SISO system limit feedback gain} \\ % 
+\end{mandesc}
+%\index{krac2}\label{krac2}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  g=krac2(sys)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sys}: SISO linear system (syslin)
+    \vname{g}: constant
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!krac2(sys)! computes the gains \verb!g! such that the system
+  \verb!sys! fedback by g (\verb!sys/.g!) has  2 real equal poles.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    h=syslin('c',352*poly(-5,'s')/poly([0,0,2000,200,25,1],'s','c'));
+    xbasc();evans(h.num,h.den,100)
+    g=krac2(h)
+    hf1= h /. g(1);roots(hf1.den)
+    hf2= h /. g(2);roots(hf2.den)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{evans}{evans} \manlink{kpure}{kpure}  
+\end{manseealso}

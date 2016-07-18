@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{lqg}
+\begin{mandesc}
+  \short{lqg}{LQG compensator} \\ % 
+\end{mandesc}
+%\index{lqg}\label{lqg}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [K]=lqg(P,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: \verb!syslin! list (augmented plant) in state-space form
+    \vname{r}: 1x2 row vector = (number of measurements, number of inputs)
+    (dimension of the 2,2 part of \verb!P!)
+    \vname{K}: \verb!syslin! list (controller)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!lqg!  computes the linear optimal LQG (H2) controller for the
+  "augmented" plant \verb!P=syslin('c',A,B,C,D)! (continuous time) or
+  \verb!P=syslin('d',A,B,C,D)! (discrete time).  The function \verb!lqg2stan!
+  returns \verb!P! and \verb!r! given the nominal plant, weighting terms and
+  variances of noises.\verb!K! is given by the following ABCD matrices:
+  \verb![A+B*Kc+Kf*C+Kf*D*Kc,-Kf,Kc,0]! where \verb!Kc=lqr(P12)!  is the
+  controller gain and \verb!Kf=lqe(P21)! is the filter gain.  See example in
+  \verb!lqg2stan!.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{lqg2stan}{lqg2stan} \manlink{lqr}{lqr} \manlink{lqe}{lqe} \manlink{h\_inf}{h-inf} \manlink{obscont}{obscont}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.D.  
+\end{authors}

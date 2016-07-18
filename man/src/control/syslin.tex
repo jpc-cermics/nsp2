@@ -1,0 +1,82 @@
+% -*- mode: latex -*-
+\mansection{syslin}
+\begin{mandesc}
+  \short{syslin}{linear system definition} \\ % 
+\end{mandesc}
+%\index{syslin}\label{syslin}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sl]=syslin(dom,A,B,C [,D [,x0] ])  
+  [sl]=syslin(dom,N,D)  
+  [sl]=syslin(dom,H)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{dom}: character string (\verb!'c'!, \verb!'d'!), or \verb![]! or a scalar.
+    \vname{A,B,C,D}: matrices of the state-space representation (\verb!D! optional with default value zero matrix). 
+    For improper systems \verb!D! is a polynomial matrix.
+    \vname{x0}: vector (initial state; default value is \verb!0!)
+    \vname{N, D}: polynomial matrices
+    \vname{H}: rational matrix or linear state space representation
+    \vname{sl}: tlist ("\verb!syslin!" list) representing the linear system
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!syslin!  defines a linear system as a list and checks consistency of
+  data.\verb!dom! specifies the time domain of the system and can have the
+  following values:\verb!dom='c'! for a continuous time system, \verb!dom='d'!
+  for a discrete time system, \verb!n! for a sampled system with sampling period
+  \verb!n! (in seconds).\verb!dom=[]! if the time domain is undefined
+  State-space representation:
+\begin{verbatim}
+  sl=syslin(dom,A,B,C [,D [,x0] ])
+\end{verbatim}
+represents the system:
+\begin{verbatim}
+  s x  = A*x + B*u
+  y  = C*x + D*u
+  x(0) = x0
+\end{verbatim}
+The output of \verb!syslin! is a list of the following form: 
+\verb!sl=tlist(['lss','A','B','C','D','X0','dt'],A,B,C,D,x0,dom)!
+Note that \verb!D! is allowed to be a polynomial matrix (improper systems).
+Transfer matrix representation:
+\begin{verbatim}
+  sl=syslin(dom,N,D) 
+  sl=syslin(dom,H)
+\end{verbatim}
+The output of \verb!syslin! is a list of the following form:  
+\verb!sl=tlist(['r','num','den','dt'],N,D,dom)! or \verb!sl=tlist(['r','num','den','dt'],H(2),H(3),dom)!.
+Linear systems defined as \verb!syslin! can be manipulated as
+usual matrices (concatenation, extraction, transpose, multiplication, etc)
+both in state-space or transfer representation.
+Most of state-space control functions receive a \verb!syslin! list as input instead
+of the four matrices defining the system.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=[0,1;0,0];B=[1;1];C=[1,1];
+    S1=syslin('c',A,B,C)   //Linear system definition
+    S1.A    //Display of A-matrix
+    S1.X0, S1.dom, S1.dt // Display of X0 and time domain
+    s=poly(0,'s');
+    D=s;
+    S2=syslin('c',A,B,C,D)
+    H1=(1+2*s)/s^2, S1bis=syslin('c',H1)
+    H2=(1+2*s+s^3)/s^2, S2bis=syslin('c',H2)
+    S1+S2
+    [S1,S2]
+    ss2tf(S1)-S1bis
+    S1bis+S2bis
+    S1*S2bis
+    size(S1)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{tlist}{tlist} \manlink{lsslist}{lsslist} \manlink{rlist}{rlist} \manlink{ssrand}{ssrand} \manlink{ss2tf}{ss2tf} \manlink{tf2ss}{tf2ss} \manlink{dscr}{dscr} \manlink{abcd}{abcd}  
+\end{manseealso}

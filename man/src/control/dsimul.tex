@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+\mansection{dsimul}
+\begin{mandesc}
+  \short{dsimul}{ state space discrete time simulation} \\ % 
+\end{mandesc}
+%\index{dsimul}\label{dsimul}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  y=dsimul(sl,u)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: \verb!syslin! list describing a discrete time linear system
+    \vname{u}: real matrix of appropriate dimension
+    \vname{y}: output of \verb!sl!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Utility function.  If \verb![A,B,C,D]=abcd(sl)! and \verb!x0=sl('X0')!,
+  \verb!dsimul! returns \verb!y=C*ltitr(A,B,u,x0)+D*u! i.e.  the time response
+  of \verb!sl! to the input \verb!u!.  \verb!sl! is assumed to be in state space
+  form (\verb!syslin! list).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    z=poly(0,'z');
+    h=(1-2*z)/(z^2-0.2*z+1);
+    sl=tf2ss(h);
+    u=zeros(1,20);u(1)=1;
+    x1=dsimul(sl,u)   //Impulse response
+    u=ones(1,20);
+    x2=dsimul(sl,u);  //Step response
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{flts}{flts} \manlink{ltitr}{ltitr}  
+\end{manseealso}

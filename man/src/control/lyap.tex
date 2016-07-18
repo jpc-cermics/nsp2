@@ -1,0 +1,44 @@
+% -*- mode: latex -*-
+\mansection{lyap}
+\begin{mandesc}
+  \short{lyap}{Lyapunov equation} \\ % 
+\end{mandesc}
+%\index{lyap}\label{lyap}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X]=lyap(A,C,'c')  
+  [X]=lyap(A,C,'d')  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, C}: real square matrices, \verb!C! must be symmetric
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!X = lyap(A,C,flag)! solves the continuous time or
+  discrete time matrix Lyapunov matrix equation:
+\begin{verbatim}
+  A'*X + X*A = C       ( flag='c' )
+  A'*X*A - X = C       ( flag='d' )
+\end{verbatim}
+Note that a unique solution exist if and only if an eigenvalue of \verb!A! is
+not an eigenvalue of \verb!-A! (\verb!flag='c'!)  or 1 over an eigenvalue of \verb!A! 
+(\verb!flag='d'!).
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(4,4);C=rand(A);C=C+C';
+    X=lyap(A,C,'c');
+    A'*X + X*A -C
+    X=lyap(A,C,'d');
+    A'*X*A - X -C
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{sylv}{sylv} \manlink{ctr\_gram}{ctr-gram} \manlink{obs\_gram}{obs-gram}  
+\end{manseealso}

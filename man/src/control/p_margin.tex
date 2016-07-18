@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+\mansection{p\_margin}
+\begin{mandesc}
+  \shortunder{p\_margin}{p_margin}{phase margin} \\ % 
+\end{mandesc}
+%\index{p\_margin}\label{p-margin}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [phm,fr]=p_margin(h)  
+  phm=p_margin(h)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: SISO linear system (\verb!syslin! list).
+    \vname{phm}: phase margin (in degree)
+    \vname{fr}: corresponding frequency (hz)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The phase margin is the values of the phase at points where the
+  nyquist plot of \verb!h! crosses the unit circle.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=syslin('c',-1+s,3+2*s+s^2)  
+    [p,fr]=p_margin(h)  
+    [p,fr]=p_margin(h+0.7)  
+    h1= h+0.7;
+    nyquist(h1.num,h1.den);
+    t=(0:0.1:2*%pi)';plot2d(sin(t),cos(t),line_color=-3);
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{chart}{chart} \manlink{black}{black} 
+  \manlink{g\_margin}{g-margin} \manlink{nyquist}{nyquist}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Serge Steer
+\end{authors}

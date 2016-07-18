@@ -1,0 +1,30 @@
+% -*- mode: latex -*-
+\mansection{parrot}
+\begin{mandesc}
+  \short{parrot}{Parrot's problem} \\ % 
+\end{mandesc}
+%\index{parrot}\label{parrot}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  K=parrot(D,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{D,K}: matrices
+    \vname{r}: 1X2 vector (dimension of the 2,2 part of \verb!D!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Given a matrix \verb!D! partionned as \verb![D11 D12; D21 D22]!
+  where \verb!size(D22)=r=[r1,r2]!
+  compute a matrix \verb!K! such that
+  largest singular value of \verb![D11 D12; D21 D22+K]!
+  is minimal (Parrot's problem)
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{h\_inf\_st}{h-inf-st}  
+\end{manseealso}

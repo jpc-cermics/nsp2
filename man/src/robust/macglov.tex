@@ -1,0 +1,31 @@
+% -*- mode: latex -*-
+\mansection{macglov}
+\begin{mandesc}
+  \short{macglov}{Mac Farlane Glover problem} \\ % 
+\end{mandesc}
+% \index{macglov}\label{macglov}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P,r]=macglov(Sl)  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list)
+    \vname{P}: linear system (\verb!syslin! list), ``augmented'' plant
+    \vname{r}: 1x2 vector, dimension of \verb!P22!
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![P,r]=macglov(Sl)! returns the standard plant
+  \verb!P! for the Glover-McFarlane problem.
+  For this problem ro\_optimal = 1-hankel\_norm(\verb![N,M]!)
+  with \verb![N,M]=lcf(sl)! (Normalized coprime factorization) i.e.
+  gama\_optimal = \verb!1/sqrt(ro_optimal)!
+\end{mandescription}
+% -- Author
+\begin{authors}
+  F. Delebecque INRIA
+\end{authors}

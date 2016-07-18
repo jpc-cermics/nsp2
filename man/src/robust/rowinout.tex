@@ -1,0 +1,49 @@
+% -*- mode: latex -*-
+\mansection{rowinout}
+\begin{mandesc}
+  \short{rowinout}{inner-outer factorization} \\ % 
+\end{mandesc}
+%\index{rowinout}\label{rowinout}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Inn,X,Gbar]=rowinout(G)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: linear system (\verb!syslin! list) \verb![A,B,C,D]!
+    \vname{Inn}:  inner factor (\verb!syslin! list)
+    \vname{Gbar}:  outer factor (\verb!syslin! list)
+    \vname{X}:  row-compressor of \verb!G! (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Inner-outer factorization (and row compression) of (\verb!l!x\verb!p!) \verb!G =[A,B,C,D]! with \verb!l$>$=p!.\verb!G! is assumed to be tall (\verb!l$>$=p!) without zero on the imaginary axis
+  and with a \verb!D! matrix which is full column rank.\verb!G! must also be stable for having \verb!Gbar! stable.\verb!G! admits the following inner-outer factorization:
+\begin{verbatim}
+  G = [ Inn ] | Gbar |
+  |  0   |
+\end{verbatim}
+where \verb!Inn! is square and inner (all pass and stable) and \verb!Gbar! 
+square and outer i.e:
+Gbar is square bi-proper and bi-stable (Gbar inverse is also proper 
+and stable);
+Note that:
+\begin{verbatim}
+        [ Gbar ]
+  X*G = [  -   ]
+        [  0   ]
+\end{verbatim}
+is a row compression of \verb!G! where \verb!X! = \verb!Inn! inverse is all-pass i.e:
+\begin{verbatim}
+  T
+  X (-s) X(s) = Identity
+\end{verbatim}
+(for the continous time case).
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{colinout}{colinout}  
+\end{manseealso}

@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{unobs}
+\begin{mandesc}
+  \short{unobs}{unobservable subspace} \\ % 
+\end{mandesc}
+%\index{unobs}\label{unobs}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [n,[U]]=unobs(A,C,[tol])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, C}: real matrices
+    \vname{tol}: tolerance used when evaluating ranks (QR factorizations).
+    \vname{n}: dimension of unobservable subspace.
+    \vname{U}: orthogonal change of basis which puts \verb!(A,B)! in canonical form.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![n,[U]]=unobs(A,C,[tol])! gives the unobservable form of an \verb!(A,C)!
+  pair.  The \verb!n! first columns of \verb!U! make a basis for the
+  unobservable subspace.  The \verb!(2,1)! block (made of last \verb!nx-n! rows
+  and \verb!n! first columns) of \verb!U'*A*U! is zero and and the \verb!n!
+  first columns of \verb!C*U! are zero.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([1,2,3]);C=[1,0,0];
+    unobs(A,C)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{contr}{contr} \manlink{contrss}{contrss} \manlink{canon}{canon} 
+  \manlink{cont\_mat}{cont-mat} \manlink{spantwo}{spantwo} \manlink{dt\_ility}{dt-ility}  
+\end{manseealso}

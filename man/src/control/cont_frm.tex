@@ -1,0 +1,35 @@
+% -*- mode: latex -*-
+\mansection{cont\_frm}
+\begin{mandesc}
+  \shortunder{cont\_frm}{cont_frm}{transfer to controllable state-space} \\ % 
+\end{mandesc}
+%\index{cont\_frm}\label{cont-frm}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [sl]=cont_frm(NUM,den)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{NUM}: polynomial matrix
+    \vname{den}: polynomial
+    \vname{sl}: \verb!syslin! list, \verb!sl=[A,B,C,D]!.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  controllable state-space form of the transfer \verb!NUM/den!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');NUM=[1+s,s];den=s^2-5*s+1;
+    sl=cont_frm(NUM,den); 
+    slss=ss2tf(sl);       //Compare with NUM/den
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{tf2ss}{tf2ss} \manlink{canon}{canon} \manlink{contr}{contr}  
+\end{manseealso}

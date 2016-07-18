@@ -1,0 +1,40 @@
+% -*- mode: latex -*-
+\mansection{tf2ss}
+\begin{mandesc}
+  \short{tf2ss}{transfer to state-space} \\ % 
+\end{mandesc}
+%\index{tf2ss}\label{tf2ss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  sl=tf2ss(h [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: rational matrix
+    \vname{tol}: may be the constant rtol or the 2 vector \verb![rtol atol]!
+    \begin{varlist}
+      \vname{rtol}:tolerance used when evaluating observability.
+      \vname{atol}:absolute tolerance used when evaluating observability.
+    \end{varlist}
+    \vname{sl}: linear system (\verb!syslin! list \verb!sl=[A,B,C,D(s)]!)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  transfer to state-space conversion:\verb!h=C*(s*eye()-A)^-1*B+D(s)!
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    H=[2/s,(s+1)/(s^2-5)];
+    Sys=tf2ss(H)
+    clean(ss2tf(Sys))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{ss2tf}{ss2tf} \manlink{tf2des}{tf2des} \manlink{des2tf}{des2tf}  
+\end{manseealso}

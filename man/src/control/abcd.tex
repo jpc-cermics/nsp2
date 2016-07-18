@@ -1,0 +1,38 @@
+% -*- mode: latex -*-
+\mansection{abcd}
+\begin{mandesc}
+  \short{abcd}{state-space matrices} \\ % 
+\end{mandesc}
+%\index{abcd}\label{abcd}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [A,B,C,D]=abcd(sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: a linear system in state-space or transfer form
+    \vname{A,B,C,D}: real matrices.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the \verb!A,B,C,D! matrices from a linear system \verb!Sl!.
+  For transfer matrices \verb!Sl! is converted
+  into state-space form by \verb!tf2ss!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=diag([1,2,3]);B=[1;1;1];C=[2,2,2];
+    sys=syslin('c',A,B,C);
+    [a1,b1,c1,d1]=abcd(sys);
+    systf=ss2tf(sys);
+    [a,b,c,d]=abcd(systf)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{ssrand}{ssrand}  
+\end{manseealso}

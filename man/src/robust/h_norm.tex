@@ -1,0 +1,29 @@
+% -*- mode: latex -*-
+\mansection{h\_norm}
+\begin{mandesc}
+  \shortunder{h\_norm}{h_norm}{H-infinity norm} \\ % 
+\end{mandesc}
+%\index{h\_norm}\label{h-norm}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [hinfnorm [,frequency]]=h_norm(sl [,rerr])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl}: the state space system (\verb!syslin! list)
+    \vname{rerr}: max. relative error, default value \verb!1e-8!
+    \vname{hinfnorm}: the infinity norm of \verb!Sl!
+    \vname{frequency}: frequency at which maximum is achieved
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  produces the infinity norm  of a state-space system 
+  (the maximum over all frequencies of the maximum singular value).
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{linfn}{linfn} \manlink{linf}{linf} \manlink{svplot}{svplot}  
+\end{manseealso}

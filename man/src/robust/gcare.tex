@@ -1,0 +1,34 @@
+% -*- mode: latex -*-
+\mansection{gcare}
+\begin{mandesc}
+  \short{gcare}{control Riccati equation} \\ % 
+\end{mandesc}
+%\index{gcare}\label{gcare}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [X,F]=gcare(Sl)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list)
+    \vname{X}: symmetric matrix
+    \vname{F}: real matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Generalized Control Algebraic Riccati Equation (GCARE).
+  \verb!X! = solution , \verb!F! = gain.
+  The GCARE for \verb!Sl=[A,B,C,D]! is:
+\begin{verbatim}
+  (A-B*Si*D'*C)'*X+X*(A-B*Si*D'*C)-X*B*Si*B'*X+C'*Ri*C=0
+\end{verbatim}
+  where \verb!S=(eye()+D'*D)!, \verb!Si=inv(S)!, \verb!R=(eye()+D*D')!, \verb!Ri=inv(R)! 
+  and \verb!F=-Si*(D'*C+B'*X)! is such that \verb!A+B*F! is stable.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{gfare}{gfare}  
+\end{manseealso}

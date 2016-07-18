@@ -1,0 +1,68 @@
+% -*- mode: latex -*-
+\mansection{csim}
+\begin{mandesc}
+  \short{csim}{simulation (time response) of linear system} \\ % 
+\end{mandesc}
+%\index{csim}\label{csim}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [y [,x]]=csim(u,t,sl,[x0 [,tol]])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{u}: function, list or string (control)
+    \vname{t}: real vector specifying times with, \verb!t(1)! is the initial
+    time (\verb!x0=x(t(1))!).
+    \vname{sl}: list (\verb!syslin!)
+    \vname{y}: a  matrix such that   \verb!y=[y(t(i)]!, i=1,..,n
+    \vname{x}: a  matrix such that   \verb!x=[x(t(i)]!, i=1,..,n
+    \vname{tol}: a 2 vector [atol rtol] defining absolute and relative
+    tolerances for ode solver (see ode)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+
+  simulation of the controlled linear system \verb!sl!.  \verb!sl! is assumed to
+  be a continuous-time system represented by a \verb!syslin! list.\verb!u! is
+  the control and \verb!x0! the initial state.\verb!y! is the output and
+  \verb!x! the state.
+  The control can be:
+  \begin{itemize}
+  \item a function: \verb![inputs]=u(t)!
+  \item a list: \verb!list(ut,parameter1,....,parametern)! such that:
+    \verb!inputs=ut(t,parameter1,....,parametern)! (\verb!ut! is a function)
+  \item the string \verb!"impuls"! for impulse response calculation
+    (here \verb!sl! is assumed SISO without direct feed through and \verb!x0=0!)
+  \item the string \verb!"step"! for step response calculation 
+    (here \verb!sl! is assumed SISO without direct feed-through and
+    \verb!x0=0!)
+  \item a vector giving the values of u correponding to each t value.
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');w=ssrand(1,1,3);w.A = w.A-2*eye(size(w.A));
+    t=0:0.05:5;
+    //impulse(w) = step (s * w)
+    xbasc(0);xset("window",0);xselect();
+    plot2d([t',t'],[(csim('step',t,tf2ss(s)*w))',0*t'])
+    xbasc(1);xset("window",1);xselect();
+    plot2d([t',t'],[(csim('impulse',t,w))',0*t'])
+    //step(w) = impulse (s^-1 * w)
+    xbasc(3);xset("window",3);xselect();
+    plot2d([t',t'],[(csim('step',t,w))',0*t'])
+    xbasc(4);xset("window",4);xselect();
+    plot2d([t',t'],[(csim('impulse',t,tf2ss(1/s)*w))',0*t'])
+    //input defined by a time function
+    function u=input(t);u=abs(sin(t));endfunction;
+    xbasc();plot2d([t',t'],[(csim(input,t,w))',0*t'])
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{dsimul}{dsimul} \manlink{flts}{flts} \manlink{ltitr}{ltitr} \manlink{rtitr}{rtitr} \manlink{ode}{ode} \manlink{impl}{impl}  
+\end{manseealso}

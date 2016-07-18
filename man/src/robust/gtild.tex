@@ -1,0 +1,74 @@
+% -*- mode: latex -*-
+\mansection{gtild}
+\begin{mandesc}
+  \short{gtild}{tilde operation} \\ % 
+\end{mandesc}
+%\index{gtild}\label{gtild}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  Gt=gtild(G)  
+  Gt=gtild(G,flag)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: either a polynomial or a linear system (\verb!syslin! list) or a rational matrix
+    \vname{Gt}: same as G
+    \vname{flag}: character string: either \verb!'c'! or \verb!'d'! (optional parameter).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  If \verb!G! is a polynomial matrix (or a polynomial), \verb!Gt=gtild(G,'c')!
+  returns the polynomial matrix \verb!Gt(s)=G(-s)'!.
+  If \verb!G! is a polynomial matrix (or a polynomial),  \verb!Gt=gtild(G,'d')! 
+  returns the polynomial matrix \verb!Gt=G(1/z)*z^n! where n is the maximum
+  degree of \verb!G!.
+  For continuous-time systems represented in state-space by a \verb!syslin! list,
+  \verb!Gt = gtild(G,'c')! returns a state-space representation
+  of \verb!G(-s)'! i.e the \verb!ABCD! matrices of \verb!Gt! are
+  \verb!A',-C', B', D'!. If \verb!G! is improper (\verb! D= D(s)!) 
+  the \verb!D! matrix of \verb!Gt! is \verb!D(-s)'!.
+  For  discrete-time systems represented in state-space by a \verb!syslin! list,
+  \verb!Gt = gtild(G,'d')! returns a state-space representation
+  of \verb!G(-1/z)'! i.e the (possibly improper) state-space 
+  representation of \verb!-z*C*inv(z*A-B)*C + D(1/z) !.
+  For rational matrices, \verb!Gt = gtild(G,'c')! returns the rational
+  matrix \verb!Gt(s)=G(-s)! and \verb!Gt = gtild(G,'d')! returns the
+  rational matrix \verb!Gt(z)= G(1/z)'!.
+  The parameter \verb!flag! is necessary when \verb!gtild! is called with
+  a polynomial argument.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    //Continuous time
+    s=poly(0,'s');G=[s,s^3;2+s^3,s^2-5]
+    Gt=gtild(G,'c')
+    Gt-horner(G,-s,ttmode=%t)'   //continuous-time interpretation
+    Gt=gtild(G,'d');
+    Gt-horner(G,1/s,ttmode=%t)'*s^3  //discrete-time interpretation
+    G=ssrand(2,2,3);Gt=gtild(G);   //State-space (G is cont. time by default)
+    clean((horner(ss2tf(G),-s,ttmode=%t))'-ss2tf(Gt))   //Check
+    // Discrete-time 
+    z=poly(0,'z');
+    Gss=ssrand(2,2,3);Gss.dom='d'; //discrete-time
+    Gss.D=[1,2;0,1];   //With a constant D matrix
+    G=ss2tf(Gss);Gt1=horner(G,1/z,ttmode=%t)';
+    Gt=gtild(Gss);
+    Gt2=clean(ss2tf(Gt)); clean(Gt1-Gt2)  //Check
+    //Improper systems
+    z=poly(0,'z');
+    Gss=ssrand(2,2,3);Gss.dom = 'd'; //discrete-time
+    Gss.D = [z,z^2;1+z,3];    //D(z) is polynomial 
+    G=ss2tf(Gss);
+    Gt1=horner(G,1/z,ttmode=%t)';  //Calculation in transfer form
+    Gt=gtild(Gss);    //..in state-space 
+    Gt2=clean(ss2tf(Gt));clean(Gt1-Gt2)  //Check
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{horner}{horner} \manlink{factors}{factors}  
+\end{manseealso}

@@ -1,0 +1,29 @@
+% -*- mode: latex -*-
+\mansection{nehari}
+\begin{mandesc}
+  \short{nehari}{Nehari approximant} \\ % 
+\end{mandesc}
+%\index{nehari}\label{nehari}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [x]=nehari(R [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{R}: linear system (\verb!syslin! list)
+    \vname{x}: linear system (\verb!syslin! list)
+    \vname{tol}: optional threshold
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![x]=nehari(R [,tol])returns! the Nehari approximant of \verb!R!.\verb!R!
+  = linear system in state-space representation (\verb!syslin! list).\verb!R! is
+  strictly proper and \verb!- R~! is stable (i.e. \verb!R! is anti stable).
+\begin{verbatim}
+  || R - X ||oo = min || R - Y ||oo
+  Y in Hoo
+\end{verbatim}
+\end{mandescription}

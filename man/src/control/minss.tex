@@ -1,0 +1,33 @@
+% -*- mode: latex -*-
+\mansection{minss}
+\begin{mandesc}
+  \short{minss}{minimal realization} \\ % 
+\end{mandesc}
+%\index{minss}\label{minss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [slc]=minss( sl [,tol])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{sl,slc}: \verb!syslin! lists (linear systems in state-space form)
+    \vname{tol}: real (threshold for rank determination (see \verb!contr!))
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!minss! returns in \verb!slc! a minimal realization of \verb!sl!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    sl=syslin('c',[1 0;0 2],[1;0],[2 1]);
+    minss(sl)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{contr}{contr} \manlink{minreal}{minreal} \manlink{arhnk}{arhnk} \manlink{contrss}{contrss} \manlink{obsvss}{obsvss} \manlink{balreal}{balreal}  
+\end{manseealso}

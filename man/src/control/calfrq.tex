@@ -1,0 +1,46 @@
+% -*- mode: latex -*-
+\mansection{calfrq}
+\begin{mandesc}
+  \short{calfrq}{frequency response discretization} \\ % 
+\end{mandesc}
+%\index{calfrq}\label{calfrq}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [frq,split]=calfrq(h,[fmin,fmax])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: SISO linear system (\verb!syslin! list)
+    \vname{fmin,fmax}: real scalars (min and max frequencies)
+    \vname{frq}: row vector (discretization of interval)
+    \vname{split}: vector of frq splitting points indexes
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+
+  frequency response discretization ; \verb!frq! is the discretization of
+  \verb![fmin,fmax]!  such that the peaks in the frequency response are well
+  represented.  Default values for \verb!fmin! and \verb!fmax! are \verb!1.d-3!,
+  \verb!1.d+3! if \verb!h! is continuous-time or \verb!1.d-3!,
+  \verb!1/(2*h('dt'))! if \verb!h! is discrete-time.  Singularities are located
+  between \verb!frq(split(k))! and \verb!frq(split(k)+1)!  for \verb!k > 1!.
+
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s')
+    h=syslin('c',(s^2+2*0.9*10*s+100)/(s^2+2*0.3*10.1*s+102.01))
+    h1=h*syslin('c',(s^2+2*0.1*15.1*s+228.01)/(s^2+2*0.9*15*s+225)) 
+    [f1,spl]=calfrq(h1,0.01,1000);
+    rf=repfreq(h1,frq=f1);
+    plot2d(real(rf)',imag(rf)')
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{bode}{bode} \manlink{black}{black} \manlink{nyquist}{nyquist} \manlink{freq}{freq} \manlink{repfreq}{repfreq} \manlink{logspace}{logspace}  
+\end{manseealso}

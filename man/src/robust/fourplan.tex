@@ -1,0 +1,32 @@
+% -*- mode: latex -*-
+\mansection{fourplan}
+\begin{mandesc}
+  \short{fourplan}{augmented plant to four plants} \\ % 
+\end{mandesc}
+%\index{fourplan}\label{fourplan}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [P11,P12,P21,P22]=fourplan(P,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{P}: \verb!syslin! list (linear system)
+    \vname{r}: 1x2 row vector, dimension of \verb!P22!
+    \vname{P11,P12,P21,P22}: \verb!syslin! lists.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Utility function.\verb!P! being partitioned as follows:
+\begin{verbatim}
+  P=[ P11 P12;
+    P21 P22]  
+\end{verbatim}
+with \verb!size(P22)=r! this function returns the four linear systems \verb!P11,P12,P21,P22!.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{lqg}{lqg} \manlink{lqg2stan}{lqg2stan} \manlink{lqr}{lqr} \manlink{lqe}{lqe} \manlink{lft}{lft}  
+\end{manseealso}

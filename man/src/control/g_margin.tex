@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+\mansection{g\_margin}
+\begin{mandesc}
+  \shortunder{g\_margin}{g_margin}{gain margin} \\ % 
+\end{mandesc}
+%\index{g\_margin}\label{g-margin}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [gm [,fr]]=g_margin(h)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{h}: \verb!syslin! list representing a linear system 
+    in state-space or transfer form.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns \verb!gm!, the gain margin in dB of \verb!h! 
+  (SISO plant) and \verb!fr!, the achieved corresponding frequency in hz.
+  The gain margin is values of the system gain at points where the
+  nyquist plot crosses the negative real axis.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    s=poly(0,'s');
+    h=syslin('c',-1+s,3+2*s+s^2)
+    [g,fr]=g_margin(h)
+    [g,fr]=g_margin(h-10)
+    nyquist(h-10)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{p\_margin}{p-margin} \manlink{black}{black} \manlink{chart}{chart} \manlink{nyquist}{nyquist}  
+\end{manseealso}

@@ -1,0 +1,32 @@
+% -*- mode: latex -*-
+\mansection{colinout}
+\begin{mandesc}
+  \short{colinout}{inner-outer factorization} \\ % 
+\end{mandesc}
+%\index{colinout}\label{colinout}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Inn,X,Gbar]=colinout(G)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: linear system (\verb!syslin! list) \verb![A,B,C,D]!
+    \vname{Inn}:  inner factor (\verb!syslin! list)
+    \vname{Gbar}:  outer factor (\verb!syslin! list)
+    \vname{X}:  row-compressor of \verb!G! (\verb!syslin! list)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Inner-outer factorization (and column compression) of (lxp)
+  \verb!G =[A,B,C,D]! with l$<$=p.\verb!G! is assumed to be fat (\verb!l$<$=p!)
+  without zero on the imaginary axis and with a \verb!D! matrix which is full
+  row rank.\verb!G! must also be stable for having \verb!Gbar! stable.  Dual of
+  \verb!rowinout!.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{syslin}{syslin} \manlink{rowinout}{rowinout}  
+\end{manseealso}

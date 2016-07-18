@@ -1,0 +1,60 @@
+% -*- mode: latex -*-
+\mansection{pfss}
+\begin{mandesc}
+  \short{pfss}{partial fraction decomposition} \\ % 
+\end{mandesc}
+%\index{pfss}\label{pfss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  elts=pfss(Sl)  
+  elts=pfss(Sl,rmax)  
+  elts=pfss(Sl,'cord')  
+  elts=pfss(Sl,rmax,'cord')  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl} \verb!syslin! list (state-space or transfer linear system)
+    rmax: real number controlling the conditioning of block
+    diagoanalization cord: character string \verb!'c'!
+    or \verb!'d'!.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Partial fraction decomposition of the linear system \verb!Sl! (in state-space 
+  form, transfer matrices are automatically converted to state-space form
+  by \verb!tf2ss!):\verb!elts! is the list of linear systems which add up to \verb!Sl!
+  i.e. \verb!elts=list(S1,S2,S3,...,Sn)! with:\verb!Sl = S1 + S2 +... +Sn!.
+  Each \verb!Si! contains some poles of \verb!!S according to the 
+  block-diagonalization of the \verb!A! matrix of \verb!S!.
+  For non proper systems the polynomial part of \verb!Sl! is put
+  in the last entry of \verb!elts!.
+  If \verb!Sl! is given in transfer form, it is first converted into state-space
+  and each subsystem \verb!Si! is then converted in transfer form.
+  The A matrix is of the state-space is put into block diagonal form
+  by function \verb!bdiag!. The optional parameter \verb!rmax! is sent to
+  \verb!bdiag!. If \verb!rmax! should be set to a large number to enforce
+  block-diagonalization.
+  If the optional flag \verb!cord='c'! is given the elements in \verb!elts!
+  are sorted according to the real part (resp. magnitude if \verb!cord='d'!)
+  of the eigenvalues of A matrices.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    W=ssrand(1,1,6);
+    elts=pfss(W); 
+    W1=0;for k=1:size(elts), W1=W1+ss2tf(elts(k));end
+    clean(ss2tf(W)-W1)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pbig}{pbig} \manlink{bdiag}{bdiag} \manlink{coffg}{coffg} \manlink{dtsi}{dtsi}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.D.;   
+\end{authors}

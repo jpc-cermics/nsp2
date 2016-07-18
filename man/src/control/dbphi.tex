@@ -1,0 +1,28 @@
+% -*- mode: latex -*-
+\mansection{dbphi}
+\begin{mandesc}
+  \short{dbphi}{frequency response to phase and magnitude representation} \\ % 
+\end{mandesc}
+%\index{dbphi}\label{dbphi}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [db,phi] =dbphi(repf)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{db,phi}: vector of gains (db) and phases (degrees)
+    \vname{repf}: vector of complex frequency response
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!db(k)! is the magnitude of \verb!repf(k)! expressed in dB i.e.
+  \verb!db(k)=20*log(abs(repf(k)))/log(10)! and \verb!phi(k)! is the phase
+  of \verb!repf(k)! expressed in degrees.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{repfreq}{repfreq} \manlink{bode}{bode}  
+\end{manseealso}

@@ -1,0 +1,43 @@
+% -*- mode: latex -*-
+\mansection{gamitg}
+\begin{mandesc}
+  \short{gamitg}{H-infinity gamma iterations} \\ % 
+\end{mandesc}
+%\index{gamitg}\label{gamitg}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [gopt]=gamitg(G,r,prec [,options]);  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{G}: \verb!syslin! list (plant realization )
+    \vname{r}: 1x2 row vector (dimension of \verb!G22!)
+    \vname{prec}: desired relative accuracy on the norm
+    \vname{option}: string \verb!'t'!
+    \vname{gopt}: real scalar, optimal H-infinity gain
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!gopt=gamitg(G,r,prec [,options])!
+  returns the H-infinity optimal gain \verb!gopt!.\verb!G! contains the state-space matrices \verb![A,B,C,D]! of
+  the plant with the usual partitions:
+\begin{verbatim}
+  B = ( B1 , B2 ) ,    C = ( C1 ) ,    D = ( D11  D12)
+  ( C2 )          ( D21  D22)
+\end{verbatim}
+  These partitions are implicitly given in \verb!r!: \verb!r(1)!
+  and \verb!r(2)! are the dimensions of \verb!D22! (rows x columns)
+  With \verb!option='t'!, \verb!gamitg! traces each bisection step, i.e., 
+  displays the lower and upper bounds and the current test point.
+\end{mandescription}
+% -- see also
+\begin{manseealso}
+  \manlink{ccontrg}{ccontrg} \manlink{h\_inf}{h-inf}  
+\end{manseealso}
+% -- Author
+\begin{authors}
+  P. Gahinet
+\end{authors}

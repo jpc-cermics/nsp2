@@ -1,0 +1,30 @@
+% -*- mode: latex -*-
+\mansection{h\_inf\_st}
+\begin{mandesc}
+  \shortunder{h\_inf\_st}{h_inf_st}{static H-infinity problem} \\ % 
+\end{mandesc}
+%\index{h\_inf\_st}\label{h-inf-st}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Kopt,gamaopt]=h_inf_stat(D,r)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{D}: real matrix
+    \vname{r}: 1x2 vector
+    \vname{Kopt}: matrix
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  computes a matrix \verb!Kopt! such that largest singular value
+  of:\verb!lft(D,r,K)=D11+D12* K*inv(I-D22*K)* D21!  is minimal (Static
+  \verb!H_infinity! four blocks problem).  D is partionned as
+  \verb!D=[D11 D12; D21 D22]!  where \verb!size(D22)=r=[r1 r2]!
+\end{mandescription}
+%-- Author
+\begin{authors}
+  F.D. ;   
+\end{authors}

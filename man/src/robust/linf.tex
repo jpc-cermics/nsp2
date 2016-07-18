@@ -1,0 +1,32 @@
+% -*- mode: latex -*-
+\mansection{linf}
+\begin{mandesc}
+  \short{linf}{infinity norm} \\ % 
+\end{mandesc}
+%\index{linf}\label{linf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  linf(g [,eps],[tol])   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{g}: is a \verb!syslin! linear system.
+    \vname{eps}: is error tolerance on n.
+    \vname{tol}: threshold for imaginary axis poles.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns the L\_infinity norm of \verb!g!.
+\begin{verbatim}
+  n=sup [sigmax(g(jw)] 
+  w
+\end{verbatim}
+(sigmax largest singular value).
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{h\_norm}{h-norm} \manlink{linfn}{linfn}  
+\end{manseealso}

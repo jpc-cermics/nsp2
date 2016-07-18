@@ -1,0 +1,56 @@
+% -*- mode: latex -*-
+\mansection{h\_inf}
+\begin{mandesc}
+  \shortunder{h\_inf}{h_inf}{H-infinity (central) controller} \\ % 
+\end{mandesc}
+%\index{h\_inf}\label{h-inf}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Sk,ro]=h_inf(P,r,romin,romax,nmax)  
+  [Sk,rk,ro]=h_inf(P,r,romin,romax,nmax)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+
+    \vname{P}: \verb!syslin! list: continuous-time linear system (``augmented''
+    plant given in state-space form or in transfer form)
+
+    \vname{r}: size of the \verb!P22! plant i.e. 2-vector
+    \verb![#outputs,#inputs]!
+    
+    \vname{romin,romax}: a priori bounds on \verb!ro! with \verb!ro=1/gama^2!;
+    (\verb!romin=0!  usually)
+
+    \vname{nmax}: integer, maximum number of iterations in the gama-iteration.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!h_inf! computes H-infinity optimal controller for the continuous-time
+  plant \verb!P!.  The partition of \verb!P! into four sub-plants is given
+  through the 2-vector \verb!r! which is the size of the \verb!22! part of
+  \verb!P!.\verb!P! is given in state-space e.g. \verb!P=syslin('c',A,B,C,D)!
+  with \verb!A,B,C,D! = constant matrices or \verb!P=syslin('c',H)! with
+  \verb!H! a transfer matrix.\verb![Sk,ro]=H_inf(P,r,romin,romax,nmax)! returns
+  \verb!ro! in \verb![romin,romax]! and the central controller \verb!Sk! in the
+  same representation as \verb!P!.  (All calculations are made in state-space,
+  i.e conversion to state-space is done by the function, if necessary).  Invoked
+  with three LHS parameters,\verb![Sk,rk,ro]=H_inf(P,r,romin,romax,nmax)!
+  returns \verb!ro! and the Parameterization of all stabilizing controllers: a
+  stabilizing controller \verb!K! is obtained by \verb!K=lft(Sk,r,PHI)! where
+  \verb!PHI! is a linear system with dimensions \verb!r'! and
+  satisfy:\verb!H_norm(PHI) $<$ gamma!.  \verb!rk (=r)! is the size of the
+  \verb!Sk22! block and \verb!ro = 1/gama^2!  after \verb!nmax! iterations.
+  Algorithm is adapted from Safonov-Limebeer. Note that \verb!P! is assumed to
+  be a continuous-time plant.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{gamitg}{gamitg} \manlink{ccontrg}{ccontrg} \manlink{leqr}{leqr}  
+\end{manseealso}
+%-- Author
+\begin{authors}
+  F.Delebecque INRIA (1990)  
+\end{authors}

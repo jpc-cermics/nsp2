@@ -1,0 +1,81 @@
+% -*- mode: latex -*-
+\mansection{ss2ss}
+\begin{mandesc}
+  \short{ss2ss}{state-space to state-space conversion, feedback, injection} \\ % 
+\end{mandesc}
+%\index{ss2ss}\label{ss2ss}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [Sl1,right,left]=ss2ss(Sl,T, [F, [G , [flag]]])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Sl}: linear system (\verb!syslin! list) in state-space form
+    \vname{T}: square (non-singular) matrix
+    \vname{Sl1, right, left}: linear systems (syslin lists) in state-space form
+    \vname{F}: real matrix (state feedback gain)
+    \vname{G}: real matrix (output injection gain)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Returns the linear system \verb!Sl1=[A1,B1,C1,D1]!
+  where \verb!A1=inv(T)*A*T, B1=inv(T)*B, C1=C*T, D1=D!.
+  Optional parameters \verb!F! and \verb!G! are state feedback
+  and output injection respectively. 
+  For example,
+  \verb!Sl1=ss2ss(Sl,T,F)! returns \verb!Sl1! with:
+  and \verb!right! is a non singular linear system such that \verb!Sl1=Sl*right!.
+  \verb!Sl1*inv(right)! is a factorization of \verb!Sl!.
+  \verb!Sl1=ss2ss(Sl,T,0*F,G)! returns \verb!Sl1! with:
+  and \verb!left! is a non singular linear system such that \verb!Sl1=left*Sl! (\verb!right=Id! if \verb!F=0!).
+  When both \verb!F! and \verb!G! are given, \verb!Sl1=left*Sl*right!.
+  \begin{description}
+  \item[-] When \verb!flag! is used and \verb!flag=1! an output injection  as follows is used 
+    and then a feedback is performed, \verb!F! must be of size \verb!(m+p,n)!
+    ( x is in \verb!R^n! , y in \verb!R^p!, u in \verb!R^m! ). 
+    \verb!right! and \verb!left! have the following property:
+\begin{verbatim}
+  Sl1 =  left*sysdiag(sys,eye(p,p))*right 
+\end{verbatim}
+\item[-] When \verb!flag! is used and \verb!flag=2! a feedback
+  (\verb!F! must be of  size \verb!(m,n)!) is performed
+  and then the above output injection is applied. \verb!right!
+  and \verb!left! have  the following property:
+\begin{verbatim}
+  Sl1 = left*sysdiag(sys*right,eye(p,p)))
+\end{verbatim}
+\end{description}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    Sl=ssrand(2,2,5); trzeros(Sl)       // zeros are invariant:
+    Sl1=ss2ss(Sl,rand(5,5),rand(2,5),rand(5,2)); 
+    trzeros(Sl1), trzeros(rand(2,2)*Sl1*rand(2,2))
+    // output injection [ A + GC, (B+GD,-G)]
+    //                  [   C   , (D   , 0)]
+    p=1,m=2,n=2; sys=ssrand(p,m,n);
+    // feedback (m,n)  first and then output injection.
+    F1=rand(m,n);
+    G=rand(n,p);
+    [sys1,right,left]=ss2ss(sys,rand(n,n),F1,G,2);
+    // Sl1 equiv left*sysdiag(sys*right,eye(p,p)))
+    res=clean(ss2tf(sys1) - ss2tf(left*sysdiag(sys*right,eye(p,p))))
+    // output injection then feedback (m+p,n) 
+    F2=rand(p,n); F=[F1;F2];
+    [sys2,right,left]=ss2ss(sys,rand(n,n),F,G,1);
+    // Sl1 equiv left*sysdiag(sys,eye(p,p))*right 
+    res=clean(ss2tf(sys2)-ss2tf(left*sysdiag(sys,eye(p,p))*right))
+    // when F2= 0; sys1 and sys2 are the same 
+    F2=0*rand(p,n);F=[F1;F2];
+    [sys2,right,left]=ss2ss(sys,rand(n,n),F,G,1);
+    res=clean(ss2tf(sys2)-ss2tf(sys1))
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{projsl}{projsl} \manlink{feedback}{feedback}  
+\end{manseealso}
