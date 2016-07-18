@@ -4,7 +4,7 @@ function [x1,x2]=riccati(a,b,c,dom,typ)
 // a'*x+x*a-x*b*x+c=0 (continuous time case)
 // a'*x*a-(a'*x*b1/(b2+b1'*x*b1))*(b1'*x*a)+c-x with b=b1/b2*b1'
 // (discrete time case)
-// If called with nargout=1 (one ouput argument) riccati returns x.
+// If called with LHS=1 (one ouput argument) riccati returns x.
 //
 // -- a,b,c real matrices nxn, b and  c symetric.
 // -- dom = 'c' or 'd' for the time domain (continuous or discrete)
@@ -13,10 +13,9 @@ function [x1,x2]=riccati(a,b,c,dom,typ)
 // See also ric_desc
 //!
 // Copyright INRIA
-
-  if nargin==4 then typ='eigen',end,
+  if nargin == 4 then typ='eigen',end,
   ham=[a -b;-c -a'],
-  [n,vn]=size(a),
+  [m,n]=size(a),
   if part(dom,1)=='c' then
     select  typ,
      case 'schur' then
@@ -36,12 +35,14 @@ function [x1,x2]=riccati(a,b,c,dom,typ)
     end,
   else
     aa=[eye(n,n) b;0*ones(n,n) a'],bb=[a  0*ones(n,n);-c eye(n,n)],
-    [bs,as,s,n1]=schur(bb,aa,sort='d');
-    if n1<>n then 
-      error('Error: wrong dimension ('+string(n1)+') of stable subspace -expecting '+string(n)')
+    // schur(A,B,...) is named qz is nsp and returned arguments are not 
+    // the same [bs,as,Q,Z,dim] in nsp [bs,as,Z,dim] in scicoslab
+    [bs,as,Q,Z,dim]=qz(bb,aa, sort = 'd');
+    if dim<>n then 
+      error('Error: wrong dimension ('+string(dim)+') of stable subspace -expecting '+string(n)')
     end
-    s=s(:,1:n1);
+    s=Z(:,1:dim);
   end,
   x1=s(n+1:2*n,:),x2=s(1:n,:),
-  if nargout==1 then x1=x1/x2,end
+  if nargout == 1 then x1=x1/x2,end
 endfunction

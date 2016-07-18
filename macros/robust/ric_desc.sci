@@ -9,7 +9,7 @@ function [X1,X2,zero]=ric_desc(H,E)
 // H = [A  R;
 //      Q -A']
 // with [X1,X2,err]=ric_desc(H),solution X is given by X=X1/X2.
-// zero=norm 1 of nargout of (Ec)
+// zero=norm 1 of lhs of (Ec)
 //
 // (solution X is also given by   X=riccati(A,Q,R,'c'))
 //
@@ -25,14 +25,14 @@ function [X1,X2,zero]=ric_desc(H,E)
 //      H=[A, 0*ones(n,n);
 //        -C, eye(n,n)];
 // with [X1,X2,err]=ric_desc(H,E),solution X is given by X=X1/X2.
-// zero=norm 1 of nargout of (Ed)
+// zero=norm 1 of lhs of (Ed)
 //   
 //  (solution X is also given by X=riccati(A,G,C,'d')  with G=B/R*B')
 //!
 // Copyright INRIA
-
-  if nargin==1 then
-    [n2,vn2]=size(H);
+  if nargin == 1 then
+    [m2,n2]=size(H);
+    if m2<>n2 then error("Error: firts argument should be square\n");end
     n1=n2/2;
     A=H(1:n1,1:n1);
     //R=H(1:n1,n1+1:n2); Q=H(n1+1:n2,1:n1);
@@ -42,7 +42,6 @@ function [X1,X2,zero]=ric_desc(H,E)
       [Hb,W1]=balanc(H);
     end
     if cond(W1) > 1.d+10*norm(H,1) then Hb=H,W1=eye(W1);end
-    
     [W2,n]=schur(Hb,sort='c');Hb=[]
     if n<>n1 then printf('Stationary Riccati solver fails!!!!');end
     W1=W1*W2;W2=[]
@@ -54,16 +53,19 @@ function [X1,X2,zero]=ric_desc(H,E)
     zr=X2'*A'*X1+X1'*A*X2+X1'*H(1:n1,n1+1:n2)*X1-X2'*H(n1+1:n2,1:n1)*X2;
     zero=norm(zr,1);
   end
-  if nargout==1 then X1=X1/X2;end
-  if nargin==2 then
-    [n2,vn2]=size(H);n1=n2/2;
+  if LHS==1 then X1=X1/X2;end
+  if RHS==2 then
+    [m2,n2]=size(H);n1=n2/2;
+    if m2<>n2 then error("Error: firts argument should be square\n");end
     n1=n2/2;
-    [UV,n]=schur(H,E,sort='d');
+    // qz in nsp 
+    // [UV,n]= qz(H,E,sort='d');
+    [A,E,Q,UV,n]= qz(H,E,sort='d');
     X2=UV(1:n,1:n);X1=UV(n+1:2*n,1:n);
-    if nargout==3 then
+    if lhs == 3 then
       A=H(1:n1,1:n1);G=E(1:n,n+1:2*n);C=-H(n+1:2*n,1:n);B=real(sqrtm(G));R=eye(A);
       X=X1/X2;zero=A'*X*A-(A'*X*B/(R+B'*X*B))*(B'*X*A)+C-X; 
     end
   end
-  if nargout==1 then X=X1/X2;end
+  if lhs == 1 then X=X1/X2;end
 endfunction
