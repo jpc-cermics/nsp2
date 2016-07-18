@@ -81,7 +81,11 @@ A && B
 i = 0;
 x = rand(1,3)
 bool = i > 0  &&  x(i) < 0.5 // the 2d expression is not evaluated
-bool = i > 0  &   x(i) < 0.5 // the 2d expression is evaluated and so raise an error
+// the 2d expression is evaluated and so raise an error
+ok=execstr('bool = i > 0  &   x(i) < 0.5',errcatch=%t);
+// ok must be false
+if ok then pause;end 
+lasterror();
 \end{Verbatim}
 
 \paragraph{OR basic examples}
@@ -98,7 +102,11 @@ A || B
 i = 0;
 x = rand(1,3)
 bool = i == 0 || x(i) < 0.5 // the 2d expression is not evaluated
-bool = i == 0 || x(i) < 0.5 // the 2d expression is evaluated and so raise an error
+// the 2d expression is evaluated and so raise an error
+ok=execstr('bool = i > 0 | x(i) < 0.5',errcatch=%t);
+// ok must be false
+if ok then pause;end 
+lasterror();
 \end{Verbatim}
 
 \end{examples}

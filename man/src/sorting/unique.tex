@@ -16,107 +16,113 @@ y = unique(x)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x}: vector (or matrix) of numbers (real float (Mat) or integers (IMat) or strings 
-               or cells, or a list.
-    \vname{y}: vector (or matrix for unique with rows or columns) or list (when x is a list) containing 
-               unique components of x (or the unique rows or columns, see option which)
-    \vname{ind}: vector of same length than y, ind(i) is an index
-                 such that y(i)=x(ind(i)). \verb+ind+ could be stored in an array of
-                 floating point numbers (Mat) (the default) or in an array of 
-                 usual C integers (IMat of itype int) if you use \verb+ind_type = "int"+
-    \vname{occ}: vector of same length than y, occ(i) is the number
-                 of occurrences of y(i) in the vector x.
+    \vname{x}: vector (or matrix) of numbers (real float (Mat) or integers
+    (IMat) or strings or cells, or a list.
+
+    \vname{y}: vector (or matrix for unique with rows or columns) or list (when
+    x is a list) containing unique components of x (or the unique rows or
+    columns, see option which)
+
+    \vname{ind}: vector of same length than y, ind(i) is an index such that
+    y(i)=x(ind(i)). \verb+ind+ could be stored in an array of floating point
+    numbers (Mat) (the default) or in an array of usual C integers (IMat of
+    itype int) if you use \verb+ind_type = "int"+
+
+    \vname{occ}: vector of same length than y, occ(i) is the number of
+    occurrences of y(i) in the vector x.
+
     \vname{first\_ind}: optional boolean scalar, useful only when x is a vector
     of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
     the smaller index such that y(i) = x(ind(i)).
-    \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
-    which gives the type for the index vector  \verb+ind+. 
-    \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
-    \verb+"elements"+) or any non ambiguous abreviation.
+    
+    \vname{ind_type = str}: named optional argument, a string among
+    \verb+{"double","int"}+ (default is \verb+"double"+) which gives the type
+    for the index vector \verb+ind+.
+
+    \vname{which = str}: named optional argument, a string among
+    \verb+{"elements","columns","rows"}+ (default is \verb+"elements"+) or any
+    non ambiguous abreviation.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  This function computes the unique components of a vector or a matrix of numbers,
-  strings or cells.
+  This function computes the unique components of a vector or a matrix of
+  numbers, strings or cells.
 
-   Using the option \verb+which = "rows"+ or \verb+which = "columns"+ 
-  you can get, instead of the unique elements, the unique rows or columns of the entry 
-  matrix (this feature is only available for real matrix (Mat) or integer matrix (IMat)). 
-   
-   As the number of occurrences of each unique
-  component could be returned, this function can be also useful for basic statistic
-  computations.
+  Using the option \verb+which = "rows"+ or \verb+which = "columns"+ you can
+  get, instead of the unique elements, the unique rows or columns of the entry
+  matrix (this feature is only available for real matrix (Mat) or integer matrix
+  (IMat)).
+  
+  As the number of occurrences of each unique component could be returned, this
+  function can be also useful for basic statistic computations.
 \end{mandescription}
-
-
 \begin{examples}
+  \paragraph{example 1} with a vector of numbers
+  \begin{Verbatim}
+    x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
+    [y, ind, occ] = unique(x)
+  \end{Verbatim}
 
-\paragraph{example 1} with a vector of numbers
-\begin{Verbatim}
-x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
-[y, ind, occ] = unique(x)
-\end{Verbatim}
+  \paragraph{example 2} with a vector of strings:
+  \begin{Verbatim}
+    x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+    [y, ind, occ] = unique(x);
+  \end{Verbatim}
 
-\paragraph{example 2} with a vector of strings:
-\begin{Verbatim}
-x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
-[y, ind, occ] = unique(x)
-\end{Verbatim}
-
-\paragraph{example 3} with a vector of cells:
-\begin{Verbatim}
-x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
-[y, ind, occ] = unique(x)}
+  \paragraph{example 3} with a vector of cells:
+  \begin{Verbatim}
+    x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
+    [y, ind, occ] = unique(x);
 \end{Verbatim}
 
 \paragraph{example 4} with a list:
 \begin{Verbatim}
-x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
-[y, ind, occ] = unique(x)
+  x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
+  [y, ind, occ] = unique(x)
 \end{Verbatim}
 
 \paragraph{example 5} using unique for rows or columns:
 \begin{Verbatim}
-// for columns
-A = grand(2,8,"uin",-1,1)
-B = unique(A,which="columns")  // or simply which="c"
-[B,ind,occ] = unique(A,which="col")
+  // for columns
+  A = grand(2,8,"uin",-1,1)
+  B = unique(A,which="columns")  // or simply which="c"
+  [B,ind,occ] = unique(A,which="col")
 
-// for rows
-A = grand(8,2,"uin",-1,1)
-B = unique(B,which="rows")     // or simply which="r"
-[B,ind,occ] = unique(A,which="rows")
+  // for rows
+  A = grand(8,2,"uin",-1,1)
+  B = unique(B,which="rows")     // or simply which="r"
+  [B,ind,occ] = unique(A,which="rows")
 \end{Verbatim}
 
 
 \paragraph{example 6} using unique for basic statistics:
 \begin{Verbatim}
-// generate a big sample of the binomial distribution B(6,0.4)
-m = 1e5;
-x = grand(m,1,"bin",6,0.4); 
-// computes the empirical probabilities associated to each values
-[y, ind, occ] = unique(x);
-p_emp = occ/m;
-// computes exact probabilities (using the cumulative distribution func)
-v = ones(7,1);
-p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);
-p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];
-// compare both empirical and exact ones
-xbasc()
-e = 0.05;
-plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...
-         rect=[-1,0,7,1.1*max(p_exact)],...
-         leg="exact probabilies@empirical probabilities")
+  // generate a big sample of the binomial distribution B(6,0.4)
+  m = 1e5;
+  x = grand(m,1,"bin",6,0.4); 
+  // computes the empirical probabilities associated to each values
+  [y, ind, occ] = unique(x);
+  p_emp = occ/m;
+  // computes exact probabilities (using the cumulative distribution func)
+  v = ones(7,1);
+  p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);
+  p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];
+  // compare both empirical and exact ones
+  xbasc()
+  e = 0.05;
+  plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...
+  rect=[-1,0,7,1.1*max(p_exact)],...
+  leg="exact probabilies@empirical probabilities")
 
-// we want to verify if grand(...,"perm",...) chooses random permutation uniformly
-// generate a big sample of permutations
-prms = grand(24e3,"perm",4);  // there 4!=24 possible permutation 
-[p,ind,occ] = unique(prms,which="col");
-size(p)   // should be 4 x 24
-xbasc()
-plot2d2(1:numel(occ),occ,style=2,rect=[0,0,25,max(occ)+100])
-xtitle("occurence for each 24 permutations should be around 1000")
+  // we want to verify if grand(...,"perm",...) chooses random permutation uniformly
+  // generate a big sample of permutations
+  prms = grand(24e3,"perm",4);  // there 4!=24 possible permutation 
+  [p,ind,occ] = unique(prms,which="col");
+  size(p)   // should be 4 x 24
+  xbasc()
+  plot2d2(1:numel(occ),occ,style=2,rect=[0,0,25,max(occ)+100])
+  xtitle("occurence for each 24 permutations should be around 1000")
 \end{Verbatim}
 
 \end{examples}

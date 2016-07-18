@@ -15,97 +15,99 @@ C = union(A,B)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A, B}: vectors or matrices of numbers (Mat or IMat), strings or cells , or lists.
-    \vname{C}: vector, matrix or list with the union of components (elements, rows or columns) of A and B.
+    \vname{A, B}: vectors or matrices of numbers (Mat or IMat), strings or cells
+    , or lists.
+
+    \vname{C}: vector, matrix or list with the union of components (elements,
+    rows or columns) of A and B.
+
     \vname{kA, kB}: vectors of indices such that $C = A(kA) \cup B(kB)$.
-    \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
-    which gives the type for the index vectors  \verb+kA+ and \verb+kB+. 
-    \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
-    \verb+"elements"+) or any non ambiguous abreviation. This option is useful only for matrices of floating 
-       point numbers (Mat) or integer numbers (IMat) for which the union operation can be done also for
-       columns or rows.
+
+    \vname{ind_type = str}: named optional argument, a string among
+    \verb+{"double","int"}+ (default is \verb+"double"+) which gives the type
+    for the index vectors \verb+kA+ and \verb+kB+.
+
+    \vname{which = str}: named optional argument, a string among
+    \verb+{"elements","columns","rows"}+ (default is \verb+"elements"+) or any
+    non ambiguous abreviation. This option is useful only for matrices of
+    floating point numbers (Mat) or integer numbers (IMat) for which the union
+    operation can be done also for columns or rows.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\begin{itemize}
-\item  By default (or when which option is "elements" ) this function computes the set 
-  union $C = A \cup B$ between 2 vectors (of numbers, strings or cells) or between 2
-  lists considered as sets (but uniqueness of each element in A or B is not
-  required). If A or B are matrices, they  are considered as big column vectors.
-  $C$ is output as a row vector if  $A$ and $B$ are both 
-  row vectors, otherwise $C$ is a column vector. For numbers or strings $C$ 
-  is sorted. 
+  \begin{itemize}
+  \item  By default (or when which option is "elements" ) this function computes the set 
+    union $C = A \cup B$ between 2 vectors (of numbers, strings or cells) or between 2
+    lists considered as sets (but uniqueness of each element in A or B is not
+    required). If A or B are matrices, they  are considered as big column vectors.
+    $C$ is output as a row vector if  $A$ and $B$ are both 
+    row vectors, otherwise $C$ is a column vector. For numbers or strings $C$ 
+    is sorted. 
 
-\item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
-  computes the union of the rows or of the columns of the two entry 
-  matrices (feature available only for Mat and IMat matrices).
-
+  \item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
+    computes the union of the rows or of the columns of the two entry 
+    matrices (feature available only for Mat and IMat matrices).
 \end{itemize}
-
 \end{mandescription}
 
 \begin{examples}
+  \paragraph{example 1} with vectors of numbers:
+  \begin{Verbatim}
+    A = [0.5, -1, 2];
+    B = [2, 2, -2, 4.4];
+    C = union(A,B)
+    [C, kA, kB] = union(A,B)
+    // we must have C = sort([A(kA),B(kB)],"g","i")
+    C.equal[sort([A(kA),B(kB)],"g","i")]
+    // index vectors kA and kB can be of IMat type
+    [C, kA, kB] = union(A,B,ind_type="int");
+  \end{Verbatim}
 
-\paragraph{example 1} with vectors of numbers:
-\begin{Verbatim}
-A = [0.5, -1, 2];
-B = [2, 2, -2, 4.4];
-C = union(A,B)
-[C, kA, kB] = union(A,B)
-// we must have C = sort([A(kA),B(kB)],"g","i")
-C.equal[sort([A(kA),B(kB)],"g","i")]
-// index vectors kA and kB can be of IMat type
-[C, kA, kB] = union(A,B,ind_type="int"))
-\end{Verbatim}
+  \paragraph{example 2} with vectors of strings:
+  \begin{Verbatim}
+    A = ["beer", "red vine"]
+    B = [ "foo", "bar", "beer"]
+    C = union(A,B)
+    [C, kA, kB] = union(A,B)
+    // we must have C = sort([A(kA),B(kB)],"g","i")
+    if ~C.equal[sort([A(kA),B(kB)],"g","i")] then pause;end
+  \end{Verbatim}
 
-\paragraph{example 2} with vectors of strings:
-\begin{Verbatim}
-A = ["beer", "red vine"]
-B = [ "foo", "bar", "beer"]
-C = union(A,B)
-[C, kA, kB] = union(A,B)
-// we must have C = sort([A(kA),B(kB)],"g","i")
-C.equal[sort([A(kA),B(kB)],"g","i")]}
-\end{Verbatim}
-
-\paragraph{example 3} with vectors of cells:
-\begin{Verbatim}
-A = {"toto", [0,1], 1, 2, 1, "bar"}
-B = { "foo",  3, [0,1], [2;3]}
-C = union(A,B)
-\end{Verbatim}
-
-\paragraph{example 4} with lists:
-\begin{Verbatim}
-A = list("toto", [0,1], 1, 2, 1, "bar")
-B = list( "foo", 3, [0,1], [2;3] )
-C = union(A,B)
-\end{Verbatim}
-
-\paragraph{example 5} unions of rows or columns:
-\begin{Verbatim}
-// for columns
-A = grand(2,6,"uin",-1,1)
-B = grand(2,7,"uin",-1,1)
-[C,kA,kB] = union(A,B,which="columns")  // or simply which="c"
-// we must have C = sort([A(:,kA),B(:,kB)],"lc","i")
-C.equal[sort([A(:,kA),B(:,kB)],"lc","i")]
-
-// for rows
-A = grand(8,2,"uin",-1,1)
-B = grand(5,2,"uin",-1,1)
-[C,kA,kB] = union(A,B,which="rows")  // or simply which="r"
-// we must have C = sort([A(kA,:);B(kB,:)],"lr","i")
-C.equal[sort([A(kA,:);B(kB,:)],"lr","i")]
-\end{Verbatim}
-
+  \paragraph{example 3} with vectors of cells:
+  \begin{Verbatim}
+    A = {"toto", [0,1], 1, 2, 1, "bar"}
+    B = { "foo",  3, [0,1], [2;3]}
+    C = union(A,B)
+  \end{Verbatim}
+  \paragraph{example 4} with lists:
+  \begin{Verbatim}
+    A = list("toto", [0,1], 1, 2, 1, "bar")
+    B = list( "foo", 3, [0,1], [2;3] )
+    C = union(A,B)
+  \end{Verbatim}
+  \paragraph{example 5} unions of rows or columns:
+  \begin{Verbatim}
+    // for columns
+    A = grand(2,6,"uin",-1,1)
+    B = grand(2,7,"uin",-1,1)
+    [C,kA,kB] = union(A,B,which="columns")  // or simply which="c"
+    // we must have C = sort([A(:,kA),B(:,kB)],"lc","i")
+    if ~C.equal[sort([A(:,kA),B(:,kB)],"lc","i")] then pause;end
+    
+    // for rows
+    A = grand(8,2,"uin",-1,1)
+    B = grand(5,2,"uin",-1,1)
+    [C,kA,kB] = union(A,B,which="rows")  // or simply which="r"
+    // we must have C = sort([A(kA,:);B(kB,:)],"lr","i")
+    if ~C.equal[sort([A(kA,:);B(kB,:)],"lr","i")] then pause;end
+  \end{Verbatim}
 \end{examples}
 
 \begin{manseealso}
-  \manlink{unique}{unique}, \manlink{setdiff}{setdiff}, \manlink{intersect}{intersect}, \manlink{setxor}{setxor}  
+  \manlink{unique}{unique}, \manlink{setdiff}{setdiff},
+  \manlink{intersect}{intersect}, \manlink{setxor}{setxor}
 \end{manseealso}
-
 % -- Authors
 \begin{authors}
   Bruno Pincon

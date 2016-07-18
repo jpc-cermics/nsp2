@@ -144,7 +144,7 @@
   \begin{Verbatim}
     A = rand(40,20);
     b = ones(40,1);
-    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f);
     // compute the ``exact solution'' with backslash (QR factorization here)
     xx = A\b;
     // compute relative difference 
@@ -152,14 +152,14 @@
     
     // compute solution again with lsmr but with a more stringent atol parameter
     // (rmk: the max number of iterations should be increased too)
-    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f,atol=1e-12,itnlim=30);
     // now the relative difference should be smaller
     norm(x-xx)/norm(x)
     
     // now we modify A such that it becomes rank deficient
     A(:,15:20) = A(:,1:6);
     // lsmr should find the minimum norm solution
-    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f,atol=1e-12,itnlim=30);
     // compute the minimum norm solution with backslash
     xx = A\b;
     // compute relative difference
@@ -170,12 +170,12 @@
   \begin{Verbatim}
     A = 2*speye(1e4,1e4) + sprand(1e4,1e4,1e-3);
     b = ones(1e4,1);
-    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f);
     // compute relative residual
     norm(A*x-b)/norm(b)
     
     // use more stringent atol and btol
-    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,btol=1e-12);
+    [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%f,atol=1e-12,btol=1e-12);
     // compute relative residual
     norm(A*x-b)/norm(b)
 \end{Verbatim}

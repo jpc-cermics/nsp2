@@ -1271,6 +1271,10 @@ static OpWrapTab B2mMatrix_func[]={
   {"prod_b_s" ,  int_mxprod , int_bm_wrap},
   {"sum_b" ,  int_mxsum , int_bm_wrap},
   {"sum_b_s" ,  int_mxsum , int_bm_wrap},
+  {"cumsum_b" ,  int_mxcusum , int_bm_wrap},
+  {"cumsum_b_s" ,  int_mxcusum , int_bm_wrap},
+  {"cumprod_b" ,  int_mxcuprod , int_bm_wrap},
+  {"cumprod_b_s" ,  int_mxcuprod , int_bm_wrap},
   {(char *) 0, NULL,NULL},
 };
 

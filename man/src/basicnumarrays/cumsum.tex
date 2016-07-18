@@ -26,30 +26,30 @@
   elements of the given matrix argument \verb+A+. 
   The second argument gives the dimension to be used for performing the cumsum (resp product) of entries.       
   \begin{itemize}
-    \item 'full' or 0 \verb+B+ and \verb+A+ have the same size and 
-     $$B_{i,j} = \sum_{k+(l-1)m \le i+(j-1)m } A_{k,l} \quad \left( \text{resp. } \prod_{k+(l-1)m \le i+(j-1)m } A_{k,l} \right)$$ 
-     where $m$ is the number of rows of \verb+A+
-    \item 'row' or 1  \verb+B+ and \verb+A+ have the same size and 
-     $$B_{i,j} = \sum_{k\le i} A_{k,j}\quad \left(\text{resp. }  \prod_{k\le i} A_{k,j}\right) \,. $$     
-    \item 'col' or 2  \verb+B+ and \verb+A+ have the same size and 
-         $$B_{i,j} = \sum_{l\le j} A_{i,l} \quad \left(\text{resp. }  \prod_{l\le j} A_{i,l}  \right) \,. $$     
-    \item 'm' is the cumulative sum (resp. product) along the first non singleton dimension of the given matrix 
-      for Matlab compatibility. 
+  \item 'full' or 0 \verb+B+ and \verb+A+ have the same size and 
+    $$B_{i,j} = \sum_{k+(l-1)m \le i+(j-1)m } A_{k,l} \quad \left( \text{resp. } \prod_{k+(l-1)m \le i+(j-1)m } A_{k,l} \right)$$ 
+    where $m$ is the number of rows of \verb+A+
+  \item 'row' or 1  \verb+B+ and \verb+A+ have the same size and 
+    $$B_{i,j} = \sum_{k\le i} A_{k,j}\quad \left(\text{resp. }  \prod_{k\le i} A_{k,j}\right) \,. $$     
+  \item 'col' or 2  \verb+B+ and \verb+A+ have the same size and 
+    $$B_{i,j} = \sum_{l\le j} A_{i,l} \quad \left(\text{resp. }  \prod_{l\le j} A_{i,l}  \right) \,. $$     
+  \item 'm' is the cumulative sum (resp. product) along the first non singleton dimension of the given matrix 
+    for Matlab compatibility. 
   \end{itemize}
 \end{mandescription}
 %--example 
 \begin{examples}
-\begin{Verbatim}
-A=rand(4,5) 
-cumsum(A,dim='c'); 
-// boolean matrix 
-cumsum(A>=0.5,dim='c');
-cumprod(1:5,dim='m') 
-// sparse matrix 
-cumsum(sparse(rand(4,6)),dim='r')
-\end{Verbatim}
+  \begin{Verbatim}
+    A=rand(4,5) 
+    cumsum(A,dim='c'); 
+    // boolean matrix 
+    cumsum(A>=0.5,dim='c');
+    cumprod(1:5,dim='m') 
+    // sparse matrix 
+    // cumsum(sparse(rand(4,6)),dim='r')
+  \end{Verbatim}
 \end{examples}
-%-- see also
+% -- see also
 \begin{manseealso}
   \manlink{sum}{sum}  \manlink{prod}{prod} 
 \end{manseealso}
