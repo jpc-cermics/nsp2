@@ -5,16 +5,13 @@ include $(TOP)/Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-WIP=	auto-sci \
-	control-sci \
-	elementary-sci \
-	linalg-sci \
-	optim-sci \
-	robust-sci \
-	lss-sci \
+WIP=	elementary-sci optim-sci
 
-SUBDIRS =  graphics miscellaneous system statistics linalg calpol \
-	ast rmatrix
+SUBDIRS = \
+	graphics miscellaneous system \
+	statistics linalg calpol \
+	ast rmatrix signal \
+	linearsys control robust \
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
