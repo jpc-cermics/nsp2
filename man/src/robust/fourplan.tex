@@ -19,14 +19,15 @@
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  Utility function.\verb!P! being partitioned as follows:
+  Utility function which returns a partition of the linear system \verb!P! as follows:
 \begin{verbatim}
   P=[ P11 P12;
-    P21 P22]  
+      P21 P22]  
 \end{verbatim}
-with \verb!size(P22)=r! this function returns the four linear systems \verb!P11,P12,P21,P22!.
+  with \verb!size(P22)=r! this function returns the four linear systems \verb!P11!, \verb!P12!
+  , \verb!P21!, \verb!P22!.
 \end{mandescription}
-%-- see also
+% -- see also
 \begin{manseealso}
   \manlink{lqg}{lqg} \manlink{lqg2stan}{lqg2stan} \manlink{lqr}{lqr} \manlink{lqe}{lqe} \manlink{lft}{lft}  
 \end{manseealso}

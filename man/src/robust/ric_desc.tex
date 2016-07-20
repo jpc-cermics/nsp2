@@ -29,7 +29,7 @@
   Defining the hamiltonian matrix \verb!H! by:
 \begin{verbatim}
   H = [A  R;
-    Q -A']
+       Q -A']
 \end{verbatim}
   with the calling sequence \verb![X1,X2,zero]=ric_descr(H)!, the 
   solution \verb!X! is given by \verb!X=X1/X2!.\verb!zero! = L1 norm of rhs of (\verb!Ec!)
@@ -42,7 +42,7 @@
   Defining \verb!G=B/R*B'! and the hamiltonian pencil \verb!(E,H)! by:
 \begin{verbatim}
   E=[eye(n,n),G;               H=[A, 0*ones(n,n);
-      0*ones(n,n),A']             -C, eye(n,n)];
+     0*ones(n,n),A']             -C, eye(n,n)];
 \end{verbatim}
   with the calling sequence \verb![X1,X2,err]=ric_descr(H,E)!, the 
   solution \verb!X! is given by \verb!X=X1/X2!.\verb!zero!= L1 norm of rhs of (\verb!Ed!)

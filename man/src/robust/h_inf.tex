@@ -31,17 +31,22 @@
   \verb!h_inf! computes H-infinity optimal controller for the continuous-time
   plant \verb!P!.  The partition of \verb!P! into four sub-plants is given
   through the 2-vector \verb!r! which is the size of the \verb!22! part of
-  \verb!P!.\verb!P! is given in state-space e.g. \verb!P=syslin('c',A,B,C,D)!
+  \verb!P!. \verb!P! is given in state-space e.g. \verb!P=syslin('c',A,B,C,D)!
   with \verb!A,B,C,D! = constant matrices or \verb!P=syslin('c',H)! with
-  \verb!H! a transfer matrix.\verb![Sk,ro]=H_inf(P,r,romin,romax,nmax)! returns
+  \verb!H! a transfer matrix. 
+
+  \verb![Sk,ro]=H_inf(P,r,romin,romax,nmax)! returns
   \verb!ro! in \verb![romin,romax]! and the central controller \verb!Sk! in the
-  same representation as \verb!P!.  (All calculations are made in state-space,
-  i.e conversion to state-space is done by the function, if necessary).  Invoked
-  with three LHS parameters,\verb![Sk,rk,ro]=H_inf(P,r,romin,romax,nmax)!
+  same representation as \verb!P!. 
+
+  All calculations are made in state-space,
+  i.e conversion to state-space is done by the function, if necessary. 
+
+  \verb![Sk,rk,ro]=H_inf(P,r,romin,romax,nmax)! 
   returns \verb!ro! and the Parameterization of all stabilizing controllers: a
   stabilizing controller \verb!K! is obtained by \verb!K=lft(Sk,r,PHI)! where
   \verb!PHI! is a linear system with dimensions \verb!r'! and
-  satisfy:\verb!H_norm(PHI) $<$ gamma!.  \verb!rk (=r)! is the size of the
+  satisfy:\verb!H_norm(PHI) < gamma!.  \verb!rk (=r)! is the size of the
   \verb!Sk22! block and \verb!ro = 1/gama^2!  after \verb!nmax! iterations.
   Algorithm is adapted from Safonov-Limebeer. Note that \verb!P! is assumed to
   be a continuous-time plant.

@@ -9,9 +9,6 @@
 % are also available at    
 % http://www.cecill.info/licences/Licence_CeCILL_V2-en.txt
 %
-
-
-
 % -*- mode: latex -*-
 \mansection{augment}
 \begin{mandesc}
@@ -30,49 +27,56 @@
 \begin{parameters}
   \begin{varlist}
     \vname{G}: linear system (\verb!syslin! list), the nominal plant
-    \vname{flag1}: one of the following (upper case) character string: \verb! 'S' !, \verb! 'R' !, \verb! 'T' !\verb! 'SR' !, \verb! 'ST' !, \verb! 'RT' !\verb! 'SRT' !
-    \vname{flag2}: one of the following character string: \verb! 'o' ! (stands for 'output', this is the default value) or \verb!'i'! (stands for 'input').
+    
+    \vname{flag1}: one of the following (upper case) character string:
+    \verb! 'S' !, \verb! 'R' !, \verb! 'T' !\verb! 'SR' !, \verb! 'ST' !,
+    \verb! 'RT' !\verb! 'SRT' !
+    
+    \vname{flag2}: one of the following character string: \verb! 'o' ! (stands
+    for 'output', this is the default value) or \verb!'i'! (stands for 'input').
+    
     \vname{P}: linear system (\verb!syslin! list), the ``augmented'' plant
+    
     \vname{r}: 1x2 row vector, dimension of \verb!P22 = G!
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
   If \verb!flag1='SRT'! (default value), returns the "full" augmented plant
 \begin{verbatim}
-  [ I | -G]   --$>$'S'
-  [ 0 |  I]   --$>$'R'
-  P = [ 0 |  G]   --$>$'T'
-  [-------]
-  [ I | -G]
+      [ I | -G]   -->'S'
+      [ 0 |  I]   -->'R'
+  P = [ 0 |  G]   -->'T'
+      [-------]
+      [ I | -G]
 \end{verbatim}
-\verb! 'S' !, \verb! 'R' !, \verb! 'T' ! refer to the first three (block) rows
-of \verb!P! respectively.
-If one of these letters is absent in \verb!flag1!, the corresponding
-row in \verb!P! is missing.
-If \verb!G! is given in state-space form, the returned \verb!P! is minimal.
-\verb!P! is calculated by: \verb![I,0,0;0,I,0;-I,0,I;I,0,0]*[I,-G;0,I;I,0]!.
-The augmented plant associated with input sensitivity functions, namely
+  \verb! 'S' !, \verb! 'R' !, \verb! 'T' ! refer to the first three (block) rows
+  of \verb!P! respectively.
+  If one of these letters is absent in \verb!flag1!, the corresponding
+  row in \verb!P! is missing.
+  If \verb!G! is given in state-space form, the returned \verb!P! is minimal.
+  \verb!P! is calculated by: \verb![I,0,0;0,I,0;-I,0,I;I,0,0]*[I,-G;0,I;I,0]!.
+  The augmented plant associated with input sensitivity functions, namely
 \begin{verbatim}
-  [ I | -I]   --$>$'S'  (input sensitivity)
-  [ G | -G]   --$>$'R'  (G*input sensitivity)
-  P = [ 0 |  I]   --$>$'T'  (K*G*input sensitivity)
-  [-------]
-  [ G | -G]
+      [ I | -I]   -->'S'  (input sensitivity)
+      [ G | -G]   -->'R'  (G*input sensitivity)
+  P = [ 0 |  I]   -->'T'  (K*G*input sensitivity)
+      [-------]
+      [ G | -G]
 \end{verbatim}
-is obtained by the command \verb![P,r]=augment(G,flag,'i')!. For
-state-space \verb!G!, this \verb!P!
-is calculated by: \verb![I,-I;0,0;0,I;0,0]+[0;I;0;I]*G*[I,-I]!
-and is thus generically minimal.
-Note that weighting functions can be introduced by left-multiplying
-\verb!P! by a diagonal system of appropriate dimension, e.g.,
-\verb! P = sysdiag(W1,W2,W3,eye(G))*P!.
-Sensitivity functions can be calculated by \verb!lft!. One has:
-For output sensitivity functions [P,r]=augment(P,'SRT'):
-lft(P,r,K)=[inv(eye()+G*K);K*inv(eye()+G*K);G*K*inv(eye()+G*K)];
-For input sensitivity functions [P,r]=augment(P,'SRT','i'):
-lft(P,r,K)=[inv(eye()+K*G);G*inv(eye()+K*G);K*G*inv(eye()+G*K)];
+  is obtained by the command \verb![P,r]=augment(G,flag,'i')!. For
+  state-space \verb!G!, this \verb!P!
+  is calculated by: \verb![I,-I;0,0;0,I;0,0]+[0;I;0;I]*G*[I,-I]!
+  and is thus generically minimal.
+  Note that weighting functions can be introduced by left-multiplying
+  \verb!P! by a diagonal system of appropriate dimension, e.g.,
+  \verb! P = sysdiag(W1,W2,W3,eye(G))*P!.
+  Sensitivity functions can be calculated by \verb!lft!. One has:
+  For output sensitivity functions [P,r]=augment(P,'SRT'):
+  lft(P,r,K)=[inv(eye()+G*K);K*inv(eye()+G*K);G*K*inv(eye()+G*K)];
+  For input sensitivity functions [P,r]=augment(P,'SRT','i'):
+  lft(P,r,K)=[inv(eye()+K*G);G*inv(eye()+K*G);K*G*inv(eye()+G*K)];
 \end{mandescription}
-%--example 
+% --example 
 \begin{examples}
   \begin{Verbatim}
     G=ssrand(2,3,2); //Plant

@@ -14,17 +14,21 @@
 \begin{parameters}
   \begin{varlist}
     \vname{G}: \verb!syslin! list  (continuous-time linear system )
-    \vname{polf, polc}: respectively the poles of \verb!XT! and \verb!YT! and the poles of \verb!n!  and \verb!M! (default values =-1).
+
+    \vname{polf, polc}: respectively the poles of \verb!XT! and \verb!YT! and
+    the poles of \verb!n!  and \verb!M! (default values \verb!=-1!).
+    
     \vname{tol}: real threshold for detecting stable poles (default value \verb!100*%eps!)
-    \vname{N,M,XT,YT}: linear systems represented by \verb!syslin! lists
+    
+    \vname{N,M,XT,YT}: linear systems represented by \verb!syslin! objects.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
   \verb![N,M,XT,YT]=copfac(G,[polf,polc,[tol]])! returns a right coprime
-  factorization of \verb!G!.\verb!G = N*M^-1! where \verb!N! and \verb!M! are
-  stable, proper and right coprime.  (i.e. \verb![N M]! left-invertible with
-  stability)\verb!XT! and \verb!YT! satisfy:\verb![XT -YT].[M N]' = eye! (Bezout
-  identity)\verb!G! is assumed stabilizable and detectable.
+  factorization of \verb!G!. The linear system \verb!G = N*M^-1! where \verb!N! and \verb!M! are
+  stable, proper and right coprime (i.e. \verb![N M]! is left-invertible with
+  stability). The systems \verb!XT! and \verb!YT! satisfy: \verb![XT -YT].[M N]' = eye! (Bezout
+  identity). The system \verb!G! is assumed stabilizable and detectable.
 \end{mandescription}
 %-- see also
 \begin{manseealso}

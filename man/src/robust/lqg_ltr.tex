@@ -21,26 +21,25 @@
 \begin{mandescription}
   returns the Kalman gains for:
 \begin{verbatim}
-  x = a*x + b*u + l*w1   
-  (sl)
-  y = c*x + mu*I*w2
-  z = h*x
+      x = a*x + b*u + l*w1   
+      y = c*x + mu*I*w2
+      z = h*x
 \end{verbatim}
 Cost function:
 \begin{verbatim}
-  /+oo
-  |
+            /+oo
+           |
   J    = E(| [z(t)'*z(t) + ro^2*u(t)'*u(t)]dt)
-  lqg     |
-  / 0
+   lqg     |
+          / 0
 \end{verbatim}
 The lqg/ltr approach looks for \verb!L,mu,H,ro! such that:
 J(lqg) = J(freq) where
 \begin{verbatim}
-  /+oo        *  *           *
+          /+oo        *  *           *
   J    =  | tr[S  W  W  S ] + tr[T  T]dw
-  freq   |
-  /0
+   freq   |
+          /0
 \end{verbatim}
 and
 \begin{verbatim}

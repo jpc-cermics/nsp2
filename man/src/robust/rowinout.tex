@@ -24,8 +24,8 @@
   and with a \verb!D! matrix which is full column rank.\verb!G! must also be stable for having \verb!Gbar! stable.\verb!G! admits the following inner-outer factorization:
 \begin{verbatim}
   G = [ Inn ] | Gbar |
-  |  0   |
-\end{verbatim}
+              |  0   |
+ \end{verbatim}
 where \verb!Inn! is square and inner (all pass and stable) and \verb!Gbar! 
 square and outer i.e:
 Gbar is square bi-proper and bi-stable (Gbar inverse is also proper 
@@ -38,7 +38,7 @@ Note that:
 \end{verbatim}
 is a row compression of \verb!G! where \verb!X! = \verb!Inn! inverse is all-pass i.e:
 \begin{verbatim}
-  T
+   T
   X (-s) X(s) = Identity
 \end{verbatim}
 (for the continous time case).

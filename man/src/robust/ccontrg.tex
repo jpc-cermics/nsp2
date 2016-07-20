@@ -21,20 +21,20 @@
 \begin{mandescription}
   returns a realization \verb!K! of the central controller for the
   general standard problem in state-space form.
-  Note that gamma must be $>$ gopt (ouput of \verb!gamitg!)
-  P contains the parameters of plant realization \verb!(A,B,C,D)!
-  (\verb!syslin! list) with
+  Note that \verb!gamma! must be $>$ gopt (ouput of \verb!gamitg!).
+  The linear system \verb!P! contains the parameters of plant realization \verb!(A,B,C,D)!
+  with
 \begin{verbatim}
   B = ( B1 , B2 ) ,        C= ( C1 ) ,    D = ( D11  D12)
-  ( C2 )          ( D21  D22)
+                              ( C2 )          ( D21  D22)
 \end{verbatim}
 \verb!r(1)! and \verb!r(2)! are the dimensions of \verb!D22! (rows x columns)
 \end{mandescription}
-%-- see also
+% -- see also
 \begin{manseealso}
   \manlink{gamitg}{gamitg} \manlink{h\_inf}{h-inf}  
 \end{manseealso}
-%-- Author
+% -- Author
 \begin{authors}
   P. Gahinet (INRIA);   
 \end{authors}
