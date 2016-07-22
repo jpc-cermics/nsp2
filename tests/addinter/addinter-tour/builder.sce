@@ -18,7 +18,7 @@ table = ['ex1c','int_ex1c';
 	 'ex7c_1','int_ex_7c_1';
 	 'ex18c_1','int_ex_18c_1'];
 
+ilib_build(ilib_name,table,files,libs,compile=%f);
 
-ilib_build(ilib_name,table,files,libs);
 
 
