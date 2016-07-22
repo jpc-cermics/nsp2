@@ -13,7 +13,7 @@ libname='util';
 // the next call generates files (Makelib,loader.sce) used
 // for compiling and loading ext1c and performs the compilation
 
-ilib_for_link(link_name,files,libs,flag,libname=libname);
+ilib_for_link(link_name,files,libs,flag,libname=libname,compile=%f);
 
 
 

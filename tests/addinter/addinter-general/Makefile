@@ -3,6 +3,8 @@
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License.
 
+SHELL=/bin/sh
+
 SCIDIR=../../../
 
 include $(SCIDIR)/Makefile.incl
@@ -18,7 +20,7 @@ include $(SCIDIR)/Makefile.incl
 NSP=$(SCIDIR)bin/nsp
 
 all	::
-	cd lib; $(MAKE) -s $(MFLAGS) all;
+	@cd lib; $(MAKE) -s $(MFLAGS) all;
 	@if test -f Makelib; then \
 		$(MAKE) -s -f Makelib $(MFLAGS); \
 	else ( echo "running builder to create Makelib" && \
@@ -31,7 +33,7 @@ job	:
 
 tests	: all
 	@echo "------------------------------------------";
-	@make -f Makelib tests 
+	@make -s -f Makelib tests 
 	@echo "------------------------------------------";
 
 clean	::

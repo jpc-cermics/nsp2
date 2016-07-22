@@ -3,6 +3,8 @@
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License.
 
+SHELL=/bin/sh
+
 SCIDIR=../../../../
 
 include $(SCIDIR)Makefile.incl
