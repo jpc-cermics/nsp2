@@ -10,5 +10,6 @@ table = [ 'first', 'int_first';		// table of (scilab_name,interface-name)
 
 // do not modify below 
 // ----------------------------------------------
-ilib_build(ilib_name,table,files,libs)
+ilib_build(ilib_name,table,files,libs,compile=%f);
+
 

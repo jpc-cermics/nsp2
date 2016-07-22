@@ -1,5 +1,11 @@
+loader.sce
+Makelib
 .libs
 .nsp_history
-Makelib
 *.lo
 *.la
+*.o
+*.dll
+*.so
+*.dylib
+
