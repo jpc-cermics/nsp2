@@ -30,8 +30,8 @@
   These gains can be computed, for example, by pole placement.\verb!A+B*Kc! and
   \verb!A+Kf*C! are (usually) assumed stable.\verb!K! is a state-space
   representation of the compensator \verb!K: y-->u!
-  in:\verb! xdot = A x + B u, y=C x + D u, zdot= (A + Kf C)z -Kf y +B u, u=Kc
-  z!\verb!K! is a linear system (\verb!syslin! list) with matrices given by:
+  in:\verb! xdot = A x + B u!, \verb!y=C x + D u!, \verb!zdot= (A + Kf C)z -Kf y +B u!, \verb!u=Kc z!. 
+  Where \verb!K! is a linear system (\verb!syslin! list) with matrices given by:
   \verb!K=[A+B*Kc+Kf*C+Kf*D*Kc,Kf,-Kc]!.  The closed loop feedback system
   \verb! Cl: v -$>$y! with (negative) feedback \verb!K! (i.e.
   \verb!y = P u, u = v - K y!, or
