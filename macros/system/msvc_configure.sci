@@ -1,354 +1,214 @@
-function ok = msvc_configure() 
 
-  function [path,v8] = msvc_get_sdk()
-    path = "";
-    entries = ["Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.1", "InstallationFolder","v8.1" ; // Windows 8 SDK (2012 express)
-	       "Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8.0" ; // Windows 8 SDK (2012 express)
-               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.1", "InstallationFolder","v8.1" ; // Windows 8 SDK (2012 express)	       
-               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8.0" ; // Windows 8 SDK (2012 express)
-    	       "Software\\Microsoft\\Microsoft SDKs\\Windows", "CurrentInstallFolder", "" ; // Vista & Seven SDK    
-	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1", "Install Dir","" ; // Windows 2003 R2 SDK
-	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3", "Install Dir",""]; // Windows 2003 SDK
-    for i = 1:size(entries,'r')
-      ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'', entries(i,1), entries(i,2))",errcatch=%t);
-      v8 = entries(i,3);
-      if ok && file('exists',path') then break;end 
-    end
-    // remove trailing slash
-    if part(path,length(path))== '\\' then 
-      path = part(path,1:(length(path)-1));
-    end
-  endfunction
+function [msvc_compiler,name,configured]=msvc_configure(all=%f)
+// try to detect a msvc compiler using a bat file 
+// msvc_compiler: a nickname for the compiler or "unknown"
+// name: the key for product dir
+// configured:  %t if succedeed in setting env variables
+
+  global(msvc_pref='unset');  
+  msvc_compiler='unknown'; // default value
+  name = 'unknown';
+  configured=%f;
+  if ~%win32 then return;end
   
-  if getenv('MSVC_SET','NOK') == "OK" then 
-    // msvc was already configured 
-    ok = %t
-    return 
+  table= msvc_table();
+  if msvc_pref <> 'unset' then 
+    // restrict the search the prefered compiler 
+    I=find(table(:,2)== msvc_pref);
+    table = table(I,:);
   end
-  ok = %f;
-  [name,path,is64] = msvc_get_compiler() 
-
-  if name == "unknown" then return;end
   
-  // remove trailing slash
-  if part(path,length(path))== '\\' then 
-    path = part(path,1:(length(path)-1));
+  // stop at first configured compiler 
+  for i=1:size(table,1)
+    name = table(i,1); // returned value
+    //    printf("Search %s\n",name);
+    [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1));
+    if ~isempty(msvc_compiler) && configured then break ;end
   end
-  [sdk_path,v8] = msvc_get_sdk();
-  // select according to version
-  select name
 
-   case  'msvc120pro' then // Microsoft Visual 2013 Studio Professional
-    ok = msvc_setenv_vc120(name,path,sdk_path, is64, v8 );
-   case  'msvc120express' then // Microsoft Visual 2013 Express
-    ok = msvc_setenv_vc120(name,path,sdk_path, is64, v8);
-   case  'msvc110pro' then // Microsoft Visual 2012 Studio Professional
-    ok = msvc_setenv_vc110(name,path,sdk_path, is64, v8);
-   case  'msvc110express' then // Microsoft Visual 2012 Express
-    ok = msvc_setenv_vc110(name,path,sdk_path, is64, v8);
-   case  'msvc100pro' then // Microsoft Visual 2010 Studio Professional
-    ok = msvc_setenv_vc10(name,path,sdk_path, is64, v8);
-   case  'msvc100express' then // Microsoft Visual 2010 Express
-    ok = msvc_setenv_vc10(name,path,sdk_path, is64, v8);
-   case  'msvc90pro' then // Microsoft Visual 2008 Studio Professional
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
-   case  'msvc90std' then     // Microsoft Visual 2008 Studio Standard
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
-   case  'msvc90express' then    // Microsoft Visual 2008 Express
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
-   case  'msvc80pro' then    // Microsoft Visual 2005 Studio Professional
-    ok = msvc_setenv_vc80(name,path,sdk_path, is64);
-   case  'msvc80std' then    // Microsoft Visual 2005 Studio Standard
-    ok = msvc_setenv_vc80(name,path,sdk_path, is64);
-   case  'msvc80express' then// Microsoft Visual 2005 Express
-    ok = msvc_setenv_vc80(name,path,sdk_path, is64);
-   case  'msvc71' then     // Microsoft Visual Studio .NET 2003
-    ok = msvc_setenv_vc7x(name,path,sdk_path, is64);
-   case  'msvc70' then // Microsoft Visual Studio .NET 2002
-    ok = msvc_setenv_vc7x(name,path,sdk_path, is64);
-  end
-  if ok then 
-    setenv('MSVC_SET','OK');
-  end
-endfunction
-
-function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64, v8)
+  // usefull for the 64bits version
   
-  function  ok=setNewLIB( path, sdk_path, bIsExpress, is64, v8)
-    ok=%f;
-    LIB = getenv('LIB', '');
-    str = m2s([]);
-    if is64 then 
-      lib_suffix="\\amd64";
-      if sdk_path <> "" then 
-	select v8 
-	 case "v8.1" then str = [ sdk_path + '\\lib\\winv6.3\\um\\x64']
-	 case "v8.0" then str = [ sdk_path + '\\lib\\win8\\um\\x64']
-	else
-	  str = sdk_path + '\\lib\\x64';
-	end
-      end
+  if msvc_compiler == 'msvc90express' then
+    // Microsoft Visual C++ Express 9.0: search sdk
+    name1 = 'Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1';
+    ok1=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name1,''Install Dir'');",errcatch=%t);
+    name1 = 'Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3'
+    ok2=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name1,''Install Dir'');",errcatch=%t);
+    name1 = 'Software\\Microsoft\\Microsoft SDKs\\Windows';
+    ok3=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name1,''CurrentInstallFolder'');",errcatch=%t);
+    if or([ok1,ok2,ok3]) then
+      return;
     else
-      lib_suffix="";
-      if sdk_path <> "" then 
-	select v8 
-	 case "v8.1" then str = [ sdk_path + '\\lib\\winv6.3\\um\\x86']
-	 case "v8.0" then str = [ sdk_path + '\\lib\\win8\\um\\x86']
-	else
-	  str = sdk_path + '\\lib';
-	end
-      end
+      printf('\nWarning : Microsoft Visual C++ 2008 Express Edition has been detected,\n");
+      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n");
+      printf('Please install this SDK if you want to use dynamic link with scilab.\n');
+      lasterror(); // The error message is cleared
     end
-    newLIB = [path + '\\VC\\ATLMFC\\LIB'+ lib_suffix;
-	      path + '\\VC\\LIB' + lib_suffix;
-	      str;
-	      LIB];
-    if bIsExpress then newLIB(1)=[];end 
-    newLIB =catenate(newLIB,sep=';');
-    setenv('LIB',newLIB );
-    if getenv('LIB','ndef') <> newLIB then return;end
-    ok=%t;
-  endfunction
-
-  function ok=setNewPATH( path, sdk_path, bIsExpress, is64, v8)
-    ok=%f;
-    // PATH = getenv('PATH', '');
-    PATH= m2s([]);
-    if is64 then 
-      str = m2s([]);
-      if sdk_path <> "" then 
-	str = [  sdk_path + '\\bin\\x64'
-		 sdk_path + '\\bin\\win64\\x64'
-		 sdk_path + '\\bin'];
-      end
-      newPATH = [ path + '\\VC\\BIN\\amd64'
-      	          path + '\\VC\\BIN\\x86_amd64'
-      	          path + '\\VC\\BIN'
-		  path + '\\VC\\VCPackages'
-		  path + '\\Common7\\IDE'
-		  path + '\\Common7\\Tools'
-		  path + '\\Common7\\Tools\\bin'
-		  str 
-		  PATH];
-    else
-      str = m2s([]);
-      if sdk_path <> "" then 
-	select v8 
-	 case "v8.1" then str = sdk_path + '\\bin\\x86';
-	 case "v8.0" then str = sdk_path + '\\bin\\x86';
-	else
-	  str = sdk_path + '\\bin';
-	end
-      end
-      newPATH = [path + '\\Common7\\IDE\\'
-		 path + '\\VC\\bin'
-		 path + '\\Common7\\Tools'
-		 path + '\\VC\\VCPackages'
-		 str 
-		 PATH];
-    end
-    newPATH=catenate(newPATH,sep=';');
-    setenv('PATH',newPATH);
-    if getenv('PATH','ndef') <> newPATH then return;end
-    ok=%t;
-  endfunction
-
-  function ok=setNewLIBPATH( path, sdk_path, bIsExpress,  is64, v8)
-    ok=%f;
-    LIBPATH = getenv('LIBPATH', '');
-    if is64 then 
-      newLIBPATH = [path + '\\VC\\ATLMFC\\LIB\\amd64';
-		    path + '\\VC\\LIB\\amd64'; 
-		    LIBPATH];
-    else
-      newLIBPATH = [path + '\\VC\\ATLMFC\\LIB'
-		    path + '\\VC\\LIB';
-		    LIBPATH];
-    end
-    if bIsExpress then newLIBPATH(1)=[];end 
-     newLIBPATH=catenate(newLIBPATH,sep=';');
-    setenv('LIBPATH', newLIBPATH);
-    if getenv('LIBPATH','ndef') <> newLIBPATH then return;end
-    ok=%t;
-  endfunction
-
-  function ok=setNewINCLUDE( path, sdk_path, bIsExpress,  is64, v8)
-    ok=%f;
-    INCLUDE = getenv('INCLUDE', '');
-    str = m2s([]);
-    if sdk_path <> "" then 
-      if v8 == "v8.0" || v8 == "v8.1"  then 
-	str = [ sdk_path + '\\include';
-		sdk_path + '\\include\\um';
-		sdk_path + '\\include\\shared';
-		sdk_path + '\\include\\winrt'];
-      else
-	str = [ sdk_path + '\\include'];
-      end
-    end
-    if is64 then 
-      newINCLUDE = [ path + '\\VC\\INCLUDE'
-		     path + '\\VC\\ATLMFC\\INCLUDE'
-		     str 
-		     INCLUDE];
-      if bIsExpress then newINCLUDE(2)=[];end 
-    else
-      newINCLUDE = [ path + '\\VC\\ATLMFC\\INCLUDE';
-		     path + '\\VC\\INCLUDE';
-		     str 
-		     INCLUDE];
-      if bIsExpress then newINCLUDE(1)=[];end 
-    end
-    newINCLUDE = catenate(newINCLUDE,sep=';');
-    setenv('INCLUDE',newINCLUDE);
-    if getenv('INCLUDE','ndef') <> newINCLUDE then return;end
-    ok=%t;
-  endfunction
-  
-  if sdk_path <> "" then
-    setenv('WindowsSdkDir', sdk_path);
-  end
-  // remove VC from path 
-  np=length(path); vcp=part(path,np-2:np);
-  if vcp == '\\VC' then 
-    path= part(path,1:np-3);
-  end 
-  setenv('VSINSTALLDIR', path );
-  DevEnvDir = path + '\\Common7\\IDE';
-  setenv('DevEnvDir', DevEnvDir);
-  setenv('VCINSTALLDIR', path + '\\VC');
-  ok=setNewLIB(path, sdk_path, IsExpress, is64);
-  ok=ok && setNewPATH(path, sdk_path, IsExpress, is64);
-  ok=ok && setNewINCLUDE(path, sdk_path, IsExpress, is64);
-  ok=ok && setNewLIBPATH(path, sdk_path, IsExpress, is64);
-
-endfunction
-
-function ok = msvc_setenv_vc120(msvc,path,sdk_path, is64, v8)
-// set up for vc 2013
-  IsExpress = (msvc == 'msvc120express');
-  setenv('VS120COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
-endfunction
-
-function ok = msvc_setenv_vc110(msvc,path,sdk_path, is64, v8)
-// set up for vc 2012
-  IsExpress = (msvc == 'msvc110express');
-  setenv('VS110COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
-endfunction
-
-function ok = msvc_setenv_vc10(msvc,path,sdk_path, is64, v8)
-// set up for vc 2010
-  IsExpress = (msvc == 'msvc100express');
-  setenv('VS100COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
-endfunction
-
-function ok=msvc_setenv_vc90(msvc,path,sdk_path, is64, v8)
-// set up for vc 90 
-  IsExpress = (msvc == 'msvc90express');
-  str = path + '\\Common7\\Tools\\';
-  setenv('VS90COMNTOOLS', str);
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
-endfunction
-
-
-function ok=msvc_setenv_vc80(msvc,path,sdk_path, is64)
-// set up for vc 80 
-  ok = %f;
-  if is64 then return ;end 
-  PATH = getenv('PATH','ndef');
-  if (PATH == 'ndef') then; return ; end 
-  setenv('VSINSTALLDIR', path ) 
-  MSVCDir = path + '\\VC';
-  setenv('VCINSTALLDIR', MSVCDir);
-  DevEnvDir = path + '\\Common7\\IDE';
-  setenv('DevEnvDir', DevEnvDir);
-  if getenv('DevEnvDir','ndef') <> DevEnvDir then; return ; end 
-  pathes = [ DevEnvDir;
-	     MSVCDir + '\\bin'
-	     path + '\\Common7\\Tools'
-	     path + '\\SDK\\v2.0\\bin'
-	     MSVCDir + '\\VCPackages'
-	     PATH];
-  pathes=catenate(pathes,sep=";");
-  setenv('PATH',pathes);
-  if getenv('PATH','ndef') <> pathes then return;end 
-    
-  LIB = getenv('LIB', '');
-  INCLUDE = getenv('INCLUDE', '');
-  
-  if ( msvc  == 'msvc80express') then
-    str = m2s([]);
-    if sdk_path <> "" then str = sdk_path + '\\Lib';end
-    LIB = [MSVCDir + '\\LIB'
-	   path + '\\SDK\v2.0\lib'
-	   str 
-	   LIB];
-    str = m2s([]);
-    if sdk_path <> "" then str = sdk_path + '\\INCLUDE';end
-    INCLUDE = [ MSVCDir + '\\INCLUDE' 
-		str ];
   else
-    LIB = [ MSVCDir + '\\LIB'
-	    path + '\\SDK\\v2.0\\lib'
-	    path + '\\VC\\PlatformSDK\\lib'
-	    LIB];
-
-    INCLUDE = [ MSVCDir + '\\INCLUDE'
-		MSVCDir + '\\PlatformSDK\\include' 
-		path + '\\SDK\\v2.0\\include'
-		INCLUDE];
+    lasterror(); // The error message is cleared
   end
 
-  pathes=catenate(LIB,sep=";");
-  setenv('LIB',pathes);
-  if getenv('LIB','ndef') <> pathes then return;end 
-
-  pathes=catenate(INCLUDE,sep=";");
-  setenv('INCLUDE',pathes);
-  if getenv('INCLUDE','ndef') <> pathes then return;end 
-  ok=%t
+  if msvc_compiler == 'msvc80express' then
+    // Microsoft Visual C++ Express 8.0: search SDK
+    name1 = 'Software\Microsoft\MicrosoftSDK\InstalledSDKs\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1';
+    ok1=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''Install Dir'');",errcatch=%t);
+    name1 = 'Software\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3';
+    ok2=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''Install Dir'');",errcatch=%t);
+    name1 = 'Software\Microsoft\Microsoft SDKs\Windows';
+    ok3=execstr("rep=registry(''HKEY_LOCAL_MACHINE'',name,''CurrentInstallFolder'');",errcatch=%t);
+    if or([ok1,ok2,ok3]) then
+      return;
+    else
+      printf('\nWarning: Microsoft Visual C++ 2005 Express Edition has been detected,\n");
+      printf('but not Microsoft Platform SDK for Windows Server 2003 R2 or more.\n");
+      printf('Please install this SDK if you want to use dynamic link with scilab.\n');
+      lasterror(); // The error message is cleared
+    end
+  else
+    lasterror(); // The error message is cleared
+  end
+  
+  if isempty(msvc_compiler) then
+    // no compiler found
+    msvc_compiler='unknown';
+    name = 'unknown';
+    configured=%f;
+  end
+  setenv('MSVC_COMPILER',msvc_compiler);// to detect if msvc_configure
+                                        // was already called
+  setenv('MSVC_NAME',name);// to detect if msvc_configure
 endfunction
 
-function ok = msvc_setenv_vc7x(msvc,path,sdk_path, is64)
-// set up for vc 70 and 71 
-  ok = %f 
-  if is64 then return ;end 
-  setenv('MSVCDir', path);
-  setenv('DevEnvDir', path + '\\..\\Common7\\Tools');
-  DevEnvDir = getenv('DevEnvDir', 'ndef');
-  if DevEnvDir == 'ndef' then return ;end 
-  PATH = getenv('PATH', 'ndef');
-  if PATH == 'ndef' then return ;end 
-  pathes=[ path+'\\BIN';
-	   DevEnvDir;
-	   DevEnvDir + '\\bin';
-	   path + '\\..\\Common7\\IDE';
-	   PATH];
-  pathes= catenate(pathes,sep=";");
-  setenv('PATH',pathes);
-  if getenv('PATH','ndef') <> pathes then return;end 
-  INCLUDE = getenv('INCLUDE', '');
-  pathes =[ path + '\\ATLMFC\\INCLUDE';
-	    path + '\\INCLUDE';
-	    path + '\\PlatformSDK\\include';
-	    INCLUDE];
-  pathes= catenate(pathes,sep=";");
-  setenv('INCLUDE', pathes)
-  if getenv('INCLUDE','ndef') <> pathes then return;end 
-  LIB = getenv('LIB', '');
-  pathes =[ path + '\\ATLMFC\\LIB'
-	    path + '\\LIB'
-            path + '\\PlatformSDK\\lib'
-	    LIB]; 
-  pathes= catenate(pathes,sep=";");
-  setenv('LIB', pathes);
-  if getenv('LIB','ndef') <> pathes then return;end 
-  ok=%t;
+function mc=msvc_select() 
+// obtain all the msvc compilers which are able to work 
+  global(msvc_pref='unset');  
+  msvc_compiler='unknown'; // default value
+  name = 'unknown';
+  configured=%f;
+  if ~%win32 then return;end
+  
+  table= msvc_table();
+  table_ok=[];
+  
+  for i=1:size(table,1)
+    name = table(i,1); // returned value
+    [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1));
+    if ~isempty(msvc_compiler) && configured then table_ok.concatd[i] ;end
+  end
+  mc = m2s([]);
+  if isempty(table_ok) then 
+    printf("Cannot find a working Microsoft C compiler\n");
+  else
+    names = table(table_ok,2);
+    val=x_choose(names,'Choose a compiler');
+    if val > 0 then mc=names(val);msvc_pref=mc; end 
+  end
 endfunction
 
+function table= msvc_table()
+  table = ['Software\\Microsoft\\VCExpress\\14.0\\Setup\\VS', 'msvc140'
+	   'Software\\Microsoft\\VisualStudio\\14.0\\Setup\\VS', 'msvc140'
+	   'Software\\Microsoft\\VCExpress\\12.0\\Setup\\VS', 'msvc120express';
+	   'Software\\Microsoft\\VisualStudio\\12.0\\Setup\\VS',  'msvc120pro';
+	   'Software\\Microsoft\\VCExpress\\11.0\\Setup\\VS',  'msvc110express';
+	   'Software\\Microsoft\\VisualStudio\\11.0\\Setup\\VS',  'msvc110pro';
+  // Microsoft Visual 2010
+	   'Software\\Microsoft\\VCExpress\\10.0\\Setup\\VS',  'msvc100express';
+	   'Software\\Microsoft\\VisualStudio\\10.0\\Setup\\VS',  'msvc100pro';
+  // Microsoft Visual 2008
+	   'Software\\Microsoft\\VCExpress\\9.0\\Setup\\VS',  'msvc90express';
+	   'Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Pro',  'msvc90pro';
+	   'Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Std',  'msvc90std';
+  // Microsoft Visual 2005
+	   'Software\\Microsoft\\VCExpress\\8.0\\Setup\\VS',  'msvc80express';
+	   'Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Pro',  'msvc80pro';
+	   'Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Std',  'msvc80std';
+  // Microsoft Visual Studio .NET 2003
+	   'SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC',  'msvc71';
+  // Microsoft Visual Studio .NET 2002
+	   'SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC',  'msvc70';
+  // Microsoft Visual Studio 6
+	   'SOFTWARE\\Microsoft\\DevStudio\\6.0\\Products\\Microsoft Visual C++','msvc60';
+  // Microsoft Visual Studio 5
+	   'SOFTWARE\\Microsoft\\DevStudio\\5.0\\Directories',  'msvc50'];
+  
+  if %win32 && %win64 then 	   
+    table = [table; "Software\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\Setup\\VS","msvc140pro";
+	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\14.0\\Setup\\VS","msvc140express";
+	     
+	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\12.0\\Setup\\VS","msvc120pro";
+	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\12.0\\Setup\\VS","msvc120express";
+	     
+	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\11.0\\Setup\\VS","msvc110pro";
+	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\11.0\\Setup\\VS","msvc110express";
+	     
+	     "Software\\Wow6432Node\\Microsoft\\VisualStudio\\10.0\\Setup\\VS" ,"msvc100pro";
+	     "Software\\Wow6432Node\\Microsoft\\VCExpress\\10.0\\Setup\\VS" ,"msvc100pro"];
+  end
+endfunction
 
+function [msvc_compiler,configured]=msvc_check_product(rep,name)
+// check if a version of visual exists and set env variables accordingly
+// msvc_compiler is set to '' if the visual version corresponding to name
+// is not found.
+// configure is set to %t if setting env variables succeeded.
 
+  configured = %f;
+  ok=execstr("vsdir=registry(''HKEY_LOCAL_MACHINE'',name,''ProductDir'');",errcatch=%t);
+  if ok then
+    msvc_compiler=rep;
+  else
+    lasterror();
+    msvc_compiler=m2s([]);
+    return;
+  end
+  // printf("C compiler found at: ""%s""\n",vsdir);
+  // execute vcvarsall to set env variables
+  VC= sprintf("%sVC",vsdir);
+  // if nsp is 64 we must produce 64 executables 
+  if %win64 then target="amd64" else target="x86"; end;
+  cmd = sprintf('""%s/bin/vc.bat"" ""%s"" %s',getenv('NSP'),VC,target);
+  //  S=unix_g(cmd)
+  [ok,S,stderr,msgerr,exitst]=spawn_sync(cmd);
+  if ~ok then S=m2s([]);end
+  vars= ['DevEnvDir';
+	 'INCLUDE';
+	 'LIB';
+	 'LIBPATH';
+	 'PATH';
+	 'VCINSTALLDIR';
+	 'VS100COMNTOOLS';
+	 'VSINSTALLDIR';
+	 'WindowsSdkDir'];
 
+  for i=1:size(vars,'*')
+    tag = vars(i)+'=';
+    ntag= length(tag);
+    for j=1:size(S,1)
+      if toupper(part(S(j,:),1:ntag)) == toupper(tag) then
+	val = part(S(j,:),(ntag+1):length(S(j,:)));
+	setenv(vars(i),val);
+	//	printf("set %s=%s\n",vars(i),val);
+	continue
+      end
+    end
+  end
+  if getenv('VCINSTALLDIR','')<>'' then
+    configured = %t
+  else
+    configured = %f
+  end
+endfunction
+
+function [msvc_compiler,name,is64]=msvc_get_compiler()
+// returns the nickname of msvc compiler or unknown
+  msvc_compiler= getenv('MSVC_COMPILER','unknown');
+  if msvc_compiler.equal['unknown'] then 
+    [msvc_compiler,name,configured]=msvc_configure();
+  else	
+    name =  getenv('MSVC_NAME');
+  end
+  is64 = %win64;
+endfunction
+
+  

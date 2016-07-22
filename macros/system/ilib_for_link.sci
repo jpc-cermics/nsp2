@@ -119,9 +119,9 @@ function ilib_link_gen_Make_unix(names,files,libs,Makename,libname, ...
     for x=libs(:)' ; fprintf(fd," %s.a",x);end
     fprintf(fd,"\n");
     fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	    " -Dmexfunction_=mex$<_  -DmexFunction=mex_$< "+ cflags +" \n"); 
+	    " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
     fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	    " -Dmexfunction=mex$< "+ fflags +"\n"); 
+	    " -Dmexfunction=mex$* "+ fflags +"\n"); 
   else
     fprintf(fd,"CFLAGS = $(CC_OPTIONS)  -DFORDLL "+cflags+ "\n");
     fprintf(fd,"FFLAGS = $(FC_OPTIONS)  -DFORDLL "+fflags+ "\n");
@@ -159,9 +159,9 @@ function ilib_link_gen_Make_win32(names,files,libs,Makename,libname,ldflags, ...
     fprintf(fd,"CC="+cc+ "\n");
   end
   fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I""$(SCIDIR)/include/"""+...
-	  " -Dmexfunction_=mex$<_  -DmexFunction=mex_$< "+ cflags +" \n"); 
+	  " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
   fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I""$(SCIDIR)/include/"""+...
-	  " -Dmexfunction=mex$< "+ fflags +"\n"); 
+	  " -Dmexfunction=mex$* "+ fflags +"\n"); 
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+"\n");
   fprintf(fd,"!include $(SCIDIR1)\\config\\Makedll.incl \n");
   fd.close[];

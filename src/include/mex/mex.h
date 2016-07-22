@@ -52,7 +52,7 @@ extern "C" {
 
   extern void _mxAssert(char *mess,int line,const char *file);
 #define mxAssert(cond,mess) if ( !(cond) ) _mxAssert(mess,__LINE__,__FILE__) ;
-  extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
+  extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexfunction);
   extern double *mxGetPr (const mxArray *ptr);
   extern double *mxGetPi (const mxArray *ptr);
   extern int mxGetM (const mxArray *ptr);

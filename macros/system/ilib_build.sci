@@ -290,13 +290,13 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway, ...
     for x=libs(:)' ; fprintf(fd," %s.a",x);end
     fprintf(fd,"\n");
     fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	    " -Dmexfunction_=mex$<_  -DmexFunction=mex_$< "+ cflags +" \n"); 
+	    " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
     fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	    " -Dmexfunction=mex$< "+ fflags +"\n"); 
+	    " -Dmexfunction=mex$* "+ fflags +"\n"); 
   else
-    fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -DmexFunction=mex_$< "+cflags+ "\n");
-    fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -Dmexfunction=mex$< "+fflags+  "\n");
-    fprintf(fd,"CXXFLAGS = $(CXX_OPTIONS) -DFORDLL -DmexFunction=mex_$< "+cflags+ "\n");
+    fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -DmexFunction=mex_$* "+cflags+ "\n");
+    fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -Dmexfunction=mex$* "+fflags+  "\n");
+    fprintf(fd,"CXXFLAGS = $(CXX_OPTIONS) -DFORDLL -DmexFunction=mex_$* "+cflags+ "\n");
   end
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+ "\n");
   if  %win32  && with_cygwin then
@@ -352,10 +352,10 @@ function ilib_gen_Make_win32(name,tables,files,libs,Makename,with_gateway,ldflag
   for x=libs(:)' ; fprintf(fd," %s.ilib",x);end
   fprintf(fd,"\n");
   fprintf(fd,"!include $(SCIDIR1)\\config\\Makefile.incl.mak\n");
-  fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	  " -Dmexfunction_=mex$<_  -DmexFunction=mex_$< "+ cflags +" \n"); 
-  fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
-	  " -Dmexfunction=mex$< "+ fflags +"\n"); 
+  fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I""$(SCIDIR)/include"""+...
+	  " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
+  fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I""$(SCIDIR)/include"""+...
+	  " -Dmexfunction=mex$* "+ fflags +"\n"); 
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+"\n");
   fprintf(fd,"!include $(SCIDIR1)\\config\\Makedll.incl \n");
   fd.close[];
@@ -378,7 +378,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
   fprintf(fd,"SCIIMPLIB=$(SCIDIR1)\\bin\\libnsp.lib\n\n");
   fprintf(fd,sprintf("CC=%s\\lcc\n",path));
   fprintf(fd,sprintf("LINKER=%s\\lcclnk\n",path));
-  fprintf(fd,"CFLAGS= -s -ansic -Z1 msvcrt.lib -I""$(SCIDIR)/routines"" -I""$(SCIDIR)/routines/f2c"" -Dmexfunction_=mex$<_ -DmexFunction=mex_$< -DWIN32 -DSTRICT -DFORDLL -D__STDC__ "+ cflags +" \n"); 
+  fprintf(fd,"CFLAGS= -s -ansic -Z1 msvcrt.lib -I""$(SCIDIR)/routines"" -I""$(SCIDIR)/routines/f2c"" -Dmexfunction_=mex$*_ -DmexFunction=mex_$* -DWIN32 -DSTRICT -DFORDLL -D__STDC__ "+ cflags +" \n"); 
   
   fprintf(fd,"LINKER_FLAGS=-dll -nounderscores\n");
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+"\n");
@@ -592,7 +592,7 @@ endfunction
 function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
   ok=%t
   msok = msvc_configure();
-  if ~msok then
+  if msok=='unknown' then
     // for cross compilation prefer  w32mode=%f
     // ok=spawn_sync(str, w32mode=%f);
     [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str, w32mode=%f);
