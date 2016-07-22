@@ -788,7 +788,7 @@ pvm_fd_add(fd, sets)
 }
 
 
-pvm_fd_delete(fd, sets)
+int pvm_fd_delete(fd, sets)
 	int fd;				/* the fd */
 	int sets;			/* which sets */
 {

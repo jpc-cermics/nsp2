@@ -270,9 +270,7 @@ static int atnewline = 1;	/* on new log line (XXX ick) */
 *	If how & 2, write to log file in /tmp
 */
 
-int
-pvmsetlog(how)
-	int how;
+int pvmsetlog(int how)
 {
 	char buf[255];
 	char hna[128];
@@ -343,10 +341,7 @@ pvmsetlog(how)
 }
 
 
-int
-vpvmlogprintf(fmt, ap)
-	char *fmt;
-	va_list ap;
+int vpvmlogprintf(const char *fmt, va_list ap)
 {
 
 	int cnt = 0;
@@ -447,9 +442,7 @@ pvmlogprintf(va_alist)
 }
 
 
-int
-pvmlogperror(s)
-	char *s;	/* text */
+int pvmlogperror(char *s)
 {
 #ifdef WIN32
 	char em[16];
@@ -486,8 +479,7 @@ pvmlogperror(s)
 *	If log_how & 4, can send message to console pvmd.
 */
 
-pvmlogerror(s)
-	char *s;	/* text */
+int pvmlogerror(char *s)
 {
 	pvmlogprintf("%s", s);
 	atnewline = 1;

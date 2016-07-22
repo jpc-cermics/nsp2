@@ -93,8 +93,7 @@ static int ngroups = -1;
 /*   gs_getgstid returns the tid of the group server, starts the server    */
 /*   if it is not running                                                  */
 
-int
-gs_getgstid()
+int gs_getgstid(void)
 {
 	int info;
 	int mytid;
@@ -167,9 +166,7 @@ gs_getgstid()
 	This allows users to keep a contiguous block of instance numbers [0,p-1].
 */
 
-int
-pvm_joingroup(group)
-char *group;
+int pvm_joingroup(char *group)
 {
 	int gid;
 	int x;
@@ -196,9 +193,7 @@ char *group;
 	This allows users to coordinate leaving and joining.
 */
 	
-int
-pvm_lvgroup(group)
-char *group;
+int pvm_lvgroup(char *group)
 {
 	int rc;
 	int x; 
@@ -229,10 +224,7 @@ char *group;
 	Returns the instance number of the specified tid in the named group.
 	Can be called by any task.
 */
-int
-pvm_getinst(group, tid)
-char *group;
-int tid;
+int pvm_getinst(char *group,int tid)
 {
 	int foo;
 	int inst;
@@ -261,10 +253,7 @@ int tid = pvm_gettid(char * group, int inum)
 	Returns the tid of the task defined by the group/inum pair.
 	Can be called by any task.
 */
-int
-pvm_gettid(group, inst)
-char *group;
-int inst;
+int pvm_gettid(char *group,int inst)
 {
 	int foo;
 	int tid;
@@ -293,9 +282,7 @@ int inst;
 	Returns the present size of the named group.
 */
 
-int
-pvm_gsize(group)
-char *group;
+int pvm_gsize(char *group)
 {
 	int foo;
 	int size;
@@ -324,10 +311,7 @@ int info = pvm_bcast(char* group, int msgtag)
 	(excluding yourself if you are in the group).
 	Calling tid need not be in the group.
 	*/
-int
-pvm_bcast(group, msgtag)
-char *group;
-int msgtag;
+int pvm_bcast(char *group,int msgtag)
 {
 	int bailout=0;
 	int cc;
@@ -417,10 +401,7 @@ int msgtag;
 	that group
 */
 
-int
-pvm_barrier(group, cnt)
-char  *group;
-int cnt;
+int pvm_barrier(char  *group,int cnt)
 {
 	int rc;
 	int x; 
@@ -489,10 +470,7 @@ int cnt;
 	the local process.
 */   
 
-int
-pvm_freezegroup(group, size)
-char *group;
-int size;
+int pvm_freezegroup(char *group,int size)
 {
 	int rc;
 	int x;
@@ -514,8 +492,7 @@ int size;
 * 	void pvm_gsdump()
 *	ask pvmgs to dump it's state. Assumes pvmgs is running
 */
-void
-pvm_gsdump()
+void pvm_gsdump(void)
 {
 	int savectx;
 	int sbuf;

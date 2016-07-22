@@ -30,14 +30,14 @@
 #include "pvmgsd.h"
 #include "pvmproto.h"
 
-main()
+int main(int argc,char **argv)
 {
-	int gstid;
-	pvm_mytid();
-	gstid = gs_getgstid();
-
-	pvm_setcontext( SYSCTX_DG );
-	pvm_initsend(PvmDataDefault);
-	pvm_send(gstid, DUMP);
+  int gstid;
+  pvm_mytid();
+  gstid = gs_getgstid();
+  
+  pvm_setcontext( SYSCTX_DG );
+  pvm_initsend(PvmDataDefault);
+  pvm_send(gstid, DUMP);
 }
 

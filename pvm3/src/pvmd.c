@@ -889,7 +889,7 @@ static char *modulenames[] = {
 	0
 };
 
-main(argc, argv)
+int main(argc, argv)
 	int argc;
 	char **argv;
 {
@@ -1502,7 +1502,7 @@ wrk_fds_init()
 }
 
 
-wrk_fds_add(fd, sets)
+int wrk_fds_add(fd, sets)
 	int fd;				/* the fd */
 	int sets;			/* which sets */
 {
@@ -1548,7 +1548,7 @@ wrk_fds_add(fd, sets)
 }
 
 
-wrk_fds_delete(fd, sets)
+int wrk_fds_delete(fd, sets)
 	int fd;				/* the fd */
 	int sets;			/* which sets */
 {
@@ -1633,7 +1633,7 @@ clear_opq_of(tid)
 *	The whole sausage
 */
 
-work()
+int work()
 {
 	static int lastpinged = 0;	/* host that got last keepalive msg */
 #ifdef FDSETNOTSTRUCT
@@ -2153,7 +2153,7 @@ char **argv;
 *	Send packets out the wire to remote pvmds.
 */
 
-netoutput()
+int netoutput()
 {
 	struct timeval tnow, tx;
 	struct pkt *pp, *pp2;
@@ -2617,7 +2617,7 @@ scrap:
 *	to be put on the queue to be sent.
 */
 
-netinpkt(hp, pp)
+int netinpkt(hp, pp)
 	struct hostd *hp;
 	struct pkt *pp;
 {
@@ -2808,7 +2808,7 @@ done:
 *	a blank context for it.
 */
 
-loclconn()
+int loclconn()
 {
 	struct task *tp;			/* new task context */
 	SOCKLEN_T oslen;
@@ -2897,7 +2897,7 @@ loclconn()
 *	Returns 0 if okay, else -1 if unrecoverable error.
 */
 
-locloutput(tp)
+int locloutput(tp)
 	struct task *tp;
 {
 	struct pkt *pp;
@@ -3056,7 +3056,7 @@ locloutput(tp)
 *	Returns 0 else -1 if error (work() should clean up the task context).
 */
 
-loclinput(tp)
+int loclinput(tp)
 	struct task *tp;
 {
 	struct pkt *pp = 0;
@@ -3215,7 +3215,7 @@ again:
 *	task context).
 */
 
-loclinpkt(tp, pp)
+int loclinpkt(tp, pp)
 	struct task *tp;
 	struct pkt *pp;
 {
@@ -3456,7 +3456,7 @@ done:
 *	pvmd to scribble in its log file.
 */
 
-loclstout(tp)
+int loclstout(tp)
 	struct task *tp;
 {
 	int n;
@@ -4316,7 +4316,7 @@ void make_valid(n)
 *	Set runstate, make ppnetsock the real netsock, close loclsock.
 */
 
-beprime()
+int beprime()
 {
 	struct htab *htp;
 	struct task *tp;
@@ -4609,7 +4609,7 @@ pkt_to_task(tp, pp)
 
 
 #ifdef	STATISTICS
-dump_statistics()
+int dump_statistics()
 {
 	pvmlogprintf(" select: rdy %d, zero %d, neg %d\n",
 			stats.selrdy, stats.selzer, stats.selneg);
@@ -4625,7 +4625,7 @@ dump_statistics()
 }
 
 
-reset_statistics()
+int reset_statistics()
 {
 	BZERO((char*)&stats, sizeof(stats));
 	return 0;

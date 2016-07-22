@@ -1492,7 +1492,7 @@ int omit;
 }
 
 
-trc_unpack_data_value( DD )
+int trc_unpack_data_value( DD )
 TRC_DATADESC DD;
 {
 	char upk_str[TRC_MAX_UNPACK_ARR_SIZE];
@@ -1901,7 +1901,7 @@ int tid;
 }
 
 
-trc_store_output_event( ID, tid, str, len )
+int trc_store_output_event( ID, tid, str, len )
 TRC_ID ID;
 int tid;
 char *str;

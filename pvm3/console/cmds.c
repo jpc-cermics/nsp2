@@ -469,7 +469,7 @@ struct hostd {
 };
 
 
-freealias(ap)
+int freealias(ap)
 	struct alias *ap;
 {
 	LISTDELETE(ap, a_link, a_rlink);
@@ -517,7 +517,7 @@ findalias(name)
 }
 
 
-docmd(cmd)
+int docmd(cmd)
 	char *cmd;
 {
 	char *p;
@@ -630,7 +630,7 @@ docmd(cmd)
  **            **
  ****************/
 
-add_cmd(ac, av)
+int add_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -676,7 +676,7 @@ add_cmd(ac, av)
 }
 
 
-diagnose_cant_start_pvm( hostline )
+int diagnose_cant_start_pvm( hostline )
 char *hostline;
 {
 	FILE *fp;
@@ -1166,7 +1166,7 @@ char *hostline;
 }
 
 
-do_rsh_cmd( hp, label, cmd, result, rsize )
+int do_rsh_cmd( hp, label, cmd, result, rsize )
 struct hostd *hp;
 char *label;
 char *cmd;
@@ -1245,7 +1245,7 @@ int rsize;
 }
 
 
-check_env_var( name, result )
+int check_env_var( name, result )
 char *name;
 char *result;
 {
@@ -1396,7 +1396,7 @@ bad:
 }
 
 
-alias_cmd(ac, av)
+int alias_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1424,7 +1424,7 @@ alias_cmd(ac, av)
 }
 
 
-conf_cmd(ac, av)
+int conf_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1448,7 +1448,7 @@ conf_cmd(ac, av)
 }
 
 
-delete_cmd(ac, av)
+int delete_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1475,7 +1475,7 @@ delete_cmd(ac, av)
 }
 
 
-echo_cmd(ac, av)
+int echo_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1491,7 +1491,7 @@ echo_cmd(ac, av)
 }
 
 
-halt_cmd(ac, av)
+int halt_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1696,7 +1696,7 @@ char *helptx[] = {
 };
 
 
-help_cmd(ac, av)
+int help_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1734,7 +1734,7 @@ help_cmd(ac, av)
 }
 
 
-id_cmd(ac, av)
+int id_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1745,7 +1745,7 @@ id_cmd(ac, av)
 }
 
 
-idump_cmd(ac, av)
+int idump_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1778,7 +1778,7 @@ insert_cmd(ac, av)
 */
 
 
-jobs_cmd(ac, av)
+int jobs_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1839,7 +1839,7 @@ jobs_cmd(ac, av)
 }
 
 
-kill_cmd(ac, av)
+int kill_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1918,7 +1918,7 @@ lookup_cmd(ac, av)
 */
 
 
-mstat_cmd(ac, av)
+int mstat_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1933,7 +1933,7 @@ mstat_cmd(ac, av)
 }
 
 
-pstat_cmd(ac, av)
+int pstat_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -1950,7 +1950,7 @@ pstat_cmd(ac, av)
 }
 
 
-quit_cmd()
+int quit_cmd()
 {
 	printf("\n");
 	if (mytid > 0) {
@@ -1983,7 +1983,7 @@ remove_cmd(ac, av)
 */
 
 
-reset_cmd(ac, av)
+int reset_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2015,7 +2015,7 @@ reset_cmd(ac, av)
 }
 
 
-setenv_cmd(ac, av)
+int setenv_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2097,7 +2097,7 @@ static char *setop_strs[] = {
 };
 
 
-setopt_cmd(ac, av)
+int setopt_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2131,7 +2131,7 @@ setopt_cmd(ac, av)
 }
 
 
-getopt_cmd(ac, av)
+int getopt_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2178,7 +2178,7 @@ getopt_cmd(ac, av)
 }
 
 
-sig_cmd(ac, av)
+int sig_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2195,7 +2195,7 @@ sig_cmd(ac, av)
 }
 
 
-spawn_cmd(ac, av)
+int spawn_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2368,7 +2368,7 @@ task_flags(f)
 }
 
 
-print_task_hdr(lflg)
+int print_task_hdr(lflg)
 	int lflg;
 {
 	if (lflg)
@@ -2381,7 +2381,7 @@ print_task_hdr(lflg)
 }
 
 
-print_task_rec(tip, lflg)
+int print_task_rec(tip, lflg)
 	struct pvmtaskinfo *tip;
 	int lflg;
 {
@@ -2418,7 +2418,7 @@ print_task_rec(tip, lflg)
 }
 
 
-tasks_cmd(ac, av)
+int tasks_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2497,7 +2497,7 @@ tasks_cmd(ac, av)
 }
 
 
-tickle_cmd(ac, av)
+int tickle_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2520,7 +2520,7 @@ tickle_cmd(ac, av)
 }
 
 
-printtm(who)
+int printtm(who)
 	int who;
 {
 	Pvmtmask tm;
@@ -2533,7 +2533,7 @@ printtm(who)
 }
 
 
-trace_cmd(ac, av)
+int trace_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2659,7 +2659,7 @@ trace_cmd(ac, av)
 }
 
 
-unalias_cmd(ac, av)
+int unalias_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2673,7 +2673,7 @@ unalias_cmd(ac, av)
 }
 
 
-version_cmd(ac, av)
+int version_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2684,7 +2684,7 @@ version_cmd(ac, av)
 }
 
 
-names_cmd(ac, av)
+int names_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2708,7 +2708,7 @@ names_cmd(ac, av)
 }
 
 
-put_cmd(ac, av)
+int put_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2722,7 +2722,7 @@ put_cmd(ac, av)
 }
 
 
-export_cmd(ac, av)
+int export_cmd(ac, av)
 	int ac;
 	char **av;
 {
@@ -2741,7 +2741,7 @@ export_cmd(ac, av)
 }
 
 
-unexport_cmd(ac, av)
+int unexport_cmd(ac, av)
 	int ac;
 	char **av;
 {

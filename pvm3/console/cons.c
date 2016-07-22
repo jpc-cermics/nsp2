@@ -303,7 +303,7 @@ exit_handler(mid)
 }
 
 
-main(argc, argv)
+int main(argc, argv)
 	int argc;
 	char **argv;
 {
@@ -629,7 +629,7 @@ acav(s, acp, av)
 *	Yet another version of ascii hex to integer
 */
 
-xtoi(p)
+int xtoi(p)
 	char *p;
 {
 	int i = 0;
@@ -647,7 +647,7 @@ xtoi(p)
 *	ascii hex or decimal to integer.
 */
 
-axtoi(p)
+int axtoi(p)
 	char *p;
 {
 	if (p[0] == '0' && p[1] == 'x')
@@ -667,7 +667,7 @@ tidtoi(p)
 }
 
 
-checkmsgs()
+int checkmsgs(void)
 {
 	int cc;
 	int len, cod, src;

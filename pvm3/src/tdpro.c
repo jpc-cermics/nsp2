@@ -1229,7 +1229,7 @@ cleanup:
 *	of the operation or when all pvmds have checked back in).
 */
 
-assign_tasks(wp)
+int assign_tasks(wp)
 	struct waitc *wp;		/* (any) waitc in peer group for this op */
 {
 	static int lasthh = -1;			/* for assigning hosts */

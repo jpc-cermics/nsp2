@@ -821,7 +821,7 @@ done:
 }
 
 
-free_waitc_add(wxp)
+int free_waitc_add(wxp)
 	struct waitc_add *wxp;
 {
 	int i;
@@ -1875,7 +1875,7 @@ ht_diff(htp2, htp1)
 *	Sends a message containing count and list of new d-tids.
 */
 
-gotnewhosts(htp2, htp1)
+int gotnewhosts(htp2, htp1)
 	struct htab *htp2;		/* new host table */
 	struct htab *htp1;		/* old host table */
 {

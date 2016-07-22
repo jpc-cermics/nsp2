@@ -634,7 +634,7 @@ pvmfreeenv(anep)
 *	Yet another version of ascii hex to integer
 */
 
-pvmxtoi(p)
+int pvmxtoi(p)
 	char *p;
 {
 	int i = 0;
@@ -785,7 +785,7 @@ gethostname(name, len)
 
 #endif
 
-pvmhdump(cp, n, pad)
+int pvmhdump(cp, n, pad)
 	char *cp;		/* bytes */
 	int n;			/* length */
 	char *pad;		/* tag string */
@@ -1280,7 +1280,7 @@ debug_flags(mask)
 *	Print an fd_set in human-readable format.
 */
 
-print_fdset(pad, n, f)
+int print_fdset(pad, n, f)
 	char *pad;			/* label at head */
 	int n;				/* max fd + 1 */
 #ifdef FDSETNOTSTRUCT

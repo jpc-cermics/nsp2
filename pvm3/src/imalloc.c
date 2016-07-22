@@ -272,7 +272,7 @@ i_malloc(len, tag)
 *	Give up a previously allocated buffer.
 */
 
-i_free(loc)
+int i_free(loc)
 	char *loc;		/* ptr to buffer */
 {
 	struct glob *ob;	/* freeing this object */

@@ -160,7 +160,7 @@ job_new(jid)
 }
 
 
-job_init()
+int job_init()
 {
 	if (!joblist) {
 		joblist = TALLOC(1, struct job, "job");
@@ -185,7 +185,7 @@ job_find(jid)
 }
 
 
-job_free(jp)
+int job_free(jp)
 	struct job *jp;
 {
 	LISTDELETE(jp, j_link, j_rlink);
@@ -234,7 +234,7 @@ obuf_new(jp, tid)
 }
 
 
-obuf_free(jp, op)
+int obuf_free(jp, op)
 	struct job *jp;
 	struct obuf *op;
 {
@@ -250,7 +250,7 @@ obuf_free(jp, op)
 }
 
 
-obuf_dump(jp)
+int obuf_dump(jp)
 	struct job *jp;
 {
 	struct obuf *op;
@@ -262,7 +262,7 @@ obuf_dump(jp)
 }
 
 
-checkoutput(jp, cc, len, cod, src)
+int checkoutput(jp, cc, len, cod, src)
 	struct job *jp;
 	int cc;					/* message mid */
 	int len;

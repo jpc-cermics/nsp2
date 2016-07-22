@@ -150,7 +150,7 @@ frag_get_header()
 
 
 static
-frag_put_header(fp)
+int frag_put_header(fp)
 	struct frag *fp;
 {
 #ifdef	CLUMP_ALLOC

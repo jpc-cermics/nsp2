@@ -473,7 +473,7 @@ makevis(dst, src)
 }
 
 
-close_slot(sp)
+int close_slot(sp)
 	struct slot *sp;
 {
 	if (sp->s_wfd != -1)
@@ -488,7 +488,7 @@ close_slot(sp)
 }
 
 
-pl_startup(num, hostlist)
+int pl_startup(num, hostlist)
 	int num;
 	struct hst **hostlist;
 {
@@ -778,7 +778,7 @@ pl_startup(num, hostlist)
 }
 
 
-phase1(sp)
+int phase1(sp)
 	struct slot *sp;
 {
 	struct hst *hp;
