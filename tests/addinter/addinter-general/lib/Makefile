@@ -37,8 +37,7 @@ clean	::
 	@$(RM) -f -r .libs libmex.c 
 
 distclean:: clean 
-	@$(RM) -f *.dia  *_gateway.c 
-	@$(RM) -f Makelib 
+	@$(RM) -f *.dia Makelib loader.sce
 
 message:
 	@echo "------------------------------------------";
