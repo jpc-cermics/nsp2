@@ -1,5 +1,5 @@
 function [libn,ok]=ilib_for_link(names,files,libs,flag,makename='Makelib',verbose=%t,...
-				 loadername='loader.sce',libname="",ldflags="",cflags="",fflags="",cc="")
+				 loadername='loader.sce',libname="",ldflags="",cflags="",fflags="",cc="",compile=%t)
   // Copyright Enpc
   // Generate a shared library which can be used by link command. 
   // names = names of entry points or the name of the library to 
@@ -14,10 +14,14 @@ function [libn,ok]=ilib_for_link(names,files,libs,flag,makename='Makelib',verbos
   if verbose then printf('   generate a Makefile: %s\n',makename);end
   ilib_link_gen_Make(names,files,libs,makename,libname,...
 		     ldflags,cflags,fflags,cc,flag);
-  // we call make
-  if verbose then printf('   running the makefile\n');end
-  if libname=="" then libname = names(1);end
-  [libn,ok]=ilib_compile('lib'+libname,makename,files,verbose=verbose);
+  // we call make if requested 
+  if compile then 
+    if verbose then printf('   running the makefile\n');end
+    if libname=="" then libname = names(1);end
+    [libn,ok]=ilib_compile('lib'+libname,makename,files,verbose=verbose);
+  else
+    libn=0;ok=%t;
+  end
 endfunction
 
 function ilib_link_gen_loader(names,flag,loadername='loader.sce',libs=[],libname="")
