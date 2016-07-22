@@ -43,7 +43,7 @@ clean	::
 
 distclean:: clean 
 	@$(RM) -f *.dia  *_gateway.c libmex.c
-	@$(RM) -f Makelib 
+	@$(RM) -f Makelib loader.sce libmulti1.c libmulti2.c
 	@cd lib ; make -s distclean 
 
 message:
