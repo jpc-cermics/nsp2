@@ -30,6 +30,9 @@ table2 =['f2',		'fmex2',	'cmex';
 	 
 table = list(table1,table2);
 
+// for unix like systems 
+ldflags = "-L./lib -lutil"
+ldflags = "lib/libutil.la" 
 
 if %win32 then 
   msvc = msvc_get_compiler();
