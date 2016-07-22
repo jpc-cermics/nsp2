@@ -7,9 +7,7 @@ ilib_path_incl()
 
 // [2] building lib/libutil.xx 
 
-chdir('lib');
-exec builder.sce 
-chdir('../')
+chdir('lib');exec builder.sce;chdir('../')
 
 // [3] the part devoted to shared lib generation 
 
@@ -39,6 +37,9 @@ if %win32 then
   end
 end
 
+// compilation will de postponed to Makefile
+compile=%f
+
 // do not modify below 
 // ----------------------------------------------
-ilib_build(ilib_name,table,files,libs,ldflags=ldflags)
+ilib_build(ilib_name,table,files,libs,ldflags=ldflags,compile=compile)

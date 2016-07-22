@@ -32,7 +32,6 @@ tests	: all
 	make -f Makelib tests 
 
 clean	::
-	@echo Cleaning 
 	@$(RM) -f -r *.o *.lo *.la *.so *.dll *.sl *.a *.dia .job.sce so_locations
 	@$(RM) -f -r .libs libmex.c 
 
