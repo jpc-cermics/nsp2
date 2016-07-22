@@ -2,7 +2,7 @@
 #include <nsp/objects.h> 
 #include <nsp/interf.h> 
 
-#include "lib/pipo.h"
+#include "lib/foo.h"
 
 int int_f4(Stack stack, int rhs, int opt, int lhs)
 {

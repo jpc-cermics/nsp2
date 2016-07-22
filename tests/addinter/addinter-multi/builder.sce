@@ -46,7 +46,7 @@ end
 
 // do not modify below 
 // ----------------------------------------------
-ilib_build(ilib_name,table,files,libs,ldflags=ldflags)
+ilib_build(ilib_name,table,files,libs,ldflags=ldflags,compile=%f)
 
 
 
