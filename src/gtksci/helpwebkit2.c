@@ -787,6 +787,7 @@ static int nsp_help_topic(const char *topic, char *buf)
 	  Scierror("Error: cannot build help table \n");
 	  return FAIL;
 	}
+      strcpy(buf,"");
       return OK;
     }
   if ( strcmp(topic, "scicoslab")==0 )
@@ -797,6 +798,7 @@ static int nsp_help_topic(const char *topic, char *buf)
 	  Scierror("Error: cannot build help table \n");
 	  return FAIL;
 	}
+      strcpy(buf,"");
       return OK;
     }
 
@@ -818,6 +820,7 @@ static int nsp_help_topic(const char *topic, char *buf)
 	  Scierror("Error: cannot add index file to help table \n");
 	  return FAIL;
 	}
+      strcpy(buf,"");
       return OK;
     }
 
@@ -825,7 +828,6 @@ static int nsp_help_topic(const char *topic, char *buf)
     {
       Sciprintf("No man found for topic %s\n",topic);
       strcpy(buf,"");
-      return OK;
     }
   else
     {
