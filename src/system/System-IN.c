@@ -174,10 +174,10 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
   NspSMatrix *S;
   char *envname,*def;
   const char *env ;
-  CheckRhs(1,2);
+  CheckStdRhs(1,2);
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ( rhs == 2 ) 
+  if ( rhs - opt == 2 ) 
     if ((def = GetString(stack,2)) == (char*)0) return RET_BUG;
   env = nsp_getenv(envname);
   if ( env != NULL ) 
@@ -189,7 +189,7 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      if ( rhs == 2) 
+      if ( rhs - opt == 2) 
 	{
 	  NthObj(2)->ret_pos = 1;
 	  return 1;
