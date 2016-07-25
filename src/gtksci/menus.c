@@ -64,7 +64,6 @@ void create_plugged_main_menu(void)
   static GtkWidget *Plug;
   GtkAccelGroup *accel_group = NULL ;
   const char * plug_info = nsp_getenv("SCIWIN");
-
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
     guint32 xid = strtol (plug_info, NULL, 0);

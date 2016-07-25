@@ -1286,37 +1286,69 @@ if test "$HAVE_CLP" = "yes"; then
 fi
 
 ###########################
-# check for WebKit
+# check for WebKit version 2
+# which exists for gtk3 only
 ###########################
 
 HELP_OBJS=
 WEBKIT_GEN=
 
-if test xx"$with_gtk" == xx; then 
+if test xx"$with_gtk" == xx; then
   # only checks if gtk is selected 
-  if test "$with_gtk3" == no; then
-     WEBKIT=webkit-1.0
-  else
-     WEBKIT=webkitgtk-3.0
+  if test "$with_gtk3" == yes; then
+     WEBKIT=webkit2gtk-3.0
+     PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
+     if test "x${have_webkit2}" = "xyes" ; then
+       GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
+       GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
+       GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+       GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+       WEBKIT_GEN="webkit2.o"
+       HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
+       AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
+       PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+       if test "x${have_webkit_zoom}" = "xyes" ; then
+       	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
+       fi
+     fi
   fi
+fi
+
+###########################
+# check for WebKit version 1
+# which exists for gtk2 or gtk3
+###########################
+
+if test xx"$have_webkit2" != xx"yes"; then 
+  HELP_OBJS=
+  WEBKIT_GEN=
+
+  if test xx"$with_gtk" == xx; then 
+    # only checks if gtk is selected 
+    if test "$with_gtk3" == no; then
+       WEBKIT=webkit-1.0
+    else
+       WEBKIT=webkitgtk-3.0
+    fi
   
-  PKG_CHECK_MODULES(webkit, $WEBKIT , have_webkit=yes, have_webkit=no)
-  if test "x${have_webkit}" = "xyes" ; then
+    PKG_CHECK_MODULES(webkit, $WEBKIT , have_webkit=yes, have_webkit=no)
+    if test "x${have_webkit}" = "xyes" ; then
        GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
        GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
        GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
        GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
        WEBKIT_GEN="webkit.o"
        if test "$with_gtk3" == no; then
-         HELP_OBJS="helpwebkit2.o"
+         HELP_OBJS="helpwebkit.o helpwebkit-1.o"
        else
-         HELP_OBJS="helpwebkit.o"
+         HELP_OBJS="helpwebkit.o helpwebkit-1.o"
        fi
        AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
        PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
        if test "x${have_webkit_zoom}" = "xyes" ; then
        	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
        fi
+    fi
   fi
 fi
 
@@ -2453,6 +2485,9 @@ if test X"$enable_cairo_svg" == Xyes; then
 fi
 echo "cairo output files.....:" $cairo_out
 echo
+if test "x${have_webkit2}" = "xyes" ; then
+   man_browser="webkit2"
+else
 if test "x${have_webkit}" = "xyes" ; then
    man_browser="webkit"
 else
@@ -2460,6 +2495,7 @@ if test "$GTKHTML" = yes; then
    man_browser="gtkhtml2"
 else
    man_browser="no browser !"
+fi
 fi
 fi
 echo "man browser............: " $man_browser

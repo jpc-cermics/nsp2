@@ -65,10 +65,12 @@ static void nsp_set_emacs_key_theme(void) ;
  * Initialize gtk
  **/
 
+#ifdef MY_LOG_HANDLER
 static void my_log_handler(const gchar *log_domain,
 			   GLogLevelFlags log_level,
 			   const gchar *message,
 			   gpointer user_data);
+#endif
 
 void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 {
@@ -132,7 +134,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
        * this should be activated or not depending on a parameter
        * i.e activated when compiling in debug mode
        */
-#if 0
+#ifdef MY_LOG_HANDLER
       g_log_set_default_handler (my_log_handler, NULL);
       g_log_set_handler (NULL, G_LOG_LEVEL_WARNING, my_log_handler, NULL);
 #endif
@@ -151,9 +153,9 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
   sci_winch_signal(0);
-
 }
 
+#ifdef MY_LOG_HANDLER
 static void my_log_handler(const gchar *log_domain,
 			   GLogLevelFlags log_level,
 			   const gchar *message,
@@ -161,7 +163,7 @@ static void my_log_handler(const gchar *log_domain,
 {
 
 };
-
+#endif
 
 /**
  * start_sci_gtk:
