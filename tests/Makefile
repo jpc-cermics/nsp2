@@ -88,7 +88,8 @@ TESTS= \
 	percenta.dia \
 	ast.dia \
 	persistent.dia \
-	stochdec.dia
+	stochdec.dia \
+	linmeq.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
@@ -138,13 +139,120 @@ tests: all
 
 .tst.vl :
 	@echo -n "valgrind $*: "
-	@setenv G_DEBUG gc-friendly; setenv G_SLICE always-malloc;valgrind --suppressions=valgrind.supp --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" >& $*.vl
+	@setenv G_DEBUG gc-friendly; setenv G_SLICE always-malloc; \
+		valgrind --suppressions=valgrind.supp --leak-check=full  \
+			../bin/scilex -nw -e "exec('$*.tst');quit" >& $*.vl
 	@echo  " $*.vl"
 
-distclean	:
+distclean	::
 	@echo cleaning tests
 	@$(RM) $(TESTS) $(ALG) $(VL) 
 	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
 
+
+# Tests generated from manual examples
+#--------------------------------------
+
+MANTESTS= \
+	man-signal.dia \
+	man-linalg.dia \
+	man-robust.dia \
+	man-control.dia \
+
+test-manuals: $(MANTESTS)
+
+man-signal.tst: ../man/src/signal/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-robust.tst: ../man/src/robust/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-control.tst: ../man/src/control/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-linalg.tst : ../man/src/linalg/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+distclean::
+	@$(RM) -f $(MANTESTS)
+
+
+# To be added
+
+man-arrays.tst : ../man/src/arrays/*.tex
+	@echo "generate $*.tst from man"
+	../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-basicnumarrays.tst : ../man/src/basicnumarrays/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-datatypes.tst : ../man/src/datatypes/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-fsqp.tst : ../man/src/fsqp/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-graphics.tst : ../man/src/graphics/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-gui.tst : ../man/src/gui/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-list.tst : ../man/src/list/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-misc.tst : ../man/src/misc/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-model.tst : ../man/src/model/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-numbers.tst : ../man/src/numbers/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-numerics.tst : ../man/src/numerics/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-polynomial.tst : ../man/src/polynomial/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-sorting.tst : ../man/src/sorting/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-sounds.tst : ../man/src/sounds/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-spmf.tst : ../man/src/spmf/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-statistics.tst : ../man/src/statistics/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-strings.tst : ../man/src/strings/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
+
+man-system.tst : ../man/src/system/*.tex
+	@echo "generate $*.tst from man"
+	@../bin/nsp -nw -e "exec('extractman.sci');extractman('$*');quit"
