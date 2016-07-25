@@ -8,7 +8,7 @@ function [libn,ok]=ilib_for_link(names,files,libs,flag,makename='Makelib',verbos
   // flag = 'c' or 'f' or '
   // 
   // generate a loader file
-  if verbose then printf('   generate a loader file %s\n',loadername);end
+  if verbose then printf('   generate a loader file: %s\n',loadername);end
   ilib_link_gen_loader(names,flag,loadername=loadername,libs=libs,libname=libname);
   // generate a Makefile
   if verbose then printf('   generate a Makefile: %s\n',makename);end

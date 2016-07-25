@@ -1,5 +1,5 @@
 function ilib_build(ilib_name,table,files,libs,...
-		    makename='Makelib',ldflags="",cflags="",fflags="",verbose=%t)
+		    makename='Makelib',ldflags="",cflags="",fflags="",verbose=%t,compile=%t)
   // generate files and make a shared library 
   // Copyright Enpc 
   // generate the gateway file
@@ -19,9 +19,11 @@ function ilib_build(ilib_name,table,files,libs,...
   // directory.
   if file('pathtype',makename)=='relative' then 
     makename = file('join',[file('split',get_current_exec_dir(absolute=%t));makename]);
-    if verbose then printf('   running the makefile: %s\n',makename);end
   end
-  ilib_compile(ilib_name,makename,files,verbose=verbose);
+  if compile then 
+    if verbose then printf('   running the makefile: %s\n',makename);end
+    ilib_compile(ilib_name,makename,files,verbose=verbose);
+  end
 endfunction
 
 function ilib_gen_gateway(name,tables)
