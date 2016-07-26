@@ -5672,7 +5672,7 @@ int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, NspObject *Obj, char i
  * 
  */
 
-#define PLUS(x,y) (( isinf( x ) == -1  || isinf( y ) == -1 ) ? (Min(x,y)) : x+y )
+#define PLUS(x,y) ((( isinf( x ) && x < 0 ) || (isinf( y ) && y < 0 )) ? (Min(x,y)) : (x)+(y))
 
 /**
  * nsp_mat_maxplus_mult:
