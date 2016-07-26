@@ -60,6 +60,7 @@ static GtkWidget  *main_menu_menubar = NULL;
 
 void create_plugged_main_menu(void)
 {
+#ifndef WIN32
   static int first = 0;
   static GtkWidget *Plug;
   GtkAccelGroup *accel_group = NULL ;
@@ -81,6 +82,7 @@ void create_plugged_main_menu(void)
   gtk_container_add(GTK_CONTAINER(Plug),main_menu_menubar);
   gtk_window_add_accel_group (GTK_WINDOW (Plug), accel_group);
   gtk_widget_show_all(Plug);
+#endif
 }
 
 /*
