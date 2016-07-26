@@ -4370,14 +4370,14 @@ int nsp_mat_minus_maxplus(NspMatrix *A)
   if ( A->rc_type == 'r') 
     {
       for ( i = 0 ; i < A->mn ; i++) 
-	if ( isinf( A->R[i]) != -1  )  A->R[i] = - A->R[i];
+	if (!( isinf( A->R[i]) && A->R[i] <0))  A->R[i] = - A->R[i];
     }
   else
     {
       for ( i = 0 ; i < A->mn ; i++) 
 	{
-	  if ( isinf( A->C[i].r) != -1 ) A->C[i].i=  - A->C[i].i;
-	  if ( isinf( A->C[i].i) != -1 ) A->C[i].r=  - A->C[i].r;
+	  if (!(isinf( A->C[i].r) && A->C[i].r < 0)) A->C[i].i=  - A->C[i].i;
+	  if (!(isinf( A->C[i].i) && A->C[i].i < 0)) A->C[i].r=  - A->C[i].r;
 	}
     }
   return(OK);
