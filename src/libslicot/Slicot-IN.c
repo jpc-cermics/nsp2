@@ -1849,7 +1849,7 @@ int int_linmeq(Stack stack, int rhs, int opt, int lhs)
 	LDC =Max (1, Max(N ,P) );
       else 
 	LDC =LDA ;
-      MXMN =MIN (P ,N );
+      MXMN =Min (P ,N );
       NDWORK =Max (1,4*N +MXMN );
       NM =N ;
     }
