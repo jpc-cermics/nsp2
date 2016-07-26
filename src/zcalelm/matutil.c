@@ -23,6 +23,13 @@
 #include <nsp/object.h>
 #include <nsp/matutil.h>
 
+#ifdef WIN32
+/* isinf just returns a boolean on win32 */
+#define IS_MINUS_INFINITY(x)  (isinf(x) && x < 0)
+#else
+#define IS_MINUS_INFINITY(x)  (isinf(x) == -1)
+#endif
+
 /**
  * SECTION:matutil
  * @title: Matrix utilities
@@ -418,7 +425,7 @@ int nsp_dadd_maxplus(const int n, const double *dx, const  int incx, double *dy,
     {
       for (i = 0 ; i < n ; ++i) 
 	{
-	  if ( isinf(*dy) != -1  && isinf( *dx) != -1 ) 
+	  if ( ! IS_MINUS_INFINITY(*dy) && ! IS_MINUS_INFINITY( *dx) ) 
 	    {
 	      *(dy++) += *(dx++);
 	    }
@@ -442,7 +449,7 @@ int nsp_dadd_maxplus(const int n, const double *dx, const  int incx, double *dy,
       x= dx+ix;
       for ( i = 0; i < n ; i++ ) 
 	{
-	  if ( isinf( (*y) ) != -1  && isinf( (*x) ) != -1 ) 
+	  if ( ! IS_MINUS_INFINITY( (*y) ) && ! IS_MINUS_INFINITY( (*x) ) ) 
 	    {
 	      *y += *x;
 	    }
@@ -520,7 +527,7 @@ int nsp_dsub_maxplus(const int n,const double *dx,const int incx, double *dy,con
     {
       for (i = 0 ; i < n ; ++i) 
 	{
-	  if ( isinf( dx[i] ) != -1)  dy[i] -= dx[i] ;
+	  if ( ! IS_MINUS_INFINITY( dx[i] ))  dy[i] -= dx[i] ;
 	}
       return 0;
     }
@@ -532,7 +539,7 @@ int nsp_dsub_maxplus(const int n,const double *dx,const int incx, double *dy,con
       if (incx < 0) { ix = (-(n) + 1) * incx ;} 
       if (incy < 0) { iy = (-(n) + 1) * incy ;}
       for ( i = 0; i < n ; i++ ) {
-	if ( isinf( dx[ix] ) != -1) dy[iy] -= dx[ix];
+	if ( ! IS_MINUS_INFINITY( dx[ix] )) dy[iy] -= dx[ix];
 	ix += incx;
 	iy += incy;
       }
@@ -1017,7 +1024,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
     {
       for (i = 0 ; i < *n ; ++i) 
 	{
-	  if ( isinf( (*zy).r)  != -1 && isinf( (*zx).r) != -1) 
+	  if ( ! IS_MINUS_INFINITY( (*zy).r) && ! IS_MINUS_INFINITY( (*zx).r) ) 
 	    {
 	      (*zy).r += (*zx).r;
 	    }
@@ -1025,7 +1032,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	    {
 	      (*zy).r = Min((*zy).r,(*zx).r);
 	    }
-	  if ( isinf( (*zy).i) != -1 && isinf( (*zx).i) != -1) 
+	  if ( ! IS_MINUS_INFINITY( (*zy).i) && ! IS_MINUS_INFINITY( (*zx).i)) 
 	    {
 	      (*zy).i += (*zx).i;
 	    }
@@ -1049,7 +1056,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
       x= zx+ix;
       for ( i = 0; i < *n ; i++ ) 
 	{
-	  if ( isinf( (*y).r ) != -1 && isinf( (*x).r ) != -1 ) 
+	  if ( ! IS_MINUS_INFINITY( (*y).r ) && ! IS_MINUS_INFINITY( (*x).r ) ) 
 	    {
 	      (*y).r += (*x).r;
 	    }
@@ -1057,7 +1064,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	    {
 	      (*y).r = Min((*y).r,(*x).r);
 	    }
-	  if ( isinf( (*y).i ) != -1 && isinf( (*x).i ) != -1 ) 
+	  if ( ! IS_MINUS_INFINITY( (*y).i ) && ! IS_MINUS_INFINITY( (*x).i ) ) 
 	    {
 	      (*y).i += (*x).i;
 	    }
@@ -1207,8 +1214,8 @@ int nsp_zsub_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
     {
       for (i = 0 ; i < *n ; ++i) 
 	{
-	  if ( isinf( zx[i].r ) != -1) zy[i].r -= zx[i].r ;
-	  if ( isinf( zx[i].i ) != -1) zy[i].i -= zx[i].i;
+	  if ( ! IS_MINUS_INFINITY( zx[i].r )) zy[i].r -= zx[i].r ;
+	  if ( ! IS_MINUS_INFINITY( zx[i].i )) zy[i].i -= zx[i].i;
 	}
       return 0;
     }
@@ -1220,8 +1227,8 @@ int nsp_zsub_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
       if (*incx < 0) { ix = (-(*n) + 1) * *incx ;} 
       if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
       for ( i = 0; i < *n ; i++ ) {
-	if ( isinf(  zx[ix].r ) != -1)zy[iy].r -= zx[ix].r ;
-	if ( isinf(  zx[ix].i ) != -1)zy[iy].i -= zx[ix].i;
+	if ( ! IS_MINUS_INFINITY(  zx[ix].r ))zy[iy].r -= zx[ix].r ;
+	if ( ! IS_MINUS_INFINITY(  zx[ix].i ))zy[iy].i -= zx[ix].i;
 	ix += *incx;
 	iy += *incy;
       }
