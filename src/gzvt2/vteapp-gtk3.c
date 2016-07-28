@@ -960,29 +960,20 @@ main(int argc, char **argv)
   /* a global vbox*/
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add(GTK_CONTAINER(window), vbox);
-  /* a test */
-#if 0
-  {
-    GtkWidget *label = gtk_label_new ("Test");
-    gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-    gtk_widget_show (label);
-  }
-#endif
   /* Create a gtk_socket to store the menu pluged by nsp */
   {
     char buf[56];
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
     gtk_box_set_spacing (GTK_BOX (hbox), 2);
     gtk_container_set_border_width (GTK_CONTAINER (hbox), 2);
-    gtk_widget_show (hbox);
     socket_button = gtk_socket_new();
+    gtk_widget_set_size_request(socket_button,1,10);
     gtk_box_pack_start(GTK_BOX(hbox), socket_button,FALSE,TRUE,0);
-    gtk_widget_show(socket_button);
     gtk_box_pack_start(GTK_BOX(vbox), hbox,FALSE,TRUE,0);
     sprintf(buf,"SCIWIN=%#lx",(gulong) gtk_socket_get_id(GTK_SOCKET(socket_button)));
     env_add[0]=buf;
   }
-
+  
   if (use_scrolled_window) {
     scrolled_window = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
@@ -995,7 +986,7 @@ main(int argc, char **argv)
     /* gtk_container_add(GTK_CONTAINER(window), hbox); */
     gtk_box_pack_start(GTK_BOX(vbox), hbox,TRUE,TRUE,0);
   }
-
+    
   /* Create the terminal widget and add it to the scrolling shell. */
   widget = vteapp_terminal_new();
   terminal = VTE_TERMINAL (widget);
@@ -1007,21 +998,20 @@ main(int argc, char **argv)
   */
   if (show_object_notifications)
     g_signal_connect(terminal, "notify", G_CALLBACK(terminal_notify_cb), NULL);
-  if (use_scrolled_window) {
-    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(terminal));
-  } else {
-    gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
-  }
 
-  if (!use_scrolled_window)
+  if (use_scrolled_window)
     {
+      gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(terminal));
+    }
+  else
+    {
+      gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
       /* Create the scrollbar for the widget. */
       scrollbar = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL,
 				    gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(terminal)));
       gtk_box_pack_start(GTK_BOX(hbox), scrollbar, FALSE, FALSE, 0);
     }
-
-
+  
   /* Connect to the "char_size_changed" signal to set geometry hints
    * whenever the font used by the terminal is changed. */
   if (use_geometry_hints) {
@@ -1159,6 +1149,7 @@ main(int argc, char **argv)
     vte_terminal_set_cjk_ambiguous_width(terminal, width);
   }
 #endif
+
 #if VTE_CHECK_VERSION(0,40,0)
   vte_terminal_set_cursor_shape(terminal, cursor_shape);
   vte_terminal_set_rewrap_on_resize(terminal, rewrap);
@@ -1181,6 +1172,19 @@ main(int argc, char **argv)
     g_strfreev (dingus);
   }
 
+
+  g_object_set_data (G_OBJECT (widget), "output_file", (gpointer) output_file);
+
+  /* Go for it! */
+  g_signal_connect(widget, "child-exited", G_CALLBACK(child_exited), window);
+  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), widget);
+
+  add_weak_pointer(G_OBJECT(widget), &widget);
+  add_weak_pointer(G_OBJECT(window), &window);
+
+  gtk_widget_realize(widget);
+
+  
   if (console) {
     /* Open a "console" connection. */
     int consolefd = -1, yes = 1, watch;
@@ -1400,17 +1404,7 @@ main(int argc, char **argv)
   }
 #endif
 
-  g_object_set_data (G_OBJECT (widget), "output_file", (gpointer) output_file);
-
-  /* Go for it! */
-  g_signal_connect(widget, "child-exited", G_CALLBACK(child_exited), window);
-  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), widget);
-
-  add_weak_pointer(G_OBJECT(widget), &widget);
-  add_weak_pointer(G_OBJECT(window), &window);
-
-  gtk_widget_realize(widget);
-
+  
   /* DEPRECATED:
   {
     GdkColor *color = NULL;
@@ -1460,7 +1454,6 @@ main(int argc, char **argv)
 #else
   gtk_widget_show_all(window);
 #endif
-
 
   gtk_main();
   

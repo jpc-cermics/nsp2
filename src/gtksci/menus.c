@@ -41,9 +41,9 @@ static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
 static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries,
 			int ne,int action_type,char *fname);
-static void sci_menubar_add_menu_entry(BCG *Xgc,GtkWidget *menubar,menu_entry *m);
+static void sci_menubar_add_menu_entry(BCG *Xgc,GtkWidget *menubar,menu_entry *m,int show_all);
 static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m);
-static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group);
+static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group,int show_all);
 static int is_menu_name(const char *name,const char *name1) ;
 
 /*--------------------------------------------------------------
@@ -69,14 +69,14 @@ void create_plugged_main_menu(void)
   if ( first == 0 ) {
     guint32 xid = strtol (plug_info, NULL, 0);
     Plug = gtk_plug_new(xid);
+    gtk_widget_realize(Plug);
     main_menu_entries = nsp_window_create_initial_menu();
     if ( main_menu_entries == NULL) return;
     first = 1;
   }
-
   accel_group = gtk_accel_group_new ();
   /* This function generates the menu items from scilab description */
-  main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group);
+  main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group,FALSE);
   /* Attach the new accelerator group to the window. */
   /* gtk_window_add_accel_group (GTK_WINDOW (window), accel_group); */
   gtk_container_add(GTK_CONTAINER(Plug),main_menu_menubar);
@@ -103,7 +103,7 @@ GtkWidget *create_main_menu( GtkWidget  *window)
     first = 1;
   }
   /* This function generates the menu items from scilab description */
-  main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group);
+  main_menu_menubar= sci_menu_to_gtkmenubar(NULL,main_menu_entries,accel_group,TRUE);
   /* Finally, return the actual menu bar created by the item factory. */
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
   return main_menu_menubar;
@@ -147,7 +147,7 @@ void create_graphic_window_menu(BCG *dd)
   /* Attach the new accelerator group to the window. */
   gtk_window_add_accel_group (GTK_WINDOW (dd->private->window), accel_group);
   /* This function generates the menu items from scilab description */
-  menubar= sci_menu_to_gtkmenubar(dd,dd->private->menu_entries,accel_group);
+  menubar= sci_menu_to_gtkmenubar(dd,dd->private->menu_entries,accel_group,TRUE);
   dd->private->menubar = GTK_WIDGET(menubar);
   gtk_box_pack_start (GTK_BOX (dd->private->vbox),dd->private->menubar, FALSE, TRUE, 0);
   gtk_widget_show (dd->private->menubar);
@@ -542,13 +542,13 @@ static void nsp_menu_delete_menuitem(menu_entry **m,const char *name)
  * fill an item factory with a menu_entry description
  *------------------------------------------------------*/
 
-static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group)
+static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group,int show_all)
 {
   GtkWidget *menubar= gtk_menu_bar_new ();
   g_object_set_data (G_OBJECT (menubar), "user_data", accel_group);
   while ( m != NULL)
     {
-      sci_menubar_add_menu_entry(Xgc,menubar,m);
+      sci_menubar_add_menu_entry(Xgc,menubar,m,show_all);
       m= m->next;
     }
   return menubar;
@@ -563,7 +563,7 @@ static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_en
 {
   if ( m == NULL ) return ;
   while ( m->next != NULL) m = m->next ;
-  sci_menubar_add_menu_entry(Xgc,menubar,m);
+  sci_menubar_add_menu_entry(Xgc,menubar,m,TRUE);
 }
 
 /*-------------------------------------------------------------------
@@ -573,7 +573,7 @@ static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_en
 
 static void nsp_menu_default_callback (GtkWidget *widget, gpointer   func_data);
 
-static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m)
+static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m,int show_all)
 {
   GtkAccelGroup *accel_group = g_object_get_data (G_OBJECT (menubar), "user_data");
   GtkWidget *menuitem;
@@ -651,7 +651,7 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
       */
     }
   gtk_menu_shell_append (GTK_MENU_SHELL (menubar), menuitem);
-  gtk_widget_show_all(menuitem);
+  if ( show_all ) gtk_widget_show_all(menuitem);
 }
 
 

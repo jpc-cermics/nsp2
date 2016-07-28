@@ -44,6 +44,8 @@
 
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern void nsp_create_main_text_view(void);
+extern void nsp_set_ignore_gtk_error(void);
+extern void nsp_set_default_gtk_error_handler(void);
 
 /* #define STATUS_BAR 1  */
 
@@ -113,6 +115,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 	  /* we just create a menu which will be inserted
 	   * in the calling zterm through socket/plug mechanism
 	   */
+	  nsp_set_ignore_gtk_error();
 	  create_plugged_main_menu() ;
 	}
       /* interaction with a textview
@@ -129,15 +132,6 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
       create_nsp_status();
 #endif
       nsp_set_emacs_key_theme() ;
-
-      /* XXX: change error handler to get rid of critical messages
-       * this should be activated or not depending on a parameter
-       * i.e activated when compiling in debug mode
-       */
-#ifdef MY_LOG_HANDLER
-      g_log_set_default_handler (my_log_handler, NULL);
-      g_log_set_handler (NULL, G_LOG_LEVEL_WARNING, my_log_handler, NULL);
-#endif
     }
   /* signals */
   signal(SIGSEGV,sci_clear_and_exit);
@@ -152,18 +146,38 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
   /* initialize nsp interp  */
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
+  nsp_set_default_gtk_error_handler();
   sci_winch_signal(0);
 }
 
-#ifdef MY_LOG_HANDLER
-static void my_log_handler(const gchar *log_domain,
-			   GLogLevelFlags log_level,
-			   const gchar *message,
-			   gpointer user_data)
+
+/*
+ * used when the menu is plugged
+ */
+
+static guint handler_id=0;
+
+static void log_error_handler(const gchar *log_domain,
+			       GLogLevelFlags log_level,
+			       const gchar *message,
+			       gpointer user_data)
 {
 
 };
-#endif
+
+void nsp_set_ignore_gtk_error(void)
+{
+  handler_id = g_log_set_handler ("Gtk",G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL
+				  | G_LOG_FLAG_RECURSION, log_error_handler, NULL);
+}
+
+void nsp_set_default_gtk_error_handler(void)
+{
+  /* 
+  if ( handler_id > 0 )
+    g_log_remove_handler ("Gtk", handler_id);
+  */
+}
 
 /**
  * start_sci_gtk:
