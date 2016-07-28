@@ -217,7 +217,7 @@ function graphics_demo_in_gtk(demo_list,ogl)
   notebook.append_page[hb, gtklabel_new(mnemonic="_Graphics")];
   notebook.append_page[sw, gtklabel_new(mnemonic="_Source")];
   //
-  winid=nsp_graphic_new(window,hb,opengl=ogl,popup_dim=[600,400]);
+  winid=nsp_graphic_new(window,hb,opengl=ogl,dim=[600,400]);
   // we must keep track of the winid somewhere
   // just in case other graphics windows are also activated.
   // this is used in row_activated_cb

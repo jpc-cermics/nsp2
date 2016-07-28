@@ -332,7 +332,19 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
       gtk_window_set_resizable(GTK_WINDOW(dd->private->window), TRUE);
-      vbox = nsp_gtk_vbox_new();
+#if GTK_CHECK_VERSION(3,0,0)
+      vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+#else 
+      vbox = gtk_vbox_new (FALSE, 0);
+#endif 
+      if ( wpdim != NULL)
+	{
+	  gtk_widget_set_size_request (vbox,Min(wpdim[0],iw),Min(wpdim[1],ih));
+	}
+      else
+	{
+	  gtk_widget_set_size_request (vbox,iw,ih);
+	}
       gtk_box_pack_start (GTK_BOX (box), vbox, TRUE, TRUE, 0);
     }
   
@@ -354,7 +366,9 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* create a new scrolled window. */
   dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
-
+#if GTK_CHECK_VERSION(3,0,0)
+  gtk_scrolled_window_set_overlay_scrolling(GTK_SCROLLED_WINDOW(scrolled_window),FALSE);
+#endif
   /* fix min size of the scrolled window */
   if ( wpdim != NULL)
     {
@@ -450,9 +464,13 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 					  GTK_WIDGET (dd->private->drawing));
 #endif 
   if ( is_top == TRUE )
-    gtk_widget_realize(dd->private->drawing);
+    {
+      gtk_widget_realize(dd->private->drawing);
+    }
   else
-    gtk_widget_show(dd->private->drawing);
+    {
+      gtk_widget_show(dd->private->drawing);
+    }
   
   /* connect to signal handlers, etc */
   g_signal_connect((dd->private->drawing), "configure_event",
@@ -467,14 +485,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		   G_CALLBACK(draw_callback), (gpointer) dd);
   g_signal_connect((dd->private->scrolled), "draw",
 		   G_CALLBACK(scrolled_draw_callback), (gpointer) dd);
-
-  {
-    GQuark quark = g_quark_from_string("xgc");
-    g_object_set_qdata_full(G_OBJECT(gtk_widget_get_window(dd->private->drawing)), quark, (gpointer) dd  , NULL);
-  }
-  gdk_window_set_invalidate_handler (
-				     gtk_widget_get_window(dd->private->drawing),
-				     nsp_drawing_invalidate_handler);
 #else
   g_signal_connect((dd->private->drawing), "expose_event",
 		   G_CALLBACK(expose_event_new), (gpointer) dd);
@@ -514,6 +524,19 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       gtk_widget_realize(dd->private->drawing);
     }
 
+
+#if GTK_CHECK_VERSION(3,0,0)
+  {
+    /* need dd->private->window to be realized */
+    GQuark quark = g_quark_from_string("xgc");
+    g_object_set_qdata_full(G_OBJECT(gtk_widget_get_window(dd->private->drawing)), quark, (gpointer) dd  , NULL);
+    /* gtk_widget_get_window may return NULL is widget is not realized */
+    gdk_window_set_invalidate_handler (
+				       gtk_widget_get_window(dd->private->drawing),
+				       nsp_drawing_invalidate_handler);
+  }
+#endif
+  
   if ( viewport_pos != NULL )
     {
       gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
