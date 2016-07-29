@@ -2,7 +2,13 @@ ARCHCFLAGS	=	 -DHASSTDLIB -DWIN32 -DSYSVBFUNC -DSYSVSTR \
 				-DHASERRORVARS -DNOWAIT3 -DNOGETDTBLSIZ -DNOUNIXDOM \
 				-DNOTMPNAM -DMAXHOSTNAMELEN=64 -DMAXPATHLEN=64 \
 				-DNEEDSFFS \
-				-I$(PVM_ROOT)/include -I$(PVM_ROOT)/tracer -I$(PVM_ROOT)/src
+				-I$(PVM_ROOT)/include -I$(PVM_ROOT)/tracer -I$(PVM_ROOT)/src \
+				-Wno-implicit-function-declaration \
+				-Wno-implicit-int \
+				-Wno-incompatible-pointer-types \
+				-Wno-pointer-to-int-cast \
+				-Wno-int-to-pointer-cast \
+				-Wno-attributes
 
 ARCHDLIB	=	 -mwindows -lwsock32 -lkernel32  -lgdi32 -lwinspool -lcomdlg32 \
 				-ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lm 

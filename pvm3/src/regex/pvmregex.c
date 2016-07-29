@@ -38,8 +38,9 @@
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
-char *malloc ();
-char *realloc ();
+void *malloc (size_t _Size);
+void *realloc (void *_Memory,size_t _NewSize);
+void free(void *_Memory);
 #endif
 
 #ifdef  SYSVSTR
