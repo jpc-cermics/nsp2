@@ -25,6 +25,11 @@
 
 #include <nsp/object.h>
 
+/* it is a macro on windows in wingdi.h */
+#ifdef GetGValue
+#undef GetGValue
+#endif 
+
 /*
  * NspGValue inherits from Object
  */

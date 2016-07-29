@@ -326,8 +326,11 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   gulong *xid;
   char * shm = get_shared() ;
 #endif
-  GtkWidget *vbox,*menubar, *socket_button;
-
+  GtkWidget *vbox,*menubar;
+#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
+  GtkWidget *socket_button;
+#endif
+  
 #ifdef __APPLE__
       /* avoid a gtk warning about locale */
       gtk_disable_setlocale();
@@ -359,14 +362,19 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   menubar= create_main_menu( window);
   gtk_box_pack_start(GTK_BOX(vbox),menubar,FALSE,TRUE,0);
 
+#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
   /* a socket in which I will redirect interaction */
   socket_button = gtk_socket_new();
   /*   gtk_widget_set_usize(socket_button,300,100); */
   gtk_box_pack_start(GTK_BOX(vbox), socket_button,TRUE,TRUE,0);
-
+#endif
+  
   /* show them all! */
   gtk_widget_show_all(window);
+#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
   gtk_widget_grab_focus(socket_button);
+#endif
+  
 #if !defined(__MSC__) && ! defined(__MINGW32__)
   /* I transmit the socket Id via shared memory  */
   xid = (gulong *) (shm+1);
