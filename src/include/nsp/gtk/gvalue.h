@@ -21,14 +21,18 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#line 14 "codegen/gvalue.override"
+
+/* start: on windows GetGValue exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGValue
+#undef GetGValue
+#endif
+
+#line 33 "./gvalue.h"
 /* NspGValue */
 
 #include <nsp/object.h>
-
-/* it is a macro on windows in wingdi.h */
-#ifdef GetGValue
-#undef GetGValue
-#endif 
 
 /*
  * NspGValue inherits from Object
@@ -94,6 +98,15 @@ extern int int_gvalue_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGValue *nsp_gvalue_xdr_load_partial(XDR *xdrs, NspGValue *M);
 extern int nsp_gvalue_xdr_save(XDR  *xdrs, NspGValue *M);
 
+#line 23 "codegen/gvalue.override"
+
+/* public: on windows GetGValue exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGValue
+#undef GetGValue
+#endif
+
+#line 110 "./gvalue.h"
 #endif /* NSP_INC_NspGValue */ 
 
 #ifdef NspGValue_Private 
@@ -108,8 +121,9 @@ static AttrTab gvalue_attrs[];
 static NspMethods *gvalue_get_methods(void);
 /* static int int_gvalue_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGValue *nsp_gvalue_create_void(const char *name,NspTypeBase *type);
-#line 14 "codegen/gvalue.override"
+#line 32 "codegen/gvalue.override"
 
+/* private: */
 static void nsp_init_GValue(GValue *value);
 static int nsp_eq_GValue(GValue *v1, GValue *v2);
 static int nsp_GValue_full_copy(NspGValue *H,GValue *v,NspGValue *self);
@@ -117,6 +131,7 @@ static int nsp_print_GValue(int indent,GValue *v,NspGValue *M);
 static int nsp_destroy_GValue(GValue *v,NspGValue *H);
 static int nsp_check_GValue(GValue *v,NspGValue *H);
 static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj);
-#line 116 "./gvalue.h"
+
+#line 136 "./gvalue.h"
 #endif /* NspGValue_Private */
 

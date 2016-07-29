@@ -27,11 +27,11 @@
 #line 4 "codegen-3.0/gvalue.override"
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
+#include <nsp/gtk/gobject.h>
 
 #ifdef GetGValue
 #undef GetGValue
 #endif
-#include <nsp/gtk/gobject.h>
 
 #line 37 "gvalue.c"
 
@@ -372,7 +372,7 @@ NspGValue  *GetGValue(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspGValue instance 
  *-----------------------------------------------------*/
-#line 24 "codegen-3.0/gvalue.override"
+#line 44 "codegen-3.0/gvalue.override"
 
 /* override the code for gvalue creation
  * we change the function nsp_gvalue_create
@@ -464,7 +464,7 @@ NspGValue *nsp_gvalue_full_copy(NspGValue *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 74 "codegen-3.0/gvalue.override"
+#line 94 "codegen-3.0/gvalue.override"
 
 /* override the default interface for gvalue_create */
 
@@ -491,7 +491,7 @@ int int_gvalue_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 98 "codegen-3.0/gvalue.override"
+#line 118 "codegen-3.0/gvalue.override"
 
 #define NSP_MAT(val) \
   if ( nsp_move_double(stack,1,(double) val)==FAIL) return RET_BUG;break;
@@ -586,7 +586,7 @@ void nsp_initialize_gvalue_types(void)
   new_type_gvalue(T_BASE);
 }
 
-#line 146 "codegen-3.0/gvalue.override"
+#line 166 "codegen-3.0/gvalue.override"
 
 static void nsp_init_GValue(GValue *value)
 {

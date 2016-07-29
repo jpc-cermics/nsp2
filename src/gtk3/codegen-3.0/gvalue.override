@@ -3,15 +3,34 @@
 headers
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
+#include <nsp/gtk/gobject.h>
 
 #ifdef GetGValue
 #undef GetGValue
 #endif
-#include <nsp/gtk/gobject.h>
+
+%%
+include-start GValue
+
+/* start: on windows GetGValue exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGValue
+#undef GetGValue
+#endif
+
+%%
+include-public GValue
+
+/* public: on windows GetGValue exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGValue
+#undef GetGValue
+#endif
 
 %%
 include-private GValue
 
+/* private: */
 static void nsp_init_GValue(GValue *value);
 static int nsp_eq_GValue(GValue *v1, GValue *v2);
 static int nsp_GValue_full_copy(NspGValue *H,GValue *v,NspGValue *self);
@@ -19,6 +38,7 @@ static int nsp_print_GValue(int indent,GValue *v,NspGValue *M);
 static int nsp_destroy_GValue(GValue *v,NspGValue *H);
 static int nsp_check_GValue(GValue *v,NspGValue *H);
 static int nsp_fill_g_value_from_nspobject(GValue *value, NspObject *obj);
+
 %%
 override-create GValue
 

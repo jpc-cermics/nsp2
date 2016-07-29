@@ -14,6 +14,7 @@ headers
 #include <nsp/type.h>
 #include <nsp/hobj.h>
 #include <nsp/interf.h>
+#include <nsp/eval.h>
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
@@ -5122,7 +5123,7 @@ struct _calendar_detail_func_data
   int pausecatch;
 };
 
-static void calendar_detail_func_clean(calendar_detail_func_data *obj);
+/* static void calendar_detail_func_clean(calendar_detail_func_data *obj); */
 static gchar *calendar_detail_func(GtkCalendar *calendar, guint year, guint month, 
 				   guint day, gpointer user_data);
 
@@ -7734,14 +7735,14 @@ static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list
  * 
  * clean after integration 
  **/
-
+/* 
 static void calendar_detail_func_clean(calendar_detail_func_data *obj)
 {
   nsp_object_destroy( (NspObject **) &(obj->func));
   nsp_matrix_destroy(obj->ymd);
   free(obj->targs);
 }
-
+*/
 /**
  * calendar_detail_func:
  * 
