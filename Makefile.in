@@ -37,7 +37,7 @@ scilex-lib::
 @PVMTARGET@::
 	@cd pvm3; echo "making all in pvm3..."; $(MAKE) $(MFLAGS) "CC=$(CC)";
 
-SUBDIRS = scripts macros demos 
+SUBDIRS = scripts macros demos demos3
 
 all::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -135,6 +135,8 @@ install-dest:
 	@cd config ; make install;
 	@echo "installing demos files"
 	@cd demos ; make install;
+	@echo "installing demos3 files"
+	@cd demos3 ; make install;
 	@echo "installing macros files"
 	@cd macros ; make install;
 	@echo "installing man files"
@@ -191,4 +193,4 @@ shared:
 # Only usefull for 
 
 cross-populate:
-	@./config/crosscopy.sh @NSP_HOST_TYPE@ @CROSS_VERSION@
+	@./config/@CROSS_COPIER@ @NSP_HOST_TYPE@ @CROSS_VERSION@

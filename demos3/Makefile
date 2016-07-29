@@ -11,7 +11,7 @@ all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && echo "making $@ in demos/$$i " && \
+		(cd $$i && echo "making $@ in demos3/$$i " && \
 		$(MAKE) $(MFLAGS) -s $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
@@ -24,13 +24,13 @@ all clean distclean ::
 DESTDIR=$(prefix)/lib/nsp
 
 xxinstall::
-	@echo "installing demos files"
+	@echo "installing demos3 files"
 	@find . \( -type f  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/demos/{} \; \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/demos3/{} \; \
 		-exec echo -n "." \;
 	@echo ""
 
 install::
-	@echo "installing demos files"
-	@$(TOP)/config/install-sh -d $(DESTDIR)/demos
-	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/demos ; tar xfp - )
+	@echo "installing demos3 files"
+	@$(TOP)/config/install-sh -d $(DESTDIR)/demos3
+	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/demos3 ; tar xfp - )
