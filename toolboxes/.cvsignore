@@ -1,10 +1,13 @@
+Makefile
+codegen-peval
+compilers
 coselica-0.4.8-nsp
 epex
 epex-elix
+modnum_43
+modnum_nsp
 nspcoinor
 nspcplex
 scicos-4.4
 scicos_tests
-modnum_43
-Makefile
 
