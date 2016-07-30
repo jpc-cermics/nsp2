@@ -122,6 +122,9 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libspqr.2.0.6.dll bin
     cp -f /usr/$dist/bin/libsuitesparseconfig.4.5.2.dll bin
     cp -f /usr/$dist/bin/libumfpack.5.7.5.dll bin
+    if [ -f /usr/$dist/bin/libgcc_s_sjlj-1.dll ]; then 
+      cp -f /usr/$dist/bin/libgcc_s_sjlj-1.dll bin
+    fi
     
     subdirs="lib/gtk-2.0 lib/glib-2.0 lib/gio lib/gdk-pixbuf-2.0 lib/pkcs11 etc share" 
     echo populate directories: lib, etc, share.
