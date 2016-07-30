@@ -19,9 +19,9 @@ fi
 
 if [ -d "/usr/$dist" ]; then
     echo populate bin with dlls from cross compiler 
-    cp -f /usr/$dist/bin/icudata53.dll bin/
-    cp -f /usr/$dist/bin/icui18n53.dll bin/
-    cp -f /usr/$dist/bin/icuuc53.dll bin/
+    cp -f /usr/$dist/bin/icudata56.dll bin/
+    cp -f /usr/$dist/bin/icui18n56.dll bin/
+    cp -f /usr/$dist/bin/icuuc56.dll bin/
     cp -f /usr/$dist/bin/libatk-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libblas.dll bin/
     cp -f /usr/$dist/bin/libcairo-2.dll bin/
@@ -42,7 +42,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgeoclue-0.dll bin/
     cp -f /usr/$dist/bin/libgio-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglib-2.0-0.dll bin/
-    cp -f /usr/$dist/bin/libglpk*.dll bin/
+    cp -f /usr/$dist/bin/*glpk*.dll bin/
     cp -f /usr/$dist/bin/libgmodule-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgmp-10.dll bin/
     cp -f /usr/$dist/bin/libgnutls-30.dll bin/
@@ -145,8 +145,8 @@ fi
 if [ -d "/usr/lib/gcc/$dist/$version" ]; then
     cp -f /usr/lib/gcc/$dist/$version/libgfortran-3.dll bin
     cp -f /usr/lib/gcc/$dist/$version/libquadmath-0.dll bin
-    cp -f /usr/lib/gcc/$dist/$version/libgcc_s_sjlj-1.dll bin/
-
+    cp -f /usr/lib/gcc/$dist/$version/libgcc_s_seh-1.dll bin/
+    cp -f /usr/lib/gcc/$dist/$version/libgomp-1.dll bin/
 else
     echo directory /usr/lib/gcc/$dist/$version  does not exists
 fi
