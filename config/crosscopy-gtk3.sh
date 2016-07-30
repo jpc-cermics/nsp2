@@ -43,7 +43,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libgeoclue-0.dll bin/
     cp -f /usr/$dist/bin/libgio-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libglib-2.0-0.dll bin/
-    cp -f /usr/$dist/bin/glpk*.dll bin/
+    cp -f /usr/$dist/bin/*glpk*.dll bin/
     cp -f /usr/$dist/bin/libgmodule-2.0-0.dll bin/
     cp -f /usr/$dist/bin/libgmp-10.dll bin/
     cp -f /usr/$dist/bin/libgnutls-30.dll bin/
