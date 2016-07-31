@@ -43,6 +43,7 @@ Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
 Source: "demos\*.*"; DestDir: "{app}\demos\"; Flags: recursesubdirs
 Source: "toolboxes\*.*"; DestDir: "{app}\toolboxes\"; Flags: recursesubdirs
 Source: "libs\NperiPos.ps"; DestDir: "{app}\libs\"; Flags: recursesubdirs
+Source: "libs\simport_pervasives.mdlio"; DestDir: "{app}\libs\"; Flags: recursesubdirs
 
 [Icons]
 Name: "{commondesktop}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
