@@ -1040,7 +1040,10 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
-  double *x= P->obj->x->R,*y= P->obj->y->R,dval;
+  double *x, *y ;
+  if ( P->obj == NULL || P->obj->x == NULL) return FALSE;
+  x = P->obj->x->R;
+  y = P->obj->y->R;
   if ( P->obj->x->mn == 0) return FALSE;
   bounds[0]=*x;/* xmin */
   bounds[1]=*y;/* ymin */
@@ -1048,7 +1051,7 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   bounds[3]=*y;/* ymax */
   for (i = 1; i < P->obj->x->mn; i++)
     {
-      dval = x[i];
+      double dval = x[i];
       if ( dval > bounds[2] )
 	bounds[2] = dval;
       else if ( dval < bounds[0] )
@@ -1062,4 +1065,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1066 "polyline.c"
+#line 1069 "polyline.c"
