@@ -522,7 +522,7 @@ static int _wrap_g_action_change_state(NspClassC *self,Stack stack,int rhs,int o
 {
   int_types T[] = {obj, t_end};
   ClassC *value = NULL;
-  NspObject *nsp_value;
+  NspObject *nsp_value = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_value) == FAIL) return RET_BUG;
   if ( IsClassC(nsp_value))
     { value = ((NspClassC *) nsp_value)->obj->value;
