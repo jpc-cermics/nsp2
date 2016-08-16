@@ -32,9 +32,10 @@ function demo_liststore_from_mat ()
   // create tree view */
 
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[%t];
+  // deprecated in 3.14
+  // treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
-
+  
   sw.add[treeview]
 
   renderer = gtkcellrenderertext_new ();
@@ -69,7 +70,8 @@ function demo_liststore_from_smat ()
 
   // create tree view */
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[%t];
+  // deprecated in 3.14
+  //treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
   sw.add[treeview]
 
@@ -108,7 +110,7 @@ function demo_liststore_from_bmat ()
 
   // create tree view */
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[%t];
+  //treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
   sw.add[treeview]
   renderer = gtkcellrenderertext_new ();

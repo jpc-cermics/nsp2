@@ -31,7 +31,7 @@ function demo_liststore ()
   // -------------------------------------------
 
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[%t];
+  //treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
   sw.add[treeview]
 

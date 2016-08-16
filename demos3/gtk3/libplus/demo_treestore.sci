@@ -60,7 +60,7 @@ function demo_treestore_from_mat ()
   // create tree view */
 
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[%t];
+  // treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
 
   sw.add[treeview]

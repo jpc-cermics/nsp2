@@ -101,7 +101,7 @@ function demo_treeview_editable()
 
   // create tree view 
   treeview = gtktreeview_new(model);
-  treeview.set_rules_hint[  %t]
+  //treeview.set_rules_hint[  %t]
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
 
   add_columns(treeview);
