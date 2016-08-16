@@ -295,7 +295,9 @@ function x=edit_matrix(x,with_scroll=%f,title="Edit matrix",size_request=[],head
     // create tree view
     treeview = gtktreeview_new(model);
     // treeview.connect["button-press-event", on_treeview_button_press_event];
-    treeview.set_rules_hint[  %t]
+    if ~exists('gtk_get_major_version','function') then
+      treeview.set_rules_hint[  %t]
+    end
     treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
     // show column headers
     treeview.set_headers_visible[headers];
@@ -808,7 +810,9 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
 
   // create tree view
   treeview = create_tree_view(L);
-  treeview.set_rules_hint[  %t]
+  if ~exists('gtk_get_major_version','function') then
+    treeview.set_rules_hint[  %t]
+  end
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers
   treeview.set_headers_visible[headers];
@@ -990,7 +994,9 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
   treeview = gtktreeview_new(model);
   treeview.user_data = x;
   treeview.connect["button-press-event", on_treeview_button_press_event];
-  treeview.set_rules_hint[  %t]
+  if ~exists('gtk_get_major_version','function') then
+    treeview.set_rules_hint[  %t]
+  end
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers
   treeview.set_headers_visible[headers];

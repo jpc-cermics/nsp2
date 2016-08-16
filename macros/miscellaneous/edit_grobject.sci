@@ -273,7 +273,9 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit Graphic object",size_reque
 
   // create tree view
   treeview = create_tree_view(L);
-  treeview.set_rules_hint[  %t]
+  if ~exists('gtk_get_major_version','function') then
+    treeview.set_rules_hint[  %t]
+  end
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
   // show column headers
   treeview.set_headers_visible[headers];
