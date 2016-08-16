@@ -1125,7 +1125,7 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 {
-  nsp_string str;
+  nsp_string str = NULL;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   int fontid[2];
@@ -1136,7 +1136,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   BCG *Xgc;
   if ( S->mn != 1)
     {
-      if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return FALSE;
+      if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) goto false;
     }
   else
     {
@@ -1153,7 +1153,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       break;
     case GR_in_box :
       /* here we need a Figure */
-      if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
+      if ( F == NULL || (Xgc = F->Xgc) == NULL) goto false;
       /* centered in a box  */
       if ( P->obj->size != -1 )
 	{
@@ -1173,7 +1173,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       break;
     case GR_no_box :
       /* no box case */
-      if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
+      if ( F == NULL || (Xgc = F->Xgc) == NULL) goto false;
       if ( P->obj->size != -1 )
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
@@ -1287,8 +1287,12 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       scale_double_to_pixels(Xgc->scales,x,y,xm,ym,4);
       Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,4,TRUE);
     }
-
+  
+  if ( S->mn != 1) nsp_string_destroy(&str) ;
   return TRUE;
+  false:
+    if ( S->mn != 1) nsp_string_destroy(&str) ;
+  return FALSE;
 }
 
-#line 1295 "grstring.c"
+#line 1299 "grstring.c"
