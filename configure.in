@@ -119,7 +119,7 @@ else
    with_gtkglext=no
 fi
 
-if test $with_packages = no; then
+if test xx"$with_packages" = xx"no"; then
 # do not use the optional packages 
     with_pvm=no
     with_sndfile=no
