@@ -31,12 +31,12 @@ function demo_colorsel ()
     end
     y=%t;
   endfunction
-
+  
   function change_color_callback (button,args)
     window=args(1);
     da=args(2);
     color=window.get_data['color'];
-    dialog = gtk_color_chooser_dialog_new("Changing color",button);
+    dialog = gtk_color_chooser_dialog_new("Changing color",window);
     dialog.set_transient_for[args(1)]
     dialog.set_rgba[color];
     response = dialog.run[];

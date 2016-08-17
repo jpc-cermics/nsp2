@@ -97,10 +97,10 @@ function insert_text (buffer)
   buffer.insert [iter, " or "];
   buffer.insert_with_tags_by_name [iter,  "a red background",  "red_background"];
   buffer.insert [iter, " or even "];
-  buffer.insert_with_tags_by_name [iter,  "a stippled red background",  "red_background", "background_stipple"];
+  buffer.insert_with_tags_by_name [iter,  "a stippled red background",  "red_background"];// "background_stipple"];
   buffer.insert [iter, " or "];
   buffer.insert_with_tags_by_name [iter, "a stippled blue foreground on solid red background",
-		    "blue_foreground", "red_background", "foreground_stipple"]
+		    "blue_foreground", "red_background"];// , "foreground_stipple"]
   buffer.insert [iter, " (select that to read it) can be used.\n\n"];
   buffer.insert_with_tags_by_name [iter, "Underline, strikethrough, and rise. ",  "heading"];
   buffer.insert_with_tags_by_name [iter, "Strikethrough",  "strikethrough"];

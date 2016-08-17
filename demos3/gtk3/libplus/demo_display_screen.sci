@@ -7,8 +7,10 @@ function screen_display_check (widget,args)
   current_screen = widget.get_screen[];
   new_screen = [];
   if  data(2).get_active[] then
+    // move to another display
     combo = data(1);
-    M= combo.get_model[]
+    M= combo.get_model[];
+    if combo.get_active[]== -1  then printf("no selected display !\n"); return;end
     iter=combo.get_active_iter[]
     display_name = M.get_value[iter,0];
     display = gdk_display_open(display_name);
@@ -20,13 +22,15 @@ function screen_display_check (widget,args)
 				    message="The display :\n"+display_name+"\ncannot be opened");
       dialog.set_screen[  current_screen]
       dialog.show[];
+      function hide(dialog) dialog.destroy[]; endfunction;
       dialog.connect["response",hide]// destroy
-      else
-	I=find(display_name == data(4))
-	if ~isempty(I) then data(5)=[data(4);display_name];end
-	new_screen = display.get_default_screen[];
+    else
+      I=find(display_name == data(4))
+      if ~isempty(I) then data(5)=[data(4);display_name];end
+      new_screen = display.get_default_screen[];
     end
   else
+    // move to the next screen 
     number_of_screens =2;// display.get_n_screens[];
     screen_num = current_screen.get_number[];
     if ((screen_num +1) < number_of_screens)
@@ -68,9 +72,6 @@ function demo_display_screen ()
     radio_scr.set_sensitive[%f]
   end
 
-
-
-
   valid_display_list = "diabolo:0.0";
   combo_dpy = gtkcombobox_new (with_entry=%t,text=valid_display_list);
   //combo_dpy.set_popdown_strings[ valid_display_list];
@@ -81,14 +82,14 @@ function demo_display_screen ()
   table.attach[  combo_dpy, 1, 0,1, 1]
 
   bbox = gtkbuttonbox_new("horizontal");
-  applyb = gtkbutton_new(stock = "gtk-apply");
-  cancelb = gtkbutton_new(stock = "gtk-cancel");
+  applyb = gtkbutton_new( label= "Apply");
+  // cancelb = gtkbutton_new( label = "Cancel");
 
   vbox.add[  bbox]
 
   bbox.add[  applyb]
-  bbox.add[  cancelb]
-
+  // bbox.add[  cancelb]
+  
   scr_dpy_data = list( combo_dpy,  radio_dpy, window.get_toplevel[], valid_display_list)
   window.set_data[ dpy_data = scr_dpy_data];
   // cancelb.connect["clicked", screen_display_destroy_diag,list(window)]

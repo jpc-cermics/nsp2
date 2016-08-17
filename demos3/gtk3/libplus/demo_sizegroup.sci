@@ -12,28 +12,93 @@
 // and not more. For example, if you are packing your widgets
 // into a table, you would not include the GTK.FILL flag.
 
+function demo_sizegroup ()
+  
 // Convenience function to create an option menu holding a number of strings
+  function [option_menu]=create_option_menu (strings)
+  // gtkoptionmenu_new deprecated and replaced by gtk_combo_box_text_new
+    if %t then 
+      // shortest way 
+      option_menu = gtkcombobox_new(text=strings); // with_entry=%t);
+      option_menu.set_active[1];
+    else
+      // another way 
+      option_menu = gtk_combo_box_text_new ();
+      for i = 1:size(strings,'*')
+	option_menu.append_text[strings(i)];
+      end
+      option_menu.set_active[1];
+    end
+  endfunction
 
-function [option_menu]=create_option_menu (strings)
-  menu = gtkmenu_new ();
-  for str=strings
-    menu_item = gtkmenuitem_new(label=str);
-    menu_item.show[];
-    menu.append[  menu_item]
-  end
-  option_menu = gtkoptionmenu_new ();
-  option_menu.set_menu[menu];
-endfunction
+  function add_row (table, row,size_group,size_group_label,label_text,options)
+    label = gtklabel_new(mnemonic=label_text);
+    table.attach[  label,0, row, 1,1];//  xoptions=ior(GTK.EXPAND,GTK.FILL)];
+    option_menu = create_option_menu (options);
+    label.set_mnemonic_widget[ option_menu]
+    size_group.add_widget[ option_menu];
+    size_group_label.add_widget[label];
+    table.attach[  option_menu,1, row, 1,1];
+  endfunction
+  
+  
+  color_options = [ "Red", "Green", "Blue"];
+  dash_options = ["Solid", "Dashed", "Dotted"];
+end_options = ["Square", "Round", "Arrow"];
 
-function add_row (table, row,size_group,label_text,options)
-  label = gtklabel_new(mnemonic=label_text);
-  label.set_alignment[  0, 1]
-  table.attach[  label,0, 1, row, row + 1,  xoptions=ior(GTK.EXPAND,GTK.FILL),yoptions= 0,xpadding=0,ypadding= 0]
-  option_menu = create_option_menu (options);
-  label.set_mnemonic_widget[ option_menu]
-  size_group.add_widget[ option_menu];
-  table.attach[  option_menu,1, 2,row, row + 1, xoptions=0,yoptions=0,xpadding=0,ypadding=0]
-endfunction
+// XXXX a rechanger GTK.RESPONSE_NONE,
+//// ,buttons= GTK.STOCK_CLOSE);
+window = gtkdialog_new(title = "GtkSizeGroup")
+window.set_resizable[%f]
+
+// XXX window.connect[  "response",gtk_widget_destroy, NULL]
+// window.connect[  "destroy",gtk_widget_destroyed, &window]
+
+vbox = gtkbox_new("vertical",spacing=5);
+window_vbox = window.get_content_area[];
+window_vbox.pack_start[ vbox,expand=%t,fill=%t,padding=0];
+vbox.set_border_width[  5]
+
+size_group = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
+size_group_labels = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
+
+// Create one frame holding color options
+
+frame = gtkframe_new(label="Color Options");
+vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
+
+// table = gtktable_new(rows=2,columns=2,homogeneous=%f);
+table = gtkgrid_new();// rows=2,columns=2,homogeneous=%f);
+table.set_row_homogeneous[%f];
+table.set_column_homogeneous[%f];
+table.set_column_spacing[5];
+table.set_border_width[  5]
+frame.add[  table]
+
+add_row (table, 0, size_group, size_group_labels, "_Foreground", color_options);
+add_row (table, 1, size_group, size_group_labels, "_Background", color_options);
+
+// And another frame holding line style options
+
+frame = gtkframe_new(label="Line Options");
+vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
+
+table = gtkgrid_new();
+table.set_row_homogeneous[%f];
+table.set_column_homogeneous[%f];
+table.set_column_spacing[5];
+table.set_border_width[  5]
+frame.add[  table]
+
+add_row (table, 0, size_group, size_group_labels, "_Dashing", dash_options);
+add_row (table, 1, size_group, size_group_labels, "_Line ends", end_options);
+
+//  And a check button to turn grouping on and off */
+check_button = gtkcheckbutton_new(mnemonic="_Enable grouping");
+vbox.pack_start[ check_button,expand=%f,fill=%f,padding=0]
+
+check_button.set_active[  %t]
+
 
 function toggle_grouping (check_button, args)
 // GTK.SIZE_GROUP_NONE is not generally useful, but is useful
@@ -47,59 +112,6 @@ function toggle_grouping (check_button, args)
   args(1).set_mode[new_mode];
 endfunction
 
-function demo_sizegroup ()
-  color_options = [ "Red", "Green", "Blue"];
-  dash_options = ["Solid", "Dashed", "Dotted"];
-  end_options = ["Square", "Round", "Arrow"];
-
-  // XXXX a rechanger GTK.RESPONSE_NONE,
-  //// ,buttons= GTK.STOCK_CLOSE);
-  window = gtkdialog_new(title = "GtkSizeGroup")
-  window.set_resizable[%f]
-
-  // XXX window.connect[  "response",gtk_widget_destroy, NULL]
-  // window.connect[  "destroy",gtk_widget_destroyed, &window]
-
-  vbox = gtkbox_new("vertical",spacing=5);
-  window_vbox = window.get_content_area[];
-  window_vbox.pack_start[ vbox,expand=%t,fill=%t,padding=0];
-  vbox.set_border_width[  5]
-
-  size_group = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
-
-  // Create one frame holding color options
-
-  frame = gtkframe_new(label="Color Options");
-  vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
-
-  table = gtktable_new(rows=2,columns=2,homogeneous=%f);
-  table.set_border_width[  5]
-  table.set_row_spacings[  5]
-  table.set_col_spacings[  10]
-  frame.add[  table]
-
-  add_row (table, 0, size_group, "_Foreground", color_options);
-  add_row (table, 1, size_group, "_Background", color_options);
-
-  // And another frame holding line style options
-
-  frame = gtkframe_new(label="Line Options");
-  vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
-
-  table = gtktable_new(rows=2,columns=2,homogeneous=%f);
-  table.set_border_width[  5]
-  table.set_row_spacings[  5]
-  table.set_col_spacings[  10]
-  frame.add[  table]
-
-  add_row (table, 0, size_group, "_Dashing", dash_options);
-  add_row (table, 1, size_group, "_Line ends", end_options);
-
-  //  And a check button to turn grouping on and off */
-  check_button = gtkcheckbutton_new(mnemonic="_Enable grouping");
-  vbox.pack_start[ check_button,expand=%f,fill=%f,padding=0]
-
-  check_button.set_active[  %t]
-  check_button.connect[  "toggled",toggle_grouping,list( size_group)]
-  window.show_all[];
+check_button.connect[  "toggled",toggle_grouping,list( size_group)]
+window.show_all[];
 endfunction
