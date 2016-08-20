@@ -39,7 +39,7 @@ distclean::
 	@$(RM) manual.lg
 	@$(RM) manual.log
 	@$(RM) manual.tmp
-	@$(RM) manual.xref
+	@$(RM) manual.xref*
 	@$(RM) *.aux
 	@$(RM) manual*.png
 
