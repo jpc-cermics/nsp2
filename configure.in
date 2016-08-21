@@ -2195,14 +2195,18 @@ fi
 ## webkit should be mandatory.
 #########################
 
-if test "x${have_webkit}" = "xyes" ; then
-   MAN_VIZUALIZATION="webkit-gtk"
+if test "x${have_webkit2}" = "xyes" ; then
+   MAN_VIZUALIZATION="webkit2"
 else
-   if test "$GTKHTML" = yes; then
+  if test "x${have_webkit}" = "xyes" ; then
+   MAN_VIZUALIZATION="webkit-gtk"
+  else
+    if test "$GTKHTML" = yes; then
      MAN_VIZUALIZATION="gtkhtml2"
-   else
+    else
      MAN_VIZUALIZATION="no man vizualization tool"
-   fi
+    fi
+  fi
 fi
 
 #########################

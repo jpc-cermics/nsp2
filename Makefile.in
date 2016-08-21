@@ -37,7 +37,7 @@ scilex-lib::
 @PVMTARGET@::
 	@cd pvm3; echo "making all in pvm3..."; $(MAKE) $(MFLAGS) "CC=$(CC)";
 
-SUBDIRS = scripts macros demos demos3
+SUBDIRS = scripts macros demos demos3 toolboxes
 
 all::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -141,6 +141,8 @@ install-dest:
 	@cd macros ; make install;
 	@echo "installing man files"
 	@cd man ; make install;
+	@echo "installing toolboxes"
+	@cd toolboxes ; make install;
 	@echo "install libtool"
 	@$(TOP)/config/install-sh $(opt_PROG) libtool $(DESTDIR)/
 	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(DESTDIR)/
