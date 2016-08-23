@@ -93,7 +93,7 @@ BrowserSettingsDialog.o: webkit2-gtk/BrowserSettingsDialog.c
 
 BrowserWindow.o: webkit2-gtk/BrowserWindow.c
 	@echo "compiling $<  Wall "
-	$(COMPILE) -DINSIDE_NSP -c $< -o $*.o
+	@$(COMPILE) -DINSIDE_NSP -c $< -o $*.o
 
 
 # generated with gcc -MMD 

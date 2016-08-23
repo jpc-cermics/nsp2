@@ -654,7 +654,7 @@ int int_ricc(Stack stack, int rhs, int opt, int lhs)
 int int_ltitr(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *X0=NULL, *A=NULL, *B=NULL, *U=NULL, *Xf=NULL, *W  = NULL, *Wgr= NULL;
-  int one   = 1;
+  int one   = 1, ig = 0, i;
 
   CheckRhs(3,4);
   CheckLhs(1,2);
@@ -686,8 +686,8 @@ int int_ltitr(Stack stack, int rhs, int opt, int lhs)
     {
       memset(Wgr->R, 0, A->m * sizeof(double));
     }
-  int ig = 0;
-  for (int i = 0; i < U->n; i++)
+
+  for (i = 0; i < U->n; i++)
     {
       ig = (i + 1) * A->m;
       nsp_calpack_dmmul(A->R, &A->m, Wgr->R + ig - A->m, &A->m, W->R, &A->m, &A->m, &A->m, &one);
@@ -820,7 +820,7 @@ static int int_freq_state(Stack stack, int rhs, int opt, int lhs)
   for ( i= 0 ; i < Wgr->mn ; i++) {Wgr->C[i].r=0;Wgr->C[i].i=0;}
   
   double *Fp = F->R;
-  for (int i = 0; i < F->mn; i++)
+  for (i = 0; i < F->mn; i++)
     {
       static int first = 0;
       int ig = i * B->n * C->m;
@@ -857,6 +857,7 @@ static int int_freq_tf(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *N=NULL,*D=NULL;
   NspMatrix *F=NULL,*Res=NULL,*Nm,*Dm;
+  int i;
 
   if ( IsMatObj(stack,1))
     {
@@ -899,7 +900,7 @@ static int int_freq_tf(Stack stack, int rhs, int opt, int lhs)
 
   if ((Res = nsp_matrix_create(NVOID,F->rc_type, Nm->m,0)) == NULLMAT) goto err;
    
-  for (int i = 0; i < F->mn ; i++)
+  for ( i = 0; i < F->mn ; i++)
     {
       NspMatrix *Ni,*Di;
       if ( IsPMat(N))

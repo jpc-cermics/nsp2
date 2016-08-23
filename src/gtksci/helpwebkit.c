@@ -26,7 +26,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <webkit/webkit.h>
+/* #include <webkit/webkit.h> */
 
 #include <nsp/nsp.h>
 #include <nsp/gtksci.h>

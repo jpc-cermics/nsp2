@@ -73,7 +73,8 @@ static double minimum (double *Val, int m)
 
 static int is_ascending(double *Val, int m)
 {
-  for (int i = 1 ; i < m; i++)
+  int i;
+  for (i = 1 ; i < m; i++)
     {
       if ( Val[i-1] > Val[i]) return FALSE;
     }
@@ -82,10 +83,11 @@ static int is_ascending(double *Val, int m)
 
 NspMatrix *reshapeFilters (const double *InR, const double *InI, int m)
 {
+  int i,j;
   NspMatrix *loc;
   if (( loc = nsp_matrix_create(NVOID,'r',1, m)) == NULL)
     return NULL;
-  for (int i = 0, j = 0; j < m ; i++, j++)
+  for (i = 0, j = 0; j < m ; i++, j++)
     {
       if ( InI[i] == 0)
 	{
@@ -155,7 +157,7 @@ int int_syredi (Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble (stack, 5, &DeltaS) == FAIL) return RET_BUG;
 
   //alloc temporary variables
-  for (int i = 0; i < OUT_COUNT; i++)
+  for (i = 0; i < OUT_COUNT; i++)
     {
       if (( Out[i] = nsp_matrix_create(NVOID,'r',1, OutSize[i]))== NULL) goto err;
     }
@@ -207,12 +209,12 @@ int int_delip (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *Out=NULL;
   double ck;
-  int complex = FALSE;
+  int complex = FALSE, i;
   //check input parameters
   CheckRhs(2,2);
   CheckLhs(0,1);
   if ((A = GetRealMatCopy (stack,1)) == NULLMAT) return RET_BUG;
-  for (int i = 0; i < A->mn; i++)
+  for ( i = 0; i < A->mn; i++)
     {
       if ( A->R[i] < 0)
 	{
@@ -517,12 +519,13 @@ int int_corr_updt(Stack stack, int rhs, int opt, int lhs)
   /* MoveObj(stack,1,NSP_OBJECT(W)); */
   if ( lhs >= 2)
     {
+      int i;
       NspMatrix *Out2 = NULL;
       int m=  W->mn / 2;
       if ((Out2 = nsp_matrix_create(NVOID,'r', 1, W->mn)) == NULLMAT)
 	return RET_BUG;
-      for (int i = 0; i < m; i++)        Out2->R[i] = X->R[X->mn - m + i];
-      for (int i = m+1 ; i < W->mn; i++) Out2->R[i] = 0.0;
+      for ( i = 0; i < m; i++)        Out2->R[i] = X->R[X->mn - m + i];
+      for ( i = m+1 ; i < W->mn; i++) Out2->R[i] = 0.0;
       MoveObj(stack,1,NSP_OBJECT(Out2));
       NSP_OBJECT(Out2)->ret_pos = 2;
     }
@@ -613,7 +616,7 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *N,*D;
   NspMatrix *Work;
-  int Nd=0, Dd=0, err= 0, Work_size=0;
+  int Nd=0, Dd=0, err= 0, Work_size=0, i;
   
   CheckRhs(2,2);
   CheckLhs(0,2);
@@ -633,7 +636,7 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
       goto ret;
     }
   
-  for (int i = 0; i < N->mn; i++)
+  for ( i = 0; i < N->mn; i++)
     {
       int nd = Max(0,((NspMatrix *) N->S[i])->mn -1);
       int dd = Max(0,((NspMatrix *) D->S[i])->mn -1);
@@ -645,7 +648,7 @@ int int_simp (Stack stack, int rhs, int opt, int lhs)
     
   if (( Work = nsp_matrix_create(NVOID,'r', 1, Work_size)) == NULLMAT) return RET_BUG;
   
-  for (int i = 0; i < Max(N->mn,D->mn); i++)
+  for ( i = 0; i < Max(N->mn,D->mn); i++)
     {
       int Nout=0, Dout=0;
       NspMatrix *Nm= (NspMatrix *) N->S[i];
@@ -791,7 +794,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *N;
   NspMatrix *Work;
-  int degree,deg2, max_iteration = 100, err   = 0, one   = 1;
+  int degree,deg2, max_iteration= 100, err= 0, one= 1, i;
 
   CheckRhs(1,1);
   CheckLhs(0,1);
@@ -813,7 +816,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
 	{
 	  Scierror("Error: A symmetric polynom is expected.\n");return RET_BUG;
 	}
-      for (int i = 0; i < Nmat->mn; i++)
+      for ( i = 0; i < Nmat->mn; i++)
 	{
 	  if ( Nmat->R[i] != Nmat->R[degree - i])
 	    {
@@ -859,7 +862,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
       memset(Out->R, 0x00, N->mn * n * sizeof(double));
 	
       if ( ( Work = nsp_matrix_create(NVOID,'r',1,(n + 1) * N->m * ((n + 1)*N->m) + 1 ))== NULL) return RET_BUG;
-      for (int i = 0; i < N->mn; i++)
+      for ( i = 0; i < N->mn; i++)
 	{
 	  NspMatrix *Elt = (NspMatrix *)  N->S[i];
 	  int nc = 2 + Elt->mn - 1 - n;
@@ -884,7 +887,7 @@ int int_sfact (Stack stack, int rhs, int opt, int lhs)
       if ((Pout =nsp_pmatrix_create(NVOID,N->m,N->n,NULL,-1, N->var))== NULLPMAT)
 	return RET_BUG;
 	
-      for (int i = 0; i < N->mn ; i++)
+      for ( i = 0; i < N->mn ; i++)
 	{
 	  NspMatrix *Mout;
 	  if (( Mout = nsp_matrix_create("pe",'r',1,n))==NULL) return RET_BUG;
