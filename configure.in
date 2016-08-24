@@ -1480,8 +1480,8 @@ if test "$MINGW32" = "yes" ; then
 fi
 
 if test "$check_vte" = "yes" ; then
-  # for gtk2 
-  if test "$with_gtk2" = "yes"; then
+  # for gtk2
+  if test xx"$with_gtk3" = xx"no"; then	
      VTE_FILE=vteapp-gtk2.c
      VTE_PKG=vte
      PKG_CHECK_MODULES(vte, vte , have_vte_gtk2=yes, have_vte_gtk2=no)
@@ -1496,17 +1496,19 @@ if test "$check_vte" = "yes" ; then
      	AC_MSG_ERROR([vte_terminal_new not found in vte])
      fi
      LIBS=$ac_save_LIBS
-  fi
-  # for gtk3
-  if test "$with_gtk3" = "yes"; then
+  else
+     # for gtk3
+     VTE_FILE=vteapp-gtk3-vte-2.91.c
      VTE_FILE=vteapp-gtk3.c
      PKG_CHECK_MODULES(vte, vte-2.91 , have_vte_291_gtk3=yes, have_vte_291_gtk3=no)
      if test "$have_vte_291_gtk3" = "yes"; then
        VTE_PKG=vte-2.91
+       VTE_FILE=vteapp-gtk3-vte-2.91.c
      else
        PKG_CHECK_MODULES(vte, vte-2.90 , have_vte_290_gtk3=yes, have_vte_290_gtk3=no)
        if test "$have_vte_290_gtk3" = "yes"; then
          VTE_PKG=vte-2.90
+         VTE_FILE=vteapp-gtk3-vte-2.90.c
        else
          AC_MSG_ERROR([you should install library and devel for VTE gtk+-3.0 (Terminal emulator widget)])
        fi
