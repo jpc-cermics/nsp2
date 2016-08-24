@@ -973,7 +973,7 @@ main(int argc, char **argv)
     sprintf(buf,"SCIWIN=%#lx",(gulong) gtk_socket_get_id(GTK_SOCKET(socket_button)));
     env_add[0]=buf;
   }
-  
+
   if (use_scrolled_window) {
     scrolled_window = gtk_scrolled_window_new (NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
@@ -1021,7 +1021,7 @@ main(int argc, char **argv)
     g_signal_connect(widget, "realize",
 		     G_CALLBACK(char_size_realized), window);
   }
-
+  
   /* Connect to the "window_title_changed" signal to set the main
    * window's title. */
   g_signal_connect(widget, "window-title-changed",
