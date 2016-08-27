@@ -1491,7 +1491,7 @@ main(int argc, char **argv)
  * @terminal must be realized (see gtk_widget_get_realized()).
  */
 
-#if VTE_CHECK_VERSION(0,42,0)
+#if VTE_CHECK_VERSION(0,40,0)
 #else 
 static void
 vte_terminal_get_geometry_hints(VteTerminal *terminal,
