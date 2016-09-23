@@ -99,6 +99,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
   end
   
   function error_size(str,sz)
+    if length(str) > 200 then str = part(str,1:200)+'... (truncated)';end
     message(['Answer given for '+str+' entry';
 	       'has invalid dimensions. ';
 	       'Expecting size to be: '+sz]);
@@ -108,6 +109,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     ok=%f;%vv=[];
     [ierr,%H]=execstr('%vv=['+str+']',env=exec_context, errcatch=%t);
     if ierr==%f then 
+      if length(str) > 200 then str = part(str,1:200)+'... (truncated)';end
       message(['Answer given for '+label+' is wrong and';
 		 'cannot be evaluated:';'v=['+str+']']);
       lasterror();
