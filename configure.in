@@ -116,6 +116,7 @@ if test xx"$with_gtk3" = xx; then
 else
    GRAPHICS_LIB_OLD=
    with_gtk3=yes
+   AC_DEFINE(WITH_GTK3,[],[using gtk3])	
    with_gtkglext=no
 fi
 
