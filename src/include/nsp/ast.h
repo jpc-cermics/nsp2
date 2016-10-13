@@ -138,7 +138,11 @@ static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt);
 static void nsp_print_string_as_read_for_html(const char *str);
 static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos);
 static void nsp_print_comment_for_html(const char *str);
+static int _nsp_ast_pprint_arg_comment_ended(NspAst *ast,int elt);
+static int _nsp_ast_pprint_op_comment_ended(NspAst *ast, int elt);
+static int nsp_ast_printlength(NspAst * L, int indent);
+static int _nsp_ast_printlength_arg(NspAst *ast,int elt, int indent, int pos, int posret);
 
-#line 143 "./ast.h"
+#line 147 "./ast.h"
 #endif /* NspAst_Private */
 

@@ -108,3 +108,9 @@
   (return-type "NspSMatrix*")
 )
 
+(define-method print_length
+  (of-object "Ast")
+  (c-name "ast_print_length")
+  (return-type "int")
+)
+
