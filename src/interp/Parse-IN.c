@@ -834,15 +834,12 @@ static int int_restart(Stack stack, int rhs, int opt, int lhs)
 static int int_parse_file_gen(Stack stack, int rhs, int opt, int lhs,int mtlb)
 {
   NspAst *ast;
-  char old[FSIZE+1], fname_expanded[FSIZE+1];
+  char fname_expanded[FSIZE+1];
   char *fname= NULL;
   int_types T[] = {string, t_end} ;
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&fname) == FAIL) return RET_BUG;
-  /* update the current exec dir in stack, old value is returned in old 
-   * fname_expanded contains the file name after expansion using current_exec_dir
-   */
-  nsp_expand_file_and_update_exec_dir(&stack,old,fname,fname_expanded);
+  nsp_expand_file_with_exec_dir(&stack,fname,fname_expanded);
   ast =nsp_parse_file(fname_expanded);
   if ( ast == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ast));

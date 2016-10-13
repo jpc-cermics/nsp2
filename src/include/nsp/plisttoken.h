@@ -79,6 +79,8 @@ enum _nsp_ops {
   SEQOR ,   /* sequential or */	      
   LT_OP,
   GT_OP,
+  COMMA_RET_OP, /* ,\n */
+  SEMICOLON_RET_OP, /* ;\n */
   LASTCODE_OP                         
 };
 

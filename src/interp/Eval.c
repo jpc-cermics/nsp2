@@ -166,7 +166,9 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
 	case 1:
-	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
+	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP
+	       || L->type == SEMICOLON_RET_OP || L->type == COMMA_RET_OP
+	       )
 	    {
 	      if (( nargs =nsp_eval_arg(L1,&stack,first,1,-1,display)) < 0) return nargs;
 	      if ( nargs == 0 ) return 0;
@@ -181,7 +183,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		    }
 		  
 		}
-	      if ( display == 1 && L->type != SEMICOLON_OP)
+	      if ( display == 1 && L->type != SEMICOLON_OP && L->type != SEMICOLON_RET_OP)
 		{
 		  opcode =nsp_astcode_to_nickname(L->type);
 		  O1=nsp_frames_search_op_object(opcode);
@@ -3488,7 +3490,7 @@ static int show_eval_bug(Stack stack,int n, PList L)
   if (  n >= RET_BUG-2 && n <= RET_BUG ) 
     { 
       NspSMatrix *res;
-      Scierror("\t==>");
+      Scierror("\t-error->");
       /* changes io in order to write in a string matrix */
       def = SetScilabIO(Sciprint2string);
       mf =nsp_set_nsp_more(scimore_void);

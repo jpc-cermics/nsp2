@@ -92,6 +92,8 @@ static OpWordTab Ops[]={
   {"||","seq_or",SEQOR,"SEQOR"},			          
   {"<","lt",(int) LT_OP,"LT_OP"},				          
   {">","gt",(int) GT_OP,"GT_OP"},				          
+  {",","virg",COMMA_RET_OP,"COMMA_RET_OP"}, 
+  {";","pvirg",SEMICOLON_RET_OP,"SEMICOLON_RET_OP"},
   {"@","noop",LASTCODE_OP,"LASTCODE_OP"},
   /* negative code from FEVAL to LASTCODE_NEG_OP 
    *--------------------------------------------*/

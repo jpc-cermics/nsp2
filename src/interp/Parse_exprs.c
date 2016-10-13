@@ -133,7 +133,9 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	{
 	  return(OK);
 	}
-      if ( T->tokenv.id == COMMA_OP || T->tokenv.id == SEMICOLON_OP ) 
+      if ( T->tokenv.id == COMMA_OP || T->tokenv.id == SEMICOLON_OP
+	   || T->tokenv.id == COMMA_RET_OP || T->tokenv.id == SEMICOLON_RET_OP )
+	
 	{
 	  int op= T->tokenv.id;
 	  /* XXX maybe there's a comment after , ; NextToken will swallow it */
@@ -235,8 +237,9 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 	    }
 	  else 
 	    {
-	      if (T->tokenv.id == COMMA_OP || T->tokenv.id == SEMICOLON_OP ||
-		  T->tokenv.id == RETURN_OP )
+	      if ( T->tokenv.id == COMMA_OP || T->tokenv.id == SEMICOLON_OP
+		   || T->tokenv.id == COMMA_RET_OP || T->tokenv.id == SEMICOLON_RET_OP
+		   || T->tokenv.id == RETURN_OP )
 		{
 		  if ( T->NextToken(T) == FAIL) return(FAIL);
 		}
@@ -249,7 +252,8 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
       if ( funcflag == 1 &&  T->tokenv.id == 0 ) break;
       plist1= NULLPLIST;
       if (parse_stmt(T,symb_table,&plist1) == FAIL ) return(FAIL);
-      if (T->tokenv.id != COMMA_OP && T->tokenv.id != SEMICOLON_OP 
+      if (T->tokenv.id != COMMA_OP && T->tokenv.id != SEMICOLON_OP
+	  && T->tokenv.id != COMMA_RET_OP && T->tokenv.id != SEMICOLON_RET_OP 
 	  && T->tokenv.id != RETURN_OP && T->tokenv.id != COMMENT &&  ~(*F)(T,T->tokenv.id) ) 
         {
 	  if ( plist1 != NULLPLIST) 
@@ -290,14 +294,8 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 		  /* a statement followed by a comment we convert to <stmt>; // comm  */
 		  if (nsp_parse_add(&plist1,SEMICOLON_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
 		  break;
-		case COMMA_OP : 
-		  if (nsp_parse_add(&plist1,COMMA_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
-		  break;
-		case RETURN_OP:
-		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
-		  break;
-		case SEMICOLON_OP : 
-		  if (nsp_parse_add(&plist1,SEMICOLON_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
+		default :
+		  if (nsp_parse_add(&plist1,T->tokenv.id,1,T->tokenv.Line) == FAIL) return(FAIL);
 		  break;
 		} 
 	      if (nsp_parse_add_list1(&plist1,&plist1)== FAIL) return(FAIL);
@@ -497,7 +495,7 @@ static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int 
     }
   id = T->tokenv.id; line = T->tokenv.Line;
   if ( T->NextToken(T) == FAIL) return(FAIL);
-  if (  T->tokenv.id == SEMICOLON_OP || T->tokenv.id == RETURN_OP )
+  if (  T->tokenv.id == SEMICOLON_OP || T->tokenv.id == SEMICOLON_RET_OP|| T->tokenv.id == RETURN_OP )
     {
       if ( flag == TRUE ) 
 	{
@@ -549,7 +547,8 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->tokenv.id ) 
 	{
-	case COMMA_OP : 
+	case COMMA_OP :
+	case COMMA_RET_OP :
 	  ++excnt;       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
@@ -558,6 +557,7 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
 	  ++excnt;
 	  break;
 	case SEMICOLON_OP:
+	case SEMICOLON_RET_OP:
 	case RETURN_OP:
 	  iter=0;
 	  break;
@@ -878,7 +878,9 @@ static int parse_functionleft(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->tokenv.id ) 
 	{
-	case COMMA_OP : ++excnt;       
+	case COMMA_OP :
+	case COMMA_RET_OP :
+	  ++excnt;       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
 	  break;
@@ -986,7 +988,9 @@ static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist)
 {
   int k;
   k=T->tokenv.id;
-  if (k != key1 && k != key2  && k != COMMA_OP && k != SEMICOLON_OP && k != RETURN_OP  && k != COMMENT )
+  if (k != key1 && k != key2  && k != COMMA_OP && k != SEMICOLON_OP
+      && k != COMMA_RET_OP && k != SEMICOLON_RET_OP
+      && k != RETURN_OP  && k != COMMENT )
     {
       /* FIXME a am'eliorer avec plist1 qui montre ou on s'est arret'e XXX 
        * plus le message d'erreur T->tokenv.id qui est pas bon
@@ -2266,7 +2270,7 @@ static int parse_listeval(Tokenizer *T,NspBHash *symb_table,PList *plist)
 
 static int IsComa(Tokenizer *T,int *op)
 {
-  if  (T->tokenv.id == COMMA_OP ) {
+  if  (T->tokenv.id == COMMA_OP || T->tokenv.id == COMMA_RET_OP ) {
     *op = PARENTH ;   if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
   }
   else 
@@ -2382,7 +2386,9 @@ static int IsColMatOp(Tokenizer *T,int *op,char opt)
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return OK;
     case RETURN_OP:
-    case SEMICOLON_OP : *op = rowconcat;
+    case SEMICOLON_OP :
+    case SEMICOLON_RET_OP :
+      *op = rowconcat;
       if ( T->NextToken(T) == FAIL) return(FAIL);
       if ( T->tokenv.id == COMMENT) 
 	{
@@ -2416,7 +2422,8 @@ static int IsRowMatOp(Tokenizer *T,int *op,char opt)
     case ' ' :
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
-    case COMMA_OP : 
+    case COMMA_OP :
+    case COMMA_RET_OP : 
       if ( T->tokenv.NextC == '\n') 
 	{
 	  /* comma followed by \n is not considered as 
@@ -2513,7 +2520,7 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
       if (  T->io == nsp_tok_file )
 	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
     }
-  else if ( T->tokenv.id == SEMICOLON_OP )
+  else if ( T->tokenv.id == SEMICOLON_OP ||  T->tokenv.id == SEMICOLON_RET_OP)
     {
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning: ;; should not be used \n");
@@ -2525,7 +2532,9 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
       if (parse_nary_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
     }
-  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop && T->tokenv.id != '#' &&
+  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP
+	 && T->tokenv.id != SEMICOLON_RET_OP
+	 && T->tokenv.id != stop && T->tokenv.id != '#' &&
 	 T->tokenv.id != COMMENT )
     {
       PList plist2=NULLPLIST;
@@ -2646,7 +2655,7 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
 	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
 
     }
-  else if ( T->tokenv.id == SEMICOLON_OP )
+  else if ( T->tokenv.id == SEMICOLON_OP ||  T->tokenv.id == SEMICOLON_RET_OP)
     {
       /* row is empty and ended by ; */
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
@@ -2663,7 +2672,8 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop,tag)== FAIL) 
 	return(FAIL);
     }
-  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != stop 
+  while (T->tokenv.id != RETURN_OP && T->tokenv.id != SEMICOLON_OP && T->tokenv.id != SEMICOLON_RET_OP
+	 && T->tokenv.id != stop 
 	 && T->tokenv.id != '#' &&  T->tokenv.id != COMMENT )
     {
       PList plist2=NULLPLIST;
@@ -2804,7 +2814,9 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspBHash *symb_table,PList *plis
       if ( fblank == 1)parse_nblines(T);
       switch ( T->tokenv.id ) 
 	{
-	case COMMA_OP : ++(*excnt);       
+	case COMMA_OP :
+	case COMMA_RET_OP :
+	  ++(*excnt);       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
 	  if ( T->tokenv.id == end_char ) 

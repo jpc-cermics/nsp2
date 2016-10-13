@@ -976,6 +976,8 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 	case AND_OP : 	*val= ((int) args[0]) && ((int) args[1]) ;break;
 	case COMMA_OP : *val= args[0];break;
 	case SEMICOLON_OP :*val= args[0];break;
+	case COMMA_RET_OP : *val= args[0];break;
+	case SEMICOLON_RET_OP :*val= args[0];break;
 	case RETURN_OP :*val= args[0];break;
 	case MINUS_OP : *val= (L->arity == 1) ? -args[0] : args[0]-args[1];break;
 	case DOTSLASH:
@@ -1310,6 +1312,8 @@ int nsp_scalarexp_byte_eval(const int *code,int lcode,const double *constv,const
 	    case AND_OP : 	stack[s_pos-2]= ((int) stack[s_pos-2]) && ((int) stack[s_pos-1]) ;s_pos--;break;
 	    case COMMA_OP : break;
 	    case SEMICOLON_OP :break;
+	    case COMMA_RET_OP : break;
+	    case SEMICOLON_RET_OP :break;
 	    case RETURN_OP : break;
 	    case MINUS_OP :  stack[s_pos-2] -= stack[s_pos-1];s_pos--;break; /* binary */
 	    case DOTSLASH:

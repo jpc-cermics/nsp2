@@ -1042,6 +1042,8 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
+	    case  COMMA_RET_OP : 
+	    case  SEMICOLON_RET_OP  :
 	      newpos =_nsp_plist_pretty_print_arg(List,indent,pos,posret);
 	      newpos =_nsp_plist_pretty_print_opname(L->type,0,newpos);
 	      Sciprintf("\n");
@@ -1711,6 +1713,8 @@ static void _nsp_plist_print(PList List, int indent)
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
+	    case  COMMA_RET_OP : 
+	    case  SEMICOLON_RET_OP  :
 	      _nsp_plist_print_arg(List,indent);
 	      nsp_print_opname(L->type);
 	      break;
@@ -2318,6 +2322,8 @@ void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
+	    case  COMMA_RET_OP : 
+	    case  SEMICOLON_RET_OP  :
 	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    case QUOTE_OP :
@@ -2698,6 +2704,8 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
+	    case  COMMA_RET_OP : 
+	    case  SEMICOLON_RET_OP  :
 	      detect_arg_name(rec,List,H);
 	      break;
 	    case QUOTE_OP :

@@ -63,7 +63,7 @@ static AcceleratedTab accelerated_tabs[] =
     { TILDE_OP,          NULL,         1,  NULL, 0, NULL},			      
     { RETURN_OP,         NULL,         1,  NULL, 0, NULL},			      
     { COMMA_OP,          NULL,         1,  NULL, 0, NULL},			      
-    { SEMICOLON_OP,      NULL,         1,  NULL, 0, NULL},		      
+    { SEMICOLON_OP,      NULL,         1,  NULL, 0, NULL},
     { MINUS_OP,          NULL,         2,  xnum_types, 0, NULL},			      
     { SLASH_OP,          NULL,         2,  xnum_types, 0, NULL},			      
     { BACKSLASH_OP,      NULL,         2,  xnum_types, 0, NULL},		      
@@ -94,6 +94,8 @@ static AcceleratedTab accelerated_tabs[] =
     { SEQOR,             NULL,         1,  NULL, 0, NULL},   
     { LT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
     { GT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
+    { COMMA_RET_OP,      NULL,         1,  NULL, 0, NULL},			      
+    { SEMICOLON_RET_OP,  NULL,         1,  NULL, 0, NULL},		      
     { undef_tab}, /* tag to detect the end */
   };
 

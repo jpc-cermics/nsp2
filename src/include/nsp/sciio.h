@@ -19,6 +19,7 @@ extern IOVFun SetScilabIO(IOVFun F);
 IOVFun nsp_set_error_io_basic();
 IOVFun SetScilabErrorIO(IOVFun F);
 extern int Sciprintf1(int indent,const char *fmt,...);
+extern int Sciprintf2(int indent,const char *str,const char *fmt,...);
 extern int Sciprintf(const char *fmt,...);
 extern int do_printf_stdout(const FILE *ignore,const char *fmt, ...);
 extern NspObject *Sciprint2string_reset();

@@ -97,6 +97,30 @@ int  Sciprintf1 (int indent,const char *fmt,...)
 }
 
 /**
+ * Sciprintf2:
+ * @indent: integer giving level of indentation
+ * @str: string to be used for printing a white space
+ * @fmt: The  format  string
+ * @...: format arguments
+ *
+ * Similar to function Sciprintf, with an extra
+ * parameter giving a level of indentation and a 
+ * parameter giving the string used for printing a white space
+ *
+ */
+
+int  Sciprintf2 (int indent,const char *str,const char *fmt,...)
+{
+  int i,n;
+  va_list ap;
+  va_start(ap,fmt);
+  for (i=0 ; i < indent ; i++) Sciprintf("%s",str);
+  n=  Scivprintf( fmt, ap );
+  va_end(ap);
+  return n+indent;
+}
+
+/**
  * do_printf_stdout:
  * @ignore:
  * @fmt:

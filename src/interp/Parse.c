@@ -705,7 +705,8 @@ int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
     }
   /* Instruction Scilab */
   if ( T->NextToken(T) == FAIL) return RET_BUG;
-  if ( T->tokenv.id != RETURN_OP && T->tokenv.id != COMMA_OP && T->tokenv.id != SEMICOLON_OP )
+  if ( T->tokenv.id != RETURN_OP && T->tokenv.id != COMMA_OP && T->tokenv.id != SEMICOLON_OP
+       && T->tokenv.id != COMMA_RET_OP && T->tokenv.id != SEMICOLON_RET_OP )
     {
       if (nsp_parse_top(T,symb_table,plist) == FAIL) return RET_BUG;
     }

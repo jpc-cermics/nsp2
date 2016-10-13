@@ -133,7 +133,12 @@ static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
+static void set_use_html_color_class(int flag);
+static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt);
+static void nsp_print_string_as_read_for_html(const char *str);
+static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos);
+static void nsp_print_comment_for_html(const char *str);
 
-#line 138 "./ast.h"
+#line 143 "./ast.h"
 #endif /* NspAst_Private */
 

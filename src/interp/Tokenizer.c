@@ -451,31 +451,23 @@ static void  parse_operators(Tokenizer *T)
   switch ( T->tokenv.id ) 
     {
     case '\'': T->tokenv.id =  QUOTE_OP ;break;
-    case '*': T->tokenv.id =  STAR_OP ;break;
-    case '+': 
-      T->tokenv.id =  PLUS_OP ;
-      /* 
-      if ( T->curline.buf[T->curline.lpt1] == ' ' 
-	   &&  T->curline.buf[T->curline.lpt2] != ' ' )
-	Sciprintf("This is a unary PLUS in matrix context\n");
-      */
-      break;
-    case '^': T->tokenv.id =  HAT_OP ;break;
-    case ':': T->tokenv.id =  COLON_OP ;break;
-    case '|': T->tokenv.id =  OR_OP ;break;
-    case '&': T->tokenv.id =  AND_OP ;break;
-    case '~': T->tokenv.id =  TILDE_OP ;break;
+    case '*':  T->tokenv.id =  STAR_OP ;break;
+    case '+':  T->tokenv.id =  PLUS_OP ;break;
+    case '^':  T->tokenv.id =  HAT_OP ;break;
+    case ':':  T->tokenv.id =  COLON_OP ;break;
+    case '|':  T->tokenv.id =  OR_OP ;break;
+    case '&':  T->tokenv.id =  AND_OP ;break;
+    case '~':  T->tokenv.id =  TILDE_OP ;break;
     case '\n': T->tokenv.id =  RETURN_OP ;break;
-    case ',': T->tokenv.id =  COMMA_OP ;break;
-    case ';': T->tokenv.id =  SEMICOLON_OP ;break;
-    case '-': T->tokenv.id =  MINUS_OP ;break;
-    case '/': T->tokenv.id =  SLASH_OP ;break;
+    case ',':  T->tokenv.id =  ( T->tokenv.NextC == '\n' ) ? COMMA_RET_OP: COMMA_OP;break;
+    case ';':  T->tokenv.id =  ( T->tokenv.NextC == '\n' ) ? SEMICOLON_RET_OP: SEMICOLON_OP;break;
+    case '-':  T->tokenv.id =  MINUS_OP ;break;
+    case '/':  T->tokenv.id =  SLASH_OP ;break;
     case '\\': T->tokenv.id =  BACKSLASH_OP ;break;
-    case '>': T->tokenv.id =  GT_OP ;break;
-    case '<': T->tokenv.id =  LT_OP ;break;
-    case '=': T->tokenv.id =  EQUAL_OP ;break;
-    default:
-      break;
+    case '>':  T->tokenv.id =  GT_OP ;break;
+    case '<':  T->tokenv.id =  LT_OP ;break;
+    case '=':  T->tokenv.id =  EQUAL_OP ;break;
+    default: break;
     }
 }
 
