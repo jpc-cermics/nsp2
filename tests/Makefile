@@ -133,7 +133,7 @@ tests: all
 
 .tst.dia :
 	@echo -n "testing $*: "
-	@../bin/nsp -nw -e "nsptest('$*.tst');quit" 
+	@../bin/nsp -ns -nw -e "nsptest('$*.tst');quit" 
 
 #export G_DEBUG=gc-friendly;export G_SLICE=always-malloc;valgrind --suppressions=tests/valgrind.supp --leak-check=full  bin/scilex -nw 
 
