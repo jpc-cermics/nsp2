@@ -14,3 +14,17 @@ silent-clean ::
 distclean:: clean 
 
 silent-distclean :: silent-clean
+
+PP=$(patsubst %.sci,%_pp.sci,$(wildcard *.sci))
+
+pp : $(PP) 
+
+%_pp.sci : %.sci
+	@echo "pretty print $*.sci"
+	@$(SCIDIR)/bin/scilex -nw -ns -e "pretty_printer('$*.sci');quit"
+	@diff -riw $*.sci $*_pp.sci && ([ $$? -eq 0 ] && echo -n "") || echo -n "" 
+
+clean	::
+	@$(RM) $(PP)
+
+

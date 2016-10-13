@@ -98,7 +98,7 @@ function ast_pprint(ast,indent)
 	return;
        case 1 then
 	select  ast.get_op[] 
-	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP} then
+	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.COMMA_RET_OP, %ast.SEMICOLON_RET_OP} then
 	  newpos =ast_pprint_arg(ast,1,indent,pos,posret);
 	  newpos =ast_pprint_opname(ast.get_opname[],0,newpos);
 	  rep = newpos;

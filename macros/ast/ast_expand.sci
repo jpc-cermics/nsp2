@@ -61,7 +61,7 @@ function ast=ast_expand(ast,reset=%t)
       // expression operators 
       // sans doute voir ce qu'on fait de , ; et \n 
       select ast.get_op[] 
-	case {%ast.RETURN_OP, %ast.COMMA_OP, %ast.SEMICOLON_OP} then 
+	case {%ast.RETURN_OP, %ast.COMMA_OP, %ast.SEMICOLON_OP, %ast.COMMA_RET_OP, %ast.SEMICOLON_RET_OP} then 
 	 flag = %f;
 	 L=ast.get_args[];
 	 [rep]= ast_expand_internal(L(1))

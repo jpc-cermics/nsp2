@@ -405,7 +405,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	return;
        case 1 then
 	select  ast.get_op[] 
-	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.RETURN_OP} then
+	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.COMMA_RET_OP, %ast.SEMICOLON_RET_OP,%ast.RETURN_OP} then
 	  [rep,H,ast]=ast_eval_args(ast,1,1,H);
 	  if ~isempty(rep) then 
 	    dd=rep(1).get_dims[]
