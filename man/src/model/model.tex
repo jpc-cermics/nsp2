@@ -141,7 +141,11 @@ a first example with $\int_0^\infty f(u)du$.
 
 \paragraph{Using Verbatim}
 
-%\begin{program}
+% we can call macros in Verbatim using the commandchars arguments 
+% \def\redtext#1{{\textcolor{red}{#1}}}
+%\begin{Verbatim}[commandchars=@\[\]]
+% @redtext[pooo] poo 
+%\end{Verbatim}
 \begin{Verbatim}
 //	Verbatim code 
 //	to be inserted 
@@ -154,7 +158,7 @@ a / b
 z.*x
 
 %inf + %nan 
-@poo # foo 
+poo # foo 
 a & b 
 a | b 
 x = 'poo' // wrong conversion
@@ -165,13 +169,39 @@ function y=f(x)
   end
 endfunction
 \end{Verbatim}
-%\end{program}
 
 \paragraph{Using t4ht special}
 
 %\special{t4ht*<model/model-verb.txt}
 
 \paragraph{Using lgrind}
+
+\paragraph{Using algorithm}
+
+% % see the manual.tex file for includes 
+
+% {\ttfamily
+
+%   \begin{algorithmic}
+%     \State Create the cumulative sum of probabilities for each care type,
+%     thus defining the interval width
+%     \For{jj=1:m} \Comment{ where m is the number of nurses}
+%     \State Choose care type
+%     \State Randomly select care length ($n$) based on care type
+%     \For{ii=1:n} \Comment{ where n is the sequence length}
+%     \State Generate a random number $w$
+%     \State Check into which cumulative probability interval $w$ falls
+%     and choose the corresponding surface category
+%     \State update ii=ii+1
+%     \State update jj=i+1
+%     \EndFor
+%     \EndFor
+%   \end{algorithmic}
+% }
+
+\end{document}
+
+
 
 %\input{model/intepsilon_c.tex}
 

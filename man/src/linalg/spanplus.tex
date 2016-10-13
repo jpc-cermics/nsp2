@@ -45,9 +45,9 @@
   The \verb!dim! first columns of \verb!X! make a basis for \verb!A+B!.
   One has the following canonical form for \verb![A,B]!:
 \begin{verbatim}
-  [*,*]    (dima rows)
+           [*,*]    (dima rows)
   X'*[A,B]=[0,*]    (dim-dima rows)
-  [0,0]    
+           [0,0]    
 \end{verbatim}
 \verb!tol! is an optional argument (see function code).
 \end{mandescription}
@@ -57,8 +57,8 @@
     A=rand(6,2)*rand(2,5);      // rank(A)=2
     B=[A(:,1),rand(6,2)]*rand(3,3);   //two additional independent vectors
     [X,dim,dimA]=spanplus(A,B);
-    dimA
-    dim
+    if dimA<>2 then pause;end 
+    if dim<>4 then pause;end 
   \end{Verbatim}
 \end{examples}
 %-- see also
