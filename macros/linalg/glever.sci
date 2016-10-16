@@ -27,7 +27,7 @@ function [Bfs,Bis,chis]=glever(E,A,s)
 // See also shuffle, determ, invr, coffg
 //
   if nargin==1 then s=poly(0,E.get_var[]);[E,A]=pen2ea(E);end 
-  if nargin==2 then s=poly(0,'s'),end;
+  if nargin==2 then s=poly(0,"s"),end;
   if nargin==3 then s=poly(0,s);end
   [Si,Pi,Di,index]=penlaur(E,A);
   k=round(sum(diag(Si*E)));
@@ -38,7 +38,7 @@ function [Bfs,Bis,chis]=glever(E,A,s)
   chis=a0+0*s;
   Bfs=Si+0*s*Si;
   
-  for i=1:k,
+  for i=1:k do
     B=SiASi*E*B;
     alfa=-sum(diag(E*B))/i;
     B=B+alfa*Si;
@@ -49,10 +49,10 @@ function [Bfs,Bis,chis]=glever(E,A,s)
   AAD=s*A*Di;
   P=eye(size(A));
   
-  for nu=1:index+1,
+  for nu=1:index+1 do
     P=AAD*P;
-    Bis=clean(Bis+Pi*P,1.d-10);
+    Bis=clean(Bis+Pi*P,1.E-10);
   end
-  Bfs=clean(Bfs,1.d-10);
-  chis=clean(chis,1.d-10);
+  Bfs=clean(Bfs,1.E-10);
+  chis=clean(chis,1.E-10);
 endfunction

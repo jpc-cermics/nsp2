@@ -26,11 +26,11 @@ function A=toeplitz(c,r)
       printf("Warning: incompatible values in c and r using c value\n");
     end
   end 
-  nr=size(c,'*');
-  nc=size(r,'*');
+  nr=size(c,"*");
+  nc=size(r,"*");
   A= type(c).new[nr,nc];
-  for i=1:nc ; A.set_diag[r(i),i-1];end
-  for i=1:nr ; A.set_diag[c(i),-(i-1)];end
+  for i=1:nc do A.set_diag[r(i),i-1];end
+  for i=1:nr do A.set_diag[c(i),-(i-1)];end
 endfunction
 
 function A=hankel(c,r)

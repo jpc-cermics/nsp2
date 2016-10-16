@@ -11,7 +11,8 @@ function L=tarjan(Adj)
     return;
   end
       
-  function [Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(v,Vindex,Vlowlink,Vonstack,index,S,L);
+  function [Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(v,Vindex,Vlowlink,Vonstack,...
+						  index,S,L)
   // Set the depth index for v to the smallest unused index
     Vindex(v) = index;
     Vlowlink(v) = index
@@ -20,10 +21,11 @@ function L=tarjan(Adj)
     Vonstack(v) = %t;
     // Consider successors of v
     next = find(full(Adj(v,:)) > 10*%eps )
-    for w = next ;
+    for w = next do
       if isnan(Vindex(w)) then
 	// Successor w has not yet been visited; recurse on it
-	[Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(w,Vindex,Vlowlink,Vonstack,index,S,L);
+	[Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(w,Vindex,Vlowlink,Vonstack,...
+						  index,S,L);
 	Vlowlink(v) = min(Vlowlink(v), Vlowlink(w))
       elseif Vonstack(w) then
 	// Successor w is in stack S and hence in the current SCC
@@ -34,14 +36,14 @@ function L=tarjan(Adj)
     if Vlowlink(v) == Vindex(v) then
       // start a new strongly connected component
       SCC=[v];
-      while %t 
+      while %t do
 	w = S(1); S(1)=[];
 	Vonstack(w) = %f;
 	// add w to current strongly connected component
 	if w == v then break;end 
 	SCC($+1)=w;
       end
-      L{$+1}=gsort(SCC,'g','i');
+      L{$+1}=gsort(SCC,"g","i");
     end
   endfunction
     
@@ -54,9 +56,10 @@ function L=tarjan(Adj)
   Vonstack= m2b(zeros(1,n));
   S=[];
   L={};
-  for v = V ;
+  for v = V do
     if isnan(Vindex(v)) then 
-      [Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(v,Vindex,Vlowlink,Vonstack,index,S,L);
+      [Vindex,Vlowlink,Vonstack,index,S,L]=strongconnect(v,Vindex,Vlowlink, Vonstack,index,...
+						  S,L);
     end
   end
 endfunction

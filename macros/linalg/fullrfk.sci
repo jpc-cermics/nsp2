@@ -26,7 +26,7 @@ function [Bk,Ck]=fullrfk(A,k)
   if k==0 then Bk=eye(n,n);Ck=Bk; return; end
   if k==1 then [Bk,Ck]=fullrf(A); return; end 
   [Bk,Ck]=fullrf(A);B=Bk;C=Ck;
-  for l=2:k
+  for l=2:k do
     [B,C,dim]=fullrf(C*B);
     Bk=Bk*B;Ck=C*Ck;     // Bk*Ck = A^k  (Full rank factorization)
   end;

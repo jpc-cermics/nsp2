@@ -32,20 +32,21 @@ function F=randpencil(eps,infi,fin,eta)
 // this should be a empty matrix with coldim(eta) rows and 0 columns.
 // (bad behavior of the empty matrix!!!!!)
 //
-  %s = poly(0,'s');
-  %zero = poly(0,'s',roots=%f);
-  if nargin <>4 then error('randpencil requires 4 (possibly []) input parameters!');
+  %s = poly(0,"s");
+  %zero = poly(0,"s",roots=%f);
+  if nargin <>4 then 
+    error("randpencil requires 4 (possibly []) input parameters!");
   end
-  select type(fin,'short')
-   case 'm'
+  select type(fin,"short")
+   case "m" then 
     D=diag(fin);
     if ~isempty(D) then Fin=%s*eye(size(D))- D;else Fin=pmat_create(0,0);end
-   case 'p'
+   case "p" then
     C=companion(fin);
     Fin=%s*eye(size(C)) - C;
   end
   
-  function j=%jdrn(n) j=zeros(n,n);for k=1:n-1;j(k,k+1)=1;end;endfunction;
+  function j=%jdrn(n) j=zeros(n,n);for k=1:n-1 do j(k,k+1)=1;end;endfunction;
 
   function Lk=%eta(k) 
     Lk=zeros(k+1,k);
@@ -53,17 +54,17 @@ function F=randpencil(eps,infi,fin,eta)
     // [me,ne]=size(Lk);Lk = ce2p(m2ce(Lk,1:me,1:ne));
     Lk = Lk + %zero;
     if k==0 then return;end;
-    for j=1:k;Lk(j,j)=%s;Lk(j+1,j)=-1+ %zero;end;
+    for j=1:k do Lk(j,j)=%s;Lk(j+1,j)=-1+ %zero;end;
   endfunction;
   
   function Lk=%epsilon(k) 
     Lk=zeros(k,k+1) + %zero ;
     if k==0 then return;end;
-    for j=1:k;Lk(j,j)=%s;Lk(j,j+1)=-1 + %zero;end;
+    for j=1:k do Lk(j,j)=%s;Lk(j,j+1)=-1 + %zero;end;
   endfunction;
 
   J=[];
-  for kk=infi;
+  for kk=infi do
     J= [J # %jdrn(kk)];
   end
   if isempty(J) then Infin=pmat_create(0,0); else Infin=%s*J-eye(size(J));end
@@ -75,7 +76,7 @@ function F=randpencil(eps,infi,fin,eta)
   seps=sort(eps);
   if ~isempty(seps) && seps(1)==0 then flageps=%t;end
   if ~flageps then
-    for k=seps;
+    for k=seps do
       if k==0 then [p,q]=size(Eps); Eps=[Eps,zeros(p,1) + %zero];end
       if k<>0 then Eps=[ Eps # %epsilon(k)];end
     end
@@ -87,7 +88,7 @@ function F=randpencil(eps,infi,fin,eta)
   seta=sort(eta);
   if ~isempty(seta) && seta(1)==0 then flageta=%t;end
   if ~flageta then
-    for k=seta;
+    for k=seta do
       if k==0 then [p,q]=size(Eta); Eta=[Eta; zeros(1,q)+%zero];end
       if k<>0 then Eta=[Eta # %eta(k)];end
     end
@@ -113,8 +114,8 @@ function F=randpencil(eps,infi,fin,eta)
   end
   // This can be uncommented for a seemingly more random pencil!
   //[p,q]=size(F);
-  //rand('seed',0);
-  //rand('normal')
+  //rand("seed",0);
+  //rand("normal")
   //Q=rand(p,p);
   //Z=rand(q,q);
   //F=Q*F*Z;

@@ -29,7 +29,7 @@ function [X,dim,Y]=im_inv(A,B,tol)
 //
   [nA,mA]=size(A);[nB,mB]=size(B);
   if nargin==2 then tol=100*%eps*mA*nA*nB*mB,end;
-  if nA<>nB then error ('im_inv: uncompatible dimensions!'),return,end
+  if nA<>nB then error ("im_inv: uncompatible dimensions!"),return,end
   // basis for im(B)
   [Y,rB]=rowcomp(B);//u=Y'
   

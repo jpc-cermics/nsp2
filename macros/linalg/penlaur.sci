@@ -25,15 +25,15 @@ function [Si,Pi,Di,order]=penlaur(E,A)
 // (so*E-A)...)
   
   if nargin==1 then [E,A]=pen2ea(E);end
-  seed=grand('getsd');
-  grand('setsd',0);
-  tests=grand(1,10,'nor',0,1);
+  seed=grand("getsd");
+  grand("setsd",0);
+  tests=grand(1,10,"nor",0,1);
   conditions=0*tests;k=1;
-  for s0=tests, conditions(k)=cond(s0*E-A);k=k+1;end
+  for s0=tests do conditions(k)=cond(s0*E-A);k=k+1;end
   [w,k1]=min(conditions);
-  grand('setsd',seed)
+  grand("setsd",seed)
 
-  if w>1.d+20 then error('Singular pencil!');return;end
+  if w>1.E+20 then error("Singular pencil!");return;end
   s0=tests(k1);
   J=inv(s0*E-A);
   [Se,Pe,De,i1]=projspec(J*E);

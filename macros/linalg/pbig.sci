@@ -28,14 +28,14 @@ function [Q,M]=pbig(A,thres,flag)
   [m,n]=size(A);
   if m<>n then error("Error: matrix should be square");end
   thres=real(thres);
-  if flag=='c' then 
-    function [flag]=%smallei(x,values) flag=real(x) >= values(1);endfunction
-    function [flag]=%bigeig(x,values) flag=real(x) < values(1);endfunction
-  elseif flag=='d' then 
-    function [flag]=%smallei(x,values) flag=abs(x) >= values(1);endfunction
-    function [flag]=%bigeig(x,values) flag=abs(x) < values(1);endfunction
+  if flag=="c" then 
+    function flag=%smallei(x,values) flag=real(x) >= values(1);endfunction
+    function flag=%bigeig(x,values) flag=real(x) < values(1);endfunction
+  elseif flag=="d" then 
+    function flag=%smallei(x,values) flag=abs(x) >= values(1);endfunction
+    function flag=%bigeig(x,values) flag=abs(x) < values(1);endfunction
   else
-    error('Invalid flag value, it must be '"c"' or '"d"' ')
+    error("Invalid flag value, it must be ""c"" or ""d"" ")
   end
   // 
   [X,dsmall] = schur(A,sort=%smallei,args=list(thres));
@@ -45,13 +45,15 @@ function [Q,M]=pbig(A,thres,flag)
   Y1=Y';
   M1=Y1(dbig+1:n,:);
   E=M1*Q;
-  if rcond(E)>1.d-7 then
+  if rcond(E)>1.E-7 then
     M=E\M1;
   else
-    //warning('bad conditionning--> balancing')
+    //warning("bad conditionning--> balancing")
     [Ab,X0]=balanc(A);
-    [X,dsmall] = schur(Ab,sort=%smallei,args=list(thres));X1=X*X0;Q=X1(:,1:dsmall);
-    [Y,dbig] = schur(Ab,sort=%bigeig,args=list(thres));Y1=inv(X0)*Y';M=Y1(dbig+1:n,:);
+    [X,dsmall] = schur(Ab,sort=%smallei,args=list(thres));
+    X1=X*X0;Q=X1(:,1:dsmall);
+    [Y,dbig] = schur(Ab,sort=%bigeig,args=list(thres));
+    Y1=inv(X0)*Y';M=Y1(dbig+1:n,:);
     E=M*Q;
     M=E\M;
   end

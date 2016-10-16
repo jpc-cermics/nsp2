@@ -1,7 +1,7 @@
-function [x, istop, itn, normr, normAr, normA, condA, normx]...
-    = lsmr(A, b, lambda=0, atol=1e-6, btol=1e-6, conlim=1e8, itnlim=[], localSize=0, show=%f)
-
-
+function [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A, b, lambda=0, atol=1e-6,...
+						  btol=1e-6, conlim=1e8, ...
+						  itnlim=[], localSize=0, ...
+						  show=%f)
    // LSMR   Iterative solver for least-squares problems.
    //   X = LSMR(A,B) solves the system of linear equations A*X=B. If the system
    //   is inconsistent, it solves the least-squares problem min ||b - Ax||_2. 
@@ -147,24 +147,24 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
    elseif is(A,%types.PList) then
       explicitA = %f;
    else
-      error('lsmr: first argument A must be a real full or sparse matrix or a function');
+      error("lsmr: first argument A must be a real full or sparse matrix or a function");
    end
 
    if ~( is(b,%types.Mat) && size(b,2) == 1 && isreal(b)) then
       error("lsmr: second argument should be a real column vector");
    end
 
-   msg = ['The exact solution is  x = 0                              '
-	  'Ax - b is small enough, given atol, btol                  '
-	  'The least-squares solution is good enough, given atol     '
-	  'The estimate of cond(Abar) has exceeded conlim            '
-	  'Ax - b is small enough for this machine                   '
-	  'The least-squares solution is good enough for this machine'
-	  'Cond(Abar) seems to be too large for this machine         '
-	  'The iteration limit has been reached                      '];
+   msg = ["The exact solution is  x = 0                              ";
+	  "Ax - b is small enough, given atol, btol                  ";
+	  "The least-squares solution is good enough, given atol     ";
+	  "The estimate of cond(Abar) has exceeded conlim            ";
+	  "Ax - b is small enough for this machine                   ";
+	  "The least-squares solution is good enough for this machine";
+	  "Cond(Abar) seems to be too large for this machine         ";
+	  "The iteration limit has been reached                      "];
 
-   hdg1 = '   itn      x(1)       norm r    norm A''r';
-   hdg2 = ' compatible   LS      norm A   cond A';
+   hdg1 = "   itn      x(1)       norm r    norm A''r";
+   hdg2 = " compatible   LS      norm A   cond A";
    pfreq  = 20;   // print frequency (for repeating the heading)
    pcount = 0;    // print counter
 
@@ -178,8 +178,8 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
    end
 
    if explicitA then
-      [m n] = size(A);
-      if size(b,1) ~= m then
+      [m, n] = size(A);
+      if size(b,1) <> m then
 	 error("lsmr: incompatible sizes between first and second argument")
       end
       v = pmult(A,u);
@@ -195,15 +195,15 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
    // stores the num of singular values
    minDim = min(m,n);
 
-   if isempty(itnlim) then, itnlim = minDim; end
+   if isempty(itnlim) then itnlim = minDim; end
 
    if show then
-      printf('\n\nLSMR            Least-squares solution of  Ax = b')
-      printf('\nVersion 1.02 (adapted for nsp)          14 Apr 2010')
-      printf('\nThe matrix A has %8g rows  and %8g cols', m,n)
-      printf('\nlambda = %16.10e', lambda )
-      printf('\natol   = %8.2e               conlim = %8.2e', atol,conlim)
-      printf('\nbtol   = %8.2e               itnlim = %8g'  , btol,itnlim)
+      printf("\n\nLSMR            Least-squares solution of  Ax = b")
+      printf("\nVersion 1.02 (adapted for nsp)          14 Apr 2010")
+      printf("\nThe matrix A has %8g rows  and %8g cols", m,n)
+      printf("\nlambda = %16.10e", lambda )
+      printf("\natol   = %8.2e               conlim = %8.2e", atol,conlim)
+      printf("\nbtol   = %8.2e               itnlim = %8g"  , btol,itnlim)
    end
 
    alpha = norm(v);
@@ -222,7 +222,7 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
       // orthogonal v_k's, Krylov subspace method would converge in not 
       // more iterations than the number of singular values, a bigger is
       // space is not necessary. 
-      if (localSize > minDim) then, localSize = minDim; end
+      if (localSize > minDim) then localSize = minDim; end
       localV = zeros(n, localSize);
       localV(:,1) = v;
    end
@@ -257,30 +257,30 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
    // Items for use in stopping rules.
    normb  = beta;
    istop  = 0;
-   ctol   = 0;         if conlim > 0 then, ctol = 1/conlim; end;
+   ctol   = 0;         if conlim > 0 then ctol = 1/conlim; end;
    normr  = beta;
 
    // Exit if b=0 or A'b = 0.
 
    normAr = alpha * beta;
-   if normAr == 0, print(msg(1,:)); return, end
+   if normAr == 0 then print(msg(1,:)); return, end
 
    // Heading for iteration log.
 
    if show then
       test1 = 1;
       test2 = alpha/beta;
-      printf('\n\n%s%s'      , hdg1 , hdg2   )
-      printf('\n%6g %12.5e'  , itn  , x(1)   )
-      printf(' %10.3e %10.3e', normr, normAr )
-      printf('  %8.1e %8.1e' , test1, test2  )
+      printf("\n\n%s%s"      , hdg1 , hdg2   )
+      printf("\n%6g %12.5e"  , itn  , x(1)   )
+      printf(" %10.3e %10.3e", normr, normAr )
+      printf("  %8.1e %8.1e" , test1, test2  )
    end
 
 
    //------------------------------------------------------------------
    //     Main iteration loop.
    //------------------------------------------------------------------
-   while itn < itnlim
+   while itn < itnlim do
       itn = itn + 1;
 
       // Perform the next step of the bidiagonalization to obtain the
@@ -302,47 +302,44 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
       beta = norm(u);
       if beta > 0 then
 	 u     = (1/beta)*u;
-	 if localOrtho then 	// store data for local-reorthogonalization of V
-	    if (localPointer < localSize) then 
-	       localPointer.add[1];
-	    else
-	       localPointer = 1;  localVQueueFull = %t;
-	    end
-	    localV(:,localPointer) = v;
+	 if localOrtho then 
+	   // store data for local-reorthogonalization of V
+	   if (localPointer < localSize) then 
+	     localPointer.add[1];
+	   else
+	     localPointer = 1;  localVQueueFull = %t;
+	   end
+	   localV(:,localPointer) = v;
 	 end
-	 
 	 if explicitA then
 	    v = pmult(A,u) - beta*v;
 	 else
 	    v = A(u,2)  - beta*v;
 	 end
-
-	 if localOrtho then 	// local-reorthogonalization of V
-	    if localVQueueFull then
-	       localOrthoLimit = localSize
-	    else
-	       localOrthoLimit = localPointer;
-	    end
-	    for localOrthoCount = 1:localOrthoLimit
-	       vtemp = localV(:, localOrthoCount);
-	       v = v - pmult(v,vtemp)*vtemp;
-	    end
+	 if localOrtho then 
+	   // local-reorthogonalization of V
+	   if localVQueueFull then
+	     localOrthoLimit = localSize
+	   else
+	     localOrthoLimit = localPointer;
+	   end
+	   for localOrthoCount = 1:localOrthoLimit do
+	     vtemp = localV(:, localOrthoCount);
+	     v = v - pmult(v,vtemp)*vtemp;
+	   end
 	 end
-	    
 	 alpha  = norm(v);
-	 if alpha > 0 then,  v = (1/alpha)*v; end
+	 if alpha > 0 then  v = (1/alpha)*v; end
       end
-	 
       // At this point, beta = beta_{k+1}, alpha = alpha_{k+1}.
-	 
       // Construct rotation Qhat_{k,2k+1}.
-      alphahat = norm([alphabar lambda]);
+      alphahat = norm([alphabar, lambda]);
       chat     = alphabar/alphahat;
       shat     = lambda/alphahat;
 
       // Use a plane rotation (Q_i) to turn B_i to R_i
       rhoold   = rho;
-      rho      = norm([alphahat beta]);
+      rho      = norm([alphahat, beta]);
       c        = alphahat/rho;
       s        = beta/rho;
       thetanew = s*alpha;
@@ -353,128 +350,106 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
       zetaold   = zeta;
       thetabar  = sbar*rho;
       rhotemp   = cbar*rho;
-      rhobar    = norm([cbar*rho thetanew]);
+      rhobar    = norm([cbar*rho, thetanew]);
       cbar      = cbar*rho/rhobar;
       sbar      = thetanew/rhobar;
       zeta      =   cbar*zetabar;
       zetabar   = - sbar*zetabar;
-	 
       // Update h, h_hat, x.
       hbar      = h - (thetabar*rho/(rhoold*rhobarold))*hbar;
       x         = x + (zeta/(rho*rhobar))*hbar;
       h         = v - (thetanew/rho)*h;
-
       // Estimate of ||r||.
-	 
       // Apply rotation Qhat_{k,2k+1}.
       betaacute =   chat* betadd;
       betacheck = - shat* betadd;
-      
       // Apply rotation Q_{k,k+1}.
       betahat   =   c*betaacute;
       betadd    = - s*betaacute;
-	 
       // Apply rotation Qtilde_{k-1}.
       // betad = betad_{k-1} here.
-      
       thetatildeold = thetatilde;
-      rhotildeold   = norm([rhodold thetabar]);
+      rhotildeold   = norm([rhodold, thetabar]);
       ctildeold     = rhodold/rhotildeold;
       stildeold     = thetabar/rhotildeold;
       thetatilde    = stildeold* rhobar;
       rhodold       =   ctildeold* rhobar;
       betad         = - stildeold*betad + ctildeold*betahat;
-
       // betad   = betad_k here.
       // rhodold = rhod_k  here.
-
       tautildeold   = (zetaold - thetatildeold*tautildeold)/rhotildeold;
       taud          = (zeta - thetatilde*tautildeold)/rhodold;
       d             = d + betacheck^2;
       normr         = sqrt(d + (betad - taud)^2 + betadd^2);
-	 
       // Estimate ||A||.
       normA2        = normA2 + beta^2;
       normA         = sqrt(normA2);
       normA2        = normA2 + alpha^2;
-	 
       // Estimate cond(A).
       maxrbar       = max(maxrbar,rhobarold);
       if itn>1 then 
 	 minrbar    = min(minrbar,rhobarold);
       end
       condA         = max(maxrbar,rhotemp)/min(minrbar,rhotemp);
-
       // Test for convergence.
-
       // Compute norms for convergence testing.
       normAr  = abs(zetabar);
       normx   = norm(x);
-
       // Now use these norms to estimate certain other quantities,
       // some of which will be small near a solution.
-
       test1   = normr /normb;
       test2   = normAr/(normA*normr);
       test3   =      1/condA;
       t1      =  test1/(1 + normA*normx/normb);
       rtol    = btol + atol*normA*normx/normb;
-	 
       // The following tests guard against extremely small values of
       // atol, btol or ctol.  (The user may have set any or all of
       // the parameters atol, btol, conlim  to 0.)
       // The effect is equivalent to the normAl tests using
       // atol = eps,  btol = eps,  conlim = 1/eps.
-	 
-      if itn >= itnlim then,   istop = 7; end
-      if 1 + test3  <= 1 then, istop = 6; end
-      if 1 + test2  <= 1 then, istop = 5; end
-      if 1 + t1     <= 1 then, istop = 4; end
-
+      if itn >= itnlim then   istop = 7; end
+      if 1 + test3  <= 1 then istop = 6; end
+      if 1 + test2  <= 1 then istop = 5; end
+      if 1 + t1     <= 1 then istop = 4; end
       // Allow for tolerances set by the user.
-      
-      if  test3 <= ctol then,  istop = 3; end
-      if  test2 <= atol then,  istop = 2; end
-      if  test1 <= rtol then,  istop = 1; end
-      
+      if  test3 <= ctol then  istop = 3; end
+      if  test2 <= atol then  istop = 2; end
+      if  test1 <= rtol then  istop = 1; end
       // See if it is time to print something.
-	 
-      if show
+      if show then
 	 prnt = 0;
-	 if n     <= 40        then, prnt = 1; end
-	 if itn   <= 10        then, prnt = 1; end
-	 if itn   >= itnlim-10 then, prnt = 1; end
-	 if mod(itn,10) == 0   then, prnt = 1; end
-	 if test3 <= 1.1*ctol  then, prnt = 1; end
-	 if test2 <= 1.1*atol  then, prnt = 1; end
-	 if test1 <= 1.1*rtol  then, prnt = 1; end
-	 if istop ~=  0        then, prnt = 1; end
-	 
+	 if n     <= 40        then prnt = 1; end
+	 if itn   <= 10        then prnt = 1; end
+	 if itn   >= itnlim-10 then prnt = 1; end
+	 if mod(itn,10) == 0   then prnt = 1; end
+	 if test3 <= 1.1*ctol  then prnt = 1; end
+	 if test2 <= 1.1*atol  then prnt = 1; end
+	 if test1 <= 1.1*rtol  then prnt = 1; end
+	 if istop <>  0        then prnt = 1; end
 	 if prnt then
 	    if pcount >= pfreq then
 	       pcount = 0;
-	       printf('\n\n%s%s'    , hdg1 , hdg2  )
+	       printf("\n\n%s%s"    , hdg1 , hdg2  )
 	    end
 	    pcount = pcount + 1;
-	    printf('\n%6g %12.5e'  , itn  , x(1)  )
-	    printf(' %10.3e %10.3e', normr, normAr)
-	    printf('  %8.1e %8.1e' , test1, test2 )
-	    printf(' %8.1e %8.1e'  , normA, condA )
+	    printf("\n%6g %12.5e"  , itn  , x(1)  )
+	    printf(" %10.3e %10.3e", normr, normAr)
+	    printf("  %8.1e %8.1e" , test1, test2 )
+	    printf(" %8.1e %8.1e"  , normA, condA )
 	 end
       end
-
-      if istop > 0 then, break, end
-   end // iteration loop
-
+      if istop > 0 then break, end
+   end; // iteration loop
+   
    // Print the stopping condition.
-
+   
    if show then
-      printf('\n\nLSMR finished')
-      printf('\n%s', msg(istop+1,:))
-      printf('\nistop =%8g    normr =%8.1e'     , istop, normr )
-      printf('    normA =%8.1e    normAr =%8.1e', normA, normAr)
-      printf('\nitn   =%8g    condA =%8.1e'     , itn  , condA )
-      printf('    normx =%8.1e\n', normx)
+     printf("\n\nLSMR finished")
+      printf("\n%s", msg(istop+1,:))
+      printf("\nistop =%8g    normr =%8.1e"     , istop, normr )
+      printf("    normA =%8.1e    normAr =%8.1e", normA, normAr)
+      printf("\nitn   =%8g    condA =%8.1e"     , itn  , condA )
+      printf("    normx =%8.1e\n", normx)
    end
    
 endfunction

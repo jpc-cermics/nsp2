@@ -1,4 +1,4 @@
-function [y]=proj(x1,x2)
+function y=proj(x1,x2)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque (Inria)
 //

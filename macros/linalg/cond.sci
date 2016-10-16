@@ -17,9 +17,9 @@ function c=cond(A)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // c=cond(A) condition number for 2-norm
-  if type(A,'short')=='m' then
+  if type(A,"short")=="m" then
     if isempty(A) then c=1,return,end
-    if size(A,1)<>size(A,2) then error('Matrix must be square'),end
+    if size(A,1)<>size(A,2) then error("Matrix must be square"),end
     s=svd(A)
     if s($)==0 then
       c=%inf
@@ -27,6 +27,6 @@ function c=cond(A)
       c=s(1)/s($)
     end
   else
-    error(sprintf('Error: cond not defined for type %s\n",type(A,'string')));
+    error(sprintf("Error: cond not defined for type %s\n",type(A,"string")));
   end
 endfunction

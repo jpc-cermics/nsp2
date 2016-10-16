@@ -46,11 +46,11 @@ function NB_blks=froben(struc)
 //
   NB_blks=[];
   if ~isempty(struc) then 
-    str=[0 struc struc($)];
+    str=[0, struc, struc($)];
   else
     str=[0 ];
   end
-  for k=2:length(str)-1
+  for k=2:length(str)-1 do
     NB_blks(k-1)=2*str(k)-str(k-1)-str(k+1);
   end
   NB_blks=NB_blks($:-1:1)';
@@ -60,7 +60,7 @@ endfunction
   
   [n,na]=size(A);
   if nargin == 1 then COEFF=1;end
-  if ~exists('verbose') then verbose=1;end
+  if ~exists("verbose") then verbose=1;end
   blks=[];
   if norm(A,1)==0 then
     if verbose then
@@ -71,7 +71,7 @@ endfunction
   end
   [X,struc,An]=Jordn(A);
   X=clean(X);
-  if struc==[] then 
+  if isempty(struc) then 
     if verbose then
       printf("         %i  block \n",0);
     end;
@@ -81,7 +81,7 @@ endfunction
     slice=[0,struc];
     Y=[];old=[];Dg=[];
     NB=froben(struc);
-    for kk=1:Index
+    for kk=1:Index do
       blk_size=Index-kk+1;  //start with J-blocks of max. size
       Nb_blks=NB(kk);  //Expected number of blocks with size=kk.
       //disp('Expected: '+string(NB(kk))+' blocks of size '+string(blk_size)');
@@ -90,16 +90,16 @@ endfunction
       //Slice=X(:,p);
       [w,d1,d2]=spanplus([kermoins,old],kerplus);
       d=d1-d2;
-      //  if d~=Nb_blks then d1=d2;warning('warning');end   //Warning ... 
-      if d~=Nb_blks then d2=d1-Nb_blks;end   //Warning ... 
+      //  if d<>Nb_blks then d1=d2;warning("warning");end   //Warning ... 
+      if d<>Nb_blks then d2=d1-Nb_blks;end; //Warning ... 
       W=w(:,d2+1:d1);
       // old=A*Slice;   //= X*An*X'*Slice = X*An(:,p)
       old=X*An(:,p); 
       //W orth.  each col <-> one block of size blk_size
       //size(W,2)=0 => no block of size  blk_size
-      for k=1:size(W,2)
+      for k=1:size(W,2) do
 	Wk=W(:,k);  //cyclic
-	for l=(blk_size-1):-1:0
+	for l=(blk_size-1):-1:0 do
 	  //Y=[Y,(A^l)*Wk];   //to be improved
 	  nxt=(X*(An^l))*(X'*Wk);nxt=nxt*COEFF^l;
 	  //[XXX,dim]=range(A,l);//XXX*nxt=[*;0];
@@ -108,7 +108,7 @@ endfunction
 	  Y=[Y,nxt];
 	end
       end;
-      if size(W,2) ~=0 then 
+      if size(W,2) <>0 then 
 	if verbose then
 	  printf("        %i  block(s) of size %i\n",size(W,2),blk_size);
 	end;
@@ -116,22 +116,23 @@ endfunction
       end;
     end
     p=size(Y,2);n=size(X,2);sz=n-p;
-    if p<n
+    if p<n then
       compl=X( :, (p+1):n );//Updt=[eye(p,p),compl(1:p,:);zeros(sz,p),compl(p+1:$,:)];
       Y=[Y,compl];Dg=[Dg;ones(size(compl,2),1)];
       //errcatch(19,'pause');
-      Tmp=inv(Y)*A*Y;k=p;A11=Tmp(1:k,1:k);A12=Tmp(1:k,k+1:$);A22=Tmp(k+1:$,k+1:$);
+      Tmp=inv(Y)*A*Y;k=p;A11=Tmp(1:k,1:k);
+      A12=Tmp(1:k,k+1:$);A22=Tmp(k+1:$,k+1:$);
       if norm(imag(A11),1)*norm(imag(A22),1)*norm(imag(A12),1)==0 then
 	L=zeros(size(A11,2),size(A22,1));
 	if norm(A11*L-L*A22+A12,1) > sqrt(%eps) then
-	  L=sylv( real(A11), real(-A22), real(-A12),'c'); //A11*L-L*A22+A12=0;
+	  L=sylv( real(A11), real(-A22), real(-A12),"c"); //A11*L-L*A22+A12=0;
 	end
 	Y(:,k+1:$)=Y(:,k+1:$)+Y(:,1:k)*L;
       else 
 	// bigA11=[real(A11) -imag(A11);imag(A11) real(A11)];
 	// bigA22=[real(A22) -imag(A22);imag(A22) real(A22)];
 	// bigA12=[real(A12) -imag(A12);imag(A12) real(A12)];
-	// bigL=sylv(bigA11, -bigA22, -bigA12,'c');
+	// bigL=sylv(bigA11, -bigA22, -bigA12,"c");
 	// L=bigL(1:$/2,1:$/2)+%i*bigL($/2+1:$,1:$/2);
 	L=sylv(A11,-A22,-A12);
 	Y(:,k+1:$)=Y(:,k+1:$)+Y(:,1:k)*L;
@@ -171,7 +172,7 @@ function [X,struc,An]=Jordn(A,flag)
   //Column compresses A22 in A=[A11,A12;A21,A22] with
   //[d,d]=size(A11)          A,A11 and A22 are square. 
     An=A(d+1:$,d+1:$);
-    if norm(An) < 1.d-8 then
+    if norm(An) < 1.E-8 then
       d=size(A,1);U=eye(size(A));return;
     end
     [p,q]=size(An);
@@ -188,7 +189,7 @@ function [X,struc,An]=Jordn(A,flag)
 
   [n,na]=size(A);X=eye(n,n);d=0;d1=-1;
   nrm=[];
-  for kmax=1:n
+  for kmax=1:n do
     nrmtst=norm(A^kmax);
     if nrmtst<%eps then break;end
     nrm=[nrm,nrmtst];
@@ -196,7 +197,7 @@ function [X,struc,An]=Jordn(A,flag)
 
   struc=[];
   kount=0;
-  while %t
+  while %t do
     [U,d1]=onestep(A,d);X=X*U;A=U'*A*U;A=clean(A);
     if d1==d then break;end
     struc=[struc,d1];d=d1;
@@ -205,7 +206,7 @@ function [X,struc,An]=Jordn(A,flag)
   end
   if nargin==2 then
     Tmp=A;k=d;A11=Tmp(1:k,1:k);A12=Tmp(1:k,k+1:$);A22=Tmp(k+1:$,k+1:$);
-    //L=sylv(real(A11),real(-A22),real(-A12),'c'); //A11*L-L*A22+A12=0;
+    //L=sylv(real(A11),real(-A22),real(-A12),"c"); //A11*L-L*A22+A12=0;
     L=sylv(A11,-A22,-A12);
     Id=eye(n,n);Jd=Id;
     X(1:size(X,1),k+1:$)=X(:,k+1:$)+X(:,1:k)*L;
@@ -260,11 +261,11 @@ if %f then
     //
       NB_blks=[];
       if ~isempty(struc) then 
-	str=[0 struc struc($)];
+	str=[0, struc, struc($)];
       else
 	str=[0 ];
       end
-      for k=2:length(str)-1
+      for k=2:length(str)-1 do
 	NB_blks(k-1)=2*str(k)-str(k-1)-str(k+1);
       end
       NB_blks=NB_blks($:-1:1)';
@@ -288,31 +289,31 @@ if %f then
 	p=length(struc);
 	q=dd(1);
 	struc2=struc;
-	for l=1:p
+	for l=1:p do
 	  struc2(l)=struc(l)-q*l;
 	end
-	for j=1:p-1
-	  if struc2($)==struc2($-1)
+	for j=1:p-1 do
+	  if struc2($)==struc2($-1) then
 	    struc2($)=[]
 	  end
 	end
       endfunction
       
-      if struc==[];
+      if isempty(struc) then
 	Q=[];P=[];blks=[];NB=[];
 	return;
       end
       Q=[];P=[];
       q=1;
-      while ~isempty(q)
+      while ~isempty(q) do
 	[q,p,struc]=struc2pq(struc);
 	Q=[Q,q];P=[P,p];
       end
       Q=[Q,struc];
       qq=[];
-      for kk=1:length(P)
+      for kk=1:length(P) do
 	F=[];
-	for f=1:Q(kk)
+	for f=1:Q(kk) do
 	  F=[F,P(kk)];
 	end
 	qq=[qq,F];
@@ -320,7 +321,7 @@ if %f then
       blks=qq;
 
       NB=[];
-      for k=max(P):-1:1
+      for k=max(P):-1:1 do
 	[ppp,qqq]=find(P==k);
 	nb=Q(qqq); 
 	if isempty(nb) then nb=0;end
@@ -330,7 +331,7 @@ if %f then
     
     function dims=blks2dims(struc)
       [Q,P,blks,NB]=struc2PQ(struc);
-      for kk=1:length(Q)
+      for kk=1:length(Q) do
 	if Q(kk)==0 then
 	  P(kk)=[];Q(kk)=[];
 	end
@@ -338,8 +339,8 @@ if %f then
 
       kp=[P($),diff(P($:-1:1))];
       dims=[];
-      for ij=1:length(P)
-	for k1=1:kp(ij)
+      for ij=1:length(P) do
+	for k1=1:kp(ij) do
 	  dims=[dims,Q];
 	end
 	Q($)=[];
@@ -349,7 +350,7 @@ if %f then
     dims=blks2dims(struc);
     Right=cumsum(dims);
     left=1;partt=list();
-    for k=1:length(dims)
+    for k=1:length(dims) do
       partt(k)=[left:Right(k)];
       left=Right(k)+1;
     end
@@ -358,7 +359,7 @@ if %f then
       du=cumsum(duale(blks));
       Cs=cumsum(dims);
       QQ=[];
-      for k=1:length(du)
+      for k=1:length(du) do
 	tst=du(k)
 	[pp,qq]=find(tst==Cs);
 	QQ=[QQ,qq];
@@ -367,16 +368,16 @@ if %f then
       L=QQ;
     endfunction
 
-    function Ll=INdxx(struc);
+    function Ll=INdxx(struc)
       dims=blks2dims(struc)
       [Q,P,blks,NB]=struc2PQ(struc);
       NB_blks=froben(struc);
-      for jj=1:length(NB_blks)
+      for jj=1:length(NB_blks) do
 	if NB_blks($)==0 then NB_blks($)=[];else break;end
       end
       Ll=list();
 
-      for kk=1:length(NB_blks)
+      for kk=1:length(NB_blks) do
 	if ~isempty(dims) then
 	  L=tmplst(blks,dims)
 	  Ll(kk)=L;
@@ -385,9 +386,9 @@ if %f then
 	end
       end
       
-      for kk=2:length(Ll)
+      for kk=2:length(Ll) do
 	lk=Ll(kk);lkm=Ll(kk-1);
-	for jj=1:length(lk)
+	for jj=1:length(lk) do
 	  lk(jj)=lkm(jj)+1;
 	end
 	Ll(kk)=lk;

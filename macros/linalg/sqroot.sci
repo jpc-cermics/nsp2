@@ -1,4 +1,4 @@
-function [S]=sqroot(Q)
+function S=sqroot(Q)
 // Scilab ( http://www.scilab.org/ ) - This file is part of Scilab
 // Copyright (C) 1987-2016 - F. Delebecque (Inria)
 //
@@ -17,12 +17,16 @@ function [S]=sqroot(Q)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
   Q1=(Q+Q')/2;
-  if norm(Q1-Q,1) > 100*%eps then printf('Warning: in sqroot, input is not symmetric!\n');end
+  if norm(Q1-Q,1) > 100*%eps then 
+    printf("Warning: in sqroot, input is not symmetric!\n");
+  end
   tt=min(spec(Q1));
-  if tt <-10*%eps then printf('Warning: in sqroot, input is not semi-definite positive!\n');end
+  if tt <-10*%eps then 
+    printf("Warning: in sqroot, input is not semi-definite positive!\n");
+  end
   if norm(Q,1) < sqrt(%eps) then S=[];return;end
   [u,S,v,rk]=svd(Q);
   S=diag(S);
   S=v(:,1:rk)*sqrt(S(1:rk,1:rk));
-  if norm(imag(Q1),1) <1.d-8 then S=real(S);;end
+  if norm(imag(Q1),1) <1.E-8 then S=real(S);end
 endfunction

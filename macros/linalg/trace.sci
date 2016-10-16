@@ -17,22 +17,22 @@ function t=trace(a)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // trace - computes the trace of a matrix
-  select type(a,'short')
-   case 'm' then
+  select type(a,"short")
+   case "m" then
     [m,n]=size(a)
-    if m<>n then error('the argument of trace must be a square matrix');end
+    if m<>n then error("the argument of trace must be a square matrix");end
     t=sum(diag(a))
-   case 'p' then
+   case "p" then
     [m,n]=size(a)
-    if m<>n then error('the argument of trace must be a square matrix');end
+    if m<>n then error("the argument of trace must be a square matrix");end
     t=sum(diag(a))
     //-compat next case retained for list /tlist compatibility
-  case 'sp' then
+  case "sp" then
     [m,n]=size(a)
-    if m<>n then error('the argument of trace must be a square matrix');end
+    if m<>n then error("the argument of trace must be a square matrix");end
     t=sum(diag(a))
     //-compat next case retained for list /tlist compatibility
   else
-    error(sprintf('trace not implemented for %s arguments for trace',type(a,'string')));
+    error(sprintf("trace not implemented for %s arguments for trace",type(a,"string")));
   end
 endfunction

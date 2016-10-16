@@ -21,15 +21,16 @@ function [U,S,V]=sva(A,tol)
   [U,S,V]=svd(A,mode="e")
   if nargin <=1  then
     tol = max(size(A)) * S(1) * %eps;
-    rk = size(find(diag(S) > tol),'*');
+    rk = size(find(diag(S) > tol),"*");
   else
-    if tol > 1 then //rank given
+    if tol > 1 then 
+      //rank given
       rk=tol
       if rk>min(size(A)) then 
-	error('Requested rank is greater than matrix dimension')
+	error("Requested rank is greater than matrix dimension")
       end
     else
-      rk = size(find(diag(S) > tol),'*');
+      rk = size(find(diag(S) > tol),"*");
     end
   end
   S=diag(S);

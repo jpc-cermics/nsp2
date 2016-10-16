@@ -1,4 +1,4 @@
-function [B] = pinv(A,tol=[])
+function B=pinv(A,tol=[])
 
 // Copyright (C) 2005-2015 Bruno Pinçon
 //

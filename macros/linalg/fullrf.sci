@@ -22,7 +22,7 @@ function [Q,M,rk]=fullrf(A,tol)
 // rk = rank(A) = #columns(Q) = #rows(M)
   
   na1=norm(A,1);
-  if na1 < 1.d-10 then Q=[];M=[];rk=0;return;end
+  if na1 < 1.E-10 then Q=[];M=[];rk=0;return;end
   // optional arguments for svd
   args=hash(1);
   if nargin <= 1 then args=hash(tol=sqrt(%eps)*na1);end

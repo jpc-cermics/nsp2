@@ -24,16 +24,17 @@ function [A,b]=aff2ab(lme,dimX,D,flag)
   function l=vec2list(vect,sizes)
   // vect: a vector 
   // sizes a kx2 matrix giving sizes 
-    msizes = prod(sizes,'c')
+    msizes = prod(sizes,"c")
     n = sum(msizes);
     if isempty(vect) then vect=zeros(1,n);end
-    if size(vect,'*') < n then 
-      error(sprintf('Error: first argument of vec2list is too small %d, expecting %d",size(vect,'*'),n));
+    if size(vect,"*") < n then 
+      error(sprintf("Error: first argument of vec2list is too small %d, expecting %d",...
+		    size(vect,"*"),n));
       return 
     end
     l=list();
     start=1;
-    for k=1:size(sizes,'r') 
+    for k=1:size(sizes,"r") do
       m= vect(start:start + msizes(k)-1);
       start.add[ msizes(k)];
       l.add_last[matrix(m,sizes(k,1),sizes(k,2))];
@@ -42,32 +43,32 @@ function [A,b]=aff2ab(lme,dimX,D,flag)
 
   function V=list2vec(L)
   // L: a list of matrices 
-    V=[]; for i=1:length(L); V.concatd[L(i)(:)];end
+    V=[]; for i=1:length(L) do V.concatd[L(i)(:)];end
   endfunction 
 
   // main code 
-  if nargin <= 3 then flag='f';end
+  if nargin <= 3 then flag="f";end
 
   nvars=0;
-  for k=dimX'
+  for k=dimX' do
     nvars=nvars+prod(k);
   end
-  if part(flag,1)=='f' then
+  if part(flag,1)=="f" then
     x0=zeros(nvars,1);
     b=list2vec(lme(vec2list(x0,dimX),D));
     [p,un]=size(b);
     A=zeros(p,nvars);
-    for k=1:nvars
+    for k=1:nvars do
       xi=x0;xi(k)=1;
       A(:,k)=list2vec(lme(vec2list(xi,dimX),D))-b;
     end
   end
 
-  if part(flag,1)=='s' then
+  if part(flag,1)=="s" then
     x0=zeros(nvars,1);
     b=list2vec(lme(vec2list(x0,dimX),D));
     A=[];
-    for k=1:nvars
+    for k=1:nvars do
       xi=x0;xi(k)=1;
       A=[A,sparse(list2vec(lme(vec2list(xi,dimX),D))-b)];
     end

@@ -29,15 +29,16 @@ function[m,den]=nlev(a,z,rmax)
   else 
     [a,x,bs]=bdiag(a),
   end;
-  [m1 n1]=size(a)
+  [m1, n1]=size(a)
   if m1<>n1 then error("Error: argument must be a squared matrix");end
   k=1;m=[];v=0*z+ ones(1,n1);den=1;
   // bs is a row in nsp 
-  for n=bs;k1=k:k-1+n;
+  for n=bs do 
     // Leverrier's algorythm
+    k1=k:k-1+n;
     h=z*eye(n,n)-a(k1,k1)
     f=eye(n,n)
-    for kl=1:n-1,
+    for kl=1:n-1 do
       b=h*f,
       d=-sum(diag(b))/kl,
       f=b+eye(size(b))*d,

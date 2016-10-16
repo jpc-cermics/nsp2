@@ -29,25 +29,25 @@ function [M,Q]=eigenmarkov(P)
   [perm,L]=classmarkov(P)
   Mn=P(perm,perm);
   perminv= perm;
-  perminv(perm)= 1:size(perm,'*');
-  rec1= []; for i=1:size(L,'*')-1, rec1($+1)=size(L{i},'*');end
+  perminv(perm)= 1:size(perm,"*");
+  rec1= []; for i=1:size(L,"*")-1 do rec1($+1)=size(L{i},"*");end
   nr= sum(rec1); // number of reccurent states 
   T=Mn(nr+1:$,nr+1:$);L=Mn(nr+1:$,1:nr);
   p=0;V=[];
-  for k=rec1
-    v=L(:,p+1:p+k);V=[V,sum(v,'c')];
+  for k=rec1 do
+    v=L(:,p+1:p+k);V=[V,sum(v,"c")];
     p=p+k;
   end
-  LL=zeros(nr,size(rec1,'*'));
+  LL=zeros(nr,size(rec1,"*"));
   p=0;
-  for k=1:size(rec1,'*')
+  for k=1:size(rec1,"*") do
     LL(p+1:p+rec1(k),k)=1;
     p=p+rec1(k);
   end
   Q=[LL;inv(eye(size(T))-T)*V];
   Q=Q(perminv,:);
   p=0;M=[];
-  for kk=1:size(rec1,'*')
+  for kk=1:size(rec1,"*") do
     classe=p+1:p+rec1(kk);
     p=p+rec1(kk);
     Mres=Mn(classe,classe);

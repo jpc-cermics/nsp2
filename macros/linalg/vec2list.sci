@@ -19,16 +19,17 @@ function l=vec2list(vect,sizes,ind)
 // vect: a vector 
 // sizes a kx2 matrix giving sizes 
 //
-  msizes = prod(sizes,'c')
+  msizes = prod(sizes,"c")
   n = sum(msizes);
   if isempty(vect) then vect=zeros(1,n);end
-  if size(vect,'*') < n then 
-    error(sprintf('Error: first argument of vec2list is too small %d, expecting %d",size(vect,'*'),n));
+  if size(vect,"*") < n then 
+    error(sprintf("Error: first argument of vec2list is too small %d, expecting %d",...
+		  size(vect,"*"),n));
     return 
   end
   l=list();
   start=1;
-  for k=1:size(sizes,'r') 
+  for k=1:size(sizes,"r") do
     m= vect(start:start + msizes(k)-1);
     start.add[ msizes(k)];
     l.add_last[matrix(m,sizes(k,1),sizes(k,2))];
@@ -40,5 +41,5 @@ endfunction
 
 function V=list2vec(L)
 // L: a list of matrices 
-  V=[]; for i=1:length(L); V.concatd[L(i)(:)];end
+  V=[]; for i=1:length(L) do V.concatd[L(i)(:)];end
 endfunction 

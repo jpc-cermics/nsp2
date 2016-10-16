@@ -28,7 +28,7 @@ function [x,dim]=spaninter(a,b,tol)
   if ma*na==0 then dim=0;x=eye(nb,nb);return;end
   if mb*nb==0 then dim=0;x=eye(na,na);return;end
   if nargin <= 2 then tol=sqrt(%eps);end
-  if na <> nb then error('Uncompatible dimensions'),end
+  if na <> nb then error("Uncompatible dimensions"),end
   if mb > ma then [x,dim]=spaninter(b,a,tol),return,end
   [xp,ra]=rowcomp(a);x=xp'
   //test  trivial cases :
@@ -48,7 +48,7 @@ function [x,dim]=spaninter(a,b,tol)
   b2=b1(:,1:k1);  //intersection in base x
   if norm(b2,1) < tol*norm(b,1)*mb*nb then dim=0,return,end
   [u2p,dim]=rowcomp(b2(up,:));
-  x(:,up)=x(:,up)*u2p'         //update
+  x(:,up)=x(:,up)*u2p';         //update
 endfunction
 
 

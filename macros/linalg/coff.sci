@@ -24,21 +24,21 @@ function [n,d]=coff(m,var)
   
   if %f then 
     m=rand(2,2);
-    [n,d]=coff(m,'s');
-    clean((poly(0,'s')*eye(2,2)-m )*n -d*eye(2,2))
+    [n,d]=coff(m,"s");
+    clean((poly(0,"s")*eye(2,2)-m )*n -d*eye(2,2))
   end
   
-  if type(m,'short')<>'m' then 
+  if type(m,"short")<>"m" then 
     error("Error: first argument should be a real or complex matrix"),
   end
   if isempty(m) then n=[];d=1;return;end
-  if nargin <= 1 then var='s',end
+  if nargin <= 1 then var="s",end
   d=clean(poly(m,var)); // denominator
   [m1,n1]=size(m);
   if m1<>n1 then error("Error: matrix should be square");end
   n=m2p([],var=var);
-  for k=1:n1,
-    for l=1:n1,
+  for k=1:n1 do 
+    for l=1:n1 do 
       mlk=-m(l,k);
       if abs(mlk)<1 then mlk=1,end
       m(l,k)=m(l,k)+mlk;

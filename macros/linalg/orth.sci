@@ -1,4 +1,4 @@
-function [ImA] = orth(A,tol=[],meth="svd")
+function ImA = orth(A,tol=[],meth="svd")
 // Copyright (C) 2007-2015 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ function [ImA] = orth(A,tol=[],meth="svd")
   
 endfunction
 
-function [ImA] = orth_sp(A,tol=[])
+function ImA = orth_sp(A,tol=[])
 // Copyright (C) 2016-2016 Bruno Pinçon and Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify

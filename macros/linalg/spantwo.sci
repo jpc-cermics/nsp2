@@ -42,7 +42,7 @@ function [Xp,dima,dimb,dim]=spantwo(A,B)
   B1B2B3=Xp*B;B1B2B3=B1B2B3(1:dim,:);
   [W,dimb]=rowcomp(B1B2B3);W=W(dim:-1:1,:);
   W11=W(1:dima,1:dima);W21=W(dima+1:dim,1:dima);
-  if rcond(W11)<1.d-10 then 
+  if rcond(W11)<1.E-10 then 
     //   Which is better? 
     B1B2=B1B2B3(1:dima,:);[W,dimb0]=rowcomp(B1B2);W=W(dima:-1:1,:);
     [n1,n2]=size(A);
@@ -50,7 +50,6 @@ function [Xp,dima,dimb,dim]=spantwo(A,B)
     Xp=[W # eye(n1-dima,n1-dima)]*Xp;
     return;
   end
-  Q=[eye(dima,dima),zeros(dima,dim-dima);
-     -W21*inv(W11),eye(dim-dima,dim-dima)];
+  Q=[eye(dima,dima),zeros(dima,dim-dima); -W21*inv(W11),eye(dim-dima,dim-dima)];
   Xp(1:dim,:)=Q*W*Xp(1:dim,:);
 endfunction
