@@ -39,89 +39,95 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
 //  AUTHORS
 //     Rainer von Seggern, Bruno Pincon
 //
-   if nargin<2 | nargin>6 then, error("Wrong number of input arguments"), end
 
-   if ~((is(F,%types.PList) | is(F,%types.Func)) & (is(x,%types.Mat) && isreal(x))) then
-      error("bad type for the first and/or the second argument")
-   end
-   
-   [n,p] = size(x)
-   if p ~= 1 then, error("x must be a column vector"), end
-   
-   if (order ~= 1 & order ~= 2 & order ~= 4) then
-      error("order must be 1, 2 or 4")
-   end
-   
-   if isempty(Q) then 
-      Q = eye(n,n);
-   elseif norm(clean(Q*Q'-eye(n,n)))>0 then
-      error("Q must be orthogonal");
-   end   
-   
-   if isempty(h) then
-      h_not_given = %t
-      select order  // stepsizes for approximation of first derivatives
-	case 1 , h = sqrt(%eps)*(1 + 1e-3*norm(x))
-	case 2 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
-	case 4 , h = %eps^(1/5)*(1 + 1e-3*norm(x))
-      end	 
-   else
-      h_not_given = %f	
-   end
+  
+  function z=%DF_(x)
+    z = %deriv1_(F, x, h, order, Q, args)';      // Transpose !
+    z.redim[-1,1]
+  endfunction 
 
-   J = %deriv1_(F, x, h, order, Q, args)
-   m = size(J,1);
-   
-   if nargout == 1 then, return, end
+  function g=%deriv1_(F_, x, h, order, Q, args)
 
-   if h_not_given then
-      select order  // stepsizes for approximation of second derivatives
-	case 1 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
-	case 2 , h = %eps^(1/4)*(1 + 1e-3*norm(x))
-	case 4 , h = %eps^(1/6)*(1 + 1e-3*norm(x))
-      end	 
-   end
-   H = %deriv1_(%DF_, x, h, order, Q, args)
-   // impose symmetry for the Hessean of each component of F
-   for k = 1:m
-      Hk = H((k-1)*n+1:k*n,:)
-      H((k-1)*n+1:k*n,:) = 0.5*(Hk + Hk')
-   end
-endfunction
-
-function z=%DF_(x)
-   z = %deriv1_(F, x, h, order, Q, args)';      // Transpose !
-   z.redim[-1,1]
-endfunction 
-
-function g=%deriv1_(F_, x, h, order, Q, args)
-   n=numel(x) 
-   Dy=[];
-   D = h*Q;
-   select order
+    function y=%R_(F_,x,args)  
+      if isempty(args) then
+	y=F_(x)
+      elseif is(args,%types.Cells)
+	y = F_(x,args{:})
+      else
+	y = F_(x,args)
+      end
+    endfunction
+    
+    n=numel(x) 
+    Dy=[];
+    D = h*Q;
+    select order
      case 1
-	y=%R_(F_,x, args);
-	for d=D, Dy.concatr[%R_(F_,x+d,args)-y], end             
-	g=pmult(Dy,Q,2)/h                    
+      y=%R_(F_,x, args);
+      for d=D, Dy.concatr[%R_(F_,x+d,args)-y], end             
+      g=pmult(Dy,Q,2)/h                    
      case 2
-	for d=D, Dy.concatr[%R_(F_,x+d,args)-%R_(F_,x-d,args)], end       
-	g=pmult(Dy,Q,2)/(2*h)
+      for d=D, Dy.concatr[%R_(F_,x+d,args)-%R_(F_,x-d,args)], end       
+      g=pmult(Dy,Q,2)/(2*h)
      case 4
-	for d=D
-	   dFh =  (%R_(F_,x+d,args)-%R_(F_,x-d,args))/(2*h)
-	   dF2h = (%R_(F_,x+2*d,args)-%R_(F_,x-2*d,args))/(4*h)
-	   Dy.concatr[(4*dFh - dF2h)/3]
-	end
-	g = pmult(Dy,Q,2)
-   end//select
+      for d=D
+	dFh =  (%R_(F_,x+d,args)-%R_(F_,x-d,args))/(2*h)
+	dF2h = (%R_(F_,x+2*d,args)-%R_(F_,x-2*d,args))/(4*h)
+	Dy.concatr[(4*dFh - dF2h)/3]
+      end
+      g = pmult(Dy,Q,2)
+    end//select
+  endfunction
+  
+  
+  if nargin<2 | nargin>6 then, error("Wrong number of input arguments"), end
+
+  if ~((is(F,%types.PList) | is(F,%types.Func)) & (is(x,%types.Mat) && isreal(x))) then
+    error("bad type for the first and/or the second argument")
+  end
+  
+  [n,p] = size(x)
+  if p ~= 1 then, error("x must be a column vector"), end
+  
+  if (order ~= 1 & order ~= 2 & order ~= 4) then
+    error("order must be 1, 2 or 4")
+  end
+  
+  if isempty(Q) then 
+    Q = eye(n,n);
+  elseif norm(clean(Q*Q'-eye(n,n)))>0 then
+    error("Q must be orthogonal");
+  end   
+  
+  if isempty(h) then
+    h_not_given = %t
+    select order  // stepsizes for approximation of first derivatives
+     case 1 , h = sqrt(%eps)*(1 + 1e-3*norm(x))
+     case 2 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
+     case 4 , h = %eps^(1/5)*(1 + 1e-3*norm(x))
+    end	 
+  else
+    h_not_given = %f	
+  end
+
+  J = %deriv1_(F, x, h, order, Q, args)
+  m = size(J,1);
+  
+  if nargout == 1 then, return, end
+
+  if h_not_given then
+    select order  // stepsizes for approximation of second derivatives
+     case 1 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
+     case 2 , h = %eps^(1/4)*(1 + 1e-3*norm(x))
+     case 4 , h = %eps^(1/6)*(1 + 1e-3*norm(x))
+    end	 
+  end
+  H = %deriv1_(%DF_, x, h, order, Q, args)
+  // impose symmetry for the Hessean of each component of F
+  for k = 1:m
+    Hk = H((k-1)*n+1:k*n,:)
+    H((k-1)*n+1:k*n,:) = 0.5*(Hk + Hk')
+  end
 endfunction
 
-function y=%R_(F_,x,args)  
-   if isempty(args) then
-      y=F_(x)
-   elseif is(args,%types.Cells)
-      y = F_(x,args{:})
-   else
-      y = F_(x,args)
-   end
-endfunction
+
