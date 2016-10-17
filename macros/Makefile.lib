@@ -1,7 +1,13 @@
 #/* -*- Mode: Makefile -*- */
 
+SHELL=/bin/sh
+
+SILENT=$(findstring s,$(MFLAGS))
+
 all	::
-	@echo "processing *.sci files" 
+	@if test "x$(SILENT)" != "xs"; then \
+		echo "processing *.sci files"; \
+	fi
 	@$(SCIDIR)/bin/scilex -nw -ns -dir ./
 
 clean	::
