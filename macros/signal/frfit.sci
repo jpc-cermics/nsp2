@@ -167,7 +167,7 @@ function [num,den]=frfit(w,fresp,order,weight)
     fweight(ind)=((1) ./(w(ind).^order));
     ind=find(w < .01);
 
-    fweight(ind)=(1./(w(ind).^min(0,sl0)))';
+    fweight(ind)=((1) ./(w(ind).^min(0,sl0)))';
     fweight=weight.*fweight;
     //Wt=diag([fweight;fweight]);
     //x=pinv(Wt*A)*(Wt*y);
