@@ -7,11 +7,13 @@ include $(TOP)/Makefile.incl
 SUBDIRS=@TOOLBOXES@
 SUBDIRS_CLEAN=@TOOLBOXES@
 
+SILENT=$(findstring s,$(MFLAGS))
+
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in macros/$$i..."; \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
 		$(MAKE) $(MFLAGS) all); \
 	done
 
@@ -19,7 +21,7 @@ distclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS_CLEAN) ;\
 	do \
-		(cd $$i ; echo "making distclean in macros/$$i..."; \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
 		$(MAKE) $(MFLAGS)  distclean); \
 	done
 
@@ -27,7 +29,7 @@ clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS_CLEAN) ;\
 	do \
-		(cd $$i ; echo "making clean in macros/$$i..."; \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
 		$(MAKE) $(MFLAGS) clean); \
 	done
 

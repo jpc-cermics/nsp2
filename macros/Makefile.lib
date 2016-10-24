@@ -11,7 +11,9 @@ all	::
 	@$(SCIDIR)/bin/scilex -nw -ns -dir ./
 
 clean	::
-	@echo "Cleaning"
+	@if test "x$(SILENT)" != "xs"; then \
+		echo "cleaning"; \
+	fi
 	@$(RM) *.bin
 
 silent-clean ::
