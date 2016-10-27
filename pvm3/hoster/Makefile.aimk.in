@@ -42,13 +42,18 @@ $(XDIR)/hoster$(EXESFX):  $(XDIR) hoster$(EXESFX)
 	cp hoster$(EXESFX) $(XDIR)
 
 hoster$(EXESFX):  $(SDIR)/hoster.c $(HEADERS) $(PVMLIBDEP) $(REXECOBJ)
-	$(CC) $(CFLAGS) -o $@ $(SDIR)/hoster.c $(REXECOBJ) $(LIBS)
+	@echo linking hoster$(EXESFX)
+	@$(CC) $(CFLAGS) -o $@ $(SDIR)/hoster.c $(REXECOBJ) $(LIBS)
 
-rexec.o:  $(PVMDIR)/src/$(PVM_ARCH)/src/rexec.c 
-	$(CC) $(CFLAGS) -c $(PVMDIR)/src/$(PVM_ARCH)/src/rexec.c 
-ruserpas.o:  $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c 
-	$(CC) $(CFLAGS) -c $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c 
+rexec.o:  $(PVMDIR)/src/$(PVM_ARCH)/src/rexec.c
+	@echo compiling ddpro.c
+	@$(CC) $(CFLAGS) -c $(PVMDIR)/src/$(PVM_ARCH)/src/rexec.c 
+
+ruserpas.o:  $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c
+	@echo compiling ddpro.c
+	@$(CC) $(CFLAGS) -c $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c 
 
 clean:
-	rm -f *.o hoster$(EXESFX)
+	@echo cleaning
+	@rm -f *.o hoster$(EXESFX)
 

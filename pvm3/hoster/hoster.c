@@ -39,6 +39,8 @@
 #ifdef HASSTDLIB
 #include <stdlib.h>
 #endif
+
+#include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -261,7 +263,7 @@ main(argc, argv)
 *	send reply message.
 */
 
-hoster()
+int hoster(void)
 {
 	int num;
 	int i;
@@ -366,7 +368,7 @@ hoster()
 }
 
 
-close_slot(sp)
+int close_slot(sp)
 	struct slot *sp;
 {
 	if (sp->s_wfd != -1)
@@ -381,7 +383,7 @@ close_slot(sp)
 }
 
 
-pl_startup(num, hostlist)
+int pl_startup(num, hostlist)
 	int num;
 	struct hst **hostlist;
 {
@@ -542,7 +544,7 @@ pl_startup(num, hostlist)
 			TVCLEAR(&tout);
 		}
 		if (debugmask) {
-			fprintf(stderr, "pl_startup() select timeout is %d.%06ld\n",
+			fprintf(stderr, "pl_startup() select timeout is %ld.%06ld\n",
 					tout.tv_sec, tout.tv_usec);
 		}
 		if ((n = select(nfds,
@@ -766,8 +768,7 @@ pl_startup(num, hostlist)
 
 
 
-phase1(sp)
-	struct slot *sp;
+int phase1(struct slot *sp)
 {
 	struct hst *hp;
 	char *hn;
