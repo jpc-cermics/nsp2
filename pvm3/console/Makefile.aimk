@@ -28,6 +28,8 @@ LIBS		=	$(LOPT) -L$(TRCLDIR) -L$(PVMLDIR) \
 				-l$(TRCLIB) -l$(PVMLIB) $(ARCHLIB)
 OBJ			=	cons.o cmds.o job.o trc.o
 
+all:		default
+
 default:	pvm$(EXESFX)
 
 install:	$(PVMLDIR) $(PVMLDIR)/pvm$(EXESFX)

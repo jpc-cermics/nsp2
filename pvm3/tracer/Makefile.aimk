@@ -104,6 +104,8 @@ PROGS		=
 # Targets
 #
 
+all:	local
+
 default:  local
 
 # $(PVMXDIR) $(PVMLDIR) $(PROGS)

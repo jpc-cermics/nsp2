@@ -1,31 +1,34 @@
-include ../Path.incl
-
-#
-# $Id$
-#
 # top-level PVM3 makefile
 #
-
 SHELL	=	/bin/sh
+
+.NOTPARALLEL:
+
+include ../Path.incl
+
+SILENT=$(findstring s,$(MFLAGS))
 
 AIMKSTR	=	-here -f ./conf/`./lib/pvmtmparch`.def -f ./Makefile.aimk
 
-all: default 
+SUBDIRS= src tracer console pvmgs @PVMHOSTER@
 
-default:
-	@PVM_ROOT=$(SCIDIR)/pvm3; export PVM_ROOT;\
-		PVM_ARCH=@PVMARCH@; export PVM_ARCH ;\
-		./lib/aimk $(AIMKSTR) default
+all: install
 
-clean:
-	@PVM_ROOT=$(SCIDIR)/pvm3; export PVM_ROOT;\
-		PVM_ARCH=@PVMARCH@; export PVM_ARCH ;\
-		./lib/aimk $(AIMKSTR) clean
+distclean: clean
 
-# distclean clean removes *.o and other remaining executables 
-# 
-distclean:: clean
-	arch=`./lib/pvmtmparch` ;$(RM) -rf lib/$$arch/* bin/$$arch/* 
+install clean ::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) $(FLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
+	done
 
 ALL_ARCH = HPPA SGI ALPHA LINUXALPHA LINUX LINUXSPARC SUN4SOL2 SUNMP 
 
