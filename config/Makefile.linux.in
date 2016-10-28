@@ -1,10 +1,15 @@
+#/* -*- Mode: Makefile -*- */
 # Copyright ENPC 
 
 FFLAGS = $(FC_OPTIONS)
 
 LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
 
-bin/scilex: scilex-lib 
+$(NSPLIBS) : scilex-lib 
+
+bin/scilex: $(NSPLIBS)
+	echo $(LIBS)
+	echo $(EXTERNLIBS)
 	@$(RM) $@;
 	@echo "linking"; 
 	@$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
