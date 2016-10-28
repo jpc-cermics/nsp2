@@ -9,28 +9,46 @@ SUBDIRS_CLEAN=@TOOLBOXES@
 
 SILENT=$(findstring s,$(MFLAGS))
 
-all:: 
+all :: path-incl
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
-		$(MAKE) $(MFLAGS) all); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
-distclean::
+# generate Path.incl in SUBDIRS. Then the toolboxes will
+# be compiled using make and not exec builder
+
+path-incl ::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+	 	( if test -f $$i/Path.incl; then ok=0; \
+		  else \
+		    (echo "SCIDIR=../.." > $$i/Path.incl; \
+		     echo "SCIDIR1=..\.." >> $$i/Path.incl ); \
+		  fi ); \
+	done
+
+clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS_CLEAN) ;\
 	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
-		$(MAKE) $(MFLAGS)  distclean); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS_CLEAN) ;\
-	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in toolboxes/$$i ";fi && \
-		$(MAKE) $(MFLAGS) clean); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
 DESTDIR=$(prefix)/lib/nsp
