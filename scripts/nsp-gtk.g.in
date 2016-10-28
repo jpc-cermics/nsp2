@@ -97,6 +97,7 @@ debug=
 now=
 display=
 start_file=
+dirname=
 prevarg=
 
 for sciarg 
@@ -156,6 +157,9 @@ for sciarg
 	-e) # script to execute 
             prevarg="start_exp"
             ;;
+	-dir) # compile macros in dir
+	    prevarg="dirname"
+	    ;;
 	-args) 
             prevarg="arguments"
             ;;
@@ -185,6 +189,10 @@ fi
 
 if test -n "$start_file"; then
     sci_args="$sci_args -f $start_file"
+fi
+
+if test -n "$dirname"; then
+    sci_args="$sci_args -dir $dirname"
 fi
 
 if test -n "$fontname"; then

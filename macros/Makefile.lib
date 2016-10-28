@@ -1,27 +1,27 @@
 #/* -*- Mode: Makefile -*- */
+# used to compile a set of sci files
+# contained in a directory
 
 SHELL=/bin/sh
 
 SILENT=$(findstring s,$(MFLAGS))
+GNUMAKEFLAGS=--no-print-dir
+
+ifndef NSP
+NSP=$(SCIDIR)/bin/scilex
+endif
 
 all	::
 	@if test "x$(SILENT)" != "xs"; then \
 		echo "processing *.sci files"; \
 	fi
-	@$(SCIDIR)/bin/scilex -nw -ns -dir ./
+	@$(NSP) -nw -ns -dir ./
 
-clean	::
+clean distclean	::
 	@if test "x$(SILENT)" != "xs"; then \
 		echo "cleaning"; \
 	fi
 	@$(RM) *.bin
-
-silent-clean ::
-	@$(RM) *.bin
-
-distclean:: clean 
-
-silent-distclean :: silent-clean
 
 PP=$(patsubst %.sci,%_pp.sci,$(wildcard *.sci))
 
@@ -34,5 +34,6 @@ pp : $(PP)
 
 clean	::
 	@$(RM) $(PP)
+
 
 

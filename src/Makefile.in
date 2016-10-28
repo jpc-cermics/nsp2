@@ -19,12 +19,15 @@ ALLSCIDIRS =zcalelm objects interp functions gtk2 \
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS)
 ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS)
 
+SILENT=$(findstring s,$(MFLAGS))
+DIR=
+
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && echo "making $@ in src/$$i " && \
-		$(MAKE) $(MFLAGS) -s $@ ); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making all in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\

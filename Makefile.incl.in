@@ -19,7 +19,7 @@ top_builddir=$(SCIDIR)
 
 all::
 
-
+GNUMAKEFLAGS=--no-print-dir
 RANLIB = @RANLIB@
 TERMCAPLIB = @TERMCAPLIB@
 LIBTOOL= @LIBTOOL@

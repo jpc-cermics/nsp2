@@ -29,42 +29,67 @@ include config/@MAKEFILE_TARGET@
 distclean::
 	$(RM) bin/scilex
 
+SILENT=$(findstring s,$(MFLAGS))
+DIR=
+
 scilex-lib::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	cd src; echo "making all in src..."; \
-		$(MAKE) $(MFLAGS) all;
+	for i in src ;\
+	do \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making all in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ all ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
+	done
 
 @PVMTARGET@::
-	@cd pvm3; echo "making all in pvm3..."; $(MAKE) $(MFLAGS) "CC=$(CC)";
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in pvm3 ;\
+	do \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making all in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ "CC=$(CC)" ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
+	done
 
 SUBDIRS = scripts macros demos demos3 toolboxes
 
-all::
+all :: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in $$i..."; \
-			$(MAKE) $(MFLAGS) all); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
-distclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in src $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making distclean in $$i..."; \
-			$(MAKE) $(MFLAGS)  distclean); \
-	done
+SUBDIRS_CLEAN= $(SUBDIRS) src
 
-distclean::
-	@cd pvm3; echo "making distclean in pvm3..."; \
-	$(MAKE) $(MFLAGS) distclean;
-
-clean::
+clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in src $(SUBDIRS) ;\
+	for i in $(SUBDIRS_CLEAN) ;\
 	do \
-		(cd $$i ; echo "making clean in $$i..."; \
-			$(MAKE) $(MFLAGS)  clean); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
 man::

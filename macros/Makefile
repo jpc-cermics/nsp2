@@ -11,12 +11,14 @@ SUBDIRS = \
 	ast rmatrix signal \
 	linearsys control robust \
 
+DIR=
+
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in macros/$$i ";fi && \
-		$(MAKE) $(MFLAGS) -s $@ ); \
+		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\
@@ -31,5 +33,4 @@ install::
 	@echo "installing macros files"
 	@$(TOP)/config/install-sh -d $(DESTDIR)/macros
 	@tar   cf - --exclude CVS . | ( cd $(DESTDIR)/macros ; tar xfp - )
-
 

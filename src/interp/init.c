@@ -276,7 +276,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 	}
       else
 	{
-	  sci_clear_and_exit(0);
+	  sci_clear_and_exit(1);
 	  return 1;
 	}
     }

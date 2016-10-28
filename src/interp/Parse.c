@@ -354,7 +354,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
   sprintf(F,"%s/%s",dirname,Fname);
   if (( f= fopen(F,"r") ) == (FILE *)0 )
     {
-      Scierror("Error: Cannot open file %s\n",F);
+      Sciprintf("Error: Cannot open file %s\n",F);
       return RET_BUG;
     }
   while (1) 
@@ -375,7 +375,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       if ((SciInput = fopen(F1,"r")) == NULL) 
 	{
 	  /* Only when strerror exists XXXXXXX **/
-	  Scierror("Error: Cannot open file %s for reading\n %s\n"
+	  Sciprintf("Error: Cannot open file %s for reading\n %s\n"
 		   ,F1,strerror(errno));
 	  rep = RET_BUG;
 	  goto end;
@@ -440,7 +440,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
   GDir *dir =  g_dir_open(dirname,0,NULL);
   if ( dir == NULL) 
     {
-      Scierror("Error: Cannot open directory %s\n",Dir);
+      Sciprintf("Error: Cannot open directory %s\n",Dir);
       return RET_BUG;
     }
   strcpy(F1,dirname);
@@ -462,7 +462,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      if ((SciInput = fopen(F1,"r")) == NULL) 
 		{
 		  /* Only when strerror exists XXXXXXX */
-		  Scierror("Error: Cannot open file %s for reading\n %s\n"
+		  Sciprintf("Error: Cannot open file %s for reading\n %s\n"
 			   ,F1,strerror(errno));
 		  rep = RET_BUG;
 		  goto end;
