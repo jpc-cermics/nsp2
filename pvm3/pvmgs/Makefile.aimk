@@ -50,7 +50,6 @@ all:	$(DIRS) $(PROGS) $(PVMLDIR)/$(LIBGPVM) $(LPROGS)
 all-mpp:	$(DIRS) $(PROGS) $(PVMLDIR)/$(LIBGPVM)-mpp $(LPROGS)
 
 $(PVMXDIR):
-	- mkdir $(PVMBDIR)
 	- mkdir $(PVMXDIR)
 
 $(PVMLDIR):

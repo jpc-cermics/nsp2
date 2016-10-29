@@ -14,6 +14,7 @@ install all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
+		if test -d $$i; then ok=1; else mkdir $$i; fi; \
 		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
 		$(MAKE) $(MFLAGS) $(FLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
