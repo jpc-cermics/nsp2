@@ -6,7 +6,9 @@ FFLAGS = $(FC_OPTIONS)
 
 LIBS=-Wl,-all_load $(NSPLIBS) 
 
-bin/scilex: scilex-lib 
+$(NSPLIBS) : scilex-lib 
+
+bin/scilex: $(NSPLIBS)
 	@$(RM) $@;
 	@echo "linking"; 
 	@$(LD) -r -o all-o.o src/interp/lsci.o -all_load $(NSPLIBS)
