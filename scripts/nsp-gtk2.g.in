@@ -214,20 +214,20 @@ if test -n "$debug"; then
     if test -n "$now"; then
         gdb $SCI/bin/scilex
     else
-        $SCI/bin/zterm  $zterm_args  -e "gdb $SCI/bin/scilex"
+        $SCI/bin/zterm  $zterm_args  -e gdb $SCI/bin/scilex
     fi
 else
   if test -n "$start_exp"; then
     if test -n "$now"; then
 	$SCI/bin/scilex $sci_args -e "$start_exp"
     else
-	$SCI/bin/zterm  $zterm_args -e "$SCI/bin/scilex $sci_args -e \"$start_exp\""
+	$SCI/bin/zterm  $zterm_args -e $SCI/bin/scilex $sci_args -e "$start_exp"
     fi
   else
     if test -n "$now"; then
 	$SCI/bin/scilex $sci_args 
     else
-	$SCI/bin/zterm  $zterm_args -e "$SCI/bin/scilex $sci_args"
+	$SCI/bin/zterm  $zterm_args -e $SCI/bin/scilex $sci_args
     fi
   fi
 fi
