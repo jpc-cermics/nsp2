@@ -1,0 +1,233 @@
+#!/bin/sh
+#/* -*- Mode: Shell-script -*- */
+if test "$PRINTERS" = ""; then
+    PRINTERS="lp"
+fi
+#############################################################################
+#                       DO NOT MODIFY BELOW THIS LINE                       #
+#############################################################################
+if test "$SCI" = ""; then
+    SCI="NSP_DIRECTORY"
+fi
+export SCI
+export UBUNTU_MENUPROXY=0
+if test "$DISPLAY" = ""; then
+    DISPLAY="unix:0.0"
+fi
+export DISPLAY
+export PRINTERS
+
+if test "$PVM_ROOT" = ""; then
+    PVM_ROOT="@PVMROOTR@"
+fi
+if test "$PVM_ARCH" = ""; then
+    PVM_ARCH=`$PVM_ROOT/lib/pvmgetarch`
+fi
+export PVM_ROOT PVM_ARCH
+
+PATH=$PATH:$SCI:$SCI/util
+export PATH
+
+do_help()
+{
+    echo "bin/nsp -h"
+    echo "Usage:"
+    echo "  nsp [OPTION...]                Start nsp console"
+    echo ""
+    echo "Help Options:"
+    echo "  -h, --help                       Show help options"
+    echo "  --help-all                       Show all help options"
+    echo "  --help-vte                       Show vte Options"
+    echo ""
+    echo "Application Options:             "
+    echo "  -args arguments                  Tranmist argumens to nsp (%argv)"
+    echo "  -dir dirname                     Compile files in dirname"
+    echo "  -display displayname             X display to use"
+    echo "  -e string                        Execute string on entry"
+    echo "  -echo                            Echo instructions while they are executed"
+    echo "  -errcatch                        Catch errors in startup phase"
+    echo "  -f file                          Preload file on entry"
+    echo "  -h, -help                        Show this help paragrah"
+    echo "  -nb                              Disable banner" 
+    echo "  -ns                              Disable execution of startup"
+    echo "  -nw                              Disable window mode"
+    echo "  -show                            "
+    echo ""
+    echo "Vte terminal Options:            "
+    echo "  -C, --console                    Watch /dev/console"
+    echo "  --no-builtin-dingus              Highlight URLs inside the terminal"
+    echo "  -D, --dingu                      Add regex highlight"
+    echo "  -R, --no-rewrap                  Disable rewrapping on resize"
+    echo "  -S, --shell                      Disable spawning a shell inside the terminal"
+    echo "  -T, --transparent=ALPHA          Enable the use of a transparent background"
+    echo "  -2, --double-buffer              Disable double-buffering"
+    echo "  -a, --audible-bell               Use audible terminal bell"
+    echo "  -font, --font                    Specify a font to use"
+    echo "  -g, --geometry=GEOMETRY          Set the size (in characters) and position"
+    echo "  --highlight-foreground-color     Enable distinct highlight foreground color for selection"
+    echo "  --highlight-background-color     Enable distinct highlight background color for selection"
+    echo "  -i, --icon-title                 Enable the setting of the icon title"
+    echo "  -k, --keep                       Live on after the window closes"
+    echo "  -n, --scrollback-lines           Specify the number of scrollback-lines"
+    echo "  --cursor-blink=MODE              Cursor blink mode (system|on|off)"
+    echo "  --cursor-color                   Enable a colored cursor"
+    echo "  --cursor-shape                   Set cursor shape (block|underline|ibeam)"
+    echo "  --encoding                       Specify the terminal encoding to use"
+    echo "  --cjk-width=NARROW|WIDE          Specify the cjk ambiguous width to use for UTF-8 encoding"
+    echo "  -w, --working-directory          Specify the initial working directory of the terminal"
+    echo "  --reverse                        Reverse foreground/background colors"
+    echo "  -G, --no-geometry-hints          Allow the terminal to be resized to any dimension, not constrained to fit to an integer multiple of characters"
+    echo "  -W, --scrolled-window            Use a GtkScrolledWindow as terminal container"
+    echo "  -P, --scrollbar-policy           Set the policy for the vertical scroolbar in the scrolled window (always|auto|never; default:always)"
+    echo "  -N, --object-notifications       Print VteTerminal object notifications"
+    echo "  --output-file                    Save terminal contents to file at exit"
+    echo "  --pty-flags                      PTY flags set from default|no-utmp|no-wtmp|no-lastlog|no-helper|no-fallback"
+    echo "  --border-width=WIDTH             Border with"
+    # echo "  --display=DISPLAY                X display to use"
+}
+
+# really calling nsp with arguments
+# we separate arguments for nsp and arguments for zterm
+# sci_args are for nsp i.e scilex
+
+sci_args=
+
+name=
+debug=
+now=
+display=
+start_file=
+dirname=
+prevarg=
+
+for sciarg 
+  do
+    # If the previous argument needs an argument, assign it.
+    if test -n "$prevarg"; then
+	eval "$prevarg=\$sciarg"
+	prevarg=
+	continue
+    fi
+    case $sciarg in
+	-name) # gives a name to nsp terminal  
+            prevarg="term_name"
+	    ;;
+	-ns)  # run nsp with no startup execution 
+	    sci_args="$sci_args -ns"
+            ;;
+	-show) # echo results of commands evaluation in nsp
+     	    sci_args="$sci_args $sciarg"
+            ;;
+	-echo) # echo execution in nsp 
+     	    sci_args="$sci_args $sciarg"
+            ;;
+	-errcatch) # catch errors when execution startup or start_file
+     	    sci_args="$sci_args $sciarg"
+            ;;
+	-nb) # no banner 
+	    sci_args="$sci_args -nb"
+            ;;
+	-debug) # start nsp through gdb 
+            debug="-debug"
+            ;;
+	-nw) # no window mode 
+            now="-nw"
+            sci_args="$sci_args -nw"
+            ;;
+	-texmacs) # unused 
+            sci_args="$sci_args -texmacs"
+            ;;
+	-nwni) # for no window mode in windows 
+            now="-nw"
+	    sci_args="$sci_args"
+            ;;
+	-tv) # do not use a terminal but nsp own gtk window 
+	    now="-nw"
+            sci_args="$sci_args -tv"
+	    ;;
+	-display|-d) # gives the X11 display to use 
+            prevarg="display"
+            ;;
+	-f) # load a file 
+            prevarg="start_file"
+            ;;
+	-font) # use custom font 
+	    prevarg="fontname"
+	    ;;
+	-e) # script to execute 
+            prevarg="start_exp"
+            ;;
+	-dir) # compile macros in dir
+	    prevarg="dirname"
+	    ;;
+	-args) 
+            prevarg="arguments"
+            ;;
+	-h) 
+              do_help
+	      exit 0
+            ;;
+	-help) 
+              do_help
+	      exit 0
+            ;;
+	*)
+	    zterm_args="$zterm_args $sciarg"
+            # do_help
+            ;;
+    esac
+done
+
+
+# deal with some detected options with value
+# which are to be inserted in sci_args or zterm_args
+
+if test -n "$display"; then
+    sci_args="$sci_args -display $display"
+    zterm_args="$zterm_args -display=$display"
+fi
+
+if test -n "$start_file"; then
+    sci_args="$sci_args -f $start_file"
+fi
+
+if test -n "$dirname"; then
+    sci_args="$sci_args -dir $dirname"
+fi
+
+if test -n "$fontname"; then
+    zterm_args="$zterm_args -f $fontname"
+fi
+
+if test -n "$history"; then
+    zterm_args="$zterm_args -n $history"
+fi
+
+if test -n "$term_name"; then
+    zterm_args="$zterm_args -N $term_name"
+fi
+
+#echo nsp: $sci_args
+#echo zterm: $zterm_args
+
+if test -n "$debug"; then 
+    if test -n "$now"; then
+        gdb $SCI/bin/scilex
+    else
+        $SCI/bin/zterm  $zterm_args  -e "gdb $SCI/bin/scilex"
+    fi
+else
+  if test -n "$start_exp"; then
+    if test -n "$now"; then
+	$SCI/bin/scilex $sci_args -e "$start_exp"
+    else
+	$SCI/bin/zterm  $zterm_args -e "$SCI/bin/scilex $sci_args -e \"$start_exp\""
+    fi
+  else
+    if test -n "$now"; then
+	$SCI/bin/scilex $sci_args 
+    else
+	$SCI/bin/zterm  $zterm_args -e "$SCI/bin/scilex $sci_args"
+    fi
+  fi
+fi
