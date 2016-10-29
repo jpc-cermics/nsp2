@@ -260,7 +260,7 @@ me_new(ind)
 {
 	struct pvmmentry *ep;
 
-	if (ep = TALLOC(1, struct pvmmentry, "pvmmentry")) {
+	if ((ep = TALLOC(1, struct pvmmentry, "pvmmentry"))) {
 		ep->me_link = ep->me_rlink = ep;
 		ep->me_tid = 0;
 		ep->me_savetid = 0;
@@ -278,7 +278,7 @@ mc_new(name)
 {
 	struct pvmmclass *np;
 
-	if (np = TALLOC(1, struct pvmmclass, "pvmmclass")) {
+	if ((np = TALLOC(1, struct pvmmclass, "pvmmclass"))) {
 		if (name) {
 			np->mc_name = STRALLOC(name);
 			np->mc_ent = me_new(-1);
@@ -418,14 +418,14 @@ mb_delete(tid, name, req, flags)
 	struct pvmmclass *np;
 	struct pvmmentry *ep = 0;
 
-	if (np = mc_find(name)) {
-		for (ep = np->mc_ent->me_link; ep != np->mc_ent;
-				ep = ep->me_link) {
-			if (ep->me_ind == req)
-				break;
-		}
-		if (ep == np->mc_ent)
-			ep = 0;
+	if ((np = mc_find(name))) {
+	  for (ep = np->mc_ent->me_link; ep != np->mc_ent;
+	       ep = ep->me_link) {
+	    if (ep->me_ind == req)
+	      break;
+	  }
+	  if (ep == np->mc_ent)
+	    ep = 0;
 	}
 
 	if (!ep)
@@ -452,7 +452,7 @@ mb_lookup(tid, name, req, flags, mpp)
 	struct pvmmclass *np;
 	struct pvmmentry *ep = 0;
 
-	if (np = mc_find(name)) {
+	if ((np = mc_find(name))) {
 		for (ep = np->mc_ent->me_link; ep != np->mc_ent;
 				ep = ep->me_link) {
 			if (ep->me_ind >= req)

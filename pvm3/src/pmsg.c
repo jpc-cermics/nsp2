@@ -548,7 +548,7 @@ pmsg_extend(mp)
 {
 	struct frag *fp;
 
-	if (fp = fr_new(pvmfrgsiz)) {
+	if ((fp = fr_new(pvmfrgsiz))) {
 		fp->fr_dat += MAXHDR;
 		LISTPUTBEFORE(mp->m_frag, fp, fr_link, fr_rlink);
 		return 0;
@@ -632,7 +632,7 @@ bytepk(mp, cp, num, siz, lnc)
 					cp += r;
 
 				} else {		/* no space, add new frag */
-					if (r = pmsg_extend(mp))
+				  if ((r = pmsg_extend(mp)))
 						return r;
 				}
 			}
@@ -708,8 +708,8 @@ byteupk(mp, cp, num, siz, lnc)
 					cp += r;
 
 				} else {		/* no space, add new frag */
-					if (r = pmsg_decmore(mp))
-						return r;
+				  if ((r = pmsg_decmore(mp)))
+				    return r;
 				}
 			}
 		}
@@ -953,7 +953,7 @@ enc_xdr_float(mp, vp, cnt, std, siz)
         buf[2] = *(cp+1);
         buf[1] = *(cp+2);
         buf[0] = *(cp+3);
-        if (cc = bytepk(mp, buf, 4, 1, 1))
+        if ((cc = bytepk(mp, buf, 4, 1, 1)))
             return cc;
     }
     return 0;
@@ -980,7 +980,7 @@ enc_xdr_double(mp, vp, cnt, std, siz)
         buf[2] = *(cp+5);
         buf[1] = *(cp+6);
         buf[0] = *(cp+7);
-        if (cc = bytepk(mp, buf, 8, 1, 1))
+        if ((cc = bytepk(mp, buf, 8, 1, 1)))
             return cc;
     }
     return 0;
@@ -1010,8 +1010,8 @@ enc_xdr_cplx(mp, vp, cnt, std, siz)
         buf[6] = *(cp+5);
         buf[5] = *(cp+6);
         buf[4] = *(cp+7);
-        if (cc = bytepk(mp, buf, 8, 1, 1))
-            return cc;
+        if ((cc = bytepk(mp, buf, 8, 1, 1)))
+	  return cc;
     }
     return 0;
 }
@@ -1045,7 +1045,7 @@ enc_xdr_dcplx(mp, vp, cnt, std, siz)
         buf[10] = *(cp+13);
         buf[9] = *(cp+14);
         buf[8] = *(cp+15);
-        if (cc = bytepk(mp, buf, 16, 1, 1))
+        if ((cc = bytepk(mp, buf, 16, 1, 1)))
             return cc;
     }
     return 0;
@@ -1066,7 +1066,7 @@ dec_xdr_byte(mp, vp, cnt, std, siz)
 {
 	int cc;
 
-	if (cc = byteupk(mp, (char*)vp, cnt, siz, std * siz))
+	if ((cc = byteupk(mp, (char*)vp, cnt, siz, std * siz)))
 		return cc;
 	mp->m_cpos = (mp->m_cpos + 3) & ~3;
 	return 0;
@@ -1084,7 +1084,7 @@ dec_xdr_short(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (short*)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 4, 1, 1))
+      if ((cc = byteupk(mp, buf, 4, 1, 1)))
             return cc;
         cp = (char *)np;
         *cp = buf[3];
@@ -1105,7 +1105,7 @@ dec_xdr_int(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (int *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 4, 1, 1))
+      if ((cc = byteupk(mp, buf, 4, 1, 1)))
             return cc;
         cp = (char *)np;
         *cp = buf[3];
@@ -1128,13 +1128,13 @@ dec_xdr_long(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (long *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf,
+      if ((cc = byteupk(mp, buf,
 #ifdef USE_XDR_LONGLONG
 				8,
 #else
 				4,
 #endif
-				1, 1))
+			1, 1)))
             return cc;
         cp = (char *)np;
 #ifdef USE_XDR_LONGLONG
@@ -1168,7 +1168,7 @@ dec_xdr_float(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (float *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 4, 1, 1))
+      if ((cc = byteupk(mp, buf, 4, 1, 1)))
             return cc;
         cp = (char *)np;
         *cp = buf[3];
@@ -1191,7 +1191,7 @@ dec_xdr_double(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (double *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 8, 1, 1))
+      if ((cc = byteupk(mp, buf, 8, 1, 1)))
             return cc;
         cp = (char *)np;
         *cp = buf[7];
@@ -1218,8 +1218,8 @@ dec_xdr_cplx(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (complex *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 8, 1, 1))
-            return cc;
+      if ((cc = byteupk(mp, buf, 8, 1, 1)))
+	return cc;
         cp = (char *)np;
         *cp = buf[3];
         *(cp+1) = buf[2];
@@ -1245,7 +1245,7 @@ dec_xdr_dcplx(mp, vp, cnt, std, siz)
     int cc = 0;
 
     for (np = (dcplx *)vp; cnt-- > 0; np += std) {
-        if (cc = byteupk(mp, buf, 16, 1, 1))
+      if ((cc = byteupk(mp, buf, 16, 1, 1)))
             return cc;
         cp = (char *)np;
         *cp     = buf[7];
@@ -1290,7 +1290,7 @@ enc_xdr_init(mp)
 		mp->m_flag &= ~MM_UPACK;
 		mp->m_flag |= MM_PACK;
 		if ((fp = mp->m_frag->fr_link) == mp->m_frag) {
-			if (cc = pmsg_extend(mp))
+		  if ((cc = pmsg_extend(mp)))
 				return cc;
 			fp = fp->fr_link;
 		}
@@ -1316,7 +1316,7 @@ enc_xdr_step(mp)
 	struct frag *fp;
 	int cc;
 
-	if (cc = pmsg_extend(mp))
+	if ((cc = pmsg_extend(mp)))
 		return cc;
 	fp = mp->m_frag->fr_rlink;
 	xdrmem_create(&mp->m_xdr,
@@ -1337,7 +1337,7 @@ enc_xdr_byte(mp, vp, cnt, std, siz)
 	int cc;
 
 	fp = mp->m_frag->fr_rlink;
-	if (cc = bytepk(mp, (char*)vp, cnt, 1, std))
+	if ((cc = bytepk(mp, (char*)vp, cnt, 1, std)))
 		return cc;
 	if (fp != mp->m_frag->fr_rlink) {
 		fp = mp->m_frag->fr_rlink;
@@ -1364,7 +1364,7 @@ enc_xdr_short(mp, vp, cnt, std, siz)
 	for (np = (short*)vp; cnt-- > 0; np += std)
 		if (!xdr_short(&mp->m_xdr, np)) {
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_short(&mp->m_xdr, np)) {
@@ -1389,7 +1389,7 @@ enc_xdr_int(mp, vp, cnt, std, siz)
 	for (np = (int*)vp; cnt-- > 0; np += std)
 		if (!xdr_int(&mp->m_xdr, np)) {
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_int(&mp->m_xdr, np)) {
@@ -1401,6 +1401,13 @@ enc_xdr_int(mp, vp, cnt, std, siz)
 	return cc;
 }
 
+#if defined(__LP64__) && defined(IMA_MACOSX)
+#define LONG int
+#define ULONG unsigned int
+#else 
+#define LONG long
+#define ULONG unsigned long
+#endif 
 
 static int
 enc_xdr_long(mp, vp, cnt, std, siz)
@@ -1408,10 +1415,10 @@ enc_xdr_long(mp, vp, cnt, std, siz)
 	void *vp;
 	int cnt, std, siz;
 {
-	register long *np;
+	register LONG *np;
 	int cc = 0;
 
-	for (np = (long*)vp; cnt-- > 0; np += std)
+	for (np = (LONG*)vp; cnt-- > 0; np += std)
 #ifdef USE_XDR_LONGLONG
 		if (!xdr_longlong_t(&mp->m_xdr, np))
 #else
@@ -1431,7 +1438,7 @@ enc_xdr_long(mp, vp, cnt, std, siz)
 				break;
 			}
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 #ifdef USE_XDR_LONGLONG
@@ -1455,10 +1462,10 @@ enc_xdr_ulong(mp, vp, cnt, std, siz)
 	void *vp;
 	int cnt, std, siz;
 {
-	register unsigned long *np;
+	register ULONG *np;
 	int cc = 0;
 
-	for (np = (unsigned long*)vp; cnt-- > 0; np += std)
+	for (np = (ULONG*)vp; cnt-- > 0; np += std)
 #ifdef USE_XDR_LONGLONG
 		if (!xdr_u_longlong_t(&mp->m_xdr, np))
 #else
@@ -1475,7 +1482,7 @@ enc_xdr_ulong(mp, vp, cnt, std, siz)
 				break;
 			}
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 #ifdef USE_XDR_LONGLONG
@@ -1505,7 +1512,7 @@ enc_xdr_float(mp, vp, cnt, std, siz)
 	for (fp = (float*)vp; cnt-- > 0; fp += std)
 		if (!xdr_float(&mp->m_xdr, fp)) {
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_float(&mp->m_xdr, fp)) {
@@ -1530,7 +1537,7 @@ enc_xdr_double(mp, vp, cnt, std, siz)
 
 	for (dp = (double*)vp; cnt-- > 0; dp += std) {
 		if (!xdr_double(&mp->m_xdr, dp)) {
-			if (cc = enc_xdr_step(mp))
+		  if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, dp)) {
@@ -1557,8 +1564,8 @@ enc_xdr_cplx(mp, vp, cnt, std, siz)
 	for (xp = (float*)vp; cnt-- > 0; xp += std) {
 		if (!xdr_float(&mp->m_xdr, xp)) {
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
-				break;
+			if ((cc = enc_xdr_step(mp)))
+			    break;
 			else
 				if (!xdr_float(&mp->m_xdr, xp)) {
 					cc = PvmNoMem;
@@ -1568,7 +1575,7 @@ enc_xdr_cplx(mp, vp, cnt, std, siz)
 		xp++;
 		if (!xdr_float(&mp->m_xdr, xp)) {
 			mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
-			if (cc = enc_xdr_step(mp))
+			if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_float(&mp->m_xdr, xp)) {
@@ -1594,7 +1601,7 @@ enc_xdr_dcplx(mp, vp, cnt, std, siz)
 	std = std * 2 - 1;
 	for (zp = (double*)vp; cnt-- > 0; zp += std) {
 		if (!xdr_double(&mp->m_xdr, zp)) {
-			if (cc = enc_xdr_step(mp))
+		  if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, zp)) {
@@ -1605,7 +1612,7 @@ enc_xdr_dcplx(mp, vp, cnt, std, siz)
 		mp->m_frag->fr_rlink->fr_len = xdr_getpos(&mp->m_xdr);
 		zp++;
 		if (!xdr_double(&mp->m_xdr, zp)) {
-			if (cc = enc_xdr_step(mp))
+		  if ((cc = enc_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, zp)) {
@@ -1668,7 +1675,7 @@ dec_xdr_step(mp)
 		p = mp->m_cfrag->fr_dat + mp->m_cpos;
 		l = mp->m_cfrag->fr_len - mp->m_cpos;
 
-		if (cc = pmsg_decmore(mp))
+		if ((cc = pmsg_decmore(mp)))
 			return cc;
 
 		fp = mp->m_cfrag;
@@ -1687,7 +1694,7 @@ dec_xdr_step(mp)
 		}
 
 	} else {
-		if (cc = pmsg_decmore(mp))
+	  if ((cc = pmsg_decmore(mp)))
 			return cc;
 		fp = mp->m_cfrag;
 	}
@@ -1707,7 +1714,7 @@ dec_xdr_byte(mp, vp, cnt, std, siz)
 	int cc;
 
 	fp = mp->m_cfrag;
-	if (cc = byteupk(mp, (char*)vp, cnt, 1, std))
+	if ((cc = byteupk(mp, (char*)vp, cnt, 1, std)))
 		return cc;
 	if (fp != mp->m_cfrag) {
 		fp = mp->m_cfrag;
@@ -1732,7 +1739,7 @@ dec_xdr_short(mp, vp, cnt, std, siz)
 	for (np = (short*)vp; cnt-- > 0; np += std)
 		if (!xdr_short(&mp->m_xdr, np)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_short(&mp->m_xdr, np)) {
@@ -1757,7 +1764,7 @@ dec_xdr_int(mp, vp, cnt, std, siz)
 	for (np = (int*)vp; cnt-- > 0; np += std)
 		if (!xdr_int(&mp->m_xdr, np)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_int(&mp->m_xdr, np)) {
@@ -1776,10 +1783,10 @@ dec_xdr_long(mp, vp, cnt, std, siz)
 	void *vp;
 	int cnt, std, siz;
 {
-	register long *np;
+	register LONG *np;
 	int cc = 0;
 
-	for (np = (long*)vp; cnt-- > 0; np += std)
+	for (np = (LONG*)vp; cnt-- > 0; np += std)
 #ifdef USE_XDR_LONGLONG
 		if (!xdr_longlong_t(&mp->m_xdr, np))
 #else
@@ -1787,7 +1794,7 @@ dec_xdr_long(mp, vp, cnt, std, siz)
 #endif
 		{
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 #ifdef USE_XDR_LONGLONG
@@ -1809,6 +1816,7 @@ static int
 dec_xdr_ushort(mp, vp, cnt, std, siz)
 	struct pmsg *mp;
 	void *vp;
+
 	int cnt, std, siz;
 {
 	register unsigned short *np;
@@ -1817,7 +1825,7 @@ dec_xdr_ushort(mp, vp, cnt, std, siz)
 	for (np = (unsigned short*)vp; cnt-- > 0; np += std)
 		if (!xdr_u_short(&mp->m_xdr, np)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_u_short(&mp->m_xdr, np)) {
@@ -1842,7 +1850,7 @@ dec_xdr_uint(mp, vp, cnt, std, siz)
 	for (np = (unsigned int*)vp; cnt-- > 0; np += std)
 		if (!xdr_u_int(&mp->m_xdr, np)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_u_int(&mp->m_xdr, np)) {
@@ -1861,10 +1869,10 @@ dec_xdr_ulong(mp, vp, cnt, std, siz)
 	void *vp;
 	int cnt, std, siz;
 {
-	register unsigned long *np;
+	register ULONG *np;
 	int cc = 0;
 
-	for (np = (unsigned long*)vp; cnt-- > 0; np += std)
+	for (np = (ULONG*)vp; cnt-- > 0; np += std)
 #ifdef USE_XDR_LONGLONG
 		if (!xdr_u_longlong_t(&mp->m_xdr, np))
 #else
@@ -1872,7 +1880,7 @@ dec_xdr_ulong(mp, vp, cnt, std, siz)
 #endif
 		{
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 #ifdef USE_XDR_LONGLONG
@@ -1902,7 +1910,7 @@ dec_xdr_float(mp, vp, cnt, std, siz)
 	for (fp = (float*)vp; cnt-- > 0; fp += std)
 		if (!xdr_float(&mp->m_xdr, fp)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_float(&mp->m_xdr, fp)) {
@@ -1926,7 +1934,7 @@ dec_xdr_double(mp, vp, cnt, std, siz)
 
 	for (dp = (double*)vp; cnt-- > 0; dp += std) {
 		if (!xdr_double(&mp->m_xdr, dp)) {
-			if (cc = dec_xdr_step(mp))
+		  if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, dp)) {
@@ -1953,7 +1961,7 @@ dec_xdr_cplx(mp, vp, cnt, std, siz)
 	for (xp = (float*)vp; cnt-- > 0; xp += std) {
 		if (!xdr_float(&mp->m_xdr, xp)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_float(&mp->m_xdr, xp)) {
@@ -1964,7 +1972,7 @@ dec_xdr_cplx(mp, vp, cnt, std, siz)
 		xp++;
 		if (!xdr_float(&mp->m_xdr, xp)) {
 			mp->m_cpos = xdr_getpos(&mp->m_xdr);
-			if (cc = dec_xdr_step(mp))
+			if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_float(&mp->m_xdr, xp)) {
@@ -1990,7 +1998,7 @@ dec_xdr_dcplx(mp, vp, cnt, std, siz)
 	std = std * 2 - 1;
 	for (zp = (double*)vp; cnt-- > 0; zp += std) {
 		if (!xdr_double(&mp->m_xdr, zp)) {
-			if (cc = dec_xdr_step(mp))
+		  if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, zp)) {
@@ -2001,7 +2009,7 @@ dec_xdr_dcplx(mp, vp, cnt, std, siz)
 		mp->m_cpos = xdr_getpos(&mp->m_xdr);
 		zp++;
 		if (!xdr_double(&mp->m_xdr, zp)) {
-			if (cc = dec_xdr_step(mp))
+		  if ((cc = dec_xdr_step(mp)))
 				break;
 			else
 				if (!xdr_double(&mp->m_xdr, zp)) {
@@ -2097,18 +2105,18 @@ enc_trc_hdr(mp)
 
 	tmp = strlen( pvmtevinfo[TEV_USER_DEFINED].name ) + 1;
 	if ((cc = enc_xdr_int(mp, (void *) &tmp, 1, 1, (int) sizeof(int))))
-		return( cc );
+	  return( cc );
 
 	if ((cc = enc_xdr_byte(mp,
-			(void *)(pvmtevinfo[TEV_USER_DEFINED].name), tmp, 1, 1)))
-		return( cc );
+			       (void *)(pvmtevinfo[TEV_USER_DEFINED].name), tmp, 1, 1)))
+	  return( cc );
 
 	if ((cc = enc_xdr_int(mp, (void *) &tsec, 1, 1,
-			(int) sizeof(int))))
-		return( cc );
+			      (int) sizeof(int))))
+	  return( cc );
 	if ((cc = enc_xdr_int(mp, (void *) &tusec, 1, 1,
-			(int) sizeof(int))))
-		return( cc );
+			      (int) sizeof(int))))
+	  return( cc );
 
 	return( 0 );
 }
@@ -2137,17 +2145,17 @@ enc_trc_byte(mp, vp, cnt, std, siz)
 		if ( cnt == 1 ) {
 			type = TEV_DATA_BYTE | TEV_DATA_SCALAR;
 			if ( (cc = enc_xdr_int(mp, (void *) &type, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 		}
 		else {
 			type = TEV_DATA_BYTE | TEV_DATA_ARRAY;
 			if ( (cc = enc_xdr_int(mp, (void *) &type, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 			if ( (cc = enc_xdr_int(mp, (void *) &cnt, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 		}
 		return enc_xdr_byte(mp, vp, cnt, std, siz);
 	}
@@ -2168,17 +2176,17 @@ enc_trc_short(mp, vp, cnt, std, siz)
 		if ( cnt == 1 ) {
 			type = TEV_DATA_SHORT | TEV_DATA_SCALAR;
 			if ( (cc = enc_xdr_int(mp, (void *) &type, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 		}
 		else {
 			type = TEV_DATA_SHORT | TEV_DATA_ARRAY;
 			if ( (cc = enc_xdr_int(mp, (void *) &type, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 			if ( (cc = enc_xdr_int(mp, (void *) &cnt, 1, 1,
-					(int) sizeof(int))) )
-				return cc;
+					       (int) sizeof(int))) )
+			  return cc;
 		}
 		return enc_xdr_short(mp, vp, cnt, std, siz);
 	}
@@ -2728,29 +2736,29 @@ pmsg_pack(mp, mp2)
 	if (mp2->m_flag & MM_PACK)
 		pmsg_setlen(mp2);
 
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_len, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_len, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_ctx, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_ctx, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_tag, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_tag, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_wid, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_wid, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_enc, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_enc, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_crc, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_crc, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_src, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_src, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_dst, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->enc_int) (mp, (void*)&mp2->m_dst, 1, 1, sizeof(int))))
 		return cc;
-	if (fp = mp2->m_frag)
+	if ((fp = mp2->m_frag))
 		while ((fp = fp->fr_link) != mp2->m_frag) {
-			if (cc = (mp->m_codef->enc_int)
-					(mp, (void*)&fp->fr_len, 1, 1, sizeof(int)))
+		  if ((cc = (mp->m_codef->enc_int)
+		       (mp, (void*)&fp->fr_len, 1, 1, sizeof(int))))
 				return cc;
-			if (cc = (mp->m_codef->enc_byte)
-					(mp, (void*)fp->fr_dat, fp->fr_len, 1, 1))
+		  if ((cc = (mp->m_codef->enc_byte)
+		       (mp, (void*)fp->fr_dat, fp->fr_len, 1, 1)))
 				return cc;
 		}
 	return cc;
@@ -2811,29 +2819,29 @@ pmsg_unpack(mp, mp2)
 	int mlen;
 	int frl;
 
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mlen, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mlen, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_ctx, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_ctx, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_tag, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_tag, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_wid, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_wid, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_enc, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_enc, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_crc, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_crc, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_src, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_src, 1, 1, sizeof(int))))
 		return cc;
-	if (cc = (mp->m_codef->dec_int)
-			(mp, (void*)&mp2->m_dst, 1, 1, sizeof(int)))
+	if ((cc = (mp->m_codef->dec_int)
+	     (mp, (void*)&mp2->m_dst, 1, 1, sizeof(int))))
 		return cc;
 
 	mp2->m_len = 0;
@@ -2842,8 +2850,8 @@ pmsg_unpack(mp, mp2)
 		cc = PvmBadMsg;
 	else {
 		while (mlen > 0) {
-			if (cc = (mp->m_codef->dec_int)
-					(mp, (void*)&frl, 1, 1, sizeof(int)))
+		  if ((cc = (mp->m_codef->dec_int)
+		       (mp, (void*)&frl, 1, 1, sizeof(int))))
 				break;
 			if (!(fp = fr_new(frl + MAXHDR))) {
 				cc = PvmNoMem;
@@ -2851,8 +2859,8 @@ pmsg_unpack(mp, mp2)
 			}
 			fp->fr_dat += MAXHDR;
 			fp->fr_len = frl;
-			if (cc = (mp->m_codef->dec_byte)
-					(mp, (void*)fp->fr_dat, frl, 1, 1))
+			if ((cc = (mp->m_codef->dec_byte)
+			     (mp, (void*)fp->fr_dat, frl, 1, 1)))
 				break;
 			LISTPUTBEFORE(mp2->m_frag, fp, fr_link, fr_rlink);
 			mp2->m_len += frl;

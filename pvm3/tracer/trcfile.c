@@ -34,6 +34,7 @@
 #include <strings.h>
 #endif
 
+#include <stdlib.h>
 
 /* Trace Lookup Trie Init Routines */
 

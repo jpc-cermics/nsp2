@@ -285,7 +285,7 @@ hd_new(hh)
 {
 	struct hostd *hp;
 
-	if (hp = TALLOC(1, struct hostd, "hd")) {
+	if ((hp = TALLOC(1, struct hostd, "hd"))) {
 		BZERO((char*)hp, sizeof(struct hostd));
 		hp->hd_ref = 1;
 		hp->hd_hostpart = hh << (ffs(tidhmask) - 1);
@@ -339,7 +339,7 @@ hd_free(hp)
 		pk_free(hp->hd_rxq);
 	if (hp->hd_rxm)
 		pmsg_unref(hp->hd_rxm);
-	if (mcap = hp->hd_mcas) {
+	if ((mcap = hp->hd_mcas)) {
 		while (mcap->mc_link != mcap)
 			mca_free(mcap->mc_link);
 		mca_free(mcap);
@@ -394,7 +394,7 @@ hd_dump(hp)
 			hp->hd_speed);
 
 	n = 0;
-	if (pp2 = hp->hd_txq)
+	if ((pp2 = hp->hd_txq))
 		for (pp = pp2->pk_link; pp != pp2; pp = pp->pk_link)
 			n++;
 	pvmlogprintf("           sa %s mtu %d f 0x%x e %d txq %d\n",
@@ -676,7 +676,7 @@ ht_merge(dst, src)
 	struct hostd *hp;
 
 	for (hh = src->ht_last; hh > 0; hh--)
-		if (hp = src->ht_hosts[hh])
+	  if ((hp = src->ht_hosts[hh]))
 			ht_insert(dst, hp);
 	return 0;
 }

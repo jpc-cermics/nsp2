@@ -227,6 +227,7 @@
 #endif
 
 #include <pvm3.h>
+#include <stdio.h>
 
 #if defined(WIN32) || defined(CYGWIN)
 #include <../xdr/types.h>

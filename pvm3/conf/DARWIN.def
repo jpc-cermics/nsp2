@@ -1,13 +1,21 @@
 ARCHCFLAGS	=	-DSOCKADHASLEN -DNOREXEC \
 	-DRSHCOMMAND=\"/usr/bin/rsh\" \
 	-DHASSTDLIB -DNEEDMENDIAN -DHASERRORVARS \
-	-DSYSERRISCONST -DIMA_MACOSX\
-	-I/System/Library/Frameworks/System.framework/Headers/bsd/sys
+	-DSYSERRISCONST -DIMA_MACOSX -DHASSTDINT \
+	-Wno-implicit-function-declaration -Wno-unused-result \
+	-Wno-deprecated-declarations \
+	-I/System/Library/Frameworks/System.framework/Headers/bsd/sys 
 	# this last -I flag needed for tracer build...
+
+
 ARCHDLIB	=
 ARCHDOBJ	=
 ARCHLIB		=	
 HASRANLIB	=	t
-AR			=	ar
+AR		=	ar
 PVM_ARCH	=	DARWIN
 MAKE		=	make
+
+
+
+

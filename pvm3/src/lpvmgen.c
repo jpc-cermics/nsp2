@@ -912,10 +912,7 @@ pvmlogperror(s)
 *		3	Print error message, abort program
 */
 
-int
-lpvmerr(f, n)
-	char *f;		/* error location */
-	int n;			/* error code */
+int lpvmerr(char *f, int n)  /* error location,  error code */
 {
 	char buf[128];
 

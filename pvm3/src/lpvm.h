@@ -234,3 +234,4 @@ struct ttpcb {
 #define TTDEAD      5           /* task dead; pcb should be cleared */
 
 
+extern int lpvmerr(char *f, int n);  /* error location,  error code */

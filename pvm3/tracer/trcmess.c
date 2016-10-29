@@ -33,7 +33,7 @@
 #else
 #include <strings.h>
 #endif
-
+#include <stdlib.h>
 
 /* Routines */
 

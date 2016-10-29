@@ -406,7 +406,7 @@ hoster(mp)
 						hp->h_login,
 						hp->h_sopts);
 			}
-			if (p = CINDEX(hp->h_login, '@')) {
+			if ((p = CINDEX(hp->h_login, '@'))) {
 				hp->h_name = STRALLOC(p + 1);
 				*p = 0;
 				p = STRALLOC(hp->h_login);
@@ -459,7 +459,7 @@ makevis(dst, src)
 {
 	char c;
 
-	while (c = *src++ & 0x7f) {
+	while ((c = *src++ & 0x7f)) {
 		if (isprint(c))
 			*dst++ = c;
 
@@ -656,7 +656,7 @@ int pl_startup(num, hostlist)
 				if (n > 0) {
 					sp->s_elen += n;
 					sp->s_ebuf[sp->s_elen] = 0;
-					while (p = CINDEX(sp->s_ebuf, '\n')) {
+					while ((p = CINDEX(sp->s_ebuf, '\n'))) {
 						*p = 0;
 						pvmlogprintf("stderr@%s: %s\n",
 								sp->s_hst->h_name, sp->s_ebuf);
@@ -694,7 +694,7 @@ int pl_startup(num, hostlist)
 				if (n > 0) {
 					sp->s_len += n;
 					sp->s_buf[sp->s_len] = 0;
-					while (p = CINDEX(sp->s_buf, '\n')) {
+					while ((p = CINDEX(sp->s_buf, '\n'))) {
 						*p = 0;
 						if (!strncmp(sp->s_buf, "ddpro", 5)) {
 							if (pvmdebmask & PDMSTARTUP) {

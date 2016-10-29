@@ -641,27 +641,28 @@ hostfailentry(hp)
 	/* (or reset if PvmTaskDefault) */
 
 					for (v = wxp->w_veclen; v-- > 0; )
-						if (wxp->w_vec[v] == hp->hd_hostpart)
-							if (!(wxp->w_flags
-									& (PvmTaskHost|PvmTaskArch)))
-							{
-								wxp->w_vec[v] = 0;
-								retry++;
-							}
-							else
-								wxp->w_vec[v] = PvmHostFail;
-
+					  if (wxp->w_vec[v] == hp->hd_hostpart)
+					    if (!(wxp->w_flags
+						  & (PvmTaskHost|PvmTaskArch)))
+					      {
+						wxp->w_vec[v] = 0;
+						retry++;
+					      }
+					    else
+					      {
+						wxp->w_vec[v] = PvmHostFail;
+					      }
 					ht_delete(wxp->w_ht, hp);
 
 	/* try assigning task again without failed host */
 
 					if ( retry )
-						assign_tasks(wp);
+					  assign_tasks(wp);
 
 	/* is this was the last wait, reply to task */
 
 					if (wp->wa_peer == wp)
-						assign_tasks(wp);
+					  assign_tasks(wp);
 				}
 				break;
 
@@ -952,7 +953,7 @@ addhosts(mp, rmp)
 		if (hp->hd_err)
 			continue;
 
-		if (he = gethostbyname(hp->hd_aname ? hp->hd_aname : hp->hd_name)) {
+		if ((he = gethostbyname(hp->hd_aname ? hp->hd_aname : hp->hd_name))) {
 			BCOPY(he->h_addr_list[0], (char*)&hp->hd_sad.sin_addr,
 					sizeof(struct in_addr));
 
@@ -1111,7 +1112,7 @@ addhosts(mp, rmp)
 		/* Include VMID (If Any) */
 		if (hp->hd_vmid)
 			pkstr(mp2, hp->hd_vmid);
-		else if (vmid = getenv("PVM_VMID"))
+		else if ((vmid = getenv("PVM_VMID")))
 			pkstr(mp2, vmid);
 		/* be sure to pack SOMETHING, dammit */
 		else
@@ -1130,7 +1131,7 @@ addhosts(mp, rmp)
 	} else {
 		wp->wa_on = TIDPVMD;
 
-		if (pid = fork()) {		/* still us */
+		if ((pid = fork())) {		/* still us */
 			if (pid == -1) {
 	/* nack request if can't fork */
 				pvmlogperror("addhosts() fork");
@@ -1712,7 +1713,7 @@ dm_sendsig(hp, mp)
 		pvmlogerror("dm_sendsig() bad msg format\n");
 		return 0;
 	}
-	if (tp = task_find(tid)) {
+	if ((tp = task_find(tid))) {
 		ppi_kill(tp, signum);
 
 	} else
@@ -2215,7 +2216,7 @@ startack(wp, mp)
 	*/
 
 	for (hh = newhosts->ht_last; hh > 0; hh--)
-		if (hp = newhosts->ht_hosts[hh]) {
+	  if ((hp = newhosts->ht_hosts[hh])) {
 			mp2 = mesg_new(0);
 			mp2->m_tag = DM_SLCONF;
 			mp2->m_dst = hp->hd_hostpart | TIDPVMD;
@@ -2262,7 +2263,7 @@ startack(wp, mp)
 	pkint(mp2, newhosts->ht_cons);
 	pkint(mp2, hosts->ht_cnt + newhosts->ht_cnt);
 	for (hh = hosts->ht_last; hh > 0; hh--)
-		if (hp = hosts->ht_hosts[hh]) {
+	  if ((hp = hosts->ht_hosts[hh])) {
 			pkint(mp2, hh);
 			pkstr(mp2, hp->hd_name);
 			pkstr(mp2, hp->hd_arch);
@@ -2272,7 +2273,7 @@ startack(wp, mp)
 			pkint(mp2, hp->hd_dsig);
 		}
 	for (hh = newhosts->ht_last; hh > 0; hh--)
-		if (hp = newhosts->ht_hosts[hh]) {
+	  if ((hp = newhosts->ht_hosts[hh])) {
 			pkint(mp2, hh);
 			pkstr(mp2, hp->hd_name);
 			pkstr(mp2, hp->hd_arch);
@@ -2283,7 +2284,7 @@ startack(wp, mp)
 		}
 
 	for (hh = newhosts->ht_last; hh > 0; hh--)
-		if (hp = newhosts->ht_hosts[hh]) {
+	  if ((hp = newhosts->ht_hosts[hh])) {
 			mp2->m_ref++;
 			mp2->m_dst = hp->hd_hostpart | TIDPVMD;
 			wp3 = wait_new(WT_HTUPD);
@@ -2309,7 +2310,7 @@ startack(wp, mp)
 	pkint(mp2, newhosts->ht_cons);
 	pkint(mp2, newhosts->ht_cnt);
 	for (hh = newhosts->ht_last; hh > 0; hh--)
-		if (hp = newhosts->ht_hosts[hh]) {
+	  if ((hp = newhosts->ht_hosts[hh])) {
 			pkint(mp2, hh);
 			pkstr(mp2, hp->hd_name);
 			pkstr(mp2, hp->hd_arch);
@@ -2437,7 +2438,7 @@ dm_task(hp, mp)
 	mp2->m_tag = DM_TASKACK;
 	mp2->m_wid = mp->m_wid;
 	if (where & tidlmask) {
-		if (tp = task_find(where)) {
+	  if ((tp = task_find(where))) {
 			pkint(mp2, tp->t_tid);
 			pkint(mp2, tp->t_ptid);
 			pkint(mp2, myhostpart);
@@ -2578,7 +2579,7 @@ dm_delhost(hp, mp)
 	pkint(mp2, count);
 	while (count-- > 0) {
 		upkstralloc(mp, &buf);
-		if (hp = nametohost(hosts, buf)) {
+		if ((hp = nametohost(hosts, buf))){
 			if (tidtohost(ht_del, hp->hd_hostpart)) {
 				pkint(mp2, PvmDupHost);
 
@@ -3301,7 +3302,7 @@ dm_htdel(hp, mp)
 		return 0;
 	}
 	while (!upkuint(mp, &tid)) {
-		if (hp = tidtohost(hosts, tid)) {
+	  if ((hp = tidtohost(hosts, tid))) {
 			if (pvmdebmask & PDMHOST) {
 				pvmlogprintf("dm_htdel() host %s\n", hp->hd_name);
 			}
@@ -3383,7 +3384,7 @@ mca_new()
 {
 	struct mca *mcap;
 
-	if (mcap = TALLOC(1, struct mca, "mca")) {
+	if ((mcap = TALLOC(1, struct mca, "mca"))) {
 		mcap->mc_link = mcap->mc_rlink = mcap;
 		mcap->mc_tid = mcap->mc_ndst = 0;
 		mcap->mc_dsts = 0;
@@ -3409,7 +3410,7 @@ mesg_new(master)
 {
 	struct pmsg *mp;
 
-	if (mp = pmsg_new(master)) {
+	if ((mp = pmsg_new(master))) {
 		mp->m_src = pvmmytid;
 		pmsg_setenc(mp, 0x10000000);	/* PvmDataDefault */
 		(mp->m_codef->enc_init)(mp);

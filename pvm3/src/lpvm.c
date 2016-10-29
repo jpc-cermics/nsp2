@@ -855,7 +855,7 @@ ttpcb_new()
 {
 	struct ttpcb *pcbp;
 
-	if (pcbp = TALLOC(1, struct ttpcb, "tpcb")) {
+	if ((pcbp = TALLOC(1, struct ttpcb, "tpcb"))) {
 		BZERO((char*)pcbp, sizeof(struct ttpcb));
 		pcbp->tt_fd = -1;
 		pcbp->tt_rxfrag = pmsg_new(1);
@@ -885,7 +885,7 @@ ttpcb_delete(pcbp)
 		pvm_fd_delete(pcbp->tt_fd, 3);
 		(void)close(pcbp->tt_fd);
 	}
-	if (up = pcbp->tt_rxfrag) {
+	if ((up = pcbp->tt_rxfrag)) {
 		while (up->m_link != up)
 			umbuf_free(up->m_link);
 		pmsg_unref(up);
@@ -913,7 +913,7 @@ ttpcb_creat(tid)
 {
 	struct ttpcb *pcbp, *pcbp2;
 
-	if (pcbp = ttpcb_new()) {
+	if ((pcbp = ttpcb_new())) {
 		pcbp->tt_tid = tid;
 
 		for (pcbp2 = ttlist->tt_link; pcbp2 != ttlist; pcbp2 = pcbp2->tt_link)
@@ -983,7 +983,7 @@ ttpcb_dead(pcbp)
 		fr_unref(pcbp->tt_rxf);
 		pcbp->tt_rxf = 0;
 	}
-	if (up = pcbp->tt_rxfrag) {
+	if ((up = pcbp->tt_rxfrag)) {
 		while (up->m_link != up)
 			umbuf_free(up->m_link);
 	}
@@ -1149,7 +1149,7 @@ pvm_tc_conreq(mid)
 	pvm_upkint(&ttpro, 1, 1);
 	pvm_upkstr(buf);
 
-	if (pcbp = ttpcb_find(src)) {
+	if ((pcbp = ttpcb_find(src))) {
 		if (pvmdebmask & PDMROUTE) {
 			pvmlogprintf(
 					"pvm_tc_conreq() crossed CONREQ from t%x\n", src);
@@ -1371,7 +1371,7 @@ pvm_tc_conack(mid)
 	pvm_upkint(&ackd, 1, 1);
 	pvm_upkstr(buf);
 
-	if (pcbp = ttpcb_find(src)) {
+	if ((pcbp = ttpcb_find(src))) {
 		if (pcbp->tt_state == TTCONWAIT) {
 			if (pvmdebmask & PDMROUTE) {
 				pvmlogprintf(
@@ -2362,7 +2362,7 @@ mroute(mid, dtid, tag, tmout)
 	char spath[PVMTMPNAMLEN];
 #endif
 
-	if (up = midtobuf(mid)) {
+	if ((up = midtobuf(mid))) {
 		up->m_dst = dtid;
 		up->m_tag = tag;
 	}
@@ -2644,7 +2644,7 @@ msendrecv(other, tag, context)
 	if (pvmrbuf)
 		umbuf_free(pvmrbuf);
 	pvmrbuf = 0;
-	if (cc = pvm_setrbuf(up->m_mid))
+	if ((cc = pvm_setrbuf(up->m_mid)))
 		return cc;
 	return up->m_mid;
 }
@@ -3018,7 +3018,7 @@ pvmbeatask()
 	* the pvmd and someone forked again
 	*/
 
-	if (p = getenv("PVMEPID"))
+	if ((p = getenv("PVMEPID")))
 		cookie = atoi(p);
 	else
 		cookie = 0;
@@ -3036,7 +3036,7 @@ pvmbeatask()
 		username = MyGetUserName();
 #endif
 
-	if (p = getenv("PVMTASKDEBUG")) {
+	if ((p = getenv("PVMTASKDEBUG"))) {
 		pvmdebmask = pvmstrtoi(p);
 		if (pvmdebmask) {
 			pvmlogprintf("task debug mask is 0x%x (%s)\n",
@@ -3045,7 +3045,7 @@ pvmbeatask()
 	}
 
 #ifndef IMA_MPP
-	if (cc = mksocs())		/* make socket to talk to pvmd */
+	if ((cc = mksocs()))		/* make socket to talk to pvmd */
 		goto bail2;
 #endif
 
@@ -3206,7 +3206,7 @@ pvmbeatask()
 		new_tracer++;
 	}
 
-	if (p = getenv("PVMCTX"))
+	if ((p = getenv("PVMCTX")))
 		pvmmyctx = pvmstrtoi(p);
 /* 
 	if (pvmmyctx == 0)
@@ -3669,7 +3669,7 @@ pvm_start_pvmd(argc, argv, block)
 
 #endif
 
-	if (cc = BEATASK)
+	if ((cc = BEATASK))
 		goto bail;
 
 	if (block) {
