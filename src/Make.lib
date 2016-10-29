@@ -41,10 +41,10 @@ f2cclean	:
 	$(RM) $(F2CFILES)
 
 clean::
-	$(RM) *.o 
+	@$(RM) *.o 
 
 distclean::
-	$(RM) *.o  $(SCIDIR)/libs/$(LIBRARY) .archive_target
+	@$(RM) *.o  $(SCIDIR)/libs/$(LIBRARY) .archive_target
 
 #------------------------
 # generate dependencies 
