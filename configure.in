@@ -1111,7 +1111,7 @@ if test xx"$with_gtk" = xx; then
     GUILIB='gtksci'
     GZVT='gzvt2'
     # we need a patched version
-    NSP_SCRIPT=nsp-gtk.g
+    NSP_SCRIPT=nsp-gtk2.g
     MENUSOBJS=GOBJS
     PERICAIRO=
     # detect if it is a quartz version is used 
@@ -1151,7 +1151,7 @@ if test xx"$with_gtk" = xx; then
     GUILIB='gtksci'
     GZVT='gzvt2'
     # we need a patched version
-    NSP_SCRIPT=nsp-gtk.g
+    NSP_SCRIPT=nsp-gtk3.g
     MENUSOBJS=GOBJS
     PERICAIRO=
   fi
@@ -2340,7 +2340,7 @@ AC_SUBST(CROSS_POPULATE)
 AC_SUBST(TARGET_MACHINE)
 AC_SUBST(CROSS_COPIER)
   
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk2.g scripts/nsp-gtk3.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
 
 echo
 echo
