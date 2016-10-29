@@ -447,72 +447,10 @@ case "$host" in
     fi
     MAKEFILE_TARGET=Makefile.linux
    ;;
-# Dec Alpha OSF 4
-   alpha*-dec-osf4.*)
-     # standard compilers
-    if test X"$CC" = Xcc; then
-        CC_OPTIONS="${CC_OPTIONS} -std -ieee_with_inexact"
-	CC_LDFLAGS="${CC_LDFLAGS} -ieee_with_inexact"
-    fi
-    if test X"$F77" = Xf77; then
-        FC_OPTIONS="${FC_OPTIONS} -fpe3"
-	FC_USE_CDEC='   '
-    fi
-    MAKEFILE_TARGET=Makefile.alpha
-    ;;
-# Dec Alpha not OSF 4 (NO LONGER SUPPORTED)
-  alpha*-dec-osf*)
-    if test X"$CC" = Xcc; then
-        # standard compilers
-	CC_OPTIONS="${CC_OPTIONS} -ieee_with_inexact"
-        CC_LDFLAGS="${CC_LDFLAGS} -ieee_with_inexact"
-    fi
-    if test X"$G77" = Xno; then
-        FC_OPTIONS="${FC_OPTIONS} -fpe3 -switch nosqrt_recip"
-    fi
-    FC_USE_CDEC='   '
-    MAKEFILE_TARGET=Makefile.alpha
-    ;;
-# IBM AIX RS 6000 (NO LONGER SUPPORTED)
-  rs6000-*-*)
-    if test X"$CC" = Xcc; then
-        # standard compilers
-	CC_OPTIONS="${CC_OPTIONS}  -Daix -DSYSV"
-    fi
-    if test X"$G77" = Xno; then
-        FC_OPTIONS="${FC_OPTIONS} -qcharlen=4096"
-    fi
-    MAKEFILE_TARGET=Makefile.aix
-    ;;
 # Linux sparc
   sparc*-*-linux-gnu)
     CC_OPTIONS="${CC_OPTIONS} -Dlinux "
     FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
-    MAKEFILE_TARGET=Makefile.linux
-   ;;
-# SUN OS (NO LONGER SUPPORTED)
-  sparc*-*-sunos*)
-    # standard compilers
-    CC_PICFLAGS=-PIC
-    FC_PICFLAGS=-PIC
-    if test X"$G77" = Xyes; then
-      FC_PICFLAGS=
-      FC_LDFLAGS="${FC_LDFLAGS} -Xlinker"
-    fi
-    MAKEFILE_TARGET=Makefile.sunos
-    ;;
-# SUN SOLARIS
-  *-*-solaris*)
-    CC_OPTIONS="${CC_OPTIONS} -DSVR4 -DSYSV -Dsolaris"
-    if test X"$G77" = Xyes; then
-      FC_LDFLAGS="${FC_LDFLAGS} -t"
-    fi
-    MAKEFILE_TARGET=Makefile.solaris
-    ;;
-# Linux, old binary format a.out (NO LONGER SUPPORTED)
-  *-pc-linux-gnuaout)
-    DLDLIB='${SCIDIR}/libs/libdld.a'
-    DLD_SUBDIR=dld
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Alpha Linux
@@ -533,57 +471,6 @@ case "$host" in
     FC_PICFLAGS=-fPIC
     MAKEFILE_TARGET=Makefile.linux
    ;;
-# SGI MIPS ULTRIX (NO LONGER SUPPORTED)
-  mips-*-ultrix*)
-    if test X"$CC" = Xcc; then
-        # standard compilers
-	CC_OPTIONS="${CC_OPTIONS} -O0"
-    fi
-    if test X"$F77" = Xf77; then
-        FC_OPTIONS="${FC_OPTIONS} -O0 -fpe1"
-    fi
-    MAKEFILE_TARGET=Makefile.ultrix
-    ;;
-# SGI
-  mips-sgi-irix*)
-    if test X"$CC" = Xcc; then
-        # standard compilers
-	CC_OPTIONS="${CC_OPTIONS} -c -DSYSV -DSVR4"
-    fi
-    if test X"$F77" = Xf77; then
-        FC_OPTIONS="${FC_OPTIONS} -Nl999 -Nn15000"
-    fi
-    MAKEFILE_TARGET=Makefile.sgi
-    ;;
-# OLD HP (NO LONGER SUPPORTED)
-  *-*-hpux9.*)
-    # standard compilers
-    HPPA_OLD=-Dhppa_old
-    if test X"$CC" = Xcc; then
-        CC_OPTIONS="${CC_OPTIONS} -DSYSV -Dhpux"
-	CC_LDFLAGS="${CC_LDFLAGS} -Wl,-a,archive'
-    fi
-    if test X"$F77" = Xfort77; then
-        FC_OPTIONS="${FC_OPTIONS}  +Obb1200 +E4"
-	FC_LDFLAGS="${FC_LDFLAGS} -Wl,-a,archive"
-    fi
-    MAKEFILE_TARGET=Makefile.hpux9
-    FGETARG=fgetarg-hpux
-    ;;
-# HP
-  *-*-hpux*)
-    # standard compilers
-    if test X"$CC" = Xcc; then
-        CC_OPTIONS="${CC_OPTIONS} -DSYSV -Dhpux +Z +DAportable"
-	CC_LDFLAGS=${CC_LDFLAGS} -Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl"
-    fi
-    if test X"$F77" = Xfort77; then
-        FC_OPTIONS="${FC_OPTIONS} +E4 +Z +DAportable"
-	FC_LDFLAGS="${FC_LDFLAGS} -Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl"
-    fi
-    MAKEFILE_TARGET=Makefile.hpux
-    FGETARG=fgetarg-hpux
-    ;;
 # CYGWIN32 for Windows 9X/NT/XP
   *-*-cygwin* )
     NSP_SCRIPT=nsp-gcwin32.g
@@ -2453,7 +2340,7 @@ AC_SUBST(CROSS_POPULATE)
 AC_SUBST(TARGET_MACHINE)
 AC_SUBST(CROSS_COPIER)
   
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak src/gtk3/Makefile src/gtk2/Makefile config/Makefile.mingw32 toolboxes/Makefile $CAML_OUTPUTS)
 
 echo
 echo
