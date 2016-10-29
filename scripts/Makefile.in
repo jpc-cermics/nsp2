@@ -122,3 +122,5 @@ $(UTIL)/Blatdocs: Blatdocs.g $(IP)
 
 distclean::
 	@$(RM) $(PROGRAMS) 
+
+clean::
