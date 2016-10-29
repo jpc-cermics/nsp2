@@ -4,7 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a
 
-OBJSC = callfunc.o FunTab.o linking.o addinter.o Functions-IN.o \
+OBJSC = callfunc.o linking.o addinter.o Functions-IN.o \
 	mexlib.o mex-IN.o accelerated_tab.o \
 	swiglib.o swigglobalvar.o swigvarlink.o
 
