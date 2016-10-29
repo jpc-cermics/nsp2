@@ -35,12 +35,17 @@
 #include <gdk/gdkkeysyms.h>
 #include <gio/gio.h>
 #include <glib/gstdio.h>
+#if GTK_CHECK_VERSION (3,0,0)
+#include <gtksourceview/gtksource.h>
+#else
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcelanguage.h>
 #include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourcelanguagemanager.h>
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
+#endif
+
 #if GTK_CHECK_VERSION (3,0,0)
 #define gtk_source_iter_forward_search gtk_text_iter_forward_search
 #define GtkSourceSearchFlags GtkTextSearchFlags
