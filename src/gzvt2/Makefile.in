@@ -5,9 +5,11 @@ CFLAGS=`$(PKG_CONFIG) @VTE_PKG@ --cflags --libs`
 all	::  ../../bin/zterm
 
 ../../bin/zterm :  @VTE_FILE@
-	$(CC) -o ../../bin/zterm @VTE_FILE@ $(CFLAGS)
+	@echo compiling @VTE_FILE@
+	@$(CC) -o ../../bin/zterm @VTE_FILE@ $(CFLAGS)
 
 distclean::
-	$(RM) -f ../../bin/zterm
+	@echo cleaning 
+	@$(RM) -f ../../bin/zterm
 
 clean::

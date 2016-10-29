@@ -71,7 +71,7 @@ icon_title_changed(GtkWidget *widget, gpointer win)
 }
 
 
-char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
+void char_size_changed(GtkWidget *widget, guint width, guint height, gpointer data)
 {
   GtkWindow *window;
   GdkGeometry geometry;
@@ -191,7 +191,7 @@ static GtkWidget *create_menu (GtkWidget *wterminal,  gpointer data)
   VteTerminal *terminal =  VTE_TERMINAL(wterminal);
   static fsize_data data1={NULL,NULL};
   
-  g_return_if_fail(GTK_IS_WINDOW(data));
+  g_return_val_if_fail(GTK_IS_WINDOW(data),NULL);
   
   if ( popup_menu != NULL) gtk_widget_destroy (popup_menu);
   
@@ -560,12 +560,13 @@ main(int argc, char **argv)
   tint.red = tint.green = tint.blue = 0;
   tint = back;
 
-  /* Have to do this early. */
+  /* Have to do this early. 
   if (getenv("VTE_PROFILE_MEMORY")) {
     if (atol(getenv("VTE_PROFILE_MEMORY")) != 0) {
       g_mem_set_vtable(glib_mem_profiler_table);
     }
   }
+  */
 
   /* Pull out long options for GTK+. */
   for (i = j = 1; i < argc; i++) {
@@ -829,17 +830,17 @@ main(int argc, char **argv)
   env_add[0]=buf;
   /* Launch a shell. */
   if ( cmdindex != 0 ) command_argv = &argv[cmdindex];
+
   vte_terminal_fork_command(VTE_TERMINAL(widget),
 			    command, command_argv, env_add,
 			    working_directory,
 			    FALSE, FALSE, FALSE);
-    
   if (command == NULL) {
     vte_terminal_feed_child(VTE_TERMINAL(widget),
 			    "pwd\n", -1);
   }
-
-  desired = vte_terminal_get_font(VTE_TERMINAL(widget));
+  
+  desired = vte_terminal_get_font(VTE_TERMINAL(widget)); 
   font_def_size = pango_font_description_get_size(desired) / PANGO_SCALE;
   
   
