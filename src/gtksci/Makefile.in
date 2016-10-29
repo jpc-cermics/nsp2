@@ -44,9 +44,10 @@ helpbrowser:  testhelpbrowser.c queue.o uri.o
 OBJTEST = x_test_loop.o
 
 clean::
-	$(RM) $(OBJTEST)
+	@$(RM) $(OBJTEST)
+
 distclean::
-	$(RM) $(OBJTEST) test
+	@$(RM) $(OBJTEST) test
 
 # resource file for windows 
 # windres is a link to i686-pc-mingw32-windres on mingwin 
