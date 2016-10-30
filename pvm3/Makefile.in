@@ -8,9 +8,7 @@ include ../Path.incl
 
 SILENT=$(findstring s,$(MFLAGS))
 
-AIMKSTR	=	-here -f ./conf/`./lib/pvmtmparch`.def -f ./Makefile.aimk
-
-SUBDIRS= src tracer console pvmgs @PVMHOSTER@
+SUBDIRS= src tracer console pvmgs hoster
 
 all: install
 
@@ -30,7 +28,7 @@ install clean ::
 	   	esac;\
 	done
 
-ALL_ARCH = HPPA SGI ALPHA LINUXALPHA LINUX LINUXSPARC SUN4SOL2 SUNMP 
+ALL_ARCH = HPPA SGI ALPHA LINUXALPHA LINUX LINUXSPARC SUN4SOL2 SUNMP MINGW
 
 # make a distclean on one architecture and removes binaries for other 
 # architectures 

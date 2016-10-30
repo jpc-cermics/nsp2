@@ -4,10 +4,10 @@ include ../../Makefile.incl
 
 SILENT=$(findstring s,$(MFLAGS))
 
-PVM_ARCH= `../lib/pvmgetarch`
+PVM_ARCH= `../lib/pvmarch`
 SUBDIRS =$(PVM_ARCH)
 
-FLAGS=-f ../../conf/`../../lib/pvmgetarch`.def -f ../Makefile.aimk PVM_ARCH=`../../lib/pvmgetarch` \
+FLAGS=-f ../../conf/`../../lib/pvmarch`.def -f ../Makefile.aimk PVM_ARCH=`../../lib/pvmarch` \
 	RANLIB=$(RANLIB) CC=$(CC) FC=$(FC)
 
 install all clean distclean ::

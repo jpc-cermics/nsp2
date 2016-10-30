@@ -8,22 +8,18 @@
 
 SHELL		=	/bin/sh
 
-
 #
 # Version Compatibility Flags & Compiler Options
 #
 
 PVMVERSION	=
-#PVMVERSION	=	-DUSE_PVM_33
-
 CFLOPTS		=	-O
-#CFLOPTS	=	-g
 
+# passed to Makefile 
 #CC			=	cc
 #CC			=	gcc
 
-CFLAGS		=	$(CFLOPTS) $(PVMVERSION) -DIMA_$(PVM_ARCH) $(ARCHCFLAGS)
-
+CFLAGS		=	$(CFLOPTS) $(PVMVERSION) -DIMA_$(PVM_ARCH) $(ARCHCFLAGS) -I../../src
 
 #
 # Source Directory
@@ -39,7 +35,6 @@ PVMBDIR		=	$(PVMDIR)/bin
 PVMXDIR		=	$(PVMBDIR)/$(PVM_ARCH)
 
 PVMLDIR		=	$(PVMDIR)/lib/$(PVM_ARCH)
-
 
 #
 # Libraries

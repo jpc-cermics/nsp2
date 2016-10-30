@@ -63,7 +63,11 @@ char *res;
 
 char *hn;
 int found_mess=0;
+
+#ifndef WIN32
+/* already defined when cross compiling */
 int errno;
+#endif
 
 int rexec(char *hostname, char *username, char *command,char *retresult)
 {

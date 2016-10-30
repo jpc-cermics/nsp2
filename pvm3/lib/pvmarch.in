@@ -1,0 +1,11 @@
+#!/bin/sh
+# filled at configure time. It gives the results of
+# pvmgetarch which is changed when we are cross compiling
+#
+#
+# begin section that may need to be tuned.
+#
+ARCH=@PVMARCH@
+echo $ARCH
+exit
+
