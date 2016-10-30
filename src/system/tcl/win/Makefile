@@ -22,7 +22,7 @@ OBJS = ${GENERIC_OBJS} ${WIN32_OBJS}
 all :: ${OBJS}
 
 clean::
-	rm -f *.a *.o libtcl* core errs *~ \#* TAGS *.E a.out errors tclsh tcltest lib.exp
+	@rm -f *.a *.o libtcl* core errs *~ \#* TAGS *.E a.out errors tclsh tcltest lib.exp
 
 distclean:: clean
 
