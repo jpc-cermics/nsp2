@@ -12,9 +12,7 @@ SUBDIRS= src tracer console pvmgs hoster
 
 all: install
 
-distclean: clean
-
-install clean ::
+install clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \

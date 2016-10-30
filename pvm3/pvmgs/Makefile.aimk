@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 #
 # $Id$
 #
@@ -40,6 +41,8 @@ PROGS		=	$(PVMXDIR)/pvm_gstat$(EXESFX) \
 LPROGS		=	$(PVMLDIR)/pvmgs$(EXESFX)
 
 LIBGPVM		=	$(LIBPREFIX)gpvm3.a
+
+SILENT=$(findstring s,$(MFLAGS))
 
 install:	all
 
@@ -85,12 +88,12 @@ pvmgs$(EXESFX):	$(DOBJ) $(PVMLIBDEP)
 	@$(CC) $(CFLAGS) -o $@ $(DOBJ) $(LIBS)
 
 $(LIBGPVM):	$(LOBJ)
-	@rm -f $(LIBGPVM)
+	@$(RM) $(LIBGPVM)
 	@$(AR) cr $(LIBGPVM) $(LOBJ)
 	@case x$(HASRANLIB) in xt ) echo $(RANLIB) $(LIBGPVM) ; $(RANLIB) $(LIBGPVM) ;; esac
 
 $(LIBGPVM)-mpp:	$(LOBJ)
-	@rm -f $(LIBGPVM)
+	@$(RM) $(LIBGPVM)
 	@$(AR_FRONT) cr $(LIBGPVM) $(LOBJ)
 	@case x$(HASRANLIB) in xt ) echo $(RANLIB) $(LIBGPVM); $(RANLIB) $(LIBGPVM) ;; esac
 	@touch $(LIBGPVM)-mpp
@@ -99,12 +102,20 @@ pvm_gstat$(EXESFX): pvm_gstat.o $(LIBGPVM) $(PVMLIBDEP)
 	@echo linking $@
 	@$(CC) $(CFLAGS) -o $@ pvm_gstat.o $(LIBGPVM) $(LIBS)
 
+
+distclean: clean
+	   @$(RM) $(PVMXDIR)/pvm_gstat$(EXESFX)
+	   @$(RM) $(PVMXDIR)/pvmgs$(EXESFX)
+	   @$(RM) $(PVMXDIR)/pvmgroups$(EXESFX)
+	   @$(RM) $(PVMLDIR)/$(LIBGPVM)
+	   @$(RM) $(PVMLDIR)/pvmgs$(EXESFX)
+	   
 clean:
-	@rm -f $(DOBJ) $(LOBJ) pvmgs$(EXESFX) $(LIBGPVM) \
+	@$(RM) $(DOBJ) $(LOBJ) pvmgs$(EXESFX) $(LIBGPVM) \
 		pvm_gstat.o pvmgroups.o pvm_gstat$(EXESFX) pvmgroups$(EXESFX)
 
 tidy:
-	@rm -f $(DOBJ) $(LOBJ)
+	@$(RM) $(DOBJ) $(LOBJ)
 
 lint:
 	lint -DARCHCLASS=\"$(PVM_ARCH)\" pvmgs.c > Ld

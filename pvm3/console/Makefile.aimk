@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 #
 # $Id$
 #
@@ -8,6 +9,7 @@
 #  ARCHCFLAGS = special cc flags
 #  ARCHLIB    = special libs needed for daemon
 #
+
 SHELL		=	/bin/sh
 PVMDIR		=	../..
 SDIR		=	$(PVMDIR)/console
@@ -27,6 +29,8 @@ CFLAGS		=	$(CFLOPTS) -DIMA_$(PVM_ARCH) -I$(PVMIDIR) -I$(TRCIDIR) \
 LIBS		=	$(LOPT) -L$(TRCLDIR) -L$(PVMLDIR) \
 				-l$(TRCLIB) -l$(PVMLIB) $(ARCHLIB)
 OBJ			=	cons.o cmds.o job.o trc.o
+
+SILENT=$(findstring s,$(MFLAGS))
 
 all:		default
 
@@ -57,9 +61,14 @@ trc.o:	$(SDIR)/trc.c
 	@echo compiling trc.c
 	@$(CC) $(CFLAGS) -c $(SDIR)/trc.c
 
+distclean: clean
+	   @$(RM) $(PVMLDIR)/pvm$(EXESFX)
+
 clean:
-	@echo cleaning
-	@rm -f *.o pvm$(EXESFX)
+	@if test "x$(SILENT)" != "xs"; then \
+		echo "cleaning"; \
+	fi
+	@$(RM) *.o pvm$(EXESFX)
 
 #
 # Source File Dependencies

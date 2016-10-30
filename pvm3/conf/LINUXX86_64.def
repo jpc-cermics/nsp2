@@ -19,13 +19,14 @@
 # to be corrupted ("segments" bits are located in the highest weighted
 # word/bits !!), on IA-64/Linux64 platforms.
 #
-ARCHCFLAGS	= -Wno-implicit-int  -Wno-implicit-function-declaration \
+ARCHCFLAGS	= \
 		  -DSYSVSIGNAL -DNOWAIT3 -DRSHCOMMAND=\"/usr/bin/rsh\" \
 		  -DNEEDENDIAN -DFDSETNOTSTRUCT -DHASERRORVARS \
 		  -DHASSTDINT -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
-		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t
+		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t \
+		  -Wno-implicit-int  -Wno-implicit-function-declaration -Wno-unused-result \
 		  
-ARCHDLIB	= -L/usr/lib64 -L/usr/X11R6/lib64
+ARCHDLIB	= -L/usr/lib64 
 ARCHDOBJ	=
 ARCHLIB		=
 HASRANLIB	=	t

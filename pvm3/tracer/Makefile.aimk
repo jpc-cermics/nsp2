@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 #
 # $Id$
 #
@@ -94,6 +95,7 @@ TRCHEADERS	=	$(TRCDIR)/trclib.h $(TRCDIR)/trctype.h \
 PROGS		=	$(PVMXDIR)/tracer$(EXESFX) $(PVMXDIR)/trcsort$(EXESFX)
 PROGS		=
 
+SILENT=$(findstring s,$(MFLAGS))
 
 #
 # Targets
@@ -146,13 +148,20 @@ $(PVMLDIR):
 again:
 	cd $(SRCDIR) ; touch *.c *.h ; $(MAKE)
 
+distclean : clean
+	  @$(RM) $(PVMXDIR)/tracer$(EXESFX)
+	  @$(RM) $(PVMXDIR)/trcsort$(EXESFX)
+	  @$(RM) $(TRCLIBDEP)
+
 clean:
-	@echo cleaning
-	@rm -f *.o
-	@rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
+	@if test "x$(SILENT)" != "xs"; then \
+		echo "cleaning"; \
+	fi
+	@$(RM) *.o
+	@$(RM) tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
 
 veryclean:  clean
-	@rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
+	@$(RM) tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
 
 
 #

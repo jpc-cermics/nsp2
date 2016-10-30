@@ -12,12 +12,12 @@
 #	On some Linux systems, readline requires ncurses, so you
 #	must also add "-lncurses" to the ARCHLIB define.
 #
-ARCHCFLAGS	=	-DSYSVSIGNAL -DNOWAIT3 -DRSHCOMMAND=\"/usr/bin/rsh\" \
-				-DNEEDENDIAN -DFDSETNOTSTRUCT -DHASERRORVARS \
-				-DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
-				-DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t -DSYSVBFUNC \
-				-Wno-implicit-function-declaration -Wno-unused-result
-
+ARCHCFLAGS	= -Wno-implicit-function-declaration -Wno-unused-result \
+		  -DSYSVSIGNAL -DNOWAIT3 -DRSHCOMMAND=\"/usr/bin/rsh\" \
+		  -DNEEDENDIAN -DFDSETNOTSTRUCT -DHASERRORVARS \
+		  -DCTIMEISTIMET -DSYSERRISCONST -DNOTMPNAM \
+		  -DUSESTRERROR -DSYSVSTR -DHASSTDLIB -DSOCKLENISsocklen_t -DSYSVBFUNC \
+		
 ARCHDLIB	=
 ARCHDOBJ	=
 ARCHLIB		=

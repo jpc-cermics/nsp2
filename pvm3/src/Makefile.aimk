@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 #
 # $Id$
 #
@@ -89,6 +90,8 @@ REGEXCONFOS2	=
 
 REGEXOBJS		=
 #REGEXOBJS		=	pvmregex.o regex.o
+
+SILENT=$(findstring s,$(MFLAGS))
 
 #
 # PVM Daemon & Library Objects
@@ -290,7 +293,7 @@ pvmd3$(EXESFX):	$(REGEXCONF) $(DOBJ) $(SOCKDOBJ)
 		$(LOPT) $(ARCHDLIB)
 
 $(LIBPVM).a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
-	@rm -f $(LIBPVM).a
+	@$(RM) $(LIBPVM).a
 	@$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
 	@case x$(HASRANLIB) in xt ) echo $(RANLIB) $(LIBPVM).a; $(RANLIB) $(LIBPVM).a ;; esac
 
@@ -301,13 +304,13 @@ pvmd3-shm:	$(REGEXCONF) $(DOBJ) $(SHMEMDOBJ)
 	touch pvmd3-shm
 
 lib-shm:	$(REGEXCONF) $(LOBJ) $(LPVMSHMEM) $(SHMEMLOBJ)
-	rm -f $(LIBPVM).a
+	$(RM) $(LIBPVM).a
 	$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSHMEM) $(SHMEMLOBJ)
 	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM).a ;; esac
 	touch lib-shm
 
 $(LIBPVM)s.a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
-	rm -f $(LIBPVM)s.a
+	$(RM) $(LIBPVM)s.a
 	$(AR) cr $(LIBPVM)s.a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM)s.a ;; esac
 
@@ -319,7 +322,7 @@ pvmd3-mpp:	$(REGEXCONF) $(DOBJ) $(MPPDOBJ)
 	touch pvmd3-mpp
 
 $(LIBPVM)pe.a:	$(REGEXCONF) $(LOBJ) $(LPVMMIMD) $(MPPLOBJ)
-	rm -f $(LIBPVM)pe.a
+	$(RM) $(LIBPVM)pe.a
 	$(AR) cr $(LIBPVM)pe.a $(LOBJ) $(LPVMMIMD) $(MPPLOBJ)
 
 # Beowulf(LINUX) pvmd3 & libpvm3.a
@@ -336,20 +339,25 @@ pvmd3-os2:	$(REGEXCONFOS2) $(OS2DOBJ) $(DOBJ) $(SOCKDOBJ)
 	touch pvmd3-os2
 
 lib-os2:	$(REGEXCONFOS2) $(LOBJ) $(OS2LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
-	rm -f $(LIBPVM).a
+	$(RM) $(LIBPVM).a
 	$(AR) cr $(LIBPVM).a $(LOBJ) $(OS2LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM).a ;; esac
 	touch lib-os2
-
 #
 
+distclean: clean
+	   @$(RM) $(LIBDIR)/pvmd3$(EXESFX)
+	   @$(RM) $(LIBDIR)/$(LIBPVM).a
+
 clean:	tidy
-	@rm -f pvmd3$(EXESFX) $(LIBPVM).a $(LIBPVM)s.a $(LIBPVM)pe.a
+	@$(RM) pvmd3$(EXESFX) $(LIBPVM).a $(LIBPVM)s.a $(LIBPVM)pe.a
 	@rm -rf $(REGEXDIR)
 
 tidy:
-	@echo cleaning 
-	@rm -f $(DOBJ) $(SOCKDOBJ) $(SHMEMDOBJ) $(MPPDOBJ) \
+	@if test "x$(SILENT)" != "xs"; then \
+		echo "cleaning"; \
+	fi
+	@$(RM) $(DOBJ) $(SOCKDOBJ) $(SHMEMDOBJ) $(MPPDOBJ) \
 		$(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(LPVMSHMEM) $(SHMEMLOBJ) \
 		$(LPVMMIMD) $(MPPLOBJ) $(REGEXDIR)/*.o \
 		pvmd3-shm lib-shm pvmd3-mpp pvmd3-os2 lib-os2 \
