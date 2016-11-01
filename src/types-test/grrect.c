@@ -857,7 +857,9 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
 }
 
-/* draw rectangle when angle is non null */
+/* draw rectangle when angle is non null 
+ * we have to perform a rotation around the rectangle center
+ */
 
 static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
 {
@@ -935,21 +937,26 @@ static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
+/* rotation (R= [sin(a),cos(a)]) with center 0 of the 
+ * rectangle. We compute a new position of the top left 
+ * corner (x,y) in such a way that the center of the rectangle 
+ * is at the position given by the rotation.
+ * To draw the rotated rectangle the draw function will have 
+ * to perform a rotation centered at the rectangle center.
+ */
+
 static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  /* the rectangle is rotated in such a way that the
-   * draw function will have to make a rotation with
-   * center the center of the rectangle
-   */
-  /* rotate the center */
+  /* rotate the center (x1,y1) gives the center position after rotation */
   x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y - P->obj->h/2);
   y1 = R[1]*(P->obj->x+ P->obj->w/2) +R[0]*(P->obj->y - P->obj->h/2);
+  /* changes x and y in such a way that the rectangle center is at (x1,y1) */
   P->obj->x = x1 - P->obj->w/2;
   P->obj->y = y1 + P->obj->h/2;
-  /* Il faut aussi changer l'angle */
+  /* set up the angle value */
   P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
@@ -1003,4 +1010,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-#line 1007 "grrect.c"
+#line 1014 "grrect.c"

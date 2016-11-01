@@ -228,7 +228,7 @@ static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str)
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],size,TRUE);
   xd1 = XDouble2Pixel_d(Xgc->scales,P->obj->x + P->obj->w/2.0);
   yd1 = YDouble2Pixel_d(Xgc->scales,P->obj->y + P->obj->h/2.0);
-  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box,P->obj->angle,
+  Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,box, P->obj->angle,
 				     GR_STR_XCENTER,GR_STR_YCENTER);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
@@ -261,6 +261,7 @@ static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
       P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
       break;
     case GR_no_box :
+      /* rotate (x,y) */
       x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
       P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
       P->obj->x = x1;
