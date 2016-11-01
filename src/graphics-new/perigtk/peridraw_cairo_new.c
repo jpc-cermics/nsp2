@@ -384,13 +384,28 @@ static void displaystring(BCG *Xgc,const char *str, double x, double y, int flag
     }
   if ( Abs(angle) >= 0.1)
     {
+      int xpos=0,ypos=0;
       double rad_angle = angle * M_PI/180.0;
-      /* cairo_text_extents_t extents; */
+      switch( posx )
+	{
+	case GR_STR_XLEFT: xpos = 0; break;
+	case GR_STR_XCENTER: xpos = 0 - width/2; break;
+	case GR_STR_XRIGHT: xpos = 0 - width; break;
+	}
+      switch( posy )
+	{
+	case GR_STR_YBOTTOM: ypos = 0 -height; break;
+	case GR_STR_YCENTER:  ypos = 0 - height/2; break;
+	case GR_STR_YBASELINE: ypos = 0 + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = 0 ; break;
+	}
+      /* we have to rotate the string at its center */
       cairo_save (cr);
       cairo_identity_matrix (cr);
       cairo_translate (cr, x,y);
       cairo_rotate (cr, rad_angle);
-      cairo_move_to (cr, 0,-height);
+      /* position the layout according to (posx,posy) */
+      cairo_move_to (cr, xpos, ypos);
       pango_layout_set_text (Xgc->private->layout,str, -1);
       pango_cairo_update_layout (cr,Xgc->private->layout);
       pango_cairo_show_layout (cr,Xgc->private->layout);
