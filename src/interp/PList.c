@@ -2682,12 +2682,12 @@ int nsp_plist_equal(PList L1,PList L2)
  * a function définition.
  */
 
-static void detect_arg_name(int rec,PList L,NspBHash *H);
+static void detect_arg_name(int rec,PList L,NspBHash *H, int action);
 
-static int check_persistent_calleval(PList List,NspBHash *H);
+static int check_persistent_calleval(PList List,NspBHash *H, int action);
 
 
-void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
+void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec, int action)
 {
   PList L=List; /* ,L1; */
   int j;
@@ -2706,30 +2706,30 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	    case  SEMICOLON_OP  :
 	    case  COMMA_RET_OP : 
 	    case  SEMICOLON_RET_OP  :
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      break;
 	    case QUOTE_OP :
 	    case DOTPRIM: 
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      break;
 	    case RETURN_OP : 
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      break;
 	    case TILDE_OP : 
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      break;
 	    default:
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	    }
 	  break;
 	case 2:
-	  detect_arg_name(rec,List,H);
-	  detect_arg_name(rec,List->next,H);
+	  detect_arg_name(rec,List,H,action);
+	  detect_arg_name(rec,List->next,H,action);
 	  break;
 	default :
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      List = List->next;
 	    }
 	  break;
@@ -2747,14 +2747,14 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	case METARGS :
 	case DOTARGS : break;
 	case CALLEVAL:
-	  if ( check_persistent_calleval(List,H) == OK ) 
+	  if ( check_persistent_calleval(List,H, action) == OK ) 
 	    {
 	    }
 	  else
 	    {
 	      for ( j =  0 ; j < L->arity ; j++)
 		{
-		  detect_arg_name(rec,List,H);
+		  detect_arg_name(rec,List,H,action);
 		  List = List->next;
 		}
 	    }
@@ -2763,13 +2763,13 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	case FEVAL :
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      List = List->next;
 	    }
 	  break;
 	case PLIST :
 	  if (L->next == NULLPLIST )
-	    detect_arg_name(rec,L,H);/* XXXXXXX */
+	    detect_arg_name(rec,L,H,action);/* XXXXXXX */
 	  break;
 	case COMMENT :
 	case NAME :
@@ -2793,8 +2793,8 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	case CELLDIAGCONCAT:
 	  break;
 	case WHILE:
-	  detect_arg_name(rec,List,H);
-	  detect_arg_name(rec,List->next,H);
+	  detect_arg_name(rec,List,H,action);
+	  detect_arg_name(rec,List->next,H,action);
 	  break;
 	case FUNCTION:
 	  /* the function prototype (= (ret-args) (feval (args))) 
@@ -2803,40 +2803,40 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	  /* this will gather ret-args */
 	  if ( rec == 0 ) 
 	    {
-	      detect_arg_name(rec+1,List,H);
+	      detect_arg_name(rec+1,List,H,action);
 	      /* function call prototype */
 	      /* L1 = ((PList) List->O)->next->next; */
 	      /* the function body i.e statements */
-	      detect_arg_name(rec+1,List->next,H);
+	      detect_arg_name(rec+1,List->next,H,action);
 	    }
 	  break;
 	case FOR:
-	  detect_arg_name(rec,List,H);
-	  detect_arg_name(rec,List->next,H);
-	  detect_arg_name(rec,List->next->next,H);
+	  detect_arg_name(rec,List,H,action);
+	  detect_arg_name(rec,List->next,H,action);
+	  detect_arg_name(rec,List->next->next,H,action);
 	  break;
 	case IF :
 	  for ( j = 0 ; j < L->arity  ; j += 2 )
 	    {
 	      if ( j == L->arity-1 ) 
 		{
-		  detect_arg_name(rec,List,H);
+		  detect_arg_name(rec,List,H,action);
 		}
 	      else 
 		{ 
-		  detect_arg_name(rec,List,H);
+		  detect_arg_name(rec,List,H,action);
 		  List = List->next ;
-		  detect_arg_name(rec,List,H);
+		  detect_arg_name(rec,List,H,action);
 		  List = List->next ;
 		}
 	    }
 	  break;
 	case TRYCATCH :
-	  detect_arg_name(rec,List,H);
-	  detect_arg_name(rec,List->next,H);
+	  detect_arg_name(rec,List,H,action);
+	  detect_arg_name(rec,List->next,H,action);
 	  if ( L->arity == 3 ) 
 	    {
-	      detect_arg_name(rec,List->next->next,H);
+	      detect_arg_name(rec,List->next->next,H,action);
 	    }
 	  break;
 	case SELECT :
@@ -2845,16 +2845,16 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
 	case PARENTH :
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	      detect_arg_name(rec,List,H);
+	      detect_arg_name(rec,List,H,action);
 	      List = List->next;
 	    }
 	  break;
 	case CASE :
-	  detect_arg_name(rec,List,H);
-	  detect_arg_name(rec,List->next,H);
+	  detect_arg_name(rec,List,H,action);
+	  detect_arg_name(rec,List->next,H,action);
 	  break;
 	case LASTCASE :
-	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List,H,action);
 	  break;
 	case GLOBAL:
 	case CLEAR:
@@ -2876,13 +2876,13 @@ void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
     }
 }
 
-static void detect_arg_name(int rec,PList L,NspBHash *H)
+static void detect_arg_name(int rec,PList L,NspBHash *H, int action )
 {
   if ( L == NULLPLIST || L->type != PLIST )  return;
-  nsp_plist_name_detect_persistent((PList) L->O,H,rec);
+  nsp_plist_name_detect_persistent((PList) L->O,H,rec, action);
 }
 
-static int check_persistent_calleval(PList List,NspBHash *H)
+static int check_persistent_calleval(PList List,NspBHash *H,int action)
 {
   char *name;
   PList L;
@@ -2904,10 +2904,23 @@ static int check_persistent_calleval(PList List,NspBHash *H)
       L= ((PList) List->O)->next;
       if ( L== NULL || L->type != NAME ) return FAIL;
       name = (char *) L->O;
-      if ( nsp_bhash_find(H,name,&val) == OK) 
+
+      if ( action == TRUE )
 	{
-	  int new_val = VAR_SET_PERSISTENT(val);
-	  nsp_bhash_enter(H,name,new_val);
+	  /* enter name in the hash table */
+	  if ( nsp_bhash_find(H,name,&val) == FAIL) 
+	    {
+	      nsp_bhash_enter(H,name,0);
+	    }
+	}
+      else
+	{
+	  if ( nsp_bhash_find(H,name,&val) == OK) 
+	    {
+	      /* tag the value of name as persistent variable */
+	      int new_val = VAR_SET_PERSISTENT(val);
+	      nsp_bhash_enter(H,name,new_val);
+	    }
 	}
     }
   return OK;

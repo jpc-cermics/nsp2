@@ -702,6 +702,14 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       int nsymb;
 #endif
       if ( T->tokenv.id == ENDFUNCTION && T->NextToken(T) == FAIL) goto fail;
+      
+      if ((cell= (NspObject *)nsp_cells_create("symbols",3,1)) == NULLOBJ) goto fail;
+      if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,FUNCTION,3,T->tokenv.Line) == FAIL) goto fail;
+      
+      /* add persistent variables declared by persistent(...) to the symbols table  */
+      nsp_plist_name_detect_persistent(plist1,symbols,0, TRUE);
+      
       /* gives id as int to each local variables */
 #ifdef  WITH_SYMB_TABLE 
       nsymb=nsp_parse_symbols_table_set_id(symbols);
@@ -711,8 +719,6 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       nsp_qsort_nsp_string(symb_names->S,NULL,FALSE,symb_names->mn,'i');
       nsp_parse_symbols_table_reset_id(symbols,symb_names);
 #endif 
-      /* nsp_hash_print(symbols,0); */
-      if ((cell= (NspObject *)nsp_cells_create("symbols",3,1)) == NULLOBJ) goto fail;
       /* we keep the hash table in the cell 
        * Note that this could be dropped if refs in calling stacks are removed in nsp.
        */
@@ -725,10 +731,15 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       ((NspCells *) cell)->objs[1]= (NspObject *) cell1;
       if ((cell1= (NspObject *) nsp_cells_create("persistents",nsymb,1)) == NULLOBJ) goto fail;
       ((NspCells *) cell)->objs[2]= (NspObject *) cell1;
-      if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
-      if (nsp_parse_add(&plist1,FUNCTION,3,T->tokenv.Line) == FAIL) goto fail;
+
+      /* second pass to tag the persistent variables in symbols 
+       * XXXX TO BE DONE: this second pass should be avoided 
+       * in the first pass we have to tag the variables when they are persistent 
+       * and we have to change nsp_parse_symbols_table_set_id in such a way that it 
+       * does not remove the tagging.
+       */
+      nsp_plist_name_detect_persistent(plist1,symbols,0, FALSE);
       /* use symbol table to walk in plist and convert names to local id*/
-      nsp_plist_name_detect_persistent(plist1,symbols,0); 
       nsp_plist_name_to_local_id(plist1,symbols,0); 
 #ifdef  SMAT_SYMB_TABLE
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
