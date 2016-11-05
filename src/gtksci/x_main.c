@@ -28,15 +28,21 @@
 #include <nsp/nsp.h>
 #include <locale.h>
 #include <gtk/gtk.h>
+
 #include <nsp/sciio.h>
 #include <nsp/system.h>
 #include <nsp/gtksci.h>
 #include <nsp/nsptcl.h>
-#include <gtk/gtk.h>
+#include <nsp/config.h>
 
 #if GTK_CHECK_VERSION (3,0,0)
+#if !defined(WITH_GTKOSX) && !defined(WIN32) 
+#define WITH_GTKXH
 #include <gtk/gtkx.h>
 #endif
+#else 
+#define WITH_GTKXH
+#endif 
 
 #ifdef WITH_GTKGLEXT
 #include <gtk/gtkgl.h>
@@ -116,7 +122,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 	   * in the calling zterm through socket/plug mechanism
 	   */
 	  nsp_set_ignore_gtk_error();
-	  create_plugged_main_menu() ;
+	  create_plugged_main_menu();
 	}
       /* interaction with a textview
        *
@@ -273,7 +279,7 @@ void nsp_status_show(char * message)
  * nsp toplevel widget when zterm widget is plugged
  */
 
-#if !defined(__MSC__) && ! defined(__MINGW32__)
+#if !defined(__MSC__) && ! defined(__MINGW32__) && !defined(WITH_GTKOSX)
 #include <gdk/gdkx.h>
 #include <gdk/gdkprivate.h>
 #include <gdk/gdkkeysyms.h>
@@ -286,7 +292,7 @@ static GtkWidget  *window = NULL;
  * the id of a socket button
  */
 
-#if !defined(__MSC__) && ! defined(__MINGW32__)
+#ifdef WITH_GTKXH
 #include <sys/types.h>
 #include <sys/shm.h>
 
@@ -322,22 +328,20 @@ static char *get_shared(void)
 
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 {
-#if !defined(__MSC__) && ! defined(__MINGW32__)
+  GtkWidget *vbox,*menubar;
+#ifdef WITH_GTKXH
   gulong *xid;
   char * shm = get_shared() ;
-#endif
-  GtkWidget *vbox,*menubar;
-#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
   GtkWidget *socket_button;
 #endif
   
 #ifdef __APPLE__
-      /* avoid a gtk warning about locale */
-      gtk_disable_setlocale();
-      setlocale(LC_ALL,"");
+  /* avoid a gtk warning about locale */
+  gtk_disable_setlocale();
+  setlocale(LC_ALL,"");
 #else
-      /* deprecated gtk_set_locale(); */
-      setlocale(LC_ALL,"");
+  /* deprecated gtk_set_locale(); */
+  setlocale(LC_ALL,"");
 #endif
 
   gtk_init(&argc, &argv);
@@ -362,7 +366,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   menubar= create_main_menu( window);
   gtk_box_pack_start(GTK_BOX(vbox),menubar,FALSE,TRUE,0);
 
-#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
+#ifdef WITH_GTKXH
   /* a socket in which I will redirect interaction */
   socket_button = gtk_socket_new();
   /*   gtk_widget_set_usize(socket_button,300,100); */
@@ -371,14 +375,14 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   
   /* show them all! */
   gtk_widget_show_all(window);
-#if !( GTK_CHECK_VERSION (3,0,0) && defined(WIN32))
+
+#ifdef WITH_GTKXH
   gtk_widget_grab_focus(socket_button);
-#endif
   
 #if !defined(__MSC__) && ! defined(__MINGW32__)
   /* I transmit the socket Id via shared memory  */
   xid = (gulong *) (shm+1);
-#ifdef  GDK_WINDOW_XWINDOW
+#ifdef GDK_WINDOW_XWINDOW
 #ifdef GSEAL_ENABLE
   *xid = (gulong) GDK_WINDOW_XWINDOW(gtk_socket_get_plug_window(GTK_SOCKET(socket_button)));
 #else
@@ -389,10 +393,11 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   /* *xid= gtk_socket_get_plug_window(GTK_SOCKET(socket_button)); */
   *xid= (gulong) gtk_socket_get_id(GTK_SOCKET(socket_button));
 #else
-  *xid = socket_button->window;
+  *xid = (gulong) socket_button->window;
 #endif
 #endif
   *shm = '*' ; /* just to tell that there's something to read */
+#endif
 #endif
 }
 
