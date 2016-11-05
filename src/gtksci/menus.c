@@ -60,7 +60,7 @@ static GtkWidget  *main_menu_menubar = NULL;
 
 void create_plugged_main_menu(void)
 {
-#if !defined(WITH_GTKOSX) && defined(WIN32) 
+#if !defined(WITH_GTKOSX) && !defined(WIN32) 
   static int first = 0;
   static GtkWidget *Plug;
   GtkAccelGroup *accel_group = NULL ;
