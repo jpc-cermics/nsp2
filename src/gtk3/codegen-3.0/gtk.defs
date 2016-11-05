@@ -7562,7 +7562,7 @@
 )
 
 (define-function gtk_drag_set_icon_gicon
-  (c-name "gtk_drag_set_icon_gicon")
+  (c-name "gtk_drag_set_icon_gicon_redef")
   (return-type "none")
   (parameters
     '("GdkDragContext*" "context")

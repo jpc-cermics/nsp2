@@ -34,6 +34,12 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 			       GtkCellRenderer *cell,
 			       GtkTreeModel *tree_model,
 			       GtkTreeIter *iter, gpointer data);
+
+static void gtk_drag_set_icon_gicon_redef (GdkDragContext *context,
+					   GIcon          *icon,
+					   gint            hot_x,
+					   gint            hot_y);
+
 %%
 init
 %%
@@ -7786,3 +7792,23 @@ static gchar *calendar_detail_func(GtkCalendar *calendar, guint year, guint mont
       return NULL;
     }
 }
+
+
+static void gtk_drag_set_icon_gicon_redef (GdkDragContext *context,
+					   GIcon          *icon,
+					   gint            hot_x,
+					   gint            hot_y)
+{
+#ifndef WITH_GTKOSX 
+  gtk_drag_set_icon_gicon  (context,icon,hot_x,hot_y);
+#else
+  Sciprintf("  gtk_drag_set_icon_gicon not found on gtk+3 (3.22) on macosx\n");
+#endif
+}
+
+
+  // gtk_drag_set_icon_gicon(GDK_DRAG_CONTEXT(context->obj),G_ICON(icon->obj),hot_x,hot_y);
+void gtk_drag_set_icon_gicon  (GdkDragContext *context,
+                               GIcon          *icon,
+                               gint            hot_x,
+                               gint            hot_y);
