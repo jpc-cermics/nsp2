@@ -1114,7 +1114,7 @@ if test xx"$with_gtk" = xx; then
     NSP_SCRIPT=nsp-gtk2.g
     MENUSOBJS=GOBJS
     PERICAIRO=
-    # detect if it is a quartz version is used 
+    # detect if a quartz version is used 
     PKG_CHECK_MODULES(gtk2quartz, gtk+-quartz-2.0 , have_gtk_quartz=yes, have_gtk_quartz=no)
     if test "$have_gtk_quartz" = "yes"; then
       AC_DEFINE(WITH_GTKOSX,[],[Gtk version with native OsX graphics])
@@ -1154,6 +1154,12 @@ if test xx"$with_gtk" = xx; then
     NSP_SCRIPT=nsp-gtk3.g
     MENUSOBJS=GOBJS
     PERICAIRO=
+    # detect if a quartz version is used 
+    PKG_CHECK_MODULES(gtk3quartz, gtk+-quartz-3.0 , have_gtk_quartz=yes, have_gtk_quartz=no)
+    if test "$have_gtk_quartz" = "yes"; then
+      AC_DEFINE(WITH_GTKOSX,[],[Gtk version with native OsX graphics])
+      GTK_OSX="yes"
+    fi
   fi
 fi
 
