@@ -37,3 +37,6 @@ Makefile.mak	: Makefile
 Makefile.amk	: Makefile
 	$(SCIDIR)/scripts/Mak2ABSMak Makefile
 
+colnew.o: colnew.c
+	@echo compiling $<
+	@$(CC) $(CFLAGS) -Wno-array-bounds -c $< -o $@

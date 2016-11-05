@@ -40,3 +40,6 @@ Makefile.mak	: Makefile
 Makefile.libmk	: Makefile
 	$(SCIDIR)/scripts/Mak2ABSMak Makefile
 
+colnew.obj: colnew.c
+	@echo compiling $<
+	@$(CC) $(CFLAGS) -Wno-array-bounds -c $< -o $@

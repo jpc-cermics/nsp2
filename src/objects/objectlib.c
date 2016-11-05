@@ -924,7 +924,13 @@ NspObject *nsp_object_serialize(const NspObject *O)
       nsp_list_destroy(buf.L);
       return NULLOBJ;
     }
+#if defined(__APPLE__)
+  typedef int (*readproc_f)(void *, void *, int);
+  typedef int (*writeproc_f)(void *, void *, int);
+  xdrrec_create(&xdrs,0,0,(char *) &buf,(readproc_f) readproc,(writeproc_f) writeproc);
+#else
   xdrrec_create(&xdrs,0,0,(char *) &buf,readproc,writeproc);
+#endif
   rep= O->type->save(&xdrs,O);
   if ( rep != FAIL) 
     {

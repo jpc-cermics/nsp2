@@ -1127,8 +1127,10 @@ int nsp_smio_printf_smatrix(NspSMio *F,NspSMatrix *S)
  * the consequences of using this software.
  *-------------------------------------------------------------*/
 
+/*
 static const char readerr[] = "Premature EOF while reading sample file.";
 static const char writerr[] = "Error writing sample file.  You are probably out of disk space.";
+*/
 
 /* generic swap routine */
 

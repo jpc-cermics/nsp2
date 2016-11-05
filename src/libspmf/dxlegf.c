@@ -55,8 +55,6 @@ static Dxblk3 dxblk3_1;
 
 /* Table of constant values */
 
-static const int c__0 = 0;
-static const double c_b4 = 0.;
 static const double c_b7 = 1.;
 static const int c_n1 = -1;
 static const int c__2 = 2;

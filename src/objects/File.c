@@ -2886,8 +2886,10 @@ static int do_printf_string_as_read( FILE *fp,  PRINTER printer,  void *target, 
  * the consequences of using this software.
  *-------------------------------------------------------------*/
 
+/*
 static const char readerr[] = "Premature EOF while reading sample file.";
 static const char writerr[] = "Error writing sample file.  You are probably out of disk space.";
+*/
 
 /* generic swap routine */
 
