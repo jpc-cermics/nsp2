@@ -1219,7 +1219,24 @@ if test xx"$with_gtk" == xx; then
        if test "x${have_webkit_zoom}" = "xyes" ; then
        	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
        fi
-     fi
+     else	
+       # for macosx brew      
+       WEBKIT=webkit2gtk-4.0
+       PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
+       if test "x${have_webkit2}" = "xyes" ; then
+         GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
+         GTK_PKGS_LIBS="$GTK_PKGS_LIBS $WEBKIT"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+         WEBKIT_GEN="webkit2.o"
+         HELP_OBJS="helpwebkit.o helpwebkit-2.o \$(WEBKIT2_OBJS) "
+         AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
+         PKG_CHECK_MODULES(webkit_zoom, $WEBKIT >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+         if test "x${have_webkit_zoom}" = "xyes" ; then
+       	  AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
+         fi
+       fi
+    fi
   fi
 fi
 
