@@ -31,7 +31,7 @@ all clean distclean ::
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\
-	    	*) echo "Cannot make $@ in sub directory $$d";\
+	    	*) echo "Cannot make $@ in sub directory $$i";\
 	       	  exit $$IER;;\
 	   	esac;\
 	done
