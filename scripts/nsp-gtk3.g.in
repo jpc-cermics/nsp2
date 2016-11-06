@@ -207,6 +207,20 @@ if test -n "$term_name"; then
     zterm_args="$zterm_args -N $term_name"
 fi
 
+# if zterm does not exists start scilex with -tv
+# or scilex -nw if nw was already present 
+
+if test -f $SCI/bin/zterm; then
+    ok=1
+else
+    if test -n "$now"; then
+      ok=1
+    else
+      now="-nw"
+      sci_args="$sci_args -tv"
+    fi
+fi
+
 #echo nsp: $sci_args
 #echo zterm: $zterm_args
 
