@@ -2,36 +2,40 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zcalelm objects interp functions @GTKDIR@ \
-	system graphics-new menus gtksci \
-	@GZVT@ modules gobjects types-test librand \
-	libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
-	libminpack liboptim libcontrol libslicot libcalelm libsignal @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ @AMOS_CEPHES_LIB@
+SCIDIRS = \
+	zcalelm objects interp functions @GTKDIR@ \
+	system graphics-new menus gtksci @GZVT@ \
+	modules gobjects types-test librand libcdf \
+	@MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
+	libminpack liboptim libcontrol libslicot libcalelm libsignal \
+	@PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ \
+	@SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ \
+	@GLPK_LIB@ @AMOS_CEPHES_LIB@ \
 
-ALLSCIDIRS =zcalelm objects interp functions gtk2 \
+ALLSCIDIRS = \
+	zcalelm objects interp functions gtk2 gtk3 \
 	system graphics-old graphics-new menus gtksci \
 	gzvt2 modules gobjects types-test librand \
 	libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
-	libminpack liboptim \
-	libpvm libblas liblapack libxdr libsndfile libumfpack libportaudio \
-	libgraphviz libglpk @AMOS_CEPHES_LIB@
+	libminpack liboptim libpvm libblas liblapack libxdr libsndfile \
+	libumfpack libportaudio libgraphviz libglpk @AMOS_CEPHES_LIB@ \
 
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS)
 ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS)
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 DIR=
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		(cd $$i && if test "x$(SILENT)" != "x-s"; then echo "making $@ in $(DIR)$$i ";fi && \
 		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\
-	    	*) echo "Cannot make $@ in sub directory $$i";\
-	       	  exit $$IER;;\
+	    	*) echo "make $@ in sub directory $$i failed"; \
+	       	   case '${MFLAGS}' in *[k]*) echo "carrying on compilation (-k used)";; *) exit $$IER;;esac;\
 	   	esac;\
 	done
