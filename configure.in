@@ -241,7 +241,6 @@ HPPA_OLD=
 MAIN='mainsci.o'
 # use cairo driver
 PERICAIRO=
-PERIGTK=
 #
 GUILIB=gtksci
 # specific for gnome/gtk version
@@ -1080,7 +1079,6 @@ fi
 #################
 
 PKG_PROG_PKG_CONFIG()
-PERIGTK=
 GTK_OSX=
 
 if test xx"$with_gtk" = xx; then 
@@ -1131,7 +1129,6 @@ fi
 if test xx"$with_gtk" = xx; then 
   if test "$with_gtk3" = yes; then
     GTKDIR=gtk3
-    PERIGTK=
     ZZLEDT="reader"
     GTK_REQUIRED_VERSION=2.0.0
     GTK_PKGS_CFLAGS='gtk+-3.0'
@@ -2226,7 +2223,6 @@ AC_SUBST(TERMCAPLIB)
 AC_SUBST(MAIN)
 AC_SUBST(MAKEFILE_TARGET)
 AC_SUBST(PERICAIRO)
-AC_SUBST(PERIGTK)
 AC_SUBST(GUILIB)
 AC_SUBST(GZVT)
 AC_SUBST(LIBXDR_LOCAL)

@@ -215,10 +215,6 @@ extern Gengine1 nsp_gengine1 ;
  * private functions for drivers
  *-----------------------------------------------------------------*/
 
-#ifdef PERIGTK
-#define xx__gengine Gtk_gengine
-#endif
-
 #ifdef PERICAIRO
 #define xx__gengine Cairo_gengine
 #endif
@@ -370,6 +366,9 @@ static void scig_deconnect_handlers(BCG *winxgc);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
+extern void create_graphic_window_menu( BCG *dd);
+extern void start_sci_gtk(void);
+
 #ifdef PERIGL
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect);
@@ -384,24 +383,5 @@ static void init_gl_lights(GLfloat light0_pos[4]);
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 #endif
 #endif /* PERIGL */
-
-#ifdef PERIGTK
-static GdkPoint *gtk_get_xpoints(void);
-static int GtkReallocVector (int n);
-static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
-#if 1
-static int gtk_store_points_remove_redundent (int n, int *vx,int *vy,int  onemore);
-#endif
-#ifndef WITH_PANGO
-static void LoadSymbFonts(void);
-static void loadfamily_n(char *name, int *j);
-static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
-			      int x, int y, int maxx, int maxy, const gchar *text,
-			      gint text_length, double angle);
-#endif /* WITH_PANGO */
-#endif /* PERIGTK */
-
-extern void create_graphic_window_menu( BCG *dd);
-extern void start_sci_gtk();
 
 #endif /*  PERI_PRIVATE */
