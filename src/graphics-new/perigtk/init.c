@@ -61,10 +61,6 @@ return nsp_graphic_new_new(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 /* #define nsp_graphic_new_new nsp_graphic_new_new */
 #endif
 
-#ifdef PERIGTK
-#define nsp_graphic_new_new nsp_graphic_new_gtk_new
-#endif
-
 int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL,NULL);

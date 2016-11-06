@@ -5,7 +5,7 @@ LIBRARY = graphics-new.a
 
 # periGif.o
 
-OBJSC = Graphics-IN.o @PERIGTK@ @PERICAIRO@ @PERIGLEXT@ \
+OBJSC = Graphics-IN.o @PERICAIRO@ @PERIGLEXT@ \
 	periPos.o periFig.o perigen.o Contour-new.o     \
 	Axes.o Plo2dEch.o Actions.o windows.o \
 	Xcall1.o click.o periTikz.o

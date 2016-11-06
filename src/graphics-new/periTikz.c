@@ -599,30 +599,6 @@ static int xset_colormap(BCG *Xgc,void *a)
 }
 
 /**
- * nsp_set_colormap_constants:
- * @Xgc: a #BCG
- * @m:
- *
- *
- **/
-
-#ifdef  PERIGTK
-void nsp_set_colormap_constants(BCG *Xgc,int m)
-{
-  Xgc->Numcolors = m;
-  Xgc->IDLastPattern = m;
-  Xgc->NumForeground = -1 ;
-  Xgc->NumBackground = -1;
-  Xgc->CurColor = -1;
-  Xgc->CmapFlag = 0;
-  Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  Xgc->graphic_engine->xset_color(Xgc,m+1);
-  Xgc->graphic_engine->xset_foreground(Xgc,m+1);
-  Xgc->graphic_engine->xset_background(Xgc,m+2);
-}
-#endif
-
-/**
  * xget_colormap:
  * @Xgc: a #BCG
  * @num:

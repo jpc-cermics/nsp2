@@ -277,11 +277,6 @@ static void clearwindow(BCG *Xgc)
       cairo_fill (cr);
     }
 #endif
-#ifdef PERIGTK
-  gdk_gc_set_rgb_fg_color(Xgc->private->stdgc,&Xgc->private->gcol_bg);
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
-		     Xgc->CWindowWidth, Xgc->CWindowHeight);
-#endif
 #ifdef PERIGL
   glClearColor(Xgc->private->gcol_bg.red /255.0,
 	       Xgc->private->gcol_bg.green /255.0,
@@ -1725,7 +1720,7 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
  * Returns:
  **/
 
-#if defined(PERIGTK) || defined(PERICAIRO)
+#if defined(PERICAIRO)
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
   BCG *Xgc = (BCG *) data;
@@ -1982,7 +1977,7 @@ static void nsp_configure_wait(BCG *dd)
  * Returns:
  **/
 
-#if defined(PERIGTK) || defined(PERICAIRO)
+#if defined(PERICAIRO)
 
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -2481,23 +2476,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 #endif
 #endif
 
-
-/**
- * nsp_get_image:
- * @Xgc: a #BCG
- *
- * get drawable as an image
- *
- * Returns:
- **/
-
-#if defined(PERIGTK)
-GdkImage* nsp_get_image(BCG *Xgc)
-{
-  return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
-}
-#endif
-
 /**
  * nsp_get_pixbuf:
  * @Xgc: a #BCG
@@ -2568,17 +2546,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 
 #ifdef PERICAIRO
 #include "perigtk/peridraw_cairo_new.c"
-#endif /* PERIGTK */
-
-/*
- * include the gdk basic graphic routines
- */
-
-#ifdef PERIGTK
-#include "perigtk/peridraw_gdk.c"
-/* routines for allocating GdkPoints */
-#include "perigtk/points.c"
-#endif /* PERIGTK */
+#endif /* PERICAIRO */
 
 /*
  * include the opengl basic graphic routines
