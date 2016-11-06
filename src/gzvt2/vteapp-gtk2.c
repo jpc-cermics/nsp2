@@ -31,7 +31,7 @@
 
 #if !defined(WITH_GTKOSX) && !defined(WIN32) 
 #define WITH_GTK_XH
-#include <gtk/gtkx.h>
+#include <gdk/gdkx.h>
 #endif
 
 #include "tumbi48.xpm"

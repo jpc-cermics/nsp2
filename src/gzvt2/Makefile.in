@@ -1,6 +1,7 @@
 include ../../Makefile.incl
 
-CFLAGS=`$(PKG_CONFIG) @VTE_PKG@ --cflags --libs` -Wno-deprecated-declarations
+CFLAGS=-I../include `$(PKG_CONFIG) @VTE_PKG@ --cflags --libs` \
+	-Wno-deprecated-declarations
 
 all	::  ../../bin/zterm
 
