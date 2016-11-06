@@ -1119,6 +1119,7 @@ if test xx"$with_gtk" = xx; then
     if test "$have_gtk_quartz" = "yes"; then
       AC_DEFINE(WITH_GTKOSX,[],[Gtk version with native OsX graphics])
       GTK_OSX="yes"
+      GZVT=
     fi
   fi 
 fi
@@ -1159,6 +1160,7 @@ if test xx"$with_gtk" = xx; then
     if test "$have_gtk_quartz" = "yes"; then
       AC_DEFINE(WITH_GTKOSX,[],[Gtk version with native OsX graphics])
       GTK_OSX="yes"
+      GZVT=
     fi
   fi
 fi
