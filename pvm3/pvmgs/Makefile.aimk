@@ -42,7 +42,7 @@ LPROGS		=	$(PVMLDIR)/pvmgs$(EXESFX)
 
 LIBGPVM		=	$(LIBPREFIX)gpvm3.a
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 
 install:	all
 

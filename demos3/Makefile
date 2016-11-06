@@ -5,19 +5,19 @@ include $(TOP)/Makefile.incl
 
 SUBDIRS = graphics gtk3
 DIR=
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		(cd $$i && if test "x$(SILENT)" != "x-s"; then echo "making $@ in $(DIR)$$i ";fi && \
 		$(MAKE) $(MFLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\
-	    	*) echo "Cannot make $@ in sub directory $$d";\
-	       	  exit $$IER;;\
+	    	*) echo "make $@ in sub directory $$i failed"; \
+	       	   case '${MFLAGS}' in *[k]*) echo "carrying on compilation (-k used)";; *) exit $$IER;;esac;\
 	   	esac;\
 	done
 

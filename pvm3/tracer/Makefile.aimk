@@ -95,7 +95,7 @@ TRCHEADERS	=	$(TRCDIR)/trclib.h $(TRCDIR)/trctype.h \
 PROGS		=	$(PVMXDIR)/tracer$(EXESFX) $(PVMXDIR)/trcsort$(EXESFX)
 PROGS		=
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 
 #
 # Targets
@@ -154,7 +154,7 @@ distclean : clean
 	  @$(RM) $(TRCLIBDEP)
 
 clean:
-	@if test "x$(SILENT)" != "xs"; then \
+	@if test "x$(SILENT)" != "x-s"; then \
 		echo "cleaning"; \
 	fi
 	@$(RM) *.o

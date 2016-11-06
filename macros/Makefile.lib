@@ -4,7 +4,7 @@
 
 SHELL=/bin/sh
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 GNUMAKEFLAGS=--no-print-dir
 
 ifndef NSP
@@ -12,13 +12,13 @@ NSP=$(SCIDIR)/bin/scilex
 endif
 
 all	::
-	@if test "x$(SILENT)" != "xs"; then \
+	@if test "x$(SILENT)" != "x-s"; then \
 		echo "processing *.sci files"; \
 	fi
 	@$(NSP) -nw -ns -dir ./
 
 clean distclean	::
-	@if test "x$(SILENT)" != "xs"; then \
+	@if test "x$(SILENT)" != "x-s"; then \
 		echo "cleaning"; \
 	fi
 	@$(RM) *.bin

@@ -54,7 +54,7 @@ ruserpas.o:  $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c
 	@$(CC) $(CFLAGS) -c $(PVMDIR)/src/$(PVM_ARCH)/src/ruserpas.c 
 
 clean:
-	@if test "x$(SILENT)" != "xs"; then \
+	@if test "x$(SILENT)" != "x-s"; then \
 		echo "cleaning"; \
 	fi
 	@rm -f *.o hoster$(EXESFX)

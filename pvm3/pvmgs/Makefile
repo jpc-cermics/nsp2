@@ -2,7 +2,7 @@ SHELL=/bin/sh
 
 include ../../Makefile.incl
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 
 PVM_ARCH= `../lib/pvmarch`
 SUBDIRS =$(PVM_ARCH)
@@ -15,12 +15,12 @@ install all clean distclean ::
 	for i in $(SUBDIRS) ;\
 	do \
 		if test -d $$i; then ok=1; else mkdir $$i; fi; \
-		(cd $$i && if test "x$(SILENT)" != "xs"; then echo "making $@ in $(DIR)$$i ";fi && \
+		(cd $$i && if test "x$(SILENT)" != "x-s"; then echo "making $@ in $(DIR)$$i ";fi && \
 		$(MAKE) $(MFLAGS) $(FLAGS) DIR=$(DIR)$$i/ $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
 	    	0) ;;\
-	    	*) echo "Cannot make $@ in sub directory $$d";\
-	       	  exit $$IER;;\
+	    	*) echo "make $@ in sub directory $$i failed"; \
+	       	   case '${MFLAGS}' in *[k]*) echo "carrying on compilation (-k used)";; *) exit $$IER;;esac;\
 	   	esac;\
 	done

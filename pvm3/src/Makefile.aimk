@@ -91,7 +91,7 @@ REGEXCONFOS2	=
 REGEXOBJS		=
 #REGEXOBJS		=	pvmregex.o regex.o
 
-SILENT=$(findstring s,$(MFLAGS))
+SILENT=$(findstring -s,$(MFLAGS))
 
 #
 # PVM Daemon & Library Objects
@@ -354,7 +354,7 @@ clean:	tidy
 	@rm -rf $(REGEXDIR)
 
 tidy:
-	@if test "x$(SILENT)" != "xs"; then \
+	@if test "x$(SILENT)" != "x-s"; then \
 		echo "cleaning"; \
 	fi
 	@$(RM) $(DOBJ) $(SOCKDOBJ) $(SHMEMDOBJ) $(MPPDOBJ) \
