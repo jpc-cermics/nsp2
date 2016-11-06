@@ -24,9 +24,15 @@
 #include <unistd.h>
 #include <locale.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include <glib-object.h>
 #include <vte/vte.h>
+
+#include <nsp/config.h>
+
+#if !defined(WITH_GTKOSX) && !defined(WIN32) 
+#define WITH_GTK_XH
+#include <gtk/gtkx.h>
+#endif
 
 #include "tumbi48.xpm"
 
@@ -520,7 +526,10 @@ main(int argc, char **argv)
   GdkPixbuf *pixbuf;
   char **command_argv;
   int cmdindex =0;
-  GtkWidget *window, *hbox, *scrollbar, *widget, *vbox, *socket_button;
+  GtkWidget *window, *hbox, *scrollbar, *widget, *vbox;
+#ifdef WITH_GTK_XH
+  GtkWidget *socket_button;
+#endif
   char buf[56];
   char *env_add[] = {NULL, NULL};
   const char *background = NULL;
@@ -692,9 +701,11 @@ main(int argc, char **argv)
 
   /* création du socket qui contiendra le plug du programme gtkplug */
 
+#ifdef WITH_GTK_XH
   socket_button = gtk_socket_new();
   gtk_box_pack_start(GTK_BOX(vbox), socket_button,FALSE,TRUE,0);
   gtk_widget_show(socket_button);
+#endif
   /* create hbox */
   hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_set_spacing (GTK_BOX (hbox), 2);
@@ -826,8 +837,11 @@ main(int argc, char **argv)
   gtk_widget_realize(widget);
   gtk_widget_show_all(window);
   /* need show all before getting the socket id */
+
+#ifdef WITH_GTK_XH
   sprintf(buf,"SCIWIN=%ld",GDK_WINDOW_XWINDOW(socket_button->window));
   env_add[0]=buf;
+#endif
   /* Launch a shell. */
   if ( cmdindex != 0 ) command_argv = &argv[cmdindex];
 
