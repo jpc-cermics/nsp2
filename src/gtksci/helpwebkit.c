@@ -187,7 +187,7 @@ static NspHash *nsp_help_table = NULLHASH;
 
 static int nsp_help_fill_help_table(const char *index_file)
 {
-  nsp_string dirname;
+  nsp_string dirname = NULL;
   nsp_tcldstring name,filename;
   int all=TRUE;
   char buf[FSIZE+32];
@@ -196,13 +196,13 @@ static int nsp_help_fill_help_table(const char *index_file)
 #ifdef WIN32
   int j;
 #endif
-  NspFile *F;
+  NspFile *F = NULL;
   char *mode = "r";
   if ( index_file != NULL)
     nsp_path_expand(index_file,buf,FSIZE);
   else
     nsp_path_expand("NSP/man/html/generated/manual.4dx",buf,FSIZE);
-
+  
   if ((dirname = nsp_dirname (buf))== NULL)return FAIL;
 
   /* Sciprintf(" nsp_help_fill_help_table: with buf=%s\n",buf); */
@@ -216,9 +216,15 @@ static int nsp_help_fill_help_table(const char *index_file)
   if ( nsp_fscanf_smatrix(F,&Sb) == FAIL)
     {
       nsp_file_close(F);
+      nsp_file_destroy(F);
       return FAIL;
     }
-  if (nsp_file_close(F) == FAIL  ) return FAIL;
+  if (nsp_file_close(F) == FAIL  )
+    {
+      nsp_file_destroy(F);
+      return FAIL;
+    }
+  nsp_file_destroy(F);
   /* initialize hash table for help */
   if (  nsp_help_table == NULLHASH)
     {
@@ -270,9 +276,11 @@ static int nsp_help_fill_help_table(const char *index_file)
 
       if (nsp_hash_enter(nsp_help_table,Obj) == FAIL) goto bug;
     }
+  nsp_string_destroy(&dirname);
   nsp_smatrix_destroy(Sb);
   return OK;
  bug:
+  if ( dirname != NULL ) nsp_string_destroy(&dirname);
   nsp_tcldstring_free(&name);
   nsp_tcldstring_free(&filename);
   nsp_smatrix_destroy(Sb);
