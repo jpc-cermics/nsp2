@@ -8,7 +8,11 @@ TOP=.
 include Path.incl
 include Makefile.incl
 
-all:: bin/scilex @CROSS_POPULATE@
+.NOTPARALLEL:
+
+.PHONY : scilex-lib 
+
+all:: scilex-lib bin/scilex @CROSS_POPULATE@
 
 # can be used to recreate all the .a 
 # 

@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 # Copyright ENPC 
 
 FFLAGS = $(FC_OPTIONS)
@@ -5,8 +6,6 @@ FFLAGS = $(FC_OPTIONS)
 # whole-archive does not exists and noall_load neither -Wl,-noall_load
 
 LIBS=-Wl,-all_load $(NSPLIBS) 
-
-$(NSPLIBS) : scilex-lib 
 
 bin/scilex: $(NSPLIBS)
 	@$(RM) $@;

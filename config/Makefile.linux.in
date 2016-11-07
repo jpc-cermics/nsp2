@@ -5,8 +5,6 @@ FFLAGS = $(FC_OPTIONS)
 
 LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
 
-$(NSPLIBS) : scilex-lib 
-
 bin/scilex: $(NSPLIBS)
 	@$(RM) $@;
 	@echo "linking"; 
