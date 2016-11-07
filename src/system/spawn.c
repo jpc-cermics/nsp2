@@ -15,7 +15,6 @@ static int nsp_win32_system(const char *working_dir, const char *command,BOOL Wa
 static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs);
 #endif
 
-static nsp_string send_string_to_child(NspSpawn *H,const char *str);
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H);
 static int nsp_spawn_move(Stack stack,const char *str,const char *split_str, int pos);
 static void nsp_spawn_showstr(char *str,const char *msg) ;
@@ -395,29 +394,56 @@ int int_spawn_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /* method send:
- * send a string to a spawned process
+ * send SMat to a spawned process
  */
 
 static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
 {
-  nsp_string str,str_res;
-  int_types T[] = {string,t_end};
-  NspObject *Res;
+  int i;
+  NspSMatrix *S, *Res;
   CheckLhs(0,1);
+  CheckStdRhs(1,1);
   if ( self->obj->active == FALSE ) 
     {
       Scierror("Error: connection to spawned program is not active\n");
       return RET_BUG;
     }
-  if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
-  if ((str_res = send_string_to_child(self,str))== NULL) return RET_BUG;
-  if ((Res = nsp_create_object_from_str(NVOID,str_res)) == NULL) 
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( S->mn == 0 ) return 0;
+  for ( i = 0 ; i < S->mn ; i++) 
     {
-      nsp_string_destroy(&str_res);
-      return RET_BUG;
+      gsize bytes_written;
+      int status;
+      status = g_io_channel_write_chars(self->obj->channel_in,S->S[i],strlen(S->S[i]),&bytes_written, NULL);
+      if ( status != G_IO_STATUS_NORMAL) 
+	{
+	  Scierror("Error: something wrong when sending characters to child\n");
+	  return RET_BUG;
+	}
+      status = g_io_channel_write_chars(self->obj->channel_in,"\n",1,&bytes_written, NULL);
+      if ( status != G_IO_STATUS_NORMAL) 
+	{
+	  Scierror("Error: something wrong when sending characters to child\n");
+	  return RET_BUG;
+	}
     }
-  MoveObj(stack,1,Res);
+  /* wait for answer */
+  gtk_main();
+  if ( self->obj->out_smat == FALSE) goto bug;
+  if ( self->obj->out == NULL)  goto bug;
+  if ((Res = nsp_smatrix_split_string(self->obj->out->S[0],"\n", 0))== NULL) goto bug;
+  Res->m = Res->n ; Res->n = 1; /* transpose */
+  nsp_smatrix_resize(self->obj->out,0,0);
+  /* remove the input prompt of child  */
+  if ( self->obj->prompt_check != NULL && strcmp(Res->S[Res->mn-1],self->obj->prompt_check) == 0)
+    {
+      nsp_smatrix_resize(Res, Max(Res->m -1,0),Res->n);
+    }
+  MoveObj(stack,1, NSP_OBJECT(Res));
   return 1;
+ bug:
+  if ( self->obj->out != NULL) nsp_smatrix_resize(self->obj->out,0,0);
+  return RET_BUG;
 }
 
 /* method close: close a spawned process. 
@@ -649,7 +675,7 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
       if (bytes_read != 0) 
 	{
 	  if ( S->obj->out == NULL) 
-	    S->obj->out = nsp_smatrix_create(NVOID,0,0,NULL,0);
+	    S->obj->out = nsp_smatrix_create("out",0,0,NULL,0);
 	  buf[bytes_read]='\0';
 	  /* Sciprintf("{%s}",buf); */
 	  if ( S->obj->prompt_check == NULL) 
@@ -700,31 +726,6 @@ static gboolean stderr_read( GIOChannel *source, GIOCondition condition, gpointe
   S->obj->err = TRUE;
   if ( gtk_main_level() != 0)  gtk_main_quit();
   return FALSE;
-}
-
-static nsp_string send_string_to_child(NspSpawn *H,const char *str)
-{
-  gsize bytes_written;
-  int status;
-  nsp_string res,pr;
-  status = g_io_channel_write_chars(H->obj->channel_in,str,strlen(str),&bytes_written, NULL);
-  if ( status != G_IO_STATUS_NORMAL) 
-    {
-      fprintf(stderr,"something wrong when sending characters to child\n");
-      return NULL;
-    }
-  gtk_main();
-  if ( H->obj->out_smat == FALSE) return NULL;
-  res = nsp_smatrix_elts_concat(H->obj->out,NULL,0,NULL,0);
-  nsp_smatrix_resize(H->obj->out,0,0);
-  /* remove the input prompt of child */
-  if ( res != NULL && H->obj->prompt_check != NULL 
-       && ((pr=strstr(res,H->obj->prompt_check)) != NULL)) 
-    {
-      if ( pr > res && *(pr-1) == '\n') *(pr-1) = '\0';
-      else *pr='\0';
-    }
-  return res;
 }
 
 /**

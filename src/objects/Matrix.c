@@ -642,7 +642,7 @@ int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level
 {
   int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  int slice=1000;
+  int slice=1000; /* use a slice printing for sizes greater than 1000 */
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   if ( Mat == NULL) 
     {
@@ -699,34 +699,87 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,cons
   nsp_num_formats fmt;
   nsp_init_pr_format (&fmt);
   nsp_matrix_set_format(&fmt,Mat);
-  Sciprintf1(indent+1,"x___=[];\n");
+  if ( Mat->m == Mat->mn )
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent+1,"%s=[\n",pname);
+	}
+      else
+	{
+	  Sciprintf1(indent+1,"[\n");
+	}
+    }
+  else
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent+1,"%s=matrix([\n",pname);
+	}
+      else
+	{
+	  Sciprintf1(indent+1,"matrix([\n");
+	}
+    }
+  
+  indent +=2;
   while (1)
     {
       int last = Min(init+slice,Mat->mn );
-      Sciprintf1(indent+1,"xx___=[");
+      int count = 0;
+      Sciprintf1(indent+1,"[\n");
       
       if ( Mat->rc_type == 'r') 
 	for ( i=init; i < last ; i++) 
 	  {
+	    count++;
 	    Sciprintf1(indent+1,"");
 	    nsp_pr_float(&fmt,Mat->R[i]);
-	    if ( i != last-1) Sciprintf(";\n");
+	    if ( i != last-1)
+	      {
+		Sciprintf(";");
+		if ( count == 10 )
+		  {
+		    Sciprintf("\n");
+		    count = 0;
+		  }
+	      }
 	  }
       else
 	for ( i=init; i < last; i++) 
 	  {
+	    count++;
 	    Sciprintf1(indent+1,"");
 	    nsp_pr_complex (&fmt,Mat->C[i]);
-	    if ( i != last-1) Sciprintf(";\n");
+	    if ( i != last-1)
+	      {
+		Sciprintf(";");
+		if ( count == 10 )
+		  {
+		    Sciprintf("\n");
+		    count = 0;
+		  }
+	      }
 	  }
-      Sciprintf1(indent+1,"];\n");
-      Sciprintf1(indent+1,"x___=[x___;xx___];\n");
+      Sciprintf1(indent+1,"]");
       init = init+slice;
-      if ( init >= Mat->mn) break;
+      if ( init >= Mat->mn)
+	{
+	  break;
+	}
+      else
+	{
+	  Sciprintf("\n");
+	}
     }
-  if ( strcmp(pname,NVOID) != 0) 
+  indent -=2;
+  if ( Mat->m == Mat->mn )
     {
-      Sciprintf1(indent+1,"%s=matrix(x___,%d,%d);\n",pname,Mat->m,Mat->n);
+      Sciprintf1(indent+1,"]\n");
+    }
+  else
+    {
+      Sciprintf1(indent+1,"],%d,%d)\n",Mat->m,Mat->n);
     }
 }
 
