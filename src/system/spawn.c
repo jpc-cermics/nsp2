@@ -210,13 +210,13 @@ void nsp_spawn_destroy(NspSpawn *H)
 	 if ( H->obj->channel_err != NULL) 
 	   {
 	     g_source_remove(H->obj->err_id);
-	     g_io_channel_unref(H->obj->channel_err);
+	     /* g_io_channel_unref(H->obj->channel_err); */
 	     H->obj->channel_err=NULL;
 	   }
 	 if ( H->obj->channel_out != NULL) 
 	   {
 	     g_source_remove(H->obj->out_id);
-	     g_io_channel_unref(H->obj->channel_out);
+	     /* g_io_channel_unref(H->obj->channel_out); */
 	     H->obj->channel_out=NULL;
 	   }
 	 g_spawn_close_pid(H->obj->pid);
@@ -369,7 +369,7 @@ int int_spawn_create(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   NspSpawn *H;
   CheckStdRhs(1,2);
-  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((S = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) 
     {
       Scierror("Error: first argument of %s should be of size > 0\n",NspFname(stack));
@@ -512,7 +512,7 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 {
   GIOChannel  *channel_out=NULL, *channel_err=NULL, *channel_in=NULL;
   GPid pid;
-  nsp_string res,pr;
+  nsp_string res; 
   int stdout_pipe=0, stderr_pipe=0,stdin_pipe=0;
   GError *error = NULL;
   gboolean rep;
@@ -612,22 +612,19 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 
   res = nsp_smatrix_elts_concat(H->obj->out,NULL,0,NULL,0);
   nsp_smatrix_resize(H->obj->out,0,0);
+#if 0
+  /* seams to be for maxima only ? */
   if ( res != NULL && ((pr=strstr(res,"(%i")) != NULL)) 
     {
       if ( pr > res && *(pr-1) == '\n') *(pr-1) = '\0';
       else *pr='\0';
     }
+#endif
   if ( res != NULL) 
     {
       fprintf(stderr,"%s\n",res);
+      nsp_string_destroy(&res);
     }
-  /* 
-  if ( H->obj->active == TRUE ) 
-    {
-      H->obj->active = FALSE;
-      g_spawn_close_pid(H->obj->pid);
-    }
-  */
   return OK;
 }
 
