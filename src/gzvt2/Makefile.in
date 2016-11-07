@@ -10,7 +10,6 @@ all	::  ../../bin/zterm
 	@$(CC) -o ../../bin/zterm @VTE_FILE@ $(CFLAGS)
 
 distclean::
-	@echo cleaning 
 	@$(RM) -f ../../bin/zterm
 
 clean::
