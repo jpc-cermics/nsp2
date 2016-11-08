@@ -912,17 +912,18 @@ main(int argc, char **argv)
     cursor_blink_mode = parse_enum(VTE_TYPE_CURSOR_BLINK_MODE, cursor_blink_mode_string);
 #else
     cursor_blink_mode = parse_enum(VTE_TYPE_TERMINAL_CURSOR_BLINK_MODE, cursor_blink_mode_string);
+#endif
     g_free(cursor_blink_mode_string);
   }
-#endif
+
   if (cursor_shape_string) {
 #if VTE_CHECK_VERSION(0,40,0)
     cursor_shape = parse_enum(VTE_TYPE_CURSOR_SHAPE, cursor_shape_string);
 #else
     cursor_shape = parse_enum(VTE_TYPE_TERMINAL_CURSOR_SHAPE, cursor_shape_string);
+#endif    
     g_free(cursor_shape_string);
   }
-#endif
 
   if (scrollbar_policy_string) {
     scrollbar_policy = parse_enum(GTK_TYPE_POLICY_TYPE, scrollbar_policy_string);
@@ -1110,22 +1111,17 @@ main(int argc, char **argv)
 #endif
 #endif
 
+  if (cursor_color_string) {
+    GdkRGBA rgba;
+    if (parse_color (cursor_color_string, &rgba))
 #if VTE_CHECK_VERSION(0,40,0)
-  if (cursor_color_string) {
-    GdkRGBA rgba;
-    if (parse_color (cursor_color_string, &rgba))
       vte_terminal_set_color_cursor(terminal, &rgba);
-    g_free(cursor_color_string);
-  }
 #else
-  if (cursor_color_string) {
-    GdkRGBA rgba;
-    if (parse_color (cursor_color_string, &rgba))
-      vte_terminal_set_color_cursor_rgba(terminal, &rgba);
+    vte_terminal_set_color_cursor_rgba(terminal, &rgba);
+#endif
     g_free(cursor_color_string);
   }
-#endif
-
+  
 #if VTE_CHECK_VERSION(0,40,0)
   if (highlight_foreground_color_string) {
     GdkRGBA rgba;
@@ -1661,3 +1657,4 @@ button_pressed(GtkWidget *widget, GdkEventButton *event, gpointer data)
   }
   return FALSE;
 }
+
