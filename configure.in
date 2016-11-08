@@ -1219,7 +1219,6 @@ if test xx"$with_gtk" == xx; then
        	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
        fi
      else	
-       # for macosx brew      
        WEBKIT=webkit2gtk-4.0
        PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
        if test "x${have_webkit2}" = "xyes" ; then
