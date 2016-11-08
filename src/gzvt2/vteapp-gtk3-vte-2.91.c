@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * vteapp: from vte-0.40.0 slightly adapted for nsp
- * Copyright (C) 2015 Chancelier Jean-Philippe (ENPC/Cermics).
+ * Copyright (C) 2016 Chancelier Jean-Philippe (ENPC/Cermics).
  *
  */
 
@@ -56,6 +56,7 @@ gdouble def_scale;
 #if VTE_CHECK_VERSION(0,40,0)
 /* exists in VERSION(0,40,0) */
 #else
+/* to be defined for VERSION(0,32,0) */
 static void
 vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
                                            GtkWindow *window);
@@ -73,17 +74,19 @@ window_title_changed(GtkWidget *widget, gpointer win)
 
   g_assert(VTE_TERMINAL(widget));
   g_assert(GTK_IS_WINDOW(win));
+  g_assert(vte_terminal_get_window_title(VTE_TERMINAL(widget))  != NULL);
   window = GTK_WINDOW(win);
-
   gtk_window_set_title(window, vte_terminal_get_window_title(VTE_TERMINAL(widget)));
 }
 
 static void
 icon_title_changed(GtkWidget *widget, gpointer win)
 {
+  /* GtkWindow *window = GTK_WINDOW(win); */
   g_assert(VTE_TERMINAL(widget));
   g_assert(GTK_IS_WINDOW(win));
-
+  /* g_assert(vte_terminal_get_icon_title(VTE_TERMINAL(widget)) != NULL); */
+  
   g_message("Icon title changed to \"%s\".\n",
 	    vte_terminal_get_icon_title(VTE_TERMINAL(widget)));
 }
@@ -117,7 +120,7 @@ static void
 destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
 {
   const char *output_file = g_object_get_data (G_OBJECT (terminal), "output_file");
-#if VTE_CHECK_VERSION(0,40,0)
+
   if (output_file) {
     GFile *file;
     GOutputStream *stream;
@@ -127,9 +130,15 @@ destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
     stream = G_OUTPUT_STREAM (g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &error));
 
     if (stream) {
+#if VTE_CHECK_VERSION(0,40,0)
       vte_terminal_write_contents_sync (terminal, stream,
 					VTE_WRITE_DEFAULT,
 					NULL, &error);
+#else
+      vte_terminal_write_contents (terminal, stream,
+				   VTE_TERMINAL_WRITE_DEFAULT,
+				   NULL, &error);
+#endif
       g_object_unref (stream);
     }
 
@@ -140,7 +149,7 @@ destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
 
     g_object_unref (file);
   }
-#endif
+
   if (GTK_IS_WIDGET(window)) gtk_widget_destroy (window);
   gtk_main_quit ();
 }
@@ -864,6 +873,9 @@ main(int argc, char **argv)
 #if VTE_CHECK_VERSION(0,40,0)
   VteCursorBlinkMode cursor_blink_mode = VTE_CURSOR_BLINK_SYSTEM;
   VteCursorShape cursor_shape = VTE_CURSOR_SHAPE_BLOCK;
+#else
+  VteTerminalCursorBlinkMode cursor_blink_mode = VTE_CURSOR_BLINK_SYSTEM;
+  VteTerminalCursorShape cursor_shape = VTE_CURSOR_SHAPE_BLOCK;
 #endif
   GtkPolicyType scrollbar_policy = GTK_POLICY_ALWAYS;
   VtePtyFlags pty_flags = VTE_PTY_DEFAULT;
@@ -895,16 +907,19 @@ main(int argc, char **argv)
     g_error_free (error);
     return 1;
   }
-#if VTE_CHECK_VERSION(0,40,0)
   if (cursor_blink_mode_string) {
+#if VTE_CHECK_VERSION(0,40,0)
     cursor_blink_mode = parse_enum(VTE_TYPE_CURSOR_BLINK_MODE, cursor_blink_mode_string);
+#else
+    cursor_blink_mode = parse_enum(VTE_TYPE_TERMINAL_CURSOR_BLINK_MODE, cursor_blink_mode_string);
     g_free(cursor_blink_mode_string);
   }
 #endif
-
-#if VTE_CHECK_VERSION(0,40,0)
   if (cursor_shape_string) {
+#if VTE_CHECK_VERSION(0,40,0)
     cursor_shape = parse_enum(VTE_TYPE_CURSOR_SHAPE, cursor_shape_string);
+#else
+    cursor_shape = parse_enum(VTE_TYPE_TERMINAL_CURSOR_SHAPE, cursor_shape_string);
     g_free(cursor_shape_string);
   }
 #endif
@@ -1073,9 +1088,7 @@ main(int argc, char **argv)
 
   /* Set some defaults. */
   vte_terminal_set_audible_bell(terminal, audible);
-#if VTE_CHECK_VERSION(0,40,0)
   vte_terminal_set_cursor_blink_mode(terminal, cursor_blink_mode);
-#endif
   vte_terminal_set_scroll_on_output(terminal, FALSE);
   vte_terminal_set_scroll_on_keystroke(terminal, TRUE);
   vte_terminal_set_scrollback_lines(terminal, lines);
@@ -1104,6 +1117,13 @@ main(int argc, char **argv)
       vte_terminal_set_color_cursor(terminal, &rgba);
     g_free(cursor_color_string);
   }
+#else
+  if (cursor_color_string) {
+    GdkRGBA rgba;
+    if (parse_color (cursor_color_string, &rgba))
+      vte_terminal_set_color_cursor_rgba(terminal, &rgba);
+    g_free(cursor_color_string);
+  }
 #endif
 
 #if VTE_CHECK_VERSION(0,40,0)
@@ -1124,7 +1144,6 @@ main(int argc, char **argv)
 
 #if VTE_CHECK_VERSION(0,40,0)
   if (encoding != NULL) {
-
     if (!vte_terminal_set_encoding(terminal, encoding, &error)) {
       g_printerr("Failed to set encoding: %s\n", error->message);
     }
@@ -1150,8 +1169,10 @@ main(int argc, char **argv)
   }
 #endif
 
-#if VTE_CHECK_VERSION(0,40,0)
+
   vte_terminal_set_cursor_shape(terminal, cursor_shape);
+
+#if VTE_CHECK_VERSION(0,40,0)
   vte_terminal_set_rewrap_on_resize(terminal, rewrap);
 #endif
   /* Set the default font. */
@@ -1183,270 +1204,218 @@ main(int argc, char **argv)
   add_weak_pointer(G_OBJECT(window), &window);
 
   gtk_widget_realize(widget);
-
   
-  if (console) {
-    /* Open a "console" connection. */
-    int consolefd = -1, yes = 1, watch;
-    GIOChannel *channel;
-    consolefd = open("/dev/console", O_RDONLY | O_NOCTTY);
-    if (consolefd != -1) {
-      /* Assume failure. */
-      console = FALSE;
+  if (console) 
+    {
+      /* Open a "console" connection. */
+      int consolefd = -1, yes = 1, watch;
+      GIOChannel *channel;
+      consolefd = open("/dev/console", O_RDONLY | O_NOCTTY);
+      if (consolefd != -1) 
+	{
+	  /* Assume failure. */
+	  console = FALSE;
 #ifdef TIOCCONS
-      if (ioctl(consolefd, TIOCCONS, &yes) != -1) {
-	/* Set up a listener. */
-	channel = g_io_channel_unix_new(consolefd);
-	watch = g_io_add_watch(channel,
-			       G_IO_IN,
-			       read_and_feed,
-			       widget);
-	g_signal_connect_swapped(widget,
-				 "eof",
-				 G_CALLBACK(disconnect_watch),
-				 GINT_TO_POINTER(watch));
-	g_signal_connect_swapped(widget,
-				 "child-exited",
-				 G_CALLBACK(disconnect_watch),
-				 GINT_TO_POINTER(watch));
-	g_signal_connect(widget,
-			 "realize",
-			 G_CALLBACK(take_xconsole_ownership),
-			 NULL);
+	  if (ioctl(consolefd, TIOCCONS, &yes) != -1) {
+	    /* Set up a listener. */
+	    channel = g_io_channel_unix_new(consolefd);
+	    watch = g_io_add_watch(channel,
+				   G_IO_IN,
+				   read_and_feed,
+				   widget);
+	    g_signal_connect_swapped(widget,
+				     "eof",
+				     G_CALLBACK(disconnect_watch),
+				     GINT_TO_POINTER(watch));
+	    g_signal_connect_swapped(widget,
+				     "child-exited",
+				     G_CALLBACK(disconnect_watch),
+				     GINT_TO_POINTER(watch));
+	    g_signal_connect(widget,
+			     "realize",
+			     G_CALLBACK(take_xconsole_ownership),
+			     NULL);
 #ifdef VTE_DEBUG
-	vte_terminal_feed(terminal,
-			  "Console log for ...\r\n",
-			  -1);
+	    vte_terminal_feed(terminal,
+			      "Console log for ...\r\n",
+			      -1);
 #endif
-	/* Record success. */
-	console = TRUE;
-      }
-#endif
-    } else {
-      /* Bail back to normal mode. */
-      g_warning(_("Could not open console.\n"));
-      close(consolefd);
-      console = FALSE;
-    }
-  }
-
-#if VTE_CHECK_VERSION(0,40,0)
-  if (!console) {
-    if (shell) {
-      GError *err = NULL;
-      char **command_argv = NULL;
-      int command_argc;
-      GPid pid = -1;
-      char *free_me = NULL;
-      /*
-	_VTE_DEBUG_IF(VTE_DEBUG_MISC)
-	vte_terminal_feed(terminal, message, -1);
-      */
-      if (command == NULL || *command == '\0')
-	command = free_me = vte_get_user_shell ();
-
-      if (command == NULL || *command == '\0')
-	command = g_getenv ("SHELL");
-
-      if (command == NULL || *command == '\0')
-	command = "/bin/sh";
-
-      if (!g_shell_parse_argv(command, &command_argc, &command_argv, &err) ||
-	  !vte_terminal_spawn_sync(terminal,
-				   pty_flags,
-				   NULL,
-				   command_argv,
-				   env_add,
-				   G_SPAWN_SEARCH_PATH,
-				   NULL, NULL,
-				   &pid,
-				   NULL /* cancellable */,
-				   &err)) {
-	g_warning("Failed to fork: %s\n", err->message);
-	g_error_free(err);
-      } else {
-	/* g_print("Fork succeeded, PID %d\n", pid); */
-      }
-
-      g_free (free_me);
-      g_strfreev(command_argv);
-    } else {
-#ifdef HAVE_FORK
-      GError *err = NULL;
-      VtePty *pty;
-      pid_t pid;
-      int i;
-
-      pty = vte_pty_new_sync(VTE_PTY_DEFAULT, NULL, &err);
-      if (pty == NULL) {
-	g_printerr ("Failed to create PTY: %s\n", err->message);
-	g_error_free(err);
-	return 1;
-      }
-
-      pid = fork();
-      switch (pid) {
-      case -1:
-	/* abnormal */
-	g_warning("Error forking: %s",
-		  g_strerror(errno));
-	g_object_unref(pty);
-	break;
-      case 0:
-	/* child */
-	vte_pty_child_setup(pty);
-
-	for (i = 0; ; i++) {
-	  switch (i % 3) {
-	  case 0:
-	  case 1:
-	    g_print("%d\n", i);
-	    break;
-	  case 2:
-	    g_printerr("%d\n", i);
-	    break;
+	    /* Record success. */
+	    console = TRUE;
 	  }
-	  sleep(1);
-	}
-	_exit(0);
-	break;
-      default:
-	vte_terminal_set_pty(terminal, pty);
-	g_object_unref(pty);
-	vte_terminal_watch_child(terminal, pid);
-	g_print("Child PID is %d (mine is %d).\n",
-		(int) pid, (int) getpid());
-	/* normal */
-	break;
-      }
-#endif /* HAVE_FORK */
-    }
-  }
-#else
-  if (!console) {
-    if (shell) {
-      GError *err = NULL;
-      char **command_argv = NULL;
-      int command_argc;
-      GPid pid = -1;
-      /*
-	_VTE_DEBUG_IF(VTE_DEBUG_MISC)
-	vte_terminal_feed(terminal, message, -1);
-      */
-      if (command == NULL || *command == '\0')
-	command = vte_get_user_shell ();
-
-      if (command == NULL || *command == '\0')
-	command = g_getenv ("SHELL");
-
-      if (command == NULL || *command == '\0')
-	command = "/bin/sh";
-      if (!g_shell_parse_argv(command, &command_argc, &command_argv, &err) ||
-	  !vte_terminal_fork_command_full(terminal,
-					  pty_flags,
-					  NULL,
-					  command_argv,
-					  env_add,
-					  G_SPAWN_SEARCH_PATH
-					  /* | G_SPAWN_STDOUT_TO_DEV_NULL  |  G_SPAWN_STDERR_TO_DEV_NULL */,
-					  NULL, NULL,
-					  &pid,
-					  &err)) {
-	g_warning("Failed to fork: %s\n", err->message);
-	g_error_free(err);
-      } else {
-	/* g_print("Fork succeeded, PID %d\n", pid); */
-      }
-
-      g_strfreev(command_argv);
-#ifdef VTE_DEBUG
-      if (command == NULL) {
-	vte_terminal_feed_child(terminal,
-				"pwd\n", -1);
-      }
 #endif
-    } else {
-      long i;
-      G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-      i = vte_terminal_forkpty(terminal,
-			       env_add, working_directory,
-			       TRUE, TRUE, TRUE);
-      G_GNUC_END_IGNORE_DEPRECATIONS;
-      switch (i) {
-      case -1:
-	/* abnormal */
-	g_warning("Error in vte_terminal_forkpty(): %s",
-		  strerror(errno));
-	break;
-      case 0:
-	/* child */
-	for (i = 0; ; i++) {
-	  switch (i % 3) {
-	  case 0:
-	  case 1:
-	    g_print("%ld\n", i);
-	    break;
-	  case 2:
-	    g_printerr("%ld\n", i);
-	    break;
-	  }
-	  sleep(1);
 	}
-	_exit(0);
-	break;
-      default:
-	g_print("Child PID is %ld (mine is %ld).\n",
-		(long) i, (long) getpid());
-	/* normal */
-	break;
-      }
+      else 
+	{
+	  /* Bail back to normal mode. */
+	  g_warning(_("Could not open console.\n"));
+	  close(consolefd);
+	  console = FALSE;
+	}
     }
-  }
-#endif
-
   
-  /* DEPRECATED:
-  {
-    GdkColor *color = NULL;
-    GtkStyleContext *context = gtk_widget_get_style_context (widget);
-    if (context != NULL)
-      {
-	GdkRGBA background,foreground;
-	gtk_style_context_get_background_color (context,GTK_STATE_FLAG_NORMAL,&background);
-	gtk_style_context_get_color (context,GTK_STATE_FLAG_NORMAL,&foreground);
-	if (!reverse)
-	  {
+  if (!console) 
+    {
+      if (shell) 
+	{
+	  GError *err = NULL;
+	  char **command_argv = NULL;
+	  int command_argc;
+	  GPid pid = -1;
+	  char *free_me = NULL;
+	  /*
+	    _VTE_DEBUG_IF(VTE_DEBUG_MISC)
+	    vte_terminal_feed(terminal, message, -1);
+	  */
+	  if (command == NULL || *command == '\0')
+	    command = free_me = vte_get_user_shell ();
+	  
+	  if (command == NULL || *command == '\0')
+	    command = g_getenv ("SHELL");
+	  
+	  if (command == NULL || *command == '\0')
+	    command = "/bin/sh";
+
+	  if (!g_shell_parse_argv(command, &command_argc, &command_argv, &err) ||
 #if VTE_CHECK_VERSION(0,40,0)
-	    vte_terminal_set_colors(terminal, &foreground, &background, NULL, 0);
+	      !vte_terminal_spawn_sync(terminal,
+				       pty_flags,
+				       NULL,
+				       command_argv,
+				       env_add,
+				       G_SPAWN_SEARCH_PATH,
+				       NULL, NULL,
+				       &pid,
+				       NULL /* cancellable */,
+				       &err)
 #else
-	    vte_terminal_set_colors_rgba(terminal, &foreground, &background, NULL, 0);
+	    !vte_terminal_fork_command_full(terminal,
+					    pty_flags,
+					    NULL,
+					    command_argv,
+					    env_add,
+					    G_SPAWN_SEARCH_PATH,
+					    NULL, NULL,
+					    &pid,
+					    &err)
 #endif
-	  }
-	  else
+	      )
 	    {
+	      g_warning("Failed to fork: %s\n", err->message);
+	      g_error_free(err);
+	    }
+	  else 
+	    {
+	      /* g_print("Fork succeeded, PID %d\n", pid); */
+	    }
+	  g_free (free_me);
+	  g_strfreev(command_argv);
+	}
+      else
+	{
 #if VTE_CHECK_VERSION(0,40,0)
-	    vte_terminal_set_colors(terminal, &background, &foreground, NULL, 0);
-#else
-	    vte_terminal_set_colors_rgba(terminal, &background, &foreground, NULL, 0);
-#endif
+#ifdef HAVE_FORK
+	  GError *err = NULL;
+	  VtePty *pty;
+	  pid_t pid;
+	  int i;
+	  pty = vte_pty_new_sync(VTE_PTY_DEFAULT, NULL, &err);
+	  if (pty == NULL) {
+	    g_printerr ("Failed to create PTY: %s\n", err->message);
+	    g_error_free(err);
+	    return 1;
 	  }
+	  pid = fork();
+	  switch (pid) {
+	  case -1:
+	    /* abnormal */
+	    g_warning("Error forking: %s",
+		      g_strerror(errno));
+	    g_object_unref(pty);
+	    break;
+	  case 0:
+	    /* child */
+	    vte_pty_child_setup(pty);
+	    for (i = 0; ; i++) {
+	      switch (i % 3) {
+	      case 0:
+	      case 1:
+		g_print("%d\n", i);
+		break;
+	      case 2:
+		g_printerr("%d\n", i);
+		break;
+	      }
+	      sleep(1);
+	    }
+	    _exit(0);
+	    break;
+	  default:
+	    vte_terminal_set_pty(terminal, pty);
+	    g_object_unref(pty);
+	    vte_terminal_watch_child(terminal, pid);
+	    g_print("Child PID is %d (mine is %d).\n",
+		    (int) pid, (int) getpid());
+	    /* normal */
+	    break;
 	  }
-  }
-  */
+#endif /* HAVE_FORK */
+#else 
+	  long i;
+	  G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+	  i = vte_terminal_forkpty(terminal,
+				   env_add, working_directory,
+				   TRUE, TRUE, TRUE);
+	  G_GNUC_END_IGNORE_DEPRECATIONS;
+	  switch (i) {
+	  case -1:
+	    /* abnormal */
+	    g_warning("Error in vte_terminal_forkpty(): %s",
+		      strerror(errno));
+	    break;
+	  case 0:
+	    /* child */
+	    for (i = 0; ; i++) {
+	      switch (i % 3) {
+	      case 0:
+	      case 1:
+		g_print("%ld\n", i);
+		break;
+	      case 2:
+		g_printerr("%ld\n", i);
+		break;
+	      }
+	      sleep(1);
+	    }
+	    _exit(0);
+	    break;
+	  default:
+	    g_print("Child PID is %ld (mine is %ld).\n",
+		    (long) i, (long) getpid());
+	    /* normal */
+	    break;
+	  }
+#endif 
+	}
+    }
   
   if (geometry) {
     if (!gtk_window_parse_geometry (GTK_WINDOW(window), geometry)) {
       g_warning (_("Could not parse the geometry spec passed to --geometry"));
     }
   } else {
+#if VTE_CHECK_VERSION(0,40,0)
     /* As of GTK+ 2.91.0, the default size of a window comes from its minimum
      * size not its natural size, so we need to set the right default size
      * explicitly */
     gtk_window_set_default_geometry (GTK_WINDOW (window),
 				     vte_terminal_get_column_count (terminal),
 				     vte_terminal_get_row_count (terminal));
+#else
+    gtk_window_set_default_size (GTK_WINDOW (window), 600,400);
+#endif 
   }
-
+  
 #ifdef NSP
   gtk_widget_grab_focus (widget);
   gtk_widget_show_all(window);
@@ -1467,10 +1436,12 @@ main(int argc, char **argv)
       sleep(60);
     }
   }
-
   return 0;
 }
 
+#if VTE_CHECK_VERSION(0,40,0)
+/* already exists in VTE_CHECK_VERSION(0,40,0) */
+#else 
 /* Just some arbitrary minimum values */
 #define MIN_COLUMNS (16)
 #define MIN_ROWS    (2)
@@ -1491,8 +1462,6 @@ main(int argc, char **argv)
  * @terminal must be realized (see gtk_widget_get_realized()).
  */
 
-#if VTE_CHECK_VERSION(0,40,0)
-#else 
 static void
 vte_terminal_get_geometry_hints(VteTerminal *terminal,
                                 GdkGeometry *hints,
@@ -1518,12 +1487,7 @@ vte_terminal_get_geometry_hints(VteTerminal *terminal,
   hints->min_width   = hints->base_width  + hints->width_inc  * min_columns;
   hints->min_height  = hints->base_height + hints->height_inc * min_rows;
 }
-#endif
 
-
-#if VTE_CHECK_VERSION(0,40,0)
-/* exists in VERSION(0,40,0) */
-#else
 static void
 vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
                                            GtkWindow *window)
@@ -1541,6 +1505,7 @@ vte_terminal_set_geometry_hints_for_window(VteTerminal *terminal,
 				GDK_HINT_MIN_SIZE |
 				GDK_HINT_BASE_SIZE);
 }
+
 static void
 vte_terminal_set_font_scale(VteTerminal *terminal,
                             gdouble scale)
