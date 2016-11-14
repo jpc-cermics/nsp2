@@ -5,8 +5,12 @@
 SHELL = /bin/sh
 TOP=.
 
+ifneq ($(wildcard Path.incl),)
 include Path.incl
+endif
+ifneq ($(wildcard Makefile.incl),)
 include Makefile.incl
+endif
 
 .NOTPARALLEL:
 
@@ -117,8 +121,8 @@ tests:
 	@echo "  to test the  distribution"
 
 distclean::
-	$(RM) config.cache config.log config.status .binary foo.f foo.o \
-	conftest conftest.c so_locations
+	@$(RM) config.cache config.log config.status .binary foo.f foo.o \
+	  conftest conftest.c so_locations
 
 tarbindist:
 	@echo tarbindist not supported by nsp 
