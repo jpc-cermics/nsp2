@@ -1452,7 +1452,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   int dp=user_pref.pr_depth;
   int at=user_pref.list_as_tree;
   int cr=user_pref.color;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0,tree=FALSE,color=TRUE,base64=FALSE;
   char *name = NULL;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 			    { "color",s_bool,NULLOBJ,-1},
@@ -1461,6 +1461,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
 			    { "latex",s_bool,NULLOBJ,-1},
 			    { "name",string,NULLOBJ,-1},
 			    { "table",s_bool,NULLOBJ,-1},
+			    { "base64",s_bool,NULLOBJ,-1},
 			    { NULL,t_end,NULLOBJ,-1}};
 
   nsp_option info_opts[] ={{ "depth", s_int,NULLOBJ,-1},
@@ -1492,7 +1493,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
   else
     {
       if ( get_optional_args(stack, rhs, opt, print_opts,&as_read,&color,&depth,
-			     &indent,&latex,&name,&table) == FAIL)
+			     &indent,&latex,&name,&table,&base64) == FAIL)
 	return RET_BUG;
     }
 
@@ -1533,7 +1534,36 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
 	{
 	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
 	}
-      pr(object,indent,name,0);
+      if ( base64 == FALSE )
+	{
+	  pr(object,indent,name,0);
+	}
+      else
+	{
+	  /* same as print as read but we use serialization and base64coding 
+	   * this can be usefull to send data between nsp instances 
+	   */
+	  const char *pname = (name != NULL) ? name : NSP_OBJECT(object)->name;
+	  NspObject *Obj = nsp_object_serialize(object);
+	  NspSMatrix *S=NULL;
+	  nsp_string res1;
+	  if (( res1=nsp_serial_to_base64((NspSerial *) Obj))== NULL) return FALSE;
+	  if (( S= (NspSMatrix *) nsp_smatrix_split_nc( res1,70)) == NULL)
+	    return RET_BUG;
+	  if ( strcmp(pname,NVOID) != 0) 
+	    {
+	      Sciprintf1(indent,"%s=base64toserial(\n",pname);
+	    }
+	  else
+	    {
+	      Sciprintf1(indent+1,"base64toserial(\n");
+	    }
+	  nsp_smatrix_print(S,indent+2,NULL,1);
+	  Sciprintf1(indent,").unserialize[]\n");
+	  nsp_object_destroy(&Obj);
+	  nsp_smatrix_destroy(S);
+	  nsp_string_destroy(&res1);
+	}
       user_pref.pr_as_read_syntax= kp;
       user_pref.pr_depth= dp;
       user_pref.list_as_tree=at;
