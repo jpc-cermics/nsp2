@@ -66,6 +66,8 @@ static char *command_generator (const char *, int);
 static char **nsp_completion (const char *, int, int);
 #endif 
 
+static char *nsp_fgets(char *str, int n, FILE *stream);
+
 /**
  * nsp_intialize_reader:
  * @void: 
@@ -153,12 +155,14 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
   
   set_is_reading(TRUE);
   
+  /* reentrant counter */
+  enter++;
+  rl_getc_function = my_getc;
+
   if( !tty) 
-    { 
+    {
+      /* if not an interactive terminal use fgets */
       static int first = 0;
-      /* if not an interactive terminal use fgets 
-       * should be changed for gtk events FIXME
-       */ 
       if ( nsp_from_texmacs() == TRUE )
 	{
 	  if ( first == 0 ) 
@@ -172,29 +176,16 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 	}
       else 
 	{
-	  fputs("-nsp->",stdout);
+	  fputs(prompt,stdout);
 	  fflush (stdout);
 	}
-      *eof = (fgets(buffer, *buf_size, stdin) == NULL);
+      *eof = (nsp_fgets(buffer, *buf_size -1, stdin) == NULL);
       *len_line = strlen(buffer);
-      /* remove newline character if there */
-      if(*len_line >= 2)
-	{
-	  if ( buffer[*len_line - 2] == '\r' && buffer[*len_line - 1] == '\n' )
-	    *len_line -= 2;
-	  else if ( buffer[*len_line - 1] == '\n') (*len_line)--;
-	}
-      else if( *len_line >= 1) 
-	{
-	  if ( buffer[*len_line - 1] == '\n') (*len_line)--;
-	}
       if ( nsp_from_texmacs() == TRUE )  fputs("\002verbatim: ",stdout);
+      /* fprintf(stdout,"[[%s]]\n",buffer);  */
       return;
     }
-  /* reentrant counter */
-  enter++;
-  rl_getc_function = my_getc;
-  
+      
   if ( sigsetjmp(my_env,1)) 
     {
       /* return from longjmp: we get here if there's a menu command 
@@ -218,10 +209,12 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
     } 
   else 
     {
-      signal (SIGINT, controlC_handler_void);
-      line = readline((use_prompt) ? prompt : "" );
-      use_prompt=1;
-      signal (SIGINT, controlC_handler);
+      {
+	signal (SIGINT, controlC_handler_void);
+	line = readline((use_prompt) ? prompt : "" );
+	use_prompt=1;
+	signal (SIGINT, controlC_handler);
+      }
     }
   if (hist && line && *line != '\0') 
     {
@@ -251,6 +244,32 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
  end: 
   enter--;
   return;
+}
+
+/* 
+ * similar to fgets but events are checked inside my_getc 
+ */
+
+static char *nsp_fgets(char *str, int n, FILE *stream)
+{
+  int count = 0, c;
+  while (1)
+    {
+      if (count == n-1 )
+	{
+	  str[count]='\0';
+	  return str;
+	}
+      if ((c= my_getc(stream))== 0 ) return NULL;
+      str[count]=c;
+      if ( c == '\n')
+	{
+	  str[count]='\0';
+	  if ( count >=1 && str[count-1]  == '\r') str[count-1]='\0';
+	  return str;
+	}
+      count++;
+    }
 }
 
 /*
