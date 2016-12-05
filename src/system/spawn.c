@@ -1,3 +1,24 @@
+/* Nsp
+ * Copyright (C) 2006-2016 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * system utilities.
+ *------------------------------------------------------------------*/
+
 #include <gtk/gtk.h>
 #include <nsp/nsp.h>
 #define  Spawn_Private 
@@ -385,8 +406,17 @@ int int_spawn_create(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( prompt_check != NULL )
     {
-      if ((H->obj->prompt_check = nsp_string_copy(prompt_check)) == (nsp_string) 0) 
-	return RET_BUG;
+      if (strcmp( prompt_check,"-nsp->") == 0)
+	{
+	  /* not to be blocked in pauses */
+	  if ((H->obj->prompt_check = nsp_string_copy("-nsp-")) == (nsp_string) 0) 
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ((H->obj->prompt_check = nsp_string_copy(prompt_check)) == (nsp_string) 0) 
+	    return RET_BUG;
+	}
     }
   if ( nsp_g_spawn_cmd(S->S,H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -431,6 +461,7 @@ static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
   gtk_main();
   if ( self->obj->out_smat == FALSE) goto bug;
   if ( self->obj->out == NULL)  goto bug;
+  if ( self->obj->out->mn == 0 ) goto bug;
   if ((Res = nsp_smatrix_split_string(self->obj->out->S[0],"\n", 0))== NULL) goto bug;
   Res->m = Res->n ; Res->n = 1; /* transpose */
   nsp_smatrix_resize(self->obj->out,0,0);
@@ -444,6 +475,39 @@ static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
  bug:
   if ( self->obj->out != NULL) nsp_smatrix_resize(self->obj->out,0,0);
   return RET_BUG;
+}
+
+static int _wrap_spawn_send_nowait(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int i;
+  NspSMatrix *S;
+  CheckLhs(0,1);
+  CheckStdRhs(1,1);
+  if ( self->obj->active == FALSE ) 
+    {
+      Scierror("Error: connection to spawned program is not active\n");
+      return RET_BUG;
+    }
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( S->mn == 0 ) return 0;
+  for ( i = 0 ; i < S->mn ; i++) 
+    {
+      gsize bytes_written;
+      int status;
+      status = g_io_channel_write_chars(self->obj->channel_in,S->S[i],strlen(S->S[i]),&bytes_written, NULL);
+      if ( status != G_IO_STATUS_NORMAL) 
+	{
+	  Scierror("Error: something wrong when sending characters to child\n");
+	  return RET_BUG;
+	}
+      status = g_io_channel_write_chars(self->obj->channel_in,"\n",1,&bytes_written, NULL);
+      if ( status != G_IO_STATUS_NORMAL) 
+	{
+	  Scierror("Error: something wrong when sending characters to child\n");
+	  return RET_BUG;
+	}
+    }
+  return 0;
 }
 
 /* method close: close a spawned process. 
@@ -477,6 +541,7 @@ static int _wrap_spawn_close(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
 
 static NspMethods spawn_methods[] = {
   {"send",(nsp_method *) _wrap_spawn_send},
+  {"send_nowait",(nsp_method *) _wrap_spawn_send_nowait},
   {"close",(nsp_method *) _wrap_spawn_close},
   { NULL, NULL}
 };
@@ -677,11 +742,11 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
 	  if ( S->obj->out == NULL) 
 	    S->obj->out = nsp_smatrix_create("out",0,0,NULL,0);
 	  buf[bytes_read]='\0';
-	  /* Sciprintf("{%s}",buf); */
+	  /* Sciprintf("{%s}\n",buf); */
 	  if ( S->obj->prompt_check == NULL) 
 	    {
 	      Sciprintf("%s",buf);
-	      /* XXXXX  here we need to be able to flush nsp stdout */
+	      /*  here we need to be able to flush nsp stdout */
 	      fflush(stdout);
 	    }
 	  else 
