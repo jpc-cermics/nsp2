@@ -2126,7 +2126,7 @@ fi
 
 builtin(include,config/ocaml.m4)
 
-AC_CHECK_FILE_ALWAYS("toolboxes/compilers/scicosc/config/Config.mk.in",[scicos_scicosc="yes"], [scicos_scicosc="no"])
+AC_CHECK_FILE_ALWAYS("toolboxes/compilers/Makefile.incl.in",[scicos_scicosc="yes"], [scicos_scicosc="no"])
 CAML_OUTPUTS=
 TOOLBOX_COMPILERS=
 
@@ -2151,11 +2151,7 @@ if test "$scicos_scicosc" = "yes"; then
    COMPILERS_SRC_INSTALL_DIR=../..
    AC_SUBST(COMPILERS_SRC_INSTALL_DIR)
 
-   CAML_OUTPUTS="toolboxes/compilers/config/Config.mk \
-   toolboxes/compilers/scicosc/config/Config.mk \
-   toolboxes/compilers/modelicac/config/Config.mk \
-   toolboxes/compilers/xml2translator/config/Config.mk \
-   toolboxes/compilers/translator/modelica/config/Config.mk"
+   CAML_OUTPUTS="toolboxes/compilers/Makefile.incl"
 fi 
 
 #########################
