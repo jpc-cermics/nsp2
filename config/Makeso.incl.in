@@ -128,6 +128,54 @@ $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
 	@echo "Compiling $<"
 	@$(FLTCOMPILE)  -c $<
 
+# used when cross compiling
+# if we are cross compiling
+# produce also a lib file
+
+CROSS=@CROSS@
+
+ifeq ($(CROSS),yes)
+all :: $(LIBRARY_NAME).lib
+
+ifeq ($(TARGET_MACHINE),x64)
+LIBEXE=x86_64-w64-mingw32-lib.exe
+else
+LIBEXE=i686-w64-mingw32-lib.exe
+endif
+
+$(LIBRARY_NAME).lib: $(LIBRARY_NAME).la $(LIBRARY_NAME).def
+	@$(LIBEXE) /machine:$(TARGET_MACHINE) /def:$(LIBRARY_NAME).def /out:$(LIBRARY_NAME).lib
+
+distclean::
+	@$(RM) $(LIBRARY_NAME).dll $(LIBRARY_NAME).dll.a $(LIBRARY_NAME).exp
+	@$(RM) $(LIBRARY_NAME).la $(LIBRARY_NAME).def $(LIBRARY_NAME).lib
+
+$(LIBRARY_NAME).def: $(OBJS)
+	@echo "Creation of $(LIBRARY_NAME).def"
+	@$(CC) -shared -o $(LIBRARY_NAME)1.dll $(OBJS) \
+		-Wl,--output-def,$(LIBRARY_NAME).def \
+		-Wl,--export-all-symbols -Wl,--allow-multiple-definition \
+		-Wl,--enable-auto-import $(LIBS) -Xlinker --out-implib -Xlinker $(LIBRARY_NAME)1.dll.a \
+		-lgfortran  $(CFLAGS) $(LDFLAGS) -L$(SCIDIR)/bin -lnsp $(OTHERLIBS) 
+	@$(RM) -f  $(LIBRARY_NAME)1.* 
+
+endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
