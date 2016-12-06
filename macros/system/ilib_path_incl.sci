@@ -21,6 +21,9 @@ function ilib_path_incl(relative=%t)
       // compute a relative path 
       k = size(dir_s,'*') - size(nsp_s,'*');
       nsp=file('join',smat_create(1,k,".."));
+    else
+      k =  size(dir_s,'*');
+      nsp=file('join',[smat_create(k-1,1,"..");nsp_s(2:$)]);
     end
   end
   F=fopen('Path.incl',mode='w');
