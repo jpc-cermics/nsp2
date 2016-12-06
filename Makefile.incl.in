@@ -23,6 +23,8 @@ GNUMAKEFLAGS=--no-print-dir
 RANLIB = @RANLIB@
 TERMCAPLIB = @TERMCAPLIB@
 LIBTOOL= @LIBTOOL@
+CROSS=@CROSS@
+TARGET_MACHINE=@TARGET_MACHINE@
 
 # 
 # nsp linking is performed by Makefiles in config/
