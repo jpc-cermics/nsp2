@@ -2706,6 +2706,10 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 
       if (! fp) target = s_target ;
 
+      /* XXXX: to be done, when target is s_target we should detect 
+       * overflow !
+       */
+            
       switch (AST (ast_cnt, pf_type))
 	{
 	case AST (0, PF_C):
