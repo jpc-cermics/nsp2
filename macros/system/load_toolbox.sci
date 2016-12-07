@@ -1,4 +1,4 @@
-function load_toolbox(name)
+function load_toolbox(name,register=%t)
 
   function register_toolbox(name)
     if ~file('exists','~/.nsp') then 
@@ -81,12 +81,14 @@ function load_toolbox(name)
     if ~ok then 
       error(catenate(lasterror()));
     else
-      register_toolbox(full_name);
-      //      val = x_message(sprintf('Do you  want to load %s at startup ?',full_name),["gtk-yes","gtk-no"]);
-      // if val == 1 then  end
-      if size(H,1) > 0 then 
-	// resume could be changed to do nothing when called with 0-args
-	resume(H(:));
+      if register then 
+	register_toolbox(full_name);
+	//      val = x_message(sprintf('Do you  want to load %s at startup ?',full_name),["gtk-yes","gtk-no"]);
+	// if val == 1 then  end
+	if size(H,1) > 0 then 
+	  // resume could be changed to do nothing when called with 0-args
+	  resume(H(:));
+	end
       end
     end
   else
