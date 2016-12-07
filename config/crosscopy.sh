@@ -19,6 +19,7 @@ fi
 
 if [ -d "/usr/$dist" ]; then
     echo populate bin with dlls from cross compiler 
+    cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
     cp -f /usr/$dist/bin/icudata56.dll bin/
     cp -f /usr/$dist/bin/icui18n56.dll bin/
     cp -f /usr/$dist/bin/icuuc56.dll bin/
