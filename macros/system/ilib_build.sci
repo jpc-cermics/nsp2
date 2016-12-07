@@ -502,9 +502,18 @@ function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
       stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
       stdout = catenate(stdout,sep="   ");
       if ~ok then
-	printf('   '+stdout + '\n');
-	stderr = catenate(stderr,sep="\n   ");
-	printf('   '+stderr + '\n');
+	printf('   failed to compile %s\n',files(i));
+	if length(stdout)<>0 then 
+	  printf('   '+stdout + '\n');
+	end
+	if length(stderr)<>0 then 
+	  stderr = catenate(stderr,sep="\n   ");
+	  printf('   '+stderr + '\n');
+	end
+	if length(msgerr)<>0 then
+	  msgerr = catenate(msgerr,sep="\n   ");
+	  printf('   '+ msgerr + '\n');
+	end
 	break;
       else
 	// XXXX here it should be possible to see the warnings 
