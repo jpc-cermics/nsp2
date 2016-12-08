@@ -44,7 +44,8 @@ function demo_main_window()
   // B('stack') = demo_stack,
   B('assistant') = demo_assistant,
   B('gmenumodel') = demo_gmenumodel,
-
+  B('revealer') = demo_revealer,
+  
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]
