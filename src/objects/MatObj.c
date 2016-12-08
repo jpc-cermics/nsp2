@@ -3077,8 +3077,7 @@ static int int_mx_gen11 (Stack stack, int rhs, int opt, int lhs, M11 F)
     }
   if ((HMat = GetMatCopy (stack, 1)) == NULLMAT)
     return RET_BUG;
-  if (((*F) (HMat)) < 0)
-    return RET_BUG;
+  if (((*F) (HMat)) == FAIL)  return RET_BUG;
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;
 }

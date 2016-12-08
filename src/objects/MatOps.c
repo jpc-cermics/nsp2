@@ -3820,7 +3820,7 @@ int nsp_mat_erf(NspMatrix *A)
     }
   else
     {
-      Scierror("Erf function argument must be real\n");
+      Scierror("Error: argument of function erf must be real\n");
       return(FAIL);
     }
   return(OK);
@@ -3844,7 +3844,7 @@ int nsp_mat_erfc(NspMatrix *A)
     }
   else
     {
-      Scierror("Erf function argument must be real\n");
+      Scierror("Error: argument of function erf must be real\n");
       return(FAIL);
     }
   return(OK);
@@ -3898,7 +3898,7 @@ int nsp_mat_polar(NspMatrix *A, NspMatrix *B)
   int i ;
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
     {
-      Scierror("MatPolar: arguments should be real\n");
+      Scierror("Error: arguments of polar should be reals\n");
       return(FAIL);
     }
   if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
@@ -3941,13 +3941,13 @@ int nsp_mat_nearfloat(int dir, NspMatrix *x)
 
   if ( x->rc_type == 'c' ) 
     {
-      Scierror("nearfloat: second argument should be real\n");
+      Scierror("Error: second argument of nearfloat should be real\n");
       return FAIL;
     }
 
   if ( base != 2 )
     {
-      Scierror("nearfloat is not adapted for floating point arithmetic with base radix not 2\n");
+      Scierror("Error: nearfloat is not adapted for floating point arithmetic with base radix not 2\n");
       return FAIL;
     }
 
@@ -4018,7 +4018,7 @@ int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
   int i ;
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
     {
-      Scierror("iand: arguments should be real\n");
+      Scierror("Error: arguments of iand should be reals\n");
       return(FAIL);
     }
   for ( i = 0 ; i < A->mn ; i++) 
@@ -4042,7 +4042,7 @@ int nsp_mat_iandu(NspMatrix *A, unsigned int *res)
   int i ;
   if ( A->rc_type == 'c') 
     {
-      Scierror("iand: argument should be real\n");
+      Scierror("Error: arguments of iand should be reals\n");
       return(FAIL);
     }
   *res = (unsigned int) A->R[0];
@@ -4067,7 +4067,7 @@ int nsp_mat_ior(NspMatrix *A, NspMatrix *B)
   int i ;
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
     {
-      Scierror("ior: arguments should be real\n");
+      Scierror("Error: ior arguments should be real\n");
       return(FAIL);
     }
   for ( i = 0 ; i < A->mn ; i++) 
@@ -4092,7 +4092,7 @@ int nsp_mat_ishift(NspMatrix *A,int shift,char dir)
   int i ;
   if ( A->rc_type == 'c' )
     {
-      Scierror("ishit: argument should be real\n");
+      Scierror("Error: ishift argument should be real\n");
       return(FAIL);
     }
   if ( dir == 'r' )
@@ -4120,7 +4120,7 @@ int nsp_mat_ioru(NspMatrix *A, unsigned int *res)
   int i ;
   if ( A->rc_type == 'c') 
     {
-      Scierror("ior: argument should be real\n");
+      Scierror("Error: ior argument should be real\n");
       return(FAIL);
     }
   *res = (unsigned int) A->R[0];
