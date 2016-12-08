@@ -96,6 +96,14 @@
   (gtype-id "GDK_TYPE_VISUAL")
 )
 
+
+(define-object GdkCursor
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkCursor")
+  (gtype-id "GDK_TYPE_CURSOR")
+  )
+
 ;; Boxed types
 ;; ----------------------------
 
@@ -118,17 +126,6 @@
     '("guint16" "red")
     '("guint16" "green")
     '("guint16" "blue")
-  )
-)
-
-(define-boxed GdkCursor
-  (in-module "Gdk")
-  (c-name "GdkCursor")
-  (gtype-id "GDK_TYPE_CURSOR")
-  (copy-func "gdk_cursor_ref")
-  (release-func "gdk_cursor_unref")
-  (fields
-    '("GdkCursorType" "type")
   )
 )
 

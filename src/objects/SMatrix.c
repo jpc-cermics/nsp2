@@ -322,6 +322,25 @@ NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,un
 }
 
 /**
+ * nsp_smatrix_create_from_string:
+ * @name: object name 
+ * @val: string 
+ *  
+ * creates a  new #NspSMatrix using a copy of given string.
+ * 
+ * Return value:  a new #NspSMatrix or %NULLSMAT 
+ **/
+
+NspSMatrix*nsp_smatrix_create_from_string(const char *name,const char *val)
+{
+  NspSMatrix *Loc;
+  if ( ( Loc =nsp_smatrix_create_with_length(name,1,1,-1) ) == NULLSMAT) 
+    return(NULLSMAT);
+  if ((Loc->S[0] =nsp_string_copy(val)) == (nsp_string) 0) return(NULLSMAT);
+  return(Loc);
+}
+
+/**
  * nsp_smatrix_copy:
  * @A: a #NspSMatrix 
  * 

@@ -1065,14 +1065,6 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
   return count;
 }
 
-static NspSMatrix*nsp_smatrix_create_from_string(const char *name,const char *val)
-{
-  NspSMatrix *Loc;
-  if ( ( Loc =nsp_smatrix_create_with_length(name,1,1,-1) ) == NULLSMAT) 
-    return(NULLSMAT);
-  if ((Loc->S[0] =nsp_string_copy(val)) == (nsp_string) 0) return(NULLSMAT);
-  return(Loc);
-}
 
 static int int_hcreate_from_smatrix(Stack stack, int rhs, int opt, int lhs)
 {

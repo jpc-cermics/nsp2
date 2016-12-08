@@ -23,20 +23,20 @@
 
 /* NspGdkCursor */
 
-#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
 
 /*
- * NspGdkCursor inherits from GBoxed
+ * NspGdkCursor inherits from GObject
  * just change some type attributes 
  */
 
-typedef NspGBoxed NspGdkCursor ;
-typedef NspTypeGBoxed NspTypeGdkCursor ;
+typedef NspGObject NspGdkCursor ;
+typedef NspTypeGObject NspTypeGdkCursor ;
 
 extern int nsp_type_gdkcursor_id;
 extern NspTypeGdkCursor *nsp_type_gdkcursor;
 
-/* type instances for gboxed */
+/* type instances for gobject */
 
 NspTypeGdkCursor *new_type_gdkcursor(type_mode mode);
 

@@ -210,10 +210,10 @@ static int gboxed_neq(NspGBoxed *A, NspObject *B)
 
 void gboxed_destroy(NspGBoxed *self)
 {
-  /*
-     Scierror("==>destroy boxed %s free=%d at Ox%lx\n",
-     g_type_name(self->gtype),
-     self->free_on_dealloc,self);
+  /* 
+  Sciprintf("==>destroy boxed %s free=%d at Ox%lx\n",
+	    g_type_name(self->gtype),
+	    self->free_on_dealloc,self);
   */
   if (self->free_on_dealloc && self->boxed) {
     nspg_unblock_threads();

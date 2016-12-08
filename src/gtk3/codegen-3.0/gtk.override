@@ -7,6 +7,7 @@ headers
 
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
+#include <nsp/smatrix.h>
 #include <nsp/cells.h>
 #include <nsp/plist.h>
 #include <nsp/none.h>
@@ -6186,6 +6187,37 @@ _wrap_gtk_file_chooser_dialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+
+%%
+override gtk_file_chooser_get_uris kwargs
+
+static int _wrap_gtk_file_chooser_get_uris(NspGtkFileChooser *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GSList *ret, *tmp;
+  NspList *nsp_list;
+  CheckRhs(0,0);
+  ret =gtk_file_chooser_get_uris(GTK_FILE_CHOOSER(self->obj));
+  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) 
+    { 
+      g_slist_free(ret);		
+      return RET_BUG; 
+    } 
+  for (tmp = ret; tmp != NULL; tmp = tmp->next)  
+    { 
+      NspObject *gtk_obj = (NspObject*) nsp_smatrix_create_from_string("lel",tmp->data);
+      if (gtk_obj == NULL) goto clean ;  
+      if ( nsp_list_end_insert(nsp_list, gtk_obj) == FAIL ) goto clean; 
+    } 
+  MoveObj(stack,1,(NspObject *)nsp_list); 
+  return 1; 
+ clean :  
+  { 
+    g_slist_free(ret);		  
+    nsp_list_destroy(nsp_list); 
+    return RET_BUG; 
+  } 
+}
+
 %%
 override gtk_rc_set_default_files kwargs
 static int

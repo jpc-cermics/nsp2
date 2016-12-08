@@ -17,7 +17,7 @@ function demo_main_window()
   B('drawing areas')= [],// None,
   B('entry')=  demo_entry,
   B('color selection')=  demo_color_selection,
-  B('file selection')=  demo_file_selection,
+  B('file chooser')=  demo_file_chooser,
   B('flipping')=  demo_flipping,
   B('focus')=  demo_focus,
   B('dialogs')=  demo_dialogs,

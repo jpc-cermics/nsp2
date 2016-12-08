@@ -3240,6 +3240,7 @@ let cast_name object_data =
   | "GtkTreeViewColumn" -> "GTK_TREE_VIEW_COLUMN"
   | "GtkWidget" -> "GTK_WIDGET"
   | "GtkWindow" -> "GTK_WINDOW"
+  | "GdkCursor" -> "GDK_CURSOR" (* XXXX just for gtk3 not to be done for gtk2 *)
   | _ -> object_data.od_cast;
 ;;
 
