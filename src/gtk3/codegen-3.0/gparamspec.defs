@@ -1,0 +1,23 @@
+;; -*- scheme -*-
+; object definitions ...
+
+;; this define-struct is just used as a type declaration
+;; for GParamSpec. GParamSpec can then be used in  object definition
+
+(define-struct gvalue
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "GParamSpec")
+  (gtype-id "gvalue")
+)
+
+(define-objectref GParamSpec
+  (in-module "Nsp")
+  (parent "Object")
+  (c-name "NspGParamSpec")
+  (fields
+    '("GParamSpec*" "value" "hidden" "-1" )
+  )
+  (gtype-id "gvalue")
+)
+

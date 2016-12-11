@@ -13,6 +13,7 @@ extern void nsp_initialize_cairo_types(void);
 extern void nsp_initialize_gdk_types(void);
 extern void nsp_initialize_gio_types(void);
 extern void nsp_initialize_glib_types(void);
+extern void nsp_initialize_gparamspec_types(void);
 #ifdef WITH_GI
 extern void nsp_initialize_girepository_types(void);
 #endif 
@@ -39,6 +40,7 @@ void nsp_init_gtk_types(void)
   nsp_initialize_gdk_types();
   nsp_initialize_gio_types();
   nsp_initialize_glib_types();
+  nsp_initialize_gparamspec_types();
 #ifdef WITH_GI
   nsp_initialize_girepository_types();
 #endif

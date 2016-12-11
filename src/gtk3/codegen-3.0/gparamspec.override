@@ -1,0 +1,119 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/gtk/gobject.h>
+
+#ifdef GetGParamSpec
+#undef GetGParamSpec
+#endif
+
+%%
+include-start GParamSpec
+
+/* start: on windows GetGParamSpec exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGParamSpec
+#undef GetGParamSpec
+#endif
+
+%%
+include-public GParamSpec
+
+/* public: on windows GetGParamSpec exists  in wingdi.h ! */
+#include <nsp/objects.h>
+#ifdef GetGParamSpec
+#undef GetGParamSpec
+#endif
+
+%%
+include-private GParamSpec
+
+/* private: */
+static int nsp_GParamSpec_full_copy(NspGParamSpec *H,GParamSpec *v,NspGParamSpec *self);
+static int nsp_print_GParamSpec(int indent,GParamSpec *v,NspGParamSpec *M);
+static int nsp_destroy_GParamSpec(GParamSpec *v,NspGParamSpec *H);
+static int nsp_check_GParamSpec(GParamSpec *v,NspGParamSpec *H);
+
+%%
+override-create GParamSpec
+
+/* override the code for gparamspec creation
+ * we change the function nsp_gparamspec_create
+ * since H->value = value does not work for Gvalue
+ */
+
+static NspGParamSpec *nsp_gparamspec_create_void(const char *name,NspTypeBase *type)
+{
+ NspGParamSpec *H  = (type == NULL) ? new_gparamspec() : type->new();
+ if ( H ==  NULLGPARAMSPEC)
+  {
+   Sciprintf("No more memory\n");
+   return NULLGPARAMSPEC;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLGPARAMSPEC;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_gparamspec_create_partial(NspGParamSpec *H)
+{
+  return OK;
+}
+
+int nsp_gparamspec_check_values(NspGParamSpec *H)
+{
+  if ( nsp_check_GParamSpec(H->obj->value,H) == FAIL ) return FAIL;
+  return OK;
+}
+
+NspGParamSpec *nsp_gparamspec_create(const char *name,GParamSpec *value,NspTypeBase *type)
+{
+  NspGParamSpec *H  = nsp_gparamspec_create_void(name,type);
+  if ( H ==  NULLGPARAMSPEC) return NULLGPARAMSPEC;
+  if ((H->obj = calloc(1,sizeof(nsp_gparamspec))) == NULL) return NULLGPARAMSPEC;
+  H->obj->ref_count=1;
+  H->obj->value = value;
+  g_param_spec_ref (value);
+  return H;
+}
+
+NspGParamSpec *nsp_gparamspec_create_default(const char *name)
+{
+ NspGParamSpec *H  = nsp_gparamspec_create_void(name,NULL);
+ if ( H ==  NULLGPARAMSPEC) return NULLGPARAMSPEC;
+ H->obj = NULL; 
+ return H;
+}
+
+%%
+last
+
+static int nsp_print_GParamSpec(int indent,GParamSpec *v,NspGParamSpec *M)
+{
+  Sciprintf1(indent+1,"gparamspec of type %s\n",G_PARAM_SPEC_TYPE_NAME(v));
+  return 0;
+}
+
+/* we do not really make a full copy */
+
+static int nsp_GParamSpec_full_copy(NspGParamSpec *H,GParamSpec *value,NspGParamSpec *self)
+{
+  H->obj->ref_count=1;
+  H->obj->value = value;
+  g_param_spec_ref (value);
+  return OK;
+}
+
+static int nsp_destroy_GParamSpec(GParamSpec *value,NspGParamSpec *H)
+{
+  g_param_spec_unref (value);
+  return OK;
+}
+
+static int nsp_check_GParamSpec(GParamSpec *v,NspGParamSpec *H)
+{
+  return OK;
+}
+

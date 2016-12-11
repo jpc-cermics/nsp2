@@ -32,14 +32,15 @@
 #include <nsp/hobj.h>
 #include <glib.h>
 #include <nsp/gvariant.h>
-#include "nsp/gtk/gobject.h"
-#include "nsp/gtk/gpointer.h"
-#include "nsp/gtk/gboxed.h"
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/gpointer.h>
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gparamspec.h>
 
-#include "nsp/pr-output.h"
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/seval.h"
+#include <nsp/pr-output.h>
+#include <nsp/interf.h>
+#include <nsp/matutil.h>
+#include <nsp/seval.h>
 
 /* class NspGObject
  * NspGObject inherits from NspObject
@@ -2276,10 +2277,17 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	return (NspObject *)gboxed_create(NVOID,G_VALUE_TYPE(value), g_value_get_boxed(value),FALSE,FALSE,type);
     }
     case G_TYPE_PARAM:
-      /*
-      return nspg_param_spec_new(g_value_get_param(value));
-      */
-      Scierror("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
+      {
+	/*
+	 * Sciprintf("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
+	 * an example of GParamSpec is given in the demo_revealer where a callback 
+	 * is called with a GParamSpec argument.
+	 */
+	GParamSpec *spec = g_value_get_param (value);
+	Sciprintf("nspg_value_as_nspobject: G_TYPE_PARAM (of type %) sis to be done \n",
+		  G_PARAM_SPEC_TYPE_NAME(spec));
+	return (NspObject *) nsp_gparamspec_create(NVOID,spec,NULL);
+      }
       return NULL;
     case G_TYPE_OBJECT:
       {
@@ -2288,21 +2296,8 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	 * if it fails it will return a None
 	 */
 	return (NspObject *) nspgobject_new(NVOID,(GObject *) gobj);
-	/*
-	NspTypeBase *type;
-	GType gtype;
-	gtype = G_OBJECT_TYPE(G_OBJECT(gobj));
-	type = nsp_type_from_gtype(gtype);
-	if ( type == NULL)
-	  {
-	    Sciprintf("Error: get type in gtype failed for gtype %s \n",g_type_name(gtype));
-	    return NULL;
-	  }
-	  return (NspObject *) gobject_create(NVOID,(GObject *)gobj, type);
-	*/
-
       }
-
+      
     case G_TYPE_VARIANT :
       {
 	GVariant *gv= g_value_get_variant(value);
@@ -2324,7 +2319,6 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 	   g_type_name(G_VALUE_TYPE(value)));
   return NULL;
 }
-
 
 /*
  * XXXX : to be stored elsewhere
