@@ -11,6 +11,9 @@
   (gtype-id "gvalue")
 )
 
+;; some gtk callbacks have extra arguments which are GParamSpec
+;; see for example the change_direction callback in demo_revealer 
+
 (define-objectref GParamSpec
   (in-module "Nsp")
   (parent "Object")
