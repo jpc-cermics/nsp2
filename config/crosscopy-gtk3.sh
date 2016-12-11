@@ -16,10 +16,13 @@ else
     version=$2
 fi
 
-
 if [ -d "/usr/$dist" ]; then
     echo populate bin with dlls from cross compiler
-    cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
+    if [ dist = "i686-w64-mingw32" ]; then
+      cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
+    else
+      cp -f /usr/$dist/bin/gspawn-win64*.exe bin/
+    fi
     cp -f /usr/$dist/bin/icudata56.dll bin/
     cp -f /usr/$dist/bin/icui18n56.dll bin/
     cp -f /usr/$dist/bin/icuuc56.dll bin/
