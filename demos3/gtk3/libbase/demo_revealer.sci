@@ -6,7 +6,9 @@ function demo_revealer()
 
   function b = reveal_one ( data)
 
-    function change_direction ( revealer)
+    function change_direction ( revealer, args)
+    // args is a gparamspec 
+    // not used in the callback
       if revealer.get_mapped[] then 
 	revealed = revealer.get_child_revealed[];
 	revealer.set_reveal_child[~revealed];
