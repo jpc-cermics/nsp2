@@ -2539,6 +2539,37 @@ static int int_print_string_as_read (Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+/* code a nsp matrix in C 
+ * the code was obtained with 
+ * printf(f,as_read=%t,base64=%t);
+ */
+/* 
+static char *x[]=
+  { "QG5zcDAxAAAADgAAAAJmAAAAAAAAAQAAAABMAAAATwAAAAAAAAP///9jAAAAAkwAAABPAA",
+    "AAAAAAAv///00AAAACTAAAAE8AAAAAAAAB////PAAAAAJOAAAAAAAAAnkAAAAAAAAFRQAA",
+    "AEwAAABPAAAAAAAAAv///zgAAAACTgAAAAAAAAJmAAAA/////04AAAAAAAACeAAAAAAAAA",
+    "ZFAAAARQAAAEwAAABPAAAAAAAAAf///z4AAAACTAAAAE8AAAAAAAABAAAAjAAAAAJMAAAA",
+    "TwAAAAAAAAL///9NAAAAAkwAAABPAAAAAAAAAf///zwAAAACTgAAAAAAAAJ5AAAAAAAABU",
+    "UAAABMAAAATwAAAAAAAAL///9MAAAAAk4AAAAAAAAEc2luAP////9MAAAATwAAAAAAAAH/",
+    "//9DAAAAAk4AAAAAAAACeAAAAAAAAAZFAAAARQAAAEUAAABFAAAARQAAAEIAAAAAAH//AA",
+    "AABkNlbGxzAAAAAAAACHN5bWJvbHMAAAAAAwAAAAFZAAAAAAB//wAAAAZCSGFzaAAAAAAA",
+    "AANzdAAAAAAACwAAAAYAAAACeQAAAAAAAAUAAAAEYW5zAAAAAAEAAAAIbmFyZ29wdAAAAA",
+    "AEAAAAAngAAAAAAAAGAAAACG5hcmdvdXQAAAAAAwAAAAduYXJnaW4AAAAAAAJZAAAAAAB/",
+    "/wAAAAZDZWxscwAAAAAAAAdsb2NhbHMAAAAAAAcAAAABTgAAAE4AAABOAAAATgAAAE4AAA",
+    "BOAAAATgAAAFkAAAAAAH//AAAABkNlbGxzAAAAAAAADHBlcnNpc3RlbnRzAAAAAAcAAAAB",
+    "TgAAAE4AAABOAAAATgAAAE4AAABOAAAATgAAAEUAAABaAAAA" };
+
+static int int_decode (Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *res;
+  if ((res = nsp_smatrix_create_from_const_table( (const char * const *) x))==NULL)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(res));
+  return 1;
+}
+*/
+
 /*
  * The Interface for basic matrices operation
  */
@@ -2635,6 +2666,7 @@ static OpTab SMatrix_func[]={
   {"s2base64",int_smatrix_to_base64},
   {"base642s",int_base64_to_smatrix},
   {"print_string_as_read",int_print_string_as_read},
+  /* {"decode", int_decode}, */
   {(char *) 0, NULL}
 };
 

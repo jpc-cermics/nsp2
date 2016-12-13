@@ -87,6 +87,12 @@ function demo_cursors (do_widget)
   add_button (section, "grab");
   add_button (section, "grabbing");
 
+  add_button (section, "dnd-ask")
+  add_button (section, "dnd-copy")
+  add_button (section, "dnd-link")
+  add_button (section, "dnd-move")
+  add_button (section, "dnd-none")
+  
   section = add_section (box, "Resize & Scrolling");
   add_button (section, "all-scroll");
   add_button (section, "col-resize");

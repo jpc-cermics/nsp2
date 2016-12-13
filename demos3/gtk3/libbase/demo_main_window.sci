@@ -71,7 +71,7 @@ function demo_main_window()
     button = gtkbutton_new(label=Bk(i1,1))
     func= B.find[Bk(i1,1)]
     if is(func,%types.PList) then
-      button.connect["clicked",func];
+      button.connect["clicked",func,win];
     else
       button.set_sensitive[%f]
     end

@@ -3,8 +3,9 @@
 // timeout are not properly activated
 // (i.e they are losing activation time)
 
-function demo_timeout(_button)
-  dialog = gtkdialog_new()
+function demo_timeout(_button,parent)
+
+  dialog = gtkdialog_new(parent=parent)
   dialog.connect["delete_event", demo_delete];
   dialog.set_title["Timeout Test"];
   label = gtklabel_new(str="count: 0")
