@@ -1,10 +1,10 @@
 
-function [msvc_compiler,name,configured]=msvc_configure(all=%f)
+function [msvc_compiler,name,configured]=msvc_configure(verbose=%f)
 // try to detect a msvc compiler using a bat file 
 // msvc_compiler: a nickname for the compiler or "unknown"
 // name: the key for product dir
 // configured:  %t if succedeed in setting env variables
-
+  
   global(msvc_pref='unset');  
   msvc_compiler='unknown'; // default value
   name = 'unknown';
@@ -22,10 +22,20 @@ function [msvc_compiler,name,configured]=msvc_configure(all=%f)
   for i=1:size(table,1)
     name = table(i,1); // returned value
     //    printf("Search %s\n",name);
-    [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1));
-    if ~isempty(msvc_compiler) && configured then break ;end
+    if %win64 then 
+      target="amd64";
+      [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+      if ~isempty(msvc_compiler) && configured then break;end 
+      target="x86_amd64";
+      [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+      if ~isempty(msvc_compiler) && configured then break;end 
+    else
+      target = "x86";
+      [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+      if ~isempty(msvc_compiler) && configured then break ;end
+    end
   end
-
+  
   // usefull for the 64bits version
   
   if msvc_compiler == 'msvc90express' then
@@ -79,7 +89,7 @@ function [msvc_compiler,name,configured]=msvc_configure(all=%f)
   setenv('MSVC_NAME',name);// to detect if msvc_configure
 endfunction
 
-function mc=msvc_select() 
+function mc=msvc_select(verbose=%f)
 // obtain all the msvc compilers which are able to work 
   global(msvc_pref='unset');  
   msvc_compiler='unknown'; // default value
@@ -92,8 +102,25 @@ function mc=msvc_select()
   
   for i=1:size(table,1)
     name = table(i,1); // returned value
-    [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1));
-    if ~isempty(msvc_compiler) && configured then table_ok.concatd[i] ;end
+    // if nsp is 64 we must produce 64 executables 
+    if %win64 then 
+      // first check if we have a 64bits compiler producing 64bits code 
+      target="amd64";
+      [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+      if ~isempty(msvc_compiler) && configured then 
+	table_ok.concatd[i] ;
+      else
+	// check if we have a 32bits compiler producing 64bits code 
+	target="x86_amd64";
+	[msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+	if ~isempty(msvc_compiler) && configured then 
+	  table_ok.concatd[i] ;
+	end
+      end
+    else target="x86"; 
+      [msvc_compiler,configured]=msvc_check_product(table(i,2),table(i,1),target,verbose);
+      if ~isempty(msvc_compiler) && configured then table_ok.concatd[i] ;end
+    end
   end
   mc = m2s([]);
   if isempty(table_ok) then 
@@ -147,7 +174,7 @@ function table= msvc_table()
   end
 endfunction
 
-function [msvc_compiler,configured]=msvc_check_product(rep,name)
+function [msvc_compiler,configured]=msvc_check_product(rep,name,target,verbose)
 // check if a version of visual exists and set env variables accordingly
 // msvc_compiler is set to '' if the visual version corresponding to name
 // is not found.
@@ -162,15 +189,14 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name)
     msvc_compiler=m2s([]);
     return;
   end
-  // printf("C compiler found at: ""%s""\n",vsdir);
+  if verbose then printf("C compiler found in registry at: ""%s""\n",vsdir); end
   // execute vcvarsall to set env variables
   VC= sprintf("%sVC",vsdir);
-  // if nsp is 64 we must produce 64 executables 
-  if %win64 then target="amd64" else target="x86"; end;
   cmd = sprintf('""%s/bin/vc.bat"" ""%s"" %s',getenv('NSP'),VC,target);
   //  S=unix_g(cmd)
   [ok,S,stderr,msgerr,exitst]=spawn_sync(cmd);
   if ~ok then S=m2s([]);end
+  
   vars= ['DevEnvDir';
 	 'INCLUDE';
 	 'LIB';
@@ -180,7 +206,7 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name)
 	 'VS100COMNTOOLS';
 	 'VSINSTALLDIR';
 	 'WindowsSdkDir'];
-
+  
   for i=1:size(vars,'*')
     tag = vars(i)+'=';
     ntag= length(tag);
@@ -195,8 +221,14 @@ function [msvc_compiler,configured]=msvc_check_product(rep,name)
   end
   if getenv('VCINSTALLDIR','')<>'' then
     configured = %t
+    if verbose then 
+      printf("C compiler env. variables found with ""vcvarsall.bat %s""\n",target);
+    end
   else
     configured = %f
+    if verbose then 
+      printf("Cannot find C compiler env. variables with ""vcvarsall.bat %s""\n",target);
+    end
   end
 endfunction
 
