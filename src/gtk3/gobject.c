@@ -1127,6 +1127,24 @@ nspgobject_gcast_bottom(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+
+
+static int
+nspgobject_bind_property(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  GBindingFlags flags =G_BINDING_DEFAULT ;
+  NspGObject *gobj;
+  char *prop1=NULL, *prop2= NULL, *option=NULL;
+  int_types T[] = {string, obj_check, string, string, t_end};
+  if ( GetArgs(stack,rhs,opt,T,&prop1,&nsp_type_gobject, &gobj,&prop2,&option) == FAIL) return RET_BUG;
+  if (strcmp(option,"DEFAULT")==0 ) flags= G_BINDING_DEFAULT;
+  else if (strcmp(option,"BIDIRECTIONAL")==0 ) flags= G_BINDING_BIDIRECTIONAL;
+  else if (strcmp(option,"SYNC_CREATE")==0 ) flags= G_BINDING_SYNC_CREATE;
+  else if (strcmp(option,"INVERT_BOOLEAN")==0 ) flags= G_BINDING_INVERT_BOOLEAN;
+  g_object_bind_property (self->obj,prop1, gobj->obj,prop2,flags);
+  return 0;
+}
+
 static NspMethods gobject_methods[] = {
   { "ref",  (nsp_method *) nspgobject_ref},
   { "unref", (nsp_method *)  nspgobject_unref},
@@ -1153,6 +1171,7 @@ static NspMethods gobject_methods[] = {
   { "chain", (nsp_method *) nspgobject_chain_from_overridden},
   { "gcast_up",  (nsp_method *) nspgobject_gcast_up},
   { "gcast_bottom",  (nsp_method *) nspgobject_gcast_bottom},
+  { "bind_property",  (nsp_method *) nspgobject_bind_property},
   { NULL, NULL }
 };
 
