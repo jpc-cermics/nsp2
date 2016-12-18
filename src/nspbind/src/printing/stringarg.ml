@@ -1261,6 +1261,18 @@ let double_pointer_arg =
 
 (* bool_pointer_arg *)
 
+let bool_pointer_arg_write_param _oname params info _byref=
+  let varlist =
+    match params.pdflt with
+    | None -> varlist_add info.varlist "int"  params.pname
+    | Some x ->
+	varlist_add info.varlist "int"  (params.pname ^ " = " ^ x ) in
+  let info = { info with arglist = ("&" ^ params.pname) :: info.arglist; varlist = varlist;} in
+  let info = add_parselist info params.pvarargs "s_int"  ["&" ^ params.pname]  [params.pname] in
+  { info with attrcodebefore= (Printf.sprintf "  if ( BoolScalar(O,&%s) == FAIL) return FAIL;\n" params.pname )
+    :: info.attrcodebefore ;}
+;;
+
 let bool_pointer_arg_attr_write_copy _objinfo params left_varname right_varname _f_copy_name =
   if right_varname <> "" then
     (* # this part is used in copy or full_copy  *)
@@ -1380,7 +1392,7 @@ let bool_pointer_arg_attr_write_return objinfo _ownsreturn params info=
 
 let bool_pointer_arg =
   { argtype with
-    (* write_param = bool_pointer_arg_write_param; *)
+    write_param = bool_pointer_arg_write_param;
     attr_write_set = bool_pointer_arg_attr_write_set;
     write_return = bool_pointer_arg_write_return;
     attr_write_return = bool_pointer_arg_attr_write_return ;
