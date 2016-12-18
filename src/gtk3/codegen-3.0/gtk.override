@@ -7717,6 +7717,64 @@ static int _wrap_gtk_builder_add_from_string(NspGtkBuilder *self,Stack stack,int
     }
   return 0;
 }
+%%
+override gtk_style_context_get_property
+
+static int _wrap_gtk_style_context_get_property(NspGtkStyleContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *ret;
+  GValue value = { 0, } ;
+  int_types T[] = {string,obj, t_end};
+  char *property;
+  GtkStateFlags state;
+  NspObject *nsp_state = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&property, &nsp_state) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(GTK_TYPE_STATE_FLAGS, nsp_state, &state)==FAIL)
+      return RET_BUG;
+  gtk_style_context_get_property(GTK_STYLE_CONTEXT(self->obj),property,state,&value);
+  if ((ret = nspg_value_as_nspobject(&value, TRUE))==NULL)
+    {
+      g_value_unset(&value);
+      return RET_BUG;
+    }
+  g_value_unset(&value);
+  MoveObj(stack,1,ret);
+  return 1;
+}
+
+%%
+override gtk_style_context_get
+
+static int _wrap_gtk_style_context_get(NspGtkStyleContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Scierror("Error: not implemented, you can insted use method get_property\n");
+  return RET_BUG;
+}
+
+%%
+override gtk_widget_list_action_prefixes
+
+#if GTK_CHECK_VERSION(3,16,0)
+static int _wrap_gtk_widget_list_action_prefixes(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar **ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret = (gchar **) gtk_widget_list_action_prefixes(GTK_WIDGET(self->obj));
+  nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
+  if ( nsp_ret == NULL) return RET_BUG;
+  g_strfreev(ret);
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#else
+int _wrap_gtk_widget_list_action_prefixes(Stack stack, int rhs, int opt, int lhs) /* list_action_prefixes */
+{
+  Scierror("Error: function gtk_widget_list_action_prefixes not available\n");
+  return RET_BUG;
+}
+#endif
 
 
 %%

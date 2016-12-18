@@ -22979,7 +22979,7 @@
   (parameters
     '("const-gchar*" "property")
     '("GtkStateFlags" "state")
-    '("GValue*" "value")
+    ;; '("GValue*" "value")
   )
 )
 
@@ -23405,29 +23405,29 @@
 
 ;; From gtkstylecontextprivate.h
 
-(define-method set_id
-  (of-object "GtkStyleContext")
-  (c-name "gtk_style_context_set_id")
-  (available "")
-  (return-type "none")
-  (parameters
-    '("const-char*" "id")
-  )
-)
+;; (define-method set_id
+;;   (of-object "GtkStyleContext")
+;;   (c-name "gtk_style_context_set_id")
+;;   (available "")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-char*" "id")
+;;   )
+;; )
 
-(define-method get_id
-  (of-object "GtkStyleContext")
-  (c-name "gtk_style_context_get_id")
-  (available "")
-  (return-type "const-char*")
-)
+;; (define-method get_id
+;;   (of-object "GtkStyleContext")
+;;   (c-name "gtk_style_context_get_id")
+;;   (available "")
+;;   (return-type "const-char*")
+;; )
 
-(define-method lookup_style
-  (of-object "GtkStyleContext")
-  (c-name "gtk_style_context_lookup_style")
-  (available "")
-  (return-type "GtkCssStyle*")
-)
+;; (define-method lookup_style
+;;   (of-object "GtkStyleContext")
+;;   (c-name "gtk_style_context_lookup_style")
+;;   (available "")
+;;   (return-type "GtkCssStyle*")
+;; )
 
 
 

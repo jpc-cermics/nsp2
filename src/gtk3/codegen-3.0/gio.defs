@@ -14333,8 +14333,9 @@
 
 (define-function g_themed_icon_new
   (c-name "g_themed_icon_new")
-  (is-constructor-of "GThemedIcon")
-  (return-type "GThemedIcon*")
+  ;; (is-constructor-of "GThemedIcon")
+  ;; (return-type "GThemedIcon*")
+  (return-type "GIcon*")
   (parameters
     '("const-char*" "iconname")
   )
@@ -14342,8 +14343,9 @@
 
 (define-function g_themed_icon_new_with_default_fallbacks
   (c-name "g_themed_icon_new_with_default_fallbacks")
-  (is-constructor-of "GThemedIcon")
-  (return-type "GThemedIcon*")
+  ;; (is-constructor-of "GThemedIcon")
+  ;; (return-type "GThemedIcon*")
+  (return-type "GIcon*")
   (parameters
     '("const-char*" "iconname")
   )
@@ -14351,11 +14353,12 @@
 
 (define-function g_themed_icon_new_from_names
   (c-name "g_themed_icon_new_from_names")
-  (is-constructor-of "GThemedIcon")
-  (return-type "GThemedIcon*")
+  ;; (is-constructor-of "GThemedIcon")
+  ;; (return-type "GThemedIcon*")
+  (return-type "GIcon*")
   (parameters
     '("char**" "iconnames")
-    '("int" "len")
+    ;; '("int" "len")
   )
 )
 

@@ -1350,6 +1350,21 @@
   (gtype-id "GTK_TYPE_SETTINGS")
 )
 
+
+(define-object GtkStyleContext
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkStyleContext")
+  (gtype-id "GTK_TYPE_STYLE_CONTEXT")
+)
+
+;; (define-object GtkStyleProperty
+;;   (in-module "Gtk")
+;;   (parent "GObject")
+;;   (c-name "GtkStyleProperty")
+;;   (gtype-id "GTK_TYPE_STYLE_PROPERTY")
+;; )
+
 ;; Gestures
 
 ;; XXXX

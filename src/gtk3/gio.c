@@ -27306,7 +27306,8 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27310 "gio.c"
+
+#line 27311 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -27904,6 +27905,59 @@ int _wrap_g_test_dbus_unset(Stack stack, int rhs, int opt, int lhs) /* g_test_db
   return 0;
 }
 
+int _wrap_g_themed_icon_new(Stack stack, int rhs, int opt, int lhs) /* g_themed_icon_new */
+{
+  int_types T[] = {string, t_end};
+  char *iconname;
+  GIcon *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
+    ret =g_themed_icon_new(iconname);
+  nsp_type_gicon = new_type_gicon(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_g_themed_icon_new_with_default_fallbacks(Stack stack, int rhs, int opt, int lhs) /* g_themed_icon_new_with_default_fallbacks */
+{
+  int_types T[] = {string, t_end};
+  char *iconname;
+  GIcon *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&iconname) == FAIL) return RET_BUG;
+    ret =g_themed_icon_new_with_default_fallbacks(iconname);
+  nsp_type_gicon = new_type_gicon(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 179 "codegen-3.0/gio.override"
+
+int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /* g_themed_icon_new_from_names */
+{
+  int_types T[] = {obj, t_end};
+  gchar **iconnames = NULL;
+  NspObject *nsp_iconnames = NULL, *nsp_ret;
+  GIcon *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_iconnames) == FAIL) return RET_BUG;
+  if ( IsSMat(nsp_iconnames))
+    { iconnames =  ((NspSMatrix *) nsp_iconnames)->S;}
+  else
+    {
+      Scierror("Error: iconnames should be of type SMat");
+      return RET_BUG;
+    }
+  ret =g_themed_icon_new_from_names(iconnames,-1);
+  nsp_type_gicon = new_type_gicon(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gicon))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+#line 27959 "gio.c"
+
+
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
 {
   GVfs *ret;
@@ -28087,6 +28141,9 @@ static OpTab gio_func[]={
   { "g_socket_connection_factory_lookup_type", _wrap_g_socket_connection_factory_lookup_type},
   { "g_srv_target_list_sort", _wrap_g_srv_target_list_sort},
   { "g_test_dbus_unset", _wrap_g_test_dbus_unset},
+  { "g_themed_icon_new", _wrap_g_themed_icon_new},
+  { "g_themed_icon_new_with_default_fallbacks", _wrap_g_themed_icon_new_with_default_fallbacks},
+  { "g_themed_icon_new_from_names", _wrap_g_themed_icon_new_from_names},
   { "g_vfs_get_default", _wrap_g_vfs_get_default},
   { "g_vfs_get_local", _wrap_g_vfs_get_local},
   { "g_volume_monitor_get", _wrap_g_volume_monitor_get},
@@ -28275,4 +28332,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 28279 "gio.c"
+#line 28336 "gio.c"
