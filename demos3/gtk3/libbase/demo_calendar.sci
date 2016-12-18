@@ -55,13 +55,17 @@ function demo_calendar()
   rpane.pack_start[frame,expand= %f, fill=%t, padding=0];
   size_g = gtk_size_group_new (GTK.SIZE_GROUP_HORIZONTAL);
   
-  //context = calendar.get_style_context [];
   //gtk_style_context_get (context, GTK.STATE_FLAG_NORMAL,GTK.STYLE_PROPERTY_FONT,font_desc);
-  //font = pango_font_description_to_string (font_desc);
-  //button = gtk_font_button_new_with_font (font);
-  //g_free (font);
-  //pango_font_description_free (font_desc);
-  //button.connect[ "font-set", calendar_select_font, calendar_data];
+  //replaced by get_property method 
+  
+  context = calendar.get_style_context [];
+  // The GTK_STYLE_PROPERTY_VALUE can be replaced by "value" 
+  // GTK_STYLE_PROPERTY_FONT -> "font"
+  font_desc = context.get_property["font",GTK.STATE_FLAG_NORMAL];
+  // font = pango_font_description_to_string (font_desc);
+  font = font_desc.to_string[];
+  button = gtk_font_button_new_with_font (font);
+  button.connect["font-set", calendar_select_font, calendar];
   
   button= gtk_font_button_new();
     
