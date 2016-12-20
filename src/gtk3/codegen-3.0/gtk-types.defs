@@ -1666,6 +1666,23 @@
   (gtype-id "GTK_TYPE_TREE_DRAG_SOURCE")
 )
 
+
+;; New
+
+(define-object GtkCssProvider
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkCssProvider")
+  (gtype-id "GTK_TYPE_CSS_PROVIDER")
+)
+
+;; (define-object GtkCssStyle
+;;   (in-module "Gtk")
+;;   (parent "GObject")
+;;   (c-name "GtkCssStyle")
+;;   (gtype-id "GTK_TYPE_CSS_STYLE")
+;; )
+
 ;; Boxed types
 ;; ----------------------
 
