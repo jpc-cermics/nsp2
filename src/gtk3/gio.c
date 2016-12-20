@@ -1953,7 +1953,7 @@ static int _wrap_g_app_info_launch(NspGAppInfo *self,Stack stack,int rhs,int opt
   if (files== NULL) return RET_BUG;
     ret =g_app_info_launch(G_APP_INFO(self->obj),files,G_APP_LAUNCH_CONTEXT(launch_context->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -1991,7 +1991,7 @@ static int _wrap_g_app_info_launch_uris(NspGAppInfo *self,Stack stack,int rhs,in
   if (uris== NULL) return RET_BUG;
     ret =g_app_info_launch_uris(G_APP_INFO(self->obj),uris,G_APP_LAUNCH_CONTEXT(launch_context->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2016,7 +2016,7 @@ static int _wrap_g_app_info_set_as_default_for_type(NspGAppInfo *self,Stack stac
   if ( GetArgs(stack,rhs,opt,T,&content_type) == FAIL) return RET_BUG;
     ret =g_app_info_set_as_default_for_type(G_APP_INFO(self->obj),content_type,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2032,7 +2032,7 @@ static int _wrap_g_app_info_set_as_default_for_extension(NspGAppInfo *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&extension) == FAIL) return RET_BUG;
     ret =g_app_info_set_as_default_for_extension(G_APP_INFO(self->obj),extension,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2048,7 +2048,7 @@ static int _wrap_g_app_info_add_supports_type(NspGAppInfo *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&content_type) == FAIL) return RET_BUG;
     ret =g_app_info_add_supports_type(G_APP_INFO(self->obj),content_type,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2073,7 +2073,7 @@ static int _wrap_g_app_info_remove_supports_type(NspGAppInfo *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&content_type) == FAIL) return RET_BUG;
     ret =g_app_info_remove_supports_type(G_APP_INFO(self->obj),content_type,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2107,7 +2107,7 @@ static int _wrap_g_app_info_set_as_last_used_for_type(NspGAppInfo *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&content_type) == FAIL) return RET_BUG;
     ret =g_app_info_set_as_last_used_for_type(G_APP_INFO(self->obj),content_type,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2803,7 +2803,7 @@ static int _wrap_g_application_register(NspGApplication *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_application_register(G_APPLICATION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -3490,7 +3490,7 @@ _wrap_g_async_initable_new_finish (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncinitable, &initable, &nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_async_initable_new_finish(G_ASYNC_INITABLE(initable->obj),G_ASYNC_RESULT(res->obj),&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -3510,7 +3510,7 @@ static int _wrap_g_async_initable_init_finish(NspGAsyncInitable *self,Stack stac
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_async_initable_init_finish(G_ASYNC_INITABLE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -3739,7 +3739,7 @@ static int _wrap_g_async_result_legacy_propagate_error(NspGAsyncResult *self,Sta
   CheckRhs(0,0);
     ret =g_async_result_legacy_propagate_error(G_ASYNC_RESULT(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -3988,7 +3988,7 @@ static int _wrap_g_cancellable_set_error_if_cancelled(NspGCancellable *self,Stac
   CheckRhs(0,0);
     ret =g_cancellable_set_error_if_cancelled(G_CANCELLABLE(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -5803,7 +5803,7 @@ static int _wrap_g_dbus_proxy_call_finish(NspGDBusProxy *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_dbus_proxy_call_finish(G_DBUS_PROXY(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gvariant= new_type_gvariant(T_BASE);
@@ -5838,7 +5838,7 @@ static int _wrap_g_dbus_proxy_call_sync(NspGDBusProxy *self,Stack stack,int rhs,
       return RET_BUG;
     ret =g_dbus_proxy_call_sync(G_DBUS_PROXY(self->obj),method_name,parameters,flags,timeout_msec,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gvariant= new_type_gvariant(T_BASE);
@@ -6171,7 +6171,7 @@ static int _wrap_g_drive_poll_for_media_finish(NspGDrive *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_drive_poll_for_media_finish(G_DRIVE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -6239,7 +6239,7 @@ static int _wrap_g_drive_start_finish(NspGDrive *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_drive_start_finish(G_DRIVE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -6264,7 +6264,7 @@ static int _wrap_g_drive_stop_finish(NspGDrive *self,Stack stack,int rhs,int opt
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_drive_stop_finish(G_DRIVE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -6280,7 +6280,7 @@ static int _wrap_g_drive_eject_with_operation_finish(NspGDrive *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_drive_eject_with_operation_finish(G_DRIVE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -6937,7 +6937,7 @@ static int _wrap_g_file_get_child_for_display_name(NspGFile *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&display_name) == FAIL) return RET_BUG;
     ret =g_file_get_child_for_display_name(G_FILE(self->obj),display_name,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
@@ -7023,7 +7023,7 @@ static int _wrap_g_file_read(NspGFile *self,Stack stack,int rhs,int opt,int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_read(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
@@ -7042,7 +7042,7 @@ static int _wrap_g_file_read_finish(NspGFile *self,Stack stack,int rhs,int opt,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_read_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileinputstream = new_type_gfileinputstream(T_BASE);
@@ -7064,7 +7064,7 @@ static int _wrap_g_file_append_to(NspGFile *self,Stack stack,int rhs,int opt,int
       return RET_BUG;
     ret =g_file_append_to(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7086,7 +7086,7 @@ static int _wrap_g_file_create(NspGFile *self,Stack stack,int rhs,int opt,int lh
       return RET_BUG;
     ret =g_file_create(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7110,7 +7110,7 @@ static int _wrap_g_file_replace(NspGFile *self,Stack stack,int rhs,int opt,int l
       return RET_BUG;
     ret =g_file_replace(G_FILE(self->obj),etag,make_backup,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7129,7 +7129,7 @@ static int _wrap_g_file_append_to_finish(NspGFile *self,Stack stack,int rhs,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_append_to_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7148,7 +7148,7 @@ static int _wrap_g_file_create_finish(NspGFile *self,Stack stack,int rhs,int opt
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_create_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7167,7 +7167,7 @@ static int _wrap_g_file_replace_finish(NspGFile *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_replace_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileoutputstream = new_type_gfileoutputstream(T_BASE);
@@ -7186,7 +7186,7 @@ static int _wrap_g_file_open_readwrite(NspGFile *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_open_readwrite(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7205,7 +7205,7 @@ static int _wrap_g_file_open_readwrite_finish(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_open_readwrite_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7227,7 +7227,7 @@ static int _wrap_g_file_create_readwrite(NspGFile *self,Stack stack,int rhs,int 
       return RET_BUG;
     ret =g_file_create_readwrite(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7246,7 +7246,7 @@ static int _wrap_g_file_create_readwrite_finish(NspGFile *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_create_readwrite_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7270,7 +7270,7 @@ static int _wrap_g_file_replace_readwrite(NspGFile *self,Stack stack,int rhs,int
       return RET_BUG;
     ret =g_file_replace_readwrite(G_FILE(self->obj),etag,make_backup,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7289,7 +7289,7 @@ static int _wrap_g_file_replace_readwrite_finish(NspGFile *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_replace_readwrite_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileiostream = new_type_gfileiostream(T_BASE);
@@ -7334,7 +7334,7 @@ static int _wrap_g_file_find_enclosing_mount(NspGFile *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_find_enclosing_mount(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
@@ -7353,7 +7353,7 @@ static int _wrap_g_file_find_enclosing_mount_finish(NspGFile *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_find_enclosing_mount_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gmount = new_type_gmount(T_BASE);
@@ -7376,7 +7376,7 @@ static int _wrap_g_file_enumerate_children(NspGFile *self,Stack stack,int rhs,in
       return RET_BUG;
     ret =g_file_enumerate_children(G_FILE(self->obj),attributes,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
@@ -7395,7 +7395,7 @@ static int _wrap_g_file_enumerate_children_finish(NspGFile *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_enumerate_children_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfileenumerator = new_type_gfileenumerator(T_BASE);
@@ -7415,7 +7415,7 @@ static int _wrap_g_file_set_display_name(NspGFile *self,Stack stack,int rhs,int 
   if ( GetArgs(stack,rhs,opt,T,&display_name, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_set_display_name(G_FILE(self->obj),display_name,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
@@ -7434,7 +7434,7 @@ static int _wrap_g_file_set_display_name_finish(NspGFile *self,Stack stack,int r
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_set_display_name_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
@@ -7452,7 +7452,7 @@ static int _wrap_g_file_delete(NspGFile *self,Stack stack,int rhs,int opt,int lh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_delete(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7469,7 +7469,7 @@ static int _wrap_g_file_delete_finish(NspGFile *self,Stack stack,int rhs,int opt
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_delete_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7492,7 +7492,7 @@ static int _wrap_g_file_trash(NspGFile *self,Stack stack,int rhs,int opt,int lhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_trash(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7509,7 +7509,7 @@ static int _wrap_g_file_trash_finish(NspGFile *self,Stack stack,int rhs,int opt,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_trash_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7532,7 +7532,7 @@ static int _wrap_g_file_copy_finish(NspGFile *self,Stack stack,int rhs,int opt,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &res) == FAIL) return RET_BUG;
     ret =g_file_copy_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7548,7 +7548,7 @@ static int _wrap_g_file_make_directory(NspGFile *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_make_directory(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7565,7 +7565,7 @@ static int _wrap_g_file_make_directory_finish(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_make_directory_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7588,7 +7588,7 @@ static int _wrap_g_file_make_directory_with_parents(NspGFile *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_make_directory_with_parents(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7605,7 +7605,7 @@ static int _wrap_g_file_make_symbolic_link(NspGFile *self,Stack stack,int rhs,in
   if ( GetArgs(stack,rhs,opt,T,&symlink_value, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_make_symbolic_link(G_FILE(self->obj),symlink_value,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7626,7 +7626,7 @@ static int _wrap_g_file_set_attribute_string(NspGFile *self,Stack stack,int rhs,
       return RET_BUG;
     ret =g_file_set_attribute_string(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7647,7 +7647,7 @@ static int _wrap_g_file_set_attribute_byte_string(NspGFile *self,Stack stack,int
       return RET_BUG;
     ret =g_file_set_attribute_byte_string(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7669,7 +7669,7 @@ static int _wrap_g_file_set_attribute_uint32(NspGFile *self,Stack stack,int rhs,
       return RET_BUG;
     ret =g_file_set_attribute_uint32(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7690,7 +7690,7 @@ static int _wrap_g_file_set_attribute_int32(NspGFile *self,Stack stack,int rhs,i
       return RET_BUG;
     ret =g_file_set_attribute_int32(G_FILE(self->obj),attribute,value,flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7706,7 +7706,7 @@ static int _wrap_g_file_mount_enclosing_volume_finish(NspGFile *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_mount_enclosing_volume_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7723,7 +7723,7 @@ static int _wrap_g_file_mount_mountable_finish(NspGFile *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_mount_mountable_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfile = new_type_gfile(T_BASE);
@@ -7741,7 +7741,7 @@ static int _wrap_g_file_unmount_mountable_with_operation_finish(NspGFile *self,S
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_unmount_mountable_with_operation_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7757,7 +7757,7 @@ static int _wrap_g_file_eject_mountable_with_operation_finish(NspGFile *self,Sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_eject_mountable_with_operation_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7777,7 +7777,7 @@ static int _wrap_g_file_copy_attributes(NspGFile *self,Stack stack,int rhs,int o
       return RET_BUG;
     ret =g_file_copy_attributes(G_FILE(self->obj),G_FILE(destination->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7797,7 +7797,7 @@ static int _wrap_g_file_monitor_directory(NspGFile *self,Stack stack,int rhs,int
       return RET_BUG;
     ret =g_file_monitor_directory(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
@@ -7819,7 +7819,7 @@ static int _wrap_g_file_monitor_file(NspGFile *self,Stack stack,int rhs,int opt,
       return RET_BUG;
     ret =g_file_monitor_file(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
@@ -7841,7 +7841,7 @@ static int _wrap_g_file_monitor(NspGFile *self,Stack stack,int rhs,int opt,int l
       return RET_BUG;
     ret =g_file_monitor(G_FILE(self->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gfilemonitor = new_type_gfilemonitor(T_BASE);
@@ -7859,7 +7859,7 @@ static int _wrap_g_file_start_mountable_finish(NspGFile *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_start_mountable_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7875,7 +7875,7 @@ static int _wrap_g_file_stop_mountable_finish(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_stop_mountable_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7891,7 +7891,7 @@ static int _wrap_g_file_poll_mountable_finish(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_poll_mountable_finish(G_FILE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7908,7 +7908,7 @@ static int _wrap_g_file_query_default_handler(NspGFile *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_query_default_handler(G_FILE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
@@ -7939,7 +7939,7 @@ static int _wrap_g_file_replace_contents(NspGFile *self,Stack stack,int rhs,int 
     }
     ret =g_file_replace_contents(G_FILE(self->obj),contents,length,etag,make_backup,flags,new_etag,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -7964,7 +7964,7 @@ static int _wrap_g_file_replace_contents_finish(NspGFile *self,Stack stack,int r
     }
     ret =g_file_replace_contents_finish(G_FILE(self->obj),G_ASYNC_RESULT(res->obj),new_etag,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8258,7 +8258,7 @@ static int _wrap_g_file_enumerator_close(NspGFileEnumerator *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_file_enumerator_close(G_FILE_ENUMERATOR(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8275,7 +8275,7 @@ static int _wrap_g_file_enumerator_next_files_finish(NspGFileEnumerator *self,St
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_enumerator_next_files_finish(G_FILE_ENUMERATOR(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -8291,7 +8291,7 @@ static int _wrap_g_file_enumerator_close_finish(NspGFileEnumerator *self,Stack s
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_file_enumerator_close_finish(G_FILE_ENUMERATOR(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8827,7 +8827,7 @@ static int _wrap_g_io_stream_close(NspGIOStream *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_io_stream_close(G_IO_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8843,7 +8843,7 @@ static int _wrap_g_io_stream_close_finish(NspGIOStream *self,Stack stack,int rhs
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_io_stream_close_finish(G_IO_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8875,7 +8875,7 @@ static int _wrap_g_io_stream_set_pending(NspGIOStream *self,Stack stack,int rhs,
   CheckRhs(0,0);
     ret =g_io_stream_set_pending(G_IO_STREAM(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -9324,7 +9324,7 @@ _wrap_g_icon_new_for_string (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_icon_new_for_string(str,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -9994,7 +9994,7 @@ _wrap_g_inet_address_mask_new_from_string (Stack stack, int rhs, int opt, int lh
   if ( GetArgs(stack,rhs,opt,T,&mask_string) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_inet_address_mask_new_from_string(mask_string,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -10016,7 +10016,7 @@ _wrap_g_inet_address_mask_new (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &addr, &length) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_inet_address_mask_new(G_INET_ADDRESS(addr->obj),length,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -10355,7 +10355,7 @@ static int _wrap_g_initable_init(NspGInitable *self,Stack stack,int rhs,int opt,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_initable_init(G_INITABLE(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -10575,7 +10575,7 @@ static int _wrap_g_input_stream_skip(NspGInputStream *self,Stack stack,int rhs,i
   if ( GetArgs(stack,rhs,opt,T,&count, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_input_stream_skip(G_INPUT_STREAM(self->obj),count,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -10591,7 +10591,7 @@ static int _wrap_g_input_stream_close(NspGInputStream *self,Stack stack,int rhs,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_input_stream_close(G_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -10607,7 +10607,7 @@ static int _wrap_g_input_stream_read_finish(NspGInputStream *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_input_stream_read_finish(G_INPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -10623,7 +10623,7 @@ static int _wrap_g_input_stream_skip_finish(NspGInputStream *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_input_stream_skip_finish(G_INPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -10639,7 +10639,7 @@ static int _wrap_g_input_stream_close_finish(NspGInputStream *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_input_stream_close_finish(G_INPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -10671,7 +10671,7 @@ static int _wrap_g_input_stream_set_pending(NspGInputStream *self,Stack stack,in
   CheckRhs(0,0);
     ret =g_input_stream_set_pending(G_INPUT_STREAM(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -11202,7 +11202,7 @@ static int _wrap_g_buffered_input_stream_fill(NspGBufferedInputStream *self,Stac
   if ( GetArgs(stack,rhs,opt,T,&count, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_buffered_input_stream_fill(G_BUFFERED_INPUT_STREAM(self->obj),count,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11218,7 +11218,7 @@ static int _wrap_g_buffered_input_stream_fill_finish(NspGBufferedInputStream *se
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_buffered_input_stream_fill_finish(G_BUFFERED_INPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11234,7 +11234,7 @@ static int _wrap_g_buffered_input_stream_read_byte(NspGBufferedInputStream *self
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_buffered_input_stream_read_byte(G_BUFFERED_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11517,7 +11517,7 @@ static int _wrap_g_data_input_stream_read_byte(NspGDataInputStream *self,Stack s
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_input_stream_read_byte(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11533,7 +11533,7 @@ static int _wrap_g_data_input_stream_read_int16(NspGDataInputStream *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_input_stream_read_int16(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11549,7 +11549,7 @@ static int _wrap_g_data_input_stream_read_uint16(NspGDataInputStream *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_input_stream_read_uint16(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11565,7 +11565,7 @@ static int _wrap_g_data_input_stream_read_int32(NspGDataInputStream *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_input_stream_read_int32(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -11581,7 +11581,7 @@ static int _wrap_g_data_input_stream_read_uint32(NspGDataInputStream *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_input_stream_read_uint32(G_DATA_INPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
  if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
@@ -12250,7 +12250,7 @@ static int _wrap_g_loadable_icon_load(NspGLoadableIcon *self,Stack stack,int rhs
     }
     ret =g_loadable_icon_load(G_LOADABLE_ICON(self->obj),size,type,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
@@ -12277,7 +12277,7 @@ static int _wrap_g_loadable_icon_load_finish(NspGLoadableIcon *self,Stack stack,
     }
     ret =g_loadable_icon_load_finish(G_LOADABLE_ICON(self->obj),G_ASYNC_RESULT(res->obj),type,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_ginputstream = new_type_ginputstream(T_BASE);
@@ -14197,7 +14197,7 @@ static int _wrap_g_mount_remount_finish(NspGMount *self,Stack stack,int rhs,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_mount_remount_finish(G_MOUNT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -14214,7 +14214,7 @@ static int _wrap_g_mount_guess_content_type_finish(NspGMount *self,Stack stack,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_mount_guess_content_type_finish(G_MOUNT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
@@ -14235,7 +14235,7 @@ static int _wrap_g_mount_guess_content_type_sync(NspGMount *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&force_rescan, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_mount_guess_content_type_sync(G_MOUNT(self->obj),force_rescan,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_ret = (NspObject *) nsp_smatrix_create_from_table(ret);
@@ -14277,7 +14277,7 @@ static int _wrap_g_mount_unmount_with_operation_finish(NspGMount *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_mount_unmount_with_operation_finish(G_MOUNT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -14293,7 +14293,7 @@ static int _wrap_g_mount_eject_with_operation_finish(NspGMount *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_mount_eject_with_operation_finish(G_MOUNT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -15416,7 +15416,7 @@ static int _wrap_g_output_stream_splice(NspGOutputStream *self,Stack stack,int r
       return RET_BUG;
     ret =g_output_stream_splice(G_OUTPUT_STREAM(self->obj),G_INPUT_STREAM(source->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -15432,7 +15432,7 @@ static int _wrap_g_output_stream_flush(NspGOutputStream *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_output_stream_flush(G_OUTPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -15448,7 +15448,7 @@ static int _wrap_g_output_stream_close(NspGOutputStream *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_output_stream_close(G_OUTPUT_STREAM(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -15464,7 +15464,7 @@ static int _wrap_g_output_stream_write_finish(NspGOutputStream *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_output_stream_write_finish(G_OUTPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -15481,7 +15481,7 @@ static int _wrap_g_output_stream_write_bytes_finish(NspGOutputStream *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_output_stream_write_bytes_finish(G_OUTPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -15504,7 +15504,7 @@ static int _wrap_g_output_stream_splice_finish(NspGOutputStream *self,Stack stac
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_output_stream_splice_finish(G_OUTPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -15520,7 +15520,7 @@ static int _wrap_g_output_stream_flush_finish(NspGOutputStream *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_output_stream_flush_finish(G_OUTPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -15536,7 +15536,7 @@ static int _wrap_g_output_stream_close_finish(NspGOutputStream *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_output_stream_close_finish(G_OUTPUT_STREAM(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -15577,7 +15577,7 @@ static int _wrap_g_output_stream_set_pending(NspGOutputStream *self,Stack stack,
   CheckRhs(0,0);
     ret =g_output_stream_set_pending(G_OUTPUT_STREAM(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16834,7 +16834,7 @@ static int _wrap_g_data_output_stream_put_byte(NspGDataOutputStream *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_byte(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16850,7 +16850,7 @@ static int _wrap_g_data_output_stream_put_int16(NspGDataOutputStream *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_int16(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16866,7 +16866,7 @@ static int _wrap_g_data_output_stream_put_uint16(NspGDataOutputStream *self,Stac
   if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_uint16(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16882,7 +16882,7 @@ static int _wrap_g_data_output_stream_put_int32(NspGDataOutputStream *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_int32(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16899,7 +16899,7 @@ static int _wrap_g_data_output_stream_put_uint32(NspGDataOutputStream *self,Stac
   if ( GetArgs(stack,rhs,opt,T,&data, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_uint32(G_DATA_OUTPUT_STREAM(self->obj),data,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -16916,7 +16916,7 @@ static int _wrap_g_data_output_stream_put_string(NspGDataOutputStream *self,Stac
   if ( GetArgs(stack,rhs,opt,T,&str, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_data_output_stream_put_string(G_DATA_OUTPUT_STREAM(self->obj),str,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -17357,7 +17357,7 @@ static int _wrap_g_permission_acquire(NspGPermission *self,Stack stack,int rhs,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_permission_acquire(G_PERMISSION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -17373,7 +17373,7 @@ static int _wrap_g_permission_acquire_finish(NspGPermission *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_permission_acquire_finish(G_PERMISSION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -17389,7 +17389,7 @@ static int _wrap_g_permission_release(NspGPermission *self,Stack stack,int rhs,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_permission_release(G_PERMISSION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -17405,7 +17405,7 @@ static int _wrap_g_permission_release_finish(NspGPermission *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_permission_release_finish(G_PERMISSION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -17677,7 +17677,7 @@ static int _wrap_g_resolver_lookup_by_name(NspGResolver *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&hostname, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_by_name(G_RESOLVER(self->obj),hostname,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -17694,7 +17694,7 @@ static int _wrap_g_resolver_lookup_by_name_finish(NspGResolver *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_by_name_finish(G_RESOLVER(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -17710,7 +17710,7 @@ static int _wrap_g_resolver_lookup_by_address(NspGResolver *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_by_address(G_RESOLVER(self->obj),G_INET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -17727,7 +17727,7 @@ static int _wrap_g_resolver_lookup_by_address_finish(NspGResolver *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_by_address_finish(G_RESOLVER(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -17746,7 +17746,7 @@ static int _wrap_g_resolver_lookup_service(NspGResolver *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&service, &protocol, &domain, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_service(G_RESOLVER(self->obj),service,protocol,domain,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -17763,7 +17763,7 @@ static int _wrap_g_resolver_lookup_service_finish(NspGResolver *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_service_finish(G_RESOLVER(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -17786,7 +17786,7 @@ static int _wrap_g_resolver_lookup_records(NspGResolver *self,Stack stack,int rh
       return RET_BUG;
     ret =g_resolver_lookup_records(G_RESOLVER(self->obj),rrname,record_type,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -17811,7 +17811,7 @@ static int _wrap_g_resolver_lookup_records_finish(NspGResolver *self,Stack stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_resolver_lookup_records_finish(G_RESOLVER(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -19768,7 +19768,7 @@ _wrap_g_socket_new_from_fd (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&fd) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_socket_new_from_fd(fd,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -19798,7 +19798,7 @@ _wrap_g_socket_new (Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
   if ((ret = (GObject *)g_socket_new(family,type,protocol,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -19853,7 +19853,7 @@ static int _wrap_g_socket_get_local_address(NspGSocket *self,Stack stack,int rhs
   CheckRhs(0,0);
     ret =g_socket_get_local_address(G_SOCKET(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -19870,7 +19870,7 @@ static int _wrap_g_socket_get_remote_address(NspGSocket *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =g_socket_get_remote_address(G_SOCKET(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -20105,7 +20105,7 @@ static int _wrap_g_socket_bind(NspGSocket *self,Stack stack,int rhs,int opt,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &allow_reuse) == FAIL) return RET_BUG;
     ret =g_socket_bind(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),allow_reuse,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20123,7 +20123,7 @@ static int _wrap_g_socket_join_multicast_group(NspGSocket *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &group, &source_specific, &iface) == FAIL) return RET_BUG;
     ret =g_socket_join_multicast_group(G_SOCKET(self->obj),G_INET_ADDRESS(group->obj),source_specific,iface,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20148,7 +20148,7 @@ static int _wrap_g_socket_leave_multicast_group(NspGSocket *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_ginetaddress, &group, &source_specific, &iface) == FAIL) return RET_BUG;
     ret =g_socket_leave_multicast_group(G_SOCKET(self->obj),G_INET_ADDRESS(group->obj),source_specific,iface,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20171,7 +20171,7 @@ static int _wrap_g_socket_connect(NspGSocket *self,Stack stack,int rhs,int opt,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_connect(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20185,7 +20185,7 @@ static int _wrap_g_socket_check_connect_result(NspGSocket *self,Stack stack,int 
   CheckRhs(0,0);
     ret =g_socket_check_connect_result(G_SOCKET(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20211,7 +20211,7 @@ static int _wrap_g_socket_accept(NspGSocket *self,Stack stack,int rhs,int opt,in
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_accept(G_SOCKET(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocket = new_type_gsocket(T_BASE);
@@ -20227,7 +20227,7 @@ static int _wrap_g_socket_listen(NspGSocket *self,Stack stack,int rhs,int opt,in
   CheckRhs(0,0);
     ret =g_socket_listen(G_SOCKET(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20244,7 +20244,7 @@ static int _wrap_g_socket_receive(NspGSocket *self,Stack stack,int rhs,int opt,i
   if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_receive(G_SOCKET(self->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -20261,7 +20261,7 @@ static int _wrap_g_socket_send(NspGSocket *self,Stack stack,int rhs,int opt,int 
   if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_send(G_SOCKET(self->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -20278,7 +20278,7 @@ static int _wrap_g_socket_send_to(NspGSocket *self,Stack stack,int rhs,int opt,i
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &buffer, &size, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_send_to(G_SOCKET(self->obj),G_SOCKET_ADDRESS(address->obj),buffer,size,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -20292,7 +20292,7 @@ static int _wrap_g_socket_close(NspGSocket *self,Stack stack,int rhs,int opt,int
   CheckRhs(0,0);
     ret =g_socket_close(G_SOCKET(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20307,7 +20307,7 @@ static int _wrap_g_socket_shutdown(NspGSocket *self,Stack stack,int rhs,int opt,
   if ( GetArgs(stack,rhs,opt,T,&shutdown_read, &shutdown_write) == FAIL) return RET_BUG;
     ret =g_socket_shutdown(G_SOCKET(self->obj),shutdown_read,shutdown_write,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20342,7 +20342,7 @@ static int _wrap_g_socket_receive_with_blocking(NspGSocket *self,Stack stack,int
   if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_receive_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -20359,7 +20359,7 @@ static int _wrap_g_socket_send_with_blocking(NspGSocket *self,Stack stack,int rh
   if ( GetArgs(stack,rhs,opt,T,&buffer, &size, &blocking, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_send_with_blocking(G_SOCKET(self->obj),buffer,size,blocking,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -20375,7 +20375,7 @@ static int _wrap_g_socket_get_option(NspGSocket *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&level, &optname, &value) == FAIL) return RET_BUG;
     ret =g_socket_get_option(G_SOCKET(self->obj),level,optname,&value,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -20398,7 +20398,7 @@ static int _wrap_g_socket_set_option(NspGSocket *self,Stack stack,int rhs,int op
   if ( GetArgs(stack,rhs,opt,T,&level, &optname, &value) == FAIL) return RET_BUG;
     ret =g_socket_set_option(G_SOCKET(self->obj),level,optname,value,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -21506,7 +21506,7 @@ static int _wrap_g_socket_address_enumerator_next(NspGSocketAddressEnumerator *s
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_address_enumerator_next(G_SOCKET_ADDRESS_ENUMERATOR(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -21525,7 +21525,7 @@ static int _wrap_g_socket_address_enumerator_next_finish(NspGSocketAddressEnumer
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_address_enumerator_next_finish(G_SOCKET_ADDRESS_ENUMERATOR(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -22153,7 +22153,7 @@ static int _wrap_g_socket_client_connect(NspGSocketClient *self,Stack stack,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketconnectable, &connectable, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_client_connect(G_SOCKET_CLIENT(self->obj),G_SOCKET_CONNECTABLE(connectable->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22174,7 +22174,7 @@ static int _wrap_g_socket_client_connect_to_host(NspGSocketClient *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&host_and_port, &default_port, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_host(G_SOCKET_CLIENT(self->obj),host_and_port,default_port,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22194,7 +22194,7 @@ static int _wrap_g_socket_client_connect_to_service(NspGSocketClient *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&domain, &service, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_service(G_SOCKET_CLIENT(self->obj),domain,service,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22216,7 +22216,7 @@ static int _wrap_g_socket_client_connect_to_uri(NspGSocketClient *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&uri, &default_port, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_uri(G_SOCKET_CLIENT(self->obj),uri,default_port,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22242,7 +22242,7 @@ static int _wrap_g_socket_client_connect_finish(NspGSocketClient *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_finish(G_SOCKET_CLIENT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22261,7 +22261,7 @@ static int _wrap_g_socket_client_connect_to_host_finish(NspGSocketClient *self,S
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22280,7 +22280,7 @@ static int _wrap_g_socket_client_connect_to_service_finish(NspGSocketClient *sel
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_service_finish(G_SOCKET_CLIENT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22299,7 +22299,7 @@ static int _wrap_g_socket_client_connect_to_uri_finish(NspGSocketClient *self,St
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_client_connect_to_uri_finish(G_SOCKET_CLIENT(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnection = new_type_gsocketconnection(T_BASE);
@@ -22801,7 +22801,7 @@ static int _wrap_g_socket_connection_connect(NspGSocketConnection *self,Stack st
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocketaddress, &address, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_socket_connection_connect(G_SOCKET_CONNECTION(self->obj),G_SOCKET_ADDRESS(address->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -22825,7 +22825,7 @@ static int _wrap_g_socket_connection_connect_finish(NspGSocketConnection *self,S
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_socket_connection_connect_finish(G_SOCKET_CONNECTION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -22859,7 +22859,7 @@ static int _wrap_g_socket_connection_get_local_address(NspGSocketConnection *sel
   CheckRhs(0,0);
     ret =g_socket_connection_get_local_address(G_SOCKET_CONNECTION(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -22876,7 +22876,7 @@ static int _wrap_g_socket_connection_get_remote_address(NspGSocketConnection *se
   CheckRhs(0,0);
     ret =g_socket_connection_get_remote_address(G_SOCKET_CONNECTION(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketaddress = new_type_gsocketaddress(T_BASE);
@@ -23359,7 +23359,7 @@ static int _wrap_g_socket_listener_add_socket(NspGSocketListener *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gsocket, &socket, &nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
     ret =g_socket_listener_add_socket(G_SOCKET_LISTENER(self->obj),G_SOCKET(socket->obj),G_OBJECT(source_object->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -23375,7 +23375,7 @@ static int _wrap_g_socket_listener_add_inet_port(NspGSocketListener *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&port, &nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
     ret =g_socket_listener_add_inet_port(G_SOCKET_LISTENER(self->obj),port,G_OBJECT(source_object->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -23391,7 +23391,7 @@ static int _wrap_g_socket_listener_add_any_inet_port(NspGSocketListener *self,St
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &source_object) == FAIL) return RET_BUG;
     ret =g_socket_listener_add_any_inet_port(G_SOCKET_LISTENER(self->obj),G_OBJECT(source_object->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -24536,7 +24536,7 @@ _wrap_g_tls_certificate_new_from_files (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&cert_file, &key_file) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_tls_certificate_new_from_files(cert_file,key_file,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -24557,7 +24557,7 @@ _wrap_g_tls_certificate_new_from_file (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&file) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_tls_certificate_new_from_file(file,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -24579,7 +24579,7 @@ _wrap_g_tls_certificate_new_from_pem (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&data, &length) == FAIL) return RET_BUG;
   if ((ret = (GObject *)g_tls_certificate_new_from_pem(data,length,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -25004,7 +25004,7 @@ static int _wrap_g_tls_connection_handshake(NspGTlsConnection *self,Stack stack,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_tls_connection_handshake(G_TLS_CONNECTION(self->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -25020,7 +25020,7 @@ static int _wrap_g_tls_connection_handshake_finish(NspGTlsConnection *self,Stack
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_connection_handshake_finish(G_TLS_CONNECTION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -25271,7 +25271,7 @@ static int _wrap_g_tls_database_verify_chain_finish(NspGTlsDatabase *self,Stack 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_database_verify_chain_finish(G_TLS_DATABASE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25304,7 +25304,7 @@ static int _wrap_g_tls_database_lookup_certificate_for_handle(NspGTlsDatabase *s
       return RET_BUG;
     ret =g_tls_database_lookup_certificate_for_handle(G_TLS_DATABASE(self->obj),handle,G_TLS_INTERACTION(interaction->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
@@ -25323,7 +25323,7 @@ static int _wrap_g_tls_database_lookup_certificate_for_handle_finish(NspGTlsData
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_database_lookup_certificate_for_handle_finish(G_TLS_DATABASE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
@@ -25345,7 +25345,7 @@ static int _wrap_g_tls_database_lookup_certificate_issuer(NspGTlsDatabase *self,
       return RET_BUG;
     ret =g_tls_database_lookup_certificate_issuer(G_TLS_DATABASE(self->obj),G_TLS_CERTIFICATE(certificate->obj),G_TLS_INTERACTION(interaction->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
@@ -25364,7 +25364,7 @@ static int _wrap_g_tls_database_lookup_certificate_issuer_finish(NspGTlsDatabase
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_database_lookup_certificate_issuer_finish(G_TLS_DATABASE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gtlscertificate = new_type_gtlscertificate(T_BASE);
@@ -25383,7 +25383,7 @@ static int _wrap_g_tls_database_lookup_certificates_issued_by_finish(NspGTlsData
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_database_lookup_certificates_issued_by_finish(G_TLS_DATABASE(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -25609,7 +25609,7 @@ static int _wrap_g_tls_interaction_invoke_ask_password(NspGTlsInteraction *self,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_tls_interaction_invoke_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25625,7 +25625,7 @@ static int _wrap_g_tls_interaction_ask_password(NspGTlsInteraction *self,Stack s
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtlspassword, &password, &nsp_type_gcancellable, &cancellable) == FAIL) return RET_BUG;
     ret =g_tls_interaction_ask_password(G_TLS_INTERACTION(self->obj),G_TLS_PASSWORD(password->obj),G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25641,7 +25641,7 @@ static int _wrap_g_tls_interaction_ask_password_finish(NspGTlsInteraction *self,
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_interaction_ask_password_finish(G_TLS_INTERACTION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25662,7 +25662,7 @@ static int _wrap_g_tls_interaction_invoke_request_certificate(NspGTlsInteraction
       return RET_BUG;
     ret =g_tls_interaction_invoke_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25690,7 +25690,7 @@ static int _wrap_g_tls_interaction_request_certificate(NspGTlsInteraction *self,
       return RET_BUG;
     ret =g_tls_interaction_request_certificate(G_TLS_INTERACTION(self->obj),G_TLS_CONNECTION(connection->obj),flags,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -25714,7 +25714,7 @@ static int _wrap_g_tls_interaction_request_certificate_finish(NspGTlsInteraction
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_tls_interaction_request_certificate_finish(G_TLS_INTERACTION(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -26553,7 +26553,7 @@ static int _wrap_g_volume_mount_finish(NspGVolume *self,Stack stack,int rhs,int 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_volume_mount_finish(G_VOLUME(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -26606,7 +26606,7 @@ static int _wrap_g_volume_eject_with_operation_finish(NspGVolume *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_volume_eject_with_operation_finish(G_VOLUME(self->obj),G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -27171,7 +27171,7 @@ int _wrap_g_app_info_create_from_commandline(Stack stack, int rhs, int opt, int 
       return RET_BUG;
     ret =g_app_info_create_from_commandline(commandline,application_name,flags,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gappinfo = new_type_gappinfo(T_BASE);
@@ -27274,7 +27274,7 @@ int _wrap_g_app_info_launch_default_for_uri(Stack stack, int rhs, int opt, int l
   if ( GetArgs(stack,rhs,opt,T,&uri, &nsp_type_gapplaunchcontext, &launch_context) == FAIL) return RET_BUG;
     ret =g_app_info_launch_default_for_uri(uri,G_APP_LAUNCH_CONTEXT(launch_context->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -27499,7 +27499,7 @@ int _wrap_g_dbus_is_supported_address(Stack stack, int rhs, int opt, int lhs) /*
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
     ret =g_dbus_is_supported_address(string,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -27524,7 +27524,7 @@ int _wrap_g_dbus_address_get_stream_finish(Stack stack, int rhs, int opt, int lh
     }
     ret =g_dbus_address_get_stream_finish(G_ASYNC_RESULT(res->obj),out_guid,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
@@ -27552,7 +27552,7 @@ int _wrap_g_dbus_address_get_stream_sync(Stack stack, int rhs, int opt, int lhs)
     }
     ret =g_dbus_address_get_stream_sync(address,out_guid,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_giostream = new_type_giostream(T_BASE);
@@ -27574,7 +27574,7 @@ int _wrap_g_dbus_address_get_for_bus_sync(Stack stack, int rhs, int opt, int lhs
       return RET_BUG;
     ret =g_dbus_address_get_for_bus_sync(bus_type,G_CANCELLABLE(cancellable->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -27591,7 +27591,7 @@ int _wrap_g_dbus_message_bytes_needed(Stack stack, int rhs, int opt, int lhs) /*
   if ( GetArgs(stack,rhs,opt,T,&blob, &blob_len) == FAIL) return RET_BUG;
     ret =g_dbus_message_bytes_needed(blob,blob_len,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -27759,7 +27759,7 @@ int _wrap_g_io_stream_splice_finish(Stack stack, int rhs, int opt, int lhs) /* g
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gasyncresult, &result) == FAIL) return RET_BUG;
     ret =g_io_stream_splice_finish(G_ASYNC_RESULT(result->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -27777,7 +27777,7 @@ int _wrap_g_network_address_parse(Stack stack, int rhs, int opt, int lhs) /* g_n
   if ( GetArgs(stack,rhs,opt,T,&host_and_port, &default_port) == FAIL) return RET_BUG;
     ret =g_network_address_parse(host_and_port,default_port,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);
@@ -27797,7 +27797,7 @@ int _wrap_g_network_address_parse_uri(Stack stack, int rhs, int opt, int lhs) /*
   if ( GetArgs(stack,rhs,opt,T,&uri, &default_port) == FAIL) return RET_BUG;
     ret =g_network_address_parse_uri(uri,default_port,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gsocketconnectable = new_type_gsocketconnectable(T_BASE);

@@ -1865,7 +1865,7 @@ int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filenam
   if ( GetArgs(stack,rhs,opt,T,&filename, &hostname) == FAIL) return RET_BUG;
     ret =g_filename_to_uri(filename,hostname,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -2040,7 +2040,7 @@ int _wrap_g_clear_error(Stack stack, int rhs, int opt, int lhs) /* g_clear_error
   CheckRhs(0,0);
     g_clear_error(&err);
   if ( err != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),err->message);
     return RET_BUG;
   }
   return 0;
@@ -2055,7 +2055,7 @@ int _wrap_g_file_set_contents(Stack stack, int rhs, int opt, int lhs) /* g_file_
   if ( GetArgs(stack,rhs,opt,T,&filename, &contents, &length) == FAIL) return RET_BUG;
     ret =g_file_set_contents(filename,contents,length,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2071,7 +2071,7 @@ int _wrap_g_file_read_link(Stack stack, int rhs, int opt, int lhs) /* g_file_rea
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
     ret =g_file_read_link(filename,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -2144,7 +2144,7 @@ int _wrap_g_file_open_tmp(Stack stack, int rhs, int opt, int lhs) /* g_file_open
     }
     ret =g_file_open_tmp(tmpl,name_used,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -2160,7 +2160,7 @@ int _wrap_g_dir_make_tmp(Stack stack, int rhs, int opt, int lhs) /* g_dir_make_t
   if ( GetArgs(stack,rhs,opt,T,&tmpl) == FAIL) return RET_BUG;
     ret =g_dir_make_tmp(tmpl,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -2634,7 +2634,7 @@ int _wrap_g_shell_unquote(Stack stack, int rhs, int opt, int lhs) /* g_shell_unq
   if ( GetArgs(stack,rhs,opt,T,&quoted_string) == FAIL) return RET_BUG;
     ret =g_shell_unquote(quoted_string,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -2661,7 +2661,7 @@ int _wrap_g_spawn_command_line_async(Stack stack, int rhs, int opt, int lhs) /* 
   if ( GetArgs(stack,rhs,opt,T,&command_line) == FAIL) return RET_BUG;
     ret =g_spawn_command_line_async(command_line,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2676,7 +2676,7 @@ int _wrap_g_spawn_check_exit_status(Stack stack, int rhs, int opt, int lhs) /* g
   if ( GetArgs(stack,rhs,opt,T,&exit_status) == FAIL) return RET_BUG;
     ret =g_spawn_check_exit_status(exit_status,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -4033,7 +4033,7 @@ int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_p
     }
     ret =g_variant_parse(type,text,limit,endptr,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gvariant= new_type_gvariant(T_BASE);

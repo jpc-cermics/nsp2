@@ -10977,7 +10977,7 @@
   (return-type "GBytes*")
   (parameters
     '("const-char*" "path")
-    '("GResourceLookupFlags" "lookup_flags")
+    '("int" "flags");; "GResourceLookupFlags" "lookup_flags")
     '("GError**" "error")
   )
 )

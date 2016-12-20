@@ -4420,7 +4420,7 @@ static int _wrap_gdk_gl_context_realize(NspGdkGLContext *self,Stack stack,int rh
   CheckRhs(0,0);
     ret =gdk_gl_context_realize(GDK_GL_CONTEXT(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -6295,7 +6295,7 @@ static int _wrap_gdk_window_create_gl_context(NspGdkWindow *self,Stack stack,int
   CheckRhs(0,0);
     ret =gdk_window_create_gl_context(GDK_WINDOW(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gdkglcontext = new_type_gdkglcontext(T_BASE);
@@ -8142,7 +8142,7 @@ _wrap_gdk_pixbuf_new_from_resource_at_scale (Stack stack, int rhs, int opt, int 
   if ( GetArgs(stack,rhs,opt,T,&resource_path, &width, &height, &preserve_aspect_ratio) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_new_from_resource_at_scale(resource_path,width,height,preserve_aspect_ratio,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8163,7 +8163,7 @@ _wrap_gdk_pixbuf_new_from_resource (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&resource_path) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_new_from_resource(resource_path,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8185,7 +8185,7 @@ _wrap_gdk_pixbuf_new_from_file_at_scale (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&filename, &width, &height, &preserve_aspect_ratio) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_new_from_file_at_scale(filename,width,height,preserve_aspect_ratio,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8207,7 +8207,7 @@ _wrap_gdk_pixbuf_new_from_file_at_size (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&filename, &width, &height) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_new_from_file_at_size(filename,width,height,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8228,7 +8228,7 @@ _wrap_gdk_pixbuf_new_from_file (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_new_from_file(filename,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8517,7 +8517,7 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
     }
     ret =gdk_pixbuf_savev(GDK_PIXBUF(self->obj),filename,type,option_keys,option_values,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8955,7 +8955,7 @@ _wrap_gdk_pixbuf_animation_new_from_resource (Stack stack, int rhs, int opt, int
   if ( GetArgs(stack,rhs,opt,T,&resource_path) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_animation_new_from_resource(resource_path,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8976,7 +8976,7 @@ _wrap_gdk_pixbuf_animation_new_from_file (Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_animation_new_from_file(filename,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -9479,7 +9479,7 @@ _wrap_gdk_pixbuf_loader_new_with_mime_type (Stack stack, int rhs, int opt, int l
   if ( GetArgs(stack,rhs,opt,T,&mime_type) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_loader_new_with_mime_type(mime_type,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -9500,7 +9500,7 @@ _wrap_gdk_pixbuf_loader_new_with_type (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&image_type) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_loader_new_with_type(image_type,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -9543,7 +9543,7 @@ static int _wrap_gdk_pixbuf_loader_write(NspGdkPixbufLoader *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&buf, &count) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_loader_write(GDK_PIXBUF_LOADER(self->obj),buf,count,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -9581,7 +9581,7 @@ static int _wrap_gdk_pixbuf_loader_close(NspGdkPixbufLoader *self,Stack stack,in
   CheckRhs(0,0);
     ret =gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;

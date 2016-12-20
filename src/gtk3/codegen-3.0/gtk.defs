@@ -7,6 +7,7 @@
 (register "gio-types.defs")
 (register "glib-types.defs")
 (register "gdkpixbuf-types.defs")
+(register "cairo-types.defs")
 
 (include "gtk-extrafuncs.defs")
 (include "gtk-types.defs")
@@ -20833,24 +20834,20 @@
 
 ;; From gtkrenderprivate.h
 
-(define-function gtk_render_content_path
-  (c-name "gtk_render_content_path")
-  (return-type "none")
-  (parameters
-    '("GtkStyleContext*" "context")
-    '("cairo_t*" "cr")
-    '("double" "x")
-    '("double" "y")
-    '("double" "width")
-    '("double" "height")
-  )
-)
-
-
+;; (define-function gtk_render_content_path
+;;   (c-name "gtk_render_content_path")
+;;   (return-type "none")
+;;   (parameters
+;;     '("GtkStyleContext*" "context")
+;;     '("cairo_t*" "cr")
+;;     '("double" "x")
+;;     '("double" "y")
+;;     '("double" "width")
+;;     '("double" "height")
+;;   )
+;; )
 
 ;; From gtkresources.h
-
-
 
 ;; From gtkrevealer.h
 

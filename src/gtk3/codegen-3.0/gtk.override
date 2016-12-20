@@ -4,6 +4,8 @@ headers
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
+#include <cairo/cairo.h>
+#include <cairo/cairo-gobject.h>
 
 #include <nsp/nsp.h>
 #include <nsp/objects.h>
@@ -25,6 +27,11 @@ headers
 #include <nsp/all-glib.h>
 #include <nsp/gvariant.h>
 #include <nsp/gvarianttype.h>
+
+
+#include <nsp/gtk/cairo_t.h>
+#include <nsp/gtk/cairo_surface_t.h>
+
 
 /* XXXX */
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);

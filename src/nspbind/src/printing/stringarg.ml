@@ -4600,8 +4600,8 @@ let gtype_arg=
 
 let handle_gerror name =
   Printf.sprintf "  if ( %s != NULL ) {\
-    \n    Scierror(\"%%s: gtk error\\n\",NspFname(stack));\
-    \n    return RET_BUG;\n  }\n" name
+    \n    Scierror(\"%%s: gtk error\\n%%s\\n\",NspFname(stack),%s->message);\
+    \n    return RET_BUG;\n  }\n" name name 
 ;;
 
 let gerror_arg_write_param _oname params info _byref=
