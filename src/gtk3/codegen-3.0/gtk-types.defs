@@ -1358,18 +1358,6 @@
   (gtype-id "GTK_TYPE_STYLE_CONTEXT")
 )
 
-(define-object GtkCssProvider
-  (in-module "Gtk")
-  (parent "GObject")
-  (c-name "GtkCssProvider")
-  (gtype-id "GTK_TYPE_CSS_PROVIDER")
-)
-
-(define-object GtkStyleProvider
-  (in-module "Gtk")
-  (c-name "GtkStyleProvider")
-  (gtype-id "GTK_TYPE_STYLE_PROVIDER")
-)
 
 ;; (define-object GtkStyleProperty
 ;;   (in-module "Gtk")
@@ -1674,6 +1662,12 @@
   (parent "GObject")
   (c-name "GtkCssProvider")
   (gtype-id "GTK_TYPE_CSS_PROVIDER")
+)
+
+(define-object GtkStyleProvider
+  (in-module "Gtk")
+  (c-name "GtkStyleProvider")
+  (gtype-id "GTK_TYPE_STYLE_PROVIDER")
 )
 
 ;; (define-object GtkCssStyle

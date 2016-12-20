@@ -247,8 +247,6 @@ static void gtk_drag_set_icon_gicon_redef (GdkDragContext *context,
 #include <nsp/gtk/gtkappchooserwidget.h>
 #include <nsp/gtk/gtksettings.h>
 #include <nsp/gtk/gtkstylecontext.h>
-#include <nsp/gtk/gtkcssprovider.h>
-#include <nsp/gtk/gtkstyleprovider.h>
 #include <nsp/gtk/gtkuimanager.h>
 #include <nsp/gtk/gtkactiongroup.h>
 #include <nsp/gtk/gtkaction.h>
@@ -259,6 +257,8 @@ static void gtk_drag_set_icon_gicon_redef (GdkDragContext *context,
 #include <nsp/gtk/gtkalignment.h>
 #include <nsp/gtk/gtkicontheme.h>
 #include <nsp/gtk/gtkaccelgroup.h>
+#include <nsp/gtk/gtkcssprovider.h>
+#include <nsp/gtk/gtkstyleprovider.h>
 #include <nsp/gtk/gtkactionable.h>
 #include <nsp/gtk/gtkbuildable.h>
 #include <nsp/gtk/gtkorientable.h>
@@ -69941,510 +69941,6 @@ static NspMethods *gtkstylecontext_get_methods(void) { return gtkstylecontext_me
 static AttrTab gtkstylecontext_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* -----------NspGtkCssProvider ----------- */
-
-
-#define  NspGtkCssProvider_Private 
-#include <nsp/objects.h>
-#include <nsp/gtk/gtkcssprovider.h>
-#include <nsp/interf.h>
-#include <nsp/nspthreads.h>
-
-/* 
- * NspGtkCssProvider inherits from GObject 
- */
-
-int nsp_type_gtkcssprovider_id=0;
-NspTypeGtkCssProvider *nsp_type_gtkcssprovider=NULL;
-
-/*
- * Type object for NspGtkCssProvider 
- * all the instance of NspTypeGtkCssProvider share the same id. 
- * nsp_type_gtkcssprovider: is an instance of NspTypeGtkCssProvider 
- *    used for objects of NspGtkCssProvider type (i.e built with new_gtkcssprovider) 
- * other instances are used for derived classes 
- */
-NspTypeGtkCssProvider *new_type_gtkcssprovider(type_mode mode)
-{
-  NspTypeGtkCssProvider *type= NULL;
-  NspTypeObject *top;
-  if (  nsp_type_gtkcssprovider != 0 && mode == T_BASE )
-    {
-      /* initialization performed and T_BASE requested */
-      return nsp_type_gtkcssprovider;
-    }
-  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
-  type->interface = NULL;
-  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
-  if ( type->surtype == NULL) return NULL;
-  type->attrs = gtkcssprovider_attrs;
-  type->get_attrs = (attrs_func *) int_get_attribute;
-  type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = gtkcssprovider_get_methods;
-  type->gtk_methods = TRUE;
-  type->new = (new_func *) new_gtkcssprovider;
-
-
-  top = NSP_TYPE_OBJECT(type->surtype);
-  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-
-  /* object methods redefined for gtkcssprovider */ 
-
-  top->s_type =  (s_type_func *) nsp_gtkcssprovider_type_as_string;
-  top->sh_type = (sh_type_func *) nsp_gtkcssprovider_type_short_string;
-  /* top->create = (create_func*) int_gtkcssprovider_create;*/
-
-  /* specific methods for gtkcssprovider */
-
-  type->init = (init_func *) init_gtkcssprovider;
-
-  /* 
-   * NspGtkCssProvider interfaces can be added here 
-   * type->interface = (NspTypeBase *) new_type_b();
-   * type->interface->interface = (NspTypeBase *) new_type_C()
-   * ....
-   */
-  if ( nsp_type_gtkcssprovider_id == 0 ) 
-    {
-      /* 
-       * the first time we get here we initialize the type id and
-       * an instance of NspTypeGtkCssProvider called nsp_type_gtkcssprovider
-       */
-      type->id =  nsp_type_gtkcssprovider_id = nsp_new_type_id();
-      nsp_type_gtkcssprovider = type;
-      if ( nsp_register_type(nsp_type_gtkcssprovider) == FALSE) return NULL;
-      /* add a ref to nsp_type in the gtype */
-      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkcssprovider, GTK_TYPE_CSS_PROVIDER);
-      return ( mode == T_BASE ) ? type : new_type_gtkcssprovider(mode);
-    }
-  else 
-    {
-      type->id = nsp_type_gtkcssprovider_id;
-      return type;
-    }
-}
-
-/*
- * initialize NspGtkCssProvider instances 
- * locally and by calling initializer on parent class 
- */
-
-static int init_gtkcssprovider(NspGtkCssProvider *Obj,NspTypeGtkCssProvider *type)
-{
-  /* initialize the surtype */ 
-  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type;
-  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
-  /* specific */
- return OK;
-}
-
-/*
- * new instance of NspGtkCssProvider 
- */
-
-NspGtkCssProvider *new_gtkcssprovider() 
-{
-  NspGtkCssProvider *loc;
-  /* type must exists */
-  nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
-  if ( (loc = malloc(sizeof(NspGtkCssProvider)))== NULLGTKCSSPROVIDER) return loc;
-  /* initialize object */
-  if ( init_gtkcssprovider(loc,nsp_type_gtkcssprovider) == FAIL) return NULLGTKCSSPROVIDER;
-  return loc;
-}
-
-/*----------------------------------------------
- * Object method redefined for NspGtkCssProvider 
- *-----------------------------------------------*/
-/*
- * type as string 
- */
-
-static char gtkcssprovider_type_name[]="GtkCssProvider";
-static char gtkcssprovider_short_type_name[]="GtkCssProvider";
-
-static char *nsp_gtkcssprovider_type_as_string(void)
-{
-  return(gtkcssprovider_type_name);
-}
-
-static char *nsp_gtkcssprovider_type_short_string(NspObject *v)
-{
-  return(gtkcssprovider_short_type_name);
-}
-
-/*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGtkCssProvider objects 
- * Note that some of these functions could become MACROS
- *-----------------------------------------------------*/
-
-NspGtkCssProvider   *nsp_gtkcssprovider_object(NspObject *O)
-{
-  /* Follow pointer */
-  HOBJ_GET_OBJECT(O,NULL);
-  /* Check type */
-  if ( check_cast (O,nsp_type_gtkcssprovider_id)  == TRUE  ) return ((NspGtkCssProvider *) O);
-  else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcssprovider));
-  return NULL;
-}
-
-int IsGtkCssProviderObj(Stack stack, int i)
-{
-  return nsp_object_type(NthObj(i),nsp_type_gtkcssprovider_id);
-}
-
-int IsGtkCssProvider(NspObject *O)
-{
-  return nsp_object_type(O,nsp_type_gtkcssprovider_id);
-}
-
-NspGtkCssProvider  *GetGtkCssProviderCopy(Stack stack, int i)
-{
-  if (  GetGtkCssProvider(stack,i) == NULL ) return NULL;
-  return MaybeObjCopy(&NthObj(i));
-}
-
-NspGtkCssProvider  *GetGtkCssProvider(Stack stack, int i)
-{
-  NspGtkCssProvider *M;
-  if (( M = nsp_gtkcssprovider_object(NthObj(i))) == NULLGTKCSSPROVIDER)
-     ArgMessage(stack,i);
-  return M;
-}
-
-/*
- * copy for gobject derived class  
- */
-
-NspGtkCssProvider *gtkcssprovider_copy(NspGtkCssProvider *self)
-{
-  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkcssprovider);*/
-  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkcssprovider);
-}
-
-/*-------------------------------------------------------------------
- * wrappers for the GtkCssProvider
- * i.e functions at Nsp level 
- *-------------------------------------------------------------------*/
-/*-------------------------------------------
- * Methods
- *-------------------------------------------*/
-static int
-_wrap_gtk_css_provider_new (Stack stack, int rhs, int opt, int lhs)
-{
-  GObject *ret; NspObject *nsp_ret;
-  CheckRhs(0,0);
-  if ((ret = (GObject *)gtk_css_provider_new())== NULL) return RET_BUG;
-
-  nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
-  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcssprovider );
-   if ( nsp_ret == NULL) return RET_BUG;
-  MoveObj(stack,1,nsp_ret);
-  return 1;
-}
-
-#if GTK_CHECK_VERSION(3,2,0)
-static int _wrap_gtk_css_provider_to_string(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
-{
-  gchar *ret;
-  CheckRhs(0,0);
-    ret =gtk_css_provider_to_string(GTK_CSS_PROVIDER(self->obj));
-  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
-  g_free(ret);
-  return 1;
-}
-
-#else
-int _wrap_gtk_css_provider_to_string(Stack stack, int rhs, int opt, int lhs) /* to_string */
-{
-  Scierror("Error: function gtk_css_provider_to_string not available\n");
-  return RET_BUG;
-}
-#endif
-static int _wrap_gtk_css_provider_load_from_data(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string,s_int, t_end};
-  char *data;
-  int length, ret;
-  GError *error = NULL;
-  if ( GetArgs(stack,rhs,opt,T,&data, &length) == FAIL) return RET_BUG;
-    ret =gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(self->obj),data,length,&error);
-  if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
-    return RET_BUG;
-  }
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-static int _wrap_gtk_css_provider_load_from_file(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {obj_check, t_end};
-  NspGObject *file;
-  GError *error = NULL;
-  int ret;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gfile, &file) == FAIL) return RET_BUG;
-    ret =gtk_css_provider_load_from_file(GTK_CSS_PROVIDER(self->obj),G_FILE(file->obj),&error);
-  if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
-    return RET_BUG;
-  }
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-static int _wrap_gtk_css_provider_load_from_path(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string, t_end};
-  char *path;
-  GError *error = NULL;
-  int ret;
-  if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
-    ret =gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(self->obj),path,&error);
-  if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
-    return RET_BUG;
-  }
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
-}
-
-#if GTK_CHECK_VERSION(3,16,0)
-static int _wrap_gtk_css_provider_load_from_resource(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {string, t_end};
-  char *resource_path;
-  if ( GetArgs(stack,rhs,opt,T,&resource_path) == FAIL) return RET_BUG;
-    gtk_css_provider_load_from_resource(GTK_CSS_PROVIDER(self->obj),resource_path);
-  return 0;
-}
-
-#else
-int _wrap_gtk_css_provider_load_from_resource(Stack stack, int rhs, int opt, int lhs) /* load_from_resource */
-{
-  Scierror("Error: function gtk_css_provider_load_from_resource not available\n");
-  return RET_BUG;
-}
-#endif
-static NspMethods gtkcssprovider_methods[] = {
-  {"to_string",(nsp_method *) _wrap_gtk_css_provider_to_string},
-  {"load_from_data",(nsp_method *) _wrap_gtk_css_provider_load_from_data},
-  {"load_from_file",(nsp_method *) _wrap_gtk_css_provider_load_from_file},
-  {"load_from_path",(nsp_method *) _wrap_gtk_css_provider_load_from_path},
-  {"load_from_resource",(nsp_method *) _wrap_gtk_css_provider_load_from_resource},
-  { NULL, NULL}
-};
-
-static NspMethods *gtkcssprovider_get_methods(void) { return gtkcssprovider_methods;};
-/*-------------------------------------------
- * Attributes
- *-------------------------------------------*/
-
-static AttrTab gtkcssprovider_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
-
-
-/* -----------NspGtkStyleProvider ----------- */
-
-
-#define  NspGtkStyleProvider_Private 
-#include <nsp/objects.h>
-#include <nsp/gtk/gtkstyleprovider.h>
-#include <nsp/interf.h>
-#include <nsp/nspthreads.h>
-
-/* 
- * NspGtkStyleProvider inherits from GObject 
- */
-
-int nsp_type_gtkstyleprovider_id=0;
-NspTypeGtkStyleProvider *nsp_type_gtkstyleprovider=NULL;
-
-/*
- * Type object for NspGtkStyleProvider 
- * all the instance of NspTypeGtkStyleProvider share the same id. 
- * nsp_type_gtkstyleprovider: is an instance of NspTypeGtkStyleProvider 
- *    used for objects of NspGtkStyleProvider type (i.e built with new_gtkstyleprovider) 
- * other instances are used for derived classes 
- */
-NspTypeGtkStyleProvider *new_type_gtkstyleprovider(type_mode mode)
-{
-  NspTypeGtkStyleProvider *type= NULL;
-  NspTypeObject *top;
-  if (  nsp_type_gtkstyleprovider != 0 && mode == T_BASE )
-    {
-      /* initialization performed and T_BASE requested */
-      return nsp_type_gtkstyleprovider;
-    }
-  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
-  type->interface = NULL;
-  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
-  if ( type->surtype == NULL) return NULL;
-  type->attrs = gtkstyleprovider_attrs;
-  type->get_attrs = (attrs_func *) int_get_attribute;
-  type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = gtkstyleprovider_get_methods;
-  type->gtk_methods = TRUE;
-  type->new = (new_func *) new_gtkstyleprovider;
-
-
-  top = NSP_TYPE_OBJECT(type->surtype);
-  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-
-  /* object methods redefined for gtkstyleprovider */ 
-
-  top->s_type =  (s_type_func *) nsp_gtkstyleprovider_type_as_string;
-  top->sh_type = (sh_type_func *) nsp_gtkstyleprovider_type_short_string;
-  /* top->create = (create_func*) int_gtkstyleprovider_create;*/
-
-  /* specific methods for gtkstyleprovider */
-
-  type->init = (init_func *) init_gtkstyleprovider;
-
-  /* 
-   * NspGtkStyleProvider interfaces can be added here 
-   * type->interface = (NspTypeBase *) new_type_b();
-   * type->interface->interface = (NspTypeBase *) new_type_C()
-   * ....
-   */
-  if ( nsp_type_gtkstyleprovider_id == 0 ) 
-    {
-      /* 
-       * the first time we get here we initialize the type id and
-       * an instance of NspTypeGtkStyleProvider called nsp_type_gtkstyleprovider
-       */
-      type->id =  nsp_type_gtkstyleprovider_id = nsp_new_type_id();
-      nsp_type_gtkstyleprovider = type;
-      if ( nsp_register_type(nsp_type_gtkstyleprovider) == FALSE) return NULL;
-      /* add a ref to nsp_type in the gtype */
-      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkstyleprovider, GTK_TYPE_STYLE_PROVIDER);
-      return ( mode == T_BASE ) ? type : new_type_gtkstyleprovider(mode);
-    }
-  else 
-    {
-      type->id = nsp_type_gtkstyleprovider_id;
-      return type;
-    }
-}
-
-/*
- * initialize NspGtkStyleProvider instances 
- * locally and by calling initializer on parent class 
- */
-
-static int init_gtkstyleprovider(NspGtkStyleProvider *Obj,NspTypeGtkStyleProvider *type)
-{
-  /* initialize the surtype */ 
-  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type;
-  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
-  /* specific */
- return OK;
-}
-
-/*
- * new instance of NspGtkStyleProvider 
- */
-
-NspGtkStyleProvider *new_gtkstyleprovider() 
-{
-  NspGtkStyleProvider *loc;
-  /* type must exists */
-  nsp_type_gtkstyleprovider = new_type_gtkstyleprovider(T_BASE);
-  if ( (loc = malloc(sizeof(NspGtkStyleProvider)))== NULLGTKSTYLEPROVIDER) return loc;
-  /* initialize object */
-  if ( init_gtkstyleprovider(loc,nsp_type_gtkstyleprovider) == FAIL) return NULLGTKSTYLEPROVIDER;
-  return loc;
-}
-
-/*----------------------------------------------
- * Object method redefined for NspGtkStyleProvider 
- *-----------------------------------------------*/
-/*
- * type as string 
- */
-
-static char gtkstyleprovider_type_name[]="GtkStyleProvider";
-static char gtkstyleprovider_short_type_name[]="GtkStyleProvider";
-
-static char *nsp_gtkstyleprovider_type_as_string(void)
-{
-  return(gtkstyleprovider_type_name);
-}
-
-static char *nsp_gtkstyleprovider_type_short_string(NspObject *v)
-{
-  return(gtkstyleprovider_short_type_name);
-}
-
-/*-----------------------------------------------------
- * a set of functions used when writing interfaces 
- * for NspGtkStyleProvider objects 
- * Note that some of these functions could become MACROS
- *-----------------------------------------------------*/
-
-NspGtkStyleProvider   *nsp_gtkstyleprovider_object(NspObject *O)
-{
-  /* Follow pointer */
-  HOBJ_GET_OBJECT(O,NULL);
-  /* Check type */
-  if ( check_cast (O,nsp_type_gtkstyleprovider_id)  == TRUE  ) return ((NspGtkStyleProvider *) O);
-  else 
-    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkstyleprovider));
-  return NULL;
-}
-
-int IsGtkStyleProviderObj(Stack stack, int i)
-{
-  return nsp_object_type(NthObj(i),nsp_type_gtkstyleprovider_id);
-}
-
-int IsGtkStyleProvider(NspObject *O)
-{
-  return nsp_object_type(O,nsp_type_gtkstyleprovider_id);
-}
-
-NspGtkStyleProvider  *GetGtkStyleProviderCopy(Stack stack, int i)
-{
-  if (  GetGtkStyleProvider(stack,i) == NULL ) return NULL;
-  return MaybeObjCopy(&NthObj(i));
-}
-
-NspGtkStyleProvider  *GetGtkStyleProvider(Stack stack, int i)
-{
-  NspGtkStyleProvider *M;
-  if (( M = nsp_gtkstyleprovider_object(NthObj(i))) == NULLGTKSTYLEPROVIDER)
-     ArgMessage(stack,i);
-  return M;
-}
-
-/*
- * copy for gobject derived class  
- */
-
-NspGtkStyleProvider *gtkstyleprovider_copy(NspGtkStyleProvider *self)
-{
-  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkstyleprovider);*/
-  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkstyleprovider);
-}
-
-/*-------------------------------------------------------------------
- * wrappers for the GtkStyleProvider
- * i.e functions at Nsp level 
- *-------------------------------------------------------------------*/
-/*-------------------------------------------
- * Methods
- *-------------------------------------------*/
-static NspMethods *gtkstyleprovider_get_methods(void) { return NULL;};
-/*-------------------------------------------
- * Attributes
- *-------------------------------------------*/
-
-static AttrTab gtkstyleprovider_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
-
-
 /* -----------NspGtkUIManager ----------- */
 
 
@@ -71144,7 +70640,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 71148 "gtk.c"
+#line 70644 "gtk.c"
 
 
 #line 7259 "codegen-3.0/gtk.override"
@@ -71163,7 +70659,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 71167 "gtk.c"
+#line 70663 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -71450,7 +70946,7 @@ _wrap_gtk_action_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 71454 "gtk.c"
+#line 70950 "gtk.c"
 
 
 static int _wrap_gtk_action_get_name(NspGtkAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -72273,7 +71769,7 @@ _wrap_gtk_image_menu_item_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 72277 "gtk.c"
+#line 71773 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -73064,7 +72560,7 @@ static int _wrap_gtk_icon_theme_choose_icon(NspGtkIconTheme *self,Stack stack,in
   return 1;
 }
 
-#line 73068 "gtk.c"
+#line 72564 "gtk.c"
 
 
 #line 7549 "codegen-3.0/gtk.override"
@@ -73087,7 +72583,7 @@ static int _wrap_gtk_icon_theme_choose_icon_for_scale(NspGtkIconTheme *self,Stac
   return 1;
 }
 
-#line 73091 "gtk.c"
+#line 72587 "gtk.c"
 
 
 static int _wrap_gtk_icon_theme_load_icon(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
@@ -73211,7 +72707,7 @@ static int _wrap_gtk_icon_theme_list_icons(NspGtkIconTheme *self,Stack stack,int
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
 
-#line 73215 "gtk.c"
+#line 72711 "gtk.c"
 
 
 static int _wrap_gtk_icon_theme_list_contexts(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
@@ -73540,6 +73036,510 @@ static NspMethods *gtkaccelgroup_get_methods(void) { return gtkaccelgroup_method
  *-------------------------------------------*/
 
 static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* -----------NspGtkCssProvider ----------- */
+
+
+#define  NspGtkCssProvider_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gtkcssprovider.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGtkCssProvider inherits from GObject 
+ */
+
+int nsp_type_gtkcssprovider_id=0;
+NspTypeGtkCssProvider *nsp_type_gtkcssprovider=NULL;
+
+/*
+ * Type object for NspGtkCssProvider 
+ * all the instance of NspTypeGtkCssProvider share the same id. 
+ * nsp_type_gtkcssprovider: is an instance of NspTypeGtkCssProvider 
+ *    used for objects of NspGtkCssProvider type (i.e built with new_gtkcssprovider) 
+ * other instances are used for derived classes 
+ */
+NspTypeGtkCssProvider *new_type_gtkcssprovider(type_mode mode)
+{
+  NspTypeGtkCssProvider *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkcssprovider != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkcssprovider;
+    }
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkcssprovider_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gtkcssprovider_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gtkcssprovider;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gtkcssprovider */ 
+
+  top->s_type =  (s_type_func *) nsp_gtkcssprovider_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gtkcssprovider_type_short_string;
+  /* top->create = (create_func*) int_gtkcssprovider_create;*/
+
+  /* specific methods for gtkcssprovider */
+
+  type->init = (init_func *) init_gtkcssprovider;
+
+  /* 
+   * NspGtkCssProvider interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gtkcssprovider_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkCssProvider called nsp_type_gtkcssprovider
+       */
+      type->id =  nsp_type_gtkcssprovider_id = nsp_new_type_id();
+      nsp_type_gtkcssprovider = type;
+      if ( nsp_register_type(nsp_type_gtkcssprovider) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkcssprovider, GTK_TYPE_CSS_PROVIDER);
+      return ( mode == T_BASE ) ? type : new_type_gtkcssprovider(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gtkcssprovider_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGtkCssProvider instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkcssprovider(NspGtkCssProvider *Obj,NspTypeGtkCssProvider *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGtkCssProvider 
+ */
+
+NspGtkCssProvider *new_gtkcssprovider() 
+{
+  NspGtkCssProvider *loc;
+  /* type must exists */
+  nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkCssProvider)))== NULLGTKCSSPROVIDER) return loc;
+  /* initialize object */
+  if ( init_gtkcssprovider(loc,nsp_type_gtkcssprovider) == FAIL) return NULLGTKCSSPROVIDER;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGtkCssProvider 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gtkcssprovider_type_name[]="GtkCssProvider";
+static char gtkcssprovider_short_type_name[]="GtkCssProvider";
+
+static char *nsp_gtkcssprovider_type_as_string(void)
+{
+  return(gtkcssprovider_type_name);
+}
+
+static char *nsp_gtkcssprovider_type_short_string(NspObject *v)
+{
+  return(gtkcssprovider_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGtkCssProvider objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGtkCssProvider   *nsp_gtkcssprovider_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkcssprovider_id)  == TRUE  ) return ((NspGtkCssProvider *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkcssprovider));
+  return NULL;
+}
+
+int IsGtkCssProviderObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gtkcssprovider_id);
+}
+
+int IsGtkCssProvider(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkcssprovider_id);
+}
+
+NspGtkCssProvider  *GetGtkCssProviderCopy(Stack stack, int i)
+{
+  if (  GetGtkCssProvider(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkCssProvider  *GetGtkCssProvider(Stack stack, int i)
+{
+  NspGtkCssProvider *M;
+  if (( M = nsp_gtkcssprovider_object(NthObj(i))) == NULLGTKCSSPROVIDER)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkCssProvider *gtkcssprovider_copy(NspGtkCssProvider *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkcssprovider);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkcssprovider);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkCssProvider
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int
+_wrap_gtk_css_provider_new (Stack stack, int rhs, int opt, int lhs)
+{
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  if ((ret = (GObject *)gtk_css_provider_new())== NULL) return RET_BUG;
+
+  nsp_type_gtkcssprovider = new_type_gtkcssprovider(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcssprovider );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#if GTK_CHECK_VERSION(3,2,0)
+static int _wrap_gtk_css_provider_to_string(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *ret;
+  CheckRhs(0,0);
+    ret =gtk_css_provider_to_string(GTK_CSS_PROVIDER(self->obj));
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+#else
+int _wrap_gtk_css_provider_to_string(Stack stack, int rhs, int opt, int lhs) /* to_string */
+{
+  Scierror("Error: function gtk_css_provider_to_string not available\n");
+  return RET_BUG;
+}
+#endif
+static int _wrap_gtk_css_provider_load_from_data(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,s_int, t_end};
+  char *data;
+  int length, ret;
+  GError *error = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&data, &length) == FAIL) return RET_BUG;
+    ret =gtk_css_provider_load_from_data(GTK_CSS_PROVIDER(self->obj),data,length,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_css_provider_load_from_file(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *file;
+  GError *error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gfile, &file) == FAIL) return RET_BUG;
+    ret =gtk_css_provider_load_from_file(GTK_CSS_PROVIDER(self->obj),G_FILE(file->obj),&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_css_provider_load_from_path(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *path;
+  GError *error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
+    ret =gtk_css_provider_load_from_path(GTK_CSS_PROVIDER(self->obj),path,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",NspFname(stack));
+    return RET_BUG;
+  }
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#if GTK_CHECK_VERSION(3,16,0)
+static int _wrap_gtk_css_provider_load_from_resource(NspGtkCssProvider *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *resource_path;
+  if ( GetArgs(stack,rhs,opt,T,&resource_path) == FAIL) return RET_BUG;
+    gtk_css_provider_load_from_resource(GTK_CSS_PROVIDER(self->obj),resource_path);
+  return 0;
+}
+
+#else
+int _wrap_gtk_css_provider_load_from_resource(Stack stack, int rhs, int opt, int lhs) /* load_from_resource */
+{
+  Scierror("Error: function gtk_css_provider_load_from_resource not available\n");
+  return RET_BUG;
+}
+#endif
+static NspMethods gtkcssprovider_methods[] = {
+  {"to_string",(nsp_method *) _wrap_gtk_css_provider_to_string},
+  {"load_from_data",(nsp_method *) _wrap_gtk_css_provider_load_from_data},
+  {"load_from_file",(nsp_method *) _wrap_gtk_css_provider_load_from_file},
+  {"load_from_path",(nsp_method *) _wrap_gtk_css_provider_load_from_path},
+  {"load_from_resource",(nsp_method *) _wrap_gtk_css_provider_load_from_resource},
+  { NULL, NULL}
+};
+
+static NspMethods *gtkcssprovider_get_methods(void) { return gtkcssprovider_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkcssprovider_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* -----------NspGtkStyleProvider ----------- */
+
+
+#define  NspGtkStyleProvider_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gtkstyleprovider.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGtkStyleProvider inherits from GObject 
+ */
+
+int nsp_type_gtkstyleprovider_id=0;
+NspTypeGtkStyleProvider *nsp_type_gtkstyleprovider=NULL;
+
+/*
+ * Type object for NspGtkStyleProvider 
+ * all the instance of NspTypeGtkStyleProvider share the same id. 
+ * nsp_type_gtkstyleprovider: is an instance of NspTypeGtkStyleProvider 
+ *    used for objects of NspGtkStyleProvider type (i.e built with new_gtkstyleprovider) 
+ * other instances are used for derived classes 
+ */
+NspTypeGtkStyleProvider *new_type_gtkstyleprovider(type_mode mode)
+{
+  NspTypeGtkStyleProvider *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gtkstyleprovider != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gtkstyleprovider;
+    }
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gtkstyleprovider_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gtkstyleprovider_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gtkstyleprovider;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gtkstyleprovider */ 
+
+  top->s_type =  (s_type_func *) nsp_gtkstyleprovider_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gtkstyleprovider_type_short_string;
+  /* top->create = (create_func*) int_gtkstyleprovider_create;*/
+
+  /* specific methods for gtkstyleprovider */
+
+  type->init = (init_func *) init_gtkstyleprovider;
+
+  /* 
+   * NspGtkStyleProvider interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gtkstyleprovider_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGtkStyleProvider called nsp_type_gtkstyleprovider
+       */
+      type->id =  nsp_type_gtkstyleprovider_id = nsp_new_type_id();
+      nsp_type_gtkstyleprovider = type;
+      if ( nsp_register_type(nsp_type_gtkstyleprovider) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gtkstyleprovider, GTK_TYPE_STYLE_PROVIDER);
+      return ( mode == T_BASE ) ? type : new_type_gtkstyleprovider(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gtkstyleprovider_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGtkStyleProvider instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gtkstyleprovider(NspGtkStyleProvider *Obj,NspTypeGtkStyleProvider *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGtkStyleProvider 
+ */
+
+NspGtkStyleProvider *new_gtkstyleprovider() 
+{
+  NspGtkStyleProvider *loc;
+  /* type must exists */
+  nsp_type_gtkstyleprovider = new_type_gtkstyleprovider(T_BASE);
+  if ( (loc = malloc(sizeof(NspGtkStyleProvider)))== NULLGTKSTYLEPROVIDER) return loc;
+  /* initialize object */
+  if ( init_gtkstyleprovider(loc,nsp_type_gtkstyleprovider) == FAIL) return NULLGTKSTYLEPROVIDER;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGtkStyleProvider 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gtkstyleprovider_type_name[]="GtkStyleProvider";
+static char gtkstyleprovider_short_type_name[]="GtkStyleProvider";
+
+static char *nsp_gtkstyleprovider_type_as_string(void)
+{
+  return(gtkstyleprovider_type_name);
+}
+
+static char *nsp_gtkstyleprovider_type_short_string(NspObject *v)
+{
+  return(gtkstyleprovider_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGtkStyleProvider objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGtkStyleProvider   *nsp_gtkstyleprovider_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gtkstyleprovider_id)  == TRUE  ) return ((NspGtkStyleProvider *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gtkstyleprovider));
+  return NULL;
+}
+
+int IsGtkStyleProviderObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gtkstyleprovider_id);
+}
+
+int IsGtkStyleProvider(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gtkstyleprovider_id);
+}
+
+NspGtkStyleProvider  *GetGtkStyleProviderCopy(Stack stack, int i)
+{
+  if (  GetGtkStyleProvider(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGtkStyleProvider  *GetGtkStyleProvider(Stack stack, int i)
+{
+  NspGtkStyleProvider *M;
+  if (( M = nsp_gtkstyleprovider_object(NthObj(i))) == NULLGTKSTYLEPROVIDER)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGtkStyleProvider *gtkstyleprovider_copy(NspGtkStyleProvider *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkstyleprovider);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gtkstyleprovider);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GtkStyleProvider
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static NspMethods *gtkstyleprovider_get_methods(void) { return NULL;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gtkstyleprovider_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 /*-------------------------------------------
  * functions 
@@ -75743,8 +75743,6 @@ static OpTab gtk_func[]={
   { "gtkappchooserwidget_new", _wrap_gtk_app_chooser_widget_new},
   { "gtk_style_context_new", _wrap_gtk_style_context_new},
   { "gtkstylecontext_new", _wrap_gtk_style_context_new},
-  { "gtk_css_provider_new", _wrap_gtk_css_provider_new},
-  { "gtkcssprovider_new", _wrap_gtk_css_provider_new},
   { "gtk_ui_manager_new", _wrap_gtk_ui_manager_new},
   { "gtkuimanager_new", _wrap_gtk_ui_manager_new},
   { "gtk_action_group_new", _wrap_gtk_action_group_new},
@@ -75757,6 +75755,8 @@ static OpTab gtk_func[]={
   { "gtkicontheme_new", _wrap_gtk_icon_theme_new},
   { "gtk_accel_group_new", _wrap_gtk_accel_group_new},
   { "gtkaccelgroup_new", _wrap_gtk_accel_group_new},
+  { "gtk_css_provider_new", _wrap_gtk_css_provider_new},
+  { "gtkcssprovider_new", _wrap_gtk_css_provider_new},
   { "nsp_graphic_new", _wrap_nsp_graphic_new},
   { "gtk_accelerator_valid", _wrap_gtk_accelerator_valid},
   { "gtk_accelerator_name", _wrap_gtk_accelerator_name},
@@ -76210,8 +76210,6 @@ void nsp_initialize_gtk_types(void)
   new_type_gtkappchooserwidget(T_BASE);
   new_type_gtksettings(T_BASE);
   new_type_gtkstylecontext(T_BASE);
-  new_type_gtkcssprovider(T_BASE);
-  new_type_gtkstyleprovider(T_BASE);
   new_type_gtkuimanager(T_BASE);
   new_type_gtkactiongroup(T_BASE);
   new_type_gtkaction(T_BASE);
@@ -76222,6 +76220,8 @@ void nsp_initialize_gtk_types(void)
   new_type_gtkalignment(T_BASE);
   new_type_gtkicontheme(T_BASE);
   new_type_gtkaccelgroup(T_BASE);
+  new_type_gtkcssprovider(T_BASE);
+  new_type_gtkstyleprovider(T_BASE);
 }
 
 #line 7808 "codegen-3.0/gtk.override"
