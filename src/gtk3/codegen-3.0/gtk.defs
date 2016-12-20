@@ -562,10 +562,10 @@
   (available "GDK_AVAILABLE_IN_3_12")
   (return-type "none")
   (parameters
-    '("guint*" "accelerator_key")
-    '("GdkModifierType*" "accelerator_mods")
+   '("guint*" "accelerator_key")
+   '("GdkModifierType*" "accelerator_mods")
+   )
   )
-)
 
 
 
@@ -575,20 +575,20 @@
   (c-name "gtk_accel_map_add_entry")
   (return-type "none")
   (parameters
-    '("const-gchar*" "accel_path")
-    '("guint" "accel_key")
-    '("GdkModifierType" "accel_mods")
+   '("const-gchar*" "accel_path")
+   '("guint" "accel_key")
+   '("GdkModifierType" "accel_mods")
+   )
   )
-)
 
 (define-function gtk_accel_map_lookup_entry
   (c-name "gtk_accel_map_lookup_entry")
   (return-type "gboolean")
   (parameters
-    '("const-gchar*" "accel_path")
-    '("GtkAccelKey*" "key")
+   '("const-gchar*" "accel_path")
+   '("GtkAccelKey*" "key")
+   )
   )
-)
 
 (define-function gtk_accel_map_change_entry
   (c-name "gtk_accel_map_change_entry")
@@ -6063,11 +6063,21 @@
   (of-object "GtkContainer")
   (c-name "gtk_container_check_resize")
   (return-type "none")
-)
+  )
 
 (define-method foreach
   (of-object "GtkContainer")
   (c-name "gtk_container_foreach")
+  (return-type "none")
+  (parameters
+    '("GtkCallback" "callback")
+    '("gpointer" "callback_data")
+    )
+  )
+
+(define-method forall
+  (of-object "GtkContainer")
+  (c-name "gtk_container_forall")
   (return-type "none")
   (parameters
     '("GtkCallback" "callback")
@@ -6299,15 +6309,6 @@
   )
 )
 
-(define-method forall
-  (of-object "GtkContainer")
-  (c-name "gtk_container_forall")
-  (return-type "none")
-  (parameters
-    '("GtkCallback" "callback")
-    '("gpointer" "callback_data")
-  )
-)
 
 (define-method handle_border_width
   (of-object "GtkContainerClass")

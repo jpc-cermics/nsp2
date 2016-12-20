@@ -10894,7 +10894,7 @@
   (return-type "GResource*")
   (parameters
     '("const-gchar*" "filename")
-    '("GError**" "error")
+    ;;'("GError**" "error")
   )
 )
 

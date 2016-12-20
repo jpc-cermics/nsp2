@@ -1078,8 +1078,10 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
+
 %%
 override gtk_container_foreach
+
 static void
 nspgtk_container_foreach_marshal(GtkWidget *widget, gpointer data)
 {
@@ -1132,7 +1134,32 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
 }
 
 %%
+override gtk_container_forall
+
+static int
+_wrap_gtk_container_forall(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *func, *arg = NULL;
+  NspGtkCustomNotify cunote;
+  
+  CheckRhs(1,2);
+  if (( func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(func,"tree_foreach")== FAIL)) return RET_BUG;
+  /* extra arguments **/
+  if ( rhs == 2 )
+    {
+      if (( arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
+      if ((nsp_object_set_name(arg,"m")== FAIL)) return RET_BUG;
+    }
+  cunote.func = func;
+  cunote.data = arg;
+  gtk_container_forall(GTK_CONTAINER(self->obj), nspgtk_container_foreach_marshal, &cunote);
+  return 0;
+}
+
+%%
 ignore gtk_label_new_with_mnemonic
+
 %%
 override gtk_label_new noargs
 static int
@@ -3697,7 +3724,6 @@ gtk_container_query_child_args
 gtk_container_child_args_collect
 gtk_container_child_arg_get_info
 gtk_container_foreach_full
-gtk_container_forall
 gtk_container_add_with_args
 gtk_container_addv
 gtk_container_child_set_valist
