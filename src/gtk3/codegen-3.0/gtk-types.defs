@@ -1782,5 +1782,11 @@
   (release-func "gtk_tree_path_free")
 )
 
-
+(define-boxed GtkCssSection
+  (in-module "Gtk")
+  (c-name "GtkCssSection")
+  (gtype-id "GTK_TYPE_CSS_SECTION")
+  ;;(copy-func "gtk_css_section_copy")
+  ;;(release-func "gtk_css_section_free")
+)
 

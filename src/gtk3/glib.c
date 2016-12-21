@@ -48,6 +48,248 @@
 
 #line 50 "glib.c"
 
+/* -----------NspGError ----------- */
+
+
+#define  NspGError_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gerror.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGError inherits from GBoxed 
+ */
+
+int nsp_type_gerror_id=0;
+NspTypeGError *nsp_type_gerror=NULL;
+
+/*
+ * Type object for NspGError 
+ * all the instance of NspTypeGError share the same id. 
+ * nsp_type_gerror: is an instance of NspTypeGError 
+ *    used for objects of NspGError type (i.e built with new_gerror) 
+ * other instances are used for derived classes 
+ */
+NspTypeGError *new_type_gerror(type_mode mode)
+{
+  NspTypeGError *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gerror != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gerror;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gerror_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gerror_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gerror;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gerror */ 
+
+  top->s_type =  (s_type_func *) nsp_gerror_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gerror_type_short_string;
+  /* top->create = (create_func*) int_gerror_create;*/
+
+  /* specific methods for gerror */
+
+  type->init = (init_func *) init_gerror;
+
+  /* 
+   * NspGError interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gerror_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGError called nsp_type_gerror
+       */
+      type->id =  nsp_type_gerror_id = nsp_new_type_id();
+      nsp_type_gerror = type;
+      if ( nsp_register_type(nsp_type_gerror) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gerror, G_TYPE_ERROR);
+      return ( mode == T_BASE ) ? type : new_type_gerror(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gerror_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGError instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gerror(NspGError *Obj,NspTypeGError *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGError 
+ */
+
+NspGError *new_gerror() 
+{
+  NspGError *loc;
+  /* type must exists */
+  nsp_type_gerror = new_type_gerror(T_BASE);
+  if ( (loc = malloc(sizeof(NspGError)))== NULLGERROR) return loc;
+  /* initialize object */
+  if ( init_gerror(loc,nsp_type_gerror) == FAIL) return NULLGERROR;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGError 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gerror_type_name[]="GError";
+static char gerror_short_type_name[]="GError";
+
+static char *nsp_gerror_type_as_string(void)
+{
+  return(gerror_type_name);
+}
+
+static char *nsp_gerror_type_short_string(NspObject *v)
+{
+  return(gerror_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGError objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGError   *nsp_gerror_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gerror_id)  == TRUE  ) return ((NspGError *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gerror));
+  return NULL;
+}
+
+int IsGErrorObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gerror_id);
+}
+
+int IsGError(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gerror_id);
+}
+
+NspGError  *GetGErrorCopy(Stack stack, int i)
+{
+  if (  GetGError(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGError  *GetGError(Stack stack, int i)
+{
+  NspGError *M;
+  if (( M = nsp_gerror_object(NthObj(i))) == NULLGERROR)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGError *gerror_copy(NspGError *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gerror);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GError
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int _wrap_g_error_free(NspGError *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_error_free(NSP_GBOXED_GET(self, GError));
+  return 0;
+}
+
+static int _wrap_g_error_copy(NspGError *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GError *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+  ret =g_error_copy(NSP_GBOXED_GET(self, GError));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_ERROR, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gerror))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 270 "codegen-3.0/glib.override"
+
+static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,s_int, t_end};
+  char *quark_string;
+  int code, ret;
+  if ( GetArgs(stack,rhs,opt,T,&quark_string, &code) == FAIL) return RET_BUG;
+  ret =g_error_matches(NSP_GBOXED_GET(self, GError),g_quark_from_static_string (quark_string),code);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#line 276 "glib.c"
+
+
+static NspMethods gerror_methods[] = {
+  {"free",(nsp_method *) _wrap_g_error_free},
+  {"copy",(nsp_method *) _wrap_g_error_copy},
+  {"matches",(nsp_method *) _wrap_g_error_matches},
+  { NULL, NULL}
+};
+
+static NspMethods *gerror_get_methods(void) { return gerror_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gerror_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
 /* -----------NspGVariantType ----------- */
 
 
@@ -1305,7 +1547,7 @@ _wrap_g_variant_new_parsed (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 187 "codegen-3.0/glib.override"
+#line 186 "codegen-3.0/glib.override"
 
 static int
 _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
@@ -1366,7 +1608,7 @@ _wrap_g_variant_new (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1370 "glib.c"
+#line 1612 "glib.c"
 
 
 static int
@@ -1832,7 +2074,7 @@ int _wrap_g_get_locale_variants(Stack stack, int rhs, int opt, int lhs) /* g_get
   return 1;
 }
 
-#line 249 "codegen-3.0/glib.override"
+#line 248 "codegen-3.0/glib.override"
 
 int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_from_uri */
 {
@@ -1853,7 +2095,7 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
   return 1;
 }
 
-#line 1857 "glib.c"
+#line 2099 "glib.c"
 
 
 int _wrap_g_filename_to_uri(Stack stack, int rhs, int opt, int lhs) /* g_filename_to_uri */
@@ -2032,6 +2274,26 @@ int _wrap_g_environ_unsetenv(Stack stack, int rhs, int opt, int lhs) /* g_enviro
   g_strfreev(ret);
   MoveObj(stack,1,nsp_ret);
   return 1;
+}
+
+int _wrap_g_propagate_error(Stack stack, int rhs, int opt, int lhs) /* g_propagate_error */
+{
+  int_types T[] = {obj, t_end};
+  GError *dest = NULL, *src = NULL;
+  NspObject *nsp_src = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_src) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_src, G_TYPE_ERROR))
+      src = nspg_boxed_get(nsp_src, GError);
+  else {
+      Scierror( "src should be a GError");
+      return RET_BUG;
+  }
+    g_propagate_error(&dest,src);
+  if ( dest != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),dest->message);
+    return RET_BUG;
+  }
+  return 0;
 }
 
 int _wrap_g_clear_error(Stack stack, int rhs, int opt, int lhs) /* g_clear_error */
@@ -4044,6 +4306,26 @@ int _wrap_g_variant_parse(Stack stack, int rhs, int opt, int lhs) /* g_variant_p
   return 1;
 }
 
+int _wrap_g_variant_parse_error_print_context(Stack stack, int rhs, int opt, int lhs) /* g_variant_parse_error_print_context */
+{
+  int_types T[] = {obj,string, t_end};
+  GError *error = NULL;
+  NspObject *nsp_error = NULL;
+  char *source_str;
+  gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_error, &source_str) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
+      error = nspg_boxed_get(nsp_error, GError);
+  else {
+      Scierror( "error should be a GError");
+      return RET_BUG;
+  }
+    ret =g_variant_parse_error_print_context(error,source_str);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
 int _wrap_g_variant_type_string_is_valid(Stack stack, int rhs, int opt, int lhs) /* g_variant_type_string_is_valid */
 {
   int_types T[] = {string, t_end};
@@ -4092,6 +4374,8 @@ int _wrap_glib_check_version(Stack stack, int rhs, int opt, int lhs) /* glib_che
  *----------------------------------------------------*/
 
 static OpTab glib_func[]={
+ /* gerror_new g_error_new_literal */
+ /* gerror_new g_error_new_valist */
   { "g_variant_type_new", _wrap_g_variant_type_new},
   { "gvarianttype_new", _wrap_g_variant_type_new},
   { "g_variant_type_new_array", _wrap_g_variant_type_new_array},
@@ -4144,6 +4428,7 @@ static OpTab glib_func[]={
   { "g_environ_getenv", _wrap_g_environ_getenv},
   { "g_environ_setenv", _wrap_g_environ_setenv},
   { "g_environ_unsetenv", _wrap_g_environ_unsetenv},
+  { "g_propagate_error", _wrap_g_propagate_error},
   { "g_clear_error", _wrap_g_clear_error},
   { "g_file_set_contents", _wrap_g_file_set_contents},
   { "g_file_read_link", _wrap_g_file_read_link},
@@ -4316,6 +4601,7 @@ static OpTab glib_func[]={
   { "g_variant_is_object_path", _wrap_g_variant_is_object_path},
   { "g_variant_is_signature", _wrap_g_variant_is_signature},
   { "g_variant_parse", _wrap_g_variant_parse},
+  { "g_variant_parse_error_print_context", _wrap_g_variant_parse_error_print_context},
   { "g_variant_type_string_is_valid", _wrap_g_variant_type_string_is_valid},
   { "g_variant_type_string_scan", _wrap_g_variant_type_string_scan},
   { "glib_check_version", _wrap_glib_check_version},
@@ -4340,11 +4626,12 @@ void glib_Interf_Info(int i, char **fname, function ( **f))
 }
 void nsp_initialize_glib_types(void)
 {
+  new_type_gerror(T_BASE);
   new_type_gvarianttype(T_BASE);
   new_type_gvariant(T_BASE);
 }
 
-#line 271 "codegen-3.0/glib.override"
+#line 284 "codegen-3.0/glib.override"
 
 static int nsp_destroy_GVariant(GVariant *value,NspGVariant *H)
 {
@@ -4422,4 +4709,4 @@ GVariantType *nsp_copy_GVariantType(const GVariantType *gv)
   return g_variant_type_copy(gv);
 }
 
-#line 4426 "glib.c"
+#line 4713 "glib.c"

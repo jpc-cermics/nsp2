@@ -59,7 +59,6 @@ _*
 *_ref
 *_unref
 
-
 %%
 override-create ZZGVariant
 
@@ -263,6 +262,20 @@ int _wrap_g_filename_from_uri(Stack stack, int rhs, int opt, int lhs) /* g_filen
     }
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   g_free(ret);
+  return 1;
+}
+
+%%
+override g_error_matches
+
+static int _wrap_g_error_matches(GError *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,s_int, t_end};
+  char *quark_string;
+  int code, ret;
+  if ( GetArgs(stack,rhs,opt,T,&quark_string, &code) == FAIL) return RET_BUG;
+  ret =g_error_matches(NSP_GBOXED_GET(self, GError),g_quark_from_static_string (quark_string),code);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
 

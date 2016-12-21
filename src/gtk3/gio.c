@@ -27582,6 +27582,80 @@ int _wrap_g_dbus_address_get_for_bus_sync(Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
+int _wrap_g_dbus_error_is_remote_error(Stack stack, int rhs, int opt, int lhs) /* g_dbus_error_is_remote_error */
+{
+  int_types T[] = {obj, t_end};
+  GError *error = NULL;
+  NspObject *nsp_error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_error) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
+      error = nspg_boxed_get(nsp_error, GError);
+  else {
+      Scierror( "error should be a GError");
+      return RET_BUG;
+  }
+    ret =g_dbus_error_is_remote_error(error);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_dbus_error_get_remote_error(Stack stack, int rhs, int opt, int lhs) /* g_dbus_error_get_remote_error */
+{
+  int_types T[] = {obj, t_end};
+  GError *error = NULL;
+  NspObject *nsp_error = NULL;
+  gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_error) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
+      error = nspg_boxed_get(nsp_error, GError);
+  else {
+      Scierror( "error should be a GError");
+      return RET_BUG;
+  }
+    ret =g_dbus_error_get_remote_error(error);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
+int _wrap_g_dbus_error_strip_remote_error(Stack stack, int rhs, int opt, int lhs) /* g_dbus_error_strip_remote_error */
+{
+  int_types T[] = {obj, t_end};
+  GError *error = NULL;
+  NspObject *nsp_error = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_error) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
+      error = nspg_boxed_get(nsp_error, GError);
+  else {
+      Scierror( "error should be a GError");
+      return RET_BUG;
+  }
+    ret =g_dbus_error_strip_remote_error(error);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_g_dbus_error_encode_gerror(Stack stack, int rhs, int opt, int lhs) /* g_dbus_error_encode_gerror */
+{
+  int_types T[] = {obj, t_end};
+  GError *error = NULL;
+  NspObject *nsp_error = NULL;
+  gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_error) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_error, G_TYPE_ERROR))
+      error = nspg_boxed_get(nsp_error, GError);
+  else {
+      Scierror( "error should be a GError");
+      return RET_BUG;
+  }
+    ret =g_dbus_error_encode_gerror(error);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  g_free(ret);
+  return 1;
+}
+
 int _wrap_g_dbus_message_bytes_needed(Stack stack, int rhs, int opt, int lhs) /* g_dbus_message_bytes_needed */
 {
   int_types T[] = {string,s_int, t_end};
@@ -27955,7 +28029,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27959 "gio.c"
+#line 28033 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -28116,6 +28190,10 @@ static OpTab gio_func[]={
   { "g_dbus_address_get_stream_finish", _wrap_g_dbus_address_get_stream_finish},
   { "g_dbus_address_get_stream_sync", _wrap_g_dbus_address_get_stream_sync},
   { "g_dbus_address_get_for_bus_sync", _wrap_g_dbus_address_get_for_bus_sync},
+  { "g_dbus_error_is_remote_error", _wrap_g_dbus_error_is_remote_error},
+  { "g_dbus_error_get_remote_error", _wrap_g_dbus_error_get_remote_error},
+  { "g_dbus_error_strip_remote_error", _wrap_g_dbus_error_strip_remote_error},
+  { "g_dbus_error_encode_gerror", _wrap_g_dbus_error_encode_gerror},
   { "g_dbus_message_bytes_needed", _wrap_g_dbus_message_bytes_needed},
   { "g_bus_unown_name", _wrap_g_bus_unown_name},
   { "g_bus_unwatch_name", _wrap_g_bus_unwatch_name},
@@ -28332,4 +28410,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 28336 "gio.c"
+#line 28414 "gio.c"

@@ -2822,8 +2822,8 @@
   (c-name "g_error_matches")
   (return-type "gboolean")
   (parameters
-    '("GQuark" "domain")
-    '("gint" "code")
+   '("const-gchar*" "quark_string") ;;'("GQuark" "domain")
+   '("gint" "code")
   )
 )
 

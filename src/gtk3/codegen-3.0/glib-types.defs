@@ -1057,8 +1057,15 @@
 ;;    )
 ;;   )
 
+;; in glib
 
-
+(define-boxed GError
+  (in-module "Gtk")
+  (c-name "GError")
+  (gtype-id "G_TYPE_ERROR")
+  (copy-func "g_error_copy")
+  (release-func "g_error_free")
+)
 
 
 
