@@ -2298,14 +2298,16 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
     case G_TYPE_PARAM:
       {
 	/*
-	 * Sciprintf("nspg_value_as_nspobject: G_TYPE_PARAM is to be done \n");
-	 * an example of GParamSpec is given in the demo_revealer where a callback 
+	 * An example of GParamSpec is given in the demo_revealer where a callback 
 	 * is called with a GParamSpec argument.
 	 */
+	NspObject *Obj;
 	GParamSpec *spec = g_value_get_param (value);
-	Sciprintf("nspg_value_as_nspobject: G_TYPE_PARAM (of type %) sis to be done \n",
-		  G_PARAM_SPEC_TYPE_NAME(spec));
-	return (NspObject *) nsp_gparamspec_create(NVOID,spec,NULL);
+	Obj = (NspObject *) nsp_gparamspec_create(NVOID,spec,NULL);
+	if ( Obj == NULL)
+	  Sciprintf("nspg_value_as_nspobject: G_TYPE_PARAM (of type %s) is to be done \n",
+		    G_PARAM_SPEC_TYPE_NAME(spec));
+	return Obj;
       }
       return NULL;
     case G_TYPE_OBJECT:
