@@ -9,12 +9,12 @@
 // It is commonly used with gtk_window_set_titlebar()
 //
 
-function demo_headerbar (do_widget)
+function window= demo_headerbar (do_widget)
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
-  //window.set_screen [ do_widget.get_screen []];
+  window.set_screen [ do_widget.get_screen []];
   //window.connect [ "destroy", gtk_widget_destroyed, &window];
   window.set_default_size[600, 400];
-
+  
   header = gtk_header_bar_new ();
   header.set_show_close_button[%t];
   header.set_title [ "Welcome to Facebook - Log in, sign up or learn more"];
