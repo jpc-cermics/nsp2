@@ -480,10 +480,16 @@ int nsp_gdk_atom_from_object(NspObject *object, GdkAtom *atom)
   if (object == NULL) *atom = NULL;
   else if (IsString(object)) *atom =  gdk_atom_intern(nsp_string_object(object), FALSE);
   else if (IsGdkAtom(object)) *atom = nsp_gdkatom_get(object);
-  else {
-    Scierror("unable to convert argument to GdkAtom");
-    return FAIL;
-  }
+  else if (IsGdkAtom(object)) *atom = nsp_gdkatom_get(object);
+  else if (IsMat(object) && ((NspMatrix *) object)->mn == 1)
+    {
+      *atom =_GDK_MAKE_ATOM(((NspMatrix *) object)->R[0]);
+    }
+  else
+    {
+      Scierror("unable to convert argument to GdkAtom\n");
+      return FAIL;
+    }
   return OK;
 }
 

@@ -4985,16 +4985,16 @@
 )
 
 
-(define-function clipboard_get_for_display
-  (c-name "gtk_clipboard_get_for_display")
-  (is-constructor-of "GtkClipboard")
-  (caller-owns-return nil)
-  (return-type "GtkClipboard*")
-  (parameters
-   '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
-   '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))
-   )
-  )
+;; (define-function clipboard_get_for_display
+;;   (c-name "gtk_clipboard_get_for_display")
+;;   (is-constructor-of "GtkClipboard")
+;;   (caller-owns-return nil)
+;;   (return-type "GtkClipboard*")
+;;   (parameters
+;;    '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
+;;    '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))
+;;    )
+;;   )
 
 (define-function gtk_clipboard_get
   (c-name "gtk_clipboard_get")
@@ -12520,8 +12520,8 @@
   (c-name "gtk_image_get_icon_name")
   (return-type "none")
   (parameters
-    '("const-gchar**" "icon_name")
-    '("GtkIconSize*" "size")
+   ;;'("const-gchar**" "icon_name")
+    ;;'("GtkIconSize*" "size")
   )
 )
 

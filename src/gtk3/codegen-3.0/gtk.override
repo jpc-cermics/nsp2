@@ -2650,7 +2650,12 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION,  nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
   gtk_icon_view_enable_model_drag_source(GTK_ICON_VIEW(self->obj), sbmask, targets, n_targets, actions);
   g_free(targets);
   return 0;
@@ -2673,7 +2678,13 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
+
   gtk_icon_view_enable_model_drag_dest(GTK_ICON_VIEW(self->obj), targets, n_targets,  actions);
   g_free(targets);
   return 0;
@@ -3185,7 +3196,12 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION,  nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
   gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(self->obj), sbmask, targets, n_targets, actions);
   g_free(targets);
   return 0;
@@ -3208,7 +3224,12 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
   gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(self->obj), targets, n_targets,  actions);
   g_free(targets);
   return 0;
@@ -4333,6 +4354,27 @@ _wrap_gtk_image_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;;
 }
+%%
+override gtk_image_get_icon_name
+
+static int _wrap_gtk_image_get_icon_name(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *name;
+  CheckRhs(0,0);
+  CheckLhs(0,2);
+  const gchar *icon_name;
+  GtkIconSize size;
+  gtk_image_get_icon_name(GTK_IMAGE(self->obj),&icon_name,&size);
+  name = nsp_new_string_obj(NVOID,icon_name,-1);
+  MoveObj(stack,1,name);
+  if ( lhs == 2 ) {
+    if ( nsp_move_double(stack,2,(double) size) == FAIL)
+      return RET_BUG;
+  }
+  return Max(lhs,1);
+}
+
+
 
 %%
 ignore gtk_button_new_with_label gtk_button_new_from_stock gtk_button_new_with_mnemonic
@@ -5254,7 +5296,13 @@ _wrap_gtk_drag_dest_set(Stack stack,int rhs,int opt,int lhs)
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
+
   gtk_drag_dest_set(GTK_WIDGET(widget->obj), flags, targets, n_targets,  actions);
   g_free(targets);
   return 0;
@@ -5363,7 +5411,12 @@ _wrap_gtk_drag_source_set(Stack stack,int rhs,int opt,int lhs)
   if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION,  nsp_actions, &actions))
     return RET_BUG;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
   gtk_drag_source_set(GTK_WIDGET(widget->obj), sbmask, targets, n_targets, actions);
   g_free(targets);
   return 0;
@@ -5420,7 +5473,13 @@ _wrap_gtk_selection_add_targets(Stack stack,int rhs,int opt,int lhs)
   if (GetArgs(stack,rhs,opt,T, &nsp_type_gtkwidget, &widget, &nsp_selection, &nsp_targets) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_selection, &selection)  == FAIL) return RET_BUG;;
 
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
+
   gtk_selection_add_targets(GTK_WIDGET(widget->obj), selection,  targets, n_targets);
   g_free(targets);
   return 0;
@@ -7837,6 +7896,29 @@ int _wrap_gtk_widget_list_action_prefixes(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
+%%
+override gtk_clipboard_set_can_store
+
+static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list,int *n_targets) ;
+
+static int _wrap_gtk_clipboard_set_can_store(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {list, t_end} ;
+  NspList  *nsp_targets;
+  GtkTargetEntry *targets;
+  gint n_targets;
+
+  if (GetArgs(stack,rhs,opt,T,&nsp_targets) == FAIL) return RET_BUG;;
+  targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets);
+  if ( targets ==NULL && n_targets != 0)
+    {
+      Scierror("Error: failed to build target entries\n");
+      return RET_BUG;
+    }
+  gtk_clipboard_set_can_store(GTK_CLIPBOARD(self->obj), targets, n_targets);
+  g_free(targets);
+  return 0;
+}
 
 %%
 last
@@ -7844,7 +7926,7 @@ last
 static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list,int *n_targets)
 {
   int i=0;
-  GtkTargetEntry *targets;
+  GtkTargetEntry *targets= NULL;
   Cell *cloc = list->first ;
 
   while ( cloc != NULLCELL) {
@@ -7852,6 +7934,7 @@ static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list
     cloc = cloc->next;
   }
   *n_targets = i;
+  if ( i == 0) return targets;
 
   if (( targets = g_new(GtkTargetEntry, *n_targets))== NULL) return targets;
   i=0;

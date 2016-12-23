@@ -67,7 +67,7 @@ function demo_dnd()
   box3.pack_start[button]
   button.show[]
   button.connect['drag_data_get', dnd_drag_data_get];
-  gtk_drag_source_set[button,ior(GDK.BUTTON1_MASK,GDK.BUTTON3_MASK),targets, GDK.ACTION_COPY]
+  gtk_drag_source_set(button,ior(GDK.BUTTON1_MASK,GDK.BUTTON3_MASK),targets, GDK.ACTION_COPY);
   frame = gtkframe_new(label="Drop")
   box2.pack_start[frame]
   frame.show[]
@@ -80,7 +80,7 @@ function demo_dnd()
   button.show[]
   button.realize[]
   button.connect['drag_data_received', dnd_drag_data_received];
-  gtk_drag_dest_set[button,GTK.DEST_DEFAULT_ALL,targets,GDK.ACTION_COPY];
+  gtk_drag_dest_set(button,GTK.DEST_DEFAULT_ALL,targets,GDK.ACTION_COPY);
   separator = gtkseparator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill=%t,padding=0]
   separator.show[]

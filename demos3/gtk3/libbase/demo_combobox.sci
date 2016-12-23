@@ -21,7 +21,7 @@
 // Boston, MA 02111-1307, USA.
 
 
-function demo_combobox()
+function window = demo_combobox(do_widget)
 
   function [pixbufs,names]=icon_collect(n)
     pixbufs = list();

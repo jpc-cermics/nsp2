@@ -1670,6 +1670,13 @@
   (gtype-id "GTK_TYPE_STYLE_PROVIDER")
 )
 
+(define-object GtkClipboard
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkClipboard")
+  (gtype-id "GTK_TYPE_CLIPBOARD")
+)
+
 ;; (define-object GtkCssStyle
 ;;   (in-module "Gtk")
 ;;   (parent "GObject")
