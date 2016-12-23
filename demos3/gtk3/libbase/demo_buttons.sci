@@ -1,7 +1,6 @@
-// buttons
-//-----------------------------------------------
+// Buttons
 
-function demo_buttons()
+function win=demo_buttons(do_widget)
 // 
   win = gtkwindow_new()
   win.connect[ "delete_event", demo_delete];
@@ -65,5 +64,4 @@ function demo_buttons()
   button.grab_default[]
   button.show[];
   win.show[]
-  //gtk_main()
 endfunction

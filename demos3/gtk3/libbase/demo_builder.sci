@@ -1,20 +1,18 @@
 // Builder
 // Demonstrates an interface loaded from a XML description.
-  
 
-function demo_builder(do_widget)
+function window= demo_builder(do_widget)
 //builder = gtk_builder_new_from_resource ("/builder/demo.ui");
 // XXX: if a keyword is not recognized in the ui file 
 // gtk_builder_new_from_file may crash as in the given 
 // example where primary is not recognized (commented out in 
 // demo.ui. A gtk error is raised and function crashed in g_log.
-
   
   function quit_activate (action,parameter, user_data)
     window = user_data(1);
     window.destroy[];
   endfunction
-
+  
   function about_activate (action,parameter, user_data)
     window = user_data(1);
     builder = window.get_data[ "builder"];
@@ -26,14 +24,12 @@ function demo_builder(do_widget)
   function help_activate (action, parameter, user_data)
     printf ("Help not available\n");
   endfunction
-
   
   ui_demo = getenv("NSP")+"/demos3/gtk3/libbase/builder.ui";
   builder = gtk_builder_new_from_file(ui_demo);
-  // gtk_builder_connect_signals (builder, NULL);
   builder.connect_signals[list()]
   window = builder.get_object [ "window1"];
-  // window.set_screen [do_widget.get_screen []);
+  window.set_screen [do_widget.get_screen []];
   // window.connect [ "destroy", gtk_widget_destroyed, &window);
   toolbar = builder.get_object [ "toolbar1"];
   //gtk_style_context_add_class (toolbar.get_style_context [], "primary-toolbar");

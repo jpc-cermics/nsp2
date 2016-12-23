@@ -1,7 +1,7 @@
 // Button Boxes
 //-----------------------------------------------
 
-function demo_button_box()
+function window=demo_button_box(do_widget)
 
   function frame=create_bbox(horizontal,title,spacing)
   // utility function which creates a frame with 
