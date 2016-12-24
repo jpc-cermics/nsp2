@@ -30,7 +30,7 @@ function window= demo_builder(do_widget)
   builder.connect_signals[list()]
   window = builder.get_object [ "window1"];
   window.set_screen [do_widget.get_screen []];
-  // window.connect [ "destroy", gtk_widget_destroyed, &window);
+  // window.connect [ "destroy", gtk_widget_destroyed, &window];
   toolbar = builder.get_object [ "toolbar1"];
   //gtk_style_context_add_class (toolbar.get_style_context [], "primary-toolbar");
 

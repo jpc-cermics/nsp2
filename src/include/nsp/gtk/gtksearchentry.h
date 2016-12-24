@@ -23,20 +23,20 @@
 
 /* NspGtkSearchEntry */
 
-#include <nsp/gtk/gtkwidget.h>
+#include <nsp/gtk/gtkentry.h>
 
 /*
- * NspGtkSearchEntry inherits from GtkWidget
+ * NspGtkSearchEntry inherits from GtkEntry
  * just change some type attributes 
  */
 
-typedef NspGtkWidget NspGtkSearchEntry ;
-typedef NspTypeGtkWidget NspTypeGtkSearchEntry ;
+typedef NspGtkEntry NspGtkSearchEntry ;
+typedef NspTypeGtkEntry NspTypeGtkSearchEntry ;
 
 extern int nsp_type_gtksearchentry_id;
 extern NspTypeGtkSearchEntry *nsp_type_gtksearchentry;
 
-/* type instances for gtkwidget */
+/* type instances for gtkentry */
 
 NspTypeGtkSearchEntry *new_type_gtksearchentry(type_mode mode);
 

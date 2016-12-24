@@ -1,17 +1,73 @@
+// Color Selector
 
-function demo_color_selection ()
-  window = gtk_window_new(type=GTK.WINDOW_TOPLEVEL);
-  // window.set_screen[widget.get_screen[]];
-  // window.connect["destroy",gtk_widget_destroyed,list(window)];
-  window.set_title["GtkColorButton"];
-  window.set_border_width[0];
-  hbox = gtk_box_new (GTK.ORIENTATION_HORIZONTAL,spacing= 8);
-  hbox.set_border_width[8];
-  window.add[hbox];
-  label = gtk_label_new (str="Pick a color");
-  hbox.add[label];
-  picker = gtk_color_button_new ();
-  picker.set_use_alpha[%t];
-  hbox.add[picker];
+function window=demo_color_selection (do_widget)
+  
+  function y = draw_callback (da,cr,data)
+    window=data(1);
+    color=window.get_data['color'];
+    CHECK_SIZE=30
+    SPACING=2
+    xcount = 0;
+    width = da.get_allocated_width[];
+    height = da.get_allocated_height[];
+    i = SPACING;
+    while (i < width)
+      j = SPACING;
+      ycount = modulo(xcount,2); // start with even/odd depending on row */
+      while (j < height)
+	if modulo(ycount,2)==0 then
+	  cairo_set_source_rgb (cr, color.red,color.green,color.blue);
+	else
+	  cairo_set_source_rgb (cr, 1, 1, 1);
+	end
+	// If we're outside the clip, this will do nothing.
+	cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
+	cairo_fill (cr);
+	j = j+ CHECK_SIZE + SPACING;
+	ycount=ycount+1;
+      end
+      i = i+ CHECK_SIZE + SPACING;
+      xcount = xcount+1;
+    end
+    y=%t;
+  endfunction
+  
+  function change_color_callback (button,args)
+    window=args(1);
+    da=args(2);
+    color=window.get_data['color'];
+    dialog = gtk_color_chooser_dialog_new("Changing color",window);
+    dialog.set_transient_for[args(1)]
+    dialog.set_rgba[color];
+    response = dialog.run[];
+    if response == GTK.RESPONSE_OK
+      color= dialog.get_rgba[];
+      window.set_data[color=color];
+    end
+    dialog.destroy[];
+  endfunction
+
+  window = gtkwindow_new ();
+  window.set_title[  "Color Selection"]
+  window.set_border_width[  8]
+  color= gdk_rgba_new("rgb(0,0,65535)");
+  window.set_data[color=color];
+
+  vbox = gtkbox_new("vertical",spacing=8);
+  vbox.set_border_width[  8]
+  window.add[  vbox]
+
+  frame = gtkframe_new();
+  frame.set_shadow_type[GTK.SHADOW_IN];
+  vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
+
+  darea = gtkdrawingarea_new ();
+  darea.connect["draw", draw_callback,list(window)]
+  darea.set_size_request[  200, 200]
+  frame.add[  darea]
+
+  button = gtkbutton_new(mnemonic="_Change the above color");
+  vbox.pack_start[ button,expand=%f,fill=%f,padding=0]
+  button.connect[  "clicked",change_color_callback,list(window,darea)];
   window.show_all[];
 endfunction

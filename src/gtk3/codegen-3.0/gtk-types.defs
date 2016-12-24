@@ -475,7 +475,7 @@
 
 (define-object GtkSearchEntry
   (in-module "Gtk")
-  (parent "GtkWidget")
+  (parent "GtkEntry")
   (c-name "GtkSearchEntry")
   (gtype-id "GTK_TYPE_SEARCH_ENTRY")
   (implements "GtkEditable")

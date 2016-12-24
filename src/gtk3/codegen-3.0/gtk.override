@@ -4645,9 +4645,9 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
   nsp_option opts[] = {
     {"detach",obj_check,NULLOBJ,-1},
     {NULL,t_end,NULLOBJ,-1} };
-
+  
   NspObject *nsp_attach_widget;
-  NspPList *detach_func;
+  NspPList *detach_func = NULL;
   GtkWidget *attach_widget;
 
   if (GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &nsp_attach_widget,&opts,&nsp_type_plist,&detach_func) == FAIL)
@@ -4665,8 +4665,10 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			      nspg_destroy_notify);
     }
   else
-    g_object_set_data (self->obj, "nspgtk_menu_detach_func", NULL);
-
+    {
+      g_object_set_data (self->obj, "nspgtk_menu_detach_func", NULL);
+    }
+  
   gtk_menu_attach_to_widget (GTK_MENU (self->obj), attach_widget,
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
@@ -5101,6 +5103,31 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG;
   return 1;
 }
+
+%%
+override gtk_notebook_append_page
+
+static int _wrap_gtk_notebook_append_page(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T1[] = {obj_check, t_end};
+  int_types T2[] = {obj_check,obj_check, t_end};
+  NspGObject *child, *tab_label;
+  int ret;
+  if ( rhs == 1 )
+    {
+      if ( GetArgs(stack,rhs,opt,T1,&nsp_type_gtkwidget, &child) == FAIL) return RET_BUG;
+      ret =gtk_notebook_append_page(GTK_NOTEBOOK(self->obj),GTK_WIDGET(child->obj),NULL);      
+    }
+  else
+    {
+      if ( GetArgs(stack,rhs,opt,T2,&nsp_type_gtkwidget, &child, &nsp_type_gtkwidget, &tab_label) == FAIL) return RET_BUG;
+      ret =gtk_notebook_append_page(GTK_NOTEBOOK(self->obj),GTK_WIDGET(child->obj),GTK_WIDGET(tab_label->obj));
+    }
+
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 %%
 override gtk_color_selection_get_current_color noargs
 static int

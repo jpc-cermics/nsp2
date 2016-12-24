@@ -100,30 +100,30 @@ function demoaction_build_actions(action_group,merge)
 // gtk_action_group_add_actions
 // gtk_action_group_add_radio_actions
 // creates a set of actions 
-  action = gtkaction_new( "Menu1Action","Menu _1" ,"", "" );
+  action = gtk_action_new( "Menu1Action","Menu _1" ,"", "" );
   action_group.add_action[action];
-  action = gtkaction_new( "Menu2Action","Menu _2" ,"", "" );
+  action = gtk_action_new( "Menu2Action","Menu _2" ,"", "" );
   action_group.add_action[action];
-  action = gtkaction_new( "Menu3Action", "_Dynamic Menu" ,"", "");
+  action = gtk_action_new( "Menu3Action", "_Dynamic Menu" ,"", "");
   action_group.add_action[action];
-  action = gtkaction_new( "cut","C_ut","Cut the selected text to the clipboard", "gtk-cut");
+  action = gtk_action_new( "cut","C_ut","Cut the selected text to the clipboard", "gtk-cut");
   action.connect["activate",demoaction_activate_action];
   action_group.add_action_with_accel[action,accelerator="<control>X"];
-  action = gtkaction_new( "copy","_Copy","Copy the selected text to the clipboard", "gtk-copy");
+  action = gtk_action_new( "copy","_Copy","Copy the selected text to the clipboard", "gtk-copy");
   action.connect["activate",demoaction_activate_action];
   action_group.add_action_with_accel[action,accelerator="<control>C"];
-  action = gtkaction_new( "paste", "_Paste","Paste the text from the clipboard", "gtk-paste");
+  action = gtk_action_new( "paste", "_Paste","Paste the text from the clipboard", "gtk-paste");
   action.connect["activate",demoaction_activate_action];
   action_group.add_action_with_accel[action,accelerator="<control>V"];
-  action = gtkaction_new( "quit", "Quit", "Quit the application", "gtk-quit");
+  action = gtk_action_new( "quit", "Quit", "Quit the application", "gtk-quit");
   action_group.add_action[action];
-  action = gtkaction_new( "customise-accels","Customise _Accels","Customise keyboard shortcuts","");
+  action = gtk_action_new( "customise-accels","Customise _Accels","Customise keyboard shortcuts","");
   action.connect["activate",demoaction_show_accel_dialog];
   action_group.add_action_with_accel[action,accelerator="<control>Q"];
-  action = gtkaction_new( "toolbar-small-icons","Small Icons", "Small Icons", "");
+  action = gtk_action_new( "toolbar-small-icons","Small Icons", "Small Icons", "");
   action.connect["activate",demoaction_toolbar_size_small,list(merge)];
   action_group.add_action[action];
-  action = gtkaction_new( "toolbar-large-icons", "Large Icons", "Large Icons", "");
+  action = gtk_action_new( "toolbar-large-icons", "Large Icons", "Large Icons", "");
   action.connect["activate",demoaction_toolbar_size_large,list(merge)];
   action_group.add_action[action];
   // now some toggle actions
@@ -211,7 +211,7 @@ function demoaction_add_cb (button,args)
   manager = args(1);
   ui_id=manager.get_data['ui_id'];
   if ui_id <> -1 then return ;end 
-  dag = gtkactiongroup_new ("DynamicActions");
+  dag = gtk_action_group_new ("DynamicActions");
   manager.set_data[dag=dag];
   manager.insert_action_group[dag, 0];
   ui_id = manager.new_merge_id[];
@@ -219,7 +219,7 @@ function demoaction_add_cb (button,args)
   for i = 0:10 
     name = sprintf("DynAction%u", i);
     label = sprintf ("Dynamic Item %d", i);
-    action = gtkaction_new(name,label,"","");
+    action = gtk_action_new(name,label,"","");
     dag.add_action[action];
     manager.add_ui[ ui_id, "/menubar/DynamicMenu", name,
 		    action=name,type=GTK.UI_MANAGER_MENUITEM,top=%f];
@@ -323,7 +323,7 @@ function demo_actions()
   window.add[box];
   box.show[];
   
-  action_group = gtkactiongroup_new("TestActions")
+  action_group = gtk_action_group_new("TestActions")
   demoaction_build_actions(action_group,merge);
   
   merge.insert_action_group[action_group, 0];

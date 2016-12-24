@@ -11,36 +11,9 @@
 // events such as button presses and mouse motion. Click the mouse
 // and drag in the scribble area to draw squiggles. Resize the window
 // to clear the area.
-///
+//
 
-/// Create a new surface of the appropriate size to store our scribbles */
-
-function y=scribble_configure_event (widget,event, data)
-// if (surface)  cairo_surface_destroy (surface);
-  allocation= widget.get_allocation[];
-  window = widget.get_window[];
-  surface = window.create_similar_surface[CAIRO.CONTENT_COLOR,...
-		    allocation.width,...
-		    allocation.height];
-  widget.set_data[surface=surface];
-  // Initialize the surface to white */
-  cr = cairo_create (surface);
-  cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_paint (cr);
-  // cairo_destroy (cr); XXXX
-  // We've handled the configure event, no need for further processing. */
-  y=%t;
-endfunction;
-
-// Redraw the screen from the surface
-function y=scribble_draw (widget, cr,data)
-  surface = widget.get_data['surface'];
-  cairo_set_source_surface (cr, surface, 0, 0);
-  cairo_paint (cr);
-  y=%f
-endfunction
-
-/// Draw a rectangle on the screen */
+// Draw a rectangle on the screen
 
 function draw_brush (widget,x, y)
   surface = widget.get_data['surface'];
@@ -83,7 +56,6 @@ function y=scribble_motion_notify_event (widget, event, data)
   device=event.device;
   window=event.window;
   rep=window.get_device_position[device];
-  // gdk_window_get_device_position (event->window, event->device, &x, &y, &state);
   if iand(rep(3), GDK.BUTTON1_MASK) then
     draw_brush (widget, rep(1), rep(2));
   end
@@ -91,56 +63,21 @@ function y=scribble_motion_notify_event (widget, event, data)
   y=%t ;
 endfunction
 
-
-function y=checkerboard_draw (da,cr, data)
-  CHECK_SIZE=10
-  SPACING=2
-  // At the start of a draw handler, a clip region has been set on
-  // the Cairo context, and the contents have been cleared to the
-  // widget's background color. The docs for
-  // gdk_window_begin_paint_region() give more details on how this
-  // works.
-  xcount = 0;
-  width = da.get_allocated_width[];
-  height = da.get_allocated_height[];
-  i = SPACING;
-  while (i < width)
-    j = SPACING;
-    ycount = modulo(xcount,2); // start with even/odd depending on row */
-    while (j < height)
-      if modulo(ycount,2)==0 then
-	cairo_set_source_rgb (cr, 0.45777, 0, 0.45777);
-      else
-	cairo_set_source_rgb (cr, 1, 1, 1);
-      end
-      // If we're outside the clip, this will do nothing.
-      cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
-      cairo_fill (cr);
-      j = j+ CHECK_SIZE + SPACING;
-      ycount=ycount+1;
-    end
-    i = i+ CHECK_SIZE + SPACING;
-    xcount = xcount+1;
-  end
-  //return TRUE because we've handled this event, so no
-  // further processing is required.
-  //
-  y=%t;
-endfunction
-
-
-function close_window ()
-  if (surface)
-    cairo_surface_destroy (surface);
-    surface = NULL;
-  end
-endfunction
-
-function demo_scribble()
+function window = demo_drawingarea(do_widget)
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
-  // window.set_screen[widget.get_screen[]];
+  if nargin >=1 then  window.set_screen[do_widget.get_screen[]];end
+  
   window.set_title["Drawing Area"];
+  
+  function close_window ()
+    if (surface)
+      cairo_surface_destroy (surface);
+      surface = NULL;
+    end
+  endfunction
+  
   // window.connect["destroy", close_window];
+
   window.set_border_width[8];
   vbox = gtk_box_new (GTK.ORIENTATION_VERTICAL,spacing= 8);
   vbox.set_border_width[8];
@@ -158,6 +95,43 @@ function demo_scribble()
   /// set a minimum size
   da.set_size_request[100, 100];
   frame.add[da];
+  
+  function y=checkerboard_draw (da,cr, data)
+    CHECK_SIZE=10
+    SPACING=2
+    // At the start of a draw handler, a clip region has been set on
+    // the Cairo context, and the contents have been cleared to the
+    // widget's background color. The docs for
+    // gdk_window_begin_paint_region() give more details on how this
+    // works.
+    xcount = 0;
+    width = da.get_allocated_width[];
+    height = da.get_allocated_height[];
+    i = SPACING;
+    while (i < width)
+      j = SPACING;
+      ycount = modulo(xcount,2); // start with even/odd depending on row */
+      while (j < height)
+	if modulo(ycount,2)==0 then
+	  cairo_set_source_rgb (cr, 0.45777, 0, 0.45777);
+	else
+	  cairo_set_source_rgb (cr, 1, 1, 1);
+	end
+	// If we're outside the clip, this will do nothing.
+	cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
+	cairo_fill (cr);
+	j = j+ CHECK_SIZE + SPACING;
+	ycount=ycount+1;
+      end
+      i = i+ CHECK_SIZE + SPACING;
+      xcount = xcount+1;
+    end
+    //return TRUE because we've handled this event, so no
+    // further processing is required.
+    //
+    y=%t;
+  endfunction
+  
   da.connect["draw",checkerboard_draw];
   ///
   // Create the scribble area
@@ -173,7 +147,35 @@ function demo_scribble()
   da.set_size_request[100, 100];
   frame.add[da];
   /// Signals used to handle backing surface ///
+  
+  // Redraw the screen from the surface
+  function y=scribble_draw (widget, cr,data)
+    surface = widget.get_data['surface'];
+    cairo_set_source_surface (cr, surface, 0, 0);
+    cairo_paint (cr);
+    y=%f
+  endfunction
+  
   da.connect["draw",scribble_draw];
+  
+  // Create a new surface of the appropriate size to store our scribbles
+  function y=scribble_configure_event (widget,event, data)
+  // if (surface)  cairo_surface_destroy (surface);
+    allocation= widget.get_allocation[];
+    window = widget.get_window[];
+    surface = window.create_similar_surface[CAIRO.CONTENT_COLOR,...
+		    allocation.width,...
+		    allocation.height];
+    widget.set_data[surface=surface];
+    // Initialize the surface to white */
+    cr = cairo_create (surface);
+    cairo_set_source_rgb (cr, 1, 1, 1);
+    cairo_paint (cr);
+    // cairo_destroy (cr); XXXX
+    // We've handled the configure event, no need for further processing. */
+    y=%t;
+  endfunction;
+  
   da.connect["configure-event",scribble_configure_event];
   /// Event signals ///
   da.connect["motion-notify-event",scribble_motion_notify_event];

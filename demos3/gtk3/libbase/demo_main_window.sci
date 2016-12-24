@@ -1,51 +1,44 @@
 
 function demo_main_window()
-  B = hash_create(100);
-  B('cairo')=  demo_cairo,
-  B('button box')=  demo_button_box,
-  B('buttons')=  demo_buttons,
-  B('toggle buttons')=  demo_toggle_buttons,
-  B('check buttons')=  demo_check_buttons,
-  B('radio buttons')=  demo_radio_buttons,
-  B('calendar')=  demo_calendar,
-  B('toolbar')=  demo_toolbar,
-  // B('handle box')= demo_handle_box, // deprecated
-  B('reparent')=  demo_reparent,
-  B('tooltips')= demo_tooltips,
-  B('menus')=  demo_menus,
-  B('scrolled windows')=  demo_scrolled_windows,
-  B('drawing areas')= [],// None,
-  B('entry')=  demo_entry,
-  B('color selection')=  demo_color_selection,
-  B('file chooser')=  demo_file_chooser,
-  B('flipping')=  demo_flipping,
-  B('focus')=  demo_focus,
-  B('dialogs')=  demo_dialogs,
-  B('messages') = demo_messagedialog,
-  B('miscellaneous')= [],// None,
-  B('range controls')=  demo_range_controls,
-  B('notebook')=  demo_notebook,
-  B('panes')=  demo_panes,
-  B('shapes')= [],// None, //demo_shapes,
-  B('dnd')= demo_dnd,
-  B('spinbutton')= demo_spinbutton,
-  B('progress bar')=  demo_progressbar,
-  // B('gamma curve')=  demo_gamma_curve,
-  B('test scrolling')= [],// None, //creaate_scroll_text,
-  B('test selection')= [],// None, //demo_selection_test,
-  B('test timeout')= demo_timeout,
-  B('test idle')= demo_idle,
-  B('test')= [],// None, //demo_test
-  B('status bar')=  demo_statusbar,
-  B('cursor')=  demo_cursor,
-  B('scribble')=  demo_scribble,
-  // B('actions')= demo_actions,
-  B('pickers') = demo_pickers,
-  // B('stack') = demo_stack,
-  B('assistant') = demo_assistant,
-  B('gmenumodel') = demo_gmenumodel,
-  B('revealer') = demo_revealer,
   
+  Demos={ {'Assistant', "demo_assistant"}
+	  {'Button Boxes',  "demo_button_box"}
+	  {'Buttons',  "demo_buttons"}
+	  {'Buttons: Check buttons',  "demo_check_buttons"}
+	  {'Buttons: Radio buttons',  "demo_radio_buttons"}
+	  {'Buttons: Toggle buttons',  "demo_toggle_buttons"}
+	  {'Cairo Drawing',  "demo_cairo"}
+	  {'Calendar',  "demo_calendar"}
+	  {'Color Selection',  "demo_color_selection"}
+	  {'Cursor',  "demo_cursor"}
+	  {'Dialog and Message Boxes',  "demo_dialog"}	  
+	  {'Dnd', "demo_dnd"}
+	  {'Drawing Area', "demo_drawingarea"}
+	  {'Entry',  "demo_entry"}
+	  {'File chooser',  "demo_file_chooser"}
+	  {'Flipping',  "demo_flipping"}
+	  {'Focus',  "demo_focus"}
+	  {'Gamma curve',  "demo_gamma_curve"}
+	  {'Gmenumodel', "demo_gmenumodel"}
+	  {'Menus',  "demo_menus"}
+	  {'Messages', "demo_messagedialog"}
+	  {'Notebook',  "demo_notebook"}
+	  {'Panes',  "demo_panes"}
+	  {'Pickers',  "demo_pickers"}
+	  {'Picker (Color)',  "demo_color_picker"}
+	  {'Progress bar',  "demo_progressbar"}
+	  {'Range controls',  "demo_range_controls"}
+	  {'Reparent',  "demo_reparent"}
+	  {'Revealer', "demo_revealer"}
+	  {'Scrolled windows',  "demo_scrolled_windows"}
+	  {'Spinbutton', "demo_spinbutton"}
+	  {'Stack', "demo_stack"}
+	  {'Status bar',  "demo_statusbar"}
+	  {'Test idle', "demo_idle"}
+	  {'Test timeout', "demo_timeout"}
+	  {'Toolbar',  "demo_toolbar"}
+	  {'Tooltips', "demo_tooltips"}}
+    
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]
@@ -64,13 +57,12 @@ function demo_main_window()
   box2 = gtkbox_new("vertical",spacing=0)
   box2.set_border_width[0]
   scrolled_window.add[box2];
-  box2.show[]
-  k = B.__keys;
-  Bk = sort(k,'g','i');
-  for i1 = 1:size(Bk,1)
-    button = gtkbutton_new(label=Bk(i1,1))
-    func= B.find[Bk(i1,1)]
-    if is(func,%types.PList) then
+  box2.show[];
+  
+  for i1 = 1:size(Demos,'*')
+    button = gtkbutton_new(label=Demos{i1}{1})
+    ok = execstr(sprintf("func=%s;",Demos{i1}{2}),errcatch=%t);
+    if ok && is(func,%types.PList) then
       button.connect["clicked",func,win];
     else
       button.set_sensitive[%f]

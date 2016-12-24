@@ -104,7 +104,7 @@ function window=demo_clipboard (do_widget)
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   //window.set_screen[ do_widget.get_screen []];
   window.set_title[ "Clipboard"];
-  // window.connect[ "destroy",gtk_widget_destroyed, &window);
+  // window.connect[ "destroy",gtk_widget_destroyed, &window];
   vbox = gtk_box_new (GTK.ORIENTATION_VERTICAL, spacing= 0);
   vbox.set_border_width[8];
   window.add[vbox];

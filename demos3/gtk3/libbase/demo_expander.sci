@@ -9,7 +9,7 @@
 
 function window=demo_expander (do_widget)
 
-  function response_cb (dialog, response_id)
+  function response_cb (dialog, response_id, window)
     window.destroy[];
   endfunction
 
@@ -21,6 +21,7 @@ function window=demo_expander (do_widget)
     parent=child.get_parent[];
     parent.child_set[child, expand= %f, fill= %f];
   endfunction
+  
   message= sprintf("<big><b>%s</b></big>","Something went wrong");
   if nargin >=1 then 
     toplevel = do_widget.get_toplevel [];
@@ -68,6 +69,6 @@ function window=demo_expander (do_widget)
   area.pack_end[expander,expand=%t,fill=%t,padding=0];
   expander.show_all[];
   expander.connect[ "notify::expanded",expander_cb, window];
-  window.connect[ "response", response_cb];
+  window.connect[ "response",response_cb, window];
   window.show_all[];
 endfunction
