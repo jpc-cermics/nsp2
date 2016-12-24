@@ -1,27 +1,22 @@
 
 function demo_gtk2_plus()
   B = hash_create(20);
-  B('colorsel')=demo_colorsel,
   B('display and screen')=demo_display_screen,
   B('image from drawable')=demo_image_from_drawable,
   B('images1')=demo_images1,
   B('images2')=demo_images2,
   B('images3')=demo_images3,
   B('images')=demo_images,
-  // B('item factory')=demo_item_factory,
   B('labels')=demo_labels,
   B('liststore1')=demo_liststore1,
   B('liststore')=demo_liststore,
-  //B('menus1')=demo_menus1,
   B('nsp graphic widget 1')=demo_nsp_graphic_widget,
   B('nsp graphic widget 2')=demo_dyn_graph,
-  B('sizegroup')=demo_sizegroup,
-  // B('stock browser')=demo_stock_browser,
   B('textview')=demo_textview,
   B('treestore1')=demo_treestore1,
   B('treestore')=demo_treestore,
   B('treeview editable')=demo_treeview_editable,
-  B('combobox')=demo_combobox,
+
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]

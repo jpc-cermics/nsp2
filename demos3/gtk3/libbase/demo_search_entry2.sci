@@ -5,39 +5,40 @@
 // when the searched operation is slow such as loads of entries
 // to search, or online searches.
 
-function search_changed_cb (entry, result_label)
-  text = entry.get_text [];
-  printf("search changed: %s", text);
-  result_label.set_text[ text];
-endfunction
-
-function changed_cb (editable)
-  text = editable.get_text [];
-  printf ("changed: %s", text);
-endfunction
-
-function y= window_key_press_event_cb (widget,event,bar)
-  y = gtk_search_bar_handle_event (bar, event);
-endfunction
-
-function search_changed (entry, label)
-  label.set_text[ "search-changed"];
-endfunction
-
-function next_match (entry, label)
-  label.set_text[ "next-match"];
-endfunction
-
-function previous_match (entry, label)
-  label.set_text[ "previous-match"];
-endfunction
-
-function stop_search (entry, label)
-  label.set_text[ "stop-search"];
-endfunction
-
 function window=demo_search_entry2 (do_widget)
 
+  
+  function search_changed_cb (entry, result_label)
+    text = entry.get_text [];
+    printf("search changed: %s\n", text);
+    result_label.set_text[ text];
+  endfunction
+
+  function changed_cb (editable)
+    text = editable.get_text [];
+    printf ("changed: %s\n", text);
+  endfunction
+
+  function y= window_key_press_event_cb (widget,event,bar)
+    y = bar.handle_event[event];
+  endfunction
+
+  function search_changed (entry, label)
+    label.set_text[ "search-changed"];
+  endfunction
+
+  function next_match (entry, label)
+    label.set_text[ "next-match"];
+  endfunction
+
+  function previous_match (entry, label)
+    label.set_text[ "previous-match"];
+  endfunction
+
+  function stop_search (entry, label)
+    label.set_text[ "stop-search"];
+  endfunction
+  
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   window.set_title[ "Delayed Search Entry"];
   
@@ -60,7 +61,7 @@ function window=demo_search_entry2 (do_widget)
   container.set_halign[GTK.ALIGN_CENTER];
   container.pack_start[entry, expand=%f, fill=%f,padding=0];
   searchbar = gtk_search_bar_new ();
-  gtk_search_bar_connect_entry (searchbar, entry);
+  searchbar.connect_entry[entry];
   searchbar.set_show_close_button[%f];
   searchbar.add[container];
   vbox.pack_start[searchbar, expand=%f, fill=%f,padding=0];
@@ -75,9 +76,8 @@ function window=demo_search_entry2 (do_widget)
 
   //  Toggle button  
   button = gtk_toggle_button_new(label="Search");
-  g_object_bind_property (button, "active",
-  searchbar, "search-mode-enabled",
-  G_BINDING_BIDIRECTIONAL);
+  button.bind_property[ "active", searchbar,...
+		    "search-mode-enabled","BIDIRECTIONAL"];
   vbox.pack_start[button, expand=%t, fill=%t,padding=0];
 
   //  Result  

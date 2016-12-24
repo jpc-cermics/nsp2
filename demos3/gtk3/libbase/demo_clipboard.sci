@@ -17,8 +17,8 @@ function copy_button_clicked (button, user_data)
   clipboard.set_text[ entry.get_text []];
 endfunction
 
-function paste_received (clipboard, text, user_data)
-  entry = user_data;
+function paste_received (clipboard, text, user_data) 
+  entry = user_data(1);
   //  Set the entry text  
   entry.set_text[text];
 endfunction
@@ -30,8 +30,7 @@ function paste_button_clicked (button, user_data)
   clipboard = entry.get_clipboard[GDK_SELECTION_CLIPBOARD];
   //  Request the contents of the clipboard, contents_received will be
   //  called when we do get the contents.
-  printf("request_text is not implemented\n");
-  //  clipboard.request_text[paste_received, entry];
+  clipboard.request_text[paste_received, list(entry)];
 endfunction
 
 function pixbuf = get_image_pixbuf (image)
