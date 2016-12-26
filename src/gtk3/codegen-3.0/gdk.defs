@@ -1072,13 +1072,12 @@
   (return-type "GType")
 )
 
-;; XXXX
-;; (define-method get_frame_time
-;;   (of-object "GdkFrameClock")
-;;   (c-name "gdk_frame_clock_get_frame_time")
-;;   (available "GDK_AVAILABLE_IN_3_8")
-;;   (return-type "gint64")
-;; )
+(define-method get_frame_time
+  (of-object "GdkFrameClock")
+  (c-name "gdk_frame_clock_get_frame_time")
+  (available "GDK_AVAILABLE_IN_3_8")
+  (return-type "gint64")
+  )
 
 (define-method request_phase
   (of-object "GdkFrameClock")
@@ -4802,3 +4801,110 @@
   (c-name "gdk_rgba_to_string")
   (return-type "gchar*")
 )
+
+;; From gdkcairo.h
+
+;; From gdkcairo.h
+
+(define-function gdk_cairo_create
+  (c-name "gdk_cairo_create")
+  (return-type "cairo_t*")
+  (parameters
+    '("GdkWindow*" "window")
+  )
+)
+
+(define-function gdk_cairo_get_clip_rectangle
+  (c-name "gdk_cairo_get_clip_rectangle")
+  (return-type "gboolean")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkRectangle*" "rect")
+  )
+)
+
+(define-function gdk_cairo_set_source_rgba
+  (c-name "gdk_cairo_set_source_rgba")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("const-GdkRGBA*" "rgba")
+  )
+)
+
+(define-function gdk_cairo_set_source_pixbuf
+  (c-name "gdk_cairo_set_source_pixbuf")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("const-GdkPixbuf*" "pixbuf")
+    '("gdouble" "pixbuf_x")
+    '("gdouble" "pixbuf_y")
+  )
+)
+
+(define-function gdk_cairo_set_source_window
+  (c-name "gdk_cairo_set_source_window")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkWindow*" "window")
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-function gdk_cairo_rectangle
+  (c-name "gdk_cairo_rectangle")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("const-GdkRectangle*" "rectangle")
+  )
+)
+
+(define-function gdk_cairo_region
+  (c-name "gdk_cairo_region")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("const-cairo_region_t*" "region")
+  )
+)
+
+(define-function gdk_cairo_region_create_from_surface
+  (c-name "gdk_cairo_region_create_from_surface")
+  (return-type "cairo_region_t*")
+  (parameters
+    '("cairo_surface_t*" "surface")
+  )
+)
+
+(define-function gdk_cairo_surface_create_from_pixbuf
+  (c-name "gdk_cairo_surface_create_from_pixbuf")
+  (return-type "cairo_surface_t*")
+  (parameters
+    '("const-GdkPixbuf*" "pixbuf")
+    '("int" "scale")
+    '("GdkWindow*" "for_window")
+  )
+)
+
+(define-function gdk_cairo_draw_from_gl
+  (c-name "gdk_cairo_draw_from_gl")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkWindow*" "window")
+    '("int" "source")
+    '("int" "source_type")
+    '("int" "buffer_scale")
+    '("int" "x")
+    '("int" "y")
+    '("int" "width")
+    '("int" "height")
+  )
+)
+
+
+

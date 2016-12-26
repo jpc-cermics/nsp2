@@ -3791,7 +3791,7 @@ ignore gtk_object_new gtk_object_newv gtk_object_query_args
 gtk_object_add_arg_type gtk_object_args_collect gtk_object_arg_get_info
 %%
 ignore gtk_true gtk_false gtk_key_snooper_install gtk_key_snooper_remove
-gtk_get_current_event gtk_get_event_widget gtk_propagate_event
+gtk_get_event_widget gtk_propagate_event
 %%
 override gtk_main noargs
 static int
@@ -3905,6 +3905,26 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   return 1;
 }
+
+%%
+override gtk_entry_get_icon_area
+
+static int _wrap_gtk_entry_get_icon_area(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  GtkEntryIconPosition icon_pos;
+  NspObject *nsp_icon_pos = NULL, *ret;
+  GdkRectangle icon_area = { 0, 0, 0, 0 };
+  if ( GetArgs(stack,rhs,opt,T,&nsp_icon_pos) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_ENTRY_ICON_POSITION, nsp_icon_pos, &icon_pos)== FAIL)
+      return RET_BUG;
+  gtk_entry_get_icon_area(GTK_ENTRY(self->obj),icon_pos,&icon_area);
+  if ((ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &icon_area, TRUE, TRUE,
+					 (NspTypeBase *) nsp_type_gdkrectangle)) == NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+
 %%
 override gtk_item_factory_new
 static int
@@ -7944,6 +7964,147 @@ static int _wrap_gtk_clipboard_set_can_store(NspGObject *self,Stack stack,int rh
     }
   gtk_clipboard_set_can_store(GTK_CLIPBOARD(self->obj), targets, n_targets);
   g_free(targets);
+  return 0;
+}
+
+%%
+override gtk_clipboard_request_text
+
+static void
+nspgtk_clipboard_request_text_marshal(GtkClipboard *clipboard, const gchar *text, gpointer user_data)
+{
+  NspGtkCustomNotify *cunote = user_data;
+
+  NspObject *args[3], *nsp_ret;
+  int nret = 0, nargs = 2;
+  
+  nspg_block_threads();
+  args[0] =  (NspObject *) gobject_create("clipboard",(GObject *) clipboard,(NspTypeBase *) nsp_type_gtkclipboard);
+  args[1] =  (NspObject *) nsp_smatrix_create_from_string("text",text);
+  if ( args[0]== NULL ||args[1]== NULL ) goto end;
+  if ( cunote->data != NULL)
+    {
+      args[2]= cunote->data;
+      nargs= 3;
+    }
+  if ( nsp_gtk_eval_function( (NspPList *)cunote->func ,args,nargs,&nsp_ret,&nret)== FAIL)
+    goto end;
+
+  if (nret ==1 && IsBMat(nsp_ret) && ((NspBMatrix *) nsp_ret)->mn==1 )
+    {
+      /* ret =  ((NspBMatrix *) nsp_ret)->B[0]; */
+    }
+  nspg_unblock_threads();
+ end:
+  {
+    nspg_unblock_threads();
+  }
+}
+
+static int _wrap_gtk_clipboard_request_text(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_func, *nsp_arg = NULL;
+  NspGtkCustomNotify *cunote;
+  CheckRhs(2,2);
+  if (( nsp_func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(nsp_func,"request_text")== FAIL)) return RET_BUG;
+  if (( nsp_arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
+  if ((nsp_object_set_name(nsp_arg,"m")== FAIL)) return RET_BUG;
+  cunote = g_new(NspGtkCustomNotify, 1);
+  cunote->func = nsp_func;
+  cunote->data = nsp_arg;
+  gtk_clipboard_request_text(GTK_CLIPBOARD(self->obj),
+			     nspgtk_clipboard_request_text_marshal,
+			     cunote);
+  /* nsp_func and nsp_arg are destroyed when returning since they 
+   * are on the stack. We only need to free cunote
+   */
+  g_free(cunote);
+  return 0;
+}
+
+%%
+override gtk_popover_get_pointing_to
+
+#if GTK_CHECK_VERSION(3,12,0)
+static int _wrap_gtk_popover_get_pointing_to(NspGtkPopover *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GdkRectangle rect = { 0, 0, 0, 0 };
+  NspObject *nsp_rect;
+  int ret;
+  CheckRhs(0,0);
+  ret =gtk_popover_get_pointing_to(GTK_POPOVER(self->obj),&rect);
+  if ( ret )
+    {
+      if ((nsp_rect = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &rect, TRUE, TRUE,
+						  (NspTypeBase *) nsp_type_gdkrectangle)) == NULL) return RET_BUG;
+      MoveObj(stack,1,nsp_rect);
+      return 1;
+    }
+  Scierror("Error: failed to get pointing_to rectangle\n");
+  return RET_BUG;
+}
+#else
+int _wrap_gtk_popover_get_pointing_to(Stack stack, int rhs, int opt, int lhs) /* get_pointing_to */
+{
+  Scierror("Error: function gtk_popover_get_pointing_to not available\n");
+  return RET_BUG;
+}
+#endif
+
+
+
+%%
+override gtk_widget_add_tick_callback
+
+static gboolean nspgtk_add_tick_callback_marshal(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
+{
+  gboolean ret = TRUE;
+  NspGtkCustomNotify *cunote = user_data;
+
+  NspObject *args[3], *nsp_ret;
+  int nret = 0, nargs = 2;
+  
+  nspg_block_threads();
+  
+  args[0] =  (NspObject *) gobject_create("widget",(GObject *) widget,(NspTypeBase *) nsp_type_gtkwidget);
+  args[1] =  (NspObject *) gobject_create("fc",(GObject *) frame_clock,(NspTypeBase *) nsp_type_gdkframeclock);
+  if ( args[0]== NULL ||args[1]== NULL ) goto end;
+  if ( cunote->data != NULL)
+    {
+      args[2]= cunote->data;
+      nargs= 3;
+    }
+  if ( nsp_gtk_eval_function( (NspPList *)cunote->func ,args,nargs,&nsp_ret,&nret)== FAIL)
+    goto end;
+  
+  if (nret ==1 && IsBMat(nsp_ret) && ((NspBMatrix *) nsp_ret)->mn==1 )
+    {
+      ret =  ((NspBMatrix *) nsp_ret)->B[0];
+    }
+  nspg_unblock_threads();
+  return ret;
+ end:
+  {
+    nspg_unblock_threads();
+    return TRUE;
+  }
+}
+
+static int _wrap_gtk_widget_add_tick_callback(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_func, *nsp_arg = NULL;
+  NspGtkCustomNotify *cunote;
+  CheckRhs(2,2);
+  if (( nsp_func = (NspObject *) GetNspPListCopy(stack,1)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(nsp_func,"request_text")== FAIL)) return RET_BUG;
+  if (( nsp_arg = (NspObject *) GetListCopy(stack,2)) == NULL ) return RET_BUG;
+  if ((nsp_object_set_name(nsp_arg,"m")== FAIL)) return RET_BUG;
+  cunote = g_new(NspGtkCustomNotify, 1);
+  cunote->func = nsp_func;
+  cunote->data = nsp_arg;
+  gtk_widget_add_tick_callback(GTK_WIDGET(self->obj),
+			       nspgtk_add_tick_callback_marshal,cunote,nspgtk_custom_destroy_notify);
   return 0;
 }
 

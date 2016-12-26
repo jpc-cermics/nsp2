@@ -1684,7 +1684,7 @@ let int64_arg_attr_write_set oname params info byref=
 
 let int64_arg_write_return _ptype _ownsreturn info =
   let varlist = varlist_add  info.varlist "gint64"  "ret" in
-  let codeafter = "  return nsp_int_from_int64(ret);" in
+  let codeafter = "  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n" ^  "  return 1;"  in
   { info with varlist = varlist ; codeafter = codeafter :: info.codeafter ;}
 ;;
 

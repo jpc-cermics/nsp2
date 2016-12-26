@@ -8240,15 +8240,17 @@
   (return-type "gint")
 )
 
+;; returns a value in nsp
+
 (define-method get_icon_area
   (of-object "GtkEntry")
   (c-name "gtk_entry_get_icon_area")
   (return-type "none")
   (parameters
-    '("GtkEntryIconPosition" "icon_pos")
-    '("GdkRectangle*" "icon_area")
+   '("GtkEntryIconPosition" "icon_pos")
+   '("GdkRectangle*" "icon_area")
+   )
   )
-)
 
 (define-method im_context_filter_keypress
   (of-object "GtkEntry")
@@ -14512,11 +14514,7 @@
   )
 )
 
-
-
 ;; From gtkmarshalers.h
-
-
 
 ;; From gtkmenu.h
 
@@ -17054,7 +17052,7 @@
   (available "GDK_AVAILABLE_IN_3_12")
   (return-type "none")
   (parameters
-    '("const-GdkRectangle*" "rect")
+    '("GdkRectangle*" "rect")
   )
 )
 

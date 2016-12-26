@@ -1883,6 +1883,36 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
+
+%%
+override gdk_window_coords_to_parent
+
+static int _wrap_gdk_window_coords_to_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,1);
+  int_types T[] = {s_double,s_double ,t_end};
+  double x, y, parent_x, parent_y;
+  if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
+  gdk_window_coords_to_parent(GDK_WINDOW(self->obj),x,y,&parent_x,&parent_y);
+  if ( nsp_move_doubles(stack,1,1,2,(double) parent_x,(double) parent_y) == FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override gdk_window_coords_from_parent
+
+static int _wrap_gdk_window_coords_from_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckLhs(0,1);
+  int_types T[] = {s_double,s_double, t_end};
+  double parent_x, parent_y, x, y;
+  if ( GetArgs(stack,rhs,opt,T,&parent_x, &parent_y) == FAIL) return RET_BUG;
+  gdk_window_coords_from_parent(GDK_WINDOW(self->obj),parent_x,parent_y,&x,&y);
+  if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
+  return 1;
+}
+
+
 %%
 override gdk_window_get_root_origin noargs
 static int
@@ -2242,16 +2272,26 @@ override gdk_rectangle_intersect args
 static int
 _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
+  gboolean ret;
+  GdkRectangle intersect ={0,0,0,0};
   NspObject *nsp_src;
   int_types T[] = { obj_check ,t_end};
+  CheckLhs(0,2);
   GdkRectangle *r = nspg_boxed_get(self, GdkRectangle);
   if (GetArgs(stack,rhs,opt,T,&nsp_type_gdkrectangle,&nsp_src) == FAIL )
     return RET_BUG;
-
-  gdk_rectangle_intersect(r, nspg_boxed_get(nsp_src, GdkRectangle),r);
-  NthObj(1)->ret_pos = 1;
-  return 1;
+  ret = gdk_rectangle_intersect(r, nspg_boxed_get(nsp_src, GdkRectangle), &intersect);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  if ( lhs == 2 )
+    {
+      NspObject *nsp_intersect = NULL;
+      if (( nsp_intersect = (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &intersect, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle)) == NULL)
+	return RET_BUG;
+      MoveObj(stack,2, nsp_intersect);
+    }
+  return Max(lhs,1);
 }
+
 %%
 override gdk_rectangle_union args
 static int
@@ -2568,4 +2608,29 @@ int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new *
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
+}
+
+%%
+override gdk_cairo_set_source_pixbuf
+
+int _wrap_gdk_cairo_set_source_pixbuf(Stack stack, int rhs, int opt, int lhs)
+{
+  double x,y;
+  int_types T[] = {obj, obj,s_double,s_double , t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_pixbuf=NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr,&nsp_pixbuf,&x,&y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+    cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+    Scierror("Error: first argument should be a cairo_t");
+    return RET_BUG;
+  }
+  if ( IsGdkPixbuf(nsp_pixbuf) == FALSE )
+    {
+      Scierror("Error: second argument should be a pixbuf");
+      return RET_BUG;
+    }
+  gdk_cairo_set_source_pixbuf(cr,GDK_PIXBUF(((NspGdkPixbuf *) nsp_pixbuf)->obj),x,y);
+  return 0;
 }
