@@ -25,6 +25,14 @@ headers
 #include <nsp/gtk/cairo_t.h>
 #define  Nspcairo_surface_t_Private
 #include <nsp/gtk/cairo_surface_t.h>
+#define  Nspcairo_pattern_t_Private
+#include <nsp/gtk/cairo_pattern_t.h>
+#define  Nspcairo_region_t_Private
+#include <nsp/gtk/cairo_region_t.h>
+#define  Nspcairo_matrix_t_Private
+#include <nsp/gtk/cairo_matrix_t.h>
+#define  Nspcairo_rectangle_t_Private
+#include <nsp/gtk/cairo_rectangle_t.h>
 
 %%
 init

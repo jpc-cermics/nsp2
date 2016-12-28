@@ -84,6 +84,7 @@
 #include <nsp/gtk/gmenuattributeiter.h>
 #include <nsp/gtk/gmenulinkiter.h>
 #include <nsp/gtk/gmenumodel.h>
+#include <nsp/gtk/gmenuitem.h>
 #include <nsp/gtk/gmenu.h>
 #include <nsp/gtk/gmount.h>
 #include <nsp/gtk/gmountoperation.h>
@@ -1579,7 +1580,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 1583 "gio.c"
+#line 1584 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -1641,7 +1642,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 1645 "gio.c"
+#line 1646 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -13353,7 +13354,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13357 "gio.c"
+#line 13358 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -13409,7 +13410,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13413 "gio.c"
+#line 13414 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -13447,6 +13448,556 @@ static NspMethods *gmenumodel_get_methods(void) { return gmenumodel_methods;};
  *-------------------------------------------*/
 
 static AttrTab gmenumodel_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
+
+
+/* -----------NspGMenuItem ----------- */
+
+
+#define  NspGMenuItem_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gmenuitem.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGMenuItem inherits from GObject 
+ */
+
+int nsp_type_gmenuitem_id=0;
+NspTypeGMenuItem *nsp_type_gmenuitem=NULL;
+
+/*
+ * Type object for NspGMenuItem 
+ * all the instance of NspTypeGMenuItem share the same id. 
+ * nsp_type_gmenuitem: is an instance of NspTypeGMenuItem 
+ *    used for objects of NspGMenuItem type (i.e built with new_gmenuitem) 
+ * other instances are used for derived classes 
+ */
+NspTypeGMenuItem *new_type_gmenuitem(type_mode mode)
+{
+  NspTypeGMenuItem *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gmenuitem != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gmenuitem;
+    }
+  if (( type =  malloc(sizeof(NspTypeGObject))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gobject(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gmenuitem_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gmenuitem_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gmenuitem;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gmenuitem */ 
+
+  top->s_type =  (s_type_func *) nsp_gmenuitem_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gmenuitem_type_short_string;
+  /* top->create = (create_func*) int_gmenuitem_create;*/
+
+  /* specific methods for gmenuitem */
+
+  type->init = (init_func *) init_gmenuitem;
+
+  /* 
+   * NspGMenuItem interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gmenuitem_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGMenuItem called nsp_type_gmenuitem
+       */
+      type->id =  nsp_type_gmenuitem_id = nsp_new_type_id();
+      nsp_type_gmenuitem = type;
+      if ( nsp_register_type(nsp_type_gmenuitem) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gmenuitem, G_TYPE_MENU_ITEM);
+      return ( mode == T_BASE ) ? type : new_type_gmenuitem(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gmenuitem_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGMenuItem instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gmenuitem(NspGMenuItem *Obj,NspTypeGMenuItem *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGMenuItem 
+ */
+
+NspGMenuItem *new_gmenuitem() 
+{
+  NspGMenuItem *loc;
+  /* type must exists */
+  nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
+  if ( (loc = malloc(sizeof(NspGMenuItem)))== NULLGMENUITEM) return loc;
+  /* initialize object */
+  if ( init_gmenuitem(loc,nsp_type_gmenuitem) == FAIL) return NULLGMENUITEM;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGMenuItem 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gmenuitem_type_name[]="GMenuItem";
+static char gmenuitem_short_type_name[]="GMenuItem";
+
+static char *nsp_gmenuitem_type_as_string(void)
+{
+  return(gmenuitem_type_name);
+}
+
+static char *nsp_gmenuitem_type_short_string(NspObject *v)
+{
+  return(gmenuitem_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGMenuItem objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGMenuItem   *nsp_gmenuitem_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gmenuitem_id)  == TRUE  ) return ((NspGMenuItem *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gmenuitem));
+  return NULL;
+}
+
+int IsGMenuItemObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gmenuitem_id);
+}
+
+int IsGMenuItem(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gmenuitem_id);
+}
+
+NspGMenuItem  *GetGMenuItemCopy(Stack stack, int i)
+{
+  if (  GetGMenuItem(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGMenuItem  *GetGMenuItem(Stack stack, int i)
+{
+  NspGMenuItem *M;
+  if (( M = nsp_gmenuitem_object(NthObj(i))) == NULLGMENUITEM)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspGMenuItem *gmenuitem_copy(NspGMenuItem *self)
+{
+  /* return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gmenuitem);*/
+  return gobject_create(NVOID,((NspGObject *) self)->obj,(NspTypeBase *) nsp_type_gmenuitem);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GMenuItem
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+static int
+_wrap_g_menu_item_new_section (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string,obj_check, t_end};
+  char *label;
+  NspGObject *section;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&label, &nsp_type_gmenumodel, &section) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)g_menu_item_new_section(label,G_MENU_MODEL(section->obj)))== NULL) return RET_BUG;
+
+  nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
+_wrap_g_menu_item_new_submenu (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string,obj_check, t_end};
+  char *label;
+  NspGObject *submenu;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&label, &nsp_type_gmenumodel, &submenu) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)g_menu_item_new_submenu(label,G_MENU_MODEL(submenu->obj)))== NULL) return RET_BUG;
+
+  nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
+_wrap_g_menu_item_new_from_model (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,s_int, t_end};
+  NspGObject *model;
+  int item_index;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gmenumodel, &model, &item_index) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)g_menu_item_new_from_model(G_MENU_MODEL(model->obj),item_index))== NULL) return RET_BUG;
+
+  nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int
+_wrap_g_menu_item_new (Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *label, *detailed_action;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&label, &detailed_action) == FAIL) return RET_BUG;
+  if ((ret = (GObject *)g_menu_item_new(label,detailed_action))== NULL) return RET_BUG;
+
+  nsp_type_gmenuitem = new_type_gmenuitem(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gmenuitem );
+   if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#if GTK_CHECK_VERSION(2,34,0)
+static int _wrap_g_menu_item_get_attribute_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,obj, t_end};
+  char *attribute;
+  const GVariantType *expected_type = NULL;
+  NspObject *nsp_expected_type = NULL, *nsp_ret;
+  GVariant *ret;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &nsp_expected_type) == FAIL) return RET_BUG;
+  if ( IsGVariantType(nsp_expected_type))
+    { expected_type = ((NspGVariantType *) nsp_expected_type)->obj->value;
+    }
+  else
+    {
+      Scierror("Error: expected_type should be of type GVariantType\n");
+      return RET_BUG;
+    }
+    ret =g_menu_item_get_attribute_value(G_MENU_ITEM(self->obj),attribute,expected_type);
+  nsp_type_gvariant= new_type_gvariant(T_BASE);
+  if((ret = nsp_copy_GVariant(ret))==NULL) return RET_BUG;
+  nsp_ret =(NspObject*) nsp_gvariant_create(NVOID,ret,(NspTypeBase *) nsp_type_gvariant);
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#else
+int _wrap_g_menu_item_get_attribute_value(Stack stack, int rhs, int opt, int lhs) /* get_attribute_value */
+{
+  Scierror("Error: function g_menu_item_get_attribute_value not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,34,0)
+static int _wrap_g_menu_item_get_attribute(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *attribute, *format_string;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &format_string) == FAIL) return RET_BUG;
+    ret =g_menu_item_get_attribute(G_MENU_ITEM(self->obj),attribute,format_string);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+#else
+int _wrap_g_menu_item_get_attribute(Stack stack, int rhs, int opt, int lhs) /* get_attribute */
+{
+  Scierror("Error: function g_menu_item_get_attribute not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,34,0)
+static int _wrap_g_menu_item_get_link(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *link;
+  GMenuModel *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&link) == FAIL) return RET_BUG;
+    ret =g_menu_item_get_link(G_MENU_ITEM(self->obj),link);
+  nsp_type_gmenumodel = new_type_gmenumodel(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gmenumodel))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#else
+int _wrap_g_menu_item_get_link(Stack stack, int rhs, int opt, int lhs) /* get_link */
+{
+  Scierror("Error: function g_menu_item_get_link not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_attribute_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,obj, t_end};
+  char *attribute;
+  GVariant *value = NULL;
+  NspObject *nsp_value = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &nsp_value) == FAIL) return RET_BUG;
+  if ( IsGVariant(nsp_value))
+    { value = ((NspGVariant *) nsp_value)->obj->value;
+      if((value = nsp_copy_GVariant(value))==NULL) return RET_BUG;
+    }
+  else
+    {
+      Scierror("Error: value should be of type GVariant\n");
+      return RET_BUG;
+    }
+    g_menu_item_set_attribute_value(G_MENU_ITEM(self->obj),attribute,value);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_attribute_value(Stack stack, int rhs, int opt, int lhs) /* set_attribute_value */
+{
+  Scierror("Error: function g_menu_item_set_attribute_value not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_attribute(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *attribute, *format_string;
+  if ( GetArgs(stack,rhs,opt,T,&attribute, &format_string) == FAIL) return RET_BUG;
+    g_menu_item_set_attribute(G_MENU_ITEM(self->obj),attribute,format_string);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_attribute(Stack stack, int rhs, int opt, int lhs) /* set_attribute */
+{
+  Scierror("Error: function g_menu_item_set_attribute not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_link(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,obj_check, t_end};
+  char *link;
+  NspGObject *model;
+  if ( GetArgs(stack,rhs,opt,T,&link, &nsp_type_gmenumodel, &model) == FAIL) return RET_BUG;
+    g_menu_item_set_link(G_MENU_ITEM(self->obj),link,G_MENU_MODEL(model->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_link(Stack stack, int rhs, int opt, int lhs) /* set_link */
+{
+  Scierror("Error: function g_menu_item_set_link not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_label(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *label;
+  if ( GetArgs(stack,rhs,opt,T,&label) == FAIL) return RET_BUG;
+    g_menu_item_set_label(G_MENU_ITEM(self->obj),label);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_label(Stack stack, int rhs, int opt, int lhs) /* set_label */
+{
+  Scierror("Error: function g_menu_item_set_label not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_submenu(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *submenu;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gmenumodel, &submenu) == FAIL) return RET_BUG;
+    g_menu_item_set_submenu(G_MENU_ITEM(self->obj),G_MENU_MODEL(submenu->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_submenu(Stack stack, int rhs, int opt, int lhs) /* set_submenu */
+{
+  Scierror("Error: function g_menu_item_set_submenu not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_section(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *section;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gmenumodel, &section) == FAIL) return RET_BUG;
+    g_menu_item_set_section(G_MENU_ITEM(self->obj),G_MENU_MODEL(section->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_section(Stack stack, int rhs, int opt, int lhs) /* set_section */
+{
+  Scierror("Error: function g_menu_item_set_section not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_action_and_target_value(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,obj, t_end};
+  char *action;
+  GVariant *target_value = NULL;
+  NspObject *nsp_target_value = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&action, &nsp_target_value) == FAIL) return RET_BUG;
+  if ( IsGVariant(nsp_target_value))
+    { target_value = ((NspGVariant *) nsp_target_value)->obj->value;
+      if((target_value = nsp_copy_GVariant(target_value))==NULL) return RET_BUG;
+    }
+  else
+    {
+      Scierror("Error: target_value should be of type GVariant\n");
+      return RET_BUG;
+    }
+    g_menu_item_set_action_and_target_value(G_MENU_ITEM(self->obj),action,target_value);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_action_and_target_value(Stack stack, int rhs, int opt, int lhs) /* set_action_and_target_value */
+{
+  Scierror("Error: function g_menu_item_set_action_and_target_value not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_action_and_target(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,string, t_end};
+  char *action, *format_string;
+  if ( GetArgs(stack,rhs,opt,T,&action, &format_string) == FAIL) return RET_BUG;
+    g_menu_item_set_action_and_target(G_MENU_ITEM(self->obj),action,format_string);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_action_and_target(Stack stack, int rhs, int opt, int lhs) /* set_action_and_target */
+{
+  Scierror("Error: function g_menu_item_set_action_and_target not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_item_set_detailed_action(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, t_end};
+  char *detailed_action;
+  if ( GetArgs(stack,rhs,opt,T,&detailed_action) == FAIL) return RET_BUG;
+    g_menu_item_set_detailed_action(G_MENU_ITEM(self->obj),detailed_action);
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_detailed_action(Stack stack, int rhs, int opt, int lhs) /* set_detailed_action */
+{
+  Scierror("Error: function g_menu_item_set_detailed_action not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,38,0)
+static int _wrap_g_menu_item_set_icon(NspGMenuItem *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *icon;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gicon, &icon) == FAIL) return RET_BUG;
+    g_menu_item_set_icon(G_MENU_ITEM(self->obj),G_ICON(icon->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_item_set_icon(Stack stack, int rhs, int opt, int lhs) /* set_icon */
+{
+  Scierror("Error: function g_menu_item_set_icon not available\n");
+  return RET_BUG;
+}
+#endif
+static NspMethods gmenuitem_methods[] = {
+  {"get_attribute_value",(nsp_method *) _wrap_g_menu_item_get_attribute_value},
+  {"get_attribute",(nsp_method *) _wrap_g_menu_item_get_attribute},
+  {"get_link",(nsp_method *) _wrap_g_menu_item_get_link},
+  {"set_attribute_value",(nsp_method *) _wrap_g_menu_item_set_attribute_value},
+  {"set_attribute",(nsp_method *) _wrap_g_menu_item_set_attribute},
+  {"set_link",(nsp_method *) _wrap_g_menu_item_set_link},
+  {"set_label",(nsp_method *) _wrap_g_menu_item_set_label},
+  {"set_submenu",(nsp_method *) _wrap_g_menu_item_set_submenu},
+  {"set_section",(nsp_method *) _wrap_g_menu_item_set_section},
+  {"set_action_and_target_value",(nsp_method *) _wrap_g_menu_item_set_action_and_target_value},
+  {"set_action_and_target",(nsp_method *) _wrap_g_menu_item_set_action_and_target},
+  {"set_detailed_action",(nsp_method *) _wrap_g_menu_item_set_detailed_action},
+  {"set_icon",(nsp_method *) _wrap_g_menu_item_set_icon},
+  { NULL, NULL}
+};
+
+static NspMethods *gmenuitem_get_methods(void) { return gmenuitem_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gmenuitem_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* -----------NspGMenu ----------- */
@@ -13670,6 +14221,58 @@ int _wrap_g_menu_freeze(Stack stack, int rhs, int opt, int lhs) /* freeze */
 }
 #endif
 #if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_insert_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,obj_check, t_end};
+  int position;
+  NspGObject *item;
+  if ( GetArgs(stack,rhs,opt,T,&position, &nsp_type_gmenuitem, &item) == FAIL) return RET_BUG;
+    g_menu_insert_item(G_MENU(self->obj),position,G_MENU_ITEM(item->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_insert_item(Stack stack, int rhs, int opt, int lhs) /* insert_item */
+{
+  Scierror("Error: function g_menu_insert_item not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_prepend_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *item;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gmenuitem, &item) == FAIL) return RET_BUG;
+    g_menu_prepend_item(G_MENU(self->obj),G_MENU_ITEM(item->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_prepend_item(Stack stack, int rhs, int opt, int lhs) /* prepend_item */
+{
+  Scierror("Error: function g_menu_prepend_item not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_menu_append_item(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check, t_end};
+  NspGObject *item;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_gmenuitem, &item) == FAIL) return RET_BUG;
+    g_menu_append_item(G_MENU(self->obj),G_MENU_ITEM(item->obj));
+  return 0;
+}
+
+#else
+int _wrap_g_menu_append_item(Stack stack, int rhs, int opt, int lhs) /* append_item */
+{
+  Scierror("Error: function g_menu_append_item not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
 static int _wrap_g_menu_remove(NspGMenu *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int, t_end};
@@ -13865,6 +14468,9 @@ int _wrap_g_menu_append_submenu(Stack stack, int rhs, int opt, int lhs) /* appen
 #endif
 static NspMethods gmenu_methods[] = {
   {"freeze",(nsp_method *) _wrap_g_menu_freeze},
+  {"insert_item",(nsp_method *) _wrap_g_menu_insert_item},
+  {"prepend_item",(nsp_method *) _wrap_g_menu_prepend_item},
+  {"append_item",(nsp_method *) _wrap_g_menu_append_item},
   {"remove",(nsp_method *) _wrap_g_menu_remove},
   {"remove_all",(nsp_method *) _wrap_g_menu_remove_all},
   {"insert",(nsp_method *) _wrap_g_menu_insert},
@@ -27307,7 +27913,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 27311 "gio.c"
+#line 27917 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28029,7 +28635,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28033 "gio.c"
+#line 28639 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -28107,6 +28713,11 @@ static OpTab gio_func[]={
   { "gmemoryinputstream_new", _wrap_g_memory_input_stream_new},
  /* gmemoryinputstream_new g_memory_input_stream_new_from_data */
  /* gmemoryinputstream_new g_memory_input_stream_new_from_bytes */
+  { "g_menu_item_new", _wrap_g_menu_item_new},
+  { "gmenuitem_new", _wrap_g_menu_item_new},
+  { "g_menu_item_new_from_model", _wrap_g_menu_item_new_from_model},
+  { "g_menu_item_new_submenu", _wrap_g_menu_item_new_submenu},
+  { "g_menu_item_new_section", _wrap_g_menu_item_new_section},
   { "g_menu_new", _wrap_g_menu_new},
   { "gmenu_new", _wrap_g_menu_new},
   { "g_mount_operation_new", _wrap_g_mount_operation_new},
@@ -28365,6 +28976,7 @@ void nsp_initialize_gio_types(void)
   new_type_gmenuattributeiter(T_BASE);
   new_type_gmenulinkiter(T_BASE);
   new_type_gmenumodel(T_BASE);
+  new_type_gmenuitem(T_BASE);
   new_type_gmenu(T_BASE);
   new_type_gmount(T_BASE);
   new_type_gmountoperation(T_BASE);
@@ -28410,4 +29022,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 28414 "gio.c"
+#line 29026 "gio.c"

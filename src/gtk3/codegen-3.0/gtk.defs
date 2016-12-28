@@ -32844,15 +32844,15 @@
 ;;   (return-type "gboolean")
 ;; )
 
-(define-method set_csd_input_shape
-  (of-object "GtkWidget")
-  (c-name "gtk_widget_set_csd_input_shape")
-  (available "")
-  (return-type "none")
-  (parameters
-    '("const-cairo_region_t*" "region")
-  )
-)
+;; (define-method set_csd_input_shape
+;;   (of-object "GtkWidget")
+;;   (c-name "gtk_widget_set_csd_input_shape")
+;;   (available "")
+;;   (return-type "none")
+;;   (parameters
+;;     '("const-cairo_region_t*" "region")
+;;   )
+;; )
 
 
 

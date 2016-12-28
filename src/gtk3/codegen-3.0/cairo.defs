@@ -1,5 +1,6 @@
 ;; -*- scheme -*-
 
+(register "pango-types.defs")
 (include "cairo-types.defs")
 
 ;; From cairo-gobject.h
@@ -2293,104 +2294,104 @@
   )
 )
 
-(define-function cairo_pattern_create_raster_source
-  (c-name "cairo_pattern_create_raster_source")
-  (return-type "cairo_pattern_t*")
-  (parameters
-    '("void*" "user_data")
-    '("cairo_content_t" "content")
-    '("int" "width")
-    '("int" "height")
-  )
-)
+;; (define-function cairo_pattern_create_raster_source
+;;   (c-name "cairo_pattern_create_raster_source")
+;;   (return-type "cairo_pattern_t*")
+;;   (parameters
+;;     '("void*" "user_data")
+;;     '("cairo_content_t" "content")
+;;     '("int" "width")
+;;     '("int" "height")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_set_callback_data
-  (c-name "cairo_raster_source_pattern_set_callback_data")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("void*" "data")
-  )
-)
+;; (define-function cairo_raster_source_pattern_set_callback_data
+;;   (c-name "cairo_raster_source_pattern_set_callback_data")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("void*" "data")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_get_callback_data
-  (c-name "cairo_raster_source_pattern_get_callback_data")
-  (return-type "void*")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-  )
-)
+;; (define-function cairo_raster_source_pattern_get_callback_data
+;;   (c-name "cairo_raster_source_pattern_get_callback_data")
+;;   (return-type "void*")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_set_acquire
-  (c-name "cairo_raster_source_pattern_set_acquire")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("cairo_raster_source_acquire_func_t" "acquire")
-    '("cairo_raster_source_release_func_t" "release")
-  )
-)
+;; (define-function cairo_raster_source_pattern_set_acquire
+;;   (c-name "cairo_raster_source_pattern_set_acquire")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("cairo_raster_source_acquire_func_t" "acquire")
+;;     '("cairo_raster_source_release_func_t" "release")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_get_acquire
-  (c-name "cairo_raster_source_pattern_get_acquire")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("cairo_raster_source_acquire_func_t*" "acquire")
-    '("cairo_raster_source_release_func_t*" "release")
-  )
-)
+;; (define-function cairo_raster_source_pattern_get_acquire
+;;   (c-name "cairo_raster_source_pattern_get_acquire")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("cairo_raster_source_acquire_func_t*" "acquire")
+;;     '("cairo_raster_source_release_func_t*" "release")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_set_snapshot
-  (c-name "cairo_raster_source_pattern_set_snapshot")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("cairo_raster_source_snapshot_func_t" "snapshot")
-  )
-)
+;; (define-function cairo_raster_source_pattern_set_snapshot
+;;   (c-name "cairo_raster_source_pattern_set_snapshot")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("cairo_raster_source_snapshot_func_t" "snapshot")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_get_snapshot
-  (c-name "cairo_raster_source_pattern_get_snapshot")
-  (return-type "cairo_raster_source_snapshot_func_t")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-  )
-)
+;; (define-function cairo_raster_source_pattern_get_snapshot
+;;   (c-name "cairo_raster_source_pattern_get_snapshot")
+;;   (return-type "cairo_raster_source_snapshot_func_t")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_set_copy
-  (c-name "cairo_raster_source_pattern_set_copy")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("cairo_raster_source_copy_func_t" "copy")
-  )
-)
+;; (define-function cairo_raster_source_pattern_set_copy
+;;   (c-name "cairo_raster_source_pattern_set_copy")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("cairo_raster_source_copy_func_t" "copy")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_get_copy
-  (c-name "cairo_raster_source_pattern_get_copy")
-  (return-type "cairo_raster_source_copy_func_t")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-  )
-)
+;; (define-function cairo_raster_source_pattern_get_copy
+;;   (c-name "cairo_raster_source_pattern_get_copy")
+;;   (return-type "cairo_raster_source_copy_func_t")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_set_finish
-  (c-name "cairo_raster_source_pattern_set_finish")
-  (return-type "none")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-    '("cairo_raster_source_finish_func_t" "finish")
-  )
-)
+;; (define-function cairo_raster_source_pattern_set_finish
+;;   (c-name "cairo_raster_source_pattern_set_finish")
+;;   (return-type "none")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;     '("cairo_raster_source_finish_func_t" "finish")
+;;   )
+;; )
 
-(define-function cairo_raster_source_pattern_get_finish
-  (c-name "cairo_raster_source_pattern_get_finish")
-  (return-type "cairo_raster_source_finish_func_t")
-  (parameters
-    '("cairo_pattern_t*" "pattern")
-  )
-)
+;; (define-function cairo_raster_source_pattern_get_finish
+;;   (c-name "cairo_raster_source_pattern_get_finish")
+;;   (return-type "cairo_raster_source_finish_func_t")
+;;   (parameters
+;;     '("cairo_pattern_t*" "pattern")
+;;   )
+;; )
 
 (define-function cairo_pattern_create_rgb
   (c-name "cairo_pattern_create_rgb")

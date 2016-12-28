@@ -1219,7 +1219,8 @@ static int
 _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int start, end;
-
+  CheckRhs(0,0);
+  CheckLhs(0,1);
   if (!gtk_label_get_selection_bounds(GTK_LABEL(self->obj), &start, &end))
     {
       if (  nsp_move_doubles(stack,1,0,0) == FAIL)
@@ -3858,6 +3859,8 @@ static int
 _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int start=0, end=0;   /* n= 0; */
+  CheckRhs(0,0);
+  CheckLhs(0,1);
   gtk_editable_get_selection_bounds(GTK_EDITABLE(self->obj), &start, &end);
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG;
   return 1;
@@ -5365,22 +5368,29 @@ _wrap_gtk_drag_dest_find_target(Stack stack,int rhs,int opt,int lhs)
   int_types T[] = {obj_check,obj_check,list, t_end} ;
   NspObject *context,*nsp_ret;
   NspList *nsp_target_list;
-  gint  n_targets;
-  GtkTargetEntry *targets;
-  GtkTargetList *target_list;
   GdkAtom atom;
-
+  CheckLhs(0,1);
   if (GetArgs(stack,rhs,opt,T, &nsp_type_gtkwidget,&widget, &nsp_type_gdkdragcontext, &context, &nsp_target_list)  == FAIL)
     return RET_BUG;;
-
-  if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_target_list, &n_targets))==NULL) return RET_BUG;
-  target_list = gtk_target_list_new(targets, n_targets);
-  g_free(targets);
-
-  atom = gtk_drag_dest_find_target(GTK_WIDGET(widget->obj),
-				   GDK_DRAG_CONTEXT(nspgobject_get(context)),
-				   target_list);
-  gtk_target_list_unref(target_list);
+  if ( nsp_list_length(nsp_target_list) == 0 )
+    {
+      atom = gtk_drag_dest_find_target(GTK_WIDGET(widget->obj),
+				       GDK_DRAG_CONTEXT(nspgobject_get(context)),
+				       NULL);
+    }
+  else
+    {
+      gint  n_targets;
+      GtkTargetEntry *targets;
+      GtkTargetList *target_list;
+      if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_target_list, &n_targets))==NULL) return RET_BUG;
+      target_list = gtk_target_list_new(targets, n_targets);
+      g_free(targets);
+      atom = gtk_drag_dest_find_target(GTK_WIDGET(widget->obj),
+				       GDK_DRAG_CONTEXT(nspgobject_get(context)),
+				       target_list);
+      gtk_target_list_unref(target_list);
+    }
   if ((nsp_ret = (NspObject *) gdkatom_create(NVOID,NULL,atom,NULL))== NULL) return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;
@@ -5645,16 +5655,17 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
 }
 %%
 override gtk_text_iter_get_marks noargs
-static NspObject *
-_wrap_gtk_text_iter_get_marks(NspGBoxed *self)
+
+static int _wrap_gtk_text_iter_get_marks(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+  NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 %%
 override gtk_text_iter_get_toggled_tags kwargs
+
 static int
 _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5671,13 +5682,14 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
 }
 %%
 override gtk_text_iter_get_tags noargs
-static NspObject *
-_wrap_gtk_text_iter_get_tags(NspGBoxed *self)
+
+static int 
+_wrap_gtk_text_iter_get_tags(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   GSList *list, *tmp;
   NspList *nsp_list;
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
-  NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
+  NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
 %%
 override gtk_text_iter_forward_search kwargs
@@ -5973,7 +5985,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
 {
   NspObject *ret1,*ret2;
   GtkTextIter start, end;
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   CheckLhs(2,2);
   gtk_text_buffer_get_bounds(GTK_TEXT_BUFFER(self->obj), &start, &end);
   if ((ret1 = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &start,TRUE, TRUE,nsp_type_gtktextiter))== NULL)
@@ -6018,7 +6030,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
 {
   NspObject *ret1,*ret2;
   GtkTextIter start, end;
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   CheckLhs(2,2);
   if (!gtk_text_buffer_get_selection_bounds(GTK_TEXT_BUFFER(self->obj),&start, &end))
     return RET_BUG;
@@ -6237,6 +6249,7 @@ override gtk_message_dialog_new kwargs
 static int
 _wrap_gtk_message_dialog_new(Stack stack,int rhs,int opt,int lhs)
 {
+  int markup = FALSE;
   NspObject *nsp_ret;
   GObject *gobj;
   GtkButtonsType buttons = GTK_BUTTONS_NONE;
@@ -6247,6 +6260,7 @@ _wrap_gtk_message_dialog_new(Stack stack,int rhs,int opt,int lhs)
     {"type",obj,NULLOBJ,-1},
     {"buttons",obj,NULLOBJ,-1},
     {"message",string,NULLOBJ,-1},
+    {"markup",s_bool,NULLOBJ,-1},
     {NULL,t_end,NULLOBJ,-1} };
 
   /* static char *kwlist[] = { "parent", "flags", "type", "buttons", "message_format", NULL };*/
@@ -6257,7 +6271,7 @@ _wrap_gtk_message_dialog_new(Stack stack,int rhs,int opt,int lhs)
   NspGObject *nsp_parent = NULL;
   char *message_format = NULL;
 
-  if (GetArgs(stack,rhs,opt,T,&opts,&nsp_type_gtkwindow, &nsp_parent, &nsp_flags, &nsp_type, &nsp_buttons, &message_format)== FAIL)
+  if (GetArgs(stack,rhs,opt,T,&opts,&nsp_type_gtkwindow, &nsp_parent, &nsp_flags, &nsp_type, &nsp_buttons, &message_format,&markup)== FAIL)
     return RET_BUG;
   if ( nsp_parent != NULL) parent = GTK_WINDOW(nsp_parent->obj);
   if (nspg_flags_get_value(GTK_TYPE_DIALOG_FLAGS, nsp_flags, &flags))
@@ -6266,13 +6280,24 @@ _wrap_gtk_message_dialog_new(Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_BUTTONS_TYPE, nsp_buttons, &buttons))
     return RET_BUG;
-
-  gobj = (GObject *)gtk_message_dialog_new(parent, flags, type, buttons, "%s", message_format);
-  if (gobj == NULL ) {
+  if ( markup == TRUE )
+    {
+      gobj = (GObject *)gtk_message_dialog_new_with_markup(parent, flags, type, buttons, NULL);
+      if (gobj == NULL ) {
         Scierror( "could not create GtkMessageDialog object");
         return RET_BUG;
+      }
+      gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (gobj),
+				     message_format);
     }
-
+  else
+    {
+      gobj = (GObject *)gtk_message_dialog_new(parent, flags, type, buttons, "%s", message_format);
+      if (gobj == NULL ) {
+        Scierror( "could not create GtkMessageDialog object");
+        return RET_BUG;
+      }
+    }
   if ((nsp_ret = (NspObject *) gobject_create(NVOID, gobj,(NspTypeBase *) nsp_type_gtkmessagedialog))== NULL)
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
@@ -7715,7 +7740,7 @@ static int _wrap_gtk_icon_theme_list_icons(NspGtkIconTheme *self,Stack stack,int
   char *context;
   GList *ret, *tmp;
   NspList *nsp_list;
-  if ( rhs <= 1 )
+  if ( rhs <= 0 )
     {
       ret =gtk_icon_theme_list_icons(GTK_ICON_THEME(self->obj),NULL);
     }
@@ -7724,6 +7749,21 @@ static int _wrap_gtk_icon_theme_list_icons(NspGtkIconTheme *self,Stack stack,int
       if ( GetArgs(stack,rhs,opt,T,&context) == FAIL) return RET_BUG;
       ret =gtk_icon_theme_list_icons(GTK_ICON_THEME(self->obj),context);
     }
+  /* objects are strings  */
+  NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
+}
+
+
+%%
+override gtk_icon_theme_list_contexts
+
+static int _wrap_gtk_icon_theme_list_contexts(NspGtkIconTheme *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GList *ret, *tmp;
+  NspList *nsp_list;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  ret =gtk_icon_theme_list_contexts(GTK_ICON_THEME(self->obj));
   /* objects are strings  */
   NSP_LIST_FROM_GLIST(ret,nsp_new_string_obj("lel",tmp->data,-1),g_list_free);
 }
@@ -8107,6 +8147,7 @@ static int _wrap_gtk_widget_add_tick_callback(NspGObject *self,Stack stack,int r
 			       nspgtk_add_tick_callback_marshal,cunote,nspgtk_custom_destroy_notify);
   return 0;
 }
+
 
 %%
 last

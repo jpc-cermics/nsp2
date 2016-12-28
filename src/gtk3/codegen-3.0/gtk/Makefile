@@ -2,7 +2,7 @@ SUFFIXES=.job
 
 H2DEF=./codegen/h2def.py
 
-all:	gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs glib.defs
+all:	gtk.defs gdk.defs pango.defs gio.defs gdkpixbuf.defs cairo.defs glib.defs gtksourceview.defs
 
 gtk.defs :
 	$(H2DEF) -s gtk /usr/local/src/mingw32-build/mingw-cross-apps-jpc/gtk+3.22/gtk+-3.22.4/gtk/gtk*.h
@@ -33,6 +33,9 @@ CAIRO_H= /usr/include/cairo/cairo-gobject.h \
 
 cairo.defs: Makefile
 	$(H2DEF) -s cairo $(CAIRO_H)
+
+gtksourceview.defs: Makefile
+	$(H2DEF) -s gtksourceview /usr/include/gtksourceview-3.0/gtksourceview/*.h
 
 test	:
 	cat $(CAIRO_H) > cairo.h

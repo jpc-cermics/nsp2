@@ -4,6 +4,10 @@ headers
 
 #include <pango/pango.h>
 #include <pango/pango-utils.h>
+
+#include <cairo/cairo.h>
+#include <cairo/cairo-gobject.h>
+
 #include <nsp/nsp.h>
 #include <nsp/smatrix.h>
 #include <nsp/bmatrix.h>
@@ -20,7 +24,12 @@ headers
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/pangoattribute.h>
 #include <nsp/all-pango.h>
-
+/*
+#include <nsp/gtk/cairo_t.h>
+#include <nsp/gtk/cairo_surface_t.h>
+#include <nsp/gtk/cairo_region_t.h>
+#include <nsp/gtk/cairo_pattern_t.h>
+*/
 %%
 init
 
@@ -871,6 +880,52 @@ _wrap_pango_layout_get_font_description(NspPangoLayout *self,Stack stack,int rhs
   ret = (PangoFontDescription *) pango_layout_get_font_description(PANGO_LAYOUT(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_pangofontdescription))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override pango_context_get_metrics
+
+static int _wrap_pango_context_get_metrics(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T1[] = {obj, t_end};
+  int_types T2[] = {obj,obj, t_end};
+  PangoFontDescription *desc = NULL;
+  NspObject *nsp_desc = NULL, *nsp_language = NULL, *nsp_ret;
+  PangoLanguage *language = NULL;
+  PangoFontMetrics *ret;
+  if ( rhs == 2 )
+    {
+      if ( GetArgs(stack,rhs,opt,T2,&nsp_desc, &nsp_language) == FAIL) return RET_BUG;
+      if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
+	desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
+      else {
+	Scierror( "desc should be a PangoFontDescription");
+	return RET_BUG;
+      }
+      if (nspg_boxed_check(nsp_language, PANGO_TYPE_LANGUAGE))
+	language = nspg_boxed_get(nsp_language, PangoLanguage);
+      else {
+	Scierror( "language should be a PangoLanguage");
+	return RET_BUG;
+      }
+    }
+  else if ( rhs == 1)
+    {
+      if ( GetArgs(stack,rhs,opt,T1,&nsp_desc) == FAIL) return RET_BUG;
+      if (nspg_boxed_check(nsp_desc, PANGO_TYPE_FONT_DESCRIPTION))
+	desc = nspg_boxed_get(nsp_desc, PangoFontDescription);
+      else {
+	Scierror( "desc should be a PangoFontDescription");
+	return RET_BUG;
+      }
+      language = NULL;
+    }
+  ret =pango_context_get_metrics(PANGO_CONTEXT(self->obj),desc,language);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,PANGO_TYPE_FONT_METRICS, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_pangofontmetrics))== NULL)
     return RET_BUG;
   MoveObj(stack,1,nsp_ret);
   return 1;

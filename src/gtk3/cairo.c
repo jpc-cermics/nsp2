@@ -49,8 +49,16 @@
 #include <nsp/gtk/cairo_t.h>
 #define  Nspcairo_surface_t_Private
 #include <nsp/gtk/cairo_surface_t.h>
+#define  Nspcairo_pattern_t_Private
+#include <nsp/gtk/cairo_pattern_t.h>
+#define  Nspcairo_region_t_Private
+#include <nsp/gtk/cairo_region_t.h>
+#define  Nspcairo_matrix_t_Private
+#include <nsp/gtk/cairo_matrix_t.h>
+#define  Nspcairo_rectangle_t_Private
+#include <nsp/gtk/cairo_rectangle_t.h>
 
-#line 54 "cairo.c"
+#line 62 "cairo.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 
@@ -452,7 +460,7 @@ static NspMethods *cairo_surface_t_get_methods(void) { return NULL;};
 static AttrTab cairo_surface_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* -----------NspCairo_pattern_t ----------- */
+/* -----------Nspcairo_pattern_t ----------- */
 
 
 #define  NspCairo_pattern_t_Private 
@@ -462,17 +470,17 @@ static AttrTab cairo_surface_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #include <nsp/nspthreads.h>
 
 /* 
- * NspCairo_pattern_t inherits from GBoxed 
+ * Nspcairo_pattern_t inherits from GBoxed 
  */
 
 int nsp_type_cairo_pattern_t_id=0;
 NspTypeCairo_pattern_t *nsp_type_cairo_pattern_t=NULL;
 
 /*
- * Type object for NspCairo_pattern_t 
+ * Type object for Nspcairo_pattern_t 
  * all the instance of NspTypeCairo_pattern_t share the same id. 
  * nsp_type_cairo_pattern_t: is an instance of NspTypeCairo_pattern_t 
- *    used for objects of NspCairo_pattern_t type (i.e built with new_cairo_pattern_t) 
+ *    used for objects of Nspcairo_pattern_t type (i.e built with new_cairo_pattern_t) 
  * other instances are used for derived classes 
  */
 NspTypeCairo_pattern_t *new_type_cairo_pattern_t(type_mode mode)
@@ -510,7 +518,7 @@ NspTypeCairo_pattern_t *new_type_cairo_pattern_t(type_mode mode)
   type->init = (init_func *) init_cairo_pattern_t;
 
   /* 
-   * NspCairo_pattern_t interfaces can be added here 
+   * Nspcairo_pattern_t interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -536,11 +544,11 @@ NspTypeCairo_pattern_t *new_type_cairo_pattern_t(type_mode mode)
 }
 
 /*
- * initialize NspCairo_pattern_t instances 
+ * initialize Nspcairo_pattern_t instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_cairo_pattern_t(NspCairo_pattern_t *Obj,NspTypeCairo_pattern_t *type)
+static int init_cairo_pattern_t(Nspcairo_pattern_t *Obj,NspTypeCairo_pattern_t *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -551,22 +559,22 @@ static int init_cairo_pattern_t(NspCairo_pattern_t *Obj,NspTypeCairo_pattern_t *
 }
 
 /*
- * new instance of NspCairo_pattern_t 
+ * new instance of Nspcairo_pattern_t 
  */
 
-NspCairo_pattern_t *new_cairo_pattern_t() 
+Nspcairo_pattern_t *new_cairo_pattern_t() 
 {
-  NspCairo_pattern_t *loc;
+  Nspcairo_pattern_t *loc;
   /* type must exists */
   nsp_type_cairo_pattern_t = new_type_cairo_pattern_t(T_BASE);
-  if ( (loc = malloc(sizeof(NspCairo_pattern_t)))== NULLCAIRO_PATTERN_T) return loc;
+  if ( (loc = malloc(sizeof(Nspcairo_pattern_t)))== NULLCAIRO_PATTERN_T) return loc;
   /* initialize object */
   if ( init_cairo_pattern_t(loc,nsp_type_cairo_pattern_t) == FAIL) return NULLCAIRO_PATTERN_T;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for NspCairo_pattern_t 
+ * Object method redefined for Nspcairo_pattern_t 
  *-----------------------------------------------*/
 /*
  * type as string 
@@ -587,16 +595,16 @@ static char *nsp_cairo_pattern_t_type_short_string(NspObject *v)
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for NspCairo_pattern_t objects 
+ * for Nspcairo_pattern_t objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspCairo_pattern_t   *nsp_cairo_pattern_t_object(NspObject *O)
+Nspcairo_pattern_t   *nsp_cairo_pattern_t_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
-  if ( check_cast (O,nsp_type_cairo_pattern_t_id)  == TRUE  ) return ((NspCairo_pattern_t *) O);
+  if ( check_cast (O,nsp_type_cairo_pattern_t_id)  == TRUE  ) return ((Nspcairo_pattern_t *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cairo_pattern_t));
   return NULL;
@@ -612,15 +620,15 @@ int IsCairo_pattern_t(NspObject *O)
   return nsp_object_type(O,nsp_type_cairo_pattern_t_id);
 }
 
-NspCairo_pattern_t  *GetCairo_pattern_tCopy(Stack stack, int i)
+Nspcairo_pattern_t  *GetCairo_pattern_tCopy(Stack stack, int i)
 {
   if (  GetCairo_pattern_t(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspCairo_pattern_t  *GetCairo_pattern_t(Stack stack, int i)
+Nspcairo_pattern_t  *GetCairo_pattern_t(Stack stack, int i)
 {
-  NspCairo_pattern_t *M;
+  Nspcairo_pattern_t *M;
   if (( M = nsp_cairo_pattern_t_object(NthObj(i))) == NULLCAIRO_PATTERN_T)
      ArgMessage(stack,i);
   return M;
@@ -630,7 +638,7 @@ NspCairo_pattern_t  *GetCairo_pattern_t(Stack stack, int i)
  * copy for boxed 
  */
 
-NspCairo_pattern_t *cairo_pattern_t_copy(NspCairo_pattern_t *self)
+Nspcairo_pattern_t *cairo_pattern_t_copy(Nspcairo_pattern_t *self)
 {
   return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
                               (NspTypeBase *) nsp_type_cairo_pattern_t);
@@ -651,7 +659,7 @@ static NspMethods *cairo_pattern_t_get_methods(void) { return NULL;};
 static AttrTab cairo_pattern_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* -----------NspCairo_region_t ----------- */
+/* -----------Nspcairo_region_t ----------- */
 
 
 #define  NspCairo_region_t_Private 
@@ -661,17 +669,17 @@ static AttrTab cairo_pattern_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #include <nsp/nspthreads.h>
 
 /* 
- * NspCairo_region_t inherits from GBoxed 
+ * Nspcairo_region_t inherits from GBoxed 
  */
 
 int nsp_type_cairo_region_t_id=0;
 NspTypeCairo_region_t *nsp_type_cairo_region_t=NULL;
 
 /*
- * Type object for NspCairo_region_t 
+ * Type object for Nspcairo_region_t 
  * all the instance of NspTypeCairo_region_t share the same id. 
  * nsp_type_cairo_region_t: is an instance of NspTypeCairo_region_t 
- *    used for objects of NspCairo_region_t type (i.e built with new_cairo_region_t) 
+ *    used for objects of Nspcairo_region_t type (i.e built with new_cairo_region_t) 
  * other instances are used for derived classes 
  */
 NspTypeCairo_region_t *new_type_cairo_region_t(type_mode mode)
@@ -709,7 +717,7 @@ NspTypeCairo_region_t *new_type_cairo_region_t(type_mode mode)
   type->init = (init_func *) init_cairo_region_t;
 
   /* 
-   * NspCairo_region_t interfaces can be added here 
+   * Nspcairo_region_t interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -735,11 +743,11 @@ NspTypeCairo_region_t *new_type_cairo_region_t(type_mode mode)
 }
 
 /*
- * initialize NspCairo_region_t instances 
+ * initialize Nspcairo_region_t instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_cairo_region_t(NspCairo_region_t *Obj,NspTypeCairo_region_t *type)
+static int init_cairo_region_t(Nspcairo_region_t *Obj,NspTypeCairo_region_t *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -750,22 +758,22 @@ static int init_cairo_region_t(NspCairo_region_t *Obj,NspTypeCairo_region_t *typ
 }
 
 /*
- * new instance of NspCairo_region_t 
+ * new instance of Nspcairo_region_t 
  */
 
-NspCairo_region_t *new_cairo_region_t() 
+Nspcairo_region_t *new_cairo_region_t() 
 {
-  NspCairo_region_t *loc;
+  Nspcairo_region_t *loc;
   /* type must exists */
   nsp_type_cairo_region_t = new_type_cairo_region_t(T_BASE);
-  if ( (loc = malloc(sizeof(NspCairo_region_t)))== NULLCAIRO_REGION_T) return loc;
+  if ( (loc = malloc(sizeof(Nspcairo_region_t)))== NULLCAIRO_REGION_T) return loc;
   /* initialize object */
   if ( init_cairo_region_t(loc,nsp_type_cairo_region_t) == FAIL) return NULLCAIRO_REGION_T;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for NspCairo_region_t 
+ * Object method redefined for Nspcairo_region_t 
  *-----------------------------------------------*/
 /*
  * type as string 
@@ -786,16 +794,16 @@ static char *nsp_cairo_region_t_type_short_string(NspObject *v)
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for NspCairo_region_t objects 
+ * for Nspcairo_region_t objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspCairo_region_t   *nsp_cairo_region_t_object(NspObject *O)
+Nspcairo_region_t   *nsp_cairo_region_t_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
-  if ( check_cast (O,nsp_type_cairo_region_t_id)  == TRUE  ) return ((NspCairo_region_t *) O);
+  if ( check_cast (O,nsp_type_cairo_region_t_id)  == TRUE  ) return ((Nspcairo_region_t *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cairo_region_t));
   return NULL;
@@ -811,15 +819,15 @@ int IsCairo_region_t(NspObject *O)
   return nsp_object_type(O,nsp_type_cairo_region_t_id);
 }
 
-NspCairo_region_t  *GetCairo_region_tCopy(Stack stack, int i)
+Nspcairo_region_t  *GetCairo_region_tCopy(Stack stack, int i)
 {
   if (  GetCairo_region_t(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspCairo_region_t  *GetCairo_region_t(Stack stack, int i)
+Nspcairo_region_t  *GetCairo_region_t(Stack stack, int i)
 {
-  NspCairo_region_t *M;
+  Nspcairo_region_t *M;
   if (( M = nsp_cairo_region_t_object(NthObj(i))) == NULLCAIRO_REGION_T)
      ArgMessage(stack,i);
   return M;
@@ -829,7 +837,7 @@ NspCairo_region_t  *GetCairo_region_t(Stack stack, int i)
  * copy for boxed 
  */
 
-NspCairo_region_t *cairo_region_t_copy(NspCairo_region_t *self)
+Nspcairo_region_t *cairo_region_t_copy(Nspcairo_region_t *self)
 {
   return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
                               (NspTypeBase *) nsp_type_cairo_region_t);
@@ -850,7 +858,7 @@ static NspMethods *cairo_region_t_get_methods(void) { return NULL;};
 static AttrTab cairo_region_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* -----------NspCairo_rectangle_t ----------- */
+/* -----------Nspcairo_rectangle_t ----------- */
 
 
 #define  NspCairo_rectangle_t_Private 
@@ -860,17 +868,17 @@ static AttrTab cairo_region_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #include <nsp/nspthreads.h>
 
 /* 
- * NspCairo_rectangle_t inherits from GBoxed 
+ * Nspcairo_rectangle_t inherits from GBoxed 
  */
 
 int nsp_type_cairo_rectangle_t_id=0;
 NspTypeCairo_rectangle_t *nsp_type_cairo_rectangle_t=NULL;
 
 /*
- * Type object for NspCairo_rectangle_t 
+ * Type object for Nspcairo_rectangle_t 
  * all the instance of NspTypeCairo_rectangle_t share the same id. 
  * nsp_type_cairo_rectangle_t: is an instance of NspTypeCairo_rectangle_t 
- *    used for objects of NspCairo_rectangle_t type (i.e built with new_cairo_rectangle_t) 
+ *    used for objects of Nspcairo_rectangle_t type (i.e built with new_cairo_rectangle_t) 
  * other instances are used for derived classes 
  */
 NspTypeCairo_rectangle_t *new_type_cairo_rectangle_t(type_mode mode)
@@ -908,7 +916,7 @@ NspTypeCairo_rectangle_t *new_type_cairo_rectangle_t(type_mode mode)
   type->init = (init_func *) init_cairo_rectangle_t;
 
   /* 
-   * NspCairo_rectangle_t interfaces can be added here 
+   * Nspcairo_rectangle_t interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -934,11 +942,11 @@ NspTypeCairo_rectangle_t *new_type_cairo_rectangle_t(type_mode mode)
 }
 
 /*
- * initialize NspCairo_rectangle_t instances 
+ * initialize Nspcairo_rectangle_t instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_cairo_rectangle_t(NspCairo_rectangle_t *Obj,NspTypeCairo_rectangle_t *type)
+static int init_cairo_rectangle_t(Nspcairo_rectangle_t *Obj,NspTypeCairo_rectangle_t *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -949,22 +957,22 @@ static int init_cairo_rectangle_t(NspCairo_rectangle_t *Obj,NspTypeCairo_rectang
 }
 
 /*
- * new instance of NspCairo_rectangle_t 
+ * new instance of Nspcairo_rectangle_t 
  */
 
-NspCairo_rectangle_t *new_cairo_rectangle_t() 
+Nspcairo_rectangle_t *new_cairo_rectangle_t() 
 {
-  NspCairo_rectangle_t *loc;
+  Nspcairo_rectangle_t *loc;
   /* type must exists */
   nsp_type_cairo_rectangle_t = new_type_cairo_rectangle_t(T_BASE);
-  if ( (loc = malloc(sizeof(NspCairo_rectangle_t)))== NULLCAIRO_RECTANGLE_T) return loc;
+  if ( (loc = malloc(sizeof(Nspcairo_rectangle_t)))== NULLCAIRO_RECTANGLE_T) return loc;
   /* initialize object */
   if ( init_cairo_rectangle_t(loc,nsp_type_cairo_rectangle_t) == FAIL) return NULLCAIRO_RECTANGLE_T;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for NspCairo_rectangle_t 
+ * Object method redefined for Nspcairo_rectangle_t 
  *-----------------------------------------------*/
 /*
  * type as string 
@@ -985,16 +993,16 @@ static char *nsp_cairo_rectangle_t_type_short_string(NspObject *v)
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for NspCairo_rectangle_t objects 
+ * for Nspcairo_rectangle_t objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspCairo_rectangle_t   *nsp_cairo_rectangle_t_object(NspObject *O)
+Nspcairo_rectangle_t   *nsp_cairo_rectangle_t_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
-  if ( check_cast (O,nsp_type_cairo_rectangle_t_id)  == TRUE  ) return ((NspCairo_rectangle_t *) O);
+  if ( check_cast (O,nsp_type_cairo_rectangle_t_id)  == TRUE  ) return ((Nspcairo_rectangle_t *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cairo_rectangle_t));
   return NULL;
@@ -1010,15 +1018,15 @@ int IsCairo_rectangle_t(NspObject *O)
   return nsp_object_type(O,nsp_type_cairo_rectangle_t_id);
 }
 
-NspCairo_rectangle_t  *GetCairo_rectangle_tCopy(Stack stack, int i)
+Nspcairo_rectangle_t  *GetCairo_rectangle_tCopy(Stack stack, int i)
 {
   if (  GetCairo_rectangle_t(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspCairo_rectangle_t  *GetCairo_rectangle_t(Stack stack, int i)
+Nspcairo_rectangle_t  *GetCairo_rectangle_t(Stack stack, int i)
 {
-  NspCairo_rectangle_t *M;
+  Nspcairo_rectangle_t *M;
   if (( M = nsp_cairo_rectangle_t_object(NthObj(i))) == NULLCAIRO_RECTANGLE_T)
      ArgMessage(stack,i);
   return M;
@@ -1028,7 +1036,7 @@ NspCairo_rectangle_t  *GetCairo_rectangle_t(Stack stack, int i)
  * copy for boxed 
  */
 
-NspCairo_rectangle_t *cairo_rectangle_t_copy(NspCairo_rectangle_t *self)
+Nspcairo_rectangle_t *cairo_rectangle_t_copy(Nspcairo_rectangle_t *self)
 {
   return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
                               (NspTypeBase *) nsp_type_cairo_rectangle_t);
@@ -1049,7 +1057,7 @@ static NspMethods *cairo_rectangle_t_get_methods(void) { return NULL;};
 static AttrTab cairo_rectangle_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
-/* -----------NspCairo_matrix_t ----------- */
+/* -----------Nspcairo_matrix_t ----------- */
 
 
 #define  NspCairo_matrix_t_Private 
@@ -1059,17 +1067,17 @@ static AttrTab cairo_rectangle_t_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 #include <nsp/nspthreads.h>
 
 /* 
- * NspCairo_matrix_t inherits from GBoxed 
+ * Nspcairo_matrix_t inherits from GBoxed 
  */
 
 int nsp_type_cairo_matrix_t_id=0;
 NspTypeCairo_matrix_t *nsp_type_cairo_matrix_t=NULL;
 
 /*
- * Type object for NspCairo_matrix_t 
+ * Type object for Nspcairo_matrix_t 
  * all the instance of NspTypeCairo_matrix_t share the same id. 
  * nsp_type_cairo_matrix_t: is an instance of NspTypeCairo_matrix_t 
- *    used for objects of NspCairo_matrix_t type (i.e built with new_cairo_matrix_t) 
+ *    used for objects of Nspcairo_matrix_t type (i.e built with new_cairo_matrix_t) 
  * other instances are used for derived classes 
  */
 NspTypeCairo_matrix_t *new_type_cairo_matrix_t(type_mode mode)
@@ -1107,7 +1115,7 @@ NspTypeCairo_matrix_t *new_type_cairo_matrix_t(type_mode mode)
   type->init = (init_func *) init_cairo_matrix_t;
 
   /* 
-   * NspCairo_matrix_t interfaces can be added here 
+   * Nspcairo_matrix_t interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
@@ -1133,11 +1141,11 @@ NspTypeCairo_matrix_t *new_type_cairo_matrix_t(type_mode mode)
 }
 
 /*
- * initialize NspCairo_matrix_t instances 
+ * initialize Nspcairo_matrix_t instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_cairo_matrix_t(NspCairo_matrix_t *Obj,NspTypeCairo_matrix_t *type)
+static int init_cairo_matrix_t(Nspcairo_matrix_t *Obj,NspTypeCairo_matrix_t *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -1148,22 +1156,22 @@ static int init_cairo_matrix_t(NspCairo_matrix_t *Obj,NspTypeCairo_matrix_t *typ
 }
 
 /*
- * new instance of NspCairo_matrix_t 
+ * new instance of Nspcairo_matrix_t 
  */
 
-NspCairo_matrix_t *new_cairo_matrix_t() 
+Nspcairo_matrix_t *new_cairo_matrix_t() 
 {
-  NspCairo_matrix_t *loc;
+  Nspcairo_matrix_t *loc;
   /* type must exists */
   nsp_type_cairo_matrix_t = new_type_cairo_matrix_t(T_BASE);
-  if ( (loc = malloc(sizeof(NspCairo_matrix_t)))== NULLCAIRO_MATRIX_T) return loc;
+  if ( (loc = malloc(sizeof(Nspcairo_matrix_t)))== NULLCAIRO_MATRIX_T) return loc;
   /* initialize object */
   if ( init_cairo_matrix_t(loc,nsp_type_cairo_matrix_t) == FAIL) return NULLCAIRO_MATRIX_T;
   return loc;
 }
 
 /*----------------------------------------------
- * Object method redefined for NspCairo_matrix_t 
+ * Object method redefined for Nspcairo_matrix_t 
  *-----------------------------------------------*/
 /*
  * type as string 
@@ -1184,16 +1192,16 @@ static char *nsp_cairo_matrix_t_type_short_string(NspObject *v)
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for NspCairo_matrix_t objects 
+ * for Nspcairo_matrix_t objects 
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspCairo_matrix_t   *nsp_cairo_matrix_t_object(NspObject *O)
+Nspcairo_matrix_t   *nsp_cairo_matrix_t_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
-  if ( check_cast (O,nsp_type_cairo_matrix_t_id)  == TRUE  ) return ((NspCairo_matrix_t *) O);
+  if ( check_cast (O,nsp_type_cairo_matrix_t_id)  == TRUE  ) return ((Nspcairo_matrix_t *) O);
   else 
     Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_cairo_matrix_t));
   return NULL;
@@ -1209,15 +1217,15 @@ int IsCairo_matrix_t(NspObject *O)
   return nsp_object_type(O,nsp_type_cairo_matrix_t_id);
 }
 
-NspCairo_matrix_t  *GetCairo_matrix_tCopy(Stack stack, int i)
+Nspcairo_matrix_t  *GetCairo_matrix_tCopy(Stack stack, int i)
 {
   if (  GetCairo_matrix_t(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-NspCairo_matrix_t  *GetCairo_matrix_t(Stack stack, int i)
+Nspcairo_matrix_t  *GetCairo_matrix_t(Stack stack, int i)
 {
-  NspCairo_matrix_t *M;
+  Nspcairo_matrix_t *M;
   if (( M = nsp_cairo_matrix_t_object(NthObj(i))) == NULLCAIRO_MATRIX_T)
      ArgMessage(stack,i);
   return M;
@@ -1227,7 +1235,7 @@ NspCairo_matrix_t  *GetCairo_matrix_t(Stack stack, int i)
  * copy for boxed 
  */
 
-NspCairo_matrix_t *cairo_matrix_t_copy(NspCairo_matrix_t *self)
+Nspcairo_matrix_t *cairo_matrix_t_copy(Nspcairo_matrix_t *self)
 {
   return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
                               (NspTypeBase *) nsp_type_cairo_matrix_t);
@@ -1392,6 +1400,27 @@ int _wrap_cairo_push_group_with_content(Stack stack, int rhs, int opt, int lhs) 
   return 0;
 }
 
+int _wrap_cairo_pop_group(Stack stack, int rhs, int opt, int lhs) /* cairo_pop_group */
+{
+  int_types T[] = {obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_ret;
+  cairo_pattern_t *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+    ret =cairo_pop_group(cr);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 int _wrap_cairo_pop_group_to_source(Stack stack, int rhs, int opt, int lhs) /* cairo_pop_group_to_source */
 {
   int_types T[] = {obj, t_end};
@@ -1424,6 +1453,29 @@ int _wrap_cairo_set_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_se
   if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_OPERATOR, nsp_op, &op)== FAIL)
       return RET_BUG;
     cairo_set_operator(cr,op);
+  return 0;
+}
+
+int _wrap_cairo_set_source(Stack stack, int rhs, int opt, int lhs) /* cairo_set_source */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_source = NULL;
+  cairo_pattern_t *source = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_source) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_source, CAIRO_GOBJECT_TYPE_PATTERN))
+      source = nspg_boxed_get(nsp_source, cairo_pattern_t);
+  else {
+      Scierror( "source should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_set_source(cr,source);
   return 0;
 }
 
@@ -1660,6 +1712,52 @@ int _wrap_cairo_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_rotate *
       return RET_BUG;
   }
     cairo_rotate(cr,angle);
+  return 0;
+}
+
+int _wrap_cairo_transform(Stack stack, int rhs, int opt, int lhs) /* cairo_transform */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_transform(cr,matrix);
+  return 0;
+}
+
+int _wrap_cairo_set_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_set_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_set_matrix(cr,matrix);
   return 0;
 }
 
@@ -1998,6 +2096,29 @@ int _wrap_cairo_paint_with_alpha(Stack stack, int rhs, int opt, int lhs) /* cair
   return 0;
 }
 
+int _wrap_cairo_mask(Stack stack, int rhs, int opt, int lhs) /* cairo_mask */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_pattern = NULL;
+  cairo_pattern_t *pattern = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mask(cr,pattern);
+  return 0;
+}
+
 int _wrap_cairo_mask_surface(Stack stack, int rhs, int opt, int lhs) /* cairo_mask_surface */
 {
   int_types T[] = {obj,obj,s_double,s_double, t_end};
@@ -2257,6 +2378,52 @@ int _wrap_cairo_set_font_size(Stack stack, int rhs, int opt, int lhs) /* cairo_s
   return 0;
 }
 
+int _wrap_cairo_set_font_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_set_font_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_set_font_matrix(cr,matrix);
+  return 0;
+}
+
+int _wrap_cairo_get_font_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_get_font_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_get_font_matrix(cr,matrix);
+  return 0;
+}
+
 int _wrap_cairo_show_text(Stack stack, int rhs, int opt, int lhs) /* cairo_show_text */
 {
   int_types T[] = {obj,string, t_end};
@@ -2306,6 +2473,27 @@ int _wrap_cairo_get_operator(Stack stack, int rhs, int opt, int lhs) /* cairo_ge
   }
     ret =cairo_get_operator(cr);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_get_source(Stack stack, int rhs, int opt, int lhs) /* cairo_get_source */
+{
+  int_types T[] = {obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_ret;
+  cairo_pattern_t *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+    ret =cairo_get_source(cr);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
   return 1;
 }
 
@@ -2484,6 +2672,29 @@ int _wrap_cairo_get_dash(Stack stack, int rhs, int opt, int lhs) /* cairo_get_da
       return RET_BUG;
   }
     cairo_get_dash(cr,&dashes,&offset);
+  return 0;
+}
+
+int _wrap_cairo_get_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_get_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_get_matrix(cr,matrix);
   return 0;
 }
 
@@ -3098,6 +3309,30 @@ int _wrap_cairo_image_surface_create_from_png(Stack stack, int rhs, int opt, int
   return 1;
 }
 
+int _wrap_cairo_recording_surface_create(Stack stack, int rhs, int opt, int lhs) /* cairo_recording_surface_create */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_content_t content;
+  NspObject *nsp_content = NULL, *nsp_extents = NULL, *nsp_ret;
+  cairo_rectangle_t *extents = NULL;
+  cairo_surface_t *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_content, &nsp_extents) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_CONTENT, nsp_content, &content)== FAIL)
+      return RET_BUG;
+  if (nspg_boxed_check(nsp_extents, CAIRO_GOBJECT_TYPE_RECTANGLE))
+      extents = nspg_boxed_get(nsp_extents, cairo_rectangle_t);
+  else {
+      Scierror( "extents should be a cairo_rectangle_t");
+      return RET_BUG;
+  }
+    ret =cairo_recording_surface_create(content,extents);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_SURFACE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_surface_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 int _wrap_cairo_recording_surface_ink_extents(Stack stack, int rhs, int opt, int lhs) /* cairo_recording_surface_ink_extents */
 {
   int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
@@ -3113,6 +3348,920 @@ int _wrap_cairo_recording_surface_ink_extents(Stack stack, int rhs, int opt, int
   }
     cairo_recording_surface_ink_extents(surface,&x0,&y0,&width,&height);
   return 0;
+}
+
+int _wrap_cairo_pattern_create_rgb(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_rgb */
+{
+  int_types T[] = {s_double,s_double,s_double, t_end};
+  double red, green, blue;
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&red, &green, &blue) == FAIL) return RET_BUG;
+    ret =cairo_pattern_create_rgb(red,green,blue);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_create_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_rgba */
+{
+  int_types T[] = {s_double,s_double,s_double,s_double, t_end};
+  double red, green, blue, alpha;
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&red, &green, &blue, &alpha) == FAIL) return RET_BUG;
+    ret =cairo_pattern_create_rgba(red,green,blue,alpha);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_create_for_surface(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_for_surface */
+{
+  int_types T[] = {obj, t_end};
+  cairo_surface_t *surface = NULL;
+  NspObject *nsp_surface = NULL, *nsp_ret;
+  cairo_pattern_t *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
+      surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
+  else {
+      Scierror( "surface should be a cairo_surface_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_create_for_surface(surface);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_create_linear(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_linear */
+{
+  int_types T[] = {s_double,s_double,s_double,s_double, t_end};
+  double x0, y0, x1, y1;
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&x0, &y0, &x1, &y1) == FAIL) return RET_BUG;
+    ret =cairo_pattern_create_linear(x0,y0,x1,y1);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_create_radial(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_radial */
+{
+  int_types T[] = {s_double,s_double,s_double,s_double,s_double,s_double, t_end};
+  double cx0, cy0, radius0, cx1, cy1, radius1;
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&cx0, &cy0, &radius0, &cx1, &cy1, &radius1) == FAIL) return RET_BUG;
+    ret =cairo_pattern_create_radial(cx0,cy0,radius0,cx1,cy1,radius1);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_create_mesh(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_create_mesh */
+{
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =cairo_pattern_create_mesh();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_reference(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_reference */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL, *ret;
+  NspObject *nsp_pattern = NULL, *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_reference(pattern);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_pattern_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_destroy */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_pattern_destroy(pattern);
+  return 0;
+}
+
+int _wrap_cairo_pattern_status(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_status */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_status(pattern);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_add_color_stop_rgb(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_add_color_stop_rgb */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double offset, red, green, blue;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &offset, &red, &green, &blue) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_pattern_add_color_stop_rgb(pattern,offset,red,green,blue);
+  return 0;
+}
+
+int _wrap_cairo_pattern_add_color_stop_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_add_color_stop_rgba */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double offset, red, green, blue, alpha;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &offset, &red, &green, &blue, &alpha) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_pattern_add_color_stop_rgba(pattern,offset,red,green,blue,alpha);
+  return 0;
+}
+
+int _wrap_cairo_mesh_pattern_begin_patch(Stack stack, int rhs, int opt, int lhs) /* cairo_mesh_pattern_begin_patch */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mesh_pattern_begin_patch(pattern);
+  return 0;
+}
+
+int _wrap_cairo_mesh_pattern_end_patch(Stack stack, int rhs, int opt, int lhs) /* cairo_mesh_pattern_end_patch */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mesh_pattern_end_patch(pattern);
+  return 0;
+}
+
+int _wrap_cairo_mesh_pattern_curve_to(Stack stack, int rhs, int opt, int lhs) /* cairo_mesh_pattern_curve_to */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double x1, y1, x2, y2, x3, y3;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &x1, &y1, &x2, &y2, &x3, &y3) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mesh_pattern_curve_to(pattern,x1,y1,x2,y2,x3,y3);
+  return 0;
+}
+
+int _wrap_cairo_mesh_pattern_line_to(Stack stack, int rhs, int opt, int lhs) /* cairo_mesh_pattern_line_to */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double x, y;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &x, &y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mesh_pattern_line_to(pattern,x,y);
+  return 0;
+}
+
+int _wrap_cairo_mesh_pattern_move_to(Stack stack, int rhs, int opt, int lhs) /* cairo_mesh_pattern_move_to */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double x, y;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &x, &y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    cairo_mesh_pattern_move_to(pattern,x,y);
+  return 0;
+}
+
+int _wrap_cairo_pattern_set_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_set_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_pattern_set_matrix(pattern,matrix);
+  return 0;
+}
+
+int _wrap_cairo_pattern_get_matrix(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_matrix */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL, *nsp_matrix = NULL;
+  cairo_matrix_t *matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_pattern_get_matrix(pattern,matrix);
+  return 0;
+}
+
+int _wrap_cairo_pattern_set_extend(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_set_extend */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL, *nsp_extend = NULL;
+  cairo_extend_t extend;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &nsp_extend) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+  if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_EXTEND, nsp_extend, &extend)== FAIL)
+      return RET_BUG;
+    cairo_pattern_set_extend(pattern,extend);
+  return 0;
+}
+
+int _wrap_cairo_pattern_get_extend(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_extend */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_extend(pattern);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_set_filter(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_set_filter */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL, *nsp_filter = NULL;
+  cairo_filter_t filter;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &nsp_filter) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+  if (nspg_enum_get_value(CAIRO_GOBJECT_TYPE_FILTER, nsp_filter, &filter)== FAIL)
+      return RET_BUG;
+    cairo_pattern_set_filter(pattern,filter);
+  return 0;
+}
+
+int _wrap_cairo_pattern_get_filter(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_filter */
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_filter(pattern);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_get_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_rgba */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double red, green, blue, alpha;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &red, &green, &blue, &alpha) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_rgba(pattern,&red,&green,&blue,&alpha);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_get_color_stop_rgba(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_color_stop_rgba */
+{
+  int_types T[] = {obj,s_int,s_double,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  int index;
+  double offset, red, green, blue, alpha;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &index, &offset, &red, &green, &blue, &alpha) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_color_stop_rgba(pattern,index,&offset,&red,&green,&blue,&alpha);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_get_color_stop_count(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_color_stop_count */
+{
+  int_types T[] = {obj,s_int, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  int count;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &count) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_color_stop_count(pattern,&count);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_get_linear_points(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_linear_points */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double x0, y0, x1, y1;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &x0, &y0, &x1, &y1) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_linear_points(pattern,&x0,&y0,&x1,&y1);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_pattern_get_radial_circles(Stack stack, int rhs, int opt, int lhs) /* cairo_pattern_get_radial_circles */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double,s_double, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  double x0, y0, r0, x1, y1, r1;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern, &x0, &y0, &r0, &x1, &y1, &r1) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    ret =cairo_pattern_get_radial_circles(pattern,&x0,&y0,&r0,&x1,&y1,&r1);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_matrix_init(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_init */
+{
+  int_types T[] = {obj,s_double,s_double,s_double,s_double,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double xx, yx, xy, yy, x0, y0;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &xx, &yx, &xy, &yy, &x0, &y0) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_init(matrix,xx,yx,xy,yy,x0,y0);
+  return 0;
+}
+
+int _wrap_cairo_matrix_init_identity(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_init_identity */
+{
+  int_types T[] = {obj, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_init_identity(matrix);
+  return 0;
+}
+
+int _wrap_cairo_matrix_init_translate(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_init_translate */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double tx, ty;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &tx, &ty) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_init_translate(matrix,tx,ty);
+  return 0;
+}
+
+int _wrap_cairo_matrix_init_scale(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_init_scale */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double sx, sy;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &sx, &sy) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_init_scale(matrix,sx,sy);
+  return 0;
+}
+
+int _wrap_cairo_matrix_init_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_init_rotate */
+{
+  int_types T[] = {obj,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double radians;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &radians) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_init_rotate(matrix,radians);
+  return 0;
+}
+
+int _wrap_cairo_matrix_translate(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_translate */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double tx, ty;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &tx, &ty) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_translate(matrix,tx,ty);
+  return 0;
+}
+
+int _wrap_cairo_matrix_scale(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_scale */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double sx, sy;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &sx, &sy) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_scale(matrix,sx,sy);
+  return 0;
+}
+
+int _wrap_cairo_matrix_rotate(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_rotate */
+{
+  int_types T[] = {obj,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double radians;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &radians) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_rotate(matrix,radians);
+  return 0;
+}
+
+int _wrap_cairo_matrix_invert(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_invert */
+{
+  int_types T[] = {obj, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    ret =cairo_matrix_invert(matrix);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_matrix_multiply(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_multiply */
+{
+  int_types T[] = {obj,obj,obj, t_end};
+  cairo_matrix_t *result = NULL, *a = NULL, *b = NULL;
+  NspObject *nsp_result = NULL, *nsp_a = NULL, *nsp_b = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_result, &nsp_a, &nsp_b) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_result, CAIRO_GOBJECT_TYPE_MATRIX))
+      result = nspg_boxed_get(nsp_result, cairo_matrix_t);
+  else {
+      Scierror( "result should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_a, CAIRO_GOBJECT_TYPE_MATRIX))
+      a = nspg_boxed_get(nsp_a, cairo_matrix_t);
+  else {
+      Scierror( "a should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_b, CAIRO_GOBJECT_TYPE_MATRIX))
+      b = nspg_boxed_get(nsp_b, cairo_matrix_t);
+  else {
+      Scierror( "b should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_multiply(result,a,b);
+  return 0;
+}
+
+int _wrap_cairo_matrix_transform_distance(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_transform_distance */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double dx, dy;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &dx, &dy) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_transform_distance(matrix,&dx,&dy);
+  return 0;
+}
+
+int _wrap_cairo_matrix_transform_point(Stack stack, int rhs, int opt, int lhs) /* cairo_matrix_transform_point */
+{
+  int_types T[] = {obj,s_double,s_double, t_end};
+  cairo_matrix_t *matrix = NULL;
+  NspObject *nsp_matrix = NULL;
+  double x, y;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_matrix, &x, &y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_matrix, CAIRO_GOBJECT_TYPE_MATRIX))
+      matrix = nspg_boxed_get(nsp_matrix, cairo_matrix_t);
+  else {
+      Scierror( "matrix should be a cairo_matrix_t");
+      return RET_BUG;
+  }
+    cairo_matrix_transform_point(matrix,&x,&y);
+  return 0;
+}
+
+int _wrap_cairo_region_create(Stack stack, int rhs, int opt, int lhs) /* cairo_region_create */
+{
+  cairo_region_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =cairo_region_create();
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_region_copy(Stack stack, int rhs, int opt, int lhs) /* cairo_region_copy */
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *original = NULL, *ret;
+  NspObject *nsp_original = NULL, *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_original) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_original, CAIRO_GOBJECT_TYPE_REGION))
+      original = nspg_boxed_get(nsp_original, cairo_region_t);
+  else {
+      Scierror( "original should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_copy(original);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_region_reference(Stack stack, int rhs, int opt, int lhs) /* cairo_region_reference */
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL, *ret;
+  NspObject *nsp_region = NULL, *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_reference(region);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+int _wrap_cairo_region_destroy(Stack stack, int rhs, int opt, int lhs) /* cairo_region_destroy */
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    cairo_region_destroy(region);
+  return 0;
+}
+
+int _wrap_cairo_region_status(Stack stack, int rhs, int opt, int lhs) /* cairo_region_status */
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_status(region);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_region_num_rectangles(Stack stack, int rhs, int opt, int lhs) /* cairo_region_num_rectangles */
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  int ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_num_rectangles(region);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_region_translate(Stack stack, int rhs, int opt, int lhs) /* cairo_region_translate */
+{
+  int_types T[] = {obj,s_int,s_int, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  int dx, dy;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region, &dx, &dy) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    cairo_region_translate(region,dx,dy);
+  return 0;
+}
+
+int _wrap_cairo_region_subtract(Stack stack, int rhs, int opt, int lhs) /* cairo_region_subtract */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_region_t *dst = NULL, *other = NULL;
+  NspObject *nsp_dst = NULL, *nsp_other = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_dst, &nsp_other) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
+      dst = nspg_boxed_get(nsp_dst, cairo_region_t);
+  else {
+      Scierror( "dst should be a cairo_region_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
+      other = nspg_boxed_get(nsp_other, cairo_region_t);
+  else {
+      Scierror( "other should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_subtract(dst,other);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_region_intersect(Stack stack, int rhs, int opt, int lhs) /* cairo_region_intersect */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_region_t *dst = NULL, *other = NULL;
+  NspObject *nsp_dst = NULL, *nsp_other = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_dst, &nsp_other) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
+      dst = nspg_boxed_get(nsp_dst, cairo_region_t);
+  else {
+      Scierror( "dst should be a cairo_region_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
+      other = nspg_boxed_get(nsp_other, cairo_region_t);
+  else {
+      Scierror( "other should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_intersect(dst,other);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_region_union(Stack stack, int rhs, int opt, int lhs) /* cairo_region_union */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_region_t *dst = NULL, *other = NULL;
+  NspObject *nsp_dst = NULL, *nsp_other = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_dst, &nsp_other) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
+      dst = nspg_boxed_get(nsp_dst, cairo_region_t);
+  else {
+      Scierror( "dst should be a cairo_region_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
+      other = nspg_boxed_get(nsp_other, cairo_region_t);
+  else {
+      Scierror( "other should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_union(dst,other);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+int _wrap_cairo_region_xor(Stack stack, int rhs, int opt, int lhs) /* cairo_region_xor */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_region_t *dst = NULL, *other = NULL;
+  NspObject *nsp_dst = NULL, *nsp_other = NULL;
+  gint ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_dst, &nsp_other) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_dst, CAIRO_GOBJECT_TYPE_REGION))
+      dst = nspg_boxed_get(nsp_dst, cairo_region_t);
+  else {
+      Scierror( "dst should be a cairo_region_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_other, CAIRO_GOBJECT_TYPE_REGION))
+      other = nspg_boxed_get(nsp_other, cairo_region_t);
+  else {
+      Scierror( "other should be a cairo_region_t");
+      return RET_BUG;
+  }
+    ret =cairo_region_xor(dst,other);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
 }
 
 int _wrap_cairo_debug_reset_static_data(Stack stack, int rhs, int opt, int lhs) /* cairo_debug_reset_static_data */
@@ -3367,8 +4516,10 @@ static OpTab cairo_func[]={
   { "cairo_restore", _wrap_cairo_restore},
   { "cairo_push_group", _wrap_cairo_push_group},
   { "cairo_push_group_with_content", _wrap_cairo_push_group_with_content},
+  { "cairo_pop_group", _wrap_cairo_pop_group},
   { "cairo_pop_group_to_source", _wrap_cairo_pop_group_to_source},
   { "cairo_set_operator", _wrap_cairo_set_operator},
+  { "cairo_set_source", _wrap_cairo_set_source},
   { "cairo_set_source_rgb", _wrap_cairo_set_source_rgb},
   { "cairo_set_source_rgba", _wrap_cairo_set_source_rgba},
   { "cairo_set_source_surface", _wrap_cairo_set_source_surface},
@@ -3382,6 +4533,8 @@ static OpTab cairo_func[]={
   { "cairo_translate", _wrap_cairo_translate},
   { "cairo_scale", _wrap_cairo_scale},
   { "cairo_rotate", _wrap_cairo_rotate},
+  { "cairo_transform", _wrap_cairo_transform},
+  { "cairo_set_matrix", _wrap_cairo_set_matrix},
   { "cairo_identity_matrix", _wrap_cairo_identity_matrix},
   { "cairo_user_to_device", _wrap_cairo_user_to_device},
   { "cairo_user_to_device_distance", _wrap_cairo_user_to_device_distance},
@@ -3402,6 +4555,7 @@ static OpTab cairo_func[]={
   { "cairo_path_extents", _wrap_cairo_path_extents},
   { "cairo_paint", _wrap_cairo_paint},
   { "cairo_paint_with_alpha", _wrap_cairo_paint_with_alpha},
+  { "cairo_mask", _wrap_cairo_mask},
   { "cairo_mask_surface", _wrap_cairo_mask_surface},
   { "cairo_stroke", _wrap_cairo_stroke},
   { "cairo_stroke_preserve", _wrap_cairo_stroke_preserve},
@@ -3417,9 +4571,12 @@ static OpTab cairo_func[]={
   { "cairo_clip_extents", _wrap_cairo_clip_extents},
   { "cairo_select_font_face", _wrap_cairo_select_font_face},
   { "cairo_set_font_size", _wrap_cairo_set_font_size},
+  { "cairo_set_font_matrix", _wrap_cairo_set_font_matrix},
+  { "cairo_get_font_matrix", _wrap_cairo_get_font_matrix},
   { "cairo_show_text", _wrap_cairo_show_text},
   { "cairo_text_path", _wrap_cairo_text_path},
   { "cairo_get_operator", _wrap_cairo_get_operator},
+  { "cairo_get_source", _wrap_cairo_get_source},
   { "cairo_get_tolerance", _wrap_cairo_get_tolerance},
   { "cairo_get_antialias", _wrap_cairo_get_antialias},
   { "cairo_get_current_point", _wrap_cairo_get_current_point},
@@ -3430,6 +4587,7 @@ static OpTab cairo_func[]={
   { "cairo_get_miter_limit", _wrap_cairo_get_miter_limit},
   { "cairo_get_dash_count", _wrap_cairo_get_dash_count},
   { "cairo_get_dash", _wrap_cairo_get_dash},
+  { "cairo_get_matrix", _wrap_cairo_get_matrix},
   { "cairo_get_target", _wrap_cairo_get_target},
   { "cairo_get_group_target", _wrap_cairo_get_group_target},
   { "cairo_status", _wrap_cairo_status},
@@ -3464,7 +4622,58 @@ static OpTab cairo_func[]={
   { "cairo_image_surface_get_height", _wrap_cairo_image_surface_get_height},
   { "cairo_image_surface_get_stride", _wrap_cairo_image_surface_get_stride},
   { "cairo_image_surface_create_from_png", _wrap_cairo_image_surface_create_from_png},
+  { "cairo_recording_surface_create", _wrap_cairo_recording_surface_create},
   { "cairo_recording_surface_ink_extents", _wrap_cairo_recording_surface_ink_extents},
+  { "cairo_pattern_create_rgb", _wrap_cairo_pattern_create_rgb},
+  { "cairo_pattern_create_rgba", _wrap_cairo_pattern_create_rgba},
+  { "cairo_pattern_create_for_surface", _wrap_cairo_pattern_create_for_surface},
+  { "cairo_pattern_create_linear", _wrap_cairo_pattern_create_linear},
+  { "cairo_pattern_create_radial", _wrap_cairo_pattern_create_radial},
+  { "cairo_pattern_create_mesh", _wrap_cairo_pattern_create_mesh},
+  { "cairo_pattern_reference", _wrap_cairo_pattern_reference},
+  { "cairo_pattern_destroy", _wrap_cairo_pattern_destroy},
+  { "cairo_pattern_status", _wrap_cairo_pattern_status},
+  { "cairo_pattern_add_color_stop_rgb", _wrap_cairo_pattern_add_color_stop_rgb},
+  { "cairo_pattern_add_color_stop_rgba", _wrap_cairo_pattern_add_color_stop_rgba},
+  { "cairo_mesh_pattern_begin_patch", _wrap_cairo_mesh_pattern_begin_patch},
+  { "cairo_mesh_pattern_end_patch", _wrap_cairo_mesh_pattern_end_patch},
+  { "cairo_mesh_pattern_curve_to", _wrap_cairo_mesh_pattern_curve_to},
+  { "cairo_mesh_pattern_line_to", _wrap_cairo_mesh_pattern_line_to},
+  { "cairo_mesh_pattern_move_to", _wrap_cairo_mesh_pattern_move_to},
+  { "cairo_pattern_set_matrix", _wrap_cairo_pattern_set_matrix},
+  { "cairo_pattern_get_matrix", _wrap_cairo_pattern_get_matrix},
+  { "cairo_pattern_set_extend", _wrap_cairo_pattern_set_extend},
+  { "cairo_pattern_get_extend", _wrap_cairo_pattern_get_extend},
+  { "cairo_pattern_set_filter", _wrap_cairo_pattern_set_filter},
+  { "cairo_pattern_get_filter", _wrap_cairo_pattern_get_filter},
+  { "cairo_pattern_get_rgba", _wrap_cairo_pattern_get_rgba},
+  { "cairo_pattern_get_color_stop_rgba", _wrap_cairo_pattern_get_color_stop_rgba},
+  { "cairo_pattern_get_color_stop_count", _wrap_cairo_pattern_get_color_stop_count},
+  { "cairo_pattern_get_linear_points", _wrap_cairo_pattern_get_linear_points},
+  { "cairo_pattern_get_radial_circles", _wrap_cairo_pattern_get_radial_circles},
+  { "cairo_matrix_init", _wrap_cairo_matrix_init},
+  { "cairo_matrix_init_identity", _wrap_cairo_matrix_init_identity},
+  { "cairo_matrix_init_translate", _wrap_cairo_matrix_init_translate},
+  { "cairo_matrix_init_scale", _wrap_cairo_matrix_init_scale},
+  { "cairo_matrix_init_rotate", _wrap_cairo_matrix_init_rotate},
+  { "cairo_matrix_translate", _wrap_cairo_matrix_translate},
+  { "cairo_matrix_scale", _wrap_cairo_matrix_scale},
+  { "cairo_matrix_rotate", _wrap_cairo_matrix_rotate},
+  { "cairo_matrix_invert", _wrap_cairo_matrix_invert},
+  { "cairo_matrix_multiply", _wrap_cairo_matrix_multiply},
+  { "cairo_matrix_transform_distance", _wrap_cairo_matrix_transform_distance},
+  { "cairo_matrix_transform_point", _wrap_cairo_matrix_transform_point},
+  { "cairo_region_create", _wrap_cairo_region_create},
+  { "cairo_region_copy", _wrap_cairo_region_copy},
+  { "cairo_region_reference", _wrap_cairo_region_reference},
+  { "cairo_region_destroy", _wrap_cairo_region_destroy},
+  { "cairo_region_status", _wrap_cairo_region_status},
+  { "cairo_region_num_rectangles", _wrap_cairo_region_num_rectangles},
+  { "cairo_region_translate", _wrap_cairo_region_translate},
+  { "cairo_region_subtract", _wrap_cairo_region_subtract},
+  { "cairo_region_intersect", _wrap_cairo_region_intersect},
+  { "cairo_region_union", _wrap_cairo_region_union},
+  { "cairo_region_xor", _wrap_cairo_region_xor},
   { "cairo_debug_reset_static_data", _wrap_cairo_debug_reset_static_data},
   { "cairo_pdf_surface_create", _wrap_cairo_pdf_surface_create},
   { "cairo_pdf_surface_restrict_to_version", _wrap_cairo_pdf_surface_restrict_to_version},
@@ -3542,4 +4751,4 @@ void nsp_initialize_cairo_types(void)
   new_type_cairo_matrix_t(T_BASE);
 }
 
-#line 3546 "cairo.c"
+#line 4755 "cairo.c"

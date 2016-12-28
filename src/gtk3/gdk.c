@@ -36,9 +36,12 @@
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/cairo_t.h>
-#include <nsp/gtk/cairo_surface_t.h>
 
-#line 42 "gdk.c"
+#include <nsp/gtk/cairo_surface_t.h>
+#include <nsp/gtk/cairo_region_t.h>
+#include <nsp/gtk/cairo_pattern_t.h>
+
+#line 45 "gdk.c"
 /* ---------- types from other modules ---------- */
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/pangocontext.h>
@@ -336,7 +339,7 @@ static int _wrap_gdk_event_get_time(NspGdkEvent *self,Stack stack,int rhs,int op
   return 1;
 }
 
-#line 1108 "codegen-3.0/gdk.override"
+#line 1111 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -347,10 +350,10 @@ _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 351 "gdk.c"
+#line 354 "gdk.c"
 
 
-#line 1120 "codegen-3.0/gdk.override"
+#line 1123 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -361,7 +364,7 @@ _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,in
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 365 "gdk.c"
+#line 368 "gdk.c"
 
 
 #if GTK_CHECK_VERSION(3,4,0)
@@ -383,7 +386,7 @@ int _wrap_gdk_event_get_scroll_deltas(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
-#line 1092 "codegen-3.0/gdk.override"
+#line 1095 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -398,7 +401,7 @@ _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,n,(double) value) == FAIL) return RET_BUG;
   return 1;
 }
-#line 402 "gdk.c"
+#line 405 "gdk.c"
 
 
 static int _wrap_gdk_event_set_device(NspGdkEvent *self,Stack stack,int rhs,int opt,int lhs)
@@ -585,7 +588,7 @@ static NspMethods *gdkevent_get_methods(void) { return gdkevent_methods;};
  *-------------------------------------------*/
 
 static AttrTab gdkevent_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
-#line 748 "codegen-3.0/gdk.override"
+#line 751 "codegen-3.0/gdk.override"
 
 static NspObject *
 _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr);
@@ -928,7 +931,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   Scierror("Error: Event attributes not found \n");
   return NULL;
 }
-#line 932 "gdk.c"
+#line 935 "gdk.c"
 
 
 /* -----------NspGdkColor ----------- */
@@ -1123,7 +1126,7 @@ NspGdkColor *gdkcolor_copy(NspGdkColor *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 397 "codegen-3.0/gdk.override"
+#line 400 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_color_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1140,7 +1143,7 @@ _wrap_gdk_color_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1144 "gdk.c"
+#line 1147 "gdk.c"
 
 
 static NspMethods *gdkcolor_get_methods(void) { return NULL;};
@@ -1186,7 +1189,7 @@ static AttrTab gdkcolor_attrs[] = {
   { NULL,NULL,NULL,NULL,NULL },
 };
 
-#line 415 "codegen-3.0/gdk.override"
+#line 418 "codegen-3.0/gdk.override"
 
 static int
 _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value);
@@ -1217,7 +1220,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   return OK;
 }
 
-#line 1221 "gdk.c"
+#line 1224 "gdk.c"
 
 
 /* -----------NspGdkRectangle ----------- */
@@ -1411,7 +1414,7 @@ NspGdkRectangle *gdkrectangle_copy(NspGdkRectangle *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 2232 "codegen-3.0/gdk.override"
+#line 2235 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_rectangle_new(Stack stack,int rhs,int opt,int lhs)
 {
@@ -1450,10 +1453,10 @@ _wrap_gdk_rectangle_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
-#line 1454 "gdk.c"
+#line 1457 "gdk.c"
 
 
-#line 2272 "codegen-3.0/gdk.override"
+#line 2275 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -1477,10 +1480,10 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
   return Max(lhs,1);
 }
 
-#line 1481 "gdk.c"
+#line 1484 "gdk.c"
 
 
-#line 2297 "codegen-3.0/gdk.override"
+#line 2300 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -1494,7 +1497,7 @@ _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1498 "gdk.c"
+#line 1501 "gdk.c"
 
 
 static NspMethods gdkrectangle_methods[] = {
@@ -2090,7 +2093,7 @@ static int _wrap_gdk_device_set_axis_use(NspGdkDevice *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 1169 "codegen-3.0/gdk.override"
+#line 1172 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2113,7 +2116,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
     if (( nsp_move_double(stack,2,(double) mask))==FAIL) return RET_BUG;
   return 2;
 }
-#line 2117 "gdk.c"
+#line 2120 "gdk.c"
 
 
 static int _wrap_gdk_device_get_window_at_position(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
@@ -2152,7 +2155,7 @@ int _wrap_gdk_device_get_window_at_position_double(Stack stack, int rhs, int opt
   return RET_BUG;
 }
 #endif
-#line 1195 "codegen-3.0/gdk.override"
+#line 1198 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2192,7 +2195,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   Scierror("Error: function _wrap_gdk_device_get_history not finished\n");
   return RET_BUG;
 }
-#line 2196 "gdk.c"
+#line 2199 "gdk.c"
 
 
 static int _wrap_gdk_device_get_n_axes(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
@@ -2228,7 +2231,7 @@ static int _wrap_gdk_device_get_axis_value(NspGdkDevice *self,Stack stack,int rh
   return 1;
 }
 
-#line 1236 "codegen-3.0/gdk.override"
+#line 1239 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2256,7 +2259,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     }
   return 1;
 }
-#line 2260 "gdk.c"
+#line 2263 "gdk.c"
 
 
 static int _wrap_gdk_device_get_display(NspGdkDevice *self,Stack stack,int rhs,int opt,int lhs)
@@ -4695,7 +4698,7 @@ NspGdkWindow *gdkwindow_copy(NspGdkWindow *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 1678 "codegen-3.0/gdk.override"
+#line 1681 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -4756,10 +4759,10 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 4760 "gdk.c"
+#line 4763 "gdk.c"
 
 
-#line 1740 "codegen-3.0/gdk.override"
+#line 1743 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -4862,7 +4865,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 4866 "gdk.c"
+#line 4869 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5092,6 +5095,23 @@ static int _wrap_gdk_window_scroll(NspGdkWindow *self,Stack stack,int rhs,int op
   return 0;
 }
 
+static int _wrap_gdk_window_move_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,s_int,s_int, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  int dx, dy;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region, &dx, &dy) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_move_region(GDK_WINDOW(self->obj),region,dx,dy);
+  return 0;
+}
+
 static int _wrap_gdk_window_ensure_native(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -5099,6 +5119,23 @@ static int _wrap_gdk_window_ensure_native(NspGdkWindow *self,Stack stack,int rhs
     ret =gdk_window_ensure_native(GDK_WINDOW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
+}
+
+static int _wrap_gdk_window_shape_combine_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,s_int,s_int, t_end};
+  cairo_region_t *shape_region = NULL;
+  NspObject *nsp_shape_region = NULL;
+  int offset_x, offset_y;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_shape_region, &offset_x, &offset_y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_shape_region, CAIRO_GOBJECT_TYPE_REGION))
+      shape_region = nspg_boxed_get(nsp_shape_region, cairo_region_t);
+  else {
+      Scierror( "shape_region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_shape_combine_region(GDK_WINDOW(self->obj),shape_region,offset_x,offset_y);
+  return 0;
 }
 
 static int _wrap_gdk_window_set_child_shapes(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5146,6 +5183,23 @@ static int _wrap_gdk_window_merge_child_shapes(NspGdkWindow *self,Stack stack,in
 {
   CheckRhs(0,0);
     gdk_window_merge_child_shapes(GDK_WINDOW(self->obj));
+  return 0;
+}
+
+static int _wrap_gdk_window_input_shape_combine_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,s_int,s_int, t_end};
+  cairo_region_t *shape_region = NULL;
+  NspObject *nsp_shape_region = NULL;
+  int offset_x, offset_y;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_shape_region, &offset_x, &offset_y) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_shape_region, CAIRO_GOBJECT_TYPE_REGION))
+      shape_region = nspg_boxed_get(nsp_shape_region, cairo_region_t);
+  else {
+      Scierror( "shape_region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_input_shape_combine_region(GDK_WINDOW(self->obj),shape_region,offset_x,offset_y);
   return 0;
 }
 
@@ -5301,6 +5355,32 @@ static int _wrap_gdk_window_set_urgency_hint(NspGdkWindow *self,Stack stack,int 
   return 0;
 }
 
+static int _wrap_gdk_window_get_clip_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  cairo_region_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =gdk_window_get_clip_region(GDK_WINDOW(self->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gdk_window_get_visible_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  cairo_region_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =gdk_window_get_visible_region(GDK_WINDOW(self->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 #if GTK_CHECK_VERSION(3,16,0)
 static int _wrap_gdk_window_mark_paint_from_clip(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5325,6 +5405,22 @@ int _wrap_gdk_window_mark_paint_from_clip(Stack stack, int rhs, int opt, int lhs
   return RET_BUG;
 }
 #endif
+static int _wrap_gdk_window_begin_paint_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_begin_paint_region(GDK_WINDOW(self->obj),region);
+  return 0;
+}
+
 static int _wrap_gdk_window_end_paint(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -5399,6 +5495,35 @@ static int _wrap_gdk_window_set_background_rgba(NspGdkWindow *self,Stack stack,i
   return 0;
 }
 
+static int _wrap_gdk_window_set_background_pattern(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  cairo_pattern_t *pattern = NULL;
+  NspObject *nsp_pattern = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_pattern) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_pattern, CAIRO_GOBJECT_TYPE_PATTERN))
+      pattern = nspg_boxed_get(nsp_pattern, cairo_pattern_t);
+  else {
+      Scierror( "pattern should be a cairo_pattern_t");
+      return RET_BUG;
+  }
+    gdk_window_set_background_pattern(GDK_WINDOW(self->obj),pattern);
+  return 0;
+}
+
+static int _wrap_gdk_window_get_background_pattern(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  cairo_pattern_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =gdk_window_get_background_pattern(GDK_WINDOW(self->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_PATTERN, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_pattern_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static int _wrap_gdk_window_set_cursor(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {new_opts, t_end};
@@ -5455,7 +5580,7 @@ static int _wrap_gdk_window_get_device_cursor(NspGdkWindow *self,Stack stack,int
   return 1;
 }
 
-#line 1844 "codegen-3.0/gdk.override"
+#line 1847 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5465,7 +5590,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5469 "gdk.c"
+#line 5594 "gdk.c"
 
 
 static int _wrap_gdk_window_get_width(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5486,7 +5611,7 @@ static int _wrap_gdk_window_get_height(NspGdkWindow *self,Stack stack,int rhs,in
   return 1;
 }
 
-#line 1855 "codegen-3.0/gdk.override"
+#line 1858 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5496,10 +5621,10 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5500 "gdk.c"
+#line 5625 "gdk.c"
 
 
-#line 1866 "codegen-3.0/gdk.override"
+#line 1869 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5509,7 +5634,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5513 "gdk.c"
+#line 5638 "gdk.c"
 
 
 static int _wrap_gdk_window_get_root_coords(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5521,7 +5646,7 @@ static int _wrap_gdk_window_get_root_coords(NspGdkWindow *self,Stack stack,int r
   return 0;
 }
 
-#line 1929 "codegen-3.0/gdk.override"
+#line 1932 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5532,10 +5657,10 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5536 "gdk.c"
+#line 5661 "gdk.c"
 
 
-#line 1889 "codegen-3.0/gdk.override"
+#line 1892 "codegen-3.0/gdk.override"
 
 static int _wrap_gdk_window_coords_to_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5548,10 +5673,10 @@ static int _wrap_gdk_window_coords_to_parent(NspGdkWindow *self,Stack stack,int 
   return 1;
 }
 
-#line 5552 "gdk.c"
+#line 5677 "gdk.c"
 
 
-#line 1903 "codegen-3.0/gdk.override"
+#line 1906 "codegen-3.0/gdk.override"
 
 static int _wrap_gdk_window_coords_from_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -5565,10 +5690,10 @@ static int _wrap_gdk_window_coords_from_parent(NspGdkWindow *self,Stack stack,in
 }
 
 
-#line 5569 "gdk.c"
+#line 5694 "gdk.c"
 
 
-#line 1918 "codegen-3.0/gdk.override"
+#line 1921 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5578,7 +5703,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5582 "gdk.c"
+#line 5707 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5610,7 +5735,7 @@ int _wrap_gdk_window_get_scale_factor(Stack stack, int rhs, int opt, int lhs) /*
   return RET_BUG;
 }
 #endif
-#line 2571 "codegen-3.0/gdk.override"
+#line 2574 "codegen-3.0/gdk.override"
 
 /* XXXX Comprendre pourquoi GdkModifierType n'est pas reconnu dans la traduction
  * en enlevant le override
@@ -5630,7 +5755,7 @@ _wrap_gdk_window_get_device_position(NspGObject *self, Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y,(double) state) == FAIL) return RET_BUG;
   return 1;
 }
-#line 5634 "gdk.c"
+#line 5759 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5681,7 +5806,7 @@ static int _wrap_gdk_window_get_effective_toplevel(NspGdkWindow *self,Stack stac
   return 1;
 }
 
-#line 1941 "codegen-3.0/gdk.override"
+#line 1944 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -5706,7 +5831,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5710 "gdk.c"
+#line 5835 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -6124,6 +6249,36 @@ static int _wrap_gdk_window_invalidate_rect(NspGdkWindow *self,Stack stack,int r
   return 0;
 }
 
+static int _wrap_gdk_window_invalidate_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,s_bool, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  int invalidate_children;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region, &invalidate_children) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_invalidate_region(GDK_WINDOW(self->obj),region,invalidate_children);
+  return 0;
+}
+
+static int _wrap_gdk_window_get_update_area(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  cairo_region_t *ret;
+  NspObject *nsp_ret;
+  CheckRhs(0,0);
+    ret =gdk_window_get_update_area(GDK_WINDOW(self->obj));
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 static int _wrap_gdk_window_freeze_updates(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -6249,6 +6404,30 @@ static int _wrap_gdk_window_get_frame_clock(NspGdkWindow *self,Stack stack,int r
 int _wrap_gdk_window_get_frame_clock(Stack stack, int rhs, int opt, int lhs) /* get_frame_clock */
 {
   Scierror("Error: function gdk_window_get_frame_clock not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(3,10,0)
+static int _wrap_gdk_window_set_opaque_region(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end};
+  cairo_region_t *region = NULL;
+  NspObject *nsp_region = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_window_set_opaque_region(GDK_WINDOW(self->obj),region);
+  return 0;
+}
+
+#else
+int _wrap_gdk_window_set_opaque_region(Stack stack, int rhs, int opt, int lhs) /* set_opaque_region */
+{
+  Scierror("Error: function gdk_window_set_opaque_region not available\n");
   return RET_BUG;
 }
 #endif
@@ -6382,11 +6561,14 @@ static NspMethods gdkwindow_methods[] = {
   {"get_focus_on_map",(nsp_method *) _wrap_gdk_window_get_focus_on_map},
   {"set_focus_on_map",(nsp_method *) _wrap_gdk_window_set_focus_on_map},
   {"scroll",(nsp_method *) _wrap_gdk_window_scroll},
+  {"move_region",(nsp_method *) _wrap_gdk_window_move_region},
   {"ensure_native",(nsp_method *) _wrap_gdk_window_ensure_native},
+  {"shape_combine_region",(nsp_method *) _wrap_gdk_window_shape_combine_region},
   {"set_child_shapes",(nsp_method *) _wrap_gdk_window_set_child_shapes},
   {"get_composited",(nsp_method *) _wrap_gdk_window_get_composited},
   {"set_composited",(nsp_method *) _wrap_gdk_window_set_composited},
   {"merge_child_shapes",(nsp_method *) _wrap_gdk_window_merge_child_shapes},
+  {"input_shape_combine_region",(nsp_method *) _wrap_gdk_window_input_shape_combine_region},
   {"set_child_input_shapes",(nsp_method *) _wrap_gdk_window_set_child_input_shapes},
   {"merge_child_input_shapes",(nsp_method *) _wrap_gdk_window_merge_child_input_shapes},
   {"is_visible",(nsp_method *) _wrap_gdk_window_is_visible},
@@ -6403,7 +6585,10 @@ static NspMethods gdkwindow_methods[] = {
   {"set_skip_taskbar_hint",(nsp_method *) _wrap_gdk_window_set_skip_taskbar_hint},
   {"set_skip_pager_hint",(nsp_method *) _wrap_gdk_window_set_skip_pager_hint},
   {"set_urgency_hint",(nsp_method *) _wrap_gdk_window_set_urgency_hint},
+  {"get_clip_region",(nsp_method *) _wrap_gdk_window_get_clip_region},
+  {"get_visible_region",(nsp_method *) _wrap_gdk_window_get_visible_region},
   {"mark_paint_from_clip",(nsp_method *) _wrap_gdk_window_mark_paint_from_clip},
+  {"begin_paint_region",(nsp_method *) _wrap_gdk_window_begin_paint_region},
   {"end_paint",(nsp_method *) _wrap_gdk_window_end_paint},
   {"flush",(nsp_method *) _wrap_gdk_window_flush},
   {"set_title",(nsp_method *) _wrap_gdk_window_set_title},
@@ -6411,6 +6596,8 @@ static NspMethods gdkwindow_methods[] = {
   {"set_startup_id",(nsp_method *) _wrap_gdk_window_set_startup_id},
   {"set_transient_for",(nsp_method *) _wrap_gdk_window_set_transient_for},
   {"set_background_rgba",(nsp_method *) _wrap_gdk_window_set_background_rgba},
+  {"set_background_pattern",(nsp_method *) _wrap_gdk_window_set_background_pattern},
+  {"get_background_pattern",(nsp_method *) _wrap_gdk_window_get_background_pattern},
   {"set_cursor",(nsp_method *) _wrap_gdk_window_set_cursor},
   {"get_cursor",(nsp_method *) _wrap_gdk_window_get_cursor},
   {"set_device_cursor",(nsp_method *) _wrap_gdk_window_set_device_cursor},
@@ -6468,6 +6655,8 @@ static NspMethods gdkwindow_methods[] = {
   {"begin_move_drag",(nsp_method *) _wrap_gdk_window_begin_move_drag},
   {"begin_move_drag_for_device",(nsp_method *) _wrap_gdk_window_begin_move_drag_for_device},
   {"invalidate_rect",(nsp_method *) _wrap_gdk_window_invalidate_rect},
+  {"invalidate_region",(nsp_method *) _wrap_gdk_window_invalidate_region},
+  {"get_update_area",(nsp_method *) _wrap_gdk_window_get_update_area},
   {"freeze_updates",(nsp_method *) _wrap_gdk_window_freeze_updates},
   {"thaw_updates",(nsp_method *) _wrap_gdk_window_thaw_updates},
   {"freeze_toplevel_updates_libgtk_only",(nsp_method *) _wrap_gdk_window_freeze_toplevel_updates_libgtk_only},
@@ -6479,6 +6668,7 @@ static NspMethods gdkwindow_methods[] = {
   {"set_support_multidevice",(nsp_method *) _wrap_gdk_window_set_support_multidevice},
   {"get_support_multidevice",(nsp_method *) _wrap_gdk_window_get_support_multidevice},
   {"get_frame_clock",(nsp_method *) _wrap_gdk_window_get_frame_clock},
+  {"set_opaque_region",(nsp_method *) _wrap_gdk_window_set_opaque_region},
   {"set_event_compression",(nsp_method *) _wrap_gdk_window_set_event_compression},
   {"get_event_compression",(nsp_method *) _wrap_gdk_window_get_event_compression},
   {"set_shadow_width",(nsp_method *) _wrap_gdk_window_set_shadow_width},
@@ -7424,7 +7614,7 @@ NspGdkVisual *gdkvisual_copy(NspGdkVisual *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 2316 "codegen-3.0/gdk.override"
+#line 2319 "codegen-3.0/gdk.override"
 static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
 _wrap_gdk_visual_new(Stack stack, int rhs, int opt, int lhs)
@@ -7503,7 +7693,7 @@ _wrap_gdk_visual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 7507 "gdk.c"
+#line 7697 "gdk.c"
 
 
 static int _wrap_gdk_visual_get_screen(NspGdkVisual *self,Stack stack,int rhs,int opt,int lhs)
@@ -7772,7 +7962,7 @@ NspGdkCursor *gdkcursor_copy(NspGdkCursor *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 652 "codegen-3.0/gdk.override"
+#line 655 "codegen-3.0/gdk.override"
 
 /* changed not to perform a copy */
 static int
@@ -7792,7 +7982,7 @@ _wrap_gdk_cursor_new_from_name(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 7796 "gdk.c"
+#line 7986 "gdk.c"
 
 
 static int
@@ -7837,7 +8027,7 @@ _wrap_gdk_cursor_new_from_pixbuf (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 693 "codegen-3.0/gdk.override"
+#line 696 "codegen-3.0/gdk.override"
 
 static int
 _wrap_gdk_cursor_new (Stack stack, int rhs, int opt, int lhs)
@@ -7858,10 +8048,10 @@ _wrap_gdk_cursor_new (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 7862 "gdk.c"
+#line 8052 "gdk.c"
 
 
-#line 715 "codegen-3.0/gdk.override"
+#line 718 "codegen-3.0/gdk.override"
 
 static int
 _wrap_gdk_cursor_new_for_display (Stack stack, int rhs, int opt, int lhs)
@@ -7883,7 +8073,7 @@ _wrap_gdk_cursor_new_for_display (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 7887 "gdk.c"
+#line 8077 "gdk.c"
 
 
 static int _wrap_gdk_cursor_get_display(NspGdkCursor *self,Stack stack,int rhs,int opt,int lhs)
@@ -8149,7 +8339,7 @@ NspGdkPixbuf *gdkpixbuf_copy(NspGdkPixbuf *self)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 2420 "codegen-3.0/gdk.override"
+#line 2423 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
 {
@@ -8171,7 +8361,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 8175 "gdk.c"
+#line 8365 "gdk.c"
 
 
 static int
@@ -8355,7 +8545,7 @@ static int _wrap_gdk_pixbuf_get_bits_per_sample(NspGdkPixbuf *self,Stack stack,i
   return 1;
 }
 
-#line 2038 "codegen-3.0/gdk.override"
+#line 2041 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -8377,7 +8567,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 8381 "gdk.c"
+#line 8571 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8437,7 +8627,7 @@ static int _wrap_gdk_pixbuf_fill(NspGdkPixbuf *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 2061 "codegen-3.0/gdk.override"
+#line 2064 "codegen-3.0/gdk.override"
 
 static NspSMatrix *writable_formats() ;
 
@@ -8532,7 +8722,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8536 "gdk.c"
+#line 8726 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8770,7 +8960,7 @@ static NspMethods *gdkpixbuf_get_methods(void) { return gdkpixbuf_methods;};
  * Attributes
  *-------------------------------------------*/
 
-#line 2018 "codegen-3.0/gdk.override"
+#line 2021 "codegen-3.0/gdk.override"
 static NspObject *
 _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
 {
@@ -8789,7 +8979,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8793 "gdk.c"
+#line 8983 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function * )_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function * )int_set_failed, (attr_get_object_function * )int_get_object_failed, NULL },
   { NULL,NULL,NULL,NULL,NULL },
@@ -9753,7 +9943,7 @@ int _wrap_gdk_set_double_click_time(Stack stack, int rhs, int opt, int lhs) /* s
   return 0;
 }
 
-#line 40 "codegen-3.0/gdk.override"
+#line 43 "codegen-3.0/gdk.override"
 
 /* block/unblock threads implementations using GDK lock to handle
  * recursion (as in 1.2 version).  Here is the comments about it from
@@ -9833,7 +10023,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 9837 "gdk.c"
+#line 10027 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs) /* pre_parse_libgtk_only */
@@ -9859,7 +10049,7 @@ int _wrap_gdk_error_trap_pop(Stack stack, int rhs, int opt, int lhs) /* error_tr
   return 1;
 }
 
-#line 447 "codegen-3.0/gdk.override"
+#line 450 "codegen-3.0/gdk.override"
 static int
 _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
 {
@@ -9876,7 +10066,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 9880 "gdk.c"
+#line 10070 "gdk.c"
 
 
 int _wrap_gdk_drag_status(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_status */
@@ -9929,7 +10119,7 @@ int _wrap_gdk_drag_get_selection(Stack stack, int rhs, int opt, int lhs) /* gdk_
   return 1;
 }
 
-#line 1652 "codegen-3.0/gdk.override"
+#line 1655 "codegen-3.0/gdk.override"
 
 static int
 _wrap_gdk_drag_begin(Stack stack,int rhs,int opt,int lhs)
@@ -9954,7 +10144,7 @@ _wrap_gdk_drag_begin(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 9958 "gdk.c"
+#line 10148 "gdk.c"
 
 
 int _wrap_gdk_drag_begin_for_device(Stack stack, int rhs, int opt, int lhs) /* gdk_drag_begin_for_device */
@@ -10304,7 +10494,7 @@ int _wrap_gdk_selection_convert(Stack stack, int rhs, int opt, int lhs) /* gdk_s
   return 0;
 }
 
-#line 2513 "codegen-3.0/gdk.override"
+#line 2516 "codegen-3.0/gdk.override"
 
 int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* selection_send_notify */
 {
@@ -10322,7 +10512,7 @@ int _wrap_gdk_selection_send_notify(Stack stack, int rhs, int opt, int lhs) /* s
   return 0;
 }
 
-#line 10326 "gdk.c"
+#line 10516 "gdk.c"
 
 
 int _wrap_gdk_selection_send_notify_for_display(Stack stack, int rhs, int opt, int lhs) /* gdk_selection_send_notify_for_display */
@@ -10445,7 +10635,7 @@ int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_
   return 1;
 }
 
-#line 2396 "codegen-3.0/gdk.override"
+#line 2399 "codegen-3.0/gdk.override"
 
 int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10468,7 +10658,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10472 "gdk.c"
+#line 10662 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs) /* gdk_display_get_default */
@@ -10507,7 +10697,7 @@ int _wrap_gdk_display_manager_get(Stack stack, int rhs, int opt, int lhs) /* gdk
   return 1;
 }
 
-#line 2592 "codegen-3.0/gdk.override"
+#line 2595 "codegen-3.0/gdk.override"
 
 int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new */
 {
@@ -10529,7 +10719,7 @@ int _wrap_gdk_rgba_new(Stack stack, int rhs, int opt, int lhs) /* gdk_rgba_new *
   return 1;
 }
 
-#line 10533 "gdk.c"
+#line 10723 "gdk.c"
 
 
 int _wrap_gdk_cairo_create(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_create */
@@ -10591,7 +10781,7 @@ int _wrap_gdk_cairo_set_source_rgba(Stack stack, int rhs, int opt, int lhs) /* g
   return 0;
 }
 
-#line 2615 "codegen-3.0/gdk.override"
+#line 2618 "codegen-3.0/gdk.override"
 
 int _wrap_gdk_cairo_set_source_pixbuf(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10614,7 +10804,7 @@ int _wrap_gdk_cairo_set_source_pixbuf(Stack stack, int rhs, int opt, int lhs)
   gdk_cairo_set_source_pixbuf(cr,GDK_PIXBUF(((NspGdkPixbuf *) nsp_pixbuf)->obj),x,y);
   return 0;
 }
-#line 10618 "gdk.c"
+#line 10808 "gdk.c"
 
 
 int _wrap_gdk_cairo_set_source_window(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_set_source_window */
@@ -10633,6 +10823,50 @@ int _wrap_gdk_cairo_set_source_window(Stack stack, int rhs, int opt, int lhs) /*
   }
     gdk_cairo_set_source_window(cr,GDK_WINDOW(window->obj),x,y);
   return 0;
+}
+
+int _wrap_gdk_cairo_region(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_region */
+{
+  int_types T[] = {obj,obj, t_end};
+  cairo_t *cr = NULL;
+  NspObject *nsp_cr = NULL, *nsp_region = NULL;
+  cairo_region_t *region = NULL;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_cr, &nsp_region) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_cr, CAIRO_GOBJECT_TYPE_CONTEXT))
+      cr = nspg_boxed_get(nsp_cr, cairo_t);
+  else {
+      Scierror( "cr should be a cairo_t");
+      return RET_BUG;
+  }
+  if (nspg_boxed_check(nsp_region, CAIRO_GOBJECT_TYPE_REGION))
+      region = nspg_boxed_get(nsp_region, cairo_region_t);
+  else {
+      Scierror( "region should be a cairo_region_t");
+      return RET_BUG;
+  }
+    gdk_cairo_region(cr,region);
+  return 0;
+}
+
+int _wrap_gdk_cairo_region_create_from_surface(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_region_create_from_surface */
+{
+  int_types T[] = {obj, t_end};
+  cairo_surface_t *surface = NULL;
+  NspObject *nsp_surface = NULL, *nsp_ret;
+  cairo_region_t *ret;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_surface) == FAIL) return RET_BUG;
+  if (nspg_boxed_check(nsp_surface, CAIRO_GOBJECT_TYPE_SURFACE))
+      surface = nspg_boxed_get(nsp_surface, cairo_surface_t);
+  else {
+      Scierror( "surface should be a cairo_surface_t");
+      return RET_BUG;
+  }
+    ret =gdk_cairo_region_create_from_surface(surface);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,CAIRO_GOBJECT_TYPE_REGION, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_cairo_region_t))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
 }
 
 int _wrap_gdk_cairo_draw_from_gl(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_draw_from_gl */
@@ -10766,6 +11000,8 @@ static OpTab gdk_func[]={
   { "gdk_cairo_set_source_rgba", _wrap_gdk_cairo_set_source_rgba},
   { "gdk_cairo_set_source_pixbuf", _wrap_gdk_cairo_set_source_pixbuf},
   { "gdk_cairo_set_source_window", _wrap_gdk_cairo_set_source_window},
+  { "gdk_cairo_region", _wrap_gdk_cairo_region},
+  { "gdk_cairo_region_create_from_surface", _wrap_gdk_cairo_region_create_from_surface},
   { "gdk_cairo_draw_from_gl", _wrap_gdk_cairo_draw_from_gl},
   { NULL, NULL}
 };
@@ -10866,4 +11102,4 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkpixbufloader(T_BASE);
 }
 
-#line 10870 "gdk.c"
+#line 11106 "gdk.c"

@@ -17,25 +17,25 @@
 
 (define-boxed Cairo_pattern_t
   (in-module "Cairo")
-  (c-name "Cairo_pattern_t")
+  (c-name "cairo_pattern_t")
   (gtype-id "CAIRO_GOBJECT_TYPE_PATTERN")
 )
 
 (define-boxed Cairo_region_t
   (in-module "Cairo")
-  (c-name "Cairo_region_t")
+  (c-name "cairo_region_t")
   (gtype-id "CAIRO_GOBJECT_TYPE_REGION")
 )
 
 (define-boxed Cairo_rectangle_t
   (in-module "Cairo")
-  (c-name "Cairo_rectangle_t")
+  (c-name "cairo_rectangle_t")
   (gtype-id "CAIRO_GOBJECT_TYPE_RECTANGLE")
 )
 
 (define-boxed Cairo_matrix_t
   (in-module "Cairo")
-  (c-name "Cairo_matrix_t")
+  (c-name "cairo_matrix_t")
   (gtype-id "CAIRO_GOBJECT_TYPE_MATRIX")
 )
 

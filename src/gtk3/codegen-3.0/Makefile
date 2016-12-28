@@ -1,13 +1,16 @@
 .SUFFIXES: .defs .diff .idiff .c $(SUFFIXES)
 SHELL = /bin/sh
 
-ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c gio.c cairo.c glib.c gparamspec.c
+ALL=  pango.c atk.c gdk.c gtk.c webkit.c gvalue.c girepository.c gio.c cairo.c glib.c gparamspec.c gtksourceview.c
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
 
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
+	cd ../; make gtksourceview.o
+
+pipo:
 	cd ../; make -j
 
 %.c: %.defs
@@ -28,6 +31,8 @@ gvalue.c: gvalue.defs gvalue.override
 gparamspec.c: gparamspec.defs gparamspec.override
 cairo.c: cairo.defs cairo.override cairo-types.defs
 glib.c: glib.defs glib.override glib-types.defs
+gtksourceview.c: gtksourceview-types.defs gtksourceview.defs gtksourceview.override
+
 
 glib.c: glib.defs
 	@echo "generating $*.c"

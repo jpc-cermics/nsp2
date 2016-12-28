@@ -267,6 +267,13 @@
   (gtype-id "G_TYPE_MENU_MODEL")
 )
 
+(define-object GMenuItem
+  (in-module "Gio")
+  (parent "GObject")
+  (c-name "GMenuItem")
+  (gtype-id "G_TYPE_MENU_ITEM")
+)
+
 (define-object GMenu
   (in-module "Gio")
   (parent "GMenuModel")

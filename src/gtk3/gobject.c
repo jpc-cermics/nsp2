@@ -771,7 +771,6 @@ static int nspgobject_check_data(NspGObject *self, Stack stack,int rhs,int opt,i
   return 1;
 }
 
-
 /* .setdata[name=val,....] */
 
 static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int lhs)

@@ -1,5 +1,6 @@
 ;; -*- scheme -*-
 
+(register "cairo-types.defs")
 (include "pango-types.defs")
 
 ;; From pango-attributes.h

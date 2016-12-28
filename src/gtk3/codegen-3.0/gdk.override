@@ -12,7 +12,10 @@ headers
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 #include <nsp/gtk/cairo_t.h>
+
 #include <nsp/gtk/cairo_surface_t.h>
+#include <nsp/gtk/cairo_region_t.h>
+#include <nsp/gtk/cairo_pattern_t.h>
 
 %%
 modulename gtk.gdk
