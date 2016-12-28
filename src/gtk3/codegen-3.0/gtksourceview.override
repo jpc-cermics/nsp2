@@ -1,0 +1,91 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <gtk/gtkx.h>
+#include <cairo/cairo.h>
+#include <cairo/cairo-gobject.h>
+
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/smatrix.h>
+#include <nsp/cells.h>
+#include <nsp/plist.h>
+#include <nsp/none.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+#include <nsp/interf.h>
+#include <nsp/eval.h>
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
+#include <nsp/gtk/gobject-util.h>
+#include <nsp/gtk/gtktexttagtable.h>
+#include <nsp/gtk/gtktooltip.h>
+#include <nsp/gtk/gerror.h>
+
+#include <nsp/all-glib.h>
+#include <nsp/gvariant.h>
+#include <nsp/gvarianttype.h>
+
+#include <nsp/gtk/cairo_t.h>
+#include <nsp/gtk/cairo_surface_t.h>
+
+#include <gtksourceview/gtksource.h>
+#include <gtksourceview/gtksourceview.h>
+#include <gtksourceview/gtksourcelanguage.h>
+#include <gtksourceview/gtksourcebuffer.h>
+#include <gtksourceview/gtksourcelanguagemanager.h>
+#include <gtksourceview/gtksourcestyleschememanager.h>
+#include <gtksourceview/gtksourceprintcompositor.h>
+// #include <gtksourceview/gtksourceiter.h>
+#include <gtksourceview/gtksourcegutter.h>
+
+#define GTK_SOURCE_TYPE_BUFFER_INPUT_STREAM GTK_SOURCE_TYPE_BUFFER
+#define GTK_SOURCE_TYPE_BUFFER_OUTPUT_STREAM GTK_SOURCE_TYPE_BUFFER
+
+%%
+init
+
+%%
+modulename gtk
+%%
+import gdk.Atom as GdkAtom
+import gdk.Pixmap as GdkPixmap
+import gdk.Window as GdkWindow
+import gdk.Gc as GdkGc
+import gdk.Font as GdkFont
+import gdk.Pixbuf as GdkPixbuf
+import gdk.Bitmap as GdkBitmap
+import gdk.PixbufAnimation as GdkPixbufAnimation
+import gdk.DragContext as GdkDragContext
+import gdk.Colormap as GdkColormap
+import gdk.Color as GdkColor
+import gdk.Image as GdkImage
+import gdk.Visual as GdkVisual
+import gdk.Rectangle as GdkRectangle
+import gdk.Event as GdkEvent
+import gdk.Screen as GdkScreen
+import gdk.Display as GdkDisplay
+import gdk.Device as GdkDevice
+import gdk.FrameClock as GdkFrameClock
+import gdk.RGBA as GdkRGBA
+
+import gtk.Treemodel as GtkTreeModel
+import pango.Layout as PangoLayout
+import pango.Language as PangoLanguage
+import pango.FontDescription  as PangoFontDescription
+import pango.FontFamily  as PangoFontFamily
+import pango.FontFace  as PangoFontFace
+import pango.AttrList  as PangoAttrList
+import pango.TabArray  as PangoTabArray
+import pango.Context  as PangoContext
+
+%%
+ignore-glob
+*_get_type
+_*
+*_ref
+*_unref
+
