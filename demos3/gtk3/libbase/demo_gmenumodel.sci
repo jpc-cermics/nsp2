@@ -459,7 +459,6 @@ function tv=create_action_treeview (group)
   column.set_cell_data_func[cell, state_cell_func, list(group)];
   cell.connect["edited",state_cell_edited, list(store)];
   tv.append_column[column];
-
 endfunction
 
 //  Dynamic menu changes

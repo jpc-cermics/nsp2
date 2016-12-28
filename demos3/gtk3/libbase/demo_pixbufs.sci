@@ -41,7 +41,6 @@ function window = demo_pixbufs (do_widget)
   //  Expose callback for the drawing area  
 
   function y= draw_cb (widget, cr, data)
-    printf("draw_cb \n");
     frame=data;
     gdk_cairo_set_source_pixbuf (cr, frame, 0, 0);
     cairo_paint (cr);
@@ -50,9 +49,6 @@ function window = demo_pixbufs (do_widget)
 
   //  Handler to regenerate the frame  
   function y = on_tick (widget, frame_clock, data)
-    
-    printf("on tick \n");
-    
     background= data(1);
     images = data(2)
     frame = data(3)
@@ -106,7 +102,6 @@ function window = demo_pixbufs (do_widget)
       end
     end
     widget.queue_draw[];
-    printf("on tick quit\n");
     y = %t; // G_SOURCE_CONTINUE;
   endfunction 
 
