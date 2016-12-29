@@ -60,7 +60,7 @@ function demo_css_multiplebgs (do_widget)
   container.add[child];
   text.connect [ "changed", css_text_changed, provider];
 
-  S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/css_multiplebgs/css_multiplebgs.css");
+  S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/demo_css_multiplebgs/css_multiplebgs.css");
   S=strsubst(S,'NSP',getenv('NSP'));
   text.set_text [ catenate(S,sep='\n')];
   

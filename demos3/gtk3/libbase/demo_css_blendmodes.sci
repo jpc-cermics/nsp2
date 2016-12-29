@@ -65,7 +65,7 @@ function demo_css_blendmodes (do_widget)
     normal_row.grab_focus[];
   endfunction 
   
-  builder = gtk_builder_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/css_blendmodes.ui");
+  builder = gtk_builder_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/demo_css_blendmodes.ui");
   window = builder.get_object["window"];
   
   //window.set_transient_for[do_widget];

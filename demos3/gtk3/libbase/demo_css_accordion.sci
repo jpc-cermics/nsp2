@@ -31,13 +31,8 @@ function demo_css_accordion (do_widget)
   end
   
   provider = gtk_css_provider_new ();
-  if %f then 
-    // if resources are present: 
-    provider.load_from_resource["/css_accordion/css_accordion.css"];
-  else
-    // load css from path 
-    provider.load_from_path[getenv('NSP')+"/demos3/gtk3/libbase/css_accordion.css"]
-  end
+  // load css from path 
+  provider.load_from_path[getenv('NSP')+"/demos3/gtk3/libbase/demo_css_accordion.css"]
   apply_css (window, list(provider));
   window.show_all[];
 endfunction 

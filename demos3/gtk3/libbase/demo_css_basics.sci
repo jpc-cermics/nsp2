@@ -25,7 +25,7 @@ function demo_css_basics (do_widget)
   text.connect [ "changed", css_text_changed, provider];
 
     // The -gtk-icon-shadow should be un commented depending on gtk version
-  S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/css_basics/css_basics.css");
+  S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/demo_css_basics/css_basics.css");
   S=strsubst(S,'NSP',getenv('NSP'));
   text.set_text [ catenate(S,sep='\n')];
   

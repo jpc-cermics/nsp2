@@ -31,7 +31,7 @@ function add_button (section, css_name)
   else
     css_name = strsubst(css_name,"-","_");
     path = sprintf ("%s%s%s_cursor.png",getenv("NSP"),...
-		    "/demos3/gtk3/libbase/cursors/", css_name);
+		    "/demos3/gtk3/libbase/demo_cursors/", css_name);
     //printf("searching %s\n",path);
     image = gtk_image_new_from_file (path);
   end
