@@ -250,7 +250,7 @@ endfunction
 
 function menu_model=get_model ()
 // obtain a menu_model
-  builder = gtk_builder_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/gmenumodel.ui");
+  builder = gtk_builder_new_from_file (getenv("NSP")+"/demos3/gtk3/libbase/demo_gmenumodel.ui");
   menu_model = builder.get_object["edit-menu"];
 endfunction
 
