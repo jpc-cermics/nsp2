@@ -1,6 +1,6 @@
 // GtkCursor
-// handlers to be done
-//-------------------------------------------------------
+//
+// Demonstrates a useful set of available cursors.
 
 function demo_cursor()
 

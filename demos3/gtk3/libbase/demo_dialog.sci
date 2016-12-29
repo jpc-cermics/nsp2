@@ -1,4 +1,5 @@
 // Dialog and Message Boxes
+//
 // Dialog widgets are used to pop up a transient window for user feedback.
 
 function window=demo_dialog(do_widget)

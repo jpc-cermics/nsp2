@@ -1,6 +1,4 @@
-//
 // GtkToggleButton 
-//-----------------------------------------------
 
 function []=demo_toggle_buttons()
   win = gtkwindow_new()

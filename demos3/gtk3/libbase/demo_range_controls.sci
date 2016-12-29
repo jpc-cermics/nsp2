@@ -1,7 +1,4 @@
-
-//------------------------------------------
 // Range Control Test
-// OK and updated
 
 function demo_range_controls()
 

@@ -1,4 +1,4 @@
-//  Scale
+// Scale
 //
 // GtkScale is a way to select a value from a range.
 // Scales can have marks to help pick special values,

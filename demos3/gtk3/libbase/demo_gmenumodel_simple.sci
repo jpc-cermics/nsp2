@@ -2,7 +2,6 @@
 
 function demo_gmenumodel_simple()
 
-
   function g_menu_names()
   // utility 
     G_MENU_ATTRIBUTE_ACTION ="action";

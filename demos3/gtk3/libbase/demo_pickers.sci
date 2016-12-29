@@ -1,4 +1,7 @@
 // Pickers
+//
+// These widgets are mainly intended for use in preference dialogs.
+// They allow to select colors, fonts, files, directories and applications.
 
 function demo_pickers()
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);

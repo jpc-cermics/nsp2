@@ -1,6 +1,5 @@
 // GtkHandleBox
 
-
 function handle_box_child_signal (hb,child,action)
   printf("signal: %s: child <%s> %s\n",type(hb,'string'),
          type(child,'string'),action(1));

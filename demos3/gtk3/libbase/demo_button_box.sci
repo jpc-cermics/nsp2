@@ -1,5 +1,6 @@
 // Button Boxes
-//-----------------------------------------------
+//
+// The Button Box widgets are used to arrange buttons with padding.
 
 function window=demo_button_box(do_widget)
 

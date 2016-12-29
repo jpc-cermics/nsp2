@@ -1,4 +1,5 @@
 // Builder
+//
 // Demonstrates an interface loaded from a XML description.
 
 function window= demo_builder(do_widget)

@@ -2,7 +2,7 @@
 //
 // You can blend multiple backgrounds using the CSS blend modes available.
 
-function demo_css_blendmodes (do_widget)
+function window = demo_css_blendmodes (do_widget)
 // Il faut etre en 3.20 
 
   

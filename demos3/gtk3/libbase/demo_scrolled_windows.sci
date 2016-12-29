@@ -1,5 +1,4 @@
-// GtkScrolledWindow OK
-//----------------------------------------------------
+// GtkScrolledWindow
 
 function demo_scrolled_windows()
   dialog = gtkdialog_new()

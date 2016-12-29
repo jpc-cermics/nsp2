@@ -1,9 +1,8 @@
 // Drag and drop
+//
 // note that these two functions don't use any global variables
 // to communicate.  In fact, try openning two copies of
 // testgtk.sci (or the C version) and drag between them.
-// To be finished XXXX
-
 
 function demo_dnd()
 

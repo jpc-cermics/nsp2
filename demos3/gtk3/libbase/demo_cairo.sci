@@ -1,4 +1,4 @@
-/// testimage.c
+// testimage.c
 // Copyright (C) 2005  Red Hat, Inc.
 // Based on cairo-demo/X11/cairo-knockout.c
 //

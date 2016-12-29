@@ -3,8 +3,7 @@
 // Gtk themes are written using CSS. Every widget is build of multiple items
 // that you can style very similarly to a regular website.
 
-
-function demo_css_multiplebgs (do_widget)
+function window = demo_css_multiplebgs (do_widget)
 
   function y=drawing_area_draw (widget,cr)
     context = widget.get_style_context [];

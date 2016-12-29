@@ -4,7 +4,7 @@
 // that you can style very similarly to a regular website.
 //
 
-function demo_css_basics (do_widget)
+function window= demo_css_basics (do_widget)
 
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   window.set_title [ "CSS Basics"];

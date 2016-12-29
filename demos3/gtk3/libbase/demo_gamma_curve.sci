@@ -1,4 +1,3 @@
-
 // Gamma Curve 
 
 function []=demo_gamma_curve()

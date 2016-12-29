@@ -1,6 +1,4 @@
 // Toolbar
-// ---------------------------------
-// XXX: reste le right to left et le drag and drop
 
 function demo_toolbar()
 

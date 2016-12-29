@@ -1,6 +1,4 @@
-
-// Reparent test OK 
-//-----------------------------------------------
+// Reparent 
 
 function demo_reparent()
   win = gtkwindow_new()

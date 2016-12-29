@@ -1,4 +1,5 @@
 // Revealer
+//
 // GtkRevealer is a container that animates showing and hiding
 // of its sole child with nice transitions.
 

@@ -1,4 +1,4 @@
-//  Pixbufs
+// Pixbufs
 //
 // A GdkPixbuf represents an image, normally in RGB or RGBA format.
 // Pixbufs are normally used to load files from disk and perform

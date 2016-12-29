@@ -1,4 +1,4 @@
-//  Clipboard
+// Clipboard
 //
 // GtkClipboard is used for clipboard handling. This demo shows how to
 // copy and paste text to and from the clipboard.

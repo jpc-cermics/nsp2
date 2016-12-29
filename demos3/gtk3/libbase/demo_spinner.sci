@@ -1,4 +1,4 @@
-//  Spinner
+// Spinner
 //
 // GtkSpinner allows to show that background activity is on-going.
 //

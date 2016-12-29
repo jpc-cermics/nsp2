@@ -1,4 +1,4 @@
-//  Application Class
+// Application Class
 //
 // Demonstrates a simple application.
 //

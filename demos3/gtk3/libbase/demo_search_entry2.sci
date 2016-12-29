@@ -1,4 +1,4 @@
-//  Entry/Delayed Search Entry
+// Entry/Delayed Search Entry
 //
 // GtkSearchEntry sets up GtkEntries ready for search. Search entries
 // have their "changed" signal delayed and should be used

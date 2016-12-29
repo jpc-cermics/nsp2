@@ -1,4 +1,4 @@
-/// Drawing Area
+// Drawing Area
 //
 // GtkDrawingArea is a blank area where you can draw custom displays
 // of various kinds.
@@ -11,7 +11,6 @@
 // events such as button presses and mouse motion. Click the mouse
 // and drag in the scribble area to draw squiggles. Resize the window
 // to clear the area.
-//
 
 // Draw a rectangle on the screen
 

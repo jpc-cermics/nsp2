@@ -1,4 +1,9 @@
-// Color Selector
+// Color Chooser
+//
+// A GtkColorChooser lets the user choose a color. There are several
+// implementations of the GtkColorChooser interface in GTK+. The
+// GtkColorChooserDialog is a prebuilt dialog containing a
+// GtkColorChooserWidget.
 
 function window=demo_color_selection (do_widget)
   

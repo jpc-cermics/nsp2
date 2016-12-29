@@ -1,9 +1,10 @@
-
-//----------------------------------------------------------------------------
-// GtkSpinButton demo
-// version ou les handler n'utilise pas de var globales
-//----------------------------------------------------------------------------
-
+// Spin Button
+//
+// GtkSpinButton provides convenient ways to input data
+// that can be seen as a value in a range. The examples
+// here show that this does not necessarily mean numeric
+// values, and it can include custom formatting.
+ 
 function []=toggle_snap (widget, spin)
   if widget.get_active[] then
     printf("dans toggle snap avec active = %%t \n",6);

@@ -1,6 +1,6 @@
 // Info Bars
+//
 // Info bar widgets are used to report important messages to the user.
-
 
 function demo_infobar(do_widget)
 

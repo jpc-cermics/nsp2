@@ -1,6 +1,4 @@
-
 // MessageDialog 
-//----------------------
 
 function messagedialog(t,mess) 
   dialog = gtkmessagedialog_new (flags= GTK.DIALOG_MODAL,

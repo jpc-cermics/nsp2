@@ -1,4 +1,4 @@
-//  Popovers
+// Popovers
 //
 // A bubble-like window containing contextual information or options.
 // GtkPopovers can be attached to any widget, and will be displayed

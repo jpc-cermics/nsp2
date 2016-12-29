@@ -1,4 +1,4 @@
-//  Overlay/Decorative Overlay
+// Overlay/Decorative Overlay
 //
 // Another example of an overlay with some decorative
 // and some interactive controls.

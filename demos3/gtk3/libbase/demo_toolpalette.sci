@@ -1,4 +1,4 @@
-//  Tool Palette
+// Tool Palette
 //
 // A tool palette widget shows groups of toolbar items as a grid of icons
 // or a list of names.

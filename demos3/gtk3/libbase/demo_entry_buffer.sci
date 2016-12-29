@@ -1,4 +1,4 @@
-//  Entry/Entry Buffer
+// Entry/Entry Buffer
 //
 // GtkEntryBuffer provides the text content in a GtkEntry.
 // Applications can provide their own buffer implementation,

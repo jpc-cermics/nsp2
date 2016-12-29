@@ -1,4 +1,5 @@
 // Cursors
+//
 // Demonstrates a useful set of available cursors.
 
 function set_cursor (button, data)

@@ -1,5 +1,4 @@
 // GtkFileSelection 
-//-------------------------------------------------------
 
 function demo_file_selection ()
   

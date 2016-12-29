@@ -1,8 +1,8 @@
 //  Theming/CSS Accordion
-//  A simple accordion demo written using CSS transitions and multiple backgrounds
 //
+//  A simple accordion demo written using CSS transitions and multiple backgrounds
   
-function demo_css_accordion (do_widget)
+function window= demo_css_accordion (do_widget)
 
   function apply_css (widget, L)
     provider=L(1);
