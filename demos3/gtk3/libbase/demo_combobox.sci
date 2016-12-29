@@ -444,7 +444,7 @@ function model= create_capital_tree()
 		     "Bismarck";
 		     "Boise";
 		     "Boston"],...
-
+		   
 		   ["Carson City";
 		    "Charleston";
 		    "Cheyenne";
