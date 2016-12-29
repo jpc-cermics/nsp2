@@ -1,5 +1,5 @@
-function pretty_printer(fname,target="nsp")
-
+function txt=pretty_printer(fname,target="nsp")
+  
   function S1=latin1_letters_to_html(S)
     table = [ "À","&Agrave;";
 	      "È","&Egrave;";
@@ -63,6 +63,10 @@ function pretty_printer(fname,target="nsp")
     target_name = target_name + ".html";
     S=ast.sprint[html=%t];
     S=strsubst(S,"//#@#@#","");
+   case "gtk" then 
+    target_name = target_name + ".txt";
+    S=ast.sprint[gtk=%t];
+    S=strsubst(S,"//#@#@#","");
    case "tex4ht" then 
     target_name = target_name + ".tex";
     S=ast.sprint[html=%t];
@@ -79,8 +83,13 @@ function pretty_printer(fname,target="nsp")
     printf("Warning: unknown target ""%s""\n",target);
     return 
   end
-  F=fopen(target_name,mode="w");
-  F.put_smatrix[S];
-  F.close[]
+  txt = S;
+  if nargout == 1 then 
+    return;
+  else
+    F=fopen(target_name,mode="w");
+    F.put_smatrix[S];
+    F.close[]
+  end
 endfunction
   

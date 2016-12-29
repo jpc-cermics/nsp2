@@ -134,6 +134,7 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
 static void set_use_html_color_class(int flag);
+static void set_use_gtk_color_class(int flag);
 static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt);
 static void nsp_print_string_as_read_for_html(const char *str);
 static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos);
@@ -143,6 +144,6 @@ static int _nsp_ast_pprint_op_comment_ended(NspAst *ast, int elt);
 static int nsp_ast_printlength(NspAst * L, int indent);
 static int _nsp_ast_printlength_arg(NspAst *ast,int elt, int indent, int pos, int posret);
 
-#line 147 "./ast.h"
+#line 148 "./ast.h"
 #endif /* NspAst_Private */
 

@@ -24,7 +24,7 @@
 
 
 
-#line 40 "codegen/ast.override"
+#line 41 "codegen/ast.override"
 #include <ctype.h>
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
@@ -90,7 +90,7 @@ NspTypeAst *new_type_ast(type_mode mode)
   top->info = (info_func *) nsp_ast_info;
   /* top->is_true = (is_true_func  *) nsp_ast_is_true; */
   /* top->loop =(loop_func *) nsp_ast_loop;*/
-#line 340 "codegen/ast.override"
+#line 341 "codegen/ast.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
 #line 97 "ast.c"
@@ -196,7 +196,7 @@ static char *nsp_ast_type_short_string(NspObject *v)
   return(ast_short_type_name);
 }
 
-#line 440 "codegen/ast.override"
+#line 441 "codegen/ast.override"
 
 /*
  * A == B 
@@ -252,7 +252,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
   if ( nsp_ast_create_partial(H) == FAIL) return NULLAST;
   if ((H  = nsp_ast_xdr_load_partial(xdrs,H))== NULLAST) return H;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 61 "codegen/ast.override"
+#line 62 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 258 "ast.c"
   return H;
@@ -264,7 +264,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
 
 void nsp_ast_destroy_partial(NspAst *H)
 {
-#line 64 "codegen/ast.override"
+#line 65 "codegen/ast.override"
 /* verbatim in destroy */
 
 #line 271 "ast.c"
@@ -284,7 +284,7 @@ void nsp_ast_destroy(NspAst *H)
   FREE(H);
 }
 
-#line 344 "codegen/ast.override"
+#line 345 "codegen/ast.override"
 /*
  * info overriden 
  */
@@ -310,7 +310,7 @@ int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
 }
 
 #line 313 "ast.c"
-#line 370 "codegen/ast.override"
+#line 371 "codegen/ast.override"
 /*
  * print overriden 
  */
@@ -503,7 +503,7 @@ NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xo
   H->args= args;
   H->user_data= user_data;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 61 "codegen/ast.override"
+#line 62 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 509 "ast.c"
   return H;
@@ -592,7 +592,7 @@ NspAst *nsp_ast_full_copy(NspAst *self)
   if ( H ==  NULLAST) return NULLAST;
   if ( nsp_ast_full_copy_partial(H,self)== NULL) return NULLAST;
 
-#line 61 "codegen/ast.override"
+#line 62 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 598 "ast.c"
   return H;
@@ -613,7 +613,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
     if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
-  #line 61 "codegen/ast.override"
+  #line 62 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 619 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -623,7 +623,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 94 "codegen/ast.override"
+#line 95 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -659,7 +659,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
 #line 660 "ast.c"
 
 
-#line 128 "codegen/ast.override"
+#line 129 "codegen/ast.override"
 static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,t_end};
@@ -675,7 +675,7 @@ static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 #line 676 "ast.c"
 
 
-#line 142 "codegen/ast.override"
+#line 143 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -692,7 +692,7 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
 #line 693 "ast.c"
 
 
-#line 157 "codegen/ast.override"
+#line 158 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -717,7 +717,7 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
 #line 718 "ast.c"
 
 
-#line 180 "codegen/ast.override"
+#line 181 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -746,7 +746,7 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
 #line 747 "ast.c"
 
 
-#line 222 "codegen/ast.override"
+#line 223 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -768,7 +768,7 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 #line 769 "ast.c"
 
 
-#line 242 "codegen/ast.override"
+#line 243 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -786,7 +786,7 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
 #line 787 "ast.c"
 
 
-#line 276 "codegen/ast.override"
+#line 277 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -804,7 +804,7 @@ static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, 
 #line 805 "ast.c"
 
 
-#line 258 "codegen/ast.override"
+#line 259 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -824,7 +824,7 @@ static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, 
 #line 825 "ast.c"
 
 
-#line 292 "codegen/ast.override"
+#line 293 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -837,7 +837,7 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
 #line 838 "ast.c"
 
 
-#line 68 "codegen/ast.override"
+#line 69 "codegen/ast.override"
 /* a method can be overriden by giving its name or 
  * class.name 
  */
@@ -865,7 +865,7 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 #line 866 "ast.c"
 
 
-#line 207 "codegen/ast.override"
+#line 208 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -882,7 +882,7 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
 #line 883 "ast.c"
 
 
-#line 312 "codegen/ast.override"
+#line 313 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -892,7 +892,7 @@ static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 #line 893 "ast.c"
 
 
-#line 320 "codegen/ast.override"
+#line 321 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -903,7 +903,7 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 #line 904 "ast.c"
 
 
-#line 303 "codegen/ast.override"
+#line 304 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -914,7 +914,7 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 #line 915 "ast.c"
 
 
-#line 329 "codegen/ast.override"
+#line 330 "codegen/ast.override"
 static int _wrap_ast_print_length(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -987,7 +987,7 @@ void nsp_initialize_Ast_types(void)
   new_type_ast(T_BASE);
 }
 
-#line 468 "codegen/ast.override"
+#line 469 "codegen/ast.override"
 
 /* pretty print of the ast i.e ast -> code */
 
@@ -1030,12 +1030,13 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   NspObject *res;
   int dp=user_pref.pr_depth;
   int cr=user_pref.color;
-  int as_read=FALSE,depth=INT_MAX,indent=0,color=TRUE,html=FALSE;
+  int as_read=FALSE,depth=INT_MAX,indent=0,color=TRUE,html=FALSE,gtk=FALSE;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 			    { "color",s_bool,NULLOBJ,-1},
 			    { "depth", s_int,NULLOBJ,-1},
 			    { "indent",s_int,NULLOBJ,-1},
 			    { "html",s_bool,NULLOBJ,-1},
+			    { "gtk",s_bool,NULLOBJ,-1},
 			    { NULL,t_end,NULLOBJ,-1}};
 
   if ( mode == file_out ) 
@@ -1052,7 +1053,7 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   if ( mode == string_out) color=FALSE;
   
   if ( get_optional_args(stack, rhs, opt, print_opts,
-			 &as_read,&color,&depth,&indent,&html) == FAIL) 
+			 &as_read,&color,&depth,&indent,&html,&gtk) == FAIL) 
     return RET_BUG;
   
   /* initialize according to mode */
@@ -1080,6 +1081,14 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   user_pref.pr_depth= depth;
   user_pref.color=color;
 
+  set_use_html_color_class(html);
+  set_use_gtk_color_class(gtk);
+
+  if ( gtk == TRUE )
+    {
+      user_pref.color= color = TRUE;
+    }
+  
   if ( html == TRUE )
     {
       /*
@@ -1093,7 +1102,6 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
       */
       
       user_pref.color= color = TRUE;
-      set_use_html_color_class(html);
       Sciprintf2(indent," ","<!-- style directives ");
       Sciprintf2(indent," ","<head>\n");
       Sciprintf2(indent+2," ","<style>\n");
@@ -1116,9 +1124,11 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
     }
   else
     {
-      set_use_html_color_class(html);
       nsp_ast_pprint(self, indent);
     }
+
+
+  
   user_pref.color=cr;
   user_pref.pr_depth= dp;
   /* restore to default values */
@@ -1166,6 +1176,14 @@ static void set_use_html_color_class(int flag)
   use_html_color_class=flag;
 }
 
+static int use_gtk_color_class = FALSE;
+
+static void set_use_gtk_color_class(int flag)
+{
+  use_gtk_color_class=flag;
+}
+
+
 
 /* set of colors that can be used in a terminal 
  * if 3 is replaced by 9 we obtain light colors.
@@ -1200,6 +1218,19 @@ static int color_from_key( nsp_colorized_types key)
   return p_black;
 }
 
+static char* colorname_from_key( nsp_colorized_types key)
+{
+  switch (key)
+    {
+    case type_comment: return "red";break;
+    case type_string:  return "cyan";break;
+    case type_keyword: return "purple";break;
+    case type_number:  return "green";break;
+    case type_fname:   return "blue";break;
+    }
+  return "black";
+}
+
 static char *colortag_from_key( nsp_colorized_types key)
 {
   switch (key)
@@ -1219,6 +1250,8 @@ static int nsp_ast_pprint_pre_tag_color( nsp_colorized_types key)
     {
       if (use_html_color_class == TRUE)
 	Sciprintf("<span class=\"%s\">",colortag_from_key(key));
+      else if (use_gtk_color_class == TRUE)
+	Sciprintf("<span color=\"%s\">",colorname_from_key(key));
       else
 	Sciprintf("\033[%dm",color_from_key(key));
     }
@@ -1229,7 +1262,8 @@ static int nsp_ast_pprint_post_tag_color(void)
 {
   if (user_pref.color == TRUE )
     {
-      if (use_html_color_class == TRUE)
+      if (use_html_color_class == TRUE ||
+	  use_gtk_color_class == TRUE)
 	Sciprintf("</span>");
       else
 	Sciprintf("\033[0m");
@@ -1242,7 +1276,8 @@ static int nsp_ast_pprint_comment(int indent,const char *str)
   int pos=0;
   pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
   pos += nsp_ast_pprint_pre_tag_color(type_comment);
-  if  (use_html_color_class == TRUE)
+  if  (use_html_color_class == TRUE ||
+       use_gtk_color_class == TRUE )
     {
       nsp_print_comment_for_html(str);
       pos += strlen(str)+2;
@@ -1264,6 +1299,7 @@ static void nsp_print_comment_for_html(const char *str)
 	{
 	case '<' : Sciprintf("%s","&lt;");break;
 	case '>' : Sciprintf("%s","&gt;");break;
+	case '&' : Sciprintf("%s","&amp;");break;
 	default :  Sciprintf("%c",*str);
 	}
       str++;
@@ -1276,7 +1312,8 @@ static int nsp_ast_pprint_string(int indent,const char *str)
   pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
   pos += nsp_ast_pprint_pre_tag_color(type_string);
   pos += 2 + strlen(str);
-  if  (use_html_color_class == TRUE)
+  if  (use_html_color_class == TRUE ||
+       use_gtk_color_class == TRUE )
     {
       nsp_print_string_as_read_for_html(str);
     }
@@ -1377,7 +1414,8 @@ static int nsp_ast_pprint_opname(int type, int indent, int pos)
 {
   const char *s = nsp_astcode_to_name(type);
   const char *s1= s;
-  if (use_html_color_class == TRUE)
+  if (use_html_color_class == TRUE ||
+      use_gtk_color_class == TRUE )
     {
       if ( strcmp(s,">") == 0)
 	s1 = "&gt;";
@@ -1387,7 +1425,14 @@ static int nsp_ast_pprint_opname(int type, int indent, int pos)
 	s1 = "&lt;=";
       else if ( strcmp(s,">=") == 0)
 	s1 = "&gt;=";
+      else if ( strcmp(s,"<>") == 0)
+	s1 = "&lt;&gt";
       else s1 = s;
+    }
+  if (  use_gtk_color_class == TRUE )
+    {
+      if ( strcmp(s,"&") == 0) s1 ="&amp;";
+      else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
     }
   Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","%s",s1);
   return pos + indent + strlen(s);
@@ -2598,4 +2643,4 @@ static int _nsp_ast_printlength_op_comment_ended(NspAst *ast, int elt)
   return FALSE;
 }
 
-#line 2602 "ast.c"
+#line 2647 "ast.c"

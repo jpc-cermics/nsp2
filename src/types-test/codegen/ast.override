@@ -26,6 +26,7 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
 static void set_use_html_color_class(int flag);
+static void set_use_gtk_color_class(int flag);
 static int _nsp_ast_pprint_statements_with_ret(NspAst *ast,int elt);
 static void nsp_print_string_as_read_for_html(const char *str);
 static int _nsp_ast_pprint_check_newline(NspAst *ast,int elt,int pos);
@@ -507,12 +508,13 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   NspObject *res;
   int dp=user_pref.pr_depth;
   int cr=user_pref.color;
-  int as_read=FALSE,depth=INT_MAX,indent=0,color=TRUE,html=FALSE;
+  int as_read=FALSE,depth=INT_MAX,indent=0,color=TRUE,html=FALSE,gtk=FALSE;
   nsp_option print_opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 			    { "color",s_bool,NULLOBJ,-1},
 			    { "depth", s_int,NULLOBJ,-1},
 			    { "indent",s_int,NULLOBJ,-1},
 			    { "html",s_bool,NULLOBJ,-1},
+			    { "gtk",s_bool,NULLOBJ,-1},
 			    { NULL,t_end,NULLOBJ,-1}};
 
   if ( mode == file_out ) 
@@ -529,7 +531,7 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   if ( mode == string_out) color=FALSE;
   
   if ( get_optional_args(stack, rhs, opt, print_opts,
-			 &as_read,&color,&depth,&indent,&html) == FAIL) 
+			 &as_read,&color,&depth,&indent,&html,&gtk) == FAIL) 
     return RET_BUG;
   
   /* initialize according to mode */
@@ -557,6 +559,14 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
   user_pref.pr_depth= depth;
   user_pref.color=color;
 
+  set_use_html_color_class(html);
+  set_use_gtk_color_class(gtk);
+
+  if ( gtk == TRUE )
+    {
+      user_pref.color= color = TRUE;
+    }
+  
   if ( html == TRUE )
     {
       /*
@@ -570,7 +580,6 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
       */
       
       user_pref.color= color = TRUE;
-      set_use_html_color_class(html);
       Sciprintf2(indent," ","<!-- style directives ");
       Sciprintf2(indent," ","<head>\n");
       Sciprintf2(indent+2," ","<style>\n");
@@ -593,9 +602,11 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
     }
   else
     {
-      set_use_html_color_class(html);
       nsp_ast_pprint(self, indent);
     }
+
+
+  
   user_pref.color=cr;
   user_pref.pr_depth= dp;
   /* restore to default values */
@@ -643,6 +654,14 @@ static void set_use_html_color_class(int flag)
   use_html_color_class=flag;
 }
 
+static int use_gtk_color_class = FALSE;
+
+static void set_use_gtk_color_class(int flag)
+{
+  use_gtk_color_class=flag;
+}
+
+
 
 /* set of colors that can be used in a terminal 
  * if 3 is replaced by 9 we obtain light colors.
@@ -677,6 +696,19 @@ static int color_from_key( nsp_colorized_types key)
   return p_black;
 }
 
+static char* colorname_from_key( nsp_colorized_types key)
+{
+  switch (key)
+    {
+    case type_comment: return "red";break;
+    case type_string:  return "cyan";break;
+    case type_keyword: return "purple";break;
+    case type_number:  return "green";break;
+    case type_fname:   return "blue";break;
+    }
+  return "black";
+}
+
 static char *colortag_from_key( nsp_colorized_types key)
 {
   switch (key)
@@ -696,6 +728,8 @@ static int nsp_ast_pprint_pre_tag_color( nsp_colorized_types key)
     {
       if (use_html_color_class == TRUE)
 	Sciprintf("<span class=\"%s\">",colortag_from_key(key));
+      else if (use_gtk_color_class == TRUE)
+	Sciprintf("<span color=\"%s\">",colorname_from_key(key));
       else
 	Sciprintf("\033[%dm",color_from_key(key));
     }
@@ -706,7 +740,8 @@ static int nsp_ast_pprint_post_tag_color(void)
 {
   if (user_pref.color == TRUE )
     {
-      if (use_html_color_class == TRUE)
+      if (use_html_color_class == TRUE ||
+	  use_gtk_color_class == TRUE)
 	Sciprintf("</span>");
       else
 	Sciprintf("\033[0m");
@@ -719,7 +754,8 @@ static int nsp_ast_pprint_comment(int indent,const char *str)
   int pos=0;
   pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
   pos += nsp_ast_pprint_pre_tag_color(type_comment);
-  if  (use_html_color_class == TRUE)
+  if  (use_html_color_class == TRUE ||
+       use_gtk_color_class == TRUE )
     {
       nsp_print_comment_for_html(str);
       pos += strlen(str)+2;
@@ -741,6 +777,7 @@ static void nsp_print_comment_for_html(const char *str)
 	{
 	case '<' : Sciprintf("%s","&lt;");break;
 	case '>' : Sciprintf("%s","&gt;");break;
+	case '&' : Sciprintf("%s","&amp;");break;
 	default :  Sciprintf("%c",*str);
 	}
       str++;
@@ -753,7 +790,8 @@ static int nsp_ast_pprint_string(int indent,const char *str)
   pos += Sciprintf2(indent, (use_html_color_class == TRUE) ? "&nbsp;": " ","");
   pos += nsp_ast_pprint_pre_tag_color(type_string);
   pos += 2 + strlen(str);
-  if  (use_html_color_class == TRUE)
+  if  (use_html_color_class == TRUE ||
+       use_gtk_color_class == TRUE )
     {
       nsp_print_string_as_read_for_html(str);
     }
@@ -854,7 +892,8 @@ static int nsp_ast_pprint_opname(int type, int indent, int pos)
 {
   const char *s = nsp_astcode_to_name(type);
   const char *s1= s;
-  if (use_html_color_class == TRUE)
+  if (use_html_color_class == TRUE ||
+      use_gtk_color_class == TRUE )
     {
       if ( strcmp(s,">") == 0)
 	s1 = "&gt;";
@@ -864,7 +903,14 @@ static int nsp_ast_pprint_opname(int type, int indent, int pos)
 	s1 = "&lt;=";
       else if ( strcmp(s,">=") == 0)
 	s1 = "&gt;=";
+      else if ( strcmp(s,"<>") == 0)
+	s1 = "&lt;&gt";
       else s1 = s;
+    }
+  if (  use_gtk_color_class == TRUE )
+    {
+      if ( strcmp(s,"&") == 0) s1 ="&amp;";
+      else if ( strcmp(s,"&&") == 0) s1 ="&amp;&amp;";
     }
   Sciprintf2(indent,(use_html_color_class == TRUE) ? "&nbsp;": " ","%s",s1);
   return pos + indent + strlen(s);
