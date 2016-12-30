@@ -7,7 +7,9 @@ function window=demo_css_pixbufs(do_widget)
 
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   window.set_title [ "Animated Backgrounds"];
-  window.set_transient_for[do_widget];
+  if nargin >=1 then 
+    window.set_transient_for[do_widget];
+  end
   window.set_default_size[400, 300];
   // window.connect [ "destroy", gtk_widget_destroyed, &window];
 
@@ -21,22 +23,24 @@ function window=demo_css_pixbufs(do_widget)
   text = gtk_text_buffer_new ();
   text.create_tag[ "warning", underline= PANGO.UNDERLINE_SINGLE];
   text.create_tag[ "error",   underline= PANGO.UNDERLINE_ERROR];
-  
   provider = gtk_css_provider_new ();
-
-  container = gtk_scrolled_window_new (NULL, NULL);
+  text.connect [ "changed", css_text_changed, provider];
+  
+  container = gtk_scrolled_window_new ();
   paned.add[container];
   child = gtk_text_view_new_with_buffer (text);
   container.add[child];
-  text.connect [ "changed", css_text_changed, provider];
-
-  S=getfile("css_pixbufs/gtk.css");
   
-  // improve set_text to work 
-  text.set_text [ catenate(S,sep='\n')];
+  S=getfile(getenv("NSP")+"/demos3/gtk3/libbase/demo_css_pixbufs/css_pixbufs.css");
+  S=strsubst(S,'NSP',getenv('NSP'));
+  text = catenate(S,sep='\n');
+  provider = gtk_css_provider_new ();
   
+  ok=execstr('provider.load_from_data[text, -1];',errcatch=%t);
+  if ~ok then printf("Error: failed to load css files\n");pause xxx; lasterror();end
+    
   provider.connect ["parsing-error", css_show_parsing_error, child.get_buffer []];
-  css_apply_css (window, provider);
+  css_apply_css (window, list(provider));
   window.show_all[];
 endfunction
 

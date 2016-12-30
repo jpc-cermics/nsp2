@@ -1,7 +1,4 @@
-@import url("resource://css_accordion/reset.css");
-/*
 @import "NSP/demos3/gtk3/libbase/demo_css_accordion/reset.css";
-*/
 
 * {
     transition-property: color, background-color, border-color, background-image, padding, border-width;

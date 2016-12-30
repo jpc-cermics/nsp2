@@ -110,9 +110,11 @@ endfunction
   vbox.pack_start[sw,expand= %t,fill= %t,padding= 0];
 
   //  Create the store and fill it with the contents of '/'  
-
-  file_pixbuf = gdk_pixbuf_new_from_resource ("/iconview/gnome-fs-regular.png");
-  folder_pixbuf = gdk_pixbuf_new_from_resource ("/iconview/gnome-fs-directory.png");
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_iconview/gnome-fs-regular.png';
+  file_pixbuf = gdk_pixbuf_new_from_file(fname);
+  
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_iconview/gnome-fs-directory.png';
+  folder_pixbuf = gdk_pixbuf_new_from_file(fname);
   window.set_data[file_pixbuf=file_pixbuf];
   window.set_data[folder_pixbuf=folder_pixbuf];
   

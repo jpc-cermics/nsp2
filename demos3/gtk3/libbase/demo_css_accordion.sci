@@ -22,19 +22,16 @@ function window= demo_css_accordion (do_widget)
     container.add[child];
   end
   
-  if %t then 
-    provider = gtk_css_provider_new ();
-    // load css from path 
-    provider.load_from_path[getenv('NSP')+"/demos3/gtk3/libbase/demo_css_accordion/demo_css_accordion.css"]
-  else
-    S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/demo_css_accordion/demo_css_accordion.css");
-    S=strsubst(S,'NSP',getenv('NSP'));
-    text = catenate(S,sep='\n');
-    provider = gtk_css_provider_new ();
-    ok=execstr('provider.load_from_data[text, -1];',errcatch=%t);
-    if ~ok then printf("Error: failed to load css files\n");lasterror();end
-  end
-
+  // provider = gtk_css_provider_new ();
+  // provider.load_from_path[getenv('NSP')+"/demos3/gtk3/libbase/demo_css_accordion/demo_css_accordion.css"]
+  
+  S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/demo_css_accordion/demo_css_accordion.css");
+  S=strsubst(S,'NSP',getenv('NSP'));
+  text = catenate(S,sep='\n');
+  provider = gtk_css_provider_new ();
+  ok=execstr('provider.load_from_data[text, -1];',errcatch=%t);
+  if ~ok then printf("Error: failed to load css files\n");lasterror();end
+  
   css_apply_css (window, list(provider));
   window.show_all[];
 endfunction 

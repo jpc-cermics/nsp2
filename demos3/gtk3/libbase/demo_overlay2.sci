@@ -35,14 +35,15 @@ function window = demo_overlay2 (do_widget)
   sw.add[text];
 
   //window.connect[ "destroy", gtk_widget_destroyed, &window);
-
-  image = gtk_image_new_from_resource ("/overlay2/decor1.png");
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_overlay2/decor1.png";
+  image = gtk_image_new('file',fname);
   overlay.add_overlay[ image];
   overlay.set_overlay_pass_through[image, %t];
   image.set_halign[GTK.ALIGN_START];
   image.set_valign[GTK.ALIGN_START];
 
-  image = gtk_image_new_from_resource ("/overlay2/decor2.png");
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_overlay2/decor2.png";
+  image = gtk_image_new('file',fname);
   overlay.add_overlay[ image];
   overlay.set_overlay_pass_through[image, %t];
   image.set_halign[GTK.ALIGN_END];
