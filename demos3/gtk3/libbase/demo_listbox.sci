@@ -24,7 +24,7 @@ function window = demo_listbox (do_widget)
 
   vbox = gtk_box_new (GTK.ORIENTATION_VERTICAL,spacing= 12);
   window.add[vbox];
-  label = gtk_label_new(str=str=str=str=str=str=str=str=str="Messages from Gtk+ and friends");
+  label = gtk_label_new(str="Messages from Gtk+ and friends");
   vbox.pack_start[label, expand=%f, fill=%f, padding= 0];
   scrolled = gtk_scrolled_window_new ();
   scrolled.set_policy[GTK.POLICY_NEVER, GTK.POLICY_AUTOMATIC];
@@ -39,7 +39,7 @@ function window = demo_listbox (do_widget)
   vbox.show_all[];
       
   for i=1:100 
-    message = gtk_label_new(str=str=str=str=str=str=str=str=str=sprintf("Message %d",i));
+    message = gtk_label_new(str=sprintf("Message %d",i));
     message.show[];
     listbox.add[message];
   end
