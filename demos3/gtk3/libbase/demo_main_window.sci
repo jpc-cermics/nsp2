@@ -2,33 +2,40 @@
 function demo_main_window()
   
   Demos={ 
-	  {'Buttons',  "demo_buttons"}
-	  {'Buttons: Check buttons',  "demo_check_buttons"}
-	  {'Buttons: Radio buttons',  "demo_radio_buttons"}
-	  {'Buttons: Toggle buttons',  "demo_toggle_buttons"}
-	  {'Cairo Drawing',  "demo_cairo"}
-	  {'Calendar',  "demo_calendar"}
-	  {'Cursor',  "demo_cursor"}
-	  {'Dnd', "demo_dnd"}
-	  {'Entry',  "demo_entry"}
-	  {'File chooser',  "demo_file_chooser"}
-	  {'Flipping',  "demo_flipping"}
-	  {'Focus',  "demo_focus"}
-	  {'Gamma curve',  "demo_gamma_curve"}
-	  {'Gmenumodel', "demo_gmenumodel"}
-	  {'Messages', "demo_messagedialog"}
-	  {'Notebook',  "demo_notebook"}
-	  {'Picker (Color)',  "demo_color_picker"}
-	  {'Progress bar',  "demo_progressbar"}
-	  {'Range controls',  "demo_range_controls"}
-          {'Reparent',  "demo_reparent"}
-	  {'Scrolled windows',  "demo_scrolled_windows"}
-	  {'Status bar',  "demo_statusbar"}
-	  {'Test idle', "demo_idle"}
-	  {'Test timeout', "demo_timeout"}
-	  {'Toolbar',  "demo_toolbar"}
-	  {'Tooltips', "demo_tooltips"}}
-    
+      {'Buttons',  "demo_buttons"}
+      {'Buttons: Check buttons',  "demo_check_buttons"}
+      {'Buttons: Radio buttons',  "demo_radio_buttons"}
+      {'Buttons: Toggle buttons',  "demo_toggle_buttons"}
+      {'Cairo Drawing',  "demo_cairo"}
+      {'Calendar',  "demo_calendar"}
+      {'Cursor',  "demo_cursor"}
+      {'Display and Screen', "demo_display_screen"}
+      {'Dnd', "demo_dnd"}
+      {'Entry',  "demo_entry"}
+      {'File chooser',  "demo_file_chooser"}
+      {'Flipping',  "demo_flipping"}
+      {'Focus',  "demo_focus"}
+      {'Gamma curve',  "demo_gamma_curve"}
+      {'Gmenumodel', "demo_gmenumodel"}
+      {'Image from drawable', "demo_image_from_drawable"}
+      {'Images1', "demo_images1"}
+      {'Images2', "demo_images2"}
+      {'Images3', "demo_images3"}
+      {'Labels', "demo_labels"}
+      {'Messages', "demo_messagedialog"}
+      {'Notebook',  "demo_notebook"}
+      {'Nsp graphic widget 1', "demo_nsp_graphic_widget"}
+      {'Nsp graphic widget 2', "demo_dyn_graph"}
+      {'Picker (Color)',  "demo_color_picker"}
+      {'Progress bar',  "demo_progressbar"}
+      {'Range controls',  "demo_range_controls"}
+      {'Reparent',  "demo_reparent"}
+      {'Scrolled windows',  "demo_scrolled_windows"}
+      {'Status bar',  "demo_statusbar"}
+      {'Test idle', "demo_idle"}
+      {'Test timeout', "demo_timeout"}
+      {'Toolbar',  "demo_toolbar"}
+      {'Tooltips', "demo_tooltips"}}
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]

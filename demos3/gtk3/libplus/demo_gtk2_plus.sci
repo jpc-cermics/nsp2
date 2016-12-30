@@ -9,7 +9,6 @@ function demo_gtk2_plus()
   B('labels')=demo_labels,
   B('nsp graphic widget 1')=demo_nsp_graphic_widget,
   B('nsp graphic widget 2')=demo_dyn_graph,
-  B('textview')=demo_textview,
   
   win = gtkwindow_new()
   win.set_title["main window"]
