@@ -4,25 +4,24 @@
 // bold or colored or underlined. But tags are not restricted to appearance.
 // They can also affect the behavior of mouse and key presses, as this demo
 // shows.
-
-//  Inserts a piece of text into the buffer, giving it the usual
-// appearance of a hyperlink in a web browser: blue and underlined.
-// Additionally, attaches some data on the tag, to make it recognizable
-// as a link.
   
-function insert_link (buffer, iter, text, page)
-  persistent(itag=0);
-  itag = itag + 1;
-  tag_name = sprintf("tag%0d",itag);
-  tag = buffer.create_tag[tag_name, foreground= "blue", underline= PANGO.UNDERLINE_SINGLE];
-  tag.set_data[ page = page];
-  buffer.insert_with_tags[iter, text, tag];
-endfunction
-
+function show_page (buffer, page)
 //  Fills the buffer with text and interspersed links. In any real
 //  hypertext app, this method would parse a file to identify the links.
   
-function show_page (buffer, page)
+  function insert_link (buffer, iter, text, page)
+  //  Inserts a piece of text into the buffer, giving it the usual
+  // appearance of a hyperlink in a web browser: blue and underlined.
+  // Additionally, attaches some data on the tag, to make it recognizable
+  // as a link.
+    persistent(itag=0);
+    itag = itag + 1;
+    tag_name = sprintf("tag%0d",itag);
+    tag = buffer.create_tag[tag_name, foreground= "blue", underline= PANGO.UNDERLINE_SINGLE];
+    tag.set_data[ page = page];
+    buffer.insert_with_tags[iter, text, tag];
+  endfunction
+
   persistent(iweight=0);
 
   buffer.set_text[ ""]
@@ -114,7 +113,12 @@ endfunction
 // and if one of them is a link, change the cursor to the "hands" cursor
 // typically used by web browsers.
   
-function set_cursor_if_appropriate (text_view, x, y)
+
+//  Update the cursor image if the pointer moved.
+  
+function y= motion_notify_event (text_view,  event)
+
+  function set_cursor_if_appropriate (text_view, x, y)
     
   hand_cursor= text_view.get_data[ "hand_cursor"];
    regular_cursor=text_view.get_data[ "regular_cursor"];
@@ -141,10 +145,7 @@ function set_cursor_if_appropriate (text_view, x, y)
     end
   end
 endfunction
-
-//  Update the cursor image if the pointer moved.
   
-function y= motion_notify_event (text_view,  event)
   xy= text_view.window_to_buffer_coords[GTK.TEXT_WINDOW_WIDGET, event.x, event.y];
   set_cursor_if_appropriate (text_view, xy(1), xy(2));
   y = %f;

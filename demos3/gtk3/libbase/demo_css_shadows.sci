@@ -2,7 +2,7 @@
 //
 // This demo shows how to use CSS shadows.
   
-function show_parsing_error (provider, section, error, buffer)
+function css_show_parsing_error (provider, section, error, buffer)
   start = buffer.get_iter_at_line_index[ section.get_start_line [],...
 		    section.get_start_position []];
   bend = buffer.get_iter_at_line_index [ section.get_end_line [], ...
@@ -31,12 +31,12 @@ function css_text_changed (buffer, provider)
   end
 endfunction
 
-function apply_css (widget, L)
+function css_apply_css (widget, L)
   provider=L(1);
   context = widget.get_style_context[];
   context.add_provider[ provider, i2m(intmax(1u))];
   if is(widget,%types.GtkContainer) then 
-    widget.forall[ apply_css, L];
+    widget.forall[ css_apply_css, L];
   end
 endfunction 
 
@@ -92,9 +92,9 @@ function window=demo_css_shadows (do_widget)
   S=strsubst(S,'NSP',getenv('NSP'));
   text.set_text [ catenate(S,sep='\n')];
   
-  //provider.connect [ "parsing-error", show_parsing_error, child.get_buffer []];
+  provider.connect [ "parsing-error", css_show_parsing_error, child.get_buffer []];
 
-  apply_css (window, list(provider));
+  css_apply_css (window, list(provider));
   window.show_all[];
 endfunction 
 

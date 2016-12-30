@@ -29,9 +29,9 @@ function window= demo_css_basics (do_widget)
   S=strsubst(S,'NSP',getenv('NSP'));
   text.set_text [ catenate(S,sep='\n')];
   
-  provider.connect [ "parsing-error", show_parsing_error, child.get_buffer []];
+  provider.connect [ "parsing-error", css_show_parsing_error, child.get_buffer []];
 
-  apply_css (window, list(provider));
+  css_apply_css (window, list(provider));
   window.show_all[];
   
 endfunction

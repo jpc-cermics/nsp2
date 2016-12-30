@@ -2,49 +2,6 @@
 //
 // Demonstrates a useful set of available cursors.
 
-function set_cursor (button, data)
-  cursor = data;
-  toplevel = button.get_toplevel [];
-  window = toplevel.get_window [];
-  window.set_cursor[cursor=cursor];
-endfunction
-
-function section = add_section (box, heading)
-  label = gtk_label_new(str=heading);
-  label.set_xalign[ 0.0];
-  label.set_margin_top[10];
-  label.set_margin_bottom[10];
-  box.pack_start[label, fill=%t, expand=%f,padding=0];
-  section = gtk_flow_box_new ();
-  section.set_halign[GTK.ALIGN_START];
-  section.set_selection_mode[GTK.SELECTION_NONE];
-  section.set_min_children_per_line[2];
-  section.set_max_children_per_line[20];
-  box.pack_start[section,fill=%t, expand=%f,padding=0];
-endfunction
-
-function add_button (section, css_name)
-  display = section.get_display [];
-  ok=execstr('cursor = gdk_cursor_new_from_name (display, css_name);',errcatch=%t);
-  if ~ok then 
-    lasterror();
-    image = gtk_image_new_from_icon_name ("image-missing", GTK.ICON_SIZE_MENU);
-  else
-    css_name = strsubst(css_name,"-","_");
-    path = sprintf ("%s%s%s_cursor.png",getenv("NSP"),...
-		    "/demos3/gtk3/libbase/demo_cursors/", css_name);
-    //printf("searching %s\n",path);
-    image = gtk_image_new_from_file (path);
-  end
-  image.set_size_request[32, 32];
-  button = gtk_button_new ();
-  button.add[image];
-  // gtk_style_context_add_class (button.get_style_context [], "image-button");
-  button.connect[ "clicked", set_cursor, cursor];
-  button.set_tooltip_text[css_name];
-  section.add[button];
-endfunction
-
 function demo_cursors (do_widget)
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   // window.set_screen[ do_widget.get_screen []);
@@ -61,6 +18,51 @@ function demo_cursors (do_widget)
   box.set_property["margin-end", 20];
   box.set_property["margin-bottom", 10];
   sw.add[box];
+  
+  function section = add_section (box, heading)
+    label = gtk_label_new(str=heading);
+    label.set_xalign[ 0.0];
+    label.set_margin_top[10];
+    label.set_margin_bottom[10];
+    box.pack_start[label, fill=%t, expand=%f,padding=0];
+    section = gtk_flow_box_new ();
+    section.set_halign[GTK.ALIGN_START];
+    section.set_selection_mode[GTK.SELECTION_NONE];
+    section.set_min_children_per_line[2];
+    section.set_max_children_per_line[20];
+    box.pack_start[section,fill=%t, expand=%f,padding=0];
+  endfunction
+
+  function add_button (section, css_name)
+    display = section.get_display [];
+    ok=execstr('cursor = gdk_cursor_new_from_name (display, css_name);',errcatch=%t);
+    if ~ok then 
+      lasterror();
+      image = gtk_image_new_from_icon_name ("image-missing", GTK.ICON_SIZE_MENU);
+    else
+      css_name = strsubst(css_name,"-","_");
+      path = sprintf ("%s%s%s_cursor.png",getenv("NSP"),...
+		      "/demos3/gtk3/libbase/demo_cursors/", css_name);
+      //printf("searching %s\n",path);
+      image = gtk_image_new_from_file (path);
+    end
+    image.set_size_request[32, 32];
+    button = gtk_button_new ();
+    button.add[image];
+    // gtk_style_context_add_class (button.get_style_context [],
+    // "image-button");
+    
+    function set_cursor (button, data)
+      cursor = data;
+      toplevel = button.get_toplevel [];
+      window = toplevel.get_window [];
+      window.set_cursor[cursor=cursor];
+    endfunction
+    
+    button.connect[ "clicked", set_cursor, cursor];
+    button.set_tooltip_text[css_name];
+    section.add[button];
+  endfunction
   
   section = add_section (box, "General");
   add_button (section, "default");
@@ -117,4 +119,4 @@ function demo_cursors (do_widget)
 
   window.show_all[];
 endfunction
-  
+

@@ -49,7 +49,7 @@ function demo_cursor()
   endfunction
 
   win = gtkwindow_new()
-  win.connect["delete_event",demo_delete];
+  // win.connect["delete_event",demo_delete];
   win.set_title["Cursor Test"];
   main_vbox = gtkbox_new("vertical",spacing=5)
   main_vbox.set_border_width[0]
@@ -94,7 +94,7 @@ function demo_cursor()
   main_vbox.pack_start[hbox,expand= %f,fill=%t,padding=0]
   hbox.show[]
   button = gtkbutton_new(label="Close")
-  button.connect["clicked", button_destroy_win,list(win)];
+  // button.connect["clicked", button_destroy_win,list(win)];
   hbox.pack_start[button]
   button.show[]
   win.show[]

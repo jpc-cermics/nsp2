@@ -8,32 +8,7 @@
 // the application exits. Clipboard persistence requires a clipboard
 // manager to run.
 
-function copy_button_clicked (button, user_data)
-  GDK_SELECTION_CLIPBOARD=69 
-  entry = user_data;
-  //  Get the clipboard object  
-  clipboard = entry.get_clipboard[GDK_SELECTION_CLIPBOARD];
-  //  Set clipboard text  
-  clipboard.set_text[ entry.get_text []];
-endfunction
-
-function paste_received (clipboard, text, user_data) 
-  entry = user_data(1);
-  //  Set the entry text  
-  entry.set_text[text];
-endfunction
-
-function paste_button_clicked (button, user_data)
-  GDK_SELECTION_CLIPBOARD=69 
-  entry = user_data;
-  //  Get the clipboard object  
-  clipboard = entry.get_clipboard[GDK_SELECTION_CLIPBOARD];
-  //  Request the contents of the clipboard, contents_received will be
-  //  called when we do get the contents.
-  clipboard.request_text[paste_received, list(entry)];
-endfunction
-
-function pixbuf = get_image_pixbuf (image)
+function pixbuf = demo_clipboard_get_pixbuf (image)
   
   select image.get_storage_type[]
    case GTK.IMAGE_PIXBUF;  pixbuf = image.get_pixbuf[];
@@ -48,58 +23,61 @@ function pixbuf = get_image_pixbuf (image)
   end
 endfunction 
 
-function drag_begin (widget, context, data)
-  pixbuf = get_image_pixbuf (data);
-  context.set_icon_pixbuf[ pixbuf, -2, -2];
-endfunction 
+function window=demo_clipboard (do_widget)
 
-function drag_data_get (widget,context, selection_data, info,time,data)
-  pixbuf = get_image_pixbuf (data);
-  selection_data.set_pixbuf[pixbuf];
-endfunction 
-
-function drag_data_received (widget, context, x, y,selection_data, info, time, data)
-  if selection_data.get_length [] > 0 then 
-    pixbuf = selection_data.get_pixbuf [];
-    data.set_from_pixbuf[pixbuf];
-  end
-endfunction 
-
-function copy_image (item, data)
-  GDK_SELECTION_CLIPBOARD=69 
-  clipboard = gtk_clipboard_get(selection=GDK_SELECTION_CLIPBOARD);
-  pixbuf = get_image_pixbuf(data);
-  clipboard.set_image[pixbuf];
-endfunction 
-
-function paste_image (item, data)
-  GDK_SELECTION_CLIPBOARD=69 
-  clipboard = gtk_clipboard_get (selection=GDK_SELECTION_CLIPBOARD);
-  pixbuf = gtk_clipboard_wait_for_image (clipboard);
-  if pixbuf then 
-    data.set_from_pixbuf[pixbuf];
-  end
-endfunction 
-
-function y=button_press (widget, button, data)
+  function y=button_press (widget, button, data)
 
   // if button.button <> GDK_BUTTON_SECONDARY then y=%f;return; end
+    
+    menu = gtk_menu_new ();
+    item = gtk_menu_item_new(mnemonic="_Copy");
+    
+    function copy_image (item, data)
+      GDK_SELECTION_CLIPBOARD=69 
+      clipboard = gtk_clipboard_get(selection=GDK_SELECTION_CLIPBOARD);
+      pixbuf = demo_clipboard_get_pixbuf(data);
+      clipboard.set_image[pixbuf];
+    endfunction 
+    
+    item.connect[ "activate", copy_image, data];
+    item.show[];
+    menu.append[item];
+
+    item = gtk_menu_item_new(mnemonic ="_Paste");
+    
+    function paste_image (item, data)
+      GDK_SELECTION_CLIPBOARD=69 
+      clipboard = gtk_clipboard_get (selection=GDK_SELECTION_CLIPBOARD);
+      pixbuf = gtk_clipboard_wait_for_image (clipboard);
+      if pixbuf then 
+	data.set_from_pixbuf[pixbuf];
+      end
+    endfunction 
+    
+    item.connect[ "activate", paste_image, data];
+    item.show[];
+    menu.append[item];
+    // menu.popup[NULL, NULL, NULL, NULL, 3, button->time];
+    y= %t;
+  endfunction 
   
-  menu = gtk_menu_new ();
-  item = gtk_menu_item_new(mnemonic="_Copy");
-  item.connect[ "activate", copy_image, data];
-  item.show[];
-  menu.append[item];
+  function drag_begin (widget, context, data)
+    pixbuf = demo_clipboard_get_pixbuf (data);
+    context.set_icon_pixbuf[ pixbuf, -2, -2];
+  endfunction 
 
-  item = gtk_menu_item_new(mnemonic ="_Paste");
-  item.connect[ "activate", paste_image, data];
-  item.show[];
-  menu.append[item];
-  // menu.popup[NULL, NULL, NULL, NULL, 3, button->time];
-  y= %t;
-endfunction 
+  function drag_data_get (widget,context, selection_data, info,time,data)
+    pixbuf = demo_clipboard_get_pixbuf (data);
+    selection_data.set_pixbuf[pixbuf];
+  endfunction 
 
-function window=demo_clipboard (do_widget)
+  function drag_data_received (widget, context, x, y,selection_data, info, time, data)
+    if selection_data.get_length [] > 0 then 
+      pixbuf = selection_data.get_pixbuf [];
+      data.set_from_pixbuf[pixbuf];
+    end
+  endfunction 
+  
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   //window.set_screen[ do_widget.get_screen []];
   window.set_title[ "Clipboard"];
@@ -121,6 +99,17 @@ function window=demo_clipboard (do_widget)
   //  Create the button  
   button = gtk_button_new(mnemonic="_Copy");
   hbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
+  function copy_button_clicked (button, user_data)
+    GDK_SELECTION_CLIPBOARD=69 
+    entry = user_data;
+    //  Get the clipboard object  
+    clipboard = entry.get_clipboard[GDK_SELECTION_CLIPBOARD];
+    //  Set clipboard text  
+    clipboard.set_text[ entry.get_text []];
+  endfunction
+
+  
   button.connect[ "clicked", copy_button_clicked, entry ];
 
   label = gtk_label_new(str="""Paste"" will paste the text from the clipboard to the entry");
@@ -137,6 +126,24 @@ function window=demo_clipboard (do_widget)
   //  Create the button  
   button = gtk_button_new(mnemonic="_Paste");
   hbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
+  function paste_button_clicked (button, user_data)
+
+    function paste_received (clipboard, text, user_data) 
+      entry = user_data(1);
+      //  Set the entry text  
+      entry.set_text[text];
+    endfunction
+    
+    GDK_SELECTION_CLIPBOARD=69 
+    entry = user_data;
+    //  Get the clipboard object  
+    clipboard = entry.get_clipboard[GDK_SELECTION_CLIPBOARD];
+    //  Request the contents of the clipboard, contents_received will be
+    //  called when we do get the contents.
+    clipboard.request_text[paste_received, list(entry)];
+  endfunction
+  
   button.connect[ "clicked", paste_button_clicked, entry];
 
   label = gtk_label_new(str="Images can be transferred via the clipboard, too");

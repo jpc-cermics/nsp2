@@ -2,7 +2,6 @@
 
 function demo_focus()
 
-
   function [l,table]=make_focus_table(flag)
     table = gtkgrid_new();
     tf =  ior(GTK.EXPAND,GTK.FILL);

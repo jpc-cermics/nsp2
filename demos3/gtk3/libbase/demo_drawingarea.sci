@@ -14,7 +14,7 @@
 
 // Draw a rectangle on the screen
 
-function draw_brush (widget,x, y)
+function demo_drawingarea_draw_brush (widget,x, y)
   surface = widget.get_data['surface'];
   rect=gdk_rectangle_new( x - 3,y - 3, 6, 6);
   // Paint to the surface, where we store our state */
@@ -27,40 +27,6 @@ function draw_brush (widget,x, y)
   window.invalidate_rect[rect=rect, invalidate_children=%f];
 endfunction
 
-function y=scribble_button_press_event (widget,event, data)
-  surface = widget.get_data['surface'];
-  if event.button == 1 // GDK.BUTTON_PRIMARY
-    draw_brush (widget, event.x, event.y);
-  end
-  y=%t;
-endfunction
-
-function y=scribble_motion_notify_event (widget, event, data)
-// paranoia check, in case we haven't gotten a configure event
-  surface = widget.get_data['surface'];
-  /// This call is very important; it requests the next motion event.
-  // If you don't call gdk_window_get_pointer() you'll only get
-  // a single motion event. The reason is that we specified
-  // GDK_POINTER_MOTION_HINT_MASK to gtk_widget_set_events().
-  // If we hadn't specified that, we could just use event->x, event->y
-  // as the pointer location. But we'd also get deluged in events.
-  // By requesting the next event as we handle the current one,
-  // we avoid getting a huge number of events faster than we
-  // can cope.
-  //
-  // there's a pb here we obtain for event->window a GdkX11Window
-  // type in gtype failed for gtype GdkX11Window
-  // Maybe in that case we can check if the parent can give a proper nsp
-  // type ?
-  device=event.device;
-  window=event.window;
-  rep=window.get_device_position[device];
-  if iand(rep(3), GDK.BUTTON1_MASK) then
-    draw_brush (widget, rep(1), rep(2));
-  end
-  /// We've handled it, stop processing */
-  y=%t ;
-endfunction
 
 function window = demo_drawingarea(do_widget)
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
@@ -174,6 +140,41 @@ function window = demo_drawingarea(do_widget)
     // We've handled the configure event, no need for further processing. */
     y=%t;
   endfunction;
+  
+  function y=scribble_button_press_event (widget,event, data)
+    surface = widget.get_data['surface'];
+    if event.button == 1 // GDK.BUTTON_PRIMARY
+      demo_drawingarea_draw_brush (widget, event.x, event.y);
+    end
+    y=%t;
+  endfunction
+
+  function y=scribble_motion_notify_event (widget, event, data)
+  // paranoia check, in case we haven't gotten a configure event
+    surface = widget.get_data['surface'];
+    /// This call is very important; it requests the next motion event.
+    // If you don't call gdk_window_get_pointer() you'll only get
+    // a single motion event. The reason is that we specified
+    // GDK_POINTER_MOTION_HINT_MASK to gtk_widget_set_events().
+    // If we hadn't specified that, we could just use event->x, event->y
+    // as the pointer location. But we'd also get deluged in events.
+    // By requesting the next event as we handle the current one,
+    // we avoid getting a huge number of events faster than we
+    // can cope.
+    //
+    // there's a pb here we obtain for event->window a GdkX11Window
+    // type in gtype failed for gtype GdkX11Window
+    // Maybe in that case we can check if the parent can give a proper nsp
+    // type ?
+    device=event.device;
+    window=event.window;
+    rep=window.get_device_position[device];
+    if iand(rep(3), GDK.BUTTON1_MASK) then
+      demo_drawingarea_draw_brush (widget, rep(1), rep(2));
+    end
+    /// We've handled it, stop processing */
+    y=%t ;
+  endfunction
   
   da.connect["configure-event",scribble_configure_event];
   /// Event signals ///

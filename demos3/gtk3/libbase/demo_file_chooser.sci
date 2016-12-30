@@ -15,151 +15,152 @@
 // You should have received a copy of the GNU Library General Public
 // License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-function print_current_folder (chooser)
-  uri = chooser.get_current_folder_uri [];
-  printf("Current folder changed: ""%s""\n", uri);
-endfunction
-
-function print_selected (chooser)
-  uris = chooser.get_uris [];
-  printf ("Selection changed :\n");
-  for i=1:length(uris)
-    printf("  %s\n",uris(i));
-  end
-endfunction
-
-function response_cb (dialog, response_id)
-  if response_id == GTK.RESPONSE_OK then 
-    list = dialog.get_uris [];
-  else
-    printf ("Dialog was closed\n");
-  end
-  gtk_main_quit ();
-endfunction
-
-function y=no_backup_files_filter(filter_info,data)
-  pause no_backup_files_filter
-// //{
-//   gsize len = filter_info->display_name ? strlen (filter_info->display_name) : 0;
-//   if (len > 0 && filter_info->display_name[len - 1] == '~')
-//     return 0;
-//   else
-//     return 1;
-//   end
-endfunction
-
-function filter_changed (dialog, data)
-  printf("file filter changed\n");
-endfunction
-
-function set_current_folder (chooser, name)
-  if chooser.set_current_folder[name] then return;end 
-  return;
-  // buttons=[ GTK.MESSAGE_ERROR, GTK.BUTTONS_CLOSE],...
-  dialog = gtk_message_dialog_new (parent=chooser,...
-				   flags=ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
-				   buttons=GTK.BUTTONS_CLOSE,...
-				   message=sprintf("Could not set the folder to %s",name));
-  gtk_dialog_run (dialog);
-  dialog.destroy[];
-endfunction
-
-function set_folder_nonexistent_cb (button,   chooser)
-  set_current_folder (chooser, "/nonexistent");
-endfunction
-
-function set_folder_existing_nonexistent_cb (button, chooser)
-  set_current_folder (chooser, "/usr/nonexistent");
-endfunction
-
-function set_filename (chooser, name)
-  if chooser.set_filename[name] then return;end
-  return;
-  // buttons=[ GTK.MESSAGE_ERROR, GTK.BUTTONS_CLOSE],...
-  dialog = gtk_message_dialog_new (parent=chooser,...
-				   flags=ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
-				   buttons=GTK.BUTTONS_CLOSE,...
-				   message=sprintf("Could not select %s",name));
-  dialog.run[];
-  dialog.destroy[];
-endfunction
-
-function set_filename_nonexistent_cb (button,  chooser)
-  set_filename (chooser, "/nonexistent");
-endfunction
-
-function set_filename_existing_nonexistent_cb (button,   chooser)
-  set_filename (chooser, "/usr/nonexistent");
-endfunction
-
-function get_selection_cb (button, chooser)
-  selection = chooser.get_uris [];
-  if length(selection)== 0 then 
-    printf("Selection: empty\n");
-    return;
-  else
-    printf("Selection: \n");
-    for i=1:length(selection) do printf('  %s\n',selection(i));end
-  end
-endfunction
-
-function get_current_name_cb (button, chooser)
-  name = chooser.get_current_name [];
-  printf ("Current name: ""%s""\n", name)
-endfunction
-
-function unmap_and_remap_cb (button, chooser)
-  chooser.hide[];
-  chooser.show[];
-endfunction
-
-function kill_dependent (win, dep)
-  dep.destroy[];
-  dep.unref[];
-endfunction
-
-function notify_multiple_cb (dialog, pspec,  button)
-  multiple = dialog.get_select_multiple [];
-  button.set_sensitive[multiple];
-endfunction
-
-function conf= confirm_overwrite_cb (chooser, data)
-
-  //GTK.MESSAGE_QUESTION, GTK.BUTTONS_NONE
-    
-  dialog = gtk_message_dialog_new (parent= chooser.get_toplevel [],...
-				   flags= ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
-				   message="What do you want to do?");
-  
-  button = gtk_button_new(label="Use the stock confirmation dialog");
-  button.show[];
-  dialog.add_action_widget[button, 1];
-
-  button = gtk_button_new(label="Type a new file name");
-  button.show[];
-  dialog.add_action_widget[button,2];
-
-  button = gtk_button_new(label="Accept the file name");
-  button.show[];
-  dialog.add_action_widget[button,3];
-
-  response = dialog.run[];
-
-  select response 
-   case 1
-    conf = GTK.FILE_CHOOSER_CONFIRMATION_CONFIRM;
-   case 3
-    conf = GTK.FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME;
-  else
-    conf = GTK.FILE_CHOOSER_CONFIRMATION_SELECT_AGAIN;
-  end
-  dialog.destroy[];
-endfunction
 
 function demo_file_chooser()
   force_rtl = %f;
   multiple = %t;
   local_only = %f;
+    
+  function print_current_folder (chooser)
+    uri = chooser.get_current_folder_uri [];
+    printf("Current folder changed: ""%s""\n", uri);
+  endfunction
+
+  function print_selected (chooser)
+    uris = chooser.get_uris [];
+    printf ("Selection changed :\n");
+    for i=1:length(uris)
+      printf("  %s\n",uris(i));
+    end
+  endfunction
+
+  function response_cb (dialog, response_id)
+    if response_id == GTK.RESPONSE_OK then 
+      list = dialog.get_uris [];
+    else
+      printf ("Dialog was closed\n");
+    end
+    gtk_main_quit ();
+  endfunction
+
+  function y=no_backup_files_filter(filter_info,data)
+    pause no_backup_files_filter
+    // //{
+    //   gsize len = filter_info->display_name ? strlen (filter_info->display_name) : 0;
+    //   if (len > 0 && filter_info->display_name[len - 1] == '~')
+    //     return 0;
+    //   else
+    //     return 1;
+    //   end
+  endfunction
+
+  function filter_changed (dialog, data)
+    printf("file filter changed\n");
+  endfunction
+
+  function set_current_folder (chooser, name)
+    if chooser.set_current_folder[name] then return;end 
+    return;
+    // buttons=[ GTK.MESSAGE_ERROR, GTK.BUTTONS_CLOSE],...
+    dialog = gtk_message_dialog_new (parent=chooser,...
+				     flags=ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
+				     buttons=GTK.BUTTONS_CLOSE,...
+				     message=sprintf("Could not set the folder to %s",name));
+    gtk_dialog_run (dialog);
+    dialog.destroy[];
+  endfunction
+
+  function set_folder_nonexistent_cb (button,   chooser)
+    set_current_folder (chooser, "/nonexistent");
+  endfunction
+
+  function set_folder_existing_nonexistent_cb (button, chooser)
+    set_current_folder (chooser, "/usr/nonexistent");
+  endfunction
+
+  function set_filename (chooser, name)
+    if chooser.set_filename[name] then return;end
+    return;
+    // buttons=[ GTK.MESSAGE_ERROR, GTK.BUTTONS_CLOSE],...
+    dialog = gtk_message_dialog_new (parent=chooser,...
+				     flags=ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
+				     buttons=GTK.BUTTONS_CLOSE,...
+				     message=sprintf("Could not select %s",name));
+    dialog.run[];
+    dialog.destroy[];
+  endfunction
+
+  function set_filename_nonexistent_cb (button,  chooser)
+    set_filename (chooser, "/nonexistent");
+  endfunction
+
+  function set_filename_existing_nonexistent_cb (button,   chooser)
+    set_filename (chooser, "/usr/nonexistent");
+  endfunction
+
+  function get_selection_cb (button, chooser)
+    selection = chooser.get_uris [];
+    if length(selection)== 0 then 
+      printf("Selection: empty\n");
+      return;
+    else
+      printf("Selection: \n");
+      for i=1:length(selection) do printf('  %s\n',selection(i));end
+    end
+  endfunction
+
+  function get_current_name_cb (button, chooser)
+    name = chooser.get_current_name [];
+    printf ("Current name: ""%s""\n", name)
+  endfunction
+
+  function unmap_and_remap_cb (button, chooser)
+    chooser.hide[];
+    chooser.show[];
+  endfunction
+
+  function kill_dependent (win, dep)
+    dep.destroy[];
+    dep.unref[];
+  endfunction
+
+  function notify_multiple_cb (dialog, pspec,  button)
+    multiple = dialog.get_select_multiple [];
+    button.set_sensitive[multiple];
+  endfunction
+
+  function conf= confirm_overwrite_cb (chooser, data)
+
+  //GTK.MESSAGE_QUESTION, GTK.BUTTONS_NONE
+    
+    dialog = gtk_message_dialog_new (parent= chooser.get_toplevel [],...
+				     flags= ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),...
+				     message="What do you want to do?");
+    
+    button = gtk_button_new(label="Use the stock confirmation dialog");
+    button.show[];
+    dialog.add_action_widget[button, 1];
+
+    button = gtk_button_new(label="Type a new file name");
+    button.show[];
+    dialog.add_action_widget[button,2];
+
+    button = gtk_button_new(label="Accept the file name");
+    button.show[];
+    dialog.add_action_widget[button,3];
+
+    response = dialog.run[];
+
+    select response 
+     case 1
+      conf = GTK.FILE_CHOOSER_CONFIRMATION_CONFIRM;
+     case 3
+      conf = GTK.FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME;
+    else
+      conf = GTK.FILE_CHOOSER_CONFIRMATION_SELECT_AGAIN;
+    end
+    dialog.destroy[];
+  endfunction
   
   //GOptionEntry options[] = 
   //{ "action", 'a', 0, G_OPTION_ARG_STRING, &action_arg, "Filechooser action", "ACTION" end,
@@ -186,7 +187,7 @@ function demo_file_chooser()
   
   // dialog = dialog.gcast_up[]; //  gtk_file_chooser_dialog_new should
   //  return a dialog ? 
-				 
+  
   select action 
    case { GTK.FILE_CHOOSER_ACTION_OPEN, GTK.FILE_CHOOSER_ACTION_SELECT_FOLDER} then
     dialog.set_title[ "Select a file"];
@@ -284,7 +285,7 @@ function demo_file_chooser()
   function f_gtk_file_chooser_unselect_all(button,dialog)
     dialog.unselect_all[];    
   endfunction
-    
+  
   button = gtk_button_new(mnemonic="_Select all");
   button.set_sensitive[multiple];
   vbbox.add[button];

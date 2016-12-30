@@ -1,12 +1,13 @@
 // GtkHandleBox
 
-function handle_box_child_signal (hb,child,action)
-  printf("signal: %s: child <%s> %s\n",type(hb,'string'),
-         type(child,'string'),action(1));
-	  
-endfunction 
 
 function demo_handle_box () 
+
+  function handle_box_child_signal (hb,child,action)
+    printf("signal: %s: child <%s> %s\n",type(hb,'string'),
+    type(child,'string'),action(1));
+  endfunction 
+  
   window = gtkwindow_new ();// GTK.WINDOW_TOPLEVEL);
   window.set_title[  "Handle Box Test"]
   window.set_resizable[  %f]

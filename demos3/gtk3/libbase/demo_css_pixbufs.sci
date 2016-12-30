@@ -35,8 +35,8 @@ function window=demo_css_pixbufs(do_widget)
   // improve set_text to work 
   text.set_text [ catenate(S,sep='\n')];
   
-  provider.connect ["parsing-error", show_parsing_error, child.get_buffer []];
-  apply_css (window, provider);
+  provider.connect ["parsing-error", css_show_parsing_error, child.get_buffer []];
+  css_apply_css (window, provider);
   window.show_all[];
 endfunction
 

@@ -64,8 +64,8 @@ function window = demo_css_multiplebgs (do_widget)
   text.set_text [ catenate(S,sep='\n')];
   
   //provider.load_from_resource["/css_multiplebgs/css_multiplebgs.css"];
-  provider.connect ["parsing-error", show_parsing_error, child.get_buffer []];
-  apply_css (window, list(provider));
+  provider.connect ["parsing-error", css_show_parsing_error, child.get_buffer []];
+  css_apply_css (window, list(provider));
   window.show_all[];
 endfunction 
 

@@ -1,93 +1,64 @@
-// testimage.c
-// Copyright (C) 2005  Red Hat, Inc.
-// Based on cairo-demo/X11/cairo-knockout.c
-//
-// Author: Owen Taylor
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library. If not, see <http://www.gnu.org/licenses/>.
-///
+// Drawing with cairo 
 
-function oval_path (cr, xc, yc, xr, yr)
-  cairo_save (cr);
-  cairo_translate (cr, xc, yc);
-  cairo_scale (cr, 1.0, yr / xr);
-  cairo_move_to (cr, xr, 0.0);
-  cairo_arc (cr, 0, 0, xr, 0, 2 * %pi)
-  cairo_close_path (cr);
-  cairo_restore (cr);
-endfunction
+function demo_cairo()
 
-/// Create a path that is a circular oval with radii xr, yr at xc,
- // yc.
- ///
-/// Fill the given area with checks in the standard style
- // for showing compositing effects.
- //
- // It would make sense to do this as a repeating surface,
- // but most implementations of RENDER currently have broken
- // implementations of repeat + transform, even when the
- // transform is a translation.
- ///
+  function rep=on_draw (widget,cr)
+// Draw a red, green, and blue circle equally spaced inside
+// the larger circle of radius r at (xc, yc)
 
-function fill_checks (cr, x, y, width, height)
-  CHECK_SIZE=32
-  cairo_rectangle (cr, x, y, width, height);
-  cairo_set_source_rgb (cr, 0.4, 0.4, 0.4);
-  cairo_fill (cr);
-  // Only works for CHECK_SIZE a power of 2
-  for j=(iand(x, -CHECK_SIZE)):CHECK_SIZE:height
-    i = iand( y , (-CHECK_SIZE));
-    for i=(iand( y , (-CHECK_SIZE))):CHECK_SIZE:width;
-      if modulo(i / CHECK_SIZE + j / CHECK_SIZE,2) == 0 then
-	cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
+  function draw_3circles (cr, xc, yc, radius, alpha)
+    subradius = radius * (2 / 3. - 0.1);
+    cairo_set_source_rgba (cr, 1., 0., 0., alpha);
+    oval_path (cr,
+    xc + radius / 3. * cos (%pi * (0.5)),
+    yc - radius / 3. * sin (%pi * (0.5)),
+    subradius, subradius);
+    cairo_fill (cr);
+
+    cairo_set_source_rgba (cr, 0., 1., 0., alpha);
+    oval_path (cr,
+    xc + radius / 3. * cos (%pi * (0.5 + 2/.3)),
+    yc - radius / 3. * sin (%pi * (0.5 + 2/.3)),
+    subradius, subradius);
+    cairo_fill (cr);
+
+    cairo_set_source_rgba (cr, 0., 0., 1., alpha);
+    oval_path (cr,
+    xc + radius / 3. * cos (%pi * (0.5 + 4/.3)),
+    yc - radius / 3. * sin (%pi * (0.5 + 4/.3)),
+    subradius, subradius);
+    cairo_fill (cr);
+  endfunction
+  
+  function oval_path (cr, xc, yc, xr, yr)
+    cairo_save (cr);
+    cairo_translate (cr, xc, yc);
+    cairo_scale (cr, 1.0, yr / xr);
+    cairo_move_to (cr, xr, 0.0);
+    cairo_arc (cr, 0, 0, xr, 0, 2 * %pi)
+    cairo_close_path (cr);
+    cairo_restore (cr);
+  endfunction
+
+  function fill_checks (cr, x, y, width, height)
+    CHECK_SIZE=32
+    cairo_rectangle (cr, x, y, width, height);
+    cairo_set_source_rgb (cr, 0.4, 0.4, 0.4);
+    cairo_fill (cr);
+    // Only works for CHECK_SIZE a power of 2
+    for j=(iand(x, -CHECK_SIZE)):CHECK_SIZE:height
+      i = iand( y , (-CHECK_SIZE));
+      for i=(iand( y , (-CHECK_SIZE))):CHECK_SIZE:width;
+	if modulo(i / CHECK_SIZE + j / CHECK_SIZE,2) == 0 then
+	  cairo_rectangle (cr, i, j, CHECK_SIZE, CHECK_SIZE);
+	end
       end
     end
-  end
-  cairo_set_source_rgb (cr, 0.7, 0.7, 0.7);
-  cairo_fill (cr);
-endfunction
-
-/// Draw a red, green, and blue circle equally spaced inside
-// the larger circle of radius r at (xc, yc)
-///
-
-function draw_3circles (cr, xc, yc, radius, alpha)
-  subradius = radius * (2 / 3. - 0.1);
-  cairo_set_source_rgba (cr, 1., 0., 0., alpha);
-  oval_path (cr,
-             xc + radius / 3. * cos (%pi * (0.5)),
-	     yc - radius / 3. * sin (%pi * (0.5)),
-	     subradius, subradius);
-  cairo_fill (cr);
-
-  cairo_set_source_rgba (cr, 0., 1., 0., alpha);
-  oval_path (cr,
-	     xc + radius / 3. * cos (%pi * (0.5 + 2/.3)),
-	     yc - radius / 3. * sin (%pi * (0.5 + 2/.3)),
-	     subradius, subradius);
-  cairo_fill (cr);
-
-  cairo_set_source_rgba (cr, 0., 0., 1., alpha);
-  oval_path (cr,
-	     xc + radius / 3. * cos (%pi * (0.5 + 4/.3)),
-	     yc - radius / 3. * sin (%pi * (0.5 + 4/.3)),
-	     subradius, subradius);
-  cairo_fill (cr);
-endfunction
-
-function rep=on_draw (widget,cr)
-// Fill the background
+    cairo_set_source_rgb (cr, 0.7, 0.7, 0.7);
+    cairo_fill (cr);
+  endfunction
+  
+  // Fill the background
   width = widget.get_allocated_width[];
   height = widget.get_allocated_height[];
   radius = 0.5 * min(width,height) - 10;
@@ -140,8 +111,7 @@ function rep=on_draw (widget,cr)
   cairo_surface_destroy (circles);
   rep=%f
 endfunction
-
-function demo_cairo()
+  
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   window.set_default_size[400, 400];
   window.set_title["cairo: Knockout Groups"];

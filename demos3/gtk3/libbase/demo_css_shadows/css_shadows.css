@@ -8,8 +8,8 @@
  *    and overrides all user settings and the theme in use
  */
 
-@import "NSP/demos3/gtk3/libbase/css_shadows/reset.css";
-@import "NSP/demos3/gtk3/libbase/css_shadows/cssview.css";
+@import "NSP/demos3/gtk3/libbase/demo_css_shadows/reset.css";
+@import "NSP/demos3/gtk3/libbase/demo_css_shadows/cssview.css";
 
 
 /* Get a nice background for the window */
