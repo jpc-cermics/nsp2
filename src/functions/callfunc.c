@@ -227,6 +227,14 @@ extern  sci_interface  glib_Interf; extern  interface_info glib_Interf_Info;
 extern  sci_interface  Control_Interf; extern  interface_info Control_Interf_Info;
 extern  sci_interface  RMatrix_Interf; extern  interface_info RMatrix_Interf_Info;
 
+#ifdef GTKSOURCEVIEW_WIP
+#if GTK_CHECK_VERSION(3,0,0)
+#ifdef HAVE_GTKSOURCEVIEW
+extern  sci_interface   gtksourceview_Interf ; extern  interface_info  gtksourceview_Interf_Info;
+#endif
+#endif
+#endif
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -382,6 +390,14 @@ InterfTab Interfaces[]={
 #endif
   {Control_Interf, Control_Interf_Info},
   {RMatrix_Interf, RMatrix_Interf_Info},
+
+#ifdef GTKSOURCEVIEW_WIP
+#if GTK_CHECK_VERSION(3,0,0)
+#ifdef HAVE_GTKSOURCEVIEW
+  {gtksourceview_Interf, gtksourceview_Interf_Info},
+#endif
+#endif
+#endif 
   {NULL,NULL}
 };
 
