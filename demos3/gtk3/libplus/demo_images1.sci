@@ -28,7 +28,7 @@ function demo_images1()
     ok=execstr('image= gtkimage_new('"file'',fname)',errcatch=%t);
   endfunction
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/gtk-logo-rgb.gif";
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif";
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtkimage_new(''file'',.) with gif file",vbox)
 
@@ -73,7 +73,7 @@ function demo_images2()
     ok = execstr('image = gtkimage_new('"pixbuf"',pixbuf);',errcatch=%t);
   endfunction
 
-  fname = getenv('NSP')+'/demos3/gtk3/libplus/gtk-logo-rgb.gif";
+  fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif";
   [image,ok]=demo_image_from_pixbuf(fname)
   demo_add_image(image,ok,"gtkimage_new(''pixbuf'',.) with gif file",vbox)
 

@@ -1,38 +1,28 @@
 
 function demo_main_window()
   
-  Demos={ {'Assistant', "demo_assistant"}
-	  {'Button Boxes',  "demo_button_box"}
+  Demos={ 
 	  {'Buttons',  "demo_buttons"}
 	  {'Buttons: Check buttons',  "demo_check_buttons"}
 	  {'Buttons: Radio buttons',  "demo_radio_buttons"}
 	  {'Buttons: Toggle buttons',  "demo_toggle_buttons"}
 	  {'Cairo Drawing',  "demo_cairo"}
 	  {'Calendar',  "demo_calendar"}
-	  {'Color Selection',  "demo_color_selection"}
 	  {'Cursor',  "demo_cursor"}
-	  {'Dialog and Message Boxes',  "demo_dialog"}	  
 	  {'Dnd', "demo_dnd"}
-	  {'Drawing Area', "demo_drawingarea"}
 	  {'Entry',  "demo_entry"}
 	  {'File chooser',  "demo_file_chooser"}
 	  {'Flipping',  "demo_flipping"}
 	  {'Focus',  "demo_focus"}
 	  {'Gamma curve',  "demo_gamma_curve"}
 	  {'Gmenumodel', "demo_gmenumodel"}
-	  {'Menus',  "demo_menus"}
 	  {'Messages', "demo_messagedialog"}
 	  {'Notebook',  "demo_notebook"}
-	  {'Panes',  "demo_panes"}
-	  {'Pickers',  "demo_pickers"}
 	  {'Picker (Color)',  "demo_color_picker"}
 	  {'Progress bar',  "demo_progressbar"}
 	  {'Range controls',  "demo_range_controls"}
-	  {'Reparent',  "demo_reparent"}
-	  {'Revealer', "demo_revealer"}
+          {'Reparent',  "demo_reparent"}
 	  {'Scrolled windows',  "demo_scrolled_windows"}
-	  {'Spinbutton', "demo_spinbutton"}
-	  {'Stack', "demo_stack"}
 	  {'Status bar',  "demo_statusbar"}
 	  {'Test idle', "demo_idle"}
 	  {'Test timeout', "demo_timeout"}

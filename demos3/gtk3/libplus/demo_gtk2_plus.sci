@@ -6,17 +6,11 @@ function demo_gtk2_plus()
   B('images1')=demo_images1,
   B('images2')=demo_images2,
   B('images3')=demo_images3,
-  B('images')=demo_images,
   B('labels')=demo_labels,
-  B('liststore1')=demo_liststore1,
-  B('liststore')=demo_liststore,
   B('nsp graphic widget 1')=demo_nsp_graphic_widget,
   B('nsp graphic widget 2')=demo_dyn_graph,
   B('textview')=demo_textview,
-  B('treestore1')=demo_treestore1,
-  B('treestore')=demo_treestore,
-  B('treeview editable')=demo_treeview_editable,
-
+  
   win = gtkwindow_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]

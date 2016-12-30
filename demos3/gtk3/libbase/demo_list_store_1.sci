@@ -1,5 +1,10 @@
+// List Store
+//
+// The GtkListStore is used to store data in list form, to be used later on
+// by a GtkTreeView to display it. This demo builds a simple GtkListStore
+// and displays it.
 
-function demo_liststore () 
+function window= demo_list_store_1 () 
   window = gtkwindow_new()
   window.set_title[  "GtkListStore demo"]
   //window.connect[  "destroy", gtk_widget_destroyed]

@@ -1,10 +1,12 @@
+//Tree Store
+//
+// The GtkTreeStore is used to store data in tree form, to be used later on 
+// by a GtkTreeView to display it. This demo builds a simple GtkTreeStore 
+// and displays it. If you're new to the GtkTreeView widgets and associates,
+// look into the GtkListStore example first. 
 
-function demo_treestore()
-  demo_treestore_from_mat () 
-endfunction
+function demo_tree_store_1()
 
-
-function demo_treestore_from_mat () 
   window = gtkwindow_new()
   window.set_title["Gtk TreeStore demo"]
   //window.connect["destroy", gtk_widget_destroyed]

@@ -1,6 +1,5 @@
 // Tree View/Editable Cells
 
-
 function demo_treeview_editable() 
   
   function add_item(button,data)
