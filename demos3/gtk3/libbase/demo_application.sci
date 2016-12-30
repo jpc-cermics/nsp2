@@ -175,10 +175,10 @@ function [app]=demo_application(do_widget)
       action.set_enabled[%t];
     end
     
-    uiapp = getenv("NSP")+"/demos3/gtk3/libbase/application.ui";
+    uiapp = getenv("NSP")+"/demos3/gtk3/libbase/demo_application.ui";
     builder = gtk_builder_new_from_file(uiapp);
     //builder = gtk_builder_new ();
-    //builder.add_from_resource["/application/application.ui"];
+    //builder.add_from_resource["/application/demo_application.ui"];
 
     grid = builder.get_object [ "grid"];
     contents = builder.get_object [ "contents"];
