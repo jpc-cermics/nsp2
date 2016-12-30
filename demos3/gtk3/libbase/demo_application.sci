@@ -134,7 +134,7 @@ function [app]=demo_application(do_widget)
   endfunction
 
   function startup (app)
-    uimenus = getenv("NSP")+"/demos3/gtk3/libbase/menus.ui";
+    uimenus = getenv("NSP")+"/demos3/gtk3/libbase/demo_application_menus.ui";
     builder = gtk_builder_new_from_file(uimenus);
     // builder.add_from_resource[ "/application/menus.ui"];
     appmenu = builder.get_object["appmenu"];
