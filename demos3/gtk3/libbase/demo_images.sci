@@ -16,49 +16,49 @@ function window = demo_images(do_widget)
 // Create an image from images stored in file
   
   function demo_add_image(image,ok,title,vbox)
-    label = gtklabel_new();
+    label = gtk_label_new();
     label.set_markup["<u>"+title+"</u>"];
     vbox.pack_start[ label,expand=%f,fill=%f,padding=0]
     if ok then
-      frame = gtkframe_new();
+      frame = gtk_frame_new();
       frame.set_shadow_type[GTK.SHADOW_IN];
       vbox.pack_start[frame,expand=%f,fill=%f,padding=0]
       frame.add[image]
     else
-      label = gtklabel_new();
+      label = gtk_label_new();
       label.set_markup["<u>"+'failed to create image'+"</u>"];
       vbox.pack_start[ label,expand=%f,fill=%f,padding=0]
     end
   endfunction
 
-  window = gtkwindow_new()
+  window = gtk_window_new()
   window.set_title[" images "];
   window.set_border_width[  8]
-  vbox = gtkbox_new("vertical",spacing=8);
+  vbox = gtk_box_new("vertical",spacing=8);
   vbox.set_border_width[  8]
   window.add[  vbox]
 
   function [image,ok]=demo_image_from_file(fname)
-    ok=execstr('image= gtkimage_new('"file'',fname)',errcatch=%t);
+    ok=execstr('image= gtk_image_new('"file'',fname)',errcatch=%t);
   endfunction
 
   image = gtk_image_new_from_icon_name("gtk3-demo", GTK.ICON_SIZE_DIALOG);
-  demo_add_image(image,%t,"gtkimage_new_from_icon_name",vbox)
+  demo_add_image(image,%t,"gtk_image_new_from_icon_name",vbox)
   
   fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif";
   [image,ok]=demo_image_from_file(fname)
-  demo_add_image(image,ok,"gtkimage_new(''file'',.) with gif file",vbox)
+  demo_add_image(image,ok,"gtk_image_new(''file'',.) with gif file",vbox)
 
   fname = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/floppybuddy.gif';
   [image,ok]=demo_image_from_file(fname)
-  demo_add_image(image,ok,"gtkimage_new(''file'',.) with animated gif file",vbox)
+  demo_add_image(image,ok,"gtk_image_new(''file'',.) with animated gif file",vbox)
 
   gicon = g_themed_icon_new_with_default_fallbacks ("battery-caution-charging-symbolic");
   image = gtk_image_new_from_gicon (gicon, GTK.ICON_SIZE_DIALOG);
-  demo_add_image(image,%t,"gtkimage_new_from_gicon",vbox)
+  demo_add_image(image,%t,"gtk_image_new_from_gicon",vbox)
   
   // Sensitivity control
-  button = gtktogglebutton_new(mnemonic="_Insensitive");
+  button = gtk_toggle_button_new(mnemonic="_Insensitive");
   vbox.pack_start[ button,expand=%f,fill=%f,padding=0]
   
   function toggle_sensitivity_callback(togglebutton,args)

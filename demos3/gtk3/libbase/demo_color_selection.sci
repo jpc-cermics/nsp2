@@ -52,26 +52,26 @@ function window=demo_color_selection (do_widget)
     dialog.destroy[];
   endfunction
 
-  window = gtkwindow_new ();
+  window = gtk_window_new ();
   window.set_title[  "Color Selection"]
   window.set_border_width[  8]
   color= gdk_rgba_new("rgb(0,0,65535)");
   window.set_data[color=color];
 
-  vbox = gtkbox_new("vertical",spacing=8);
+  vbox = gtk_box_new("vertical",spacing=8);
   vbox.set_border_width[  8]
   window.add[  vbox]
 
-  frame = gtkframe_new();
+  frame = gtk_frame_new();
   frame.set_shadow_type[GTK.SHADOW_IN];
   vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
 
-  darea = gtkdrawingarea_new ();
+  darea = gtk_drawing_area_new ();
   darea.connect["draw", draw_callback,list(window)]
   darea.set_size_request[  200, 200]
   frame.add[  darea]
 
-  button = gtkbutton_new(mnemonic="_Change the above color");
+  button = gtk_button_new(mnemonic="_Change the above color");
   vbox.pack_start[ button,expand=%f,fill=%f,padding=0]
   button.connect[  "clicked",change_color_callback,list(window,darea)];
   window.show_all[];

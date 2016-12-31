@@ -25,7 +25,7 @@ function demo_treeview_editable()
   function cell_edited (cell,path_string,new_text,data)
     model = data(1);
     col = cell.get_data["column"];
-    path = gtktreepath_new(path_string);
+    path = gtk_tree_path_new(path_string);
     i = path.get_indices[];
     iter = model.get_iter[path_string];
     select col 
@@ -42,19 +42,19 @@ function demo_treeview_editable()
     col_editable = 2;
     cols=["Nombre","Produits"];
     for col= 0:1
-      renderer = gtkcellrenderertext_new ();
+      renderer = gtk_cell_renderer_text_new ();
       renderer.connect[  "edited",  cell_edited,list(model)]
       renderer.set_data[column=col ];
       attrs= hash_create(text= col, editable= col_editable);
       // XXXX bugué a reparer 
       // treeview.insert_column_with_attributes[ -1,title=sprintf("Column
       // %d",col+1),renderer=renderer,attrs= attrs];
-      tc = gtktreeviewcolumn_new(title=cols[col+1],renderer=renderer,attrs=attrs);
+      tc = gtk_tree_view_column_new(title=cols[col+1],renderer=renderer,attrs=attrs);
       treeview.append_column[tc];
     end 
 
     // column for editable flag 
-    renderer = gtkcellrenderertoggle_new ();
+    renderer = gtk_cell_renderer_toggle_new ();
   
     function editable_toggled (cell, path_str, data)
     // callback for changing the toggle status 
@@ -70,23 +70,23 @@ function demo_treeview_editable()
     endfunction
   
     renderer.connect["toggled", editable_toggled,list(model,col_editable)]
-    col = gtktreeviewcolumn_new(title="Editable",renderer=renderer,attrs= hash(active=col_editable));
+    col = gtk_tree_view_column_new(title="Editable",renderer=renderer,attrs= hash(active=col_editable));
     col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED] 
     col.set_fixed_width[50]
     treeview.append_column[col];
   endfunction
     
-  window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
+  window = gtk_window_new();// (GTK.WINDOW_TOPLEVEL);
   window.set_title[  "Shopping list"]
   window.set_border_width[  5]
   // window.connect[  "destroy",gtk_widget_destroyed, &window]
 
-  vbox = gtkbox_new("vertical",spacing=5);
+  vbox = gtk_box_new("vertical",spacing=5);
   window.add[  vbox]
-  label=gtklabel_new(str="Shopping list (you can edit the cells!)")
+  label=gtk_label_new(str="Shopping list (you can edit the cells!)")
   vbox.pack_start[label,expand=%f,fill=%f,padding=0];
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
   sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
   vbox.pack_start[ sw,expand=%t,fill=%t,padding=0];
@@ -96,10 +96,10 @@ function demo_treeview_editable()
   str = ["Chateau Margaud"; "Kg de pommes de terre"; "Boites de confit de canard"];
   fls = list( [1;2;2], str, [%t;%t;%t]);
 
-  model = gtkliststore_new(fls) 
+  model = gtk_list_store_new(fls) 
 
   // create tree view 
-  treeview = gtktreeview_new(model);
+  treeview = gtk_tree_view_new(model);
   //treeview.set_rules_hint[  %t]
   treeview.get_selection[].set_mode[GTK.SELECTION_SINGLE];
 
@@ -108,14 +108,14 @@ function demo_treeview_editable()
   sw.add[treeview]
 
   // some buttons 
-  hbox = gtkbox_new("horizontal",spacing=4);
+  hbox = gtk_box_new("horizontal",spacing=4);
   vbox.pack_start[ hbox,expand=%f,fill=%f,padding=0]
 
-  button = gtkbutton_new(label="Add item");
+  button = gtk_button_new(label="Add item");
   button.connect[  "clicked", add_item, list(model)]
   hbox.pack_start[ button,expand=%t,fill=%t,padding=0]
 
-  button = gtkbutton_new(label="Remove item");
+  button = gtk_button_new(label="Remove item");
   button.connect[  "clicked",remove_item, list(treeview)]
   hbox.pack_start[ button,expand=%t,fill=%t,padding=0]
 

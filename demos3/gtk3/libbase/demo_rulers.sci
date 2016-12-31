@@ -3,7 +3,7 @@
 // Deprecated and removed
 
 function demo_rulers()
-  win = gtkwindow_new()
+  win = gtk_window_new()
   win.connect["delete_event", demo_delete];
   win.set_title["rulers"];
   win.set_size_request[300, 300]
@@ -49,7 +49,7 @@ function demo_rulers()
   xoptions=GTK.FILL,  yoptions=ior(GTK.EXPAND, GTK.FILL),
   table.attach[yruler,0,1,1,2,xoptions=xoptions,yoptions=yoptions];
   yruler.show[]
-  label = gtklabel_new(str = "The rulers now work!\n" +
+  label = gtk_label_new(str = "The rulers now work!\n" +
   "They use the new interface to\n" +
   "gtk_signal_emit.")
   xoptions=ior(GTK.EXPAND,GTK.FILL),  yoptions=xoptions;

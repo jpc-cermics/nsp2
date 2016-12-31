@@ -45,12 +45,12 @@ function demo_item_factory ()
     list( "/Help/_Help",       "",         gtk_ifactory_cb,       0, "<StockItem>", "gtk-help"),
     list( "/Help/_About",      "",         gtk_ifactory_cb,       0,"","" ));
   
-  window = gtkwindow_new();
+  window = gtk_window_new();
   // window.set_screen[  widget.get_screen[]]
   // window.connect[  "destroy",...];
   // window.connect[  "delete-event",...]
       
-  accel_group = gtkaccelgroup_new ()
+  accel_group = gtk_accel_group_new ()
   item_factory = gtkitemfactory_new ("menu_bar", "<main>", accel_group= accel_group)
   window.set_data[main = item_factory];
   window.add_accel_group[  accel_group]
@@ -81,24 +81,24 @@ function demo_item_factory ()
   tooltips.set_tip[ item_factory.get_item[ "/File/Save"], "Safe file"];
   tooltips.set_tip[ item_factory.get_item[ "/Preferences/Color"],  "Modify color"];
   
-  box1 = gtkbox_new("vertical",spacing=0);
+  box1 = gtk_box_new("vertical",spacing=0);
   window.add[  box1]
   
   box1.pack_start[  item_factory.get_widget["<main>"]];
 
-  label = gtklabel_new(str="Type\n<alt>\nto start");
+  label = gtk_label_new(str="Type\n<alt>\nto start");
   label.set_size_request[  200, 200]
   label.set_alignment[  0.5, 0.5]
   box1.pack_start[ label,expand=%t,fill=%t,padding=0]
 
-  separator = gtkseparator_new("horizontal");
+  separator = gtk_separator_new("horizontal");
   box1.pack_start[ separator,expand=%f,fill=%t,padding=0]
 
-  box2 = gtkbox_new("vertical",spacing=10);
+  box2 = gtk_box_new("vertical",spacing=10);
   box2.set_border_width[  10]
   box1.pack_start[ box2,expand=%f,fill=%t,padding=0]
 
-  button = gtkbutton_new(label="close");
+  button = gtk_button_new(label="close");
   button.connect[ "clicked",button_destroy_win,list(window)];
   box2.pack_start[ button,expand=%t,fill=%t,padding=0]
   button.set_can_default[%t]

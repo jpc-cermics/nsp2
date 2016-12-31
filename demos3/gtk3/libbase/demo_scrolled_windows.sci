@@ -1,10 +1,10 @@
 // GtkScrolledWindow
 
 function demo_scrolled_windows()
-  dialog = gtkdialog_new()
+  dialog = gtk_dialog_new()
   //dialog.connect["delete_event", demo_delete];
   dialog.set_title["dialog"];
-  scrolled_window= gtkscrolledwindow_new()
+  scrolled_window= gtk_scrolled_window_new()
   scrolled_window.set_min_content_width[200];
   scrolled_window.set_min_content_height[200];
   scrolled_window.set_border_width[10]
@@ -19,7 +19,7 @@ function demo_scrolled_windows()
   table.show[]
   for i = 0:5
     for j = 0:5
-      button = gtktogglebutton_new(label=sprintf("button (%d,%d)",i,j));
+      button = gtk_toggle_button_new(label=sprintf("button (%d,%d)",i,j));
       table.attach[button,i,j,1,1];
       button.show[]
     end

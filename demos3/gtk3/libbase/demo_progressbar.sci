@@ -51,29 +51,29 @@ function demo_progressbar()
     args(1).set_text[widget.get_text[]];
   endfunction
 
-  dialog = gtkdialog_new (flags=ior(GTK.DIALOG_MODAL,GTK.DIALOG_DESTROY_WITH_PARENT));
+  dialog = gtk_dialog_new (flags=ior(GTK.DIALOG_MODAL,GTK.DIALOG_DESTROY_WITH_PARENT));
   dialog.set_resizable[ %f]
   dialog.set_title["GtkProgressBar"]
   dialog.set_border_width[ 0]
 
   vbox = dialog.get_content_area[];
-  frame = gtkframe_new(label="Progress");
+  frame = gtk_frame_new(label="Progress");
   vbox.pack_start[ frame,expand=%f,fill=%t,padding=0]
-  vbox2 = gtkbox_new("vertical",spacing=5);
+  vbox2 = gtk_box_new("vertical",spacing=5);
   frame.add[ vbox2]
 
-  align = gtkbox_new("horizontal",spacing=5);
+  align = gtk_box_new("horizontal",spacing=5);
   vbox2.pack_start[ align,expand=%f,fill=%f,padding=5]
 
-  pbar = gtkprogressbar_new();
+  pbar = gtk_progress_bar_new();
   align.add[pbar];
-  align = gtkbox_new("horizontal",spacing=5);
+  align = gtk_box_new("horizontal",spacing=5);
   vbox2.pack_start[ align,expand=%f,fill=%f,padding=5]
-  hbox = gtkbox_new("horizontal",spacing=5);
+  hbox = gtk_box_new("horizontal",spacing=5);
   align.add[ hbox]
-  label = gtklabel_new(str="Label updated by user :");
+  label = gtk_label_new(str="Label updated by user :");
   hbox.pack_start[ label,expand=%f,fill=%t,padding=0]
-  label = gtklabel_new(str="");
+  label = gtk_label_new(str="");
   hbox.pack_start[ label,expand=%f,fill=%t,padding=0]
 
   pbar.set_data[activity_mode=%f];
@@ -86,15 +86,15 @@ function demo_progressbar()
   dialog.connect["destroy",destroy_timeout,list(timeout)];
 
   //---- Options
-  frame = gtkframe_new(label="Options");
+  frame = gtk_frame_new(label="Options");
   vbox.pack_start[ frame,expand=%f,fill=%t,padding=0]
-  vbox2 = gtkbox_new("vertical",spacing=5);
+  vbox2 = gtk_box_new("vertical",spacing=5);
   frame.add[ vbox2]
 
-  tab = gtkgrid_new();
+  tab = gtk_grid_new();
   vbox2.pack_start[ tab,expand=%f,fill=%t,padding=0]
   //----- Orientation
-  label = gtklabel_new(str="Orientation:");
+  label = gtk_label_new(str="Orientation:");
   //label.set_alignment[  0, 0.5]
   tab.attach[label,0,0,1,1];
 
@@ -108,22 +108,22 @@ function demo_progressbar()
     args(1).set_orientation[i];
   endfunction
 
-  combobox =gtkcombobox_new(text=['Horizontal','Vertical']);
+  combobox =gtk_combo_box_new(text=['Horizontal','Vertical']);
   combobox.set_active[0];
   combobox.connect [ "changed",progressbar_toggle_orientation,list(pbar)];
-  hbox = gtkbox_new("horizontal",spacing=0);
+  hbox = gtk_box_new("horizontal",spacing=0);
   tab.attach[ hbox, 1, 0, 1,1];
   hbox.pack_start[combobox,expand=%t,fill=%t,padding=0]
 
   //----- Show text
-  check = gtkcheckbutton_new(label="Show text");
+  check = gtk_check_button_new(label="Show text");
   tab.attach[  check, 0, 1,1,1];
-  hbox = gtkbox_new("horizontal",spacing=0);
+  hbox = gtk_box_new("horizontal",spacing=0);
   tab.attach[  hbox, 1, 1,1, 1];
-  label = gtklabel_new(str="Text: ");
+  label = gtk_label_new(str="Text: ");
   hbox.pack_start[label,expand=%f,fill=%t,padding=0]
 
-  entry = gtkentry_new ();
+  entry = gtk_entry_new ();
   entry.connect["changed",entry_changed,list(pbar)];
   hbox.pack_start[ entry,expand=%t,fill=%t,padding=0]
   entry.set_text["Progress bar text"];
@@ -134,22 +134,22 @@ function demo_progressbar()
   check.connect[  "clicked",toggle_show_text,list(pbar,entry)];
 
   //----- Activity mode
-  check = gtkcheckbutton_new(label="Activity mode");
+  check = gtk_check_button_new(label="Activity mode");
   tab.attach[ check,0,3,1,1];
 
-  hbox = gtkbox_new("horizontal",spacing=0);
+  hbox = gtk_box_new("horizontal",spacing=0);
   tab.attach[ hbox,1, 3,1,1];
-  label = gtklabel_new(str="Pulse step: ");
+  label = gtk_label_new(str="Pulse step: ");
   hbox.pack_start[ label,expand=%f,fill=%t,padding=0]
-  adj = gtkadjustment_new(value=3,lower=1,upper=20,step_incr=1,page_incr=5,page_size=0);
-  step_spin = gtkspinbutton_new(adjustment=adj,climb_rate=0,digits=0);
+  adj = gtk_adjustment_new(value=3,lower=1,upper=20,step_incr=1,page_incr=5,page_size=0);
+  step_spin = gtk_spin_button_new(adjustment=adj,climb_rate=0,digits=0);
   adj.connect[ "value_changed",adjust_step, list(pbar,step_spin)];
   hbox.pack_start[ step_spin,expand=%f,fill=%t,padding=0]
   step_spin.set_sensitive[%f];
   check.connect[ "clicked",toggle_activity_mode,list(pbar,step_spin)];
 
   // ---- Invert movement
-  check = gtkcheckbutton_new(label="inverted");
+  check = gtk_check_button_new(label="inverted");
   tab.attach[ check,0,4,1,1];
   check.connect[ "clicked",toggle_inverted_mode,list(pbar)];
   //------ Close

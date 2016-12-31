@@ -1,15 +1,15 @@
 function demo_dyn_graph()
-  win = gtkwindow_new()
+  win = gtk_window_new()
   win.connect["delete_event", demo_delete];
   win.set_title["range_controls"];
-  box1 = gtkbox_new("vertical",spacing=0)
+  box1 = gtk_box_new("vertical",spacing=0)
   win.add[box1]
   box1.show[]
 
   id_win=nsp_graphic_new(win,box1,dim=[300,200]);
 
   initial_v=10;
-  adjustment =gtkadjustment_new(value=initial_v,lower=5,upper=21,step_incr=1,...
+  adjustment =gtk_adjustment_new(value=initial_v,lower=5,upper=21,step_incr=1,...
 				page_incr=1,page_size=1)
   win.set_data[hscale=initial_v];
   scale = gtk_scale_new(GTK.ORIENTATION_HORIZONTAL,adjustment=adjustment)
@@ -28,7 +28,7 @@ function demo_dyn_graph()
 
   // hbox for radio buttons
   // ----------------------
-  box2 = gtkbox_new("horizontal",spacing=0)
+  box2 = gtk_box_new("horizontal",spacing=0)
   box2.set_border_width[10]
   box1.pack_start[box2,expand=%f,fill=%f,padding=0];
   box2.show[];
@@ -37,7 +37,7 @@ function demo_dyn_graph()
 
   // The "toggled" signal
 
-  button1=gtkradiobutton_new(label="hot")
+  button1=gtk_radio_button_new(label="hot")
   box2.pack_start[button1]
   button1.show[]
   // button1 i sthe default selection.
@@ -46,24 +46,24 @@ function demo_dyn_graph()
   //
   button1.connect["toggled",demo_dyn_graph_toggled, list(id_win,button1,1,win)];
   //
-  button=gtkradiobutton_new(group=button1,label= "gray");
+  button=gtk_radio_button_new(group=button1,label= "gray");
   box2.pack_start[button];
   button.show[];
   button.connect[ "toggled",demo_dyn_graph_toggled,
 		   list(id_win,button,2,win)];
   //
-  button=gtkradiobutton_new(group=button1,label= "jet");
+  button=gtk_radio_button_new(group=button1,label= "jet");
   box2.pack_start[button];
   button.show[];
   button.connect[ "toggled",demo_dyn_graph_toggled,
 		   list(id_win,button,3,win)];
 
-  separator = gtkseparator_new("horizontal");
+  separator = gtk_separator_new("horizontal");
   box1.pack_start[separator];
   separator.show[];
 
   //
-  button = gtkbutton_new(label="Close")
+  button = gtk_button_new(label="Close")
   button.connect["clicked", button_destroy_win,list(win)];
   box1.pack_start[button,expand=%f,fill=%f,padding=0]
   button.set_can_default[%t]

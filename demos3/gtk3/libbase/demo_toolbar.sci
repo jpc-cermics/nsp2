@@ -32,15 +32,15 @@ function demo_toolbar()
     // the model contains a tool_item and a string
     item = gtk_tool_item_new();
     fls = list(list(item),"name")
-    list_store = gtkliststore_new(fls,%f);
+    list_store = gtk_list_store_new(fls,%f);
     treeview = gtk_tree_view_new_with_model (list_store);
 
     col_id=1;
-    renderer = gtkcellrenderertext_new ();
+    renderer = gtk_cell_renderer_text_new ();
     //renderer.connect[  "edited",  cell_edited,list(model)]
     renderer.set_data[column=col_id ];
     attrs= hash_create(text= col_id, editable= col_id);
-    col= gtktreeviewcolumn_new(title="ToolItem",renderer=renderer,attrs=attrs);
+    col= gtk_tree_view_column_new(title="ToolItem",renderer=renderer,attrs=attrs);
     treeview.append_column[col];
 
     for str=["visible","expand","homogeneous","is_important"]

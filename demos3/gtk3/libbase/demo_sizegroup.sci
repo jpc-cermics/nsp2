@@ -19,7 +19,7 @@ function demo_sizegroup ()
   // gtkoptionmenu_new deprecated and replaced by gtk_combo_box_text_new
     if %t then 
       // shortest way 
-      option_menu = gtkcombobox_new(text=strings); // with_entry=%t);
+      option_menu = gtk_combo_box_new(text=strings); // with_entry=%t);
       option_menu.set_active[1];
     else
       // another way 
@@ -32,7 +32,7 @@ function demo_sizegroup ()
   endfunction
 
   function add_row (table, row,size_group,size_group_label,label_text,options)
-    label = gtklabel_new(mnemonic=label_text);
+    label = gtk_label_new(mnemonic=label_text);
     table.attach[  label,0, row, 1,1];//  xoptions=ior(GTK.EXPAND,GTK.FILL)];
     option_menu = create_option_menu (options);
     label.set_mnemonic_widget[ option_menu]
@@ -48,27 +48,27 @@ end_options = ["Square", "Round", "Arrow"];
 
 // XXXX a rechanger GTK.RESPONSE_NONE,
 //// ,buttons= GTK.STOCK_CLOSE);
-window = gtkdialog_new(title = "GtkSizeGroup")
+window = gtk_dialog_new(title = "GtkSizeGroup")
 window.set_resizable[%f]
 
 // XXX window.connect[  "response",gtk_widget_destroy, NULL]
 // window.connect[  "destroy",gtk_widget_destroyed, &window]
 
-vbox = gtkbox_new("vertical",spacing=5);
+vbox = gtk_box_new("vertical",spacing=5);
 window_vbox = window.get_content_area[];
 window_vbox.pack_start[ vbox,expand=%t,fill=%t,padding=0];
 vbox.set_border_width[  5]
 
-size_group = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
-size_group_labels = gtksizegroup_new (GTK.SIZE_GROUP_HORIZONTAL);
+size_group = gtk_size_group_new (GTK.SIZE_GROUP_HORIZONTAL);
+size_group_labels = gtk_size_group_new (GTK.SIZE_GROUP_HORIZONTAL);
 
 // Create one frame holding color options
 
-frame = gtkframe_new(label="Color Options");
+frame = gtk_frame_new(label="Color Options");
 vbox.pack_start[ frame,expand=%t,fill=%t,padding=0]
 
 // table = gtktable_new(rows=2,columns=2,homogeneous=%f);
-table = gtkgrid_new();// rows=2,columns=2,homogeneous=%f);
+table = gtk_grid_new();// rows=2,columns=2,homogeneous=%f);
 table.set_row_homogeneous[%f];
 table.set_column_homogeneous[%f];
 table.set_column_spacing[5];
@@ -80,10 +80,10 @@ add_row (table, 1, size_group, size_group_labels, "_Background", color_options);
 
 // And another frame holding line style options
 
-frame = gtkframe_new(label="Line Options");
+frame = gtk_frame_new(label="Line Options");
 vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-table = gtkgrid_new();
+table = gtk_grid_new();
 table.set_row_homogeneous[%f];
 table.set_column_homogeneous[%f];
 table.set_column_spacing[5];
@@ -94,7 +94,7 @@ add_row (table, 0, size_group, size_group_labels, "_Dashing", dash_options);
 add_row (table, 1, size_group, size_group_labels, "_Line ends", end_options);
 
 //  And a check button to turn grouping on and off */
-check_button = gtkcheckbutton_new(mnemonic="_Enable grouping");
+check_button = gtk_check_button_new(mnemonic="_Enable grouping");
 vbox.pack_start[ check_button,expand=%f,fill=%f,padding=0]
 
 check_button.set_active[  %t]

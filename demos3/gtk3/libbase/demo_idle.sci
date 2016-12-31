@@ -1,9 +1,9 @@
 function [y]=demo_idle(_button)
   y=1
-  dialog = gtkdialog_new()
+  dialog = gtk_dialog_new()
   dialog.connect["delete_event", demo_delete];
   dialog.set_title["Idle Test"];
-  label = gtklabel_new(str="count: 0")
+  label = gtk_label_new(str="count: 0")
   dialog_vbox = dialog.get_content_area[];
   dialog_vbox.pack_start[label]
   label.show[]

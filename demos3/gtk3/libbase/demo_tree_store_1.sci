@@ -7,17 +7,17 @@
 
 function demo_tree_store_1()
 
-  window = gtkwindow_new()
+  window = gtk_window_new()
   window.set_title["Gtk TreeStore demo"]
   //window.connect["destroy", gtk_widget_destroyed]
   window.set_border_width[  8]
 
-  vbox = gtkbox_new("vertical",spacing=8);
+  vbox = gtk_box_new("vertical",spacing=8);
   window.add[  vbox]
-  label = gtklabel_new(str="This is a tree store test From a real Matrix .");
+  label = gtk_label_new(str="This is a tree store test From a real Matrix .");
   vbox.pack_start[ label,expand=%f,fill=%f,padding=0]
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_shadow_type[GTK.SHADOW_ETCHED_IN]
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC]
   vbox.pack_start[sw,expand=%t,fill=%t,padding=0]
@@ -26,7 +26,7 @@ function demo_tree_store_1()
   mode = 2
   if mode==1 then 
     M= testmatrix('magic',5);
-    model = gtktreestore_new(M); 
+    model = gtk_tree_store_new(M); 
     // fill the model at next level 
     it = model.get_iter_first[] 
     while %t 
@@ -39,7 +39,7 @@ function demo_tree_store_1()
       
   if mode == 2 
     M= testmatrix('magic',5);
-    model = gtktreestore_new(list(1,2,3,4,5),%f); 
+    model = gtk_tree_store_new(list(1,2,3,4,5),%f); 
     for i=1:3 
       iter=model.append[list(1,2,3,4,5)];
       for j=1:3 
@@ -50,7 +50,7 @@ function demo_tree_store_1()
   
   if mode == 3 
     M= testmatrix('magic',5);
-    model = gtktreestore_new(list(1,2,3,4,5),%f); 
+    model = gtk_tree_store_new(list(1,2,3,4,5),%f); 
     for i=1:3 
       iter=model.insert[0,list([1:5]*i)];
       for j=1:3 
@@ -61,15 +61,15 @@ function demo_tree_store_1()
     
   // create tree view */
 
-  treeview = gtktreeview_new(model);
+  treeview = gtk_tree_view_new(model);
   // treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
 
   sw.add[treeview]
 
-  renderer = gtkcellrenderertext_new ();
+  renderer = gtk_cell_renderer_text_new ();
   for i=1:size(M,'c') 
-    col = gtktreeviewcolumn_new(title=sprintf("Col %d",i),renderer=renderer,attrs=hash(text=i-1));
+    col = gtk_tree_view_column_new(title=sprintf("Col %d",i),renderer=renderer,attrs=hash(text=i-1));
     col.set_sort_column_id[i-1];
     treeview.append_column[col];
   end 

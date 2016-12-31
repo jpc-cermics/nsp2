@@ -18,7 +18,7 @@ function demo_filter()
   C5 = list(10,20,30);
   list_store=list(C1,C23,C4,C5);
 
-  model = gtkliststore_new(list_store);
+  model = gtk_list_store_new(list_store);
   
   // to get back the model as a list description. 
   L1=model.get_list[]; 
@@ -67,7 +67,7 @@ function demo_filter()
 		      ["foo";"goo";"moo";"roo"],list(10,30,89,789))]
   
   // an empty model 
-  model = gtkliststore_new(list(%t,1,3,"",list(4)),%f);
+  model = gtk_list_store_new(list(%t,1,3,"",list(4)),%f);
   // fill the model with set 
   model.set[list([%t;%t;%f;%f],[6;7;88;90],[8;9;90;90],...
                  ["foo";"goo";"moo";"roo"],list(10,30,89,789))];

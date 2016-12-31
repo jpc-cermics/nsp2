@@ -8,7 +8,7 @@ function demo_handle_box ()
     type(child,'string'),action(1));
   endfunction 
   
-  window = gtkwindow_new ();// GTK.WINDOW_TOPLEVEL);
+  window = gtk_window_new ();// GTK.WINDOW_TOPLEVEL);
   window.set_title[  "Handle Box Test"]
   window.set_resizable[  %f]
     
@@ -16,27 +16,27 @@ function demo_handle_box ()
       
   window.set_border_width[  20]
 
-  vbox = gtkbox_new("vertical",spacing=0);
+  vbox = gtk_box_new("vertical",spacing=0);
   window.add[  vbox]
   vbox.show[];
 
-  label = gtklabel_new(str="Above");
+  label = gtk_label_new(str="Above");
   vbox.add[  label]
   label.show[];
 
-  separator = gtkseparator_new("horizontal");
+  separator = gtk_separator_new("horizontal");
   vbox.add[  separator]
   separator.show[];
     
-  hbox = gtkbox_new("horizontal",spacing=10);
+  hbox = gtk_box_new("horizontal",spacing=10);
   vbox.add[  hbox]
   hbox.show[];
 
-  separator = gtkseparator_new("horizontal");
+  separator = gtk_separator_new("horizontal");
   vbox.add[  separator]
   separator.show[];
 
-  label = gtklabel_new(str="Below");
+  label = gtk_label_new(str="Below");
   vbox.add[  label]
   label.show[];
 
@@ -61,7 +61,7 @@ function demo_handle_box ()
   handle_box2.connect[ "child_detached", handle_box_child_signal, list( "detached")]
   handle_box2.show[];
 
-  label = gtklabel_new(str="Fooo!");
+  label = gtk_label_new(str="Fooo!");
   handle_box2.add[  label]
   label.show[];
   window.show[];

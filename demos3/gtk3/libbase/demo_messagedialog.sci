@@ -1,7 +1,7 @@
 // MessageDialog 
 
 function messagedialog(t,mess) 
-  dialog = gtkmessagedialog_new (flags= GTK.DIALOG_MODAL,
+  dialog = gtk_message_dialog_new (flags= GTK.DIALOG_MODAL,
      type= t,
      buttons= GTK.BUTTONS_OK,
      message = mess );

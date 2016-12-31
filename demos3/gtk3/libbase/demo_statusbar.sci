@@ -2,11 +2,11 @@
 
 function []=demo_statusbar()
 //
-  dialog = gtkdialog_new()
+  dialog = gtk_dialog_new()
   dialog.connect[ "delete_event", demo_delete];
   dialog.set_title["Status Bar Test"];
 
-  statusbar = gtkstatusbar_new()
+  statusbar = gtk_statusbar_new()
   vbox = dialog.get_content_area[];
   vbox.add[statusbar];
   statusbar.show[]

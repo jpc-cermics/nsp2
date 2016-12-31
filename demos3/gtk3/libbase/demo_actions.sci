@@ -252,13 +252,13 @@ function window= demo_actions(do_widget)
 	     "  </popup>\n"];
   
   str = strcat(ui_info);
-  merge = gtkuimanager_new ();
-  window = gtkwindow_new();// GTK_WINDOW_TOPLEVEL;
+  merge = gtk_ui_manager_new ();
+  window = gtk_window_new();// GTK_WINDOW_TOPLEVEL;
   window.set_default_size[  -1, -1];
   window.set_title[ "Actions Demo"];
   //g_signal_connect_swapped (window, "destroy", G_CALLBACK (g_object_unref), merge);
   //g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
-  box = gtkbox_new("vertical",spacing=0);
+  box = gtk_box_new("vertical",spacing=0);
   window.add[box];
   box.show[];
   
@@ -289,11 +289,11 @@ function window= demo_actions(do_widget)
   // revoir le rep 
   if rep==0 then printf("building menus failed: \n"); end
   
-  hbox = gtkbox_new("horizontal",spacing=0);
+  hbox = gtk_box_new("horizontal",spacing=0);
   box.pack_end[hbox,expand=%f,fill=%f,padding=0];
   hbox.show[];
   
-  button = gtkbutton_new(label="Add");
+  button = gtk_button_new(label="Add");
   hbox.pack_start[ button,expand=%f,fill=%f,padding=0];
   button.show[];
   
@@ -320,7 +320,7 @@ function window= demo_actions(do_widget)
   
   button.connect["clicked", demoaction_add_cb, list(merge)];
   
-  button = gtkbutton_new(label="Remove");
+  button = gtk_button_new(label="Remove");
   hbox.pack_start[ button,expand=%f,fill=%f,padding=0];
   button.show[];
   
@@ -338,7 +338,7 @@ function window= demo_actions(do_widget)
   
   button.connect["clicked", demoaction_remove_cb, list(merge)];
 
-  button = gtkbutton_new(label="Popup");
+  button = gtk_button_new(label="Popup");
   hbox.pack_start[ button,expand=%f,fill=%f,padding=0];
   button.show[];
   

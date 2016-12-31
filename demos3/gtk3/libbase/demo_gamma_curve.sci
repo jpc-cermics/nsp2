@@ -1,7 +1,7 @@
 // Gamma Curve 
 
 function []=demo_gamma_curve()
-  win = gtkwindow_new()
+  win = gtk_window_new()
   //win.connect[ "destroy", hide];
   win.connect["delete_event", demo_delete];
   win.set_title["test"];

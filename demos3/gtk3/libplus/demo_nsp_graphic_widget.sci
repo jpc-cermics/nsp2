@@ -11,10 +11,10 @@ function [id1,id2]=demo_nsp_graphic_widget()
     end
   endfunction
 
-  dialog = gtkdialog_new();
+  dialog = gtk_dialog_new();
   dialog.set_title["dialog"];
   dialog_vbox = dialog.get_content_area[];
-  label = gtklabel_new(str="Insert a Nsp graphic window in a dialog");
+  label = gtk_label_new(str="Insert a Nsp graphic window in a dialog");
   dialog_vbox.pack_start[label, expand=%f,fill= %f,padding=5];
   id1=nsp_graphic_new(dialog,dialog_vbox,dim=[600,400]);
   plot3d1();

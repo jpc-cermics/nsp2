@@ -21,14 +21,14 @@ function window= demo_tree_store_2()
   
   setup_default_icon ();
   
-  window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
+  window = gtk_window_new();// (GTK.WINDOW_TOPLEVEL);
   window.set_title[  "GTK+ Treestore demo"]
   //window.connect[  "destroy", hide];
   window.set_default_size[280,300]
 
-  hbox = gtkbox_new("horizontal",spacing=0);
+  hbox = gtk_box_new("horizontal",spacing=0);
   window.add[hbox]
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_shadow_type[GTK.SHADOW_ETCHED_IN]
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC]
   hbox.pack_start[sw,expand=%t,fill=%t,padding=0]
@@ -36,7 +36,7 @@ function window= demo_tree_store_2()
   function tree_view=create_tree(h)
 
     function message(t,mess)
-      dialog = gtkmessagedialog_new (flags= GTK.DIALOG_MODAL,
+      dialog = gtk_message_dialog_new (flags= GTK.DIALOG_MODAL,
       type= t,
       buttons= GTK.BUTTONS_OK,
       message = mess );
@@ -92,25 +92,25 @@ function window= demo_tree_store_2()
       end
     endfunction
 
-    model = gtktreestore_new(list("var","type","mxn"),%f);
+    model = gtk_tree_store_new(list("var","type","mxn"),%f);
     tree_model_append(model,h,0);
 
-    tree_view = gtktreeview_new ();
+    tree_view = gtk_tree_view_new ();
     tree_view.set_model[model=model];
     selection = tree_view.get_selection[];
     selection.set_mode[ GTK.SELECTION_BROWSE];
     tree_view.set_size_request[  200, -1]
 
-    cell = gtkcellrenderertext_new ();
-    col = gtktreeviewcolumn_new(title="Name",renderer=cell,attrs=hash(text= 0));
+    cell = gtk_cell_renderer_text_new ();
+    col = gtk_tree_view_column_new(title="Name",renderer=cell,attrs=hash(text= 0));
     tree_view.append_column[col];
 
-    cell = gtkcellrenderertext_new ();
-    col = gtktreeviewcolumn_new(title="Type",renderer=cell,attrs=hash(text= 1));
+    cell = gtk_cell_renderer_text_new ();
+    col = gtk_tree_view_column_new(title="Type",renderer=cell,attrs=hash(text= 1));
     tree_view.append_column[col];
 
-    cell = gtkcellrenderertext_new ();
-    col = gtktreeviewcolumn_new(title="mxn",renderer=cell,attrs=hash(text=  2));
+    cell = gtk_cell_renderer_text_new ();
+    col = gtk_tree_view_column_new(title="mxn",renderer=cell,attrs=hash(text=  2));
     tree_view.append_column[col];
 
     selection.connect["changed", selection_cb,list(model)]

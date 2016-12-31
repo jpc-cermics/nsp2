@@ -36,28 +36,28 @@ function demo_main_window()
       {'Test timeout', "demo_timeout"}
       {'Toolbar',  "demo_toolbar"}
       {'Tooltips', "demo_tooltips"}}
-  win = gtkwindow_new()
+  win = gtk_window_new()
   win.set_title["main window"]
   win.set_size_request[200, 400]
   //win.set_uposition[20,20]
   //win.connect["destroy",hide];
   win.connect["delete_event", demo_delete];
   win.set_title["gtktest"];
-  box1 = gtkbox_new("vertical",spacing=0)
+  box1 = gtk_box_new("vertical",spacing=0)
   win.add[box1]
   box1.show[]
-  scrolled_window = gtkscrolledwindow_new()
+  scrolled_window = gtk_scrolled_window_new()
   scrolled_window.set_border_width[10]
   scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
   box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0]
   scrolled_window.show[]
-  box2 = gtkbox_new("vertical",spacing=0)
+  box2 = gtk_box_new("vertical",spacing=0)
   box2.set_border_width[0]
   scrolled_window.add[box2];
   box2.show[];
   
   for i1 = 1:size(Demos,'*')
-    button = gtkbutton_new(label=Demos{i1}{1})
+    button = gtk_button_new(label=Demos{i1}{1})
     ok = execstr(sprintf("func=%s;",Demos{i1}{2}),errcatch=%t);
     if ok && is(func,%types.PList) then
       button.connect["clicked",func,win];
@@ -67,14 +67,14 @@ function demo_main_window()
     box2.pack_start[button]
     button.show[]
   end
-  separator = gtkseparator_new("horizontal")
+  separator = gtk_separator_new("horizontal")
   box1.pack_start[separator,expand= %f,fill= %f,padding=0]
   separator.show[]
-  box2 = gtkbox_new("vertical",spacing=10)
+  box2 = gtk_box_new("vertical",spacing=10)
   box2.set_border_width[10]
   box1.pack_start[box2,expand= %f,expand=%f,fill=%f,padding=0]
   box2.show[]
-  button = gtkbutton_new(label="close")
+  button = gtk_button_new(label="close")
   button.connect["clicked",button_destroy_win,list(win)];
   //button.set_flags[GTK.CAN_DEFAULT]
   box2.pack_start[button]

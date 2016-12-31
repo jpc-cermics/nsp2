@@ -5,10 +5,10 @@
 
 function demo_timeout(_button,parent)
 
-  dialog = gtkdialog_new(parent=parent)
+  dialog = gtk_dialog_new(parent=parent)
   dialog.connect["delete_event", demo_delete];
   dialog.set_title["Timeout Test"];
-  label = gtklabel_new(str="count: 0")
+  label = gtk_label_new(str="count: 0")
   //label.set_padding[10,10]
   dialog_vbox = dialog.get_content_area[];
   dialog_vbox.pack_start[label];

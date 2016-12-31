@@ -42,17 +42,17 @@ function ret= image_source_draw(da,cr, data)
 endfunction
 
 function demo_image_from_drawable()
-  window = gtkwindow_new();
+  window = gtk_window_new();
   // window.set_screen[  widget.get_screen[]]
   //window.connect[ "destroy", gtk_widget_destroyed];
 
-  vbox = gtkbox_new("vertical",spacing=0);
+  vbox = gtk_box_new("vertical",spacing=0);
   window.add[  vbox]
-  sw1 = gtkscrolledwindow_new ();
+  sw1 = gtk_scrolled_window_new ();
   sw1.set_policy[ GTK.POLICY_AUTOMATIC, GTK.POLICY_AUTOMATIC]
 
   sw1.set_size_request[  400, 400]
-  src = gtkdrawingarea_new ();
+  src = gtk_drawing_area_new ();
   w=800
   src.set_size_request[w,w]
 
@@ -65,17 +65,17 @@ function demo_image_from_drawable()
   sw1.add[ src]
   vbox.pack_start[ sw1,expand=%t,fill=%t,padding=0]
 
-  hbox = gtkbox_new("horizontal",spacing=3);
-  snap = gtkimage_new()
+  hbox = gtk_box_new("horizontal",spacing=3);
+  snap = gtk_image_new()
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_policy[GTK.POLICY_AUTOMATIC, GTK.POLICY_AUTOMATIC]
   sw.set_size_request[300,300]
 
   sw.add[snap]
   hbox.pack_end[  sw,expand=%f,fill=%f,padding=5]
 
-  button = gtkbutton_new(label="Get image from drawable");
+  button = gtk_button_new(label="Get image from drawable");
   button.connect[ "clicked", take_snapshot,list(sw1,src,snap)]
 
   hbox.pack_start[ button,expand=%f,fill=%f,padding=0];

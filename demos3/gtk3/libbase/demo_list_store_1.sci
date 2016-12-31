@@ -5,17 +5,17 @@
 // and displays it.
 
 function window= demo_list_store_1 () 
-  window = gtkwindow_new()
+  window = gtk_window_new()
   window.set_title[  "GtkListStore demo"]
   //window.connect[  "destroy", gtk_widget_destroyed]
   window.set_border_width[  8]
 
-  vbox = gtkbox_new("vertical",spacing=8);
+  vbox = gtk_box_new("vertical",spacing=8);
   window.add[  vbox]
-  label = gtklabel_new(str="List store test");
+  label = gtk_label_new(str="List store test");
   vbox.pack_start[ label,expand=%f,fill=%f,padding=0]
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_shadow_type[GTK.SHADOW_ETCHED_IN]
   sw.set_policy[GTK.POLICY_NEVER,GTK.POLICY_AUTOMATIC]
   vbox.pack_start[ sw,expand=%t,fill=%t,padding=0]
@@ -29,13 +29,13 @@ function window= demo_list_store_1 ()
   C5 = list(10,20,30);
   list_store=list(C1,C23,C4,C5);
 
-  model = gtkliststore_new(list_store);
+  model = gtk_list_store_new(list_store);
 
   // --------------------------------------------
   // A treeview for model visualization 
   // -------------------------------------------
 
-  treeview = gtktreeview_new(model);
+  treeview = gtk_tree_view_new(model);
   //treeview.set_rules_hint[%t];
   treeview.set_search_column[3];
   sw.add[treeview]
@@ -50,7 +50,7 @@ function window= demo_list_store_1 ()
 
   model = treeview.get_model[];
   // column for booleans 
-  renderer = gtkcellrenderertoggle_new ();
+  renderer = gtk_cell_renderer_toggle_new ();
   //uncomment if toggle button can be activated 
   
   function fixed_toggled (cell, path_str, data)
@@ -67,39 +67,39 @@ function window= demo_list_store_1 ()
   endfunction
   
   renderer.connect[  "toggled", fixed_toggled,list(model,C1)]
-  col = gtktreeviewcolumn_new(title="Boolean as toggle",renderer=renderer,attrs= hash(active=C1));
+  col = gtk_tree_view_column_new(title="Boolean as toggle",renderer=renderer,attrs= hash(active=C1));
   col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED]   // set this column to a fixed sizing (of 50 pixels) */
   col.set_fixed_width[50]
   treeview.append_column[col];
 
   // same column  for booleans as text 
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Boolean as text",renderer=renderer,attrs= hash(text=C1));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="Boolean as text",renderer=renderer,attrs= hash(text=C1));
   col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED]   // set this column to a fixed sizing (of 50 pixels) */
   col.set_fixed_width[50]
   treeview.append_column[col];
   
   // column for numbers */
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C2));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="Scalars",renderer=renderer,attrs=hash(text=C2));
   col.set_sort_column_id[C2];
   treeview.append_column[col];
 
   // column for numbers 
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C3));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="Scalars",renderer=renderer,attrs=hash(text=C3));
   col.set_sort_column_id[C3];
   treeview.append_column[col];
 
   // column for strings */
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="String",renderer=renderer,attrs=hash(text=C4));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="String",renderer=renderer,attrs=hash(text=C4));
   col.set_sort_column_id[C4];
   treeview.append_column[col];
   
   // column for numbers */
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C5));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="Scalars",renderer=renderer,attrs=hash(text=C5));
   col.set_sort_column_id[C5];
   treeview.append_column[col];
   // ---------------------------------------------

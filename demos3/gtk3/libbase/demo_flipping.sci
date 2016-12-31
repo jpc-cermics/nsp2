@@ -18,10 +18,10 @@ function demo_flipping ()
   endfunction
 
   function frame= create_forward_back (title, text_dir)
-    frame = gtkframe_new(label=title);
-    bbox = gtkbuttonbox_new("horizontal");
-    back_button = gtkbutton_new(icon_name="go-previous");
-    forward_button = gtkbutton_new(icon_name="document-save");
+    frame = gtk_frame_new(label=title);
+    bbox = gtk_button_box_new("horizontal");
+    back_button = gtk_button_new(icon_name="go-previous");
+    forward_button = gtk_button_new(icon_name="document-save");
     bbox.set_border_width[  5]
     frame.add[  bbox]
     bbox.add[  back_button]
@@ -29,11 +29,11 @@ function demo_flipping ()
     set_direction_recurse(frame,list(text_dir));
   endfunction
 
-  dialog = gtkdialog_new ();
+  dialog = gtk_dialog_new ();
   //     dialog.connect[  "destroy",hide]
   dialog.set_title[  "Bidirectional Flipping"]
 
-  check_button = gtkcheckbutton_new(label="Right-to-left global direction");
+  check_button = gtk_check_button_new(label="Right-to-left global direction");
   dialog_vbox = dialog.get_content_area[];
   dialog_vbox.pack_start[ check_button,expand=%t,fill=%t,padding=0];
   dialog_vbox.pack_start[ create_forward_back ("Default", GTK.TEXT_DIR_NONE)];

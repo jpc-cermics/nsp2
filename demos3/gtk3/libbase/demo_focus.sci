@@ -3,7 +3,7 @@
 function demo_focus()
 
   function [l,table]=make_focus_table(flag)
-    table = gtkgrid_new();
+    table = gtk_grid_new();
     tf =  ior(GTK.EXPAND,GTK.FILL);
     count=1
     l= list();
@@ -11,10 +11,10 @@ function demo_focus()
       for j=0:2
 	if flag then pos= j+3*i;else pos=  i+3*j; end
 	if modulo((i + j),2)==0
-          widget = gtkentry_new ();
+          widget = gtk_entry_new ();
 	  widget.set_text[sprintf("Foo %d",pos+1)];
 	else
-          widget = gtkbutton_new(label=sprintf("Foo %d",pos+1));
+          widget = gtk_button_new(label=sprintf("Foo %d",pos+1));
 	end
 	l($+1) =  widget
 	table.attach[widget, i, j, 1,1];
@@ -22,17 +22,17 @@ function demo_focus()
     end
   endfunction
 
-  dialog = gtkdialog_new(title="Keyboard focus navigation");
+  dialog = gtk_dialog_new(title="Keyboard focus navigation");
   //dialog.connect["destroy",hide]
   //dialog.connect["response",hide ]
   dialog.set_title["Keyboard Focus Navigation"]
-  frame = gtkframe_new(label="Weird tab focus chain");
+  frame = gtk_frame_new(label="Weird tab focus chain");
   dialog_vbox = dialog.get_content_area[];
   dialog_vbox.pack_start[ frame,expand=%t,fill=%t,padding=0];
   [l,table] = make_focus_table(%t);
   frame.add[  table]
   table.set_focus_chain[ l]
-  frame = gtkframe_new(label="Default tab focus chain");
+  frame = gtk_frame_new(label="Default tab focus chain");
   dialog_vbox.pack_start[ frame,expand=%t,fill=%t,padding=0];
   [l,table] = make_focus_table(%f);
   frame.add[ table]

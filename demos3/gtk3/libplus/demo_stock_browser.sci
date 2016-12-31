@@ -118,16 +118,16 @@ function label_set_func (tree_column,cell,model,iter,data)
 endfunction 
 
 function demo_stock_browser () 
-  window = gtkwindow_new ();
+  window = gtk_window_new ();
   window.set_title[  "Stock Icons and Items"]
   window.set_default_size[  -1, 500]
   //window.connect[  "destroy", gtk_widget_destroyed, &window]
   window.set_border_width[  8]
 
-  hbox = gtkbox_new("horizontal",spacing=8);
+  hbox = gtk_box_new("horizontal",spacing=8);
   window.add[  hbox]
 
-  sw = gtkscrolledwindow_new ();
+  sw = gtk_scrolled_window_new ();
   sw.set_policy[ GTK.POLICY_NEVER, GTK.POLICY_AUTOMATIC]
   hbox.pack_start[ sw,expand=%f,fill=%f,padding=0]
   
@@ -137,46 +137,46 @@ function demo_stock_browser ()
   for i=1:n 
     pix(i) = icon_data(i)(4);
   end
-  model = gtkliststore_new(list((1:n)',pix));
+  model = gtk_list_store_new(list((1:n)',pix));
   model.set_data[nsp_data=icon_data];
   
-  treeview = gtktreeview_new(model);
+  treeview = gtk_tree_view_new(model);
   sw.add[treeview]
       
-  col = gtktreeviewcolumn_new ();
+  col = gtk_tree_view_column_new ();
   col.set_title["Macro"];
   
-  cell_renderer = gtkcellrendererpixbuf_new ();
+  cell_renderer = gtk_cell_renderer_pixbuf_new ();
   col.pack_start[ cell_renderer,  %f];
   //  col.set_attributes[cell_renderer,hcreate(1,stock_id=1) ];
   col.set_cell_data_func[ cell_renderer, macro_set_func_pixbuf];
     
-  cell_renderer = gtkcellrenderertext_new ();
+  cell_renderer = gtk_cell_renderer_text_new ();
   col.pack_start[ cell_renderer, %t];
   col.set_cell_data_func[ cell_renderer, macro_set_func_text];
   treeview.append_column[ col]
     
-  cell_renderer = gtkcellrenderertext_new ();
+  cell_renderer = gtk_cell_renderer_text_new ();
   treeview.insert_column_with_data_func[ -1, "Label", cell_renderer, label_set_func];
 
-  cell_renderer = gtkcellrenderertext_new ();
+  cell_renderer = gtk_cell_renderer_text_new ();
   treeview.insert_column_with_data_func[ -1 ,"Accel", cell_renderer, accel_set_func];  
 
-  cell_renderer = gtkcellrenderertext_new ();
+  cell_renderer = gtk_cell_renderer_text_new ();
   treeview.insert_column_with_data_func[ -1, "ID",  cell_renderer,  id_set_func];
         
   align = gtkalignment_new(xalign=0.5,yalign=0.0,xscale=0.0,yscale=0.0);
   hbox.pack_end[ align, expand=%f,fill=%f,padding=0]
       
-  frame = gtkframe_new(label="Selected Item");
+  frame = gtk_frame_new(label="Selected Item");
   align.add[  frame]
 
-  vbox = gtkbox_new("vertical",spacing=8);
+  vbox = gtk_box_new("vertical",spacing=8);
   vbox.set_border_width[  4]
   frame.add[  vbox]
   
   //g_object_set_data_full (G_OBJECT (treeview), "stock-display",display, g_free); 
-  display= list( gtklabel_new(),gtklabel_new(), gtklabel_new(), gtkimage_new());
+  display= list( gtk_label_new(),gtk_label_new(), gtk_label_new(), gtk_image_new());
   treeview.set_data[stock_display=display];
   for el=display ;  vbox.pack_start[el, expand=%f,fill=%f,padding=0];end 
   selection = treeview.get_selection[];

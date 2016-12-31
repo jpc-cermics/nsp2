@@ -82,7 +82,7 @@ function demo_tooltips()
 	   "The GIMP"
 	   "Terminal"
 	   "Word Processor"]
-    model = gtktreestore_new(list(names));
+    model = gtk_tree_store_new(list(names));
   endfunction
 
   function selection_changed_cb (selection, tree_view)
@@ -196,8 +196,8 @@ function demo_tooltips()
   tree_view = gtk_tree_view_new_with_model (create_model ());
   tree_view.set_size_request[200, 240];
   
-  renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Col 0",renderer=renderer,attrs=hash(text= 0));
+  renderer = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new(title="Col 0",renderer=renderer,attrs=hash(text= 0));
   tree_view.append_column[col];
   
   // tree_view.insert_column_with_attributes 0, "Test",

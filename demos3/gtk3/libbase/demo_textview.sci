@@ -11,7 +11,7 @@
 
 
 function demo_textview ()
-  window = gtkwindow_new();
+  window = gtk_window_new();
   window.set_default_size[450, 450];
   // XXXXX window.connect["destroy",gtk_widget_destroyed];
   window.set_title["TextView"];
@@ -29,12 +29,12 @@ function demo_textview ()
   buffer = view1.get_buffer[];
   view2 = gtk_text_view_new_with_buffer(buffer);
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
   vpaned.add1[sw];
   sw.add[view1];
 
-  sw = gtkscrolledwindow_new();
+  sw = gtk_scrolled_window_new();
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
   vpaned.add2[sw];
   sw.add[view2];
@@ -42,7 +42,7 @@ function demo_textview ()
   
   function create_tags (buffer)
   // Create a bunch of tags. Note that it's also possible to
-  // create tags with gtktexttag_new() then add them to the
+  // create tags with gtk_text_tag_new() then add them to the
   // tag table for the buffer, gtk_text_buffer_create_tag() is
   // just a convenience function. Also note that you don't have
   // to give tags a name; pass NULL for the name to create an
@@ -211,10 +211,10 @@ function demo_textview ()
       function recursive_attach_view (depth,view,anchor)
 	if depth > 4 then return; end ;
 
-	child_view = gtktextview_new(buffer=view.get_buffer[]);
+	child_view = gtk_text_view_new(buffer=view.get_buffer[]);
 
 	// Event box is to add a black border around each child view */
-	event_box = gtkeventbox_new ();
+	event_box = gtk_event_box_new ();
 	color= gdk_color_parse ("black");
 	gtk_widget_modify_bg (event_box, GTK_STATE_NORMAL, color);
 
@@ -227,15 +227,15 @@ function demo_textview ()
 	recursive_attach_view (depth + 1, child_view, anchor);
       endfunction
       
-      buffer = gtktextbuffer_new ();
+      buffer = gtk_text_buffer_new ();
       iter= buffer.get_start_iter[];
       buffer.insert[iter,"This buffer is shared by a set of nested text views.\n Nested view:\n"];
       anchor = buffer.create_child_anchor[iter];
       buffer.insert[iter,"\nDon''t do this in real applications, please.\n"];
-      view = gtktextview_new(buffer=buffer);
+      view = gtk_text_view_new(buffer=buffer);
       recursive_attach_view (0,view, anchor);
-      window = gtkwindow_new();
-      sw = gtkscrolledwindow_new();
+      window = gtk_window_new();
+      sw = gtk_scrolled_window_new();
       sw.set_policy[ GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
       window.add[sw]
       sw.add[view];
@@ -256,16 +256,16 @@ function demo_textview ()
     while iter.find_anchor[]
       anchor = iter.get_child_anchor[];
       if i == 0  then
-	widget = gtkbutton_new(label="Click Me");
+	widget = gtk_button_new(label="Click Me");
 	widget.connect["clicked",easter_egg_callback];
       elseif i == 1
-	menu = gtkmenu_new ();
+	menu = gtk_menu_new ();
 	widget = gtkoptionmenu_new ();
-	menu_item = gtkmenuitem_new(label="Option 1");
+	menu_item = gtk_menu_item_new(label="Option 1");
 	menu.append[menu_item];
-	menu_item = gtkmenuitem_new(label="Option 2");
+	menu_item = gtk_menu_item_new(label="Option 2");
 	menu.append[menu_item];
-	menu_item = gtkmenuitem_new(label="Option 3");
+	menu_item = gtk_menu_item_new(label="Option 3");
 	menu.append[menu_item];
 	widget.set_menu[menu];
       elseif i == 2
@@ -274,9 +274,9 @@ function demo_textview ()
 	widget.set_size_request[70, -1];
       elseif i == 3
 	flop = getenv('NSP')+'/demos3/gtk3/libplus/floppybuddy.gif";
-	widget = gtkimage_new('file',flop);
+	widget = gtk_image_new('file',flop);
       elseif i == 4
-	widget = gtkentry_new ();
+	widget = gtk_entry_new ();
       end
       text_view.add_child_at_anchor[ widget, anchor];
       widget.show_all[];

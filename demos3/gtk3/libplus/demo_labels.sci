@@ -8,7 +8,7 @@ endfunction
 
 
 function button=create_sensitivity_control (widget)
-  button = gtktogglebutton_new(label="Sensitive");  
+  button = gtk_toggle_button_new(label="Sensitive");  
   button.set_active[widget.get_property['sensitive']];
   button.connect["toggled", sensitivity_toggled,list(widget)]
   button.show_all[];
@@ -32,19 +32,19 @@ function selectable_toggled (toggle,args)
 endfunction 
 
 function button=create_selectable_control (widget)
-  button = gtktogglebutton_new(label="Selectable");  
+  button = gtk_toggle_button_new(label="Selectable");  
   button.set_active[ %f]
   button.connect[ "toggled", selectable_toggled,list(widget)]
   button.show_all[]
 endfunction 
 
 function demo_labels ()
-  window = gtkwindow_new();
+  window = gtk_window_new();
   // window.connect[  "destroy", hide];
   window.set_title[  "Label"]
   
-  vbox = gtkbox_new("vertical",spacing=5);
-  hbox = gtkbox_new("horizontal",spacing=5);
+  vbox = gtk_box_new("vertical",spacing=5);
+  hbox = gtk_box_new("horizontal",spacing=5);
   window.add[  vbox]
   vbox.pack_end[hbox];
 
@@ -54,35 +54,35 @@ function demo_labels ()
   button = create_selectable_control (hbox);
 
   vbox.pack_start[ button,expand=%f,fill=%f,padding=0]
-  vbox = gtkbox_new("vertical",spacing=5);
+  vbox = gtk_box_new("vertical",spacing=5);
       
   hbox.pack_start[ vbox,expand=%f,fill=%f,padding=0]
   window.set_border_width[  5]
 
-  frame = gtkframe_new(label="Normal Label");
-  label = gtklabel_new(str="This is a Normal label");
+  frame = gtk_frame_new(label="Normal Label");
+  label = gtk_label_new(str="This is a Normal label");
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
   
-  frame = gtkframe_new(label="Multi-line Label");
-  label = gtklabel_new(str="This is a Multi-line label.\nSecond line\nThird line");
+  frame = gtk_frame_new(label="Multi-line Label");
+  label = gtk_label_new(str="This is a Multi-line label.\nSecond line\nThird line");
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-  frame = gtkframe_new(label="Left Justified Label");
-  label = gtklabel_new(str="This is a Left-Justified\nMulti-line label.\nThird      line");
+  frame = gtk_frame_new(label="Left Justified Label");
+  label = gtk_label_new(str="This is a Left-Justified\nMulti-line label.\nThird      line");
   label.set_justify[  GTK.JUSTIFY_LEFT]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-  frame = gtkframe_new(label="Right Justified Label");
-  label = gtklabel_new(str="This is a Right-Justified\nMulti-line label.\nFourth line, (j/k)");
+  frame = gtk_frame_new(label="Right Justified Label");
+  label = gtk_label_new(str="This is a Right-Justified\nMulti-line label.\nFourth line, (j/k)");
   label.set_justify[  GTK.JUSTIFY_RIGHT]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-  frame = gtkframe_new(label="Internationalized Label");
-  label = gtklabel_new();
+  frame = gtk_frame_new(label="Internationalized Label");
+  label = gtk_label_new();
   str=[ "French (Fran\303\247ais) Bonjour, Salut\n"
 	"Korean (\355\225\234\352\270\200)   \354\225\210\353\205\225\355\225\230\354\204\270\354\232\224, \354\225\210\353\205\225\355\225\230\354\213\255\353\213\210\352\271\214\n"
 	"Russian (\320\240\321\203\321\201\321\201\320\272\320\270\320\271) \320\227\320\264\321\200\320\260\320\262\321\201\321\202\320\262\321\203\320\271\321\202\320\265!\n"
@@ -93,18 +93,18 @@ function demo_labels ()
   label.set_justify[  GTK.JUSTIFY_LEFT]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
-  frame = gtkframe_new(label="Bidirection Label");
+  frame = gtk_frame_new(label="Bidirection Label");
   str = ["Arabic	\330\247\331\204\330\263\331\204\330\247\331\205\330\271\331\204\331\212\331\203\331\205\n"
 	 "Hebrew	\327\251\327\234\327\225\327\235"];	 
-  label = gtklabel_new(str=catenate(str));
+  label = gtk_label_new(str=catenate(str));
   label.set_direction[  GTK.TEXT_DIR_RTL]
   label.set_justify[  GTK.JUSTIFY_RIGHT]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-  vbox = gtkbox_new("vertical",spacing=5);
+  vbox = gtk_box_new("vertical",spacing=5);
   hbox.pack_start[ vbox,expand=%f,fill=%f,padding=0]
-  frame = gtkframe_new(label="Line wrapped label");
+  frame = gtk_frame_new(label="Line wrapped label");
   str = [ "This is an example of a line-wrapped label.  It should not be taking "
 	  "up the entire             "
 	  "width allocated to it, but automatically wraps the words to fit.  "
@@ -112,13 +112,13 @@ function demo_labels ()
 	  "The sixth sheik''s six sheep''s sick.\n"
 	  "     It supports multiple paragraphs correctly, and  correctly   adds "
 	  "many          extra  spaces. "];
-  label = gtklabel_new(str=catenate(str));
+  label = gtk_label_new(str=catenate(str));
 
   label.set_line_wrap[  %t]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
   
-  frame = gtkframe_new(label="Filled, wrapped label");
+  frame = gtk_frame_new(label="Filled, wrapped label");
   str = ["This is an example of a line-wrapped, filled label.  It should be taking "
 	 "up the entire              width allocated to it.  Here is a seneance to prove "
 	 "my point.  Here is another sentence. "
@@ -127,23 +127,23 @@ function demo_labels ()
 	 "    This is another newer, longer, better paragraph.  It is coming to an end, "
 	 "unfortunately."];
 			 
-  label = gtklabel_new(str=catenate(str));
+  label = gtk_label_new(str=catenate(str));
   label.set_justify[  GTK.JUSTIFY_FILL]
   label.set_line_wrap[  %t]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
   
-  frame = gtkframe_new(label="Underlined label");
+  frame = gtk_frame_new(label="Underlined label");
   str=["This label is underlined!\n"
        "This one is underlined (\343\201\223\343\202\223\343\201\253\343\201\241\343\201\257) in quite a funky fashion"];
-  label = gtklabel_new(str=catenate(str));
+  label = gtk_label_new(str=catenate(str));
   label.set_justify[  GTK.JUSTIFY_LEFT]
   label.set_pattern[  "_________________________ _ _________ _ _____ _ __ __  ___ ____ _____"]
   frame.add[  label]
   vbox.pack_start[ frame,expand=%f,fill=%f,padding=0]
 
-  frame = gtkframe_new(label="Markup label");
-  label = gtklabel_new()
+  frame = gtk_frame_new(label="Markup label");
+  label = gtk_label_new()
 
   // There's also a gtk_label_set_markup() without accel if you
   // don't have an accelerator key

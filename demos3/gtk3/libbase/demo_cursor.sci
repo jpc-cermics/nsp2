@@ -48,52 +48,52 @@ function demo_cursor()
     // args(2).set_text[cursor.name]
   endfunction
 
-  win = gtkwindow_new()
+  win = gtk_window_new()
   // win.connect["delete_event",demo_delete];
   win.set_title["Cursor Test"];
-  main_vbox = gtkbox_new("vertical",spacing=5)
+  main_vbox = gtk_box_new("vertical",spacing=5)
   main_vbox.set_border_width[0]
   win.add[main_vbox]
   main_vbox.show[]
-  vbox = gtkbox_new("vertical",spacing=5)
+  vbox = gtk_box_new("vertical",spacing=5)
   vbox.set_border_width[10]
   main_vbox.pack_start[vbox]
   vbox.show[]
-  hbox=	gtkbox_new("horizontal",spacing= 5)
+  hbox=	gtk_box_new("horizontal",spacing= 5)
   vbox.pack_start[hbox,expand= %f,fill=%t,padding=0]
   hbox.show[]
-  label = gtklabel_new(str='Cursor value: ')
+  label = gtk_label_new(str='Cursor value: ')
   //label.set_alignment[0,0.5]
   hbox.pack_start[label,expand= %f,fill=%t,padding=0]
   label.show[]
-  adj =  gtkadjustment_new (value=0,lower=0,upper=152,step_incr=2,page_incr=10, page_size=0);
-  spinner = gtkspinbutton_new (adjustment=adj,climb_rate= 0,digits= 0);
+  adj =  gtk_adjustment_new (value=0,lower=0,upper=152,step_incr=2,page_incr=10, page_size=0);
+  spinner = gtk_spin_button_new (adjustment=adj,climb_rate= 0,digits= 0);
   hbox.pack_start[spinner]
   spinner.show[]
-  frame = gtkframe_new(label="Cursor Area")
+  frame = gtk_frame_new(label="Cursor Area")
   frame.set_border_width[10]
   frame.set_label_align[0.5,0]
   vbox.pack_start[frame]
   frame.show[]
-  darea = gtkdrawingarea_new()
+  darea = gtk_drawing_area_new()
   darea.set_size_request[80,80]
   frame.add[darea]
   darea.show[]
-  cur_name = gtklabel_new()
+  cur_name = gtk_label_new()
   vbox.pack_start[cur_name,expand= %f,fill=%t,padding=0]
   cur_name.show[]
   darea.connect["draw", cursor_draw];
   darea.add_events[ior(GDK.EXPOSURE_MASK,GDK.BUTTON_PRESS_MASK)]
   darea.connect["button_press_event", ct_button_press,list( spinner)];
   spinner.connect["changed", set_cursor,list( darea, cur_name)];
-  hsep = gtkseparator_new("horizontal")
+  hsep = gtk_separator_new("horizontal")
   main_vbox.pack_start[hsep,expand= %f,fill=%t,padding=0]
   hsep.show[]
-  hbox=	gtkbox_new("horizontal",spacing= 5)
+  hbox=	gtk_box_new("horizontal",spacing= 5)
   hbox.set_border_width[10]
   main_vbox.pack_start[hbox,expand= %f,fill=%t,padding=0]
   hbox.show[]
-  button = gtkbutton_new(label="Close")
+  button = gtk_button_new(label="Close")
   // button.connect["clicked", button_destroy_win,list(win)];
   hbox.pack_start[button]
   button.show[]

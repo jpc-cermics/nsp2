@@ -31,12 +31,12 @@ function demo_file_selection ()
   
   window.ok_button.connect["clicked", file_selection_ok,list(window)]
   window.cancel_button.connect["clicked", button_destroy_win, list(window)]
-  button = gtkcheckbutton_new(label="Show Fileops");
+  button = gtk_check_button_new(label="Show Fileops");
   button.connect[  "toggled",  show_fileops,list(  window)];
   window.action_area.pack_start[ button,expand=%f,fill=%f,padding=0];
   button.show[];
   
-  button = gtkcheckbutton_new(label="Select Multiple");
+  button = gtk_check_button_new(label="Select Multiple");
   button.connect[  "clicked",  select_multiple,list(window)]
   window.action_area.pack_start[ button,expand=%f,fill=%f,padding=0];
   button.show[];
