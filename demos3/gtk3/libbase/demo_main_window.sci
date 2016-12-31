@@ -1,5 +1,8 @@
 
 function demo_main_window()
+
+  // shoud be adapted for gtk3 
+  // {'Image from drawable', "demo_image_from_drawable"}
   
   Demos={ 
       {'Buttons',  "demo_buttons"}
@@ -15,9 +18,7 @@ function demo_main_window()
       {'File chooser',  "demo_file_chooser"}
       {'Flipping',  "demo_flipping"}
       {'Focus',  "demo_focus"}
-      {'Gamma curve',  "demo_gamma_curve"}
       {'Gmenumodel', "demo_gmenumodel"}
-      {'Image from drawable', "demo_image_from_drawable"}
       {'Images1', "demo_images1"}
       {'Images2', "demo_images2"}
       {'Images3', "demo_images3"}
