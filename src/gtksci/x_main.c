@@ -411,10 +411,12 @@ static void nsp_unset_gtk_error(int no_log)
   else
     /* Set default handler based on argument for appropriate log level */
     g_log_set_default_handler( g_log_default_handler, NULL);
-
-  g_warning("This is warning\n");
-  g_message("This is message\n");
-  g_debug("This is debug\n");
-  g_critical("This is critical\n");
-  g_log(NULL, G_LOG_LEVEL_INFO , "This is info\n");
+  if (0 )
+    {
+      g_warning("This is warning\n");
+      g_message("This is message\n");
+      g_debug("This is debug\n");
+      g_critical("This is critical\n");
+      g_log(NULL, G_LOG_LEVEL_INFO , "This is info\n");
+    }
 }
