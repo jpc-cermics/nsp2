@@ -50,8 +50,6 @@
 
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern void nsp_create_main_text_view(void);
-extern void nsp_set_ignore_gtk_error(void);
-extern void nsp_set_default_gtk_error_handler(void);
 
 /* #define STATUS_BAR 1  */
 
@@ -62,7 +60,7 @@ static void create_nsp_status(void);
 static void nsp_gtk_gl_init (int *argc,char ***argv);
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
 static void nsp_set_emacs_key_theme(void) ;
-
+static void nsp_unset_gtk_error(int no_log);
 
 /**
  * nsp_gtk_init:
@@ -100,8 +98,10 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 #endif
 #endif
       gtk_init(&argc,&argv);
+      // TRUE: means no log, this is for production
+      nsp_unset_gtk_error(TRUE);
       /*
-      g_object_set (gtk_settings_get_default (),
+	g_object_set (gtk_settings_get_default (),
 		    "gtk-enable-mnemonics", TRUE,
 		    "gtk-auto-mnemonics", FALSE,
 		    "gtk-enable-accels", TRUE, NULL);
@@ -121,7 +121,6 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 	  /* we just create a menu which will be inserted
 	   * in the calling zterm through socket/plug mechanism
 	   */
-	  nsp_set_ignore_gtk_error();
 	  create_plugged_main_menu();
 	}
       /* interaction with a textview
@@ -152,37 +151,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
   /* initialize nsp interp  */
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
-  nsp_set_default_gtk_error_handler();
   sci_winch_signal(0);
-}
-
-
-/*
- * used when the menu is plugged
- */
-
-static guint handler_id=0;
-
-static void log_error_handler(const gchar *log_domain,
-			       GLogLevelFlags log_level,
-			       const gchar *message,
-			       gpointer user_data)
-{
-
-};
-
-void nsp_set_ignore_gtk_error(void)
-{
-  handler_id = g_log_set_handler ("Gtk",G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL
-				  | G_LOG_FLAG_RECURSION, log_error_handler, NULL);
-}
-
-void nsp_set_default_gtk_error_handler(void)
-{
-  /* 
-  if ( handler_id > 0 )
-    g_log_remove_handler ("Gtk", handler_id);
-  */
 }
 
 /**
@@ -419,4 +388,33 @@ void nsp_set_emacs_key_theme(void)
     gtk_settings_set_string_property (settings,
 				      "gtk-key-theme-name", "Emacs","");
   if ( default_key_theme != NULL)  free(default_key_theme);
+}
+
+/* gtk warnings:
+ *
+ */
+
+static void _dummy(const gchar *log_domain,
+		   GLogLevelFlags log_level,
+		   const gchar *message,
+		   gpointer user_data )
+{
+  /* Dummy does nothing */ 
+  return ;      
+}
+
+static void nsp_unset_gtk_error(int no_log)
+{
+  if (no_log)
+    /* Set dummy for all levels */
+    g_log_set_default_handler(  _dummy, NULL);
+  else
+    /* Set default handler based on argument for appropriate log level */
+    g_log_set_default_handler( g_log_default_handler, NULL);
+
+  g_warning("This is warning\n");
+  g_message("This is message\n");
+  g_debug("This is debug\n");
+  g_critical("This is critical\n");
+  g_log(NULL, G_LOG_LEVEL_INFO , "This is info\n");
 }
