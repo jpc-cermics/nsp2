@@ -112,6 +112,7 @@ struct _NspGClosure {
 extern GClosure *nspg_closure_new(NspPList *callback, NspList *extra_args, NspObject *swap_data);
 extern GClosure *nspg_signal_class_closure_get(void);
 extern int nspgobject_watch_closure(NspObject *self, GClosure *closure);
+extern int nsp_gobject_watch_closure(GObject *gobj, GClosure *closure);
 
 extern void nspg_closure_marshal(GClosure *closure,
 				 GValue *return_value,
