@@ -7798,62 +7798,100 @@ ignore-win32
         gtk_plug_construct
         gtk_plug_get_id
 %%
-override zz_gtk_builder_connect_signals
+override gtk_builder_connect_signals
 
-/*
- * builder.connect_signals[{ "fname", nsp-fname, list-args;....}]
+typedef struct _builder_connect_infos builder_connect_infos;
+ 
+struct _builder_connect_infos
+{
+  NspHash *handlers;
+  NspObject *args;
+};
+
+static void
+nsp_gtk_builder_connect_signals_default (GtkBuilder    *builder,
+					 GObject       *object,
+					 const gchar   *signal_name,
+					 const gchar   *handler_name,
+					 GObject       *connect_object,
+					 GConnectFlags  flags,
+					 gpointer       user_data)
+{
+  builder_connect_infos *info= user_data;
+  guint sigid;
+  GQuark detail = 0;
+  GClosure *closure;
+  NspObject *handler;/* a NspPList */
+  NspObject *nsp_connect_object=NULL;
+  NspObject *extra_args = info->args;
+
+  if ( nsp_hash_find_and_copy(info->handlers, (char *) handler_name, &handler)== FAIL)
+    {
+      Sciprintf("Error: in connect_signals, failed to find handler %s\n",handler_name);
+      return;
+    }
+  if  (IsNspPList(handler) == FALSE)
+    {
+      Sciprintf("Error: in connect_signals, handler %s should be a function\n",handler_name);
+      return;
+    }
+  
+  if ( extra_args != NULL)
+    {
+      if ((extra_args = nsp_object_copy_and_name("data", extra_args)) == NULL)
+	{
+	  Sciprintf("Error: in connect_signals, failed to copy extra argument\n");
+	  return;
+	}
+    }
+  
+  if (connect_object)
+    {
+      if ((nsp_connect_object = (NspObject *) nspgobject_new("co_obj",connect_object))== NULL)
+	{
+	  Sciprintf("Error: in connect_signals, failed to copy object\n");
+	  return;
+	}
+    }
+  /* if (( handler =GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG; */
+  if (!g_signal_parse_name(signal_name,G_OBJECT_TYPE(object), &sigid, &detail, TRUE))
+    {
+      Sciprintf("method connect: unknown signal name (%s)\n",signal_name);
+      return;
+    }
+  closure = nspg_closure_new((NspPList *) handler, (NspList *) extra_args,
+			     (connect_object) ? nsp_connect_object : NULL);
+  nsp_gobject_watch_closure( object , closure);
+  g_signal_connect_closure_by_id(object, sigid, detail, closure, flags);
+  return;
+}
+
+/* nsp_implementation : first argument is a hash table of handlers
+ * second argument is the extra_args argument 
  */
 
 static int _wrap_gtk_builder_connect_signals(NspGtkBuilder *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspCells *C;
-  CheckRhs(1,1);
-  CheckLhs(0,1);
-  if ((C = GetCells(stack,1))  == NULLCELLS) return RET_BUG;
-  if ( C->n != 3)
+  NspHash *H;
+  NspObject *Args;
+  builder_connect_infos info;
+  CheckStdRhs(1,2);
+  CheckLhs(0,0);
+  if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
+  info.handlers = H;
+  if ( rhs == 2 )
     {
-      Scierror("Error: first argument of connect_signals method should be a mx3 cell array\n");
-      return RET_BUG;
+      if ((Args= nsp_get_object(stack,2)) == NULL) return RET_BUG;
+      info.args = Args;
     }
-  for ( i = 0 ; i < m ; i++)
+  else
     {
-      NspPList *callback;
-      NspList *L;
-      NspObject *name = C->objs[i],*fun= C->objs[i+C->m],*data = C->objs[i+2*C->m];
-      if ( ! IsString(name))
-	{
-	  Scierror("Error: cell argument (%d,1) should be a string\n",i+1);
-	  return RET_BUG;
-	}
-      if ( ! IsNspPList(fun))
-	{
-	  Scierror("Error: cell argument (%d,2) should be a function\n",i+1);
-	  return RET_BUG;
-	}
-      if ((callback=NspPListCopy(fun)) == NULL)
-	{
-	  Scierror("Error: out of memory in connect_signals method\n");
-	  return RET_BUG;
-	}
-      if ((nsp_object_set_name((NspObject *) callback,name)== FAIL))
-	return RET_BUG;
-      if ( ! IsList(data))
-	{
-	  Scierror("Error: cell argument (%d,3) should be a list\n",i+1);
-	  return RET_BUG;
-	}
-      if ((L=NspListCopy(data)) == NULL)
-	{
-	  Scierror("Error: out of memory in connect_signals method\n");
-	  return RET_BUG;
-	}
-      if ((nsp_object_set_name((NspObject *) L,"args")== FAIL)) return RET_BUG;
-
-      /* */
-      gtk_builder_add_callback_symbol (GTK_BUILDER(self->obj),
-						   const gchar *callback_name,
-						   GCallback callback_symbol);
+      info.args = NULL;
     }
+  gtk_builder_connect_signals_full (GTK_BUILDER(self->obj),
+				    nsp_gtk_builder_connect_signals_default,
+				    &info);
+  return 0;
 }
 
 

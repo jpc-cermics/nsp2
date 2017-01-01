@@ -853,44 +853,6 @@ static int nspgobject_connect_after(NspGObject *self, Stack stack,int rhs,int op
 /*
  *
  */
-#if 0
-static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int rhs,int opt,int lhs,int flag)
-{
-  NspPList *callback;
-  NspObject *object;
-  NspList *extra_args= NULL;
-  gchar *name;
-  guint handlerid, sigid;
-  GQuark detail = 0;
-  GClosure *closure;
-
-  CheckRhs(3,4);
-  CheckLhs(1,1);
-
-  if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;
-  /* Need a GetFunction here XXXXXX */
-  if (( callback =GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
-  if (( nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
-  if (( object  =nsp_get_object_copy(stack,3)) == NULLOBJ ) return RET_BUG;
-  if (( nsp_object_set_name((NspObject *) object,"o")== FAIL)) return RET_BUG;
-  /* list of extra arguments */
-  if ( rhs == 4 )
-    {
-      if (( extra_args =  GetListCopy(stack,4)) == NULLLIST ) return RET_BUG;
-      if (( nsp_object_set_name((NspObject *) extra_args,"m")== FAIL)) return RET_BUG;
-    }
-  if (!g_signal_parse_name(name,G_OBJECT_TYPE(self->obj), &sigid, &detail, TRUE))
-    {
-      Scierror("method connect: unknown signal name (%s)\n",name);
-      return RET_BUG;
-    }
-  closure = nspg_closure_new(callback, extra_args, object );
-  nspgobject_watch_closure((NspObject *)self, closure);
-  handlerid = g_signal_connect_closure_by_id(self->obj, sigid, detail, closure, flag);
-  if ( nsp_move_double(stack,1,(double) handlerid)== FAIL) return RET_BUG;
-  return 1;
-}
-#endif
 
 static int
 nspgobject_connect_object(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
@@ -1417,26 +1379,30 @@ void nspg_block_threads(void) {};
 static GQuark	nsp_gobject_closures = 0;
 static void nsp_gobject_closures_destroy (gpointer data);
 
-int
-nspgobject_watch_closure(NspObject *self, GClosure *closure)
+int nsp_gobject_watch_closure(GObject *gobj, GClosure *closure)
 {
   GSList *closures;
-
-  if (self == NULL) return FAIL;
-  if (!IsGObject(self)) return FAIL;
-  if (closure == NULL) return FAIL;
+  if ( gobj == NULL) return FAIL;
+  if ( closure == NULL) return FAIL;
   if ( nsp_gobject_closures == 0 )
     nsp_gobject_closures = g_quark_from_static_string ("nsp-gobject-closures");
 
-  closures = g_object_steal_qdata (((NspGObject *)self)->obj,nsp_gobject_closures);
+  closures = g_object_steal_qdata ( gobj,nsp_gobject_closures);
 
   if (g_slist_find(closures,closure) != NULL) return FAIL;
 
   closures = g_slist_prepend(closures, g_closure_ref (closure));
   g_closure_sink (closure);
-  g_object_set_qdata_full (((NspGObject *)self)->obj,nsp_gobject_closures,
+  g_object_set_qdata_full (gobj,nsp_gobject_closures,
 			   closures, nsp_gobject_closures_destroy);
   return OK;
+}
+
+int nspgobject_watch_closure(NspObject *self, GClosure *closure)
+{
+  if (self == NULL) return FAIL;
+  if (!IsGObject(self)) return FAIL;
+  return nsp_gobject_watch_closure(((NspGObject *)self)->obj,closure);
 }
 
 static void

@@ -28,7 +28,7 @@ function window= demo_builder(do_widget)
   
   ui_demo = getenv("NSP")+"/demos3/gtk3/libbase/demo_builder.ui";
   builder = gtk_builder_new_from_file(ui_demo);
-  builder.connect_signals[list()]
+  // builder.connect_signals[table,extra_args]
   window = builder.get_object [ "window1"];
   window.set_screen [do_widget.get_screen []];
   // window.connect [ "destroy", gtk_widget_destroyed, &window];

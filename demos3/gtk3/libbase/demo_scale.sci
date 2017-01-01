@@ -11,7 +11,7 @@ function window= demo_scale (do_widget)
 //   
   builder = gtk_builder_new();
   builder.add_from_file[(getenv("NSP")+"/demos3/gtk3/libbase/demo_scale.ui")];
-  builder.connect_signals[list()];
+  // builder.connect_signals[H,args];
   window = builder.get_object["window1"];
   if nargin >= 1 then window.set_screen[ do_widget.get_screen []];end
   // window.connect[ "destroy", gtk_widget_destroyed, &window];

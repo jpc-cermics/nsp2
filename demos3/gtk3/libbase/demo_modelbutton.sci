@@ -14,7 +14,7 @@
 
 function window=demo_modelbutton (do_widget)
 
-  function tool_clicked (button)
+  function tool_clicked (button,user_data)
   //use get_property for g_object_get (button, "active", &active, NULL);
     active = button.get_property["active"];  
     button.set_property[ "active", ~active];
@@ -23,20 +23,26 @@ function window=demo_modelbutton (do_widget)
   fname = getenv('NSP')+"/demos3/gtk3/libbase/demo_modelbutton.ui"
   builder = gtk_builder_new_from_file(fname);
 
-  // this part isn't implemented yet 
-  // gtk_builder_add_callback_symbol (builder, "tool_clicked", tool_clicked);
-  // gtk_builder_connect_signals (builder, NULL);
-  // Thus we need to connect signals explicitely 
-  
-  popover= builder.get_object[ "thing_c"]
-  childs = popover.get_children[];
-  box = childs(1);
-  childs = box.get_children[];
-  for i =1:size(childs) 
-    mb = childs(i);
-    mb.connect["clicked",tool_clicked];
+  if %t then 
+    // 
+    // gtk_builder_add_callback_symbol (builder, "tool_clicked", tool_clicked);
+    // gtk_builder_connect_signals (builder, NULL);
+    H=hash(tool_clicked=tool_clicked);
+    // builder.connect_signal(H [,extra_args]);
+    // extra_args are extra_arguments passed to handler
+    builder.connect_signals[H]; 
+  else
+    // connect signals explicitely 
+    popover= builder.get_object[ "thing_c"]
+    childs = popover.get_children[];
+    box = childs(1);
+    childs = box.get_children[];
+    for i =1:size(childs) 
+      mb = childs(i);
+      mb.connect["clicked",tool_clicked];
+    end
   end
-  
+    
   // main window 
   window = builder.get_object[ "window1"];
   if nargin >= 1 then window.set_screen[ do_widget.get_screen []];end

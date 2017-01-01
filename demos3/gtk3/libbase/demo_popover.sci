@@ -21,7 +21,7 @@ function popover=create_complex_popover (parent, pos)
 
   builder = gtk_builder_new();
   builder.add_from_file[(getenv("NSP")+"/demos3/gtk3/libbase/demo_popover.ui")];
-  builder.connect_signals[list()];
+  // builder.connect_signals[H,args];
   
   window = builder.get_object["window"];
   content = window.get_child [];
