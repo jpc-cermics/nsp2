@@ -7299,8 +7299,16 @@ static int int_nsp_clear_queue(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* be sure that gtk is started 
+ *
+ */
 
-
+static int int_start_sci_gtk(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  start_sci_gtk();
+  return 0;
+}
 
 /*************************************************************
  * The Interface for graphic functions
@@ -7362,6 +7370,7 @@ static OpTab GraphicsUtil_func[]={
   {"gtk_test_loop", int_gtk_loop},
 #endif
   {"ximage", int_ximage_new},
+  {"gtk_start",int_start_sci_gtk},
   {(char *) 0, NULL}
 };
 
