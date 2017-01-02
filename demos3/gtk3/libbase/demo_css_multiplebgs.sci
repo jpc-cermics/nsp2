@@ -19,7 +19,7 @@ function window = demo_css_multiplebgs (do_widget)
   
   window = gtk_window_new (type=GTK.WINDOW_TOPLEVEL);
   window.set_title [ "Multiple Backgrounds"];
-  //window.set_transient_for[do_widget];
+  if nargin >= 1 then window.set_transient_for[do_widget];end
   window.set_default_size[400, 300];
   // window.connect [ "destroy", gtk_widget_destroyed, &window];
 
@@ -29,7 +29,7 @@ function window = demo_css_multiplebgs (do_widget)
   
   child = gtk_drawing_area_new ();
   child.set_name [ "canvas"];
-  //child.connect [ "draw", drawing_area_draw];
+  child.connect [ "draw", drawing_area_draw];
   container.add[child];
 
   child = gtk_button_new ();
@@ -61,8 +61,12 @@ function window = demo_css_multiplebgs (do_widget)
 
   S=getfile(getenv('NSP')+"/demos3/gtk3/libbase/demo_css_multiplebgs/css_multiplebgs.css");
   S=strsubst(S,'NSP',getenv('NSP'));
-  text.set_text [ catenate(S,sep='\n')];
+  S=catenate(S,sep='\n');
+  text.set_text [S];
   
+  ok=execstr('provider.load_from_data[S, -1];',errcatch=%t);
+  if ~ok then lasterror();end 
+    
   //provider.load_from_resource["/css_multiplebgs/css_multiplebgs.css"];
   provider.connect ["parsing-error", css_show_parsing_error, child.get_buffer []];
   css_apply_css (window, list(provider));
