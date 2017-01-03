@@ -48,15 +48,19 @@ static int nsp_fontsize_string_in_box(BCG *Xgc, double iw, double ih, int fsize,
 void nsp_graphic_titles(BCG *Xgc,char *title,char *x,char *y)
 {
   int auto_size=TRUE; /* font are resized automatically */
-  int barlength, fontid[2],fontsize_kp;
+  int fontid[2],fontsize_kp;
 
   Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   fontsize_kp = fontid[1] ;
-  if ( auto_size)
+  if ( auto_size )
     {
-      char foo[]="0";
-      barlength = Xgc->scales->Irect.height/40.0;
-      fontid[1]= nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
+      const char *str = "O";
+      double sw = Xgc->scales->Irect.width/25.0;
+      double sh = Xgc->scales->Irect.height/25.0;
+      int fid1,fid2;
+      fid1= nsp_fontsize_string_in_box(Xgc,sw,sh, -1, str);
+      fid2= nsp_fontsize_string_in_box(Xgc,sh,sw, -1, str);
+      fontid[1]= Max(fid1,fid2);
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
     }
   if ( title[0] != '\0')
@@ -308,10 +312,14 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 
   if ( auto_size)
     {
-      barlength = Xgc->scales->Irect.height/40.0;
-      strcpy(foo,"0");
-      fontid[1]= nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
-      smallersize= fontid[1]-2;// nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,foo);
+      const char *str = "O";
+      double sw = Xgc->scales->Irect.width/20.0;
+      double sh = Xgc->scales->Irect.height/20.0;
+      int fid1,fid2;
+      fid1= nsp_fontsize_string_in_box(Xgc,sw,sh, -1,str);
+      fid2= nsp_fontsize_string_in_box(Xgc,sh,sw, -1,str);
+      fontid[1]= Max(fid1,fid2);
+      smallersize= fontid[1]-2;
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
     }
   else
@@ -987,8 +995,13 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,
   fontsize_kp = fontid[1] ;
   if ( auto_size)
     {
-      int barlength = Xgc->scales->Irect.height/40.0;
-      fontid[1]= nsp_fontsize_string_in_box(Xgc,barlength*40,barlength*2, -1,"0");
+      const char *str = "O";
+      double sw = Xgc->scales->Irect.width/25.0;
+      double sh = Xgc->scales->Irect.height/25.0;
+      int fid1,fid2;
+      fid1= nsp_fontsize_string_in_box(Xgc,sw,sh, -1,str);
+      fid2= nsp_fontsize_string_in_box(Xgc,sh,sw, -1,str);
+      fontid[1]= Max(fid1,fid2);
       Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], TRUE);
     }
 
