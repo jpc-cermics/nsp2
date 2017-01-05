@@ -8,7 +8,7 @@ DIFF=$(patsubst %.c,%.diff,$(ALL))
 PROG=../../../bin/nspbind -nw
 
 all:	$(ALL)
-	cd ../; make gtksourceview.o
+	cd ../; make gio.o
 
 pipo:
 	cd ../; make -j

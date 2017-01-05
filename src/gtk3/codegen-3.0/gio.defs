@@ -10855,6 +10855,16 @@
 
 ;; From gresource.h
 
+;; added 
+
+(define-function g_resource_from_int
+  (c-name "g_resource_from_int")
+  (return-type "GResource*")
+  (parameters
+   '("NspObject*" "mat")
+    )
+  )
+
 (define-function g_resource_error_quark
   (c-name "g_resource_error_quark")
   (return-type "GQuark")
@@ -10867,11 +10877,11 @@
 
 (define-function g_resource_new_from_data
   (c-name "g_resource_new_from_data")
-  (is-constructor-of "GResource")
+  ;; (is-constructor-of "GResource")
   (return-type "GResource*")
   (parameters
-    '("GBytes*" "data")
-    '("GError**" "error")
+   ;; '("GBytes*" "data")
+   ;; '("GError**" "error")
   )
 )
 

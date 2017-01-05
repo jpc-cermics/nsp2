@@ -197,3 +197,83 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override g_resource_load
+
+int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_load */
+{
+  GError      *error;
+  int_types T[] = {string, t_end};
+  char *filename;
+  GResource *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  ret =g_resource_load(filename,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override g_resource_new_from_data
+
+int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_resource_new_from_data */
+{
+  char *text;
+  GError      *error;
+  GResource *ret;
+  NspObject *nsp_ret;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if (( text = GetString(stack,1))== NULL) return RET_BUG;
+  GBytes *bytes = g_bytes_new (text,strlen(text));
+  ret = g_resource_new_from_data(bytes,&error);
+  if ( error != NULL )
+    {
+      Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+      return RET_BUG;
+    }
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
+override g_resource_from_int
+
+int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resource_from_int */
+{
+  GStaticResource static_resource = { NULL, 0, NULL, NULL, NULL };
+  int_types T[] = {obj, t_end};
+  NspObject *Im = NULL;
+  NspObject *nsp_ret;
+  GResource *ret;
+  if ( GetArgs(stack,rhs,opt,T,&Im) == FAIL) return RET_BUG;
+  if ( ! IsIMat(Im) )
+    {
+      Scierror("Error: argument should be of type IMat (uint8)\n");
+      return RET_BUG;
+    }
+  if ( ((NspIMatrix *) Im)->itype != nsp_guint8)
+    {
+      Scierror ("Error: integer matrix argument for %s should be of uint8 subtype\n", NspFname(stack));
+      return RET_BUG;
+    }
+  static_resource.data = ((NspIMatrix *) Im)->Guint8;
+  static_resource.data_len = ((NspIMatrix *) Im)->mn*sizeof(guint8);
+  g_static_resource_init (&static_resource);
+  ret = g_static_resource_get_resource (&static_resource);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}

@@ -48,6 +48,7 @@
 
 #line 50 "gio.c"
 /* ---------- forward type declarations ---------- */
+#include <nsp/gtk/gresource.h>
 #include <nsp/gtk/gappinfo.h>
 #include <nsp/gtk/gapplaunchcontext.h>
 #include <nsp/gtk/gapplication.h>
@@ -133,6 +134,241 @@
 #include <nsp/gtk/gaction.h>
 #include <nsp/gtk/gactiongroup.h>
 #include <nsp/gtk/gactionmap.h>
+
+
+/* -----------NspGResource ----------- */
+
+
+#define  NspGResource_Private 
+#include <nsp/objects.h>
+#include <nsp/gtk/gresource.h>
+#include <nsp/interf.h>
+#include <nsp/nspthreads.h>
+
+/* 
+ * NspGResource inherits from GBoxed 
+ */
+
+int nsp_type_gresource_id=0;
+NspTypeGResource *nsp_type_gresource=NULL;
+
+/*
+ * Type object for NspGResource 
+ * all the instance of NspTypeGResource share the same id. 
+ * nsp_type_gresource: is an instance of NspTypeGResource 
+ *    used for objects of NspGResource type (i.e built with new_gresource) 
+ * other instances are used for derived classes 
+ */
+NspTypeGResource *new_type_gresource(type_mode mode)
+{
+  NspTypeGResource *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_gresource != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_gresource;
+    }
+  if (( type =  malloc(sizeof(NspTypeGBoxed))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_gboxed(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = gresource_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = gresource_get_methods;
+  type->gtk_methods = TRUE;
+  type->new = (new_func *) new_gresource;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for gresource */ 
+
+  top->s_type =  (s_type_func *) nsp_gresource_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_gresource_type_short_string;
+  /* top->create = (create_func*) int_gresource_create;*/
+
+  /* specific methods for gresource */
+
+  type->init = (init_func *) init_gresource;
+
+  /* 
+   * NspGResource interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_gresource_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeGResource called nsp_type_gresource
+       */
+      type->id =  nsp_type_gresource_id = nsp_new_type_id();
+      nsp_type_gresource = type;
+      if ( nsp_register_type(nsp_type_gresource) == FALSE) return NULL;
+      /* add a ref to nsp_type in the gtype */
+      register_nsp_type_in_gtype((NspTypeBase *)nsp_type_gresource, G_TYPE_RESOURCE);
+      return ( mode == T_BASE ) ? type : new_type_gresource(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_gresource_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspGResource instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_gresource(NspGResource *Obj,NspTypeGResource *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+ return OK;
+}
+
+/*
+ * new instance of NspGResource 
+ */
+
+NspGResource *new_gresource() 
+{
+  NspGResource *loc;
+  /* type must exists */
+  nsp_type_gresource = new_type_gresource(T_BASE);
+  if ( (loc = malloc(sizeof(NspGResource)))== NULLGRESOURCE) return loc;
+  /* initialize object */
+  if ( init_gresource(loc,nsp_type_gresource) == FAIL) return NULLGRESOURCE;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspGResource 
+ *-----------------------------------------------*/
+/*
+ * type as string 
+ */
+
+static char gresource_type_name[]="GResource";
+static char gresource_short_type_name[]="GResource";
+
+static char *nsp_gresource_type_as_string(void)
+{
+  return(gresource_type_name);
+}
+
+static char *nsp_gresource_type_short_string(NspObject *v)
+{
+  return(gresource_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspGResource objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspGResource   *nsp_gresource_object(NspObject *O)
+{
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
+  if ( check_cast (O,nsp_type_gresource_id)  == TRUE  ) return ((NspGResource *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_gresource));
+  return NULL;
+}
+
+int IsGResourceObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_gresource_id);
+}
+
+int IsGResource(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_gresource_id);
+}
+
+NspGResource  *GetGResourceCopy(Stack stack, int i)
+{
+  if (  GetGResource(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspGResource  *GetGResource(Stack stack, int i)
+{
+  NspGResource *M;
+  if (( M = nsp_gresource_object(NthObj(i))) == NULLGRESOURCE)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy for boxed 
+ */
+
+NspGResource *gresource_copy(NspGResource *self)
+{
+  return gboxed_create(NVOID,((NspGBoxed *) self)->gtype,((NspGBoxed *) self)->boxed, TRUE, TRUE,
+                              (NspTypeBase *) nsp_type_gresource);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the GResource
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_resources_register(NspGResource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_resources_register(NSP_GBOXED_GET(self, GResource));
+  return 0;
+}
+
+#else
+int _wrap_g_resources_register(Stack stack, int rhs, int opt, int lhs) /* s_register */
+{
+  Scierror("Error: function g_resources_register not available\n");
+  return RET_BUG;
+}
+#endif
+#if GTK_CHECK_VERSION(2,32,0)
+static int _wrap_g_resources_unregister(NspGResource *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  g_resources_unregister(NSP_GBOXED_GET(self, GResource));
+  return 0;
+}
+
+#else
+int _wrap_g_resources_unregister(Stack stack, int rhs, int opt, int lhs) /* s_unregister */
+{
+  Scierror("Error: function g_resources_unregister not available\n");
+  return RET_BUG;
+}
+#endif
+static NspMethods gresource_methods[] = {
+  {"s_register",(nsp_method *) _wrap_g_resources_register},
+  {"s_unregister",(nsp_method *) _wrap_g_resources_unregister},
+  { NULL, NULL}
+};
+
+static NspMethods *gresource_get_methods(void) { return gresource_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab gresource_attrs[]={{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* -----------NspGDBusInterface ----------- */
@@ -1580,7 +1816,7 @@ int _wrap_g_action_map_lookup_action(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 1584 "gio.c"
+#line 1820 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -1642,7 +1878,7 @@ static int _wrap_g_action_map_add_action_entries(NspGActionMap *self,Stack stack
   return 0;
 }
 
-#line 1646 "gio.c"
+#line 1882 "gio.c"
 
 
 static NspMethods gactionmap_methods[] = {
@@ -13354,7 +13590,7 @@ int _wrap_g_menu_model_get_item_attribute(Stack stack, int rhs, int opt, int lhs
 }
 #endif
 
-#line 13358 "gio.c"
+#line 13594 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -13410,7 +13646,7 @@ int _wrap_g_menu_model_get_item_link(Stack stack, int rhs, int opt, int lhs) /* 
 }
 #endif
 
-#line 13414 "gio.c"
+#line 13650 "gio.c"
 
 
 #if GTK_CHECK_VERSION(2,32,0)
@@ -27913,7 +28149,7 @@ int _wrap_g_application_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
-#line 27917 "gio.c"
+#line 28153 "gio.c"
 
 
 int _wrap_g_cancellable_get_current(Stack stack, int rhs, int opt, int lhs) /* g_cancellable_get_current */
@@ -28522,6 +28758,92 @@ int _wrap_g_resolver_free_targets(Stack stack, int rhs, int opt, int lhs) /* g_r
   return 0;
 }
 
+#line 251 "codegen-3.0/gio.override"
+
+int _wrap_g_resource_from_int(Stack stack, int rhs, int opt, int lhs) /* g_resource_from_int */
+{
+  GStaticResource static_resource = { NULL, 0, NULL, NULL, NULL };
+  int_types T[] = {obj, t_end};
+  NspObject *Im = NULL;
+  NspObject *nsp_ret;
+  GResource *ret;
+  if ( GetArgs(stack,rhs,opt,T,&Im) == FAIL) return RET_BUG;
+  if ( ! IsIMat(Im) )
+    {
+      Scierror("Error: argument should be of type IMat (uint8)\n");
+      return RET_BUG;
+    }
+  if ( ((NspIMatrix *) Im)->itype != nsp_guint8)
+    {
+      Scierror ("Error: integer matrix argument for %s should be of uint8 subtype\n", NspFname(stack));
+      return RET_BUG;
+    }
+  static_resource.data = ((NspIMatrix *) Im)->Guint8;
+  static_resource.data_len = ((NspIMatrix *) Im)->mn*sizeof(guint8);
+  g_static_resource_init (&static_resource);
+  ret = g_static_resource_get_resource (&static_resource);
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+#line 28792 "gio.c"
+
+
+#line 225 "codegen-3.0/gio.override"
+
+int _wrap_g_resource_new_from_data(Stack stack, int rhs, int opt, int lhs) /* g_resource_new_from_data */
+{
+  char *text;
+  GError      *error;
+  GResource *ret;
+  NspObject *nsp_ret;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if (( text = GetString(stack,1))== NULL) return RET_BUG;
+  GBytes *bytes = g_bytes_new (text,strlen(text));
+  ret = g_resource_new_from_data(bytes,&error);
+  if ( error != NULL )
+    {
+      Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+      return RET_BUG;
+    }
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 28820 "gio.c"
+
+
+#line 202 "codegen-3.0/gio.override"
+
+int _wrap_g_resource_load(Stack stack, int rhs, int opt, int lhs) /* g_resource_load */
+{
+  GError      *error;
+  int_types T[] = {string, t_end};
+  char *filename;
+  GResource *ret;
+  NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
+  ret =g_resource_load(filename,&error);
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
+    return RET_BUG;
+  }
+  if ((nsp_ret = (NspObject *) gboxed_create(NVOID,G_TYPE_RESOURCE, ret, TRUE, TRUE,
+                                             (NspTypeBase *) nsp_type_gresource))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+#line 28845 "gio.c"
+
+
 int _wrap_g_settings_sync(Stack stack, int rhs, int opt, int lhs) /* g_settings_sync */
 {
   CheckRhs(0,0);
@@ -28635,7 +28957,7 @@ int _wrap_g_themed_icon_new_from_names(Stack stack, int rhs, int opt, int lhs) /
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28639 "gio.c"
+#line 28961 "gio.c"
 
 
 int _wrap_g_vfs_get_default(Stack stack, int rhs, int opt, int lhs) /* g_vfs_get_default */
@@ -28825,6 +29147,9 @@ static OpTab gio_func[]={
   { "g_resolver_get_default", _wrap_g_resolver_get_default},
   { "g_resolver_free_addresses", _wrap_g_resolver_free_addresses},
   { "g_resolver_free_targets", _wrap_g_resolver_free_targets},
+  { "g_resource_from_int", _wrap_g_resource_from_int},
+  { "g_resource_new_from_data", _wrap_g_resource_new_from_data},
+  { "g_resource_load", _wrap_g_resource_load},
   { "g_settings_sync", _wrap_g_settings_sync},
   { "g_socket_connection_factory_register_type", _wrap_g_socket_connection_factory_register_type},
   { "g_socket_connection_factory_lookup_type", _wrap_g_socket_connection_factory_lookup_type},
@@ -28935,6 +29260,7 @@ gio_add_constants(NspObject *module, const gchar *strip_prefix)
 
 void nsp_initialize_gio_types(void)
 {
+  new_type_gresource(T_BASE);
   new_type_gdbusinterface(T_BASE);
   new_type_gdbusobject(T_BASE);
   new_type_gaction(T_BASE);
@@ -29022,4 +29348,4 @@ void nsp_initialize_gio_types(void)
   new_type_gnativevolumemonitor(T_BASE);
 }
 
-#line 29026 "gio.c"
+#line 29352 "gio.c"

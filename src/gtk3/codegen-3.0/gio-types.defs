@@ -1540,3 +1540,13 @@
     '("invert-boolean" "G_SETTINGS_BIND_INVERT_BOOLEAN")
   )
 )
+
+;;
+
+(define-boxed GResource
+  (in-module "Gio")
+  (c-name "GResource")
+  (gtype-id "G_TYPE_RESOURCE")
+  ;;(copy-func "g_resource_copy")
+  ;;(release-func "g_resource_free")
+)
