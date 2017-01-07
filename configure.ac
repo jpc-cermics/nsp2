@@ -679,9 +679,9 @@ case "$host" in
 esac
 
 if test "$with_gtk3" == yes; then
-  NSP_ISS=${NSP_ISS}-gtk3
+  NSP_ISS_GTK=gtk3
 else
-  NSP_ISS=${NSP_ISS}-gtk2
+  NSP_ISS_GTK=gtk2
 fi
 
 # to be improved
@@ -2351,6 +2351,7 @@ AC_SUBST(CC_OPTIONS)
 AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 AC_SUBST(NSP_ISS)
+AC_SUBST(NSP_ISS_GTK)
 AC_SUBST(SCICOS_GEN_LIB)
 AC_SUBST(GTKDIR)
 AC_SUBST(GRAPHICS_LIB_OLD)
