@@ -678,6 +678,12 @@ case "$host" in
     ;;
 esac
 
+if test "$with_gtk3" == yes; then
+  NSP_ISS=${NSP_ISS}-gtk3
+else
+  NSP_ISS=${NSP_ISS}-gtk2
+fi
+
 # to be improved
 
 case "$CROSS_VERSION" in
