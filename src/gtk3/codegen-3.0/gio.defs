@@ -10885,6 +10885,15 @@
   )
 )
 
+(define-function g_resource_load
+  (c-name "g_resource_load")
+  (return-type "GResource*")
+  (parameters
+    '("const-gchar*" "filename")
+    ;;'("GError**" "error")
+  )
+)
+
 (define-method ref
   (of-object "GResource")
   (c-name "g_resource_ref")
@@ -10897,15 +10906,6 @@
   (c-name "g_resource_unref")
   (available "GLIB_AVAILABLE_IN_2_32")
   (return-type "none")
-)
-
-(define-function g_resource_load
-  (c-name "g_resource_load")
-  (return-type "GResource*")
-  (parameters
-    '("const-gchar*" "filename")
-    ;;'("GError**" "error")
-  )
 )
 
 (define-method open_stream

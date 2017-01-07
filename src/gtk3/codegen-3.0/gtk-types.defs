@@ -1099,7 +1099,20 @@
 
 ;; Printing
 
-;; GtkPrintOperation High-level Printing API
+(define-object GtkPrintOperation
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkPrintOperation")
+  (gtype-id "GTK_TYPE_PRINT_OPERATION")
+)
+
+(define-object GtkPrintOperationPreview
+  (in-module "Gtk")
+  (c-name "GtkPrintOperationPreview")
+  (gtype-id "GTK_TYPE_PRINT_OPERATION_PREVIEW")
+)
+
+
 ;; GtkPrintContext Encapsulates context for drawing pages
 ;; GtkPrintSettings Stores print settings
 ;; GtkPageSetup Stores page setup information

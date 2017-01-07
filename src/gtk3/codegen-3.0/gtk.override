@@ -1358,6 +1358,9 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
   if ( geom_mask != 0) 
     gtk_window_set_geometry_hints(GTK_WINDOW(self->obj), geometry_widget,
 				  &geometry, geom_mask);
+  else
+    gtk_window_set_geometry_hints(GTK_WINDOW(self->obj), geometry_widget,
+				  NULL, geom_mask);
   return 0;
 }
 %%
