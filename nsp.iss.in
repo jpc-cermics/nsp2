@@ -1,5 +1,5 @@
 [Setup]
-AppName=Nsp
+AppName=Nsp-@NSP_ISS@-@NSP_ISS_GTK@
 AppVerName=Nsp @PACKAGE_VERSION@
 AppVersion=@PACKAGE_VERSION@
 AppPublisherURL=http://cermics.enpc.fr/~jpc/nsp-tiddly/mine.html
@@ -7,7 +7,7 @@ AppSupportURL=http://code.google.com/p/tumbi/issues/list
 AppUpdatesURL=http://cermics.enpc.fr/~jpc/nsp-tiddly/mine.html
 CreateAppDir=yes
 ; pf for program files
-DefaultDirName={pf}\nsp
+DefaultDirName={pf}\nsp-@NSP_ISS@-@NSP_ISS_GTK@
 DefaultGroupName=Nsp
 ; icon for uninstall
 UninstallDisplayIcon={app}\nsp-win.exe
