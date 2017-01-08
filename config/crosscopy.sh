@@ -23,7 +23,6 @@ if [ -d "/usr/$dist" ]; then
     else
       cp -f /usr/$dist/bin/gspawn-win64*.exe bin/
     fi
-    cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
     cp -f /usr/$dist/bin/icudata56.dll bin/
     cp -f /usr/$dist/bin/icui18n56.dll bin/
     cp -f /usr/$dist/bin/icuuc56.dll bin/
