@@ -59,7 +59,7 @@ install::
 	@tar   cf - --exclude CVS --exclude '*.c' --exclude '*.o' --exclude '*.lo' \
 		--exclude '*.f' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
-SUBDIRS_UP= coselica-0.4.8-nsp  scicos-4.4 codegen-peval
+SUBDIRS_UP= coselica-0.4.8-nsp  scicos-4.4 modnum_nsp compilers
 
 up:
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
