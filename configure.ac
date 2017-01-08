@@ -680,8 +680,10 @@ esac
 
 if test "$with_gtk3" == yes; then
   NSP_ISS_GTK=gtk3
+  GTK_PKG='gtk+-3.0'
 else
   NSP_ISS_GTK=gtk2
+  GTK_PKG='gtk+-2.0'
 fi
 
 # to be improved
@@ -2344,6 +2346,7 @@ AC_SUBST(HAVE_UMFPACK)
 AC_SUBST(HAVE_SPQR)
 AC_SUBST(have_gtksourceview)
 AC_SUBST(MAN_VIZUALIZATION)
+AC_SUBST(GTK_PKG)
 AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(LAPACK_LIBS) AC_SUBST(BLAS_LIBS)
 AC_SUBST(CC)

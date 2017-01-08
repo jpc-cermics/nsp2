@@ -89,6 +89,8 @@ PVMINCLUDE = @PVMINCLUDE@
 #
 TCLTK_INC_PATH = @TCLTK_INC_PATH@
 #
+# GTK version used for compilation
+GTK_PKG=@GTK_PKG@
 # libraries needed for linking 
 # 1- inside nsp 
 NSPLIBS=$(SCIDIR)/libs/nsp.a @GRAPHICS_LIB_OLD@ $(SCIDIR)/libs/graphics-new.a $(SCIDIR)/libs/rand.a $(SCIDIR)/libs/dcd.a $(SCIDIR)/libs/integ.a $(SCIDIR)/libs/approx.a $(SCIDIR)/libs/spmf.a @MPLUSLIB@ @LIBXDRA@
