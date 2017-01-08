@@ -30,20 +30,21 @@ OutputBaseFilename=nsp2-@NSP_ISS@-@NSP_ISS_GTK@-@DATE@
 ;;Root: HKCU; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; ValueType: string; ValueName: "Path"; ValueData: "{app}"; Flags: uninsdeletekey
 
 [Files]
-Source: "bin\*.*"; DestDir: "{app}\bin"; Flags: recursesubdirs
-Source: "src\include\*.*"; DestDir: "{app}\include"; Flags: recursesubdirs
-Source: "config\*.*"; DestDir: "{app}\config"; Flags: recursesubdirs
-Source: "lib\*.*"; DestDir: "{app}\lib"; Flags: recursesubdirs
-Source: "etc\*.*"; DestDir: "{app}\etc"; Flags: recursesubdirs
-Source: "share\*.*"; DestDir: "{app}\share"; Flags: recursesubdirs
-Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: recursesubdirs
-Source: "man\scicoslab.4dx"; DestDir: "{app}\man\";
-Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
-Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
-Source: "demos\*.*"; DestDir: "{app}\demos\"; Flags: recursesubdirs
-Source: "toolboxes\*.*"; DestDir: "{app}\toolboxes\"; Flags: recursesubdirs
-Source: "libs\NperiPos.ps"; DestDir: "{app}\libs\"; Flags: recursesubdirs
-Source: "libs\simport_pervasives.mdlio"; DestDir: "{app}\libs\"; Flags: recursesubdirs
+Source: "bin\*.*"; Excludes: "CVS"; Destdir: "{app}\bin"; Flags: recursesubdirs
+Source: "src\include\*.*"; Excludes: "CVS"; Destdir: "{app}\include"; Flags: recursesubdirs
+Source: "config\*.*"; Excludes: "CVS"; Destdir: "{app}\config"; Flags: recursesubdirs
+Source: "lib\*.*"; Excludes: "CVS"; Destdir: "{app}\lib"; Flags: recursesubdirs
+Source: "etc\*.*"; Excludes: "CVS"; Destdir: "{app}\etc"; Flags: recursesubdirs
+Source: "share\*.*"; Excludes: "CVS"; Destdir: "{app}\share"; Flags: recursesubdirs
+Source: "man\html\generated\*.*"; Excludes: "CVS"; Destdir: "{app}\man\html\generated"; Flags: recursesubdirs
+Source: "man\scicoslab.4dx"; Excludes: "CVS"; Destdir: "{app}\man\";
+Source: "macros\*.*"; Excludes: "CVS"; Destdir: "{app}\macros\"; Flags: recursesubdirs
+Source: "tests\*.*"; Excludes: "CVS"; Destdir: "{app}\tests\"; Flags: recursesubdirs
+Source: "demos\*.*"; Excludes: "CVS"; Destdir: "{app}\demos\"; Flags: recursesubdirs
+Source: "demos3\*.*"; Excludes: "CVS"; Destdir: "{app}\demos\"; Flags: recursesubdirs
+Source: "toolboxes\*.*"; Excludes: "CVS"; Destdir: "{app}\toolboxes\"; Flags: recursesubdirs
+Source: "libs\NperiPos.ps"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
+Source: "libs\simport_pervasives.mdlio"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
 
 [Icons]
 Name: "{commondesktop}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
