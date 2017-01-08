@@ -35,14 +35,11 @@
 #include <nsp/nsptcl.h>
 #include <nsp/config.h>
 
-#if GTK_CHECK_VERSION (3,0,0)
+/* #if GTK_CHECK_VERSION (3,0,0) */
 #if !defined(WITH_GTKOSX) && !defined(WIN32) 
 #define WITH_GTKXH
 #include <gtk/gtkx.h>
 #endif
-#else 
-#define WITH_GTKXH
-#endif 
 
 #ifdef WITH_GTKGLEXT
 #include <gtk/gtkgl.h>
