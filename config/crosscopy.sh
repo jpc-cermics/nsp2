@@ -16,9 +16,13 @@ else
     version=$2
 fi
 
-
 if [ -d "/usr/$dist" ]; then
     echo populate bin with dlls from cross compiler 
+    if [ $dist = "i686-w64-mingw32" ]; then
+      cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
+    else
+      cp -f /usr/$dist/bin/gspawn-win64*.exe bin/
+    fi
     cp -f /usr/$dist/bin/gspawn-win32*.exe bin/
     cp -f /usr/$dist/bin/icudata56.dll bin/
     cp -f /usr/$dist/bin/icui18n56.dll bin/
@@ -149,7 +153,12 @@ fi
 if [ -d "/usr/lib/gcc/$dist/$version" ]; then
     cp -f /usr/lib/gcc/$dist/$version/libgfortran-3.dll bin
     cp -f /usr/lib/gcc/$dist/$version/libquadmath-0.dll bin
-    cp -f /usr/lib/gcc/$dist/$version/libgcc_s_seh-1.dll bin/
+    if [ -f "/usr/lib/gcc/$dist/$version/libgcc_s_seh-1.dll" ]; then 
+	cp -f /usr/lib/gcc/$dist/$version/libgcc_s_seh-1.dll bin/
+    fi
+    if [ -f "/usr/lib/gcc/$dist/$version/libgcc_s_sjlj-1.dll" ]; then 
+	cp -f /usr/lib/gcc/$dist/$version/libgcc_s_sjlj-1.dll bin/
+    fi
     cp -f /usr/lib/gcc/$dist/$version/libgomp-1.dll bin/
 else
     echo directory /usr/lib/gcc/$dist/$version  does not exists
