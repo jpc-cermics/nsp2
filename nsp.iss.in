@@ -41,7 +41,7 @@ Source: "man\scicoslab.4dx"; Excludes: "CVS"; Destdir: "{app}\man\";
 Source: "macros\*.*"; Excludes: "CVS"; Destdir: "{app}\macros\"; Flags: recursesubdirs
 Source: "tests\*.*"; Excludes: "CVS"; Destdir: "{app}\tests\"; Flags: recursesubdirs
 Source: "demos\*.*"; Excludes: "CVS"; Destdir: "{app}\demos\"; Flags: recursesubdirs
-Source: "demos3\*.*"; Excludes: "CVS"; Destdir: "{app}\demos\"; Flags: recursesubdirs
+Source: "demos3\*.*"; Excludes: "CVS"; Destdir: "{app}\demos3\"; Flags: recursesubdirs
 Source: "toolboxes\*.*"; Excludes: "CVS"; Destdir: "{app}\toolboxes\"; Flags: recursesubdirs
 Source: "libs\NperiPos.ps"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
 Source: "libs\simport_pervasives.mdlio"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
