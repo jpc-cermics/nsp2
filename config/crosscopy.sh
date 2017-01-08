@@ -72,7 +72,7 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libharfbuzz-0.dll bin/
     cp -f /usr/$dist/bin/libhogweed-4-2.dll bin/
     cp -f /usr/$dist/bin/libintl-8.dll bin/
-    cp -f /usr/$dist/bin/libjasper-1.dll bin/
+    cp -f /usr/$dist/bin/libjasper-4.dll bin/
     cp -f /usr/$dist/bin/libjavascriptcoregtk-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libjpeg-8.dll bin/
     cp -f /usr/$dist/bin/liblapack.dll bin/
