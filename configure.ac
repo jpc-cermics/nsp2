@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 ## Copyright Enpc
 
 AC_REVISION($Revision$)dnl
-AC_INIT([nsp],[1.1])
+AC_INIT([nsp],[1.2])
 DATE=`date +%Y-%m-%d`
 SCIDIR=`pwd`
 AC_CONFIG_AUX_DIR(config)
