@@ -7,7 +7,7 @@ AppSupportURL=http://code.google.com/p/tumbi/issues/list
 AppUpdatesURL=http://cermics.enpc.fr/~jpc/nsp-tiddly/mine.html
 CreateAppDir=yes
 ; pf for program files
-DefaultDirName={pf}\nsp-@NSP_ISS@-@NSP_ISS_GTK@
+DefaultDirName={pf}\nsp-@NSP_ISS_GTK@-@NSP_ISS@
 DefaultGroupName=Nsp
 ; icon for uninstall
 UninstallDisplayIcon={app}\nsp-win.exe
@@ -21,7 +21,8 @@ BackColor=clPurple
 BackColor2=clBlack
 Compression=bzip/9
 OutputDir=..
-OutputBaseFilename=nsp2-@NSP_ISS@-@NSP_ISS_GTK@-@DATE@
+;; @DATE@
+OutputBaseFilename=nsp2-@NSP_ISS_GTK@-@NSP_ISS@-@PACKAGE_VERSION@
 ;;[Registry]
 ;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
 ;;Root: HKLM; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; Flags: uninsdeletekey
