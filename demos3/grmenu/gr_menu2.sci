@@ -427,7 +427,7 @@ function draw_scope(rect)
   execstr(str);
 endfunction;
 
-gtk_logo = getenv('NSP')+'/demos3/gtk3/libplus/gtk-logo-rgb.gif";
+gtk_logo = getenv('NSP')+'/demos3/gtk3/libbase/demo_images/gtk-logo-rgb.gif';
 global gtk_logo_pixbuf;
 gtk_logo_pixbuf = gdk_pixbuf_new_from_file(gtk_logo);
 
@@ -468,13 +468,11 @@ endfunction;
 global('GF');
 GF=hash_create(6);
 
-
-
 xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 
-if %t then
+if %f then
   seteventhandler('my_eventhandler');
   xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
   xset('recording',0)
