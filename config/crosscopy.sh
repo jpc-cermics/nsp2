@@ -164,3 +164,12 @@ else
 fi
 
 chmod +x bin/*.dll
+
+
+# change the pathes in pixbuf loaders
+
+loaders_cache=lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+if [ -f "$loaders_cache" ]; then
+    echo "modify loaders.cache"
+    sed -e "s+Z:/usr/$dist+..+" /usr/$dist/$loaders_cache > $loaders_cache
+fi
