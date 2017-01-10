@@ -90,9 +90,8 @@ if [ -d "/usr/$dist" ]; then
     cp -f /usr/$dist/bin/libpangowin32-1.0-0.dll bin/
     cp -f /usr/$dist/bin/libpathplan-4.dll bin/
     cp -f /usr/$dist/bin/libpixman-1-0.dll bin/
-    cp -f /usr/$dist/bin/libpng15-15.dll bin/
     cp -f /usr/$dist/bin/libpng16-16.dll bin/
-    cp -f /usr/$dist/bin/libpoppler-47.dll bin/
+    cp -f /usr/$dist/bin/libpoppler-56.dll bin/
     cp -f /usr/$dist/bin/libpoppler-glib-8.dll bin/
     cp -f /usr/$dist/bin/libportaudio-2.dll bin/
     cp -f /usr/$dist/bin/libreadline6.dll bin/
