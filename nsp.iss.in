@@ -43,7 +43,7 @@ Source: "macros\*.*"; Excludes: "CVS"; Destdir: "{app}\macros\"; Flags: recurses
 Source: "tests\*.*"; Excludes: "CVS"; Destdir: "{app}\tests\"; Flags: recursesubdirs
 Source: "demos\*.*"; Excludes: "CVS"; Destdir: "{app}\demos\"; Flags: recursesubdirs
 Source: "demos3\*.*"; Excludes: "CVS"; Destdir: "{app}\demos3\"; Flags: recursesubdirs
-Source: "toolboxes\*.*"; Excludes: "CVS"; Destdir: "{app}\toolboxes\"; Flags: recursesubdirs
+Source: "toolboxes\*.*"; Excludes: "CVS, *.o, *.c, *.lo, *.f, compilers"; Destdir: "{app}\toolboxes\"; Flags: recursesubdirs
 Source: "libs\NperiPos.ps"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
 Source: "libs\simport_pervasives.mdlio"; Excludes: "CVS"; Destdir: "{app}\libs\"; Flags: recursesubdirs
 
