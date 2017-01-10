@@ -22,7 +22,7 @@ BackColor2=clBlack
 Compression=bzip/9
 OutputDir=..
 ;; @DATE@
-OutputBaseFilename=nsp2-@NSP_ISS_GTK@-@NSP_ISS@-@PACKAGE_VERSION@
+OutputBaseFilename=nsp-@PACKAGE_VERSION@-@NSP_ISS_GTK@-@NSP_ISS@
 ;;[Registry]
 ;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
 ;;Root: HKLM; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; Flags: uninsdeletekey
