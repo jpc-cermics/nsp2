@@ -4593,7 +4593,7 @@ static int
 _wrap_atk_no_op_object_new (Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspGObject *obj;
+  NspGObject *obj = NULL;
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
   if ((ret = (GObject *)atk_no_op_object_new(G_OBJECT(obj->obj)))== NULL) return RET_BUG;
@@ -4807,7 +4807,7 @@ NspAtkObjectFactory *atkobjectfactory_copy(NspAtkObjectFactory *self)
 static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, t_end};
-  NspGObject *obj;
+  NspGObject *obj = NULL;
   AtkObject *ret;
   NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;

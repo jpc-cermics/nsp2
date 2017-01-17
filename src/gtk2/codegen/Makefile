@@ -22,6 +22,14 @@ girepository.c: girepository.defs
 	@mv girepository.c ../
 	@rm -f *.h
 
+# cursor is not the same in gtk2 and gtk3
+
+gdk.c: gdk.defs
+	@echo "generating $*.c"
+	@$(PROG) -cp "codegen/" -p $* -o $*.c $*
+	@sed -e "s/gdkcursor\.h/gdkcursor-gtk2\.h/" $*.c > ../$*.c
+	@rm -f *.h $*.c
+
 clean:
 	rm -f *.c *.h
 
@@ -39,6 +47,7 @@ gvalue.c: gvalue.defs gvalue.override
 	@$(PROG) -cp "codegen/" -p $* -o $*.c $*
 	@mv $*.c ../
 	@rm -f *.h
+
 
 
 

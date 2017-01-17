@@ -34,7 +34,7 @@
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 
-#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object) 
+#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object)
 
 /* #include "pygtk-private.h" */
 
@@ -50,7 +50,7 @@
 #include <nsp/gtk/gdkevent.h>
 #include <nsp/gtk/gdkfont.h>
 #include <nsp/gtk/gdkcolor.h>
-#include <nsp/gtk/gdkcursor.h>
+#include <nsp/gtk/gdkcursor-gtk2.h>
 #include <nsp/gtk/gdkrectangle.h>
 #include <nsp/gtk/gdkcolormap.h>
 #include <nsp/gtk/gdkdevice.h>
@@ -1450,7 +1450,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 #define  NspGdkCursor_Private 
 #include <nsp/objects.h>
-#include <nsp/gtk/gdkcursor.h>
+#include <nsp/gtk/gdkcursor-gtk2.h>
 #include <nsp/interf.h>
 #include <nsp/nspthreads.h>
 
@@ -2326,7 +2326,7 @@ static int _wrap_gdk_color_white(NspGdkColormap *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
@@ -2344,7 +2344,7 @@ static int _wrap_gdk_color_black(NspGdkColormap *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
@@ -2372,7 +2372,7 @@ static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int o
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
@@ -3179,7 +3179,7 @@ static int _wrap_gdk_display_put_event(NspGdkDisplay *self,Stack stack,int rhs,i
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
@@ -4285,7 +4285,7 @@ static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj,obj_check,s_int,s_int,string, t_end};
   GdkFont *font = NULL;
-  NspObject *nsp_font;
+  NspObject *nsp_font = NULL;
   NspGObject *gc;
   int x, y;
   char *string;
@@ -4438,7 +4438,7 @@ static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int op
   NspGObject *gc, *font;
   int x, y;
   PangoGlyphString *glyphs = NULL;
-  NspObject *nsp_glyphs;
+  NspObject *nsp_glyphs = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkgc, &gc, &nsp_type_pangofont, &font, &x, &y, &nsp_glyphs) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_glyphs, PANGO_TYPE_GLYPH_STRING))
       glyphs = nspg_boxed_get(nsp_glyphs, PangoGlyphString);
@@ -5361,7 +5361,7 @@ static int _wrap_gdk_window_set_background(NspGdkWindow *self,Stack stack,int rh
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
       color = nspg_boxed_get(nsp_color, GdkColor);
@@ -6627,7 +6627,7 @@ static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
       color = nspg_boxed_get(nsp_color, GdkColor);
@@ -6643,7 +6643,7 @@ static int _wrap_gdk_gc_set_background(NspGdkGC *self,Stack stack,int rhs,int op
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
       color = nspg_boxed_get(nsp_color, GdkColor);
@@ -6659,7 +6659,7 @@ static int _wrap_gdk_gc_set_font(NspGdkGC *self,Stack stack,int rhs,int opt,int 
 {
   int_types T[] = {obj, t_end};
   GdkFont *font = NULL;
-  NspObject *nsp_font;
+  NspObject *nsp_font = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_font) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_font, GDK_TYPE_FONT))
       font = nspg_boxed_get(nsp_font, GdkFont);
@@ -6862,7 +6862,7 @@ static int _wrap_gdk_gc_set_rgb_fg_color(NspGdkGC *self,Stack stack,int rhs,int 
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
       color = nspg_boxed_get(nsp_color, GdkColor);
@@ -6878,7 +6878,7 @@ static int _wrap_gdk_gc_set_rgb_bg_color(NspGdkGC *self,Stack stack,int rhs,int 
 {
   int_types T[] = {obj, t_end};
   GdkColor *color = NULL;
-  NspObject *nsp_color;
+  NspObject *nsp_color = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_color) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_color, GDK_TYPE_COLOR))
       color = nspg_boxed_get(nsp_color, GdkColor);
@@ -8084,7 +8084,7 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
   int_types T[] = {string,string,obj,obj, t_end};
   char *filename, *type;
   gchar **option_keys = NULL, **option_values = NULL;
-  NspObject *nsp_option_keys, *nsp_option_values;
+  NspObject *nsp_option_keys = NULL, *nsp_option_values = NULL;
   GError *error = NULL;
   int ret;
   if ( GetArgs(stack,rhs,opt,T,&filename, &type, &nsp_option_keys, &nsp_option_values) == FAIL) return RET_BUG;
@@ -8104,7 +8104,7 @@ static int _wrap_gdk_pixbuf_savev(NspGdkPixbuf *self,Stack stack,int rhs,int opt
     }
     ret =gdk_pixbuf_savev(GDK_PIXBUF(self->obj),filename,type,option_keys,option_values,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8492,7 +8492,7 @@ _wrap_gdk_pixbuf_animation_new_from_file (Stack stack, int rhs, int opt, int lhs
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_animation_new_from_file(filename,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -8995,7 +8995,7 @@ _wrap_gdk_pixbuf_loader_new_with_type (Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&image_type) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_loader_new_with_type(image_type,&error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
 
@@ -9015,7 +9015,7 @@ static int _wrap_gdk_pixbuf_loader_write(NspGdkPixbufLoader *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&buf, &count) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_loader_write(GDK_PIXBUF_LOADER(self->obj),buf,count,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -9053,7 +9053,7 @@ static int _wrap_gdk_pixbuf_loader_close(NspGdkPixbufLoader *self,Stack stack,in
   CheckRhs(0,0);
     ret =gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(self->obj),&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -9482,7 +9482,7 @@ static int _wrap_gdk_screen_broadcast_client_message(NspGdkScreen *self,Stack st
 {
   int_types T[] = {obj, t_end};
   GdkEvent *event = NULL;
-  NspObject *nsp_event;
+  NspObject *nsp_event = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_event) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
       event = nspg_boxed_get(nsp_event, GdkEvent);
@@ -10361,7 +10361,7 @@ int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs) /*
   NspGObject *drawable, *gc, *layout;
   int x, y;
   GdkColor *foreground = NULL, *background = NULL;
-  NspObject *nsp_foreground, *nsp_background;
+  NspObject *nsp_foreground = NULL, *nsp_background = NULL;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &nsp_type_gdkgc, &gc, &x, &y, &nsp_type_pangolayout, &layout, &nsp_foreground, &nsp_background) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_foreground, GDK_TYPE_COLOR))
       foreground = nspg_boxed_get(nsp_foreground, GdkColor);
@@ -10470,7 +10470,7 @@ int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs) /* f
 {
   int_types T[] = {obj, t_end};
   PangoFontDescription *font_desc = NULL;
-  NspObject *nsp_font_desc, *nsp_ret;
+  NspObject *nsp_font_desc = NULL, *nsp_ret;
   GdkFont *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_font_desc) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_font_desc, PANGO_TYPE_FONT_DESCRIPTION))
@@ -10612,7 +10612,7 @@ int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs) /*
   char *data;
   int width, height, depth;
   GdkColor *fg = NULL, *bg = NULL;
-  NspObject *nsp_fg, *nsp_bg, *nsp_ret;
+  NspObject *nsp_fg = NULL, *nsp_bg = NULL, *nsp_ret;
   GdkPixmap *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &data, &width, &height, &depth, &nsp_fg, &nsp_bg) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_fg, GDK_TYPE_COLOR))
@@ -11068,7 +11068,7 @@ int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs) /* pi
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_new_from_file(filename,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
@@ -11114,7 +11114,7 @@ int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs) /* 
   if ( GetArgs(stack,rhs,opt,T,&data_length, &data, &copy_pixels) == FAIL) return RET_BUG;
     ret =gdk_pixbuf_new_from_inline(data_length,data,copy_pixels,&error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",NspFname(stack));
+    Scierror("%s: gtk error\n%s\n",NspFname(stack),error->message);
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);

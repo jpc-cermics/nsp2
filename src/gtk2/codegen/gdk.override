@@ -10,7 +10,7 @@ headers
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
 
-#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object) 
+#define GDK_DISPLAY(object) GDK_DISPLAY_OBJECT(object)
 
 /* #include "pygtk-private.h" */
 
