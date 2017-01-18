@@ -53,8 +53,8 @@ gdouble def_scale;
 #include "tumbi48.xpm"
 #endif
 
-#if VTE_CHECK_VERSION(0,40,0)
-/* exists in VERSION(0,40,0) */
+#if VTE_CHECK_VERSION(0,38,0)
+/* exists in VERSION(0,38,0) */
 #else
 /* to be defined for VERSION(0,32,0) */
 static void
@@ -130,7 +130,7 @@ destroy_and_quit(VteTerminal *terminal, GtkWidget *window)
     stream = G_OUTPUT_STREAM (g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &error));
 
     if (stream) {
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
       vte_terminal_write_contents_sync (terminal, stream,
 					VTE_WRITE_DEFAULT,
 					NULL, &error);
@@ -870,7 +870,7 @@ main(int argc, char **argv)
   };
   GOptionContext *context;
   GError *error = NULL;
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   VteCursorBlinkMode cursor_blink_mode = VTE_CURSOR_BLINK_SYSTEM;
   VteCursorShape cursor_shape = VTE_CURSOR_SHAPE_BLOCK;
 #else
@@ -908,7 +908,7 @@ main(int argc, char **argv)
     return 1;
   }
   if (cursor_blink_mode_string) {
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
     cursor_blink_mode = parse_enum(VTE_TYPE_CURSOR_BLINK_MODE, cursor_blink_mode_string);
 #else
     cursor_blink_mode = parse_enum(VTE_TYPE_TERMINAL_CURSOR_BLINK_MODE, cursor_blink_mode_string);
@@ -917,7 +917,7 @@ main(int argc, char **argv)
   }
 
   if (cursor_shape_string) {
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
     cursor_shape = parse_enum(VTE_TYPE_CURSOR_SHAPE, cursor_shape_string);
 #else
     cursor_shape = parse_enum(VTE_TYPE_TERMINAL_CURSOR_SHAPE, cursor_shape_string);
@@ -1104,7 +1104,7 @@ main(int argc, char **argv)
   /* in NSP we try to obtain foregrounf and background from style_context after
    * widget is realized
    */
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   vte_terminal_set_colors(terminal, &fore, &back, NULL, 0);
 #else
   vte_terminal_set_colors_rgba(terminal, &fore, &back, NULL, 0);
@@ -1114,7 +1114,7 @@ main(int argc, char **argv)
   if (cursor_color_string) {
     GdkRGBA rgba;
     if (parse_color (cursor_color_string, &rgba))
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
       vte_terminal_set_color_cursor(terminal, &rgba);
 #else
     vte_terminal_set_color_cursor_rgba(terminal, &rgba);
@@ -1122,7 +1122,7 @@ main(int argc, char **argv)
     g_free(cursor_color_string);
   }
   
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   if (highlight_foreground_color_string) {
     GdkRGBA rgba;
     if (parse_color (highlight_foreground_color_string, &rgba))
@@ -1138,7 +1138,7 @@ main(int argc, char **argv)
   }
 #endif
 
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   if (encoding != NULL) {
     if (!vte_terminal_set_encoding(terminal, encoding, &error)) {
       g_printerr("Failed to set encoding: %s\n", error->message);
@@ -1148,7 +1148,7 @@ main(int argc, char **argv)
   }
 #endif
 
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   if (cjk_ambiguous_width != NULL) {
     int width = 1;
 
@@ -1168,7 +1168,7 @@ main(int argc, char **argv)
 
   vte_terminal_set_cursor_shape(terminal, cursor_shape);
 
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
   vte_terminal_set_rewrap_on_resize(terminal, rewrap);
 #endif
   /* Set the default font. */
@@ -1273,7 +1273,7 @@ main(int argc, char **argv)
 	    command = "/bin/sh";
 
 	  if (!g_shell_parse_argv(command, &command_argc, &command_argv, &err) ||
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
 	      !vte_terminal_spawn_sync(terminal,
 				       pty_flags,
 				       NULL,
@@ -1309,7 +1309,7 @@ main(int argc, char **argv)
 	}
       else
 	{
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
 #ifdef HAVE_FORK
 	  GError *err = NULL;
 	  VtePty *pty;
@@ -1400,7 +1400,7 @@ main(int argc, char **argv)
       g_warning (_("Could not parse the geometry spec passed to --geometry"));
     }
   } else {
-#if VTE_CHECK_VERSION(0,40,0)
+#if VTE_CHECK_VERSION(0,38,0)
     /* As of GTK+ 2.91.0, the default size of a window comes from its minimum
      * size not its natural size, so we need to set the right default size
      * explicitly */
@@ -1435,8 +1435,8 @@ main(int argc, char **argv)
   return 0;
 }
 
-#if VTE_CHECK_VERSION(0,40,0)
-/* already exists in VTE_CHECK_VERSION(0,40,0) */
+#if VTE_CHECK_VERSION(0,38,0)
+/* already exists in VTE_CHECK_VERSION(0,38,0) */
 #else 
 /* Just some arbitrary minimum values */
 #define MIN_COLUMNS (16)
