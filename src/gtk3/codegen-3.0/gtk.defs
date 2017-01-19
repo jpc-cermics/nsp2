@@ -22795,6 +22795,7 @@
 (define-function gtk_stack_sidebar_new
   (c-name "gtk_stack_sidebar_new")
   (is-constructor-of "GtkStackSidebar")
+  (available "GDK_AVAILABLE_IN_3_16")
   (return-type "GtkStackSidebar*")
 )
 

@@ -10869,6 +10869,7 @@ int _wrap_gdk_cairo_region_create_from_surface(Stack stack, int rhs, int opt, in
   return 1;
 }
 
+#if GTK_CHECK_VERSION(3,16,0)
 int _wrap_gdk_cairo_draw_from_gl(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_draw_from_gl */
 {
   int_types T[] = {obj,obj_check,s_int,s_int,s_int,s_int,s_int,s_int,s_int, t_end};
@@ -10887,6 +10888,13 @@ int _wrap_gdk_cairo_draw_from_gl(Stack stack, int rhs, int opt, int lhs) /* gdk_
   return 0;
 }
 
+#else
+int _wrap_gdk_cairo_draw_from_gl(Stack stack, int rhs, int opt, int lhs) /* gdk_cairo_draw_from_gl */
+{
+  Scierror("Error: function gdk_cairo_draw_from_gl not available\n");
+  return RET_BUG;
+}
+#endif
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -11102,4 +11110,4 @@ void nsp_initialize_gdk_types(void)
   new_type_gdkpixbufloader(T_BASE);
 }
 
-#line 11106 "gdk.c"
+#line 11114 "gdk.c"

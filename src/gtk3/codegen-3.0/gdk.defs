@@ -4903,8 +4903,9 @@
     '("int" "y")
     '("int" "width")
     '("int" "height")
+    )
+  (available "GDK_AVAILABLE_IN_3_16")
   )
-)
 
 
 
