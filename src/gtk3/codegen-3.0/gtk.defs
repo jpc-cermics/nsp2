@@ -5009,8 +5009,9 @@
   (return-type "GtkClipboard*")
   (parameters
     '("GdkDisplay*" "display")
+    )
+  (available "GDK_AVAILABLE_IN_3_16")
   )
-)
 
 (define-method get_display
   (of-object "GtkClipboard")

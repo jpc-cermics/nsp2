@@ -76252,6 +76252,7 @@ int _wrap_gtk_clipboard_get(Stack stack, int rhs, int opt, int lhs) /* gtk_clipb
   return 1;
 }
 
+#if GTK_CHECK_VERSION(3,16,0)
 int _wrap_gtk_clipboard_get_default(Stack stack, int rhs, int opt, int lhs) /* gtk_clipboard_get_default */
 {
   int_types T[] = {obj_check, t_end};
@@ -76266,6 +76267,13 @@ int _wrap_gtk_clipboard_get_default(Stack stack, int rhs, int opt, int lhs) /* g
   return 1;
 }
 
+#else
+int _wrap_gtk_clipboard_get_default(Stack stack, int rhs, int opt, int lhs) /* gtk_clipboard_get_default */
+{
+  Scierror("Error: function gtk_clipboard_get_default not available\n");
+  return RET_BUG;
+}
+#endif
 int _wrap_gtk_hsv_to_rgb(Stack stack, int rhs, int opt, int lhs) /* gtk_hsv_to_rgb */
 {
   int_types T[] = {s_double,s_double,s_double,s_double,s_double,s_double, t_end};
@@ -76442,7 +76450,7 @@ _wrap_gtk_drag_dest_set(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 76446 "gtk.c"
+#line 76454 "gtk.c"
 
 
 int _wrap_gtk_drag_dest_set_proxy(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_dest_set_proxy */
@@ -76504,7 +76512,7 @@ _wrap_gtk_drag_dest_find_target(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 76508 "gtk.c"
+#line 76516 "gtk.c"
 
 
 #line 5403 "codegen-3.0/gtk.override"
@@ -76536,7 +76544,7 @@ _wrap_gtk_drag_dest_get_target_list(Stack stack,int rhs,int opt,int lhs)
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 76540 "gtk.c"
+#line 76548 "gtk.c"
 
 
 #line 5433 "codegen-3.0/gtk.override"
@@ -76560,7 +76568,7 @@ _wrap_gtk_drag_dest_set_target_list(Stack stack,int rhs,int opt,int lhs)
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 76564 "gtk.c"
+#line 76572 "gtk.c"
 
 
 int _wrap_gtk_drag_dest_add_text_targets(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_dest_add_text_targets */
@@ -76642,7 +76650,7 @@ _wrap_gtk_drag_source_set(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 76646 "gtk.c"
+#line 76654 "gtk.c"
 
 
 int _wrap_gtk_drag_source_unset(Stack stack, int rhs, int opt, int lhs) /* gtk_drag_source_unset */
@@ -76937,7 +76945,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 76941 "gtk.c"
+#line 76949 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs) /* gtk_main_level */
@@ -76969,7 +76977,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 76973 "gtk.c"
+#line 76981 "gtk.c"
 
 
 #line 3825 "codegen-3.0/gtk.override"
@@ -76985,7 +76993,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 76989 "gtk.c"
+#line 76997 "gtk.c"
 
 
 int _wrap_gtk_grab_add(Stack stack, int rhs, int opt, int lhs) /* gtk_grab_add */
@@ -77507,7 +77515,7 @@ _wrap_gtk_selection_add_targets(Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 77511 "gtk.c"
+#line 77519 "gtk.c"
 
 
 int _wrap_gtk_selection_clear_targets(Stack stack, int rhs, int opt, int lhs) /* gtk_selection_clear_targets */
@@ -77912,7 +77920,7 @@ _wrap_gtk_tree_get_row_drag_data(Stack stack,int rhs,int opt,int lhs)
   return RetArgs(stack,lhs,Tr,nsp_model,nsp_path);
 }
 
-#line 77916 "gtk.c"
+#line 77924 "gtk.c"
 
 
 int _wrap_gtk_tree_row_reference_inserted(Stack stack, int rhs, int opt, int lhs) /* gtk_tree_row_reference_inserted */
@@ -78115,7 +78123,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 78119 "gtk.c"
+#line 78127 "gtk.c"
 
 
 #line 6902 "codegen-3.0/gtk.override"
@@ -78135,7 +78143,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 78139 "gtk.c"
+#line 78147 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs) /* icon_size_lookup_for_settings */
@@ -79101,4 +79109,4 @@ void gtk_drag_set_icon_gicon  (GdkDragContext *context,
                                gint            hot_x,
                                gint            hot_y);
 
-#line 79105 "gtk.c"
+#line 79113 "gtk.c"
