@@ -1212,7 +1212,7 @@ WEBKIT_GEN=
 if test xx"$with_gtk" == xx; then
   # only checks if gtk is selected 
   if test "$with_gtk3" == yes; then
-     WEBKIT=webkit2gtk-3.0
+     WEBKIT=webkit2gtk-4.0   
      PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
      if test "x${have_webkit2}" = "xyes" ; then
        GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
@@ -1227,7 +1227,7 @@ if test xx"$with_gtk" == xx; then
        	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
        fi
      else	
-       WEBKIT=webkit2gtk-4.0
+       WEBKIT=webkit2gtk-3.0
        PKG_CHECK_MODULES(webkit2, $WEBKIT , have_webkit2=yes, have_webkit2=no)
        if test "x${have_webkit2}" = "xyes" ; then
          GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS $WEBKIT"
