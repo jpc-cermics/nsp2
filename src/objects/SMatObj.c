@@ -2165,12 +2165,12 @@ static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res =  stripblanks(A)
+ * Res =  stripblanks(A [, bool])
  */
 
 static int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
 {
-  int tab=FALSE;
+  int tab=TRUE;
   NspSMatrix *HMat1;
   CheckRhs(1,2);
   CheckLhs(1,1);

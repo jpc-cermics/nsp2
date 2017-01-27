@@ -7,7 +7,7 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-B=stripblanks(A)
+B=stripblanks(A [,opt])
 \end{verbatim}
 \end{calling_sequence}
 
@@ -15,12 +15,14 @@ B=stripblanks(A)
 \begin{parameters}
   \begin{varlist}
     \vname{B,A}: string matrices.
+    \vname{opt}: a Boolean (default value is true)
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-removes leading and trailing white-space characters, i.e characters for which 
-\verb+isspace+ returns \verb+%t+.
+removes leading and trailing space characters, i.e characters for which 
+\verb+isspace+ returns \verb+%t+. If a second argument is given and set to false, 
+then only leading and trailing white spaces are removed.
 \end{mandescription}
 % -- see also
 

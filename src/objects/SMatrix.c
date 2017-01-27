@@ -2658,7 +2658,7 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
  * @tab: an integer 
  * 
  * strips blanck characters at the begining and end of each entry of @A.
- * If tab is %TRUE then tabulation are also removed.
+ * If tab is %TRUE then tabulation and linefeed are also removed.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -2672,14 +2672,14 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A,int tab)
       int ln = strlen(loc);
       for ( j = ln-1 ; j >=0 ; j--) 
 	{
-	  if ( loc[j]== ' ' || (loc[j]== '\t' && tab == TRUE))
+	  if ( loc[j]== ' ' || ((loc[j]== '\t' || loc[j]== '\n') && tab == TRUE))
 	    loc[j]='\0';
 	  else 
 	    break;
 	}
       for ( j = 0 ;j < ln ; j++) 
 	{
-	  if ( loc[j]== ' ' || (loc[j]== '\t' && tab == TRUE))
+	  if ( loc[j]== ' ' || ((loc[j]== '\t' || loc[j]== '\n') && tab == TRUE))
 	    {
 	      loc1 = loc + j + 1;
 	    }
