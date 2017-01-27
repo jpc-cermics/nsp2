@@ -393,6 +393,19 @@ int int_gmarkup_node_create(Stack stack, int rhs, int opt, int lhs)
   if(( H = gmarkup_node_create_void(NVOID,(NspTypeBase *) nsp_type_gmarkup_node)) == NULLMARKUPNODE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+
+  if ( H->attributes == NULL )
+    {
+      if((H->attributes = nsp_hash_create("attributes",4)) == NULLHASH) return RET_BUG;
+    }
+  if ( H->children == NULL)
+    {
+      if ((H->children= nsp_list_create("children"))== NULL) return RET_BUG;
+    }
+  if ( H->name == NULL )
+    {
+      if ((H->name =nsp_string_copy("void")) == (nsp_string) 0) return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -411,8 +424,120 @@ static int int_gmarkup_node_meth_get_name(NspGMarkupNode *self, Stack stack, int
   return 1;
 }
 
+/* WIP: must be sure that characters are escaped and that 
+ * uf8 is used for output
+ */
+
+#define BUF_SIZE 512
+
+static NspSMatrix *smatrix_from_gmarkup_node(int indent, NspGMarkupNode *self)
+{
+  Cell *C;
+  NspHash *H = self->attributes;
+  NspList *L = self->children;
+  char buf[BUF_SIZE], *str;
+  NspObject *Res,*Str;
+  int n=0, i1;
+  str = buf;
+  for ( i1=0 ; i1 < indent; i1++) { str[i1]=' ';}
+  n = indent;
+  str +=n;
+  n= snprintf(str,(&buf[BUF_SIZE-1] -str),"<%s",self->name);
+  str += n;
+  for ( i1 =0 ; i1 <= H->hsize ; i1++) 
+    {
+      Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
+      if ( loc->used && loc->data != NULLOBJ && IsSMat(loc->data) ) 
+	{
+	  char *txt =g_markup_escape_text(((NspSMatrix *) loc->data)->S[0],-1);
+	  n= snprintf(str,(size_t) (&buf[BUF_SIZE-1] -str)," %s=\"%s\" ",
+		      nsp_object_get_name(loc->data),
+		      txt);
+	  g_free(txt);
+	  if ( n >= (size_t) (&buf[BUF_SIZE-1] -str) )
+	    {
+	      Sciprintf("Error: output was truncated attributes are too long \n");
+	      buf[BUF_SIZE-1] = '\0';break;
+	    }
+	  str += n;
+	}
+    }
+  n=snprintf(str,(&buf[BUF_SIZE-1] -str),">");
+  if ((Res = nsp_create_object_from_str(NVOID,buf)) == NULL) return NULL;
+  C= L->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  if ( IsGMarkupNode(C->O) )
+	    {
+	      NspSMatrix *Loc;
+	      Loc = smatrix_from_gmarkup_node(indent+2,(NspGMarkupNode *) C->O);
+	      if (Loc == NULL ) return NULL;
+	      if (nsp_smatrix_concat_down1((NspSMatrix *) Res,(NspSMatrix *) Loc,TRUE) != OK)
+		return NULL;
+	    }
+	  else if ( IsSMat(C->O) )
+	    {
+	      NspSMatrix *S= (NspSMatrix *) C->O;
+	      for (i1=0 ; i1 < S->mn; i1++)
+		{
+		  int k, ok;
+		  char *txt,*start,*stop;
+		  ok = FALSE;
+		  for ( k=0 ; k < strlen(S->S[i1]) ; k++)
+		    {
+		      if ( !( S->S[i1][k] == ' ' || S->S[i1][k] == '\t' || S->S[i1][k] == '\n')) {ok=TRUE;break;}
+		    }
+		  if (! ok) continue;
+		  /* cut S->S[i1] into pieces */
+		  start = S->S[i1];
+		  while (1)
+		    {
+		      str = buf;
+		      stop = strstr(start,"\n");
+		      if ( stop != NULL) *stop='\0';
+		      for ( k=0 ; k < indent; k++) { str[k]=' ';}
+		      n = indent;
+		      str +=n;
+		      txt =g_markup_escape_text( start,-1);
+		      snprintf(str,(&buf[BUF_SIZE-1] -str),"%s",txt);
+		      g_free(txt);
+		      if ((Str = nsp_create_object_from_str(NVOID,buf)) == NULL) return NULL;
+		      if (nsp_smatrix_concat_down1((NspSMatrix *) Res,(NspSMatrix *) Str,TRUE) != OK)
+			return NULL;
+		      if ( stop == NULL) break;
+		      *stop = '\n';
+		      start = stop +1;
+		    }
+		}
+	    }
+	}
+      C = C->next;
+    }
+  str = buf;
+  for ( i1=0 ; i1 < indent; i1++) { str[i1]=' ';}
+  n= indent;
+  str += n;
+  n= snprintf(str,BUF_SIZE-1-n,"</%s>",self->name);
+  if ((Str = nsp_create_object_from_str(NVOID,buf)) == NULL) return NULL;
+  if (nsp_smatrix_concat_down1((NspSMatrix *) Res,(NspSMatrix *)Str,TRUE) != OK) return NULL;
+  return (NspSMatrix *) Res;
+}
+
+static int int_gmarkup_node_sprintf(NspGMarkupNode *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *Res;
+  CheckRhs(0,0); 
+  CheckLhs(1,1);
+  if (( Res = smatrix_from_gmarkup_node(0,self))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
 static NspMethods gmarkup_node_methods[] = {
   {"get_node_name",(nsp_method *) int_gmarkup_node_meth_get_name},
+  {"sprintf",(nsp_method *) int_gmarkup_node_sprintf},
   { NULL, NULL}
 };
 
@@ -718,6 +843,7 @@ int int_gmarkup_escape_text(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab gmarkup_node_func[]={
   { "gmarkup", int_gmarkup},
+  { "gmarkup_node_create",int_gmarkup_node_create},
   { "gmarkup_escape_text", int_gmarkup_escape_text},
   { NULL, NULL}
 };
