@@ -23,6 +23,24 @@
 #define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
 
 
+/**
+ * clearwindow:
+ * @Xgc: a #BCG
+ *
+ * use background to paint the current window.
+ * this function should only be called by expose_event
+ * when necessary.
+ *
+ **/
+
+static void clearwindow(BCG *Xgc)
+{
+  glClearColor(Xgc->private->gcol_bg.red /255.0,
+	       Xgc->private->gcol_bg.green /255.0,
+	       Xgc->private->gcol_bg.blue /255.0,0.0);
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 /*
  * cleararea: clear a rectangle zone
  */
@@ -807,11 +825,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-  /* XXX when PERIGLGTK is active  the current drawable which is always a pixmap */
-  int status = 1;
-#ifndef PERIGLGTK
-  status = Xgc->CurPixmapStatus;
-#endif
+  int status = Xgc->CurPixmapStatus;
   if ( status == 1 )
     {
       glClearColor(Xgc->private->gcol_bg.red /255.0,
@@ -857,7 +871,7 @@ static void pixmap_resize(BCG *Xgc)
 /* Change the private->pixmap status of a Graphic Window.
  * adding or removing a Background Pixmap to it
  */
-#ifndef PERIGLGTK
+
 static void xset_pixmapOn(BCG *Xgc,int num)
 {
   int num1= Min(Max(num,0),1);
@@ -905,61 +919,6 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       Xgc->private->gldrawable = gtk_widget_get_gl_drawable (Xgc->private->drawing);
     }
 }
-#else
-
-static void xset_pixmapOn(BCG *Xgc,int num)
-{
-  int num1= Min(Max(num,0),1);
-  if ( Xgc->CurPixmapStatus == num1 ) return;
-  if ( num1 == 1 )
-    {
-      GdkDrawable *temp ;
-      /* create a new pixmap */
-      temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
-					    Xgc->CWindowWidth, Xgc->CWindowHeight,
-					    -1);
-      if ( temp  == NULL )
-	{
-	  xinfo(Xgc, "Not enough space to switch to Animation mode");
-	}
-      else
-	{
-	  int status ;
-	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
-	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	  status = nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
-	  if ( status == FALSE )
-	    {
-	      Sciprintf("Gl rendering off-screen not working !\n");
-	      cairo_surface_destroy(Xgc->private->extra_pixmap);
-	      Xgc->private->extra_pixmap = NULL;
-	      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
-	      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
-	      return ;
-	    }
-	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
-	  Xgc->CurPixmapStatus = 1;
-	}
-    }
-  else
-    {
-      /* I remove the extra pixmap to the window */
-      xinfo(Xgc," ");
-      if ( Xgc->private->gldrawable != NULL)
-	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
-      gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
-      cairo_surface_destroy(Xgc->private->extra_pixmap);
-      /* gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap); */
-      Xgc->private->extra_pixmap = NULL;
-      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
-      Xgc->CurPixmapStatus = 0;
-      nsp_set_gldrawable(Xgc, Xgc->private->pixmap);
-      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
-    }
-}
-
-#endif
-
 
 /* used to create a gldrawable and glcontex ref when
  * we use a pixmap. Note that this function may not work

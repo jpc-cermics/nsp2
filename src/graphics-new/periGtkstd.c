@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2016 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -64,27 +64,9 @@ static void nsp_drawing_invalidate_handler(GdkWindow *window, cairo_region_t *re
 
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
-#ifdef PERICAIRO
-GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
-#endif
+/* defined only in periCairo and shared */
 
-#ifdef PERICAIRO
-double nsp_predef_colors[] =
-  {
-    0,0,0,       /* black */
-    1,1,1,       /* white */
-    0.8,0.8,0.8, /* gray */
-    0,   0, 1,   /* Blue */
-    0,   1, 0,   /* Green */
-    0,   1, 1,   /* Cyan */
-    1,   0, 0,   /* Red */
-    1,   0, 1,   /* Magenta */
-    1,   1, 0,   /* Yellow */
-};
-#else
 extern double nsp_predef_colors[];
-#endif
-
 
 /**
  * invalidate:
@@ -175,22 +157,7 @@ static void xset_show(BCG *Xgc)
   cairo_t *cr;
   if ( Xgc->CurPixmapStatus == 1)
     {
-#ifdef PERIGLGTK
-      /* we copy the extra_pixmap to the window and to the backing store pixmap */
-      /* drawing to the window and to the backing store pixmap */
-      if ( Xgc->private->gldrawable != NULL
-	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
-	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
-      gdk_draw_drawable(gtk_widget_get_window(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
-		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-      gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
-		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-      if ( Xgc->private->gldrawable != NULL
-	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
-	gdk_gl_drawable_wait_gdk(Xgc->private->gldrawable);
-#else
       /* we copy the extra_pixmap to the window and to the backing store pixmap
-       * except for perigl which draw without a Xgc->private->pixmap.
        */
       cr = gdk_cairo_create (gtk_widget_get_window(Xgc->private->drawing));
       cairo_set_source_surface(cr,Xgc->private->extra_pixmap,0,0);
@@ -205,7 +172,6 @@ static void xset_show(BCG *Xgc)
       cairo_rectangle (cr, 0, 0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       cairo_fill (cr);
       cairo_destroy (cr);
-#endif
     }
   else
     {
@@ -250,40 +216,6 @@ static void xend(BCG *Xgc)
   /* Must destroy everything  */
 }
 
-/**
- * clearwindow:
- * @Xgc: a #BCG
- *
- * use background to paint the current window.
- * this function should only be called by expose_event
- * when necessary.
- *
- **/
-
-static void clearwindow(BCG *Xgc)
-{
-#ifdef PERICAIRO
-  cairo_t *cr = Xgc->private->cairo_drawable_cr;
-  /* when exporting, figure background should not
-   * be painted when  Xgc->figure_bg_draw is not TRUE
-   */
-  if ( Xgc->figure_bg_draw == TRUE )
-    {
-      cairo_set_source_rgb(cr,
-			   Xgc->private->gcol_bg.red/65535.0,
-			   Xgc->private->gcol_bg.green/65535.0,
-			   Xgc->private->gcol_bg.blue/65535.0);
-      cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
-      cairo_fill (cr);
-    }
-#endif
-#ifdef PERIGL
-  glClearColor(Xgc->private->gcol_bg.red /255.0,
-	       Xgc->private->gcol_bg.green /255.0,
-	       Xgc->private->gcol_bg.blue /255.0,0.0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-#endif
-}
 
 /**
  * xget_recording:
@@ -1321,30 +1253,6 @@ static int xset_colormap(BCG *Xgc,void *a)
 }
 
 /**
- * nsp_set_colormap_constants:
- * @Xgc: a #BCG
- * @m:
- *
- *
- **/
-
-#ifdef  PERICAIRO
-void nsp_set_colormap_constants(BCG *Xgc,int m)
-{
-  Xgc->Numcolors = m;
-  Xgc->IDLastPattern = m;
-  Xgc->NumForeground = -1 ;
-  Xgc->NumBackground = -1;
-  Xgc->CurColor = -1;
-  Xgc->CmapFlag = 0;
-  Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  Xgc->graphic_engine->xset_color(Xgc,m+1);
-  Xgc->graphic_engine->xset_foreground(Xgc,m+1);
-  Xgc->graphic_engine->xset_background(Xgc,m+2);
-}
-#endif
-
-/**
  * xget_colormap:
  * @Xgc: a #BCG
  * @num:
@@ -1637,45 +1545,6 @@ static void xset_fpf_def(BCG *Xgc)
 #include "perigtk/actions.c"
 #include "perigtk/init.c"
 
-/*
- * Initialisation of the graphic context. Used also
- * to come back to the default graphic state
- */
-
-/**
- * nsp_initialize_gc:
- * @Xgc: a #BCG
- *
- *
- **/
-
-#ifdef PERICAIRO
-void nsp_initialize_gc( BCG *Xgc )
-{
-  int i;
-  Xgc->graphic_engine->xset_unclip(Xgc);
-  Xgc->fontId=0; Xgc->fontSize=0 ;
-  Xgc->graphic_engine->xset_font(Xgc,2,1,FALSE);
-  Xgc->CurHardSymb=0; Xgc->CurHardSymbSize=0;
-  Xgc->graphic_engine->xset_mark(Xgc,1,1);
-  /* Absolute coord mode */
-  Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
-  /* initialisation des pattern dash par defaut en n&b */
-  Xgc->graphic_engine->xset_default_colormap(Xgc);
-  getcolordef(&i); /* preferred color status */
-  Xgc->graphic_engine->xset_usecolor(Xgc,i);
-  Xgc->graphic_engine->xset_dash(Xgc,1);
-  Xgc->graphic_engine->xset_hidden3d(Xgc,1);
-  Xgc->graphic_engine->xset_thickness(Xgc,1);
-  Xgc->graphic_engine->xset_color(Xgc,1);
-  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground);
-  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumBackground);
-  Xgc->graphic_engine->xset_hidden3d(Xgc,4);
-  Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
-  Xgc->graphic_engine->xset_fpf_def(Xgc) ;
-}
-#endif
-
 static void xset_default(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
@@ -1739,7 +1608,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
 #ifdef PERIGL
 static void realize_event_ogl(BCG *dd );
-#ifndef PERIGLGTK
+
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
   BCG *Xgc = (BCG *) data;
@@ -1775,32 +1644,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   return FALSE;
 }
 
-#else /* PERIGLGTK */
-static gint realize_event(GtkWidget *widget, gpointer data)
-{
-  BCG *dd = (BCG *) data;
-
-  if ( realize_event_common(widget,data) == FALSE ) return FALSE;
-
-  if ( dd->private->pixmap == NULL)
-    {
-      dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
-							       CAIRO_CONTENT_COLOR,
-							       dd->CWindowWidth, dd->CWindowHeight);
-    }
-
-  /* default value is to use the background pixmap */
-  dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
-  nsp_set_gldrawable(dd,dd->private->pixmap);
-  pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
-  if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext))
-    return FALSE;
-  realize_event_ogl(dd);
-  return FALSE;
-}
-#endif /* PERIGLGTK */
-
-
 static void realize_event_ogl(BCG *dd )
 {
   glClearDepth(1.0);
@@ -1834,7 +1677,6 @@ static void size_allocate_event (GtkWidget *widget, GdkRectangle *allocation, gp
   Sciprintf("A size allocate: (%d,%d)\n",allocation->width,allocation->height);
 }
 */
-
 
 /**
  * configure_event:
@@ -2010,11 +1852,9 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 							       dd->CWindowWidth, dd->CWindowHeight);
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
-#ifdef PERICAIRO
       if ( dd->private->cairo_pixmap_cr != NULL) cairo_destroy (dd->private->cairo_pixmap_cr);
       dd->private->cairo_pixmap_cr = cairo_create (dd->private->pixmap);
       dd->private->cairo_drawable_cr = dd->private->cairo_pixmap_cr;
-#endif
       /* if we have an extra pixmap we must resize */
       dd->graphic_engine->pixmap_resize(dd);
       /* we want to redraw all the window */
@@ -2289,8 +2129,6 @@ static gint scrolled_draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data
 #endif
 
 #ifdef PERIGL
-#ifndef PERIGLGTK
-
 /* periGL version */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -2369,171 +2207,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   return FALSE;
 }
 
-#else
-/* periGL version with drawing in a pixbuf
- */
-static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
-{
-  GdkRectangle *rect;
-  BCG *dd = (BCG *) data;
-  g_return_val_if_fail(dd != NULL, FALSE);
-  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-
-  /*
-   * redraw rectangle:
-   * here we use dd->private->invalidated and not
-   * event because event is clipped to the visible
-   * part of the drawing area and we want to keep
-   * also correct drawing in hidden part of the
-   * drawing area since we use a backing store pixbuf.
-   */
-  rect =  ( event != NULL) ? &dd->private->invalidated : NULL;
-
-
-  if( dd->private->resize != 0)
-    {
-      /* we need to resize the pixmap used for drawing
-       */
-      dd->private->resize = 0;
-      if ( dd->private->pixmap )
-	{
-	  /* free old pixmap */
-	  gdk_pixmap_unset_gl_capability (dd->private->pixmap);
-	  cairo_surface_destroy (dd->private->pixmap);
-	  /* gdk_pixmap_unref(dd->private->pixmap); */
-	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
-	}
-      dd->private->pixmap = gdk_window_create_similar_surface (gtk_widget_get_window(dd->private->drawing),
-							       CAIRO_CONTENT_COLOR,
-							       dd->CWindowWidth, dd->CWindowHeight);
-      nsp_set_gldrawable(dd,dd->private->pixmap);
-      /* update drawable */
-      if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
-      /* fill private background with background */
-      pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
-      dd->private->gl_only = TRUE;
-      /* if we have an extra pixmap we must resize */
-      dd->graphic_engine->pixmap_resize(dd);
-      /* we want to redraw all the window */
-      dd->private->draw = TRUE;
-      rect = NULL;
-    }
-
-  if ( dd->private->draw == TRUE )
-    {
-      gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
-      dd->private->draw = FALSE;
-      dd->private->gl_only = TRUE;
-      if (dd->figure == NULL)
-	{
-	  dd->graphic_engine->cleararea(dd,rect);
-	}
-      else
-	{
-	  NspGraphic *G = (NspGraphic *) dd->figure ;
-	  G->type->draw(dd,G,rect,NULL);
-	}
-      gdk_gl_drawable_gl_end (dd->private->gldrawable);
-    }
-
-  glFlush ();
-  gdk_gl_drawable_wait_gl(dd->private->gldrawable);
-
-  if (event  != NULL)
-    {
-      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,
-			event->area.x, event->area.y, event->area.x, event->area.y,
-			event->area.width, event->area.height);
-      /* debug the drawing rectangle which is updated              */
-      gdk_draw_rectangle(gtk_widget_get_window(dd->private->drawing),dd->private->wgc,FALSE,
-			 event->area.x, event->area.y,
-			 event->area.width, event->area.height);
-    }
-  else
-    {
-      gdk_draw_drawable(gtk_widget_get_window(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,0,0,0,0,
-			dd->CWindowWidth, dd->CWindowHeight);
-    }
-  /* if a zrect exists then add it on graphics  */
-  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0)
-    {
-      gdk_draw_rectangle(gtk_widget_get_window(dd->private->drawing),dd->private->wgc,FALSE,
-			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
-    }
-  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
-
-  dd->private->invalidated.x = 0;
-  dd->private->invalidated.y = 0;
-  dd->private->invalidated.width = 0;
-  dd->private->invalidated.height = 0;
-
-  gdk_flush();
-  return FALSE;
-}
-
-#endif
-#endif
-
-/**
- * nsp_get_pixbuf:
- * @Xgc: a #BCG
- *
- *
- *
- * Returns:
- **/
-
-#if defined(PERICAIRO)
-
-#if GTK_CHECK_VERSION(3,0,0)
-GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
-{
-  cairo_surface_t *surface;
-  GtkWidget *graphic_widget=  Xgc->private->drawing;
-  GdkPixbuf *pixbuf;
-  int width, height;
-  cairo_t *cr;
-  if (  Xgc->private->drawing == NULL ) return NULL;
-  width = gtk_widget_get_allocated_width (graphic_widget);
-  height = gtk_widget_get_allocated_height (graphic_widget);
-  
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
-
-  cr = cairo_create (surface);
-  gtk_widget_draw (graphic_widget, cr);
-  cairo_destroy (cr);
-
-  pixbuf = gdk_pixbuf_get_from_surface (surface,
-					0, 0,
-					width, height);
-  cairo_surface_destroy (surface);
-  return pixbuf;
-}
-
-#else 
-/* gtk-2 version */
-
-GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
-{
-  int width, height;
-  GdkPixbuf *pixbuf;
-  GdkPixmap *pixmap;
-  GtkWidget *graphic_widget = Xgc->private->drawing;
-  if (  Xgc->private->drawing == NULL ) return NULL;
-  pixmap = gtk_widget_get_snapshot (graphic_widget, NULL);
-  gdk_drawable_get_size (pixmap, &width, &height);
-  pixbuf = gdk_pixbuf_get_from_drawable (NULL, pixmap,
-					 gtk_widget_get_colormap (graphic_widget),
-					 0, 0,
-					 0, 0,
-					 width, height);
-  g_object_unref (pixmap);
-  return pixbuf;
-}
-#endif 
-
 #endif
 
 /*
@@ -2556,8 +2229,12 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #include "perigtk/peridraw_gl.c"
 #endif /* PERIGL */
 
-#ifdef PERICAIRO
-/* for all drivers */
+/* function below are to be defined once they are 
+ * shared by all drivers. PERI_COMMON is just defined 
+ * in periCairoNew.c
+ */
+
+#ifdef PERI_COMMON
 
 void nsp_set_cursor(BCG *Xgc,int id)
 {
@@ -2596,7 +2273,6 @@ void nsp_set_cursor(BCG *Xgc,int id)
     }
 }
 
-
 NspObject *nsp_get_graphic_widget(int wid)
 {
   NspObject *Obj;
@@ -2611,4 +2287,158 @@ NspObject *nsp_get_graphic_widget(int wid)
   return NULL;
 }
 
-#endif
+/**
+ * nsp_set_colormap_constants:
+ * @Xgc: a #BCG
+ * @m:
+ *
+ *
+ **/
+
+void nsp_set_colormap_constants(BCG *Xgc,int m)
+{
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m;
+  Xgc->NumForeground = -1 ;
+  Xgc->NumBackground = -1;
+  Xgc->CurColor = -1;
+  Xgc->CmapFlag = 0;
+  Xgc->graphic_engine->xset_usecolor(Xgc,1);
+  Xgc->graphic_engine->xset_color(Xgc,m+1);
+  Xgc->graphic_engine->xset_foreground(Xgc,m+1);
+  Xgc->graphic_engine->xset_background(Xgc,m+2);
+}
+
+GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
+
+double nsp_predef_colors[] =
+  {
+    0,0,0,       /* black */
+    1,1,1,       /* white */
+    0.8,0.8,0.8, /* gray */
+    0,   0, 1,   /* Blue */
+    0,   1, 0,   /* Green */
+    0,   1, 1,   /* Cyan */
+    1,   0, 0,   /* Red */
+    1,   0, 1,   /* Magenta */
+    1,   1, 0,   /* Yellow */
+};
+
+/**
+ * nsp_initialize_gc:
+ * @Xgc: a #BCG
+ *
+ * Initialisation of the graphic context. Used also
+ * to come back to the default graphic state
+ *
+ **/
+
+void nsp_initialize_gc( BCG *Xgc )
+{
+  int i;
+  Xgc->graphic_engine->xset_unclip(Xgc);
+  Xgc->fontId=0; Xgc->fontSize=0 ;
+  Xgc->graphic_engine->xset_font(Xgc,2,1,FALSE);
+  Xgc->CurHardSymb=0; Xgc->CurHardSymbSize=0;
+  Xgc->graphic_engine->xset_mark(Xgc,1,1);
+  /* Absolute coord mode */
+  Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
+  /* initialisation des pattern dash par defaut en n&b */
+  Xgc->graphic_engine->xset_default_colormap(Xgc);
+  getcolordef(&i); /* preferred color status */
+  Xgc->graphic_engine->xset_usecolor(Xgc,i);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,1);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_color(Xgc,1);
+  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground);
+  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumBackground);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,4);
+  Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
+  Xgc->graphic_engine->xset_fpf_def(Xgc) ;
+}
+
+
+/**
+ * nsp_get_pixbuf:
+ * @Xgc: a #BCG
+ *
+ *
+ *
+ * Returns:
+ **/
+
+#if GTK_CHECK_VERSION(3,0,0)
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
+{
+  cairo_surface_t *surface;
+  GtkWidget *graphic_widget=  Xgc->private->drawing;
+  GdkPixbuf *pixbuf;
+  int width, height;
+  cairo_t *cr;
+  if (  Xgc->private->drawing == NULL ) return NULL;
+  width = gtk_widget_get_allocated_width (graphic_widget);
+  height = gtk_widget_get_allocated_height (graphic_widget);
+  
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
+
+  cr = cairo_create (surface);
+  gtk_widget_draw (graphic_widget, cr);
+  cairo_destroy (cr);
+  
+  pixbuf = gdk_pixbuf_get_from_surface (surface, 0, 0,width, height);
+  cairo_surface_destroy (surface);
+  return pixbuf;
+}
+
+#else
+
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
+{
+  int width, height;
+  GdkPixbuf *pixbuf;
+  GdkPixmap *pixmap;
+  GtkWidget *graphic_widget = Xgc->private->drawing;
+  if (  Xgc->private->drawing == NULL ) return NULL;
+  pixmap = gtk_widget_get_snapshot (graphic_widget, NULL);
+  gdk_drawable_get_size (pixmap, &width, &height);
+  pixbuf = gdk_pixbuf_get_from_drawable (NULL, pixmap,
+					 gtk_widget_get_colormap (graphic_widget),
+					 0, 0, 0, 0, width, height);
+  g_object_unref (pixmap);
+  return pixbuf;
+}
+
+#endif /* GTK_CHECK_VERSION(3,0,0) */
+
+void nsp_pause(int sec_time,int events)
+{
+  if ( sec_time == 0 )
+    {
+      /* flush events only */
+      while ( gtk_events_pending()) gtk_main_iteration();
+    }
+  else
+    {
+      xpause(sec_time,events);
+    }
+}
+
+int window_list_check_top(BCG *dd,void *win)
+{
+  return dd->private->window == (GtkWidget *) win ;
+}
+
+int window_list_check_drawing(BCG *dd,void *win)
+{
+  return dd->private->drawing == (GtkWidget *) win ;
+}
+
+/* this should be  moved in windows: keep track of window ids
+ */
+
+static int EntryCounter = 0;
+int nsp_get_win_counter() { return EntryCounter;};
+void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
+
+#endif /* PERI_COMMON */

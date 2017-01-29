@@ -23,6 +23,7 @@
 
 #define PERICAIRO 1
 #define PERI_PRIVATE_CAIRO 1
+#define PERI_COMMON
 
 #include "periGtkstd.c" 
 

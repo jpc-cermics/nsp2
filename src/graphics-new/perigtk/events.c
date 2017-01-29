@@ -586,7 +586,6 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
 #include <unistd.h>  /* for usleep */
 #endif
 
-
 #ifdef HAVE_USLEEP
 #define USLEEP(x) usleep(x)
 #else
@@ -595,21 +594,6 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
 #else
 #define USLEEP(x) x
 #endif
-#endif
-
-#ifdef PERICAIRO
-void nsp_pause(int sec_time,int events)
-{
-  if ( sec_time == 0 )
-    {
-      /* flush events only */
-      while ( gtk_events_pending()) gtk_main_iteration();
-    }
-  else
-    {
-      xpause(sec_time,events);
-    }
-}
 #endif
 
 extern int nsp_check_events_activated(void);
@@ -698,20 +682,6 @@ static void xinfo(BCG *Xgc,char *format,...)
     }
 }
 
-
-#ifdef PERICAIRO
-int window_list_check_top(BCG *dd,void *win)
-{
-  return dd->private->window == (GtkWidget *) win ;
-}
-
-int window_list_check_drawing(BCG *dd,void *win)
-{
-  return dd->private->drawing == (GtkWidget *) win ;
-}
-
-#endif
-
 /* delete the graphic window given a graphic
  * context or the window id @intnum.
  *
@@ -753,9 +723,6 @@ static void delete_window(BCG *dd,int intnum)
     }
   if ( winxgc->private->extra_pixmap != NULL)
     {
-#if defined(PERIGL) && defined(PERIGLGTK)
-      gdk_pixmap_unset_gl_capability (winxgc->private->extra_pixmap);
-#endif
       /* we can have a non null extra_pixmap */
       cairo_surface_destroy(winxgc->private->extra_pixmap);
     }
@@ -764,9 +731,6 @@ static void delete_window(BCG *dd,int intnum)
   /* backing store private->pixmap */
   if (winxgc->private->pixmap != NULL)
     {
-#if defined(PERIGL) && defined(PERIGLGTK)
-      gdk_pixmap_unset_gl_capability (winxgc->private->pixmap);
-#endif
       cairo_surface_destroy(winxgc->private->pixmap);
     }
   /* destroy top level window if it is not shared by other graphics  */
@@ -775,9 +739,6 @@ static void delete_window(BCG *dd,int intnum)
     {
       if ( winxgc->private->window != NULL)
 	{
-#if defined(PERIGL) && !defined(PERIGLGTK)
-	  gdk_window_unset_gl_capability(gtk_widget_get_window(winxgc->private->drawing));
-#endif
 	  gtk_widget_destroy(winxgc->private->window);
 	}
     }
@@ -1045,7 +1006,6 @@ target_drag_drop(GtkWidget *widget, GdkDragContext *context,
   return FALSE;
 }
 #endif
-
 
 #if 0
 static void

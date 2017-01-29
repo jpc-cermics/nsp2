@@ -56,6 +56,34 @@ static const int symbols[] =
     0x25A1  /* white square */
   };
 
+
+/**
+ * clearwindow:
+ * @Xgc: a #BCG
+ *
+ * use background to paint the current window.
+ * this function should only be called by expose_event
+ * when necessary.
+ *
+ **/
+
+static void clearwindow(BCG *Xgc)
+{
+  cairo_t *cr = Xgc->private->cairo_drawable_cr;
+  /* when exporting, figure background should not
+   * be painted when  Xgc->figure_bg_draw is not TRUE
+   */
+  if ( Xgc->figure_bg_draw == TRUE )
+    {
+      cairo_set_source_rgb(cr,
+			   Xgc->private->gcol_bg.red/65535.0,
+			   Xgc->private->gcol_bg.green/65535.0,
+			   Xgc->private->gcol_bg.blue/65535.0);
+      cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+      cairo_fill (cr);
+    }
+}
+
 /* clear a rectangle zone by painting with the background color
  * if r is NULL then entire graphics window is painted.
  */

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2015 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2016 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -29,7 +29,6 @@
  * EntryCounter is used to check for first Entry + to know the next
  * available window number
  */
-
 #ifdef PERICAIRO
 #include <cairo-pdf.h>
 #include <cairo-ps.h>
@@ -52,11 +51,12 @@ static void *initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double
 #ifdef PERIGL
 #define nsp_graphic_new_new nsp_graphic_new_gl_new
 #endif
+
 #ifdef PERICAIRO
 int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 int nsp_graphic_new_cairo_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
-return nsp_graphic_new_new(win,box,v2,wdim,wpdim,viewport_pos,wpos);
+  return nsp_graphic_new_new(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
 /* #define nsp_graphic_new_new nsp_graphic_new_new */
 #endif
@@ -66,14 +66,6 @@ int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpd
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL,NULL);
   return  nsp_get_win_counter()-1;
 }
-
-#ifdef PERICAIRO
-/* this should be  moved in windows: keep track of window ids
- */
-static int EntryCounter = 0;
-int nsp_get_win_counter() { return EntryCounter;};
-void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
-#endif
 
 static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
 				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data,void *Fig)
@@ -194,7 +186,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
    */
   /* Default value is without Pixmap */
   NewXgc->CurPixmapStatus = 0;
-#if defined(PERIGL) && !defined(PERIGLGTK)
+#if defined(PERIGL) 
   NewXgc->private->drawable = gtk_widget_get_window(NewXgc->private->drawing);
 #endif
   /* initialize a pango_layout */
@@ -264,7 +256,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gint iw, ih;
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
-#if defined(PERIGL) && !defined(PERIGLGTK)
+#if defined(PERIGL) 
   guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
   GdkGLConfig *glconfig;
 
@@ -389,7 +381,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
-#if defined(PERIGL) && !defined(PERIGLGTK)
+#if defined(PERIGL) 
   /* Set OpenGL-capability to the widget
    * opengl rendering in the window
    */
@@ -402,7 +394,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* we use our own double buffer */
   gtk_widget_set_double_buffered (dd->private->drawing , FALSE);
 
-#endif /* defined(PERIGL) && !defined(PERIGLGTK)  */
+#endif /* defined(PERIGL) */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
 #if 0
