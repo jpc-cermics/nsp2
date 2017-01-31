@@ -1298,7 +1298,8 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
      */
 
 #ifdef  WITH_OPENGL
-    if (  Xgc->graphic_engine == &GL_gengine )
+    /* the opengl version does not work it should be revisited */
+    if ( 0 && Xgc->graphic_engine == &GL_gengine )
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
 	  for ( j = 0 ; j < ny -1 ; j++)
@@ -1780,4 +1781,4 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 }
 
 
-#line 1784 "gmatrix1.c"
+#line 1785 "gmatrix1.c"
